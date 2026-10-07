@@ -7,44 +7,24 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_coates_correct.chain.jpg">tb_tcspc_coates_correct: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_coates_correct.chain.jpg">tb_tcspc_coates_correct: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_coates_correct.inputs.jpg">tb_tcspc_coates_correct: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_coates_correct.inputs.jpg">tb_tcspc_coates_correct: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Undo TCSPC pile-up exactly (Coates&#x27;s estimator) — the early-photon bias.</p>
-<p>Classical TCSPC records <b>at most one photon per excitation cycle</b>: the</p>
-<p>first one. Late bins are therefore starved, because the cycles in which an</p>
-<p>early photon arrived never reach them, and the measured histogram is biased</p>
-<p>toward short arrival times — a dToF depth read straight off a piled-up</p>
-<p>histogram is *too close*, and a fluorescence lifetime is *too short*.</p>
-<p>Coates&#x27;s estimator inverts that exactly. With `<code style="color:#22d3bf">N_k</code>` the measured counts in</p>
-<p>bin `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">C</code>` the number of excitation cycles, the number of cycles that</p>
-<p>survived to reach bin `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">D_k = C - sum_{j&lt;k} N_j</code>`, the per-cycle</p>
-<p>detection probability in that bin is `<code style="color:#22d3bf">p_k = N_k / D_k</code>` and the pile-up-free</p>
-<p>per-cycle intensity is `<code style="color:#22d3bf">lambda_k = -ln(1 - p_k)</code>`. This op returns</p>
-<p>`<code style="color:#22d3bf">C * lambda_k</code>` — the histogram the same scene would have produced if the</p>
-<p>detector could record every photon — so it is directly comparable to the</p>
-<p>measured one.</p>
-<p>This is an <b>exact</b> inverse, not a linearisation: build a histogram from a</p>
-<p>known `<code style="color:#22d3bf">lambda</code><code style="color:#22d3bf"> through the forward model </code>`N_k = C * exp(-sum_{j&lt;k}</p>
-<p>lambda_j) * (1 - exp(-lambda_k))`<code style="color:#22d3bf"> and Coates returns </code><code style="color:#22d3bf">lambda</code>` to machine</p>
-<p>precision (measured max relative error 1.6e-15 in the tests, on a pile-up so</p>
-<p>severe that the last bin was suppressed to 14.8% of its true counts).</p>
-<p>*hist* is the 1-D measured histogram (counts per bin); *cycles* the number of</p>
-<p>excitation cycles (laser pulses) that produced it.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *hist*, a</p>
-<p>non-positive or non-integer *cycles*, a histogram whose total exceeds</p>
-<p>*cycles* (impossible: at most one photon per cycle — a sure sign that</p>
-<p>*cycles* is wrong or the data are not first-photon TCSPC), and any bin that</p>
-<p>consumed every remaining cycle (`<code style="color:#22d3bf">p_k = 1</code><code style="color:#22d3bf">, where </code><code style="color:#22d3bf">-ln(0)</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">inf</code>`).</p>
-<p>Typed bridge of the photon op `<code style="color:#22d3bf">tcspc_coates_correct</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>Classical TCSPC records <b>at most one photon per excitation cycle</b>: the first one. Late bins are therefore starved, because the cycles in which an early photon arrived never reach them, and the measured histogram is biased toward short arrival times — a dToF depth read straight off a piled-up histogram is *too close*, and a fluorescence lifetime is *too short*.</p>
+<p>Coates&#x27;s estimator inverts that exactly. With <code style="color:#22d3bf">N_k</code> the measured counts in bin <code style="color:#22d3bf">k</code> and <code style="color:#22d3bf">C</code> the number of excitation cycles, the number of cycles that survived to reach bin <code style="color:#22d3bf">k</code> is <code style="color:#22d3bf">D_k = C - sum_{j&lt;k} N_j</code>, the per-cycle detection probability in that bin is <code style="color:#22d3bf">p_k = N_k / D_k</code> and the pile-up-free per-cycle intensity is <code style="color:#22d3bf">lambda_k = -ln(1 - p_k)</code>. This op returns <code style="color:#22d3bf">C * lambda_k</code> — the histogram the same scene would have produced if the detector could record every photon — so it is directly comparable to the measured one.</p>
+<p>This is an <b>exact</b> inverse, not a linearisation: build a histogram from a known <code style="color:#22d3bf">lambda</code> through the forward model <code style="color:#22d3bf">N_k = C * exp(-sum_{j&lt;k} lambda_j) * (1 - exp(-lambda_k))</code> and Coates returns <code style="color:#22d3bf">lambda</code> to machine precision (measured max relative error 1.6e-15 in the tests, on a pile-up so severe that the last bin was suppressed to 14.8% of its true counts).</p>
+<p>*hist* is the 1-D measured histogram (counts per bin); *cycles* the number of excitation cycles (laser pulses) that produced it.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: negative, non-finite or non-1-D *hist*, a non-positive or non-integer *cycles*, a histogram whose total exceeds *cycles* (impossible: at most one photon per cycle — a sure sign that *cycles* is wrong or the data are not first-photon TCSPC), and any bin that consumed every remaining cycle (<code style="color:#22d3bf">p_k = 1</code>, where <code style="color:#22d3bf">-ln(0)</code> is <code style="color:#22d3bf">inf</code>).</p>
+<p>Typed bridge of the photon op <code style="color:#22d3bf">tcspc_coates_correct</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_counts 0.50 0.50
-tb_tcspc_coates_correct 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_counts%200.50%200.50%0Atb_tcspc_coates_correct%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_counts%200.50%200.50%0Atb_tcspc_coates_correct%200.50%200.50">Load &amp; run</a></p>
+tb_tcspc_coates_correct 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_counts%200.50%200.50%0Atb_tcspc_coates_correct%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_counts%200.50%200.50%0Atb_tcspc_coates_correct%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">tcspc_coates_correct</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>

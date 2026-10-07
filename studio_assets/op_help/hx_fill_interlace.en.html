@@ -13,13 +13,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Interpolate two video half-frames (replace the odd rows by the mean of the adjacent even rows = de-interlacing).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>1 枚の画像を奇数行・偶数行の 2 フィールドとみなし、奇数行(`<code style="color:#22d3bf">1::2</code>`)を上下の隣接行の平均</p>
-<p>`<code style="color:#22d3bf">0.5*(v[i-1] + v[i+1])</code>` で置き換える。偶数行はそのまま。出力は入力と同形の float 画像。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 上下の行は `<code style="color:#22d3bf">np.roll</code>` で取るため、高さが偶数のとき最終行(奇数行)の「下」は先頭行になる(端 1 行だけ循環)。</p>
-<p>インターレース映像の櫛状ずれを消す最も単純な線形補間で、奇数フィールドの情報は捨てられる(縦の解像度は</p>
-<p>半分に落ちる)。どちらのフィールドを残すかは選べない(常に偶数行が生き残る)。行方向の縞が疑われるときの</p>
-<p>前処理として、`<code style="color:#22d3bf">hx_nonmax_dir</code>` など微分系 op の前に置く。</p>
+<p>1 枚の画像を奇数行・偶数行の 2 フィールドとみなし、奇数行(<code style="color:#22d3bf">1::2</code>)を上下の隣接行の平均 <code style="color:#22d3bf">0.5*(v[i-1] + v[i+1])</code> で置き換える。偶数行はそのまま。出力は入力と同形の float 画像。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 上下の行は <code style="color:#22d3bf">np.roll</code> で取るため、高さが偶数のとき最終行(奇数行)の「下」は先頭行になる(端 1 行だけ循環)。</p>
+<p>インターレース映像の櫛状ずれを消す最も単純な線形補間で、奇数フィールドの情報は捨てられる(縦の解像度は半分に落ちる)。どちらのフィールドを残すかは選べない(常に偶数行が生き残る)。行方向の縞が疑われるときの前処理として、<code style="color:#22d3bf">hx_nonmax_dir</code> など微分系 op の前に置く。</p>
 <p><b>Border handling</b>: wrap around to the opposite side (periodic) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

@@ -5,12 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>テスト・CI 用の最小 CommonRoad 2020a XML を文字列で返す。</p>
-<p>`<code style="color:#22d3bf">tjunction</code>`: lanelet 100(直線 40 m, +x)→ 101(左 90° 円弧、中心線半径 12 m)→ 102(直線 40 m, +y)、対向 lanelet 200</p>
-<p>(100 の左隣、−x 向き)に対向車 1 台(8 m/s、矩形 4.5 × 1.8)、標識 274(speed_limit m/s)は 3 本すべてに、stopLine は 100 の</p>
-<p>終端(交差点の手前)、planning problem = (5, 0) から v0 でゴール lanelet 102・time_step [100, 200]・速度 [0, 15]。</p>
-<p>`<code style="color:#22d3bf">straight</code><code style="color:#22d3bf">: 101 も直線(3 本で 120 m)。</code><code style="color:#22d3bf">blocked</code>`: straight の 101 の中央に静止障害物(衝突の門用)。</p>
-<p>車線幅 3.5 m。中心線の長さ = 40 + 6π(≒ 18.85、円弧は 16 分割の折線) + 40(tjunction)/ 120(straight)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: kind が :data:</code>SYNTHETIC_KINDS` 以外、dt / speed_limit / v0 が正でない。</p>
+<p><code style="color:#22d3bf">tjunction</code>: lanelet 100(直線 40 m, +x)→ 101(左 90° 円弧、中心線半径 12 m)→ 102(直線 40 m, +y)、対向 lanelet 200 (100 の左隣、−x 向き)に対向車 1 台(8 m/s、矩形 4.5 × 1.8)、標識 274(speed_limit m/s)は 3 本すべてに、stopLine は 100 の終端(交差点の手前)、planning problem = (5, 0) から v0 でゴール lanelet 102・time_step [100, 200]・速度 [0, 15]。<code style="color:#22d3bf">straight</code>: 101 も直線(3 本で 120 m)。<code style="color:#22d3bf">blocked</code>: straight の 101 の中央に静止障害物(衝突の門用)。車線幅 3.5 m。中心線の長さ = 40 + 6π(≒ 18.85、円弧は 16 分割の折線) + 40(tjunction)/ 120(straight)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: kind が <code style="color:#22d3bf">SYNTHETIC_KINDS</code> 以外、dt / speed_limit / v0 が正でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

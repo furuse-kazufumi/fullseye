@@ -4,18 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_zero_crossings_funct_1d&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p>*그림 없음: op는 실행됐지만 빈 결과를 반환했다(합성 입력에서는 이 op의 답이 없음 —— 영점 교차나 이상치가 없는 등). 빈 결과는 그림으로 그리지 않는다. 아래 “Studio에서 시험”의 프로그램은 실행되므로 자신의 영상으로 시험할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>함수의 부호가 바뀌는 지점의 인덱스(HALCON `<code style="color:#22d3bf">zero_crossings_funct_1d</code>`).</p>
+<p>함수의 부호가 바뀌는 지점의 인덱스(HALCON <code style="color:#22d3bf">zero_crossings_funct_1d</code>).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Returns the integer indices `<code style="color:#22d3bf">i</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">sign(y[i]) * sign(y[i+1]) &lt; 0</code>` —</p>
-<p>the sample *before* each crossing. An empty input returns an empty index</p>
-<p>array (degenerate case, not an error).</p>
-<p>Honest limitation: the test is a <b>strict</b> sign product, so a crossing that</p>
-<p>lands exactly on a zero sample (`<code style="color:#22d3bf">[-1, 0, 1]</code>`) is *not* reported, nor is a</p>
-<p>touch of zero without a sign change (`<code style="color:#22d3bf">[1, 0, 1]</code>`).</p>
-<p>:param y: 1-D function (may be empty).</p>
-<p>:returns: int index array (possibly empty).</p>
-<p>:raises ValueError: non-1-D / NaN / Inf input.</p>
-<p>Typed bridge of the 1d op `<code style="color:#22d3bf">zero_crossings_funct_1d</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>Returns the integer indices <code style="color:#22d3bf">i</code> with <code style="color:#22d3bf">sign(y[i]) * sign(y[i+1]) &lt; 0</code> — the sample *before* each crossing. An empty input returns an empty index array (degenerate case, not an error).</p>
+<p>Honest limitation: the test is a <b>strict</b> sign product, so a crossing that lands exactly on a zero sample (<code style="color:#22d3bf">[-1, 0, 1]</code>) is *not* reported, nor is a touch of zero without a sign change (<code style="color:#22d3bf">[1, 0, 1]</code>).</p>
+<p>:param y: 1-D function (may be empty). :returns: int index array (possibly empty). :raises ValueError: non-1-D / NaN / Inf input.</p>
+<p>Typed bridge of the 1d op <code style="color:#22d3bf">zero_crossings_funct_1d</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

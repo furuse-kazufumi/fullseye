@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gmsd(ref, dist, data_range: &#x27;float&#x27; = 255.0, c: &#x27;float&#x27; = 170.0) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import iqafsim; iqafsim.gmsd(ref, dist, data_range: &#x27;float&#x27; = 255.0, c: &#x27;float&#x27; = 170.0) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;gmsd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>GMSD = GMS 地図の標準偏差(N−1、原実装の `<code style="color:#22d3bf">std2</code>`、論文 式 5)。0 = 同一、大きいほど劣化(<b>lower is better</b> —— MOS との順位相関は負で、</p>
-<p>公表表は |ρ| を載せる: TID2013 全体 |SROCC| 0.8038、二次資料 0.8044)。入力 (H, W) か (H, W, 3)(3-ch は Y)。</p>
-<p>`<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, gmsd, luma=&quot;rgb&quot;)</code><code style="color:#22d3bf">。**Raises** </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: :func:</code>gmsd_map` と同じ、地図が 1 画素(分散が定義されない)。</p>
+<p>GMSD = GMS 地図の標準偏差(N−1、原実装の <code style="color:#22d3bf">std2</code>、論文 式 5)。0 = 同一、大きいほど劣化(<b>lower is better</b> —— MOS との順位相関は負で、公表表は |ρ| を載せる: TID2013 全体 |SROCC| 0.8038、二次資料 0.8044)。入力 (H, W) か (H, W, 3)(3-ch は Y)。<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, gmsd, luma=&quot;rgb&quot;)</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">gmsd_map</code> と同じ、地図が 1 画素(分散が定義されない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

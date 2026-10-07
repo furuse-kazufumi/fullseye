@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_aim_normal(eye, mirror_center, look_dir) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_aim_normal(eye, mirror_center, look_dir) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;mirror_aim_normal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>眼 `<code style="color:#22d3bf">eye</code><code style="color:#22d3bf"> から鏡の中心 </code><code style="color:#22d3bf">mirror_center</code><code style="color:#22d3bf"> へ来た光線を方向 </code><code style="color:#22d3bf">look_dir</code>` へ反射させる鏡の法線(2D でも 3D でも)。</p>
+<p>眼 <code style="color:#22d3bf">eye</code> から鏡の中心 <code style="color:#22d3bf">mirror_center</code> へ来た光線を方向 <code style="color:#22d3bf">look_dir</code> へ反射させる鏡の法線(2D でも 3D でも)。</p>
 <p>n = normalize(unit(E − M) + unit(ℓ))</p>
-<p>(反射の法則: 入射の逆向きと反射の向きの二等分)。法線は眼の側を向く。`<code style="color:#22d3bf">look_dir</code>` が眼の方向と正反対(鏡を真横から</p>
-<p>見る)だと定まらないので ValueError。</p>
+<p>(反射の法則: 入射の逆向きと反射の向きの二等分)。法線は眼の側を向く。<code style="color:#22d3bf">look_dir</code> が眼の方向と正反対(鏡を真横から見る)だと定まらないので ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

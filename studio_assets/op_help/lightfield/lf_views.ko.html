@@ -3,15 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">images</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_views(lf)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import lightfield; lightfield.lf_views(lf)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opslightfield.get(&quot;lf_views&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>각도 격자 전체를 2-D 이미지의 평범한 리스트로(`<code style="color:#22d3bf">(v, u)</code>` 행 우선).</p>
+<p>각도 격자 전체를 2-D 이미지의 평범한 리스트로(<code style="color:#22d3bf">(v, u)</code> 행 우선).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The bridge to the rest of fullseye: the returned `<code style="color:#22d3bf">list</code><code style="color:#22d3bf"> of </code><code style="color:#22d3bf">V*U</code>`</p>
-<p>`<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> arrays is the </code><code style="color:#22d3bf">images</code>` type, so multi-image operators</p>
-<p>(registration, fusion, statistics, :mod:<code style="color:#22d3bf">focus_stack</code>&#x27;s machinery) consume a</p>
-<p>light field with no adapter. Ordering is `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> outer, </code><code style="color:#22d3bf">u</code>` inner, i.e.</p>
-<p>`<code style="color:#22d3bf">views[v*U + u] == lf[v, u]</code>`; each entry is a copy, so mutating one does</p>
-<p>not corrupt the field.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* is not a valid light field.</p>
+<p>The bridge to the rest of fullseye: the returned <code style="color:#22d3bf">list</code> of <code style="color:#22d3bf">V*U</code> <code style="color:#22d3bf">(H, W)</code> arrays is the <code style="color:#22d3bf">images</code> type, so multi-image operators (registration, fusion, statistics, <code style="color:#22d3bf">focus_stack</code>&#x27;s machinery) consume a light field with no adapter. Ordering is <code style="color:#22d3bf">v</code> outer, <code style="color:#22d3bf">u</code> inner, i.e. <code style="color:#22d3bf">views[v*U + u] == lf[v, u]</code>; each entry is a copy, so mutating one does not corrupt the field.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* is not a valid light field.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

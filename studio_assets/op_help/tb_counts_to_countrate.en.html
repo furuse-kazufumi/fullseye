@@ -12,7 +12,7 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_counts_to_countrate.inputs.jpg">tb_counts_to_countrate: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Counts -&gt; count rate `<code style="color:#22d3bf">[Hz]</code><code style="color:#22d3bf">. The inverse of :func:</code>countrate_to_counts`.</p>
+<p>Counts -&gt; count rate <code style="color:#22d3bf">[Hz]</code>. The inverse of <code style="color:#22d3bf">countrate_to_counts</code>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>Args:</p>
 <p>counts: (N,) の非負計数。</p>
@@ -21,7 +21,7 @@
 <p>(N,) float64 の非負レート [Hz]。</p>
 <p>Raises:</p>
 <p>ValueError: 負の計数 / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op `<code style="color:#22d3bf">counts_to_countrate</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gate_s</code><code style="color:#22d3bf">(既定 0.001)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">counts_to_countrate</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">gate_s</code>(既定 0.001)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

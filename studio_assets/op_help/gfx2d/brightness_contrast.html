@@ -3,11 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.brightness_contrast(rgb, brightness=0.0, contrast=1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.brightness_contrast(rgb, brightness=0.0, contrast=1.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;brightness_contrast&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>`<code style="color:#22d3bf">out = (rgb - 0.5) * contrast + 0.5 + brightness</code><code style="color:#22d3bf">, clipped to </code><code style="color:#22d3bf">[0, 1]</code>`.</p>
-<p>Contrast pivots about mid-grey so `<code style="color:#22d3bf">contrast=2</code>` doubles the distance from</p>
-<p>0.5 and leaves 0.5 alone; brightness is an additive offset. Ground truth:</p>
-<p>`<code style="color:#22d3bf">(0, 1)</code>` is the exact identity; mid-grey is invariant to any contrast.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *brightness* outside </code><code style="color:#22d3bf">[-1, 1]</code>` or *contrast* &lt; 0.</p>
+<p><code style="color:#22d3bf">out = (rgb - 0.5) * contrast + 0.5 + brightness</code>, clipped to <code style="color:#22d3bf">[0, 1]</code>.</p>
+<p>Contrast pivots about mid-grey so <code style="color:#22d3bf">contrast=2</code> doubles the distance from 0.5 and leaves 0.5 alone; brightness is an additive offset. Ground truth:</p>
+<p><code style="color:#22d3bf">(0, 1)</code> is the exact identity; mid-grey is invariant to any contrast. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *brightness* outside <code style="color:#22d3bf">[-1, 1]</code> or *contrast* &lt; 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

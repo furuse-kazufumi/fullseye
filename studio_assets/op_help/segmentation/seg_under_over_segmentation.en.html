@@ -5,16 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Counts over- and under-segmentation as the multiplicity of the contingency-table majority vote (Levine &amp; Nazif style) (seg_under_over_segmentation).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各予測(背景以外)を、最も重なる真(背景も候補)に帰属させる。真 i に帰属した予測の数 k_i が `<code style="color:#22d3bf">pieces_per_true</code>`、</p>
-<p>`<code style="color:#22d3bf">over</code>` = Σ max(k_i − 1, 0)(1 つの真が何個に割れたか)。各真を最も重なる予測に帰属させ、予測 j に帰属した真の数 m_j が</p>
-<p>`<code style="color:#22d3bf">objects_per_pred</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">under</code>` = Σ max(m_j − 1, 0)(1 つの予測が何個の真を抱えたか)。</p>
-<p>背景に帰属した予測は `<code style="color:#22d3bf">spurious</code><code style="color:#22d3bf">(偽)、背景に帰属した真は </code><code style="color:#22d3bf">missed</code>`(欠落)に数える。</p>
-<p>返り値: `<code style="color:#22d3bf">over</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">under</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">spurious</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">missed</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">pieces_per_true</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels_pred</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">objects_per_pred</code>`、</p>
-<p>`<code style="color:#22d3bf">over_segmented_true</code><code style="color:#22d3bf">(k ≥ 2 の真のラベル)、</code><code style="color:#22d3bf">under_segmented_pred</code>`(m ≥ 2 の予測のラベル)。</p>
+<p>各予測(背景以外)を、最も重なる真(背景も候補)に帰属させる。真 i に帰属した予測の数 k_i が <code style="color:#22d3bf">pieces_per_true</code>、<code style="color:#22d3bf">over</code> = Σ max(k_i − 1, 0)(1 つの真が何個に割れたか)。各真を最も重なる予測に帰属させ、予測 j に帰属した真の数 m_j が <code style="color:#22d3bf">objects_per_pred</code>、<code style="color:#22d3bf">under</code> = Σ max(m_j − 1, 0)(1 つの予測が何個の真を抱えたか)。背景に帰属した予測は <code style="color:#22d3bf">spurious</code>(偽)、背景に帰属した真は <code style="color:#22d3bf">missed</code>(欠落)に数える。</p>
+<p>返り値: <code style="color:#22d3bf">over</code>、<code style="color:#22d3bf">under</code>、<code style="color:#22d3bf">spurious</code>、<code style="color:#22d3bf">missed</code>、<code style="color:#22d3bf">labels_true</code> / <code style="color:#22d3bf">pieces_per_true</code>、<code style="color:#22d3bf">labels_pred</code> / <code style="color:#22d3bf">objects_per_pred</code>、<code style="color:#22d3bf">over_segmented_true</code>(k ≥ 2 の真のラベル)、<code style="color:#22d3bf">under_segmented_pred</code>(m ≥ 2 の予測のラベル)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — Scoring segmentations and synthetic worlds with ground truth — which metric is blind to which failure</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

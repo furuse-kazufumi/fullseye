@@ -5,17 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>成分樹（max-tree）：以 Union-Find 建構上水平集 {f ≥ h} 的連通成分樹（依像素值遞減順序處理）（max_tree）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>返す: `<code style="color:#22d3bf">parent</code><code style="color:#22d3bf">(H, W の平らな添字。根は自分自身)、</code><code style="color:#22d3bf">order</code><code style="color:#22d3bf">(値の昇順、親は子より前)、</code><code style="color:#22d3bf">canonical</code>`(節の代表画素の印 =</p>
-<p>根か、親と値が違う画素)、`<code style="color:#22d3bf">area</code><code style="color:#22d3bf">(代表画素での成分の画素数)、</code><code style="color:#22d3bf">diameter</code>`(成分の外接矩形の長い辺 = skimage の diameter と同じ)、</p>
-<p>`<code style="color:#22d3bf">height</code><code style="color:#22d3bf">(成分の中の最大値 − 成分の値、参考)、</code><code style="color:#22d3bf">n_nodes</code>`。</p>
+<p>返す: <code style="color:#22d3bf">parent</code>(H, W の平らな添字。根は自分自身)、<code style="color:#22d3bf">order</code>(値の昇順、親は子より前)、<code style="color:#22d3bf">canonical</code>(節の代表画素の印 = 根か、親と値が違う画素)、<code style="color:#22d3bf">area</code>(代表画素での成分の画素数)、<code style="color:#22d3bf">diameter</code>(成分の外接矩形の長い辺 = skimage の diameter と同じ)、<code style="color:#22d3bf">height</code>(成分の中の最大値 − 成分の値、参考)、<code style="color:#22d3bf">n_nodes</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — 用圖、階層與閾值定理做分割 —— 什麼是嚴格的,分割在哪裡失效</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

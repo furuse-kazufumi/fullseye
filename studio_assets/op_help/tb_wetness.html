@@ -5,30 +5,27 @@
 <p><img src="fig/tb_wetness.png" alt="tb_wetness: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.a.jpg">tb_wetness: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.a.jpg">tb_wetness: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.b.jpg">tb_wetness: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.b.jpg">tb_wetness: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.chain.jpg">tb_wetness: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.chain.jpg">tb_wetness: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.inputs.jpg">tb_wetness: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.inputs.jpg">tb_wetness: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>濡れた面の下地色。<b>拡散が暗くなる</b>(そして鏡面が増える)。</p>
 <p>base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。</p>
 <p>ior: 水膜の屈折率。</p>
 <p>返り値: 濡れた状態の拡散色(同形)。</p>
-<p>なぜ暗くなるか: 水膜の内側で全反射が起き、拡散光が何度も表面へ戻されて</p>
-<p>そのたびに吸収される。近似として、乾いた反射率 ρ に対し内部反射率</p>
-<p>Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの</p>
-<p>(鏡面が増えるのは <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> を重ねて表す)。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op `<code style="color:#22d3bf">wetness</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">wet</code><code style="color:#22d3bf">(既定 1)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">ior</code>`(既定 1.33)を振る。</p>
+<p>なぜ暗くなるか: 水膜の内側で全反射が起き、拡散光が何度も表面へ戻されてそのたびに吸収される。近似として、乾いた反射率 ρ に対し内部反射率 Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの(鏡面が増えるのは <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> を重ねて表す)。</p>
+<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">wetness</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">wet</code>(既定 1)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">ior</code>(既定 1.33)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_rgb 0.50 0.50
-tb_wetness 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_wetness%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_wetness%200.50%200.50">Load &amp; run</a></p>
+tb_wetness 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_wetness%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_wetness%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">wetness</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:machined_metal_and_materials">machined_metal_and_materials</a> — <code style="color:#22d3bf">py -3.11 examples/machined_metal_and_materials.py</code></p>

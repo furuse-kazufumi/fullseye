@@ -3,17 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × axes</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grid_lines(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, alpha=0.35, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.grid_lines(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, alpha=0.35, scheme=&#x27;okabe_ito&#x27;, style=None)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;grid_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Grid lines. If no tick values are given, :func:<code style="color:#22d3bf">nice_ticks</code> chooses them.</p>
+<p>Grid lines. If no tick values are given, <code style="color:#22d3bf">nice_ticks</code> chooses them.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">alpha</code>` は格子を薄く敷くための重み(データ線より前に出ないように)。</p>
-<p>Raises</p>
-<p>------</p>
+<p><code style="color:#22d3bf">alpha</code> は格子を薄く敷くための重み(データ線より前に出ないように)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>alpha が [0,1] の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training-dataset conventions — COCO / YOLO / VOC and pitfalls in visual inspection</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

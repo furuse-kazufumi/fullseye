@@ -8,33 +8,23 @@
 <p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_area_center.chain.jpg">xg_area_center: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_area_center.chain.jpg">xg_area_center: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用鞋帶公式求 contour 的多邊形面積(絕對值求和)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>輪郭辞書 `<code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [Nx2 の (row, col) 点列, ...]}</code>` の各輪郭を</p>
-<p>多角形とみなし、靴ひも公式 `<code style="color:#22d3bf">0.5*|Σ(x_i*y_{i+1} - x_{i+1}*y_i)|</code>` で面積を</p>
-<p>求めて全輪郭の合計を返す。点が 3 個未満の輪郭は 0 として無視。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は</p>
-<p>未使用。</p>
-<p>返り値は `<code style="color:#22d3bf">numpy.float64</code>`(単位は画素²、正規化なし)。輪郭が無い・辞書で</p>
-<p>ない・非有限値を含む輪郭は読み飛ばされ、合計に寄与しない(空なら 0.0)。</p>
-<p>開いた輪郭でも「最後の点と最初の点を結んで閉じた多角形」の面積になる点に</p>
-<p>注意(直線状の開輪郭では 0、折れ線の開輪郭でも非零になる)。絶対値を取る</p>
-<p>ので点列の向き(時計回り/反時計回り)は結果に影響しない。自己交差する輪郭では</p>
-<p>交差で符号が打ち消しあい、真の面積より小さく出る。名前に反して重心は</p>
-<p>返さない(面積のみ)。同じ点集合の 2 次モーメントは `<code style="color:#22d3bf">xg_moments</code>`、bbox の</p>
-<p>縦横比は `<code style="color:#22d3bf">xg_height_width_ratio</code>`。</p>
+<p>輪郭辞書 <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [Nx2 の (row, col) 点列, ...]}</code> の各輪郭を多角形とみなし、靴ひも公式 <code style="color:#22d3bf">0.5*|Σ(x_i*y_{i+1} - x_{i+1}*y_i)|</code> で面積を求めて全輪郭の合計を返す。点が 3 個未満の輪郭は 0 として無視。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>返り値は <code style="color:#22d3bf">numpy.float64</code>(単位は画素²、正規化なし)。輪郭が無い・辞書でない・非有限値を含む輪郭は読み飛ばされ、合計に寄与しない(空なら 0.0)。開いた輪郭でも「最後の点と最初の点を結んで閉じた多角形」の面積になる点に注意(直線状の開輪郭では 0、折れ線の開輪郭でも非零になる)。絶対値を取るので点列の向き(時計回り/反時計回り)は結果に影響しない。自己交差する輪郭では交差で符号が打ち消しあい、真の面積より小さく出る。名前に反して重心は返さない(面積のみ)。同じ点集合の 2 次モーメントは <code style="color:#22d3bf">xg_moments</code>、bbox の縦横比は <code style="color:#22d3bf">xg_height_width_ratio</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-xg_area_center 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_area_center%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_area_center%200.50%200.50">Load &amp; run</a></p>
+xg_area_center 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_area_center%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_area_center%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">feature</code> 作為輸入)</h3>

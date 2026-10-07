@@ -2,6 +2,11 @@
 guide: mv_cameras
 dim: optics
 title: 産業用カメラの知識 — センサとの紐付け・ラインスキャン / TDI
+title_en: Industrial camera makers (sensor mapping, line scan / TDI)
+title_zh: 工业相机厂商(与传感器的对应、线扫描 / TDI)
+title_tw: 工業相機廠商(與感測器的對應、線掃描 / TDI)
+title_ko: 산업용 카메라 제조사(센서와의 대응·라인 스캔 / TDI)
+title_de: Hersteller von Industriekameras (Sensorzuordnung, Zeilenkamera / TDI)
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

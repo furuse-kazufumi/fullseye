@@ -5,16 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>Sobel 3×3(3.46 節): G_x = [[−1,0,1],[−2,0,2],[−1,0,1]]、G_y = [[−1,−2,−1],[0,0,0],[1,2,1]] (REQ-0415)を相関として当てる。</p>
-<p>*image*: U8。*border*(必須): `<code style="color:#22d3bf">&quot;replicate&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;constant&quot;</code><code style="color:#22d3bf">(*constant_value* で埋める)/ </code><code style="color:#22d3bf">&quot;undefined&quot;</code>`(端 1 画素は</p>
-<p>規格上未定義 —— 0 を入れ、`<code style="color:#22d3bf">valid</code>` の外として返す)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;gx&quot;: S16, &quot;gy&quot;: S16, &quot;valid&quot;: (y0, y1, x0, x1)}</code>`(U8 の 3×3 Sobel は |値| ≤ 1020 なので S16 で飽和しない)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 2-D の U8 でない / border が一覧に無い / constant_value が 0〜255 の外。</p>
+<p>*image*: U8。*border*(必須): <code style="color:#22d3bf">&quot;replicate&quot;</code> / <code style="color:#22d3bf">&quot;constant&quot;</code>(*constant_value* で埋める)/ <code style="color:#22d3bf">&quot;undefined&quot;</code>(端 1 画素は規格上未定義 —— 0 を入れ、<code style="color:#22d3bf">valid</code> の外として返す)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;gx&quot;: S16, &quot;gy&quot;: S16, &quot;valid&quot;: (y0, y1, x0, x1)}</code>(U8 の 3×3 Sobel は |値| ≤ 1020 なので S16 で飽和しない)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D の U8 でない / border が一覧に無い / constant_value が 0〜255 の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• (暂无)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

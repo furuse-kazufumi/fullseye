@@ -3,13 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_contingency(a, b, ignore_label=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import segcompare; segcompare.seg_contingency(a, b, ignore_label=None)</code>; from the registry, <code style="color:#22d3bf">opsemproof.get(&quot;seg_contingency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The contingency table of truth `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> against candidate </code><code style="color:#22d3bf">b</code>` (sparse).</p>
-<p>Returns `<code style="color:#22d3bf">labels_a</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">labels_b</code><code style="color:#22d3bf"> (the distinct labels), </code><code style="color:#22d3bf">rows</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cols</code>` (indices</p>
-<p>into them) and `<code style="color:#22d3bf">counts</code><code style="color:#22d3bf"> for every co-occurring pair, plus </code><code style="color:#22d3bf">n</code>` (pixels counted),</p>
-<p>`<code style="color:#22d3bf">row_sums</code><code style="color:#22d3bf"> (size of each truth object) and </code><code style="color:#22d3bf">col_sums</code>` (size of each candidate object).</p>
-<p>`<code style="color:#22d3bf">counts.sum() == n</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">row_sums.sum() == col_sums.sum() == n</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-integer, non-finite, boolean-free-but-string or masked input;</p>
-<p>not 2-D / 3-D; empty; different shapes; every pixel ignored.</p>
+<p>The contingency table of truth <code style="color:#22d3bf">a</code> against candidate <code style="color:#22d3bf">b</code> (sparse).</p>
+<p>Returns <code style="color:#22d3bf">labels_a</code> / <code style="color:#22d3bf">labels_b</code> (the distinct labels), <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> (indices into them) and <code style="color:#22d3bf">counts</code> for every co-occurring pair, plus <code style="color:#22d3bf">n</code> (pixels counted), <code style="color:#22d3bf">row_sums</code> (size of each truth object) and <code style="color:#22d3bf">col_sums</code> (size of each candidate object). <code style="color:#22d3bf">counts.sum() == n</code>, <code style="color:#22d3bf">row_sums.sum() == col_sums.sum() == n</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-integer, non-finite, boolean-free-but-string or masked input; not 2-D / 3-D; empty; different shapes; every pixel ignored.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

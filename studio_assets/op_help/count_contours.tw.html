@@ -8,26 +8,26 @@
 <p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/count_contours.chain.jpg">count_contours: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/count_contours.chain.jpg">count_contours: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>回傳輪廓（物件）數量的特徵量。相當於 HALCON 的 `<code style="color:#22d3bf">count_obj</code>`（Number of objects in a tuple.）。</p>
+<p>回傳輪廓（物件）數量的特徵量。相當於 HALCON 的 <code style="color:#22d3bf">count_obj</code>（Number of objects in a tuple.）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。輪郭リストの長さをそのまま返すだけ。</p>
-<p style="margin:2px 0 2px 12px">• 入力は XLD 輪郭 dict `<code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [(N_i, 2), ...]}</code><code style="color:#22d3bf">。数えるのは </code><code style="color:#22d3bf">cs</code>` の要素数で、各輪郭の点数・長さ・閉じているかは見ない(点が 1 つの輪郭も 1 本)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は `<code style="color:#22d3bf">np.float64</code><code style="color:#22d3bf">(sort </code><code style="color:#22d3bf">feature</code>`)。0 本なら 0.0。</p>
-<p style="margin:2px 0 2px 12px">• 前段の輪郭抽出(`<code style="color:#22d3bf">sk_find_contours</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">edges_sub_pix</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hx_gen_contours_skeleton</code><code style="color:#22d3bf">)がどう分割するかで値が決まる —— 同じ形でも 1 画素の切れ目で本数が増える。本数を安定させたいなら </code><code style="color:#22d3bf">select_contours</code><code style="color:#22d3bf">(長さでの選別)や </code><code style="color:#22d3bf">hx_union_adjacent_contours</code>` を間に置く。</p>
-<p style="margin:2px 0 2px 12px">• 「物体の数」として使うなら `<code style="color:#22d3bf">connection</code><code style="color:#22d3bf">(region の連結成分)+ </code><code style="color:#22d3bf">count_regions</code>` 相当のほうが切れ目に強い。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。輪郭リストの長さをそのまま返すだけ。</p>
+<p style="margin:2px 0 2px 12px">• 入力は XLD 輪郭 dict <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [(N_i, 2), ...]}</code>。数えるのは <code style="color:#22d3bf">cs</code> の要素数で、各輪郭の点数・長さ・閉じているかは見ない(点が 1 つの輪郭も 1 本)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は <code style="color:#22d3bf">np.float64</code>(sort <code style="color:#22d3bf">feature</code>)。0 本なら 0.0。</p>
+<p style="margin:2px 0 2px 12px">• 前段の輪郭抽出(<code style="color:#22d3bf">sk_find_contours</code> / <code style="color:#22d3bf">edges_sub_pix</code> / <code style="color:#22d3bf">hx_gen_contours_skeleton</code>)がどう分割するかで値が決まる —— 同じ形でも 1 画素の切れ目で本数が増える。本数を安定させたいなら <code style="color:#22d3bf">select_contours</code>(長さでの選別)や <code style="color:#22d3bf">hx_union_adjacent_contours</code> を間に置く。</p>
+<p style="margin:2px 0 2px 12px">• 「物体の数」として使うなら <code style="color:#22d3bf">connection</code>(region の連結成分)+ <code style="color:#22d3bf">count_regions</code> 相当のほうが切れ目に強い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-count_contours 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Acount_contours%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Acount_contours%200.50%200.50">Load &amp; run</a></p>
+count_contours 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Acount_contours%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Acount_contours%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">feature</code> 作為輸入)</h3>

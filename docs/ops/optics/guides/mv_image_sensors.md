@@ -2,6 +2,11 @@
 guide: mv_image_sensors
 dim: optics
 title: イメージセンサの知識 — EMVA1288 と型番の読み方
+title_en: Industrial image sensors (mainly current products)
+title_zh: 工业图像传感器(以现行产品为主)
+title_tw: 工業影像感測器(以現行產品為主)
+title_ko: 산업용 이미지 센서(현행 제품 중심)
+title_de: Industrielle Bildsensoren (vorwiegend aktuelle Produkte)
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

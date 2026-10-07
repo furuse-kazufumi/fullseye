@@ -3,16 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_hull(V)</code>(要直接呼叫實作,<code style="color:#22d3bf">import meshrepair; meshrepair.convex_hull(V)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;convex_hull&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>點集的凸包 -&gt; `<code style="color:#22d3bf">(V, F)</code>`,三角形朝外定向。</p>
+<p>點集的凸包 -&gt; <code style="color:#22d3bf">(V, F)</code>,三角形朝外定向。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Thin wrapper over :class:<code style="color:#22d3bf">scipy.spatial.ConvexHull</code> (Qhull): interior points</p>
-<p>are dropped, faces are triangulated, and each triangle is wound so its normal</p>
-<p>points away from the hull centroid (outward, positive signed volume) — so the</p>
-<p>result feeds straight into :func:<code style="color:#22d3bf">inertia_tensor</code> or a MuJoCo convex collider.</p>
-<p>Needs at least 4 non-coplanar points.</p>
+<p>Thin wrapper over <code style="color:#22d3bf">scipy.spatial.ConvexHull</code> (Qhull): interior points are dropped, faces are triangulated, and each triangle is wound so its normal points away from the hull centroid (outward, positive signed volume) — so the result feeds straight into <code style="color:#22d3bf">inertia_tensor</code> or a MuJoCo convex collider. Needs at least 4 non-coplanar points.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

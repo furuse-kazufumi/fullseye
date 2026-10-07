@@ -8,14 +8,10 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/moments_region_2nd_rel_invar.chain.jpg">moments_region_2nd_rel_invar: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/moments_region_2nd_rel_invar.chain.jpg">moments_region_2nd_rel_invar: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Hu の第 3 不変モーメント(`<code style="color:#22d3bf">hu[2]</code>`)の絶対値。名前(2nd_rel_invar)と</p>
-<p>実装(Hu の 3 番目の不変量)が厳密には対応していない点に注意 ―― HALCON</p>
-<p>独自の「2 次相対不変モーメント」ではなく、汎用の Hu 不変モーメント系列</p>
-<p>から割り当てただけの近似。HALCON の `<code style="color:#22d3bf">moments_region_2nd_rel_invar</code>`</p>
-<p>（Geometric moments of regions.）の代役。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>Hu の第 3 不変モーメント(<code style="color:#22d3bf">hu[2]</code>)の絶対値。名前(2nd_rel_invar)と実装(Hu の 3 番目の不変量)が厳密には対応していない点に注意 ―― HALCON 独自の「2 次相対不変モーメント」ではなく、汎用の Hu 不変モーメント系列から割り当てただけの近似。HALCON の <code style="color:#22d3bf">moments_region_2nd_rel_invar</code> （Geometric moments of regions.）の代役。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -25,7 +21,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-moments_region_2nd_rel_invar 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Amoments_region_2nd_rel_invar%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Amoments_region_2nd_rel_invar%200.50%200.50">Load &amp; run</a></p>
+moments_region_2nd_rel_invar 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Amoments_region_2nd_rel_invar%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Amoments_region_2nd_rel_invar%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>

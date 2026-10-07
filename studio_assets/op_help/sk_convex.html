@@ -8,12 +8,12 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_convex.chain.jpg">sk_convex: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_convex.chain.jpg">sk_convex: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_convex.inputs.jpg">sk_convex: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_convex.inputs.jpg">sk_convex: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>凸包(convex hull)による領域の変形。前景領域を包む最小の凸多角形を求め、その内部を塗りつぶした領域を返す —— くびれや凹みを全て埋める。</p>
-<p>HALCON の <code style="color:#22d3bf">shape_trans</code>(Transform the shape of a region.)に相当(近似。`<code style="color:#22d3bf">shape_trans</code><code style="color:#22d3bf"> は他の変形モードも持つ汎用命令だが、ここでは凸包のみ)。実装は </code><code style="color:#22d3bf">morphology.convex_hull_image(binm(v))</code>`。a, b は未使用。</p>
+<p>HALCON の <code style="color:#22d3bf">shape_trans</code>(Transform the shape of a region.)に相当(近似。<code style="color:#22d3bf">shape_trans</code> は他の変形モードも持つ汎用命令だが、ここでは凸包のみ)。実装は <code style="color:#22d3bf">morphology.convex_hull_image(binm(v))</code>。a, b は未使用。</p>
 <p><b>端の扱い</b>: 画像の外側は背景(0)とみなす(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>
@@ -24,7 +24,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-sk_convex 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_convex%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_convex%200.50%200.50">Load &amp; run</a></p>
+sk_convex 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_convex%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_convex%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">region</code> を入力に取れる)</h3>

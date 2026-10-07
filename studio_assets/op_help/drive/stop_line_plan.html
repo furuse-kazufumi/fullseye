@@ -3,18 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stop_line_plan(v: &#x27;float&#x27;, dist_to_line: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None, t0: &#x27;float&#x27; = 0.0, margin: &#x27;float&#x27; = 0.5, A1: &#x27;float&#x27; = 1.5, A2: &#x27;float&#x27; = 2.5, split: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelong; drivelong.stop_line_plan(v: &#x27;float&#x27;, dist_to_line: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None, t0: &#x27;float&#x27; = 0.0, margin: &#x27;float&#x27; = 0.5, A1: &#x27;float&#x27; = 1.5, A2: &#x27;float&#x27; = 2.5, split: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;stop_line_plan&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>知覚した瞬間(時刻 t0、前端から停止線まで `<code style="color:#22d3bf">dist_to_line</code><code style="color:#22d3bf">、速さ v)から、停止線の </code><code style="color:#22d3bf">margin</code>` 手前に止まる <b>2 段制動</b> の計画。</p>
-<p>段: 反応(ρ、速さを保つ)→ [必要なら速さを保ったまま待つ(cruise)] → 1 段目(減速度の定数部分 A1、速さが split·v まで)</p>
-<p>→ 2 段目(A2、止まるまで)→ 保持。制動を 2 段に分けるのは通達の「ブレーキを数回に分けて踏まない場合」(制動操作不良)に合わせる。</p>
-<p>間に合わないときは 2 段目の減速度を閉形式で解き直し(ln の式、k &gt; 0 でも厳密)、1 段目だけで足りない距離なら 1 段で止める</p>
-<p>(stages = 1)。上限(min(a_brake_max, μ g cos θ))で頭打ちなら `<code style="color:#22d3bf">saturated</code>` = True、予測は頭打ちの値で出す。</p>
-<p>坂は区間の中で一定の θ(停止の区間が坂の折れ点をまたがない)とする。</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : `<code style="color:#22d3bf">phases</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(t_start, kind, drive, brake)</code><code style="color:#22d3bf"> の列、kind = react / cruise / brake1 / brake2)、</code><code style="color:#22d3bf">t_breaks</code>`、</p>
-<p>`<code style="color:#22d3bf">stages</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">predicted_gap</code><code style="color:#22d3bf">(止まった前端から停止線まで。負 = 越えた)、</code><code style="color:#22d3bf">t_stop</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">saturated</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">theta</code>`、</p>
-<p>`<code style="color:#22d3bf">d_react</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">d_cruise</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">d_brake</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: v ≤ 0、非有限、split ∉ (0, 1)、A1・A2 ≤ 0。</p>
+<p>知覚した瞬間(時刻 t0、前端から停止線まで <code style="color:#22d3bf">dist_to_line</code>、速さ v)から、停止線の <code style="color:#22d3bf">margin</code> 手前に止まる <b>2 段制動</b> の計画。</p>
+<p>段: 反応(ρ、速さを保つ)→ [必要なら速さを保ったまま待つ(cruise)] → 1 段目(減速度の定数部分 A1、速さが split·v まで) → 2 段目(A2、止まるまで)→ 保持。制動を 2 段に分けるのは通達の「ブレーキを数回に分けて踏まない場合」(制動操作不良)に合わせる。間に合わないときは 2 段目の減速度を閉形式で解き直し(ln の式、k &gt; 0 でも厳密)、1 段目だけで足りない距離なら 1 段で止める(stages = 1)。上限(min(a_brake_max, μ g cos θ))で頭打ちなら <code style="color:#22d3bf">saturated</code> = True、予測は頭打ちの値で出す。坂は区間の中で一定の θ(停止の区間が坂の折れ点をまたがない)とする。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">phases</code>(<code style="color:#22d3bf">(t_start, kind, drive, brake)</code> の列、kind = react / cruise / brake1 / brake2)、<code style="color:#22d3bf">t_breaks</code>、</p>
+<p><code style="color:#22d3bf">stages</code>、<code style="color:#22d3bf">predicted_gap</code>(止まった前端から停止線まで。負 = 越えた)、<code style="color:#22d3bf">t_stop</code>、<code style="color:#22d3bf">saturated</code>、<code style="color:#22d3bf">theta</code>、<code style="color:#22d3bf">d_react</code>, <code style="color:#22d3bf">d_cruise</code>, <code style="color:#22d3bf">d_brake</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v ≤ 0、非有限、split ∉ (0, 1)、A1・A2 ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.preston_track_profile(y, force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, spin: &#x27;float&#x27; = 0.0, speed=None, estar=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import polish; polish.preston_track_profile(y, force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, spin: &#x27;float&#x27; = 0.0, speed=None, estar=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;preston_track_profile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>長い直線の一筆(+x へ進む)の断面の除去の深さ h(y) [m] (y = 進む向きの左が正の横ずれ、`<code style="color:#22d3bf">y</code>` と同じ形)。閉形式:</p>
-<p>平板 2 k_p p √(a² − y²)、Hertz k_p (E*/R)(a² − y²)(a は力から Hertz で)、回る平板(`<code style="color:#22d3bf">spin</code><code style="color:#22d3bf"> = ω、</code><code style="color:#22d3bf">speed</code>` = v が要る)</p>
-<p>(k_p p / v)[c √(b² + ω²c²) + (b²/ω) asinh(ωc/|b|)] (c = √(a² − y²)、b = v − ωy)。|y| ≥ a は 0。</p>
-<p><b>Raises</b> ValueError: 数の検査、回る時に速さが無い、Hertz で回す(閉形式が無い)。</p>
+<p>長い直線の一筆(+x へ進む)の断面の除去の深さ h(y) [m] (y = 進む向きの左が正の横ずれ、<code style="color:#22d3bf">y</code> と同じ形)。閉形式:</p>
+<p>平板 2 k_p p √(a² − y²)、Hertz k_p (E*/R)(a² − y²)(a は力から Hertz で)、回る平板(<code style="color:#22d3bf">spin</code> = ω、<code style="color:#22d3bf">speed</code> = v が要る) (k_p p / v)[c √(b² + ω²c²) + (b²/ω) asinh(ωc/|b|)] (c = √(a² − y²)、b = v − ωy)。|y| ≥ a は 0。<b>Raises</b> ValueError: 数の検査、回る時に速さが無い、Hertz で回す(閉形式が無い)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

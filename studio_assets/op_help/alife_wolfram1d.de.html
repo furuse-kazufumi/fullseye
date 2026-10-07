@@ -5,26 +5,17 @@
 <p><img src="fig/alife_wolfram1d.png" alt="alife_wolfram1d: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_wolfram1d.a.jpg">alife_wolfram1d: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_wolfram1d.a.jpg">alife_wolfram1d: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_wolfram1d.b.jpg">alife_wolfram1d: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_wolfram1d.b.jpg">alife_wolfram1d: Regler b durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_wolfram1d.inputs.jpg">alife_wolfram1d: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_wolfram1d.inputs.jpg">alife_wolfram1d: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wolframs elementarer eindimensionaler zellulärer Automat, dargestellt als Raumzeit-Diagramm.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Reimplements the elementary (radius-1, two-state) cellular automata of</p>
-<p>S. Wolfram, Rev. Mod. Phys. 55, 601 (1983) / *A New Kind of Science* (2002).</p>
-<p>The initial row is the top row of the image thresholded at 0.5; if that row</p>
-<p>is empty a single central seed is used instead, which is the classical</p>
-<p>initial condition (rule 90 from a single seed is Pascal&#x27;s triangle mod 2,</p>
-<p>i.e. the Sierpinski gasket). The lattice is circular, one generation is</p>
-<p>written per output row, and row 0 is generation 0, so the output is the H x W</p>
-<p>{0,1} spacetime diagram.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> picks the rule from the curated table </code><code style="color:#22d3bf">_ELEMENTARY_RULES</code>`;</p>
-<p>`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> sets the initial density by adding </code><code style="color:#22d3bf">int(b * W/2)</code>` evenly spaced extra</p>
-<p>seed cells to row 0 (b = 0 leaves the thresholded row untouched).</p>
+<p>Reimplements the elementary (radius-1, two-state) cellular automata of S. Wolfram, Rev. Mod. Phys. 55, 601 (1983) / *A New Kind of Science* (2002). The initial row is the top row of the image thresholded at 0.5; if that row is empty a single central seed is used instead, which is the classical initial condition (rule 90 from a single seed is Pascal&#x27;s triangle mod 2, i.e. the Sierpinski gasket). The lattice is circular, one generation is written per output row, and row 0 is generation 0, so the output is the H x W {0,1} spacetime diagram.</p>
+<p><code style="color:#22d3bf">a</code> picks the rule from the curated table <code style="color:#22d3bf">_ELEMENTARY_RULES</code>; <code style="color:#22d3bf">b</code> sets the initial density by adding <code style="color:#22d3bf">int(b * W/2)</code> evenly spaced extra seed cells to row 0 (b = 0 leaves the thresholded row untouched).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -33,7 +24,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">alife_wolfram1d 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:alife_wolfram1d%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:alife_wolfram1d%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">alife_wolfram1d 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:alife_wolfram1d%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:alife_wolfram1d%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_physics_alife_3d.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>

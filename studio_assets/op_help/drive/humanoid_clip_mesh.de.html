@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.humanoid_clip_mesh(clip: &#x27;dict&#x27;, distance: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivehumanoid; drivehumanoid.humanoid_clip_mesh(clip: &#x27;dict&#x27;, distance: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;humanoid_clip_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>歩いた距離 `<code style="color:#22d3bf">distance</code><code style="color:#22d3bf"> [m] でのメッシュ(</code><code style="color:#22d3bf">{&quot;V&quot;,&quot;F&quot;,&quot;color&quot;,&quot;label&quot;,&quot;dims&quot;}</code>`、原点 = 腰の真下、+x = 前)。</p>
-<p>1 周期で `<code style="color:#22d3bf">cycle_length</code>` 進む。コマの間は頂点を線形に補間する(面の組み方は全コマ同じ)。形は腰の真下が原点のまま</p>
-<p>なので、**置く位置を `<code style="color:#22d3bf">distance</code><code style="color:#22d3bf"> だけ進めれば**支持脚は地面で止まって見える(コマの位相は </code><code style="color:#22d3bf">advance</code>` で歩いた距離に</p>
-<p>合わせてある)。★2026-10-03: 最初の版は周期内の前進をここでも差し引き、置く側と 2 重に引いていた(滑りの門で発覚)。</p>
+<p>歩いた距離 <code style="color:#22d3bf">distance</code> [m] でのメッシュ(<code style="color:#22d3bf">{&quot;V&quot;,&quot;F&quot;,&quot;color&quot;,&quot;label&quot;,&quot;dims&quot;}</code>、原点 = 腰の真下、+x = 前)。</p>
+<p>1 周期で <code style="color:#22d3bf">cycle_length</code> 進む。コマの間は頂点を線形に補間する(面の組み方は全コマ同じ)。形は腰の真下が原点のままなので、<b>置く位置を <code style="color:#22d3bf">distance</code> だけ進めれば</b>支持脚は地面で止まって見える(コマの位相は <code style="color:#22d3bf">advance</code> で歩いた距離に合わせてある)。★2026-10-03: 最初の版は周期内の前進をここでも差し引き、置く側と 2 重に引いていた(滑りの門で発覚)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import agvfleet; agvfleet.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;adg_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>ADG に従って実行する。各時刻、各車両は確率 `<code style="color:#22d3bf">delay_prob</code>` で止まる(滑り・人・荷役の遅れ)。</p>
-<p>次の行動の依存がすべて済んでいる車両だけが 1 マス進む。返りは dict: `<code style="color:#22d3bf">trajectories</code>`(実際の位置の列)、</p>
-<p>`<code style="color:#22d3bf">makespan</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">collisions</code><code style="color:#22d3bf">(同じマス・すれ違い)、</code><code style="color:#22d3bf">deadlock</code><code style="color:#22d3bf">(誰も進めず未了)、</code><code style="color:#22d3bf">finished</code>`。</p>
+<p>ADG に従って実行する。各時刻、各車両は確率 <code style="color:#22d3bf">delay_prob</code> で止まる(滑り・人・荷役の遅れ)。</p>
+<p>次の行動の依存がすべて済んでいる車両だけが 1 マス進む。返りは dict: <code style="color:#22d3bf">trajectories</code>(実際の位置の列)、<code style="color:#22d3bf">makespan</code>、<code style="color:#22d3bf">collisions</code>(同じマス・すれ違い)、<code style="color:#22d3bf">deadlock</code>(誰も進めず未了)、<code style="color:#22d3bf">finished</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

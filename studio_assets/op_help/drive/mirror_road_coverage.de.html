@@ -5,12 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>カーブミラー(凸面の円弧 or 平面)に映る道の範囲(上から見た 2 次元、閉形式)。場面 S064・S130。</p>
-<p>道 = 直線 Q(λ) = road_point + λ·road_direction(単位にする。λ = 0 を交差点の衝突の点に置くと読みやすい)。鏡の両端</p>
-<p>(円弧なら端の法線 N = cos φ n ± sin φ t、φ = asin(w/2R))で眼からの光線を反射させ、道との交点 λ₁, λ₂ を求める。</p>
-<p>凸面では反射光線の向きが鏡の上の位置に単調なので、映る範囲 = [min λ, max λ]。光線が道に届かなければ(平行・背を向ける)</p>
-<p>その側は ±∞(光線の向きと道の向きの内積の符号)。`<code style="color:#22d3bf">blind_near</code>` = λ = 0 から映る範囲の手前の端までの長さ(0 より奥から</p>
-<p>しか映らないとき、交差点の直前が映らない死角)。`<code style="color:#22d3bf">drivedecide.convex_mirror_fov</code>` と同じ端の光線(眼が軸上なら</p>
-<p>2 本の向きの差 = 全視野角)。</p>
+<p>道 = 直線 Q(λ) = road_point + λ·road_direction(単位にする。λ = 0 を交差点の衝突の点に置くと読みやすい)。鏡の両端(円弧なら端の法線 N = cos φ n ± sin φ t、φ = asin(w/2R))で眼からの光線を反射させ、道との交点 λ₁, λ₂ を求める。凸面では反射光線の向きが鏡の上の位置に単調なので、映る範囲 = [min λ, max λ]。光線が道に届かなければ(平行・背を向ける) その側は ±∞(光線の向きと道の向きの内積の符号)。<code style="color:#22d3bf">blind_near</code> = λ = 0 から映る範囲の手前の端までの長さ(0 より奥からしか映らないとき、交差点の直前が映らない死角)。<code style="color:#22d3bf">drivedecide.convex_mirror_fov</code> と同じ端の光線(眼が軸上なら 2 本の向きの差 = 全視野角)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

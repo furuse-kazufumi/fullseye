@@ -5,14 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Edge-stopping function g = 1 / (1 + |∇(G_σ * I)|² / k²) (the p = 2 form of Caselles–Kimmel–Sapiro 1997) (edge_stop_g).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> = ガウスの標準偏差(0 なら平滑化なしの中心差分)、</code><code style="color:#22d3bf">k</code>` = 勾配の尺度(k = 1 で g = 1/(1 + |∇G_σ*I|²))。</p>
+<p><code style="color:#22d3bf">sigma</code> = ガウスの標準偏差(0 なら平滑化なしの中心差分)、<code style="color:#22d3bf">k</code> = 勾配の尺度(k = 1 で g = 1/(1 + |∇G_σ*I|²))。</p>
 <p>画像の値域に依存する: Li ら 2010 の配布例は 0〜255 の画像で k = 1 なので、[0, 1] の画像なら k = 1/255 が同じ挙動。</p>
-<p>返り値: `<code style="color:#22d3bf">g</code><code style="color:#22d3bf">(0 &lt; g ≤ 1、平坦で 1)、</code><code style="color:#22d3bf">grad_mag</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">g_min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">g_max</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sigma</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">k</code>`。</p>
+<p>返り値: <code style="color:#22d3bf">g</code>(0 &lt; g ≤ 1、平坦で 1)、<code style="color:#22d3bf">grad_mag</code>、<code style="color:#22d3bf">g_min</code> / <code style="color:#22d3bf">g_max</code>、<code style="color:#22d3bf">sigma</code>、<code style="color:#22d3bf">k</code>。</p>
 <p>門: g ∈ (0, 1] —— 分母 ≥ 1、平坦な画像で g ≡ 1(勾配 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — Variational and active contours, level sets — which contour stops where, and what it guarantees</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,20 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_keypoints_to_image2d&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p>*无图: 类型可达，但通用合成输入不在此算子的定义域内 —— 橋渡しで束縛した raster が 64×64 固定で、128×128 の点は外に落ちる。用法见下方可运行示例。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>图像坐标 `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → 计数图像 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">keypoints</code>` 的第二个出口。</p>
+<p>图像坐标 <code style="color:#22d3bf">(N,2) = (u, v)</code> → 计数图像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">keypoints</code> 的第二个出口。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">round(v)</code><code style="color:#22d3bf"> を行、</code><code style="color:#22d3bf">round(u)</code>` を列として 1 ずつ加算する。**画素格子への</p>
-<p>量子化が損失**で、:func:<code style="color:#22d3bf">keypoints_from_image2d</code> と往復すると位置が</p>
-<p>最大 0.5 画素ずれる(よく離れた 225 点での実測: <b>軸あたり</b> RMS 0.2835 px =</p>
-<p>一様量子化の理論値 1/sqrt(12) = 0.2887 と一致。2-D 距離では sqrt(2) 倍の</p>
-<p>0.4009 px で、理論 sqrt(2/12) = 0.4082)。</p>
-<p>★ここも一度間違えた: 2-D 距離の実測を 1-D の理論値と並べて「0.29 のはずが</p>
-<p>0.40 だ」と読みかけた —— 軸ごとの量と距離の量を混ぜると、正しい実装が</p>
-<p>誤っているように見える。</p>
-<p>近接した点は連結成分として融合するので、往復で点数も減りうる</p>
-<p>(実測: 60 点をランダムに置くと 54 点)。</p>
-<p>範囲外の点は<b>黙って捨てない</b> —— 捨てると「検出が減った」のか</p>
-<p>「画像が小さすぎた」のかが区別できなくなる。</p>
+<p><code style="color:#22d3bf">round(v)</code> を行、<code style="color:#22d3bf">round(u)</code> を列として 1 ずつ加算する。<b>画素格子への量子化が損失</b>で、<code style="color:#22d3bf">keypoints_from_image2d</code> と往復すると位置が最大 0.5 画素ずれる(よく離れた 225 点での実測: <b>軸あたり</b> RMS 0.2835 px = 一様量子化の理論値 1/sqrt(12) = 0.2887 と一致。2-D 距離では sqrt(2) 倍の 0.4009 px で、理論 sqrt(2/12) = 0.4082)。</p>
+<p>★ここも一度間違えた: 2-D 距離の実測を 1-D の理論値と並べて「0.29 のはずが 0.40 だ」と読みかけた —— 軸ごとの量と距離の量を混ぜると、正しい実装が誤っているように見える。近接した点は連結成分として融合するので、往復で点数も減りうる(実測: 60 点をランダムに置くと 54 点)。</p>
+<p>範囲外の点は<b>黙って捨てない</b> —— 捨てると「検出が減った」のか「画像が小さすぎた」のかが区別できなくなる。</p>
 <p>Args:</p>
 <p>keypoints: (N, 2) の (u, v)。</p>
 <p>shape: (H, W)。</p>
@@ -25,8 +16,8 @@
 <p>(H, W) float64 の計数画像。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正 / 非有限 / 範囲外の点がある / shape が上限超。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op `<code style="color:#22d3bf">keypoints_to_image2d</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">keypoints_to_image2d</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

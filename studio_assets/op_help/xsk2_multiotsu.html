@@ -5,21 +5,14 @@
 <p><img src="fig/xsk2_multiotsu.png" alt="xsk2_multiotsu: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk2_multiotsu.a.jpg">xsk2_multiotsu: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk2_multiotsu.a.jpg">xsk2_multiotsu: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk2_multiotsu.inputs.jpg">xsk2_multiotsu: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk2_multiotsu.inputs.jpg">xsk2_multiotsu: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>大津の判別分析法（Otsu&#x27;s method）を多値に拡張した多値大津法で階調を</p>
-<p>量子化する。`<code style="color:#22d3bf">skimage.filters.threshold_multiotsu</code>` を使う。</p>
-<p>a はクラス数を 3 または 4 に切り替える（`<code style="color:#22d3bf">3 + int(a &gt; 0.5)</code>`）。</p>
-<p><b>5 クラス以上は実装していない</b>——多値大津はしきい値の全探索コストが</p>
-<p>`<code style="color:#22d3bf">bins ** (classes - 1)</code>` で増えるため、実測（128x128）で 3 クラス</p>
-<p>0.0008 秒に対し 5 クラスは 2.435 秒（3239 倍）かかり、進化ループ 1 世代</p>
-<p>だけで実行が止まって見えるほど遅い（画像サイズにはほぼ依らない）。</p>
-<p>4 クラスなら 0.025 秒に収まる。b は未使用。しきい値で量子化した後</p>
-<p>`<code style="color:#22d3bf">(cls-1)</code>` で割って [0,1] に正規化する。</p>
+<p>大津の判別分析法（Otsu&#x27;s method）を多値に拡張した多値大津法で階調を量子化する。<code style="color:#22d3bf">skimage.filters.threshold_multiotsu</code> を使う。</p>
+<p>a はクラス数を 3 または 4 に切り替える（<code style="color:#22d3bf">3 + int(a &gt; 0.5)</code>）。<b>5 クラス以上は実装していない</b>——多値大津はしきい値の全探索コストが <code style="color:#22d3bf">bins ** (classes - 1)</code> で増えるため、実測（128x128）で 3 クラス 0.0008 秒に対し 5 クラスは 2.435 秒（3239 倍）かかり、進化ループ 1 世代だけで実行が止まって見えるほど遅い（画像サイズにはほぼ依らない）。4 クラスなら 0.025 秒に収まる。b は未使用。しきい値で量子化した後 <code style="color:#22d3bf">(cls-1)</code> で割って [0,1] に正規化する。</p>
 <p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation ファミリ ガイド</a></p>
@@ -29,7 +22,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xsk2_multiotsu 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xsk2_multiotsu%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xsk2_multiotsu%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xsk2_multiotsu 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xsk2_multiotsu%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xsk2_multiotsu%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_segmentation">gallery2d_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_segmentation.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_mri_bias_field">poc_mri_bias_field</a> — <code style="color:#22d3bf">py -3.11 examples/poc_mri_bias_field.py</code></p>

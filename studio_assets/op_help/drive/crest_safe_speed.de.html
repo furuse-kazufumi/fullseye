@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>見えている距離の中で止まれる上限の速さ(停止距離の逆関数、閉形式、配列可)。場面 S065。</p>
-<p>v ρ + v²/(2A) = S、A = brake + g sin θ + c_rr g cos θ(θ &gt; 0 = 上り。`<code style="color:#22d3bf">drivelong.stopping_distance_grade</code>` の空気抵抗なしの式)</p>
-<p>を解いた v = 2S/(ρ + √(ρ² + 2S/A))。A ≤ 0 は ValueError。返り値: `<code style="color:#22d3bf">speed</code><code style="color:#22d3bf"> [m/s]、</code><code style="color:#22d3bf">speed_kmh</code>`、</p>
-<p>`<code style="color:#22d3bf">crawl_required</code><code style="color:#22d3bf">(42 条 2 号は頂上付近では速さによらず徐行 = True)、</code><code style="color:#22d3bf">crawl_sufficient</code><code style="color:#22d3bf">(徐行 </code><code style="color:#22d3bf">crawl</code>`(<b>仮定</b>)で</p>
-<p>視距の中に止まれるか)。</p>
+<p>v ρ + v²/(2A) = S、A = brake + g sin θ + c_rr g cos θ(θ &gt; 0 = 上り。<code style="color:#22d3bf">drivelong.stopping_distance_grade</code> の空気抵抗なしの式) を解いた v = 2S/(ρ + √(ρ² + 2S/A))。A ≤ 0 は ValueError。返り値: <code style="color:#22d3bf">speed</code> [m/s]、<code style="color:#22d3bf">speed_kmh</code>、<code style="color:#22d3bf">crawl_required</code>(42 条 2 号は頂上付近では速さによらず徐行 = True)、<code style="color:#22d3bf">crawl_sufficient</code>(徐行 <code style="color:#22d3bf">crawl</code>(<b>仮定</b>)で視距の中に止まれるか)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

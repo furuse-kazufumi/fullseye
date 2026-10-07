@@ -3,13 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spin_from_marker_sequence(dirs, dt: &#x27;float&#x27;, *, lag: &#x27;int&#x27; = 4, max_angle: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import balltrack; balltrack.spin_from_marker_sequence(dirs, dt: &#x27;float&#x27;, *, lag: &#x27;int&#x27; = 4, max_angle: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;spin_from_marker_sequence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>コマの列の模様の向き `<code style="color:#22d3bf">dirs[k]</code>`((M_k, 3) の単位ベクトル、見つからないコマは None)から角速度を読む(2 段)。</p>
-<p>1 段目: 隣のコマ同士で、向きが `<code style="color:#22d3bf">max_angle</code><code style="color:#22d3bf"> [rad] 以内で最も近い模様を組にして Kabsch(:func:</code>spin_from_markers`)、</p>
-<p>その中央値を ω₁ とする。2 段目: `<code style="color:#22d3bf">lag</code><code style="color:#22d3bf"> コマ離れた組を、前のコマを ω₁ で回した予測に最も近い模様(</code><code style="color:#22d3bf">max_angle</code>`/2 以内)と</p>
-<p>組んで当て直す —— 回転角が lag 倍になるので、模様の位置の誤差が効く割合は 1/lag。★1 コマの回転角は `<code style="color:#22d3bf">max_angle</code>`</p>
-<p>より十分小さいこと(模様の取り違え)、lag コマの回転は π より小さいこと(Kabsch は最短の回転を返す)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;omega&quot;, &quot;omega_stage1&quot;, &quot;n_pairs&quot;, &quot;per_pair&quot; (N, 3)}</code>`(ω は dirs と同じ座標系)。組が 1 つも無ければ</p>
-<p>ω は NaN。模様が見えた向きの組が要るので、各コマ 2 個以上の模様が要る。</p>
+<p>コマの列の模様の向き <code style="color:#22d3bf">dirs[k]</code>((M_k, 3) の単位ベクトル、見つからないコマは None)から角速度を読む(2 段)。</p>
+<p>1 段目: 隣のコマ同士で、向きが <code style="color:#22d3bf">max_angle</code> [rad] 以内で最も近い模様を組にして Kabsch(<code style="color:#22d3bf">spin_from_markers</code>)、その中央値を ω₁ とする。2 段目: <code style="color:#22d3bf">lag</code> コマ離れた組を、前のコマを ω₁ で回した予測に最も近い模様(<code style="color:#22d3bf">max_angle</code>/2 以内)と組んで当て直す —— 回転角が lag 倍になるので、模様の位置の誤差が効く割合は 1/lag。★1 コマの回転角は <code style="color:#22d3bf">max_angle</code> より十分小さいこと(模様の取り違え)、lag コマの回転は π より小さいこと(Kabsch は最短の回転を返す)。返り値 <code style="color:#22d3bf">{&quot;omega&quot;, &quot;omega_stage1&quot;, &quot;n_pairs&quot;, &quot;per_pair&quot; (N, 3)}</code>(ω は dirs と同じ座標系)。組が 1 つも無ければ ω は NaN。模様が見えた向きの組が要るので、各コマ 2 個以上の模様が要る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

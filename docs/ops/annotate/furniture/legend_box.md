@@ -19,7 +19,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 色 × 説明の凡例。**箱の高さは要素数から閉形式で決まる**。
 
-``height = 2*pad + n*row_h + (n-1)*row_gap`` (``row_h = max(swatch, 文字高))。
+``height = 2*pad + n*row_h + (n-1)*row_gap`` (``row_h = max(swatch, 文字高)``)。
 
 Parameters
 ----------

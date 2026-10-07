@@ -4,25 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tree_run_length(tree, labels, background=0, zero_labels=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import treemorph; treemorph.tree_run_length(tree, labels, background=0, zero_labels=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;tree_run_length&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Expected run length (ERL) of a skeleton under a candidate labelling of its nodes.</p>
-<p>`<code style="color:#22d3bf">labels</code>` gives, for every node of the tree table, the candidate object it falls in.</p>
-<p>A <b>run</b> is a maximal connected piece of the tree whose nodes all carry the same</p>
-<p>label and that holds at least one edge; its length is the cable inside it (an edge</p>
-<p>belongs to a run only if both ends share the label; a lone node between two cuts is</p>
-<p>no run). Edges touching `<code style="color:#22d3bf">background</code>` belong to no run. Runs whose label is</p>
-<p>in `<code style="color:#22d3bf">zero_labels</code>` (objects that also cover another skeleton — a merge) count as length</p>
-<p>0, as in Januszewski et al. 2018: a merged run is not trustworthy anywhere.</p>
-<p>`<code style="color:#22d3bf">erl = sum(l_i^2) / L</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">L</code>` the whole cable — the run length a point drawn</p>
-<p>uniformly along the skeleton finds itself in (points on cut or background edges find</p>
-<p>length 0). Also returns `<code style="color:#22d3bf">run_lengths</code>` (one per run, merged runs already zeroed),</p>
-<p>`<code style="color:#22d3bf">runs</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">max_run</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">cable_length</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">cut_edges</code>` (both ends labelled, differently),</p>
-<p>`<code style="color:#22d3bf">background_edges</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">merged_runs</code>`.</p>
-<p>Identities: `<code style="color:#22d3bf">erl == L</code>` when every node carries one non-background label;</p>
-<p>`<code style="color:#22d3bf">sum(run_lengths) + cut cable + background cable == L</code>`; for any labelling with</p>
-<p>`<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> runs and no lost cable, </code><code style="color:#22d3bf">erl &gt;= L / k</code><code style="color:#22d3bf"> (Cauchy-Schwarz) and </code><code style="color:#22d3bf">erl &lt;= max_run</code>`;</p>
-<p>a path of length `<code style="color:#22d3bf">L</code><code style="color:#22d3bf"> cut at </code><code style="color:#22d3bf">m</code><code style="color:#22d3bf"> equally spaced points gives exactly </code><code style="color:#22d3bf">L / (m + 1)</code>`;</p>
-<p>cut at `<code style="color:#22d3bf">m</code><code style="color:#22d3bf"> uniformly random points, </code><code style="color:#22d3bf">E[erl] = 2L / (m + 2)</code>` (Dirichlet(1, .., 1)).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: not a tree table; </code><code style="color:#22d3bf">labels</code>` not one integer per node,</p>
-<p>non-finite or non-integer.</p>
+<p><code style="color:#22d3bf">labels</code> gives, for every node of the tree table, the candidate object it falls in. A <b>run</b> is a maximal connected piece of the tree whose nodes all carry the same label and that holds at least one edge; its length is the cable inside it (an edge belongs to a run only if both ends share the label; a lone node between two cuts is no run). Edges touching <code style="color:#22d3bf">background</code> belong to no run. Runs whose label is in <code style="color:#22d3bf">zero_labels</code> (objects that also cover another skeleton — a merge) count as length 0, as in Januszewski et al. 2018: a merged run is not trustworthy anywhere.</p>
+<p><code style="color:#22d3bf">erl = sum(l_i^2) / L</code> with <code style="color:#22d3bf">L</code> the whole cable — the run length a point drawn uniformly along the skeleton finds itself in (points on cut or background edges find length 0). Also returns <code style="color:#22d3bf">run_lengths</code> (one per run, merged runs already zeroed), <code style="color:#22d3bf">runs</code>, <code style="color:#22d3bf">max_run</code>, <code style="color:#22d3bf">cable_length</code>, <code style="color:#22d3bf">cut_edges</code> (both ends labelled, differently), <code style="color:#22d3bf">background_edges</code> and <code style="color:#22d3bf">merged_runs</code>.</p>
+<p>Identities: <code style="color:#22d3bf">erl == L</code> when every node carries one non-background label; <code style="color:#22d3bf">sum(run_lengths) + cut cable + background cable == L</code>; for any labelling with <code style="color:#22d3bf">k</code> runs and no lost cable, <code style="color:#22d3bf">erl &gt;= L / k</code> (Cauchy-Schwarz) and <code style="color:#22d3bf">erl &lt;= max_run</code>; a path of length <code style="color:#22d3bf">L</code> cut at <code style="color:#22d3bf">m</code> equally spaced points gives exactly <code style="color:#22d3bf">L / (m + 1)</code>; cut at <code style="color:#22d3bf">m</code> uniformly random points, <code style="color:#22d3bf">E[erl] = 2L / (m + 2)</code> (Dirichlet(1, .., 1)).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not a tree table; <code style="color:#22d3bf">labels</code> not one integer per node, non-finite or non-integer.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

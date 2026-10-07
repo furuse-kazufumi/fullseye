@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polygon_offset(vertices, clearance: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsym; pegsym.polygon_offset(vertices, clearance: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;polygon_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>凸多角形の各辺を外へ `<code style="color:#22d3bf">clearance</code>` [m] ずらした多角形(角は尖ったまま = 穴の図面の作り方)。正多角形なら相似拡大で、向きと</p>
-<p>対称は変わらない。返り `<code style="color:#22d3bf">vertices</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">normals</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">offsets</code>`(n·x ≤ h)。<b>Raises</b> ValueError: 凸でない、clearance &lt; 0 か有限でない、</p>
-<p>ずらすと辺が消える(凹みを持つ角は無いので、ここでは起きない形だけを通す)。</p>
+<p>凸多角形の各辺を外へ <code style="color:#22d3bf">clearance</code> [m] ずらした多角形(角は尖ったまま = 穴の図面の作り方)。正多角形なら相似拡大で、向きと対称は変わらない。返り <code style="color:#22d3bf">vertices</code>・<code style="color:#22d3bf">normals</code>・<code style="color:#22d3bf">offsets</code>(n·x ≤ h)。<b>Raises</b> ValueError: 凸でない、clearance &lt; 0 か有限でない、ずらすと辺が消える(凹みを持つ角は無いので、ここでは起きない形だけを通す)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

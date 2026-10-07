@@ -4,15 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_episode_summary(ep) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegfail; pegfail.insertion_episode_summary(ep) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_episode_summary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>1 走行の記録(:func:<code style="color:#22d3bf">pegfail_episode_run</code> の返り、または同じ鍵の dict)を要約: 注入クラス、最初に<b>検出</b>された失敗クラス、</p>
-<p>検出の遅れ(真の失敗の始まり `<code style="color:#22d3bf">failing_onset_tick</code>` → 検出の刻、刻 = 10 ms)、回復の回数と成否、最終深さ・最大力。</p>
-<p>`<code style="color:#22d3bf">ep[&quot;rec&quot;]</code><code style="color:#22d3bf"> は列 </code><code style="color:#22d3bf">depth</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">cls_truth</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">detected</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">force</code><code style="color:#22d3bf"> を持つ dict。返り: </code><code style="color:#22d3bf">injected</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">first_cls</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">first_cls_tick</code>`、</p>
-<p>`<code style="color:#22d3bf">stall_onset_tick</code><code style="color:#22d3bf">(= 使った onset)、</code><code style="color:#22d3bf">latency_ticks</code><code style="color:#22d3bf">(nan なら検出なし)、</code><code style="color:#22d3bf">recoveries</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">success</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">status</code>`、</p>
-<p>`<code style="color:#22d3bf">final_depth_mm</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">max_force_N</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">classes_seen</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>1 走行の記録(<code style="color:#22d3bf">pegfail_episode_run</code> の返り、または同じ鍵の dict)を要約: 注入クラス、最初に<b>検出</b>された失敗クラス、検出の遅れ(真の失敗の始まり <code style="color:#22d3bf">failing_onset_tick</code> → 検出の刻、刻 = 10 ms)、回復の回数と成否、最終深さ・最大力。</p>
+<p><code style="color:#22d3bf">ep[&quot;rec&quot;]</code> は列 <code style="color:#22d3bf">depth</code>・<code style="color:#22d3bf">cls_truth</code>・<code style="color:#22d3bf">detected</code>・<code style="color:#22d3bf">force</code> を持つ dict。返り: <code style="color:#22d3bf">injected</code>、<code style="color:#22d3bf">first_cls</code>、<code style="color:#22d3bf">first_cls_tick</code>、<code style="color:#22d3bf">stall_onset_tick</code>(= 使った onset)、<code style="color:#22d3bf">latency_ticks</code>(nan なら検出なし)、<code style="color:#22d3bf">recoveries</code>、<code style="color:#22d3bf">success</code>、<code style="color:#22d3bf">status</code>、<code style="color:#22d3bf">final_depth_mm</code>、<code style="color:#22d3bf">max_force_N</code>、<code style="color:#22d3bf">classes_seen</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_failure_recovery">poc_peg_failure_recovery</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_failure_recovery.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

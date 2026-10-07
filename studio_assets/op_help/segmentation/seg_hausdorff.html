@@ -3,9 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segeval; segeval.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;seg_hausdorff&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>境界画素の集合の間の Hausdorff 距離 = max(max 予測→真, max 真→予測)と、その `<code style="color:#22d3bf">percentile</code>` 版(HD95 など)。</p>
-<p>境界は :func:<code style="color:#22d3bf">_boundary</code> の規約。どちらかの境界が空(1 色の画像)なら測るものが無いので ValueError。</p>
-<p>返り値: `<code style="color:#22d3bf">hausdorff</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">hausdorff_percentile</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">percentile</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">directed_pred_to_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">directed_true_to_pred</code>`(各最大)。</p>
+<p>境界画素の集合の間の Hausdorff 距離 = max(max 予測→真, max 真→予測)と、その <code style="color:#22d3bf">percentile</code> 版(HD95 など)。</p>
+<p>境界は <code style="color:#22d3bf">_boundary</code> の規約。どちらかの境界が空(1 色の画像)なら測るものが無いので ValueError。</p>
+<p>返り値: <code style="color:#22d3bf">hausdorff</code>、<code style="color:#22d3bf">hausdorff_percentile</code>、<code style="color:#22d3bf">percentile</code>、<code style="color:#22d3bf">directed_pred_to_true</code> / <code style="color:#22d3bf">directed_true_to_pred</code>(各最大)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

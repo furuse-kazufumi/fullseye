@@ -3,25 +3,19 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">metrics</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metrics_table(report, order=None)</code>(要直接调用实现,<code style="color:#22d3bf">import imgmetrics; imgmetrics.metrics_table(report, order=None)</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;metrics_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>把报告整理成 `<code style="color:#22d3bf">(名称, 数值)</code>` 的表 —— 描述测量条件的行<b>必定一并列出</b>。</p>
+<p>把报告整理成 <code style="color:#22d3bf">(名称, 数值)</code> 的表 —— 描述测量条件的行<b>必定一并列出</b>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>数値だけの表を作れないようにしてあるのがこの op の主旨。`<code style="color:#22d3bf">contract</code>` の</p>
-<p>各項目が `<code style="color:#22d3bf">条件: &lt;名前&gt;</code>` として同じ表に入る。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">report</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">compare_images</code><code style="color:#22d3bf"> または </code><code style="color:#22d3bf">measure_with</code><code style="color:#22d3bf"> の返り値(</code><code style="color:#22d3bf">contract</code>`</p>
-<p>キーを持つ dict)。それ以外は `<code style="color:#22d3bf">MetricContractError</code>`。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">order</code><code style="color:#22d3bf">: 先頭に並べる指標名の並び(省略時はキーの辞書順)。</code><code style="color:#22d3bf">report</code>` に無い</p>
-<p>名前は黙って飛ばし、`<code style="color:#22d3bf">&quot;contract&quot;</code>` は指標として並べない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(名前, 値)</code><code style="color:#22d3bf"> タプルの list。指標行のあと、</code><code style="color:#22d3bf">contract</code>` の各項目を</p>
-<p>`<code style="color:#22d3bf">&quot;条件: data_range&quot;</code>` のようにキーの辞書順で追加する。値は変換しない</p>
-<p>(`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">inf</code>` もそのまま)。</p>
-<p>図注や Markdown の表に落とす直前に置く。<b>条件行を削ってから貼らない</b>こと</p>
-<p>―― `<code style="color:#22d3bf">data_range</code>` が違う 2 つの PSNR を並べると 48 dB の見かけの差が出る。</p>
+<p>数値だけの表を作れないようにしてあるのがこの op の主旨。<code style="color:#22d3bf">contract</code> の各項目が <code style="color:#22d3bf">条件: &lt;名前&gt;</code> として同じ表に入る。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">report</code>: <code style="color:#22d3bf">compare_images</code> または <code style="color:#22d3bf">measure_with</code> の返り値(<code style="color:#22d3bf">contract</code> キーを持つ dict)。それ以外は <code style="color:#22d3bf">MetricContractError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code>: 先頭に並べる指標名の並び(省略時はキーの辞書順)。<code style="color:#22d3bf">report</code> に無い名前は黙って飛ばし、<code style="color:#22d3bf">&quot;contract&quot;</code> は指標として並べない。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(名前, 値)</code> タプルの list。指標行のあと、<code style="color:#22d3bf">contract</code> の各項目を <code style="color:#22d3bf">&quot;条件: data_range&quot;</code> のようにキーの辞書順で追加する。値は変換しない(<code style="color:#22d3bf">None</code> や <code style="color:#22d3bf">inf</code> もそのまま)。</p>
+<p>図注や Markdown の表に落とす直前に置く。<b>条件行を削ってから貼らない</b>こと ―― <code style="color:#22d3bf">data_range</code> が違う 2 つの PSNR を並べると 48 dB の見かけの差が出る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_quality_metrics">image_quality_metrics</a> — <code style="color:#22d3bf">py -3.11 examples/image_quality_metrics.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

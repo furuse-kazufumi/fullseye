@@ -17,10 +17,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Iteratively extracts up to <code style="color:#22d3bf">max_planes</code> planes via repeated RANSAC (remaining residual points are -1).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>残り点集合に :func:<code style="color:#22d3bf">ransac_fit.ransac_plane</code> を掛け、その最大 consensus 平面の</p>
-<p>inlier 数が `<code style="color:#22d3bf">min_inliers</code>` 以上なら新ラベルを与えて除去 → 残りで再検出、を繰り返す。</p>
-<p>複数の床/壁/階段状の面を一度に分離する(単一平面適合の pcseg との差)。inlier が</p>
-<p>`<code style="color:#22d3bf">min_inliers</code>` に満たなくなった時点で停止し、以降の点は残差 -1(球や複雑物体はここに残る)。</p>
+<p>残り点集合に <code style="color:#22d3bf">ransac_fit.ransac_plane</code> を掛け、その最大 consensus 平面の inlier 数が <code style="color:#22d3bf">min_inliers</code> 以上なら新ラベルを与えて除去 → 残りで再検出、を繰り返す。複数の床/壁/階段状の面を一度に分離する(単一平面適合の pcseg との差)。inlier が <code style="color:#22d3bf">min_inliers</code> に満たなくなった時点で停止し、以降の点は残差 -1(球や複雑物体はここに残る)。</p>
 <p>Args:</p>
 <p>points: (N,3) 点群。</p>
 <p>thresh: 点-平面距離の inlier しきい値(距離、要 &gt; 0)。</p>
@@ -31,7 +28,7 @@
 <p>Returns:</p>
 <p>labels: (N,) int。検出順(=consensus 大きい順に近い)に 0,1,2,... を平面へ付与、</p>
 <p>どの平面にも属さない残差点は -1。空入力は shape (0,)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">plane_segmentation</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">max_planes</code><code style="color:#22d3bf">(既定 5)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">iters</code>`(既定 300)を振る。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">plane_segmentation</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">max_planes</code>(既定 5)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">iters</code>(既定 300)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -5,29 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>도달 시각 히스토그램을 장치 응답(타이밍 지터)으로 흐립니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The temporal analogue of a PSF convolution: a detector&#x27;s timing uncertainty</p>
-<p>(SPAD jitter + TDC quantisation + laser pulse width) smears every arrival</p>
-<p>time by the instrument response function, here a Gaussian of full width at</p>
-<p>half maximum *irf_fwhm_ps*. The kernel is the <b>exact bin integral</b> of that</p>
-<p>Gaussian (erf differences), normalised to sum 1, truncated at</p>
-<p>`<code style="color:#22d3bf">+-truncate*sigma</code>` and forced to odd length so the convolution is centred.</p>
-<p>Ground truth: convolving a unit spike in the middle of a 256-bin window with</p>
-<p>`<code style="color:#22d3bf">irf_fwhm_ps = 500</code><code style="color:#22d3bf"> at </code><code style="color:#22d3bf">bin_ps = 50</code>` leaves the centroid <b>exactly</b></p>
-<p>where it was (measured shift 0.0 ps — the kernel is symmetric) and gives a</p>
-<p>profile whose measured FWHM is 501.22 ps. That 0.24% excess over 500 is the</p>
-<p>*measurement*, not the kernel: :func:<code style="color:#22d3bf">tcspc_stats</code> finds the half-maximum</p>
-<p>crossings by linear interpolation between bins, which slightly overestimates</p>
-<p>the width of a Gaussian.</p>
-<p>Total counts are preserved *except* at the window edges, where</p>
-<p>`<code style="color:#22d3bf">mode=&#x27;same&#x27;</code>` discards the tail that falls outside — measured loss exactly</p>
-<p>0 for that centred spike, but a genuine loss for a pulse within a few sigma</p>
-<p>of either end.</p>
+<p>The temporal analogue of a PSF convolution: a detector&#x27;s timing uncertainty (SPAD jitter + TDC quantisation + laser pulse width) smears every arrival time by the instrument response function, here a Gaussian of full width at half maximum *irf_fwhm_ps*. The kernel is the <b>exact bin integral</b> of that Gaussian (erf differences), normalised to sum 1, truncated at <code style="color:#22d3bf">+-truncate*sigma</code> and forced to odd length so the convolution is centred.</p>
+<p>Ground truth: convolving a unit spike in the middle of a 256-bin window with <code style="color:#22d3bf">irf_fwhm_ps = 500</code> at <code style="color:#22d3bf">bin_ps = 50</code> leaves the centroid <b>exactly</b> where it was (measured shift 0.0 ps — the kernel is symmetric) and gives a profile whose measured FWHM is 501.22 ps. That 0.24% excess over 500 is the *measurement*, not the kernel: <code style="color:#22d3bf">tcspc_stats</code> finds the half-maximum crossings by linear interpolation between bins, which slightly overestimates the width of a Gaussian.</p>
+<p>Total counts are preserved *except* at the window edges, where <code style="color:#22d3bf">mode=&#x27;same&#x27;</code> discards the tail that falls outside — measured loss exactly 0 for that centred spike, but a genuine loss for a pulse within a few sigma of either end.</p>
 <p>Returns a float64 1-D histogram of the same length as *hist*.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *hist*, a</p>
-<p>non-positive *bin_ps* / *irf_fwhm_ps* / *truncate*, an IRF sigma below</p>
-<p>1e-3 bins (the kernel would be a delta and the op a no-op — say so instead</p>
-<p>of pretending to blur), and a kernel that would be longer than the</p>
-<p>:data:<code style="color:#22d3bf">MAX_BINS</code> cap.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: negative, non-finite or non-1-D *hist*, a non-positive *bin_ps* / *irf_fwhm_ps* / *truncate*, an IRF sigma below 1e-3 bins (the kernel would be a delta and the op a no-op — say so instead of pretending to blur), and a kernel that would be longer than the <code style="color:#22d3bf">MAX_BINS</code> cap.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

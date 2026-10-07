@@ -5,20 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>형태학적 Chan–Vese(Márquez-Neila–Baumela–Álvarez 2014의 MorphACWE). 1회 반복 = 데이터 단계 + 평활 단계(morph_chan_vese).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>データ段: c1 = 内側の平均、c0 = 外側の平均、aux = |∇u|(λ1 (I − c1)² − λ2 (I − c0)²)、aux &lt; 0 の画素を内側、</p>
-<p>aux &gt; 0 を外側に(|∇u| ≠ 0 = 境界の近くだけが動く)。平滑段: 曲率の作用素(SI∘IS と IS∘SI を交互)を `<code style="color:#22d3bf">smoothing</code>` 回。</p>
-<p>`<code style="color:#22d3bf">phase</code>` = 最初に使う作用素(0 = SI∘IS)。skimage の実装は交互の位相をモジュールの大域状態に持つので、</p>
-<p>同じ入力でも直前の呼び出しで結果が変わりうる —— ここは呼び出しごとに `<code style="color:#22d3bf">phase</code>` から始める(決定的)。</p>
-<p>当てはめのエネルギー E_fit = λ1 Σ_in (I − c1)² + λ2 Σ_out (I − c0)² を各段の前後で記録する。</p>
-<p>門(厳密): c を固定した E_fit は画素ごとの和なので、データ段で反転した画素はどれも E_fit を下げ(または等しく)、</p>
-<p>その後 c を平均に更新するとさらに下がる ⇒ データ段の前後で E_fit は単調非増加(`<code style="color:#22d3bf">n_data_increase</code>` = 0)。</p>
-<p>平滑段は E_fit を上げうる(`<code style="color:#22d3bf">fit_after_smooth</code>` で実測)。</p>
-<p>返り値: `<code style="color:#22d3bf">mask</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fit_before_data</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fit_after_data</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fit_after_smooth</code><code style="color:#22d3bf">(反復ごと)、</code><code style="color:#22d3bf">n_data_increase</code>`、</p>
-<p>`<code style="color:#22d3bf">history</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_changed</code>`(反復ごとに変わった画素数)。</p>
+<p>データ段: c1 = 内側の平均、c0 = 外側の平均、aux = |∇u|(λ1 (I − c1)² − λ2 (I − c0)²)、aux &lt; 0 の画素を内側、aux &gt; 0 を外側に(|∇u| ≠ 0 = 境界の近くだけが動く)。平滑段: 曲率の作用素(SI∘IS と IS∘SI を交互)を <code style="color:#22d3bf">smoothing</code> 回。<code style="color:#22d3bf">phase</code> = 最初に使う作用素(0 = SI∘IS)。skimage の実装は交互の位相をモジュールの大域状態に持つので、同じ入力でも直前の呼び出しで結果が変わりうる —— ここは呼び出しごとに <code style="color:#22d3bf">phase</code> から始める(決定的)。当てはめのエネルギー E_fit = λ1 Σ_in (I − c1)² + λ2 Σ_out (I − c0)² を各段の前後で記録する。門(厳密): c を固定した E_fit は画素ごとの和なので、データ段で反転した画素はどれも E_fit を下げ(または等しく)、その後 c を平均に更新するとさらに下がる ⇒ データ段の前後で E_fit は単調非増加(<code style="color:#22d3bf">n_data_increase</code> = 0)。平滑段は E_fit を上げうる(<code style="color:#22d3bf">fit_after_smooth</code> で実測)。</p>
+<p>返り値: <code style="color:#22d3bf">mask</code>、<code style="color:#22d3bf">fit_before_data</code> / <code style="color:#22d3bf">fit_after_data</code> / <code style="color:#22d3bf">fit_after_smooth</code>(反復ごと)、<code style="color:#22d3bf">n_data_increase</code>、<code style="color:#22d3bf">history</code>、<code style="color:#22d3bf">n_iter</code>、<code style="color:#22d3bf">n_changed</code>(反復ごとに変わった画素数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 변분·동적 윤곽과 레벨셋 — 어떤 윤곽이 어디서 멈추고 무엇을 보장하는가</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -5,13 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구조적 유사도(Wang, Bovik, Sheikh &amp; Simoncelli, IEEE TIP 13(4), 2004).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>既定は原論文の設定 ―― <b>11x11 のガウシアン窓 σ=1.5、K1=0.01、K2=0.03</b>、</p>
-<p>重み付き<b>母</b>分散(標本分散への `<code style="color:#22d3bf">n/(n-1)</code>` 補正を入れない)。</p>
-<p>`<code style="color:#22d3bf">crop_border=True</code>`(既定)は窓の半径ぶんの縁を平均から落とす。縁では</p>
-<p>鏡像で埋めた画素が統計に混ざるため。<b>落とすかどうかで値が変わる</b>ので、</p>
-<p>他所の数値と比べるときは必ずこの設定を揃えること(小さい絵ほど差が出る)。</p>
-<p>Returns</p>
-<p>-------</p>
+<p>既定は原論文の設定 ―― <b>11x11 のガウシアン窓 σ=1.5、K1=0.01、K2=0.03</b>、重み付き<b>母</b>分散(標本分散への <code style="color:#22d3bf">n/(n-1)</code> 補正を入れない)。</p>
+<p><code style="color:#22d3bf">crop_border=True</code>(既定)は窓の半径ぶんの縁を平均から落とす。縁では鏡像で埋めた画素が統計に混ざるため。<b>落とすかどうかで値が変わる</b>ので、他所の数値と比べるときは必ずこの設定を揃えること(小さい絵ほど差が出る)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>float</p>
 <p>1.0 が完全一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

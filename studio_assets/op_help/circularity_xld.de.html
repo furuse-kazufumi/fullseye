@@ -8,13 +8,12 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity_xld.chain.jpg">circularity_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity_xld.chain.jpg">circularity_xld: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Berechnet für die größte Kontur `<code style="color:#22d3bf">min(1, F/(π · max²))</code><code style="color:#22d3bf"> aus der Fläche </code><code style="color:#22d3bf">F</code><code style="color:#22d3bf"> (Gaußsche Trapezformel) und dem größten Abstand </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> vom **Schwerpunkt der eingeschlossenen Fläche** zu einem Konturpunkt (das Kontur-Gegenstück zu </code><code style="color:#22d3bf">circularity</code><code style="color:#22d3bf">). **Dieselbe Formel wie** HALCONs </code><code style="color:#22d3bf">circularity_xld</code>` (Shape factor for the circularity (similarity to a circle) of contours or polygons.).</p>
+<p>Berechnet für die größte Kontur <code style="color:#22d3bf">min(1, F/(π · max²))</code> aus der Fläche <code style="color:#22d3bf">F</code> (Gaußsche Trapezformel) und dem größten Abstand <code style="color:#22d3bf">max</code> vom <b>Schwerpunkt der eingeschlossenen Fläche</b> zu einem Konturpunkt (das Kontur-Gegenstück zu <code style="color:#22d3bf">circularity</code>). <b>Dieselbe Formel wie</b> HALCONs <code style="color:#22d3bf">circularity_xld</code> (Shape factor for the circularity (similarity to a circle) of contours or polygons.).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>★2026-09-26 まで等周比 `<code style="color:#22d3bf">4π・面積/周囲長²</code>` という別の量だった。重心は点の</p>
-<p>平均ではなく面積の重心を使う —— 点が密な側に寄ってしまうため。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>★2026-09-26 まで等周比 <code style="color:#22d3bf">4π・面積/周囲長²</code> という別の量だった。重心は点の平均ではなく面積の重心を使う —— 点が密な側に寄ってしまうため。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -25,7 +24,7 @@
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-circularity_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Acircularity_xld%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Acircularity_xld%200.50%200.50">Load &amp; run</a></p>
+circularity_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Acircularity_xld%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Acircularity_xld%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>

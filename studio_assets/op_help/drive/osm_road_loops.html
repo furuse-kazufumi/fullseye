@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_road_loops(roadmask: &#x27;dict&#x27;, *, tolerance_px: &#x27;float&#x27; = 0.75) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivejapan; drivejapan.osm_road_loops(roadmask: &#x27;dict&#x27;, *, tolerance_px: &#x27;float&#x27; = 0.75) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;osm_road_loops&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>道路の和集合の境界ループ。外側(道路の縁)と穴(街区)に分け、Douglas–Peucker で間引く。</p>
-<p>追跡は画素の辺に沿う(:func:<code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>)ので、間引く前のループの面積の和 = 画素数 × step²</p>
-<p>(外側 − 穴)が厳密に成り立つ(`<code style="color:#22d3bf">area_check</code>`)。穴か外側かは、ループの最も左の縦の辺のすぐ右の画素が道路かどうかで決める。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;outer&quot;: [(K,2) xy], &quot;holes&quot;: [(K,2) xy], &quot;outer_raw&quot;, &quot;holes_raw&quot;, &quot;area_check&quot;: {&quot;loops_m2&quot;, &quot;pixels_m2&quot;, &quot;abs_err&quot;}}</code>`。</p>
+<p>追跡は画素の辺に沿う(<code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>)ので、間引く前のループの面積の和 = 画素数 × step² (外側 − 穴)が厳密に成り立つ(<code style="color:#22d3bf">area_check</code>)。穴か外側かは、ループの最も左の縦の辺のすぐ右の画素が道路かどうかで決める。返り値 <code style="color:#22d3bf">{&quot;outer&quot;: [(K,2) xy], &quot;holes&quot;: [(K,2) xy], &quot;outer_raw&quot;, &quot;holes_raw&quot;, &quot;area_check&quot;: {&quot;loops_m2&quot;, &quot;pixels_m2&quot;, &quot;abs_err&quot;}}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

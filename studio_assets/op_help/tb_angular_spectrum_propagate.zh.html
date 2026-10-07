@@ -5,55 +5,31 @@
 <p><img src="fig/tb_angular_spectrum_propagate.png" alt="tb_angular_spectrum_propagate: input → output"></p>
 <p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
 <p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_angular_spectrum_propagate.a.jpg">tb_angular_spectrum_propagate: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_angular_spectrum_propagate.a.jpg">tb_angular_spectrum_propagate: 旋钮 a 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_angular_spectrum_propagate.b.jpg">tb_angular_spectrum_propagate: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_angular_spectrum_propagate.b.jpg">tb_angular_spectrum_propagate: 旋钮 b 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_angular_spectrum_propagate.chain.jpg">tb_angular_spectrum_propagate: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_angular_spectrum_propagate.chain.jpg">tb_angular_spectrum_propagate: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_angular_spectrum_propagate.inputs.jpg">tb_angular_spectrum_propagate: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_angular_spectrum_propagate.inputs.jpg">tb_angular_spectrum_propagate: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>复数场的精确标量自由空间传播（角谱法）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">U(z) = IFFT{ FFT{U(0)} * exp(i*2*pi*z*sqrt(1/lambda^2 - fx^2 - fy^2)) }</code>`</p>
-<p>in the `<code style="color:#22d3bf">exp(-i*omega*t)</code>` convention, so a positive *distance_um*</p>
-<p>propagates forward. Components beyond the propagating cone</p>
-<p>(`<code style="color:#22d3bf">fx^2 + fy^2 &gt; 1/lambda^2</code>`) are <b>attenuated</b> by</p>
-<p>`<code style="color:#22d3bf">exp(-2*pi*|z|*sqrt(fx^2 + fy^2 - 1/lambda^2))</code>`, which is the physical</p>
-<p>evanescent decay — not zeroed, so `<code style="color:#22d3bf">distance_um = 0</code>` is an *exact*</p>
-<p>identity and the transfer function is continuous through it.</p>
-<p>Unlike Fresnel propagation this makes no paraxial approximation: it is the</p>
-<p>exact solution of the Helmholtz equation for a band-limited field, valid</p>
-<p>from a fraction of a wavelength outward.</p>
+<p><code style="color:#22d3bf">U(z) = IFFT{ FFT{U(0)} * exp(i*2*pi*z*sqrt(1/lambda^2 - fx^2 - fy^2)) }</code> in the <code style="color:#22d3bf">exp(-i*omega*t)</code> convention, so a positive *distance_um* propagates forward. Components beyond the propagating cone (<code style="color:#22d3bf">fx^2 + fy^2 &gt; 1/lambda^2</code>) are <b>attenuated</b> by <code style="color:#22d3bf">exp(-2*pi*|z|*sqrt(fx^2 + fy^2 - 1/lambda^2))</code>, which is the physical evanescent decay — not zeroed, so <code style="color:#22d3bf">distance_um = 0</code> is an *exact* identity and the transfer function is continuous through it.</p>
+<p>Unlike Fresnel propagation this makes no paraxial approximation: it is the exact solution of the Helmholtz equation for a band-limited field, valid from a fraction of a wavelength outward.</p>
 <p>Returns a complex128 array with the same shape as *field*.</p>
-<p>Ground truth it reproduces (measured): `<code style="color:#22d3bf">distance_um = 0</code>` returns the field</p>
-<p>bit-identically (it short-circuits the transform pair); propagating `<code style="color:#22d3bf">+z</code>`</p>
-<p>then `<code style="color:#22d3bf">-z</code>` returns the original to a relative L2 error of 4.3e-16 to</p>
-<p>5.3e-16 for a band-limited field (measured on three: 64x64 random at</p>
-<p>+/-50 um, a 64x64 Gaussian at +/-250 um, a 128x128 random at +/-500 um);</p>
-<p>total power is conserved to between 0 and 3.5e-16 relative on the same</p>
-<p>three. A field *with*</p>
-<p>evanescent content does <b>not</b> round-trip — those components are gone by</p>
-<p>construction, in both directions, because that is what physically happens.</p>
-<p>*field* is a field in the <b>space</b> domain, not a spectrum: do not hand it</p>
-<p>the fftshifted output of :func:<code style="color:#22d3bf">complexops.cx_fft</code>. Real input is promoted</p>
-<p>to complex, which loses nothing.</p>
-<p>Aliasing: the discrete transfer function is periodic, so a field that</p>
-<p>diffracts past the array edge wraps around. The practical guard is the</p>
-<p>usual one — pad the field so the propagated support stays inside, and keep</p>
-<p>`<code style="color:#22d3bf">pixel_pitch_um</code><code style="color:#22d3bf"> below </code><code style="color:#22d3bf">lambda/(2*NA)</code>`. No warning can detect this</p>
-<p>reliably from the array alone, so none is invented.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *field* is not 2-D, smaller than 2x2, larger than</p>
-<p>:data:<code style="color:#22d3bf">MAX_FIELD_ELEMENTS</code>, masked, or non-finite; non-positive or</p>
-<p>non-finite *wavelength_um* / *pixel_pitch_um*; non-finite *distance_um*.</p>
-<p>Typed bridge of the optics op `<code style="color:#22d3bf">angular_spectrum_propagate</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">wavelength_um</code><code style="color:#22d3bf"> (default 0.55) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">distance_um</code>` (default 100).</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>Ground truth it reproduces (measured): <code style="color:#22d3bf">distance_um = 0</code> returns the field bit-identically (it short-circuits the transform pair); propagating <code style="color:#22d3bf">+z</code> then <code style="color:#22d3bf">-z</code> returns the original to a relative L2 error of 4.3e-16 to 5.3e-16 for a band-limited field (measured on three: 64x64 random at +/-50 um, a 64x64 Gaussian at +/-250 um, a 128x128 random at +/-500 um); total power is conserved to between 0 and 3.5e-16 relative on the same three. A field *with* evanescent content does <b>not</b> round-trip — those components are gone by construction, in both directions, because that is what physically happens.</p>
+<p>*field* is a field in the <b>space</b> domain, not a spectrum: do not hand it the fftshifted output of <code style="color:#22d3bf">complexops.cx_fft</code>. Real input is promoted to complex, which loses nothing.</p>
+<p>Aliasing: the discrete transfer function is periodic, so a field that diffracts past the array edge wraps around. The practical guard is the usual one — pad the field so the propagated support stays inside, and keep <code style="color:#22d3bf">pixel_pitch_um</code> below <code style="color:#22d3bf">lambda/(2*NA)</code>. No warning can detect this reliably from the array alone, so none is invented.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *field* is not 2-D, smaller than 2x2, larger than <code style="color:#22d3bf">MAX_FIELD_ELEMENTS</code>, masked, or non-finite; non-positive or non-finite *wavelength_um* / *pixel_pitch_um*; non-finite *distance_um*.</p>
+<p>Typed bridge of the optics op <code style="color:#22d3bf">angular_spectrum_propagate</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> drives <code style="color:#22d3bf">wavelength_um</code> (default 0.55) and <code style="color:#22d3bf">b</code> drives <code style="color:#22d3bf">distance_um</code> (default 100).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
 <p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_cimage 0.50 0.50
-tb_angular_spectrum_propagate 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_cimage%200.50%200.50%0Atb_angular_spectrum_propagate%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_cimage%200.50%200.50%0Atb_angular_spectrum_propagate%200.50%200.50">Load &amp; run</a></p>
+tb_angular_spectrum_propagate 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_cimage%200.50%200.50%0Atb_angular_spectrum_propagate%200.50%200.50">▸ 载入此流水线</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_cimage%200.50%200.50%0Atb_angular_spectrum_propagate%200.50%200.50">载入并运行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p>下面的示例调用的是底层账本算子 <code style="color:#22d3bf">angular_spectrum_propagate</code>。此桥接算子只是把同一实现适配为 <code style="color:#22d3bf">fn(v, a, b)</code> 约定，行为完全相同(只是调用形式不同)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>

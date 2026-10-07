@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_from_depth_motion(depth, K, T_rel) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivettc; drivettc.flow_from_depth_motion(depth, K, T_rel) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;flow_from_depth_motion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>深度像と剛体運動から <b>真の像の流れ</b>: `<code style="color:#22d3bf">{&quot;u&quot;, &quot;v&quot;, &quot;valid&quot;, &quot;depth1&quot;}</code>`(各 (H, W))。</p>
-<p>画素の 3-D 点を `<code style="color:#22d3bf">T_rel</code><code style="color:#22d3bf"> で動かして再投影し、</code><code style="color:#22d3bf">u = col₁ − col₀</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">v = row₁ − row₀</code>`。動かした後に</p>
-<p>カメラの背後へ行く点や深度の無い画素は `<code style="color:#22d3bf">valid = False</code><code style="color:#22d3bf">(u, v は NaN)。</code><code style="color:#22d3bf">depth1</code>` は動かした後の深度。</p>
-<p>光学流の推定器の採点に使う真値(推定器と同じ規約: (x, y) → (x + u, y + v))。</p>
+<p>深度像と剛体運動から <b>真の像の流れ</b>: <code style="color:#22d3bf">{&quot;u&quot;, &quot;v&quot;, &quot;valid&quot;, &quot;depth1&quot;}</code>(各 (H, W))。</p>
+<p>画素の 3-D 点を <code style="color:#22d3bf">T_rel</code> で動かして再投影し、<code style="color:#22d3bf">u = col₁ − col₀</code>、<code style="color:#22d3bf">v = row₁ − row₀</code>。動かした後にカメラの背後へ行く点や深度の無い画素は <code style="color:#22d3bf">valid = False</code>(u, v は NaN)。<code style="color:#22d3bf">depth1</code> は動かした後の深度。光学流の推定器の採点に使う真値(推定器と同じ規約: (x, y) → (x + u, y + v))。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -2,6 +2,11 @@
 guide: segmentation_scoring_and_worlds
 dim: segmentation
 title: 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か
+title_en: Scoring segmentations and synthetic worlds with ground truth — which metric is blind to which failure
+title_zh: 分割评分与带真值的合成世界 —— 哪种度量对哪种失效视而不见
+title_tw: 分割評分與帶真值的合成世界 —— 哪種度量對哪種失效視而不見
+title_ko: 분할 채점과 정답이 있는 합성 세계 — 어떤 척도가 어떤 실패에 눈먼가
+title_de: Segmentierungen bewerten und synthetische Welten mit Ground Truth — welches Maß für welchen Fehler blind ist
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

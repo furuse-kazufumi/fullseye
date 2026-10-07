@@ -5,22 +5,17 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>物体个数一致性：由“主要重叠”边的二部图次数来计数分裂/融合/漏检/误检/匹配（seg_object_counts_match）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>真 i と予測 j(どちらも背景でない)の間に辺を置く条件 = 重なり n_ij ≥ `<code style="color:#22d3bf">min_overlap</code>` × min(|i|, |j|)</p>
-<p>(小さい方がもう一方に主に入っている)。真の次数 d_i、予測の次数 e_j:</p>
-<p>`<code style="color:#22d3bf">missed</code><code style="color:#22d3bf"> = #{d_i = 0}、</code><code style="color:#22d3bf">false</code><code style="color:#22d3bf"> = #{e_j = 0}、</code><code style="color:#22d3bf">split</code>` = #{d_i ≥ 2}(1 つの真が複数の予測に割れた)、</p>
-<p>`<code style="color:#22d3bf">merged</code><code style="color:#22d3bf"> = #{e_j ≥ 2}(1 つの予測が複数の真を抱えた)、</code><code style="color:#22d3bf">matched</code>` = #{d_i = 1 かつ その相手の e_j = 1}。</p>
-<p>`<code style="color:#22d3bf">counts_match</code>` = 真と予測の個数が同じで全部が一致。min_overlap &gt; 0.5 なら各予測は高々 1 つの真に「主に入る」が、</p>
-<p>真が小さく予測が大きい辺もあるので融合は検出できる。</p>
-<p>返り値: 上の数 + `<code style="color:#22d3bf">n_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_pred</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf">(真ラベル, 予測ラベル)の (m, 2)、</code><code style="color:#22d3bf">split_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">merged_pred</code>` /</p>
-<p>`<code style="color:#22d3bf">missed_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">false_pred</code><code style="color:#22d3bf">(ラベルの配列)、</code><code style="color:#22d3bf">min_overlap</code>`。</p>
+<p>真 i と予測 j(どちらも背景でない)の間に辺を置く条件 = 重なり n_ij ≥ <code style="color:#22d3bf">min_overlap</code> × min(|i|, |j|) (小さい方がもう一方に主に入っている)。真の次数 d_i、予測の次数 e_j:</p>
+<p><code style="color:#22d3bf">missed</code> = #{d_i = 0}、<code style="color:#22d3bf">false</code> = #{e_j = 0}、<code style="color:#22d3bf">split</code> = #{d_i ≥ 2}(1 つの真が複数の予測に割れた)、<code style="color:#22d3bf">merged</code> = #{e_j ≥ 2}(1 つの予測が複数の真を抱えた)、<code style="color:#22d3bf">matched</code> = #{d_i = 1 かつ その相手の e_j = 1}。<code style="color:#22d3bf">counts_match</code> = 真と予測の個数が同じで全部が一致。min_overlap &gt; 0.5 なら各予測は高々 1 つの真に「主に入る」が、真が小さく予測が大きい辺もあるので融合は検出できる。</p>
+<p>返り値: 上の数 + <code style="color:#22d3bf">n_true</code> / <code style="color:#22d3bf">n_pred</code>、<code style="color:#22d3bf">edges</code>(真ラベル, 予測ラベル)の (m, 2)、<code style="color:#22d3bf">split_true</code> / <code style="color:#22d3bf">merged_pred</code> / <code style="color:#22d3bf">missed_true</code> / <code style="color:#22d3bf">false_pred</code>(ラベルの配列)、<code style="color:#22d3bf">min_overlap</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割评分与带真值的合成世界 —— 哪种度量对哪种失效视而不见</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

@@ -6,18 +6,16 @@
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>social force の 1 歩(単位質量あたり。Helbing &amp; Molnár 1995 / Helbing, Farkas, Vicsek 2000 の形)。</p>
 <p>dv_i/dt = (v0_i e_i − v_i)/τ + Σ_j A exp((r_ij − d_ij)/B) n_ij + Σ_W A exp((r_i − d_iW)/B) n_iW</p>
-<p>e_i = 目標への単位ベクトル(目標に 1e-9 m 以内なら 0)、r_ij = r_i + r_j、d_ij = |x_i − x_j|、</p>
-<p>n_ij = (x_i − x_j)/d_ij。壁 W は線分 ((x0, y0), (x1, y1)) の列で、d_iW と n_iW は最近点から。</p>
+<p>e_i = 目標への単位ベクトル(目標に 1e-9 m 以内なら 0)、r_ij = r_i + r_j、d_ij = |x_i − x_j|、n_ij = (x_i − x_j)/d_ij。壁 W は線分 ((x0, y0), (x1, y1)) の列で、d_iW と n_iW は最近点から。</p>
 <p>積分(指数積分): 斥力 F を刻みの間一定と置き、線形部分 (v_d − v)/τ(v_d = v0 e + τ F)を厳密に解く:</p>
-<p>v&#x27; = v_d + (v − v_d) e^{−dt/τ}、x&#x27; = x + v_d dt + (v − v_d) τ (1 − e^{−dt/τ})。</p>
-<p>1 人で斥力が無ければ v(t) = v0(1 − e^{−t/τ}) に <b>dt に依らず</b> 一致する(門)。斥力がある時は 1 次の誤差。</p>
-<p>引数: `<code style="color:#22d3bf">pos</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">vel</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">goals</code><code style="color:#22d3bf"> は (N, 2)。</code><code style="color:#22d3bf">v0</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> はスカラーか (N,)。</code><code style="color:#22d3bf">walls</code>` は (M, 2, 2) か None。</p>
+<p>v&#x27; = v_d + (v − v_d) e^{−dt/τ}、x&#x27; = x + v_d dt + (v − v_d) τ (1 − e^{−dt/τ})。1 人で斥力が無ければ v(t) = v0(1 − e^{−t/τ}) に <b>dt に依らず</b> 一致する(門)。斥力がある時は 1 次の誤差。</p>
+<p>引数: <code style="color:#22d3bf">pos</code>, <code style="color:#22d3bf">vel</code>, <code style="color:#22d3bf">goals</code> は (N, 2)。<code style="color:#22d3bf">v0</code> と <code style="color:#22d3bf">radius</code> はスカラーか (N,)。<code style="color:#22d3bf">walls</code> は (M, 2, 2) か None。</p>
 <p>戻り値: (pos&#x27;, vel&#x27;)。配置が鏡映・点対称なら結果も同じ対称性を保つ(式が対称なので。門で確かめる)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形の不一致、非有限、τ・B・dt ≤ 0、A &lt; 0、半径 &lt; 0、2 人の位置が一致。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の不一致、非有限、τ・B・dt ≤ 0、A &lt; 0、半径 &lt; 0、2 人の位置が一致。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">any</code> 作為輸入)</h3>

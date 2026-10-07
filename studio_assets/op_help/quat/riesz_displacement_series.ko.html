@@ -5,21 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>모노제닉 위상으로부터의 프레임 전체 변위 파형. → (T, 2).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The contrast-weighted spatial mean of :func:<code style="color:#22d3bf">riesz_displacement</code>: the</p>
-<p>rigid-body motion of the scene in pixels, one `<code style="color:#22d3bf">(dx, dy)</code>` row per frame.</p>
-<p>The `<code style="color:#22d3bf">(n, 2)</code><code style="color:#22d3bf"> layout is the shared 1-D convention (</code><code style="color:#22d3bf">dsp.spectrum</code>`,</p>
-<p>`<code style="color:#22d3bf">funct1d</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">opsoptics</code>`&#x27;s MTF curves), so the trace can be handed to</p>
-<p>`<code style="color:#22d3bf">dsp.spectrum</code>` to read off a resonant frequency without any repacking.</p>
-<p>Weights are the `<code style="color:#22d3bf">|z|^2</code>` contrast the field solve uses, restricted to the</p>
-<p>pixels marked `<code style="color:#22d3bf">valid</code>`, so blank regions do not drag the average towards</p>
-<p>zero. A clip with no valid pixel anywhere (a constant image) returns exact</p>
-<p>zeros rather than dividing by zero.</p>
-<p>Accuracy, the `<code style="color:#22d3bf">J0</code>` cliff and the multi-orientation failure all inherit from</p>
-<p>:func:<code style="color:#22d3bf">riesz_displacement</code> — read its head-to-head table before trusting a</p>
-<p>number from here. On a single-grating 64x64x64 / 8 px / 4 Hz clip a true</p>
-<p>0.5 px amplitude is recovered as <b>0.50000000000000 px</b> (2.2e-16 relative);</p>
-<p>on the two-grating `<code style="color:#22d3bf">motionmag.synthesize_translation</code>` default the same</p>
-<p>0.5 px comes back 13.0 % low, with nothing to signal it.</p>
+<p>The contrast-weighted spatial mean of <code style="color:#22d3bf">riesz_displacement</code>: the rigid-body motion of the scene in pixels, one <code style="color:#22d3bf">(dx, dy)</code> row per frame. The <code style="color:#22d3bf">(n, 2)</code> layout is the shared 1-D convention (<code style="color:#22d3bf">dsp.spectrum</code>, <code style="color:#22d3bf">funct1d</code>, <code style="color:#22d3bf">opsoptics</code>&#x27;s MTF curves), so the trace can be handed to <code style="color:#22d3bf">dsp.spectrum</code> to read off a resonant frequency without any repacking.</p>
+<p>Weights are the <code style="color:#22d3bf">|z|^2</code> contrast the field solve uses, restricted to the pixels marked <code style="color:#22d3bf">valid</code>, so blank regions do not drag the average towards zero. A clip with no valid pixel anywhere (a constant image) returns exact zeros rather than dividing by zero.</p>
+<p>Accuracy, the <code style="color:#22d3bf">J0</code> cliff and the multi-orientation failure all inherit from <code style="color:#22d3bf">riesz_displacement</code> — read its head-to-head table before trusting a number from here. On a single-grating 64x64x64 / 8 px / 4 Hz clip a true 0.5 px amplitude is recovered as <b>0.50000000000000 px</b> (2.2e-16 relative); on the two-grating <code style="color:#22d3bf">motionmag.synthesize_translation</code> default the same 0.5 px comes back 13.0 % low, with nothing to signal it.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

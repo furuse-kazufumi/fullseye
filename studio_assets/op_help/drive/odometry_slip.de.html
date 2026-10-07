@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import roverslip; roverslip.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;odometry_slip&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>視覚オドメトリの位置の列と車輪の累積回転角から、実際の滑り率 `<code style="color:#22d3bf">s = 1 − Δx / (r Δφ)</code>`。</p>
-<p>`<code style="color:#22d3bf">position</code><code style="color:#22d3bf"> は (T,) の進んだ距離か (T, 2) の平面の位置 [m]、</code><code style="color:#22d3bf">wheel_angle</code>` は (T,) の車輪の累積回転角 [rad]、</p>
-<p>`<code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> = r [m]。</code><code style="color:#22d3bf">window</code>` 個ぶんの区間でまとめて割る(短い区間は雑音を拾う)。車輪がほとんど回らない</p>
-<p>区間(`<code style="color:#22d3bf">r Δφ</code><code style="color:#22d3bf"> が全体の中央値の 1 % 未満)は nan。返り値 </code>`{&quot;slip&quot;: (T − window,), &quot;slip_total&quot;: 全区間の 1 個,</p>
-<p>&quot;distance&quot;: 区間ごとの車体の移動 [m], &quot;wheel_travel&quot;: 区間ごとの r Δφ [m]}``。</p>
+<p>視覚オドメトリの位置の列と車輪の累積回転角から、実際の滑り率 <code style="color:#22d3bf">s = 1 − Δx / (r Δφ)</code>。</p>
+<p><code style="color:#22d3bf">position</code> は (T,) の進んだ距離か (T, 2) の平面の位置 [m]、<code style="color:#22d3bf">wheel_angle</code> は (T,) の車輪の累積回転角 [rad]、<code style="color:#22d3bf">radius</code> = r [m]。<code style="color:#22d3bf">window</code> 個ぶんの区間でまとめて割る(短い区間は雑音を拾う)。車輪がほとんど回らない区間(<code style="color:#22d3bf">r Δφ</code> が全体の中央値の 1 % 未満)は nan。返り値 <code style="color:#22d3bf">{&quot;slip&quot;: (T − window,), &quot;slip_total&quot;: 全区間の 1 個, &quot;distance&quot;: 区間ごとの車体の移動 [m], &quot;wheel_travel&quot;: 区間ごとの r Δφ [m]}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

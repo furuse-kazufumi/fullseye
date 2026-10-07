@@ -3,17 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import residue; residue.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsresidue.get(&quot;residue_integer_crt&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>정확한 정수 중국인의 나머지 정리(Garner 혼합 기수 알고리즘) -&gt; `<code style="color:#22d3bf">dict</code>`.</p>
+<p>정확한 정수 중국인의 나머지 정리(Garner 혼합 기수 알고리즘) -&gt; <code style="color:#22d3bf">dict</code>.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">residues</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">moduli</code>` are equal-length integer sequences; the moduli must</p>
-<p>be pairwise coprime and &gt;= 2. Returns ``{&quot;value&quot;: int, &quot;modulus&quot;: int,</p>
-<p>&quot;mixed_radix&quot;: [digits]}`<code style="color:#22d3bf"> where </code><code style="color:#22d3bf">value</code>` is the unique solution in</p>
-<p>`<code style="color:#22d3bf">[0, prod(moduli))</code><code style="color:#22d3bf">. Arithmetic is Python&#x27;s arbitrary-precision </code><code style="color:#22d3bf">int</code>` —</p>
-<p>there is no rounding anywhere, which is why this op is the oracle for</p>
-<p>:func:<code style="color:#22d3bf">residue_crt</code>.</p>
-<p>The mixed-radix digits `<code style="color:#22d3bf">d_k</code><code style="color:#22d3bf"> satisfy </code><code style="color:#22d3bf">value = d_0 + d_1 m_0 + d_2 m_0 m_1 + ...</code>`:</p>
-<p>the *positional* (coarse-to-fine) reading of the same residues, i.e. the</p>
-<p>bridge between the residue view and the place-value view.</p>
+<p><code style="color:#22d3bf">residues</code> and <code style="color:#22d3bf">moduli</code> are equal-length integer sequences; the moduli must be pairwise coprime and &gt;= 2. Returns <code style="color:#22d3bf">{&quot;value&quot;: int, &quot;modulus&quot;: int, &quot;mixed_radix&quot;: [digits]}</code> where <code style="color:#22d3bf">value</code> is the unique solution in <code style="color:#22d3bf">[0, prod(moduli))</code>. Arithmetic is Python&#x27;s arbitrary-precision <code style="color:#22d3bf">int</code> — there is no rounding anywhere, which is why this op is the oracle for <code style="color:#22d3bf">residue_crt</code>.</p>
+<p>The mixed-radix digits <code style="color:#22d3bf">d_k</code> satisfy <code style="color:#22d3bf">value = d_0 + d_1 m_0 + d_2 m_0 m_1 + ...</code>:</p>
+<p>the *positional* (coarse-to-fine) reading of the same residues, i.e. the bridge between the residue view and the place-value view.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

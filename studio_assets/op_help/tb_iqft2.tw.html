@@ -7,38 +7,26 @@
 <p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_iqft2.chain.jpg">tb_iqft2: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_iqft2.chain.jpg">tb_iqft2: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_iqft2.inputs.jpg">tb_iqft2: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_iqft2.inputs.jpg">tb_iqft2: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對<b>置中</b>頻譜做四元數逆傅立葉變換。→ (H, W, 4)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>The exact inverse of :func:<code style="color:#22d3bf">qft2</code> <b>for the same side and the same mu</b>:</p>
-<p>measured round-trip error `<code style="color:#22d3bf">2.22e-15</code>` for both sides on a standard-normal</p>
-<p>`<code style="color:#22d3bf">(32, 32, 4)</code><code style="color:#22d3bf"> field. The kernel is </code><code style="color:#22d3bf">exp(+mu * 2*pi*(...))</code>` applied on the</p>
-<p>side named, and the `<code style="color:#22d3bf">1/(H*W)</code>` normalisation is carried here, as in</p>
-<p>`<code style="color:#22d3bf">numpy.fft.ifft2</code>`.</p>
-<p><b>Using the wrong side does not raise.</b> `<code style="color:#22d3bf">iqft2(qft2(q, &quot;left&quot;), &quot;right&quot;)</code>`</p>
-<p>returns a finite, plausible quaternion image that is simply not `<code style="color:#22d3bf">q</code>`:</p>
-<p>measured `<code style="color:#22d3bf">max|err| = 1.113</code>` on a random colour image whose own range is</p>
-<p>`<code style="color:#22d3bf">0.9994</code><code style="color:#22d3bf"> (another seed: 1.063 against 1.0), and — the dangerous case — only </code><code style="color:#22d3bf">0.054</code>` against a range of</p>
-<p>`<code style="color:#22d3bf">1.076</code>` on a grey-axis-dominated one, which is small enough to survive a</p>
-<p>look at the picture. The `<code style="color:#22d3bf">side</code>` argument is required at both ends for</p>
-<p>exactly this reason, and the two calls must agree: nothing in the data</p>
-<p>records which transform produced it, so nothing downstream can catch the</p>
-<p>mismatch for you.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *spectrum* is not a valid </code><code style="color:#22d3bf">(H, W, 4)</code>` field;</p>
-<p>*side* is not `<code style="color:#22d3bf">&#x27;left&#x27;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&#x27;right&#x27;</code>`; *mu* is not a finite non-zero</p>
-<p>3-vector.</p>
-<p>Typed bridge of the quat op `<code style="color:#22d3bf">iqft2</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>The exact inverse of <code style="color:#22d3bf">qft2</code> <b>for the same side and the same mu</b>:</p>
+<p>measured round-trip error <code style="color:#22d3bf">2.22e-15</code> for both sides on a standard-normal <code style="color:#22d3bf">(32, 32, 4)</code> field. The kernel is <code style="color:#22d3bf">exp(+mu * 2*pi*(...))</code> applied on the side named, and the <code style="color:#22d3bf">1/(H*W)</code> normalisation is carried here, as in <code style="color:#22d3bf">numpy.fft.ifft2</code>.</p>
+<p><b>Using the wrong side does not raise.</b> <code style="color:#22d3bf">iqft2(qft2(q, &quot;left&quot;), &quot;right&quot;)</code> returns a finite, plausible quaternion image that is simply not <code style="color:#22d3bf">q</code>:</p>
+<p>measured <code style="color:#22d3bf">max|err| = 1.113</code> on a random colour image whose own range is <code style="color:#22d3bf">0.9994</code> (another seed: 1.063 against 1.0), and — the dangerous case — only <code style="color:#22d3bf">0.054</code> against a range of <code style="color:#22d3bf">1.076</code> on a grey-axis-dominated one, which is small enough to survive a look at the picture. The <code style="color:#22d3bf">side</code> argument is required at both ends for exactly this reason, and the two calls must agree: nothing in the data records which transform produced it, so nothing downstream can catch the mismatch for you.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *spectrum* is not a valid <code style="color:#22d3bf">(H, W, 4)</code> field; *side* is not <code style="color:#22d3bf">&#x27;left&#x27;</code> / <code style="color:#22d3bf">&#x27;right&#x27;</code>; *mu* is not a finite non-zero 3-vector.</p>
+<p>Typed bridge of the quat op <code style="color:#22d3bf">iqft2</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_rgb 0.50 0.50
 tb_rgb_to_quaternion 0.50 0.50
-tb_iqft2 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_rgb_to_quaternion%200.50%200.50%0Atb_iqft2%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_rgb_to_quaternion%200.50%200.50%0Atb_iqft2%200.50%200.50">Load &amp; run</a></p>
+tb_iqft2 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_rgb_to_quaternion%200.50%200.50%0Atb_iqft2%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_rgb_to_quaternion%200.50%200.50%0Atb_iqft2%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p>下面的範例呼叫的是底層帳本運算子 <code style="color:#22d3bf">iqft2</code>。此橋接運算子只是把同一實作適配為 <code style="color:#22d3bf">fn(v, a, b)</code> 慣例，行為完全相同(只是呼叫形式不同)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>

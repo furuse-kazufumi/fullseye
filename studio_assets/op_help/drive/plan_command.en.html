@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_command(plan: &#x27;dict&#x27;, road=None, params: &#x27;Optional[dict]&#x27; = None, hold_brake: &#x27;Optional[float]&#x27; = None, before: &#x27;Optional[Callable]&#x27; = None) -&gt; &#x27;Callable&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelong; drivelong.plan_command(plan: &#x27;dict&#x27;, road=None, params: &#x27;Optional[dict]&#x27; = None, hold_brake: &#x27;Optional[float]&#x27; = None, before: &#x27;Optional[Callable]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;plan_command&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>:func:<code style="color:#22d3bf">stop_line_plan</code> を `<code style="color:#22d3bf">command(t, s, v)</code><code style="color:#22d3bf"> にする。t0 より前は </code><code style="color:#22d3bf">before</code>`(None = 速さを保つ)、react / cruise は</p>
-<p>速さを保つ(駆動 = 坂 + 転がり + 空気抵抗の打ち消し、下りで負なら制動)、brake1 / brake2 は計画の値、止まったら保持</p>
-<p>(制動 `<code style="color:#22d3bf">hold_brake</code>`(None = 上限)+ クリープの駆動)。</p>
+<p><code style="color:#22d3bf">stop_line_plan</code> を <code style="color:#22d3bf">command(t, s, v)</code> にする。t0 より前は <code style="color:#22d3bf">before</code>(None = 速さを保つ)、react / cruise は速さを保つ(駆動 = 坂 + 転がり + 空気抵抗の打ち消し、下りで負なら制動)、brake1 / brake2 は計画の値、止まったら保持(制動 <code style="color:#22d3bf">hold_brake</code>(None = 上限)+ クリープの駆動)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

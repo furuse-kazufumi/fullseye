@@ -5,15 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>環状交差点の中の合図を採点する(53 条 2・4 項、教則 5-5-1(2))。場面 S069。</p>
-<p>`<code style="color:#22d3bf">progress</code><code style="color:#22d3bf"> = 入口から右回りに進んだ角 [rad]、単調非減少、サンプルごと、</code><code style="color:#22d3bf">left_on</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">right_on</code>` = 合図の状態(bool)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">left_late</code><code style="color:#22d3bf">: 合図の角 + </code><code style="color:#22d3bf">tol</code>` から出口の角までの間に左の合図が消えているサンプルがある。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">left_early</code><code style="color:#22d3bf">: 合図の角 − </code><code style="color:#22d3bf">tol</code>` より手前で左の合図が点いている(手前の出口で出るように見える。53 条 4 項の</p>
-<p>「行為をしないのに合図」の <b>解釈</b>)。入った直後の出口(合図の角 = 0)では問わない。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">right_signal</code>`: 環道の中で右の合図(53 条 2 項は出るときだけを求める。4 項の <b>解釈</b>)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">progress</code> = 入口から右回りに進んだ角 [rad]、単調非減少、サンプルごと、<code style="color:#22d3bf">left_on</code> / <code style="color:#22d3bf">right_on</code> = 合図の状態(bool)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_late</code>: 合図の角 + <code style="color:#22d3bf">tol</code> から出口の角までの間に左の合図が消えているサンプルがある。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_early</code>: 合図の角 − <code style="color:#22d3bf">tol</code> より手前で左の合図が点いている(手前の出口で出るように見える。53 条 4 項の「行為をしないのに合図」の <b>解釈</b>)。入った直後の出口(合図の角 = 0)では問わない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">right_signal</code>: 環道の中で右の合図(53 条 2 項は出るときだけを求める。4 項の <b>解釈</b>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

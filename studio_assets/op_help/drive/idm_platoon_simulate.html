@@ -4,23 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.idm_platoon_simulate(lead_v_of_t, n_followers: &#x27;int&#x27;, *, params_per_vehicle, dt: &#x27;float&#x27;, t_end: &#x27;float&#x27;, reaction_delay: &#x27;float&#x27; = 0.0, seed: &#x27;Optional[int]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetraffic; drivetraffic.idm_platoon_simulate(lead_v_of_t, n_followers: &#x27;int&#x27;, *, params_per_vehicle, dt: &#x27;float&#x27;, t_end: &#x27;float&#x27;, reaction_delay: &#x27;float&#x27; = 0.0, seed: &#x27;Optional[int]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;idm_platoon_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>先頭車の速度プロファイルに IDM の追従車列を積分する(車 0 = 先頭、1..n = 追従車)。</p>
-<p>引数</p>
-<p>----</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">lead_v_of_t</code><code style="color:#22d3bf">: 先頭車の速度 [m/s]。</code><code style="color:#22d3bf">callable(t) -&gt; v</code>` か、時刻列と同じ長さの配列。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">params_per_vehicle</code><code style="color:#22d3bf">: 追従車ごとの dict(長さ n)か、全車共通の 1 つの dict。キー </code><code style="color:#22d3bf">v0, T, a, b, s0</code>`</p>
-<p>(必須)、`<code style="color:#22d3bf">delta</code><code style="color:#22d3bf">(既定 4)、</code><code style="color:#22d3bf">length</code><code style="color:#22d3bf">(前の車の車長として使う。既定 4.5 m、仮定)、</code><code style="color:#22d3bf">reaction_delay</code>`</p>
-<p>(無ければ引数 `<code style="color:#22d3bf">reaction_delay</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">speed_noise</code>`(希望速度 v0 に掛ける 1 + N(0, speed_noise²) の相対むら。</p>
-<p>&gt; 0 なら `<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> が必須 = 決定的)。先頭車の車長は </code><code style="color:#22d3bf">params_per_vehicle</code><code style="color:#22d3bf"> の 1 台目の </code><code style="color:#22d3bf">length</code>` を使う。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">reaction_delay</code>`: 反応遅れ [s]。刻み dt の整数倍に丸める(m = round(delay/dt))。車 i は時刻 k に</p>
-<p><b>時刻 k − m の自分の速度・車間・相対速度</b> を見て加速度を決める(t &lt; 0 は初期の定常状態が続いていたとする)。</p>
-<p>積分(ballistic update): v_{k+1} = max(0, v_k + a_k dt)、x_{k+1} = x_k + v_k dt + ½ a_k dt²</p>
-<p>(速度が負になる刻みでは止まる位置 x_k − v_k²/(2 a_k) で止める)。先頭車の位置は速度の台形積分。</p>
-<p>初期状態: 全車が v_lead(0) で走り、各追従車の車間はその速度の平衡車間 `<code style="color:#22d3bf">idm_equilibrium_gap</code>`。</p>
-<p>車間が 0 以下になったら(追突)、その車を <b>接触の位置(車間 0)で止め</b>、以後は動かさない(速度・加速度 0。前の車や</p>
-<p>後ろの車は積分を続け、後ろの車には止まった車が先行車になる)。車を重ねない —— 重ねたまま積分すると位置に意味が無い。</p>
-<p>戻り値 dict: `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (K,)、</code><code style="color:#22d3bf">x</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">v</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">gap</code><code style="color:#22d3bf"> (K, n+1)(gap[:, 0] = inf)、</code><code style="color:#22d3bf">params</code>`(実際に使った</p>
-<p>車ごとの母数。速度むら込み)、`<code style="color:#22d3bf">delay_steps</code><code style="color:#22d3bf"> (n,)、</code><code style="color:#22d3bf">collision</code><code style="color:#22d3bf">(bool)、</code><code style="color:#22d3bf">collision_time</code>`(最初の時刻 or None)、</p>
-<p>`<code style="color:#22d3bf">collisions</code><code style="color:#22d3bf">(追突の </code><code style="color:#22d3bf">(時刻, 車番)</code><code style="color:#22d3bf"> の列。車番 i は前の車 i−1 に追突した車)、</code><code style="color:#22d3bf">crashed</code>` (n+1,) bool。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">引数</h4>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lead_v_of_t</code>: 先頭車の速度 [m/s]。<code style="color:#22d3bf">callable(t) -&gt; v</code> か、時刻列と同じ長さの配列。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">params_per_vehicle</code>: 追従車ごとの dict(長さ n)か、全車共通の 1 つの dict。キー <code style="color:#22d3bf">v0, T, a, b, s0</code> (必須)、<code style="color:#22d3bf">delta</code>(既定 4)、<code style="color:#22d3bf">length</code>(前の車の車長として使う。既定 4.5 m、仮定)、<code style="color:#22d3bf">reaction_delay</code> (無ければ引数 <code style="color:#22d3bf">reaction_delay</code>)、<code style="color:#22d3bf">speed_noise</code>(希望速度 v0 に掛ける 1 + N(0, speed_noise²) の相対むら。</p>
+<p>&gt; 0 なら <code style="color:#22d3bf">seed</code> が必須 = 決定的)。先頭車の車長は <code style="color:#22d3bf">params_per_vehicle</code> の 1 台目の <code style="color:#22d3bf">length</code> を使う。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reaction_delay</code>: 反応遅れ [s]。刻み dt の整数倍に丸める(m = round(delay/dt))。車 i は時刻 k に <b>時刻 k − m の自分の速度・車間・相対速度</b> を見て加速度を決める(t &lt; 0 は初期の定常状態が続いていたとする)。</p>
+<p>積分(ballistic update): v_{k+1} = max(0, v_k + a_k dt)、x_{k+1} = x_k + v_k dt + ½ a_k dt² (速度が負になる刻みでは止まる位置 x_k − v_k²/(2 a_k) で止める)。先頭車の位置は速度の台形積分。</p>
+<p>初期状態: 全車が v_lead(0) で走り、各追従車の車間はその速度の平衡車間 <code style="color:#22d3bf">idm_equilibrium_gap</code>。車間が 0 以下になったら(追突)、その車を <b>接触の位置(車間 0)で止め</b>、以後は動かさない(速度・加速度 0。前の車や後ろの車は積分を続け、後ろの車には止まった車が先行車になる)。車を重ねない —— 重ねたまま積分すると位置に意味が無い。</p>
+<p>戻り値 dict: <code style="color:#22d3bf">t</code> (K,)、<code style="color:#22d3bf">x</code>, <code style="color:#22d3bf">v</code>, <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">gap</code> (K, n+1)(gap[:, 0] = inf)、<code style="color:#22d3bf">params</code>(実際に使った車ごとの母数。速度むら込み)、<code style="color:#22d3bf">delay_steps</code> (n,)、<code style="color:#22d3bf">collision</code>(bool)、<code style="color:#22d3bf">collision_time</code>(最初の時刻 or None)、<code style="color:#22d3bf">collisions</code>(追突の <code style="color:#22d3bf">(時刻, 車番)</code> の列。車番 i は前の車 i−1 に追突した車)、<code style="color:#22d3bf">crashed</code> (n+1,) bool。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

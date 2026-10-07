@@ -10,15 +10,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_matrix.inputs.jpg">img_to_matrix: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Treat the (H,W) image as an H×W numeric matrix (sort `<code style="color:#22d3bf">matrix</code>`) — a pure cast.</p>
+<p>Treat the (H,W) image as an H×W numeric matrix (sort <code style="color:#22d3bf">matrix</code>) — a pure cast.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>値も形も変えない(`<code style="color:#22d3bf">float64</code>` へのコピーのみ)。線形代数の族</p>
-<p>(`<code style="color:#22d3bf">tb_mat_cond</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_mat_pinv</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_stat_covariance</code>` …)に画像を渡す</p>
-<p>ための型の読み替えで、<b>a, b は未使用</b>。</p>
-<p>注意: 画像は一般に正則でも対称でもない。条件数は大きく(`<code style="color:#22d3bf">tb_mat_cond</code>`)、</p>
-<p>共分散(`<code style="color:#22d3bf">tb_stat_covariance</code>`)は「行 = 標本、列 = 変数」として読まれる ——</p>
-<p>つまり <b>各列(x 位置)を変数、各行を観測</b> とみなした統計になる。</p>
-<p>転置して渡したいなら前段に `<code style="color:#22d3bf">transpose</code>`(台帳)を置く。</p>
+<p>値も形も変えない(<code style="color:#22d3bf">float64</code> へのコピーのみ)。線形代数の族(<code style="color:#22d3bf">tb_mat_cond</code> / <code style="color:#22d3bf">tb_mat_pinv</code> / <code style="color:#22d3bf">tb_stat_covariance</code> …)に画像を渡すための型の読み替えで、<b>a, b は未使用</b>。</p>
+<p>注意: 画像は一般に正則でも対称でもない。条件数は大きく(<code style="color:#22d3bf">tb_mat_cond</code>)、共分散(<code style="color:#22d3bf">tb_stat_covariance</code>)は「行 = 標本、列 = 変数」として読まれる —— つまり <b>各列(x 位置)を変数、各行を観測</b> とみなした統計になる。転置して渡したいなら前段に <code style="color:#22d3bf">transpose</code>(台帳)を置く。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

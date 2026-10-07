@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lamp_pair_phase(a, b, fps: &#x27;float&#x27;, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8, tol: &#x27;float&#x27; = 0.25) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.lamp_pair_phase(a, b, fps: &#x27;float&#x27;, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8, tol: &#x27;float&#x27; = 0.25) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;lamp_pair_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 つの明るさの時系列(2 灯の画素)から、共通の点滅の周波数と位相差を相互スペクトルで推定する。</p>
-<p>平均を引き Hann 窓、`<code style="color:#22d3bf">pad</code><code style="color:#22d3bf"> 倍に 0 を詰めた rFFT。|A| + |B| の山(</code><code style="color:#22d3bf">f_min</code>` 以上、0 Hz の裾を除く)で</p>
-<p>φ = arg(A_k B̄_k) を [0, π] に畳む。`<code style="color:#22d3bf">delay</code><code style="color:#22d3bf"> = φ / (2π f)。</code><code style="color:#22d3bf">alternating</code>` = |φ − π| &lt; tol(交互点滅)。</p>
-<p>周波数は <b>見かけ</b> の値(fps/2 を超える点滅は折り返る)。どちらかが一定なら ValueError。</p>
+<p>平均を引き Hann 窓、<code style="color:#22d3bf">pad</code> 倍に 0 を詰めた rFFT。|A| + |B| の山(<code style="color:#22d3bf">f_min</code> 以上、0 Hz の裾を除く)で φ = arg(A_k B̄_k) を [0, π] に畳む。<code style="color:#22d3bf">delay</code> = φ / (2π f)。<code style="color:#22d3bf">alternating</code> = |φ − π| &lt; tol(交互点滅)。周波数は <b>見かけ</b> の値(fps/2 を超える点滅は折り返る)。どちらかが一定なら ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -5,15 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SNIC(Achanta–Süsstrunk 2017의 Algorithm 1): 격자 씨앗에서 우선순위 큐로 키우는 비반복 슈퍼픽셀(snic_superpixels).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>距離 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K)、m = `<code style="color:#22d3bf">compactness</code>`、c は画素の値。SLIC の正規化の形、式 (1) の表記は要確認)。</p>
-<p>待ち行列から最小の d を取り出し、未ラベルならラベルを付け、重心(位置と値)をその場で更新し、未ラベルの近傍を今の重心との</p>
-<p>距離で積む。同点は (距離, 積んだ順) で決める(決定的)。</p>
-<p>返す: `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..K)、</code><code style="color:#22d3bf">n_segments</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">all_connected</code>`(全ラベルが 4-連結 = 構成上の保証を数えて確かめた印)、</p>
-<p>`<code style="color:#22d3bf">n_disconnected</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sizes</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">seeds</code><code style="color:#22d3bf">((K, 2) の [row, col])、</code><code style="color:#22d3bf">s</code>`。</p>
+<p>距離 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K)、m = <code style="color:#22d3bf">compactness</code>、c は画素の値。SLIC の正規化の形、式 (1) の表記は要確認)。待ち行列から最小の d を取り出し、未ラベルならラベルを付け、重心(位置と値)をその場で更新し、未ラベルの近傍を今の重心との距離で積む。同点は (距離, 積んだ順) で決める(決定的)。</p>
+<p>返す: <code style="color:#22d3bf">labels</code>(1..K)、<code style="color:#22d3bf">n_segments</code>、<code style="color:#22d3bf">all_connected</code>(全ラベルが 4-連結 = 構成上の保証を数えて確かめた印)、<code style="color:#22d3bf">n_disconnected</code>、<code style="color:#22d3bf">sizes</code>、<code style="color:#22d3bf">seeds</code>((K, 2) の [row, col])、<code style="color:#22d3bf">s</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — 그래프·계층·임계값 정리로 만드는 분할 — 무엇이 엄밀하고 어디서 분할이 무너지는가</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

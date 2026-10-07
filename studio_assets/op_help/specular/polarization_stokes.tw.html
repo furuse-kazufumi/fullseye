@@ -3,31 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">stokes</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import specularity; specularity.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsspecular.get(&quot;polarization_stokes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>偏振片旋轉序列的場景積分 Stokes 向量。→ (4,),可直接交給 :func:<code style="color:#22d3bf">optics.stokes_analyze</code>。</p>
+<p>偏振片旋轉序列的場景積分 Stokes 向量。→ (4,),可直接交給 <code style="color:#22d3bf">optics.stokes_analyze</code>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Stokes parameters are linear in radiance, so the spatial mean of the frames</p>
-<p>has a Stokes vector that is the mean of the per-pixel ones — the vector a</p>
-<p>non-imaging polarimeter looking at the whole field would report. Fitting</p>
-<p>`<code style="color:#22d3bf">I(t) = 0.5 (S0 + S1 cos 2t + S2 sin 2t)</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">(S0, S1, S2)</code>` directly.</p>
-<p><b>S3 is always exactly 0, and that is a limitation, not a measurement.</b> A</p>
-<p>set of linear analysers cannot see circular polarisation; a quarter-wave</p>
-<p>plate is needed. The returned vector is therefore the linear part of the</p>
-<p>truth, and :func:<code style="color:#22d3bf">optics.stokes_analyze</code> will report `<code style="color:#22d3bf">handedness=&quot;linear&quot;</code>`</p>
-<p>for it no matter what the scene actually did. Returning an invented `<code style="color:#22d3bf">S3</code>`</p>
-<p>would be worse, and returning a 3-vector would break the Stokes contract the</p>
-<p>optics family is built on.</p>
-<p>The result satisfies that contract by construction — ``S0 &gt;= sqrt(S1^2 +</p>
-<p>S2^2 + S3^2)``, i.e. degree of polarisation at most 1 — because the same</p>
-<p>non-negativity check that guards :func:<code style="color:#22d3bf">polarization_separate</code> is exactly</p>
-<p>the condition for it. That is why `<code style="color:#22d3bf">optics.stokes_analyze</code>` accepts the</p>
-<p>output without a further test.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>polarization_separate`.</p>
+<p>Stokes parameters are linear in radiance, so the spatial mean of the frames has a Stokes vector that is the mean of the per-pixel ones — the vector a non-imaging polarimeter looking at the whole field would report. Fitting <code style="color:#22d3bf">I(t) = 0.5 (S0 + S1 cos 2t + S2 sin 2t)</code> gives <code style="color:#22d3bf">(S0, S1, S2)</code> directly.</p>
+<p><b>S3 is always exactly 0, and that is a limitation, not a measurement.</b> A set of linear analysers cannot see circular polarisation; a quarter-wave plate is needed. The returned vector is therefore the linear part of the truth, and <code style="color:#22d3bf">optics.stokes_analyze</code> will report <code style="color:#22d3bf">handedness=&quot;linear&quot;</code> for it no matter what the scene actually did. Returning an invented <code style="color:#22d3bf">S3</code> would be worse, and returning a 3-vector would break the Stokes contract the optics family is built on.</p>
+<p>The result satisfies that contract by construction — <code style="color:#22d3bf">S0 &gt;= sqrt(S1^2 + S2^2 + S3^2)</code>, i.e. degree of polarisation at most 1 — because the same non-negativity check that guards <code style="color:#22d3bf">polarization_separate</code> is exactly the condition for it. That is why <code style="color:#22d3bf">optics.stokes_analyze</code> accepts the output without a further test.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: as <code style="color:#22d3bf">polarization_separate</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_polarization_specular">poc_polarization_specular</a> — <code style="color:#22d3bf">py -3.11 examples/poc_polarization_specular.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:polarization_camera_pipeline">polarization_camera_pipeline</a> — <code style="color:#22d3bf">py -3.11 examples/polarization_camera_pipeline.py</code></p>

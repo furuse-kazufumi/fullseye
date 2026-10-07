@@ -5,16 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>混合物から相を 1 つずつ剥がす(貪欲な前進選択)。</p>
-<p>段 0 は背景だけ。各段で、まだ選んでいない相を 1 つずつ足して :func:<code style="color:#22d3bf">phase_fractions</code> を当て、`<code style="color:#22d3bf">rwp</code>` が最も下がる</p>
-<p>相を選ぶ。`<code style="color:#22d3bf">rwp</code><code style="color:#22d3bf"> の相対的な下がり幅が </code><code style="color:#22d3bf">min_gain</code><code style="color:#22d3bf"> 未満、または選んだ相の重量分率が </code><code style="color:#22d3bf">min_fraction</code>` 未満なら止める。</p>
-<p>全部の相を一度に当てる :func:<code style="color:#22d3bf">phase_fractions</code> と違い、「どの順で、どれだけ説明が進んだか」が残る(図の素材)。</p>
-<p>返り値(dict): `<code style="color:#22d3bf">order</code><code style="color:#22d3bf">(選んだ順の名前)・</code><code style="color:#22d3bf">stages</code><code style="color:#22d3bf">(各段の </code><code style="color:#22d3bf">phases</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">weight_fraction</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">fit</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">residual</code>`・</p>
-<p>`<code style="color:#22d3bf">rwp</code><code style="color:#22d3bf">)・</code><code style="color:#22d3bf">final</code><code style="color:#22d3bf">(最後の段の :func:</code>phase_fractions` の結果)。</p>
-<p>Raises ValueError: :func:<code style="color:#22d3bf">phase_fractions</code> と同じ。`<code style="color:#22d3bf">min_gain</code>` が [0, 1) の外。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>段 0 は背景だけ。各段で、まだ選んでいない相を 1 つずつ足して <code style="color:#22d3bf">phase_fractions</code> を当て、<code style="color:#22d3bf">rwp</code> が最も下がる相を選ぶ。<code style="color:#22d3bf">rwp</code> の相対的な下がり幅が <code style="color:#22d3bf">min_gain</code> 未満、または選んだ相の重量分率が <code style="color:#22d3bf">min_fraction</code> 未満なら止める。</p>
+<p>全部の相を一度に当てる <code style="color:#22d3bf">phase_fractions</code> と違い、「どの順で、どれだけ説明が進んだか」が残る(図の素材)。</p>
+<p>返り値(dict): <code style="color:#22d3bf">order</code>(選んだ順の名前)・<code style="color:#22d3bf">stages</code>(各段の <code style="color:#22d3bf">phases</code>・<code style="color:#22d3bf">weight_fraction</code>・<code style="color:#22d3bf">fit</code>・<code style="color:#22d3bf">residual</code>・ <code style="color:#22d3bf">rwp</code>)・<code style="color:#22d3bf">final</code>(最後の段の <code style="color:#22d3bf">phase_fractions</code> の結果)。</p>
+<p>Raises ValueError: <code style="color:#22d3bf">phase_fractions</code> と同じ。<code style="color:#22d3bf">min_gain</code> が [0, 1) の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pxrd_phase_peel">poc_pxrd_phase_peel</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pxrd_phase_peel.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

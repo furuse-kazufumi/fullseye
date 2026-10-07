@@ -5,20 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>사원수 이미지의 벡터부를 선형 RGB 로. → (H, W, 3).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The inverse of :func:<code style="color:#22d3bf">rgb_to_quaternion</code> — and, by default, a *checked*</p>
-<p>inverse. A quaternion image that picked up a scalar component somewhere (a</p>
-<p>Hamilton product with a non-pure quaternion, a monogenic signal handed here</p>
-<p>by mistake) is <b>refused</b> rather than silently truncated, because dropping</p>
-<p>the `<code style="color:#22d3bf">w</code>` component is exactly the kind of loss that produces a plausible</p>
-<p>picture from the wrong data. Pass `<code style="color:#22d3bf">allow_scalar=True</code>` to opt in to the</p>
-<p>truncation when it is what you meant.</p>
-<p>The tolerance is relative to the field&#x27;s own peak modulus</p>
-<p>(:data:<code style="color:#22d3bf">_MONOGENIC_K_TOL</code>, 1e-9): a quaternion image that really is pure</p>
-<p>carries `<code style="color:#22d3bf">|w|</code>` at the 1e-17 level after a round trip through two FFTs, and</p>
-<p>anything with a meaningful scalar part is many orders above that. Nothing</p>
-<p>real lives in between.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *qimage* is not a finite </code><code style="color:#22d3bf">(H, W, 4)</code>` array; or</p>
-<p>it has a non-negligible scalar part and `<code style="color:#22d3bf">allow_scalar</code>` is False.</p>
+<p>The inverse of <code style="color:#22d3bf">rgb_to_quaternion</code> — and, by default, a *checked* inverse. A quaternion image that picked up a scalar component somewhere (a Hamilton product with a non-pure quaternion, a monogenic signal handed here by mistake) is <b>refused</b> rather than silently truncated, because dropping the <code style="color:#22d3bf">w</code> component is exactly the kind of loss that produces a plausible picture from the wrong data. Pass <code style="color:#22d3bf">allow_scalar=True</code> to opt in to the truncation when it is what you meant.</p>
+<p>The tolerance is relative to the field&#x27;s own peak modulus (<code style="color:#22d3bf">_MONOGENIC_K_TOL</code>, 1e-9): a quaternion image that really is pure carries <code style="color:#22d3bf">|w|</code> at the 1e-17 level after a round trip through two FFTs, and anything with a meaningful scalar part is many orders above that. Nothing real lives in between.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *qimage* is not a finite <code style="color:#22d3bf">(H, W, 4)</code> array; or it has a non-negligible scalar part and <code style="color:#22d3bf">allow_scalar</code> is False.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

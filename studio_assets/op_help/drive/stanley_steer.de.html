@@ -5,9 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>Stanley の舵角 δ = ψ_e + atan2(−k e, k_s + v)(前車軸の中心の横ずれ e は経路の左が正、ψ_e = 経路の向き − ψ)。</p>
-<p>`<code style="color:#22d3bf">front_pose</code><code style="color:#22d3bf">: (3,) または (N, 3)。</code><code style="color:#22d3bf">max_steer</code><code style="color:#22d3bf"> で切る(切ると :func:</code>stanley_straight_decay` の閉形式から外れる)。</p>
-<p>返り値: `<code style="color:#22d3bf">steer</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">lateral</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">heading_error</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">index</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形の誤り、k ≤ 0、v &lt; 0、k_s &lt; 0、max_steer ≤ 0。</p>
+<p><code style="color:#22d3bf">front_pose</code>: (3,) または (N, 3)。<code style="color:#22d3bf">max_steer</code> で切る(切ると <code style="color:#22d3bf">stanley_straight_decay</code> の閉形式から外れる)。</p>
+<p>返り値: <code style="color:#22d3bf">steer</code>, <code style="color:#22d3bf">lateral</code>, <code style="color:#22d3bf">heading_error</code>, <code style="color:#22d3bf">index</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、k ≤ 0、v &lt; 0、k_s &lt; 0、max_steer ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

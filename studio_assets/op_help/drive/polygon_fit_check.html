@@ -3,10 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polygon_fit_check(peg_points, hole_vertices) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsym; pegsym.polygon_fit_check(peg_points, hole_vertices) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;polygon_fit_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>点群(ペグの頂点、または傾けたペグの射影した頂点)を<b>平行移動だけで</b>凸多角形の穴に入れられるか —— 余裕 m を最大にする線形計画</p>
-<p>max m s.t. n_j·(p + t) ≤ h_j − m(全点・全辺)を、3 本の制約が等号になる頂点の列挙で厳密に解く(辺は高々十数本、組はまとめて解く)。</p>
-<p>返り `<code style="color:#22d3bf">fit</code><code style="color:#22d3bf">(m ≥ 0)、</code><code style="color:#22d3bf">margin</code><code style="color:#22d3bf"> [m] (負なら最小の食い込み)、</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf">(最適な平行移動 (2,))、</code><code style="color:#22d3bf">active</code>`(等号の辺の番号)。</p>
-<p><b>Raises</b> ValueError: 点群が (N ≥ 1, 2) でない・有限でない、穴が凸多角形でない、穴の法線が全方向を囲まない(有界でない)。</p>
+<p>点群(ペグの頂点、または傾けたペグの射影した頂点)を<b>平行移動だけで</b>凸多角形の穴に入れられるか —— 余裕 m を最大にする線形計画 max m s.t. n_j·(p + t) ≤ h_j − m(全点・全辺)を、3 本の制約が等号になる頂点の列挙で厳密に解く(辺は高々十数本、組はまとめて解く)。返り <code style="color:#22d3bf">fit</code>(m ≥ 0)、<code style="color:#22d3bf">margin</code> [m] (負なら最小の食い込み)、<code style="color:#22d3bf">t</code>(最適な平行移動 (2,))、<code style="color:#22d3bf">active</code>(等号の辺の番号)。<b>Raises</b> ValueError: 点群が (N ≥ 1, 2) でない・有限でない、穴が凸多角形でない、穴の法線が全方向を囲まない(有界でない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

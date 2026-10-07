@@ -5,19 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>工業零件世界（帶圓孔的旋轉矩形）：斜向照明的陰影、表面明暗與高光（world_parts_with_shadow）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>光は `<code style="color:#22d3bf">light_angle</code><code style="color:#22d3bf">(度、画像の x 軸から y 軸へ)の向きに差す平行光。影 = 部品のマスクを光の向きに </code><code style="color:#22d3bf">shadow_length</code>`</p>
-<p>だけずらした集合から部品を除いた画素(穴は光を通す)。部品の面は光に向く側が明るく、遠い側は影と同じくらい暗い</p>
-<p>(閾値が欺かれる理由)。ハイライトは光に向く側の縁の近くのガウス。</p>
-<p>返り値: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(部品 1..n)、</code><code style="color:#22d3bf">shadow</code><code style="color:#22d3bf">(bool)、</code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> = {</code><code style="color:#22d3bf">n_parts</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">parts</code>`(center, w, h, angle, holes)、</p>
-<p>`<code style="color:#22d3bf">areas</code><code style="color:#22d3bf">(w h − Σ π r²)、</code><code style="color:#22d3bf">shadow_offset</code><code style="color:#22d3bf"> (dy, dx)、</code><code style="color:#22d3bf">shadow_area</code><code style="color:#22d3bf">(測った画素数)、</code><code style="color:#22d3bf">light_angle</code>`}。</p>
+<p>光は <code style="color:#22d3bf">light_angle</code>(度、画像の x 軸から y 軸へ)の向きに差す平行光。影 = 部品のマスクを光の向きに <code style="color:#22d3bf">shadow_length</code> だけずらした集合から部品を除いた画素(穴は光を通す)。部品の面は光に向く側が明るく、遠い側は影と同じくらい暗い(閾値が欺かれる理由)。ハイライトは光に向く側の縁の近くのガウス。</p>
+<p>返り値: <code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">labels</code>(部品 1..n)、<code style="color:#22d3bf">shadow</code>(bool)、<code style="color:#22d3bf">truth</code> = {<code style="color:#22d3bf">n_parts</code>、<code style="color:#22d3bf">parts</code>(center, w, h, angle, holes)、<code style="color:#22d3bf">areas</code>(w h − Σ π r²)、<code style="color:#22d3bf">shadow_offset</code> (dy, dx)、<code style="color:#22d3bf">shadow_area</code>(測った画素数)、<code style="color:#22d3bf">light_angle</code>}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割評分與帶真值的合成世界 —— 哪種度量對哪種失效視而不見</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>

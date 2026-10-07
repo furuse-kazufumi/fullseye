@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivettc; drivettc.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_motion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>拡大の中心(FoE)の画素 `<code style="color:#22d3bf">(col, row)</code><code style="color:#22d3bf">: 相対運動の並進 </code><code style="color:#22d3bf">t</code>` を無限遠で投影した点。</p>
-<p>`<code style="color:#22d3bf">T_rel</code><code style="color:#22d3bf"> の回転が単位でないと FoE は定義されない(</code><code style="color:#22d3bf">ValueError</code>`)。奥行き方向の並進が 0(純粋な横滑り)なら</p>
-<p>`<code style="color:#22d3bf">(nan, nan)</code>`。</p>
+<p>拡大の中心(FoE)の画素 <code style="color:#22d3bf">(col, row)</code>: 相対運動の並進 <code style="color:#22d3bf">t</code> を無限遠で投影した点。</p>
+<p><code style="color:#22d3bf">T_rel</code> の回転が単位でないと FoE は定義されない(<code style="color:#22d3bf">ValueError</code>)。奥行き方向の並進が 0(純粋な横滑り)なら <code style="color:#22d3bf">(nan, nan)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -6,23 +6,20 @@
 <p><img src="fig/hx_gen_bandfilter.png" alt="hx_gen_bandfilter: input → output"></p>
 <p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
 <p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.a.jpg">hx_gen_bandfilter: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.a.jpg">hx_gen_bandfilter: 노브 a 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.b.jpg">hx_gen_bandfilter: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.b.jpg">hx_gen_bandfilter: 노브 b 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.inputs.jpg">hx_gen_bandfilter: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.inputs.jpg">hx_gen_bandfilter: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이상 대역 필터 이미지(주파수 원환, 중심 반지름 a·폭 b). gen_bandpass 와는 다른 연산자.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">hx_gen_lowpass</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">fftshift</code><code style="color:#22d3bf"> 済の正規化周波数半径 </code><code style="color:#22d3bf">r</code>`(中心=DC)に対し</p>
-<p>`<code style="color:#22d3bf">c - half &lt;= r &lt;= c + half</code><code style="color:#22d3bf"> の円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 </code><code style="color:#22d3bf">v</code>` は</p>
-<p>形状の取得にのみ使う。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 円環の中心半径 </code><code style="color:#22d3bf">c = 0.05 + 0.4*a</code>`(0.05〜0.45)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 半幅 </code><code style="color:#22d3bf">half = 0.03 + 0.15*b</code><code style="color:#22d3bf">(0.03〜0.18)。内半径 </code><code style="color:#22d3bf">c - half</code>` が負になる組み合わせ(小さい a と</p>
+<p><code style="color:#22d3bf">hx_gen_lowpass</code> と同じ <code style="color:#22d3bf">fftshift</code> 済の正規化周波数半径 <code style="color:#22d3bf">r</code>(中心=DC)に対し <code style="color:#22d3bf">c - half &lt;= r &lt;= c + half</code> の円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 <code style="color:#22d3bf">v</code> は形状の取得にのみ使う。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 円環の中心半径 <code style="color:#22d3bf">c = 0.05 + 0.4*a</code>(0.05〜0.45)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 半幅 <code style="color:#22d3bf">half = 0.03 + 0.15*b</code>(0.03〜0.18)。内半径 <code style="color:#22d3bf">c - half</code> が負になる組み合わせ(小さい a と</p>
 <p>大きい b)では DC を含む円板になり、実質ローパスになる。</p>
-<p>`<code style="color:#22d3bf">hx_gen_bandpass</code>` が「内半径と幅」なのに対し、こちらは「中心と半幅」で同じ円環を指定する。特定の空間周波数</p>
-<p>(縞の周期 `<code style="color:#22d3bf">1/c</code><code style="color:#22d3bf"> 画素)だけを抜き出すマスクを作り、</code><code style="color:#22d3bf">fft_generic</code>` などの中心=DC スペクトルと画素積で使う。</p>
+<p><code style="color:#22d3bf">hx_gen_bandpass</code> が「内半径と幅」なのに対し、こちらは「中心と半幅」で同じ円環を指定する。特定の空間周波数(縞の周期 <code style="color:#22d3bf">1/c</code> 画素)だけを抜き出すマスクを作り、<code style="color:#22d3bf">fft_generic</code> などの中心=DC スペクトルと画素積で使う。</p>
 <p><b>값의 비교 가능성(실측)</b>: 출력을 <b>그 이미지 자신의 최댓값으로 정규화</b>한다(출력 최댓값이 항상 1.0이고, 입력을 상수배해도 출력이 바뀌지 않는다). 따라서 <b>이미지 사이에서 값을 비교할 수 없다</b> —— 같은 세기의 특징이라도 그 이미지에서 가장 강한 특징이 무엇인지에 따라 값이 달라지며, 약한 특징만 있는 이미지에서는 잡음이 1.0까지 올라간다. 이미지 간 비교가 필요하면 공통 기준으로 다시 나눌 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
@@ -32,7 +29,7 @@
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
 <p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_gen_bandfilter 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_gen_bandfilter%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_gen_bandfilter%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_gen_bandfilter 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_gen_bandfilter%200.50%200.50">▸ 이 파이프라인 불러오기</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_gen_bandfilter%200.50%200.50">불러와서 실행</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image</code> 를 입력으로 받는 것)</h3>

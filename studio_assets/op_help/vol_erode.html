@@ -7,14 +7,14 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_erode.chain.jpg">vol_erode: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_erode.chain.jpg">vol_erode: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_erode.inputs.jpg">vol_erode: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_erode.inputs.jpg">vol_erode: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>動き</b>(GIF: フレーム / 視点 / スライスを順に。静止の図が完成形で、GIF は補助):</p>
 <p><img src="fig/vol_erode.gif" alt="vol_erode: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D ボリュームのグレースケール侵食。対応する HALCON op は指定されていない。</p>
-<p>構造要素の一辺は `<code style="color:#22d3bf">size = 1 + 2*(1 + int(a))</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">[0,1)</code><code style="color:#22d3bf"> の範囲では </code><code style="color:#22d3bf">int(a)</code><code style="color:#22d3bf"> が常に 0 になるため実質サイズ </code><code style="color:#22d3bf">3</code><code style="color:#22d3bf"> 固定で、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">1.0</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">decode</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">np.clip</code><code style="color:#22d3bf"> で上限に張り付いたとき）になったときだけ </code><code style="color:#22d3bf">5</code><code style="color:#22d3bf"> に切り替わる、実質 2 値スイッチにしかなっていない（</code><code style="color:#22d3bf">_vol_dilate</code><code style="color:#22d3bf"> も同じ式で同じ性質）。</code><code style="color:#22d3bf">b</code>` も未使用。</p>
+<p>構造要素の一辺は <code style="color:#22d3bf">size = 1 + 2*(1 + int(a))</code>。<code style="color:#22d3bf">a</code> は <code style="color:#22d3bf">[0,1)</code> の範囲では <code style="color:#22d3bf">int(a)</code> が常に 0 になるため実質サイズ <code style="color:#22d3bf">3</code> 固定で、<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">1.0</code>（<code style="color:#22d3bf">decode</code> の <code style="color:#22d3bf">np.clip</code> で上限に張り付いたとき）になったときだけ <code style="color:#22d3bf">5</code> に切り替わる、実質 2 値スイッチにしかなっていない（<code style="color:#22d3bf">_vol_dilate</code> も同じ式で同じ性質）。<code style="color:#22d3bf">b</code> も未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -24,7 +24,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_volume 0.50 0.50
-vol_erode 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_volume%200.50%200.50%0Avol_erode%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_volume%200.50%200.50%0Avol_erode%200.50%200.50">Load &amp; run</a></p>
+vol_erode 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_volume%200.50%200.50%0Avol_erode%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_volume%200.50%200.50%0Avol_erode%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_physics_alife_3d.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_warehouse_flow">poc_warehouse_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_warehouse_flow.py</code></p>

@@ -3,18 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgb × rgb</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blend_mode(base, top, mode=&#x27;normal&#x27;, opacity=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gfx2d; gfx2d.blend_mode(base, top, mode=&#x27;normal&#x27;, opacity=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgfx2d.get(&quot;blend_mode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>불투명한 `<code style="color:#22d3bf">rgb</code>` 두 장을 이름 붙은 블렌드 모드로 섞습니다(W3C Level 1).</p>
+<p>불투명한 <code style="color:#22d3bf">rgb</code> 두 장을 이름 붙은 블렌드 모드로 섞습니다(W3C Level 1).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>With an opaque backdrop the specification reduces to a lerp,</p>
-<p>`<code style="color:#22d3bf">Co = (1 - opacity)*Cb + opacity*B(Cb, Cs)</code><code style="color:#22d3bf">, so </code><code style="color:#22d3bf">opacity=0</code>` returns the</p>
-<p>backdrop <b>exactly</b> and `<code style="color:#22d3bf">mode=&quot;normal&quot;, opacity=1</code>` returns the source</p>
-<p>exactly. Both identities are checked bit-for-bit in the test suite.</p>
-<p>Named `<code style="color:#22d3bf">blend_mode</code><code style="color:#22d3bf"> and not </code><code style="color:#22d3bf">blend</code><code style="color:#22d3bf"> because :func:</code>imagemorph.blend`</p>
-<p>already owns that name for a two-image cross-fade; two functions called</p>
-<p>`<code style="color:#22d3bf">blend</code>` with different signatures is exactly the kind of collision this</p>
-<p>library&#x27;s naming test exists to prevent.</p>
-<p>Raises ValueError: unknown mode, mismatched shapes, opacity outside</p>
-<p>`<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">, values outside </code><code style="color:#22d3bf">[0, 1]</code>`.</p>
+<p>With an opaque backdrop the specification reduces to a lerp, <code style="color:#22d3bf">Co = (1 - opacity)*Cb + opacity*B(Cb, Cs)</code>, so <code style="color:#22d3bf">opacity=0</code> returns the backdrop <b>exactly</b> and <code style="color:#22d3bf">mode=&quot;normal&quot;, opacity=1</code> returns the source exactly. Both identities are checked bit-for-bit in the test suite.</p>
+<p>Named <code style="color:#22d3bf">blend_mode</code> and not <code style="color:#22d3bf">blend</code> because <code style="color:#22d3bf">imagemorph.blend</code> already owns that name for a two-image cross-fade; two functions called <code style="color:#22d3bf">blend</code> with different signatures is exactly the kind of collision this library&#x27;s naming test exists to prevent.</p>
+<p>Raises ValueError: unknown mode, mismatched shapes, opacity outside <code style="color:#22d3bf">[0, 1]</code>, values outside <code style="color:#22d3bf">[0, 1]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

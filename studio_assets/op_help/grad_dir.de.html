@@ -7,12 +7,12 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/grad_dir.inputs.jpg">grad_dir: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/grad_dir.inputs.jpg">grad_dir: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt die Gradientenrichtung (Kantenausrichtung) als Bild zurück. Es ist keine entsprechende HALCON-Operation angegeben (spezifisch für fullseye).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。Sobel 応答から </code><code style="color:#22d3bf">atan2(Gy, Gx)</code><code style="color:#22d3bf"> で角度（</code><code style="color:#22d3bf">-π〜π</code><code style="color:#22d3bf">）を求め、</code><code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> へ線形に写す。</code><code style="color:#22d3bf">0</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">1</code><code style="color:#22d3bf"> はどちらも同じ角度（</code><code style="color:#22d3bf">-π</code><code style="color:#22d3bf">≡</code><code style="color:#22d3bf">π</code>`）に対応する周期量である点に注意——連続的に変化する向きでも出力が 0 と 1 の間で不連続にジャンプし得る。平坦な領域では勾配がほぼ 0 で方向が不定になり、ノイズの影響を受けやすい。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。Sobel 応答から <code style="color:#22d3bf">atan2(Gy, Gx)</code> で角度（<code style="color:#22d3bf">-π〜π</code>）を求め、<code style="color:#22d3bf">[0,1]</code> へ線形に写す。<code style="color:#22d3bf">0</code> と <code style="color:#22d3bf">1</code> はどちらも同じ角度（<code style="color:#22d3bf">-π</code>≡<code style="color:#22d3bf">π</code>）に対応する周期量である点に注意——連続的に変化する向きでも出力が 0 と 1 の間で不連続にジャンプし得る。平坦な領域では勾配がほぼ 0 で方向が不定になり、ノイズの影響を受けやすい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -21,7 +21,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">grad_dir 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:grad_dir%200.40%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:grad_dir%200.40%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">grad_dir 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:grad_dir%200.40%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:grad_dir%200.40%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_edges">gallery2d_edges</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_edges.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>

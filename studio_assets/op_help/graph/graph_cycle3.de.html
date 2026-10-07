@@ -4,13 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_cycle3(adj)</code> (die Implementierung direkt: <code style="color:#22d3bf">import graphinv; graphinv.graph_cycle3(adj)</code>; aus dem Register: <code style="color:#22d3bf">opsgraph.get(&quot;graph_cycle3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Number of directed 3-cycles `<code style="color:#22d3bf">i -&gt; j -&gt; k -&gt; i</code><code style="color:#22d3bf"> as </code><code style="color:#22d3bf">tr(B^3) / 3</code>`.</p>
-<p>Each cycle is counted once (the trace visits it from each of its three starting</p>
-<p>nodes). Self-loops are removed first. Returns a dict with `<code style="color:#22d3bf">cycles3</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">n</code>`.</p>
-<p>A second, independent implementation (brute-force enumeration) agrees exactly on</p>
-<p>small graphs — pinned in the tests, because a single implementation of a counting</p>
-<p>formula cannot catch its own off-by-three.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>graph_degree_summary`.</p>
+<p>Number of directed 3-cycles <code style="color:#22d3bf">i -&gt; j -&gt; k -&gt; i</code> as <code style="color:#22d3bf">tr(B^3) / 3</code>.</p>
+<p>Each cycle is counted once (the trace visits it from each of its three starting nodes). Self-loops are removed first. Returns a dict with <code style="color:#22d3bf">cycles3</code> and <code style="color:#22d3bf">n</code>.</p>
+<p>A second, independent implementation (brute-force enumeration) agrees exactly on small graphs — pinned in the tests, because a single implementation of a counting formula cannot catch its own off-by-three.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: as <code style="color:#22d3bf">graph_degree_summary</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

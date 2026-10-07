@@ -5,34 +5,22 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>곡선을 따라 번호 차가 k 인 두 점은 평면에서 얼마나 떨어져 있는가?</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The reason a space-filling curve is used for storage layout, texture tiling</p>
-<p>or rendering order is <b>locality</b>: neighbours in the ordering should stay</p>
-<p>neighbours in space. This op measures that directly — for each gap `<code style="color:#22d3bf">k</code>` it</p>
-<p>returns the mean Euclidean distance between points `<code style="color:#22d3bf">i</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">i + k</code>`.</p>
-<p>★<b>Why this earns its place</b>: the claim &quot;Hilbert has better locality than</p>
-<p>scanning row by row&quot; is usually asserted and never measured. Here it is a</p>
-<p>table you can read: a Hilbert curve grows roughly as `<code style="color:#22d3bf">sqrt(k)</code>` (measured</p>
-<p>1.00 / 1.53 / 2.12 / 3.17 / 4.29 / 6.38 at k = 1 .. 32), while a boustrophedon</p>
-<p>scan grows nearly <b>linearly</b> (1.00 / 1.96 / 3.79 / 7.07 / 12.12 / 16.07) —</p>
-<p>an honest, reproducible gap rather than a slogan.</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>The reason a space-filling curve is used for storage layout, texture tiling or rendering order is <b>locality</b>: neighbours in the ordering should stay neighbours in space. This op measures that directly — for each gap <code style="color:#22d3bf">k</code> it returns the mean Euclidean distance between points <code style="color:#22d3bf">i</code> and <code style="color:#22d3bf">i + k</code>.</p>
+<p>★<b>Why this earns its place</b>: the claim &quot;Hilbert has better locality than scanning row by row&quot; is usually asserted and never measured. Here it is a table you can read: a Hilbert curve grows roughly as <code style="color:#22d3bf">sqrt(k)</code> (measured 1.00 / 1.53 / 2.12 / 3.17 / 4.29 / 6.38 at k = 1 .. 32), while a boustrophedon scan grows nearly <b>linearly</b> (1.00 / 1.96 / 3.79 / 7.07 / 12.12 / 16.07) — an honest, reproducible gap rather than a slogan.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : (N, 2) array</p>
 <p>The curve&#x27;s points <b>in visiting order</b>.</p>
 <p>gaps : ints</p>
-<p>Index gaps to report. Gaps at or beyond `<code style="color:#22d3bf">N</code>` are dropped (not an error;</p>
+<p>Index gaps to report. Gaps at or beyond <code style="color:#22d3bf">N</code> are dropped (not an error;</p>
 <p>a short curve simply has nothing to say about a long gap).</p>
-<p>Returns a `<code style="color:#22d3bf">table</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">gap</code><code style="color:#22d3bf"> (int), </code><code style="color:#22d3bf">mean_distance</code><code style="color:#22d3bf">, and </code><code style="color:#22d3bf">ratio</code>` =</p>
-<p>`<code style="color:#22d3bf">mean_distance / mean_distance[gap == 1]</code>` so curves of different scales can</p>
-<p>be compared directly.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: not an (N, 2) array; fewer than 2 points;</p>
-<p>non-finite coordinates; every requested gap out of range.</p>
+<p>Returns a <code style="color:#22d3bf">table</code>: <code style="color:#22d3bf">gap</code> (int), <code style="color:#22d3bf">mean_distance</code>, and <code style="color:#22d3bf">ratio</code> = <code style="color:#22d3bf">mean_distance / mean_distance[gap == 1]</code> so curves of different scales can be compared directly.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not an (N, 2) array; fewer than 2 points; non-finite coordinates; every requested gap out of range.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
-<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
-<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code></b> —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
 <p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

@@ -5,14 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>切った後の端面のシルエット(行ごと副画素)を断面とみなし、最小二乗の直線を引いて ISO 4287 のパラメータ(µm)を出す。</p>
-<p>パラメータは `<code style="color:#22d3bf">roughness.profile_params</code>`(Ra / Rq / Rz / Rt …)をそのまま呼ぶ。断面は行の高さ 1 px で平均されるので、</p>
-<p>正弦の凹凸は箱型の閉形式 `<code style="color:#22d3bf">sinc(πΔ/λ)</code>`(Δ = 1 px)倍に弱まる。平らな面でも測りの床(雑音と肌理による Rq)が残るので、</p>
-<p>比べるときは床を二乗で引く。Rz は雑音の山に引っ張られる(床の扱いは Rq でだけ意味がある)。</p>
-<p>返り値: `<code style="color:#22d3bf">profile_um</code><code style="color:#22d3bf">(行ごとの偏差)、</code><code style="color:#22d3bf">z_mm</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">params</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">dz_um</code><code style="color:#22d3bf">(標本間隔)、</code><code style="color:#22d3bf">n_rows</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>パラメータは <code style="color:#22d3bf">roughness.profile_params</code>(Ra / Rq / Rz / Rt …)をそのまま呼ぶ。断面は行の高さ 1 px で平均されるので、正弦の凹凸は箱型の閉形式 <code style="color:#22d3bf">sinc(πΔ/λ)</code>(Δ = 1 px)倍に弱まる。平らな面でも測りの床(雑音と肌理による Rq)が残るので、比べるときは床を二乗で引く。Rz は雑音の山に引っ張られる(床の扱いは Rq でだけ意味がある)。</p>
+<p>返り値: <code style="color:#22d3bf">profile_um</code>(行ごとの偏差)、<code style="color:#22d3bf">z_mm</code>、<code style="color:#22d3bf">params</code>、<code style="color:#22d3bf">dz_um</code>(標本間隔)、<code style="color:#22d3bf">n_rows</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_food_cutting_measure">poc_food_cutting_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_food_cutting_measure.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

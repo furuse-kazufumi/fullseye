@@ -5,12 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>有向 3 サイクルの数 tr(B³)/3(総当たりの第 2 実装と一致)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Each cycle is counted once (the trace visits it from each of its three starting</p>
-<p>nodes). Self-loops are removed first. Returns a dict with `<code style="color:#22d3bf">cycles3</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">n</code>`.</p>
-<p>A second, independent implementation (brute-force enumeration) agrees exactly on</p>
-<p>small graphs — pinned in the tests, because a single implementation of a counting</p>
-<p>formula cannot catch its own off-by-three.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>graph_degree_summary`.</p>
+<p>Each cycle is counted once (the trace visits it from each of its three starting nodes). Self-loops are removed first. Returns a dict with <code style="color:#22d3bf">cycles3</code> and <code style="color:#22d3bf">n</code>.</p>
+<p>A second, independent implementation (brute-force enumeration) agrees exactly on small graphs — pinned in the tests, because a single implementation of a counting formula cannot catch its own off-by-three.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: as <code style="color:#22d3bf">graph_degree_summary</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segworld; segworld.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;voronoi_cells&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>矩形 [−0.5, W − 0.5] × [−0.5, H − 0.5] の中の種のボロノイ分割を多角形で返す(半平面の総当たり、O(n²))。</p>
-<p>返り値: `<code style="color:#22d3bf">polygons</code><code style="color:#22d3bf">(多角形の列、各 (k, 2) [y, x])、</code><code style="color:#22d3bf">areas</code><code style="color:#22d3bf">(靴紐)、</code><code style="color:#22d3bf">edge_length_total</code>`(内部の辺の長さの和)、</p>
-<p>`<code style="color:#22d3bf">n_edges</code><code style="color:#22d3bf">(内部の辺の数)、</code><code style="color:#22d3bf">perimeter_internal</code>` (n,)(各セルの内部の辺の長さ)。</p>
+<p>返り値: <code style="color:#22d3bf">polygons</code>(多角形の列、各 (k, 2) [y, x])、<code style="color:#22d3bf">areas</code>(靴紐)、<code style="color:#22d3bf">edge_length_total</code>(内部の辺の長さの和)、<code style="color:#22d3bf">n_edges</code>(内部の辺の数)、<code style="color:#22d3bf">perimeter_internal</code> (n,)(各セルの内部の辺の長さ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

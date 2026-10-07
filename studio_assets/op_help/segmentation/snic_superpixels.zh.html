@@ -5,19 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>SNIC（Achanta–Süsstrunk 2017 的 Algorithm 1）：从网格种子出发、用优先队列生长的非迭代超像素（snic_superpixels）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>距離 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K)、m = `<code style="color:#22d3bf">compactness</code>`、c は画素の値。SLIC の正規化の形、式 (1) の表記は要確認)。</p>
-<p>待ち行列から最小の d を取り出し、未ラベルならラベルを付け、重心(位置と値)をその場で更新し、未ラベルの近傍を今の重心との</p>
-<p>距離で積む。同点は (距離, 積んだ順) で決める(決定的)。</p>
-<p>返す: `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..K)、</code><code style="color:#22d3bf">n_segments</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">all_connected</code>`(全ラベルが 4-連結 = 構成上の保証を数えて確かめた印)、</p>
-<p>`<code style="color:#22d3bf">n_disconnected</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sizes</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">seeds</code><code style="color:#22d3bf">((K, 2) の [row, col])、</code><code style="color:#22d3bf">s</code>`。</p>
+<p>距離 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K)、m = <code style="color:#22d3bf">compactness</code>、c は画素の値。SLIC の正規化の形、式 (1) の表記は要確認)。待ち行列から最小の d を取り出し、未ラベルならラベルを付け、重心(位置と値)をその場で更新し、未ラベルの近傍を今の重心との距離で積む。同点は (距離, 積んだ順) で決める(決定的)。</p>
+<p>返す: <code style="color:#22d3bf">labels</code>(1..K)、<code style="color:#22d3bf">n_segments</code>、<code style="color:#22d3bf">all_connected</code>(全ラベルが 4-連結 = 構成上の保証を数えて確かめた印)、<code style="color:#22d3bf">n_disconnected</code>、<code style="color:#22d3bf">sizes</code>、<code style="color:#22d3bf">seeds</code>((K, 2) の [row, col])、<code style="color:#22d3bf">s</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — 用图、层次与阈值定理做分割 —— 什么是严格的,分割在哪里失效</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

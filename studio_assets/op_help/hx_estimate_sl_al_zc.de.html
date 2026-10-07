@@ -10,13 +10,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zheng-Chellappa: schätzt den Slant, korrigiert über die Gradientenenergie.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">hx_estimate_sl_al_lr</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">arccos(&lt;I&gt;)</code><code style="color:#22d3bf"> の slant に、Sobel 勾配振幅の平均 </code><code style="color:#22d3bf">e</code>`(1 で頭打ち)による係数</p>
-<p>`<code style="color:#22d3bf">(1 + min(e, 1))</code><code style="color:#22d3bf"> を掛けて、</code><code style="color:#22d3bf">pi/2</code><code style="color:#22d3bf"> で割り 1 で頭打ちした </code><code style="color:#22d3bf">np.float64</code>` を返す。「勾配が強い=斜光=slant 大」</p>
-<p>という向きの補正。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>補正係数は 1〜2 倍で、平均輝度が低く勾配も強い画像では上限 1 に張り付く。勾配振幅はテクスチャや雑音でも</p>
-<p>増えるので、照明以外の要因で slant が過大に出る。前段に `<code style="color:#22d3bf">gauss_filter</code>` を置くと雑音分の勾配は減る。</p>
-<p>反射率の推定は `<code style="color:#22d3bf">hx_estimate_al_am</code><code style="color:#22d3bf">、方位は </code><code style="color:#22d3bf">hx_estimate_tilt_zc</code>`。</p>
+<p><code style="color:#22d3bf">hx_estimate_sl_al_lr</code> と同じ <code style="color:#22d3bf">arccos(&lt;I&gt;)</code> の slant に、Sobel 勾配振幅の平均 <code style="color:#22d3bf">e</code>(1 で頭打ち)による係数 <code style="color:#22d3bf">(1 + min(e, 1))</code> を掛けて、<code style="color:#22d3bf">pi/2</code> で割り 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> を返す。「勾配が強い=斜光=slant 大」という向きの補正。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>補正係数は 1〜2 倍で、平均輝度が低く勾配も強い画像では上限 1 に張り付く。勾配振幅はテクスチャや雑音でも増えるので、照明以外の要因で slant が過大に出る。前段に <code style="color:#22d3bf">gauss_filter</code> を置くと雑音分の勾配は減る。反射率の推定は <code style="color:#22d3bf">hx_estimate_al_am</code>、方位は <code style="color:#22d3bf">hx_estimate_tilt_zc</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -25,7 +21,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_estimate_sl_al_zc 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_estimate_sl_al_zc%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_estimate_sl_al_zc%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_estimate_sl_al_zc 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_estimate_sl_al_zc%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_estimate_sl_al_zc%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>

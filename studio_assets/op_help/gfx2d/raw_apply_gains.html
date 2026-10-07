@@ -3,10 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × vector</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.raw_apply_gains(raw, gains, pattern=&#x27;RGGB&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.raw_apply_gains(raw, gains, pattern=&#x27;RGGB&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;raw_apply_gains&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Multiply a Bayer frame by per-channel gains (3 values `<code style="color:#22d3bf">R, G, B</code>` or 4</p>
-<p>values `<code style="color:#22d3bf">R, G1, G2, B</code><code style="color:#22d3bf">) and clip to </code><code style="color:#22d3bf">[0, 1]</code>` — white balance applied</p>
-<p><b>before</b> demosaicing, which is where a real ISP does it (interpolating</p>
-<p>unbalanced channels smears the cast across colours).</p>
+<p>Multiply a Bayer frame by per-channel gains (3 values <code style="color:#22d3bf">R, G, B</code> or 4 values <code style="color:#22d3bf">R, G1, G2, B</code>) and clip to <code style="color:#22d3bf">[0, 1]</code> — white balance applied <b>before</b> demosaicing, which is where a real ISP does it (interpolating unbalanced channels smears the cast across colours).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

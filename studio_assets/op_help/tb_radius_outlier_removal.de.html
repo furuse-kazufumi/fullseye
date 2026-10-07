@@ -7,40 +7,35 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_radius_outlier_removal.chain.jpg">tb_radius_outlier_removal: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_radius_outlier_removal.chain.jpg">tb_radius_outlier_removal: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_radius_outlier_removal.inputs.jpg">tb_radius_outlier_removal: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_radius_outlier_removal.inputs.jpg">tb_radius_outlier_removal: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Entfernt Punkte, deren Anzahl an Nachbarn innerhalb des Radius <code style="color:#22d3bf">radius</code> unter <code style="color:#22d3bf">min_neighbors</code> liegt (Entfernung isolierter Punkte).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各点を中心に半径 `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> の球を張り、その中に居る他点の数が </code><code style="color:#22d3bf">min_neighbors</code>`</p>
-<p>に満たない点を「孤立した粒」として落とす。統計的手法より局所的・直接的で、</p>
-<p>センサの実スケールが分かっているときにしきい値を決めやすい。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>各点を中心に半径 <code style="color:#22d3bf">radius</code> の球を張り、その中に居る他点の数が <code style="color:#22d3bf">min_neighbors</code> に満たない点を「孤立した粒」として落とす。統計的手法より局所的・直接的で、センサの実スケールが分かっているときにしきい値を決めやすい。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
 <p>入力点群。</p>
 <p>radius : float</p>
 <p>近傍とみなす球の半径(&gt; 0)。</p>
 <p>min_neighbors : int</p>
 <p>残すのに必要な近傍数(自分自身は数えない、既定 8)。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
 <p>生き残った点(元の順序を保持)。</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
 <p>各入力点を残すか(True=残す)。</p>
-<p>Notes</p>
-<p>-----</p>
-<p>`<code style="color:#22d3bf">radius &lt;= 0</code>` は ValueError。空入力は空を返す(graceful)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">radius_outlier_removal</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">min_neighbors</code><code style="color:#22d3bf">(既定 8)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p><code style="color:#22d3bf">radius &lt;= 0</code> は ValueError。空入力は空を返す(graceful)。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">radius_outlier_removal</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">min_neighbors</code>(既定 8)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
-tb_radius_outlier_removal 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_radius_outlier_removal%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_radius_outlier_removal%200.50%200.50">Load &amp; run</a></p>
+tb_radius_outlier_removal 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_radius_outlier_removal%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_radius_outlier_removal%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">radius_outlier_removal</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pcl_geodesic">pcl_geodesic</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pcl_geodesic.py</code></p>

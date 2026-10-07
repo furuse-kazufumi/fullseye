@@ -5,23 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
 <p>Larger-the-better SN ratio of abnormal-sample distances, in decibels.</p>
-<p>MT-method item selection asks which features earn their place: run the unit</p>
-<p>space with a subset of features, score the *abnormal* samples, and keep the</p>
-<p>subset whose distances are largest. The figure of merit is the</p>
-<p>larger-the-better signal-to-noise ratio</p>
+<p>MT-method item selection asks which features earn their place: run the unit space with a subset of features, score the *abnormal* samples, and keep the subset whose distances are largest. The figure of merit is the larger-the-better signal-to-noise ratio</p>
 <p>eta = -10 log10( (1/n) sum_i 1 / MD_i^2 )</p>
-<p>an inverse-square average, so one abnormal sample that the subset fails to</p>
-<p>separate drags the whole score down — which is the behaviour wanted when the</p>
-<p>cost of a miss dominates. The caller drives the subsets (classically by an</p>
-<p>orthogonal array); this operator is the closed-form score for one subset.</p>
-<p>`<code style="color:#22d3bf">md</code>` is a 1-D array of distances for the abnormal samples. Returns a dict</p>
-<p>with `<code style="color:#22d3bf">sn_ratio_db</code><code style="color:#22d3bf">, the </code><code style="color:#22d3bf">harmonic_mean_md_sq</code><code style="color:#22d3bf"> it came from, and </code><code style="color:#22d3bf">n</code>`.</p>
-<p>For a constant `<code style="color:#22d3bf">MD == d</code><code style="color:#22d3bf"> the sum collapses and </code><code style="color:#22d3bf">eta == 20 log10(d)</code>`</p>
-<p>exactly — pinned in the tests, and the reason a subset that puts every</p>
-<p>abnormal sample at distance 10 scores exactly 20 dB.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: an empty or non-1-D *md*, a non-positive entry (a</p>
-<p>zero distance would divide by zero: an abnormal sample sitting exactly on the</p>
-<p>unit-space centre means the subset separates nothing), or non-finite input.</p>
+<p>an inverse-square average, so one abnormal sample that the subset fails to separate drags the whole score down — which is the behaviour wanted when the cost of a miss dominates. The caller drives the subsets (classically by an orthogonal array); this operator is the closed-form score for one subset.</p>
+<p><code style="color:#22d3bf">md</code> is a 1-D array of distances for the abnormal samples. Returns a dict with <code style="color:#22d3bf">sn_ratio_db</code>, the <code style="color:#22d3bf">harmonic_mean_md_sq</code> it came from, and <code style="color:#22d3bf">n</code>.</p>
+<p>For a constant <code style="color:#22d3bf">MD == d</code> the sum collapses and <code style="color:#22d3bf">eta == 20 log10(d)</code> exactly — pinned in the tests, and the reason a subset that puts every abnormal sample at distance 10 scores exactly 20 dB.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: an empty or non-1-D *md*, a non-positive entry (a zero distance would divide by zero: an abnormal sample sitting exactly on the unit-space centre means the subset separates nothing), or non-finite input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

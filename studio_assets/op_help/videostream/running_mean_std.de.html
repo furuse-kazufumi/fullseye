@@ -3,16 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.running_mean_std(video) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import videostream; videostream.running_mean_std(video) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsvideostream.get(&quot;running_mean_std&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Welford-Mittelwert / Populations-Std pro Pixel über den Clip → `<code style="color:#22d3bf">{&quot;mean&quot;, &quot;std&quot;, &quot;n&quot;}</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">table</code>`).</p>
+<p>Welford-Mittelwert / Populations-Std pro Pixel über den Clip → <code style="color:#22d3bf">{&quot;mean&quot;, &quot;std&quot;, &quot;n&quot;}</code> (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Equals `<code style="color:#22d3bf">video.mean(0)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">video.std(0)</code>` but needs two images of state,</p>
-<p>not the clip — the streaming form for a recording that never ends.</p>
+<p>Equals <code style="color:#22d3bf">video.mean(0)</code> / <code style="color:#22d3bf">video.std(0)</code> but needs two images of state, not the clip — the streaming form for a recording that never ends.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">Leitfaden zur Familie video_streaming</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_cables">mv_cables</a> — ケーブル（規格・速度・給電・ロボットケーブル）</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_frame_grabbers">mv_frame_grabbers</a> — フレームグラバーボード（光学系ではないが、撮れるかを決める）</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_standards">mv_standards</a> — カメラインターフェースの規格と団体</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_cables">mv_cables</a> — Kabel (Standards, Geschwindigkeit, Stromversorgung, Roboterkabel)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_frame_grabbers">mv_frame_grabbers</a> — Framegrabber-Karten (keine Optik, entscheiden aber, ob überhaupt aufgenommen werden kann)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_standards">mv_standards</a> — Kameraschnittstellen: Standards und Gremien</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

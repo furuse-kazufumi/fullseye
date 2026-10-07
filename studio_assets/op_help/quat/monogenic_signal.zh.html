@@ -5,44 +5,18 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>某一尺度下图像的单演信号。→ (H, W, 4)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Felsberg &amp; Sommer (2001). The image is band-passed by a log-radial raised</p>
-<p>cosine centred at `<code style="color:#22d3bf">1/wavelength_px</code>` cycles/pixel with half-width</p>
-<p>*bandwidth_octaves*, and the result is packed with its Riesz pair as the</p>
-<p>quaternion `<code style="color:#22d3bf">(band-pass image, R1, R2, 0)</code>`. From that single object</p>
-<p>:func:<code style="color:#22d3bf">monogenic_amplitude</code>, :func:<code style="color:#22d3bf">monogenic_phase</code> and</p>
-<p>:func:<code style="color:#22d3bf">monogenic_orientation</code> read the local contrast, the local phase and</p>
-<p>the local orientation — the 2-D analogue of what `<code style="color:#22d3bf">|z|</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">arg z</code>` give</p>
-<p>a 1-D analytic signal, with orientation as the extra degree of freedom that</p>
-<p>only exists in 2-D.</p>
-<p>The band-pass is applied *before* the Riesz kernels because the Riesz</p>
-<p>multiplier has a jump at DC: without a band that excludes DC the &quot;local</p>
-<p>phase&quot; of the image mean is undefined, not merely noisy.</p>
-<p>Closed form</p>
-<p>-----------</p>
-<p>A grating exactly at the band centre passes with gain 1, so for</p>
-<p>`<code style="color:#22d3bf">contrast * cos(2*pi*(u0*x+v0*y) + p)</code><code style="color:#22d3bf"> the amplitude is </code><code style="color:#22d3bf">contrast</code>`</p>
-<p>everywhere, the phase is the grating&#x27;s own phase, and the orientation is</p>
-<p>`<code style="color:#22d3bf">atan2(v0, u0) mod pi</code>`. Measured on a 64x64 frame with an 8 px grating of</p>
-<p>unit contrast and phase 0.7: amplitude mean exactly `<code style="color:#22d3bf">1.0</code>` with a spread of</p>
-<p>`<code style="color:#22d3bf">8.9e-16</code><code style="color:#22d3bf"> across the frame, phase error </code><code style="color:#22d3bf">5.3e-15</code>` rad, orientation error</p>
-<p>`<code style="color:#22d3bf">0.0</code>` rad.</p>
-<p><b>Honest limit.</b> The phase is well defined only where the amplitude is; in a</p>
-<p>flat region the amplitude is at the rounding floor and the phase is the angle</p>
-<p>of numerical dust. Nothing here suppresses that — the amplitude map *is* the</p>
-<p>confidence map and it is returned in the same object, so a caller can mask on</p>
-<p>it. The operators that consume the signal (:func:<code style="color:#22d3bf">riesz_displacement</code>,</p>
-<p>:func:<code style="color:#22d3bf">riesz_motion_magnify</code>) do mask, with the same relative thresholds</p>
-<p>:mod:<code style="color:#22d3bf">motionmag</code> uses, so their numbers are comparable.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image* is not a finite real </code><code style="color:#22d3bf">(H, W)</code>` array;</p>
-<p>*wavelength_px* is not `<code style="color:#22d3bf">&gt; 2</code>` (a shorter wavelength is past Nyquist and the</p>
-<p>band would be empty); *bandwidth_octaves* is not `<code style="color:#22d3bf">&gt; 0</code>`; the band contains</p>
-<p>no frequency bin of this frame size.</p>
+<p>Felsberg &amp; Sommer (2001). The image is band-passed by a log-radial raised cosine centred at <code style="color:#22d3bf">1/wavelength_px</code> cycles/pixel with half-width *bandwidth_octaves*, and the result is packed with its Riesz pair as the quaternion <code style="color:#22d3bf">(band-pass image, R1, R2, 0)</code>. From that single object <code style="color:#22d3bf">monogenic_amplitude</code>, <code style="color:#22d3bf">monogenic_phase</code> and <code style="color:#22d3bf">monogenic_orientation</code> read the local contrast, the local phase and the local orientation — the 2-D analogue of what <code style="color:#22d3bf">|z|</code> and <code style="color:#22d3bf">arg z</code> give a 1-D analytic signal, with orientation as the extra degree of freedom that only exists in 2-D.</p>
+<p>The band-pass is applied *before* the Riesz kernels because the Riesz multiplier has a jump at DC: without a band that excludes DC the &quot;local phase&quot; of the image mean is undefined, not merely noisy.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Closed form</h4>
+<p>A grating exactly at the band centre passes with gain 1, so for <code style="color:#22d3bf">contrast * cos(2*pi*(u0*x+v0*y) + p)</code> the amplitude is <code style="color:#22d3bf">contrast</code> everywhere, the phase is the grating&#x27;s own phase, and the orientation is <code style="color:#22d3bf">atan2(v0, u0) mod pi</code>. Measured on a 64x64 frame with an 8 px grating of unit contrast and phase 0.7: amplitude mean exactly <code style="color:#22d3bf">1.0</code> with a spread of <code style="color:#22d3bf">8.9e-16</code> across the frame, phase error <code style="color:#22d3bf">5.3e-15</code> rad, orientation error <code style="color:#22d3bf">0.0</code> rad.</p>
+<p><b>Honest limit.</b> The phase is well defined only where the amplitude is; in a flat region the amplitude is at the rounding floor and the phase is the angle of numerical dust. Nothing here suppresses that — the amplitude map *is* the confidence map and it is returned in the same object, so a caller can mask on it. The operators that consume the signal (<code style="color:#22d3bf">riesz_displacement</code>, <code style="color:#22d3bf">riesz_motion_magnify</code>) do mask, with the same relative thresholds <code style="color:#22d3bf">motionmag</code> uses, so their numbers are comparable.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *image* is not a finite real <code style="color:#22d3bf">(H, W)</code> array; *wavelength_px* is not <code style="color:#22d3bf">&gt; 2</code> (a shorter wavelength is past Nyquist and the band would be empty); *bandwidth_octaves* is not <code style="color:#22d3bf">&gt; 0</code>; the band contains no frequency bin of this frame size.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">qimage</code> 作为输入)</h3>

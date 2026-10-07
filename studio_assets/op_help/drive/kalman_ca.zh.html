@@ -5,13 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>等加速度モデルの Kalman フィルタ(位置の観測 (N, D)、状態 = 位置・速度・加速度 × D)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;x&quot; (N, 3D) 更新後, &quot;x_pred&quot; (N, 3D) 予測, &quot;P&quot; (N, 3D, 3D), &quot;innovation&quot; (N, D)}</code>`。</p>
-<p>`<code style="color:#22d3bf">q</code><code style="color:#22d3bf"> = 加速度の変化の分散(白色ジャーク)、</code><code style="color:#22d3bf">r</code>` = 観測の分散。放物線の真値を入れると(モデルが厳密なので)収束後の</p>
-<p>新息 → 0、r → 0 で更新後の位置 = 観測(門)。NaN の観測は予測だけ(欠測)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>返り値 <code style="color:#22d3bf">{&quot;x&quot; (N, 3D) 更新後, &quot;x_pred&quot; (N, 3D) 予測, &quot;P&quot; (N, 3D, 3D), &quot;innovation&quot; (N, D)}</code>。<code style="color:#22d3bf">q</code> = 加速度の変化の分散(白色ジャーク)、<code style="color:#22d3bf">r</code> = 観測の分散。放物線の真値を入れると(モデルが厳密なので)収束後の新息 → 0、r → 0 で更新後の位置 = 観測(門)。NaN の観測は予測だけ(欠測)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_air_hockey_intercept">poc_air_hockey_intercept</a> — <code style="color:#22d3bf">py -3.11 examples/poc_air_hockey_intercept.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ball_bounce">poc_ball_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ball_bounce.py</code></p>

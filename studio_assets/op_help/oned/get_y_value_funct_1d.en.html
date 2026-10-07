@@ -3,18 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.get_y_value_funct_1d(y, x, interpolate=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import funct1d; funct1d.get_y_value_funct_1d(y, x, interpolate=True)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;get_y_value_funct_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The y-value at (fractional) position *x* (HALCON `<code style="color:#22d3bf">get_y_value_funct_1d</code>`).</p>
-<p>With `<code style="color:#22d3bf">interpolate=True</code>` (default) the value is linearly interpolated</p>
-<p>between the two neighbouring samples; with `<code style="color:#22d3bf">interpolate=False</code>` the nearest</p>
-<p>sample is returned.</p>
-<p>Domain policy (documented, not extrapolated): *x* outside `<code style="color:#22d3bf">[0, n-1]</code>`</p>
-<p><b>clamps</b> to the boundary value (`<code style="color:#22d3bf">numpy.interp</code>` end-hold semantics /</p>
-<p>index clip). HALCON&#x27;s `<code style="color:#22d3bf">&#x27;zero&#x27;</code>`-border variant is not offered.</p>
-<p>:param y: 1-D function, at least 1 sample.</p>
-<p>:param x: finite scalar position in index units.</p>
-<p>:param interpolate: linear interpolation (True) or nearest sample (False).</p>
-<p>:returns: float.</p>
-<p>:raises ValueError: non-1-D / NaN / Inf input, empty input, or non-finite *x*.</p>
+<p>The y-value at (fractional) position *x* (HALCON <code style="color:#22d3bf">get_y_value_funct_1d</code>).</p>
+<p>With <code style="color:#22d3bf">interpolate=True</code> (default) the value is linearly interpolated between the two neighbouring samples; with <code style="color:#22d3bf">interpolate=False</code> the nearest sample is returned.</p>
+<p>Domain policy (documented, not extrapolated): *x* outside <code style="color:#22d3bf">[0, n-1]</code> <b>clamps</b> to the boundary value (<code style="color:#22d3bf">numpy.interp</code> end-hold semantics / index clip). HALCON&#x27;s <code style="color:#22d3bf">&#x27;zero&#x27;</code>-border variant is not offered.</p>
+<p>:param y: 1-D function, at least 1 sample. :param x: finite scalar position in index units. :param interpolate: linear interpolation (True) or nearest sample (False). :returns: float. :raises ValueError: non-1-D / NaN / Inf input, empty input, or non-finite *x*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

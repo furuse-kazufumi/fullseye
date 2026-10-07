@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_cvar(model, slopes, alpha: &#x27;float&#x27; = 0.9, sign: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import roverslip; roverslip.slip_cvar(model, slopes, alpha: &#x27;float&#x27; = 0.9, sign: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;slip_cvar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>滑り率の CVaR_α(上側 1 − α の尾の条件付き期待値)。`<code style="color:#22d3bf">sign = −1</code>` で −s の CVaR(下りの空走・横滑りの大きさ)。</p>
-<p>ガウス過程は閉形式 `<code style="color:#22d3bf">μ + σ φ(Φ⁻¹(α)) / (1 − α)</code>`(α = 0 で平均、σ は観測の予測分布)。分位点回帰は</p>
-<p>`<code style="color:#22d3bf">(1/(1 − α)) ∫_α^{q_max} Q(u) du</code><code style="color:#22d3bf"> を当てはめた段で台形則に、</code><code style="color:#22d3bf">q_max</code>` より上の尾は最上段の値で埋める</p>
-<p>(尾を細く見積もる向きの近似 —— 段の外の分布は分からない)。返り値 (n,)。</p>
+<p>滑り率の CVaR_α(上側 1 − α の尾の条件付き期待値)。<code style="color:#22d3bf">sign = −1</code> で −s の CVaR(下りの空走・横滑りの大きさ)。</p>
+<p>ガウス過程は閉形式 <code style="color:#22d3bf">μ + σ φ(Φ⁻¹(α)) / (1 − α)</code>(α = 0 で平均、σ は観測の予測分布)。分位点回帰は <code style="color:#22d3bf">(1/(1 − α)) ∫_α^{q_max} Q(u) du</code> を当てはめた段で台形則に、<code style="color:#22d3bf">q_max</code> より上の尾は最上段の値で埋める(尾を細く見積もる向きの近似 —— 段の外の分布は分からない)。返り値 (n,)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

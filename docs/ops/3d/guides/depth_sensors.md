@@ -2,6 +2,11 @@
 guide: depth_sensors
 dim: 3d
 title: 深度センサの知識 — 測距原理・実機の値・欠測の出方
+title_en: Depth sensors — ranging principles, real-device figures, how dropouts appear
+title_zh: 深度传感器知识 —— 测距原理、实机数值、缺测的表现
+title_tw: 深度感測器知識 —— 測距原理、實機數值、缺測的表現
+title_ko: 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식
+title_de: Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

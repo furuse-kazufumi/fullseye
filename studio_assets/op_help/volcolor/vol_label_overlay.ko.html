@@ -3,26 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel × labels</code> → <code style="color:#22d3bf">rgbvolume</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_overlay(vol, labels, seed: &#x27;int&#x27; = 0, alpha: &#x27;float&#x27; = 0.5, vmin=None, vmax=None, mode: &#x27;str&#x27; = &#x27;fill&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volcolor; volcolor.vol_label_overlay(vol, labels, seed: &#x27;int&#x27; = 0, alpha: &#x27;float&#x27; = 0.5, vmin=None, vmax=None, mode: &#x27;str&#x27; = &#x27;fill&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_overlay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>원래 그레이 볼륨에 색 레이블을 겹친 `<code style="color:#22d3bf">(D, H, W, 3)</code>`.</p>
+<p>원래 그레이 볼륨에 색 레이블을 겹친 <code style="color:#22d3bf">(D, H, W, 3)</code>.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>医用 CT / 産業 CT で実際に使う形 ―― 「セグメンテーションだけの絵」は</p>
-<p>どこを切り出したのかが分からず、「元画像だけの絵」は何を測ったのかが分からない。</p>
-<p>*vol* は `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf">。表示窓は </code><code style="color:#22d3bf">vmin</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">vmax</code>` で<b>明示</b>する</p>
-<p>(`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">vol</code>` の最小 / 最大)。窓を暗黙に決めないのは、窓が違えば</p>
-<p>同じ組織が別の明るさで出るからで、CT の window/level と同じ理由である。</p>
-<p>*alpha* は `<code style="color:#22d3bf">0</code><code style="color:#22d3bf">(元画像のまま)から </code><code style="color:#22d3bf">1</code>`(色で塗り潰す)。*mode* は</p>
-<p>`<code style="color:#22d3bf">&quot;fill&quot;</code><code style="color:#22d3bf">(成分全体を塗る)か </code><code style="color:#22d3bf">&quot;boundary&quot;</code>`(6 近傍で隣が別ラベルの</p>
-<p>ボクセルだけを塗る = 輪郭表示、下の構造が完全に見える)。</p>
-<p>**`<code style="color:#22d3bf">background</code>` 引数は無い**。この op はラベル 0 のボクセルに一切色を置かず</p>
-<p>(そこは元画像そのもの)、パレット行 0 を一度も引かない。受け取っておいて</p>
-<p>何もしない引数は「背景色を指定したのに効かない」という形の静かな嘘になる。</p>
-<p>実測(`<code style="color:#22d3bf">(24, 48, 48)</code><code style="color:#22d3bf">・16 成分・ノイズ入りグレー体、seed=0、</code><code style="color:#22d3bf">mode=&quot;fill&quot;</code>`):</p>
-<p>前景ボクセルにおける元画像との平均絶対差は alpha=0.00 で 0.0000、</p>
-<p>0.25 で 0.0679、0.50 で 0.1359、0.75 で 0.2038、1.00 で 0.2718 ――</p>
-<p>alpha に対して直線(合成が線形であることの確認)。**背景ボクセルは</p>
-<p>alpha に依らず 0.0000**(色は前景にしか乗らない)。</p>
-<p>Raises `<code style="color:#22d3bf">ValueError</code>` when *vol* and *labels* differ in shape, on a non-finite</p>
-<p>*vol*, on `<code style="color:#22d3bf">vmin &gt;= vmax</code>`, on an *alpha* outside [0, 1], or on an unknown *mode*.</p>
+<p>医用 CT / 産業 CT で実際に使う形 ―― 「セグメンテーションだけの絵」はどこを切り出したのかが分からず、「元画像だけの絵」は何を測ったのかが分からない。</p>
+<p>*vol* は <code style="color:#22d3bf">(D, H, W)</code>。表示窓は <code style="color:#22d3bf">vmin</code> / <code style="color:#22d3bf">vmax</code> で<b>明示</b>する(<code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">vol</code> の最小 / 最大)。窓を暗黙に決めないのは、窓が違えば同じ組織が別の明るさで出るからで、CT の window/level と同じ理由である。</p>
+<p>*alpha* は <code style="color:#22d3bf">0</code>(元画像のまま)から <code style="color:#22d3bf">1</code>(色で塗り潰す)。*mode* は <code style="color:#22d3bf">&quot;fill&quot;</code>(成分全体を塗る)か <code style="color:#22d3bf">&quot;boundary&quot;</code>(6 近傍で隣が別ラベルのボクセルだけを塗る = 輪郭表示、下の構造が完全に見える)。</p>
+<p><b><code style="color:#22d3bf">background</code> 引数は無い</b>。この op はラベル 0 のボクセルに一切色を置かず(そこは元画像そのもの)、パレット行 0 を一度も引かない。受け取っておいて何もしない引数は「背景色を指定したのに効かない」という形の静かな嘘になる。</p>
+<p>実測(<code style="color:#22d3bf">(24, 48, 48)</code>・16 成分・ノイズ入りグレー体、seed=0、<code style="color:#22d3bf">mode=&quot;fill&quot;</code>):</p>
+<p>前景ボクセルにおける元画像との平均絶対差は alpha=0.00 で 0.0000、0.25 で 0.0679、0.50 で 0.1359、0.75 で 0.2038、1.00 で 0.2718 ―― alpha に対して直線(合成が線形であることの確認)。<b>背景ボクセルは alpha に依らず 0.0000</b>(色は前景にしか乗らない)。</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> when *vol* and *labels* differ in shape, on a non-finite *vol*, on <code style="color:#22d3bf">vmin &gt;= vmax</code>, on an *alpha* outside [0, 1], or on an unknown *mode*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

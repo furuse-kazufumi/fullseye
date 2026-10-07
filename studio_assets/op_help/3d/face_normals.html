@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mesh_props; mesh_props.face_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;face_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>三角形メッシュの<b>面法線</b>(各三角形の単位法線ベクトル)。→ (M,3)。</p>
-<p>法線 = 正規化した cross(v1−v0, v2−v0)。向きは <b>faces の巻き順(winding)</b> から一貫して</p>
-<p>決まる(PCA のような符号未定さは無い)。閉じたメッシュを外向き巻きで作れば全法線が外向き。</p>
+<p>法線 = 正規化した cross(v1−v0, v2−v0)。向きは <b>faces の巻き順(winding)</b> から一貫して決まる(PCA のような符号未定さは無い)。閉じたメッシュを外向き巻きで作れば全法線が外向き。</p>
 <p>Args:</p>
 <p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
 <p>Returns:</p>

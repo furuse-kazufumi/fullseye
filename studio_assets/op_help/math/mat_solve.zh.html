@@ -3,32 +3,26 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_solve(a, b)</code>(要直接调用实现,<code style="color:#22d3bf">import mathops; mathops.mat_solve(a, b)</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;mat_solve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>解方阵线性方程组 `<code style="color:#22d3bf">A x = b</code><code style="color:#22d3bf">(LAPACK </code><code style="color:#22d3bf">gesv</code>`,部分选主元的 LU)。</p>
+<p>解方阵线性方程组 <code style="color:#22d3bf">A x = b</code>(LAPACK <code style="color:#22d3bf">gesv</code>,部分选主元的 LU)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>*a* must be square `<code style="color:#22d3bf">(n, n)</code><code style="color:#22d3bf">; *b* is </code><code style="color:#22d3bf">(n,)</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">(n, k)</code>` (multiple</p>
-<p>right-hand sides). An exactly singular *A* raises `<code style="color:#22d3bf">ValueError</code>`.</p>
-<p><b>Do not trust the answer of an ill-conditioned system</b>: a solve loses</p>
-<p>about `<code style="color:#22d3bf">log10(cond(A))</code><code style="color:#22d3bf"> significant digits, so at </code><code style="color:#22d3bf">cond &gt; 1e12</code>` maybe 3</p>
-<p>of float64&#x27;s ~16 digits survive — and *this function cannot tell you that*,</p>
-<p>because a near-singular system still &quot;solves&quot;. Check :func:<code style="color:#22d3bf">mat_cond</code></p>
-<p>first; for a rank-deficient or noisy system use :func:<code style="color:#22d3bf">mat_lstsq</code> /</p>
-<p>:func:<code style="color:#22d3bf">mat_pinv</code> with an explicit `<code style="color:#22d3bf">rcond</code>` instead.</p>
-<p>HALCON: `<code style="color:#22d3bf">solve_matrix</code>`. Returns float64, same trailing shape as *b*.</p>
+<p>*a* must be square <code style="color:#22d3bf">(n, n)</code>; *b* is <code style="color:#22d3bf">(n,)</code> or <code style="color:#22d3bf">(n, k)</code> (multiple right-hand sides). An exactly singular *A* raises <code style="color:#22d3bf">ValueError</code>.</p>
+<p><b>Do not trust the answer of an ill-conditioned system</b>: a solve loses about <code style="color:#22d3bf">log10(cond(A))</code> significant digits, so at <code style="color:#22d3bf">cond &gt; 1e12</code> maybe 3 of float64&#x27;s ~16 digits survive — and *this function cannot tell you that*, because a near-singular system still &quot;solves&quot;. Check <code style="color:#22d3bf">mat_cond</code> first; for a rank-deficient or noisy system use <code style="color:#22d3bf">mat_lstsq</code> / <code style="color:#22d3bf">mat_pinv</code> with an explicit <code style="color:#22d3bf">rcond</code> instead.</p>
+<p>HALCON: <code style="color:#22d3bf">solve_matrix</code>. Returns float64, same trailing shape as *b*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
-<p style="margin:2px 0 2px 12px">• **complex 输入一律 <code style="color:#22d3bf">ValueError</code>** —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>
-<p style="margin:2px 0 2px 12px">• **含被掩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code>** —— 拒绝「剥掉掩码直接使用下面原值」的隐式转换。请显式选择填充还是丢弃。</p>
-<p style="margin:2px 0 2px 12px">• **所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**(明确给出个数后拒绝 —— 它会污染整个结果)。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>
+<p style="margin:2px 0 2px 12px">• <b>含被掩元素的 masked array 一律 <code style="color:#22d3bf">ValueError</code></b> —— 拒绝「剥掉掩码直接使用下面原值」的隐式转换。请显式选择填充还是丢弃。</p>
+<p style="margin:2px 0 2px 12px">• <b>所有输入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code></b>(明确给出个数后拒绝 —— 它会污染整个结果)。</p>
 <p style="margin:2px 0 2px 12px">• <b>形状严格</b>:不对 1-D 与 2-D 做隐式提升或广播(向量槽位收到矩阵、矩阵槽位收到向量都是 <code style="color:#22d3bf">ValueError</code>;请显式 reshape)。</p>
 <p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:接受矩阵的算子与 <code style="color:#22d3bf">stat_histogram</code> 的 bins,超过 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万个元素)即 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:blas_threads_and_memory">blas_threads_and_memory</a> — 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_colocalization_crosstalk">poc_colocalization_crosstalk</a> — <code style="color:#22d3bf">py -3.11 examples/poc_colocalization_crosstalk.py</code></p>

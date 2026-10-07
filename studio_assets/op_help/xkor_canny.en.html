@@ -12,11 +12,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xkor_canny.inputs.jpg">xkor_canny: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Edge (binary region) detection by the Canny method. Calls `<code style="color:#22d3bf">kornia.filters.canny</code><code style="color:#22d3bf"> and adopts the binary edge map (</code><code style="color:#22d3bf">edges</code>`) among its return values (the gradient-magnitude side is discarded).</p>
+<p>Edge (binary region) detection by the Canny method. Calls <code style="color:#22d3bf">kornia.filters.canny</code> and adopts the binary edge map (<code style="color:#22d3bf">edges</code>) among its return values (the gradient-magnitude side is discarded).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>a が低いしきい値（`<code style="color:#22d3bf">0.1 + 0.3 * a</code>`）、b が高いしきい値</p>
-<p>（`<code style="color:#22d3bf">max(低いしきい値 + 1e-3, 0.3 + 0.4 * b)</code>`、低い方を必ず上回るよう</p>
-<p>下駄を履かせている）を振る。出力の sort は <code style="color:#22d3bf">region</code>。</p>
+<p>a が低いしきい値（<code style="color:#22d3bf">0.1 + 0.3 * a</code>）、b が高いしきい値（<code style="color:#22d3bf">max(低いしきい値 + 1e-3, 0.3 + 0.4 * b)</code>、低い方を必ず上回るよう下駄を履かせている）を振る。出力の sort は <code style="color:#22d3bf">region</code>。</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

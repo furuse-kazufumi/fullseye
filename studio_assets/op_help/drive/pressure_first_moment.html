@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × matrix × matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pressure_first_moment(p, X, Y, pitch: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tactorque; tactorque.pressure_first_moment(p, X, Y, pitch: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;pressure_first_moment&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>格子上の圧力 p (n, n) [Pa] の 0 次・1 次モーメント: `<code style="color:#22d3bf">P</code><code style="color:#22d3bf"> = Σ p h² [N]、</code><code style="color:#22d3bf">M1</code><code style="color:#22d3bf"> = Σ (x, y) p h² [N·m]、</code><code style="color:#22d3bf">tau</code>` = (−M1_y, M1_x)</p>
-<p>(z はゲルから物体へ、物体がゲルを押す力 −ẑ p のモーメント)。<b>Raises</b> ValueError: 形が違う、pitch ≤ 0。</p>
+<p>格子上の圧力 p (n, n) [Pa] の 0 次・1 次モーメント: <code style="color:#22d3bf">P</code> = Σ p h² [N]、<code style="color:#22d3bf">M1</code> = Σ (x, y) p h² [N·m]、<code style="color:#22d3bf">tau</code> = (−M1_y, M1_x) (z はゲルから物体へ、物体がゲルを押す力 −ẑ p のモーメント)。<b>Raises</b> ValueError: 形が違う、pitch ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -16,11 +16,7 @@
 <p>Two coupled species on a torus,</p>
 <p>u_t = Du*lap(u) - u v^2 + F (1 - u)</p>
 <p>v_t = Dv*lap(v) + u v^2 - (F + K) v</p>
-<p>with Du=0.16, Dv=0.08. The image seeds v (the autocatalyst) while u starts</p>
-<p>from the depleted complement, so bright input pixels are the nuclei from</p>
-<p>which spots / stripes / labyrinths grow. `<code style="color:#22d3bf">a</code>` sets the feed rate</p>
-<p>F = 0.02 + 0.06a *and* the number of integration steps T = 8 + int(20a);</p>
-<p>`<code style="color:#22d3bf">b</code>` sets the kill rate K = 0.05 + 0.02b. Returns the normalised v field.</p>
+<p>with Du=0.16, Dv=0.08. The image seeds v (the autocatalyst) while u starts from the depleted complement, so bright input pixels are the nuclei from which spots / stripes / labyrinths grow. <code style="color:#22d3bf">a</code> sets the feed rate F = 0.02 + 0.06a *and* the number of integration steps T = 8 + int(20a); <code style="color:#22d3bf">b</code> sets the kill rate K = 0.05 + 0.02b. Returns the normalised v field.</p>
 <p><b>Border handling</b>: wrap around to the opposite side (periodic) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>

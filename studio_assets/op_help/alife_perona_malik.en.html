@@ -13,14 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Perona-Malik anisotropic (edge-preserving) diffusion.</p>
-<p>Explicit 4-neighbour update I &lt;- I + lam * sum_dir g(|grad_dir I|) grad_dir I</p>
-<p>with the Perona-Malik conductance g(s) = 1/(1 + (s/kappa)^2): inside a flat</p>
-<p>region g -&gt; 1 and the field diffuses like the heat equation, across a strong</p>
-<p>edge g -&gt; 0 and the edge is preserved. Unlike a bilateral filter the</p>
-<p>conductance is recomputed from the *evolving* field at every iteration, which</p>
-<p>is what makes the edges sharpen rather than merely survive. `<code style="color:#22d3bf">a</code>` sets the</p>
-<p>edge scale kappa = 0.02 + 0.2a, `<code style="color:#22d3bf">b</code>` the iteration count 1 + int(15b);</p>
-<p>lambda is fixed at 0.2 (&lt;= 0.25, the explicit-scheme stability bound).</p>
+<p>Explicit 4-neighbour update I &lt;- I + lam * sum_dir g(|grad_dir I|) grad_dir I with the Perona-Malik conductance g(s) = 1/(1 + (s/kappa)^2): inside a flat region g -&gt; 1 and the field diffuses like the heat equation, across a strong edge g -&gt; 0 and the edge is preserved. Unlike a bilateral filter the conductance is recomputed from the *evolving* field at every iteration, which is what makes the edges sharpen rather than merely survive. <code style="color:#22d3bf">a</code> sets the edge scale kappa = 0.02 + 0.2a, <code style="color:#22d3bf">b</code> the iteration count 1 + int(15b); lambda is fixed at 0.2 (&lt;= 0.25, the explicit-scheme stability bound).</p>
 <p><b>Border handling</b>: wrap around to the opposite side (periodic) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>

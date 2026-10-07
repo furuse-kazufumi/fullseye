@@ -15,13 +15,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>An ideal band-pass (an annular mask in the frequency domain, inner radius a and bandwidth b).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">hx_gen_lowpass</code><code style="color:#22d3bf"> と同じ正規化周波数半径 </code><code style="color:#22d3bf">r</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">fftshift</code><code style="color:#22d3bf"> 済、中心=DC)に対し </code><code style="color:#22d3bf">r_lo &lt;= r &lt;= r_hi</code>` の</p>
-<p>円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 `<code style="color:#22d3bf">v</code>` は形状の取得にのみ使う。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 内半径 </code><code style="color:#22d3bf">r_lo = 0.05 + 0.4*a</code>`(0.05〜0.45)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 帯域幅 </code><code style="color:#22d3bf">r_hi - r_lo = 0.05 + 0.3*b</code><code style="color:#22d3bf">(0.05〜0.35)。外半径は </code><code style="color:#22d3bf">r_lo + 幅</code>` で最大 0.8 だが、半径が</p>
+<p><code style="color:#22d3bf">hx_gen_lowpass</code> と同じ正規化周波数半径 <code style="color:#22d3bf">r</code>(<code style="color:#22d3bf">fftshift</code> 済、中心=DC)に対し <code style="color:#22d3bf">r_lo &lt;= r &lt;= r_hi</code> の円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 <code style="color:#22d3bf">v</code> は形状の取得にのみ使う。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 内半径 <code style="color:#22d3bf">r_lo = 0.05 + 0.4*a</code>(0.05〜0.45)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 帯域幅 <code style="color:#22d3bf">r_hi - r_lo = 0.05 + 0.3*b</code>(0.05〜0.35)。外半径は <code style="color:#22d3bf">r_lo + 幅</code> で最大 0.8 だが、半径が</p>
 <p>約 0.707 を超える周波数は存在しないので、大きな a, b では円環の外側が画像外に出て実質ハイパスになる。</p>
-<p>`<code style="color:#22d3bf">hx_gen_bandfilter</code><code style="color:#22d3bf"> は「中心半径と半幅」で同じ円環を指定する別パラメータ化。</code><code style="color:#22d3bf">fft_generic</code>` などの中心=DC</p>
-<p>スペクトルとの画素積で使う。</p>
+<p><code style="color:#22d3bf">hx_gen_bandfilter</code> は「中心半径と半幅」で同じ円環を指定する別パラメータ化。<code style="color:#22d3bf">fft_generic</code> などの中心=DC スペクトルとの画素積で使う。</p>
 <p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

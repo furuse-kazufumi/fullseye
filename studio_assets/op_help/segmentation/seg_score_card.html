@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_score_card(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, tau: &#x27;float&#x27; = 2.0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segeval; segeval.seg_score_card(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, tau: &#x27;float&#x27; = 2.0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;seg_score_card&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>全部の物差しを 1 枚に: Dice・Jaccard(マスク)、VI・split・merge、Rand・ARI(`<code style="color:#22d3bf">segcompare</code>`)、境界 F(τ)、</p>
-<p>Hausdorff・HD95・ASSD(境界が無ければ NaN)、過分割・未分割、分裂・融合・欠落・偽・一致、個数。</p>
-<p>`<code style="color:#22d3bf">segcompare</code>` には a = 真、b = 予測で渡す(split = 予測が真を切った量、merge = 予測が真を貼った量)。</p>
-<p>値は float か int の平らな dict(表にそのまま並ぶ)。</p>
+<p>全部の物差しを 1 枚に: Dice・Jaccard(マスク)、VI・split・merge、Rand・ARI(<code style="color:#22d3bf">segcompare</code>)、境界 F(τ)、Hausdorff・HD95・ASSD(境界が無ければ NaN)、過分割・未分割、分裂・融合・欠落・偽・一致、個数。</p>
+<p><code style="color:#22d3bf">segcompare</code> には a = 真、b = 予測で渡す(split = 予測が真を切った量、merge = 予測が真を貼った量)。値は float か int の平らな dict(表にそのまま並ぶ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

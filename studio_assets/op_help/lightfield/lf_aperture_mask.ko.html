@@ -5,27 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각도 방향 가중 마스크 —— 조이거나 모양을 바꾸는 합성 조리개 그 자체.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Returns a `<code style="color:#22d3bf">(V, U)</code>` 2-D array of per-view weights, indexed the same way as</p>
-<p>the light field&#x27;s angular axes, for :func:<code style="color:#22d3bf">lf_synthetic_aperture</code>. The</p>
-<p>radius is measured in <b>angular steps</b> from the centre ``((V-1)/2,</p>
-<p>(U-1)/2)`<code style="color:#22d3bf">, so </code><code style="color:#22d3bf">radius=0</code>` selects the single centre view (an infinitely</p>
-<p>small aperture: everything in focus, no light) and the default</p>
-<p>`<code style="color:#22d3bf">radius = max(V-1, U-1)/2</code>` is the largest circle that fits.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">circle</code>`   — hard-edged disc, the physical iris.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">square</code>`   — Chebyshev disc; separable, the cheapest to reason about.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">gaussian</code><code style="color:#22d3bf"> — apodised pupil (</code><code style="color:#22d3bf">sigma</code>` in angular steps, default</p>
-<p>`<code style="color:#22d3bf">radius/2</code>`); no ringing in the defocus PSF.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">annulus</code>`  — ring between *inner* and *radius*; a coded aperture whose</p>
-<p>defocus PSF has more high-frequency content, which is what makes</p>
-<p>depth-from-defocus work better.</p>
-<p>With `<code style="color:#22d3bf">normalize=True</code>` (default) the weights sum to exactly 1, so a masked</p>
-<p>reduction is a weighted <b>mean</b> and its result is directly comparable with</p>
-<p>:func:<code style="color:#22d3bf">lf_refocus</code>. Set it to `<code style="color:#22d3bf">False</code>` to keep 0/1 selection weights.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: an angular shape outside </code><code style="color:#22d3bf">[1, MAX_ANGULAR]</code>`, a</p>
-<p>negative *radius* / *inner* / *sigma*, `<code style="color:#22d3bf">inner &gt;= radius</code>`, an unknown</p>
-<p>*shape*, and — explicitly rather than returning a field of zeros — a mask</p>
-<p>that selects <b>no</b> view at all (an opaque aperture), which would make every</p>
-<p>downstream weighted mean a 0/0.</p>
+<p>Returns a <code style="color:#22d3bf">(V, U)</code> 2-D array of per-view weights, indexed the same way as the light field&#x27;s angular axes, for <code style="color:#22d3bf">lf_synthetic_aperture</code>. The radius is measured in <b>angular steps</b> from the centre <code style="color:#22d3bf">((V-1)/2, (U-1)/2)</code>, so <code style="color:#22d3bf">radius=0</code> selects the single centre view (an infinitely small aperture: everything in focus, no light) and the default <code style="color:#22d3bf">radius = max(V-1, U-1)/2</code> is the largest circle that fits.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circle</code>   — hard-edged disc, the physical iris.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">square</code>   — Chebyshev disc; separable, the cheapest to reason about.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gaussian</code> — apodised pupil (<code style="color:#22d3bf">sigma</code> in angular steps, default <code style="color:#22d3bf">radius/2</code>); no ringing in the defocus PSF.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">annulus</code>  — ring between *inner* and *radius*; a coded aperture whose defocus PSF has more high-frequency content, which is what makes depth-from-defocus work better.</p>
+<p>With <code style="color:#22d3bf">normalize=True</code> (default) the weights sum to exactly 1, so a masked reduction is a weighted <b>mean</b> and its result is directly comparable with <code style="color:#22d3bf">lf_refocus</code>. Set it to <code style="color:#22d3bf">False</code> to keep 0/1 selection weights.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: an angular shape outside <code style="color:#22d3bf">[1, MAX_ANGULAR]</code>, a negative *radius* / *inner* / *sigma*, <code style="color:#22d3bf">inner &gt;= radius</code>, an unknown *shape*, and — explicitly rather than returning a field of zeros — a mask that selects <b>no</b> view at all (an opaque aperture), which would make every downstream weighted mean a 0/0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

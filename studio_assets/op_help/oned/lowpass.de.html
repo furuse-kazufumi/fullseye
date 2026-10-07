@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lowpass(x, rate, cutoff, order=4)</code> (die Implementierung direkt: <code style="color:#22d3bf">import dsp; dsp.lowpass(x, rate, cutoff, order=4)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;lowpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside</p>
-<p>`<code style="color:#22d3bf">(0, rate/2)</code>`; an out-of-Nyquist cutoff raises instead of passing the signal</p>
-<p>through. A signal too short for zero-phase filtfilt also raises (the message</p>
-<p>names the exact minimum) instead of silently coming back unfiltered.</p>
+<p>Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside <code style="color:#22d3bf">(0, rate/2)</code>; an out-of-Nyquist cutoff raises instead of passing the signal through. A signal too short for zero-phase filtfilt also raises (the message names the exact minimum) instead of silently coming back unfiltered.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -5,27 +5,24 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>縦の運動方程式を RK4 で積分する(事象の時刻で刻みを切る。モジュールの docstring)。</p>
-<p>Parameters</p>
-<p>----------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>s0, v0 : 初めの位置 [m] (道なりの弧長)と速度 [m/s] (負 = 後ろ向き)</p>
-<p>command : `<code style="color:#22d3bf">command(t, s, v) -&gt; (drive, brake)</code>`(どちらも ≥ 0 [m/s²]。上限は μ g cos θ と a_max で頭打ち)。</p>
+<p>command : <code style="color:#22d3bf">command(t, s, v) -&gt; (drive, brake)</code>(どちらも ≥ 0 [m/s²]。上限は μ g cos θ と a_max で頭打ち)。</p>
 <p><b>v = 0.0 で呼ばれるのは止まっている間だけ</b>(動いている刻みの中間点で速度が 0 を横切っても、指令には動きの向きの</p>
-<p>±1e-300 を渡す)ので、指令は `<code style="color:#22d3bf">v == 0</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">v &lt;= 0</code>` で「止まったら保持」を書いてよい。</p>
-<p>指令が時刻で不連続に変わるなら、その時刻を `<code style="color:#22d3bf">t_breaks</code>` に入れると刻みがそこで切れる(厳密さのため)。</p>
-<p>road : 道の縦断(:func:<code style="color:#22d3bf">road_eval</code> と同じ)</p>
+<p>±1e-300 を渡す)ので、指令は <code style="color:#22d3bf">v == 0</code> / <code style="color:#22d3bf">v &lt;= 0</code> で「止まったら保持」を書いてよい。</p>
+<p>指令が時刻で不連続に変わるなら、その時刻を <code style="color:#22d3bf">t_breaks</code> に入れると刻みがそこで切れる(厳密さのため)。</p>
+<p>road : 道の縦断(<code style="color:#22d3bf">road_eval</code> と同じ)</p>
 <p>t_end : 終わりの時刻 [s]、dt : 刻み [s]</p>
-<p>params : :func:<code style="color:#22d3bf">long_params</code> の dict(None = 既定)</p>
+<p>params : <code style="color:#22d3bf">long_params</code> の dict(None = 既定)</p>
 <p>t0 : 初めの時刻 [s]</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : `<code style="color:#22d3bf">t, s, v, a, drive, brake, z, W_drive, W_brake, W_rr, W_drag</code>`(各 (n,) の配列、a = その時点の加速度)、</p>
-<p>`<code style="color:#22d3bf">stopped</code><code style="color:#22d3bf">(bool 配列)、</code><code style="color:#22d3bf">events</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(&quot;stop&quot;|&quot;move&quot;, t, s, 向き)</code><code style="color:#22d3bf"> の列)、</code><code style="color:#22d3bf">saturated</code>`(上限で頭打ちになった刻みがあったか)、</p>
-<p>`<code style="color:#22d3bf">params</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 引数が不正、指令が負や非有限を返した。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">t, s, v, a, drive, brake, z, W_drive, W_brake, W_rr, W_drag</code>(各 (n,) の配列、a = その時点の加速度)、</p>
+<p><code style="color:#22d3bf">stopped</code>(bool 配列)、<code style="color:#22d3bf">events</code>(<code style="color:#22d3bf">(&quot;stop&quot;|&quot;move&quot;, t, s, 向き)</code> の列)、<code style="color:#22d3bf">saturated</code>(上限で頭打ちになった刻みがあったか)、<code style="color:#22d3bf">params</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 引数が不正、指令が負や非有限を返した。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_longitudinal">poc_driving_longitudinal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_longitudinal.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>

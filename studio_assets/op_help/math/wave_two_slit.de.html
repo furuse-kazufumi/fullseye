@@ -5,26 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Doppelspalt-Interferenz auf einem Schirm — aus der Physik gebaut, nicht aus der Streifenformel.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Each slit is treated as a line source of the given width; the screen intensity</p>
-<p>is `<code style="color:#22d3bf">|sum over slit of exp(i k R) / sqrt(R)|**2</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">R</code>` the true distance</p>
-<p>from each source point. **The textbook spacing `<code style="color:#22d3bf">lambda D / d</code>` is nowhere in</p>
-<p>this computation** — which is the point: it is then available as an</p>
-<p>independent prediction to check the picture against.</p>
-<p>★<b>Why this earns its place</b>: :func:<code style="color:#22d3bf">wave_fringe_period</code> measures the period</p>
-<p>of the produced image, and it must land on `<code style="color:#22d3bf">lambda D / d</code>` (in pixels,</p>
-<p>`<code style="color:#22d3bf">lambda D / (d * pixel)</code>`). Two ways to the same number, only one of which</p>
-<p>was used to draw.</p>
-<p>Returns an `<code style="color:#22d3bf">image2d</code>` normalised to a peak of 1.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive wavelength, separation, distance,</p>
-<p>pixel or width; a grid over the cap; a geometry so coarse that fewer than</p>
-<p>three fringes fit on the screen (reported, not silently aliased).</p>
-<p>Limits: scalar, monochromatic, far-from-paraxial geometries are not modelled;</p>
-<p>the slits are lines, so there is no vertical structure.</p>
+<p>Each slit is treated as a line source of the given width; the screen intensity is <code style="color:#22d3bf">|sum over slit of exp(i k R) / sqrt(R)|**2</code> with <code style="color:#22d3bf">R</code> the true distance from each source point. <b>The textbook spacing <code style="color:#22d3bf">lambda D / d</code> is nowhere in this computation</b> — which is the point: it is then available as an independent prediction to check the picture against.</p>
+<p>★<b>Why this earns its place</b>: <code style="color:#22d3bf">wave_fringe_period</code> measures the period of the produced image, and it must land on <code style="color:#22d3bf">lambda D / d</code> (in pixels, <code style="color:#22d3bf">lambda D / (d * pixel)</code>). Two ways to the same number, only one of which was used to draw.</p>
+<p>Returns an <code style="color:#22d3bf">image2d</code> normalised to a peak of 1.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-positive wavelength, separation, distance, pixel or width; a grid over the cap; a geometry so coarse that fewer than three fringes fit on the screen (reported, not silently aliased).</p>
+<p>Limits: scalar, monochromatic, far-from-paraxial geometries are not modelled; the slits are lines, so there is no vertical structure.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

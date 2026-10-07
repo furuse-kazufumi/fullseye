@@ -5,20 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
 <p>本物と同じ構造の最小 CityGML 2.0 文字列を作る(テスト・デモ用)。</p>
-<p>建物は `<code style="color:#22d3bf">size</code><code style="color:#22d3bf"> [m] の正方形を </code><code style="color:#22d3bf">spacing</code>` [m] 間隔で x 方向に並べ、各建物に</p>
-<p>`<code style="color:#22d3bf">bldg:measuredHeight</code><code style="color:#22d3bf"> と </code>`bldg:lod1Solid &gt; gml:Solid &gt; gml:exterior &gt;</p>
-<p>gml:CompositeSurface &gt; gml:surfaceMember × 6 &gt; gml:Polygon &gt; gml:exterior &gt;</p>
-<p>gml:LinearRing &gt; gml:posList``(底面 + 側面 4 + 天面、lat lon alt の順)を書く。</p>
-<p>等距円筒近似は線形なので、局所座標で作った正方形は読み戻すと面積が size² に一致する。</p>
+<p>建物は <code style="color:#22d3bf">size</code> [m] の正方形を <code style="color:#22d3bf">spacing</code> [m] 間隔で x 方向に並べ、各建物に <code style="color:#22d3bf">bldg:measuredHeight</code> と <code style="color:#22d3bf">bldg:lod1Solid &gt; gml:Solid &gt; gml:exterior &gt; gml:CompositeSurface &gt; gml:surfaceMember × 6 &gt; gml:Polygon &gt; gml:exterior &gt; gml:LinearRing &gt; gml:posList</code>(底面 + 側面 4 + 天面、lat lon alt の順)を書く。等距円筒近似は線形なので、局所座標で作った正方形は読み戻すと面積が size² に一致する。</p>
 <p>Args:</p>
 <p>n: 建物数(≥ 0)。</p>
 <p>origin: 建物 0 の中心の (lat, lon) [deg]。</p>
 <p>spacing: 建物中心の間隔 [m]。</p>
 <p>size: 正方形の一辺 [m]。</p>
-<p>heights: 各建物の高さ [m]。None なら `<code style="color:#22d3bf">10 + 5*i</code>`。</p>
+<p>heights: 各建物の高さ [m]。None なら <code style="color:#22d3bf">10 + 5*i</code>。</p>
 <p>ground_z: 底面の標高 [m]。</p>
-<p>omit_measured_height: この添字の建物では `<code style="color:#22d3bf">measuredHeight</code>` を書かない。</p>
-<p>use_lod0_footprint: True なら lod1Solid の前に `<code style="color:#22d3bf">lod0FootPrint</code>`(底面のみ)も書く。</p>
+<p>omit_measured_height: この添字の建物では <code style="color:#22d3bf">measuredHeight</code> を書かない。</p>
+<p>use_lod0_footprint: True なら lod1Solid の前に <code style="color:#22d3bf">lod0FootPrint</code>(底面のみ)も書く。</p>
 <p>ns_building: bldg 名前空間 URI(版違いの試験用に差し替え可)。</p>
 <p>Returns:</p>
 <p>UTF-8 で書き出せる CityGML 文字列。</p>

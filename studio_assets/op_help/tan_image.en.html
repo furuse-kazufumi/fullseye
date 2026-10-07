@@ -11,7 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tan_image.inputs.jpg">tan_image: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>A pointwise transform that takes the tangent of pixel values. Corresponds to HALCON&#x27;s `<code style="color:#22d3bf">tan_image</code>` (computes the tangent of an image), but is an approximation with a different normalization convention.</p>
+<p>A pointwise transform that takes the tangent of pixel values. Corresponds to HALCON&#x27;s <code style="color:#22d3bf">tan_image</code> (computes the tangent of an image), but is an approximation with a different normalization convention.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>実装は x を [0,1] にクリップし、(x-0.5) を ±0.45π の範囲へ写してから tan を掛け、結果を signed01（符号つき値を [0,1] に写す、0.5 が 0 に対応）で戻す。a, b は未使用。角度域を ±0.45π に抑えているため tan の発散（±90° 付近）には達しない。中間輝度付近で傾きが最大になり、コントラストを強めたい局所帯域を狙うのに使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

@@ -8,24 +8,18 @@
 <p>A vector sum on the circle::</p>
 <p>DSI = |sum_k r_k exp(i theta_k)| / (sum_k r_k + 1e-9)</p>
 <p>preferred = angle(sum_k r_k exp(i theta_k))</p>
-<p>where `<code style="color:#22d3bf">r_k &gt;= 0</code>` is the response to a stimulus moving at angle</p>
-<p>`<code style="color:#22d3bf">theta_k = angles_deg[k]</code>` (negatives clipped to 0).</p>
+<p>where <code style="color:#22d3bf">r_k &gt;= 0</code> is the response to a stimulus moving at angle <code style="color:#22d3bf">theta_k = angles_deg[k]</code> (negatives clipped to 0).</p>
 <p>responses:  a 1-D array of responses, one per direction.</p>
 <p>angles_deg: the stimulus directions in degrees, same length.</p>
-<p>Returns a dict `<code style="color:#22d3bf">{&quot;dsi&quot;: float, &quot;pref_deg&quot;: float}</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">pref_deg</code>` in</p>
-<p>`<code style="color:#22d3bf">[-180, 180]</code>`.</p>
-<p>Ground truth: a response at a single direction gives `<code style="color:#22d3bf">dsi == 1</code>`; an isotropic</p>
-<p>response over directions evenly spanning the circle gives `<code style="color:#22d3bf">dsi == 0</code>` (pinned</p>
-<p>in the tests).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / non-finite *responses* or</p>
-<p>*angles_deg*, mismatched lengths, an array over :data:<code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, and</p>
-<p>an all-zero *responses* (no direction tuning to report).</p>
+<p>Returns a dict <code style="color:#22d3bf">{&quot;dsi&quot;: float, &quot;pref_deg&quot;: float}</code> with <code style="color:#22d3bf">pref_deg</code> in <code style="color:#22d3bf">[-180, 180]</code>.</p>
+<p>Ground truth: a response at a single direction gives <code style="color:#22d3bf">dsi == 1</code>; an isotropic response over directions evenly spanning the circle gives <code style="color:#22d3bf">dsi == 0</code> (pinned in the tests).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-1-D / empty / non-finite *responses* or *angles_deg*, mismatched lengths, an array over <code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, and an all-zero *responses* (no direction tuning to report).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_vision">poc_fly_vision</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_vision.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_from_depth_motion(depth, K, T_rel) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivettc; drivettc.flow_from_depth_motion(depth, K, T_rel) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;flow_from_depth_motion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>深度像と剛体運動から <b>真の像の流れ</b>: `<code style="color:#22d3bf">{&quot;u&quot;, &quot;v&quot;, &quot;valid&quot;, &quot;depth1&quot;}</code>`(各 (H, W))。</p>
-<p>画素の 3-D 点を `<code style="color:#22d3bf">T_rel</code><code style="color:#22d3bf"> で動かして再投影し、</code><code style="color:#22d3bf">u = col₁ − col₀</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">v = row₁ − row₀</code>`。動かした後に</p>
-<p>カメラの背後へ行く点や深度の無い画素は `<code style="color:#22d3bf">valid = False</code><code style="color:#22d3bf">(u, v は NaN)。</code><code style="color:#22d3bf">depth1</code>` は動かした後の深度。</p>
-<p>光学流の推定器の採点に使う真値(推定器と同じ規約: (x, y) → (x + u, y + v))。</p>
+<p>深度像と剛体運動から <b>真の像の流れ</b>: <code style="color:#22d3bf">{&quot;u&quot;, &quot;v&quot;, &quot;valid&quot;, &quot;depth1&quot;}</code>(各 (H, W))。</p>
+<p>画素の 3-D 点を <code style="color:#22d3bf">T_rel</code> で動かして再投影し、<code style="color:#22d3bf">u = col₁ − col₀</code>、<code style="color:#22d3bf">v = row₁ − row₀</code>。動かした後にカメラの背後へ行く点や深度の無い画素は <code style="color:#22d3bf">valid = False</code>(u, v は NaN)。<code style="color:#22d3bf">depth1</code> は動かした後の深度。光学流の推定器の採点に使う真値(推定器と同じ規約: (x, y) → (x + u, y + v))。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

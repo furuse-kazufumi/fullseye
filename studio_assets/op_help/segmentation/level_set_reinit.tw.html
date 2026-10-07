@@ -5,21 +5,17 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 φ（φ &lt; 0 為內側）改寫為同一零等值線的符號距離函數（level_set_reinit）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">method=&quot;sussman&quot;</code>` = φ_τ + S(φ0)(|∇φ| − 1) = 0(Sussman–Smereka–Osher 1994)を Godunov の風上差分で</p>
-<p>`<code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf"> 回(刻み </code><code style="color:#22d3bf">dt</code>` ≤ 0.5)。界面に接する格子点(4 近傍で符号が変わる)は Russo–Smereka 2000 の subcell fix:</p>
-<p>D = φ0 / Δφ0(Δφ0 = 中心差分の勾配の大きさと片側差分の最大)へ緩和させ、零等高線を動かさない。</p>
-<p>`<code style="color:#22d3bf">method=&quot;edt&quot;</code>` = マスク φ &lt; 0 から距離変換で作る符号付き距離(第 2 実装。零等高線は画素の中心の中間に量子化され、</p>
-<p>最大で半画素動く)。bool のマスクを渡すと edt の符号付き距離を φ0 として使う。</p>
-<p>返り値: `<code style="color:#22d3bf">phi</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">grad</code><code style="color:#22d3bf">(|φ| ≤ band での |∇φ| の 10/50/90 % 点と画素数)、</code><code style="color:#22d3bf">grad_before</code>`(同、入力)、</p>
-<p>`<code style="color:#22d3bf">zero_hausdorff</code><code style="color:#22d3bf">(前後の零等高線の Hausdorff、画素)、</code><code style="color:#22d3bf">method</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_iter</code>`。</p>
+<p><code style="color:#22d3bf">method=&quot;sussman&quot;</code> = φ_τ + S(φ0)(|∇φ| − 1) = 0(Sussman–Smereka–Osher 1994)を Godunov の風上差分で <code style="color:#22d3bf">n_iter</code> 回(刻み <code style="color:#22d3bf">dt</code> ≤ 0.5)。界面に接する格子点(4 近傍で符号が変わる)は Russo–Smereka 2000 の subcell fix:</p>
+<p>D = φ0 / Δφ0(Δφ0 = 中心差分の勾配の大きさと片側差分の最大)へ緩和させ、零等高線を動かさない。<code style="color:#22d3bf">method=&quot;edt&quot;</code> = マスク φ &lt; 0 から距離変換で作る符号付き距離(第 2 実装。零等高線は画素の中心の中間に量子化され、最大で半画素動く)。bool のマスクを渡すと edt の符号付き距離を φ0 として使う。</p>
+<p>返り値: <code style="color:#22d3bf">phi</code>、<code style="color:#22d3bf">grad</code>(|φ| ≤ band での |∇φ| の 10/50/90 % 点と画素数)、<code style="color:#22d3bf">grad_before</code>(同、入力)、<code style="color:#22d3bf">zero_hausdorff</code>(前後の零等高線の Hausdorff、画素)、<code style="color:#22d3bf">method</code>、<code style="color:#22d3bf">n_iter</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 變分、主動輪廓與水平集 —— 哪種輪廓停在哪裡、保證什麼</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

@@ -3,12 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgba</code> → <code style="color:#22d3bf">rgba_premul</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.premultiply(rgba)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.premultiply(rgba)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;premultiply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>`<code style="color:#22d3bf">rgba</code><code style="color:#22d3bf"> mit gerader Alpha → **vormultipliziertes** </code><code style="color:#22d3bf">rgba</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(C*A, A)</code>`.</p>
+<p><code style="color:#22d3bf">rgba</code> mit gerader Alpha → <b>vormultipliziertes</b> <code style="color:#22d3bf">rgba</code>: <code style="color:#22d3bf">(C*A, A)</code>.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Lossy in one place, on purpose: the colour of a fully transparent pixel is</p>
-<p>multiplied to zero and cannot be recovered. That colour never affects a</p>
-<p>composite, so nothing downstream needs it — but a round trip through this</p>
-<p>pair is the identity only where `<code style="color:#22d3bf">alpha &gt; 0</code>`.</p>
+<p>Lossy in one place, on purpose: the colour of a fully transparent pixel is multiplied to zero and cannot be recovered. That colour never affects a composite, so nothing downstream needs it — but a round trip through this pair is the identity only where <code style="color:#22d3bf">alpha &gt; 0</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>教則の場面の再現台帳(docs/drive/kyosoku_scenarios.json)を読み、category × status の件数表にする。</p>
-<p>`<code style="color:#22d3bf">path</code><code style="color:#22d3bf"> = None なら repo の </code><code style="color:#22d3bf">docs/drive/kyosoku_scenarios.json</code>`(このモジュールの場所から引く)。</p>
-<p>返り値 ``{&quot;total&quot;, &quot;statuses&quot; (順序つき), &quot;by_status&quot;: {status: n}, &quot;categories&quot;: [...] (件数の多い順),</p>
-<p>&quot;by_category&quot;: {category: {status: n}}, &quot;table&quot;: [[category, n_reproduced, n_partial, n_pending, n_not_reproducible, total], ...]}``。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: ファイルが無い・JSON でない・</code><code style="color:#22d3bf">scenarios</code>` が無い・場面に id/category/status が無い・</p>
-<p>status が :data:<code style="color:#22d3bf">KYOSOKU_STATUSES</code> に無い・id が重複。</p>
+<p><code style="color:#22d3bf">path</code> = None なら repo の <code style="color:#22d3bf">docs/drive/kyosoku_scenarios.json</code>(このモジュールの場所から引く)。返り値 <code style="color:#22d3bf">{&quot;total&quot;, &quot;statuses&quot; (順序つき), &quot;by_status&quot;: {status: n}, &quot;categories&quot;: [...] (件数の多い順), &quot;by_category&quot;: {category: {status: n}}, &quot;table&quot;: [[category, n_reproduced, n_partial, n_pending, n_not_reproducible, total], ...]}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: ファイルが無い・JSON でない・<code style="color:#22d3bf">scenarios</code> が無い・場面に id/category/status が無い・ status が <code style="color:#22d3bf">KYOSOKU_STATUSES</code> に無い・id が重複。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

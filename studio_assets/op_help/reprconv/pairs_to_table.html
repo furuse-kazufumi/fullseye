@@ -3,16 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_table(pairs)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_table(pairs)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>対 `<code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> → 要約 </code><code style="color:#22d3bf">table</code>`。<b>一方向</b>。</p>
-<p>`<code style="color:#22d3bf">x_uniform</code>` は「列 0 が等間隔か」の判定で、これが False の対を</p>
-<p>:func:<code style="color:#22d3bf">pairs_to_signal</code> に通すと x が黙って落ちる(上の docstring 参照)。</p>
-<p>判定は最大差分と最小差分の比で行い、閾値は 1e-9(相対)。</p>
+<p>対 <code style="color:#22d3bf">(N,2)</code> → 要約 <code style="color:#22d3bf">table</code>。<b>一方向</b>。</p>
+<p><code style="color:#22d3bf">x_uniform</code> は「列 0 が等間隔か」の判定で、これが False の対を <code style="color:#22d3bf">pairs_to_signal</code> に通すと x が黙って落ちる(上の docstring 参照)。判定は最大差分と最小差分の比で行い、閾値は 1e-9(相対)。</p>
 <p>Args:</p>
 <p>pairs: (N, 2)。</p>
 <p>Returns:</p>
-<p>dict(`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">x_min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">x_max</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">y_min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">y_max</code>` /</p>
-<p>`<code style="color:#22d3bf">y_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">x_uniform</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">x_step</code>`(等間隔のときのみ) /</p>
-<p>`<code style="color:#22d3bf">pearson_r</code>`(N &gt;= 2 かつ両列が定数でないとき))。</p>
+<p>dict(<code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">x_min</code> / <code style="color:#22d3bf">x_max</code> / <code style="color:#22d3bf">y_min</code> / <code style="color:#22d3bf">y_max</code> /</p>
+<p><code style="color:#22d3bf">y_mean</code> / <code style="color:#22d3bf">x_uniform</code> / <code style="color:#22d3bf">x_step</code>(等間隔のときのみ) /</p>
+<p><code style="color:#22d3bf">pearson_r</code>(N &gt;= 2 かつ両列が定数でないとき))。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

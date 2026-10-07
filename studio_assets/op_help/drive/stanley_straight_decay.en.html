@@ -5,10 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>直線の経路で Stanley(切らない)の前車軸の横ずれ e(t) の閉形式。</p>
-<p>ė = −v k e / √(a² + k² e²)、a = k_s + v。F(e) = √(a² + k²e²) − a ln((a + √(a² + k²e²))/(k|e|)) は</p>
-<p>dF/dt = −v k(一定)。F(e(t)) = F(e₀) − v k t を |e| ∈ (0, |e₀|] の二分法(F は |e| に単調増加)で解く。</p>
-<p>小さい e では e ≈ e₀&#x27; e^{−k t v/a}(指数)、大きい e では |e| がほぼ v t で減る(直線)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: k ≤ 0、v ≤ 0、k_s &lt; 0、t &lt; 0。</p>
+<p>ė = −v k e / √(a² + k² e²)、a = k_s + v。F(e) = √(a² + k²e²) − a ln((a + √(a² + k²e²))/(k|e|)) は dF/dt = −v k(一定)。F(e(t)) = F(e₀) − v k t を |e| ∈ (0, |e₀|] の二分法(F は |e| に単調増加)で解く。小さい e では e ≈ e₀&#x27; e^{−k t v/a}(指数)、大きい e では |e| がほぼ v t で減る(直線)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: k ≤ 0、v ≤ 0、k_s &lt; 0、t &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

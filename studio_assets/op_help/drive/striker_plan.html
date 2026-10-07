@@ -3,10 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.striker_plan(crossing, q_now, link: &#x27;dict&#x27;, *, omega_max: &#x27;float&#x27; = 6.0, t_now: &#x27;float&#x27; = 0.0, margin: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import puck; puck.striker_plan(crossing, q_now, link: &#x27;dict&#x27;, *, omega_max: &#x27;float&#x27; = 6.0, t_now: &#x27;float&#x27; = 0.0, margin: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;striker_plan&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>打点計画(規則): 予測の交点へ IK で関節角を出し、各サーボを一定角速度 ≤ ω_max で動かす。所要 = max|Δq|/ω_max。</p>
-<p>交点の到着より先に着けば feasible。返り値 `<code style="color:#22d3bf">{&quot;feasible&quot;,&quot;reason&quot;,&quot;q_target&quot;,&quot;dq&quot;,&quot;t_move&quot;,&quot;t_arrive&quot;,&quot;t_cross&quot;,&quot;E&quot;}</code>`、</p>
-<p>reason ∈ {&quot;ok&quot;,&quot;no_crossing&quot;,&quot;unreachable&quot;,&quot;too_late&quot;}。`<code style="color:#22d3bf">crossing</code><code style="color:#22d3bf"> = :func:</code>puck_crossing_point` の返り値(None 可)。</p>
-<p>ω_max = 6 rad/s の既定は仮定。</p>
+<p>打点計画(規則): 予測の交点へ IK で関節角を出し、各サーボを一定角速度 ≤ ω_max で動かす。所要 = max|Δq|/ω_max。交点の到着より先に着けば feasible。返り値 <code style="color:#22d3bf">{&quot;feasible&quot;,&quot;reason&quot;,&quot;q_target&quot;,&quot;dq&quot;,&quot;t_move&quot;,&quot;t_arrive&quot;,&quot;t_cross&quot;,&quot;E&quot;}</code>、reason ∈ {&quot;ok&quot;,&quot;no_crossing&quot;,&quot;unreachable&quot;,&quot;too_late&quot;}。<code style="color:#22d3bf">crossing</code> = <code style="color:#22d3bf">puck_crossing_point</code> の返り値(None 可)。ω_max = 6 rad/s の既定は仮定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

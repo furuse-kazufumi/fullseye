@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bounce_detect(t, z, *, min_gap: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import balltrack; balltrack.bounce_detect(t, z, *, min_gap: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;bounce_detect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>高さの列 z(t) から接触の候補を出す: 下向きの速度が上向きに変わる局所最小(前後 `<code style="color:#22d3bf">min_gap</code>` 標本で最小)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;index&quot; (M,), &quot;t&quot; (M,), &quot;z&quot; (M,)}</code>`。</p>
+<p>高さの列 z(t) から接触の候補を出す: 下向きの速度が上向きに変わる局所最小(前後 <code style="color:#22d3bf">min_gap</code> 標本で最小)。返り値 <code style="color:#22d3bf">{&quot;index&quot; (M,), &quot;t&quot; (M,), &quot;z&quot; (M,)}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

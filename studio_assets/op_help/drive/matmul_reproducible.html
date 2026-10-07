@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matmul_reproducible(A, B, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ozakimm; ozakimm.matmul_reproducible(A, B, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;matmul_reproducible&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>ビット単位で再現する FP64 の精度の `<code style="color:#22d3bf">A @ B</code><code style="color:#22d3bf">(保証できなければ </code><code style="color:#22d3bf">ValueError</code>` = fail-closed)。</p>
-<p>:func:<code style="color:#22d3bf">matmul_ozaki</code> の Ozaki-I の自動選択に `<code style="color:#22d3bf">on_insufficient=&quot;raise&quot;</code>` を固定したもの。誤差は要素ごとに</p>
-<p>`<code style="color:#22d3bf">tol · (|A||B|)_ij</code>` + 最後の組み立ての丸め(数 ulp)以下。内側の添字の順(点の順)・BLAS のスレッド数に依らず</p>
-<p>同じビットを返す。点群の 3×N @ N×3 や 6×N @ N×6 の縮約向け(出力が大きい積では DGEMM の 15〜83 倍遅い)。</p>
+<p>ビット単位で再現する FP64 の精度の <code style="color:#22d3bf">A @ B</code>(保証できなければ <code style="color:#22d3bf">ValueError</code> = fail-closed)。</p>
+<p><code style="color:#22d3bf">matmul_ozaki</code> の Ozaki-I の自動選択に <code style="color:#22d3bf">on_insufficient=&quot;raise&quot;</code> を固定したもの。誤差は要素ごとに <code style="color:#22d3bf">tol · (|A||B|)_ij</code> + 最後の組み立ての丸め(数 ulp)以下。内側の添字の順(点の順)・BLAS のスレッド数に依らず同じビットを返す。点群の 3×N @ N×3 や 6×N @ N×6 の縮約向け(出力が大きい積では DGEMM の 15〜83 倍遅い)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

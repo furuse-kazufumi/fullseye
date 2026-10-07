@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.understeer_gradient(params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.understeer_gradient(params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;understeer_gradient&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>アンダーステア勾配 K = (m/L)(l_r/C_f − l_f/C_r) [rad/(m/s²)] と、特性速度 / 臨界速度。</p>
-<p>`<code style="color:#22d3bf">params</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">mass</code><code style="color:#22d3bf"> [kg]、</code><code style="color:#22d3bf">l_f</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">l_r</code><code style="color:#22d3bf">(重心から前・後車軸)[m]、</code><code style="color:#22d3bf">c_f</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">c_r</code>`(軸ごとのコーナリングパワー)[N/rad]。</p>
-<p>返り値: `<code style="color:#22d3bf">K</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">kind</code><code style="color:#22d3bf">(&quot;understeer&quot; / &quot;neutral&quot; / &quot;oversteer&quot;)、</code><code style="color:#22d3bf">characteristic_speed</code>`(K &gt; 0 で √(L/K)、</p>
-<p>ヨーレートゲインが最大の速さ)、`<code style="color:#22d3bf">critical_speed</code><code style="color:#22d3bf">(K &lt; 0 で √(−L/K)、これを超えると不安定)。無いものは </code><code style="color:#22d3bf">inf</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 欠けた / 正でない母数。</p>
+<p><code style="color:#22d3bf">params</code>: <code style="color:#22d3bf">mass</code> [kg]、<code style="color:#22d3bf">l_f</code>・<code style="color:#22d3bf">l_r</code>(重心から前・後車軸)[m]、<code style="color:#22d3bf">c_f</code>・<code style="color:#22d3bf">c_r</code>(軸ごとのコーナリングパワー)[N/rad]。</p>
+<p>返り値: <code style="color:#22d3bf">K</code>、<code style="color:#22d3bf">kind</code>(&quot;understeer&quot; / &quot;neutral&quot; / &quot;oversteer&quot;)、<code style="color:#22d3bf">characteristic_speed</code>(K &gt; 0 で √(L/K)、ヨーレートゲインが最大の速さ)、<code style="color:#22d3bf">critical_speed</code>(K &lt; 0 で √(−L/K)、これを超えると不安定)。無いものは <code style="color:#22d3bf">inf</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 欠けた / 正でない母数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

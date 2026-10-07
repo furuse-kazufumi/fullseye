@@ -7,9 +7,9 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Energiestreuung der Wavelet-Pakete (Shannon-Entropie). Führt mit `<code style="color:#22d3bf">db1</code><code style="color:#22d3bf"> eine Wavelet-Paket-Zerlegung der Tiefe 2 durch, betrachtet die normalisierte Verteilung der Energie (Summe der quadrierten Koeffizienten) jedes der 16 Blatt-Subbänder als Wahrscheinlichkeitsverteilung, berechnet deren Shannon-Entropie und normalisiert sie durch Division mit </code><code style="color:#22d3bf">log2(16)</code>` auf [0,1].</p>
+<p>Energiestreuung der Wavelet-Pakete (Shannon-Entropie). Führt mit <code style="color:#22d3bf">db1</code> eine Wavelet-Paket-Zerlegung der Tiefe 2 durch, betrachtet die normalisierte Verteilung der Energie (Summe der quadrierten Koeffizienten) jedes der 16 Blatt-Subbänder als Wahrscheinlichkeitsverteilung, berechnet deren Shannon-Entropie und normalisiert sie durch Division mit <code style="color:#22d3bf">log2(16)</code> auf [0,1].</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値が 1 に近いほどエネルギーが全周波数帯に均等に分散(テクスチャが複雑)、0 に近いほど特定の帯域に集中(単純なパターンや平坦な領域)していることを示す。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。値が 1 に近いほどエネルギーが全周波数帯に均等に分散(テクスチャが複雑)、0 に近いほど特定の帯域に集中(単純なパターンや平坦な領域)していることを示す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -18,7 +18,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xwt_packet_entropy 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xwt_packet_entropy%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xwt_packet_entropy%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xwt_packet_entropy 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xwt_packet_entropy%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xwt_packet_entropy%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>

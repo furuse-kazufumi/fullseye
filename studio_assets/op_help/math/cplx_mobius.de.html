@@ -3,28 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cpoints</code> → <code style="color:#22d3bf">cpoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_mobius(z, a, b, c, d)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.cplx_mobius(z, a, b, c, d)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;cplx_mobius&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Möbius-Transformation (gebrochen lineare Abbildung) `<code style="color:#22d3bf">w = (a z + b) / (c z + d)</code>`.</p>
+<p>Möbius-Transformation (gebrochen lineare Abbildung) <code style="color:#22d3bf">w = (a z + b) / (c z + d)</code>.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The automorphisms of the Riemann sphere: every Möbius map is conformal and</p>
-<p>sends circles-and-lines to circles-and-lines. Two standard cases the tests</p>
-<p>pin: the Cayley transform `<code style="color:#22d3bf">(z - i)/(z + i)</code>` maps the real axis onto the</p>
-<p>unit circle (`<code style="color:#22d3bf">|w| = 1</code><code style="color:#22d3bf">) and </code><code style="color:#22d3bf">i</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">0</code><code style="color:#22d3bf">; the inversion </code><code style="color:#22d3bf">1/z</code>` maps the</p>
-<p>unit circle onto itself.</p>
-<p>The determinant `<code style="color:#22d3bf">a d - b c</code>` must not vanish — that degenerate case is not</p>
-<p>a map but a constant (every point collapses to `<code style="color:#22d3bf">a/c</code>`), which is refused</p>
-<p>rather than returned as a suspiciously uniform answer.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">|a d - b c|</code><code style="color:#22d3bf"> below </code><code style="color:#22d3bf">1e-12</code>` of the</p>
-<p>coefficient scale (degenerate/constant map), a sample <b>at</b> the pole</p>
-<p>`<code style="color:#22d3bf">z = -d/c</code>` (the image is the point at infinity, which float64 cannot</p>
-<p>represent), an overflowed result (a sample microscopically close to that</p>
-<p>pole), plus the usual shape and finiteness contracts.</p>
-<p>HALCON: no operator (`<code style="color:#22d3bf">projective_trans_point_2d</code>` is the real-plane</p>
-<p>projective analogue).</p>
+<p>The automorphisms of the Riemann sphere: every Möbius map is conformal and sends circles-and-lines to circles-and-lines. Two standard cases the tests</p>
+<p>pin: the Cayley transform <code style="color:#22d3bf">(z - i)/(z + i)</code> maps the real axis onto the unit circle (<code style="color:#22d3bf">|w| = 1</code>) and <code style="color:#22d3bf">i</code> to <code style="color:#22d3bf">0</code>; the inversion <code style="color:#22d3bf">1/z</code> maps the unit circle onto itself.</p>
+<p>The determinant <code style="color:#22d3bf">a d - b c</code> must not vanish — that degenerate case is not a map but a constant (every point collapses to <code style="color:#22d3bf">a/c</code>), which is refused rather than returned as a suspiciously uniform answer.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">|a d - b c|</code> below <code style="color:#22d3bf">1e-12</code> of the coefficient scale (degenerate/constant map), a sample <b>at</b> the pole <code style="color:#22d3bf">z = -d/c</code> (the image is the point at infinity, which float64 cannot represent), an overflowed result (a sample microscopically close to that pole), plus the usual shape and finiteness contracts.</p>
+<p>HALCON: no operator (<code style="color:#22d3bf">projective_trans_point_2d</code> is the real-plane projective analogue).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

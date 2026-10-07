@@ -6,14 +6,14 @@
 <p><img src="fig/r3_runlength_distribution.png" alt="r3_runlength_distribution: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_runlength_distribution.a.jpg">r3_runlength_distribution: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_runlength_distribution.a.jpg">r3_runlength_distribution: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_runlength_distribution.chain.jpg">r3_runlength_distribution: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_runlength_distribution.chain.jpg">r3_runlength_distribution: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Gibt eine zusammenfassende Statistik der horizontalen Lauflängenverteilung zurück (entspricht HALCON `<code style="color:#22d3bf">runlength_distribution</code>`).</p>
+<p>Gibt eine zusammenfassende Statistik der horizontalen Lauflängenverteilung zurück (entspricht HALCON <code style="color:#22d3bf">runlength_distribution</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>領域の全行にわたる水平連結ランの長さを集め、`<code style="color:#22d3bf">a &lt; 0.5</code><code style="color:#22d3bf"> ならその（母）分散、</code><code style="color:#22d3bf">a &gt;= 0.5</code><code style="color:#22d3bf"> ならラン長ヒストグラムのシャノンエントロピー（ビット）を返す。</code><code style="color:#22d3bf">b</code>` は未使用。ランが 1 つも無ければ 0.0。</p>
+<p>領域の全行にわたる水平連結ランの長さを集め、<code style="color:#22d3bf">a &lt; 0.5</code> ならその（母）分散、<code style="color:#22d3bf">a &gt;= 0.5</code> ならラン長ヒストグラムのシャノンエントロピー（ビット）を返す。<code style="color:#22d3bf">b</code> は未使用。ランが 1 つも無ければ 0.0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -23,7 +23,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-r3_runlength_distribution 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ar3_runlength_distribution%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ar3_runlength_distribution%200.50%200.50">Load &amp; run</a></p>
+r3_runlength_distribution 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ar3_runlength_distribution%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ar3_runlength_distribution%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>

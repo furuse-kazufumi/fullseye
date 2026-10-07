@@ -3,23 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_signal(pairs)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.pairs_to_signal(pairs)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_signal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>对 `<code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> → 因变量的 </code><code style="color:#22d3bf">signal (N,)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">pairs</code>` 的第二个出口。</p>
+<p>对 <code style="color:#22d3bf">(N,2)</code> → 因变量的 <code style="color:#22d3bf">signal (N,)</code>。<code style="color:#22d3bf">pairs</code> 的第二个出口。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>列 1(y)だけを取り出す。`<code style="color:#22d3bf">funct_1d_to_pairs</code>` が (x, y) を並べた</p>
-<p>(N,2) を返すので、その逆向きにあたる —— <b>x が等間隔ならば</b></p>
-<p>`<code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code>` は bit 一致する。等間隔でない x を持つ対を</p>
-<p>通すと、<b>x の情報が黙って落ちる</b>(`<code style="color:#22d3bf">signal</code>` は添字が等間隔だという前提の型)。</p>
-<p>だから :func:<code style="color:#22d3bf">pairs_to_table</code> が `<code style="color:#22d3bf">x_uniform</code>` を必ず一緒に出す。</p>
+<p>列 1(y)だけを取り出す。<code style="color:#22d3bf">funct_1d_to_pairs</code> が (x, y) を並べた(N,2) を返すので、その逆向きにあたる —— <b>x が等間隔ならば</b> <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> は bit 一致する。等間隔でない x を持つ対を通すと、<b>x の情報が黙って落ちる</b>(<code style="color:#22d3bf">signal</code> は添字が等間隔だという前提の型)。</p>
+<p>だから <code style="color:#22d3bf">pairs_to_table</code> が <code style="color:#22d3bf">x_uniform</code> を必ず一緒に出す。</p>
 <p>Args:</p>
 <p>pairs: (N, 2) または 2 本の等長 1-D のタプル。</p>
 <p>Returns:</p>
 <p>(N,) float64。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正 / 非有限。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>

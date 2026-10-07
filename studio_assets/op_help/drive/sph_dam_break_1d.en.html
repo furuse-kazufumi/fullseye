@@ -5,12 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>1 次元 SPH の浅水方程式でダム崩壊(乾いた床)を解く(群れのゲートを開けたときの広がりの模型)。</p>
-<p>水深 h_i = Σ_j m_j W(x_i − x_j, ℓ_ij)(1 次元の核、m = h₀ Δx)、加速度 du_i/dt = −g Σ_j m_j ∂W_ij/∂x_i(= −g ∂h/∂x、</p>
-<p>運動量を保存する対称形)+ Monaghan の人工粘性。平滑化の長さは粒子ごとに ℓ_i = κ m/h_i(先端の薄い所で広がる)、</p>
-<p>組には平均 ℓ_ij。左の壁(x = −length)は鏡像の粒子。真値は :func:<code style="color:#22d3bf">ritter_dam_break</code>(門で照らす)。</p>
+<p>水深 h_i = Σ_j m_j W(x_i − x_j, ℓ_ij)(1 次元の核、m = h₀ Δx)、加速度 du_i/dt = −g Σ_j m_j ∂W_ij/∂x_i(= −g ∂h/∂x、運動量を保存する対称形)+ Monaghan の人工粘性。平滑化の長さは粒子ごとに ℓ_i = κ m/h_i(先端の薄い所で広がる)、組には平均 ℓ_ij。左の壁(x = −length)は鏡像の粒子。真値は <code style="color:#22d3bf">ritter_dam_break</code>(門で照らす)。</p>
 <p>Returns:</p>
-<p>dict: `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (K,)、</code><code style="color:#22d3bf">x</code><code style="color:#22d3bf"> (K, N)、</code><code style="color:#22d3bf">h</code><code style="color:#22d3bf"> (K, N)、</code><code style="color:#22d3bf">u</code><code style="color:#22d3bf"> (K, N)(各時刻の粒子)、</code><code style="color:#22d3bf">front</code>` (K,)(最も前の粒子)、</p>
-<p>`<code style="color:#22d3bf">mass</code><code style="color:#22d3bf">(全質量、保存)、</code><code style="color:#22d3bf">c0</code>`。</p>
+<p>dict: <code style="color:#22d3bf">t</code> (K,)、<code style="color:#22d3bf">x</code> (K, N)、<code style="color:#22d3bf">h</code> (K, N)、<code style="color:#22d3bf">u</code> (K, N)(各時刻の粒子)、<code style="color:#22d3bf">front</code> (K,)(最も前の粒子)、</p>
+<p><code style="color:#22d3bf">mass</code>(全質量、保存)、<code style="color:#22d3bf">c0</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

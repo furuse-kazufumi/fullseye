@@ -5,28 +5,18 @@
 <p><img src="fig/tb_countrate_to_counts.png" alt="tb_countrate_to_counts: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.a.jpg">tb_countrate_to_counts: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.a.jpg">tb_countrate_to_counts: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.chain.jpg">tb_countrate_to_counts: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.chain.jpg">tb_countrate_to_counts: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.inputs.jpg">tb_countrate_to_counts: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.inputs.jpg">tb_countrate_to_counts: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Zählrate `<code style="color:#22d3bf">[Hz]</code><code style="color:#22d3bf"> → Zählwerte </code><code style="color:#22d3bf">counts</code><code style="color:#22d3bf">. Ein Ausgang von </code><code style="color:#22d3bf">countrate</code>` (<b>reversibel</b>).</p>
+<p>Zählrate <code style="color:#22d3bf">[Hz]</code> → Zählwerte <code style="color:#22d3bf">counts</code>. Ein Ausgang von <code style="color:#22d3bf">countrate</code> (<b>reversibel</b>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>単位が変換の全内容</b>: `<code style="color:#22d3bf">[1/s] * [s] = [1]</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">gate_s</code>` は積算窓の秒数で、</p>
-<p>既定 1 ms。`<code style="color:#22d3bf">counts</code>` は「時間 bin ごとの光子数」の型なので、レート列を</p>
-<p>そのまま counts と名乗らせると<b>桁が 7 つずれたまま黙って通る</b></p>
-<p>(`<code style="color:#22d3bf">TYPE_CHECKS</code>` はどちらも「非負の 1-D」としか見ていない)。</p>
-<p>:func:<code style="color:#22d3bf">counts_to_countrate</code> と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので</p>
-<p><b>相対</b> 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、</p>
-<p>レートのように桁が広い量は相対で言う)。</p>
-<p>★<b>2 度掛けても例外は出ない</b>。`<code style="color:#22d3bf">TYPE_TO_SORT</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">countrate</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">counts</code>` に</p>
-<p>畳んでいるので、出口が入口にそのまま繋がる。実測(2026-09-08、1,200 Hz を</p>
-<p>gate 1 ms で): 1 回で 1.2000 counts、もう 1 回通すと 0.0012 counts ——</p>
-<p><b>1,000 倍の取り違えが、負の値も NaN も出さずに通る</b>。値だけを見て</p>
-<p>「レートか計数か」を判定する方法は無いので、この 1 件は検査でなく</p>
-<p><b>呼ぶ側の規律</b>で守るしかない(繋いだ経路を書き残すこと)。</p>
+<p><b>単位が変換の全内容</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>。<code style="color:#22d3bf">gate_s</code> は積算窓の秒数で、既定 1 ms。<code style="color:#22d3bf">counts</code> は「時間 bin ごとの光子数」の型なので、レート列をそのまま counts と名乗らせると<b>桁が 7 つずれたまま黙って通る</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> はどちらも「非負の 1-D」としか見ていない)。</p>
+<p><code style="color:#22d3bf">counts_to_countrate</code> と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので <b>相対</b> 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、レートのように桁が広い量は相対で言う)。</p>
+<p>★<b>2 度掛けても例外は出ない</b>。<code style="color:#22d3bf">TYPE_TO_SORT</code> が <code style="color:#22d3bf">countrate</code> を <code style="color:#22d3bf">counts</code> に畳んでいるので、出口が入口にそのまま繋がる。実測(2026-09-08、1,200 Hz を gate 1 ms で): 1 回で 1.2000 counts、もう 1 回通すと 0.0012 counts —— <b>1,000 倍の取り違えが、負の値も NaN も出さずに通る</b>。値だけを見て「レートか計数か」を判定する方法は無いので、この 1 件は検査でなく <b>呼ぶ側の規律</b>で守るしかない(繋いだ経路を書き残すこと)。</p>
 <p>Args:</p>
 <p>countrate: (N,) の非負レート [Hz]。</p>
 <p>gate_s: 積算窓 [s]。&gt; 0。</p>
@@ -34,14 +24,14 @@
 <p>(N,) float64 の非負計数。</p>
 <p>Raises:</p>
 <p>ValueError: 負のレート / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op `<code style="color:#22d3bf">countrate_to_counts</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gate_s</code><code style="color:#22d3bf">(既定 0.001)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">countrate_to_counts</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">gate_s</code>(既定 0.001)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_counts 0.50 0.50
-tb_countrate_to_counts 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_counts%200.50%200.50%0Atb_countrate_to_counts%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_counts%200.50%200.50%0Atb_countrate_to_counts%200.50%200.50">Load &amp; run</a></p>
+tb_countrate_to_counts 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_counts%200.50%200.50%0Atb_countrate_to_counts%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_counts%200.50%200.50%0Atb_countrate_to_counts%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">countrate_to_counts</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>

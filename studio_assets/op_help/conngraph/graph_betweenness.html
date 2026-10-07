@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import conngraph; conngraph.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconngraph.get(&quot;graph_betweenness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>媒介中心性(Brandes 2001、二値有向、正規化なし)。ノードごとの長さ n の配列。</p>
-<p>ノード v の値 = Σ_{s≠v≠t} σ_st(v) / σ_st(最短路の本数比)。二値構造が対称</p>
-<p>(すべての辺が相互)なら無向グラフとして (s, t) と (t, s) を 1 対と数え 2 で割る</p>
-<p>—— 無向スター(n 個)の中心が (n−1)(n−2)/2、葉が 0 になる教科書の値。</p>
-<p>有向(非対称)なら順序対のまま数える。</p>
+<p>ノード v の値 = Σ_{s≠v≠t} σ_st(v) / σ_st(最短路の本数比)。二値構造が対称(すべての辺が相互)なら無向グラフとして (s, t) と (t, s) を 1 対と数え 2 で割る —— 無向スター(n 個)の中心が (n−1)(n−2)/2、葉が 0 になる教科書の値。有向(非対称)なら順序対のまま数える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -4,15 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;gs_read_file&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D Gaussian Splatting のファイルを読み、ガウスの中心・色・不透明度・大きさ・向きを返す。</p>
-<p>対応: <b>INRIA 形式の .ply</b>(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。</p>
-<p>`<code style="color:#22d3bf">gsplat_train_native</code>` の出力もこれ)と <b>.splat</b>(1 個 32 バイト: 位置 3×f32、大きさ 3×f32、</p>
-<p>RGBA 4×u8、回転 4×u8(wxyz、(q·128)+128))。</p>
+<p>対応: <b>INRIA 形式の .ply</b>(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。<code style="color:#22d3bf">gsplat_train_native</code> の出力もこれ)と <b>.splat</b>(1 個 32 バイト: 位置 3×f32、大きさ 3×f32、RGBA 4×u8、回転 4×u8(wxyz、(q·128)+128))。</p>
 <p>Args:</p>
 <p>path: ファイル。</p>
 <p>min_opacity: これ未満の不透明度のガウスを落とす(0 なら全部)。</p>
 <p>Returns:</p>
-<p>``{&quot;xyz&quot; (N,3), &quot;rgb&quot; (N,3) [0,1], &quot;opacity&quot; (N,) [0,1], &quot;scale&quot; (N,3)(実寸、exp 済み),</p>
-<p>&quot;rot&quot; (N,4) wxyz 単位四元数, &quot;n_total&quot;, &quot;format&quot;}``。色は 0 次の球面調和だけ(視点で変わる高次は捨てる)。</p>
+<p><code style="color:#22d3bf">{&quot;xyz&quot; (N,3), &quot;rgb&quot; (N,3) [0,1], &quot;opacity&quot; (N,) [0,1], &quot;scale&quot; (N,3)(実寸、exp 済み), &quot;rot&quot; (N,4) wxyz 単位四元数, &quot;n_total&quot;, &quot;format&quot;}</code>。色は 0 次の球面調和だけ(視点で変わる高次は捨てる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

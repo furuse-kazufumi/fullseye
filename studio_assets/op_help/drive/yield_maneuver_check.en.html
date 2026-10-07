@@ -5,18 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>緊急自動車が近づいたときの自車の動きを道路交通法 40 条で採点する。</p>
-<p>40 条 1 項: 交差点又はその附近 → 交差点を避け、道路の左側に寄って <b>一時停止</b>。</p>
-<p>40 条 2 項: それ以外 → 道路の左側に寄って進路を譲る(停止までは求めない)。</p>
-<p>(一方通行で左に寄ると妨げる場合の右寄せは扱わない。)</p>
-<p>`<code style="color:#22d3bf">trajectory</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">{&quot;t&quot;, &quot;x&quot;, &quot;y&quot;, &quot;v&quot;}</code>`。x = 道に沿った前端の位置、y = 車の左側面と道路の左端の距離(≥ 0)、</p>
-<p>v = 速さ。`<code style="color:#22d3bf">intersections</code>` = [(x_in, x_out), ...] (交差点の範囲)。車は [x − car_length, x] を占める。</p>
-<p>`<code style="color:#22d3bf">t_approach</code><code style="color:#22d3bf"> = 近づきに気づくべき時刻、</code><code style="color:#22d3bf">t_passed</code>` = 緊急自動車が通り過ぎた時刻。</p>
+<p>40 条 1 項: 交差点又はその附近 → 交差点を避け、道路の左側に寄って <b>一時停止</b>。40 条 2 項: それ以外 → 道路の左側に寄って進路を譲る(停止までは求めない)。(一方通行で左に寄ると妨げる場合の右寄せは扱わない。)</p>
+<p><code style="color:#22d3bf">trajectory</code>: <code style="color:#22d3bf">{&quot;t&quot;, &quot;x&quot;, &quot;y&quot;, &quot;v&quot;}</code>。x = 道に沿った前端の位置、y = 車の左側面と道路の左端の距離(≥ 0)、v = 速さ。<code style="color:#22d3bf">intersections</code> = [(x_in, x_out), ...] (交差点の範囲)。車は [x − car_length, x] を占める。<code style="color:#22d3bf">t_approach</code> = 近づきに気づくべき時刻、<code style="color:#22d3bf">t_passed</code> = 緊急自動車が通り過ぎた時刻。</p>
 <p>判定(閾値はすべて <b>仮定</b>、法は数値を定めていない):</p>
 <p style="margin:2px 0 2px 12px">• 「附近」= t_approach の自車の前端が [x_in − near_margin, x_out + near_margin] に入る交差点がある。</p>
-<p style="margin:2px 0 2px 12px">• 「左に寄る」= 期間中に y ≤ `<code style="color:#22d3bf">left_tol</code><code style="color:#22d3bf">。「一時停止」= 期間中に v ≤ </code><code style="color:#22d3bf">stop_speed</code>` の刻みがある。</p>
+<p style="margin:2px 0 2px 12px">• 「左に寄る」= 期間中に y ≤ <code style="color:#22d3bf">left_tol</code>。「一時停止」= 期間中に v ≤ <code style="color:#22d3bf">stop_speed</code> の刻みがある。</p>
 <p style="margin:2px 0 2px 12px">• 「交差点を避け」= 期間中に止まっている刻み(v ≤ stop_speed)で車体が交差点の範囲に重ならない。</p>
-<p>返り値: `<code style="color:#22d3bf">case</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">&quot;40-1&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;40-2&quot;</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">violations</code><code style="color:#22d3bf">(各 </code><code style="color:#22d3bf">{&quot;rule&quot;, &quot;detail&quot;, &quot;article&quot;}</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">ok</code>`、</p>
-<p>`<code style="color:#22d3bf">min_y</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">stopped</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">stopped_in_intersection</code>`。</p>
+<p>返り値: <code style="color:#22d3bf">case</code>(<code style="color:#22d3bf">&quot;40-1&quot;</code> / <code style="color:#22d3bf">&quot;40-2&quot;</code>)、<code style="color:#22d3bf">violations</code>(各 <code style="color:#22d3bf">{&quot;rule&quot;, &quot;detail&quot;, &quot;article&quot;}</code>)、<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">min_y</code>、<code style="color:#22d3bf">stopped</code>、<code style="color:#22d3bf">stopped_in_intersection</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

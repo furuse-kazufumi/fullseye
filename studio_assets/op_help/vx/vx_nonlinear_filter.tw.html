@@ -5,18 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>非線形フィルタ(3.38 節): マスクの真の画素の値の中央値 / 最小(収縮)/ 最大(膨張)(REQ-0325・0330)。</p>
-<p>*function*: `<code style="color:#22d3bf">&quot;median&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;min&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;max&quot;</code>`(vx_non_linear_filter_e)。*mask*: 2-D の bool(BOX / CROSS / DISK / OTHER の</p>
-<p>どれでも)。*origin*: マスクの原点 (行, 列)(VX_MATRIX_ORIGIN、既定は中央 `<code style="color:#22d3bf">(rows // 2, cols // 2)</code>`)。</p>
-<p>*border*(必須): `<code style="color:#22d3bf">&quot;replicate&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;constant&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;undefined&quot;</code>`(端は 0 で埋めて計算する —— 値は規格上未定義)。</p>
-<p>★マスクの画素数が偶数のときの中央値は規格に無い —— 昇順に並べた `<code style="color:#22d3bf">n // 2</code>` 番目(上側の中央値、scipy の median_filter と同じ)を取る。</p>
+<p>*function*: <code style="color:#22d3bf">&quot;median&quot;</code> / <code style="color:#22d3bf">&quot;min&quot;</code> / <code style="color:#22d3bf">&quot;max&quot;</code>(vx_non_linear_filter_e)。*mask*: 2-D の bool(BOX / CROSS / DISK / OTHER のどれでも)。*origin*: マスクの原点 (行, 列)(VX_MATRIX_ORIGIN、既定は中央 <code style="color:#22d3bf">(rows // 2, cols // 2)</code>)。*border*(必須): <code style="color:#22d3bf">&quot;replicate&quot;</code> / <code style="color:#22d3bf">&quot;constant&quot;</code> / <code style="color:#22d3bf">&quot;undefined&quot;</code>(端は 0 で埋めて計算する —— 値は規格上未定義)。★マスクの画素数が偶数のときの中央値は規格に無い —— 昇順に並べた <code style="color:#22d3bf">n // 2</code> 番目(上側の中央値、scipy の median_filter と同じ)を取る。</p>
 <p>REQ-0327: 9×9 までのマスクは必ず扱う(この実装に上限は無い)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: U8 の 2-D でない / function が一覧に無い / mask が 2-D の bool でない・空 / origin がマスクの外。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / function が一覧に無い / mask が 2-D の bool でない・空 / origin がマスクの外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>

@@ -3,10 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spiral_search_points(pitch: &#x27;float&#x27;, step: &#x27;float&#x27;, r_max: &#x27;float&#x27;, centre=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsym; pegsym.spiral_search_points(pitch: &#x27;float&#x27;, step: &#x27;float&#x27;, r_max: &#x27;float&#x27;, centre=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;spiral_search_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>横ずれの探索点: Archimedes のらせん r = p φ/(2π) を弧長 `<code style="color:#22d3bf">step</code><code style="color:#22d3bf"> [m] ごとに(中心から)、半径 </code><code style="color:#22d3bf">r_max</code>` まで。隣の巻きとの間隔 =</p>
-<p>`<code style="color:#22d3bf">pitch</code>`。面取りが捕まえる半径を c とすると、p ≤ 2c かつ step ≤ 2c で抜けなく覆う(隣の巻きの間の点の最悪の距離 √((p/2)² + (s/2)²)</p>
-<p>≤ c が十分条件、`<code style="color:#22d3bf">worst_gap</code><code style="color:#22d3bf"> で返す)。返り </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf">(N, 2)、</code><code style="color:#22d3bf">worst_gap</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n</code>`。</p>
-<p><b>Raises</b> ValueError: pitch・step・r_max ≤ 0、点が 200,000 を超える。</p>
+<p>横ずれの探索点: Archimedes のらせん r = p φ/(2π) を弧長 <code style="color:#22d3bf">step</code> [m] ごとに(中心から)、半径 <code style="color:#22d3bf">r_max</code> まで。隣の巻きとの間隔 = <code style="color:#22d3bf">pitch</code>。面取りが捕まえる半径を c とすると、p ≤ 2c かつ step ≤ 2c で抜けなく覆う(隣の巻きの間の点の最悪の距離 √((p/2)² + (s/2)²) ≤ c が十分条件、<code style="color:#22d3bf">worst_gap</code> で返す)。返り <code style="color:#22d3bf">points</code>(N, 2)、<code style="color:#22d3bf">worst_gap</code>、<code style="color:#22d3bf">n</code>。<b>Raises</b> ValueError: pitch・step・r_max ≤ 0、点が 200,000 を超える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

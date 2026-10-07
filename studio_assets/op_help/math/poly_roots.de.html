@@ -5,26 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Alle Wurzeln eines Polynoms (Koeffizienten höchste Potenz zuerst) — komplexe eingeschlossen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Roots are the eigenvalues of the companion matrix (`<code style="color:#22d3bf">np.roots</code>`); the</p>
-<p>polynomial must have degree ≥ 1 and a <b>non-zero leading coefficient</b></p>
-<p>(fail-closed: a zero leading coefficient means the stated degree is a lie —</p>
-<p>trim it explicitly rather than have it silently dropped).</p>
-<p>Returns complex128, sorted by real part then imaginary part</p>
-<p>(deterministic). Complex answers are honest answers: `<code style="color:#22d3bf">x² + 1</code>` really does</p>
-<p>have roots `<code style="color:#22d3bf">±i</code>`, and hiding them would misreport the polynomial. Pass</p>
-<p>`<code style="color:#22d3bf">real_only=True</code>` to keep only roots whose imaginary part is negligible</p>
-<p>(`<code style="color:#22d3bf">|imag| &lt;= imag_tol * max(1, |root|)</code>`) and get them back as a sorted</p>
-<p>float64 array — possibly <b>empty</b>, which is the correct answer for</p>
-<p>`<code style="color:#22d3bf">x² + 1</code>`.</p>
-<p>Numerical note: root-finding conditioning degrades with degree and with</p>
-<p>clustered roots (a double root moves ~`<code style="color:#22d3bf">sqrt(eps)</code>` under coefficient</p>
-<p>noise — Wilkinson&#x27;s classic analysis); treat high-degree roots as</p>
-<p>approximate. HALCON: no root-finding tuple operator.</p>
+<p>Roots are the eigenvalues of the companion matrix (<code style="color:#22d3bf">np.roots</code>); the polynomial must have degree ≥ 1 and a <b>non-zero leading coefficient</b> (fail-closed: a zero leading coefficient means the stated degree is a lie — trim it explicitly rather than have it silently dropped).</p>
+<p>Returns complex128, sorted by real part then imaginary part (deterministic). Complex answers are honest answers: <code style="color:#22d3bf">x² + 1</code> really does have roots <code style="color:#22d3bf">±i</code>, and hiding them would misreport the polynomial. Pass <code style="color:#22d3bf">real_only=True</code> to keep only roots whose imaginary part is negligible (<code style="color:#22d3bf">|imag| &lt;= imag_tol * max(1, |root|)</code>) and get them back as a sorted float64 array — possibly <b>empty</b>, which is the correct answer for <code style="color:#22d3bf">x² + 1</code>.</p>
+<p>Numerical note: root-finding conditioning degrades with degree and with clustered roots (a double root moves ~<code style="color:#22d3bf">sqrt(eps)</code> under coefficient noise — Wilkinson&#x27;s classic analysis); treat high-degree roots as approximate. HALCON: no root-finding tuple operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

@@ -2,27 +2,17 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">synth_frame_series — ASTROSTACK <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">images</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import astrostack; astrostack.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsastrostack.get(&quot;synth_frame_series&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.synth_frame_series(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">images</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.synth_frame_series.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">astrostack.synth_frame_series</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.synth_frame_series(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">images</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.synth_frame_series.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">astrostack.synth_frame_series</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>같은 성야를 `<code style="color:#22d3bf">n_frames</code>` 장, <b>각각 다른 잡음과 다른 디더</b>로 다시 촬영합니다.</p>
+<p>같은 성야를 <code style="color:#22d3bf">n_frames</code> 장, <b>각각 다른 잡음과 다른 디더</b>로 다시 촬영합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>星の座標・フラックスは全フレームで同じ(`<code style="color:#22d3bf">field_seed</code>` を固定して星の抽選を</p>
-<p>再現し、観測ごとの `<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">shift_row</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">shift_col</code>` だけを振る)ので、</p>
-<p>位置合わせ・合成・drizzle の正解が 1 組で済む。*fwhm_jitter* を与えると FWHM がフレームごとに揺れる</p>
-<p>—— これが lucky imaging の「シーイングが揺らぐ」条件で、0 のままだと</p>
-<p>:func:<code style="color:#22d3bf">lucky_select</code> が選ぶ理由が無くなる。</p>
-<p>ディザは `<code style="color:#22d3bf">dither_px</code><code style="color:#22d3bf"> を半径とする決定的な螺旋(</code><code style="color:#22d3bf">i</code>` 番目のフレームを</p>
-<p>`<code style="color:#22d3bf">dither_px * (i / (n-1))</code>` の半径・黄金角の方向へ置く)。乱数でないので</p>
-<p>フレーム数を変えても並びが安定し、図が再現する。</p>
-<p>Returns `<code style="color:#22d3bf">(frames, truth)</code>`:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">frames</code><code style="color:#22d3bf"> —— 長さ </code><code style="color:#22d3bf">n_frames</code><code style="color:#22d3bf"> の list、各要素は </code><code style="color:#22d3bf">(H, W)</code>` float64。</p>
-<p>**`<code style="color:#22d3bf">images</code>` 語彙そのもの**なので、合成 op へそのまま渡せる。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> —— :func:</code>synth_starfield<code style="color:#22d3bf"> の truth に、</code><code style="color:#22d3bf">shifts</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N, 2)</code>`</p>
-<p>(各フレームの `<code style="color:#22d3bf">(dr, dc)</code><code style="color:#22d3bf">)と </code><code style="color:#22d3bf">fwhms</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N,)</code>` を足したもの。</p>
-<p>`<code style="color:#22d3bf">rows</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cols</code>` は<b>ディザ前</b>(フレーム 0 の位置)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: :func:</code>synth_starfield` の条件に加えて、</p>
-<p>*n_frames* が 1 未満、*dither_px* が負、*fwhm_jitter* が負の場合。</p>
+<p>星の座標・フラックスは全フレームで同じ(<code style="color:#22d3bf">field_seed</code> を固定して星の抽選を再現し、観測ごとの <code style="color:#22d3bf">seed</code> と <code style="color:#22d3bf">shift_row</code> / <code style="color:#22d3bf">shift_col</code> だけを振る)ので、位置合わせ・合成・drizzle の正解が 1 組で済む。*fwhm_jitter* を与えると FWHM がフレームごとに揺れる —— これが lucky imaging の「シーイングが揺らぐ」条件で、0 のままだと <code style="color:#22d3bf">lucky_select</code> が選ぶ理由が無くなる。</p>
+<p>ディザは <code style="color:#22d3bf">dither_px</code> を半径とする決定的な螺旋(<code style="color:#22d3bf">i</code> 番目のフレームを <code style="color:#22d3bf">dither_px * (i / (n-1))</code> の半径・黄金角の方向へ置く)。乱数でないのでフレーム数を変えても並びが安定し、図が再現する。</p>
+<p>Returns <code style="color:#22d3bf">(frames, truth)</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">frames</code> —— 長さ <code style="color:#22d3bf">n_frames</code> の list、各要素は <code style="color:#22d3bf">(H, W)</code> float64。<b><code style="color:#22d3bf">images</code> 語彙そのもの</b>なので、合成 op へそのまま渡せる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">truth</code> —— <code style="color:#22d3bf">synth_starfield</code> の truth に、<code style="color:#22d3bf">shifts</code> <code style="color:#22d3bf">(N, 2)</code> (各フレームの <code style="color:#22d3bf">(dr, dc)</code>)と <code style="color:#22d3bf">fwhms</code> <code style="color:#22d3bf">(N,)</code> を足したもの。<code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> は<b>ディザ前</b>(フレーム 0 の位置)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">synth_starfield</code> の条件に加えて、*n_frames* が 1 未満、*dither_px* が負、*fwhm_jitter* が負の場合。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

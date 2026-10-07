@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>Kendall の τ_b(同順位補正あり)= (C − D) / sqrt((n0 − n1)(n0 − n2))。</p>
-<p>C / D = 一致 / 不一致の対の数、n0 = n(n−1)/2、n1 / n2 = x 側 / y 側で同順位の対の数。O(n²) を `<code style="color:#22d3bf">chunk</code>` 行ずつの</p>
-<p>放送で数える(n = 3000 で 4.5e6 対、数秒)。単調増加で 1、反転で −1。どちらかが定数なら `<code style="color:#22d3bf">nan</code>`。TID2013 の公表 Kendall は</p>
-<p>τ_b(14 本が 3 桁一致、τ_a だと 4 本外れる)。±inf は順序だけ使う。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 長さ不一致・2 未満・nan。</p>
+<p>C / D = 一致 / 不一致の対の数、n0 = n(n−1)/2、n1 / n2 = x 側 / y 側で同順位の対の数。O(n²) を <code style="color:#22d3bf">chunk</code> 行ずつの放送で数える(n = 3000 で 4.5e6 対、数秒)。単調増加で 1、反転で −1。どちらかが定数なら <code style="color:#22d3bf">nan</code>。TID2013 の公表 Kendall は τ_b(14 本が 3 桁一致、τ_a だと 4 本外れる)。±inf は順序だけ使う。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さ不一致・2 未満・nan。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

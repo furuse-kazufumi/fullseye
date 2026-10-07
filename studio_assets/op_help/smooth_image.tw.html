@@ -6,25 +6,25 @@
 <p><img src="fig/smooth_image.png" alt="smooth_image: input → output"></p>
 <p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
 <p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/smooth_image.a.jpg">smooth_image: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/smooth_image.a.jpg">smooth_image: 旋鈕 a 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/smooth_image.inputs.jpg">smooth_image: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/smooth_image.inputs.jpg">smooth_image: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>以單一高斯模糊(sigma 為 `<code style="color:#22d3bf">0.5+2.0*a</code><code style="color:#22d3bf">)近似的通用平滑處理。HALCON 的 </code><code style="color:#22d3bf">smooth_image</code>`(Smooth an image using various filters.)是可在 Deriche/Gauss/Mean 等多種濾波器類型間選擇的萬能運算子,但這裡簡化為僅高斯一種(此近似的侷限)。</p>
+<p>以單一高斯模糊(sigma 為 <code style="color:#22d3bf">0.5+2.0*a</code>)近似的通用平滑處理。HALCON 的 <code style="color:#22d3bf">smooth_image</code>(Smooth an image using various filters.)是可在 Deriche/Gauss/Mean 等多種濾波器類型間選擇的萬能運算子,但這裡簡化為僅高斯一種(此近似的侷限)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシグマを 0.5〜2.5 の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)（實測。</code>tools/impl2/border_probe.py`）。</p>
+<p><code style="color:#22d3bf">a</code> がシグマを 0.5〜2.5 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 <code style="color:#22d3bf">reflect</code>)（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">smooth_image 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:smooth_image%200.35%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:smooth_image%200.35%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">smooth_image 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:smooth_image%200.35%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:smooth_image%200.35%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_smoothing_rank.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image</code> 作為輸入)</h3>

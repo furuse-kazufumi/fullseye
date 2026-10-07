@@ -3,13 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_lateral(v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import rsssafety; rsssafety.rss_lateral(v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;rss_lateral&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>横方向(論文 Lemma lateral / lib `<code style="color:#22d3bf">calculateSafeLateralDistance</code>`)の最小安全距離 [m]。c_1 が左。</p>
-<p>横速度は <b>+ が右向き</b>(左の車が相手へ向かう向き)。``d_min = [ 左のオフセット − 右のオフセット</p>
-<p>+ ½(μ_1 + μ_2) ]_+`<code style="color:#22d3bf"> で、左 = </code><code style="color:#22d3bf">S(v1; ρ_1, +a_lat,1, b_lat,1, direction=+1)</code>`、</p>
-<p>右 = `<code style="color:#22d3bf">S(v2; ρ_2, −a_lat,2, b_lat,2, direction=−1)</code>`。</p>
-<p>ρ 後の横速度が互いに向いている範囲(v_{1,ρ} ≥ 0, v_{2,ρ} ≤ 0、かつ 左 − 右 ≥ 0)では論文の式</p>
-<p>`<code style="color:#22d3bf">μ + [ (v_1 + v_{1,ρ})/2 ρ + v_{1,ρ}²/(2b) − ((v_2 + v_{2,ρ})/2 ρ − v_{2,ρ}²/(2b)) ]_+</code>` と一致する。</p>
-<p>それ以外では lib に従う(モジュール docstring「論文と ad-rss-lib が違う所」)。</p>
+<p>横方向(論文 Lemma lateral / lib <code style="color:#22d3bf">calculateSafeLateralDistance</code>)の最小安全距離 [m]。c_1 が左。</p>
+<p>横速度は <b>+ が右向き</b>(左の車が相手へ向かう向き)。<code style="color:#22d3bf">d_min = [ 左のオフセット − 右のオフセット + ½(μ_1 + μ_2) ]_+</code> で、左 = <code style="color:#22d3bf">S(v1; ρ_1, +a_lat,1, b_lat,1, direction=+1)</code>、右 = <code style="color:#22d3bf">S(v2; ρ_2, −a_lat,2, b_lat,2, direction=−1)</code>。ρ 後の横速度が互いに向いている範囲(v_{1,ρ} ≥ 0, v_{2,ρ} ≤ 0、かつ 左 − 右 ≥ 0)では論文の式 <code style="color:#22d3bf">μ + [ (v_1 + v_{1,ρ})/2 ρ + v_{1,ρ}²/(2b) − ((v_2 + v_{2,ρ})/2 ρ − v_{2,ρ}²/(2b)) ]_+</code> と一致する。それ以外では lib に従う(モジュール docstring「論文と ad-rss-lib が違う所」)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

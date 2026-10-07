@@ -5,18 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 화소를 RGB 유클리드 거리로 가장 가까운 팔레트 색에 대응시킵니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">colors</code><code style="color:#22d3bf"> is an </code><code style="color:#22d3bf">(K, 3)</code><code style="color:#22d3bf"> array or a list of :mod:</code>palette` role names;</p>
-<p>the default is the whole Okabe–Ito set plus black and white, so the result</p>
-<p>stays legible under a colour vision deficiency.</p>
-<p>The search is exhaustive, so the assignment is <b>optimal for this metric</b></p>
-<p>and each pixel&#x27;s error equals its distance to the nearest palette entry —</p>
-<p>there is no approximation to bound. The suite checks optimality by brute</p>
-<p>force and checks that an image whose colours already lie in the palette</p>
-<p>comes back unchanged, bit for bit.</p>
-<p>Euclidean distance in (possibly sRGB-encoded) RGB is not perceptual</p>
-<p>distance. That is a documented choice, not an oversight: a perceptual metric</p>
-<p>needs a colour-appearance model this module does not own, and quantising in</p>
-<p>an unstated space would be worse than quantising in a stated one.</p>
+<p><code style="color:#22d3bf">colors</code> is an <code style="color:#22d3bf">(K, 3)</code> array or a list of <code style="color:#22d3bf">palette</code> role names; the default is the whole Okabe–Ito set plus black and white, so the result stays legible under a colour vision deficiency.</p>
+<p>The search is exhaustive, so the assignment is <b>optimal for this metric</b> and each pixel&#x27;s error equals its distance to the nearest palette entry — there is no approximation to bound. The suite checks optimality by brute force and checks that an image whose colours already lie in the palette comes back unchanged, bit for bit.</p>
+<p>Euclidean distance in (possibly sRGB-encoded) RGB is not perceptual distance. That is a documented choice, not an oversight: a perceptual metric needs a colour-appearance model this module does not own, and quantising in an unstated space would be worse than quantising in a stated one.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

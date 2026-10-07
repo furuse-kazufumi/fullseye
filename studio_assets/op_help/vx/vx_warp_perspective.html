@@ -3,10 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import vxcore; vxcore.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_perspective&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>射影変換(3.57 節)。逆写像: `<code style="color:#22d3bf">x0 = M[0]·(x, y, 1)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">y0 = M[1]·(x, y, 1)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">z0 = M[2]·(x, y, 1)</code>`、</p>
-<p>出力 (x, y) = 入力 (x0/z0, y0/z0)(REQ-0508)。z0 = 0 の画素は外として埋める。</p>
-<p>*matrix*: 数学の並びの 3×3(規格の C の宣言 `<code style="color:#22d3bf">mat[3][3]</code><code style="color:#22d3bf"> は転置した並び)。他の引数は :func:</code>vx_warp_affine` と同じ。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: U8 の 2-D でない / matrix が 3×3 の有限でない / interpolation・border が一覧に無い。</p>
+<p>射影変換(3.57 節)。逆写像: <code style="color:#22d3bf">x0 = M[0]·(x, y, 1)</code>、<code style="color:#22d3bf">y0 = M[1]·(x, y, 1)</code>、<code style="color:#22d3bf">z0 = M[2]·(x, y, 1)</code>、出力 (x, y) = 入力 (x0/z0, y0/z0)(REQ-0508)。z0 = 0 の画素は外として埋める。</p>
+<p>*matrix*: 数学の並びの 3×3(規格の C の宣言 <code style="color:#22d3bf">mat[3][3]</code> は転置した並び)。他の引数は <code style="color:#22d3bf">vx_warp_affine</code> と同じ。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / matrix が 3×3 の有限でない / interpolation・border が一覧に無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

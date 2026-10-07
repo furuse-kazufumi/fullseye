@@ -6,10 +6,7 @@
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>写真から<b>列ごとの空と地形の境界の行</b>を動的計画法で 1 本抜く → signal (W,)。</p>
 <p>Lie・Lin・Hsu 2005(*Pattern Recognition*: 航法のための頑健なスカイライン抽出)と同じ考え:</p>
-<p>垂直方向の明るさの変化(空が上で明るければ `<code style="color:#22d3bf">I[v−1] − I[v+1]</code>` が正)を「境界らしさ」にし、</p>
-<p>隣の列から行が `<code style="color:#22d3bf">max_jump</code>` 以上飛ばない連続な経路のうちコストが最小のものを選ぶ</p>
-<p>(`<code style="color:#22d3bf">jump_penalty</code>` × 行の飛び)。雲や建物の縦の縁で局所的に強い応答が出ても、経路の</p>
-<p>連続性が本物の稜線を残す。</p>
+<p>垂直方向の明るさの変化(空が上で明るければ <code style="color:#22d3bf">I[v−1] − I[v+1]</code> が正)を「境界らしさ」にし、隣の列から行が <code style="color:#22d3bf">max_jump</code> 以上飛ばない連続な経路のうちコストが最小のものを選ぶ(<code style="color:#22d3bf">jump_penalty</code> × 行の飛び)。雲や建物の縦の縁で局所的に強い応答が出ても、経路の連続性が本物の稜線を残す。</p>
 <p>Args:</p>
 <p>image: (H, W) float。RGB なら先に灰色にする。</p>
 <p>sky_is_bright: 空が地形より明るい(昼)。夜景・逆光で反転するなら False。</p>
@@ -17,8 +14,7 @@
 <p>max_jump: 隣の列で許す行の飛び [画素]。</p>
 <p>jump_penalty: 飛び 1 画素あたりのコスト(境界らしさは 0〜1 に正規化してある)。</p>
 <p>Returns:</p>
-<p>signal (W,) float: 列ごとの境界の行(0 が最上段)。**空しか写っていない・地形しか</p>
-<p>写っていない**画像では境界の応答が弱く、経路の平均コストが 0 に近いので ValueError</p>
+<p>signal (W,) float: 列ごとの境界の行(0 が最上段)。<b>空しか写っていない・地形しか写っていない</b>画像では境界の応答が弱く、経路の平均コストが 0 に近いので ValueError</p>
 <p>で止める(黙って雑音の線を返さない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>

@@ -5,54 +5,42 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>領域(region)を<b>反転色</b>で塗る/縁取る。</p>
-<p>「地が明るいか暗いか判らないので、どちらでも見える色で描きたい」という</p>
-<p>ときの古典手。塗り色を決めずに済むかわりに、<b>中間調で消える</b>ので</p>
-<p>:func:<code style="color:#22d3bf">annotate_invert_visibility</code> の測定を内側で必ず通す。</p>
-<p>★<b>地がモノクロ(グレー)なら、まず彩度のある色を検討すること</b>。灰色には</p>
-<p>彩度が無いので、彩度のある色はどの階調とも<b>色相で</b>区別がつく —— 反転色</p>
-<p>より確実で、しかも「これは重ねた線だ」と一目で判る</p>
-<p>(:func:<code style="color:#22d3bf">annotate_outline</code> / :func:<code style="color:#22d3bf">overlay_mask</code> に役割色を渡す)。</p>
-<p>反転色が本領を発揮するのは、地がカラーで<b>どの色を選んでも衝突しうる</b>とき。</p>
-<p>なお :func:<code style="color:#22d3bf">annotate_invert_visibility</code> が測るのは WCAG の<b>輝度</b>比なので、</p>
-<p>「輝度は同じだが色相が違う」ような見え方は評価できない —— 色で描くなら、</p>
-<p>この op の数字は当てにしないこと。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>「地が明るいか暗いか判らないので、どちらでも見える色で描きたい」というときの古典手。塗り色を決めずに済むかわりに、<b>中間調で消える</b>ので <code style="color:#22d3bf">annotate_invert_visibility</code> の測定を内側で必ず通す。</p>
+<p>★<b>地がモノクロ(グレー)なら、まず彩度のある色を検討すること</b>。灰色には彩度が無いので、彩度のある色はどの階調とも<b>色相で</b>区別がつく —— 反転色より確実で、しかも「これは重ねた線だ」と一目で判る(<code style="color:#22d3bf">annotate_outline</code> / <code style="color:#22d3bf">overlay_mask</code> に役割色を渡す)。反転色が本領を発揮するのは、地がカラーで<b>どの色を選んでも衝突しうる</b>とき。</p>
+<p>なお <code style="color:#22d3bf">annotate_invert_visibility</code> が測るのは WCAG の<b>輝度</b>比なので、「輝度は同じだが色相が違う」ような見え方は評価できない —— 色で描くなら、この op の数字は当てにしないこと。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>mask : (H,W)</p>
 <p>領域。真偽か [0,1] の重み。<b>画像と形が違えば例外</b>。</p>
 <p>draw : {&quot;fill&quot;, &quot;margin&quot;}</p>
-<p>HALCON の `<code style="color:#22d3bf">set_draw</code><code style="color:#22d3bf"> と同じ語。</code><code style="color:#22d3bf">&quot;fill&quot;</code><code style="color:#22d3bf"> は中身ごと、</code><code style="color:#22d3bf">&quot;margin&quot;</code>`</p>
-<p>は<b>輪郭だけ</b>を反転する。輪郭は太さ `<code style="color:#22d3bf">width</code>` 画素(整数に丸める)の</p>
+<p>HALCON の <code style="color:#22d3bf">set_draw</code> と同じ語。<code style="color:#22d3bf">&quot;fill&quot;</code> は中身ごと、<code style="color:#22d3bf">&quot;margin&quot;</code></p>
+<p>は<b>輪郭だけ</b>を反転する。輪郭は太さ <code style="color:#22d3bf">width</code> 画素(整数に丸める)の</p>
 <p>帯で、領域の内外へ半分ずつ広がる。</p>
 <p>width : float</p>
-<p>`<code style="color:#22d3bf">draw=&quot;margin&quot;</code>` のときの帯の太さ(画素)。</p>
+<p><code style="color:#22d3bf">draw=&quot;margin&quot;</code> のときの帯の太さ(画素)。</p>
 <p>mode : str</p>
-<p>:data:<code style="color:#22d3bf">INVERT_MODES</code>。`<code style="color:#22d3bf">&quot;complement&quot;</code><code style="color:#22d3bf"> は地の模様を残し、</code><code style="color:#22d3bf">&quot;xor&quot;</code>` は</p>
-<p>模様を残したまま消えないことを保証し、`<code style="color:#22d3bf">&quot;contrast&quot;</code>` は白黒に倒して</p>
+<p><code style="color:#22d3bf">INVERT_MODES</code>。<code style="color:#22d3bf">&quot;complement&quot;</code> は地の模様を残し、<code style="color:#22d3bf">&quot;xor&quot;</code> は</p>
+<p>模様を残したまま消えないことを保証し、<code style="color:#22d3bf">&quot;contrast&quot;</code> は白黒に倒して</p>
 <p>見えることを保証する。</p>
 <p>bits : int</p>
-<p>`<code style="color:#22d3bf">mode=&quot;xor&quot;</code><code style="color:#22d3bf"> の bit マスク(1..255)。既定 </code><code style="color:#22d3bf">0x80</code>` は最上位 bit だけを</p>
-<p>反転する ―― <b>必ず 128 階調跳ぶので消えない</b>。`<code style="color:#22d3bf">0xFF</code>` にすると</p>
-<p>`<code style="color:#22d3bf">complement</code><code style="color:#22d3bf"> と同じ(崖ごと同じ)、</code><code style="color:#22d3bf">0x0F</code>` のような下位だけの</p>
+<p><code style="color:#22d3bf">mode=&quot;xor&quot;</code> の bit マスク(1..255)。既定 <code style="color:#22d3bf">0x80</code> は最上位 bit だけを</p>
+<p>反転する ―― <b>必ず 128 階調跳ぶので消えない</b>。<code style="color:#22d3bf">0xFF</code> にすると</p>
+<p><code style="color:#22d3bf">complement</code> と同じ(崖ごと同じ)、<code style="color:#22d3bf">0x0F</code> のような下位だけの</p>
 <p>マスクは<b>どの階調でも見えない</b>(実測: 全 256 階調で比 1.5 未満)。</p>
 <p>alpha : float</p>
 <p>反転の効き。1.0 で完全に反転、0.5 なら地と反転色の中間</p>
-<p>(**`<code style="color:#22d3bf">mode=&quot;complement&quot;</code>` の 0.5 は必ず中間調になる** —— 反転色を</p>
+<p>(<b><code style="color:#22d3bf">mode=&quot;complement&quot;</code> の 0.5 は必ず中間調になる</b> —— 反転色を</p>
 <p>半分にすると消えるのは道理なので、警告はそれを拾う)。</p>
 <p>min_contrast, on_invisible :</p>
-<p>見えないと判ったときの扱い。`<code style="color:#22d3bf">&quot;warn&quot;</code><code style="color:#22d3bf">(既定)/ </code><code style="color:#22d3bf">&quot;raise&quot;</code>`(fail-closed)</p>
-<p>/ `<code style="color:#22d3bf">&quot;ignore&quot;</code>`。</p>
-<p>Returns</p>
-<p>-------</p>
+<p>見えないと判ったときの扱い。<code style="color:#22d3bf">&quot;warn&quot;</code>(既定)/ <code style="color:#22d3bf">&quot;raise&quot;</code>(fail-closed)</p>
+<p>/ <code style="color:#22d3bf">&quot;ignore&quot;</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(H,W[,C]) float64</p>
 <p>反転を乗せた複製。<b>入力は書き換えない</b>。</p>
-<p>Raises</p>
-<p>------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形の不一致 / 値域外 / 未知の `<code style="color:#22d3bf">draw</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">on_invisible</code>` /</p>
-<p>`<code style="color:#22d3bf">on_invisible=&quot;raise&quot;</code>` で不可視。</p>
-<p>Examples</p>
-<p>--------</p>
+<p>形の不一致 / 値域外 / 未知の <code style="color:#22d3bf">draw</code> <code style="color:#22d3bf">mode</code> <code style="color:#22d3bf">on_invisible</code> /</p>
+<p><code style="color:#22d3bf">on_invisible=&quot;raise&quot;</code> で不可視。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np, annotate</p>
 <p>&gt;&gt;&gt; img = np.zeros((16, 16)); img[4:12, 4:12] = 1.0</p>
 <p>&gt;&gt;&gt; m = np.zeros((16, 16), bool); m[6:10, 6:10] = True</p>
@@ -65,7 +53,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training-dataset conventions — COCO / YOLO / VOC and pitfalls in visual inspection</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

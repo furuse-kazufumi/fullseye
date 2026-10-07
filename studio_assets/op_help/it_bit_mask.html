@@ -6,29 +6,15 @@
 <p><img src="fig/it_bit_mask.png" alt="it_bit_mask: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/it_bit_mask.a.jpg">it_bit_mask: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/it_bit_mask.a.jpg">it_bit_mask: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/it_bit_mask.inputs.jpg">it_bit_mask: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/it_bit_mask.inputs.jpg">it_bit_mask: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>bit_mask: logical AND of the 8-bit image with the constant bit mask</p>
-<p>round(a*255). `<code style="color:#22d3bf">b</code>` is ignored.</p>
-<p>入力を [0,1] の 2 次元 float64 に揃えたあと `<code style="color:#22d3bf">round(x*255)</code>` で 0〜255 の</p>
-<p>8 ビット整数に量子化し、定数マスク `<code style="color:#22d3bf">m = round(a*255) &amp; 0xFF</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">a</code>` は</p>
-<p>[0,1] に clip)と画素ごとにビット AND を取って、`<code style="color:#22d3bf">/255</code>` で [0,1] に戻す。</p>
-<p>`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> でマスク 255(量子化以外は恒等)、</code><code style="color:#22d3bf">a=0</code>` でマスク 0(全零)、</p>
-<p>`<code style="color:#22d3bf">a=0.5</code>` で 128(最上位ビットだけ残す=0.5 以上か否かの 2 値化と同じ)。</p>
-<p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>返り値は入力と同形の float64、値は `<code style="color:#22d3bf">k/255</code><code style="color:#22d3bf"> の離散値。</code><code style="color:#22d3bf">a</code>` はビット</p>
-<p>パターンとして効くので単調ではない: 0.5(=128)は最上位ビット、0.25 付近</p>
-<p>(=64)は上から 2 番目のビットだけを残し、それぞれ独立した縞状の階調平面</p>
-<p>(bit plane)が出る。「上位 n ビットを残す」なら `<code style="color:#22d3bf">a = (256 - 2**(8-n))/255</code>`</p>
-<p>に選ぶ(n=2 で 192/255 ≈ 0.753)。カラー(3 次元)入力はチャネル平均で 2 次元に</p>
-<p>落とされる。例外時は fail-soft で入力のクリップ版が返り、台帳に記録される。</p>
-<p>ビットシフトは `<code style="color:#22d3bf">it_bit_lshift</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">it_bit_rshift</code>`、階調数の削減は</p>
-<p>`<code style="color:#22d3bf">it_convert_image_type</code>`。透かし・ステガノグラフィの解析や量子化ノイズの</p>
-<p>可視化(下位ビット平面の抽出)に。</p>
+<p>bit_mask: logical AND of the 8-bit image with the constant bit mask round(a*255). <code style="color:#22d3bf">b</code> is ignored.</p>
+<p>入力を [0,1] の 2 次元 float64 に揃えたあと <code style="color:#22d3bf">round(x*255)</code> で 0〜255 の 8 ビット整数に量子化し、定数マスク <code style="color:#22d3bf">m = round(a*255) &amp; 0xFF</code>(<code style="color:#22d3bf">a</code> は [0,1] に clip)と画素ごとにビット AND を取って、<code style="color:#22d3bf">/255</code> で [0,1] に戻す。<code style="color:#22d3bf">a=1</code> でマスク 255(量子化以外は恒等)、<code style="color:#22d3bf">a=0</code> でマスク 0(全零)、<code style="color:#22d3bf">a=0.5</code> で 128(最上位ビットだけ残す=0.5 以上か否かの 2 値化と同じ)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>返り値は入力と同形の float64、値は <code style="color:#22d3bf">k/255</code> の離散値。<code style="color:#22d3bf">a</code> はビットパターンとして効くので単調ではない: 0.5(=128)は最上位ビット、0.25 付近(=64)は上から 2 番目のビットだけを残し、それぞれ独立した縞状の階調平面(bit plane)が出る。「上位 n ビットを残す」なら <code style="color:#22d3bf">a = (256 - 2**(8-n))/255</code> に選ぶ(n=2 で 192/255 ≈ 0.753)。カラー(3 次元)入力はチャネル平均で 2 次元に落とされる。例外時は fail-soft で入力のクリップ版が返り、台帳に記録される。ビットシフトは <code style="color:#22d3bf">it_bit_lshift</code> / <code style="color:#22d3bf">it_bit_rshift</code>、階調数の削減は <code style="color:#22d3bf">it_convert_image_type</code>。透かし・ステガノグラフィの解析や量子化ノイズの可視化(下位ビット平面の抽出)に。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -37,7 +23,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">it_bit_mask 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:it_bit_mask%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:it_bit_mask%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">it_bit_mask 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:it_bit_mask%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:it_bit_mask%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_gray_arith">gallery2d_gray_arith</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_gray_arith.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

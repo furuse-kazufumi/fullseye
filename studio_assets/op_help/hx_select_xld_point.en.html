@@ -15,13 +15,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Keep only the contours whose bounding box contains the query point (normalised a, b) — a filter.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>正規化座標 `<code style="color:#22d3bf">(a, b)</code><code style="color:#22d3bf"> のクエリ点 </code><code style="color:#22d3bf">(qy, qx) = (a*H, b*W)</code>` が、contour の外接軸並行矩形</p>
-<p>`<code style="color:#22d3bf">[min row, max row] × [min col, max col]</code>` に入る contour だけを残して返す。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code>` → クエリ点の行(0〜1 を高さに写す)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` → クエリ点の列(0〜1 を幅に写す)。</p>
-<p>判定は外接矩形であって contour の内側(多角形の内外)ではないので、L 字や環状の contour では contour の外の</p>
-<p>点でも選ばれる。厳密な内外判定が要るなら `<code style="color:#22d3bf">contours_to_region</code><code style="color:#22d3bf"> で region 化して </code><code style="color:#22d3bf">hx_test_region_point</code>`。</p>
-<p>点に最も近い contour までの距離は `<code style="color:#22d3bf">hx_distance_pc</code>`。該当が無ければ空の contour 集合。</p>
+<p>正規化座標 <code style="color:#22d3bf">(a, b)</code> のクエリ点 <code style="color:#22d3bf">(qy, qx) = (a*H, b*W)</code> が、contour の外接軸並行矩形 <code style="color:#22d3bf">[min row, max row] × [min col, max col]</code> に入る contour だけを残して返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → クエリ点の行(0〜1 を高さに写す)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → クエリ点の列(0〜1 を幅に写す)。</p>
+<p>判定は外接矩形であって contour の内側(多角形の内外)ではないので、L 字や環状の contour では contour の外の点でも選ばれる。厳密な内外判定が要るなら <code style="color:#22d3bf">contours_to_region</code> で region 化して <code style="color:#22d3bf">hx_test_region_point</code>。点に最も近い contour までの距離は <code style="color:#22d3bf">hx_distance_pc</code>。該当が無ければ空の contour 集合。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

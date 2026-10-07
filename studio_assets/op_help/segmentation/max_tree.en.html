@@ -5,13 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Component tree (max-tree): builds the tree of connected components of the upper level sets {f ≥ h} with Union-Find (pixels processed in descending order of value) (max_tree).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返す: `<code style="color:#22d3bf">parent</code><code style="color:#22d3bf">(H, W の平らな添字。根は自分自身)、</code><code style="color:#22d3bf">order</code><code style="color:#22d3bf">(値の昇順、親は子より前)、</code><code style="color:#22d3bf">canonical</code>`(節の代表画素の印 =</p>
-<p>根か、親と値が違う画素)、`<code style="color:#22d3bf">area</code><code style="color:#22d3bf">(代表画素での成分の画素数)、</code><code style="color:#22d3bf">diameter</code>`(成分の外接矩形の長い辺 = skimage の diameter と同じ)、</p>
-<p>`<code style="color:#22d3bf">height</code><code style="color:#22d3bf">(成分の中の最大値 − 成分の値、参考)、</code><code style="color:#22d3bf">n_nodes</code>`。</p>
+<p>返す: <code style="color:#22d3bf">parent</code>(H, W の平らな添字。根は自分自身)、<code style="color:#22d3bf">order</code>(値の昇順、親は子より前)、<code style="color:#22d3bf">canonical</code>(節の代表画素の印 = 根か、親と値が違う画素)、<code style="color:#22d3bf">area</code>(代表画素での成分の画素数)、<code style="color:#22d3bf">diameter</code>(成分の外接矩形の長い辺 = skimage の diameter と同じ)、<code style="color:#22d3bf">height</code>(成分の中の最大値 − 成分の値、参考)、<code style="color:#22d3bf">n_nodes</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — Segmentation from graph, hierarchy and threshold theorems — what is exact, and where the partition breaks down</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

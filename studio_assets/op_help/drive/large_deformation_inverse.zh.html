@@ -5,14 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>測った接触半径 a から押し込みと力を逆に読む(式 4 を d について解き、式 2 で力)。センサの読み出しの本体。</p>
-<p>平頭は閉形式 d = 1 − (a0/a)²。それ以外は a(d) = (a/a_L)(d)·D·(dL)^{1/p} が d の単調増加なので二分法(相対 `<code style="color:#22d3bf">tol</code>`)。</p>
-<p>返り: `<code style="color:#22d3bf">d</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">delta</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">F</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">F_L</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">kappa</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">F_hertz_from_radius</code>`(同じ a を線形解 = Hertz で読んだ力)・</p>
-<p>`<code style="color:#22d3bf">err_hertz_pct</code><code style="color:#22d3bf">(Hertz で読んだ力の誤差)・</code><code style="color:#22d3bf">beyond_validated</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">iterations</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a ≤ 0、平頭で a ≤ a0、d が 1 に届いても a に足りない(数値の範囲外)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>平頭は閉形式 d = 1 − (a0/a)²。それ以外は a(d) = (a/a_L)(d)·D·(dL)^{1/p} が d の単調増加なので二分法(相対 <code style="color:#22d3bf">tol</code>)。</p>
+<p>返り: <code style="color:#22d3bf">d</code>・<code style="color:#22d3bf">delta</code>・<code style="color:#22d3bf">F</code>・<code style="color:#22d3bf">F_L</code>・<code style="color:#22d3bf">kappa</code>・<code style="color:#22d3bf">F_hertz_from_radius</code>(同じ a を線形解 = Hertz で読んだ力)・ <code style="color:#22d3bf">err_hertz_pct</code>(Hertz で読んだ力の誤差)・<code style="color:#22d3bf">beyond_validated</code>・<code style="color:#22d3bf">iterations</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a ≤ 0、平頭で a ≤ a0、d が 1 に届いても a に足りない(数値の範囲外)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacdome_large_deformation">poc_tacdome_large_deformation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacdome_large_deformation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

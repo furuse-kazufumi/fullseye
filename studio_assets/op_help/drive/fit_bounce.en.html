@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import ballistics; ballistics.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;fit_bounce&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>跳ねの前後の (v, ω) から (e, μ) を閉形式で戻す(同定)。e = −v_n&#x27;/v_n。接線力積 J_t = m(v_t&#x27; − v_t) の大きさと</p>
-<p>J_n = m(v_n&#x27; − v_n) の比が μ —— 滑ったままの領域なら等号、途中で転がりに移った(grip)領域なら <b>下界</b>(μ ≥ |J_t|/J_n)。</p>
-<p>どちらかは、跳ねた後の接触点の滑り速度が 0 か(grip)で判る。返り値 `<code style="color:#22d3bf">{&quot;e&quot;, &quot;mu&quot;, &quot;mu_is_lower_bound&quot;, &quot;regime&quot;, &quot;J_n&quot;, &quot;J_t&quot;}</code>`。</p>
+<p>跳ねの前後の (v, ω) から (e, μ) を閉形式で戻す(同定)。e = −v_n&#x27;/v_n。接線力積 J_t = m(v_t&#x27; − v_t) の大きさと J_n = m(v_n&#x27; − v_n) の比が μ —— 滑ったままの領域なら等号、途中で転がりに移った(grip)領域なら <b>下界</b>(μ ≥ |J_t|/J_n)。どちらかは、跳ねた後の接触点の滑り速度が 0 か(grip)で判る。返り値 <code style="color:#22d3bf">{&quot;e&quot;, &quot;mu&quot;, &quot;mu_is_lower_bound&quot;, &quot;regime&quot;, &quot;J_n&quot;, &quot;J_t&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

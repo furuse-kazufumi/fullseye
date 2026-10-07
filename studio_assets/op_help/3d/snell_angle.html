@@ -4,14 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.snell_angle(theta_i_deg, eta1=1.0, eta2=1.5)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.snell_angle(theta_i_deg, eta1=1.0, eta2=1.5)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;snell_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>入射角(度)→ 屈折角(度)。n1 sinθi = n2 sinθt。臨界角超は NaN(全反射)。</p>
-<p>`<code style="color:#22d3bf">θt = arcsin((eta1/eta2)·sin θi)</code><code style="color:#22d3bf"> を度で返す(float)。</code><code style="color:#22d3bf">theta_i_deg</code>` は実数スカラー(配列・</p>
-<p>None は ValueError)。符号は保たれる(負の入射角は負の屈折角)。`<code style="color:#22d3bf">|(eta1/eta2) sin θi| &gt; 1</code>` なら</p>
-<p>`<code style="color:#22d3bf">nan</code><code style="color:#22d3bf">(全反射。</code><code style="color:#22d3bf">eta1 &gt; eta2</code><code style="color:#22d3bf"> のときだけ起きる)。臨界角は </code><code style="color:#22d3bf">degrees(arcsin(eta2/eta1))</code>`。</p>
-<p>`<code style="color:#22d3bf">eta1 == eta2</code>` なら入射角そのまま。</p>
-<p>ベクトルで曲げるなら `<code style="color:#22d3bf">refract</code><code style="color:#22d3bf">(バッチは :func:</code>glassmirror.refract_rays`。</p>
-<p>`<code style="color:#22d3bf">refract</code><code style="color:#22d3bf"> は 1 本でも TIR があるとバッチ全体が </code><code style="color:#22d3bf">None</code>` になる)、反射率は</p>
-<p>`<code style="color:#22d3bf">fresnel_reflectance(cos(radians(θi)))</code>`。<b>角度を配列でまとめて曲げる口は無い</b> ——</p>
-<p>音響のように屈折率でなく速度で考える場合は `<code style="color:#22d3bf">eta = 1/c</code>` を渡す(n ∝ 1/c)。</p>
+<p><code style="color:#22d3bf">θt = arcsin((eta1/eta2)·sin θi)</code> を度で返す(float)。<code style="color:#22d3bf">theta_i_deg</code> は実数スカラー(配列・ None は ValueError)。符号は保たれる(負の入射角は負の屈折角)。<code style="color:#22d3bf">|(eta1/eta2) sin θi| &gt; 1</code> なら <code style="color:#22d3bf">nan</code>(全反射。<code style="color:#22d3bf">eta1 &gt; eta2</code> のときだけ起きる)。臨界角は <code style="color:#22d3bf">degrees(arcsin(eta2/eta1))</code>。<code style="color:#22d3bf">eta1 == eta2</code> なら入射角そのまま。ベクトルで曲げるなら <code style="color:#22d3bf">refract</code>(バッチは <code style="color:#22d3bf">glassmirror.refract_rays</code>。<code style="color:#22d3bf">refract</code> は 1 本でも TIR があるとバッチ全体が <code style="color:#22d3bf">None</code> になる)、反射率は <code style="color:#22d3bf">fresnel_reflectance(cos(radians(θi)))</code>。<b>角度を配列でまとめて曲げる口は無い</b> —— 音響のように屈折率でなく速度で考える場合は <code style="color:#22d3bf">eta = 1/c</code> を渡す(n ∝ 1/c)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

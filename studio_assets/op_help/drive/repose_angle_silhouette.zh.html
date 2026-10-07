@@ -5,26 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>側面像(粉の被覆率)から安息角 φ を読む —— 左右の斜面に別々に直線を当て、裾と頂を除く。</p>
-<p>手順(Sunday ほか 2020 §5.3 の作法を規則化): ①列ごとの粉面の高さ = 被覆率が `<code style="color:#22d3bf">threshold</code>` を切る縁の画素の</p>
-<p>位置 + その被覆率(副画素; `<code style="color:#22d3bf">method=&quot;edge&quot;</code><code style="color:#22d3bf">、既定)②地面 = 各列の最下の交差(同じ補間)→ </code><code style="color:#22d3bf">measure.fit_line</code>` で</p>
-<p>地面の傾き β。`<code style="color:#22d3bf">method=&quot;column_sum&quot;</code>` は被覆率の列和(縁が反エイリアスなら厳密な副画素だが、粉の画素値が</p>
-<p>1 からずれると <b>その比で tan φ がずれる</b>: 一様雑音 ±0.1 を [0, 1] に切っただけで 0.62 度低く出た、実測)</p>
-<p>③頂 = 高さの最大列 ④地面からの高さが `<code style="color:#22d3bf">toe_frac·H</code><code style="color:#22d3bf"> 以上・</code><code style="color:#22d3bf">(1 − apex_frac)·H</code>` 以下の点だけを</p>
-<p>左右別々に `<code style="color:#22d3bf">fit_line</code>`(全最小二乗)⑤φ = 左右の平均。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">correct_ground</code><code style="color:#22d3bf">: 基準面の傾き β を **tan の引き算**で外す(</code><code style="color:#22d3bf">tan φ&#x27; = tan θ ∓ tan β</code>`; せん断型</p>
-<p>datum の傾きに対して厳密)。カメラのロールなら角の引き算が正しく、両者は β = 5 度で 1 度以上違う</p>
-<p>ので既定は外さない。左右の差 `<code style="color:#22d3bf">asymmetry_deg</code>` が大きいときだけ基準面を疑う。</p>
-<p style="margin:2px 0 2px 12px">• 返り: `<code style="color:#22d3bf">phi_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">phi_left_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">phi_right_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">asymmetry_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ground_deg</code>`,</p>
-<p>`<code style="color:#22d3bf">height_px</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">base_px</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">apex_col</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">left_cols</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">right_cols</code>`(当てた列の範囲)、</p>
-<p>`<code style="color:#22d3bf">rms_left</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rms_right</code><code style="color:#22d3bf">(直線からの残差 [px])、</code><code style="color:#22d3bf">n_left</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_right</code>`。</p>
-<p style="margin:2px 0 2px 12px">• <b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 画像でない / 被覆率が [0, 1] の外 / 粉が写っていない / 山が画像の</p>
-<p>上・左・右の縁に触れている(切れている)/ 当てる点が `<code style="color:#22d3bf">min_points</code>` 未満(山が小さすぎる)/</p>
-<p>`<code style="color:#22d3bf">toe_frac + apex_frac ≥ 1</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">method</code>` の綴り違い。</p>
+<p>手順(Sunday ほか 2020 §5.3 の作法を規則化): ①列ごとの粉面の高さ = 被覆率が <code style="color:#22d3bf">threshold</code> を切る縁の画素の位置 + その被覆率(副画素; <code style="color:#22d3bf">method=&quot;edge&quot;</code>、既定)②地面 = 各列の最下の交差(同じ補間)→ <code style="color:#22d3bf">measure.fit_line</code> で地面の傾き β。<code style="color:#22d3bf">method=&quot;column_sum&quot;</code> は被覆率の列和(縁が反エイリアスなら厳密な副画素だが、粉の画素値が 1 からずれると <b>その比で tan φ がずれる</b>: 一様雑音 ±0.1 を [0, 1] に切っただけで 0.62 度低く出た、実測) ③頂 = 高さの最大列 ④地面からの高さが <code style="color:#22d3bf">toe_frac·H</code> 以上・<code style="color:#22d3bf">(1 − apex_frac)·H</code> 以下の点だけを左右別々に <code style="color:#22d3bf">fit_line</code>(全最小二乗)⑤φ = 左右の平均。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">correct_ground</code>: 基準面の傾き β を <b>tan の引き算</b>で外す(<code style="color:#22d3bf">tan φ&#x27; = tan θ ∓ tan β</code>; せん断型 datum の傾きに対して厳密)。カメラのロールなら角の引き算が正しく、両者は β = 5 度で 1 度以上違うので既定は外さない。左右の差 <code style="color:#22d3bf">asymmetry_deg</code> が大きいときだけ基準面を疑う。</p>
+<p style="margin:2px 0 2px 12px">• 返り: <code style="color:#22d3bf">phi_deg</code>, <code style="color:#22d3bf">phi_left_deg</code>, <code style="color:#22d3bf">phi_right_deg</code>, <code style="color:#22d3bf">asymmetry_deg</code>, <code style="color:#22d3bf">ground_deg</code>, <code style="color:#22d3bf">height_px</code>, <code style="color:#22d3bf">base_px</code>, <code style="color:#22d3bf">apex_col</code>, <code style="color:#22d3bf">left_cols</code> / <code style="color:#22d3bf">right_cols</code>(当てた列の範囲)、<code style="color:#22d3bf">rms_left</code> / <code style="color:#22d3bf">rms_right</code>(直線からの残差 [px])、<code style="color:#22d3bf">n_left</code> / <code style="color:#22d3bf">n_right</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像でない / 被覆率が [0, 1] の外 / 粉が写っていない / 山が画像の上・左・右の縁に触れている(切れている)/ 当てる点が <code style="color:#22d3bf">min_points</code> 未満(山が小さすぎる)/ <code style="color:#22d3bf">toe_frac + apex_frac ≥ 1</code> / <code style="color:#22d3bf">method</code> の綴り違い。</p>
 <p>分解能の目安(被覆率に一様雑音 ±0.1、4 角度 × 6 seed の実測): 山の幅 400 px で 0.007 度、50 px で 0.2 度、25 px で 0.6 度。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

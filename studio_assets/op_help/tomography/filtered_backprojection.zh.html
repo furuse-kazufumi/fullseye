@@ -5,22 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>滤波反投影(FBP)—— CT 重建的标准方法。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Filter each projection along the detector axis with the ramp `<code style="color:#22d3bf">|f|</code>` (times an</p>
-<p>optional apodisation window), then back-project. This is the discretised</p>
-<p>inverse Radon transform, and with enough samples it is exact: reconstructing a</p>
-<p>uniform disc of density 1.0 from its <b>analytic</b> sinogram returns an interior</p>
-<p>mean of <b>1.0011</b>, and — since 2026-09-06 — the same 1.0011 at 363 and at</p>
-<p>727 detector bins, and at 180, 360 and 720 views. The old text here read</p>
-<p>0.9954 at 363 bins &quot;converging as the detector is refined&quot;; that was not</p>
-<p>convergence but the ramp&#x27;s missing DC bin, whose size is set by the FFT pad</p>
-<p>length (:func:<code style="color:#22d3bf">_ramlak_spectrum</code>). The absolute value is</p>
-<p>what pins the ordinary-versus-angular frequency convention in the ramp: the</p>
-<p>other convention, equally defensible and printed in the same textbooks, would</p>
-<p>return `<code style="color:#22d3bf">2*pi</code>` times this, and a CT slice has no absolute grey level for</p>
-<p>anyone to notice against.</p>
-<p>Where it breaks, measured on the Shepp-Logan phantom (256 px, <b>analytic</b></p>
-<p>sinogram so the projector contributes no error of its own; normalised RMS</p>
-<p>error against the truth):</p>
+<p>Filter each projection along the detector axis with the ramp <code style="color:#22d3bf">|f|</code> (times an optional apodisation window), then back-project. This is the discretised inverse Radon transform, and with enough samples it is exact: reconstructing a uniform disc of density 1.0 from its <b>analytic</b> sinogram returns an interior mean of <b>1.0011</b>, and — since 2026-09-06 — the same 1.0011 at 363 and at 727 detector bins, and at 180, 360 and 720 views. The old text here read 0.9954 at 363 bins &quot;converging as the detector is refined&quot;; that was not convergence but the ramp&#x27;s missing DC bin, whose size is set by the FFT pad length (<code style="color:#22d3bf">_ramlak_spectrum</code>). The absolute value is what pins the ordinary-versus-angular frequency convention in the ramp: the other convention, equally defensible and printed in the same textbooks, would return <code style="color:#22d3bf">2*pi</code> times this, and a CT slice has no absolute grey level for anyone to notice against.</p>
+<p>Where it breaks, measured on the Shepp-Logan phantom (256 px, <b>analytic</b> sinogram so the projector contributes no error of its own; normalised RMS error against the truth):</p>
 <p>views     FBP (ramp)    SART (10 sweeps)    FBP/SART</p>
 <p>180        0.0250          0.0175           1.43</p>
 <p>90        0.0454          0.0195           2.33</p>
@@ -28,47 +14,28 @@
 <p>32        0.1362          0.0497           2.74</p>
 <p>16        0.2341          0.0859           2.72</p>
 <p>8        0.3635          0.1257           2.89</p>
-<p>**There is no crossing point, and the expectation that there would be one was</p>
-<p>wrong.** The received story is that FBP wins when the data is complete and</p>
-<p>loses only in the sparse regime; measured here, SART with a non-negativity</p>
-<p>constraint is better at *every* view count — by 1.43x at 180 views and by</p>
-<p>about 2.9x once the scan is sparse. What changes with the view count is the</p>
-<p>price, not the ranking: at 180 views SART costs <b>312x</b> the wall clock</p>
-<p>(37.7 s against 0.12 s for a 256-px slice) to buy that 1.43x, which is why</p>
-<p>filtered back-projection is what production scanners run. At the sparse end</p>
-<p>the same 2.9x comes nearly free, because both methods scale with the views.</p>
-<p>With noise the ranking holds but the margins change, and the apodisation</p>
-<p>windows stop being decoration (Poisson counts at `<code style="color:#22d3bf">I0 = 2e4</code>`, same phantom):</p>
+<p><b>There is no crossing point, and the expectation that there would be one was wrong.</b> The received story is that FBP wins when the data is complete and loses only in the sparse regime; measured here, SART with a non-negativity constraint is better at *every* view count — by 1.43x at 180 views and by about 2.9x once the scan is sparse. What changes with the view count is the price, not the ranking: at 180 views SART costs <b>312x</b> the wall clock (37.7 s against 0.12 s for a 256-px slice) to buy that 1.43x, which is why filtered back-projection is what production scanners run. At the sparse end the same 2.9x comes nearly free, because both methods scale with the views.</p>
+<p>With noise the ranking holds but the margins change, and the apodisation windows stop being decoration (Poisson counts at <code style="color:#22d3bf">I0 = 2e4</code>, same phantom):</p>
 <p>views    FBP ramp    FBP hann    SART (10 sweeps)</p>
 <p>180      0.0360      0.0371         0.0291</p>
 <p>45      0.1159      0.0766         0.0385</p>
 <p>16      0.2481      0.1921         0.0864</p>
 <p>8      0.3813      0.3093         0.1259</p>
-<p>At 180 views the exact ramp beats Hann — the data is complete and the roll-off</p>
-<p>only blurs. At 45 views and below Hann beats the exact inverse by up to 1.5x,</p>
-<p>because the frequencies the ramp is busy amplifying were never measured.</p>
-<p>Filters, and what they trade: `<code style="color:#22d3bf">&quot;ramp&quot;</code>` is the exact inverse and therefore</p>
-<p>the sharpest and the noisiest; `<code style="color:#22d3bf">&quot;shepp-logan&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;cosine&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;hann&quot;</code>` and</p>
-<p>`<code style="color:#22d3bf">&quot;hamming&quot;</code>` roll the high frequencies off, in that order of aggressiveness.</p>
-<p>`<code style="color:#22d3bf">&quot;none&quot;</code><code style="color:#22d3bf"> skips the filter entirely and gives :func:</code>backproject_sinogram`.</p>
-<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>`, rows = angles.</p>
-<p>:param angles_deg: view angles in degrees; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; uniform </code><code style="color:#22d3bf">[0, 180)</code>`</p>
+<p>At 180 views the exact ramp beats Hann — the data is complete and the roll-off only blurs. At 45 views and below Hann beats the exact inverse by up to 1.5x, because the frequencies the ramp is busy amplifying were never measured.</p>
+<p>Filters, and what they trade: <code style="color:#22d3bf">&quot;ramp&quot;</code> is the exact inverse and therefore the sharpest and the noisiest; <code style="color:#22d3bf">&quot;shepp-logan&quot;</code>, <code style="color:#22d3bf">&quot;cosine&quot;</code>, <code style="color:#22d3bf">&quot;hann&quot;</code> and <code style="color:#22d3bf">&quot;hamming&quot;</code> roll the high frequencies off, in that order of aggressiveness. <code style="color:#22d3bf">&quot;none&quot;</code> skips the filter entirely and gives <code style="color:#22d3bf">backproject_sinogram</code>.</p>
+<p>:param sinogram: <code style="color:#22d3bf">(n_angles, n_detectors)</code>, rows = angles. :param angles_deg: view angles in degrees; <code style="color:#22d3bf">None</code> -&gt; uniform <code style="color:#22d3bf">[0, 180)</code></p>
 <p>with one view per row.</p>
-<p>:param size: output side; `<code style="color:#22d3bf">None</code>` -&gt; the inscribed square.</p>
-<p>:param filter_name: one of :data:<code style="color:#22d3bf">FILTERS</code>.</p>
-<p>:param cutoff: fraction of Nyquist to keep, `<code style="color:#22d3bf">(0, 1]</code>`.</p>
-<p>:param span_deg: angular range for the `<code style="color:#22d3bf">d(theta)</code><code style="color:#22d3bf"> weight; </code><code style="color:#22d3bf">None</code>` -&gt; the</p>
+<p>:param size: output side; <code style="color:#22d3bf">None</code> -&gt; the inscribed square. :param filter_name: one of <code style="color:#22d3bf">FILTERS</code>. :param cutoff: fraction of Nyquist to keep, <code style="color:#22d3bf">(0, 1]</code>. :param span_deg: angular range for the <code style="color:#22d3bf">d(theta)</code> weight; <code style="color:#22d3bf">None</code> -&gt; the</p>
 <p>range the views actually cover, inferred from the angle list (exact for</p>
 <p>a uniform grid over any span and for any full-coverage irregular set</p>
-<p>such as golden angle; see :func:<code style="color:#22d3bf">_span_weight</code>).</p>
-<p>:returns: `<code style="color:#22d3bf">(size, size)</code>` float64 image.</p>
-<p>:raises ValueError: on a non-2-D or non-finite sinogram, an angle count that</p>
+<p>such as golden angle; see <code style="color:#22d3bf">_span_weight</code>).</p>
+<p>:returns: <code style="color:#22d3bf">(size, size)</code> float64 image. :raises ValueError: on a non-2-D or non-finite sinogram, an angle count that</p>
 <p>disagrees with the row count, an unknown filter, a cutoff outside</p>
-<p>`<code style="color:#22d3bf">(0, 1]</code><code style="color:#22d3bf">, or an output over :data:</code>MAX_IMAGE_ELEMENTS`.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">(0, 1]</code>, or an output over <code style="color:#22d3bf">MAX_IMAGE_ELEMENTS</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ct_fidelity">poc_ct_fidelity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ct_fidelity.py</code></p>

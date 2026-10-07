@@ -2,6 +2,11 @@
 guide: mv_cables
 dim: optics
 title: ケーブルの知識 — 規格・速度・給電・ロボットケーブル
+title_en: Cables (standards, speed, power delivery, robot cables)
+title_zh: 线缆(规格、速度、供电、机器人线缆)
+title_tw: 線纜(規格、速度、供電、機器人線纜)
+title_ko: 케이블(규격·속도·급전·로봇 케이블)
+title_de: Kabel (Standards, Geschwindigkeit, Stromversorgung, Roboterkabel)
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

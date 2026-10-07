@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boussinesq_surface_displacement(p, kern: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tactorque; tactorque.boussinesq_surface_displacement(p, kern: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;boussinesq_surface_displacement&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>法線圧 p (n, n) [Pa] → 表面変位 `<code style="color:#22d3bf">ux</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">uy</code><code style="color:#22d3bf">(核に </code><code style="color:#22d3bf">Kz</code><code style="color:#22d3bf"> があれば </code><code style="color:#22d3bf">uz</code>`、沈む向きが正)(n, n) [m]。零詰め 2n の線形畳み込み。</p>
-<p><b>Raises</b> ValueError: p が (n, n) でない、kern が :func:<code style="color:#22d3bf">boussinesq_kernel</code> の表でない。</p>
+<p>法線圧 p (n, n) [Pa] → 表面変位 <code style="color:#22d3bf">ux</code>・<code style="color:#22d3bf">uy</code>(核に <code style="color:#22d3bf">Kz</code> があれば <code style="color:#22d3bf">uz</code>、沈む向きが正)(n, n) [m]。零詰め 2n の線形畳み込み。<b>Raises</b> ValueError: p が (n, n) でない、kern が <code style="color:#22d3bf">boussinesq_kernel</code> の表でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

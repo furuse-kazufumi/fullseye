@@ -5,20 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>動く救急車のサイレン(二音の交互)を、止まっているマイクで聞いた音を合成する。</p>
-<p>音源 p(τ) = `<code style="color:#22d3bf">source_start</code><code style="color:#22d3bf"> + </code><code style="color:#22d3bf">source_velocity</code>`·τ(2D、等速直線)、発する音は sin φ(τ)、φ は高い音 f_high と</p>
-<p>低い音 f_low を `<code style="color:#22d3bf">period</code>`/2 ずつ交互に鳴らす連続位相。マイク m が時刻 t に聞く音は、発音時刻 τ が</p>
+<p>音源 p(τ) = <code style="color:#22d3bf">source_start</code> + <code style="color:#22d3bf">source_velocity</code>·τ(2D、等速直線)、発する音は sin φ(τ)、φ は高い音 f_high と低い音 f_low を <code style="color:#22d3bf">period</code>/2 ずつ交互に鳴らす連続位相。マイク m が時刻 t に聞く音は、発音時刻 τ が</p>
 <p>c (t − τ) = |p(τ) − m|   ⇔   (c² − |u|²) s² + 2 (q·u) s − |q|² = 0,  s = t − τ ≥ 0,  q = p(t) − m</p>
-<p>を満たすときの sin φ(τ)(振幅は `<code style="color:#22d3bf">spreading</code>` なら r_ref / r、r_ref = 最初の距離)。<b>ドップラーの式は使っていない</b></p>
-<p>(到着時刻の幾何だけ)ので、`<code style="color:#22d3bf">doppler_track</code>` の門の独立な経路になる。</p>
-<p>`<code style="color:#22d3bf">mic_velocity</code>` = マイク(を載せた自車)の等速度(空気 = 地面に対して。風なし)。マイクは m(t) = m₀ + u_L t と動く。</p>
-<p>上の式は q = p(t) − m(t) と置けば同じ形のまま成り立つ(c(t − τ) = |p(τ) − m(t)|、p(τ) = p(t) − u s)。</p>
-<p>2 次方程式に入るのは <b>受信時のマイクの位置だけ</b>(音源は等速)なので、マイクは任意の道を動いてよい:</p>
-<p>`<code style="color:#22d3bf">mic_track</code><code style="color:#22d3bf"> = (位置 (k, n, 2), 速度 (k, n, 2))を標本ごとに与えると </code><code style="color:#22d3bf">mics</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mic_velocity</code>` の代わりに使う</p>
-<p>(減速して左に寄る自車に載せたマイク。速度は dτ/dt の閉形式にだけ使う)。</p>
-<p>返り値: `<code style="color:#22d3bf">t</code><code style="color:#22d3bf">(n,)、</code><code style="color:#22d3bf">signals</code><code style="color:#22d3bf">(マイク数, n)、</code><code style="color:#22d3bf">tau</code><code style="color:#22d3bf">(同)、</code><code style="color:#22d3bf">f_emit</code><code style="color:#22d3bf">(同、発した周波数)、</code><code style="color:#22d3bf">v_radial</code>`(同、</p>
-<p><b>近づく向きの距離の変化率</b> −d|p(τ) − m(t)|/dt を「音源の視線速度に換算した値」c(1 − 1/D)、D = dτ/dt。マイクが</p>
-<p>止まっていれば発音時の −ṙ と同じ)、`<code style="color:#22d3bf">range_rate</code>`(同、受信時の幾何の距離 |p(τ) − m(t)| の時間微分。負 = 近づく)、</p>
-<p>`<code style="color:#22d3bf">f_true</code>`(同、= f_emit · dτ/dt。閉形式 dτ/dt = (c + r̂·u_L)/(c + r̂·u_S)、r̂ = (p(τ) − m(t))/r の単位ベクトル)。</p>
+<p>を満たすときの sin φ(τ)(振幅は <code style="color:#22d3bf">spreading</code> なら r_ref / r、r_ref = 最初の距離)。<b>ドップラーの式は使っていない</b> (到着時刻の幾何だけ)ので、<code style="color:#22d3bf">doppler_track</code> の門の独立な経路になる。</p>
+<p><code style="color:#22d3bf">mic_velocity</code> = マイク(を載せた自車)の等速度(空気 = 地面に対して。風なし)。マイクは m(t) = m₀ + u_L t と動く。上の式は q = p(t) − m(t) と置けば同じ形のまま成り立つ(c(t − τ) = |p(τ) − m(t)|、p(τ) = p(t) − u s)。2 次方程式に入るのは <b>受信時のマイクの位置だけ</b>(音源は等速)なので、マイクは任意の道を動いてよい:</p>
+<p><code style="color:#22d3bf">mic_track</code> = (位置 (k, n, 2), 速度 (k, n, 2))を標本ごとに与えると <code style="color:#22d3bf">mics</code> / <code style="color:#22d3bf">mic_velocity</code> の代わりに使う(減速して左に寄る自車に載せたマイク。速度は dτ/dt の閉形式にだけ使う)。</p>
+<p>返り値: <code style="color:#22d3bf">t</code>(n,)、<code style="color:#22d3bf">signals</code>(マイク数, n)、<code style="color:#22d3bf">tau</code>(同)、<code style="color:#22d3bf">f_emit</code>(同、発した周波数)、<code style="color:#22d3bf">v_radial</code>(同、<b>近づく向きの距離の変化率</b> −d|p(τ) − m(t)|/dt を「音源の視線速度に換算した値」c(1 − 1/D)、D = dτ/dt。マイクが止まっていれば発音時の −ṙ と同じ)、<code style="color:#22d3bf">range_rate</code>(同、受信時の幾何の距離 |p(τ) − m(t)| の時間微分。負 = 近づく)、<code style="color:#22d3bf">f_true</code>(同、= f_emit · dτ/dt。閉形式 dτ/dt = (c + r̂·u_L)/(c + r̂·u_S)、r̂ = (p(τ) − m(t))/r の単位ベクトル)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

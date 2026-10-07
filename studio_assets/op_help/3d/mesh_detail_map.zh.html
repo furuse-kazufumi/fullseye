@@ -3,21 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_detail_map(V, F)</code>(要直接调用实现,<code style="color:#22d3bf">import meshres; meshres.mesh_detail_map(V, F)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mesh_detail_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>网格逐顶点的粗糙度与细节度(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>网格逐顶点的粗糙度与细节度(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">coarseness</code>` (nv,) — mean incident edge length, mapped linearly from the</p>
-<p>5th percentile (0) to the 95th (1) and clipped; `<code style="color:#22d3bf">edge_length</code>` (nv,) the</p>
-<p>raw value. `<code style="color:#22d3bf">detail</code>` (nv,) — mean angle (radians) between the normals of</p>
-<p>the faces around the vertex divided by the mean incident edge length: a</p>
-<p>curvature proxy in 1/unit that is high where the *data* already carries</p>
-<p>relief, independent of how densely it is sampled. `<code style="color:#22d3bf">relief_weight</code>` (nv,)</p>
-<p>= `<code style="color:#22d3bf">coarseness × (1 − detail_norm)</code>` — 1 where the mesh is coarse and</p>
-<p>smooth (add synthetic detail), 0 where it is fine or already rough — the</p>
-<p>weight :func:<code style="color:#22d3bf">render3d.mesh_displace_fbm</code>-style steps should multiply</p>
-<p>their amplitude by. Also `<code style="color:#22d3bf">stats</code>` for each map.</p>
+<p><code style="color:#22d3bf">coarseness</code> (nv,) — mean incident edge length, mapped linearly from the 5th percentile (0) to the 95th (1) and clipped; <code style="color:#22d3bf">edge_length</code> (nv,) the raw value. <code style="color:#22d3bf">detail</code> (nv,) — mean angle (radians) between the normals of the faces around the vertex divided by the mean incident edge length: a curvature proxy in 1/unit that is high where the *data* already carries relief, independent of how densely it is sampled. <code style="color:#22d3bf">relief_weight</code> (nv,) = <code style="color:#22d3bf">coarseness × (1 − detail_norm)</code> — 1 where the mesh is coarse and smooth (add synthetic detail), 0 where it is fine or already rough — the</p>
+<p>weight <code style="color:#22d3bf">render3d.mesh_displace_fbm</code>-style steps should multiply their amplitude by. Also <code style="color:#22d3bf">stats</code> for each map.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>横断歩道等(又はその手前の直前)で止まっている車の側方を通って前に出る前に一時停止したか(38 条 2 項)。</p>
-<p>stopped[i] = {&quot;x&quot;: 止まっている車の前端, &quot;t0&quot;, &quot;t1&quot;: 止まっている時間}。前端が [crosswalk_start − near, crosswalk_end]</p>
-<p>にある車だけが対象(near = 「直前」、<b>仮定</b> 3 m)。自分の前端がその前端を越える時刻 t_e が [t0, t1] の中なら、</p>
-<p>t_e より前に、前端が [x − approach, x] にある間に速さ ≤ v_stop になっていなければ違反(approach は <b>仮定</b> 10 m)。</p>
+<p>stopped[i] = {&quot;x&quot;: 止まっている車の前端, &quot;t0&quot;, &quot;t1&quot;: 止まっている時間}。前端が [crosswalk_start − near, crosswalk_end] にある車だけが対象(near = 「直前」、<b>仮定</b> 3 m)。自分の前端がその前端を越える時刻 t_e が [t0, t1] の中なら、t_e より前に、前端が [x − approach, x] にある間に速さ ≤ v_stop になっていなければ違反(approach は <b>仮定</b> 10 m)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

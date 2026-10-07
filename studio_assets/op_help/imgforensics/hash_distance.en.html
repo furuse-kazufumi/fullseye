@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Hamming distance between two perceptual hashes (the number of differing bits).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><b>dtype と長さを検査して fail-closed</b> する。float の 1-D を受け取って</p>
-<p>`<code style="color:#22d3bf">!=</code>` で数えると、ほぼ確実に「全ビット違う」= 最大距離という</p>
-<p>*もっともらしい* 値が出る —— それは型の取り違えであって画像の違いではない。</p>
-<p>返りは Python の `<code style="color:#22d3bf">int</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">measurement</code>` 語彙)。ビット長で割った</p>
-<p>正規化距離が欲しければ `<code style="color:#22d3bf">hash_distance(a, b) / a.size</code>`。</p>
+<p><b>dtype と長さを検査して fail-closed</b> する。float の 1-D を受け取って <code style="color:#22d3bf">!=</code> で数えると、ほぼ確実に「全ビット違う」= 最大距離という *もっともらしい* 値が出る —— それは型の取り違えであって画像の違いではない。</p>
+<p>返りは Python の <code style="color:#22d3bf">int</code>(<code style="color:#22d3bf">measurement</code> 語彙)。ビット長で割った正規化距離が欲しければ <code style="color:#22d3bf">hash_distance(a, b) / a.size</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -5,14 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>俯瞰のコマ列 → 隣どうしの相互相関の PIV(pivops.piv_cross_correlate)→ 全部の組の平均 → 世界の速度場。</p>
-<p>個体を一つずつ見分けない(重なっても使える)代わりに、窓(`<code style="color:#22d3bf">window</code>` px)より細かい乱れは均される。峰の比が</p>
-<p>`<code style="color:#22d3bf">min_peak_ratio</code>` 未満の窓は欠測(NaN)。★群れは格子のように並びやすく(押し合いで間隔がそろう)、相関の峰が</p>
-<p>隣の格子の位置にも立つので峰の比が 1 に近い。実測(間隔 7.5 px、窓 24): しきい値 0 だと取り違えた窓が混ざり個体の</p>
-<p>速度との rms が U の 13.7 %、1.1 で 1.9 %(測れた窓 85 %)、1.3 では測れた窓が 18 % に減る —— 既定は 1.1。</p>
-<p>さらに組ごとに正規化した中央値の検査(pivops.piv_outlier_mask、しきい値 `<code style="color:#22d3bf">outlier_threshold</code>`、None で掛けない)で</p>
-<p>外れた窓を欠測にしてから平均する。pivops の注意どおり、急な勾配(障害物の肩)を外れと呼ばないよう慣行の 2 より緩い 3。pivops の成分 (dy, dx) [px/コマ] を u = dx·res/Δt、v = −dy·res/Δt に直す。</p>
+<p>個体を一つずつ見分けない(重なっても使える)代わりに、窓(<code style="color:#22d3bf">window</code> px)より細かい乱れは均される。峰の比が <code style="color:#22d3bf">min_peak_ratio</code> 未満の窓は欠測(NaN)。★群れは格子のように並びやすく(押し合いで間隔がそろう)、相関の峰が隣の格子の位置にも立つので峰の比が 1 に近い。実測(間隔 7.5 px、窓 24): しきい値 0 だと取り違えた窓が混ざり個体の速度との rms が U の 13.7 %、1.1 で 1.9 %(測れた窓 85 %)、1.3 では測れた窓が 18 % に減る —— 既定は 1.1。さらに組ごとに正規化した中央値の検査(pivops.piv_outlier_mask、しきい値 <code style="color:#22d3bf">outlier_threshold</code>、None で掛けない)で外れた窓を欠測にしてから平均する。pivops の注意どおり、急な勾配(障害物の肩)を外れと呼ばないよう慣行の 2 より緩い 3。pivops の成分 (dy, dx) [px/コマ] を u = dx·res/Δt、v = −dy·res/Δt に直す。</p>
 <p>Returns:</p>
-<p>速度場の dict + `<code style="color:#22d3bf">valid_fraction</code><code style="color:#22d3bf">(窓のうち測れた割合)、</code><code style="color:#22d3bf">n_pairs</code>`。</p>
+<p>速度場の dict + <code style="color:#22d3bf">valid_fraction</code>(窓のうち測れた割合)、<code style="color:#22d3bf">n_pairs</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

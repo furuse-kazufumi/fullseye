@@ -3,16 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import spc; spc.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;msa_bias_linearity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Bias against a reference value and how that bias depends on the reference (linearity) (`<code style="color:#22d3bf">table</code>`).</p>
+<p>Bias against a reference value and how that bias depends on the reference (linearity) (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>偏り `<code style="color:#22d3bf">bias = measured - reference</code>` を基準値に回帰する</p>
-<p>(`<code style="color:#22d3bf">bias = intercept + slope * reference</code>`)。傾きが 0 でなければ、測定系は</p>
-<p>測定範囲の<b>場所によって違う量だけずれている</b> = 直線性の問題。</p>
-<p>返りは基準値ごとの平均偏り(`<code style="color:#22d3bf">ref</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">bias_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n</code>`)と、回帰の</p>
-<p>`<code style="color:#22d3bf">intercept</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">slope</code>` / それぞれの標準誤差・t 値・p 値、全体平均偏り。</p>
-<p>★門にできる厳密な性質: 雑音の無い `<code style="color:#22d3bf">bias = a + b*ref</code>` を渡すと最小二乗は</p>
-<p>a と b を<b>厳密に</b>返す(残差 0)。そのとき標準誤差は 0 なので t は `<code style="color:#22d3bf">inf</code>` /</p>
-<p>p は 0 —— これは欠陥ではなく完全適合の正しい報告なので、そのまま返す。</p>
+<p>偏り <code style="color:#22d3bf">bias = measured - reference</code> を基準値に回帰する(<code style="color:#22d3bf">bias = intercept + slope * reference</code>)。傾きが 0 でなければ、測定系は測定範囲の<b>場所によって違う量だけずれている</b> = 直線性の問題。</p>
+<p>返りは基準値ごとの平均偏り(<code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">bias_mean</code> / <code style="color:#22d3bf">n</code>)と、回帰の <code style="color:#22d3bf">intercept</code> / <code style="color:#22d3bf">slope</code> / それぞれの標準誤差・t 値・p 値、全体平均偏り。</p>
+<p>★門にできる厳密な性質: 雑音の無い <code style="color:#22d3bf">bias = a + b*ref</code> を渡すと最小二乗は a と b を<b>厳密に</b>返す(残差 0)。そのとき標準誤差は 0 なので t は <code style="color:#22d3bf">inf</code> / p は 0 —— これは欠陥ではなく完全適合の正しい報告なので、そのまま返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

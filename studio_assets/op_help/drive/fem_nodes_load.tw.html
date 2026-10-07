@@ -4,14 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fem_nodes_load(dirpath: &#x27;str&#x27;, name: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacslip; tacslip.fem_nodes_load(dirpath: &#x27;str&#x27;, name: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;fem_nodes_load&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>有限要素の表面節点テキスト(Robo-Touch/Taxim リポジトリ同梱、MIT ライセンス)を 3 本読む: `<code style="color:#22d3bf">&lt;dirpath&gt;/&lt;name&gt;_{x,y,z}.txt</code>`、</p>
-<p>タブ区切り・1 行ヘッダ `<code style="color:#22d3bf">Node Number / X Location (m) / Y Location (m) / Z Location (m) / Directional Deformation (m)</code>`、単位 m。</p>
-<p>3 本は同じ節点集合で最終列だけがその方向の変位。返り `<code style="color:#22d3bf">id</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">X</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">Y</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">Z</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">dx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">dy</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">dz</code><code style="color:#22d3bf">(各 (N,))、</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">name</code>`。</p>
-<p><b>Raises</b> FileNotFoundError: ファイルが無い。ValueError: ヘッダが違う、列が 5 本でない、3 本の節点座標が一致しない(fail-closed)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>有限要素の表面節点テキスト(Robo-Touch/Taxim リポジトリ同梱、MIT ライセンス)を 3 本読む: <code style="color:#22d3bf">&lt;dirpath&gt;/&lt;name&gt;_{x,y,z}.txt</code>、タブ区切り・1 行ヘッダ <code style="color:#22d3bf">Node Number / X Location (m) / Y Location (m) / Z Location (m) / Directional Deformation (m)</code>、単位 m。3 本は同じ節点集合で最終列だけがその方向の変位。返り <code style="color:#22d3bf">id</code>・<code style="color:#22d3bf">X</code>・<code style="color:#22d3bf">Y</code>・<code style="color:#22d3bf">Z</code>・<code style="color:#22d3bf">dx</code>・<code style="color:#22d3bf">dy</code>・<code style="color:#22d3bf">dz</code>(各 (N,))、<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">name</code>。<b>Raises</b> FileNotFoundError: ファイルが無い。ValueError: ヘッダが違う、列が 5 本でない、3 本の節点座標が一致しない(fail-closed)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_marker_shear">poc_tacsim_marker_shear</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_marker_shear.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tactile_dipole_torque">poc_tactile_dipole_torque</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tactile_dipole_torque.py</code></p>

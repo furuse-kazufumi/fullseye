@@ -5,20 +5,17 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert eine Tabelle (dict): Ort und Vergrößerungsfaktor der Einblendung, in geschlossener Form.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">factor=None</code><code style="color:#22d3bf"> なら「幅・高さとも画像の </code><code style="color:#22d3bf">max_fraction</code>` 以下」で最大の</p>
-<p>整数倍率。差し込みが元枠に重なる隅は ValueError(自分の元を隠す)。</p>
-<p>Returns</p>
-<p>-------</p>
+<p><code style="color:#22d3bf">factor=None</code> なら「幅・高さとも画像の <code style="color:#22d3bf">max_fraction</code> 以下」で最大の整数倍率。差し込みが元枠に重なる隅は ValueError(自分の元を隠す)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>`<code style="color:#22d3bf">{&quot;src_rect&quot;,&quot;dst_rect&quot;,&quot;factor&quot;,&quot;corner&quot;}</code>`。</p>
-<p>Raises</p>
-<p>------</p>
+<p><code style="color:#22d3bf">{&quot;src_rect&quot;,&quot;dst_rect&quot;,&quot;factor&quot;,&quot;corner&quot;}</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>元枠が画像外、倍率 &lt; 1 か非整数、差し込みが収まらない/元枠と重なる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Konventionen für Trainingsdatensätze — COCO / YOLO / VOC und Fallstricke in der Sichtprüfung</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

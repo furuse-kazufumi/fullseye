@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>刃先方向の像(RGB)。暗い背景・食材(右側が本体)・刃(片刃、平らな面が切片側)。</p>
-<p>`<code style="color:#22d3bf">end_face</code><code style="color:#22d3bf"> は食材の端面 y(z)(mm): 数なら平らな面、</code><code style="color:#22d3bf">{&quot;z_mm&quot;, &quot;y_mm&quot;}</code>` か (N, 2) の配列なら標本を線形補間(前の切断面の</p>
-<p>粗さを持たせる)。`<code style="color:#22d3bf">cut_y_top</code><code style="color:#22d3bf"> は切断面(= 刃の平らな面)が食材の上面と交わる y、</code><code style="color:#22d3bf">lean_deg</code>` は刃の傾き(鉛直から、+ で下ほど</p>
-<p>本体側 = 下ほど切片が厚い)、`<code style="color:#22d3bf">edge_z</code>` は刃先の高さ。端面は行ごとに縦 8 副行で被覆率を積分する。</p>
+<p><code style="color:#22d3bf">end_face</code> は食材の端面 y(z)(mm): 数なら平らな面、<code style="color:#22d3bf">{&quot;z_mm&quot;, &quot;y_mm&quot;}</code> か (N, 2) の配列なら標本を線形補間(前の切断面の粗さを持たせる)。<code style="color:#22d3bf">cut_y_top</code> は切断面(= 刃の平らな面)が食材の上面と交わる y、<code style="color:#22d3bf">lean_deg</code> は刃の傾き(鉛直から、+ で下ほど本体側 = 下ほど切片が厚い)、<code style="color:#22d3bf">edge_z</code> は刃先の高さ。端面は行ごとに縦 8 副行で被覆率を積分する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

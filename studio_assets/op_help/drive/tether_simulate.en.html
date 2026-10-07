@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tether_simulate(p0, v0, handle, L: &#x27;float&#x27;, t_end: &#x27;float&#x27;, dt: &#x27;float&#x27; = 0.001, g: &#x27;float&#x27; = 9.81, mass: &#x27;float&#x27; = 0.01) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import ballistics; ballistics.tether_simulate(p0, v0, handle, L: &#x27;float&#x27;, t_end: &#x27;float&#x27;, dt: &#x27;float&#x27; = 0.001, g: &#x27;float&#x27; = 9.81, mass: &#x27;float&#x27; = 0.01) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;tether_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>伸びないひも(長さ L)で手元 `<code style="color:#22d3bf">handle</code>` に繋がれた質点の運動(けん玉の玉)。</p>
-<p>`<code style="color:#22d3bf">handle</code>` は (3,) の固定点か、時刻 → (3,) の関数。各ステップで自由落下を進め、|p − h| &gt; L になったら球面へ射影して</p>
-<p>外向きの相対径方向速度を消す(片側拘束: ひもは引くだけで押さない)。その瞬間に失う運動エネルギー ½ m v_r² を &quot;snap_loss&quot; に</p>
-<p>積む。張力の推定 = 射影で消した径方向の速度変化 × m / dt(≥ 0)。返り値 ``{&quot;t&quot;, &quot;p&quot;, &quot;v&quot;, &quot;tension&quot;, &quot;taut&quot; (bool),</p>
-<p>&quot;snap_times&quot;, &quot;snap_loss&quot;, &quot;energy&quot;}``。定理の門: |p − h| ≤ L + 1e-9、張力 ≥ 0、手元が固定なら力学的エネルギーは</p>
-<p>snap の瞬間以外で不変(RK 誤差の範囲)、小振幅の周期は 2π√(L/g)。</p>
+<p>伸びないひも(長さ L)で手元 <code style="color:#22d3bf">handle</code> に繋がれた質点の運動(けん玉の玉)。</p>
+<p><code style="color:#22d3bf">handle</code> は (3,) の固定点か、時刻 → (3,) の関数。各ステップで自由落下を進め、|p − h| &gt; L になったら球面へ射影して外向きの相対径方向速度を消す(片側拘束: ひもは引くだけで押さない)。その瞬間に失う運動エネルギー ½ m v_r² を &quot;snap_loss&quot; に積む。張力の推定 = 射影で消した径方向の速度変化 × m / dt(≥ 0)。返り値 <code style="color:#22d3bf">{&quot;t&quot;, &quot;p&quot;, &quot;v&quot;, &quot;tension&quot;, &quot;taut&quot; (bool), &quot;snap_times&quot;, &quot;snap_loss&quot;, &quot;energy&quot;}</code>。定理の門: |p − h| ≤ L + 1e-9、張力 ≥ 0、手元が固定なら力学的エネルギーは snap の瞬間以外で不変(RK 誤差の範囲)、小振幅の周期は 2π√(L/g)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivepass; drivepass.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;roundabout_signal_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>環状交差点の中の合図を採点する(53 条 2・4 項、教則 5-5-1(2))。場面 S069。</p>
-<p>`<code style="color:#22d3bf">progress</code><code style="color:#22d3bf"> = 入口から右回りに進んだ角 [rad]、単調非減少、サンプルごと、</code><code style="color:#22d3bf">left_on</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">right_on</code>` = 合図の状態(bool)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">left_late</code><code style="color:#22d3bf">: 合図の角 + </code><code style="color:#22d3bf">tol</code>` から出口の角までの間に左の合図が消えているサンプルがある。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">left_early</code><code style="color:#22d3bf">: 合図の角 − </code><code style="color:#22d3bf">tol</code>` より手前で左の合図が点いている(手前の出口で出るように見える。53 条 4 項の</p>
-<p>「行為をしないのに合図」の <b>解釈</b>)。入った直後の出口(合図の角 = 0)では問わない。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">right_signal</code>`: 環道の中で右の合図(53 条 2 項は出るときだけを求める。4 項の <b>解釈</b>)。</p>
+<p><code style="color:#22d3bf">progress</code> = 入口から右回りに進んだ角 [rad]、単調非減少、サンプルごと、<code style="color:#22d3bf">left_on</code> / <code style="color:#22d3bf">right_on</code> = 合図の状態(bool)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_late</code>: 合図の角 + <code style="color:#22d3bf">tol</code> から出口の角までの間に左の合図が消えているサンプルがある。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_early</code>: 合図の角 − <code style="color:#22d3bf">tol</code> より手前で左の合図が点いている(手前の出口で出るように見える。53 条 4 項の「行為をしないのに合図」の <b>解釈</b>)。入った直後の出口(合図の角 = 0)では問わない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">right_signal</code>: 環道の中で右の合図(53 条 2 項は出るときだけを求める。4 項の <b>解釈</b>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

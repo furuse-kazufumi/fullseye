@@ -5,19 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A bearing-angle image: the angle between the line of sight along the scan direction and the local surface (a classic range-image descriptor). → HxW in degrees.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>隣接深度差から局所傾斜角 atan2(Δdepth, step) を計算。斜面の向きに敏感で照明不変。</p>
-<p>direction ∈ {down,up,right,left}。</p>
-<p>`<code style="color:#22d3bf">direction</code>` が &quot;down&quot;/&quot;up&quot; なら行方向(axis=0)、&quot;right&quot;/&quot;left&quot; なら列方向(axis=1)の</p>
-<p>`<code style="color:#22d3bf">np.gradient</code>`(中心差分、端は片側差分)で隣接深度差 Δd を取り、&quot;up&quot;/&quot;left&quot; では符号を</p>
-<p>反転する。角度は `<code style="color:#22d3bf">degrees(atan2(Δd, 1))</code>` なので値域は (-90, 90) 度、平坦面で 0、走査</p>
-<p>方向に遠ざかる面で正。格子間隔を 1 としているため、深度の単位が画素と違う(mm 等)場合</p>
-<p>は幾何学的な入射角そのものではなく「深度単位あたりの傾き」の角になる。上記 4 語以外の</p>
-<p>`<code style="color:#22d3bf">direction</code>` は列方向・符号そのままとして扱われ、エラーにはならない。返り値は float32</p>
-<p>の `<code style="color:#22d3bf">(H,W)</code>`。深度の段差では ±90 度近くまで振れるので遮蔽の目安にもなるが、段差と斜面</p>
-<p>を区別するには `<code style="color:#22d3bf">occlusion_edges</code>` を使う。入力検証は無い。</p>
+<p>隣接深度差から局所傾斜角 atan2(Δdepth, step) を計算。斜面の向きに敏感で照明不変。direction ∈ {down,up,right,left}。</p>
+<p><code style="color:#22d3bf">direction</code> が &quot;down&quot;/&quot;up&quot; なら行方向(axis=0)、&quot;right&quot;/&quot;left&quot; なら列方向(axis=1)の <code style="color:#22d3bf">np.gradient</code>(中心差分、端は片側差分)で隣接深度差 Δd を取り、&quot;up&quot;/&quot;left&quot; では符号を反転する。角度は <code style="color:#22d3bf">degrees(atan2(Δd, 1))</code> なので値域は (-90, 90) 度、平坦面で 0、走査方向に遠ざかる面で正。格子間隔を 1 としているため、深度の単位が画素と違う(mm 等)場合は幾何学的な入射角そのものではなく「深度単位あたりの傾き」の角になる。上記 4 語以外の <code style="color:#22d3bf">direction</code> は列方向・符号そのままとして扱われ、エラーにはならない。返り値は float32 の <code style="color:#22d3bf">(H,W)</code>。深度の段差では ±90 度近くまで振れるので遮蔽の目安にもなるが、段差と斜面を区別するには <code style="color:#22d3bf">occlusion_edges</code> を使う。入力検証は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

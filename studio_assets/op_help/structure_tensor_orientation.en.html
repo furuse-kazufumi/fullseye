@@ -14,19 +14,11 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>局所の<b>縞の走る向き</b>(構造テンソルの主軸)を `<code style="color:#22d3bf">[0,1]</code>` に写して返す。</p>
-<p>`<code style="color:#22d3bf">0</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">1</code><code style="color:#22d3bf"> がともに水平、</code><code style="color:#22d3bf">0.5</code>` が垂直にあたる(向きは 180 度で一周するので、</p>
-<p>`<code style="color:#22d3bf">0</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">1</code>` は同じ向き —— <b>この出力を差分すると境目で偽の段差が出る</b>ことに注意)。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が微分前の平滑 </code><code style="color:#22d3bf">sigma</code><code style="color:#22d3bf">(0.5〜3.0 画素)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が積分窓 </code><code style="color:#22d3bf">rho</code>`(1.0〜8.0 画素)。</p>
-<p>`<code style="color:#22d3bf">rho</code>` は「どれくらいの広さで向きが揃っているとみなすか」で、繊維や研磨目のピッチより</p>
-<p>大きく取る。</p>
-<p><b>適用条件</b>: 向きが定義できるのは<b>勾配が構造的に偏っている所だけ</b>。テンソルの</p>
-<p>異方度が跡に対して `<code style="color:#22d3bf">1e-6</code>` を下回る画素(平坦面・等方な雑音)は「向き未定義」として</p>
-<p>`<code style="color:#22d3bf">0.5</code><code style="color:#22d3bf"> を返す —— ここで床を置かないと、一様な面で丸め屑が </code><code style="color:#22d3bf">arctan2</code>` に増幅されて</p>
-<p><b>明るさを 0.01 変えただけで向きが一斉に反転する</b>。向きの確からしさは</p>
-<p>`<code style="color:#22d3bf">structure_tensor_coherence</code>` で別に測ること。</p>
-<p><b>用途</b>: 繊維強化材の繊維配向、圧延・研磨の条痕方向、木目、結晶粒の伸長方向。</p>
-<p>HALCON に対応する単体 op は無い。</p>
+<p>局所の<b>縞の走る向き</b>(構造テンソルの主軸)を <code style="color:#22d3bf">[0,1]</code> に写して返す。</p>
+<p><code style="color:#22d3bf">0</code> と <code style="color:#22d3bf">1</code> がともに水平、<code style="color:#22d3bf">0.5</code> が垂直にあたる(向きは 180 度で一周するので、<code style="color:#22d3bf">0</code> と <code style="color:#22d3bf">1</code> は同じ向き —— <b>この出力を差分すると境目で偽の段差が出る</b>ことに注意)。</p>
+<p><code style="color:#22d3bf">a</code> が微分前の平滑 <code style="color:#22d3bf">sigma</code>(0.5〜3.0 画素)、<code style="color:#22d3bf">b</code> が積分窓 <code style="color:#22d3bf">rho</code>(1.0〜8.0 画素)。<code style="color:#22d3bf">rho</code> は「どれくらいの広さで向きが揃っているとみなすか」で、繊維や研磨目のピッチより大きく取る。</p>
+<p><b>適用条件</b>: 向きが定義できるのは<b>勾配が構造的に偏っている所だけ</b>。テンソルの異方度が跡に対して <code style="color:#22d3bf">1e-6</code> を下回る画素(平坦面・等方な雑音)は「向き未定義」として <code style="color:#22d3bf">0.5</code> を返す —— ここで床を置かないと、一様な面で丸め屑が <code style="color:#22d3bf">arctan2</code> に増幅されて <b>明るさを 0.01 変えただけで向きが一斉に反転する</b>。向きの確からしさは <code style="color:#22d3bf">structure_tensor_coherence</code> で別に測ること。</p>
+<p><b>用途</b>: 繊維強化材の繊維配向、圧延・研磨の条痕方向、木目、結晶粒の伸長方向。HALCON に対応する単体 op は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

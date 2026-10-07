@@ -5,13 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>ISODATA (Ridler–Calvard 1978): iteriert t ← (μ_≤t + μ_&gt;t)/2 <b>auf den Pixelwerten</b>, bis sich die Aufteilung nicht mehr ändert (Startwert = Mittelwert) (threshold_isodata).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>分割が止まれば t は μ を計算し直しても動かない = 不動点 t = (μ_low + μ_high)/2 が厳密に成り立つ(`<code style="color:#22d3bf">residual</code>` = 0)。</p>
-<p>ヒストグラムの上の不動点(skimage と同じ「ビンの中心 c で 0 ≤ (μ_≤c + μ_&gt;c)/2 − c &lt; ビン幅」)も `<code style="color:#22d3bf">fixed_points</code>` で返す。</p>
-<p>返す: `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> = image &gt; t、</code><code style="color:#22d3bf">mu_low</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mu_high</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">residual</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fixed_points</code>`。</p>
+<p>分割が止まれば t は μ を計算し直しても動かない = 不動点 t = (μ_low + μ_high)/2 が厳密に成り立つ(<code style="color:#22d3bf">residual</code> = 0)。ヒストグラムの上の不動点(skimage と同じ「ビンの中心 c で 0 ≤ (μ_≤c + μ_&gt;c)/2 − c &lt; ビン幅」)も <code style="color:#22d3bf">fixed_points</code> で返す。</p>
+<p>返す: <code style="color:#22d3bf">threshold</code>、<code style="color:#22d3bf">mask</code> = image &gt; t、<code style="color:#22d3bf">mu_low</code> / <code style="color:#22d3bf">mu_high</code>、<code style="color:#22d3bf">residual</code>、<code style="color:#22d3bf">n_iter</code>、<code style="color:#22d3bf">fixed_points</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — Segmentierung aus Graph-, Hierarchie- und Schwellwertsätzen — was exakt ist und wo die Zerlegung kippt</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

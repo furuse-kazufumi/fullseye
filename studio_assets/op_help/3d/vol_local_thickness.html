@@ -4,27 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_local_thickness(vol_binary, spacing=None, max_radius=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volops; volops.vol_local_thickness(vol_binary, spacing=None, max_radius=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_local_thickness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Local thickness map: the diameter of the largest ball that covers each voxel.</p>
-<p>For every foreground voxel this is ``max{ 2r : the voxel lies inside some ball</p>
-<p>of radius r that fits entirely in the foreground }`` — the classical</p>
-<p>granulometric size, and the quantity trabecular-bone and industrial-CT work</p>
-<p>calls *local thickness* (a pore&#x27;s local thickness is its diameter; a wall&#x27;s is</p>
-<p>its thickness).  Computed from the exact distance transform: take the voxels</p>
-<p>whose distance is at least `<code style="color:#22d3bf">r</code>` as ball centres and paint the balls they</p>
-<p>cover, largest radius first.</p>
-<p>★**Distinct from `<code style="color:#22d3bf">vol_wall_thickness</code>`**, which walks a single probe segment</p>
-<p>`<code style="color:#22d3bf">p0 -&gt; p1</code>` and returns a list of crossings.  This one is a *volume*, so the</p>
-<p>thickness of every feature is available at once and can be histogrammed.</p>
-<p>Pass *spacing* `<code style="color:#22d3bf">(sz, sy, sx)</code><code style="color:#22d3bf"> (or a :class:</code>volio.VolumeMeta`) and the</p>
-<p>result is in <b>millimetres</b>; otherwise in voxels.  *max_radius* caps the</p>
-<p>search (in the same units); leave it `<code style="color:#22d3bf">None</code>` to derive it from the largest</p>
-<p>distance actually present, which costs one pass more but never saturates.</p>
-<p><b>Applicability.</b> (1) The foreground comes from a single threshold, so</p>
-<p>beam hardening or a brightness gradient biases the thickness across the</p>
-<p>volume — flatten first.  (2) With anisotropic voxels the ball is a ball in</p>
-<p>millimetres, not in voxels, so *spacing* is not cosmetic.  (3) A feature</p>
-<p>three voxels across is quantised at better than 30% only if you say so:</p>
+<p>For every foreground voxel this is <code style="color:#22d3bf">max{ 2r : the voxel lies inside some ball of radius r that fits entirely in the foreground }</code> — the classical granulometric size, and the quantity trabecular-bone and industrial-CT work calls *local thickness* (a pore&#x27;s local thickness is its diameter; a wall&#x27;s is its thickness).  Computed from the exact distance transform: take the voxels whose distance is at least <code style="color:#22d3bf">r</code> as ball centres and paint the balls they cover, largest radius first.</p>
+<p>★<b>Distinct from <code style="color:#22d3bf">vol_wall_thickness</code></b>, which walks a single probe segment <code style="color:#22d3bf">p0 -&gt; p1</code> and returns a list of crossings.  This one is a *volume*, so the thickness of every feature is available at once and can be histogrammed.</p>
+<p>Pass *spacing* <code style="color:#22d3bf">(sz, sy, sx)</code> (or a <code style="color:#22d3bf">volio.VolumeMeta</code>) and the result is in <b>millimetres</b>; otherwise in voxels.  *max_radius* caps the search (in the same units); leave it <code style="color:#22d3bf">None</code> to derive it from the largest distance actually present, which costs one pass more but never saturates.</p>
+<p><b>Applicability.</b> (1) The foreground comes from a single threshold, so beam hardening or a brightness gradient biases the thickness across the volume — flatten first.  (2) With anisotropic voxels the ball is a ball in millimetres, not in voxels, so *spacing* is not cosmetic.  (3) A feature three voxels across is quantised at better than 30% only if you say so:</p>
 <p>report the voxel size next to any thickness number.</p>
-<p>Returns a `<code style="color:#22d3bf">(D, H, W)</code>` float64 volume, 0 on the background.</p>
+<p>Returns a <code style="color:#22d3bf">(D, H, W)</code> float64 volume, 0 on the background.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

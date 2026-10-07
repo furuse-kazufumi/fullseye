@@ -6,18 +6,16 @@
 <p><img src="fig/hx_move_region.png" alt="hx_move_region: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.a.jpg">hx_move_region: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.a.jpg">hx_move_region: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.b.jpg">hx_move_region: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.b.jpg">hx_move_region: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.chain.jpg">hx_move_region: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.chain.jpg">hx_move_region: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.inputs.jpg">hx_move_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.inputs.jpg">hx_move_region: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>region を平行移動(dy=a, dx=b を中心 0 のオフセットに)。</p>
-<p>np.roll ゆえ<b>端は循環</b>(はみ出た region が反対側から現れる)。HALCON の</p>
-<p>move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる —</p>
-<p>進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。</p>
+<p>np.roll ゆえ<b>端は循環</b>(はみ出た region が反対側から現れる)。HALCON の move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる — 進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -27,7 +25,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-hx_move_region 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ahx_move_region%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ahx_move_region%200.50%200.50">Load &amp; run</a></p>
+hx_move_region 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ahx_move_region%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ahx_move_region%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">region</code> を入力に取れる)</h3>

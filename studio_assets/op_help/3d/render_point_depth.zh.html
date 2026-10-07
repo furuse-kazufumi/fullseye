@@ -5,17 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群 → 深度图像(z-buffer,每像素取最近点的深度)。用于合成观测/外观检测样本。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">project_points(points, K, R, t)</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">(u, v, z)</code><code style="color:#22d3bf"> を取り、</code><code style="color:#22d3bf">round</code><code style="color:#22d3bf"> した画素 </code>`(row=v,</p>
-<p>col=u)`<code style="color:#22d3bf"> が </code><code style="color:#22d3bf">size=(H, W)</code><code style="color:#22d3bf"> 内かつ </code><code style="color:#22d3bf">z &gt; 0</code>` の点だけを、遠い順に書いて近い点で上書きする</p>
-<p>(同一画素は最小 z が残る)。点が無い画素は <b>0</b>(`<code style="color:#22d3bf">tsdf_from_depth</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">depth_to_points</code>` が</p>
-<p>無効値として扱う規約)。返り値 `<code style="color:#22d3bf">(H, W)</code>` float64、単位は点の座標の単位。</p>
-<p style="margin:2px 0 2px 12px">• 1 点 = 1 画素なので疎な点群は穴だらけになる(`<code style="color:#22d3bf">mesh_to_points</code>` で密にしてから)。splat</p>
+<p><code style="color:#22d3bf">project_points(points, K, R, t)</code> で <code style="color:#22d3bf">(u, v, z)</code> を取り、<code style="color:#22d3bf">round</code> した画素 <code style="color:#22d3bf">(row=v, col=u)</code> が <code style="color:#22d3bf">size=(H, W)</code> 内かつ <code style="color:#22d3bf">z &gt; 0</code> の点だけを、遠い順に書いて近い点で上書きする(同一画素は最小 z が残る)。点が無い画素は <b>0</b>(<code style="color:#22d3bf">tsdf_from_depth</code> / <code style="color:#22d3bf">depth_to_points</code> が無効値として扱う規約)。返り値 <code style="color:#22d3bf">(H, W)</code> float64、単位は点の座標の単位。</p>
+<p style="margin:2px 0 2px 12px">• 1 点 = 1 画素なので疎な点群は穴だらけになる(<code style="color:#22d3bf">mesh_to_points</code> で密にしてから)。splat</p>
 <p>半径は無い。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">K</code><code style="color:#22d3bf"> は numpy (3,3)、</code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">t</code>` は省略可。</p>
-<p>後段: `<code style="color:#22d3bf">depth_to_points</code><code style="color:#22d3bf"> で戻す、</code><code style="color:#22d3bf">normals_from_depth</code><code style="color:#22d3bf"> で法線、</code><code style="color:#22d3bf">tsdf_from_depth</code>`。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> は numpy (3,3)、<code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> は省略可。</p>
+<p>後段: <code style="color:#22d3bf">depth_to_points</code> で戻す、<code style="color:#22d3bf">normals_from_depth</code> で法線、<code style="color:#22d3bf">tsdf_from_depth</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

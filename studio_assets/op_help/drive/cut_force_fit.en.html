@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>切断中の力の列 F(N)と切っている幅 w_eff(mm)から靱性 R(J/m²)を原点を通る最小二乗で出す。</p>
-<p>模型: `<code style="color:#22d3bf">F = R · w_eff · g(ξ)</code><code style="color:#22d3bf">、g = 1/(1+ξ²)(:func:</code>cut_force_atkins<code style="color:#22d3bf"> の slice_push、摩擦なし)。w_eff &lt; </code><code style="color:#22d3bf">min_w_mm</code>` の点</p>
-<p>(入り始め)は使わない。★ 合成の真値を同じ模型で作るとこの当てはめは配管の検査にしかならず、摩擦の分は R に吸い込まれる</p>
-<p>(返り値の `<code style="color:#22d3bf">model</code><code style="color:#22d3bf"> に書く)。返り値: </code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rms_n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">g</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">model</code>`。</p>
+<p>模型: <code style="color:#22d3bf">F = R · w_eff · g(ξ)</code>、g = 1/(1+ξ²)(<code style="color:#22d3bf">cut_force_atkins</code> の slice_push、摩擦なし)。w_eff &lt; <code style="color:#22d3bf">min_w_mm</code> の点(入り始め)は使わない。★ 合成の真値を同じ模型で作るとこの当てはめは配管の検査にしかならず、摩擦の分は R に吸い込まれる(返り値の <code style="color:#22d3bf">model</code> に書く)。返り値: <code style="color:#22d3bf">R</code>、<code style="color:#22d3bf">rms_n</code>、<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">g</code>、<code style="color:#22d3bf">model</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

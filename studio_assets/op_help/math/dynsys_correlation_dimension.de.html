@@ -3,35 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynsys_correlation_dimension(points, n_radii=24, r_lo=None, r_hi=None, max_points=4000, seed=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.dynsys_correlation_dimension(points, n_radii=24, r_lo=None, r_hi=None, max_points=4000, seed=0)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;dynsys_correlation_dimension&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Grassberger-Procaccia-Korrelationsdimension — die Steigung von `<code style="color:#22d3bf">log C(r)</code>`.</p>
+<p>Grassberger-Procaccia-Korrelationsdimension — die Steigung von <code style="color:#22d3bf">log C(r)</code>.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">C(r)</code><code style="color:#22d3bf"> is the fraction of point pairs closer than </code><code style="color:#22d3bf">r</code>`; for a self-similar</p>
-<p>set it grows like `<code style="color:#22d3bf">r**D</code>`, and *D* is read off the straight part of the</p>
-<p>log-log plot (fitted on the middle 60 % of the radii, where the curve is free</p>
-<p>of the small-`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> noise floor and the large-</code><code style="color:#22d3bf">r</code>` saturation).</p>
-<p>★<b>Why this earns its place</b>: unlike box counting it needs no grid, and its</p>
-<p>answers are known for simple sets — a circle gives <b>1</b>, a filled square</p>
-<p><b>2</b>, a Cantor set `<code style="color:#22d3bf">log2/log3 = 0.6309</code>`. It measures a different quantity</p>
-<p>from the existing `<code style="color:#22d3bf">fractal_dimension</code>` (box counting), so the two are an</p>
-<p>independent pair rather than two names for one number.</p>
-<p>Returns a `<code style="color:#22d3bf">measurement</code>`: the fitted dimension.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: fewer than 32 points; not a 2-D array; non-finite</p>
-<p>input; a degenerate cloud (every point identical); a radius range that leaves</p>
-<p>no pairs.</p>
-<p>Limits: sub-sampled to *max_points* (pairs grow quadratically). ★The</p>
-<p>dominant error is <b>not</b> the sub-sampling but the <b>radius window</b>: the</p>
-<p>default range is the 1st-25th percentile of pair distances, and on a *bounded*</p>
-<p>set its upper end runs into the boundary, where `<code style="color:#22d3bf">C(r)</code>` saturates and flattens</p>
-<p>the slope. Measured on a unit square (true D = 2): 1.879 with the default</p>
-<p>window and 1.873 / 1.879 / 1.871 at 400 / 1,500 / 3,000 points —— more points</p>
-<p>do <b>not</b> help; narrowing the window to `<code style="color:#22d3bf">r_lo=0.01, r_hi=0.1</code>` gives 1.947</p>
-<p>and `<code style="color:#22d3bf">0.002 / 0.05</code>` gives 2.050. Pass *r_lo* / *r_hi* explicitly when the</p>
-<p>answer matters, and report the window with the number.</p>
+<p><code style="color:#22d3bf">C(r)</code> is the fraction of point pairs closer than <code style="color:#22d3bf">r</code>; for a self-similar set it grows like <code style="color:#22d3bf">r**D</code>, and *D* is read off the straight part of the log-log plot (fitted on the middle 60 % of the radii, where the curve is free of the small-<code style="color:#22d3bf">r</code> noise floor and the large-<code style="color:#22d3bf">r</code> saturation).</p>
+<p>★<b>Why this earns its place</b>: unlike box counting it needs no grid, and its answers are known for simple sets — a circle gives <b>1</b>, a filled square <b>2</b>, a Cantor set <code style="color:#22d3bf">log2/log3 = 0.6309</code>. It measures a different quantity from the existing <code style="color:#22d3bf">fractal_dimension</code> (box counting), so the two are an independent pair rather than two names for one number.</p>
+<p>Returns a <code style="color:#22d3bf">measurement</code>: the fitted dimension.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: fewer than 32 points; not a 2-D array; non-finite input; a degenerate cloud (every point identical); a radius range that leaves no pairs.</p>
+<p>Limits: sub-sampled to *max_points* (pairs grow quadratically). ★The dominant error is <b>not</b> the sub-sampling but the <b>radius window</b>: the default range is the 1st-25th percentile of pair distances, and on a *bounded* set its upper end runs into the boundary, where <code style="color:#22d3bf">C(r)</code> saturates and flattens the slope. Measured on a unit square (true D = 2): 1.879 with the default window and 1.873 / 1.879 / 1.871 at 400 / 1,500 / 3,000 points —— more points do <b>not</b> help; narrowing the window to <code style="color:#22d3bf">r_lo=0.01, r_hi=0.1</code> gives 1.947 and <code style="color:#22d3bf">0.002 / 0.05</code> gives 2.050. Pass *r_lo* / *r_hi* explicitly when the answer matters, and report the window with the number.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

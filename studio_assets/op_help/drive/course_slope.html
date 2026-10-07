@@ -3,12 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_slope&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>坂道コース: 緩坂で高さ `<code style="color:#22d3bf">height</code><code style="color:#22d3bf"> まで上り、頂上平坦部 </code><code style="color:#22d3bf">top</code>`、急坂で下りる矩形の道(x 軸沿い)。</p>
-<p>多角形は幅 w × 長さ L = height/g_gentle + top + height/g_steep の矩形。`<code style="color:#22d3bf">profile</code>` = (s, z) の折線</p>
-<p>[(0,0), (s1,h), (s1+top,h), (L,0)]、z は `<code style="color:#22d3bf">slope_height</code>` で補間(driveworld が路面を持ち上げる)。</p>
-<p>規格: 幅 ≥ 7、高さ ≥ 1.5、緩 6.5〜9.0 %、急 10.0〜12.5 %、平坦部 ≥ 4 → `<code style="color:#22d3bf">params[&quot;regulation&quot;]</code>`。</p>
-<p>面積 = w·L。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 幅・高さ・勾配・平坦部が正でない、勾配 ≥ 1(45° 超は道ではない)。</p>
+<p>坂道コース: 緩坂で高さ <code style="color:#22d3bf">height</code> まで上り、頂上平坦部 <code style="color:#22d3bf">top</code>、急坂で下りる矩形の道(x 軸沿い)。</p>
+<p>多角形は幅 w × 長さ L = height/g_gentle + top + height/g_steep の矩形。<code style="color:#22d3bf">profile</code> = (s, z) の折線 [(0,0), (s1,h), (s1+top,h), (L,0)]、z は <code style="color:#22d3bf">slope_height</code> で補間(driveworld が路面を持ち上げる)。</p>
+<p>規格: 幅 ≥ 7、高さ ≥ 1.5、緩 6.5〜9.0 %、急 10.0〜12.5 %、平坦部 ≥ 4 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。面積 = w·L。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・高さ・勾配・平坦部が正でない、勾配 ≥ 1(45° 超は道ではない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

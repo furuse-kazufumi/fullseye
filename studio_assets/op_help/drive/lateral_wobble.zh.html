@@ -6,14 +6,12 @@
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>Ornstein–Uhlenbeck 過程 dX = −θ X dt + σ dW の厳密離散化(長さ n の列、刻み dt)。</p>
 <p>x_{k+1} = x_k e^{−θ dt} + σ sqrt((1 − e^{−2θ dt}) / (2θ)) ξ_k,   ξ_k ~ N(0, 1) 独立</p>
-<p>遷移分布が厳密なので dt に依らず定常分散 σ²/(2θ)、自己相関 corr(x_k, x_{k+j}) = e^{−θ j dt}(門は長い系列の標本で、</p>
-<p>許容幅は AR(1) の標本誤差から決める)。`<code style="color:#22d3bf">x0</code>` = None なら定常分布 N(0, σ²/(2θ)) から引く(最初から定常)。</p>
-<p>`<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">np.random.default_rng(seed)</code>`(None も可だが非決定的)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: n &lt; 1、dt ≤ 0、θ ≤ 0、σ &lt; 0。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>遷移分布が厳密なので dt に依らず定常分散 σ²/(2θ)、自己相関 corr(x_k, x_{k+j}) = e^{−θ j dt}(門は長い系列の標本で、許容幅は AR(1) の標本誤差から決める)。<code style="color:#22d3bf">x0</code> = None なら定常分布 N(0, σ²/(2θ)) から引く(最初から定常)。<code style="color:#22d3bf">seed</code> は <code style="color:#22d3bf">np.random.default_rng(seed)</code>(None も可だが非決定的)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: n &lt; 1、dt ≤ 0、θ ≤ 0、σ &lt; 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_traffic">poc_driving_traffic</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_traffic.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">signal</code> 作为输入)</h3>

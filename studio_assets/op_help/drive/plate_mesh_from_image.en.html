@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>RGBA 画像を、面の色を持つ薄い板のメッシュにする。</p>
-<p>画像を `<code style="color:#22d3bf">cell × cell</code>` 画素の区画に切り、alpha の平均が 0.5 以上の区画だけを面にする(2 三角形)。面の色 =</p>
-<p>その区画の alpha で重みづけた平均色 `<code style="color:#22d3bf">Σ(α·rgb) / Σα</code>`。表面の法線 = <b>−x</b>(yaw 0 で +x へ進んで来る車に向く)、</p>
-<p>裏面は同じ形で `<code style="color:#22d3bf">back_color</code>`(法線 +x)。原点 = 板の中心、板は y-z 平面(画像の左 = +y、上 = +z)、</p>
-<p>厚さ `<code style="color:#22d3bf">thickness</code>` を x の ±半分に振る。使われない頂点は残さない(寸法を頂点から測れるように)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;, &quot;front_faces&quot;: (0, n), &quot;back_faces&quot;: (n, 2n), &quot;cells&quot;: (rows, cols)}</code>`。</p>
+<p>画像を <code style="color:#22d3bf">cell × cell</code> 画素の区画に切り、alpha の平均が 0.5 以上の区画だけを面にする(2 三角形)。面の色 = その区画の alpha で重みづけた平均色 <code style="color:#22d3bf">Σ(α·rgb) / Σα</code>。表面の法線 = <b>−x</b>(yaw 0 で +x へ進んで来る車に向く)、裏面は同じ形で <code style="color:#22d3bf">back_color</code>(法線 +x)。原点 = 板の中心、板は y-z 平面(画像の左 = +y、上 = +z)、厚さ <code style="color:#22d3bf">thickness</code> を x の ±半分に振る。使われない頂点は残さない(寸法を頂点から測れるように)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;, &quot;front_faces&quot;: (0, n), &quot;back_faces&quot;: (n, 2n), &quot;cells&quot;: (rows, cols)}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

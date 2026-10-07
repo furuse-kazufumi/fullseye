@@ -7,11 +7,9 @@
 <p>面の粗さパラメータ Sa/Sq/Sp/Sv/Sz/Ssk/Sku/Sdq/Sdr(ISO 25178-2)。</p>
 <p>引数</p>
 <p>z               帯域処理済みの高さ場(形状とうねりを除いたもの)。</p>
-<p>dx, dy          標本間隔。`<code style="color:#22d3bf">dy=None</code>` は正方画素。</p>
-<p>assume_filtered `<code style="color:#22d3bf">True</code><code style="color:#22d3bf"> で帯域の検査を飛ばす。既定は </code><code style="color:#22d3bf">False</code>` = <b>検査する</b>。</p>
-<p>戻り値は `<code style="color:#22d3bf">dict</code>`。パラメータ 9 個に加えて、判断の根拠を数字で残すため</p>
-<p>`<code style="color:#22d3bf">band_long_wave_fraction</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">band_form_ptv_over_sq</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_points</code>` /</p>
-<p>`<code style="color:#22d3bf">assume_filtered</code>` を入れる。</p>
+<p>dx, dy          標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>
+<p>assume_filtered <code style="color:#22d3bf">True</code> で帯域の検査を飛ばす。既定は <code style="color:#22d3bf">False</code> = <b>検査する</b>。</p>
+<p>戻り値は <code style="color:#22d3bf">dict</code>。パラメータ 9 個に加えて、判断の根拠を数字で残すため <code style="color:#22d3bf">band_long_wave_fraction</code> / <code style="color:#22d3bf">band_form_ptv_over_sq</code> / <code style="color:#22d3bf">n_points</code> / <code style="color:#22d3bf">assume_filtered</code> を入れる。</p>
 <p>★ なぜ既定で拒否するのか(実測)</p>
 <p>512x512, dx=1 µm の合成面(自己アフィン PSD + 加工目 λ=32 µm + 深い傷</p>
 <p>4 本 + うねり λ=256 µm + 傾き 0.050/-0.025)を、手順を変えて評価した。</p>
@@ -21,8 +19,7 @@
 <p>最小二乗平面だけ除去      0.7520     +83.9 %   0.5273   -2.04   10.21</p>
 <p>平面 + λc=80µm ハイパス   0.4104      +0.4 %   0.2501   -2.88   18.76</p>
 <p>真値                      0.4089          —    0.2502   -2.80   18.52</p>
-<p><b>生の rms を Sq と呼ぶと 20.3 倍</b>。Ssk は -2.80 が **+0.05 になって</p>
-<p>符号ごと消え**、Sku は 18.5 が 2.26(ガウスの 3 より下)になる。うねりと</p>
+<p><b>生の rms を Sq と呼ぶと 20.3 倍</b>。Ssk は -2.80 が <b>+0.05 になって符号ごと消え</b>、Sku は 18.5 が 2.26(ガウスの 3 より下)になる。うねりと</p>
 <p>傾きが分布を支配すると、深い傷の情報が跡形もなく無くなる。</p>
 <p>平面だけ除いてもまだ 1.8 倍ずれる。「どのパラメータなら安全か」という</p>
 <p>逃げ道は無い —— 帯域を宣言しないまま出した数字は、パラメータの</p>
@@ -37,8 +34,7 @@
 <p>平面 + λc=80µm ハイパス               0.0086      0.00      通す</p>
 <p>真値(λc=80µm)                       0.0042      0.00      通す</p>
 <p>純正弦波 λ=32(256 角)                0.0038      0.03      通す</p>
-<p>通す側の余裕は λc をどこまで上げても保たれるか —— **正当な運用で誤って</p>
-<p>拒否されないこと**を確かめるほうが大事なので、λc を振って測った</p>
+<p>通す側の余裕は λc をどこまで上げても保たれるか —— <b>正当な運用で誤って拒否されないこと</b>を確かめるほうが大事なので、λc を振って測った</p>
 <p>(512², 加工目 + 傷 1 個を含む面):</p>
 <p>λc         16     32     64     80    128    170    256(=L/2)</p>
 <p>長波長比  0.0005 0.0011 0.0044 0.0085 0.0306 0.0563  0.1056</p>
@@ -50,9 +46,9 @@
 <p>なおこの 2 つは <b>or</b> で判定する —— 傾きは無いがうねりが残っている面</p>
 <p>(上の表の「うねりだけ残した面」)は形状 PTV では捕まらず、長波長比だけが</p>
 <p>鳴る。片方だけでは穴が開く。</p>
-<p>それでも判断を機械に預けきらないよう、`<code style="color:#22d3bf">assume_filtered=True</code>` で</p>
+<p>それでも判断を機械に預けきらないよう、<code style="color:#22d3bf">assume_filtered=True</code> で</p>
 <p>明示的に外せる(黙って外れはしない)。証拠の数値そのものも</p>
-<p>`<code style="color:#22d3bf">band_long_wave_fraction</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">band_form_ptv_over_sq</code>` で返す。</p>
+<p><code style="color:#22d3bf">band_long_wave_fraction</code> / <code style="color:#22d3bf">band_form_ptv_over_sq</code> で返す。</p>
 <p>★ 落とし穴 (a) —— Sz は「表面の性質」ではなく「どれだけ長く見たか」を測る</p>
 <p>同じ標本間隔(1 µm)のまま評価窓だけ広げると、Sz は頭打ちにならず</p>
 <p>単調に増える(実測、傷を抜いた面):</p>
@@ -60,12 +56,11 @@
 <p>窓の数      256      64      16       4       1</p>
 <p>Sz平均   0.7112  0.8011  0.8693  0.9248  1.0058</p>
 <p>実測/予測 0.5204  0.5295  0.5314  0.5287  0.5420</p>
-<p>面積 256 倍で <b>+41.4 %</b>。予測はガウス極値の `<code style="color:#22d3bf">2√(2 ln M) · Sq</code>`。</p>
+<p>面積 256 倍で <b>+41.4 %</b>。予測はガウス極値の <code style="color:#22d3bf">2√(2 ln M) · Sq</code>。</p>
 <p>比が窓によらずほぼ一定(0.520〜0.542、平均のまわり ±2.0 %)なので</p>
 <p><b>増え方の形(領域の対数)は当たっている</b>が、絶対値は 1.9 倍外す ——</p>
 <p>面に相関があり、独立な標本の数が点数 M より少ないため。</p>
-<p>**頭打ちにならないので「真の Sz」は存在しない。Sz を報告するときは</p>
-<p>窓の大きさと窓の数を必ず添える。**</p>
+<p><b>頭打ちにならないので「真の Sz」は存在しない。Sz を報告するときは窓の大きさと窓の数を必ず添える。</b></p>
 <p>★ 落とし穴 (b) —— 標本間隔に対していちばん強いのは Sa ではなく <b>Sq</b></p>
 <p>同じ面を点標本化で間引き、毎回同じ手順(傾き除去 → λc=80 µm ハイパス)</p>
 <p>で評価した、真値に対する相対誤差(実測):</p>
@@ -82,8 +77,8 @@
 <p>dx=8 µm では <b>Sa は ±5 % 合格・Sz は不合格</b> —— 同じデータで、</p>
 <p>どちらの数字を見たかだけで結論が反転する。</p>
 <p>★ 落とし穴 (c) —— Sdq / Sdr は標本間隔にも単位にも効かれる</p>
-<p>Sdq は勾配の rms、Sdr は展開面積比 `<code style="color:#22d3bf">mean(√(1+|∇z|²)) - 1</code>`。どちらも</p>
-<p>中心差分で計算するので、波長 λ の正弦では `<code style="color:#22d3bf">sinc(2 dx/λ)</code>` の分だけ</p>
+<p>Sdq は勾配の rms、Sdr は展開面積比 <code style="color:#22d3bf">mean(√(1+|∇z|²)) - 1</code>。どちらも</p>
+<p>中心差分で計算するので、波長 λ の正弦では <code style="color:#22d3bf">sinc(2 dx/λ)</code> の分だけ</p>
 <p><b>過小</b>に出る(実測、λ=32 µm、振幅 1、解析値 Sdq=0.138840):</p>
 <p>dx      Sdq 実測    実測の誤差   sinc(2dx/λ) の予想</p>
 <p>1 µm    0.138471      -0.27 %        -0.64 %</p>
@@ -92,13 +87,13 @@
 <p>8 µm    0.088388     -36.34 %       -36.34 %</p>
 <p><b>粗く測るほど面は滑らかに見える。</b> Sdr のほうは形自体は正しく、</p>
 <p>十分細かく測れば解析値と +0.116 % で一致する(λ=32、dx=0.25 で実測)。</p>
-<p>高さと `<code style="color:#22d3bf">dx</code>` の単位が違うと <b>ここだけが静かに壊れる</b>(Sa/Sq は</p>
+<p>高さと <code style="color:#22d3bf">dx</code> の単位が違うと <b>ここだけが静かに壊れる</b>(Sa/Sq は</p>
 <p>高さの単位しか使わないので気づけない)。</p>
 <p>端の 1 行 1 列は片側差分になるので<b>評価から外している</b>。</p>
 <p>fail-closed</p>
 <p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">dx</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">dy</code>` が非正・非有限。</p>
-<p style="margin:2px 0 2px 12px">• 帯域処理済みに見えない(`<code style="color:#22d3bf">assume_filtered=False</code>` のとき)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dx</code> や <code style="color:#22d3bf">dy</code> が非正・非有限。</p>
+<p style="margin:2px 0 2px 12px">• 帯域処理済みに見えない(<code style="color:#22d3bf">assume_filtered=False</code> のとき)。</p>
 <p style="margin:2px 0 2px 12px">• 全点が同じ高さ(Sq=0 で Ssk/Sku が定義できない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 패밀리 가이드</a></p>

@@ -8,13 +8,10 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/count_channels.chain.jpg">count_channels: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/count_channels.chain.jpg">count_channels: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>画像のチャンネル数を数える。HALCON の `<code style="color:#22d3bf">count_channels</code>`（画像のチャンネル</p>
-<p>数を数える）に相当。</p>
-<p>`<code style="color:#22d3bf">ndim == 3</code>` ならその最後の軸の長さ（チャンネル数）、そうでなければ</p>
-<p>（グレースケール扱いで）1 を返す。a, b は未使用。出力は <code style="color:#22d3bf">feature</code></p>
-<p>（スカラー 1 個）。</p>
+<p>画像のチャンネル数を数える。HALCON の <code style="color:#22d3bf">count_channels</code>（画像のチャンネル数を数える）に相当。</p>
+<p><code style="color:#22d3bf">ndim == 3</code> ならその最後の軸の長さ（チャンネル数）、そうでなければ（グレースケール扱いで）1 を返す。a, b は未使用。出力は <code style="color:#22d3bf">feature</code> （スカラー 1 個）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -24,7 +21,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cfa_to_rgb 0.50 0.50
-count_channels 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cfa_to_rgb%200.50%200.50%0Acount_channels%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cfa_to_rgb%200.50%200.50%0Acount_channels%200.50%200.50">Load &amp; run</a></p>
+count_channels 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cfa_to_rgb%200.50%200.50%0Acount_channels%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cfa_to_rgb%200.50%200.50%0Acount_channels%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>

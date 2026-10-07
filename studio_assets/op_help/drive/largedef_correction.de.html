@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largedef_correction(d, n: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacdome; tacdome.largedef_correction(d, n: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;largedef_correction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>大変形の補正 κₙ(d) = [1 − c₁·d + n/(2+n)·d²]/(1 − d)²(式 3、c₁ は :func:<code style="color:#22d3bf">largedef_c1_coefficient</code>)。F = κₙ·F_L。</p>
-<p>`<code style="color:#22d3bf">d</code>` はスカラーか配列(0 ≤ d &lt; 1)。既定の読みは導出した c₁ = 2n/(1+n)。d → 0 で 1 + 2d/(1+n)、n = 1 で neo-Hookean の円柱の</p>
-<p>厳密解 [(1 − d)⁻² − (1 − d)]/(3d) に一致する。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: d が [0, 1) の外、n が [1, 3] の外、読みの綴り違い。</p>
+<p>大変形の補正 κₙ(d) = [1 − c₁·d + n/(2+n)·d²]/(1 − d)²(式 3、c₁ は <code style="color:#22d3bf">largedef_c1_coefficient</code>)。F = κₙ·F_L。</p>
+<p><code style="color:#22d3bf">d</code> はスカラーか配列(0 ≤ d &lt; 1)。既定の読みは導出した c₁ = 2n/(1+n)。d → 0 で 1 + 2d/(1+n)、n = 1 で neo-Hookean の円柱の厳密解 [(1 − d)⁻² − (1 − d)]/(3d) に一致する。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、n が [1, 3] の外、読みの綴り違い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

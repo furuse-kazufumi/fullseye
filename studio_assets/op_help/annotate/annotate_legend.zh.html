@@ -3,27 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_legend(img, labels, xy, anchor=&#x27;lt&#x27;, start=1, radius=7.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, numbers=None)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.annotate_legend(img, labels, xy, anchor=&#x27;lt&#x27;, start=1, radius=7.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, numbers=None)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_legend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>返回图像(image2d):带编号圆形标记 × 说明的图例(:func:<code style="color:#22d3bf">annotate_markers</code> 的搭档)。</p>
+<p>返回图像(image2d):带编号圆形标记 × 说明的图例(<code style="color:#22d3bf">annotate_markers</code> 的搭档)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>箱の高さは閉形式 `<code style="color:#22d3bf">2*pad + n*row_h + (n-1)*row_gap</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">row_h = max(2r, 文字高)</code>`)。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>箱の高さは閉形式 <code style="color:#22d3bf">2*pad + n*row_h + (n-1)*row_gap</code>(<code style="color:#22d3bf">row_h = max(2r, 文字高)</code>)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : sequence of str</p>
 <p>各行の説明。</p>
 <p>numbers : sequence of str or None</p>
-<p>各行のマーカー文字。None なら `<code style="color:#22d3bf">start</code>` から連番。</p>
-<p>Raises</p>
-<p>------</p>
+<p>各行のマーカー文字。None なら <code style="color:#22d3bf">start</code> から連番。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>labels が空、箱が画像からはみ出す、負の余白。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 训练数据集规范知识 —— COCO / YOLO / VOC 及外观检测中的陷阱</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:paper_figure">paper_figure</a> — <code style="color:#22d3bf">py -3.11 examples/paper_figure.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_defect_floor">poc_real_defect_floor</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_defect_floor.py</code></p>

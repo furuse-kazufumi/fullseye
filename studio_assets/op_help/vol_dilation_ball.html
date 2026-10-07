@@ -5,17 +5,17 @@
 <p><img src="fig/vol_dilation_ball.png" alt="vol_dilation_ball: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_dilation_ball.a.jpg">vol_dilation_ball: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_dilation_ball.a.jpg">vol_dilation_ball: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_dilation_ball.chain.jpg">vol_dilation_ball: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_dilation_ball.chain.jpg">vol_dilation_ball: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_dilation_ball.inputs.jpg">vol_dilation_ball: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_dilation_ball.inputs.jpg">vol_dilation_ball: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>動き</b>(GIF: フレーム / 視点 / スライスを順に。静止の図が完成形で、GIF は補助):</p>
 <p><img src="fig/vol_dilation_ball.gif" alt="vol_dilation_ball: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>球形構造要素による 3D 二値膨張。対応する HALCON op は指定されていない。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が球の半径を </code><code style="color:#22d3bf">1〜4</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">1+int(3a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。球は </code><code style="color:#22d3bf">x²+y²+z² &lt;= r²</code><code style="color:#22d3bf"> で作る（</code><code style="color:#22d3bf">skimage.morphology.ball</code><code style="color:#22d3bf"> と同じ定義）。</code><code style="color:#22d3bf">_vol_reg_dilate</code><code style="color:#22d3bf">（6近傍固定）より広い近傍を扱え、</code><code style="color:#22d3bf">a</code>` で半径そのものを直接変えられる。</p>
+<p><code style="color:#22d3bf">a</code> が球の半径を <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">1+int(3a)</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。球は <code style="color:#22d3bf">x²+y²+z² &lt;= r²</code> で作る（<code style="color:#22d3bf">skimage.morphology.ball</code> と同じ定義）。<code style="color:#22d3bf">_vol_reg_dilate</code>（6近傍固定）より広い近傍を扱え、<code style="color:#22d3bf">a</code> で半径そのものを直接変えられる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -25,7 +25,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_volume 0.50 0.50
-vol_dilation_ball 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_volume%200.50%200.50%0Avol_dilation_ball%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_volume%200.50%200.50%0Avol_dilation_ball%200.50%200.50">Load &amp; run</a></p>
+vol_dilation_ball 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_volume%200.50%200.50%0Avol_dilation_ball%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_volume%200.50%200.50%0Avol_dilation_ball%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_physics_alife_3d.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">volume</code> を入力に取れる)</h3>

@@ -5,13 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>非圧縮 neo-Hookean の円柱を摩擦なしで一軸に圧縮する厳密解(連続体の教科書の結果、模型と独立)。</p>
-<p>伸び λ = 1 − d、横は λ^{−1/2}(体積一定)。公称応力 P = μ(λ⁻² − λ)(圧縮を正)、Cauchy 応力 σ = μ(λ⁻¹ − λ²)、力 F = P·area、</p>
-<p>線形の力 3μ·d·area(E = 3μ)、`<code style="color:#22d3bf">kappa</code><code style="color:#22d3bf"> = F/線形、</code><code style="color:#22d3bf">radius_ratio</code>` = λ^{−1/2}。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: d が [0, 1) の外、μ・area ≤ 0。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>伸び λ = 1 − d、横は λ^{−1/2}(体積一定)。公称応力 P = μ(λ⁻² − λ)(圧縮を正)、Cauchy 応力 σ = μ(λ⁻¹ − λ²)、力 F = P·area、線形の力 3μ·d·area(E = 3μ)、<code style="color:#22d3bf">kappa</code> = F/線形、<code style="color:#22d3bf">radius_ratio</code> = λ^{−1/2}。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、μ・area ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacdome_large_deformation">poc_tacdome_large_deformation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacdome_large_deformation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

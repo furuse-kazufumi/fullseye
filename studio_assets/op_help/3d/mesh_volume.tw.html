@@ -5,33 +5,20 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>閉じた三角形メッシュが囲む<b>符号付き体積</b> → float。</p>
-<p>発散定理(divergence theorem)で `<code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>`。面の巻き順が外向き</p>
-<p>(右手系)なら正、内向きなら負になる —— <b>符号は向きの検査そのもの</b>で、負が</p>
-<p>返ったら法線が裏返っている。</p>
+<p>発散定理(divergence theorem)で <code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>。面の巻き順が外向き(右手系)なら正、内向きなら負になる —— <b>符号は向きの検査そのもの</b>で、負が返ったら法線が裏返っている。</p>
 <p>Args:</p>
-<p>mesh: `<code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code>` のタプル。</p>
+<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
 <p>Returns:</p>
 <p>符号付き体積(float、座標の単位の 3 乗)。</p>
 <p>Raises:</p>
-<p>ValueError: `<code style="color:#22d3bf">mesh</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">(vertices, faces)</code>` の 2 要素でない、形状不正、</p>
+<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
 <p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p>★**<code style="color:#22d3bf">voxel_to_mesh</code>(marching cubes)の返りは内向き巻きなので、そのまま渡すと</p>
-<p>負になる**(実測: 1000 voxel の立方体で -985.67)。「負 = 法線が裏返っている」</p>
-<p>のは正しいが、<b>この組み合わせでは裏返っているのが既定</b>なので、体積が欲しい</p>
-<p>だけなら `<code style="color:#22d3bf">abs()</code><code style="color:#22d3bf"> を取るか </code><code style="color:#22d3bf">faces[:, ::-1]</code>` で巻き直すこと。向きの検査に</p>
-<p>使うのは、巻き順を自分で決めた(または向きを揃えた)メッシュに対して。</p>
-<p><b>限界(honest)</b>: 発散定理は<b>閉じた曲面でのみ</b>成り立つ。開いたメッシュ</p>
-<p>(穴のあるスキャン)に対しても数値は返るが、それは「穴を原点へ向かって</p>
-<p>塞いだ立体の体積」であって、欲しい量ではない。閉じているかどうかは</p>
-<p>:func:<code style="color:#22d3bf">boundary_vertices</code> が空か、`<code style="color:#22d3bf">mesh_edge_stats</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">boundary_edges</code>` が</p>
-<p>0 かで<b>先に確かめること</b>。自己交差があるメッシュでは重なった領域が</p>
-<p>符号つきで二重に数えられる(これも定理どおりの挙動で、検出はしない)。</p>
-<p>Reference (public): 発散定理による多面体体積は標準的な公式。例えば</p>
-<p>C. Zhang &amp; T. Chen, &quot;Efficient feature extraction for 2D/3D objects in mesh</p>
-<p>representation&quot;, ICIP 2001。</p>
+<p>★<b><code style="color:#22d3bf">voxel_to_mesh</code>(marching cubes)の返りは内向き巻きなので、そのまま渡すと負になる</b>(実測: 1000 voxel の立方体で -985.67)。「負 = 法線が裏返っている」のは正しいが、<b>この組み合わせでは裏返っているのが既定</b>なので、体積が欲しいだけなら <code style="color:#22d3bf">abs()</code> を取るか <code style="color:#22d3bf">faces[:, ::-1]</code> で巻き直すこと。向きの検査に使うのは、巻き順を自分で決めた(または向きを揃えた)メッシュに対して。</p>
+<p><b>限界(honest)</b>: 発散定理は<b>閉じた曲面でのみ</b>成り立つ。開いたメッシュ(穴のあるスキャン)に対しても数値は返るが、それは「穴を原点へ向かって塞いだ立体の体積」であって、欲しい量ではない。閉じているかどうかは <code style="color:#22d3bf">boundary_vertices</code> が空か、<code style="color:#22d3bf">mesh_edge_stats</code> の <code style="color:#22d3bf">boundary_edges</code> が 0 かで<b>先に確かめること</b>。自己交差があるメッシュでは重なった領域が符号つきで二重に数えられる(これも定理どおりの挙動で、検出はしない)。</p>
+<p>Reference (public): 発散定理による多面体体積は標準的な公式。例えば C. Zhang &amp; T. Chen, &quot;Efficient feature extraction for 2D/3D objects in mesh representation&quot;, ICIP 2001。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

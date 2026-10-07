@@ -3,13 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × flow_scattered</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_apply(points, flow)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.flow_apply(points, flow)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;flow_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Add a scattered flow `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> to a point set </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf">. The consuming side of </code><code style="color:#22d3bf">flow</code>`.</p>
+<p>Add a scattered flow <code style="color:#22d3bf">(N,3)</code> to a point set <code style="color:#22d3bf">(N,3)</code> → <code style="color:#22d3bf">points</code>. The consuming side of <code style="color:#22d3bf">flow</code>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">estimate_flow(a, b)</code>` が「a の各点から b の最近傍への変位」を返すので、</p>
-<p>`<code style="color:#22d3bf">flow_apply(a, estimate_flow(a, b))</code>` は **b の点のうち a から最近傍として</p>
-<p>選ばれたもの**へ移る。往復が厳密になるのは対応が全単射のときだけで、</p>
-<p>そうでなければ「a の 2 点が b の同じ点へ落ちる」ぶんだけ形が縮む</p>
-<p>—— `<code style="color:#22d3bf">selftest</code>` はこの残差を数字で出す。</p>
+<p><code style="color:#22d3bf">estimate_flow(a, b)</code> が「a の各点から b の最近傍への変位」を返すので、<code style="color:#22d3bf">flow_apply(a, estimate_flow(a, b))</code> は <b>b の点のうち a から最近傍として選ばれたもの</b>へ移る。往復が厳密になるのは対応が全単射のときだけで、そうでなければ「a の 2 点が b の同じ点へ落ちる」ぶんだけ形が縮む —— <code style="color:#22d3bf">selftest</code> はこの残差を数字で出す。</p>
 <p>Args:</p>
 <p>points: (N, 3)。</p>
 <p>flow: (N, 3)。</p>

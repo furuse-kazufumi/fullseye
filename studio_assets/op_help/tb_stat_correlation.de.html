@@ -7,30 +7,23 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_stat_correlation.chain.jpg">tb_stat_correlation: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_stat_correlation.chain.jpg">tb_stat_correlation: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_stat_correlation.inputs.jpg">tb_stat_correlation: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_stat_correlation.inputs.jpg">tb_stat_correlation: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Pearson-Korrelationsmatrix von `<code style="color:#22d3bf">(N, D)</code><code style="color:#22d3bf"> Beobachtungen → </code><code style="color:#22d3bf">(D, D)</code>`.</p>
+<p>Pearson-Korrelationsmatrix von <code style="color:#22d3bf">(N, D)</code> Beobachtungen → <code style="color:#22d3bf">(D, D)</code>.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Same orientation as :func:<code style="color:#22d3bf">stat_covariance</code> (rows = observations).</p>
-<p>Entries are clipped to `<code style="color:#22d3bf">[-1, 1]</code>` (floating-point can overshoot by an</p>
-<p>ulp), the diagonal is exactly `<code style="color:#22d3bf">1</code>` and the matrix exactly symmetric by</p>
-<p>construction.</p>
-<p>**A constant column raises `<code style="color:#22d3bf">ValueError</code>`** (naming the column) instead of</p>
-<p>yielding NaN: correlation with a zero-variance variable is mathematically</p>
-<p>undefined (0/0), and a NaN that surfaces three ops downstream is the</p>
-<p>classic zero-division bug family this module fails closed against. Drop or</p>
-<p>perturb the constant column deliberately if that is what you mean.</p>
-<p>HALCON: no public tuple operator (see :func:<code style="color:#22d3bf">stat_covariance</code>).</p>
-<p>Typed bridge of the math op `<code style="color:#22d3bf">stat_correlation</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>Same orientation as <code style="color:#22d3bf">stat_covariance</code> (rows = observations). Entries are clipped to <code style="color:#22d3bf">[-1, 1]</code> (floating-point can overshoot by an ulp), the diagonal is exactly <code style="color:#22d3bf">1</code> and the matrix exactly symmetric by construction.</p>
+<p><b>A constant column raises <code style="color:#22d3bf">ValueError</code></b> (naming the column) instead of yielding NaN: correlation with a zero-variance variable is mathematically undefined (0/0), and a NaN that surfaces three ops downstream is the classic zero-division bug family this module fails closed against. Drop or perturb the constant column deliberately if that is what you mean.</p>
+<p>HALCON: no public tuple operator (see <code style="color:#22d3bf">stat_covariance</code>).</p>
+<p>Typed bridge of the math op <code style="color:#22d3bf">stat_correlation</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_matrix 0.50 0.50
-tb_stat_correlation 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_matrix%200.50%200.50%0Atb_stat_correlation%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_matrix%200.50%200.50%0Atb_stat_correlation%200.50%200.50">Load &amp; run</a></p>
+tb_stat_correlation 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_matrix%200.50%200.50%0Atb_stat_correlation%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_matrix%200.50%200.50%0Atb_stat_correlation%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">stat_correlation</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>

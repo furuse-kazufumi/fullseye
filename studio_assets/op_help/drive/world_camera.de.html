@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_camera(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, *, light=(0.3, -0.5, 0.8), ambient: &#x27;float&#x27; = 0.35, sky=(0.62, 0.75, 0.92), ego=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveworld; driveworld.world_camera(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, *, light=(0.3, -0.5, 0.8), ambient: &#x27;float&#x27; = 0.35, sky=(0.62, 0.75, 0.92), ego=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;world_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>世界をカメラで撮る: `<code style="color:#22d3bf">{&quot;color&quot; (H,W,3), &quot;label&quot; (H,W) int(−1 = 空), &quot;depth&quot; (H,W), &quot;face&quot; (H,W), &quot;shade&quot; (H,W)}</code>`。</p>
-<p>render3d.render_mesh(attributes=True) の三角形 id から面の色・ラベルを引き、色は Lambert</p>
-<p>(`<code style="color:#22d3bf">ambient + (1−ambient)·max(n·l, 0)</code>`、n は render3d のカメラ系法線を世界系に戻さず、光をカメラ系で与える)。</p>
-<p>`<code style="color:#22d3bf">ego=(V, F, color)</code>` を渡すと自車のメッシュも一緒に描く(世界には足さない)。</p>
+<p>世界をカメラで撮る: <code style="color:#22d3bf">{&quot;color&quot; (H,W,3), &quot;label&quot; (H,W) int(−1 = 空), &quot;depth&quot; (H,W), &quot;face&quot; (H,W), &quot;shade&quot; (H,W)}</code>。</p>
+<p>render3d.render_mesh(attributes=True) の三角形 id から面の色・ラベルを引き、色は Lambert (<code style="color:#22d3bf">ambient + (1−ambient)·max(n·l, 0)</code>、n は render3d のカメラ系法線を世界系に戻さず、光をカメラ系で与える)。<code style="color:#22d3bf">ego=(V, F, color)</code> を渡すと自車のメッシュも一緒に描く(世界には足さない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

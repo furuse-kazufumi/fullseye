@@ -11,7 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/iv_richardson_lucy.inputs.jpg">iv_richardson_lucy: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Richardson-Lucy deconvolution assuming a small Gaussian PSF (sigma = `<code style="color:#22d3bf">RL_SIGMA</code><code style="color:#22d3bf">). </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the iteration count n = 1 + round(a*14) (1..15); </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> is ignored. RL multiplicatively drives the estimate </code><code style="color:#22d3bf">u</code><code style="color:#22d3bf"> so that </code><code style="color:#22d3bf">u (*) psf</code>` matches the blurred measurement, sharpening real edges.</p>
+<p>Richardson-Lucy deconvolution assuming a small Gaussian PSF (sigma = <code style="color:#22d3bf">RL_SIGMA</code>). <code style="color:#22d3bf">a</code> sets the iteration count n = 1 + round(a*14) (1..15); <code style="color:#22d3bf">b</code> is ignored. RL multiplicatively drives the estimate <code style="color:#22d3bf">u</code> so that <code style="color:#22d3bf">u (*) psf</code> matches the blurred measurement, sharpening real edges.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

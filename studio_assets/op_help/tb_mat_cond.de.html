@@ -7,31 +7,24 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mat_cond.chain.jpg">tb_mat_cond: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mat_cond.chain.jpg">tb_mat_cond: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Spektrale (2-Norm-)Konditionszahl `<code style="color:#22d3bf">s_max / s_min</code>` — der numerische Kanarienvogel der gesamten linalg-Familie.</p>
+<p>Spektrale (2-Norm-)Konditionszahl <code style="color:#22d3bf">s_max / s_min</code> — der numerische Kanarienvogel der gesamten linalg-Familie.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">cond == 1</code>` for an orthogonal/orthonormal matrix (the best possible);</p>
-<p>`<code style="color:#22d3bf">inf</code>` (returned, not raised — the question &quot;how conditioned is it?&quot; has</p>
-<p>that honest answer) for an exactly singular one. A solve against *A* loses</p>
-<p>roughly `<code style="color:#22d3bf">log10(cond(A))</code>` significant digits (Golub &amp; Van Loan §2.6):</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cond ~ 1e3</code>`  — comfortable, ~13 digits survive.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cond ~ 1e8</code>`  — half the digits are gone; residuals may still look</p>
-<p>small while parameters are off.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cond &gt; 1e12</code><code style="color:#22d3bf"> — **do not trust** :func:</code>mat_solve` here: at best ~3</p>
-<p>digits remain. Rescale/centre the problem, or switch to</p>
-<p>:func:<code style="color:#22d3bf">mat_lstsq</code> / :func:<code style="color:#22d3bf">mat_pinv</code> with an honest `<code style="color:#22d3bf">rcond</code>`.</p>
-<p>Defined for any rectangular `<code style="color:#22d3bf">(m, n)</code>` matrix (via its singular values).</p>
-<p>HALCON: no direct operator (combine `<code style="color:#22d3bf">norm_matrix</code>` of *A* and of its</p>
-<p>inverse).</p>
-<p>Typed bridge of the math op `<code style="color:#22d3bf">mat_cond</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p><code style="color:#22d3bf">cond == 1</code> for an orthogonal/orthonormal matrix (the best possible); <code style="color:#22d3bf">inf</code> (returned, not raised — the question &quot;how conditioned is it?&quot; has that honest answer) for an exactly singular one. A solve against *A* loses roughly <code style="color:#22d3bf">log10(cond(A))</code> significant digits (Golub &amp; Van Loan §2.6):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cond ~ 1e3</code>  — comfortable, ~13 digits survive.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cond ~ 1e8</code>  — half the digits are gone; residuals may still look small while parameters are off.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cond &gt; 1e12</code> — <b>do not trust</b> <code style="color:#22d3bf">mat_solve</code> here: at best ~3 digits remain. Rescale/centre the problem, or switch to <code style="color:#22d3bf">mat_lstsq</code> / <code style="color:#22d3bf">mat_pinv</code> with an honest <code style="color:#22d3bf">rcond</code>.</p>
+<p>Defined for any rectangular <code style="color:#22d3bf">(m, n)</code> matrix (via its singular values).</p>
+<p>HALCON: no direct operator (combine <code style="color:#22d3bf">norm_matrix</code> of *A* and of its inverse).</p>
+<p>Typed bridge of the math op <code style="color:#22d3bf">mat_cond</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_matrix 0.50 0.50
-tb_mat_cond 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_matrix%200.50%200.50%0Atb_mat_cond%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_matrix%200.50%200.50%0Atb_mat_cond%200.50%200.50">Load &amp; run</a></p>
+tb_mat_cond 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_matrix%200.50%200.50%0Atb_mat_cond%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_matrix%200.50%200.50%0Atb_mat_cond%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">mat_cond</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>

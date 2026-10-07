@@ -13,13 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/ph_coherence_enhancing_diffusion.inputs.jpg">ph_coherence_enhancing_diffusion: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Weickert coherence-enhancing diffusion (HALCON `<code style="color:#22d3bf">coherence_enhancing_diff</code>`).</p>
-<p>Builds the structure tensor J_rho = G_rho * (grad I_sigma . grad I_sigma^T),</p>
-<p>eigendecomposes it, and diffuses with a tensor whose ALONG-structure eigenvalue</p>
-<p>grows with local coherence (mu1-mu2)^2 while the ACROSS-structure eigenvalue</p>
-<p>stays small — so noise is smoothed along coherent lines/flow without blurring</p>
-<p>across them. Update  I &lt;- I + dt * div(D grad I). `<code style="color:#22d3bf">a</code>` sets the step count,</p>
-<p>`<code style="color:#22d3bf">b</code>` the integration scale rho.</p>
+<p>Weickert coherence-enhancing diffusion (HALCON <code style="color:#22d3bf">coherence_enhancing_diff</code>).</p>
+<p>Builds the structure tensor J_rho = G_rho * (grad I_sigma . grad I_sigma^T), eigendecomposes it, and diffuses with a tensor whose ALONG-structure eigenvalue grows with local coherence (mu1-mu2)^2 while the ACROSS-structure eigenvalue stays small — so noise is smoothed along coherent lines/flow without blurring across them. Update  I &lt;- I + dt * div(D grad I). <code style="color:#22d3bf">a</code> sets the step count, <code style="color:#22d3bf">b</code> the integration scale rho.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

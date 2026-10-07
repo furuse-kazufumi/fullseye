@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.restitution_from_intervals(contact_times) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballistics; ballistics.restitution_from_intervals(contact_times) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;restitution_from_intervals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>接触時刻の列(≥ 3 個、増加)から e を推定: 間隔 T_{k+1} = e T_k → log T_k の傾きが log e。`<code style="color:#22d3bf">{&quot;e&quot;, &quot;residual&quot;}</code>`。</p>
+<p>接触時刻の列(≥ 3 個、増加)から e を推定: 間隔 T_{k+1} = e T_k → log T_k の傾きが log e。<code style="color:#22d3bf">{&quot;e&quot;, &quot;residual&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

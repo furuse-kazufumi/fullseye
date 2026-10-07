@@ -15,7 +15,7 @@
 <p style="margin:2px 0 2px 12px">• <b>render(3)</b> — <code style="color:#22d3bf">volseq_render_orbit</code>(時間を進めながら回す <code style="color:#22d3bf">rgbvideo</code>、<code style="color:#22d3bf">mode=&quot;speed&quot;</code> で速さの色)/ <code style="color:#22d3bf">focus_sweep_height_video</code>(高さ場 <code style="color:#22d3bf">video</code>)/ <code style="color:#22d3bf">focus_sweep_surface_video</code>(陰影つきの高さ場 <code style="color:#22d3bf">rgbvideo</code>)。</p>
 <p>回した動画は videocube の <code style="color:#22d3bf">video_write_gif</code> でそのまま GIF になります。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">連鎖</h3>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid-Diagramm (Quelltext):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
     S[volseq_synth_beating / dividing] --&gt; M[volseq_magnify_motion]
     R[実測の z-stack 時系列 volseq] --&gt; M
     R --&gt; I[volseq_interpolate_flow]

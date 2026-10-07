@@ -5,14 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>테두리를 새 크기로 늘이되 네 모서리는 변형시키지 않습니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The four corners are copied <b>bit for bit</b>, the four edges are stretched</p>
-<p>along one axis only, and the centre is stretched along both. This is the</p>
-<p>standard way a UI panel grows: the border keeps its thickness at any size.</p>
-<p>Stretching is nearest-neighbour on the interior spans, so an output the same</p>
-<p>size as the input is the exact identity — no resampling blur creeps in when</p>
-<p>a panel happens not to need stretching.</p>
-<p>Raises ValueError: borders that meet or cross (`<code style="color:#22d3bf">left + right &gt;= width</code>`),</p>
-<p>an output smaller than the borders it must preserve.</p>
+<p>The four corners are copied <b>bit for bit</b>, the four edges are stretched along one axis only, and the centre is stretched along both. This is the standard way a UI panel grows: the border keeps its thickness at any size.</p>
+<p>Stretching is nearest-neighbour on the interior spans, so an output the same size as the input is the exact identity — no resampling blur creeps in when a panel happens not to need stretching.</p>
+<p>Raises ValueError: borders that meet or cross (<code style="color:#22d3bf">left + right &gt;= width</code>), an output smaller than the borders it must preserve.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

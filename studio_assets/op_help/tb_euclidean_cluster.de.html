@@ -7,32 +7,29 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_euclidean_cluster.chain.jpg">tb_euclidean_cluster: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_euclidean_cluster.chain.jpg">tb_euclidean_cluster: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_euclidean_cluster.inputs.jpg">tb_euclidean_cluster: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_euclidean_cluster.inputs.jpg">tb_euclidean_cluster: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Bewegung</b> (GIF: Bilder / Ansichten / Schnitte nacheinander. Die stehende Abbildung ist die vollständige; das GIF ist ergänzend):</p>
 <p><img src="fig/tb_euclidean_cluster.gif" alt="tb_euclidean_cluster: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Distanzbasiertes Clustering über die Zusammenhangskomponenten eines Nachbarschaftsgraphen mit Radius <code style="color:#22d3bf">tol</code> (-1 = Rauschen).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>互いに `<code style="color:#22d3bf">tol</code>` 以内の点を(推移的に)同一クラスタへ束ねる。空間的に離れた物体が</p>
-<p>別クラスタになる(接地面除去後の「どの塊が掴める物か」の分離に使う)。連結成分のうち</p>
-<p>`<code style="color:#22d3bf">min_size</code>` 未満のものはノイズとして -1。ラベルはクラスタサイズ降順で 0,1,2,...</p>
-<p>(決定論)。</p>
+<p>互いに <code style="color:#22d3bf">tol</code> 以内の点を(推移的に)同一クラスタへ束ねる。空間的に離れた物体が別クラスタになる(接地面除去後の「どの塊が掴める物か」の分離に使う)。連結成分のうち <code style="color:#22d3bf">min_size</code> 未満のものはノイズとして -1。ラベルはクラスタサイズ降順で 0,1,2,... (決定論)。</p>
 <p>Args:</p>
 <p>points: (N,3) 点群。</p>
 <p>tol: 同一クラスタとみなす近接半径(距離、要 &gt; 0)。</p>
 <p>min_size: これ未満の連結成分はノイズ(-1)。</p>
 <p>Returns:</p>
 <p>labels: (N,) int。0..(n_clusters-1) がクラスタ、-1 がノイズ。空入力は shape (0,)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">euclidean_cluster</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">min_size</code><code style="color:#22d3bf">(既定 10)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">euclidean_cluster</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">min_size</code>(既定 10)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
-tb_euclidean_cluster 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_euclidean_cluster%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_euclidean_cluster%200.50%200.50">Load &amp; run</a></p>
+tb_euclidean_cluster 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_euclidean_cluster%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_euclidean_cluster%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">euclidean_cluster</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:object_segmentation">object_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples_3d/object_segmentation.py</code></p>

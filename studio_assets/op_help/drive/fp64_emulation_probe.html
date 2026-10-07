@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fp64_emulation_probe()</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ozakimm; ozakimm.fp64_emulation_probe()</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;fp64_emulation_probe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>cuBLAS の FP64 エミュレーション(CUDA 13.0 Update 2 以降)が、この計算機で使えるかを表で返す。</p>
-<p><b>例外を出さない</b>: GPU・CUDA・cuBLAS 13 が無ければ `<code style="color:#22d3bf">available=False</code>` と理由を返す(重い依存は持たない。ctypes で</p>
-<p>ライブラリを開いて版を読むだけ)。返り: `<code style="color:#22d3bf">available</code><code style="color:#22d3bf">(bool)、</code><code style="color:#22d3bf">rows</code><code style="color:#22d3bf">(候補ごとの </code><code style="color:#22d3bf">library</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">path</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">loaded</code>`・</p>
-<p>`<code style="color:#22d3bf">cublas_version</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">emulation_api</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">cublasSetEmulationStrategy</code><code style="color:#22d3bf"> があるか)・</code><code style="color:#22d3bf">gpu</code>`(ハンドルを作れたか)・</p>
-<p>`<code style="color:#22d3bf">reason</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">how</code><code style="color:#22d3bf">(有効にする方法)、</code><code style="color:#22d3bf">note</code>`。</p>
-<p>有効にする方法は opt-in: math mode `<code style="color:#22d3bf">CUBLAS_FP64_EMULATED_FIXEDPOINT_MATH</code>`、またはコードを変えずに</p>
-<p>`<code style="color:#22d3bf">CUBLAS_EMULATE_DOUBLE_PRECISION=1</code>`。cuBLAS の文書はエミュレーション中はビット単位の再現の保証が外れると書く</p>
-<p>—— 再現が要るなら :func:<code style="color:#22d3bf">matmul_reproducible</code>。</p>
+<p><b>例外を出さない</b>: GPU・CUDA・cuBLAS 13 が無ければ <code style="color:#22d3bf">available=False</code> と理由を返す(重い依存は持たない。ctypes でライブラリを開いて版を読むだけ)。返り: <code style="color:#22d3bf">available</code>(bool)、<code style="color:#22d3bf">rows</code>(候補ごとの <code style="color:#22d3bf">library</code>・<code style="color:#22d3bf">path</code>・<code style="color:#22d3bf">loaded</code>・ <code style="color:#22d3bf">cublas_version</code>・<code style="color:#22d3bf">emulation_api</code>(<code style="color:#22d3bf">cublasSetEmulationStrategy</code> があるか)・<code style="color:#22d3bf">gpu</code>(ハンドルを作れたか)・ <code style="color:#22d3bf">reason</code>)、<code style="color:#22d3bf">how</code>(有効にする方法)、<code style="color:#22d3bf">note</code>。</p>
+<p>有効にする方法は opt-in: math mode <code style="color:#22d3bf">CUBLAS_FP64_EMULATED_FIXEDPOINT_MATH</code>、またはコードを変えずに <code style="color:#22d3bf">CUBLAS_EMULATE_DOUBLE_PRECISION=1</code>。cuBLAS の文書はエミュレーション中はビット単位の再現の保証が外れると書く —— 再現が要るなら <code style="color:#22d3bf">matmul_reproducible</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

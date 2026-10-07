@@ -8,19 +8,15 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_histo_to_thresh.inputs.jpg">hx_histo_to_thresh: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_histo_to_thresh.inputs.jpg">hx_histo_to_thresh: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ヒストグラムの谷から閾値を決めて二値化(Otsu の分散基準でなく谷検出=別 op)。</p>
-<p>`<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> の 64 bin ヒストグラム(範囲 [0,1])を σ=1.5 のガウスで平滑化し、最も高い bin </code><code style="color:#22d3bf">p1</code><code style="color:#22d3bf"> と、</code><code style="color:#22d3bf">p1</code>` から 5 bin</p>
-<p>以上離れた中で次に高い bin `<code style="color:#22d3bf">p2</code><code style="color:#22d3bf"> を取り、その間で最小の bin(谷)の左端の値をしきい値 </code><code style="color:#22d3bf">thr</code>` にして</p>
-<p>`<code style="color:#22d3bf">v &gt; thr</code>` を 1 とする 0/1 の float region を返す。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用(しきい値は完全に自動)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">p2</code><code style="color:#22d3bf"> が見つからない(5 bin 以上離れた bin が無い)ときは </code><code style="color:#22d3bf">lo == hi</code><code style="color:#22d3bf"> となり谷を bin 32、つまり </code><code style="color:#22d3bf">thr = 0.5</code>`</p>
+<p><code style="color:#22d3bf">v</code> の 64 bin ヒストグラム(範囲 [0,1])を σ=1.5 のガウスで平滑化し、最も高い bin <code style="color:#22d3bf">p1</code> と、<code style="color:#22d3bf">p1</code> から 5 bin 以上離れた中で次に高い bin <code style="color:#22d3bf">p2</code> を取り、その間で最小の bin(谷)の左端の値をしきい値 <code style="color:#22d3bf">thr</code> にして <code style="color:#22d3bf">v &gt; thr</code> を 1 とする 0/1 の float region を返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用(しきい値は完全に自動)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p2</code> が見つからない(5 bin 以上離れた bin が無い)ときは <code style="color:#22d3bf">lo == hi</code> となり谷を bin 32、つまり <code style="color:#22d3bf">thr = 0.5</code></p>
 <p>に固定する。</p>
-<p>注意: `<code style="color:#22d3bf">p2</code>` は「2 番目のモード」ではなく「p1 から 5 bin 以上離れた 2 番目に高い bin」なので、単峰の裾でも選ばれる。</p>
-<p>その場合の谷はピークと裾の間の最小値になり、意図と違う位置で切れる(単峰のガウス雑音画像で大半が前景になる</p>
-<p>実測あり)。双峰性がはっきりした画像向け。分散基準で決めたいときは `<code style="color:#22d3bf">otsu</code><code style="color:#22d3bf">、局所的なら </code><code style="color:#22d3bf">dyn_threshold</code>`。</p>
+<p>注意: <code style="color:#22d3bf">p2</code> は「2 番目のモード」ではなく「p1 から 5 bin 以上離れた 2 番目に高い bin」なので、単峰の裾でも選ばれる。その場合の谷はピークと裾の間の最小値になり、意図と違う位置で切れる(単峰のガウス雑音画像で大半が前景になる実測あり)。双峰性がはっきりした画像向け。分散基準で決めたいときは <code style="color:#22d3bf">otsu</code>、局所的なら <code style="color:#22d3bf">dyn_threshold</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -29,7 +25,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_histo_to_thresh 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_histo_to_thresh%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_histo_to_thresh%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_histo_to_thresh 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_histo_to_thresh%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_histo_to_thresh%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">region</code> を入力に取れる)</h3>

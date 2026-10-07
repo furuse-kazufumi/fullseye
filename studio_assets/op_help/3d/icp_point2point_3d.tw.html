@@ -5,14 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 point-to-point ICP(Kabsch/SVD)精化點群。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>粗いマッチ推定(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)で得た</p>
-<p>初期姿勢 (init_R, init_t) を出発点に、src 側点群を dst 側点群へ剛体変換で</p>
-<p>位置合わせする。各反復で最近傍対応(cKDTree)を張り直し、Kabsch アルゴリズム</p>
-<p>(SVD)で相対回転・並進を求めて累積することで、対応が既知でなくても</p>
-<p>サブボクセル精度へ収束させる。</p>
-<p>部分重なり・外れ値には Trimmed ICP(距離の小さい対応のみ採用)と</p>
-<p>絶対距離ゲート(max_corr_dist)で対処する。最終 RMSE は実際に採用した</p>
-<p>対応(インライア)上で評価するため、部分観測でも姿勢品質を正しく反映する。</p>
+<p>粗いマッチ推定(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)で得た初期姿勢 (init_R, init_t) を出発点に、src 側点群を dst 側点群へ剛体変換で位置合わせする。各反復で最近傍対応(cKDTree)を張り直し、Kabsch アルゴリズム(SVD)で相対回転・並進を求めて累積することで、対応が既知でなくてもサブボクセル精度へ収束させる。</p>
+<p>部分重なり・外れ値には Trimmed ICP(距離の小さい対応のみ採用)と絶対距離ゲート(max_corr_dist)で対処する。最終 RMSE は実際に採用した対応(インライア)上で評価するため、部分観測でも姿勢品質を正しく反映する。</p>
 <p>引数:</p>
 <p>src: (N,3) 移動側点群(torch.Tensor か numpy.ndarray)。</p>
 <p>dst: (M,3) 固定側(参照)点群。</p>
@@ -29,16 +23,15 @@
 <p>src の点の順を入れ替えても R・t・rmse がビット単位で同じ(同じ計算機・同じ LAPACK の上)。trim_ratio の切れ目で</p>
 <p>距離がちょうど同点の点は、順で選ばれ方が変わりうる。20 万点で 1 反復あたり 0.7 ms が 170 ms 程度になる。</p>
 <p>返り値:</p>
-<p>R: (3,3) 回転。dst ~= src @ R.T + t を満たす。**torch がある環境では</p>
-<p>`<code style="color:#22d3bf">torch.Tensor</code><code style="color:#22d3bf">、無ければ同じ値の </code><code style="color:#22d3bf">numpy.ndarray</code>`**(2026-09-07 に</p>
+<p>R: (3,3) 回転。dst ~= src @ R.T + t を満たす。<b>torch がある環境では <code style="color:#22d3bf">torch.Tensor</code>、無ければ同じ値の <code style="color:#22d3bf">numpy.ndarray</code></b>(2026-09-07 に</p>
 <p>本体を numpy 化したときも、互換のため型は据え置いた)。</p>
-<p>★同じ族の :func:<code style="color:#22d3bf">icp_point2plane</code> は<b>常に numpy を返す</b> —— 族の中で</p>
-<p>型が揃っていないので、下流では `<code style="color:#22d3bf">np.asarray(R)</code>` を通すのが安全</p>
+<p>★同じ族の <code style="color:#22d3bf">icp_point2plane</code> は<b>常に numpy を返す</b> —— 族の中で</p>
+<p>型が揃っていないので、下流では <code style="color:#22d3bf">np.asarray(R)</code> を通すのが安全</p>
 <p>(どちらでも動く。破壊的変更を避けてこの不揃いを残してある)。</p>
 <p>t: (3,) 並進(R と同じ型)。</p>
 <p>info: dict。&quot;rmse&quot;(採用対応上の最終RMSE), &quot;iters&quot;(実反復数),</p>
 <p>&quot;converged&quot;(bool), &quot;inliers&quot;(採用対応数), &quot;rmse_history&quot;(list)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

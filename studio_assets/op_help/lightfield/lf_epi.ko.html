@@ -5,18 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>에피폴라 평면 이미지 —— <b>선의 기울기가 곧 시차</b>인 단면.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>An EPI is what makes a light field different from a pile of photographs: fix</p>
-<p>one image row and one angular row, and every scene point traces a *straight</p>
-<p>line* whose gradient `<code style="color:#22d3bf">dx/du</code><code style="color:#22d3bf"> is exactly its slope </code><code style="color:#22d3bf">s</code>`. Occlusion becomes</p>
-<p>one line crossing in front of another, which is why EPI methods handle it</p>
-<p>better than window matching.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">axis=&quot;u&quot;</code><code style="color:#22d3bf"> (horizontal): fix </code><code style="color:#22d3bf">v = view</code>` (default: the centre row,</p>
-<p>`<code style="color:#22d3bf">(V-1)//2</code><code style="color:#22d3bf">) and image row </code><code style="color:#22d3bf">y = index</code><code style="color:#22d3bf">; returns </code><code style="color:#22d3bf">E[u, x]</code>` of shape</p>
-<p>`<code style="color:#22d3bf">(U, W)</code>`.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">axis=&quot;v&quot;</code><code style="color:#22d3bf"> (vertical): fix </code><code style="color:#22d3bf">u = view</code><code style="color:#22d3bf"> and image column </code><code style="color:#22d3bf">x = index</code>`;</p>
-<p>returns `<code style="color:#22d3bf">E[v, y]</code><code style="color:#22d3bf"> of shape </code><code style="color:#22d3bf">(V, H)</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, unknown *axis*,</p>
-<p>*index* outside the spatial extent, *view* outside the angular extent.</p>
+<p>An EPI is what makes a light field different from a pile of photographs: fix one image row and one angular row, and every scene point traces a *straight line* whose gradient <code style="color:#22d3bf">dx/du</code> is exactly its slope <code style="color:#22d3bf">s</code>. Occlusion becomes one line crossing in front of another, which is why EPI methods handle it better than window matching.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis=&quot;u&quot;</code> (horizontal): fix <code style="color:#22d3bf">v = view</code> (default: the centre row, <code style="color:#22d3bf">(V-1)//2</code>) and image row <code style="color:#22d3bf">y = index</code>; returns <code style="color:#22d3bf">E[u, x]</code> of shape <code style="color:#22d3bf">(U, W)</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis=&quot;v&quot;</code> (vertical): fix <code style="color:#22d3bf">u = view</code> and image column <code style="color:#22d3bf">x = index</code>; returns <code style="color:#22d3bf">E[v, y]</code> of shape <code style="color:#22d3bf">(V, H)</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not a valid light field, unknown *axis*, *index* outside the spatial extent, *view* outside the angular extent.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

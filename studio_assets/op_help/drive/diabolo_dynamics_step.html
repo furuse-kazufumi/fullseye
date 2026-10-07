@@ -4,16 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_dynamics_step(state: &#x27;dict&#x27;, sticks_prev, sticks_now, dt: &#x27;float&#x27;, params: &#x27;dict&#x27;, *, plane_rule: &#x27;str&#x27; = &#x27;paper&#x27;, rotation: &#x27;str&#x27; = &#x27;paper&#x27;, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import diabolo; diabolo.diabolo_dynamics_step(state: &#x27;dict&#x27;, sticks_prev, sticks_now, dt: &#x27;float&#x27;, params: &#x27;dict&#x27;, *, plane_rule: &#x27;str&#x27; = &#x27;paper&#x27;, rotation: &#x27;str&#x27; = &#x27;paper&#x27;, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_dynamics_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>論文の解析模型を 1 ステップ進める(ディアボロ = 質点 + 補助の回転楕円体 + 重力)。</p>
-<p>`<code style="color:#22d3bf">state</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">{&quot;x&quot;, &quot;v&quot;, &quot;omega&quot;, &quot;mode&quot;}</code><code style="color:#22d3bf">(mode は :data:</code>DIABOLO_STATES`)。棒の組 = matrix (2, 3)。手順(本文の 1–4):</p>
-<p>前進 Euler で x += v dt、v += g dt → 新しい楕円体 → 状態遷移 → 糸に乗っていて外に出たら最近点へ戻し、v_pull(変位/dt の</p>
-<p>内向き法線成分)を v_origin + v_edge で頭打ち(式 3)、張りつめの近く(間隔 &gt; l − 5 cm)では面の規則(式 4)、外向きの法線速度を</p>
-<p>消す(本文は明記せず、公開実装に合わせた)→ 回転(式 2: ω_t = ω_{t−1} + μ Δ_string、Δ_string = d_R の増分、μ = μ_acc / μ_dec)。</p>
-<p>減衰係数は全部 1(公開実装の既定)。</p>
-<p>選べる形(公開実装との比較用): `<code style="color:#22d3bf">plane_rule</code>` = &quot;paper&quot;(式 4: n_plane = x̂ × (x_L − x_R) の向きだけ残す)/ &quot;code&quot;(前後の</p>
-<p>成分だけ消す); `<code style="color:#22d3bf">rotation</code>` = &quot;paper&quot;(式 2、刻みに依らない望遠鏡和)/ &quot;code&quot;(Δω = k (Δd_R/dt − ω r)、k = 0.01。刻みを半分に</p>
-<p>すると ω が 2 倍になる); `<code style="color:#22d3bf">flying_rule</code>` = &quot;paper&quot;(図: s &gt; c_F)/ &quot;code&quot;(棒を結ぶ面より上)。</p>
-<p>返り `<code style="color:#22d3bf">{&quot;x&quot;, &quot;v&quot;, &quot;omega&quot;, &quot;mode&quot;, &quot;s&quot;, &quot;pulled&quot;, &quot;v_pull_raw&quot;}</code><code style="color:#22d3bf">。**Raises** </code><code style="color:#22d3bf">ValueError</code>`: 選択肢の綴り、知らない mode、</p>
-<p>dt ≤ 0、state の鍵の欠け、棒の組の形。</p>
+<p><code style="color:#22d3bf">state</code> = <code style="color:#22d3bf">{&quot;x&quot;, &quot;v&quot;, &quot;omega&quot;, &quot;mode&quot;}</code>(mode は <code style="color:#22d3bf">DIABOLO_STATES</code>)。棒の組 = matrix (2, 3)。手順(本文の 1–4):</p>
+<p>前進 Euler で x += v dt、v += g dt → 新しい楕円体 → 状態遷移 → 糸に乗っていて外に出たら最近点へ戻し、v_pull(変位/dt の内向き法線成分)を v_origin + v_edge で頭打ち(式 3)、張りつめの近く(間隔 &gt; l − 5 cm)では面の規則(式 4)、外向きの法線速度を消す(本文は明記せず、公開実装に合わせた)→ 回転(式 2: ω_t = ω_{t−1} + μ Δ_string、Δ_string = d_R の増分、μ = μ_acc / μ_dec)。減衰係数は全部 1(公開実装の既定)。</p>
+<p>選べる形(公開実装との比較用): <code style="color:#22d3bf">plane_rule</code> = &quot;paper&quot;(式 4: n_plane = x̂ × (x_L − x_R) の向きだけ残す)/ &quot;code&quot;(前後の成分だけ消す); <code style="color:#22d3bf">rotation</code> = &quot;paper&quot;(式 2、刻みに依らない望遠鏡和)/ &quot;code&quot;(Δω = k (Δd_R/dt − ω r)、k = 0.01。刻みを半分にすると ω が 2 倍になる); <code style="color:#22d3bf">flying_rule</code> = &quot;paper&quot;(図: s &gt; c_F)/ &quot;code&quot;(棒を結ぶ面より上)。</p>
+<p>返り <code style="color:#22d3bf">{&quot;x&quot;, &quot;v&quot;, &quot;omega&quot;, &quot;mode&quot;, &quot;s&quot;, &quot;pulled&quot;, &quot;v_pull_raw&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 選択肢の綴り、知らない mode、dt ≤ 0、state の鍵の欠け、棒の組の形。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

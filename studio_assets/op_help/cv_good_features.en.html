@@ -10,7 +10,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>High-quality corner detection via the Shi-Tomasi method (a single scalar feature, OpenCV implementation). Evaluates &quot;corner-ness&quot; using the same minimum-eigenvalue criterion as cv_min_eigen, and detects the top corners after thinning them out with non-maximum suppression and a minimum-distance filter - here, only the number of detected corners is returned (0 if none).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">cv2.goodFeaturesToTrack(v, maxCorners=int(10+40*a), qualityLevel=0.01+0.1*b, minDistance=5)</code>` —— a は検出上限数を 10〜50 に、b は品質しきい値(最強コーナーに対する相対比。大きいほど厳しく絞り込まれ検出数が減る)を 0.01〜0.11 に振る。最小距離は 5 画素に固定。</p>
+<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">cv2.goodFeaturesToTrack(v, maxCorners=int(10+40*a), qualityLevel=0.01+0.1*b, minDistance=5)</code> —— a は検出上限数を 10〜50 に、b は品質しきい値(最強コーナーに対する相対比。大きいほど厳しく絞り込まれ検出数が減る)を 0.01〜0.11 に振る。最小距離は 5 画素に固定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

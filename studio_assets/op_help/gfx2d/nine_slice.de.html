@@ -5,14 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Streckt einen Rahmen auf eine neue Größe, ohne seine Ecken zu verformen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The four corners are copied <b>bit for bit</b>, the four edges are stretched</p>
-<p>along one axis only, and the centre is stretched along both. This is the</p>
-<p>standard way a UI panel grows: the border keeps its thickness at any size.</p>
-<p>Stretching is nearest-neighbour on the interior spans, so an output the same</p>
-<p>size as the input is the exact identity — no resampling blur creeps in when</p>
-<p>a panel happens not to need stretching.</p>
-<p>Raises ValueError: borders that meet or cross (`<code style="color:#22d3bf">left + right &gt;= width</code>`),</p>
-<p>an output smaller than the borders it must preserve.</p>
+<p>The four corners are copied <b>bit for bit</b>, the four edges are stretched along one axis only, and the centre is stretched along both. This is the standard way a UI panel grows: the border keeps its thickness at any size.</p>
+<p>Stretching is nearest-neighbour on the interior spans, so an output the same size as the input is the exact identity — no resampling blur creeps in when a panel happens not to need stretching.</p>
+<p>Raises ValueError: borders that meet or cross (<code style="color:#22d3bf">left + right &gt;= width</code>), an output smaller than the borders it must preserve.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;gs_render_fn&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>`<code style="color:#22d3bf">render_fn(world, cam) → (H, W, 3)</code><code style="color:#22d3bf">(:func:</code>kendamaworld.camera_perceiver` の描画の差し替え口)を返す: 呼ばれるたびに</p>
-<p>:func:<code style="color:#22d3bf">gs_update</code> で世界のいまの頂点へガウシアンを付け直し、`<code style="color:#22d3bf">cam</code><code style="color:#22d3bf">(dict: pose, K, width, height)で :func:</code>gs_render` する。</p>
-<p>`<code style="color:#22d3bf">render_kw</code><code style="color:#22d3bf"> は gs_render へそのまま渡す。属性 </code><code style="color:#22d3bf">n_calls</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n_pairs</code>`(累計)を持つ。</p>
+<p><code style="color:#22d3bf">render_fn(world, cam) → (H, W, 3)</code>(<code style="color:#22d3bf">kendamaworld.camera_perceiver</code> の描画の差し替え口)を返す: 呼ばれるたびに <code style="color:#22d3bf">gs_update</code> で世界のいまの頂点へガウシアンを付け直し、<code style="color:#22d3bf">cam</code>(dict: pose, K, width, height)で <code style="color:#22d3bf">gs_render</code> する。<code style="color:#22d3bf">render_kw</code> は gs_render へそのまま渡す。属性 <code style="color:#22d3bf">n_calls</code>・<code style="color:#22d3bf">n_pairs</code>(累計)を持つ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

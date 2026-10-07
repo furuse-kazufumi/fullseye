@@ -8,11 +8,11 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/roberts_mag.inputs.jpg">roberts_mag: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/roberts_mag.inputs.jpg">roberts_mag: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Roberts クロス勾配による勾配強度（エッジ検出）。HALCON の `<code style="color:#22d3bf">roberts</code>`（Detect edges using the Roberts filter.）に相当。</p>
-<p>2×2 の対角差分（`<code style="color:#22d3bf">v - shift(-1,-1)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">shift(0,-1) - shift(-1,0)</code><code style="color:#22d3bf">）のユークリッドノルムを </code><code style="color:#22d3bf">_norm</code><code style="color:#22d3bf"> で正規化する。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。カーネルが小さい（2×2）ためノイズに敏感だが応答の局在性は高い。境界は </code><code style="color:#22d3bf">_shift_edge</code>` によりレプリケート（折り返しなし）。</p>
+<p>Roberts クロス勾配による勾配強度（エッジ検出）。HALCON の <code style="color:#22d3bf">roberts</code>（Detect edges using the Roberts filter.）に相当。</p>
+<p>2×2 の対角差分（<code style="color:#22d3bf">v - shift(-1,-1)</code> と <code style="color:#22d3bf">shift(0,-1) - shift(-1,0)</code>）のユークリッドノルムを <code style="color:#22d3bf">_norm</code> で正規化する。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。カーネルが小さい（2×2）ためノイズに敏感だが応答の局在性は高い。境界は <code style="color:#22d3bf">_shift_edge</code> によりレプリケート（折り返しなし）。</p>
 <p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
@@ -23,7 +23,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">roberts_mag 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:roberts_mag%200.40%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:roberts_mag%200.40%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">roberts_mag 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:roberts_mag%200.40%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:roberts_mag%200.40%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_edges">gallery2d_edges</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_edges.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

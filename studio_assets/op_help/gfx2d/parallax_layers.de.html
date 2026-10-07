@@ -3,21 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">sprites</code> → <code style="color:#22d3bf">rgba</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;parallax_layers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Scrollt einen Satz `<code style="color:#22d3bf">rgba</code>`-Ebenen mit unterschiedlichen Raten und komponiert sie.</p>
+<p>Scrollt einen Satz <code style="color:#22d3bf">rgba</code>-Ebenen mit unterschiedlichen Raten und komponiert sie.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">layers[0]</code>` is the farthest layer and is drawn first. Each layer is</p>
-<p>shifted by `<code style="color:#22d3bf">-round(camera_x * factors[i])</code>` columns (and rows, if</p>
-<p>`<code style="color:#22d3bf">factors_y</code>` is given) and <b>wraps</b> — a parallax backdrop is a loop, and</p>
-<p>wrapping is what makes it one.</p>
-<p>Shifts are rounded to whole pixels, so the scroll is a pure permutation: a</p>
-<p>single layer shifted by exactly its own width comes back with its alpha</p>
-<p>channel bit-identical and its colour identical wherever `<code style="color:#22d3bf">alpha &gt; 0</code>`. (The</p>
-<p>colour of *fully transparent* pixels is not preserved — compositing goes</p>
-<p>through :func:<code style="color:#22d3bf">premultiply</code>, which zeroes it by definition. That is the</p>
-<p>documented cost of the premultiplied round trip, not a bug in the scroll.)</p>
-<p>Sub-pixel scrolling would resample every frame and accumulate blur, which is</p>
-<p>why it is not offered here — put the fractional part in</p>
-<p>:func:<code style="color:#22d3bf">sprite_transform</code> if you need it.</p>
+<p><code style="color:#22d3bf">layers[0]</code> is the farthest layer and is drawn first. Each layer is shifted by <code style="color:#22d3bf">-round(camera_x * factors[i])</code> columns (and rows, if <code style="color:#22d3bf">factors_y</code> is given) and <b>wraps</b> — a parallax backdrop is a loop, and wrapping is what makes it one.</p>
+<p>Shifts are rounded to whole pixels, so the scroll is a pure permutation: a single layer shifted by exactly its own width comes back with its alpha channel bit-identical and its colour identical wherever <code style="color:#22d3bf">alpha &gt; 0</code>. (The colour of *fully transparent* pixels is not preserved — compositing goes</p>
+<p>through <code style="color:#22d3bf">premultiply</code>, which zeroes it by definition. That is the documented cost of the premultiplied round trip, not a bug in the scroll.)</p>
+<p>Sub-pixel scrolling would resample every frame and accumulate blur, which is why it is not offered here — put the fractional part in <code style="color:#22d3bf">sprite_transform</code> if you need it.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

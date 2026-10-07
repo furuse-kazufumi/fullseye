@@ -8,17 +8,12 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/trans_to_rgb.chain.jpg">trans_to_rgb: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/trans_to_rgb.chain.jpg">trans_to_rgb: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/trans_to_rgb.inputs.jpg">trans_to_rgb: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/trans_to_rgb.inputs.jpg">trans_to_rgb: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>色空間から RGB へ戻す逆変換。HALCON の `<code style="color:#22d3bf">trans_to_rgb</code>`（任意の色空間から</p>
-<p>RGB 色空間への変換）に相当するとされるが、<b>実装は HSV→RGB の 1 方向だけ</b></p>
-<p>しか持たない。</p>
-<p>`<code style="color:#22d3bf">trans_from_rgb</code>` は a で 4 色空間（HSV/Lab/YUV/XYZ）を選べるのに対し、</p>
-<p>この逆変換は常に入力を HSV とみなして `<code style="color:#22d3bf">cv2.COLOR_HSV2RGB</code>` を掛ける。</p>
-<p>Lab/YUV/XYZ から呼んだ場合は色空間の解釈を誤ったまま変換するため、</p>
-<p>出力は破綻した色になる。a, b は未使用。</p>
+<p>色空間から RGB へ戻す逆変換。HALCON の <code style="color:#22d3bf">trans_to_rgb</code>（任意の色空間から RGB 色空間への変換）に相当するとされるが、<b>実装は HSV→RGB の 1 方向だけ</b> しか持たない。</p>
+<p><code style="color:#22d3bf">trans_from_rgb</code> は a で 4 色空間（HSV/Lab/YUV/XYZ）を選べるのに対し、この逆変換は常に入力を HSV とみなして <code style="color:#22d3bf">cv2.COLOR_HSV2RGB</code> を掛ける。Lab/YUV/XYZ から呼んだ場合は色空間の解釈を誤ったまま変換するため、出力は破綻した色になる。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
@@ -30,7 +25,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cfa_to_rgb 0.50 0.50
-trans_to_rgb 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cfa_to_rgb%200.50%200.50%0Atrans_to_rgb%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cfa_to_rgb%200.50%200.50%0Atrans_to_rgb%200.50%200.50">Load &amp; run</a></p>
+trans_to_rgb 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cfa_to_rgb%200.50%200.50%0Atrans_to_rgb%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cfa_to_rgb%200.50%200.50%0Atrans_to_rgb%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_color_artistic">gallery2d_color_artistic</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_color_artistic.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">color</code> を入力に取れる)</h3>

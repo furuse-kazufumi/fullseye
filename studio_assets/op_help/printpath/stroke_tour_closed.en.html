@@ -4,13 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import printpath; printpath.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>; from the registry, <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tour_closed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>点を 1 回ずつ通って戻る<b>閉じた巡回路</b>に並べ替える。→ `<code style="color:#22d3bf">pairs</code>`</p>
-<p>返るのは入力と同じ点を並べ替えた `<code style="color:#22d3bf">(N, 2)</code>`。<b>最後の点から最初の点へ戻る</b></p>
-<p>ことで閉じる(末尾に先頭を重複させない)。</p>
+<p>点を 1 回ずつ通って戻る<b>閉じた巡回路</b>に並べ替える。→ <code style="color:#22d3bf">pairs</code></p>
+<p>返るのは入力と同じ点を並べ替えた <code style="color:#22d3bf">(N, 2)</code>。<b>最後の点から最初の点へ戻る</b> ことで閉じる(末尾に先頭を重複させない)。</p>
 <p>★これは最適な巡回路ではない(TSP は NP 困難)。<b>下界と比べて質を言う</b>:</p>
-<p>閉じた巡回路は最小全域木より短くなれないので `<code style="color:#22d3bf">length / mst_length</code>` が</p>
-<p>1 に近いほど良い。一様な点なら Beardwood–Halton–Hammersley の</p>
-<p>`<code style="color:#22d3bf">0.7124 √(n A)</code>` も目安になる。<b>黄金ファイルは使わない。</b></p>
+<p>閉じた巡回路は最小全域木より短くなれないので <code style="color:#22d3bf">length / mst_length</code> が 1 に近いほど良い。一様な点なら Beardwood–Halton–Hammersley の <code style="color:#22d3bf">0.7124 √(n A)</code> も目安になる。<b>黄金ファイルは使わない。</b></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -11,14 +11,13 @@
 <p>次数&gt;=3 = 分岐点(branch)</p>
 <p>次数 0  = 孤立点(isolated)</p>
 <p>に分類する。個数は平行移動・回転(90 度)不変で、形状の位相を粗く要約する記述子になる。</p>
-<p>注意(honest): 26 近傍の次数は、分岐近傍で対角隣接により過大に数えられることがある(離散</p>
-<p>骨格の既知の性質)。端点数は各枝の末端で厳密だが、分岐点数はやや過大側に振れうる。</p>
+<p>注意(honest): 26 近傍の次数は、分岐近傍で対角隣接により過大に数えられることがある(離散骨格の既知の性質)。端点数は各枝の末端で厳密だが、分岐点数はやや過大側に振れうる。</p>
 <p>Args:</p>
 <p>skeleton: 骨格 voxel(bool / 0-1 の 3D)。</p>
 <p>Returns:</p>
 <p>dict: endpoints, branches, normal, isolated, total(骨格 voxel 総数),</p>
 <p>degree_hist(次数 -&gt; 個数)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

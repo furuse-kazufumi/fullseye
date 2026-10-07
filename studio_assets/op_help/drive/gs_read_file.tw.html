@@ -5,19 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>3D Gaussian Splatting のファイルを読み、ガウスの中心・色・不透明度・大きさ・向きを返す。</p>
-<p>対応: <b>INRIA 形式の .ply</b>(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。</p>
-<p>`<code style="color:#22d3bf">gsplat_train_native</code>` の出力もこれ)と <b>.splat</b>(1 個 32 バイト: 位置 3×f32、大きさ 3×f32、</p>
-<p>RGBA 4×u8、回転 4×u8(wxyz、(q·128)+128))。</p>
+<p>対応: <b>INRIA 形式の .ply</b>(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。<code style="color:#22d3bf">gsplat_train_native</code> の出力もこれ)と <b>.splat</b>(1 個 32 バイト: 位置 3×f32、大きさ 3×f32、RGBA 4×u8、回転 4×u8(wxyz、(q·128)+128))。</p>
 <p>Args:</p>
 <p>path: ファイル。</p>
 <p>min_opacity: これ未満の不透明度のガウスを落とす(0 なら全部)。</p>
 <p>Returns:</p>
-<p>``{&quot;xyz&quot; (N,3), &quot;rgb&quot; (N,3) [0,1], &quot;opacity&quot; (N,) [0,1], &quot;scale&quot; (N,3)(実寸、exp 済み),</p>
-<p>&quot;rot&quot; (N,4) wxyz 単位四元数, &quot;n_total&quot;, &quot;format&quot;}``。色は 0 次の球面調和だけ(視点で変わる高次は捨てる)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">{&quot;xyz&quot; (N,3), &quot;rgb&quot; (N,3) [0,1], &quot;opacity&quot; (N,) [0,1], &quot;scale&quot; (N,3)(実寸、exp 済み), &quot;rot&quot; (N,4) wxyz 単位四元数, &quot;n_total&quot;, &quot;format&quot;}</code>。色は 0 次の球面調和だけ(視点で変わる高次は捨てる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

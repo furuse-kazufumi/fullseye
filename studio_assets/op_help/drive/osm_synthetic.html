@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_synthetic(kind: &#x27;str&#x27; = &#x27;grid&#x27;, *, origin=(35.6716, 139.765), n: &#x27;int&#x27; = 3, pitch: &#x27;float&#x27; = 80.0) -&gt; &#x27;str&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivejapan; drivejapan.osm_synthetic(kind: &#x27;str&#x27; = &#x27;grid&#x27;, *, origin=(35.6716, 139.765), n: &#x27;int&#x27; = 3, pitch: &#x27;float&#x27; = 80.0) -&gt; &#x27;str&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;osm_synthetic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>テストと fuzz 用の最小の OSM XML(本物と同じ要素: bounds / node / way / tag)。</p>
-<p>&quot;grid&quot; = n × n の格子(東西 = primary、lanes=2、南北 = residential、幅は既定)。中央の交差点に `<code style="color:#22d3bf">highway=traffic_signals</code>`、</p>
-<p>東の縁の中段(T 字路)に `<code style="color:#22d3bf">highway=stop</code><code style="color:#22d3bf">、西の辺の途中に </code><code style="color:#22d3bf">highway=crossing</code><code style="color:#22d3bf">、南の辺の途中に </code><code style="color:#22d3bf">railway=level_crossing</code>`。</p>
-<p>&quot;line&quot; = 東西 1 本の residential(長さ pitch × (n − 1))。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: kind が未知、n &lt; 2、pitch ≤ 0。</p>
+<p>&quot;grid&quot; = n × n の格子(東西 = primary、lanes=2、南北 = residential、幅は既定)。中央の交差点に <code style="color:#22d3bf">highway=traffic_signals</code>、東の縁の中段(T 字路)に <code style="color:#22d3bf">highway=stop</code>、西の辺の途中に <code style="color:#22d3bf">highway=crossing</code>、南の辺の途中に <code style="color:#22d3bf">railway=level_crossing</code>。&quot;line&quot; = 東西 1 本の residential(長さ pitch × (n − 1))。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: kind が未知、n &lt; 2、pitch ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

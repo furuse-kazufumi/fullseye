@@ -3,16 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">deformation</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deformation_to_points(deformation)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.deformation_to_points(deformation)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;deformation_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>TPS 変形 `<code style="color:#22d3bf">deformation</code><code style="color:#22d3bf"> → 制御点 </code><code style="color:#22d3bf">points (N,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">deformation</code>` の出口。</p>
-<p>`<code style="color:#22d3bf">tps_fit</code><code style="color:#22d3bf"> が返す dict の </code><code style="color:#22d3bf">ctrl</code>` を取り出す。「この歪みはどこに</p>
-<p>固定されているか」を点群語彙で見るためのもので、<b>一方向</b></p>
-<p>(制御点だけからは重み `<code style="color:#22d3bf">w</code><code style="color:#22d3bf"> とアフィン項 </code><code style="color:#22d3bf">a</code>` は復元できない)。</p>
+<p>TPS 変形 <code style="color:#22d3bf">deformation</code> → 制御点 <code style="color:#22d3bf">points (N,3)</code>。<code style="color:#22d3bf">deformation</code> の出口。</p>
+<p><code style="color:#22d3bf">tps_fit</code> が返す dict の <code style="color:#22d3bf">ctrl</code> を取り出す。「この歪みはどこに固定されているか」を点群語彙で見るためのもので、<b>一方向</b> (制御点だけからは重み <code style="color:#22d3bf">w</code> とアフィン項 <code style="color:#22d3bf">a</code> は復元できない)。</p>
 <p>Args:</p>
-<p>deformation: `<code style="color:#22d3bf">ctrl</code><code style="color:#22d3bf"> を持つ dict(</code><code style="color:#22d3bf">tps_fit</code>` の返り)。</p>
+<p>deformation: <code style="color:#22d3bf">ctrl</code> を持つ dict(<code style="color:#22d3bf">tps_fit</code> の返り)。</p>
 <p>Returns:</p>
 <p>(N, 3) float64。</p>
 <p>Raises:</p>
-<p>ValueError: dict でない / `<code style="color:#22d3bf">ctrl</code>` が無い / 形状不正 / 非有限。</p>
+<p>ValueError: dict でない / <code style="color:#22d3bf">ctrl</code> が無い / 形状不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

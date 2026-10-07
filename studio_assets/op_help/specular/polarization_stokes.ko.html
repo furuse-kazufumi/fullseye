@@ -3,25 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">polsweep</code> → <code style="color:#22d3bf">stokes</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import specularity; specularity.polarization_stokes(images, angles_deg=(0.0, 45.0, 90.0, 135.0), max_violation_frac=0.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspecular.get(&quot;polarization_stokes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>편광판 회전의 장면 적분 Stokes 벡터. → (4,), :func:<code style="color:#22d3bf">optics.stokes_analyze</code> 에 그대로 넘길 수 있습니다.</p>
+<p>편광판 회전의 장면 적분 Stokes 벡터. → (4,), <code style="color:#22d3bf">optics.stokes_analyze</code> 에 그대로 넘길 수 있습니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Stokes parameters are linear in radiance, so the spatial mean of the frames</p>
-<p>has a Stokes vector that is the mean of the per-pixel ones — the vector a</p>
-<p>non-imaging polarimeter looking at the whole field would report. Fitting</p>
-<p>`<code style="color:#22d3bf">I(t) = 0.5 (S0 + S1 cos 2t + S2 sin 2t)</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">(S0, S1, S2)</code>` directly.</p>
-<p><b>S3 is always exactly 0, and that is a limitation, not a measurement.</b> A</p>
-<p>set of linear analysers cannot see circular polarisation; a quarter-wave</p>
-<p>plate is needed. The returned vector is therefore the linear part of the</p>
-<p>truth, and :func:<code style="color:#22d3bf">optics.stokes_analyze</code> will report `<code style="color:#22d3bf">handedness=&quot;linear&quot;</code>`</p>
-<p>for it no matter what the scene actually did. Returning an invented `<code style="color:#22d3bf">S3</code>`</p>
-<p>would be worse, and returning a 3-vector would break the Stokes contract the</p>
-<p>optics family is built on.</p>
-<p>The result satisfies that contract by construction — ``S0 &gt;= sqrt(S1^2 +</p>
-<p>S2^2 + S3^2)``, i.e. degree of polarisation at most 1 — because the same</p>
-<p>non-negativity check that guards :func:<code style="color:#22d3bf">polarization_separate</code> is exactly</p>
-<p>the condition for it. That is why `<code style="color:#22d3bf">optics.stokes_analyze</code>` accepts the</p>
-<p>output without a further test.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>polarization_separate`.</p>
+<p>Stokes parameters are linear in radiance, so the spatial mean of the frames has a Stokes vector that is the mean of the per-pixel ones — the vector a non-imaging polarimeter looking at the whole field would report. Fitting <code style="color:#22d3bf">I(t) = 0.5 (S0 + S1 cos 2t + S2 sin 2t)</code> gives <code style="color:#22d3bf">(S0, S1, S2)</code> directly.</p>
+<p><b>S3 is always exactly 0, and that is a limitation, not a measurement.</b> A set of linear analysers cannot see circular polarisation; a quarter-wave plate is needed. The returned vector is therefore the linear part of the truth, and <code style="color:#22d3bf">optics.stokes_analyze</code> will report <code style="color:#22d3bf">handedness=&quot;linear&quot;</code> for it no matter what the scene actually did. Returning an invented <code style="color:#22d3bf">S3</code> would be worse, and returning a 3-vector would break the Stokes contract the optics family is built on.</p>
+<p>The result satisfies that contract by construction — <code style="color:#22d3bf">S0 &gt;= sqrt(S1^2 + S2^2 + S3^2)</code>, i.e. degree of polarisation at most 1 — because the same non-negativity check that guards <code style="color:#22d3bf">polarization_separate</code> is exactly the condition for it. That is why <code style="color:#22d3bf">optics.stokes_analyze</code> accepts the output without a further test.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: as <code style="color:#22d3bf">polarization_separate</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

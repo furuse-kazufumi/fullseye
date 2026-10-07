@@ -3,16 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_expanded(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, dof=&#x27;dof&#x27;, level=0.95, correlation=None, estimate=None, lower_bound=None, upper_bound=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spc; spc.gum_expanded(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, dof=&#x27;dof&#x27;, level=0.95, correlation=None, estimate=None, lower_bound=None, upper_bound=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;gum_expanded&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Welch-Satterthwaite の有効自由度と包含係数 k、拡張不確かさ U(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>Welch-Satterthwaite の有効自由度と包含係数 k、拡張不確かさ U(<code style="color:#22d3bf">table</code>)。</p>
 <p>nu_eff = u_c^4 / sum_i (c_i u_i)^4 / nu_i        U = k u_c,  k = t_{p}(nu_eff)</p>
 <p>★門にできる厳密な性質が 3 つある:</p>
-<p style="margin:2px 0 2px 12px">• 成分が 1 つだけなら `<code style="color:#22d3bf">nu_eff == nu</code>`(厳密)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">nu_eff &gt;= min_i nu_i</code>` が<b>常に</b>成り立つ。証明は</p>
-<p>`<code style="color:#22d3bf">sum u_i^4/nu_i &lt;= (1/nu_min) sum u_i^4 &lt;= (1/nu_min)(sum u_i^2)^2</code>`。</p>
-<p>有効自由度が最小の成分より小さくなったら計算が壊れている。</p>
-<p style="margin:2px 0 2px 12px">• すべての自由度が無限大なら `<code style="color:#22d3bf">k</code>` は正規分布の分位点へ収束する</p>
-<p>(95 % で 1.959964)。</p>
-<p>無限自由度(既知の定数など)は `<code style="color:#22d3bf">numpy.inf</code>` を入れる。</p>
+<p style="margin:2px 0 2px 12px">• 成分が 1 つだけなら <code style="color:#22d3bf">nu_eff == nu</code>(厳密)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nu_eff &gt;= min_i nu_i</code> が<b>常に</b>成り立つ。証明は <code style="color:#22d3bf">sum u_i^4/nu_i &lt;= (1/nu_min) sum u_i^4 &lt;= (1/nu_min)(sum u_i^2)^2</code>。有効自由度が最小の成分より小さくなったら計算が壊れている。</p>
+<p style="margin:2px 0 2px 12px">• すべての自由度が無限大なら <code style="color:#22d3bf">k</code> は正規分布の分位点へ収束する(95 % で 1.959964)。</p>
+<p>無限自由度(既知の定数など)は <code style="color:#22d3bf">numpy.inf</code> を入れる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

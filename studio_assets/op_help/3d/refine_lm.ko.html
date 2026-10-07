@@ -6,8 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Levenberg-Marquardt 에 의한 병진(+등방 스케일/휘도 게인) 서브복셀 정련.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>粗いマッチ位置 init_pos(テンプレ中心の scene 内座標 [z,y,x])を出発点に、</p>
-<p>forward-additive Lucas-Kanade を減衰付き Gauss-Newton(LM)で解き SSD</p>
+<p>粗いマッチ位置 init_pos(テンプレ中心の scene 内座標 [z,y,x])を出発点に、forward-additive Lucas-Kanade を減衰付き Gauss-Newton(LM)で解き SSD</p>
 <p>E(p) = Σ_x [ I(W(x;p)) - g·T(x) ]²</p>
 <p>を最小化する。整数 NCC / Fourier-Mellin / Hough の粗推定を連続座標へ収束させる後段。</p>
 <p>ワープ        W(x;p) = t + s·(x - c_T)   (c_T=テンプレ中心, t=並進, s=等方スケール)</p>

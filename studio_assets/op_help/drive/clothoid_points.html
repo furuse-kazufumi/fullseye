@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.clothoid_points(length: &#x27;float&#x27;, s, *, kappa0: &#x27;float&#x27; = 0.0, kappa1: &#x27;float&#x27; = 0.0, start=(0.0, 0.0), heading0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.clothoid_points(length: &#x27;float&#x27;, s, *, kappa0: &#x27;float&#x27; = 0.0, kappa1: &#x27;float&#x27; = 0.0, start=(0.0, 0.0), heading0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;clothoid_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>曲率が弧長に一次 κ(s) = κ₀ + (κ₁ − κ₀) s / length の曲線(クロソイドの一部。κ₀ = κ₁ なら円弧・直線)の点。</p>
-<p>`<code style="color:#22d3bf">s</code><code style="color:#22d3bf">: 0 ≤ s ≤ length の弧長(配列)。</code><code style="color:#22d3bf">start</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">heading0</code>`: 始点と始点の向き。左へ曲がる曲率を正。</p>
-<p>クロソイドの部分は標準形(A² = 1/|dκ/ds|)をフレネル積分で写し、始点・向きに合わせて回す(数値積分を使わない)。</p>
-<p>返り値: `<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> (N, 2)、</code><code style="color:#22d3bf">heading</code><code style="color:#22d3bf"> (N,)、</code><code style="color:#22d3bf">curvature</code><code style="color:#22d3bf"> (N,)、</code><code style="color:#22d3bf">A</code>`(クロソイドのパラメータ、円弧・直線は inf)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: length ≤ 0、s が範囲外、非有限。</p>
+<p><code style="color:#22d3bf">s</code>: 0 ≤ s ≤ length の弧長(配列)。<code style="color:#22d3bf">start</code>・<code style="color:#22d3bf">heading0</code>: 始点と始点の向き。左へ曲がる曲率を正。クロソイドの部分は標準形(A² = 1/|dκ/ds|)をフレネル積分で写し、始点・向きに合わせて回す(数値積分を使わない)。</p>
+<p>返り値: <code style="color:#22d3bf">points</code> (N, 2)、<code style="color:#22d3bf">heading</code> (N,)、<code style="color:#22d3bf">curvature</code> (N,)、<code style="color:#22d3bf">A</code>(クロソイドのパラメータ、円弧・直線は inf)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: length ≤ 0、s が範囲外、非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

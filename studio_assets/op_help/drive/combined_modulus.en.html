@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.combined_modulus(E1: &#x27;float&#x27;, nu1: &#x27;float&#x27;, E2: &#x27;float | None&#x27; = None, nu2: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacsim; tacsim.combined_modulus(E1: &#x27;float&#x27;, nu1: &#x27;float&#x27;, E2: &#x27;float | None&#x27; = None, nu2: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;combined_modulus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>複合弾性率 E*: 1/E* = (1 − ν1²)/E1 + (1 − ν2²)/E2(Johnson 1985 式 4.9)。`<code style="color:#22d3bf">E2=None</code>` は剛体の押し込み子(第 2 項 0)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: E ≤ 0、|ν| ≥ 1(Poisson 比は (−1, 0.5] が物理的だが上限は見ない)。</p>
+<p>複合弾性率 E*: 1/E* = (1 − ν1²)/E1 + (1 − ν2²)/E2(Johnson 1985 式 4.9)。<code style="color:#22d3bf">E2=None</code> は剛体の押し込み子(第 2 項 0)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: E ≤ 0、|ν| ≥ 1(Poisson 比は (−1, 0.5] が物理的だが上限は見ない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -5,18 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>内輪差の過渡(閉形式): 前車軸の中心が半径 R の円に入ってから弧長 s 進んだときの車の姿勢と内側の車輪の半径。</p>
-<p>後車軸の中心は前車軸の中心を長さ L の棒で引く(すべりなし)。棒と前の速度のなす角 γ は dγ/ds = 1/R − sin γ / L。</p>
-<p>a = 1/R、b = 1/L、k = √(b² − a²)、t± = (b ± k)/a(t− = tan(γ*/2)、sin γ* = L/R)とすると</p>
-<p>Q = ((t+ − t₀)/(t− − t₀)) e^{k s}、tan(γ/2) = (Q t− − t+)/(Q − 1)。</p>
-<p>`<code style="color:#22d3bf">arc_length</code><code style="color:#22d3bf">: s ≥ 0(配列可)。</code><code style="color:#22d3bf">track</code><code style="color:#22d3bf">: 輪距 t(内側の車輪の位置に使う)。</code><code style="color:#22d3bf">gamma0</code>`: 円に入るときの γ(0 = 直線から</p>
-<p>まっすぐ入る、0 ≤ γ₀ &lt; γ*)。返り値(s と同じ形): `<code style="color:#22d3bf">gamma</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rear_radius</code>`(後車軸の中心の半径</p>
-<p>√(R² + L² − 2RL sin γ))、`<code style="color:#22d3bf">front_inner_wheel_radius</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rear_inner_wheel_radius</code>`(内側の車輪の旋回中心からの距離)、</p>
-<p>`<code style="color:#22d3bf">offtracking</code><code style="color:#22d3bf">(前内輪 − 後内輪)、</code><code style="color:#22d3bf">steady</code>`(s → ∞ の値の dict)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: R ≤ L(定常が無い)、s &lt; 0、γ₀ が範囲外、t/2 ≥ 後輪の半径。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>後車軸の中心は前車軸の中心を長さ L の棒で引く(すべりなし)。棒と前の速度のなす角 γ は dγ/ds = 1/R − sin γ / L。a = 1/R、b = 1/L、k = √(b² − a²)、t± = (b ± k)/a(t− = tan(γ*/2)、sin γ* = L/R)とすると Q = ((t+ − t₀)/(t− − t₀)) e^{k s}、tan(γ/2) = (Q t− − t+)/(Q − 1)。</p>
+<p><code style="color:#22d3bf">arc_length</code>: s ≥ 0(配列可)。<code style="color:#22d3bf">track</code>: 輪距 t(内側の車輪の位置に使う)。<code style="color:#22d3bf">gamma0</code>: 円に入るときの γ(0 = 直線からまっすぐ入る、0 ≤ γ₀ &lt; γ*)。返り値(s と同じ形): <code style="color:#22d3bf">gamma</code>、<code style="color:#22d3bf">rear_radius</code>(後車軸の中心の半径 √(R² + L² − 2RL sin γ))、<code style="color:#22d3bf">front_inner_wheel_radius</code>・<code style="color:#22d3bf">rear_inner_wheel_radius</code>(内側の車輪の旋回中心からの距離)、<code style="color:#22d3bf">offtracking</code>(前内輪 − 後内輪)、<code style="color:#22d3bf">steady</code>(s → ∞ の値の dict)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ L(定常が無い)、s &lt; 0、γ₀ が範囲外、t/2 ≥ 後輪の半径。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_lateral">poc_driving_lateral</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_lateral.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

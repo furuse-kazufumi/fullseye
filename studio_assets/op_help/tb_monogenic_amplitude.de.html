@@ -8,32 +8,23 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_monogenic_amplitude.chain.jpg">tb_monogenic_amplitude: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_monogenic_amplitude.chain.jpg">tb_monogenic_amplitude: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_monogenic_amplitude.inputs.jpg">tb_monogenic_amplitude: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_monogenic_amplitude.inputs.jpg">tb_monogenic_amplitude: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Lokale Amplitude `<code style="color:#22d3bf">sqrt(f^2 + R1^2 + R2^2)</code>` eines monogenen Signals. → (H, W).</p>
+<p>Lokale Amplitude <code style="color:#22d3bf">sqrt(f^2 + R1^2 + R2^2)</code> eines monogenen Signals. → (H, W).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The local contrast at the signal&#x27;s scale, and the confidence map for</p>
-<p>:func:<code style="color:#22d3bf">monogenic_phase</code> / :func:<code style="color:#22d3bf">monogenic_orientation</code>, which mean nothing</p>
-<p>where this is at the rounding floor. <b>Raw / unnormalised</b> (a contrast is a</p>
-<p>metric quantity), in the same spirit as `<code style="color:#22d3bf">complexops.cx_magnitude</code>`.</p>
-<p>For a unit-contrast grating at the band centre it is exactly 1.0 (measured</p>
-<p>spread 8.9e-16 over a 64x64 frame) and, unlike a squared oriented-filter</p>
-<p>response, it is *isotropic*: rotating the grating does not change it.</p>
-<p>Measured over eight grid-exact orientations the amplitude spans</p>
-<p>`<code style="color:#22d3bf">[0.99999999999999911, 1.0000000000000011]</code>` — a total spread of 2.0e-15</p>
-<p>across all of them, which is the isotropy claim as a number.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the input is not a valid quaternion field, or its</p>
-<p>`<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> component is non-zero (see :func:</code>_require_monogenic`).</p>
-<p>Typed bridge of the quat op `<code style="color:#22d3bf">monogenic_amplitude</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>The local contrast at the signal&#x27;s scale, and the confidence map for <code style="color:#22d3bf">monogenic_phase</code> / <code style="color:#22d3bf">monogenic_orientation</code>, which mean nothing where this is at the rounding floor. <b>Raw / unnormalised</b> (a contrast is a metric quantity), in the same spirit as <code style="color:#22d3bf">complexops.cx_magnitude</code>.</p>
+<p>For a unit-contrast grating at the band centre it is exactly 1.0 (measured spread 8.9e-16 over a 64x64 frame) and, unlike a squared oriented-filter response, it is *isotropic*: rotating the grating does not change it. Measured over eight grid-exact orientations the amplitude spans <code style="color:#22d3bf">[0.99999999999999911, 1.0000000000000011]</code> — a total spread of 2.0e-15 across all of them, which is the isotropy claim as a number.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: the input is not a valid quaternion field, or its <code style="color:#22d3bf">k</code> component is non-zero (see <code style="color:#22d3bf">_require_monogenic</code>).</p>
+<p>Typed bridge of the quat op <code style="color:#22d3bf">monogenic_amplitude</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_monogenic 0.50 0.50
-tb_monogenic_amplitude 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_monogenic%200.50%200.50%0Atb_monogenic_amplitude%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_monogenic%200.50%200.50%0Atb_monogenic_amplitude%200.50%200.50">Load &amp; run</a></p>
+tb_monogenic_amplitude 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_monogenic%200.50%200.50%0Atb_monogenic_amplitude%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_monogenic%200.50%200.50%0Atb_monogenic_amplitude%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">monogenic_amplitude</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>

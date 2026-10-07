@@ -4,12 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kendama_pose(world: &#x27;dict&#x27;, hand, p_ball, *, R_ken=None, R_ball=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import kendamaworld; kendamaworld.kendama_pose(world: &#x27;dict&#x27;, hand, p_ball, *, R_ken=None, R_ball=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;kendama_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>けん玉の世界の状態を置く: けん(1 つの剛体。持つ所 kp[&quot;grip&quot;] を手元 `<code style="color:#22d3bf">hand</code><code style="color:#22d3bf"> に、姿勢 </code><code style="color:#22d3bf">R_ken</code>` 既定 = kp の技の姿勢</p>
-<p>kp[&quot;R_ken&quot;]: 皿胴の中心 = hand − R·grip)、玉(中心 `<code style="color:#22d3bf">p_ball</code>`)、</p>
-<p>糸(皿胴の糸穴 → 玉の糸穴)。`<code style="color:#22d3bf">R_ball</code>` 既定 = 玉の糸穴(−HOLE_AXIS_LOCAL)が皿胴の糸穴を向く回転(玉の回転は解かない:</p>
-<p>張っている間は正しく、飛翔中は近似)。返り値 ``{&quot;tie&quot;, &quot;cup&quot; (受ける皿の縁の中心), &quot;cup_axis&quot;, &quot;cross&quot; (皿胴の中心), &quot;string_hole&quot;, &quot;hole_axis&quot; (大きな穴の向き、世界),</p>
-<p>&quot;R_ball&quot;}``。</p>
-<p>`<code style="color:#22d3bf">world</code><code style="color:#22d3bf"> は :func:</code>kendama_world` のもの(world[&quot;kendama&quot;] が要る)。</p>
+<p>けん玉の世界の状態を置く: けん(1 つの剛体。持つ所 kp[&quot;grip&quot;] を手元 <code style="color:#22d3bf">hand</code> に、姿勢 <code style="color:#22d3bf">R_ken</code> 既定 = kp の技の姿勢 kp[&quot;R_ken&quot;]: 皿胴の中心 = hand − R·grip)、玉(中心 <code style="color:#22d3bf">p_ball</code>)、糸(皿胴の糸穴 → 玉の糸穴)。<code style="color:#22d3bf">R_ball</code> 既定 = 玉の糸穴(−HOLE_AXIS_LOCAL)が皿胴の糸穴を向く回転(玉の回転は解かない:</p>
+<p>張っている間は正しく、飛翔中は近似)。返り値 <code style="color:#22d3bf">{&quot;tie&quot;, &quot;cup&quot; (受ける皿の縁の中心), &quot;cup_axis&quot;, &quot;cross&quot; (皿胴の中心), &quot;string_hole&quot;, &quot;hole_axis&quot; (大きな穴の向き、世界), &quot;R_ball&quot;}</code>。<code style="color:#22d3bf">world</code> は <code style="color:#22d3bf">kendama_world</code> のもの(world[&quot;kendama&quot;] が要る)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

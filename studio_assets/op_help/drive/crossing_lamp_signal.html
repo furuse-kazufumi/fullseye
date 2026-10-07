@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crossing_lamp_signal(t, *, t_on: &#x27;float&#x27;, t_off: &#x27;float&#x27;, flash_per_min: &#x27;float&#x27; = 50.0, duty: &#x27;float&#x27; = 0.5, exposure: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.crossing_lamp_signal(t, *, t_on: &#x27;float&#x27;, t_off: &#x27;float&#x27;, flash_per_min: &#x27;float&#x27; = 50.0, duty: &#x27;float&#x27; = 0.5, exposure: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;crossing_lamp_signal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 灯の赤色せん光灯の明るさ(0..1)を時刻 t(配列)で返す: 形 (n, 2)、列 0 = 左、列 1 = 右。</p>
-<p>1 灯の周期 P = 60 / flash_per_min、点灯 duty·P。右の灯は P/2 遅れ(解釈基準「交互に点滅」)。点くのは</p>
-<p>[t_on, t_off)。`<code style="color:#22d3bf">exposure</code>` &gt; 0 ならカメラの露光 [t, t + exposure] の平均(点灯時間の原始関数で閉形式)。</p>
+<p>1 灯の周期 P = 60 / flash_per_min、点灯 duty·P。右の灯は P/2 遅れ(解釈基準「交互に点滅」)。点くのは [t_on, t_off)。<code style="color:#22d3bf">exposure</code> &gt; 0 ならカメラの露光 [t, t + exposure] の平均(点灯時間の原始関数で閉形式)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

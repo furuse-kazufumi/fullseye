@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
 <p>閉形式の運動で切断の 1 回分を作る(準静的、剛塑性の食材 + 縦だけ柔らかい手首)。返り値 dict(列は numpy 配列)。</p>
-<p>指令: 刃の根元を (vx, −vz) mm/s で動かす(`<code style="color:#22d3bf">k_wrist</code>` N/mm)。食材は切れ始めるまで動かず、切れている間の押し力は</p>
-<p>`<code style="color:#22d3bf">R · w_eff · 1/(1+ξ²)</code><code style="color:#22d3bf">(:func:</code>cut_force_atkins` の slice_push)。刃は「指令 + F/k」の高さに止まり、切った所は戻らない。</p>
-<p>刃先の最下点(食材の幅の中)がまな板の 0.3 mm 上に来たら止める。</p>
-<p>返り値: `<code style="color:#22d3bf">t</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">heel_x</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">heel_z_cmd</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">heel_z</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">edge_z_c</code><code style="color:#22d3bf">(食材中央での刃先の高さの真値)、</code><code style="color:#22d3bf">F</code>`(押し力の真値)、</p>
-<p>`<code style="color:#22d3bf">w_eff</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">xi</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">params</code>`。</p>
+<p>指令: 刃の根元を (vx, −vz) mm/s で動かす(<code style="color:#22d3bf">k_wrist</code> N/mm)。食材は切れ始めるまで動かず、切れている間の押し力は <code style="color:#22d3bf">R · w_eff · 1/(1+ξ²)</code>(<code style="color:#22d3bf">cut_force_atkins</code> の slice_push)。刃は「指令 + F/k」の高さに止まり、切った所は戻らない。刃先の最下点(食材の幅の中)がまな板の 0.3 mm 上に来たら止める。</p>
+<p>返り値: <code style="color:#22d3bf">t</code>、<code style="color:#22d3bf">heel_x</code>、<code style="color:#22d3bf">heel_z_cmd</code>、<code style="color:#22d3bf">heel_z</code>、<code style="color:#22d3bf">edge_z_c</code>(食材中央での刃先の高さの真値)、<code style="color:#22d3bf">F</code>(押し力の真値)、<code style="color:#22d3bf">w_eff</code>、<code style="color:#22d3bf">xi</code>、<code style="color:#22d3bf">params</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

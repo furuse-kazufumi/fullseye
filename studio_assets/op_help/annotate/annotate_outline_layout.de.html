@@ -5,21 +5,17 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert eine Tabelle (dict): die Randschleifen einer Binärmaske (geschlossene Polygone entlang der Pixelkanten) und ihren Schwerpunkt.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>輪郭は :func:<code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>(外側 + 穴、成分ごと)。</p>
-<p>多角形の面積はマスクの画素数と厳密に一致する。</p>
-<p>Returns</p>
-<p>-------</p>
+<p>輪郭は <code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>(外側 + 穴、成分ごと)。多角形の面積はマスクの画素数と厳密に一致する。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>``{&quot;contours&quot;: [(K,2) の (x,y)], &quot;centroid&quot;: (x,y), &quot;area&quot;: int,</p>
-<p>&quot;bbox&quot;: (x,y,w,h), &quot;n_loops&quot;: int}``。</p>
-<p>Raises</p>
-<p>------</p>
+<p><code style="color:#22d3bf">{&quot;contours&quot;: [(K,2) の (x,y)], &quot;centroid&quot;: (x,y), &quot;area&quot;: int, &quot;bbox&quot;: (x,y,w,h), &quot;n_loops&quot;: int}</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>mask が 2-D でない、真の画素が無い、非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Konventionen für Trainingsdatensätze — COCO / YOLO / VOC und Fallstricke in der Sichtprüfung</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

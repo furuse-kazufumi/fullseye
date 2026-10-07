@@ -4,25 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code>(要直接呼叫實作,<code style="color:#22d3bf">import kendama; kendama.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;catch_plan_staged&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>段階を明示した捕球の制御(大皿・小皿・中皿・ろうそくに同じ計画を使う: 皿の向きは kp の技の姿勢から)。</p>
-<p>返り値は `<code style="color:#22d3bf">plan(t, p, v, cup_state) → dict</code><code style="color:#22d3bf">(:func:</code>kendama_simulate<code style="color:#22d3bf"> の </code><code style="color:#22d3bf">catch_plan</code>`)。</p>
+<p>段階を明示した捕球の制御(大皿・小皿・中皿・ろうそくに同じ計画を使う: 皿の向きは kp の技の姿勢から)。返り値は <code style="color:#22d3bf">plan(t, p, v, cup_state) → dict</code>(<code style="color:#22d3bf">kendama_simulate</code> の <code style="color:#22d3bf">catch_plan</code>)。</p>
 <p>段階(人のコツ「膝で真上に引き上げ、糸が弛んでから皿を玉の真下へ水平に運び、着地で下げて衝撃を吸う(すくいに行かず待つ)」を写す):</p>
-<p>0. <b>lift / wait</b>(:func:<code style="color:#22d3bf">kendama_simulate</code> 側): 振り上げの間と、弛む前は計画を呼ばない = 弛んでから動かす。</p>
-<p>1. <b>hold</b>: 玉の下端がけん玉のいちばん高い所(手元 + kp[&quot;top_offset&quot;]、+ `<code style="color:#22d3bf">margin</code>`)より上に出るまで皿を動かさない</p>
-<p>(けんは玉を押せないので、昇ってくる玉にけんを寄せない。玉がそこまで昇らない軌道なら hold のまま = 捕らない)。</p>
-<p>2. <b>carry</b>: 皿を今の高さのまま<b>水平に</b>、玉が縁に乗る点の真下へ運ぶ: 玉の中心が「皿の中心 + h_c·軸」に下りてくる時刻 τ</p>
-<p>(z(τ) = 皿の高さ + h_c·a_z の遅い根 = 頂点を過ぎて下降中)の玉の xy から h_c·(a_x, a_y) を引いた点。</p>
-<p>3. <b>absorb</b>: 着地の `<code style="color:#22d3bf">absorb_time</code>`(既定 √(absorb_depth / a_max) = bang-bang で下げる動きの折り返しの時間)前から、目標を</p>
-<p>`<code style="color:#22d3bf">absorb_depth</code>` 下げる: 着地の瞬間に皿が下向きに最高速 √(a_max·absorb_depth)(20 m/s²・2 cm で 0.63 m/s)で動いている</p>
-<p>= 相対速さを減らす。absorb_time を長く取ると皿は着地の前に下がり切って止まり、玉はその分深く落ちて速くなる(0.06 s で</p>
-<p>4 技とも縁で弾かれた —— 測って退けた)。</p>
-<p>返り値 ``{&quot;target&quot; (皿の中心の目標), &quot;stage&quot;, &quot;landing&quot; (玉が縁に乗る点の真下の皿の中心), &quot;t_land&quot;, &quot;wait&quot; (hold の残り), &quot;feasible&quot;,</p>
-<p>&quot;apex&quot;, &quot;travel&quot;}`<code style="color:#22d3bf">。頂点が縁に乗る高さに届かない軌道は </code><code style="color:#22d3bf">feasible=False</code>` で hold。</p>
-<p>制限(正直に): 皿の姿勢は技ごとに固定(手首を回して玉を迎えない)、抗力は予測に入れない(毎回知覚からやり直す)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">0. <b>lift / wait</b>(<code style="color:#22d3bf">kendama_simulate</code> 側): 振り上げの間と、弛む前は計画を呼ばない = 弛んでから動かす。</p>
+<p style="margin:2px 0 2px 12px">1. <b>hold</b>: 玉の下端がけん玉のいちばん高い所(手元 + kp[&quot;top_offset&quot;]、+ <code style="color:#22d3bf">margin</code>)より上に出るまで皿を動かさない(けんは玉を押せないので、昇ってくる玉にけんを寄せない。玉がそこまで昇らない軌道なら hold のまま = 捕らない)。</p>
+<p style="margin:2px 0 2px 12px">2. <b>carry</b>: 皿を今の高さのまま<b>水平に</b>、玉が縁に乗る点の真下へ運ぶ: 玉の中心が「皿の中心 + h_c·軸」に下りてくる時刻 τ (z(τ) = 皿の高さ + h_c·a_z の遅い根 = 頂点を過ぎて下降中)の玉の xy から h_c·(a_x, a_y) を引いた点。</p>
+<p style="margin:2px 0 2px 12px">3. <b>absorb</b>: 着地の <code style="color:#22d3bf">absorb_time</code>(既定 √(absorb_depth / a_max) = bang-bang で下げる動きの折り返しの時間)前から、目標を <code style="color:#22d3bf">absorb_depth</code> 下げる: 着地の瞬間に皿が下向きに最高速 √(a_max·absorb_depth)(20 m/s²・2 cm で 0.63 m/s)で動いている = 相対速さを減らす。absorb_time を長く取ると皿は着地の前に下がり切って止まり、玉はその分深く落ちて速くなる(0.06 s で 4 技とも縁で弾かれた —— 測って退けた)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;target&quot; (皿の中心の目標), &quot;stage&quot;, &quot;landing&quot; (玉が縁に乗る点の真下の皿の中心), &quot;t_land&quot;, &quot;wait&quot; (hold の残り), &quot;feasible&quot;, &quot;apex&quot;, &quot;travel&quot;}</code>。頂点が縁に乗る高さに届かない軌道は <code style="color:#22d3bf">feasible=False</code> で hold。制限(正直に): 皿の姿勢は技ごとに固定(手首を回して玉を迎えない)、抗力は予測に入れない(毎回知覚からやり直す)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_kendama">poc_kendama</a> — <code style="color:#22d3bf">py -3.11 examples/poc_kendama.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">any</code> 作為輸入)</h3>

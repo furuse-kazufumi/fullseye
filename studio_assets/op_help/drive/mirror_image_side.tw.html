@@ -6,15 +6,11 @@
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>カーブミラーに映る点が、鏡の中心より左右どちらに見えるか・どちらへ動いて見えるか(平面鏡の閉形式)。場面 S064・S130。</p>
 <p>左右の向きは凸面鏡でも同じ(門で光線追跡と照合。凸面は角を縮めるだけ)。</p>
-<p>上から見た 2 次元(x, y)。像 P&#x27; = P − 2((P − M)·n)n(`<code style="color:#22d3bf">drivedecide.mirror_reflection_matrix</code>` の 2 次元版)。</p>
-<p>`<code style="color:#22d3bf">image_offset</code><code style="color:#22d3bf"> = 眼から鏡の中心を見る向きに対する像の向きの角(+ = 左)。</code><code style="color:#22d3bf">real_side</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">heading</code>`(運転者の前)に</p>
-<p>対して物が左(+1)か右(−1)か。`<code style="color:#22d3bf">velocities</code><code style="color:#22d3bf"> を渡すと </code><code style="color:#22d3bf">image_motion</code><code style="color:#22d3bf"> = 像の角の速さ、</code><code style="color:#22d3bf">direct_motion</code>` = 眼から物を</p>
-<p>直接見たときの角の速さ(遮りは見ない)、`<code style="color:#22d3bf">virtual_eye_motion</code>` = 仮想の眼 E&#x27; から見た角の速さ(= −image_motion が恒等式)、</p>
-<p>`<code style="color:#22d3bf">reversed</code>` = 像と直接の動きの向きが逆か。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>上から見た 2 次元(x, y)。像 P&#x27; = P − 2((P − M)·n)n(<code style="color:#22d3bf">drivedecide.mirror_reflection_matrix</code> の 2 次元版)。<code style="color:#22d3bf">image_offset</code> = 眼から鏡の中心を見る向きに対する像の向きの角(+ = 左)。<code style="color:#22d3bf">real_side</code> = <code style="color:#22d3bf">heading</code>(運転者の前)に対して物が左(+1)か右(−1)か。<code style="color:#22d3bf">velocities</code> を渡すと <code style="color:#22d3bf">image_motion</code> = 像の角の速さ、<code style="color:#22d3bf">direct_motion</code> = 眼から物を直接見たときの角の速さ(遮りは見ない)、<code style="color:#22d3bf">virtual_eye_motion</code> = 仮想の眼 E&#x27; から見た角の速さ(= −image_motion が恒等式)、<code style="color:#22d3bf">reversed</code> = 像と直接の動きの向きが逆か。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.statistical_region_merging(image, *, q: &#x27;float&#x27; = 32.0, g: &#x27;int&#x27; = 256, value_range=(0.0, 1.0), connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import seggraph; seggraph.statistical_region_merging(image, *, q: &#x27;float&#x27; = 32.0, g: &#x27;int&#x27; = 256, value_range=(0.0, 1.0), connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;statistical_region_merging&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>統計的領域併合 SRM(Nock–Nielsen 2004): 隣の画素の組を |I_p − I_q| の昇順に処理し、述語 P(R, R&#x27;) が真なら併合。</p>
-<p>画素の値は `<code style="color:#22d3bf">value_range</code>` を [0, g − 1] に線形に写して使う(範囲の外の値は ValueError)。</p>
-<p>P(R, R&#x27;) ⇔ |R̄ − R̄&#x27;| ≤ √(b²(R) + b²(R&#x27;))、b(R) = g √(ln(|R_|R||/δ) / (2Q|R|))、ln|R_l| = min(l, g) ln(l + 1)、</p>
-<p>δ = 1/(6|I|²)(述語の係数は <b>要確認</b>、モジュールの説明参照)。Q(`<code style="color:#22d3bf">q</code>`)が大きいほど b が小さく、併合を渋る(細かい)。</p>
-<p>返す: `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..k)、</code><code style="color:#22d3bf">n_regions</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">means</code><code style="color:#22d3bf">(領域ごとの平均、元の値の尺度)、</code><code style="color:#22d3bf">n_merges</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">q</code>`。</p>
+<p>画素の値は <code style="color:#22d3bf">value_range</code> を [0, g − 1] に線形に写して使う(範囲の外の値は ValueError)。P(R, R&#x27;) ⇔ |R̄ − R̄&#x27;| ≤ √(b²(R) + b²(R&#x27;))、b(R) = g √(ln(|R_|R||/δ) / (2Q|R|))、ln|R_l| = min(l, g) ln(l + 1)、δ = 1/(6|I|²)(述語の係数は <b>要確認</b>、モジュールの説明参照)。Q(<code style="color:#22d3bf">q</code>)が大きいほど b が小さく、併合を渋る(細かい)。</p>
+<p>返す: <code style="color:#22d3bf">labels</code>(1..k)、<code style="color:#22d3bf">n_regions</code>、<code style="color:#22d3bf">means</code>(領域ごとの平均、元の値の尺度)、<code style="color:#22d3bf">n_merges</code>、<code style="color:#22d3bf">q</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

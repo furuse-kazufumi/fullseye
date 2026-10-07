@@ -5,18 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>p 次の Hankel 変換 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr を quasi-discrete 法で。</p>
-<p>`<code style="color:#22d3bf">(r, f)</code><code style="color:#22d3bf"> は動径の標本(r は昇順)。標本点 r_k へは線形補間で載せ、</code><code style="color:#22d3bf">r_max</code>`(既定 = r の最大値)の外は 0。</p>
-<p>`<code style="color:#22d3bf">f</code><code style="color:#22d3bf"> に呼び出し可能を渡すと、標本点で直接評価する(</code><code style="color:#22d3bf">r</code><code style="color:#22d3bf"> は無視して </code><code style="color:#22d3bf">r_max</code>` を必ず渡す)。</p>
-<p>標本点は r_k = j_k R / S(j_k は J_p の k 番目の零点、S = j_{n+1})、周波数 ν_k = j_k / (2πR)。</p>
-<p>この変換は核 T が<b>対合</b>(T·T = I)なので、同じ関数で逆変換もできる(`<code style="color:#22d3bf">F</code>` を f として渡す)。</p>
-<p>門: exp(−π r²) は自己双対(F(ν) = exp(−π ν²))。0 次の Hankel 変換は軸対称な関数の</p>
-<p>2 次元フーリエ変換の動径断面に等しい。</p>
-<p>返り値: `<code style="color:#22d3bf">{&quot;r&quot;, &quot;f&quot;, &quot;nu&quot;, &quot;F&quot;, &quot;T_involution_error&quot;}</code>`(最後は ‖T·T − I‖_max)。</p>
+<p><code style="color:#22d3bf">(r, f)</code> は動径の標本(r は昇順)。標本点 r_k へは線形補間で載せ、<code style="color:#22d3bf">r_max</code>(既定 = r の最大値)の外は 0。<code style="color:#22d3bf">f</code> に呼び出し可能を渡すと、標本点で直接評価する(<code style="color:#22d3bf">r</code> は無視して <code style="color:#22d3bf">r_max</code> を必ず渡す)。標本点は r_k = j_k R / S(j_k は J_p の k 番目の零点、S = j_{n+1})、周波数 ν_k = j_k / (2πR)。この変換は核 T が<b>対合</b>(T·T = I)なので、同じ関数で逆変換もできる(<code style="color:#22d3bf">F</code> を f として渡す)。</p>
+<p>門: exp(−π r²) は自己双対(F(ν) = exp(−π ν²))。0 次の Hankel 変換は軸対称な関数の 2 次元フーリエ変換の動径断面に等しい。</p>
+<p>返り値: <code style="color:#22d3bf">{&quot;r&quot;, &quot;f&quot;, &quot;nu&quot;, &quot;F&quot;, &quot;T_involution_error&quot;}</code>(最後は ‖T·T − I‖_max)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

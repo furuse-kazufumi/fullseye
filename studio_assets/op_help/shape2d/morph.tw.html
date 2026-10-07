@@ -6,11 +6,10 @@
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>2 枚の画像 A, B を対応点でモーフし、比率 alpha の中間画像を作る。</p>
 <p>手順(Beier–Neely 流のメッシュ・モーフ):</p>
-<p>1. 中間形状 mid = (1-alpha)·ptsA + alpha·ptsB を作る。</p>
-<p>2. A を ptsA→mid へ、B を ptsB→mid へワープ(両者の特徴を mid に揃える)。</p>
-<p>3. warp(A), warp(B) を alpha でクロスディゾルブ。</p>
-<p>alpha=0 で A、alpha=1 で B に一致する。単純な blend(A,B,alpha) と違い、</p>
-<p>目・鼻などの特徴が二重像にならず 1 つに重なる(=「本物の中間」)。</p>
+<p style="margin:2px 0 2px 12px">1. 中間形状 mid = (1-alpha)·ptsA + alpha·ptsB を作る。</p>
+<p style="margin:2px 0 2px 12px">2. A を ptsA→mid へ、B を ptsB→mid へワープ(両者の特徴を mid に揃える)。</p>
+<p style="margin:2px 0 2px 12px">3. warp(A), warp(B) を alpha でクロスディゾルブ。</p>
+<p>alpha=0 で A、alpha=1 で B に一致する。単純な blend(A,B,alpha) と違い、目・鼻などの特徴が二重像にならず 1 つに重なる(=「本物の中間」)。</p>
 <p>引数:</p>
 <p>imgA, imgB: (H,W[,C])、同 shape、[0,1]。</p>
 <p>ptsA, ptsB: (K,2) の (x,y)。A と B の対応点(同数・同順)。</p>
@@ -21,10 +20,10 @@
 <p>返り値: (H,W[,C]) の中間画像([0,1])。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_morph">image_morph</a> — <code style="color:#22d3bf">py -3.11 examples/image_morph.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_vanishing_detail_and_morphing_area">poc_vanishing_detail_and_morphing_area</a> — <code style="color:#22d3bf">py -3.11 examples/poc_vanishing_detail_and_morphing_area.py</code></p>

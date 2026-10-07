@@ -7,28 +7,14 @@
 <p>From the subtended angle and its rate::</p>
 <p>shape=&quot;disk&quot;:   tau = sin(theta) / theta&#x27;</p>
 <p>shape=&quot;sphere&quot;: tau = 2*tan(theta/2) / theta&#x27;</p>
-<p>`<code style="color:#22d3bf">theta_signal</code>` is the full subtended angle over time, radians.</p>
-<p>★ The two object models differ by 33% at a 60-degree subtense (`<code style="color:#22d3bf">sin 60 = 0.866</code>`</p>
-<p>vs `<code style="color:#22d3bf">2 tan 30 = 1.155</code>`); using the wrong one silently mis-times a landing, so</p>
-<p>the model is a required, named choice rather than a default guess.</p>
+<p><code style="color:#22d3bf">theta_signal</code> is the full subtended angle over time, radians.</p>
+<p>★ The two object models differ by 33% at a 60-degree subtense (<code style="color:#22d3bf">sin 60 = 0.866</code> vs <code style="color:#22d3bf">2 tan 30 = 1.155</code>); using the wrong one silently mis-times a landing, so the model is a required, named choice rather than a default guess.</p>
 <p>theta_signal: the full subtended angle per sample, radians.</p>
 <p>dt_s:  the sample interval, seconds.</p>
-<p>shape: `<code style="color:#22d3bf">&quot;disk&quot;</code><code style="color:#22d3bf"> (a frontal circular disk) or </code><code style="color:#22d3bf">&quot;sphere&quot;</code>`.</p>
-<p>Returns a 1-D float64 array of the time-to-contact per sample, seconds.</p>
-<p>Non-expanding samples (`<code style="color:#22d3bf">theta&#x27; &lt;= 0</code><code style="color:#22d3bf">) return </code><code style="color:#22d3bf">NaN</code>` — a documented</p>
-<p>non-finite, because a contracting or static angle has no time-to-contact and</p>
-<p>inventing one would be a plausible-wrong number. (The registry op</p>
-<p>`<code style="color:#22d3bf">tb_fly_tau_from_expansion</code>` must return a finite signal, so it replaces those</p>
-<p>NaN by the signal fallback without recording a fallback event —</p>
-<p>`<code style="color:#22d3bf">backend_safe.NONFINITE_BY_DESIGN</code>`; call this function directly to keep the NaN.)</p>
-<p>Ground truth: for the model&#x27;s own object geometry (`<code style="color:#22d3bf">theta = 2 asin(l/d)</code>` for a</p>
-<p>sphere, `<code style="color:#22d3bf">theta = 2 atan(l/d)</code><code style="color:#22d3bf"> for a disk) approaching at speed </code><code style="color:#22d3bf">|v|</code>`, the</p>
-<p>returned tau equals the true distance-over-speed `<code style="color:#22d3bf">d/|v|</code>` (pinned in the</p>
-<p>tests).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / too-short (&lt; 3) / non-finite</p>
-<p>*theta_signal*, a signal over :data:<code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, a non-positive *dt_s*,</p>
-<p>and an unknown *shape*. A non-expanding angle is <b>not</b> an error — it is the</p>
-<p>documented `<code style="color:#22d3bf">NaN</code>` return above.</p>
+<p>shape: <code style="color:#22d3bf">&quot;disk&quot;</code> (a frontal circular disk) or <code style="color:#22d3bf">&quot;sphere&quot;</code>.</p>
+<p>Returns a 1-D float64 array of the time-to-contact per sample, seconds. Non-expanding samples (<code style="color:#22d3bf">theta&#x27; &lt;= 0</code>) return <code style="color:#22d3bf">NaN</code> — a documented non-finite, because a contracting or static angle has no time-to-contact and inventing one would be a plausible-wrong number. (The registry op <code style="color:#22d3bf">tb_fly_tau_from_expansion</code> must return a finite signal, so it replaces those NaN by the signal fallback without recording a fallback event — <code style="color:#22d3bf">backend_safe.NONFINITE_BY_DESIGN</code>; call this function directly to keep the NaN.)</p>
+<p>Ground truth: for the model&#x27;s own object geometry (<code style="color:#22d3bf">theta = 2 asin(l/d)</code> for a sphere, <code style="color:#22d3bf">theta = 2 atan(l/d)</code> for a disk) approaching at speed <code style="color:#22d3bf">|v|</code>, the returned tau equals the true distance-over-speed <code style="color:#22d3bf">d/|v|</code> (pinned in the tests).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-1-D / empty / too-short (&lt; 3) / non-finite *theta_signal*, a signal over <code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, a non-positive *dt_s*, and an unknown *shape*. A non-expanding angle is <b>not</b> an error — it is the documented <code style="color:#22d3bf">NaN</code> return above.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

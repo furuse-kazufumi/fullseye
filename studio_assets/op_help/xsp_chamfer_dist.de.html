@@ -8,20 +8,14 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsp_chamfer_dist.chain.jpg">xsp_chamfer_dist: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsp_chamfer_dist.chain.jpg">xsp_chamfer_dist: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsp_chamfer_dist.inputs.jpg">xsp_chamfer_dist: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsp_chamfer_dist.inputs.jpg">xsp_chamfer_dist: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>City-Block-(Chamfer-)Abstand zum nächsten Hintergrundpixel, normalisiert auf [0,1].</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>★2026-09-02: 縮退入力での <b>符号つきセンチネル</b> を潰す。</p>
-<p>`<code style="color:#22d3bf">scipy.ndimage.distance_transform_cdt</code>` は「背景画素が 1 つも無い」入力に対して</p>
-<p>距離ではなく <b>-1 を全画素に</b>書く(実測: `<code style="color:#22d3bf">np.ones((8,8), bool)</code>` -&gt; min=max=-1)。</p>
-<p>旧実装はそれをそのまま `<code style="color:#22d3bf">_norm</code>` に通していたので、**塗り潰された領域の距離マップが</p>
-<p>一様 -1 の「画像」**になっていた —— 例外も警告も出ないまま値域 [0,1] の image 契約を</p>
-<p>破り、保存・表示では全面が黒に潰れる。</p>
-<p>背景が無い = どの画素も「無限に遠い」ので、正規化後の正直な答えは <b>一様 1.0</b>。</p>
-<p>前景が無いときは距離 0 の一様 0.0。どちらも符号つきの値を返さない。</p>
+<p>★2026-09-02: 縮退入力での <b>符号つきセンチネル</b> を潰す。<code style="color:#22d3bf">scipy.ndimage.distance_transform_cdt</code> は「背景画素が 1 つも無い」入力に対して距離ではなく <b>-1 を全画素に</b>書く(実測: <code style="color:#22d3bf">np.ones((8,8), bool)</code> -&gt; min=max=-1)。旧実装はそれをそのまま <code style="color:#22d3bf">_norm</code> に通していたので、<b>塗り潰された領域の距離マップが一様 -1 の「画像」</b>になっていた —— 例外も警告も出ないまま値域 [0,1] の image 契約を破り、保存・表示では全面が黒に潰れる。</p>
+<p>背景が無い = どの画素も「無限に遠い」ので、正規化後の正直な答えは <b>一様 1.0</b>。前景が無いときは距離 0 の一様 0.0。どちらも符号つきの値を返さない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -31,7 +25,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-xsp_chamfer_dist 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Axsp_chamfer_dist%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Axsp_chamfer_dist%200.50%200.50">Load &amp; run</a></p>
+xsp_chamfer_dist 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Axsp_chamfer_dist%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Axsp_chamfer_dist%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>

@@ -8,11 +8,11 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/area_center.chain.jpg">area_center: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/area_center.chain.jpg">area_center: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Gibt Fläche und Schwerpunkt einer Region als auflösungsunabhängigen, normierten 3-Komponenten-Vektor zurück (Flächenanteil = Fläche / Anzahl Bildpixel, normierte Schwerpunktzeile, normierte Schwerpunktspalte). Da ein einzelner Skalar (Area, Row, Column) nicht darstellen kann, unterscheidet sich diese Op von anderen Region-Feature-Ops dadurch, dass sie im `<code style="color:#22d3bf">match</code><code style="color:#22d3bf">-Sortformat (ein 1-D-Vektor, dieselbe Form wie bei </code><code style="color:#22d3bf">ncc_locate</code><code style="color:#22d3bf">) zurückgegeben wird. Sie hat eine Fail-Soft-Spezifikation: Ist die Region leer, wird (0, 0.5, 0.5) zurückgegeben -- Fläche null, Zentrum = Bildmitte. Entspricht HALCONs </code><code style="color:#22d3bf">area_center</code>` (Area and center of regions.).</p>
+<p>Gibt Fläche und Schwerpunkt einer Region als auflösungsunabhängigen, normierten 3-Komponenten-Vektor zurück (Flächenanteil = Fläche / Anzahl Bildpixel, normierte Schwerpunktzeile, normierte Schwerpunktspalte). Da ein einzelner Skalar (Area, Row, Column) nicht darstellen kann, unterscheidet sich diese Op von anderen Region-Feature-Ops dadurch, dass sie im <code style="color:#22d3bf">match</code>-Sortformat (ein 1-D-Vektor, dieselbe Form wie bei <code style="color:#22d3bf">ncc_locate</code>) zurückgegeben wird. Sie hat eine Fail-Soft-Spezifikation: Ist die Region leer, wird (0, 0.5, 0.5) zurückgegeben -- Fläche null, Zentrum = Bildmitte. Entspricht HALCONs <code style="color:#22d3bf">area_center</code> (Area and center of regions.).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -22,7 +22,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-area_center 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aarea_center%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aarea_center%200.50%200.50">Load &amp; run</a></p>
+area_center 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aarea_center%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aarea_center%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">match</code> als Eingabe)</h3>

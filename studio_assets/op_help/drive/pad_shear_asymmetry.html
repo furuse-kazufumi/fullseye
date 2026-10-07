@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_shear_asymmetry(qR, qL) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegtactile; pegtactile.pad_shear_asymmetry(qR, qL) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;pad_shear_asymmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>2 パッドの膜のせん断を共通成分(= 軸方向の力、F_z/2 の向き)と差分(= 偶力、M/(2w))に分ける: 共通 = (q_R + q_L)/2、</p>
-<p>差分 = (q_R − q_L)/2。`<code style="color:#22d3bf">ratio_v</code><code style="color:#22d3bf"> = |差分_v| / (|共通_v| + |差分_v|)(0 = 同じ向き、1 = 純粋な偶力)、</code><code style="color:#22d3bf">opposite_v</code>` = v 成分の</p>
-<p>符号が左右で逆か。<b>Raises</b> ValueError: 有限の 2 成分でない。</p>
+<p>2 パッドの膜のせん断を共通成分(= 軸方向の力、F_z/2 の向き)と差分(= 偶力、M/(2w))に分ける: 共通 = (q_R + q_L)/2、差分 = (q_R − q_L)/2。<code style="color:#22d3bf">ratio_v</code> = |差分_v| / (|共通_v| + |差分_v|)(0 = 同じ向き、1 = 純粋な偶力)、<code style="color:#22d3bf">opposite_v</code> = v 成分の符号が左右で逆か。<b>Raises</b> ValueError: 有限の 2 成分でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

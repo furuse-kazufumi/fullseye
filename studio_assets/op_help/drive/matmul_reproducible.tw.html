@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matmul_reproducible(A, B, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>(要直接呼叫實作,<code style="color:#22d3bf">import ozakimm; ozakimm.matmul_reproducible(A, B, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;matmul_reproducible&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ビット単位で再現する FP64 の精度の `<code style="color:#22d3bf">A @ B</code><code style="color:#22d3bf">(保証できなければ </code><code style="color:#22d3bf">ValueError</code>` = fail-closed)。</p>
-<p>:func:<code style="color:#22d3bf">matmul_ozaki</code> の Ozaki-I の自動選択に `<code style="color:#22d3bf">on_insufficient=&quot;raise&quot;</code>` を固定したもの。誤差は要素ごとに</p>
-<p>`<code style="color:#22d3bf">tol · (|A||B|)_ij</code>` + 最後の組み立ての丸め(数 ulp)以下。内側の添字の順(点の順)・BLAS のスレッド数に依らず</p>
-<p>同じビットを返す。点群の 3×N @ N×3 や 6×N @ N×6 の縮約向け(出力が大きい積では DGEMM の 15〜83 倍遅い)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>ビット単位で再現する FP64 の精度の <code style="color:#22d3bf">A @ B</code>(保証できなければ <code style="color:#22d3bf">ValueError</code> = fail-closed)。</p>
+<p><code style="color:#22d3bf">matmul_ozaki</code> の Ozaki-I の自動選択に <code style="color:#22d3bf">on_insufficient=&quot;raise&quot;</code> を固定したもの。誤差は要素ごとに <code style="color:#22d3bf">tol · (|A||B|)_ij</code> + 最後の組み立ての丸め(数 ulp)以下。内側の添字の順(点の順)・BLAS のスレッド数に依らず同じビットを返す。点群の 3×N @ N×3 や 6×N @ N×6 の縮約向け(出力が大きい積では DGEMM の 15〜83 倍遅い)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_reproducible_icp">poc_reproducible_icp</a> — <code style="color:#22d3bf">py -3.11 examples/poc_reproducible_icp.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">matrix</code> 作為輸入)</h3>

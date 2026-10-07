@@ -5,15 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>踏切の 3 つの時刻(警報開始・遮断動作の終了・列車の到達)を解釈基準の標準と最小に照らす(配列 = 列車ごと)。</p>
-<p>警報→到達の 30 / 20 秒は解釈基準 5(3) の<b>踏切警報機</b>(遮断機なし)の値。遮断機のある踏切では 4(3)(5) の 2 つ</p>
-<p>(15 + 20 = 35 秒が標準)が効き、30 / 20 秒の側は自動的に満たされる。</p>
-<p>返り値: `<code style="color:#22d3bf">warn_to_closed</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">closed_to_arrival</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">warn_to_arrival</code><code style="color:#22d3bf">(各 [s])、</code><code style="color:#22d3bf">meets_minimum</code>`(3 つとも最小以上)、</p>
-<p>`<code style="color:#22d3bf">deviation</code><code style="color:#22d3bf">(標準からのずれ、3 つ)、</code><code style="color:#22d3bf">spread</code>`(列車ごとの警報開始→到達の最大 − 最小。解釈基準 5(4)「速度等により</p>
-<p>大きく異なるものでない」の量)。時刻の順が逆(遮断終了が警報より前など)は ValueError。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>警報→到達の 30 / 20 秒は解釈基準 5(3) の<b>踏切警報機</b>(遮断機なし)の値。遮断機のある踏切では 4(3)(5) の 2 つ(15 + 20 = 35 秒が標準)が効き、30 / 20 秒の側は自動的に満たされる。</p>
+<p>返り値: <code style="color:#22d3bf">warn_to_closed</code> / <code style="color:#22d3bf">closed_to_arrival</code> / <code style="color:#22d3bf">warn_to_arrival</code>(各 [s])、<code style="color:#22d3bf">meets_minimum</code>(3 つとも最小以上)、<code style="color:#22d3bf">deviation</code>(標準からのずれ、3 つ)、<code style="color:#22d3bf">spread</code>(列車ごとの警報開始→到達の最大 − 最小。解釈基準 5(4)「速度等により大きく異なるものでない」の量)。時刻の順が逆(遮断終了が警報より前など)は ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

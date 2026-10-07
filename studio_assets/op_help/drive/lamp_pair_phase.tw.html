@@ -5,13 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>2 つの明るさの時系列(2 灯の画素)から、共通の点滅の周波数と位相差を相互スペクトルで推定する。</p>
-<p>平均を引き Hann 窓、`<code style="color:#22d3bf">pad</code><code style="color:#22d3bf"> 倍に 0 を詰めた rFFT。|A| + |B| の山(</code><code style="color:#22d3bf">f_min</code>` 以上、0 Hz の裾を除く)で</p>
-<p>φ = arg(A_k B̄_k) を [0, π] に畳む。`<code style="color:#22d3bf">delay</code><code style="color:#22d3bf"> = φ / (2π f)。</code><code style="color:#22d3bf">alternating</code>` = |φ − π| &lt; tol(交互点滅)。</p>
-<p>周波数は <b>見かけ</b> の値(fps/2 を超える点滅は折り返る)。どちらかが一定なら ValueError。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>平均を引き Hann 窓、<code style="color:#22d3bf">pad</code> 倍に 0 を詰めた rFFT。|A| + |B| の山(<code style="color:#22d3bf">f_min</code> 以上、0 Hz の裾を除く)で φ = arg(A_k B̄_k) を [0, π] に畳む。<code style="color:#22d3bf">delay</code> = φ / (2π f)。<code style="color:#22d3bf">alternating</code> = |φ − π| &lt; tol(交互点滅)。周波数は <b>見かけ</b> の値(fps/2 を超える点滅は折り返る)。どちらかが一定なら ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

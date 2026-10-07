@@ -5,17 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2-D の法線マップを平行光源 1 灯で陰影付けする(Lambert + Blinn 1977)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>`<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> is a </code><code style="color:#22d3bf">normalmap</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W, 3)</code>` <b>unit</b> vectors, as</p>
-<p>:func:<code style="color:#22d3bf">normal_map_decode</code> returns. Non-unit input raises rather than being</p>
-<p>normalised for you — a normal map that is not normalised is usually a map</p>
-<p>that was never decoded, and quietly fixing it hides the mistake.</p>
-<p>`<code style="color:#22d3bf">out = diffuse * (ambient + max(n·l, 0)) + specular * max(n·h, 0)^shininess</code>`</p>
-<p>with `<code style="color:#22d3bf">h</code>` the normalised halfway vector between light and view.</p>
-<p>Directions are `<code style="color:#22d3bf">(x, y, z)</code>` with **+x right, +y down, +z out of the</p>
-<p>screen** — the same handedness as the pixel grid, so a light at</p>
-<p>`<code style="color:#22d3bf">(0, -1, 1)</code>` comes from above the screen. Getting the sign of y wrong</p>
-<p>flips the perceived relief (bumps become dents) without raising anything;</p>
-<p>that is the one thing to check on first render.</p>
+<p><code style="color:#22d3bf">normals</code> is a <code style="color:#22d3bf">normalmap</code>: <code style="color:#22d3bf">(H, W, 3)</code> <b>unit</b> vectors, as <code style="color:#22d3bf">normal_map_decode</code> returns. Non-unit input raises rather than being normalised for you — a normal map that is not normalised is usually a map that was never decoded, and quietly fixing it hides the mistake.</p>
+<p><code style="color:#22d3bf">out = diffuse * (ambient + max(n·l, 0)) + specular * max(n·h, 0)^shininess</code> with <code style="color:#22d3bf">h</code> the normalised halfway vector between light and view.</p>
+<p>Directions are <code style="color:#22d3bf">(x, y, z)</code> with <b>+x right, +y down, +z out of the screen</b> — the same handedness as the pixel grid, so a light at <code style="color:#22d3bf">(0, -1, 1)</code> comes from above the screen. Getting the sign of y wrong flips the perceived relief (bumps become dents) without raising anything; that is the one thing to check on first render.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

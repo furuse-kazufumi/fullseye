@@ -3,11 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_to_position(points)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.points_to_position(points)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>점군 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 무게중심 </code><code style="color:#22d3bf">(z, y, x)</code>`. <b>비가역</b>(분포를 버립니다).</p>
+<p>점군 <code style="color:#22d3bf">(N,3)</code> → 무게중심 <code style="color:#22d3bf">(z, y, x)</code>. <b>비가역</b>(분포를 버립니다).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>捨てた量は測れる: 重心まわりの RMS 距離が「1 点に潰したときに失った広がり」</p>
-<p>そのもので、`<code style="color:#22d3bf">selftest</code>` はこれを数字で出す。N = 1 のときだけ</p>
-<p>:func:<code style="color:#22d3bf">position_to_points</code> との往復が bit 一致する。</p>
+<p>捨てた量は測れる: 重心まわりの RMS 距離が「1 点に潰したときに失った広がり」そのもので、<code style="color:#22d3bf">selftest</code> はこれを数字で出す。N = 1 のときだけ <code style="color:#22d3bf">position_to_points</code> との往復が bit 一致する。</p>
 <p>Args:</p>
 <p>points: (N, 3) の (z, y, x)。</p>
 <p>Returns:</p>

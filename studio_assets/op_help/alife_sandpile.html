@@ -5,30 +5,16 @@
 <p><img src="fig/alife_sandpile.png" alt="alife_sandpile: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.a.jpg">alife_sandpile: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.a.jpg">alife_sandpile: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.b.jpg">alife_sandpile: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.b.jpg">alife_sandpile: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.inputs.jpg">alife_sandpile: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.inputs.jpg">alife_sandpile: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Abelian sandpile / self-organised criticality (Bak-Tang-Wiesenfeld 1987).</p>
-<p>The image is quantised to integer grain heights h = round(K * image) with</p>
-<p>K = 4 + int(12a), then relaxed by the BTW toppling rule: a cell with 4 or</p>
-<p>more grains gives one grain to each orthogonal neighbour and keeps the rest.</p>
-<p>The boundary is dissipative (grains leaving the grid are lost), which is what</p>
-<p>lets the pile settle into the self-organised critical state where every cell</p>
-<p>holds at most 3 grains.</p>
-<p>`<code style="color:#22d3bf">a</code>` sets the initial grain scale K (how supercritical the pile starts);</p>
-<p>`<code style="color:#22d3bf">b</code>` sets the number of parallel relaxation sweeps 1 + int(50b). For</p>
-<p>b &gt;= 0.9 the pile relaxes *toward* stability with early termination, but the</p>
-<p>sweep count is bounded by a total-work budget (`<code style="color:#22d3bf">_SANDPILE_BUDGET</code>` grain-</p>
-<p>updates) so the op stays fast on any image size: a small or varied pile</p>
-<p>reaches the stable critical state (every cell &lt;= 3), while a very large</p>
-<p>maximally-supercritical pile is only partially relaxed (full BTW</p>
-<p>stabilisation is O(L^2) sweeps). Returns h / max(h) in [0, 1]; a fully</p>
-<p>relaxed pile (max 3) takes values in {0, 1/3, 2/3, 1} (or {0, 1/2, 1} when</p>
-<p>the stable maximum is 2).</p>
+<p>The image is quantised to integer grain heights h = round(K * image) with K = 4 + int(12a), then relaxed by the BTW toppling rule: a cell with 4 or more grains gives one grain to each orthogonal neighbour and keeps the rest. The boundary is dissipative (grains leaving the grid are lost), which is what lets the pile settle into the self-organised critical state where every cell holds at most 3 grains.</p>
+<p><code style="color:#22d3bf">a</code> sets the initial grain scale K (how supercritical the pile starts); <code style="color:#22d3bf">b</code> sets the number of parallel relaxation sweeps 1 + int(50b). For b &gt;= 0.9 the pile relaxes *toward* stability with early termination, but the sweep count is bounded by a total-work budget (<code style="color:#22d3bf">_SANDPILE_BUDGET</code> grain- updates) so the op stays fast on any image size: a small or varied pile reaches the stable critical state (every cell &lt;= 3), while a very large maximally-supercritical pile is only partially relaxed (full BTW stabilisation is O(L^2) sweeps). Returns h / max(h) in [0, 1]; a fully relaxed pile (max 3) takes values in {0, 1/3, 2/3, 1} (or {0, 1/2, 1} when the stable maximum is 2).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -37,7 +23,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">alife_sandpile 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:alife_sandpile%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:alife_sandpile%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">alife_sandpile 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:alife_sandpile%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:alife_sandpile%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_physics_alife_3d.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

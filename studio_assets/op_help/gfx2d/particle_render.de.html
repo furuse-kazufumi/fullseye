@@ -3,18 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">rgba</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_render(state, height, width, mode=&#x27;add&#x27;, fade=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.particle_render(state, height, width, mode=&#x27;add&#x27;, fade=True)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Splattet einen Partikelzustand in ein `<code style="color:#22d3bf">rgba</code>`-Bild.</p>
+<p>Splattet einen Partikelzustand in ein <code style="color:#22d3bf">rgba</code>-Bild.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Each particle is a radially symmetric `<code style="color:#22d3bf">(1 - (r/R)^2)^2</code>` kernel of radius</p>
-<p>`<code style="color:#22d3bf">size</code><code style="color:#22d3bf">, weighted by its alpha and, when </code><code style="color:#22d3bf">fade</code>` is set, by the remaining</p>
-<p>fraction of its life `<code style="color:#22d3bf">(1 - age/life)</code>`. Particles past their lifetime</p>
-<p>contribute nothing.</p>
-<p>`<code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">&quot;add&quot;</code>` (premultiplied additive — what a spark does; the</p>
-<p>result is clipped at 1 and the clipped energy is *not* returned) or</p>
-<p>`<code style="color:#22d3bf">&quot;over&quot;</code>` (each particle composited in array order, which is what a soft</p>
-<p>smoke puff does).</p>
-<p>Pure function of the state: no randomness enters here, so two calls on the</p>
-<p>same state produce identical bytes.</p>
+<p>Each particle is a radially symmetric <code style="color:#22d3bf">(1 - (r/R)^2)^2</code> kernel of radius <code style="color:#22d3bf">size</code>, weighted by its alpha and, when <code style="color:#22d3bf">fade</code> is set, by the remaining fraction of its life <code style="color:#22d3bf">(1 - age/life)</code>. Particles past their lifetime contribute nothing.</p>
+<p><code style="color:#22d3bf">mode</code> is <code style="color:#22d3bf">&quot;add&quot;</code> (premultiplied additive — what a spark does; the result is clipped at 1 and the clipped energy is *not* returned) or <code style="color:#22d3bf">&quot;over&quot;</code> (each particle composited in array order, which is what a soft smoke puff does).</p>
+<p>Pure function of the state: no randomness enters here, so two calls on the same state produce identical bytes.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

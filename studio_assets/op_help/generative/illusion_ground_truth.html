@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_ground_truth(name: &#x27;str&#x27; = &#x27;&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import illusion; illusion.illusion_ground_truth(name: &#x27;str&#x27; = &#x27;&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_ground_truth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>錯視が守っている<b>厳密な不変量</b>を表で返す(`<code style="color:#22d3bf">name</code>` 空で全件)。</p>
-<p>★これがこの族の芯。図だけを配ると「きれいだね」で終わるが、**図と一緒に</p>
-<p>真値が出てくる**と、測る側を採点できる。返り値の `<code style="color:#22d3bf">value</code>` はすべて</p>
-<p>「あるべき値」であって、測った値ではない(測るのは呼んだ側の仕事)。</p>
+<p>錯視が守っている<b>厳密な不変量</b>を表で返す(<code style="color:#22d3bf">name</code> 空で全件)。</p>
+<p>★これがこの族の芯。図だけを配ると「きれいだね」で終わるが、<b>図と一緒に真値が出てくる</b>と、測る側を採点できる。返り値の <code style="color:#22d3bf">value</code> はすべて「あるべき値」であって、測った値ではない(測るのは呼んだ側の仕事)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

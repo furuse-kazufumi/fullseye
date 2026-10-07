@@ -1026,7 +1026,7 @@ def legend_box(img, entries, xy, anchor="lt", swatch=14, row_gap=4, pad=8,
                border=1, border_color="neutral"):
     """色 × 説明の凡例。**箱の高さは要素数から閉形式で決まる**。
 
-    ``height = 2*pad + n*row_h + (n-1)*row_gap`` (``row_h = max(swatch, 文字高))。
+    ``height = 2*pad + n*row_h + (n-1)*row_gap`` (``row_h = max(swatch, 文字高)``)。
 
     Parameters
     ----------

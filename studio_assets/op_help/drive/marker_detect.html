@@ -3,12 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.marker_detect(m, dark: &#x27;float&#x27;, r_px: &#x27;float&#x27;, binary: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacslip; tacslip.marker_detect(m, dark: &#x27;float&#x27;, r_px: &#x27;float&#x27;, binary: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;marker_detect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>マーカー像 m(:func:<code style="color:#22d3bf">marker_image</code>)→ マーカー中心。`<code style="color:#22d3bf">weighted</code>`(主、(N, 2) の (x, y) [px]): 高しきい値 0.5·dark の連結成分</p>
-<p>(:func:<code style="color:#22d3bf">blob2d.blob_label</code>)を本体とし、低しきい値 0.08·dark の画素(縞)を距離変換で最近傍の本体へ割り当て、m を重みにした重心を</p>
-<p>反復ガウス重み(σ = r_px)で精密化。`<code style="color:#22d3bf">weighted_plain</code><code style="color:#22d3bf"> = 精密化前。</code><code style="color:#22d3bf">binary=True</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">binary</code><code style="color:#22d3bf"> = :func:</code>blob2d.blob_features` の</p>
-<p>row/col(二値重心、周長・凸包まで計算するので 1,000 個で 0.4 s)。縁に触る成分は捨てる。`<code style="color:#22d3bf">n</code>` = 本体の数。</p>
-<p>縞を本体から切るのは、滑り環で隣接間隔が 8 → 6 px に縮むと低しきい値の縞が繋がって 1 成分に併合するから(実測)。</p>
-<p><b>Raises</b> ValueError: m が 2 次元でない、dark が (0, 1] の外、r_px ≤ 0。</p>
+<p>マーカー像 m(<code style="color:#22d3bf">marker_image</code>)→ マーカー中心。<code style="color:#22d3bf">weighted</code>(主、(N, 2) の (x, y) [px]): 高しきい値 0.5·dark の連結成分(<code style="color:#22d3bf">blob2d.blob_label</code>)を本体とし、低しきい値 0.08·dark の画素(縞)を距離変換で最近傍の本体へ割り当て、m を重みにした重心を反復ガウス重み(σ = r_px)で精密化。<code style="color:#22d3bf">weighted_plain</code> = 精密化前。<code style="color:#22d3bf">binary=True</code> なら <code style="color:#22d3bf">binary</code> = <code style="color:#22d3bf">blob2d.blob_features</code> の row/col(二値重心、周長・凸包まで計算するので 1,000 個で 0.4 s)。縁に触る成分は捨てる。<code style="color:#22d3bf">n</code> = 本体の数。縞を本体から切るのは、滑り環で隣接間隔が 8 → 6 px に縮むと低しきい値の縞が繋がって 1 成分に併合するから(実測)。<b>Raises</b> ValueError: m が 2 次元でない、dark が (0, 1] の外、r_px ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

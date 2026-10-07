@@ -3,13 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polish_scene_mjcf(radius: &#x27;float&#x27; = 0.008, k_z: &#x27;float&#x27; = 500.0, k_xy: &#x27;float&#x27; = 20000.0, mass: &#x27;float&#x27; = 0.2, friction: &#x27;float&#x27; = 0.3, thickness: &#x27;float&#x27; = 0.004, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import polish; polish.polish_scene_mjcf(radius: &#x27;float&#x27; = 0.008, k_z: &#x27;float&#x27; = 500.0, k_xy: &#x27;float&#x27; = 20000.0, mass: &#x27;float&#x27; = 0.2, friction: &#x27;float&#x27; = 0.3, thickness: &#x27;float&#x27; = 0.004, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;polish_scene_mjcf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>平らな板(z = 0 の平面)の上で、円柱の工具(半径 `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf">、厚さ </code><code style="color:#22d3bf">thickness</code><code style="color:#22d3bf">、質量 </code><code style="color:#22d3bf">mass</code>`)を x・y・z の 3 本の直動の</p>
-<p>関節で動かす MJCF。z は位置サーボ(ゲイン `<code style="color:#22d3bf">k_z</code><code style="color:#22d3bf"> [N/m] = 手首の押し付けのばね)、x・y は硬いサーボ </code><code style="color:#22d3bf">k_xy</code>`。重力あり。</p>
-<p>ばねの閉形式: 工具の底が板に載っている時の法線力 N = m g + k_z (q_surface − q_cmd)(q_surface = 底が z = 0 に来る関節値)。</p>
-<p>接触は硬めに(solref の時定数 = 4 × timestep、solimp 0.99)して、めり込みを ばねの縮みより十分小さくする(既定の柔らかい接触では</p>
-<p>質量 0.05 kg・5 N で 0.7 mm めり込み、手首のばねと直列になって力が 6 % 小さく出た —— 実測)。摩擦の錐は角錐(pyramidal)。</p>
-<p>楕円の錐 + impratio = 10 では、硬い手首(20 kN/m)で 0.1〜0.36 mm めり込んで力が 17 % 小さく出た(摩擦 0 でも同じ、実測)。</p>
-<p><b>Raises</b> ValueError: 数の検査。</p>
+<p>平らな板(z = 0 の平面)の上で、円柱の工具(半径 <code style="color:#22d3bf">radius</code>、厚さ <code style="color:#22d3bf">thickness</code>、質量 <code style="color:#22d3bf">mass</code>)を x・y・z の 3 本の直動の関節で動かす MJCF。z は位置サーボ(ゲイン <code style="color:#22d3bf">k_z</code> [N/m] = 手首の押し付けのばね)、x・y は硬いサーボ <code style="color:#22d3bf">k_xy</code>。重力あり。</p>
+<p>ばねの閉形式: 工具の底が板に載っている時の法線力 N = m g + k_z (q_surface − q_cmd)(q_surface = 底が z = 0 に来る関節値)。接触は硬めに(solref の時定数 = 4 × timestep、solimp 0.99)して、めり込みを ばねの縮みより十分小さくする(既定の柔らかい接触では質量 0.05 kg・5 N で 0.7 mm めり込み、手首のばねと直列になって力が 6 % 小さく出た —— 実測)。摩擦の錐は角錐(pyramidal)。楕円の錐 + impratio = 10 では、硬い手首(20 kN/m)で 0.1〜0.36 mm めり込んで力が 17 % 小さく出た(摩擦 0 でも同じ、実測)。<b>Raises</b> ValueError: 数の検査。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

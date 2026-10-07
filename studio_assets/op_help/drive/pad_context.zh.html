@@ -5,13 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>膜の合成と読みで 1 回だけ作る道具: 画素中心の格子 (X, Y)、Cerruti 核、3 色の光源、無荷重の膜の背景とマーカーの基準像。</p>
-<p>マーカーは `<code style="color:#22d3bf">jitter_px</code>` の一様ジッタで位相を散らす(印刷のばらつき程度)。**規則格子(0 px)は全マーカーが同じ副画素位相なので、</p>
-<p>重心の pixel-locking が場全体の共通モードになり、せん断ゼロでも偽のせん断が出る**(PoC の門で 11 mN → 0.9 mN)。</p>
-<p>`<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> はジッタの乱数。返りの </code><code style="color:#22d3bf">_model_cache</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">_sr_cache</code>` は読みの内部キャッシュ。<b>Raises</b> ValueError: jitter &lt; 0。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>マーカーは <code style="color:#22d3bf">jitter_px</code> の一様ジッタで位相を散らす(印刷のばらつき程度)。<b>規則格子(0 px)は全マーカーが同じ副画素位相なので、重心の pixel-locking が場全体の共通モードになり、せん断ゼロでも偽のせん断が出る</b>(PoC の門で 11 mN → 0.9 mN)。<code style="color:#22d3bf">seed</code> はジッタの乱数。返りの <code style="color:#22d3bf">_model_cache</code>・<code style="color:#22d3bf">_sr_cache</code> は読みの内部キャッシュ。<b>Raises</b> ValueError: jitter &lt; 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_knife_tactile_toughness">poc_knife_tactile_toughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_knife_tactile_toughness.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>

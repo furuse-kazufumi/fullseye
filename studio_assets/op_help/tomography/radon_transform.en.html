@@ -4,32 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)</code> (to call the implementation directly, <code style="color:#22d3bf">import tomography; tomography.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)</code>; from the registry, <code style="color:#22d3bf">opstomography.get(&quot;radon_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Forward parallel-beam projection: a slice in, a <b>sinogram</b> out.</p>
-<p>Rows of the result are projection angles and columns are detector bins. The</p>
-<p>convention is fixed here and never negotiated again; every other operator in</p>
-<p>this module reads it the same way, and a transposed sinogram is structurally</p>
-<p>indistinguishable from a valid one (see :mod:<code style="color:#22d3bf">opstomography</code> for the measured</p>
-<p>consequences of not giving it its own sort).</p>
-<p>The ray at detector bin `<code style="color:#22d3bf">j</code><code style="color:#22d3bf"> and angle </code><code style="color:#22d3bf">theta</code>` is the line</p>
-<p>`<code style="color:#22d3bf">x cos(theta) + y sin(theta) = j - (n_det-1)/2</code><code style="color:#22d3bf">, with </code><code style="color:#22d3bf">x</code>` the column</p>
-<p>offset from the image centre and `<code style="color:#22d3bf">y</code><code style="color:#22d3bf"> the row offset — so </code><code style="color:#22d3bf">+y</code>` runs *down*</p>
-<p>the array, matching the rest of Fullseye&#x27;s image indexing rather than a</p>
-<p>textbook&#x27;s upward `<code style="color:#22d3bf">y</code>`. The transform is the same either way (the sinogram is</p>
-<p>mirrored in the angle axis), but only one of the two agrees with</p>
-<p>:func:<code style="color:#22d3bf">ellipse_phantom</code>, and the tests hold them together.</p>
-<p>Accuracy against the closed form (a disc of radius 60 px in a 256-px grid,</p>
-<p>180 views), measured in `<code style="color:#22d3bf">tests/test_tomography.py</code>`: interior RMS error</p>
-<p><b>0.073 %</b> of the peak line integral, whole-sinogram RMS <b>0.402 %</b> — the</p>
-<p>difference between the two being the partial-volume edge, where the phantom&#x27;s</p>
-<p>own anti-aliased boundary is what is being sampled.</p>
-<p>:param image: 2-D slice, at least 2x2.</p>
-<p>:param angles_deg: 1-D view angles in degrees; `<code style="color:#22d3bf">None</code>` -&gt;</p>
-<p>`<code style="color:#22d3bf">linspace(0, 180, 180, endpoint=False)</code>`.</p>
-<p>:param n_detectors: bins; `<code style="color:#22d3bf">None</code>` -&gt; odd count covering the diagonal.</p>
-<p>:param oversample: ray samples per pixel, `<code style="color:#22d3bf">1 .. 8</code>`. The default is 1</p>
+<p>Rows of the result are projection angles and columns are detector bins. The convention is fixed here and never negotiated again; every other operator in this module reads it the same way, and a transposed sinogram is structurally indistinguishable from a valid one (see <code style="color:#22d3bf">opstomography</code> for the measured consequences of not giving it its own sort).</p>
+<p>The ray at detector bin <code style="color:#22d3bf">j</code> and angle <code style="color:#22d3bf">theta</code> is the line <code style="color:#22d3bf">x cos(theta) + y sin(theta) = j - (n_det-1)/2</code>, with <code style="color:#22d3bf">x</code> the column offset from the image centre and <code style="color:#22d3bf">y</code> the row offset — so <code style="color:#22d3bf">+y</code> runs *down* the array, matching the rest of Fullseye&#x27;s image indexing rather than a textbook&#x27;s upward <code style="color:#22d3bf">y</code>. The transform is the same either way (the sinogram is mirrored in the angle axis), but only one of the two agrees with <code style="color:#22d3bf">ellipse_phantom</code>, and the tests hold them together.</p>
+<p>Accuracy against the closed form (a disc of radius 60 px in a 256-px grid, 180 views), measured in <code style="color:#22d3bf">tests/test_tomography.py</code>: interior RMS error <b>0.073 %</b> of the peak line integral, whole-sinogram RMS <b>0.402 %</b> — the difference between the two being the partial-volume edge, where the phantom&#x27;s own anti-aliased boundary is what is being sampled.</p>
+<p>:param image: 2-D slice, at least 2x2. :param angles_deg: 1-D view angles in degrees; <code style="color:#22d3bf">None</code> -&gt;</p>
+<p><code style="color:#22d3bf">linspace(0, 180, 180, endpoint=False)</code>.</p>
+<p>:param n_detectors: bins; <code style="color:#22d3bf">None</code> -&gt; odd count covering the diagonal. :param oversample: ray samples per pixel, <code style="color:#22d3bf">1 .. 8</code>. The default is 1</p>
 <p>because 4 measures no better (0.073 % against 0.070 %).</p>
-<p>:returns: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` float64 sinogram.</p>
-<p>:raises ValueError: on non-finite input, an empty angle list, a detector count</p>
-<p>under 4, or a sinogram over :data:<code style="color:#22d3bf">MAX_SINOGRAM_ELEMENTS</code>.</p>
+<p>:returns: <code style="color:#22d3bf">(n_angles, n_detectors)</code> float64 sinogram. :raises ValueError: on non-finite input, an empty angle list, a detector count</p>
+<p>under 4, or a sinogram over <code style="color:#22d3bf">MAX_SINOGRAM_ELEMENTS</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

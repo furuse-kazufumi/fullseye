@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_loads_to_peg_wrench(PR: &#x27;float&#x27;, qR, PL: &#x27;float&#x27;, qL, pad: &#x27;dict&#x27;, torsion: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegtactile; pegtactile.pad_loads_to_peg_wrench(PR: &#x27;float&#x27;, qR, PL: &#x27;float&#x27;, qL, pad: &#x27;dict&#x27;, torsion: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;pad_loads_to_peg_wrench&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>:func:<code style="color:#22d3bf">peg_wrench_to_pad_loads</code> の逆: 2 パッドの (P, q) と膜が受けるねじり(パッド 1 枚あたり、グリッパ x まわり)→ パッドが</p>
-<p>ペグに加えるレンチ(グリッパ系、把持点まわり)と把持力。ペグへのねじり = −2·torsion。返り `<code style="color:#22d3bf">F</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">M</code><code style="color:#22d3bf">(3,)、</code><code style="color:#22d3bf">grip</code>` = (N_R + N_L)/2。</p>
-<p><b>Raises</b> ValueError: q が有限の 2 成分でない、P か torsion が有限でない。</p>
+<p><code style="color:#22d3bf">peg_wrench_to_pad_loads</code> の逆: 2 パッドの (P, q) と膜が受けるねじり(パッド 1 枚あたり、グリッパ x まわり)→ パッドがペグに加えるレンチ(グリッパ系、把持点まわり)と把持力。ペグへのねじり = −2·torsion。返り <code style="color:#22d3bf">F</code>・<code style="color:#22d3bf">M</code>(3,)、<code style="color:#22d3bf">grip</code> = (N_R + N_L)/2。<b>Raises</b> ValueError: q が有限の 2 成分でない、P か torsion が有限でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

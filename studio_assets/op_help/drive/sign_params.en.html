@@ -4,13 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_params(kind: &#x27;str&#x27;, *, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roadjp; roadjp.sign_params(kind: &#x27;str&#x27;, *, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sign_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>標識 `<code style="color:#22d3bf">kind</code>` の形・寸法・色を返す(公表値、一次資料で要確認)。</p>
-<p>`<code style="color:#22d3bf">{&quot;shape&quot;, &quot;width&quot;, &quot;height&quot;, &quot;mount_height&quot;, &quot;ground&quot;, &quot;border&quot;, &quot;ink&quot;, &quot;side&quot;}</code>`。</p>
-<p>shape は circle / triangle_down / diamond / pentagon / rect。width・height は板の外形 [m]:</p>
-<p>円 直径 0.6、逆三角形 一辺 0.6(高さ = 一辺 × √3/2)、菱形 一辺 0.45(対角 = 一辺 × √2)、横長矩形 0.6 × 0.3、</p>
-<p>五角形(横断歩道)0.6 × 0.6 —— 出典: 道路標識、区画線及び道路標示に関する命令 別表第二 / KICTEC 寸法表。</p>
-<p>矩形・五角形の寸法は同表で確かめていない(要確認)。`<code style="color:#22d3bf">side</code>` を渡すと一辺(円は直径、菱形は一辺)を置き換える</p>
-<p>(一時停止 800 mm の記述に合わせるなど)。mount_height = 1.8(路側式、板の下端)。</p>
+<p>標識 <code style="color:#22d3bf">kind</code> の形・寸法・色を返す(公表値、一次資料で要確認)。</p>
+<p><code style="color:#22d3bf">{&quot;shape&quot;, &quot;width&quot;, &quot;height&quot;, &quot;mount_height&quot;, &quot;ground&quot;, &quot;border&quot;, &quot;ink&quot;, &quot;side&quot;}</code>。shape は circle / triangle_down / diamond / pentagon / rect。width・height は板の外形 [m]:</p>
+<p>円 直径 0.6、逆三角形 一辺 0.6(高さ = 一辺 × √3/2)、菱形 一辺 0.45(対角 = 一辺 × √2)、横長矩形 0.6 × 0.3、五角形(横断歩道)0.6 × 0.6 —— 出典: 道路標識、区画線及び道路標示に関する命令 別表第二 / KICTEC 寸法表。矩形・五角形の寸法は同表で確かめていない(要確認)。<code style="color:#22d3bf">side</code> を渡すと一辺(円は直径、菱形は一辺)を置き換える(一時停止 800 mm の記述に合わせるなど)。mount_height = 1.8(路側式、板の下端)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

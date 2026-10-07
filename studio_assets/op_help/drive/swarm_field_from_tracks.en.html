@@ -5,12 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>俯瞰のコマ列 → 個体を検出(blob2d の連結成分 + 明るさの重心)→ 隣のコマと相互最近傍でつなぐ → 速度を SPH 核で格子へ。</p>
-<p>つなぐ条件: A の点の最近傍が B の点で、その B の点の最近傍も A の点(相互)、かつ移動が `<code style="color:#22d3bf">max_disp_px</code>` 以下</p>
-<p>(既定 = 検出した点どうしの最近傍の間隔の中央値の 0.45 倍。1 コマの移動がこれを超えると取り違える = 追跡の限界)。</p>
-<p>全部のコマの組の速度を一つの集団にして平均する(定常の流れの前提)。取り違えた組は速度が桁で外れる(実測: 一様に</p>
-<p>撒いた 1300 個で 2 % の組が 1〜3 m/s ずれ、格子の rms 誤差が U の 16 % になった)ので、格子へ移す前に**正規化した</p>
-<p>中央値の検査**(PIV の慣行、近い `<code style="color:#22d3bf">outlier_k</code><code style="color:#22d3bf"> 個の速度の中央値からのずれ / その近傍のずれの中央値 &gt; </code><code style="color:#22d3bf">outlier_threshold</code>`)</p>
-<p>で捨てる。</p>
+<p>つなぐ条件: A の点の最近傍が B の点で、その B の点の最近傍も A の点(相互)、かつ移動が <code style="color:#22d3bf">max_disp_px</code> 以下(既定 = 検出した点どうしの最近傍の間隔の中央値の 0.45 倍。1 コマの移動がこれを超えると取り違える = 追跡の限界)。全部のコマの組の速度を一つの集団にして平均する(定常の流れの前提)。取り違えた組は速度が桁で外れる(実測: 一様に撒いた 1300 個で 2 % の組が 1〜3 m/s ずれ、格子の rms 誤差が U の 16 % になった)ので、格子へ移す前に<b>正規化した中央値の検査</b>(PIV の慣行、近い <code style="color:#22d3bf">outlier_k</code> 個の速度の中央値からのずれ / その近傍のずれの中央値 &gt; <code style="color:#22d3bf">outlier_threshold</code>) で捨てる。</p>
 <p>Args:</p>
 <p>frames: 同じ大きさの (H, W) のコマの列(2 枚以上)。</p>
 <p>res: 画素の大きさ [m/px]。</p>
@@ -24,9 +19,9 @@
 <p>outlier_k: 中央値の検査に使う近傍の数(0 で検査しない)。</p>
 <p>outlier_threshold: 検査のしきい値。</p>
 <p>Returns:</p>
-<p>速度場の dict(module の規約)+ `<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> (M, 2)・</code><code style="color:#22d3bf">point_velocity</code>` (M, 2)(つないだ組の中点と速度)、</p>
-<p>`<code style="color:#22d3bf">n_detected</code><code style="color:#22d3bf">(コマごと)、</code><code style="color:#22d3bf">n_linked</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_outliers</code><code style="color:#22d3bf">(中央値の検査で捨てた組)、</code><code style="color:#22d3bf">n_rejected_blobs</code>`、</p>
-<p>`<code style="color:#22d3bf">spacing</code>`(個体の間隔の推定 [m])。</p>
+<p>速度場の dict(module の規約)+ <code style="color:#22d3bf">points</code> (M, 2)・<code style="color:#22d3bf">point_velocity</code> (M, 2)(つないだ組の中点と速度)、</p>
+<p><code style="color:#22d3bf">n_detected</code>(コマごと)、<code style="color:#22d3bf">n_linked</code>、<code style="color:#22d3bf">n_outliers</code>(中央値の検査で捨てた組)、<code style="color:#22d3bf">n_rejected_blobs</code>、</p>
+<p><code style="color:#22d3bf">spacing</code>(個体の間隔の推定 [m])。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

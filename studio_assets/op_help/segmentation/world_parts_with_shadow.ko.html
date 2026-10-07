@@ -5,15 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>산업 부품 세계(원형 구멍이 있는 회전 사각형): 비스듬한 조명의 그림자·면 음영·하이라이트(world_parts_with_shadow).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>光は `<code style="color:#22d3bf">light_angle</code><code style="color:#22d3bf">(度、画像の x 軸から y 軸へ)の向きに差す平行光。影 = 部品のマスクを光の向きに </code><code style="color:#22d3bf">shadow_length</code>`</p>
-<p>だけずらした集合から部品を除いた画素(穴は光を通す)。部品の面は光に向く側が明るく、遠い側は影と同じくらい暗い</p>
-<p>(閾値が欺かれる理由)。ハイライトは光に向く側の縁の近くのガウス。</p>
-<p>返り値: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(部品 1..n)、</code><code style="color:#22d3bf">shadow</code><code style="color:#22d3bf">(bool)、</code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> = {</code><code style="color:#22d3bf">n_parts</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">parts</code>`(center, w, h, angle, holes)、</p>
-<p>`<code style="color:#22d3bf">areas</code><code style="color:#22d3bf">(w h − Σ π r²)、</code><code style="color:#22d3bf">shadow_offset</code><code style="color:#22d3bf"> (dy, dx)、</code><code style="color:#22d3bf">shadow_area</code><code style="color:#22d3bf">(測った画素数)、</code><code style="color:#22d3bf">light_angle</code>`}。</p>
+<p>光は <code style="color:#22d3bf">light_angle</code>(度、画像の x 軸から y 軸へ)の向きに差す平行光。影 = 部品のマスクを光の向きに <code style="color:#22d3bf">shadow_length</code> だけずらした集合から部品を除いた画素(穴は光を通す)。部品の面は光に向く側が明るく、遠い側は影と同じくらい暗い(閾値が欺かれる理由)。ハイライトは光に向く側の縁の近くのガウス。</p>
+<p>返り値: <code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">labels</code>(部品 1..n)、<code style="color:#22d3bf">shadow</code>(bool)、<code style="color:#22d3bf">truth</code> = {<code style="color:#22d3bf">n_parts</code>、<code style="color:#22d3bf">parts</code>(center, w, h, angle, holes)、<code style="color:#22d3bf">areas</code>(w h − Σ π r²)、<code style="color:#22d3bf">shadow_offset</code> (dy, dx)、<code style="color:#22d3bf">shadow_area</code>(測った画素数)、<code style="color:#22d3bf">light_angle</code>}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 분할 채점과 정답이 있는 합성 세계 — 어떤 척도가 어떤 실패에 눈먼가</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

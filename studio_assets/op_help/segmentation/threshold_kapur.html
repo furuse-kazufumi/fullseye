@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.threshold_kapur(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import seggraph; seggraph.threshold_kapur(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;threshold_kapur&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>最大エントロピー閾値(Kapur–Sahoo–Wong 1985): H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i &gt; t) (p_i/P2) ln(p_i/P2)</p>
-<p>を最大にするビン t(両側とも確率が正のビンだけ)。返す: `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> = そのビンの上端、</code><code style="color:#22d3bf">mask</code>`(ビンの番号 &gt; t)、</p>
-<p>`<code style="color:#22d3bf">bin</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">entropy</code>`(H、除いたビンは nan)。</p>
+<p>最大エントロピー閾値(Kapur–Sahoo–Wong 1985): H(t) = −Σ_(i ≤ t) (p_i/P1) ln(p_i/P1) − Σ_(i &gt; t) (p_i/P2) ln(p_i/P2) を最大にするビン t(両側とも確率が正のビンだけ)。返す: <code style="color:#22d3bf">threshold</code> = そのビンの上端、<code style="color:#22d3bf">mask</code>(ビンの番号 &gt; t)、<code style="color:#22d3bf">bin</code>、<code style="color:#22d3bf">entropy</code>(H、除いたビンは nan)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

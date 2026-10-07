@@ -8,19 +8,15 @@
 <p>*노브 a 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_skeleton_region.chain.jpg">hx_split_skeleton_region: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_skeleton_region.chain.jpg">hx_split_skeleton_region: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_skeleton_region.inputs.jpg">hx_split_skeleton_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_skeleton_region.inputs.jpg">hx_split_skeleton_region: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>1 화소 폭 skeleton 을 분기점에서 분할: 이웃 수 &gt;=3 인 junction 을 빼고 연결 성분으로 나눕니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">v &gt; 0.5</code><code style="color:#22d3bf"> の骨格画素ごとに 8 近傍の骨格画素数 </code><code style="color:#22d3bf">nb</code><code style="color:#22d3bf"> を数え、</code><code style="color:#22d3bf">nb &gt;= 3</code>` の画素(分岐点)を取り除いた</p>
-<p>0/1 の float 配列を返す。分岐点を抜くことで骨格が枝ごとの連結成分に分かれる。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>前提は 1 画素幅の骨格(`<code style="color:#22d3bf">skeleton</code><code style="color:#22d3bf"> の出力)。太い線や塊を渡すと内部の画素はすべて </code><code style="color:#22d3bf">nb &gt;= 3</code>` となり</p>
-<p>ほぼ全部が消える。分岐点そのものは出力に含まれない(分岐の位置が要るなら `<code style="color:#22d3bf">junctions_skeleton</code>`)。</p>
-<p>分かれた枝を個別に扱うには後段で `<code style="color:#22d3bf">hx_region_to_label</code>` を掛ける。分岐点の隣接画素は除かないので、</p>
-<p>多方向が集まる太めの交差では 1 画素の残骸がつながったまま残ることがある。同系の op に `<code style="color:#22d3bf">r2_split_skeleton_lines</code>`。</p>
+<p><code style="color:#22d3bf">v &gt; 0.5</code> の骨格画素ごとに 8 近傍の骨格画素数 <code style="color:#22d3bf">nb</code> を数え、<code style="color:#22d3bf">nb &gt;= 3</code> の画素(分岐点)を取り除いた 0/1 の float 配列を返す。分岐点を抜くことで骨格が枝ごとの連結成分に分かれる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>前提は 1 画素幅の骨格(<code style="color:#22d3bf">skeleton</code> の出力)。太い線や塊を渡すと内部の画素はすべて <code style="color:#22d3bf">nb &gt;= 3</code> となりほぼ全部が消える。分岐点そのものは出力に含まれない(分岐の位置が要るなら <code style="color:#22d3bf">junctions_skeleton</code>)。分かれた枝を個別に扱うには後段で <code style="color:#22d3bf">hx_region_to_label</code> を掛ける。分岐点の隣接画素は除かないので、多方向が集まる太めの交差では 1 画素の残骸がつながったまま残ることがある。同系の op に <code style="color:#22d3bf">r2_split_skeleton_lines</code>。</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
@@ -31,7 +27,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
 <p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-hx_split_skeleton_region 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ahx_split_skeleton_region%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ahx_split_skeleton_region%200.50%200.50">Load &amp; run</a></p>
+hx_split_skeleton_region 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ahx_split_skeleton_region%200.50%200.50">▸ 이 파이프라인 불러오기</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ahx_split_skeleton_region%200.50%200.50">불러와서 실행</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fresco_craquelure">poc_fresco_craquelure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fresco_craquelure.py</code></p>

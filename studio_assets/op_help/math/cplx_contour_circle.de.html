@@ -5,28 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tastet einen Kreis als geschlossene Kontur ab — der übliche Integrationsweg.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Returns `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> complex points </code><code style="color:#22d3bf">center + radius * exp(±i * 2*pi*k/n)</code>`,</p>
-<p>`<code style="color:#22d3bf">k = 0..n-1</code><code style="color:#22d3bf">. The closing segment </code><code style="color:#22d3bf">z[-1] -&gt; z[0]</code>` is <b>implicit</b>: the</p>
-<p>first point is *not* repeated (every contour op in this family closes the</p>
-<p>polygon itself; repeating it would only add a zero-length segment).</p>
-<p>*orientation* is explicit because in complex analysis the sign of every</p>
-<p>result depends on it: `<code style="color:#22d3bf">&#x27;ccw&#x27;</code>` (default) is the positive/mathematical</p>
-<p>direction — the one for which the residue theorem, the Cauchy formula and</p>
-<p>the argument principle carry a `<code style="color:#22d3bf">+</code><code style="color:#22d3bf"> sign — and </code><code style="color:#22d3bf">&#x27;cw&#x27;</code>` negates all three.</p>
-<p>Honest limitation: this is a <b>polygon</b> through samples of the circle, not</p>
-<p>the circle. Its enclosed area is short by a factor `<code style="color:#22d3bf">sinc</code>`-like in</p>
-<p>`<code style="color:#22d3bf">2*pi/n</code><code style="color:#22d3bf">, and every quadrature on it converges as </code><code style="color:#22d3bf">O(n^-2)</code>`</p>
-<p>(:func:<code style="color:#22d3bf">cplx_contour_integral</code> documents the measured rate).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: non-finite *center*/*radius*, </code><code style="color:#22d3bf">radius &lt;= 0</code>`,</p>
-<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> not an integer in </code><code style="color:#22d3bf">[3, MAX_CONTOUR_POINTS]</code>` (a fail-closed size cap</p>
-<p>— `<code style="color:#22d3bf">n=10**9</code>` would allocate 16 GB), unknown *orientation*.</p>
-<p>HALCON: no complex-plane operator (`<code style="color:#22d3bf">gen_circle_contour_xld</code>` draws the</p>
-<p>same geometry as an XLD contour for image space).</p>
+<p>Returns <code style="color:#22d3bf">n</code> complex points <code style="color:#22d3bf">center + radius * exp(±i * 2*pi*k/n)</code>, <code style="color:#22d3bf">k = 0..n-1</code>. The closing segment <code style="color:#22d3bf">z[-1] -&gt; z[0]</code> is <b>implicit</b>: the first point is *not* repeated (every contour op in this family closes the polygon itself; repeating it would only add a zero-length segment).</p>
+<p>*orientation* is explicit because in complex analysis the sign of every result depends on it: <code style="color:#22d3bf">&#x27;ccw&#x27;</code> (default) is the positive/mathematical direction — the one for which the residue theorem, the Cauchy formula and the argument principle carry a <code style="color:#22d3bf">+</code> sign — and <code style="color:#22d3bf">&#x27;cw&#x27;</code> negates all three.</p>
+<p>Honest limitation: this is a <b>polygon</b> through samples of the circle, not the circle. Its enclosed area is short by a factor <code style="color:#22d3bf">sinc</code>-like in <code style="color:#22d3bf">2*pi/n</code>, and every quadrature on it converges as <code style="color:#22d3bf">O(n^-2)</code> (<code style="color:#22d3bf">cplx_contour_integral</code> documents the measured rate).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-finite *center*/*radius*, <code style="color:#22d3bf">radius &lt;= 0</code>, <code style="color:#22d3bf">n</code> not an integer in <code style="color:#22d3bf">[3, MAX_CONTOUR_POINTS]</code> (a fail-closed size cap — <code style="color:#22d3bf">n=10**9</code> would allocate 16 GB), unknown *orientation*.</p>
+<p>HALCON: no complex-plane operator (<code style="color:#22d3bf">gen_circle_contour_xld</code> draws the same geometry as an XLD contour for image space).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

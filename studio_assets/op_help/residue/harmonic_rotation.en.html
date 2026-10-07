@@ -3,25 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.harmonic_rotation(image, reference, orders=(3, 4, 5), rings=((14, 24), (30, 40), (46, 56)), center=None, tol=0.05) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import residue; residue.harmonic_rotation(image, reference, orders=(3, 4, 5), rings=((14, 24), (30, 40), (46, 56)), center=None, tol=0.05) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsresidue.get(&quot;harmonic_rotation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Absolute in-plane rotation of `<code style="color:#22d3bf">image</code><code style="color:#22d3bf"> relative to </code><code style="color:#22d3bf">reference</code><code style="color:#22d3bf"> over 360 degrees -&gt; </code><code style="color:#22d3bf">dict</code>`.</p>
-<p>A feature with n-fold symmetry (n lobes, n holes, n slots) tells the</p>
-<p>rotation only modulo `<code style="color:#22d3bf">360/n</code><code style="color:#22d3bf"> degrees: its order-</code><code style="color:#22d3bf">n</code>` circular harmonic has</p>
-<p>phase `<code style="color:#22d3bf">n*theta</code>`. Features of several orders, each ambiguous alone, fix</p>
-<p>`<code style="color:#22d3bf">theta</code>` uniquely whenever the orders have no common divisor (3 and 4: 360 /</p>
-<p>gcd = 360). This op samples each annulus `<code style="color:#22d3bf">rings[i]</code>` (radii in px around</p>
-<p>`<code style="color:#22d3bf">center</code><code style="color:#22d3bf">, default the image centre), takes the order </code><code style="color:#22d3bf">orders[i]</code>` angular</p>
-<p>Fourier coefficient of image and reference, and solves the angle by</p>
-<p>:func:<code style="color:#22d3bf">residue_crt</code> with the coefficient amplitudes as weights.</p>
-<p>Returns ``{&quot;angle_deg&quot;, &quot;per_order_deg&quot;, &quot;residual_deg&quot;, &quot;margin&quot;, &quot;suspect&quot;,</p>
-<p>&quot;amplitude&quot;}`<code style="color:#22d3bf">. </code><code style="color:#22d3bf">angle_deg</code>` is counter-clockwise on screen (rows down) — the</p>
-<p>convention of `<code style="color:#22d3bf">scipy.ndimage.rotate</code><code style="color:#22d3bf"> — in </code><code style="color:#22d3bf">[0, 360)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">suspect</code>` is the index of the ring whose residual is</p>
-<p>worst relative to its period (or `<code style="color:#22d3bf">-1</code><code style="color:#22d3bf"> if all are within </code><code style="color:#22d3bf">tol</code>`) — a smudged,</p>
-<p>occluded or broken feature shows up there before it corrupts the angle.</p>
-<p>With &gt;= 3 orders and only one corrupted, :func:<code style="color:#22d3bf">residue_fault_locate</code> gives a</p>
-<p>hard decision; this op keeps the soft one.</p>
-<p>Rotate greyscale images (interpolate, then threshold if needed): rotating a</p>
-<p>binary mask with nearest-neighbour sampling roughens the edges and biases the</p>
-<p>harmonics.</p>
+<p>Absolute in-plane rotation of <code style="color:#22d3bf">image</code> relative to <code style="color:#22d3bf">reference</code> over 360 degrees -&gt; <code style="color:#22d3bf">dict</code>.</p>
+<p>A feature with n-fold symmetry (n lobes, n holes, n slots) tells the rotation only modulo <code style="color:#22d3bf">360/n</code> degrees: its order-<code style="color:#22d3bf">n</code> circular harmonic has phase <code style="color:#22d3bf">n*theta</code>. Features of several orders, each ambiguous alone, fix <code style="color:#22d3bf">theta</code> uniquely whenever the orders have no common divisor (3 and 4: 360 / gcd = 360). This op samples each annulus <code style="color:#22d3bf">rings[i]</code> (radii in px around <code style="color:#22d3bf">center</code>, default the image centre), takes the order <code style="color:#22d3bf">orders[i]</code> angular Fourier coefficient of image and reference, and solves the angle by <code style="color:#22d3bf">residue_crt</code> with the coefficient amplitudes as weights.</p>
+<p>Returns <code style="color:#22d3bf">{&quot;angle_deg&quot;, &quot;per_order_deg&quot;, &quot;residual_deg&quot;, &quot;margin&quot;, &quot;suspect&quot;, &quot;amplitude&quot;}</code>. <code style="color:#22d3bf">angle_deg</code> is counter-clockwise on screen (rows down) — the convention of <code style="color:#22d3bf">scipy.ndimage.rotate</code> — in <code style="color:#22d3bf">[0, 360)</code>. <code style="color:#22d3bf">suspect</code> is the index of the ring whose residual is worst relative to its period (or <code style="color:#22d3bf">-1</code> if all are within <code style="color:#22d3bf">tol</code>) — a smudged, occluded or broken feature shows up there before it corrupts the angle. With &gt;= 3 orders and only one corrupted, <code style="color:#22d3bf">residue_fault_locate</code> gives a hard decision; this op keeps the soft one.</p>
+<p>Rotate greyscale images (interpolate, then threshold if needed): rotating a binary mask with nearest-neighbour sampling roughens the edges and biases the harmonics.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

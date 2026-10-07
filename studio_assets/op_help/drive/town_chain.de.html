@@ -4,20 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetown; drivetown.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;town_chain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>要素を順に継いで配置する: 要素 k+1 の entry を要素 k の exit(の `<code style="color:#22d3bf">overlap</code>` 手前)に合わせる剛体配置を閉形式で求め、</p>
-<p>:func:<code style="color:#22d3bf">drivecourse.course_layout</code> に渡す。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>要素を順に継いで配置する: 要素 k+1 の entry を要素 k の exit(の <code style="color:#22d3bf">overlap</code> 手前)に合わせる剛体配置を閉形式で求め、<code style="color:#22d3bf">drivecourse.course_layout</code> に渡す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>elements : drivecourse の要素(dict)の列。順に継ぐ。</p>
 <p>start : 最初の要素の entry を置く世界姿勢 (x, y, yaw)。</p>
 <p>overlap : 継ぎ目の食い込み [m] (≥ 0。3-D 化で継ぎ目に縁石が立たないため)。要素の中心線より短いこと。</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : course_layout の dict に `<code style="color:#22d3bf">&quot;chain&quot;</code><code style="color:#22d3bf"> を足したもの。</code>`chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の</p>
-<p>弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot;</p>
-<p>(= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}``。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 要素が空・layout の入れ子・entry/exit/centerline が無い、start/overlap が非有限、overlap が負、</p>
-<p>overlap が要素の中心線より長い。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : course_layout の dict に <code style="color:#22d3bf">&quot;chain&quot;</code> を足したもの。<code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・layout の入れ子・entry/exit/centerline が無い、start/overlap が非有限、overlap が負、overlap が要素の中心線より長い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

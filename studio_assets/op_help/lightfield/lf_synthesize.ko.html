@@ -2,52 +2,16 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">lf_synthesize — LIGHTFIELD <code style="color:#22d3bf">synthesis</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">lightfield</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *, occlusion=True, coverage=0.55, texture_sigma=2.0, interp=&#x27;linear&#x27;, edge=&#x27;wrap&#x27;, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import lightfield; lightfield.lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *, occlusion=True, coverage=0.55, texture_sigma=2.0, interp=&#x27;linear&#x27;, edge=&#x27;wrap&#x27;, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opslightfield.get(&quot;lf_synthesize&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.lf_synthesize(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">lightfield</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.lf_synthesize.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">lightfield.lf_synthesize</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.lf_synthesize(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">lightfield</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.lf_synthesize.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">lightfield.lf_synthesize</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>알려진</b> 기울기를 가진 텍스처 층으로 라이트필드를 만듭니다(시험대).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Each entry of *slopes* is one fronto-parallel layer, given as its slope</p>
-<p>`<code style="color:#22d3bf">s = dx/du</code>` in <b>pixels of image shift per angular step</b>; the layer&#x27;s</p>
-<p>texture is band-limited noise (Gaussian-smoothed, `<code style="color:#22d3bf">texture_sigma</code>` px) and</p>
-<p>view `<code style="color:#22d3bf">(v, u)</code><code style="color:#22d3bf"> sees it displaced by </code><code style="color:#22d3bf">(s*(v - v_c), s*(u - u_c))</code>`. Because</p>
-<p>the displacement is exactly linear in the angular index, every downstream</p>
-<p>answer is closed-form: the refocus sharpness peaks at `<code style="color:#22d3bf">s</code>`, the EPI lines</p>
-<p>have slope `<code style="color:#22d3bf">s</code>`, and the disparity between the extreme views is</p>
-<p>`<code style="color:#22d3bf">s * (U - 1)</code>`.</p>
-<p>*angular* is `<code style="color:#22d3bf">(V, U)</code><code style="color:#22d3bf"> and *shape* is </code><code style="color:#22d3bf">(H, W)</code>`.</p>
-<p>With `<code style="color:#22d3bf">occlusion=True</code>` (default) the layers are composited front-to-back by</p>
-<p>`<code style="color:#22d3bf">|slope|</code><code style="color:#22d3bf"> (largest </code><code style="color:#22d3bf">|s|</code>` = nearest = drawn last) through random binary</p>
-<p>masks covering roughly *coverage* of the frame, and the layer with the</p>
-<p><b>smallest</b> `<code style="color:#22d3bf">|slope|</code>` is forced opaque as the background — **regardless</p>
-<p>of its position in *slopes*** (a tie goes to the earlier entry, the sort is</p>
-<p>stable). `<code style="color:#22d3bf">(0.0, 2.0)</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">(2.0, 0.0)</code>` therefore describe the same</p>
-<p>scene with the same `<code style="color:#22d3bf">slope_map</code>`; only the per-layer textures are drawn in</p>
-<p>a different order. That is what makes a</p>
-<p>see-through synthetic-aperture test meaningful. With `<code style="color:#22d3bf">occlusion=False</code>` the</p>
-<p>layers are averaged instead — a transparent superposition, which is the</p>
-<p>cleanest possible input for refocusing because each layer survives the</p>
-<p>average untouched.</p>
-<p>Returns `<code style="color:#22d3bf">(light_field, slope_map)</code><code style="color:#22d3bf">: the </code><code style="color:#22d3bf">(V, U, H, W)</code>` array and the</p>
-<p>`<code style="color:#22d3bf">(H, W)</code>` map of the front-most layer&#x27;s slope at each pixel — the ground</p>
-<p>truth for :func:<code style="color:#22d3bf">lf_depth_from_focus</code> and :func:<code style="color:#22d3bf">lf_epi_slope</code>. The map is</p>
-<p>in <b>centre-view</b> coordinates (the masks are stated unshifted, and the</p>
-<p>centre view is the one view whose shift is zero), which is also the frame a</p>
-<p>refocused image lands in. With</p>
-<p>`<code style="color:#22d3bf">occlusion=False</code>` the light field also contains the *other* layers at</p>
-<p>every pixel, so a depth estimator will legitimately disagree with the map</p>
-<p>wherever layers overlap; the single-layer case is unambiguous and is what</p>
-<p>the exactness tests use.</p>
-<p>`<code style="color:#22d3bf">edge=&quot;wrap&quot;</code>` (default) makes the scene periodic so an integer slope is a</p>
-<p>pure `<code style="color:#22d3bf">np.roll</code>` and the whole pipeline is bit-exact end to end (measured</p>
-<p>round-trip error 5.6e-16); `<code style="color:#22d3bf">edge=&quot;nearest&quot;</code>` reproduces a real camera&#x27;s</p>
-<p>border clamping.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: an empty or over-long *slopes* list</p>
-<p>(:data:<code style="color:#22d3bf">MAX_LAYERS</code>), a non-finite or over-large slope</p>
-<p>(:data:<code style="color:#22d3bf">MAX_ABS_SLOPE</code>), an angular or spatial shape outside</p>
-<p>`<code style="color:#22d3bf">[1, MAX_ANGULAR]</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">[1, MAX_SPATIAL]</code>`, a total size over</p>
-<p>:data:<code style="color:#22d3bf">MAX_LF_ELEMENTS</code>, *coverage* outside `<code style="color:#22d3bf">(0, 1]</code>`, a *texture_sigma*</p>
-<p>so large the smoothed texture&#x27;s dynamic range falls below</p>
-<p>:data:<code style="color:#22d3bf">MIN_TEXTURE_RANGE</code>, and an unknown *interp* / *edge*.</p>
+<p>Each entry of *slopes* is one fronto-parallel layer, given as its slope <code style="color:#22d3bf">s = dx/du</code> in <b>pixels of image shift per angular step</b>; the layer&#x27;s texture is band-limited noise (Gaussian-smoothed, <code style="color:#22d3bf">texture_sigma</code> px) and view <code style="color:#22d3bf">(v, u)</code> sees it displaced by <code style="color:#22d3bf">(s*(v - v_c), s*(u - u_c))</code>. Because the displacement is exactly linear in the angular index, every downstream answer is closed-form: the refocus sharpness peaks at <code style="color:#22d3bf">s</code>, the EPI lines have slope <code style="color:#22d3bf">s</code>, and the disparity between the extreme views is <code style="color:#22d3bf">s * (U - 1)</code>.</p>
+<p>*angular* is <code style="color:#22d3bf">(V, U)</code> and *shape* is <code style="color:#22d3bf">(H, W)</code>.</p>
+<p>With <code style="color:#22d3bf">occlusion=True</code> (default) the layers are composited front-to-back by <code style="color:#22d3bf">|slope|</code> (largest <code style="color:#22d3bf">|s|</code> = nearest = drawn last) through random binary masks covering roughly *coverage* of the frame, and the layer with the <b>smallest</b> <code style="color:#22d3bf">|slope|</code> is forced opaque as the background — <b>regardless of its position in *slopes*</b> (a tie goes to the earlier entry, the sort is stable). <code style="color:#22d3bf">(0.0, 2.0)</code> and <code style="color:#22d3bf">(2.0, 0.0)</code> therefore describe the same scene with the same <code style="color:#22d3bf">slope_map</code>; only the per-layer textures are drawn in a different order. That is what makes a see-through synthetic-aperture test meaningful. With <code style="color:#22d3bf">occlusion=False</code> the layers are averaged instead — a transparent superposition, which is the cleanest possible input for refocusing because each layer survives the average untouched.</p>
+<p>Returns <code style="color:#22d3bf">(light_field, slope_map)</code>: the <code style="color:#22d3bf">(V, U, H, W)</code> array and the <code style="color:#22d3bf">(H, W)</code> map of the front-most layer&#x27;s slope at each pixel — the ground truth for <code style="color:#22d3bf">lf_depth_from_focus</code> and <code style="color:#22d3bf">lf_epi_slope</code>. The map is in <b>centre-view</b> coordinates (the masks are stated unshifted, and the centre view is the one view whose shift is zero), which is also the frame a refocused image lands in. With <code style="color:#22d3bf">occlusion=False</code> the light field also contains the *other* layers at every pixel, so a depth estimator will legitimately disagree with the map wherever layers overlap; the single-layer case is unambiguous and is what the exactness tests use.</p>
+<p><code style="color:#22d3bf">edge=&quot;wrap&quot;</code> (default) makes the scene periodic so an integer slope is a pure <code style="color:#22d3bf">np.roll</code> and the whole pipeline is bit-exact end to end (measured round-trip error 5.6e-16); <code style="color:#22d3bf">edge=&quot;nearest&quot;</code> reproduces a real camera&#x27;s border clamping.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: an empty or over-long *slopes* list (<code style="color:#22d3bf">MAX_LAYERS</code>), a non-finite or over-large slope (<code style="color:#22d3bf">MAX_ABS_SLOPE</code>), an angular or spatial shape outside <code style="color:#22d3bf">[1, MAX_ANGULAR]</code> / <code style="color:#22d3bf">[1, MAX_SPATIAL]</code>, a total size over <code style="color:#22d3bf">MAX_LF_ELEMENTS</code>, *coverage* outside <code style="color:#22d3bf">(0, 1]</code>, a *texture_sigma* so large the smoothed texture&#x27;s dynamic range falls below <code style="color:#22d3bf">MIN_TEXTURE_RANGE</code>, and an unknown *interp* / *edge*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

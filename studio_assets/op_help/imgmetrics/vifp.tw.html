@@ -5,19 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>VIF の画素領域版(Sheikh &amp; Bovik 2006 §V の scalar GSM、公開 vifp_mscale の規約)。1 = 同一、<b>higher is better</b>。</p>
-<p>各スケール s = 1..4: 窓 N = 2^(4−s+1)+1、ガウス σ = N/5(17/3.4、9/1.8、5/1.0、3/0.6)。s &gt; 1 では窓で平滑して 2 間引き。局所統計(μ、σ²、σ12)は</p>
-<p>&#x27;valid&#x27; 相関、g = σ12/(σ1²+1e-10)、σ_v² = σ2² − g σ12、σ1² &lt; 1e-10・σ2² &lt; 1e-10・g &lt; 0 の画素は規約どおり潰す、σ_v² ≤ 1e-10 → 1e-10。</p>
-<p>VIF = Σ log10(1 + g² σ1²/(σ_v² + σ_n²)) / Σ log10(1 + σ1²/σ_n²)。<b>非対称</b>(参照の情報量で割る: vif(a, b) ≠ vif(b, a))、コントラスト強調で</p>
-<p><b>1 を超える</b>(TID2013 の作者値も最大 1.1379 = 歪み 17)—— 忠実度でなく情報量の比。入力 (H, W) か (H, W, 3)(3-ch は Y)。</p>
-<p>TID2013 の VIFP.txt(論文の「VIFP」、steerable 版の「VIF」とは別行)と 4 桁一致するのは <b>Y′ limited の灰色画像</b></p>
-<p>(`<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, vifp, luma=&quot;limited_u8&quot;)</code>`、3,000 組 max |差| 6.8e-5)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形が違う、最小スケールで窓より小さい、参照が平坦(分母 0)、sigma_nsq ≤ 0。</p>
+<p>各スケール s = 1..4: 窓 N = 2^(4−s+1)+1、ガウス σ = N/5(17/3.4、9/1.8、5/1.0、3/0.6)。s &gt; 1 では窓で平滑して 2 間引き。局所統計(μ、σ²、σ12)は &#x27;valid&#x27; 相関、g = σ12/(σ1²+1e-10)、σ_v² = σ2² − g σ12、σ1² &lt; 1e-10・σ2² &lt; 1e-10・g &lt; 0 の画素は規約どおり潰す、σ_v² ≤ 1e-10 → 1e-10。VIF = Σ log10(1 + g² σ1²/(σ_v² + σ_n²)) / Σ log10(1 + σ1²/σ_n²)。<b>非対称</b>(参照の情報量で割る: vif(a, b) ≠ vif(b, a))、コントラスト強調で <b>1 を超える</b>(TID2013 の作者値も最大 1.1379 = 歪み 17)—— 忠実度でなく情報量の比。入力 (H, W) か (H, W, 3)(3-ch は Y)。TID2013 の VIFP.txt(論文の「VIFP」、steerable 版の「VIF」とは別行)と 4 桁一致するのは <b>Y′ limited の灰色画像</b> (<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, vifp, luma=&quot;limited_u8&quot;)</code>、3,000 組 max |差| 6.8e-5)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形が違う、最小スケールで窓より小さい、参照が平坦(分母 0)、sigma_nsq ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_iqa_fsim_gmsd_vif">poc_iqa_fsim_gmsd_vif</a> — <code style="color:#22d3bf">py -3.11 examples/poc_iqa_fsim_gmsd_vif.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">scalar</code> 作為輸入)</h3>

@@ -2,6 +2,11 @@
 guide: graph_hierarchy_and_thresholds
 dim: segmentation
 title: グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか
+title_en: Segmentation from graph, hierarchy and threshold theorems — what is exact, and where the partition breaks down
+title_zh: 用图、层次与阈值定理做分割 —— 什么是严格的,分割在哪里失效
+title_tw: 用圖、階層與閾值定理做分割 —— 什麼是嚴格的,分割在哪裡失效
+title_ko: 그래프·계층·임계값 정리로 만드는 분할 — 무엇이 엄밀하고 어디서 분할이 무너지는가
+title_de: Segmentierung aus Graph-, Hierarchie- und Schwellwertsätzen — was exakt ist und wo die Zerlegung kippt
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

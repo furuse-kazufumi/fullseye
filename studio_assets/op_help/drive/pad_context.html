@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegtactile; pegtactile.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;pad_context&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>膜の合成と読みで 1 回だけ作る道具: 画素中心の格子 (X, Y)、Cerruti 核、3 色の光源、無荷重の膜の背景とマーカーの基準像。</p>
-<p>マーカーは `<code style="color:#22d3bf">jitter_px</code>` の一様ジッタで位相を散らす(印刷のばらつき程度)。**規則格子(0 px)は全マーカーが同じ副画素位相なので、</p>
-<p>重心の pixel-locking が場全体の共通モードになり、せん断ゼロでも偽のせん断が出る**(PoC の門で 11 mN → 0.9 mN)。</p>
-<p>`<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> はジッタの乱数。返りの </code><code style="color:#22d3bf">_model_cache</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">_sr_cache</code>` は読みの内部キャッシュ。<b>Raises</b> ValueError: jitter &lt; 0。</p>
+<p>マーカーは <code style="color:#22d3bf">jitter_px</code> の一様ジッタで位相を散らす(印刷のばらつき程度)。<b>規則格子(0 px)は全マーカーが同じ副画素位相なので、重心の pixel-locking が場全体の共通モードになり、せん断ゼロでも偽のせん断が出る</b>(PoC の門で 11 mN → 0.9 mN)。<code style="color:#22d3bf">seed</code> はジッタの乱数。返りの <code style="color:#22d3bf">_model_cache</code>・<code style="color:#22d3bf">_sr_cache</code> は読みの内部キャッシュ。<b>Raises</b> ValueError: jitter &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

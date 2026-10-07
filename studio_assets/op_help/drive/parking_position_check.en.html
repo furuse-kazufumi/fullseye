@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.parking_position_check(rear: &#x27;float&#x27;, front: &#x27;float&#x27;, zones_result: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecrossing; drivecrossing.parking_position_check(rear: &#x27;float&#x27;, front: &#x27;float&#x27;, zones_result: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;parking_position_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>車体 [rear, front] が駐停車禁止の区間に重なるか。`<code style="color:#22d3bf">zones_result</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">no_stopping_zones</code>` の返り値。</p>
-<p>返り値: `<code style="color:#22d3bf">ok</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">overlap</code><code style="color:#22d3bf"> = 重なりの長さの最大 [m]、</code><code style="color:#22d3bf">reasons</code>` = 重なった区間の (kind, 号)。端に触れるだけは重ならない。</p>
+<p>車体 [rear, front] が駐停車禁止の区間に重なるか。<code style="color:#22d3bf">zones_result</code> = <code style="color:#22d3bf">no_stopping_zones</code> の返り値。</p>
+<p>返り値: <code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">overlap</code> = 重なりの長さの最大 [m]、<code style="color:#22d3bf">reasons</code> = 重なった区間の (kind, 号)。端に触れるだけは重ならない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -22,7 +22,7 @@
 <p>| <code style="color:#22d3bf">segmentation.watersheds_marker</code> | 分水嶺 | 発見時はモジュールにだけ在った → 2026-10-02 に <code style="color:#22d3bf">opssegmentation</code> 台帳(<code style="color:#22d3bf">fs.ledger.watersheds_marker</code>)へ。算法が違う(immersion 型・skimage 依存)ので <code style="color:#22d3bf">blob_split</code> とは別物のまま |</p>
 <p><code style="color:#22d3bf">ndimage.label</code> 自体は op の実装の<b>中</b>に 20 か所以上あります。ただしどれも結果を画像かスカラに畳んでから返すので、利用者からは見えません。<b>実装が在ることと、公開経路が在ることは別</b>というのがこの repo で繰り返し出ている形です。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid diagram (source):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
     IMG[&quot;画像 (H, W)&lt;br/&gt;撮影 or 合成&quot;]
     IMG --&gt; TH[&quot;しきい値・モルフォロジー&lt;br/&gt;(この族の外)&quot;]
     TH --&gt; M[&quot;mask (H, W) bool&lt;br/&gt;前景かどうかだけ&quot;]
@@ -88,7 +88,7 @@ f = fs.ledger.blob_features(fs.ledger.blob_label(mask))   # 正しい
 print(&quot;物体の数:&quot;, f[&quot;n&quot;])               # -&gt; 2(マスクのままなら 1 個として測る)</pre>
 <p>拒否するのは意地悪ではありません。マスクをそのまま測ると<b>別々の 2 個の細胞が 1 個の物体として測られ、2 つの中心のあいだに重心が出ます</b>。例外にならず、それらしい数字が返る —— この repo が型を分ける基準そのものです。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">3. <code style="color:#22d3bf">spacing</code> は長さに 1 乗、面積に 2 乗。ただし添字は素通し</h3>
-<p><code style="color:#22d3bf">spacing</code> は画素 1 個の大きさです。<code style="color:#22d3bf">area</code> には 2 乗、<code style="color:#22d3bf">perimeter</code> / <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> / <code style="color:#22d3bf">equiv_diameter</code> には 1 乗が掛かります。**<code style="color:#22d3bf">bbox_*</code> と <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> は画素のまま**です —— あれは長さではなく添字だからです。</p>
+<p><code style="color:#22d3bf">spacing</code> は画素 1 個の大きさです。<code style="color:#22d3bf">area</code> には 2 乗、<code style="color:#22d3bf">perimeter</code> / <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> / <code style="color:#22d3bf">equiv_diameter</code> には 1 乗が掛かります。<b><code style="color:#22d3bf">bbox_*</code> と <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> は画素のまま</b>です —— あれは長さではなく添字だからです。</p>
 <p>読み違いを防ぐため、<code style="color:#22d3bf">blob_features</code> の返り値には <code style="color:#22d3bf">units</code> が入っています:</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
 import fullseye as fs
@@ -114,12 +114,12 @@ print(round(float(f[&quot;area&quot;][0]), 4), &quot;mm^2&quot;)      # 160 px *
 <p>素朴に数えると 2 割超の過大。Serra の重み(1 / √2 / (1+√2)/2)は<b>大きさを変えても +4.95 % のまま</b>で、円板の円形度が 0.908 で頭打ちになります —— 「円らしさ 0.9 以上」で切る使い方が成り立ちません。Crofton は大きさとともに真値へ寄り、r=40 で円形度 <b>0.988</b>。</p>
 <p><b>正直に書いておく偏り</b>: 軸に平行な多角形では逆に小さく出ます。20×20 の正方形(真値 80)で 74.73(<b>−6.6 %</b>)、円形度は π/4 = 0.785 のところ 0.900。<b>角ばった物体の円形度を絶対値で語らないこと</b>(同じ形どうしの相対比較なら向きは保たれます)。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">円形度の定義 —— HALCON と違う</h3>
-<p><code style="color:#22d3bf">circularity</code> は <b>4πA/P²</b>(等周比)です。**HALCON の <code style="color:#22d3bf">circularity</code> は「面積 / 最遠点を半径とする円の面積」で別物**なので、値を突き合わせるときは定義を確かめてください。</p>
+<p><code style="color:#22d3bf">circularity</code> は <b>4πA/P²</b>(等周比)です。<b>HALCON の <code style="color:#22d3bf">circularity</code> は「面積 / 最遠点を半径とする円の面積」で別物</b>なので、値を突き合わせるときは定義を確かめてください。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">充填率(<code style="color:#22d3bf">solidity</code>)—— 凸包は塗り直して数える</h3>
 <p>分母の凸包面積を多角形として出すと、「画素を点と見るか正方形と見るか」でどちらかへ必ずずれ、<b>凸な物体でも 1 になりません</b>(半径 40 px の円板で 0.977 か 1.025)。分子が画素の数なら分母も画素の数で揃える —— 凸包を塗り直して数えると 1.000 になります。</p>
 <p>実測: 円板 1.000 / 正方形 1.000 / 直角三角形 1.000 / 1 画素 1.000 / 1 画素幅の線 1.000 / 三日月 0.528。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">慣性モーメントに 1/12 を足す</h3>
-<p>画素を点ではなく 1 辺 1 の正方形として扱う補正です。これが無いと **1 画素幅の線で <code style="color:#22d3bf">minor</code> が 0 になり <code style="color:#22d3bf">eccentricity</code> が 1 に張り付きます**。補正を入れると <code style="color:#22d3bf">minor</code> = 1.155、<code style="color:#22d3bf">eccentricity</code> = 0.986。</p>
+<p>画素を点ではなく 1 辺 1 の正方形として扱う補正です。これが無いと <b>1 画素幅の線で <code style="color:#22d3bf">minor</code> が 0 になり <code style="color:#22d3bf">eccentricity</code> が 1 に張り付きます</b>。補正を入れると <code style="color:#22d3bf">minor</code> = 1.155、<code style="color:#22d3bf">eccentricity</code> = 0.986。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">4 連結か 8 連結か</h3>
 <p>既定は <b>8</b>(<code style="color:#22d3bf">ndimage.label</code> と HALCON <code style="color:#22d3bf">connection</code> の既定)。市松に並べた 2 個は 8 連結で 1 個、4 連結で 2 個になります。<code style="color:#22d3bf">poc_cell_counting</code> の実測では、4 連結にすると斜めに接した細胞が別々に数えられて過剰計数になりました。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">速さ</h3>
@@ -130,7 +130,7 @@ print(round(float(f[&quot;area&quot;][0]), 4), &quot;mm^2&quot;)      # 160 px *
 <p>| <code style="color:#22d3bf">blob_features</code> | 33.6 ms(0.22 ms/物体) |</p>
 <p>| <code style="color:#22d3bf">blob_select(&quot;area&quot;, vmin=…)</code> | 中で <code style="color:#22d3bf">blob_features</code> を呼ぶので同程度 |</p>
 <p><code style="color:#22d3bf">blob_features</code> の内訳は凸包が 19.4 ms・周長 3.4 ms・穴の数 3.4 ms。凸包は Qhull を呼ばず monotone chain を自前で持っています(Qhull 版は 74.1 ms、<b>3.8 倍</b>遅い —— 小さな点集合を何千回も包む用途では起動費が支配的)。</p>
-<p>**何度も選ぶなら <code style="color:#22d3bf">blob_features</code> を 1 回だけ**:</p>
+<p><b>何度も選ぶなら <code style="color:#22d3bf">blob_features</code> を 1 回だけ</b>:</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
 import fullseye as fs
 
@@ -165,7 +165,7 @@ print(&quot;割れた:&quot;, f[&quot;n&quot;], &quot;個  面積&quot;, np.sort
 <p>3 つを別々の op にしてあるのは、<b>種の選び方がいちばん効くノブ</b>だからです。1 本にまとめると <code style="color:#22d3bf">h</code> の意味が隠れます。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">押さえておく偏り</h3>
 <p style="margin:2px 0 2px 12px">• <b>重なりは小さいほうへ寄ります。</b> 分水嶺は 2 つの種の中間で切るので、上の例では真値 1257 / 613 に対して <b>1149 / 680</b>。大きいほうが損をして小さいほうが得をする —— これは算法の定義どおりで、誤差ではありません。粒径分布を出すなら、この偏りを承知で使うこと。</p>
-<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">h</code> は絶対値です。** <code style="color:#22d3bf">fs.op.xsk2_h_maxima</code> は入力を <code style="color:#22d3bf">[0,1]</code> に切り詰めるうえ <code style="color:#22d3bf">h</code> が正規化画像に対する比なので、生の距離マップには使えません(画像に大きい物体が 1 つ入るだけで、小さい物体側の実効 <code style="color:#22d3bf">h</code> が上がる)。ここはそのどちらもしません。</p>
+<p style="margin:2px 0 2px 12px">• <b><code style="color:#22d3bf">h</code> は絶対値です。</b> <code style="color:#22d3bf">fs.op.xsk2_h_maxima</code> は入力を <code style="color:#22d3bf">[0,1]</code> に切り詰めるうえ <code style="color:#22d3bf">h</code> が正規化画像に対する比なので、生の距離マップには使えません(画像に大きい物体が 1 つ入るだけで、小さい物体側の実効 <code style="color:#22d3bf">h</code> が上がる)。ここはそのどちらもしません。</p>
 <p style="margin:2px 0 2px 12px">• <b>種を持たない塊はそのまま残します。</b> 割る材料が無いのに消すのは嘘になるので。総面積は必ず保存します(門で確認)。</p>
 <p style="margin:2px 0 2px 12px">• <b>速さ</b>: 種の再構成は<b>連結成分ごとの外接箱の中でだけ</b>回します。背景を通る伝播が消えるので 512×512 に 200 個の円で <b>237.7 ms → 15.3 ms(15.5 倍)</b>、結果は全画素一致(門 <code style="color:#22d3bf">test_the_per_component_reconstruction_matches_the_global_one</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族で測れないこと(正直に)</h3>

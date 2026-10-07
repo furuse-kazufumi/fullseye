@@ -5,17 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schattiert eine 2-D-Normalenkarte mit einer gerichteten Lichtquelle (Lambert + Blinn 1977).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> is a </code><code style="color:#22d3bf">normalmap</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W, 3)</code>` <b>unit</b> vectors, as</p>
-<p>:func:<code style="color:#22d3bf">normal_map_decode</code> returns. Non-unit input raises rather than being</p>
-<p>normalised for you — a normal map that is not normalised is usually a map</p>
-<p>that was never decoded, and quietly fixing it hides the mistake.</p>
-<p>`<code style="color:#22d3bf">out = diffuse * (ambient + max(n·l, 0)) + specular * max(n·h, 0)^shininess</code>`</p>
-<p>with `<code style="color:#22d3bf">h</code>` the normalised halfway vector between light and view.</p>
-<p>Directions are `<code style="color:#22d3bf">(x, y, z)</code>` with **+x right, +y down, +z out of the</p>
-<p>screen** — the same handedness as the pixel grid, so a light at</p>
-<p>`<code style="color:#22d3bf">(0, -1, 1)</code>` comes from above the screen. Getting the sign of y wrong</p>
-<p>flips the perceived relief (bumps become dents) without raising anything;</p>
-<p>that is the one thing to check on first render.</p>
+<p><code style="color:#22d3bf">normals</code> is a <code style="color:#22d3bf">normalmap</code>: <code style="color:#22d3bf">(H, W, 3)</code> <b>unit</b> vectors, as <code style="color:#22d3bf">normal_map_decode</code> returns. Non-unit input raises rather than being normalised for you — a normal map that is not normalised is usually a map that was never decoded, and quietly fixing it hides the mistake.</p>
+<p><code style="color:#22d3bf">out = diffuse * (ambient + max(n·l, 0)) + specular * max(n·h, 0)^shininess</code> with <code style="color:#22d3bf">h</code> the normalised halfway vector between light and view.</p>
+<p>Directions are <code style="color:#22d3bf">(x, y, z)</code> with <b>+x right, +y down, +z out of the screen</b> — the same handedness as the pixel grid, so a light at <code style="color:#22d3bf">(0, -1, 1)</code> comes from above the screen. Getting the sign of y wrong flips the perceived relief (bumps become dents) without raising anything; that is the one thing to check on first render.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

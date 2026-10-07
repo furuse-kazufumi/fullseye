@@ -12,15 +12,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xkor_motion_blur.inputs.jpg">xkor_motion_blur: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Motion blur. Calls `<code style="color:#22d3bf">kornia.filters.motion_blur</code>`.</p>
+<p>Motion blur. Calls <code style="color:#22d3bf">kornia.filters.motion_blur</code>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>a がカーネル長とブラー角度の<b>両方</b>を振る</p>
-<p>（カーネルサイズ `<code style="color:#22d3bf">2*int(2+a*6)+1</code><code style="color:#22d3bf"> = 5〜17、角度 </code><code style="color:#22d3bf">360*a</code>` 度）ため、</p>
-<p>この 2 つは独立には制御できない。b はブラー方向のオフセット</p>
-<p>（`<code style="color:#22d3bf">2*b-1</code>`、範囲 -1〜1）を振る。kornia は float32 の畳み込みなので</p>
-<p>重み和の丸めで出力が 1 をわずかに超えることがある(実測 max=1+2e-7)。</p>
-<p><code style="color:#22d3bf">image</code> は [0,1] 契約なので出口で clip する（<code style="color:#22d3bf">ops._apply</code> が段間で</p>
-<p>掛けている clip と同じで、パイプライン全体の結果は変わらない）。</p>
+<p>a がカーネル長とブラー角度の<b>両方</b>を振る（カーネルサイズ <code style="color:#22d3bf">2*int(2+a*6)+1</code> = 5〜17、角度 <code style="color:#22d3bf">360*a</code> 度）ため、この 2 つは独立には制御できない。b はブラー方向のオフセット（<code style="color:#22d3bf">2*b-1</code>、範囲 -1〜1）を振る。kornia は float32 の畳み込みなので重み和の丸めで出力が 1 をわずかに超えることがある(実測 max=1+2e-7)。<code style="color:#22d3bf">image</code> は [0,1] 契約なので出口で clip する（<code style="color:#22d3bf">ops._apply</code> が段間で掛けている clip と同じで、パイプライン全体の結果は変わらない）。</p>
 <p><b>Border handling</b>: treat everything outside the image as background (0) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

@@ -5,16 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>혼동표 다수결의 다중도로 과분할·미분할 개수를 센다(Levine &amp; Nazif 방식)(seg_under_over_segmentation).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各予測(背景以外)を、最も重なる真(背景も候補)に帰属させる。真 i に帰属した予測の数 k_i が `<code style="color:#22d3bf">pieces_per_true</code>`、</p>
-<p>`<code style="color:#22d3bf">over</code>` = Σ max(k_i − 1, 0)(1 つの真が何個に割れたか)。各真を最も重なる予測に帰属させ、予測 j に帰属した真の数 m_j が</p>
-<p>`<code style="color:#22d3bf">objects_per_pred</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">under</code>` = Σ max(m_j − 1, 0)(1 つの予測が何個の真を抱えたか)。</p>
-<p>背景に帰属した予測は `<code style="color:#22d3bf">spurious</code><code style="color:#22d3bf">(偽)、背景に帰属した真は </code><code style="color:#22d3bf">missed</code>`(欠落)に数える。</p>
-<p>返り値: `<code style="color:#22d3bf">over</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">under</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">spurious</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">missed</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">pieces_per_true</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels_pred</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">objects_per_pred</code>`、</p>
-<p>`<code style="color:#22d3bf">over_segmented_true</code><code style="color:#22d3bf">(k ≥ 2 の真のラベル)、</code><code style="color:#22d3bf">under_segmented_pred</code>`(m ≥ 2 の予測のラベル)。</p>
+<p>各予測(背景以外)を、最も重なる真(背景も候補)に帰属させる。真 i に帰属した予測の数 k_i が <code style="color:#22d3bf">pieces_per_true</code>、<code style="color:#22d3bf">over</code> = Σ max(k_i − 1, 0)(1 つの真が何個に割れたか)。各真を最も重なる予測に帰属させ、予測 j に帰属した真の数 m_j が <code style="color:#22d3bf">objects_per_pred</code>、<code style="color:#22d3bf">under</code> = Σ max(m_j − 1, 0)(1 つの予測が何個の真を抱えたか)。背景に帰属した予測は <code style="color:#22d3bf">spurious</code>(偽)、背景に帰属した真は <code style="color:#22d3bf">missed</code>(欠落)に数える。</p>
+<p>返り値: <code style="color:#22d3bf">over</code>、<code style="color:#22d3bf">under</code>、<code style="color:#22d3bf">spurious</code>、<code style="color:#22d3bf">missed</code>、<code style="color:#22d3bf">labels_true</code> / <code style="color:#22d3bf">pieces_per_true</code>、<code style="color:#22d3bf">labels_pred</code> / <code style="color:#22d3bf">objects_per_pred</code>、<code style="color:#22d3bf">over_segmented_true</code>(k ≥ 2 の真のラベル)、<code style="color:#22d3bf">under_segmented_pred</code>(m ≥ 2 の予測のラベル)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 분할 채점과 정답이 있는 합성 세계 — 어떤 척도가 어떤 실패에 눈먼가</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

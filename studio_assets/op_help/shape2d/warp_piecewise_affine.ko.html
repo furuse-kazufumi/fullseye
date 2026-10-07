@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
 <p>img の src_pts にある内容を dst_pts へ動かす区分アフィンワープ。</p>
-<p>dst_pts を Delaunay 三角形分割し、各出力画素が属す三角形の重心座標を求め、</p>
-<p>同じ重心座標で src_pts 側の対応三角形へ写して逆写像サンプルする。凸包の外側</p>
-<p>(三角形に属さない画素)は恒等(元位置)でサンプルするため、四隅を対応点に含める</p>
-<p>(:func:<code style="color:#22d3bf">add_frame_corners</code>)と穴なく画像全体を覆える。</p>
+<p>dst_pts を Delaunay 三角形分割し、各出力画素が属す三角形の重心座標を求め、同じ重心座標で src_pts 側の対応三角形へ写して逆写像サンプルする。凸包の外側(三角形に属さない画素)は恒等(元位置)でサンプルするため、四隅を対応点に含める(<code style="color:#22d3bf">add_frame_corners</code>)と穴なく画像全体を覆える。</p>
 <p>引数:</p>
 <p>img: (H,W) か (H,W,C)、[0,1]。</p>
 <p>src_pts, dst_pts: (K,2) の (x,y)。同数・同順の対応点。</p>

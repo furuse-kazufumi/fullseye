@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像中心を基準に赤と青のチャネルだけ倍率を変える(緑は固定)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Lateral chromatic aberration: red is magnified by `<code style="color:#22d3bf">1 + strength</code>`, blue by</p>
-<p>`<code style="color:#22d3bf">1 - strength</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">strength=0</code>` samples the exact pixel centres and returns</p>
-<p>the input to within 1e-15, which the suite checks.</p>
-<p>Negative `<code style="color:#22d3bf">strength</code>` swaps which channel spreads outward — allowed, since</p>
-<p>which way a real lens disperses depends on the glass.</p>
+<p>Lateral chromatic aberration: red is magnified by <code style="color:#22d3bf">1 + strength</code>, blue by <code style="color:#22d3bf">1 - strength</code>. <code style="color:#22d3bf">strength=0</code> samples the exact pixel centres and returns the input to within 1e-15, which the suite checks.</p>
+<p>Negative <code style="color:#22d3bf">strength</code> swaps which channel spreads outward — allowed, since which way a real lens disperses depends on the glass.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

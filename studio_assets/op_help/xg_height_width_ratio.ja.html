@@ -8,18 +8,11 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_height_width_ratio.chain.jpg">xg_height_width_ratio: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_height_width_ratio.chain.jpg">xg_height_width_ratio: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群の軸並行外接矩形の 高さ/幅 比。</p>
-<p>全輪郭の点(閉輪郭の重複終点は除く)をまとめ、行方向の広がり</p>
-<p>`<code style="color:#22d3bf">h = max(row) - min(row)</code><code style="color:#22d3bf"> と列方向の広がり </code><code style="color:#22d3bf">w = max(col) - min(col)</code>` の比</p>
-<p>`<code style="color:#22d3bf">h / w</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>返り値は `<code style="color:#22d3bf">numpy.float64</code><code style="color:#22d3bf">。点が無ければ 0.0。</code><code style="color:#22d3bf">w &lt; 1e-12</code>`(全点が同じ列=</p>
-<p>縦一直線)では `<code style="color:#22d3bf">h &gt; 1e-12</code>` なら 1e6、そうでなければ 0.0。上限は 1e6。</p>
-<p>軸並行の bbox なので回転に不変ではない(45° 傾いた細長い輪郭は 1 に近づく)。</p>
-<p>回転不変な細長さは `<code style="color:#22d3bf">xg_elliptic_axis</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">xg_eccentricity</code>` を使う。</p>
-<p>`<code style="color:#22d3bf">h</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">w</code>` は点座標の範囲(画素中心間の距離)で、画素数ベースの幅より 1 小さい。</p>
-<p>複数輪郭があれば全体を囲む 1 つの bbox の比になる。</p>
+<p>全輪郭の点(閉輪郭の重複終点は除く)をまとめ、行方向の広がり <code style="color:#22d3bf">h = max(row) - min(row)</code> と列方向の広がり <code style="color:#22d3bf">w = max(col) - min(col)</code> の比 <code style="color:#22d3bf">h / w</code> を返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>返り値は <code style="color:#22d3bf">numpy.float64</code>。点が無ければ 0.0。<code style="color:#22d3bf">w &lt; 1e-12</code>(全点が同じ列= 縦一直線)では <code style="color:#22d3bf">h &gt; 1e-12</code> なら 1e6、そうでなければ 0.0。上限は 1e6。軸並行の bbox なので回転に不変ではない(45° 傾いた細長い輪郭は 1 に近づく)。回転不変な細長さは <code style="color:#22d3bf">xg_elliptic_axis</code> / <code style="color:#22d3bf">xg_eccentricity</code> を使う。<code style="color:#22d3bf">h</code>, <code style="color:#22d3bf">w</code> は点座標の範囲(画素中心間の距離)で、画素数ベースの幅より 1 小さい。複数輪郭があれば全体を囲む 1 つの bbox の比になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -30,7 +23,7 @@
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-xg_height_width_ratio 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_height_width_ratio%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_height_width_ratio%200.50%200.50">Load &amp; run</a></p>
+xg_height_width_ratio 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_height_width_ratio%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_height_width_ratio%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>

@@ -5,13 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Welt aus 2-4 Regionen mit gleichem Mittelwert, die sich nur in Varianz und Periode unterscheiden (nicht durch Schwellwert trennbar) (world_texture_regions).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>領域 = 離した種の最近傍(ボロノイ)。模様は順に: 小さい雑音(σ = noise)、大きい雑音(σ = 4 noise)、縞(周期 P₁・向き θ₁、</p>
-<p>振幅 0.2)+ 雑音、縞(周期 P₂・向き θ₂)+ 雑音。どれも零平均で `<code style="color:#22d3bf">mean</code>` に足す(クリップは ±0.45 で対称 = 平均を保つ)。</p>
-<p>返り値: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> = {</code><code style="color:#22d3bf">n_regions</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">seeds</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">specs</code>`(kind, std(理論)、period、angle(度)、amp)}。</p>
+<p>領域 = 離した種の最近傍(ボロノイ)。模様は順に: 小さい雑音(σ = noise)、大きい雑音(σ = 4 noise)、縞(周期 P₁・向き θ₁、振幅 0.2)+ 雑音、縞(周期 P₂・向き θ₂)+ 雑音。どれも零平均で <code style="color:#22d3bf">mean</code> に足す(クリップは ±0.45 で対称 = 平均を保つ)。</p>
+<p>返り値: <code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">labels</code>、<code style="color:#22d3bf">truth</code> = {<code style="color:#22d3bf">n_regions</code>、<code style="color:#22d3bf">mean</code>、<code style="color:#22d3bf">seeds</code>、<code style="color:#22d3bf">specs</code>(kind, std(理論)、period、angle(度)、amp)}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — Segmentierungen bewerten und synthetische Welten mit Ground Truth — welches Maß für welchen Fehler blind ist</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

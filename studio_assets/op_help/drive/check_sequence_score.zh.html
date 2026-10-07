@@ -5,25 +5,18 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>進路変更・右左折の前の「安全確認 → 合図 → (約 3 秒 / 30 m)→ 行為 → 合図をやめる」を採点する。</p>
-<p>`<code style="color:#22d3bf">events</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">{&quot;t&quot;: 時刻, &quot;kind&quot;: 種類, &quot;s&quot;: 道のりの位置(任意)}</code>` の列。種類は</p>
-<p>`<code style="color:#22d3bf">mirror</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">head_check</code><code style="color:#22d3bf">(安全確認)、</code><code style="color:#22d3bf">signal_on</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">signal_off</code><code style="color:#22d3bf">(合図)、</code><code style="color:#22d3bf">start</code>`(進路を変え始めた /</p>
-<p>右左折の地点に達した)、`<code style="color:#22d3bf">end</code><code style="color:#22d3bf">(行為が終わった)。</code><code style="color:#22d3bf">start</code>` は必須(1 回)。</p>
-<p>規則(根拠は `<code style="color:#22d3bf">SOURCES</code>`):</p>
-<p>1. 合図がある(`<code style="color:#22d3bf">signal_missing</code>`)。</p>
-<p>2. 合図より前(かつ start より前)に安全確認がある(`<code style="color:#22d3bf">safety_check_missing</code>`。教則「あらかじめバックミラーなどで</p>
-<p>安全を確かめてから合図」)。</p>
-<p>3. 合図の時期(`<code style="color:#22d3bf">signal_timing</code><code style="color:#22d3bf">): 進路変更は start − 合図 ≥ </code><code style="color:#22d3bf">lead_time − lead_tol</code>`(教則「約 3 秒前」。許容は仮定)、</p>
-<p>`<code style="color:#22d3bf">max_lead</code><code style="color:#22d3bf"> を与えれば早すぎも減点。右左折・転回は start の位置 − 合図の位置 ≥ </code><code style="color:#22d3bf">signal_distance − distance_tol</code>`</p>
-<p>(教則「30 メートル手前」。`<code style="color:#22d3bf">s</code>` が必要)。</p>
-<p>4. `<code style="color:#22d3bf">end</code><code style="color:#22d3bf"> より前に合図をやめていない(</code><code style="color:#22d3bf">signal_not_continued</code>`、法 53 条 1 項)。</p>
-<p>5. `<code style="color:#22d3bf">end</code><code style="color:#22d3bf"> の後 </code><code style="color:#22d3bf">cancel_tol</code><code style="color:#22d3bf"> 秒以内に合図をやめた(</code><code style="color:#22d3bf">signal_not_cancelled</code>`、法 53 条 4 項。許容は仮定)。</p>
-<p>`<code style="color:#22d3bf">end</code>` が無ければ 4・5 は見ない。</p>
-<p>返り値: `<code style="color:#22d3bf">violations</code><code style="color:#22d3bf">(各 </code><code style="color:#22d3bf">{&quot;rule&quot;, &quot;detail&quot;, &quot;deduction&quot;}</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">deduction</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">score</code>` = 100 − deduction、</p>
-<p>`<code style="color:#22d3bf">ok</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">lead</code><code style="color:#22d3bf">(秒、進路変更)/ </code><code style="color:#22d3bf">distance</code>`(m、右左折)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">events</code>: <code style="color:#22d3bf">{&quot;t&quot;: 時刻, &quot;kind&quot;: 種類, &quot;s&quot;: 道のりの位置(任意)}</code> の列。種類は <code style="color:#22d3bf">mirror</code> / <code style="color:#22d3bf">head_check</code>(安全確認)、<code style="color:#22d3bf">signal_on</code> / <code style="color:#22d3bf">signal_off</code>(合図)、<code style="color:#22d3bf">start</code>(進路を変え始めた / 右左折の地点に達した)、<code style="color:#22d3bf">end</code>(行為が終わった)。<code style="color:#22d3bf">start</code> は必須(1 回)。</p>
+<p>規則(根拠は <code style="color:#22d3bf">SOURCES</code>):</p>
+<p style="margin:2px 0 2px 12px">1. 合図がある(<code style="color:#22d3bf">signal_missing</code>)。</p>
+<p style="margin:2px 0 2px 12px">2. 合図より前(かつ start より前)に安全確認がある(<code style="color:#22d3bf">safety_check_missing</code>。教則「あらかじめバックミラーなどで安全を確かめてから合図」)。</p>
+<p style="margin:2px 0 2px 12px">3. 合図の時期(<code style="color:#22d3bf">signal_timing</code>): 進路変更は start − 合図 ≥ <code style="color:#22d3bf">lead_time − lead_tol</code>(教則「約 3 秒前」。許容は仮定)、<code style="color:#22d3bf">max_lead</code> を与えれば早すぎも減点。右左折・転回は start の位置 − 合図の位置 ≥ <code style="color:#22d3bf">signal_distance − distance_tol</code> (教則「30 メートル手前」。<code style="color:#22d3bf">s</code> が必要)。</p>
+<p style="margin:2px 0 2px 12px">4. <code style="color:#22d3bf">end</code> より前に合図をやめていない(<code style="color:#22d3bf">signal_not_continued</code>、法 53 条 1 項)。</p>
+<p style="margin:2px 0 2px 12px">5. <code style="color:#22d3bf">end</code> の後 <code style="color:#22d3bf">cancel_tol</code> 秒以内に合図をやめた(<code style="color:#22d3bf">signal_not_cancelled</code>、法 53 条 4 項。許容は仮定)。<code style="color:#22d3bf">end</code> が無ければ 4・5 は見ない。</p>
+<p>返り値: <code style="color:#22d3bf">violations</code>(各 <code style="color:#22d3bf">{&quot;rule&quot;, &quot;detail&quot;, &quot;deduction&quot;}</code>)、<code style="color:#22d3bf">deduction</code>、<code style="color:#22d3bf">score</code> = 100 − deduction、<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">lead</code>(秒、進路変更)/ <code style="color:#22d3bf">distance</code>(m、右左折)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

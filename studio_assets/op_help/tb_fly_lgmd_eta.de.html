@@ -5,40 +5,33 @@
 <p><img src="fig/tb_fly_lgmd_eta.png" alt="tb_fly_lgmd_eta: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fly_lgmd_eta.a.jpg">tb_fly_lgmd_eta: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fly_lgmd_eta.a.jpg">tb_fly_lgmd_eta: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fly_lgmd_eta.chain.jpg">tb_fly_lgmd_eta: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fly_lgmd_eta.chain.jpg">tb_fly_lgmd_eta: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fly_lgmd_eta.inputs.jpg">tb_fly_lgmd_eta: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fly_lgmd_eta.inputs.jpg">tb_fly_lgmd_eta: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>LGMD/eta looming response from an expanding subtended angle.</p>
 <p>The multiplicative looming model::</p>
 <p>eta(t) = theta&#x27;(t - delay) * exp(-alpha * theta(t - delay))</p>
-<p>where *theta_signal* is the object&#x27;s full subtended angle over time, in</p>
-<p>radians. The product of the angular expansion rate and an exponentially</p>
-<p>decaying gain gives a response that peaks a fixed time before collision.</p>
+<p>where *theta_signal* is the object&#x27;s full subtended angle over time, in radians. The product of the angular expansion rate and an exponentially decaying gain gives a response that peaks a fixed time before collision.</p>
 <p>theta_signal: the full subtended angle per sample, radians.</p>
 <p>dt_s:  the sample interval, seconds.</p>
 <p>alpha: the gain-decay constant.</p>
 <p>delay_s: a fixed neural delay, seconds.</p>
-<p>Returns a 1-D float64 array `<code style="color:#22d3bf">eta(t)</code>` of the same length.</p>
-<p>Ground truth: for an object of half-size `<code style="color:#22d3bf">l</code><code style="color:#22d3bf"> approaching at speed </code><code style="color:#22d3bf">|v|</code>`,</p>
-<p>`<code style="color:#22d3bf">eta</code><code style="color:#22d3bf"> peaks at a time-to-contact of </code><code style="color:#22d3bf">alpha*l/|v| - delay_s</code>` (Gabbiani et</p>
-<p>al. Eq. 5), where the subtended angle is exactly `<code style="color:#22d3bf">2*atan(1/alpha)</code>` (Eq. 6;</p>
-<p>24.0 degrees for `<code style="color:#22d3bf">alpha = 4.7</code>`) — both pinned in the tests.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / too-short (&lt; 3) / non-finite</p>
-<p>*theta_signal*, a signal over :data:<code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, a non-positive *dt_s*</p>
-<p>/ *alpha*, and a negative *delay_s*.</p>
-<p>Typed bridge of the flyvision op `<code style="color:#22d3bf">fly_lgmd_eta</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> (default 4.7); </code><code style="color:#22d3bf">b</code>` is unused.</p>
+<p>Returns a 1-D float64 array <code style="color:#22d3bf">eta(t)</code> of the same length.</p>
+<p>Ground truth: for an object of half-size <code style="color:#22d3bf">l</code> approaching at speed <code style="color:#22d3bf">|v|</code>, <code style="color:#22d3bf">eta</code> peaks at a time-to-contact of <code style="color:#22d3bf">alpha*l/|v| - delay_s</code> (Gabbiani et al. Eq. 5), where the subtended angle is exactly <code style="color:#22d3bf">2*atan(1/alpha)</code> (Eq. 6; 24.0 degrees for <code style="color:#22d3bf">alpha = 4.7</code>) — both pinned in the tests.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-1-D / empty / too-short (&lt; 3) / non-finite *theta_signal*, a signal over <code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, a non-positive *dt_s* / *alpha*, and a negative *delay_s*.</p>
+<p>Typed bridge of the flyvision op <code style="color:#22d3bf">fly_lgmd_eta</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> drives <code style="color:#22d3bf">alpha</code> (default 4.7); <code style="color:#22d3bf">b</code> is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_signal 0.50 0.50
-tb_fly_lgmd_eta 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_signal%200.50%200.50%0Atb_fly_lgmd_eta%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_signal%200.50%200.50%0Atb_fly_lgmd_eta%200.50%200.50">Load &amp; run</a></p>
+tb_fly_lgmd_eta 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_signal%200.50%200.50%0Atb_fly_lgmd_eta%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_signal%200.50%200.50%0Atb_fly_lgmd_eta%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">fly_lgmd_eta</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_vision">poc_fly_vision</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_vision.py</code></p>

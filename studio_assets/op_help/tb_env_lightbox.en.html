@@ -15,17 +15,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Environment of a photo light box (broad overhead light + a faintly bright surround). <b>Achromatic</b>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>:func:<code style="color:#22d3bf">env_studio</code> が「劇的に見せる」ための暗い部屋 + 小さいソフトボックス 2 灯</p>
-<p>なのに対し、こちらは<b>加工面が加工面に見える</b>ための環境。2026-09-05 の実測で</p>
-<p>分かった 2 つの条件を満たすように作ってある:</p>
-<p style="margin:2px 0 2px 12px">• 周囲が明るいこと ―― 暗い環境だとアルミが真っ黒になる(反射率 ~0.9 の金属が</p>
-<p>黒く写るのは、映るものが黒いから)。</p>
-<p style="margin:2px 0 2px 12px">• それでも<b>勾配があること</b> ―― 完全に一様な環境では、どんな異方性ローブでも</p>
-<p>同じ値を返すので加工目が消える。ブラシ目が見えるのは、目が環境の明暗を</p>
-<p>目方向に引き伸ばすからである。</p>
-<p>加工目は<b>斜めから見ないと出ない</b>(真上から見た平面は反射方向が全画素で天頂に</p>
-<p>集中し、環境の勾配を掃かない)。`<code style="color:#22d3bf">optical_camera(tilt_deg=50〜70)</code>` 程度が目安。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op `<code style="color:#22d3bf">env_lightbox</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">base</code><code style="color:#22d3bf">(既定 0.45)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">key</code>`(既定 4)を振る。</p>
+<p><code style="color:#22d3bf">env_studio</code> が「劇的に見せる」ための暗い部屋 + 小さいソフトボックス 2 灯なのに対し、こちらは<b>加工面が加工面に見える</b>ための環境。2026-09-05 の実測で分かった 2 つの条件を満たすように作ってある:</p>
+<p style="margin:2px 0 2px 12px">• 周囲が明るいこと ―― 暗い環境だとアルミが真っ黒になる(反射率 ~0.9 の金属が黒く写るのは、映るものが黒いから)。</p>
+<p style="margin:2px 0 2px 12px">• それでも<b>勾配があること</b> ―― 完全に一様な環境では、どんな異方性ローブでも同じ値を返すので加工目が消える。ブラシ目が見えるのは、目が環境の明暗を目方向に引き伸ばすからである。</p>
+<p>加工目は<b>斜めから見ないと出ない</b>(真上から見た平面は反射方向が全画素で天頂に集中し、環境の勾配を掃かない)。<code style="color:#22d3bf">optical_camera(tilt_deg=50〜70)</code> 程度が目安。</p>
+<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">env_lightbox</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">base</code>(既定 0.45)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">key</code>(既定 4)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

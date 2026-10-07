@@ -1,21 +1,19 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">이 가이드는 일본어만 있습니다(사람이 쓴 산문이라 기계적으로 치환하지 않았습니다).</p>
 <h2 style="color:#f5a524;margin:0 0 4px 0">エッジ・微分・コーナー — 使い方ガイド</h2>
-<p>&gt; 呼び出しモデル: 2-D op は「1 画像 + 2 つのつまみ <code style="color:#22d3bf">a,b ∈ [0,1]</code>」。</p>
-<p>&gt; <code style="color:#22d3bf">out = fullseye.apply(img, &quot;sobel_amp&quot;, a, b)</code>。連鎖は <code style="color:#22d3bf">fullseye.run_pipeline(img, [&quot;gaussian&quot;, &quot;sobel_amp&quot;, &quot;otsu&quot;], a, b)</code>。</p>
-<p>&gt; 入力は <code style="color:#22d3bf">image</code>（HxW float, 値域 [0,1]）、<code style="color:#22d3bf">edges_color</code> だけ <code style="color:#22d3bf">color</code>（HxWx3）。出力はすべて <code style="color:#22d3bf">image</code>（HxW float, 値域 [0,1]）。</p>
+<p>&gt; 呼び出しモデル: 2-D op は「1 画像 + 2 つのつまみ <code style="color:#22d3bf">a,b ∈ [0,1]</code>」。<code style="color:#22d3bf">out = fullseye.apply(img, &quot;sobel_amp&quot;, a, b)</code>。連鎖は <code style="color:#22d3bf">fullseye.run_pipeline(img, [&quot;gaussian&quot;, &quot;sobel_amp&quot;, &quot;otsu&quot;], a, b)</code>。入力は <code style="color:#22d3bf">image</code>（HxW float, 値域 [0,1]）、<code style="color:#22d3bf">edges_color</code> だけ <code style="color:#22d3bf">color</code>（HxWx3）。出力はすべて <code style="color:#22d3bf">image</code>（HxW float, 値域 [0,1]）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
 <p>この族（<code style="color:#22d3bf">category == &quot;edges&quot;</code>、57 エントリ／ユニーク 56 名。<code style="color:#22d3bf">laplace</code> が素の実装と <code style="color:#22d3bf">_safe</code> ラップ版で 2 回登録されるため 1 名だけ重複）は、<b>画像の明るさが急に変わる場所（＝輪郭・エッジ）と、二方向に曲がる場所（＝コーナー特徴点）を取り出す</b>フィルタ群です。入力はグレースケール画像 1 枚（<code style="color:#22d3bf">edges_color</code> のみカラー）、出力はどれも同じ大きさの強度マップ（値域 [0,1]）で、「そのピクセルがどれだけエッジ／コーナーらしいか」あるいは「勾配がどちらを向いているか」を表します。用途は、物体の輪郭抽出、トラッキング／マッチング用の特徴点検出、欠陥・キズのエッジ強調、後段のしきい値化・細線化の前処理です。</p>
 <p>中身は挙動で 4 系統に分かれます。<b>(1) 一次微分（勾配）</b>は明るさの傾きの大きさ（<code style="color:#22d3bf">*_amp</code>/<code style="color:#22d3bf">*_mag</code>）や向き（<code style="color:#22d3bf">*_dir</code>）を返し、段差で強く・平坦部でゼロに応答します。<b>(2) 二次微分・帯域通過</b>（Laplacian / LoG / DoG / Hessian）はゼロ交差でエッジを、点・線状構造でピークを出し、直流成分（一様な明るさ）には応答しません。<b>(3) コーナー／特徴点</b>（Harris・min-eigen・Förstner・FAST・Moravec・Kitchen-Rosenfeld）は直線エッジではなく「角」でだけ強く応答します。<b>(4) 拡張系</b>（<code style="color:#22d3bf">x*</code>/<code style="color:#22d3bf">f2_*</code>/<code style="color:#22d3bf">tf_*</code>）は PIL・scipy・kornia・wavelet や、位相合同性（phase congruency）・shock filter・topographic sketch など別バックエンド由来のエッジ／コーナー表現です。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン（op の繋がり）</h3>
 <p>エッジ強度マップを作って輪郭領域に落とす典型（<code style="color:#22d3bf">gauss</code>→勾配→しきい値化）と、コーナー強度マップから特徴点を拾う典型（<code style="color:#22d3bf">gauss</code>→コーナー応答→局所最大）です。<code style="color:#22d3bf">otsu</code>/<code style="color:#22d3bf">nonmax_suppression_amp</code>/<code style="color:#22d3bf">local_max</code> は隣の segmentation 族の下流 op（データ種 image→region で接続）。</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 다이어그램(소스):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
   A[image&lt;br/&gt;HxW float 0..1] --&gt;|gaussian| B[smoothed&lt;br/&gt;image]
   B --&gt;|sobel_amp / prewitt_mag / cv_scharr| C[gradient magnitude&lt;br/&gt;image 0..1]
   B --&gt;|grad_dir / sobel_dir| D[gradient orientation&lt;br/&gt;image 0..1]
   C --&gt;|otsu / nonmax_suppression_amp| E[edge region&lt;br/&gt;region]
   C -.向きで細線化.-&gt; D</pre>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 다이어그램(소스):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
   A[image&lt;br/&gt;HxW float 0..1] --&gt;|gaussian| B[smoothed&lt;br/&gt;image]
   B --&gt;|corner_response / points_foerstner / cv_min_eigen| C[corner strength&lt;br/&gt;image 0..1]
   B --&gt;|log / laplace_of_gauss / dog| F[blob / zero-cross&lt;br/&gt;image 0..1]

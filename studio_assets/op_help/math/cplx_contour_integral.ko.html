@@ -3,34 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">cscalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_contour_integral(z, fz)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathops; mathops.cplx_contour_integral(z, fz)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;cplx_contour_integral&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>현 사다리꼴 공식으로 닫힌 폐곡선 적분 `<code style="color:#22d3bf">∮ f(z) dz</code>` 를 계산합니다.</p>
+<p>현 사다리꼴 공식으로 닫힌 폐곡선 적분 <code style="color:#22d3bf">∮ f(z) dz</code> 를 계산합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*z* are the contour vertices (closing segment implicit, see</p>
-<p>:func:<code style="color:#22d3bf">cplx_contour_circle</code>) and *fz* the function sampled at exactly those</p>
-<p>points — the op never calls back into Python, so any `<code style="color:#22d3bf">f</code>` is allowed as</p>
-<p>long as you can sample it. The quadrature is</p>
-<p>`<code style="color:#22d3bf">sum_k (f_k + f_{k+1})/2 * (z_{k+1} - z_k)</code>`, i.e. the trapezoidal rule</p>
-<p>along the *chords*; it is exact for a piecewise-linear integrand and second</p>
-<p>order otherwise.</p>
-<p>Ground truth it reproduces: `<code style="color:#22d3bf">f = 1/(z - a)</code>` around a circle enclosing</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> integrates to </code><code style="color:#22d3bf">2*pi*i</code>` (Cauchy); measured on the unit circle with</p>
-<p>`<code style="color:#22d3bf">a = 0</code><code style="color:#22d3bf">, the relative error is 1.0e-4 at </code><code style="color:#22d3bf">n = 256</code>` and</p>
-<p>6.3e-6 at `<code style="color:#22d3bf">n = 1024</code>` — a factor 16.0 for 4x</p>
-<p>refinement, i.e. the `<code style="color:#22d3bf">O(n^-2)</code>` rate, *not* the spectral accuracy the</p>
-<p>trapezoid rule enjoys when applied in the angle parameter. That difference</p>
-<p>is the honest price of accepting an arbitrary point list instead of a</p>
-<p>parametrisation.</p>
-<p>Orientation follows the sample order: a clockwise contour returns the</p>
-<p>negative of the counter-clockwise one.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: fewer than 3 points, </code><code style="color:#22d3bf">len(z) != len(fz)</code>`, a</p>
-<p>degenerate contour (all points coincide), non-finite/masked input, or a sum</p>
-<p>that overflowed (`<code style="color:#22d3bf">|f|</code>` near a pole *on* the path).</p>
+<p>*z* are the contour vertices (closing segment implicit, see <code style="color:#22d3bf">cplx_contour_circle</code>) and *fz* the function sampled at exactly those points — the op never calls back into Python, so any <code style="color:#22d3bf">f</code> is allowed as long as you can sample it. The quadrature is <code style="color:#22d3bf">sum_k (f_k + f_{k+1})/2 * (z_{k+1} - z_k)</code>, i.e. the trapezoidal rule along the *chords*; it is exact for a piecewise-linear integrand and second order otherwise.</p>
+<p>Ground truth it reproduces: <code style="color:#22d3bf">f = 1/(z - a)</code> around a circle enclosing <code style="color:#22d3bf">a</code> integrates to <code style="color:#22d3bf">2*pi*i</code> (Cauchy); measured on the unit circle with <code style="color:#22d3bf">a = 0</code>, the relative error is 1.0e-4 at <code style="color:#22d3bf">n = 256</code> and 6.3e-6 at <code style="color:#22d3bf">n = 1024</code> — a factor 16.0 for 4x refinement, i.e. the <code style="color:#22d3bf">O(n^-2)</code> rate, *not* the spectral accuracy the trapezoid rule enjoys when applied in the angle parameter. That difference is the honest price of accepting an arbitrary point list instead of a parametrisation.</p>
+<p>Orientation follows the sample order: a clockwise contour returns the negative of the counter-clockwise one.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: fewer than 3 points, <code style="color:#22d3bf">len(z) != len(fz)</code>, a degenerate contour (all points coincide), non-finite/masked input, or a sum that overflowed (<code style="color:#22d3bf">|f|</code> near a pole *on* the path).</p>
 <p>HALCON: no operator (contour integration is not part of its tuple/XLD API).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
-<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
-<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code></b> —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
 <p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

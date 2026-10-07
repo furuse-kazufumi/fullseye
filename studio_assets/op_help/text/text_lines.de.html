@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fasst Zeichenkandidaten-Boxen zu Zeilen zusammen (vertikal überlappend, horizontal nah, ähnliche Strichbreite).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>★規則の根拠(2026-09-27 実測): 候補は字画ごとの断片になる(横棒と &#x27;l&#x27; では高さが 5 倍</p>
-<p>違う)ので「高さが近い」を条件にすると 3 行が 30〜60 行に割れた。行の同一性は**縦の</p>
-<p>重なり**(小さい方の高さの `<code style="color:#22d3bf">overlap_ratio</code>` 以上)で判定し、横の隙間は大きい方の高さの</p>
-<p>`<code style="color:#22d3bf">gap_ratio</code><code style="color:#22d3bf"> 倍以内、ストローク幅は </code><code style="color:#22d3bf">width_ratio</code>` 倍以内。</p>
-<p>Returns dict: `<code style="color:#22d3bf">lines</code><code style="color:#22d3bf">(M×4 の矩形)/ </code><code style="color:#22d3bf">members</code>`(各行の候補 index のリスト)。</p>
+<p>★規則の根拠(2026-09-27 実測): 候補は字画ごとの断片になる(横棒と &#x27;l&#x27; では高さが 5 倍違う)ので「高さが近い」を条件にすると 3 行が 30〜60 行に割れた。行の同一性は<b>縦の重なり</b>(小さい方の高さの <code style="color:#22d3bf">overlap_ratio</code> 以上)で判定し、横の隙間は大きい方の高さの <code style="color:#22d3bf">gap_ratio</code> 倍以内、ストローク幅は <code style="color:#22d3bf">width_ratio</code> 倍以内。</p>
+<p>Returns dict: <code style="color:#22d3bf">lines</code>(M×4 の矩形)/ <code style="color:#22d3bf">members</code>(各行の候補 index のリスト)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

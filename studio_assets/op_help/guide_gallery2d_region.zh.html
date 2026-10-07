@@ -2,21 +2,12 @@
 <p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">本指南仅有日文版(它是人写的散文,这里不做机械替换)。</p>
 <h2 style="color:#f5a524;margin:0 0 4px 0">領域(region)処理 — 使い方ガイド</h2>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
-<p><code style="color:#22d3bf">gallery2d_region</code> は <b>二値マスク</b>(前景=1 / 背景=0 の 2 次元 float 配列、以下「領域(region)」)の</p>
-<p><b>形を整え・選り分け・測る</b> ためのオペレータ族です。しきい値処理(segmentation 族)や検出で得た</p>
-<p>生のマスクは、ギザギザ・小さな穴・ノイズ塊・複数成分が混ざった状態になりがちです。この族は、</p>
-<p>モルフォロジー(収縮・膨張・開閉)で輪郭をならし、穴を埋め、連結成分を選別し、</p>
-<p>スケルトン(骨格)や境界を抜き出し、外接/内接図形や距離変換で形状を定量化します。</p>
-<p>用途は前処理後のマスク整形・ブロブ選別・形状計測で、検査(欠陥/寸法)・OCR 前処理・</p>
-<p>顕微鏡・医用・歩行 Physical AI の踏み場領域処理などに向きます。</p>
-<p>呼び出しは全オペレータ共通で「**1 領域 + 2 スカラつまみ <code style="color:#22d3bf">a,b</code>∈[0,1]**」です:</p>
-<p><code style="color:#22d3bf">fullseye.apply(region, &quot;op_name&quot;, a, b)</code>。多くは領域→領域(<code style="color:#22d3bf">out_sort=region</code>)ですが、</p>
-<p>距離変換は領域→<b>画像</b>(<code style="color:#22d3bf">out_sort=image</code>、連続値マップ)、ラン長・形状計測は</p>
-<p>領域→<b>特徴量</b>(<code style="color:#22d3bf">out_sort=feature</code>、有限スカラ)を返します。グレースケール画像を渡した場合は</p>
-<p>0.5 で二値化されてから処理されます(<code style="color:#22d3bf">apply(..., coerce=True)</code> が既定)。</p>
+<p><code style="color:#22d3bf">gallery2d_region</code> は <b>二値マスク</b>(前景=1 / 背景=0 の 2 次元 float 配列、以下「領域(region)」)の <b>形を整え・選り分け・測る</b> ためのオペレータ族です。しきい値処理(segmentation 族)や検出で得た生のマスクは、ギザギザ・小さな穴・ノイズ塊・複数成分が混ざった状態になりがちです。この族は、モルフォロジー(収縮・膨張・開閉)で輪郭をならし、穴を埋め、連結成分を選別し、スケルトン(骨格)や境界を抜き出し、外接/内接図形や距離変換で形状を定量化します。用途は前処理後のマスク整形・ブロブ選別・形状計測で、検査(欠陥/寸法)・OCR 前処理・顕微鏡・医用・歩行 Physical AI の踏み場領域処理などに向きます。</p>
+<p>呼び出しは全オペレータ共通で「<b>1 領域 + 2 スカラつまみ <code style="color:#22d3bf">a,b</code>∈[0,1]</b>」です:</p>
+<p><code style="color:#22d3bf">fullseye.apply(region, &quot;op_name&quot;, a, b)</code>。多くは領域→領域(<code style="color:#22d3bf">out_sort=region</code>)ですが、距離変換は領域→<b>画像</b>(<code style="color:#22d3bf">out_sort=image</code>、連続値マップ)、ラン長・形状計測は領域→<b>特徴量</b>(<code style="color:#22d3bf">out_sort=feature</code>、有限スカラ)を返します。グレースケール画像を渡した場合は 0.5 で二値化されてから処理されます(<code style="color:#22d3bf">apply(..., coerce=True)</code> が既定)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
 <p>しきい値処理で得た荒いマスクを、整形→成分選別→計測へと繋ぐのが典型です。</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 图(源码):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
     IMG[画像 image] --&gt;|threshold / otsu| M[領域 region 荒いマスク]
     M --&gt;|reg_close / closing_circle| C[隙間を閉じた領域]
     C --&gt;|fill_holes / fill_up| F[穴埋め済み領域]
@@ -24,7 +15,7 @@
     S --&gt;|region_boundary / get_region_contour| B[境界 region]
     S --&gt;|r3_region_features| FEAT[形状特徴 feature]</pre>
 <p>骨格化・距離変換は「形の芯」や「厚みマップ」を取り出す別の枝です。</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 图(源码):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
     S[整形済み領域 region] --&gt;|skeleton / thinning| SK[1画素幅の骨格 region]
     SK --&gt;|pruning| SKP[ヒゲを刈った骨格]
     SKP --&gt;|junctions_skeleton| J[分岐点 region]
@@ -33,9 +24,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(op グループ別)</h3>
 <p>以下は実在の op のみ。呼び出しは <code style="color:#22d3bf">fullseye.apply(region, &quot;&lt;op&gt;&quot;, a, b)</code>。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">モルフォロジー(収縮・膨張・開・閉)</h3>
-<p>前景を構造要素(円 disk / 矩形 rect)で削る・太らせる・開く(erode→dilate)・閉じる(dilate→erode)。</p>
-<p>つまみ <code style="color:#22d3bf">a</code> が構造要素の大きさ/反復回数を決めます(膨張は面積増、収縮は面積減、</p>
-<p>開は突起・小塊を除き、閉は隙間・小穴を埋める)。</p>
+<p>前景を構造要素(円 disk / 矩形 rect)で削る・太らせる・開く(erode→dilate)・閉じる(dilate→erode)。つまみ <code style="color:#22d3bf">a</code> が構造要素の大きさ/反復回数を決めます(膨張は面積増、収縮は面積減、開は突起・小塊を除き、閉は隙間・小穴を埋める)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reg_erode</code> / <code style="color:#22d3bf">reg_dilate</code> / <code style="color:#22d3bf">reg_open</code> / <code style="color:#22d3bf">reg_close</code> — 円形 SE の基本 4 種(反復 <code style="color:#22d3bf">1+int(a*3)</code> 回)。GROUNDED(<code style="color:#22d3bf">ndimage.binary_*</code>)。例: <code style="color:#22d3bf">fullseye.apply(m, &quot;reg_close&quot;, 0.4, 0.5)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">erosion_circle</code> / <code style="color:#22d3bf">dilation_circle</code> / <code style="color:#22d3bf">opening_circle</code> / <code style="color:#22d3bf">closing_circle</code> — 円形 SE(半径をノブ化)。HALCON 同名。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">erosion_rectangle1</code> / <code style="color:#22d3bf">dilation_rectangle1</code> / <code style="color:#22d3bf">opening_rectangle1</code> / <code style="color:#22d3bf">closing_rectangle1</code> — 矩形 SE 版。HALCON 同名。</p>
@@ -68,20 +57,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">junctions_skeleton</code> — スケルトンの分岐点(joint、8 近傍が 3 個以上)を抽出。GROUNDED。HALCON 版は EndPoints/JuncPoints の両方を返すが、こちらは分岐点のみ。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">r2_endpoints_skeleton</code> — スケルトンの端点(8 近傍がちょうど 1 個)を抽出。HALCON <code style="color:#22d3bf">junctions_skeleton</code> の EndPoints 出力に相当。骨格でない入力は em_skeleton で細線化してから測る。GROUNDED。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">r2_split_skeleton_lines</code> — 骨格を分岐点で切り、線分に分割(<code style="color:#22d3bf">a</code> で短い断片を除去)。</p>
-<p>&gt; <b>HALCON との差(重要)</b>: HALCON の <code style="color:#22d3bf">skeleton</code> は Eckhardt–Maderlechner 法、</p>
-<p>&gt; Fullseye の既定 <code style="color:#22d3bf">skeleton</code>/<code style="color:#22d3bf">sk_skeleton</code> は Zhang–Suen 法(skimage)で、</p>
-<p>&gt; <b>アルゴリズムが異なります</b>。HALCON からの移植で骨格の枝ぶりを</p>
-<p>&gt; 近づけたい場合は、同系アルゴリズムの **<code style="color:#22d3bf">em_skeleton</code>** を使ってください</p>
-<p>&gt; (独立実装だが、<b>公表されている EM93 の参照出力とビット単位一致を検証済み</b>。</p>
-<p>&gt; HALCON 実機との直接照合のみ未実施)。</p>
-<p>&gt; スケルトンは実装依存性が強い代表例で、細い枝(ヒゲ)の生え方・分岐点の</p>
-<p>&gt; 画素位置・斜め 2 画素幅部の残り方は一致しません。したがって</p>
-<p>&gt; <code style="color:#22d3bf">junctions_skeleton</code> / <code style="color:#22d3bf">r2_split_skeleton_lines</code> の分岐数・線分数も</p>
-<p>&gt; HALCON と同数にはなりません。一致するのは位相的な性質</p>
-<p>&gt; (連結性の保存・穴の数・おおむね 1 画素幅)です。HALCON からの移植で</p>
-<p>&gt; 分岐数などを閾値に使っている場合は、<code style="color:#22d3bf">pruning</code> でヒゲを刈ってから</p>
-<p>&gt; 閾値を取り直してください。<code style="color:#22d3bf">sk_medial</code>(距離変換の稜線)はさらに別物で、</p>
-<p>&gt; ヒゲが多い代わりに局所半径(厚み)が得られます。</p>
+<p>&gt; <b>HALCON との差(重要)</b>: HALCON の <code style="color:#22d3bf">skeleton</code> は Eckhardt–Maderlechner 法、Fullseye の既定 <code style="color:#22d3bf">skeleton</code>/<code style="color:#22d3bf">sk_skeleton</code> は Zhang–Suen 法(skimage)で、<b>アルゴリズムが異なります</b>。HALCON からの移植で骨格の枝ぶりを近づけたい場合は、同系アルゴリズムの <b><code style="color:#22d3bf">em_skeleton</code></b> を使ってください(独立実装だが、<b>公表されている EM93 の参照出力とビット単位一致を検証済み</b>。HALCON 実機との直接照合のみ未実施)。スケルトンは実装依存性が強い代表例で、細い枝(ヒゲ)の生え方・分岐点の画素位置・斜め 2 画素幅部の残り方は一致しません。したがって <code style="color:#22d3bf">junctions_skeleton</code> / <code style="color:#22d3bf">r2_split_skeleton_lines</code> の分岐数・線分数も HALCON と同数にはなりません。一致するのは位相的な性質(連結性の保存・穴の数・おおむね 1 画素幅)です。HALCON からの移植で分岐数などを閾値に使っている場合は、<code style="color:#22d3bf">pruning</code> でヒゲを刈ってから閾値を取り直してください。<code style="color:#22d3bf">sk_medial</code>(距離変換の稜線)はさらに別物で、ヒゲが多い代わりに局所半径(厚み)が得られます。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">境界・輪郭抽出</h3>
 <p>領域から外周(1 画素の縁)を取り出す。いずれも元領域の部分集合になる薄いリング。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">boundary</code> / <code style="color:#22d3bf">region_boundary</code> / <code style="color:#22d3bf">get_region_contour</code> — 領域から収縮を引いた縁(<code style="color:#22d3bf">region − erosion</code>)。GROUNDED。元領域の部分集合。</p>
@@ -115,8 +91,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">r3_region_features</code> — <code style="color:#22d3bf">a&lt;0.5</code> で面積割合、<code style="color:#22d3bf">a≥0.5</code> でコンパクトネス <code style="color:#22d3bf">P²/(4πA)</code>(円で ~1)。GROUNDED。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">r3_runlength_distribution</code> — ラン長分布の要約(<code style="color:#22d3bf">a&lt;0.5</code> で分散、<code style="color:#22d3bf">a≥0.5</code> でエントロピー)。GROUNDED。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_region から)</h3>
-<p>repo 直下で <code style="color:#22d3bf">py -3.11</code> から実行可能な自己完結スニペット(検証済みギャラリーの GT を写経・短縮)。</p>
-<p>モルフォロジー・反転・穴埋め・境界・距離変換の既知性質を機械検証します。</p>
+<p>repo 直下で <code style="color:#22d3bf">py -3.11</code> から実行可能な自己完結スニペット(検証済みギャラリーの GT を写経・短縮)。モルフォロジー・反転・穴埋め・境界・距離変換の既知性質を機械検証します。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
 import fullseye
 
@@ -187,17 +162,12 @@ print(&quot;PASS&quot;)</pre>
 <p>$$A \circ B = (A \ominus B) \oplus B, \qquad A \bullet B = (A \oplus B) \ominus B$$</p>
 <p>境界(<code style="color:#22d3bf">boundary</code> / <code style="color:#22d3bf">region_boundary</code>)は領域から収縮を引いた薄い縁:</p>
 <p>$$\partial A = A \setminus (A \ominus B)$$</p>
-<p>距離変換。<code style="color:#22d3bf">distance_transform</code> は前景各点から<b>背景</b>までのユークリッド距離、</p>
-<p><code style="color:#22d3bf">closest_point_transform</code> は各点から<b>最も近い前景</b>までの距離(= 補集合の距離変換):</p>
+<p>距離変換。<code style="color:#22d3bf">distance_transform</code> は前景各点から<b>背景</b>までのユークリッド距離、<code style="color:#22d3bf">closest_point_transform</code> は各点から<b>最も近い前景</b>までの距離(= 補集合の距離変換):</p>
 <p>$$D_A(p) = \min_{q \notin A} \lVert p - q \rVert, \qquad D^{\ast}_A(p) = \min_{q \in A} \lVert p - q \rVert$$</p>
-<p>コンパクトネス(<code style="color:#22d3bf">r3_region_features</code> の <code style="color:#22d3bf">a≥0.5</code>)。周囲長 $P$、面積 $A$ に対し</p>
-<p>(理想的な円で 1、細長いほど大):</p>
+<p>コンパクトネス(<code style="color:#22d3bf">r3_region_features</code> の <code style="color:#22d3bf">a≥0.5</code>)。周囲長 $P$、面積 $A$ に対し(理想的な円で 1、細長いほど大):</p>
 <p>$$C = \frac{P^2}{4\pi A}$$</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
-<p>この族のデバッグには <b>二値化しやすい形状画像</b>が便利です。詳細は <code style="color:#22d3bf">../../SAMPLES.md</code> を参照。</p>
-<p><code style="color:#22d3bf">import sample_images; sample_images.load(&quot;blobs&quot;)</code>(合成ブロブ、穴埋め/成分選別に好適)や</p>
-<p><code style="color:#22d3bf">sample_images.load(&quot;coins&quot;)</code>(skimage.data、BSD/public。しきい値→モルフォロジー整形の題材)を</p>
-<p><code style="color:#22d3bf">fullseye.apply(img, &quot;otsu&quot;)</code> などで二値化してから領域 op を試せます。</p>
+<p>この族のデバッグには <b>二値化しやすい形状画像</b>が便利です。詳細は <code style="color:#22d3bf">../../SAMPLES.md</code> を参照。<code style="color:#22d3bf">import sample_images; sample_images.load(&quot;blobs&quot;)</code>(合成ブロブ、穴埋め/成分選別に好適)や <code style="color:#22d3bf">sample_images.load(&quot;coins&quot;)</code>(skimage.data、BSD/public。しきい値→モルフォロジー整形の題材)を <code style="color:#22d3bf">fullseye.apply(img, &quot;otsu&quot;)</code> などで二値化してから領域 op を試せます。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
 <p>台帳は <code style="color:#22d3bf">../../../REFERENCES.md</code>。この族のアルゴリズムの古典:</p>
 <p style="margin:2px 0 2px 12px">• Serra, J. (1982). &quot;Image Analysis and Mathematical Morphology.&quot; (Matheron 1975) — 収縮・膨張・開閉・トップハット。</p>

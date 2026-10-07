@@ -5,24 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>Compare 3-cycles and reciprocity against a degree-preserving null model.</p>
-<p>Each null sample requests `<code style="color:#22d3bf">swaps_per_edge * |E|</code>` edge swaps that keep every node&#x27;s</p>
-<p>in- and out-degree <b>exactly</b> (Maslov &amp; Sneppen 2002); a swap that would create a</p>
-<p>self-loop or duplicate edge is skipped, so dense graphs accept fewer</p>
-<p>(`<code style="color:#22d3bf">swaps_accepted</code>`). The sample&#x27;s</p>
-<p>degree sequences are checked against the original before it is used — a null that</p>
-<p>drifted would make every ratio a lie, so this fails closed.</p>
-<p>Returns a dict with the observed `<code style="color:#22d3bf">cycles3</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">reciprocal_pairs</code>`, the null</p>
-<p>`<code style="color:#22d3bf">*_null_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">*_null_sd</code><code style="color:#22d3bf">, the </code><code style="color:#22d3bf">*_ratio</code><code style="color:#22d3bf"> (observed / null mean) and </code><code style="color:#22d3bf">*_z</code>`,</p>
-<p>plus `<code style="color:#22d3bf">n_samples</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">swaps</code><code style="color:#22d3bf"> (requested per sample) and </code><code style="color:#22d3bf">swaps_accepted</code>` (list,</p>
-<p>accepted per sample). Ratios are what let graphs of different size be compared;</p>
-<p>raw counts cannot.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>graph_degree_summary<code style="color:#22d3bf">; </code><code style="color:#22d3bf">n_samples &lt; 2</code>`</p>
-<p>(no spread to estimate); `<code style="color:#22d3bf">swaps_per_edge &lt; 1</code>`; a graph with fewer than 2 edges</p>
-<p>(nothing to swap).</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>Each null sample requests <code style="color:#22d3bf">swaps_per_edge * |E|</code> edge swaps that keep every node&#x27;s in- and out-degree <b>exactly</b> (Maslov &amp; Sneppen 2002); a swap that would create a self-loop or duplicate edge is skipped, so dense graphs accept fewer (<code style="color:#22d3bf">swaps_accepted</code>). The sample&#x27;s degree sequences are checked against the original before it is used — a null that drifted would make every ratio a lie, so this fails closed.</p>
+<p>Returns a dict with the observed <code style="color:#22d3bf">cycles3</code> and <code style="color:#22d3bf">reciprocal_pairs</code>, the null <code style="color:#22d3bf">*_null_mean</code> / <code style="color:#22d3bf">*_null_sd</code>, the <code style="color:#22d3bf">*_ratio</code> (observed / null mean) and <code style="color:#22d3bf">*_z</code>, plus <code style="color:#22d3bf">n_samples</code>, <code style="color:#22d3bf">swaps</code> (requested per sample) and <code style="color:#22d3bf">swaps_accepted</code> (list, accepted per sample). Ratios are what let graphs of different size be compared; raw counts cannot.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: as <code style="color:#22d3bf">graph_degree_summary</code>; <code style="color:#22d3bf">n_samples &lt; 2</code> (no spread to estimate); <code style="color:#22d3bf">swaps_per_edge &lt; 1</code>; a graph with fewer than 2 edges (nothing to swap).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:graphinv_three_phyla">graphinv_three_phyla</a> — <code style="color:#22d3bf">py -3.11 examples/graphinv_three_phyla.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

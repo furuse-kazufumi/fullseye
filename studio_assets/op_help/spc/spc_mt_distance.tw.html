@@ -5,29 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>Score observations against an MT-method unit space.</p>
-<p>`<code style="color:#22d3bf">data</code><code style="color:#22d3bf"> is a 2-D array of shape </code><code style="color:#22d3bf">(m, p)</code><code style="color:#22d3bf">. Pass the </code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">std</code>` and</p>
-<p>`<code style="color:#22d3bf">inv_corr</code><code style="color:#22d3bf"> from :func:</code>spc_mt_unit_space` to score new product against a</p>
-<p>stored unit space; omit all three and the unit space is built from `<code style="color:#22d3bf">data</code>`</p>
-<p>itself, which is the training case and makes `<code style="color:#22d3bf">md_sq_mean</code>` land on</p>
-<p>`<code style="color:#22d3bf">(m-1)/m</code>`.</p>
-<p>Each row&#x27;s distance is `<code style="color:#22d3bf">MD_i = sqrt(z_i&#x27; R^-1 z_i / p)</code>` with</p>
-<p>`<code style="color:#22d3bf">z_i = (x_i - mean) / std</code><code style="color:#22d3bf">. Rows with </code><code style="color:#22d3bf">MD &gt; threshold</code>` are reported in</p>
-<p>`<code style="color:#22d3bf">flagged</code><code style="color:#22d3bf">; the rest in </code><code style="color:#22d3bf">inside</code><code style="color:#22d3bf">. Dividing the quadratic form by </code><code style="color:#22d3bf">p</code>` is</p>
-<p>what puts the unit space at 1 regardless of how many features are used, so a</p>
-<p>threshold carries over when features are added or removed.</p>
-<p>Returns a dict with the per-row `<code style="color:#22d3bf">md</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">md_sq</code><code style="color:#22d3bf"> arrays, </code><code style="color:#22d3bf">flagged</code>`,</p>
-<p>`<code style="color:#22d3bf">inside</code><code style="color:#22d3bf">, the </code><code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">md_sq_mean</code><code style="color:#22d3bf">, and </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">p</code>`.</p>
-<p>Relationship to :func:<code style="color:#22d3bf">spc_hotelling_t2</code> (used as the oracle in the tests):</p>
-<p>on the standardised matrix the covariance *is* the correlation, so</p>
-<p>`<code style="color:#22d3bf">md**2 == t2 / p</code>` exactly for the same data.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D / empty *data*, a non-positive</p>
-<p>`<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">, a unit space given only in part, a </code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">std</code>` /</p>
-<p>`<code style="color:#22d3bf">inv_corr</code><code style="color:#22d3bf"> whose shape disagrees with </code><code style="color:#22d3bf">p</code>`, a non-positive entry in</p>
-<p>`<code style="color:#22d3bf">std</code>`, or non-finite input.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">data</code> is a 2-D array of shape <code style="color:#22d3bf">(m, p)</code>. Pass the <code style="color:#22d3bf">mean</code>, <code style="color:#22d3bf">std</code> and <code style="color:#22d3bf">inv_corr</code> from <code style="color:#22d3bf">spc_mt_unit_space</code> to score new product against a stored unit space; omit all three and the unit space is built from <code style="color:#22d3bf">data</code> itself, which is the training case and makes <code style="color:#22d3bf">md_sq_mean</code> land on <code style="color:#22d3bf">(m-1)/m</code>.</p>
+<p>Each row&#x27;s distance is <code style="color:#22d3bf">MD_i = sqrt(z_i&#x27; R^-1 z_i / p)</code> with <code style="color:#22d3bf">z_i = (x_i - mean) / std</code>. Rows with <code style="color:#22d3bf">MD &gt; threshold</code> are reported in <code style="color:#22d3bf">flagged</code>; the rest in <code style="color:#22d3bf">inside</code>. Dividing the quadratic form by <code style="color:#22d3bf">p</code> is what puts the unit space at 1 regardless of how many features are used, so a threshold carries over when features are added or removed.</p>
+<p>Returns a dict with the per-row <code style="color:#22d3bf">md</code> and <code style="color:#22d3bf">md_sq</code> arrays, <code style="color:#22d3bf">flagged</code>, <code style="color:#22d3bf">inside</code>, the <code style="color:#22d3bf">threshold</code>, <code style="color:#22d3bf">md_sq_mean</code>, and <code style="color:#22d3bf">n</code>/<code style="color:#22d3bf">p</code>.</p>
+<p>Relationship to <code style="color:#22d3bf">spc_hotelling_t2</code> (used as the oracle in the tests):</p>
+<p>on the standardised matrix the covariance *is* the correlation, so <code style="color:#22d3bf">md**2 == t2 / p</code> exactly for the same data.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-2-D / empty *data*, a non-positive <code style="color:#22d3bf">threshold</code>, a unit space given only in part, a <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">inv_corr</code> whose shape disagrees with <code style="color:#22d3bf">p</code>, a non-positive entry in <code style="color:#22d3bf">std</code>, or non-finite input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_mt_hidden_fault">poc_mt_hidden_fault</a> — <code style="color:#22d3bf">py -3.11 examples/poc_mt_hidden_fault.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>

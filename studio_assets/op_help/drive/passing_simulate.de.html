@@ -5,12 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>&quot;go&quot; にした場合を時間を進めて走らせ、PET(自車が対向車線から戻り切った時刻と、対向車がその地点に着く時刻の差)を返す。</p>
-<p>閉形式と独立な経路: 自車の <b>横位置</b> を、x_in〜x_out の間は対向車線(y = 1)、x_out を過ぎたら</p>
-<p>y(τ) = 1 − smoothstep(τ / T_lc)(τ = x_out を過ぎてからの時間)で戻すとして刻み dt で進め、y が 0 になった刻みを</p>
-<p>探して刻み内を二分法で詰めた時刻を戻り切った時刻とする(T_lc = 0 なら x_out を過ぎた時刻)。対向車は x = D から</p>
-<p>−v_on で進め、戻り切った地点を通る刻みを探して線形補間する。v_on = 0 なら PET = inf。</p>
-<p>`<code style="color:#22d3bf">v_obstacle</code>` &gt; 0: 障害物の前端の外(x_out)も v_obstacle で進む(走っている自転車の追い越し)。</p>
-<p>戻り値 dict: `<code style="color:#22d3bf">t_clear</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">x_clear</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">t_oncoming</code><code style="color:#22d3bf">(対向車が x_clear に着く時刻)、</code><code style="color:#22d3bf">pet</code>`。</p>
+<p>閉形式と独立な経路: 自車の <b>横位置</b> を、x_in〜x_out の間は対向車線(y = 1)、x_out を過ぎたら y(τ) = 1 − smoothstep(τ / T_lc)(τ = x_out を過ぎてからの時間)で戻すとして刻み dt で進め、y が 0 になった刻みを探して刻み内を二分法で詰めた時刻を戻り切った時刻とする(T_lc = 0 なら x_out を過ぎた時刻)。対向車は x = D から −v_on で進め、戻り切った地点を通る刻みを探して線形補間する。v_on = 0 なら PET = inf。</p>
+<p><code style="color:#22d3bf">v_obstacle</code> &gt; 0: 障害物の前端の外(x_out)も v_obstacle で進む(走っている自転車の追い越し)。</p>
+<p>戻り値 dict: <code style="color:#22d3bf">t_clear</code>、<code style="color:#22d3bf">x_clear</code>、<code style="color:#22d3bf">t_oncoming</code>(対向車が x_clear に着く時刻)、<code style="color:#22d3bf">pet</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

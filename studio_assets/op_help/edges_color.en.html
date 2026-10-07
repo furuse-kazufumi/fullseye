@@ -12,12 +12,9 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edges_color.inputs.jpg">edges_color: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Detects color edge strength. Claimed to correspond to HALCON&#x27;s `<code style="color:#22d3bf">edges_color</code>` (extracts color edges with a Canny/Deriche/Shen filter), but <b>the implementation is fixed to Di Zenzo&#x27;s multichannel gradient method rather than being filter-selectable</b>.</p>
+<p>Detects color edge strength. Claimed to correspond to HALCON&#x27;s <code style="color:#22d3bf">edges_color</code> (extracts color edges with a Canny/Deriche/Shen filter), but <b>the implementation is fixed to Di Zenzo&#x27;s multichannel gradient method rather than being filter-selectable</b>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各チャンネルに Sobel 勾配 (gx, gy) をかけ、勾配テンソル</p>
-<p>`<code style="color:#22d3bf">[[gxx, gxy], [gxy, gyy]]</code>`（gxx=Σgx², gyy=Σgy², gxy=Σgx·gy）の最大</p>
-<p>固有値を画素ごとに求め、その平方根をエッジ強度として最大値で正規化する。</p>
-<p>a, b は未使用（HALCON 側にあるフィルタ種別・しきい値の選択はできない）。</p>
+<p>各チャンネルに Sobel 勾配 (gx, gy) をかけ、勾配テンソル <code style="color:#22d3bf">[[gxx, gxy], [gxy, gyy]]</code>（gxx=Σgx², gyy=Σgy², gxy=Σgx·gy）の最大固有値を画素ごとに求め、その平方根をエッジ強度として最大値で正規化する。a, b は未使用（HALCON 側にあるフィルタ種別・しきい値の選択はできない）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

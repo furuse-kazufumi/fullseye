@@ -4,16 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetown; drivetown.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;town_world&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>:func:<code style="color:#22d3bf">driveworld.world_build</code> の薄い包み(`<code style="color:#22d3bf">props</code>` と残りの引数をそのまま渡す)に、停止線・信号・踏切の位置の表を</p>
-<p>`<code style="color:#22d3bf">world[&quot;town&quot;]</code>` として足し、踏切の要素ごとに <b>遮断機つき警報機 2 基・遮断かん(上がり)・踏切の板・列車(遠くに待機)</b> を置く。</p>
-<p>``world[&quot;town&quot;] = {&quot;stop_lines&quot;: [(x, y, yaw, kind)], &quot;signals&quot;: [(x, y, yaw, kind)], &quot;crossings&quot;: [(x0, y0, x1, y1, s0, s1)],</p>
-<p>&quot;gear&quot;: [踏切ごとの設備の索引 dict], &quot;total_length&quot;}``(signals は交差点の 4 基全部、yaw = 灯器が向く向き。stop_lines は</p>
-<p>左側通行の物)。設備の状態は :func:<code style="color:#22d3bf">town_crossing_state</code> で時刻ごとに書き換える。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: layout が town_chain の物でない(world_build の例外はそのまま)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">driveworld.world_build</code> の薄い包み(<code style="color:#22d3bf">props</code> と残りの引数をそのまま渡す)に、停止線・信号・踏切の位置の表を <code style="color:#22d3bf">world[&quot;town&quot;]</code> として足し、踏切の要素ごとに <b>遮断機つき警報機 2 基・遮断かん(上がり)・踏切の板・列車(遠くに待機)</b> を置く。</p>
+<p><code style="color:#22d3bf">world[&quot;town&quot;] = {&quot;stop_lines&quot;: [(x, y, yaw, kind)], &quot;signals&quot;: [(x, y, yaw, kind)], &quot;crossings&quot;: [(x0, y0, x1, y1, s0, s1)], &quot;gear&quot;: [踏切ごとの設備の索引 dict], &quot;total_length&quot;}</code>(signals は交差点の 4 基全部、yaw = 灯器が向く向き。stop_lines は</p>
+<p>左側通行の物)。設備の状態は <code style="color:#22d3bf">town_crossing_state</code> で時刻ごとに書き換える。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: layout が town_chain の物でない(world_build の例外はそのまま)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

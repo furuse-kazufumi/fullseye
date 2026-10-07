@@ -12,7 +12,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Connected component count (a single scalar feature, OpenCV implementation). Counts the number of connected components (blobs of foreground) in a binary region - returns the count after subtracting 1 for the background label.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">connection</code>(Compute connected components of a region.)に相当(近似。分割結果ではなく個数のみを返す)。実装は `<code style="color:#22d3bf">cv2.connectedComponents(_u8(binm(v)))[0] - 1</code>`。a, b は未使用。connectivity は OpenCV の既定(8 連結)のまま。</p>
+<p>HALCON の <code style="color:#22d3bf">connection</code>(Compute connected components of a region.)に相当(近似。分割結果ではなく個数のみを返す)。実装は <code style="color:#22d3bf">cv2.connectedComponents(_u8(binm(v)))[0] - 1</code>。a, b は未使用。connectivity は OpenCV の既定(8 連結)のまま。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

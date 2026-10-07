@@ -5,18 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>p 次の Hankel 変換 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr を quasi-discrete 法で。</p>
-<p>`<code style="color:#22d3bf">(r, f)</code><code style="color:#22d3bf"> は動径の標本(r は昇順)。標本点 r_k へは線形補間で載せ、</code><code style="color:#22d3bf">r_max</code>`(既定 = r の最大値)の外は 0。</p>
-<p>`<code style="color:#22d3bf">f</code><code style="color:#22d3bf"> に呼び出し可能を渡すと、標本点で直接評価する(</code><code style="color:#22d3bf">r</code><code style="color:#22d3bf"> は無視して </code><code style="color:#22d3bf">r_max</code>` を必ず渡す)。</p>
-<p>標本点は r_k = j_k R / S(j_k は J_p の k 番目の零点、S = j_{n+1})、周波数 ν_k = j_k / (2πR)。</p>
-<p>この変換は核 T が<b>対合</b>(T·T = I)なので、同じ関数で逆変換もできる(`<code style="color:#22d3bf">F</code>` を f として渡す)。</p>
-<p>門: exp(−π r²) は自己双対(F(ν) = exp(−π ν²))。0 次の Hankel 変換は軸対称な関数の</p>
-<p>2 次元フーリエ変換の動径断面に等しい。</p>
-<p>返り値: `<code style="color:#22d3bf">{&quot;r&quot;, &quot;f&quot;, &quot;nu&quot;, &quot;F&quot;, &quot;T_involution_error&quot;}</code>`(最後は ‖T·T − I‖_max)。</p>
+<p><code style="color:#22d3bf">(r, f)</code> は動径の標本(r は昇順)。標本点 r_k へは線形補間で載せ、<code style="color:#22d3bf">r_max</code>(既定 = r の最大値)の外は 0。<code style="color:#22d3bf">f</code> に呼び出し可能を渡すと、標本点で直接評価する(<code style="color:#22d3bf">r</code> は無視して <code style="color:#22d3bf">r_max</code> を必ず渡す)。標本点は r_k = j_k R / S(j_k は J_p の k 番目の零点、S = j_{n+1})、周波数 ν_k = j_k / (2πR)。この変換は核 T が<b>対合</b>(T·T = I)なので、同じ関数で逆変換もできる(<code style="color:#22d3bf">F</code> を f として渡す)。</p>
+<p>門: exp(−π r²) は自己双対(F(ν) = exp(−π ν²))。0 次の Hankel 変換は軸対称な関数の 2 次元フーリエ変換の動径断面に等しい。</p>
+<p>返り値: <code style="color:#22d3bf">{&quot;r&quot;, &quot;f&quot;, &quot;nu&quot;, &quot;F&quot;, &quot;T_involution_error&quot;}</code>(最後は ‖T·T − I‖_max)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

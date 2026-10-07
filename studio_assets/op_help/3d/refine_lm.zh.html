@@ -6,8 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Levenberg-Marquardt 做平移(+各向同性缩放/亮度增益)的亚体素精化。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>粗いマッチ位置 init_pos(テンプレ中心の scene 内座標 [z,y,x])を出発点に、</p>
-<p>forward-additive Lucas-Kanade を減衰付き Gauss-Newton(LM)で解き SSD</p>
+<p>粗いマッチ位置 init_pos(テンプレ中心の scene 内座標 [z,y,x])を出発点に、forward-additive Lucas-Kanade を減衰付き Gauss-Newton(LM)で解き SSD</p>
 <p>E(p) = Σ_x [ I(W(x;p)) - g·T(x) ]²</p>
 <p>を最小化する。整数 NCC / Fourier-Mellin / Hough の粗推定を連続座標へ収束させる後段。</p>
 <p>ワープ        W(x;p) = t + s·(x - c_T)   (c_T=テンプレ中心, t=並進, s=等方スケール)</p>
@@ -28,7 +27,7 @@
 <p>scale : 等方スケール(scale=False なら 1.0)</p>
 <p>gain  : 輝度ゲイン(gain=False なら 1.0)</p>
 <p>cost  : 最終 SSD、rms: 1voxel あたり残差 RMS、iters: 実行反復数</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

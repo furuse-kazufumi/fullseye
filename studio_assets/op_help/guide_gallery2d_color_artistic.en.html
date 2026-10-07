@@ -6,7 +6,7 @@
 <p>呼び出しは全 op 共通で「1 枚の配列 + 2 つのスカラつまみ <code style="color:#22d3bf">a, b ∈ [0,1]</code>」: <code style="color:#22d3bf">fullseye.apply(img, &quot;op名&quot;, a, b)</code>。ただし <b>sort(型)は繋げると変わります</b> — <code style="color:#22d3bf">image → color</code>(<code style="color:#22d3bf">cfa_to_rgb</code>)、<code style="color:#22d3bf">color → image</code>(<code style="color:#22d3bf">rgb1_to_gray</code>)、<code style="color:#22d3bf">image → region</code>(<code style="color:#22d3bf">xsitk_maxentropy_thresh</code>)、<code style="color:#22d3bf">region → image</code>(<code style="color:#22d3bf">xsitk_signed_maurer_dist</code>)。augmentation は入出力とも <code style="color:#22d3bf">image</code>。augmentation/extra のノイズ・パターン・位置は <b>つまみ (a,b) からシードされた固定実現</b>で、同一入力なら 2 回呼んでも bit 完全一致します(再現可能ホールドアウト評価のための registry 契約。1 回の呼び出しは 1 つの固定実現なので、ノイズ集合を見たければつまみを掃引します)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
 <p>色 sort への持ち上げ → 色空間で加工 → gray へ戻す、という色の道筋:</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid diagram (source):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
   I[&quot;image (H×W)&quot;] --&gt;|cfa_to_rgb| C1[&quot;color (H×W×3)&quot;]
   C1 --&gt;|trans_from_rgb| C2[&quot;color (HSV/Lab/YUV/XYZ)&quot;]
   C2 --&gt;|trans_to_rgb| C3[&quot;color (RGB)&quot;]
@@ -14,7 +14,7 @@
   C3 --&gt;|rgb1_to_gray| G[&quot;image (輝度)&quot;]
   C4 --&gt;|access_channel| G2[&quot;image (1ch)&quot;]</pre>
 <p>理想画像を実カメラ風に劣化させ(sim-to-real)、拡張スムージングで整え、閾値で前景を切り、距離場にする道筋:</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid diagram (source):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
   S[&quot;image (理想 / 合成)&quot;] --&gt;|aug_motion_blur| A1[&quot;image&quot;]
   A1 --&gt;|aug_shot_noise| A2[&quot;image&quot;]
   A2 --&gt;|aug_vignette| A3[&quot;image (実カメラ風)&quot;]

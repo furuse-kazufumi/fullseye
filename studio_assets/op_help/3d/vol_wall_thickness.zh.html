@@ -2,26 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_wall_thickness — 3D <code style="color:#22d3bf">probe</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code>(要直接调用实现,<code style="color:#22d3bf">import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vol_wall_thickness&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">signal</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness.raw(...)</code>,或直接调用 <code style="color:#22d3bf">volprobe.vol_wall_thickness</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">signal</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness.raw(...)</code>,或直接调用 <code style="color:#22d3bf">volprobe.vol_wall_thickness</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>沿探针 `<code style="color:#22d3bf">p0 -&gt; p1</code>` 的壁厚 —— 工业 CT 的经典计量。</p>
+<p>沿探针 <code style="color:#22d3bf">p0 -&gt; p1</code> 的壁厚 —— 工业 CT 的经典计量。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>measurement itself.</p>
-<p>Runs :func:<code style="color:#22d3bf">vol_edge_probe</code> (all polarities) and pairs consecutive</p>
-<p>opposite-polarity edges *rising -&gt; falling* in probe order: each pair is</p>
-<p>one traversal of bright material (entry surface -&gt; exit surface), and its</p>
-<p>thickness is the difference of the two edges&#x27; `<code style="color:#22d3bf">t_mm</code>` (physical units —</p>
-<p>mm with a spacing, voxels without). A probe crossing both walls of a pipe</p>
-<p>therefore yields two thicknesses.</p>
-<p>Edges that do not complete a rising -&gt; falling pair (a probe starting or</p>
-<p>ending inside material, consecutive same-polarity edges) are <b>ignored</b>,</p>
-<p>not paired creatively — the count of returned thicknesses can be smaller</p>
-<p>than `<code style="color:#22d3bf">len(edges) // 2</code>`. Dark walls on a bright background need an</p>
-<p>inverted volume (the pairing convention is bright material).</p>
-<p>Returns a list of float thicknesses, in probe order (possibly empty).</p>
-<p>Raises `<code style="color:#22d3bf">ValueError</code>` on the same malformed inputs as</p>
-<p>:func:<code style="color:#22d3bf">vol_edge_probe</code>.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>Runs <code style="color:#22d3bf">vol_edge_probe</code> (all polarities) and pairs consecutive opposite-polarity edges *rising -&gt; falling* in probe order: each pair is one traversal of bright material (entry surface -&gt; exit surface), and its thickness is the difference of the two edges&#x27; <code style="color:#22d3bf">t_mm</code> (physical units — mm with a spacing, voxels without). A probe crossing both walls of a pipe therefore yields two thicknesses.</p>
+<p>Edges that do not complete a rising -&gt; falling pair (a probe starting or ending inside material, consecutive same-polarity edges) are <b>ignored</b>, not paired creatively — the count of returned thicknesses can be smaller than <code style="color:#22d3bf">len(edges) // 2</code>. Dark walls on a bright background need an inverted volume (the pairing convention is bright material).</p>
+<p>Returns a list of float thicknesses, in probe order (possibly empty). Raises <code style="color:#22d3bf">ValueError</code> on the same malformed inputs as <code style="color:#22d3bf">vol_edge_probe</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

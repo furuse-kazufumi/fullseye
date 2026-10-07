@@ -8,13 +8,13 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/thinning.chain.jpg">thinning: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/thinning.chain.jpg">thinning: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/thinning.inputs.jpg">thinning: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/thinning.inputs.jpg">thinning: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Verdünnt eine Region mit `<code style="color:#22d3bf">skimage.morphology.thin</code><code style="color:#22d3bf"> (einem Ausdünnungsalgorithmus der Zhang-Suen-Familie) auf 1 Pixel Breite. Der Zweck ähnelt </code><code style="color:#22d3bf">skeleton</code><code style="color:#22d3bf">, aber der interne Algorithmus unterscheidet sich, sodass sich die Ergebnisse in der Nähe von Verzweigungspunkten und ähnlichen Stellen leicht unterscheiden können. Ein Ersatz für HALCONs </code><code style="color:#22d3bf">thinning</code>` (Remove the result of a hit-or-miss operation from a region.).</p>
+<p>Verdünnt eine Region mit <code style="color:#22d3bf">skimage.morphology.thin</code> (einem Ausdünnungsalgorithmus der Zhang-Suen-Familie) auf 1 Pixel Breite. Der Zweck ähnelt <code style="color:#22d3bf">skeleton</code>, aber der interne Algorithmus unterscheidet sich, sodass sich die Ergebnisse in der Nähe von Verzweigungspunkten und ähnlichen Stellen leicht unterscheiden können. Ein Ersatz für HALCONs <code style="color:#22d3bf">thinning</code> (Remove the result of a hit-or-miss operation from a region.).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
@@ -25,7 +25,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-thinning 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Athinning%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Athinning%200.50%200.50">Load &amp; run</a></p>
+thinning 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Athinning%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Athinning%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_crack_width">poc_crack_width</a> — <code style="color:#22d3bf">py -3.11 examples/poc_crack_width.py</code></p>

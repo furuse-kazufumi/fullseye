@@ -5,22 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert ein Bild (image2d): Text entlang eines Linienzugs (jede Glyphe zum Tangentenwinkel gedreht).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>文字の板は敷かない(経路の上に載せる用途なので)。配置と、</p>
-<p>`<code style="color:#22d3bf">anchor</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">offset</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">upright</code><code style="color:#22d3bf">(縦書き)/ </code><code style="color:#22d3bf">\n</code>` による改行の意味は</p>
-<p>:func:<code style="color:#22d3bf">annotate_text_path_layout</code> に書いてある。</p>
-<p>`<code style="color:#22d3bf">layout</code>` を渡した場合、そちらが<b>そのまま使われる</b> ——</p>
-<p>`<code style="color:#22d3bf">anchor</code>` などは無視されるので、両方を渡さないこと。</p>
-<p>`<code style="color:#22d3bf">bold</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">italic</code><code style="color:#22d3bf"> は**合成**(:func:</code>_bold_px<code style="color:#22d3bf"> / :func:</code>_italic_tile`)。</p>
-<p>1 字ずつ焼いてから回すので、傾きは<b>字の縦軸に対して</b>掛かる(経路が</p>
-<p>斜めでも斜体が経路の向きに歪まない)。</p>
-<p>Raises</p>
-<p>------</p>
+<p>文字の板は敷かない(経路の上に載せる用途なので)。配置と、<code style="color:#22d3bf">anchor</code> / <code style="color:#22d3bf">offset</code> / <code style="color:#22d3bf">upright</code>(縦書き)/ <code style="color:#22d3bf">\n</code> による改行の意味は <code style="color:#22d3bf">annotate_text_path_layout</code> に書いてある。</p>
+<p><code style="color:#22d3bf">layout</code> を渡した場合、そちらが<b>そのまま使われる</b> —— <code style="color:#22d3bf">anchor</code> などは無視されるので、両方を渡さないこと。</p>
+<p><code style="color:#22d3bf">bold</code> / <code style="color:#22d3bf">italic</code> は<b>合成</b>(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。1 字ずつ焼いてから回すので、傾きは<b>字の縦軸に対して</b>掛かる(経路が斜めでも斜体が経路の向きに歪まない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>:func:<code style="color:#22d3bf">annotate_text_path_layout</code> と同じ + 回転した字が画像の外に出る。</p>
+<p><code style="color:#22d3bf">annotate_text_path_layout</code> と同じ + 回転した字が画像の外に出る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Konventionen für Trainingsdatensätze — COCO / YOLO / VOC und Fallstricke in der Sichtprüfung</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

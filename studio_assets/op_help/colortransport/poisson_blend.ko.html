@@ -2,35 +2,29 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">poisson_blend — COLORTRANSPORT <code style="color:#22d3bf">blend</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_blend(src, dst, mask, offset=(0, 0))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.poisson_blend(src, dst, mask, offset=(0, 0))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;poisson_blend&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.poisson_blend(...)</code> 는 **선언된 out 형 <code style="color:#22d3bf">image2d</code> 의 값만** 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.poisson_blend.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">colortransport.poisson_blend</code> 를 직접 호출하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.poisson_blend(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">image2d</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.poisson_blend.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">colortransport.poisson_blend</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>기울기장을 옮기는 이음매 없는 합성(Pérez, Gangnet &amp; Blake, SIGGRAPH 2003).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> の内部で **</code><code style="color:#22d3bf">src</code><code style="color:#22d3bf"> の勾配**を保ちつつ、**境界で </code><code style="color:#22d3bf">dst</code>` の値**に</p>
-<p>一致する像を解く。よって出力は次の 2 つを<b>構成上</b>満たし、</p>
+<p><code style="color:#22d3bf">mask</code> の内部で <b><code style="color:#22d3bf">src</code> の勾配</b>を保ちつつ、<b>境界で <code style="color:#22d3bf">dst</code> の値</b>に一致する像を解く。よって出力は次の 2 つを<b>構成上</b>満たし、</p>
 <p>それが正しさの検算になる:</p>
-<p style="margin:2px 0 2px 12px">• 内部のラプラシアンが `<code style="color:#22d3bf">src</code>` のラプラシアンと一致(解の残差ぶんまで)</p>
-<p style="margin:2px 0 2px 12px">• マスクの外は `<code style="color:#22d3bf">dst</code>` と<b>厳密に一致</b>(1 画素も触らない)</p>
-<p><b>貼った物の色は変わる。</b> それが目的の処理だが、「貼った物体の色を測る」</p>
-<p>用途にそのまま流すと<b>測っているのは貼り先の色</b>になる。返り値は</p>
-<p>`<code style="color:#22d3bf">(blended, info)</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code>` と</p>
-<p>`<code style="color:#22d3bf">info[&quot;max_shift&quot;]</code>` が実際にどれだけ動いたかを言う。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p style="margin:2px 0 2px 12px">• 内部のラプラシアンが <code style="color:#22d3bf">src</code> のラプラシアンと一致(解の残差ぶんまで)</p>
+<p style="margin:2px 0 2px 12px">• マスクの外は <code style="color:#22d3bf">dst</code> と<b>厳密に一致</b>(1 画素も触らない)</p>
+<p><b>貼った物の色は変わる。</b> それが目的の処理だが、「貼った物体の色を測る」用途にそのまま流すと<b>測っているのは貼り先の色</b>になる。返り値は <code style="color:#22d3bf">(blended, info)</code> で、<code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code> と <code style="color:#22d3bf">info[&quot;max_shift&quot;]</code> が実際にどれだけ動いたかを言う。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>src : array_like</p>
-<p>貼る絵。`<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> または </code><code style="color:#22d3bf">(H, W, C)</code>`。</p>
+<p>貼る絵。<code style="color:#22d3bf">(H, W)</code> または <code style="color:#22d3bf">(H, W, C)</code>。</p>
 <p>dst : array_like</p>
-<p>貼り先。`<code style="color:#22d3bf">src</code>` 以上の大きさ。</p>
+<p>貼り先。<code style="color:#22d3bf">src</code> 以上の大きさ。</p>
 <p>mask : array_like</p>
-<p>`<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">(H, W)</code>` の真偽値。<b>縁に接していてはいけない</b></p>
+<p><code style="color:#22d3bf">src</code> と同じ <code style="color:#22d3bf">(H, W)</code> の真偽値。<b>縁に接していてはいけない</b></p>
 <p>(境界条件が取れないため明示的に拒否する)。</p>
 <p>offset : (int, int)</p>
-<p>`<code style="color:#22d3bf">dst</code><code style="color:#22d3bf"> の中で </code><code style="color:#22d3bf">src</code><code style="color:#22d3bf"> の左上を置く </code><code style="color:#22d3bf">(row, col)</code>`。</p>
-<p>Returns</p>
-<p>-------</p>
+<p><code style="color:#22d3bf">dst</code> の中で <code style="color:#22d3bf">src</code> の左上を置く <code style="color:#22d3bf">(row, col)</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(ndarray, dict)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 측색과 분광 지식 — 색은 ‘분광 × 광원 × 관찰자’로만 정해진다</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

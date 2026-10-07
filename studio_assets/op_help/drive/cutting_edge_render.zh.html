@@ -5,13 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>刃先方向の像(RGB)。暗い背景・食材(右側が本体)・刃(片刃、平らな面が切片側)。</p>
-<p>`<code style="color:#22d3bf">end_face</code><code style="color:#22d3bf"> は食材の端面 y(z)(mm): 数なら平らな面、</code><code style="color:#22d3bf">{&quot;z_mm&quot;, &quot;y_mm&quot;}</code>` か (N, 2) の配列なら標本を線形補間(前の切断面の</p>
-<p>粗さを持たせる)。`<code style="color:#22d3bf">cut_y_top</code><code style="color:#22d3bf"> は切断面(= 刃の平らな面)が食材の上面と交わる y、</code><code style="color:#22d3bf">lean_deg</code>` は刃の傾き(鉛直から、+ で下ほど</p>
-<p>本体側 = 下ほど切片が厚い)、`<code style="color:#22d3bf">edge_z</code>` は刃先の高さ。端面は行ごとに縦 8 副行で被覆率を積分する。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">end_face</code> は食材の端面 y(z)(mm): 数なら平らな面、<code style="color:#22d3bf">{&quot;z_mm&quot;, &quot;y_mm&quot;}</code> か (N, 2) の配列なら標本を線形補間(前の切断面の粗さを持たせる)。<code style="color:#22d3bf">cut_y_top</code> は切断面(= 刃の平らな面)が食材の上面と交わる y、<code style="color:#22d3bf">lean_deg</code> は刃の傾き(鉛直から、+ で下ほど本体側 = 下ほど切片が厚い)、<code style="color:#22d3bf">edge_z</code> は刃先の高さ。端面は行ごとに縦 8 副行で被覆率を積分する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_food_cutting_measure">poc_food_cutting_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_food_cutting_measure.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgb</code> 作为输入)</h3>

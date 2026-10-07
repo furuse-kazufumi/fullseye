@@ -5,19 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 장의 하프톤 스크린이 만드는 맥놀이 —— 주기와 방향을 닫힌 형식으로。</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Each screen is a frequency <b>vector</b> `<code style="color:#22d3bf">f (cos t, sin t)</code>`; where two screens</p>
-<p>overlap the visible moiré is the difference vector, so its period is</p>
-<p>`<code style="color:#22d3bf">1 / |f_a - f_b|</code>` and its direction is that of the difference. For equal</p>
-<p>rulings the magnitude reduces to `<code style="color:#22d3bf">2 f sin(dt / 2)</code>`, which is why the beat</p>
-<p>period grows without bound as the angle difference goes to zero — two plates</p>
-<p>at nearly the same angle give a huge, very visible moiré.</p>
-<p>★<b>Why this earns its place</b>: the prediction is available <b>before</b> any</p>
-<p>screen is drawn, and :func:<code style="color:#22d3bf">halftone_screen</code> plus an FFT can measure the beat</p>
-<p>out of the picture. Two independent routes to one number.</p>
-<p>Returns a `<code style="color:#22d3bf">table</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">period_px</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">angle_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">freq_cycles_per_px</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive ruling or pitch; two screens that are</p>
-<p>identical in both ruling and angle (the difference vanishes — there is no</p>
-<p>beat, and returning `<code style="color:#22d3bf">inf</code>` silently would be worse than saying so).</p>
+<p>Each screen is a frequency <b>vector</b> <code style="color:#22d3bf">f (cos t, sin t)</code>; where two screens overlap the visible moiré is the difference vector, so its period is <code style="color:#22d3bf">1 / |f_a - f_b|</code> and its direction is that of the difference. For equal rulings the magnitude reduces to <code style="color:#22d3bf">2 f sin(dt / 2)</code>, which is why the beat period grows without bound as the angle difference goes to zero — two plates at nearly the same angle give a huge, very visible moiré.</p>
+<p>★<b>Why this earns its place</b>: the prediction is available <b>before</b> any screen is drawn, and <code style="color:#22d3bf">halftone_screen</code> plus an FFT can measure the beat out of the picture. Two independent routes to one number.</p>
+<p>Returns a <code style="color:#22d3bf">table</code>: <code style="color:#22d3bf">period_px</code>, <code style="color:#22d3bf">angle_deg</code>, <code style="color:#22d3bf">freq_cycles_per_px</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-positive ruling or pitch; two screens that are identical in both ruling and angle (the difference vanishes — there is no beat, and returning <code style="color:#22d3bf">inf</code> silently would be worse than saying so).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

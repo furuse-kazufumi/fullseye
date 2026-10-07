@@ -9,17 +9,11 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fft_image_inv.inputs.jpg">fft_image_inv: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fft_image_inv.inputs.jpg">fft_image_inv: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*カラー (H,W,3) の入力は載せていない: この op は色チャネルを 3 本目の空間軸として扱う(色を跨ぐ)ため。チャネルごとに分けて呼ぶこと。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>入力画像をそのまま周波数領域の配列とみなして逆 FFT を掛け、実部を</p>
-<p>`<code style="color:#22d3bf">signed01</code>` で [0,1] に写す(0.5 がゼロ)。本来 HALCON の</p>
-<p>`<code style="color:#22d3bf">fft_image_inv</code>`（Compute the inverse fast Fourier transform of an</p>
-<p>image.）は `<code style="color:#22d3bf">fft_image</code>` が作った複素スペクトル(実部・虚部の組)を戻す</p>
-<p>演算だが、この代役はグレー画像 1 枚しか扱えないパイプライン契約のため、</p>
-<p>画素値をそのまま(虚部 0 の)複素配列として逆変換する近似になっている</p>
-<p>(`<code style="color:#22d3bf">fft_image</code>` の出力をそのまま渡しても意味的な往復にはならない点に注意)。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>入力画像をそのまま周波数領域の配列とみなして逆 FFT を掛け、実部を <code style="color:#22d3bf">signed01</code> で [0,1] に写す(0.5 がゼロ)。本来 HALCON の <code style="color:#22d3bf">fft_image_inv</code>（Compute the inverse fast Fourier transform of an image.）は <code style="color:#22d3bf">fft_image</code> が作った複素スペクトル(実部・虚部の組)を戻す演算だが、この代役はグレー画像 1 枚しか扱えないパイプライン契約のため、画素値をそのまま(虚部 0 の)複素配列として逆変換する近似になっている(<code style="color:#22d3bf">fft_image</code> の出力をそのまま渡しても意味的な往復にはならない点に注意)。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
@@ -29,7 +23,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">fft_image_inv 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:fft_image_inv%200.40%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:fft_image_inv%200.40%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">fft_image_inv 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:fft_image_inv%200.40%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:fft_image_inv%200.40%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

@@ -3,15 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_image2d(pairs, shape=(64, 64))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_image2d(pairs, shape=(64, 64))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>쌍 `<code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> → 산점 밀도 이미지 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">pairs</code>` 의 세 번째 출구.</p>
+<p>쌍 <code style="color:#22d3bf">(N,2)</code> → 산점 밀도 이미지 <code style="color:#22d3bf">(H, W)</code>. <code style="color:#22d3bf">pairs</code> 의 세 번째 출구.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>列 0 を行方向、列 1 を列方向に、それぞれの最小-最大で正規化して bin へ落とす</p>
-<p>(2-D ヒストグラム)。位相図・相関図として見るためのもので、<b>不可逆</b></p>
-<p>(bin 幅ぶんの量子化 + 正規化で絶対値のスケールを捨てる)。</p>
-<p>捨てたスケールは戻せるように `<code style="color:#22d3bf">extent</code><code style="color:#22d3bf"> を…返さない —— 返すと </code><code style="color:#22d3bf">image2d</code>`</p>
-<p>でなくなる。必要なら :func:<code style="color:#22d3bf">pairs_to_table</code> の `<code style="color:#22d3bf">x_min</code>` などを使う。</p>
-<p>定数列(最小 == 最大)は 0.5 の位置へ集める(0 除算を避けるが、</p>
-<p>それを「密度が中央に集中している」と読まれないよう、bin は 1 本だけ立つ)。</p>
+<p>列 0 を行方向、列 1 を列方向に、それぞれの最小-最大で正規化して bin へ落とす(2-D ヒストグラム)。位相図・相関図として見るためのもので、<b>不可逆</b> (bin 幅ぶんの量子化 + 正規化で絶対値のスケールを捨てる)。捨てたスケールは戻せるように <code style="color:#22d3bf">extent</code> を…返さない —— 返すと <code style="color:#22d3bf">image2d</code></p>
+<p>でなくなる。必要なら <code style="color:#22d3bf">pairs_to_table</code> の <code style="color:#22d3bf">x_min</code> などを使う。</p>
+<p>定数列(最小 == 最大)は 0.5 の位置へ集める(0 除算を避けるが、それを「密度が中央に集中している」と読まれないよう、bin は 1 本だけ立つ)。</p>
 <p>Args:</p>
 <p>pairs: (N, 2)。</p>
 <p>shape: (H, W)。</p>

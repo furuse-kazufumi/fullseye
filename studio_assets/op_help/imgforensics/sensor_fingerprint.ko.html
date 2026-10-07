@@ -5,18 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>여러 장으로부터 <b>PRNU 센서 지문</b> K 를 최대우도 추정합니다(Chen et al. 2008).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">K = Σ_i W_i I_i / Σ_i I_i²</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">W_i = I_i - denoise(I_i)</code>`)。撮像モデル</p>
-<p>`<code style="color:#22d3bf">I = I⁰ + I⁰·K + Θ</code>` の下で、これが K の最尤推定量になる —— 明るい画素ほど</p>
-<p>PRNU が強く出る(乗法的な欠陥だから)ので、<b>明るさで重み付けした平均</b>である。</p>
-<p>返りは `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> の float64 で、</code><code style="color:#22d3bf">zero_mean=True</code>`(既定)なら行・列平均を</p>
-<p>抜いたうえで <b>標準偏差 1 に正規化</b>してある。正規化は :func:<code style="color:#22d3bf">fingerprint_correlate</code></p>
-<p>の PCE をスケール不変にするためで、指紋の絶対的な強さは</p>
-<p>:func:<code style="color:#22d3bf">fingerprint_strength_map</code> が別に返す。</p>
-<p>`<code style="color:#22d3bf">images</code>` は同じ shape の 2 枚以上。<b>リサイズして揃えてはいけない</b> ——</p>
-<p>PRNU は画素の物理位置そのものなので、内挿した瞬間に指紋は消える(shape 不一致は</p>
-<p>:class:<code style="color:#22d3bf">ValueError</code>)。</p>
-<p>枚数と分離度の実測(`<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_separates_two_sensors</code>`、</p>
-<p>128x128・PRNU 強度 3%・読み出し雑音 σ=0.01、既定 `<code style="color:#22d3bf">denoiser=&quot;wiener&quot;</code>`):</p>
+<p><code style="color:#22d3bf">K = Σ_i W_i I_i / Σ_i I_i²</code>(<code style="color:#22d3bf">W_i = I_i - denoise(I_i)</code>)。撮像モデル <code style="color:#22d3bf">I = I⁰ + I⁰·K + Θ</code> の下で、これが K の最尤推定量になる —— 明るい画素ほど PRNU が強く出る(乗法的な欠陥だから)ので、<b>明るさで重み付けした平均</b>である。</p>
+<p>返りは <code style="color:#22d3bf">(H, W)</code> の float64 で、<code style="color:#22d3bf">zero_mean=True</code>(既定)なら行・列平均を抜いたうえで <b>標準偏差 1 に正規化</b>してある。正規化は <code style="color:#22d3bf">fingerprint_correlate</code> の PCE をスケール不変にするためで、指紋の絶対的な強さは <code style="color:#22d3bf">fingerprint_strength_map</code> が別に返す。</p>
+<p><code style="color:#22d3bf">images</code> は同じ shape の 2 枚以上。<b>リサイズして揃えてはいけない</b> —— PRNU は画素の物理位置そのものなので、内挿した瞬間に指紋は消える(shape 不一致は <code style="color:#22d3bf">ValueError</code>)。</p>
+<p>枚数と分離度の実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_separates_two_sensors</code>、128x128・PRNU 強度 3%・読み出し雑音 σ=0.01、既定 <code style="color:#22d3bf">denoiser=&quot;wiener&quot;</code>):</p>
 <p>====== ======================== ================= =================</p>
 <p>枚数   真の K との相関          同一センサの PCE  別センサの PCE</p>
 <p>====== ======================== ================= =================</p>
@@ -25,17 +17,9 @@
 <p>8      +0.859                   7246             13.1</p>
 <p>16     +0.892                   7755             -12.3</p>
 <p>====== ======================== ================= =================</p>
-<p><b>「真の K との相関」を測ることが重要</b>である。PCE だけを見ていると、</p>
-<p>指紋がセンサのパターンをまったく捉えていなくても「分離しているように見える」</p>
-<p>—— 実際この実装は一度その状態にあった(:func:<code style="color:#22d3bf">_wiener_denoise</code> の docstring)。</p>
-<p>PCE は「同一センサで一貫して現れる何か」を測るので、それが PRNU である保証は</p>
-<p>PCE 自体には無い。</p>
-<p>`<code style="color:#22d3bf">denoiser=&quot;wavelet&quot;</code>`(PyWavelets 必須)は同じ条件で相関 +0.745 〜 +0.901、</p>
-<p>同一センサ PCE 6068 〜 8852 と一貫して強い。既定を `<code style="color:#22d3bf">&quot;wiener&quot;</code>` にしてあるのは</p>
-<p><b>optional 依存を必須にしないため</b>であって、精度で選んだのではない。</p>
-<p><b>これは合成雑音での値</b>であり、実カメラでは被写体の内容が残差に漏れるので</p>
-<p>桁で小さくなる。この表は「実装が正しく動いている」ことの固定であって、</p>
-<p>実運用のしきい値ではない。</p>
+<p><b>「真の K との相関」を測ることが重要</b>である。PCE だけを見ていると、指紋がセンサのパターンをまったく捉えていなくても「分離しているように見える」—— 実際この実装は一度その状態にあった(<code style="color:#22d3bf">_wiener_denoise</code> の docstring)。PCE は「同一センサで一貫して現れる何か」を測るので、それが PRNU である保証は PCE 自体には無い。</p>
+<p><code style="color:#22d3bf">denoiser=&quot;wavelet&quot;</code>(PyWavelets 必須)は同じ条件で相関 +0.745 〜 +0.901、同一センサ PCE 6068 〜 8852 と一貫して強い。既定を <code style="color:#22d3bf">&quot;wiener&quot;</code> にしてあるのは <b>optional 依存を必須にしないため</b>であって、精度で選んだのではない。</p>
+<p><b>これは合成雑音での値</b>であり、実カメラでは被写体の内容が残差に漏れるので桁で小さくなる。この表は「実装が正しく動いている」ことの固定であって、実運用のしきい値ではない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

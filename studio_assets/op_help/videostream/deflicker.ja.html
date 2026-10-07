@@ -3,10 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deflicker(video, alpha: &#x27;float&#x27; = 0.1, max_gain: &#x27;float&#x27; = 4.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import videostream; videostream.deflicker(video, alpha: &#x27;float&#x27; = 0.1, max_gain: &#x27;float&#x27; = 4.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsvideostream.get(&quot;deflicker&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>フレームごとの輝度フリッカ除去 → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">video</code>`)。</p>
+<p>フレームごとの輝度フリッカ除去 → <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Rescales each frame so its mean tracks a slow running reference, cancelling</p>
-<p>one-frame brightness pumping while following genuine lighting changes.</p>
+<p>Rescales each frame so its mean tracks a slow running reference, cancelling one-frame brightness pumping while following genuine lighting changes.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

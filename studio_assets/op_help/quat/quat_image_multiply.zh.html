@@ -5,27 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>四元数图像与一个四元数或一个场的 Hamilton 积。→ (H, W, 4)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">side=&quot;left&quot;</code><code style="color:#22d3bf"> computes </code><code style="color:#22d3bf">other * qimage</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">side=&quot;right&quot;</code>` computes</p>
-<p>`<code style="color:#22d3bf">qimage * other</code><code style="color:#22d3bf">. **There is no default** — see :func:</code>_require_side`. The</p>
-<p>two results are genuinely different objects, not a sign convention: measured</p>
-<p>on a standard-normal `<code style="color:#22d3bf">(32, 32, 4)</code>` field against a unit rotor,</p>
-<p>`<code style="color:#22d3bf">max|left - right| = 3.143</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">mean|left - right| = 0.4948</code>` on data</p>
-<p>whose own extreme is 3.372 — that is, the two answers differ by as much as</p>
-<p>the data itself. Neither raises, neither is NaN, and both look like a</p>
-<p>perfectly good quaternion image.</p>
-<p>*other* is either a single quaternion (a `<code style="color:#22d3bf">(4,)</code>` array-like) or a full</p>
-<p>`<code style="color:#22d3bf">(H, W, 4)</code>` field of the same shape; anything else is refused rather than</p>
-<p>broadcast, because NumPy would happily broadcast a `<code style="color:#22d3bf">(H, 4)</code>` array along the</p>
-<p>wrong axis and produce an image-shaped answer to a different question.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: either input is not a valid quaternion field;</p>
-<p>*other* is neither `<code style="color:#22d3bf">(4,)</code><code style="color:#22d3bf"> nor exactly </code><code style="color:#22d3bf">qimage</code>`&#x27;s shape; *side* is not</p>
-<p>`<code style="color:#22d3bf">&#x27;left&#x27;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&#x27;right&#x27;</code>`.</p>
+<p><code style="color:#22d3bf">side=&quot;left&quot;</code> computes <code style="color:#22d3bf">other * qimage</code>; <code style="color:#22d3bf">side=&quot;right&quot;</code> computes <code style="color:#22d3bf">qimage * other</code>. <b>There is no default</b> — see <code style="color:#22d3bf">_require_side</code>. The two results are genuinely different objects, not a sign convention: measured on a standard-normal <code style="color:#22d3bf">(32, 32, 4)</code> field against a unit rotor, <code style="color:#22d3bf">max|left - right| = 3.143</code> and <code style="color:#22d3bf">mean|left - right| = 0.4948</code> on data whose own extreme is 3.372 — that is, the two answers differ by as much as the data itself. Neither raises, neither is NaN, and both look like a perfectly good quaternion image.</p>
+<p>*other* is either a single quaternion (a <code style="color:#22d3bf">(4,)</code> array-like) or a full <code style="color:#22d3bf">(H, W, 4)</code> field of the same shape; anything else is refused rather than broadcast, because NumPy would happily broadcast a <code style="color:#22d3bf">(H, 4)</code> array along the wrong axis and produce an image-shaped answer to a different question.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: either input is not a valid quaternion field; *other* is neither <code style="color:#22d3bf">(4,)</code> nor exactly <code style="color:#22d3bf">qimage</code>&#x27;s shape; *side* is not <code style="color:#22d3bf">&#x27;left&#x27;</code> / <code style="color:#22d3bf">&#x27;right&#x27;</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">qimage</code> 作为输入)</h3>

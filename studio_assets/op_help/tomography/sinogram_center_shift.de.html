@@ -5,27 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zentriert ein Sinogramm neu auf seine Rotationsachse.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Shifts every projection by `<code style="color:#22d3bf">-shift_px</code>` along the detector axis with linear</p>
-<p>interpolation. With `<code style="color:#22d3bf">shift_px=None</code>` the shift is measured first by</p>
-<p>:func:<code style="color:#22d3bf">sinogram_center_of_rotation</code>, which makes this the one-call fix.</p>
+<p>Shifts every projection by <code style="color:#22d3bf">-shift_px</code> along the detector axis with linear interpolation. With <code style="color:#22d3bf">shift_px=None</code> the shift is measured first by <code style="color:#22d3bf">sinogram_center_of_rotation</code>, which makes this the one-call fix.</p>
 <p>Round-trip on the Shepp-Logan phantom, shifting by *d* and back:</p>
 <p>d        max |error|    relative to the peak line integral</p>
 <p>1.00 px   0.0e+00        0.0e+00     (an integer shift is exact)</p>
 <p>0.50 px   1.4e-01        1.2e-01</p>
 <p>0.25 px   1.1e-01        9.2e-02</p>
-<p>A *fractional* shift is <b>not</b> a small operation and this is the operator&#x27;s</p>
-<p>honest limitation: 12 % of the peak, on a phantom with sharp edges, from one</p>
-<p>round trip. Interpolation is a low-pass filter and the sinogram of an edge is</p>
-<p>not band-limited, so there is nothing to recover on the way back. Using a</p>
-<p>Fourier shift instead would trade this visible blur for invisible ringing at</p>
-<p>the detector edges, which is worse in the way that matters here. The</p>
-<p>consequence is in :func:<code style="color:#22d3bf">sinogram_center_of_rotation</code>&#x27;s table: an integer</p>
-<p>centre error is fully repairable, a half-pixel one is not.</p>
-<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>`.</p>
-<p>:param shift_px: axis offset in detector bins; `<code style="color:#22d3bf">None</code>` -&gt; measure it.</p>
-<p>:param angles_deg: view angles, used only when *shift_px* is `<code style="color:#22d3bf">None</code>`.</p>
-<p>:returns: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` float64 sinogram.</p>
-<p>:raises ValueError: if `<code style="color:#22d3bf">|shift_px|</code>` is at or past half the detector width —</p>
+<p>A *fractional* shift is <b>not</b> a small operation and this is the operator&#x27;s honest limitation: 12 % of the peak, on a phantom with sharp edges, from one round trip. Interpolation is a low-pass filter and the sinogram of an edge is not band-limited, so there is nothing to recover on the way back. Using a Fourier shift instead would trade this visible blur for invisible ringing at the detector edges, which is worse in the way that matters here. The consequence is in <code style="color:#22d3bf">sinogram_center_of_rotation</code>&#x27;s table: an integer centre error is fully repairable, a half-pixel one is not.</p>
+<p>:param sinogram: <code style="color:#22d3bf">(n_angles, n_detectors)</code>. :param shift_px: axis offset in detector bins; <code style="color:#22d3bf">None</code> -&gt; measure it. :param angles_deg: view angles, used only when *shift_px* is <code style="color:#22d3bf">None</code>. :returns: <code style="color:#22d3bf">(n_angles, n_detectors)</code> float64 sinogram. :raises ValueError: if <code style="color:#22d3bf">|shift_px|</code> is at or past half the detector width —</p>
 <p>past that the object has been shifted out of the field of view and what</p>
 <p>comes back is edge padding, which reconstructs as a plausible, empty slice.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

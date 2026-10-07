@@ -2,20 +2,14 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">harris3d_keypoints — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.harris3d_keypoints(vol, device=&#x27;cpu&#x27;, k=0.005, nms=3, topn=64, sigma_i=1.5, response=&#x27;mineig&#x27;, rel_thresh=0.01, border=2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import feat_harris; feat_harris.harris3d_keypoints(vol, device=&#x27;cpu&#x27;, k=0.005, nms=3, topn=64, sigma_i=1.5, response=&#x27;mineig&#x27;, rel_thresh=0.01, border=2)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;harris3d_keypoints&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints(...)</code> は**宣言 out 型 <code style="color:#22d3bf">keypoints</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints.raw(...)</code>、または <code style="color:#22d3bf">feat_harris.harris3d_keypoints</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">keypoints</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints.raw(...)</code>、または <code style="color:#22d3bf">feat_harris.harris3d_keypoints</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(keypoints, scores)</code></p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>3D Harris キーポイント検出(2D Harris コーナー検出の 3D 版)。</p>
-<p>voxel 密度場の 3D 勾配 g=(gz,gy,gx) から、各ボクセルで局所構造テンソル</p>
-<p>M=Σ_w w·g gᵀ(3x3 対称、gaussian 窓 sigma_i で積和)を組み、コーナー性を</p>
-<p>測る。応答が周囲で極大かつ閾値超のボクセルを keypoint とする(初期姿勢</p>
-<p>推定なしに検出できるため、大回転+部分重なりの対応付けや ICP の coarse</p>
-<p>init 供給に使える)。</p>
+<p>voxel 密度場の 3D 勾配 g=(gz,gy,gx) から、各ボクセルで局所構造テンソル M=Σ_w w·g gᵀ(3x3 対称、gaussian 窓 sigma_i で積和)を組み、コーナー性を測る。応答が周囲で極大かつ閾値超のボクセルを keypoint とする(初期姿勢推定なしに検出できるため、大回転+部分重なりの対応付けや ICP の coarse init 供給に使える)。</p>
 <p>コーナー性の指標:</p>
-<p style="margin:2px 0 2px 12px">• &quot;mineig&quot;(既定): 3x3 対称行列の最小固有値(Shi-Tomasi 流)。3 方向すべて</p>
-<p>に構造がある(=角)ほど最小固有値が大きい。閉形式(三角関数法)で算出。</p>
-<p>k 調整不要で頑健(実測 mean repeatability 85%、min 72.5%)。</p>
+<p style="margin:2px 0 2px 12px">• &quot;mineig&quot;(既定): 3x3 対称行列の最小固有値(Shi-Tomasi 流)。3 方向すべてに構造がある(=角)ほど最小固有値が大きい。閉形式(三角関数法)で算出。k 調整不要で頑健(実測 mean repeatability 85%、min 72.5%)。</p>
 <p style="margin:2px 0 2px 12px">• &quot;harris&quot;: R = det(M) - k·tr(M)³。3D では固有値 3 個なので tr の 3 乗で</p>
 <p>無次元化。★注意: 密度 voxel の角では det/tr³ 比が経験的に ~0.01 しか</p>
 <p>ないため、2D 標準の k=0.04〜0.06 では全応答が負になり検出 0 になる。</p>

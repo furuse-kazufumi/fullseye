@@ -5,15 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>SNIC (Algorithm 1 of Achanta–Süsstrunk 2017): non-iterative superpixels grown from grid seeds with a priority queue (snic_superpixels).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>距離 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K)、m = `<code style="color:#22d3bf">compactness</code>`、c は画素の値。SLIC の正規化の形、式 (1) の表記は要確認)。</p>
-<p>待ち行列から最小の d を取り出し、未ラベルならラベルを付け、重心(位置と値)をその場で更新し、未ラベルの近傍を今の重心との</p>
-<p>距離で積む。同点は (距離, 積んだ順) で決める(決定的)。</p>
-<p>返す: `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..K)、</code><code style="color:#22d3bf">n_segments</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">all_connected</code>`(全ラベルが 4-連結 = 構成上の保証を数えて確かめた印)、</p>
-<p>`<code style="color:#22d3bf">n_disconnected</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sizes</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">seeds</code><code style="color:#22d3bf">((K, 2) の [row, col])、</code><code style="color:#22d3bf">s</code>`。</p>
+<p>距離 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K)、m = <code style="color:#22d3bf">compactness</code>、c は画素の値。SLIC の正規化の形、式 (1) の表記は要確認)。待ち行列から最小の d を取り出し、未ラベルならラベルを付け、重心(位置と値)をその場で更新し、未ラベルの近傍を今の重心との距離で積む。同点は (距離, 積んだ順) で決める(決定的)。</p>
+<p>返す: <code style="color:#22d3bf">labels</code>(1..K)、<code style="color:#22d3bf">n_segments</code>、<code style="color:#22d3bf">all_connected</code>(全ラベルが 4-連結 = 構成上の保証を数えて確かめた印)、<code style="color:#22d3bf">n_disconnected</code>、<code style="color:#22d3bf">sizes</code>、<code style="color:#22d3bf">seeds</code>((K, 2) の [row, col])、<code style="color:#22d3bf">s</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — Segmentation from graph, hierarchy and threshold theorems — what is exact, and where the partition breaks down</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

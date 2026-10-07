@@ -2,22 +2,21 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_align — PROFILE <code style="color:#22d3bf">compare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_align(measured, reference, mode=&#x27;chord&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import profileops; profileops.profile_align(measured, reference, mode=&#x27;chord&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsprofile.get(&quot;profile_align&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.profile_align(...)</code> 只回傳**宣告的 out 型別 <code style="color:#22d3bf">pairs</code> 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.profile_align.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">profileops.profile_align</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.profile_align(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">pairs</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.profile_align.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">profileops.profile_align</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(aligned, info) -&gt; pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>測った輪郭を設計輪郭へ合わせる。返りは `<code style="color:#22d3bf">(aligned, info)</code>`。</p>
-<p>`<code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> は :data:</code>ALIGN_MODES`。<b>相似(スケール推定)は提供しない</b> ——</p>
-<p>大きさの誤差そのものを吸収してしまうため(モジュール docstring の実測表)。</p>
+<p>測った輪郭を設計輪郭へ合わせる。返りは <code style="color:#22d3bf">(aligned, info)</code>。</p>
+<p><code style="color:#22d3bf">mode</code> は <code style="color:#22d3bf">ALIGN_MODES</code>。<b>相似(スケール推定)は提供しない</b> —— 大きさの誤差そのものを吸収してしまうため(モジュール docstring の実測表)。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(aligned (N, 2), info)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">info</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">angle_deg</code>` /</p>
-<p>`<code style="color:#22d3bf">translation</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">scale</code>`(常に 1.0。<b>推定していないことの明示</b>)。</p>
+<p><code style="color:#22d3bf">(aligned (N, 2), info)</code>。<code style="color:#22d3bf">info</code> は <code style="color:#22d3bf">mode</code> / <code style="color:#22d3bf">angle_deg</code> /</p>
+<p><code style="color:#22d3bf">translation</code> / <code style="color:#22d3bf">scale</code>(常に 1.0。<b>推定していないことの明示</b>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:profile_frame_tour">profile_frame_tour</a> — <code style="color:#22d3bf">py -3.11 examples/profile_frame_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">pairs</code> 作為輸入)</h3>

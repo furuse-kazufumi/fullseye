@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_mass(volume: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import granular; granular.heap_mass(volume: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;heap_mass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>`<code style="color:#22d3bf">m = ρ_b V</code><code style="color:#22d3bf"> [kg]。</code><code style="color:#22d3bf">bulk_density</code>` はかさ密度 [kg/m³] (粒子密度ではない —— ガラス球 2500 kg/m³ の</p>
-<p>山は充填率 ≈ 0.6 で ρ_b ≈ 1500 kg/m³)。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 体積が &lt; 0、密度が ≤ 0。</p>
+<p><code style="color:#22d3bf">m = ρ_b V</code> [kg]。<code style="color:#22d3bf">bulk_density</code> はかさ密度 [kg/m³] (粒子密度ではない —— ガラス球 2500 kg/m³ の山は充填率 ≈ 0.6 で ρ_b ≈ 1500 kg/m³)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 体積が &lt; 0、密度が ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

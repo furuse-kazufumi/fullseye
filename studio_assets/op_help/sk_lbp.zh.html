@@ -6,28 +6,28 @@
 <p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
 <p>*输出以类 viridis 伪彩色显示(深紫 = 小，黄 = 大)，便于读取距离、相位、方向、深度这类“量的场”。*</p>
 <p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_lbp.a.jpg">sk_lbp: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_lbp.a.jpg">sk_lbp: 旋钮 a 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_lbp.b.jpg">sk_lbp: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_lbp.b.jpg">sk_lbp: 旋钮 b 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_lbp.inputs.jpg">sk_lbp: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_lbp.inputs.jpg">sk_lbp: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>LBP(局部二值模式,Local Binary Pattern)。以每个像素为中心,与其圆周上的邻域像素逐一比较大小生成二进制编码,是一种对光照变化具有鲁棒性的纹理描述符。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">feature.local_binary_pattern(v, 8, 1+int(a*3))</code><code style="color:#22d3bf"> を正規化したもの —— 近傍点数 P=8 は固定、a は半径 R を 1〜4 に振る(半径が大きいほど粗いスケールのテクスチャを拾う)。★</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は符号化 </code><code style="color:#22d3bf">method</code><code style="color:#22d3bf"> を選ぶ ―― </code><code style="color:#22d3bf">b&lt;0.60</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">&#x27;default&#x27;</code><code style="color:#22d3bf">(既定。回転不変ではない)、</code><code style="color:#22d3bf">&lt;0.75</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">&#x27;ror&#x27;</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">&lt;0.90</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">&#x27;uniform&#x27;</code><code style="color:#22d3bf">、それ以上で </code><code style="color:#22d3bf">&#x27;nri_uniform&#x27;</code>`。</p>
-<p>実写のテクスチャで測ると、<b>回転不変な符号化にしても異方な素材は救えない</b> ―― brick / grass / gravel で、回転による自分自身からのずれを素材間の最小距離で割った比は `<code style="color:#22d3bf">&#x27;default&#x27;</code><code style="color:#22d3bf"> で 9.64 / 0.17 / 0.19、</code><code style="color:#22d3bf">&#x27;uniform&#x27;</code><code style="color:#22d3bf"> で **1.72** / 0.02 / 0.01。等方な 2 つは 10 倍良くなるのに、brick は 1 を割らない(回した自分より別の素材のほうが近い)。LBP の回転不変性は**局所パターンの巡回**に対するもので、**素材そのものの向きの分布**は消せないため。詳細 = </code><code style="color:#22d3bf">examples/poc_real_texture_invariance.py</code>`。</p>
+<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">feature.local_binary_pattern(v, 8, 1+int(a*3))</code> を正規化したもの —— 近傍点数 P=8 は固定、a は半径 R を 1〜4 に振る(半径が大きいほど粗いスケールのテクスチャを拾う)。★<code style="color:#22d3bf">b</code> は符号化 <code style="color:#22d3bf">method</code> を選ぶ ―― <code style="color:#22d3bf">b&lt;0.60</code> で <code style="color:#22d3bf">&#x27;default&#x27;</code>(既定。回転不変ではない)、<code style="color:#22d3bf">&lt;0.75</code> で <code style="color:#22d3bf">&#x27;ror&#x27;</code>、<code style="color:#22d3bf">&lt;0.90</code> で <code style="color:#22d3bf">&#x27;uniform&#x27;</code>、それ以上で <code style="color:#22d3bf">&#x27;nri_uniform&#x27;</code>。</p>
+<p>実写のテクスチャで測ると、<b>回転不変な符号化にしても異方な素材は救えない</b> ―― brick / grass / gravel で、回転による自分自身からのずれを素材間の最小距離で割った比は <code style="color:#22d3bf">&#x27;default&#x27;</code> で 9.64 / 0.17 / 0.19、<code style="color:#22d3bf">&#x27;uniform&#x27;</code> で <b>1.72</b> / 0.02 / 0.01。等方な 2 つは 10 倍良くなるのに、brick は 1 を割らない(回した自分より別の素材のほうが近い)。LBP の回転不変性は<b>局所パターンの巡回</b>に対するもので、<b>素材そのものの向きの分布</b>は消せないため。詳細 = <code style="color:#22d3bf">examples/poc_real_texture_invariance.py</code>。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，全部像素都成为前景（1）</b>。过曝、被遮挡或没有被摄物的帧会被报为「<b>缺陷 100%</b>」，因此应在上游判定是否均匀并加以剔除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
 <p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">sk_lbp 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:sk_lbp%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:sk_lbp%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">sk_lbp 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:sk_lbp%200.50%200.50">▸ 载入此流水线</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:sk_lbp%200.50%200.50">载入并运行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_texture_invariance">poc_real_texture_invariance</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_texture_invariance.py</code></p>

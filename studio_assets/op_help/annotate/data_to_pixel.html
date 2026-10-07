@@ -2,33 +2,20 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">data_to_pixel — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">axes × signal × signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.data_to_pixel(axes, x, y)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.data_to_pixel(axes, x, y)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;data_to_pixel&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.data_to_pixel(...)</code> は**宣言 out 型 <code style="color:#22d3bf">pairs</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.data_to_pixel.raw(...)</code>、または <code style="color:#22d3bf">annotate.data_to_pixel</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.data_to_pixel(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">pairs</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.data_to_pixel.raw(...)</code>、または <code style="color:#22d3bf">annotate.data_to_pixel</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>:func:<code style="color:#22d3bf">axes_transform</code> の対応でデータ点を画素 (x,y) に写す。</p>
-<p><b>クリップしない</b> ―― `<code style="color:#22d3bf">np.clip(v, lo, hi)</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">lo &gt; hi</code>`(反転軸)の</p>
-<p>とき黙って `<code style="color:#22d3bf">hi</code>` を返し、全点が端に貼り付いた「もっともらしい嘘の図」に</p>
-<p>なる(この repo の生成器で実際に一度騙されている)。範囲外を弾くのは</p>
-<p>:func:<code style="color:#22d3bf">plot_series</code> の `<code style="color:#22d3bf">clip=True</code>` の仕事で、そこでは<b>例外</b>にする。</p>
-<p>Returns</p>
-<p>-------</p>
+<p><code style="color:#22d3bf">axes_transform</code> の対応でデータ点を画素 (x,y) に写す。</p>
+<p><b>クリップしない</b> ―― <code style="color:#22d3bf">np.clip(v, lo, hi)</code> は <code style="color:#22d3bf">lo &gt; hi</code>(反転軸)のとき黙って <code style="color:#22d3bf">hi</code> を返し、全点が端に貼り付いた「もっともらしい嘘の図」になる(この repo の生成器で実際に一度騙されている)。範囲外を弾くのは <code style="color:#22d3bf">plot_series</code> の <code style="color:#22d3bf">clip=True</code> の仕事で、そこでは<b>例外</b>にする。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(ndarray, ndarray)</p>
-<p>`<code style="color:#22d3bf">px</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">py</code>`(float、丸めない ―― 丸めは描画側の仕事)。</p>
-<p>Raises</p>
-<p>------</p>
+<p><code style="color:#22d3bf">px</code>, <code style="color:#22d3bf">py</code>(float、丸めない ―― 丸めは描画側の仕事)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>log 軸に 0 以下の値を渡したとき(-inf を「端」として描く図は嘘になる)。</p>
-<p>`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">y</code>` の長さが違うとき(下記)。</p>
-<p>Notes</p>
-<p>-----</p>
-<p><b>長さの不一致を拒否するのは 2026-09-02 に足した</b>。連鎖ファザーがこの op を</p>
-<p>実行できるようになった直後、長さの違う 2 本の signal を渡す経路で採掘器が</p>
-<p>`<code style="color:#22d3bf">np.stack</code><code style="color:#22d3bf"> の生の ValueError で落ちて発覚した。それまでは </code><code style="color:#22d3bf">x</code>` 7 点・</p>
-<p>`<code style="color:#22d3bf">y</code>` 3 点でも<b>例外を出さず、長さの違う 2 本をそのまま返していた</b>。</p>
-<p>危ないのは落ちることではなく、落ちないこと ―― 返った 2 本を `<code style="color:#22d3bf">zip</code>` すると</p>
-<p><b>3 点だけが、x の先頭 3 つの位置に</b>描かれる。点が消えたことも、x が</p>
-<p>ずれたことも図からは分からない。兄弟の :func:<code style="color:#22d3bf">plot_series</code> は同じ状況を</p>
-<p>`<code style="color:#22d3bf">&quot;x and y must have the same length&quot;</code>` で拒否していたので、**同じ族の中で</p>
-<p>規律が割れていた**(片方だけ直しても再発する型なので、文言も揃えてある)。</p>
+<p><code style="color:#22d3bf">x</code> と <code style="color:#22d3bf">y</code> の長さが違うとき(下記)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p><b>長さの不一致を拒否するのは 2026-09-02 に足した</b>。連鎖ファザーがこの op を実行できるようになった直後、長さの違う 2 本の signal を渡す経路で採掘器が <code style="color:#22d3bf">np.stack</code> の生の ValueError で落ちて発覚した。それまでは <code style="color:#22d3bf">x</code> 7 点・ <code style="color:#22d3bf">y</code> 3 点でも<b>例外を出さず、長さの違う 2 本をそのまま返していた</b>。</p>
+<p>危ないのは落ちることではなく、落ちないこと ―― 返った 2 本を <code style="color:#22d3bf">zip</code> すると <b>3 点だけが、x の先頭 3 つの位置に</b>描かれる。点が消えたことも、x がずれたことも図からは分からない。兄弟の <code style="color:#22d3bf">plot_series</code> は同じ状況を <code style="color:#22d3bf">&quot;x and y must have the same length&quot;</code> で拒否していたので、<b>同じ族の中で規律が割れていた</b>(片方だけ直しても再発する型なので、文言も揃えてある)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

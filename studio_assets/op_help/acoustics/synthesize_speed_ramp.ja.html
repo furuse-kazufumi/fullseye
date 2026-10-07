@@ -5,26 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>回転上昇: 軸<b>次数</b>に固定した成分(必要なら 1 本だけ Hz 固定)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Order tracking has no meaning at constant speed, so its ground truth needs a</p>
-<p>signal whose shaft rate moves. Here the shaft rate ramps linearly from</p>
-<p>`<code style="color:#22d3bf">rpm_start</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">rpm_end</code>` and each component&#x27;s instantaneous phase is</p>
-<p>`<code style="color:#22d3bf">2 pi * order * revolutions(t)</code>` — so it is locked to the shaft *exactly*,</p>
-<p>by construction, and its order is known to machine precision.</p>
-<p>`<code style="color:#22d3bf">resonance_hz</code>` adds one component at a <b>fixed frequency</b> instead. That is</p>
-<p>the discriminating case: after angular resampling an order stays put and a</p>
-<p>resonance smears, which is the whole diagnostic value of the transform.</p>
+<p>Order tracking has no meaning at constant speed, so its ground truth needs a signal whose shaft rate moves. Here the shaft rate ramps linearly from <code style="color:#22d3bf">rpm_start</code> to <code style="color:#22d3bf">rpm_end</code> and each component&#x27;s instantaneous phase is <code style="color:#22d3bf">2 pi * order * revolutions(t)</code> — so it is locked to the shaft *exactly*, by construction, and its order is known to machine precision.</p>
+<p><code style="color:#22d3bf">resonance_hz</code> adds one component at a <b>fixed frequency</b> instead. That is the discriminating case: after angular resampling an order stays put and a resonance smears, which is the whole diagnostic value of the transform.</p>
 <p>Returns a dict, because a speed record without its speed profile is not</p>
-<p>analysable: `<code style="color:#22d3bf">signal</code><code style="color:#22d3bf"> (the waveform), </code><code style="color:#22d3bf">rpm</code>` (per-sample shaft rate),</p>
-<p>`<code style="color:#22d3bf">revolutions</code><code style="color:#22d3bf"> (cumulative, per-sample), </code><code style="color:#22d3bf">rate</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">duration</code>`,</p>
-<p>`<code style="color:#22d3bf">orders</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">total_revolutions</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">resonance_hz</code>`, and</p>
-<p>`<code style="color:#22d3bf">max_component_hz</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-real / string / bool scalars, non-positive</p>
-<p>`<code style="color:#22d3bf">rate</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">duration</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rpm_start</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rpm_end</code>`, an empty or non-finite</p>
-<p>`<code style="color:#22d3bf">orders</code><code style="color:#22d3bf">, an </code><code style="color:#22d3bf">amplitudes</code>` of the wrong length, a length over</p>
-<p>:data:<code style="color:#22d3bf">MAX_SAMPLES</code>, and **any component reaching Nyquist at the fastest</p>
-<p>point of the ramp** — checked at `<code style="color:#22d3bf">max(rpm)</code>`, not at the mean, because a</p>
-<p>ramp that is legal on average can alias at its top end and produce a</p>
-<p>perfectly plausible spectrum.</p>
+<p>analysable: <code style="color:#22d3bf">signal</code> (the waveform), <code style="color:#22d3bf">rpm</code> (per-sample shaft rate), <code style="color:#22d3bf">revolutions</code> (cumulative, per-sample), <code style="color:#22d3bf">rate</code>, <code style="color:#22d3bf">duration</code>, <code style="color:#22d3bf">orders</code>, <code style="color:#22d3bf">total_revolutions</code>, <code style="color:#22d3bf">resonance_hz</code>, and <code style="color:#22d3bf">max_component_hz</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-real / string / bool scalars, non-positive <code style="color:#22d3bf">rate</code> / <code style="color:#22d3bf">duration</code> / <code style="color:#22d3bf">rpm_start</code> / <code style="color:#22d3bf">rpm_end</code>, an empty or non-finite <code style="color:#22d3bf">orders</code>, an <code style="color:#22d3bf">amplitudes</code> of the wrong length, a length over <code style="color:#22d3bf">MAX_SAMPLES</code>, and <b>any component reaching Nyquist at the fastest point of the ramp</b> — checked at <code style="color:#22d3bf">max(rpm)</code>, not at the mean, because a ramp that is legal on average can alias at its top end and produce a perfectly plausible spectrum.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

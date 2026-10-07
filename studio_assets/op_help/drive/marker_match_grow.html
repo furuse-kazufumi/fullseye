@@ -3,13 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.marker_match_grow(p0, p1, pitch_px: &#x27;float&#x27;, seed_tol: &#x27;float&#x27; = 0.25, tols=(0.2, 0.3, 0.45), nb_r: &#x27;float&#x27; = 1.6, border: &#x27;float&#x27; = 2.0, max_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacslip; tacslip.marker_match_grow(p0, p1, pitch_px: &#x27;float&#x27;, seed_tol: &#x27;float&#x27; = 0.25, tols=(0.2, 0.3, 0.45), nb_r: &#x27;float&#x27; = 1.6, border: &#x27;float&#x27; = 2.0, max_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;marker_match_grow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>基準マーカー p0 と荷重後 p1(各 (N, 2) [px])の対応を<b>連続性で伸ばして</b>取る。返り `<code style="color:#22d3bf">i0</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">i1</code><code style="color:#22d3bf">(対応の index 配列)、</code><code style="color:#22d3bf">matched</code>`。</p>
-<p>規則格子では |u| がピッチ/2 を超えると最近傍も相関も隣のマーカーに飛ぶ(実測: 8 px 格子で 5 px のずれを PIV は −3 px と読む)。</p>
-<p>種 = p0 の外接矩形の<b>縁(border·ピッチ以内)</b>にあるマーカーで、予測なしの最近傍が seed_tol·ピッチ以内かつ 2 番目が 0.75 ピッチより</p>
-<p>遠いもの(「接触は視野の内側にあり縁は遠方場 = 小変位」という物理の前提。どこでも種にすると、核の変位 6.4 px が隣の基準位置から</p>
-<p>1.6 px なのでピッチ 1 つ飛んだ偽の種が 27 個できた)。以後、未対応のマーカーは nb_r·ピッチ以内の既対応 2 点以上の変位の平均を予測にして</p>
-<p>tol·ピッチ以内の最近傍を取り、tol は小さい値から段階的に緩める。1 つの p1 は 1 回しか使わない。</p>
-<p><b>Raises</b> ValueError: p0/p1 が (N, 2) でない、pitch_px ≤ 0。</p>
+<p>基準マーカー p0 と荷重後 p1(各 (N, 2) [px])の対応を<b>連続性で伸ばして</b>取る。返り <code style="color:#22d3bf">i0</code>・<code style="color:#22d3bf">i1</code>(対応の index 配列)、<code style="color:#22d3bf">matched</code>。</p>
+<p>規則格子では |u| がピッチ/2 を超えると最近傍も相関も隣のマーカーに飛ぶ(実測: 8 px 格子で 5 px のずれを PIV は −3 px と読む)。種 = p0 の外接矩形の<b>縁(border·ピッチ以内)</b>にあるマーカーで、予測なしの最近傍が seed_tol·ピッチ以内かつ 2 番目が 0.75 ピッチより遠いもの(「接触は視野の内側にあり縁は遠方場 = 小変位」という物理の前提。どこでも種にすると、核の変位 6.4 px が隣の基準位置から 1.6 px なのでピッチ 1 つ飛んだ偽の種が 27 個できた)。以後、未対応のマーカーは nb_r·ピッチ以内の既対応 2 点以上の変位の平均を予測にして tol·ピッチ以内の最近傍を取り、tol は小さい値から段階的に緩める。1 つの p1 は 1 回しか使わない。<b>Raises</b> ValueError: p0/p1 が (N, 2) でない、pitch_px ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

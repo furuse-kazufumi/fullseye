@@ -5,14 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>OSM XML(文字列かファイルパス)を読み、節点を局所平面座標 [m] に落とす。</p>
-<p>返り値 ``{&quot;origin&quot;: (lat0, lon0), &quot;nodes&quot;: {id: {&quot;xy&quot;: (x, y), &quot;lat&quot;, &quot;lon&quot;, &quot;tags&quot;: {}}}, &quot;ways&quot;: [{&quot;id&quot;, &quot;nodes&quot;: [id], &quot;tags&quot;: {}}],</p>
-<p>&quot;bbox&quot;: (xmin, xmax, ymin, ymax)(`<code style="color:#22d3bf">&lt;bounds&gt;</code><code style="color:#22d3bf"> があればそれ、無ければ節点の範囲), &quot;n_nodes&quot;, &quot;n_ways&quot;}</code>`。</p>
-<p>origin が None なら `<code style="color:#22d3bf">&lt;bounds&gt;</code><code style="color:#22d3bf"> の中心(無ければ節点の平均)。</code><code style="color:#22d3bf">&lt;nd ref&gt;</code><code style="color:#22d3bf"> が未知の節点を指す way はその節点を落とす(件数を </code><code style="color:#22d3bf">n_dangling</code>` に)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: XML でない、</code><code style="color:#22d3bf">&lt;osm&gt;</code>` でない、節点が 1 つも無い。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>返り値 <code style="color:#22d3bf">{&quot;origin&quot;: (lat0, lon0), &quot;nodes&quot;: {id: {&quot;xy&quot;: (x, y), &quot;lat&quot;, &quot;lon&quot;, &quot;tags&quot;: {}}}, &quot;ways&quot;: [{&quot;id&quot;, &quot;nodes&quot;: [id], &quot;tags&quot;: {}}], &quot;bbox&quot;: (xmin, xmax, ymin, ymax)(</code>&lt;bounds&gt;<code style="color:#22d3bf"> があればそれ、無ければ節点の範囲), &quot;n_nodes&quot;, &quot;n_ways&quot;}</code>。origin が None なら <code style="color:#22d3bf">&lt;bounds&gt;</code> の中心(無ければ節点の平均)。<code style="color:#22d3bf">&lt;nd ref&gt;</code> が未知の節点を指す way はその節点を落とす(件数を <code style="color:#22d3bf">n_dangling</code> に)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: XML でない、<code style="color:#22d3bf">&lt;osm&gt;</code> でない、節点が 1 つも無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_japan_town">poc_driving_japan_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_japan_town.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

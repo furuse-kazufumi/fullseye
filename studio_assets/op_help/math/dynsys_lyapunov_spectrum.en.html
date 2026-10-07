@@ -4,30 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dynsys_lyapunov_spectrum(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=200.0, dt=0.005, burn_in=20.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.dynsys_lyapunov_spectrum(system=&#x27;lorenz&#x27;, params=None, x0=None, t_end=200.0, dt=0.005, burn_in=20.0)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;dynsys_lyapunov_spectrum&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The Lyapunov spectrum by tangent flow + QR — and the sum you can check.</p>
-<p>Integrates the state together with an orthonormal frame of tangent vectors</p>
-<p>(the variational equation `<code style="color:#22d3bf">dY/dt = J(x) Y</code>`), re-orthonormalising by QR at</p>
-<p>every step and accumulating `<code style="color:#22d3bf">log</code>` of the diagonal. The exponents come out</p>
-<p><b>ordered</b>, largest first.</p>
-<p>★★<b>Why this earns its place — the trace identity.</b> The sum of the exponents</p>
-<p>equals the time-average of the divergence of the field:</p>
+<p>Integrates the state together with an orthonormal frame of tangent vectors (the variational equation <code style="color:#22d3bf">dY/dt = J(x) Y</code>), re-orthonormalising by QR at every step and accumulating <code style="color:#22d3bf">log</code> of the diagonal. The exponents come out <b>ordered</b>, largest first.</p>
+<p>★★<b>Why this earns its place — the trace identity.</b> The sum of the exponents equals the time-average of the divergence of the field:</p>
 <p>sum(lambda_i) == &lt;div f&gt;</p>
-<p>For Lorenz the divergence is the <b>constant</b> `<code style="color:#22d3bf">-(sigma + 1 + beta)</code>`, so the</p>
-<p>sum is known in closed form: `<code style="color:#22d3bf">-13.6667</code>` for the classical parameters. That</p>
-<p>is an exact target the attractor picture cannot provide. The published largest</p>
-<p>exponent (≈ 0.906 for sigma=10, beta=8/3, rho=28) is a second, independent</p>
-<p>check.</p>
-<p>Returns a `<code style="color:#22d3bf">signal</code>`: the exponents, descending.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: unknown system; non-finite input; </code><code style="color:#22d3bf">burn_in</code>` not</p>
-<p>shorter than `<code style="color:#22d3bf">t_end</code>`; a trajectory that left float range.</p>
-<p>Limits: the exponents converge like `<code style="color:#22d3bf">1/sqrt(T)</code>` — a short window gives a</p>
-<p>plausible but wrong spectrum. The trace identity converges much faster and is</p>
-<p>the honest gate; the individual exponents need long windows.</p>
+<p>For Lorenz the divergence is the <b>constant</b> <code style="color:#22d3bf">-(sigma + 1 + beta)</code>, so the sum is known in closed form: <code style="color:#22d3bf">-13.6667</code> for the classical parameters. That is an exact target the attractor picture cannot provide. The published largest exponent (≈ 0.906 for sigma=10, beta=8/3, rho=28) is a second, independent check.</p>
+<p>Returns a <code style="color:#22d3bf">signal</code>: the exponents, descending.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown system; non-finite input; <code style="color:#22d3bf">burn_in</code> not shorter than <code style="color:#22d3bf">t_end</code>; a trajectory that left float range.</p>
+<p>Limits: the exponents converge like <code style="color:#22d3bf">1/sqrt(T)</code> — a short window gives a plausible but wrong spectrum. The trace identity converges much faster and is the honest gate; the individual exponents need long windows.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

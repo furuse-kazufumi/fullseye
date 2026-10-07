@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_magnitude(gx, gy)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import vxcore; vxcore.vx_magnitude(gx, gy)</code>、台帳から引くなら <code style="color:#22d3bf">opsvx.get(&quot;vx_magnitude&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>勾配の大きさ(3.31 節)。REQ-0270 の概念定義をそのまま: `<code style="color:#22d3bf">z = uint16(sqrt(double(uint32(x·x) + uint32(y·y))) + 0.5)</code>`、</p>
-<p>`<code style="color:#22d3bf">mag = z &gt; 32767 ? 32767 : z</code>`。入力・出力とも S16。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: S16 の 2-D でない / 形が違う。</p>
+<p>勾配の大きさ(3.31 節)。REQ-0270 の概念定義をそのまま: <code style="color:#22d3bf">z = uint16(sqrt(double(uint32(x·x) + uint32(y·y))) + 0.5)</code>、<code style="color:#22d3bf">mag = z &gt; 32767 ? 32767 : z</code>。入力・出力とも S16。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: S16 の 2-D でない / 形が違う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

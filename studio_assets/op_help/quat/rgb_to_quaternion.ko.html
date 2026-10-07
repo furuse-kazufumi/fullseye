@@ -3,20 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">qimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rgb_to_quaternion(image_rgb) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import quatimage; quatimage.rgb_to_quaternion(image_rgb) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsquat.get(&quot;rgb_to_quaternion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>컬러 이미지를 순수 사원수 `<code style="color:#22d3bf">0 + R i + G j + B k</code>` 로 삽입. → (H, W, 4).</p>
+<p>컬러 이미지를 순수 사원수 <code style="color:#22d3bf">0 + R i + G j + B k</code> 로 삽입. → (H, W, 4).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Sangwine&#x27;s 1996 encoding, and the entry point of the whole colour half of</p>
-<p>this module: once a pixel is a quaternion, `<code style="color:#22d3bf">q x conj(q)</code>` rotates its colour</p>
-<p>and :func:<code style="color:#22d3bf">qft2</code> transforms the three channels as <b>one</b> hypercomplex signal</p>
-<p>instead of three unrelated real ones.</p>
-<p>The scalar (`<code style="color:#22d3bf">w</code>`) component is set to exactly zero — a *pure* quaternion —</p>
-<p>because that is what makes the conjugation a 3-D rotation. Values are not</p>
-<p>clamped: linear RGB after black-level subtraction legitimately goes negative,</p>
-<p>and clipping it would change the colour direction, which is the quantity</p>
-<p>every operator downstream reads.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image_rgb* is not a finite </code><code style="color:#22d3bf">(H, W, 3)</code>` numeric</p>
-<p>array, is complex / bool / string-typed / masked, or exceeds</p>
-<p>:data:<code style="color:#22d3bf">MAX_PIXELS</code>.</p>
+<p>Sangwine&#x27;s 1996 encoding, and the entry point of the whole colour half of this module: once a pixel is a quaternion, <code style="color:#22d3bf">q x conj(q)</code> rotates its colour</p>
+<p>and <code style="color:#22d3bf">qft2</code> transforms the three channels as <b>one</b> hypercomplex signal instead of three unrelated real ones.</p>
+<p>The scalar (<code style="color:#22d3bf">w</code>) component is set to exactly zero — a *pure* quaternion — because that is what makes the conjugation a 3-D rotation. Values are not</p>
+<p>clamped: linear RGB after black-level subtraction legitimately goes negative, and clipping it would change the colour direction, which is the quantity every operator downstream reads.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *image_rgb* is not a finite <code style="color:#22d3bf">(H, W, 3)</code> numeric array, is complex / bool / string-typed / masked, or exceeds <code style="color:#22d3bf">MAX_PIXELS</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

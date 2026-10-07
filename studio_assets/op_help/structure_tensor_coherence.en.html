@@ -14,20 +14,11 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>局所の<b>向きの揃い具合</b>(構造テンソルの異方度)を `<code style="color:#22d3bf">[0,1]</code>` で返す。</p>
-<p>`<code style="color:#22d3bf">(lambda1 - lambda2) / (lambda1 + lambda2)</code><code style="color:#22d3bf"> そのもの。</code><code style="color:#22d3bf">1</code>` は完全に一方向(理想的な縞)、</p>
-<p>`<code style="color:#22d3bf">0</code><code style="color:#22d3bf"> は等方(平坦面・白色雑音・十字の交点)。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">b</code>` は</p>
-<p>`<code style="color:#22d3bf">structure_tensor_orientation</code>` と同じ 2 つのスケール。</p>
-<p>**`<code style="color:#22d3bf">structure_tensor_orientation</code>` と対で使う**: 向きの図は全画素に値が入るので、</p>
-<p>向きが意味を持たない所も色がつく。この op を重みにして初めて「どこの向きを信じてよいか」</p>
-<p>が分かる。</p>
-<p><b>適用条件と既知の落とし穴</b>: (1) `<code style="color:#22d3bf">b</code>`(積分窓)が小さすぎるとテンソルの階数が 1 に</p>
-<p>落ちて<b>どこでも 1 に貼りつく</b> —— 揃っているのではなく測れていない。(2) 2 方向が</p>
-<p>同じ強さで交差する所(織物の交点・格子)では `<code style="color:#22d3bf">0</code>` に落ちる —— 「構造が無い」のでは</p>
-<p>なく「向きが 1 つに決まらない」で、平坦面と区別できない。区別したいときは</p>
-<p>`<code style="color:#22d3bf">local_std</code>` を併記する。</p>
-<p>跡が全画像最大の `<code style="color:#22d3bf">1e-6</code><code style="color:#22d3bf"> を下回る画素は </code><code style="color:#22d3bf">0</code>` を返す(平坦面)。HALCON に対応する</p>
-<p>単体 op は無い。</p>
+<p>局所の<b>向きの揃い具合</b>(構造テンソルの異方度)を <code style="color:#22d3bf">[0,1]</code> で返す。</p>
+<p><code style="color:#22d3bf">(lambda1 - lambda2) / (lambda1 + lambda2)</code> そのもの。<code style="color:#22d3bf">1</code> は完全に一方向(理想的な縞)、<code style="color:#22d3bf">0</code> は等方(平坦面・白色雑音・十字の交点)。<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> は <code style="color:#22d3bf">structure_tensor_orientation</code> と同じ 2 つのスケール。</p>
+<p><b><code style="color:#22d3bf">structure_tensor_orientation</code> と対で使う</b>: 向きの図は全画素に値が入るので、向きが意味を持たない所も色がつく。この op を重みにして初めて「どこの向きを信じてよいか」が分かる。</p>
+<p><b>適用条件と既知の落とし穴</b>: (1) <code style="color:#22d3bf">b</code>(積分窓)が小さすぎるとテンソルの階数が 1 に落ちて<b>どこでも 1 に貼りつく</b> —— 揃っているのではなく測れていない。(2) 2 方向が同じ強さで交差する所(織物の交点・格子)では <code style="color:#22d3bf">0</code> に落ちる —— 「構造が無い」のではなく「向きが 1 つに決まらない」で、平坦面と区別できない。区別したいときは <code style="color:#22d3bf">local_std</code> を併記する。</p>
+<p>跡が全画像最大の <code style="color:#22d3bf">1e-6</code> を下回る画素は <code style="color:#22d3bf">0</code> を返す(平坦面)。HALCON に対応する単体 op は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -6,16 +6,13 @@
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>Ritter のダム崩壊解(浅水方程式、乾いた床、ダムは x = 0、水は x &lt; 0)。</p>
 <p>c₀ = √(g h₀)。x ≤ −c₀ t: h = h₀、u = 0 / −c₀ t &lt; x &lt; 2c₀ t: h = (2c₀ − x/t)²/(9g)、u = (2/3)(x/t + c₀) / x ≥ 2c₀ t: h = 0。</p>
-<p>先端の近くは h ∝ (x_f − x)² で水がほとんど無い。先端から δ までの水の量は ∫₀^δ (s/t)²/(9g) ds = δ³/(27 g t²)(導出)。</p>
-<p>粒子 1 個の量 m(1 次元の SPH なら h₀Δx)を与えると、<b>最も前の粒子の居場所</b>(先端から量 m/2 の所)</p>
-<p>x_f − (27 g t² m/2)^{1/3} を `<code style="color:#22d3bf">lead_particle</code>` に返す —— 粒子法の先端は Ritter の先端より必ず遅れて見え、その遅れは</p>
-<p>この式で読める(粒子を細かくすると m^{1/3} でしか縮まない)。</p>
+<p>先端の近くは h ∝ (x_f − x)² で水がほとんど無い。先端から δ までの水の量は ∫₀^δ (s/t)²/(9g) ds = δ³/(27 g t²)(導出)。粒子 1 個の量 m(1 次元の SPH なら h₀Δx)を与えると、<b>最も前の粒子の居場所</b>(先端から量 m/2 の所) x_f − (27 g t² m/2)^{1/3} を <code style="color:#22d3bf">lead_particle</code> に返す —— 粒子法の先端は Ritter の先端より必ず遅れて見え、その遅れはこの式で読める(粒子を細かくすると m^{1/3} でしか縮まない)。</p>
 <p>Returns:</p>
-<p>dict: `<code style="color:#22d3bf">h</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">u</code><code style="color:#22d3bf">(x と同じ形)、</code><code style="color:#22d3bf">front</code><code style="color:#22d3bf"> = 2c₀ t、</code><code style="color:#22d3bf">rarefaction_head</code><code style="color:#22d3bf"> = −c₀ t、</code><code style="color:#22d3bf">c0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">lead_particle</code>`(m を与えたとき)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>dict: <code style="color:#22d3bf">h</code>・<code style="color:#22d3bf">u</code>(x と同じ形)、<code style="color:#22d3bf">front</code> = 2c₀ t、<code style="color:#22d3bf">rarefaction_head</code> = −c₀ t、<code style="color:#22d3bf">c0</code>、<code style="color:#22d3bf">lead_particle</code>(m を与えたとき)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

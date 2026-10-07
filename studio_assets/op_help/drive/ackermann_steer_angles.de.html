@@ -6,9 +6,8 @@
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>アッカーマンの内外輪の舵角(後車軸の中心の旋回半径 R、ホイールベース L、輪距 t)。</p>
 <p>δ_in = atan(L/(R − t/2))、δ_out = atan(L/(R + t/2))、2 輪等価 δ = atan(L/R)。cot δ_out − cot δ_in = t/L。</p>
-<p>返り値: `<code style="color:#22d3bf">inner</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">outer</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">bicycle</code><code style="color:#22d3bf"> [rad]、</code><code style="color:#22d3bf">front_inner_radius</code><code style="color:#22d3bf"> √((R − t/2)² + L²)、</code><code style="color:#22d3bf">front_outer_radius</code>`、</p>
-<p>`<code style="color:#22d3bf">rear_inner_radius</code><code style="color:#22d3bf"> R − t/2、</code><code style="color:#22d3bf">offtracking</code>`(定常の内輪差 = 前内輪 − 後内輪の半径)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: R ≤ t/2(内側の後輪が旋回の中心を越える)、L ≤ 0、t &lt; 0。</p>
+<p>返り値: <code style="color:#22d3bf">inner</code>, <code style="color:#22d3bf">outer</code>, <code style="color:#22d3bf">bicycle</code> [rad]、<code style="color:#22d3bf">front_inner_radius</code> √((R − t/2)² + L²)、<code style="color:#22d3bf">front_outer_radius</code>、<code style="color:#22d3bf">rear_inner_radius</code> R − t/2、<code style="color:#22d3bf">offtracking</code>(定常の内輪差 = 前内輪 − 後内輪の半径)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ t/2(内側の後輪が旋回の中心を越える)、L ≤ 0、t &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

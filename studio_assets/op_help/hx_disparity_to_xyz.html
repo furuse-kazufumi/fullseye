@@ -7,24 +7,20 @@
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p>*出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_disparity_to_xyz.a.jpg">hx_disparity_to_xyz: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_disparity_to_xyz.a.jpg">hx_disparity_to_xyz: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_disparity_to_xyz.b.jpg">hx_disparity_to_xyz: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_disparity_to_xyz.b.jpg">hx_disparity_to_xyz: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_disparity_to_xyz.inputs.jpg">hx_disparity_to_xyz: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_disparity_to_xyz.inputs.jpg">hx_disparity_to_xyz: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>視差画像から深度 Z = f*baseline/disparity を計算(焦点/基線は a,b で可変)。正規化 Z。</p>
-<p>`<code style="color:#22d3bf">v</code><code style="color:#22d3bf">(0〜1)を視差 </code><code style="color:#22d3bf">disp = v*63 + 0.5</code><code style="color:#22d3bf"> 画素相当に写し、</code><code style="color:#22d3bf">Z = f * baseline / disp</code>` を計算して min-max で</p>
-<p>[0,1] に正規化した画像を返す。X, Y は計算しない(Z のみ)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 焦点距離 </code><code style="color:#22d3bf">f = 200 + 600*a</code>`。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 基線長 </code><code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>`。</p>
+<p><code style="color:#22d3bf">v</code>(0〜1)を視差 <code style="color:#22d3bf">disp = v*63 + 0.5</code> 画素相当に写し、<code style="color:#22d3bf">Z = f * baseline / disp</code> を計算して min-max で [0,1] に正規化した画像を返す。X, Y は計算しない(Z のみ)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 焦点距離 <code style="color:#22d3bf">f = 200 + 600*a</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基線長 <code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>。</p>
 <p style="margin:2px 0 2px 12px">• 視差の下限を 0.5 に置いているのでゼロ除算は起きない。</p>
-<p>注意: `<code style="color:#22d3bf">f * baseline</code><code style="color:#22d3bf"> は全画素共通の定数倍で、最後の min-max 正規化で打ち消されるため、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` を変えても</p>
-<p>出力は変わらない(実測で完全一致)。出力は実質「視差の逆数を正規化したもの」で、視差最大(`<code style="color:#22d3bf">v = 1</code>`)が 0、</p>
-<p>視差最小(`<code style="color:#22d3bf">v = 0</code>`)が 1 になる(近い物ほど暗い)。絶対的な深度が要る用途には使えない。逆数変換で遠方の</p>
-<p>量子化が粗くなるので、`<code style="color:#22d3bf">v</code>` が小さい領域の値は不安定。</p>
-<p><b>つまみ(実測)</b>: `<code style="color:#22d3bf">a</code>` を 0 から 1 まで振っても<b>出力は変わらない</b>(実測。5 種類の入力で確認)。</p>
+<p>注意: <code style="color:#22d3bf">f * baseline</code> は全画素共通の定数倍で、最後の min-max 正規化で打ち消されるため、<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> を変えても出力は変わらない(実測で完全一致)。出力は実質「視差の逆数を正規化したもの」で、視差最大(<code style="color:#22d3bf">v = 1</code>)が 0、視差最小(<code style="color:#22d3bf">v = 0</code>)が 1 になる(近い物ほど暗い)。絶対的な深度が要る用途には使えない。逆数変換で遠方の量子化が粗くなるので、<code style="color:#22d3bf">v</code> が小さい領域の値は不安定。</p>
+<p><b>つまみ(実測)</b>: <code style="color:#22d3bf">a</code> を 0 から 1 まで振っても<b>出力は変わらない</b>(実測。5 種類の入力で確認)。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
@@ -34,7 +30,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_disparity_to_xyz 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_disparity_to_xyz%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_disparity_to_xyz%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_disparity_to_xyz 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_disparity_to_xyz%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_disparity_to_xyz%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_point_depth(kp, theta: &#x27;float&#x27;, model: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsim; pegsim.two_point_depth(kp, theta: &#x27;float&#x27;, model: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;two_point_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>傾き θ [rad] で二点接触が始まる挿入深さ l₂ [m] (最狭部から先端中心まで)。3 つの模型を名前で選ぶ。</p>
-<p>`<code style="color:#22d3bf">&quot;exact&quot;</code><code style="color:#22d3bf">: 3-D の円柱で厳密 l₂ = (2R − r(cos θ + sec θ)) / tan θ(導出 (1′))。</code><code style="color:#22d3bf">&quot;small_angle&quot;</code>`: l₂ = 2c_r / sin θ</p>
-<p>(OCW p.9 の l/d = c/θ を半径 clearance で書いたもの)。`<code style="color:#22d3bf">&quot;rectangle&quot;</code>`: 2-D の長方形近似 (D − d/cos θ)/tan θ(縁の点の</p>
-<p>高さ r sin θ を無視するので θ = 6° で 0.5 mm 浅く出る —— 間違いの量を測るために残す)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: θ ≤ 0、θ ≥ θ_m_exact(入口にすら入らない)、未知の model。</p>
+<p><code style="color:#22d3bf">&quot;exact&quot;</code>: 3-D の円柱で厳密 l₂ = (2R − r(cos θ + sec θ)) / tan θ(導出 (1′))。<code style="color:#22d3bf">&quot;small_angle&quot;</code>: l₂ = 2c_r / sin θ (OCW p.9 の l/d = c/θ を半径 clearance で書いたもの)。<code style="color:#22d3bf">&quot;rectangle&quot;</code>: 2-D の長方形近似 (D − d/cos θ)/tan θ(縁の点の高さ r sin θ を無視するので θ = 6° で 0.5 mm 浅く出る —— 間違いの量を測るために残す)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: θ ≤ 0、θ ≥ θ_m_exact(入口にすら入らない)、未知の model。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

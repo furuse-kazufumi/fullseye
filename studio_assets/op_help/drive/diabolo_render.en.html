@@ -5,12 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>ディアボロの 1 コマを光線追跡で描く(RGB float (H, W, 3)、[0, 1])。</p>
-<p>形 = 2 つのカップ(円錐殻、外面 赤・内面 黄)+ 底の板(暗い灰)+ 軸。マーカーは手前のカップの内面に `<code style="color:#22d3bf">n_slots</code>` か所(反射 = 白、</p>
-<p>ダミー = 灰)。`<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> の既定はカメラの注視点、</code><code style="color:#22d3bf">axis</code><code style="color:#22d3bf"> の既定はカメラへ向く向き。</code><code style="color:#22d3bf">phase</code>` = 体の系 e1 から測った回転角、</p>
-<p>`<code style="color:#22d3bf">omega</code><code style="color:#22d3bf"> [rad/s] と </code><code style="color:#22d3bf">exposure</code><code style="color:#22d3bf"> [s] でマーカーの回転ぶれ(露光の中心 = コマの時刻、</code><code style="color:#22d3bf">n_sub</code><code style="color:#22d3bf"> 点で平均)。</code><code style="color:#22d3bf">sticks</code>` = (2, 3) を</p>
-<p>渡すと棒と糸(軸へ伸びる 2 本)と棒の先の青い印も描く。`<code style="color:#22d3bf">ss</code><code style="color:#22d3bf"> × </code><code style="color:#22d3bf">ss</code>` の超標本化はディアボロの外接矩形だけ(縁の被覆率が</p>
-<p>正しく出る)。`<code style="color:#22d3bf">noise</code><code style="color:#22d3bf"> = 画素ごとのガウス雑音の σ(</code><code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> で再現)、</code><code style="color:#22d3bf">blur_sigma</code>` = 光学ぼけ [px]。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: cam / params の形、軸がゼロ、ss / n_sub &lt; 1、負の雑音・ぼけ・露光。</p>
+<p>形 = 2 つのカップ(円錐殻、外面 赤・内面 黄)+ 底の板(暗い灰)+ 軸。マーカーは手前のカップの内面に <code style="color:#22d3bf">n_slots</code> か所(反射 = 白、ダミー = 灰)。<code style="color:#22d3bf">center</code> の既定はカメラの注視点、<code style="color:#22d3bf">axis</code> の既定はカメラへ向く向き。<code style="color:#22d3bf">phase</code> = 体の系 e1 から測った回転角、<code style="color:#22d3bf">omega</code> [rad/s] と <code style="color:#22d3bf">exposure</code> [s] でマーカーの回転ぶれ(露光の中心 = コマの時刻、<code style="color:#22d3bf">n_sub</code> 点で平均)。<code style="color:#22d3bf">sticks</code> = (2, 3) を渡すと棒と糸(軸へ伸びる 2 本)と棒の先の青い印も描く。<code style="color:#22d3bf">ss</code> × <code style="color:#22d3bf">ss</code> の超標本化はディアボロの外接矩形だけ(縁の被覆率が正しく出る)。<code style="color:#22d3bf">noise</code> = 画素ごとのガウス雑音の σ(<code style="color:#22d3bf">seed</code> で再現)、<code style="color:#22d3bf">blur_sigma</code> = 光学ぼけ [px]。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: cam / params の形、軸がゼロ、ss / n_sub &lt; 1、負の雑音・ぼけ・露光。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

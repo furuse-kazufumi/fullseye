@@ -5,22 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>대칭 하우스도르프 거리 = max(max_a min_b, max_b min_a). → scalar. 최악의 괴리.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>計算: `<code style="color:#22d3bf">cKDTree</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> の各点から </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> への最近傍距離と、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">a</code>` への</p>
-<p>最近傍距離を取り、両方向の <b>最大値</b> のうち大きい方を返す。「一方の雲のどの点も、</p>
-<p>相手の雲からこの距離以内にある」を保証する最小の半径。単位は座標の単位。</p>
-<p>入力: `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">(M, 3)</code>` の点群(点数は異なってよい、対応不要)。</p>
-<p><b>この op は入口検査を持たない</b>(`<code style="color:#22d3bf">_require_cloud</code>` を通らない): 空の点群を渡すと</p>
-<p>`<code style="color:#22d3bf">max()</code><code style="color:#22d3bf"> が numpy の </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(&quot;zero-size array&quot;)で落ち、</code><code style="color:#22d3bf">(N, 2)</code>` など</p>
-<p>3 列でない入力は cKDTree の次元不一致で `<code style="color:#22d3bf">ValueError</code>` になる — いずれも</p>
-<p>メッセージはこの op のものではない。呼ぶ前に空でないことを確かめること。</p>
-<p>返り値: Python `<code style="color:#22d3bf">float</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">[0, inf)</code>`。同一点群なら 0。正規化はしない。</p>
-<p>注意: 1 点の外れ値で値が決まる(平均ではなく最大)。ノイズを含むスキャンの</p>
-<p>評価には `<code style="color:#22d3bf">chamfer_distance</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">fscore</code><code style="color:#22d3bf">(閾値 </code><code style="color:#22d3bf">tau</code>` 以内の割合)の方が</p>
-<p>安定で、Hausdorff は「最悪でもこの精度」を主張したいとき(公差検証、</p>
-<p>LOD の `<code style="color:#22d3bf">max_error</code>` と同じ性格)に使う。</p>
+<p>計算: <code style="color:#22d3bf">cKDTree</code> で <code style="color:#22d3bf">a</code> の各点から <code style="color:#22d3bf">b</code> への最近傍距離と、<code style="color:#22d3bf">b</code> から <code style="color:#22d3bf">a</code> への最近傍距離を取り、両方向の <b>最大値</b> のうち大きい方を返す。「一方の雲のどの点も、相手の雲からこの距離以内にある」を保証する最小の半径。単位は座標の単位。</p>
+<p>入力: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は <code style="color:#22d3bf">(N, 3)</code> / <code style="color:#22d3bf">(M, 3)</code> の点群(点数は異なってよい、対応不要)。<b>この op は入口検査を持たない</b>(<code style="color:#22d3bf">_require_cloud</code> を通らない): 空の点群を渡すと <code style="color:#22d3bf">max()</code> が numpy の <code style="color:#22d3bf">ValueError</code>(&quot;zero-size array&quot;)で落ち、<code style="color:#22d3bf">(N, 2)</code> など 3 列でない入力は cKDTree の次元不一致で <code style="color:#22d3bf">ValueError</code> になる — いずれもメッセージはこの op のものではない。呼ぶ前に空でないことを確かめること。</p>
+<p>返り値: Python <code style="color:#22d3bf">float</code>、<code style="color:#22d3bf">[0, inf)</code>。同一点群なら 0。正規化はしない。</p>
+<p>注意: 1 点の外れ値で値が決まる(平均ではなく最大)。ノイズを含むスキャンの評価には <code style="color:#22d3bf">chamfer_distance</code> か <code style="color:#22d3bf">fscore</code>(閾値 <code style="color:#22d3bf">tau</code> 以内の割合)の方が安定で、Hausdorff は「最悪でもこの精度」を主張したいとき(公差検証、LOD の <code style="color:#22d3bf">max_error</code> と同じ性格)に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 측정 불확도와 교정 지식 — ‘측정되고 있다’고 주장하려면</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -3,16 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.complex_steerable_reconstruct(decomposition) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import motionmag; motionmag.complex_steerable_reconstruct(decomposition) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmotionmag.get(&quot;complex_steerable_reconstruct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Invertiert :func:<code style="color:#22d3bf">complex_steerable_decompose</code> -&gt; reelles `<code style="color:#22d3bf">(H, W)</code>`-Bild.</p>
+<p>Invertiert <code style="color:#22d3bf">complex_steerable_decompose</code> -&gt; reelles <code style="color:#22d3bf">(H, W)</code>-Bild.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Exact: the analysis bank is a tight frame after the divisor correction, so</p>
-<p>the round trip is the identity up to floating-point rounding (measured</p>
-<p>`<code style="color:#22d3bf">6.66e-16</code>` maximum absolute error on a 64x64 random frame with the default</p>
-<p>4 scales x 4 orientations). Editing a band before calling this — scaling its</p>
-<p>phase, zeroing it — is how every other operator in this module works.</p>
-<p>Refuses a dict whose bands do not match the declared shape or count, because</p>
-<p>a partially edited decomposition would otherwise reconstruct something</p>
-<p>plausible from the wrong frame size.</p>
+<p>Exact: the analysis bank is a tight frame after the divisor correction, so the round trip is the identity up to floating-point rounding (measured <code style="color:#22d3bf">6.66e-16</code> maximum absolute error on a 64x64 random frame with the default 4 scales x 4 orientations). Editing a band before calling this — scaling its phase, zeroing it — is how every other operator in this module works.</p>
+<p>Refuses a dict whose bands do not match the declared shape or count, because a partially edited decomposition would otherwise reconstruct something plausible from the wrong frame size.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">Leitfaden zur Familie motion_magnification</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

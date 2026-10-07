@@ -5,19 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由平場(白板)產生抵消暗角的增益圖:逐通道 mean / flat。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Shoot a uniform white target; vignetting and the micro-lens fall-off make</p>
-<p>the corners darker. Multiplying any later frame by this map undoes that.</p>
-<p>*smooth_sigma* &gt; 0 Gaussian-smooths the flat first (per channel) so sensor</p>
-<p>noise and dust do not become gain speckle. The gain is normalised so the</p>
-<p>channel <b>mean</b> stays 1 — the map corrects shape, not exposure.</p>
-<p>Ground truth: `<code style="color:#22d3bf">lens_shading_correct(flat, lens_shading_gain(flat))</code>` is a</p>
-<p>constant frame (each channel equal to its own mean) to 1e-12.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-finite input, a zero or negative pixel in</p>
-<p>the flat (no gain can be defined there), or a negative *smooth_sigma*.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>Shoot a uniform white target; vignetting and the micro-lens fall-off make the corners darker. Multiplying any later frame by this map undoes that. *smooth_sigma* &gt; 0 Gaussian-smooths the flat first (per channel) so sensor noise and dust do not become gain speckle. The gain is normalised so the channel <b>mean</b> stays 1 — the map corrects shape, not exposure.</p>
+<p>Ground truth: <code style="color:#22d3bf">lens_shading_correct(flat, lens_shading_gain(flat))</code> is a constant frame (each channel equal to its own mean) to 1e-12. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-finite input, a zero or negative pixel in the flat (no gain can be defined there), or a negative *smooth_sigma*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:raw_to_display_isp">raw_to_display_isp</a> — <code style="color:#22d3bf">py -3.11 examples/raw_to_display_isp.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>

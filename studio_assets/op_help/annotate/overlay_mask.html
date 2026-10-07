@@ -3,18 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.overlay_mask(img, mask, color=&#x27;wrong&#x27;, alpha=0.45, outline=0, outline_color=None, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.overlay_mask(img, mask, color=&#x27;wrong&#x27;, alpha=0.45, outline=0, outline_color=None, scheme=&#x27;okabe_ito&#x27;, style=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;overlay_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>2 値マスクを α で重ねる。**厳密に `<code style="color:#22d3bf">a*f + (1-a)*b</code>`**。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>2 値マスクを α で重ねる。<b>厳密に <code style="color:#22d3bf">a*f + (1-a)*b</code></b>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>mask : (H,W)</p>
 <p>画像と同じ大きさの真偽(または [0,1] の重み)。</p>
 <p><b>形が違えば例外</b> ―― (row,col) と (x,y) の取り違えはここで死ぬ。</p>
 <p>alpha : float</p>
 <p>マスク側の重み。</p>
 <p>outline : int</p>
-<p>0 より大きければマスクの輪郭を太さ `<code style="color:#22d3bf">outline</code>` で描く。</p>
-<p>Raises</p>
-<p>------</p>
+<p>0 より大きければマスクの輪郭を太さ <code style="color:#22d3bf">outline</code> で描く。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>形の不一致 / alpha が [0,1] の外 / mask に非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

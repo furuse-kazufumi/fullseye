@@ -5,26 +5,21 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳表(dict):以閉合式確定尺寸線的幾何(尺寸線・界線・文字位置)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> を p0→p1 の左法線(画面座標)として、寸法線は </code><code style="color:#22d3bf">p + n*offset</code>`、補助線は</p>
-<p>`<code style="color:#22d3bf">p</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">p + n*(offset+extension)</code><code style="color:#22d3bf">、文字は寸法線の中点から </code><code style="color:#22d3bf">n*text_gap</code>`。</p>
-<p>`<code style="color:#22d3bf">offset</code>` の符号で側を選ぶ。</p>
-<p>Returns</p>
-<p>-------</p>
+<p><code style="color:#22d3bf">n</code> を p0→p1 の左法線(画面座標)として、寸法線は <code style="color:#22d3bf">p + n*offset</code>、補助線は <code style="color:#22d3bf">p</code> から <code style="color:#22d3bf">p + n*(offset+extension)</code>、文字は寸法線の中点から <code style="color:#22d3bf">n*text_gap</code>。<code style="color:#22d3bf">offset</code> の符号で側を選ぶ。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>``{&quot;p0&quot;,&quot;p1&quot;,&quot;line&quot;:(q0,q1),&quot;ext0&quot;,&quot;ext1&quot;,&quot;text_xy&quot;,&quot;normal&quot;,</p>
-<p>&quot;angle_deg&quot;,&quot;length_px&quot;}``。</p>
-<p>Raises</p>
-<p>------</p>
+<p><code style="color:#22d3bf">{&quot;p0&quot;,&quot;p1&quot;,&quot;line&quot;:(q0,q1),&quot;ext0&quot;,&quot;ext1&quot;,&quot;text_xy&quot;,&quot;normal&quot;, &quot;angle_deg&quot;,&quot;length_px&quot;}</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>2 点が一致(向きが無い)、非有限、offset が 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 訓練資料集規範知識 —— COCO / YOLO / VOC 及外觀檢測中的陷阱</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:paper_figure">paper_figure</a> — <code style="color:#22d3bf">py -3.11 examples/paper_figure.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

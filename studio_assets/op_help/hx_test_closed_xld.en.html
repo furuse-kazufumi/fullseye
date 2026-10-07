@@ -13,14 +13,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The fraction of contours that are closed (end-point distance below a threshold = closed; a feature).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>contour dict の各 contour について、点数が 3 以上かつ始点と終点のユークリッド距離が `<code style="color:#22d3bf">tol</code>` 以下なら</p>
-<p>「閉じている」と数え、閉じた contour の本数を全 contour 数で割った割合を `<code style="color:#22d3bf">np.float64</code>` で返す。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 許容距離 </code><code style="color:#22d3bf">tol = 1 + a*4</code>`(1〜5 画素)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>contour dict の各 contour について、点数が 3 以上かつ始点と終点のユークリッド距離が <code style="color:#22d3bf">tol</code> 以下なら「閉じている」と数え、閉じた contour の本数を全 contour 数で割った割合を <code style="color:#22d3bf">np.float64</code> で返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 許容距離 <code style="color:#22d3bf">tol = 1 + a*4</code>(1〜5 画素)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
 <p style="margin:2px 0 2px 12px">• contour が無ければ 0.0。</p>
-<p>始点=終点を重複させて閉じる `<code style="color:#22d3bf">close_contours_xld</code>` の出力は距離 0 なので必ず閉と判定される。</p>
-<p>`<code style="color:#22d3bf">hx_clip_end_points</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">hx_clip_contours</code>` で端を落とした後は開いた扱いになる。個々の contour がどれかは</p>
-<p>返さない(割合のみ)。</p>
+<p>始点=終点を重複させて閉じる <code style="color:#22d3bf">close_contours_xld</code> の出力は距離 0 なので必ず閉と判定される。<code style="color:#22d3bf">hx_clip_end_points</code> や <code style="color:#22d3bf">hx_clip_contours</code> で端を落とした後は開いた扱いになる。個々の contour がどれかは返さない(割合のみ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

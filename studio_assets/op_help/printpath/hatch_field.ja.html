@@ -5,20 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><b>絵に沿う</b>クロスハッチ —— 向きは構造テンソルから。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>The stroke direction is the local structure orientation (the existing</p>
-<p>`<code style="color:#22d3bf">structure_tensor_orientation</code>`: strokes run *along* edges, not across them),</p>
-<p>and the number of superposed hatch layers comes from the tone — one layer for</p>
-<p>a light grey, up to *levels* for a dark one, each rotated by *cross_deg*.</p>
-<p>★<b>Why this earns its place</b>: the direction is checkable against a picture</p>
-<p>whose orientation is known by construction (a sine grating at 30° must give</p>
-<p>strokes at 30°), and the tone is checkable by blurring the result. The usual</p>
-<p>NPR routine offers neither.</p>
-<p>Returns an `<code style="color:#22d3bf">image2d</code>`: 1 = paper, 0 = ink.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: spacing below 2 px; levels below 1; non-positive</p>
-<p>sigma; a non-finite or oversized image.</p>
-<p>Limits: a single orientation per pixel, so crossings and junctions (where the</p>
-<p>structure tensor is isotropic) get an arbitrary but locally smooth direction —</p>
-<p>the coherence, not the orientation, is what says whether to trust it.</p>
+<p>The stroke direction is the local structure orientation (the existing <code style="color:#22d3bf">structure_tensor_orientation</code>: strokes run *along* edges, not across them), and the number of superposed hatch layers comes from the tone — one layer for a light grey, up to *levels* for a dark one, each rotated by *cross_deg*.</p>
+<p>★<b>Why this earns its place</b>: the direction is checkable against a picture whose orientation is known by construction (a sine grating at 30° must give strokes at 30°), and the tone is checkable by blurring the result. The usual NPR routine offers neither.</p>
+<p>Returns an <code style="color:#22d3bf">image2d</code>: 1 = paper, 0 = ink.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: spacing below 2 px; levels below 1; non-positive sigma; a non-finite or oversized image.</p>
+<p>Limits: a single orientation per pixel, so crossings and junctions (where the structure tensor is isotropic) get an arbitrary but locally smooth direction — the coherence, not the orientation, is what says whether to trust it.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

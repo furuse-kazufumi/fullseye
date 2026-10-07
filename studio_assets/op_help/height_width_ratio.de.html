@@ -8,16 +8,12 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/height_width_ratio.chain.jpg">height_width_ratio: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/height_width_ratio.chain.jpg">height_width_ratio: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Seitenverhältnis `<code style="color:#22d3bf">Höhe / Breite</code><code style="color:#22d3bf"> des achsparallelen umschließenden Rechtecks. Es gibt keine obere Schranke — eine hohe Region überschreitet 1 (160x4 ergibt 40.0). Es ist **dieselbe Größe wie das Ratio** unter den drei Werten, die HALCONs </code><code style="color:#22d3bf">height_width_ratio</code>` (Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.) liefert (Höhe und Breite sind Pixellängen und werden nicht geliefert — siehe docs/KNOWN_ISSUES.md §51).</p>
+<p>Seitenverhältnis <code style="color:#22d3bf">Höhe / Breite</code> des achsparallelen umschließenden Rechtecks. Es gibt keine obere Schranke — eine hohe Region überschreitet 1 (160x4 ergibt 40.0). Es ist <b>dieselbe Größe wie das Ratio</b> unter den drei Werten, die HALCONs <code style="color:#22d3bf">height_width_ratio</code> (Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.) liefert (Höhe und Breite sind Pixellängen und werden nicht geliefert — siehe docs/KNOWN_ISSUES.md §51).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>★2026-09-26 まで `<code style="color:#22d3bf">min(1, 高さ/幅)</code>` で切っていたので、**縦長の対象が全部</p>
-<p>1.0** になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、</p>
-<p><b>向きが変わった瞬間に情報が消える</b>。飽和は説明文に「仕様」として書かれて</p>
-<p>いたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ――</p>
-<p>`<code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>`。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>★2026-09-26 まで <code style="color:#22d3bf">min(1, 高さ/幅)</code> で切っていたので、<b>縦長の対象が全部 1.0</b> になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、<b>向きが変わった瞬間に情報が消える</b>。飽和は説明文に「仕様」として書かれていたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ―― <code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -27,7 +23,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-height_width_ratio 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aheight_width_ratio%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aheight_width_ratio%200.50%200.50">Load &amp; run</a></p>
+height_width_ratio 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aheight_width_ratio%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aheight_width_ratio%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>

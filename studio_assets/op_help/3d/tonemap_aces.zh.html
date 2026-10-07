@@ -3,22 +3,19 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;tonemap_aces&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>用 ACES filmic 近似(Narkowicz 2015)把 HDR 压缩到 `<code style="color:#22d3bf">[0, 1]</code>` 的 LDR。→ float64。</p>
+<p>用 ACES filmic 近似(Narkowicz 2015)把 HDR 压缩到 <code style="color:#22d3bf">[0, 1]</code> 的 LDR。→ float64。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">x = hdr * exposure</code><code style="color:#22d3bf"> に対し </code><code style="color:#22d3bf">f(x) = x(a x + b) / (x(c x + d) + e)</code>` を適用する。</p>
-<p>フィルム的な S 字カーブで暗部を持ち上げハイライトを緩やかに巻き取り、映像制作標準の</p>
-<p>「見栄え」を出す。`<code style="color:#22d3bf">x &lt; ~7.24</code>` の範囲では狭義単調増加・出力 &lt; 1(それ以上は 1 に</p>
-<p>飽和しクリップ)。カラー `<code style="color:#22d3bf">(H, W, C)</code>` はチャンネル独立に写像する。</p>
+<p><code style="color:#22d3bf">x = hdr * exposure</code> に対し <code style="color:#22d3bf">f(x) = x(a x + b) / (x(c x + d) + e)</code> を適用する。フィルム的な S 字カーブで暗部を持ち上げハイライトを緩やかに巻き取り、映像制作標準の「見栄え」を出す。<code style="color:#22d3bf">x &lt; ~7.24</code> の範囲では狭義単調増加・出力 &lt; 1(それ以上は 1 に飽和しクリップ)。カラー <code style="color:#22d3bf">(H, W, C)</code> はチャンネル独立に写像する。</p>
 <p>Args:</p>
-<p>hdr: HDR 画像。`<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">(H, W, C)</code>`、放射輝度 &gt;= 0。</p>
+<p>hdr: HDR 画像。<code style="color:#22d3bf">(H, W)</code> or <code style="color:#22d3bf">(H, W, C)</code>、放射輝度 &gt;= 0。</p>
 <p>exposure: 写像前に掛ける露出スケール(正)。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">[0, 1]</code>` の float64 LDR 画像(入力と同形状)。</p>
+<p><code style="color:#22d3bf">[0, 1]</code> の float64 LDR 画像(入力と同形状)。</p>
 <p>Raises:</p>
 <p>ValueError: 空/非有限/負の放射輝度、非正の exposition(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

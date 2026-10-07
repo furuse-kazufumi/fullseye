@@ -3,28 +3,17 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.temporal_bandpass(video, f_lo, f_hi, fps) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import motionmag; motionmag.temporal_bandpass(video, f_lo, f_hi, fps) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmotionmag.get(&quot;temporal_bandpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>對每個像素時間序列的理想時間帶通 -&gt; `<code style="color:#22d3bf">(T, H, W)</code>`。</p>
+<p>對每個像素時間序列的理想時間帶通 -&gt; <code style="color:#22d3bf">(T, H, W)</code>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Each pixel is transformed along time, every DFT bin whose frequency lies</p>
-<p>outside `<code style="color:#22d3bf">[f_lo, f_hi]</code>` (in Hz, magnitude, DC always excluded) is zeroed,</p>
-<p>and the result is transformed back. Frequency-selective where</p>
-<p>`<code style="color:#22d3bf">videops.moving_average</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">videops.spatiotemporal_gaussian</code>` are</p>
-<p>low-pass; this is the filter isolating &quot;what is happening at 4 Hz&quot;.</p>
-<p>Exact for a component sitting on a bin: with `<code style="color:#22d3bf">T</code><code style="color:#22d3bf"> frames at </code><code style="color:#22d3bf">fps</code>`, a</p>
-<p>sinusoid at `<code style="color:#22d3bf">k*fps/T</code>` Hz passes with gain 1 and everything else in the band</p>
-<p>passes untouched. Measured on a bin-centred 4 Hz unit sinusoid in a 64-frame</p>
-<p>32 fps clip that also carries a DC offset of 0.5 and a 12 Hz component of</p>
-<p>amplitude 0.3, the recovered waveform matches the 4 Hz term alone to</p>
-<p>`<code style="color:#22d3bf">max|err| = 4.36e-15</code>`.</p>
-<p>A brick-wall filter rings in time; that is the price of an exact pass-band</p>
-<p>and it is the same choice the 2012 Eulerian magnification paper makes. The</p>
-<p>output is zero-mean along time by construction.</p>
+<p>Each pixel is transformed along time, every DFT bin whose frequency lies outside <code style="color:#22d3bf">[f_lo, f_hi]</code> (in Hz, magnitude, DC always excluded) is zeroed, and the result is transformed back. Frequency-selective where <code style="color:#22d3bf">videops.moving_average</code> and <code style="color:#22d3bf">videops.spatiotemporal_gaussian</code> are low-pass; this is the filter isolating &quot;what is happening at 4 Hz&quot;.</p>
+<p>Exact for a component sitting on a bin: with <code style="color:#22d3bf">T</code> frames at <code style="color:#22d3bf">fps</code>, a sinusoid at <code style="color:#22d3bf">k*fps/T</code> Hz passes with gain 1 and everything else in the band passes untouched. Measured on a bin-centred 4 Hz unit sinusoid in a 64-frame 32 fps clip that also carries a DC offset of 0.5 and a 12 Hz component of amplitude 0.3, the recovered waveform matches the 4 Hz term alone to <code style="color:#22d3bf">max|err| = 4.36e-15</code>.</p>
+<p>A brick-wall filter rings in time; that is the price of an exact pass-band and it is the same choice the 2012 Eulerian magnification paper makes. The output is zero-mean along time by construction.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:motion_magnification">motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/motion_magnification.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_beam_modal_video">poc_beam_modal_video</a> — <code style="color:#22d3bf">py -3.11 examples/poc_beam_modal_video.py</code></p>

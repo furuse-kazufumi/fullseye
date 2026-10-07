@@ -13,10 +13,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/projective_trans_image.inputs.jpg">projective_trans_image: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Perspective (projective) transformation (`<code style="color:#22d3bf">cv2.warpPerspective</code><code style="color:#22d3bf">). Creates a trapezoidal (perspective-distorted) warp by pulling the top two of the four corners inward by a ratio of </code><code style="color:#22d3bf">d=0.06+0.12*a</code><code style="color:#22d3bf">. Areas outside the frame are filled by reflection. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">projective_trans_image</code>` (Apply a projective transformation to an image.) (HALCON can take an arbitrary homography matrix, but this is an approximation limited to a single trapezoidal-distortion pattern).</p>
+<p>Perspective (projective) transformation (<code style="color:#22d3bf">cv2.warpPerspective</code>). Creates a trapezoidal (perspective-distorted) warp by pulling the top two of the four corners inward by a ratio of <code style="color:#22d3bf">d=0.06+0.12*a</code>. Areas outside the frame are filled by reflection. Corresponds to HALCON&#x27;s <code style="color:#22d3bf">projective_trans_image</code> (Apply a projective transformation to an image.) (HALCON can take an arbitrary homography matrix, but this is an approximation limited to a single trapezoidal-distortion pattern).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が歪みの強さを、</code><code style="color:#22d3bf">b</code>` が左右の非対称さ(どちら側をより歪ませるか)を</p>
-<p>振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> が歪みの強さを、<code style="color:#22d3bf">b</code> が左右の非対称さ(どちら側をより歪ませるか)を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

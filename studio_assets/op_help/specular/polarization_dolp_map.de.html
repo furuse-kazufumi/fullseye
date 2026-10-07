@@ -5,22 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Linearer Polarisationsgrad pro Pixel. → (H, W) in [0, 1].</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">sqrt(S1^2 + S2^2) / S0</code>`, from the same sinusoid fit as</p>
-<p>:func:<code style="color:#22d3bf">polarization_separate</code>. It answers the question that decides whether</p>
-<p>a polariser is worth mounting at all: <b>1</b> means the light at that pixel is</p>
-<p>fully linearly polarised and a crossed analyser extinguishes it completely,</p>
-<p><b>0</b> means the polariser will only cost you a stop of exposure.</p>
-<p>Being a ratio, it is invariant to exposure: scaling every frame by 1e-4,</p>
-<p>1e4 or 1e8 moves it by at most 3.9e-16 (measured), which is what makes it</p>
-<p>comparable across a production line where the lamps age. Not *bit*-</p>
-<p>identical — the least-squares fit rounds differently at a different scale —</p>
-<p>and the difference between &quot;invariant&quot; and &quot;bit-identical&quot; is the kind of</p>
-<p>claim this library measures rather than asserts.</p>
-<p>Pixels with zero total radiance have no degree of polarisation (every ratio</p>
-<p>would be 0/0) and are returned as 0.0 rather than as NaN; that is a</p>
-<p>convention, and it is stated here because a NaN spreading into a</p>
-<p>thresholding routine is exactly the silent failure this library refuses.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>polarization_separate`.</p>
+<p><code style="color:#22d3bf">sqrt(S1^2 + S2^2) / S0</code>, from the same sinusoid fit as <code style="color:#22d3bf">polarization_separate</code>. It answers the question that decides whether a polariser is worth mounting at all: <b>1</b> means the light at that pixel is fully linearly polarised and a crossed analyser extinguishes it completely, <b>0</b> means the polariser will only cost you a stop of exposure.</p>
+<p>Being a ratio, it is invariant to exposure: scaling every frame by 1e-4, 1e4 or 1e8 moves it by at most 3.9e-16 (measured), which is what makes it comparable across a production line where the lamps age. Not *bit*- identical — the least-squares fit rounds differently at a different scale — and the difference between &quot;invariant&quot; and &quot;bit-identical&quot; is the kind of claim this library measures rather than asserts.</p>
+<p>Pixels with zero total radiance have no degree of polarisation (every ratio would be 0/0) and are returned as 0.0 rather than as NaN; that is a convention, and it is stated here because a NaN spreading into a thresholding routine is exactly the silent failure this library refuses.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: as <code style="color:#22d3bf">polarization_separate</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">Leitfaden zur Familie specular_photometric</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

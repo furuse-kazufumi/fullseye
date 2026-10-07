@@ -5,33 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由光源光谱决定的相干扫描系统的轴向极限。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>The counterpart of :mod:<code style="color:#22d3bf">visiondesign</code> for the *vertical* axis: closed-form</p>
-<p>answers to the questions asked before any hardware is bought — how localised</p>
-<p>is the coherence peak, how finely must the scan step, how many planes is that,</p>
-<p>and how much memory does the stack need.</p>
+<p>The counterpart of <code style="color:#22d3bf">visiondesign</code> for the *vertical* axis: closed-form answers to the questions asked before any hardware is bought — how localised is the coherence peak, how finely must the scan step, how many planes is that, and how much memory does the stack need.</p>
 <p>Returned dict:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">coherence_length_um</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">(4 ln2 / pi) * lambda^2 / delta_lambda</code>`, the</p>
-<p>FWHM of `<code style="color:#22d3bf">|gamma(OPD)|</code>` for a Gaussian source (Born &amp; Wolf 7.5.8). This</p>
-<p>is a property of the <b>optical path difference</b>. Verified in the tests</p>
-<p>against a direct numerical Fourier transform of the Gaussian source</p>
-<p>spectrum, at three (lambda, delta_lambda) settings, agreeing to 6</p>
-<p>significant figures.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">envelope_fwhm_um</code>` — <b>half</b> of that: the width of the envelope along</p>
-<p>the <b>scan axis</b>, because the double pass makes `<code style="color:#22d3bf">OPD = 2z</code>`. This is the</p>
-<p>one to hand to :func:<code style="color:#22d3bf">csi_signal_simulate</code> /</p>
-<p>:func:<code style="color:#22d3bf">csi_stack_simulate</code>, and the two are reported separately precisely</p>
-<p>because collapsing them into one name called &quot;coherence length&quot; is a clean</p>
-<p>factor-of-two error in every height the module produces. (It was one</p>
-<p>during development, and the numerical check above is what caught it.)</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">envelope_sigma_um</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">envelope_fwhm_um</code>` as a Gaussian sigma.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">fringe_period_um</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">lambda/2</code>`. The double pass halves it, and this</p>
-<p>is the number that makes phase-shifting ambiguous above `<code style="color:#22d3bf">lambda/4</code>`.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">max_z_step_um</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">lambda/4</code>`. The Nyquist ceiling on the scan step;</p>
-<p>:func:<code style="color:#22d3bf">csi_peak_position</code> and :func:<code style="color:#22d3bf">csi_height_map</code> refuse at or above</p>
-<p>it. <b>It is a rejection bound, not an operating point</b> — the accuracy</p>
-<p>is already gone well before the refusal. Measured on a tilted plane</p>
-<p>(lambda 0.6 um, bandwidth 0.12 um, ceiling 0.15 um, <b>no noise at all</b>,</p>
-<p>so every number below is method error):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">coherence_length_um</code> — <code style="color:#22d3bf">(4 ln2 / pi) * lambda^2 / delta_lambda</code>, the FWHM of <code style="color:#22d3bf">|gamma(OPD)|</code> for a Gaussian source (Born &amp; Wolf 7.5.8). This is a property of the <b>optical path difference</b>. Verified in the tests against a direct numerical Fourier transform of the Gaussian source spectrum, at three (lambda, delta_lambda) settings, agreeing to 6 significant figures.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">envelope_fwhm_um</code> — <b>half</b> of that: the width of the envelope along the <b>scan axis</b>, because the double pass makes <code style="color:#22d3bf">OPD = 2z</code>. This is the one to hand to <code style="color:#22d3bf">csi_signal_simulate</code> / <code style="color:#22d3bf">csi_stack_simulate</code>, and the two are reported separately precisely because collapsing them into one name called &quot;coherence length&quot; is a clean factor-of-two error in every height the module produces. (It was one during development, and the numerical check above is what caught it.)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">envelope_sigma_um</code> — <code style="color:#22d3bf">envelope_fwhm_um</code> as a Gaussian sigma.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fringe_period_um</code> — <code style="color:#22d3bf">lambda/2</code>. The double pass halves it, and this is the number that makes phase-shifting ambiguous above <code style="color:#22d3bf">lambda/4</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_z_step_um</code> — <code style="color:#22d3bf">lambda/4</code>. The Nyquist ceiling on the scan step; <code style="color:#22d3bf">csi_peak_position</code> and <code style="color:#22d3bf">csi_height_map</code> refuse at or above it. <b>It is a rejection bound, not an operating point</b> — the accuracy is already gone well before the refusal. Measured on a tilted plane (lambda 0.6 um, bandwidth 0.12 um, ceiling 0.15 um, <b>no noise at all</b>, so every number below is method error):</p>
 <p>==========  ===========  ===========</p>
 <p>step [um]   bias [nm]    RMSE [nm]</p>
 <p>==========  ===========  ===========</p>
@@ -48,51 +28,21 @@
 <p>than 0.1400. The error near the ceiling is an aliasing beat between the</p>
 <p>fringe period and the step, not a smooth degradation, so &quot;just under the</p>
 <p>limit&quot; cannot be made safe by nudging the step. Use</p>
-<p>`<code style="color:#22d3bf">recommended_z_step_um</code>`; the bias only stays in the 0.1 nm range up to</p>
-<p>about `<code style="color:#22d3bf">lambda/6</code>`.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">recommended_z_step_um</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">lambda/step_divisor</code>` (default lambda/8, the</p>
-<p>usual 90-degree-per-plane choice), reported only if it is below the</p>
-<p>ceiling.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">capture_range_um</code>` — the height interval over which the fringe contrast</p>
-<p>stays above *min_visibility* of its peak,</p>
-<p>`<code style="color:#22d3bf">2*sigma*sqrt(2 ln(1/min_visibility))</code>`. Outside it a surface produces</p>
-<p>fringes too faint to locate, whatever the scan range is.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">planes_per_envelope</code>` — how many scan planes fall inside</p>
-<p>`<code style="color:#22d3bf">envelope_fwhm_um</code>` at the recommended step. Below ~4 the three-point</p>
-<p>estimators have nothing to fit.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">n_planes</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">stack_elements</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">stack_megabytes</code>` — the scan you are</p>
-<p>about to run and the float64 stack it produces, plus</p>
-<p>`<code style="color:#22d3bf">stack_within_cap</code><code style="color:#22d3bf"> against :data:</code>MAX_STACK_ELEMENTS`. This is the</p>
-<p>number people discover after waiting for the scan.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">phase_unambiguous_step_um</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">lambda/4</code>`, the largest surface step</p>
-<p>phase-shifting interferometry can measure without a fringe-order error.</p>
-<p>It is here so the two families can be compared in one place: coherence</p>
-<p>scanning has <b>no</b> such limit inside the scan range, and that is the</p>
-<p>entire reason to pay for the scan.</p>
-<p>What this deliberately does <b>not</b> return is a vertical *repeatability* — a</p>
-<p>&quot;resolution&quot; in nanometres. That number depends on the signal-to-noise ratio</p>
-<p>and on which of :data:<code style="color:#22d3bf">ESTIMATORS</code> you use, the estimators do not even rank</p>
-<p>the same way with and without noise, and an attempt to verify the textbook</p>
-<p>&quot;two surfaces closer than the coherence length are unresolved&quot; criterion</p>
-<p>against this module&#x27;s own forward model <b>failed</b>: two reflectors 0.4</p>
-<p>coherence lengths apart still produce two envelope maxima, because the two</p>
-<p>interferograms interfere with each other and the envelope of a sum is not the</p>
-<p>sum of the envelopes. Rather than assert a formula that its own tests</p>
-<p>contradict, this operator returns only quantities it can verify, and the</p>
-<p>measured estimator table lives in the module docstring.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-real / non-finite / string / bool parameters, a</p>
-<p>non-positive wavelength / bandwidth / range, a *bandwidth_um* at or above</p>
-<p>*wavelength_um* (a source whose spectrum reaches zero frequency is not a</p>
-<p>quasi-monochromatic source and the coherence-length formula does not apply to</p>
-<p>it), a *min_visibility* outside `<code style="color:#22d3bf">(0, 1)</code>`, a *step_divisor* below 4 (which</p>
-<p>would recommend a step at or past its own Nyquist ceiling), and pixel counts</p>
-<p>outside `<code style="color:#22d3bf">[1, 65536]</code>`.</p>
+<p><code style="color:#22d3bf">recommended_z_step_um</code>; the bias only stays in the 0.1 nm range up to</p>
+<p>about <code style="color:#22d3bf">lambda/6</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">recommended_z_step_um</code> — <code style="color:#22d3bf">lambda/step_divisor</code> (default lambda/8, the usual 90-degree-per-plane choice), reported only if it is below the ceiling.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">capture_range_um</code> — the height interval over which the fringe contrast stays above *min_visibility* of its peak, <code style="color:#22d3bf">2*sigma*sqrt(2 ln(1/min_visibility))</code>. Outside it a surface produces fringes too faint to locate, whatever the scan range is.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">planes_per_envelope</code> — how many scan planes fall inside <code style="color:#22d3bf">envelope_fwhm_um</code> at the recommended step. Below ~4 the three-point estimators have nothing to fit.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_planes</code> / <code style="color:#22d3bf">stack_elements</code> / <code style="color:#22d3bf">stack_megabytes</code> — the scan you are about to run and the float64 stack it produces, plus <code style="color:#22d3bf">stack_within_cap</code> against <code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>. This is the number people discover after waiting for the scan.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phase_unambiguous_step_um</code> — <code style="color:#22d3bf">lambda/4</code>, the largest surface step phase-shifting interferometry can measure without a fringe-order error. It is here so the two families can be compared in one place: coherence scanning has <b>no</b> such limit inside the scan range, and that is the entire reason to pay for the scan.</p>
+<p>What this deliberately does <b>not</b> return is a vertical *repeatability* — a &quot;resolution&quot; in nanometres. That number depends on the signal-to-noise ratio and on which of <code style="color:#22d3bf">ESTIMATORS</code> you use, the estimators do not even rank the same way with and without noise, and an attempt to verify the textbook &quot;two surfaces closer than the coherence length are unresolved&quot; criterion against this module&#x27;s own forward model <b>failed</b>: two reflectors 0.4 coherence lengths apart still produce two envelope maxima, because the two interferograms interfere with each other and the envelope of a sum is not the sum of the envelopes. Rather than assert a formula that its own tests contradict, this operator returns only quantities it can verify, and the measured estimator table lives in the module docstring.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-real / non-finite / string / bool parameters, a non-positive wavelength / bandwidth / range, a *bandwidth_um* at or above *wavelength_um* (a source whose spectrum reaches zero frequency is not a quasi-monochromatic source and the coherence-length formula does not apply to it), a *min_visibility* outside <code style="color:#22d3bf">(0, 1)</code>, a *step_divisor* below 4 (which would recommend a step at or past its own Nyquist ceiling), and pixel counts outside <code style="color:#22d3bf">[1, 65536]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideinterferometry:coherence_scanning">coherence_scanning 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:coherence_scanning">coherence_scanning</a> — <code style="color:#22d3bf">py -3.11 examples/coherence_scanning.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_interferometry_step">poc_interferometry_step</a> — <code style="color:#22d3bf">py -3.11 examples/poc_interferometry_step.py</code></p>

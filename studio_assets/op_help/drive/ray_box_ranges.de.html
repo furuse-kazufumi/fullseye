@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import lidarsim; lidarsim.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ray_box_ranges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>原点 `<code style="color:#22d3bf">origin</code><code style="color:#22d3bf"> から方向 </code><code style="color:#22d3bf">dirs (...,3)</code>` のレイが軸平行箱に入るまでの距離(slab 法)。</p>
-<p>`<code style="color:#22d3bf">box = (xmin, ymin, zmin, xmax, ymax, zmax)</code><code style="color:#22d3bf">。外れは </code><code style="color:#22d3bf">inf</code>`。原点が箱の内側なら前方で最初に</p>
-<p>当たる面(出口)までの距離。距離は `<code style="color:#22d3bf">t·‖D‖</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">min &lt; max</code><code style="color:#22d3bf"> でない箱は </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<p>原点 <code style="color:#22d3bf">origin</code> から方向 <code style="color:#22d3bf">dirs (...,3)</code> のレイが軸平行箱に入るまでの距離(slab 法)。</p>
+<p><code style="color:#22d3bf">box = (xmin, ymin, zmin, xmax, ymax, zmax)</code>。外れは <code style="color:#22d3bf">inf</code>。原点が箱の内側なら前方で最初に当たる面(出口)までの距離。距離は <code style="color:#22d3bf">t·‖D‖</code>。<code style="color:#22d3bf">min &lt; max</code> でない箱は <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

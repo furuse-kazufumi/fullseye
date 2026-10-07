@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_measure_overlay(rgb, truth_uv, est_uv, edge_uv=None, size: &#x27;int&#x27; = 12, zoom: &#x27;int&#x27; = 3, crop: &#x27;int&#x27; = 40) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegsim; pegsim.peg_measure_overlay(rgb, truth_uv, est_uv, edge_uv=None, size: &#x27;int&#x27; = 12, zoom: &#x27;int&#x27; = 3, crop: &#x27;int&#x27; = 40) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;peg_measure_overlay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>計測の重ね図(numpy だけ): 真値 = 緑の大きな十字、推定 = 赤の小さな十字、円当てはめに使った縁の点 = 黄の点(imagedraw)。</p>
-<p>右下に真値の重心まわり `<code style="color:#22d3bf">crop</code><code style="color:#22d3bf"> px 四方を </code><code style="color:#22d3bf">zoom</code>` 倍にした拡大を貼る(副画素の一致を目で見るため)。</p>
-<p>`<code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> は (H, W, 3) uint8、</code><code style="color:#22d3bf">truth_uv</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">est_uv</code>` は (N, 2) の (u, v)。返りは同じ大きさの uint8。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: rgb の形が違う、点が無い。</p>
+<p>計測の重ね図(numpy だけ): 真値 = 緑の大きな十字、推定 = 赤の小さな十字、円当てはめに使った縁の点 = 黄の点(imagedraw)。右下に真値の重心まわり <code style="color:#22d3bf">crop</code> px 四方を <code style="color:#22d3bf">zoom</code> 倍にした拡大を貼る(副画素の一致を目で見るため)。</p>
+<p><code style="color:#22d3bf">rgb</code> は (H, W, 3) uint8、<code style="color:#22d3bf">truth_uv</code>・<code style="color:#22d3bf">est_uv</code> は (N, 2) の (u, v)。返りは同じ大きさの uint8。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: rgb の形が違う、点が無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

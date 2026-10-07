@@ -4,18 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveenv; driveenv.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;sun_at&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>日時(タイムゾーンつき datetime かユリウス日)の太陽の高度・方位。式は :func:<code style="color:#22d3bf">geocam.sun_position</code>(NOAA の太陽位置の式</p>
-<p>= Meeus &quot;Astronomical Algorithms&quot; 第 25 章の低精度版、NOAA の大気差)をそのまま使い、日時の受け方と地球–太陽の距離を足す。</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : `<code style="color:#22d3bf">elevation</code><code style="color:#22d3bf">(度、</code><code style="color:#22d3bf">refraction</code><code style="color:#22d3bf"> なら大気差つきの見かけ)、</code><code style="color:#22d3bf">elevation_geometric</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">azimuth</code>`(北から時計回り 度)、</p>
-<p>`<code style="color:#22d3bf">declination</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">eq_time</code><code style="color:#22d3bf">(均時差 分)、</code><code style="color:#22d3bf">hour_angle</code><code style="color:#22d3bf">(度)、</code><code style="color:#22d3bf">jd</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">distance_au</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">semidiameter</code>`(度)。</p>
+<p>日時(タイムゾーンつき datetime かユリウス日)の太陽の高度・方位。式は <code style="color:#22d3bf">geocam.sun_position</code>(NOAA の太陽位置の式 = Meeus &quot;Astronomical Algorithms&quot; 第 25 章の低精度版、NOAA の大気差)をそのまま使い、日時の受け方と地球–太陽の距離を足す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">elevation</code>(度、<code style="color:#22d3bf">refraction</code> なら大気差つきの見かけ)、<code style="color:#22d3bf">elevation_geometric</code>、<code style="color:#22d3bf">azimuth</code>(北から時計回り 度)、</p>
+<p><code style="color:#22d3bf">declination</code>、<code style="color:#22d3bf">eq_time</code>(均時差 分)、<code style="color:#22d3bf">hour_angle</code>(度)、<code style="color:#22d3bf">jd</code>、<code style="color:#22d3bf">distance_au</code>、<code style="color:#22d3bf">semidiameter</code>(度)。</p>
 <p>NOAA が述べる精度は、日の出入りの時刻で緯度 ±72° 以内 1 分以内(1800〜2100 年)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 素朴な datetime・範囲外の緯度経度。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 素朴な datetime・範囲外の緯度経度。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_weather">poc_driving_weather</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_weather.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

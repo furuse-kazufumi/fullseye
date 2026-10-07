@@ -6,14 +6,12 @@
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>MUSIC(Schmidt 1986): 共分散の雑音部分空間に直交する向きを探す。</p>
 <p>P(θ) = 1 / ‖E_nᴴ a(θ)‖²。真の向きでは分母がほぼ 0 になり鋭い峰が立つ。</p>
-<p><b>前提</b>: 波源の数が正しい・波源どうしが無相関(相関した波 = 多重反射では部分空間が潰れて峰が消える)。</p>
-<p>`<code style="color:#22d3bf">n_sources=None</code><code style="color:#22d3bf"> なら :func:</code>n_sources_mdl<code style="color:#22d3bf"> で推定し、返り値の </code><code style="color:#22d3bf">n_sources_estimated</code>` を True にする。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;grid_deg&quot;, &quot;pseudo_spectrum_db&quot;, &quot;doa_deg&quot;, &quot;eigenvalues&quot;}</code>`(doa は峰の大きい順に n 個、格子の分解能)。</p>
+<p><b>前提</b>: 波源の数が正しい・波源どうしが無相関(相関した波 = 多重反射では部分空間が潰れて峰が消える)。<code style="color:#22d3bf">n_sources=None</code> なら <code style="color:#22d3bf">n_sources_mdl</code> で推定し、返り値の <code style="color:#22d3bf">n_sources_estimated</code> を True にする。返り値 <code style="color:#22d3bf">{&quot;grid_deg&quot;, &quot;pseudo_spectrum_db&quot;, &quot;doa_deg&quot;, &quot;eigenvalues&quot;}</code>(doa は峰の大きい順に n 個、格子の分解能)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

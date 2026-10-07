@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>2 つの明るさの時系列(2 灯の画素)から、共通の点滅の周波数と位相差を相互スペクトルで推定する。</p>
-<p>平均を引き Hann 窓、`<code style="color:#22d3bf">pad</code><code style="color:#22d3bf"> 倍に 0 を詰めた rFFT。|A| + |B| の山(</code><code style="color:#22d3bf">f_min</code>` 以上、0 Hz の裾を除く)で</p>
-<p>φ = arg(A_k B̄_k) を [0, π] に畳む。`<code style="color:#22d3bf">delay</code><code style="color:#22d3bf"> = φ / (2π f)。</code><code style="color:#22d3bf">alternating</code>` = |φ − π| &lt; tol(交互点滅)。</p>
-<p>周波数は <b>見かけ</b> の値(fps/2 を超える点滅は折り返る)。どちらかが一定なら ValueError。</p>
+<p>平均を引き Hann 窓、<code style="color:#22d3bf">pad</code> 倍に 0 を詰めた rFFT。|A| + |B| の山(<code style="color:#22d3bf">f_min</code> 以上、0 Hz の裾を除く)で φ = arg(A_k B̄_k) を [0, π] に畳む。<code style="color:#22d3bf">delay</code> = φ / (2π f)。<code style="color:#22d3bf">alternating</code> = |φ − π| &lt; tol(交互点滅)。周波数は <b>見かけ</b> の値(fps/2 を超える点滅は折り返る)。どちらかが一定なら ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

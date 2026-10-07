@@ -5,25 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>패리 분수의 포드 원 —— 접한다는 것은 정수 등식 그 자체다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>For a fraction `<code style="color:#22d3bf">p/q</code>` in lowest terms the Ford circle sits at</p>
-<p>`<code style="color:#22d3bf">(p/q, 1/(2q**2))</code><code style="color:#22d3bf"> with radius </code><code style="color:#22d3bf">1/(2q**2)</code>`. Two such circles are</p>
-<p><b>tangent if and only if</b> `<code style="color:#22d3bf">|p*s - q*r| == 1</code>` — the Farey-neighbour</p>
-<p>condition — and otherwise strictly disjoint. They never overlap.</p>
-<p>★<b>Why this earns its place</b>: the picture&#x27;s correctness is an identity</p>
-<p>between integers, not a tolerance. `<code style="color:#22d3bf">|p*s - q*r|</code>` is computed in exact</p>
-<p>integer arithmetic and compared with the *geometric* tangency</p>
-<p>`<code style="color:#22d3bf">|c_i - c_j| == r_i + r_j</code>` measured from the coordinates; the two must</p>
-<p>agree on every pair. The number of fractions is the Farey length</p>
-<p>`<code style="color:#22d3bf">1 + sum(phi(q) for q in 1..n)</code>`, another exact integer.</p>
-<p>Returns a `<code style="color:#22d3bf">table</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">x</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">y</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">p</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">q</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">max_denominator &lt; 1</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">lo &gt;= hi</code>`; the</p>
-<p>interval or denominator would exceed the cap.</p>
+<p>For a fraction <code style="color:#22d3bf">p/q</code> in lowest terms the Ford circle sits at <code style="color:#22d3bf">(p/q, 1/(2q**2))</code> with radius <code style="color:#22d3bf">1/(2q**2)</code>. Two such circles are <b>tangent if and only if</b> <code style="color:#22d3bf">|p*s - q*r| == 1</code> — the Farey-neighbour condition — and otherwise strictly disjoint. They never overlap.</p>
+<p>★<b>Why this earns its place</b>: the picture&#x27;s correctness is an identity between integers, not a tolerance. <code style="color:#22d3bf">|p*s - q*r|</code> is computed in exact integer arithmetic and compared with the *geometric* tangency <code style="color:#22d3bf">|c_i - c_j| == r_i + r_j</code> measured from the coordinates; the two must agree on every pair. The number of fractions is the Farey length <code style="color:#22d3bf">1 + sum(phi(q) for q in 1..n)</code>, another exact integer.</p>
+<p>Returns a <code style="color:#22d3bf">table</code>: <code style="color:#22d3bf">x</code>, <code style="color:#22d3bf">y</code>, <code style="color:#22d3bf">radius</code>, <code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">q</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">max_denominator &lt; 1</code>; <code style="color:#22d3bf">lo &gt;= hi</code>; the interval or denominator would exceed the cap.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
-<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
-<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code></b> —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
 <p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

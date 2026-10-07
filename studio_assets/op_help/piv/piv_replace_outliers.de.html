@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_replace_outliers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>外れ値を近傍で埋める。`<code style="color:#22d3bf">method=&quot;nan&quot;</code>` なら<b>埋めずに欠測にする</b>。</p>
-<p>埋めた場所と実測を区別できなくなるのが埋め込みの代償なので、</p>
-<p>どこを埋めたかは呼ぶ側が `<code style="color:#22d3bf">mask</code>` として持っている前提にしてある</p>
-<p>(この op は mask を返さない —— 入力として受け取ったものだから)。</p>
+<p>外れ値を近傍で埋める。<code style="color:#22d3bf">method=&quot;nan&quot;</code> なら<b>埋めずに欠測にする</b>。</p>
+<p>埋めた場所と実測を区別できなくなるのが埋め込みの代償なので、どこを埋めたかは呼ぶ側が <code style="color:#22d3bf">mask</code> として持っている前提にしてある(この op は mask を返さない —— 入力として受け取ったものだから)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

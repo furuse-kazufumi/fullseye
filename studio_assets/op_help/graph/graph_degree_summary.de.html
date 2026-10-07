@@ -5,16 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>Degrees, density and reciprocity of a directed wiring matrix.</p>
-<p>`<code style="color:#22d3bf">adj</code><code style="color:#22d3bf"> is a square matrix; entry </code><code style="color:#22d3bf">(i, j) &gt; 0</code><code style="color:#22d3bf"> means an edge </code><code style="color:#22d3bf">i -&gt; j</code>`. Self-loops</p>
-<p>are counted separately and excluded from the edge statistics. Returns a dict with</p>
-<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">self_loops</code><code style="color:#22d3bf">, the </code><code style="color:#22d3bf">in_degree</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">out_degree</code>` arrays,</p>
-<p>`<code style="color:#22d3bf">density</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">edges / (n (n-1))</code><code style="color:#22d3bf">), and </code><code style="color:#22d3bf">reciprocal_pairs</code>` (unordered pairs wired</p>
-<p>in both directions).</p>
-<p>The identity `<code style="color:#22d3bf">in_degree.sum() == out_degree.sum() == edges</code>` holds exactly for</p>
-<p>any directed graph and is checked before returning (fail-closed — if it ever broke,</p>
-<p>the matrix was not what the caller thought).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-square / empty / non-finite / negative input, or a</p>
-<p>matrix over the node cap.</p>
+<p><code style="color:#22d3bf">adj</code> is a square matrix; entry <code style="color:#22d3bf">(i, j) &gt; 0</code> means an edge <code style="color:#22d3bf">i -&gt; j</code>. Self-loops are counted separately and excluded from the edge statistics. Returns a dict with <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">edges</code>, <code style="color:#22d3bf">self_loops</code>, the <code style="color:#22d3bf">in_degree</code> / <code style="color:#22d3bf">out_degree</code> arrays, <code style="color:#22d3bf">density</code> (<code style="color:#22d3bf">edges / (n (n-1))</code>), and <code style="color:#22d3bf">reciprocal_pairs</code> (unordered pairs wired in both directions).</p>
+<p>The identity <code style="color:#22d3bf">in_degree.sum() == out_degree.sum() == edges</code> holds exactly for any directed graph and is checked before returning (fail-closed — if it ever broke, the matrix was not what the caller thought).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-square / empty / non-finite / negative input, or a matrix over the node cap.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

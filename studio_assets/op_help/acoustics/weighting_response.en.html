@@ -4,16 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.weighting_response(freqs, kind=&#x27;A&#x27;, floor_db=-200.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import acoustics; acoustics.weighting_response(freqs, kind=&#x27;A&#x27;, floor_db=-200.0)</code>; from the registry, <code style="color:#22d3bf">opsacoustics.get(&quot;weighting_response&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The A / C / Z frequency-weighting curve, in dB, at the given frequencies.</p>
-<p>Computed from the four pole frequencies that *define* the networks and</p>
-<p>normalised so that the response at 1 kHz is exactly 0 dB <b>by construction</b></p>
-<p>— the curve is divided by its own value at 1 kHz rather than having a</p>
-<p>published offset constant added to it. That is why the tests can assert</p>
-<p>equality at 1 kHz to 0.0 rather than to a tolerance, and why no standard&#x27;s</p>
-<p>table of attenuations appears anywhere in this repository.</p>
-<p>The response depends on `<code style="color:#22d3bf">f</code><code style="color:#22d3bf"> only through </code><code style="color:#22d3bf">f**2</code>`, so it is an even</p>
-<p>function and negative frequencies are evaluated at `<code style="color:#22d3bf">|f|</code>` — that is the</p>
-<p>definition, not a repair. `<code style="color:#22d3bf">f = 0</code>` has zero response (both curves have a</p>
-<p>zero at DC) and is reported as `<code style="color:#22d3bf">floor_db</code><code style="color:#22d3bf"> rather than </code><code style="color:#22d3bf">-inf</code>`.</p>
+<p>Computed from the four pole frequencies that *define* the networks and normalised so that the response at 1 kHz is exactly 0 dB <b>by construction</b> — the curve is divided by its own value at 1 kHz rather than having a published offset constant added to it. That is why the tests can assert equality at 1 kHz to 0.0 rather than to a tolerance, and why no standard&#x27;s table of attenuations appears anywhere in this repository.</p>
+<p>The response depends on <code style="color:#22d3bf">f</code> only through <code style="color:#22d3bf">f**2</code>, so it is an even function and negative frequencies are evaluated at <code style="color:#22d3bf">|f|</code> — that is the definition, not a repair. <code style="color:#22d3bf">f = 0</code> has zero response (both curves have a zero at DC) and is reported as <code style="color:#22d3bf">floor_db</code> rather than <code style="color:#22d3bf">-inf</code>.</p>
 <p>Measured (computed, then printed — these are outputs, not transcriptions):</p>
 <p>========  =========  =========</p>
 <p>f (Hz)    A (dB)     C (dB)</p>
@@ -26,21 +18,10 @@
 <p>10000      -2.4918    -4.4055</p>
 <p>20000      -9.3469   -11.2786</p>
 <p>========  =========  =========</p>
-<p>`<code style="color:#22d3bf">A(1000)</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">C(1000)</code><code style="color:#22d3bf"> are exactly </code><code style="color:#22d3bf">0.0</code>` — the Python float, not a</p>
-<p>rounding — because of the construction. The low-frequency asymptote is a</p>
-<p>closed form and is asserted in the tests: `<code style="color:#22d3bf">A</code>` falls at exactly</p>
-<p>80 dB/decade as `<code style="color:#22d3bf">f -&gt; 0</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">f**4</code><code style="color:#22d3bf"> over three constants) and </code><code style="color:#22d3bf">C</code>` at</p>
-<p>exactly 40 dB/decade (`<code style="color:#22d3bf">f**2</code>`). Measured between 0.001 and 0.01 Hz with the</p>
-<p>floor lowered out of the way: <b>79.999998</b> and <b>39.999998</b> dB/decade.</p>
-<p>That last caveat is real and is why the floor is an argument: with the</p>
-<p>default `<code style="color:#22d3bf">floor_db = -200</code>` the A curve reaches the floor below about</p>
-<p>0.35 Hz (unfloored, `<code style="color:#22d3bf">A(0.1) = -228.55</code>` dB), so the asymptote measured</p>
-<p>against the default floor comes out as 0.0 dB/decade between 0.01 and</p>
-<p>0.1 Hz — a clamp, correctly reported, that would look like a bug if the</p>
-<p>floor were not visible.</p>
+<p><code style="color:#22d3bf">A(1000)</code> and <code style="color:#22d3bf">C(1000)</code> are exactly <code style="color:#22d3bf">0.0</code> — the Python float, not a rounding — because of the construction. The low-frequency asymptote is a closed form and is asserted in the tests: <code style="color:#22d3bf">A</code> falls at exactly 80 dB/decade as <code style="color:#22d3bf">f -&gt; 0</code> (<code style="color:#22d3bf">f**4</code> over three constants) and <code style="color:#22d3bf">C</code> at exactly 40 dB/decade (<code style="color:#22d3bf">f**2</code>). Measured between 0.001 and 0.01 Hz with the floor lowered out of the way: <b>79.999998</b> and <b>39.999998</b> dB/decade.</p>
+<p>That last caveat is real and is why the floor is an argument: with the default <code style="color:#22d3bf">floor_db = -200</code> the A curve reaches the floor below about 0.35 Hz (unfloored, <code style="color:#22d3bf">A(0.1) = -228.55</code> dB), so the asymptote measured against the default floor comes out as 0.0 dB/decade between 0.01 and 0.1 Hz — a clamp, correctly reported, that would look like a bug if the floor were not visible.</p>
 <p>Returns a float64 array the same shape as *freqs*.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / non-finite / complex / masked</p>
-<p>`<code style="color:#22d3bf">freqs</code><code style="color:#22d3bf">, an unknown </code><code style="color:#22d3bf">kind</code>`.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-1-D / non-finite / complex / masked <code style="color:#22d3bf">freqs</code>, an unknown <code style="color:#22d3bf">kind</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

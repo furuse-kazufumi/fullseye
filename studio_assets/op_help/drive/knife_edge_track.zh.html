@@ -5,17 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>正面像から刃先の直線・峰・先端を出す(規則のみ)。</p>
-<p>手順: 輝度の縦の段が「暗 → 明」(刃 → 壁)になる行を列ごとに拾う → 食材の列(彩度の規則)と周辺 3 px を除く → 被覆率法で</p>
-<p>副画素に(窓はぼけの推定に合わせて広げる)→ 全最小二乗の直線(`<code style="color:#22d3bf">measure.fit_line</code><code style="color:#22d3bf"> と同じ定式)→ 残差 &gt; </code><code style="color:#22d3bf">reject_px</code>` を外して</p>
-<p>当て直す。上側の境界(峰と先端の斜め線)も同じく拾い、峰の直線から外れた右側の連続部分 = 斜め線、刃先線との交点 = 先端。</p>
-<p>食材に隠れた列(`<code style="color:#22d3bf">occluded_cols</code>`)の刃先は、両側から当てた 1 本の直線の内挿になる。</p>
-<p>`<code style="color:#22d3bf">method</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">&quot;coverage&quot;</code><code style="color:#22d3bf">(既定)か </code><code style="color:#22d3bf">&quot;gradient&quot;</code><code style="color:#22d3bf">(微分の重心、比較用)。返り値: </code><code style="color:#22d3bf">angle_deg</code>`(x 右・z 上の反時計回り、</p>
-<p>atan2)、`<code style="color:#22d3bf">line</code><code style="color:#22d3bf">(row = cy + (col − cx)·dy/dx の全最小二乗)、</code><code style="color:#22d3bf">slope</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">offset</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">tip_rc</code>`(先端、見つからなければ None)、</p>
-<p>`<code style="color:#22d3bf">n_points</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rms_px</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">cols_used</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">occluded_cols</code>`。刃が写っていなければ ValueError。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>手順: 輝度の縦の段が「暗 → 明」(刃 → 壁)になる行を列ごとに拾う → 食材の列(彩度の規則)と周辺 3 px を除く → 被覆率法で副画素に(窓はぼけの推定に合わせて広げる)→ 全最小二乗の直線(<code style="color:#22d3bf">measure.fit_line</code> と同じ定式)→ 残差 &gt; <code style="color:#22d3bf">reject_px</code> を外して当て直す。上側の境界(峰と先端の斜め線)も同じく拾い、峰の直線から外れた右側の連続部分 = 斜め線、刃先線との交点 = 先端。食材に隠れた列(<code style="color:#22d3bf">occluded_cols</code>)の刃先は、両側から当てた 1 本の直線の内挿になる。</p>
+<p><code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;coverage&quot;</code>(既定)か <code style="color:#22d3bf">&quot;gradient&quot;</code>(微分の重心、比較用)。返り値: <code style="color:#22d3bf">angle_deg</code>(x 右・z 上の反時計回り、atan2)、<code style="color:#22d3bf">line</code>(row = cy + (col − cx)·dy/dx の全最小二乗)、<code style="color:#22d3bf">slope</code>、<code style="color:#22d3bf">offset</code>、<code style="color:#22d3bf">tip_rc</code>(先端、見つからなければ None)、<code style="color:#22d3bf">n_points</code>、<code style="color:#22d3bf">rms_px</code>、<code style="color:#22d3bf">cols_used</code>、<code style="color:#22d3bf">occluded_cols</code>。刃が写っていなければ ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_food_cutting_measure">poc_food_cutting_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_food_cutting_measure.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

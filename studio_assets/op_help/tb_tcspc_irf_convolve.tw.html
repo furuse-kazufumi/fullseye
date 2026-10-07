@@ -5,47 +5,29 @@
 <p><img src="fig/tb_tcspc_irf_convolve.png" alt="tb_tcspc_irf_convolve: input → output"></p>
 <p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
 <p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_irf_convolve.a.jpg">tb_tcspc_irf_convolve: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_irf_convolve.a.jpg">tb_tcspc_irf_convolve: 旋鈕 a 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_irf_convolve.b.jpg">tb_tcspc_irf_convolve: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_irf_convolve.b.jpg">tb_tcspc_irf_convolve: 旋鈕 b 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_irf_convolve.chain.jpg">tb_tcspc_irf_convolve: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_irf_convolve.chain.jpg">tb_tcspc_irf_convolve: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_irf_convolve.inputs.jpg">tb_tcspc_irf_convolve: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_tcspc_irf_convolve.inputs.jpg">tb_tcspc_irf_convolve: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用儀器響應（時序抖動）對到達時間直方圖進行模糊處理。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>The temporal analogue of a PSF convolution: a detector&#x27;s timing uncertainty</p>
-<p>(SPAD jitter + TDC quantisation + laser pulse width) smears every arrival</p>
-<p>time by the instrument response function, here a Gaussian of full width at</p>
-<p>half maximum *irf_fwhm_ps*. The kernel is the <b>exact bin integral</b> of that</p>
-<p>Gaussian (erf differences), normalised to sum 1, truncated at</p>
-<p>`<code style="color:#22d3bf">+-truncate*sigma</code>` and forced to odd length so the convolution is centred.</p>
-<p>Ground truth: convolving a unit spike in the middle of a 256-bin window with</p>
-<p>`<code style="color:#22d3bf">irf_fwhm_ps = 500</code><code style="color:#22d3bf"> at </code><code style="color:#22d3bf">bin_ps = 50</code>` leaves the centroid <b>exactly</b></p>
-<p>where it was (measured shift 0.0 ps — the kernel is symmetric) and gives a</p>
-<p>profile whose measured FWHM is 501.22 ps. That 0.24% excess over 500 is the</p>
-<p>*measurement*, not the kernel: :func:<code style="color:#22d3bf">tcspc_stats</code> finds the half-maximum</p>
-<p>crossings by linear interpolation between bins, which slightly overestimates</p>
-<p>the width of a Gaussian.</p>
-<p>Total counts are preserved *except* at the window edges, where</p>
-<p>`<code style="color:#22d3bf">mode=&#x27;same&#x27;</code>` discards the tail that falls outside — measured loss exactly</p>
-<p>0 for that centred spike, but a genuine loss for a pulse within a few sigma</p>
-<p>of either end.</p>
+<p>The temporal analogue of a PSF convolution: a detector&#x27;s timing uncertainty (SPAD jitter + TDC quantisation + laser pulse width) smears every arrival time by the instrument response function, here a Gaussian of full width at half maximum *irf_fwhm_ps*. The kernel is the <b>exact bin integral</b> of that Gaussian (erf differences), normalised to sum 1, truncated at <code style="color:#22d3bf">+-truncate*sigma</code> and forced to odd length so the convolution is centred.</p>
+<p>Ground truth: convolving a unit spike in the middle of a 256-bin window with <code style="color:#22d3bf">irf_fwhm_ps = 500</code> at <code style="color:#22d3bf">bin_ps = 50</code> leaves the centroid <b>exactly</b> where it was (measured shift 0.0 ps — the kernel is symmetric) and gives a profile whose measured FWHM is 501.22 ps. That 0.24% excess over 500 is the *measurement*, not the kernel: <code style="color:#22d3bf">tcspc_stats</code> finds the half-maximum crossings by linear interpolation between bins, which slightly overestimates the width of a Gaussian.</p>
+<p>Total counts are preserved *except* at the window edges, where <code style="color:#22d3bf">mode=&#x27;same&#x27;</code> discards the tail that falls outside — measured loss exactly 0 for that centred spike, but a genuine loss for a pulse within a few sigma of either end.</p>
 <p>Returns a float64 1-D histogram of the same length as *hist*.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *hist*, a</p>
-<p>non-positive *bin_ps* / *irf_fwhm_ps* / *truncate*, an IRF sigma below</p>
-<p>1e-3 bins (the kernel would be a delta and the op a no-op — say so instead</p>
-<p>of pretending to blur), and a kernel that would be longer than the</p>
-<p>:data:<code style="color:#22d3bf">MAX_BINS</code> cap.</p>
-<p>Typed bridge of the photon op `<code style="color:#22d3bf">tcspc_irf_convolve</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">bin_ps</code><code style="color:#22d3bf"> (default 100) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">irf_fwhm_ps</code>` (default 200).</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: negative, non-finite or non-1-D *hist*, a non-positive *bin_ps* / *irf_fwhm_ps* / *truncate*, an IRF sigma below 1e-3 bins (the kernel would be a delta and the op a no-op — say so instead of pretending to blur), and a kernel that would be longer than the <code style="color:#22d3bf">MAX_BINS</code> cap.</p>
+<p>Typed bridge of the photon op <code style="color:#22d3bf">tcspc_irf_convolve</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> drives <code style="color:#22d3bf">bin_ps</code> (default 100) and <code style="color:#22d3bf">b</code> drives <code style="color:#22d3bf">irf_fwhm_ps</code> (default 200).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_counts 0.50 0.50
-tb_tcspc_irf_convolve 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_counts%200.50%200.50%0Atb_tcspc_irf_convolve%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_counts%200.50%200.50%0Atb_tcspc_irf_convolve%200.50%200.50">Load &amp; run</a></p>
+tb_tcspc_irf_convolve 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_counts%200.50%200.50%0Atb_tcspc_irf_convolve%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_counts%200.50%200.50%0Atb_tcspc_irf_convolve%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p>下面的範例呼叫的是底層帳本運算子 <code style="color:#22d3bf">tcspc_irf_convolve</code>。此橋接運算子只是把同一實作適配為 <code style="color:#22d3bf">fn(v, a, b)</code> 慣例，行為完全相同(只是呼叫形式不同)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>

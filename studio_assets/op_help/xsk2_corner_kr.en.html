@@ -11,7 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk2_corner_kr.inputs.jpg">xsk2_corner_kr: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Kitchen-Rosenfeld corner detection response. Calls `<code style="color:#22d3bf">skimage.feature.corner_kitchen_rosenfeld</code><code style="color:#22d3bf">, replaces NaN with 0, then maps the signed response to [0,1] via </code><code style="color:#22d3bf">signed01</code>`.</p>
+<p>Kitchen-Rosenfeld corner detection response. Calls <code style="color:#22d3bf">skimage.feature.corner_kitchen_rosenfeld</code>, replaces NaN with 0, then maps the signed response to [0,1] via <code style="color:#22d3bf">signed01</code>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>a, b は未使用。等高線の曲率とエッジ強度から求まる古典的なコーナー検出器で、平坦部やエッジ上では 0 付近、コーナーで大きな値になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

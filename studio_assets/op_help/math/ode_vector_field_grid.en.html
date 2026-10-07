@@ -3,33 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">flow2d</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ode_vector_field_grid(system=&#x27;rossler&#x27;, params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane=&#x27;xy&#x27;, offset=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.ode_vector_field_grid(system=&#x27;rossler&#x27;, params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane=&#x27;xy&#x27;, offset=0.0)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;ode_vector_field_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Sample a named field on a grid — a `<code style="color:#22d3bf">flow2d</code>` the existing viewers take.</p>
-<p>Returns `<code style="color:#22d3bf">(2, H, W)</code><code style="color:#22d3bf"> with components </code><code style="color:#22d3bf">(dy, dx)</code>` — the library&#x27;s</p>
-<p>`<code style="color:#22d3bf">flow2d</code>` layout — so the <b>existing flow2d viewers</b> render it with no new</p>
-<p>drawing code: `<code style="color:#22d3bf">piv_flow_to_rgbimage</code><code style="color:#22d3bf"> (colour wheel), </code><code style="color:#22d3bf">piv_flow_magnitude</code>` and</p>
-<p>`<code style="color:#22d3bf">piv_line_integral_convolution</code><code style="color:#22d3bf"> (texture along the flow), </code><code style="color:#22d3bf">piv_quiver</code>`</p>
-<p>(arrows) and `<code style="color:#22d3bf">piv_streamline_image</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">piv_streamlines</code>` (evenly spaced</p>
-<p>streamlines). (★2026-10-03: this docstring used to name &quot;quiver, streamlines,</p>
-<p>flow_magnitude&quot; before any quiver or streamline op existed; they were added the</p>
-<p>same day. `<code style="color:#22d3bf">fs.flow_magnitude</code>` takes two components, not a flow2d array.) For a</p>
-<p>3-D system, *plane* picks the slice (`<code style="color:#22d3bf">xy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">xz</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">yz</code>`) and *offset*</p>
-<p>fixes the third coordinate.</p>
-<p>★<b>Why this earns its place</b>: it is the bridge that keeps this family from</p>
-<p>growing its own renderer. The vectors are the same `<code style="color:#22d3bf">_dyn_derivative</code>` the</p>
-<p>integrator uses, so what you see is what gets integrated.</p>
-<p>★The layout is <b>channel-first</b>, not the `<code style="color:#22d3bf">(H, W, 2)</code>` that reads more</p>
-<p>naturally here: `<code style="color:#22d3bf">flow2d</code>` is an existing type with an existing predicate and</p>
-<p>existing consumers, and a row that declares `<code style="color:#22d3bf">flow2d</code>` while returning the</p>
-<p>transpose is a type lie the fuzzer catches (it did —— 2026-09-23). Row 0 is</p>
-<p>the <b>top</b> (the image convention), so the vertical component is negated to</p>
-<p>match what the viewer draws.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: unknown system or plane; a grid over the cap;</p>
-<p>non-finite bounds; a degenerate window.</p>
+<p>Sample a named field on a grid — a <code style="color:#22d3bf">flow2d</code> the existing viewers take.</p>
+<p>Returns <code style="color:#22d3bf">(2, H, W)</code> with components <code style="color:#22d3bf">(dy, dx)</code> — the library&#x27;s <code style="color:#22d3bf">flow2d</code> layout — so the <b>existing flow2d viewers</b> render it with no new drawing code: <code style="color:#22d3bf">piv_flow_to_rgbimage</code> (colour wheel), <code style="color:#22d3bf">piv_flow_magnitude</code> and <code style="color:#22d3bf">piv_line_integral_convolution</code> (texture along the flow), <code style="color:#22d3bf">piv_quiver</code> (arrows) and <code style="color:#22d3bf">piv_streamline_image</code> / <code style="color:#22d3bf">piv_streamlines</code> (evenly spaced streamlines). (★2026-10-03: this docstring used to name &quot;quiver, streamlines, flow_magnitude&quot; before any quiver or streamline op existed; they were added the same day. <code style="color:#22d3bf">fs.flow_magnitude</code> takes two components, not a flow2d array.) For a 3-D system, *plane* picks the slice (<code style="color:#22d3bf">xy</code> / <code style="color:#22d3bf">xz</code> / <code style="color:#22d3bf">yz</code>) and *offset* fixes the third coordinate.</p>
+<p>★<b>Why this earns its place</b>: it is the bridge that keeps this family from growing its own renderer. The vectors are the same <code style="color:#22d3bf">_dyn_derivative</code> the integrator uses, so what you see is what gets integrated.</p>
+<p>★The layout is <b>channel-first</b>, not the <code style="color:#22d3bf">(H, W, 2)</code> that reads more naturally here: <code style="color:#22d3bf">flow2d</code> is an existing type with an existing predicate and existing consumers, and a row that declares <code style="color:#22d3bf">flow2d</code> while returning the transpose is a type lie the fuzzer catches (it did —— 2026-09-23). Row 0 is the <b>top</b> (the image convention), so the vertical component is negated to match what the viewer draws.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown system or plane; a grid over the cap; non-finite bounds; a degenerate window.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

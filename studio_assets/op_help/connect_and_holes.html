@@ -8,10 +8,10 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/connect_and_holes.chain.jpg">connect_and_holes: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/connect_and_holes.chain.jpg">connect_and_holes: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>領域の連結成分数を数える（8 連結、`<code style="color:#22d3bf">count_obj</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">_sh_region_feat</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">count</code>` 分岐）。a, b は未使用。</p>
-<p>HALCON の `<code style="color:#22d3bf">connect_and_holes</code><code style="color:#22d3bf">（連結成分数と穴の数の 2 つを同時に返す演算）のうち**連結成分数だけ**を返す近似 —— feature sort は 1 スカラーしか運べないため、穴の数は含まれない（</code><code style="color:#22d3bf">area_holes</code>` が穴の面積比を別途計算する）。</p>
+<p>領域の連結成分数を数える（8 連結、<code style="color:#22d3bf">count_obj</code> と同じ <code style="color:#22d3bf">_sh_region_feat</code> の <code style="color:#22d3bf">count</code> 分岐）。a, b は未使用。</p>
+<p>HALCON の <code style="color:#22d3bf">connect_and_holes</code>（連結成分数と穴の数の 2 つを同時に返す演算）のうち<b>連結成分数だけ</b>を返す近似 —— feature sort は 1 スカラーしか運べないため、穴の数は含まれない（<code style="color:#22d3bf">area_holes</code> が穴の面積比を別途計算する）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -21,7 +21,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-connect_and_holes 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aconnect_and_holes%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aconnect_and_holes%200.50%200.50">Load &amp; run</a></p>
+connect_and_holes 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aconnect_and_holes%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aconnect_and_holes%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>

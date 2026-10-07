@@ -6,20 +6,15 @@
 <p><img src="fig/linear_trans_color.png" alt="linear_trans_color: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/linear_trans_color.a.jpg">linear_trans_color: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/linear_trans_color.a.jpg">linear_trans_color: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/linear_trans_color.chain.jpg">linear_trans_color: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/linear_trans_color.chain.jpg">linear_trans_color: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/linear_trans_color.inputs.jpg">linear_trans_color: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/linear_trans_color.inputs.jpg">linear_trans_color: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>3x3 の混合行列でチャンネル間を線形変換する（アフィン色変換）。HALCON の</p>
-<p>`<code style="color:#22d3bf">linear_trans_color</code>`（多チャンネル画像の色値のアフィン変換を計算する）</p>
-<p>に相当（本実装はオフセット項なしの純粋な線形変換）。</p>
-<p>対角成分 0.6 + 非対角 0.2 を基本形とし、a で位相 `<code style="color:#22d3bf">theta = pi * a</code>` を</p>
-<p>振って対角成分の一部を `<code style="color:#22d3bf">cos(theta)</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">sin(theta)</code>` で回転的に変化させた</p>
-<p>行列を作り、各行を合計 1 に正規化してから `<code style="color:#22d3bf">c @ M.T</code>` を掛ける。</p>
-<p>a が 0→1 で R/G 寄りの重みづけが周期的に入れ替わる。b は未使用。</p>
+<p>3x3 の混合行列でチャンネル間を線形変換する（アフィン色変換）。HALCON の <code style="color:#22d3bf">linear_trans_color</code>（多チャンネル画像の色値のアフィン変換を計算する）に相当（本実装はオフセット項なしの純粋な線形変換）。</p>
+<p>対角成分 0.6 + 非対角 0.2 を基本形とし、a で位相 <code style="color:#22d3bf">theta = pi * a</code> を振って対角成分の一部を <code style="color:#22d3bf">cos(theta)</code>/<code style="color:#22d3bf">sin(theta)</code> で回転的に変化させた行列を作り、各行を合計 1 に正規化してから <code style="color:#22d3bf">c @ M.T</code> を掛ける。a が 0→1 で R/G 寄りの重みづけが周期的に入れ替わる。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
@@ -31,7 +26,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cfa_to_rgb 0.50 0.50
-linear_trans_color 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cfa_to_rgb%200.50%200.50%0Alinear_trans_color%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cfa_to_rgb%200.50%200.50%0Alinear_trans_color%200.50%200.50">Load &amp; run</a></p>
+linear_trans_color 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cfa_to_rgb%200.50%200.50%0Alinear_trans_color%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cfa_to_rgb%200.50%200.50%0Alinear_trans_color%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_color_artistic">gallery2d_color_artistic</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_color_artistic.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">color</code> を入力に取れる)</h3>

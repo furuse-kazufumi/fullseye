@@ -3,13 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_signal(pairs)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_signal(pairs)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_signal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>쌍 `<code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> → 종속변수의 </code><code style="color:#22d3bf">signal (N,)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">pairs</code>` 의 두 번째 출구.</p>
+<p>쌍 <code style="color:#22d3bf">(N,2)</code> → 종속변수의 <code style="color:#22d3bf">signal (N,)</code>. <code style="color:#22d3bf">pairs</code> 의 두 번째 출구.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>列 1(y)だけを取り出す。`<code style="color:#22d3bf">funct_1d_to_pairs</code>` が (x, y) を並べた</p>
-<p>(N,2) を返すので、その逆向きにあたる —— <b>x が等間隔ならば</b></p>
-<p>`<code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code>` は bit 一致する。等間隔でない x を持つ対を</p>
-<p>通すと、<b>x の情報が黙って落ちる</b>(`<code style="color:#22d3bf">signal</code>` は添字が等間隔だという前提の型)。</p>
-<p>だから :func:<code style="color:#22d3bf">pairs_to_table</code> が `<code style="color:#22d3bf">x_uniform</code>` を必ず一緒に出す。</p>
+<p>列 1(y)だけを取り出す。<code style="color:#22d3bf">funct_1d_to_pairs</code> が (x, y) を並べた(N,2) を返すので、その逆向きにあたる —— <b>x が等間隔ならば</b> <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> は bit 一致する。等間隔でない x を持つ対を通すと、<b>x の情報が黙って落ちる</b>(<code style="color:#22d3bf">signal</code> は添字が等間隔だという前提の型)。</p>
+<p>だから <code style="color:#22d3bf">pairs_to_table</code> が <code style="color:#22d3bf">x_uniform</code> を必ず一緒に出す。</p>
 <p>Args:</p>
 <p>pairs: (N, 2) または 2 本の等長 1-D のタプル。</p>
 <p>Returns:</p>

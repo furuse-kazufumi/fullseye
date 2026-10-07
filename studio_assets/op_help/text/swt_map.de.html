@@ -5,13 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Stroke Width Transform — schreibt in jedes Pixel die Breite des Strichs, der es enthält.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>文字側の境界画素から、勾配の向きに沿って文字の内側へ光線を飛ばし、向かい合う境界</p>
-<p>画素(勾配がほぼ逆向き)に当たったら、光線上の全画素に幅(境界画素の中心間距離 + 1)</p>
-<p>を書く(既に小さい値があれば小さい方)。Epshtein 2010 §3 の手順で、2 回目の走査で</p>
-<p>光線上の中央値より大きい値を中央値に置き換える(角の過大を抑える)。エッジの規約は</p>
-<p>:func:<code style="color:#22d3bf">_edges_and_gradient</code> に書いた(矩形ストロークで幅が厳密に整数になる)。</p>
-<p>Returns dict: `<code style="color:#22d3bf">swt</code><code style="color:#22d3bf">(幅の配列、ストローク外は 0)/ </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_rays</code>` /</p>
-<p>`<code style="color:#22d3bf">n_hits</code>`(向かい合うエッジに当たった光線の数)。</p>
+<p>文字側の境界画素から、勾配の向きに沿って文字の内側へ光線を飛ばし、向かい合う境界画素(勾配がほぼ逆向き)に当たったら、光線上の全画素に幅(境界画素の中心間距離 + 1) を書く(既に小さい値があれば小さい方)。Epshtein 2010 §3 の手順で、2 回目の走査で光線上の中央値より大きい値を中央値に置き換える(角の過大を抑える)。エッジの規約は <code style="color:#22d3bf">_edges_and_gradient</code> に書いた(矩形ストロークで幅が厳密に整数になる)。</p>
+<p>Returns dict: <code style="color:#22d3bf">swt</code>(幅の配列、ストローク外は 0)/ <code style="color:#22d3bf">edges</code> / <code style="color:#22d3bf">n_rays</code> / <code style="color:#22d3bf">n_hits</code>(向かい合うエッジに当たった光線の数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

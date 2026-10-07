@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veil_chroma_limit(color, luminance: &#x27;float&#x27;, tol: &#x27;float&#x27; = 0.15) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveenv; driveenv.veil_chroma_limit(color, luminance: &#x27;float&#x27;, tol: &#x27;float&#x27; = 0.15) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;veil_chroma_limit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>色 `<code style="color:#22d3bf">color</code><code style="color:#22d3bf">(RGB の比)で輝度 </code><code style="color:#22d3bf">luminance</code>` の灯火に白い光(光幕・霧の大気光)W を足したとき、色度の距離</p>
-<p>|(c L + W·1)/|c L + W·1| − c/|c||(balltrack.ball_detect の chroma と同じ量)が `<code style="color:#22d3bf">tol</code>` に達する W* [cd/m²]。</p>
-<p>距離は W に単調に増える(W → ∞ で灰色 (1,1,1)/√3 との距離に漸近)。漸近値が tol 以下なら `<code style="color:#22d3bf">inf</code>`(どれだけ白を足しても</p>
-<p>色は読める)。二分法で相対 1e-12。使い道: 逆光の閾値 θ* = √(10 E_glare / W*)(Stiles–Holladay)、霧の中で色が読める距離</p>
-<p>d* = ln(1 + W*/L_h)/β(灯火 c L e^{−βd} + 大気光 L_h (1 − e^{−βd}) の色度は c L + L_h (e^{βd} − 1)·1 と同じ)。</p>
+<p>色 <code style="color:#22d3bf">color</code>(RGB の比)で輝度 <code style="color:#22d3bf">luminance</code> の灯火に白い光(光幕・霧の大気光)W を足したとき、色度の距離 |(c L + W·1)/|c L + W·1| − c/|c||(balltrack.ball_detect の chroma と同じ量)が <code style="color:#22d3bf">tol</code> に達する W* [cd/m²]。</p>
+<p>距離は W に単調に増える(W → ∞ で灰色 (1,1,1)/√3 との距離に漸近)。漸近値が tol 以下なら <code style="color:#22d3bf">inf</code>(どれだけ白を足しても色は読める)。二分法で相対 1e-12。使い道: 逆光の閾値 θ* = √(10 E_glare / W*)(Stiles–Holladay)、霧の中で色が読める距離 d* = ln(1 + W*/L_h)/β(灯火 c L e^{−βd} + 大気光 L_h (1 − e^{−βd}) の色度は c L + L_h (e^{βd} − 1)·1 と同じ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

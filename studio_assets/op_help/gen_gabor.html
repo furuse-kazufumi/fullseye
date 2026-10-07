@@ -7,22 +7,16 @@
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p>*出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_gabor.a.jpg">gen_gabor: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_gabor.a.jpg">gen_gabor: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_gabor.b.jpg">gen_gabor: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_gabor.b.jpg">gen_gabor: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_gabor.inputs.jpg">gen_gabor: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_gabor.inputs.jpg">gen_gabor: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>単一の Gabor カーネル(向き `<code style="color:#22d3bf">θ=π*a</code><code style="color:#22d3bf">、周波数 </code><code style="color:#22d3bf">0.1+0.3*b</code>`)による</p>
-<p>畳み込み応答の絶対値を、カーネルの L1 ノルムで正規化して返す。DC 成分を</p>
-<p>除いた(平均を引いた)実部のみのカーネルで、指定方向・周波数の縞模様に</p>
-<p>選択的に反応するバンドパステクスチャフィルタ。HALCON の `<code style="color:#22d3bf">gen_gabor</code>`</p>
-<p>（Generate a Gabor filter.）に相当(虚部/位相は持たない実カーネルのみの</p>
-<p>簡易版)。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が向き θ(0〜180°)を、</code><code style="color:#22d3bf">b</code>` が空間周波数(0.1〜0.4)を振る。両方が</p>
-<p>使われる。`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> が縦縞、</code><code style="color:#22d3bf">a=0.5</code>`(90°)が横縞に応答する規約。</p>
-<p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)(実測。</code>tools/impl2/border_probe.py`)。</p>
+<p>単一の Gabor カーネル(向き <code style="color:#22d3bf">θ=π*a</code>、周波数 <code style="color:#22d3bf">0.1+0.3*b</code>)による畳み込み応答の絶対値を、カーネルの L1 ノルムで正規化して返す。DC 成分を除いた(平均を引いた)実部のみのカーネルで、指定方向・周波数の縞模様に選択的に反応するバンドパステクスチャフィルタ。HALCON の <code style="color:#22d3bf">gen_gabor</code> （Generate a Gabor filter.）に相当(虚部/位相は持たない実カーネルのみの簡易版)。</p>
+<p><code style="color:#22d3bf">a</code> が向き θ(0〜180°)を、<code style="color:#22d3bf">b</code> が空間周波数(0.1〜0.4)を振る。両方が使われる。<code style="color:#22d3bf">a=0</code> が縦縞、<code style="color:#22d3bf">a=0.5</code>(90°)が横縞に応答する規約。</p>
+<p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 <code style="color:#22d3bf">reflect</code>)(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
@@ -32,7 +26,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">gen_gabor 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:gen_gabor%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:gen_gabor%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">gen_gabor 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:gen_gabor%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:gen_gabor%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

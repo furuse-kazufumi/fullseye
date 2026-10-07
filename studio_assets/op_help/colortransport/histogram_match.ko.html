@@ -3,30 +3,17 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;histogram_match&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>`<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> 의 값 분포를 </code><code style="color:#22d3bf">ref</code>` 에 맞춥니다(1 차원 엄밀 최적수송).</p>
+<p><code style="color:#22d3bf">src</code> 의 값 분포를 <code style="color:#22d3bf">ref</code> 에 맞춥니다(1 차원 엄밀 최적수송).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>順位を保ったまま参照の分位点に置き換える。`<code style="color:#22d3bf">bins</code>` を指定すると、その段数の</p>
-<p>累積分布で近似する ―― 速いが<b>厳密ではなくなる</b>ので、既定は `<code style="color:#22d3bf">None</code>`</p>
-<p>(厳密)にしてある。</p>
-<p><b>同じ値の画素をどう扱うかで、絵の意味が変わる。</b> 単調写像なら「等しい入力</p>
-<p>は等しい出力に写る」はずだが、素朴に順位で置き換えると<b>同値が引き裂かれる</b>。</p>
-<p>実測(値 2 が 4 画素ある整数画像):出力は ``0.2222 / 0.3333 / 0.4444 /</p>
-<p>0.5556`` の 4 つに分かれた。つまり**平坦だった領域に、元の絵に無い濃淡が</p>
-<p>生える**。整数画像は同値だらけなので、これは例外ではなく常態。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ties=&quot;average&quot;</code>`(既定)—— 同値の画素には、そこに割り当たった参照値の</p>
-<p><b>平均</b>を与える。等しい入力は等しい出力に写り、単調性が保たれる。</p>
-<p>その代わり<b>出力の分布は参照と厳密には一致しなくなる</b>(同値の塊のぶん、</p>
-<p>分布が階段状に丸まる)。連続な入力(同値が無い)なら厳密一致のまま。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ties=&quot;break&quot;</code>` —— 順位そのままで引き裂く。**出力の分布は参照と厳密に</p>
-<p>一致する**が、平坦部に偽の濃淡が出る。分布を厳密に合わせることが目的で、</p>
-<p>絵として見ないと分かっているときだけ。</p>
-<p>どちらを選んでも失うものがある(分布の厳密さ か 平坦部の平坦さ)ので、</p>
-<p><b>黙って片方に決めず引数にした</b>。</p>
-<p>多チャネルの絵に<b>そのまま掛けるとチャネル間の相関を壊す</b>。</p>
-<p>各軸の周辺分布は合うのに、色の組合せが元に無かったものになりうる。</p>
-<p>相関ごと運びたいときは :func:<code style="color:#22d3bf">color_transfer</code> の `<code style="color:#22d3bf">method=&quot;gaussian&quot;</code>`。</p>
+<p>順位を保ったまま参照の分位点に置き換える。<code style="color:#22d3bf">bins</code> を指定すると、その段数の累積分布で近似する ―― 速いが<b>厳密ではなくなる</b>ので、既定は <code style="color:#22d3bf">None</code> (厳密)にしてある。</p>
+<p><b>同じ値の画素をどう扱うかで、絵の意味が変わる。</b> 単調写像なら「等しい入力は等しい出力に写る」はずだが、素朴に順位で置き換えると<b>同値が引き裂かれる</b>。実測(値 2 が 4 画素ある整数画像):出力は <code style="color:#22d3bf">0.2222 / 0.3333 / 0.4444 / 0.5556</code> の 4 つに分かれた。つまり<b>平坦だった領域に、元の絵に無い濃淡が生える</b>。整数画像は同値だらけなので、これは例外ではなく常態。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;average&quot;</code>(既定)—— 同値の画素には、そこに割り当たった参照値の <b>平均</b>を与える。等しい入力は等しい出力に写り、単調性が保たれる。その代わり<b>出力の分布は参照と厳密には一致しなくなる</b>(同値の塊のぶん、分布が階段状に丸まる)。連続な入力(同値が無い)なら厳密一致のまま。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;break&quot;</code> —— 順位そのままで引き裂く。<b>出力の分布は参照と厳密に一致する</b>が、平坦部に偽の濃淡が出る。分布を厳密に合わせることが目的で、絵として見ないと分かっているときだけ。</p>
+<p>どちらを選んでも失うものがある(分布の厳密さ か 平坦部の平坦さ)ので、<b>黙って片方に決めず引数にした</b>。</p>
+<p>多チャネルの絵に<b>そのまま掛けるとチャネル間の相関を壊す</b>。各軸の周辺分布は合うのに、色の組合せが元に無かったものになりうる。</p>
+<p>相関ごと運びたいときは <code style="color:#22d3bf">color_transfer</code> の <code style="color:#22d3bf">method=&quot;gaussian&quot;</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 측색과 분광 지식 — 색은 ‘분광 × 광원 × 관찰자’로만 정해진다</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

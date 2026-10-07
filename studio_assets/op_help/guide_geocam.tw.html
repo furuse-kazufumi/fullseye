@@ -13,7 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">規約(ここが姿勢の定義)</h3>
 <p>世界 = ENU(東・北・上)、方位は北 0° 時計回り、仰角は水平 0°。カメラ = OpenCV(右・下・前)、K = (fx, fy, cx, cy)。<b>yaw</b> = 光軸の方位、<b>pitch</b> = 光軸の仰角(上が正)、<b>roll</b> = 光軸まわり(正でカメラが右に傾く)。<code style="color:#22d3bf">R_wc = Rz(−yaw)·Rx(pitch)·Ry(roll)·B</code>。DEM は行 0 が北端。太陽の方位・仰角も同じ規約なので、2 経路の答えはそのまま比べられます。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">パイプライン</h3>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 圖(原始碼):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
     T[時刻 + 緯度経度] --&gt; SP[sun_position]
     I[写真] --&gt; SPX[sun_pixel_position]
     SPX --&gt; OS[camera_orientation_from_sun]

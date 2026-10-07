@@ -12,14 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>gradient_domain_reintegrate: threshold the gradient, then Poisson-reintegrate.</p>
-<p>The forward gradient (gx, gy) is computed, gradient vectors whose magnitude is</p>
-<p>below a threshold `<code style="color:#22d3bf">t = a * max|grad|</code>` are zeroed (small texture/noise</p>
-<p>gradients discarded, strong edges kept), and the image is reconstructed from</p>
-<p>the modified gradient field by solving the Poisson equation</p>
-<p>`<code style="color:#22d3bf">lap f = div(g)</code><code style="color:#22d3bf"> with an FFT solver. With </code><code style="color:#22d3bf">a == 0</code>` every gradient is kept</p>
-<p>and the original image is recovered (up to a constant); with `<code style="color:#22d3bf">a &gt; 0</code>` flat</p>
-<p>regions are flattened while edges survive -- an edge-preserving gradient-domain</p>
-<p>filter. `<code style="color:#22d3bf">b</code>` is unused. Output rescaled to [0,1].</p>
+<p>The forward gradient (gx, gy) is computed, gradient vectors whose magnitude is below a threshold <code style="color:#22d3bf">t = a * max|grad|</code> are zeroed (small texture/noise gradients discarded, strong edges kept), and the image is reconstructed from the modified gradient field by solving the Poisson equation <code style="color:#22d3bf">lap f = div(g)</code> with an FFT solver. With <code style="color:#22d3bf">a == 0</code> every gradient is kept and the original image is recovered (up to a constant); with <code style="color:#22d3bf">a &gt; 0</code> flat regions are flattened while edges survive -- an edge-preserving gradient-domain filter. <code style="color:#22d3bf">b</code> is unused. Output rescaled to [0,1].</p>
 <p><b>Border handling</b>: wrap around to the opposite side (periodic) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>

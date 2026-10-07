@@ -7,31 +7,28 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_euclidean_cluster.chain.jpg">tb_euclidean_cluster: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_euclidean_cluster.chain.jpg">tb_euclidean_cluster: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_euclidean_cluster.inputs.jpg">tb_euclidean_cluster: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_euclidean_cluster.inputs.jpg">tb_euclidean_cluster: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>動き</b>(GIF: フレーム / 視点 / スライスを順に。静止の図が完成形で、GIF は補助):</p>
 <p><img src="fig/tb_euclidean_cluster.gif" alt="tb_euclidean_cluster: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>半径 tol の近接グラフの連結成分で距離クラスタリング(-1=ノイズ)。</p>
-<p>互いに `<code style="color:#22d3bf">tol</code>` 以内の点を(推移的に)同一クラスタへ束ねる。空間的に離れた物体が</p>
-<p>別クラスタになる(接地面除去後の「どの塊が掴める物か」の分離に使う)。連結成分のうち</p>
-<p>`<code style="color:#22d3bf">min_size</code>` 未満のものはノイズとして -1。ラベルはクラスタサイズ降順で 0,1,2,...</p>
-<p>(決定論)。</p>
+<p>互いに <code style="color:#22d3bf">tol</code> 以内の点を(推移的に)同一クラスタへ束ねる。空間的に離れた物体が別クラスタになる(接地面除去後の「どの塊が掴める物か」の分離に使う)。連結成分のうち <code style="color:#22d3bf">min_size</code> 未満のものはノイズとして -1。ラベルはクラスタサイズ降順で 0,1,2,... (決定論)。</p>
 <p>Args:</p>
 <p>points: (N,3) 点群。</p>
 <p>tol: 同一クラスタとみなす近接半径(距離、要 &gt; 0)。</p>
 <p>min_size: これ未満の連結成分はノイズ(-1)。</p>
 <p>Returns:</p>
 <p>labels: (N,) int。0..(n_clusters-1) がクラスタ、-1 がノイズ。空入力は shape (0,)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">euclidean_cluster</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">min_size</code><code style="color:#22d3bf">(既定 10)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">euclidean_cluster</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">min_size</code>(既定 10)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
-tb_euclidean_cluster 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_euclidean_cluster%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_euclidean_cluster%200.50%200.50">Load &amp; run</a></p>
+tb_euclidean_cluster 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_euclidean_cluster%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_euclidean_cluster%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">euclidean_cluster</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:object_segmentation">object_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples_3d/object_segmentation.py</code></p>

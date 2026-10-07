@@ -5,64 +5,61 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>帶襯底(半透明板)的文字。<b>溢出不靜默裁切,而是擲出例外</b>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Parameters</p>
-<p>----------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>img : ndarray</p>
-<p>`<code style="color:#22d3bf">(H,W)</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">(H,W,C)</code>`、float [0,1]。</p>
+<p><code style="color:#22d3bf">(H,W)</code> か <code style="color:#22d3bf">(H,W,C)</code>、float [0,1]。</p>
 <p>text : str</p>
 <p>描く文字列。</p>
 <p>xy : (x, y)</p>
 <p>アンカーの位置(<b>x=col, y=row</b>、row は下向き)。</p>
 <p>color : str or sequence</p>
-<p>役割名または RGB。`<code style="color:#22d3bf">text_color</code>` 未指定ならこれが<b>枠の色</b>として</p>
+<p>役割名または RGB。<code style="color:#22d3bf">text_color</code> 未指定ならこれが<b>枠の色</b>として</p>
 <p>使われ、文字は読みやすい既定色になる。</p>
 <p>text_color, box_color : str/sequence or None</p>
 <p>文字色・板の色。None なら既定(明るい文字 × 暗い板)。文字色が None の</p>
-<p>ときは、<b>実際に下に出る色</b>に対して明るい既定色が `<code style="color:#22d3bf">min_contrast</code>` を</p>
+<p>ときは、<b>実際に下に出る色</b>に対して明るい既定色が <code style="color:#22d3bf">min_contrast</code> を</p>
 <p>割る場合に限り、暗い文字(板の色)へ自動で切り替える ―― 板なし</p>
-<p>(`<code style="color:#22d3bf">box_alpha=0</code>`)で白地に置く目盛り・カラーバー・凡例のラベルが</p>
-<p>白に溶けないため。`<code style="color:#22d3bf">text_color</code>` を明示したときは切り替えない</p>
+<p>(<code style="color:#22d3bf">box_alpha=0</code>)で白地に置く目盛り・カラーバー・凡例のラベルが</p>
+<p>白に溶けないため。<code style="color:#22d3bf">text_color</code> を明示したときは切り替えない</p>
 <p>(色は図の意味なので勝手に変えず、読めなければ例外にする)。</p>
 <p>box_alpha : float</p>
-<p>板の不透明度 [0,1]。`<code style="color:#22d3bf">0</code>` なら板を描かない(目盛りラベル向け)。</p>
+<p>板の不透明度 [0,1]。<code style="color:#22d3bf">0</code> なら板を描かない(目盛りラベル向け)。</p>
 <p>anchor : str</p>
-<p>`<code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code>` の 9 通り。</p>
+<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> の 9 通り。</p>
 <p>pad : int</p>
 <p>板の内側余白[px]。</p>
 <p>max_width : int or None</p>
 <p>文字の折り返し幅。None なら 1 行のまま。</p>
 <p>wrap : bool</p>
-<p>False なら折り返さず 1 行のまま縮めて `<code style="color:#22d3bf">max_width</code>` に収める。</p>
+<p>False なら折り返さず 1 行のまま縮めて <code style="color:#22d3bf">max_width</code> に収める。</p>
 <p>min_contrast : float</p>
 <p>文字と「実際にその下に出る色」のコントラスト比の下限。下回れば</p>
 <p><b>ValueError</b>(背景と同化した文字は誰も気づけないので通さない)。</p>
 <p><b>限界(正直に)</b>: 比べる相手は板の下の<b>平均色</b>なので、</p>
-<p>白と黒が半々に混じった写真の上に `<code style="color:#22d3bf">box_alpha=0</code>` で置くと、平均は</p>
+<p>白と黒が半々に混じった写真の上に <code style="color:#22d3bf">box_alpha=0</code> で置くと、平均は</p>
 <p>中間灰になり検査を通ってしまう(白い部分の上の文字は読めない)。</p>
-<p>地が荒れている場所では `<code style="color:#22d3bf">box_alpha</code>` を上げて板を効かせること ――</p>
+<p>地が荒れている場所では <code style="color:#22d3bf">box_alpha</code> を上げて板を効かせること ――</p>
 <p>この検査は「板を忘れた」を捕まえるためのもので、</p>
 <p>「板があっても読めない」まで保証はしない。</p>
 <p>border : int</p>
-<p>板の枠線の太さ(0 で枠なし)。色は `<code style="color:#22d3bf">border_color</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">color</code>`。</p>
+<p>板の枠線の太さ(0 で枠なし)。色は <code style="color:#22d3bf">border_color</code> か <code style="color:#22d3bf">color</code>。</p>
 <p>style : dict or None</p>
-<p>枠線を引く :func:<code style="color:#22d3bf">imagedraw.draw_polyline</code> へ<b>素通し</b>する引数。</p>
-<p>Returns</p>
-<p>-------</p>
+<p>枠線を引く <code style="color:#22d3bf">imagedraw.draw_polyline</code> へ<b>素通し</b>する引数。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <p>同じ shape の新しい配列。</p>
-<p>Raises</p>
-<p>------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>板が画像からはみ出す / 文字が収まらない / コントラスト不足 /</p>
 <p>未知の役割名・アンカー / 負の余白。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 訓練資料集規範知識 —— COCO / YOLO / VOC 及外觀檢測中的陷阱</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>

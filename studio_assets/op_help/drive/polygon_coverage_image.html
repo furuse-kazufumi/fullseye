@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polygon_coverage_image(vertices_px, size: &#x27;int&#x27; = 160, ss: &#x27;int&#x27; = 8, width: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsym; pegsym.polygon_coverage_image(vertices_px, size: &#x27;int&#x27; = 160, ss: &#x27;int&#x27; = 8, width: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;polygon_coverage_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>凸多角形(画素座標 (col, row) の頂点列)の被覆率の像 0..1((size, width)、反エイリアスは `<code style="color:#22d3bf">ss</code><code style="color:#22d3bf"> × </code><code style="color:#22d3bf">ss</code>` の副標本)。真値つきの</p>
-<p>合成の部品。<b>Raises</b> ValueError: 凸でない、size &lt; 8、ss &lt; 1。</p>
+<p>凸多角形(画素座標 (col, row) の頂点列)の被覆率の像 0..1((size, width)、反エイリアスは <code style="color:#22d3bf">ss</code> × <code style="color:#22d3bf">ss</code> の副標本)。真値つきの合成の部品。<b>Raises</b> ValueError: 凸でない、size &lt; 8、ss &lt; 1。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

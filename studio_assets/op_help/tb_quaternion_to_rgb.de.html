@@ -7,27 +7,16 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_quaternion_to_rgb.chain.jpg">tb_quaternion_to_rgb: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_quaternion_to_rgb.chain.jpg">tb_quaternion_to_rgb: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_quaternion_to_rgb.inputs.jpg">tb_quaternion_to_rgb: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_quaternion_to_rgb.inputs.jpg">tb_quaternion_to_rgb: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Vektorteil eines Quaternionenbilds, als lineares RGB. → (H, W, 3).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The inverse of :func:<code style="color:#22d3bf">rgb_to_quaternion</code> — and, by default, a *checked*</p>
-<p>inverse. A quaternion image that picked up a scalar component somewhere (a</p>
-<p>Hamilton product with a non-pure quaternion, a monogenic signal handed here</p>
-<p>by mistake) is <b>refused</b> rather than silently truncated, because dropping</p>
-<p>the `<code style="color:#22d3bf">w</code>` component is exactly the kind of loss that produces a plausible</p>
-<p>picture from the wrong data. Pass `<code style="color:#22d3bf">allow_scalar=True</code>` to opt in to the</p>
-<p>truncation when it is what you meant.</p>
-<p>The tolerance is relative to the field&#x27;s own peak modulus</p>
-<p>(:data:<code style="color:#22d3bf">_MONOGENIC_K_TOL</code>, 1e-9): a quaternion image that really is pure</p>
-<p>carries `<code style="color:#22d3bf">|w|</code>` at the 1e-17 level after a round trip through two FFTs, and</p>
-<p>anything with a meaningful scalar part is many orders above that. Nothing</p>
-<p>real lives in between.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *qimage* is not a finite </code><code style="color:#22d3bf">(H, W, 4)</code>` array; or</p>
-<p>it has a non-negligible scalar part and `<code style="color:#22d3bf">allow_scalar</code>` is False.</p>
-<p>Typed bridge of the quat op `<code style="color:#22d3bf">quaternion_to_rgb</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>The inverse of <code style="color:#22d3bf">rgb_to_quaternion</code> — and, by default, a *checked* inverse. A quaternion image that picked up a scalar component somewhere (a Hamilton product with a non-pure quaternion, a monogenic signal handed here by mistake) is <b>refused</b> rather than silently truncated, because dropping the <code style="color:#22d3bf">w</code> component is exactly the kind of loss that produces a plausible picture from the wrong data. Pass <code style="color:#22d3bf">allow_scalar=True</code> to opt in to the truncation when it is what you meant.</p>
+<p>The tolerance is relative to the field&#x27;s own peak modulus (<code style="color:#22d3bf">_MONOGENIC_K_TOL</code>, 1e-9): a quaternion image that really is pure carries <code style="color:#22d3bf">|w|</code> at the 1e-17 level after a round trip through two FFTs, and anything with a meaningful scalar part is many orders above that. Nothing real lives in between.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *qimage* is not a finite <code style="color:#22d3bf">(H, W, 4)</code> array; or it has a non-negligible scalar part and <code style="color:#22d3bf">allow_scalar</code> is False.</p>
+<p>Typed bridge of the quat op <code style="color:#22d3bf">quaternion_to_rgb</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
@@ -35,7 +24,7 @@
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_rgb 0.50 0.50
 tb_rgb_to_quaternion 0.50 0.50
-tb_quaternion_to_rgb 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_rgb_to_quaternion%200.50%200.50%0Atb_quaternion_to_rgb%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_rgb_to_quaternion%200.50%200.50%0Atb_quaternion_to_rgb%200.50%200.50">Load &amp; run</a></p>
+tb_quaternion_to_rgb 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_rgb_to_quaternion%200.50%200.50%0Atb_quaternion_to_rgb%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_rgb_to_quaternion%200.50%200.50%0Atb_quaternion_to_rgb%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">quaternion_to_rgb</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>

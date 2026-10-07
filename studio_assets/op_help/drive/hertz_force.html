@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_force(R: &#x27;float&#x27;, Estar: &#x27;float&#x27;, a: &#x27;float | None&#x27; = None, delta: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacsim; tacsim.hertz_force(R: &#x27;float&#x27;, Estar: &#x27;float&#x27;, a: &#x27;float | None&#x27; = None, delta: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;hertz_force&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Hertz の逆算: 接触半径 a か押し込み δ のどちらか一方から荷重 F。F = 4E*a³/(3R) = (4/3) E* √R δ^{3/2}。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a と δ の両方(または両方なし)、値が ≤ 0。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a と δ の両方(または両方なし)、値が ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

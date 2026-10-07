@@ -5,14 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>刃先方向の像で、行ごとに「食材の端面」と「刃の平らな面」の副画素位置を出し、差 = 切片の厚み(mm)。</p>
-<p>各画素を 3 色(背景・食材・刃)の割合に<b>線形分解</b>する(彩度 R − B と輝度の 2 チャンネル + 和 = 1)。背景の割合は端面で</p>
-<p>1 → 0 に落ちる純粋な段、刃の割合は刃の面で 0 → 1 に上がる純粋な段なので、それぞれの窓の中の和が縁の位置になる(被覆率法)。</p>
-<p>ぼけは割合の和を変えないので、窓をぼけの推定(端面の段の 2 次モーメント σ)に合わせて ±(3σ + 1) px に広げれば偏らない。</p>
-<p>切片が窓より薄くても、2 つの段は別々の割合なので干渉しない。参照の色は行ごとに局所で取る(照明の左右勾配に追従)。</p>
-<p>刃の判定は「刃の輝度が背景と食材の間のどこにあるか」の比で行い、明るさの倍率(gain)に依らない。</p>
-<p>端面と刃の面はそれぞれ直線に乗るはず: 1.5 px より外れた行を外し、外れが 3 割を超えたら ValueError(黙って間違えない)。</p>
-<p>`<code style="color:#22d3bf">z_band</code><code style="color:#22d3bf">: (z_lo, z_hi) mm で使う行を絞る(片刃の切刃部を外すのに使う)。返り値: </code><code style="color:#22d3bf">z_mm</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">thickness_mm</code>`(行ごと)、</p>
-<p>`<code style="color:#22d3bf">mean_mm</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">lean_deg</code><code style="color:#22d3bf">(刃の面の鉛直からの傾き、atan2)、</code><code style="color:#22d3bf">face_line</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">end_line</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_rows</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_rejected</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">blur_px</code>`。</p>
+<p>各画素を 3 色(背景・食材・刃)の割合に<b>線形分解</b>する(彩度 R − B と輝度の 2 チャンネル + 和 = 1)。背景の割合は端面で 1 → 0 に落ちる純粋な段、刃の割合は刃の面で 0 → 1 に上がる純粋な段なので、それぞれの窓の中の和が縁の位置になる(被覆率法)。ぼけは割合の和を変えないので、窓をぼけの推定(端面の段の 2 次モーメント σ)に合わせて ±(3σ + 1) px に広げれば偏らない。切片が窓より薄くても、2 つの段は別々の割合なので干渉しない。参照の色は行ごとに局所で取る(照明の左右勾配に追従)。刃の判定は「刃の輝度が背景と食材の間のどこにあるか」の比で行い、明るさの倍率(gain)に依らない。</p>
+<p>端面と刃の面はそれぞれ直線に乗るはず: 1.5 px より外れた行を外し、外れが 3 割を超えたら ValueError(黙って間違えない)。<code style="color:#22d3bf">z_band</code>: (z_lo, z_hi) mm で使う行を絞る(片刃の切刃部を外すのに使う)。返り値: <code style="color:#22d3bf">z_mm</code>、<code style="color:#22d3bf">thickness_mm</code>(行ごと)、<code style="color:#22d3bf">mean_mm</code>、<code style="color:#22d3bf">lean_deg</code>(刃の面の鉛直からの傾き、atan2)、<code style="color:#22d3bf">face_line</code>、<code style="color:#22d3bf">end_line</code>、<code style="color:#22d3bf">n_rows</code>、<code style="color:#22d3bf">n_rejected</code>、<code style="color:#22d3bf">blur_px</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

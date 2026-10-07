@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dipole_to_torque_fit(D, M) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tactorque; tactorque.dipole_to_torque_fit(D, M) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;dipole_to_torque_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>双極子の 1 成分列 D (K,) と既知のモーメント M (K,) [N·m] の線形較正 D ≈ k M(原点通過)と D ≈ k₁ M + b(切片あり)。</p>
-<p>返り `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">R2</code><code style="color:#22d3bf">(原点通過の決定係数 = 1 − SS_res/SS_tot)・</code><code style="color:#22d3bf">k1</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">R2_affine</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rmse_M</code>`(M に換算した残差 RMS)。</p>
-<p>論文の較正係数 c = 1/k に当たる。<b>Raises</b> ValueError: K &lt; 2、形が違う、M がすべて同じ。</p>
+<p>双極子の 1 成分列 D (K,) と既知のモーメント M (K,) [N·m] の線形較正 D ≈ k M(原点通過)と D ≈ k₁ M + b(切片あり)。返り <code style="color:#22d3bf">k</code>・<code style="color:#22d3bf">R2</code>(原点通過の決定係数 = 1 − SS_res/SS_tot)・<code style="color:#22d3bf">k1</code>・<code style="color:#22d3bf">b</code>・<code style="color:#22d3bf">R2_affine</code>・<code style="color:#22d3bf">rmse_M</code>(M に換算した残差 RMS)。論文の較正係数 c = 1/k に当たる。<b>Raises</b> ValueError: K &lt; 2、形が違う、M がすべて同じ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -3,21 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import seggraph; seggraph.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;area_opening_attr&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>属性开运算（Salembier 等 1998）：删除成分树中属性 &lt; `<code style="color:#22d3bf">threshold</code>` 的节点，并使每个像素取“属性 ≥ 阈值的最近祖先”的值（area_opening_attr）。</p>
+<p>属性开运算（Salembier 等 1998）：删除成分树中属性 &lt; <code style="color:#22d3bf">threshold</code> 的节点，并使每个像素取“属性 ≥ 阈值的最近祖先”的值（area_opening_attr）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">attribute</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">&quot;area&quot;</code><code style="color:#22d3bf">(画素数、skimage の area_opening と同じ「面積が閾値未満の明るい構造を消す」)か </code><code style="color:#22d3bf">&quot;diameter&quot;</code>`</p>
-<p>(外接矩形の長い辺、skimage の diameter_opening)。どちらも <b>2 値の集合の</b> 増加する属性なので、結果は代数的開放 =</p>
-<p>冪等・反拡大・増加。成分の中の最大値に依る「高さ」は集合の属性でなく(h-maxima と同じく)冪等にならないので載せない</p>
-<p>(実測で 2 回目に値が変わった)。</p>
-<p>返す: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">(開放の結果)、</code><code style="color:#22d3bf">n_nodes_kept</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_nodes</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">removed</code>`(値が下がった画素の数)。</p>
+<p><code style="color:#22d3bf">attribute</code> = <code style="color:#22d3bf">&quot;area&quot;</code>(画素数、skimage の area_opening と同じ「面積が閾値未満の明るい構造を消す」)か <code style="color:#22d3bf">&quot;diameter&quot;</code> (外接矩形の長い辺、skimage の diameter_opening)。どちらも <b>2 値の集合の</b> 増加する属性なので、結果は代数的開放 = 冪等・反拡大・増加。成分の中の最大値に依る「高さ」は集合の属性でなく(h-maxima と同じく)冪等にならないので載せない(実測で 2 回目に値が変わった)。</p>
+<p>返す: <code style="color:#22d3bf">image</code>(開放の結果)、<code style="color:#22d3bf">n_nodes_kept</code> / <code style="color:#22d3bf">n_nodes</code>、<code style="color:#22d3bf">removed</code>(値が下がった画素の数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — 用图、层次与阈值定理做分割 —— 什么是严格的,分割在哪里失效</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

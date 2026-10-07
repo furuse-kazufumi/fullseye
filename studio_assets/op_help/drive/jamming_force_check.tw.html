@@ -4,17 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_force_check(kp, depth: &#x27;float&#x27;, fx_over_fz: &#x27;float&#x27;, m_over_rfz: &#x27;float&#x27;, tol: &#x27;float&#x27; = 0.0, side: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegfail; pegfail.jamming_force_check(kp, depth: &#x27;float&#x27;, fx_over_fz: &#x27;float&#x27;, m_over_rfz: &#x27;float&#x27;, tol: &#x27;float&#x27; = 0.0, side: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;jamming_force_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>計測した先端の力の比 (F_x/F_z, M/(rF_z)) が Whitney の平行四辺形の内側か(pegsim.jamming_diagram を包み、どの辺に近いか・</p>
-<p>どちらの斜辺が今の接触配置に効くかを足す)。</p>
-<p><b>規約</b>(:func:<code style="color:#22d3bf">jamming_parallelogram_planar</code> の導出で固定): e_x は「先端が触れている壁から反対側の口の縁へ」向かう水平単位</p>
-<p>ベクトル、F_x はその向きの成分、F_z は押し込み(下向き)正、M = M⃗·(e_x × e_z)(x 右・z 上の平面で反時計回り正)。この規約で</p>
-<p>今の配置に効く斜辺は切片 −λ の線(`<code style="color:#22d3bf">side=-1</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">side=+1</code><code style="color:#22d3bf"> は鏡像、</code><code style="color:#22d3bf">side=0</code>` は両方(平行四辺形の全体)。</p>
-<p>`<code style="color:#22d3bf">tol</code><code style="color:#22d3bf"> は内側判定の余裕(負なら厳しく)。返り: </code><code style="color:#22d3bf">inside</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">margin</code><code style="color:#22d3bf">(4 辺の最小余裕、負なら外)、</code><code style="color:#22d3bf">edge</code>`(最小余裕の辺の名)、</p>
-<p>`<code style="color:#22d3bf">margins</code><code style="color:#22d3bf">(dict)、</code><code style="color:#22d3bf">lambda</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">active_line</code><code style="color:#22d3bf">。**Raises** </code><code style="color:#22d3bf">ValueError</code>`: 力の比が有限でない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>計測した先端の力の比 (F_x/F_z, M/(rF_z)) が Whitney の平行四辺形の内側か(pegsim.jamming_diagram を包み、どの辺に近いか・どちらの斜辺が今の接触配置に効くかを足す)。</p>
+<p><b>規約</b>(<code style="color:#22d3bf">jamming_parallelogram_planar</code> の導出で固定): e_x は「先端が触れている壁から反対側の口の縁へ」向かう水平単位ベクトル、F_x はその向きの成分、F_z は押し込み(下向き)正、M = M⃗·(e_x × e_z)(x 右・z 上の平面で反時計回り正)。この規約で今の配置に効く斜辺は切片 −λ の線(<code style="color:#22d3bf">side=-1</code>)。<code style="color:#22d3bf">side=+1</code> は鏡像、<code style="color:#22d3bf">side=0</code> は両方(平行四辺形の全体)。<code style="color:#22d3bf">tol</code> は内側判定の余裕(負なら厳しく)。返り: <code style="color:#22d3bf">inside</code>、<code style="color:#22d3bf">margin</code>(4 辺の最小余裕、負なら外)、<code style="color:#22d3bf">edge</code>(最小余裕の辺の名)、<code style="color:#22d3bf">margins</code>(dict)、<code style="color:#22d3bf">lambda</code>、<code style="color:#22d3bf">active_line</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 力の比が有限でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_failure_recovery">poc_peg_failure_recovery</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_failure_recovery.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

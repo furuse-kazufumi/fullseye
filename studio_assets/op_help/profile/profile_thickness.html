@@ -3,10 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_thickness(contour, n=101)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import profileops; profileops.profile_thickness(contour, n=101)</code>、台帳から引くなら <code style="color:#22d3bf">opsprofile.get(&quot;profile_thickness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>厚み分布 `<code style="color:#22d3bf">t(x)</code><code style="color:#22d3bf">。返りは </code><code style="color:#22d3bf">(n, 2)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(x, t)</code>`。</p>
-<p>`<code style="color:#22d3bf">pairs</code><code style="color:#22d3bf"> として返すので、</code><code style="color:#22d3bf">pairs_to_signal</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">plot_series</code>` へそのまま</p>
-<p>渡せる。最大厚みとその位置は :func:<code style="color:#22d3bf">profile_thickness_stats</code> ではなく</p>
-<p>返り値から取る(`<code style="color:#22d3bf">t</code>` の最大 = 最大厚み比)。</p>
+<p>厚み分布 <code style="color:#22d3bf">t(x)</code>。返りは <code style="color:#22d3bf">(n, 2)</code> の <code style="color:#22d3bf">(x, t)</code>。</p>
+<p><code style="color:#22d3bf">pairs</code> として返すので、<code style="color:#22d3bf">pairs_to_signal</code> や <code style="color:#22d3bf">plot_series</code> へそのまま</p>
+<p>渡せる。最大厚みとその位置は <code style="color:#22d3bf">profile_thickness_stats</code> ではなく返り値から取る(<code style="color:#22d3bf">t</code> の最大 = 最大厚み比)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

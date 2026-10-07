@@ -5,36 +5,22 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Chaosspiel auf einem iterierten Funktionensystem — die Dimension ist geschlossen darstellbar.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Picks a map at random (by `<code style="color:#22d3bf">weights</code>`, or by area if none are given), applies</p>
-<p>it, and plots the orbit. After a short burn-in the orbit lands on the</p>
-<p>attractor and stays there, so the picture is the attractor and not a path to</p>
-<p>it.</p>
-<p>★**Why this earns its place — two numbers that must agree and were computed</p>
-<p>two different ways**:</p>
-<p style="margin:2px 0 2px 12px">• *Moran&#x27;s equation.* For similarities with ratios `<code style="color:#22d3bf">r_i</code>` satisfying the</p>
-<p>open set condition, the similarity dimension `<code style="color:#22d3bf">d</code>` is the unique root of</p>
-<p>`<code style="color:#22d3bf">sum(r_i**d) == 1</code>` — a closed form read off the <b>maps</b>, before</p>
-<p>anything is drawn. Sierpinski gives `<code style="color:#22d3bf">log 3 / log 2 = 1.5850</code>`, the Koch</p>
-<p>curve `<code style="color:#22d3bf">log 4 / log 3 = 1.2619</code><code style="color:#22d3bf">, Cantor dust </code><code style="color:#22d3bf">log 4 / log 3</code>` as well.</p>
-<p style="margin:2px 0 2px 12px">• *Box counting.* This repository&#x27;s existing `<code style="color:#22d3bf">fractal_dimension</code>`</p>
-<p>operator measures the dimension from the <b>drawing</b>. The two must agree,</p>
-<p>and they are not the same computation: one is algebra on the maps, the</p>
-<p>other is a regression on a rasterised image.</p>
+<p>Picks a map at random (by <code style="color:#22d3bf">weights</code>, or by area if none are given), applies it, and plots the orbit. After a short burn-in the orbit lands on the attractor and stays there, so the picture is the attractor and not a path to it.</p>
+<p>★<b>Why this earns its place — two numbers that must agree and were computed two different ways</b>:</p>
+<p style="margin:2px 0 2px 12px">• *Moran&#x27;s equation.* For similarities with ratios <code style="color:#22d3bf">r_i</code> satisfying the open set condition, the similarity dimension <code style="color:#22d3bf">d</code> is the unique root of <code style="color:#22d3bf">sum(r_i**d) == 1</code> — a closed form read off the <b>maps</b>, before anything is drawn. Sierpinski gives <code style="color:#22d3bf">log 3 / log 2 = 1.5850</code>, the Koch curve <code style="color:#22d3bf">log 4 / log 3 = 1.2619</code>, Cantor dust <code style="color:#22d3bf">log 4 / log 3</code> as well.</p>
+<p style="margin:2px 0 2px 12px">• *Box counting.* This repository&#x27;s existing <code style="color:#22d3bf">fractal_dimension</code> operator measures the dimension from the <b>drawing</b>. The two must agree, and they are not the same computation: one is algebra on the maps, the other is a regression on a rasterised image.</p>
 <p>Hutchinson&#x27;s theorem gives a third, structural check: the attractor is</p>
 <p><b>invariant</b>, so applying every map to the point set maps it back into</p>
 <p>itself.</p>
-<p>`<code style="color:#22d3bf">maps</code><code style="color:#22d3bf"> overrides </code><code style="color:#22d3bf">preset</code><code style="color:#22d3bf">: a sequence of </code><code style="color:#22d3bf">(a, b, c, d, e, f)</code>` meaning</p>
-<p>`<code style="color:#22d3bf">x -&gt; [[a, b], [c, d]] x + [e, f]</code>`.</p>
-<p>Returns `<code style="color:#22d3bf">pairs</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(n, 2)</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: unknown preset; a map that is not 6 numbers; a map</p>
-<p>that is not a contraction (spectral norm &gt;= 1 — the orbit would escape);</p>
-<p>`<code style="color:#22d3bf">n_points</code><code style="color:#22d3bf"> below 1 or over the cap; negative </code><code style="color:#22d3bf">burn_in</code>`.</p>
+<p><code style="color:#22d3bf">maps</code> overrides <code style="color:#22d3bf">preset</code>: a sequence of <code style="color:#22d3bf">(a, b, c, d, e, f)</code> meaning <code style="color:#22d3bf">x -&gt; [[a, b], [c, d]] x + [e, f]</code>.</p>
+<p>Returns <code style="color:#22d3bf">pairs</code> <code style="color:#22d3bf">(n, 2)</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown preset; a map that is not 6 numbers; a map that is not a contraction (spectral norm &gt;= 1 — the orbit would escape); <code style="color:#22d3bf">n_points</code> below 1 or over the cap; negative <code style="color:#22d3bf">burn_in</code>.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

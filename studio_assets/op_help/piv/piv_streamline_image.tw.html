@@ -4,24 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_streamline_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>流線図(MATLAB の `<code style="color:#22d3bf">streamslice</code><code style="color:#22d3bf">)。返りは </code><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>`。</p>
-<p>:func:<code style="color:#22d3bf">piv_streamlines</code> の等間隔配置で線を引き、各線の弧長の中ほどに</p>
-<p>向きの矢じりを 1 つ置く(LIC と違って<b>前後が読める</b>)。線の間隔が揃うので、</p>
-<p><b>線の密度では速さを表さない</b> —— 速さを見たいときは `<code style="color:#22d3bf">background</code>` に</p>
-<p>`<code style="color:#22d3bf">piv_flow_magnitude</code>` か色相図を敷く。</p>
+<p>流線図(MATLAB の <code style="color:#22d3bf">streamslice</code>)。返りは <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>。</p>
+<p><code style="color:#22d3bf">piv_streamlines</code> の等間隔配置で線を引き、各線の弧長の中ほどに向きの矢じりを 1 つ置く(LIC と違って<b>前後が読める</b>)。線の間隔が揃うので、<b>線の密度では速さを表さない</b> —— 速さを見たいときは <code style="color:#22d3bf">background</code> に <code style="color:#22d3bf">piv_flow_magnitude</code> か色相図を敷く。</p>
 <p>Args:</p>
-<p>flow: `<code style="color:#22d3bf">(2, h, w)</code>`。</p>
-<p>upsample / background / color / width: :func:<code style="color:#22d3bf">piv_quiver</code> と同じ。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
+<p>upsample / background / color / width: <code style="color:#22d3bf">piv_quiver</code> と同じ。</p>
 <p>arrows: 矢じりを置くか。</p>
-<p>**stream_kw: :func:<code style="color:#22d3bf">piv_streamlines</code> へ素通し(`<code style="color:#22d3bf">separation</code>` など)。</p>
+<p>**stream_kw: <code style="color:#22d3bf">piv_streamlines</code> へ素通し(<code style="color:#22d3bf">separation</code> など)。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>` float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64、値域 [0, 1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">rgb</code> 作為輸入)</h3>

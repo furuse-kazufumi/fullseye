@@ -11,9 +11,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xwt_lf_reconstruct.inputs.jpg">xwt_lf_reconstruct: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Low-frequency reconstructed image. Decomposes with `<code style="color:#22d3bf">db2</code>`, zeroes out all detail coefficients, and reconstructs via inverse transform from the approximation component alone -- the result is a multi-level wavelet-smoothed image close to a Gaussian blur.</p>
+<p>Low-frequency reconstructed image. Decomposes with <code style="color:#22d3bf">db2</code>, zeroes out all detail coefficients, and reconstructs via inverse transform from the approximation component alone -- the result is a multi-level wavelet-smoothed image close to a Gaussian blur.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は分解段数(</code><code style="color:#22d3bf">1+int(a*3)</code><code style="color:#22d3bf"> で 1〜4 段)を振る —— 段数を増やすほど強くぼける。</code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> は分解段数(<code style="color:#22d3bf">1+int(a*3)</code> で 1〜4 段)を振る —— 段数を増やすほど強くぼける。<code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

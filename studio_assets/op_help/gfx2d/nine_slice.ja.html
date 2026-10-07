@@ -5,14 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>枠を新しいサイズへ伸ばす —— 四隅は変形させない。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>The four corners are copied <b>bit for bit</b>, the four edges are stretched</p>
-<p>along one axis only, and the centre is stretched along both. This is the</p>
-<p>standard way a UI panel grows: the border keeps its thickness at any size.</p>
-<p>Stretching is nearest-neighbour on the interior spans, so an output the same</p>
-<p>size as the input is the exact identity — no resampling blur creeps in when</p>
-<p>a panel happens not to need stretching.</p>
-<p>Raises ValueError: borders that meet or cross (`<code style="color:#22d3bf">left + right &gt;= width</code>`),</p>
-<p>an output smaller than the borders it must preserve.</p>
+<p>The four corners are copied <b>bit for bit</b>, the four edges are stretched along one axis only, and the centre is stretched along both. This is the standard way a UI panel grows: the border keeps its thickness at any size.</p>
+<p>Stretching is nearest-neighbour on the interior spans, so an output the same size as the input is the exact identity — no resampling blur creeps in when a panel happens not to need stretching.</p>
+<p>Raises ValueError: borders that meet or cross (<code style="color:#22d3bf">left + right &gt;= width</code>), an output smaller than the borders it must preserve.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -5,41 +5,33 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把光源的光譜壓縮為成像所用的少數波長與權重。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>レーザー = 1 本、LED = 狭帯域を数本、ハロゲン = 広帯域を数本。同じ面でも</p>
-<p>波長で鏡面/散乱の配分が変わるので、広帯域は<b>重ね合わせて</b>撮るのが正しい。</p>
-<p>手順: `<code style="color:#22d3bf">light[&quot;wavelength_nm&quot;]</code><code style="color:#22d3bf">(無ければ 550)を中心 </code><code style="color:#22d3bf">λ</code>`、</p>
-<p>`<code style="color:#22d3bf">light[&quot;bandwidth_nm&quot;]</code><code style="color:#22d3bf">(無ければ 0)を全幅 </code><code style="color:#22d3bf">bw</code><code style="color:#22d3bf"> とし、</code><code style="color:#22d3bf">k = max(samples, 1)</code>`</p>
-<p>本を `<code style="color:#22d3bf">λ ± bw/2</code><code style="color:#22d3bf"> に等間隔で置く。重みはガウス型 </code><code style="color:#22d3bf">exp(-0.5 (2x)^2)</code>`</p>
-<p>(`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">[-1, 1]</code>` に正規化した位置、端が 2σ)で、和が 1 になるよう正規化。</p>
-<p>`<code style="color:#22d3bf">bw &lt;= 0</code><code style="color:#22d3bf">(レーザー)または </code><code style="color:#22d3bf">k == 1</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">λ</code>` 1 本・重み 1。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">light</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">light_spec</code>` の結果(dict)。キーが無ければ既定値で進む(dict でなければ</p>
-<p>`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。sort </code><code style="color:#22d3bf">table</code>` の行リストが流れ込むのを止める)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">samples</code>`: 本数。既定 5。1 未満は 1 に丸める。奇数にすると中心波長が入る。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(wavelengths (k,), weights (k,))</code>` の 2 本の float64 配列。</p>
-<p>スペクトルの実形状(LED の非対称、ハロゲンの黒体分布)は模さない近似。</p>
-<p>`<code style="color:#22d3bf">layout_capture</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">spectral_samples</code>` 本でこれを呼び、波長ごとの結果を</p>
-<p>この重みで足し合わせる。</p>
+<p>レーザー = 1 本、LED = 狭帯域を数本、ハロゲン = 広帯域を数本。同じ面でも波長で鏡面/散乱の配分が変わるので、広帯域は<b>重ね合わせて</b>撮るのが正しい。</p>
+<p>手順: <code style="color:#22d3bf">light[&quot;wavelength_nm&quot;]</code>(無ければ 550)を中心 <code style="color:#22d3bf">λ</code>、<code style="color:#22d3bf">light[&quot;bandwidth_nm&quot;]</code>(無ければ 0)を全幅 <code style="color:#22d3bf">bw</code> とし、<code style="color:#22d3bf">k = max(samples, 1)</code> 本を <code style="color:#22d3bf">λ ± bw/2</code> に等間隔で置く。重みはガウス型 <code style="color:#22d3bf">exp(-0.5 (2x)^2)</code> (<code style="color:#22d3bf">x</code> は <code style="color:#22d3bf">[-1, 1]</code> に正規化した位置、端が 2σ)で、和が 1 になるよう正規化。<code style="color:#22d3bf">bw &lt;= 0</code>(レーザー)または <code style="color:#22d3bf">k == 1</code> なら <code style="color:#22d3bf">λ</code> 1 本・重み 1。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">light</code>: <code style="color:#22d3bf">light_spec</code> の結果(dict)。キーが無ければ既定値で進む(dict でなければ <code style="color:#22d3bf">ValueError</code>。sort <code style="color:#22d3bf">table</code> の行リストが流れ込むのを止める)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">samples</code>: 本数。既定 5。1 未満は 1 に丸める。奇数にすると中心波長が入る。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(wavelengths (k,), weights (k,))</code> の 2 本の float64 配列。スペクトルの実形状(LED の非対称、ハロゲンの黒体分布)は模さない近似。</p>
+<p><code style="color:#22d3bf">layout_capture</code> が <code style="color:#22d3bf">spectral_samples</code> 本でこれを呼び、波長ごとの結果をこの重みで足し合わせる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>
-<p style="margin:2px 0 2px 12px">• **字串一律 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 會成功,於是未解析的設定值會被當成長度混進來(實測:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾回傳看似合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隱式提升拒絕。</p>
-<p style="margin:2px 0 2px 12px">• **complex / masked array 一律 <code style="color:#22d3bf">ValueError</code><b>(僅接受實數槽位;拒絕無聲丟棄虛部或剝掉遮罩)。</b>所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>字串一律 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 會成功,於是未解析的設定值會被當成長度混進來(實測:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾回傳看似合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隱式提升拒絕。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 一律 <code style="color:#22d3bf">ValueError</code></b>(僅接受實數槽位;拒絕無聲丟棄虛部或剝掉遮罩)。<b>所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code></b>。</p>
 <p style="margin:2px 0 2px 12px">• <b>逐項點名拒絕除零及其近親</b>:焦距 0、曲率半徑 0、折射率 &lt;= 0、全不透明光闌(全為 0,正規化變成 0/0)、總和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 向量、物體位於前焦點(像在無窮遠)。</p>
-<p style="margin:2px 0 2px 12px">• <b>只有兩個運算子會回傳非有限值,而且都寫進了契約</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外回傳 <code style="color:#22d3bf">far_mm = inf</code>(這正是超焦距的定義),<code style="color:#22d3bf">gaussian_beam</code> 在束腰處回傳 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半徑)。兩者都同時回傳一個有限的夥伴(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。**除此之外的無聲 NaN/Inf 都在內部檢出並 <code style="color:#22d3bf">ValueError</code>** ——「float64 溢位了」和「答案是無窮大」是兩種不同的主張,不能拿後者的臉去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有兩個運算子會回傳非有限值,而且都寫進了契約</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外回傳 <code style="color:#22d3bf">far_mm = inf</code>(這正是超焦距的定義),<code style="color:#22d3bf">gaussian_beam</code> 在束腰處回傳 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半徑)。兩者都同時回傳一個有限的夥伴(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。<b>除此之外的無聲 NaN/Inf 都在內部檢出並 <code style="color:#22d3bf">ValueError</code></b> ——「float64 溢位了」和「答案是無窮大」是兩種不同的主張,不能拿後者的臉去交付前者。</p>
 <p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成網格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,傳入的場/PSF/光闌受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小參數引發巨大內部配置」的路徑(實測:n_max=40 × 4096² 需要 108 GB)。</p>
 <p style="margin:2px 0 2px 12px">• <b>物理上不可能的狀態同樣拒絕</b>:偏振度 &gt; 1 的 Stokes 向量、負穿透率、負強度、n-|m| 為奇數等非法 Zernike 指標。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_cameras">mv_cameras</a> — 産業用カメラメーカー（センサとの紐付け・ラインスキャン / TDI）</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_illumination_practice">mv_illumination_practice</a> — 照明の実務知識 — 波長・偏光・点灯方式・外光・安全</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_image_sensors">mv_image_sensors</a> — 産業用イメージセンサ（現行品中心）</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:virtual_machine_vision">virtual_machine_vision</a> — 仮想マシンビジョン — パラメータの洗い出しとオブジェクト模型</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:dataset_conventions">dataset_conventions</a> — 訓練資料集規範知識 —— COCO / YOLO / VOC 及外觀檢測中的陷阱</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_cameras">mv_cameras</a> — 工業相機廠商(與感測器的對應、線掃描 / TDI)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_illumination_practice">mv_illumination_practice</a> — 照明實務知識 —— 波長、偏振、點亮方式、外部光、安全</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:mv_image_sensors">mv_image_sensors</a> — 工業影像感測器(以現行產品為主)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:virtual_machine_vision">virtual_machine_vision</a> — 虛擬機器視覺 —— 梳理參數與物件模型</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:vision_layout_from_catalog">vision_layout_from_catalog</a> — <code style="color:#22d3bf">py -3.11 examples/vision_layout_from_catalog.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">pairs</code> 作為輸入)</h3>

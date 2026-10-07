@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stopping_distance_grade(v: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelong; drivelong.stopping_distance_grade(v: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;stopping_distance_grade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>停止距離の閉形式 = 空走 v ρ + 制動距離 (1/(2k)) ln(1 + k v²/A)、A = brake + g sin θ + c_rr g cos θ(k = 0 で v²/(2A))。</p>
-<p>θ &gt; 0 が上り(止まりやすい)、θ &lt; 0 が下り。ρ の間は速さを保つ。A ≤ 0(下りで制動が坂に負ける)なら止まらない → `<code style="color:#22d3bf">inf</code>`。</p>
-<p>平地・c_rr = k = 0 で `<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, 0, brake)</code>` と同じ式。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: v &lt; 0、非有限、|θ| ≥ 45°。</p>
+<p>θ &gt; 0 が上り(止まりやすい)、θ &lt; 0 が下り。ρ の間は速さを保つ。A ≤ 0(下りで制動が坂に負ける)なら止まらない → <code style="color:#22d3bf">inf</code>。平地・c_rr = k = 0 で <code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, 0, brake)</code> と同じ式。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0、非有限、|θ| ≥ 45°。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

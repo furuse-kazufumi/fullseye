@@ -4,15 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.env_params(when=None, lat: &#x27;float&#x27; = 35.6581, lon: &#x27;float&#x27; = 139.7414, *, sun=None, cloud: &#x27;float&#x27; = 0.0, fog_mor: &#x27;Optional[float]&#x27; = None, rain: &#x27;float&#x27; = 0.0, headlamps: &#x27;str&#x27; = &#x27;off&#x27;, north_yaw: &#x27;float&#x27; = 90.0, lamp_luminance: &#x27;float&#x27; = 10000.0, exposure: &#x27;Optional[float]&#x27; = None, max_gain: &#x27;float&#x27; = 1.0, glare_model: &#x27;str&#x27; = &#x27;stiles_holladay&#x27;, fog_layer: &#x27;float&#x27; = 100.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveenv; driveenv.env_params(when=None, lat: &#x27;float&#x27; = 35.6581, lon: &#x27;float&#x27; = 139.7414, *, sun=None, cloud: &#x27;float&#x27; = 0.0, fog_mor: &#x27;Optional[float]&#x27; = None, rain: &#x27;float&#x27; = 0.0, headlamps: &#x27;str&#x27; = &#x27;off&#x27;, north_yaw: &#x27;float&#x27; = 90.0, lamp_luminance: &#x27;float&#x27; = 10000.0, exposure: &#x27;Optional[float]&#x27; = None, max_gain: &#x27;float&#x27; = 1.0, glare_model: &#x27;str&#x27; = &#x27;stiles_holladay&#x27;, fog_layer: &#x27;float&#x27; = 100.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;env_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>描画の条件をまとめる(:func:<code style="color:#22d3bf">env_render</code> に渡す)。</p>
-<p>`<code style="color:#22d3bf">when</code><code style="color:#22d3bf"> + 緯度経度(既定 = 東京の暦計算室の代表点)から太陽を出す。</code><code style="color:#22d3bf">sun=(elevation, azimuth)</code>` で直接与えてもよい。</p>
-<p>`<code style="color:#22d3bf">fog_mor</code><code style="color:#22d3bf"> = 気象光学距離 [m] (None で霧なし)、</code><code style="color:#22d3bf">rain</code>` ∈ [0, 1] (0 = 乾き。濡れた路面・雨筋の強さ)、</p>
-<p>`<code style="color:#22d3bf">headlamps</code><code style="color:#22d3bf"> ∈ {&quot;off&quot;, &quot;low&quot;, &quot;high&quot;}、</code><code style="color:#22d3bf">exposure</code>` = 固定の露出(輝度 → 画素値の倍率。None で自動)、</p>
-<p>`<code style="color:#22d3bf">max_gain</code>` = 自動露出の倍率の上限(暗い夜に雑に明るくしない)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>描画の条件をまとめる(<code style="color:#22d3bf">env_render</code> に渡す)。</p>
+<p><code style="color:#22d3bf">when</code> + 緯度経度(既定 = 東京の暦計算室の代表点)から太陽を出す。<code style="color:#22d3bf">sun=(elevation, azimuth)</code> で直接与えてもよい。<code style="color:#22d3bf">fog_mor</code> = 気象光学距離 [m] (None で霧なし)、<code style="color:#22d3bf">rain</code> ∈ [0, 1] (0 = 乾き。濡れた路面・雨筋の強さ)、<code style="color:#22d3bf">headlamps</code> ∈ {&quot;off&quot;, &quot;low&quot;, &quot;high&quot;}、<code style="color:#22d3bf">exposure</code> = 固定の露出(輝度 → 画素値の倍率。None で自動)、<code style="color:#22d3bf">max_gain</code> = 自動露出の倍率の上限(暗い夜に雑に明るくしない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_weather">poc_driving_weather</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_weather.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

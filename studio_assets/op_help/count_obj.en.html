@@ -10,9 +10,9 @@
 <p><b>Stages</b> (the ops that come before → this op, left to right):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/count_obj.chain.jpg">count_obj: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Counts the number of connected components (`<code style="color:#22d3bf">ndimage.label</code><code style="color:#22d3bf">, default 8-connectivity). Uses 8-connectivity, the same default as HALCON&#x27;s </code><code style="color:#22d3bf">count_obj</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">connection</code><code style="color:#22d3bf">, so two blobs touching diagonally are counted as one (an example where switching to 4-connectivity causes over-counting -- measured cell counts of 342 vs. 327; see the in-code comment). Equivalent to HALCON&#x27;s </code><code style="color:#22d3bf">count_obj</code>` (Number of objects in a tuple.).</p>
+<p>Counts the number of connected components (<code style="color:#22d3bf">ndimage.label</code>, default 8-connectivity). Uses 8-connectivity, the same default as HALCON&#x27;s <code style="color:#22d3bf">count_obj</code>/<code style="color:#22d3bf">connection</code>, so two blobs touching diagonally are counted as one (an example where switching to 4-connectivity causes over-counting -- measured cell counts of 342 vs. 327; see the in-code comment). Equivalent to HALCON&#x27;s <code style="color:#22d3bf">count_obj</code> (Number of objects in a tuple.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

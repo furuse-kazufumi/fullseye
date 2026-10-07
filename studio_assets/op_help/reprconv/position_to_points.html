@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">position</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.position_to_points(position)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.position_to_points(position)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;position_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>位置 `<code style="color:#22d3bf">(z, y, x)</code><code style="color:#22d3bf"> → 1 点の点群 </code><code style="color:#22d3bf">(1, 3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">position</code>` の出口(<b>可逆</b>)。</p>
-<p>`<code style="color:#22d3bf">position</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">volregion.vol_rle_centroid</code>` などが返す 3-tuple で、</p>
-<p>順序は <b>(z, y, x)</b>(`<code style="color:#22d3bf">vol_rle_centroid</code>` の docstring が明示している)。</p>
-<p>点群も voxel 由来なら同じ順なので、そのまま 1 行の点群にできる。</p>
+<p>位置 <code style="color:#22d3bf">(z, y, x)</code> → 1 点の点群 <code style="color:#22d3bf">(1, 3)</code>。<code style="color:#22d3bf">position</code> の出口(<b>可逆</b>)。</p>
+<p><code style="color:#22d3bf">position</code> は <code style="color:#22d3bf">volregion.vol_rle_centroid</code> などが返す 3-tuple で、順序は <b>(z, y, x)</b>(<code style="color:#22d3bf">vol_rle_centroid</code> の docstring が明示している)。点群も voxel 由来なら同じ順なので、そのまま 1 行の点群にできる。</p>
 <p>Args:</p>
 <p>position: 長さ 3 の列 (z, y, x)。</p>
 <p>Returns:</p>

@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rigid_rotation_fit(pts, u, window=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tactorque; tactorque.rigid_rotation_fit(pts, u, window=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;rigid_rotation_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>窓内のマーカー場に剛体変位 u ≈ t + ω ẑ×r を最小二乗で当てる: `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> = 平均変位、</code><code style="color:#22d3bf">omega</code>` = Σ (x′u′_y − y′u′_x)/Σ r′²</p>
-<p>(′ は窓内平均を引いたもの)、`<code style="color:#22d3bf">resid_rms</code><code style="color:#22d3bf"> = 残差 RMS、</code><code style="color:#22d3bf">n</code>`。無滑りねじりでは円内が剛体回転(u_θ = βr)なので ω = β が真値</p>
-<p>(平均 curl/2 は円の縁で当てはめが外に漏れて低くなる —— 実測 11 %)。`<code style="color:#22d3bf">window</code>` = (cx, cy, R)。<b>Raises</b> ValueError: 点が 3 未満。</p>
+<p>窓内のマーカー場に剛体変位 u ≈ t + ω ẑ×r を最小二乗で当てる: <code style="color:#22d3bf">t</code> = 平均変位、<code style="color:#22d3bf">omega</code> = Σ (x′u′_y − y′u′_x)/Σ r′² (′ は窓内平均を引いたもの)、<code style="color:#22d3bf">resid_rms</code> = 残差 RMS、<code style="color:#22d3bf">n</code>。無滑りねじりでは円内が剛体回転(u_θ = βr)なので ω = β が真値(平均 curl/2 は円の縁で当てはめが外に漏れて低くなる —— 実測 11 %)。<code style="color:#22d3bf">window</code> = (cx, cy, R)。<b>Raises</b> ValueError: 点が 3 未満。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

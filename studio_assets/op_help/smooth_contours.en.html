@@ -13,9 +13,9 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/smooth_contours.inputs.jpg">smooth_contours: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Smooths XLD contours using a moving average. Equivalent to HALCON&#x27;s `<code style="color:#22d3bf">smooth_contours_xld</code>` (Smooth an XLD contour.).</p>
+<p>Smooths XLD contours using a moving average. Equivalent to HALCON&#x27;s <code style="color:#22d3bf">smooth_contours_xld</code> (Smooth an XLD contour.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が平滑化窓の半幅を </code><code style="color:#22d3bf">1〜4</code><code style="color:#22d3bf">（窓長 </code><code style="color:#22d3bf">2w+1 = 3,5,7,9</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。各輪郭の </code><code style="color:#22d3bf">(row, col)</code><code style="color:#22d3bf"> 列を独立に等重み移動平均（</code><code style="color:#22d3bf">np.convolve</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">&quot;same&quot;</code>` モード）で均す。点数が窓長の 2 倍以下の短い輪郭はそのまま素通しする（平滑化されない）。</p>
+<p><code style="color:#22d3bf">a</code> が平滑化窓の半幅を <code style="color:#22d3bf">1〜4</code>（窓長 <code style="color:#22d3bf">2w+1 = 3,5,7,9</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。各輪郭の <code style="color:#22d3bf">(row, col)</code> 列を独立に等重み移動平均（<code style="color:#22d3bf">np.convolve</code> の <code style="color:#22d3bf">&quot;same&quot;</code> モード）で均す。点数が窓長の 2 倍以下の短い輪郭はそのまま素通しする（平滑化されない）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

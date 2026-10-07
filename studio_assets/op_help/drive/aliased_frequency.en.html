@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aliased_frequency(f, fps)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivedecide; drivedecide.aliased_frequency(f, fps)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;aliased_frequency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>周波数 `<code style="color:#22d3bf">f</code><code style="color:#22d3bf"> [Hz] の明滅をフレームレート </code><code style="color:#22d3bf">fps</code>` で標本化したときの <b>見かけの</b> 周波数(閉形式)。</p>
+<p>周波数 <code style="color:#22d3bf">f</code> [Hz] の明滅をフレームレート <code style="color:#22d3bf">fps</code> で標本化したときの <b>見かけの</b> 周波数(閉形式)。</p>
 <p>f_a = | f − fps · round(f / fps) |  ∈ [0, fps/2]</p>
 <p>f &lt; fps/2 ならそのまま、fps の整数倍に近いほど遅く見える(車輪が止まって見える現象と同じ)。配列も可。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

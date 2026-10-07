@@ -3,17 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import residue; residue.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsresidue.get(&quot;residue_integer_crt&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>整数の中国剰余定理(Garner の混合基数法)-&gt; `<code style="color:#22d3bf">dict</code>`。</p>
+<p>整数の中国剰余定理(Garner の混合基数法)-&gt; <code style="color:#22d3bf">dict</code>。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>`<code style="color:#22d3bf">residues</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">moduli</code>` are equal-length integer sequences; the moduli must</p>
-<p>be pairwise coprime and &gt;= 2. Returns ``{&quot;value&quot;: int, &quot;modulus&quot;: int,</p>
-<p>&quot;mixed_radix&quot;: [digits]}`<code style="color:#22d3bf"> where </code><code style="color:#22d3bf">value</code>` is the unique solution in</p>
-<p>`<code style="color:#22d3bf">[0, prod(moduli))</code><code style="color:#22d3bf">. Arithmetic is Python&#x27;s arbitrary-precision </code><code style="color:#22d3bf">int</code>` —</p>
-<p>there is no rounding anywhere, which is why this op is the oracle for</p>
-<p>:func:<code style="color:#22d3bf">residue_crt</code>.</p>
-<p>The mixed-radix digits `<code style="color:#22d3bf">d_k</code><code style="color:#22d3bf"> satisfy </code><code style="color:#22d3bf">value = d_0 + d_1 m_0 + d_2 m_0 m_1 + ...</code>`:</p>
-<p>the *positional* (coarse-to-fine) reading of the same residues, i.e. the</p>
-<p>bridge between the residue view and the place-value view.</p>
+<p><code style="color:#22d3bf">residues</code> and <code style="color:#22d3bf">moduli</code> are equal-length integer sequences; the moduli must be pairwise coprime and &gt;= 2. Returns <code style="color:#22d3bf">{&quot;value&quot;: int, &quot;modulus&quot;: int, &quot;mixed_radix&quot;: [digits]}</code> where <code style="color:#22d3bf">value</code> is the unique solution in <code style="color:#22d3bf">[0, prod(moduli))</code>. Arithmetic is Python&#x27;s arbitrary-precision <code style="color:#22d3bf">int</code> — there is no rounding anywhere, which is why this op is the oracle for <code style="color:#22d3bf">residue_crt</code>.</p>
+<p>The mixed-radix digits <code style="color:#22d3bf">d_k</code> satisfy <code style="color:#22d3bf">value = d_0 + d_1 m_0 + d_2 m_0 m_1 + ...</code>:</p>
+<p>the *positional* (coarse-to-fine) reading of the same residues, i.e. the bridge between the residue view and the place-value view.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

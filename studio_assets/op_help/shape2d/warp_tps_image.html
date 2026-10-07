@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import imagemorph; imagemorph.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code>、台帳から引くなら <code style="color:#22d3bf">opsshape2d.get(&quot;warp_tps_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>薄板スプラインで img の src_pts を dst_pts へ動かす滑らかなワープ。</p>
-<p>出力座標 → 入力座標の逆写像 TPS(dst→src)を当てはめ、出力全格子で評価して</p>
-<p>サンプルする。lam=0 なら制御点上で厳密に対応(特徴が正しく着地)、lam&gt;0 で</p>
-<p>変形を平滑化。区分アフィンより滑らかだが、全画素×制御点のカーネル評価コスト。</p>
-<p>引数・返り値は :func:<code style="color:#22d3bf">warp_piecewise_affine</code> と同じ。</p>
+<p>出力座標 → 入力座標の逆写像 TPS(dst→src)を当てはめ、出力全格子で評価してサンプルする。lam=0 なら制御点上で厳密に対応(特徴が正しく着地)、lam&gt;0 で変形を平滑化。区分アフィンより滑らかだが、全画素×制御点のカーネル評価コスト。</p>
+<p>引数・返り値は <code style="color:#22d3bf">warp_piecewise_affine</code> と同じ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

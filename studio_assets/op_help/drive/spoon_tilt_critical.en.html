@@ -5,15 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>スプーンから粉がこぼれ始める傾き θ_c [度] (2 次元断面、準静的、壁摩擦なし —— <b>自分の導出</b>)。</p>
-<p>模型: 床の長さ `<code style="color:#22d3bf">L</code><code style="color:#22d3bf">(唇から奥壁まで、奥壁は床に垂直)、水平で深さ </code><code style="color:#22d3bf">h0</code>` に平らに盛った粉。唇を下げて床を θ 傾ける。</p>
-<p>粉の自由表面は水平から φ(安息角)までしか立てないので、唇を通る斜面は<b>床から見て φ − θ</b>。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">lip=&quot;wall&quot;</code><code style="color:#22d3bf">(既定: 口に縁があり、初めは口まで平らに満ちている、初めの面積 </code><code style="color:#22d3bf">L h0</code>`): 保持できる断面は</p>
-<p>`<code style="color:#22d3bf">A(θ) = ½ L² tan(φ − θ)</code><code style="color:#22d3bf">(床と表面の楔)。</code><code style="color:#22d3bf">L h0</code><code style="color:#22d3bf"> を超えて保持できなくなる傾きが </code><code style="color:#22d3bf">θ_c = φ − atan(2 h0 / L)</code>`(atan2 で)。</p>
-<p>盛りが多いほど早くこぼれ、`<code style="color:#22d3bf">h0 → 0</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">θ_c → φ</code><code style="color:#22d3bf">、θ = φ で全部出る。</code><code style="color:#22d3bf">2 h0 / L ≥ tan φ</code>` なら水平でも既に保持できない(0 を返す)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">lip=&quot;open&quot;</code>`(口に壁の無い器): 前面は初めから安息角の斜面なので <b>θ = 0⁺ からこぼれる</b> —— 常に 0 を返す。</p>
-<p>★2026-10-05 まで `<code style="color:#22d3bf">wall</code><code style="color:#22d3bf"> の楔の傾きを </code><code style="color:#22d3bf">tan φ − tan θ</code><code style="color:#22d3bf"> と書いていた(小角の近似、</code><code style="color:#22d3bf">θ_c = atan(tan φ − 2 h0 / L)</code>`)。</p>
-<p>θ = 10 度・φ = 30 度で楔の傾きが 10 % 大きく、L 50 mm・h0 5 mm で θ_c が 20.67 度(厳密 18.69 度)と出ていた。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: φ が (0, 90) の外、L / h0 が ≤ 0、</code><code style="color:#22d3bf">lip</code>` が wall / open 以外。</p>
+<p>模型: 床の長さ <code style="color:#22d3bf">L</code>(唇から奥壁まで、奥壁は床に垂直)、水平で深さ <code style="color:#22d3bf">h0</code> に平らに盛った粉。唇を下げて床を θ 傾ける。粉の自由表面は水平から φ(安息角)までしか立てないので、唇を通る斜面は<b>床から見て φ − θ</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lip=&quot;wall&quot;</code>(既定: 口に縁があり、初めは口まで平らに満ちている、初めの面積 <code style="color:#22d3bf">L h0</code>): 保持できる断面は <code style="color:#22d3bf">A(θ) = ½ L² tan(φ − θ)</code>(床と表面の楔)。<code style="color:#22d3bf">L h0</code> を超えて保持できなくなる傾きが <code style="color:#22d3bf">θ_c = φ − atan(2 h0 / L)</code>(atan2 で)。盛りが多いほど早くこぼれ、<code style="color:#22d3bf">h0 → 0</code> で <code style="color:#22d3bf">θ_c → φ</code>、θ = φ で全部出る。<code style="color:#22d3bf">2 h0 / L ≥ tan φ</code> なら水平でも既に保持できない(0 を返す)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lip=&quot;open&quot;</code>(口に壁の無い器): 前面は初めから安息角の斜面なので <b>θ = 0⁺ からこぼれる</b> —— 常に 0 を返す。</p>
+<p>★2026-10-05 まで <code style="color:#22d3bf">wall</code> の楔の傾きを <code style="color:#22d3bf">tan φ − tan θ</code> と書いていた(小角の近似、<code style="color:#22d3bf">θ_c = atan(tan φ − 2 h0 / L)</code>)。θ = 10 度・φ = 30 度で楔の傾きが 10 % 大きく、L 50 mm・h0 5 mm で θ_c が 20.67 度(厳密 18.69 度)と出ていた。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: φ が (0, 90) の外、L / h0 が ≤ 0、<code style="color:#22d3bf">lip</code> が wall / open 以外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

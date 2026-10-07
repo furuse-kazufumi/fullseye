@@ -2,18 +2,14 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">grid_coords — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">coordgrid</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grid_coords(bounds, res)</code>(要直接调用实现,<code style="color:#22d3bf">import sdf_ops; sdf_ops.grid_coords(bounds, res)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;grid_coords&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.grid_coords(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">coordgrid</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.grid_coords.raw(...)</code>,或直接调用 <code style="color:#22d3bf">sdf_ops.grid_coords</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.grid_coords(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">coordgrid</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.grid_coords.raw(...)</code>,或直接调用 <code style="color:#22d3bf">sdf_ops.grid_coords</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>构建用于 CSG 求值的体素中心坐标网格(与 occupancy 相同的格点约定)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">res</code>` は各軸のボクセル数(スカラ=立方</p>
-<p>or 長さ3)。voxel `<code style="color:#22d3bf">i</code><code style="color:#22d3bf"> の中心は world </code><code style="color:#22d3bf">lo + (i+0.5)/res * span</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">occupancy.query_distance</code>`</p>
-<p>の `<code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code>` と整合 = 中心アライン)。返り値は</p>
-<p>`<code style="color:#22d3bf">coords</code><code style="color:#22d3bf"> shape </code><code style="color:#22d3bf">(nx,ny,nz,3)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">extent=(xmin,xmax,ymin,ymax,zmin,zmax)</code>`。</p>
-<p>こうして作った座標に `<code style="color:#22d3bf">sphere_sdf</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">box_sdf</code><code style="color:#22d3bf"> を評価し CSG 合成すれば、</code><code style="color:#22d3bf">recon3d</code>` の</p>
-<p>marching cubes や `<code style="color:#22d3bf">occupancy</code>` のゼロ交差抽出へそのまま渡せる。</p>
+<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code>、<code style="color:#22d3bf">res</code> は各軸のボクセル数(スカラ=立方 or 長さ3)。voxel <code style="color:#22d3bf">i</code> の中心は world <code style="color:#22d3bf">lo + (i+0.5)/res * span</code>(<code style="color:#22d3bf">occupancy.query_distance</code> の <code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code> と整合 = 中心アライン)。返り値は <code style="color:#22d3bf">coords</code> shape <code style="color:#22d3bf">(nx,ny,nz,3)</code> と <code style="color:#22d3bf">extent=(xmin,xmax,ymin,ymax,zmin,zmax)</code>。</p>
+<p>こうして作った座標に <code style="color:#22d3bf">sphere_sdf</code>/<code style="color:#22d3bf">box_sdf</code> を評価し CSG 合成すれば、<code style="color:#22d3bf">recon3d</code> の marching cubes や <code style="color:#22d3bf">occupancy</code> のゼロ交差抽出へそのまま渡せる。</p>
 <p>Raises ValueError for degenerate bounds or res&lt;=0。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

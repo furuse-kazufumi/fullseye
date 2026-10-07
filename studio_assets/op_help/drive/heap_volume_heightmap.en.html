@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_volume_heightmap(hm, pitch: &#x27;float&#x27;, ground=None) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import granular; granular.heap_volume_heightmap(hm, pitch: &#x27;float&#x27;, ground=None) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;heap_volume_heightmap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>高さ図の山の体積 `<code style="color:#22d3bf">Σ (z − z_ground) pitch²</code><code style="color:#22d3bf"> [m³]。</code><code style="color:#22d3bf">ground</code>` は同形の地面高さ(None = 0)。</p>
-<p>負の高さ(地面より下)は 0 に切る —— 穴を山から引き算しない。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形・pitch。</p>
+<p>高さ図の山の体積 <code style="color:#22d3bf">Σ (z − z_ground) pitch²</code> [m³]。<code style="color:#22d3bf">ground</code> は同形の地面高さ(None = 0)。負の高さ(地面より下)は 0 に切る —— 穴を山から引き算しない。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・pitch。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

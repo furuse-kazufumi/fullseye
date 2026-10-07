@@ -3,10 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × points × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flight_fit(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 12, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballistics; ballistics.flight_fit(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 12, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;flight_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>観測 (t_i, p_i)(跳ねを含まない区間)に、抗力 + マグヌス(ω 既知)の運動方程式を <b>初期状態 (p₀, v₀) の 6 パラメータ</b> で</p>
-<p>Gauss–Newton(有限差分のヤコビアン)で当てる。放物線の当てはめは抗力・マグヌスを g と v₀ に吸うので予測が曲がる —— こちらは</p>
-<p>先駆者の「空力モデルつきの追跡」に当たる。返り値 `<code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;rms&quot;, &quot;iters&quot;, &quot;t0&quot;}</code>`(p₀・v₀ は t = t[0] での状態)。</p>
-<p>真値の軌跡を入れると 1e-9 で戻る(門)。</p>
+<p>観測 (t_i, p_i)(跳ねを含まない区間)に、抗力 + マグヌス(ω 既知)の運動方程式を <b>初期状態 (p₀, v₀) の 6 パラメータ</b> で Gauss–Newton(有限差分のヤコビアン)で当てる。放物線の当てはめは抗力・マグヌスを g と v₀ に吸うので予測が曲がる —— こちらは先駆者の「空力モデルつきの追跡」に当たる。返り値 <code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;rms&quot;, &quot;iters&quot;, &quot;t0&quot;}</code>(p₀・v₀ は t = t[0] での状態)。真値の軌跡を入れると 1e-9 で戻る(門)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

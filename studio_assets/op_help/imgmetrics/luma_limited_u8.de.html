@@ -5,14 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>RGB (H, W, 3) uint8 → Y′ = round(16 + (65.481 R + 128.553 G + 24.966 B) / 255) の uint8 (H, W)。</p>
-<p>ITU-R BT.601 の <b>limited range</b>(studio swing)の輝度。黒 (0,0,0) → 16、白 (255,255,255) → 235。full range の</p>
-<p>Y = 0.299 R + 0.587 G + 0.114 B(黒 0・白 255)とは<b>別の量</b>で、PSNR(peak 255 のまま)は 20 log10(255/219) = 1.321 dB</p>
-<p>低く出る。TID2013 の作者値 psnr.txt(「luminance component」)と ssim.txt は <b>この規約で 4 桁一致</b>した(10 組、2026-10-04。</p>
-<p>full range だと PSNR −1.3 dB・SSIM 最大 0.05 ずれ、丸めないと PSNR が +0.002〜0.07 dB ずれる)。ページにも readme にも</p>
-<p>どの輝度かは書かれておらず、実測で特定した規約。丸めは `<code style="color:#22d3bf">np.round</code>`(半偶数)。輝度が <b>ちょうど k.5</b> に落ちる画素は丸めの向きが</p>
-<p>算術の順序で変わり、作者と 1 LSB 食い違うことがある(TID2013 では参照 I12 の 28 画素。彩度変化 5 組で作者 = 完全一致、ここでは 86.6 dB。</p>
-<p>半切り上げでも float32 でも揃わない)。PSNR が 60 dB を超える領域だけの話で、それ以外の 2,995 組は 0.0005 dB 以内。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形が (H, W, 3) でない、dtype が uint8 でない。</p>
+<p>ITU-R BT.601 の <b>limited range</b>(studio swing)の輝度。黒 (0,0,0) → 16、白 (255,255,255) → 235。full range の Y = 0.299 R + 0.587 G + 0.114 B(黒 0・白 255)とは<b>別の量</b>で、PSNR(peak 255 のまま)は 20 log10(255/219) = 1.321 dB 低く出る。TID2013 の作者値 psnr.txt(「luminance component」)と ssim.txt は <b>この規約で 4 桁一致</b>した(10 組、2026-10-04。full range だと PSNR −1.3 dB・SSIM 最大 0.05 ずれ、丸めないと PSNR が +0.002〜0.07 dB ずれる)。ページにも readme にもどの輝度かは書かれておらず、実測で特定した規約。丸めは <code style="color:#22d3bf">np.round</code>(半偶数)。輝度が <b>ちょうど k.5</b> に落ちる画素は丸めの向きが算術の順序で変わり、作者と 1 LSB 食い違うことがある(TID2013 では参照 I12 の 28 画素。彩度変化 5 組で作者 = 完全一致、ここでは 86.6 dB。半切り上げでも float32 でも揃わない)。PSNR が 60 dB を超える領域だけの話で、それ以外の 2,995 組は 0.0005 dB 以内。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形が (H, W, 3) でない、dtype が uint8 でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

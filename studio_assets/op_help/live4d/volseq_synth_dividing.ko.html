@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_synth_dividing(shape=(24, 32, 32), n_frames: &#x27;int&#x27; = 24, split_frame: &#x27;int&#x27; = 8, speed: &#x27;float&#x27; = 0.5, sigma: &#x27;float&#x27; = 2.5, axis: &#x27;int&#x27; = 3, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import live4d; live4d.volseq_synth_dividing(shape=(24, 32, 32), n_frames: &#x27;int&#x27; = 24, split_frame: &#x27;int&#x27; = 8, speed: &#x27;float&#x27; = 0.5, sigma: &#x27;float&#x27; = 2.5, axis: &#x27;int&#x27; = 3, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opslive4d.get(&quot;volseq_synth_dividing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>既知の速さで二つに分かれる塊の体積時系列 `<code style="color:#22d3bf">(T, Z, Y, X)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">volseq</code>`)。</p>
-<p>`<code style="color:#22d3bf">split_frame</code><code style="color:#22d3bf"> までは中心に 1 つのガウス塊(標準偏差 </code><code style="color:#22d3bf">sigma</code><code style="color:#22d3bf">)、それ以降は 2 つの塊が </code><code style="color:#22d3bf">axis</code>`</p>
-<p>(1 = z, 2 = y, 3 = x)に沿って `<code style="color:#22d3bf">±speed · (t − split_frame)</code>` voxel ずつ離れる(細胞分裂の最小モデル)。</p>
-<p><b>真値 = 中心の位置</b>なので、流れ(`<code style="color:#22d3bf">vol_flow_3d</code><code style="color:#22d3bf">)は </code><code style="color:#22d3bf">±speed</code>` の並進、軌跡は直線になるはず。</p>
+<p>既知の速さで二つに分かれる塊の体積時系列 <code style="color:#22d3bf">(T, Z, Y, X)</code>(<code style="color:#22d3bf">volseq</code>)。</p>
+<p><code style="color:#22d3bf">split_frame</code> までは中心に 1 つのガウス塊(標準偏差 <code style="color:#22d3bf">sigma</code>)、それ以降は 2 つの塊が <code style="color:#22d3bf">axis</code> (1 = z, 2 = y, 3 = x)に沿って <code style="color:#22d3bf">±speed · (t − split_frame)</code> voxel ずつ離れる(細胞分裂の最小モデル)。<b>真値 = 中心の位置</b>なので、流れ(<code style="color:#22d3bf">vol_flow_3d</code>)は <code style="color:#22d3bf">±speed</code> の並進、軌跡は直線になるはず。</p>
 <p>&gt;&gt;&gt; s = volseq_synth_dividing((16, 24, 24), n_frames=12, split_frame=4, speed=0.5)</p>
 <p>&gt;&gt;&gt; s.shape</p>
 <p>(12, 16, 24, 24)</p>

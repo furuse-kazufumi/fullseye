@@ -5,20 +5,17 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>同方向の最悪ケース(論文 Definition 4)を時間で追う。</p>
-<p>先行車は t = 0 から `<code style="color:#22d3bf">brake_max</code><code style="color:#22d3bf"> で停止まで減速。後続車は ρ の間 </code><code style="color:#22d3bf">accel_max</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">v_max_accel</code>` で頭打ち)、</p>
-<p>その後 `<code style="color:#22d3bf">brake_min</code>` で停止まで減速。各時刻の位置は区分ごとの等加速度の厳密式で、時刻列には ρ・頭打ち時刻・</p>
-<p>各車の停止時刻を必ず含める(`<code style="color:#22d3bf">dt</code>` は表示密度で、min_gap は dt に依らない)。</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : `<code style="color:#22d3bf">t, x_rear, x_front, v_rear, v_front, gap</code><code style="color:#22d3bf"> (ndarray)、</code><code style="color:#22d3bf">min_gap, t_min</code>` (float)、</p>
-<p>`<code style="color:#22d3bf">collided</code><code style="color:#22d3bf"> (min_gap &lt; 0)、</code><code style="color:#22d3bf">t_stop_rear, t_stop_front</code>`。gap = x_front − x_rear</p>
+<p>先行車は t = 0 から <code style="color:#22d3bf">brake_max</code> で停止まで減速。後続車は ρ の間 <code style="color:#22d3bf">accel_max</code>(<code style="color:#22d3bf">v_max_accel</code> で頭打ち)、その後 <code style="color:#22d3bf">brake_min</code> で停止まで減速。各時刻の位置は区分ごとの等加速度の厳密式で、時刻列には ρ・頭打ち時刻・各車の停止時刻を必ず含める(<code style="color:#22d3bf">dt</code> は表示密度で、min_gap は dt に依らない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">t, x_rear, x_front, v_rear, v_front, gap</code> (ndarray)、<code style="color:#22d3bf">min_gap, t_min</code> (float)、</p>
+<p><code style="color:#22d3bf">collided</code> (min_gap &lt; 0)、<code style="color:#22d3bf">t_stop_rear, t_stop_front</code>。gap = x_front − x_rear</p>
 <p>(後続の前端と先行の後端の間隔、後続は x = 0、先行は x = d0 から出発)。</p>
-<p>`<code style="color:#22d3bf">min_gap = d0 − max(d_min − min_distance, 0)</code><code style="color:#22d3bf"> が成り立つ(d_min = </code><code style="color:#22d3bf">rss_longitudinal_same</code>`)。</p>
-<p>`<code style="color:#22d3bf">t_max</code>` を与えると(両車の停止より前で)打ち切る。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">min_gap = d0 − max(d_min − min_distance, 0)</code> が成り立つ(d_min = <code style="color:#22d3bf">rss_longitudinal_same</code>)。</p>
+<p><code style="color:#22d3bf">t_max</code> を与えると(両車の停止より前で)打ち切る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ttc_rss">poc_ttc_rss</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ttc_rss.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

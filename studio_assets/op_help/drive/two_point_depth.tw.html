@@ -5,14 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>傾き θ [rad] で二点接触が始まる挿入深さ l₂ [m] (最狭部から先端中心まで)。3 つの模型を名前で選ぶ。</p>
-<p>`<code style="color:#22d3bf">&quot;exact&quot;</code><code style="color:#22d3bf">: 3-D の円柱で厳密 l₂ = (2R − r(cos θ + sec θ)) / tan θ(導出 (1′))。</code><code style="color:#22d3bf">&quot;small_angle&quot;</code>`: l₂ = 2c_r / sin θ</p>
-<p>(OCW p.9 の l/d = c/θ を半径 clearance で書いたもの)。`<code style="color:#22d3bf">&quot;rectangle&quot;</code>`: 2-D の長方形近似 (D − d/cos θ)/tan θ(縁の点の</p>
-<p>高さ r sin θ を無視するので θ = 6° で 0.5 mm 浅く出る —— 間違いの量を測るために残す)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: θ ≤ 0、θ ≥ θ_m_exact(入口にすら入らない)、未知の model。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">&quot;exact&quot;</code>: 3-D の円柱で厳密 l₂ = (2R − r(cos θ + sec θ)) / tan θ(導出 (1′))。<code style="color:#22d3bf">&quot;small_angle&quot;</code>: l₂ = 2c_r / sin θ (OCW p.9 の l/d = c/θ を半径 clearance で書いたもの)。<code style="color:#22d3bf">&quot;rectangle&quot;</code>: 2-D の長方形近似 (D − d/cos θ)/tan θ(縁の点の高さ r sin θ を無視するので θ = 6° で 0.5 mm 浅く出る —— 間違いの量を測るために残す)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: θ ≤ 0、θ ≥ θ_m_exact(入口にすら入らない)、未知の model。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pegsim_insertion">poc_pegsim_insertion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pegsim_insertion.py</code></p>

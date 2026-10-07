@@ -5,14 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>角の建物があるとき、線路の上でどこまで見えるか(見通しの三角形)。</p>
-<p>線路 = x 軸(y = 0)、道路の中心 = x = 0。目 = (eye_offset, −eye_distance)、建物の角 = (corner_offset, −corner_distance)、</p>
-<p>建物は x ≥ corner_offset かつ y ≤ −corner_distance を占める(角の向こうの側、corner_offset &gt; eye_offset)。</p>
-<p>返り値 = 見える線路の上の最も遠い点の x(道路の中心から)。corner_distance ≥ eye_distance(建物が目より線路寄りに</p>
-<p>出ていない)なら遮らず ∞。左側は x を反転して同じ式を使う。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>線路 = x 軸(y = 0)、道路の中心 = x = 0。目 = (eye_offset, −eye_distance)、建物の角 = (corner_offset, −corner_distance)、建物は x ≥ corner_offset かつ y ≤ −corner_distance を占める(角の向こうの側、corner_offset &gt; eye_offset)。返り値 = 見える線路の上の最も遠い点の x(道路の中心から)。corner_distance ≥ eye_distance(建物が目より線路寄りに出ていない)なら遮らず ∞。左側は x を反転して同じ式を使う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">scalar</code> 作為輸入)</h3>

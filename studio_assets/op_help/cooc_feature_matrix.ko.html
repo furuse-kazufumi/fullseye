@@ -6,15 +6,15 @@
 <p><img src="fig/cooc_feature_matrix.png" alt="cooc_feature_matrix: input → output"></p>
 <p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
 <p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cooc_feature_matrix.a.jpg">cooc_feature_matrix: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cooc_feature_matrix.a.jpg">cooc_feature_matrix: 노브 a 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cooc_feature_matrix.b.jpg">cooc_feature_matrix: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cooc_feature_matrix.b.jpg">cooc_feature_matrix: 노브 b 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>그레이레벨 동시발생 행렬(GLCM, `<code style="color:#22d3bf">skimage.feature.graycomatrix</code><code style="color:#22d3bf">, 16계조로 양자화, 거리 </code><code style="color:#22d3bf">1+3*a</code><code style="color:#22d3bf">, 각도 0°)로부터 Haralick 텍스처 특징 </code><code style="color:#22d3bf">energy</code><code style="color:#22d3bf">(각 2차 모멘트, 행렬 값의 집중도=텍스처의 균일성)를 계산한다. HALCON의 </code><code style="color:#22d3bf">cooc_feature_matrix</code>`(Calculate gray value features from a co-occurrence matrix.)에 해당(HALCON은 여러 특징·여러 각도를 동시에 반환할 수 있지만, 여기서는 energy·각도 0° 고정으로 단순화).</p>
+<p>그레이레벨 동시발생 행렬(GLCM, <code style="color:#22d3bf">skimage.feature.graycomatrix</code>, 16계조로 양자화, 거리 <code style="color:#22d3bf">1+3*a</code>, 각도 0°)로부터 Haralick 텍스처 특징 <code style="color:#22d3bf">energy</code>(각 2차 모멘트, 행렬 값의 집중도=텍스처의 균일성)를 계산한다. HALCON의 <code style="color:#22d3bf">cooc_feature_matrix</code>(Calculate gray value features from a co-occurrence matrix.)에 해당(HALCON은 여러 특징·여러 각도를 동시에 반환할 수 있지만, 여기서는 energy·각도 0° 고정으로 단순화).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が共起を取る画素間距離を 1〜4 の範囲で振る。★</code><code style="color:#22d3bf">b &gt;= 0.75</code><code style="color:#22d3bf"> で **0/45/90/135 度の 4 方向を平均**する(既定 </code><code style="color:#22d3bf">b=0.5</code>` は従来どおり 0 度だけなので、既存の結果は 1 ビットも変わらない)。</p>
-<p>実写テクスチャ(brick / grass / gravel)を回して測ると(`<code style="color:#22d3bf">poc_real_texture_invariance</code><code style="color:#22d3bf"> の節 6)、**効くかどうかは距離 </code><code style="color:#22d3bf">a</code>` で変わる**:</p>
-<p style="margin:2px 0 2px 12px">• まず `<code style="color:#22d3bf">a</code>` を伸ばすと<b>素材どうしの分解能そのものが潰れる</b>(0.0328 -&gt; 0.0122、2.7 分の 1)。異方な brick の振れ幅は分解能の <b>0.30 -&gt; 3.13 倍</b>へ膨らむ。</p>
+<p><code style="color:#22d3bf">a</code> が共起を取る画素間距離を 1〜4 の範囲で振る。★<code style="color:#22d3bf">b &gt;= 0.75</code> で <b>0/45/90/135 度の 4 方向を平均</b>する(既定 <code style="color:#22d3bf">b=0.5</code> は従来どおり 0 度だけなので、既存の結果は 1 ビットも変わらない)。</p>
+<p>実写テクスチャ(brick / grass / gravel)を回して測ると(<code style="color:#22d3bf">poc_real_texture_invariance</code> の節 6)、<b>効くかどうかは距離 <code style="color:#22d3bf">a</code> で変わる</b>:</p>
+<p style="margin:2px 0 2px 12px">• まず <code style="color:#22d3bf">a</code> を伸ばすと<b>素材どうしの分解能そのものが潰れる</b>(0.0328 -&gt; 0.0122、2.7 分の 1)。異方な brick の振れ幅は分解能の <b>0.30 -&gt; 3.13 倍</b>へ膨らむ。</p>
 <p style="margin:2px 0 2px 12px">• 4 方向平均は<b>等方な素材には短中距離で効く</b>(grass 0.23 -&gt; 0.12、gravel 0.20 -&gt; 0.11)。</p>
 <p style="margin:2px 0 2px 12px">• 異方な brick には<b>距離 4 でだけ効き</b>(3.13 -&gt; 1.54)、<b>距離 1 では逆に悪化する</b>(0.30 -&gt; 0.56)。</p>
 <p style="margin:2px 0 2px 12px">• 距離 4 まで来ると等方な grass すら改善しない(0.17 -&gt; 0.19)—— 分解能が潰れたあとは平均しても取り返せない。</p>
@@ -27,7 +27,7 @@
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
 <p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cooc_feature_matrix 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cooc_feature_matrix%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cooc_feature_matrix%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cooc_feature_matrix 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cooc_feature_matrix%200.50%200.50">▸ 이 파이프라인 불러오기</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cooc_feature_matrix%200.50%200.50">불러와서 실행</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_texture_invariance">poc_real_texture_invariance</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_texture_invariance.py</code></p>

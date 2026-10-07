@@ -5,50 +5,27 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>SART —— 同時代數重建,一次一個角度。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>An iterative solver for `<code style="color:#22d3bf">A x = p</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">A</code>` is the projector: for each</p>
-<p>view in turn, project the current estimate, take the residual, and</p>
-<p>back-project it with the row and column sums of `<code style="color:#22d3bf">A</code>` as normalisers::</p>
+<p>An iterative solver for <code style="color:#22d3bf">A x = p</code> where <code style="color:#22d3bf">A</code> is the projector: for each view in turn, project the current estimate, take the residual, and back-project it with the row and column sums of <code style="color:#22d3bf">A</code> as normalisers::</p>
 <p>x &lt;- x + lambda * BP_theta( (p_theta - FP_theta(x)) / rowsum_theta )</p>
 <p>/ colsum_theta</p>
-<p>*rowsum* is the length of each ray through the grid and *colsum* is how many</p>
-<p>rays touched each pixel, so the update is dimensionally a density and does not</p>
-<p>depend on the grid size. One &quot;iteration&quot; is one pass over all views.</p>
-<p>Why it exists next to :func:<code style="color:#22d3bf">filtered_backprojection</code>: FBP inverts an integral</p>
-<p>transform and therefore *needs* the transform to have been sampled; SART</p>
-<p>solves a linear system and merely does worse when the system is</p>
-<p>underdetermined. Measured, it is better at every view count tested (the table</p>
-<p>in :func:<code style="color:#22d3bf">filtered_backprojection</code>), by 1.43x at 180 views and 2.9x at 8.</p>
-<p>The cost is honest and it is the reason this is not the default: 10 sweeps</p>
-<p>over 180 views is 1800 forward *and* 1800 back-projections against FBP&#x27;s 180</p>
-<p>back-projections, measured at <b>37.7 s</b> against <b>0.12 s</b> for a 256-px</p>
-<p>reconstruction — a factor of <b>312</b>. At 8 views it is 2.14 s against 0.01 s,</p>
-<p>the same ratio applied to a much smaller number.</p>
-<p>`<code style="color:#22d3bf">nonnegative=True</code>` clips the estimate at zero after every sweep. Attenuation</p>
-<p>coefficients cannot be negative, so this is a genuine constraint and not a</p>
-<p>cosmetic clip, and it carries a large part of the advantage above — measured</p>
-<p>on the analytic Shepp-Logan sinogram, normalised RMS with the constraint</p>
-<p>against without:</p>
+<p>*rowsum* is the length of each ray through the grid and *colsum* is how many rays touched each pixel, so the update is dimensionally a density and does not depend on the grid size. One &quot;iteration&quot; is one pass over all views.</p>
+<p>Why it exists next to <code style="color:#22d3bf">filtered_backprojection</code>: FBP inverts an integral transform and therefore *needs* the transform to have been sampled; SART solves a linear system and merely does worse when the system is underdetermined. Measured, it is better at every view count tested (the table</p>
+<p>in <code style="color:#22d3bf">filtered_backprojection</code>), by 1.43x at 180 views and 2.9x at 8.</p>
+<p>The cost is honest and it is the reason this is not the default: 10 sweeps over 180 views is 1800 forward *and* 1800 back-projections against FBP&#x27;s 180 back-projections, measured at <b>37.7 s</b> against <b>0.12 s</b> for a 256-px reconstruction — a factor of <b>312</b>. At 8 views it is 2.14 s against 0.01 s, the same ratio applied to a much smaller number.</p>
+<p><code style="color:#22d3bf">nonnegative=True</code> clips the estimate at zero after every sweep. Attenuation coefficients cannot be negative, so this is a genuine constraint and not a cosmetic clip, and it carries a large part of the advantage above — measured on the analytic Shepp-Logan sinogram, normalised RMS with the constraint against without:</p>
 <p>views     with     without</p>
 <p>180    0.0175    0.0300</p>
 <p>45    0.0353    0.0626</p>
 <p>8    0.1257    0.1428</p>
-<p>so at 180 views the constraint alone is worth 1.7x, and it is the *only*</p>
-<p>reason SART leads FBP there at all (FBP scores 0.0250, between the two).</p>
-<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>`, rows = angles.</p>
-<p>:param angles_deg: view angles; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; uniform </code><code style="color:#22d3bf">[0, 180)</code>`.</p>
-<p>:param size: output side; `<code style="color:#22d3bf">None</code>` -&gt; the inscribed square.</p>
-<p>:param n_iter: sweeps over the full angle set, `<code style="color:#22d3bf">1 .. 500</code>`.</p>
-<p>:param relaxation: step size `<code style="color:#22d3bf">lambda</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">(0, 2)</code>`. Over 1 the iteration can</p>
+<p>so at 180 views the constraint alone is worth 1.7x, and it is the *only* reason SART leads FBP there at all (FBP scores 0.0250, between the two).</p>
+<p>:param sinogram: <code style="color:#22d3bf">(n_angles, n_detectors)</code>, rows = angles. :param angles_deg: view angles; <code style="color:#22d3bf">None</code> -&gt; uniform <code style="color:#22d3bf">[0, 180)</code>. :param size: output side; <code style="color:#22d3bf">None</code> -&gt; the inscribed square. :param n_iter: sweeps over the full angle set, <code style="color:#22d3bf">1 .. 500</code>. :param relaxation: step size <code style="color:#22d3bf">lambda</code>, <code style="color:#22d3bf">(0, 2)</code>. Over 1 the iteration can</p>
 <p>oscillate; over 2 it provably diverges, and is refused.</p>
-<p>:param initial: starting estimate, `<code style="color:#22d3bf">(size, size)</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">None</code>` -&gt; zeros.</p>
-<p>:param nonnegative: clip to `<code style="color:#22d3bf">&gt;= 0</code>` after each sweep.</p>
-<p>:returns: `<code style="color:#22d3bf">(size, size)</code>` float64 image.</p>
-<p>:raises ValueError: as :func:<code style="color:#22d3bf">filtered_backprojection</code>, plus a relaxation</p>
-<p>outside `<code style="color:#22d3bf">(0, 2)</code><code style="color:#22d3bf"> and an *initial* whose shape is not </code><code style="color:#22d3bf">(size, size)</code>`.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>:param initial: starting estimate, <code style="color:#22d3bf">(size, size)</code>; <code style="color:#22d3bf">None</code> -&gt; zeros. :param nonnegative: clip to <code style="color:#22d3bf">&gt;= 0</code> after each sweep. :returns: <code style="color:#22d3bf">(size, size)</code> float64 image. :raises ValueError: as <code style="color:#22d3bf">filtered_backprojection</code>, plus a relaxation</p>
+<p>outside <code style="color:#22d3bf">(0, 2)</code> and an *initial* whose shape is not <code style="color:#22d3bf">(size, size)</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>

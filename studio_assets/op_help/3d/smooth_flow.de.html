@@ -5,11 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert einen regularisierten Fluss (N, 3): den Nächste-Nachbar-Fluss, lokal durch Nachbarschaftsmittelung geglättet.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>:func:<code style="color:#22d3bf">nearest_neighbor_flow</code> の生フロー(最近傍対応ゆえノイズが乗る)を、</p>
-<p>`<code style="color:#22d3bf">pts0</code>` 空間の k 近傍トポロジ(自身を含む、1 度だけ構築)で反復平均する。</p>
-<p>ゼロ平均ノイズを抑えつつ滑らかな変位場は概ね保存する(Jacobi 反復 =</p>
-<p>フロー場のラプラシアン平滑化)。線形場は対称近傍で不偏、曲率のある場は</p>
-<p>僅かに縮む(honest な平滑化バイアス)。</p>
+<p><code style="color:#22d3bf">nearest_neighbor_flow</code> の生フロー(最近傍対応ゆえノイズが乗る)を、<code style="color:#22d3bf">pts0</code> 空間の k 近傍トポロジ(自身を含む、1 度だけ構築)で反復平均する。ゼロ平均ノイズを抑えつつ滑らかな変位場は概ね保存する(Jacobi 反復 = フロー場のラプラシアン平滑化)。線形場は対称近傍で不偏、曲率のある場は僅かに縮む(honest な平滑化バイアス)。</p>
 <p>Args:</p>
 <p>pts0: (N, 3) 時刻 0 の点群。</p>
 <p>pts1: (M, 3) 時刻 1 の点群。</p>

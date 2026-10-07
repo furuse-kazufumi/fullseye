@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × table × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_traction_curve(load, wheel, soil, slips=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roverslip; roverslip.wheel_traction_curve(load, wheel, soil, slips=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;wheel_traction_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>1 輪の荷重 `<code style="color:#22d3bf">load</code>` [N] を一定に保ったときの、滑り率ごとの沈下・牽引力・トルク(牽引–滑り曲線)。</p>
-<p>`<code style="color:#22d3bf">slips</code><code style="color:#22d3bf"> の既定は 0〜0.95 の 40 点。返り値 </code><code style="color:#22d3bf">{&quot;slip&quot;, &quot;sinkage&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;DP_over_W&quot;, &quot;efficiency&quot;}</code>`</p>
-<p>(`<code style="color:#22d3bf">efficiency</code>` = 牽引の仕事率 / 駆動の仕事率 = DP (1 − s) r / T、T ≤ 0 の点は 0)。</p>
+<p>1 輪の荷重 <code style="color:#22d3bf">load</code> [N] を一定に保ったときの、滑り率ごとの沈下・牽引力・トルク(牽引–滑り曲線)。</p>
+<p><code style="color:#22d3bf">slips</code> の既定は 0〜0.95 の 40 点。返り値 <code style="color:#22d3bf">{&quot;slip&quot;, &quot;sinkage&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;DP_over_W&quot;, &quot;efficiency&quot;}</code> (<code style="color:#22d3bf">efficiency</code> = 牽引の仕事率 / 駆動の仕事率 = DP (1 − s) r / T、T ≤ 0 の点は 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

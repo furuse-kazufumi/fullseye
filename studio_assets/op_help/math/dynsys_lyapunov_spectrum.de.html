@@ -5,30 +5,19 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Das Lyapunov-Spektrum über Tangentialfluss + QR — und die Summe, die man nachrechnen kann.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Integrates the state together with an orthonormal frame of tangent vectors</p>
-<p>(the variational equation `<code style="color:#22d3bf">dY/dt = J(x) Y</code>`), re-orthonormalising by QR at</p>
-<p>every step and accumulating `<code style="color:#22d3bf">log</code>` of the diagonal. The exponents come out</p>
-<p><b>ordered</b>, largest first.</p>
-<p>★★<b>Why this earns its place — the trace identity.</b> The sum of the exponents</p>
-<p>equals the time-average of the divergence of the field:</p>
+<p>Integrates the state together with an orthonormal frame of tangent vectors (the variational equation <code style="color:#22d3bf">dY/dt = J(x) Y</code>), re-orthonormalising by QR at every step and accumulating <code style="color:#22d3bf">log</code> of the diagonal. The exponents come out <b>ordered</b>, largest first.</p>
+<p>★★<b>Why this earns its place — the trace identity.</b> The sum of the exponents equals the time-average of the divergence of the field:</p>
 <p>sum(lambda_i) == &lt;div f&gt;</p>
-<p>For Lorenz the divergence is the <b>constant</b> `<code style="color:#22d3bf">-(sigma + 1 + beta)</code>`, so the</p>
-<p>sum is known in closed form: `<code style="color:#22d3bf">-13.6667</code>` for the classical parameters. That</p>
-<p>is an exact target the attractor picture cannot provide. The published largest</p>
-<p>exponent (≈ 0.906 for sigma=10, beta=8/3, rho=28) is a second, independent</p>
-<p>check.</p>
-<p>Returns a `<code style="color:#22d3bf">signal</code>`: the exponents, descending.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: unknown system; non-finite input; </code><code style="color:#22d3bf">burn_in</code>` not</p>
-<p>shorter than `<code style="color:#22d3bf">t_end</code>`; a trajectory that left float range.</p>
-<p>Limits: the exponents converge like `<code style="color:#22d3bf">1/sqrt(T)</code>` — a short window gives a</p>
-<p>plausible but wrong spectrum. The trace identity converges much faster and is</p>
-<p>the honest gate; the individual exponents need long windows.</p>
+<p>For Lorenz the divergence is the <b>constant</b> <code style="color:#22d3bf">-(sigma + 1 + beta)</code>, so the sum is known in closed form: <code style="color:#22d3bf">-13.6667</code> for the classical parameters. That is an exact target the attractor picture cannot provide. The published largest exponent (≈ 0.906 for sigma=10, beta=8/3, rho=28) is a second, independent check.</p>
+<p>Returns a <code style="color:#22d3bf">signal</code>: the exponents, descending.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown system; non-finite input; <code style="color:#22d3bf">burn_in</code> not shorter than <code style="color:#22d3bf">t_end</code>; a trajectory that left float range.</p>
+<p>Limits: the exponents converge like <code style="color:#22d3bf">1/sqrt(T)</code> — a short window gives a plausible but wrong spectrum. The trace identity converges much faster and is the honest gate; the individual exponents need long windows.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

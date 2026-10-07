@@ -6,21 +6,15 @@
 <p><img src="fig/cfa_to_rgb.png" alt="cfa_to_rgb: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cfa_to_rgb.a.jpg">cfa_to_rgb: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cfa_to_rgb.a.jpg">cfa_to_rgb: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cfa_to_rgb.inputs.jpg">cfa_to_rgb: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cfa_to_rgb.inputs.jpg">cfa_to_rgb: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Bayer 配列（CFA: Color Filter Array）から RGB 画像へのデモザイク処理。HALCON の</p>
-<p>`<code style="color:#22d3bf">cfa_to_rgb</code>`（単板カラーフィルタアレイ画像を RGB 画像に変換する）に近似。</p>
-<p>単一チャンネルのグレースケール画像を Bayer パターンの生データとみなし、</p>
-<p>OpenCV の `<code style="color:#22d3bf">cv2.cvtColor</code>` でデモザイクして 3 チャンネル RGB に復元する。</p>
-<p><code style="color:#22d3bf">image</code> から <code style="color:#22d3bf">color</code> への橋渡し op（進化がカラー系統に入る唯一の入口）。</p>
-<p>a は Bayer パターンの並び順を 4 通り（BG/GB/RG/GR の並び）から選ぶ</p>
-<p>（`<code style="color:#22d3bf">min(3, int(a * 4))</code>` で 0〜3 に量子化）。b は未使用。</p>
-<p>パターンが実際の入力と合わない場合、色ズレ・モアレが出る（本来の Bayer</p>
-<p>配置が分からない合成画像に対してはどれも「それらしい」RGB化でしかない）。</p>
+<p>Bayer 配列（CFA: Color Filter Array）から RGB 画像へのデモザイク処理。HALCON の <code style="color:#22d3bf">cfa_to_rgb</code>（単板カラーフィルタアレイ画像を RGB 画像に変換する）に近似。</p>
+<p>単一チャンネルのグレースケール画像を Bayer パターンの生データとみなし、OpenCV の <code style="color:#22d3bf">cv2.cvtColor</code> でデモザイクして 3 チャンネル RGB に復元する。<code style="color:#22d3bf">image</code> から <code style="color:#22d3bf">color</code> への橋渡し op（進化がカラー系統に入る唯一の入口）。</p>
+<p>a は Bayer パターンの並び順を 4 通り（BG/GB/RG/GR の並び）から選ぶ（<code style="color:#22d3bf">min(3, int(a * 4))</code> で 0〜3 に量子化）。b は未使用。パターンが実際の入力と合わない場合、色ズレ・モアレが出る（本来の Bayer 配置が分からない合成画像に対してはどれも「それらしい」RGB化でしかない）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
@@ -31,7 +25,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cfa_to_rgb 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cfa_to_rgb%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cfa_to_rgb%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cfa_to_rgb 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cfa_to_rgb%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cfa_to_rgb%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_color_artistic">gallery2d_color_artistic</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_color_artistic.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">color</code> を入力に取れる)</h3>

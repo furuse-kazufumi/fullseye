@@ -4,16 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_rules(jurisdiction: &#x27;str&#x27; = &#x27;JP&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetown; drivetown.town_rules(jurisdiction: &#x27;str&#x27; = &#x27;JP&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;town_rules&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>法規パック(:data:<code style="color:#22d3bf">RULE_PACKS</code> の複製)。``{&quot;jurisdiction&quot;, &quot;side&quot;: &quot;left&quot;|&quot;right&quot;, &quot;crossing_stop&quot;: &quot;always&quot;|&quot;when_active&quot;,</p>
-<p>&quot;intersection_stop&quot;: &quot;signal&quot;, &quot;hold_s&quot;, &quot;look_required&quot;, &quot;look_hold_s&quot;, &quot;sources&quot;: [...], &quot;verified&quot;, &quot;notes&quot;}``。</p>
-<p>JP = 左側通行・踏切は常に一時停止 + 安全確認(道路交通法 33 条 1 項、本文で確認済 → verified True)。</p>
-<p>US = 右側通行・一般車は警報中だけ停止(州法。<b>一次確認なし → verified False</b>)。DE = 右側通行・StVO §19 で遮断機/灯火が</p>
-<p>動作している時だけ(<b>一次確認なし → verified False</b>)。verified が False の規則は PoC・報告で断定しない。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 知らない jurisdiction。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>法規パック(<code style="color:#22d3bf">RULE_PACKS</code> の複製)。<code style="color:#22d3bf">{&quot;jurisdiction&quot;, &quot;side&quot;: &quot;left&quot;|&quot;right&quot;, &quot;crossing_stop&quot;: &quot;always&quot;|&quot;when_active&quot;, &quot;intersection_stop&quot;: &quot;signal&quot;, &quot;hold_s&quot;, &quot;look_required&quot;, &quot;look_hold_s&quot;, &quot;sources&quot;: [...], &quot;verified&quot;, &quot;notes&quot;}</code>。</p>
+<p>JP = 左側通行・踏切は常に一時停止 + 安全確認(道路交通法 33 条 1 項、本文で確認済 → verified True)。US = 右側通行・一般車は警報中だけ停止(州法。<b>一次確認なし → verified False</b>)。DE = 右側通行・StVO §19 で遮断機/灯火が動作している時だけ(<b>一次確認なし → verified False</b>)。verified が False の規則は PoC・報告で断定しない。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 知らない jurisdiction。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

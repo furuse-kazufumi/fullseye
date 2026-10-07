@@ -6,16 +6,16 @@
 <p><img src="fig/morph_grad.png" alt="morph_grad: input → output"></p>
 <p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
 <p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/morph_grad.a.jpg">morph_grad: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/morph_grad.a.jpg">morph_grad: 노브 a 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/morph_grad.inputs.jpg">morph_grad: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/morph_grad.inputs.jpg">morph_grad: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>모폴로지 그래디언트(팽창 − 침식). HALCON의 `<code style="color:#22d3bf">gray_range_rect</code>`(Determine the gray value range within a rectangle.)에 해당한다.</p>
+<p>모폴로지 그래디언트(팽창 − 침식). HALCON의 <code style="color:#22d3bf">gray_range_rect</code>(Determine the gray value range within a rectangle.)에 해당한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が構造要素の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">）に振る。</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。窓内の最大値と最小値の差を返すため、エッジ検出フィルタ（Sobel 等）に似た働きをするが方向を持たない。結果は </code><code style="color:#22d3bf">_norm</code>` で正規化される。</p>
-<p><b>노브(실측)</b>: `<code style="color:#22d3bf">a</code>`는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.25、0.49、0.75(간격 0.02 스윕으로 실측).</p>
+<p><code style="color:#22d3bf">a</code> が構造要素の一辺を <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k(a)</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。窓内の最大値と最小値の差を返すため、エッジ検出フィルタ（Sobel 等）に似た働きをするが方向を持たない。結果は <code style="color:#22d3bf">_norm</code> で正規化される。</p>
+<p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.25、0.49、0.75(간격 0.02 스윕으로 실측).</p>
 <p><b>값의 비교 가능성(실측)</b>: 출력을 <b>그 이미지 자신의 최댓값으로 정규화</b>한다(출력 최댓값이 항상 1.0이고, 입력을 상수배해도 출력이 바뀌지 않는다). 따라서 <b>이미지 사이에서 값을 비교할 수 없다</b> —— 같은 세기의 특징이라도 그 이미지에서 가장 강한 특징이 무엇인지에 따라 값이 달라지며, 약한 특징만 있는 이미지에서는 잡음이 1.0까지 올라간다. 이미지 간 비교가 필요하면 공통 기준으로 다시 나눌 것.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
@@ -26,7 +26,7 @@
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
 <p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">morph_grad 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:morph_grad%200.35%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:morph_grad%200.35%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">morph_grad 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:morph_grad%200.35%200.50">▸ 이 파이프라인 불러오기</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:morph_grad%200.35%200.50">불러와서 실행</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_morphology">gallery2d_morphology</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_morphology.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image</code> 를 입력으로 받는 것)</h3>

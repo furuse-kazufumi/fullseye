@@ -5,25 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>兩張半色調網屏之間的拍頻 —— 週期與方向的閉式解。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Each screen is a frequency <b>vector</b> `<code style="color:#22d3bf">f (cos t, sin t)</code>`; where two screens</p>
-<p>overlap the visible moiré is the difference vector, so its period is</p>
-<p>`<code style="color:#22d3bf">1 / |f_a - f_b|</code>` and its direction is that of the difference. For equal</p>
-<p>rulings the magnitude reduces to `<code style="color:#22d3bf">2 f sin(dt / 2)</code>`, which is why the beat</p>
-<p>period grows without bound as the angle difference goes to zero — two plates</p>
-<p>at nearly the same angle give a huge, very visible moiré.</p>
-<p>★<b>Why this earns its place</b>: the prediction is available <b>before</b> any</p>
-<p>screen is drawn, and :func:<code style="color:#22d3bf">halftone_screen</code> plus an FFT can measure the beat</p>
-<p>out of the picture. Two independent routes to one number.</p>
-<p>Returns a `<code style="color:#22d3bf">table</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">period_px</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">angle_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">freq_cycles_per_px</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive ruling or pitch; two screens that are</p>
-<p>identical in both ruling and angle (the difference vanishes — there is no</p>
-<p>beat, and returning `<code style="color:#22d3bf">inf</code>` silently would be worse than saying so).</p>
+<p>Each screen is a frequency <b>vector</b> <code style="color:#22d3bf">f (cos t, sin t)</code>; where two screens overlap the visible moiré is the difference vector, so its period is <code style="color:#22d3bf">1 / |f_a - f_b|</code> and its direction is that of the difference. For equal rulings the magnitude reduces to <code style="color:#22d3bf">2 f sin(dt / 2)</code>, which is why the beat period grows without bound as the angle difference goes to zero — two plates at nearly the same angle give a huge, very visible moiré.</p>
+<p>★<b>Why this earns its place</b>: the prediction is available <b>before</b> any screen is drawn, and <code style="color:#22d3bf">halftone_screen</code> plus an FFT can measure the beat out of the picture. Two independent routes to one number.</p>
+<p>Returns a <code style="color:#22d3bf">table</code>: <code style="color:#22d3bf">period_px</code>, <code style="color:#22d3bf">angle_deg</code>, <code style="color:#22d3bf">freq_cycles_per_px</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-positive ruling or pitch; two screens that are identical in both ruling and angle (the difference vanishes — there is no beat, and returning <code style="color:#22d3bf">inf</code> silently would be worse than saying so).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_beats_fringes_and_screens">poc_beats_fringes_and_screens</a> — <code style="color:#22d3bf">py -3.11 examples/poc_beats_fringes_and_screens.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_moire_screen">poc_moire_screen</a> — <code style="color:#22d3bf">py -3.11 examples/poc_moire_screen.py</code></p>

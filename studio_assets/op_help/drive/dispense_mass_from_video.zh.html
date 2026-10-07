@@ -5,14 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>高さ図の列から出た質量と排出率 —— 各コマの山の体積 × ρ_b、時間に対する直線当て(最小二乗)。</p>
-<p>返り: `<code style="color:#22d3bf">masses</code><code style="color:#22d3bf"> [kg]、</code><code style="color:#22d3bf">rate</code><code style="color:#22d3bf">(傾き [kg/s])、</code><code style="color:#22d3bf">total</code><code style="color:#22d3bf">(最後 − 最初)、</code><code style="color:#22d3bf">rms</code>`(直線残差 [kg])。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: コマが 2 未満 / 時刻の数が合わない / 時刻が単調でない。</p>
-<p>画像の体積分解能は `<code style="color:#22d3bf">pitch³ ρ_b</code>` の桁(1 mm・1500 kg/m³ で 1.5 mg/画素³ だが、縁の 1 画素の</p>
-<p>不確かさが面積 × pitch で乗るので実際は g 級)。mg 級は秤に譲る。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>返り: <code style="color:#22d3bf">masses</code> [kg]、<code style="color:#22d3bf">rate</code>(傾き [kg/s])、<code style="color:#22d3bf">total</code>(最後 − 最初)、<code style="color:#22d3bf">rms</code>(直線残差 [kg])。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: コマが 2 未満 / 時刻の数が合わない / 時刻が単調でない。画像の体積分解能は <code style="color:#22d3bf">pitch³ ρ_b</code> の桁(1 mm・1500 kg/m³ で 1.5 mg/画素³ だが、縁の 1 画素の不確かさが面積 × pitch で乗るので実際は g 級)。mg 級は秤に譲る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

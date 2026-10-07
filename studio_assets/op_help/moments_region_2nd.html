@@ -8,16 +8,12 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/moments_region_2nd.chain.jpg">moments_region_2nd: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/moments_region_2nd.chain.jpg">moments_region_2nd: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>正規化中心 2 次モーメントの和の絶対値 `<code style="color:#22d3bf">|μ20 + μ02|</code><code style="color:#22d3bf">(</code>`skimage.</p>
-<p>measure.moments_normalized`<code style="color:#22d3bf"> 由来)。HALCON の </code><code style="color:#22d3bf">moments_region_2nd</code>`</p>
-<p>（Calculate the geometric moments of regions.）は本来 M20/M02/M11 を</p>
-<p>それぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純</p>
-<p>加算した合成値で近似している(個々の方向成分は失われる)。</p>
-<p>★2026-09-26 まで `<code style="color:#22d3bf">min(1, ...)</code><code style="color:#22d3bf"> で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で**全部 1.0** になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(</code><code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>`)。</p>
-<p>★**`<code style="color:#22d3bf">moments_region_2nd_invar</code><code style="color:#22d3bf"> と同じ数を返す。** </code><code style="color:#22d3bf">|μ20+μ02|</code>` は定義上 Hu の第 1 不変モーメントそのものなので、名前は 2 つでも量は 1 つである(HALCON では前者が 5 値、後者が 3 値の別演算子)。docs/KNOWN_ISSUES.md §52。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>正規化中心 2 次モーメントの和の絶対値 <code style="color:#22d3bf">|μ20 + μ02|</code>(<code style="color:#22d3bf">skimage. measure.moments_normalized</code> 由来)。HALCON の <code style="color:#22d3bf">moments_region_2nd</code> （Calculate the geometric moments of regions.）は本来 M20/M02/M11 をそれぞれ返すが、この代役では 1 スカラーに単純化するため 2 成分を単純加算した合成値で近似している(個々の方向成分は失われる)。</p>
+<p>★2026-09-26 まで <code style="color:#22d3bf">min(1, ...)</code> で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で<b>全部 1.0</b> になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(<code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>)。</p>
+<p>★<b><code style="color:#22d3bf">moments_region_2nd_invar</code> と同じ数を返す。</b> <code style="color:#22d3bf">|μ20+μ02|</code> は定義上 Hu の第 1 不変モーメントそのものなので、名前は 2 つでも量は 1 つである(HALCON では前者が 5 値、後者が 3 値の別演算子)。docs/KNOWN_ISSUES.md §52。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -27,7 +23,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-moments_region_2nd 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Amoments_region_2nd%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Amoments_region_2nd%200.50%200.50">Load &amp; run</a></p>
+moments_region_2nd 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Amoments_region_2nd%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Amoments_region_2nd%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:scale_law_of_features">scale_law_of_features</a> — <code style="color:#22d3bf">py -3.11 examples/scale_law_of_features.py</code></p>

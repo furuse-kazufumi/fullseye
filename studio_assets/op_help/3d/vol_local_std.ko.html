@@ -5,20 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정육면체 창 안의 국소 표준편차(불편추정).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The 3-D counterpart of the registry op `<code style="color:#22d3bf">local_std</code>` (HALCON&#x27;s</p>
-<p>`<code style="color:#22d3bf">deviation_image</code>`).  The variance is taken **after subtracting the global</p>
-<p>mean** — `<code style="color:#22d3bf">E[x^2] - E[x]^2</code>` loses every significant digit on a volume whose</p>
-<p>values sit far from zero, and the leftover shows up as a fake texture on a</p>
-<p>uniform block.  It is then unbiased twice: `<code style="color:#22d3bf">n/(n-1)</code>` on the variance and</p>
-<p>`<code style="color:#22d3bf">c4(n)</code><code style="color:#22d3bf"> on the square root, so the estimate of </code><code style="color:#22d3bf">sigma</code>` itself (not of</p>
-<p>`<code style="color:#22d3bf">sigma^2</code>`) is unbiased.</p>
-<p>*size* is the edge of the cubic window in voxels (odd, &gt;= 3), so</p>
-<p>`<code style="color:#22d3bf">n = size**3</code>` voxels enter each estimate.  **The relative standard error of</p>
-<p>a single voxel&#x27;s estimate is `<code style="color:#22d3bf">1/sqrt(2(n-1))</code>`** — 3.1% for a 5x5x5 window,</p>
-<p>1.1% for 9x9x9.  Quote that figure whenever a noise or roughness number is</p>
-<p>read off this volume.</p>
-<p>Returns a `<code style="color:#22d3bf">(D, H, W)</code>` float64 volume in the input&#x27;s own units (it is *not*</p>
-<p>normalised, so values from different scans compare directly).</p>
+<p>The 3-D counterpart of the registry op <code style="color:#22d3bf">local_std</code> (HALCON&#x27;s <code style="color:#22d3bf">deviation_image</code>).  The variance is taken <b>after subtracting the global mean</b> — <code style="color:#22d3bf">E[x^2] - E[x]^2</code> loses every significant digit on a volume whose values sit far from zero, and the leftover shows up as a fake texture on a uniform block.  It is then unbiased twice: <code style="color:#22d3bf">n/(n-1)</code> on the variance and <code style="color:#22d3bf">c4(n)</code> on the square root, so the estimate of <code style="color:#22d3bf">sigma</code> itself (not of <code style="color:#22d3bf">sigma^2</code>) is unbiased.</p>
+<p>*size* is the edge of the cubic window in voxels (odd, &gt;= 3), so <code style="color:#22d3bf">n = size**3</code> voxels enter each estimate.  <b>The relative standard error of a single voxel&#x27;s estimate is <code style="color:#22d3bf">1/sqrt(2(n-1))</code></b> — 3.1% for a 5x5x5 window, 1.1% for 9x9x9.  Quote that figure whenever a noise or roughness number is read off this volume.</p>
+<p>Returns a <code style="color:#22d3bf">(D, H, W)</code> float64 volume in the input&#x27;s own units (it is *not* normalised, so values from different scans compare directly).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

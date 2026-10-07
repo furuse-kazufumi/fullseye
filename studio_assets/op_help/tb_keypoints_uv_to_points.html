@@ -7,17 +7,13 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_keypoints_uv_to_points.chain.jpg">tb_keypoints_uv_to_points: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_keypoints_uv_to_points.chain.jpg">tb_keypoints_uv_to_points: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_keypoints_uv_to_points.inputs.jpg">tb_keypoints_uv_to_points: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_keypoints_uv_to_points.inputs.jpg">tb_keypoints_uv_to_points: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>画像座標 `<code style="color:#22d3bf">(N,2) = (u, v)</code><code style="color:#22d3bf"> → 点群 </code><code style="color:#22d3bf">(N,3) = (z, y, x)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">keypoints</code>` の出口。</p>
-<p><b>op 名に軸の約束が書いてある</b>のは、この repo で `<code style="color:#22d3bf">keypoints</code>` を産む</p>
-<p>`<code style="color:#22d3bf">match3d.project_points</code><code style="color:#22d3bf"> が **(u, v) = (列, 行)** を返し、</code><code style="color:#22d3bf">points</code>` を産む</p>
-<p>`<code style="color:#22d3bf">fuse3d.to_points(voxel)</code>` が <b>(z, y, x)</b> を返すから —— 素直に「先頭 2 列」</p>
-<p>として繋ぐと<b>例外も NaN も出ないまま行と列が入れ替わる</b>。ここでは</p>
-<p>`<code style="color:#22d3bf">y = v</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">x = u</code>` と明示的に入れ替えて渡す。</p>
-<p>:func:<code style="color:#22d3bf">points_zyx_to_keypoints_uv</code> と往復して <b>bit 一致</b>(z を渡した向き)。</p>
+<p>画像座標 <code style="color:#22d3bf">(N,2) = (u, v)</code> → 点群 <code style="color:#22d3bf">(N,3) = (z, y, x)</code>。<code style="color:#22d3bf">keypoints</code> の出口。</p>
+<p><b>op 名に軸の約束が書いてある</b>のは、この repo で <code style="color:#22d3bf">keypoints</code> を産む <code style="color:#22d3bf">match3d.project_points</code> が <b>(u, v) = (列, 行)</b> を返し、<code style="color:#22d3bf">points</code> を産む <code style="color:#22d3bf">fuse3d.to_points(voxel)</code> が <b>(z, y, x)</b> を返すから —— 素直に「先頭 2 列」として繋ぐと<b>例外も NaN も出ないまま行と列が入れ替わる</b>。ここでは <code style="color:#22d3bf">y = v</code>、<code style="color:#22d3bf">x = u</code> と明示的に入れ替えて渡す。</p>
+<p><code style="color:#22d3bf">points_zyx_to_keypoints_uv</code> と往復して <b>bit 一致</b>(z を渡した向き)。</p>
 <p>Args:</p>
 <p>keypoints: (N, 2) の (u, v)。</p>
 <p>z: 載せる平面の z(スカラ、または (N,) の配列)。</p>
@@ -25,14 +21,14 @@
 <p>(N, 3) float64 の (z, y, x)。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正 / 非有限 / z の長さ不一致。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op `<code style="color:#22d3bf">keypoints_uv_to_points</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
+<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">keypoints_uv_to_points</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_keypoints 0.50 0.50
-tb_keypoints_uv_to_points 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_keypoints%200.50%200.50%0Atb_keypoints_uv_to_points%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_keypoints%200.50%200.50%0Atb_keypoints_uv_to_points%200.50%200.50">Load &amp; run</a></p>
+tb_keypoints_uv_to_points 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_keypoints%200.50%200.50%0Atb_keypoints_uv_to_points%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_keypoints%200.50%200.50%0Atb_keypoints_uv_to_points%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">keypoints_uv_to_points</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>

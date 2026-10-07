@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>交差道路の車(領域まで dist、速さ speed)が、領域に t_free より前に入らないために要る一定の減速度(閉形式、配列可)。</p>
-<p>T = t_free。speed·T ≤ dist なら 0(減速しなくても間に合う)。T ≤ 2 dist / speed なら 2(speed·T − dist)/T²、</p>
-<p>それより後なら speed² / (2 dist)(領域の手前で止まる)。`<code style="color:#22d3bf">obstructs</code><code style="color:#22d3bf"> = 減速度 &gt; </code><code style="color:#22d3bf">sudden</code>`(<b>仮定</b> 2.0 m/s²、</p>
-<p>2 条 22 号「速度又は方向を急に変更しなければならない」)。dist ≤ 0(もう領域にいる)で T &gt; 0 は ∞。</p>
+<p>T = t_free。speed·T ≤ dist なら 0(減速しなくても間に合う)。T ≤ 2 dist / speed なら 2(speed·T − dist)/T²、それより後なら speed² / (2 dist)(領域の手前で止まる)。<code style="color:#22d3bf">obstructs</code> = 減速度 &gt; <code style="color:#22d3bf">sudden</code>(<b>仮定</b> 2.0 m/s²、2 条 22 号「速度又は方向を急に変更しなければならない」)。dist ≤ 0(もう領域にいる)で T &gt; 0 は ∞。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

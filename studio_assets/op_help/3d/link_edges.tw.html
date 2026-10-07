@@ -2,25 +2,21 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">link_edges — 3D <code style="color:#22d3bf">edges</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.link_edges(edge_mask)</code>(要直接呼叫實作,<code style="color:#22d3bf">import edges3d; edges3d.link_edges(edge_mask)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;link_edges&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.link_edges(...)</code> 只回傳**宣告的 out 型別 <code style="color:#22d3bf">voxel</code> 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.link_edges.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">edges3d.link_edges</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.link_edges(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">voxel</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.link_edges.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">edges3d.link_edges</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(linked, n)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 26 鄰域把邊緣 mask 標記為連通成分。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Parameters</p>
-<p>----------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>edge_mask : (D,H,W) bool</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>labels : (D,H,W) int</p>
 <p>各 voxel の成分ラベル(背景 = 0、成分 = 1..n)。</p>
 <p>n : int</p>
 <p>連結成分数。</p>
-<p>Notes</p>
-<p>-----</p>
-<p>26 連結(3x3x3 の全近傍)。断片化したエッジ片を 1 本の曲線 / 閉曲面としてまとめ、</p>
-<p>下流の Hough / chamfer で成分単位に扱えるようにする。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>26 連結(3x3x3 の全近傍)。断片化したエッジ片を 1 本の曲線 / 閉曲面としてまとめ、下流の Hough / chamfer で成分単位に扱えるようにする。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

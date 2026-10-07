@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sphere_normals_known(shape, centre, a_px: &#x27;float&#x27;, R_px: &#x27;float&#x27;, inner: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacscalib; tacscalib.sphere_normals_known(shape, centre, a_px: &#x27;float&#x27;, R_px: &#x27;float&#x27;, inner: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sphere_normals_known&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>既知球の押し込み: 接触円(中心 `<code style="color:#22d3bf">centre</code><code style="color:#22d3bf"> = (行, 列)、半径 </code><code style="color:#22d3bf">a_px</code>`)の内側で法線を閉形式で返す。</p>
-<p>n = (−dx, −dy, √(R² − r²))/R(dx = 列 − 中心の列、dy = 行 − 中心の行)。マスクは r &lt; inner · min(a, R)(較正手順と同じく</p>
-<p>a と R の小さい方まで)。外側は (0, 0, 1)。返り: `<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> (H, W, 3)、</code><code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> (H, W) bool、</code><code style="color:#22d3bf">r</code>` (H, W) [px]、</p>
-<p>`<code style="color:#22d3bf">theta</code>`(傾き角 = atan2(r, √(R² − r²))、マスク外 0)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: shape・centre の形、a・R ≤ 0、inner が 0 &lt; inner ≤ 1 の外。</p>
+<p>既知球の押し込み: 接触円(中心 <code style="color:#22d3bf">centre</code> = (行, 列)、半径 <code style="color:#22d3bf">a_px</code>)の内側で法線を閉形式で返す。</p>
+<p>n = (−dx, −dy, √(R² − r²))/R(dx = 列 − 中心の列、dy = 行 − 中心の行)。マスクは r &lt; inner · min(a, R)(較正手順と同じく a と R の小さい方まで)。外側は (0, 0, 1)。返り: <code style="color:#22d3bf">normals</code> (H, W, 3)、<code style="color:#22d3bf">mask</code> (H, W) bool、<code style="color:#22d3bf">r</code> (H, W) [px]、<code style="color:#22d3bf">theta</code>(傾き角 = atan2(r, √(R² − r²))、マスク外 0)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: shape・centre の形、a・R ≤ 0、inner が 0 &lt; inner ≤ 1 の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

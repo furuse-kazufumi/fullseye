@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crosswalk_stopped_vehicle_check(ego, stopped, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, near: &#x27;float&#x27; = 3.0, approach: &#x27;float&#x27; = 10.0, v_stop: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.crosswalk_stopped_vehicle_check(ego, stopped, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, near: &#x27;float&#x27; = 3.0, approach: &#x27;float&#x27; = 10.0, v_stop: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;crosswalk_stopped_vehicle_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>横断歩道等(又はその手前の直前)で止まっている車の側方を通って前に出る前に一時停止したか(38 条 2 項)。</p>
-<p>stopped[i] = {&quot;x&quot;: 止まっている車の前端, &quot;t0&quot;, &quot;t1&quot;: 止まっている時間}。前端が [crosswalk_start − near, crosswalk_end]</p>
-<p>にある車だけが対象(near = 「直前」、<b>仮定</b> 3 m)。自分の前端がその前端を越える時刻 t_e が [t0, t1] の中なら、</p>
-<p>t_e より前に、前端が [x − approach, x] にある間に速さ ≤ v_stop になっていなければ違反(approach は <b>仮定</b> 10 m)。</p>
+<p>stopped[i] = {&quot;x&quot;: 止まっている車の前端, &quot;t0&quot;, &quot;t1&quot;: 止まっている時間}。前端が [crosswalk_start − near, crosswalk_end] にある車だけが対象(near = 「直前」、<b>仮定</b> 3 m)。自分の前端がその前端を越える時刻 t_e が [t0, t1] の中なら、t_e より前に、前端が [x − approach, x] にある間に速さ ≤ v_stop になっていなければ違反(approach は <b>仮定</b> 10 m)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

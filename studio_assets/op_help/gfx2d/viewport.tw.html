@@ -3,21 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.viewport(img, x, y, width, height, scale=1.0, interp=&#x27;bilinear&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import gfx2d; gfx2d.viewport(img, x, y, width, height, scale=1.0, interp=&#x27;bilinear&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsgfx2d.get(&quot;viewport&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>裁出 `<code style="color:#22d3bf">(x, y, width, height)</code><code style="color:#22d3bf"> 的矩形並按 </code><code style="color:#22d3bf">scale</code>` 重取樣。</p>
+<p>裁出 <code style="color:#22d3bf">(x, y, width, height)</code> 的矩形並按 <code style="color:#22d3bf">scale</code> 重取樣。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Accepts `<code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">rgba</code>` (straight alpha; the crop is a copy, so no</p>
-<p>premultiplication is involved) and returns the same channel count.</p>
-<p><b>Out-of-bounds raises</b>, unlike :func:<code style="color:#22d3bf">sprite_blit</code>, which clips. The</p>
-<p>asymmetry is the point: a sprite leaving the screen is the normal case,</p>
-<p>while a camera asking for rows the image does not have is arithmetic that</p>
-<p>has already gone wrong somewhere upstream, and returning a partly black</p>
-<p>frame would let it keep going.</p>
-<p>`<code style="color:#22d3bf">scale=1</code>` with integer bounds returns an exact sub-array copy — no</p>
-<p>interpolation touches it.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>Accepts <code style="color:#22d3bf">rgb</code> or <code style="color:#22d3bf">rgba</code> (straight alpha; the crop is a copy, so no premultiplication is involved) and returns the same channel count.</p>
+<p><b>Out-of-bounds raises</b>, unlike <code style="color:#22d3bf">sprite_blit</code>, which clips. The asymmetry is the point: a sprite leaving the screen is the normal case, while a camera asking for rows the image does not have is arithmetic that has already gone wrong somewhere upstream, and returning a partly black frame would let it keep going.</p>
+<p><code style="color:#22d3bf">scale=1</code> with integer bounds returns an exact sub-array copy — no interpolation touches it.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">rgb</code> 作為輸入)</h3>

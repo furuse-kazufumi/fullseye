@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_loads_to_peg_wrench(PR: &#x27;float&#x27;, qR, PL: &#x27;float&#x27;, qL, pad: &#x27;dict&#x27;, torsion: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegtactile; pegtactile.pad_loads_to_peg_wrench(PR: &#x27;float&#x27;, qR, PL: &#x27;float&#x27;, qL, pad: &#x27;dict&#x27;, torsion: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;pad_loads_to_peg_wrench&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>:func:<code style="color:#22d3bf">peg_wrench_to_pad_loads</code> の逆: 2 パッドの (P, q) と膜が受けるねじり(パッド 1 枚あたり、グリッパ x まわり)→ パッドが</p>
-<p>ペグに加えるレンチ(グリッパ系、把持点まわり)と把持力。ペグへのねじり = −2·torsion。返り `<code style="color:#22d3bf">F</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">M</code><code style="color:#22d3bf">(3,)、</code><code style="color:#22d3bf">grip</code>` = (N_R + N_L)/2。</p>
-<p><b>Raises</b> ValueError: q が有限の 2 成分でない、P か torsion が有限でない。</p>
+<p><code style="color:#22d3bf">peg_wrench_to_pad_loads</code> の逆: 2 パッドの (P, q) と膜が受けるねじり(パッド 1 枚あたり、グリッパ x まわり)→ パッドがペグに加えるレンチ(グリッパ系、把持点まわり)と把持力。ペグへのねじり = −2·torsion。返り <code style="color:#22d3bf">F</code>・<code style="color:#22d3bf">M</code>(3,)、<code style="color:#22d3bf">grip</code> = (N_R + N_L)/2。<b>Raises</b> ValueError: q が有限の 2 成分でない、P か torsion が有限でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

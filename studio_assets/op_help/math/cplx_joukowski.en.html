@@ -3,27 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">cpoints</code> → <code style="color:#22d3bf">cpoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_joukowski(z, c=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.cplx_joukowski(z, c=1.0)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;cplx_joukowski&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Joukowski (Zhukovsky) conformal map `<code style="color:#22d3bf">w = z + c^2 / z</code>`.</p>
-<p>The classical aerofoil map (Zhukovsky 1910): the circle `<code style="color:#22d3bf">|z| = c</code>` folds</p>
-<p>onto the flat plate `<code style="color:#22d3bf">[-2c, 2c]</code><code style="color:#22d3bf"> of the real axis (</code><code style="color:#22d3bf">z = c e^(i t)</code>` gives</p>
-<p>`<code style="color:#22d3bf">w = 2c cos t</code>` — exact, and what the tests pin); a circle of radius</p>
-<p>`<code style="color:#22d3bf">R &gt; c</code>` centred at the origin maps to the ellipse with semi-axes</p>
-<p>`<code style="color:#22d3bf">R + c^2/R</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">R - c^2/R</code><code style="color:#22d3bf">; and a circle through </code><code style="color:#22d3bf">z = c</code>` whose</p>
-<p>centre is offset into the second quadrant maps to a cambered aerofoil with</p>
-<p>a cusped trailing edge — the reason the map exists.</p>
-<p>Conformal (angle-preserving) everywhere except at `<code style="color:#22d3bf">z = ±c</code>`, where the</p>
-<p>derivative `<code style="color:#22d3bf">1 - c^2/z^2</code>` vanishes and angles are <b>doubled</b> — that is</p>
-<p>what creates the cusp, and it is a property of the map, not a defect.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: a sample at </code><code style="color:#22d3bf">z = 0</code>` (the map&#x27;s pole), a result</p>
-<p>that overflowed (a sample so close to 0 that `<code style="color:#22d3bf">c^2/z</code>` leaves float64</p>
-<p>range), a non-finite or non-positive-real *c*, plus the usual shape and</p>
-<p>finiteness contracts.</p>
+<p>Joukowski (Zhukovsky) conformal map <code style="color:#22d3bf">w = z + c^2 / z</code>.</p>
+<p>The classical aerofoil map (Zhukovsky 1910): the circle <code style="color:#22d3bf">|z| = c</code> folds onto the flat plate <code style="color:#22d3bf">[-2c, 2c]</code> of the real axis (<code style="color:#22d3bf">z = c e^(i t)</code> gives <code style="color:#22d3bf">w = 2c cos t</code> — exact, and what the tests pin); a circle of radius <code style="color:#22d3bf">R &gt; c</code> centred at the origin maps to the ellipse with semi-axes <code style="color:#22d3bf">R + c^2/R</code> and <code style="color:#22d3bf">R - c^2/R</code>; and a circle through <code style="color:#22d3bf">z = c</code> whose centre is offset into the second quadrant maps to a cambered aerofoil with a cusped trailing edge — the reason the map exists.</p>
+<p>Conformal (angle-preserving) everywhere except at <code style="color:#22d3bf">z = ±c</code>, where the derivative <code style="color:#22d3bf">1 - c^2/z^2</code> vanishes and angles are <b>doubled</b> — that is what creates the cusp, and it is a property of the map, not a defect.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a sample at <code style="color:#22d3bf">z = 0</code> (the map&#x27;s pole), a result that overflowed (a sample so close to 0 that <code style="color:#22d3bf">c^2/z</code> leaves float64 range), a non-finite or non-positive-real *c*, plus the usual shape and finiteness contracts.</p>
 <p>HALCON: no operator (conformal maps are not part of its transform set).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

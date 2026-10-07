@@ -2,34 +2,18 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_select_labels — VOLCOLOR <code style="color:#22d3bf">select</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_select_labels(labels, props=None, spacing=None, relabel: &#x27;bool&#x27; = False, exclude_border: &#x27;bool&#x27; = False, keep=None, **criteria)</code> (to call the implementation directly, <code style="color:#22d3bf">import volcolor; volcolor.vol_select_labels(labels, props=None, spacing=None, relabel: &#x27;bool&#x27; = False, exclude_border: &#x27;bool&#x27; = False, keep=None, **criteria)</code>; from the registry, <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_select_labels&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.vol_select_labels(...)</code> returns **only the declared out type <code style="color:#22d3bf">labels</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.vol_select_labels.raw(...)</code> or call <code style="color:#22d3bf">volcolor.vol_select_labels</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.vol_select_labels(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">labels</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.vol_select_labels.raw(...)</code> or call <code style="color:#22d3bf">volcolor.vol_select_labels</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Sieve components by 3-D features (the 3-D counterpart of 2-D blob selection).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">(labels_out, kept_ids)</code>` を返す。落ちた成分のボクセルは 0(背景)になる。</p>
-<p>*props* は :func:<code style="color:#22d3bf">vol_label_shape_stats</code> か :func:<code style="color:#22d3bf">volops.vol_region_props</code> の</p>
-<p>返り値。`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> なら :func:</code>vol_label_shape_stats` をその場で呼ぶ。</p>
-<p>条件(すべて省略可・与えたものは AND):`<code style="color:#22d3bf">min_volume</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_volume</code>`</p>
-<p>`<code style="color:#22d3bf">min_voxels</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_voxels</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">min_sphericity</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_sphericity</code>`</p>
-<p>`<code style="color:#22d3bf">min_elongation</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_elongation</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">min_isotropy</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_isotropy</code>`</p>
-<p>`<code style="color:#22d3bf">min_equivalent_diameter</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">max_equivalent_diameter</code>`。加えて</p>
-<p>`<code style="color:#22d3bf">exclude_border=True</code>` で<b>ボリューム端に接する成分を落とす</b>(CT の視野で</p>
-<p>切れている粒子を計測から外す標準手順)、`<code style="color:#22d3bf">keep=[...]</code>` で残す id を直接指定。</p>
-<p><b>必要なキーが props に無ければ ValueError</b>。たとえば `<code style="color:#22d3bf">min_sphericity</code>` を</p>
-<p>:func:<code style="color:#22d3bf">vol_label_shape_stats</code> の結果に対して指定すると、`<code style="color:#22d3bf">sphericity</code>` は</p>
-<p>そちらが出さない量なので拒否する ―― 欠けたキーを既定値で埋めると「条件を</p>
-<p>書いたのに一件も落ちない」フィルタが黙って出来上がる。</p>
-<p>`<code style="color:#22d3bf">relabel</code>`:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">False</code>`(既定)―― <b>元の id をそのまま残す</b>。ゆえに</p>
-<p>:func:<code style="color:#22d3bf">vol_colorize_labels</code> を前後で呼んでも<b>残った成分の色は変わらない</b>。</p>
-<p>「ふるいにかけて色が残っていく」図が成立するのはこの既定のおかげである。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">True</code><code style="color:#22d3bf"> ―― 残った成分を </code><code style="color:#22d3bf">1..k</code>` へ振り直す。<b>色は総取り替えになる</b></p>
-<p>(ラベル番号がパレットの行番号だから)。下流が連番を要求する場合だけ使う。</p>
-<p>この 1 引数がこの族の売りを壊せる唯一の場所なので、明示的にした。</p>
-<p>Returns `<code style="color:#22d3bf">(labels_out int32 (D, H, W), kept_ids np.ndarray int64)</code>`.</p>
-<p>Raises `<code style="color:#22d3bf">ValueError</code>` for an unknown criterion, a criterion whose key is absent</p>
-<p>from *props*, a *props* that does not cover the labels present, or a *keep*</p>
-<p>containing a label that is not in the volume.</p>
+<p><code style="color:#22d3bf">(labels_out, kept_ids)</code> を返す。落ちた成分のボクセルは 0(背景)になる。</p>
+<p>*props* は <code style="color:#22d3bf">vol_label_shape_stats</code> か <code style="color:#22d3bf">volops.vol_region_props</code> の返り値。<code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">vol_label_shape_stats</code> をその場で呼ぶ。</p>
+<p>条件(すべて省略可・与えたものは AND):<code style="color:#22d3bf">min_volume</code> <code style="color:#22d3bf">max_volume</code> <code style="color:#22d3bf">min_voxels</code> <code style="color:#22d3bf">max_voxels</code> <code style="color:#22d3bf">min_sphericity</code> <code style="color:#22d3bf">max_sphericity</code> <code style="color:#22d3bf">min_elongation</code> <code style="color:#22d3bf">max_elongation</code> <code style="color:#22d3bf">min_isotropy</code> <code style="color:#22d3bf">max_isotropy</code> <code style="color:#22d3bf">min_equivalent_diameter</code> <code style="color:#22d3bf">max_equivalent_diameter</code>。加えて <code style="color:#22d3bf">exclude_border=True</code> で<b>ボリューム端に接する成分を落とす</b>(CT の視野で切れている粒子を計測から外す標準手順)、<code style="color:#22d3bf">keep=[...]</code> で残す id を直接指定。</p>
+<p><b>必要なキーが props に無ければ ValueError</b>。たとえば <code style="color:#22d3bf">min_sphericity</code> を <code style="color:#22d3bf">vol_label_shape_stats</code> の結果に対して指定すると、<code style="color:#22d3bf">sphericity</code> はそちらが出さない量なので拒否する ―― 欠けたキーを既定値で埋めると「条件を書いたのに一件も落ちない」フィルタが黙って出来上がる。</p>
+<p><code style="color:#22d3bf">relabel</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">False</code>(既定)―― <b>元の id をそのまま残す</b>。ゆえに <code style="color:#22d3bf">vol_colorize_labels</code> を前後で呼んでも<b>残った成分の色は変わらない</b>。「ふるいにかけて色が残っていく」図が成立するのはこの既定のおかげである。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">True</code> ―― 残った成分を <code style="color:#22d3bf">1..k</code> へ振り直す。<b>色は総取り替えになる</b> (ラベル番号がパレットの行番号だから)。下流が連番を要求する場合だけ使う。この 1 引数がこの族の売りを壊せる唯一の場所なので、明示的にした。</p>
+<p>Returns <code style="color:#22d3bf">(labels_out int32 (D, H, W), kept_ids np.ndarray int64)</code>. Raises <code style="color:#22d3bf">ValueError</code> for an unknown criterion, a criterion whose key is absent from *props*, a *props* that does not cover the labels present, or a *keep* containing a label that is not in the volume.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -13,13 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Life-like totalistic cellular automaton (Conway-family B/S rules).</p>
-<p>The image is thresholded at 0.5 to obtain the initial live/dead lattice, then</p>
-<p>a totalistic outer-neighbourhood rule is applied on the torus: a dead cell is</p>
-<p>born when its live Moore-neighbour count lies in the birth set B, a live cell</p>
-<p>survives when its count lies in the survival set S. `<code style="color:#22d3bf">a</code>` picks the rule</p>
-<p>preset -- Conway B3/S23, HighLife B36/S23, Day&amp;Night B3678/S34678, Seeds B2/S</p>
-<p>-- and `<code style="color:#22d3bf">b</code>` sets the generation count 1 + int(9b). Returns the live-cell</p>
-<p>field as 0.0/1.0.</p>
+<p>The image is thresholded at 0.5 to obtain the initial live/dead lattice, then a totalistic outer-neighbourhood rule is applied on the torus: a dead cell is born when its live Moore-neighbour count lies in the birth set B, a live cell survives when its count lies in the survival set S. <code style="color:#22d3bf">a</code> picks the rule preset -- Conway B3/S23, HighLife B36/S23, Day&amp;Night B3678/S34678, Seeds B2/S -- and <code style="color:#22d3bf">b</code> sets the generation count 1 + int(9b). Returns the live-cell field as 0.0/1.0.</p>
 <p><b>Border handling</b>: wrap around to the opposite side (periodic) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>

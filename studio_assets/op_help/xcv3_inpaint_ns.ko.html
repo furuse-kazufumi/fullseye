@@ -7,12 +7,12 @@
 <p>*노브 a 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv3_inpaint_ns.inputs.jpg">xcv3_inpaint_ns: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv3_inpaint_ns.inputs.jpg">xcv3_inpaint_ns: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>Navier-Stokes 방법에 의한 인페인팅(OpenCV `<code style="color:#22d3bf">cv2.inpaint</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">INPAINT_NS</code>`). 주변 화소로부터 유체역학적으로 정보를 전파시켜 결손 영역을 메우는 복원 알고리즘.</p>
+<p>Navier-Stokes 방법에 의한 인페인팅(OpenCV <code style="color:#22d3bf">cv2.inpaint</code>, <code style="color:#22d3bf">INPAINT_NS</code>). 주변 화소로부터 유체역학적으로 정보를 전파시켜 결손 영역을 메우는 복원 알고리즘.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>このレシピはマスクを外部から受け取らず、画像自身の中で輝度が 235 超(白飛び)または 20 未満(黒つぶれ)の画素を自動的に欠損とみなして半径 3 px でインペイントする。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。任意のマスクで穴埋めしたい用途には使えない点に注意。</p>
+<p>このレシピはマスクを外部から受け取らず、画像自身の中で輝度が 235 超(白飛び)または 20 未満(黒つぶれ)の画素を自動的に欠損とみなして半径 3 px でインペイントする。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。任意のマスクで穴埋めしたい用途には使えない点に注意。</p>
 <p><b>정밀도(실측)</b>: 내부에서 <b>8 bit(256단계)로 양자화</b>한다(출력이 k/255 격자에 정확히 올라온다). float64로 넘겨도 <b>그 정밀도는 유지되지 않는다</b> —— 16-bit 카메라의 계조(약 1.5e-5)는 1/255 ≈ 3.9e-3로 반올림되고, 1/255보다 작은 차이만 있는 두 장은 같은 답을 돌려준다. 미세한 농담 차를 재는 용도나 출력을 다시 미분·회귀에 넘기는 용도에서는 양자화 계단이 드러나므로, 8 bit를 거치지 않는 op를 고를 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
@@ -22,7 +22,7 @@
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
 <p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv3_inpaint_ns 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv3_inpaint_ns%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv3_inpaint_ns%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv3_inpaint_ns 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv3_inpaint_ns%200.50%200.50">▸ 이 파이프라인 불러오기</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv3_inpaint_ns%200.50%200.50">불러와서 실행</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_smoothing_rank.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image</code> 를 입력으로 받는 것)</h3>

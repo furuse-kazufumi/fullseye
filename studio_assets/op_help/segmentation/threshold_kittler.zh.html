@@ -3,15 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.threshold_kittler(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import seggraph; seggraph.threshold_kittler(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;threshold_kittler&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>最小误差阈值（Kittler–Illingworth 1986）：在每个箱 t 处分为低侧（箱 ≤ t）与高侧，最小化 J(t) = 1 + 2(P1 ln σ1 + P2 ln σ2) − 2(P1 ln P1 + P2 ln P2)（σ 为各侧箱中心的标准差；任一侧 σ 为 0 的箱除外）。返回：`<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> = 该箱的上端（mask 按箱号 &gt; t 决定 = 端点上的值也不矛盾）、</code><code style="color:#22d3bf">mask</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">bin</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">criterion</code>`（J，被排除的箱为 nan）（threshold_kittler）。</p>
+<p>最小误差阈值（Kittler–Illingworth 1986）：在每个箱 t 处分为低侧（箱 ≤ t）与高侧，最小化 J(t) = 1 + 2(P1 ln σ1 + P2 ln σ2) − 2(P1 ln P1 + P2 ln P2)（σ 为各侧箱中心的标准差；任一侧 σ 为 0 的箱除外）。返回：<code style="color:#22d3bf">threshold</code> = 该箱的上端（mask 按箱号 &gt; t 决定 = 端点上的值也不矛盾）、<code style="color:#22d3bf">mask</code>、<code style="color:#22d3bf">bin</code>、<code style="color:#22d3bf">criterion</code>（J，被排除的箱为 nan）（threshold_kittler）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — 用图、层次与阈值定理做分割 —— 什么是严格的,分割在哪里失效</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

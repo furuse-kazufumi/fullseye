@@ -2,6 +2,11 @@
 guide: blender_interop
 dim: 3d
 title: Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)
+title_en: Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)
+title_zh: 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)
+title_tw: 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)
+title_ko: Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)
+title_de: Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

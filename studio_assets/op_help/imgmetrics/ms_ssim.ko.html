@@ -5,10 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>다중 스케일 SSIM(Wang, Simoncelli &amp; Bovik, Asilomar Conf. 2003).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>5 段の縮小を経るので、最終段で 11 画素の窓が成立するには<b>各辺 176 画素</b>が</p>
-<p>要る。足りないときに<b>段数を黙って減らさない</b> ―― 段数の違う MS-SSIM は</p>
-<p>別の指標であり、比べると嘘になる。足りなければ `<code style="color:#22d3bf">ValueError</code>`。</p>
-<p>2 次元のグレー画像専用(色は `<code style="color:#22d3bf">channel_axis</code>` ではなくチャネルごとに呼ぶ)。</p>
+<p>5 段の縮小を経るので、最終段で 11 画素の窓が成立するには<b>各辺 176 画素</b>が要る。足りないときに<b>段数を黙って減らさない</b> ―― 段数の違う MS-SSIM は別の指標であり、比べると嘘になる。足りなければ <code style="color:#22d3bf">ValueError</code>。</p>
+<p>2 次元のグレー画像専用(色は <code style="color:#22d3bf">channel_axis</code> ではなくチャネルごとに呼ぶ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

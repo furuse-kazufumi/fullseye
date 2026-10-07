@@ -5,13 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스트로크 폭 변환 — 각 화소에 그 화소를 포함하는 스트로크의 폭을 기록한다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>文字側の境界画素から、勾配の向きに沿って文字の内側へ光線を飛ばし、向かい合う境界</p>
-<p>画素(勾配がほぼ逆向き)に当たったら、光線上の全画素に幅(境界画素の中心間距離 + 1)</p>
-<p>を書く(既に小さい値があれば小さい方)。Epshtein 2010 §3 の手順で、2 回目の走査で</p>
-<p>光線上の中央値より大きい値を中央値に置き換える(角の過大を抑える)。エッジの規約は</p>
-<p>:func:<code style="color:#22d3bf">_edges_and_gradient</code> に書いた(矩形ストロークで幅が厳密に整数になる)。</p>
-<p>Returns dict: `<code style="color:#22d3bf">swt</code><code style="color:#22d3bf">(幅の配列、ストローク外は 0)/ </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_rays</code>` /</p>
-<p>`<code style="color:#22d3bf">n_hits</code>`(向かい合うエッジに当たった光線の数)。</p>
+<p>文字側の境界画素から、勾配の向きに沿って文字の内側へ光線を飛ばし、向かい合う境界画素(勾配がほぼ逆向き)に当たったら、光線上の全画素に幅(境界画素の中心間距離 + 1) を書く(既に小さい値があれば小さい方)。Epshtein 2010 §3 の手順で、2 回目の走査で光線上の中央値より大きい値を中央値に置き換える(角の過大を抑える)。エッジの規約は <code style="color:#22d3bf">_edges_and_gradient</code> に書いた(矩形ストロークで幅が厳密に整数になる)。</p>
+<p>Returns dict: <code style="color:#22d3bf">swt</code>(幅の配列、ストローク外は 0)/ <code style="color:#22d3bf">edges</code> / <code style="color:#22d3bf">n_rays</code> / <code style="color:#22d3bf">n_hits</code>(向かい合うエッジに当たった光線の数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

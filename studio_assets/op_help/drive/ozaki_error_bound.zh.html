@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import ozakimm; ozakimm.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ozaki_error_bound&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>`<code style="color:#22d3bf">matmul_ozaki(A, B, n_slices)</code>`(Ozaki-I)の打ち切り誤差の要素ごとの保証上界(行列)。</p>
-<p>切り捨ての残りと捨てた切れ端の組の和の上界で、最後の float64 の組み立ての丸め(`<code style="color:#22d3bf">(s+1) u |A||B|</code>` 程度)は含めない。</p>
-<p>門では 26 万点余りの要素で破れ 0(PoC と tests)。並べ替えた和で計算するので、上界そのものも内側の順に依らない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">matmul_ozaki(A, B, n_slices)</code>(Ozaki-I)の打ち切り誤差の要素ごとの保証上界(行列)。</p>
+<p>切り捨ての残りと捨てた切れ端の組の和の上界で、最後の float64 の組み立ての丸め(<code style="color:#22d3bf">(s+1) u |A||B|</code> 程度)は含めない。門では 26 万点余りの要素で破れ 0(PoC と tests)。並べ替えた和で計算するので、上界そのものも内側の順に依らない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_reproducible_icp">poc_reproducible_icp</a> — <code style="color:#22d3bf">py -3.11 examples/poc_reproducible_icp.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">matrix</code> 作为输入)</h3>

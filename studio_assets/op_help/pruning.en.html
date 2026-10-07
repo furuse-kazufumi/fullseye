@@ -13,10 +13,9 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/pruning.inputs.jpg">pruning: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>After skeletonization (`<code style="color:#22d3bf">skeletonize</code><code style="color:#22d3bf">, or the input as-is if unavailable), repeatedly (</code><code style="color:#22d3bf">1+4*a</code><code style="color:#22d3bf"> times) trims off endpoint pixels with a neighbor count of 1 or fewer (spurs = stray branches), removing short branches from the skeleton. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">pruning</code>` (Prune the branches of a region.) (HALCON can specify branch length, but this is an approximation using an iteration count).</p>
+<p>After skeletonization (<code style="color:#22d3bf">skeletonize</code>, or the input as-is if unavailable), repeatedly (<code style="color:#22d3bf">1+4*a</code> times) trims off endpoint pixels with a neighbor count of 1 or fewer (spurs = stray branches), removing short branches from the skeleton. Corresponds to HALCON&#x27;s <code style="color:#22d3bf">pruning</code> (Prune the branches of a region.) (HALCON can specify branch length, but this is an approximation using an iteration count).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が削り取る反復回数を 1〜5 回の範囲で振る。</code><code style="color:#22d3bf">b</code>` は未使用。回数が</p>
-<p>多いほど主要な骨格まで削れてしまうことがある。</p>
+<p><code style="color:#22d3bf">a</code> が削り取る反復回数を 1〜5 回の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。回数が多いほど主要な骨格まで削れてしまうことがある。</p>
 <p><b>Border handling</b>: treat everything outside the image as background (0) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

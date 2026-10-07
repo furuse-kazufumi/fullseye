@@ -3,24 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × text</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.leader_line(img, anchor_xy, target_xy, text=None, color=&#x27;emphasis&#x27;, width=2, cap=&#x27;dot&#x27;, cap_size=4, elbow=True, scheme=&#x27;okabe_ito&#x27;, style=None, **text_kw)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.leader_line(img, anchor_xy, target_xy, text=None, color=&#x27;emphasis&#x27;, width=2, cap=&#x27;dot&#x27;, cap_size=4, elbow=True, scheme=&#x27;okabe_ito&#x27;, style=None, **text_kw)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;leader_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>引出線 —— 從註記位置(`<code style="color:#22d3bf">anchor_xy</code><code style="color:#22d3bf">)指向對象(</code><code style="color:#22d3bf">target_xy</code>`)。</p>
+<p>引出線 —— 從註記位置(<code style="color:#22d3bf">anchor_xy</code>)指向對象(<code style="color:#22d3bf">target_xy</code>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">elbow=True</code>` なら水平 → 斜めの 2 折れで引く(注記が本体に被りにくい)。</p>
-<p>端点には `<code style="color:#22d3bf">cap</code><code style="color:#22d3bf"> の印(</code><code style="color:#22d3bf">&#x27;dot&#x27;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&#x27;arrow&#x27;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&#x27;cross&#x27;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&#x27;none&#x27;</code>`)を置く。</p>
-<p>`<code style="color:#22d3bf">text</code><code style="color:#22d3bf"> を渡すと </code><code style="color:#22d3bf">anchor_xy</code><code style="color:#22d3bf"> 側に :func:</code>text_box` を置く。</p>
-<p>追加の `<code style="color:#22d3bf">**text_kw</code><code style="color:#22d3bf"> は :func:</code>text_box` へそのまま渡す。</p>
-<p>Raises</p>
-<p>------</p>
+<p><code style="color:#22d3bf">elbow=True</code> なら水平 → 斜めの 2 折れで引く(注記が本体に被りにくい)。端点には <code style="color:#22d3bf">cap</code> の印(<code style="color:#22d3bf">&#x27;dot&#x27;</code>/<code style="color:#22d3bf">&#x27;arrow&#x27;</code>/<code style="color:#22d3bf">&#x27;cross&#x27;</code>/<code style="color:#22d3bf">&#x27;none&#x27;</code>)を置く。<code style="color:#22d3bf">text</code> を渡すと <code style="color:#22d3bf">anchor_xy</code> 側に <code style="color:#22d3bf">text_box</code> を置く。追加の <code style="color:#22d3bf">**text_kw</code> は <code style="color:#22d3bf">text_box</code> へそのまま渡す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>未知の `<code style="color:#22d3bf">cap</code>`、非有限な座標、線が画像の外。</p>
+<p>未知の <code style="color:#22d3bf">cap</code>、非有限な座標、線が画像の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 訓練資料集規範知識 —— COCO / YOLO / VOC 及外觀檢測中的陷阱</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_kendama">poc_kendama</a> — <code style="color:#22d3bf">py -3.11 examples/poc_kendama.py</code></p>

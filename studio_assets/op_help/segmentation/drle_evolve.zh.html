@@ -5,21 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>距离正则化水平集 DRLSE（Li–Xu–Gui–Fox 2010）的边缘版。不做重新初始化（drle_evolve）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>φ_t = μ div(d_p(|∇φ|)∇φ) + λ δ_ε(φ) div(g ∇φ/|∇φ|) + α g δ_ε(φ)(φ &lt; 0 が内側、α &gt; 0 で縮む)。</p>
-<p>d_p(s) = p&#x27;(s)/s。二重井戸 p2(s) = (1 − cos 2πs)/(2π)²(s ≤ 1)、(s − 1)²/2(s ≥ 1)、単井戸 p1(s) = (s − 1)²/2。</p>
-<p>初期 = 2 値の段差(内側 −c0、外側 +c0、Li の例と同じ)。g = `<code style="color:#22d3bf">edge_stop_g(image, sigma, k)</code><code style="color:#22d3bf"> の g(</code><code style="color:#22d3bf">g</code>` で直接与えても</p>
-<p>よい)。μ の既定は 0.2/dt、CFL 条件 μ dt &lt; 1/4 を満たさなければ ValueError。境界は Li のコードの Neumann。</p>
-<p>エネルギー ε(φ) = μ Σ p(|∇φ|) + λ Σ g δ_ε(φ)|∇φ| + α Σ g H_ε(−φ) も各反復で記録する(実測、門ではない)。</p>
-<p>返り値: `<code style="color:#22d3bf">mask</code><code style="color:#22d3bf">(φ &lt; 0)、</code><code style="color:#22d3bf">phi</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">grad</code><code style="color:#22d3bf">(|φ| ≤ ε の |∇φ| 分位点)、</code><code style="color:#22d3bf">grad_trace</code>`(record_every ごとの中央値)、</p>
-<p>`<code style="color:#22d3bf">energy</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_increase</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">history</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_iter</code>`。</p>
+<p>φ_t = μ div(d_p(|∇φ|)∇φ) + λ δ_ε(φ) div(g ∇φ/|∇φ|) + α g δ_ε(φ)(φ &lt; 0 が内側、α &gt; 0 で縮む)。d_p(s) = p&#x27;(s)/s。二重井戸 p2(s) = (1 − cos 2πs)/(2π)²(s ≤ 1)、(s − 1)²/2(s ≥ 1)、単井戸 p1(s) = (s − 1)²/2。初期 = 2 値の段差(内側 −c0、外側 +c0、Li の例と同じ)。g = <code style="color:#22d3bf">edge_stop_g(image, sigma, k)</code> の g(<code style="color:#22d3bf">g</code> で直接与えてもよい)。μ の既定は 0.2/dt、CFL 条件 μ dt &lt; 1/4 を満たさなければ ValueError。境界は Li のコードの Neumann。エネルギー ε(φ) = μ Σ p(|∇φ|) + λ Σ g δ_ε(φ)|∇φ| + α Σ g H_ε(−φ) も各反復で記録する(実測、門ではない)。</p>
+<p>返り値: <code style="color:#22d3bf">mask</code>(φ &lt; 0)、<code style="color:#22d3bf">phi</code>、<code style="color:#22d3bf">grad</code>(|φ| ≤ ε の |∇φ| 分位点)、<code style="color:#22d3bf">grad_trace</code>(record_every ごとの中央値)、<code style="color:#22d3bf">energy</code>、<code style="color:#22d3bf">n_increase</code>、<code style="color:#22d3bf">history</code>、<code style="color:#22d3bf">n_iter</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 变分、主动轮廓与水平集 —— 哪种轮廓停在哪里、保证什么</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

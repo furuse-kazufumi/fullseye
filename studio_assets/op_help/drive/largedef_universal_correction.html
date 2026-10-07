@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largedef_universal_correction(d, k: &#x27;float&#x27; = 1.1111111111111112)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacdome; tacdome.largedef_universal_correction(d, k: &#x27;float&#x27; = 1.1111111111111112)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;largedef_universal_correction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>普遍形の補正 κ(d) = (1 − k·d)⁻¹(式 6、k = 10/9)。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: d が [0, 1) の外、k·d ≥ 1、k ≤ 0。</p>
+<p>普遍形の補正 κ(d) = (1 − k·d)⁻¹(式 6、k = 10/9)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、k·d ≥ 1、k ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

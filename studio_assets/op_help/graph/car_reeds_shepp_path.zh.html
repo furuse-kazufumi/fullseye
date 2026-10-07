@@ -5,23 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>Shortest path of a car that may reverse, between two poses (Reeds and Shepp 1990), by closed form.</p>
-<p>`<code style="color:#22d3bf">poses</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">[[x, y, theta], [x&#x27;, y&#x27;, theta&#x27;]]</code>` (start, goal). The car turns with minimum radius</p>
-<p>`<code style="color:#22d3bf">radius</code>` and may change gear. Reeds and Shepp proved the shortest path has at most five segments</p>
-<p>drawn from 48 words (Sussmann and Tang 1991: 46 suffice); the 44 formulas used here (the 12 base</p>
-<p>words of the paper expanded by time reversal, reflection and backwards reading, as in OMPL) generate</p>
-<p>every candidate. Each candidate is verified by forward integration and discarded if it misses the</p>
-<p>goal (counted in `<code style="color:#22d3bf">n_rejected</code>`); the shortest survivor is the answer. Reversed segments carry</p>
-<p>`<code style="color:#22d3bf">gear = -1</code>`.</p>
-<p>Returns `<code style="color:#22d3bf">word</code><code style="color:#22d3bf"> (letters L/S/R; reversed segments are lower-case), </code><code style="color:#22d3bf">length</code>` (metres, sum of</p>
-<p>absolute segment lengths), `<code style="color:#22d3bf">segments</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">[(kind, gear, length)]</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N, 3)</code>` poses</p>
-<p>sampled every `<code style="color:#22d3bf">step</code><code style="color:#22d3bf"> metres, </code><code style="color:#22d3bf">candidates</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">[(word, length)]</code><code style="color:#22d3bf"> sorted, </code><code style="color:#22d3bf">n_candidates</code>`,</p>
-<p>`<code style="color:#22d3bf">n_rejected</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">lower_bound</code><code style="color:#22d3bf"> (Euclidean distance), </code><code style="color:#22d3bf">radius</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: poses not </code><code style="color:#22d3bf">(2, 3)</code><code style="color:#22d3bf"> finite; </code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">step</code>` not positive; no word</p>
-<p>reached the goal.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">poses</code> is <code style="color:#22d3bf">[[x, y, theta], [x&#x27;, y&#x27;, theta&#x27;]]</code> (start, goal). The car turns with minimum radius <code style="color:#22d3bf">radius</code> and may change gear. Reeds and Shepp proved the shortest path has at most five segments drawn from 48 words (Sussmann and Tang 1991: 46 suffice); the 44 formulas used here (the 12 base words of the paper expanded by time reversal, reflection and backwards reading, as in OMPL) generate every candidate. Each candidate is verified by forward integration and discarded if it misses the goal (counted in <code style="color:#22d3bf">n_rejected</code>); the shortest survivor is the answer. Reversed segments carry <code style="color:#22d3bf">gear = -1</code>.</p>
+<p>Returns <code style="color:#22d3bf">word</code> (letters L/S/R; reversed segments are lower-case), <code style="color:#22d3bf">length</code> (metres, sum of absolute segment lengths), <code style="color:#22d3bf">segments</code> <code style="color:#22d3bf">[(kind, gear, length)]</code>, <code style="color:#22d3bf">points</code> <code style="color:#22d3bf">(N, 3)</code> poses sampled every <code style="color:#22d3bf">step</code> metres, <code style="color:#22d3bf">candidates</code> <code style="color:#22d3bf">[(word, length)]</code> sorted, <code style="color:#22d3bf">n_candidates</code>, <code style="color:#22d3bf">n_rejected</code>, <code style="color:#22d3bf">lower_bound</code> (Euclidean distance), <code style="color:#22d3bf">radius</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: poses not <code style="color:#22d3bf">(2, 3)</code> finite; <code style="color:#22d3bf">radius</code> or <code style="color:#22d3bf">step</code> not positive; no word reached the goal.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_car_parking">poc_car_parking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_car_parking.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

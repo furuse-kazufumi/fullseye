@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_histogram(image, *, num_bins, offset, range_)</code> (die Implementierung direkt: <code style="color:#22d3bf">import vxcore; vxcore.vx_histogram(image, *, num_bins, offset, range_)</code>; aus dem Register: <code style="color:#22d3bf">opsvx.get(&quot;vx_histogram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ヒストグラム(3.26 節): 画素値 I は `<code style="color:#22d3bf">i = (I − offset) × numBins / range</code>` の升に入る(offset ≤ I &lt; offset + range、REQ-0230)。</p>
-<p>範囲外の画素は数えない。整数の割り算(切り捨て)で升を決める。</p>
-<p>返り値 `<code style="color:#22d3bf">(num_bins, 2)</code>` の pairs: 列 0 = 升の下端の画素値(offset + i·range/numBins)、列 1 = 数。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: U8 の 2-D でない / num_bins・range_ が正でない / num_bins &gt; range_ / offset が負。</p>
+<p>ヒストグラム(3.26 節): 画素値 I は <code style="color:#22d3bf">i = (I − offset) × numBins / range</code> の升に入る(offset ≤ I &lt; offset + range、REQ-0230)。範囲外の画素は数えない。整数の割り算(切り捨て)で升を決める。</p>
+<p>返り値 <code style="color:#22d3bf">(num_bins, 2)</code> の pairs: 列 0 = 升の下端の画素値(offset + i·range/numBins)、列 1 = 数。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / num_bins・range_ が正でない / num_bins &gt; range_ / offset が負。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">Leitfaden zur Familie openvx_ports</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

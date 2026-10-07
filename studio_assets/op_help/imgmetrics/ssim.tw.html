@@ -5,21 +5,17 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>結構相似性(Wang, Bovik, Sheikh &amp; Simoncelli, IEEE TIP 13(4), 2004)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>既定は原論文の設定 ―― <b>11x11 のガウシアン窓 σ=1.5、K1=0.01、K2=0.03</b>、</p>
-<p>重み付き<b>母</b>分散(標本分散への `<code style="color:#22d3bf">n/(n-1)</code>` 補正を入れない)。</p>
-<p>`<code style="color:#22d3bf">crop_border=True</code>`(既定)は窓の半径ぶんの縁を平均から落とす。縁では</p>
-<p>鏡像で埋めた画素が統計に混ざるため。<b>落とすかどうかで値が変わる</b>ので、</p>
-<p>他所の数値と比べるときは必ずこの設定を揃えること(小さい絵ほど差が出る)。</p>
-<p>Returns</p>
-<p>-------</p>
+<p>既定は原論文の設定 ―― <b>11x11 のガウシアン窓 σ=1.5、K1=0.01、K2=0.03</b>、重み付き<b>母</b>分散(標本分散への <code style="color:#22d3bf">n/(n-1)</code> 補正を入れない)。</p>
+<p><code style="color:#22d3bf">crop_border=True</code>(既定)は窓の半径ぶんの縁を平均から落とす。縁では鏡像で埋めた画素が統計に混ざるため。<b>落とすかどうかで値が変わる</b>ので、他所の数値と比べるときは必ずこの設定を揃えること(小さい絵ほど差が出る)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>float</p>
 <p>1.0 が完全一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_quality_metrics">image_quality_metrics</a> — <code style="color:#22d3bf">py -3.11 examples/image_quality_metrics.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_camera_shake_deblur">poc_camera_shake_deblur</a> — <code style="color:#22d3bf">py -3.11 examples/poc_camera_shake_deblur.py</code></p>

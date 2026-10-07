@@ -5,23 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>速度場に円柱まわりのポテンシャル流 u − i v = U (1 − R²/(z − z_c)²) を当てはめる(実装 2、2 次元の非線形最小二乗)。</p>
-<p>未知数は (x_c, y_c, R², U)。出発点は 2 つ: :func:<code style="color:#22d3bf">stagnation_from_centerline</code> と、格子の節点を中心の候補にした</p>
-<p>粗い探索(U を固定すると模型は R² について 1 次なので閉形式で解ける)。説明できる割合の大きい方を採る。円の</p>
-<p>`<code style="color:#22d3bf">exclude_margin</code>` 倍より内側の格子は使わない(格子へ移す核が壁をまたいで速さを均すため)—— 推定し直して 3 回回す。</p>
-<p>`<code style="color:#22d3bf">upstream_only</code>` なら衝突点より上流(x &lt; x_c − R)の格子だけで当てはめる(「当たる前に」分かるか)。</p>
-<p>判定: 一様流だけの模型(u, v が定数)の残差 RSS₀ に対して、円柱の模型で減った割合 1 − RSS₁/RSS₀(**乱れのうち</p>
-<p>円柱で説明できる割合**)が `<code style="color:#22d3bf">min_explained</code><code style="color:#22d3bf"> 以上、半径が </code><code style="color:#22d3bf">min_radius</code>`(既定 = 格子の間隔 2 つ)以上、中心が場の中</p>
-<p>—— の 3 つで `<code style="color:#22d3bf">detected</code>`。否定の判定(障害物なし)はこの割合が小さいことで出る。</p>
-<p>★半径の下限は解像の限界: :func:<code style="color:#22d3bf">swarm_field_from_tracks</code> の格子は個体の間隔 s ごとなので、既定では R &lt; 2s の障害物を</p>
-<p>「ある」と言わない。拒否が正当なことは実測で確かめた(一様に撒いた粒子、R = 0.6 m: R/s ≈ 5 で中心・半径とも 2 % 以内、</p>
-<p>R/s ≈ 2.5 で 5 % 以内、R/s ≈ 1.2 で半径が 48 % 小さく出る)。</p>
+<p>未知数は (x_c, y_c, R², U)。出発点は 2 つ: <code style="color:#22d3bf">stagnation_from_centerline</code> と、格子の節点を中心の候補にした粗い探索(U を固定すると模型は R² について 1 次なので閉形式で解ける)。説明できる割合の大きい方を採る。円の <code style="color:#22d3bf">exclude_margin</code> 倍より内側の格子は使わない(格子へ移す核が壁をまたいで速さを均すため)—— 推定し直して 3 回回す。<code style="color:#22d3bf">upstream_only</code> なら衝突点より上流(x &lt; x_c − R)の格子だけで当てはめる(「当たる前に」分かるか)。</p>
+<p>判定: 一様流だけの模型(u, v が定数)の残差 RSS₀ に対して、円柱の模型で減った割合 1 − RSS₁/RSS₀(<b>乱れのうち円柱で説明できる割合</b>)が <code style="color:#22d3bf">min_explained</code> 以上、半径が <code style="color:#22d3bf">min_radius</code>(既定 = 格子の間隔 2 つ)以上、中心が場の中 —— の 3 つで <code style="color:#22d3bf">detected</code>。否定の判定(障害物なし)はこの割合が小さいことで出る。</p>
+<p>★半径の下限は解像の限界: <code style="color:#22d3bf">swarm_field_from_tracks</code> の格子は個体の間隔 s ごとなので、既定では R &lt; 2s の障害物を「ある」と言わない。拒否が正当なことは実測で確かめた(一様に撒いた粒子、R = 0.6 m: R/s ≈ 5 で中心・半径とも 2 % 以内、R/s ≈ 2.5 で 5 % 以内、R/s ≈ 1.2 で半径が 48 % 小さく出る)。</p>
 <p>Returns:</p>
-<p>dict: `<code style="color:#22d3bf">center</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">speed</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">stagnation</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">explained</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">detected</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n_used</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rms_residual</code>`</p>
-<p>(m/s)・`<code style="color:#22d3bf">rms_null</code>`(m/s)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>dict: <code style="color:#22d3bf">center</code>・<code style="color:#22d3bf">radius</code>・<code style="color:#22d3bf">speed</code>・<code style="color:#22d3bf">stagnation</code>・<code style="color:#22d3bf">explained</code>・<code style="color:#22d3bf">detected</code>・<code style="color:#22d3bf">n_used</code>・<code style="color:#22d3bf">rms_residual</code></p>
+<p>(m/s)・<code style="color:#22d3bf">rms_null</code>(m/s)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

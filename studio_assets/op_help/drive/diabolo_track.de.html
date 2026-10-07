@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_track(frames, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import diabolo; diabolo.diabolo_track(frames, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>コマの列 → ディアボロの中心 (N, 3)・軸 (N, 3)・警報 `<code style="color:#22d3bf">ok</code><code style="color:#22d3bf"> (N,)・残差 (N,)。コマごとに :func:</code>diabolo_axis_from_image`</p>
-<p>(学習なし、前のコマに頼らない)。推定できないコマは NaN で `<code style="color:#22d3bf">ok = False</code><code style="color:#22d3bf">。**Raises** </code><code style="color:#22d3bf">ValueError</code>`: コマの列が空か列でない。</p>
+<p>コマの列 → ディアボロの中心 (N, 3)・軸 (N, 3)・警報 <code style="color:#22d3bf">ok</code> (N,)・残差 (N,)。コマごとに <code style="color:#22d3bf">diabolo_axis_from_image</code> (学習なし、前のコマに頼らない)。推定できないコマは NaN で <code style="color:#22d3bf">ok = False</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: コマの列が空か列でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

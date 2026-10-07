@@ -4,29 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chromatic_confocal_height(spectrum, wavelength_start_nm=500.0, wavelength_step_nm=0.5, dispersion_um_per_nm=0.2, reference_wavelength_nm=600.0, mode=&#x27;gaussian&#x27;, subtract_background=True, min_visibility=0.3, min_peak_bins=2.0, max_carrier_fraction=0.1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import interferometry; interferometry.chromatic_confocal_height(spectrum, wavelength_start_nm=500.0, wavelength_step_nm=0.5, dispersion_um_per_nm=0.2, reference_wavelength_nm=600.0, mode=&#x27;gaussian&#x27;, subtract_background=True, min_visibility=0.3, min_peak_bins=2.0, max_carrier_fraction=0.1)</code>、台帳から引くなら <code style="color:#22d3bf">opsinterferometry.get(&quot;chromatic_confocal_height&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Surface height from one confocal return spectrum — the wavelength *is* the height.</p>
-<p>The inverse of :func:<code style="color:#22d3bf">chromatic_confocal_simulate</code>. Find the peak wavelength</p>
-<p>of the spectrum, then::</p>
+<p>The inverse of <code style="color:#22d3bf">chromatic_confocal_simulate</code>. Find the peak wavelength of the spectrum, then::</p>
 <p>height = (lambda_peak - reference_wavelength_nm) * dispersion_um_per_nm</p>
-<p>No scan, no moving parts, one spectrum per point — which is why this family</p>
-<p>reaches sampling rates a z scan cannot, and why it is limited to the axial</p>
-<p>range the objective&#x27;s chromatic spread covers.</p>
-<p>The four *mode* estimators are :data:<code style="color:#22d3bf">ESTIMATORS</code>, identical to</p>
-<p>:func:<code style="color:#22d3bf">csi_peak_position</code>&#x27;s and sharing its implementation. `<code style="color:#22d3bf">&quot;gaussian&quot;</code>` is</p>
-<p>exact for a Gaussian confocal response (measured 0.0e+00 to 3.6e-15 um),</p>
-<p>*including when the peak is narrower than one bin and when it sits two bins</p>
-<p>from the band edge* — the logarithm of a sampled Gaussian is a parabola</p>
-<p>whatever its width, and the fit is local. That exactness is a property of</p>
-<p>noiseless data only, which is what *min_peak_bins* is about.</p>
+<p>No scan, no moving parts, one spectrum per point — which is why this family reaches sampling rates a z scan cannot, and why it is limited to the axial range the objective&#x27;s chromatic spread covers.</p>
+<p>The four *mode* estimators are <code style="color:#22d3bf">ESTIMATORS</code>, identical to <code style="color:#22d3bf">csi_peak_position</code>&#x27;s and sharing its implementation. <code style="color:#22d3bf">&quot;gaussian&quot;</code> is exact for a Gaussian confocal response (measured 0.0e+00 to 3.6e-15 um), *including when the peak is narrower than one bin and when it sits two bins from the band edge* — the logarithm of a sampled Gaussian is a parabola whatever its width, and the fit is local. That exactness is a property of noiseless data only, which is what *min_peak_bins* is about.</p>
 <p>spectrum:             1-D non-negative intensities across the spectrometer.</p>
-<p>wavelength_start_nm / wavelength_step_nm: the spectrometer axis.</p>
-<p>dispersion_um_per_nm: the axial chromatic calibration constant.</p>
-<p>reference_wavelength_nm: the wavelength that focuses at height 0.</p>
-<p>subtract_background:  subtract the spectrum&#x27;s median before locating the peak.</p>
-<p>On by default because a pedestal drags the `<code style="color:#22d3bf">centroid</code>`</p>
+<p>wavelength_start_nm / wavelength_step_nm: the spectrometer axis. dispersion_um_per_nm: the axial chromatic calibration constant. reference_wavelength_nm: the wavelength that focuses at height 0. subtract_background:  subtract the spectrum&#x27;s median before locating the peak.</p>
+<p>On by default because a pedestal drags the <code style="color:#22d3bf">centroid</code></p>
 <p>estimator toward the middle of the band exactly as it</p>
 <p>drags the CSI centroid toward the middle of the scan.</p>
 <p>min_visibility:       refuse a spectrum whose peak prominence</p>
-<p>`<code style="color:#22d3bf">(max-median)/max</code>` is below this — a flat spectrum has</p>
+<p><code style="color:#22d3bf">(max-median)/max</code> is below this — a flat spectrum has</p>
 <p>no focused wavelength and its argmax is noise.</p>
 <p>min_peak_bins:        refuse a peak whose full width at half maximum spans</p>
 <p>fewer than this many bins. Undersampling does not break</p>
@@ -60,17 +48,8 @@
 <p>finite, wrong height. This is the guard that lets the</p>
 <p>two 1-D families share one type pool safely. Pass 0 to</p>
 <p>disable.</p>
-<p>Returns the height as a float, in micrometres. It may be negative — a height</p>
-<p>is signed, unlike a time-of-flight distance.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-1-D / empty / too-short (&lt; 3) / non-finite /</p>
-<p>complex / masked *spectrum*, a *spectrum* over :data:<code style="color:#22d3bf">MAX_SCAN_POINTS</code></p>
-<p>elements (checked before the float64 promotion), any <b>negative</b> intensity</p>
-<p>(a spectrometer cannot read negative light; clip explicitly if this is a</p>
-<p>pre-subtracted spectrum), a non-positive step / dispersion / reference</p>
-<p>wavelength, an unknown *mode*, a peak prominence below *min_visibility*, a</p>
-<p>peak narrower than *min_peak_bins*, and a peak on the <b>first or last bin</b></p>
-<p>(the surface is outside the calibrated axial range, which is</p>
-<p>`<code style="color:#22d3bf">+-(band_nm/2) * dispersion_um_per_nm</code>` about the reference).</p>
+<p>Returns the height as a float, in micrometres. It may be negative — a height is signed, unlike a time-of-flight distance.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-1-D / empty / too-short (&lt; 3) / non-finite / complex / masked *spectrum*, a *spectrum* over <code style="color:#22d3bf">MAX_SCAN_POINTS</code> elements (checked before the float64 promotion), any <b>negative</b> intensity (a spectrometer cannot read negative light; clip explicitly if this is a pre-subtracted spectrum), a non-positive step / dispersion / reference wavelength, an unknown *mode*, a peak prominence below *min_visibility*, a peak narrower than *min_peak_bins*, and a peak on the <b>first or last bin</b> (the surface is outside the calibrated axial range, which is <code style="color:#22d3bf">+-(band_nm/2) * dispersion_um_per_nm</code> about the reference).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideinterferometry:coherence_scanning">coherence_scanning ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

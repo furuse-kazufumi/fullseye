@@ -5,27 +5,25 @@
 <p><img src="fig/tb_sensor_capture.png" alt="tb_sensor_capture: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.a.jpg">tb_sensor_capture: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.a.jpg">tb_sensor_capture: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.b.jpg">tb_sensor_capture: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.b.jpg">tb_sensor_capture: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.chain.jpg">tb_sensor_capture: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.chain.jpg">tb_sensor_capture: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.inputs.jpg">tb_sensor_capture: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.inputs.jpg">tb_sensor_capture: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>放射輝度 → 実センサの出力(ショット雑音・読み出し雑音・飽和・量子化)。</p>
-<p>光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。</p>
-<p>そこへ読み出し雑音(正規)を足し、`<code style="color:#22d3bf">full_well_e</code><code style="color:#22d3bf"> で**飽和**させ、</code><code style="color:#22d3bf">bit_depth</code>`</p>
-<p>で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。</p>
-<p>返り値は 0..2^bit_depth−1 の整数配列。`<code style="color:#22d3bf">seed</code>` を固定すれば決定的。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op `<code style="color:#22d3bf">sensor_capture</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">exposure_ms</code><code style="color:#22d3bf">(既定 10)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gain_e_per_unit</code>`(既定 50000)を振る。</p>
+<p>光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。そこへ読み出し雑音(正規)を足し、<code style="color:#22d3bf">full_well_e</code> で<b>飽和</b>させ、<code style="color:#22d3bf">bit_depth</code> で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。</p>
+<p>返り値は 0..2^bit_depth−1 の整数配列。<code style="color:#22d3bf">seed</code> を固定すれば決定的。</p>
+<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">sensor_capture</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">exposure_ms</code>(既定 10)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">gain_e_per_unit</code>(既定 50000)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_rgb 0.50 0.50
-tb_sensor_capture 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_sensor_capture%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_sensor_capture%200.50%200.50">Load &amp; run</a></p>
+tb_sensor_capture 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_sensor_capture%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_sensor_capture%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">sensor_capture</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:vision_layout_from_catalog">vision_layout_from_catalog</a> — <code style="color:#22d3bf">py -3.11 examples/vision_layout_from_catalog.py</code></p>

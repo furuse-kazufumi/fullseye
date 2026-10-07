@@ -4,16 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ground_shift_track(frames, pixel_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import roverslip; roverslip.ground_shift_track(frames, pixel_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ground_shift_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>地面を見下ろすカメラのコマ列から、隣り合うコマの並進を、窓つきの相互相関(整数)と</p>
-<p>並進の Lucas–Kanade(副画素)で測り、累積する。</p>
-<p>`<code style="color:#22d3bf">frames</code><code style="color:#22d3bf"> は (T, H, W) の配列か同じ形の 2-D 配列の列(T ≥ 2)。</code><code style="color:#22d3bf">pixel_size</code>` は地面での画素の大きさ [m]。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;step&quot;: (T−1, 2) の (drow, dcol) [m]、&quot;position&quot;: (T, 2) の累積 [m]、&quot;peak&quot;: (T−1,) 合わせた後の正規化相関}</code>`。</p>
-<p>`<code style="color:#22d3bf">step</code>` は <b>像の中で模様が動いた量</b>(カメラ・車体の移動はその逆向き —— 前に進むと地面は後ろへ流れる)。</p>
-<p>1 コマの移動は像の 1/4 程度まで(相関は周期的なので、半分を越えると折り返す)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>地面を見下ろすカメラのコマ列から、隣り合うコマの並進を、窓つきの相互相関(整数)と並進の Lucas–Kanade(副画素)で測り、累積する。</p>
+<p><code style="color:#22d3bf">frames</code> は (T, H, W) の配列か同じ形の 2-D 配列の列(T ≥ 2)。<code style="color:#22d3bf">pixel_size</code> は地面での画素の大きさ [m]。返り値 <code style="color:#22d3bf">{&quot;step&quot;: (T−1, 2) の (drow, dcol) [m]、&quot;position&quot;: (T, 2) の累積 [m]、&quot;peak&quot;: (T−1,) 合わせた後の正規化相関}</code>。<code style="color:#22d3bf">step</code> は <b>像の中で模様が動いた量</b>(カメラ・車体の移動はその逆向き —— 前に進むと地面は後ろへ流れる)。1 コマの移動は像の 1/4 程度まで(相関は周期的なので、半分を越えると折り返す)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rover_slip_risk_path">poc_rover_slip_risk_path</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rover_slip_risk_path.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>ペグ(上向きカメラ → 先端面の平面に打ち直した図)と穴(手首カメラ → 口の平面の図)の向きの差を、n 回対称の商で:</p>
-<p>Δ = symmetry_fold(yaw_peg − yaw_hole, n)。どちらも :func:<code style="color:#22d3bf">polygon_yaw_read</code> で読み、形ごとの位相の定数(頂点の向きと面の向きの差)は</p>
-<p>同じ形どうしの差で消える(穴はペグを外へずらした相似形なので)。キー付き(n = 1)は相似でないので、ずれが小さく残る(門で測る)。</p>
-<p>返り `<code style="color:#22d3bf">delta</code><code style="color:#22d3bf">(ペグを −delta 回せば揃う)、</code><code style="color:#22d3bf">peg</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">hole</code><code style="color:#22d3bf">(読み)、</code><code style="color:#22d3bf">n</code>`。</p>
-<p><b>Raises</b> ValueError: n &lt; 1、読みが失敗した(:func:<code style="color:#22d3bf">polygon_yaw_read</code> の例外)。</p>
+<p>Δ = symmetry_fold(yaw_peg − yaw_hole, n)。どちらも <code style="color:#22d3bf">polygon_yaw_read</code> で読み、形ごとの位相の定数(頂点の向きと面の向きの差)は同じ形どうしの差で消える(穴はペグを外へずらした相似形なので)。キー付き(n = 1)は相似でないので、ずれが小さく残る(門で測る)。返り <code style="color:#22d3bf">delta</code>(ペグを −delta 回せば揃う)、<code style="color:#22d3bf">peg</code>・<code style="color:#22d3bf">hole</code>(読み)、<code style="color:#22d3bf">n</code>。<b>Raises</b> ValueError: n &lt; 1、読みが失敗した(<code style="color:#22d3bf">polygon_yaw_read</code> の例外)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>dynamics の階層の ultrametric contour map(UCM): 隣り合う画素 p, q の値 = 「p と q が同じ領域になる最小の閾値」。</p>
 <p>盆地の中の辺は 0、盆地の境の辺は第 2 の Kruskal(盆地の木を saliency の昇順に併合)で 2 つの盆地が出会う高さ。</p>
-<p>返す: `<code style="color:#22d3bf">ucm_h</code><code style="color:#22d3bf">(H, W − 1:画素とその右)、</code><code style="color:#22d3bf">ucm_v</code><code style="color:#22d3bf">(H − 1, W:画素とその下)、</code><code style="color:#22d3bf">ucm</code>`(画素ごとに右と下の大きい方 =</p>
-<p>境界を左上の画素で代表、segeval と同じ)、`<code style="color:#22d3bf">basins</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">levels</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">distance</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">distance_matrix=True</code>` かつ盆地が</p>
-<p>2500 以下なら盆地の全組の ultrametric 距離の行列)。閾値 θ で ucm &gt; θ の辺を切った成分 = hierarchical_watershed(θ)。</p>
+<p>返す: <code style="color:#22d3bf">ucm_h</code>(H, W − 1:画素とその右)、<code style="color:#22d3bf">ucm_v</code>(H − 1, W:画素とその下)、<code style="color:#22d3bf">ucm</code>(画素ごとに右と下の大きい方 = 境界を左上の画素で代表、segeval と同じ)、<code style="color:#22d3bf">basins</code>、<code style="color:#22d3bf">levels</code>、<code style="color:#22d3bf">distance</code>(<code style="color:#22d3bf">distance_matrix=True</code> かつ盆地が 2500 以下なら盆地の全組の ultrametric 距離の行列)。閾値 θ で ucm &gt; θ の辺を切った成分 = hierarchical_watershed(θ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

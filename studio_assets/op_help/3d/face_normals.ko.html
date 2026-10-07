@@ -5,8 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삼각형 메시의 <b>면 법선</b>(각 삼각형의 단위 법선 벡터). → (M,3).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>法線 = 正規化した cross(v1−v0, v2−v0)。向きは <b>faces の巻き順(winding)</b> から一貫して</p>
-<p>決まる(PCA のような符号未定さは無い)。閉じたメッシュを外向き巻きで作れば全法線が外向き。</p>
+<p>法線 = 正規化した cross(v1−v0, v2−v0)。向きは <b>faces の巻き順(winding)</b> から一貫して決まる(PCA のような符号未定さは無い)。閉じたメッシュを外向き巻きで作れば全法線が外向き。</p>
 <p>Args:</p>
 <p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
 <p>Returns:</p>
@@ -14,7 +13,7 @@
 <p>Raises:</p>
 <p>ValueError: 形状不正・範囲外 index、または退化(ゼロ面積)三角形で法線が定義できないとき。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

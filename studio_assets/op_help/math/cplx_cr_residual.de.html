@@ -5,38 +5,17 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Cauchy-Riemann-Residuum eines abgetasteten komplexen Feldes — „ist dieses Feld holomorph?“ als Zahl.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>With `<code style="color:#22d3bf">f = u + i v</code>` sampled on a uniform grid, holomorphy means</p>
-<p>`<code style="color:#22d3bf">u_x = v_y</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">u_y = -v_x</code>` (Cauchy-Riemann). This returns the</p>
-<p><b>relative</b> residual `<code style="color:#22d3bf">max(|u_x - v_y|, |u_y + v_x|) / max|grad|</code>`</p>
-<p>(central differences, `<code style="color:#22d3bf">numpy.gradient</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">0</code>` = the samples satisfy CR to</p>
-<p>the discretisation limit, `<code style="color:#22d3bf">2</code>` = the field is the conjugate of a</p>
-<p>holomorphic one (`<code style="color:#22d3bf">conj(z)</code>` gives exactly 2), values in between = partly</p>
-<p>analytic or noisy.</p>
-<p><b>Grid convention (it decides the sign of the answer)</b>: `<code style="color:#22d3bf">f[i, j]</code>` is the</p>
-<p>field at `<code style="color:#22d3bf">z = x0 + j*spacing + i*spacing*1j</code>` — rows index the *increasing</p>
-<p>imaginary* axis, columns the real axis. Image arrays usually run rows</p>
-<p>*downward*; feeding one directly measures the conjugate field, whose</p>
-<p>residual is `<code style="color:#22d3bf">2</code><code style="color:#22d3bf">, not </code><code style="color:#22d3bf">0</code><code style="color:#22d3bf">. Flip rows (</code><code style="color:#22d3bf">f[::-1]</code>`) to use image data.</p>
-<p>Discretisation, honestly: central differences are exact for polynomials of</p>
-<p>degree &lt;= 2, so `<code style="color:#22d3bf">f = z**2</code>` returns exactly 0; for higher order the</p>
-<p>residual floors at `<code style="color:#22d3bf">O(h^2 * |f&#x27;&#x27;&#x27;|)</code><code style="color:#22d3bf"> (measured: </code><code style="color:#22d3bf">f = z**3</code>` on a</p>
-<p>`<code style="color:#22d3bf">[-1,1]^2</code><code style="color:#22d3bf"> grid returns 1.7e-3 at </code><code style="color:#22d3bf">h</code>` and 4.2e-4 at</p>
-<p>`<code style="color:#22d3bf">h/2</code>` — a factor 4.00, the expected second order). Read a</p>
-<p>small value as &quot;consistent with holomorphic at this resolution&quot;, never as</p>
-<p>proof.</p>
-<p>A constant field returns `<code style="color:#22d3bf">0.0</code><code style="color:#22d3bf"> (it is holomorphic; the </code><code style="color:#22d3bf">0/0</code>` of the</p>
-<p>normalisation is resolved by that limit, and stated here rather than left</p>
-<p>to numpy).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: not a 2-D array, either dimension below 3 (no</p>
-<p>central difference exists), non-finite/masked input, over-cap size,</p>
-<p>non-finite or non-positive *spacing*.</p>
-<p>HALCON: no operator (`<code style="color:#22d3bf">derivate_gauss</code>` supplies the real-valued</p>
-<p>derivatives one would build this from).</p>
+<p>With <code style="color:#22d3bf">f = u + i v</code> sampled on a uniform grid, holomorphy means <code style="color:#22d3bf">u_x = v_y</code> and <code style="color:#22d3bf">u_y = -v_x</code> (Cauchy-Riemann). This returns the <b>relative</b> residual <code style="color:#22d3bf">max(|u_x - v_y|, |u_y + v_x|) / max|grad|</code> (central differences, <code style="color:#22d3bf">numpy.gradient</code>): <code style="color:#22d3bf">0</code> = the samples satisfy CR to the discretisation limit, <code style="color:#22d3bf">2</code> = the field is the conjugate of a holomorphic one (<code style="color:#22d3bf">conj(z)</code> gives exactly 2), values in between = partly analytic or noisy.</p>
+<p><b>Grid convention (it decides the sign of the answer)</b>: <code style="color:#22d3bf">f[i, j]</code> is the field at <code style="color:#22d3bf">z = x0 + j*spacing + i*spacing*1j</code> — rows index the *increasing imaginary* axis, columns the real axis. Image arrays usually run rows *downward*; feeding one directly measures the conjugate field, whose residual is <code style="color:#22d3bf">2</code>, not <code style="color:#22d3bf">0</code>. Flip rows (<code style="color:#22d3bf">f[::-1]</code>) to use image data.</p>
+<p>Discretisation, honestly: central differences are exact for polynomials of degree &lt;= 2, so <code style="color:#22d3bf">f = z**2</code> returns exactly 0; for higher order the residual floors at <code style="color:#22d3bf">O(h^2 * |f&#x27;&#x27;&#x27;|)</code> (measured: <code style="color:#22d3bf">f = z**3</code> on a <code style="color:#22d3bf">[-1,1]^2</code> grid returns 1.7e-3 at <code style="color:#22d3bf">h</code> and 4.2e-4 at <code style="color:#22d3bf">h/2</code> — a factor 4.00, the expected second order). Read a small value as &quot;consistent with holomorphic at this resolution&quot;, never as proof.</p>
+<p>A constant field returns <code style="color:#22d3bf">0.0</code> (it is holomorphic; the <code style="color:#22d3bf">0/0</code> of the normalisation is resolved by that limit, and stated here rather than left to numpy).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not a 2-D array, either dimension below 3 (no central difference exists), non-finite/masked input, over-cap size, non-finite or non-positive *spacing*.</p>
+<p>HALCON: no operator (<code style="color:#22d3bf">derivate_gauss</code> supplies the real-valued derivatives one would build this from).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

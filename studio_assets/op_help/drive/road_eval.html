@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_eval(road, l: &#x27;float&#x27;) -&gt; &#x27;Tuple[float, float, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelong; drivelong.road_eval(road, l: &#x27;float&#x27;) -&gt; &#x27;Tuple[float, float, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;road_eval&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>道の縦断を弧長 l で引く: (z, sin θ, cos θ)。`<code style="color:#22d3bf">road</code>` = None(平ら)/ 数値(一定の勾配角 θ [rad]、z = l sin θ)/</p>
-<p>:func:<code style="color:#22d3bf">road_profile</code> の dict。折れ点の上ではその先の区間の値(右連続)。</p>
+<p>道の縦断を弧長 l で引く: (z, sin θ, cos θ)。<code style="color:#22d3bf">road</code> = None(平ら)/ 数値(一定の勾配角 θ [rad]、z = l sin θ)/ <code style="color:#22d3bf">road_profile</code> の dict。折れ点の上ではその先の区間の値(右連続)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

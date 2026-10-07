@@ -5,22 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이색성 모델의 스칼라 계면(정반사) 계수. → (H, W).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The same decomposition as :func:<code style="color:#22d3bf">specular_diffuse_split</code>, returning the</p>
-<p>scalar `<code style="color:#22d3bf">m_s(x)</code><code style="color:#22d3bf"> instead of the coloured image </code><code style="color:#22d3bf">m_s(x) * G</code>`. That scalar</p>
-<p>is what an inspection routine thresholds: it is the amount of light the</p>
-<p>surface reflected *as a mirror does*, in the units of the input radiance,</p>
-<p>and it is zero wherever the surface behaved as a Lambertian body.</p>
-<p>`<code style="color:#22d3bf">specular_coefficient_map(...) * illuminant_unit</code>` equals the second return</p>
-<p>value of :func:<code style="color:#22d3bf">specular_diffuse_split</code> exactly, by construction — the two</p>
-<p>operators share one core.</p>
-<p>Arguments, guards and honest limits are identical to</p>
-<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> — including the fact that the two guards</p>
-<p>bound gross violations only.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: exactly the same conditions as</p>
-<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> (invalid image, invalid illuminant,</p>
-<p>identically zero image, body colour parallel to the illuminant, either</p>
-<p>guard firing, fewer than 3 pixels on the uniform-body route, invalid</p>
-<p>*body_rgb*).</p>
+<p>The same decomposition as <code style="color:#22d3bf">specular_diffuse_split</code>, returning the scalar <code style="color:#22d3bf">m_s(x)</code> instead of the coloured image <code style="color:#22d3bf">m_s(x) * G</code>. That scalar is what an inspection routine thresholds: it is the amount of light the surface reflected *as a mirror does*, in the units of the input radiance, and it is zero wherever the surface behaved as a Lambertian body.</p>
+<p><code style="color:#22d3bf">specular_coefficient_map(...) * illuminant_unit</code> equals the second return value of <code style="color:#22d3bf">specular_diffuse_split</code> exactly, by construction — the two operators share one core.</p>
+<p>Arguments, guards and honest limits are identical to <code style="color:#22d3bf">specular_diffuse_split</code> — including the fact that the two guards bound gross violations only.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: exactly the same conditions as <code style="color:#22d3bf">specular_diffuse_split</code> (invalid image, invalid illuminant, identically zero image, body colour parallel to the illuminant, either guard firing, fewer than 3 pixels on the uniform-body route, invalid *body_rgb*).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

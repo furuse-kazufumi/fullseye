@@ -13,9 +13,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/regiongrowing.inputs.jpg">regiongrowing: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>A simplified approximation of region growing. First creates seed regions using a high threshold (`<code style="color:#22d3bf">x &gt; 0.5+0.3*a</code><code style="color:#22d3bf">), then expands them by binary dilation </code><code style="color:#22d3bf">1+4*b</code><code style="color:#22d3bf"> times -- this is a lightweight substitute using threshold + dilation rather than true region growing (which expands by sequentially judging similarity with neighboring pixels) (a limitation of the approximation). A stand-in for HALCON&#x27;s </code><code style="color:#22d3bf">regiongrowing</code>` (Segment an image using region growing).</p>
+<p>A simplified approximation of region growing. First creates seed regions using a high threshold (<code style="color:#22d3bf">x &gt; 0.5+0.3*a</code>), then expands them by binary dilation <code style="color:#22d3bf">1+4*b</code> times -- this is a lightweight substitute using threshold + dilation rather than true region growing (which expands by sequentially judging similarity with neighboring pixels) (a limitation of the approximation). A stand-in for HALCON&#x27;s <code style="color:#22d3bf">regiongrowing</code> (Segment an image using region growing).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシードのしきい値を、</code><code style="color:#22d3bf">b</code>` が膨張の反復回数を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> がシードのしきい値を、<code style="color:#22d3bf">b</code> が膨張の反復回数を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -8,15 +8,10 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/area_center.chain.jpg">area_center: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/area_center.chain.jpg">area_center: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>領域の面積と重心を、解像度に依らない正規化済みの 3 成分ベクトル</p>
-<p>(面積比 = 面積/画像画素数、正規化重心行、正規化重心列)として返す。1</p>
-<p>スカラーでは (Area, Row, Column) を表せないため、`<code style="color:#22d3bf">match</code>` ソート(1 次元</p>
-<p>ベクトル、`<code style="color:#22d3bf">ncc_locate</code>` と同じ形)で返す点が他の region 特徴 op と異なる。</p>
-<p>領域が空のときは (0, 0.5, 0.5)(面積ゼロ・中心=画像中心)を返す fail-soft</p>
-<p>仕様。HALCON の `<code style="color:#22d3bf">area_center</code>`（Area and center of regions.）に相当。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>領域の面積と重心を、解像度に依らない正規化済みの 3 成分ベクトル(面積比 = 面積/画像画素数、正規化重心行、正規化重心列)として返す。1 スカラーでは (Area, Row, Column) を表せないため、<code style="color:#22d3bf">match</code> ソート(1 次元ベクトル、<code style="color:#22d3bf">ncc_locate</code> と同じ形)で返す点が他の region 特徴 op と異なる。領域が空のときは (0, 0.5, 0.5)(面積ゼロ・中心=画像中心)を返す fail-soft 仕様。HALCON の <code style="color:#22d3bf">area_center</code>（Area and center of regions.）に相当。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -26,7 +21,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-area_center 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aarea_center%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aarea_center%200.50%200.50">Load &amp; run</a></p>
+area_center 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aarea_center%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aarea_center%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">match</code> を入力に取れる)</h3>

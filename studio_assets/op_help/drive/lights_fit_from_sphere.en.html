@@ -5,12 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>背景差分画像(1 枚か列)と既知法線から、チャネルごとの線形 Lambertian 模型を最小二乗で解く。</p>
-<p>`<code style="color:#22d3bf">order=0</code><code style="color:#22d3bf">: I_c = a_c + l_c · n(3 チャネル × 4 = 12 パラメタ)。</code><code style="color:#22d3bf">order=2</code>`(診断用): 4 つの係数それぞれが位置の 2 次式</p>
-<p>(チャネルあたり 24、計 72 パラメタ)—— 線形模型の残差が「照明の非一様」か「反射の非線形」かを分ける。</p>
-<p>`<code style="color:#22d3bf">diffs</code><code style="color:#22d3bf"> (H, W, 3) かその列、</code><code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> (H, W, 3) の列、</code><code style="color:#22d3bf">masks</code>` (H, W) bool の列。</p>
-<p>返り: `<code style="color:#22d3bf">order</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">L</code><code style="color:#22d3bf"> (3, 3)(行 c = l_c、長さ = チャネルの強度。order 2 は画像中心の値)、</code><code style="color:#22d3bf">ambient</code><code style="color:#22d3bf"> (3,)、</code><code style="color:#22d3bf">rms</code>` (3,)</p>
-<p>(当てはめ残差)、`<code style="color:#22d3bf">n_rows</code><code style="color:#22d3bf">(使った画素数)、</code><code style="color:#22d3bf">cond</code><code style="color:#22d3bf">(設計行列の条件数)、order 2 は </code><code style="color:#22d3bf">coef</code><code style="color:#22d3bf"> (4, 6, 3) と </code><code style="color:#22d3bf">image_shape</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 列の長さ・形の不一致 / order が 0・2 以外 / 画素が未知数より少ない / 法線が退化(平面上)。</p>
+<p><code style="color:#22d3bf">order=0</code>: I_c = a_c + l_c · n(3 チャネル × 4 = 12 パラメタ)。<code style="color:#22d3bf">order=2</code>(診断用): 4 つの係数それぞれが位置の 2 次式(チャネルあたり 24、計 72 パラメタ)—— 線形模型の残差が「照明の非一様」か「反射の非線形」かを分ける。<code style="color:#22d3bf">diffs</code> (H, W, 3) かその列、<code style="color:#22d3bf">normals</code> (H, W, 3) の列、<code style="color:#22d3bf">masks</code> (H, W) bool の列。</p>
+<p>返り: <code style="color:#22d3bf">order</code>、<code style="color:#22d3bf">L</code> (3, 3)(行 c = l_c、長さ = チャネルの強度。order 2 は画像中心の値)、<code style="color:#22d3bf">ambient</code> (3,)、<code style="color:#22d3bf">rms</code> (3,) (当てはめ残差)、<code style="color:#22d3bf">n_rows</code>(使った画素数)、<code style="color:#22d3bf">cond</code>(設計行列の条件数)、order 2 は <code style="color:#22d3bf">coef</code> (4, 6, 3) と <code style="color:#22d3bf">image_shape</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 列の長さ・形の不一致 / order が 0・2 以外 / 画素が未知数より少ない / 法線が退化(平面上)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -5,15 +5,15 @@
 <p><img src="fig/sg_region_growing_seeded.png" alt="sg_region_growing_seeded: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sg_region_growing_seeded.a.jpg">sg_region_growing_seeded: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sg_region_growing_seeded.a.jpg">sg_region_growing_seeded: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sg_region_growing_seeded.inputs.jpg">sg_region_growing_seeded: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sg_region_growing_seeded.inputs.jpg">sg_region_growing_seeded: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Seed-basiertes Region Growing, das vom Bildzentrum ausgeht und Pixel mit ähnlicher Helligkeit verbindet (HALCON `<code style="color:#22d3bf">regiongrowing</code><code style="color:#22d3bf"> wird bereits von einer anderen Operation abgedeckt, daher wird hier </code><code style="color:#22d3bf">halcon=&quot;&quot;</code>` verwendet, um eine doppelte Meldung zu vermeiden).</p>
+<p>Seed-basiertes Region Growing, das vom Bildzentrum ausgeht und Pixel mit ähnlicher Helligkeit verbindet (HALCON <code style="color:#22d3bf">regiongrowing</code> wird bereits von einer anderen Operation abgedeckt, daher wird hier <code style="color:#22d3bf">halcon=&quot;&quot;</code> verwendet, um eine doppelte Meldung zu vermeiden).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>種は画像中心の 1 画素。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">（0〜1）が同質性の許容差（種の輝度 ±a 以内なら繋がる）、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が連結性を切り替える（</code><code style="color:#22d3bf">b &gt; 0.5</code>` で 8 連結、それ以外は 4 連結）。結果は種を含む連結成分のみ。</p>
+<p>種は画像中心の 1 画素。<code style="color:#22d3bf">a</code>（0〜1）が同質性の許容差（種の輝度 ±a 以内なら繋がる）、<code style="color:#22d3bf">b</code> が連結性を切り替える（<code style="color:#22d3bf">b &gt; 0.5</code> で 8 連結、それ以外は 4 連結）。結果は種を含む連結成分のみ。</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit macht <b>unabhängig von der Helligkeit jedes Pixel zum Vordergrund (1)</b>. Ein überbelichtetes, verdecktes oder motivloses Bild kommt als „<b>100 % defekt</b>“ zurück; prüfe daher vorgelagert auf Gleichmäßigkeit und verwirf solche Bilder.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
@@ -23,7 +23,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">sg_region_growing_seeded 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:sg_region_growing_seeded%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:sg_region_growing_seeded%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">sg_region_growing_seeded 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:sg_region_growing_seeded%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:sg_region_growing_seeded%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_segmentation">gallery2d_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_segmentation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">region</code> als Eingabe)</h3>

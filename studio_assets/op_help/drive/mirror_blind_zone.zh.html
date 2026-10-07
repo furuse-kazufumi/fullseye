@@ -5,19 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>自車の左後方で、左のドアミラーにも直接の視界にも入らない領域(2D、上から見た図)。</p>
-<p>座標は車の x = 前・y = 左。`<code style="color:#22d3bf">eye_xy</code><code style="color:#22d3bf"> = 運転者の眼、</code><code style="color:#22d3bf">mirror_center_xy</code><code style="color:#22d3bf"> = 鏡の中心、</code><code style="color:#22d3bf">mirror_normal_xy</code>` = 鏡の</p>
-<p>法線(眼の側を向く。`<code style="color:#22d3bf">mirror_aim_normal</code><code style="color:#22d3bf"> で作れる)、</code><code style="color:#22d3bf">mirror_width</code>` = 鏡の幅(上から見た弦の長さ)、</p>
-<p>`<code style="color:#22d3bf">mirror_radius</code><code style="color:#22d3bf"> = 凸面の曲率半径(inf = 平面鏡)。</code><code style="color:#22d3bf">direct_limit_deg</code>` = 首を回さずに直接見える方位の上限</p>
-<p>(前方から左回り。100° は <b>仮定</b>)。`<code style="color:#22d3bf">roi</code>` = (x_min, x_max, y_min, y_max) の対象領域(左の隣の車線。鏡の本体と</p>
-<p>車体を含まないように置くこと = 鏡の光線が車体を通るかは見ていない)。</p>
-<p>鏡で見える領域 = 鏡の両端で反射した 2 本の光線に挟まれ、かつ鏡の弦より眼の側。直接見える = 眼から見た方位 ≤ 上限。</p>
-<p>死角 = roi ∖ (鏡 ∪ 直接) を <b>互いに素な凸多角形の列</b> で返す(凸 ∖ 凸 = 半平面を 1 つずつ外した和)。</p>
-<p>返り値: `<code style="color:#22d3bf">pieces</code><code style="color:#22d3bf">(凸多角形 (k, 2) の list)、</code><code style="color:#22d3bf">area</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mirror_edges</code>`(両端の点 (2, 2))、</p>
-<p>`<code style="color:#22d3bf">mirror_rays</code><code style="color:#22d3bf">(両端の反射光線の単位ベクトル (2, 2))、</code><code style="color:#22d3bf">mirror_area</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">direct_area</code>`(roi の中で見える面積)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>座標は車の x = 前・y = 左。<code style="color:#22d3bf">eye_xy</code> = 運転者の眼、<code style="color:#22d3bf">mirror_center_xy</code> = 鏡の中心、<code style="color:#22d3bf">mirror_normal_xy</code> = 鏡の法線(眼の側を向く。<code style="color:#22d3bf">mirror_aim_normal</code> で作れる)、<code style="color:#22d3bf">mirror_width</code> = 鏡の幅(上から見た弦の長さ)、<code style="color:#22d3bf">mirror_radius</code> = 凸面の曲率半径(inf = 平面鏡)。<code style="color:#22d3bf">direct_limit_deg</code> = 首を回さずに直接見える方位の上限(前方から左回り。100° は <b>仮定</b>)。<code style="color:#22d3bf">roi</code> = (x_min, x_max, y_min, y_max) の対象領域(左の隣の車線。鏡の本体と車体を含まないように置くこと = 鏡の光線が車体を通るかは見ていない)。</p>
+<p>鏡で見える領域 = 鏡の両端で反射した 2 本の光線に挟まれ、かつ鏡の弦より眼の側。直接見える = 眼から見た方位 ≤ 上限。死角 = roi ∖ (鏡 ∪ 直接) を <b>互いに素な凸多角形の列</b> で返す(凸 ∖ 凸 = 半平面を 1 つずつ外した和)。</p>
+<p>返り値: <code style="color:#22d3bf">pieces</code>(凸多角形 (k, 2) の list)、<code style="color:#22d3bf">area</code>、<code style="color:#22d3bf">mirror_edges</code>(両端の点 (2, 2))、<code style="color:#22d3bf">mirror_rays</code>(両端の反射光線の単位ベクトル (2, 2))、<code style="color:#22d3bf">mirror_area</code> / <code style="color:#22d3bf">direct_area</code>(roi の中で見える面積)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

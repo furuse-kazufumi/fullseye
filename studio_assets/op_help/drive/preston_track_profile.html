@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × scalar × scalar × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.preston_track_profile(y, force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, spin: &#x27;float&#x27; = 0.0, speed=None, estar=None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import polish; polish.preston_track_profile(y, force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, spin: &#x27;float&#x27; = 0.0, speed=None, estar=None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;preston_track_profile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>長い直線の一筆(+x へ進む)の断面の除去の深さ h(y) [m] (y = 進む向きの左が正の横ずれ、`<code style="color:#22d3bf">y</code>` と同じ形)。閉形式:</p>
-<p>平板 2 k_p p √(a² − y²)、Hertz k_p (E*/R)(a² − y²)(a は力から Hertz で)、回る平板(`<code style="color:#22d3bf">spin</code><code style="color:#22d3bf"> = ω、</code><code style="color:#22d3bf">speed</code>` = v が要る)</p>
-<p>(k_p p / v)[c √(b² + ω²c²) + (b²/ω) asinh(ωc/|b|)] (c = √(a² − y²)、b = v − ωy)。|y| ≥ a は 0。</p>
-<p><b>Raises</b> ValueError: 数の検査、回る時に速さが無い、Hertz で回す(閉形式が無い)。</p>
+<p>長い直線の一筆(+x へ進む)の断面の除去の深さ h(y) [m] (y = 進む向きの左が正の横ずれ、<code style="color:#22d3bf">y</code> と同じ形)。閉形式:</p>
+<p>平板 2 k_p p √(a² − y²)、Hertz k_p (E*/R)(a² − y²)(a は力から Hertz で)、回る平板(<code style="color:#22d3bf">spin</code> = ω、<code style="color:#22d3bf">speed</code> = v が要る) (k_p p / v)[c √(b² + ω²c²) + (b²/ω) asinh(ωc/|b|)] (c = √(a² − y²)、b = v − ωy)。|y| ≥ a は 0。<b>Raises</b> ValueError: 数の検査、回る時に速さが無い、Hertz で回す(閉形式が無い)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -5,31 +5,28 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>颜色 × 说明的图例。<b>框高由条目数以闭式确定</b>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">height = 2*pad + n*row_h + (n-1)*row_gap</code><code style="color:#22d3bf"> (</code>`row_h = max(swatch, 文字高))。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p><code style="color:#22d3bf">height = 2*pad + n*row_h + (n-1)*row_gap</code> (<code style="color:#22d3bf">row_h = max(swatch, 文字高)</code>)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>entries : sequence</p>
-<p>`<code style="color:#22d3bf">(color, text)</code><code style="color:#22d3bf"> の並び。</code><code style="color:#22d3bf">color</code>` は役割名でも RGB でもよい。</p>
+<p><code style="color:#22d3bf">(color, text)</code> の並び。<code style="color:#22d3bf">color</code> は役割名でも RGB でもよい。</p>
 <p>markers : bool</p>
-<p>True なら役割名に対応する :data:<code style="color:#22d3bf">palette.ROLE_MARKERS</code> の記号を</p>
+<p>True なら役割名に対応する <code style="color:#22d3bf">palette.ROLE_MARKERS</code> の記号を</p>
 <p>説明の前に付ける(<b>色だけに意味を載せない</b>ため)。役割名でない</p>
 <p>要素には記号が無いので付かない。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>Raises</p>
-<p>------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>entries が空 / 形が `<code style="color:#22d3bf">(color, text)</code>` でない / 箱が画像からはみ出す /</p>
+<p>entries が空 / 形が <code style="color:#22d3bf">(color, text)</code> でない / 箱が画像からはみ出す /</p>
 <p>未知の役割名。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 训练数据集规范知识 —— COCO / YOLO / VOC 及外观检测中的陷阱</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>

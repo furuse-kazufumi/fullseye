@@ -4,12 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pxrd; pxrd.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;phase_peel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>混合物から相を 1 つずつ剥がす(貪欲な前進選択)。</p>
-<p>段 0 は背景だけ。各段で、まだ選んでいない相を 1 つずつ足して :func:<code style="color:#22d3bf">phase_fractions</code> を当て、`<code style="color:#22d3bf">rwp</code>` が最も下がる</p>
-<p>相を選ぶ。`<code style="color:#22d3bf">rwp</code><code style="color:#22d3bf"> の相対的な下がり幅が </code><code style="color:#22d3bf">min_gain</code><code style="color:#22d3bf"> 未満、または選んだ相の重量分率が </code><code style="color:#22d3bf">min_fraction</code>` 未満なら止める。</p>
-<p>全部の相を一度に当てる :func:<code style="color:#22d3bf">phase_fractions</code> と違い、「どの順で、どれだけ説明が進んだか」が残る(図の素材)。</p>
-<p>返り値(dict): `<code style="color:#22d3bf">order</code><code style="color:#22d3bf">(選んだ順の名前)・</code><code style="color:#22d3bf">stages</code><code style="color:#22d3bf">(各段の </code><code style="color:#22d3bf">phases</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">weight_fraction</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">fit</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">residual</code>`・</p>
-<p>`<code style="color:#22d3bf">rwp</code><code style="color:#22d3bf">)・</code><code style="color:#22d3bf">final</code><code style="color:#22d3bf">(最後の段の :func:</code>phase_fractions` の結果)。</p>
-<p>Raises ValueError: :func:<code style="color:#22d3bf">phase_fractions</code> と同じ。`<code style="color:#22d3bf">min_gain</code>` が [0, 1) の外。</p>
+<p>段 0 は背景だけ。各段で、まだ選んでいない相を 1 つずつ足して <code style="color:#22d3bf">phase_fractions</code> を当て、<code style="color:#22d3bf">rwp</code> が最も下がる相を選ぶ。<code style="color:#22d3bf">rwp</code> の相対的な下がり幅が <code style="color:#22d3bf">min_gain</code> 未満、または選んだ相の重量分率が <code style="color:#22d3bf">min_fraction</code> 未満なら止める。</p>
+<p>全部の相を一度に当てる <code style="color:#22d3bf">phase_fractions</code> と違い、「どの順で、どれだけ説明が進んだか」が残る(図の素材)。</p>
+<p>返り値(dict): <code style="color:#22d3bf">order</code>(選んだ順の名前)・<code style="color:#22d3bf">stages</code>(各段の <code style="color:#22d3bf">phases</code>・<code style="color:#22d3bf">weight_fraction</code>・<code style="color:#22d3bf">fit</code>・<code style="color:#22d3bf">residual</code>・ <code style="color:#22d3bf">rwp</code>)・<code style="color:#22d3bf">final</code>(最後の段の <code style="color:#22d3bf">phase_fractions</code> の結果)。</p>
+<p>Raises ValueError: <code style="color:#22d3bf">phase_fractions</code> と同じ。<code style="color:#22d3bf">min_gain</code> が [0, 1) の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

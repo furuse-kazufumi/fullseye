@@ -3,22 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">rgb</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radial_light(height, width, x, y, radius, intensity=1.0, falloff=&#x27;smooth&#x27;, color=&#x27;emphasis&#x27;, scheme=&#x27;okabe_ito&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gfx2d; gfx2d.radial_light(height, width, x, y, radius, intensity=1.0, falloff=&#x27;smooth&#x27;, color=&#x27;emphasis&#x27;, scheme=&#x27;okabe_ito&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgfx2d.get(&quot;radial_light&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>`<code style="color:#22d3bf">(x, y)</code><code style="color:#22d3bf"> 를 중심으로 하는 방사형 라이트 맵 </code><code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(H, W, 3)</code>`.</p>
+<p><code style="color:#22d3bf">(x, y)</code> 를 중심으로 하는 방사형 라이트 맵 <code style="color:#22d3bf">rgb</code> <code style="color:#22d3bf">(H, W, 3)</code>.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">falloff</code>`:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;smooth&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">(1 - t^2)^2</code>`, compactly supported: exactly zero at and</p>
-<p>beyond `<code style="color:#22d3bf">radius</code>`. The default, because a light that ends somewhere is the</p>
-<p>only kind you can budget.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;linear&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">1 - t</code>`, also compact.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;inverse_square&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">1 / (1 + (3t)^2)</code>`, the physical law softened at</p>
-<p>the origin. <b>Not</b> compactly supported: it is 10 % of peak at the nominal</p>
-<p>radius and never reaches zero, so a scene full of these never gets dark.</p>
-<p>The value at the centre is exactly `<code style="color:#22d3bf">intensity * color</code>`. This is a</p>
-<p>*linear-light* quantity: add lights together, then encode once.</p>
-<p>With `<code style="color:#22d3bf">intensity &gt; 1</code><code style="color:#22d3bf"> the result leaves </code><code style="color:#22d3bf">[0, 1]</code>` — deliberately, because a</p>
-<p>light map is not a picture. :func:<code style="color:#22d3bf">light_mask</code> accepts it; the operators that</p>
-<p>take an `<code style="color:#22d3bf">rgb</code>` *image* reject it with the documented range error rather than</p>
-<p>clipping a light budget behind your back.</p>
+<p><code style="color:#22d3bf">falloff</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;smooth&quot;</code> — <code style="color:#22d3bf">(1 - t^2)^2</code>, compactly supported: exactly zero at and beyond <code style="color:#22d3bf">radius</code>. The default, because a light that ends somewhere is the only kind you can budget.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;linear&quot;</code> — <code style="color:#22d3bf">1 - t</code>, also compact.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;inverse_square&quot;</code> — <code style="color:#22d3bf">1 / (1 + (3t)^2)</code>, the physical law softened at the origin. <b>Not</b> compactly supported: it is 10 % of peak at the nominal radius and never reaches zero, so a scene full of these never gets dark.</p>
+<p>The value at the centre is exactly <code style="color:#22d3bf">intensity * color</code>. This is a *linear-light* quantity: add lights together, then encode once.</p>
+<p>With <code style="color:#22d3bf">intensity &gt; 1</code> the result leaves <code style="color:#22d3bf">[0, 1]</code> — deliberately, because a light map is not a picture. <code style="color:#22d3bf">light_mask</code> accepts it; the operators that take an <code style="color:#22d3bf">rgb</code> *image* reject it with the documented range error rather than clipping a light budget behind your back.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

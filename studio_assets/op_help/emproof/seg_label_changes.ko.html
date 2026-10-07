@@ -5,13 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
 <p>2 枚のラベル画像の差を<b>融合と分断の対</b>として返す(校正の前後、または仕込んだ誤りの答え合わせ)。</p>
-<p>`<code style="color:#22d3bf">before</code><code style="color:#22d3bf"> のラベル b と </code><code style="color:#22d3bf">after</code><code style="color:#22d3bf"> のラベル a が同じ画素を </code><code style="color:#22d3bf">min_pixels</code>` 以上共有する対を数え、</p>
-<p style="margin:2px 0 2px 12px">• 融合 = after の 1 ラベルが before の 2 ラベル以上を覆う → `<code style="color:#22d3bf">merge_after</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">merge_before</code>`(対ごとに 1 行。</p>
-<p>吸った側の id 自身も before の 1 つとして並ぶ)</p>
-<p style="margin:2px 0 2px 12px">• 分断 = before の 1 ラベルが after の 2 ラベル以上に割れる → `<code style="color:#22d3bf">split_before</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">split_after</code>`(同様に</p>
-<p>残った側の id も並ぶ)</p>
-<p>`<code style="color:#22d3bf">n_merged</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_split</code>` は誤りの数(after 側・before 側の id で数える)。id の一致は見ない</p>
-<p>(ラベルを振り直した 2 枚でも使える)。</p>
+<p><code style="color:#22d3bf">before</code> のラベル b と <code style="color:#22d3bf">after</code> のラベル a が同じ画素を <code style="color:#22d3bf">min_pixels</code> 以上共有する対を数え、</p>
+<p style="margin:2px 0 2px 12px">• 融合 = after の 1 ラベルが before の 2 ラベル以上を覆う → <code style="color:#22d3bf">merge_after</code> / <code style="color:#22d3bf">merge_before</code>(対ごとに 1 行。吸った側の id 自身も before の 1 つとして並ぶ)</p>
+<p style="margin:2px 0 2px 12px">• 分断 = before の 1 ラベルが after の 2 ラベル以上に割れる → <code style="color:#22d3bf">split_before</code> / <code style="color:#22d3bf">split_after</code>(同様に残った側の id も並ぶ)</p>
+<p><code style="color:#22d3bf">n_merged</code> / <code style="color:#22d3bf">n_split</code> は誤りの数(after 側・before 側の id で数える)。id の一致は見ない(ラベルを振り直した 2 枚でも使える)。</p>
 <p>&gt;&gt;&gt; ch = seg_label_changes(truth, seg_inject_merge(truth))</p>
 <p>&gt;&gt;&gt; int(ch[&quot;n_merged&quot;])</p>
 <p>1</p>

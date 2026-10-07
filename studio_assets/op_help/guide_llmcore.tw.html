@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <b>attend(4)</b> — <code style="color:#22d3bf">attention_softmax</code>(一括の参照実装 = 答え合わせの基準)/ <code style="color:#22d3bf">attention_tiled</code>(タイル + online softmax = FlashAttention の芯)/ <code style="color:#22d3bf">attention_linear</code>((QKᵀ)V == Q(KᵀV))/ <code style="color:#22d3bf">attention_grouped</code>(GQA。両端が MHA と MQA に厳密一致)。</p>
 <p style="margin:2px 0 2px 12px">• <b>decode(1)</b> — <code style="color:#22d3bf">kv_cache_decode</code>(1 トークンずつ進める推論)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">連鎖</h3>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 圖(原始碼):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
     img[画像] --&gt; P[パッチ列 tokens]
     P --&gt; N[rms_norm] --&gt; R[rope_rotate]
     R --&gt; S[attention_scores] --&gt; W[attention_weights] --&gt; A[attention_apply] --&gt; out[tokens]

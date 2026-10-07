@@ -5,14 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>深度图像的双边滤波(保边去噪)。→ float64 (H,W)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>range 重みは深度自身の差で作る。無効画素(非有限 or sentinel=invalid)は近傍として寄与せず、</p>
-<p>中心が無効なら元値のまま(穴埋めは :func:<code style="color:#22d3bf">fill_holes</code> の役目)。spatial_sigma は画素単位、</p>
-<p>range_sigma は深度値の単位(段差 &gt; range_sigma なら段差を跨がず、ノイズ std &lt; range_sigma</p>
-<p>ならノイズを平滑する)。truncate=3 でガウス窓半径 = ceil(3*spatial_sigma)。</p>
+<p>range 重みは深度自身の差で作る。無効画素(非有限 or sentinel=invalid)は近傍として寄与せず、中心が無効なら元値のまま(穴埋めは <code style="color:#22d3bf">fill_holes</code> の役目)。spatial_sigma は画素単位、range_sigma は深度値の単位(段差 &gt; range_sigma なら段差を跨がず、ノイズ std &lt; range_sigma ならノイズを平滑する)。truncate=3 でガウス窓半径 = ceil(3*spatial_sigma)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

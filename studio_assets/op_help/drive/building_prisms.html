@@ -5,14 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>建物列を押し出し柱メッシュにまとめる。</p>
 <p>Args:</p>
-<p>buildings: `<code style="color:#22d3bf">plateau_parse</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">buildings</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">footprint</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">height</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ground_z</code>`)。</p>
-<p>color_fn: `<code style="color:#22d3bf">building -&gt; (r,g,b)</code><code style="color:#22d3bf"> 0..1。None なら </code><code style="color:#22d3bf">_default_building_color</code>`。</p>
-<p>base_z: 全建物の底 z [m]。None なら各建物の `<code style="color:#22d3bf">ground_z</code>` を使う(起伏のある世界向け)。</p>
+<p>buildings: <code style="color:#22d3bf">plateau_parse</code> の <code style="color:#22d3bf">buildings</code>(<code style="color:#22d3bf">footprint</code>, <code style="color:#22d3bf">height</code>, <code style="color:#22d3bf">ground_z</code>)。</p>
+<p>color_fn: <code style="color:#22d3bf">building -&gt; (r,g,b)</code> 0..1。None なら <code style="color:#22d3bf">_default_building_color</code>。</p>
+<p>base_z: 全建物の底 z [m]。None なら各建物の <code style="color:#22d3bf">ground_z</code> を使う(起伏のある世界向け)。</p>
 <p>自前の平らな道路世界には 0.0 が合う。</p>
 <p>roof_shade: 屋根面の色の倍率(側面と見分けるための控えめな陰)。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(V (n,3) float64, F (m,3) int64, colors (m,3) float64 0..1, ids (m,) int64)</code>`。</p>
-<p>`<code style="color:#22d3bf">ids[f]</code>` は面 f が属する建物の番号(入力列の添字)。建物が 0 件なら各配列は空。</p>
+<p><code style="color:#22d3bf">(V (n,3) float64, F (m,3) int64, colors (m,3) float64 0..1, ids (m,) int64)</code>。<code style="color:#22d3bf">ids[f]</code> は面 f が属する建物の番号(入力列の添字)。建物が 0 件なら各配列は空。</p>
 <p>Raises:</p>
 <p>ValueError: color_fn の返り値が RGB 3 要素 0..1 でない、建物の footprint/height が不正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

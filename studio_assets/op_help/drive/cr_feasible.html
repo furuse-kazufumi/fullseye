@@ -3,11 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;cr_feasible&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>運動学の実現可能性(採点器 `<code style="color:#22d3bf">solution_feasible</code>` と同じ考え方の第 2 実装)。</p>
-<p>各遷移で記録した u から :func:<code style="color:#22d3bf">ks_step</code> を回し、次の状態と |Δx|, |Δy| &lt; tol[0], tol[1]、|Δψ| &lt; tol[2] か、u が制限内か</p>
-<p>(δ̇ ∈ [ddelta_min, ddelta_max]、|a| ≤ a_max)、摩擦円 a² + (v ψ̇)² ≤ a_max² か(ψ̇ = v/l_wb tan δ)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;feasible&quot;, &quot;max_pos_err&quot;, &quot;max_psi_err&quot;, &quot;violations&quot;: [(k, reason)], &quot;n_transitions&quot;}</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: run が cr_drive の物でない、tol が 3 要素でない。</p>
+<p>運動学の実現可能性(採点器 <code style="color:#22d3bf">solution_feasible</code> と同じ考え方の第 2 実装)。</p>
+<p>各遷移で記録した u から <code style="color:#22d3bf">ks_step</code> を回し、次の状態と |Δx|, |Δy| &lt; tol[0], tol[1]、|Δψ| &lt; tol[2] か、u が制限内か(δ̇ ∈ [ddelta_min, ddelta_max]、|a| ≤ a_max)、摩擦円 a² + (v ψ̇)² ≤ a_max² か(ψ̇ = v/l_wb tan δ)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;feasible&quot;, &quot;max_pos_err&quot;, &quot;max_psi_err&quot;, &quot;violations&quot;: [(k, reason)], &quot;n_transitions&quot;}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: run が cr_drive の物でない、tol が 3 要素でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

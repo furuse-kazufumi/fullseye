@@ -5,47 +5,28 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>대역통과 → 복조 → 변환. 베어링 결함이 실제로 드러나는 곳.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The three steps are each already available (`<code style="color:#22d3bf">dsp.bandpass</code>`,</p>
-<p>`<code style="color:#22d3bf">dsp.envelope</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">numpy.fft</code>`); what is not available anywhere in</p>
-<p>:mod:<code style="color:#22d3bf">dsp</code> is the *composition*, and the composition is the diagnostic. The</p>
-<p>raw spectrum of a defective bearing shows a resonance at some kHz and</p>
-<p>nothing at the defect rate; the envelope of that resonance band, transformed,</p>
-<p>shows the defect rate as a clean line.</p>
-<p>`<code style="color:#22d3bf">low</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">high</code>` are the demodulation band in Hz and are <b>required</b>,</p>
-<p>not optional. Choosing the band is the analysis; a default would hide the</p>
-<p>one decision that has to be made. :func:<code style="color:#22d3bf">spectral_kurtosis</code> finds a</p>
-<p>candidate band when there is no prior knowledge of the resonance.</p>
-<p>The envelope&#x27;s mean is removed before the transform (otherwise a large DC</p>
-<p>line dominates every plot), amplitudes are single-sided (`<code style="color:#22d3bf">2/N</code>`), and DC is</p>
-<p>excluded from peak picking.</p>
-<p>Returns a dict: `<code style="color:#22d3bf">freqs</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">magnitude</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">peak_freq</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">peak_amplitude</code>`,</p>
-<p>`<code style="color:#22d3bf">peak_freqs</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">peak_amplitudes</code><code style="color:#22d3bf"> (the </code><code style="color:#22d3bf">n_peaks</code>` largest, descending),</p>
-<p>`<code style="color:#22d3bf">band</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">envelope_mean</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">resolution_hz</code>`, plus two numbers that exist</p>
-<p>because **this operator always returns a peak frequency, including when</p>
-<p>there is nothing there**:</p>
-<p>`<code style="color:#22d3bf">peak_prominence</code>`</p>
+<p>The three steps are each already available (<code style="color:#22d3bf">dsp.bandpass</code>, <code style="color:#22d3bf">dsp.envelope</code>, <code style="color:#22d3bf">numpy.fft</code>); what is not available anywhere in <code style="color:#22d3bf">dsp</code> is the *composition*, and the composition is the diagnostic. The raw spectrum of a defective bearing shows a resonance at some kHz and nothing at the defect rate; the envelope of that resonance band, transformed, shows the defect rate as a clean line.</p>
+<p><code style="color:#22d3bf">low</code> / <code style="color:#22d3bf">high</code> are the demodulation band in Hz and are <b>required</b>, not optional. Choosing the band is the analysis; a default would hide the one decision that has to be made. <code style="color:#22d3bf">spectral_kurtosis</code> finds a candidate band when there is no prior knowledge of the resonance.</p>
+<p>The envelope&#x27;s mean is removed before the transform (otherwise a large DC line dominates every plot), amplitudes are single-sided (<code style="color:#22d3bf">2/N</code>), and DC is excluded from peak picking.</p>
+<p>Returns a dict: <code style="color:#22d3bf">freqs</code>, <code style="color:#22d3bf">magnitude</code>, <code style="color:#22d3bf">peak_freq</code>, <code style="color:#22d3bf">peak_amplitude</code>, <code style="color:#22d3bf">peak_freqs</code> / <code style="color:#22d3bf">peak_amplitudes</code> (the <code style="color:#22d3bf">n_peaks</code> largest, descending), <code style="color:#22d3bf">band</code>, <code style="color:#22d3bf">envelope_mean</code>, <code style="color:#22d3bf">resolution_hz</code>, plus two numbers that exist because <b>this operator always returns a peak frequency, including when there is nothing there</b>:</p>
+<p><code style="color:#22d3bf">peak_prominence</code></p>
 <p>the peak divided by the median of the <b>whole</b> magnitude spectrum.</p>
 <p><b>Band-width dependent, and it inverts in a narrow band</b> — see</p>
-<p>`<code style="color:#22d3bf">local_prominence</code><code style="color:#22d3bf"> below and the table in :func:</code>_local_prominence`.</p>
-<p>`<code style="color:#22d3bf">local_prominence</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">local_noise_floor</code>`</p>
+<p><code style="color:#22d3bf">local_prominence</code> below and the table in <code style="color:#22d3bf">_local_prominence</code>.</p>
+<p><code style="color:#22d3bf">local_prominence</code> / <code style="color:#22d3bf">local_noise_floor</code></p>
 <p>the peak divided by the median of its own neighbourhood (±50 Hz,</p>
 <p>excluding ±5 Hz of the peak itself), and that median. Use this one to</p>
 <p>decide whether a peak is real: measured over both a 2000-4000 Hz and a</p>
 <p>2900-3100 Hz demodulation band, pure noise and a constant signal stay</p>
 <p>at 2.2-3.3 while a real 107 Hz defect reaches 1558 (wide) and 33.9</p>
-<p>(narrow). `<code style="color:#22d3bf">peak_prominence</code>` puts pure noise at <b>11375</b> in the</p>
+<p>(narrow). <code style="color:#22d3bf">peak_prominence</code> puts pure noise at <b>11375</b> in the</p>
 <p>narrow band, above the real defect&#x27;s 9434 — the ordering is reversed,</p>
 <p>which is why the number below the table in this docstring (&quot;white</p>
 <p>noise 365&quot;) only holds at that one band width.</p>
-<p>`<code style="color:#22d3bf">band_fraction</code>`</p>
+<p><code style="color:#22d3bf">band_fraction</code></p>
 <p>the RMS of the band-passed signal divided by the RMS of the input — how</p>
 <p>much of the record actually lives in the demodulation band.</p>
-<p>Found by adversarial audit and not repaired by an exception, because there</p>
-<p>is nothing invalid to refuse: a <b>constant</b> signal band-passed over</p>
-<p>100-2000 Hz has an envelope made of rounding error, and this operator dutifully</p>
-<p>reported `<code style="color:#22d3bf">peak_freq = 8.0000 Hz</code>`. Nothing raised, nothing was NaN, and</p>
-<p>`<code style="color:#22d3bf">8 Hz</code>` is a perfectly plausible number to write down. Measured, the four</p>
-<p>cases separate on the returned numbers rather than on any invented</p>
+<p>Found by adversarial audit and not repaired by an exception, because there is nothing invalid to refuse: a <b>constant</b> signal band-passed over 100-2000 Hz has an envelope made of rounding error, and this operator dutifully reported <code style="color:#22d3bf">peak_freq = 8.0000 Hz</code>. Nothing raised, nothing was NaN, and <code style="color:#22d3bf">8 Hz</code> is a perfectly plausible number to write down. Measured, the four cases separate on the returned numbers rather than on any invented</p>
 <p>threshold:</p>
 <p>================  ========  =========  ===========  =============</p>
 <p>input             peak Hz   peak amp   prominence   band_fraction</p>
@@ -55,31 +36,10 @@
 <p>white noise       128.0000  2.785e-02        365.2     3.745e-01</p>
 <p>constant signal     8.0000  1.691e-12        173.0     1.995e-12</p>
 <p>================  ========  =========  ===========  =============</p>
-<p>No cut-off is imposed here: a defect that is genuinely 20 dB into the noise</p>
-<p>is a real finding and refusing it would be worse than reporting it. The</p>
-<p>numbers are returned so the caller can see the difference between row 1 and</p>
-<p>row 4, which `<code style="color:#22d3bf">peak_freq</code>` alone does not show.</p>
-<p>Measured on :func:<code style="color:#22d3bf">synthesize_bearing_signal</code> (25600 Hz, 1 s, 3 kHz carrier,</p>
-<p>107 Hz defect, `<code style="color:#22d3bf">m = 0.5</code><code style="color:#22d3bf">) demodulated over 2000-4000 Hz: </code>`peak_freq =</p>
-<p>107.000000`<code style="color:#22d3bf"> Hz, </code><code style="color:#22d3bf">peak_amplitude = 0.499677</code>` — the modulation depth</p>
-<p>itself, because the analytic envelope of that signal is exactly</p>
-<p>`<code style="color:#22d3bf">1 + 0.5 cos(2 pi 107 t)</code>`. The ordinary spectrum of the same signal has a</p>
-<p>one-sided amplitude of <b>4.291662e-16</b> at 107 Hz: the defect rate is not</p>
-<p>present as a frequency component at all, which is the entire point of the</p>
-<p>operator.</p>
-<p>**That number needs a scaling step that used to be missing from this</p>
-<p>sentence.** `<code style="color:#22d3bf">dsp.spectrum</code><code style="color:#22d3bf"> returns the raw </code><code style="color:#22d3bf">|rfft|</code>`, not an amplitude —</p>
-<p>the raw value in that bin is <b>5.493328e-12</b>, and the one-sided amplitude</p>
-<p>above is `<code style="color:#22d3bf">mag * (2.0 / len(x))</code><code style="color:#22d3bf">, here </code><code style="color:#22d3bf">2/25600 = 7.8125e-05</code>`. This</p>
-<p>operator and :func:<code style="color:#22d3bf">order_spectrum</code> apply that `<code style="color:#22d3bf">2/N</code>` *internally* and so</p>
-<p>return amplitudes directly (carrier 3000 Hz: raw 12800, amplitude</p>
-<p>1.000000; sidebands 2893 / 3107 Hz: raw 3200, amplitude 0.250000 = m/2).</p>
-<p>The two conventions coexist in the library, so do not apply `<code style="color:#22d3bf">2/N</code>` twice</p>
-<p>when comparing a `<code style="color:#22d3bf">dsp</code>` spectrum against one of these.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal<code style="color:#22d3bf"> and </code><code style="color:#22d3bf">dsp.bandpass</code>`</p>
-<p>refuse (non-finite, complex, masked, non-1-D, a band edge outside</p>
-<p>`<code style="color:#22d3bf">(0, rate/2)</code>`, a signal too short for zero-phase filtering), plus a</p>
-<p>non-positive `<code style="color:#22d3bf">n_peaks</code>`.</p>
+<p>No cut-off is imposed here: a defect that is genuinely 20 dB into the noise is a real finding and refusing it would be worse than reporting it. The numbers are returned so the caller can see the difference between row 1 and row 4, which <code style="color:#22d3bf">peak_freq</code> alone does not show.</p>
+<p>Measured on <code style="color:#22d3bf">synthesize_bearing_signal</code> (25600 Hz, 1 s, 3 kHz carrier, 107 Hz defect, <code style="color:#22d3bf">m = 0.5</code>) demodulated over 2000-4000 Hz: <code style="color:#22d3bf">peak_freq = 107.000000</code> Hz, <code style="color:#22d3bf">peak_amplitude = 0.499677</code> — the modulation depth itself, because the analytic envelope of that signal is exactly <code style="color:#22d3bf">1 + 0.5 cos(2 pi 107 t)</code>. The ordinary spectrum of the same signal has a one-sided amplitude of <b>4.291662e-16</b> at 107 Hz: the defect rate is not present as a frequency component at all, which is the entire point of the operator.</p>
+<p><b>That number needs a scaling step that used to be missing from this sentence.</b> <code style="color:#22d3bf">dsp.spectrum</code> returns the raw <code style="color:#22d3bf">|rfft|</code>, not an amplitude — the raw value in that bin is <b>5.493328e-12</b>, and the one-sided amplitude above is <code style="color:#22d3bf">mag * (2.0 / len(x))</code>, here <code style="color:#22d3bf">2/25600 = 7.8125e-05</code>. This operator and <code style="color:#22d3bf">order_spectrum</code> apply that <code style="color:#22d3bf">2/N</code> *internally* and so return amplitudes directly (carrier 3000 Hz: raw 12800, amplitude 1.000000; sidebands 2893 / 3107 Hz: raw 3200, amplitude 0.250000 = m/2). The two conventions coexist in the library, so do not apply <code style="color:#22d3bf">2/N</code> twice when comparing a <code style="color:#22d3bf">dsp</code> spectrum against one of these.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: everything <code style="color:#22d3bf">_as_signal</code> and <code style="color:#22d3bf">dsp.bandpass</code> refuse (non-finite, complex, masked, non-1-D, a band edge outside <code style="color:#22d3bf">(0, rate/2)</code>, a signal too short for zero-phase filtering), plus a non-positive <code style="color:#22d3bf">n_peaks</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

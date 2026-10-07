@@ -5,10 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>検出器の各画素の 2θ・方位 χ・相対立体角(傾き・距離・中心つき)。</p>
-<p>`<code style="color:#22d3bf">shape = (H, W)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">geometry</code><code style="color:#22d3bf"> は module の docstring の Fit2D 型。返り値(dict): </code><code style="color:#22d3bf">two_theta</code><code style="color:#22d3bf"> [deg]・</code><code style="color:#22d3bf">chi</code>` [deg]</p>
-<p>(`<code style="color:#22d3bf">atan2</code><code style="color:#22d3bf">、+列が 0、+行が +90)・</code><code style="color:#22d3bf">solid_angle</code><code style="color:#22d3bf">(ビームの中心で傾き 0 のとき 1 になる相対値、</code><code style="color:#22d3bf">cos³</code>` で落ちる)。</p>
-<p>2θ は `<code style="color:#22d3bf">atan2(hypot(Pₓ, P_y), P_z)</code>` で求める(acos を使うと 2θ → 0 の近くで丸めの床が出る)。</p>
-<p>Raises ValueError: 形が 2 要素の正の整数でない、幾何の鍵の欠け・綴り違い、`<code style="color:#22d3bf">|tilt| &gt;= 60</code>`。</p>
+<p><code style="color:#22d3bf">shape = (H, W)</code>、<code style="color:#22d3bf">geometry</code> は module の docstring の Fit2D 型。返り値(dict): <code style="color:#22d3bf">two_theta</code> [deg]・<code style="color:#22d3bf">chi</code> [deg] (<code style="color:#22d3bf">atan2</code>、+列が 0、+行が +90)・<code style="color:#22d3bf">solid_angle</code>(ビームの中心で傾き 0 のとき 1 になる相対値、<code style="color:#22d3bf">cos³</code> で落ちる)。2θ は <code style="color:#22d3bf">atan2(hypot(Pₓ, P_y), P_z)</code> で求める(acos を使うと 2θ → 0 の近くで丸めの床が出る)。</p>
+<p>Raises ValueError: 形が 2 要素の正の整数でない、幾何の鍵の欠け・綴り違い、<code style="color:#22d3bf">|tilt| &gt;= 60</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

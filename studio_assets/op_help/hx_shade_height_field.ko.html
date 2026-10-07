@@ -7,23 +7,19 @@
 <p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
 <p>*출력은 viridis 풍의 의사 컬러(짙은 보라 = 작음, 노랑 = 큼)로 표시한다. 거리·위상·방향·깊이 같은 「양의 장」을 읽기 위해.*</p>
 <p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_shade_height_field.a.jpg">hx_shade_height_field: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_shade_height_field.a.jpg">hx_shade_height_field: 노브 a 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_shade_height_field.b.jpg">hx_shade_height_field: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_shade_height_field.b.jpg">hx_shade_height_field: 노브 b 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_shade_height_field.inputs.jpg">hx_shade_height_field: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_shade_height_field.inputs.jpg">hx_shade_height_field: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>높이장 v 를 Lambert 음영으로 그립니다(법선×광원). 광원은 방위 a·앙각 b.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> を高さ場(gray 値 = 高さ、画素間隔 1)とみなし、</code><code style="color:#22d3bf">np.gradient</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(gy, gx)</code>` から法線</p>
-<p>`<code style="color:#22d3bf">n = (-gx, -gy, 1) / sqrt(gx^2 + gy^2 + 1)</code><code style="color:#22d3bf"> を作り、方向 </code><code style="color:#22d3bf">l = (cos(el)cos(az), cos(el)sin(az), sin(el))</code>` の</p>
-<p>平行光との内積 `<code style="color:#22d3bf">n·l</code>` を 0 で下から clip し、min-max で [0,1] に正規化して返す(Lambertian 陰影)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 光源の方位角 </code><code style="color:#22d3bf">az = a*2*pi</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">lx = cos(az)</code><code style="color:#22d3bf"> が列方向、</code><code style="color:#22d3bf">ly = sin(az)</code>` が行方向の成分)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 光源の仰角 </code><code style="color:#22d3bf">el = (0.2 + 0.7*b) * pi/2</code>`(約 18°〜81°。1 で真上に近い)。</p>
-<p>注意: 高さのスケール係数が無く、[0,1] の値を数百画素にわたって微分するため勾配はごく小さい。そのままでは</p>
-<p>陰影の差がほとんど無いが、最後の min-max 正規化で見える化している。したがって出力の絶対的な明るさに意味は</p>
-<p>無く、入力が平坦だと全画素 0 になる。深度画像や `<code style="color:#22d3bf">hx_fit_surface2</code>` で推定した背景面の凹凸を目で確かめる用途向け。</p>
+<p><code style="color:#22d3bf">v</code> を高さ場(gray 値 = 高さ、画素間隔 1)とみなし、<code style="color:#22d3bf">np.gradient</code> の <code style="color:#22d3bf">(gy, gx)</code> から法線 <code style="color:#22d3bf">n = (-gx, -gy, 1) / sqrt(gx^2 + gy^2 + 1)</code> を作り、方向 <code style="color:#22d3bf">l = (cos(el)cos(az), cos(el)sin(az), sin(el))</code> の平行光との内積 <code style="color:#22d3bf">n·l</code> を 0 で下から clip し、min-max で [0,1] に正規化して返す(Lambertian 陰影)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 光源の方位角 <code style="color:#22d3bf">az = a*2*pi</code>(<code style="color:#22d3bf">lx = cos(az)</code> が列方向、<code style="color:#22d3bf">ly = sin(az)</code> が行方向の成分)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 光源の仰角 <code style="color:#22d3bf">el = (0.2 + 0.7*b) * pi/2</code>(約 18°〜81°。1 で真上に近い)。</p>
+<p>注意: 高さのスケール係数が無く、[0,1] の値を数百画素にわたって微分するため勾配はごく小さい。そのままでは陰影の差がほとんど無いが、最後の min-max 正規化で見える化している。したがって出力の絶対的な明るさに意味は無く、入力が平坦だと全画素 0 になる。深度画像や <code style="color:#22d3bf">hx_fit_surface2</code> で推定した背景面の凹凸を目で確かめる用途向け。</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
@@ -33,7 +29,7 @@
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
 <p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_shade_height_field 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_shade_height_field%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_shade_height_field%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_shade_height_field 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_shade_height_field%200.50%200.50">▸ 이 파이프라인 불러오기</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_shade_height_field%200.50%200.50">불러와서 실행</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image</code> 를 입력으로 받는 것)</h3>

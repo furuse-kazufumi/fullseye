@@ -1,33 +1,18 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</h2>
-<p>セグメンテーション拡充 第 3 陣のカテゴリ <b>graph</b>(12 op)と <b>threshold</b>(4 op)です。実体はどちらも</p>
-<p><code style="color:#22d3bf">seggraph</code>。学習器は載せません(numpy + scipy のルールベース)。どの op も <b>定理か第 2 実装の門</b> を持ち、</p>
-<p>その門を下の表に書きます。</p>
-<p>規約(全 op 共通): 画素の添字は (row, col)。4 近傍の辺は「右」と「下」の 2 枚。ラベル画像は int64 で</p>
-<p><b>1 から</b> 振る(0 = マスクの外 / 背景)。2 値の結果は bool の <code style="color:#22d3bf">mask</code>。返りはどれも <code style="color:#22d3bf">table</code>(dict)で、</p>
-<p>入力が不正なら <code style="color:#22d3bf">ValueError</code>(黙って直さない)。乱数は使わない(quick shift の同点は画素番号で決める)。</p>
-<p>1 枚の画素数は <code style="color:#22d3bf">MAX_PIXELS</code> = 100 万まで(Python の Union-Find / 待ち行列を回すので、先に断る)。</p>
+<p>セグメンテーション拡充 第 3 陣のカテゴリ <b>graph</b>(12 op)と <b>threshold</b>(4 op)です。実体はどちらも <code style="color:#22d3bf">seggraph</code>。学習器は載せません(numpy + scipy のルールベース)。どの op も <b>定理か第 2 実装の門</b> を持ち、その門を下の表に書きます。</p>
+<p>規約(全 op 共通): 画素の添字は (row, col)。4 近傍の辺は「右」と「下」の 2 枚。ラベル画像は int64 で <b>1 から</b> 振る(0 = マスクの外 / 背景)。2 値の結果は bool の <code style="color:#22d3bf">mask</code>。返りはどれも <code style="color:#22d3bf">table</code>(dict)で、入力が不正なら <code style="color:#22d3bf">ValueError</code>(黙って直さない)。乱数は使わない(quick shift の同点は画素番号で決める)。1 枚の画素数は <code style="color:#22d3bf">MAX_PIXELS</code> = 100 万まで(Python の Union-Find / 待ち行列を回すので、先に断る)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">4 つの系統</h3>
-<p style="margin:2px 0 2px 12px">• <b>エネルギーの最小化(グラフカット)</b> — <code style="color:#22d3bf">graph_cut_binary</code>: 2 値の E = Σ D_p(x_p) + λ Σ w_pq [x_p ≠ x_q] を</p>
-<p>s-t グラフの最小カットで <b>厳密に</b> 最小化(Boykov–Jolly 2001)。<code style="color:#22d3bf">seeds</code>(labels2d、1 = 背景・2 = 物体)で硬く縛れる。</p>
-<p><code style="color:#22d3bf">alpha_expansion</code>: 多ラベル版。各ラベル α への「替える / 替えない」の 2 値移動を graph cut で厳密に解き、</p>
-<p>下がる時だけ受け入れる(Boykov–Veksler–Zabih 2001)。大域解ではなく <b>E ≤ 2c E\</b>* の保証つき局所解。</p>
-<p style="margin:2px 0 2px 12px">• <b>併合と木(階層)</b> — <code style="color:#22d3bf">statistical_region_merging</code>(SRM、Nock–Nielsen 2004): 隣の差の昇順に併合の述語で結ぶ。</p>
-<p><code style="color:#22d3bf">max_tree</code> / <code style="color:#22d3bf">area_opening_attr</code>: 成分木を作り、面積(または外接矩形の径)の小さい節を消す属性開放</p>
-<p>(Salembier ら 1998)。<code style="color:#22d3bf">quasi_flat_zones</code> / <code style="color:#22d3bf">alpha_tree</code>: 隣の差が α 以下の経路で結べる画素の同値類(Soille 2008)。</p>
-<p style="margin:2px 0 2px 12px">• <b>地形の階層(分水嶺)</b> — <code style="color:#22d3bf">hierarchical_watershed</code>: 最小全域森の辺に dynamics(浅い側の盆地の深さ)を付け、</p>
-<p>閾値 θ 以下の辺で結ぶ(Najman–Schmitt 1996、Cousty ら 2009)。<code style="color:#22d3bf">ultrametric_contour_map</code>: 隣り合う 2 画素が</p>
-<p>「同じ領域になる最小の θ」を縁の強さとして持つ地図(UCM)。<b>1 本の木から全部の θ の分割が読める</b>。</p>
-<p style="margin:2px 0 2px 12px">• <b>超画素と採点</b> — <code style="color:#22d3bf">snic_superpixels</code>(Achanta–Süsstrunk 2017、非反復)、<code style="color:#22d3bf">quickshift</code>(Vedaldi–Soatto 2008)、</p>
-<p><code style="color:#22d3bf">superpixel_quality</code>(境界の再現率・CUSE・ASA・UE、超画素と真値の labels2d 2 枚)。</p>
-<p style="margin:2px 0 2px 12px">• <b>閾値(threshold カテゴリ)</b> — <code style="color:#22d3bf">threshold_triangle</code>(Zack ら 1977)/ <code style="color:#22d3bf">threshold_isodata</code>(Ridler–Calvard 1978)/</p>
-<p><code style="color:#22d3bf">threshold_kittler</code>(Kittler–Illingworth 1986、最小誤差)/ <code style="color:#22d3bf">threshold_kapur</code>(Kapur–Sahoo–Wong 1985、最大エントロピー)。</p>
-<p>どれも <code style="color:#22d3bf">threshold</code>・<code style="color:#22d3bf">mask</code> に加えて <b>基準の曲線</b>(距離・J・H)を返す —— 閾値の根拠を後から見られる。</p>
+<p style="margin:2px 0 2px 12px">• <b>エネルギーの最小化(グラフカット)</b> — <code style="color:#22d3bf">graph_cut_binary</code>: 2 値の E = Σ D_p(x_p) + λ Σ w_pq [x_p ≠ x_q] を s-t グラフの最小カットで <b>厳密に</b> 最小化(Boykov–Jolly 2001)。<code style="color:#22d3bf">seeds</code>(labels2d、1 = 背景・2 = 物体)で硬く縛れる。<code style="color:#22d3bf">alpha_expansion</code>: 多ラベル版。各ラベル α への「替える / 替えない」の 2 値移動を graph cut で厳密に解き、下がる時だけ受け入れる(Boykov–Veksler–Zabih 2001)。大域解ではなく <b>E ≤ 2c E*</b> の保証つき局所解。</p>
+<p style="margin:2px 0 2px 12px">• <b>併合と木(階層)</b> — <code style="color:#22d3bf">statistical_region_merging</code>(SRM、Nock–Nielsen 2004): 隣の差の昇順に併合の述語で結ぶ。<code style="color:#22d3bf">max_tree</code> / <code style="color:#22d3bf">area_opening_attr</code>: 成分木を作り、面積(または外接矩形の径)の小さい節を消す属性開放(Salembier ら 1998)。<code style="color:#22d3bf">quasi_flat_zones</code> / <code style="color:#22d3bf">alpha_tree</code>: 隣の差が α 以下の経路で結べる画素の同値類(Soille 2008)。</p>
+<p style="margin:2px 0 2px 12px">• <b>地形の階層(分水嶺)</b> — <code style="color:#22d3bf">hierarchical_watershed</code>: 最小全域森の辺に dynamics(浅い側の盆地の深さ)を付け、閾値 θ 以下の辺で結ぶ(Najman–Schmitt 1996、Cousty ら 2009)。<code style="color:#22d3bf">ultrametric_contour_map</code>: 隣り合う 2 画素が「同じ領域になる最小の θ」を縁の強さとして持つ地図(UCM)。<b>1 本の木から全部の θ の分割が読める</b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>超画素と採点</b> — <code style="color:#22d3bf">snic_superpixels</code>(Achanta–Süsstrunk 2017、非反復)、<code style="color:#22d3bf">quickshift</code>(Vedaldi–Soatto 2008)、<code style="color:#22d3bf">superpixel_quality</code>(境界の再現率・CUSE・ASA・UE、超画素と真値の labels2d 2 枚)。</p>
+<p style="margin:2px 0 2px 12px">• <b>閾値(threshold カテゴリ)</b> — <code style="color:#22d3bf">threshold_triangle</code>(Zack ら 1977)/ <code style="color:#22d3bf">threshold_isodata</code>(Ridler–Calvard 1978)/ <code style="color:#22d3bf">threshold_kittler</code>(Kittler–Illingworth 1986、最小誤差)/ <code style="color:#22d3bf">threshold_kapur</code>(Kapur–Sahoo–Wong 1985、最大エントロピー)。どれも <code style="color:#22d3bf">threshold</code>・<code style="color:#22d3bf">mask</code> に加えて <b>基準の曲線</b>(距離・J・H)を返す —— 閾値の根拠を後から見られる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">門(何が保証され、何が保証されないか)</h3>
 <p>| op | 門(真値の出どころ) | 保証しないこと |</p>
 <p>|---|---|---|</p>
 <p>| <code style="color:#22d3bf">graph_cut_binary</code> | 最大フロー = 最小カット(整数の容量で厳密一致、<code style="color:#22d3bf">flow_value_int</code> = <code style="color:#22d3bf">cut_value_int</code>)、カットの値 + 定数 = エネルギー、12 画素以下で総当たりの最小と一致、λ = 0 で画素ごとの判定 | 実数の入力は <code style="color:#22d3bf">scale</code> 倍して丸めた整数のエネルギーを最小化する → 実数の最小との差は <code style="color:#22d3bf">quantization_bound</code> 以下(返す) |</p>
-<p>| <code style="color:#22d3bf">alpha_expansion</code> | 受け入れの列 <code style="color:#22d3bf">energies</code> は単調減少、各移動の 2 値の最小 ≤ 今の値、E ≤ 2c E\*(BVZ 2001 Theorem 6.1、Potts c = 1) | 大域解。PoC の 3×3 の罠で E = 72 / E\* = 57(比 1.26、上界 2 の内側) |</p>
+<p>| <code style="color:#22d3bf">alpha_expansion</code> | 受け入れの列 <code style="color:#22d3bf">energies</code> は単調減少、各移動の 2 値の最小 ≤ 今の値、E ≤ 2c E*(BVZ 2001 Theorem 6.1、Potts c = 1) | 大域解。PoC の 3×3 の罠で E = 72 / E* = 57(比 1.26、上界 2 の内側) |</p>
 <p>| <code style="color:#22d3bf">statistical_region_merging</code> | なし(述語の係数・誤差上界の定理の文言を原論文で確認できていない) | q に対する領域数の単調性 —— 実測として返すだけで門にしない |</p>
 <p>| <code style="color:#22d3bf">max_tree</code> / <code style="color:#22d3bf">area_opening_attr</code> | 開放は冪等・反拡大・増加(増加する属性の連結開放は代数的開放)、skimage の <code style="color:#22d3bf">area_opening</code> / <code style="color:#22d3bf">diameter_opening</code> と画素一致・節の数一致 | 増加しない属性(この op は面積と径だけを受ける) |</p>
 <p>| <code style="color:#22d3bf">quasi_flat_zones</code> / <code style="color:#22d3bf">alpha_tree</code> | 「差 &gt; α の辺を落とした連結成分」=「最小全域木の重み ≤ α の辺の連結成分」(最小全域木の切断性質)、α を増やすと入れ子 | α が大きいと <b>連鎖効果</b> で勾配沿いに全部つながる(α-連結の性質そのもの) |</p>
@@ -92,7 +77,7 @@ print(round(q[&quot;boundary_recall&quot;], 3), round(q[&quot;cuse&quot;], 3))</
 <p>|---|---|---|</p>
 <p>| graph cut の λ を上げたら雑音は消えたが、細い線(幅 1〜3 px)も消えた | 平滑項は「細い物」と「雑音」を区別しない(縁の長さに罰を掛けるだけ)。PoC で λ = 0.1 は粒の Dice +0.13、線の Dice −0.11〜−0.15 | <code style="color:#22d3bf">contrast_sigma</code> で縁の強い所の罰を下げる、細い物は <code style="color:#22d3bf">seeds</code> で縛る、または別の op(稜線の検出)で拾う |</p>
 <p>| <code style="color:#22d3bf">alpha_expansion</code> が画素ごとの判定のまま 1 度も動かない(<code style="color:#22d3bf">n_accepted</code> = 0) | 雑音が段の差に比べて小さく、画素ごとの判定が既に最小。または λ が小さすぎる | 異常ではない。<code style="color:#22d3bf">energies</code> と <code style="color:#22d3bf">move_minima</code> を見て、平滑項を試したいなら λ を上げる |</p>
-<p>| <code style="color:#22d3bf">alpha_expansion</code> の結果が大域解より悪い | expansion は局所解(E ≤ 2c E\* の保証だけ)。1 回の移動は 1 ラベルしか広げないので、2 つのラベルを同時に動かさないと抜けられない局所解がある(PoC の 3×3、λ = 12: 全画素がラベル 2 で止まり E = 72、大域解 57) | <code style="color:#22d3bf">init</code> を変えて回し直し小さいほうを取る、<code style="color:#22d3bf">pairwise</code> / λ を見直す。比が上界 <code style="color:#22d3bf">bound_factor</code> を超えることは無い |</p>
+<p>| <code style="color:#22d3bf">alpha_expansion</code> の結果が大域解より悪い | expansion は局所解(E ≤ 2c E* の保証だけ)。1 回の移動は 1 ラベルしか広げないので、2 つのラベルを同時に動かさないと抜けられない局所解がある(PoC の 3×3、λ = 12: 全画素がラベル 2 で止まり E = 72、大域解 57) | <code style="color:#22d3bf">init</code> を変えて回し直し小さいほうを取る、<code style="color:#22d3bf">pairwise</code> / λ を見直す。比が上界 <code style="color:#22d3bf">bound_factor</code> を超えることは無い |</p>
 <p>| SRM がどの q でも質感の違う 2 領域を 1 つにする | 述語は <b>領域の平均</b> しか見ない。平均が同じで質感だけ違う世界は割れない(PoC で 3 seed とも「全部 1 領域」より良くならない) | 先に局所の分散・テクスチャ特徴の画像を作って渡す |</p>
 <p>| SRM が <code style="color:#22d3bf">ValueError</code>(範囲の外) | 画素の値を <code style="color:#22d3bf">value_range</code>(既定 (0, 1))で [0, g − 1] に写す。範囲の外の値は黙って切らない | <code style="color:#22d3bf">value_range</code> を画像の実際の範囲にする |</p>
 <p>| 照明の勾配で isodata が半分を丸ごと取る | isodata は 2 群の平均の中点。勾配があると「明るい側」と「暗い側」が 2 群になる(PoC で Dice 0.29〜0.41) | Kittler(2 群の分散を別々に持つ、同じ世界で Dice 0.93〜0.99)、または先にフラットフィールド補正 |</p>
@@ -118,15 +103,8 @@ print(round(q[&quot;boundary_recall&quot;], 3), round(q[&quot;cuse&quot;], 3))</
 <p style="margin:2px 0 2px 12px">• Ridler, Calvard 1978, &quot;Picture thresholding using an iterative selection method&quot;: &lt;https://doi.org/10.1109/TSMC.1978.4310039&gt;</p>
 <p style="margin:2px 0 2px 12px">• Kittler, Illingworth 1986, &quot;Minimum error thresholding&quot;: &lt;https://doi.org/10.1016/0031-3203(86)90030-0&gt;</p>
 <p style="margin:2px 0 2px 12px">• Kapur, Sahoo, Wong 1985, &quot;A new method for gray-level picture thresholding using the entropy of the histogram&quot;: &lt;https://doi.org/10.1016/0734-189X(85)90125-2&gt;</p>
-<p><code style="color:#22d3bf">seggraph</code> の docstring に、原論文の版面で確かめた式(BVZ 2001 の Theorem 6.1・Boykov–Jolly の重みの表・SNIC の</p>
-<p>Algorithm 1 と CUSE の式 (2)・quick shift の木)と、記憶や広く使われる実装にとどまる箇所(SRM の述語の係数、</p>
-<p>Kittler / Kapur / 三角法の作図の規約、分水嶺カット = 最小全域森の定理の文言)を分けて書いてあります。</p>
+<p><code style="color:#22d3bf">seggraph</code> の docstring に、原論文の版面で確かめた式(BVZ 2001 の Theorem 6.1・Boykov–Jolly の重みの表・SNIC の Algorithm 1 と CUSE の式 (2)・quick shift の木)と、記憶や広く使われる実装にとどまる箇所(SRM の述語の係数、Kittler / Kapur / 三角法の作図の規約、分水嶺カット = 最小全域森の定理の文言)を分けて書いてあります。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">segeval</code>(採点の物差し)と <code style="color:#22d3bf">segworld</code>(真値つきの合成世界): <code style="color:#22d3bf">segmentation_scoring_and_worlds</code> ガイド。</p>
-<p>どの世界でどれが勝つか(触れ合う粒・雑音と細い線・質感・照明の勾配)は PoC</p>
-<p><code style="color:#22d3bf">examples/poc_graph_hierarchy_segmentation.py</code> が数で見せます。</p>
-<p style="margin:2px 0 2px 12px">• 既存の 2-D レジストリ: <code style="color:#22d3bf">sk_area_opening</code>(skimage、<code style="color:#22d3bf">area_opening_attr</code> の照合相手)、<code style="color:#22d3bf">sk_slic</code> / <code style="color:#22d3bf">sg_slic_superpixels</code></p>
-<p>(SLIC)、<code style="color:#22d3bf">binary_threshold</code> / <code style="color:#22d3bf">auto_threshold</code>(大津)、<code style="color:#22d3bf">xsitk_maxentropy_thresh</code>(SimpleITK の最大エントロピー、</p>
-<p>マスクだけを返す —— <code style="color:#22d3bf">threshold_kapur</code> は基準の曲線つき・依存なしの版)。</p>
-<p style="margin:2px 0 2px 12px">• 動的輪郭とレベルセット(<code style="color:#22d3bf">active_contours_and_level_sets</code> ガイド)、HALCON Segmentation 章の 9 op</p>
-<p>(<code style="color:#22d3bf">halcon_segmentation</code> ガイド): 同じ台帳 <code style="color:#22d3bf">opssegmentation</code> の他のカテゴリ。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">segeval</code>(採点の物差し)と <code style="color:#22d3bf">segworld</code>(真値つきの合成世界): <code style="color:#22d3bf">segmentation_scoring_and_worlds</code> ガイド。どの世界でどれが勝つか(触れ合う粒・雑音と細い線・質感・照明の勾配)は PoC <code style="color:#22d3bf">examples/poc_graph_hierarchy_segmentation.py</code> が数で見せます。</p>
+<p style="margin:2px 0 2px 12px">• 既存の 2-D レジストリ: <code style="color:#22d3bf">sk_area_opening</code>(skimage、<code style="color:#22d3bf">area_opening_attr</code> の照合相手)、<code style="color:#22d3bf">sk_slic</code> / <code style="color:#22d3bf">sg_slic_superpixels</code> (SLIC)、<code style="color:#22d3bf">binary_threshold</code> / <code style="color:#22d3bf">auto_threshold</code>(大津)、<code style="color:#22d3bf">xsitk_maxentropy_thresh</code>(SimpleITK の最大エントロピー、マスクだけを返す —— <code style="color:#22d3bf">threshold_kapur</code> は基準の曲線つき・依存なしの版)。</p>
+<p style="margin:2px 0 2px 12px">• 動的輪郭とレベルセット(<code style="color:#22d3bf">active_contours_and_level_sets</code> ガイド)、HALCON Segmentation 章の 9 op (<code style="color:#22d3bf">halcon_segmentation</code> ガイド): 同じ台帳 <code style="color:#22d3bf">opssegmentation</code> の他のカテゴリ。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × any × table</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_state_sequence(X, sticks, params: &#x27;dict&#x27;, *, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;, mode0: &#x27;str&#x27; = &#x27;on_string&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import diabolo; diabolo.diabolo_state_sequence(X, sticks, params: &#x27;dict&#x27;, *, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;, mode0: &#x27;str&#x27; = &#x27;on_string&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_state_sequence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>位置の列 X (N, 3) と棒 (N, 2, 3) から論文の状態遷移だけを回す(観測した軌跡の分類用、力学は解かない)。有限でない行は</p>
-<p>直前の状態を保つ(追跡が見失ったコマ)。返り (N,) の状態名。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形・長さ・綴り。</p>
+<p>位置の列 X (N, 3) と棒 (N, 2, 3) から論文の状態遷移だけを回す(観測した軌跡の分類用、力学は解かない)。有限でない行は直前の状態を保つ(追跡が見失ったコマ)。返り (N,) の状態名。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・長さ・綴り。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

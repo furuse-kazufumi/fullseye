@@ -5,14 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>点の、折線の経路に沿った弧長 s と横ずれ n(進行方向の左が正)。最も近い区間への射影。</p>
-<p>`<code style="color:#22d3bf">start_index</code><code style="color:#22d3bf">(点ごと、または 1 つ)を与えると、その区間の前後 </code><code style="color:#22d3bf">window</code>` 区間だけを調べる(繰り返しを速くする。</p>
-<p>窓の外に本当の最寄りがあると誤るので、点が少しずつ動くときに使う)。None なら全区間を調べる。</p>
-<p>返り値: `<code style="color:#22d3bf">s</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">index</code><code style="color:#22d3bf">(区間)、</code><code style="color:#22d3bf">heading</code>`(その区間の向き)。点 (2,) なら スカラー。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形の誤り、start_index が範囲外。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">start_index</code>(点ごと、または 1 つ)を与えると、その区間の前後 <code style="color:#22d3bf">window</code> 区間だけを調べる(繰り返しを速くする。窓の外に本当の最寄りがあると誤るので、点が少しずつ動くときに使う)。None なら全区間を調べる。</p>
+<p>返り値: <code style="color:#22d3bf">s</code>, <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">index</code>(区間)、<code style="color:#22d3bf">heading</code>(その区間の向き)。点 (2,) なら スカラー。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、start_index が範囲外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_lateral">poc_driving_lateral</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_lateral.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

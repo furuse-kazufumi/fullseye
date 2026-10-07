@@ -2,24 +2,13 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_wall_thickness — 3D <code style="color:#22d3bf">probe</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_wall_thickness&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness(...)</code> は**宣言 out 型 <code style="color:#22d3bf">signal</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness.raw(...)</code>、または <code style="color:#22d3bf">volprobe.vol_wall_thickness</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">signal</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness.raw(...)</code>、または <code style="color:#22d3bf">volprobe.vol_wall_thickness</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Wall thicknesses along the probe `<code style="color:#22d3bf">p0 -&gt; p1</code>` — the industrial-CT</p>
+<p>Wall thicknesses along the probe <code style="color:#22d3bf">p0 -&gt; p1</code> — the industrial-CT</p>
 <p>measurement itself.</p>
-<p>Runs :func:<code style="color:#22d3bf">vol_edge_probe</code> (all polarities) and pairs consecutive</p>
-<p>opposite-polarity edges *rising -&gt; falling* in probe order: each pair is</p>
-<p>one traversal of bright material (entry surface -&gt; exit surface), and its</p>
-<p>thickness is the difference of the two edges&#x27; `<code style="color:#22d3bf">t_mm</code>` (physical units —</p>
-<p>mm with a spacing, voxels without). A probe crossing both walls of a pipe</p>
-<p>therefore yields two thicknesses.</p>
-<p>Edges that do not complete a rising -&gt; falling pair (a probe starting or</p>
-<p>ending inside material, consecutive same-polarity edges) are <b>ignored</b>,</p>
-<p>not paired creatively — the count of returned thicknesses can be smaller</p>
-<p>than `<code style="color:#22d3bf">len(edges) // 2</code>`. Dark walls on a bright background need an</p>
-<p>inverted volume (the pairing convention is bright material).</p>
-<p>Returns a list of float thicknesses, in probe order (possibly empty).</p>
-<p>Raises `<code style="color:#22d3bf">ValueError</code>` on the same malformed inputs as</p>
-<p>:func:<code style="color:#22d3bf">vol_edge_probe</code>.</p>
+<p>Runs <code style="color:#22d3bf">vol_edge_probe</code> (all polarities) and pairs consecutive opposite-polarity edges *rising -&gt; falling* in probe order: each pair is one traversal of bright material (entry surface -&gt; exit surface), and its thickness is the difference of the two edges&#x27; <code style="color:#22d3bf">t_mm</code> (physical units — mm with a spacing, voxels without). A probe crossing both walls of a pipe therefore yields two thicknesses.</p>
+<p>Edges that do not complete a rising -&gt; falling pair (a probe starting or ending inside material, consecutive same-polarity edges) are <b>ignored</b>, not paired creatively — the count of returned thicknesses can be smaller than <code style="color:#22d3bf">len(edges) // 2</code>. Dark walls on a bright background need an inverted volume (the pairing convention is bright material).</p>
+<p>Returns a list of float thicknesses, in probe order (possibly empty). Raises <code style="color:#22d3bf">ValueError</code> on the same malformed inputs as <code style="color:#22d3bf">vol_edge_probe</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

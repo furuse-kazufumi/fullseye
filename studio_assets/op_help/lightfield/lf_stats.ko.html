@@ -5,18 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>라이트필드의 소개: 형상·각도 중심·담을 수 있는 기울기 범위.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Returns a dict — `<code style="color:#22d3bf">angular_v</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">angular_u</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">height</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">width</code>` ·</p>
-<p>`<code style="color:#22d3bf">n_views = V*U</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">center_v</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">center_u</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">(N-1)/2</code>`, a half-integer</p>
-<p>when the axis is even, so `<code style="color:#22d3bf">center_is_a_view</code>` says whether a single view</p>
-<p>actually sits at the centre) · `<code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean</code>` of the samples ·</p>
-<p>`<code style="color:#22d3bf">max_slope_px</code><code style="color:#22d3bf">, the largest </code><code style="color:#22d3bf">|s|</code>` for which the extreme view is still</p>
-<p>displaced by less than half the frame, i.e. the honest limit of what this</p>
-<p>array can measure (`<code style="color:#22d3bf">min(H, W) / max(V-1, U-1, 1)</code>`; reported as</p>
-<p>`<code style="color:#22d3bf">float(min(H, W))</code>` when the array has a single view in both directions,</p>
-<p>since then no shift happens at all) · `<code style="color:#22d3bf">baseline_views</code>`, the angular span</p>
-<p>`<code style="color:#22d3bf">(V-1, U-1)</code>` that any disparity is measured over.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* is not a finite 4-D array within the shape</p>
-<p>and element caps.</p>
+<p>Returns a dict — <code style="color:#22d3bf">angular_v</code> / <code style="color:#22d3bf">angular_u</code> · <code style="color:#22d3bf">height</code> / <code style="color:#22d3bf">width</code> · <code style="color:#22d3bf">n_views = V*U</code> · <code style="color:#22d3bf">center_v</code> / <code style="color:#22d3bf">center_u</code> (<code style="color:#22d3bf">(N-1)/2</code>, a half-integer when the axis is even, so <code style="color:#22d3bf">center_is_a_view</code> says whether a single view actually sits at the centre) · <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">mean</code> of the samples · <code style="color:#22d3bf">max_slope_px</code>, the largest <code style="color:#22d3bf">|s|</code> for which the extreme view is still displaced by less than half the frame, i.e. the honest limit of what this array can measure (<code style="color:#22d3bf">min(H, W) / max(V-1, U-1, 1)</code>; reported as <code style="color:#22d3bf">float(min(H, W))</code> when the array has a single view in both directions, since then no shift happens at all) · <code style="color:#22d3bf">baseline_views</code>, the angular span <code style="color:#22d3bf">(V-1, U-1)</code> that any disparity is measured over.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* is not a finite 4-D array within the shape and element caps.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

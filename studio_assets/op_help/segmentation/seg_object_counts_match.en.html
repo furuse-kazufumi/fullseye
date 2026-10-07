@@ -5,18 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Object-count agreement: counts split / merged / missed / false / matched from the degrees of a &#x27;mainly overlapping&#x27; bipartite graph (seg_object_counts_match).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>真 i と予測 j(どちらも背景でない)の間に辺を置く条件 = 重なり n_ij ≥ `<code style="color:#22d3bf">min_overlap</code>` × min(|i|, |j|)</p>
-<p>(小さい方がもう一方に主に入っている)。真の次数 d_i、予測の次数 e_j:</p>
-<p>`<code style="color:#22d3bf">missed</code><code style="color:#22d3bf"> = #{d_i = 0}、</code><code style="color:#22d3bf">false</code><code style="color:#22d3bf"> = #{e_j = 0}、</code><code style="color:#22d3bf">split</code>` = #{d_i ≥ 2}(1 つの真が複数の予測に割れた)、</p>
-<p>`<code style="color:#22d3bf">merged</code><code style="color:#22d3bf"> = #{e_j ≥ 2}(1 つの予測が複数の真を抱えた)、</code><code style="color:#22d3bf">matched</code>` = #{d_i = 1 かつ その相手の e_j = 1}。</p>
-<p>`<code style="color:#22d3bf">counts_match</code>` = 真と予測の個数が同じで全部が一致。min_overlap &gt; 0.5 なら各予測は高々 1 つの真に「主に入る」が、</p>
-<p>真が小さく予測が大きい辺もあるので融合は検出できる。</p>
-<p>返り値: 上の数 + `<code style="color:#22d3bf">n_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_pred</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf">(真ラベル, 予測ラベル)の (m, 2)、</code><code style="color:#22d3bf">split_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">merged_pred</code>` /</p>
-<p>`<code style="color:#22d3bf">missed_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">false_pred</code><code style="color:#22d3bf">(ラベルの配列)、</code><code style="color:#22d3bf">min_overlap</code>`。</p>
+<p>真 i と予測 j(どちらも背景でない)の間に辺を置く条件 = 重なり n_ij ≥ <code style="color:#22d3bf">min_overlap</code> × min(|i|, |j|) (小さい方がもう一方に主に入っている)。真の次数 d_i、予測の次数 e_j:</p>
+<p><code style="color:#22d3bf">missed</code> = #{d_i = 0}、<code style="color:#22d3bf">false</code> = #{e_j = 0}、<code style="color:#22d3bf">split</code> = #{d_i ≥ 2}(1 つの真が複数の予測に割れた)、<code style="color:#22d3bf">merged</code> = #{e_j ≥ 2}(1 つの予測が複数の真を抱えた)、<code style="color:#22d3bf">matched</code> = #{d_i = 1 かつ その相手の e_j = 1}。<code style="color:#22d3bf">counts_match</code> = 真と予測の個数が同じで全部が一致。min_overlap &gt; 0.5 なら各予測は高々 1 つの真に「主に入る」が、真が小さく予測が大きい辺もあるので融合は検出できる。</p>
+<p>返り値: 上の数 + <code style="color:#22d3bf">n_true</code> / <code style="color:#22d3bf">n_pred</code>、<code style="color:#22d3bf">edges</code>(真ラベル, 予測ラベル)の (m, 2)、<code style="color:#22d3bf">split_true</code> / <code style="color:#22d3bf">merged_pred</code> / <code style="color:#22d3bf">missed_true</code> / <code style="color:#22d3bf">false_pred</code>(ラベルの配列)、<code style="color:#22d3bf">min_overlap</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — Scoring segmentations and synthetic worlds with ground truth — which metric is blind to which failure</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

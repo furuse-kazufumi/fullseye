@@ -5,17 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>cuBLAS の FP64 エミュレーション(CUDA 13.0 Update 2 以降)が、この計算機で使えるかを表で返す。</p>
-<p><b>例外を出さない</b>: GPU・CUDA・cuBLAS 13 が無ければ `<code style="color:#22d3bf">available=False</code>` と理由を返す(重い依存は持たない。ctypes で</p>
-<p>ライブラリを開いて版を読むだけ)。返り: `<code style="color:#22d3bf">available</code><code style="color:#22d3bf">(bool)、</code><code style="color:#22d3bf">rows</code><code style="color:#22d3bf">(候補ごとの </code><code style="color:#22d3bf">library</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">path</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">loaded</code>`・</p>
-<p>`<code style="color:#22d3bf">cublas_version</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">emulation_api</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">cublasSetEmulationStrategy</code><code style="color:#22d3bf"> があるか)・</code><code style="color:#22d3bf">gpu</code>`(ハンドルを作れたか)・</p>
-<p>`<code style="color:#22d3bf">reason</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">how</code><code style="color:#22d3bf">(有効にする方法)、</code><code style="color:#22d3bf">note</code>`。</p>
-<p>有効にする方法は opt-in: math mode `<code style="color:#22d3bf">CUBLAS_FP64_EMULATED_FIXEDPOINT_MATH</code>`、またはコードを変えずに</p>
-<p>`<code style="color:#22d3bf">CUBLAS_EMULATE_DOUBLE_PRECISION=1</code>`。cuBLAS の文書はエミュレーション中はビット単位の再現の保証が外れると書く</p>
-<p>—— 再現が要るなら :func:<code style="color:#22d3bf">matmul_reproducible</code>。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><b>例外を出さない</b>: GPU・CUDA・cuBLAS 13 が無ければ <code style="color:#22d3bf">available=False</code> と理由を返す(重い依存は持たない。ctypes でライブラリを開いて版を読むだけ)。返り: <code style="color:#22d3bf">available</code>(bool)、<code style="color:#22d3bf">rows</code>(候補ごとの <code style="color:#22d3bf">library</code>・<code style="color:#22d3bf">path</code>・<code style="color:#22d3bf">loaded</code>・ <code style="color:#22d3bf">cublas_version</code>・<code style="color:#22d3bf">emulation_api</code>(<code style="color:#22d3bf">cublasSetEmulationStrategy</code> があるか)・<code style="color:#22d3bf">gpu</code>(ハンドルを作れたか)・ <code style="color:#22d3bf">reason</code>)、<code style="color:#22d3bf">how</code>(有効にする方法)、<code style="color:#22d3bf">note</code>。</p>
+<p>有効にする方法は opt-in: math mode <code style="color:#22d3bf">CUBLAS_FP64_EMULATED_FIXEDPOINT_MATH</code>、またはコードを変えずに <code style="color:#22d3bf">CUBLAS_EMULATE_DOUBLE_PRECISION=1</code>。cuBLAS の文書はエミュレーション中はビット単位の再現の保証が外れると書く —— 再現が要るなら <code style="color:#22d3bf">matmul_reproducible</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_reproducible_icp">poc_reproducible_icp</a> — <code style="color:#22d3bf">py -3.11 examples/poc_reproducible_icp.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

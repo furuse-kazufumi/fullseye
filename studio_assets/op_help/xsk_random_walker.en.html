@@ -14,14 +14,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Graph-based region segmentation using the random walker method.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>skimage.segmentation.random_walker で、明暗の閾値から自動生成した</p>
-<p>2 クラスのシード(marker)を出発点に、各画素がどちらのシードへ拡散</p>
-<p>伝播しやすいかを解いて 2 値ラベルに分割し、そのラベル境界を返す</p>
-<p>(返り値は領域そのものではなく、領域の境界線 region)。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシードの閾値幅を振る(暗側シード </code><code style="color:#22d3bf">&lt; 0.3+0.2a</code>`、明側シード</p>
-<p>`<code style="color:#22d3bf">&gt; 0.7-0.2a</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">a</code>` が大きいほどシードが広がり不定領域が減る)。</p>
-<p>`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は拡散のしやすさを決める </code><code style="color:#22d3bf">beta</code>`(10〜210)を振り、大きいほど</p>
-<p>エッジをまたいだ伝播が抑えられ境界がシャープになる。</p>
+<p>skimage.segmentation.random_walker で、明暗の閾値から自動生成した 2 クラスのシード(marker)を出発点に、各画素がどちらのシードへ拡散伝播しやすいかを解いて 2 値ラベルに分割し、そのラベル境界を返す(返り値は領域そのものではなく、領域の境界線 region)。</p>
+<p><code style="color:#22d3bf">a</code> がシードの閾値幅を振る(暗側シード <code style="color:#22d3bf">&lt; 0.3+0.2a</code>、明側シード <code style="color:#22d3bf">&gt; 0.7-0.2a</code>。<code style="color:#22d3bf">a</code> が大きいほどシードが広がり不定領域が減る)。<code style="color:#22d3bf">b</code> は拡散のしやすさを決める <code style="color:#22d3bf">beta</code>(10〜210)を振り、大きいほどエッジをまたいだ伝播が抑えられ境界がシャープになる。</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

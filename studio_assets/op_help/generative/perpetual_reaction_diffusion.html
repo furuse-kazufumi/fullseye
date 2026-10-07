@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_reaction_diffusion(size: &#x27;int&#x27; = 220, steps: &#x27;int&#x27; = 1600, feed: &#x27;float&#x27; = 0.037, kill: &#x27;float&#x27; = 0.06, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import perpetual; perpetual.perpetual_reaction_diffusion(size: &#x27;int&#x27; = 220, steps: &#x27;int&#x27; = 1600, feed: &#x27;float&#x27; = 0.037, kill: &#x27;float&#x27; = 0.06, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_reaction_diffusion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>グレイ–スコット反応拡散 ―― 模様が生まれ、分裂し、増え続ける。</p>
-<p>不変量: **餌も死も 0(`<code style="color:#22d3bf">feed = kill = 0</code>`)なら、総量は厳密に保存される**</p>
-<p>—— 拡散は再分配であって生成ではないから。数値解法が壊れていれば、</p>
-<p>ここが真っ先に崩れる(:func:<code style="color:#22d3bf">perpetual_identities</code>)。</p>
+<p>不変量: <b>餌も死も 0(<code style="color:#22d3bf">feed = kill = 0</code>)なら、総量は厳密に保存される</b> —— 拡散は再分配であって生成ではないから。数値解法が壊れていれば、ここが真っ先に崩れる(<code style="color:#22d3bf">perpetual_identities</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

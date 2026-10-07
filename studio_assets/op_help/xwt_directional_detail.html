@@ -6,14 +6,14 @@
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xwt_directional_detail.b.jpg">xwt_directional_detail: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xwt_directional_detail.b.jpg">xwt_directional_detail: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xwt_directional_detail.inputs.jpg">xwt_directional_detail: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xwt_directional_detail.inputs.jpg">xwt_directional_detail: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>方向別エッジ検出。1 段の `<code style="color:#22d3bf">db2</code><code style="color:#22d3bf"> 分解から水平(cH)・垂直(cV)・対角(cD)のいずれか 1 つの詳細サブバンドを選び、絶対値を正規化してから元の解像度までブロック拡大(</code><code style="color:#22d3bf">kron</code>` で 2x2 複製)して返す。</p>
-<p>`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> でどの方向を見るか選ぶ(</code><code style="color:#22d3bf">min(2,int(b*3))</code><code style="color:#22d3bf"> で cH→cV→cD の 3 択)。</code><code style="color:#22d3bf">a</code>` は未使用。サブバンドは元画像の半分の解像度なのでブロック状に拡大されることに注意(滑らかな拡大ではない)。</p>
-<p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">)(実測。</code>tools/impl2/border_probe.py`)。</p>
+<p>方向別エッジ検出。1 段の <code style="color:#22d3bf">db2</code> 分解から水平(cH)・垂直(cV)・対角(cD)のいずれか 1 つの詳細サブバンドを選び、絶対値を正規化してから元の解像度までブロック拡大(<code style="color:#22d3bf">kron</code> で 2x2 複製)して返す。</p>
+<p><code style="color:#22d3bf">b</code> でどの方向を見るか選ぶ(<code style="color:#22d3bf">min(2,int(b*3))</code> で cH→cV→cD の 3 択)。<code style="color:#22d3bf">a</code> は未使用。サブバンドは元画像の半分の解像度なのでブロック状に拡大されることに注意(滑らかな拡大ではない)。</p>
+<p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 <code style="color:#22d3bf">reflect</code>)(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -22,7 +22,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xwt_directional_detail 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:xwt_directional_detail%200.40%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xwt_directional_detail%200.40%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xwt_directional_detail 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:xwt_directional_detail%200.40%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xwt_directional_detail%200.40%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_edges">gallery2d_edges</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_edges.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

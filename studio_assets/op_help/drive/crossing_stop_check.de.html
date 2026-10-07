@@ -5,17 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>踏切の通り方を採点する(33 条 1・2 項、50 条 2 項、教則 6-1-1(1)(3)(4)(5))。</p>
-<p>`<code style="color:#22d3bf">trajectory</code>` = {&quot;t&quot;, &quot;x&quot;[, &quot;v&quot;]}(x = 車の前端)。判定(違反の名前):</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">no_stop</code>`(33 条 1 項): 前端が踏切に入る前に、停止線の直前([stop_line − near, stop_line])で止まっていない</p>
-<p>(`<code style="color:#22d3bf">signal_controlled</code>` なら免除)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">no_look</code>`(33 条 1 項・教則 6-1-1(1)(2)): <b>最後の停止</b>の間(止まってから動き出すまで)に左右の両方を見ていない。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">entered_while_forbidden</code><code style="color:#22d3bf">(33 条 2 項): 前端が踏切の手前の端を越えた時刻が </code><code style="color:#22d3bf">forbidden_intervals</code>` の中。</p>
-<p>`<code style="color:#22d3bf">brake_max</code>` [m/s²] を渡すと、その区間の始まりの時点で brake_max の減速では踏切の手前に止まれなかった進入</p>
-<p>(v² / (2 brake_max) &gt; 踏切までの距離)は違反に数えず `<code style="color:#22d3bf">unavoidable</code>` に記録する(黄信号で止まれない距離と同じ</p>
-<p>考え方。法に明文の例外は無い = <b>解釈・仮定</b>)。None なら例外なし。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">no_exit_room</code><code style="color:#22d3bf">(50 条 2 項): 入った時刻に向こう側の余地が無い(</code><code style="color:#22d3bf">exit_room_check</code>`)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">stopped_inside</code>`(教則 6-1-1(5)): 車体が踏切にかかっている間に止まった。</p>
-<p>踏切に入らなかった軌跡は `<code style="color:#22d3bf">entered</code>` = False(違反は停止・確認以外を数えない)。</p>
+<p><code style="color:#22d3bf">trajectory</code> = {&quot;t&quot;, &quot;x&quot;[, &quot;v&quot;]}(x = 車の前端)。判定(違反の名前):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">no_stop</code>(33 条 1 項): 前端が踏切に入る前に、停止線の直前([stop_line − near, stop_line])で止まっていない(<code style="color:#22d3bf">signal_controlled</code> なら免除)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">no_look</code>(33 条 1 項・教則 6-1-1(1)(2)): <b>最後の停止</b>の間(止まってから動き出すまで)に左右の両方を見ていない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">entered_while_forbidden</code>(33 条 2 項): 前端が踏切の手前の端を越えた時刻が <code style="color:#22d3bf">forbidden_intervals</code> の中。<code style="color:#22d3bf">brake_max</code> [m/s²] を渡すと、その区間の始まりの時点で brake_max の減速では踏切の手前に止まれなかった進入(v² / (2 brake_max) &gt; 踏切までの距離)は違反に数えず <code style="color:#22d3bf">unavoidable</code> に記録する(黄信号で止まれない距離と同じ考え方。法に明文の例外は無い = <b>解釈・仮定</b>)。None なら例外なし。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">no_exit_room</code>(50 条 2 項): 入った時刻に向こう側の余地が無い(<code style="color:#22d3bf">exit_room_check</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">stopped_inside</code>(教則 6-1-1(5)): 車体が踏切にかかっている間に止まった。</p>
+<p>踏切に入らなかった軌跡は <code style="color:#22d3bf">entered</code> = False(違反は停止・確認以外を数えない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

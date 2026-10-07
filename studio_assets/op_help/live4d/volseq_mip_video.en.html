@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_mip_video(volseq, axis: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import live4d; live4d.volseq_mip_video(volseq, axis: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opslive4d.get(&quot;volseq_mip_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>体積時系列を軸 `<code style="color:#22d3bf">axis</code><code style="color:#22d3bf">(1 = z, 2 = y, 3 = x)の最大値投影で動画 </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> に畳む(</code><code style="color:#22d3bf">video</code>`)。</p>
-<p>畳んだ先は `<code style="color:#22d3bf">video_spacetime_cube</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">video_cube_cut</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">motion_magnify</code>` など 2D+t の op がそのまま</p>
-<p>使える。最大値投影は「奥行きのどこかにあれば見える」投影なので、重なりは失われる(何を失ったかは</p>
-<p>`<code style="color:#22d3bf">volseq_cut_video</code>` の断面と見比べる)。</p>
+<p>体積時系列を軸 <code style="color:#22d3bf">axis</code>(1 = z, 2 = y, 3 = x)の最大値投影で動画 <code style="color:#22d3bf">(T, H, W)</code> に畳む(<code style="color:#22d3bf">video</code>)。</p>
+<p>畳んだ先は <code style="color:#22d3bf">video_spacetime_cube</code> / <code style="color:#22d3bf">video_cube_cut</code> / <code style="color:#22d3bf">motion_magnify</code> など 2D+t の op がそのまま使える。最大値投影は「奥行きのどこかにあれば見える」投影なので、重なりは失われる(何を失ったかは <code style="color:#22d3bf">volseq_cut_video</code> の断面と見比べる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

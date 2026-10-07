@@ -5,14 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>アンダーステア勾配 K = (m/L)(l_r/C_f − l_f/C_r) [rad/(m/s²)] と、特性速度 / 臨界速度。</p>
-<p>`<code style="color:#22d3bf">params</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">mass</code><code style="color:#22d3bf"> [kg]、</code><code style="color:#22d3bf">l_f</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">l_r</code><code style="color:#22d3bf">(重心から前・後車軸)[m]、</code><code style="color:#22d3bf">c_f</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">c_r</code>`(軸ごとのコーナリングパワー)[N/rad]。</p>
-<p>返り値: `<code style="color:#22d3bf">K</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">kind</code><code style="color:#22d3bf">(&quot;understeer&quot; / &quot;neutral&quot; / &quot;oversteer&quot;)、</code><code style="color:#22d3bf">characteristic_speed</code>`(K &gt; 0 で √(L/K)、</p>
-<p>ヨーレートゲインが最大の速さ)、`<code style="color:#22d3bf">critical_speed</code><code style="color:#22d3bf">(K &lt; 0 で √(−L/K)、これを超えると不安定)。無いものは </code><code style="color:#22d3bf">inf</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 欠けた / 正でない母数。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">params</code>: <code style="color:#22d3bf">mass</code> [kg]、<code style="color:#22d3bf">l_f</code>・<code style="color:#22d3bf">l_r</code>(重心から前・後車軸)[m]、<code style="color:#22d3bf">c_f</code>・<code style="color:#22d3bf">c_r</code>(軸ごとのコーナリングパワー)[N/rad]。</p>
+<p>返り値: <code style="color:#22d3bf">K</code>、<code style="color:#22d3bf">kind</code>(&quot;understeer&quot; / &quot;neutral&quot; / &quot;oversteer&quot;)、<code style="color:#22d3bf">characteristic_speed</code>(K &gt; 0 で √(L/K)、ヨーレートゲインが最大の速さ)、<code style="color:#22d3bf">critical_speed</code>(K &lt; 0 で √(−L/K)、これを超えると不安定)。無いものは <code style="color:#22d3bf">inf</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 欠けた / 正でない母数。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_lateral">poc_driving_lateral</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_lateral.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

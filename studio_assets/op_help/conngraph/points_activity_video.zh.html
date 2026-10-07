@@ -5,22 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>点群に活動を載せて回す色動画 (F, H, W, 3)、値 [0, 1]。F = T × substeps、H = size、W = size × aspect。</p>
-<p>`<code style="color:#22d3bf">views</code>` に (yaw, pitch) の並び(度)を渡すと<b>回さずに</b>、その方向から見たコマを横に並べる</p>
-<p>(W = views 数 × size × aspect + 4 px の隙間、yaw_start / yaw_span は使わない)。同じ瞬間を</p>
-<p>複数の方向から見比べる用(例: 背側 (0, 0) / 側面 (90, 0) / 体軸方向 (0, 90))。</p>
-<p>`<code style="color:#22d3bf">P</code><code style="color:#22d3bf"> = (n, 3) の座標、</code><code style="color:#22d3bf">X</code>` = (T, n) の状態列(reservoir_states)。コマ k は時刻 k / substeps の</p>
-<p>状態(隣り合うステップの線形補間)を、yaw = yaw_start + yaw_span × k / F のカメラで正射影する。</p>
-<p>明るさ b = log1p(gain · |x| / max|X|) / log1p(gain) —— <b>尺度は全コマで 1 つ</b>(コマごとに伸ばすと</p>
-<p>動いていないものがちらつく)。ノードの色 = `<code style="color:#22d3bf">colors</code>`((n, 3)、[0, 1]、None なら白)× (0.2 + 0.8 b)、</p>
-<p>b &gt; 0.5 のノードは一回り大きく明るく塗る。`<code style="color:#22d3bf">background</code>` は (m, 3) の点群を薄い灰で先に敷く</p>
-<p>(脳の全 soma の上に選んだノードを載せる、など)。画角は P と background を合わせた箱で決める。</p>
-<p>出力は F×H×W×3 ≤ MAX_VIDEO_ELEMENTS(2^27)に制限する。</p>
+<p><code style="color:#22d3bf">views</code> に (yaw, pitch) の並び(度)を渡すと<b>回さずに</b>、その方向から見たコマを横に並べる(W = views 数 × size × aspect + 4 px の隙間、yaw_start / yaw_span は使わない)。同じ瞬間を複数の方向から見比べる用(例: 背側 (0, 0) / 側面 (90, 0) / 体軸方向 (0, 90))。</p>
+<p><code style="color:#22d3bf">P</code> = (n, 3) の座標、<code style="color:#22d3bf">X</code> = (T, n) の状態列(reservoir_states)。コマ k は時刻 k / substeps の状態(隣り合うステップの線形補間)を、yaw = yaw_start + yaw_span × k / F のカメラで正射影する。明るさ b = log1p(gain · |x| / max|X|) / log1p(gain) —— <b>尺度は全コマで 1 つ</b>(コマごとに伸ばすと動いていないものがちらつく)。ノードの色 = <code style="color:#22d3bf">colors</code>((n, 3)、[0, 1]、None なら白)× (0.2 + 0.8 b)、b &gt; 0.5 のノードは一回り大きく明るく塗る。<code style="color:#22d3bf">background</code> は (m, 3) の点群を薄い灰で先に敷く(脳の全 soma の上に選んだノードを載せる、など)。画角は P と background を合わせた箱で決める。出力は F×H×W×3 ≤ MAX_VIDEO_ELEMENTS(2^27)に制限する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_connectome_motor_bottleneck">poc_connectome_motor_bottleneck</a> — <code style="color:#22d3bf">py -3.11 examples/poc_connectome_motor_bottleneck.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_branch_territory">poc_em_branch_territory</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_branch_territory.py</code></p>

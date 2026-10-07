@@ -3,21 +3,14 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Advance a particle state by `<code style="color:#22d3bf">dt</code>` seconds. Returns a <b>new</b> dict.</p>
+<p>Advance a particle state by <code style="color:#22d3bf">dt</code> seconds. Returns a <b>new</b> dict.</p>
 <p>Semi-implicit (symplectic) Euler::</p>
 <p>v &lt;- v + (g - drag*v) * dt</p>
 <p>p &lt;- p + v * dt</p>
 <p>age &lt;- age + dt</p>
-<p>which makes the closed form exact and checkable: with `<code style="color:#22d3bf">gravity=(0,0)</code>` and</p>
-<p>`<code style="color:#22d3bf">drag=0</code><code style="color:#22d3bf"> the position after </code><code style="color:#22d3bf">k</code><code style="color:#22d3bf"> steps is </code><code style="color:#22d3bf">p0 + v0*k*dt</code>`, and with drag</p>
-<p>the speed is `<code style="color:#22d3bf">v0 * (1 - drag*dt)**k</code>`. Both are compared as equalities in</p>
-<p>the test suite.</p>
-<p>`<code style="color:#22d3bf">gravity</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">(gx, gy)</code><code style="color:#22d3bf"> in px/s^2, positive </code><code style="color:#22d3bf">gy</code>` pulling <b>down</b> the</p>
-<p>screen. The input dict is never mutated.</p>
-<p>Raises ValueError: `<code style="color:#22d3bf">dt &lt;= 0</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">drag * dt &gt;= 1</code>`, which is the point where</p>
-<p>explicit drag stops decaying the speed and starts reversing it — an</p>
-<p>instability that otherwise shows up as particles flying backwards rather</p>
-<p>than as an error.</p>
+<p>which makes the closed form exact and checkable: with <code style="color:#22d3bf">gravity=(0,0)</code> and <code style="color:#22d3bf">drag=0</code> the position after <code style="color:#22d3bf">k</code> steps is <code style="color:#22d3bf">p0 + v0*k*dt</code>, and with drag the speed is <code style="color:#22d3bf">v0 * (1 - drag*dt)**k</code>. Both are compared as equalities in the test suite.</p>
+<p><code style="color:#22d3bf">gravity</code> is <code style="color:#22d3bf">(gx, gy)</code> in px/s^2, positive <code style="color:#22d3bf">gy</code> pulling <b>down</b> the screen. The input dict is never mutated.</p>
+<p>Raises ValueError: <code style="color:#22d3bf">dt &lt;= 0</code>; <code style="color:#22d3bf">drag * dt &gt;= 1</code>, which is the point where explicit drag stops decaying the speed and starts reversing it — an instability that otherwise shows up as particles flying backwards rather than as an error.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

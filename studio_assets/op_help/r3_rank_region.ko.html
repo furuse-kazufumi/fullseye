@@ -6,17 +6,17 @@
 <p><img src="fig/r3_rank_region.png" alt="r3_rank_region: input → output"></p>
 <p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
 <p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_rank_region.a.jpg">r3_rank_region: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_rank_region.a.jpg">r3_rank_region: 노브 a 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_rank_region.b.jpg">r3_rank_region: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_rank_region.b.jpg">r3_rank_region: 노브 b 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_rank_region.chain.jpg">r3_rank_region: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_rank_region.chain.jpg">r3_rank_region: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_rank_region.inputs.jpg">r3_rank_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_rank_region.inputs.jpg">r3_rank_region: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>영역에 대한 형태학적 순위(rank) 연산자(HALCON의 진짜 `<code style="color:#22d3bf">rank_region</code>`: 순수한 침식도 팽창도 아닌 일반화 형태).</p>
+<p>영역에 대한 형태학적 순위(rank) 연산자(HALCON의 진짜 <code style="color:#22d3bf">rank_region</code>: 순수한 침식도 팽창도 아닌 일반화 형태).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">sz x sz</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">sz</code><code style="color:#22d3bf"> は 3, 5, 7 のいずれかを </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で選ぶ）の窓の中で、領域に属する画素が </code><code style="color:#22d3bf">number</code><code style="color:#22d3bf"> 個以上あれば出力を立てる。</code><code style="color:#22d3bf">number</code><code style="color:#22d3bf"> は</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">（0〜1）を窓面積に対する割合として決める（</code><code style="color:#22d3bf">number = sz*sz</code><code style="color:#22d3bf"> で収縮相当、</code><code style="color:#22d3bf">number = 1</code>` で膨張相当、中間ではランク/メディアンフィルタ相当の挙動になる）。</p>
+<p><code style="color:#22d3bf">sz x sz</code>（<code style="color:#22d3bf">sz</code> は 3, 5, 7 のいずれかを <code style="color:#22d3bf">a</code> で選ぶ）の窓の中で、領域に属する画素が <code style="color:#22d3bf">number</code> 個以上あれば出力を立てる。<code style="color:#22d3bf">number</code> は<code style="color:#22d3bf">b</code>（0〜1）を窓面積に対する割合として決める（<code style="color:#22d3bf">number = sz*sz</code> で収縮相当、<code style="color:#22d3bf">number = 1</code> で膨張相当、中間ではランク/メディアンフィルタ相当の挙動になる）。</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>
@@ -27,7 +27,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
 <p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-r3_rank_region 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ar3_rank_region%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ar3_rank_region%200.50%200.50">Load &amp; run</a></p>
+r3_rank_region 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ar3_rank_region%200.50%200.50">▸ 이 파이프라인 불러오기</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ar3_rank_region%200.50%200.50">불러와서 실행</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">region</code> 를 입력으로 받는 것)</h3>

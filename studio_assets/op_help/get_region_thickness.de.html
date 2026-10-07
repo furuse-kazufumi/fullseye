@@ -8,11 +8,11 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_thickness.chain.jpg">get_region_thickness: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_thickness.chain.jpg">get_region_thickness: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Eine Näherung der Bereichsdicke: `<code style="color:#22d3bf">2 x maximaler Inkreisradius / maximale Seitenlänge</code><code style="color:#22d3bf"> (das Doppelte des Maximums von </code><code style="color:#22d3bf">distance_transform_edt</code><code style="color:#22d3bf">, normiert auf die Bildgröße). Im Unterschied zu HALCONs </code><code style="color:#22d3bf">get_region_thickness</code>` (Access the thickness of a region along the main axis.), das ein &#x27;Dickenprofil entlang der Hauptachse&#x27; definiert, handelt es sich hier um eine Vereinfachung, die nur den richtungsunabhängigen, globalen maximalen Inkreisradius betrachtet (Informationen zur Hauptachsenrichtung gehen verloren).</p>
+<p>Eine Näherung der Bereichsdicke: <code style="color:#22d3bf">2 x maximaler Inkreisradius / maximale Seitenlänge</code> (das Doppelte des Maximums von <code style="color:#22d3bf">distance_transform_edt</code>, normiert auf die Bildgröße). Im Unterschied zu HALCONs <code style="color:#22d3bf">get_region_thickness</code> (Access the thickness of a region along the main axis.), das ein &#x27;Dickenprofil entlang der Hauptachse&#x27; definiert, handelt es sich hier um eine Vereinfachung, die nur den richtungsunabhängigen, globalen maximalen Inkreisradius betrachtet (Informationen zur Hauptachsenrichtung gehen verloren).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -22,7 +22,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-get_region_thickness 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aget_region_thickness%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aget_region_thickness%200.50%200.50">Load &amp; run</a></p>
+get_region_thickness 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aget_region_thickness%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aget_region_thickness%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_bone_trabecular_thickness">poc_bone_trabecular_thickness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_bone_trabecular_thickness.py</code></p>

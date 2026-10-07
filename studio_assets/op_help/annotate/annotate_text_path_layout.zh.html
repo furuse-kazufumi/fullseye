@@ -5,51 +5,29 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回表(dict):沿折线逐字的位置与倾角(按弧长确定)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>文字 i の中心は弧長 `<code style="color:#22d3bf">s_i = s0 + Σ_{j&lt;i} a_j*spacing + a_i/2</code>`、傾きは</p>
-<p>その位置の線分の接線角(画面座標、度)。経路より長い文字列は ValueError。</p>
+<p>文字 i の中心は弧長 <code style="color:#22d3bf">s_i = s0 + Σ_{j&lt;i} a_j*spacing + a_i/2</code>、傾きはその位置の線分の接線角(画面座標、度)。経路より長い文字列は ValueError。</p>
 <p><b>位置の決め方</b>(2026-09-08 に追加。既定はそれまでの動作と同じ):</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">anchor</code><code style="color:#22d3bf"> —— 経路に沿ったそろえ方。</code><code style="color:#22d3bf">&quot;start&quot;</code>`(既定・従来どおり)/</p>
-<p>`<code style="color:#22d3bf">&quot;center&quot;</code><code style="color:#22d3bf">(経路の中央にそろえる)/ </code><code style="color:#22d3bf">&quot;end&quot;</code>`(終端にそろえる)。</p>
-<p>`<code style="color:#22d3bf">start</code>` はアンカーで決めた位置から<b>さらにずらす</b>量として効く。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">offset</code>` —— 経路に<b>垂直</b>なずらし [px]。正が<b>進行方向の右</b></p>
-<p>(画面座標。y が下向きなので、左→右に進む文字なら「下」)。</p>
-<p>線に触れさせずに脇へ置く用途。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">\n</code><code style="color:#22d3bf"> で**改行**。2 行目以降は </code><code style="color:#22d3bf">line_spacing</code>` を掛けた行高だけ</p>
-<p>`<code style="color:#22d3bf">offset</code>` と同じ向き(進行方向の右)へずれる。★この 1 つの規則で、</p>
-<p>横書きは「下へ」、縦書きは「左へ」と<b>どちらも組版どおり</b>になる</p>
-<p>(縦書きは進行方向が下なので、その右は画面の左)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">upright</code>` —— 字を接線角に回さず<b>正立</b>させる。経路が主に縦向き</p>
-<p>(始点→終点の |dy| &gt; |dx|)なら送りを字幅でなく<b>字高</b>にするので、</p>
-<p>これが<b>縦書き</b>になる。`<code style="color:#22d3bf">VERTICAL_ROTATED_CHARS</code>` の字だけは 90 度回す。</p>
-<p>句読点(`<code style="color:#22d3bf">、。，．</code>`)は縦組みの作法どおり<b>右上へ寄せる</b></p>
-<p>(:data:<code style="color:#22d3bf">VERTICAL_SHIFTED_CHARS</code>、寄せ量は送りの :data:<code style="color:#22d3bf">_VPUNCT_SHIFT</code> 倍)。</p>
-<p>Windows の `<code style="color:#22d3bf">@</code>` 付きフォントが font 側でやっていたことを、ここでは合成で行う</p>
-<p>—— Pillow はフォントをファイルパスで開くので `<code style="color:#22d3bf">@</code>` の顔に到達できず、</p>
-<p>HarfBuzz の `<code style="color:#22d3bf">direction=&quot;ttb&quot;</code>` も Raqm の有無で結果が変わるため、</p>
-<p><b>プラットフォームで揃うほう</b>を採った。</p>
-<p>★<b>縦書きで実装していないこと</b>(黙って近似しない): 小書き仮名の位置補正、</p>
-<p>縦中横、行末の禁則。短い注記のための機能で、本文組版ではない。</p>
-<p>Returns</p>
-<p>-------</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">anchor</code> —— 経路に沿ったそろえ方。<code style="color:#22d3bf">&quot;start&quot;</code>(既定・従来どおり)/ <code style="color:#22d3bf">&quot;center&quot;</code>(経路の中央にそろえる)/ <code style="color:#22d3bf">&quot;end&quot;</code>(終端にそろえる)。<code style="color:#22d3bf">start</code> はアンカーで決めた位置から<b>さらにずらす</b>量として効く。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">offset</code> —— 経路に<b>垂直</b>なずらし [px]。正が<b>進行方向の右</b> (画面座標。y が下向きなので、左→右に進む文字なら「下」)。線に触れさせずに脇へ置く用途。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">\n</code> で<b>改行</b>。2 行目以降は <code style="color:#22d3bf">line_spacing</code> を掛けた行高だけ <code style="color:#22d3bf">offset</code> と同じ向き(進行方向の右)へずれる。★この 1 つの規則で、横書きは「下へ」、縦書きは「左へ」と<b>どちらも組版どおり</b>になる(縦書きは進行方向が下なので、その右は画面の左)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">upright</code> —— 字を接線角に回さず<b>正立</b>させる。経路が主に縦向き(始点→終点の |dy| &gt; |dx|)なら送りを字幅でなく<b>字高</b>にするので、これが<b>縦書き</b>になる。<code style="color:#22d3bf">VERTICAL_ROTATED_CHARS</code> の字だけは 90 度回す。</p>
+<p>句読点(<code style="color:#22d3bf">、。，．</code>)は縦組みの作法どおり<b>右上へ寄せる</b> (<code style="color:#22d3bf">VERTICAL_SHIFTED_CHARS</code>、寄せ量は送りの <code style="color:#22d3bf">_VPUNCT_SHIFT</code> 倍)。Windows の <code style="color:#22d3bf">@</code> 付きフォントが font 側でやっていたことを、ここでは合成で行う —— Pillow はフォントをファイルパスで開くので <code style="color:#22d3bf">@</code> の顔に到達できず、HarfBuzz の <code style="color:#22d3bf">direction=&quot;ttb&quot;</code> も Raqm の有無で結果が変わるため、<b>プラットフォームで揃うほう</b>を採った。</p>
+<p>★<b>縦書きで実装していないこと</b>(黙って近似しない): 小書き仮名の位置補正、縦中横、行末の禁則。短い注記のための機能で、本文組版ではない。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>``{&quot;chars&quot;: [{&quot;char&quot;,&quot;s&quot;,&quot;xy&quot;,&quot;angle_deg&quot;,&quot;width&quot;,&quot;advance&quot;,&quot;line&quot;}],</p>
-<p>&quot;length&quot;: 経路長, &quot;used&quot;: 最も長い行の<b>送りの合計</b>(従来どおり</p>
-<p>`<code style="color:#22d3bf">Σ advance*spacing</code>`), &quot;span&quot;: 最も長い行が<b>実際に占める</b>弧長</p>
-<p>(最後の字の後ろの送りを含まない —— アンカーはこちらで揃える),</p>
-<p>&quot;lines&quot;: 行数, &quot;line_height&quot;: 行送り [px], &quot;vertical&quot;: 縦書きか}``。</p>
-<p>Raises</p>
-<p>------</p>
+<p><code style="color:#22d3bf">{&quot;chars&quot;: [{&quot;char&quot;,&quot;s&quot;,&quot;xy&quot;,&quot;angle_deg&quot;,&quot;width&quot;,&quot;advance&quot;,&quot;line&quot;}], &quot;length&quot;: 経路長, &quot;used&quot;: 最も長い行の**送りの合計**(従来どおり </code>Σ advance*spacing<code style="color:#22d3bf">), &quot;span&quot;: 最も長い行が**実際に占める**弧長(最後の字の後ろの送りを含まない —— アンカーはこちらで揃える), &quot;lines&quot;: 行数, &quot;line_height&quot;: 行送り [px], &quot;vertical&quot;: 縦書きか}</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>文字が空、経路が 2 点未満か長さゼロ、非有限、行が経路より長い、</p>
-<p>アンカーと `<code style="color:#22d3bf">start</code>` の組み合わせで行が経路から外れる場合。</p>
+<p>アンカーと <code style="color:#22d3bf">start</code> の組み合わせで行が経路から外れる場合。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 训练数据集规范知识 —— COCO / YOLO / VOC 及外观检测中的陷阱</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

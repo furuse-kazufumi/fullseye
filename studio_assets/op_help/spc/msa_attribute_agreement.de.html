@@ -3,17 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;msa_attribute_agreement&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Übereinstimmung der Prüfer bei attributiver (io/nio) Prüfung (`<code style="color:#22d3bf">table</code>`).</p>
+<p>Übereinstimmung der Prüfer bei attributiver (io/nio) Prüfung (<code style="color:#22d3bf">table</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>同じ部品を複数の検査員が判定した表から、<b>検査員の対ごとの Cohen のカッパ</b>と</p>
-<p>全体の <b>Fleiss のカッパ</b>、および素の一致率を返す。</p>
-<p>★カッパは一致率そのものではない。`<code style="color:#22d3bf">kappa = (p_o - p_e)/(1 - p_e)</code>` で、</p>
-<p><b>偶然でも起きる一致 p_e を割り引いた</b>残りを測る —— 合格率 95 % の工程では</p>
-<p>でたらめに判を押しても素の一致率は 90 % を超えるので、一致率だけ見ると</p>
-<p>「よく合っている」と読めてしまう。</p>
-<p>★門にできる厳密な値: 全員が同じ判定 → `<code style="color:#22d3bf">kappa = 1</code>`(厳密)。2 人 x 2 カテゴリの</p>
-<p>Cohen のカッパは `<code style="color:#22d3bf">2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))</code>` という閉形式と一致する。</p>
-<p>独立でたらめな判定では期待値 0(こちらは標本ごとに揺れるので区間で見る)。</p>
+<p>同じ部品を複数の検査員が判定した表から、<b>検査員の対ごとの Cohen のカッパ</b>と全体の <b>Fleiss のカッパ</b>、および素の一致率を返す。</p>
+<p>★カッパは一致率そのものではない。<code style="color:#22d3bf">kappa = (p_o - p_e)/(1 - p_e)</code> で、<b>偶然でも起きる一致 p_e を割り引いた</b>残りを測る —— 合格率 95 % の工程ではでたらめに判を押しても素の一致率は 90 % を超えるので、一致率だけ見ると「よく合っている」と読めてしまう。</p>
+<p>★門にできる厳密な値: 全員が同じ判定 → <code style="color:#22d3bf">kappa = 1</code>(厳密)。2 人 x 2 カテゴリの Cohen のカッパは <code style="color:#22d3bf">2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))</code> という閉形式と一致する。独立でたらめな判定では期待値 0(こちらは標本ごとに揺れるので区間で見る)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

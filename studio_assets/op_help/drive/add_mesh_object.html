@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_mesh_object(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, *, name: &#x27;str&#x27; = &#x27;&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;int&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveterrain; driveterrain.add_mesh_object(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, *, name: &#x27;str&#x27; = &#x27;&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;int&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;add_mesh_object&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>手続き的なメッシュ(tree_mesh / pedestrian_mesh …、原点 = 底面中心)を姿勢に置いて世界に足す。</p>
-<p>資産と同じ `<code style="color:#22d3bf">pose</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">dims</code><code style="color:#22d3bf"> を持たせるので :func:</code>driveworld.world_move` で動かせる。</p>
+<p>資産と同じ <code style="color:#22d3bf">pose</code>/<code style="color:#22d3bf">dims</code> を持たせるので <code style="color:#22d3bf">driveworld.world_move</code> で動かせる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

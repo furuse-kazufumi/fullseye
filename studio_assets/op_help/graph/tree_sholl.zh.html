@@ -5,27 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>Sholl analysis: segments crossing spheres (3-D) or circles (a projection) around the root.</p>
-<p>`<code style="color:#22d3bf">radii</code><code style="color:#22d3bf"> are the shell radii (ascending, positive); if omitted, </code><code style="color:#22d3bf">n_radii</code>` shells at</p>
-<p>the mid-points of equal steps up to the largest distance from the centre (never exactly</p>
-<p>on a node&#x27;s distance). A shell passing exactly through a node is ambiguous under</p>
-<p>rounding — a rotation may move that node by one ulp to either side. `<code style="color:#22d3bf">plane=None</code>` measures in 3-D;</p>
-<p>`<code style="color:#22d3bf">plane=&quot;xy&quot; | &quot;xz&quot; | &quot;yz&quot;</code>` drops the third axis first — what a single image sees.</p>
-<p>`<code style="color:#22d3bf">center</code>` defaults to the root position.</p>
-<p>A segment (parent-child) crosses radius `<code style="color:#22d3bf">r</code>` when its end points lie strictly on</p>
-<p>opposite sides of `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> (the endpoint rule). Returns </code><code style="color:#22d3bf">radii</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">crossings</code>` (int array),</p>
-<p>`<code style="color:#22d3bf">max_crossings</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">radius_at_max</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">integral</code>` — the exact area under the whole</p>
-<p>continuous Sholl curve, computed from the segments&#x27; intervals (independent of where</p>
-<p>the shells are placed).</p>
-<p>Identities: in 3-D the crossings are invariant, integer for integer, under any rotation</p>
-<p>about the centre; and `<code style="color:#22d3bf">integral</code><code style="color:#22d3bf"> equals </code><code style="color:#22d3bf">sum |d_child - d_parent|</code>` (the tests also</p>
-<p>check that the mid-point sum of the sampled crossings converges to it — a second</p>
-<p>implementation).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: not a tree table; </code><code style="color:#22d3bf">plane</code>` not one of None/xy/xz/yz;</p>
-<p>radii not 1-D, not finite, not positive or not strictly increasing; `<code style="color:#22d3bf">n_radii &lt; 1</code>`.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">radii</code> are the shell radii (ascending, positive); if omitted, <code style="color:#22d3bf">n_radii</code> shells at the mid-points of equal steps up to the largest distance from the centre (never exactly on a node&#x27;s distance). A shell passing exactly through a node is ambiguous under rounding — a rotation may move that node by one ulp to either side. <code style="color:#22d3bf">plane=None</code> measures in 3-D; <code style="color:#22d3bf">plane=&quot;xy&quot; | &quot;xz&quot; | &quot;yz&quot;</code> drops the third axis first — what a single image sees. <code style="color:#22d3bf">center</code> defaults to the root position.</p>
+<p>A segment (parent-child) crosses radius <code style="color:#22d3bf">r</code> when its end points lie strictly on opposite sides of <code style="color:#22d3bf">r</code> (the endpoint rule). Returns <code style="color:#22d3bf">radii</code>, <code style="color:#22d3bf">crossings</code> (int array), <code style="color:#22d3bf">max_crossings</code>, <code style="color:#22d3bf">radius_at_max</code> and <code style="color:#22d3bf">integral</code> — the exact area under the whole continuous Sholl curve, computed from the segments&#x27; intervals (independent of where the shells are placed).</p>
+<p>Identities: in 3-D the crossings are invariant, integer for integer, under any rotation about the centre; and <code style="color:#22d3bf">integral</code> equals <code style="color:#22d3bf">sum |d_child - d_parent|</code> (the tests also check that the mid-point sum of the sampled crossings converges to it — a second implementation).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not a tree table; <code style="color:#22d3bf">plane</code> not one of None/xy/xz/yz; radii not 1-D, not finite, not positive or not strictly increasing; <code style="color:#22d3bf">n_radii &lt; 1</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swc_tree_truth">poc_swc_tree_truth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swc_tree_truth.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_worm_neurites_grow">poc_worm_neurites_grow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_worm_neurites_grow.py</code></p>

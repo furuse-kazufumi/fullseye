@@ -5,27 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>국소 두께 지도 —— 각 복셀을 덮을 수 있는 최대 구의 지름.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>For every foreground voxel this is ``max{ 2r : the voxel lies inside some ball</p>
-<p>of radius r that fits entirely in the foreground }`` — the classical</p>
-<p>granulometric size, and the quantity trabecular-bone and industrial-CT work</p>
-<p>calls *local thickness* (a pore&#x27;s local thickness is its diameter; a wall&#x27;s is</p>
-<p>its thickness).  Computed from the exact distance transform: take the voxels</p>
-<p>whose distance is at least `<code style="color:#22d3bf">r</code>` as ball centres and paint the balls they</p>
-<p>cover, largest radius first.</p>
-<p>★**Distinct from `<code style="color:#22d3bf">vol_wall_thickness</code>`**, which walks a single probe segment</p>
-<p>`<code style="color:#22d3bf">p0 -&gt; p1</code>` and returns a list of crossings.  This one is a *volume*, so the</p>
-<p>thickness of every feature is available at once and can be histogrammed.</p>
-<p>Pass *spacing* `<code style="color:#22d3bf">(sz, sy, sx)</code><code style="color:#22d3bf"> (or a :class:</code>volio.VolumeMeta`) and the</p>
-<p>result is in <b>millimetres</b>; otherwise in voxels.  *max_radius* caps the</p>
-<p>search (in the same units); leave it `<code style="color:#22d3bf">None</code>` to derive it from the largest</p>
-<p>distance actually present, which costs one pass more but never saturates.</p>
-<p><b>Applicability.</b> (1) The foreground comes from a single threshold, so</p>
-<p>beam hardening or a brightness gradient biases the thickness across the</p>
-<p>volume — flatten first.  (2) With anisotropic voxels the ball is a ball in</p>
-<p>millimetres, not in voxels, so *spacing* is not cosmetic.  (3) A feature</p>
-<p>three voxels across is quantised at better than 30% only if you say so:</p>
+<p>For every foreground voxel this is <code style="color:#22d3bf">max{ 2r : the voxel lies inside some ball of radius r that fits entirely in the foreground }</code> — the classical granulometric size, and the quantity trabecular-bone and industrial-CT work calls *local thickness* (a pore&#x27;s local thickness is its diameter; a wall&#x27;s is its thickness).  Computed from the exact distance transform: take the voxels whose distance is at least <code style="color:#22d3bf">r</code> as ball centres and paint the balls they cover, largest radius first.</p>
+<p>★<b>Distinct from <code style="color:#22d3bf">vol_wall_thickness</code></b>, which walks a single probe segment <code style="color:#22d3bf">p0 -&gt; p1</code> and returns a list of crossings.  This one is a *volume*, so the thickness of every feature is available at once and can be histogrammed.</p>
+<p>Pass *spacing* <code style="color:#22d3bf">(sz, sy, sx)</code> (or a <code style="color:#22d3bf">volio.VolumeMeta</code>) and the result is in <b>millimetres</b>; otherwise in voxels.  *max_radius* caps the search (in the same units); leave it <code style="color:#22d3bf">None</code> to derive it from the largest distance actually present, which costs one pass more but never saturates.</p>
+<p><b>Applicability.</b> (1) The foreground comes from a single threshold, so beam hardening or a brightness gradient biases the thickness across the volume — flatten first.  (2) With anisotropic voxels the ball is a ball in millimetres, not in voxels, so *spacing* is not cosmetic.  (3) A feature three voxels across is quantised at better than 30% only if you say so:</p>
 <p>report the voxel size next to any thickness number.</p>
-<p>Returns a `<code style="color:#22d3bf">(D, H, W)</code>` float64 volume, 0 on the background.</p>
+<p>Returns a <code style="color:#22d3bf">(D, H, W)</code> float64 volume, 0 on the background.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>ペグと穴の寸法の表(m・rad): ペグ半径 r、穴半径 R、穴の深さ、面取りの幅と角、ペグ長、摩擦係数、手首剛性、手首カメラ。</p>
-<p>既定は試作の寸法: r = 5.0 mm、R = 5.2 mm(半径 clearance 0.2 mm、c = 0.0385)、深さ 20 mm、45° の面取り 1 mm、ペグ 40 mm、</p>
-<p>μ = 0.3(MuJoCo の滑り摩擦)。`<code style="color:#22d3bf">n_seg</code><code style="color:#22d3bf"> は穴の壁を近似する箱の数(MJCF)、</code><code style="color:#22d3bf">k_trans</code><code style="color:#22d3bf"> [N/m]・</code><code style="color:#22d3bf">k_rot</code>` [N m/rad] は</p>
-<p>手首(コンプライアント支持)の並進・回転剛性、`<code style="color:#22d3bf">image_size</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">fovy_deg</code>` は手首カメラ。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: r ≤ 0、R ≤ r、面取りが穴より深い、μ &lt; 0、面取り角が (0°, 90°) の外。</p>
+<p>既定は試作の寸法: r = 5.0 mm、R = 5.2 mm(半径 clearance 0.2 mm、c = 0.0385)、深さ 20 mm、45° の面取り 1 mm、ペグ 40 mm、μ = 0.3(MuJoCo の滑り摩擦)。<code style="color:#22d3bf">n_seg</code> は穴の壁を近似する箱の数(MJCF)、<code style="color:#22d3bf">k_trans</code> [N/m]・<code style="color:#22d3bf">k_rot</code> [N m/rad] は手首(コンプライアント支持)の並進・回転剛性、<code style="color:#22d3bf">image_size</code> と <code style="color:#22d3bf">fovy_deg</code> は手首カメラ。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: r ≤ 0、R ≤ r、面取りが穴より深い、μ &lt; 0、面取り角が (0°, 90°) の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

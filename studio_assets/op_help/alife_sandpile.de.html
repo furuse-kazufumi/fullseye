@@ -5,31 +5,17 @@
 <p><img src="fig/alife_sandpile.png" alt="alife_sandpile: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.a.jpg">alife_sandpile: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.a.jpg">alife_sandpile: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.b.jpg">alife_sandpile: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.b.jpg">alife_sandpile: Regler b durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.inputs.jpg">alife_sandpile: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_sandpile.inputs.jpg">alife_sandpile: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Abelscher Sandhaufen / selbstorganisierte Kritikalität (Bak-Tang-Wiesenfeld 1987).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The image is quantised to integer grain heights h = round(K * image) with</p>
-<p>K = 4 + int(12a), then relaxed by the BTW toppling rule: a cell with 4 or</p>
-<p>more grains gives one grain to each orthogonal neighbour and keeps the rest.</p>
-<p>The boundary is dissipative (grains leaving the grid are lost), which is what</p>
-<p>lets the pile settle into the self-organised critical state where every cell</p>
-<p>holds at most 3 grains.</p>
-<p>`<code style="color:#22d3bf">a</code>` sets the initial grain scale K (how supercritical the pile starts);</p>
-<p>`<code style="color:#22d3bf">b</code>` sets the number of parallel relaxation sweeps 1 + int(50b). For</p>
-<p>b &gt;= 0.9 the pile relaxes *toward* stability with early termination, but the</p>
-<p>sweep count is bounded by a total-work budget (`<code style="color:#22d3bf">_SANDPILE_BUDGET</code>` grain-</p>
-<p>updates) so the op stays fast on any image size: a small or varied pile</p>
-<p>reaches the stable critical state (every cell &lt;= 3), while a very large</p>
-<p>maximally-supercritical pile is only partially relaxed (full BTW</p>
-<p>stabilisation is O(L^2) sweeps). Returns h / max(h) in [0, 1]; a fully</p>
-<p>relaxed pile (max 3) takes values in {0, 1/3, 2/3, 1} (or {0, 1/2, 1} when</p>
-<p>the stable maximum is 2).</p>
+<p>The image is quantised to integer grain heights h = round(K * image) with K = 4 + int(12a), then relaxed by the BTW toppling rule: a cell with 4 or more grains gives one grain to each orthogonal neighbour and keeps the rest. The boundary is dissipative (grains leaving the grid are lost), which is what lets the pile settle into the self-organised critical state where every cell holds at most 3 grains.</p>
+<p><code style="color:#22d3bf">a</code> sets the initial grain scale K (how supercritical the pile starts); <code style="color:#22d3bf">b</code> sets the number of parallel relaxation sweeps 1 + int(50b). For b &gt;= 0.9 the pile relaxes *toward* stability with early termination, but the sweep count is bounded by a total-work budget (<code style="color:#22d3bf">_SANDPILE_BUDGET</code> grain- updates) so the op stays fast on any image size: a small or varied pile reaches the stable critical state (every cell &lt;= 3), while a very large maximally-supercritical pile is only partially relaxed (full BTW stabilisation is O(L^2) sweeps). Returns h / max(h) in [0, 1]; a fully relaxed pile (max 3) takes values in {0, 1/3, 2/3, 1} (or {0, 1/2, 1} when the stable maximum is 2).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -38,7 +24,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">alife_sandpile 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:alife_sandpile%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:alife_sandpile%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">alife_sandpile 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:alife_sandpile%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:alife_sandpile%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_physics_alife_3d.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>

@@ -5,17 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The entropically regularised optimal-transport plan (Cuturi, NIPS 2013).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><b>厳密解ではない。</b> `<code style="color:#22d3bf">reg</code>` を小さくすると厳密解に近づくが、同時に</p>
-<p>数値的に不安定になる(指数がアンダーフローする)。`<code style="color:#22d3bf">reg</code>` を下げると</p>
-<p>厳密解との差が縮むこと自体をテストで固定してある。</p>
-<p>Returns</p>
-<p>-------</p>
+<p><b>厳密解ではない。</b> <code style="color:#22d3bf">reg</code> を小さくすると厳密解に近づくが、同時に数値的に不安定になる(指数がアンダーフローする)。<code style="color:#22d3bf">reg</code> を下げると厳密解との差が縮むこと自体をテストで固定してある。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>`<code style="color:#22d3bf">(n, m)</code><code style="color:#22d3bf"> の輸送計画。行和・列和は </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">b</code>` に一致する</p>
-<p>(`<code style="color:#22d3bf">tol</code><code style="color:#22d3bf"> まで)。収束しなければ </code><code style="color:#22d3bf">RuntimeError</code>` ―― 収束しないまま</p>
+<p><code style="color:#22d3bf">(n, m)</code> の輸送計画。行和・列和は <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code> に一致する</p>
+<p>(<code style="color:#22d3bf">tol</code> まで)。収束しなければ <code style="color:#22d3bf">RuntimeError</code> ―― 収束しないまま</p>
 <p>最後の反復を返すと、行和が合っていない計画が黙って下流へ流れる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Colorimetry and spectra — colour is fixed only by spectrum × illuminant × observer</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

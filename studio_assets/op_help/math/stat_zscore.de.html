@@ -3,29 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_zscore(x)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.stat_zscore(x)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;stat_zscore&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Standardisiert eine 1-D-Stichprobe: `<code style="color:#22d3bf">(x - mean) / std</code><code style="color:#22d3bf"> (Population, </code><code style="color:#22d3bf">ddof=0</code>`).</p>
+<p>Standardisiert eine 1-D-Stichprobe: <code style="color:#22d3bf">(x - mean) / std</code> (Population, <code style="color:#22d3bf">ddof=0</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The result has mean 0 and standard deviation 1 — the common currency for</p>
-<p>comparing residuals across scales and flagging outliers (`<code style="color:#22d3bf">|z| &gt; 3</code>`).</p>
-<p>**A constant input raises `<code style="color:#22d3bf">ValueError</code>`** — the decision, stated: with</p>
-<p>zero variance the z-score is 0/0. Returning silent zeros would claim &quot;every</p>
-<p>point is perfectly average&quot;, which is *a* convention but hides upstream</p>
-<p>breakage (a sensor stuck at one value would sail through an outlier gate).</p>
-<p>Fail-closed instead; a caller who wants the all-zeros convention can catch</p>
-<p>this and substitute deliberately.</p>
-<p>HALCON: no direct tuple operator (compose `<code style="color:#22d3bf">tuple_mean</code>` +</p>
-<p>`<code style="color:#22d3bf">tuple_deviation</code>` + arithmetic).</p>
+<p>The result has mean 0 and standard deviation 1 — the common currency for comparing residuals across scales and flagging outliers (<code style="color:#22d3bf">|z| &gt; 3</code>).</p>
+<p><b>A constant input raises <code style="color:#22d3bf">ValueError</code></b> — the decision, stated: with zero variance the z-score is 0/0. Returning silent zeros would claim &quot;every point is perfectly average&quot;, which is *a* convention but hides upstream breakage (a sensor stuck at one value would sail through an outlier gate). Fail-closed instead; a caller who wants the all-zeros convention can catch this and substitute deliberately.</p>
+<p>HALCON: no direct tuple operator (compose <code style="color:#22d3bf">tuple_mean</code> + <code style="color:#22d3bf">tuple_deviation</code> + arithmetic).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:measurement_uncertainty">measurement_uncertainty</a> — Messunsicherheit und Kalibrierung — was nötig ist, um zu behaupten, dass man misst</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -20,7 +20,8 @@ Subcommands (all idempotent; safe to re-run)::
     py -3.11 tools/opdocs.py md      # (re)write per-op Markdown notes (deterministic)
     py -3.11 tools/opdocs.py toc     # (re)write INDEX.md files by walking the tree
     py -3.11 tools/opdocs.py html    # bulk-convert 2-D Markdown -> Studio HTML help
-    py -3.11 tools/opdocs.py all     # md + toc + html
+    py -3.11 tools/opdocs.py coverage  # docs/i18n/help_coverage.json (ratchet; refuses to regress)
+    py -3.11 tools/opdocs.py all     # md + toc + html + coverage
 
 Per-op notes and every INDEX.md are **generated** — do not hand-edit (a drift test
 regenerates and diffs). The guides under ``docs/ops/<dim>/guides/`` are authored and
@@ -266,13 +267,47 @@ def knowledge_guides():
             stem = os.path.splitext(os.path.basename(g))[0]
             if stem in fams:
                 continue
-            spec = _guide_front(g).get("applies_to", "").strip()
+            front = _guide_front(g)
+            spec = front.get("applies_to", "").strip()
             targets = () if spec == "none" else tuple(
                 t.strip() for t in spec.split(",") if t.strip())
+            # 題名の訳は frontmatter の ``title_<lang>``(本文は人の散文なので訳さない
+            # が、op 頁の「背景知識ガイド」の一覧に並ぶ題名だけは読み手の言語で出す)。
+            titles = {c: front["title_" + c] for c in LANGS
+                      if c != "ja" and front.get("title_" + c)}
             out.append({"path": g, "stem": stem, "title": _md_title(g),
-                        "spec": spec, "applies_to": targets})
+                        "titles": titles, "spec": spec, "applies_to": targets})
         _KNOWLEDGE_GUIDES = out
     return _KNOWLEDGE_GUIDES
+
+
+def guide_title(g, lang="ja"):
+    """知識ガイドの題名を ``lang`` で(訳が無ければ原文 —— :func:`T` と同じ規約)。"""
+    return (g.get("titles") or {}).get(lang) or g["title"]
+
+
+def guides_without_title_translation():
+    """``title_<lang>`` が欠けている知識ガイド ``{stem: [lang, …]}``(生成時に報告)。"""
+    out = {}
+    for g in knowledge_guides():
+        miss = [c for c in LANGS if c != "ja" and c not in (g.get("titles") or {})]
+        if miss:
+            out[g["stem"]] = miss
+    return out
+
+
+def _localize_guide_md(md, lang):
+    """ガイド md の最初の ``# 題名`` を frontmatter の ``title_<lang>`` に差し替える。
+
+    frontmatter に訳が無い言語・``ja`` は原文のまま返す。
+    """
+    if lang == "ja" or not md.lstrip().startswith("---"):
+        return md
+    head = md.lstrip().split("\n---", 1)[0]
+    m = re.search(r"^title_%s:\s*(.+?)\s*$" % re.escape(lang), head, re.M)
+    if not m:
+        return md
+    return re.sub(r"^# .*$", lambda _m: "# " + m.group(1), md, count=1, flags=re.M)
 
 
 def guides_for(dim, category):
@@ -1326,7 +1361,7 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
         lines.append(T("## 背景知識ガイド(この op の手前にある物理・規約)", lang))
         lines.append("")
         for g in kg:
-            lines.append(f"- [{g['stem']}]({_rel(path, g['path'])}) — {g['title']}")
+            lines.append(f"- [{g['stem']}]({_rel(path, g['path'])}) — {guide_title(g, lang)}")
         lines.append("")
     # sample data + references (honest pointers to the curated catalogs)
     sp = os.path.join(DOCS, "SAMPLES.md")
@@ -1825,8 +1860,29 @@ def cmd_skill():
 # ------------------------------------------------------------------ #
 
 _LINK = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
-_ICODE = re.compile(r"`([^`]+)`")
-_BOLD = re.compile(r"\*\*([^*]+)\*\*")
+#: コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。
+#: 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の ``
+#: の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中
+#: 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す
+#: (733 枚で ``:func:`` が生で見えていた)。
+_ROLE_NAMES = ("func|class|mod|meth|data|attr|exc|obj|const|ref|doc|term|math|file|envvar|"
+               "option|kbd|samp|abbr|any|attribute|method|function|module|py:[a-z]+")
+_ICODE = re.compile(r"(?P<role>:(?:%s):)?(?:``(?P<dbl>.+?)``|`(?P<sgl>[^`]+)`)" % _ROLE_NAMES)
+#: 太字。中身にコードスパンを含められるよう、コードは**先に**置き換え記号へ退避してから当てる
+#: (以前は `([^*]+)` をコードで割った断片に当てていたので、``**complex input raises
+#: `ValueError`**`` が ``**`` ごと生で出ていた)。前後が英数字の ``**`` は冪乗(``x**2``)。
+#: 閉じ側は「直前も直後も英数字」だけを拒む —— ``強調する**S字`` は太字の閉じ。
+#: ``*slopes***`` のように星が続くときは最後の 2 つで閉じる。
+_BOLD = re.compile(r"(?<![A-Za-z0-9_*])\*\*(?![\s*])(.+?)(?<!\s)\*\*(?!\*)"
+                   r"(?:(?<![A-Za-z0-9_]\*\*)|(?![A-Za-z0-9_]))")
+#: 散文中の冪乗 ``x**2`` / ``(1 - lam) ** (2 i)``、引数説明の ``**kwargs:``。太字の記号ではない。
+_POWER = re.compile(r"[A-Za-z0-9_)\]]\*\*[A-Za-z0-9_(]|\s\*\*\s|\*\*(?=[A-Za-z_]\w*:\s)")
+#: 退避記号(私用領域)。コード = U+E000 n U+E001、リンク = U+E002 n U+E003。
+_PH_CODE = re.compile("\ue000(\\d+)\ue001")
+_PH_LINK = re.compile("\ue002(\\d+)\ue003")
+_PH_ANY = re.compile("[\ue000-\ue004]")
+#: Markdown のエスケープ ``\*``(太字の中の * など)。U+E004 に退避して最後に ``*`` へ戻す。
+_PH_STAR = "\ue004"
 
 
 def _rewrite_link(text: str, target: str) -> str:
@@ -1853,15 +1909,48 @@ def _rewrite_link(text: str, target: str) -> str:
             f'{_spans(text)}</a>')
 
 
+def _role_target(t: str) -> str:
+    """RST ロールの中身 → 表示する名前。
+
+    ``~pkg.mod.fn`` は末尾の ``fn``、``表示 <target>`` は ``表示``、先頭の ``!`` / ``.``
+    は落とす(Sphinx と同じ見え方)。
+    """
+    t = t.strip()
+    m = re.match(r"^(.*?)\s*<([^<>]+)>$", t)
+    if m and m.group(1):
+        return m.group(1)
+    if t.startswith("~"):
+        return t[1:].rsplit(".", 1)[-1]
+    return t.lstrip("!.") or t
+
+
 def _spans(s: str) -> str:
-    """Code spans + bold, on text that is known to contain no links."""
-    out, idx = [], 0
-    for m in _ICODE.finditer(s):
-        out.append(_bold_escape(s[idx:m.start()]))
-        out.append(f'<code style="color:{_CODE}">{_html.escape(m.group(1))}</code>')
-        idx = m.end()
-    out.append(_bold_escape(s[idx:]))
-    return "".join(out)
+    """Code spans (``…`` / `…` / :role:`…`) + bold, on text whose links are already cut.
+
+    コードを先に退避記号へ置き換えてから太字を当て、最後に戻す —— 太字の中のコード
+    (``**raises `ValueError`**``)も、コードの中の ``**``(``a**2``)も壊れない。
+    """
+    codes = []
+
+    def _cut(m):
+        dbl = m.group("dbl")
+        body = dbl if dbl is not None else m.group("sgl")
+        if dbl is not None and len(body) > 2 and body[0] == " " and body[-1] == " ":
+            body = body[1:-1]                      # CommonMark: `` `x` `` の両端 1 空白
+        if m.group("role"):
+            body = _role_target(body)
+        codes.append(f'<code style="color:{_CODE}">{_html.escape(body)}</code>')
+        return "\ue000%d\ue001" % (len(codes) - 1)
+
+    t = _ICODE.sub(_cut, s.replace("\ue000", "").replace("\ue001", ""))
+    t = t.replace("\\*", _PH_STAR)
+    out, pos = [], 0
+    for m in _BOLD.finditer(t):
+        out.append(_html.escape(t[pos:m.start()]))
+        out.append("<b>" + _html.escape(m.group(1)) + "</b>")
+        pos = m.end()
+    out.append(_html.escape(t[pos:]))
+    return _PH_CODE.sub(lambda m: codes[int(m.group(1))], "".join(out)).replace(_PH_STAR, "*")
 
 
 def _inline(s: str) -> str:
@@ -1872,14 +1961,18 @@ def _inline(s: str) -> str:
     3 つに割れ、リンクの正規表現がどの断片にも当たらない。結果、Studio の
     ヘルプに **Markdown が生のまま** ``[…](…)`` と表示されていた(60 ページ)。
     リンクを先に取り出し、その**表示文字列の中で**コードスパンと太字を処理する。
+
+    取り出したリンクは退避記号で残すので、``**[x](y) を見よ**`` のように太字が
+    リンクをまたいでも太字の組が割れない(2026-10-07)。
     """
-    out, pos = [], 0
-    for m in _LINK.finditer(s):
-        out.append(_spans(s[pos:m.start()]))
-        out.append(_rewrite_link(m.group(1), m.group(2)))
-        pos = m.end()
-    out.append(_spans(s[pos:]))
-    return "".join(out)
+    links = []
+
+    def _cut(m):
+        links.append(_rewrite_link(m.group(1), m.group(2)))
+        return "\ue002%d\ue003" % (len(links) - 1)
+
+    t = _LINK.sub(_cut, _PH_ANY.sub("", s))
+    return _PH_LINK.sub(lambda m: links[int(m.group(1))], _spans(t))
 
 
 def _bold_escape(s: str) -> str:
@@ -1893,8 +1986,125 @@ def _bold_escape(s: str) -> str:
     return "".join(buf)
 
 
-def md_to_html(md: str) -> str:
-    """Convert the controlled Markdown subset we emit into Studio's inline-styled HTML."""
+#: 段落の行をつなぐときに空白を入れない文字(かな・漢字・ハングル・全角記号)。
+_WIDE = re.compile(r"[　-〿぀-ヿ㐀-鿿가-힯＀-￯]")
+#: numpy 流の欄見出し ``name : type``(散文の行に「 : 」はまず現れない)。
+_FIELD_LINE = re.compile(r"^[\w.*\[\], ]{1,60} : \S")
+#: 「注意: …」「Note: …」のような短い見出し語で始まる行 —— 新しい段落を始める。
+_LABEL_LINE = re.compile(r"^(?:[^\s:：`*\[(]{1,16}|\*\*[^*]{1,40}\*\*)\s?[:：]")
+#: 箇条書き(記号・番号)。
+_ITEM_LINE = re.compile(r"^(?:[-*•]|\d{1,3}[.)]|\(\d{1,3}\))\s")
+#: RST の見出し下線(``Parameters`` / ``----------``)。``---`` 単独は水平線として先に処理済み。
+_UNDERLINE = re.compile(r"^[-=~^]{3,}$")
+#: 揃えのための連続空白(表・数式の桁揃え)。こういう行は 1 行ずつ残す。
+_ALIGNED = re.compile(r"\S {3,}\S")
+_HEADING = re.compile(r"^#{1,6} ")
+
+#: 図(JPEG = docs サイトに置く段階図・複数入力)の alt は英語で 1 つ(6 言語で図を共有する)。
+#: リンクの**表示文字列**としては読み手の言語で出す。キーは原文(日本語)。
+_FIG_KIND_JA = {
+    "knob a sweep": "つまみ a を振った図",
+    "knob b sweep": "つまみ b を振った図",
+    "stages": "段階の図",
+    "other inputs": "別の画像での出力",
+    "animation": "動き(GIF)",
+}
+
+
+def _indent(line: str) -> int:
+    return len(line) - len(line.lstrip(" \t"))
+
+
+def _unbalanced(text: str) -> bool:
+    """行末で ``…`` / `…` / ``**`` が閉じていないか(= 次の行へまたいでいる)。
+
+    docstring は字下げの深い行(引数説明)の中でもコードや太字を折り返す
+    (``dict: ``{"center": (3,),`` ↵ ``"r": float}````)。閉じていない行は、字下げの
+    規則より優先して次の行とつなぐ —— 割ると両方の断片でバッククォートが生で出る。
+    """
+    if text.count("``") % 2:
+        return True
+    if text.replace("``", "").count("`") % 2:
+        return True
+    # 組になった太字を先に外し、残った ``**`` から冪乗(``x**2``)を除いて数える
+    # (``0.5095**(相対`` のように閉じ記号の直後が ASCII 括弧の日本語もあるので、
+    # 冪乗の判定は組を外した**後**の残りにだけ当てる)。
+    # ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの
+    #   直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が
+    #   英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+    rest = _BOLD.sub("\ue000", _ICODE.sub("\ue000", text.replace("\\*", "\ue000")))
+    stars = rest.count("**") - len(_POWER.findall(rest))
+    return stars % 2 == 1
+
+
+def _join(a: str, b: str) -> str:
+    """段落の 2 行をつなぐ。日本語どうし・全角記号の前後は空白を入れない。"""
+    if not a or not b:
+        return a or b
+    if _WIDE.match(a[-1]) and (_WIDE.match(b[0]) or b[0] in "(「"):
+        return a + b
+    if a[-1] in "、。，．」』）】" or b[0] in "、。，．」』）】":
+        return a + b
+    return a + " " + b
+
+
+def _prose_margins(lines):
+    """各行の「散文の左端」(節ごと)。
+
+    docstring は ``__doc__`` のまま貼られているものが多く、1 行目だけが左端 0・
+    残りが 4 字下げ、という形をしている(``inspect.cleandoc`` が 1 行目を除いて
+    字下げを測るのと同じ事情)。そこで節(見出し・水平線・コード塊で区切る)ごとに、
+    **2 行以上ある段落の 2 行目以降**の最小字下げを左端とする。これより深い行は
+    数式や引数説明の字下げなので段落にはつながない。
+    """
+    marg = [0] * len(lines)
+    sec = []
+
+    def close():
+        runs, cur = [], []
+        for i in sec:
+            if lines[i].strip():
+                cur.append(i)
+            elif cur:
+                runs.append(cur)
+                cur = []
+        if cur:
+            runs.append(cur)
+        cands = [min(_indent(lines[i]) for i in r[1:]) for r in runs if len(r) > 1]
+        m = min(cands) if cands else 0
+        for i in sec:
+            marg[i] = m
+        sec.clear()
+
+    in_code = False
+    for i, line in enumerate(lines):
+        st = line.strip()
+        if st.startswith("```"):
+            if not in_code:
+                close()
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+        if _HEADING.match(st) or st == "---":
+            close()
+            continue
+        sec.append(i)
+    close()
+    return marg
+
+
+def md_to_html(md: str, lang: str = "ja") -> str:
+    """Convert the controlled Markdown subset we emit into Studio's inline-styled HTML.
+
+    ``lang`` は**枠の文言**(図の種類・ボタン・Mermaid/数式のラベル)の言語。本文は
+    呼び出し側が ``lang`` で組み立てた Markdown をそのまま使う。
+
+    ★段落: Markdown と同じく**空行が段落の区切り**で、段落内の改行は 1 つの ``<p>``
+    につなぐ(2026-10-07 まで docstring の折り返し 1 行ごとに ``<p>`` を出しており、
+    文の途中で段落が切れていた)。箇条書き・表・doctest・桁揃えの行・字下げの深い行
+    (数式・引数説明)は今まで通り 1 行ずつ出す。
+    """
     lines = md.split("\n")
     # strip frontmatter -> render as a muted meta line
     meta = {}
@@ -1906,13 +2116,33 @@ def md_to_html(md: str) -> str:
                 meta[k.strip()] = v.strip()
             j += 1
         lines = lines[j + 1:]
+    margins = _prose_margins(lines)
     out = []
     in_code = False
     code_lang = ""
     code_buf = []
-    for line in lines:
+    # 段落のバッファ: 種類("p" / "item")、行の字下げ、つなげてよいか
+    para = {"kind": None, "text": "", "indent": 0, "open": False, "lines": 0}
+
+    def flush():
+        k, t = para["kind"], para["text"]
+        if k in ("p", "quote"):
+            out.append(f"<p>{_inline(t)}</p>")
+        elif k == "item":
+            if t.startswith("- ") or t.startswith("* ") or t.startswith("• "):
+                out.append(f'<p style="margin:2px 0 2px 12px">• {_inline(t[2:])}</p>')
+            else:
+                out.append(f'<p style="margin:2px 0 2px 12px">{_inline(t)}</p>')
+        para.update(kind=None, text="", indent=0, open=False, lines=0)
+
+    def start(kind, text, indent, open_=True):
+        flush()
+        para.update(kind=kind, text=text, indent=indent, open=open_, lines=1)
+
+    for idx, line in enumerate(lines):
         st = line.strip()
         if st.startswith("```"):
+            flush()
             if in_code:
                 # mermaid / math: QTextBrowser can't render these, so we keep the source
                 # in a labelled block (Markdown-native viewers — GitHub/Obsidian/RAD — do render).
@@ -1925,18 +2155,21 @@ def md_to_html(md: str) -> str:
                     enc = _up.quote(prog, safe="")
                     out.append(f'<pre style="background:#12141b;border:1px solid #2c313f;'
                                f'padding:6px;color:{_CODE}">' + _html.escape(prog) + "</pre>"
-                               # ボタンの文言は手書きページ(gaussian 等)と同じ短い英語 ——
-                               # md_to_html は言語を知らず、6 言語で同じ HTML を使うため。
-                               f'<p><a style="color:{_AMBER}" href="sample:{enc}">▸ Load this pipeline</a>'
-                               f' &nbsp;·&nbsp; <a style="color:{_AMBER}" href="run:{enc}">Load &amp; run</a></p>')
+                               # ボタンの文言は読み手の言語で(2026-10-07 まで英語固定で、
+                               # 中・韓・独の頁にも英語のボタンが出ていた)。
+                               f'<p><a style="color:{_AMBER}" href="sample:{enc}">'
+                               + _html.escape(T("▸ このパイプラインを読み込む", lang)) + "</a>"
+                               f' &nbsp;·&nbsp; <a style="color:{_AMBER}" href="run:{enc}">'
+                               + _html.escape(T("読み込んで実行", lang)) + "</a></p>")
                     code_buf = []
                     in_code = False
                     code_lang = ""
                     continue
                 if code_lang in ("mermaid", "math"):
-                    kind = "Mermaid 図" if code_lang == "mermaid" else "数式(LaTeX)"
+                    kind = (T("Mermaid 図(ソース):", lang) if code_lang == "mermaid"
+                            else T("数式(LaTeX)(ソース):", lang))
                     label = (f'<p style="color:{_MUTE};font-size:11px;margin:6px 0 0 0">'
-                             f'{kind}(ソース):</p>')
+                             f'{_html.escape(kind)}</p>')
                 out.append(label + f'<pre style="background:#12141b;border:1px solid #2c313f;'
                            f'padding:6px;color:{_CODE}">' + _html.escape("\n".join(code_buf)) + "</pre>")
                 code_buf = []
@@ -1950,8 +2183,10 @@ def md_to_html(md: str) -> str:
             code_buf.append(line)
             continue
         if not st:
+            flush()
             continue
         if st.startswith("![") and "](" in st:
+            flush()
             # 図。生成物は docs/ 相対のまま、ヘルプでは op_help/fig/<file> を指す
             # (studio.py が表示時に絶対 file:// へ直す)。
             alt = st[2:st.index("](")]
@@ -1961,26 +2196,84 @@ def md_to_html(md: str) -> str:
                 # 段階図・複数入力(JPEG)は wheel に同梱しない(全 op ぶんで PyPI の
                 # 上限 100 MB を超える)。docs サイトへのリンクにする。
                 url = "https://furuse.work/ops/_fig/" + base_
-                out.append(f'<p>▸ <a style="color:{_TEAL}" href="{url}">{_html.escape(alt)}</a> '
-                           f'<span style="color:#8b91a0;font-size:11px">(docs site)</span></p>')
+                opn, _, kind_en = alt.partition(": ")
+                label = alt
+                if kind_en in _FIG_KIND_JA:
+                    label = "%s: %s" % (opn, T(_FIG_KIND_JA[kind_en], lang))
+                out.append(f'<p>▸ <a style="color:{_TEAL}" href="{url}">{_html.escape(label)}</a> '
+                           f'<span style="color:#8b91a0;font-size:11px">'
+                           f'{_html.escape(T("(docs サイト)", lang))}</span></p>')
                 continue
             out.append(f'<p><img src="fig/{_html.escape(base_, quote=True)}" '
                        f'alt="{_html.escape(alt, quote=True)}"></p>')
             continue
         if st == "---":
+            flush()
             out.append('<hr style="border:0;border-top:1px solid #2c313f">')
-        elif st.startswith("#### "):
+            continue
+        if st.startswith("#### "):
+            flush()
             out.append(f'<h4 style="color:{_TEAL};margin:6px 0 2px 0">{_inline(st[5:])}</h4>')
-        elif st.startswith("### "):
+            continue
+        if st.startswith("### "):
+            flush()
             out.append(f'<h3 style="color:{_TEAL};margin:8px 0 2px 0">{_inline(st[4:])}</h3>')
-        elif st.startswith("## "):
+            continue
+        if st.startswith("## "):
+            flush()
             out.append(f'<h3 style="color:{_TEAL};margin:10px 0 2px 0">{_inline(st[3:])}</h3>')
-        elif st.startswith("# "):
+            continue
+        if st.startswith("# "):
+            flush()
             out.append(f'<h2 style="color:{_AMBER};margin:0 0 4px 0">{_inline(st[2:])}</h2>')
-        elif st.startswith("- ") or st.startswith("* "):
-            out.append(f'<p style="margin:2px 0 2px 12px">• {_inline(st[2:])}</p>')
+            continue
+        ind = _indent(line)
+        eff = max(0, ind - margins[idx])
+        if para["kind"] and _unbalanced(para["text"]):
+            # コード・太字が行をまたいでいる —— 字下げに関係なくつなぐ
+            para["text"] = _join(para["text"], st)
+            para["lines"] += 1
+            continue
+        if st.startswith(">") and not st.startswith(">>>"):
+            # 引用(ガイドの > 行・訳の断り書き)。続く > 行は 1 つの引用段落につなぐ。
+            if para["kind"] == "quote" and para["open"]:
+                para["text"] = _join(para["text"], st[1:].strip())
+                para["lines"] += 1
+            else:
+                start("quote", st, ind)
+            continue
+        if _UNDERLINE.match(st):
+            # RST の見出し下線: 直前の 1 行段落を小見出しにし、下線そのものは出さない。
+            if para["kind"] == "p" and para["lines"] == 1:
+                t = para["text"]
+                para.update(kind=None, text="", indent=0, open=False, lines=0)
+                out.append(f'<h4 style="color:{_TEAL};margin:6px 0 2px 0">{_inline(t)}</h4>')
+            else:
+                flush()
+            continue
+        if _ITEM_LINE.match(st):
+            start("item", st, ind)
+            continue
+        verbatim = (st.startswith(">>>") or st.startswith("...") or _ALIGNED.search(st)
+                    or (st.startswith("|") and st.endswith("|") and st.count("|") >= 3)
+                    or _FIELD_LINE.match(st))
+        if verbatim:
+            start("p", st, ind, open_=False)
+            continue
+        joinable = para["open"] and not _LABEL_LINE.match(st)
+        if joinable and para["kind"] == "item" and ind > para["indent"]:
+            pass                                   # 箇条書きの折り返し
+        elif joinable and para["kind"] == "p" and eff == 0:
+            pass                                   # 段落の折り返し
         else:
-            out.append(f"<p>{_inline(st)}</p>")
+            # 新しい段落。字下げの深い行(数式・引数説明)は 1 行で閉じる。
+            start("p", st, ind, open_=(eff == 0 and not st.endswith(":")))
+            continue
+        para["text"] = _join(para["text"], st)
+        para["lines"] += 1
+        if st.endswith(":"):
+            para["open"] = False
+    flush()
     if in_code and code_buf:
         out.append(f'<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:{_CODE}">'
                    + _html.escape("\n".join(code_buf)) + "</pre>")
@@ -2062,7 +2355,7 @@ def _help_pages_for_dim(dim, recs_by_name, langs):
                 continue
             npath = os.path.join(cdir, f)
             for lang in langs:
-                body = md_to_html(_op_md(rec, npath, recs_by_name, lang=lang))
+                body = md_to_html(_op_md(rec, npath, recs_by_name, lang=lang), lang=lang)
                 if _write_generated(os.path.join(out, "%s.%s.html" % (op, lang)),
                                     _anchor_rewrite(body, dim)):
                     tr += 1
@@ -2077,6 +2370,60 @@ def _help_pages_for_dim(dim, recs_by_name, langs):
                                     _anchor_rewrite(body, dim)):
                     tr += 1
     return n, skipped, tr
+
+
+def prune_orphan_help_pages() -> list:
+    """ノートの無い op の**生成**ヘルプ頁を消し、消したパスを返す。
+
+    ヘルプは ``docs/ops/<dim>/<cat>/<op>.md`` から作るので、ノートが消えた(op が
+    改名・撤去された)頁は二度と書き直されず、古い生成器の出力のまま同梱され続けて
+    いた(2026-10-07 実測: 11 op・26 頁 + 改名されたガイド 6 頁。直したはずの描画欠陥が
+    そこにだけ残る)。
+    手書き頁(生成印なし)とガイド頁には触らない。
+    """
+    removed = []
+    stems = {os.path.splitext(os.path.basename(g))[0]
+             for g in glob.glob(os.path.join(DOCS, "*", "guides", "*.md"))}
+    if stems:
+        # ガイドも同じ: 改名で元の名前の頁が残る(2026-10-07: flyvision → fly_vision の 6 頁)
+        for f in sorted(os.listdir(HELP_ROOT)):
+            if not (f.startswith("guide_") and f.endswith(".html")):
+                continue
+            if f[len("guide_"):-len(".html")].split(".")[0] in stems:
+                continue
+            p = os.path.join(HELP_ROOT, f)
+            with open(p, encoding="utf-8") as fh:
+                head = fh.read(len(_GEN_MARK) + 4)
+            if _GEN_MARK in head:
+                os.remove(p)
+                removed.append(p)
+    for dim in sorted(os.listdir(DOCS)):
+        ddir = os.path.join(DOCS, dim)
+        if not os.path.isdir(ddir) or dim.startswith("_"):
+            continue
+        notes = set()
+        for cat in os.listdir(ddir):
+            cdir = os.path.join(ddir, cat)
+            if os.path.isdir(cdir) and cat != "guides":
+                notes |= {f[:-3] for f in os.listdir(cdir) if f.endswith(".md")}
+        hdir = HELP_ROOT if dim == "2d" else os.path.join(HELP_ROOT, dim)
+        if not notes or not os.path.isdir(hdir):
+            continue                       # ノートが 1 本も無い次元は判断しない(消しすぎない)
+        for f in sorted(os.listdir(hdir)):
+            if not f.endswith(".html") or f.startswith("guide_"):
+                continue
+            if f.split(".")[0] in notes:
+                continue
+            p = os.path.join(hdir, f)
+            try:
+                with open(p, encoding="utf-8") as fh:
+                    head = fh.read(len(_GEN_MARK) + 4)
+            except OSError:
+                continue
+            if _GEN_MARK in head:
+                os.remove(p)
+                removed.append(p)
+    return removed
 
 
 def _ja_help_differs(rec) -> bool:
@@ -2144,9 +2491,14 @@ def cmd_html():
                 banner = ('<p style="color:%s;font-size:11px;margin:0 0 8px 0">%s</p>\n'
                           % (_AMBER, _html.escape(
                               T("このガイドは日本語のみです(人が書いた散文なので機械的な差し替えをしていません)。", lang))))
+                # 本文は訳さないが、題名(``title_<lang>``)と枠の文言は読み手の言語で。
                 _write_generated(
                     os.path.join(HELP_ROOT, "guide_%s.%s.html" % (f[:-3], lang)),
-                    banner + body)
+                    banner + md_to_html(_localize_guide_md(md, lang), lang=lang))
+    pruned = prune_orphan_help_pages()
+    if pruned:
+        print("  pruned %d orphan help pages (no source note): %s"
+              % (len(pruned), ", ".join(sorted({os.path.basename(q).split(".")[0] for q in pruned})[:12])))
     nf = _copy_figures()
     print(f"opdocs html: wrote {n} 2-D op pages ({skipped} hand-authored preserved) "
           f"+ {n3} 3-D op pages + {nm} ledger op pages ({'/'.join(LEDGER_DIMS)}) "
@@ -2179,6 +2531,183 @@ def untranslated_strings():
     return out
 
 
+# ------------------------------------------------------------------ #
+# ヘルプの多言語被覆 —— 枠(対訳表)と中身(本文)を分けて数え、後退を止める
+# ------------------------------------------------------------------ #
+#: 被覆の台帳。``tools/opdocs.py coverage``(``all`` にも含む)が書き、
+#: ``tests/test_help_rendering.py`` が**後退**(訳済み比率が下がる・未訳が増える)を落とす。
+HELP_COVERAGE_PATH = os.path.join(_ROOT, "docs", "i18n", "help_coverage.json")
+#: かな(中黒 U+30FB「・」は中国語の訳文でも使うので除く)。
+_KANA = re.compile(r"[぀-ヺー-ヿ]")
+_TAG = re.compile(r"<[^>]+>")
+_CODE_EL = re.compile(r"<code[^>]*>.*?</code>", re.S)
+_PRE_EL = re.compile(r"<pre[^>]*>.*?</pre>", re.S)
+#: 後退を許さない指標(言語ごと)。``(名前, 向き)``、向き +1 = 大きいほど良い。
+_COVERAGE_GATED = (("summaries_untranslated", -1), ("summary_translated_share", +1))
+
+
+def _help_page_files():
+    """生成されたヘルプ頁を ``{lang: [path, …]}`` で(ガイド・手書き頁は除く)。
+
+    ``ja`` は日本語の読み手が実際に開く頁(``<op>.ja.html`` があればそれ、無ければ
+    原文の ``<op>.html``)。
+    """
+    by = {c: [] for c in LANGS}
+    for dp, _dn, fn in os.walk(HELP_ROOT):
+        if os.path.basename(dp) == "fig":
+            continue
+        names = set(fn)
+        for f in sorted(fn):
+            if not f.endswith(".html") or f.startswith("guide_"):
+                continue
+            parts = f[:-5].split(".")
+            p = os.path.join(dp, f)
+            if len(parts) == 1:
+                if parts[0] + ".ja.html" not in names:
+                    by["ja"].append(p)
+            elif len(parts) == 2 and parts[1] in by:
+                by[parts[1]].append(p)
+    return by
+
+
+def _body_text(html: str) -> str:
+    """散文だけ(``<pre>`` と ``<code>`` を除き、タグを外して実体参照を戻す)。"""
+    return _html.unescape(_TAG.sub(" ", _CODE_EL.sub(" ", _PRE_EL.sub(" ", html))))
+
+
+def help_coverage() -> dict:
+    """同梱のヘルプ頁から言語ごとの被覆を数える(レジストリを読まない = 環境に依らない)。
+
+    * ``pages`` —— op ヘルプ頁の枚数
+    * ``pages_with_kana`` —— 本文(コード以外)にかなが残る頁(``ja`` 以外では未訳の散文)
+    * ``summaries_untranslated`` —— 要約すら訳が無く「まだ訳がありません」と断る頁
+    * ``pages_with_example`` —— 実行できる例(``py -3.11 examples…``)を載せる頁
+    * ``summary_translated_share`` / ``kana_free_share`` —— 上の比率
+    """
+    files = _help_page_files()
+    notice = "この op の説明はまだ訳がありません。原文をそのまま載せます。"
+    langs = {}
+    for lang in LANGS:
+        n = kana = untr = ex = 0
+        mark = _html.escape(T("> " + notice, lang)[2:]) if lang != "ja" else None
+        for p in files[lang]:
+            with open(p, encoding="utf-8") as fh:
+                raw = fh.read()
+            if _GEN_MARK not in raw[:len(_GEN_MARK) + 4]:
+                continue
+            n += 1
+            if lang != "ja" and _KANA.search(_body_text(raw)):
+                kana += 1
+            if mark and mark in raw:
+                untr += 1
+            if "py -3.11 examples" in raw:
+                ex += 1
+        row = {"pages": n, "pages_with_example": ex}
+        if lang != "ja":
+            row.update(pages_with_kana=kana, summaries_untranslated=untr,
+                       summary_translated_share=round(1 - untr / n, 4) if n else 0.0,
+                       kana_free_share=round(1 - kana / n, 4) if n else 0.0)
+        else:
+            row["pages_ja_summary_of_english_source"] = sum(
+                1 for p in files["ja"] if p.endswith(".ja.html"))
+        langs[lang] = row
+    tbl = _i18n()
+    frame = {"keys": len(tbl)}
+    for lang in LANGS:
+        if lang != "ja":
+            frame[lang] = sum(1 for v in tbl.values() if (v or {}).get(lang))
+    kg = knowledge_guides()
+    titles = {"guides": len(kg)}
+    for lang in LANGS:
+        if lang != "ja":
+            titles[lang] = sum(1 for g in kg if lang in (g.get("titles") or {}))
+    return {"languages": langs, "frame_strings": frame, "knowledge_guide_titles": titles}
+
+
+def coverage_regressions(committed: dict, current: dict) -> list:
+    """``current`` が ``committed`` より**悪い**指標を文で返す(空 = 後退なし)。"""
+    bad = []
+    for lang, row in (committed.get("languages") or {}).items():
+        now = (current.get("languages") or {}).get(lang)
+        if now is None:
+            bad.append("%s: 言語ごと消えた" % lang)
+            continue
+        for key, sign in _COVERAGE_GATED:
+            if key not in row:
+                continue
+            if key not in now:
+                bad.append("%s.%s: 指標が消えた" % (lang, key))
+            elif (now[key] - row[key]) * sign < -1e-9:
+                bad.append("%s.%s: %s → %s" % (lang, key, row[key], now[key]))
+    for sec in ("frame_strings", "knowledge_guide_titles"):
+        old, new = committed.get(sec) or {}, current.get(sec) or {}
+        for lang in LANGS:
+            if lang == "ja" or lang not in old:
+                continue
+            o = old[lang] / max(1, old.get("keys", old.get("guides", 1)))
+            n = new.get(lang, 0) / max(1, new.get("keys", new.get("guides", 1)))
+            if n < o - 1e-9:
+                bad.append("%s.%s: %.4f → %.4f" % (sec, lang, o, n))
+    return bad
+
+
+def cmd_coverage(accept_regression=False):
+    """被覆の台帳を書く。**後退していたら書かない**(ラチェット)。
+
+    ``--accept-regression`` は意図した後退(op を大量に足して訳が追いつかない等)を
+    人が明示して受け入れるときだけ使う。黙って数字を下げる経路は作らない。
+    """
+    cur = help_coverage()
+    old = None
+    if os.path.exists(HELP_COVERAGE_PATH):
+        with open(HELP_COVERAGE_PATH, encoding="utf-8") as f:
+            old = json.load(f)
+    if old is not None and not accept_regression:
+        bad = coverage_regressions(old, cur)
+        if bad:
+            print("opdocs coverage: 後退があるので %s を書き換えない(--accept-regression で明示受け入れ): %s"
+                  % (os.path.relpath(HELP_COVERAGE_PATH, _ROOT), "; ".join(bad[:10])), file=sys.stderr)
+            return 1
+    doc = {"_": ("Studio op ヘルプの多言語被覆(生成物 —— tools/opdocs.py coverage が書く)。"
+                 "frame_strings = 枠の対訳表の訳済み件数(枠は全言語そろっている)、"
+                 "languages.* = 本文側の実測(要約が訳されているか・かなの残る頁)。"
+                 "tests/test_help_rendering.py が後退(訳済み比率の低下・未訳の増加)を落とす。")}
+    doc.update(cur)
+    body = json.dumps(doc, ensure_ascii=False, indent=1, sort_keys=False) + "\n"
+    os.makedirs(os.path.dirname(HELP_COVERAGE_PATH), exist_ok=True)
+    with open(HELP_COVERAGE_PATH, "w", encoding="utf-8", newline="\n") as f:
+        f.write(body)
+    en = cur["languages"].get("en", {})
+    print("opdocs coverage: en 要約訳 %.1f%% / かなの無い頁 %.1f%% (%d 頁) -> %s"
+          % (100 * en.get("summary_translated_share", 0), 100 * en.get("kana_free_share", 0),
+             en.get("pages", 0), os.path.relpath(HELP_COVERAGE_PATH, _ROOT)))
+    return 0
+
+
+#: Studio ヘルプの描画欠陥の型。(名前, 正規表現 —— 散文側に当てる)
+_RENDER_ARTIFACTS = (
+    ("rst_role_leak", re.compile(r":(?:py:)?(?:func|class|mod|meth|data|attr|exc|obj|const|ref):")),
+    ("literal_double_star", re.compile(r"\*\*")),
+    ("stray_backtick", re.compile(r"`")),
+)
+
+
+def render_artifacts(html: str) -> dict:
+    """1 頁の描画欠陥を数える(``<pre>`` の中は対象外 —— プログラムや doctest)。
+
+    * ``rst_role_leak`` —— ``:func:`` などの RST ロールが生で見える
+    * ``literal_double_star`` —— 太字にならなかった ``**``(冪乗 ``x**2`` は数えない)
+    * ``stray_backtick`` —— 散文に残ったバッククォート(``…`` の組み違えの痕)
+    * ``split_code`` —— ``</code><code`` の連続(``…`` を `…` 2 組と読んだ痕)
+    """
+    no_pre = _PRE_EL.sub(" ", html)
+    prose = _body_text(no_pre)
+    out = {name: len(rx.findall(prose)) for name, rx in _RENDER_ARTIFACTS}
+    out["literal_double_star"] -= len(_POWER.findall(prose))
+    out["split_code"] = no_pre.count("</code><code")
+    return out
+
+
 def main(argv):
     cmd = argv[1] if len(argv) > 1 else "all"
     if cmd in ("md", "all"):
@@ -2191,10 +2720,14 @@ def main(argv):
         cmd_skill()
     if cmd in ("html", "all"):
         cmd_html()
-    if cmd not in ("md", "samples", "toc", "skill", "html", "all"):
+    rc = 0
+    if cmd in ("coverage", "all"):
+        # html の**後**(同梱頁を数える)。後退していたら書かずに非 0 で返す。
+        rc = cmd_coverage(accept_regression="--accept-regression" in argv)
+    if cmd not in ("md", "samples", "toc", "skill", "html", "coverage", "all"):
         print(__doc__)
         return 2
-    return 0
+    return rc
 
 
 if __name__ == "__main__":

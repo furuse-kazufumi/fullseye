@@ -4,15 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quat_normalize_image(qimage) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import quatimage; quatimage.quat_normalize_image(qimage) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsquat.get(&quot;quat_normalize_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Per-pixel normalisation to unit modulus. → (H, W, 4).</p>
-<p><b>Fail-closed on a zero pixel.</b> A quaternion image routinely contains exact</p>
-<p>zeros — a black pixel is `<code style="color:#22d3bf">(0,0,0,0)</code>` — so the case is not hypothetical, and</p>
-<p>a zero quaternion has no direction to normalise towards. It is refused by</p>
-<p>name, with the count and the first offending pixel&#x27;s row and column in the</p>
-<p>message, rather than divided by `<code style="color:#22d3bf">norm + eps</code>`: that idiom returns zero, and</p>
-<p>a zero used as a rotor becomes the <b>identity rotation</b> with no exception</p>
-<p>and no NaN to mark it. (`<code style="color:#22d3bf">pose_quat.quat_normalize</code>` did exactly that until</p>
-<p>2026-09-01 and now fail-closes too; see :func:<code style="color:#22d3bf">quat_color_rotate</code>.)</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: any pixel has modulus 0.</p>
+<p><b>Fail-closed on a zero pixel.</b> A quaternion image routinely contains exact zeros — a black pixel is <code style="color:#22d3bf">(0,0,0,0)</code> — so the case is not hypothetical, and a zero quaternion has no direction to normalise towards. It is refused by name, with the count and the first offending pixel&#x27;s row and column in the message, rather than divided by <code style="color:#22d3bf">norm + eps</code>: that idiom returns zero, and a zero used as a rotor becomes the <b>identity rotation</b> with no exception and no NaN to mark it. (<code style="color:#22d3bf">pose_quat.quat_normalize</code> did exactly that until 2026-09-01 and now fail-closes too; see <code style="color:#22d3bf">quat_color_rotate</code>.)</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: any pixel has modulus 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

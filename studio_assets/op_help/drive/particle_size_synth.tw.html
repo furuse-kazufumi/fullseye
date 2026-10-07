@@ -5,13 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>対数正規の <b>体積</b> 分布を装置と同じ区間に割り付けた粒度分布(真値つき)。</p>
-<p>体積の累積 `<code style="color:#22d3bf">F(x) = Φ((ln x − ln d50) / σ)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">edges</code>` を省くと公開データの装置の 74 端(比 1.13616)。</p>
-<p>返り: `<code style="color:#22d3bf">edges</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">volume</code><code style="color:#22d3bf">(%)と </code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">d10</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">d50</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">d90</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">d50 · exp(±1.28155 σ)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sigma_ln</code>`)。</p>
-<p>区間の外にはみ出す体積が 1e-6 を超えると `<code style="color:#22d3bf">ValueError</code>`(端で切ると D10/D90 が黙って動く)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>体積の累積 <code style="color:#22d3bf">F(x) = Φ((ln x − ln d50) / σ)</code>。<code style="color:#22d3bf">edges</code> を省くと公開データの装置の 74 端(比 1.13616)。</p>
+<p>返り: <code style="color:#22d3bf">edges</code>・<code style="color:#22d3bf">volume</code>(%)と <code style="color:#22d3bf">truth</code>(<code style="color:#22d3bf">d10</code>・<code style="color:#22d3bf">d50</code>・<code style="color:#22d3bf">d90</code> = <code style="color:#22d3bf">d50 · exp(±1.28155 σ)</code>、<code style="color:#22d3bf">sigma_ln</code>)。区間の外にはみ出す体積が 1e-6 を超えると <code style="color:#22d3bf">ValueError</code>(端で切ると D10/D90 が黙って動く)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dose_uniformity_from_grinding">poc_dose_uniformity_from_grinding</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dose_uniformity_from_grinding.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_grinding_ae">poc_powder_grinding_ae</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_grinding_ae.py</code></p>

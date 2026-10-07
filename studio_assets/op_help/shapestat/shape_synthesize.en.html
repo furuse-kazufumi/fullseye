@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_synthesize(model, sigmas=None, n_modes: &#x27;int&#x27; = 3, seed: &#x27;int&#x27; = 0)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.shape_synthesize(model, sigmas=None, n_modes: &#x27;int&#x27; = 3, seed: &#x27;int&#x27; = 0)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;shape_synthesize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>モデルから<b>もっともらしい新しい形</b>を 1 つ作る。→ `<code style="color:#22d3bf">(N, 3)</code>`。</p>
-<p>`<code style="color:#22d3bf">sigmas</code><code style="color:#22d3bf"> を与えればその標準偏差倍のスコア、省けば先頭 </code><code style="color:#22d3bf">n_modes</code>` 本を</p>
-<p>正規乱数で引く。3 標準偏差を超える形は群の中に 1 つも無かった形なので、</p>
-<p>既定では引かない(`<code style="color:#22d3bf">sigmas</code>` で明示すれば作れる)。</p>
+<p>モデルから<b>もっともらしい新しい形</b>を 1 つ作る。→ <code style="color:#22d3bf">(N, 3)</code>。</p>
+<p><code style="color:#22d3bf">sigmas</code> を与えればその標準偏差倍のスコア、省けば先頭 <code style="color:#22d3bf">n_modes</code> 本を正規乱数で引く。3 標準偏差を超える形は群の中に 1 つも無かった形なので、既定では引かない(<code style="color:#22d3bf">sigmas</code> で明示すれば作れる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

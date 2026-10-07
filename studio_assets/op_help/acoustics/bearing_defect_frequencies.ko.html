@@ -5,35 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>기하로부터 구름 베어링의 네 가지 특징 주파수를 구합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Derived, not tabulated. Under pure rolling the cage advances at half the sum</p>
-<p>of the race surface speeds, which with `<code style="color:#22d3bf">r = d/D cos(alpha)</code>` gives, per</p>
-<p>shaft revolution rate `<code style="color:#22d3bf">f_r = rpm/60</code>`:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">FTF</code><code style="color:#22d3bf">  (cage / fundamental train) </code><code style="color:#22d3bf">= f_r (1 - r) / 2</code>`</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">BPFO</code><code style="color:#22d3bf"> (ball pass, outer race)    </code><code style="color:#22d3bf">= N f_r (1 - r) / 2 = N * FTF</code>`</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">BPFI</code><code style="color:#22d3bf"> (ball pass, inner race)    </code><code style="color:#22d3bf">= N f_r (1 + r) / 2</code>`</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">BSF</code><code style="color:#22d3bf">  (ball spin)                </code><code style="color:#22d3bf">= f_r (1 - r^2) D / (2 d)</code>`</p>
-<p>Two exact identities fall out and are asserted in the tests, because they</p>
-<p>catch a transposed `<code style="color:#22d3bf">d</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">D</code><code style="color:#22d3bf"> immediately: </code><code style="color:#22d3bf">BPFO + BPFI = N f_r</code>`</p>
-<p>exactly, and `<code style="color:#22d3bf">BPFO = N * FTF</code>` exactly. Measured for the defaults</p>
-<p>(1800 rpm, 9 elements, d = 8, D = 40, alpha = 0): `<code style="color:#22d3bf">ratio = 0.200000</code>`,</p>
-<p>`<code style="color:#22d3bf">f_r = 30.000000</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">FTF = 12.000000</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">BPFO = 108.000000</code>`,</p>
-<p>`<code style="color:#22d3bf">BPFI = 162.000000</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">BSF = 72.000000</code>` Hz, with</p>
-<p>`<code style="color:#22d3bf">BPFO + BPFI - 9 f_r = 0.000e+00</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">BPFO - 9 FTF = 0.000e+00</code>` —</p>
-<p>exactly zero in float64, not merely small.</p>
-<p>Returns a dict with `<code style="color:#22d3bf">shaft_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ftf_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">bpfo_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">bpfi_hz</code>`,</p>
-<p>`<code style="color:#22d3bf">bsf_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">d/D cos alpha</code>`), and the inputs echoed back.</p>
-<p>Also `<code style="color:#22d3bf">bsf_hz_2x</code>`: a rolling element normally strikes *both* races per</p>
-<p>spin, so a spall on the element itself is usually seen at `<code style="color:#22d3bf">2 * BSF</code>`, and</p>
-<p>reporting only `<code style="color:#22d3bf">BSF</code>` is the classic way to miss it.</p>
-<p>These are the <b>no-slip kinematic</b> rates. Real bearings slip by roughly a</p>
-<p>percent, so an observed line within about 1 % of one of these is a match and</p>
-<p>an exact match is a coincidence; that tolerance is the caller&#x27;s to apply.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: non-real / string / bool scalars, </code><code style="color:#22d3bf">rpm &lt;= 0</code>`,</p>
-<p>`<code style="color:#22d3bf">n_elements</code>` not an int &gt;= 2, non-positive diameters, an</p>
-<p>`<code style="color:#22d3bf">element_diameter &gt;= pitch_diameter</code>` (geometrically impossible — the</p>
-<p>rolling elements would not fit inside the pitch circle, and the usual cause</p>
-<p>is the two arguments being swapped, which otherwise returns a negative FTF</p>
-<p>and a plausible-looking BPFI), and `<code style="color:#22d3bf">|contact_angle_deg| &gt;= 90</code>`.</p>
+<p>Derived, not tabulated. Under pure rolling the cage advances at half the sum of the race surface speeds, which with <code style="color:#22d3bf">r = d/D cos(alpha)</code> gives, per shaft revolution rate <code style="color:#22d3bf">f_r = rpm/60</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">FTF</code>  (cage / fundamental train) <code style="color:#22d3bf">= f_r (1 - r) / 2</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">BPFO</code> (ball pass, outer race)    <code style="color:#22d3bf">= N f_r (1 - r) / 2 = N * FTF</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">BPFI</code> (ball pass, inner race)    <code style="color:#22d3bf">= N f_r (1 + r) / 2</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">BSF</code>  (ball spin)                <code style="color:#22d3bf">= f_r (1 - r^2) D / (2 d)</code></p>
+<p>Two exact identities fall out and are asserted in the tests, because they catch a transposed <code style="color:#22d3bf">d</code> and <code style="color:#22d3bf">D</code> immediately: <code style="color:#22d3bf">BPFO + BPFI = N f_r</code> exactly, and <code style="color:#22d3bf">BPFO = N * FTF</code> exactly. Measured for the defaults (1800 rpm, 9 elements, d = 8, D = 40, alpha = 0): <code style="color:#22d3bf">ratio = 0.200000</code>, <code style="color:#22d3bf">f_r = 30.000000</code>, <code style="color:#22d3bf">FTF = 12.000000</code>, <code style="color:#22d3bf">BPFO = 108.000000</code>, <code style="color:#22d3bf">BPFI = 162.000000</code>, <code style="color:#22d3bf">BSF = 72.000000</code> Hz, with <code style="color:#22d3bf">BPFO + BPFI - 9 f_r = 0.000e+00</code> and <code style="color:#22d3bf">BPFO - 9 FTF = 0.000e+00</code> — exactly zero in float64, not merely small.</p>
+<p>Returns a dict with <code style="color:#22d3bf">shaft_hz</code>, <code style="color:#22d3bf">ftf_hz</code>, <code style="color:#22d3bf">bpfo_hz</code>, <code style="color:#22d3bf">bpfi_hz</code>, <code style="color:#22d3bf">bsf_hz</code>, <code style="color:#22d3bf">ratio</code> (<code style="color:#22d3bf">d/D cos alpha</code>), and the inputs echoed back. Also <code style="color:#22d3bf">bsf_hz_2x</code>: a rolling element normally strikes *both* races per spin, so a spall on the element itself is usually seen at <code style="color:#22d3bf">2 * BSF</code>, and reporting only <code style="color:#22d3bf">BSF</code> is the classic way to miss it.</p>
+<p>These are the <b>no-slip kinematic</b> rates. Real bearings slip by roughly a percent, so an observed line within about 1 % of one of these is a match and an exact match is a coincidence; that tolerance is the caller&#x27;s to apply.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-real / string / bool scalars, <code style="color:#22d3bf">rpm &lt;= 0</code>, <code style="color:#22d3bf">n_elements</code> not an int &gt;= 2, non-positive diameters, an <code style="color:#22d3bf">element_diameter &gt;= pitch_diameter</code> (geometrically impossible — the rolling elements would not fit inside the pitch circle, and the usual cause is the two arguments being swapped, which otherwise returns a negative FTF and a plausible-looking BPFI), and <code style="color:#22d3bf">|contact_angle_deg| &gt;= 90</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

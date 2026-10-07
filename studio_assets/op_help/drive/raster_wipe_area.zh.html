@@ -4,15 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.raster_wipe_area(radius: &#x27;float&#x27;, length: &#x27;float&#x27;, pitch: &#x27;float&#x27;, n_strokes: &#x27;int&#x27;, centre=(0.0, 0.0), step=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import polish; polish.raster_wipe_area(radius: &#x27;float&#x27;, length: &#x27;float&#x27;, pitch: &#x27;float&#x27;, n_strokes: &#x27;int&#x27;, centre=(0.0, 0.0), step=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;raster_wipe_area&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>半径 `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> の工具で、長さ </code><code style="color:#22d3bf">length</code><code style="color:#22d3bf"> の平行な一筆(+x へ、間隔 </code><code style="color:#22d3bf">pitch</code>` で +y へ並べ、一筆ごとに持ち上げて戻る)を</p>
-<p>`<code style="color:#22d3bf">n_strokes</code>` 本引いた時、工具が触れた面積の閉形式: (2a + (N − 1) min(s, 2a)) L + N π a² − (N − 1) lens(s)。</p>
-<p>返り `<code style="color:#22d3bf">area</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rect_area</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">disc_union_area</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">lens</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">overlap_saving</code><code style="color:#22d3bf">(N 本の和 − 面積)、</code><code style="color:#22d3bf">path</code>`((M, 2)、NaN で</p>
-<p>区切った軌跡、`<code style="color:#22d3bf">step</code>` があれば各一筆をその刻みの点列に)。<b>Raises</b> ValueError: 数の検査、n_strokes &lt; 1、面積が溢れる、</p>
-<p>一筆の点が 1e6 を超える。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>半径 <code style="color:#22d3bf">radius</code> の工具で、長さ <code style="color:#22d3bf">length</code> の平行な一筆(+x へ、間隔 <code style="color:#22d3bf">pitch</code> で +y へ並べ、一筆ごとに持ち上げて戻る)を <code style="color:#22d3bf">n_strokes</code> 本引いた時、工具が触れた面積の閉形式: (2a + (N − 1) min(s, 2a)) L + N π a² − (N − 1) lens(s)。返り <code style="color:#22d3bf">area</code>、<code style="color:#22d3bf">rect_area</code>、<code style="color:#22d3bf">disc_union_area</code>、<code style="color:#22d3bf">lens</code>、<code style="color:#22d3bf">overlap_saving</code>(N 本の和 − 面積)、<code style="color:#22d3bf">path</code>((M, 2)、NaN で区切った軌跡、<code style="color:#22d3bf">step</code> があれば各一筆をその刻みの点列に)。<b>Raises</b> ValueError: 数の検査、n_strokes &lt; 1、面積が溢れる、一筆の点が 1e6 を超える。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_polish_wipe_measure">poc_polish_wipe_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_polish_wipe_measure.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

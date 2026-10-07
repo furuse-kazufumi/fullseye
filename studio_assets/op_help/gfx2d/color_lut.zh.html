@@ -3,19 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">lut</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0), gamma=(1.0, 1.0, 1.0), saturation=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import gfx2d; gfx2d.color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0), gamma=(1.0, 1.0, 1.0), saturation=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opsgfx2d.get(&quot;color_lut&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>构建 3-D 色彩 LUT `<code style="color:#22d3bf">(n, n, n, 3)</code><code style="color:#22d3bf">,索引为 </code><code style="color:#22d3bf">[r, g, b]</code>`。</p>
+<p>构建 3-D 色彩 LUT <code style="color:#22d3bf">(n, n, n, 3)</code>,索引为 <code style="color:#22d3bf">[r, g, b]</code>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">out = clip(lift + gain * in**gamma)</code>` per channel, then saturation is</p>
-<p>applied about the Rec. 709 luma. With all defaults this is the **identity</p>
-<p>LUT**, and because trilinear interpolation is exact for a function that is</p>
-<p>linear in each variable, :func:<code style="color:#22d3bf">color_grade</code> with the identity LUT is the</p>
-<p>identity to float64 rounding (measured maximum 3.3e-16 at size 17 and</p>
-<p>2.2e-16 at size 2) — the property the suite uses to prove the interpolation</p>
-<p>itself is right before testing any grade.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">out = clip(lift + gain * in**gamma)</code> per channel, then saturation is applied about the Rec. 709 luma. With all defaults this is the <b>identity LUT</b>, and because trilinear interpolation is exact for a function that is linear in each variable, <code style="color:#22d3bf">color_grade</code> with the identity LUT is the identity to float64 rounding (measured maximum 3.3e-16 at size 17 and 2.2e-16 at size 2) — the property the suite uses to prove the interpolation itself is right before testing any grade.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:genspark_external_review">genspark_external_review</a> — <code style="color:#22d3bf">py -3.11 examples/genspark_external_review.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>

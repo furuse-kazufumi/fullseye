@@ -4,15 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_q_criterion(flow, spacing=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_q_criterion(flow, spacing=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_q_criterion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Q 基準 `<code style="color:#22d3bf">-tr(J^2)/2</code>`。<b>回転がひずみを上回る</b>場所が正になる。</p>
-<p>渦度だけを見るとせん断層も光る(層流の壁近傍が渦に見える)ので、渦の抽出には</p>
-<p>こちらを使う。閉形式(解析場を直接与えた実測):</p>
-<p style="margin:2px 0 2px 12px">• 剛体回転 ω=0.01 → `<code style="color:#22d3bf">+1.0e-4</code>` (= ω^2)</p>
-<p style="margin:2px 0 2px 12px">• 一様膨張 s=0.01 → `<code style="color:#22d3bf">-1.0e-4</code>` (= -s^2)</p>
-<p style="margin:2px 0 2px 12px">• 単純せん断 g=0.02 → `<code style="color:#22d3bf">0.0</code>`(<b>せん断は渦ではない</b>、が要点)</p>
-<p>★ 閾値を必要とする量である。`<code style="color:#22d3bf">Q &gt; 0</code>` だけでは薄い領域まで拾うので、</p>
-<p>閾値をどう決めたかを書かない渦可視化は、絵の美しさが閾値の産物である</p>
-<p>可能性を隠している。閾値を振ったときの面積変化を併記すること。</p>
+<p>Q 基準 <code style="color:#22d3bf">-tr(J^2)/2</code>。<b>回転がひずみを上回る</b>場所が正になる。</p>
+<p>渦度だけを見るとせん断層も光る(層流の壁近傍が渦に見える)ので、渦の抽出にはこちらを使う。閉形式(解析場を直接与えた実測):</p>
+<p style="margin:2px 0 2px 12px">• 剛体回転 ω=0.01 → <code style="color:#22d3bf">+1.0e-4</code> (= ω^2)</p>
+<p style="margin:2px 0 2px 12px">• 一様膨張 s=0.01 → <code style="color:#22d3bf">-1.0e-4</code> (= -s^2)</p>
+<p style="margin:2px 0 2px 12px">• 単純せん断 g=0.02 → <code style="color:#22d3bf">0.0</code>(<b>せん断は渦ではない</b>、が要点)</p>
+<p>★ 閾値を必要とする量である。<code style="color:#22d3bf">Q &gt; 0</code> だけでは薄い領域まで拾うので、閾値をどう決めたかを書かない渦可視化は、絵の美しさが閾値の産物である可能性を隠している。閾値を振ったときの面積変化を併記すること。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

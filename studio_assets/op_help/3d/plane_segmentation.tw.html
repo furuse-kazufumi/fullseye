@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用迭代 RANSAC 依次提取最多 max_planes 個平面(殘餘點為 -1)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>残り点集合に :func:<code style="color:#22d3bf">ransac_fit.ransac_plane</code> を掛け、その最大 consensus 平面の</p>
-<p>inlier 数が `<code style="color:#22d3bf">min_inliers</code>` 以上なら新ラベルを与えて除去 → 残りで再検出、を繰り返す。</p>
-<p>複数の床/壁/階段状の面を一度に分離する(単一平面適合の pcseg との差)。inlier が</p>
-<p>`<code style="color:#22d3bf">min_inliers</code>` に満たなくなった時点で停止し、以降の点は残差 -1(球や複雑物体はここに残る)。</p>
+<p>残り点集合に <code style="color:#22d3bf">ransac_fit.ransac_plane</code> を掛け、その最大 consensus 平面の inlier 数が <code style="color:#22d3bf">min_inliers</code> 以上なら新ラベルを与えて除去 → 残りで再検出、を繰り返す。複数の床/壁/階段状の面を一度に分離する(単一平面適合の pcseg との差)。inlier が <code style="color:#22d3bf">min_inliers</code> に満たなくなった時点で停止し、以降の点は残差 -1(球や複雑物体はここに残る)。</p>
 <p>Args:</p>
 <p>points: (N,3) 点群。</p>
 <p>thresh: 点-平面距離の inlier しきい値(距離、要 &gt; 0)。</p>
@@ -19,7 +16,7 @@
 <p>Returns:</p>
 <p>labels: (N,) int。検出順(=consensus 大きい順に近い)に 0,1,2,... を平面へ付与、</p>
 <p>どの平面にも属さない残差点は -1。空入力は shape (0,)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

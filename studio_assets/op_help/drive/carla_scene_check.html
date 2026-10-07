@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_scene_check(scene) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import carlabridge; carlabridge.carla_scene_check(scene) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;carla_scene_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>場面記録の鍵・形・型を検査して要約を返す(通らなければ ValueError)。</p>
-<p>返り値 = `<code style="color:#22d3bf">{&quot;width&quot;, &quot;height&quot;, &quot;has_lead&quot;, &quot;has_instance&quot;, &quot;meta&quot;(dict), &quot;n_tags&quot;}</code>`。</p>
+<p>場面記録の鍵・形・型を検査して要約を返す(通らなければ ValueError)。返り値 = <code style="color:#22d3bf">{&quot;width&quot;, &quot;height&quot;, &quot;has_lead&quot;, &quot;has_instance&quot;, &quot;meta&quot;(dict), &quot;n_tags&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

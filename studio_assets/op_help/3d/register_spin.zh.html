@@ -5,15 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Spin Image 描述子 + RANSAC 的无初值稀疏特征刚体配准。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>2 点群 `<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> (N,3), </code><code style="color:#22d3bf">dst</code>` (M,3) を、初期姿勢の事前情報なしに位置合わせする。</p>
-<p>各点の法線(局所 PCA、重心から外向きに符号統一 = 剛体変換で不変)を軸として近傍点を</p>
-<p>(α=軸からの距離, β=軸方向の高さ) の 2D ヒストグラムへ「回転(spin)」蓄積した</p>
-<p>Spin Image 記述子(Johnson &amp; Hebert 1997)を keypoint ごとに作り、記述子空間の</p>
-<p>最近傍でマッチ(Lowe ratio test で選別)、RANSAC(3 点最小標本 + Kabsch)で</p>
-<p>外れ値に頑健な剛体変換を推定する。密マッチ(NCC/位相相関/Hough)や PCA 主軸整列と</p>
-<p>違い、<b>大回転 + 部分重なり</b>でも局所特徴の対応から姿勢を復元できるため、ICP の</p>
-<p>前段(coarse init 供給)に使える。返す姿勢は `<code style="color:#22d3bf">dst ~= src @ R.T + t</code>`</p>
-<p>(= `<code style="color:#22d3bf">R @ src_i + t</code><code style="color:#22d3bf">)の規約に従う(</code><code style="color:#22d3bf">icp_point2point_3d</code>` と同一)。</p>
+<p>2 点群 <code style="color:#22d3bf">src</code> (N,3), <code style="color:#22d3bf">dst</code> (M,3) を、初期姿勢の事前情報なしに位置合わせする。各点の法線(局所 PCA、重心から外向きに符号統一 = 剛体変換で不変)を軸として近傍点を(α=軸からの距離, β=軸方向の高さ) の 2D ヒストグラムへ「回転(spin)」蓄積した Spin Image 記述子(Johnson &amp; Hebert 1997)を keypoint ごとに作り、記述子空間の最近傍でマッチ(Lowe ratio test で選別)、RANSAC(3 点最小標本 + Kabsch)で外れ値に頑健な剛体変換を推定する。密マッチ(NCC/位相相関/Hough)や PCA 主軸整列と違い、<b>大回転 + 部分重なり</b>でも局所特徴の対応から姿勢を復元できるため、ICP の前段(coarse init 供給)に使える。返す姿勢は <code style="color:#22d3bf">dst ~= src @ R.T + t</code> (= <code style="color:#22d3bf">R @ src_i + t</code>)の規約に従う(<code style="color:#22d3bf">icp_point2point_3d</code> と同一)。</p>
 <p>引数:</p>
 <p>src: (N,3) 移動側点群(numpy.ndarray か torch.Tensor)。</p>
 <p>dst: (M,3) 固定側(参照)点群。</p>
@@ -28,7 +20,7 @@
 <p>lowe_ratio: Lowe 比率テストしきい値(d1 &lt; ratio*d2 の対応のみ採用)。</p>
 <p>ransac_iters: RANSAC 反復数。</p>
 <p>inlier_thr: RANSAC のインライア距離しきい値。None なら bbox 対角の 0.04 倍。</p>
-<p>min_inliers: 有効姿勢とみなす最小インライア数(`<code style="color:#22d3bf">ok</code>` 判定)。</p>
+<p>min_inliers: 有効姿勢とみなす最小インライア数(<code style="color:#22d3bf">ok</code> 判定)。</p>
 <p>seed: RANSAC 乱数シード。</p>
 <p>返り値:</p>
 <p>R: (3,3) torch.Tensor。dst ~= src @ R.T + t を満たす回転。</p>
@@ -37,16 +29,11 @@
 <p>&quot;inlier_ratio&quot;, &quot;rmse&quot;(インライア上 RMSE), &quot;support_radius&quot;,</p>
 <p>&quot;inlier_thr&quot;, &quot;ok&quot;(min_inliers 以上か)。</p>
 <p>注意:</p>
-<p style="margin:2px 0 2px 12px">• 記述子は法線符号に依存する。重心から外向きの符号統一は、法線が概ね放射状で</p>
-<p>n·(p-重心) の符号が安定な形状(lumpy な閉曲面等)で有効。薄板・管状など</p>
-<p>n·(p-重心)≈0 の領域が多い形状では 2 雲間で符号が反転しうる。</p>
-<p style="margin:2px 0 2px 12px">• 平面・球など曲率が空間的に一様な部位は記述子が縮退し ratio test で対応が消える</p>
-<p>(無特徴形状には不向き)。overlap が概ね 60% を切ると成功率が急落し、失敗時は</p>
-<p>幾何整合だが誤りの解に RANSAC がロックして壊滅的な誤差になりうる(`<code style="color:#22d3bf">ok</code>` /</p>
-<p>`<code style="color:#22d3bf">inlier_ratio</code>` ゲートの併用を推奨)。</p>
+<p style="margin:2px 0 2px 12px">• 記述子は法線符号に依存する。重心から外向きの符号統一は、法線が概ね放射状で n·(p-重心) の符号が安定な形状(lumpy な閉曲面等)で有効。薄板・管状など n·(p-重心)≈0 の領域が多い形状では 2 雲間で符号が反転しうる。</p>
+<p style="margin:2px 0 2px 12px">• 平面・球など曲率が空間的に一様な部位は記述子が縮退し ratio test で対応が消える(無特徴形状には不向き)。overlap が概ね 60% を切ると成功率が急落し、失敗時は幾何整合だが誤りの解に RANSAC がロックして壊滅的な誤差になりうる(<code style="color:#22d3bf">ok</code> / <code style="color:#22d3bf">inlier_ratio</code> ゲートの併用を推奨)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

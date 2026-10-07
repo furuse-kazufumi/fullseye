@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crosswalk_mesh(a, b, length: &#x27;float&#x27; = 4.0, stripe: &#x27;float&#x27; = 0.45, gap: &#x27;float&#x27; = 0.45, z: &#x27;float&#x27; = 0.006) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveterrain; driveterrain.crosswalk_mesh(a, b, length: &#x27;float&#x27; = 4.0, stripe: &#x27;float&#x27; = 0.45, gap: &#x27;float&#x27; = 0.45, z: &#x27;float&#x27; = 0.006) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;crosswalk_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>横断歩道(ゼブラ): 道を横切る線分 a→b に沿って幅 `<code style="color:#22d3bf">stripe</code><code style="color:#22d3bf">・間隔 </code><code style="color:#22d3bf">gap</code>` の縞を、a→b に直交する向きに</p>
-<p>`<code style="color:#22d3bf">length</code><code style="color:#22d3bf"> だけ伸ばす(a→b の左手側)。</code><code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot; (12), &quot;n_stripes&quot;, &quot;area&quot;}</code>`。</p>
+<p>横断歩道(ゼブラ): 道を横切る線分 a→b に沿って幅 <code style="color:#22d3bf">stripe</code>・間隔 <code style="color:#22d3bf">gap</code> の縞を、a→b に直交する向きに <code style="color:#22d3bf">length</code> だけ伸ばす(a→b の左手側)。<code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot; (12), &quot;n_stripes&quot;, &quot;area&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

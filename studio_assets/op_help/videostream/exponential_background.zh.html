@@ -3,30 +3,24 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exponential_background(video, alpha: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import videostream; videostream.exponential_background(video, alpha: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsvideostream.get(&quot;exponential_background&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>递归背景 `<code style="color:#22d3bf">bg ← (1−α)·bg + α·frame</code><code style="color:#22d3bf"> 逐帧 → </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">video</code>`)。</p>
+<p>递归背景 <code style="color:#22d3bf">bg ← (1−α)·bg + α·frame</code> 逐帧 → <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>最初のフレームで `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> を初期化し、以後 </code><code style="color:#22d3bf">bg += α (frame - bg)</code>` を画素ごとに</p>
-<p>繰り返す指数移動平均。状態は背景 1 枚だけ(窓を持たない)。フレーム `<code style="color:#22d3bf">t</code>` の</p>
-<p>出力はその時点の `<code style="color:#22d3bf">bg</code><code style="color:#22d3bf"> の写しで、</code><code style="color:#22d3bf">t = 0</code>` は入力の先頭フレームそのもの。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">video</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(T, H, W)</code>` 配列か 2-D フレームの list。整数 dtype は最大値で</p>
-<p>`<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> に正規化、float は </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> にクリップ。NaN/Inf は </code><code style="color:#22d3bf">ValueError</code>`。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">。時定数はおよそ </code><code style="color:#22d3bf">1/α</code>` フレーム(0.05 → 約 20 枚)。</p>
-<p>0 なら背景は先頭フレームのまま固定、1 なら常に現在のフレーム。</p>
-<p>**物体が止まると `<code style="color:#22d3bf">1/α</code>` 枚ほどで背景に吸収される**(選択的更新は無い)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> float64、</code><code style="color:#22d3bf">[0, 1]</code>`。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(形・dtype・</code><code style="color:#22d3bf">alpha</code>` の範囲)。</p>
-<p>前景マスクまで欲しいなら同じモデルの `<code style="color:#22d3bf">exponential_foreground</code>`。画素ごとの</p>
-<p>雑音に閾値を合わせたいなら `<code style="color:#22d3bf">running_gaussian_background</code>`。</p>
+<p>最初のフレームで <code style="color:#22d3bf">bg</code> を初期化し、以後 <code style="color:#22d3bf">bg += α (frame - bg)</code> を画素ごとに繰り返す指数移動平均。状態は背景 1 枚だけ(窓を持たない)。フレーム <code style="color:#22d3bf">t</code> の出力はその時点の <code style="color:#22d3bf">bg</code> の写しで、<code style="color:#22d3bf">t = 0</code> は入力の先頭フレームそのもの。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 配列か 2-D フレームの list。整数 dtype は最大値で <code style="color:#22d3bf">[0, 1]</code> に正規化、float は <code style="color:#22d3bf">[0, 1]</code> にクリップ。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code>。時定数はおよそ <code style="color:#22d3bf">1/α</code> フレーム(0.05 → 約 20 枚)。0 なら背景は先頭フレームのまま固定、1 なら常に現在のフレーム。<b>物体が止まると <code style="color:#22d3bf">1/α</code> 枚ほどで背景に吸収される</b>(選択的更新は無い)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64、<code style="color:#22d3bf">[0, 1]</code>。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形・dtype・<code style="color:#22d3bf">alpha</code> の範囲)。</p>
+<p>前景マスクまで欲しいなら同じモデルの <code style="color:#22d3bf">exponential_foreground</code>。画素ごとの雑音に閾値を合わせたいなら <code style="color:#22d3bf">running_gaussian_background</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_cables">mv_cables</a> — ケーブル（規格・速度・給電・ロボットケーブル）</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_frame_grabbers">mv_frame_grabbers</a> — フレームグラバーボード（光学系ではないが、撮れるかを決める）</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_standards">mv_standards</a> — カメラインターフェースの規格と団体</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_cables">mv_cables</a> — 线缆(规格、速度、供电、机器人线缆)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_frame_grabbers">mv_frame_grabbers</a> — 图像采集卡(不属于光学系统,却决定能否采到图像)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_standards">mv_standards</a> — 相机接口规格与标准组织</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:video_streaming">video_streaming</a> — <code style="color:#22d3bf">py -3.11 examples/video_streaming.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">video</code> 作为输入)</h3>

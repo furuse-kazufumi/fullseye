@@ -5,40 +5,28 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이름으로 부른 벡터장을 적분한다 —— 궤적과, 치른 만큼의 차수。</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Explicit Runge-Kutta on one of the named systems (`<code style="color:#22d3bf">lorenz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">rossler</code>`,</p>
-<p>`<code style="color:#22d3bf">harmonic</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">linear</code><code style="color:#22d3bf">). </code><code style="color:#22d3bf">method=&quot;rk4&quot;</code>` is the classical 4th-order step;</p>
-<p>`<code style="color:#22d3bf">method=&quot;euler&quot;</code>` is there as a <b>control group</b> — the same picture comes out</p>
-<p>of both, and only the error tells them apart.</p>
-<p>★<b>Why the field is a name, not a function</b>: the typed ledger registers inputs</p>
-<p>by sort and the chain fuzzer builds arguments from data, so a callable can</p>
-<p>never be reached from there. A name (or, for `<code style="color:#22d3bf">linear</code>`, the matrix itself in</p>
-<p>`<code style="color:#22d3bf">params</code>`) keeps every op in this family reachable from the ledger.</p>
-<p>★<b>Why this earns its place</b>: for `<code style="color:#22d3bf">system=&quot;linear&quot;</code>` the exact solution is</p>
-<p>`<code style="color:#22d3bf">expm(A t) x0</code><code style="color:#22d3bf">, so the error is known in closed form — and halving </code><code style="color:#22d3bf">dt</code>`</p>
-<p>divides it by <b>16</b>, which is what &quot;4th order&quot; means. A drawing of an</p>
-<p>attractor cannot be checked; this can.</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>Explicit Runge-Kutta on one of the named systems (<code style="color:#22d3bf">lorenz</code>, <code style="color:#22d3bf">rossler</code>, <code style="color:#22d3bf">harmonic</code>, <code style="color:#22d3bf">linear</code>). <code style="color:#22d3bf">method=&quot;rk4&quot;</code> is the classical 4th-order step; <code style="color:#22d3bf">method=&quot;euler&quot;</code> is there as a <b>control group</b> — the same picture comes out of both, and only the error tells them apart.</p>
+<p>★<b>Why the field is a name, not a function</b>: the typed ledger registers inputs by sort and the chain fuzzer builds arguments from data, so a callable can never be reached from there. A name (or, for <code style="color:#22d3bf">linear</code>, the matrix itself in <code style="color:#22d3bf">params</code>) keeps every op in this family reachable from the ledger.</p>
+<p>★<b>Why this earns its place</b>: for <code style="color:#22d3bf">system=&quot;linear&quot;</code> the exact solution is <code style="color:#22d3bf">expm(A t) x0</code>, so the error is known in closed form — and halving <code style="color:#22d3bf">dt</code> divides it by <b>16</b>, which is what &quot;4th order&quot; means. A drawing of an attractor cannot be checked; this can.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>system : str</p>
-<p>One of `<code style="color:#22d3bf">DYNSYS_SYSTEMS</code>`.</p>
+<p>One of <code style="color:#22d3bf">DYNSYS_SYSTEMS</code>.</p>
 <p>params : floats or None</p>
-<p>System parameters (defaults in `<code style="color:#22d3bf">DYNSYS_SYSTEMS</code><code style="color:#22d3bf">). For </code><code style="color:#22d3bf">linear</code>` this is</p>
-<p>the matrix `<code style="color:#22d3bf">A</code><code style="color:#22d3bf"> in row-major order (</code><code style="color:#22d3bf">n*n</code>` numbers).</p>
+<p>System parameters (defaults in <code style="color:#22d3bf">DYNSYS_SYSTEMS</code>). For <code style="color:#22d3bf">linear</code> this is</p>
+<p>the matrix <code style="color:#22d3bf">A</code> in row-major order (<code style="color:#22d3bf">n*n</code> numbers).</p>
 <p>x0 : floats or None</p>
 <p>Initial state (default: a point on the attractor / unit first coordinate).</p>
 <p>t_end, dt : float</p>
-<p>Integration window and step. `<code style="color:#22d3bf">t_end / dt</code>` must stay under 4,000,000.</p>
+<p>Integration window and step. <code style="color:#22d3bf">t_end / dt</code> must stay under 4,000,000.</p>
 <p>method : &quot;rk4&quot; | &quot;euler&quot;</p>
-<p>Returns a `<code style="color:#22d3bf">states</code><code style="color:#22d3bf"> table: </code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (S,) and </code><code style="color:#22d3bf">x</code>` (S, n).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: unknown system or method; wrong parameter count;</p>
-<p>non-finite input; `<code style="color:#22d3bf">dt</code>` not positive; a step count over the cap; a trajectory</p>
-<p>that left float range (the field diverged — reported, never silently clipped).</p>
+<p>Returns a <code style="color:#22d3bf">states</code> table: <code style="color:#22d3bf">t</code> (S,) and <code style="color:#22d3bf">x</code> (S, n).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown system or method; wrong parameter count; non-finite input; <code style="color:#22d3bf">dt</code> not positive; a step count over the cap; a trajectory that left float range (the field diverged — reported, never silently clipped).</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
-<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
-<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code></b> —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
 <p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

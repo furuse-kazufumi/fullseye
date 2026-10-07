@@ -3,16 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.complex_steerable_reconstruct(decomposition) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import motionmag; motionmag.complex_steerable_reconstruct(decomposition) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmotionmag.get(&quot;complex_steerable_reconstruct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>:func:<code style="color:#22d3bf">complex_steerable_decompose</code> 를 역변환 -&gt; `<code style="color:#22d3bf">(H, W)</code>` 실수 이미지.</p>
+<p><code style="color:#22d3bf">complex_steerable_decompose</code> 를 역변환 -&gt; <code style="color:#22d3bf">(H, W)</code> 실수 이미지.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Exact: the analysis bank is a tight frame after the divisor correction, so</p>
-<p>the round trip is the identity up to floating-point rounding (measured</p>
-<p>`<code style="color:#22d3bf">6.66e-16</code>` maximum absolute error on a 64x64 random frame with the default</p>
-<p>4 scales x 4 orientations). Editing a band before calling this — scaling its</p>
-<p>phase, zeroing it — is how every other operator in this module works.</p>
-<p>Refuses a dict whose bands do not match the declared shape or count, because</p>
-<p>a partially edited decomposition would otherwise reconstruct something</p>
-<p>plausible from the wrong frame size.</p>
+<p>Exact: the analysis bank is a tight frame after the divisor correction, so the round trip is the identity up to floating-point rounding (measured <code style="color:#22d3bf">6.66e-16</code> maximum absolute error on a 64x64 random frame with the default 4 scales x 4 orientations). Editing a band before calling this — scaling its phase, zeroing it — is how every other operator in this module works.</p>
+<p>Refuses a dict whose bands do not match the declared shape or count, because a partially edited decomposition would otherwise reconstruct something plausible from the wrong frame size.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

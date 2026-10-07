@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cup_catch_check(p_ball, v_ball, cup_center, cup_axis, cup_radius: &#x27;float&#x27;, ball_radius: &#x27;float&#x27;, v_rel_max: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import ballistics; ballistics.cup_catch_check(p_ball, v_ball, cup_center, cup_axis, cup_radius: &#x27;float&#x27;, ball_radius: &#x27;float&#x27;, v_rel_max: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;cup_catch_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>玉が皿(中心・軸・半径)に入る幾何の判定: 玉の中心が皿の軸から (cup_radius − ball_radius) 以内、皿の面から玉の半径の 1.5 倍以内の</p>
-<p>高さ(0 ≤ height ≤ 1.5 r)、速さ ≤ v_rel_max。`<code style="color:#22d3bf">{&quot;caught&quot;, &quot;lateral&quot;, &quot;height&quot;, &quot;speed&quot;}</code>`。皿が玉より小さければ ValueError。</p>
+<p>玉が皿(中心・軸・半径)に入る幾何の判定: 玉の中心が皿の軸から (cup_radius − ball_radius) 以内、皿の面から玉の半径の 1.5 倍以内の高さ(0 ≤ height ≤ 1.5 r)、速さ ≤ v_rel_max。<code style="color:#22d3bf">{&quot;caught&quot;, &quot;lateral&quot;, &quot;height&quot;, &quot;speed&quot;}</code>。皿が玉より小さければ ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

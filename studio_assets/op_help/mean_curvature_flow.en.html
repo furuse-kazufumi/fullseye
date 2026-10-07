@@ -13,12 +13,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/mean_curvature_flow.inputs.jpg">mean_curvature_flow: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Smoothing that <b>approximates</b> mean curvature flow by repeatedly applying a small-sigma (0.6) Gaussian blur. Rather than the true mean-curvature PDE (the diffusion equation that a separate implementation on the `<code style="color:#22d3bf">ops</code><code style="color:#22d3bf"> side actually performs), it substitutes computationally cheap iterative blurring -- a limitation specific to this backend&#x27;s approximation. A stand-in for HALCON&#x27;s </code><code style="color:#22d3bf">mean_curvature_flow</code>` (Apply the mean curvature flow to an image.).</p>
+<p>Smoothing that <b>approximates</b> mean curvature flow by repeatedly applying a small-sigma (0.6) Gaussian blur. Rather than the true mean-curvature PDE (the diffusion equation that a separate implementation on the <code style="color:#22d3bf">ops</code> side actually performs), it substitutes computationally cheap iterative blurring -- a limitation specific to this backend&#x27;s approximation. A stand-in for HALCON&#x27;s <code style="color:#22d3bf">mean_curvature_flow</code> (Apply the mean curvature flow to an image.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code>` が反復回数を 1〜7 回の範囲で振る(回数が多いほど強く滑らかになる)。</p>
-<p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
-<p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (measured; </code>tools/impl2/border_probe.py`).</p>
-<p><b>Knobs (measured)</b>: `<code style="color:#22d3bf">a</code>` acts in <b>discrete steps</b>; it switches at a ≈ 0.17、0.33、0.49、0.67、0.83、0.99 (measured on a sweep of step 0.02).</p>
+<p><code style="color:#22d3bf">a</code> が反復回数を 1〜7 回の範囲で振る(回数が多いほど強く滑らかになる)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default <code style="color:#22d3bf">reflect</code>) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
+<p><b>Knobs (measured)</b>: <code style="color:#22d3bf">a</code> acts in <b>discrete steps</b>; it switches at a ≈ 0.17、0.33、0.49、0.67、0.83、0.99 (measured on a sweep of step 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jp_sign_stop_mesh(*, side: &#x27;float&#x27; = 0.8, height: &#x27;float&#x27; = 2.5, pole_r: &#x27;float&#x27; = 0.04)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivejapan; drivejapan.jp_sign_stop_mesh(*, side: &#x27;float&#x27; = 0.8, height: &#x27;float&#x27; = 2.5, pole_r: &#x27;float&#x27; = 0.04)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;jp_sign_stop_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>一時停止(規制標識 330-A)の標識: 赤地の逆正三角形(一辺 side = 80 cm、縁線と文字は白、縁と地は赤 —— 別表第二 備考一(三)3(8))+ 柱。</p>
-<p>板は +x を向く(来る車の側)。角の丸み(R 5 cm)と「止まれ」の文字(字高 13 cm)は省く(字は路面文字 :func:<code style="color:#22d3bf">jp_stop_marking_mesh</code> で見せる)。</p>
-<p>返り値 (V, F, colors) 面色つき。</p>
+<p>一時停止(規制標識 330-A)の標識: 赤地の逆正三角形(一辺 side = 80 cm、縁線と文字は白、縁と地は赤 —— 別表第二 備考一(三)3(8))+ 柱。板は +x を向く(来る車の側)。角の丸み(R 5 cm)と「止まれ」の文字(字高 13 cm)は省く(字は路面文字 <code style="color:#22d3bf">jp_stop_marking_mesh</code> で見せる)。返り値 (V, F, colors) 面色つき。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

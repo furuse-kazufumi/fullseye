@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_predict(model, slopes, level: &#x27;float&#x27; = 0.9) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roverslip; roverslip.slip_predict(model, slopes, level: &#x27;float&#x27; = 0.9) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;slip_predict&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>滑り率の予測と両側 `<code style="color:#22d3bf">level</code>` の帯。ガウス過程は観測の予測分布(潜在の分散 + 雑音)、分位点回帰は曲線そのもの。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;mean&quot;, &quot;std&quot;, &quot;lower&quot;, &quot;upper&quot;, &quot;median&quot;, &quot;level&quot;}</code><code style="color:#22d3bf">(各 (n,))。分位点回帰の </code><code style="color:#22d3bf">mean</code>` は当てはめた</p>
-<p>分位点の平均、`<code style="color:#22d3bf">std</code>` は四分位範囲 / 1.349、帯の端は (1 ± level)/2 の分位点(当てはめた段に無ければ ValueError)に、</p>
-<p>共形の補正(:func:<code style="color:#22d3bf">slip_quantile_fit</code> の `<code style="color:#22d3bf">conformal</code>`)があればその幅を足す。</p>
+<p>滑り率の予測と両側 <code style="color:#22d3bf">level</code> の帯。ガウス過程は観測の予測分布(潜在の分散 + 雑音)、分位点回帰は曲線そのもの。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;mean&quot;, &quot;std&quot;, &quot;lower&quot;, &quot;upper&quot;, &quot;median&quot;, &quot;level&quot;}</code>(各 (n,))。分位点回帰の <code style="color:#22d3bf">mean</code> は当てはめた分位点の平均、<code style="color:#22d3bf">std</code> は四分位範囲 / 1.349、帯の端は (1 ± level)/2 の分位点(当てはめた段に無ければ ValueError)に、共形の補正(<code style="color:#22d3bf">slip_quantile_fit</code> の <code style="color:#22d3bf">conformal</code>)があればその幅を足す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

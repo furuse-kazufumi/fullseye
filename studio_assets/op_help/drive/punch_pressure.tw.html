@@ -4,14 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.punch_pressure(X, Y, a: &#x27;float&#x27;, P: &#x27;float&#x27; = 0.0, M1=(0.0, 0.0), pitch: &#x27;float | None&#x27; = None, sub: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tactorque; tactorque.punch_pressure(X, Y, a: &#x27;float&#x27;, P: &#x27;float&#x27; = 0.0, M1=(0.0, 0.0), pitch: &#x27;float | None&#x27; = None, sub: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;punch_pressure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>平頭円形押し込み子(半径 a [m])の圧力 [Pa]: p = P/(2πa√(a²−r²)) + 3(M1_x x + M1_y y)/(2πa³√(a²−r²))(r &lt; a、外は 0)。</p>
-<p>第 1 項 = Johnson 1985 式 3.34、第 2 項 = ∫ (x, y) p dA = M1 を満たす反対称項(導出はモジュール docstring、門で数値確認)。</p>
-<p>`<code style="color:#22d3bf">pitch</code>` を渡すと画素を sub×sub の副標本で平均する(縁の 1/√ 特異点の格子誤差を減らす。4×4 で Σ p h² が P と 0.6 %、実測)。</p>
-<p><b>Raises</b> ValueError: a ≤ 0、P &lt; 0、X と Y の形が違う、|M1| &gt; Pa/3(接触が離れる: 線形の式が成り立たない、fail-closed)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>平頭円形押し込み子(半径 a [m])の圧力 [Pa]: p = P/(2πa√(a²−r²)) + 3(M1_x x + M1_y y)/(2πa³√(a²−r²))(r &lt; a、外は 0)。第 1 項 = Johnson 1985 式 3.34、第 2 項 = ∫ (x, y) p dA = M1 を満たす反対称項(導出はモジュール docstring、門で数値確認)。<code style="color:#22d3bf">pitch</code> を渡すと画素を sub×sub の副標本で平均する(縁の 1/√ 特異点の格子誤差を減らす。4×4 で Σ p h² が P と 0.6 %、実測)。<b>Raises</b> ValueError: a ≤ 0、P &lt; 0、X と Y の形が違う、|M1| &gt; Pa/3(接触が離れる: 線形の式が成り立たない、fail-closed)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tactile_dipole_torque">poc_tactile_dipole_torque</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tactile_dipole_torque.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">matrix</code> 作為輸入)</h3>

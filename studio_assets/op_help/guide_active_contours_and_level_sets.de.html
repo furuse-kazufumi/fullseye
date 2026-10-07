@@ -1,27 +1,13 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">Dieser Leitfaden liegt nur auf Japanisch vor (es ist von Menschen geschriebene Prosa, hier wird nichts maschinell ersetzt).</p>
-<h2 style="color:#f5a524;margin:0 0 4px 0">変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</h2>
-<p>セグメンテーション拡充 第 2 陣のカテゴリ <b>contour</b>(実体 <code style="color:#22d3bf">segcontour</code>、10 op)です。</p>
-<p>閾値や分水嶺が「画素を一度に振り分ける」のに対し、ここの手法は **曲線(または曲線を零等高線に</p>
-<p>持つ関数 φ)を、エネルギーが下がる向きに少しずつ動かす** ものです。学習器は載せません —— どの op も</p>
-<p><b>定理か第 2 実装の門</b> を持ちます(下の表)。</p>
-<p>規約(全 op 共通): 画素の添字は (row, col)。snake の点は (N, 2) の [row, col]。レベルセットは</p>
-<p><b>φ &lt; 0 が内側</b>。マスク(bool)を渡すと距離変換の符号付き距離に直してから使います。</p>
-<p>返りはどれも <code style="color:#22d3bf">table</code>(dict)で、<code style="color:#22d3bf">mask</code> を持つ op はそれが最終の領域です。入力が不正なら <code style="color:#22d3bf">ValueError</code></p>
-<p>(黙って直しません)。</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">Variationelle und aktive Konturen, Level-Sets — welche Kontur wo stoppt und was sie garantiert</h2>
+<p>セグメンテーション拡充 第 2 陣のカテゴリ <b>contour</b>(実体 <code style="color:#22d3bf">segcontour</code>、10 op)です。閾値や分水嶺が「画素を一度に振り分ける」のに対し、ここの手法は <b>曲線(または曲線を零等高線に持つ関数 φ)を、エネルギーが下がる向きに少しずつ動かす</b> ものです。学習器は載せません —— どの op も <b>定理か第 2 実装の門</b> を持ちます(下の表)。</p>
+<p>規約(全 op 共通): 画素の添字は (row, col)。snake の点は (N, 2) の [row, col]。レベルセットは <b>φ &lt; 0 が内側</b>。マスク(bool)を渡すと距離変換の符号付き距離に直してから使います。返りはどれも <code style="color:#22d3bf">table</code>(dict)で、<code style="color:#22d3bf">mask</code> を持つ op はそれが最終の領域です。入力が不正なら <code style="color:#22d3bf">ValueError</code> (黙って直しません)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">3 つの系統</h3>
-<p style="margin:2px 0 2px 12px">• <b>パラメトリック(点列)</b> — <code style="color:#22d3bf">snake_evolve</code>: Kass–Witkin–Terzopoulos 1988 の半陰的更新</p>
-<p>x_t = (A + γI)^(-1)(γ x_(t-1) − f_x)。外力は <code style="color:#22d3bf">external</code> で <code style="color:#22d3bf">edge</code>(勾配の大きさ)/ <code style="color:#22d3bf">gvf</code> / <code style="color:#22d3bf">potential</code> / <code style="color:#22d3bf">none</code>。</p>
-<p><code style="color:#22d3bf">gvf_field</code> は Xu–Prince 1998 の勾配ベクトル流(縁から離れた所まで力を拡散した場)で、snake を</p>
-<p><b>凹部へ引き込む</b> ための外力です。</p>
-<p style="margin:2px 0 2px 12px">• <b>領域の当てはめ(縁を使わない)</b> — <code style="color:#22d3bf">chan_vese_energy</code> / <code style="color:#22d3bf">chan_vese_evolve</code>(Chan–Vese 2001。</p>
-<p>内外の平均 c1・c2 で近似した 2 値画像との差 + 長さ)、<code style="color:#22d3bf">morph_chan_vese</code>(Márquez-Neila ら 2014 の</p>
-<p>形態学的近似、MorphACWE)。</p>
-<p style="margin:2px 0 2px 12px">• <b>縁で止まる(測地的)</b> — <code style="color:#22d3bf">edge_stop_g</code>(g = 1 / (1 + |∇G_σ*I|² / k²)、縁で小さい)、</p>
-<p><code style="color:#22d3bf">morph_geodesic_ac</code>(形態学的 GAC、MorphGAC。入力は g)、<code style="color:#22d3bf">drle_evolve</code>(Li ら 2010 の距離正則化</p>
-<p>レベルセット、再初期化なし)。</p>
-<p style="margin:2px 0 2px 12px">• <b>レベルセットの道具</b> — <code style="color:#22d3bf">level_set_reinit</code>(φ を同じ零等高線の符号付き距離に直す、Sussman ら 1994 +</p>
-<p>Russo–Smereka 2000)、<code style="color:#22d3bf">curvature_flow</code>(平均曲率流。閉曲線の面積は dA/dt = −2π で減る)。</p>
+<p style="margin:2px 0 2px 12px">• <b>パラメトリック(点列)</b> — <code style="color:#22d3bf">snake_evolve</code>: Kass–Witkin–Terzopoulos 1988 の半陰的更新 x_t = (A + γI)^(-1)(γ x_(t-1) − f_x)。外力は <code style="color:#22d3bf">external</code> で <code style="color:#22d3bf">edge</code>(勾配の大きさ)/ <code style="color:#22d3bf">gvf</code> / <code style="color:#22d3bf">potential</code> / <code style="color:#22d3bf">none</code>。<code style="color:#22d3bf">gvf_field</code> は Xu–Prince 1998 の勾配ベクトル流(縁から離れた所まで力を拡散した場)で、snake を <b>凹部へ引き込む</b> ための外力です。</p>
+<p style="margin:2px 0 2px 12px">• <b>領域の当てはめ(縁を使わない)</b> — <code style="color:#22d3bf">chan_vese_energy</code> / <code style="color:#22d3bf">chan_vese_evolve</code>(Chan–Vese 2001。内外の平均 c1・c2 で近似した 2 値画像との差 + 長さ)、<code style="color:#22d3bf">morph_chan_vese</code>(Márquez-Neila ら 2014 の形態学的近似、MorphACWE)。</p>
+<p style="margin:2px 0 2px 12px">• <b>縁で止まる(測地的)</b> — <code style="color:#22d3bf">edge_stop_g</code>(g = 1 / (1 + |∇G_σ*I|² / k²)、縁で小さい)、<code style="color:#22d3bf">morph_geodesic_ac</code>(形態学的 GAC、MorphGAC。入力は g)、<code style="color:#22d3bf">drle_evolve</code>(Li ら 2010 の距離正則化レベルセット、再初期化なし)。</p>
+<p style="margin:2px 0 2px 12px">• <b>レベルセットの道具</b> — <code style="color:#22d3bf">level_set_reinit</code>(φ を同じ零等高線の符号付き距離に直す、Sussman ら 1994 + Russo–Smereka 2000)、<code style="color:#22d3bf">curvature_flow</code>(平均曲率流。閉曲線の面積は dA/dt = −2π で減る)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">門(何が保証され、何が保証されないか)</h3>
 <p>| op | 門(真値の出どころ) | 保証しないこと |</p>
 <p>|---|---|---|</p>
@@ -33,7 +19,7 @@
 <p>| <code style="color:#22d3bf">drle_evolve</code> | 零等高線の近くの \|∇φ\| の分位点を測って返す(Li の主張「距離の形を保つ」の確認) | エネルギーは陽的な刻みのため増えることがある(<code style="color:#22d3bf">n_increase</code>) |</p>
 <p>| <code style="color:#22d3bf">curvature_flow</code> | dA/dt = −2π(回転数 1、凸でなくても)、円なら r² = r₀² − 2t | 曲線が消える時刻以降 |</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid-Diagramm (Quelltext):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
     IMG[&quot;image2d&quot;] --&gt; G[&quot;edge_stop_g&lt;br/&gt;g = 1/(1+|∇G*I|²/k²)&quot;]
     IMG --&gt; GVF[&quot;gvf_field&lt;br/&gt;(u, v)&quot;]
     IMG --&gt; SN[&quot;snake_evolve&lt;br/&gt;(image, 初期点 (N,2))&quot;]
@@ -95,10 +81,8 @@ assert abs(flow[&quot;area_rate&quot;] - flow[&quot;area_rate_theory&quot;]) &lt
 <p style="margin:2px 0 2px 12px">• Li, Xu, Gui, Fox 2010, &quot;Distance regularized level set evolution and its application to image segmentation&quot;: &lt;https://doi.org/10.1109/TIP.2010.2069690&gt;</p>
 <p style="margin:2px 0 2px 12px">• Gage, Hamilton 1986, &quot;The heat equation shrinking convex plane curves&quot;: &lt;https://doi.org/10.4310/jdg/1214439902&gt;</p>
 <p style="margin:2px 0 2px 12px">• Grayson 1987, &quot;The heat equation shrinks embedded plane curves to round points&quot;: &lt;https://doi.org/10.4310/jdg/1214441371&gt;</p>
-<p><code style="color:#22d3bf">segcontour</code> の docstring に、原論文の版面で確かめた式と、二次資料・記憶にとどまる箇所(GVF の時間刻みの</p>
-<p>安定条件、形態学的作用素の PDE との同値性の文言、DRLSE の CFL 条件の出典)を分けて書いてあります。</p>
+<p><code style="color:#22d3bf">segcontour</code> の docstring に、原論文の版面で確かめた式と、二次資料・記憶にとどまる箇所(GVF の時間刻みの安定条件、形態学的作用素の PDE との同値性の文言、DRLSE の CFL 条件の出典)を分けて書いてあります。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">segeval</code>(採点の物差し)と <code style="color:#22d3bf">segworld</code>(真値つきの合成世界): <code style="color:#22d3bf">segmentation_scoring_and_worlds</code> ガイド。</p>
-<p>輪郭法の限界(照明の勾配・影・触れ合う粒)は合成世界の上で数で見えます(PoC <code style="color:#22d3bf">examples/poc_active_contours.py</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">segeval</code>(採点の物差し)と <code style="color:#22d3bf">segworld</code>(真値つきの合成世界): <code style="color:#22d3bf">segmentation_scoring_and_worlds</code> ガイド。輪郭法の限界(照明の勾配・影・触れ合う粒)は合成世界の上で数で見えます(PoC <code style="color:#22d3bf">examples/poc_active_contours.py</code>)。</p>
 <p style="margin:2px 0 2px 12px">• 既存の <code style="color:#22d3bf">sk_chan_vese</code>(2-D レジストリ、skimage の Chan–Vese): <code style="color:#22d3bf">chan_vese_evolve</code> の照合相手。</p>
 <p style="margin:2px 0 2px 12px">• HALCON Segmentation 章の 9 op(<code style="color:#22d3bf">halcon_segmentation</code> ガイド): 画素を一度に振り分ける側。</p>

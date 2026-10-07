@@ -5,22 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>Shortest forward-only path of a car between two poses (Dubins 1957) by the six closed-form words.</p>
-<p>`<code style="color:#22d3bf">poses</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">[[x, y, theta], [x&#x27;, y&#x27;, theta&#x27;]]</code>` (start, goal; theta in radians, counter-clockwise</p>
-<p>from the x axis). The car turns with minimum radius `<code style="color:#22d3bf">radius</code>` and never reverses. Dubins proved the</p>
-<p>shortest path is one of LSL, RSR, LSR, RSL, RLR, LRL (arcs of maximal curvature and straights); each</p>
-<p>word&#x27;s three segment lengths are closed-form (Shkel and Lumelsky 2001). Every candidate is verified</p>
-<p>by forward integration to the goal and discarded if it misses (fail-closed against formula slips;</p>
-<p>the count is returned as `<code style="color:#22d3bf">n_rejected</code>`), and the shortest survivor is the answer.</p>
-<p>Returns `<code style="color:#22d3bf">word</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">length</code><code style="color:#22d3bf"> (metres), </code><code style="color:#22d3bf">segments</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">[(kind, gear, length)]</code>` (kind L/S/R, gear +1),</p>
-<p>`<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf"> poses sampled every </code><code style="color:#22d3bf">step</code>` metres along the path (start and goal included),</p>
-<p>`<code style="color:#22d3bf">candidates</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">[(word, length)]</code><code style="color:#22d3bf"> for all verified words in increasing length, </code><code style="color:#22d3bf">n_rejected</code>`,</p>
-<p>`<code style="color:#22d3bf">lower_bound</code><code style="color:#22d3bf"> (the Euclidean distance, never exceeded), </code><code style="color:#22d3bf">radius</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: poses not </code><code style="color:#22d3bf">(2, 3)</code><code style="color:#22d3bf"> finite; </code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">step</code>` not positive; no word</p>
-<p>reaches the goal (cannot happen for finite poses; reported rather than guessed).</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">poses</code> is <code style="color:#22d3bf">[[x, y, theta], [x&#x27;, y&#x27;, theta&#x27;]]</code> (start, goal; theta in radians, counter-clockwise from the x axis). The car turns with minimum radius <code style="color:#22d3bf">radius</code> and never reverses. Dubins proved the shortest path is one of LSL, RSR, LSR, RSL, RLR, LRL (arcs of maximal curvature and straights); each word&#x27;s three segment lengths are closed-form (Shkel and Lumelsky 2001). Every candidate is verified by forward integration to the goal and discarded if it misses (fail-closed against formula slips; the count is returned as <code style="color:#22d3bf">n_rejected</code>), and the shortest survivor is the answer.</p>
+<p>Returns <code style="color:#22d3bf">word</code>, <code style="color:#22d3bf">length</code> (metres), <code style="color:#22d3bf">segments</code> <code style="color:#22d3bf">[(kind, gear, length)]</code> (kind L/S/R, gear +1), <code style="color:#22d3bf">points</code> <code style="color:#22d3bf">(N, 3)</code> poses sampled every <code style="color:#22d3bf">step</code> metres along the path (start and goal included), <code style="color:#22d3bf">candidates</code> <code style="color:#22d3bf">[(word, length)]</code> for all verified words in increasing length, <code style="color:#22d3bf">n_rejected</code>, <code style="color:#22d3bf">lower_bound</code> (the Euclidean distance, never exceeded), <code style="color:#22d3bf">radius</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: poses not <code style="color:#22d3bf">(2, 3)</code> finite; <code style="color:#22d3bf">radius</code> or <code style="color:#22d3bf">step</code> not positive; no word reaches the goal (cannot happen for finite poses; reported rather than guessed).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_car_parking">poc_car_parking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_car_parking.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_school">poc_driving_school</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_school.py</code></p>

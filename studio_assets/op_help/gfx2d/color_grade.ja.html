@@ -3,13 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb × lut</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_grade(rgb, lut)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.color_grade(rgb, lut)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;color_grade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>3-D カラー LUT を三線形補間で `<code style="color:#22d3bf">rgb</code>` 画像に適用する。</p>
+<p>3-D カラー LUT を三線形補間で <code style="color:#22d3bf">rgb</code> 画像に適用する。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>`<code style="color:#22d3bf">lut</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">(n, n, n, 3)</code><code style="color:#22d3bf"> indexed </code><code style="color:#22d3bf">[r, g, b]</code>` — the layout</p>
-<p>:func:<code style="color:#22d3bf">color_lut</code> produces. The identity LUT returns the input to within</p>
-<p>float64 rounding (measured maximum 3.3e-16), which is what makes this</p>
-<p>testable without a reference implementation: trilinear interpolation of a</p>
-<p>coordinate function is that coordinate, exactly.</p>
+<p><code style="color:#22d3bf">lut</code> is <code style="color:#22d3bf">(n, n, n, 3)</code> indexed <code style="color:#22d3bf">[r, g, b]</code> — the layout <code style="color:#22d3bf">color_lut</code> produces. The identity LUT returns the input to within float64 rounding (measured maximum 3.3e-16), which is what makes this testable without a reference implementation: trilinear interpolation of a coordinate function is that coordinate, exactly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

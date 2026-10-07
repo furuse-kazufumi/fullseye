@@ -5,11 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>任意の c/a の Mindlin 変位場を<b>相似則</b>で出す逆算模型(畳み込みは 1 回だけ)。</p>
-<p>Hertz 形の接線トラクション(半径 R、頂点 q0)の表面変位は u = q0·R·ĝ(x/R)(線形弾性 + 無次元化)。q′(半径 a、頂点 μp0)と</p>
-<p>q″(半径 c、頂点 μp0·c/a)の差だから、g(x) = 頂点 1 Pa・半径 a の場として u(x; c) = μp0·[g(x) − (c/a)²·g(x·a/c)]。</p>
-<p>g は Cerruti 核で格子上に作り、x·a/c が格子の外に出る点は点荷重の漸近形(総力 (2/3)πa²·1 Pa)で補う。順方向の畳み込みとの差は</p>
-<p>核で 0.05 %、環で 0.13 %。返り `<code style="color:#22d3bf">gx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">gy</code><code style="color:#22d3bf">(n, n)、</code><code style="color:#22d3bf">Qunit</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">pitch</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">c0</code><code style="color:#22d3bf">(格子中心 [px])、</code><code style="color:#22d3bf">hz</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">G</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">nu</code>`。</p>
-<p>c/a の格子を線形補間する模型は場が c に非線形なので c/a を 0.01 ずらした(捨てた)。<b>Raises</b> ValueError: 形の不一致、G ≤ 0。</p>
+<p>Hertz 形の接線トラクション(半径 R、頂点 q0)の表面変位は u = q0·R·ĝ(x/R)(線形弾性 + 無次元化)。q′(半径 a、頂点 μp0)と q″(半径 c、頂点 μp0·c/a)の差だから、g(x) = 頂点 1 Pa・半径 a の場として u(x; c) = μp0·[g(x) − (c/a)²·g(x·a/c)]。g は Cerruti 核で格子上に作り、x·a/c が格子の外に出る点は点荷重の漸近形(総力 (2/3)πa²·1 Pa)で補う。順方向の畳み込みとの差は核で 0.05 %、環で 0.13 %。返り <code style="color:#22d3bf">gx</code>・<code style="color:#22d3bf">gy</code>(n, n)、<code style="color:#22d3bf">Qunit</code>、<code style="color:#22d3bf">n</code>・<code style="color:#22d3bf">pitch</code>・<code style="color:#22d3bf">c0</code>(格子中心 [px])、<code style="color:#22d3bf">hz</code>・<code style="color:#22d3bf">G</code>・<code style="color:#22d3bf">nu</code>。c/a の格子を線形補間する模型は場が c に非線形なので c/a を 0.01 ずらした(捨てた)。<b>Raises</b> ValueError: 形の不一致、G ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

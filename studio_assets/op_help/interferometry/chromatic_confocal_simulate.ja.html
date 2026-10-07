@@ -5,16 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>既知の高さにある表面の共焦点戻り光スペクトルを合成する。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>A chromatic objective is built to have axial colour on purpose: each</p>
-<p>wavelength focuses at a different height, so only the wavelength focused *on</p>
-<p>the surface* passes the confocal pinhole. The spectrometer therefore sees a</p>
-<p>peak whose <b>wavelength is the height</b>::</p>
+<p>A chromatic objective is built to have axial colour on purpose: each wavelength focuses at a different height, so only the wavelength focused *on the surface* passes the confocal pinhole. The spectrometer therefore sees a peak whose <b>wavelength is the height</b>::</p>
 <p>lambda_peak = reference_wavelength_nm</p>
 <p>+ (surface_um - 0) / dispersion_um_per_nm</p>
-<p>i.e. ``surface_um = (lambda_peak - reference_wavelength_nm) *</p>
-<p>dispersion_um_per_nm`<code style="color:#22d3bf">, which is what :func:</code>chromatic_confocal_height`</p>
-<p>inverts. The peak is modelled as a Gaussian of FWHM *peak_fwhm_nm* on a flat</p>
-<p>*background* pedestal.</p>
+<p>i.e. <code style="color:#22d3bf">surface_um = (lambda_peak - reference_wavelength_nm) * dispersion_um_per_nm</code>, which is what <code style="color:#22d3bf">chromatic_confocal_height</code> inverts. The peak is modelled as a Gaussian of FWHM *peak_fwhm_nm* on a flat *background* pedestal.</p>
 <p>surface_um:                 true height (0 = the reference wavelength focuses</p>
 <p>exactly on it). May be negative — unlike a</p>
 <p>time-of-flight distance, a height is signed.</p>
@@ -27,21 +21,9 @@
 <p>peak_fwhm_nm:               spectral width of the confocal response.</p>
 <p>peak_counts / background:   peak height above, and level of, the pedestal.</p>
 <p>noise / seed:               additive Gaussian sigma and its integer seed.</p>
-<p>Returns a 1-D float64 spectrum of `<code style="color:#22d3bf">n_bins</code>` non-negative intensities</p>
-<p>(clipped at 0, because a spectrometer cannot read negative light — and the</p>
-<p>clip is stated here rather than left as a surprise).</p>
-<p>Ground truth: with `<code style="color:#22d3bf">noise=0</code><code style="color:#22d3bf"> the </code><code style="color:#22d3bf">&quot;gaussian&quot;</code>` estimator recovers</p>
-<p>*surface_um* <b>exactly</b> (measured 0.0e+00 to 3.6e-15 um over heights from</p>
-<p>-15 to +18 um), at any peak width and even with the peak two bins from the</p>
-<p>band edge, because the logarithm of a sampled Gaussian is exactly a parabola</p>
-<p>and the three-point fit is *local* — there is no Hilbert transform here, so</p>
-<p>the truncation failure that limits the coherence-scanning side does not exist</p>
-<p>on this one (pinned in the tests).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-real / non-finite / string / bool parameters, a</p>
-<p>non-positive step / width / dispersion, negative *peak_counts* /</p>
-<p>*background* / *noise*, *n_bins* outside `<code style="color:#22d3bf">[3, MAX_SCAN_POINTS]</code>`, and a</p>
-<p>*surface_um* whose wavelength falls outside the spectrometer band (the</p>
-<p>out-of-range case a real probe reports as &quot;no surface&quot;).</p>
+<p>Returns a 1-D float64 spectrum of <code style="color:#22d3bf">n_bins</code> non-negative intensities (clipped at 0, because a spectrometer cannot read negative light — and the clip is stated here rather than left as a surprise).</p>
+<p>Ground truth: with <code style="color:#22d3bf">noise=0</code> the <code style="color:#22d3bf">&quot;gaussian&quot;</code> estimator recovers *surface_um* <b>exactly</b> (measured 0.0e+00 to 3.6e-15 um over heights from -15 to +18 um), at any peak width and even with the peak two bins from the band edge, because the logarithm of a sampled Gaussian is exactly a parabola and the three-point fit is *local* — there is no Hilbert transform here, so the truncation failure that limits the coherence-scanning side does not exist on this one (pinned in the tests).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-real / non-finite / string / bool parameters, a non-positive step / width / dispersion, negative *peak_counts* / *background* / *noise*, *n_bins* outside <code style="color:#22d3bf">[3, MAX_SCAN_POINTS]</code>, and a *surface_um* whose wavelength falls outside the spectrometer band (the out-of-range case a real probe reports as &quot;no surface&quot;).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideinterferometry:coherence_scanning">coherence_scanning ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

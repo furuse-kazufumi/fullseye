@@ -5,22 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>既知良品の観測から MT 法の単位空間を作る(MD² の平均はちょうど (n-1)/n)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>`<code style="color:#22d3bf">data</code><code style="color:#22d3bf"> is a 2-D array of shape </code><code style="color:#22d3bf">(n, p)</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> observations of </code><code style="color:#22d3bf">p</code>`</p>
-<p>features, <b>all of which must be normal product</b>. The unit space is the</p>
-<p>triple `<code style="color:#22d3bf">(mean, std, inv_corr)</code>`: per-feature mean and ddof=1 standard</p>
-<p>deviation, and the inverse of the correlation matrix of the standardised</p>
-<p>data. Feed it to :func:<code style="color:#22d3bf">spc_mt_distance</code> to score new observations.</p>
-<p>Returns a dict with `<code style="color:#22d3bf">mean</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">std</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">corr</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">inv_corr</code>` arrays, the</p>
-<p>unit space&#x27;s own `<code style="color:#22d3bf">md</code><code style="color:#22d3bf"> per row, </code><code style="color:#22d3bf">md_sq_mean</code>`, the exact expected value</p>
-<p>`<code style="color:#22d3bf">md_sq_mean_exact = (n-1)/n</code><code style="color:#22d3bf">, the counts </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">p</code>`, how many features</p>
-<p>had no spread (`<code style="color:#22d3bf">flat_features</code>`), and whether the correlation matrix was</p>
-<p>singular enough to need a pseudo-inverse (`<code style="color:#22d3bf">pseudo_inverse</code>`).</p>
-<p>The mean of `<code style="color:#22d3bf">md**2</code><code style="color:#22d3bf"> over the unit space equals </code><code style="color:#22d3bf">(n-1)/n</code>` exactly — the</p>
-<p>quantitative form of &quot;a unit space averages a distance of one&quot;. It reaches 1</p>
-<p>only as `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> grows; the deficit is exactly </code><code style="color:#22d3bf">1/n</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D / empty *data*, fewer than two</p>
-<p>observations (no spread to standardise by), zero features, or non-finite</p>
-<p>input.</p>
+<p><code style="color:#22d3bf">data</code> is a 2-D array of shape <code style="color:#22d3bf">(n, p)</code> — <code style="color:#22d3bf">n</code> observations of <code style="color:#22d3bf">p</code> features, <b>all of which must be normal product</b>. The unit space is the triple <code style="color:#22d3bf">(mean, std, inv_corr)</code>: per-feature mean and ddof=1 standard deviation, and the inverse of the correlation matrix of the standardised data. Feed it to <code style="color:#22d3bf">spc_mt_distance</code> to score new observations.</p>
+<p>Returns a dict with <code style="color:#22d3bf">mean</code>, <code style="color:#22d3bf">std</code>, <code style="color:#22d3bf">corr</code> and <code style="color:#22d3bf">inv_corr</code> arrays, the unit space&#x27;s own <code style="color:#22d3bf">md</code> per row, <code style="color:#22d3bf">md_sq_mean</code>, the exact expected value <code style="color:#22d3bf">md_sq_mean_exact = (n-1)/n</code>, the counts <code style="color:#22d3bf">n</code> and <code style="color:#22d3bf">p</code>, how many features had no spread (<code style="color:#22d3bf">flat_features</code>), and whether the correlation matrix was singular enough to need a pseudo-inverse (<code style="color:#22d3bf">pseudo_inverse</code>).</p>
+<p>The mean of <code style="color:#22d3bf">md**2</code> over the unit space equals <code style="color:#22d3bf">(n-1)/n</code> exactly — the quantitative form of &quot;a unit space averages a distance of one&quot;. It reaches 1 only as <code style="color:#22d3bf">n</code> grows; the deficit is exactly <code style="color:#22d3bf">1/n</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-2-D / empty *data*, fewer than two observations (no spread to standardise by), zero features, or non-finite input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

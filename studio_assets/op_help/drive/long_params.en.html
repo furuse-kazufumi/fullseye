@@ -5,8 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>縦の運動のパラメータ(既定値はすべて <b>仮定</b>。出典はモジュールの docstring)。</p>
-<p>Parameters</p>
-<p>----------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>mass : 車両質量 [kg] (&gt; 0)。空気抵抗の係数 k = ρ_air C_d A / (2 m) にだけ効く。</p>
 <p>c_rr : 転がり抵抗係数(≥ 0、文献値 0.010〜0.015)</p>
 <p>cda : C_d × 前面投影面積 [m²] (≥ 0。0 で空気抵抗なし)</p>
@@ -16,10 +15,9 @@
 <p>mu : 路面とタイヤの摩擦係数(&gt; 0。乾燥 0.7〜0.8・湿潤 0.4〜0.6 —— 要確認)</p>
 <p>a_creep : AT のクリープの駆動 [m/s²] (≥ 0。保持の間だけ)</p>
 <p>g : 重力加速度 [m/s²] (&gt; 0)</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : 引数と同じキー + `<code style="color:#22d3bf">k</code>`(空気抵抗の係数 [1/m])。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 非有限・範囲外。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : 引数と同じキー + <code style="color:#22d3bf">k</code>(空気抵抗の係数 [1/m])。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 非有限・範囲外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

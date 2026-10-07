@@ -3,22 +3,19 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.labels_to_indices(labels)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.labels_to_indices(labels)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;labels_to_indices&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>`<code style="color:#22d3bf">labels</code><code style="color:#22d3bf"> → 非背景的索引 </code><code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf">。:func:</code>indices_to_labels` 的反向。</p>
+<p><code style="color:#22d3bf">labels</code> → 非背景的索引 <code style="color:#22d3bf">(N,)</code>。<code style="color:#22d3bf">indices_to_labels</code> 的反向。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>2-D 以上のラベル画像も受ける —— その場合の添字は</p>
-<p>**`<code style="color:#22d3bf">labels.ravel()</code><code style="color:#22d3bf"> への添字**(C 順)である。</code><code style="color:#22d3bf">np.unravel_index</code>` で</p>
-<p>座標へ戻せるが、<b>戻すには元の shape が要る</b>ので、この向きは</p>
-<p>`<code style="color:#22d3bf">shape</code>` を捨てている(不可逆)。</p>
+<p>2-D 以上のラベル画像も受ける —— その場合の添字は <b><code style="color:#22d3bf">labels.ravel()</code> への添字</b>(C 順)である。<code style="color:#22d3bf">np.unravel_index</code> で座標へ戻せるが、<b>戻すには元の shape が要る</b>ので、この向きは <code style="color:#22d3bf">shape</code> を捨てている(不可逆)。</p>
 <p>Args:</p>
 <p>labels: 任意次元の整数/実ラベル配列。</p>
 <p>Returns:</p>
 <p>(N,) int64。ラベルが 0 でない位置の平坦添字(昇順)。</p>
 <p>Raises:</p>
 <p>ValueError: 空 / 非有限 / 非背景が 1 つも無い。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">indices</code> 作為輸入)</h3>

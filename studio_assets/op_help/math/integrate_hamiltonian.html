@@ -3,21 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathnumerics; mathnumerics.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;integrate_hamiltonian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>名前つきのハミルトン系(質量 1)を時間積分する。返り値 `<code style="color:#22d3bf">{&quot;t&quot;,&quot;q&quot;,&quot;p&quot;,&quot;energy&quot;,&quot;energy_drift&quot;}</code>`。</p>
-<p>`<code style="color:#22d3bf">method</code>`:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;verlet&quot;</code>` —— 速度 Verlet(シンプレクティック・時間反転対称)。エネルギー誤差は O(dt²) で<b>有界</b>のまま</p>
-<p>振動し、長時間でも増えない。dt を負にして回すと元の状態に(丸め誤差まで)戻る。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;euler&quot;</code>` —— 陽的 Euler(比較用の失敗例)。調和振動子ではエネルギーが毎ステップ (1 + ω²dt²) 倍に増え、</p>
-<p>位相空間で外向きの渦巻きになる。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;rk4&quot;</code>` —— 古典的 4 次 Runge–Kutta。短時間はとても正確だが、シンプレクティックではないので</p>
-<p>エネルギーは長時間でゆっくり減り続ける(有界ではない)。</p>
-<p>`<code style="color:#22d3bf">system</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">&quot;harmonic&quot;</code><code style="color:#22d3bf">(omega)/ </code><code style="color:#22d3bf">&quot;pendulum&quot;</code><code style="color:#22d3bf">(omega)/ </code><code style="color:#22d3bf">&quot;kepler&quot;</code>`(mu、2-D)。</p>
+<p>名前つきのハミルトン系(質量 1)を時間積分する。返り値 <code style="color:#22d3bf">{&quot;t&quot;,&quot;q&quot;,&quot;p&quot;,&quot;energy&quot;,&quot;energy_drift&quot;}</code>。</p>
+<p><code style="color:#22d3bf">method</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;verlet&quot;</code> —— 速度 Verlet(シンプレクティック・時間反転対称)。エネルギー誤差は O(dt²) で<b>有界</b>のまま振動し、長時間でも増えない。dt を負にして回すと元の状態に(丸め誤差まで)戻る。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;euler&quot;</code> —— 陽的 Euler(比較用の失敗例)。調和振動子ではエネルギーが毎ステップ (1 + ω²dt²) 倍に増え、位相空間で外向きの渦巻きになる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;rk4&quot;</code> —— 古典的 4 次 Runge–Kutta。短時間はとても正確だが、シンプレクティックではないのでエネルギーは長時間でゆっくり減り続ける(有界ではない)。</p>
+<p><code style="color:#22d3bf">system</code>: <code style="color:#22d3bf">&quot;harmonic&quot;</code>(omega)/ <code style="color:#22d3bf">&quot;pendulum&quot;</code>(omega)/ <code style="color:#22d3bf">&quot;kepler&quot;</code>(mu、2-D)。</p>
 <p>門: Verlet のエネルギー誤差が有界 / 時間反転で戻る / Euler の増幅率が (1 + ω²dt²)^n。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
-<p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
-<p style="margin:2px 0 2px 12px">• **masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code>** — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**(件数を明示して拒否 — 結果全体に伝播するため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code></b> — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>(件数を明示して拒否 — 結果全体に伝播するため)。</p>
 <p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は <code style="color:#22d3bf">ValueError</code>。reshape を明示する)。</p>
 <p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

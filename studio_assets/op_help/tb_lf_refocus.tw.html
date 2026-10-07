@@ -7,36 +7,25 @@
 <p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_refocus.chain.jpg">tb_lf_refocus: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_refocus.chain.jpg">tb_lf_refocus: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_refocus.inputs.jpg">tb_lf_refocus: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_refocus.inputs.jpg">tb_lf_refocus: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>位移疊加重新對焦：在指定 *slope* 對焦的合成孔徑影像。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Every view `<code style="color:#22d3bf">(v, u)</code><code style="color:#22d3bf"> is shifted by </code><code style="color:#22d3bf">(-s*(v - v_c), -s*(u - u_c))</code>` — the</p>
-<p><b>minus</b> undoes the parallax of a point at slope `<code style="color:#22d3bf">s</code>` — and the shifted</p>
-<p>views are averaged. Points at that slope add coherently and stay sharp;</p>
-<p>everything else is smeared by an amount proportional to its slope</p>
-<p>difference times the angular baseline. `<code style="color:#22d3bf">slope=0</code>` is the plane the array</p>
-<p>was already focused on and returns the plain average of the views.</p>
-<p>Ground truth it reproduces exactly (pinned in `<code style="color:#22d3bf">tests/test_lightfield.py</code>`):</p>
-<p>a single-layer field synthesised at slope `<code style="color:#22d3bf">s0</code><code style="color:#22d3bf"> and refocused at </code><code style="color:#22d3bf">s0</code>`</p>
-<p>with `<code style="color:#22d3bf">edge=&quot;wrap&quot;</code><code style="color:#22d3bf"> and an integer </code><code style="color:#22d3bf">s0</code>` returns the original texture to</p>
-<p>5.6e-16; sweeping the slope, the variance of the result peaks at `<code style="color:#22d3bf">s0</code>`</p>
-<p>(measured exactly on the sweep grid in all 18 texture/slope combinations</p>
-<p>listed in the module docstring), and refocusing at `<code style="color:#22d3bf">-s0</code>` does *not* —</p>
-<p>which is the check that catches a flipped shift sign.</p>
-<p>Returns a `<code style="color:#22d3bf">(H, W)</code>` 2-D image.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, a non-finite or</p>
-<p>over-large *slope* (:data:<code style="color:#22d3bf">MAX_ABS_SLOPE</code>), unknown *interp* / *edge*.</p>
-<p>Typed bridge of the lightfield op `<code style="color:#22d3bf">lf_refocus</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>Every view <code style="color:#22d3bf">(v, u)</code> is shifted by <code style="color:#22d3bf">(-s*(v - v_c), -s*(u - u_c))</code> — the <b>minus</b> undoes the parallax of a point at slope <code style="color:#22d3bf">s</code> — and the shifted views are averaged. Points at that slope add coherently and stay sharp; everything else is smeared by an amount proportional to its slope difference times the angular baseline. <code style="color:#22d3bf">slope=0</code> is the plane the array was already focused on and returns the plain average of the views.</p>
+<p>Ground truth it reproduces exactly (pinned in <code style="color:#22d3bf">tests/test_lightfield.py</code>):</p>
+<p>a single-layer field synthesised at slope <code style="color:#22d3bf">s0</code> and refocused at <code style="color:#22d3bf">s0</code> with <code style="color:#22d3bf">edge=&quot;wrap&quot;</code> and an integer <code style="color:#22d3bf">s0</code> returns the original texture to 5.6e-16; sweeping the slope, the variance of the result peaks at <code style="color:#22d3bf">s0</code> (measured exactly on the sweep grid in all 18 texture/slope combinations listed in the module docstring), and refocusing at <code style="color:#22d3bf">-s0</code> does *not* — which is the check that catches a flipped shift sign.</p>
+<p>Returns a <code style="color:#22d3bf">(H, W)</code> 2-D image.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not a valid light field, a non-finite or over-large *slope* (<code style="color:#22d3bf">MAX_ABS_SLOPE</code>), unknown *interp* / *edge*.</p>
+<p>Typed bridge of the lightfield op <code style="color:#22d3bf">lf_refocus</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_lightfield 0.50 0.50
-tb_lf_refocus 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_lightfield%200.50%200.50%0Atb_lf_refocus%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_lightfield%200.50%200.50%0Atb_lf_refocus%200.50%200.50">Load &amp; run</a></p>
+tb_lf_refocus 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_lightfield%200.50%200.50%0Atb_lf_refocus%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_lightfield%200.50%200.50%0Atb_lf_refocus%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p>下面的範例呼叫的是底層帳本運算子 <code style="color:#22d3bf">lf_refocus</code>。此橋接運算子只是把同一實作適配為 <code style="color:#22d3bf">fn(v, a, b)</code> 慣例，行為完全相同(只是呼叫形式不同)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>

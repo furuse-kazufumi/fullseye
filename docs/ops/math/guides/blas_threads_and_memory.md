@@ -2,6 +2,11 @@
 guide: blas_threads_and_memory
 dim: math
 title: 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置
+title_en: Why matrix decompositions are slow — BLAS threads, caches, memory layout
+title_zh: 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局
+title_tw: 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置
+title_ko: 행렬 분해가 느린 이유 — BLAS 스레드·캐시·메모리 배치
+title_de: Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

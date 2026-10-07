@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">qimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quat_conjugate_image(qimage) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import quatimage; quatimage.quat_conjugate_image(qimage) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsquat.get(&quot;quat_conjugate_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Per-pixel quaternion conjugate `<code style="color:#22d3bf">(w, -x, -y, -z)</code>`. → (H, W, 4).</p>
-<p>Exact and involutive: `<code style="color:#22d3bf">quat_conjugate_image(quat_conjugate_image(q)) is q</code>`</p>
-<p>to the last bit (a sign flip is exact in IEEE 754). Agrees with</p>
-<p>`<code style="color:#22d3bf">pose_quat.quat_conjugate</code>` per pixel, asserted in the tests.</p>
+<p>Per-pixel quaternion conjugate <code style="color:#22d3bf">(w, -x, -y, -z)</code>. → (H, W, 4).</p>
+<p>Exact and involutive: <code style="color:#22d3bf">quat_conjugate_image(quat_conjugate_image(q)) is q</code> to the last bit (a sign flip is exact in IEEE 754). Agrees with <code style="color:#22d3bf">pose_quat.quat_conjugate</code> per pixel, asserted in the tests.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

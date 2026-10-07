@@ -4,15 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.overlay_labels(img, labels, alpha=0.5, colors=None, scheme=&#x27;okabe_ito&#x27;, background=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.overlay_labels(img, labels, alpha=0.5, colors=None, scheme=&#x27;okabe_ito&#x27;, background=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;overlay_labels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>色ラベル図を α で重ねる。<b>同じラベル番号には常に同じ色</b>。</p>
-<p>Parameters</p>
-<p>----------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : (H,W) int</p>
-<p>ラベル番号の地図。`<code style="color:#22d3bf">background</code>`(既定 0)は透明。</p>
+<p>ラベル番号の地図。<code style="color:#22d3bf">background</code>(既定 0)は透明。</p>
 <p>colors : (k,3) or None</p>
 <p>番号 → 色。None なら Okabe–Ito 8 色を番号順に周回する</p>
 <p>(乱数を使わないので、同じラベル図なら常に同じ絵になる)。</p>
-<p>Raises</p>
-<p>------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>形の不一致 / 負のラベル / alpha が [0,1] の外 / colors の形。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

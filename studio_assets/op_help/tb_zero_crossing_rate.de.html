@@ -7,23 +7,19 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_zero_crossing_rate.chain.jpg">tb_zero_crossing_rate: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_zero_crossing_rate.chain.jpg">tb_zero_crossing_rate: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Anteil benachbarter Abtastwerte mit Vorzeichenwechsel — ein einfacher Hinweis auf Tonhöhe/Rauschanteil.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Exact zeros are neither a crossing nor a sign: a crossing is counted only when</p>
-<p>the sign changes between consecutive *non-zero* samples, and the rate divides</p>
-<p>by the number of adjacent sample pairs `<code style="color:#22d3bf">len(x) - 1</code><code style="color:#22d3bf">. So </code><code style="color:#22d3bf">[1, 0, 1, 0, 1]</code>` is</p>
-<p>`<code style="color:#22d3bf">0.0</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">[1, 0, -1]</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">0.5</code><code style="color:#22d3bf"> (before 2026-09-02 </code><code style="color:#22d3bf">diff(sign(x))</code>` counted</p>
-<p>every touch of zero as a crossing: `<code style="color:#22d3bf">1.0</code>` for both).</p>
-<p>Typed bridge of the 1d op `<code style="color:#22d3bf">zero_crossing_rate</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>Exact zeros are neither a crossing nor a sign: a crossing is counted only when the sign changes between consecutive *non-zero* samples, and the rate divides by the number of adjacent sample pairs <code style="color:#22d3bf">len(x) - 1</code>. So <code style="color:#22d3bf">[1, 0, 1, 0, 1]</code> is <code style="color:#22d3bf">0.0</code> and <code style="color:#22d3bf">[1, 0, -1]</code> is <code style="color:#22d3bf">0.5</code> (before 2026-09-02 <code style="color:#22d3bf">diff(sign(x))</code> counted every touch of zero as a crossing: <code style="color:#22d3bf">1.0</code> for both).</p>
+<p>Typed bridge of the 1d op <code style="color:#22d3bf">zero_crossing_rate</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_signal 0.50 0.50
-tb_zero_crossing_rate 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_signal%200.50%200.50%0Atb_zero_crossing_rate%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_signal%200.50%200.50%0Atb_zero_crossing_rate%200.50%200.50">Load &amp; run</a></p>
+tb_zero_crossing_rate 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_signal%200.50%200.50%0Atb_zero_crossing_rate%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_signal%200.50%200.50%0Atb_zero_crossing_rate%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• (noch keine)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>

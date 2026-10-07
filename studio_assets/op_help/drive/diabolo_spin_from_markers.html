@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_spin_from_markers(phases, smears, dt: &#x27;float&#x27;, exposure: &#x27;float&#x27;, *, use_smear: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import diabolo; diabolo.diabolo_spin_from_markers(phases, smears, dt: &#x27;float&#x27;, exposure: &#x27;float&#x27;, *, use_smear: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_spin_from_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>コマごとの位相 ψ_k(mod 2π)とぶれの弧の幅 → 回転の速さ ω、単位 rad/s(軸のまわり、右ねじ)。</p>
-<p>隣のコマの差を (−π, π] に包むと |ω| dt &lt; π までしか読めない(ナイキストで折り返す、車輪の錯視)。`<code style="color:#22d3bf">use_smear</code>` なら</p>
-<p>弧の幅 / 露光 = |ω| の粗い値で 2π k の枝を選ぶ(折り返さない粗い値 × 折り返す精しい値)。枝の間隔 2π/dt に対して弧の幅の</p>
-<p>誤差が半分より小さいことを前提にする。返り `<code style="color:#22d3bf">{&quot;omega&quot;, &quot;omega_wrapped&quot;, &quot;omega_smear&quot;, &quot;branch&quot;}</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 位相が 2 コマ未満、長さが違う、dt ≤ 0、露光 &lt; 0、有限でない値。</p>
+<p>隣のコマの差を (−π, π] に包むと |ω| dt &lt; π までしか読めない(ナイキストで折り返す、車輪の錯視)。<code style="color:#22d3bf">use_smear</code> なら弧の幅 / 露光 = |ω| の粗い値で 2π k の枝を選ぶ(折り返さない粗い値 × 折り返す精しい値)。枝の間隔 2π/dt に対して弧の幅の誤差が半分より小さいことを前提にする。返り <code style="color:#22d3bf">{&quot;omega&quot;, &quot;omega_wrapped&quot;, &quot;omega_smear&quot;, &quot;branch&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 位相が 2 コマ未満、長さが違う、dt ≤ 0、露光 &lt; 0、有限でない値。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

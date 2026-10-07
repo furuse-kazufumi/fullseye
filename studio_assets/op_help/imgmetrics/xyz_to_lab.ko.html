@@ -3,22 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">lab</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;xyz_to_lab&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>CIE XYZ → CIE 1976 L\*a\*b\*. 기본 백색점은 D65 2°.</p>
+<p>CIE XYZ → CIE 1976 L*a*b*. 기본 백색점은 D65 2°.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>式: `<code style="color:#22d3bf">t = XYZ / white</code><code style="color:#22d3bf"> として </code><code style="color:#22d3bf">f(t) = cbrt(t)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">t &gt; (6/29)^3</code>`)、</p>
-<p>それ以外は `<code style="color:#22d3bf">t / (3 (6/29)^2) + 4/29</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">L = 116 f(Y) - 16</code>`、</p>
-<p>`<code style="color:#22d3bf">a = 500 (f(X) - f(Y))</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">b = 200 (f(Y) - f(Z))</code>`。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">xyz</code><code style="color:#22d3bf">: 最後の軸が 3 の任意の形。</code><code style="color:#22d3bf">rgb_to_xyz</code>` の出力と同じ、Y = 1 が白の尺度。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">white</code><code style="color:#22d3bf">: 白色点 </code><code style="color:#22d3bf">(Xn, Yn, Zn)</code><code style="color:#22d3bf"> の 3 つの正の数。既定 </code><code style="color:#22d3bf">D65_WHITE</code>` =</p>
-<p>`<code style="color:#22d3bf">(0.95047, 1.0, 1.08883)</code>`。別の光源(D50 など)で撮った XYZ ならここを変える。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64。`<code style="color:#22d3bf">L</code><code style="color:#22d3bf"> は白で 100、黒で 0。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">b</code>` は符号つき。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(`<code style="color:#22d3bf">MetricContractError</code><code style="color:#22d3bf">): 最後の軸が 3 でない / </code><code style="color:#22d3bf">white</code>` が 3 要素でない、</p>
-<p>または 0 以下を含む。XYZ の値域は検査しない(負や 1 超もそのまま計算する)。</p>
-<p>`<code style="color:#22d3bf">delta_e_76</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">delta_e_2000</code>` はこの Lab を入力にする。</p>
+<p>式: <code style="color:#22d3bf">t = XYZ / white</code> として <code style="color:#22d3bf">f(t) = cbrt(t)</code>(<code style="color:#22d3bf">t &gt; (6/29)^3</code>)、それ以外は <code style="color:#22d3bf">t / (3 (6/29)^2) + 4/29</code>。<code style="color:#22d3bf">L = 116 f(Y) - 16</code>、<code style="color:#22d3bf">a = 500 (f(X) - f(Y))</code>、<code style="color:#22d3bf">b = 200 (f(Y) - f(Z))</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xyz</code>: 最後の軸が 3 の任意の形。<code style="color:#22d3bf">rgb_to_xyz</code> の出力と同じ、Y = 1 が白の尺度。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: 白色点 <code style="color:#22d3bf">(Xn, Yn, Zn)</code> の 3 つの正の数。既定 <code style="color:#22d3bf">D65_WHITE</code> = <code style="color:#22d3bf">(0.95047, 1.0, 1.08883)</code>。別の光源(D50 など)で撮った XYZ ならここを変える。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64。<code style="color:#22d3bf">L</code> は白で 100、黒で 0。<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> は符号つき。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): 最後の軸が 3 でない / <code style="color:#22d3bf">white</code> が 3 要素でない、または 0 以下を含む。XYZ の値域は検査しない(負や 1 超もそのまま計算する)。</p>
+<p><code style="color:#22d3bf">delta_e_76</code> / <code style="color:#22d3bf">delta_e_2000</code> はこの Lab を入力にする。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:colorimetry">colorimetry</a> — 측색과 분광 지식 — 색은 ‘분광 × 광원 × 관찰자’로만 정해진다</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

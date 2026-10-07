@@ -5,17 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>reservoir の状態列: x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in u_t)。返りは (T − washout, n)。</p>
-<p>`<code style="color:#22d3bf">U</code><code style="color:#22d3bf"> は (T, d) の入力列(1-D は (T, 1))。</code><code style="color:#22d3bf">W_in</code>` は seed で決まる一様 (−in_scale, in_scale)</p>
-<p>の (n, d) 行列。`<code style="color:#22d3bf">nonlinearity</code>` は tanh / linear。x_0 = 0 から始め、各ステップの更新後の</p>
-<p>状態を並べる。`<code style="color:#22d3bf">washout</code>` 行を先頭から捨てる(T 以上は拒否)。</p>
-<p>`<code style="color:#22d3bf">W_in</code><code style="color:#22d3bf"> を渡すと乱数の代わりにその (n, d) 行列を使う(</code><code style="color:#22d3bf">in_scale</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">seed</code>` は無視)——</p>
-<p>決まったノード群に刺激を入れる(列 = 刺激するノードの指示子)のはこちら。</p>
+<p><code style="color:#22d3bf">U</code> は (T, d) の入力列(1-D は (T, 1))。<code style="color:#22d3bf">W_in</code> は seed で決まる一様 (−in_scale, in_scale) の (n, d) 行列。<code style="color:#22d3bf">nonlinearity</code> は tanh / linear。x_0 = 0 から始め、各ステップの更新後の状態を並べる。<code style="color:#22d3bf">washout</code> 行を先頭から捨てる(T 以上は拒否)。</p>
+<p><code style="color:#22d3bf">W_in</code> を渡すと乱数の代わりにその (n, d) 行列を使う(<code style="color:#22d3bf">in_scale</code> / <code style="color:#22d3bf">seed</code> は無視)—— 決まったノード群に刺激を入れる(列 = 刺激するノードの指示子)のはこちら。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_malecns_activity_wave">poc_malecns_activity_wave</a> — <code style="color:#22d3bf">py -3.11 examples/poc_malecns_activity_wave.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_microns_brain_wave">poc_microns_brain_wave</a> — <code style="color:#22d3bf">py -3.11 examples/poc_microns_brain_wave.py</code></p>

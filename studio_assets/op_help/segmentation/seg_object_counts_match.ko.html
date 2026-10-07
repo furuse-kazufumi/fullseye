@@ -5,18 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>물체 개수 일치: &#x27;주로 겹치는&#x27; 간선의 이분 그래프 차수로 분열/융합/누락/오검/일치를 센다(seg_object_counts_match).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>真 i と予測 j(どちらも背景でない)の間に辺を置く条件 = 重なり n_ij ≥ `<code style="color:#22d3bf">min_overlap</code>` × min(|i|, |j|)</p>
-<p>(小さい方がもう一方に主に入っている)。真の次数 d_i、予測の次数 e_j:</p>
-<p>`<code style="color:#22d3bf">missed</code><code style="color:#22d3bf"> = #{d_i = 0}、</code><code style="color:#22d3bf">false</code><code style="color:#22d3bf"> = #{e_j = 0}、</code><code style="color:#22d3bf">split</code>` = #{d_i ≥ 2}(1 つの真が複数の予測に割れた)、</p>
-<p>`<code style="color:#22d3bf">merged</code><code style="color:#22d3bf"> = #{e_j ≥ 2}(1 つの予測が複数の真を抱えた)、</code><code style="color:#22d3bf">matched</code>` = #{d_i = 1 かつ その相手の e_j = 1}。</p>
-<p>`<code style="color:#22d3bf">counts_match</code>` = 真と予測の個数が同じで全部が一致。min_overlap &gt; 0.5 なら各予測は高々 1 つの真に「主に入る」が、</p>
-<p>真が小さく予測が大きい辺もあるので融合は検出できる。</p>
-<p>返り値: 上の数 + `<code style="color:#22d3bf">n_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_pred</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf">(真ラベル, 予測ラベル)の (m, 2)、</code><code style="color:#22d3bf">split_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">merged_pred</code>` /</p>
-<p>`<code style="color:#22d3bf">missed_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">false_pred</code><code style="color:#22d3bf">(ラベルの配列)、</code><code style="color:#22d3bf">min_overlap</code>`。</p>
+<p>真 i と予測 j(どちらも背景でない)の間に辺を置く条件 = 重なり n_ij ≥ <code style="color:#22d3bf">min_overlap</code> × min(|i|, |j|) (小さい方がもう一方に主に入っている)。真の次数 d_i、予測の次数 e_j:</p>
+<p><code style="color:#22d3bf">missed</code> = #{d_i = 0}、<code style="color:#22d3bf">false</code> = #{e_j = 0}、<code style="color:#22d3bf">split</code> = #{d_i ≥ 2}(1 つの真が複数の予測に割れた)、<code style="color:#22d3bf">merged</code> = #{e_j ≥ 2}(1 つの予測が複数の真を抱えた)、<code style="color:#22d3bf">matched</code> = #{d_i = 1 かつ その相手の e_j = 1}。<code style="color:#22d3bf">counts_match</code> = 真と予測の個数が同じで全部が一致。min_overlap &gt; 0.5 なら各予測は高々 1 つの真に「主に入る」が、真が小さく予測が大きい辺もあるので融合は検出できる。</p>
+<p>返り値: 上の数 + <code style="color:#22d3bf">n_true</code> / <code style="color:#22d3bf">n_pred</code>、<code style="color:#22d3bf">edges</code>(真ラベル, 予測ラベル)の (m, 2)、<code style="color:#22d3bf">split_true</code> / <code style="color:#22d3bf">merged_pred</code> / <code style="color:#22d3bf">missed_true</code> / <code style="color:#22d3bf">false_pred</code>(ラベルの配列)、<code style="color:#22d3bf">min_overlap</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 분할 채점과 정답이 있는 합성 세계 — 어떤 척도가 어떤 실패에 눈먼가</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

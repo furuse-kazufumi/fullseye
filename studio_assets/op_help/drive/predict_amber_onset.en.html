@@ -4,14 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.predict_amber_onset(observations, *, flash_duration: &#x27;Optional[float]&#x27; = None, crossing_length: &#x27;Optional[float]&#x27; = None, walk_speed: &#x27;float&#x27; = 1.0, ped_red_to_amber: &#x27;float&#x27; = 2.0, t_now: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivedecide; drivedecide.predict_amber_onset(observations, *, flash_duration: &#x27;Optional[float]&#x27; = None, crossing_length: &#x27;Optional[float]&#x27; = None, walk_speed: &#x27;float&#x27; = 1.0, ped_red_to_amber: &#x27;float&#x27; = 2.0, t_now: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;predict_amber_onset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>並行する歩行者信号の観測(時刻順の `<code style="color:#22d3bf">(t, state)</code>`、state ∈ green / flash / red)から車両の黄の始まりを推定する。</p>
-<p>F = `<code style="color:#22d3bf">flash_duration</code><code style="color:#22d3bf">(無ければ </code><code style="color:#22d3bf">crossing_length / walk_speed</code><code style="color:#22d3bf">)、Δ = </code><code style="color:#22d3bf">ped_red_to_amber</code>`。</p>
-<p>観測の切り替わり(green→flash、flash→red)ごとに黄の時刻が入る区間を作り、その <b>積</b> をとる:</p>
+<p>並行する歩行者信号の観測(時刻順の <code style="color:#22d3bf">(t, state)</code>、state ∈ green / flash / red)から車両の黄の始まりを推定する。</p>
+<p>F = <code style="color:#22d3bf">flash_duration</code>(無ければ <code style="color:#22d3bf">crossing_length / walk_speed</code>)、Δ = <code style="color:#22d3bf">ped_red_to_amber</code>。観測の切り替わり(green→flash、flash→red)ごとに黄の時刻が入る区間を作り、その <b>積</b> をとる:</p>
 <p>green→flash(最後の green t_g、最初の flash t_f): 黄 ∈ [t_g + F + Δ, t_f + F + Δ]</p>
 <p>flash→red  (最後の flash t_f&#x27;、最初の red t_r):   黄 ∈ [t_f&#x27; + Δ, t_r + Δ]</p>
-<p>返り値: `<code style="color:#22d3bf">amber_onset</code><code style="color:#22d3bf">(区間の中点)、</code><code style="color:#22d3bf">lo</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hi</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">half_width</code><code style="color:#22d3bf">(誤差の上限)、</code><code style="color:#22d3bf">remaining</code>`</p>
-<p>= amber_onset − t_now(既定 = 最後の観測時刻)、`<code style="color:#22d3bf">basis</code>`(使った切り替わり)。切り替わりが 1 つも無ければ</p>
-<p>ValueError(青が続いているだけでは「いつ点滅するか」は分からない)。区間が空(観測と F・Δ が矛盾)も ValueError。</p>
+<p>返り値: <code style="color:#22d3bf">amber_onset</code>(区間の中点)、<code style="color:#22d3bf">lo</code> / <code style="color:#22d3bf">hi</code>、<code style="color:#22d3bf">half_width</code>(誤差の上限)、<code style="color:#22d3bf">remaining</code> = amber_onset − t_now(既定 = 最後の観測時刻)、<code style="color:#22d3bf">basis</code>(使った切り替わり)。切り替わりが 1 つも無ければ ValueError(青が続いているだけでは「いつ点滅するか」は分からない)。区間が空(観測と F・Δ が矛盾)も ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

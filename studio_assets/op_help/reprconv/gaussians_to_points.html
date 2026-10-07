@@ -3,11 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">gaussians</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_points(gaussians)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_points(gaussians)</code>、台帳から引くなら <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>`<code style="color:#22d3bf">gaussians</code><code style="color:#22d3bf"> → 中心の点群 </code><code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">gaussians</code>` の出口(<b>中心は可逆</b>)。</p>
+<p><code style="color:#22d3bf">gaussians</code> → 中心の点群 <code style="color:#22d3bf">(N,3)</code>。<code style="color:#22d3bf">gaussians</code> の出口(<b>中心は可逆</b>)。</p>
 <p>Args:</p>
-<p>gaussians: `<code style="color:#22d3bf">mu</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">w</code>` を持つ dict。</p>
+<p>gaussians: <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code> を持つ dict。</p>
 <p>Returns:</p>
-<p>(N, 3) float64(`<code style="color:#22d3bf">mu</code>` のコピー)。</p>
+<p>(N, 3) float64(<code style="color:#22d3bf">mu</code> のコピー)。</p>
 <p>Raises:</p>
 <p>ValueError: キー欠落 / 形状不整合 / sigma &lt;= 0 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tree_mesh(height: &#x27;float&#x27; = 6.0, trunk_radius: &#x27;float&#x27; = 0.15, crown_radius: &#x27;float&#x27; = 1.8, kind: &#x27;str&#x27; = &#x27;broadleaf&#x27;, n: &#x27;int&#x27; = 8, color=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveterrain; driveterrain.tree_mesh(height: &#x27;float&#x27; = 6.0, trunk_radius: &#x27;float&#x27; = 0.15, crown_radius: &#x27;float&#x27; = 1.8, kind: &#x27;str&#x27; = &#x27;broadleaf&#x27;, n: &#x27;int&#x27; = 8, color=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;tree_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>手続き的な木: 幹 = 正 n 角柱(高さ 0.35·height)、樹冠 = 円錐(conifer)か回転楕円体(broadleaf、上下 0.65·height)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot; (M,3), &quot;label&quot; (13), &quot;dims&quot;, &quot;volume&quot;}</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">volume</code>` は閉形式: 幹 = ½ n r² sin(2π/n)·h_t、</p>
-<p>円錐 = ⅓·½ n R² sin(2π/n)·h_c(多角形の底面なので厳密)、楕円体は内接なので mesh_signed_volume ≤ 4/3·π R² (h_c/2)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot; (M,3), &quot;label&quot; (13), &quot;dims&quot;, &quot;volume&quot;}</code>。<code style="color:#22d3bf">volume</code> は閉形式: 幹 = ½ n r² sin(2π/n)·h_t、円錐 = ⅓·½ n R² sin(2π/n)·h_c(多角形の底面なので厳密)、楕円体は内接なので mesh_signed_volume ≤ 4/3·π R² (h_c/2)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import agvfleet; agvfleet.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;warehouse_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>棚の列と通路でできた倉庫の格子(True = 走れる)。</p>
-<p>棚は横長の 1 行 × `<code style="color:#22d3bf">rack_len</code><code style="color:#22d3bf"> マスのブロックで、上下左右を幅 </code><code style="color:#22d3bf">aisle</code><code style="color:#22d3bf"> の通路が囲む。外周に </code><code style="color:#22d3bf">margin</code>`</p>
-<p>マスの走行帯(ステーションの前)を置く。返りは `<code style="color:#22d3bf">(grid, info)</code>`、info に棚のマスの一覧と外周の帯。</p>
+<p>棚は横長の 1 行 × <code style="color:#22d3bf">rack_len</code> マスのブロックで、上下左右を幅 <code style="color:#22d3bf">aisle</code> の通路が囲む。外周に <code style="color:#22d3bf">margin</code> マスの走行帯(ステーションの前)を置く。返りは <code style="color:#22d3bf">(grid, info)</code>、info に棚のマスの一覧と外周の帯。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

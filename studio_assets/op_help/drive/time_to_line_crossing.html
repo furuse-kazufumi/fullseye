@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.time_to_line_crossing(offset: &#x27;float&#x27;, heading_error: &#x27;float&#x27;, curvature: &#x27;float&#x27;, speed: &#x27;float&#x27;, *, line_offset: &#x27;float&#x27;, lane_curvature: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.time_to_line_crossing(offset: &#x27;float&#x27;, heading_error: &#x27;float&#x27;, curvature: &#x27;float&#x27;, speed: &#x27;float&#x27;, *, line_offset: &#x27;float&#x27;, lane_curvature: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;time_to_line_crossing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>TLC: 車(の基準点)が今の曲率のまま円(または直線)を走るとして、車線の境界に届くまでの時間 [s]。</p>
-<p>座標: 車線の中心線の上の点を原点、中心線の向きを +x、左を +y。車は (0, `<code style="color:#22d3bf">offset</code>`)、中心線に対する向き</p>
-<p>`<code style="color:#22d3bf">heading_error</code><code style="color:#22d3bf">、曲率 </code><code style="color:#22d3bf">curvature</code><code style="color:#22d3bf">(左が正)。境界は中心線から横 </code><code style="color:#22d3bf">line_offset</code>`(左が正)の線 —— 中心線が</p>
-<p>曲率 `<code style="color:#22d3bf">lane_curvature</code><code style="color:#22d3bf"> の円なら、それと同心の円。届かなければ </code><code style="color:#22d3bf">inf</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 非有限、v ≤ 0、車がすでに境界の外側(offset と line_offset の関係で判断)。</p>
+<p>座標: 車線の中心線の上の点を原点、中心線の向きを +x、左を +y。車は (0, <code style="color:#22d3bf">offset</code>)、中心線に対する向き <code style="color:#22d3bf">heading_error</code>、曲率 <code style="color:#22d3bf">curvature</code>(左が正)。境界は中心線から横 <code style="color:#22d3bf">line_offset</code>(左が正)の線 —— 中心線が曲率 <code style="color:#22d3bf">lane_curvature</code> の円なら、それと同心の円。届かなければ <code style="color:#22d3bf">inf</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 非有限、v ≤ 0、車がすでに境界の外側(offset と line_offset の関係で判断)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

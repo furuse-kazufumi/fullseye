@@ -5,14 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>TLC: 車(の基準点)が今の曲率のまま円(または直線)を走るとして、車線の境界に届くまでの時間 [s]。</p>
-<p>座標: 車線の中心線の上の点を原点、中心線の向きを +x、左を +y。車は (0, `<code style="color:#22d3bf">offset</code>`)、中心線に対する向き</p>
-<p>`<code style="color:#22d3bf">heading_error</code><code style="color:#22d3bf">、曲率 </code><code style="color:#22d3bf">curvature</code><code style="color:#22d3bf">(左が正)。境界は中心線から横 </code><code style="color:#22d3bf">line_offset</code>`(左が正)の線 —— 中心線が</p>
-<p>曲率 `<code style="color:#22d3bf">lane_curvature</code><code style="color:#22d3bf"> の円なら、それと同心の円。届かなければ </code><code style="color:#22d3bf">inf</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 非有限、v ≤ 0、車がすでに境界の外側(offset と line_offset の関係で判断)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>座標: 車線の中心線の上の点を原点、中心線の向きを +x、左を +y。車は (0, <code style="color:#22d3bf">offset</code>)、中心線に対する向き <code style="color:#22d3bf">heading_error</code>、曲率 <code style="color:#22d3bf">curvature</code>(左が正)。境界は中心線から横 <code style="color:#22d3bf">line_offset</code>(左が正)の線 —— 中心線が曲率 <code style="color:#22d3bf">lane_curvature</code> の円なら、それと同心の円。届かなければ <code style="color:#22d3bf">inf</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 非有限、v ≤ 0、車がすでに境界の外側(offset と line_offset の関係で判断)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_lateral">poc_driving_lateral</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_lateral.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">scalar</code> 作為輸入)</h3>

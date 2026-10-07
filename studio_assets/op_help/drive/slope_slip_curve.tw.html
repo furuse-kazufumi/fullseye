@@ -5,15 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>斜面の角(度、登りが正)ごとに、車体の重さを支えつつ斜面方向の重力成分を牽引力で釣り合わせる定常の滑り率。</p>
-<p>1 輪あたり `<code style="color:#22d3bf">F_z = m g cos β / N</code><code style="color:#22d3bf">、必要な牽引力 </code><code style="color:#22d3bf">m g sin β / N</code>`。滑り率を [s_min, s_max] で二分法</p>
-<p>(内側で沈下も二分法)。`<code style="color:#22d3bf">s_max</code><code style="color:#22d3bf"> でも牽引力が足りない角は </code><code style="color:#22d3bf">feasible = False</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">slip = nan</code>`(立ち往生)、</p>
-<p>下りで `<code style="color:#22d3bf">s_min</code>` でも止まれない角も同じ。既定の重力は火星 3.72 m/s²。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;slope&quot;, &quot;slip&quot;, &quot;sinkage&quot;, &quot;feasible&quot;, &quot;max_slope&quot;}</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">max_slope</code>` は登れる最大の角の内挿 [deg]、</p>
-<p>範囲内に限界が無ければ nan)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>1 輪あたり <code style="color:#22d3bf">F_z = m g cos β / N</code>、必要な牽引力 <code style="color:#22d3bf">m g sin β / N</code>。滑り率を [s_min, s_max] で二分法(内側で沈下も二分法)。<code style="color:#22d3bf">s_max</code> でも牽引力が足りない角は <code style="color:#22d3bf">feasible = False</code>・<code style="color:#22d3bf">slip = nan</code>(立ち往生)、下りで <code style="color:#22d3bf">s_min</code> でも止まれない角も同じ。既定の重力は火星 3.72 m/s²。返り値 <code style="color:#22d3bf">{&quot;slope&quot;, &quot;slip&quot;, &quot;sinkage&quot;, &quot;feasible&quot;, &quot;max_slope&quot;}</code>(<code style="color:#22d3bf">max_slope</code> は登れる最大の角の内挿 [deg]、範囲内に限界が無ければ nan)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rover_slip_risk_path">poc_rover_slip_risk_path</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rover_slip_risk_path.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

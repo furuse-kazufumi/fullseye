@@ -4,13 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pure_pursuit_curvature(pose, path, lookahead, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelateral; drivelateral.pure_pursuit_curvature(pose, path, lookahead, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;pure_pursuit_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>pure pursuit: 後車軸の中心(`<code style="color:#22d3bf">pose</code>` = (x, y, ψ)、(N, 3) 可)から経路の上で距離 L_d 先の点を狙う曲率 κ = 2 sin α / L_d。</p>
-<p>経路は折線(M, 2)。最も近い点を探し、そこから先で初めて距離が L_d になる点を区間の上で 2 次方程式で求める</p>
-<p>(経路の終わりまで届かなければ終点を狙い、L_d をその距離にする)。`<code style="color:#22d3bf">start_index</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">window</code>` で最も近い点を</p>
-<p>探す範囲を絞る(長い経路の繰り返しを速くする。None なら全体)。</p>
-<p>返り値: `<code style="color:#22d3bf">kappa</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">goal</code><code style="color:#22d3bf"> (N, 2), </code><code style="color:#22d3bf">index</code><code style="color:#22d3bf">(最も近い区間), </code><code style="color:#22d3bf">lateral</code>`(経路からの横ずれ、左が正),</p>
-<p>`<code style="color:#22d3bf">lookahead</code>`(実際の距離)。1 つの pose なら先頭の次元を落とす。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形の誤り、L_d ≤ 0、start_index が範囲外。</p>
+<p>pure pursuit: 後車軸の中心(<code style="color:#22d3bf">pose</code> = (x, y, ψ)、(N, 3) 可)から経路の上で距離 L_d 先の点を狙う曲率 κ = 2 sin α / L_d。</p>
+<p>経路は折線(M, 2)。最も近い点を探し、そこから先で初めて距離が L_d になる点を区間の上で 2 次方程式で求める(経路の終わりまで届かなければ終点を狙い、L_d をその距離にする)。<code style="color:#22d3bf">start_index</code> と <code style="color:#22d3bf">window</code> で最も近い点を探す範囲を絞る(長い経路の繰り返しを速くする。None なら全体)。</p>
+<p>返り値: <code style="color:#22d3bf">kappa</code>, <code style="color:#22d3bf">alpha</code>, <code style="color:#22d3bf">goal</code> (N, 2), <code style="color:#22d3bf">index</code>(最も近い区間), <code style="color:#22d3bf">lateral</code>(経路からの横ずれ、左が正), <code style="color:#22d3bf">lookahead</code>(実際の距離)。1 つの pose なら先頭の次元を落とす。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、L_d ≤ 0、start_index が範囲外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

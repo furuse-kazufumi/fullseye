@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.snic_superpixels(image, *, n_segments: &#x27;int&#x27; = 100, compactness: &#x27;float&#x27; = 0.1, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import seggraph; seggraph.snic_superpixels(image, *, n_segments: &#x27;int&#x27; = 100, compactness: &#x27;float&#x27; = 0.1, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;snic_superpixels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>SNIC(Achanta–Süsstrunk 2017 の Algorithm 1): 格子の種から優先度つき待ち行列で育てる非反復の超画素。</p>
-<p>距離 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K)、m = `<code style="color:#22d3bf">compactness</code>`、c は画素の値。SLIC の正規化の形、式 (1) の表記は要確認)。</p>
-<p>待ち行列から最小の d を取り出し、未ラベルならラベルを付け、重心(位置と値)をその場で更新し、未ラベルの近傍を今の重心との</p>
-<p>距離で積む。同点は (距離, 積んだ順) で決める(決定的)。</p>
-<p>返す: `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..K)、</code><code style="color:#22d3bf">n_segments</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">all_connected</code>`(全ラベルが 4-連結 = 構成上の保証を数えて確かめた印)、</p>
-<p>`<code style="color:#22d3bf">n_disconnected</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sizes</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">seeds</code><code style="color:#22d3bf">((K, 2) の [row, col])、</code><code style="color:#22d3bf">s</code>`。</p>
+<p>距離 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K)、m = <code style="color:#22d3bf">compactness</code>、c は画素の値。SLIC の正規化の形、式 (1) の表記は要確認)。待ち行列から最小の d を取り出し、未ラベルならラベルを付け、重心(位置と値)をその場で更新し、未ラベルの近傍を今の重心との距離で積む。同点は (距離, 積んだ順) で決める(決定的)。</p>
+<p>返す: <code style="color:#22d3bf">labels</code>(1..K)、<code style="color:#22d3bf">n_segments</code>、<code style="color:#22d3bf">all_connected</code>(全ラベルが 4-連結 = 構成上の保証を数えて確かめた印)、<code style="color:#22d3bf">n_disconnected</code>、<code style="color:#22d3bf">sizes</code>、<code style="color:#22d3bf">seeds</code>((K, 2) の [row, col])、<code style="color:#22d3bf">s</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

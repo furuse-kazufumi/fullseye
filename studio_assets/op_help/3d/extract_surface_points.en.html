@@ -5,12 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extract surface points (M,3) from the TSDF zero crossing (no marching cubes needed; linear interpolation).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>観測済み(weight&gt;0)の隣接 voxel 対で TSDF 符号が変わる辺を、その 2 中心の間で</p>
-<p>`<code style="color:#22d3bf">alpha = t_a/(t_a - t_b)</code>` により線形補間して交点(表面点)を出す。両端とも weight&gt;0 の</p>
-<p>辺のみ採用(未観測の初期値 1.0 との偽の交差を作らない=honest)。x/y/z 3 軸の全辺を走査。</p>
-<p>交差が無ければ空 (0,3) を返す(詐称せず honest な空返し)。</p>
+<p>観測済み(weight&gt;0)の隣接 voxel 対で TSDF 符号が変わる辺を、その 2 中心の間で <code style="color:#22d3bf">alpha = t_a/(t_a - t_b)</code> により線形補間して交点(表面点)を出す。両端とも weight&gt;0 の辺のみ採用(未観測の初期値 1.0 との偽の交差を作らない=honest)。x/y/z 3 軸の全辺を走査。交差が無ければ空 (0,3) を返す(詐称せず honest な空返し)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

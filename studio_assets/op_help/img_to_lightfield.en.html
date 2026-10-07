@@ -16,19 +16,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Split the image into a foreground and a background layer and build a 4-D light field (V,U,H,W) with parallax.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">lf_synthesize</code><code style="color:#22d3bf"> と同じ前方モデルの 2 層版: 視点 </code><code style="color:#22d3bf">(v, u)</code>` は層ごとに</p>
-<p>`<code style="color:#22d3bf">(slope * (v - v_c), slope * (u - u_c))</code>` だけ画像をずらして見る(線形補間、</p>
-<p>縁は最近傍)。背景層は傾き 0(無限遠)、前景層(しきい値以上の画素)は傾き</p>
-<p>`<code style="color:#22d3bf">slope</code>` で、前景が背景を<b>遮蔽</b>する(視点ごとにマスクもずらす)。</p>
-<p>変位が角度インデックスに線形なので、EPI の傾き・リフォーカスの最良スロープ・</p>
-<p>両端視点の視差 `<code style="color:#22d3bf">slope * (U - 1)</code>` がすべて閉形式で分かる。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 前景の傾き </code><code style="color:#22d3bf">slope = 1.5 * a</code>` 画素/視点(a=0.5 で 0.75。5×5 なら</p>
-<p>両端で 3 px)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 前景のしきい値 </code><code style="color:#22d3bf">thr = b</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">img &gt;= thr</code>` が前景。b=0.5 で明るい部分)。</p>
-<p style="margin:2px 0 2px 12px">• 角度サンプルは `<code style="color:#22d3bf">LF_ANGULAR = (5, 5)</code><code style="color:#22d3bf">。返り値 </code><code style="color:#22d3bf">(5, 5, H, W)</code>` float64。</p>
-<p style="margin:2px 0 2px 12px">• 中央視点 `<code style="color:#22d3bf">(2, 2)</code>` は入力そのもの(ずれ 0)。</p>
-<p>使いどころ: `<code style="color:#22d3bf">tb_lf_epi</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_lf_refocus</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_lf_depth_from_focus</code>` の入口。</p>
-<p>深度推定の答えは「前景 = slope、背景 = 0」の 2 値。</p>
+<p><code style="color:#22d3bf">lf_synthesize</code> と同じ前方モデルの 2 層版: 視点 <code style="color:#22d3bf">(v, u)</code> は層ごとに <code style="color:#22d3bf">(slope * (v - v_c), slope * (u - u_c))</code> だけ画像をずらして見る(線形補間、縁は最近傍)。背景層は傾き 0(無限遠)、前景層(しきい値以上の画素)は傾き <code style="color:#22d3bf">slope</code> で、前景が背景を<b>遮蔽</b>する(視点ごとにマスクもずらす)。変位が角度インデックスに線形なので、EPI の傾き・リフォーカスの最良スロープ・両端視点の視差 <code style="color:#22d3bf">slope * (U - 1)</code> がすべて閉形式で分かる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 前景の傾き <code style="color:#22d3bf">slope = 1.5 * a</code> 画素/視点(a=0.5 で 0.75。5×5 なら両端で 3 px)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 前景のしきい値 <code style="color:#22d3bf">thr = b</code>(<code style="color:#22d3bf">img &gt;= thr</code> が前景。b=0.5 で明るい部分)。</p>
+<p style="margin:2px 0 2px 12px">• 角度サンプルは <code style="color:#22d3bf">LF_ANGULAR = (5, 5)</code>。返り値 <code style="color:#22d3bf">(5, 5, H, W)</code> float64。</p>
+<p style="margin:2px 0 2px 12px">• 中央視点 <code style="color:#22d3bf">(2, 2)</code> は入力そのもの(ずれ 0)。</p>
+<p>使いどころ: <code style="color:#22d3bf">tb_lf_epi</code> / <code style="color:#22d3bf">tb_lf_refocus</code> / <code style="color:#22d3bf">tb_lf_depth_from_focus</code> の入口。深度推定の答えは「前景 = slope、背景 = 0」の 2 値。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

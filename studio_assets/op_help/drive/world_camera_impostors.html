@@ -3,12 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_camera_impostors(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, actors=(), **camera_kw) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivehumanoid; drivehumanoid.world_camera_impostors(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, actors=(), **camera_kw) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;world_camera_impostors&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>:func:<code style="color:#22d3bf">driveworld.world_camera</code> で世界を撮り、`<code style="color:#22d3bf">actors</code>` のインポスタを<b>深度で前後を比べて</b>貼る。</p>
-<p>`<code style="color:#22d3bf">actors</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">[{&quot;imp&quot;: humanoid_impostors の返り値, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;distance&quot; (歩いた距離 [m])}, …]</code>`。</p>
-<p>向きの段 = 体から見たカメラの方位を n_yaw 段に丸めたもの、位相 = 歩いた距離を周期で割った余りに最も近い段。</p>
-<p>大きさ = 実際のカメラの「1 m あたりの画素」/ 事前描画の「1 m あたりの画素」(最近傍で拡大縮小)。</p>
-<p>返り値は world_camera と同じ鍵。貼った画素は `<code style="color:#22d3bf">label</code><code style="color:#22d3bf"> = 物体のラベル(7)、</code><code style="color:#22d3bf">face</code>` = −2(三角形が無い)、</p>
-<p>`<code style="color:#22d3bf">shade</code><code style="color:#22d3bf"> = 1。加えて </code><code style="color:#22d3bf">&quot;impostor_pixels&quot;</code>`(貼った画素の数)。</p>
+<p><code style="color:#22d3bf">driveworld.world_camera</code> で世界を撮り、<code style="color:#22d3bf">actors</code> のインポスタを<b>深度で前後を比べて</b>貼る。</p>
+<p><code style="color:#22d3bf">actors</code> = <code style="color:#22d3bf">[{&quot;imp&quot;: humanoid_impostors の返り値, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;distance&quot; (歩いた距離 [m])}, …]</code>。向きの段 = 体から見たカメラの方位を n_yaw 段に丸めたもの、位相 = 歩いた距離を周期で割った余りに最も近い段。大きさ = 実際のカメラの「1 m あたりの画素」/ 事前描画の「1 m あたりの画素」(最近傍で拡大縮小)。返り値は world_camera と同じ鍵。貼った画素は <code style="color:#22d3bf">label</code> = 物体のラベル(7)、<code style="color:#22d3bf">face</code> = −2(三角形が無い)、<code style="color:#22d3bf">shade</code> = 1。加えて <code style="color:#22d3bf">&quot;impostor_pixels&quot;</code>(貼った画素の数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

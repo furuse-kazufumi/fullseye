@@ -4,17 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivedecide; drivedecide.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_fov&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>凸面鏡(球面、半径 `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf">、開口の直径 </code><code style="color:#22d3bf">aperture</code><code style="color:#22d3bf">)を軸上 </code><code style="color:#22d3bf">eye_distance</code>`(頂点から)の眼で見たときの視野角。</p>
-<p>厳密(軸を含む断面): h = a/2、α = asin(h/R)、s = R − sqrt(R² − h²)、β = atan(h/(D + s))、</p>
-<p><b>全視野角 = 2(β + 2α)</b>。`<code style="color:#22d3bf">radius = inf</code>` は平面鏡 2 atan(h/D)。</p>
+<p>凸面鏡(球面、半径 <code style="color:#22d3bf">radius</code>、開口の直径 <code style="color:#22d3bf">aperture</code>)を軸上 <code style="color:#22d3bf">eye_distance</code>(頂点から)の眼で見たときの視野角。</p>
+<p>厳密(軸を含む断面): h = a/2、α = asin(h/R)、s = R − sqrt(R² − h²)、β = atan(h/(D + s))、<b>全視野角 = 2(β + 2α)</b>。<code style="color:#22d3bf">radius = inf</code> は平面鏡 2 atan(h/D)。</p>
 <p>近軸: ≈ a (1/D + 2/R)(誤差は h³ の桁。h/R ≲ 0.2 かつ h/D ≲ 0.2 で相対誤差が数 % 以内が目安)。</p>
-<p>返り値: `<code style="color:#22d3bf">fov_rad</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fov_deg</code><code style="color:#22d3bf">(厳密)、</code><code style="color:#22d3bf">fov_paraxial_rad</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">flat_fov_rad</code>`(同じ開口の平面鏡)、</p>
-<p>`<code style="color:#22d3bf">widening</code><code style="color:#22d3bf">(= fov / flat_fov、凸面で何倍広く見えるか)、</code><code style="color:#22d3bf">edge_tilt_rad</code><code style="color:#22d3bf"> = α、</code><code style="color:#22d3bf">eye_angle_rad</code>` = β。</p>
-<p>h ≥ R(半球より大きい開口)は ValueError。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>返り値: <code style="color:#22d3bf">fov_rad</code> / <code style="color:#22d3bf">fov_deg</code>(厳密)、<code style="color:#22d3bf">fov_paraxial_rad</code>、<code style="color:#22d3bf">flat_fov_rad</code>(同じ開口の平面鏡)、<code style="color:#22d3bf">widening</code>(= fov / flat_fov、凸面で何倍広く見えるか)、<code style="color:#22d3bf">edge_tilt_rad</code> = α、<code style="color:#22d3bf">eye_angle_rad</code> = β。h ≥ R(半球より大きい開口)は ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

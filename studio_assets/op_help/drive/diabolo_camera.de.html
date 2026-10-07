@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_camera(*, position=(1.4, 0.0, 0.75), look_at=(0.0, 0.0, 0.75), shape=(480, 640), fovy_deg: &#x27;float&#x27; = 30.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import diabolo; diabolo.diabolo_camera(*, position=(1.4, 0.0, 0.75), look_at=(0.0, 0.0, 0.75), shape=(480, 640), fovy_deg: &#x27;float&#x27; = 30.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>透視カメラ(既定 = 前 1.4 m から −x を見る、世界の z が上)。返り `<code style="color:#22d3bf">{&quot;C&quot;, &quot;R&quot;(行 = 右・下・前), &quot;K&quot;, &quot;shape&quot;, &quot;look_at&quot;}</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 位置と注視点が重なる、視線が鉛直、画の大きさや画角が不正。</p>
+<p>透視カメラ(既定 = 前 1.4 m から −x を見る、世界の z が上)。返り <code style="color:#22d3bf">{&quot;C&quot;, &quot;R&quot;(行 = 右・下・前), &quot;K&quot;, &quot;shape&quot;, &quot;look_at&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 位置と注視点が重なる、視線が鉛直、画の大きさや画角が不正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

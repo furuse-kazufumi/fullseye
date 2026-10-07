@@ -5,24 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>形態學 Chan–Vese（Márquez-Neila–Baumela–Álvarez 2014 的 MorphACWE）。1 次迭代 = 資料步 + 平滑步（morph_chan_vese）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>データ段: c1 = 内側の平均、c0 = 外側の平均、aux = |∇u|(λ1 (I − c1)² − λ2 (I − c0)²)、aux &lt; 0 の画素を内側、</p>
-<p>aux &gt; 0 を外側に(|∇u| ≠ 0 = 境界の近くだけが動く)。平滑段: 曲率の作用素(SI∘IS と IS∘SI を交互)を `<code style="color:#22d3bf">smoothing</code>` 回。</p>
-<p>`<code style="color:#22d3bf">phase</code>` = 最初に使う作用素(0 = SI∘IS)。skimage の実装は交互の位相をモジュールの大域状態に持つので、</p>
-<p>同じ入力でも直前の呼び出しで結果が変わりうる —— ここは呼び出しごとに `<code style="color:#22d3bf">phase</code>` から始める(決定的)。</p>
-<p>当てはめのエネルギー E_fit = λ1 Σ_in (I − c1)² + λ2 Σ_out (I − c0)² を各段の前後で記録する。</p>
-<p>門(厳密): c を固定した E_fit は画素ごとの和なので、データ段で反転した画素はどれも E_fit を下げ(または等しく)、</p>
-<p>その後 c を平均に更新するとさらに下がる ⇒ データ段の前後で E_fit は単調非増加(`<code style="color:#22d3bf">n_data_increase</code>` = 0)。</p>
-<p>平滑段は E_fit を上げうる(`<code style="color:#22d3bf">fit_after_smooth</code>` で実測)。</p>
-<p>返り値: `<code style="color:#22d3bf">mask</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fit_before_data</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fit_after_data</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fit_after_smooth</code><code style="color:#22d3bf">(反復ごと)、</code><code style="color:#22d3bf">n_data_increase</code>`、</p>
-<p>`<code style="color:#22d3bf">history</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_changed</code>`(反復ごとに変わった画素数)。</p>
+<p>データ段: c1 = 内側の平均、c0 = 外側の平均、aux = |∇u|(λ1 (I − c1)² − λ2 (I − c0)²)、aux &lt; 0 の画素を内側、aux &gt; 0 を外側に(|∇u| ≠ 0 = 境界の近くだけが動く)。平滑段: 曲率の作用素(SI∘IS と IS∘SI を交互)を <code style="color:#22d3bf">smoothing</code> 回。<code style="color:#22d3bf">phase</code> = 最初に使う作用素(0 = SI∘IS)。skimage の実装は交互の位相をモジュールの大域状態に持つので、同じ入力でも直前の呼び出しで結果が変わりうる —— ここは呼び出しごとに <code style="color:#22d3bf">phase</code> から始める(決定的)。当てはめのエネルギー E_fit = λ1 Σ_in (I − c1)² + λ2 Σ_out (I − c0)² を各段の前後で記録する。門(厳密): c を固定した E_fit は画素ごとの和なので、データ段で反転した画素はどれも E_fit を下げ(または等しく)、その後 c を平均に更新するとさらに下がる ⇒ データ段の前後で E_fit は単調非増加(<code style="color:#22d3bf">n_data_increase</code> = 0)。平滑段は E_fit を上げうる(<code style="color:#22d3bf">fit_after_smooth</code> で実測)。</p>
+<p>返り値: <code style="color:#22d3bf">mask</code>、<code style="color:#22d3bf">fit_before_data</code> / <code style="color:#22d3bf">fit_after_data</code> / <code style="color:#22d3bf">fit_after_smooth</code>(反復ごと)、<code style="color:#22d3bf">n_data_increase</code>、<code style="color:#22d3bf">history</code>、<code style="color:#22d3bf">n_iter</code>、<code style="color:#22d3bf">n_changed</code>(反復ごとに変わった画素数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 變分、主動輪廓與水平集 —— 哪種輪廓停在哪裡、保證什麼</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

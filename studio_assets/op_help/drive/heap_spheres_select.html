@@ -3,10 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_spheres_select(pos, radius: &#x27;float&#x27;, floor_height: &#x27;float&#x27;, bin_radius: &#x27;float&#x27;, keep_min: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import granular; granular.heap_spheres_select(pos, radius: &#x27;float&#x27;, floor_height: &#x27;float&#x27;, bin_radius: &#x27;float&#x27;, keep_min: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;heap_spheres_select&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>山に属する球だけを選ぶ: ビンの底板より下(`<code style="color:#22d3bf">z &lt; floor_height − r</code>`)で、ビン半径の 3 倍の内側。</p>
-<p>ビンに残った球(平底の滞留層)と転がって逃げた球は山ではない。返り: `<code style="color:#22d3bf">pos</code><code style="color:#22d3bf">(選んだ中心)、</code><code style="color:#22d3bf">n_in_bin</code>`、</p>
-<p>`<code style="color:#22d3bf">n_runaway</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">radius_95</code><code style="color:#22d3bf">(山の半径の目安)。**Raises** </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 残りが </code><code style="color:#22d3bf">keep_min</code>` 未満(山になって</p>
-<p>いない —— 滑らかな台で 1,200 個中 600 個が逃げたときに黙って測らないため)。</p>
+<p>山に属する球だけを選ぶ: ビンの底板より下(<code style="color:#22d3bf">z &lt; floor_height − r</code>)で、ビン半径の 3 倍の内側。ビンに残った球(平底の滞留層)と転がって逃げた球は山ではない。返り: <code style="color:#22d3bf">pos</code>(選んだ中心)、<code style="color:#22d3bf">n_in_bin</code>、<code style="color:#22d3bf">n_runaway</code>、<code style="color:#22d3bf">radius_95</code>(山の半径の目安)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 残りが <code style="color:#22d3bf">keep_min</code> 未満(山になっていない —— 滑らかな台で 1,200 個中 600 個が逃げたときに黙って測らないため)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

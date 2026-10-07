@@ -8,18 +8,12 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/transpose_region.chain.jpg">transpose_region: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/transpose_region.chain.jpg">transpose_region: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/transpose_region.inputs.jpg">transpose_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/transpose_region.inputs.jpg">transpose_region: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>領域(2 値マスク)を転置する(`<code style="color:#22d3bf">x.T</code>`、対角線に関する鏡映=行と列の</p>
-<p>入れ替え)。カテゴリは geometry だが in/out は `<code style="color:#22d3bf">region</code>`。幾何変換の一種</p>
-<p>として `<code style="color:#22d3bf">_sh_geom</code>` で実装されているが、転置は補間を伴わないため</p>
-<p>`<code style="color:#22d3bf">build()</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">_rebinarise</code>` を通しても値は変化しない(すでに {0,1} の</p>
-<p>まま)。HALCON の `<code style="color:#22d3bf">transpose_region</code>`（Reflect a region about a point.）に</p>
-<p>相当(HALCON の「点に関する反転」とは厳密には別の変換で、行列の転置=</p>
-<p>対角線に関する反転という近似)。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>領域(2 値マスク)を転置する(<code style="color:#22d3bf">x.T</code>、対角線に関する鏡映=行と列の入れ替え)。カテゴリは geometry だが in/out は <code style="color:#22d3bf">region</code>。幾何変換の一種として <code style="color:#22d3bf">_sh_geom</code> で実装されているが、転置は補間を伴わないため <code style="color:#22d3bf">build()</code> の <code style="color:#22d3bf">_rebinarise</code> を通しても値は変化しない(すでに {0,1} のまま)。HALCON の <code style="color:#22d3bf">transpose_region</code>（Reflect a region about a point.）に相当(HALCON の「点に関する反転」とは厳密には別の変換で、行列の転置= 対角線に関する反転という近似)。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -29,7 +23,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-transpose_region 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Atranspose_region%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Atranspose_region%200.50%200.50">Load &amp; run</a></p>
+transpose_region 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Atranspose_region%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Atranspose_region%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">region</code> を入力に取れる)</h3>

@@ -8,19 +8,11 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/height_width_ratio.chain.jpg">height_width_ratio: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/height_width_ratio.chain.jpg">height_width_ratio: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>軸平行の外接矩形の縦横比 `<code style="color:#22d3bf">高さ / 幅</code>`。上限は無く、縦長なら 1 を超える</p>
-<p>(160x4 なら 40.0)。HALCON の `<code style="color:#22d3bf">height_width_ratio</code>`（Compute the width,</p>
-<p>height, and aspect ratio of the surrounding rectangle parallel to the</p>
-<p>coordinate axes.）が返す 3 値のうち <b>Ratio と同じ量</b>(Height と Width は</p>
-<p>画素の長さなので返していない —— docs/KNOWN_ISSUES.md §51)。</p>
-<p>★2026-09-26 まで `<code style="color:#22d3bf">min(1, 高さ/幅)</code>` で切っていたので、**縦長の対象が全部</p>
-<p>1.0** になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、</p>
-<p><b>向きが変わった瞬間に情報が消える</b>。飽和は説明文に「仕様」として書かれて</p>
-<p>いたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ――</p>
-<p>`<code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>`。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>軸平行の外接矩形の縦横比 <code style="color:#22d3bf">高さ / 幅</code>。上限は無く、縦長なら 1 を超える(160x4 なら 40.0)。HALCON の <code style="color:#22d3bf">height_width_ratio</code>（Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.）が返す 3 値のうち <b>Ratio と同じ量</b>(Height と Width は画素の長さなので返していない —— docs/KNOWN_ISSUES.md §51)。</p>
+<p>★2026-09-26 まで <code style="color:#22d3bf">min(1, 高さ/幅)</code> で切っていたので、<b>縦長の対象が全部 1.0</b> になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、<b>向きが変わった瞬間に情報が消える</b>。飽和は説明文に「仕様」として書かれていたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ―― <code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -30,7 +22,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-height_width_ratio 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aheight_width_ratio%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aheight_width_ratio%200.50%200.50">Load &amp; run</a></p>
+height_width_ratio 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aheight_width_ratio%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aheight_width_ratio%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>

@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stall_verdict(kp, theta: &#x27;float&#x27;, mu_hat) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegtactile; pegtactile.stall_verdict(kp, theta: &#x27;float&#x27;, mu_hat) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;stall_verdict&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>二点接触で止まった時の Whitney の判定(OCW p.28): θ &gt; c/μ̂ ならくさび(力を抜いても抜けない側)、以下ならかじり(力の向きで</p>
-<p>解ける)。c = (R − r)/R。μ̂ は同じ挿入の滑りの区間で触覚から読んだ値(:func:<code style="color:#22d3bf">friction_from_single_contact</code>)、None か ≤ 0 なら</p>
-<p>推測せず `<code style="color:#22d3bf">&quot;unknown&quot;</code><code style="color:#22d3bf">。返り </code><code style="color:#22d3bf">verdict</code><code style="color:#22d3bf">(&quot;wedging&quot; / &quot;jamming&quot; / &quot;unknown&quot;)・</code><code style="color:#22d3bf">theta_limit</code>`。<b>Raises</b> ValueError: θ が有限でないか負。</p>
+<p>二点接触で止まった時の Whitney の判定(OCW p.28): θ &gt; c/μ̂ ならくさび(力を抜いても抜けない側)、以下ならかじり(力の向きで解ける)。c = (R − r)/R。μ̂ は同じ挿入の滑りの区間で触覚から読んだ値(<code style="color:#22d3bf">friction_from_single_contact</code>)、None か ≤ 0 なら推測せず <code style="color:#22d3bf">&quot;unknown&quot;</code>。返り <code style="color:#22d3bf">verdict</code>(&quot;wedging&quot; / &quot;jamming&quot; / &quot;unknown&quot;)・<code style="color:#22d3bf">theta_limit</code>。<b>Raises</b> ValueError: θ が有限でないか負。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

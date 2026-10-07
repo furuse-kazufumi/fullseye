@@ -5,25 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wertet ein Polynom in der komplexen Ebene aus (Horner-Schema, komplexfähig).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The complex twin of :func:<code style="color:#22d3bf">poly_eval</code>: *coeffs* is highest-power-first</p>
-<p>(`<code style="color:#22d3bf">[c_d, ..., c_1, c_0]</code>`, possibly complex) and *z* is a complex scalar or</p>
-<p>1-D array. A scalar query returns a Python `<code style="color:#22d3bf">complex</code>`, an array returns</p>
-<p>`<code style="color:#22d3bf">complex128</code><code style="color:#22d3bf"> — mirroring :func:</code>poly_eval`&#x27;s scalar/array behaviour.</p>
-<p>This is what makes the rest of the family usable: sample a polynomial on a</p>
-<p>contour from :func:<code style="color:#22d3bf">cplx_contour_circle</code>, then count its zeros with</p>
-<p>:func:<code style="color:#22d3bf">cplx_argument_principle</code> or reconstruct interior values with</p>
-<p>:func:<code style="color:#22d3bf">cplx_cauchy_value</code>. (:func:<code style="color:#22d3bf">poly_eval</code> refuses complex input by</p>
-<p>design — silent imaginary-part truncation — so it cannot serve here.)</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: empty/multi-dimensional *coeffs*, non-finite or</p>
-<p>masked input, over-cap size, and — the honest one — a result that</p>
-<p>overflowed to Inf/NaN (a degree-200 polynomial on `<code style="color:#22d3bf">|z| = 10</code>` genuinely</p>
-<p>exceeds float64 range; that is refused rather than returned as `<code style="color:#22d3bf">inf</code>`).</p>
+<p>The complex twin of <code style="color:#22d3bf">poly_eval</code>: *coeffs* is highest-power-first (<code style="color:#22d3bf">[c_d, ..., c_1, c_0]</code>, possibly complex) and *z* is a complex scalar or 1-D array. A scalar query returns a Python <code style="color:#22d3bf">complex</code>, an array returns <code style="color:#22d3bf">complex128</code> — mirroring <code style="color:#22d3bf">poly_eval</code>&#x27;s scalar/array behaviour.</p>
+<p>This is what makes the rest of the family usable: sample a polynomial on a contour from <code style="color:#22d3bf">cplx_contour_circle</code>, then count its zeros with <code style="color:#22d3bf">cplx_argument_principle</code> or reconstruct interior values with <code style="color:#22d3bf">cplx_cauchy_value</code>. (<code style="color:#22d3bf">poly_eval</code> refuses complex input by design — silent imaginary-part truncation — so it cannot serve here.)</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: empty/multi-dimensional *coeffs*, non-finite or masked input, over-cap size, and — the honest one — a result that overflowed to Inf/NaN (a degree-200 polynomial on <code style="color:#22d3bf">|z| = 10</code> genuinely exceeds float64 range; that is refused rather than returned as <code style="color:#22d3bf">inf</code>).</p>
 <p>HALCON: no complex polynomial operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

@@ -2,22 +2,16 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">project_points — 3D <code style="color:#22d3bf">render</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_points(points, K, R=None, t=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.project_points(points, K, R=None, t=None)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;project_points&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.project_points(...)</code> 只回傳**宣告的 out 型別 <code style="color:#22d3bf">keypoints</code> 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.project_points.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">match3d.project_points</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.project_points(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">keypoints</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.project_points.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">match3d.project_points</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(uv (N,2), depth (N,)) → uv</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 點群 (N,3) → 影像座標 (u,v) 與深度。針孔(depth_to_points 的正向)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>K=カメラ内部行列 [[fx,0,cx],[0,fy,cy],[0,0,1]]。R,t で外部姿勢。世界モデルの観測写像。</p>
-<p>`<code style="color:#22d3bf">P_cam = R @ P + t</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">R</code><code style="color:#22d3bf"> (3,3)、</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (3,)。None は恒等・零)を </code><code style="color:#22d3bf">u = fx·X/Z + cx</code>`、</p>
-<p>`<code style="color:#22d3bf">v = fy·Y/Z + cy</code><code style="color:#22d3bf"> で投影する。返り値 </code><code style="color:#22d3bf">(uv (N,2), depth (N,))</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">uv[:,0] = u</code>`(列)、</p>
-<p>`<code style="color:#22d3bf">uv[:,1] = v</code><code style="color:#22d3bf">(行)、</code><code style="color:#22d3bf">depth</code>` はカメラ座標の Z(clip 前の生値で、負もそのまま)。</p>
-<p>`<code style="color:#22d3bf">K</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">K[0,0]</code>` 等で添字するので numpy 配列(nested list は不可)。</p>
-<p>Z は `<code style="color:#22d3bf">1e-6</code>` 以上に clip してから割るので、<b>カメラ後方の点も捨てず</b>巨大な u,v になる</p>
-<p>(`<code style="color:#22d3bf">depth &gt; 0</code><code style="color:#22d3bf"> で呼び手が除く)。画像外の点も返す(</code><code style="color:#22d3bf">render_point_depth</code>` が範囲で切る)。</p>
-<p>`<code style="color:#22d3bf">depth_to_points</code><code style="color:#22d3bf"> の逆で、</code><code style="color:#22d3bf">depth_to_points(render_point_depth(...))</code>` が往復になる。</p>
+<p><code style="color:#22d3bf">P_cam = R @ P + t</code>(<code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,)。None は恒等・零)を <code style="color:#22d3bf">u = fx·X/Z + cx</code>、<code style="color:#22d3bf">v = fy·Y/Z + cy</code> で投影する。返り値 <code style="color:#22d3bf">(uv (N,2), depth (N,))</code>: <code style="color:#22d3bf">uv[:,0] = u</code>(列)、<code style="color:#22d3bf">uv[:,1] = v</code>(行)、<code style="color:#22d3bf">depth</code> はカメラ座標の Z(clip 前の生値で、負もそのまま)。<code style="color:#22d3bf">K</code> は <code style="color:#22d3bf">K[0,0]</code> 等で添字するので numpy 配列(nested list は不可)。Z は <code style="color:#22d3bf">1e-6</code> 以上に clip してから割るので、<b>カメラ後方の点も捨てず</b>巨大な u,v になる(<code style="color:#22d3bf">depth &gt; 0</code> で呼び手が除く)。画像外の点も返す(<code style="color:#22d3bf">render_point_depth</code> が範囲で切る)。<code style="color:#22d3bf">depth_to_points</code> の逆で、<code style="color:#22d3bf">depth_to_points(render_point_depth(...))</code> が往復になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

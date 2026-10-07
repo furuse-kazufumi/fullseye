@@ -4,20 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6, mask=None, unit=&#x27;&#x27;, label_fmt=&#x27;{:.3g}&#x27;, orientation=&#x27;vertical&#x27;, font_size=12, scheme=&#x27;okabe_ito&#x27;, font_path=None, text_color=None, nan_transparent=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6, mask=None, unit=&#x27;&#x27;, label_fmt=&#x27;{:.3g}&#x27;, orientation=&#x27;vertical&#x27;, font_size=12, scheme=&#x27;okabe_ito&#x27;, font_path=None, text_color=None, nan_transparent=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;annotate_colorbar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>画像(image2d)を返す: スカラ場を LUT で色分けして重ね、カラーバーを添える。</p>
-<p>`<code style="color:#22d3bf">t = (field - vmin)/(vmax - vmin)</code><code style="color:#22d3bf"> を [0,1] に**クリップ**し </code><code style="color:#22d3bf">lut[round(t*(n-1))]</code>`</p>
-<p>で色にする(範囲外の値は端の色 —— カラーバーの端と同じなので嘘にならない)。</p>
-<p>重ねは `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf"> の α 合成、</code><code style="color:#22d3bf">mask</code>` を渡せばその画素だけ。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p><code style="color:#22d3bf">t = (field - vmin)/(vmax - vmin)</code> を [0,1] に<b>クリップ</b>し <code style="color:#22d3bf">lut[round(t*(n-1))]</code> で色にする(範囲外の値は端の色 —— カラーバーの端と同じなので嘘にならない)。重ねは <code style="color:#22d3bf">alpha</code> の α 合成、<code style="color:#22d3bf">mask</code> を渡せばその画素だけ。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>field : (H, W)</p>
-<p>画像と同じ大きさのスカラ場。非有限は `<code style="color:#22d3bf">nan_transparent=True</code>` のときだけ</p>
+<p>画像と同じ大きさのスカラ場。非有限は <code style="color:#22d3bf">nan_transparent=True</code> のときだけ</p>
 <p>透明として許す(既定は ValueError)。</p>
 <p>lut : (n, 3) or None</p>
-<p>None なら :func:<code style="color:#22d3bf">palette.diverging_lut</code> の 256 段。</p>
+<p>None なら <code style="color:#22d3bf">palette.diverging_lut</code> の 256 段。</p>
 <p>vmin, vmax : float or None</p>
 <p>None なら場の(有限値の)最小・最大。等しければ ValueError。</p>
-<p>Raises</p>
-<p>------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>形の不一致、非有限(許可なし)、vmin == vmax、alpha が [0,1] の外、</p>
 <p>バーの矩形が画像外、LUT の形。</p>

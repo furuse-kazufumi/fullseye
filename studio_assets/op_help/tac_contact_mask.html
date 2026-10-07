@@ -5,29 +5,22 @@
 <p><img src="fig/tac_contact_mask.png" alt="tac_contact_mask: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.a.jpg">tac_contact_mask: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.a.jpg">tac_contact_mask: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.b.jpg">tac_contact_mask: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.b.jpg">tac_contact_mask: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.inputs.jpg">tac_contact_mask: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_contact_mask.inputs.jpg">tac_contact_mask: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Contact region of a tactile frame by pseudo-reference background</p>
-<p>subtraction: `<code style="color:#22d3bf">dev = |v - G_sigma(v)|</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">sigma = max(2, min(H,W)/6)</code>`</p>
-<p>(the low-frequency envelope stands in for the undeformed reference frame),</p>
-<p>thresholded at `<code style="color:#22d3bf">thr = 0.005 + 0.145*a</code>` gray levels, then cleaned with</p>
-<p>`<code style="color:#22d3bf">round(3*b)</code>` iterations of binary opening followed by binary closing</p>
-<p>(3x3, 8-connected). `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = deviation threshold (sensitivity), </code><code style="color:#22d3bf">b</code>` =</p>
-<p>morphological cleanup strength. Returns a BINARY 0/1 float64 region of the</p>
-<p>input HxW; a perfectly flat (constant) frame has zero deviation everywhere</p>
-<p>and therefore yields an EMPTY mask.</p>
+<p>subtraction: <code style="color:#22d3bf">dev = |v - G_sigma(v)|</code> with <code style="color:#22d3bf">sigma = max(2, min(H,W)/6)</code> (the low-frequency envelope stands in for the undeformed reference frame), thresholded at <code style="color:#22d3bf">thr = 0.005 + 0.145*a</code> gray levels, then cleaned with <code style="color:#22d3bf">round(3*b)</code> iterations of binary opening followed by binary closing (3x3, 8-connected). <code style="color:#22d3bf">a</code> = deviation threshold (sensitivity), <code style="color:#22d3bf">b</code> = morphological cleanup strength. Returns a BINARY 0/1 float64 region of the input HxW; a perfectly flat (constant) frame has zero deviation everywhere and therefore yields an EMPTY mask.</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tac_contact_mask 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:tac_contact_mask%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tac_contact_mask%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tac_contact_mask 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:tac_contact_mask%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tac_contact_mask%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_elastic_membrane">poc_tacsim_elastic_membrane</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_elastic_membrane.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sim2real_and_alife">sim2real_and_alife</a> — <code style="color:#22d3bf">py -3.11 examples/sim2real_and_alife.py</code></p>

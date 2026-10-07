@@ -4,29 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_enu_from_geodetic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>測地座標 → 基準点まわりの<b>局所 ENU</b>(東・北・上)[m] (`<code style="color:#22d3bf">points</code>`)。</p>
-<p>現場の図面・ロボットの地図・点群の多くは「原点からの東・北・上」で書かれる。</p>
-<p>ECEF からの変換は基準点での回転 1 つで、`<code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>`。</p>
-<p>★ 平面直角座標(投影)<b>ではない</b>。ENU は基準点で接する平面への正射影に</p>
-<p>相当し、距離が伸びるほど地球の丸みぶん高さ方向に落ちる —— 10 km で約 7.8 m、</p>
-<p>100 km で約 780 m。広域を「平らな xy」として扱うのは、この落差を捨てること。</p>
+<p>測地座標 → 基準点まわりの<b>局所 ENU</b>(東・北・上)[m] (<code style="color:#22d3bf">points</code>)。</p>
+<p>現場の図面・ロボットの地図・点群の多くは「原点からの東・北・上」で書かれる。ECEF からの変換は基準点での回転 1 つで、<code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>。</p>
+<p>★ 平面直角座標(投影)<b>ではない</b>。ENU は基準点で接する平面への正射影に相当し、距離が伸びるほど地球の丸みぶん高さ方向に落ちる —— 10 km で約 7.8 m、100 km で約 780 m。広域を「平らな xy」として扱うのは、この落差を捨てること。</p>
 <p>Args:</p>
 <p>lat_deg / lon_deg: 点の緯度・経度 [度]。配列可。</p>
 <p>h_m: 点の楕円体高 [m]。</p>
 <p>lat0_deg / lon0_deg / h0_m: 基準点(原点)の測地座標。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(n, 3)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(east, north, up)</code><code style="color:#22d3bf"> [m]。基準点そのものは厳密に </code><code style="color:#22d3bf">(0, 0, 0)</code>`。</p>
-<p>閉じた式で検査できること: 基準点で `<code style="color:#22d3bf">(0, 0, 0)</code>`、</p>
-<p>:func:<code style="color:#22d3bf">dem_geodetic_from_enu</code> との往復が 1e-9 m 級、そして既存の</p>
-<p>:func:<code style="color:#22d3bf">dem_geodetic_to_ecef</code> を経由して自分で回した結果と一致する</p>
-<p>(<b>別経路での検算</b>)。</p>
+<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(east, north, up)</code> [m]。基準点そのものは厳密に <code style="color:#22d3bf">(0, 0, 0)</code>。</p>
+<p>閉じた式で検査できること: 基準点で <code style="color:#22d3bf">(0, 0, 0)</code>、<code style="color:#22d3bf">dem_geodetic_from_enu</code> との往復が 1e-9 m 級、そして既存の <code style="color:#22d3bf">dem_geodetic_to_ecef</code> を経由して自分で回した結果と一致する(<b>別経路での検算</b>)。</p>
 <p><b>ValueError</b>: 非有限、緯度が ±90 を外れる、長さの食い違い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_geodetic_benchmarks_real">poc_geodetic_benchmarks_real</a> — <code style="color:#22d3bf">py -3.11 examples/poc_geodetic_benchmarks_real.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_geodetic_height_frames">poc_geodetic_height_frames</a> — <code style="color:#22d3bf">py -3.11 examples/poc_geodetic_height_frames.py</code></p>

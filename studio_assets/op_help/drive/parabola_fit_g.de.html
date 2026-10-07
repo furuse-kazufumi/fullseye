@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>重力 g(−z)を既知とした放物線 p(t) = p_r + v_r (t − t_ref) − ½ g (t − t_ref)² ẑ を最小二乗で当てる(未知 6 = 位置と速度)。</p>
-<p>`<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (N,)、</code><code style="color:#22d3bf">P</code><code style="color:#22d3bf"> (N, 3)(NaN の行は飛ばす)。</code><code style="color:#22d3bf">t_ref</code>` 既定 = 使った最後の時刻(= その瞬間の状態を返す)。各軸は</p>
-<p>[1, t − t_ref] の線形最小二乗(z は ½ g (t − t_ref)² を足してから)。返り値 ``{&quot;p&quot;, &quot;v&quot;, &quot;t_ref&quot;, &quot;rms&quot; (残差の RMS [m]),</p>
-<p>&quot;n&quot;}``。有効な点が 2 未満・時刻が全部同じ・g ≤ 0 は ValueError。真空の正確な標本なら (p, v) を丸め誤差で戻す(門)。</p>
+<p><code style="color:#22d3bf">t</code> (N,)、<code style="color:#22d3bf">P</code> (N, 3)(NaN の行は飛ばす)。<code style="color:#22d3bf">t_ref</code> 既定 = 使った最後の時刻(= その瞬間の状態を返す)。各軸は [1, t − t_ref] の線形最小二乗(z は ½ g (t − t_ref)² を足してから)。返り値 <code style="color:#22d3bf">{&quot;p&quot;, &quot;v&quot;, &quot;t_ref&quot;, &quot;rms&quot; (残差の RMS [m]), &quot;n&quot;}</code>。有効な点が 2 未満・時刻が全部同じ・g ≤ 0 は ValueError。真空の正確な標本なら (p, v) を丸め誤差で戻す(門)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -6,39 +6,27 @@
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_spectrogram.b.jpg">tb_spectrogram: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_spectrogram.b.jpg">tb_spectrogram: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_spectrogram.chain.jpg">tb_spectrogram: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_spectrogram.chain.jpg">tb_spectrogram: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_spectrogram.inputs.jpg">tb_spectrogram: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_spectrogram.inputs.jpg">tb_spectrogram: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>STFT（短時間フーリエ変換）による振幅スペクトログラム → `<code style="color:#22d3bf">(freqs, times, S)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">S</code><code style="color:#22d3bf"> の形状は </code><code style="color:#22d3bf">(n_freqs, n_frames)</code><code style="color:#22d3bf">。ハン窓を使用し、*hop* の既定値は </code><code style="color:#22d3bf">win//2</code>`。</p>
+<p>STFT（短時間フーリエ変換）による振幅スペクトログラム → <code style="color:#22d3bf">(freqs, times, S)</code>、<code style="color:#22d3bf">S</code> の形状は <code style="color:#22d3bf">(n_freqs, n_frames)</code>。ハン窓を使用し、*hop* の既定値は <code style="color:#22d3bf">win//2</code>。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>**Same raw convention as :func:<code style="color:#22d3bf">spectrum</code>, but a different divisor.** Each</p>
-<p>column is the unnormalised `<code style="color:#22d3bf">|rfft(frame * hann(win))|</code>`, so it is not an</p>
-<p>amplitude either — and dividing by `<code style="color:#22d3bf">2/win</code>` is *wrong* here, because the</p>
-<p>Hann window has already thrown away part of the signal. The correct one-sided</p>
-<p>amplitude conversion divides by the window&#x27;s coherent gain::</p>
+<p><b>Same raw convention as <code style="color:#22d3bf">spectrum</code>, but a different divisor.</b> Each column is the unnormalised <code style="color:#22d3bf">|rfft(frame * hann(win))|</code>, so it is not an amplitude either — and dividing by <code style="color:#22d3bf">2/win</code> is *wrong* here, because the Hann window has already thrown away part of the signal. The correct one-sided amplitude conversion divides by the window&#x27;s coherent gain::</p>
 <p>w = np.hanning(win)</p>
 <p>amp = S * (2.0 / w.sum())        # bins 1 .. win/2-1; DC / Nyquist: 1/w.sum()</p>
-<p>Measured on a unit sine at a bin centre (`<code style="color:#22d3bf">rate = 16000</code>` Hz, 1000 Hz,</p>
-<p>amplitude exactly 1.0, `<code style="color:#22d3bf">win = 256</code>`): the raw column peak is</p>
-<p>`<code style="color:#22d3bf">63.7497786196906</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">* 2/win</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">0.49804514546633283</code>` (too small by</p>
-<p>exactly the Hann coherent gain `<code style="color:#22d3bf">sum(w)/win = 0.498046875</code>`), while</p>
-<p>`<code style="color:#22d3bf">* 2/sum(w)</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">0.9999965273676957</code>`. Only the second one is the</p>
-<p>amplitude that was actually in the signal.</p>
-<p>Peak *positions*, frame-to-frame ratios and any dB *difference* are unaffected</p>
-<p>by either factor. This function returns magnitudes only — the phase is</p>
-<p>discarded, so it cannot be inverted; use `<code style="color:#22d3bf">acoustics.stft</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">acoustics.istft</code>`</p>
-<p>for a round-trip.</p>
-<p>Typed bridge of the 1d op `<code style="color:#22d3bf">spectrogram</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">rate</code><code style="color:#22d3bf"> (default 1) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">win</code>` (default 256).</p>
+<p>Measured on a unit sine at a bin centre (<code style="color:#22d3bf">rate = 16000</code> Hz, 1000 Hz, amplitude exactly 1.0, <code style="color:#22d3bf">win = 256</code>): the raw column peak is <code style="color:#22d3bf">63.7497786196906</code>; <code style="color:#22d3bf">* 2/win</code> gives <code style="color:#22d3bf">0.49804514546633283</code> (too small by exactly the Hann coherent gain <code style="color:#22d3bf">sum(w)/win = 0.498046875</code>), while <code style="color:#22d3bf">* 2/sum(w)</code> gives <code style="color:#22d3bf">0.9999965273676957</code>. Only the second one is the amplitude that was actually in the signal.</p>
+<p>Peak *positions*, frame-to-frame ratios and any dB *difference* are unaffected by either factor. This function returns magnitudes only — the phase is discarded, so it cannot be inverted; use <code style="color:#22d3bf">acoustics.stft</code> / <code style="color:#22d3bf">acoustics.istft</code> for a round-trip.</p>
+<p>Typed bridge of the 1d op <code style="color:#22d3bf">spectrogram</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> drives <code style="color:#22d3bf">rate</code> (default 1) and <code style="color:#22d3bf">b</code> drives <code style="color:#22d3bf">win</code> (default 256).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_signal 0.50 0.50
-tb_spectrogram 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_signal%200.50%200.50%0Atb_spectrogram%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_signal%200.50%200.50%0Atb_spectrogram%200.50%200.50">Load &amp; run</a></p>
+tb_spectrogram 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_signal%200.50%200.50%0Atb_spectrogram%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_signal%200.50%200.50%0Atb_spectrogram%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">spectrogram</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>

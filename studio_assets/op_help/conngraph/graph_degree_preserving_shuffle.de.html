@@ -5,11 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>次数保存シャッフル(帰無モデル): 各ノードの入次数・出次数と重みの多重集合を保って辺を繋ぎ替える。</p>
-<p>有向 double-edge swap(Maslov &amp; Sneppen 2002): 辺 (a→b, w1) と (c→d, w2) を</p>
-<p>(a→d, w1) と (c→b, w2) に替える。自己結合と重複辺を作る組は捨てる。</p>
-<p>`<code style="color:#22d3bf">n_swaps</code>` の既定は 10 × 辺数。<b>二値構造の次数</b>を保つ(重みは辺に付いて</p>
-<p>移動するので strength は変わりうる)。対角(自己結合)は動かさずそのまま残す。</p>
-<p>辺が 2 本未満なら複製を返す。</p>
+<p>有向 double-edge swap(Maslov &amp; Sneppen 2002): 辺 (a→b, w1) と (c→d, w2) を(a→d, w1) と (c→b, w2) に替える。自己結合と重複辺を作る組は捨てる。<code style="color:#22d3bf">n_swaps</code> の既定は 10 × 辺数。<b>二値構造の次数</b>を保つ(重みは辺に付いて移動するので strength は変わりうる)。対角(自己結合)は動かさずそのまま残す。辺が 2 本未満なら複製を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

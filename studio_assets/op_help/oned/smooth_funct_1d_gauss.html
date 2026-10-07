@@ -3,14 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_funct_1d_gauss(y, sigma: &#x27;float&#x27; = 1.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import funct1d; funct1d.smooth_funct_1d_gauss(y, sigma: &#x27;float&#x27; = 1.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops1d.get(&quot;smooth_funct_1d_gauss&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Gaussian smoothing of a 1-D function (HALCON `<code style="color:#22d3bf">smooth_funct_1d_gauss</code>`).</p>
-<p>Convolves *y* with a Gaussian of standard deviation *sigma* (in samples),</p>
-<p>`<code style="color:#22d3bf">reflect</code>` boundary handling (scipy default). The DC level is preserved;</p>
-<p>zero-mean noise variance shrinks by roughly `<code style="color:#22d3bf">1 / (2 * sigma * sqrt(pi))</code>`.</p>
-<p>:param y: 1-D function, at least 1 sample.</p>
-<p>:param sigma: Gaussian standard deviation in samples; must be finite and &gt; 0.</p>
-<p>:returns: smoothed float64 array, same length as *y*.</p>
-<p>:raises ValueError: non-1-D / NaN / Inf input, empty input, or `<code style="color:#22d3bf">sigma &lt;= 0</code>`.</p>
+<p>Gaussian smoothing of a 1-D function (HALCON <code style="color:#22d3bf">smooth_funct_1d_gauss</code>).</p>
+<p>Convolves *y* with a Gaussian of standard deviation *sigma* (in samples), <code style="color:#22d3bf">reflect</code> boundary handling (scipy default). The DC level is preserved; zero-mean noise variance shrinks by roughly <code style="color:#22d3bf">1 / (2 * sigma * sqrt(pi))</code>.</p>
+<p>:param y: 1-D function, at least 1 sample. :param sigma: Gaussian standard deviation in samples; must be finite and &gt; 0. :returns: smoothed float64 array, same length as *y*. :raises ValueError: non-1-D / NaN / Inf input, empty input, or <code style="color:#22d3bf">sigma &lt;= 0</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

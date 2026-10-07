@@ -12,20 +12,12 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_monogenic.inputs.jpg">img_to_monogenic: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Build the single-scale monogenic signal of the image (a quaternion field (H,W,4), sort `<code style="color:#22d3bf">qimage</code>`).</p>
+<p>Build the single-scale monogenic signal of the image (a quaternion field (H,W,4), sort <code style="color:#22d3bf">qimage</code>).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>台帳の `<code style="color:#22d3bf">monogenic_signal</code>`(Felsberg &amp; Sommer 2001)そのもの: 対数放射状の</p>
-<p>raised-cosine 帯域通過を掛け、その Riesz 対と組にして四元数</p>
-<p>`<code style="color:#22d3bf">(帯域通過像, R1, R2, 0)</code><code style="color:#22d3bf"> に詰める。</code><code style="color:#22d3bf">tb_monogenic_amplitude</code>` /</p>
-<p>`<code style="color:#22d3bf">tb_monogenic_phase</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_monogenic_orientation</code>` は **この形の qimage</p>
-<p>だけ** を受け付ける(色の四元数 `<code style="color:#22d3bf">tb_rgb_to_quaternion</code>` を渡すと</p>
-<p>「モノジェニック信号ではない」と拒否する)ので、その族の入口はこちら。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 中心波長 </code><code style="color:#22d3bf">wavelength_px = 8 * (0.25 + 1.75 * a)</code>` 画素</p>
-<p>(a=0.5 で 9 px。小さいほど細かい構造に応答)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 帯域幅 </code><code style="color:#22d3bf">bandwidth_octaves = 1.0 * (0.25 + 1.75 * b)</code>` オクターブ</p>
-<p>(b=0.5 で 1.125)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(H, W, 4)</code>` float64。値域は入力に依存し [0,1] に収まらない</p>
-<p>(Riesz 対は符号つき)。</p>
+<p>台帳の <code style="color:#22d3bf">monogenic_signal</code>(Felsberg &amp; Sommer 2001)そのもの: 対数放射状の raised-cosine 帯域通過を掛け、その Riesz 対と組にして四元数 <code style="color:#22d3bf">(帯域通過像, R1, R2, 0)</code> に詰める。<code style="color:#22d3bf">tb_monogenic_amplitude</code> / <code style="color:#22d3bf">tb_monogenic_phase</code> / <code style="color:#22d3bf">tb_monogenic_orientation</code> は <b>この形の qimage だけ</b> を受け付ける(色の四元数 <code style="color:#22d3bf">tb_rgb_to_quaternion</code> を渡すと「モノジェニック信号ではない」と拒否する)ので、その族の入口はこちら。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 中心波長 <code style="color:#22d3bf">wavelength_px = 8 * (0.25 + 1.75 * a)</code> 画素(a=0.5 で 9 px。小さいほど細かい構造に応答)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 帯域幅 <code style="color:#22d3bf">bandwidth_octaves = 1.0 * (0.25 + 1.75 * b)</code> オクターブ(b=0.5 で 1.125)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W, 4)</code> float64。値域は入力に依存し [0,1] に収まらない(Riesz 対は符号つき)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

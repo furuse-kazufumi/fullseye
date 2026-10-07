@@ -5,22 +5,19 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Taubin λ|μ 濾波的<b>非收縮</b>平滑。→ (verts, faces)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各反復で「正の `<code style="color:#22d3bf">lam</code><code style="color:#22d3bf"> で寄せる段」→「負の </code><code style="color:#22d3bf">mu</code>` で押し戻す段」を続けて掛ける。</p>
-<p>`<code style="color:#22d3bf">|mu| &gt; lam</code>` とすることで低周波(全体形状)を通し高周波(ノイズ)だけを減衰させる</p>
-<p>帯域通過フィルタになり、Laplacian の収縮アーティファクトを打ち消す(球の平均半径が</p>
-<p>ほぼ保たれる)。既定 `<code style="color:#22d3bf">lam=0.33, mu=-0.34</code>` は Taubin (1995) の推奨に近い。</p>
+<p>各反復で「正の <code style="color:#22d3bf">lam</code> で寄せる段」→「負の <code style="color:#22d3bf">mu</code> で押し戻す段」を続けて掛ける。<code style="color:#22d3bf">|mu| &gt; lam</code> とすることで低周波(全体形状)を通し高周波(ノイズ)だけを減衰させる帯域通過フィルタになり、Laplacian の収縮アーティファクトを打ち消す(球の平均半径がほぼ保たれる)。既定 <code style="color:#22d3bf">lam=0.33, mu=-0.34</code> は Taubin (1995) の推奨に近い。</p>
 <p>Args:</p>
 <p>mesh: (verts (N,3), faces (M,3)[, ...]) のシーケンス。faces は不変。</p>
 <p>iters: λ|μ ペアの反復回数(正の整数)。</p>
-<p>lam: 寄せ段の係数、`<code style="color:#22d3bf">0 &lt; lam &lt; 1</code>`。</p>
-<p>mu: 押し戻し段の係数、`<code style="color:#22d3bf">mu &lt; 0</code><code style="color:#22d3bf"> かつ </code><code style="color:#22d3bf">|mu| &gt; lam</code>`(収縮を打ち消す条件)。</p>
+<p>lam: 寄せ段の係数、<code style="color:#22d3bf">0 &lt; lam &lt; 1</code>。</p>
+<p>mu: 押し戻し段の係数、<code style="color:#22d3bf">mu &lt; 0</code> かつ <code style="color:#22d3bf">|mu| &gt; lam</code>(収縮を打ち消す条件)。</p>
 <p>Returns:</p>
 <p>(verts (N,3) float64, faces (M,3) int64)。faces は入力を保持。</p>
 <p>Raises:</p>
 <p>ValueError: メッシュ形状不正・面範囲外・iters/lam/mu が不正(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

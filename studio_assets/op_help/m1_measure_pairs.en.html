@@ -10,13 +10,13 @@
 <p><b>Sweeping knob b</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_pairs.b.jpg">m1_measure_pairs: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Counts rising-to-falling edge pairs (the two ends of a bright object) along a caliper line through the centre (equivalent to HALCON `<code style="color:#22d3bf">measure_pairs</code>`: extracts pairs of straight edges perpendicular to a rectangle/arc).</p>
+<p>Counts rising-to-falling edge pairs (the two ends of a bright object) along a caliper line through the centre (equivalent to HALCON <code style="color:#22d3bf">measure_pairs</code>: extracts pairs of straight edges perpendicular to a rectangle/arc).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は線の向き（</code><code style="color:#22d3bf">theta = a*pi</code><code style="color:#22d3bf">）。エッジ検出は </code><code style="color:#22d3bf">m1_measure_pos</code><code style="color:#22d3bf">と同じ（勾配ピークのサブピクセル検出）で、</code><code style="color:#22d3bf">b</code>`（0〜1）は最大振幅に対する相対しきい値。しきい値を超えたエッジを順に走査し、極性がrising→falling と並ぶ組を 1 対として数える（feature、整数値）。エッジが 2 本未満なら 0.0。</p>
+<p><code style="color:#22d3bf">a</code> は線の向き（<code style="color:#22d3bf">theta = a*pi</code>）。エッジ検出は <code style="color:#22d3bf">m1_measure_pos</code>と同じ（勾配ピークのサブピクセル検出）で、<code style="color:#22d3bf">b</code>（0〜1）は最大振幅に対する相対しきい値。しきい値を超えたエッジを順に走査し、極性がrising→falling と並ぶ組を 1 対として数える（feature、整数値）。エッジが 2 本未満なら 0.0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty and calibration — what it takes to claim you are measuring</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

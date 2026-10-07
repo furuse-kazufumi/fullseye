@@ -2,25 +2,12 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_chamfer_3d — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_chamfer_3d(scene, template, device=&#x27;cpu&#x27;, thr=0.3, edt=&#x27;scipy&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.match_chamfer_3d(scene, template, device=&#x27;cpu&#x27;, thr=0.3, edt=&#x27;scipy&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;match_chamfer_3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.match_chamfer_3d(...)</code> は**宣言 out 型 <code style="color:#22d3bf">position</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.match_chamfer_3d.raw(...)</code>、または <code style="color:#22d3bf">match3d.match_chamfer_3d</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.match_chamfer_3d(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">position</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.match_chamfer_3d.raw(...)</code>、または <code style="color:#22d3bf">match3d.match_chamfer_3d</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>chamfer / 距離場マッチング(部分・遮蔽に頑健)。voxel × chamfer 列。</p>
-<p>シーンのエッジの EDT(各 voxel から最近エッジまでの距離)に、テンプレのエッジ点を載せて</p>
-<p>距離和を最小化。score(pos)=Σ_{template edge} DT_scene(pos+edge)/n。<b>低いほど良い一致</b>。</p>
-<p>エッジ点の一部が欠けても効く(NCC より遮蔽に強い)。相関(conv3d)は常に GPU。距離場は</p>
-<p>edt=&quot;scipy&quot;(CPU、既定)か edt=&quot;jfa&quot;(<code style="color:#22d3bf">edt_jfa</code>、全 GPU で CPU 往復なし。scipy と厳密一致)。</p>
-<p>返り値 [chamfer 距離, d, h, w]。</p>
-<p>手順: 両 volume で `<code style="color:#22d3bf">|∇| &gt; thr·max|∇|</code><code style="color:#22d3bf"> の voxel をエッジにする(</code><code style="color:#22d3bf">thr</code>` は各 volume の最大</p>
-<p>勾配に対する <b>相対比</b>、勾配は `<code style="color:#22d3bf">sobel3d</code>`)。scene エッジの距離変換 DT を作り、テンプレの</p>
-<p>エッジ 2 値 volume をカーネルに conv3d した値をエッジ数 `<code style="color:#22d3bf">n</code>` で割る。</p>
-<p>返り値 `<code style="color:#22d3bf">[距離, z, y, x]</code>` の距離は「テンプレのエッジ 1 voxel あたり、最寄り scene エッジまでの</p>
-<p>平均距離(voxel 単位)」で 0 が完全一致。位置は <b>テンプレ中心 (T//2)</b> の scene 座標で</p>
-<p><b>整数</b>(subvoxel 精緻化は無い。要るなら `<code style="color:#22d3bf">refine_translation_lk</code>` へ。corner 規約なので</p>
-<p>T//2 を引く)。テンプレが完全に収まらない位置は最大値+1 で埋めて除外する。</p>
-<p>テンプレにエッジが無い(`<code style="color:#22d3bf">thr</code>` が高すぎる等)と score が全 0 になり index (0,0,0) が返る。</p>
-<p>scene にエッジが無い場合の距離場は意味を持たない(`<code style="color:#22d3bf">thr</code>` を下げる)。</p>
-<p>`<code style="color:#22d3bf">edt=&quot;jfa&quot;</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">edt_jfa</code><code style="color:#22d3bf"> を使い </code><code style="color:#22d3bf">device</code>` 上で完結、それ以外は scipy(CPU)。</p>
+<p>シーンのエッジの EDT(各 voxel から最近エッジまでの距離)に、テンプレのエッジ点を載せて距離和を最小化。score(pos)=Σ_{template edge} DT_scene(pos+edge)/n。<b>低いほど良い一致</b>。エッジ点の一部が欠けても効く(NCC より遮蔽に強い)。相関(conv3d)は常に GPU。距離場は edt=&quot;scipy&quot;(CPU、既定)か edt=&quot;jfa&quot;(<code style="color:#22d3bf">edt_jfa</code>、全 GPU で CPU 往復なし。scipy と厳密一致)。返り値 [chamfer 距離, d, h, w]。</p>
+<p>手順: 両 volume で <code style="color:#22d3bf">|∇| &gt; thr·max|∇|</code> の voxel をエッジにする(<code style="color:#22d3bf">thr</code> は各 volume の最大勾配に対する <b>相対比</b>、勾配は <code style="color:#22d3bf">sobel3d</code>)。scene エッジの距離変換 DT を作り、テンプレのエッジ 2 値 volume をカーネルに conv3d した値をエッジ数 <code style="color:#22d3bf">n</code> で割る。返り値 <code style="color:#22d3bf">[距離, z, y, x]</code> の距離は「テンプレのエッジ 1 voxel あたり、最寄り scene エッジまでの平均距離(voxel 単位)」で 0 が完全一致。位置は <b>テンプレ中心 (T//2)</b> の scene 座標で <b>整数</b>(subvoxel 精緻化は無い。要るなら <code style="color:#22d3bf">refine_translation_lk</code> へ。corner 規約なので T//2 を引く)。テンプレが完全に収まらない位置は最大値+1 で埋めて除外する。テンプレにエッジが無い(<code style="color:#22d3bf">thr</code> が高すぎる等)と score が全 0 になり index (0,0,0) が返る。scene にエッジが無い場合の距離場は意味を持たない(<code style="color:#22d3bf">thr</code> を下げる)。<code style="color:#22d3bf">edt=&quot;jfa&quot;</code> は <code style="color:#22d3bf">edt_jfa</code> を使い <code style="color:#22d3bf">device</code> 上で完結、それ以外は scipy(CPU)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

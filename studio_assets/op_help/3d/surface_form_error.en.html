@@ -2,21 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_form_error — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_form_error(height, degree=1)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.surface_form_error(height, degree=1)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;surface_form_error&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.surface_form_error(...)</code> returns **only the declared out type <code style="color:#22d3bf">measurement</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.surface_form_error.raw(...)</code> or call <code style="color:#22d3bf">match3d.surface_form_error</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.surface_form_error(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">measurement</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.surface_form_error.raw(...)</code> or call <code style="color:#22d3bf">match3d.surface_form_error</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(residual, rms, pv) → pv float</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Height-field grid → the residual from an ideal (polynomial) surface = the form error (flatness deg 1 / sphericity deg 2). → (residual, rms, pv).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">(H,W)</code><code style="color:#22d3bf"> の高さ場に </code><code style="color:#22d3bf">x = 列 index</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">y = 行 index</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">fit_poly_surface(degree)</code>` を当て、</p>
-<p>`<code style="color:#22d3bf">residual = height − fit</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">degree=1</code><code style="color:#22d3bf"> は最小二乗平面(平面度=pv)、</code><code style="color:#22d3bf">degree=2</code>` は</p>
-<p>2 次曲面(球面の近似。真の球ではない)。</p>
-<p>返り値 `<code style="color:#22d3bf">(residual (H,W) float64, rms, pv)</code>`、単位は高さの単位(横方向は画素単位なので傾き</p>
-<p>係数は「高さ/画素」)。NaN があると lstsq が失敗する(欠損は先に埋める)。2-D 以外の入力は</p>
-<p>形の unpack で失敗する。</p>
-<p>用途: 平面度・うねりの評価。`<code style="color:#22d3bf">background_flatten</code>` は同じ計算の「画像版」。点群の平面度は</p>
-<p>`<code style="color:#22d3bf">fit_plane_3d</code>` の resid。</p>
+<p><code style="color:#22d3bf">(H,W)</code> の高さ場に <code style="color:#22d3bf">x = 列 index</code>、<code style="color:#22d3bf">y = 行 index</code> で <code style="color:#22d3bf">fit_poly_surface(degree)</code> を当て、<code style="color:#22d3bf">residual = height − fit</code> を返す。<code style="color:#22d3bf">degree=1</code> は最小二乗平面(平面度=pv)、<code style="color:#22d3bf">degree=2</code> は 2 次曲面(球面の近似。真の球ではない)。返り値 <code style="color:#22d3bf">(residual (H,W) float64, rms, pv)</code>、単位は高さの単位(横方向は画素単位なので傾き係数は「高さ/画素」)。NaN があると lstsq が失敗する(欠損は先に埋める)。2-D 以外の入力は形の unpack で失敗する。</p>
+<p>用途: 平面度・うねりの評価。<code style="color:#22d3bf">background_flatten</code> は同じ計算の「画像版」。点群の平面度は <code style="color:#22d3bf">fit_plane_3d</code> の resid。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Why matrix decompositions are slow — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

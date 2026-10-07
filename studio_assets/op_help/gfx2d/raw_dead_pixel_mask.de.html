@@ -5,13 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Karte der defekten Pixel: Pixel, die von allen acht gleichfarbigen Nachbarn in dieselbe Richtung um mehr als die Schwelle abweichen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>&quot;Every neighbour, same sign&quot; is what separates a defect from an edge: at an</p>
-<p>edge some same-colour neighbours are on the pixel&#x27;s own side. The rule is</p>
-<p>the one openISP documents for its DPC stage; here it is pattern-free</p>
-<p>because same-colour neighbours are simply the pixels two steps away.</p>
-<p>Ground truth: dead pixels planted in a smooth frame are recovered exactly</p>
-<p>(no misses, no false alarms) while a hard edge produces none.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: bad *raw* or a *threshold* outside </code><code style="color:#22d3bf">(0, 1]</code>`.</p>
+<p>&quot;Every neighbour, same sign&quot; is what separates a defect from an edge: at an edge some same-colour neighbours are on the pixel&#x27;s own side. The rule is the one openISP documents for its DPC stage; here it is pattern-free because same-colour neighbours are simply the pixels two steps away.</p>
+<p>Ground truth: dead pixels planted in a smooth frame are recovered exactly (no misses, no false alarms) while a hard edge produces none. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: bad *raw* or a *threshold* outside <code style="color:#22d3bf">(0, 1]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

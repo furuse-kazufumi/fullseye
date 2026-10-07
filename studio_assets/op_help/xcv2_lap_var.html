@@ -7,12 +7,8 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>ラプラシアン分散によるフォーカス（ボケ）指標（`<code style="color:#22d3bf">cv2.Laplacian</code>` の分散）。</p>
-<p>画像全体に Laplacian を掛けた結果の分散を計算し、`<code style="color:#22d3bf">min(1.0, 分散*20)</code>` で</p>
-<p>[0,1] にクリップしたスカラーを返す。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値が大きいほど</p>
-<p>エッジ/テクスチャが豊富＝合焦、小さいほどボケている可能性が高い、という</p>
-<p>古典的なオートフォーカス評価指標。倍率 20 は経験的なスケーリングで、</p>
-<p>絶対的なボケ量ではなく相対比較に向く。</p>
+<p>ラプラシアン分散によるフォーカス（ボケ）指標（<code style="color:#22d3bf">cv2.Laplacian</code> の分散）。</p>
+<p>画像全体に Laplacian を掛けた結果の分散を計算し、<code style="color:#22d3bf">min(1.0, 分散*20)</code> で [0,1] にクリップしたスカラーを返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。値が大きいほどエッジ/テクスチャが豊富＝合焦、小さいほどボケている可能性が高い、という古典的なオートフォーカス評価指標。倍率 20 は経験的なスケーリングで、絶対的なボケ量ではなく相対比較に向く。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -21,7 +17,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv2_lap_var 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv2_lap_var%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv2_lap_var%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv2_lap_var 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv2_lap_var%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv2_lap_var%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_focus_stacking">poc_focus_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_focus_stacking.py</code></p>

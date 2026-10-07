@@ -5,14 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>安息角 → 流動性区分(USP &lt;1174&gt; Table 1、原典 Carr 1965)。</p>
-<p>返り: `<code style="color:#22d3bf">cls</code><code style="color:#22d3bf">(excellent / good / fair / passable / poor / very poor / very, very poor)、</code><code style="color:#22d3bf">phi_int</code>`(表を引いた</p>
-<p>整数の度 = 四捨五入)、`<code style="color:#22d3bf">tabulated</code><code style="color:#22d3bf">(表の下限 25 度以上か)、</code><code style="color:#22d3bf">band_upper_deg</code>`(その区分の上限; 上限の無い最後の区分は None ——</p>
-<p>返りに inf を入れない、JSON に載らないため)。表は整数の</p>
-<p>度なので 30.5 は 31(good)、30.4 は 30(excellent)。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 角が (0, 90) の外。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>返り: <code style="color:#22d3bf">cls</code>(excellent / good / fair / passable / poor / very poor / very, very poor)、<code style="color:#22d3bf">phi_int</code>(表を引いた整数の度 = 四捨五入)、<code style="color:#22d3bf">tabulated</code>(表の下限 25 度以上か)、<code style="color:#22d3bf">band_upper_deg</code>(その区分の上限; 上限の無い最後の区分は None —— 返りに inf を入れない、JSON に載らないため)。表は整数の度なので 30.5 は 31(good)、30.4 は 30(excellent)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 角が (0, 90) の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

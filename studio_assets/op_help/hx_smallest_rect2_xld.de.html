@@ -8,17 +8,14 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_rect2_xld.chain.jpg">hx_smallest_rect2_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_rect2_xld.chain.jpg">hx_smallest_rect2_xld: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Das Flächenverhältnis des flächenminimalen orientierten Rechtecks (Rechteckfläche / Bildfläche; ein Merkmal).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>全 contour の点をまとめ、0°〜84° を 6° 刻みで回転させて軸並行外接矩形の面積を計算し、その最小値を画像面積</p>
-<p>`<code style="color:#22d3bf">H*W</code><code style="color:#22d3bf"> で割って 1 で頭打ちした </code><code style="color:#22d3bf">np.float64</code>` で返す。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 3 個未満なら 0.0。各辺には `<code style="color:#22d3bf">1e-9</code>` が足してあり、点が同一直線上でも面積は厳密には 0 でなく極小値。</p>
-<p>角度探索が 6° 刻みなので真の最小面積より最大で数 % 大きく出ることがある。全 contour を 1 つの矩形で包むため、</p>
-<p>離れた contour が複数あると間の空白も含む。アスペクト比は `<code style="color:#22d3bf">hx_fit_rectangle2_contour</code>`、軸並行版は</p>
-<p>`<code style="color:#22d3bf">hx_smallest_rect1_xld</code>`。</p>
+<p>全 contour の点をまとめ、0°〜84° を 6° 刻みで回転させて軸並行外接矩形の面積を計算し、その最小値を画像面積 <code style="color:#22d3bf">H*W</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点が 3 個未満なら 0.0。各辺には <code style="color:#22d3bf">1e-9</code> が足してあり、点が同一直線上でも面積は厳密には 0 でなく極小値。</p>
+<p>角度探索が 6° 刻みなので真の最小面積より最大で数 % 大きく出ることがある。全 contour を 1 つの矩形で包むため、離れた contour が複数あると間の空白も含む。アスペクト比は <code style="color:#22d3bf">hx_fit_rectangle2_contour</code>、軸並行版は <code style="color:#22d3bf">hx_smallest_rect1_xld</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -29,7 +26,7 @@
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-hx_smallest_rect2_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_smallest_rect2_xld%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_smallest_rect2_xld%200.50%200.50">Load &amp; run</a></p>
+hx_smallest_rect2_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_smallest_rect2_xld%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_smallest_rect2_xld%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>

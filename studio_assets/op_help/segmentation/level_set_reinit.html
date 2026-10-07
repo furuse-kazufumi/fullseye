@@ -4,13 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.level_set_reinit(phi, *, method: &#x27;str&#x27; = &#x27;sussman&#x27;, n_iter: &#x27;int&#x27; = 100, dt: &#x27;float&#x27; = 0.5, band: &#x27;float&#x27; = 3.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segcontour; segcontour.level_set_reinit(phi, *, method: &#x27;str&#x27; = &#x27;sussman&#x27;, n_iter: &#x27;int&#x27; = 100, dt: &#x27;float&#x27; = 0.5, band: &#x27;float&#x27; = 3.0) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;level_set_reinit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>φ(内側 φ &lt; 0)を同じ零等高線の符号付き距離に直す。</p>
-<p>`<code style="color:#22d3bf">method=&quot;sussman&quot;</code>` = φ_τ + S(φ0)(|∇φ| − 1) = 0(Sussman–Smereka–Osher 1994)を Godunov の風上差分で</p>
-<p>`<code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf"> 回(刻み </code><code style="color:#22d3bf">dt</code>` ≤ 0.5)。界面に接する格子点(4 近傍で符号が変わる)は Russo–Smereka 2000 の subcell fix:</p>
-<p>D = φ0 / Δφ0(Δφ0 = 中心差分の勾配の大きさと片側差分の最大)へ緩和させ、零等高線を動かさない。</p>
-<p>`<code style="color:#22d3bf">method=&quot;edt&quot;</code>` = マスク φ &lt; 0 から距離変換で作る符号付き距離(第 2 実装。零等高線は画素の中心の中間に量子化され、</p>
-<p>最大で半画素動く)。bool のマスクを渡すと edt の符号付き距離を φ0 として使う。</p>
-<p>返り値: `<code style="color:#22d3bf">phi</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">grad</code><code style="color:#22d3bf">(|φ| ≤ band での |∇φ| の 10/50/90 % 点と画素数)、</code><code style="color:#22d3bf">grad_before</code>`(同、入力)、</p>
-<p>`<code style="color:#22d3bf">zero_hausdorff</code><code style="color:#22d3bf">(前後の零等高線の Hausdorff、画素)、</code><code style="color:#22d3bf">method</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_iter</code>`。</p>
+<p><code style="color:#22d3bf">method=&quot;sussman&quot;</code> = φ_τ + S(φ0)(|∇φ| − 1) = 0(Sussman–Smereka–Osher 1994)を Godunov の風上差分で <code style="color:#22d3bf">n_iter</code> 回(刻み <code style="color:#22d3bf">dt</code> ≤ 0.5)。界面に接する格子点(4 近傍で符号が変わる)は Russo–Smereka 2000 の subcell fix:</p>
+<p>D = φ0 / Δφ0(Δφ0 = 中心差分の勾配の大きさと片側差分の最大)へ緩和させ、零等高線を動かさない。<code style="color:#22d3bf">method=&quot;edt&quot;</code> = マスク φ &lt; 0 から距離変換で作る符号付き距離(第 2 実装。零等高線は画素の中心の中間に量子化され、最大で半画素動く)。bool のマスクを渡すと edt の符号付き距離を φ0 として使う。</p>
+<p>返り値: <code style="color:#22d3bf">phi</code>、<code style="color:#22d3bf">grad</code>(|φ| ≤ band での |∇φ| の 10/50/90 % 点と画素数)、<code style="color:#22d3bf">grad_before</code>(同、入力)、<code style="color:#22d3bf">zero_hausdorff</code>(前後の零等高線の Hausdorff、画素)、<code style="color:#22d3bf">method</code>、<code style="color:#22d3bf">n_iter</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

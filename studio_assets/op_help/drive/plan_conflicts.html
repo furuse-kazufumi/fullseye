@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_conflicts(paths)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import agvfleet; agvfleet.plan_conflicts(paths)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;plan_conflicts&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>衝突の一覧: 同じ時刻に同じマス(vertex)・すれ違い(edge)・追従(follow)。</p>
-<p>返りは `<code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>`。着いた車両はその場に居続けるものとして数える。</p>
-<p>follow は「i が時刻 t にマス v へ<b>入った</b>とき、j が t-1 に v に居た」(i ≠ j)。</p>
+<p>返りは <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>。着いた車両はその場に居続けるものとして数える。follow は「i が時刻 t にマス v へ<b>入った</b>とき、j が t-1 に v に居た」(i ≠ j)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

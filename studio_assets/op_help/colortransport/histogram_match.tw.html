@@ -3,34 +3,21 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import colortransport; colortransport.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opscolortransport.get(&quot;histogram_match&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>把 `<code style="color:#22d3bf">src</code><code style="color:#22d3bf"> 的取值分布匹配到 </code><code style="color:#22d3bf">ref</code>`(一維精確最佳輸運)。</p>
+<p>把 <code style="color:#22d3bf">src</code> 的取值分布匹配到 <code style="color:#22d3bf">ref</code>(一維精確最佳輸運)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>順位を保ったまま参照の分位点に置き換える。`<code style="color:#22d3bf">bins</code>` を指定すると、その段数の</p>
-<p>累積分布で近似する ―― 速いが<b>厳密ではなくなる</b>ので、既定は `<code style="color:#22d3bf">None</code>`</p>
-<p>(厳密)にしてある。</p>
-<p><b>同じ値の画素をどう扱うかで、絵の意味が変わる。</b> 単調写像なら「等しい入力</p>
-<p>は等しい出力に写る」はずだが、素朴に順位で置き換えると<b>同値が引き裂かれる</b>。</p>
-<p>実測(値 2 が 4 画素ある整数画像):出力は ``0.2222 / 0.3333 / 0.4444 /</p>
-<p>0.5556`` の 4 つに分かれた。つまり**平坦だった領域に、元の絵に無い濃淡が</p>
-<p>生える**。整数画像は同値だらけなので、これは例外ではなく常態。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ties=&quot;average&quot;</code>`(既定)—— 同値の画素には、そこに割り当たった参照値の</p>
-<p><b>平均</b>を与える。等しい入力は等しい出力に写り、単調性が保たれる。</p>
-<p>その代わり<b>出力の分布は参照と厳密には一致しなくなる</b>(同値の塊のぶん、</p>
-<p>分布が階段状に丸まる)。連続な入力(同値が無い)なら厳密一致のまま。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ties=&quot;break&quot;</code>` —— 順位そのままで引き裂く。**出力の分布は参照と厳密に</p>
-<p>一致する**が、平坦部に偽の濃淡が出る。分布を厳密に合わせることが目的で、</p>
-<p>絵として見ないと分かっているときだけ。</p>
-<p>どちらを選んでも失うものがある(分布の厳密さ か 平坦部の平坦さ)ので、</p>
-<p><b>黙って片方に決めず引数にした</b>。</p>
-<p>多チャネルの絵に<b>そのまま掛けるとチャネル間の相関を壊す</b>。</p>
-<p>各軸の周辺分布は合うのに、色の組合せが元に無かったものになりうる。</p>
-<p>相関ごと運びたいときは :func:<code style="color:#22d3bf">color_transfer</code> の `<code style="color:#22d3bf">method=&quot;gaussian&quot;</code>`。</p>
+<p>順位を保ったまま参照の分位点に置き換える。<code style="color:#22d3bf">bins</code> を指定すると、その段数の累積分布で近似する ―― 速いが<b>厳密ではなくなる</b>ので、既定は <code style="color:#22d3bf">None</code> (厳密)にしてある。</p>
+<p><b>同じ値の画素をどう扱うかで、絵の意味が変わる。</b> 単調写像なら「等しい入力は等しい出力に写る」はずだが、素朴に順位で置き換えると<b>同値が引き裂かれる</b>。実測(値 2 が 4 画素ある整数画像):出力は <code style="color:#22d3bf">0.2222 / 0.3333 / 0.4444 / 0.5556</code> の 4 つに分かれた。つまり<b>平坦だった領域に、元の絵に無い濃淡が生える</b>。整数画像は同値だらけなので、これは例外ではなく常態。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;average&quot;</code>(既定)—— 同値の画素には、そこに割り当たった参照値の <b>平均</b>を与える。等しい入力は等しい出力に写り、単調性が保たれる。その代わり<b>出力の分布は参照と厳密には一致しなくなる</b>(同値の塊のぶん、分布が階段状に丸まる)。連続な入力(同値が無い)なら厳密一致のまま。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;break&quot;</code> —— 順位そのままで引き裂く。<b>出力の分布は参照と厳密に一致する</b>が、平坦部に偽の濃淡が出る。分布を厳密に合わせることが目的で、絵として見ないと分かっているときだけ。</p>
+<p>どちらを選んでも失うものがある(分布の厳密さ か 平坦部の平坦さ)ので、<b>黙って片方に決めず引数にした</b>。</p>
+<p>多チャネルの絵に<b>そのまま掛けるとチャネル間の相関を壊す</b>。各軸の周辺分布は合うのに、色の組合せが元に無かったものになりうる。</p>
+<p>相関ごと運びたいときは <code style="color:#22d3bf">color_transfer</code> の <code style="color:#22d3bf">method=&quot;gaussian&quot;</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色與光譜知識 —— 顏色只由「光譜 × 光源 × 觀察者」決定</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:color_transport">color_transport</a> — <code style="color:#22d3bf">py -3.11 examples/color_transport.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_change_detection_misreg">poc_change_detection_misreg</a> — <code style="color:#22d3bf">py -3.11 examples/poc_change_detection_misreg.py</code></p>

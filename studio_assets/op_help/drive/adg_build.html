@@ -5,9 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>行動依存グラフ(Hönig, Kiesel, Tinka, Durham, Ayanian 2019)。</p>
 <p>各車両の行動 = 「訪れるマスの列の k 番目に入る」。依存は 2 種類:</p>
-<p>(1) 同じ車両の前の行動、(2) <b>同じマスを先に使う他車がそのマスを出ること</b>(計画の時刻順)。</p>
-<p>返りは dict: `<code style="color:#22d3bf">cells</code><code style="color:#22d3bf">(各車両のマスの列)、</code><code style="color:#22d3bf">deps</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(i, k)</code><code style="color:#22d3bf"> → それより先に終わるべき </code><code style="color:#22d3bf">(j, m)</code>` の集合)。</p>
-<p>計画に衝突があれば ValueError(依存の向きが決まらない)。</p>
+<p style="margin:2px 0 2px 12px">(1) 同じ車両の前の行動、(2) <b>同じマスを先に使う他車がそのマスを出ること</b>(計画の時刻順)。</p>
+<p>返りは dict: <code style="color:#22d3bf">cells</code>(各車両のマスの列)、<code style="color:#22d3bf">deps</code>(<code style="color:#22d3bf">(i, k)</code> → それより先に終わるべき <code style="color:#22d3bf">(j, m)</code> の集合)。計画に衝突があれば ValueError(依存の向きが決まらない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

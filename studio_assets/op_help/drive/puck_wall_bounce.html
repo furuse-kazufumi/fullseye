@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import puck; puck.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;puck_wall_bounce&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>壁との衝突: 法線成分 vₙ&#x27; = −e vₙ、接線成分 vₜ&#x27; = kₜ vₜ(e = 法線の反発係数、kₜ = 接線の保持率 = 接線の反発係数)。</p>
-<p>回転は持たない(壁の摩擦で入る回転は接線の減りに畳んである。Cross 2022 のディスク衝突は「滑りか把持か」で接線の</p>
-<p>反発係数を書く —— その 2 領域は入れていない)。返り値</p>
-<p>`<code style="color:#22d3bf">{&quot;v&quot;, &quot;vn_in&quot;, &quot;vn_out&quot;, &quot;vt_in&quot;, &quot;vt_out&quot;, &quot;energy_ratio&quot;}</code>`。法線だけの衝突なら energy_ratio = e²(門)。</p>
-<p>`<code style="color:#22d3bf">v·n ≥ 0</code>`(離れていく)なら何もしない。</p>
+<p>回転は持たない(壁の摩擦で入る回転は接線の減りに畳んである。Cross 2022 のディスク衝突は「滑りか把持か」で接線の反発係数を書く —— その 2 領域は入れていない)。返り値 <code style="color:#22d3bf">{&quot;v&quot;, &quot;vn_in&quot;, &quot;vn_out&quot;, &quot;vt_in&quot;, &quot;vt_out&quot;, &quot;energy_ratio&quot;}</code>。法線だけの衝突なら energy_ratio = e²(門)。<code style="color:#22d3bf">v·n ≥ 0</code>(離れていく)なら何もしない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -6,20 +6,14 @@
 <p><img src="fig/highpass_image.png" alt="highpass_image: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/highpass_image.a.jpg">highpass_image: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/highpass_image.a.jpg">highpass_image: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/highpass_image.inputs.jpg">highpass_image: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/highpass_image.inputs.jpg">highpass_image: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>周波数領域で低域(半径 `<code style="color:#22d3bf">&lt;= 0.02+0.3*a</code>`)を遮断し、残りを逆 FFT で</p>
-<p>実空間に戻したハイパスフィルタ。零平均の<b>符号つき</b>応答になるため</p>
-<p>`<code style="color:#22d3bf">signed01</code>` で [0,1] に写像している(0.5 がゼロ、つまり画素の約半分が</p>
-<p>0.5 未満になるのが正常)。HALCON の `<code style="color:#22d3bf">highpass_image</code>`（Extract high</p>
-<p>frequency components from an image.）に相当。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が遮断半径(カットオフ周波数)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。単純に</p>
-<p>`<code style="color:#22d3bf">&gt; 0.5</code>` で二値化するとほぼ半分の画素が黒に潰れるので注意(詳細は</p>
-<p>`<code style="color:#22d3bf">_sh_freq</code>` の docstring)。</p>
+<p>周波数領域で低域(半径 <code style="color:#22d3bf">&lt;= 0.02+0.3*a</code>)を遮断し、残りを逆 FFT で実空間に戻したハイパスフィルタ。零平均の<b>符号つき</b>応答になるため <code style="color:#22d3bf">signed01</code> で [0,1] に写像している(0.5 がゼロ、つまり画素の約半分が 0.5 未満になるのが正常)。HALCON の <code style="color:#22d3bf">highpass_image</code>（Extract high frequency components from an image.）に相当。</p>
+<p><code style="color:#22d3bf">a</code> が遮断半径(カットオフ周波数)を振る。<code style="color:#22d3bf">b</code> は未使用。単純に <code style="color:#22d3bf">&gt; 0.5</code> で二値化するとほぼ半分の画素が黒に潰れるので注意(詳細は <code style="color:#22d3bf">_sh_freq</code> の docstring)。</p>
 <p><b>端の扱い</b>: 反対側へ巻き付ける(周期)(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
@@ -29,7 +23,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">highpass_image 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:highpass_image%200.40%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:highpass_image%200.40%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">highpass_image 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:highpass_image%200.40%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:highpass_image%200.40%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_river_surface_velocity">poc_river_surface_velocity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_river_surface_velocity.py</code></p>

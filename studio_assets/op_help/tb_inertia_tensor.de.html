@@ -7,33 +7,29 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_inertia_tensor.chain.jpg">tb_inertia_tensor: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_inertia_tensor.chain.jpg">tb_inertia_tensor: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_inertia_tensor.inputs.jpg">tb_inertia_tensor: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_inertia_tensor.inputs.jpg">tb_inertia_tensor: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Trägheitstensor der Punktwolke (3,3) (aus dem zentralen Moment zweiter Ordnung, bei gleicher Masse und einer Gesamtmasse von 1).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²),</p>
-<p>I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)。</p>
-<p>共分散 C を使うと I = tr(C)·E₃ − C(E₃ は単位行列)と等価。対称・半正定値。</p>
-<p>重心中心化のため並進不変。</p>
-<p>Returns</p>
-<p>-------</p>
+<p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²), I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)。共分散 C を使うと I = tr(C)·E₃ − C(E₃ は単位行列)と等価。対称・半正定値。重心中心化のため並進不変。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (3, 3)</p>
 <p>対称な慣性テンソル。</p>
 <p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 単位は長さ²(質量 1 の等質量点とみなすので密度は入らない)。点群を回転で回すと `<code style="color:#22d3bf">R I Rᵀ</code><code style="color:#22d3bf"> に写り、固有値(</code><code style="color:#22d3bf">principal_moments</code><code style="color:#22d3bf">)が回転不変量、固有ベクトルが主軸(</code><code style="color:#22d3bf">moment_axes</code>`)。</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1(1 点なら零行列)。形状不正・非有限は `<code style="color:#22d3bf">ValueError</code>`。</p>
-<p style="margin:2px 0 2px 12px">• 共分散 C とは `<code style="color:#22d3bf">I = tr(C)·E₃ - C</code><code style="color:#22d3bf"> の関係で、C と I の固有ベクトルは同じ、固有値は </code><code style="color:#22d3bf">tr(C) - c_i</code>`。</p>
-<p style="margin:2px 0 2px 12px">• 実体(体積)のモーメントではなく <b>サンプル点</b> のモーメントなので、同じ形でも点密度の偏りで値が変わる。密度を均すなら前段で `<code style="color:#22d3bf">voxel_grid_downsample</code>`。決定論的。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">inertia_tensor</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
+<p style="margin:2px 0 2px 12px">• 単位は長さ²(質量 1 の等質量点とみなすので密度は入らない)。点群を回転で回すと <code style="color:#22d3bf">R I Rᵀ</code> に写り、固有値(<code style="color:#22d3bf">principal_moments</code>)が回転不変量、固有ベクトルが主軸(<code style="color:#22d3bf">moment_axes</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1(1 点なら零行列)。形状不正・非有限は <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• 共分散 C とは <code style="color:#22d3bf">I = tr(C)·E₃ - C</code> の関係で、C と I の固有ベクトルは同じ、固有値は <code style="color:#22d3bf">tr(C) - c_i</code>。</p>
+<p style="margin:2px 0 2px 12px">• 実体(体積)のモーメントではなく <b>サンプル点</b> のモーメントなので、同じ形でも点密度の偏りで値が変わる。密度を均すなら前段で <code style="color:#22d3bf">voxel_grid_downsample</code>。決定論的。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">inertia_tensor</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
-tb_inertia_tensor 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_inertia_tensor%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_inertia_tensor%200.50%200.50">Load &amp; run</a></p>
+tb_inertia_tensor 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_inertia_tensor%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_inertia_tensor%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">inertia_tensor</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:moment_invariants">moment_invariants</a> — <code style="color:#22d3bf">py -3.11 examples_3d/moment_invariants.py</code></p>

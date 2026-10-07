@@ -14,7 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Upper-tone clipping (THRESH_TRUNC, OpenCV implementation). All pixels brighter than the specified value are clamped to that value, while pixels at or below it are left unchanged - a tonal operation that crushes only the highlights (does not touch the shadows).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">scale_image</code>(Scale the gray values of an image.)に相当(近似。線形スケーリングではなく片側クリップ)。実装は `<code style="color:#22d3bf">cv2.threshold(v, thresh=a, maxval=1.0, THRESH_TRUNC)</code>` —— a は切り詰めレベルを 0〜1 に振る。b は未使用。</p>
+<p>HALCON の <code style="color:#22d3bf">scale_image</code>(Scale the gray values of an image.)に相当(近似。線形スケーリングではなく片側クリップ)。実装は <code style="color:#22d3bf">cv2.threshold(v, thresh=a, maxval=1.0, THRESH_TRUNC)</code> —— a は切り詰めレベルを 0〜1 に振る。b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -5,43 +5,33 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>FMCW 配置的 bin 宽度、分辨率与混叠极限。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>The paper answer to &quot;will this waveform see what I care about?&quot;, with no data</p>
-<p>and no simulation — the stance :mod:<code style="color:#22d3bf">visiondesign</code> takes for optics. Every</p>
-<p>number is closed form:</p>
+<p>The paper answer to &quot;will this waveform see what I care about?&quot;, with no data and no simulation — the stance <code style="color:#22d3bf">visiondesign</code> takes for optics. Every number is closed form:</p>
 <p>==============================  ============================================</p>
 <p>quantity                        formula</p>
 <p>==============================  ============================================</p>
-<p>swept bandwidth                 `<code style="color:#22d3bf">B = S * N_s / f_s</code>`</p>
-<p>range bin / resolution          `<code style="color:#22d3bf">dR = c / (2B) = c*f_s / (2*S*N_s)</code>`</p>
-<p>max unambiguous range           `<code style="color:#22d3bf">R_max = c*f_s / (2S)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">= N_s * dR</code>`)</p>
-<p>beat frequency per metre        `<code style="color:#22d3bf">2S/c</code>`</p>
-<p>velocity bin / resolution       `<code style="color:#22d3bf">dv = lambda / (2*N_c*T_c)</code>`</p>
-<p>max unambiguous velocity        `<code style="color:#22d3bf">v_max = lambda / (4*T_c)</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">= N_c*dv/2</code>`)</p>
-<p>Doppler phase per (m/s)         `<code style="color:#22d3bf">4*pi*T_c / lambda</code>` rad per chirp</p>
-<p>coherent processing interval    `<code style="color:#22d3bf">N_c * T_c</code>`</p>
-<p>max unambiguous angle           `<code style="color:#22d3bf">asin(lambda / (2d))</code>`</p>
-<p>angular resolution (boresight)  `<code style="color:#22d3bf">0.886 * lambda / (N_a * d)</code>`</p>
-<p>==============================  ============================================</p>
+<p>swept bandwidth                 <code style="color:#22d3bf">B = S * N_s / f_s</code></p>
+<p>range bin / resolution          <code style="color:#22d3bf">dR = c / (2B) = c*f_s / (2*S*N_s)</code></p>
+<p>max unambiguous range           <code style="color:#22d3bf">R_max = c*f_s / (2S)</code> (<code style="color:#22d3bf">= N_s * dR</code>)</p>
+<p>beat frequency per metre        <code style="color:#22d3bf">2S/c</code></p>
+<p>velocity bin / resolution       <code style="color:#22d3bf">dv = lambda / (2*N_c*T_c)</code></p>
+<p>max unambiguous velocity        <code style="color:#22d3bf">v_max = lambda / (4*T_c)</code> (<code style="color:#22d3bf">= N_c*dv/2</code>)</p>
+<p>Doppler phase per (m/s)         <code style="color:#22d3bf">4*pi*T_c / lambda</code> rad per chirp</p>
+<p>coherent processing interval    <code style="color:#22d3bf">N_c * T_c</code></p>
+<p>max unambiguous angle           <code style="color:#22d3bf">asin(lambda / (2d))</code></p>
+<p>angular resolution (boresight)  <code style="color:#22d3bf">0.886 * lambda / (N_a * d)</code> ==============================  ============================================</p>
 <p>The two &quot;max&quot; figures are <b>hard aliasing limits</b>, and they are the same</p>
-<p>numbers :func:<code style="color:#22d3bf">fmcw_beat_simulate</code> refuses to cross. The angular resolution</p>
-<p>is the 3 dB beamwidth of a uniform linear array at boresight (Van Trees 2002,</p>
-<p>§2.4); it widens as `<code style="color:#22d3bf">1/cos(theta)</code>` off boresight, which this does not report</p>
-<p>because it is a function, not a number.</p>
-<p>`<code style="color:#22d3bf">cube_elements</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">cube_mebibytes</code>` are included because &quot;small input,</p>
-<p>huge allocation&quot; is the failure mode of this family: the cube grows as</p>
-<p>`<code style="color:#22d3bf">N_a * N_c * N_s</code>` and complex128 is 16 bytes a sample.</p>
-<p>Returns a `<code style="color:#22d3bf">dict</code><code style="color:#22d3bf">. Raises </code><code style="color:#22d3bf">ValueError</code>` on a non-positive or non-finite</p>
-<p>parameter, a wavelength over :data:<code style="color:#22d3bf">MAX_WAVELENGTH_M</code>, or a count outside its</p>
-<p>cap.</p>
+<p>numbers <code style="color:#22d3bf">fmcw_beat_simulate</code> refuses to cross. The angular resolution is the 3 dB beamwidth of a uniform linear array at boresight (Van Trees 2002, §2.4); it widens as <code style="color:#22d3bf">1/cos(theta)</code> off boresight, which this does not report because it is a function, not a number.</p>
+<p><code style="color:#22d3bf">cube_elements</code> and <code style="color:#22d3bf">cube_mebibytes</code> are included because &quot;small input, huge allocation&quot; is the failure mode of this family: the cube grows as <code style="color:#22d3bf">N_a * N_c * N_s</code> and complex128 is 16 bytes a sample.</p>
+<p>Returns a <code style="color:#22d3bf">dict</code>. Raises <code style="color:#22d3bf">ValueError</code> on a non-positive or non-finite parameter, a wavelength over <code style="color:#22d3bf">MAX_WAVELENGTH_M</code>, or a count outside its cap.</p>
 <p>&gt;&gt;&gt; d = fmcw_design()</p>
 <p>&gt;&gt;&gt; round(d[&quot;range_bin_m&quot;], 6), round(d[&quot;max_unambiguous_velocity_ms&quot;], 6)</p>
 <p>(1.171064, 19.467)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guiderangedoppler:fmcw_range_doppler">fmcw_range_doppler 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fmcw_range_doppler">fmcw_range_doppler</a> — <code style="color:#22d3bf">py -3.11 examples/fmcw_range_doppler.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

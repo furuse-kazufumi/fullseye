@@ -3,17 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">curvature</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_table(curvature)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.curvature_to_table(curvature)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Curvature → a `<code style="color:#22d3bf">table</code>` summarising its distribution. <b>One-way</b> (a statistic&#x27;s job is to throw information away).</p>
+<p>Curvature → a <code style="color:#22d3bf">table</code> summarising its distribution. <b>One-way</b> (a statistic&#x27;s job is to throw information away).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>(N,) の単独曲率も (N,2) の主曲率対も受ける —— 統計を出すだけなら対で</p>
-<p>ある必要が無いため。`<code style="color:#22d3bf">kind</code>` に受けた形を書き戻すので、下流は「対だったのか」</p>
-<p>を後から判別できる。</p>
+<p>(N,) の単独曲率も (N,2) の主曲率対も受ける —— 統計を出すだけなら対である必要が無いため。<code style="color:#22d3bf">kind</code> に受けた形を書き戻すので、下流は「対だったのか」を後から判別できる。</p>
 <p>Args:</p>
 <p>curvature: (N,) / (N, 2) / 2 本の等長 1-D のタプル。</p>
 <p>Returns:</p>
-<p>dict。`<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rms</code>` /</p>
-<p>`<code style="color:#22d3bf">p05</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">p50</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">p95</code><code style="color:#22d3bf">、対なら </code><code style="color:#22d3bf">gauss_mean</code>`(K = k1*k2 の平均)と</p>
-<p>`<code style="color:#22d3bf">mean_curvature_mean</code>`((k1+k2)/2 の平均)。</p>
+<p>dict。<code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">rms</code> /</p>
+<p><code style="color:#22d3bf">p05</code> / <code style="color:#22d3bf">p50</code> / <code style="color:#22d3bf">p95</code>、対なら <code style="color:#22d3bf">gauss_mean</code>(K = k1*k2 の平均)と</p>
+<p><code style="color:#22d3bf">mean_curvature_mean</code>((k1+k2)/2 の平均)。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

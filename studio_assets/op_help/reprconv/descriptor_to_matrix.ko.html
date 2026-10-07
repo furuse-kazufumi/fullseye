@@ -3,20 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">descriptor</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_matrix(descriptor)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>기술자 → `<code style="color:#22d3bf">matrix</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">descriptor</code>` 의 출구(<b>가역</b>).</p>
+<p>기술자 → <code style="color:#22d3bf">matrix</code>. <code style="color:#22d3bf">descriptor</code> 의 출구(<b>가역</b>).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>1-D の記述子 (n,) は <b>(1, n)</b> の 1 行行列にする。2-D の記述子束</p>
-<p>(`<code style="color:#22d3bf">sh_descriptor</code>` の (12, 9) のような「点 x 次元」)はそのまま通す。</p>
-<p>こうしておくと記述子バンクに `<code style="color:#22d3bf">mat_svd</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mat_pinv</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mat_cond</code>`</p>
-<p>がそのまま掛かる —— 記述子は本質的にベクトルなので、行列語彙へ渡すのは</p>
-<p>梱包の付け替えであって変形ではない。</p>
-<p>:func:<code style="color:#22d3bf">matrix_to_descriptor</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。</p>
+<p>1-D の記述子 (n,) は <b>(1, n)</b> の 1 行行列にする。2-D の記述子束(<code style="color:#22d3bf">sh_descriptor</code> の (12, 9) のような「点 x 次元」)はそのまま通す。こうしておくと記述子バンクに <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> がそのまま掛かる —— 記述子は本質的にベクトルなので、行列語彙へ渡すのは梱包の付け替えであって変形ではない。</p>
+<p><code style="color:#22d3bf">matrix_to_descriptor</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。</p>
 <p>Args:</p>
 <p>descriptor: (n,) または (m, n) の実配列。</p>
 <p>Returns:</p>
 <p>(1, n) または (m, n) float64。</p>
 <p>Raises:</p>
-<p>ValueError: 3-D 以上 / 非有限 / dict(`<code style="color:#22d3bf">fit_zernike</code>` は dict を返すので</p>
+<p>ValueError: 3-D 以上 / 非有限 / dict(<code style="color:#22d3bf">fit_zernike</code> は dict を返すので</p>
 <p>ここで拒否される —— 詳細は本モジュール docstring)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>

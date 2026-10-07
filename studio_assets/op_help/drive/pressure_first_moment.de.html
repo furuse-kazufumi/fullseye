@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pressure_first_moment(p, X, Y, pitch: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tactorque; tactorque.pressure_first_moment(p, X, Y, pitch: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;pressure_first_moment&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>格子上の圧力 p (n, n) [Pa] の 0 次・1 次モーメント: `<code style="color:#22d3bf">P</code><code style="color:#22d3bf"> = Σ p h² [N]、</code><code style="color:#22d3bf">M1</code><code style="color:#22d3bf"> = Σ (x, y) p h² [N·m]、</code><code style="color:#22d3bf">tau</code>` = (−M1_y, M1_x)</p>
-<p>(z はゲルから物体へ、物体がゲルを押す力 −ẑ p のモーメント)。<b>Raises</b> ValueError: 形が違う、pitch ≤ 0。</p>
+<p>格子上の圧力 p (n, n) [Pa] の 0 次・1 次モーメント: <code style="color:#22d3bf">P</code> = Σ p h² [N]、<code style="color:#22d3bf">M1</code> = Σ (x, y) p h² [N·m]、<code style="color:#22d3bf">tau</code> = (−M1_y, M1_x) (z はゲルから物体へ、物体がゲルを押す力 −ẑ p のモーメント)。<b>Raises</b> ValueError: 形が違う、pitch ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

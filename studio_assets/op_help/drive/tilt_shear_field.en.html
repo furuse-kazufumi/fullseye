@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tilt_shear_field(p_before, p_after, kern: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tactorque; tactorque.tilt_shear_field(p_before, p_after, kern: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;tilt_shear_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>「把持後に零点を取る」論文の手順そのまま: 把持直後の圧 p_before とトルク後の圧 p_after の差 Δp を Boussinesq 核で畳み、</p>
-<p>零点後のマーカー変位 `<code style="color:#22d3bf">ux</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">uy</code><code style="color:#22d3bf">(・</code><code style="color:#22d3bf">uz</code><code style="color:#22d3bf">)と </code><code style="color:#22d3bf">dp</code>` を返す。Δp の 0 次モーメントが 0(法線力不変)なら双極子は原点に依らない。</p>
-<p><b>Raises</b> ValueError: 2 枚の形が違う。</p>
+<p>「把持後に零点を取る」論文の手順そのまま: 把持直後の圧 p_before とトルク後の圧 p_after の差 Δp を Boussinesq 核で畳み、零点後のマーカー変位 <code style="color:#22d3bf">ux</code>・<code style="color:#22d3bf">uy</code>(・<code style="color:#22d3bf">uz</code>)と <code style="color:#22d3bf">dp</code> を返す。Δp の 0 次モーメントが 0(法線力不変)なら双極子は原点に依らない。<b>Raises</b> ValueError: 2 枚の形が違う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

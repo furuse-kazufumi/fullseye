@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import conngraph; conngraph.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsconngraph.get(&quot;states_participation_ratio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>状態列 `<code style="color:#22d3bf">X</code><code style="color:#22d3bf"> (N, n) の**実効次元** = participation ratio </code><code style="color:#22d3bf">PR = (Σλ)² / Σλ²</code>`(λ は共分散の固有値、</p>
-<p>Gao et al. 2017)。全列が独立で同じ分散なら n、1 本の方向に乗っていれば 1。</p>
+<p>状態列 <code style="color:#22d3bf">X</code> (N, n) の<b>実効次元</b> = participation ratio <code style="color:#22d3bf">PR = (Σλ)² / Σλ²</code>(λ は共分散の固有値、Gao et al. 2017)。全列が独立で同じ分散なら n、1 本の方向に乗っていれば 1。</p>
 <p>標本数 N に依存する(N が小さいと PR ≤ N に頭打ち)ので、比べるときは N を揃える。定数(分散 0)なら 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph ファミリ ガイド</a></p>

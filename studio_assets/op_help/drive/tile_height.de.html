@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_height(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveinf; driveinf.tile_height(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;tile_height&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>区画 (i, j) の中の点 (x, y) の地面の高さ [m]: 全体の整数格子の Perlin 雑音 × relief、道の周りは平ら</p>
-<p>(`<code style="color:#22d3bf">flat</code><code style="color:#22d3bf"> m まで 0、</code><code style="color:#22d3bf">blend</code>` m で smoothstep)。格子の番号 = 区画の番号 × cells + 升目の番号(整数で厳密)、</p>
-<p>補間は升目の中の小数だけ —— 継ぎ目で連続し、遠くでも桁が落ちない。</p>
+<p>区画 (i, j) の中の点 (x, y) の地面の高さ [m]: 全体の整数格子の Perlin 雑音 × relief、道の周りは平ら(<code style="color:#22d3bf">flat</code> m まで 0、<code style="color:#22d3bf">blend</code> m で smoothstep)。格子の番号 = 区画の番号 × cells + 升目の番号(整数で厳密)、補間は升目の中の小数だけ —— 継ぎ目で連続し、遠くでも桁が落ちない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -11,7 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <b>visibility(3)</b> — <code style="color:#22d3bf">dem_horizon_angle</code> / <code style="color:#22d3bf">dem_sky_view_factor</code> / <code style="color:#22d3bf">dem_viewshed</code>: 視線が地形に遮られるか。日射・眺望・電波見通し・都市の放射冷却に効きます。</p>
 <p><b>新しい依存は 1 つも要りません。</b> DEM は深度画像そのもの(メートルの高さ格子)なので、この repo にとって新しい対象ではなく、既存の <code style="color:#22d3bf">depth</code> と同じ格子を地形の語彙で扱っているだけです。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使う順序</h3>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 다이어그램(소스):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
     D[&quot;標高格子 (H, W) [m]&lt;br/&gt;+ cell_size [m]&quot;]
     D --&gt; S[&quot;dem_slope / dem_aspect&lt;br/&gt;傾斜[度]・方位[度]&quot;]
     D --&gt; C[&quot;dem_curvature&lt;br/&gt;断面/平面/全曲率 [1/m]&quot;]
@@ -72,7 +72,7 @@ assert 0.0 &lt;= svf.min() and svf.max() &lt;= 1.0
 <p>| <code style="color:#22d3bf">cell_size</code> | <b>必須引数</b>(既定値なし) | ← これを既定 1.0 にしていたら、上の事故が既定値として起きる |</p>
 <p>| 方位の基準 | <b>北 0 度・東回り</b> | 数学の反時計回りと 90 度ずれ、南北が鏡像になる |</p>
 <p>| 行 0 | <b>北</b>(画像の上端が北) | 同上。DEM タイルの規約に合わせてある |</p>
-<p>| 欠測 | **<code style="color:#22d3bf">nan</code>** のみ | <code style="color:#22d3bf">-9999</code> のような番兵は<b>受け取らない</b>(実数として扱うと傾斜が巨大な嘘になる) |</p>
+<p>| 欠測 | <b><code style="color:#22d3bf">nan</code></b> のみ | <code style="color:#22d3bf">-9999</code> のような番兵は<b>受け取らない</b>(実数として扱うと傾斜が巨大な嘘になる) |</p>
 <p>| 平坦セルの方位 | <code style="color:#22d3bf">ASPECT_FLAT = -1.0</code> | 0 を使うと<b>北向き斜面と区別できない</b> |</p>
 <p><b>セル寸法は緯度で変わります。</b> Web メルカトルのタイルを使う場合、地上分解能は</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cell_size [m/px] = 156543.03392804097 * cos(latitude) / 2**zoom</pre>
@@ -88,7 +88,7 @@ assert 0.0 &lt;= svf.min() and svf.max() &lt;= 1.0
 <p>| 一様傾斜面の集水量 | 列ごとに単調増加(D8 の定義から) | 厳密 |</p>
 <p>ガウス丘の曲率だけ 1e-3 なのは<b>離散化の誤差</b>です。手法の誤りと区別するために、格子を細かくすると誤差が <b>2 次で</b>小さくなることも固定してあります。「1e-3 だから多分こんなもの」で済ませると、係数を 1 つ間違えたコードが同じ 1e-3 で通ってしまいます。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">書いた本人が踏んだ罠 — 鏡像は実装ではなくテストの側だった</h3>
-<p>方位のテストを 5 通りの平面で書いたところ、**5 件すべてで期待値が <code style="color:#22d3bf">180 - A</code> になり**、実装が南北反転しているように見えました。実装を疑って読み直しても間違いが見つからず、テストの平面生成を確かめたら <code style="color:#22d3bf">e, n = sin(ar), cos(ar)</code> とすべきところで符号を取り違えていました。<b>実装は最初から正しく、テストのほうが鏡像</b>でした。</p>
+<p>方位のテストを 5 通りの平面で書いたところ、<b>5 件すべてで期待値が <code style="color:#22d3bf">180 - A</code> になり</b>、実装が南北反転しているように見えました。実装を疑って読み直しても間違いが見つからず、テストの平面生成を確かめたら <code style="color:#22d3bf">e, n = sin(ar), cos(ar)</code> とすべきところで符号を取り違えていました。<b>実装は最初から正しく、テストのほうが鏡像</b>でした。</p>
 <p>そのため今は <code style="color:#22d3bf">test_aspect_is_not_mirrored_north_south</code> という、北向き斜面を名指しで確かめるテストが別に立っています。「規約が鏡像になっていないか」は、規約そのものを使って書いたテストでは捕まえられません。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">欠測(<code style="color:#22d3bf">nan</code>)の扱い —— 埋める選択肢を置かない理由</h3>
 <p>水面はレーザが返らないので、実データには<b>必ず</b>欠測が出ます。<code style="color:#22d3bf">NODATA_POLICIES</code> は 3 つ:</p>
@@ -117,7 +117,7 @@ assert 0.0 &lt;= svf.min() and svf.max() &lt;= 1.0
 <p style="margin:2px 0 2px 12px">• <b>2-D でなければ拒否</b> — <code style="color:#22d3bf">(H, W)</code> 以外は形を添えて <code style="color:#22d3bf">ValueError</code>。</p>
 <p style="margin:2px 0 2px 12px">• <b>セル寸法は有限の正数</b> — 0 や負や <code style="color:#22d3bf">inf</code> は拒否(傾斜が <code style="color:#22d3bf">inf</code> や符号反転になる)。</p>
 <p style="margin:2px 0 2px 12px">• <b>番兵の拒否</b> — <code style="color:#22d3bf">-9999</code> のような値が入っていたら、それが実標高でないことを疑って<b>明示的に落とします</b>。「たまたま深い海」と区別できないため、<code style="color:#22d3bf">nan</code> へ直してから渡すことを求めます。</p>
-<p style="margin:2px 0 2px 12px">• **欠測があって <code style="color:#22d3bf">nodata=&quot;error&quot;</code>(既定)なら拒否** — 静かに 0 を入れて流したりしません。</p>
+<p style="margin:2px 0 2px 12px">• <b>欠測があって <code style="color:#22d3bf">nodata=&quot;error&quot;</code>(既定)なら拒否</b> — 静かに 0 を入れて流したりしません。</p>
 <p style="margin:2px 0 2px 12px">• <b>選択肢は表で検証</b> — <code style="color:#22d3bf">method</code> / <code style="color:#22d3bf">units</code> / <code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">nodata</code> は綴り違いを黙って既定に落とさず、許容値を列挙して落とします。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実データでの速度(参考値)</h3>
 <p>国土地理院の標高タイル(dem5a、z=15)を 4x4 枚モザイクした <b>1024x1024</b>(セル 3.880 m、標高 -8.57〜36.02 m、欠測 3.83 %)での実測:</p>

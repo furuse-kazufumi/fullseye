@@ -12,24 +12,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rotate_img.inputs.jpg">rotate_img: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Rotate about the image centre by `<code style="color:#22d3bf">-45° + 90°·a</code><code style="color:#22d3bf"> (a=0.5 → 0°). </code><code style="color:#22d3bf">b</code>` unused.</p>
+<p>Rotate about the image centre by <code style="color:#22d3bf">-45° + 90°·a</code> (a=0.5 → 0°). <code style="color:#22d3bf">b</code> unused.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>★呼び出し規約(2026-09-02 に明文化。実装は変えていない):</p>
-<p style="margin:2px 0 2px 12px">• <b>キャンバスを変えない</b> (`<code style="color:#22d3bf">reshape=False</code>`)。出力の shape は入力と同じで、</p>
-<p>回転で枠外へ出た画素は捨てられる。</p>
-<p style="margin:2px 0 2px 12px">• <b>枠外は鏡映で埋める</b> (`<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>`)。つまり回すと **四隅に元画像が</p>
-<p>折り返して写り込む**(帳票を回すと隅に鏡文字が出る)。</p>
-<p>どちらが正典かは用途で割れる。**この op の正典は「連鎖しても常に同じ形・</p>
-<p>同じ値域の画像が出ること」** — 進化パイプラインは image を段間で無条件に</p>
-<p>繋ぐので、shape が変わる/枠外に定数が入ると後段の統計(平均・分散・</p>
-<p>ヒストグラム)が回転量に依存して動いてしまう。鏡映は「無から作った定数」で</p>
-<p>はなく画像自身の統計を保つので、この用途ではこちらを採る。</p>
-<p><b>deskew(帳票の傾き補正)には向かない</b>: 折り返した鏡文字が OCR / 二値化に</p>
-<p>そのまま乗る。背景色で埋めたい場合はこの op を使わず、</p>
-<p>`<code style="color:#22d3bf">scipy.ndimage.rotate(v, ang, reshape=True, mode=&quot;constant&quot;, cval=bg)</code>` を</p>
-<p>直接呼ぶこと(`<code style="color:#22d3bf">fullseye.apply</code>` の 2 つまみ界面では背景色を渡せない)。</p>
-<p>同じ規約が backends_auto の `<code style="color:#22d3bf">rotate_image</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">_sh_geom</code>` kind=&quot;rotate&quot;)にも</p>
-<p>そのまま当てはまる。</p>
+<p style="margin:2px 0 2px 12px">• <b>キャンバスを変えない</b> (<code style="color:#22d3bf">reshape=False</code>)。出力の shape は入力と同じで、回転で枠外へ出た画素は捨てられる。</p>
+<p style="margin:2px 0 2px 12px">• <b>枠外は鏡映で埋める</b> (<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>)。つまり回すと <b>四隅に元画像が折り返して写り込む</b>(帳票を回すと隅に鏡文字が出る)。</p>
+<p>どちらが正典かは用途で割れる。<b>この op の正典は「連鎖しても常に同じ形・同じ値域の画像が出ること」</b> — 進化パイプラインは image を段間で無条件に繋ぐので、shape が変わる/枠外に定数が入ると後段の統計(平均・分散・ヒストグラム)が回転量に依存して動いてしまう。鏡映は「無から作った定数」ではなく画像自身の統計を保つので、この用途ではこちらを採る。</p>
+<p><b>deskew(帳票の傾き補正)には向かない</b>: 折り返した鏡文字が OCR / 二値化にそのまま乗る。背景色で埋めたい場合はこの op を使わず、<code style="color:#22d3bf">scipy.ndimage.rotate(v, ang, reshape=True, mode=&quot;constant&quot;, cval=bg)</code> を直接呼ぶこと(<code style="color:#22d3bf">fullseye.apply</code> の 2 つまみ界面では背景色を渡せない)。同じ規約が backends_auto の <code style="color:#22d3bf">rotate_image</code> (<code style="color:#22d3bf">_sh_geom</code> kind=&quot;rotate&quot;)にもそのまま当てはまる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

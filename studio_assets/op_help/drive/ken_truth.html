@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ken_truth(world: &#x27;dict&#x27;, i_ken: &#x27;int&#x27;, cam: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import kendamaworld; kendamaworld.ken_truth(world: &#x27;dict&#x27;, i_ken: &#x27;int&#x27;, cam: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;ken_truth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>けん i_ken の真値の投影: 受ける皿の縁の中心(anchors[kp[&quot;catch_cup&quot;] + &quot;_rim&quot;] を姿勢で動かした点)の (col, row)、深度、</p>
-<p>像での皿の半径 [px] (大皿の半径で)、</p>
-<p>`<code style="color:#22d3bf">visible</code>`(カメラの前にあり画素が像の内側)。ballworld.ball_truth と同型。</p>
+<p>けん i_ken の真値の投影: 受ける皿の縁の中心(anchors[kp[&quot;catch_cup&quot;] + &quot;_rim&quot;] を姿勢で動かした点)の (col, row)、深度、像での皿の半径 [px] (大皿の半径で)、<code style="color:#22d3bf">visible</code>(カメラの前にあり画素が像の内側)。ballworld.ball_truth と同型。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

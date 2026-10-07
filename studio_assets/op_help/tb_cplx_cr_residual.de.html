@@ -7,45 +7,24 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cplx_cr_residual.chain.jpg">tb_cplx_cr_residual: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cplx_cr_residual.chain.jpg">tb_cplx_cr_residual: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Cauchy-Riemann-Residuum eines abgetasteten komplexen Feldes — &quot;Ist dieses Feld holomorph?&quot; als Zahl.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>With `<code style="color:#22d3bf">f = u + i v</code>` sampled on a uniform grid, holomorphy means</p>
-<p>`<code style="color:#22d3bf">u_x = v_y</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">u_y = -v_x</code>` (Cauchy-Riemann). This returns the</p>
-<p><b>relative</b> residual `<code style="color:#22d3bf">max(|u_x - v_y|, |u_y + v_x|) / max|grad|</code>`</p>
-<p>(central differences, `<code style="color:#22d3bf">numpy.gradient</code><code style="color:#22d3bf">): </code><code style="color:#22d3bf">0</code>` = the samples satisfy CR to</p>
-<p>the discretisation limit, `<code style="color:#22d3bf">2</code>` = the field is the conjugate of a</p>
-<p>holomorphic one (`<code style="color:#22d3bf">conj(z)</code>` gives exactly 2), values in between = partly</p>
-<p>analytic or noisy.</p>
-<p><b>Grid convention (it decides the sign of the answer)</b>: `<code style="color:#22d3bf">f[i, j]</code>` is the</p>
-<p>field at `<code style="color:#22d3bf">z = x0 + j*spacing + i*spacing*1j</code>` — rows index the *increasing</p>
-<p>imaginary* axis, columns the real axis. Image arrays usually run rows</p>
-<p>*downward*; feeding one directly measures the conjugate field, whose</p>
-<p>residual is `<code style="color:#22d3bf">2</code><code style="color:#22d3bf">, not </code><code style="color:#22d3bf">0</code><code style="color:#22d3bf">. Flip rows (</code><code style="color:#22d3bf">f[::-1]</code>`) to use image data.</p>
-<p>Discretisation, honestly: central differences are exact for polynomials of</p>
-<p>degree &lt;= 2, so `<code style="color:#22d3bf">f = z**2</code>` returns exactly 0; for higher order the</p>
-<p>residual floors at `<code style="color:#22d3bf">O(h^2 * |f&#x27;&#x27;&#x27;|)</code><code style="color:#22d3bf"> (measured: </code><code style="color:#22d3bf">f = z**3</code>` on a</p>
-<p>`<code style="color:#22d3bf">[-1,1]^2</code><code style="color:#22d3bf"> grid returns 1.7e-3 at </code><code style="color:#22d3bf">h</code>` and 4.2e-4 at</p>
-<p>`<code style="color:#22d3bf">h/2</code>` — a factor 4.00, the expected second order). Read a</p>
-<p>small value as &quot;consistent with holomorphic at this resolution&quot;, never as</p>
-<p>proof.</p>
-<p>A constant field returns `<code style="color:#22d3bf">0.0</code><code style="color:#22d3bf"> (it is holomorphic; the </code><code style="color:#22d3bf">0/0</code>` of the</p>
-<p>normalisation is resolved by that limit, and stated here rather than left</p>
-<p>to numpy).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: not a 2-D array, either dimension below 3 (no</p>
-<p>central difference exists), non-finite/masked input, over-cap size,</p>
-<p>non-finite or non-positive *spacing*.</p>
-<p>HALCON: no operator (`<code style="color:#22d3bf">derivate_gauss</code>` supplies the real-valued</p>
-<p>derivatives one would build this from).</p>
-<p>Typed bridge of the math op `<code style="color:#22d3bf">cplx_cr_residual</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">spacing</code><code style="color:#22d3bf"> (default 1); </code><code style="color:#22d3bf">b</code>` is unused.</p>
+<p>With <code style="color:#22d3bf">f = u + i v</code> sampled on a uniform grid, holomorphy means <code style="color:#22d3bf">u_x = v_y</code> and <code style="color:#22d3bf">u_y = -v_x</code> (Cauchy-Riemann). This returns the <b>relative</b> residual <code style="color:#22d3bf">max(|u_x - v_y|, |u_y + v_x|) / max|grad|</code> (central differences, <code style="color:#22d3bf">numpy.gradient</code>): <code style="color:#22d3bf">0</code> = the samples satisfy CR to the discretisation limit, <code style="color:#22d3bf">2</code> = the field is the conjugate of a holomorphic one (<code style="color:#22d3bf">conj(z)</code> gives exactly 2), values in between = partly analytic or noisy.</p>
+<p><b>Grid convention (it decides the sign of the answer)</b>: <code style="color:#22d3bf">f[i, j]</code> is the field at <code style="color:#22d3bf">z = x0 + j*spacing + i*spacing*1j</code> — rows index the *increasing imaginary* axis, columns the real axis. Image arrays usually run rows *downward*; feeding one directly measures the conjugate field, whose residual is <code style="color:#22d3bf">2</code>, not <code style="color:#22d3bf">0</code>. Flip rows (<code style="color:#22d3bf">f[::-1]</code>) to use image data.</p>
+<p>Discretisation, honestly: central differences are exact for polynomials of degree &lt;= 2, so <code style="color:#22d3bf">f = z**2</code> returns exactly 0; for higher order the residual floors at <code style="color:#22d3bf">O(h^2 * |f&#x27;&#x27;&#x27;|)</code> (measured: <code style="color:#22d3bf">f = z**3</code> on a <code style="color:#22d3bf">[-1,1]^2</code> grid returns 1.7e-3 at <code style="color:#22d3bf">h</code> and 4.2e-4 at <code style="color:#22d3bf">h/2</code> — a factor 4.00, the expected second order). Read a small value as &quot;consistent with holomorphic at this resolution&quot;, never as proof.</p>
+<p>A constant field returns <code style="color:#22d3bf">0.0</code> (it is holomorphic; the <code style="color:#22d3bf">0/0</code> of the normalisation is resolved by that limit, and stated here rather than left to numpy).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not a 2-D array, either dimension below 3 (no central difference exists), non-finite/masked input, over-cap size, non-finite or non-positive *spacing*.</p>
+<p>HALCON: no operator (<code style="color:#22d3bf">derivate_gauss</code> supplies the real-valued derivatives one would build this from).</p>
+<p>Typed bridge of the math op <code style="color:#22d3bf">cplx_cr_residual</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> drives <code style="color:#22d3bf">spacing</code> (default 1); <code style="color:#22d3bf">b</code> is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_cimage 0.50 0.50
-tb_cplx_cr_residual 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_cimage%200.50%200.50%0Atb_cplx_cr_residual%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_cimage%200.50%200.50%0Atb_cplx_cr_residual%200.50%200.50">Load &amp; run</a></p>
+tb_cplx_cr_residual 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_cimage%200.50%200.50%0Atb_cplx_cr_residual%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_cimage%200.50%200.50%0Atb_cplx_cr_residual%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">cplx_cr_residual</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_complex">math_complex</a> — <code style="color:#22d3bf">py -3.11 examples/math_complex.py</code></p>

@@ -4,12 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivedecide; drivedecide.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;tdoa_bearing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>2 本のマイク(左 = +y、右 = −y、間隔 `<code style="color:#22d3bf">mic_spacing</code>`)の到着時間差から音源の方位(遠方近似)。</p>
+<p>2 本のマイク(左 = +y、右 = −y、間隔 <code style="color:#22d3bf">mic_spacing</code>)の到着時間差から音源の方位(遠方近似)。</p>
 <p>Δt = t_右 − t_左(左に先に着けば正)、 sin θ = c Δt / d、θ = 前方からの角(左が正)</p>
-<p>Δt は相互相関 Σ right[n] left[n − k] の最大(周波数領域で 0 を詰めて `<code style="color:#22d3bf">upsample</code>` 倍に補間し、さらに放物線)。</p>
-<p>探す範囲は物理的にありうる |Δt| ≤ d/c に限る。前後(θ と π − θ)は区別できない。</p>
-<p>返り値: `<code style="color:#22d3bf">delay</code><code style="color:#22d3bf">(秒)、</code><code style="color:#22d3bf">bearing_rad</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">bearing_deg</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sin_theta</code><code style="color:#22d3bf">(クリップ前)、</code><code style="color:#22d3bf">ambiguous</code>`</p>
-<p>(主な周波数 f_peak で d &gt; c/(2 f_peak) なら True = 相関の山が 1/f ごとに並び範囲内に 2 つ入りうる)、`<code style="color:#22d3bf">f_peak</code>`。</p>
+<p>Δt は相互相関 Σ right[n] left[n − k] の最大(周波数領域で 0 を詰めて <code style="color:#22d3bf">upsample</code> 倍に補間し、さらに放物線)。探す範囲は物理的にありうる |Δt| ≤ d/c に限る。前後(θ と π − θ)は区別できない。</p>
+<p>返り値: <code style="color:#22d3bf">delay</code>(秒)、<code style="color:#22d3bf">bearing_rad</code> / <code style="color:#22d3bf">bearing_deg</code>、<code style="color:#22d3bf">sin_theta</code>(クリップ前)、<code style="color:#22d3bf">ambiguous</code> (主な周波数 f_peak で d &gt; c/(2 f_peak) なら True = 相関の山が 1/f ごとに並び範囲内に 2 つ入りうる)、<code style="color:#22d3bf">f_peak</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

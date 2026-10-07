@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_vorticity(flow, spacing=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_vorticity(flow, spacing=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_vorticity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>渦度 `<code style="color:#22d3bf">d(dx)/dy - d(dy)/dx</code>`。<b>反時計回りが正</b>(画像座標での定義)。</p>
-<p>行が下向きに増える画像座標では、数学の xy 座標と上下が逆になる。この符号を</p>
-<p>決めずに書くと渦の向きが黙って反転するので、定義を docstring に固定する。</p>
+<p>渦度 <code style="color:#22d3bf">d(dx)/dy - d(dy)/dx</code>。<b>反時計回りが正</b>(画像座標での定義)。</p>
+<p>行が下向きに増える画像座標では、数学の xy 座標と上下が逆になる。この符号を決めずに書くと渦の向きが黙って反転するので、定義を docstring に固定する。</p>
 <p>Args:</p>
-<p>flow: `<code style="color:#22d3bf">(2, h, w)</code>`。</p>
-<p>spacing: 隣り合うベクトルの間隔 [px] (`<code style="color:#22d3bf">info[&quot;step&quot;]</code>`)。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
+<p>spacing: 隣り合うベクトルの間隔 [px] (<code style="color:#22d3bf">info[&quot;step&quot;]</code>)。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(h, w)</code><code style="color:#22d3bf">。単位は 1/フレーム(</code><code style="color:#22d3bf">spacing</code>` が画素なら)。</p>
+<p><code style="color:#22d3bf">(h, w)</code>。単位は 1/フレーム(<code style="color:#22d3bf">spacing</code> が画素なら)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_flow_from_particles">piv_flow_from_particles</a> — <code style="color:#22d3bf">py -3.11 examples/piv_flow_from_particles.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tactile_dipole_torque">poc_tactile_dipole_torque</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tactile_dipole_torque.py</code></p>

@@ -3,22 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_cone(points) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_cone(points) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fit_cone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>对点群拟合无限圆锥,返回 `<code style="color:#22d3bf">{apex, axis, half_angle, residual}</code>`。</p>
+<p>对点群拟合无限圆锥,返回 <code style="color:#22d3bf">{apex, axis, half_angle, residual}</code>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>子午面での点-母線直交距離 `<code style="color:#22d3bf">a·sinα − ρ·cosα</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">=軸成分, </code><code style="color:#22d3bf">ρ</code>`=半径,</p>
-<p>`<code style="color:#22d3bf">α</code><code style="color:#22d3bf">=半角)を </code><code style="color:#22d3bf">scipy.optimize.least_squares</code>` で最小化する。初期値は PCA 軸 +</p>
-<p>半径 ρ の軸成分 t に対する線形回帰(`<code style="color:#22d3bf">ρ = m·t + b</code>` の傾き m=tanα, 切片ゼロ点=頂点)。</p>
-<p>軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。</p>
+<p>子午面での点-母線直交距離 <code style="color:#22d3bf">a·sinα − ρ·cosα</code>(<code style="color:#22d3bf">a</code>=軸成分, <code style="color:#22d3bf">ρ</code>=半径, <code style="color:#22d3bf">α</code>=半角)を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で最小化する。初期値は PCA 軸 + 半径 ρ の軸成分 t に対する線形回帰(<code style="color:#22d3bf">ρ = m·t + b</code> の傾き m=tanα, 切片ゼロ点=頂点)。軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。</p>
 <p>Args:</p>
 <p>points: (N,3) 点群(最低 6 点)。</p>
 <p>Returns:</p>
-<p>dict: ``{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,) 単位軸(開く向き), &quot;half_angle&quot;: float [rad],</p>
-<p>&quot;residual&quot;: float 点-面距離の RMS}``。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,) 単位軸(開く向き), &quot;half_angle&quot;: float [rad], &quot;residual&quot;: float 点-面距離の RMS}</code>。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正/点数不足/半角 ~0(円柱へ縮退)など fail-closed。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

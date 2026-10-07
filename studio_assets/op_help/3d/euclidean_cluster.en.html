@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Distance clustering by the connected components of the proximity graph at radius tol (−1 = noise).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>互いに `<code style="color:#22d3bf">tol</code>` 以内の点を(推移的に)同一クラスタへ束ねる。空間的に離れた物体が</p>
-<p>別クラスタになる(接地面除去後の「どの塊が掴める物か」の分離に使う)。連結成分のうち</p>
-<p>`<code style="color:#22d3bf">min_size</code>` 未満のものはノイズとして -1。ラベルはクラスタサイズ降順で 0,1,2,...</p>
-<p>(決定論)。</p>
+<p>互いに <code style="color:#22d3bf">tol</code> 以内の点を(推移的に)同一クラスタへ束ねる。空間的に離れた物体が別クラスタになる(接地面除去後の「どの塊が掴める物か」の分離に使う)。連結成分のうち <code style="color:#22d3bf">min_size</code> 未満のものはノイズとして -1。ラベルはクラスタサイズ降順で 0,1,2,... (決定論)。</p>
 <p>Args:</p>
 <p>points: (N,3) 点群。</p>
 <p>tol: 同一クラスタとみなす近接半径(距離、要 &gt; 0)。</p>

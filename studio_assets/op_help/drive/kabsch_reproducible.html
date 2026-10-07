@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kabsch_reproducible(P, Q)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ozakimm; ozakimm.kabsch_reproducible(P, Q)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;kabsch_reproducible&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>`<code style="color:#22d3bf">|R p + t − q|</code><code style="color:#22d3bf"> を最小にする剛体の </code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">t</code>`(Kabsch 1976)を、点の順に依らないビットで返す。</p>
-<p>返り: `<code style="color:#22d3bf">{&quot;R&quot;: (3, 3), &quot;t&quot;: (3,), &quot;H&quot;: (3, 3)}</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">H</code><code style="color:#22d3bf"> は :func:</code>cross_covariance_reproducible`(どの計算機でも同じ</p>
-<p>ビット)、`<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">H</code><code style="color:#22d3bf"> の特異値分解から(反射は det で直す)。特異値分解は LAPACK なので、</code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">t</code>` が同じビットに</p>
-<p>なるのは同じ計算機・同じ LAPACK の上(3×3 なのでスレッド数には依らない)。</p>
+<p><code style="color:#22d3bf">|R p + t − q|</code> を最小にする剛体の <code style="color:#22d3bf">R</code>・<code style="color:#22d3bf">t</code>(Kabsch 1976)を、点の順に依らないビットで返す。</p>
+<p>返り: <code style="color:#22d3bf">{&quot;R&quot;: (3, 3), &quot;t&quot;: (3,), &quot;H&quot;: (3, 3)}</code>。<code style="color:#22d3bf">H</code> は <code style="color:#22d3bf">cross_covariance_reproducible</code>(どの計算機でも同じビット)、<code style="color:#22d3bf">R</code> は <code style="color:#22d3bf">H</code> の特異値分解から(反射は det で直す)。特異値分解は LAPACK なので、<code style="color:#22d3bf">R</code>・<code style="color:#22d3bf">t</code> が同じビットになるのは同じ計算機・同じ LAPACK の上(3×3 なのでスレッド数には依らない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

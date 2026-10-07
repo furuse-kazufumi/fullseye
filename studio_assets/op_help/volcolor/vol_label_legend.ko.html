@@ -5,20 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>「어느 색이 어느 성분이고 그 계측값은 얼마인가」의 범례 표.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>色だけを出して意味の読めない図を作らないための op。返りは `<code style="color:#22d3bf">list[dict]</code>`:</p>
-<p>`<code style="color:#22d3bf">label</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(r, g, b)</code><code style="color:#22d3bf"> float </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">hex</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">&quot;#rrggbb&quot;</code>` ·</p>
-<p>`<code style="color:#22d3bf">voxel_count</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">volume</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">measure</code>` 並べ替えに使った量の名前 ·</p>
-<p>`<code style="color:#22d3bf">value</code><code style="color:#22d3bf"> その値 · </code><code style="color:#22d3bf">rank</code><code style="color:#22d3bf"> 1 始まりの順位 · </code><code style="color:#22d3bf">share</code>` 全成分の</p>
+<p>色だけを出して意味の読めない図を作らないための op。返りは <code style="color:#22d3bf">list[dict]</code>:</p>
+<p><code style="color:#22d3bf">label</code> · <code style="color:#22d3bf">rgb</code> <code style="color:#22d3bf">(r, g, b)</code> float <code style="color:#22d3bf">[0, 1]</code> · <code style="color:#22d3bf">hex</code> <code style="color:#22d3bf">&quot;#rrggbb&quot;</code> ·</p>
+<p><code style="color:#22d3bf">voxel_count</code> · <code style="color:#22d3bf">volume</code> · <code style="color:#22d3bf">measure</code> 並べ替えに使った量の名前 ·</p>
+<p><code style="color:#22d3bf">value</code> その値 · <code style="color:#22d3bf">rank</code> 1 始まりの順位 · <code style="color:#22d3bf">share</code> 全成分の</p>
 <p>*measure* 合計に対する割合。</p>
-<p>*measure* は props に載っている数値キーなら何でもよい(`<code style="color:#22d3bf">&quot;volume&quot;</code>`</p>
-<p>`<code style="color:#22d3bf">&quot;voxel_count&quot;</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">&quot;equivalent_diameter&quot;</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">volops.vol_region_props</code>` を</p>
-<p>渡したなら `<code style="color:#22d3bf">&quot;sphericity&quot;</code>` も)。降順に並べ、同点はラベル番号の昇順で割る</p>
-<p>(<b>決定的</b>)。*top* を与えると上位 N 件だけ返す。</p>
-<p>実在するラベルは `<code style="color:#22d3bf">np.bincount</code><code style="color:#22d3bf"> の非ゼロから取る。</code><code style="color:#22d3bf">labels.max()</code>` を成分数と</p>
-<p>見なさないので、番号に欠番があっても件数も順位も狂わない</p>
-<p>(`<code style="color:#22d3bf">tests/test_volcolor.py::test_stats_do_not_invent_the_component_count_from_max</code>`)。</p>
-<p>Raises `<code style="color:#22d3bf">ValueError</code>` when *measure* is not a numeric key of *props*, when</p>
-<p>*props* does not cover the labels present, or on a bad *top*.</p>
+<p>*measure* は props に載っている数値キーなら何でもよい(<code style="color:#22d3bf">&quot;volume&quot;</code> <code style="color:#22d3bf">&quot;voxel_count&quot;</code> <code style="color:#22d3bf">&quot;equivalent_diameter&quot;</code>、<code style="color:#22d3bf">volops.vol_region_props</code> を渡したなら <code style="color:#22d3bf">&quot;sphericity&quot;</code> も)。降順に並べ、同点はラベル番号の昇順で割る(<b>決定的</b>)。*top* を与えると上位 N 件だけ返す。</p>
+<p>実在するラベルは <code style="color:#22d3bf">np.bincount</code> の非ゼロから取る。<code style="color:#22d3bf">labels.max()</code> を成分数と見なさないので、番号に欠番があっても件数も順位も狂わない(<code style="color:#22d3bf">tests/test_volcolor.py::test_stats_do_not_invent_the_component_count_from_max</code>)。</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code> when *measure* is not a numeric key of *props*, when *props* does not cover the labels present, or on a bad *top*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

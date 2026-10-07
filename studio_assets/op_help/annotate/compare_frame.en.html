@@ -5,32 +5,29 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Put two images side by side, with a <b>divider</b> and <b>labels</b> at the boundary.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Parameters</p>
-<p>----------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>left, right : ndarray</p>
-<p>比べる 2 枚。大きさが違ってもよい(足りない側は `<code style="color:#22d3bf">background</code>` で埋める)。</p>
+<p>比べる 2 枚。大きさが違ってもよい(足りない側は <code style="color:#22d3bf">background</code> で埋める)。</p>
 <p>チャンネル数は揃っていること。</p>
 <p>layout : {&#x27;h&#x27;,&#x27;v&#x27;}</p>
-<p>`<code style="color:#22d3bf">&#x27;h&#x27;</code><code style="color:#22d3bf"> = 左右、</code><code style="color:#22d3bf">&#x27;v&#x27;</code>` = 上下。</p>
+<p><code style="color:#22d3bf">&#x27;h&#x27;</code> = 左右、<code style="color:#22d3bf">&#x27;v&#x27;</code> = 上下。</p>
 <p>labels : (str, str) or None</p>
 <p>それぞれの見出し。</p>
 <p>divider : int</p>
 <p>仕切りの太さ [px] (0 で無し)。</p>
 <p>gap : int</p>
 <p>仕切りの両側に空ける余白[px]。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <p>新しい合成画像。</p>
-<p>Raises</p>
-<p>------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>チャンネル数の不一致 / 未知の layout / 負の divider・gap /</p>
 <p>labels が 2 要素でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training-dataset conventions — COCO / YOLO / VOC and pitfalls in visual inspection</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

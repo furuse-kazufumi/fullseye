@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import iqatid; iqatid.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_metric_values&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>作者の計算値 `<code style="color:#22d3bf">metrics_values/&lt;metric&gt;.txt</code>`(大文字小文字無視、3000 行、名前なし)を (3000,) float で返す。</p>
-<p>行の順は :func:<code style="color:#22d3bf">tid2013_index</code> の `<code style="color:#22d3bf">names</code><code style="color:#22d3bf"> と同じ。</code><code style="color:#22d3bf">metric</code><code style="color:#22d3bf"> は :func:</code>tid2013_published` の鍵(psnr / psnrc / ssim / mssim …)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: ファイルが無い、行数 ≠ 3000、非数。</p>
+<p>作者の計算値 <code style="color:#22d3bf">metrics_values/&lt;metric&gt;.txt</code>(大文字小文字無視、3000 行、名前なし)を (3000,) float で返す。</p>
+<p>行の順は <code style="color:#22d3bf">tid2013_index</code> の <code style="color:#22d3bf">names</code> と同じ。<code style="color:#22d3bf">metric</code> は <code style="color:#22d3bf">tid2013_published</code> の鍵(psnr / psnrc / ssim / mssim …)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: ファイルが無い、行数 ≠ 3000、非数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

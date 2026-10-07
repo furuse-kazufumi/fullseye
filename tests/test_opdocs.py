@@ -829,7 +829,8 @@ def test_translated_help_is_generated_from_the_generator_no_drift(lang):
              if rec["dim"] == "2d"
              else os.path.join(ROOT, "studio_assets", "op_help", rec["dim"]))
         f = os.path.join(d, "%s.%s.html" % (rec["name"], lang))
-        want = OD._anchor_rewrite(OD.md_to_html(OD._op_md(rec, p, by, lang=lang)), rec["dim"])
+        want = OD._anchor_rewrite(OD.md_to_html(OD._op_md(rec, p, by, lang=lang), lang=lang),
+                                  rec["dim"])
         with open(f, encoding="utf-8") as fh:
             got = fh.read()
         if got != OD._GEN_MARK + "\n" + want:

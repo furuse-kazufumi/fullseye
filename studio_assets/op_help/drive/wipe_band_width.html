@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wipe_band_width(force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, coat: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, estar=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import polish; polish.wipe_band_width(force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, coat: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, estar=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;wipe_band_width&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>厚さ `<code style="color:#22d3bf">coat</code><code style="color:#22d3bf"> の膜を回らない工具の直線の一筆で拭いた時、膜が消える帯の幅(閉形式)。返り </code><code style="color:#22d3bf">width</code>`(0 なら拭けない)、</p>
-<p>`<code style="color:#22d3bf">half_width</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">force_min</code><code style="color:#22d3bf">(帯ができ始める力)、</code><code style="color:#22d3bf">centre_depth</code><code style="color:#22d3bf">(中心の除去の深さ)、</code><code style="color:#22d3bf">a</code>`(接触半径)。</p>
-<p>平板: D = 2 a k_p p、半幅 a √(1 − (h0/D)²)、F_min = π a h0/(2 k_p)。Hertz: D = k_p E* a²/R、半幅 √(a² − h0 R/(k_p E*))、</p>
-<p>F_min = (4E*/3R)(h0 R/(k_p E*))^{3/2}。速さに依らない(回らない時)。<b>Raises</b> ValueError: 数の検査。</p>
+<p>厚さ <code style="color:#22d3bf">coat</code> の膜を回らない工具の直線の一筆で拭いた時、膜が消える帯の幅(閉形式)。返り <code style="color:#22d3bf">width</code>(0 なら拭けない)、<code style="color:#22d3bf">half_width</code>、<code style="color:#22d3bf">force_min</code>(帯ができ始める力)、<code style="color:#22d3bf">centre_depth</code>(中心の除去の深さ)、<code style="color:#22d3bf">a</code>(接触半径)。</p>
+<p>平板: D = 2 a k_p p、半幅 a √(1 − (h0/D)²)、F_min = π a h0/(2 k_p)。Hertz: D = k_p E* a²/R、半幅 √(a² − h0 R/(k_p E*))、F_min = (4E*/3R)(h0 R/(k_p E*))^{3/2}。速さに依らない(回らない時)。<b>Raises</b> ValueError: 数の検査。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

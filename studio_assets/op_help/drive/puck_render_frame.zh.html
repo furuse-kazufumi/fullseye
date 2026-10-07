@@ -5,12 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>真上の 1 コマを合成(float (H,W)、0〜1): 白い台・灰色の壁・暗いパック(1 次の反エイリアス)。</p>
-<p>`<code style="color:#22d3bf">exposure</code>` &gt; 0 なら露光の間 [t, t+exposure] にパックが v·exposure 動く分を n_sub 個の副露光の平均で入れる(モーションブラー)。</p>
-<p>コマの時刻は <b>露光の始め</b>: ブラーした像の重心は v·exposure/2 だけ進む(閉形式、門)。`<code style="color:#22d3bf">noise</code>` はガウス雑音の σ。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">exposure</code> &gt; 0 なら露光の間 [t, t+exposure] にパックが v·exposure 動く分を n_sub 個の副露光の平均で入れる(モーションブラー)。コマの時刻は <b>露光の始め</b>: ブラーした像の重心は v·exposure/2 だけ進む(閉形式、門)。<code style="color:#22d3bf">noise</code> はガウス雑音の σ。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_air_hockey_intercept">poc_air_hockey_intercept</a> — <code style="color:#22d3bf">py -3.11 examples/poc_air_hockey_intercept.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image2d</code> 作为输入)</h3>

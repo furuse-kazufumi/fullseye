@@ -2,31 +2,18 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">stat_histogram — MATH <code style="color:#22d3bf">stats</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_histogram(x, bins=10, range=None, density=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.stat_histogram(x, bins=10, range=None, density=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;stat_histogram&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.stat_histogram(...)</code> は**宣言 out 型 <code style="color:#22d3bf">pairs</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.stat_histogram.raw(...)</code>、または <code style="color:#22d3bf">mathops.stat_histogram</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.stat_histogram(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">pairs</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.stat_histogram.raw(...)</code>、または <code style="color:#22d3bf">mathops.stat_histogram</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1-D 標本のヒストグラム。ビン分割を<b>明示</b>する。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>*bins* is a positive integer count of equal-width bins; *range* is an</p>
-<p>explicit `<code style="color:#22d3bf">(lo, hi)</code><code style="color:#22d3bf"> (finite, </code><code style="color:#22d3bf">lo &lt; hi</code><code style="color:#22d3bf">) or </code><code style="color:#22d3bf">None</code>` to span the data</p>
-<p>(values exactly at `<code style="color:#22d3bf">hi</code>` land in the last bin, numpy&#x27;s convention; with an</p>
-<p>explicit *range*, values outside it are excluded from every bin — they</p>
-<p>simply do not count, which is why passing *range* explicitly is the honest</p>
-<p>choice when comparing histograms across datasets). With `<code style="color:#22d3bf">density=False</code>`</p>
-<p>(default) *counts* are occurrence <b>frequencies</b> (int64, summing to the</p>
-<p>number of in-range samples); with `<code style="color:#22d3bf">density=True</code>` they form a</p>
-<p><b>probability density</b> (float64, integrating to 1 over the range).</p>
-<p>A *range* that excludes <b>every</b> sample raises `<code style="color:#22d3bf">ValueError</code>` under</p>
-<p>`<code style="color:#22d3bf">density=True</code>` (the density would be 0/0 — silent NaNs refused) while</p>
-<p>`<code style="color:#22d3bf">density=False</code>` honestly returns all-zero counts. *bins* is capped at</p>
-<p>`<code style="color:#22d3bf">MAX_ELEMENTS</code>` (the edge/count arrays are allocations too).</p>
-<p>Returns `<code style="color:#22d3bf">(counts, edges)</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf"> has </code><code style="color:#22d3bf">bins + 1</code>` entries;</p>
-<p>bin *i* is `<code style="color:#22d3bf">[edges[i], edges[i+1])</code>`.</p>
-<p>HALCON: `<code style="color:#22d3bf">tuple_histo_range</code><code style="color:#22d3bf"> (and </code><code style="color:#22d3bf">gray_histo</code>` for whole images).</p>
+<p>*bins* is a positive integer count of equal-width bins; *range* is an explicit <code style="color:#22d3bf">(lo, hi)</code> (finite, <code style="color:#22d3bf">lo &lt; hi</code>) or <code style="color:#22d3bf">None</code> to span the data (values exactly at <code style="color:#22d3bf">hi</code> land in the last bin, numpy&#x27;s convention; with an explicit *range*, values outside it are excluded from every bin — they simply do not count, which is why passing *range* explicitly is the honest choice when comparing histograms across datasets). With <code style="color:#22d3bf">density=False</code> (default) *counts* are occurrence <b>frequencies</b> (int64, summing to the number of in-range samples); with <code style="color:#22d3bf">density=True</code> they form a <b>probability density</b> (float64, integrating to 1 over the range). A *range* that excludes <b>every</b> sample raises <code style="color:#22d3bf">ValueError</code> under <code style="color:#22d3bf">density=True</code> (the density would be 0/0 — silent NaNs refused) while <code style="color:#22d3bf">density=False</code> honestly returns all-zero counts. *bins* is capped at <code style="color:#22d3bf">MAX_ELEMENTS</code> (the edge/count arrays are allocations too).</p>
+<p>Returns <code style="color:#22d3bf">(counts, edges)</code> — <code style="color:#22d3bf">edges</code> has <code style="color:#22d3bf">bins + 1</code> entries; bin *i* is <code style="color:#22d3bf">[edges[i], edges[i+1])</code>.</p>
+<p>HALCON: <code style="color:#22d3bf">tuple_histo_range</code> (and <code style="color:#22d3bf">gray_histo</code> for whole images).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
-<p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
-<p style="margin:2px 0 2px 12px">• **masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code>** — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**(件数を明示して拒否 — 結果全体に伝播するため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code></b> — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>(件数を明示して拒否 — 結果全体に伝播するため)。</p>
 <p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は <code style="color:#22d3bf">ValueError</code>。reshape を明示する)。</p>
 <p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

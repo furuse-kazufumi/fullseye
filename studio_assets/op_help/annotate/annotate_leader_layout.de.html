@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert eine Tabelle (dict): die Anordnung der Hinweislinien (Knick, Textposition, Plattenrechteck) in geschlossener Form.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各点について候補側を固定順に試し、**板が画像に収まり・他の板と重ならず・</p>
-<p>他の点を覆わない**最初の候補を採る。どの候補も駄目なら肘を 1.6 倍、2.4 倍に</p>
-<p>伸ばして再試行し、それでも駄目なら <b>ValueError</b>(黙って重ねない)。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>各点について候補側を固定順に試し、<b>板が画像に収まり・他の板と重ならず・他の点を覆わない</b>最初の候補を採る。どの候補も駄目なら肘を 1.6 倍、2.4 倍に伸ばして再試行し、それでも駄目なら <b>ValueError</b>(黙って重ねない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>shape : (H, W)</p>
 <p>描く画像の大きさ。</p>
 <p>points : (N, 2)</p>
@@ -19,21 +16,18 @@
 <p>gap : float</p>
 <p>肘の長さ[px]。斜め腕 = gap、水平腕 = 0.6*gap。</p>
 <p>side : {&#x27;auto&#x27;,&#x27;left&#x27;,&#x27;right&#x27;}</p>
-<p>`<code style="color:#22d3bf">&#x27;auto&#x27;</code>` は画像中心から<b>遠ざかる</b>側を先に試す(対象の上に文字を</p>
+<p><code style="color:#22d3bf">&#x27;auto&#x27;</code> は画像中心から<b>遠ざかる</b>側を先に試す(対象の上に文字を</p>
 <p>載せないため)。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>``{&quot;n&quot;, &quot;gap&quot;, &quot;items&quot;: [{&quot;point&quot;, &quot;elbow&quot;, &quot;text_xy&quot;, &quot;anchor&quot;,</p>
-<p>&quot;box&quot;, &quot;side&quot;}]}`<code style="color:#22d3bf">。</code><code style="color:#22d3bf">box</code><code style="color:#22d3bf"> は板の </code><code style="color:#22d3bf">(x, y, w, h)</code>`。</p>
-<p>Raises</p>
-<p>------</p>
+<p><code style="color:#22d3bf">{&quot;n&quot;, &quot;gap&quot;, &quot;items&quot;: [{&quot;point&quot;, &quot;elbow&quot;, &quot;text_xy&quot;, &quot;anchor&quot;, &quot;box&quot;, &quot;side&quot;}]}</code>。<code style="color:#22d3bf">box</code> は板の <code style="color:#22d3bf">(x, y, w, h)</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>点が空・非有限、labels の数が合わない、未知の side、配置できない点。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Konventionen für Trainingsdatensätze — COCO / YOLO / VOC und Fallstricke in der Sichtprüfung</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

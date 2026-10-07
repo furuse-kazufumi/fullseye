@@ -5,19 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>배경 잡음 sigma 를 강건하게 추정합니다(별에 오염되지 않는 실수 하나).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*method* `<code style="color:#22d3bf">&quot;mad&quot;</code><code style="color:#22d3bf"> は中央絶対偏差の </code><code style="color:#22d3bf">1.4826</code>` 倍(正規分布のときに標準偏差と</p>
-<p>一致する定数)。`<code style="color:#22d3bf">&quot;clip&quot;</code><code style="color:#22d3bf"> は対称な κ-σ クリップを </code><code style="color:#22d3bf">iters</code>` 回。星は上側だけの</p>
-<p>外れ値なので、素の `<code style="color:#22d3bf">std</code>` を使うと<b>星が明るいほど「雑音」が大きく</b>なる</p>
-<p>—— 128x128 に 40 星(フラックス 3e3〜4e4 e-)、真の背景 σ が</p>
-<p>`<code style="color:#22d3bf">sqrt(100 + 36) = 11.662</code><code style="color:#22d3bf"> のフレームでの実測: 素の </code><code style="color:#22d3bf">np.std</code>` は</p>
-<p><b>175.43(真値の 15.0 倍)</b>、`<code style="color:#22d3bf">method=&quot;mad&quot;</code>` は 13.804(+18.4 %)、</p>
-<p>`<code style="color:#22d3bf">method=&quot;clip&quot;</code>` は 12.349(+5.9 %)。MAD が 1 % で当たるのは星がまばらな</p>
-<p>ときだけで、<b>混み合った視野では星の裾が背景に効く</b> —— そこまで要求する</p>
-<p>なら `<code style="color:#22d3bf">&quot;clip&quot;</code><code style="color:#22d3bf"> を選ぶこと。桁が違うのは </code><code style="color:#22d3bf">std</code>` だけで、そこが要点。</p>
-<p>`<code style="color:#22d3bf">sqrt(N)</code>` 則を絵にするとき図に載せる数値は、すべてこの op の返り。</p>
-<p>Returns `<code style="color:#22d3bf">float</code>`(*image* と同じ単位)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 2-D でない / 非有限を含む / *method* が</p>
-<p>:data:<code style="color:#22d3bf">NOISE_METHODS</code> にない場合。</p>
+<p>*method* <code style="color:#22d3bf">&quot;mad&quot;</code> は中央絶対偏差の <code style="color:#22d3bf">1.4826</code> 倍(正規分布のときに標準偏差と一致する定数)。<code style="color:#22d3bf">&quot;clip&quot;</code> は対称な κ-σ クリップを <code style="color:#22d3bf">iters</code> 回。星は上側だけの外れ値なので、素の <code style="color:#22d3bf">std</code> を使うと<b>星が明るいほど「雑音」が大きく</b>なる —— 128x128 に 40 星(フラックス 3e3〜4e4 e-)、真の背景 σ が <code style="color:#22d3bf">sqrt(100 + 36) = 11.662</code> のフレームでの実測: 素の <code style="color:#22d3bf">np.std</code> は <b>175.43(真値の 15.0 倍)</b>、<code style="color:#22d3bf">method=&quot;mad&quot;</code> は 13.804(+18.4 %)、<code style="color:#22d3bf">method=&quot;clip&quot;</code> は 12.349(+5.9 %)。MAD が 1 % で当たるのは星がまばらなときだけで、<b>混み合った視野では星の裾が背景に効く</b> —— そこまで要求するなら <code style="color:#22d3bf">&quot;clip&quot;</code> を選ぶこと。桁が違うのは <code style="color:#22d3bf">std</code> だけで、そこが要点。</p>
+<p><code style="color:#22d3bf">sqrt(N)</code> 則を絵にするとき図に載せる数値は、すべてこの op の返り。</p>
+<p>Returns <code style="color:#22d3bf">float</code>(*image* と同じ単位)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / 非有限を含む / *method* が <code style="color:#22d3bf">NOISE_METHODS</code> にない場合。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

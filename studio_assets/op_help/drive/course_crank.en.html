@@ -5,13 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>屈折コース(クランク、Z 形): 進入 → 左 90° → B → 右 90° → 退出。</p>
-<p>別表第三の図(3JH00000217782)の測り方に合わせる: 幅 A = w、曲角間の長さ B は一方の道の外壁から</p>
-<p>向かいの道の内壁まで(= 中心線の曲角間距離)、出入口部 C は横断する帯の壁から出入口まで(中心線では</p>
-<p>C + w/2)、すみ切り D は曲角部の <b>内側</b> の角(外側の角は正方形のまま)。中心線は</p>
-<p>(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B)、長さ L = 2C + w + B。面積 = w·L + 2r²(1 − π/4)</p>
-<p>(導出はモジュール docstring)。規格(普通免許): A = 3.5, B = 12, C ≥ 4, D = 1 → `<code style="color:#22d3bf">params[&quot;regulation&quot;]</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 幅・B・C が正でない、r &lt; 0、C &lt; r(すみ切りが出入口にはみ出る)、</p>
-<p>B &lt; w + r(2 つの角が重なる)、arc_pts が 1 以上の整数でない。</p>
+<p>別表第三の図(3JH00000217782)の測り方に合わせる: 幅 A = w、曲角間の長さ B は一方の道の外壁から向かいの道の内壁まで(= 中心線の曲角間距離)、出入口部 C は横断する帯の壁から出入口まで(中心線では C + w/2)、すみ切り D は曲角部の <b>内側</b> の角(外側の角は正方形のまま)。中心線は(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B)、長さ L = 2C + w + B。面積 = w·L + 2r²(1 − π/4) (導出はモジュール docstring)。規格(普通免許): A = 3.5, B = 12, C ≥ 4, D = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・B・C が正でない、r &lt; 0、C &lt; r(すみ切りが出入口にはみ出る)、B &lt; w + r(2 つの角が重なる)、arc_pts が 1 以上の整数でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

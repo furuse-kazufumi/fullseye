@@ -4,16 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_summary(adj)</code> (to call the implementation directly, <code style="color:#22d3bf">import graphinv; graphinv.graph_degree_summary(adj)</code>; from the registry, <code style="color:#22d3bf">opsgraph.get(&quot;graph_degree_summary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Degrees, density and reciprocity of a directed wiring matrix.</p>
-<p>`<code style="color:#22d3bf">adj</code><code style="color:#22d3bf"> is a square matrix; entry </code><code style="color:#22d3bf">(i, j) &gt; 0</code><code style="color:#22d3bf"> means an edge </code><code style="color:#22d3bf">i -&gt; j</code>`. Self-loops</p>
-<p>are counted separately and excluded from the edge statistics. Returns a dict with</p>
-<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">self_loops</code><code style="color:#22d3bf">, the </code><code style="color:#22d3bf">in_degree</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">out_degree</code>` arrays,</p>
-<p>`<code style="color:#22d3bf">density</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">edges / (n (n-1))</code><code style="color:#22d3bf">), and </code><code style="color:#22d3bf">reciprocal_pairs</code>` (unordered pairs wired</p>
-<p>in both directions).</p>
-<p>The identity `<code style="color:#22d3bf">in_degree.sum() == out_degree.sum() == edges</code>` holds exactly for</p>
-<p>any directed graph and is checked before returning (fail-closed — if it ever broke,</p>
-<p>the matrix was not what the caller thought).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-square / empty / non-finite / negative input, or a</p>
-<p>matrix over the node cap.</p>
+<p><code style="color:#22d3bf">adj</code> is a square matrix; entry <code style="color:#22d3bf">(i, j) &gt; 0</code> means an edge <code style="color:#22d3bf">i -&gt; j</code>. Self-loops are counted separately and excluded from the edge statistics. Returns a dict with <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">edges</code>, <code style="color:#22d3bf">self_loops</code>, the <code style="color:#22d3bf">in_degree</code> / <code style="color:#22d3bf">out_degree</code> arrays, <code style="color:#22d3bf">density</code> (<code style="color:#22d3bf">edges / (n (n-1))</code>), and <code style="color:#22d3bf">reciprocal_pairs</code> (unordered pairs wired in both directions).</p>
+<p>The identity <code style="color:#22d3bf">in_degree.sum() == out_degree.sum() == edges</code> holds exactly for any directed graph and is checked before returning (fail-closed — if it ever broke, the matrix was not what the caller thought).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-square / empty / non-finite / negative input, or a matrix over the node cap.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -5,27 +5,24 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Legende aus Farben und Beschreibungen. <b>Die Kastenhöhe folgt in geschlossener Form aus der Anzahl der Einträge.</b></p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">height = 2*pad + n*row_h + (n-1)*row_gap</code><code style="color:#22d3bf"> (</code>`row_h = max(swatch, 文字高))。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p><code style="color:#22d3bf">height = 2*pad + n*row_h + (n-1)*row_gap</code> (<code style="color:#22d3bf">row_h = max(swatch, 文字高)</code>)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>entries : sequence</p>
-<p>`<code style="color:#22d3bf">(color, text)</code><code style="color:#22d3bf"> の並び。</code><code style="color:#22d3bf">color</code>` は役割名でも RGB でもよい。</p>
+<p><code style="color:#22d3bf">(color, text)</code> の並び。<code style="color:#22d3bf">color</code> は役割名でも RGB でもよい。</p>
 <p>markers : bool</p>
-<p>True なら役割名に対応する :data:<code style="color:#22d3bf">palette.ROLE_MARKERS</code> の記号を</p>
+<p>True なら役割名に対応する <code style="color:#22d3bf">palette.ROLE_MARKERS</code> の記号を</p>
 <p>説明の前に付ける(<b>色だけに意味を載せない</b>ため)。役割名でない</p>
 <p>要素には記号が無いので付かない。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>Raises</p>
-<p>------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>entries が空 / 形が `<code style="color:#22d3bf">(color, text)</code>` でない / 箱が画像からはみ出す /</p>
+<p>entries が空 / 形が <code style="color:#22d3bf">(color, text)</code> でない / 箱が画像からはみ出す /</p>
 <p>未知の役割名。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Konventionen für Trainingsdatensätze — COCO / YOLO / VOC und Fallstricke in der Sichtprüfung</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

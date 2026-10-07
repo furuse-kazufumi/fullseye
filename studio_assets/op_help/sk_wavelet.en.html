@@ -13,7 +13,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Denoising via wavelet transform. Decomposes the image into the wavelet domain, discards small coefficients (regarded as noise) using BayesShrink-criterion thresholding, and then applies the inverse transform.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON に直接対応するものは無い。実装は `<code style="color:#22d3bf">restoration.denoise_wavelet(v)</code><code style="color:#22d3bf"> をそのまま </code><code style="color:#22d3bf">[0,1]</code>` に clip したもので、しきい値やウェーブレット基底はすべて skimage の既定値まかせ —— a, b は未使用(調整点が無い、最も枯れた設定でとりあえずノイズを落としたい時用)。</p>
+<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_wavelet(v)</code> をそのまま <code style="color:#22d3bf">[0,1]</code> に clip したもので、しきい値やウェーブレット基底はすべて skimage の既定値まかせ —— a, b は未使用(調整点が無い、最も枯れた設定でとりあえずノイズを落としたい時用)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

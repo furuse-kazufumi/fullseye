@@ -3,10 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.threshold_triangle(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import seggraph; seggraph.threshold_triangle(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;threshold_triangle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>三角法(Zack–Rogers–Latt 1977): 山頂 (b_p, h_p) と、裾の長い側の端のビン (b_e, 0) を結ぶ線から、間のビンの</p>
-<p>(b, h_b) までの符号つき垂直距離が最大のビンを閾値にする(線の下側を正)。返す: `<code style="color:#22d3bf">threshold</code>`(そのビンの中心)、</p>
-<p>`<code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> = image &gt; threshold、</code><code style="color:#22d3bf">bin</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">distance</code>`(各ビンの距離、範囲外は nan)。端点の高さ 0・裾の側の選び方は</p>
-<p>skimage / ImageJ と同じ規約(原典は要確認)。</p>
+<p>三角法(Zack–Rogers–Latt 1977): 山頂 (b_p, h_p) と、裾の長い側の端のビン (b_e, 0) を結ぶ線から、間のビンの(b, h_b) までの符号つき垂直距離が最大のビンを閾値にする(線の下側を正)。返す: <code style="color:#22d3bf">threshold</code>(そのビンの中心)、<code style="color:#22d3bf">mask</code> = image &gt; threshold、<code style="color:#22d3bf">bin</code>、<code style="color:#22d3bf">distance</code>(各ビンの距離、範囲外は nan)。端点の高さ 0・裾の側の選び方は skimage / ImageJ と同じ規約(原典は要確認)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

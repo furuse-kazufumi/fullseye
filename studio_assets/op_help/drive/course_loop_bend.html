@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecourse; drivecourse.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_loop_bend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>周回コースの端の半円(左へ 180° 回る): 進入 (0, 0, 0) → 中心 (0, R) の周りを回って退出 (0, 2R, π)。</p>
-<p>多角形は外側の弧(半径 R + w/2)と内側の弧(R − w/2)で囲む環の半分。面積 = π R w(閉形式)、弧を</p>
-<p>折線にした分だけ小さく、arc_pts を増やすと収束する。規格(周回コース): 幅 8 m 以上、おおむね長円形。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: R ≤ w/2(内側の弧が潰れる)、幅・半径が正でない、arc_pts が不正。</p>
+<p>周回コースの端の半円(左へ 180° 回る): 進入 (0, 0, 0) → 中心 (0, R) の周りを回って退出 (0, 2R, π)。多角形は外側の弧(半径 R + w/2)と内側の弧(R − w/2)で囲む環の半分。面積 = π R w(閉形式)、弧を折線にした分だけ小さく、arc_pts を増やすと収束する。規格(周回コース): 幅 8 m 以上、おおむね長円形。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ w/2(内側の弧が潰れる)、幅・半径が正でない、arc_pts が不正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

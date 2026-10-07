@@ -7,22 +7,18 @@
 <p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>基于拉普拉斯方差的对焦（模糊）指标（`<code style="color:#22d3bf">cv2.Laplacian</code>`的方差）。</p>
+<p>基于拉普拉斯方差的对焦（模糊）指标（<code style="color:#22d3bf">cv2.Laplacian</code>的方差）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>画像全体に Laplacian を掛けた結果の分散を計算し、`<code style="color:#22d3bf">min(1.0, 分散*20)</code>` で</p>
-<p>[0,1] にクリップしたスカラーを返す。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値が大きいほど</p>
-<p>エッジ/テクスチャが豊富＝合焦、小さいほどボケている可能性が高い、という</p>
-<p>古典的なオートフォーカス評価指標。倍率 20 は経験的なスケーリングで、</p>
-<p>絶対的なボケ量ではなく相対比較に向く。</p>
+<p>画像全体に Laplacian を掛けた結果の分散を計算し、<code style="color:#22d3bf">min(1.0, 分散*20)</code> で [0,1] にクリップしたスカラーを返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。値が大きいほどエッジ/テクスチャが豊富＝合焦、小さいほどボケている可能性が高い、という古典的なオートフォーカス評価指標。倍率 20 は経験的なスケーリングで、絶対的なボケ量ではなく相対比較に向く。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
 <p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv2_lap_var 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv2_lap_var%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv2_lap_var%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv2_lap_var 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv2_lap_var%200.50%200.50">▸ 载入此流水线</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv2_lap_var%200.50%200.50">载入并运行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_focus_stacking">poc_focus_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_focus_stacking.py</code></p>

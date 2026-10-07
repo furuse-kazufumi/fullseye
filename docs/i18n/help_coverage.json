@@ -1,0 +1,66 @@
+{
+ "_": "Studio op ヘルプの多言語被覆(生成物 —— tools/opdocs.py coverage が書く)。frame_strings = 枠の対訳表の訳済み件数(枠は全言語そろっている)、languages.* = 本文側の実測(要約が訳されているか・かなの残る頁)。tests/test_help_rendering.py が後退(訳済み比率の低下・未訳の増加)を落とす。",
+ "languages": {
+  "ja": {
+   "pages": 3086,
+   "pages_with_example": 2898,
+   "pages_ja_summary_of_english_source": 693
+  },
+  "en": {
+   "pages": 3086,
+   "pages_with_example": 2898,
+   "pages_with_kana": 2439,
+   "summaries_untranslated": 1121,
+   "summary_translated_share": 0.6367,
+   "kana_free_share": 0.2097
+  },
+  "zh": {
+   "pages": 3086,
+   "pages_with_example": 2898,
+   "pages_with_kana": 2439,
+   "summaries_untranslated": 1213,
+   "summary_translated_share": 0.6069,
+   "kana_free_share": 0.2097
+  },
+  "tw": {
+   "pages": 3086,
+   "pages_with_example": 2898,
+   "pages_with_kana": 2439,
+   "summaries_untranslated": 1213,
+   "summary_translated_share": 0.6069,
+   "kana_free_share": 0.2097
+  },
+  "ko": {
+   "pages": 3086,
+   "pages_with_example": 2898,
+   "pages_with_kana": 2439,
+   "summaries_untranslated": 1213,
+   "summary_translated_share": 0.6069,
+   "kana_free_share": 0.2097
+  },
+  "de": {
+   "pages": 3086,
+   "pages_with_example": 2898,
+   "pages_with_kana": 2439,
+   "summaries_untranslated": 1213,
+   "summary_translated_share": 0.6069,
+   "kana_free_share": 0.2097
+  }
+ },
+ "frame_strings": {
+  "keys": 91,
+  "en": 91,
+  "zh": 91,
+  "tw": 91,
+  "ko": 91,
+  "de": 91
+ },
+ "knowledge_guide_titles": {
+  "guides": 17,
+  "en": 17,
+  "zh": 17,
+  "tw": 17,
+  "ko": 17,
+  "de": 17
+ }
+}

@@ -5,17 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>中心線の欠損を直線化して、上流の衝突点(よどみ点)・障害物の中心・半径を読む(実装 1、上流の点だけ)。</p>
-<p>1. 欠損(3 × 3 の平均)が `<code style="color:#22d3bf">d_range</code>` の上限を超える格子のうち、最も上流のものを「衝突点のそば」とする。</p>
-<p>2. その少し上流の列(4 列)で、欠損が最大の行を放物線で副格子に求め、平均を中心線 y_c とする</p>
-<p>(上流の欠損 R²(Δx² − Δy²)/(Δx² + Δy²)² は Δy = 0 で最大)。</p>
-<p>3. y_c の高さで欠損を行の間の 1 次補間で取り、衝突点のそばより上流で `<code style="color:#22d3bf">d_range</code>` の中にある格子で</p>
-<p>1/√d = (x_c − x)/R を重みつき最小二乗で引く(速さの雑音 σ_d は 1/√d では σ_d/(2d^{3/2}) に増えるので、</p>
-<p>重み d^{3/2} —— 欠損の小さい遠くの点は雑音で暴れる): R = −1/傾き、x_c = 切片 × R。よどみ点 = (x_c − R, y_c)。</p>
-<p>4. `<code style="color:#22d3bf">speed</code><code style="color:#22d3bf"> を与えないときは、上流の端の u を閉形式で割り戻して U を推定し直し、3 を繰り返す(U の変化が 1e-9 未満になるか </code><code style="color:#22d3bf">n_iter</code>` 回まで。収束は 1 次で、R = 0.6・端までの距離 3 の場で約 30 回)。</p>
-<p>上流の端も 1/r² で欠けているので(R = 0.6、距離 3 で 4 %)、端の中央値をそのまま U にすると直線が曲がる。</p>
+<p style="margin:2px 0 2px 12px">1. 欠損(3 × 3 の平均)が <code style="color:#22d3bf">d_range</code> の上限を超える格子のうち、最も上流のものを「衝突点のそば」とする。</p>
+<p style="margin:2px 0 2px 12px">2. その少し上流の列(4 列)で、欠損が最大の行を放物線で副格子に求め、平均を中心線 y_c とする(上流の欠損 R²(Δx² − Δy²)/(Δx² + Δy²)² は Δy = 0 で最大)。</p>
+<p style="margin:2px 0 2px 12px">3. y_c の高さで欠損を行の間の 1 次補間で取り、衝突点のそばより上流で <code style="color:#22d3bf">d_range</code> の中にある格子で 1/√d = (x_c − x)/R を重みつき最小二乗で引く(速さの雑音 σ_d は 1/√d では σ_d/(2d^{3/2}) に増えるので、重み d^{3/2} —— 欠損の小さい遠くの点は雑音で暴れる): R = −1/傾き、x_c = 切片 × R。よどみ点 = (x_c − R, y_c)。</p>
+<p style="margin:2px 0 2px 12px">4. <code style="color:#22d3bf">speed</code> を与えないときは、上流の端の u を閉形式で割り戻して U を推定し直し、3 を繰り返す(U の変化が 1e-9 未満になるか <code style="color:#22d3bf">n_iter</code> 回まで。収束は 1 次で、R = 0.6・端までの距離 3 の場で約 30 回)。上流の端も 1/r² で欠けているので(R = 0.6、距離 3 で 4 %)、端の中央値をそのまま U にすると直線が曲がる。</p>
 <p>Returns:</p>
-<p>dict: `<code style="color:#22d3bf">stagnation</code><code style="color:#22d3bf"> (x, y)、</code><code style="color:#22d3bf">center</code><code style="color:#22d3bf"> (x, y)、</code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_used</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rms_residual</code>`(1/√d の当てはめの残差)、</p>
-<p>`<code style="color:#22d3bf">speed</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">ok</code>`(点が足りて傾きが負なら True)。</p>
+<p>dict: <code style="color:#22d3bf">stagnation</code> (x, y)、<code style="color:#22d3bf">center</code> (x, y)、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">n_used</code>、<code style="color:#22d3bf">rms_residual</code>(1/√d の当てはめの残差)、</p>
+<p><code style="color:#22d3bf">speed</code>、<code style="color:#22d3bf">ok</code>(点が足りて傾きが負なら True)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

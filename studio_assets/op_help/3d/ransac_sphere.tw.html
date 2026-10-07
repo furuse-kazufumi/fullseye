@@ -5,8 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對外點穩健的 RANSAC 球擬合。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>4 点をサンプル → 線形法(代数フィット)で球中心・半径 → |‖p-c‖ - r| &lt; `<code style="color:#22d3bf">thresh</code>` の</p>
-<p>inlier を最大化 → 最終 inlier で最小二乗リフィット。配管ボール/球面計測用。</p>
+<p>4 点をサンプル → 線形法(代数フィット)で球中心・半径 → |‖p-c‖ - r| &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化 → 最終 inlier で最小二乗リフィット。配管ボール/球面計測用。</p>
 <p>Args:</p>
 <p>points: (N,3) 点群。</p>
 <p>thresh: inlier とみなす |距離-r| のしきい値。</p>
@@ -15,8 +14,8 @@
 <p>Returns:</p>
 <p>(params, inlier_mask, info)。params = {&quot;center&quot;: (3,), &quot;radius&quot;: float}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

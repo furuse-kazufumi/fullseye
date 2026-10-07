@@ -5,23 +5,18 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>ad-rss-lib の stated braking pattern による <b>符号つき位置オフセット</b>(縦・横共通の 1 つの式)。</p>
-<p>ρ の間 `<code style="color:#22d3bf">accel</code><code style="color:#22d3bf"> で加速(</code><code style="color:#22d3bf">v_max</code>` で頭打ち)し、ρ 後の速度 v_ρ が <b>相手へ向いている</b></p>
-<p>(`<code style="color:#22d3bf">direction · v_ρ &gt; 0</code><code style="color:#22d3bf">)ときだけ停止距離 </code><code style="color:#22d3bf">direction · v_ρ² / (2 brake)</code>` を足す。</p>
-<p>離れる向きなら足さない(lib `<code style="color:#22d3bf">calculateLongitudinalDistanceOffsetAfterStatedBrakingPattern</code>` /</p>
-<p>`<code style="color:#22d3bf">calculateLateralDistanceOffsetAfterStatedBrakingPattern</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">signbit</code>` 判定)。</p>
-<p>符号規約</p>
-<p>--------</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">direction</code>` = 相手へ向かう向き(+1 か −1)。縦方向は +1(進行方向 = +x)。横方向は左の車が +1、右の車が −1。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">v</code>` は符号つき速度(direction 側が正なら相手へ向かっている)。縦方向は v ≥ 0 で呼ぶ。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">accel</code><code style="color:#22d3bf"> は符号つきで **direction 側に向ける**(</code><code style="color:#22d3bf">direction · accel ≥ 0</code>` でないと ValueError)。</p>
-<p>縦方向は `<code style="color:#22d3bf">+a_accel_max</code><code style="color:#22d3bf">、横方向は左 </code><code style="color:#22d3bf">+a_lat</code><code style="color:#22d3bf">、右 </code><code style="color:#22d3bf">−a_lat</code>`。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">brake</code><code style="color:#22d3bf"> は正の大きさ。常に「相手へ向かう速度を 0 にする向き」(= </code><code style="color:#22d3bf">−direction</code>` 側)にかかる。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">v_max</code>` は direction 側の到達速度の上限(None = 制限なし)。既に |v| がそれ以上なら加速しない。</p>
-<p>縦方向(v ≥ 0, accel ≥ 0)では `<code style="color:#22d3bf">v ρ + ½ a ρ² + (v + a ρ)²/(2 b)</code>` になり論文 Lemma 2 の後続車の走行距離と一致する。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>ρ の間 <code style="color:#22d3bf">accel</code> で加速(<code style="color:#22d3bf">v_max</code> で頭打ち)し、ρ 後の速度 v_ρ が <b>相手へ向いている</b> (<code style="color:#22d3bf">direction · v_ρ &gt; 0</code>)ときだけ停止距離 <code style="color:#22d3bf">direction · v_ρ² / (2 brake)</code> を足す。離れる向きなら足さない(lib <code style="color:#22d3bf">calculateLongitudinalDistanceOffsetAfterStatedBrakingPattern</code> / <code style="color:#22d3bf">calculateLateralDistanceOffsetAfterStatedBrakingPattern</code> の <code style="color:#22d3bf">signbit</code> 判定)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">符号規約</h4>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">direction</code> = 相手へ向かう向き(+1 か −1)。縦方向は +1(進行方向 = +x)。横方向は左の車が +1、右の車が −1。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">v</code> は符号つき速度(direction 側が正なら相手へ向かっている)。縦方向は v ≥ 0 で呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">accel</code> は符号つきで <b>direction 側に向ける</b>(<code style="color:#22d3bf">direction · accel ≥ 0</code> でないと ValueError)。縦方向は <code style="color:#22d3bf">+a_accel_max</code>、横方向は左 <code style="color:#22d3bf">+a_lat</code>、右 <code style="color:#22d3bf">−a_lat</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">brake</code> は正の大きさ。常に「相手へ向かう速度を 0 にする向き」(= <code style="color:#22d3bf">−direction</code> 側)にかかる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">v_max</code> は direction 側の到達速度の上限(None = 制限なし)。既に |v| がそれ以上なら加速しない。</p>
+<p>縦方向(v ≥ 0, accel ≥ 0)では <code style="color:#22d3bf">v ρ + ½ a ρ² + (v + a ρ)²/(2 b)</code> になり論文 Lemma 2 の後続車の走行距離と一致する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_longitudinal">poc_driving_longitudinal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_longitudinal.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">scalar</code> 作为输入)</h3>

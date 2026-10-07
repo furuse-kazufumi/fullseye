@@ -3,18 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">measurement</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ifs_similarity_dimension(preset=&#x27;sierpinski&#x27;, maps=None, tol=1e-13)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.ifs_similarity_dimension(preset=&#x27;sierpinski&#x27;, maps=None, tol=1e-13)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;ifs_similarity_dimension&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Moran&#x27;s equation `<code style="color:#22d3bf">sum(r_i**d) = 1</code><code style="color:#22d3bf"> solved for </code><code style="color:#22d3bf">d</code>` — from the maps alone.</p>
-<p>The similarity dimension of a self-similar set, computed <b>before</b> anything</p>
-<p>is drawn. Valid when the pieces overlap only on a set of measure zero (the</p>
-<p>open set condition); affine maps that are not similarities (the fern) have</p>
-<p>no single ratio, so this raises rather than returning a number that looks</p>
-<p>right (measured: the fern&#x27;s four maps have singular-value ratios from 0.16</p>
-<p>to 0.85, so no `<code style="color:#22d3bf">r_i</code>` exists).</p>
+<p>Moran&#x27;s equation <code style="color:#22d3bf">sum(r_i**d) = 1</code> solved for <code style="color:#22d3bf">d</code> — from the maps alone.</p>
+<p>The similarity dimension of a self-similar set, computed <b>before</b> anything is drawn. Valid when the pieces overlap only on a set of measure zero (the open set condition); affine maps that are not similarities (the fern) have no single ratio, so this raises rather than returning a number that looks right (measured: the fern&#x27;s four maps have singular-value ratios from 0.16 to 0.85, so no <code style="color:#22d3bf">r_i</code> exists).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

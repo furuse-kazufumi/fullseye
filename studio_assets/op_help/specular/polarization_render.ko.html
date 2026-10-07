@@ -5,20 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>편광판 회전의 순방향 모델: 알려진 분리를 편광 카메라가 기록할 프레임들로 만듭니다. → (N, H, W).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">I(t) = 0.5 * diffuse + specular * cos^2(t - azimuth)</code>`. The diffuse term is</p>
-<p>treated as completely unpolarised, so it contributes half its radiance at</p>
-<p>every analyser angle; the specular term is treated as completely linearly</p>
-<p>polarised at *azimuth_deg*, so it follows Malus&#x27;s law. Those are the two</p>
-<p>assumptions :func:<code style="color:#22d3bf">polarization_separate</code> inverts, and rendering with them</p>
-<p>is how the inversion gets a ground truth to be exact against.</p>
-<p>Physically the assumptions hold near Brewster&#x27;s angle for a dielectric and</p>
-<p>fail at normal incidence; the module docstring says where. This operator</p>
-<p>does not model the incidence angle at all — it takes the two radiance maps</p>
-<p>you specify and produces the sweep they imply.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *diffuse* / *specular* are not 2-D arrays of the</p>
-<p>same shape, or are complex / masked / non-finite / string-typed; either has</p>
-<p>a negative value (a negative radiance is not a scene); *angles_deg* has</p>
-<p>fewer than 3 entries or does not determine the three unknowns.</p>
+<p><code style="color:#22d3bf">I(t) = 0.5 * diffuse + specular * cos^2(t - azimuth)</code>. The diffuse term is treated as completely unpolarised, so it contributes half its radiance at every analyser angle; the specular term is treated as completely linearly polarised at *azimuth_deg*, so it follows Malus&#x27;s law. Those are the two</p>
+<p>assumptions <code style="color:#22d3bf">polarization_separate</code> inverts, and rendering with them is how the inversion gets a ground truth to be exact against.</p>
+<p>Physically the assumptions hold near Brewster&#x27;s angle for a dielectric and fail at normal incidence; the module docstring says where. This operator does not model the incidence angle at all — it takes the two radiance maps you specify and produces the sweep they imply.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *diffuse* / *specular* are not 2-D arrays of the same shape, or are complex / masked / non-finite / string-typed; either has a negative value (a negative radiance is not a scene); *angles_deg* has fewer than 3 entries or does not determine the three unknowns.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

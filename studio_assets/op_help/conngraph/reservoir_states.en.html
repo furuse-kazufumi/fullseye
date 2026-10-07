@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>reservoir の状態列: x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in u_t)。返りは (T − washout, n)。</p>
-<p>`<code style="color:#22d3bf">U</code><code style="color:#22d3bf"> は (T, d) の入力列(1-D は (T, 1))。</code><code style="color:#22d3bf">W_in</code>` は seed で決まる一様 (−in_scale, in_scale)</p>
-<p>の (n, d) 行列。`<code style="color:#22d3bf">nonlinearity</code>` は tanh / linear。x_0 = 0 から始め、各ステップの更新後の</p>
-<p>状態を並べる。`<code style="color:#22d3bf">washout</code>` 行を先頭から捨てる(T 以上は拒否)。</p>
-<p>`<code style="color:#22d3bf">W_in</code><code style="color:#22d3bf"> を渡すと乱数の代わりにその (n, d) 行列を使う(</code><code style="color:#22d3bf">in_scale</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">seed</code>` は無視)——</p>
-<p>決まったノード群に刺激を入れる(列 = 刺激するノードの指示子)のはこちら。</p>
+<p><code style="color:#22d3bf">U</code> は (T, d) の入力列(1-D は (T, 1))。<code style="color:#22d3bf">W_in</code> は seed で決まる一様 (−in_scale, in_scale) の (n, d) 行列。<code style="color:#22d3bf">nonlinearity</code> は tanh / linear。x_0 = 0 から始め、各ステップの更新後の状態を並べる。<code style="color:#22d3bf">washout</code> 行を先頭から捨てる(T 以上は拒否)。</p>
+<p><code style="color:#22d3bf">W_in</code> を渡すと乱数の代わりにその (n, d) 行列を使う(<code style="color:#22d3bf">in_scale</code> / <code style="color:#22d3bf">seed</code> は無視)—— 決まったノード群に刺激を入れる(列 = 刺激するノードの指示子)のはこちら。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

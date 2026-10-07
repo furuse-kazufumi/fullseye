@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_speed(volseq, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import live4d; live4d.volseq_speed(volseq, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opslive4d.get(&quot;volseq_speed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>体積時系列の隣り合うフレーム間の<b>速さ</b> `<code style="color:#22d3bf">|d|</code><code style="color:#22d3bf"> [voxel/frame] を </code><code style="color:#22d3bf">(T − 1, Z, Y, X)</code><code style="color:#22d3bf"> で返す(</code><code style="color:#22d3bf">volseq</code>`)。</p>
-<p>各フレーム対に `<code style="color:#22d3bf">vol_flow_3d</code><code style="color:#22d3bf"> を当てた大きさ。どこが・いつ動いたかの地図で、</code><code style="color:#22d3bf">volseq_render_orbit(mode=&quot;speed&quot;)</code>`</p>
-<p>の色もこれ。T &gt;= 3 が要る(返りも `<code style="color:#22d3bf">volseq</code>` = T − 1 &gt;= 2 枚)。</p>
+<p>体積時系列の隣り合うフレーム間の<b>速さ</b> <code style="color:#22d3bf">|d|</code> [voxel/frame] を <code style="color:#22d3bf">(T − 1, Z, Y, X)</code> で返す(<code style="color:#22d3bf">volseq</code>)。</p>
+<p>各フレーム対に <code style="color:#22d3bf">vol_flow_3d</code> を当てた大きさ。どこが・いつ動いたかの地図で、<code style="color:#22d3bf">volseq_render_orbit(mode=&quot;speed&quot;)</code> の色もこれ。T &gt;= 3 が要る(返りも <code style="color:#22d3bf">volseq</code> = T − 1 &gt;= 2 枚)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -3,12 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_index(root) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import iqatid; iqatid.tid2013_index(root) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>`<code style="color:#22d3bf">mos_with_names.txt</code>` を読んで組の台帳を返す。</p>
-<p>返り値: `<code style="color:#22d3bf">names</code><code style="color:#22d3bf">(3000、配布物の綴りのまま)、</code><code style="color:#22d3bf">mos</code><code style="color:#22d3bf"> (3000,)、</code><code style="color:#22d3bf">ref</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">dist_type</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">level</code>`(各 int 配列、1 始まり)、</p>
-<p>`<code style="color:#22d3bf">ref_files</code><code style="color:#22d3bf">(参照 25 枚のパス、番号順)、</code><code style="color:#22d3bf">dist_files</code><code style="color:#22d3bf">(歪み 3000 枚のパス、台帳の順)、</code><code style="color:#22d3bf">root</code>`。</p>
-<p>作者値 `<code style="color:#22d3bf">metrics_values/*.txt</code>` には名前が無く <b>この台帳の順</b>(i01_01_1 … i25_24_5)で並ぶので、順序はこの関数が握る。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 行数 ≠ 3000、名前が iXX_YY_Z.bmp の形でない、名前集合が </code><code style="color:#22d3bf">distorted_images/</code>` の BMP と一致しない</p>
-<p>(大文字小文字無視)、参照 25 枚が揃わない、MOS が [0, 9] の外。</p>
+<p><code style="color:#22d3bf">mos_with_names.txt</code> を読んで組の台帳を返す。</p>
+<p>返り値: <code style="color:#22d3bf">names</code>(3000、配布物の綴りのまま)、<code style="color:#22d3bf">mos</code> (3000,)、<code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">dist_type</code> / <code style="color:#22d3bf">level</code>(各 int 配列、1 始まり)、<code style="color:#22d3bf">ref_files</code>(参照 25 枚のパス、番号順)、<code style="color:#22d3bf">dist_files</code>(歪み 3000 枚のパス、台帳の順)、<code style="color:#22d3bf">root</code>。作者値 <code style="color:#22d3bf">metrics_values/*.txt</code> には名前が無く <b>この台帳の順</b>(i01_01_1 … i25_24_5)で並ぶので、順序はこの関数が握る。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 行数 ≠ 3000、名前が iXX_YY_Z.bmp の形でない、名前集合が <code style="color:#22d3bf">distorted_images/</code> の BMP と一致しない(大文字小文字無視)、参照 25 枚が揃わない、MOS が [0, 9] の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

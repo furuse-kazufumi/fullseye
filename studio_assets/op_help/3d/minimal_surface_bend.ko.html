@@ -5,18 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>카테노이드 ⇄ 헬리코이드의 굽힘 —— 족의 어느 것도 여전히 극소다。</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The *associate family* `<code style="color:#22d3bf">cos(t) * helicoid + sin(t) * catenoid</code>` (in the</p>
-<p>Weierstrass sense) deforms one into the other <b>without stretching</b>: the</p>
-<p>surfaces are isometric at every `<code style="color:#22d3bf">t</code>`, and every one of them is minimal.</p>
-<p>`<code style="color:#22d3bf">t = 0</code><code style="color:#22d3bf"> is the helicoid, </code><code style="color:#22d3bf">t = pi/2</code>` the catenoid.</p>
-<p>★<b>Why this earns its place</b>: it turns &quot;minimal&quot; from a property of two</p>
-<p>named surfaces into a <b>one-parameter claim that must hold throughout</b>. If</p>
-<p>an implementation is only accidentally right at the endpoints, the middle of</p>
-<p>the family exposes it — and the intrinsic geometry (first fundamental form)</p>
-<p>must not change along the way, which is a second, independent check.</p>
-<p>Returns a `<code style="color:#22d3bf">mesh</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the same shape/scale contracts as</p>
-<p>:func:<code style="color:#22d3bf">minimal_surface</code>; a non-finite `<code style="color:#22d3bf">t</code>`.</p>
+<p>The *associate family* <code style="color:#22d3bf">cos(t) * helicoid + sin(t) * catenoid</code> (in the Weierstrass sense) deforms one into the other <b>without stretching</b>: the surfaces are isometric at every <code style="color:#22d3bf">t</code>, and every one of them is minimal. <code style="color:#22d3bf">t = 0</code> is the helicoid, <code style="color:#22d3bf">t = pi/2</code> the catenoid.</p>
+<p>★<b>Why this earns its place</b>: it turns &quot;minimal&quot; from a property of two named surfaces into a <b>one-parameter claim that must hold throughout</b>. If an implementation is only accidentally right at the endpoints, the middle of the family exposes it — and the intrinsic geometry (first fundamental form) must not change along the way, which is a second, independent check.</p>
+<p>Returns a <code style="color:#22d3bf">mesh</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: the same shape/scale contracts as <code style="color:#22d3bf">minimal_surface</code>; a non-finite <code style="color:#22d3bf">t</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

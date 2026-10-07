@@ -3,16 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import residue; residue.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsresidue.get(&quot;residue_integer_crt&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Exact integer CRT (Garner&#x27;s mixed-radix algorithm) -&gt; `<code style="color:#22d3bf">dict</code>`.</p>
-<p>`<code style="color:#22d3bf">residues</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">moduli</code>` are equal-length integer sequences; the moduli must</p>
-<p>be pairwise coprime and &gt;= 2. Returns ``{&quot;value&quot;: int, &quot;modulus&quot;: int,</p>
-<p>&quot;mixed_radix&quot;: [digits]}`<code style="color:#22d3bf"> where </code><code style="color:#22d3bf">value</code>` is the unique solution in</p>
-<p>`<code style="color:#22d3bf">[0, prod(moduli))</code><code style="color:#22d3bf">. Arithmetic is Python&#x27;s arbitrary-precision </code><code style="color:#22d3bf">int</code>` —</p>
-<p>there is no rounding anywhere, which is why this op is the oracle for</p>
-<p>:func:<code style="color:#22d3bf">residue_crt</code>.</p>
-<p>The mixed-radix digits `<code style="color:#22d3bf">d_k</code><code style="color:#22d3bf"> satisfy </code><code style="color:#22d3bf">value = d_0 + d_1 m_0 + d_2 m_0 m_1 + ...</code>`:</p>
-<p>the *positional* (coarse-to-fine) reading of the same residues, i.e. the</p>
-<p>bridge between the residue view and the place-value view.</p>
+<p>Exact integer CRT (Garner&#x27;s mixed-radix algorithm) -&gt; <code style="color:#22d3bf">dict</code>.</p>
+<p><code style="color:#22d3bf">residues</code> and <code style="color:#22d3bf">moduli</code> are equal-length integer sequences; the moduli must be pairwise coprime and &gt;= 2. Returns <code style="color:#22d3bf">{&quot;value&quot;: int, &quot;modulus&quot;: int, &quot;mixed_radix&quot;: [digits]}</code> where <code style="color:#22d3bf">value</code> is the unique solution in <code style="color:#22d3bf">[0, prod(moduli))</code>. Arithmetic is Python&#x27;s arbitrary-precision <code style="color:#22d3bf">int</code> — there is no rounding anywhere, which is why this op is the oracle for <code style="color:#22d3bf">residue_crt</code>.</p>
+<p>The mixed-radix digits <code style="color:#22d3bf">d_k</code> satisfy <code style="color:#22d3bf">value = d_0 + d_1 m_0 + d_2 m_0 m_1 + ...</code>:</p>
+<p>the *positional* (coarse-to-fine) reading of the same residues, i.e. the bridge between the residue view and the place-value view.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

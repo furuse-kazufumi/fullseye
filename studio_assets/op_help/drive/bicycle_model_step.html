@@ -4,11 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;bicycle_model_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>線形 2 輪等価モデルの 1 刻み(古典的な 4 次 Runge–Kutta、刻みの間 δ と u は一定)。</p>
-<p>`<code style="color:#22d3bf">state</code>`: (..., 5) = (x, y, ψ, v_y, r)(重心の位置 [m]、向き [rad]、車の座標の横速度 [m/s]、ヨーレート [rad/s])。</p>
-<p>`<code style="color:#22d3bf">steer</code><code style="color:#22d3bf">: 前輪の舵角 δ [rad] (state の先頭の形に放送)。</code><code style="color:#22d3bf">speed</code>`: 前向きの速さ u [m/s] (&gt; 0、放送)。</p>
-<p>`<code style="color:#22d3bf">params</code><code style="color:#22d3bf"> には </code><code style="color:#22d3bf">inertia</code>`(I_z [kg m²])も要る。返り値: 次の状態(同じ形)。</p>
+<p><code style="color:#22d3bf">state</code>: (..., 5) = (x, y, ψ, v_y, r)(重心の位置 [m]、向き [rad]、車の座標の横速度 [m/s]、ヨーレート [rad/s])。<code style="color:#22d3bf">steer</code>: 前輪の舵角 δ [rad] (state の先頭の形に放送)。<code style="color:#22d3bf">speed</code>: 前向きの速さ u [m/s] (&gt; 0、放送)。<code style="color:#22d3bf">params</code> には <code style="color:#22d3bf">inertia</code>(I_z [kg m²])も要る。返り値: 次の状態(同じ形)。</p>
 <p>横力は線形(飽和しない)。u → 0 で式が特異になるので u ≥ 0.5 m/s を要求する(低速は運動学で扱う)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形の誤り、非有限、u &lt; 0.5、dt ≤ 0、I_z が無い。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、非有限、u &lt; 0.5、dt ≤ 0、I_z が無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

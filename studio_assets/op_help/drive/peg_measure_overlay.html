@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb × matrix × matrix</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_measure_overlay(rgb, truth_uv, est_uv, edge_uv=None, size: &#x27;int&#x27; = 12, zoom: &#x27;int&#x27; = 3, crop: &#x27;int&#x27; = 40) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsim; pegsim.peg_measure_overlay(rgb, truth_uv, est_uv, edge_uv=None, size: &#x27;int&#x27; = 12, zoom: &#x27;int&#x27; = 3, crop: &#x27;int&#x27; = 40) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;peg_measure_overlay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>計測の重ね図(numpy だけ): 真値 = 緑の大きな十字、推定 = 赤の小さな十字、円当てはめに使った縁の点 = 黄の点(imagedraw)。</p>
-<p>右下に真値の重心まわり `<code style="color:#22d3bf">crop</code><code style="color:#22d3bf"> px 四方を </code><code style="color:#22d3bf">zoom</code>` 倍にした拡大を貼る(副画素の一致を目で見るため)。</p>
-<p>`<code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> は (H, W, 3) uint8、</code><code style="color:#22d3bf">truth_uv</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">est_uv</code>` は (N, 2) の (u, v)。返りは同じ大きさの uint8。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: rgb の形が違う、点が無い。</p>
+<p>計測の重ね図(numpy だけ): 真値 = 緑の大きな十字、推定 = 赤の小さな十字、円当てはめに使った縁の点 = 黄の点(imagedraw)。右下に真値の重心まわり <code style="color:#22d3bf">crop</code> px 四方を <code style="color:#22d3bf">zoom</code> 倍にした拡大を貼る(副画素の一致を目で見るため)。</p>
+<p><code style="color:#22d3bf">rgb</code> は (H, W, 3) uint8、<code style="color:#22d3bf">truth_uv</code>・<code style="color:#22d3bf">est_uv</code> は (N, 2) の (u, v)。返りは同じ大きさの uint8。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: rgb の形が違う、点が無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

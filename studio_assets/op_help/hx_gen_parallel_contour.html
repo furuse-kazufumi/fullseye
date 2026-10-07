@@ -6,23 +6,19 @@
 <p><img src="fig/hx_gen_parallel_contour.png" alt="hx_gen_parallel_contour: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.a.jpg">hx_gen_parallel_contour: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.a.jpg">hx_gen_parallel_contour: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.chain.jpg">hx_gen_parallel_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.chain.jpg">hx_gen_parallel_contour: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.inputs.jpg">hx_gen_parallel_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.inputs.jpg">hx_gen_parallel_contour: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>各 contour の平行(法線オフセット)contour を生成(距離は (a-0.5) で符号つき)。</p>
-<p>各 contour(点数 2 以上)の接線を `<code style="color:#22d3bf">np.gradient(c, axis=0)</code>` で求め、それを 90° 回した単位法線</p>
-<p>`<code style="color:#22d3bf">(-t_col, t_row) / |t|</code><code style="color:#22d3bf"> の方向に </code><code style="color:#22d3bf">dist</code>` だけ全点をずらした contour を返す。元の contour は出力に含まれない</p>
-<p>(置き換わる)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 符号つきオフセット </code><code style="color:#22d3bf">dist = (a - 0.5) * 10</code>`(-5〜+5 画素。a=0.5 で無変化)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>各 contour(点数 2 以上)の接線を <code style="color:#22d3bf">np.gradient(c, axis=0)</code> で求め、それを 90° 回した単位法線 <code style="color:#22d3bf">(-t_col, t_row) / |t|</code> の方向に <code style="color:#22d3bf">dist</code> だけ全点をずらした contour を返す。元の contour は出力に含まれない(置き換わる)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 符号つきオフセット <code style="color:#22d3bf">dist = (a - 0.5) * 10</code>(-5〜+5 画素。a=0.5 で無変化)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
 <p style="margin:2px 0 2px 12px">• 接線長が 1e-9 未満の点(重複点)は法線 0 とし動かさない。点数 1 の contour はそのまま。</p>
-<p>法線の向きは contour の進行方向で決まる(左右どちらが正かは点列の向き次第)。曲率半径より大きくずらすと</p>
-<p>自己交差する(`<code style="color:#22d3bf">hx_test_self_intersect</code>` で検出可能)。輪郭を太らせ/痩せさせた形の比較や、計測線を境界から</p>
-<p>一定距離に置くのに使う。</p>
+<p>法線の向きは contour の進行方向で決まる(左右どちらが正かは点列の向き次第)。曲率半径より大きくずらすと自己交差する(<code style="color:#22d3bf">hx_test_self_intersect</code> で検出可能)。輪郭を太らせ/痩せさせた形の比較や、計測線を境界から一定距離に置くのに使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -33,7 +29,7 @@
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-hx_gen_parallel_contour 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_gen_parallel_contour%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_gen_parallel_contour%200.50%200.50">Load &amp; run</a></p>
+hx_gen_parallel_contour 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_gen_parallel_contour%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_gen_parallel_contour%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">contour</code> を入力に取れる)</h3>

@@ -5,20 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>고전적인 회전 하프톤 스크린 —— 점의 면적이 농담을 나른다。</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Thresholds the image against a rotated periodic spot function (the product of</p>
-<p>two shifted cosines, the classical round-dot screen). *lpi* is lines per inch</p>
-<p>and *pixel_um* the pixel pitch, so the screen frequency in pixels follows the</p>
-<p>printing convention rather than a bare &quot;period in pixels&quot;.</p>
-<p>★<b>Why this earns its place</b>: two screens at different angles beat against</p>
-<p>one another, and the <b>period and direction of that moiré are a closed form</b></p>
-<p>(:func:<code style="color:#22d3bf">halftone_moire_period</code>) that can be predicted *before* anything is</p>
-<p>drawn and then measured out of the image. That is why newspaper printing puts</p>
-<p>the plates at 15°/45°/75° — the beat is pushed to a frequency the eye does not</p>
-<p>resolve — and this op lets that be shown as numbers, not folklore.</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>Thresholds the image against a rotated periodic spot function (the product of two shifted cosines, the classical round-dot screen). *lpi* is lines per inch and *pixel_um* the pixel pitch, so the screen frequency in pixels follows the printing convention rather than a bare &quot;period in pixels&quot;.</p>
+<p>★<b>Why this earns its place</b>: two screens at different angles beat against one another, and the <b>period and direction of that moiré are a closed form</b> (<code style="color:#22d3bf">halftone_moire_period</code>) that can be predicted *before* anything is drawn and then measured out of the image. That is why newspaper printing puts the plates at 15°/45°/75° — the beat is pushed to a frequency the eye does not resolve — and this op lets that be shown as numbers, not folklore.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>image : 2-D array in [0, 1]</p>
-<p>Tone; 0 prints solid, 1 prints blank (the ink is `<code style="color:#22d3bf">1 - image</code>`).</p>
+<p>Tone; 0 prints solid, 1 prints blank (the ink is <code style="color:#22d3bf">1 - image</code>).</p>
 <p>lpi : float</p>
 <p>Screen ruling, lines per inch. Newspapers use 65-85, magazines 133-175.</p>
 <p>angle_deg : float</p>
@@ -27,13 +18,9 @@
 <p>Pixel pitch in micrometres (25.4 um = 1000 dpi).</p>
 <p>sharpness : float</p>
 <p>Edge hardness of the dot; large values give a hard threshold.</p>
-<p>Returns an `<code style="color:#22d3bf">image2d</code>`: 1 = paper, 0 = ink.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive lpi, pixel pitch or sharpness; a screen</p>
-<p>period below 2 px (it would alias — reported, never silently drawn); a</p>
-<p>non-finite or oversized image.</p>
-<p>Limits: this is a *screen*, not a printer. Dot gain, ink spread and</p>
-<p>registration error are not modelled, so measured ink is the geometric</p>
-<p>coverage and will read lighter than a real press.</p>
+<p>Returns an <code style="color:#22d3bf">image2d</code>: 1 = paper, 0 = ink.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-positive lpi, pixel pitch or sharpness; a screen period below 2 px (it would alias — reported, never silently drawn); a non-finite or oversized image.</p>
+<p>Limits: this is a *screen*, not a printer. Dot gain, ink spread and registration error are not modelled, so measured ink is the geometric coverage and will read lighter than a real press.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

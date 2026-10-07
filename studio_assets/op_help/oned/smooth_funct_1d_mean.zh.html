@@ -4,23 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_funct_1d_mean(y, size=3, iterations=1)</code>(要直接调用实现,<code style="color:#22d3bf">import funct1d; funct1d.smooth_funct_1d_mean(y, size=3, iterations=1)</code>;从台账取用则 <code style="color:#22d3bf">ops1d.get(&quot;smooth_funct_1d_mean&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Iterated moving-average smoothing (HALCON `<code style="color:#22d3bf">smooth_funct_1d_mean</code>`).</p>
-<p>Applies a length-*size* uniform (box) filter *iterations* times with</p>
-<p>`<code style="color:#22d3bf">nearest</code>` (edge-replicating) boundary handling. Repeated box filtering</p>
-<p>approaches a Gaussian (central limit theorem).</p>
-<p>:param y: 1-D function, at least 1 sample.</p>
-<p>:param size: window length in samples; truncated to int, must be &gt;= 1.</p>
+<p>Iterated moving-average smoothing (HALCON <code style="color:#22d3bf">smooth_funct_1d_mean</code>).</p>
+<p>Applies a length-*size* uniform (box) filter *iterations* times with <code style="color:#22d3bf">nearest</code> (edge-replicating) boundary handling. Repeated box filtering approaches a Gaussian (central limit theorem).</p>
+<p>:param y: 1-D function, at least 1 sample. :param size: window length in samples; truncated to int, must be &gt;= 1.</p>
 <p><b>Even sizes are accepted but shift the window origin by half a sample</b></p>
 <p>(scipy&#x27;s origin convention) — prefer odd sizes for a symmetric window.</p>
 <p>:param iterations: number of passes; truncated to int, must be &gt;= 0.</p>
-<p>`<code style="color:#22d3bf">iterations=0</code>` returns the (float64-coerced) input unchanged.</p>
-<p>:returns: smoothed float64 array, same length as *y*.</p>
-<p>:raises ValueError: non-1-D / NaN / Inf input, empty input, `<code style="color:#22d3bf">size &lt; 1</code>`,</p>
-<p>or `<code style="color:#22d3bf">iterations &lt; 0</code>`.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">iterations=0</code> returns the (float64-coerced) input unchanged.</p>
+<p>:returns: smoothed float64 array, same length as *y*. :raises ValueError: non-1-D / NaN / Inf input, empty input, <code style="color:#22d3bf">size &lt; 1</code>,</p>
+<p>or <code style="color:#22d3bf">iterations &lt; 0</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weld_bead_profile">poc_weld_bead_profile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weld_bead_profile.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:signal_funct1d">signal_funct1d</a> — <code style="color:#22d3bf">py -3.11 examples/signal_funct1d.py</code></p>

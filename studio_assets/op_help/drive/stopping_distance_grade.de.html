@@ -5,9 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>停止距離の閉形式 = 空走 v ρ + 制動距離 (1/(2k)) ln(1 + k v²/A)、A = brake + g sin θ + c_rr g cos θ(k = 0 で v²/(2A))。</p>
-<p>θ &gt; 0 が上り(止まりやすい)、θ &lt; 0 が下り。ρ の間は速さを保つ。A ≤ 0(下りで制動が坂に負ける)なら止まらない → `<code style="color:#22d3bf">inf</code>`。</p>
-<p>平地・c_rr = k = 0 で `<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, 0, brake)</code>` と同じ式。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: v &lt; 0、非有限、|θ| ≥ 45°。</p>
+<p>θ &gt; 0 が上り(止まりやすい)、θ &lt; 0 が下り。ρ の間は速さを保つ。A ≤ 0(下りで制動が坂に負ける)なら止まらない → <code style="color:#22d3bf">inf</code>。平地・c_rr = k = 0 で <code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, 0, brake)</code> と同じ式。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0、非有限、|θ| ≥ 45°。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

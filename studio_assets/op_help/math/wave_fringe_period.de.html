@@ -5,20 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Misst die Periode aus einem gestreiften Bild zurück (Pixel).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Takes the mean profile along *axis*, removes the mean, and reads the dominant</p>
-<p>frequency from the FFT with a <b>parabolic interpolation</b> on the log spectrum,</p>
-<p>so the answer is not quantised to the FFT bin.</p>
-<p>★<b>Why this earns its place</b>: it closes the loop on :func:<code style="color:#22d3bf">wave_two_slit</code> and</p>
-<p>on any halftone or grating image — the period predicted by the closed form and</p>
-<p>the period measured from the pixels are two different computations.</p>
-<p>Returns a `<code style="color:#22d3bf">measurement</code>`: the period in pixels.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: not a 2-D array; fewer than 8 samples along *axis*;</p>
-<p>non-finite values; a profile with no variation (a flat image has no period).</p>
+<p>Takes the mean profile along *axis*, removes the mean, and reads the dominant frequency from the FFT with a <b>parabolic interpolation</b> on the log spectrum, so the answer is not quantised to the FFT bin.</p>
+<p>★<b>Why this earns its place</b>: it closes the loop on <code style="color:#22d3bf">wave_two_slit</code> and on any halftone or grating image — the period predicted by the closed form and the period measured from the pixels are two different computations.</p>
+<p>Returns a <code style="color:#22d3bf">measurement</code>: the period in pixels.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not a 2-D array; fewer than 8 samples along *axis*; non-finite values; a profile with no variation (a flat image has no period).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

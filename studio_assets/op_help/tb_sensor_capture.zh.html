@@ -5,28 +5,26 @@
 <p><img src="fig/tb_sensor_capture.png" alt="tb_sensor_capture: input → output"></p>
 <p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
 <p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.a.jpg">tb_sensor_capture: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.a.jpg">tb_sensor_capture: 旋钮 a 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.b.jpg">tb_sensor_capture: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.b.jpg">tb_sensor_capture: 旋钮 b 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.chain.jpg">tb_sensor_capture: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.chain.jpg">tb_sensor_capture: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.inputs.jpg">tb_sensor_capture: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.inputs.jpg">tb_sensor_capture: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>辐射亮度 → 真实传感器输出（散粒噪声、读出噪声、饱和、量化）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。</p>
-<p>そこへ読み出し雑音(正規)を足し、`<code style="color:#22d3bf">full_well_e</code><code style="color:#22d3bf"> で**飽和**させ、</code><code style="color:#22d3bf">bit_depth</code>`</p>
-<p>で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。</p>
-<p>返り値は 0..2^bit_depth−1 の整数配列。`<code style="color:#22d3bf">seed</code>` を固定すれば決定的。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op `<code style="color:#22d3bf">sensor_capture</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">exposure_ms</code><code style="color:#22d3bf">(既定 10)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gain_e_per_unit</code>`(既定 50000)を振る。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。そこへ読み出し雑音(正規)を足し、<code style="color:#22d3bf">full_well_e</code> で<b>飽和</b>させ、<code style="color:#22d3bf">bit_depth</code> で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。</p>
+<p>返り値は 0..2^bit_depth−1 の整数配列。<code style="color:#22d3bf">seed</code> を固定すれば決定的。</p>
+<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">sensor_capture</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">exposure_ms</code>(既定 10)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">gain_e_per_unit</code>(既定 50000)を振る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
 <p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_rgb 0.50 0.50
-tb_sensor_capture 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_sensor_capture%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_sensor_capture%200.50%200.50">Load &amp; run</a></p>
+tb_sensor_capture 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_sensor_capture%200.50%200.50">▸ 载入此流水线</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_sensor_capture%200.50%200.50">载入并运行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p>下面的示例调用的是底层账本算子 <code style="color:#22d3bf">sensor_capture</code>。此桥接算子只是把同一实现适配为 <code style="color:#22d3bf">fn(v, a, b)</code> 约定，行为完全相同(只是调用形式不同)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:vision_layout_from_catalog">vision_layout_from_catalog</a> — <code style="color:#22d3bf">py -3.11 examples/vision_layout_from_catalog.py</code></p>

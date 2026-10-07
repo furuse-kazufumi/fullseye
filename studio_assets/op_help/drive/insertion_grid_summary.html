@@ -3,11 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsim; pegsim.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;insertion_grid_summary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>成功率の格子を集計する: 行 = {eps_mm, tilt_deg, correct, success} の列から、補正あり/なし × ε₀ × θ₀ の成功率の表と、</p>
-<p>「補正なしで全部成功する最大の ε₀」「補正ありの成功数 / 総数」。</p>
-<p>返り: `<code style="color:#22d3bf">eps_mm</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">tilt_deg</code><code style="color:#22d3bf">(軸)、</code><code style="color:#22d3bf">rate</code><code style="color:#22d3bf">: {False: (n_eps, n_tilt) の配列, True: 同}、</code><code style="color:#22d3bf">n_runs</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">max_eps_all_ok</code>`:</p>
-<p>{correct: その補正で全 θ₀ が成功する最大の ε₀(無ければ None)}、`<code style="color:#22d3bf">success_count</code>`: {correct: (成功数, 総数)}。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 行が空、鍵が欠ける。</p>
+<p>成功率の格子を集計する: 行 = {eps_mm, tilt_deg, correct, success} の列から、補正あり/なし × ε₀ × θ₀ の成功率の表と、「補正なしで全部成功する最大の ε₀」「補正ありの成功数 / 総数」。</p>
+<p>返り: <code style="color:#22d3bf">eps_mm</code>・<code style="color:#22d3bf">tilt_deg</code>(軸)、<code style="color:#22d3bf">rate</code>: {False: (n_eps, n_tilt) の配列, True: 同}、<code style="color:#22d3bf">n_runs</code>、<code style="color:#22d3bf">max_eps_all_ok</code>:</p>
+<p>{correct: その補正で全 θ₀ が成功する最大の ε₀(無ければ None)}、<code style="color:#22d3bf">success_count</code>: {correct: (成功数, 総数)}。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 行が空、鍵が欠ける。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

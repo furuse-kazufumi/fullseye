@@ -5,16 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>1 次元 SPH の浅水方程式でダム崩壊(乾いた床)を解く(群れのゲートを開けたときの広がりの模型)。</p>
-<p>水深 h_i = Σ_j m_j W(x_i − x_j, ℓ_ij)(1 次元の核、m = h₀ Δx)、加速度 du_i/dt = −g Σ_j m_j ∂W_ij/∂x_i(= −g ∂h/∂x、</p>
-<p>運動量を保存する対称形)+ Monaghan の人工粘性。平滑化の長さは粒子ごとに ℓ_i = κ m/h_i(先端の薄い所で広がる)、</p>
-<p>組には平均 ℓ_ij。左の壁(x = −length)は鏡像の粒子。真値は :func:<code style="color:#22d3bf">ritter_dam_break</code>(門で照らす)。</p>
+<p>水深 h_i = Σ_j m_j W(x_i − x_j, ℓ_ij)(1 次元の核、m = h₀ Δx)、加速度 du_i/dt = −g Σ_j m_j ∂W_ij/∂x_i(= −g ∂h/∂x、運動量を保存する対称形)+ Monaghan の人工粘性。平滑化の長さは粒子ごとに ℓ_i = κ m/h_i(先端の薄い所で広がる)、組には平均 ℓ_ij。左の壁(x = −length)は鏡像の粒子。真値は <code style="color:#22d3bf">ritter_dam_break</code>(門で照らす)。</p>
 <p>Returns:</p>
-<p>dict: `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (K,)、</code><code style="color:#22d3bf">x</code><code style="color:#22d3bf"> (K, N)、</code><code style="color:#22d3bf">h</code><code style="color:#22d3bf"> (K, N)、</code><code style="color:#22d3bf">u</code><code style="color:#22d3bf"> (K, N)(各時刻の粒子)、</code><code style="color:#22d3bf">front</code>` (K,)(最も前の粒子)、</p>
-<p>`<code style="color:#22d3bf">mass</code><code style="color:#22d3bf">(全質量、保存)、</code><code style="color:#22d3bf">c0</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>dict: <code style="color:#22d3bf">t</code> (K,)、<code style="color:#22d3bf">x</code> (K, N)、<code style="color:#22d3bf">h</code> (K, N)、<code style="color:#22d3bf">u</code> (K, N)(各時刻の粒子)、<code style="color:#22d3bf">front</code> (K,)(最も前の粒子)、</p>
+<p><code style="color:#22d3bf">mass</code>(全質量、保存)、<code style="color:#22d3bf">c0</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

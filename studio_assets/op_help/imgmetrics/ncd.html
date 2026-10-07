@@ -4,26 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import imgmetrics; imgmetrics.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;ncd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>正規化圧縮距離(Li, Chen, Li, Ma &amp; Vitányi, IEEE TIT 50(12), 2004)。</p>
-<p>`<code style="color:#22d3bf">NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))</code>`。</p>
-<p>同じものなら 0 に近づき、無関係なら 1 に近づく ―― ただし **実際の圧縮器は</p>
-<p>理想的な Kolmogorov 複雑度ではない**ので、同一入力でも厳密に 0 にはならない</p>
-<p>(ヘッダぶんの下駄がある)。その下駄の実測値はテストに残してある。</p>
-<p><b>生の float 配列は受け付けない。</b> 圧縮器はバイト列の繰り返しを見るので、</p>
-<p>値がごくわずか違うだけで float の仮数部が総取っ替えになり、**似ている 2 枚</p>
-<p>でも共通のバイト列が消える**。実測(2026-09-02、`<code style="color:#22d3bf">linspace</code>` の勾配と</p>
-<p>それを +0.02 した絵、PSNR 34.0 dB = よく似ている):</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">float64</code>` のまま:8 バイト語の共有率 <b>0.02 %</b> → <b>NCD 1.0959</b></p>
-<p>(「まったく無関係」と読める値。しかも 1 を超える)</p>
+<p><code style="color:#22d3bf">NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))</code>。同じものなら 0 に近づき、無関係なら 1 に近づく ―― ただし <b>実際の圧縮器は理想的な Kolmogorov 複雑度ではない</b>ので、同一入力でも厳密に 0 にはならない(ヘッダぶんの下駄がある)。その下駄の実測値はテストに残してある。</p>
+<p><b>生の float 配列は受け付けない。</b> 圧縮器はバイト列の繰り返しを見るので、値がごくわずか違うだけで float の仮数部が総取っ替えになり、<b>似ている 2 枚でも共通のバイト列が消える</b>。実測(2026-09-02、<code style="color:#22d3bf">linspace</code> の勾配とそれを +0.02 した絵、PSNR 34.0 dB = よく似ている):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">float64</code> のまま:8 バイト語の共有率 <b>0.02 %</b> → <b>NCD 1.0959</b> (「まったく無関係」と読める値。しかも 1 を超える)</p>
 <p style="margin:2px 0 2px 12px">• 256 段に量子化:<b>NCD 0.1290</b>(正しく「よく似ている」)</p>
 <p style="margin:2px 0 2px 12px">• 本当に無関係な 2 枚:<b>NCD 0.9981</b></p>
-<p>つまり float のまま測ると<b>例外なく逆の結論</b>が出る。よって float には</p>
-<p>`<code style="color:#22d3bf">levels</code><code style="color:#22d3bf"> の明示を要求する(</code><code style="color:#22d3bf">levels=256</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">data_range</code>` を 256 段に</p>
-<p>量子化してから測る)。整数 dtype はそのまま測れる。</p>
-<p>`<code style="color:#22d3bf">symmetric=True</code>`(既定)は <b>両向きを測って平均する</b>。圧縮器は前から順に</p>
-<p>辞書を作るので `<code style="color:#22d3bf">C(xy) != C(yx)</code>` になり、素朴に実装すると「距離」を名乗り</p>
-<p>ながら引数の順で値が変わる(実測: 縦縞と横縞で 0.571429 対 0.595238、</p>
-<p>相対 4 %)。**一様乱数どうしでは差 0.000e+00 になるので、乱数で試している</p>
-<p>限り気づけない** ―― 構造のある実データで初めて破れる型の欠陥。</p>
+<p>つまり float のまま測ると<b>例外なく逆の結論</b>が出る。よって float には <code style="color:#22d3bf">levels</code> の明示を要求する(<code style="color:#22d3bf">levels=256</code> なら <code style="color:#22d3bf">data_range</code> を 256 段に量子化してから測る)。整数 dtype はそのまま測れる。</p>
+<p><code style="color:#22d3bf">symmetric=True</code>(既定)は <b>両向きを測って平均する</b>。圧縮器は前から順に辞書を作るので <code style="color:#22d3bf">C(xy) != C(yx)</code> になり、素朴に実装すると「距離」を名乗りながら引数の順で値が変わる(実測: 縦縞と横縞で 0.571429 対 0.595238、相対 4 %)。<b>一様乱数どうしでは差 0.000e+00 になるので、乱数で試している限り気づけない</b> ―― 構造のある実データで初めて破れる型の欠陥。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

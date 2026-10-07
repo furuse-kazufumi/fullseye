@@ -5,36 +5,21 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가우스 빔 전파: 스폿 크기·파면 곡률·Gouy 위상.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The `<code style="color:#22d3bf">q</code>`-parameter solution of the paraxial wave equation, evaluated at</p>
-<p>*distance_mm* from the waist. With `<code style="color:#22d3bf">zR = pi*w0^2*n/lambda</code>`:</p>
-<p>`<code style="color:#22d3bf">w(z) = w0*sqrt(1 + (z/zR)^2)</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">R(z) = z*(1 + (zR/z)^2)</code>` ·</p>
-<p>`<code style="color:#22d3bf">psi(z) = arctan(z/zR)</code>` (Gouy) · far-field half-divergence</p>
-<p>`<code style="color:#22d3bf">theta = lambda/(pi*n*w0)</code>`.</p>
-<p>Returns a dict: `<code style="color:#22d3bf">radius_um</code><code style="color:#22d3bf"> the 1/e^2 field radius </code><code style="color:#22d3bf">w(z)</code>` ·</p>
-<p>`<code style="color:#22d3bf">rayleigh_mm</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">zR</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">wavefront_radius_mm</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">R(z)</code>` ·</p>
-<p>`<code style="color:#22d3bf">curvature_per_mm</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">1/R(z)</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">gouy_deg</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">divergence_mrad</code>` the</p>
-<p>far-field half angle · `<code style="color:#22d3bf">waist_um</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">distance_mm</code>` echoed back.</p>
-<p>**`<code style="color:#22d3bf">wavefront_radius_mm</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">inf</code>` exactly at the waist, by contract**:</p>
-<p>the wavefront there is planar and a plane has infinite radius. That is why</p>
-<p>`<code style="color:#22d3bf">curvature_per_mm</code>` is also returned — it is 0 at the waist and finite</p>
-<p>everywhere, so downstream arithmetic never has to divide by an infinity.</p>
-<p>A negative `<code style="color:#22d3bf">R</code><code style="color:#22d3bf"> (before the waist, </code><code style="color:#22d3bf">z &lt; 0</code>`) means a converging wavefront.</p>
-<p>Ground truth it reproduces exactly (verified at machine precision): at</p>
-<p>`<code style="color:#22d3bf">z = zR</code><code style="color:#22d3bf"> the spot is </code><code style="color:#22d3bf">sqrt(2)*w0</code><code style="color:#22d3bf">, the wavefront radius is </code><code style="color:#22d3bf">2*zR</code>` (its</p>
-<p>minimum over all z) and the Gouy phase is exactly 45 degrees; the</p>
-<p>beam-parameter product `<code style="color:#22d3bf">w0*theta = lambda/(pi*n)</code>` holds for every input.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive or non-finite *waist_um*,</p>
-<p>*wavelength_um*, *n_medium*; non-finite *distance_mm*.</p>
-<p>Paraxial and fundamental-mode (TEM00) only: a real multimode beam needs an</p>
-<p>`<code style="color:#22d3bf">M^2</code>` factor, which this op deliberately does not fake by accepting one</p>
-<p>silently.</p>
+<p>The <code style="color:#22d3bf">q</code>-parameter solution of the paraxial wave equation, evaluated at *distance_mm* from the waist. With <code style="color:#22d3bf">zR = pi*w0^2*n/lambda</code>:</p>
+<p><code style="color:#22d3bf">w(z) = w0*sqrt(1 + (z/zR)^2)</code> · <code style="color:#22d3bf">R(z) = z*(1 + (zR/z)^2)</code> · <code style="color:#22d3bf">psi(z) = arctan(z/zR)</code> (Gouy) · far-field half-divergence <code style="color:#22d3bf">theta = lambda/(pi*n*w0)</code>.</p>
+<p>Returns a dict: <code style="color:#22d3bf">radius_um</code> the 1/e^2 field radius <code style="color:#22d3bf">w(z)</code> · <code style="color:#22d3bf">rayleigh_mm</code> <code style="color:#22d3bf">zR</code> · <code style="color:#22d3bf">wavefront_radius_mm</code> <code style="color:#22d3bf">R(z)</code> · <code style="color:#22d3bf">curvature_per_mm</code> <code style="color:#22d3bf">1/R(z)</code> · <code style="color:#22d3bf">gouy_deg</code> · <code style="color:#22d3bf">divergence_mrad</code> the far-field half angle · <code style="color:#22d3bf">waist_um</code> and <code style="color:#22d3bf">distance_mm</code> echoed back.</p>
+<p><b><code style="color:#22d3bf">wavefront_radius_mm</code> is <code style="color:#22d3bf">inf</code> exactly at the waist, by contract</b>:</p>
+<p>the wavefront there is planar and a plane has infinite radius. That is why <code style="color:#22d3bf">curvature_per_mm</code> is also returned — it is 0 at the waist and finite everywhere, so downstream arithmetic never has to divide by an infinity. A negative <code style="color:#22d3bf">R</code> (before the waist, <code style="color:#22d3bf">z &lt; 0</code>) means a converging wavefront.</p>
+<p>Ground truth it reproduces exactly (verified at machine precision): at <code style="color:#22d3bf">z = zR</code> the spot is <code style="color:#22d3bf">sqrt(2)*w0</code>, the wavefront radius is <code style="color:#22d3bf">2*zR</code> (its minimum over all z) and the Gouy phase is exactly 45 degrees; the beam-parameter product <code style="color:#22d3bf">w0*theta = lambda/(pi*n)</code> holds for every input.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-positive or non-finite *waist_um*, *wavelength_um*, *n_medium*; non-finite *distance_mm*.</p>
+<p>Paraxial and fundamental-mode (TEM00) only: a real multimode beam needs an <code style="color:#22d3bf">M^2</code> factor, which this op deliberately does not fake by accepting one silently.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>
-<p style="margin:2px 0 2px 12px">• **문자열은 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 은 성공하므로 파싱되지 않은 설정값이 길이로 통과해 버립니다(실측: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 이 그럴듯한 66.667 mm 를 돌려주고 있었습니다). bool 도 <code style="color:#22d3bf">True == 1</code> 의 암묵 승격으로 보고 거부합니다.</p>
-<p style="margin:2px 0 2px 12px">• **complex / masked array 는 <code style="color:#22d3bf">ValueError</code><b>(실수 슬롯만. 허수부의 무언 절삭·마스크 벗기기를 거부).</b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**.</p>
+<p style="margin:2px 0 2px 12px">• <b>문자열은 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 은 성공하므로 파싱되지 않은 설정값이 길이로 통과해 버립니다(실측: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 이 그럴듯한 66.667 mm 를 돌려주고 있었습니다). bool 도 <code style="color:#22d3bf">True == 1</code> 의 암묵 승격으로 보고 거부합니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 는 <code style="color:#22d3bf">ValueError</code></b>(실수 슬롯만. 허수부의 무언 절삭·마스크 벗기기를 거부).<b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>.</p>
 <p style="margin:2px 0 2px 12px">• <b>0 나눗셈과 그 친척들을 이름을 들어 거부</b>: 초점거리 0, 곡률반경 0, 굴절률 &lt;= 0, 불투명한 조리개(전부 0 이라 정규화가 0/0), 총합 &lt;= 0 인 PSF, S0 = 0 인 스토크스 벡터, 물체가 앞쪽 초점에 있는 경우(상이 무한대).</p>
-<p style="margin:2px 0 2px 12px">• <b>비유한 값을 돌려주는 것은 2 개 연산자뿐이며, 둘 다 계약으로 명시</b>: <code style="color:#22d3bf">depth_of_field</code> 의 과초점거리 너머 <code style="color:#22d3bf">far_mm = inf</code>(그것이 과초점거리의 정의)와 <code style="color:#22d3bf">gaussian_beam</code> 의 허리에서의 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(평면 파면의 곡률반경). 둘 다 유한한 짝(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)을 함께 돌려줍니다. **그 밖의 무언 NaN/Inf 는 내부에서 검출해 <code style="color:#22d3bf">ValueError</code>** —— 「float64 가 넘쳤다」와 「답이 무한대다」는 다른 주장이므로, 후자의 얼굴로 전자를 돌려주지 않습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>비유한 값을 돌려주는 것은 2 개 연산자뿐이며, 둘 다 계약으로 명시</b>: <code style="color:#22d3bf">depth_of_field</code> 의 과초점거리 너머 <code style="color:#22d3bf">far_mm = inf</code>(그것이 과초점거리의 정의)와 <code style="color:#22d3bf">gaussian_beam</code> 의 허리에서의 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(평면 파면의 곡률반경). 둘 다 유한한 짝(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)을 함께 돌려줍니다. <b>그 밖의 무언 NaN/Inf 는 내부에서 검출해 <code style="color:#22d3bf">ValueError</code></b> —— 「float64 가 넘쳤다」와 「답이 무한대다」는 다른 주장이므로, 후자의 얼굴로 전자를 돌려주지 않습니다.</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 생성 격자는 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096), 넘겨받은 필드/PSF/조리개는 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24), ABCD 소자열은 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024), Zernike 는 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25). 작은 인자에서 거대한 내부 할당이 일어나는 경로(실측: n_max=40 × 4096² 로 108 GB)를 fail-closed 로 막습니다.</p>
 <p style="margin:2px 0 2px 12px">• <b>물리적으로 불가능한 상태도 거부</b>: 편광도 &gt; 1 인 스토크스 벡터, 음의 투과율, 음의 강도, n-|m| 이 홀수인 잘못된 Zernike 첨자 등.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

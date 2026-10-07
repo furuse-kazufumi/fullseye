@@ -4,12 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_rules(jurisdiction: &#x27;str&#x27; = &#x27;JP&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetown; drivetown.town_rules(jurisdiction: &#x27;str&#x27; = &#x27;JP&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;town_rules&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>法規パック(:data:<code style="color:#22d3bf">RULE_PACKS</code> の複製)。``{&quot;jurisdiction&quot;, &quot;side&quot;: &quot;left&quot;|&quot;right&quot;, &quot;crossing_stop&quot;: &quot;always&quot;|&quot;when_active&quot;,</p>
-<p>&quot;intersection_stop&quot;: &quot;signal&quot;, &quot;hold_s&quot;, &quot;look_required&quot;, &quot;look_hold_s&quot;, &quot;sources&quot;: [...], &quot;verified&quot;, &quot;notes&quot;}``。</p>
-<p>JP = 左側通行・踏切は常に一時停止 + 安全確認(道路交通法 33 条 1 項、本文で確認済 → verified True)。</p>
-<p>US = 右側通行・一般車は警報中だけ停止(州法。<b>一次確認なし → verified False</b>)。DE = 右側通行・StVO §19 で遮断機/灯火が</p>
-<p>動作している時だけ(<b>一次確認なし → verified False</b>)。verified が False の規則は PoC・報告で断定しない。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 知らない jurisdiction。</p>
+<p>法規パック(<code style="color:#22d3bf">RULE_PACKS</code> の複製)。<code style="color:#22d3bf">{&quot;jurisdiction&quot;, &quot;side&quot;: &quot;left&quot;|&quot;right&quot;, &quot;crossing_stop&quot;: &quot;always&quot;|&quot;when_active&quot;, &quot;intersection_stop&quot;: &quot;signal&quot;, &quot;hold_s&quot;, &quot;look_required&quot;, &quot;look_hold_s&quot;, &quot;sources&quot;: [...], &quot;verified&quot;, &quot;notes&quot;}</code>。</p>
+<p>JP = 左側通行・踏切は常に一時停止 + 安全確認(道路交通法 33 条 1 項、本文で確認済 → verified True)。US = 右側通行・一般車は警報中だけ停止(州法。<b>一次確認なし → verified False</b>)。DE = 右側通行・StVO §19 で遮断機/灯火が動作している時だけ(<b>一次確認なし → verified False</b>)。verified が False の規則は PoC・報告で断定しない。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 知らない jurisdiction。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

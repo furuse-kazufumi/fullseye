@@ -8,14 +8,13 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_shape_std.chain.jpg">select_shape_std: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_shape_std.chain.jpg">select_shape_std: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_shape_std.inputs.jpg">select_shape_std: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_shape_std.inputs.jpg">select_shape_std: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Behält nur die zusammenhängende Komponente mit der größten Fläche (ausgewählt über `<code style="color:#22d3bf">_largest_label</code><code style="color:#22d3bf">). HALCONs </code><code style="color:#22d3bf">select_shape_std</code><code style="color:#22d3bf"> (Select regions of a given shape.) ist ein Operator, bei dem unter mehreren Standardkriterien einschließlich </code><code style="color:#22d3bf">max_area</code>` gewählt werden kann, hier jedoch fest auf das eine Kriterium &#x27;größte Fläche&#x27; festgelegt ist (eine Approximation).</p>
+<p>Behält nur die zusammenhängende Komponente mit der größten Fläche (ausgewählt über <code style="color:#22d3bf">_largest_label</code>). HALCONs <code style="color:#22d3bf">select_shape_std</code> (Select regions of a given shape.) ist ein Operator, bei dem unter mehreren Standardkriterien einschließlich <code style="color:#22d3bf">max_area</code> gewählt werden kann, hier jedoch fest auf das eine Kriterium &#x27;größte Fläche&#x27; festgelegt ist (eine Approximation).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。複数領域が同面積の場合は </code><code style="color:#22d3bf">argmax</code>` の実装依存で</p>
-<p>どれか 1 つが選ばれる。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。複数領域が同面積の場合は <code style="color:#22d3bf">argmax</code> の実装依存でどれか 1 つが選ばれる。</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
@@ -26,7 +25,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-select_shape_std 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aselect_shape_std%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aselect_shape_std%200.50%200.50">Load &amp; run</a></p>
+select_shape_std 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aselect_shape_std%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aselect_shape_std%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">region</code> als Eingabe)</h3>

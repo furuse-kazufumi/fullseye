@@ -6,29 +6,16 @@
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p>*出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_structure_texture.a.jpg">dc_structure_texture: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_structure_texture.a.jpg">dc_structure_texture: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_structure_texture.inputs.jpg">dc_structure_texture: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_structure_texture.inputs.jpg">dc_structure_texture: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Structure / cartoon part of the image (TV-L2, Chambolle).</p>
-<p>画像を「構造(cartoon)+テクスチャ」に分け、構造側を返す。ROF/TV-L2 モデル</p>
-<p>`<code style="color:#22d3bf">min_u ||u - f||^2 / (2*weight) + TV(u)</code>` を Chambolle(2004)の双対射影法で</p>
-<p>固定 120 反復(`<code style="color:#22d3bf">tau=0.125</code><code style="color:#22d3bf">)解く。</code><code style="color:#22d3bf">weight = 0.02 + 0.28*a</code><code style="color:#22d3bf"> で、</code><code style="color:#22d3bf">a</code>` が</p>
-<p>大きいほど滑らか(平坦な区画が広がり、細かい模様が消える)、`<code style="color:#22d3bf">a=0</code>` でも</p>
-<p>ごく弱い平滑が入る。`<code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>入力は 2 次元 float64・[0,1] に揃える(3 次元はチャネル平均、NaN→0、</p>
-<p>±Inf→1/0)。返り値は入力と同形の float64、[0,1] に clip。飽和しない限り</p>
-<p>`<code style="color:#22d3bf">dc_structure_texture + (dc_texture_residual - 0.5) == 入力</code>` が成り立つ。</p>
-<p>1xN / Nx1 など 2 次元の発散が定義できない極小画像は入力をそのまま返す</p>
-<p>(構造=入力、テクスチャ=0.5)。例外時は fail-soft で入力のクリップ版が返り、</p>
-<p>backend_safe の台帳に記録される(strict モードでは再送出)。</p>
-<p>ガウスぼかしと違ってエッジ(段差)は保ち、模様・ノイズだけを落とす。反復数が</p>
-<p>固定なので大きな画像では収束しきらないことがある(残りはテクスチャ側に出る)。</p>
-<p>テクスチャ側だけが欲しければ `<code style="color:#22d3bf">dc_texture_residual</code>`。周期模様の除去や</p>
-<p>欠陥検出の前処理として使い、後段に `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">dyn_threshold</code>`。</p>
-<p>背景が低ランク(縞・グラデーション)なら `<code style="color:#22d3bf">dc_rpca_lowrank</code>` も候補。</p>
+<p>画像を「構造(cartoon)+テクスチャ」に分け、構造側を返す。ROF/TV-L2 モデル <code style="color:#22d3bf">min_u ||u - f||^2 / (2*weight) + TV(u)</code> を Chambolle(2004)の双対射影法で固定 120 反復(<code style="color:#22d3bf">tau=0.125</code>)解く。<code style="color:#22d3bf">weight = 0.02 + 0.28*a</code> で、<code style="color:#22d3bf">a</code> が大きいほど滑らか(平坦な区画が広がり、細かい模様が消える)、<code style="color:#22d3bf">a=0</code> でもごく弱い平滑が入る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>入力は 2 次元 float64・[0,1] に揃える(3 次元はチャネル平均、NaN→0、±Inf→1/0)。返り値は入力と同形の float64、[0,1] に clip。飽和しない限り <code style="color:#22d3bf">dc_structure_texture + (dc_texture_residual - 0.5) == 入力</code> が成り立つ。1xN / Nx1 など 2 次元の発散が定義できない極小画像は入力をそのまま返す(構造=入力、テクスチャ=0.5)。例外時は fail-soft で入力のクリップ版が返り、backend_safe の台帳に記録される(strict モードでは再送出)。</p>
+<p>ガウスぼかしと違ってエッジ(段差)は保ち、模様・ノイズだけを落とす。反復数が固定なので大きな画像では収束しきらないことがある(残りはテクスチャ側に出る)。テクスチャ側だけが欲しければ <code style="color:#22d3bf">dc_texture_residual</code>。周期模様の除去や欠陥検出の前処理として使い、後段に <code style="color:#22d3bf">threshold</code> や <code style="color:#22d3bf">dyn_threshold</code>。背景が低ランク(縞・グラデーション)なら <code style="color:#22d3bf">dc_rpca_lowrank</code> も候補。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
@@ -39,7 +26,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">dc_structure_texture 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:dc_structure_texture%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:dc_structure_texture%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">dc_structure_texture 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:dc_structure_texture%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:dc_structure_texture%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fiber_orientation">poc_fiber_orientation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fiber_orientation.py</code></p>

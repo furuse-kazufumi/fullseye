@@ -7,20 +7,14 @@
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p>*出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hough_line_trans.a.jpg">hough_line_trans: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hough_line_trans.a.jpg">hough_line_trans: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hough_line_trans.inputs.jpg">hough_line_trans: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hough_line_trans.inputs.jpg">hough_line_trans: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>直線検出のための Hough 変換アキュムレータ。まず Sobel 勾配からエッジ</p>
-<p>マスクを作り、`<code style="color:#22d3bf">skimage.transform.hough_line</code>` でアキュムレータ空間</p>
-<p>(角度×距離)を計算、正規化してから入力と同じ画素形状にリサイズして返す</p>
-<p>(アキュムレータそのものの座標系ではなく画像として可視化する形)。HALCON の</p>
-<p>`<code style="color:#22d3bf">hough_line_trans</code>`（Produce the Hough transform for lines within</p>
-<p>regions.）に相当。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ抽出の閾値(0.2〜0.6)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。半径・角度分解能</p>
-<p>は skimage の既定値に固定されている。</p>
+<p>直線検出のための Hough 変換アキュムレータ。まず Sobel 勾配からエッジマスクを作り、<code style="color:#22d3bf">skimage.transform.hough_line</code> でアキュムレータ空間(角度×距離)を計算、正規化してから入力と同じ画素形状にリサイズして返す(アキュムレータそのものの座標系ではなく画像として可視化する形)。HALCON の <code style="color:#22d3bf">hough_line_trans</code>（Produce the Hough transform for lines within regions.）に相当。</p>
+<p><code style="color:#22d3bf">a</code> がエッジ抽出の閾値(0.2〜0.6)を振る。<code style="color:#22d3bf">b</code> は未使用。半径・角度分解能は skimage の既定値に固定されている。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
@@ -30,7 +24,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hough_line_trans 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hough_line_trans%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hough_line_trans%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hough_line_trans 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hough_line_trans%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hough_line_trans%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

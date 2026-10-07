@@ -3,20 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.coherence(x, y, rate, win=None, hop=None, window=&#x27;hann&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import acoustics; acoustics.coherence(x, y, rate, win=None, hop=None, window=&#x27;hann&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsacoustics.get(&quot;coherence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>通常のコヒーレンス: `<code style="color:#22d3bf">y</code><code style="color:#22d3bf"> のうち </code><code style="color:#22d3bf">x</code>` で線形に説明できる割合。</p>
+<p>通常のコヒーレンス: <code style="color:#22d3bf">y</code> のうち <code style="color:#22d3bf">x</code> で線形に説明できる割合。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>`<code style="color:#22d3bf">gamma**2(f) = |Pxy|**2 / (Pxx * Pyy)</code>`, Welch-averaged. It is bounded in</p>
-<p>`<code style="color:#22d3bf">[0, 1]</code>`, and it is the number that says whether a transfer function is</p>
-<p>worth reading at a given frequency.</p>
-<p><b>A single frame makes it identically 1.0</b> — the Cauchy-Schwarz inequality</p>
-<p>is an equality without averaging — so an unaveraged coherence is a perfect</p>
-<p>score that carries no information at all. That case is refused, not returned.</p>
-<p>`<code style="color:#22d3bf">win</code>` defaults to the largest power of two leaving at least 8 frames,</p>
-<p>capped at 1024; the value used is returned.</p>
-<p>Returns a dict: `<code style="color:#22d3bf">freqs</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">coherence</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_frames</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">win</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">hop</code>`,</p>
-<p>`<code style="color:#22d3bf">rate</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">mean_coherence</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">bias</code>` (the coherence a *pair of independent</p>
-<p>noise records* would show with this many frames, `<code style="color:#22d3bf">1/n_frames</code>` — anything</p>
-<p>at or below this is indistinguishable from nothing).</p>
+<p><code style="color:#22d3bf">gamma**2(f) = |Pxy|**2 / (Pxx * Pyy)</code>, Welch-averaged. It is bounded in <code style="color:#22d3bf">[0, 1]</code>, and it is the number that says whether a transfer function is worth reading at a given frequency.</p>
+<p><b>A single frame makes it identically 1.0</b> — the Cauchy-Schwarz inequality is an equality without averaging — so an unaveraged coherence is a perfect score that carries no information at all. That case is refused, not returned.</p>
+<p><code style="color:#22d3bf">win</code> defaults to the largest power of two leaving at least 8 frames, capped at 1024; the value used is returned.</p>
+<p>Returns a dict: <code style="color:#22d3bf">freqs</code>, <code style="color:#22d3bf">coherence</code>, <code style="color:#22d3bf">n_frames</code>, <code style="color:#22d3bf">win</code>, <code style="color:#22d3bf">hop</code>, <code style="color:#22d3bf">rate</code>, <code style="color:#22d3bf">mean_coherence</code>, <code style="color:#22d3bf">bias</code> (the coherence a *pair of independent noise records* would show with this many frames, <code style="color:#22d3bf">1/n_frames</code> — anything at or below this is indistinguishable from nothing).</p>
 <p>Measured at 16 kHz over 16384 samples, win = 1024, 31 frames:</p>
 <p>=======================================  ==============  ========</p>
 <p>case                                     mean coherence  min</p>
@@ -26,17 +18,8 @@
 <p>y = 2.5 x + independent noise, 0 dB SNR  0.509143        0.2219</p>
 <p>y, x independent noise                   0.035640        0.0001</p>
 <p>=======================================  ==============  ========</p>
-<p>Row three against its closed form: for output noise the expected coherence</p>
-<p>is `<code style="color:#22d3bf">SNR/(1+SNR)</code>` = 0.5000 at 0 dB, measured 0.5091. Row four against the</p>
-<p>bias floor `<code style="color:#22d3bf">1/n_frames = 1/31 = 0.0323</code>`, measured 0.0356 — which is why</p>
-<p>`<code style="color:#22d3bf">bias</code>` is returned: <b>an uncorrelated pair does not read zero</b>, and</p>
-<p>reading 0.03 as &quot;a little bit of coupling&quot; is the mistake this number</p>
-<p>prevents. Row two shows the other honest limit: a pure delay is a perfectly</p>
-<p>linear system and still reads 0.983, not 1, because a delay of 37 samples</p>
-<p>moves signal across the frame boundaries the estimator averages over.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal` refuses on either</p>
-<p>channel, unequal channel lengths, fewer than 2 frames, `<code style="color:#22d3bf">win</code>` longer than</p>
-<p>the record, an unknown window.</p>
+<p>Row three against its closed form: for output noise the expected coherence is <code style="color:#22d3bf">SNR/(1+SNR)</code> = 0.5000 at 0 dB, measured 0.5091. Row four against the bias floor <code style="color:#22d3bf">1/n_frames = 1/31 = 0.0323</code>, measured 0.0356 — which is why <code style="color:#22d3bf">bias</code> is returned: <b>an uncorrelated pair does not read zero</b>, and reading 0.03 as &quot;a little bit of coupling&quot; is the mistake this number prevents. Row two shows the other honest limit: a pure delay is a perfectly linear system and still reads 0.983, not 1, because a delay of 37 samples moves signal across the frame boundaries the estimator averages over.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: everything <code style="color:#22d3bf">_as_signal</code> refuses on either channel, unequal channel lengths, fewer than 2 frames, <code style="color:#22d3bf">win</code> longer than the record, an unknown window.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

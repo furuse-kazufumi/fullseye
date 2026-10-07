@@ -5,19 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>CommonRoad 2020a XML(文字列 or パス)を読む。</p>
-<p>返り値: ``{&quot;kind&quot;: &quot;commonroad_scene&quot;, &quot;id&quot;, &quot;dt&quot;, &quot;version&quot;, &quot;lanelets&quot;: {id: {&quot;center&quot; (n,2), &quot;left&quot;, &quot;right&quot;, &quot;polygon&quot;,</p>
-<p>&quot;successors&quot;, &quot;predecessors&quot;, &quot;adj_left&quot;, &quot;adj_right&quot;, &quot;speed_limit_mps&quot; | None, &quot;stop_line&quot; (2,2) | None,</p>
-<p>&quot;traffic_sign_ids&quot;, &quot;traffic_light_ids&quot;, &quot;length&quot;}}, &quot;obstacles&quot;: [{&quot;id&quot;, &quot;type&quot;, &quot;static&quot;, &quot;shape&quot;, &quot;states&quot; (T,5)</p>
-<p>[time_step, x, y, orientation, velocity]}], &quot;planning_problems&quot;: [{&quot;id&quot;, &quot;initial&quot;: {time_step, x, y, orientation,</p>
-<p>velocity}, &quot;goal&quot;: [{&quot;time_step&quot;: (lo, hi), &quot;position_lanelets&quot; | None, &quot;position_polygon&quot; (k,2) | None,</p>
-<p>&quot;velocity&quot;: (lo, hi) | None, &quot;orientation&quot;: (lo, hi) | None}]}], &quot;traffic_signs&quot;: {id: {&quot;element_ids&quot;, &quot;additional&quot;,</p>
-<p>&quot;position&quot;}}, &quot;traffic_lights&quot;: {id: {&quot;position&quot;, &quot;cycle&quot;: [(color, duration)], &quot;time_offset&quot;, &quot;active&quot;, &quot;direction&quot;}}}``。</p>
+<p>返り値: <code style="color:#22d3bf">{&quot;kind&quot;: &quot;commonroad_scene&quot;, &quot;id&quot;, &quot;dt&quot;, &quot;version&quot;, &quot;lanelets&quot;: {id: {&quot;center&quot; (n,2), &quot;left&quot;, &quot;right&quot;, &quot;polygon&quot;, &quot;successors&quot;, &quot;predecessors&quot;, &quot;adj_left&quot;, &quot;adj_right&quot;, &quot;speed_limit_mps&quot; | None, &quot;stop_line&quot; (2,2) | None, &quot;traffic_sign_ids&quot;, &quot;traffic_light_ids&quot;, &quot;length&quot;}}, &quot;obstacles&quot;: [{&quot;id&quot;, &quot;type&quot;, &quot;static&quot;, &quot;shape&quot;, &quot;states&quot; (T,5) [time_step, x, y, orientation, velocity]}], &quot;planning_problems&quot;: [{&quot;id&quot;, &quot;initial&quot;: {time_step, x, y, orientation, velocity}, &quot;goal&quot;: [{&quot;time_step&quot;: (lo, hi), &quot;position_lanelets&quot; | None, &quot;position_polygon&quot; (k,2) | None, &quot;velocity&quot;: (lo, hi) | None, &quot;orientation&quot;: (lo, hi) | None}]}], &quot;traffic_signs&quot;: {id: {&quot;element_ids&quot;, &quot;additional&quot;, &quot;position&quot;}}, &quot;traffic_lights&quot;: {id: {&quot;position&quot;, &quot;cycle&quot;: [(color, duration)], &quot;time_offset&quot;, &quot;active&quot;, &quot;direction&quot;}}}</code>。</p>
 <p>中心線は左右境界の平均(頂点数が揃っていることを要求)。標識 274 の additional_value[0] は m/s → float。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 壊れた XML、ルートが commonRoad でない、commonRoadVersion ≠ 2020a、必須要素の欠落、矩形以外の障害物。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 壊れた XML、ルートが commonRoad でない、commonRoadVersion ≠ 2020a、必須要素の欠落、矩形以外の障害物。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_commonroad">poc_driving_commonroad</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_commonroad.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

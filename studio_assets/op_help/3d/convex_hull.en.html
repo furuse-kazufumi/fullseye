@@ -3,14 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_hull(V)</code> (to call the implementation directly, <code style="color:#22d3bf">import meshrepair; meshrepair.convex_hull(V)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;convex_hull&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Convex hull of a point set -&gt; `<code style="color:#22d3bf">(V, F)</code>` with outward-oriented triangles.</p>
-<p>Thin wrapper over :class:<code style="color:#22d3bf">scipy.spatial.ConvexHull</code> (Qhull): interior points</p>
-<p>are dropped, faces are triangulated, and each triangle is wound so its normal</p>
-<p>points away from the hull centroid (outward, positive signed volume) — so the</p>
-<p>result feeds straight into :func:<code style="color:#22d3bf">inertia_tensor</code> or a MuJoCo convex collider.</p>
-<p>Needs at least 4 non-coplanar points.</p>
+<p>Convex hull of a point set -&gt; <code style="color:#22d3bf">(V, F)</code> with outward-oriented triangles.</p>
+<p>Thin wrapper over <code style="color:#22d3bf">scipy.spatial.ConvexHull</code> (Qhull): interior points are dropped, faces are triangulated, and each triangle is wound so its normal points away from the hull centroid (outward, positive signed volume) — so the result feeds straight into <code style="color:#22d3bf">inertia_tensor</code> or a MuJoCo convex collider. Needs at least 4 non-coplanar points.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

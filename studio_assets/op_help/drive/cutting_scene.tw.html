@@ -4,17 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cutting_scene(kind: &#x27;str&#x27; = &#x27;face&#x27;, px_per_mm: &#x27;float | None&#x27; = None, **overrides) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.cutting_scene(kind: &#x27;str&#x27; = &#x27;face&#x27;, px_per_mm: &#x27;float | None&#x27; = None, **overrides) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cutting_scene&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>合成の場面の諸元(dict)。`<code style="color:#22d3bf">kind=&quot;face&quot;</code><code style="color:#22d3bf"> = 正面像(カメラは刃の面の法線方向)、</code><code style="color:#22d3bf">&quot;edge&quot;</code>` = 刃先方向の像。</p>
-<p>正面像: 刃は食材より長く、食材の左右で刃先の直線が見える。食材の幅の中は食材に隠れる。キーは `<code style="color:#22d3bf">food_xc</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">food_w</code>` /</p>
-<p>`<code style="color:#22d3bf">food_h</code><code style="color:#22d3bf">(食材の中心・幅・高さ)、</code><code style="color:#22d3bf">blade_len</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">blade_h</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tip_slant</code>`(刃先の長さ・刃の高さ・先端の斜め部)。</p>
-<p>刃先方向の像: 刃は細い帯に見え、片刃の平らな面と食材の端面の距離が切片の厚み。キーは `<code style="color:#22d3bf">food_top</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">blade_tb</code>`(峰の厚み)、</p>
-<p>`<code style="color:#22d3bf">blade_hb</code><code style="color:#22d3bf">(片刃の切刃の高さ)、</code><code style="color:#22d3bf">blade_h</code>`。</p>
-<p>`<code style="color:#22d3bf">px_per_mm</code><code style="color:#22d3bf"> を変えると画素の寸法 </code><code style="color:#22d3bf">H</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">W</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">board_row</code>`(z = 0 の行)が比例して変わる(mm の寸法は同じ)。</p>
-<p>既定は正面像 8 px/mm(800×480)、刃先方向 20 px/mm(520×560)。知らないキーは ValueError(綴り壊しを黙って通さない)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>合成の場面の諸元(dict)。<code style="color:#22d3bf">kind=&quot;face&quot;</code> = 正面像(カメラは刃の面の法線方向)、<code style="color:#22d3bf">&quot;edge&quot;</code> = 刃先方向の像。</p>
+<p>正面像: 刃は食材より長く、食材の左右で刃先の直線が見える。食材の幅の中は食材に隠れる。キーは <code style="color:#22d3bf">food_xc</code> / <code style="color:#22d3bf">food_w</code> / <code style="color:#22d3bf">food_h</code>(食材の中心・幅・高さ)、<code style="color:#22d3bf">blade_len</code> / <code style="color:#22d3bf">blade_h</code> / <code style="color:#22d3bf">tip_slant</code>(刃先の長さ・刃の高さ・先端の斜め部)。</p>
+<p>刃先方向の像: 刃は細い帯に見え、片刃の平らな面と食材の端面の距離が切片の厚み。キーは <code style="color:#22d3bf">food_top</code>、<code style="color:#22d3bf">blade_tb</code>(峰の厚み)、<code style="color:#22d3bf">blade_hb</code>(片刃の切刃の高さ)、<code style="color:#22d3bf">blade_h</code>。</p>
+<p><code style="color:#22d3bf">px_per_mm</code> を変えると画素の寸法 <code style="color:#22d3bf">H</code> / <code style="color:#22d3bf">W</code> / <code style="color:#22d3bf">board_row</code>(z = 0 の行)が比例して変わる(mm の寸法は同じ)。既定は正面像 8 px/mm(800×480)、刃先方向 20 px/mm(520×560)。知らないキーは ValueError(綴り壊しを黙って通さない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_food_cutting_measure">poc_food_cutting_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_food_cutting_measure.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_knife_tactile_toughness">poc_knife_tactile_toughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_knife_tactile_toughness.py</code></p>

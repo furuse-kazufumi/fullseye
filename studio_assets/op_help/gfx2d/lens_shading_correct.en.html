@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_shading_correct(raw, gain)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.lens_shading_correct(raw, gain)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;lens_shading_correct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Multiply a frame by a lens-shading gain map and clip to `<code style="color:#22d3bf">[0, 1]</code>`. *raw* and *gain* must have the same shape; the gain must be finite and &gt; 0.</p>
+<p>Multiply a frame by a lens-shading gain map and clip to <code style="color:#22d3bf">[0, 1]</code>. *raw* and *gain* must have the same shape; the gain must be finite and &gt; 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -5,28 +5,18 @@
 <p><img src="fig/tb_countrate_to_counts.png" alt="tb_countrate_to_counts: input → output"></p>
 <p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
 <p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.a.jpg">tb_countrate_to_counts: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.a.jpg">tb_countrate_to_counts: 旋鈕 a 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.chain.jpg">tb_countrate_to_counts: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.chain.jpg">tb_countrate_to_counts: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.inputs.jpg">tb_countrate_to_counts: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.inputs.jpg">tb_countrate_to_counts: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>計數率 `<code style="color:#22d3bf">[Hz]</code><code style="color:#22d3bf"> → 計數 </code><code style="color:#22d3bf">counts</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">countrate</code>` 的出口（<b>可逆</b>）。</p>
+<p>計數率 <code style="color:#22d3bf">[Hz]</code> → 計數 <code style="color:#22d3bf">counts</code>。<code style="color:#22d3bf">countrate</code> 的出口（<b>可逆</b>）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><b>単位が変換の全内容</b>: `<code style="color:#22d3bf">[1/s] * [s] = [1]</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">gate_s</code>` は積算窓の秒数で、</p>
-<p>既定 1 ms。`<code style="color:#22d3bf">counts</code>` は「時間 bin ごとの光子数」の型なので、レート列を</p>
-<p>そのまま counts と名乗らせると<b>桁が 7 つずれたまま黙って通る</b></p>
-<p>(`<code style="color:#22d3bf">TYPE_CHECKS</code>` はどちらも「非負の 1-D」としか見ていない)。</p>
-<p>:func:<code style="color:#22d3bf">counts_to_countrate</code> と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので</p>
-<p><b>相対</b> 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、</p>
-<p>レートのように桁が広い量は相対で言う)。</p>
-<p>★<b>2 度掛けても例外は出ない</b>。`<code style="color:#22d3bf">TYPE_TO_SORT</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">countrate</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">counts</code>` に</p>
-<p>畳んでいるので、出口が入口にそのまま繋がる。実測(2026-09-08、1,200 Hz を</p>
-<p>gate 1 ms で): 1 回で 1.2000 counts、もう 1 回通すと 0.0012 counts ——</p>
-<p><b>1,000 倍の取り違えが、負の値も NaN も出さずに通る</b>。値だけを見て</p>
-<p>「レートか計数か」を判定する方法は無いので、この 1 件は検査でなく</p>
-<p><b>呼ぶ側の規律</b>で守るしかない(繋いだ経路を書き残すこと)。</p>
+<p><b>単位が変換の全内容</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>。<code style="color:#22d3bf">gate_s</code> は積算窓の秒数で、既定 1 ms。<code style="color:#22d3bf">counts</code> は「時間 bin ごとの光子数」の型なので、レート列をそのまま counts と名乗らせると<b>桁が 7 つずれたまま黙って通る</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> はどちらも「非負の 1-D」としか見ていない)。</p>
+<p><code style="color:#22d3bf">counts_to_countrate</code> と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので <b>相対</b> 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、レートのように桁が広い量は相対で言う)。</p>
+<p>★<b>2 度掛けても例外は出ない</b>。<code style="color:#22d3bf">TYPE_TO_SORT</code> が <code style="color:#22d3bf">countrate</code> を <code style="color:#22d3bf">counts</code> に畳んでいるので、出口が入口にそのまま繋がる。実測(2026-09-08、1,200 Hz を gate 1 ms で): 1 回で 1.2000 counts、もう 1 回通すと 0.0012 counts —— <b>1,000 倍の取り違えが、負の値も NaN も出さずに通る</b>。値だけを見て「レートか計数か」を判定する方法は無いので、この 1 件は検査でなく <b>呼ぶ側の規律</b>で守るしかない(繋いだ経路を書き残すこと)。</p>
 <p>Args:</p>
 <p>countrate: (N,) の非負レート [Hz]。</p>
 <p>gate_s: 積算窓 [s]。&gt; 0。</p>
@@ -34,14 +24,14 @@
 <p>(N,) float64 の非負計数。</p>
 <p>Raises:</p>
 <p>ValueError: 負のレート / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op `<code style="color:#22d3bf">countrate_to_counts</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">gate_s</code><code style="color:#22d3bf">(既定 0.001)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">countrate_to_counts</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">gate_s</code>(既定 0.001)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_counts 0.50 0.50
-tb_countrate_to_counts 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_counts%200.50%200.50%0Atb_countrate_to_counts%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_counts%200.50%200.50%0Atb_countrate_to_counts%200.50%200.50">Load &amp; run</a></p>
+tb_countrate_to_counts 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_counts%200.50%200.50%0Atb_countrate_to_counts%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_counts%200.50%200.50%0Atb_countrate_to_counts%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p>下面的範例呼叫的是底層帳本運算子 <code style="color:#22d3bf">countrate_to_counts</code>。此橋接運算子只是把同一實作適配為 <code style="color:#22d3bf">fn(v, a, b)</code> 慣例，行為完全相同(只是呼叫形式不同)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>

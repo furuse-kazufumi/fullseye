@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stanley_straight_decay(e0: &#x27;float&#x27;, t, *, gain: &#x27;float&#x27;, speed: &#x27;float&#x27;, softening: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.stanley_straight_decay(e0: &#x27;float&#x27;, t, *, gain: &#x27;float&#x27;, speed: &#x27;float&#x27;, softening: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;stanley_straight_decay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>直線の経路で Stanley(切らない)の前車軸の横ずれ e(t) の閉形式。</p>
-<p>ė = −v k e / √(a² + k² e²)、a = k_s + v。F(e) = √(a² + k²e²) − a ln((a + √(a² + k²e²))/(k|e|)) は</p>
-<p>dF/dt = −v k(一定)。F(e(t)) = F(e₀) − v k t を |e| ∈ (0, |e₀|] の二分法(F は |e| に単調増加)で解く。</p>
-<p>小さい e では e ≈ e₀&#x27; e^{−k t v/a}(指数)、大きい e では |e| がほぼ v t で減る(直線)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: k ≤ 0、v ≤ 0、k_s &lt; 0、t &lt; 0。</p>
+<p>ė = −v k e / √(a² + k² e²)、a = k_s + v。F(e) = √(a² + k²e²) − a ln((a + √(a² + k²e²))/(k|e|)) は dF/dt = −v k(一定)。F(e(t)) = F(e₀) − v k t を |e| ∈ (0, |e₀|] の二分法(F は |e| に単調増加)で解く。小さい e では e ≈ e₀&#x27; e^{−k t v/a}(指数)、大きい e では |e| がほぼ v t で減る(直線)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: k ≤ 0、v ≤ 0、k_s &lt; 0、t &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -4,19 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wave_nodal_lines(field, tol=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.wave_nodal_lines(field, tol=0.0)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;wave_nodal_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Where a signed field changes sign — the nodal set, as a mask.</p>
-<p>A pixel is marked when it differs in sign from its right or lower neighbour</p>
-<p>(or is within *tol* of zero). That is the discrete version of &quot;the sand</p>
-<p>collects where the plate does not move&quot;.</p>
-<p>★<b>Why this earns its place</b>: the count is predictable. A plain `<code style="color:#22d3bf">(m, n)</code>`</p>
-<p>rectangular mode has `<code style="color:#22d3bf">m-1</code><code style="color:#22d3bf"> interior nodal lines in one direction and </code><code style="color:#22d3bf">n-1</code>`</p>
-<p>in the other, so the mask can be graded against integers rather than by eye.</p>
-<p>Returns a `<code style="color:#22d3bf">mask</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: not a 2-D array; non-finite values; negative *tol*.</p>
+<p>A pixel is marked when it differs in sign from its right or lower neighbour (or is within *tol* of zero). That is the discrete version of &quot;the sand collects where the plate does not move&quot;.</p>
+<p>★<b>Why this earns its place</b>: the count is predictable. A plain <code style="color:#22d3bf">(m, n)</code> rectangular mode has <code style="color:#22d3bf">m-1</code> interior nodal lines in one direction and <code style="color:#22d3bf">n-1</code> in the other, so the mask can be graded against integers rather than by eye.</p>
+<p>Returns a <code style="color:#22d3bf">mask</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not a 2-D array; non-finite values; negative *tol*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

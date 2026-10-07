@@ -3,14 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">curvature</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index_to_curvature(pairs)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.shape_index_to_curvature(pairs)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;shape_index_to_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>형상 지수와 굽음 `<code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> → 주곡률 </code><code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf">. :func:</code>curvature_to_shape_index` 의 역.</p>
+<p>형상 지수와 굽음 <code style="color:#22d3bf">(N,2)</code> → 주곡률 <code style="color:#22d3bf">(N,2)</code>. <code style="color:#22d3bf">curvature_to_shape_index</code> 의 역.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>theta = pi*S/2 として `<code style="color:#22d3bf">k1 = C(sin+cos)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">k2 = C(sin-cos)</code>`。</p>
-<p>(S, C) の定義式を解いた閉形式で、近似も反復も入っていない。</p>
+<p>theta = pi*S/2 として <code style="color:#22d3bf">k1 = C(sin+cos)</code>, <code style="color:#22d3bf">k2 = C(sin-cos)</code>。(S, C) の定義式を解いた閉形式で、近似も反復も入っていない。</p>
 <p>Args:</p>
-<p>pairs: (N, 2) の `<code style="color:#22d3bf">[S, C]</code>`。</p>
+<p>pairs: (N, 2) の <code style="color:#22d3bf">[S, C]</code>。</p>
 <p>Returns:</p>
-<p>(N, 2) float64 の `<code style="color:#22d3bf">[k1, k2]</code>`(k1 &gt;= k2)。</p>
+<p>(N, 2) float64 の <code style="color:#22d3bf">[k1, k2]</code>(k1 &gt;= k2)。</p>
 <p>Raises:</p>
 <p>ValueError: |S| &gt; 1 / C &lt; 0 / 形状不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

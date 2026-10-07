@@ -5,33 +5,27 @@
 <p><img src="fig/tb_env_lightbox.png" alt="tb_env_lightbox: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_env_lightbox.a.jpg">tb_env_lightbox: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_env_lightbox.a.jpg">tb_env_lightbox: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_env_lightbox.b.jpg">tb_env_lightbox: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_env_lightbox.b.jpg">tb_env_lightbox: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_env_lightbox.chain.jpg">tb_env_lightbox: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_env_lightbox.chain.jpg">tb_env_lightbox: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_env_lightbox.inputs.jpg">tb_env_lightbox: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_env_lightbox.inputs.jpg">tb_env_lightbox: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>撮影ボックスの環境(広い天井の明かり + ほんのり明るい周囲)。<b>無彩色</b>。</p>
-<p>:func:<code style="color:#22d3bf">env_studio</code> が「劇的に見せる」ための暗い部屋 + 小さいソフトボックス 2 灯</p>
-<p>なのに対し、こちらは<b>加工面が加工面に見える</b>ための環境。2026-09-05 の実測で</p>
-<p>分かった 2 つの条件を満たすように作ってある:</p>
-<p style="margin:2px 0 2px 12px">• 周囲が明るいこと ―― 暗い環境だとアルミが真っ黒になる(反射率 ~0.9 の金属が</p>
-<p>黒く写るのは、映るものが黒いから)。</p>
-<p style="margin:2px 0 2px 12px">• それでも<b>勾配があること</b> ―― 完全に一様な環境では、どんな異方性ローブでも</p>
-<p>同じ値を返すので加工目が消える。ブラシ目が見えるのは、目が環境の明暗を</p>
-<p>目方向に引き伸ばすからである。</p>
-<p>加工目は<b>斜めから見ないと出ない</b>(真上から見た平面は反射方向が全画素で天頂に</p>
-<p>集中し、環境の勾配を掃かない)。`<code style="color:#22d3bf">optical_camera(tilt_deg=50〜70)</code>` 程度が目安。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op `<code style="color:#22d3bf">env_lightbox</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">base</code><code style="color:#22d3bf">(既定 0.45)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">key</code>`(既定 4)を振る。</p>
+<p><code style="color:#22d3bf">env_studio</code> が「劇的に見せる」ための暗い部屋 + 小さいソフトボックス 2 灯なのに対し、こちらは<b>加工面が加工面に見える</b>ための環境。2026-09-05 の実測で分かった 2 つの条件を満たすように作ってある:</p>
+<p style="margin:2px 0 2px 12px">• 周囲が明るいこと ―― 暗い環境だとアルミが真っ黒になる(反射率 ~0.9 の金属が黒く写るのは、映るものが黒いから)。</p>
+<p style="margin:2px 0 2px 12px">• それでも<b>勾配があること</b> ―― 完全に一様な環境では、どんな異方性ローブでも同じ値を返すので加工目が消える。ブラシ目が見えるのは、目が環境の明暗を目方向に引き伸ばすからである。</p>
+<p>加工目は<b>斜めから見ないと出ない</b>(真上から見た平面は反射方向が全画素で天頂に集中し、環境の勾配を掃かない)。<code style="color:#22d3bf">optical_camera(tilt_deg=50〜70)</code> 程度が目安。</p>
+<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">env_lightbox</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">base</code>(既定 0.45)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">key</code>(既定 4)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
-tb_env_lightbox 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_env_lightbox%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_env_lightbox%200.50%200.50">Load &amp; run</a></p>
+tb_env_lightbox 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_env_lightbox%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_env_lightbox%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">env_lightbox</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:studio_raytrace_scene">studio_raytrace_scene</a> — <code style="color:#22d3bf">py -3.11 examples/studio_raytrace_scene.py</code></p>

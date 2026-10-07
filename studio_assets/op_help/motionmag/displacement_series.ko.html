@@ -3,20 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.displacement_series(video, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import motionmag; motionmag.displacement_series(video, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmotionmag.get(&quot;displacement_series&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>프레임 전체의 변위 파형 -&gt; `<code style="color:#22d3bf">(dx, dy)</code><code style="color:#22d3bf"> 의 </code><code style="color:#22d3bf">(T, 2)</code>` 배열.</p>
+<p>프레임 전체의 변위 파형 -&gt; <code style="color:#22d3bf">(dx, dy)</code> 의 <code style="color:#22d3bf">(T, 2)</code> 배열.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The contrast-weighted spatial mean of :func:<code style="color:#22d3bf">phase_displacement</code>, i.e. the</p>
-<p>rigid-body motion of the scene in pixels, one row per frame. This is the</p>
-<p>trace to plot, or to feed to `<code style="color:#22d3bf">dsp.spectrum</code>` to read off the resonant</p>
-<p>frequency — a vibration waveform recovered from a camera.</p>
-<p>Weights are the same `<code style="color:#22d3bf">|z|^2</code>` contrast the field solve uses, restricted to</p>
-<p>the pixels marked `<code style="color:#22d3bf">valid</code>`, so blank regions do not drag the average</p>
-<p>towards zero. A clip with no valid pixel anywhere (a constant image) returns</p>
-<p>exact zeros rather than a division by zero.</p>
-<p>Sub-pixel accuracy and its cliff inherit from :func:<code style="color:#22d3bf">phase_displacement</code>;</p>
-<p>measured on the 64x64x64 / 8 px / 4 Hz synthetic, a true 0.5 px amplitude is</p>
-<p>recovered as 0.50000000 px (6.7e-16 relative), and a true 0.001 px amplitude</p>
-<p>as 0.00100000 px (8.7e-15).</p>
+<p>The contrast-weighted spatial mean of <code style="color:#22d3bf">phase_displacement</code>, i.e. the rigid-body motion of the scene in pixels, one row per frame. This is the trace to plot, or to feed to <code style="color:#22d3bf">dsp.spectrum</code> to read off the resonant frequency — a vibration waveform recovered from a camera.</p>
+<p>Weights are the same <code style="color:#22d3bf">|z|^2</code> contrast the field solve uses, restricted to the pixels marked <code style="color:#22d3bf">valid</code>, so blank regions do not drag the average towards zero. A clip with no valid pixel anywhere (a constant image) returns exact zeros rather than a division by zero.</p>
+<p>Sub-pixel accuracy and its cliff inherit from <code style="color:#22d3bf">phase_displacement</code>; measured on the 64x64x64 / 8 px / 4 Hz synthetic, a true 0.5 px amplitude is recovered as 0.50000000 px (6.7e-16 relative), and a true 0.001 px amplitude as 0.00100000 px (8.7e-15).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

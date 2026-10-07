@@ -5,19 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>容差 tau 下的边界 F 值：precision = 预测边界像素中落在真边界 tau 距离内的比例，recall 反之（seg_boundary_f）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>F = 2PR/(P+R)。境界は :func:<code style="color:#22d3bf">_boundary</code> の規約(ラベルの割れ目、1 画素幅)なので、ラベルの番号や背景の区別によらない</p>
-<p>(分割の形だけを見る)。距離は距離変換(ユークリッド、画素の中心)。τ = 0 で画素の一致。</p>
-<p>両方の境界が空(どちらも 1 色)なら P = R = F = 1、片方だけ空なら 0。</p>
-<p>返り値: `<code style="color:#22d3bf">f</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">precision</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">recall</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">tau</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_pred_boundary</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_true_boundary</code>`、</p>
-<p>`<code style="color:#22d3bf">dist_pred_to_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">dist_true_to_pred</code>`(境界画素ごとの距離)。</p>
+<p>F = 2PR/(P+R)。境界は <code style="color:#22d3bf">_boundary</code> の規約(ラベルの割れ目、1 画素幅)なので、ラベルの番号や背景の区別によらない(分割の形だけを見る)。距離は距離変換(ユークリッド、画素の中心)。τ = 0 で画素の一致。両方の境界が空(どちらも 1 色)なら P = R = F = 1、片方だけ空なら 0。</p>
+<p>返り値: <code style="color:#22d3bf">f</code>、<code style="color:#22d3bf">precision</code>、<code style="color:#22d3bf">recall</code>、<code style="color:#22d3bf">tau</code>、<code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>、<code style="color:#22d3bf">dist_pred_to_true</code> / <code style="color:#22d3bf">dist_true_to_pred</code>(境界画素ごとの距離)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割评分与带真值的合成世界 —— 哪种度量对哪种失效视而不见</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_am_thermal_to_ct">poc_am_thermal_to_ct</a> — <code style="color:#22d3bf">py -3.11 examples/poc_am_thermal_to_ct.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>

@@ -5,17 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>屈折コース(クランク、Z 形): 進入 → 左 90° → B → 右 90° → 退出。</p>
-<p>別表第三の図(3JH00000217782)の測り方に合わせる: 幅 A = w、曲角間の長さ B は一方の道の外壁から</p>
-<p>向かいの道の内壁まで(= 中心線の曲角間距離)、出入口部 C は横断する帯の壁から出入口まで(中心線では</p>
-<p>C + w/2)、すみ切り D は曲角部の <b>内側</b> の角(外側の角は正方形のまま)。中心線は</p>
-<p>(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B)、長さ L = 2C + w + B。面積 = w·L + 2r²(1 − π/4)</p>
-<p>(導出はモジュール docstring)。規格(普通免許): A = 3.5, B = 12, C ≥ 4, D = 1 → `<code style="color:#22d3bf">params[&quot;regulation&quot;]</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 幅・B・C が正でない、r &lt; 0、C &lt; r(すみ切りが出入口にはみ出る)、</p>
-<p>B &lt; w + r(2 つの角が重なる)、arc_pts が 1 以上の整数でない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>別表第三の図(3JH00000217782)の測り方に合わせる: 幅 A = w、曲角間の長さ B は一方の道の外壁から向かいの道の内壁まで(= 中心線の曲角間距離)、出入口部 C は横断する帯の壁から出入口まで(中心線では C + w/2)、すみ切り D は曲角部の <b>内側</b> の角(外側の角は正方形のまま)。中心線は(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B)、長さ L = 2C + w + B。面積 = w·L + 2r²(1 − π/4) (導出はモジュール docstring)。規格(普通免許): A = 3.5, B = 12, C ≥ 4, D = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・B・C が正でない、r &lt; 0、C &lt; r(すみ切りが出入口にはみ出る)、B &lt; w + r(2 つの角が重なる)、arc_pts が 1 以上の整数でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_school">poc_driving_school</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_school.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>

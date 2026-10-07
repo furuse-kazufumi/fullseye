@@ -5,37 +5,25 @@
 <p><img src="fig/deform_mls.png" alt="deform_mls: input → output"></p>
 <p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
 <p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.a.jpg">deform_mls: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.a.jpg">deform_mls: 旋鈕 a 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.b.jpg">deform_mls: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.b.jpg">deform_mls: 旋鈕 b 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.inputs.jpg">deform_mls: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.inputs.jpg">deform_mls: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>移動最小平方(moving-least-squares)影像變形,仿射變體(Schaefer 2006)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>A 5x5 grid of control points `<code style="color:#22d3bf">p_i</code>` is displaced to</p>
-<p>`<code style="color:#22d3bf">q_i = p_i + amp*[sin(2 pi gx), cos(2 pi gy)]</code>` (gy, gx = normalised</p>
-<p>control coordinates). For every destination pixel the weighted</p>
-<p>least-squares affine map is re-solved with the weights</p>
-<p>`<code style="color:#22d3bf">w_i = 1/|p_i - v|^(2 alpha)</code>`, so the warp is a *different* affine at every</p>
-<p>pixel -- smooth, interpolating at the control points, and exact on affine</p>
-<p>data. The backward map is obtained by solving the same MLS problem with the</p>
-<p>roles of `<code style="color:#22d3bf">p</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">q</code>` swapped (the resampling formulation of the paper&#x27;s</p>
-<p>section 4), which is the exact inverse whenever the control data is affine</p>
-<p>and a smooth approximation of it otherwise. `<code style="color:#22d3bf">a</code>` sets the amplitude</p>
-<p>`<code style="color:#22d3bf">amp = 0.12*a*min(H,W)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> the falloff </code><code style="color:#22d3bf">alpha = 0.5 + 1.5b</code>` (large</p>
-<p>alpha = tightly local deformation). `<code style="color:#22d3bf">a = 0</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">q = p</code>`, hence the</p>
-<p>identity (up to sub-pixel resampling error).</p>
+<p>A 5x5 grid of control points <code style="color:#22d3bf">p_i</code> is displaced to <code style="color:#22d3bf">q_i = p_i + amp*[sin(2 pi gx), cos(2 pi gy)]</code> (gy, gx = normalised control coordinates). For every destination pixel the weighted least-squares affine map is re-solved with the weights <code style="color:#22d3bf">w_i = 1/|p_i - v|^(2 alpha)</code>, so the warp is a *different* affine at every pixel -- smooth, interpolating at the control points, and exact on affine data. The backward map is obtained by solving the same MLS problem with the roles of <code style="color:#22d3bf">p</code> and <code style="color:#22d3bf">q</code> swapped (the resampling formulation of the paper&#x27;s section 4), which is the exact inverse whenever the control data is affine and a smooth approximation of it otherwise. <code style="color:#22d3bf">a</code> sets the amplitude <code style="color:#22d3bf">amp = 0.12*a*min(H,W)</code>, <code style="color:#22d3bf">b</code> the falloff <code style="color:#22d3bf">alpha = 0.5 + 1.5b</code> (large alpha = tightly local deformation). <code style="color:#22d3bf">a = 0</code> gives <code style="color:#22d3bf">q = p</code>, hence the identity (up to sub-pixel resampling error).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">deform_mls 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:deform_mls%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:deform_mls%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">deform_mls 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:deform_mls%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:deform_mls%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image</code> 作為輸入)</h3>

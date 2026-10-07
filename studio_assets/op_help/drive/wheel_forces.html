@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import roverslip; roverslip.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;wheel_forces&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>沈下 z [m] と滑り率 s で、剛な車輪が土から受ける力(Wong–Reece の応力分布の数値積分)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;Fz&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;theta_f&quot;, &quot;theta_m&quot;, &quot;theta_r&quot;}</code>`: 垂直力 [N]、牽引力(drawbar pull、前向き正)[N]、</p>
-<p>駆動トルク [N·m]、角 [rad]。`<code style="color:#22d3bf">sinkage</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">slip</code>` はスカラーか同じ形に放送できる配列(0 ≤ z &lt; r、−1 &lt; s &lt; 1)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;Fz&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;theta_f&quot;, &quot;theta_m&quot;, &quot;theta_r&quot;}</code>: 垂直力 [N]、牽引力(drawbar pull、前向き正)[N]、駆動トルク [N·m]、角 [rad]。<code style="color:#22d3bf">sinkage</code>・<code style="color:#22d3bf">slip</code> はスカラーか同じ形に放送できる配列(0 ≤ z &lt; r、−1 &lt; s &lt; 1)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

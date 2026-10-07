@@ -5,18 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>既知の標準(Si など)の環から検出器の中心・距離・傾きを較正する。</p>
-<p>`<code style="color:#22d3bf">d_spacings</code><code style="color:#22d3bf"> は標準の面間隔 [Å] の list(強い順でなくてよい)、</code><code style="color:#22d3bf">geometry_guess</code><code style="color:#22d3bf"> には少なくとも </code><code style="color:#22d3bf">pixel</code>` と</p>
-<p>`<code style="color:#22d3bf">wavelength</code><code style="color:#22d3bf">、分かっていれば </code><code style="color:#22d3bf">cx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">cy</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">distance</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">tilt</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">tilt_dir</code>` を入れる。手順:</p>
-<p>1. 中心が無ければ明るい画素の重心から始め、最も強い環を光線に沿って拾い、円の当てはめで中心を 3 回更新する。</p>
-<p>2. 距離が無ければ、半径方向のプロファイルの最初の山を d の候補(小さい 2θ から 4 本)に当て、他の環の予測と</p>
-<p>観測の山が最も多く一致する組を選ぶ。</p>
-<p>3. 現在の幾何で各環の位置を `<code style="color:#22d3bf">n_azimuth</code>` 本の光線上で予測し、窓の中の強度の重心で点を拾い、</p>
-<p>`<code style="color:#22d3bf">scipy.optimize.least_squares</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">(cx, cy, distance, tilt の 2 成分)</code>` を 2θ の残差 [deg] で当てる。窓を</p>
-<p>縮めながら 3 回。傾きは回転ベクトルの 2 成分 `<code style="color:#22d3bf">tilt·(cos φ, sin φ)</code>` で解く(傾き 0 で φ が不定になる特異点を避ける)。</p>
-<p>返り値(dict): 幾何(`<code style="color:#22d3bf">cx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">cy</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">distance</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">pixel</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">wavelength</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">tilt</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">tilt_dir</code>`)に</p>
-<p>`<code style="color:#22d3bf">rms_two_theta_deg</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n_points</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n_rings</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rings_deg</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">ok</code><code style="color:#22d3bf">(rms が画素 1/4 の角 </code><code style="color:#22d3bf">0.25·pixel/distance</code>` 未満</p>
-<p>かつ環 &gt;= `<code style="color:#22d3bf">min_rings</code>`)を足したもの。</p>
-<p>Raises ValueError: 像が 2-D でない、d が 1 本も無い、pixel / wavelength が無い、環が `<code style="color:#22d3bf">min_rings</code>` 本見つからない。</p>
+<p><code style="color:#22d3bf">d_spacings</code> は標準の面間隔 [Å] の list(強い順でなくてよい)、<code style="color:#22d3bf">geometry_guess</code> には少なくとも <code style="color:#22d3bf">pixel</code> と</p>
+<p><code style="color:#22d3bf">wavelength</code>、分かっていれば <code style="color:#22d3bf">cx</code>・<code style="color:#22d3bf">cy</code>・<code style="color:#22d3bf">distance</code>・<code style="color:#22d3bf">tilt</code>・<code style="color:#22d3bf">tilt_dir</code> を入れる。手順:</p>
+<p style="margin:2px 0 2px 12px">1. 中心が無ければ明るい画素の重心から始め、最も強い環を光線に沿って拾い、円の当てはめで中心を 3 回更新する。</p>
+<p style="margin:2px 0 2px 12px">2. 距離が無ければ、半径方向のプロファイルの最初の山を d の候補(小さい 2θ から 4 本)に当て、他の環の予測と観測の山が最も多く一致する組を選ぶ。</p>
+<p style="margin:2px 0 2px 12px">3. 現在の幾何で各環の位置を <code style="color:#22d3bf">n_azimuth</code> 本の光線上で予測し、窓の中の強度の重心で点を拾い、<code style="color:#22d3bf">scipy.optimize.least_squares</code> で <code style="color:#22d3bf">(cx, cy, distance, tilt の 2 成分)</code> を 2θ の残差 [deg] で当てる。窓を縮めながら 3 回。傾きは回転ベクトルの 2 成分 <code style="color:#22d3bf">tilt·(cos φ, sin φ)</code> で解く(傾き 0 で φ が不定になる特異点を避ける)。</p>
+<p>返り値(dict): 幾何(<code style="color:#22d3bf">cx</code>・<code style="color:#22d3bf">cy</code>・<code style="color:#22d3bf">distance</code>・<code style="color:#22d3bf">pixel</code>・<code style="color:#22d3bf">wavelength</code>・<code style="color:#22d3bf">tilt</code>・<code style="color:#22d3bf">tilt_dir</code>)に</p>
+<p><code style="color:#22d3bf">rms_two_theta_deg</code>・<code style="color:#22d3bf">n_points</code>・<code style="color:#22d3bf">n_rings</code>・<code style="color:#22d3bf">rings_deg</code>・<code style="color:#22d3bf">ok</code>(rms が画素 1/4 の角 <code style="color:#22d3bf">0.25·pixel/distance</code> 未満</p>
+<p>かつ環 &gt;= <code style="color:#22d3bf">min_rings</code>)を足したもの。</p>
+<p>Raises ValueError: 像が 2-D でない、d が 1 本も無い、pixel / wavelength が無い、環が <code style="color:#22d3bf">min_rings</code> 本見つからない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

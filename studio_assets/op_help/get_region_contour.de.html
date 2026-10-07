@@ -8,13 +8,13 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_contour.chain.jpg">get_region_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_contour.chain.jpg">get_region_contour: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_contour.inputs.jpg">get_region_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_contour.inputs.jpg">get_region_contour: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Extrahiert die Kontur (Grenzlinie, 1 Pixel breit) der Region. Zieht eine einmal binär erodierte Version der Region ab, um die Kontur zu erhalten. <b>Bei einer Region mit Löchern werden auch die Lochkonturen zurückgegeben, nicht nur die äußere</b> (gemessen am 2026-09-16: bei einem 8x8-Rahmen mit einem 4x4-Loch ergeben 16 der 20 an das Loch angrenzenden Vordergrundpixel eine Kontur). „Region minus Erosion&quot; lässt definitionsgemäß außen wie auch an der Lochseite je ein Pixel stehen; wer nur die äußere Grenze will, füllt die Löcher zuerst. a und b werden nicht verwendet. Gleiche Implementierung wie der `<code style="color:#22d3bf">boundary</code>`-Seed-Op.</p>
+<p>Extrahiert die Kontur (Grenzlinie, 1 Pixel breit) der Region. Zieht eine einmal binär erodierte Version der Region ab, um die Kontur zu erhalten. <b>Bei einer Region mit Löchern werden auch die Lochkonturen zurückgegeben, nicht nur die äußere</b> (gemessen am 2026-09-16: bei einem 8x8-Rahmen mit einem 4x4-Loch ergeben 16 der 20 an das Loch angrenzenden Vordergrundpixel eine Kontur). „Region minus Erosion&quot; lässt definitionsgemäß außen wie auch an der Lochseite je ein Pixel stehen; wer nur die äußere Grenze will, füllt die Löcher zuerst. a und b werden nicht verwendet. Gleiche Implementierung wie der <code style="color:#22d3bf">boundary</code>-Seed-Op.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の `<code style="color:#22d3bf">get_region_contour</code>`（領域の輪郭を取得する演算、本来は XLD 輪郭として座標列を返す）とは出力形式が異なる近似 —— この backend は輪郭を region（画素マスク）として返し、XLD の座標点列にはしていない。</p>
+<p>HALCON の <code style="color:#22d3bf">get_region_contour</code>（領域の輪郭を取得する演算、本来は XLD 輪郭として座標列を返す）とは出力形式が異なる近似 —— この backend は輪郭を region（画素マスク）として返し、XLD の座標点列にはしていない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -24,7 +24,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-get_region_contour 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aget_region_contour%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aget_region_contour%200.50%200.50">Load &amp; run</a></p>
+get_region_contour 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aget_region_contour%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aget_region_contour%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_document_scan">poc_document_scan</a> — <code style="color:#22d3bf">py -3.11 examples/poc_document_scan.py</code></p>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ball_mesh(radius: &#x27;float&#x27; = 0.02, subdiv: &#x27;int&#x27; = 3, color=(1.0, 0.55, 0.05), marker_dir=(0.0, 0.0, 1.0), marker_angle: &#x27;float&#x27; = 25.0, marker_color=(0.05, 0.05, 0.05), markers=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import ballworld; ballworld.ball_mesh(radius: &#x27;float&#x27; = 0.02, subdiv: &#x27;int&#x27; = 3, color=(1.0, 0.55, 0.05), marker_dir=(0.0, 0.0, 1.0), marker_angle: &#x27;float&#x27; = 25.0, marker_color=(0.05, 0.05, 0.05), markers=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ball_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>球のメッシュ(原点 = 中心)と模様。`<code style="color:#22d3bf">markers</code>` = [(dir, angle_deg), …] で複数の模様(None なら marker_dir 1 つ)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot; (M,3), &quot;label&quot; (M,) (23 or 24), &quot;radius&quot;, &quot;markers&quot;: [単位ベクトル …]}</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>球のメッシュ(原点 = 中心)と模様。<code style="color:#22d3bf">markers</code> = [(dir, angle_deg), …] で複数の模様(None なら marker_dir 1 つ)。返り値 <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot; (M,3), &quot;label&quot; (M,) (23 or 24), &quot;radius&quot;, &quot;markers&quot;: [単位ベクトル …]}</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ball_bounce">poc_ball_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ball_bounce.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_table_tennis_bounce">poc_table_tennis_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_table_tennis_bounce.py</code></p>

@@ -4,34 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code> (die Implementierung direkt: <code style="color:#22d3bf">import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>; aus dem Register: <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_quantize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>個眼信号を眼と同じやり方で量子化する: 対数圧縮してから個眼あたり n ビット(`<code style="color:#22d3bf">mode=&quot;onoff&quot;</code>` は ON / OFF の 2 チャネル)。</p>
-<p>複眼は生まれつき量子化器で、片眼およそ 800 個眼(間隔 4.6°)、光受容器は強度を対数圧縮して平均に適応し、</p>
-<p>ラミナの L1 / L2 が平均からの偏差を ON と OFF に分ける。この op はその予算を再現し、下流のモデル</p>
-<p>(reservoir・網膜部位対応の検査)に「本当に何ビット要るか」を問えるようにする。</p>
-<p>A compound eye is a quantizer by construction: ~800 ommatidia per eye at 4.6 deg spacing,</p>
-<p>photoreceptors that log-compress intensity and adapt to the mean, and lamina cells (L1/L2)</p>
-<p>that split the deviation into ON and OFF channels. This op reproduces that budget so a</p>
-<p>downstream model (reservoir, retinotopy test) can be asked how many bits it really needs.</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>個眼信号を眼と同じやり方で量子化する: 対数圧縮してから個眼あたり n ビット(<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> は ON / OFF の 2 チャネル)。</p>
+<p>複眼は生まれつき量子化器で、片眼およそ 800 個眼(間隔 4.6°)、光受容器は強度を対数圧縮して平均に適応し、ラミナの L1 / L2 が平均からの偏差を ON と OFF に分ける。この op はその予算を再現し、下流のモデル(reservoir・網膜部位対応の検査)に「本当に何ビット要るか」を問えるようにする。</p>
+<p>A compound eye is a quantizer by construction: ~800 ommatidia per eye at 4.6 deg spacing, photoreceptors that log-compress intensity and adapt to the mean, and lamina cells (L1/L2) that split the deviation into ON and OFF channels. This op reproduces that budget so a downstream model (reservoir, retinotopy test) can be asked how many bits it really needs.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>signal : (n,) float</p>
-<p>Per-ommatidium intensities &gt;= 0 (`<code style="color:#22d3bf">fly_hex_resample</code>` output).</p>
+<p>Per-ommatidium intensities &gt;= 0 (<code style="color:#22d3bf">fly_hex_resample</code> output).</p>
 <p>bits : int</p>
-<p>1..8 levels = 2**bits (`<code style="color:#22d3bf">mode=&quot;onoff&quot;</code>` ignores it: the output is the signed pair below).</p>
+<p>1..8 levels = 2**bits (<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> ignores it: the output is the signed pair below).</p>
 <p>mode : str</p>
-<p>`<code style="color:#22d3bf">&quot;log&quot;</code>`: log1p-compress relative to the mean, shift the darkest ommatidium to 0, then</p>
-<p>uniform levels over the compressed range; `<code style="color:#22d3bf">&quot;linear&quot;</code><code style="color:#22d3bf">: uniform levels over [0, max]; </code><code style="color:#22d3bf">&quot;onoff&quot;</code>`: deviation from the mean</p>
-<p>relative to `<code style="color:#22d3bf">contrast</code><code style="color:#22d3bf"> clipped to [-1, 1] and returned as </code><code style="color:#22d3bf">2 * n</code><code style="color:#22d3bf"> values </code><code style="color:#22d3bf">[ON..., OFF...]</code>`</p>
+<p><code style="color:#22d3bf">&quot;log&quot;</code>: log1p-compress relative to the mean, shift the darkest ommatidium to 0, then</p>
+<p>uniform levels over the compressed range; <code style="color:#22d3bf">&quot;linear&quot;</code>: uniform levels over [0, max]; <code style="color:#22d3bf">&quot;onoff&quot;</code>: deviation from the mean</p>
+<p>relative to <code style="color:#22d3bf">contrast</code> clipped to [-1, 1] and returned as <code style="color:#22d3bf">2 * n</code> values <code style="color:#22d3bf">[ON..., OFF...]</code></p>
 <p>(ON = positive part, OFF = negative part), each &gt;= 0.</p>
 <p>contrast : float</p>
-<p>Michelson-style contrast that saturates the ON/OFF channels (`<code style="color:#22d3bf">mode=&quot;onoff&quot;</code>` only).</p>
-<p>Returns</p>
-<p>-------</p>
-<p>(n,) float in [0, 1] (levels / (2**bits - 1)); for `<code style="color:#22d3bf">&quot;onoff&quot;</code>` (2n,) in [0, 1].</p>
-<p>Notes</p>
-<p>-----</p>
-<p>Non-finite or negative inputs are refused. A constant signal quantizes to all-zeros</p>
-<p>(`<code style="color:#22d3bf">&quot;log&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;onoff&quot;</code>`) — there is no contrast to encode.</p>
+<p>Michelson-style contrast that saturates the ON/OFF channels (<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> only).</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>(n,) float in [0, 1] (levels / (2**bits - 1)); for <code style="color:#22d3bf">&quot;onoff&quot;</code> (2n,) in [0, 1].</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p>Non-finite or negative inputs are refused. A constant signal quantizes to all-zeros (<code style="color:#22d3bf">&quot;log&quot;</code> / <code style="color:#22d3bf">&quot;onoff&quot;</code>) — there is no contrast to encode.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">Leitfaden zur Familie fly_vision</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

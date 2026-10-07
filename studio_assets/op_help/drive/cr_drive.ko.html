@@ -5,17 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
 <p>自分の運転手(縦 IDM + pure pursuit)を CommonRoad の planning problem で走らせる。</p>
-<p>縦: IDM(a_max, b_max, idm_T, s₀ = stop_margin)で、目標 = 経路終点(ゴール lanelet の `<code style="color:#22d3bf">goal_inset</code>` 地点、止まった先行車と</p>
-<p>見なす)・`<code style="color:#22d3bf">stop_lines</code><code style="color:#22d3bf">(経路の弧長の列、または </code><code style="color:#22d3bf">&quot;scene&quot;</code><code style="color:#22d3bf"> で lanelet の stopLine を経路に射影。止まったら </code><code style="color:#22d3bf">hold_s</code>` 秒で発進)・</p>
-<p>経路上の先行障害物(`<code style="color:#22d3bf">follow_obstacles</code><code style="color:#22d3bf">、中心が経路から </code><code style="color:#22d3bf">follow_width</code>` 以内で前にある物)。希望速度 v₀ = min(v_cruise, 経路の</p>
-<p>制限, 曲率の許容 √(a_lat/|κ|)、κ は `<code style="color:#22d3bf">curvature_window</code>` m の移動平均)。横: 見通し L_d = max(lookahead, k_v·v) の pure pursuit、</p>
-<p>δ̇ ∈ ±0.4。各 step は :func:<code style="color:#22d3bf">ks_step</code>(RK4)。`<code style="color:#22d3bf">horizon</code>` = step 数(既定 = ゴール time_step 区間の上端 − 初期 time_step)。</p>
-<p>返り値 ``{&quot;kind&quot;: &quot;commonroad_run&quot;, &quot;t&quot;, &quot;time_step&quot;, &quot;x&quot;, &quot;y&quot; (車両中心), &quot;x_rear&quot;, &quot;y_rear&quot;, &quot;delta&quot;, &quot;v&quot;, &quot;psi&quot;,</p>
-<p>&quot;u&quot; (T−1, 2), &quot;s&quot; (中心の弧長), &quot;s_front&quot;, &quot;lat_err&quot;, &quot;v_allow&quot;, &quot;stops&quot;: [(time_step, s_front, kind, target_s)], &quot;events&quot;,</p>
-<p>&quot;route&quot;, &quot;goal_reached&quot;, &quot;goal_index&quot;, &quot;params&quot;, &quot;dt&quot;, &quot;pp_id&quot;, &quot;initial_time_step&quot;, &quot;v_limit&quot;}``。</p>
+<p>縦: IDM(a_max, b_max, idm_T, s₀ = stop_margin)で、目標 = 経路終点(ゴール lanelet の <code style="color:#22d3bf">goal_inset</code> 地点、止まった先行車と見なす)・<code style="color:#22d3bf">stop_lines</code>(経路の弧長の列、または <code style="color:#22d3bf">&quot;scene&quot;</code> で lanelet の stopLine を経路に射影。止まったら <code style="color:#22d3bf">hold_s</code> 秒で発進)・経路上の先行障害物(<code style="color:#22d3bf">follow_obstacles</code>、中心が経路から <code style="color:#22d3bf">follow_width</code> 以内で前にある物)。希望速度 v₀ = min(v_cruise, 経路の制限, 曲率の許容 √(a_lat/|κ|)、κ は <code style="color:#22d3bf">curvature_window</code> m の移動平均)。横: 見通し L_d = max(lookahead, k_v·v) の pure pursuit、δ̇ ∈ ±0.4。各 step は <code style="color:#22d3bf">ks_step</code>(RK4)。<code style="color:#22d3bf">horizon</code> = step 数(既定 = ゴール time_step 区間の上端 − 初期 time_step)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;kind&quot;: &quot;commonroad_run&quot;, &quot;t&quot;, &quot;time_step&quot;, &quot;x&quot;, &quot;y&quot; (車両中心), &quot;x_rear&quot;, &quot;y_rear&quot;, &quot;delta&quot;, &quot;v&quot;, &quot;psi&quot;, &quot;u&quot; (T−1, 2), &quot;s&quot; (中心の弧長), &quot;s_front&quot;, &quot;lat_err&quot;, &quot;v_allow&quot;, &quot;stops&quot;: [(time_step, s_front, kind, target_s)], &quot;events&quot;, &quot;route&quot;, &quot;goal_reached&quot;, &quot;goal_index&quot;, &quot;params&quot;, &quot;dt&quot;, &quot;pp_id&quot;, &quot;initial_time_step&quot;, &quot;v_limit&quot;}</code>。</p>
 <p>門: |a| ≤ max(a_max, b_max)、0 ≤ v ≤ v_limit、停止線の前端が 0〜1 m 手前で止まる、cr_feasible が feasible、ゴール到達。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: scene / route が不正、pp_index 範囲外、速度の上限が決まらない(制限も v_cruise も無い)、</p>
-<p>初期位置がどの lanelet にも無い、stop_lines が経路の外。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: scene / route が不正、pp_index 範囲外、速度の上限が決まらない(制限も v_cruise も無い)、初期位置がどの lanelet にも無い、stop_lines が経路の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -13,20 +13,12 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_derivative_filter.inputs.jpg">hx_gen_derivative_filter: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>A derivative filter in the frequency domain. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> is the order of the derivative, </code><code style="color:#22d3bf">b</code>` its direction.</p>
+<p>A derivative filter in the frequency domain. <code style="color:#22d3bf">a</code> is the order of the derivative, <code style="color:#22d3bf">b</code> its direction.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の `<code style="color:#22d3bf">gen_derivative_filter</code>` は Derivative(x / y / xx / yy / xy)と</p>
-<p>次数を取るが、ここは長らく `<code style="color:#22d3bf">|f|</code>` を正規化して返すだけで、**入力の中身も</p>
-<p>つまみも一切見ていなかった** —— 2026-09-02 実測で、同じ形なら</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">b</code>` を変えても、別の絵を渡しても、返りが<b>バイト一致</b>だった</p>
-<p>(兄弟の `<code style="color:#22d3bf">hx_gen_lowpass</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hx_gen_highpass</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">hx_gen_bandfilter</code>` は</p>
-<p>つまみで変わるので、この 1 件だけ浮いていた)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> : 階数 1〜2(</code><code style="color:#22d3bf">|f|</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">|f|^2</code>`)。2 階はラプラシアンに対応する。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> : 向き。0 で x 方向 </code><code style="color:#22d3bf">|f_x|</code><code style="color:#22d3bf">、1 で y 方向 </code><code style="color:#22d3bf">|f_y|</code><code style="color:#22d3bf">、間は等方 </code><code style="color:#22d3bf">|f|</code>`</p>
-<p>へ滑らかに混ぜる(0.5 でちょうど等方)。</p>
-<p>返りは周波数領域の<b>フィルタそのもの</b>(HALCON の gen_* と同じ約束)なので、</p>
-<p>入力は形を決めるためだけに使う。ただし形だけでなく<b>つまみでちゃんと変わる</b></p>
-<p>ようになったので、進化が階数と向きを選べる。</p>
+<p>HALCON の <code style="color:#22d3bf">gen_derivative_filter</code> は Derivative(x / y / xx / yy / xy)と次数を取るが、ここは長らく <code style="color:#22d3bf">|f|</code> を正規化して返すだけで、<b>入力の中身もつまみも一切見ていなかった</b> —— 2026-09-02 実測で、同じ形なら <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> を変えても、別の絵を渡しても、返りが<b>バイト一致</b>だった(兄弟の <code style="color:#22d3bf">hx_gen_lowpass</code> / <code style="color:#22d3bf">hx_gen_highpass</code> / <code style="color:#22d3bf">hx_gen_bandfilter</code> はつまみで変わるので、この 1 件だけ浮いていた)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> : 階数 1〜2(<code style="color:#22d3bf">|f|</code> か <code style="color:#22d3bf">|f|^2</code>)。2 階はラプラシアンに対応する。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> : 向き。0 で x 方向 <code style="color:#22d3bf">|f_x|</code>、1 で y 方向 <code style="color:#22d3bf">|f_y|</code>、間は等方 <code style="color:#22d3bf">|f|</code> へ滑らかに混ぜる(0.5 でちょうど等方)。</p>
+<p>返りは周波数領域の<b>フィルタそのもの</b>(HALCON の gen_* と同じ約束)なので、入力は形を決めるためだけに使う。ただし形だけでなく<b>つまみでちゃんと変わる</b> ようになったので、進化が階数と向きを選べる。</p>
 <p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

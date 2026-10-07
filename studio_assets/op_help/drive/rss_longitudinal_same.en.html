@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_longitudinal_same(v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import rsssafety; rsssafety.rss_longitudinal_same(v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;rss_longitudinal_same&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>同方向(論文 Lemma 2 / lib `<code style="color:#22d3bf">calculateSafeLongitudinalDistanceSameDirection</code>`)の最小安全距離 [m]。</p>
-<p>`<code style="color:#22d3bf">d_min = [ v_r ρ + ½ a ρ² + (v_r + a ρ)²/(2 b_min) − v_f²/(2 b_max) ]_+ + min_distance</code>`。</p>
-<p>後続車 c_r のパラメータが `<code style="color:#22d3bf">p</code>`(ρ, accel_max, brake_min, v_max_accel, min_distance)、先行車 c_f の</p>
-<p>`<code style="color:#22d3bf">brake_max</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">p_front</code><code style="color:#22d3bf">(None なら </code><code style="color:#22d3bf">p</code>`)から取る。v_rear, v_front ≥ 0。</p>
+<p>同方向(論文 Lemma 2 / lib <code style="color:#22d3bf">calculateSafeLongitudinalDistanceSameDirection</code>)の最小安全距離 [m]。</p>
+<p><code style="color:#22d3bf">d_min = [ v_r ρ + ½ a ρ² + (v_r + a ρ)²/(2 b_min) − v_f²/(2 b_max) ]_+ + min_distance</code>。後続車 c_r のパラメータが <code style="color:#22d3bf">p</code>(ρ, accel_max, brake_min, v_max_accel, min_distance)、先行車 c_f の <code style="color:#22d3bf">brake_max</code> は <code style="color:#22d3bf">p_front</code>(None なら <code style="color:#22d3bf">p</code>)から取る。v_rear, v_front ≥ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

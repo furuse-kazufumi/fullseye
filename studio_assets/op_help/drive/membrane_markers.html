@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_markers(n: &#x27;int&#x27;, pitch_px: &#x27;float&#x27;, ox: &#x27;float&#x27; = 0.3, oy: &#x27;float&#x27; = 0.6) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacslip; tacslip.membrane_markers(n: &#x27;int&#x27;, pitch_px: &#x27;float&#x27;, ox: &#x27;float&#x27; = 0.3, oy: &#x27;float&#x27; = 0.6) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;membrane_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>n×n 画素の視野に撒くマーカー中心 (N, 2) = (x, y) [px] の規則格子(ピッチ pitch_px、副画素位相 (ox, oy))。視野の外にも 1 周だけ撒く</p>
-<p>(変位で入ってくるぶん)。<b>Raises</b> ValueError: n &lt; 8、pitch_px &lt; 2。</p>
+<p>n×n 画素の視野に撒くマーカー中心 (N, 2) = (x, y) [px] の規則格子(ピッチ pitch_px、副画素位相 (ox, oy))。視野の外にも 1 周だけ撒く(変位で入ってくるぶん)。<b>Raises</b> ValueError: n &lt; 8、pitch_px &lt; 2。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

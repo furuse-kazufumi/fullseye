@@ -4,16 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_candidates(kp, tip, axis, n_az: &#x27;int&#x27; = 144, tol: &#x27;float&#x27; = 8e-05) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegtactile; pegtactile.contact_candidates(kp, tip, axis, n_az: &#x27;int&#x27; = 144, tol: &#x27;float&#x27; = 8e-05) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;contact_candidates&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>単一接触の候補点(世界系)と、その点が<b>幾何的に触れうるか</b>の印。`<code style="color:#22d3bf">tip_rim</code>` = 先端の縁の円(半径 r、軸に垂直)で、縁の点が</p>
-<p>壁(最狭部より深い: 半径 ≥ R − tol)か面取り面(半径 ≥ R + (W − 深さ) − tol)に届くものだけ有効。`<code style="color:#22d3bf">mouth</code>` = 穴の最狭部の縁の円</p>
-<p>(半径 R、z = −W)で、胴の表面が通る(軸の直線からの距離が r ± tol、先端が最狭部より深い)ものだけ有効。</p>
-<p>候補を絞らないと、二点接触の合力の作用線が「壁に触れていない側の先端の縁」を通る偶然を一点と読む(試作のくさびで実測)。</p>
-<p>`<code style="color:#22d3bf">tol</code><code style="color:#22d3bf"> は MuJoCo の柔らかい接触のめり込みと 36 角形の壁(頂点で +0.02 mm)ぶん。返り </code><code style="color:#22d3bf">tip_rim</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rim_ok</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">mouth</code>`・</p>
-<p>`<code style="color:#22d3bf">mouth_ok</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">depth</code>`。<b>Raises</b> ValueError: tip・axis が有限の 3 成分でない、n_az &lt; 8、tol &lt; 0。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>単一接触の候補点(世界系)と、その点が<b>幾何的に触れうるか</b>の印。<code style="color:#22d3bf">tip_rim</code> = 先端の縁の円(半径 r、軸に垂直)で、縁の点が壁(最狭部より深い: 半径 ≥ R − tol)か面取り面(半径 ≥ R + (W − 深さ) − tol)に届くものだけ有効。<code style="color:#22d3bf">mouth</code> = 穴の最狭部の縁の円(半径 R、z = −W)で、胴の表面が通る(軸の直線からの距離が r ± tol、先端が最狭部より深い)ものだけ有効。候補を絞らないと、二点接触の合力の作用線が「壁に触れていない側の先端の縁」を通る偶然を一点と読む(試作のくさびで実測)。<code style="color:#22d3bf">tol</code> は MuJoCo の柔らかい接触のめり込みと 36 角形の壁(頂点で +0.02 mm)ぶん。返り <code style="color:#22d3bf">tip_rim</code>・<code style="color:#22d3bf">rim_ok</code>・<code style="color:#22d3bf">mouth</code>・ <code style="color:#22d3bf">mouth_ok</code>・<code style="color:#22d3bf">depth</code>。<b>Raises</b> ValueError: tip・axis が有限の 3 成分でない、n_az &lt; 8、tol &lt; 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

@@ -5,14 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>ペグと穴の寸法の表(m・rad): ペグ半径 r、穴半径 R、穴の深さ、面取りの幅と角、ペグ長、摩擦係数、手首剛性、手首カメラ。</p>
-<p>既定は試作の寸法: r = 5.0 mm、R = 5.2 mm(半径 clearance 0.2 mm、c = 0.0385)、深さ 20 mm、45° の面取り 1 mm、ペグ 40 mm、</p>
-<p>μ = 0.3(MuJoCo の滑り摩擦)。`<code style="color:#22d3bf">n_seg</code><code style="color:#22d3bf"> は穴の壁を近似する箱の数(MJCF)、</code><code style="color:#22d3bf">k_trans</code><code style="color:#22d3bf"> [N/m]・</code><code style="color:#22d3bf">k_rot</code>` [N m/rad] は</p>
-<p>手首(コンプライアント支持)の並進・回転剛性、`<code style="color:#22d3bf">image_size</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">fovy_deg</code>` は手首カメラ。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: r ≤ 0、R ≤ r、面取りが穴より深い、μ &lt; 0、面取り角が (0°, 90°) の外。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>既定は試作の寸法: r = 5.0 mm、R = 5.2 mm(半径 clearance 0.2 mm、c = 0.0385)、深さ 20 mm、45° の面取り 1 mm、ペグ 40 mm、μ = 0.3(MuJoCo の滑り摩擦)。<code style="color:#22d3bf">n_seg</code> は穴の壁を近似する箱の数(MJCF)、<code style="color:#22d3bf">k_trans</code> [N/m]・<code style="color:#22d3bf">k_rot</code> [N m/rad] は手首(コンプライアント支持)の並進・回転剛性、<code style="color:#22d3bf">image_size</code> と <code style="color:#22d3bf">fovy_deg</code> は手首カメラ。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: r ≤ 0、R ≤ r、面取りが穴より深い、μ &lt; 0、面取り角が (0°, 90°) の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_failure_recovery">poc_peg_failure_recovery</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_failure_recovery.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>

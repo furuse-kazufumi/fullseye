@@ -5,18 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>通し走行の採点(閉形式の門 + 既存の踏切の採点 op)。</p>
-<p>`<code style="color:#22d3bf">stops</code><code style="color:#22d3bf">: 目標になった停止線ごと(弧長順)に </code>`{&quot;kind&quot;, &quot;s_line&quot;, &quot;s_stop&quot;, &quot;before&quot; = s_line − s_stop, &quot;ok&quot; (0 ≤ before ≤ 1.0),</p>
-<p>&quot;crossing&quot;: crossing_stop_check の結果(踏切だけ。`<code style="color:#22d3bf">train</code>` があれば警報中の区間を forbidden_intervals に渡す),</p>
-<p>&quot;skipped&quot;: 動的な目標で止まらなかった}`<code style="color:#22d3bf">。</code><code style="color:#22d3bf">count_ok</code>` = 停止の回数 = 静的な停止線 + 止まった動的な停止線の数。</p>
-<p>`<code style="color:#22d3bf">kinematics</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">{&quot;a_max_abs&quot;, &quot;v_max&quot;, &quot;v_min&quot;, &quot;integral_gap&quot; = max|台形則 ∫v dt − (s − s0)|, &quot;ok&quot;}</code>`</p>
-<p>(|a| ≤ max(a_max, b_max)、0 ≤ v ≤ v_max、integral_gap ≤ dt·v_max)。`<code style="color:#22d3bf">braking</code>`: 停止ごとに減速を始めた速度 v_b と制動距離 d_b、</p>
-<p>定理 d_b ≥ v_b²/(2 b_max) の ok。`<code style="color:#22d3bf">train</code><code style="color:#22d3bf">(列車があれば): </code>`{&quot;inside_while_forbidden_s&quot;(警報中に車体が踏切面にかかっていた</p>
-<p>時間)、&quot;go_after_clear&quot;(踏切の発進が警報停止 + 上昇の後)、&quot;timing_meets_minimum&quot;, &quot;ok&quot;}`<code style="color:#22d3bf">。</code><code style="color:#22d3bf">ok</code>` = 全部。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: run が town_run の物でない、layout が town_chain の物でない、car_length が正でない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">stops</code>: 目標になった停止線ごと(弧長順)に <code style="color:#22d3bf">{&quot;kind&quot;, &quot;s_line&quot;, &quot;s_stop&quot;, &quot;before&quot; = s_line − s_stop, &quot;ok&quot; (0 ≤ before ≤ 1.0), &quot;crossing&quot;: crossing_stop_check の結果(踏切だけ。</code>train<code style="color:#22d3bf"> があれば警報中の区間を forbidden_intervals に渡す), &quot;skipped&quot;: 動的な目標で止まらなかった}</code>。<code style="color:#22d3bf">count_ok</code> = 停止の回数 = 静的な停止線 + 止まった動的な停止線の数。<code style="color:#22d3bf">kinematics</code>: <code style="color:#22d3bf">{&quot;a_max_abs&quot;, &quot;v_max&quot;, &quot;v_min&quot;, &quot;integral_gap&quot; = max|台形則 ∫v dt − (s − s0)|, &quot;ok&quot;}</code> (|a| ≤ max(a_max, b_max)、0 ≤ v ≤ v_max、integral_gap ≤ dt·v_max)。<code style="color:#22d3bf">braking</code>: 停止ごとに減速を始めた速度 v_b と制動距離 d_b、定理 d_b ≥ v_b²/(2 b_max) の ok。<code style="color:#22d3bf">train</code>(列車があれば): <code style="color:#22d3bf">{&quot;inside_while_forbidden_s&quot;(警報中に車体が踏切面にかかっていた時間)、&quot;go_after_clear&quot;(踏切の発進が警報停止 + 上昇の後)、&quot;timing_meets_minimum&quot;, &quot;ok&quot;}</code>。<code style="color:#22d3bf">ok</code> = 全部。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: run が town_run の物でない、layout が town_chain の物でない、car_length が正でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_japan_town">poc_driving_japan_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_japan_town.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>

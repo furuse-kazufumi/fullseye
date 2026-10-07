@@ -3,12 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scale_y_funct_1d(y, mult=1.0, add=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import funct1d; funct1d.scale_y_funct_1d(y, mult=1.0, add=0.0)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;scale_y_funct_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Linear map of the y-values, `<code style="color:#22d3bf">mult * y + add</code><code style="color:#22d3bf"> (HALCON </code><code style="color:#22d3bf">scale_y_funct_1d</code>`).</p>
-<p>The x-grid is untouched (use :func:<code style="color:#22d3bf">transform_funct_1d</code> to move x too).</p>
-<p>:param y: 1-D function (may be empty).</p>
-<p>:param mult: finite multiplier.</p>
-<p>:param add: finite offset.</p>
-<p>:raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.</p>
+<p>Linear map of the y-values, <code style="color:#22d3bf">mult * y + add</code> (HALCON <code style="color:#22d3bf">scale_y_funct_1d</code>).</p>
+<p>The x-grid is untouched (use <code style="color:#22d3bf">transform_funct_1d</code> to move x too).</p>
+<p>:param y: 1-D function (may be empty). :param mult: finite multiplier. :param add: finite offset. :raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

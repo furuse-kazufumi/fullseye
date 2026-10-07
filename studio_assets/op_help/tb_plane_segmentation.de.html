@@ -5,22 +5,19 @@
 <p><img src="fig/tb_plane_segmentation.png" alt="tb_plane_segmentation: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_plane_segmentation.a.jpg">tb_plane_segmentation: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_plane_segmentation.a.jpg">tb_plane_segmentation: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_plane_segmentation.b.jpg">tb_plane_segmentation: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_plane_segmentation.b.jpg">tb_plane_segmentation: Regler b durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_plane_segmentation.chain.jpg">tb_plane_segmentation: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_plane_segmentation.chain.jpg">tb_plane_segmentation: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_plane_segmentation.inputs.jpg">tb_plane_segmentation: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_plane_segmentation.inputs.jpg">tb_plane_segmentation: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Bewegung</b> (GIF: Bilder / Ansichten / Schnitte nacheinander. Die stehende Abbildung ist die vollständige; das GIF ist ergänzend):</p>
 <p><img src="fig/tb_plane_segmentation.gif" alt="tb_plane_segmentation: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extrahiert iterativ mittels wiederholtem RANSAC bis zu <code style="color:#22d3bf">max_planes</code> Ebenen nacheinander (verbleibende Restpunkte sind -1).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>残り点集合に :func:<code style="color:#22d3bf">ransac_fit.ransac_plane</code> を掛け、その最大 consensus 平面の</p>
-<p>inlier 数が `<code style="color:#22d3bf">min_inliers</code>` 以上なら新ラベルを与えて除去 → 残りで再検出、を繰り返す。</p>
-<p>複数の床/壁/階段状の面を一度に分離する(単一平面適合の pcseg との差)。inlier が</p>
-<p>`<code style="color:#22d3bf">min_inliers</code>` に満たなくなった時点で停止し、以降の点は残差 -1(球や複雑物体はここに残る)。</p>
+<p>残り点集合に <code style="color:#22d3bf">ransac_fit.ransac_plane</code> を掛け、その最大 consensus 平面の inlier 数が <code style="color:#22d3bf">min_inliers</code> 以上なら新ラベルを与えて除去 → 残りで再検出、を繰り返す。複数の床/壁/階段状の面を一度に分離する(単一平面適合の pcseg との差)。inlier が <code style="color:#22d3bf">min_inliers</code> に満たなくなった時点で停止し、以降の点は残差 -1(球や複雑物体はここに残る)。</p>
 <p>Args:</p>
 <p>points: (N,3) 点群。</p>
 <p>thresh: 点-平面距離の inlier しきい値(距離、要 &gt; 0)。</p>
@@ -31,14 +28,14 @@
 <p>Returns:</p>
 <p>labels: (N,) int。検出順(=consensus 大きい順に近い)に 0,1,2,... を平面へ付与、</p>
 <p>どの平面にも属さない残差点は -1。空入力は shape (0,)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">plane_segmentation</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">max_planes</code><code style="color:#22d3bf">(既定 5)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">iters</code>`(既定 300)を振る。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">plane_segmentation</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">max_planes</code>(既定 5)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">iters</code>(既定 300)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
-tb_plane_segmentation 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_plane_segmentation%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_plane_segmentation%200.50%200.50">Load &amp; run</a></p>
+tb_plane_segmentation 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_plane_segmentation%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_plane_segmentation%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">plane_segmentation</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:object_segmentation">object_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples_3d/object_segmentation.py</code></p>

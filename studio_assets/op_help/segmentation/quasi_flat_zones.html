@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quasi_flat_zones(image, alpha: &#x27;float&#x27; = 0.05, *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import seggraph; seggraph.quasi_flat_zones(image, alpha: &#x27;float&#x27; = 0.05, *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;quasi_flat_zones&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>α-準平坦領域(Soille 2008): |f_p − f_q| ≤ α の隣接辺だけで結んだ連結成分。返す: `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..k)、</code><code style="color:#22d3bf">n_zones</code>`。</p>
+<p>α-準平坦領域(Soille 2008): |f_p − f_q| ≤ α の隣接辺だけで結んだ連結成分。返す: <code style="color:#22d3bf">labels</code>(1..k)、<code style="color:#22d3bf">n_zones</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.from_xld(contour, i=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.from_xld(contour, i=0)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;from_xld&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>XLD 輪郭 dict(`<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;:[Nx2,...]}</code>`)から i 番目の輪郭を取り出す。</p>
-<p>返るのは XLD と同じ <b>(row, col)</b> 順の (N,2)。`<code style="color:#22d3bf">imagemorph</code>` へ渡すときは</p>
-<p>`<code style="color:#22d3bf">[:, ::-1]</code>` で (x, y) に入れ替えること(モジュール冒頭の「座標順の落とし穴」)。</p>
+<p>XLD 輪郭 dict(<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;:[Nx2,...]}</code>)から i 番目の輪郭を取り出す。</p>
+<p>返るのは XLD と同じ <b>(row, col)</b> 順の (N,2)。<code style="color:#22d3bf">imagemorph</code> へ渡すときは <code style="color:#22d3bf">[:, ::-1]</code> で (x, y) に入れ替えること(モジュール冒頭の「座標順の落とし穴」)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">Leitfaden zur Familie shape_description_2d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_layout(name: &#x27;str&#x27; = &#x27;default&#x27;, *, overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetown; drivetown.town_layout(name: &#x27;str&#x27; = &#x27;default&#x27;, *, overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;town_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>既定の町。`<code style="color:#22d3bf">&quot;default&quot;</code>` = road(30) → intersection → road(20) → crossing(踏切) → road(20) → slope → road(20) →</p>
-<p>parallel_parking → road(30)(全部幅 7 m、停止線は交差点 1 本と踏切 1 本)。`<code style="color:#22d3bf">&quot;short&quot;</code>` = road(20) → crossing → road(20)</p>
-<p>(テストの速い門)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 名前が :data:</code>TOWN_NAMES` に無い。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>既定の町。<code style="color:#22d3bf">&quot;default&quot;</code> = road(30) → intersection → road(20) → crossing(踏切) → road(20) → slope → road(20) → parallel_parking → road(30)(全部幅 7 m、停止線は交差点 1 本と踏切 1 本)。<code style="color:#22d3bf">&quot;short&quot;</code> = road(20) → crossing → road(20) (テストの速い門)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 名前が <code style="color:#22d3bf">TOWN_NAMES</code> に無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

@@ -5,15 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>時刻 t の踏切の設備を世界に書き込む(全部の踏切に同じ列車の時刻を使う)。</p>
-<p>`<code style="color:#22d3bf">train</code><code style="color:#22d3bf"> = :func:</code>town_run<code style="color:#22d3bf"> の </code><code style="color:#22d3bf">run[&quot;train&quot;]</code>`(None = 待機: かん上・灯消灯・列車は遠く)。状態は既存 op</p>
-<p>:func:<code style="color:#22d3bf">drivecrossing.crossing_gate_state</code>(警報 → 降下 → 遮断 → 上昇、かんの角)と :func:<code style="color:#22d3bf">drivecrossing.crossing_lamp_signal</code></p>
-<p>(2 灯の交互点滅、`<code style="color:#22d3bf">exposure</code><code style="color:#22d3bf"> &gt; 0 でカメラの露光平均)で評価する。列車の先頭は </code><code style="color:#22d3bf">t_arrival</code>` に道路の縁(手前 margin)に着き、</p>
-<p>`<code style="color:#22d3bf">v_train</code><code style="color:#22d3bf"> で +y(局所)へ進む。返り値 </code><code style="color:#22d3bf">{&quot;state&quot;, &quot;state_name&quot;, &quot;boom_angle&quot;, &quot;lamps&quot;, &quot;entry_forbidden&quot;, &quot;train_y&quot;}</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: world が town_world の物でない、t が非有限、train の鍵が足りない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">train</code> = <code style="color:#22d3bf">town_run</code> の <code style="color:#22d3bf">run[&quot;train&quot;]</code>(None = 待機: かん上・灯消灯・列車は遠く)。状態は既存 op <code style="color:#22d3bf">drivecrossing.crossing_gate_state</code>(警報 → 降下 → 遮断 → 上昇、かんの角)と <code style="color:#22d3bf">drivecrossing.crossing_lamp_signal</code> (2 灯の交互点滅、<code style="color:#22d3bf">exposure</code> &gt; 0 でカメラの露光平均)で評価する。列車の先頭は <code style="color:#22d3bf">t_arrival</code> に道路の縁(手前 margin)に着き、<code style="color:#22d3bf">v_train</code> で +y(局所)へ進む。返り値 <code style="color:#22d3bf">{&quot;state&quot;, &quot;state_name&quot;, &quot;boom_angle&quot;, &quot;lamps&quot;, &quot;entry_forbidden&quot;, &quot;train_y&quot;}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: world が town_world の物でない、t が非有限、train の鍵が足りない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

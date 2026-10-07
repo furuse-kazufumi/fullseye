@@ -5,25 +5,18 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>種から<b>高いところ順に</b>領域を広げて、融合した塊を割る(分水嶺)。</p>
-<p>`<code style="color:#22d3bf">distance</code>` の高い画素から順に、隣接する既知のラベルを取り込んでいく</p>
-<p>(immersion 型の分水嶺を、距離の降順で回す形)。**種を持たない塊はその</p>
-<p>まま残す** —— 割る材料が無いのに消すのは嘘になるため。</p>
-<p>`<code style="color:#22d3bf">segmentation.watersheds_marker</code>` を使わないのは、**skimage が無い環境で</p>
-<p>黙って別の算法(マーカーからの最近傍)に落ちる**から。落ちた先は画像を</p>
-<p>一切見ないので、同じ関数名で違うものが返る。ここは numpy と scipy だけで</p>
-<p>閉じる。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p><code style="color:#22d3bf">distance</code> の高い画素から順に、隣接する既知のラベルを取り込んでいく(immersion 型の分水嶺を、距離の降順で回す形)。<b>種を持たない塊はそのまま残す</b> —— 割る材料が無いのに消すのは嘘になるため。</p>
+<p><code style="color:#22d3bf">segmentation.watersheds_marker</code> を使わないのは、<b>skimage が無い環境で黙って別の算法(マーカーからの最近傍)に落ちる</b>から。落ちた先は画像を一切見ないので、同じ関数名で違うものが返る。ここは numpy と scipy だけで閉じる。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : array_like</p>
-<p>割る対象。:func:<code style="color:#22d3bf">blob_label</code> の出力(`<code style="color:#22d3bf">&gt; 0</code>` の画素だけが割られる)。</p>
+<p>割る対象。<code style="color:#22d3bf">blob_label</code> の出力(<code style="color:#22d3bf">&gt; 0</code> の画素だけが割られる)。</p>
 <p>seeds : array_like</p>
-<p>:func:<code style="color:#22d3bf">blob_seeds</code> の出力。`<code style="color:#22d3bf">labels</code>` の外にある種は無視する。</p>
+<p><code style="color:#22d3bf">blob_seeds</code> の出力。<code style="color:#22d3bf">labels</code> の外にある種は無視する。</p>
 <p>distance : array_like</p>
-<p>優先度。ふつうは :func:<code style="color:#22d3bf">blob_distance</code> の出力。</p>
-<p>Returns</p>
-<p>-------</p>
+<p>優先度。ふつうは <code style="color:#22d3bf">blob_distance</code> の出力。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p>`<code style="color:#22d3bf">int32</code>` のラベル画像。番号は 1 から振り直す。</p>
+<p><code style="color:#22d3bf">int32</code> のラベル画像。番号は 1 から振り直す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

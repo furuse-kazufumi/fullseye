@@ -3,27 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wave_grating_orders(pitch_um=1.6, wavelength_nm=550.0, sin_in=0.0, orders=(-2, -1, 1, 2))</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.wave_grating_orders(pitch_um=1.6, wavelength_nm=550.0, sin_in=0.0, orders=(-2, -1, 1, 2))</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;wave_grating_orders&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Where a grating sends each order: `<code style="color:#22d3bf">d (sin_out - sin_in) = m lambda</code>` solved for the angle.</p>
-<p>The companion to the existing `<code style="color:#22d3bf">grating_wavelengths</code>` (which solves the same</p>
-<p>identity for *lambda*): given the pitch and the wavelength, this returns the</p>
-<p>outgoing direction of each order, and marks the orders that are</p>
-<p><b>evanescent</b> — `<code style="color:#22d3bf">|sin_out| &gt; 1</code>` means that order does not propagate, which</p>
-<p>is why a CD shows fewer colours at grazing incidence.</p>
-<p>★<b>Why this earns its place</b>: the two ops invert one another, so a round trip</p>
-<p>must return the wavelength it started from; and the angles can be compared</p>
-<p>against the peak positions of a *simulated* far field (the existing</p>
-<p>`<code style="color:#22d3bf">fraunhofer_pattern</code>` of a real grating aperture), which knows nothing about</p>
-<p>the grating equation.</p>
-<p>Returns a `<code style="color:#22d3bf">table</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">order</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">sin_out</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">angle_deg</code>` (NaN when</p>
-<p>evanescent), `<code style="color:#22d3bf">propagates</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: non-positive pitch or wavelength; </code><code style="color:#22d3bf">|sin_in| &gt; 1</code>`;</p>
-<p>order 0 alone with no others (it is always the specular direction — allowed,</p>
-<p>but a caller asking only for it probably meant something else); non-finite input.</p>
+<p>Where a grating sends each order: <code style="color:#22d3bf">d (sin_out - sin_in) = m lambda</code> solved for the angle.</p>
+<p>The companion to the existing <code style="color:#22d3bf">grating_wavelengths</code> (which solves the same identity for *lambda*): given the pitch and the wavelength, this returns the outgoing direction of each order, and marks the orders that are <b>evanescent</b> — <code style="color:#22d3bf">|sin_out| &gt; 1</code> means that order does not propagate, which is why a CD shows fewer colours at grazing incidence.</p>
+<p>★<b>Why this earns its place</b>: the two ops invert one another, so a round trip must return the wavelength it started from; and the angles can be compared against the peak positions of a *simulated* far field (the existing <code style="color:#22d3bf">fraunhofer_pattern</code> of a real grating aperture), which knows nothing about the grating equation.</p>
+<p>Returns a <code style="color:#22d3bf">table</code>: <code style="color:#22d3bf">order</code>, <code style="color:#22d3bf">sin_out</code>, <code style="color:#22d3bf">angle_deg</code> (NaN when evanescent), <code style="color:#22d3bf">propagates</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-positive pitch or wavelength; <code style="color:#22d3bf">|sin_in| &gt; 1</code>; order 0 alone with no others (it is always the specular direction — allowed, but a caller asking only for it probably meant something else); non-finite input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

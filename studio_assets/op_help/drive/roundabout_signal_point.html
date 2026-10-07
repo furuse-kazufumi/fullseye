@@ -4,11 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roundabout_signal_point(arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivepass; drivepass.roundabout_signal_point(arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;roundabout_signal_point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>環状交差点を出るときの左の合図を始める位置(右回りに進んだ角)。場面 S069。</p>
-<p>教則 5-5-1(2)・5-7-2(4): 出ようとする地点の直前の出口の側方を通過したとき、入った直後の出口を出るなら入ったとき</p>
-<p>(53 条 2 項。時期の政令 = 施行令 21 条は未確認)。`<code style="color:#22d3bf">arm_angles</code><code style="color:#22d3bf"> = 各枝の角、</code><code style="color:#22d3bf">entry</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">exit</code>` = 番号。</p>
-<p>右回りに入口から測った各枝の角 d_i = (θ_entry − θ_i) mod 2π(出口 = 入口なら 2π、転回)。合図の角 = 目的の出口の角より</p>
-<p>小さい d_i の最大値(無ければ 0 = 入ったとき)。返り値: `<code style="color:#22d3bf">signal_angle</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">exit_angle</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">exits_before</code>`(通り過ぎる出口の数)、</p>
-<p>`<code style="color:#22d3bf">signal_theta</code>`(環道の上の角)。</p>
+<p>教則 5-5-1(2)・5-7-2(4): 出ようとする地点の直前の出口の側方を通過したとき、入った直後の出口を出るなら入ったとき(53 条 2 項。時期の政令 = 施行令 21 条は未確認)。<code style="color:#22d3bf">arm_angles</code> = 各枝の角、<code style="color:#22d3bf">entry</code> / <code style="color:#22d3bf">exit</code> = 番号。右回りに入口から測った各枝の角 d_i = (θ_entry − θ_i) mod 2π(出口 = 入口なら 2π、転回)。合図の角 = 目的の出口の角より小さい d_i の最大値(無ければ 0 = 入ったとき)。返り値: <code style="color:#22d3bf">signal_angle</code>、<code style="color:#22d3bf">exit_angle</code>、<code style="color:#22d3bf">exits_before</code>(通り過ぎる出口の数)、<code style="color:#22d3bf">signal_theta</code>(環道の上の角)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

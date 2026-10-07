@@ -15,18 +15,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>行列を<b>見るための濃淡</b>にして画像へ戻す —— キャストではない。</p>
-<p>行き(`<code style="color:#22d3bf">img_to_matrix</code>`)は値も形も変えない<b>純粋なキャスト</b>だと明記して</p>
-<p>あるが、戻りを同じくキャストにすると嘘になる: 行列の値は [0,1] に収まらず、</p>
-<p>最小値が黒・最大値が白に伸びるだけだと <b>0 がどこかが分からない</b>。</p>
-<p>共分散・相関・擬似逆行列の符号は、そこが読めないと意味を持たない。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → **対数圧縮**の強さ。</code><code style="color:#22d3bf">k = 10**(3a) - 1</code>` として</p>
-<p>`<code style="color:#22d3bf">y = sign(x) * log1p(k|x|) / log1p(k)</code>`(a=0 は線形、a=1 で 1000 倍の圧縮)。</p>
-<p>条件数のように桁が開く行列で、小さい成分が全部黒に潰れるのを防ぐ。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 基準。</code><code style="color:#22d3bf">b &lt; 0.5</code>` は<b>データの min–max を [0,1] に伸ばす</b>、</p>
-<p>`<code style="color:#22d3bf">b &gt;= 0.5</code><code style="color:#22d3bf"> は **0 を 0.5 に置いて </code><code style="color:#22d3bf">|x|</code>` の最大で対称に**(符号つきの</p>
-<p>行列向け。0.5 が中立、明るい = 正、暗い = 負)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と<b>同じ形</b>の float64、値域 [0,1]。全要素が等しい行列は一様な</p>
-<p>0.5(min–max 側でも 0 除算にならないよう中立へ倒す)。</p>
+<p>行き(<code style="color:#22d3bf">img_to_matrix</code>)は値も形も変えない<b>純粋なキャスト</b>だと明記してあるが、戻りを同じくキャストにすると嘘になる: 行列の値は [0,1] に収まらず、最小値が黒・最大値が白に伸びるだけだと <b>0 がどこかが分からない</b>。共分散・相関・擬似逆行列の符号は、そこが読めないと意味を持たない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → <b>対数圧縮</b>の強さ。<code style="color:#22d3bf">k = 10**(3a) - 1</code> として <code style="color:#22d3bf">y = sign(x) * log1p(k|x|) / log1p(k)</code>(a=0 は線形、a=1 で 1000 倍の圧縮)。条件数のように桁が開く行列で、小さい成分が全部黒に潰れるのを防ぐ。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基準。<code style="color:#22d3bf">b &lt; 0.5</code> は<b>データの min–max を [0,1] に伸ばす</b>、<code style="color:#22d3bf">b &gt;= 0.5</code> は <b>0 を 0.5 に置いて <code style="color:#22d3bf">|x|</code> の最大で対称に</b>(符号つきの行列向け。0.5 が中立、明るい = 正、暗い = 負)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と<b>同じ形</b>の float64、値域 [0,1]。全要素が等しい行列は一様な 0.5(min–max 側でも 0 除算にならないよう中立へ倒す)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

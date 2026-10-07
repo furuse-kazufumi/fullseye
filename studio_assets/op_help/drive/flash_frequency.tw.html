@@ -5,14 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>画素(または領域の平均)の明るさの時系列から点滅の周波数を推定する(FFT のいちばん高い山)。</p>
-<p>平均を引き、Hann 窓をかけ、`<code style="color:#22d3bf">pad</code><code style="color:#22d3bf"> 倍に 0 を詰めて rFFT。</code><code style="color:#22d3bf">f_min</code>` 以上でいちばん高い山を対数振幅の放物線で</p>
-<p>補間する。返る周波数は <b>見かけの</b> 周波数(fps/2 を超える点滅は `<code style="color:#22d3bf">aliased_frequency</code>` の値に折り返って見える)。</p>
-<p>返り値: `<code style="color:#22d3bf">frequency</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">bin_width</code><code style="color:#22d3bf"> = fps / n(窓の分解能の目安)、</code><code style="color:#22d3bf">nyquist</code><code style="color:#22d3bf"> = fps/2、</code><code style="color:#22d3bf">peak_ratio</code>`(山の高さ /</p>
-<p>山以外の中央値。点滅していない画素は小さい)。一定の系列(振れ幅 0)は ValueError。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>平均を引き、Hann 窓をかけ、<code style="color:#22d3bf">pad</code> 倍に 0 を詰めて rFFT。<code style="color:#22d3bf">f_min</code> 以上でいちばん高い山を対数振幅の放物線で補間する。返る周波数は <b>見かけの</b> 周波数(fps/2 を超える点滅は <code style="color:#22d3bf">aliased_frequency</code> の値に折り返って見える)。</p>
+<p>返り値: <code style="color:#22d3bf">frequency</code>、<code style="color:#22d3bf">bin_width</code> = fps / n(窓の分解能の目安)、<code style="color:#22d3bf">nyquist</code> = fps/2、<code style="color:#22d3bf">peak_ratio</code>(山の高さ / 山以外の中央値。点滅していない画素は小さい)。一定の系列(振れ幅 0)は ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>

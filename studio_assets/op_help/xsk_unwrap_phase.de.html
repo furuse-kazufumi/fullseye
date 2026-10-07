@@ -8,14 +8,12 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk_unwrap_phase.inputs.jpg">xsk_unwrap_phase: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk_unwrap_phase.inputs.jpg">xsk_unwrap_phase: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Phasen-Unwrapping. Betrachtet die Eingabe [0,1] als Phase [-pi, pi], entfernt 2*pi-Umbrüche mit `<code style="color:#22d3bf">skimage.restoration.unwrap_phase</code><code style="color:#22d3bf"> und wandelt sie anschließend mit </code><code style="color:#22d3bf">signed01</code>` unter Beibehaltung des Vorzeichens zurück in [0,1] (0 -&gt; 0.5).</p>
+<p>Phasen-Unwrapping. Betrachtet die Eingabe [0,1] als Phase [-pi, pi], entfernt 2*pi-Umbrüche mit <code style="color:#22d3bf">skimage.restoration.unwrap_phase</code> und wandelt sie anschließend mit <code style="color:#22d3bf">signed01</code> unter Beibehaltung des Vorzeichens zurück in [0,1] (0 -&gt; 0.5).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。干渉縞など周期的にラップした位相画像の連続化に使う op で、</p>
-<p>一様なグラデーションやランダムノイズなど元々位相らしくない入力では意味のある</p>
-<p>結果にならないことがある。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。干渉縞など周期的にラップした位相画像の連続化に使う op で、一様なグラデーションやランダムノイズなど元々位相らしくない入力では意味のある結果にならないことがある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -24,7 +22,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xsk_unwrap_phase 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xsk_unwrap_phase%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xsk_unwrap_phase%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xsk_unwrap_phase 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xsk_unwrap_phase%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xsk_unwrap_phase%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_smoothing_rank.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>

@@ -4,14 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_spheres_select(pos, radius: &#x27;float&#x27;, floor_height: &#x27;float&#x27;, bin_radius: &#x27;float&#x27;, keep_min: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.heap_spheres_select(pos, radius: &#x27;float&#x27;, floor_height: &#x27;float&#x27;, bin_radius: &#x27;float&#x27;, keep_min: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;heap_spheres_select&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>山に属する球だけを選ぶ: ビンの底板より下(`<code style="color:#22d3bf">z &lt; floor_height − r</code>`)で、ビン半径の 3 倍の内側。</p>
-<p>ビンに残った球(平底の滞留層)と転がって逃げた球は山ではない。返り: `<code style="color:#22d3bf">pos</code><code style="color:#22d3bf">(選んだ中心)、</code><code style="color:#22d3bf">n_in_bin</code>`、</p>
-<p>`<code style="color:#22d3bf">n_runaway</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">radius_95</code><code style="color:#22d3bf">(山の半径の目安)。**Raises** </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 残りが </code><code style="color:#22d3bf">keep_min</code>` 未満(山になって</p>
-<p>いない —— 滑らかな台で 1,200 個中 600 個が逃げたときに黙って測らないため)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>山に属する球だけを選ぶ: ビンの底板より下(<code style="color:#22d3bf">z &lt; floor_height − r</code>)で、ビン半径の 3 倍の内側。ビンに残った球(平底の滞留層)と転がって逃げた球は山ではない。返り: <code style="color:#22d3bf">pos</code>(選んだ中心)、<code style="color:#22d3bf">n_in_bin</code>、<code style="color:#22d3bf">n_runaway</code>、<code style="color:#22d3bf">radius_95</code>(山の半径の目安)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 残りが <code style="color:#22d3bf">keep_min</code> 未満(山になっていない —— 滑らかな台で 1,200 個中 600 個が逃げたときに黙って測らないため)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

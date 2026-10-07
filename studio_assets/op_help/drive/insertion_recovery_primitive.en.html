@@ -4,14 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_recovery_primitive(name: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegfail; pegfail.insertion_recovery_primitive(name: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;insertion_recovery_primitive&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>回復プリミティブの表(クラス → 動作の記述)。`<code style="color:#22d3bf">name</code><code style="color:#22d3bf"> は表の </code><code style="color:#22d3bf">recovery</code>` の語。</p>
-<p>`<code style="color:#22d3bf">lift_recentre</code>`: 先端を板の上 6 mm まで上げ、手首 RGB-D で (dx, dy) を測って搬送台を寄せ(≤ 6 回)、再降下。</p>
-<p>`<code style="color:#22d3bf">lift_reapproach</code>`: 口の上 10 mm まで上げ、治具の目標座標へ搬送台を戻し、カメラで寄せて再降下。</p>
-<p>`<code style="color:#22d3bf">retract_reduce_tilt</code>`: 4 mm 退避し、手首ヒンジの角度を測って把持の傾きをその分戻し(θ → 0)、再降下(p.28 の θ ≤ c/μ へ)。</p>
-<p>`<code style="color:#22d3bf">steer_force</code>`: 平行四辺形の余裕を線形模型で見て、搬送台の横移動 0.5 mm(F_x と M = L_g F_x が一緒に動く)と手首の回転 0.5°</p>
-<p>(M だけが k_r Δ 動く)の組 3 × 3 から余裕が最大の組を選び、進むまで ≤ 6 歩(Whitney p.34: 力の比を図の中へ)。</p>
-<p>`<code style="color:#22d3bf">lift_abort</code><code style="color:#22d3bf">: 退避して終了(障害物は押しても取れない)。</code><code style="color:#22d3bf">continue</code><code style="color:#22d3bf">: 何もしない。</code><code style="color:#22d3bf">stop</code>`: 完了。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 未知の名(綴り壊しは fail-closed)。</p>
+<p>回復プリミティブの表(クラス → 動作の記述)。<code style="color:#22d3bf">name</code> は表の <code style="color:#22d3bf">recovery</code> の語。</p>
+<p><code style="color:#22d3bf">lift_recentre</code>: 先端を板の上 6 mm まで上げ、手首 RGB-D で (dx, dy) を測って搬送台を寄せ(≤ 6 回)、再降下。<code style="color:#22d3bf">lift_reapproach</code>: 口の上 10 mm まで上げ、治具の目標座標へ搬送台を戻し、カメラで寄せて再降下。<code style="color:#22d3bf">retract_reduce_tilt</code>: 4 mm 退避し、手首ヒンジの角度を測って把持の傾きをその分戻し(θ → 0)、再降下(p.28 の θ ≤ c/μ へ)。<code style="color:#22d3bf">steer_force</code>: 平行四辺形の余裕を線形模型で見て、搬送台の横移動 0.5 mm(F_x と M = L_g F_x が一緒に動く)と手首の回転 0.5° (M だけが k_r Δ 動く)の組 3 × 3 から余裕が最大の組を選び、進むまで ≤ 6 歩(Whitney p.34: 力の比を図の中へ)。<code style="color:#22d3bf">lift_abort</code>: 退避して終了(障害物は押しても取れない)。<code style="color:#22d3bf">continue</code>: 何もしない。<code style="color:#22d3bf">stop</code>: 完了。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 未知の名(綴り壊しは fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

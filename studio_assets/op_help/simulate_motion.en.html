@@ -13,10 +13,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/simulate_motion.inputs.jpg">simulate_motion: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Simulates linear motion blur. Creates a line-segment kernel of length `<code style="color:#22d3bf">5+10*b</code><code style="color:#22d3bf"> pixels in the direction of angle </code><code style="color:#22d3bf">pi*a</code><code style="color:#22d3bf"> (0-180 degrees) and convolves it. Equivalent to HALCON&#x27;s </code><code style="color:#22d3bf">simulate_motion</code>` (Simulation of (linearly) motion blur.).</p>
+<p>Simulates linear motion blur. Creates a line-segment kernel of length <code style="color:#22d3bf">5+10*b</code> pixels in the direction of angle <code style="color:#22d3bf">pi*a</code> (0-180 degrees) and convolves it. Equivalent to HALCON&#x27;s <code style="color:#22d3bf">simulate_motion</code> (Simulation of (linearly) motion blur.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がぶれの方向角を、</code><code style="color:#22d3bf">b</code>` がぶれの長さを振る。両方が使われる。</p>
-<p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default `<code style="color:#22d3bf">reflect</code><code style="color:#22d3bf">) (measured; </code>tools/impl2/border_probe.py`).</p>
+<p><code style="color:#22d3bf">a</code> がぶれの方向角を、<code style="color:#22d3bf">b</code> がぶれの長さを振る。両方が使われる。</p>
+<p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default <code style="color:#22d3bf">reflect</code>) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

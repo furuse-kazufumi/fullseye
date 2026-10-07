@@ -3,14 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_map_decode(rgb)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.normal_map_decode(rgb)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;normal_map_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>`<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> の接空間法線マップ </code><code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> を単位ベクトル </code><code style="color:#22d3bf">(H, W, 3)</code>` へ。</p>
+<p><code style="color:#22d3bf">[0, 1]</code> の接空間法線マップ <code style="color:#22d3bf">rgb</code> を単位ベクトル <code style="color:#22d3bf">(H, W, 3)</code> へ。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>The usual encoding `<code style="color:#22d3bf">n = 2c - 1</code>` followed by normalisation. The result is</p>
-<p>the `<code style="color:#22d3bf">normalmap</code>` sort the rest of the library already speaks, so a decoded</p>
-<p>map can go straight into the 3-D normals family.</p>
-<p>Raises ValueError: a pixel whose decoded vector has zero length (the encoded</p>
-<p>colour was exactly mid-grey), because normalising it would silently invent a</p>
-<p>direction.</p>
+<p>The usual encoding <code style="color:#22d3bf">n = 2c - 1</code> followed by normalisation. The result is the <code style="color:#22d3bf">normalmap</code> sort the rest of the library already speaks, so a decoded map can go straight into the 3-D normals family.</p>
+<p>Raises ValueError: a pixel whose decoded vector has zero length (the encoded colour was exactly mid-grey), because normalising it would silently invent a direction.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

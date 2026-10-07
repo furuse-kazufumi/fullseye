@@ -3,10 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelong; drivelong.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;road_profile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>水平距離と高さの折線 (x, z)(drivecourse.course_slope の `<code style="color:#22d3bf">profile</code>` と同じ形)を、<b>路面に沿った弧長 l</b> の縦断にする。</p>
-<p>返り値 = `<code style="color:#22d3bf">{&quot;l&quot; (n,), &quot;x&quot; (n,), &quot;z&quot; (n,), &quot;sin&quot; (n−1,), &quot;cos&quot; (n−1,)}</code><code style="color:#22d3bf">。l は </code><code style="color:#22d3bf">l0</code>` から始まる折れ点の弧長。</p>
-<p>区間 i の勾配角 θ_i は sin = Δz/Δl、cos = Δx/Δl(両端の外は平ら: θ = 0、z は端の値)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 2 点未満、非有限、x が狭義単調増加でない、勾配が 45° 以上。</p>
+<p>水平距離と高さの折線 (x, z)(drivecourse.course_slope の <code style="color:#22d3bf">profile</code> と同じ形)を、<b>路面に沿った弧長 l</b> の縦断にする。</p>
+<p>返り値 = <code style="color:#22d3bf">{&quot;l&quot; (n,), &quot;x&quot; (n,), &quot;z&quot; (n,), &quot;sin&quot; (n−1,), &quot;cos&quot; (n−1,)}</code>。l は <code style="color:#22d3bf">l0</code> から始まる折れ点の弧長。区間 i の勾配角 θ_i は sin = Δz/Δl、cos = Δx/Δl(両端の外は平ら: θ = 0、z は端の値)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2 点未満、非有限、x が狭義単調増加でない、勾配が 45° 以上。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

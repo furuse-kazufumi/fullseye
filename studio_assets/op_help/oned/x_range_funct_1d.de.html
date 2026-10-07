@@ -2,12 +2,11 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">x_range_funct_1d — ONED <code style="color:#22d3bf">function</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.x_range_funct_1d(y)</code> (die Implementierung direkt: <code style="color:#22d3bf">import funct1d; funct1d.x_range_funct_1d(y)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;x_range_funct_1d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.x_range_funct_1d(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.x_range_funct_1d.raw(...)</code> oder rufe <code style="color:#22d3bf">funct1d.x_range_funct_1d</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.x_range_funct_1d(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.x_range_funct_1d.raw(...)</code> oder rufe <code style="color:#22d3bf">funct1d.x_range_funct_1d</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>The x-domain `<code style="color:#22d3bf">(0.0, n - 1.0)</code><code style="color:#22d3bf"> (HALCON </code><code style="color:#22d3bf">x_range_funct_1d</code>`).</p>
-<p>:param y: 1-D function, at least 1 sample (an empty function has no domain).</p>
-<p>:raises ValueError: non-1-D / NaN / Inf input, or empty input.</p>
+<p>The x-domain <code style="color:#22d3bf">(0.0, n - 1.0)</code> (HALCON <code style="color:#22d3bf">x_range_funct_1d</code>).</p>
+<p>:param y: 1-D function, at least 1 sample (an empty function has no domain). :raises ValueError: non-1-D / NaN / Inf input, or empty input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

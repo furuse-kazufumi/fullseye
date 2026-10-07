@@ -3,12 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.symmetry_order_contour(contour, K: &#x27;int&#x27; = 24, rel: &#x27;float&#x27; = 0.01) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegtactile; pegtactile.symmetry_order_contour(contour, K: &#x27;int&#x27; = 24, rel: &#x27;float&#x27; = 0.01) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;symmetry_order_contour&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>閉輪郭 (N, 2) = (row, col) の複素フーリエ係数(:func:<code style="color:#22d3bf">fourierdesc.contour_fourier_complex</code>、弧長で打ち直し、±K 次)から n 回対称の</p>
-<p>次数を読む: n 回対称なら非零の係数は k ≡ 1 (mod n) だけ。有意(|c_k| &gt; rel·|c_1|、k ≠ 0, 1)な k の (k − 1) の最大公約数が n。</p>
-<p>有意な k が無ければ円(`<code style="color:#22d3bf">n</code>` = 0 = 連続)。向き α̂ = arg(c₁₋ₙ c₁ⁿ⁻¹)/n(始点の取り方に依らない不変量、mod 2π/n)。n = 1 は</p>
-<p>c₂ c₁⁻² から α̂ = −arg(·) —— k = −1(振幅は 3 倍)は形ごとの定数位相が違い、枝(α / α + π)を参照なしに決められない(試作で</p>
-<p>180° 取り違えた)。返り `<code style="color:#22d3bf">n</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">angle</code><code style="color:#22d3bf">(rad、n = 0 は nan)・</code><code style="color:#22d3bf">amps</code><code style="color:#22d3bf">(k → |c_k|/|c_1|)・</code><code style="color:#22d3bf">sig</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">centroid</code>`(c₀ = (row, col))。</p>
-<p>2 次モーメントの向きは n ≥ 3 で慣性が等方になり使えない(PoC の罠の門)。<b>Raises</b> ValueError: 輪郭が (N ≥ 8, 2) でない、K &lt; 6。</p>
+<p>閉輪郭 (N, 2) = (row, col) の複素フーリエ係数(<code style="color:#22d3bf">fourierdesc.contour_fourier_complex</code>、弧長で打ち直し、±K 次)から n 回対称の</p>
+<p>次数を読む: n 回対称なら非零の係数は k ≡ 1 (mod n) だけ。有意(|c_k| &gt; rel·|c_1|、k ≠ 0, 1)な k の (k − 1) の最大公約数が n。有意な k が無ければ円(<code style="color:#22d3bf">n</code> = 0 = 連続)。向き α̂ = arg(c₁₋ₙ c₁ⁿ⁻¹)/n(始点の取り方に依らない不変量、mod 2π/n)。n = 1 は c₂ c₁⁻² から α̂ = −arg(·) —— k = −1(振幅は 3 倍)は形ごとの定数位相が違い、枝(α / α + π)を参照なしに決められない(試作で 180° 取り違えた)。返り <code style="color:#22d3bf">n</code>・<code style="color:#22d3bf">angle</code>(rad、n = 0 は nan)・<code style="color:#22d3bf">amps</code>(k → |c_k|/|c_1|)・<code style="color:#22d3bf">sig</code>・<code style="color:#22d3bf">centroid</code>(c₀ = (row, col))。2 次モーメントの向きは n ≥ 3 で慣性が等方になり使えない(PoC の罠の門)。<b>Raises</b> ValueError: 輪郭が (N ≥ 8, 2) でない、K &lt; 6。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

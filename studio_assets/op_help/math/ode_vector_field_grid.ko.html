@@ -3,34 +3,17 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">flow2d</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ode_vector_field_grid(system=&#x27;rossler&#x27;, params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane=&#x27;xy&#x27;, offset=0.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathops; mathops.ode_vector_field_grid(system=&#x27;rossler&#x27;, params=None, bounds=(-10.0, 10.0, -10.0, 10.0), shape=(64, 64), plane=&#x27;xy&#x27;, offset=0.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;ode_vector_field_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>이름으로 부른 장을 격자에서 표본화 —— 기존 뷰어가 받는 `<code style="color:#22d3bf">flow2d</code>`。</p>
+<p>이름으로 부른 장을 격자에서 표본화 —— 기존 뷰어가 받는 <code style="color:#22d3bf">flow2d</code>。</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Returns `<code style="color:#22d3bf">(2, H, W)</code><code style="color:#22d3bf"> with components </code><code style="color:#22d3bf">(dy, dx)</code>` — the library&#x27;s</p>
-<p>`<code style="color:#22d3bf">flow2d</code>` layout — so the <b>existing flow2d viewers</b> render it with no new</p>
-<p>drawing code: `<code style="color:#22d3bf">piv_flow_to_rgbimage</code><code style="color:#22d3bf"> (colour wheel), </code><code style="color:#22d3bf">piv_flow_magnitude</code>` and</p>
-<p>`<code style="color:#22d3bf">piv_line_integral_convolution</code><code style="color:#22d3bf"> (texture along the flow), </code><code style="color:#22d3bf">piv_quiver</code>`</p>
-<p>(arrows) and `<code style="color:#22d3bf">piv_streamline_image</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">piv_streamlines</code>` (evenly spaced</p>
-<p>streamlines). (★2026-10-03: this docstring used to name &quot;quiver, streamlines,</p>
-<p>flow_magnitude&quot; before any quiver or streamline op existed; they were added the</p>
-<p>same day. `<code style="color:#22d3bf">fs.flow_magnitude</code>` takes two components, not a flow2d array.) For a</p>
-<p>3-D system, *plane* picks the slice (`<code style="color:#22d3bf">xy</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">xz</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">yz</code>`) and *offset*</p>
-<p>fixes the third coordinate.</p>
-<p>★<b>Why this earns its place</b>: it is the bridge that keeps this family from</p>
-<p>growing its own renderer. The vectors are the same `<code style="color:#22d3bf">_dyn_derivative</code>` the</p>
-<p>integrator uses, so what you see is what gets integrated.</p>
-<p>★The layout is <b>channel-first</b>, not the `<code style="color:#22d3bf">(H, W, 2)</code>` that reads more</p>
-<p>naturally here: `<code style="color:#22d3bf">flow2d</code>` is an existing type with an existing predicate and</p>
-<p>existing consumers, and a row that declares `<code style="color:#22d3bf">flow2d</code>` while returning the</p>
-<p>transpose is a type lie the fuzzer catches (it did —— 2026-09-23). Row 0 is</p>
-<p>the <b>top</b> (the image convention), so the vertical component is negated to</p>
-<p>match what the viewer draws.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: unknown system or plane; a grid over the cap;</p>
-<p>non-finite bounds; a degenerate window.</p>
+<p>Returns <code style="color:#22d3bf">(2, H, W)</code> with components <code style="color:#22d3bf">(dy, dx)</code> — the library&#x27;s <code style="color:#22d3bf">flow2d</code> layout — so the <b>existing flow2d viewers</b> render it with no new drawing code: <code style="color:#22d3bf">piv_flow_to_rgbimage</code> (colour wheel), <code style="color:#22d3bf">piv_flow_magnitude</code> and <code style="color:#22d3bf">piv_line_integral_convolution</code> (texture along the flow), <code style="color:#22d3bf">piv_quiver</code> (arrows) and <code style="color:#22d3bf">piv_streamline_image</code> / <code style="color:#22d3bf">piv_streamlines</code> (evenly spaced streamlines). (★2026-10-03: this docstring used to name &quot;quiver, streamlines, flow_magnitude&quot; before any quiver or streamline op existed; they were added the same day. <code style="color:#22d3bf">fs.flow_magnitude</code> takes two components, not a flow2d array.) For a 3-D system, *plane* picks the slice (<code style="color:#22d3bf">xy</code> / <code style="color:#22d3bf">xz</code> / <code style="color:#22d3bf">yz</code>) and *offset* fixes the third coordinate.</p>
+<p>★<b>Why this earns its place</b>: it is the bridge that keeps this family from growing its own renderer. The vectors are the same <code style="color:#22d3bf">_dyn_derivative</code> the integrator uses, so what you see is what gets integrated.</p>
+<p>★The layout is <b>channel-first</b>, not the <code style="color:#22d3bf">(H, W, 2)</code> that reads more naturally here: <code style="color:#22d3bf">flow2d</code> is an existing type with an existing predicate and existing consumers, and a row that declares <code style="color:#22d3bf">flow2d</code> while returning the transpose is a type lie the fuzzer catches (it did —— 2026-09-23). Row 0 is the <b>top</b> (the image convention), so the vertical component is negated to match what the viewer draws.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown system or plane; a grid over the cap; non-finite bounds; a degenerate window.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
-<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
-<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code></b> —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
 <p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

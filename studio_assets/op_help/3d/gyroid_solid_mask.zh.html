@@ -5,19 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>作为可打印<b>实体</b>的 gyroid —— 等值面 ±*thickness* 之内的壳。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Returns a `<code style="color:#22d3bf">volume</code>` (float 0/1), so it feeds the existing voxel ops</p>
-<p>(`<code style="color:#22d3bf">vol_label</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">skeletonize_vol</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mesh_slice_stack</code>`) directly and needs</p>
-<p>no marching cubes —— this form works on bare numpy, while</p>
-<p>:func:<code style="color:#22d3bf">gyroid_isosurface</code> needs scikit-image.</p>
-<p>★<b>Why this earns its place</b>: at `<code style="color:#22d3bf">level = 0</code>` the field is odd under the</p>
-<p>body-centred inversion, so the solid fraction of the two sides is *exactly*</p>
-<p>equal —— a symmetry fact the mask can be checked against (the measured</p>
-<p>fraction above 0 converges on 0.5 as the grid refines), and the shell volume</p>
-<p>grows linearly in *thickness* for small *thickness* because the level set has</p>
-<p>finite area. Both are independent of how the field was sampled.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a grid below 8 per axis or over the cap;</p>
-<p>non-positive periods; a non-finite level; a negative thickness.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>Returns a <code style="color:#22d3bf">volume</code> (float 0/1), so it feeds the existing voxel ops (<code style="color:#22d3bf">vol_label</code> / <code style="color:#22d3bf">skeletonize_vol</code> / <code style="color:#22d3bf">mesh_slice_stack</code>) directly and needs no marching cubes —— this form works on bare numpy, while <code style="color:#22d3bf">gyroid_isosurface</code> needs scikit-image.</p>
+<p>★<b>Why this earns its place</b>: at <code style="color:#22d3bf">level = 0</code> the field is odd under the body-centred inversion, so the solid fraction of the two sides is *exactly* equal —— a symmetry fact the mask can be checked against (the measured fraction above 0 converges on 0.5 as the grid refines), and the shell volume grows linearly in *thickness* for small *thickness* because the level set has finite area. Both are independent of how the field was sampled.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a grid below 8 per axis or over the cap; non-positive periods; a non-finite level; a negative thickness.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

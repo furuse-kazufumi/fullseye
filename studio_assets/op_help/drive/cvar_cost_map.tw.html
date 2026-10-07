@@ -5,17 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>数値標高(DTM)から、8 近傍の辺ごとの所要時間 [s] を、辺の傾き(進む向きの符号つき)の滑りの CVaR_α で割り引いて作る。</p>
-<p>`<code style="color:#22d3bf">dtm</code><code style="color:#22d3bf"> (H, W) [m]、</code><code style="color:#22d3bf">cell</code><code style="color:#22d3bf"> [m]。辺 (i, j) → 近傍 k の傾き </code><code style="color:#22d3bf">θ = atan2(Δz, 水平距離)</code>`、悲観的な滑り</p>
-<p>`<code style="color:#22d3bf">ρ = CVaR_α(s(θ))</code><code style="color:#22d3bf">(θ ≥ 0)/ </code><code style="color:#22d3bf">CVaR_α(−s(θ))</code><code style="color:#22d3bf">(θ &lt; 0)、所要時間 </code><code style="color:#22d3bf">L / (v (1 − ρ))</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">L</code>` は 3-D の辺の長さ。</p>
-<p>`<code style="color:#22d3bf">ρ ≥ s_max</code><code style="color:#22d3bf"> と範囲外は inf。</code><code style="color:#22d3bf">extrapolate = False</code>`(既定)では、模型を当てはめたデータの角の範囲</p>
-<p>(`<code style="color:#22d3bf">x_range</code>`)の外の傾きの辺も inf(分からない斜面は通らない)—— ガウス過程はデータの外で事前の平均に戻るので、</p>
-<p>外挿させると急斜面ほど「滑らない」と答える(門の罠)。`<code style="color:#22d3bf">alpha = 0</code><code style="color:#22d3bf"> なら平均の滑り(リスクに中立)。</code><code style="color:#22d3bf">model</code><code style="color:#22d3bf"> は 1 個か、</code><code style="color:#22d3bf">soil_map</code>`</p>
-<p>(H, W の整数 0..K−1)と組で K 個の list。返り値 ``{&quot;cost&quot;: (8, H, W), &quot;risk_slip&quot;: (8, H, W), &quot;pitch&quot;: (8, H, W) [deg],</p>
-<p>&quot;offsets&quot;: (8, 2), &quot;worst_slip&quot;: (H, W) 8 方向の ρ の最大, &quot;alpha&quot;, &quot;cell&quot;}``。横方向の傾き(横転・横滑り)は入れない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">dtm</code> (H, W) [m]、<code style="color:#22d3bf">cell</code> [m]。辺 (i, j) → 近傍 k の傾き <code style="color:#22d3bf">θ = atan2(Δz, 水平距離)</code>、悲観的な滑り <code style="color:#22d3bf">ρ = CVaR_α(s(θ))</code>(θ ≥ 0)/ <code style="color:#22d3bf">CVaR_α(−s(θ))</code>(θ &lt; 0)、所要時間 <code style="color:#22d3bf">L / (v (1 − ρ))</code>、<code style="color:#22d3bf">L</code> は 3-D の辺の長さ。<code style="color:#22d3bf">ρ ≥ s_max</code> と範囲外は inf。<code style="color:#22d3bf">extrapolate = False</code>(既定)では、模型を当てはめたデータの角の範囲(<code style="color:#22d3bf">x_range</code>)の外の傾きの辺も inf(分からない斜面は通らない)—— ガウス過程はデータの外で事前の平均に戻るので、外挿させると急斜面ほど「滑らない」と答える(門の罠)。<code style="color:#22d3bf">alpha = 0</code> なら平均の滑り(リスクに中立)。<code style="color:#22d3bf">model</code> は 1 個か、<code style="color:#22d3bf">soil_map</code> (H, W の整数 0..K−1)と組で K 個の list。返り値 <code style="color:#22d3bf">{&quot;cost&quot;: (8, H, W), &quot;risk_slip&quot;: (8, H, W), &quot;pitch&quot;: (8, H, W) [deg], &quot;offsets&quot;: (8, 2), &quot;worst_slip&quot;: (H, W) 8 方向の ρ の最大, &quot;alpha&quot;, &quot;cell&quot;}</code>。横方向の傾き(横転・横滑り)は入れない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rover_slip_risk_path">poc_rover_slip_risk_path</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rover_slip_risk_path.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

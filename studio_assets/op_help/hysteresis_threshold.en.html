@@ -12,9 +12,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hysteresis_threshold.inputs.jpg">hysteresis_threshold: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Hysteresis thresholding (`<code style="color:#22d3bf">skimage.filters.apply_hysteresis_threshold</code><code style="color:#22d3bf">). Among pixels exceeding a low threshold (</code><code style="color:#22d3bf">0.2+0.3*a</code><code style="color:#22d3bf">), only those connected to pixels exceeding a high threshold (</code><code style="color:#22d3bf">0.5+0.3*b</code><code style="color:#22d3bf">) are kept as foreground -- an edge-extraction technique resistant to gaps, also used as post-processing for Canny edge detection. Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">hysteresis_threshold</code>` (Perform a hysteresis threshold operation on an image).</p>
+<p>Hysteresis thresholding (<code style="color:#22d3bf">skimage.filters.apply_hysteresis_threshold</code>). Among pixels exceeding a low threshold (<code style="color:#22d3bf">0.2+0.3*a</code>), only those connected to pixels exceeding a high threshold (<code style="color:#22d3bf">0.5+0.3*b</code>) are kept as foreground -- an edge-extraction technique resistant to gaps, also used as post-processing for Canny edge detection. Corresponds to HALCON&#x27;s <code style="color:#22d3bf">hysteresis_threshold</code> (Perform a hysteresis threshold operation on an image).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が低いしきい値を、</code><code style="color:#22d3bf">b</code>` が高いしきい値を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> が低いしきい値を、<code style="color:#22d3bf">b</code> が高いしきい値を振る。両方が使われる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -5,20 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 *slopes* 的每個斜率上重聚焦 —— 一次曝光得到一整疊焦點堆疊。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Returns a `<code style="color:#22d3bf">list</code><code style="color:#22d3bf"> of </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> images (the </code><code style="color:#22d3bf">images</code>` type), in the order</p>
-<p>given, so :mod:<code style="color:#22d3bf">focus_stack</code>&#x27;s fusion and any multi-image operator applies</p>
-<p>unchanged. The physical camera equivalent is racking the focus N times; here</p>
-<p>it costs one exposure and `<code style="color:#22d3bf">len(slopes) * V * U</code>` image shifts.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, *slopes* empty or</p>
-<p>longer than :data:<code style="color:#22d3bf">MAX_STACK_SLICES</code>, any slope non-finite or over</p>
-<p>:data:<code style="color:#22d3bf">MAX_ABS_SLOPE</code>, a stack larger than :data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>,</p>
-<p>unknown *interp* / *edge*.</p>
+<p>Returns a <code style="color:#22d3bf">list</code> of <code style="color:#22d3bf">(H, W)</code> images (the <code style="color:#22d3bf">images</code> type), in the order given, so <code style="color:#22d3bf">focus_stack</code>&#x27;s fusion and any multi-image operator applies unchanged. The physical camera equivalent is racking the focus N times; here it costs one exposure and <code style="color:#22d3bf">len(slopes) * V * U</code> image shifts.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not a valid light field, *slopes* empty or longer than <code style="color:#22d3bf">MAX_STACK_SLICES</code>, any slope non-finite or over <code style="color:#22d3bf">MAX_ABS_SLOPE</code>, a stack larger than <code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>, unknown *interp* / *edge*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">images</code> 作為輸入)</h3>

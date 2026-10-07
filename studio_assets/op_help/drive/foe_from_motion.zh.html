@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivettc; drivettc.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_motion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>拡大の中心(FoE)の画素 `<code style="color:#22d3bf">(col, row)</code><code style="color:#22d3bf">: 相対運動の並進 </code><code style="color:#22d3bf">t</code>` を無限遠で投影した点。</p>
-<p>`<code style="color:#22d3bf">T_rel</code><code style="color:#22d3bf"> の回転が単位でないと FoE は定義されない(</code><code style="color:#22d3bf">ValueError</code>`)。奥行き方向の並進が 0(純粋な横滑り)なら</p>
-<p>`<code style="color:#22d3bf">(nan, nan)</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>拡大の中心(FoE)の画素 <code style="color:#22d3bf">(col, row)</code>: 相対運動の並進 <code style="color:#22d3bf">t</code> を無限遠で投影した点。</p>
+<p><code style="color:#22d3bf">T_rel</code> の回転が単位でないと FoE は定義されない(<code style="color:#22d3bf">ValueError</code>)。奥行き方向の並進が 0(純粋な横滑り)なら <code style="color:#22d3bf">(nan, nan)</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ttc_rss">poc_ttc_rss</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ttc_rss.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_world_terrain">poc_world_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_world_terrain.py</code></p>

@@ -8,28 +8,25 @@
 <p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_fit_ellipse_contour.chain.jpg">hx_fit_ellipse_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_fit_ellipse_contour.chain.jpg">hx_fit_ellipse_contour: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由二階矩擬合橢圓,回傳軸比(短/長:正圓為 1,越細長越接近 0)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>全 contour の点をまとめて座標共分散行列の固有値 `<code style="color:#22d3bf">λmin, λmax</code><code style="color:#22d3bf"> を取り、</code><code style="color:#22d3bf">sqrt(λmin/λmax)</code>`(主軸方向の標準偏差</p>
-<p>の比 = 慣性楕円の短軸/長軸)を `<code style="color:#22d3bf">np.float64</code>` で返す。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 3 個未満、または `<code style="color:#22d3bf">λmax &lt;= 1e-9</code>`(全点一致)なら 0.0。負の固有値は 0 に clip する。</p>
-<p>1 に近いほど等方(真円)、0 に近いほど細長い。楕円境界を当てはめる代数的フィットではなく点群の 2 次モーメント</p>
-<p>なので、点の密度の偏りや欠けた弧では軸比が変わる。楕円の傾き・中心は返さない(`<code style="color:#22d3bf">orientation_xld</code>` /</p>
-<p>`<code style="color:#22d3bf">area_center_xld</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">cv2.fitEllipse</code><code style="color:#22d3bf"> 版は </code><code style="color:#22d3bf">elliptic_axis_xld</code><code style="color:#22d3bf">。楕円からの逸脱量は </code><code style="color:#22d3bf">hx_dist_ellipse_contour</code>`。</p>
+<p>全 contour の点をまとめて座標共分散行列の固有値 <code style="color:#22d3bf">λmin, λmax</code> を取り、<code style="color:#22d3bf">sqrt(λmin/λmax)</code>(主軸方向の標準偏差の比 = 慣性楕円の短軸/長軸)を <code style="color:#22d3bf">np.float64</code> で返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点が 3 個未満、または <code style="color:#22d3bf">λmax &lt;= 1e-9</code>(全点一致)なら 0.0。負の固有値は 0 に clip する。</p>
+<p>1 に近いほど等方(真円)、0 に近いほど細長い。楕円境界を当てはめる代数的フィットではなく点群の 2 次モーメントなので、点の密度の偏りや欠けた弧では軸比が変わる。楕円の傾き・中心は返さない(<code style="color:#22d3bf">orientation_xld</code> / <code style="color:#22d3bf">area_center_xld</code>)。<code style="color:#22d3bf">cv2.fitEllipse</code> 版は <code style="color:#22d3bf">elliptic_axis_xld</code>。楕円からの逸脱量は <code style="color:#22d3bf">hx_dist_ellipse_contour</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-hx_fit_ellipse_contour 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_fit_ellipse_contour%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_fit_ellipse_contour%200.50%200.50">Load &amp; run</a></p>
+hx_fit_ellipse_contour 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_fit_ellipse_contour%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_fit_ellipse_contour%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">feature</code> 作為輸入)</h3>

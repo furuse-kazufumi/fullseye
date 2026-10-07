@@ -52,7 +52,7 @@ assert abs(profileops.profile_deviation(moved, ref, n=400)[&quot;mean&quot;] - 0
 # 6) 同じ形どうしなら偏差はほぼ 0(検査の床)
 assert profileops.profile_deviation(ref, ref, n=400)[&quot;rms&quot;] &lt; 1e-5</pre>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使う順序</h3>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 圖(原始碼):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
     N[&quot;profile_synth_naca4&lt;br/&gt;閉形式の設計形状&quot;]
     M[&quot;測定した輪郭&lt;br/&gt;(スキャン・撮影・CAD)&quot;]
     N --&gt; PB[&quot;profile_perturb&lt;br/&gt;既知の欠陥を注入&quot;]
@@ -103,7 +103,7 @@ assert profileops.profile_deviation(ref, ref, n=400)[&quot;rms&quot;] &lt; 1e-5<
 <p>| <code style="color:#22d3bf">&quot;chord&quot;</code>(既定) | -0.00283 | <b>x = 1.000(後縁!)</b> | -0.00096 |</p>
 <p>| <code style="color:#22d3bf">&quot;rigid&quot;</code> | -0.00166 | x = 0.009 | -0.00166 |</p>
 <p>| <code style="color:#22d3bf">&quot;none&quot;</code> | -0.00309 | x = 0.001 | -0.00309 |</p>
-<p>前縁を削ると前縁の位置そのものが動くので、前縁と後縁を合わせる <code style="color:#22d3bf">&quot;chord&quot;</code> は<b>損失を反対の端へ移し</b>、前縁での落ち込みを 3 分の 1 に見せます。<code style="color:#22d3bf">&quot;rigid&quot;</code>(全点の最小二乗)は場所は正しく出しますが、ずれを全体へ散らして半分に見せます。**同じ座標系にある(<code style="color:#22d3bf">&quot;none&quot;</code>)ときだけ、注入した 0.003 がそのまま出ます**。</p>
+<p>前縁を削ると前縁の位置そのものが動くので、前縁と後縁を合わせる <code style="color:#22d3bf">&quot;chord&quot;</code> は<b>損失を反対の端へ移し</b>、前縁での落ち込みを 3 分の 1 に見せます。<code style="color:#22d3bf">&quot;rigid&quot;</code>(全点の最小二乗)は場所は正しく出しますが、ずれを全体へ散らして半分に見せます。<b>同じ座標系にある(<code style="color:#22d3bf">&quot;none&quot;</code>)ときだけ、注入した 0.003 がそのまま出ます</b>。</p>
 <p>&gt; 欠陥が基準に乗る場所(前縁・後縁・取り付け面)を検査するときは、合わせの自由度をその場所から<b>外して</b>取るか、測定側の座標系を先に決めて <code style="color:#22d3bf">&quot;none&quot;</code> で比べること。</p>
 <p><b>相似(スケール推定)は提供していません</b> —— 大きさの誤差そのものを吸収するからです。<code style="color:#22d3bf">profile_align</code> は常に <code style="color:#22d3bf">scale = 1.0</code> を返します(推定していないことの明示)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">検査の床 —— 検出したい量と同じ桁なら意味が無い</h3>

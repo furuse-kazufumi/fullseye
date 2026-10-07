@@ -5,18 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把彩色体的三个正交断面排成<b>一张 RGB 图</b>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>左から axial `<code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> / coronal </code><code style="color:#22d3bf">(D, W)</code><code style="color:#22d3bf"> / sagittal </code><code style="color:#22d3bf">(D, H)</code>`。*center* は</p>
-<p>`<code style="color:#22d3bf">(z, y, x)</code>` の交点(既定は各軸の中央)。パネルの高さは最大値へ *background*</p>
-<p>で下詰めパディングし、間に *gap* 画素の隙間を空ける。</p>
-<p>ラベル色が<b>ボリューム由来</b>であることがこの図の意味である ―― 3 面で同じ部品が</p>
-<p>同じ色に見えることが、3 断面が同じラベリングから来ている証拠になる</p>
-<p>(断面ごとに色を付け直した図では 3 面の色は一致しない)。</p>
-<p>Returns float64 `<code style="color:#22d3bf">(H_out, W_out, 3)</code><code style="color:#22d3bf">. Raises </code><code style="color:#22d3bf">ValueError</code>` for a bad volume,</p>
-<p>a *center* outside the volume, or a negative *gap*.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>左から axial <code style="color:#22d3bf">(H, W)</code> / coronal <code style="color:#22d3bf">(D, W)</code> / sagittal <code style="color:#22d3bf">(D, H)</code>。*center* は <code style="color:#22d3bf">(z, y, x)</code> の交点(既定は各軸の中央)。パネルの高さは最大値へ *background* で下詰めパディングし、間に *gap* 画素の隙間を空ける。</p>
+<p>ラベル色が<b>ボリューム由来</b>であることがこの図の意味である ―― 3 面で同じ部品が同じ色に見えることが、3 断面が同じラベリングから来ている証拠になる(断面ごとに色を付け直した図では 3 面の色は一致しない)。</p>
+<p>Returns float64 <code style="color:#22d3bf">(H_out, W_out, 3)</code>. Raises <code style="color:#22d3bf">ValueError</code> for a bad volume, a *center* outside the volume, or a negative *gap*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:voxel_labels_color">voxel_labels_color</a> — <code style="color:#22d3bf">py -3.11 examples/voxel_labels_color.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgbimage</code> 作为输入)</h3>

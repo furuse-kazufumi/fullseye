@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>ルールベースの先行車の距離(両方の世界に同じ式):</p>
-<p>`<code style="color:#22d3bf">depth_median</code>` = 画像の中央の帯(幅 band × W)にある車の画素の深度の中央値(後ろ面は像面に平行なので一定)、</p>
-<p>`<code style="color:#22d3bf">row_distance</code>` = 車の最下行から平らな路面の式(driveenv.road_row_distance)で出した水平距離、</p>
-<p>`<code style="color:#22d3bf">bbox</code><code style="color:#22d3bf"> = (top, bottom, left, right)、</code><code style="color:#22d3bf">n_pixels</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">found</code>`。車の画素が無ければ found = False(距離は inf)。</p>
+<p><code style="color:#22d3bf">depth_median</code> = 画像の中央の帯(幅 band × W)にある車の画素の深度の中央値(後ろ面は像面に平行なので一定)、<code style="color:#22d3bf">row_distance</code> = 車の最下行から平らな路面の式(driveenv.road_row_distance)で出した水平距離、<code style="color:#22d3bf">bbox</code> = (top, bottom, left, right)、<code style="color:#22d3bf">n_pixels</code>、<code style="color:#22d3bf">found</code>。車の画素が無ければ found = False(距離は inf)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

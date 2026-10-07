@@ -5,16 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>線形 2 輪等価モデルの定常円旋回(速さ u、旋回半径 R = u/r、左旋回を正)。</p>
-<p>R は前向きの速さ u とヨーレート r で定義する(線形モデルの慣習)。重心の軌跡の実際の半径は合成の速さ / r =</p>
-<p>R √(1 + tan²β) で、β が小さい範囲で R に等しい(門で確かめた差は β² の桁)。</p>
-<p>返り値: `<code style="color:#22d3bf">steer</code><code style="color:#22d3bf"> δ = L/R + K u²/R [rad]、</code><code style="color:#22d3bf">yaw_rate</code><code style="color:#22d3bf"> r = u/R、</code><code style="color:#22d3bf">lateral_accel</code>` u²/R、</p>
-<p>`<code style="color:#22d3bf">sideslip</code><code style="color:#22d3bf"> β = l_r/R − m l_f u²/(C_r L R)、</code><code style="color:#22d3bf">yaw_gain</code><code style="color:#22d3bf"> r/δ = (u/L)/(1 + K u²/L)、</code><code style="color:#22d3bf">front_slip</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rear_slip</code>`</p>
-<p>(軸の横すべり角)、`<code style="color:#22d3bf">K</code>`。R &lt; 0 で右旋回(符号がそのまま反転)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: u ≤ 0、R = 0 / 非有限、母数の誤り、1 + K u²/L ≤ 0(臨界速度以上)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>R は前向きの速さ u とヨーレート r で定義する(線形モデルの慣習)。重心の軌跡の実際の半径は合成の速さ / r = R √(1 + tan²β) で、β が小さい範囲で R に等しい(門で確かめた差は β² の桁)。</p>
+<p>返り値: <code style="color:#22d3bf">steer</code> δ = L/R + K u²/R [rad]、<code style="color:#22d3bf">yaw_rate</code> r = u/R、<code style="color:#22d3bf">lateral_accel</code> u²/R、<code style="color:#22d3bf">sideslip</code> β = l_r/R − m l_f u²/(C_r L R)、<code style="color:#22d3bf">yaw_gain</code> r/δ = (u/L)/(1 + K u²/L)、<code style="color:#22d3bf">front_slip</code>・<code style="color:#22d3bf">rear_slip</code> (軸の横すべり角)、<code style="color:#22d3bf">K</code>。R &lt; 0 で右旋回(符号がそのまま反転)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: u ≤ 0、R = 0 / 非有限、母数の誤り、1 + K u²/L ≤ 0(臨界速度以上)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

@@ -3,33 +3,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">cscalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_cauchy_value(z, fz, w)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.cplx_cauchy_value(z, fz, w)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;cplx_cauchy_value&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Cauchysche Integralformel: rekonstruiert `<code style="color:#22d3bf">f(w)</code>` <b>innerhalb</b> einer Kontur aus deren Werten <b>auf</b> der Kontur.</p>
+<p>Cauchysche Integralformel: rekonstruiert <code style="color:#22d3bf">f(w)</code> <b>innerhalb</b> einer Kontur aus deren Werten <b>auf</b> der Kontur.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">f(w) = 1/(2*pi*i*n) ∮ f(zeta)/(zeta - w) dzeta</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">n</code>` is the</p>
-<p>winding number of the contour around *w* (Cauchy 1831; the division by</p>
-<p>`<code style="color:#22d3bf">n</code>` is what makes a doubly-wound contour give the same answer). Valid</p>
-<p>only if `<code style="color:#22d3bf">f</code>` is holomorphic on and inside the contour — nothing here can</p>
-<p>check that, and this is the honest limit of the op: fed values of a</p>
-<p>non-holomorphic `<code style="color:#22d3bf">f</code>` (or of one with a pole inside) it returns the</p>
-<p>integral, which is then simply *not* `<code style="color:#22d3bf">f(w)</code>`.</p>
-<p>Accuracy inherits the `<code style="color:#22d3bf">O(n^-2)</code>` chordal quadrature of</p>
-<p>:func:<code style="color:#22d3bf">cplx_contour_integral</code> and degrades as *w* approaches the path</p>
-<p>(the integrand&#x27;s peak sharpens): measured for `<code style="color:#22d3bf">f(z) = z**2</code>` on a</p>
-<p>256-point unit circle, the absolute error is 9.0e-6 at `<code style="color:#22d3bf">w = 0.3</code>` and</p>
-<p>8.1e-5 at `<code style="color:#22d3bf">w = 0.9</code>` — 9x worse for a point 7x closer to the path</p>
-<p>(0.7 -&gt; 0.1 of clearance). The blow-up is real but gradual; what it does</p>
-<p>*not* survive is clearance below one sampling step, which is refused.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *w* outside the contour (winding 0 — the</p>
-<p>integral is then 0 and returning it as &quot;f(w)&quot; would be a lie), *w* closer</p>
-<p>to the contour than one sampling step (the quadrature is meaningless</p>
-<p>there — refine the contour), plus everything</p>
-<p>:func:<code style="color:#22d3bf">cplx_winding_number</code> and :func:<code style="color:#22d3bf">cplx_contour_integral</code> refuse.</p>
+<p><code style="color:#22d3bf">f(w) = 1/(2*pi*i*n) ∮ f(zeta)/(zeta - w) dzeta</code> where <code style="color:#22d3bf">n</code> is the winding number of the contour around *w* (Cauchy 1831; the division by <code style="color:#22d3bf">n</code> is what makes a doubly-wound contour give the same answer). Valid only if <code style="color:#22d3bf">f</code> is holomorphic on and inside the contour — nothing here can check that, and this is the honest limit of the op: fed values of a non-holomorphic <code style="color:#22d3bf">f</code> (or of one with a pole inside) it returns the integral, which is then simply *not* <code style="color:#22d3bf">f(w)</code>.</p>
+<p>Accuracy inherits the <code style="color:#22d3bf">O(n^-2)</code> chordal quadrature of <code style="color:#22d3bf">cplx_contour_integral</code> and degrades as *w* approaches the path (the integrand&#x27;s peak sharpens): measured for <code style="color:#22d3bf">f(z) = z**2</code> on a 256-point unit circle, the absolute error is 9.0e-6 at <code style="color:#22d3bf">w = 0.3</code> and 8.1e-5 at <code style="color:#22d3bf">w = 0.9</code> — 9x worse for a point 7x closer to the path (0.7 -&gt; 0.1 of clearance). The blow-up is real but gradual; what it does *not* survive is clearance below one sampling step, which is refused.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *w* outside the contour (winding 0 — the integral is then 0 and returning it as &quot;f(w)&quot; would be a lie), *w* closer to the contour than one sampling step (the quadrature is meaningless there — refine the contour), plus everything <code style="color:#22d3bf">cplx_winding_number</code> and <code style="color:#22d3bf">cplx_contour_integral</code> refuse.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

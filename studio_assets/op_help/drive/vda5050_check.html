@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vda5050_check(order)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import agvfleet; agvfleet.vda5050_check(order)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;vda5050_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>VDA 5050 の order の<b>構造の規則</b>を検査する(公式 JSON スキーマとは別の、自前の第 2 実装)。</p>
-<p>規則: 必須キー / ノードの sequenceId は 0 から偶数で連番、エッジは奇数で連番 / エッジ数 = ノード数 − 1 /</p>
-<p>各エッジの始点・終点が前後のノード / released は base の先頭から連続(base → horizon の 1 回の切替のみ)/</p>
-<p>エッジの released はその終点ノードと同じ。返りは違反の文言のリスト(空 = 合格)。</p>
+<p>規則: 必須キー / ノードの sequenceId は 0 から偶数で連番、エッジは奇数で連番 / エッジ数 = ノード数 − 1 / 各エッジの始点・終点が前後のノード / released は base の先頭から連続(base → horizon の 1 回の切替のみ)/ エッジの released はその終点ノードと同じ。返りは違反の文言のリスト(空 = 合格)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

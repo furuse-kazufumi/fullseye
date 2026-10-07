@@ -5,36 +5,24 @@
 <p><img src="fig/tb_normals_to_egi.png" alt="tb_normals_to_egi: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.a.jpg">tb_normals_to_egi: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.a.jpg">tb_normals_to_egi: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.b.jpg">tb_normals_to_egi: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.b.jpg">tb_normals_to_egi: Regler b durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.chain.jpg">tb_normals_to_egi: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.chain.jpg">tb_normals_to_egi: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.inputs.jpg">tb_normals_to_egi: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.inputs.jpg">tb_normals_to_egi: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Normalen `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">image2d</code><code style="color:#22d3bf"> des Extended Gaussian Image </code><code style="color:#22d3bf">(n_el, n_az)</code>`.</p>
+<p>Normalen <code style="color:#22d3bf">(N,3)</code> → <code style="color:#22d3bf">image2d</code> des Extended Gaussian Image <code style="color:#22d3bf">(n_el, n_az)</code>.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12)</p>
-<p>1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では</p>
-<p>1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
-<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、</p>
-<p>既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(`<code style="color:#22d3bf">selftest</code>` が出す)。</p>
-<p>仰角の bin は `<code style="color:#22d3bf">sin(el)</code>` で等分する(等立体角)。度で等分すると極が過剰に</p>
-<p>細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
+<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では 1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
+<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(<code style="color:#22d3bf">selftest</code> が出す)。</p>
+<p>仰角の bin は <code style="color:#22d3bf">sin(el)</code> で等分する(等立体角)。度で等分すると極が過剰に細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
 <p>Args:</p>
 <p>normals: (N, 3)。</p>
 <p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
 <p>n_el: 仰角の bin 数(既定 18)。</p>
-<p>★<b>位置の点群を渡しても例外は出ない</b>。`<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code>` が</p>
-<p>`<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">points</code>` に畳んでいるので、進化器も台帳も両者を区別しない。</p>
-<p>この op は方向しか見ない(長さは捨てる)ので、`<code style="color:#22d3bf">(N,3)</code>` の座標を渡すと</p>
-<p>「原点から各点を見た向き」のヒストグラムが<b>もっともらしく</b>返る。実測</p>
-<p>(2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、</p>
-<p>最大 bin が 200 → 44 に変わるだけで、<b>総和はどちらも 200</b>。</p>
-<p>「総和が点数と合うから正しい」では区別がつかない。</p>
-<p>`<code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code>` にすると、単位長から外れた</p>
-<p>ベクトルを<b>拒否</b>する(下の Raises)。</p>
+<p>★<b>位置の点群を渡しても例外は出ない</b>。<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> が <code style="color:#22d3bf">normals</code> を <code style="color:#22d3bf">points</code> に畳んでいるので、進化器も台帳も両者を区別しない。この op は方向しか見ない(長さは捨てる)ので、<code style="color:#22d3bf">(N,3)</code> の座標を渡すと「原点から各点を見た向き」のヒストグラムが<b>もっともらしく</b>返る。実測(2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、最大 bin が 200 → 44 に変わるだけで、<b>総和はどちらも 200</b>。「総和が点数と合うから正しい」では区別がつかない。<code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> にすると、単位長から外れたベクトルを<b>拒否</b>する(下の Raises)。</p>
 <p>Args:</p>
 <p>normals: (N, 3)。</p>
 <p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
@@ -43,16 +31,16 @@
 <p>(n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。</p>
 <p>Raises:</p>
 <p>ValueError: bin 数が 1 未満 / 上限超 / 入力不正。</p>
-<p>ValueError: `<code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code>` で、長さが 1 から 1e-6 を超えて外れる</p>
+<p>ValueError: <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code> で、長さが 1 から 1e-6 を超えて外れる</p>
 <p>ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op `<code style="color:#22d3bf">normals_to_egi</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">n_az</code><code style="color:#22d3bf">(既定 36)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">n_el</code>`(既定 18)を振る。</p>
+<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">normals_to_egi</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">n_az</code>(既定 36)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">n_el</code>(既定 18)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
-tb_normals_to_egi 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_normals_to_egi%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_normals_to_egi%200.50%200.50">Load &amp; run</a></p>
+tb_normals_to_egi 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_normals_to_egi%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_normals_to_egi%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">normals_to_egi</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>

@@ -4,11 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poly_lut_invert(rgb, poly: &#x27;dict&#x27;, mask=None, method: &#x27;str&#x27; = &#x27;coarse&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacscalib; tacscalib.poly_lut_invert(rgb, poly: &#x27;dict&#x27;, mask=None, method: &#x27;str&#x27; = &#x27;coarse&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;poly_lut_invert&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>アダプタ: 外部の<b>位置依存</b>多項式 LUT(`<code style="color:#22d3bf">bins</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">grad_r</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">grad_g</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">grad_b</code>` = (bins, bins, 6)、ビンごとに</p>
-<p>6 係数 [x², y², xy, x, y, 1]・x = 列・y = 行を<b>画素のまま</b>で背景差分の各チャネルを表す書式)を、</p>
-<p>:func:<code style="color:#22d3bf">gradient_lut_invert</code> と同じ逆引き(同じビン割り・同じ粗 → 細)に通す。`<code style="color:#22d3bf">rgb</code>` は外部の手順と同じ背景処理をした差分。</p>
-<p>外部の表は全ビンが埋まっているので全ビンを使う。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: キー欠落 / 係数の形が (bins, bins, 6) でない / 非有限。</p>
+<p>アダプタ: 外部の<b>位置依存</b>多項式 LUT(<code style="color:#22d3bf">bins</code> と <code style="color:#22d3bf">grad_r</code> / <code style="color:#22d3bf">grad_g</code> / <code style="color:#22d3bf">grad_b</code> = (bins, bins, 6)、ビンごとに 6 係数 [x², y², xy, x, y, 1]・x = 列・y = 行を<b>画素のまま</b>で背景差分の各チャネルを表す書式)を、<code style="color:#22d3bf">gradient_lut_invert</code> と同じ逆引き(同じビン割り・同じ粗 → 細)に通す。<code style="color:#22d3bf">rgb</code> は外部の手順と同じ背景処理をした差分。外部の表は全ビンが埋まっているので全ビンを使う。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: キー欠落 / 係数の形が (bins, bins, 6) でない / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

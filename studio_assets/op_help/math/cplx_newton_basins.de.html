@@ -5,31 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>In welche Wurzel eines Polynoms fällt das Newton-Verfahren von jedem Punkt aus?</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Labels the window `<code style="color:#22d3bf">1..len(roots)</code><code style="color:#22d3bf"> by the root reached, and </code><code style="color:#22d3bf">0</code>` where the</p>
-<p>iteration has not converged within `<code style="color:#22d3bf">max_iter</code>` (the Julia set and its</p>
-<p>neighbourhood). Roots come from `<code style="color:#22d3bf">numpy.roots</code>` — the same routine behind</p>
-<p>this family&#x27;s `<code style="color:#22d3bf">poly_roots</code><code style="color:#22d3bf"> — and are sorted by </code><code style="color:#22d3bf">(Re, Im)</code>` so the label</p>
-<p>of a given root does not change between runs.</p>
-<p>★**Degree 2 has a closed-form answer, so the operator can be checked</p>
-<p>exactly rather than plausibly.** Cayley (1879): for `<code style="color:#22d3bf">z**2 - 1</code>` the basins</p>
-<p>are the two open half-planes `<code style="color:#22d3bf">Re z &gt; 0</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">Re z &lt; 0</code>`, and the boundary</p>
-<p>is the imaginary axis — no fractal. The famous fractal boundary appears at</p>
-<p>degree 3, which Cayley could not settle; there the honest checks are</p>
-<p>structural (every root&#x27;s basin is non-empty; `<code style="color:#22d3bf">z**3 - 1</code>` is invariant under</p>
-<p>rotation by `<code style="color:#22d3bf">2*pi/3</code>`, and so is its labelling, up to the cyclic</p>
-<p>relabelling of the roots).</p>
-<p>`<code style="color:#22d3bf">coeffs</code><code style="color:#22d3bf"> is highest-degree-first, as </code><code style="color:#22d3bf">numpy.roots</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">poly_roots</code>`</p>
-<p>take it.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: text, non-finite or all-zero coefficients; a</p>
-<p>non-zero constant (no roots); `<code style="color:#22d3bf">max_iter &lt; 1</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">tol &lt;= 0</code>`; degenerate</p>
-<p>window. Points where the derivative vanishes are left unconverged (label</p>
-<p>`<code style="color:#22d3bf">0</code>`) rather than divided by — a critical point is genuinely undecided.</p>
+<p>Labels the window <code style="color:#22d3bf">1..len(roots)</code> by the root reached, and <code style="color:#22d3bf">0</code> where the iteration has not converged within <code style="color:#22d3bf">max_iter</code> (the Julia set and its neighbourhood). Roots come from <code style="color:#22d3bf">numpy.roots</code> — the same routine behind this family&#x27;s <code style="color:#22d3bf">poly_roots</code> — and are sorted by <code style="color:#22d3bf">(Re, Im)</code> so the label of a given root does not change between runs.</p>
+<p>★<b>Degree 2 has a closed-form answer, so the operator can be checked exactly rather than plausibly.</b> Cayley (1879): for <code style="color:#22d3bf">z**2 - 1</code> the basins are the two open half-planes <code style="color:#22d3bf">Re z &gt; 0</code> and <code style="color:#22d3bf">Re z &lt; 0</code>, and the boundary is the imaginary axis — no fractal. The famous fractal boundary appears at degree 3, which Cayley could not settle; there the honest checks are structural (every root&#x27;s basin is non-empty; <code style="color:#22d3bf">z**3 - 1</code> is invariant under rotation by <code style="color:#22d3bf">2*pi/3</code>, and so is its labelling, up to the cyclic relabelling of the roots).</p>
+<p><code style="color:#22d3bf">coeffs</code> is highest-degree-first, as <code style="color:#22d3bf">numpy.roots</code> and <code style="color:#22d3bf">poly_roots</code> take it.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: text, non-finite or all-zero coefficients; a non-zero constant (no roots); <code style="color:#22d3bf">max_iter &lt; 1</code>; <code style="color:#22d3bf">tol &lt;= 0</code>; degenerate window. Points where the derivative vanishes are left unconverged (label <code style="color:#22d3bf">0</code>) rather than divided by — a critical point is genuinely undecided.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

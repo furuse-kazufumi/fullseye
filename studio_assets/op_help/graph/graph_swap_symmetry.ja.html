@@ -5,16 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>節点の対を入れ替えた配線との Jaccard(恒等ペアで 1.0)—— 左右対称の検査。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>`<code style="color:#22d3bf">pairs</code><code style="color:#22d3bf"> is a sequence of </code><code style="color:#22d3bf">(i, j)</code>` index pairs to exchange (each node in at most</p>
-<p>one pair). The wiring is re-indexed by the exchange and compared with the original:</p>
-<p>`<code style="color:#22d3bf">jaccard = |E ∩ E&#x27;| / |E ∪ E&#x27;|</code>` over directed edges (self-loops removed). Returns</p>
-<p>a dict with `<code style="color:#22d3bf">jaccard</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">shared</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">union</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf">, and </code><code style="color:#22d3bf">n_pairs</code>`.</p>
-<p>Identities: the identity pairing (or an empty `<code style="color:#22d3bf">pairs</code>`) gives exactly 1.0; applying</p>
-<p>the exchange twice recovers the original matrix exactly. For the C. elegans</p>
-<p>hermaphrodite chemical connectome with its 98 named left/right pairs the measured</p>
-<p>value is 0.470 — half the wiring is not mirrored.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>graph_degree_summary`; an index out of range;</p>
-<p>a node appearing in two pairs; a pair of a node with itself.</p>
+<p><code style="color:#22d3bf">pairs</code> is a sequence of <code style="color:#22d3bf">(i, j)</code> index pairs to exchange (each node in at most one pair). The wiring is re-indexed by the exchange and compared with the original:</p>
+<p><code style="color:#22d3bf">jaccard = |E ∩ E&#x27;| / |E ∪ E&#x27;|</code> over directed edges (self-loops removed). Returns a dict with <code style="color:#22d3bf">jaccard</code>, <code style="color:#22d3bf">shared</code>, <code style="color:#22d3bf">union</code>, <code style="color:#22d3bf">edges</code>, and <code style="color:#22d3bf">n_pairs</code>.</p>
+<p>Identities: the identity pairing (or an empty <code style="color:#22d3bf">pairs</code>) gives exactly 1.0; applying the exchange twice recovers the original matrix exactly. For the C. elegans hermaphrodite chemical connectome with its 98 named left/right pairs the measured value is 0.470 — half the wiring is not mirrored.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: as <code style="color:#22d3bf">graph_degree_summary</code>; an index out of range; a node appearing in two pairs; a pair of a node with itself.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

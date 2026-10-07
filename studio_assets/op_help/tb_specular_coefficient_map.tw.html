@@ -7,36 +7,24 @@
 <p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_coefficient_map.chain.jpg">tb_specular_coefficient_map: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_coefficient_map.chain.jpg">tb_specular_coefficient_map: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_coefficient_map.inputs.jpg">tb_specular_coefficient_map: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_coefficient_map.inputs.jpg">tb_specular_coefficient_map: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>雙色反射模型中的純量介面（鏡面）係數。→ (H, W)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>The same decomposition as :func:<code style="color:#22d3bf">specular_diffuse_split</code>, returning the</p>
-<p>scalar `<code style="color:#22d3bf">m_s(x)</code><code style="color:#22d3bf"> instead of the coloured image </code><code style="color:#22d3bf">m_s(x) * G</code>`. That scalar</p>
-<p>is what an inspection routine thresholds: it is the amount of light the</p>
-<p>surface reflected *as a mirror does*, in the units of the input radiance,</p>
-<p>and it is zero wherever the surface behaved as a Lambertian body.</p>
-<p>`<code style="color:#22d3bf">specular_coefficient_map(...) * illuminant_unit</code>` equals the second return</p>
-<p>value of :func:<code style="color:#22d3bf">specular_diffuse_split</code> exactly, by construction — the two</p>
-<p>operators share one core.</p>
-<p>Arguments, guards and honest limits are identical to</p>
-<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> — including the fact that the two guards</p>
-<p>bound gross violations only.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: exactly the same conditions as</p>
-<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> (invalid image, invalid illuminant,</p>
-<p>identically zero image, body colour parallel to the illuminant, either</p>
-<p>guard firing, fewer than 3 pixels on the uniform-body route, invalid</p>
-<p>*body_rgb*).</p>
-<p>Typed bridge of the specular op `<code style="color:#22d3bf">specular_coefficient_map</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">max_rank_ratio</code><code style="color:#22d3bf"> (default 0.1) and </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">max_negative_frac</code>` (default 0.02).</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>The same decomposition as <code style="color:#22d3bf">specular_diffuse_split</code>, returning the scalar <code style="color:#22d3bf">m_s(x)</code> instead of the coloured image <code style="color:#22d3bf">m_s(x) * G</code>. That scalar is what an inspection routine thresholds: it is the amount of light the surface reflected *as a mirror does*, in the units of the input radiance, and it is zero wherever the surface behaved as a Lambertian body.</p>
+<p><code style="color:#22d3bf">specular_coefficient_map(...) * illuminant_unit</code> equals the second return value of <code style="color:#22d3bf">specular_diffuse_split</code> exactly, by construction — the two operators share one core.</p>
+<p>Arguments, guards and honest limits are identical to <code style="color:#22d3bf">specular_diffuse_split</code> — including the fact that the two guards bound gross violations only.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: exactly the same conditions as <code style="color:#22d3bf">specular_diffuse_split</code> (invalid image, invalid illuminant, identically zero image, body colour parallel to the illuminant, either guard firing, fewer than 3 pixels on the uniform-body route, invalid *body_rgb*).</p>
+<p>Typed bridge of the specular op <code style="color:#22d3bf">specular_coefficient_map</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> drives <code style="color:#22d3bf">max_rank_ratio</code> (default 0.1) and <code style="color:#22d3bf">b</code> drives <code style="color:#22d3bf">max_negative_frac</code> (default 0.02).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_rgb 0.50 0.50
-tb_specular_coefficient_map 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_specular_coefficient_map%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_specular_coefficient_map%200.50%200.50">Load &amp; run</a></p>
+tb_specular_coefficient_map 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_specular_coefficient_map%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_specular_coefficient_map%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p>下面的範例呼叫的是底層帳本運算子 <code style="color:#22d3bf">specular_coefficient_map</code>。此橋接運算子只是把同一實作適配為 <code style="color:#22d3bf">fn(v, a, b)</code> 慣例，行為完全相同(只是呼叫形式不同)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>

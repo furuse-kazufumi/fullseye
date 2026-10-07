@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_predict(model, slopes, level: &#x27;float&#x27; = 0.9) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.slip_predict(model, slopes, level: &#x27;float&#x27; = 0.9) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;slip_predict&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>滑り率の予測と両側 `<code style="color:#22d3bf">level</code>` の帯。ガウス過程は観測の予測分布(潜在の分散 + 雑音)、分位点回帰は曲線そのもの。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;mean&quot;, &quot;std&quot;, &quot;lower&quot;, &quot;upper&quot;, &quot;median&quot;, &quot;level&quot;}</code><code style="color:#22d3bf">(各 (n,))。分位点回帰の </code><code style="color:#22d3bf">mean</code>` は当てはめた</p>
-<p>分位点の平均、`<code style="color:#22d3bf">std</code>` は四分位範囲 / 1.349、帯の端は (1 ± level)/2 の分位点(当てはめた段に無ければ ValueError)に、</p>
-<p>共形の補正(:func:<code style="color:#22d3bf">slip_quantile_fit</code> の `<code style="color:#22d3bf">conformal</code>`)があればその幅を足す。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>滑り率の予測と両側 <code style="color:#22d3bf">level</code> の帯。ガウス過程は観測の予測分布(潜在の分散 + 雑音)、分位点回帰は曲線そのもの。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;mean&quot;, &quot;std&quot;, &quot;lower&quot;, &quot;upper&quot;, &quot;median&quot;, &quot;level&quot;}</code>(各 (n,))。分位点回帰の <code style="color:#22d3bf">mean</code> は当てはめた分位点の平均、<code style="color:#22d3bf">std</code> は四分位範囲 / 1.349、帯の端は (1 ± level)/2 の分位点(当てはめた段に無ければ ValueError)に、共形の補正(<code style="color:#22d3bf">slip_quantile_fit</code> の <code style="color:#22d3bf">conformal</code>)があればその幅を足す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rover_slip_risk_path">poc_rover_slip_risk_path</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rover_slip_risk_path.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

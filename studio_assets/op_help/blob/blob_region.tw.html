@@ -4,27 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_region(labels: &#x27;Any&#x27;, index: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import blob2d; blob2d.blob_region(labels: &#x27;Any&#x27;, index: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsblob.get(&quot;blob_region&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>物体 1 個を二値領域(bool)として抜く。`<code style="color:#22d3bf">index</code>` は <b>1 起点</b>。</p>
-<p>`<code style="color:#22d3bf">labels == index</code><code style="color:#22d3bf"> を返すだけの選択 op。番号は </code><code style="color:#22d3bf">blob_label</code>` が付けた 1..n の</p>
-<p>連番で、0 は背景。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">: 2-D の整数ラベル画像(</code><code style="color:#22d3bf">blob_label</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">blob_select</code>` /</p>
-<p>`<code style="color:#22d3bf">blob_split</code>` の出力)。<b>bool マスクは拒否</b>(「複数物体を 1 個として測る」</p>
-<p>事故を防ぐため、先に `<code style="color:#22d3bf">blob_label</code>` を掛けるよう促す)。float も拒否</p>
-<p>(`<code style="color:#22d3bf">0.999</code><code style="color:#22d3bf"> がどの物体か決められない)。負の番号があれば </code><code style="color:#22d3bf">ValueError</code>`。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">index</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">1 &lt;= index &lt;= labels.max()</code>` の int。0(背景)や範囲外は</p>
-<p>`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">blob_features</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">label</code><code style="color:#22d3bf"> 列、</code><code style="color:#22d3bf">blob_select_largest</code>` の</p>
-<p>結果(1 から振り直される)と同じ番号体系。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(H, W)</code>` の bool。空になることはない(番号は必ず存在する</p>
-<p>―― ただし `<code style="color:#22d3bf">blob_select</code>` で番号を振り直していない自作ラベルに欠番があれば</p>
-<p>全 False が返りうる)。</p>
-<p>抜いた領域は `<code style="color:#22d3bf">blob_distance</code><code style="color:#22d3bf">(距離変換)や </code><code style="color:#22d3bf">blob_overlay</code>` の重ね描き、</p>
-<p>`<code style="color:#22d3bf">annotate_outline</code>` の輪郭描画にそのまま渡せる。</p>
+<p>物体 1 個を二値領域(bool)として抜く。<code style="color:#22d3bf">index</code> は <b>1 起点</b>。</p>
+<p><code style="color:#22d3bf">labels == index</code> を返すだけの選択 op。番号は <code style="color:#22d3bf">blob_label</code> が付けた 1..n の連番で、0 は背景。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>: 2-D の整数ラベル画像(<code style="color:#22d3bf">blob_label</code> / <code style="color:#22d3bf">blob_select</code> / <code style="color:#22d3bf">blob_split</code> の出力)。<b>bool マスクは拒否</b>(「複数物体を 1 個として測る」事故を防ぐため、先に <code style="color:#22d3bf">blob_label</code> を掛けるよう促す)。float も拒否(<code style="color:#22d3bf">0.999</code> がどの物体か決められない)。負の番号があれば <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">index</code>: <code style="color:#22d3bf">1 &lt;= index &lt;= labels.max()</code> の int。0(背景)や範囲外は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">blob_features</code> の <code style="color:#22d3bf">label</code> 列、<code style="color:#22d3bf">blob_select_largest</code> の結果(1 から振り直される)と同じ番号体系。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> の bool。空になることはない(番号は必ず存在する ―― ただし <code style="color:#22d3bf">blob_select</code> で番号を振り直していない自作ラベルに欠番があれば全 False が返りうる)。</p>
+<p>抜いた領域は <code style="color:#22d3bf">blob_distance</code>(距離変換)や <code style="color:#22d3bf">blob_overlay</code> の重ね描き、<code style="color:#22d3bf">annotate_outline</code> の輪郭描画にそのまま渡せる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gear_tooth_metrology">poc_gear_tooth_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gear_tooth_metrology.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_particle_sizing">poc_particle_sizing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_particle_sizing.py</code></p>

@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.preston_pressure_kernel(force: &#x27;float&#x27;, radius: &#x27;float&#x27;, res: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, estar=None, normalize: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import polish; polish.preston_pressure_kernel(force: &#x27;float&#x27;, radius: &#x27;float&#x27;, res: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, estar=None, normalize: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;preston_pressure_kernel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>工具の下の圧力 [Pa] を画素中心で標本化した窓(奇数 × 奇数、中心の画素が工具の中心)。平板は円の内側で一様 F/(πa²)、</p>
-<p>Hertz は p0 √(1 − r²/a²)(`<code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> = 球の半径 R、</code><code style="color:#22d3bf">estar</code><code style="color:#22d3bf"> が要る)。</code><code style="color:#22d3bf">normalize=True</code>` なら Σ p · res² = F に合わせる</p>
-<p>(画素で数えた円の面積の誤差を消す。FFT の畳み込みで体積を保つため)。</p>
-<p><b>Raises</b> ValueError: 力・半径・画素が正でない、kind が不明、Hertz で estar が無い、接触半径が 1 画素より小さい。</p>
+<p>工具の下の圧力 [Pa] を画素中心で標本化した窓(奇数 × 奇数、中心の画素が工具の中心)。平板は円の内側で一様 F/(πa²)、Hertz は p0 √(1 − r²/a²)(<code style="color:#22d3bf">radius</code> = 球の半径 R、<code style="color:#22d3bf">estar</code> が要る)。<code style="color:#22d3bf">normalize=True</code> なら Σ p · res² = F に合わせる(画素で数えた円の面積の誤差を消す。FFT の畳み込みで体積を保つため)。<b>Raises</b> ValueError: 力・半径・画素が正でない、kind が不明、Hertz で estar が無い、接触半径が 1 画素より小さい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

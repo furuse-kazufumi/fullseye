@@ -6,13 +6,13 @@
 <p>入力はすべて <code style="color:#22d3bf">image</code>(グレースケール [0,1] 配列)、出力もすべて <code style="color:#22d3bf">image</code>。つまり「画像を入れると画像が返る」前処理・特徴抽出の一族で、<b>特定サイズの構造だけ残す/消す</b> のが仕事です。典型用途は照明ムラ補正、粒径解析、欠陥検出、文字・血管など細い構造の強調。SE のサイズはつまみ <code style="color:#22d3bf">a</code> で決まり(基本 op は 3→5→7→9 px の正方 SE)、どのつまみでも必ず効果が出る(恒等ではない)よう最小 3 px から始まります。この族には基本 4 演算に加え、SE 形状(正方/円盤)を変えた変種、OpenCV/skimage/scipy 由来の実装、そして SE ではなく <b>面積・直径・再構成</b> で成分を選ぶ属性フィルタ(粒径解析の本命)、骨格・穴埋めまで含みます。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
 <p>明るい欠陥を背景ムラごと拾って数える定番の流れ。モルフォロジーが前処理を担い、下流の segmentation・features 族へデータ種が <code style="color:#22d3bf">image → region → feature</code> と繋がります。</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 다이어그램(소스):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
     A[image 元画像] --&gt;|gopen 小明ノイズ除去| B[image]
     B --&gt;|tophat 背景ムラ除去 / 明欠陥抽出| C[image]
     C --&gt;|otsu 2値化| D[region 欠陥領域]
     D --&gt;|blob_count 計数| E[feature 個数]</pre>
 <p>この族の内部代数(すべてコード上の定義そのもの)。erosion / dilation という二演算から opening / closing / top-hat / black-hat / gradient が導かれます。</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TB
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 다이어그램(소스):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TB
     IN[&quot;image f&quot;] --&gt; E[&quot;gerode ε(収縮)&quot;]
     IN --&gt; D[&quot;gdilate δ(膨張)&quot;]
     E --&gt;|&quot;δ∘ε&quot;| O[&quot;gopen γ(開)&quot;]
@@ -87,23 +87,11 @@ assert abs(ao[:, 24:].mean() - g[:, 24:].mean()) &lt; 0.05      # 大面積の�
 print(&quot;PASS&quot;)</pre>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
 <p>構造要素 $B$ とグレースケール画像 $f$ に対し、この族の中核は次の通り(コード上は erosion/dilation が SE 内の min/max、他はその合成・差分)。</p>
-<p>$$</p>
-<p>(\varepsilon_B f)(x) = \min_{s\in B} f(x+s), \qquad</p>
-<p>(\delta_B f)(x) = \max_{s\in B} f(x+s)</p>
-<p>$$</p>
-<p>$$</p>
-<p>\gamma_B f = \delta_B(\varepsilon_B f)\ \text{(opening)}, \qquad</p>
-<p>\phi_B f = \varepsilon_B(\delta_B f)\ \text{(closing)}</p>
-<p>$$</p>
-<p>$$</p>
-<p>\mathrm{WTH}(f) = f - \gamma_B f, \qquad</p>
-<p>\mathrm{BTH}(f) = \phi_B f - f, \qquad</p>
-<p>g_B f = \delta_B f - \varepsilon_B f</p>
-<p>$$</p>
+<p>$$ (\varepsilon_B f)(x) = \min_{s\in B} f(x+s), \qquad (\delta_B f)(x) = \max_{s\in B} f(x+s) $$</p>
+<p>$$ \gamma_B f = \delta_B(\varepsilon_B f)\ \text{(opening)}, \qquad \phi_B f = \varepsilon_B(\delta_B f)\ \text{(closing)} $$</p>
+<p>$$ \mathrm{WTH}(f) = f - \gamma_B f, \qquad \mathrm{BTH}(f) = \phi_B f - f, \qquad g_B f = \delta_B f - \varepsilon_B f $$</p>
 <p>これらから、同一 SE のもとで常に成り立つ <b>順序律</b>(examples の GT でも検証):</p>
-<p>$$</p>
-<p>\varepsilon_B f \ \le\ \gamma_B f \ \le\ f \ \le\ \phi_B f \ \le\ \delta_B f</p>
-<p>$$</p>
+<p>$$ \varepsilon_B f \ \le\ \gamma_B f \ \le\ f \ \le\ \phi_B f \ \le\ \delta_B f $$</p>
 <p>なお <code style="color:#22d3bf">tophat</code>/<code style="color:#22d3bf">bothat</code>/<code style="color:#22d3bf">morph_grad</code> の出力は実装上 $\max|\cdot|$ で割って [0,1] に正規化されます。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
 <p>デバッグには合成画像が扱いやすい: <code style="color:#22d3bf">blobs</code>(大小の塊 → opening/面積フィルタで粒径選別)、<code style="color:#22d3bf">shapes</code>(境界が明快 → morph_grad で確認)。文字・線構造なら <code style="color:#22d3bf">page</code>(skimage.data、細線 → f2_gray_skeleton / bothat 向き)。取得は <code style="color:#22d3bf">import sample_images; sample_images.load(&quot;blobs&quot;)</code>。一覧・ライセンスは <code style="color:#22d3bf">../../SAMPLES.md</code>。</p>

@@ -5,18 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Dice 与 Jaccard —— 对掩膜（非背景像素的并集）算一组，或按真值标签与其最大重叠对象逐一计算（seg_dice_jaccard）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>マスク: `<code style="color:#22d3bf">intersection</code><code style="color:#22d3bf"> = 両方とも背景でない画素数、</code><code style="color:#22d3bf">size_pred</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">size_true</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">union</code>`。</p>
-<p>Jaccard J = ∩/∪、Dice D = 2∩/(|P|+|T|)。両方空なら 1(何も無いと正しく言った)。恒等式 D = 2J/(1+J)(門)。</p>
-<p>`<code style="color:#22d3bf">per_label=True</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(背景でない真のラベル)、</code><code style="color:#22d3bf">per_dice</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">per_jaccard</code>`(相手が無ければ 0)、</p>
-<p>`<code style="color:#22d3bf">mean_dice</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mean_jaccard</code>` を足す。</p>
+<p>マスク: <code style="color:#22d3bf">intersection</code> = 両方とも背景でない画素数、<code style="color:#22d3bf">size_pred</code> / <code style="color:#22d3bf">size_true</code>、<code style="color:#22d3bf">union</code>。Jaccard J = ∩/∪、Dice D = 2∩/(|P|+|T|)。両方空なら 1(何も無いと正しく言った)。恒等式 D = 2J/(1+J)(門)。<code style="color:#22d3bf">per_label=True</code> で <code style="color:#22d3bf">labels</code>(背景でない真のラベル)、<code style="color:#22d3bf">per_dice</code> / <code style="color:#22d3bf">per_jaccard</code>(相手が無ければ 0)、<code style="color:#22d3bf">mean_dice</code> / <code style="color:#22d3bf">mean_jaccard</code> を足す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割评分与带真值的合成世界 —— 哪种度量对哪种失效视而不见</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_am_thermal_to_ct">poc_am_thermal_to_ct</a> — <code style="color:#22d3bf">py -3.11 examples/poc_am_thermal_to_ct.py</code></p>

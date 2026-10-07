@@ -6,23 +6,16 @@
 <p><img src="fig/dl_aniso_diffusion.png" alt="dl_aniso_diffusion: input → output"></p>
 <p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
 <p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dl_aniso_diffusion.a.jpg">dl_aniso_diffusion: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dl_aniso_diffusion.a.jpg">dl_aniso_diffusion: 노브 a 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dl_aniso_diffusion.b.jpg">dl_aniso_diffusion: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dl_aniso_diffusion.b.jpg">dl_aniso_diffusion: 노브 b 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dl_aniso_diffusion.inputs.jpg">dl_aniso_diffusion: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dl_aniso_diffusion.inputs.jpg">dl_aniso_diffusion: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Perona-Malik 유형의 이방성 확산 필터(torch 구현, GPU가 있으면 GPU에서 실행).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>上下左右 4 方向の差分にそれぞれ `<code style="color:#22d3bf">exp(-(差分/K)^2)</code>` の伝導度を掛けてから加算する</p>
-<p>反復拡散で、勾配が大きい（エッジらしい）場所ほど拡散が弱まり、エッジを保ったまま</p>
-<p>平滑化する。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はエッジ検出しきい値 </code><code style="color:#22d3bf">K</code><code style="color:#22d3bf"> を 0.02〜0.22 に振る（</code>`K = 0.02 +</p>
-<p>0.2*a`<code style="color:#22d3bf">、大きいほどエッジを跨いで拡散しやすくなる）。</code><code style="color:#22d3bf">b</code>` は反復回数を 5〜20 回に</p>
-<p>振る（`<code style="color:#22d3bf">iters = 5 + int(b*15)</code><code style="color:#22d3bf">）。ステップ幅 </code><code style="color:#22d3bf">lam=0.2</code>` は固定。ガウシアンぼかしと</p>
-<p>異なりエッジをぼかさずにノイズだけ均せるのが利点。HALCON の</p>
-<p>`<code style="color:#22d3bf">anisotropic_diffusion</code>`（画像の異方性拡散を行う）に相当するが、同じ結果になる</p>
-<p>とは限らない近似実装。</p>
+<p>上下左右 4 方向の差分にそれぞれ <code style="color:#22d3bf">exp(-(差分/K)^2)</code> の伝導度を掛けてから加算する反復拡散で、勾配が大きい（エッジらしい）場所ほど拡散が弱まり、エッジを保ったまま平滑化する。<code style="color:#22d3bf">a</code> はエッジ検出しきい値 <code style="color:#22d3bf">K</code> を 0.02〜0.22 に振る（<code style="color:#22d3bf">K = 0.02 + 0.2*a</code>、大きいほどエッジを跨いで拡散しやすくなる）。<code style="color:#22d3bf">b</code> は反復回数を 5〜20 回に振る（<code style="color:#22d3bf">iters = 5 + int(b*15)</code>）。ステップ幅 <code style="color:#22d3bf">lam=0.2</code> は固定。ガウシアンぼかしと異なりエッジをぼかさずにノイズだけ均せるのが利点。HALCON の <code style="color:#22d3bf">anisotropic_diffusion</code>（画像の異方性拡散を行う）に相当するが、同じ結果になるとは限らない近似実装。</p>
 <p><b>가장자리 처리</b>: 반대쪽으로 감싼다(주기적)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
@@ -32,7 +25,7 @@
 <p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
 <p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">dl_aniso_diffusion 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:dl_aniso_diffusion%200.35%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:dl_aniso_diffusion%200.35%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">dl_aniso_diffusion 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:dl_aniso_diffusion%200.35%200.50">▸ 이 파이프라인 불러오기</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:dl_aniso_diffusion%200.35%200.50">불러와서 실행</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_smoothing_rank.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">image</code> 를 입력으로 받는 것)</h3>

@@ -5,41 +5,28 @@
 <p><img src="fig/dc_rpca_sparse.png" alt="dc_rpca_sparse: input → output"></p>
 <p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
 <p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_sparse.a.jpg">dc_rpca_sparse: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_sparse.a.jpg">dc_rpca_sparse: 旋鈕 a 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_sparse.inputs.jpg">dc_rpca_sparse: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dc_rpca_sparse.inputs.jpg">dc_rpca_sparse: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>穩健 PCA 的稀疏（缺陷／異常）殘差 = 輸入 - 低秩，位於 0.5。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">dc_rpca_lowrank</code><code style="color:#22d3bf"> と同じ inexact ALM の PCP 分解 </code><code style="color:#22d3bf">M = L + S</code>` を行い、</p>
-<p>スパース項 `<code style="color:#22d3bf">S</code><code style="color:#22d3bf"> を 0.5 を中心に置いて返す(</code><code style="color:#22d3bf">clip(S + 0.5, 0, 1)</code>`)。背景と</p>
-<p>同じ画素は 0.5、背景より明るい孤立点は 0.5 より上、暗い点は下に出る符号つき</p>
-<p>残差で、飽和しない範囲で `<code style="color:#22d3bf">dc_rpca_lowrank + (この出力 - 0.5) == 入力</code>`。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はスパース重み </code><code style="color:#22d3bf">λ = (0.5 + 1.5*a)/sqrt(max(m, n))</code>` で、大きいほど</p>
-<p>`<code style="color:#22d3bf">S</code><code style="color:#22d3bf"> が疎(小さな残差は 0 に丸められ、はっきりした欠陥だけ残る)、</code><code style="color:#22d3bf">a=0</code>`</p>
-<p>ではほぼ全画素に残差が出る。`<code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>長辺 64 超の画像は縮小して `<code style="color:#22d3bf">L</code><code style="color:#22d3bf"> を解き、</code><code style="color:#22d3bf">S</code>` は元解像度で</p>
-<p>`<code style="color:#22d3bf">S = soft(M0 - L_up, λ/μ_final)</code><code style="color:#22d3bf"> として作り直す(縮小した </code><code style="color:#22d3bf">S</code>` を拡大</p>
-<p>すると 1 画素欠陥がにじんで振幅を失うため)。入力は [0,1] の 2 次元に揃え、</p>
-<p>返り値は同形 float64、[0,1]。全零画像では `<code style="color:#22d3bf">S = 0</code>` で一様 0.5。例外時は</p>
-<p>fail-soft で入力のクリップ版が返り、台帳に記録される。</p>
-<p>後段では `<code style="color:#22d3bf">|出力 - 0.5|</code><code style="color:#22d3bf"> が欠陥の強さなので、</code><code style="color:#22d3bf">threshold</code>` 系の op で 0.5 から</p>
-<p>離れた画素を拾う(明側・暗側のどちらを拾うかはしきい値の向きで決まる)。周期</p>
-<p>背景(織物・格子・ディスプレイ)上の点欠陥・傷の検出向けで、非周期背景では</p>
-<p>残差に背景の凹凸がそのまま混ざる。</p>
+<p><code style="color:#22d3bf">dc_rpca_lowrank</code> と同じ inexact ALM の PCP 分解 <code style="color:#22d3bf">M = L + S</code> を行い、スパース項 <code style="color:#22d3bf">S</code> を 0.5 を中心に置いて返す(<code style="color:#22d3bf">clip(S + 0.5, 0, 1)</code>)。背景と同じ画素は 0.5、背景より明るい孤立点は 0.5 より上、暗い点は下に出る符号つき残差で、飽和しない範囲で <code style="color:#22d3bf">dc_rpca_lowrank + (この出力 - 0.5) == 入力</code>。<code style="color:#22d3bf">a</code> はスパース重み <code style="color:#22d3bf">λ = (0.5 + 1.5*a)/sqrt(max(m, n))</code> で、大きいほど <code style="color:#22d3bf">S</code> が疎(小さな残差は 0 に丸められ、はっきりした欠陥だけ残る)、<code style="color:#22d3bf">a=0</code> ではほぼ全画素に残差が出る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>長辺 64 超の画像は縮小して <code style="color:#22d3bf">L</code> を解き、<code style="color:#22d3bf">S</code> は元解像度で <code style="color:#22d3bf">S = soft(M0 - L_up, λ/μ_final)</code> として作り直す(縮小した <code style="color:#22d3bf">S</code> を拡大すると 1 画素欠陥がにじんで振幅を失うため)。入力は [0,1] の 2 次元に揃え、返り値は同形 float64、[0,1]。全零画像では <code style="color:#22d3bf">S = 0</code> で一様 0.5。例外時は fail-soft で入力のクリップ版が返り、台帳に記録される。</p>
+<p>後段では <code style="color:#22d3bf">|出力 - 0.5|</code> が欠陥の強さなので、<code style="color:#22d3bf">threshold</code> 系の op で 0.5 から離れた画素を拾う(明側・暗側のどちらを拾うかはしきい値の向きで決まる)。周期背景(織物・格子・ディスプレイ)上の点欠陥・傷の検出向けで、非周期背景では残差に背景の凹凸がそのまま混ざる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">dc_rpca_sparse 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:dc_rpca_sparse%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:dc_rpca_sparse%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">dc_rpca_sparse 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:dc_rpca_sparse%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:dc_rpca_sparse%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image</code> 作為輸入)</h3>

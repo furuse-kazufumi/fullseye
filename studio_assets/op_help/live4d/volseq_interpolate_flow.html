@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">volseq</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_interpolate_flow(volseq, factor: &#x27;int&#x27; = 2, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001, occlusion_tau: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import live4d; live4d.volseq_interpolate_flow(volseq, factor: &#x27;int&#x27; = 2, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001, occlusion_tau: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opslive4d.get(&quot;volseq_interpolate_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>体積時系列 `<code style="color:#22d3bf">(T, Z, Y, X)</code><code style="color:#22d3bf"> を 3 次元の流れで補間して </code><code style="color:#22d3bf">(T + (T − 1)(factor − 1), Z, Y, X)</code><code style="color:#22d3bf"> に(</code><code style="color:#22d3bf">volseq</code>`)。</p>
-<p>`<code style="color:#22d3bf">video_interpolate_flow</code><code style="color:#22d3bf"> と同じ手順の 3 次元版(流れは </code><code style="color:#22d3bf">vol_flow_3d</code>`)。ライトシートの z-stack は</p>
-<p>時間方向が粗い(1 体積に秒単位)ので、ここを埋めると「回しながら動く」動画になる。</p>
+<p>体積時系列 <code style="color:#22d3bf">(T, Z, Y, X)</code> を 3 次元の流れで補間して <code style="color:#22d3bf">(T + (T − 1)(factor − 1), Z, Y, X)</code> に(<code style="color:#22d3bf">volseq</code>)。</p>
+<p><code style="color:#22d3bf">video_interpolate_flow</code> と同じ手順の 3 次元版(流れは <code style="color:#22d3bf">vol_flow_3d</code>)。ライトシートの z-stack は時間方向が粗い(1 体積に秒単位)ので、ここを埋めると「回しながら動く」動画になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

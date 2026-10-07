@@ -5,14 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verschachtelt ein Lichtfeld wieder zu einem Mikrolinsen-Array-Rohbild (exakte Umkehrung).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Inverse of :func:<code style="color:#22d3bf">lf_from_mla</code> with `<code style="color:#22d3bf">offset=(0, 0)</code>`: the returned frame has</p>
-<p>shape `<code style="color:#22d3bf">(H*V, W*U)</code><code style="color:#22d3bf"> and puts </code><code style="color:#22d3bf">L[v, u, t, s]</code>` back at raw pixel</p>
-<p>`<code style="color:#22d3bf">(t*V + v, s*U + u)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">lf_from_mla(lf_to_mla(L), (V, U))</code><code style="color:#22d3bf"> returns </code><code style="color:#22d3bf">L</code>`</p>
-<p>bit-for-bit (verified with `<code style="color:#22d3bf">np.array_equal</code>`), which is the cheapest</p>
-<p>possible check that the decode&#x27;s index arithmetic has no off-by-one.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not 4-D / non-finite / over the shape and</p>
-<p>element caps (see :func:<code style="color:#22d3bf">lf_from_mla</code>), and a raw frame whose side would</p>
-<p>exceed `<code style="color:#22d3bf">MAX_SPATIAL * MAX_ANGULAR</code>`.</p>
+<p>Inverse of <code style="color:#22d3bf">lf_from_mla</code> with <code style="color:#22d3bf">offset=(0, 0)</code>: the returned frame has shape <code style="color:#22d3bf">(H*V, W*U)</code> and puts <code style="color:#22d3bf">L[v, u, t, s]</code> back at raw pixel <code style="color:#22d3bf">(t*V + v, s*U + u)</code>. <code style="color:#22d3bf">lf_from_mla(lf_to_mla(L), (V, U))</code> returns <code style="color:#22d3bf">L</code> bit-for-bit (verified with <code style="color:#22d3bf">np.array_equal</code>), which is the cheapest possible check that the decode&#x27;s index arithmetic has no off-by-one.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not 4-D / non-finite / over the shape and element caps (see <code style="color:#22d3bf">lf_from_mla</code>), and a raw frame whose side would exceed <code style="color:#22d3bf">MAX_SPATIAL * MAX_ANGULAR</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">Leitfaden zur Familie lightfield_depth</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

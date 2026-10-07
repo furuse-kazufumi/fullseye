@@ -5,14 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kanten-Stoppfunktion g = 1 / (1 + |∇(G_σ * I)|² / k²) (die p = 2-Form von Caselles–Kimmel–Sapiro 1997) (edge_stop_g).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> = ガウスの標準偏差(0 なら平滑化なしの中心差分)、</code><code style="color:#22d3bf">k</code>` = 勾配の尺度(k = 1 で g = 1/(1 + |∇G_σ*I|²))。</p>
+<p><code style="color:#22d3bf">sigma</code> = ガウスの標準偏差(0 なら平滑化なしの中心差分)、<code style="color:#22d3bf">k</code> = 勾配の尺度(k = 1 で g = 1/(1 + |∇G_σ*I|²))。</p>
 <p>画像の値域に依存する: Li ら 2010 の配布例は 0〜255 の画像で k = 1 なので、[0, 1] の画像なら k = 1/255 が同じ挙動。</p>
-<p>返り値: `<code style="color:#22d3bf">g</code><code style="color:#22d3bf">(0 &lt; g ≤ 1、平坦で 1)、</code><code style="color:#22d3bf">grad_mag</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">g_min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">g_max</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">sigma</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">k</code>`。</p>
+<p>返り値: <code style="color:#22d3bf">g</code>(0 &lt; g ≤ 1、平坦で 1)、<code style="color:#22d3bf">grad_mag</code>、<code style="color:#22d3bf">g_min</code> / <code style="color:#22d3bf">g_max</code>、<code style="color:#22d3bf">sigma</code>、<code style="color:#22d3bf">k</code>。</p>
 <p>門: g ∈ (0, 1] —— 分母 ≥ 1、平坦な画像で g ≡ 1(勾配 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — Variationelle und aktive Konturen, Level-Sets — welche Kontur wo stoppt und was sie garantiert</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

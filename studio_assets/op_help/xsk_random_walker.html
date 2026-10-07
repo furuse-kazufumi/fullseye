@@ -5,22 +5,16 @@
 <p><img src="fig/xsk_random_walker.png" alt="xsk_random_walker: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk_random_walker.a.jpg">xsk_random_walker: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk_random_walker.a.jpg">xsk_random_walker: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk_random_walker.b.jpg">xsk_random_walker: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk_random_walker.b.jpg">xsk_random_walker: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk_random_walker.inputs.jpg">xsk_random_walker: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk_random_walker.inputs.jpg">xsk_random_walker: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ランダムウォーカー法によるグラフベース領域分割。</p>
-<p>skimage.segmentation.random_walker で、明暗の閾値から自動生成した</p>
-<p>2 クラスのシード(marker)を出発点に、各画素がどちらのシードへ拡散</p>
-<p>伝播しやすいかを解いて 2 値ラベルに分割し、そのラベル境界を返す</p>
-<p>(返り値は領域そのものではなく、領域の境界線 region)。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がシードの閾値幅を振る(暗側シード </code><code style="color:#22d3bf">&lt; 0.3+0.2a</code>`、明側シード</p>
-<p>`<code style="color:#22d3bf">&gt; 0.7-0.2a</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">a</code>` が大きいほどシードが広がり不定領域が減る)。</p>
-<p>`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は拡散のしやすさを決める </code><code style="color:#22d3bf">beta</code>`(10〜210)を振り、大きいほど</p>
-<p>エッジをまたいだ伝播が抑えられ境界がシャープになる。</p>
+<p>skimage.segmentation.random_walker で、明暗の閾値から自動生成した 2 クラスのシード(marker)を出発点に、各画素がどちらのシードへ拡散伝播しやすいかを解いて 2 値ラベルに分割し、そのラベル境界を返す(返り値は領域そのものではなく、領域の境界線 region)。</p>
+<p><code style="color:#22d3bf">a</code> がシードの閾値幅を振る(暗側シード <code style="color:#22d3bf">&lt; 0.3+0.2a</code>、明側シード <code style="color:#22d3bf">&gt; 0.7-0.2a</code>。<code style="color:#22d3bf">a</code> が大きいほどシードが広がり不定領域が減る)。<code style="color:#22d3bf">b</code> は拡散のしやすさを決める <code style="color:#22d3bf">beta</code>(10〜210)を振り、大きいほどエッジをまたいだ伝播が抑えられ境界がシャープになる。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation ファミリ ガイド</a></p>
@@ -30,7 +24,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xsk_random_walker 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xsk_random_walker%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xsk_random_walker%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xsk_random_walker 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xsk_random_walker%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xsk_random_walker%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_segmentation">gallery2d_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_segmentation.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:genspark_external_review">genspark_external_review</a> — <code style="color:#22d3bf">py -3.11 examples/genspark_external_review.py</code></p>

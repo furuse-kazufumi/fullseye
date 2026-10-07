@@ -4,17 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cx_apply_transfer_function&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p>*無圖: 型別可達，但通用合成輸入不在此運算子的定義域內 —— 橋渡しで束縛した伝達関数 H が 32×32 固定で、128×128 のスペクトルと合わない。用法見下方可執行範例。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>將<b>已置中</b>的頻譜與濾波器 `<code style="color:#22d3bf">H</code><code style="color:#22d3bf"> 相乘 -&gt; </code><code style="color:#22d3bf">(H, W)</code>` complex128。</p>
+<p>將<b>已置中</b>的頻譜與濾波器 <code style="color:#22d3bf">H</code> 相乘 -&gt; <code style="color:#22d3bf">(H, W)</code> complex128。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>The honest primitive under `<code style="color:#22d3bf">ops.lowpass</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ops.highpass</code>`, but</p>
-<p><b>complex-preserving</b>: the filtered spectrum is returned as a complex field</p>
-<p>(not immediately inverted and real-cast), so it can be chained, inspected, or</p>
-<p>handed to :func:<code style="color:#22d3bf">cx_ifft</code>. `<code style="color:#22d3bf">H</code>` is a same-shape transfer function laid out in</p>
-<p>the *centred* convention of :func:<code style="color:#22d3bf">cx_fft</code> (DC at the centre); it may be real</p>
-<p>(a magnitude mask) or complex (a phase-shifting filter). A real `<code style="color:#22d3bf">cx</code>` is</p>
-<p>FFT&#x27;d first (module convenience).</p>
-<p>Typed bridge of the 2d op `<code style="color:#22d3bf">cx_apply_transfer_function</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>The honest primitive under <code style="color:#22d3bf">ops.lowpass</code> / <code style="color:#22d3bf">ops.highpass</code>, but</p>
+<p><b>complex-preserving</b>: the filtered spectrum is returned as a complex field (not immediately inverted and real-cast), so it can be chained, inspected, or handed to <code style="color:#22d3bf">cx_ifft</code>. <code style="color:#22d3bf">H</code> is a same-shape transfer function laid out in the *centred* convention of <code style="color:#22d3bf">cx_fft</code> (DC at the centre); it may be real (a magnitude mask) or complex (a phase-shifting filter). A real <code style="color:#22d3bf">cx</code> is FFT&#x27;d first (module convenience).</p>
+<p>Typed bridge of the 2d op <code style="color:#22d3bf">cx_apply_transfer_function</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

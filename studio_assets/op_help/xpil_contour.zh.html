@@ -7,24 +7,24 @@
 <p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xpil_contour.inputs.jpg">xpil_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xpil_contour.inputs.jpg">xpil_contour: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>Pillow 的轮廓提取滤镜。使用 `<code style="color:#22d3bf">PIL.ImageFilter.CONTOUR</code>` 的固定卷积核，制造出仅在白色背景上留下黑色轮廓线的效果（钢笔画/线稿风格效果）。</p>
+<p>Pillow 的轮廓提取滤镜。使用 <code style="color:#22d3bf">PIL.ImageFilter.CONTOUR</code> 的固定卷积核，制造出仅在白色背景上留下黑色轮廓线的效果（钢笔画/线稿风格效果）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>a, b は未使用（固定カーネル）。</p>
-<p>カーネルは 3x3 の `<code style="color:#22d3bf">[-1,-1,-1; -1,8,-1; -1,-1,-1]</code><code style="color:#22d3bf">（scale 1、offset 255）で、出力は </code><code style="color:#22d3bf">255 + (8*中心 - 8 近傍の和)</code><code style="color:#22d3bf"> を 0〜255 に飽和させたもの。平坦部は255（白）、周囲より暗い画素は暗く、周囲より明るい画素は 255 で飽和する。つまり段差の「暗い側」に 1 画素幅の黒線が乗り、明るい側は白のまま（</code><code style="color:#22d3bf">xpil_find_edges</code>` は同じカーネルで offset 0 なので両側が明るく出る）。</p>
-<p>入力は [0,1] に clip して `<code style="color:#22d3bf">*255</code><code style="color:#22d3bf"> の切り捨てで 8 ビットの L 画像にし、出力を </code><code style="color:#22d3bf">/255</code><code style="color:#22d3bf"> で [0,1] に戻す（1/255 の量子化が入る）。画像の最外周1 画素は Pillow がフィルタせず入力値のまま返す。0 サイズの画像はValueError で拒否され、fail-soft で入力のクリップ版に落ちる（台帳に記録）。ノイズにも反応するので、前段に </code><code style="color:#22d3bf">xpil_smooth_more</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">median</code><code style="color:#22d3bf"> を置くと線が整理される。線を領域として使うなら </code><code style="color:#22d3bf">invert</code><code style="color:#22d3bf"> で黒線側を明るくしてから </code><code style="color:#22d3bf">threshold</code>` に繋ぐ。</p>
+<p>カーネルは 3x3 の <code style="color:#22d3bf">[-1,-1,-1; -1,8,-1; -1,-1,-1]</code>（scale 1、offset 255）で、出力は <code style="color:#22d3bf">255 + (8*中心 - 8 近傍の和)</code> を 0〜255 に飽和させたもの。平坦部は255（白）、周囲より暗い画素は暗く、周囲より明るい画素は 255 で飽和する。つまり段差の「暗い側」に 1 画素幅の黒線が乗り、明るい側は白のまま（<code style="color:#22d3bf">xpil_find_edges</code> は同じカーネルで offset 0 なので両側が明るく出る）。</p>
+<p>入力は [0,1] に clip して <code style="color:#22d3bf">*255</code> の切り捨てで 8 ビットの L 画像にし、出力を <code style="color:#22d3bf">/255</code> で [0,1] に戻す（1/255 の量子化が入る）。画像の最外周1 画素は Pillow がフィルタせず入力値のまま返す。0 サイズの画像はValueError で拒否され、fail-soft で入力のクリップ版に落ちる（台帳に記録）。ノイズにも反応するので、前段に <code style="color:#22d3bf">xpil_smooth_more</code> や <code style="color:#22d3bf">median</code> を置くと線が整理される。線を領域として使うなら <code style="color:#22d3bf">invert</code> で黒線側を明るくしてから <code style="color:#22d3bf">threshold</code> に繋ぐ。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，全部像素都成为前景（1）</b>。过曝、被遮挡或没有被摄物的帧会被报为「<b>缺陷 100%</b>」，因此应在上游判定是否均匀并加以剔除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
 <p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xpil_contour 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:xpil_contour%200.40%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xpil_contour%200.40%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xpil_contour 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:xpil_contour%200.40%200.50">▸ 载入此流水线</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xpil_contour%200.40%200.50">载入并运行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_edges">gallery2d_edges</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_edges.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image</code> 作为输入)</h3>

@@ -6,19 +6,14 @@
 <p><img src="fig/cooc_feature_matrix.png" alt="cooc_feature_matrix: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cooc_feature_matrix.a.jpg">cooc_feature_matrix: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cooc_feature_matrix.a.jpg">cooc_feature_matrix: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cooc_feature_matrix.b.jpg">cooc_feature_matrix: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cooc_feature_matrix.b.jpg">cooc_feature_matrix: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>グレーレベル共起行列(GLCM、`<code style="color:#22d3bf">skimage.feature.graycomatrix</code>`、16 階調</p>
-<p>に量子化、距離 `<code style="color:#22d3bf">1+3*a</code>`、角度 0°)から Haralick テクスチャ特徴量</p>
-<p>`<code style="color:#22d3bf">energy</code>`(角二次モーメント、行列の値の集中度=テクスチャの均一性)を計算</p>
-<p>する。HALCON の `<code style="color:#22d3bf">cooc_feature_matrix</code>`（Calculate gray value features</p>
-<p>from a co-occurrence matrix.）に相当(HALCON は複数の特徴量・複数角度を</p>
-<p>同時に返せるが、ここでは energy・角度 0° 固定に単純化)。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が共起を取る画素間距離を 1〜4 の範囲で振る。★</code><code style="color:#22d3bf">b &gt;= 0.75</code><code style="color:#22d3bf"> で **0/45/90/135 度の 4 方向を平均**する(既定 </code><code style="color:#22d3bf">b=0.5</code>` は従来どおり 0 度だけなので、既存の結果は 1 ビットも変わらない)。</p>
-<p>実写テクスチャ(brick / grass / gravel)を回して測ると(`<code style="color:#22d3bf">poc_real_texture_invariance</code><code style="color:#22d3bf"> の節 6)、**効くかどうかは距離 </code><code style="color:#22d3bf">a</code>` で変わる**:</p>
-<p style="margin:2px 0 2px 12px">• まず `<code style="color:#22d3bf">a</code>` を伸ばすと<b>素材どうしの分解能そのものが潰れる</b>(0.0328 -&gt; 0.0122、2.7 分の 1)。異方な brick の振れ幅は分解能の <b>0.30 -&gt; 3.13 倍</b>へ膨らむ。</p>
+<p>グレーレベル共起行列(GLCM、<code style="color:#22d3bf">skimage.feature.graycomatrix</code>、16 階調に量子化、距離 <code style="color:#22d3bf">1+3*a</code>、角度 0°)から Haralick テクスチャ特徴量 <code style="color:#22d3bf">energy</code>(角二次モーメント、行列の値の集中度=テクスチャの均一性)を計算する。HALCON の <code style="color:#22d3bf">cooc_feature_matrix</code>（Calculate gray value features from a co-occurrence matrix.）に相当(HALCON は複数の特徴量・複数角度を同時に返せるが、ここでは energy・角度 0° 固定に単純化)。</p>
+<p><code style="color:#22d3bf">a</code> が共起を取る画素間距離を 1〜4 の範囲で振る。★<code style="color:#22d3bf">b &gt;= 0.75</code> で <b>0/45/90/135 度の 4 方向を平均</b>する(既定 <code style="color:#22d3bf">b=0.5</code> は従来どおり 0 度だけなので、既存の結果は 1 ビットも変わらない)。</p>
+<p>実写テクスチャ(brick / grass / gravel)を回して測ると(<code style="color:#22d3bf">poc_real_texture_invariance</code> の節 6)、<b>効くかどうかは距離 <code style="color:#22d3bf">a</code> で変わる</b>:</p>
+<p style="margin:2px 0 2px 12px">• まず <code style="color:#22d3bf">a</code> を伸ばすと<b>素材どうしの分解能そのものが潰れる</b>(0.0328 -&gt; 0.0122、2.7 分の 1)。異方な brick の振れ幅は分解能の <b>0.30 -&gt; 3.13 倍</b>へ膨らむ。</p>
 <p style="margin:2px 0 2px 12px">• 4 方向平均は<b>等方な素材には短中距離で効く</b>(grass 0.23 -&gt; 0.12、gravel 0.20 -&gt; 0.11)。</p>
 <p style="margin:2px 0 2px 12px">• 異方な brick には<b>距離 4 でだけ効き</b>(3.13 -&gt; 1.54)、<b>距離 1 では逆に悪化する</b>(0.30 -&gt; 0.56)。</p>
 <p style="margin:2px 0 2px 12px">• 距離 4 まで来ると等方な grass すら改善しない(0.17 -&gt; 0.19)—— 分解能が潰れたあとは平均しても取り返せない。</p>
@@ -31,7 +26,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cooc_feature_matrix 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cooc_feature_matrix%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cooc_feature_matrix%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">cooc_feature_matrix 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:cooc_feature_matrix%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:cooc_feature_matrix%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_texture_freq">gallery2d_texture_freq</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_texture_freq.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_texture_invariance">poc_real_texture_invariance</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_texture_invariance.py</code></p>

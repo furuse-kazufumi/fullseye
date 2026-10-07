@@ -5,32 +5,17 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>斜率(每角度步的像素數)-&gt; 度量深度,相機陣列模型。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>For a rectified array of viewpoints spaced *baseline* apart with focal</p>
-<p>length *focal_px* expressed <b>in pixels of the sub-aperture image</b>, a point</p>
-<p>at distance `<code style="color:#22d3bf">Z</code><code style="color:#22d3bf"> shifts by </code><code style="color:#22d3bf">|s| = focal_px * baseline / Z</code>` pixels per</p>
-<p>step. Inverting: `<code style="color:#22d3bf">Z = focal_px * baseline / |s|</code>`, returned in whatever</p>
-<p>length unit *baseline* was given in (mm in, mm out).</p>
-<p>Only `<code style="color:#22d3bf">|s|</code>` enters, deliberately. The *sign* of the slope says which side of</p>
-<p>the focal plane a point is on, and which sign means &quot;nearer&quot; depends on how</p>
-<p>the angular axis was oriented when the field was decoded — a convention this</p>
-<p>module cannot know and refuses to guess. If your decode puts near objects at</p>
-<p>negative slope, negate before calling.</p>
-<p>*far_depth* is the fail-closed switch for the `<code style="color:#22d3bf">s -&gt; 0</code>` pole (a point at</p>
-<p>infinity has zero parallax). `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> (default) makes any </code><code style="color:#22d3bf">|s| &lt; min_slope</code>`</p>
-<p>a `<code style="color:#22d3bf">ValueError</code>` naming how many pixels were affected — mask them, or pass an</p>
-<p>explicit saturation distance as *far_depth* and get that value there. There</p>
-<p>is no silent `<code style="color:#22d3bf">inf</code>` and no silent clamp.</p>
-<p>Accepts a scalar or any array; returns the same shape (a scalar in gives a</p>
-<p>0-d array out, so downstream code has one type to handle).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-finite *slope* / *focal_px* / *baseline*, a</p>
-<p>non-positive *focal_px* / *baseline* / *min_slope*, a negative *far_depth*,</p>
-<p>and `<code style="color:#22d3bf">|slope| &lt; min_slope</code><code style="color:#22d3bf"> anywhere when *far_depth* is </code><code style="color:#22d3bf">None</code>`.</p>
+<p>For a rectified array of viewpoints spaced *baseline* apart with focal length *focal_px* expressed <b>in pixels of the sub-aperture image</b>, a point at distance <code style="color:#22d3bf">Z</code> shifts by <code style="color:#22d3bf">|s| = focal_px * baseline / Z</code> pixels per step. Inverting: <code style="color:#22d3bf">Z = focal_px * baseline / |s|</code>, returned in whatever length unit *baseline* was given in (mm in, mm out).</p>
+<p>Only <code style="color:#22d3bf">|s|</code> enters, deliberately. The *sign* of the slope says which side of the focal plane a point is on, and which sign means &quot;nearer&quot; depends on how the angular axis was oriented when the field was decoded — a convention this module cannot know and refuses to guess. If your decode puts near objects at negative slope, negate before calling.</p>
+<p>*far_depth* is the fail-closed switch for the <code style="color:#22d3bf">s -&gt; 0</code> pole (a point at infinity has zero parallax). <code style="color:#22d3bf">None</code> (default) makes any <code style="color:#22d3bf">|s| &lt; min_slope</code> a <code style="color:#22d3bf">ValueError</code> naming how many pixels were affected — mask them, or pass an explicit saturation distance as *far_depth* and get that value there. There is no silent <code style="color:#22d3bf">inf</code> and no silent clamp.</p>
+<p>Accepts a scalar or any array; returns the same shape (a scalar in gives a 0-d array out, so downstream code has one type to handle).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-finite *slope* / *focal_px* / *baseline*, a non-positive *focal_px* / *baseline* / *min_slope*, a negative *far_depth*, and <code style="color:#22d3bf">|slope| &lt; min_slope</code> anywhere when *far_depth* is <code style="color:#22d3bf">None</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_lightfield_depth">poc_lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_lightfield_depth.py</code></p>

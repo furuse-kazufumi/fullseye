@@ -5,15 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Welt aus 1-3 px breiten Linien (gerade) und Rissen (Polylinien); Ground Truth = Mittellinien und Breiten (world_thin_structures).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>構造 k は直線(2 点)と折れ線(7 点のランダムウォーク)を交互に、幅は `<code style="color:#22d3bf">widths</code>` を順に使う。画素は中心線からの距離</p>
-<p>≤ w/2 なら構造。画像 = 明るい背景(0.82 + 緩い勾配)に、幅が細いほど薄い暗線(w = 1: 0.5、2: 0.38、3: 0.26)、</p>
-<p>縁は距離で反エイリアス、わずかにぼかし + 雑音。</p>
-<p>返り値: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">distance</code><code style="color:#22d3bf">(各画素から最も近い中心線までの距離)、</code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> = {</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">kinds</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">widths</code>`、</p>
-<p>`<code style="color:#22d3bf">lengths</code><code style="color:#22d3bf">(Σ 線分)、</code><code style="color:#22d3bf">length_total</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">polylines</code><code style="color:#22d3bf">((m, 2) [y, x] の列)、</code><code style="color:#22d3bf">areas_stadium</code>`(L w + π w²/4)}。</p>
+<p>構造 k は直線(2 点)と折れ線(7 点のランダムウォーク)を交互に、幅は <code style="color:#22d3bf">widths</code> を順に使う。画素は中心線からの距離 ≤ w/2 なら構造。画像 = 明るい背景(0.82 + 緩い勾配)に、幅が細いほど薄い暗線(w = 1: 0.5、2: 0.38、3: 0.26)、縁は距離で反エイリアス、わずかにぼかし + 雑音。</p>
+<p>返り値: <code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">labels</code>、<code style="color:#22d3bf">distance</code>(各画素から最も近い中心線までの距離)、<code style="color:#22d3bf">truth</code> = {<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">kinds</code>、<code style="color:#22d3bf">widths</code>、<code style="color:#22d3bf">lengths</code>(Σ 線分)、<code style="color:#22d3bf">length_total</code>、<code style="color:#22d3bf">polylines</code>((m, 2) [y, x] の列)、<code style="color:#22d3bf">areas_stadium</code>(L w + π w²/4)}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — Segmentierungen bewerten und synthetische Welten mit Ground Truth — welches Maß für welchen Fehler blind ist</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

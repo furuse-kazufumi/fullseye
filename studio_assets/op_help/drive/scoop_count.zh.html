@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scoop_count(volume: &#x27;float&#x27;, radius: &#x27;float&#x27;, packing: &#x27;float&#x27;, *, density: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import scoop; scoop.scoop_count(volume: &#x27;float&#x27;, radius: &#x27;float&#x27;, packing: &#x27;float&#x27;, *, density: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;scoop_count&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>体積と充填率から粒の数 `<code style="color:#22d3bf">N = V ν / ((4/3) π r³)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">density</code><code style="color:#22d3bf"> を与えれば質量 </code><code style="color:#22d3bf">N m_p</code><code style="color:#22d3bf"> とかさ密度 </code><code style="color:#22d3bf">ν ρ_p</code>`)。</p>
-<p>`<code style="color:#22d3bf">packing</code><code style="color:#22d3bf"> ν は **較正値**(同じ粒・同じ測り方で、数の分かった 1 回から </code><code style="color:#22d3bf">N v_p / V_img</code>` を取る): 側面の輪郭は</p>
-<p>粒の外側の包絡なので、ν は充填そのものより小さく出る(包絡の分の体積を含む)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 体積 &lt; 0、半径 ≤ 0、ν が (0, 1] の外。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>体積と充填率から粒の数 <code style="color:#22d3bf">N = V ν / ((4/3) π r³)</code>(<code style="color:#22d3bf">density</code> を与えれば質量 <code style="color:#22d3bf">N m_p</code> とかさ密度 <code style="color:#22d3bf">ν ρ_p</code>)。</p>
+<p><code style="color:#22d3bf">packing</code> ν は <b>較正値</b>(同じ粒・同じ測り方で、数の分かった 1 回から <code style="color:#22d3bf">N v_p / V_img</code> を取る): 側面の輪郭は粒の外側の包絡なので、ν は充填そのものより小さく出る(包絡の分の体積を含む)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 体積 &lt; 0、半径 ≤ 0、ν が (0, 1] の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_scoop_pour">poc_powder_scoop_pour</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_scoop_pour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

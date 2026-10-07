@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>角の建物があるとき、線路の上でどこまで見えるか(見通しの三角形)。</p>
-<p>線路 = x 軸(y = 0)、道路の中心 = x = 0。目 = (eye_offset, −eye_distance)、建物の角 = (corner_offset, −corner_distance)、</p>
-<p>建物は x ≥ corner_offset かつ y ≤ −corner_distance を占める(角の向こうの側、corner_offset &gt; eye_offset)。</p>
-<p>返り値 = 見える線路の上の最も遠い点の x(道路の中心から)。corner_distance ≥ eye_distance(建物が目より線路寄りに</p>
-<p>出ていない)なら遮らず ∞。左側は x を反転して同じ式を使う。</p>
+<p>線路 = x 軸(y = 0)、道路の中心 = x = 0。目 = (eye_offset, −eye_distance)、建物の角 = (corner_offset, −corner_distance)、建物は x ≥ corner_offset かつ y ≤ −corner_distance を占める(角の向こうの側、corner_offset &gt; eye_offset)。返り値 = 見える線路の上の最も遠い点の x(道路の中心から)。corner_distance ≥ eye_distance(建物が目より線路寄りに出ていない)なら遮らず ∞。左側は x を反転して同じ式を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

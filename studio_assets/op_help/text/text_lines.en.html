@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Groups character-candidate boxes into lines (vertically overlapping, horizontally close, similar stroke width).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>★規則の根拠(2026-09-27 実測): 候補は字画ごとの断片になる(横棒と &#x27;l&#x27; では高さが 5 倍</p>
-<p>違う)ので「高さが近い」を条件にすると 3 行が 30〜60 行に割れた。行の同一性は**縦の</p>
-<p>重なり**(小さい方の高さの `<code style="color:#22d3bf">overlap_ratio</code>` 以上)で判定し、横の隙間は大きい方の高さの</p>
-<p>`<code style="color:#22d3bf">gap_ratio</code><code style="color:#22d3bf"> 倍以内、ストローク幅は </code><code style="color:#22d3bf">width_ratio</code>` 倍以内。</p>
-<p>Returns dict: `<code style="color:#22d3bf">lines</code><code style="color:#22d3bf">(M×4 の矩形)/ </code><code style="color:#22d3bf">members</code>`(各行の候補 index のリスト)。</p>
+<p>★規則の根拠(2026-09-27 実測): 候補は字画ごとの断片になる(横棒と &#x27;l&#x27; では高さが 5 倍違う)ので「高さが近い」を条件にすると 3 行が 30〜60 行に割れた。行の同一性は<b>縦の重なり</b>(小さい方の高さの <code style="color:#22d3bf">overlap_ratio</code> 以上)で判定し、横の隙間は大きい方の高さの <code style="color:#22d3bf">gap_ratio</code> 倍以内、ストローク幅は <code style="color:#22d3bf">width_ratio</code> 倍以内。</p>
+<p>Returns dict: <code style="color:#22d3bf">lines</code>(M×4 の矩形)/ <code style="color:#22d3bf">members</code>(各行の候補 index のリスト)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

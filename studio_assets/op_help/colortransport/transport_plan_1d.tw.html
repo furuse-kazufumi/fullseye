@@ -3,32 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">transport_plan</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_plan_1d(u_values, v_values)</code>(要直接呼叫實作,<code style="color:#22d3bf">import colortransport; colortransport.transport_plan_1d(u_values, v_values)</code>;從台帳取用則 <code style="color:#22d3bf">opscolortransport.get(&quot;transport_plan_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>一維精確輸運計畫(西北角法則)。回傳 `<code style="color:#22d3bf">(n, m)</code>` 質量矩陣。</p>
+<p>一維精確輸運計畫(西北角法則)。回傳 <code style="color:#22d3bf">(n, m)</code> 質量矩陣。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>行和が `<code style="color:#22d3bf">1/n</code><code style="color:#22d3bf">、列和が </code><code style="color:#22d3bf">1/m</code>` になる ―― これは<b>構成上厳密</b>で、</p>
-<p>数値誤差以外でずれることはない(テストで固定)。</p>
-<p>手順: `<code style="color:#22d3bf">u</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf"> 個)と </code><code style="color:#22d3bf">v</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">m</code>` 個)をそれぞれ昇順に並べ、小さいほうから</p>
-<p>順に質量 `<code style="color:#22d3bf">min(残り u, 残り v)</code>` を割り当てる(単調な結合)。各標本の質量は</p>
-<p>等しく `<code style="color:#22d3bf">1/n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">1/m</code>`(重み付きは受けない)。1 次元では<b>距離の凸関数</b>を</p>
-<p>コストとする限りこの単調結合が最適解なので、`<code style="color:#22d3bf">wasserstein_1d</code>` と同じ</p>
-<p>輸送を「どの標本がどこへ行くか」の行列として得られる。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">u_values</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">v_values</code><code style="color:#22d3bf">: 1 次元に潰す(</code><code style="color:#22d3bf">ravel</code>`)。長さは違ってよい。</p>
-<p>空なら `<code style="color:#22d3bf">MetricContractError</code>`。<b>有限性は検査しない</b>(NaN はソートで末尾に</p>
-<p>回り、黙って結合される)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(n, m)</code><code style="color:#22d3bf"> の float64(</code><code style="color:#22d3bf">transport_plan</code><code style="color:#22d3bf"> 型)。</code><code style="color:#22d3bf">plan[i, j]</code>` は入力の</p>
-<p>元の並びで `<code style="color:#22d3bf">u[i]</code><code style="color:#22d3bf"> から </code><code style="color:#22d3bf">v[j]</code><code style="color:#22d3bf"> へ運ぶ質量。非零要素は高々 </code><code style="color:#22d3bf">n + m - 1</code>`。</p>
-<p>`<code style="color:#22d3bf">n == m</code><code style="color:#22d3bf"> なら置換行列 / </code><code style="color:#22d3bf">n</code>`(一対一対応)。</p>
-<p style="margin:2px 0 2px 12px">• 計算量は `<code style="color:#22d3bf">O((n + m) log)</code><code style="color:#22d3bf"> のソート + </code><code style="color:#22d3bf">O(n + m)</code>` の走査だが、返す行列は</p>
-<p>`<code style="color:#22d3bf">n × m</code>` の密行列なので画素数規模の標本には向かない(その場合は</p>
-<p>`<code style="color:#22d3bf">histogram_match</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">sinkhorn</code>`)。</p>
-<p>`<code style="color:#22d3bf">apply_transport(plan, v)</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">u</code>` 側の各標本の行き先の値(重心)を、</p>
-<p>`<code style="color:#22d3bf">transport_cost(plan, cost)</code>` で総コストを取る。</p>
+<p>行和が <code style="color:#22d3bf">1/n</code>、列和が <code style="color:#22d3bf">1/m</code> になる ―― これは<b>構成上厳密</b>で、数値誤差以外でずれることはない(テストで固定)。</p>
+<p>手順: <code style="color:#22d3bf">u</code>(<code style="color:#22d3bf">n</code> 個)と <code style="color:#22d3bf">v</code>(<code style="color:#22d3bf">m</code> 個)をそれぞれ昇順に並べ、小さいほうから順に質量 <code style="color:#22d3bf">min(残り u, 残り v)</code> を割り当てる(単調な結合)。各標本の質量は等しく <code style="color:#22d3bf">1/n</code>、<code style="color:#22d3bf">1/m</code>(重み付きは受けない)。1 次元では<b>距離の凸関数</b>をコストとする限りこの単調結合が最適解なので、<code style="color:#22d3bf">wasserstein_1d</code> と同じ輸送を「どの標本がどこへ行くか」の行列として得られる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">u_values</code>, <code style="color:#22d3bf">v_values</code>: 1 次元に潰す(<code style="color:#22d3bf">ravel</code>)。長さは違ってよい。空なら <code style="color:#22d3bf">MetricContractError</code>。<b>有限性は検査しない</b>(NaN はソートで末尾に回り、黙って結合される)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(n, m)</code> の float64(<code style="color:#22d3bf">transport_plan</code> 型)。<code style="color:#22d3bf">plan[i, j]</code> は入力の元の並びで <code style="color:#22d3bf">u[i]</code> から <code style="color:#22d3bf">v[j]</code> へ運ぶ質量。非零要素は高々 <code style="color:#22d3bf">n + m - 1</code>。<code style="color:#22d3bf">n == m</code> なら置換行列 / <code style="color:#22d3bf">n</code>(一対一対応)。</p>
+<p style="margin:2px 0 2px 12px">• 計算量は <code style="color:#22d3bf">O((n + m) log)</code> のソート + <code style="color:#22d3bf">O(n + m)</code> の走査だが、返す行列は <code style="color:#22d3bf">n × m</code> の密行列なので画素数規模の標本には向かない(その場合は <code style="color:#22d3bf">histogram_match</code> か <code style="color:#22d3bf">sinkhorn</code>)。</p>
+<p><code style="color:#22d3bf">apply_transport(plan, v)</code> で <code style="color:#22d3bf">u</code> 側の各標本の行き先の値(重心)を、<code style="color:#22d3bf">transport_cost(plan, cost)</code> で総コストを取る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色與光譜知識 —— 顏色只由「光譜 × 光源 × 觀察者」決定</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:color_transport">color_transport</a> — <code style="color:#22d3bf">py -3.11 examples/color_transport.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">transport_plan</code> 作為輸入)</h3>

@@ -3,10 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import polish; polish.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;band_width_profile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>直線の一筆(`<code style="color:#22d3bf">along</code>` の向き)で拭けた帯の幅を、帯に直交する線ごとに副画素で読む: しきい値を最初に越える所と最後に越える所を</p>
-<p>隣の画素との線形補間で求め、その差 × res。返り `<code style="color:#22d3bf">widths</code><code style="color:#22d3bf">(線ごと、読めない線は NaN)、</code><code style="color:#22d3bf">centres</code>`(帯の中心の位置 [m]、</p>
-<p>地図の座標)、`<code style="color:#22d3bf">valid</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">median</code>`。帯が 1 本である前提(複数の帯は外側どうしの幅になる)。</p>
-<p><b>Raises</b> ValueError: 画像の検査、res ≤ 0、along が x / y でない、しきい値が非有限。</p>
+<p>直線の一筆(<code style="color:#22d3bf">along</code> の向き)で拭けた帯の幅を、帯に直交する線ごとに副画素で読む: しきい値を最初に越える所と最後に越える所を隣の画素との線形補間で求め、その差 × res。返り <code style="color:#22d3bf">widths</code>(線ごと、読めない線は NaN)、<code style="color:#22d3bf">centres</code>(帯の中心の位置 [m]、地図の座標)、<code style="color:#22d3bf">valid</code>、<code style="color:#22d3bf">median</code>。帯が 1 本である前提(複数の帯は外側どうしの幅になる)。<b>Raises</b> ValueError: 画像の検査、res ≤ 0、along が x / y でない、しきい値が非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

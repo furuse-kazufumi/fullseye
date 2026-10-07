@@ -3,11 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_solution_xml(scene, run, *, vehicle_model: &#x27;str&#x27; = &#x27;KS&#x27;, vehicle_type: &#x27;str&#x27; = &#x27;BMW_320i&#x27;, cost: &#x27;str&#x27; = &#x27;JB1&#x27;, benchmark_version: &#x27;str&#x27; = &#x27;2020a&#x27;, date=None) -&gt; &#x27;str&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_solution_xml(scene, run, *, vehicle_model: &#x27;str&#x27; = &#x27;KS&#x27;, vehicle_type: &#x27;str&#x27; = &#x27;BMW_320i&#x27;, cost: &#x27;str&#x27; = &#x27;JB1&#x27;, benchmark_version: &#x27;str&#x27; = &#x27;2020a&#x27;, date=None) -&gt; &#x27;str&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;cr_solution_xml&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>公式 solution XML(commonroad-io `<code style="color:#22d3bf">CommonRoadSolutionWriter</code>` と同じ形)を文字列で返す。</p>
-<p>`<code style="color:#22d3bf">&lt;CommonRoadSolution benchmark_id=&quot;KS2:JB1:&lt;scenario id&gt;:2020a&quot; date=&quot;YYYY-MM-DDTHH:MM:SS&quot;&gt;</code>` の中に</p>
-<p>`<code style="color:#22d3bf">&lt;ksTrajectory planningProblem=&quot;&lt;pp id&gt;&quot;&gt;</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">ksState{x, y, steeringAngle, velocity, orientation, time}</code>`。</p>
-<p>位置は <b>車両中心</b>(run[&quot;x&quot;], run[&quot;y&quot;])。`<code style="color:#22d3bf">date</code>` を渡すと再現可能(省略で今)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: vehicle_model が &quot;KS&quot; 以外(状態が KS の物なので)、vehicle_type が未知、run が不正。</p>
+<p>公式 solution XML(commonroad-io <code style="color:#22d3bf">CommonRoadSolutionWriter</code> と同じ形)を文字列で返す。</p>
+<p><code style="color:#22d3bf">&lt;CommonRoadSolution benchmark_id=&quot;KS2:JB1:&lt;scenario id&gt;:2020a&quot; date=&quot;YYYY-MM-DDTHH:MM:SS&quot;&gt;</code> の中に <code style="color:#22d3bf">&lt;ksTrajectory planningProblem=&quot;&lt;pp id&gt;&quot;&gt;</code> と <code style="color:#22d3bf">ksState{x, y, steeringAngle, velocity, orientation, time}</code>。位置は <b>車両中心</b>(run[&quot;x&quot;], run[&quot;y&quot;])。<code style="color:#22d3bf">date</code> を渡すと再現可能(省略で今)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: vehicle_model が &quot;KS&quot; 以外(状態が KS の物なので)、vehicle_type が未知、run が不正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

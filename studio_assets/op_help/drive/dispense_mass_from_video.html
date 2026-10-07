@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dispense_mass_from_video(frames, pitch: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;, times, ground=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import granular; granular.dispense_mass_from_video(frames, pitch: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;, times, ground=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;dispense_mass_from_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>高さ図の列から出た質量と排出率 —— 各コマの山の体積 × ρ_b、時間に対する直線当て(最小二乗)。</p>
-<p>返り: `<code style="color:#22d3bf">masses</code><code style="color:#22d3bf"> [kg]、</code><code style="color:#22d3bf">rate</code><code style="color:#22d3bf">(傾き [kg/s])、</code><code style="color:#22d3bf">total</code><code style="color:#22d3bf">(最後 − 最初)、</code><code style="color:#22d3bf">rms</code>`(直線残差 [kg])。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: コマが 2 未満 / 時刻の数が合わない / 時刻が単調でない。</p>
-<p>画像の体積分解能は `<code style="color:#22d3bf">pitch³ ρ_b</code>` の桁(1 mm・1500 kg/m³ で 1.5 mg/画素³ だが、縁の 1 画素の</p>
-<p>不確かさが面積 × pitch で乗るので実際は g 級)。mg 級は秤に譲る。</p>
+<p>返り: <code style="color:#22d3bf">masses</code> [kg]、<code style="color:#22d3bf">rate</code>(傾き [kg/s])、<code style="color:#22d3bf">total</code>(最後 − 最初)、<code style="color:#22d3bf">rms</code>(直線残差 [kg])。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: コマが 2 未満 / 時刻の数が合わない / 時刻が単調でない。画像の体積分解能は <code style="color:#22d3bf">pitch³ ρ_b</code> の桁(1 mm・1500 kg/m³ で 1.5 mg/画素³ だが、縁の 1 画素の不確かさが面積 × pitch で乗るので実際は g 級)。mg 級は秤に譲る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -4,29 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)</code>(要直接呼叫實作,<code style="color:#22d3bf">import measuring1d; measuring1d.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;gen_measure_arc&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。</p>
-<p>サンプル数 n = round(|angle_extent|*radius)+1、`<code style="color:#22d3bf">spacing</code>` = 弧長/(n-1)。</p>
-<p>弧上のサンプル点は `<code style="color:#22d3bf">row = center_row + radius sin(θ)</code>`、</p>
-<p>`<code style="color:#22d3bf">col = center_col + radius cos(θ)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">θ = angle_start + linspace(0, angle_extent, n)</code>`。</p>
-<p>角度は <b>ラジアン</b>で、col 軸(x)から row 軸(画像下向き)へ回る向きが正。</p>
-<p>`<code style="color:#22d3bf">angle_extent</code><code style="color:#22d3bf"> が負なら逆回りに進み、</code><code style="color:#22d3bf">measure_pos</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">pos</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">dist</code>` は</p>
-<p>その進行方向に沿って数える。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf">: [px]。</code><code style="color:#22d3bf">n = max(2, round(|angle_extent| * radius) + 1)</code>` なので、</p>
-<p>半径や角度幅が小さすぎるとサンプル 2 点・`<code style="color:#22d3bf">spacing</code>` が弧長そのものになる。</p>
-<p>`<code style="color:#22d3bf">radius = 0</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">spacing = 0</code>` になり後段の微分で破綻する(ここでは検証しない)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">width</code><code style="color:#22d3bf">: 幅方向(法線)の平均化幅 [px]。</code><code style="color:#22d3bf">int</code>` に切られ、1 以下なら平均なし。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">shape</code><code style="color:#22d3bf">: 画像の </code><code style="color:#22d3bf">(H, W)</code>`。dict に保存されるだけで、範囲外は</p>
-<p>`<code style="color:#22d3bf">measure_pos</code>` 側が最近傍で外挿する(例外は出ない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: ``{&quot;type&quot;: &quot;arc&quot;, &quot;rows&quot;, &quot;cols&quot;, &quot;width&quot;, &quot;shape&quot;, &quot;spacing&quot;, &quot;center&quot;,</p>
-<p>&quot;radius&quot;, &quot;angles&quot;}`<code style="color:#22d3bf"> の dict(</code><code style="color:#22d3bf">measurehandle</code>` 型)。</p>
-<p>`<code style="color:#22d3bf">measure_pos</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">measure_pairs</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fuzzy_measure_pairing</code>` に渡す。直線なら</p>
-<p>`<code style="color:#22d3bf">gen_measure_rectangle2</code><code style="color:#22d3bf">。位置決め後は </code><code style="color:#22d3bf">translate_measure</code>` で動かす。</p>
+<p>測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。サンプル数 n = round(|angle_extent|*radius)+1、<code style="color:#22d3bf">spacing</code> = 弧長/(n-1)。</p>
+<p>弧上のサンプル点は <code style="color:#22d3bf">row = center_row + radius sin(θ)</code>、<code style="color:#22d3bf">col = center_col + radius cos(θ)</code>、<code style="color:#22d3bf">θ = angle_start + linspace(0, angle_extent, n)</code>。角度は <b>ラジアン</b>で、col 軸(x)から row 軸(画像下向き)へ回る向きが正。<code style="color:#22d3bf">angle_extent</code> が負なら逆回りに進み、<code style="color:#22d3bf">measure_pos</code> の <code style="color:#22d3bf">pos</code> / <code style="color:#22d3bf">dist</code> はその進行方向に沿って数える。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: [px]。<code style="color:#22d3bf">n = max(2, round(|angle_extent| * radius) + 1)</code> なので、半径や角度幅が小さすぎるとサンプル 2 点・<code style="color:#22d3bf">spacing</code> が弧長そのものになる。<code style="color:#22d3bf">radius = 0</code> は <code style="color:#22d3bf">spacing = 0</code> になり後段の微分で破綻する(ここでは検証しない)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 幅方向(法線)の平均化幅 [px]。<code style="color:#22d3bf">int</code> に切られ、1 以下なら平均なし。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code>: 画像の <code style="color:#22d3bf">(H, W)</code>。dict に保存されるだけで、範囲外は <code style="color:#22d3bf">measure_pos</code> 側が最近傍で外挿する(例外は出ない)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">{&quot;type&quot;: &quot;arc&quot;, &quot;rows&quot;, &quot;cols&quot;, &quot;width&quot;, &quot;shape&quot;, &quot;spacing&quot;, &quot;center&quot;, &quot;radius&quot;, &quot;angles&quot;}</code> の dict(<code style="color:#22d3bf">measurehandle</code> 型)。</p>
+<p><code style="color:#22d3bf">measure_pos</code> / <code style="color:#22d3bf">measure_pairs</code> / <code style="color:#22d3bf">fuzzy_measure_pairing</code> に渡す。直線なら <code style="color:#22d3bf">gen_measure_rectangle2</code>。位置決め後は <code style="color:#22d3bf">translate_measure</code> で動かす。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">measurehandle</code> 作為輸入)</h3>

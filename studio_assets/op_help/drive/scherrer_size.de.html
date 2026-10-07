@@ -4,12 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scherrer_size(fwhm, two_theta, wavelength, K=0.9, instrumental_fwhm=0.0, combine=&#x27;gauss&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pxrd; pxrd.scherrer_size(fwhm, two_theta, wavelength, K=0.9, instrumental_fwhm=0.0, combine=&#x27;gauss&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;scherrer_size&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Scherrer の式で結晶子径 [Å] (`<code style="color:#22d3bf">L = K λ / (β cos θ)</code>`)。</p>
-<p>`<code style="color:#22d3bf">fwhm</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">instrumental_fwhm</code><code style="color:#22d3bf"> は 2θ の半値全幅 [deg]、</code><code style="color:#22d3bf">two_theta</code><code style="color:#22d3bf"> [deg]、</code><code style="color:#22d3bf">wavelength</code>` [Å]。試料による広がり β は</p>
-<p>`<code style="color:#22d3bf">combine=&quot;gauss&quot;</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">sqrt(fwhm² − inst²)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">&quot;lorentz&quot;</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">fwhm − inst</code>`。配列を渡せば配列で返す。</p>
-<p>Scherrer の式は <b>体積で重みを付けた柱の長さ</b> の目安で、ひずみの広がり(tan θ に比例)は区別しない —— ひずみが</p>
-<p>疑わしいときは複数の山で Williamson–Hall のように tan θ への依存を見ること。</p>
-<p>Raises ValueError: `<code style="color:#22d3bf">fwhm &lt;= instrumental_fwhm</code>`(装置より細い山 = 径が決まらない)、非正の値、綴り違い。</p>
+<p>Scherrer の式で結晶子径 [Å] (<code style="color:#22d3bf">L = K λ / (β cos θ)</code>)。</p>
+<p><code style="color:#22d3bf">fwhm</code>・<code style="color:#22d3bf">instrumental_fwhm</code> は 2θ の半値全幅 [deg]、<code style="color:#22d3bf">two_theta</code> [deg]、<code style="color:#22d3bf">wavelength</code> [Å]。試料による広がり β は <code style="color:#22d3bf">combine=&quot;gauss&quot;</code> で <code style="color:#22d3bf">sqrt(fwhm² − inst²)</code>、<code style="color:#22d3bf">&quot;lorentz&quot;</code> で <code style="color:#22d3bf">fwhm − inst</code>。配列を渡せば配列で返す。Scherrer の式は <b>体積で重みを付けた柱の長さ</b> の目安で、ひずみの広がり(tan θ に比例)は区別しない —— ひずみが疑わしいときは複数の山で Williamson–Hall のように tan θ への依存を見ること。</p>
+<p>Raises ValueError: <code style="color:#22d3bf">fwhm &lt;= instrumental_fwhm</code>(装置より細い山 = 径が決まらない)、非正の値、綴り違い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -5,17 +5,12 @@
 <p><img src="fig/xcv_orb_count.png" alt="xcv_orb_count: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_orb_count.a.jpg">xcv_orb_count: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_orb_count.a.jpg">xcv_orb_count: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>OpenCV 版 ORB(Oriented FAST and Rotated BRIEF)キーポイント検出数。</p>
-<p>`<code style="color:#22d3bf">cv2.ORB_create</code>` で検出のみ行い(記述子は計算しない)、検出できた</p>
-<p>キーポイント数を返す(feature 出力)。`<code style="color:#22d3bf">xsk_orb_count</code>`(skimage 版)</p>
-<p>と同じ発想の別実装で、検出器の実装が異なるため件数が一致するとは</p>
-<p>限らない。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が要求する最大特徴点数 </code><code style="color:#22d3bf">nfeatures</code>` を 50〜500 の範囲で振る</p>
-<p>(上限であり、実際の検出数は画像内容に依存してそれより少なくなる)。</p>
-<p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><code style="color:#22d3bf">cv2.ORB_create</code> で検出のみ行い(記述子は計算しない)、検出できたキーポイント数を返す(feature 出力)。<code style="color:#22d3bf">xsk_orb_count</code>(skimage 版) と同じ発想の別実装で、検出器の実装が異なるため件数が一致するとは限らない。</p>
+<p><code style="color:#22d3bf">a</code> が要求する最大特徴点数 <code style="color:#22d3bf">nfeatures</code> を 50〜500 の範囲で振る(上限であり、実際の検出数は画像内容に依存してそれより少なくなる)。<code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -24,7 +19,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv_orb_count 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv_orb_count%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv_orb_count%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv_orb_count 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv_orb_count%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv_orb_count%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>

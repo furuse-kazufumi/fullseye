@@ -5,14 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>掃描的角度序列,以<b>度</b>為單位的一維 float64 陣列。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Three schemes, and the difference between them is what happens when a scan is</p>
-<p>cut short:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;uniform&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">start + span * k / n</code>`. The textbook scan. A prefix of it</p>
-<p>covers only a wedge, so an interrupted uniform scan is a limited-angle scan.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;golden&quot;</code><code style="color:#22d3bf"> — increments of </code><code style="color:#22d3bf">180/phi = 111.246...</code>` degrees, wrapped into</p>
-<p>`<code style="color:#22d3bf">[start, start+span)</code>`. Every prefix is near-uniform, so an interrupted</p>
-<p>golden scan is a *sparse* scan, which is a far easier problem. Largest</p>
-<p>angular gap left by a scan that stops early, measured:</p>
+<p>Three schemes, and the difference between them is what happens when a scan is cut short:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;uniform&quot;</code> — <code style="color:#22d3bf">start + span * k / n</code>. The textbook scan. A prefix of it covers only a wedge, so an interrupted uniform scan is a limited-angle scan.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;golden&quot;</code> — increments of <code style="color:#22d3bf">180/phi = 111.246...</code> degrees, wrapped into <code style="color:#22d3bf">[start, start+span)</code>. Every prefix is near-uniform, so an interrupted golden scan is a *sparse* scan, which is a far easier problem. Largest angular gap left by a scan that stops early, measured:</p>
 <p>scheme          after 32 of 180    all 180</p>
 <p>uniform            149.000 deg     1.000 deg</p>
 <p>golden              10.031 deg     1.464 deg</p>
@@ -21,24 +16,14 @@
 <p>accident. Bit-reversed is the only one of the three that is good at both</p>
 <p>ends; golden&#x27;s price for working at *every* prefix length rather than only</p>
 <p>at powers of two is a completed set 1.46x less even than the grid.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;bit-reversed&quot;</code>` — the uniform grid, visited in bit-reversed order. Same</p>
-<p>guarantee as golden for power-of-two prefixes and exactly uniform at the</p>
-<p>end, which golden is not.</p>
-<p>*span_deg* is the total angular range. 180 degrees is the complete data set</p>
-<p>for parallel beam — projections at `<code style="color:#22d3bf">theta</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">theta+180</code>` are mirror</p>
-<p>images and carry no new information — so a 360-degree span is redundancy, not</p>
-<p>resolution, and anything under 180 is the limited-angle problem.</p>
-<p>:param n_angles: number of views, `<code style="color:#22d3bf">1 .. 65536</code>`.</p>
-<p>:param span_deg: total angular range in degrees, `<code style="color:#22d3bf">&gt; 0</code>`.</p>
-<p>:param scheme: one of :data:<code style="color:#22d3bf">ANGLE_SCHEMES</code>.</p>
-<p>:param start_deg: angle of the first view.</p>
-<p>:returns: `<code style="color:#22d3bf">(n_angles,)</code>` float64 array of degrees.</p>
-<p>:raises ValueError: on a non-int count, a non-positive span, a non-finite</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;bit-reversed&quot;</code> — the uniform grid, visited in bit-reversed order. Same guarantee as golden for power-of-two prefixes and exactly uniform at the end, which golden is not.</p>
+<p>*span_deg* is the total angular range. 180 degrees is the complete data set for parallel beam — projections at <code style="color:#22d3bf">theta</code> and <code style="color:#22d3bf">theta+180</code> are mirror images and carry no new information — so a 360-degree span is redundancy, not resolution, and anything under 180 is the limited-angle problem.</p>
+<p>:param n_angles: number of views, <code style="color:#22d3bf">1 .. 65536</code>. :param span_deg: total angular range in degrees, <code style="color:#22d3bf">&gt; 0</code>. :param scheme: one of <code style="color:#22d3bf">ANGLE_SCHEMES</code>. :param start_deg: angle of the first view. :returns: <code style="color:#22d3bf">(n_angles,)</code> float64 array of degrees. :raises ValueError: on a non-int count, a non-positive span, a non-finite</p>
 <p>start, or an unknown scheme.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_ct_degradation">poc_battery_ct_degradation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_ct_degradation.py</code></p>

@@ -1,17 +1,12 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">이 가이드는 일본어만 있습니다(사람이 쓴 산문이라 기계적으로 치환하지 않았습니다).</p>
 <h2 style="color:#f5a524;margin:0 0 4px 0">画質・差分指標の知識 — 数字が動く前に、たいてい条件が動いている</h2>
-<p>「この処理で良くなりました」を数字で言う場面の教材である。</p>
-<p><code style="color:#22d3bf">imgmetrics</code> 族（24 op）の使い方であると同時に、**他所のライブラリで測った数字を</p>
-<p>受け取ったとき、それが比較可能かどうかを見抜く**ための知識でもある。</p>
-<p>この族が他と違うのは <b>答え合わせが外からできる</b>ことで、そのぶん</p>
-<p>「合っているのに比べられない」という失敗のほうが起きやすい。</p>
-<p>指標の値が動いたとき、<b>動いたのはたいてい対象ではなく測定条件</b>である。</p>
-<p>関連: <code style="color:#22d3bf">2d/guides/colorimetry.md</code>（色差の手前にある物理）、</p>
-<p><code style="color:#22d3bf">math/guides/measurement_uncertainty.md</code>（そもそも「精度」とは何か）。</p>
+<p>「この処理で良くなりました」を数字で言う場面の教材である。<code style="color:#22d3bf">imgmetrics</code> 族（24 op）の使い方であると同時に、<b>他所のライブラリで測った数字を受け取ったとき、それが比較可能かどうかを見抜く</b>ための知識でもある。</p>
+<p>この族が他と違うのは <b>答え合わせが外からできる</b>ことで、そのぶん「合っているのに比べられない」という失敗のほうが起きやすい。指標の値が動いたとき、<b>動いたのはたいてい対象ではなく測定条件</b>である。</p>
+<p>関連: <code style="color:#22d3bf">2d/guides/colorimetry.md</code>（色差の手前にある物理）、<code style="color:#22d3bf">math/guides/measurement_uncertainty.md</code>（そもそも「精度」とは何か）。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">0. 測る流れ</h3>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 다이어그램(소스):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
   a[&quot;画像 A&quot;] --&gt; dr[&quot;data_range_of&lt;br/&gt;幅を決める(推測しない)&quot;]
   b[&quot;画像 B&quot;] --&gt; dr
   dr --&gt; cmp[&quot;compare_images&lt;br/&gt;数値 + contract&quot;]
@@ -43,8 +38,7 @@ rgb1 = np.zeros((8, 8, 3)); rgb1[..., 0] = 0.80
 rgb2 = np.zeros((8, 8, 3)); rgb2[..., 0] = 0.82
 print(float(M.delta_e_map(rgb1, rgb2).mean()))  # dE00 = 1.057
 print(M.rgb_to_lab(rgb1)[0, 0])                 # (42.52, 67.70, 56.80)</pre>
-<p><code style="color:#22d3bf">rgb_to_xyz</code> / <code style="color:#22d3bf">xyz_to_lab</code> / <code style="color:#22d3bf">lab_to_rgb</code> も同じ族にある（<code style="color:#22d3bf">lab_to_rgb</code> は色域外を</p>
-<p>切り詰めるので、往復が一致するのは色域内だけ）。</p>
+<p><code style="color:#22d3bf">rgb_to_xyz</code> / <code style="color:#22d3bf">xyz_to_lab</code> / <code style="color:#22d3bf">lab_to_rgb</code> も同じ族にある（<code style="color:#22d3bf">lab_to_rgb</code> は色域外を切り詰めるので、往復が一致するのは色域内だけ）。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">1. 最初に決めるもの — <code style="color:#22d3bf">data_range</code></h3>
 <p>PSNR も SSIM も「画素値が取りうる幅」で正規化する。ここを取り違えると:</p>
@@ -56,23 +50,15 @@ print(M.rgb_to_lab(rgb1)[0, 0])                 # (42.52, 67.70, 56.80)</pre>
 <p>| --- | --- |</p>
 <p>| 整数 dtype | dtype から一意（<code style="color:#22d3bf">uint8</code> → 255、<code style="color:#22d3bf">uint16</code> → 65535） |</p>
 <p>| float で <code style="color:#22d3bf">[0, 1]</code> に収まる | 1.0 とみなす |</p>
-<p>| float で 1.0 超 / 負値を含む | **<code style="color:#22d3bf">data_range</code> の明示を要求して例外**（「たぶん 255」で進まない） |</p>
+<p>| float で 1.0 超 / 負値を含む | <b><code style="color:#22d3bf">data_range</code> の明示を要求して例外</b>（「たぶん 255」で進まない） |</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">他所のライブラリを受け取るとき（★実務で最も効く一次情報）</h3>
-<p>scikit-image の <code style="color:#22d3bf">structural_similarity</code> / <code style="color:#22d3bf">peak_signal_noise_ratio</code> は</p>
-<p><code style="color:#22d3bf">data_range</code> の既定が <b>dtype からの推定</b>で、しかもドキュメントに明記がある:</p>
-<p>&gt; &quot;By default, this is estimated from the image data-type. However for</p>
-<p>&gt; floating-point image data, this estimate yields a result double the value of</p>
-<p>&gt; the desired range&quot; — <b>&quot;it is recommended to always pass this scalar value explicitly&quot;</b></p>
-<p>つまり **float 画像に <code style="color:#22d3bf">data_range</code> を渡していない skimage の SSIM/PSNR は、</p>
-<p>既定のまま使うと想定の 2 倍の幅で正規化されている**。他人の数字を見たら、</p>
-<p>まずここを訊く。</p>
+<p>scikit-image の <code style="color:#22d3bf">structural_similarity</code> / <code style="color:#22d3bf">peak_signal_noise_ratio</code> は <code style="color:#22d3bf">data_range</code> の既定が <b>dtype からの推定</b>で、しかもドキュメントに明記がある:</p>
+<p>&gt; &quot;By default, this is estimated from the image data-type. However for floating-point image data, this estimate yields a result double the value of the desired range&quot; — <b>&quot;it is recommended to always pass this scalar value explicitly&quot;</b></p>
+<p>つまり <b>float 画像に <code style="color:#22d3bf">data_range</code> を渡していない skimage の SSIM/PSNR は、既定のまま使うと想定の 2 倍の幅で正規化されている</b>。他人の数字を見たら、まずここを訊く。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">2. SSIM は「実装が同じ」でないと比べられない</h3>
-<p><code style="color:#22d3bf">ssim</code> の既定は原論文（Wang, Bovik, Sheikh &amp; Simoncelli, IEEE TIP 13(4), 2004）の設定</p>
-<p>—— <b>11×11 ガウシアン窓 σ=1.5、K1=0.01、K2=0.03、重み付き母分散</b>。</p>
-<p>skimage で原論文に合わせるには、ドキュメントの記載どおり</p>
-<p><code style="color:#22d3bf">gaussian_weights=True</code> / <code style="color:#22d3bf">sigma=1.5</code> / <code style="color:#22d3bf">use_sample_covariance=False</code> に加えて</p>
-<p><code style="color:#22d3bf">data_range</code> を明示する必要がある。<b>既定のままでは原論文の SSIM ではない。</b></p>
+<p><code style="color:#22d3bf">ssim</code> の既定は原論文（Wang, Bovik, Sheikh &amp; Simoncelli, IEEE TIP 13(4), 2004）の設定 —— <b>11×11 ガウシアン窓 σ=1.5、K1=0.01、K2=0.03、重み付き母分散</b>。</p>
+<p>skimage で原論文に合わせるには、ドキュメントの記載どおり <code style="color:#22d3bf">gaussian_weights=True</code> / <code style="color:#22d3bf">sigma=1.5</code> / <code style="color:#22d3bf">use_sample_covariance=False</code> に加えて <code style="color:#22d3bf">data_range</code> を明示する必要がある。<b>既定のままでは原論文の SSIM ではない。</b></p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">値が変わる 4 つのつまみ（どれも「バグ」ではない）</h3>
 <p>| つまみ | 何が起きるか |</p>
 <p>| --- | --- |</p>
@@ -81,79 +67,52 @@ print(M.rgb_to_lab(rgb1)[0, 0])                 # (42.52, 67.70, 56.80)</pre>
 <p>| 色の扱い | チャネルごとに計算して平均するのか、輝度 1 枚で測るのか。<b>同じ「SSIM」という名前で別の数字</b>になる |</p>
 <p>| 窓の形 | 一様窓（7×7 など）とガウシアン窓（11×11 σ=1.5）は別物 |</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">MS-SSIM は段数が命</h3>
-<p>5 段の縮小を経るので、最終段で 11 画素の窓が成立するには <b>各辺 176 px</b> 要る</p>
-<p>（<code style="color:#22d3bf">(win_size−1)·2^(n−1) + 2^(n−1)</code> = 10·16 + 16）。</p>
-<p>足りないときに <b>段数を黙って減らす実装がある</b>。段数の違う MS-SSIM は</p>
-<p>別の指標であり、並べた時点で嘘になる。fullseye は減らさずに例外を投げる。</p>
-<p>なお公表されている 5 段の重みは和が <b>1 ではなく 1.0001</b>（原論文が 4 桁で丸めた値）。</p>
-<p>fullseye は黙って正規化しない —— 他所との 1e-4 のずれの出所がここだと分かるようにしてある。</p>
+<p>5 段の縮小を経るので、最終段で 11 画素の窓が成立するには <b>各辺 176 px</b> 要る（<code style="color:#22d3bf">(win_size−1)·2^(n−1) + 2^(n−1)</code> = 10·16 + 16）。足りないときに <b>段数を黙って減らす実装がある</b>。段数の違う MS-SSIM は別の指標であり、並べた時点で嘘になる。fullseye は減らさずに例外を投げる。</p>
+<p>なお公表されている 5 段の重みは和が <b>1 ではなく 1.0001</b>（原論文が 4 桁で丸めた値）。fullseye は黙って正規化しない —— 他所との 1e-4 のずれの出所がここだと分かるようにしてある。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">3. 何を測る指標かで選ぶ</h3>
 <p>| 指標 | 見ているもの | 向く場面 | 外す場面 |</p>
 <p>| --- | --- | --- | --- |</p>
 <p>| <code style="color:#22d3bf">mse</code> / <code style="color:#22d3bf">rmse</code> | 画素値の差の大きさ | 物理量の残差、最適化の目的関数 | 見た目の良し悪し |</p>
-<p>| <code style="color:#22d3bf">psnr</code> | 同上を dB で | 圧縮・復元の定量比較（**同じ <code style="color:#22d3bf">data_range</code> で**） | 1 px のずれで大きく落ちる。構造の一致 |</p>
+<p>| <code style="color:#22d3bf">psnr</code> | 同上を dB で | 圧縮・復元の定量比較（<b>同じ <code style="color:#22d3bf">data_range</code> で</b>） | 1 px のずれで大きく落ちる。構造の一致 |</p>
 <p>| <code style="color:#22d3bf">ssim</code> / <code style="color:#22d3bf">ssim_map</code> | 局所の輝度・コントラスト・構造 | 「どこが似ていないか」を絵で見る | 幾何ずれ、大域的な明るさの違い |</p>
 <p>| <code style="color:#22d3bf">ms_ssim</code> | 上を多尺度で | 縮小耐性が要るとき | 小さい画像（176 px 未満で例外） |</p>
 <p>| <code style="color:#22d3bf">mutual_information</code> | 2 枚の<b>統計的な依存</b>（値の対応が線形でなくてよい） | <b>モダリティが違う画像の位置合わせ</b>（X 線と可視、深度と輝度） | 絶対値の比較（<code style="color:#22d3bf">bins</code> で変わる） |</p>
 <p>| <code style="color:#22d3bf">ncd</code> | 圧縮で測る「情報の重なり」 | 事前知識なしの粗い類似度 | 微小な差の判定 |</p>
 <p>| <code style="color:#22d3bf">delta_e_2000</code> | <b>知覚的な色差</b> | 色の合否判定 | 形・テクスチャの違い |</p>
-<p><b>RGB の平均二乗誤差を「色の差」と呼ばない。</b> 色差は <code style="color:#22d3bf">delta_e_map</code> の仕事で、</p>
-<p>その手前に光源・観測者・白色点の話がある（<code style="color:#22d3bf">2d/guides/colorimetry.md</code>）。</p>
+<p><b>RGB の平均二乗誤差を「色の差」と呼ばない。</b> 色差は <code style="color:#22d3bf">delta_e_map</code> の仕事で、その手前に光源・観測者・白色点の話がある（<code style="color:#22d3bf">2d/guides/colorimetry.md</code>）。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">相互情報量の換算と足場</h3>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bins</code> を変えると値が変わる。**<code style="color:#22d3bf">bins</code> を書かない相互情報量は比較できない。**</p>
-<p style="margin:2px 0 2px 12px">• 足場になる既知値: <code style="color:#22d3bf">I(X;X) = H(X)</code>、独立な一様乱数 2 枚なら <code style="color:#22d3bf">I ≈ 0</code>。</p>
-<p>実装を疑ったらまずこの 2 つを測る。</p>
-<p style="margin:2px 0 2px 12px">• 正規化版（<code style="color:#22d3bf">normalized_mutual_information</code>）は定義が複数ある</p>
-<p>（<code style="color:#22d3bf">2I/(H(X)+H(Y))</code> 型か <code style="color:#22d3bf">I/√(H(X)H(Y))</code> 型か）。<b>どの正規化かを書く。</b></p>
-<p style="margin:2px 0 2px 12px">• 分布そのものを見たいときは <code style="color:#22d3bf">joint_histogram</code>。位置合わせが効いていれば</p>
-<p>対角に集まる —— 数字が動かない理由は、たいていこの絵に出ている。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bins</code> を変えると値が変わる。<b><code style="color:#22d3bf">bins</code> を書かない相互情報量は比較できない。</b></p>
+<p style="margin:2px 0 2px 12px">• 足場になる既知値: <code style="color:#22d3bf">I(X;X) = H(X)</code>、独立な一様乱数 2 枚なら <code style="color:#22d3bf">I ≈ 0</code>。実装を疑ったらまずこの 2 つを測る。</p>
+<p style="margin:2px 0 2px 12px">• 正規化版（<code style="color:#22d3bf">normalized_mutual_information</code>）は定義が複数ある（<code style="color:#22d3bf">2I/(H(X)+H(Y))</code> 型か <code style="color:#22d3bf">I/√(H(X)H(Y))</code> 型か）。<b>どの正規化かを書く。</b></p>
+<p style="margin:2px 0 2px 12px">• 分布そのものを見たいときは <code style="color:#22d3bf">joint_histogram</code>。位置合わせが効いていれば対角に集まる —— 数字が動かない理由は、たいていこの絵に出ている。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">4. 学習系の指標（fullseye の外だが、仕事では必ず出てくる）</h3>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">LPIPS —— 入力の約束を外すと静かに壊れる</h3>
-<p style="margin:2px 0 2px 12px">• 入力は **<code style="color:#22d3bf">Nx3xHxW</code> の RGB を <code style="color:#22d3bf">[-1, 1]</code> に正規化**したもの（公式実装の明記）。</p>
-<p><code style="color:#22d3bf">[0, 1]</code> のまま入れても例外は出ず、<b>それらしい数字が出る</b>。</p>
-<p style="margin:2px 0 2px 12px">• バックボーンは SqueezeNet / AlexNet（既定・forward スコア用）/ VGG（最適化用）。</p>
-<p>公式は「アーキテクチャ間で似たスコア」としつつ、<b>どれを使ったか明記せよ</b>としている。</p>
+<p style="margin:2px 0 2px 12px">• 入力は <b><code style="color:#22d3bf">Nx3xHxW</code> の RGB を <code style="color:#22d3bf">[-1, 1]</code> に正規化</b>したもの（公式実装の明記）。<code style="color:#22d3bf">[0, 1]</code> のまま入れても例外は出ず、<b>それらしい数字が出る</b>。</p>
+<p style="margin:2px 0 2px 12px">• バックボーンは SqueezeNet / AlexNet（既定・forward スコア用）/ VGG（最適化用）。公式は「アーキテクチャ間で似たスコア」としつつ、<b>どれを使ったか明記せよ</b>としている。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">version</code> 引数がある（現行 0.1、初版 0.0）。<b>論文・報告には版も書く。</b></p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">FID —— リサイズ実装だけで生成品質より大きな差が立つ</h3>
-<p>clean-fid（Parmar et al.）の実測が決定的である。FFHQ を 256×256 にリサイズして、</p>
-<p><b>同じ画像集合をリサイズ実装だけ変えて</b>比べると:</p>
+<p>clean-fid（Parmar et al.）の実測が決定的である。FFHQ を 256×256 にリサイズして、<b>同じ画像集合をリサイズ実装だけ変えて</b>比べると:</p>
 <p>| リサイズ | FID |</p>
 <p>| --- | --- |</p>
 <p>| PIL-bicubic（基準・エイリアシングなし） | ~0 |</p>
 <p>| PIL-Lanczos / bilinear / box | ≤ 0.75 |</p>
 <p>| <b>OpenCV-bicubic / PyTorch-bicubic / TensorFlow-bicubic（antialias なし）</b> | <b>≥ 6.0</b> |</p>
-<p>論文の指摘は「多くの実装が<b>固定幅の前置フィルタ</b>を使っており、縮小率に応じて</p>
-<p>フィルタ幅を変える信号処理の原則を破っている」こと。</p>
-<p><b>モデルを一切変えずに FID が 6 動く。</b> 論文で報告される改善幅と同じ桁である。</p>
-<p>JPEG も効く: StyleGAN2 / LSUN Church で、学習集合が品質 75 のとき、</p>
-<p>生成画像を <b>品質 87 で保存したときに FID が最良（3.48）</b> になる。</p>
-<p>「実画像側が圧縮されているなら、生成画像も圧縮したほうが FID が良くなる」。</p>
-<p>実務の結論: <b>FID の絶対値は引用しない。</b> 同じ前処理コード・同じ枚数</p>
-<p>（50k が慣例）で測った値どうしだけを比べる。</p>
+<p>論文の指摘は「多くの実装が<b>固定幅の前置フィルタ</b>を使っており、縮小率に応じてフィルタ幅を変える信号処理の原則を破っている」こと。<b>モデルを一切変えずに FID が 6 動く。</b> 論文で報告される改善幅と同じ桁である。</p>
+<p>JPEG も効く: StyleGAN2 / LSUN Church で、学習集合が品質 75 のとき、生成画像を <b>品質 87 で保存したときに FID が最良（3.48）</b> になる。「実画像側が圧縮されているなら、生成画像も圧縮したほうが FID が良くなる」。</p>
+<p>実務の結論: <b>FID の絶対値は引用しない。</b> 同じ前処理コード・同じ枚数（50k が慣例）で測った値どうしだけを比べる。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">無参照指標（NIQE / BRISQUE）は「自然画像」の物差し</h3>
-<p>NIQE は原論文の言葉で &quot;a simple and successful space domain **natural scene</p>
-<p>statistic (NSS)** model&quot; に基づき、その特徴量は &quot;derived from a corpus of</p>
-<p><b>natural, undistorted images</b>&quot; である。</p>
-<p>したがって —— これは原論文の主張ではなく、そこからの帰結として ——</p>
-<p><b>外観検査画像・医用画像・顕微鏡画像・天体画像は、その物差しが想定する分布の外</b>にある。</p>
-<p>使ってはいけないという意味ではないが、**値の大小を「品質」と読み替える前に、</p>
-<p>自分の対象で目視順位との相関を取る**こと。相関が無ければその指標は使えない。</p>
+<p>NIQE は原論文の言葉で &quot;a simple and successful space domain <b>natural scene statistic (NSS)</b> model&quot; に基づき、その特徴量は &quot;derived from a corpus of <b>natural, undistorted images</b>&quot; である。</p>
+<p>したがって —— これは原論文の主張ではなく、そこからの帰結として —— <b>外観検査画像・医用画像・顕微鏡画像・天体画像は、その物差しが想定する分布の外</b>にある。使ってはいけないという意味ではないが、<b>値の大小を「品質」と読み替える前に、自分の対象で目視順位との相関を取る</b>こと。相関が無ければその指標は使えない。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">5. 報告のしかた —— 数字だけ写すと条件が消える</h3>
-<p>この repo で実際に起きた事故の型がこれである。**別々に測った 2 つの PSNR を</p>
-<p>並べたとき、片方が <code style="color:#22d3bf">data_range=1.0</code>、もう片方が <code style="color:#22d3bf">255</code> なら、48.13 dB の差が</p>
-<p>「改善」に見える。**</p>
+<p>この repo で実際に起きた事故の型がこれである。<b>別々に測った 2 つの PSNR を並べたとき、片方が <code style="color:#22d3bf">data_range=1.0</code>、もう片方が <code style="color:#22d3bf">255</code> なら、48.13 dB の差が「改善」に見える。</b></p>
 <p>だから <code style="color:#22d3bf">imgmetrics</code> は次の形にしてある:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">compare_images(a, b)</code> は数値と一緒に **<code style="color:#22d3bf">contract</code>**（<code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> /</p>
-<p><code style="color:#22d3bf">crop_border</code> / SSIM の窓）を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measure_with(report, a2, b2)</code> は <b>前の測定と厳密に同じ条件で</b>測り直す。</p>
-<p>条件を持ち回れば、比べられない組合せがそもそも作れない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">metrics_table(report)</code> は数値行と <code style="color:#22d3bf">条件: …</code> 行を<b>同じ表に</b>並べる。</p>
-<p>数字だけの表を作れないようにしてある。</p>
-<p>図注・スライド・論文表に指標を書くときは、**指標名・<code style="color:#22d3bf">data_range</code>・窓・<code style="color:#22d3bf">bins</code>・</p>
-<p>枚数**を同じ場所に書く。これが無い数字は、半年後の自分にも再現できない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">compare_images(a, b)</code> は数値と一緒に <b><code style="color:#22d3bf">contract</code></b>（<code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">crop_border</code> / SSIM の窓）を返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measure_with(report, a2, b2)</code> は <b>前の測定と厳密に同じ条件で</b>測り直す。条件を持ち回れば、比べられない組合せがそもそも作れない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">metrics_table(report)</code> は数値行と <code style="color:#22d3bf">条件: …</code> 行を<b>同じ表に</b>並べる。数字だけの表を作れないようにしてある。</p>
+<p>図注・スライド・論文表に指標を書くときは、<b>指標名・<code style="color:#22d3bf">data_range</code>・窓・<code style="color:#22d3bf">bins</code>・枚数</b>を同じ場所に書く。これが無い数字は、半年後の自分にも再現できない。</p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">6. 診断表 — 症状から原因へ</h3>
 <p>| 症状 | まず疑う | 確かめ方 |</p>
@@ -179,25 +138,15 @@ print(M.rgb_to_lab(rgb1)[0, 0])                 # (42.52, 67.70, 56.80)</pre>
 <p>| 条件を持ち回る報告（<code style="color:#22d3bf">compare_images</code> / <code style="color:#22d3bf">measure_with</code> / <code style="color:#22d3bf">metrics_table</code>） | — |</p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">出典</h3>
-<p style="margin:2px 0 2px 12px">• Z. Wang, A. C. Bovik, H. R. Sheikh, E. P. Simoncelli,</p>
-<p>*Image quality assessment: from error visibility to structural similarity*,</p>
-<p>IEEE Trans. Image Processing 13(4):600–612, 2004（SSIM の原設定）</p>
-<p style="margin:2px 0 2px 12px">• Z. Wang, E. P. Simoncelli, A. C. Bovik, *Multiscale structural similarity for</p>
-<p>image quality assessment*, Asilomar Conf. Signals, Systems &amp; Computers, 2003</p>
-<p>（MS-SSIM の 5 段の重み）</p>
-<p style="margin:2px 0 2px 12px">• scikit-image <code style="color:#22d3bf">skimage.metrics</code> API リファレンス（<code style="color:#22d3bf">data_range</code> の既定と</p>
-<p>「float では望む範囲の 2 倍になる」注意、原論文に合わせる設定） —</p>
+<p style="margin:2px 0 2px 12px">• Z. Wang, A. C. Bovik, H. R. Sheikh, E. P. Simoncelli, *Image quality assessment: from error visibility to structural similarity*, IEEE Trans. Image Processing 13(4):600–612, 2004（SSIM の原設定）</p>
+<p style="margin:2px 0 2px 12px">• Z. Wang, E. P. Simoncelli, A. C. Bovik, *Multiscale structural similarity for image quality assessment*, Asilomar Conf. Signals, Systems &amp; Computers, 2003 （MS-SSIM の 5 段の重み）</p>
+<p style="margin:2px 0 2px 12px">• scikit-image <code style="color:#22d3bf">skimage.metrics</code> API リファレンス（<code style="color:#22d3bf">data_range</code> の既定と「float では望む範囲の 2 倍になる」注意、原論文に合わせる設定） —</p>
 <p>&lt;https://scikit-image.org/docs/stable/api/skimage.metrics.html&gt;</p>
-<p style="margin:2px 0 2px 12px">• G. Parmar, R. Zhang, J.-Y. Zhu, *On Aliased Resizing and Surprising Subtleties</p>
-<p>in GAN Evaluation*（clean-fid。リサイズ実装差で FID が 6 以上動く、JPEG 品質の効果） —</p>
+<p style="margin:2px 0 2px 12px">• G. Parmar, R. Zhang, J.-Y. Zhu, *On Aliased Resizing and Surprising Subtleties in GAN Evaluation*（clean-fid。リサイズ実装差で FID が 6 以上動く、JPEG 品質の効果） —</p>
 <p>&lt;https://arxiv.org/abs/2104.11222&gt; ／ &lt;https://github.com/GaParmar/clean-fid&gt;</p>
-<p style="margin:2px 0 2px 12px">• R. Zhang et al., *The Unreasonable Effectiveness of Deep Features as a</p>
-<p>Perceptual Metric*（LPIPS。入力は <code style="color:#22d3bf">[-1,1]</code>、バックボーンと版の明記） —</p>
+<p style="margin:2px 0 2px 12px">• R. Zhang et al., *The Unreasonable Effectiveness of Deep Features as a Perceptual Metric*（LPIPS。入力は <code style="color:#22d3bf">[-1,1]</code>、バックボーンと版の明記） —</p>
 <p>&lt;https://github.com/richzhang/PerceptualSimilarity&gt;</p>
-<p style="margin:2px 0 2px 12px">• A. Mittal, R. Soundararajan, A. C. Bovik, *Making a &#x27;Completely Blind&#x27; Image</p>
-<p>Quality Analyzer*, IEEE Signal Processing Letters 20(3), 2013（NIQE は自然画像</p>
-<p>統計モデルに基づき、特徴量は無歪みの自然画像コーパスから導かれる） —</p>
+<p style="margin:2px 0 2px 12px">• A. Mittal, R. Soundararajan, A. C. Bovik, *Making a &#x27;Completely Blind&#x27; Image Quality Analyzer*, IEEE Signal Processing Letters 20(3), 2013（NIQE は自然画像統計モデルに基づき、特徴量は無歪みの自然画像コーパスから導かれる） —</p>
 <p>&lt;https://live.ece.utexas.edu/publications/2013/mittal2013.pdf&gt;</p>
-<p style="margin:2px 0 2px 12px">• G. Sharma, W. Wu, E. N. Dalal, *The CIEDE2000 color-difference formula*,</p>
-<p>Color Research &amp; Application 30(1):21–30, 2005（34 組の検証対） —</p>
+<p style="margin:2px 0 2px 12px">• G. Sharma, W. Wu, E. N. Dalal, *The CIEDE2000 color-difference formula*, Color Research &amp; Application 30(1):21–30, 2005（34 組の検証対） —</p>
 <p>&lt;https://hajim.rochester.edu/ece/sites/gsharma/papers/CIEDE2000CRNAFeb05.pdf&gt;</p>

@@ -5,21 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用一盏平行光给 2-D 法线贴图着色(Lambert + Blinn 1977)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> is a </code><code style="color:#22d3bf">normalmap</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(H, W, 3)</code>` <b>unit</b> vectors, as</p>
-<p>:func:<code style="color:#22d3bf">normal_map_decode</code> returns. Non-unit input raises rather than being</p>
-<p>normalised for you — a normal map that is not normalised is usually a map</p>
-<p>that was never decoded, and quietly fixing it hides the mistake.</p>
-<p>`<code style="color:#22d3bf">out = diffuse * (ambient + max(n·l, 0)) + specular * max(n·h, 0)^shininess</code>`</p>
-<p>with `<code style="color:#22d3bf">h</code>` the normalised halfway vector between light and view.</p>
-<p>Directions are `<code style="color:#22d3bf">(x, y, z)</code>` with **+x right, +y down, +z out of the</p>
-<p>screen** — the same handedness as the pixel grid, so a light at</p>
-<p>`<code style="color:#22d3bf">(0, -1, 1)</code>` comes from above the screen. Getting the sign of y wrong</p>
-<p>flips the perceived relief (bumps become dents) without raising anything;</p>
-<p>that is the one thing to check on first render.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">normals</code> is a <code style="color:#22d3bf">normalmap</code>: <code style="color:#22d3bf">(H, W, 3)</code> <b>unit</b> vectors, as <code style="color:#22d3bf">normal_map_decode</code> returns. Non-unit input raises rather than being normalised for you — a normal map that is not normalised is usually a map that was never decoded, and quietly fixing it hides the mistake.</p>
+<p><code style="color:#22d3bf">out = diffuse * (ambient + max(n·l, 0)) + specular * max(n·h, 0)^shininess</code> with <code style="color:#22d3bf">h</code> the normalised halfway vector between light and view.</p>
+<p>Directions are <code style="color:#22d3bf">(x, y, z)</code> with <b>+x right, +y down, +z out of the screen</b> — the same handedness as the pixel grid, so a light at <code style="color:#22d3bf">(0, -1, 1)</code> comes from above the screen. Getting the sign of y wrong flips the perceived relief (bumps become dents) without raising anything; that is the one thing to check on first render.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgb</code> 作为输入)</h3>

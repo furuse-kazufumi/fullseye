@@ -8,13 +8,13 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_contour_region_xld.chain.jpg">gen_contour_region_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_contour_region_xld.chain.jpg">gen_contour_region_xld: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_contour_region_xld.inputs.jpg">gen_contour_region_xld: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_contour_region_xld.inputs.jpg">gen_contour_region_xld: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Extrahiert den Außenrand einer Region (Pixelmaske) als XLD-Kontur unter Beibehaltung der Verfolgungsreihenfolge (Reihenfolge entlang der Kontur). Verwendet `<code style="color:#22d3bf">find_contours</code>` (Subpixel-Konturen mittels Marching Squares), falls skimage verfügbar ist, andernfalls Fallback auf eine eigene Moore-Nachbarschaftsverfolgung (8er-Nachbarschaft, Jacobs Abbruchkriterium). a und b werden nicht verwendet.</p>
+<p>Extrahiert den Außenrand einer Region (Pixelmaske) als XLD-Kontur unter Beibehaltung der Verfolgungsreihenfolge (Reihenfolge entlang der Kontur). Verwendet <code style="color:#22d3bf">find_contours</code> (Subpixel-Konturen mittels Marching Squares), falls skimage verfügbar ist, andernfalls Fallback auf eine eigene Moore-Nachbarschaftsverfolgung (8er-Nachbarschaft, Jacobs Abbruchkriterium). a und b werden nicht verwendet.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>2026-08-30 の修正で、以前使っていた汎用の `<code style="color:#22d3bf">edges_sub_pix</code><code style="color:#22d3bf"> 経路は </code><code style="color:#22d3bf">np.where</code><code style="color:#22d3bf"> のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の </code><code style="color:#22d3bf">gen_contour_region_xld</code>`（region から XLD 輪郭を生成する演算）に相当する。</p>
+<p>2026-08-30 の修正で、以前使っていた汎用の <code style="color:#22d3bf">edges_sub_pix</code> 経路は <code style="color:#22d3bf">np.where</code> のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の <code style="color:#22d3bf">gen_contour_region_xld</code>（region から XLD 輪郭を生成する演算）に相当する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -24,7 +24,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-gen_contour_region_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Agen_contour_region_xld%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Agen_contour_region_xld%200.50%200.50">Load &amp; run</a></p>
+gen_contour_region_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Agen_contour_region_xld%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Agen_contour_region_xld%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_contour_measure">gallery2d_contour_measure</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_contour_measure.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">contour</code> als Eingabe)</h3>

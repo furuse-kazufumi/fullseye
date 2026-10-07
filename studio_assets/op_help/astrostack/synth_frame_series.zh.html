@@ -2,31 +2,21 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">synth_frame_series — ASTROSTACK <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">images</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)</code>(要直接调用实现,<code style="color:#22d3bf">import astrostack; astrostack.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)</code>;从台账取用则 <code style="color:#22d3bf">opsastrostack.get(&quot;synth_frame_series&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.synth_frame_series(...)</code> 只返回**声明的 out 类型 <code style="color:#22d3bf">images</code> 的值**(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.synth_frame_series.raw(...)</code>,或直接调用 <code style="color:#22d3bf">astrostack.synth_frame_series</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.synth_frame_series(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">images</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.synth_frame_series.raw(...)</code>,或直接调用 <code style="color:#22d3bf">astrostack.synth_frame_series</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>把同一星场重拍 `<code style="color:#22d3bf">n_frames</code>` 次,<b>各自带不同噪声与不同抖动</b>。</p>
+<p>把同一星场重拍 <code style="color:#22d3bf">n_frames</code> 次,<b>各自带不同噪声与不同抖动</b>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>星の座標・フラックスは全フレームで同じ(`<code style="color:#22d3bf">field_seed</code>` を固定して星の抽選を</p>
-<p>再現し、観測ごとの `<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">shift_row</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">shift_col</code>` だけを振る)ので、</p>
-<p>位置合わせ・合成・drizzle の正解が 1 組で済む。*fwhm_jitter* を与えると FWHM がフレームごとに揺れる</p>
-<p>—— これが lucky imaging の「シーイングが揺らぐ」条件で、0 のままだと</p>
-<p>:func:<code style="color:#22d3bf">lucky_select</code> が選ぶ理由が無くなる。</p>
-<p>ディザは `<code style="color:#22d3bf">dither_px</code><code style="color:#22d3bf"> を半径とする決定的な螺旋(</code><code style="color:#22d3bf">i</code>` 番目のフレームを</p>
-<p>`<code style="color:#22d3bf">dither_px * (i / (n-1))</code>` の半径・黄金角の方向へ置く)。乱数でないので</p>
-<p>フレーム数を変えても並びが安定し、図が再現する。</p>
-<p>Returns `<code style="color:#22d3bf">(frames, truth)</code>`:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">frames</code><code style="color:#22d3bf"> —— 長さ </code><code style="color:#22d3bf">n_frames</code><code style="color:#22d3bf"> の list、各要素は </code><code style="color:#22d3bf">(H, W)</code>` float64。</p>
-<p>**`<code style="color:#22d3bf">images</code>` 語彙そのもの**なので、合成 op へそのまま渡せる。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> —— :func:</code>synth_starfield<code style="color:#22d3bf"> の truth に、</code><code style="color:#22d3bf">shifts</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N, 2)</code>`</p>
-<p>(各フレームの `<code style="color:#22d3bf">(dr, dc)</code><code style="color:#22d3bf">)と </code><code style="color:#22d3bf">fwhms</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(N,)</code>` を足したもの。</p>
-<p>`<code style="color:#22d3bf">rows</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cols</code>` は<b>ディザ前</b>(フレーム 0 の位置)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: :func:</code>synth_starfield` の条件に加えて、</p>
-<p>*n_frames* が 1 未満、*dither_px* が負、*fwhm_jitter* が負の場合。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>星の座標・フラックスは全フレームで同じ(<code style="color:#22d3bf">field_seed</code> を固定して星の抽選を再現し、観測ごとの <code style="color:#22d3bf">seed</code> と <code style="color:#22d3bf">shift_row</code> / <code style="color:#22d3bf">shift_col</code> だけを振る)ので、位置合わせ・合成・drizzle の正解が 1 組で済む。*fwhm_jitter* を与えると FWHM がフレームごとに揺れる —— これが lucky imaging の「シーイングが揺らぐ」条件で、0 のままだと <code style="color:#22d3bf">lucky_select</code> が選ぶ理由が無くなる。</p>
+<p>ディザは <code style="color:#22d3bf">dither_px</code> を半径とする決定的な螺旋(<code style="color:#22d3bf">i</code> 番目のフレームを <code style="color:#22d3bf">dither_px * (i / (n-1))</code> の半径・黄金角の方向へ置く)。乱数でないのでフレーム数を変えても並びが安定し、図が再現する。</p>
+<p>Returns <code style="color:#22d3bf">(frames, truth)</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">frames</code> —— 長さ <code style="color:#22d3bf">n_frames</code> の list、各要素は <code style="color:#22d3bf">(H, W)</code> float64。<b><code style="color:#22d3bf">images</code> 語彙そのもの</b>なので、合成 op へそのまま渡せる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">truth</code> —— <code style="color:#22d3bf">synth_starfield</code> の truth に、<code style="color:#22d3bf">shifts</code> <code style="color:#22d3bf">(N, 2)</code> (各フレームの <code style="color:#22d3bf">(dr, dc)</code>)と <code style="color:#22d3bf">fwhms</code> <code style="color:#22d3bf">(N,)</code> を足したもの。<code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> は<b>ディザ前</b>(フレーム 0 の位置)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">synth_starfield</code> の条件に加えて、*n_frames* が 1 未満、*dither_px* が負、*fwhm_jitter* が負の場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_astro_photometry">poc_astro_photometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_astro_photometry.py</code></p>

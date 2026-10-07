@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectral_slope(field, dx: &#x27;float&#x27;, f_lo: &#x27;float&#x27;, f_hi: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveterrain; driveterrain.spectral_slope(field, dx: &#x27;float&#x27;, f_lo: &#x27;float&#x27;, f_hi: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;spectral_slope&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>動径周期図の log–log 直線当てはめ: `<code style="color:#22d3bf">{&quot;beta&quot;, &quot;intercept&quot;, &quot;n&quot;}</code>`(power ∝ f^{−beta})。</p>
+<p>動径周期図の log–log 直線当てはめ: <code style="color:#22d3bf">{&quot;beta&quot;, &quot;intercept&quot;, &quot;n&quot;}</code>(power ∝ f^{−beta})。</p>
 <p>定理: fBm 面(H)なら β = 2H + 2(Saupe 1988)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>

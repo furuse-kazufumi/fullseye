@@ -12,10 +12,9 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_shape_std.inputs.jpg">select_shape_std: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Keeps only the connected component with the largest area (selected via `<code style="color:#22d3bf">_largest_label</code><code style="color:#22d3bf">). HALCON&#x27;s </code><code style="color:#22d3bf">select_shape_std</code><code style="color:#22d3bf"> (Select regions of a given shape.) is an operator that lets you choose among several standard criteria including </code><code style="color:#22d3bf">max_area</code>`, but here it is fixed to the single criterion &quot;largest area&quot; (an approximation).</p>
+<p>Keeps only the connected component with the largest area (selected via <code style="color:#22d3bf">_largest_label</code>). HALCON&#x27;s <code style="color:#22d3bf">select_shape_std</code> (Select regions of a given shape.) is an operator that lets you choose among several standard criteria including <code style="color:#22d3bf">max_area</code>, but here it is fixed to the single criterion &quot;largest area&quot; (an approximation).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。複数領域が同面積の場合は </code><code style="color:#22d3bf">argmax</code>` の実装依存で</p>
-<p>どれか 1 つが選ばれる。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。複数領域が同面積の場合は <code style="color:#22d3bf">argmax</code> の実装依存でどれか 1 つが選ばれる。</p>
 <p><b>Border handling</b>: treat everything outside the image as background (0) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

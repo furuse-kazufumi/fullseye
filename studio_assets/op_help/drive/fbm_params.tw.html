@@ -5,13 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>乱数位相の正弦の和で fBm 面を作るための表(Saupe 1988 のスペクトル合成の連続版)。</p>
-<p>周波数は [f_min, f_max] に対数一様、向きは一様、位相は一様、振幅 ∝ f^{−H}。対数一様に撒いた波は</p>
-<p>2 次元周波数面の密度が ∝ f^{−2} なので、パワースペクトルは ∝ A(f)² f^{−2} = f^{−(2H+2)}、</p>
-<p>つまり β = 2H + E(E = 2)。振幅は RMS が `<code style="color:#22d3bf">amplitude</code>` になるよう正規化する。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>周波数は [f_min, f_max] に対数一様、向きは一様、位相は一様、振幅 ∝ f^{−H}。対数一様に撒いた波は 2 次元周波数面の密度が ∝ f^{−2} なので、パワースペクトルは ∝ A(f)² f^{−2} = f^{−(2H+2)}、つまり β = 2H + E(E = 2)。振幅は RMS が <code style="color:#22d3bf">amplitude</code> になるよう正規化する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rover_slip_risk_path">poc_rover_slip_risk_path</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rover_slip_risk_path.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

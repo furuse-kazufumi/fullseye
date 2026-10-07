@@ -8,22 +8,17 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/eccentricity.chain.jpg">eccentricity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/eccentricity.chain.jpg">eccentricity: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Liefert die drei aus den Ellipsenparametern abgeleiteten Formmerkmale `<code style="color:#22d3bf">(Anisometry, Bulkiness, StructureFactor)</code><code style="color:#22d3bf"> als dreikomponentigen Vektor der Sortierung </code><code style="color:#22d3bf">match</code><code style="color:#22d3bf"> (ein einzelner Skalar kann drei Werte nicht tragen — dieselbe Form wie </code><code style="color:#22d3bf">area_center</code>`).</p>
+<p>Liefert die drei aus den Ellipsenparametern abgeleiteten Formmerkmale <code style="color:#22d3bf">(Anisometry, Bulkiness, StructureFactor)</code> als dreikomponentigen Vektor der Sortierung <code style="color:#22d3bf">match</code> (ein einzelner Skalar kann drei Werte nicht tragen — dieselbe Form wie <code style="color:#22d3bf">area_center</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">Ra</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">Rb</code><code style="color:#22d3bf"> を同じモーメントを持つ楕円の半径、</code><code style="color:#22d3bf">A</code>` を面積として</p>
-<p>`<code style="color:#22d3bf">Anisometry = Ra/Rb</code>`(細長さ。円で 1、下限 1)</p>
-<p>`<code style="color:#22d3bf">Bulkiness = π·Ra·Rb / A</code>`(楕円をどれだけ埋めていないか。円で 1)</p>
-<p>`<code style="color:#22d3bf">StructureFactor = Anisometry·Bulkiness - 1</code>`(円で 0)</p>
-<p>HALCON の `<code style="color:#22d3bf">eccentricity</code>`（Shape features derived from the ellipse</p>
-<p>parameters.）<b>と同じ 3 値・同じ式</b>。3 つとも無次元なので正規化していない。</p>
-<p>★2026-09-26 まで skimage の離心率 `<code style="color:#22d3bf">sqrt(1-(b/a)²)</code>` という**3 つのどれでもない</p>
-<p>量**を 1 スカラーで返していた(円で 0.0 対 HALCON の 1.0、4x80 の棒で 0.999 対</p>
-<p>20.65)。1 スカラーでは 3 値を表せないため、`<code style="color:#22d3bf">area_center</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">match</code>`</p>
-<p>ソートに変えた。`<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>`。</p>
-<p>領域が空のときは円の値 `<code style="color:#22d3bf">(1, 1, 0)</code>` を返す fail-soft 仕様(成分数は入力で</p>
-<p>変わらない)。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> を同じモーメントを持つ楕円の半径、<code style="color:#22d3bf">A</code> を面積として</p>
+<p><code style="color:#22d3bf">Anisometry = Ra/Rb</code>(細長さ。円で 1、下限 1)</p>
+<p><code style="color:#22d3bf">Bulkiness = π·Ra·Rb / A</code>(楕円をどれだけ埋めていないか。円で 1)</p>
+<p><code style="color:#22d3bf">StructureFactor = Anisometry·Bulkiness - 1</code>(円で 0)</p>
+<p>HALCON の <code style="color:#22d3bf">eccentricity</code>（Shape features derived from the ellipse parameters.）<b>と同じ 3 値・同じ式</b>。3 つとも無次元なので正規化していない。</p>
+<p>★2026-09-26 まで skimage の離心率 <code style="color:#22d3bf">sqrt(1-(b/a)²)</code> という<b>3 つのどれでもない量</b>を 1 スカラーで返していた(円で 0.0 対 HALCON の 1.0、4x80 の棒で 0.999 対 20.65)。1 スカラーでは 3 値を表せないため、<code style="color:#22d3bf">area_center</code> と同じ <code style="color:#22d3bf">match</code> ソートに変えた。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
+<p>領域が空のときは円の値 <code style="color:#22d3bf">(1, 1, 0)</code> を返す fail-soft 仕様(成分数は入力で変わらない)。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -33,7 +28,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-eccentricity 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aeccentricity%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aeccentricity%200.50%200.50">Load &amp; run</a></p>
+eccentricity 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Aeccentricity%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Aeccentricity%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rotation_invariance_audit">poc_rotation_invariance_audit</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rotation_invariance_audit.py</code></p>

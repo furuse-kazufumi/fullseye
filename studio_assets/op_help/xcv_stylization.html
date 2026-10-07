@@ -5,21 +5,16 @@
 <p><img src="fig/xcv_stylization.png" alt="xcv_stylization: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_stylization.a.jpg">xcv_stylization: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_stylization.a.jpg">xcv_stylization: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_stylization.b.jpg">xcv_stylization: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_stylization.b.jpg">xcv_stylization: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_stylization.inputs.jpg">xcv_stylization: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_stylization.inputs.jpg">xcv_stylization: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>OpenCV の stylization(絵画風/カートゥーン風のノンフォトリアリスティック・</p>
-<p>レンダリング)。</p>
-<p>エッジ保存平滑化を使って細部を均しつつ主要な輪郭を残し、平坦な色面と</p>
-<p>目立つ輪郭からなるイラスト調の画像を作る(内部で 3ch に変換して処理し、</p>
-<p>結果をグレースケールへ戻す)。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が空間方向の平滑化範囲 </code><code style="color:#22d3bf">sigma_s</code>` を 20〜120 で振る(大きいほど</p>
-<p>広い範囲を均す)。`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が色(輝度)差の許容範囲 </code><code style="color:#22d3bf">sigma_r</code>` を 0.1〜0.5</p>
-<p>で振る(大きいほどエッジをまたいで均しやすくなり、平坦化が強まる)。</p>
+<p>OpenCV の stylization(絵画風/カートゥーン風のノンフォトリアリスティック・レンダリング)。</p>
+<p>エッジ保存平滑化を使って細部を均しつつ主要な輪郭を残し、平坦な色面と目立つ輪郭からなるイラスト調の画像を作る(内部で 3ch に変換して処理し、結果をグレースケールへ戻す)。</p>
+<p><code style="color:#22d3bf">a</code> が空間方向の平滑化範囲 <code style="color:#22d3bf">sigma_s</code> を 20〜120 で振る(大きいほど広い範囲を均す)。<code style="color:#22d3bf">b</code> が色(輝度)差の許容範囲 <code style="color:#22d3bf">sigma_r</code> を 0.1〜0.5 で振る(大きいほどエッジをまたいで均しやすくなり、平坦化が強まる)。</p>
 <p><b>精度(実測)</b>: 内部で <b>8 bit(256 段)に量子化</b>している(出力が k/255 の格子にちょうど載る)。float64 で渡しても<b>その精度は保たれない</b> —— 16-bit カメラの階調(約 1.5e-5)は 1/255 =約 3.9e-3 に丸められ、1/255 より小さい差しか無い 2 枚は同じ答えを返す。微小な濃淡差を測る用途や、出力をさらに微分・回帰に渡す用途では量子化の段差が出るので、8 bit を経由しない op を選ぶこと。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
@@ -30,7 +25,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv_stylization 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv_stylization%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv_stylization%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv_stylization 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv_stylization%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv_stylization%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_color_artistic">gallery2d_color_artistic</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_color_artistic.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

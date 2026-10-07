@@ -6,22 +6,16 @@
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p>*Die Ausgabe ist in einer viridis-artigen Falschfarbe dargestellt (dunkles Violett = klein, Gelb = groß), damit ein Feld von Größen — Abstand, Phase, Orientierung, Tiefe — lesbar ist.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tf_phase_congruency.a.jpg">tf_phase_congruency: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tf_phase_congruency.a.jpg">tf_phase_congruency: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tf_phase_congruency.b.jpg">tf_phase_congruency: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tf_phase_congruency.b.jpg">tf_phase_congruency: Regler b durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tf_phase_congruency.inputs.jpg">tf_phase_congruency: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tf_phase_congruency.inputs.jpg">tf_phase_congruency: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>phase_congruency: eine vereinfachte monogene Phasenkongruenz-Merkmalskarte.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Multi-scale radial log-Gabor bandpass responses (even part) plus their Riesz</p>
-<p>(monogenic odd) components are accumulated; phase congruency is</p>
-<p>`<code style="color:#22d3bf">|sum of the (even, odd1, odd2) energy vectors| / (sum of amplitudes)</code>`.</p>
-<p>Because both numerator and denominator scale linearly with image gain and the</p>
-<p>log-Gabor filters carry no DC, the result is invariant to affine illumination</p>
-<p>change. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> is a noise threshold (fraction of mean energy); </code><code style="color:#22d3bf">b</code>` scales the</p>
-<p>base wavelength. Peaks at edges/lines where the phases align.</p>
+<p>Multi-scale radial log-Gabor bandpass responses (even part) plus their Riesz (monogenic odd) components are accumulated; phase congruency is <code style="color:#22d3bf">|sum of the (even, odd1, odd2) energy vectors| / (sum of amplitudes)</code>. Because both numerator and denominator scale linearly with image gain and the log-Gabor filters carry no DC, the result is invariant to affine illumination change. <code style="color:#22d3bf">a</code> is a noise threshold (fraction of mean energy); <code style="color:#22d3bf">b</code> scales the base wavelength. Peaks at edges/lines where the phases align.</p>
 <p><b>Randbehandlung</b>: auf die gegenüberliegende Seite umlaufen (periodisch) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
@@ -32,7 +26,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tf_phase_congruency 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:tf_phase_congruency%200.40%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tf_phase_congruency%200.40%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tf_phase_congruency 0.40 0.50</pre><p><a style="color:#f5a524" href="sample:tf_phase_congruency%200.40%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tf_phase_congruency%200.40%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_edges">gallery2d_edges</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_edges.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_iqa_fsim_gmsd_vif">poc_iqa_fsim_gmsd_vif</a> — <code style="color:#22d3bf">py -3.11 examples/poc_iqa_fsim_gmsd_vif.py</code></p>

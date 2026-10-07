@@ -9,7 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <b>inject(3)</b> — <code style="color:#22d3bf">seg_inject_merge</code> / <code style="color:#22d3bf">seg_inject_split</code> / <code style="color:#22d3bf">seg_label_changes</code>: 評価用に正解ラベルへ人工の融合・分断を仕込み、2 枚のラベルの差を対として取り出す。</p>
 <p style="margin:2px 0 2px 12px">• <b>evaluate(1)</b> — <code style="color:#22d3bf">holdout_threshold</code>: 閾値を訓練側のスコアで選び(負例の偽陽性率 ≤ target_fpr)、評価は別の側で AUC / TPR / FPR を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">連鎖</h3>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 图(源码):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
     raw[EM 断面 image2d] --&gt; R[seg_membrane_response]
     truth[正解ラベル labels2d] --&gt; IM[seg_inject_merge] --&gt; IS[seg_inject_split] --&gt; cut[評価用ラベル]
     truth --&gt; CH[seg_label_changes]

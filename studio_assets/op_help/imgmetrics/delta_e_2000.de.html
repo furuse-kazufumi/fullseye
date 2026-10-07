@@ -5,24 +5,19 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>CIEDE2000-Farbabstand (CIE 142-2001).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>実装が踏み外しやすい 3 か所 ―― <b>色相角の平均</b>(0/360 をまたぐ扱い)、</p>
-<p><b>275° の回転項</b>、<b>彩度ゼロ近傍</b>(`<code style="color:#22d3bf">atan2(0, 0)</code>` の扱い)―― は</p>
-<p>Sharma, Wu &amp; Dalal (2005) の 34 組の検証対で固定してある</p>
-<p>(`<code style="color:#22d3bf">CIEDE2000_TEST_PAIRS</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tests/test_imgmetrics.py</code>`)。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>実装が踏み外しやすい 3 か所 ―― <b>色相角の平均</b>(0/360 をまたぐ扱い)、<b>275° の回転項</b>、<b>彩度ゼロ近傍</b>(<code style="color:#22d3bf">atan2(0, 0)</code> の扱い)―― は Sharma, Wu &amp; Dalal (2005) の 34 組の検証対で固定してある(<code style="color:#22d3bf">CIEDE2000_TEST_PAIRS</code> / <code style="color:#22d3bf">tests/test_imgmetrics.py</code>)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>lab1, lab2 : array_like</p>
-<p>最後の軸が `<code style="color:#22d3bf">(L*, a*, b*)</code>` の配列。ブロードキャストされる。</p>
+<p>最後の軸が <code style="color:#22d3bf">(L*, a*, b*)</code> の配列。ブロードキャストされる。</p>
 <p>kL, kC, kH : float</p>
 <p>観察条件のパラメトリック係数。既定は基準条件の 1。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <p>ΔE00(最後の軸が落ちた形)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:colorimetry">colorimetry</a> — Farbmetrik und Spektren — Farbe ist nur durch Spektrum × Lichtart × Beobachter bestimmt</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

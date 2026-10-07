@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_longitudinal_check(d: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import rsssafety; rsssafety.rss_longitudinal_check(d: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;rss_longitudinal_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>同方向の縦間隔 d(後続の前端 〜 先行の後端、≥ 0)が安全か。</p>
-<p>Returns `<code style="color:#22d3bf">{&quot;safe_distance&quot;, &quot;dangerous&quot; (d ≤ safe_distance), &quot;margin&quot; (d − safe_distance)}</code>`。</p>
+<p>Returns <code style="color:#22d3bf">{&quot;safe_distance&quot;, &quot;dangerous&quot; (d ≤ safe_distance), &quot;margin&quot; (d − safe_distance)}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

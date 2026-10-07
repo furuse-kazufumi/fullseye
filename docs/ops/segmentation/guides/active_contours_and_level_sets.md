@@ -2,6 +2,11 @@
 guide: active_contours_and_level_sets
 dim: segmentation
 title: 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか
+title_en: Variational and active contours, level sets — which contour stops where, and what it guarantees
+title_zh: 变分、主动轮廓与水平集 —— 哪种轮廓停在哪里、保证什么
+title_tw: 變分、主動輪廓與水平集 —— 哪種輪廓停在哪裡、保證什麼
+title_ko: 변분·동적 윤곽과 레벨셋 — 어떤 윤곽이 어디서 멈추고 무엇을 보장하는가
+title_de: Variationelle und aktive Konturen, Level-Sets — welche Kontur wo stoppt und was sie garantiert
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

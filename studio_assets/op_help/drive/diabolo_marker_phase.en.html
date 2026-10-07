@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>1 コマのマーカーから回転の位相 ψ(体の系 e1 から、右ねじ)と回転ぶれの弧の幅 |ω|·露光 [rad] を読む。</p>
-<p>`<code style="color:#22d3bf">pose</code><code style="color:#22d3bf"> は :func:</code>diabolo_axis_from_image` の返り(軸・中心・分割)。マーカーの画素を推定した姿勢でマーカーの円の面へ戻し、</p>
-<p>方位角の度数(白さで重みづけ)を作る → 弧の幅ごとの型紙(反射 3 か所 + 灰のダミー 5 か所、非対称なので向きが一意)と円周</p>
-<p>相互相関(FFT)で最大を取り、位相は放物線で副標本。返り `<code style="color:#22d3bf">{&quot;phase&quot;, &quot;smear&quot;, &quot;score&quot;, &quot;profile&quot;}</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 画像の形、pose が軸の推定の返りでない、nbins &lt; 16、マーカーが写っていない。</p>
+<p><code style="color:#22d3bf">pose</code> は <code style="color:#22d3bf">diabolo_axis_from_image</code> の返り(軸・中心・分割)。マーカーの画素を推定した姿勢でマーカーの円の面へ戻し、方位角の度数(白さで重みづけ)を作る → 弧の幅ごとの型紙(反射 3 か所 + 灰のダミー 5 か所、非対称なので向きが一意)と円周相互相関(FFT)で最大を取り、位相は放物線で副標本。返り <code style="color:#22d3bf">{&quot;phase&quot;, &quot;smear&quot;, &quot;score&quot;, &quot;profile&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像の形、pose が軸の推定の返りでない、nbins &lt; 16、マーカーが写っていない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,16 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_patch_radius(img, pitch: &#x27;float&#x27;, ring_px: &#x27;float&#x27; = 4.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacdome; tacdome.contact_patch_radius(img, pitch: &#x27;float&#x27;, ring_px: &#x27;float&#x27; = 4.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;contact_patch_radius&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>接触の像(:func:<code style="color:#22d3bf">dome_contact_image</code> の型)から接触半径を読む。被覆率の線形和(面積法)で縁の副画素まで使う。</p>
-<p>1) しきい値 (1 % 点 + 99.9 % 点)/2 で粗い円盤 → 重心と半径 r_t。2) 内側 r &lt; r_t − `<code style="color:#22d3bf">ring_px</code>` の中央値を fg、外の輪</p>
-<p>r_t + `<code style="color:#22d3bf">ring_px</code><code style="color:#22d3bf"> 〜 r_t + 2·</code><code style="color:#22d3bf">ring_px</code><code style="color:#22d3bf"> の中央値を bg。3) 被覆率 (I − bg)/(fg − bg) を r &lt; r_t + </code><code style="color:#22d3bf">ring_px</code>` で<b>切らずに</b>足す</p>
-<p>(切ると雑音が片側に偏る)→ a = pitch·√(Σ/π)、重心は被覆率の重み。返り: `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">a_px</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">a_threshold</code>`(しきい値の画素数の円)・</p>
-<p>`<code style="color:#22d3bf">centre</code><code style="color:#22d3bf">(行, 列)・</code><code style="color:#22d3bf">fg</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">bg</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">edge_points</code>`(しきい値の円盤の境界画素 (行, 列)、measure.fit_circle に渡せる)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 2 次元でない、明るい円盤が無い(コントラスト 0)、円盤が小さすぎる(r_t &lt; 3 px)か窓の縁に触れる。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>接触の像(<code style="color:#22d3bf">dome_contact_image</code> の型)から接触半径を読む。被覆率の線形和(面積法)で縁の副画素まで使う。</p>
+<p style="margin:2px 0 2px 12px">1) しきい値 (1 % 点 + 99.9 % 点)/2 で粗い円盤 → 重心と半径 r_t。2) 内側 r &lt; r_t − <code style="color:#22d3bf">ring_px</code> の中央値を fg、外の輪</p>
+<p>r_t + <code style="color:#22d3bf">ring_px</code> 〜 r_t + 2·<code style="color:#22d3bf">ring_px</code> の中央値を bg。3) 被覆率 (I − bg)/(fg − bg) を r &lt; r_t + <code style="color:#22d3bf">ring_px</code> で<b>切らずに</b>足す(切ると雑音が片側に偏る)→ a = pitch·√(Σ/π)、重心は被覆率の重み。返り: <code style="color:#22d3bf">a</code>・<code style="color:#22d3bf">a_px</code>・<code style="color:#22d3bf">a_threshold</code>(しきい値の画素数の円)・ <code style="color:#22d3bf">centre</code>(行, 列)・<code style="color:#22d3bf">fg</code>・<code style="color:#22d3bf">bg</code>・<code style="color:#22d3bf">edge_points</code>(しきい値の円盤の境界画素 (行, 列)、measure.fit_circle に渡せる)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2 次元でない、明るい円盤が無い(コントラスト 0)、円盤が小さすぎる(r_t &lt; 3 px)か窓の縁に触れる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacdome_large_deformation">poc_tacdome_large_deformation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacdome_large_deformation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

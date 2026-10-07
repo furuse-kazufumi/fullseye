@@ -3,11 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sphere_normals_known(shape, centre, a_px: &#x27;float&#x27;, R_px: &#x27;float&#x27;, inner: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacscalib; tacscalib.sphere_normals_known(shape, centre, a_px: &#x27;float&#x27;, R_px: &#x27;float&#x27;, inner: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;sphere_normals_known&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>既知球の押し込み: 接触円(中心 `<code style="color:#22d3bf">centre</code><code style="color:#22d3bf"> = (行, 列)、半径 </code><code style="color:#22d3bf">a_px</code>`)の内側で法線を閉形式で返す。</p>
-<p>n = (−dx, −dy, √(R² − r²))/R(dx = 列 − 中心の列、dy = 行 − 中心の行)。マスクは r &lt; inner · min(a, R)(較正手順と同じく</p>
-<p>a と R の小さい方まで)。外側は (0, 0, 1)。返り: `<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> (H, W, 3)、</code><code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> (H, W) bool、</code><code style="color:#22d3bf">r</code>` (H, W) [px]、</p>
-<p>`<code style="color:#22d3bf">theta</code>`(傾き角 = atan2(r, √(R² − r²))、マスク外 0)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: shape・centre の形、a・R ≤ 0、inner が 0 &lt; inner ≤ 1 の外。</p>
+<p>既知球の押し込み: 接触円(中心 <code style="color:#22d3bf">centre</code> = (行, 列)、半径 <code style="color:#22d3bf">a_px</code>)の内側で法線を閉形式で返す。</p>
+<p>n = (−dx, −dy, √(R² − r²))/R(dx = 列 − 中心の列、dy = 行 − 中心の行)。マスクは r &lt; inner · min(a, R)(較正手順と同じく a と R の小さい方まで)。外側は (0, 0, 1)。返り: <code style="color:#22d3bf">normals</code> (H, W, 3)、<code style="color:#22d3bf">mask</code> (H, W) bool、<code style="color:#22d3bf">r</code> (H, W) [px]、<code style="color:#22d3bf">theta</code>(傾き角 = atan2(r, √(R² − r²))、マスク外 0)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: shape・centre の形、a・R ≤ 0、inner が 0 &lt; inner ≤ 1 の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

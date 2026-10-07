@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import agvfleet; agvfleet.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;naive_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>比較用の素朴な実行: 計画の<b>マスの列</b>だけを使い、次のマスが空いていれば進む(順番の約束は無い)。</p>
-<p>遅れが入ると、計画では時間差ですれ違うはずの 2 台が向かい合って止まる。返りは :func:<code style="color:#22d3bf">adg_execute</code> と</p>
-<p>同じ形に `<code style="color:#22d3bf">waits_for</code>`(デッドロックの瞬間の「誰が誰を待つか」の辺)を足したもの。</p>
+<p>遅れが入ると、計画では時間差ですれ違うはずの 2 台が向かい合って止まる。返りは <code style="color:#22d3bf">adg_execute</code> と同じ形に <code style="color:#22d3bf">waits_for</code>(デッドロックの瞬間の「誰が誰を待つか」の辺)を足したもの。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

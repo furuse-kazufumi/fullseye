@@ -5,37 +5,29 @@
 <p><img src="fig/local_thickness.png" alt="local_thickness: input → output"></p>
 <p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
 <p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_thickness.a.jpg">local_thickness: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_thickness.a.jpg">local_thickness: 旋钮 a 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_thickness.b.jpg">local_thickness: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_thickness.b.jpg">local_thickness: 旋钮 b 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_thickness.inputs.jpg">local_thickness: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_thickness.inputs.jpg">local_thickness: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>各前景画素に「そこを覆える<b>最大の円の直径</b>」を入れて返す(局所肉厚)。</p>
-<p>明るい側を前景とみなす閾値が `<code style="color:#22d3bf">b</code><code style="color:#22d3bf">(0.1〜0.9)。</code><code style="color:#22d3bf">a</code>` が測る上限の半径(1〜12 画素)で、</p>
-<p>出力はその上限で割って `<code style="color:#22d3bf">[0,1]</code><code style="color:#22d3bf"> に収めてある —— **絶対値が要るときは </code><code style="color:#22d3bf">a</code>` から</p>
-<p>上限を逆算して掛け戻すこと**。</p>
-<p>粒径・気孔径・肉厚を「1 枚の地図」として出す古典的な量で、モルフォロジーの</p>
-<p>粒度測定(granulometry)と同じもの: ある画素の値が `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> なら、その画素は半径 </code><code style="color:#22d3bf">r</code>` の</p>
-<p>円による開処理を生き残る。距離変換で内接円の半径を求め、半径の大きい順にその円が</p>
-<p>覆う範囲へ書き込む、という素直な実装。</p>
-<p><b>適用条件</b>: (1) 前景を 1 つの閾値で決めるので、照明むらがあると太さが場所によって</p>
-<p>偏る —— 先に `<code style="color:#22d3bf">local_threshold</code><code style="color:#22d3bf"> などで平坦化すること。(2) 上限 </code><code style="color:#22d3bf">a</code>` より太い構造は</p>
-<p><b>上限で頭打ちになる</b>(飽和しているかは出力の最大値が 1.0 に貼りついているかで分かる)。</p>
-<p>(3) 画素単位の量なので、直径が 3 画素を切ると量子化の刻みが 30% を超える。</p>
-<p><b>用途</b>: 鋳巣・発泡体の気孔径分布、粉体の粒径、薄肉部の検出、繊維の太さ。</p>
-<p>3-D 版は `<code style="color:#22d3bf">ops3d</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">vol_wall_thickness</code>`。HALCON に対応する単体 op は無い。</p>
+<p>明るい側を前景とみなす閾値が <code style="color:#22d3bf">b</code>(0.1〜0.9)。<code style="color:#22d3bf">a</code> が測る上限の半径(1〜12 画素)で、出力はその上限で割って <code style="color:#22d3bf">[0,1]</code> に収めてある —— <b>絶対値が要るときは <code style="color:#22d3bf">a</code> から上限を逆算して掛け戻すこと</b>。</p>
+<p>粒径・気孔径・肉厚を「1 枚の地図」として出す古典的な量で、モルフォロジーの粒度測定(granulometry)と同じもの: ある画素の値が <code style="color:#22d3bf">r</code> なら、その画素は半径 <code style="color:#22d3bf">r</code> の円による開処理を生き残る。距離変換で内接円の半径を求め、半径の大きい順にその円が覆う範囲へ書き込む、という素直な実装。</p>
+<p><b>適用条件</b>: (1) 前景を 1 つの閾値で決めるので、照明むらがあると太さが場所によって偏る —— 先に <code style="color:#22d3bf">local_threshold</code> などで平坦化すること。(2) 上限 <code style="color:#22d3bf">a</code> より太い構造は <b>上限で頭打ちになる</b>(飽和しているかは出力の最大値が 1.0 に貼りついているかで分かる)。</p>
+<p style="margin:2px 0 2px 12px">(3) 画素単位の量なので、直径が 3 画素を切ると量子化の刻みが 30% を超える。</p>
+<p><b>用途</b>: 鋳巣・発泡体の気孔径分布、粉体の粒径、薄肉部の検出、繊維の太さ。3-D 版は <code style="color:#22d3bf">ops3d</code> の <code style="color:#22d3bf">vol_wall_thickness</code>。HALCON に対応する単体 op は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
 <p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">local_thickness 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:local_thickness%200.35%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:local_thickness%200.35%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">local_thickness 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:local_thickness%200.35%200.50">▸ 载入此流水线</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:local_thickness%200.35%200.50">载入并运行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_morphology">gallery2d_morphology</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_morphology.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_bone_trabecular_thickness">poc_bone_trabecular_thickness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_bone_trabecular_thickness.py</code></p>

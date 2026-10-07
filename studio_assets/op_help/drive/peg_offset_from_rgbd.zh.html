@@ -5,13 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>手首 RGB-D 1 枚から、穴中心に対するペグ先端の相対ずれ (dx, dy) [m] を世界(搬送台)座標で —— 視覚サーボの観測量。</p>
-<p>`<code style="color:#22d3bf">R_cam_to_world</code><code style="color:#22d3bf"> はカメラ座標のベクトルを世界へ回す 3×3(hand-eye)。ずれは板の平面内の成分、</code><code style="color:#22d3bf">height</code>` は先端の板からの高さ。</p>
-<p>`<code style="color:#22d3bf">hole_radius</code><code style="color:#22d3bf"> を与えると穴の円を既知半径で当てる(:func:</code>hole_centre_from_rgbd`)。</p>
-<p>返り: `<code style="color:#22d3bf">hole</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">tip</code><code style="color:#22d3bf">(各計測の dict)、</code><code style="color:#22d3bf">dx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">dy</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">height</code>`。試作(16 姿勢): |dx|, |dy| の最大 0.010 mm。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">R_cam_to_world</code> はカメラ座標のベクトルを世界へ回す 3×3(hand-eye)。ずれは板の平面内の成分、<code style="color:#22d3bf">height</code> は先端の板からの高さ。<code style="color:#22d3bf">hole_radius</code> を与えると穴の円を既知半径で当てる(<code style="color:#22d3bf">hole_centre_from_rgbd</code>)。</p>
+<p>返り: <code style="color:#22d3bf">hole</code>・<code style="color:#22d3bf">tip</code>(各計測の dict)、<code style="color:#22d3bf">dx</code>・<code style="color:#22d3bf">dy</code>・<code style="color:#22d3bf">height</code>。試作(16 姿勢): |dx|, |dy| の最大 0.010 mm。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_failure_recovery">poc_peg_failure_recovery</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_failure_recovery.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>

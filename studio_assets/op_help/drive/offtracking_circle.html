@@ -4,14 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.offtracking_circle(front_radius: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, arc_length, *, track: &#x27;float&#x27; = 0.0, gamma0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.offtracking_circle(front_radius: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, arc_length, *, track: &#x27;float&#x27; = 0.0, gamma0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;offtracking_circle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>内輪差の過渡(閉形式): 前車軸の中心が半径 R の円に入ってから弧長 s 進んだときの車の姿勢と内側の車輪の半径。</p>
-<p>後車軸の中心は前車軸の中心を長さ L の棒で引く(すべりなし)。棒と前の速度のなす角 γ は dγ/ds = 1/R − sin γ / L。</p>
-<p>a = 1/R、b = 1/L、k = √(b² − a²)、t± = (b ± k)/a(t− = tan(γ*/2)、sin γ* = L/R)とすると</p>
-<p>Q = ((t+ − t₀)/(t− − t₀)) e^{k s}、tan(γ/2) = (Q t− − t+)/(Q − 1)。</p>
-<p>`<code style="color:#22d3bf">arc_length</code><code style="color:#22d3bf">: s ≥ 0(配列可)。</code><code style="color:#22d3bf">track</code><code style="color:#22d3bf">: 輪距 t(内側の車輪の位置に使う)。</code><code style="color:#22d3bf">gamma0</code>`: 円に入るときの γ(0 = 直線から</p>
-<p>まっすぐ入る、0 ≤ γ₀ &lt; γ*)。返り値(s と同じ形): `<code style="color:#22d3bf">gamma</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rear_radius</code>`(後車軸の中心の半径</p>
-<p>√(R² + L² − 2RL sin γ))、`<code style="color:#22d3bf">front_inner_wheel_radius</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rear_inner_wheel_radius</code>`(内側の車輪の旋回中心からの距離)、</p>
-<p>`<code style="color:#22d3bf">offtracking</code><code style="color:#22d3bf">(前内輪 − 後内輪)、</code><code style="color:#22d3bf">steady</code>`(s → ∞ の値の dict)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: R ≤ L(定常が無い)、s &lt; 0、γ₀ が範囲外、t/2 ≥ 後輪の半径。</p>
+<p>後車軸の中心は前車軸の中心を長さ L の棒で引く(すべりなし)。棒と前の速度のなす角 γ は dγ/ds = 1/R − sin γ / L。a = 1/R、b = 1/L、k = √(b² − a²)、t± = (b ± k)/a(t− = tan(γ*/2)、sin γ* = L/R)とすると Q = ((t+ − t₀)/(t− − t₀)) e^{k s}、tan(γ/2) = (Q t− − t+)/(Q − 1)。</p>
+<p><code style="color:#22d3bf">arc_length</code>: s ≥ 0(配列可)。<code style="color:#22d3bf">track</code>: 輪距 t(内側の車輪の位置に使う)。<code style="color:#22d3bf">gamma0</code>: 円に入るときの γ(0 = 直線からまっすぐ入る、0 ≤ γ₀ &lt; γ*)。返り値(s と同じ形): <code style="color:#22d3bf">gamma</code>、<code style="color:#22d3bf">rear_radius</code>(後車軸の中心の半径 √(R² + L² − 2RL sin γ))、<code style="color:#22d3bf">front_inner_wheel_radius</code>・<code style="color:#22d3bf">rear_inner_wheel_radius</code>(内側の車輪の旋回中心からの距離)、<code style="color:#22d3bf">offtracking</code>(前内輪 − 後内輪)、<code style="color:#22d3bf">steady</code>(s → ∞ の値の dict)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ L(定常が無い)、s &lt; 0、γ₀ が範囲外、t/2 ≥ 後輪の半径。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

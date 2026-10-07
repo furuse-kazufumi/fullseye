@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import annotate; annotate.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsannotate.get(&quot;zoom_inset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>拡大の差し込み ―― 元図に<b>枠</b>と<b>引き出し線</b>を付ける。</p>
-<p>拡大は `<code style="color:#22d3bf">np.repeat</code>` の<b>最近傍</b>(整数倍)。補間しないのは、拡大図が</p>
-<p>「元の画素そのもの」であることを保証するため(滑らかにすると、無かった</p>
-<p>構造が生まれたように見える)。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>拡大は <code style="color:#22d3bf">np.repeat</code> の<b>最近傍</b>(整数倍)。補間しないのは、拡大図が「元の画素そのもの」であることを保証するため(滑らかにすると、無かった構造が生まれたように見える)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>src_rect : (x, y, w, h)</p>
 <p>拡大元。</p>
 <p>dst_xy : (x, y)</p>
@@ -17,8 +14,7 @@
 <p>整数の拡大率(&gt;= 1)。</p>
 <p>connect : bool</p>
 <p>True なら元枠と差し込み枠の対応する角を 2 本の線で結ぶ。</p>
-<p>Raises</p>
-<p>------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>factor が 1 未満か非整数、元枠/差し込みが画像からはみ出す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

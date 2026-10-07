@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_validate(table=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_validate(table=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_validate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>表を検証する(fail-closed): 欄の語彙・クラス名・回復名の綴り、<b>全ペアの排他</b>(2 行が同じ署名に当たり得ないか = 全欄で</p>
-<p>許す集合が交わる行の組が無い)、<b>到達性</b>(unknown 以外の全クラスに ≥ 1 行)。</p>
-<p>返り: `<code style="color:#22d3bf">n_rows</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">classes_covered</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">classes_missing</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_signatures</code><code style="color:#22d3bf">(語彙の直積の大きさ)、</code><code style="color:#22d3bf">n_covered</code>`(どれかの行に</p>
-<p>当たる署名の数)、`<code style="color:#22d3bf">coverage</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">overlaps</code>`(交わる行の組 —— 空でなければ下の ValueError)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 綴り違い・交わる行・届かないクラス。</p>
+<p>表を検証する(fail-closed): 欄の語彙・クラス名・回復名の綴り、<b>全ペアの排他</b>(2 行が同じ署名に当たり得ないか = 全欄で許す集合が交わる行の組が無い)、<b>到達性</b>(unknown 以外の全クラスに ≥ 1 行)。</p>
+<p>返り: <code style="color:#22d3bf">n_rows</code>、<code style="color:#22d3bf">classes_covered</code>、<code style="color:#22d3bf">classes_missing</code>、<code style="color:#22d3bf">n_signatures</code>(語彙の直積の大きさ)、<code style="color:#22d3bf">n_covered</code>(どれかの行に当たる署名の数)、<code style="color:#22d3bf">coverage</code>、<code style="color:#22d3bf">overlaps</code>(交わる行の組 —— 空でなければ下の ValueError)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 綴り違い・交わる行・届かないクラス。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

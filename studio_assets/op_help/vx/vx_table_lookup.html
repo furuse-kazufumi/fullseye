@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_table_lookup(image, table, *, offset=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import vxcore; vxcore.vx_table_lookup(image, table, *, offset=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsvx.get(&quot;vx_table_lookup&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>表引き(3.47 節): 出力 = table[画素値 + offset] (REQ-0421)。U8 と S16 を受ける(REQ-0422)。出力の dtype は表の dtype。</p>
-<p>*offset*: S16 の表は負の画素値を引くために中央を 0 に置く(VX_LUT_OFFSET、典型は 32768)。U8 は 0。</p>
-<p>★表の外を引く画素があれば止める(黙って端に寄せない)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 画像が U8/S16 の 2-D でない / 表が 1-D でない・空 / 表の外を引く画素がある。</p>
+<p>*offset*: S16 の表は負の画素値を引くために中央を 0 に置く(VX_LUT_OFFSET、典型は 32768)。U8 は 0。★表の外を引く画素があれば止める(黙って端に寄せない)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像が U8/S16 の 2-D でない / 表が 1-D でない・空 / 表の外を引く画素がある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

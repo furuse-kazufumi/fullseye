@@ -5,18 +5,12 @@
 <p><img src="fig/fractal_dimension.png" alt="fractal_dimension: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fractal_dimension.a.jpg">fractal_dimension: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fractal_dimension.a.jpg">fractal_dimension: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>テクスチャの複雑さを測る Minkowski-Bouligand(ボックスカウント)フラクタル次元。</p>
-<p>閾値 `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">(既定 0.5)で二値化し、箱サイズ </code><code style="color:#22d3bf">s = 1, 2, 4, …</code>` について「構造を</p>
-<p>含む s×s 箱」の数 `<code style="color:#22d3bf">N(s)</code><code style="color:#22d3bf"> を数え、</code><code style="color:#22d3bf">log N(s)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">log(1/s)</code>` に最小二乗回帰した</p>
-<p>傾きを返す(Mandelbrot 1982)。直線状の構造は ~1、平面を埋める領域は ~2、自己</p>
-<p>相似な縁は中間の非整数(Sierpinski 三角形なら `<code style="color:#22d3bf">log 3 / log 2 ≈ 1.585</code>`)。表面</p>
-<p>粗さ・組織テクスチャ・地形・破面などの安価な複雑さ特徴に使える。</p>
-<p>有限解像度のため塗り潰し領域は 2 をやや下回る(粗いスケールで箱が飽和する既知の</p>
-<p>過小評価)。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が二値化の閾値、</code><code style="color:#22d3bf">b</code>` は未使用。構造が無い/1 スケールしか取れない</p>
-<p>ときは 0 を返す。</p>
+<p>閾値 <code style="color:#22d3bf">a</code>(既定 0.5)で二値化し、箱サイズ <code style="color:#22d3bf">s = 1, 2, 4, …</code> について「構造を含む s×s 箱」の数 <code style="color:#22d3bf">N(s)</code> を数え、<code style="color:#22d3bf">log N(s)</code> を <code style="color:#22d3bf">log(1/s)</code> に最小二乗回帰した傾きを返す(Mandelbrot 1982)。直線状の構造は ~1、平面を埋める領域は ~2、自己相似な縁は中間の非整数(Sierpinski 三角形なら <code style="color:#22d3bf">log 3 / log 2 ≈ 1.585</code>)。表面粗さ・組織テクスチャ・地形・破面などの安価な複雑さ特徴に使える。</p>
+<p>有限解像度のため塗り潰し領域は 2 をやや下回る(粗いスケールで箱が飽和する既知の過小評価)。<code style="color:#22d3bf">a</code> が二値化の閾値、<code style="color:#22d3bf">b</code> は未使用。構造が無い/1 スケールしか取れないときは 0 を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -25,7 +19,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">fractal_dimension 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:fractal_dimension%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:fractal_dimension%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">fractal_dimension 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:fractal_dimension%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:fractal_dimension%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_endless_zoom_and_turning_solids">poc_endless_zoom_and_turning_solids</a> — <code style="color:#22d3bf">py -3.11 examples/poc_endless_zoom_and_turning_solids.py</code></p>

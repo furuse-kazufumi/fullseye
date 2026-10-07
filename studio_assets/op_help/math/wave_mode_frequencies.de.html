@@ -5,23 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Eigenwertleiter einer Membran — eine geschlossene Form zum Nachrechnen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">kind=&quot;rectangular&quot;</code>`: the Dirichlet eigenvalues of a rectangle are</p>
-<p>`<code style="color:#22d3bf">pi**2 * (m**2 + n**2 / aspect**2)</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">m, n &gt;= 1</code><code style="color:#22d3bf"> — **not** </code><code style="color:#22d3bf">m n pi</code>`,</p>
-<p>which is the usual slip. `<code style="color:#22d3bf">kind=&quot;circular&quot;</code>`: the free-edge (Neumann) circular</p>
-<p>membrane&#x27;s eigenvalues are the squares of the zeros of `<code style="color:#22d3bf">J&#x27;_m</code>`.</p>
-<p>★<b>Why this earns its place</b>: this ladder is what separates a membrane from a</p>
-<p>plate, and it is exactly computable. The square drum&#x27;s ratios start</p>
-<p>2, 5, 5, 8, 10, 10, 13 (in units of `<code style="color:#22d3bf">pi**2</code>`) — the repeated 5 and 10 are the</p>
-<p>famous degeneracies that make the square drum&#x27;s modes ambiguous, and a wrong</p>
-<p>implementation loses them.</p>
-<p>Returns a `<code style="color:#22d3bf">signal</code>`: the eigenvalues, ascending.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: unknown kind; non-positive count or aspect; a</p>
-<p>circular request without scipy.</p>
+<p><code style="color:#22d3bf">kind=&quot;rectangular&quot;</code>: the Dirichlet eigenvalues of a rectangle are <code style="color:#22d3bf">pi**2 * (m**2 + n**2 / aspect**2)</code> for <code style="color:#22d3bf">m, n &gt;= 1</code> — <b>not</b> <code style="color:#22d3bf">m n pi</code>, which is the usual slip. <code style="color:#22d3bf">kind=&quot;circular&quot;</code>: the free-edge (Neumann) circular membrane&#x27;s eigenvalues are the squares of the zeros of <code style="color:#22d3bf">J&#x27;_m</code>.</p>
+<p>★<b>Why this earns its place</b>: this ladder is what separates a membrane from a plate, and it is exactly computable. The square drum&#x27;s ratios start 2, 5, 5, 8, 10, 10, 13 (in units of <code style="color:#22d3bf">pi**2</code>) — the repeated 5 and 10 are the famous degeneracies that make the square drum&#x27;s modes ambiguous, and a wrong implementation loses them.</p>
+<p>Returns a <code style="color:#22d3bf">signal</code>: the eigenvalues, ascending.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown kind; non-positive count or aspect; a circular request without scipy.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

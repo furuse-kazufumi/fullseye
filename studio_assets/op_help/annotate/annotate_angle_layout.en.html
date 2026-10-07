@@ -3,23 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_angle_layout(a, vertex, b, radius=30.0, text_gap=12.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_angle_layout(a, vertex, b, radius=30.0, text_gap=12.0)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_angle_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Returns a table (dict): the arc and text position for the (smaller) angle at `<code style="color:#22d3bf">a, vertex, b</code>`.</p>
+<p>Returns a table (dict): the arc and text position for the (smaller) angle at <code style="color:#22d3bf">a, vertex, b</code>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>角度は画面座標(x 右・y 下)で `<code style="color:#22d3bf">atan2</code><code style="color:#22d3bf"> から出すので、</code><code style="color:#22d3bf">start_deg</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">end_deg</code>`</p>
-<p>は :func:<code style="color:#22d3bf">arc</code> と同じ「x 軸から時計回り」の度。</p>
-<p>Returns</p>
-<p>-------</p>
+<p>角度は画面座標(x 右・y 下)で <code style="color:#22d3bf">atan2</code> から出すので、<code style="color:#22d3bf">start_deg</code>/<code style="color:#22d3bf">end_deg</code></p>
+<p>は <code style="color:#22d3bf">arc</code> と同じ「x 軸から時計回り」の度。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>``{&quot;vertex&quot;,&quot;angle_deg&quot;,&quot;start_deg&quot;,&quot;end_deg&quot;,&quot;radius&quot;,&quot;text_xy&quot;,</p>
-<p>&quot;bisector_deg&quot;}``。</p>
-<p>Raises</p>
-<p>------</p>
+<p><code style="color:#22d3bf">{&quot;vertex&quot;,&quot;angle_deg&quot;,&quot;start_deg&quot;,&quot;end_deg&quot;,&quot;radius&quot;,&quot;text_xy&quot;, &quot;bisector_deg&quot;}</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>a か b が vertex と一致、非有限、radius が非正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training-dataset conventions — COCO / YOLO / VOC and pitfalls in visual inspection</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

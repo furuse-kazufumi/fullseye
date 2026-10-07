@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tether_slack_angle(theta0: &#x27;float&#x27;, L: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import kendama; kendama.tether_slack_angle(theta0: &#x27;float&#x27;, L: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;tether_slack_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>真下で速さ v₀ = √(2gL(1 − cos θ₀)) をもつ玉(棒なら θ₀ で止まるエネルギー)のひもが弛む角 θ_s(真下から)。</p>
-<p>導出: v² = 2gL(cos θ − cos θ₀)、T = m(v²/L + g cos θ) = m g (3 cos θ − 2 cos θ₀) = 0 → <b>cos θ_s = (2/3) cos θ₀</b>。</p>
-<p>上半分(cos θ_s &lt; 0)に達するのは cos θ₀ &lt; 0 ⇔ θ₀ &gt; π/2 のときだけ。θ₀ ≤ π/2 なら張力は θ₀ で m g cos θ₀ ≥ 0 まで下がる</p>
-<p>だけで弛まない → None。θ₀ = π(頂点にちょうど届くエネルギー)で θ_s = arccos(−2/3) = 131.8°。θ₀ ∈ (0, π] 以外は ValueError。</p>
-<p>θ₀ &gt; π/2 の玉を静止から放すと最初から弛む(張力 m g cos θ₀ &lt; 0)ので、θ₀ は真下での速さで与える。</p>
+<p>導出: v² = 2gL(cos θ − cos θ₀)、T = m(v²/L + g cos θ) = m g (3 cos θ − 2 cos θ₀) = 0 → <b>cos θ_s = (2/3) cos θ₀</b>。上半分(cos θ_s &lt; 0)に達するのは cos θ₀ &lt; 0 ⇔ θ₀ &gt; π/2 のときだけ。θ₀ ≤ π/2 なら張力は θ₀ で m g cos θ₀ ≥ 0 まで下がるだけで弛まない → None。θ₀ = π(頂点にちょうど届くエネルギー)で θ_s = arccos(−2/3) = 131.8°。θ₀ ∈ (0, π] 以外は ValueError。θ₀ &gt; π/2 の玉を静止から放すと最初から弛む(張力 m g cos θ₀ &lt; 0)ので、θ₀ は真下での速さで与える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

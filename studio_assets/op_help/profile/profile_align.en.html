@@ -2,16 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">profile_align — PROFILE <code style="color:#22d3bf">compare</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs × pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_align(measured, reference, mode=&#x27;chord&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import profileops; profileops.profile_align(measured, reference, mode=&#x27;chord&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsprofile.get(&quot;profile_align&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.profile_align(...)</code> returns **only the declared out type <code style="color:#22d3bf">pairs</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.profile_align.raw(...)</code> or call <code style="color:#22d3bf">profileops.profile_align</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.profile_align(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">pairs</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.profile_align.raw(...)</code> or call <code style="color:#22d3bf">profileops.profile_align</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(aligned, info) -&gt; pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>測った輪郭を設計輪郭へ合わせる。返りは `<code style="color:#22d3bf">(aligned, info)</code>`。</p>
-<p>`<code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> は :data:</code>ALIGN_MODES`。<b>相似(スケール推定)は提供しない</b> ——</p>
-<p>大きさの誤差そのものを吸収してしまうため(モジュール docstring の実測表)。</p>
+<p>測った輪郭を設計輪郭へ合わせる。返りは <code style="color:#22d3bf">(aligned, info)</code>。</p>
+<p><code style="color:#22d3bf">mode</code> は <code style="color:#22d3bf">ALIGN_MODES</code>。<b>相似(スケール推定)は提供しない</b> —— 大きさの誤差そのものを吸収してしまうため(モジュール docstring の実測表)。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(aligned (N, 2), info)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">info</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">angle_deg</code>` /</p>
-<p>`<code style="color:#22d3bf">translation</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">scale</code>`(常に 1.0。<b>推定していないことの明示</b>)。</p>
+<p><code style="color:#22d3bf">(aligned (N, 2), info)</code>。<code style="color:#22d3bf">info</code> は <code style="color:#22d3bf">mode</code> / <code style="color:#22d3bf">angle_deg</code> /</p>
+<p><code style="color:#22d3bf">translation</code> / <code style="color:#22d3bf">scale</code>(常に 1.0。<b>推定していないことの明示</b>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

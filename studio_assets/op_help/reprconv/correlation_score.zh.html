@@ -3,26 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">score</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_score(voxel_a, voxel_b)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.correlation_score(voxel_a, voxel_b)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;correlation_score&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>两个 `<code style="color:#22d3bf">voxel</code><code style="color:#22d3bf"> → 归一化互相关的 </code><code style="color:#22d3bf">score</code>` 体。<b>该类型的唯一入口</b>。</p>
+<p>两个 <code style="color:#22d3bf">voxel</code> → 归一化互相关的 <code style="color:#22d3bf">score</code> 体。<b>该类型的唯一入口</b>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">score</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">refine_peak_newton</code>` が食う型だが、**台帳のどの op も</p>
-<p>`<code style="color:#22d3bf">score</code>` を産まなかった**(実測。生成器の種を置いてようやく到達していた)。</p>
-<p>ここでは FFT による循環相互相関を返す:</p>
+<p><code style="color:#22d3bf">score</code> は <code style="color:#22d3bf">refine_peak_newton</code> が食う型だが、<b>台帳のどの op も <code style="color:#22d3bf">score</code> を産まなかった</b>(実測。生成器の種を置いてようやく到達していた)。ここでは FFT による循環相互相関を返す:</p>
 <p>score[s] = sum_x (a[x] - mean_a) * (b[x + s] - mean_b) / (N * std_a * std_b)</p>
-<p>したがって `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">s0</code><code style="color:#22d3bf"> だけ </code><code style="color:#22d3bf">np.roll</code>` したものなら、</p>
-<p>ピークは<b>厳密に</b> `<code style="color:#22d3bf">s0</code>` に立つ(閉形式の真値。テストがこれを使う)。</p>
-<p>循環相関なので端は巻き込む —— <b>打ち切り相関ではない</b>ことを明記しておく。</p>
+<p>したがって <code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">a</code> を <code style="color:#22d3bf">s0</code> だけ <code style="color:#22d3bf">np.roll</code> したものなら、ピークは<b>厳密に</b> <code style="color:#22d3bf">s0</code> に立つ(閉形式の真値。テストがこれを使う)。循環相関なので端は巻き込む —— <b>打ち切り相関ではない</b>ことを明記しておく。</p>
 <p>Args:</p>
 <p>voxel_a: (D, H, W)。</p>
-<p>voxel_b: (D, H, W)、`<code style="color:#22d3bf">voxel_a</code>` と同形。</p>
+<p>voxel_b: (D, H, W)、<code style="color:#22d3bf">voxel_a</code> と同形。</p>
 <p>Returns:</p>
 <p>(D, H, W) float64、値域は概ね [-1, 1] (完全一致で 1.0)。</p>
 <p>Raises:</p>
 <p>ValueError: 3-D でない / 形が違う / 定数体積(標準偏差 0)/ 非有限。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_leak_localization">poc_leak_localization</a> — <code style="color:#22d3bf">py -3.11 examples/poc_leak_localization.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>

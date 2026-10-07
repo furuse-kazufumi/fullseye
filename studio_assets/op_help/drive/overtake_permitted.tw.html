@@ -5,19 +5,17 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>追越しを始めてよいか(条文と教則の判定)。場面 S077・S078・S079・S080・S081・S083。</p>
-<p>`<code style="color:#22d3bf">maneuver_start</code><code style="color:#22d3bf"> .. </code><code style="color:#22d3bf">maneuver_end</code>` = 進路を変え始めてから前車の側方を通り終えるまでの自車の前端の位置。</p>
-<p>理由(code, 根拠):</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">no_passing_zone</code><code style="color:#22d3bf">(30 条): その区間が </code><code style="color:#22d3bf">no_overtaking_zones</code><code style="color:#22d3bf"> の禁止区間と重なる(前車が </code><code style="color:#22d3bf">EXEMPT_KINDS</code>` なら除く)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">double_overtaking</code>`(29 条): 前車が他の自動車を追い越そうとしている。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">wrong_side</code><code style="color:#22d3bf">(28 条 1・2 項): 前車が右折のため中央(右側端)に寄っている(</code><code style="color:#22d3bf">lead_keeping_right</code>`)なら左、それ以外は右。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">oncoming_too_close</code><code style="color:#22d3bf">(28 条 4 項 + 閉形式): </code><code style="color:#22d3bf">dist_oncoming</code><code style="color:#22d3bf"> &lt; </code><code style="color:#22d3bf">requirement[&quot;d_required&quot;]</code>`</p>
-<p>(`<code style="color:#22d3bf">overtake_requirement</code>` の返り値)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">being_overtaken</code>`(教則 5-6-1(2)エ。<b>法の明文なし</b>、場面 S080): 後ろの車が自車を追い越そうとしている。</p>
-<p>返り値: `<code style="color:#22d3bf">ok</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">reasons</code><code style="color:#22d3bf"> = [(code, 根拠)]、</code><code style="color:#22d3bf">required_side</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">maneuver_start</code> .. <code style="color:#22d3bf">maneuver_end</code> = 進路を変え始めてから前車の側方を通り終えるまでの自車の前端の位置。理由(code, 根拠):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">no_passing_zone</code>(30 条): その区間が <code style="color:#22d3bf">no_overtaking_zones</code> の禁止区間と重なる(前車が <code style="color:#22d3bf">EXEMPT_KINDS</code> なら除く)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">double_overtaking</code>(29 条): 前車が他の自動車を追い越そうとしている。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">wrong_side</code>(28 条 1・2 項): 前車が右折のため中央(右側端)に寄っている(<code style="color:#22d3bf">lead_keeping_right</code>)なら左、それ以外は右。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">oncoming_too_close</code>(28 条 4 項 + 閉形式): <code style="color:#22d3bf">dist_oncoming</code> &lt; <code style="color:#22d3bf">requirement[&quot;d_required&quot;]</code> (<code style="color:#22d3bf">overtake_requirement</code> の返り値)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">being_overtaken</code>(教則 5-6-1(2)エ。<b>法の明文なし</b>、場面 S080): 後ろの車が自車を追い越そうとしている。</p>
+<p>返り値: <code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">reasons</code> = [(code, 根拠)]、<code style="color:#22d3bf">required_side</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

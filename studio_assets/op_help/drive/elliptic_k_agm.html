@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">scalar</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.elliptic_k_agm(k) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import kendama; kendama.elliptic_k_agm(k) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;elliptic_k_agm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>第 1 種完全楕円積分 K(k) = ∫₀^{π/2} dφ / √(1 − k² sin² φ) を算術幾何平均で: K(k) = π / (2·AGM(1, √(1 − k²)))。</p>
-<p>|k| &lt; 1(それ以外は ValueError)。門: K(0) = π/2、K(0.5) = 1.685750354812596(公表値、パラメータ m = k² = 0.25)。</p>
+<p>第 1 種完全楕円積分 K(k) = ∫₀^{π/2} dφ / √(1 − k² sin² φ) を算術幾何平均で: K(k) = π / (2·AGM(1, √(1 − k²)))。|k| &lt; 1(それ以外は ValueError)。門: K(0) = π/2、K(0.5) = 1.685750354812596(公表値、パラメータ m = k² = 0.25)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

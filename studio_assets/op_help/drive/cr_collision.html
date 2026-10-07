@@ -4,11 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;cr_collision&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>障害物との衝突(矩形同士の SAT、time_step ごと)と道路境界(車両 4 角が lanelet 多角形の和集合に入るか)。</p>
-<p>`<code style="color:#22d3bf">lanelets=&quot;all&quot;</code><code style="color:#22d3bf">(既定)は場面の全 lanelet(採点器の boundary_collision と同じ範囲)、</code><code style="color:#22d3bf">&quot;route&quot;</code>` は経路の lanelet だけ。</p>
-<p>`<code style="color:#22d3bf">margin</code>` は障害物の SAT を膨らませる距離(m)。</p>
-<p>返り値 ``{&quot;obstacle_collision&quot;, &quot;first_collision&quot;: (time_step, obstacle_id) | None, &quot;boundary_violation&quot;,</p>
-<p>&quot;first_outside&quot;: time_step | None, &quot;n_collisions&quot;, &quot;n_outside&quot;}``。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: scene / run が不正、lanelets が &quot;all&quot;/&quot;route&quot; 以外、margin &lt; 0。</p>
+<p><code style="color:#22d3bf">lanelets=&quot;all&quot;</code>(既定)は場面の全 lanelet(採点器の boundary_collision と同じ範囲)、<code style="color:#22d3bf">&quot;route&quot;</code> は経路の lanelet だけ。<code style="color:#22d3bf">margin</code> は障害物の SAT を膨らませる距離(m)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;obstacle_collision&quot;, &quot;first_collision&quot;: (time_step, obstacle_id) | None, &quot;boundary_violation&quot;, &quot;first_outside&quot;: time_step | None, &quot;n_collisions&quot;, &quot;n_outside&quot;}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: scene / run が不正、lanelets が &quot;all&quot;/&quot;route&quot; 以外、margin &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

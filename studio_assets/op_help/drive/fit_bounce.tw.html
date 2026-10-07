@@ -4,13 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import ballistics; ballistics.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;fit_bounce&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>跳ねの前後の (v, ω) から (e, μ) を閉形式で戻す(同定)。e = −v_n&#x27;/v_n。接線力積 J_t = m(v_t&#x27; − v_t) の大きさと</p>
-<p>J_n = m(v_n&#x27; − v_n) の比が μ —— 滑ったままの領域なら等号、途中で転がりに移った(grip)領域なら <b>下界</b>(μ ≥ |J_t|/J_n)。</p>
-<p>どちらかは、跳ねた後の接触点の滑り速度が 0 か(grip)で判る。返り値 `<code style="color:#22d3bf">{&quot;e&quot;, &quot;mu&quot;, &quot;mu_is_lower_bound&quot;, &quot;regime&quot;, &quot;J_n&quot;, &quot;J_t&quot;}</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>跳ねの前後の (v, ω) から (e, μ) を閉形式で戻す(同定)。e = −v_n&#x27;/v_n。接線力積 J_t = m(v_t&#x27; − v_t) の大きさと J_n = m(v_n&#x27; − v_n) の比が μ —— 滑ったままの領域なら等号、途中で転がりに移った(grip)領域なら <b>下界</b>(μ ≥ |J_t|/J_n)。どちらかは、跳ねた後の接触点の滑り速度が 0 か(grip)で判る。返り値 <code style="color:#22d3bf">{&quot;e&quot;, &quot;mu&quot;, &quot;mu_is_lower_bound&quot;, &quot;regime&quot;, &quot;J_n&quot;, &quot;J_t&quot;}</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

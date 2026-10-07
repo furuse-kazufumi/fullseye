@@ -8,11 +8,11 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/diameter_xld.chain.jpg">diameter_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/diameter_xld.chain.jpg">diameter_xld: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Der Durchmesser des minimal umschließenden Kreises (`<code style="color:#22d3bf">cv2.minEnclosingCircle</code><code style="color:#22d3bf">), der die Kontur enthält, normiert durch die längste Seitenlänge des Bildes. Eine Metrik, die sich streng genommen von der &quot;maximalen Distanz zwischen zwei Konturpunkten&quot; unterscheidet, die HALCONs </code><code style="color:#22d3bf">diameter_xld</code>` (Maximum distance between two contour or polygon points.) definiert (eine Annäherung über den Durchmesser des umschließenden Kreises; der minimal umschließende Kreis stimmt nicht zwangsläufig mit dem Durchmesser überein, der die beiden am weitesten entfernten Punkte verbindet).</p>
+<p>Der Durchmesser des minimal umschließenden Kreises (<code style="color:#22d3bf">cv2.minEnclosingCircle</code>), der die Kontur enthält, normiert durch die längste Seitenlänge des Bildes. Eine Metrik, die sich streng genommen von der &quot;maximalen Distanz zwischen zwei Konturpunkten&quot; unterscheidet, die HALCONs <code style="color:#22d3bf">diameter_xld</code> (Maximum distance between two contour or polygon points.) definiert (eine Annäherung über den Durchmesser des umschließenden Kreises; der minimal umschließende Kreis stimmt nicht zwangsläufig mit dem Durchmesser überein, der die beiden am weitesten entfernten Punkte verbindet).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -23,7 +23,7 @@
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-diameter_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Adiameter_xld%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Adiameter_xld%200.50%200.50">Load &amp; run</a></p>
+diameter_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Adiameter_xld%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Adiameter_xld%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>

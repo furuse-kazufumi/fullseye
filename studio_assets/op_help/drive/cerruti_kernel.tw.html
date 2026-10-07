@@ -5,14 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>x 向き接線トラクション(1 画素 = pitch² に一様 1 Pa)が作る表面変位の離散核を 2n 格子(零詰めの線形畳み込み用)で作り、rfft2 済みで返す。</p>
-<p>核は画素ごとに<b>画素平均</b>で持つ(sub×sub の副標本の平均)。中心画素は 1/r が可積分なので解析値 —— ∫□ 1/r dA = 4h ln(1+√2)、</p>
-<p>∫□ x²/r³ dA = 2h ln(1+√2)(対称性から ∫x²/r³ = ∫y²/r³ = ½∫1/r)、∫□ xy/r³ = ∫□ x/r² = 0。返り: `<code style="color:#22d3bf">Kxx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">Kyx</code>`(接線 → 接線)、</p>
-<p>`<code style="color:#22d3bf">with_uz=True</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">Kzx</code><code style="color:#22d3bf">(接線 → 法線、係数 (1−2ν) で ν 0.48 では 0.04 倍)、</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">pitch</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">G</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">nu</code>`。</p>
-<p>閉形式 (3.91) との一致は ūx 0.017 %・ūy 0.03 %(256 px、PoC の門)。<b>Raises</b> ValueError: n &lt; 8、pitch, G ≤ 0、sub &lt; 1。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>核は画素ごとに<b>画素平均</b>で持つ(sub×sub の副標本の平均)。中心画素は 1/r が可積分なので解析値 —— ∫□ 1/r dA = 4h ln(1+√2)、∫□ x²/r³ dA = 2h ln(1+√2)(対称性から ∫x²/r³ = ∫y²/r³ = ½∫1/r)、∫□ xy/r³ = ∫□ x/r² = 0。返り: <code style="color:#22d3bf">Kxx</code>・<code style="color:#22d3bf">Kyx</code>(接線 → 接線)、<code style="color:#22d3bf">with_uz=True</code> なら <code style="color:#22d3bf">Kzx</code>(接線 → 法線、係数 (1−2ν) で ν 0.48 では 0.04 倍)、<code style="color:#22d3bf">n</code>・<code style="color:#22d3bf">pitch</code>・<code style="color:#22d3bf">G</code>・<code style="color:#22d3bf">nu</code>。閉形式 (3.91) との一致は ūx 0.017 %・ūy 0.03 %(256 px、PoC の門)。<b>Raises</b> ValueError: n &lt; 8、pitch, G ≤ 0、sub &lt; 1。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacsim_marker_shear">poc_tacsim_marker_shear</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacsim_marker_shear.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tactile_dipole_torque">poc_tactile_dipole_torque</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tactile_dipole_torque.py</code></p>

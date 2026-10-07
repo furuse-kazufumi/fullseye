@@ -3,13 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × indices</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.select_points(points, indices)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>점군 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> 과 인덱스 </code><code style="color:#22d3bf">(M,)</code><code style="color:#22d3bf"> → 부분 점군 </code><code style="color:#22d3bf">(M,3)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">indices</code>` 의 소비 쪽.</p>
+<p>점군 <code style="color:#22d3bf">(N,3)</code> 과 인덱스 <code style="color:#22d3bf">(M,)</code> → 부분 점군 <code style="color:#22d3bf">(M,3)</code>. <code style="color:#22d3bf">indices</code> 의 소비 쪽.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">indices</code><code style="color:#22d3bf"> を産む op は 6 つあるのに(</code><code style="color:#22d3bf">iss_keypoints</code>` /</p>
-<p>`<code style="color:#22d3bf">farthest_point_sampling</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">alpha_shape_boundary</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">find_peaks</code>` /</p>
-<p>`<code style="color:#22d3bf">zero_crossings_funct_1d</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cad_visible_faces</code>`)、**添字を食う単入力 op が</p>
-<p>1 つも無かった** —— 添字は「元の集合とセットで初めて意味を持つ」ので、</p>
-<p>単入力では原理的に作れない。よってこれは 2 入力にしてある。</p>
+<p><code style="color:#22d3bf">indices</code> を産む op は 6 つあるのに(<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>)、<b>添字を食う単入力 op が 1 つも無かった</b> —— 添字は「元の集合とセットで初めて意味を持つ」ので、単入力では原理的に作れない。よってこれは 2 入力にしてある。</p>
 <p>Args:</p>
 <p>points: (N, 3)。</p>
 <p>indices: (M,) の非負整数、N 未満。</p>

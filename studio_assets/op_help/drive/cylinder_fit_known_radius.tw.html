@@ -5,12 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>半径 r が既知の円柱を 3-D 点群 (N, 3) に当てる: 軸上の点(軸に垂直な 2 自由度)と軸の向き(2 自由度)を Gauss-Newton で。</p>
-<p>初期値 `<code style="color:#22d3bf">axis_point</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">axis</code><code style="color:#22d3bf"> から出発し、残差 = 軸からの距離 − r。返り: </code><code style="color:#22d3bf">axis_point</code><code style="color:#22d3bf">(3,)、</code><code style="color:#22d3bf">axis</code>`(単位、入力の向きを保つ)、</p>
-<p>`<code style="color:#22d3bf">rms</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">。**Raises** </code><code style="color:#22d3bf">ValueError</code>`: 点が 5 未満、r ≤ 0、axis がゼロ。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>初期値 <code style="color:#22d3bf">axis_point</code>・<code style="color:#22d3bf">axis</code> から出発し、残差 = 軸からの距離 − r。返り: <code style="color:#22d3bf">axis_point</code>(3,)、<code style="color:#22d3bf">axis</code>(単位、入力の向きを保つ)、<code style="color:#22d3bf">rms</code>、<code style="color:#22d3bf">n</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 点が 5 未満、r ≤ 0、axis がゼロ。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

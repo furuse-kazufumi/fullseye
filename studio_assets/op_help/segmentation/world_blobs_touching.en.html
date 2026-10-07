@@ -5,15 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>World of overlapping discs (cells/grains): equal-radius circles placed in a chain, each overlapping only the previous one at centre distance 2r(1 - overlap) (world_blobs_touching).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>ラベル = 円の内側で最も近い中心(重なりは垂直二等分線で分ける)。画像 = 明るい内部 + 暗い縁 + 重なりはやや明るい</p>
-<p>+ ぼかし + 雑音(細胞の見た目)。鎖がそれ以上伸ばせなければ新しい鎖を始める(その円は誰とも重ならない)。</p>
-<p>返り値: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">count_map</code><code style="color:#22d3bf">(各画素を覆う円の数)、</code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> = {</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">centers</code><code style="color:#22d3bf"> (n, 2) [y, x]、</code><code style="color:#22d3bf">radius</code>`、</p>
-<p>`<code style="color:#22d3bf">overlap</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">pairs</code><code style="color:#22d3bf"> (m, 2)(重なる組)、</code><code style="color:#22d3bf">lens_area</code><code style="color:#22d3bf"> (m,)(閉形式)、</code><code style="color:#22d3bf">areas</code><code style="color:#22d3bf"> (n,)(πr² − Σ レンズ/2)、</code><code style="color:#22d3bf">union_area</code>`、</p>
-<p>`<code style="color:#22d3bf">overlap_measured</code>`(2 つ以上に覆われた画素 / 和集合の画素)}。置けなければ ValueError。</p>
+<p>ラベル = 円の内側で最も近い中心(重なりは垂直二等分線で分ける)。画像 = 明るい内部 + 暗い縁 + 重なりはやや明るい + ぼかし + 雑音(細胞の見た目)。鎖がそれ以上伸ばせなければ新しい鎖を始める(その円は誰とも重ならない)。</p>
+<p>返り値: <code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">labels</code>、<code style="color:#22d3bf">count_map</code>(各画素を覆う円の数)、<code style="color:#22d3bf">truth</code> = {<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">centers</code> (n, 2) [y, x]、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">overlap</code>、<code style="color:#22d3bf">pairs</code> (m, 2)(重なる組)、<code style="color:#22d3bf">lens_area</code> (m,)(閉形式)、<code style="color:#22d3bf">areas</code> (n,)(πr² − Σ レンズ/2)、<code style="color:#22d3bf">union_area</code>、<code style="color:#22d3bf">overlap_measured</code>(2 つ以上に覆われた画素 / 和集合の画素)}。置けなければ ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — Scoring segmentations and synthetic worlds with ground truth — which metric is blind to which failure</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

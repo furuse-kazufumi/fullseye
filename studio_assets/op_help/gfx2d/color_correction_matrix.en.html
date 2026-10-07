@@ -3,15 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb × matrix</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_correction_matrix(rgb, ccm, normalize_rows=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.color_correction_matrix(rgb, ccm, normalize_rows=True)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;color_correction_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Apply a 3x3 colour-correction matrix: `<code style="color:#22d3bf">out = rgb @ ccm.T</code><code style="color:#22d3bf"> per pixel, clipped to </code><code style="color:#22d3bf">[0, 1]</code>`.</p>
-<p>The CCM maps the sensor&#x27;s spectral response onto the display primaries. With</p>
-<p>*normalize_rows* (default) every row is divided by its sum so that **white</p>
-<p>stays white** (`<code style="color:#22d3bf">[1, 1, 1] -&gt; [1, 1, 1]</code>`) — the constraint most calibration</p>
-<p>procedures impose; pass `<code style="color:#22d3bf">False</code>` to apply the matrix as given.</p>
-<p>Ground truth: the identity matrix is the exact identity; a normalised matrix</p>
-<p>maps every grey `<code style="color:#22d3bf">[v, v, v]</code>` to itself to 1e-15.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *ccm* is not a finite 3x3, or a row sums to 0</p>
-<p>when normalising.</p>
+<p>Apply a 3x3 colour-correction matrix: <code style="color:#22d3bf">out = rgb @ ccm.T</code> per pixel, clipped to <code style="color:#22d3bf">[0, 1]</code>.</p>
+<p>The CCM maps the sensor&#x27;s spectral response onto the display primaries. With *normalize_rows* (default) every row is divided by its sum so that <b>white stays white</b> (<code style="color:#22d3bf">[1, 1, 1] -&gt; [1, 1, 1]</code>) — the constraint most calibration procedures impose; pass <code style="color:#22d3bf">False</code> to apply the matrix as given.</p>
+<p>Ground truth: the identity matrix is the exact identity; a normalised matrix maps every grey <code style="color:#22d3bf">[v, v, v]</code> to itself to 1e-15. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *ccm* is not a finite 3x3, or a row sums to 0 when normalising.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

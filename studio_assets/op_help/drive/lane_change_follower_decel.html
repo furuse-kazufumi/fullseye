@@ -4,11 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lane_change_follower_decel(gap, v_follow, v_ego, *, reaction: &#x27;float&#x27;, accel_ego: &#x27;float&#x27; = 0.0, min_gap: &#x27;float&#x27; = 0.0, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivepass; drivepass.lane_change_follower_decel(gap, v_follow, v_ego, *, reaction: &#x27;float&#x27;, accel_ego: &#x27;float&#x27; = 0.0, min_gap: &#x27;float&#x27; = 0.0, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;lane_change_follower_decel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>進路を変えた先の後続車が、自車に min_gap より近づかないために要る一定の減速度(閉形式、配列可)。場面 S072。</p>
-<p>車間 `<code style="color:#22d3bf">gap</code><code style="color:#22d3bf"> = 後続車の前端と自車の後端の距離(変えた瞬間)、後続車 </code><code style="color:#22d3bf">v_follow</code><code style="color:#22d3bf">、自車 </code><code style="color:#22d3bf">v_ego</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">accel_ego</code>` ≥ 0 で</p>
-<p>加速し続ける)。後続車は `<code style="color:#22d3bf">reaction</code>` の間は速さを保ち、その後一定の減速。w₀ = v_follow − v_ego。</p>
-<p>反応の間に詰まる量 = w₀τ − a_eτ²/2(相対速度が反応の中で 0 に届けば w₀²/(2a_e))。反応の後の相対速度</p>
-<p>w₁ = w₀ − a_eτ、残り g₁ = gap − min_gap − (詰まる量)。要る減速度 b = max(0, w₁²/(2g₁) − a_e)。</p>
-<p>反応の間にもう min_gap を割るなら ∞。`<code style="color:#22d3bf">obstructs</code><code style="color:#22d3bf"> = b &gt; </code><code style="color:#22d3bf">sudden</code>`(<b>仮定</b> 2.0 m/s²、26 条の 2 第 2 項「急に」)。</p>
+<p>車間 <code style="color:#22d3bf">gap</code> = 後続車の前端と自車の後端の距離(変えた瞬間)、後続車 <code style="color:#22d3bf">v_follow</code>、自車 <code style="color:#22d3bf">v_ego</code>(<code style="color:#22d3bf">accel_ego</code> ≥ 0 で加速し続ける)。後続車は <code style="color:#22d3bf">reaction</code> の間は速さを保ち、その後一定の減速。w₀ = v_follow − v_ego。反応の間に詰まる量 = w₀τ − a_eτ²/2(相対速度が反応の中で 0 に届けば w₀²/(2a_e))。反応の後の相対速度 w₁ = w₀ − a_eτ、残り g₁ = gap − min_gap − (詰まる量)。要る減速度 b = max(0, w₁²/(2g₁) − a_e)。反応の間にもう min_gap を割るなら ∞。<code style="color:#22d3bf">obstructs</code> = b &gt; <code style="color:#22d3bf">sudden</code>(<b>仮定</b> 2.0 m/s²、26 条の 2 第 2 項「急に」)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

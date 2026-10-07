@@ -2,6 +2,11 @@
 guide: colorimetry
 dim: 2d
 title: 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない
+title_en: Colorimetry and spectra — colour is fixed only by spectrum × illuminant × observer
+title_zh: 测色与光谱知识 —— 颜色只由“光谱 × 光源 × 观察者”决定
+title_tw: 測色與光譜知識 —— 顏色只由「光譜 × 光源 × 觀察者」決定
+title_ko: 측색과 분광 지식 — 색은 ‘분광 × 광원 × 관찰자’로만 정해진다
+title_de: Farbmetrik und Spektren — Farbe ist nur durch Spektrum × Lichtart × Beobachter bestimmt
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

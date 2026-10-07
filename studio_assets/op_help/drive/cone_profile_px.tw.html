@@ -4,15 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cone_profile_px(u, H_px: &#x27;float&#x27;, phi_deg: &#x27;float&#x27;, toe_round_px: &#x27;float&#x27; = 0.0, apex_blunt_px: &#x27;float&#x27; = 0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import granular; granular.cone_profile_px(u, H_px: &#x27;float&#x27;, phi_deg: &#x27;float&#x27;, toe_round_px: &#x27;float&#x27; = 0.0, apex_blunt_px: &#x27;float&#x27; = 0.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cone_profile_px&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>円錐の母線の断面 `<code style="color:#22d3bf">c(u)</code><code style="color:#22d3bf"> [px] (</code><code style="color:#22d3bf">u</code>` = 軸からの距離 [px])。</p>
-<p>基本は `<code style="color:#22d3bf">c = max(0, H − u tan φ)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">apex_blunt_px</code>` = 頂に内接する円弧の半径(材料を削る、中心は</p>
-<p>`<code style="color:#22d3bf">(0, H − r/cos φ)</code><code style="color:#22d3bf">、接点 </code><code style="color:#22d3bf">u = r sin φ</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">toe_round_px</code>` = 裾の凹みを埋める円弧の半径(材料を</p>
-<p>足す、中心は空気側 `<code style="color:#22d3bf">(x_t, r)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">x_t = R + r tan(φ/2)</code><code style="color:#22d3bf">、接点 </code><code style="color:#22d3bf">u = x_t − r sin φ</code>`)—— どちらも</p>
-<p>接線連続(導出: 接点で両側の高さが裾は `<code style="color:#22d3bf">r(1 − cos φ)</code><code style="color:#22d3bf">、頂は </code><code style="color:#22d3bf">H − r sin²φ / cos φ</code><code style="color:#22d3bf"> で一致)。**Raises** </code><code style="color:#22d3bf">ValueError</code>`: 2 つの円弧が重なる(山が小さすぎる)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>円錐の母線の断面 <code style="color:#22d3bf">c(u)</code> [px] (<code style="color:#22d3bf">u</code> = 軸からの距離 [px])。</p>
+<p>基本は <code style="color:#22d3bf">c = max(0, H − u tan φ)</code>。<code style="color:#22d3bf">apex_blunt_px</code> = 頂に内接する円弧の半径(材料を削る、中心は <code style="color:#22d3bf">(0, H − r/cos φ)</code>、接点 <code style="color:#22d3bf">u = r sin φ</code>)。<code style="color:#22d3bf">toe_round_px</code> = 裾の凹みを埋める円弧の半径(材料を足す、中心は空気側 <code style="color:#22d3bf">(x_t, r)</code>、<code style="color:#22d3bf">x_t = R + r tan(φ/2)</code>、接点 <code style="color:#22d3bf">u = x_t − r sin φ</code>)—— どちらも接線連続(導出: 接点で両側の高さが裾は <code style="color:#22d3bf">r(1 − cos φ)</code>、頂は <code style="color:#22d3bf">H − r sin²φ / cos φ</code> で一致)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2 つの円弧が重なる(山が小さすぎる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">signal</code> 作為輸入)</h3>

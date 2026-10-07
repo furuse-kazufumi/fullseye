@@ -3,17 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × lut</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_grade(rgb, lut)</code>(要直接呼叫實作,<code style="color:#22d3bf">import gfx2d; gfx2d.color_grade(rgb, lut)</code>;從台帳取用則 <code style="color:#22d3bf">opsgfx2d.get(&quot;color_grade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>用三線性插值把 3-D 色彩 LUT 套用到 `<code style="color:#22d3bf">rgb</code>` 影像。</p>
+<p>用三線性插值把 3-D 色彩 LUT 套用到 <code style="color:#22d3bf">rgb</code> 影像。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">lut</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">(n, n, n, 3)</code><code style="color:#22d3bf"> indexed </code><code style="color:#22d3bf">[r, g, b]</code>` — the layout</p>
-<p>:func:<code style="color:#22d3bf">color_lut</code> produces. The identity LUT returns the input to within</p>
-<p>float64 rounding (measured maximum 3.3e-16), which is what makes this</p>
-<p>testable without a reference implementation: trilinear interpolation of a</p>
-<p>coordinate function is that coordinate, exactly.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">lut</code> is <code style="color:#22d3bf">(n, n, n, 3)</code> indexed <code style="color:#22d3bf">[r, g, b]</code> — the layout <code style="color:#22d3bf">color_lut</code> produces. The identity LUT returns the input to within float64 rounding (measured maximum 3.3e-16), which is what makes this testable without a reference implementation: trilinear interpolation of a coordinate function is that coordinate, exactly.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">rgb</code> 作為輸入)</h3>

@@ -3,16 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import spc; spc.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;msa_attribute_agreement&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>計数値(合否)検査の一致度(`<code style="color:#22d3bf">table</code>`)。</p>
-<p>同じ部品を複数の検査員が判定した表から、<b>検査員の対ごとの Cohen のカッパ</b>と</p>
-<p>全体の <b>Fleiss のカッパ</b>、および素の一致率を返す。</p>
-<p>★カッパは一致率そのものではない。`<code style="color:#22d3bf">kappa = (p_o - p_e)/(1 - p_e)</code>` で、</p>
-<p><b>偶然でも起きる一致 p_e を割り引いた</b>残りを測る —— 合格率 95 % の工程では</p>
-<p>でたらめに判を押しても素の一致率は 90 % を超えるので、一致率だけ見ると</p>
-<p>「よく合っている」と読めてしまう。</p>
-<p>★門にできる厳密な値: 全員が同じ判定 → `<code style="color:#22d3bf">kappa = 1</code>`(厳密)。2 人 x 2 カテゴリの</p>
-<p>Cohen のカッパは `<code style="color:#22d3bf">2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))</code>` という閉形式と一致する。</p>
-<p>独立でたらめな判定では期待値 0(こちらは標本ごとに揺れるので区間で見る)。</p>
+<p>計数値(合否)検査の一致度(<code style="color:#22d3bf">table</code>)。</p>
+<p>同じ部品を複数の検査員が判定した表から、<b>検査員の対ごとの Cohen のカッパ</b>と全体の <b>Fleiss のカッパ</b>、および素の一致率を返す。</p>
+<p>★カッパは一致率そのものではない。<code style="color:#22d3bf">kappa = (p_o - p_e)/(1 - p_e)</code> で、<b>偶然でも起きる一致 p_e を割り引いた</b>残りを測る —— 合格率 95 % の工程ではでたらめに判を押しても素の一致率は 90 % を超えるので、一致率だけ見ると「よく合っている」と読めてしまう。</p>
+<p>★門にできる厳密な値: 全員が同じ判定 → <code style="color:#22d3bf">kappa = 1</code>(厳密)。2 人 x 2 カテゴリの Cohen のカッパは <code style="color:#22d3bf">2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))</code> という閉形式と一致する。独立でたらめな判定では期待値 0(こちらは標本ごとに揺れるので区間で見る)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

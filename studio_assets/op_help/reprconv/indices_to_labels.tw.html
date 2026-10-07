@@ -3,23 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">indices</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.indices_to_labels(indices)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.indices_to_labels(indices)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;indices_to_labels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>索引 `<code style="color:#22d3bf">(N,)</code><code style="color:#22d3bf"> → 選擇遮罩 </code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">indices</code>` 的出口(<b>可逆</b>)。</p>
+<p>索引 <code style="color:#22d3bf">(N,)</code> → 選擇遮罩 <code style="color:#22d3bf">labels</code>。<code style="color:#22d3bf">indices</code> 的出口(<b>可逆</b>)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">max(indices) + 1</code>` 長の 1-D ラベル配列を作り、選ばれた位置に 1 を置く。</p>
-<p>`<code style="color:#22d3bf">indices -&gt; labels -&gt; indices</code>` は <b>bit 一致</b>(重複と順序を除く)。</p>
-<p>逆向き `<code style="color:#22d3bf">labels -&gt; indices -&gt; labels</code>` は<b>末尾の背景を落とす</b></p>
-<p>(長さが `<code style="color:#22d3bf">max_index + 1</code>` に切り詰まる)—— これは情報の損失であって</p>
-<p>バグではないので、:func:<code style="color:#22d3bf">labels_to_indices</code> の docstring に量を書いてある。</p>
+<p><code style="color:#22d3bf">max(indices) + 1</code> 長の 1-D ラベル配列を作り、選ばれた位置に 1 を置く。<code style="color:#22d3bf">indices -&gt; labels -&gt; indices</code> は <b>bit 一致</b>(重複と順序を除く)。逆向き <code style="color:#22d3bf">labels -&gt; indices -&gt; labels</code> は<b>末尾の背景を落とす</b> (長さが <code style="color:#22d3bf">max_index + 1</code> に切り詰まる)—— これは情報の損失であって</p>
+<p>バグではないので、<code style="color:#22d3bf">labels_to_indices</code> の docstring に量を書いてある。</p>
 <p>Args:</p>
 <p>indices: (N,) の非負整数配列。</p>
 <p>Returns:</p>
 <p>(max + 1,) の int64 ラベル配列(選択 = 1、背景 = 0)。</p>
 <p>Raises:</p>
 <p>ValueError: 1-D でない / 負 / 空 / 上限超。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">labels</code> 作為輸入)</h3>

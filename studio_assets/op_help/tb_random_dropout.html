@@ -7,27 +7,21 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_random_dropout.chain.jpg">tb_random_dropout: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_random_dropout.chain.jpg">tb_random_dropout: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_random_dropout.inputs.jpg">tb_random_dropout: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_random_dropout.inputs.jpg">tb_random_dropout: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>点の `<code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> 割合をランダム除去し </code><code style="color:#22d3bf">(kept, kept_idx)</code>` を返す(欠損の模倣)。</p>
-<p>残す点数は `<code style="color:#22d3bf">round((1-ratio)*N)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">kept_idx</code>` は元配列への昇順インデックスで、</p>
-<p>`<code style="color:#22d3bf">kept == points[kept_idx]</code>` が厳密に成り立つ。オクルージョン/疎な視点による</p>
-<p>点欠損を学習で再現する。`<code style="color:#22d3bf">0 &lt;= ratio &lt;= 1</code>` を要求。</p>
-<p>`<code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> が [0,1] の外なら </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">ratio=1</code><code style="color:#22d3bf"> は空 </code><code style="color:#22d3bf">(0,3)</code>` と空インデックス、</p>
-<p>`<code style="color:#22d3bf">ratio=0</code><code style="color:#22d3bf"> は全点(順序は元のまま)。残す点数は Python の </code><code style="color:#22d3bf">round</code>`(偶数丸め)で決まる</p>
-<p>ので `<code style="color:#22d3bf">.5</code><code style="color:#22d3bf"> 端では偶数側に寄る。</code><code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">permutation</code>` が決まり決定論的。返り値は</p>
-<p>`<code style="color:#22d3bf">(kept float64 (M,3), kept_idx int64 (M,))</code>`。除去は空間的に一様なので、局所的な</p>
-<p>欠損(遮蔽)を模すには `<code style="color:#22d3bf">cutout</code>` を使う。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">random_dropout</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
+<p>点の <code style="color:#22d3bf">ratio</code> 割合をランダム除去し <code style="color:#22d3bf">(kept, kept_idx)</code> を返す(欠損の模倣)。</p>
+<p>残す点数は <code style="color:#22d3bf">round((1-ratio)*N)</code>。<code style="color:#22d3bf">kept_idx</code> は元配列への昇順インデックスで、<code style="color:#22d3bf">kept == points[kept_idx]</code> が厳密に成り立つ。オクルージョン/疎な視点による点欠損を学習で再現する。<code style="color:#22d3bf">0 &lt;= ratio &lt;= 1</code> を要求。</p>
+<p><code style="color:#22d3bf">ratio</code> が [0,1] の外なら <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">ratio=1</code> は空 <code style="color:#22d3bf">(0,3)</code> と空インデックス、<code style="color:#22d3bf">ratio=0</code> は全点(順序は元のまま)。残す点数は Python の <code style="color:#22d3bf">round</code>(偶数丸め)で決まるので <code style="color:#22d3bf">.5</code> 端では偶数側に寄る。<code style="color:#22d3bf">seed</code> で <code style="color:#22d3bf">permutation</code> が決まり決定論的。返り値は <code style="color:#22d3bf">(kept float64 (M,3), kept_idx int64 (M,))</code>。除去は空間的に一様なので、局所的な欠損(遮蔽)を模すには <code style="color:#22d3bf">cutout</code> を使う。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">random_dropout</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
-tb_random_dropout 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_random_dropout%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_random_dropout%200.50%200.50">Load &amp; run</a></p>
+tb_random_dropout 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_random_dropout%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_random_dropout%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">random_dropout</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:augment_pointcloud">augment_pointcloud</a> — <code style="color:#22d3bf">py -3.11 examples_3d/augment_pointcloud.py</code></p>

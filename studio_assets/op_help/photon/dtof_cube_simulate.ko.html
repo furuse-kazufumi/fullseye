@@ -3,29 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">histcube</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None, signal_photons=20.0, ambient_photons=5.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None, signal_photons=20.0, ambient_photons=5.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>SPAD 어레이가 만드는 `<code style="color:#22d3bf">(H, W, T)</code>` 광자 히스토그램 큐브를 합성합니다.</p>
+<p>SPAD 어레이가 만드는 <code style="color:#22d3bf">(H, W, T)</code> 광자 히스토그램 큐브를 합성합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The per-pixel version of :func:<code style="color:#22d3bf">tcspc_simulate</code>: every pixel of the *depth*</p>
-<p>map (metres, one-way distance) gets a Gaussian return at its own round-trip</p>
-<p>time `<code style="color:#22d3bf">2d/c</code>`, scaled by *signal_photons* times that pixel&#x27;s *reflectivity*,</p>
-<p>on a uniform ambient pedestal of `<code style="color:#22d3bf">ambient_photons/bins</code>` per bin, Poisson</p>
-<p>sampled with `<code style="color:#22d3bf">numpy.random.default_rng(seed)</code>`.</p>
-<p>The output is the cube that :func:<code style="color:#22d3bf">dtof_cube_depth</code> inverts, and the axis</p>
-<p>order is <b>(H, W, T) with time LAST</b> — the same layout a SPAD array streams.</p>
-<p>That is not the `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> of a :mod:</code>volops` voxel volume; the two are</p>
-<p>both 3-D float arrays and swapping them silently produces a plausible-wrong</p>
-<p>depth map, which is why :func:<code style="color:#22d3bf">dtof_cube_depth</code> checks and says so.</p>
-<p>`<code style="color:#22d3bf">noise=False</code>` returns the exact expectation cube (no sampling).</p>
-<p>Ground truth: with `<code style="color:#22d3bf">noise=False</code>` the per-pixel centroid of the cube returns</p>
-<p>the input depth map to an RMS error of 3.2e-16 m (pinned in the tests) — the</p>
-<p>pulse integral is analytic, so the only error is float round-off.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D, non-finite or non-positive *depth*, a</p>
-<p>*reflectivity* that is negative or not the same shape as *depth*, a *bins*</p>
-<p>outside `<code style="color:#22d3bf">[2, MAX_BINS]</code>`, non-positive *bin_ps* / *irf_fwhm_ps*, negative</p>
-<p>photon budgets, a non-integer *seed*, a cube over</p>
-<p>:data:<code style="color:#22d3bf">MAX_CUBE_ELEMENTS</code> (`<code style="color:#22d3bf">H*W*bins</code>` grows fast — 512x512x256 is 8x the</p>
-<p>cap), and any depth whose round-trip time falls outside the time window</p>
-<p>(which a real sensor would alias into a short distance).</p>
+<p>The per-pixel version of <code style="color:#22d3bf">tcspc_simulate</code>: every pixel of the *depth* map (metres, one-way distance) gets a Gaussian return at its own round-trip time <code style="color:#22d3bf">2d/c</code>, scaled by *signal_photons* times that pixel&#x27;s *reflectivity*, on a uniform ambient pedestal of <code style="color:#22d3bf">ambient_photons/bins</code> per bin, Poisson sampled with <code style="color:#22d3bf">numpy.random.default_rng(seed)</code>.</p>
+<p>The output is the cube that <code style="color:#22d3bf">dtof_cube_depth</code> inverts, and the axis order is <b>(H, W, T) with time LAST</b> — the same layout a SPAD array streams. That is not the <code style="color:#22d3bf">(D, H, W)</code> of a <code style="color:#22d3bf">volops</code> voxel volume; the two are both 3-D float arrays and swapping them silently produces a plausible-wrong depth map, which is why <code style="color:#22d3bf">dtof_cube_depth</code> checks and says so.</p>
+<p><code style="color:#22d3bf">noise=False</code> returns the exact expectation cube (no sampling).</p>
+<p>Ground truth: with <code style="color:#22d3bf">noise=False</code> the per-pixel centroid of the cube returns the input depth map to an RMS error of 3.2e-16 m (pinned in the tests) — the pulse integral is analytic, so the only error is float round-off.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-2-D, non-finite or non-positive *depth*, a *reflectivity* that is negative or not the same shape as *depth*, a *bins* outside <code style="color:#22d3bf">[2, MAX_BINS]</code>, non-positive *bin_ps* / *irf_fwhm_ps*, negative photon budgets, a non-integer *seed*, a cube over <code style="color:#22d3bf">MAX_CUBE_ELEMENTS</code> (<code style="color:#22d3bf">H*W*bins</code> grows fast — 512x512x256 is 8x the cap), and any depth whose round-trip time falls outside the time window (which a real sensor would alias into a short distance).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

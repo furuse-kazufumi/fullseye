@@ -5,14 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Voronoi grain world: n jittered seeds on a lattice; labels = index of the nearest seed (1..n) (world_grains_voronoi).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>画像 = 粒ごとの明るさ(0.4〜0.75)× 粒界の暗い線(幅 `<code style="color:#22d3bf">boundary_width</code>`、粒界までの距離の閉形式で描く)+ 雑音。</p>
-<p>背景は無い(全画素がどれかの粒)。</p>
-<p>返り値: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">edge_distance</code><code style="color:#22d3bf">(各画素から粒界までの距離)、</code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> = {</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">seeds</code><code style="color:#22d3bf"> (n, 2)、</code><code style="color:#22d3bf">areas</code>`</p>
-<p>(多角形、靴紐)、`<code style="color:#22d3bf">edge_length_total</code><code style="color:#22d3bf">(内部の辺の長さの和)、</code><code style="color:#22d3bf">n_edges</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">polygons</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">boundary_width</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">total_area</code>` = H·W}。</p>
+<p>画像 = 粒ごとの明るさ(0.4〜0.75)× 粒界の暗い線(幅 <code style="color:#22d3bf">boundary_width</code>、粒界までの距離の閉形式で描く)+ 雑音。背景は無い(全画素がどれかの粒)。</p>
+<p>返り値: <code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">labels</code>、<code style="color:#22d3bf">edge_distance</code>(各画素から粒界までの距離)、<code style="color:#22d3bf">truth</code> = {<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">seeds</code> (n, 2)、<code style="color:#22d3bf">areas</code> (多角形、靴紐)、<code style="color:#22d3bf">edge_length_total</code>(内部の辺の長さの和)、<code style="color:#22d3bf">n_edges</code>、<code style="color:#22d3bf">polygons</code>、<code style="color:#22d3bf">boundary_width</code>、<code style="color:#22d3bf">total_area</code> = H·W}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — Scoring segmentations and synthetic worlds with ground truth — which metric is blind to which failure</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

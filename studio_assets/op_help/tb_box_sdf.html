@@ -7,28 +7,27 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_box_sdf.chain.jpg">tb_box_sdf: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_box_sdf.chain.jpg">tb_box_sdf: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_box_sdf.inputs.jpg">tb_box_sdf: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_box_sdf.inputs.jpg">tb_box_sdf: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>動き</b>(GIF: フレーム / 視点 / スライスを順に。静止の図が完成形で、GIF は補助):</p>
 <p><img src="fig/tb_box_sdf.gif" alt="tb_box_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>軸平行直方体の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
-<p>Inigo Quilez の box SDF: `<code style="color:#22d3bf">q = |p-center| - half_extents</code>` とし、</p>
-<p>`<code style="color:#22d3bf">outside = |max(q,0)|</code>` (角/辺/面の外はユークリッド距離),</p>
-<p>`<code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code>` (内側は最近面までの負値),</p>
-<p>`<code style="color:#22d3bf">sdf = outside + inside</code>`。</p>
-<p>`<code style="color:#22d3bf">half_extents</code>` は各軸の<b>半辺長</b>(中心から面まで)。外側は厳密距離(角では対角、面前は</p>
-<p>垂直距離)、内側も最近面までの厳密負距離を与える。</p>
+<p>Inigo Quilez の box SDF: <code style="color:#22d3bf">q = |p-center| - half_extents</code> とし、</p>
+<p><code style="color:#22d3bf">outside = |max(q,0)|</code> (角/辺/面の外はユークリッド距離),</p>
+<p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code> (内側は最近面までの負値),</p>
+<p><code style="color:#22d3bf">sdf = outside + inside</code>。</p>
+<p><code style="color:#22d3bf">half_extents</code> は各軸の<b>半辺長</b>(中心から面まで)。外側は厳密距離(角では対角、面前は垂直距離)、内側も最近面までの厳密負距離を与える。</p>
 <p>Raises ValueError for any half_extent&lt;0 or malformed grid/center/half_extents。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">box_sdf</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">box_sdf</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
-tb_box_sdf 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_box_sdf%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_box_sdf%200.50%200.50">Load &amp; run</a></p>
+tb_box_sdf 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_box_sdf%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_box_sdf%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">box_sdf</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:gear_metrology">gear_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/gear_metrology.py</code></p>

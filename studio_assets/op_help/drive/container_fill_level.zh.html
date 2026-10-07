@@ -5,13 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>容器内側の側面像(粉の被覆率、容器の内寸 = 画像)から充填率と粉面の傾きを読む。</p>
-<p>充填率 = 列ごとの粉面(しきい値の交差、副画素)の平均 / 行数。粉面 → `<code style="color:#22d3bf">fit_line</code>` →</p>
-<p>`<code style="color:#22d3bf">surface_tilt_deg</code><code style="color:#22d3bf">(右が高いほど正)と </code><code style="color:#22d3bf">surface_rms</code>`(平面からのずれ [px])。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 空(しきい値以上の画素が無い)/ 満杯で粉面が見えない(最上行が粉)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>充填率 = 列ごとの粉面(しきい値の交差、副画素)の平均 / 行数。粉面 → <code style="color:#22d3bf">fit_line</code> → <code style="color:#22d3bf">surface_tilt_deg</code>(右が高いほど正)と <code style="color:#22d3bf">surface_rms</code>(平面からのずれ [px])。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 空(しきい値以上の画素が無い)/ 満杯で粉面が見えない(最上行が粉)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

@@ -3,17 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">rgba</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.layer_stack(layers)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.layer_stack(layers)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;layer_stack&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Komponiert eine z-geordnete Liste von `<code style="color:#22d3bf">rgba</code>`-Ebenen, von unten beginnend.</p>
+<p>Komponiert eine z-geordnete Liste von <code style="color:#22d3bf">rgba</code>-Ebenen, von unten beginnend.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Each layer is a dict:</p>
-<p>`<code style="color:#22d3bf">{&quot;image&quot;: rgba, &quot;mode&quot;: str = &quot;normal&quot;, &quot;opacity&quot;: float = 1.0}</code>`</p>
-<p>and the W3C rule for a blend mode against a *partially transparent* backdrop</p>
-<p>is used — the blend function is weighted by the backdrop&#x27;s own alpha,</p>
-<p>`<code style="color:#22d3bf">Cs&#x27; = (1 - a_b) Cs + a_b B(Cb, Cs)</code>` — so a layer over empty space keeps</p>
-<p>its own colour whatever the mode. The result is straight-alpha `<code style="color:#22d3bf">rgba</code>`.</p>
-<p>All layers must share one shape; see :func:<code style="color:#22d3bf">alpha_composite</code> on why.</p>
-<p>Raises ValueError: empty list, more than :data:<code style="color:#22d3bf">MAX_LAYERS</code>, a non-dict</p>
-<p>entry, an unknown key, mismatched shapes.</p>
+<p><code style="color:#22d3bf">{&quot;image&quot;: rgba, &quot;mode&quot;: str = &quot;normal&quot;, &quot;opacity&quot;: float = 1.0}</code></p>
+<p>and the W3C rule for a blend mode against a *partially transparent* backdrop is used — the blend function is weighted by the backdrop&#x27;s own alpha, <code style="color:#22d3bf">Cs&#x27; = (1 - a_b) Cs + a_b B(Cb, Cs)</code> — so a layer over empty space keeps its own colour whatever the mode. The result is straight-alpha <code style="color:#22d3bf">rgba</code>.</p>
+<p>All layers must share one shape; see <code style="color:#22d3bf">alpha_composite</code> on why.</p>
+<p>Raises ValueError: empty list, more than <code style="color:#22d3bf">MAX_LAYERS</code>, a non-dict entry, an unknown key, mismatched shapes.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

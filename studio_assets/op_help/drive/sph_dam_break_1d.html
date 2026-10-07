@@ -4,12 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_dam_break_1d(h0: &#x27;float&#x27; = 0.1, length: &#x27;float&#x27; = 1.0, n_particles: &#x27;int&#x27; = 400, t_end: &#x27;float&#x27; = 0.2, g: &#x27;float&#x27; = 9.81, kappa: &#x27;float&#x27; = 1.3, alpha: &#x27;float&#x27; = 0.3, n_out: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import swarmflow; swarmflow.sph_dam_break_1d(h0: &#x27;float&#x27; = 0.1, length: &#x27;float&#x27; = 1.0, n_particles: &#x27;int&#x27; = 400, t_end: &#x27;float&#x27; = 0.2, g: &#x27;float&#x27; = 9.81, kappa: &#x27;float&#x27; = 1.3, alpha: &#x27;float&#x27; = 0.3, n_out: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;sph_dam_break_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1 次元 SPH の浅水方程式でダム崩壊(乾いた床)を解く(群れのゲートを開けたときの広がりの模型)。</p>
-<p>水深 h_i = Σ_j m_j W(x_i − x_j, ℓ_ij)(1 次元の核、m = h₀ Δx)、加速度 du_i/dt = −g Σ_j m_j ∂W_ij/∂x_i(= −g ∂h/∂x、</p>
-<p>運動量を保存する対称形)+ Monaghan の人工粘性。平滑化の長さは粒子ごとに ℓ_i = κ m/h_i(先端の薄い所で広がる)、</p>
-<p>組には平均 ℓ_ij。左の壁(x = −length)は鏡像の粒子。真値は :func:<code style="color:#22d3bf">ritter_dam_break</code>(門で照らす)。</p>
+<p>水深 h_i = Σ_j m_j W(x_i − x_j, ℓ_ij)(1 次元の核、m = h₀ Δx)、加速度 du_i/dt = −g Σ_j m_j ∂W_ij/∂x_i(= −g ∂h/∂x、運動量を保存する対称形)+ Monaghan の人工粘性。平滑化の長さは粒子ごとに ℓ_i = κ m/h_i(先端の薄い所で広がる)、組には平均 ℓ_ij。左の壁(x = −length)は鏡像の粒子。真値は <code style="color:#22d3bf">ritter_dam_break</code>(門で照らす)。</p>
 <p>Returns:</p>
-<p>dict: `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (K,)、</code><code style="color:#22d3bf">x</code><code style="color:#22d3bf"> (K, N)、</code><code style="color:#22d3bf">h</code><code style="color:#22d3bf"> (K, N)、</code><code style="color:#22d3bf">u</code><code style="color:#22d3bf"> (K, N)(各時刻の粒子)、</code><code style="color:#22d3bf">front</code>` (K,)(最も前の粒子)、</p>
-<p>`<code style="color:#22d3bf">mass</code><code style="color:#22d3bf">(全質量、保存)、</code><code style="color:#22d3bf">c0</code>`。</p>
+<p>dict: <code style="color:#22d3bf">t</code> (K,)、<code style="color:#22d3bf">x</code> (K, N)、<code style="color:#22d3bf">h</code> (K, N)、<code style="color:#22d3bf">u</code> (K, N)(各時刻の粒子)、<code style="color:#22d3bf">front</code> (K,)(最も前の粒子)、</p>
+<p><code style="color:#22d3bf">mass</code>(全質量、保存)、<code style="color:#22d3bf">c0</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

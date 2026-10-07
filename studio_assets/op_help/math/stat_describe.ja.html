@@ -5,22 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>1-D 標本の五数要約(+ α)を素の dict で。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Returns `<code style="color:#22d3bf">{&quot;n&quot;, &quot;mean&quot;, &quot;std&quot;, &quot;min&quot;, &quot;max&quot;, &quot;percentiles&quot;}</code>` where</p>
-<p>`<code style="color:#22d3bf">percentiles</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">{&quot;p5&quot;, &quot;p25&quot;, &quot;p50&quot;, &quot;p75&quot;, &quot;p95&quot;}</code>` (linear</p>
-<p>interpolation between order statistics, numpy&#x27;s default). `<code style="color:#22d3bf">std</code>` is the</p>
-<p><b>population</b> standard deviation (`<code style="color:#22d3bf">ddof=0</code>` — well-defined down to a</p>
-<p>single sample; multiply by `<code style="color:#22d3bf">sqrt(n/(n-1))</code>` for the sample estimator,</p>
-<p>which is what :func:<code style="color:#22d3bf">stat_covariance</code> uses, documented there).</p>
-<p>The tails matter in metrology: `<code style="color:#22d3bf">mean</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">std</code>` of residuals say how good</p>
-<p>the fit is *on average*; `<code style="color:#22d3bf">p5</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">p95</code>` say how bad the *outliers* are —</p>
-<p>report both, a fit can pass on RMS and fail on extremes.</p>
-<p>HALCON: `<code style="color:#22d3bf">tuple_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tuple_deviation</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tuple_min</code>` /</p>
-<p>`<code style="color:#22d3bf">tuple_max</code>` (the percentile row has no single HALCON tuple operator).</p>
+<p>Returns <code style="color:#22d3bf">{&quot;n&quot;, &quot;mean&quot;, &quot;std&quot;, &quot;min&quot;, &quot;max&quot;, &quot;percentiles&quot;}</code> where <code style="color:#22d3bf">percentiles</code> is <code style="color:#22d3bf">{&quot;p5&quot;, &quot;p25&quot;, &quot;p50&quot;, &quot;p75&quot;, &quot;p95&quot;}</code> (linear interpolation between order statistics, numpy&#x27;s default). <code style="color:#22d3bf">std</code> is the <b>population</b> standard deviation (<code style="color:#22d3bf">ddof=0</code> — well-defined down to a single sample; multiply by <code style="color:#22d3bf">sqrt(n/(n-1))</code> for the sample estimator, which is what <code style="color:#22d3bf">stat_covariance</code> uses, documented there).</p>
+<p>The tails matter in metrology: <code style="color:#22d3bf">mean</code>/<code style="color:#22d3bf">std</code> of residuals say how good the fit is *on average*; <code style="color:#22d3bf">p5</code>/<code style="color:#22d3bf">p95</code> say how bad the *outliers* are — report both, a fit can pass on RMS and fail on extremes.</p>
+<p>HALCON: <code style="color:#22d3bf">tuple_mean</code> / <code style="color:#22d3bf">tuple_deviation</code> / <code style="color:#22d3bf">tuple_min</code> / <code style="color:#22d3bf">tuple_max</code> (the percentile row has no single HALCON tuple operator).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
-<p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
-<p style="margin:2px 0 2px 12px">• **masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code>** — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**(件数を明示して拒否 — 結果全体に伝播するため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code></b> — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>(件数を明示して拒否 — 結果全体に伝播するため)。</p>
 <p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は <code style="color:#22d3bf">ValueError</code>。reshape を明示する)。</p>
 <p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

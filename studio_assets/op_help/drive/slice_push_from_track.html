@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slice_push_from_track(theta_deg: &#x27;float&#x27;, x_mm, z_mm) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import cutting; cutting.slice_push_from_track(theta_deg: &#x27;float&#x27;, x_mm, z_mm) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;slice_push_from_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>刃の 1 点の軌跡 (x, z)(画像から)と刃先の傾き θ(画像から)で ξ を出す。速度は軌跡の直線当てはめの向き(ξ は比)。</p>
-<p>押している区間だけを渡すこと。入り始め(手首が縮む途中)を混ぜると刃が指令より遅れて ξ が偏る —— 刃が食材の全幅を</p>
-<p>切っている定常区間を使う(PoC で 0.63 → 0.57 = 真値に戻ることを確かめた)。</p>
+<p>押している区間だけを渡すこと。入り始め(手首が縮む途中)を混ぜると刃が指令より遅れて ξ が偏る —— 刃が食材の全幅を切っている定常区間を使う(PoC で 0.63 → 0.57 = 真値に戻ることを確かめた)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -13,10 +13,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hough_line_trans.inputs.jpg">hough_line_trans: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>The Hough transform accumulator for line detection. First creates an edge mask from the Sobel gradient, computes the accumulator space (angle x distance) with `<code style="color:#22d3bf">skimage.transform.hough_line</code><code style="color:#22d3bf">, normalizes it, then resizes it to the same pixel shape as the input before returning (visualized as an image rather than in the accumulator&#x27;s own coordinate system). Corresponds to HALCON&#x27;s </code><code style="color:#22d3bf">hough_line_trans</code>` (Produce the Hough transform for lines within regions.).</p>
+<p>The Hough transform accumulator for line detection. First creates an edge mask from the Sobel gradient, computes the accumulator space (angle x distance) with <code style="color:#22d3bf">skimage.transform.hough_line</code>, normalizes it, then resizes it to the same pixel shape as the input before returning (visualized as an image rather than in the accumulator&#x27;s own coordinate system). Corresponds to HALCON&#x27;s <code style="color:#22d3bf">hough_line_trans</code> (Produce the Hough transform for lines within regions.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ抽出の閾値(0.2〜0.6)を振る。</code><code style="color:#22d3bf">b</code>` は未使用。半径・角度分解能</p>
-<p>は skimage の既定値に固定されている。</p>
+<p><code style="color:#22d3bf">a</code> がエッジ抽出の閾値(0.2〜0.6)を振る。<code style="color:#22d3bf">b</code> は未使用。半径・角度分解能は skimage の既定値に固定されている。</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

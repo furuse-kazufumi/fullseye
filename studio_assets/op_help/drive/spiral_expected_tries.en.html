@@ -4,11 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spiral_expected_tries(points, capture: &#x27;float&#x27;, rho: &#x27;float&#x27;, grid: &#x27;int&#x27; = 161) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegsym; pegsym.spiral_expected_tries(points, capture: &#x27;float&#x27;, rho: &#x27;float&#x27;, grid: &#x27;int&#x27; = 161) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;spiral_expected_tries&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>横ずれが半径 `<code style="color:#22d3bf">rho</code><code style="color:#22d3bf"> の円板に一様のとき、点列 </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf"> を順に試して初めて(距離 ≤ </code><code style="color:#22d3bf">capture</code>`)捕まえるまでの期待試行回数。</p>
-<p>`<code style="color:#22d3bf">measured</code><code style="color:#22d3bf"> = 円板内の格子(grid × grid、円の外は捨てる)の平均。</code><code style="color:#22d3bf">closed</code>` = 掃いた面積の近似: k 点で面積 k·p·s を掃くので、半径 r に</p>
-<p>達するのは k = πr²/(ps)、r が円板に一様なら E = πρ²/(2ps) + 1/2(p・s は点列から推定: s = 隣の点の距離の中央値、p = 外周の点の半径の</p>
-<p>巻きあたりの増分)。どの点でも捕まらない格子点があれば `<code style="color:#22d3bf">uncovered</code>` &gt; 0(覆いの穴)。</p>
-<p><b>Raises</b> ValueError: 点が (N ≥ 3, 2) でない、capture・rho ≤ 0、grid &lt; 11。</p>
+<p>横ずれが半径 <code style="color:#22d3bf">rho</code> の円板に一様のとき、点列 <code style="color:#22d3bf">points</code> を順に試して初めて(距離 ≤ <code style="color:#22d3bf">capture</code>)捕まえるまでの期待試行回数。<code style="color:#22d3bf">measured</code> = 円板内の格子(grid × grid、円の外は捨てる)の平均。<code style="color:#22d3bf">closed</code> = 掃いた面積の近似: k 点で面積 k·p·s を掃くので、半径 r に達するのは k = πr²/(ps)、r が円板に一様なら E = πρ²/(2ps) + 1/2(p・s は点列から推定: s = 隣の点の距離の中央値、p = 外周の点の半径の巻きあたりの増分)。どの点でも捕まらない格子点があれば <code style="color:#22d3bf">uncovered</code> &gt; 0(覆いの穴)。<b>Raises</b> ValueError: 点が (N ≥ 3, 2) でない、capture・rho ≤ 0、grid &lt; 11。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

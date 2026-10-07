@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Passt einen 3-D-Thin-Plate-Spline aus Kontrollpunktkorrespondenzen an.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>移動側の制御点 `<code style="color:#22d3bf">src_ctrl</code><code style="color:#22d3bf"> を固定側 </code><code style="color:#22d3bf">dst_ctrl</code>` へ写す TPS 係数を、鞍点系</p>
-<p>を最小二乗(`<code style="color:#22d3bf">numpy.linalg.lstsq</code>`)で解いて求める。λ=0 なら制御点上で厳密に</p>
-<p>内挿(`<code style="color:#22d3bf">tps_warp(model, src_ctrl) == dst_ctrl</code>`)、λ&gt;0 で平滑化する。</p>
+<p>移動側の制御点 <code style="color:#22d3bf">src_ctrl</code> を固定側 <code style="color:#22d3bf">dst_ctrl</code> へ写す TPS 係数を、鞍点系を最小二乗(<code style="color:#22d3bf">numpy.linalg.lstsq</code>)で解いて求める。λ=0 なら制御点上で厳密に内挿(<code style="color:#22d3bf">tps_warp(model, src_ctrl) == dst_ctrl</code>)、λ&gt;0 で平滑化する。</p>
 <p>引数:</p>
 <p>src_ctrl: (K,3) 制御点(変形の始点、TPS のカーネル中心 p_i)。</p>
 <p>dst_ctrl: (K,3) 対応する目標点(変形の終点 v_i)。</p>
@@ -21,7 +19,7 @@
 <p>&quot;lam&quot;  使用した λ。</p>
 <p>例外:</p>
 <p>ValueError: 形状不一致、制御点数不足、非有限値、または制御点数が</p>
-<p>`<code style="color:#22d3bf">TPS_MAX_CTRL</code>`(10,000)超(密な (K+4)² 系は O(K³) のため。</p>
+<p><code style="color:#22d3bf">TPS_MAX_CTRL</code>(10,000)超(密な (K+4)² 系は O(K³) のため。</p>
 <p>対応点を間引いてから渡す — TPS は疎な制御点で滑らかな変形を</p>
 <p>表現するのが本来の使い方)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

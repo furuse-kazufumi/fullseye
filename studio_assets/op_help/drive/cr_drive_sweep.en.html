@@ -5,12 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>ルールベースの gap acceptance: 運転手の母数の格子を穏やかな順に試し、<b>最初に全部の門を通った走行</b> を返す。</p>
-<p>門 = ゴール到達 ∧ :func:<code style="color:#22d3bf">cr_feasible</code> ∧ :func:<code style="color:#22d3bf">cr_collision</code> で障害物なし(`<code style="color:#22d3bf">margin</code>` だけ膨らませた判定)∧ 道路境界なし。</p>
-<p>`<code style="color:#22d3bf">grid</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">{&quot;a_lat&quot;: (...), &quot;lookahead&quot;: (...), &quot;k_v&quot;: (...), &quot;v_cruise&quot;: (...)}</code>` 形式(既定 = a_lat 2.5→10、lookahead 5/8、</p>
-<p>k_v 0.6/1.0、v_cruise None)。他の kwargs は :func:<code style="color:#22d3bf">cr_drive</code> へ。</p>
-<p>返り値 ``{&quot;run&quot; (通った走行 | None), &quot;settings&quot; (その母数 | None), &quot;tries&quot;: [{&quot;settings&quot;, &quot;goal_reached&quot;, &quot;feasible&quot;,</p>
-<p>&quot;obstacle_collision&quot;, &quot;boundary_violation&quot;, &quot;first_collision&quot;}], &quot;n_tries&quot;}`<code style="color:#22d3bf">。通る物が無ければ </code><code style="color:#22d3bf">run</code>` は None(ValueError ではない)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: grid のキーが上記以外、margin &lt; 0。</p>
+<p>門 = ゴール到達 ∧ <code style="color:#22d3bf">cr_feasible</code> ∧ <code style="color:#22d3bf">cr_collision</code> で障害物なし(<code style="color:#22d3bf">margin</code> だけ膨らませた判定)∧ 道路境界なし。<code style="color:#22d3bf">grid</code> は <code style="color:#22d3bf">{&quot;a_lat&quot;: (...), &quot;lookahead&quot;: (...), &quot;k_v&quot;: (...), &quot;v_cruise&quot;: (...)}</code> 形式(既定 = a_lat 2.5→10、lookahead 5/8、k_v 0.6/1.0、v_cruise None)。他の kwargs は <code style="color:#22d3bf">cr_drive</code> へ。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;run&quot; (通った走行 | None), &quot;settings&quot; (その母数 | None), &quot;tries&quot;: [{&quot;settings&quot;, &quot;goal_reached&quot;, &quot;feasible&quot;, &quot;obstacle_collision&quot;, &quot;boundary_violation&quot;, &quot;first_collision&quot;}], &quot;n_tries&quot;}</code>。通る物が無ければ <code style="color:#22d3bf">run</code> は None(ValueError ではない)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: grid のキーが上記以外、margin &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

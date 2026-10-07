@@ -5,26 +5,26 @@
 <p><img src="fig/xmh_bernsen.png" alt="xmh_bernsen: input → output"></p>
 <p>*图为在 128×128 合成输入上实际运行的输出。左为输入，右为输出。点云以俯视散点显示(亮度 = z)，一维序列为折线，体数据为沿 z 的最大值投影，视频为中间帧，复数图像为幅值；无法成像的返回值直接显示数值。*</p>
 <p><b>扫描旋钮 a</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_bernsen.a.jpg">xmh_bernsen: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_bernsen.a.jpg">xmh_bernsen: 旋钮 a 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>扫描旋钮 b</b>(0.1 / 0.5 / 0.9，另一旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_bernsen.b.jpg">xmh_bernsen: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_bernsen.b.jpg">xmh_bernsen: 旋钮 b 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_bernsen.inputs.jpg">xmh_bernsen: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_bernsen.inputs.jpg">xmh_bernsen: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>Bernsen局部二值化（`<code style="color:#22d3bf">mahotas.thresholding.bernsen</code>`）。以邻域最大亮度与最小亮度的中间值作为局部阈值，仅在对比度低的区域回退到全局阈值。</p>
+<p>Bernsen局部二值化（<code style="color:#22d3bf">mahotas.thresholding.bernsen</code>）。以邻域最大亮度与最小亮度的中间值作为局部阈值，仅在对比度低的区域回退到全局阈值。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は近傍半径(3〜15 px)、</code><code style="color:#22d3bf">b</code>` はコントラスト閾値(5〜55。これを下回る低コントラスト域はグローバル閾値 128 で代用)を振る。濃淡ムラのある照明下でのエッジ二値化に向く。</p>
+<p><code style="color:#22d3bf">a</code> は近傍半径(3〜15 px)、<code style="color:#22d3bf">b</code> はコントラスト閾値(5〜55。これを下回る低コントラスト域はグローバル閾値 128 で代用)を振る。濃淡ムラのある照明下でのエッジ二値化に向く。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
 <p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xmh_bernsen 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xmh_bernsen%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xmh_bernsen%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xmh_bernsen 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xmh_bernsen%200.50%200.50">▸ 载入此流水线</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xmh_bernsen%200.50%200.50">载入并运行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_segmentation">gallery2d_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_segmentation.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:threshold_family_agreement">threshold_family_agreement</a> — <code style="color:#22d3bf">py -3.11 examples/threshold_family_agreement.py</code></p>

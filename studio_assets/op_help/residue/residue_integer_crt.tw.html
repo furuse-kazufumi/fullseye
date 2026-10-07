@@ -3,21 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import residue; residue.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsresidue.get(&quot;residue_integer_crt&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>精確的整數中國剩餘定理（Garner 混合基數演算法）-&gt; `<code style="color:#22d3bf">dict</code>`。</p>
+<p>精確的整數中國剩餘定理（Garner 混合基數演算法）-&gt; <code style="color:#22d3bf">dict</code>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">residues</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">moduli</code>` are equal-length integer sequences; the moduli must</p>
-<p>be pairwise coprime and &gt;= 2. Returns ``{&quot;value&quot;: int, &quot;modulus&quot;: int,</p>
-<p>&quot;mixed_radix&quot;: [digits]}`<code style="color:#22d3bf"> where </code><code style="color:#22d3bf">value</code>` is the unique solution in</p>
-<p>`<code style="color:#22d3bf">[0, prod(moduli))</code><code style="color:#22d3bf">. Arithmetic is Python&#x27;s arbitrary-precision </code><code style="color:#22d3bf">int</code>` —</p>
-<p>there is no rounding anywhere, which is why this op is the oracle for</p>
-<p>:func:<code style="color:#22d3bf">residue_crt</code>.</p>
-<p>The mixed-radix digits `<code style="color:#22d3bf">d_k</code><code style="color:#22d3bf"> satisfy </code><code style="color:#22d3bf">value = d_0 + d_1 m_0 + d_2 m_0 m_1 + ...</code>`:</p>
-<p>the *positional* (coarse-to-fine) reading of the same residues, i.e. the</p>
-<p>bridge between the residue view and the place-value view.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">residues</code> and <code style="color:#22d3bf">moduli</code> are equal-length integer sequences; the moduli must be pairwise coprime and &gt;= 2. Returns <code style="color:#22d3bf">{&quot;value&quot;: int, &quot;modulus&quot;: int, &quot;mixed_radix&quot;: [digits]}</code> where <code style="color:#22d3bf">value</code> is the unique solution in <code style="color:#22d3bf">[0, prod(moduli))</code>. Arithmetic is Python&#x27;s arbitrary-precision <code style="color:#22d3bf">int</code> — there is no rounding anywhere, which is why this op is the oracle for <code style="color:#22d3bf">residue_crt</code>.</p>
+<p>The mixed-radix digits <code style="color:#22d3bf">d_k</code> satisfy <code style="color:#22d3bf">value = d_0 + d_1 m_0 + d_2 m_0 m_1 + ...</code>:</p>
+<p>the *positional* (coarse-to-fine) reading of the same residues, i.e. the bridge between the residue view and the place-value view.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_residue_crt">poc_residue_crt</a> — <code style="color:#22d3bf">py -3.11 examples/poc_residue_crt.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

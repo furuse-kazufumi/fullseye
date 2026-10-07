@@ -11,9 +11,9 @@
 <p><b>Stages</b> (the ops that come before → this op, left to right):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_region_features.chain.jpg">r3_region_features: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Returns one shape feature of the region (implements part of HALCON `<code style="color:#22d3bf">region_features</code>`).</p>
+<p>Returns one shape feature of the region (implements part of HALCON <code style="color:#22d3bf">region_features</code>).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a &lt; 0.5</code><code style="color:#22d3bf"> なら正規化面積（前景画素数/全画素数）、</code><code style="color:#22d3bf">a &gt;= 0.5</code><code style="color:#22d3bf"> なら真円度の逆数にあたるコンパクトネス </code><code style="color:#22d3bf">P^2 / (4*pi*A)</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">P</code><code style="color:#22d3bf"> は 4 連結境界の周囲長。円で 1、正方形で約 1.27、細長いほど大きくなる）を返す。</code><code style="color:#22d3bf">b</code>` は未使用。領域が空なら 0.0。</p>
+<p><code style="color:#22d3bf">a &lt; 0.5</code> なら正規化面積（前景画素数/全画素数）、<code style="color:#22d3bf">a &gt;= 0.5</code> なら真円度の逆数にあたるコンパクトネス <code style="color:#22d3bf">P^2 / (4*pi*A)</code>（<code style="color:#22d3bf">P</code> は 4 連結境界の周囲長。円で 1、正方形で約 1.27、細長いほど大きくなる）を返す。<code style="color:#22d3bf">b</code> は未使用。領域が空なら 0.0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,17 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_layout(elements, placements)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecourse; drivecourse.course_layout(elements, placements)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;course_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>複数の要素を剛体運動 `<code style="color:#22d3bf">(x, y, yaw)</code>` で配置して 1 つの dict にする。</p>
-<p>各要素の polygon / centerline / rails / stop_lines は点として、entry / exit / signal_poses は姿勢として</p>
-<p>(yaw も回す)変換する。`<code style="color:#22d3bf">profile</code>`(坂道の (s, z))は要素の局所弧長なのでそのまま。返り値は</p>
-<p>``{&quot;kind&quot;: &quot;layout&quot;, &quot;elements&quot;: [変換済み要素(各々 &quot;placement&quot; を持つ)], &quot;polygon&quot;: None,</p>
-<p>&quot;bounds&quot;: (xmin, xmax, ymin, ymax), &quot;placements&quot;: [...]}`<code style="color:#22d3bf">。内外判定は要素の和(</code><code style="color:#22d3bf">course_contains</code>` /</p>
-<p>`<code style="color:#22d3bf">course_occupancy</code>`)。要素の重なりは和として扱う。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 要素が空・要素と配置の数が違う・要素が dict でない・配置が 3 要素で有限でない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>複数の要素を剛体運動 <code style="color:#22d3bf">(x, y, yaw)</code> で配置して 1 つの dict にする。</p>
+<p>各要素の polygon / centerline / rails / stop_lines は点として、entry / exit / signal_poses は姿勢として(yaw も回す)変換する。<code style="color:#22d3bf">profile</code>(坂道の (s, z))は要素の局所弧長なのでそのまま。返り値は <code style="color:#22d3bf">{&quot;kind&quot;: &quot;layout&quot;, &quot;elements&quot;: [変換済み要素(各々 &quot;placement&quot; を持つ)], &quot;polygon&quot;: None, &quot;bounds&quot;: (xmin, xmax, ymin, ymax), &quot;placements&quot;: [...]}</code>。内外判定は要素の和(<code style="color:#22d3bf">course_contains</code> / <code style="color:#22d3bf">course_occupancy</code>)。要素の重なりは和として扱う。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・要素と配置の数が違う・要素が dict でない・配置が 3 要素で有限でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_longitudinal">poc_driving_longitudinal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_longitudinal.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_school">poc_driving_school</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_school.py</code></p>

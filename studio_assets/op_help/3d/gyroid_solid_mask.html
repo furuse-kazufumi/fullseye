@@ -4,18 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gyroid_solid_mask(shape=(64, 64, 64), level=0.0, periods=1.0, thickness=0.3)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import render3d; render3d.gyroid_solid_mask(shape=(64, 64, 64), level=0.0, periods=1.0, thickness=0.3)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;gyroid_solid_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The gyroid as a printable <b>solid</b>: the shell within ±*thickness* of the level set.</p>
-<p>Returns a `<code style="color:#22d3bf">volume</code>` (float 0/1), so it feeds the existing voxel ops</p>
-<p>(`<code style="color:#22d3bf">vol_label</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">skeletonize_vol</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mesh_slice_stack</code>`) directly and needs</p>
-<p>no marching cubes —— this form works on bare numpy, while</p>
-<p>:func:<code style="color:#22d3bf">gyroid_isosurface</code> needs scikit-image.</p>
-<p>★<b>Why this earns its place</b>: at `<code style="color:#22d3bf">level = 0</code>` the field is odd under the</p>
-<p>body-centred inversion, so the solid fraction of the two sides is *exactly*</p>
-<p>equal —— a symmetry fact the mask can be checked against (the measured</p>
-<p>fraction above 0 converges on 0.5 as the grid refines), and the shell volume</p>
-<p>grows linearly in *thickness* for small *thickness* because the level set has</p>
-<p>finite area. Both are independent of how the field was sampled.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a grid below 8 per axis or over the cap;</p>
-<p>non-positive periods; a non-finite level; a negative thickness.</p>
+<p>Returns a <code style="color:#22d3bf">volume</code> (float 0/1), so it feeds the existing voxel ops (<code style="color:#22d3bf">vol_label</code> / <code style="color:#22d3bf">skeletonize_vol</code> / <code style="color:#22d3bf">mesh_slice_stack</code>) directly and needs no marching cubes —— this form works on bare numpy, while <code style="color:#22d3bf">gyroid_isosurface</code> needs scikit-image.</p>
+<p>★<b>Why this earns its place</b>: at <code style="color:#22d3bf">level = 0</code> the field is odd under the body-centred inversion, so the solid fraction of the two sides is *exactly* equal —— a symmetry fact the mask can be checked against (the measured fraction above 0 converges on 0.5 as the grid refines), and the shell volume grows linearly in *thickness* for small *thickness* because the level set has finite area. Both are independent of how the field was sampled.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a grid below 8 per axis or over the cap; non-positive periods; a non-finite level; a negative thickness.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

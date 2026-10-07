@@ -5,12 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Ritter のダム崩壊解(浅水方程式、乾いた床、ダムは x = 0、水は x &lt; 0)。</p>
 <p>c₀ = √(g h₀)。x ≤ −c₀ t: h = h₀、u = 0 / −c₀ t &lt; x &lt; 2c₀ t: h = (2c₀ − x/t)²/(9g)、u = (2/3)(x/t + c₀) / x ≥ 2c₀ t: h = 0。</p>
-<p>先端の近くは h ∝ (x_f − x)² で水がほとんど無い。先端から δ までの水の量は ∫₀^δ (s/t)²/(9g) ds = δ³/(27 g t²)(導出)。</p>
-<p>粒子 1 個の量 m(1 次元の SPH なら h₀Δx)を与えると、<b>最も前の粒子の居場所</b>(先端から量 m/2 の所)</p>
-<p>x_f − (27 g t² m/2)^{1/3} を `<code style="color:#22d3bf">lead_particle</code>` に返す —— 粒子法の先端は Ritter の先端より必ず遅れて見え、その遅れは</p>
-<p>この式で読める(粒子を細かくすると m^{1/3} でしか縮まない)。</p>
+<p>先端の近くは h ∝ (x_f − x)² で水がほとんど無い。先端から δ までの水の量は ∫₀^δ (s/t)²/(9g) ds = δ³/(27 g t²)(導出)。粒子 1 個の量 m(1 次元の SPH なら h₀Δx)を与えると、<b>最も前の粒子の居場所</b>(先端から量 m/2 の所) x_f − (27 g t² m/2)^{1/3} を <code style="color:#22d3bf">lead_particle</code> に返す —— 粒子法の先端は Ritter の先端より必ず遅れて見え、その遅れはこの式で読める(粒子を細かくすると m^{1/3} でしか縮まない)。</p>
 <p>Returns:</p>
-<p>dict: `<code style="color:#22d3bf">h</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">u</code><code style="color:#22d3bf">(x と同じ形)、</code><code style="color:#22d3bf">front</code><code style="color:#22d3bf"> = 2c₀ t、</code><code style="color:#22d3bf">rarefaction_head</code><code style="color:#22d3bf"> = −c₀ t、</code><code style="color:#22d3bf">c0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">lead_particle</code>`(m を与えたとき)。</p>
+<p>dict: <code style="color:#22d3bf">h</code>・<code style="color:#22d3bf">u</code>(x と同じ形)、<code style="color:#22d3bf">front</code> = 2c₀ t、<code style="color:#22d3bf">rarefaction_head</code> = −c₀ t、<code style="color:#22d3bf">c0</code>、<code style="color:#22d3bf">lead_particle</code>(m を与えたとき)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

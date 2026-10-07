@@ -3,13 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_hull(V)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import meshrepair; meshrepair.convex_hull(V)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;convex_hull&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>点群の凸包 → 外向きに向き付けした三角形の `<code style="color:#22d3bf">(V, F)</code>`。</p>
+<p>点群の凸包 → 外向きに向き付けした三角形の <code style="color:#22d3bf">(V, F)</code>。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Thin wrapper over :class:<code style="color:#22d3bf">scipy.spatial.ConvexHull</code> (Qhull): interior points</p>
-<p>are dropped, faces are triangulated, and each triangle is wound so its normal</p>
-<p>points away from the hull centroid (outward, positive signed volume) — so the</p>
-<p>result feeds straight into :func:<code style="color:#22d3bf">inertia_tensor</code> or a MuJoCo convex collider.</p>
-<p>Needs at least 4 non-coplanar points.</p>
+<p>Thin wrapper over <code style="color:#22d3bf">scipy.spatial.ConvexHull</code> (Qhull): interior points are dropped, faces are triangulated, and each triangle is wound so its normal points away from the hull centroid (outward, positive signed volume) — so the result feeds straight into <code style="color:#22d3bf">inertia_tensor</code> or a MuJoCo convex collider. Needs at least 4 non-coplanar points.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

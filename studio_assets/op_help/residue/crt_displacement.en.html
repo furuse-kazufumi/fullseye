@@ -3,34 +3,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crt_displacement(image0, image1, periods=(5.0, 7.0, 9.0, 11.0, 13.0, 16.0), sigma_px=40.0, max_disp=40.0, axis=&#x27;x&#x27;, refine=2) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import residue; residue.crt_displacement(image0, image1, periods=(5.0, 7.0, 9.0, 11.0, 13.0, 16.0), sigma_px=40.0, max_disp=40.0, axis=&#x27;x&#x27;, refine=2) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsresidue.get(&quot;crt_displacement&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Local displacement from band phases at several wavelengths, unwrapped by CRT -&gt; `<code style="color:#22d3bf">dict</code>`.</p>
-<p>A band of wavelength `<code style="color:#22d3bf">p</code><code style="color:#22d3bf"> measures the local shift only modulo </code><code style="color:#22d3bf">p</code>`, so</p>
-<p>any single-band phase method breaks at `<code style="color:#22d3bf">|d| = p/2</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">motionmag.phase_displacement</code>`</p>
-<p>reports this as `<code style="color:#22d3bf">wrap_limit_px</code>`). Bands at *coprime* wavelengths each break</p>
-<p>there too, but together they fix `<code style="color:#22d3bf">d</code>` over the least common multiple —</p>
-<p>693 px for 7/9/11 — so the limit becomes `<code style="color:#22d3bf">max_disp</code>`, the search half-width.</p>
-<p>`<code style="color:#22d3bf">image1</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">image0</code><code style="color:#22d3bf"> with its content moved by </code><code style="color:#22d3bf">d(y, x)</code><code style="color:#22d3bf"> along </code><code style="color:#22d3bf">axis</code>`</p>
-<p>(`<code style="color:#22d3bf">&quot;x&quot;</code><code style="color:#22d3bf"> = columns, </code><code style="color:#22d3bf">&quot;y&quot;</code>` = rows; positive towards increasing index). For each</p>
-<p>wavelength a Gaussian band-pass (analytic, one-sided, spatial std `<code style="color:#22d3bf">sigma_px</code>`)</p>
-<p>gives a local phase and a *local* wavelength (measured, not nominal — see</p>
-<p>`<code style="color:#22d3bf">_band_measure</code><code style="color:#22d3bf">); their phase differences are residues of </code><code style="color:#22d3bf">d</code>`; amplitude</p>
-<p>products are the weights; every pixel is solved by the phasor-agreement search</p>
-<p>of :func:<code style="color:#22d3bf">residue_crt</code>. `<code style="color:#22d3bf">refine</code><code style="color:#22d3bf"> iterations then warp </code><code style="color:#22d3bf">image1</code>` back by the</p>
-<p>current estimate and add the (now small, wrap-free) weighted residual.</p>
-<p>Returns `<code style="color:#22d3bf">{&quot;d&quot;, &quot;weight&quot;, &quot;margin&quot;, &quot;residual&quot;, &quot;valid&quot;, &quot;wrap_limit_single_px&quot;}</code>`.</p>
-<p>`<code style="color:#22d3bf">valid</code>` = enough contrast in the bands *and* a margin above 0.05; a pixel</p>
-<p>that fails is still returned but should not be trusted.</p>
-<p><b>Where it applies</b>: textured regions that each move (nearly) rigidly by a</p>
-<p>large amount — measured on two regions of the public scikit-image textures moving</p>
-<p>+20 / -15 px, pixels farther than 1.5 `<code style="color:#22d3bf">sigma_px</code>` from the region boundary are</p>
-<p>off by more than 1 px on 2 % (grass) / 5 % (gravel) / 6 % (brick), where the</p>
-<p>best pyramid Lucas-Kanade (3-6 levels) is off on 49 / 50 / 67 %.</p>
-<p><b>Where it does not</b>: within ~1.5 `<code style="color:#22d3bf">sigma_px</code>` of a motion boundary; where the</p>
-<p>displacement changes inside the window (a 6 px field with gradient 0.07 is</p>
-<p>already off on half the pixels — a band narrow enough to keep the local</p>
-<p>frequency stable needs a window too wide to follow the field); flat regions</p>
-<p>(`<code style="color:#22d3bf">weight</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">valid</code>` say where); occlusions. A single global translation is</p>
-<p>better served by phase correlation. Numbers: `<code style="color:#22d3bf">examples/poc_residue_crt.py</code>`.</p>
+<p>Local displacement from band phases at several wavelengths, unwrapped by CRT -&gt; <code style="color:#22d3bf">dict</code>.</p>
+<p>A band of wavelength <code style="color:#22d3bf">p</code> measures the local shift only modulo <code style="color:#22d3bf">p</code>, so any single-band phase method breaks at <code style="color:#22d3bf">|d| = p/2</code> (<code style="color:#22d3bf">motionmag.phase_displacement</code> reports this as <code style="color:#22d3bf">wrap_limit_px</code>). Bands at *coprime* wavelengths each break there too, but together they fix <code style="color:#22d3bf">d</code> over the least common multiple — 693 px for 7/9/11 — so the limit becomes <code style="color:#22d3bf">max_disp</code>, the search half-width.</p>
+<p><code style="color:#22d3bf">image1</code> is <code style="color:#22d3bf">image0</code> with its content moved by <code style="color:#22d3bf">d(y, x)</code> along <code style="color:#22d3bf">axis</code> (<code style="color:#22d3bf">&quot;x&quot;</code> = columns, <code style="color:#22d3bf">&quot;y&quot;</code> = rows; positive towards increasing index). For each wavelength a Gaussian band-pass (analytic, one-sided, spatial std <code style="color:#22d3bf">sigma_px</code>) gives a local phase and a *local* wavelength (measured, not nominal — see <code style="color:#22d3bf">_band_measure</code>); their phase differences are residues of <code style="color:#22d3bf">d</code>; amplitude products are the weights; every pixel is solved by the phasor-agreement search</p>
+<p>of <code style="color:#22d3bf">residue_crt</code>. <code style="color:#22d3bf">refine</code> iterations then warp <code style="color:#22d3bf">image1</code> back by the current estimate and add the (now small, wrap-free) weighted residual.</p>
+<p>Returns <code style="color:#22d3bf">{&quot;d&quot;, &quot;weight&quot;, &quot;margin&quot;, &quot;residual&quot;, &quot;valid&quot;, &quot;wrap_limit_single_px&quot;}</code>. <code style="color:#22d3bf">valid</code> = enough contrast in the bands *and* a margin above 0.05; a pixel that fails is still returned but should not be trusted.</p>
+<p><b>Where it applies</b>: textured regions that each move (nearly) rigidly by a large amount — measured on two regions of the public scikit-image textures moving +20 / -15 px, pixels farther than 1.5 <code style="color:#22d3bf">sigma_px</code> from the region boundary are off by more than 1 px on 2 % (grass) / 5 % (gravel) / 6 % (brick), where the best pyramid Lucas-Kanade (3-6 levels) is off on 49 / 50 / 67 %.</p>
+<p><b>Where it does not</b>: within ~1.5 <code style="color:#22d3bf">sigma_px</code> of a motion boundary; where the displacement changes inside the window (a 6 px field with gradient 0.07 is already off on half the pixels — a band narrow enough to keep the local frequency stable needs a window too wide to follow the field); flat regions (<code style="color:#22d3bf">weight</code> and <code style="color:#22d3bf">valid</code> say where); occlusions. A single global translation is better served by phase correlation. Numbers: <code style="color:#22d3bf">examples/poc_residue_crt.py</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

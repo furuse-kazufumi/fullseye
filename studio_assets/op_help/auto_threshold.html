@@ -8,15 +8,11 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/auto_threshold.inputs.jpg">auto_threshold: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/auto_threshold.inputs.jpg">auto_threshold: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>実装は `<code style="color:#22d3bf">binary_threshold</code>` と同一(Otsu の判別分析法による自動</p>
-<p>しきい値化)。HALCON の `<code style="color:#22d3bf">auto_threshold</code>`（Segment an image using</p>
-<p>thresholds determined from its histogram.）は本来ヒストグラムの複数の谷</p>
-<p>から<b>複数のしきい値</b>(多クラス分割)を決める演算子だが、この代役では</p>
-<p>単一の Otsu しきい値による二値化に単純化している(近似の限界)。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>実装は <code style="color:#22d3bf">binary_threshold</code> と同一(Otsu の判別分析法による自動しきい値化)。HALCON の <code style="color:#22d3bf">auto_threshold</code>（Segment an image using thresholds determined from its histogram.）は本来ヒストグラムの複数の谷から<b>複数のしきい値</b>(多クラス分割)を決める演算子だが、この代役では単一の Otsu しきい値による二値化に単純化している(近似の限界)。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation ファミリ ガイド</a></p>
@@ -26,7 +22,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">auto_threshold 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:auto_threshold%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:auto_threshold%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">auto_threshold 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:auto_threshold%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:auto_threshold%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_segmentation">gallery2d_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_segmentation.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_electrode_breathing">poc_battery_electrode_breathing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_electrode_breathing.py</code></p>

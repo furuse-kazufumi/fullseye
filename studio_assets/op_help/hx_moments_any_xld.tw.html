@@ -8,29 +8,25 @@
 <p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_moments_any_xld.chain.jpg">hx_moments_any_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_moments_any_xld.chain.jpg">hx_moments_any_xld: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>全部 contour 點的二階中心矩(展佈),正規化 feature。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>contour dict の全点をまとめ、重心からの二乗距離の平均 `<code style="color:#22d3bf">mean((row - mean_row)^2 + (col - mean_col)^2)</code>`</p>
-<p>(2 次中心モーメント `<code style="color:#22d3bf">mu20 + mu02</code><code style="color:#22d3bf"> を点数で割ったもの)を </code><code style="color:#22d3bf">max(H, W)^2</code>` で割り、1 で頭打ちした</p>
-<p>`<code style="color:#22d3bf">np.float64</code>` で返す。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>contour dict の全点をまとめ、重心からの二乗距離の平均 <code style="color:#22d3bf">mean((row - mean_row)^2 + (col - mean_col)^2)</code> (2 次中心モーメント <code style="color:#22d3bf">mu20 + mu02</code> を点数で割ったもの)を <code style="color:#22d3bf">max(H, W)^2</code> で割り、1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <p style="margin:2px 0 2px 12px">• 点が 2 個未満なら 0.0。</p>
-<p>「点群が重心からどれだけ広がっているか」の等方的な指標で、向きや縦横比は含まない。輪郭の点密度に依存するので、</p>
-<p>同じ図形でも点の刻みが不均一だと値が変わる。向き付きの慣性(長軸・短軸)は `<code style="color:#22d3bf">hx_fit_ellipse_contour</code>` /</p>
-<p>`<code style="color:#22d3bf">elliptic_axis_xld</code><code style="color:#22d3bf">、region の 2 次モーメントは </code><code style="color:#22d3bf">moments_region_2nd</code>`。</p>
+<p>「点群が重心からどれだけ広がっているか」の等方的な指標で、向きや縦横比は含まない。輪郭の点密度に依存するので、同じ図形でも点の刻みが不均一だと値が変わる。向き付きの慣性(長軸・短軸)は <code style="color:#22d3bf">hx_fit_ellipse_contour</code> / <code style="color:#22d3bf">elliptic_axis_xld</code>、region の 2 次モーメントは <code style="color:#22d3bf">moments_region_2nd</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-hx_moments_any_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_moments_any_xld%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_moments_any_xld%200.50%200.50">Load &amp; run</a></p>
+hx_moments_any_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_moments_any_xld%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_moments_any_xld%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">feature</code> 作為輸入)</h3>

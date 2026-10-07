@@ -5,48 +5,18 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>균일하게 표본화한 원</b> 위의 로랑(및 테일러) 계수 —— 유수 포함.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>For `<code style="color:#22d3bf">f</code><code style="color:#22d3bf"> holomorphic on an annulus around </code><code style="color:#22d3bf">c</code>`,</p>
-<p>`<code style="color:#22d3bf">f(z) = sum_k c_k (z - c)^k</code>` with</p>
-<p>`<code style="color:#22d3bf">c_k = 1/(2*pi*i) ∮ f(zeta)/(zeta - c)^(k+1) dzeta</code>`. On a circle of</p>
-<p>radius `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> sampled at </code><code style="color:#22d3bf">n</code>` equally spaced angles this becomes a discrete</p>
-<p>Fourier sum, `<code style="color:#22d3bf">c_k = (1/(n r^k)) sum_j f_j exp(-i k theta_j)</code>` — the</p>
-<p>trapezoidal rule in the angle, where it converges <b>geometrically</b> rather</p>
-<p>than as `<code style="color:#22d3bf">O(n^-2)</code>` (Trefethen &amp; Weideman 2014, &quot;The exponentially</p>
-<p>convergent trapezoidal rule&quot;).</p>
-<p>`<code style="color:#22d3bf">c_-1</code><code style="color:#22d3bf"> **is the residue** at </code><code style="color:#22d3bf">c</code><code style="color:#22d3bf"> (when </code><code style="color:#22d3bf">c</code>` is the only singularity</p>
-<p>inside), `<code style="color:#22d3bf">c_k</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">k &gt;= 0</code>` are the Taylor coefficients</p>
-<p>`<code style="color:#22d3bf">f^(k)(c)/k!</code><code style="color:#22d3bf">, and a non-zero </code><code style="color:#22d3bf">c_-m</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">m &gt; 1</code>` reveals a pole of</p>
-<p>order `<code style="color:#22d3bf">m</code><code style="color:#22d3bf">. Measured on the unit circle with </code><code style="color:#22d3bf">f = 1/(z - 0.5)</code>`,</p>
-<p>`<code style="color:#22d3bf">n = 64</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">c_-1 = 1</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">c_-2 = 0.5</code>` to 1e-16 (machine precision).</p>
-<p>Returns a dict: `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> (int64 orders, </code><code style="color:#22d3bf">kmin..kmax</code><code style="color:#22d3bf">) · </code><code style="color:#22d3bf">c</code>` (complex128</p>
-<p>coefficients) · `<code style="color:#22d3bf">center</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">radius</code>`. The centre is the sample mean,</p>
-<p>which is exact for a uniformly sampled circle.</p>
-<p><b>Orientation, and how it differs from the rest of the family</b>: the sum</p>
-<p>runs over the sample *set*, not the sample *order*, so this op always</p>
-<p>returns the coefficients of the positively oriented circle — the standard</p>
-<p>definition — whatever order the points arrive in. Feed a clockwise circle</p>
-<p>and `<code style="color:#22d3bf">c_-1</code><code style="color:#22d3bf"> still comes back </code><code style="color:#22d3bf">+</code>` the residue, while</p>
-<p>`<code style="color:#22d3bf">cplx_contour_integral / (2*pi*i)</code><code style="color:#22d3bf"> on the same points returns </code><code style="color:#22d3bf">-</code>` it</p>
-<p>(verified). Both are right; they answer different questions (the intrinsic</p>
-<p>coefficient vs the integral along *this* traversal). Do not cross-check one</p>
-<p>against the other without fixing the orientation first.</p>
-<p>Honest limitation — <b>aliasing</b>: the discrete sum cannot distinguish</p>
-<p>`<code style="color:#22d3bf">c_k</code><code style="color:#22d3bf"> from </code><code style="color:#22d3bf">c_{k+n}</code>`, so a coefficient carries the alias sum</p>
-<p>`<code style="color:#22d3bf">sum_m c_{k+m n} r^{m n}</code>`. That is negligible for a rapidly converging</p>
-<p>series (the `<code style="color:#22d3bf">0.5^64</code>` term above) and ruinous near the annulus boundary.</p>
-<p>Requesting more than `<code style="color:#22d3bf">n</code>` coefficients is refused for the same reason.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the samples are not a uniformly spaced circle</p>
-<p>(unequal radii or unequal angular gaps beyond `<code style="color:#22d3bf">1e-8</code>` relative — this op</p>
-<p>is *not* valid on an arbitrary contour, and silently pretending otherwise</p>
-<p>would return numbers that mean nothing), `<code style="color:#22d3bf">kmin &gt; kmax</code><code style="color:#22d3bf">, more than </code><code style="color:#22d3bf">n</code>`</p>
-<p>coefficients requested, non-integer orders, and a coefficient that</p>
-<p>overflowed (`<code style="color:#22d3bf">r^-k</code>` for a small radius and a large negative order).</p>
+<p>For <code style="color:#22d3bf">f</code> holomorphic on an annulus around <code style="color:#22d3bf">c</code>, <code style="color:#22d3bf">f(z) = sum_k c_k (z - c)^k</code> with <code style="color:#22d3bf">c_k = 1/(2*pi*i) ∮ f(zeta)/(zeta - c)^(k+1) dzeta</code>. On a circle of radius <code style="color:#22d3bf">r</code> sampled at <code style="color:#22d3bf">n</code> equally spaced angles this becomes a discrete Fourier sum, <code style="color:#22d3bf">c_k = (1/(n r^k)) sum_j f_j exp(-i k theta_j)</code> — the trapezoidal rule in the angle, where it converges <b>geometrically</b> rather than as <code style="color:#22d3bf">O(n^-2)</code> (Trefethen &amp; Weideman 2014, &quot;The exponentially convergent trapezoidal rule&quot;).</p>
+<p><code style="color:#22d3bf">c_-1</code> <b>is the residue</b> at <code style="color:#22d3bf">c</code> (when <code style="color:#22d3bf">c</code> is the only singularity inside), <code style="color:#22d3bf">c_k</code> for <code style="color:#22d3bf">k &gt;= 0</code> are the Taylor coefficients <code style="color:#22d3bf">f^(k)(c)/k!</code>, and a non-zero <code style="color:#22d3bf">c_-m</code> for <code style="color:#22d3bf">m &gt; 1</code> reveals a pole of order <code style="color:#22d3bf">m</code>. Measured on the unit circle with <code style="color:#22d3bf">f = 1/(z - 0.5)</code>, <code style="color:#22d3bf">n = 64</code>: <code style="color:#22d3bf">c_-1 = 1</code> and <code style="color:#22d3bf">c_-2 = 0.5</code> to 1e-16 (machine precision).</p>
+<p>Returns a dict: <code style="color:#22d3bf">k</code> (int64 orders, <code style="color:#22d3bf">kmin..kmax</code>) · <code style="color:#22d3bf">c</code> (complex128 coefficients) · <code style="color:#22d3bf">center</code> · <code style="color:#22d3bf">radius</code>. The centre is the sample mean, which is exact for a uniformly sampled circle.</p>
+<p><b>Orientation, and how it differs from the rest of the family</b>: the sum runs over the sample *set*, not the sample *order*, so this op always returns the coefficients of the positively oriented circle — the standard definition — whatever order the points arrive in. Feed a clockwise circle and <code style="color:#22d3bf">c_-1</code> still comes back <code style="color:#22d3bf">+</code> the residue, while <code style="color:#22d3bf">cplx_contour_integral / (2*pi*i)</code> on the same points returns <code style="color:#22d3bf">-</code> it (verified). Both are right; they answer different questions (the intrinsic coefficient vs the integral along *this* traversal). Do not cross-check one against the other without fixing the orientation first.</p>
+<p>Honest limitation — <b>aliasing</b>: the discrete sum cannot distinguish <code style="color:#22d3bf">c_k</code> from <code style="color:#22d3bf">c_{k+n}</code>, so a coefficient carries the alias sum <code style="color:#22d3bf">sum_m c_{k+m n} r^{m n}</code>. That is negligible for a rapidly converging series (the <code style="color:#22d3bf">0.5^64</code> term above) and ruinous near the annulus boundary. Requesting more than <code style="color:#22d3bf">n</code> coefficients is refused for the same reason.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: the samples are not a uniformly spaced circle (unequal radii or unequal angular gaps beyond <code style="color:#22d3bf">1e-8</code> relative — this op is *not* valid on an arbitrary contour, and silently pretending otherwise would return numbers that mean nothing), <code style="color:#22d3bf">kmin &gt; kmax</code>, more than <code style="color:#22d3bf">n</code> coefficients requested, non-integer orders, and a coefficient that overflowed (<code style="color:#22d3bf">r^-k</code> for a small radius and a large negative order).</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
-<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
-<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code></b> —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
 <p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

@@ -5,13 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>幾何学的な押し込み(弾性の裾なし)の真の高さ: 接触円の内側 h(r) = −(√(R² − r²) − √(R² − a²))、外側 0(a は min(a, R))。</p>
-<p>返り: `<code style="color:#22d3bf">h</code><code style="color:#22d3bf"> (H, W) [m]、</code><code style="color:#22d3bf">delta</code><code style="color:#22d3bf">(中心の深さ [m] = R − √(R² − a²))、</code><code style="color:#22d3bf">shape_rel</code>`(h(r) − h(0) = R − √(R² − r²) [m]、a に</p>
-<p>依らない形、外側は nan)、`<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> [px]。</code><code style="color:#22d3bf">pitch</code>` [m/px]。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: shape・centre の形、a・R・pitch ≤ 0。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>返り: <code style="color:#22d3bf">h</code> (H, W) [m]、<code style="color:#22d3bf">delta</code>(中心の深さ [m] = R − √(R² − a²))、<code style="color:#22d3bf">shape_rel</code>(h(r) − h(0) = R − √(R² − r²) [m]、a に依らない形、外側は nan)、<code style="color:#22d3bf">r</code> [px]。<code style="color:#22d3bf">pitch</code> [m/px]。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: shape・centre の形、a・R・pitch ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacscalib_sphere_lut">poc_tacscalib_sphere_lut</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacscalib_sphere_lut.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

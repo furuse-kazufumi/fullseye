@@ -4,14 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code>、台帳から引くなら <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>エントロピー正則化つき最適輸送の計画(Cuturi, NIPS 2013)。</p>
-<p><b>厳密解ではない。</b> `<code style="color:#22d3bf">reg</code>` を小さくすると厳密解に近づくが、同時に</p>
-<p>数値的に不安定になる(指数がアンダーフローする)。`<code style="color:#22d3bf">reg</code>` を下げると</p>
-<p>厳密解との差が縮むこと自体をテストで固定してある。</p>
-<p>Returns</p>
-<p>-------</p>
+<p><b>厳密解ではない。</b> <code style="color:#22d3bf">reg</code> を小さくすると厳密解に近づくが、同時に数値的に不安定になる(指数がアンダーフローする)。<code style="color:#22d3bf">reg</code> を下げると厳密解との差が縮むこと自体をテストで固定してある。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>`<code style="color:#22d3bf">(n, m)</code><code style="color:#22d3bf"> の輸送計画。行和・列和は </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">b</code>` に一致する</p>
-<p>(`<code style="color:#22d3bf">tol</code><code style="color:#22d3bf"> まで)。収束しなければ </code><code style="color:#22d3bf">RuntimeError</code>` ―― 収束しないまま</p>
+<p><code style="color:#22d3bf">(n, m)</code> の輸送計画。行和・列和は <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code> に一致する</p>
+<p>(<code style="color:#22d3bf">tol</code> まで)。収束しなければ <code style="color:#22d3bf">RuntimeError</code> ―― 収束しないまま</p>
 <p>最後の反復を返すと、行和が合っていない計画が黙って下流へ流れる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>

@@ -5,14 +5,14 @@
 <p><img src="fig/aug_fixed_pattern.png" alt="aug_fixed_pattern: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_fixed_pattern.a.jpg">aug_fixed_pattern: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_fixed_pattern.a.jpg">aug_fixed_pattern: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_fixed_pattern.b.jpg">aug_fixed_pattern: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_fixed_pattern.b.jpg">aug_fixed_pattern: Regler b durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_fixed_pattern.inputs.jpg">aug_fixed_pattern: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_fixed_pattern.inputs.jpg">aug_fixed_pattern: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Festmusterrauschen (FPN / Photoresponse-Nichtuniformität). Im Gegensatz zum Ausleserauschen ist dieses Muster über die Frames hinweg STATISCH: ein Offset pro Spalte plus ein Offset pro Zeile, jeweils einmal gezogen und beibehalten. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> legt die Amplitude </code><code style="color:#22d3bf">0,02 + 0,2*a</code><code style="color:#22d3bf"> fest; </code><code style="color:#22d3bf">b</code>` wählt aus, WELCHES Festmuster verwendet wird (der Generator wird ausschließlich aus b geseedet, sodass ein Durchlaufen von a nur die Stärke eines Musters ändert). Das spalten-basierte FPN dominiert (Gewicht 2/3), wie es bei CMOS-Sensoren mit spaltenparallelen ADCs der Fall ist.</p>
+<p>Festmusterrauschen (FPN / Photoresponse-Nichtuniformität). Im Gegensatz zum Ausleserauschen ist dieses Muster über die Frames hinweg STATISCH: ein Offset pro Spalte plus ein Offset pro Zeile, jeweils einmal gezogen und beibehalten. <code style="color:#22d3bf">a</code> legt die Amplitude <code style="color:#22d3bf">0,02 + 0,2*a</code> fest; <code style="color:#22d3bf">b</code> wählt aus, WELCHES Festmuster verwendet wird (der Generator wird ausschließlich aus b geseedet, sodass ein Durchlaufen von a nur die Stärke eines Musters ändert). Das spalten-basierte FPN dominiert (Gewicht 2/3), wie es bei CMOS-Sensoren mit spaltenparallelen ADCs der Fall ist.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -21,7 +21,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">aug_fixed_pattern 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:aug_fixed_pattern%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:aug_fixed_pattern%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">aug_fixed_pattern 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:aug_fixed_pattern%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:aug_fixed_pattern%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_color_artistic">gallery2d_color_artistic</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_color_artistic.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sim2real_and_alife">sim2real_and_alife</a> — <code style="color:#22d3bf">py -3.11 examples/sim2real_and_alife.py</code></p>

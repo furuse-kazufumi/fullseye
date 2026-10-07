@@ -3,10 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">shift</code> → <code style="color:#22d3bf">vector</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shift_to_vector(shift)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.shift_to_vector(shift)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;shift_to_vector&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>An integer shift `<code style="color:#22d3bf">(dz, dy, dx)</code><code style="color:#22d3bf"> → a </code><code style="color:#22d3bf">vector (3,)</code><code style="color:#22d3bf">. The exit from </code><code style="color:#22d3bf">shift</code>` (<b>invertible</b>).</p>
+<p>An integer shift <code style="color:#22d3bf">(dz, dy, dx)</code> → a <code style="color:#22d3bf">vector (3,)</code>. The exit from <code style="color:#22d3bf">shift</code> (<b>invertible</b>).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">match_phase_3d</code><code style="color:#22d3bf"> は整数 3-tuple を返す。</code><code style="color:#22d3bf">vector</code>` へ載せると</p>
-<p>`<code style="color:#22d3bf">points</code><code style="color:#22d3bf"> 語彙へ繋がる(</code><code style="color:#22d3bf">vector -&gt; points</code>` の既存 op がある)。</p>
+<p><code style="color:#22d3bf">match_phase_3d</code> は整数 3-tuple を返す。<code style="color:#22d3bf">vector</code> へ載せると <code style="color:#22d3bf">points</code> 語彙へ繋がる(<code style="color:#22d3bf">vector -&gt; points</code> の既存 op がある)。</p>
 <p>Args:</p>
 <p>shift: 長さ 3 の整数列 (dz, dy, dx)。</p>
 <p>Returns:</p>

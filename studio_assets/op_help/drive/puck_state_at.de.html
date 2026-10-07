@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_state_at(pred: &#x27;dict&#x27;, t) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.puck_state_at(pred: &#x27;dict&#x27;, t) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;puck_state_at&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>:func:<code style="color:#22d3bf">puck_slide_predict</code> の経路上の位置と速度を時刻 t(スカラーか (N,))で。終端より後は終端の状態のまま(位置は動かない、速度は終端の値 = 止まっていれば 0)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;p&quot; (N,2), &quot;v&quot; (N,2)}</code>`。</p>
+<p><code style="color:#22d3bf">puck_slide_predict</code> の経路上の位置と速度を時刻 t(スカラーか (N,))で。終端より後は終端の状態のまま(位置は動かない、速度は終端の値 = 止まっていれば 0)。返り値 <code style="color:#22d3bf">{&quot;p&quot; (N,2), &quot;v&quot; (N,2)}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

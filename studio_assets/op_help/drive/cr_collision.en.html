@@ -5,11 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>障害物との衝突(矩形同士の SAT、time_step ごと)と道路境界(車両 4 角が lanelet 多角形の和集合に入るか)。</p>
-<p>`<code style="color:#22d3bf">lanelets=&quot;all&quot;</code><code style="color:#22d3bf">(既定)は場面の全 lanelet(採点器の boundary_collision と同じ範囲)、</code><code style="color:#22d3bf">&quot;route&quot;</code>` は経路の lanelet だけ。</p>
-<p>`<code style="color:#22d3bf">margin</code>` は障害物の SAT を膨らませる距離(m)。</p>
-<p>返り値 ``{&quot;obstacle_collision&quot;, &quot;first_collision&quot;: (time_step, obstacle_id) | None, &quot;boundary_violation&quot;,</p>
-<p>&quot;first_outside&quot;: time_step | None, &quot;n_collisions&quot;, &quot;n_outside&quot;}``。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: scene / run が不正、lanelets が &quot;all&quot;/&quot;route&quot; 以外、margin &lt; 0。</p>
+<p><code style="color:#22d3bf">lanelets=&quot;all&quot;</code>(既定)は場面の全 lanelet(採点器の boundary_collision と同じ範囲)、<code style="color:#22d3bf">&quot;route&quot;</code> は経路の lanelet だけ。<code style="color:#22d3bf">margin</code> は障害物の SAT を膨らませる距離(m)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;obstacle_collision&quot;, &quot;first_collision&quot;: (time_step, obstacle_id) | None, &quot;boundary_violation&quot;, &quot;first_outside&quot;: time_step | None, &quot;n_collisions&quot;, &quot;n_outside&quot;}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: scene / run が不正、lanelets が &quot;all&quot;/&quot;route&quot; 以外、margin &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

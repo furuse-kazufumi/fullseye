@@ -7,39 +7,24 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_free_transform.chain.jpg">tb_specular_free_transform: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_free_transform.chain.jpg">tb_specular_free_transform: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_free_transform.inputs.jpg">tb_specular_free_transform: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_free_transform.inputs.jpg">tb_specular_free_transform: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Herausprojizieren der Beleuchtungsrichtung: der Teil des Bildes, den ein Glanzlicht nicht erreichen kann. → (H, W, 3).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">I - (I.G) G</code><code style="color:#22d3bf"> for the unit illuminant colour </code><code style="color:#22d3bf">G</code>`. Under the dichromatic</p>
-<p>model the interface term is `<code style="color:#22d3bf">m_s * G</code>`, so it lies entirely in the removed</p>
-<p>direction and the result is <b>invariant to any specular term whatsoever</b> —</p>
-<p>exactly, for any lobe shape, any strength, any spatial pattern. That is the</p>
-<p>specular-invariant subspace of Mallick et al. (2005); this operator is the</p>
-<p>projection itself, with no rotation into named channels, so it stays in RGB</p>
-<p>and composes with the rest of the family.</p>
-<p>Use it when the *shape* of the specular lobe is unknown or the surface is</p>
-<p>textured — feature matching, edge detection and correlation all work in this</p>
-<p>subspace without any of the assumptions</p>
-<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> needs.</p>
-<p><b>This is a projection, not a picture.</b> The result loses one of three</p>
-<p>degrees of freedom (its component along `<code style="color:#22d3bf">G</code>` is exactly zero everywhere)</p>
-<p>and, for an image with negative values after black-level subtraction, keeps</p>
-<p>them. It is not a displayable &quot;highlight-removed photo&quot; and does not claim</p>
-<p>to be; for that, use :func:<code style="color:#22d3bf">specular_diffuse_split</code>.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image_rgb* is not a valid </code><code style="color:#22d3bf">(H, W, 3)</code>` linear</p>
-<p>RGB image (see :func:<code style="color:#22d3bf">specular_diffuse_split</code>); *illuminant_rgb* is not a</p>
-<p>non-zero 3-vector.</p>
-<p>Typed bridge of the specular op `<code style="color:#22d3bf">specular_free_transform</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p><code style="color:#22d3bf">I - (I.G) G</code> for the unit illuminant colour <code style="color:#22d3bf">G</code>. Under the dichromatic model the interface term is <code style="color:#22d3bf">m_s * G</code>, so it lies entirely in the removed direction and the result is <b>invariant to any specular term whatsoever</b> — exactly, for any lobe shape, any strength, any spatial pattern. That is the specular-invariant subspace of Mallick et al. (2005); this operator is the projection itself, with no rotation into named channels, so it stays in RGB and composes with the rest of the family.</p>
+<p>Use it when the *shape* of the specular lobe is unknown or the surface is textured — feature matching, edge detection and correlation all work in this subspace without any of the assumptions <code style="color:#22d3bf">specular_diffuse_split</code> needs.</p>
+<p><b>This is a projection, not a picture.</b> The result loses one of three degrees of freedom (its component along <code style="color:#22d3bf">G</code> is exactly zero everywhere) and, for an image with negative values after black-level subtraction, keeps them. It is not a displayable &quot;highlight-removed photo&quot; and does not claim to be; for that, use <code style="color:#22d3bf">specular_diffuse_split</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *image_rgb* is not a valid <code style="color:#22d3bf">(H, W, 3)</code> linear RGB image (see <code style="color:#22d3bf">specular_diffuse_split</code>); *illuminant_rgb* is not a non-zero 3-vector.</p>
+<p>Typed bridge of the specular op <code style="color:#22d3bf">specular_free_transform</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_rgb 0.50 0.50
-tb_specular_free_transform 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_specular_free_transform%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_specular_free_transform%200.50%200.50">Load &amp; run</a></p>
+tb_specular_free_transform 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_specular_free_transform%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_specular_free_transform%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">specular_free_transform</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_leaf_disease_area">poc_leaf_disease_area</a> — <code style="color:#22d3bf">py -3.11 examples/poc_leaf_disease_area.py</code></p>

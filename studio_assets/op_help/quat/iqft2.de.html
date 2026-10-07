@@ -5,23 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Inverse Quaternionen-Fourier-Transformation eines <b>zentrierten</b> Spektrums. → (H, W, 4).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The exact inverse of :func:<code style="color:#22d3bf">qft2</code> <b>for the same side and the same mu</b>:</p>
-<p>measured round-trip error `<code style="color:#22d3bf">2.22e-15</code>` for both sides on a standard-normal</p>
-<p>`<code style="color:#22d3bf">(32, 32, 4)</code><code style="color:#22d3bf"> field. The kernel is </code><code style="color:#22d3bf">exp(+mu * 2*pi*(...))</code>` applied on the</p>
-<p>side named, and the `<code style="color:#22d3bf">1/(H*W)</code>` normalisation is carried here, as in</p>
-<p>`<code style="color:#22d3bf">numpy.fft.ifft2</code>`.</p>
-<p><b>Using the wrong side does not raise.</b> `<code style="color:#22d3bf">iqft2(qft2(q, &quot;left&quot;), &quot;right&quot;)</code>`</p>
-<p>returns a finite, plausible quaternion image that is simply not `<code style="color:#22d3bf">q</code>`:</p>
-<p>measured `<code style="color:#22d3bf">max|err| = 1.113</code>` on a random colour image whose own range is</p>
-<p>`<code style="color:#22d3bf">0.9994</code><code style="color:#22d3bf"> (another seed: 1.063 against 1.0), and — the dangerous case — only </code><code style="color:#22d3bf">0.054</code>` against a range of</p>
-<p>`<code style="color:#22d3bf">1.076</code>` on a grey-axis-dominated one, which is small enough to survive a</p>
-<p>look at the picture. The `<code style="color:#22d3bf">side</code>` argument is required at both ends for</p>
-<p>exactly this reason, and the two calls must agree: nothing in the data</p>
-<p>records which transform produced it, so nothing downstream can catch the</p>
-<p>mismatch for you.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *spectrum* is not a valid </code><code style="color:#22d3bf">(H, W, 4)</code>` field;</p>
-<p>*side* is not `<code style="color:#22d3bf">&#x27;left&#x27;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&#x27;right&#x27;</code>`; *mu* is not a finite non-zero</p>
-<p>3-vector.</p>
+<p>The exact inverse of <code style="color:#22d3bf">qft2</code> <b>for the same side and the same mu</b>:</p>
+<p>measured round-trip error <code style="color:#22d3bf">2.22e-15</code> for both sides on a standard-normal <code style="color:#22d3bf">(32, 32, 4)</code> field. The kernel is <code style="color:#22d3bf">exp(+mu * 2*pi*(...))</code> applied on the side named, and the <code style="color:#22d3bf">1/(H*W)</code> normalisation is carried here, as in <code style="color:#22d3bf">numpy.fft.ifft2</code>.</p>
+<p><b>Using the wrong side does not raise.</b> <code style="color:#22d3bf">iqft2(qft2(q, &quot;left&quot;), &quot;right&quot;)</code> returns a finite, plausible quaternion image that is simply not <code style="color:#22d3bf">q</code>:</p>
+<p>measured <code style="color:#22d3bf">max|err| = 1.113</code> on a random colour image whose own range is <code style="color:#22d3bf">0.9994</code> (another seed: 1.063 against 1.0), and — the dangerous case — only <code style="color:#22d3bf">0.054</code> against a range of <code style="color:#22d3bf">1.076</code> on a grey-axis-dominated one, which is small enough to survive a look at the picture. The <code style="color:#22d3bf">side</code> argument is required at both ends for exactly this reason, and the two calls must agree: nothing in the data records which transform produced it, so nothing downstream can catch the mismatch for you.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *spectrum* is not a valid <code style="color:#22d3bf">(H, W, 4)</code> field; *side* is not <code style="color:#22d3bf">&#x27;left&#x27;</code> / <code style="color:#22d3bf">&#x27;right&#x27;</code>; *mu* is not a finite non-zero 3-vector.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">Leitfaden zur Familie quaternion_monogenic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -5,14 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Statistisches Region Merging SRM (Nock–Nielsen 2004): verarbeitet Paare benachbarter Pixel aufsteigend nach |I_p − I_q| und verschmilzt sie, wenn das Prädikat P(R, R&#x27;) gilt (statistical_region_merging).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>画素の値は `<code style="color:#22d3bf">value_range</code>` を [0, g − 1] に線形に写して使う(範囲の外の値は ValueError)。</p>
-<p>P(R, R&#x27;) ⇔ |R̄ − R̄&#x27;| ≤ √(b²(R) + b²(R&#x27;))、b(R) = g √(ln(|R_|R||/δ) / (2Q|R|))、ln|R_l| = min(l, g) ln(l + 1)、</p>
-<p>δ = 1/(6|I|²)(述語の係数は <b>要確認</b>、モジュールの説明参照)。Q(`<code style="color:#22d3bf">q</code>`)が大きいほど b が小さく、併合を渋る(細かい)。</p>
-<p>返す: `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..k)、</code><code style="color:#22d3bf">n_regions</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">means</code><code style="color:#22d3bf">(領域ごとの平均、元の値の尺度)、</code><code style="color:#22d3bf">n_merges</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">q</code>`。</p>
+<p>画素の値は <code style="color:#22d3bf">value_range</code> を [0, g − 1] に線形に写して使う(範囲の外の値は ValueError)。P(R, R&#x27;) ⇔ |R̄ − R̄&#x27;| ≤ √(b²(R) + b²(R&#x27;))、b(R) = g √(ln(|R_|R||/δ) / (2Q|R|))、ln|R_l| = min(l, g) ln(l + 1)、δ = 1/(6|I|²)(述語の係数は <b>要確認</b>、モジュールの説明参照)。Q(<code style="color:#22d3bf">q</code>)が大きいほど b が小さく、併合を渋る(細かい)。</p>
+<p>返す: <code style="color:#22d3bf">labels</code>(1..k)、<code style="color:#22d3bf">n_regions</code>、<code style="color:#22d3bf">means</code>(領域ごとの平均、元の値の尺度)、<code style="color:#22d3bf">n_merges</code>、<code style="color:#22d3bf">q</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — Segmentierung aus Graph-, Hierarchie- und Schwellwertsätzen — was exakt ist und wo die Zerlegung kippt</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

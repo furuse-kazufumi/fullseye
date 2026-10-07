@@ -2,38 +2,25 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">data_to_pixel — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">axes × signal × signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.data_to_pixel(axes, x, y)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.data_to_pixel(axes, x, y)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;data_to_pixel&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.data_to_pixel(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.data_to_pixel.raw(...)</code> oder rufe <code style="color:#22d3bf">annotate.data_to_pixel</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.data_to_pixel(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.data_to_pixel.raw(...)</code> oder rufe <code style="color:#22d3bf">annotate.data_to_pixel</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Bildet Datenpunkte über eine :func:<code style="color:#22d3bf">axes_transform</code>-Abbildung auf Pixel `<code style="color:#22d3bf">(x, y)</code>` ab.</p>
+<p>Bildet Datenpunkte über eine <code style="color:#22d3bf">axes_transform</code>-Abbildung auf Pixel <code style="color:#22d3bf">(x, y)</code> ab.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>クリップしない</b> ―― `<code style="color:#22d3bf">np.clip(v, lo, hi)</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">lo &gt; hi</code>`(反転軸)の</p>
-<p>とき黙って `<code style="color:#22d3bf">hi</code>` を返し、全点が端に貼り付いた「もっともらしい嘘の図」に</p>
-<p>なる(この repo の生成器で実際に一度騙されている)。範囲外を弾くのは</p>
-<p>:func:<code style="color:#22d3bf">plot_series</code> の `<code style="color:#22d3bf">clip=True</code>` の仕事で、そこでは<b>例外</b>にする。</p>
-<p>Returns</p>
-<p>-------</p>
+<p><b>クリップしない</b> ―― <code style="color:#22d3bf">np.clip(v, lo, hi)</code> は <code style="color:#22d3bf">lo &gt; hi</code>(反転軸)のとき黙って <code style="color:#22d3bf">hi</code> を返し、全点が端に貼り付いた「もっともらしい嘘の図」になる(この repo の生成器で実際に一度騙されている)。範囲外を弾くのは <code style="color:#22d3bf">plot_series</code> の <code style="color:#22d3bf">clip=True</code> の仕事で、そこでは<b>例外</b>にする。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(ndarray, ndarray)</p>
-<p>`<code style="color:#22d3bf">px</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">py</code>`(float、丸めない ―― 丸めは描画側の仕事)。</p>
-<p>Raises</p>
-<p>------</p>
+<p><code style="color:#22d3bf">px</code>, <code style="color:#22d3bf">py</code>(float、丸めない ―― 丸めは描画側の仕事)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>log 軸に 0 以下の値を渡したとき(-inf を「端」として描く図は嘘になる)。</p>
-<p>`<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">y</code>` の長さが違うとき(下記)。</p>
-<p>Notes</p>
-<p>-----</p>
-<p><b>長さの不一致を拒否するのは 2026-09-02 に足した</b>。連鎖ファザーがこの op を</p>
-<p>実行できるようになった直後、長さの違う 2 本の signal を渡す経路で採掘器が</p>
-<p>`<code style="color:#22d3bf">np.stack</code><code style="color:#22d3bf"> の生の ValueError で落ちて発覚した。それまでは </code><code style="color:#22d3bf">x</code>` 7 点・</p>
-<p>`<code style="color:#22d3bf">y</code>` 3 点でも<b>例外を出さず、長さの違う 2 本をそのまま返していた</b>。</p>
-<p>危ないのは落ちることではなく、落ちないこと ―― 返った 2 本を `<code style="color:#22d3bf">zip</code>` すると</p>
-<p><b>3 点だけが、x の先頭 3 つの位置に</b>描かれる。点が消えたことも、x が</p>
-<p>ずれたことも図からは分からない。兄弟の :func:<code style="color:#22d3bf">plot_series</code> は同じ状況を</p>
-<p>`<code style="color:#22d3bf">&quot;x and y must have the same length&quot;</code>` で拒否していたので、**同じ族の中で</p>
-<p>規律が割れていた**(片方だけ直しても再発する型なので、文言も揃えてある)。</p>
+<p><code style="color:#22d3bf">x</code> と <code style="color:#22d3bf">y</code> の長さが違うとき(下記)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p><b>長さの不一致を拒否するのは 2026-09-02 に足した</b>。連鎖ファザーがこの op を実行できるようになった直後、長さの違う 2 本の signal を渡す経路で採掘器が <code style="color:#22d3bf">np.stack</code> の生の ValueError で落ちて発覚した。それまでは <code style="color:#22d3bf">x</code> 7 点・ <code style="color:#22d3bf">y</code> 3 点でも<b>例外を出さず、長さの違う 2 本をそのまま返していた</b>。</p>
+<p>危ないのは落ちることではなく、落ちないこと ―― 返った 2 本を <code style="color:#22d3bf">zip</code> すると <b>3 点だけが、x の先頭 3 つの位置に</b>描かれる。点が消えたことも、x がずれたことも図からは分からない。兄弟の <code style="color:#22d3bf">plot_series</code> は同じ状況を <code style="color:#22d3bf">&quot;x and y must have the same length&quot;</code> で拒否していたので、<b>同じ族の中で規律が割れていた</b>(片方だけ直しても再発する型なので、文言も揃えてある)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Konventionen für Trainingsdatensätze — COCO / YOLO / VOC und Fallstricke in der Sichtprüfung</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

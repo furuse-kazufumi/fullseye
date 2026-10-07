@@ -5,18 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>横型の車両用灯器(日本式)。原点 = 灯器の底面の中心、表示面は −x を向く。</p>
-<p>箱: 幅 = n·(lens + 0.10) + 0.05(3 灯・300 mm で 1.25 m)、高さ = lens + 0.13(0.43 m)、奥行 0.30 m、濃い灰。</p>
-<p>レンズ = 半径 lens/2 の円盤(24 分割)を前面より 5 mm 外(−x 側)に置く。並びは <b>−x を向いて見て左から 青・黄・赤</b></p>
-<p>= 青が +y、赤が −y(運転者から見て左から青・黄・赤 — Wikipedia 日本の交通信号機、一次資料で要確認)。</p>
-<p>n = 2 なら 黄・赤、n = 1 なら 黄(一灯点滅式)。各レンズの上に庇(薄い箱、長さ 0.25 m、`<code style="color:#22d3bf">hood</code>`)。</p>
-<p>レンズ径は 300 mm(2017 年度から標準 250 mm、どちらも現役)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;: 3, &quot;lamp_faces&quot;: {&quot;green&quot;: (f0, f1), ...}, &quot;width&quot;, &quot;height&quot;, &quot;depth&quot;, &quot;lens&quot;}</code>`。</p>
-<p>`<code style="color:#22d3bf">lamp_faces</code>` はこのメッシュ内の面の索引の範囲(世界に足すときは world_add の返す範囲へ平行移動する —</p>
-<p>:func:<code style="color:#22d3bf">driveworld.add_signal</code> と同じ仕組み)。`<code style="color:#22d3bf">state</code>` の灯だけ driveworld._LAMP の色、他は &quot;off&quot; の色。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>箱: 幅 = n·(lens + 0.10) + 0.05(3 灯・300 mm で 1.25 m)、高さ = lens + 0.13(0.43 m)、奥行 0.30 m、濃い灰。レンズ = 半径 lens/2 の円盤(24 分割)を前面より 5 mm 外(−x 側)に置く。並びは <b>−x を向いて見て左から 青・黄・赤</b> = 青が +y、赤が −y(運転者から見て左から青・黄・赤 — Wikipedia 日本の交通信号機、一次資料で要確認)。n = 2 なら 黄・赤、n = 1 なら 黄(一灯点滅式)。各レンズの上に庇(薄い箱、長さ 0.25 m、<code style="color:#22d3bf">hood</code>)。レンズ径は 300 mm(2017 年度から標準 250 mm、どちらも現役)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;: 3, &quot;lamp_faces&quot;: {&quot;green&quot;: (f0, f1), ...}, &quot;width&quot;, &quot;height&quot;, &quot;depth&quot;, &quot;lens&quot;}</code>。<code style="color:#22d3bf">lamp_faces</code> はこのメッシュ内の面の索引の範囲(世界に足すときは world_add の返す範囲へ平行移動する — <code style="color:#22d3bf">driveworld.add_signal</code> と同じ仕組み)。<code style="color:#22d3bf">state</code> の灯だけ driveworld._LAMP の色、他は &quot;off&quot; の色。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• (暂无)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

@@ -4,15 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code>(要直接调用实现,<code style="color:#22d3bf">import measuring1d; measuring1d.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;gen_measure_rectangle2&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>回転測定矩形(長軸 `<code style="color:#22d3bf">phi</code>` 方向に 1 px 間隔でプロファイルを取る)を定義</p>
-<p>(gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は</p>
-<p>中心から -(n-1)/2 px の位置。`<code style="color:#22d3bf">length2</code>` は幅方向の平均化幅 [px]。</p>
+<p>回転測定矩形(長軸 <code style="color:#22d3bf">phi</code> 方向に 1 px 間隔でプロファイルを取る)を定義(gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は中心から -(n-1)/2 px の位置。<code style="color:#22d3bf">length2</code> は幅方向の平均化幅 [px]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_barcode_1d">poc_barcode_1d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_barcode_1d.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_electrode_breathing">poc_battery_electrode_breathing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_electrode_breathing.py</code></p>

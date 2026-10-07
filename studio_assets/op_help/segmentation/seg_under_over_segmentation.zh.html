@@ -5,20 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以混淆表多数表决的重数来计数过分割与欠分割（Levine &amp; Nazif 风格）（seg_under_over_segmentation）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各予測(背景以外)を、最も重なる真(背景も候補)に帰属させる。真 i に帰属した予測の数 k_i が `<code style="color:#22d3bf">pieces_per_true</code>`、</p>
-<p>`<code style="color:#22d3bf">over</code>` = Σ max(k_i − 1, 0)(1 つの真が何個に割れたか)。各真を最も重なる予測に帰属させ、予測 j に帰属した真の数 m_j が</p>
-<p>`<code style="color:#22d3bf">objects_per_pred</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">under</code>` = Σ max(m_j − 1, 0)(1 つの予測が何個の真を抱えたか)。</p>
-<p>背景に帰属した予測は `<code style="color:#22d3bf">spurious</code><code style="color:#22d3bf">(偽)、背景に帰属した真は </code><code style="color:#22d3bf">missed</code>`(欠落)に数える。</p>
-<p>返り値: `<code style="color:#22d3bf">over</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">under</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">spurious</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">missed</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">pieces_per_true</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels_pred</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">objects_per_pred</code>`、</p>
-<p>`<code style="color:#22d3bf">over_segmented_true</code><code style="color:#22d3bf">(k ≥ 2 の真のラベル)、</code><code style="color:#22d3bf">under_segmented_pred</code>`(m ≥ 2 の予測のラベル)。</p>
+<p>各予測(背景以外)を、最も重なる真(背景も候補)に帰属させる。真 i に帰属した予測の数 k_i が <code style="color:#22d3bf">pieces_per_true</code>、<code style="color:#22d3bf">over</code> = Σ max(k_i − 1, 0)(1 つの真が何個に割れたか)。各真を最も重なる予測に帰属させ、予測 j に帰属した真の数 m_j が <code style="color:#22d3bf">objects_per_pred</code>、<code style="color:#22d3bf">under</code> = Σ max(m_j − 1, 0)(1 つの予測が何個の真を抱えたか)。背景に帰属した予測は <code style="color:#22d3bf">spurious</code>(偽)、背景に帰属した真は <code style="color:#22d3bf">missed</code>(欠落)に数える。</p>
+<p>返り値: <code style="color:#22d3bf">over</code>、<code style="color:#22d3bf">under</code>、<code style="color:#22d3bf">spurious</code>、<code style="color:#22d3bf">missed</code>、<code style="color:#22d3bf">labels_true</code> / <code style="color:#22d3bf">pieces_per_true</code>、<code style="color:#22d3bf">labels_pred</code> / <code style="color:#22d3bf">objects_per_pred</code>、<code style="color:#22d3bf">over_segmented_true</code>(k ≥ 2 の真のラベル)、<code style="color:#22d3bf">under_segmented_pred</code>(m ≥ 2 の予測のラベル)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割评分与带真值的合成世界 —— 哪种度量对哪种失效视而不见</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

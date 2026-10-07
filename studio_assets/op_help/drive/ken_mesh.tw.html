@@ -5,16 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>けん + 皿胴(大皿・小皿)+ 中皿のメッシュ。原点 = 皿胴の中心(手元)、けん = +x(けん先が +x)、皿胴の軸 = +z(大皿が上)。</p>
-<p>面ラベル: 27 けん・皿胴の胴、28 大皿(皿胴の +z のラッパと皿)、30 小皿(−z)、31 中皿(けんの −x の端の開いた部分)。</p>
-<p>返り値 ``{&quot;V&quot;, &quot;F&quot;, &quot;color&quot; (M,3), &quot;label&quot; (M,), &quot;parts&quot;: {&quot;ken&quot;: (f0, f1), &quot;cross&quot;: (f0, f1)}, &quot;anchors&quot;: {...},</p>
-<p>&quot;cup_radius&quot;, &quot;cup_depth&quot;, &quot;ken_length&quot;}`<code style="color:#22d3bf">。anchors(局所座標)= </code><code style="color:#22d3bf">cross</code><code style="color:#22d3bf"> (0 = 皿胴の中心)、</code><code style="color:#22d3bf">spike_tip</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">base_rim</code>`(中皿の縁の中心)、</p>
-<p>`<code style="color:#22d3bf">big_rim</code><code style="color:#22d3bf">(大皿の縁の中心)、</code><code style="color:#22d3bf">small_rim</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">tie</code><code style="color:#22d3bf">(皿胴の糸穴 (0, −cross_radius, 0))、</code><code style="color:#22d3bf">big_axis</code><code style="color:#22d3bf"> (+z)、</code><code style="color:#22d3bf">small_axis</code>` (−z)、</p>
-<p>`<code style="color:#22d3bf">base_axis</code><code style="color:#22d3bf"> (−x)、</code><code style="color:#22d3bf">ken_axis</code><code style="color:#22d3bf"> (+x)、</code><code style="color:#22d3bf">grip</code>`(技の持つ所 = kp[&quot;grip&quot;])。</p>
-<p>2 つの閉じた回転体(けん・皿胴)は交わって置かれる(描画は深度で解く)。面は全部外向き(符号つき体積 &gt; 0)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>面ラベル: 27 けん・皿胴の胴、28 大皿(皿胴の +z のラッパと皿)、30 小皿(−z)、31 中皿(けんの −x の端の開いた部分)。返り値 <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot; (M,3), &quot;label&quot; (M,), &quot;parts&quot;: {&quot;ken&quot;: (f0, f1), &quot;cross&quot;: (f0, f1)}, &quot;anchors&quot;: {...}, &quot;cup_radius&quot;, &quot;cup_depth&quot;, &quot;ken_length&quot;}</code>。anchors(局所座標)= <code style="color:#22d3bf">cross</code> (0 = 皿胴の中心)、<code style="color:#22d3bf">spike_tip</code>、<code style="color:#22d3bf">base_rim</code>(中皿の縁の中心)、<code style="color:#22d3bf">big_rim</code>(大皿の縁の中心)、<code style="color:#22d3bf">small_rim</code>、<code style="color:#22d3bf">tie</code>(皿胴の糸穴 (0, −cross_radius, 0))、<code style="color:#22d3bf">big_axis</code> (+z)、<code style="color:#22d3bf">small_axis</code> (−z)、<code style="color:#22d3bf">base_axis</code> (−x)、<code style="color:#22d3bf">ken_axis</code> (+x)、<code style="color:#22d3bf">grip</code>(技の持つ所 = kp[&quot;grip&quot;])。2 つの閉じた回転体(けん・皿胴)は交わって置かれる(描画は深度で解く)。面は全部外向き(符号つき体積 &gt; 0)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_kendama">poc_kendama</a> — <code style="color:#22d3bf">py -3.11 examples/poc_kendama.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

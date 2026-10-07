@@ -4,14 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_datum_shift_3param&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>測地成果(datum)の乗り換え —— 地心 3 パラメータの平行移動(`<code style="color:#22d3bf">points</code>`)。</p>
-<p>同じ「北緯 35 度 41 分」でも、旧日本測地系と世界測地系では<b>地上で数百メートル</b></p>
-<p>離れた点を指す。この op はその乗り換えを、地心直交座標での平行移動</p>
-<p>(`<code style="color:#22d3bf">Molodensky-Badekas</code>` の回転・縮尺なしの場合)として行う::</p>
+<p>測地成果(datum)の乗り換え —— 地心 3 パラメータの平行移動(<code style="color:#22d3bf">points</code>)。</p>
+<p>同じ「北緯 35 度 41 分」でも、旧日本測地系と世界測地系では<b>地上で数百メートル</b> 離れた点を指す。この op はその乗り換えを、地心直交座標での平行移動(<code style="color:#22d3bf">Molodensky-Badekas</code> の回転・縮尺なしの場合)として行う::</p>
 <p>ECEF(a_from, f_from) + (dx, dy, dz) -&gt; 測地座標(a_to, f_to)</p>
-<p>★<b>パラメータに既定値を置かない</b>。どの成果からどの成果へ、どの平行移動量で</p>
-<p>移すのかは国・地域・版で違い、黙って仮定すると「例外は出ないが数百メートル</p>
-<p>ずれた座標」が出る —— それがこの op の存在理由なので、呼び手に必ず書かせる。</p>
+<p>★<b>パラメータに既定値を置かない</b>。どの成果からどの成果へ、どの平行移動量で移すのかは国・地域・版で違い、黙って仮定すると「例外は出ないが数百メートルずれた座標」が出る —— それがこの op の存在理由なので、呼び手に必ず書かせる。</p>
 <p>Args:</p>
 <p>lat_deg / lon_deg: 元の成果での緯度・経度 [度]。配列可。</p>
 <p>h_m: 元の成果での楕円体高 [m]。</p>
@@ -19,10 +15,8 @@
 <p>a_from_m / f_from: 元の楕円体の長半径 [m] と扁平率。</p>
 <p>a_to_m / f_to: 先の楕円体の長半径 [m] と扁平率。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(n, 3)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">(緯度[度], 経度[度], 楕円体高[m])</code>`。</p>
-<p>閉じた式で検査できること: 平行移動 0 かつ同じ楕円体なら<b>恒等変換</b></p>
-<p>(往復の床は `<code style="color:#22d3bf">dem_ecef_to_geodetic</code>` と同じ)。平行移動だけを与えたときの</p>
-<p>地上の移動量は、その点の ECEF 基底で分解した成分と一致する。</p>
+<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(緯度[度], 経度[度], 楕円体高[m])</code>。</p>
+<p>閉じた式で検査できること: 平行移動 0 かつ同じ楕円体なら<b>恒等変換</b> (往復の床は <code style="color:#22d3bf">dem_ecef_to_geodetic</code> と同じ)。平行移動だけを与えたときの地上の移動量は、その点の ECEF 基底で分解した成分と一致する。</p>
 <p><b>ValueError</b>: 非有限、緯度が ±90 を外れる、長半径が非正、扁平率が [0, 1) を外れる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>

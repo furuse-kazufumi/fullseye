@@ -5,14 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Misst Text, <b>bevor</b> er gezeichnet wird. Passt er nicht, wird umbrochen oder verkleinert; sonst eine Ausnahme.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Parameters</p>
-<p>----------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>text : str</p>
-<p>測る文字列(`<code style="color:#22d3bf">\n</code>` で改行)。</p>
+<p>測る文字列(<code style="color:#22d3bf">\n</code> で改行)。</p>
 <p>font_size : int</p>
-<p>希望のサイズ。`<code style="color:#22d3bf">max_width</code>` に入らなければ 1pt ずつ縮める。</p>
+<p>希望のサイズ。<code style="color:#22d3bf">max_width</code> に入らなければ 1pt ずつ縮める。</p>
 <p>font_path : str or None</p>
-<p>明示すると機械をまたいでも同じ結果になる。None は :data:<code style="color:#22d3bf">FONT_CANDIDATES</code></p>
+<p>明示すると機械をまたいでも同じ結果になる。None は <code style="color:#22d3bf">FONT_CANDIDATES</code></p>
 <p>を固定順で探す。</p>
 <p>max_width : int or None</p>
 <p>入れたい幅[px]。None なら縮小も折り返しもしない。</p>
@@ -21,32 +20,30 @@
 <p>line_spacing : float</p>
 <p>行送り係数。</p>
 <p>bold, italic : bool or int</p>
-<p><b>合成</b>の太字・斜体(:func:<code style="color:#22d3bf">_bold_px</code> / :func:<code style="color:#22d3bf">_italic_tile</code>)。本物の</p>
+<p><b>合成</b>の太字・斜体(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。本物の</p>
 <p>Bold / Italic 書体ではないので字形は違う ―― 本物が要るときは</p>
-<p>`<code style="color:#22d3bf">font_path</code><code style="color:#22d3bf"> にその書体のファイルを渡すこと。</code><code style="color:#22d3bf">bold</code>` に整数を渡すと</p>
-<p>重ね打ちの回数を直に指定できる。**太さと傾きのぶんは `<code style="color:#22d3bf">width</code>` に入る**</p>
+<p><code style="color:#22d3bf">font_path</code> にその書体のファイルを渡すこと。<code style="color:#22d3bf">bold</code> に整数を渡すと</p>
+<p>重ね打ちの回数を直に指定できる。<b>太さと傾きのぶんは <code style="color:#22d3bf">width</code> に入る</b></p>
 <p>ので、板や表の桁はそのまま広がる(重ね打ちは横にだけ太るので</p>
-<p>`<code style="color:#22d3bf">height</code>` は変わらない)。</p>
+<p><code style="color:#22d3bf">height</code> は変わらない)。</p>
 <p>wrap : bool</p>
-<p>True(既定)なら `<code style="color:#22d3bf">max_width</code>` で<b>折り返す</b>。False なら折り返さず</p>
+<p>True(既定)なら <code style="color:#22d3bf">max_width</code> で<b>折り返す</b>。False なら折り返さず</p>
 <p><b>行を増やさずフォントを縮めて</b>収める(格子のラベルのように、2 行に</p>
-<p>なると版が崩れる場所で使う ―― `<code style="color:#22d3bf">exhibit_tile._fit_label</code>` と同じ流儀)。</p>
-<p>どちらでも `<code style="color:#22d3bf">min_font_size</code>` まで来て入らなければ例外。</p>
-<p>`<code style="color:#22d3bf">\n</code><code style="color:#22d3bf"> の改行は </code><code style="color:#22d3bf">max_width</code><code style="color:#22d3bf"> の有無・</code><code style="color:#22d3bf">wrap</code>` の値に<b>よらず常に</b>効く</p>
+<p>なると版が崩れる場所で使う ―― <code style="color:#22d3bf">exhibit_tile._fit_label</code> と同じ流儀)。</p>
+<p>どちらでも <code style="color:#22d3bf">min_font_size</code> まで来て入らなければ例外。</p>
+<p><code style="color:#22d3bf">\n</code> の改行は <code style="color:#22d3bf">max_width</code> の有無・<code style="color:#22d3bf">wrap</code> の値に<b>よらず常に</b>効く</p>
 <p>(幅を与えないと 1 行に潰れる、という事故は起きない)。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>`<code style="color:#22d3bf">{&quot;lines&quot;, &quot;font&quot;, &quot;font_size&quot;, &quot;width&quot;, &quot;height&quot;, &quot;line_height&quot;}</code>`。</p>
-<p>`<code style="color:#22d3bf">width</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">height</code>` は実測[px]。</p>
-<p>Raises</p>
-<p>------</p>
+<p><code style="color:#22d3bf">{&quot;lines&quot;, &quot;font&quot;, &quot;font_size&quot;, &quot;width&quot;, &quot;height&quot;, &quot;line_height&quot;}</code>。</p>
+<p><code style="color:#22d3bf">width</code>/<code style="color:#22d3bf">height</code> は実測[px]。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>`<code style="color:#22d3bf">max_width</code><code style="color:#22d3bf"> が非正 / </code><code style="color:#22d3bf">min_font_size</code>` まで縮めても 1 行が入らない。</p>
+<p><code style="color:#22d3bf">max_width</code> が非正 / <code style="color:#22d3bf">min_font_size</code> まで縮めても 1 行が入らない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Konventionen für Trainingsdatensätze — COCO / YOLO / VOC und Fallstricke in der Sichtprüfung</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

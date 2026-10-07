@@ -3,10 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boussinesq_kernel(n: &#x27;int&#x27;, pitch: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;, sub: &#x27;int&#x27; = 4, with_uz: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tactorque; tactorque.boussinesq_kernel(n: &#x27;int&#x27;, pitch: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;, sub: &#x27;int&#x27; = 4, with_uz: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;boussinesq_kernel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>法線圧(1 画素 = pitch² に一様 1 Pa)が作る表面変位の離散核(2n 格子、rfft2 済み): `<code style="color:#22d3bf">Kx</code><code style="color:#22d3bf"> = ū_x、</code><code style="color:#22d3bf">Ky</code>` = ū_y(接線、</p>
-<p>−(1−2ν)/(4πG) · x/r² と y/r²、Johnson 1985 §3.2 の点荷重解)、`<code style="color:#22d3bf">with_uz</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">Kz</code>` = ū_z((1−ν)/(2πGr))。</p>
-<p>画素平均(sub² の副標本)。中心画素: ∫□ x/r² dA = 0(奇関数)、∫□ 1/r dA = 4h ln(1+√2)(解析値)。</p>
-<p>:func:<code style="color:#22d3bf">tacslip.cerruti_kernel</code>(接線 → 接線)と同じ作りの法線版。<b>Raises</b> ValueError: n &lt; 8、pitch, G ≤ 0、ν が [0, 0.5] の外。</p>
+<p>法線圧(1 画素 = pitch² に一様 1 Pa)が作る表面変位の離散核(2n 格子、rfft2 済み): <code style="color:#22d3bf">Kx</code> = ū_x、<code style="color:#22d3bf">Ky</code> = ū_y(接線、−(1−2ν)/(4πG) · x/r² と y/r²、Johnson 1985 §3.2 の点荷重解)、<code style="color:#22d3bf">with_uz</code> なら <code style="color:#22d3bf">Kz</code> = ū_z((1−ν)/(2πGr))。画素平均(sub² の副標本)。中心画素: ∫□ x/r² dA = 0(奇関数)、∫□ 1/r dA = 4h ln(1+√2)(解析値)。<code style="color:#22d3bf">tacslip.cerruti_kernel</code>(接線 → 接線)と同じ作りの法線版。<b>Raises</b> ValueError: n &lt; 8、pitch, G ≤ 0、ν が [0, 0.5] の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

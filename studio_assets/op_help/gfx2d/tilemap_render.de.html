@@ -3,16 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">sprites</code> → <code style="color:#22d3bf">rgba</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tilemap_render(tiles, indices, empty=-1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.tilemap_render(tiles, indices, empty=-1)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;tilemap_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Zeichnet ein Raster von Kachelindizes in ein `<code style="color:#22d3bf">rgba</code>`-Bild.</p>
+<p>Zeichnet ein Raster von Kachelindizes in ein <code style="color:#22d3bf">rgba</code>-Bild.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">tiles</code><code style="color:#22d3bf"> is a list of equally sized </code><code style="color:#22d3bf">rgba</code>` tiles (what</p>
-<p>:func:<code style="color:#22d3bf">sprite_sheet_slice</code> returns) or an `<code style="color:#22d3bf">(N, th, tw, 4)</code>` array.</p>
-<p>`<code style="color:#22d3bf">indices</code><code style="color:#22d3bf"> is a 2-D **integer** array; a cell equal to </code><code style="color:#22d3bf">empty</code>` is left</p>
-<p>transparent. The result is `<code style="color:#22d3bf">(rows*th, cols*tw, 4)</code>`.</p>
+<p><code style="color:#22d3bf">tiles</code> is a list of equally sized <code style="color:#22d3bf">rgba</code> tiles (what <code style="color:#22d3bf">sprite_sheet_slice</code> returns) or an <code style="color:#22d3bf">(N, th, tw, 4)</code> array. <code style="color:#22d3bf">indices</code> is a 2-D <b>integer</b> array; a cell equal to <code style="color:#22d3bf">empty</code> is left transparent. The result is <code style="color:#22d3bf">(rows*th, cols*tw, 4)</code>.</p>
 <p>Every cell is a copy, not a resample, so the output equals the tile exactly.</p>
-<p>Raises ValueError: a float index array (a float &quot;index&quot; is a rounding waiting</p>
-<p>to happen), an index outside the tile set, tiles of differing shapes, an</p>
-<p>output past :data:<code style="color:#22d3bf">MAX_PIXELS</code>.</p>
+<p>Raises ValueError: a float index array (a float &quot;index&quot; is a rounding waiting to happen), an index outside the tile set, tiles of differing shapes, an output past <code style="color:#22d3bf">MAX_PIXELS</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

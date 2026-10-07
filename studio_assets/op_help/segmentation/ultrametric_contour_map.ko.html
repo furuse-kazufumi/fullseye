@@ -6,13 +6,11 @@
 <p>dynamics 계층의 초거리 윤곽 지도(UCM): 이웃한 화소 p, q의 값 = &#x27;p와 q가 같은 영역이 되는 최소 임계값&#x27;(ultrametric_contour_map).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>盆地の中の辺は 0、盆地の境の辺は第 2 の Kruskal(盆地の木を saliency の昇順に併合)で 2 つの盆地が出会う高さ。</p>
-<p>返す: `<code style="color:#22d3bf">ucm_h</code><code style="color:#22d3bf">(H, W − 1:画素とその右)、</code><code style="color:#22d3bf">ucm_v</code><code style="color:#22d3bf">(H − 1, W:画素とその下)、</code><code style="color:#22d3bf">ucm</code>`(画素ごとに右と下の大きい方 =</p>
-<p>境界を左上の画素で代表、segeval と同じ)、`<code style="color:#22d3bf">basins</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">levels</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">distance</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">distance_matrix=True</code>` かつ盆地が</p>
-<p>2500 以下なら盆地の全組の ultrametric 距離の行列)。閾値 θ で ucm &gt; θ の辺を切った成分 = hierarchical_watershed(θ)。</p>
+<p>返す: <code style="color:#22d3bf">ucm_h</code>(H, W − 1:画素とその右)、<code style="color:#22d3bf">ucm_v</code>(H − 1, W:画素とその下)、<code style="color:#22d3bf">ucm</code>(画素ごとに右と下の大きい方 = 境界を左上の画素で代表、segeval と同じ)、<code style="color:#22d3bf">basins</code>、<code style="color:#22d3bf">levels</code>、<code style="color:#22d3bf">distance</code>(<code style="color:#22d3bf">distance_matrix=True</code> かつ盆地が 2500 以下なら盆地の全組の ultrametric 距離の行列)。閾値 θ で ucm &gt; θ の辺を切った成分 = hierarchical_watershed(θ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — 그래프·계층·임계값 정리로 만드는 분할 — 무엇이 엄밀하고 어디서 분할이 무너지는가</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

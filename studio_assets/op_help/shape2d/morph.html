@@ -5,11 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 枚の画像 A, B を対応点でモーフし、比率 alpha の中間画像を作る。</p>
 <p>手順(Beier–Neely 流のメッシュ・モーフ):</p>
-<p>1. 中間形状 mid = (1-alpha)·ptsA + alpha·ptsB を作る。</p>
-<p>2. A を ptsA→mid へ、B を ptsB→mid へワープ(両者の特徴を mid に揃える)。</p>
-<p>3. warp(A), warp(B) を alpha でクロスディゾルブ。</p>
-<p>alpha=0 で A、alpha=1 で B に一致する。単純な blend(A,B,alpha) と違い、</p>
-<p>目・鼻などの特徴が二重像にならず 1 つに重なる(=「本物の中間」)。</p>
+<p style="margin:2px 0 2px 12px">1. 中間形状 mid = (1-alpha)·ptsA + alpha·ptsB を作る。</p>
+<p style="margin:2px 0 2px 12px">2. A を ptsA→mid へ、B を ptsB→mid へワープ(両者の特徴を mid に揃える)。</p>
+<p style="margin:2px 0 2px 12px">3. warp(A), warp(B) を alpha でクロスディゾルブ。</p>
+<p>alpha=0 で A、alpha=1 で B に一致する。単純な blend(A,B,alpha) と違い、目・鼻などの特徴が二重像にならず 1 つに重なる(=「本物の中間」)。</p>
 <p>引数:</p>
 <p>imgA, imgB: (H,W[,C])、同 shape、[0,1]。</p>
 <p>ptsA, ptsB: (K,2) の (x,y)。A と B の対応点(同数・同順)。</p>

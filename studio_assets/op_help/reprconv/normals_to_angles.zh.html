@@ -3,25 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>法线 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 方位・仰角对 </code><code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> **[度]**。</code><code style="color:#22d3bf">normals</code>` 的出口。</p>
+<p>法线 <code style="color:#22d3bf">(N,3)</code> → 方位・仰角对 <code style="color:#22d3bf">(N,2)</code> <b>[度]</b>。<code style="color:#22d3bf">normals</code> 的出口。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">az = atan2(c1, c0)</code><code style="color:#22d3bf"> を軸0-軸1 平面内の方位、</code><code style="color:#22d3bf">el = asin(c2/|v|)</code>` を</p>
-<p>軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に</p>
-<p>(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された</p>
-<p>配列がどちらの流儀かに依存して意味が変わってしまう。</p>
-<p>可逆: :func:<code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測</p>
-<p>max|Δ| = 6.1e-16、`<code style="color:#22d3bf">selftest</code>` が毎回測る)。<b>戻らないのは長さだけ</b> ——</p>
-<p>法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
+<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> を軸0-軸1 平面内の方位、<code style="color:#22d3bf">el = asin(c2/|v|)</code> を軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された配列がどちらの流儀かに依存して意味が変わってしまう。</p>
+<p>可逆: <code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測 max|Δ| = 6.1e-16、<code style="color:#22d3bf">selftest</code> が毎回測る)。<b>戻らないのは長さだけ</b> —— 法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
 <p>Args:</p>
 <p>normals: (N, 3) 実配列。零ベクトルは拒否(方位が定義できない)。</p>
 <p>Returns:</p>
 <p>(N, 2) float64。列 0 = 方位 (-180, 180]、列 1 = 仰角 [-90, 90]。</p>
 <p>Raises:</p>
 <p>ValueError: 形状が (N,3) でない / 非有限 / 長さ 0 のベクトルを含む。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacscalib_sphere_lut">poc_tacscalib_sphere_lut</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacscalib_sphere_lut.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>

@@ -4,19 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matmul_ozaki(A, B, n_slices=None, scheme: &#x27;str&#x27; = &#x27;ozaki1&#x27;, tol: &#x27;float&#x27; = 1.1102230246251565e-16, on_insufficient: &#x27;str&#x27; = &#x27;raise&#x27;, return_info: &#x27;bool&#x27; = False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import ozakimm; ozakimm.matmul_ozaki(A, B, n_slices=None, scheme: &#x27;str&#x27; = &#x27;ozaki1&#x27;, tol: &#x27;float&#x27; = 1.1102230246251565e-16, on_insufficient: &#x27;str&#x27; = &#x27;raise&#x27;, return_info: &#x27;bool&#x27; = False)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;matmul_ozaki&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>FP64 の精度の行列積 `<code style="color:#22d3bf">A @ B</code>` を、正確な低精度の部分積から組む(Ozaki-I / Ozaki-II)。</p>
-<p>`<code style="color:#22d3bf">scheme=&quot;ozaki1&quot;</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">n_slices</code><code style="color:#22d3bf"> 枚に切る(積 </code><code style="color:#22d3bf">n(n+1)/2</code><code style="color:#22d3bf"> 回)。</code><code style="color:#22d3bf">n_slices=None</code>` なら、誤差の保証上界が</p>
-<p>`<code style="color:#22d3bf">tol · (|A||B|)_ij</code><code style="color:#22d3bf"> 以下になる最少の枚数を自動で選ぶ(1〜16 枚)。届かなければ </code><code style="color:#22d3bf">on_insufficient=&quot;raise&quot;</code>` で</p>
-<p>`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">&quot;fallback&quot;</code><code style="color:#22d3bf"> で普通の float64 の積を返す(この場合だけ再現性の約束は外れる。</code><code style="color:#22d3bf">return_info=True</code>`</p>
-<p>の `<code style="color:#22d3bf">fallback</code>` で分かる)。</p>
-<p>`<code style="color:#22d3bf">scheme=&quot;ozaki2&quot;</code><code style="color:#22d3bf">: 法の数を </code><code style="color:#22d3bf">n_slices</code><code style="color:#22d3bf">(2〜20)で必ず指定する(積 </code><code style="color:#22d3bf">n</code>` 回)。自動の選択は無い。</p>
-<p>`<code style="color:#22d3bf">return_info=True</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">(C, info)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">n_slices</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n_products</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">scheme</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">fallback</code>`)。</p>
-<p>どちらの方式も、同じ入力なら内側の並べ替え・BLAS のスレッド数に依らず同じビット。CPU では DGEMM より 1〜2 桁遅い</p>
-<p>(module の docstring の使い分けを参照)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>FP64 の精度の行列積 <code style="color:#22d3bf">A @ B</code> を、正確な低精度の部分積から組む(Ozaki-I / Ozaki-II)。</p>
+<p><code style="color:#22d3bf">scheme=&quot;ozaki1&quot;</code>: <code style="color:#22d3bf">n_slices</code> 枚に切る(積 <code style="color:#22d3bf">n(n+1)/2</code> 回)。<code style="color:#22d3bf">n_slices=None</code> なら、誤差の保証上界が <code style="color:#22d3bf">tol · (|A||B|)_ij</code> 以下になる最少の枚数を自動で選ぶ(1〜16 枚)。届かなければ <code style="color:#22d3bf">on_insufficient=&quot;raise&quot;</code> で <code style="color:#22d3bf">ValueError</code>、<code style="color:#22d3bf">&quot;fallback&quot;</code> で普通の float64 の積を返す(この場合だけ再現性の約束は外れる。<code style="color:#22d3bf">return_info=True</code> の <code style="color:#22d3bf">fallback</code> で分かる)。<code style="color:#22d3bf">scheme=&quot;ozaki2&quot;</code>: 法の数を <code style="color:#22d3bf">n_slices</code>(2〜20)で必ず指定する(積 <code style="color:#22d3bf">n</code> 回)。自動の選択は無い。<code style="color:#22d3bf">return_info=True</code> で <code style="color:#22d3bf">(C, info)</code>(<code style="color:#22d3bf">n_slices</code>・<code style="color:#22d3bf">n_products</code>・<code style="color:#22d3bf">scheme</code>・<code style="color:#22d3bf">fallback</code>)。</p>
+<p>どちらの方式も、同じ入力なら内側の並べ替え・BLAS のスレッド数に依らず同じビット。CPU では DGEMM より 1〜2 桁遅い(module の docstring の使い分けを参照)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_reproducible_icp">poc_reproducible_icp</a> — <code style="color:#22d3bf">py -3.11 examples/poc_reproducible_icp.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">matrix</code> 作為輸入)</h3>

@@ -3,34 +3,27 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.running_gaussian_background(video, alpha: &#x27;float&#x27; = 0.02, k: &#x27;float&#x27; = 2.5, var_init: &#x27;float&#x27; = 0.01, selective: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import videostream; videostream.running_gaussian_background(video, alpha: &#x27;float&#x27; = 0.02, k: &#x27;float&#x27; = 2.5, var_init: &#x27;float&#x27; = 0.01, selective: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsvideostream.get(&quot;running_gaussian_background&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>自适应单高斯背景(滑动均值)逐帧 → `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">video</code>`)。</p>
+<p>自适应单高斯背景(滑动均值)逐帧 → <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>画素ごとに平均 `<code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> と分散 </code><code style="color:#22d3bf">var</code>` を持つ単一ガウス背景(Wren の Pfinder)を</p>
-<p>回し、各フレーム後の `<code style="color:#22d3bf">mean</code>` を返す。前景判定は</p>
-<p>`<code style="color:#22d3bf">(frame - mean)^2 &gt; k^2 var</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">selective=True</code>`(既定)では前景と判定した画素の</p>
-<p>`<code style="color:#22d3bf">mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">var</code>` を<b>更新しない</b>ので、ゆっくり動く物体が背景に溶けない。</p>
-<p>更新式は `<code style="color:#22d3bf">mean += α diff</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">var += α (diff^2 - var)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">var</code>` の下限は 1e-4。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">video</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> 配列か 2-D フレームの list。整数は最大値で </code><code style="color:#22d3bf">[0, 1]</code>`</p>
-<p>に正規化、float はクリップ。NaN/Inf は `<code style="color:#22d3bf">ValueError</code>`。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 1]</code>` の学習率。既定 0.02(時定数およそ 50 枚)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[0, 100]</code>`。前景とみなす標準偏差の倍数。既定 2.5。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">var_init</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">[1e-9, 1]</code><code style="color:#22d3bf">。先頭フレームでの分散の初期値(</code><code style="color:#22d3bf">[0, 1]</code>` 強度の 2 乗)。</p>
-<p>小さすぎると 2 枚目から全画素が前景になり、`<code style="color:#22d3bf">selective</code>` で更新が止まる。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">selective</code><code style="color:#22d3bf">: 前景画素の更新を止めるか。</code><code style="color:#22d3bf">False</code>` なら全画素を常に更新。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code><code style="color:#22d3bf"> float64。</code><code style="color:#22d3bf">t = 0</code>` は先頭フレームそのもの。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: `<code style="color:#22d3bf">ValueError</code>`(形・dtype・各範囲)。</p>
-<p>同じモデルの前景マスクは `<code style="color:#22d3bf">running_gaussian_foreground</code>`(同じ引数で対にすると</p>
-<p>フレームごとに整合する)。</p>
+<p>画素ごとに平均 <code style="color:#22d3bf">mean</code> と分散 <code style="color:#22d3bf">var</code> を持つ単一ガウス背景(Wren の Pfinder)を回し、各フレーム後の <code style="color:#22d3bf">mean</code> を返す。前景判定は <code style="color:#22d3bf">(frame - mean)^2 &gt; k^2 var</code>。<code style="color:#22d3bf">selective=True</code>(既定)では前景と判定した画素の <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">var</code> を<b>更新しない</b>ので、ゆっくり動く物体が背景に溶けない。更新式は <code style="color:#22d3bf">mean += α diff</code>、<code style="color:#22d3bf">var += α (diff^2 - var)</code>、<code style="color:#22d3bf">var</code> の下限は 1e-4。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 配列か 2-D フレームの list。整数は最大値で <code style="color:#22d3bf">[0, 1]</code> に正規化、float はクリップ。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code> の学習率。既定 0.02(時定数およそ 50 枚)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: <code style="color:#22d3bf">[0, 100]</code>。前景とみなす標準偏差の倍数。既定 2.5。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">var_init</code>: <code style="color:#22d3bf">[1e-9, 1]</code>。先頭フレームでの分散の初期値(<code style="color:#22d3bf">[0, 1]</code> 強度の 2 乗)。小さすぎると 2 枚目から全画素が前景になり、<code style="color:#22d3bf">selective</code> で更新が止まる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">selective</code>: 前景画素の更新を止めるか。<code style="color:#22d3bf">False</code> なら全画素を常に更新。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64。<code style="color:#22d3bf">t = 0</code> は先頭フレームそのもの。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形・dtype・各範囲)。</p>
+<p>同じモデルの前景マスクは <code style="color:#22d3bf">running_gaussian_foreground</code>(同じ引数で対にするとフレームごとに整合する)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_cables">mv_cables</a> — ケーブル（規格・速度・給電・ロボットケーブル）</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_frame_grabbers">mv_frame_grabbers</a> — フレームグラバーボード（光学系ではないが、撮れるかを決める）</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_standards">mv_standards</a> — カメラインターフェースの規格と団体</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_cables">mv_cables</a> — 线缆(规格、速度、供电、机器人线缆)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_frame_grabbers">mv_frame_grabbers</a> — 图像采集卡(不属于光学系统,却决定能否采到图像)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_standards">mv_standards</a> — 相机接口规格与标准组织</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:video_streaming">video_streaming</a> — <code style="color:#22d3bf">py -3.11 examples/video_streaming.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">video</code> 作为输入)</h3>

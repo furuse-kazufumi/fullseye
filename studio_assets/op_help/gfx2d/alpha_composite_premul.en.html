@@ -3,11 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgba_premul × rgba_premul</code> → <code style="color:#22d3bf">rgba_premul</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_composite_premul(src, dst)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.alpha_composite_premul(src, dst)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;alpha_composite_premul&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Porter–Duff <b>over</b> on premultiplied colour: `<code style="color:#22d3bf">src + dst*(1 - src.a)</code>`.</p>
-<p>This is the operator; :func:<code style="color:#22d3bf">alpha_composite</code> is this one with a conversion</p>
-<p>on each side. Being affine in `<code style="color:#22d3bf">dst</code>`, it is <b>exactly associative</b> —</p>
-<p>`<code style="color:#22d3bf">over(over(A, B), C) == over(A, over(B, C))</code>` to float64 rounding, which the</p>
-<p>test suite checks as an equality rather than a tolerance.</p>
+<p>Porter–Duff <b>over</b> on premultiplied colour: <code style="color:#22d3bf">src + dst*(1 - src.a)</code>.</p>
+<p>This is the operator; <code style="color:#22d3bf">alpha_composite</code> is this one with a conversion on each side. Being affine in <code style="color:#22d3bf">dst</code>, it is <b>exactly associative</b> — <code style="color:#22d3bf">over(over(A, B), C) == over(A, over(B, C))</code> to float64 rounding, which the test suite checks as an equality rather than a tolerance.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

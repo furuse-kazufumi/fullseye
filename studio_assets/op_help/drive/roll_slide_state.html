@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roll_slide_state(v_t, omega, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballistics; ballistics.roll_slide_state(v_t, omega, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;roll_slide_state&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>平面上の球が転がっているか滑っているか: 接触点の滑り速度 s = v_t − r(ω × n)。`<code style="color:#22d3bf">{&quot;slip_speed&quot;, &quot;rolling&quot;}</code>`</p>
-<p>(|s| &lt; 1e-9 なら転がり)。</p>
+<p>平面上の球が転がっているか滑っているか: 接触点の滑り速度 s = v_t − r(ω × n)。<code style="color:#22d3bf">{&quot;slip_speed&quot;, &quot;rolling&quot;}</code> (|s| &lt; 1e-9 なら転がり)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

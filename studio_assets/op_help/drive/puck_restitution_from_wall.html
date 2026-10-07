@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_restitution_from_wall(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import puck; puck.puck_restitution_from_wall(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;puck_restitution_from_wall&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>壁で跳ねた軌跡から e(法線)と kₜ(接線): 向きが最も変わるコマで前後に分け、両側を :func:<code style="color:#22d3bf">puck_velocity_estimate</code> で</p>
-<p>衝突時刻へ外挿。壁は衝突点に最も近い壁。`<code style="color:#22d3bf">{&quot;e&quot;, &quot;kt&quot;, &quot;t_hit&quot;, &quot;wall&quot;, &quot;n_before&quot;, &quot;n_after&quot;, &quot;v_in&quot;, &quot;v_out&quot;}</code>`。両側 3 点未満は ValueError。</p>
+<p>壁で跳ねた軌跡から e(法線)と kₜ(接線): 向きが最も変わるコマで前後に分け、両側を <code style="color:#22d3bf">puck_velocity_estimate</code> で衝突時刻へ外挿。壁は衝突点に最も近い壁。<code style="color:#22d3bf">{&quot;e&quot;, &quot;kt&quot;, &quot;t_hit&quot;, &quot;wall&quot;, &quot;n_before&quot;, &quot;n_after&quot;, &quot;v_in&quot;, &quot;v_out&quot;}</code>。両側 3 点未満は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

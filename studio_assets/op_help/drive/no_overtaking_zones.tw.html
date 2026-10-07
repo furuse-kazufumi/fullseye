@@ -6,15 +6,12 @@
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>道に沿った施設から、30 条の追越し(のための進路変更・側方通過)の禁止区間を作る。場面 S081・S009・S130。</p>
 <p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(点の施設は &quot;at&quot;)。kind:</p>
-<p>`<code style="color:#22d3bf">sign</code><code style="color:#22d3bf">(標識等で禁止された区間をそのまま)、</code><code style="color:#22d3bf">curve</code><code style="color:#22d3bf">(曲がり角、1 号「付近」= 前後 </code><code style="color:#22d3bf">vicinity</code>`、<b>仮定</b> 30 m)、</p>
-<p>`<code style="color:#22d3bf">crest</code><code style="color:#22d3bf">(上り坂の頂上、同)、</code><code style="color:#22d3bf">downhill</code><code style="color:#22d3bf">(下り坂、&quot;grade&quot; が </code><code style="color:#22d3bf">steep_grade</code>`(<b>仮定</b> 10 %)以上か grade 無しなら</p>
-<p>1 号の「勾配の急な」)、`<code style="color:#22d3bf">tunnel</code><code style="color:#22d3bf">(2 号。&quot;has_lanes&quot; が真なら除外)、</code><code style="color:#22d3bf">intersection</code><code style="color:#22d3bf">(3 号。</code><code style="color:#22d3bf">priority_road</code>` を</p>
-<p>通行しているなら除外)、`<code style="color:#22d3bf">railway_crossing</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">crosswalk</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">bicycle_crossing</code>`(3 号)。3 号は [start − 30, end]。</p>
-<p>返り値: `<code style="color:#22d3bf">zones</code><code style="color:#22d3bf"> = [(a, b, kind, 号)]、</code><code style="color:#22d3bf">merged</code>` = 重なりを併せた (k, 2)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">sign</code>(標識等で禁止された区間をそのまま)、<code style="color:#22d3bf">curve</code>(曲がり角、1 号「付近」= 前後 <code style="color:#22d3bf">vicinity</code>、<b>仮定</b> 30 m)、<code style="color:#22d3bf">crest</code>(上り坂の頂上、同)、<code style="color:#22d3bf">downhill</code>(下り坂、&quot;grade&quot; が <code style="color:#22d3bf">steep_grade</code>(<b>仮定</b> 10 %)以上か grade 無しなら 1 号の「勾配の急な」)、<code style="color:#22d3bf">tunnel</code>(2 号。&quot;has_lanes&quot; が真なら除外)、<code style="color:#22d3bf">intersection</code>(3 号。<code style="color:#22d3bf">priority_road</code> を通行しているなら除外)、<code style="color:#22d3bf">railway_crossing</code> / <code style="color:#22d3bf">crosswalk</code> / <code style="color:#22d3bf">bicycle_crossing</code>(3 号)。3 号は [start − 30, end]。</p>
+<p>返り値: <code style="color:#22d3bf">zones</code> = [(a, b, kind, 号)]、<code style="color:#22d3bf">merged</code> = 重なりを併せた (k, 2)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

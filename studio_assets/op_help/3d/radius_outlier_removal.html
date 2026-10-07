@@ -2,29 +2,24 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">radius_outlier_removal — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radius_outlier_removal(points, radius: &#x27;float&#x27;, min_neighbors: &#x27;int&#x27; = 8)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pcl_filter; pcl_filter.radius_outlier_removal(points, radius: &#x27;float&#x27;, min_neighbors: &#x27;int&#x27; = 8)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;radius_outlier_removal&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal(...)</code> は**宣言 out 型 <code style="color:#22d3bf">points</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal.raw(...)</code>、または <code style="color:#22d3bf">pcl_filter.radius_outlier_removal</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">points</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal.raw(...)</code>、または <code style="color:#22d3bf">pcl_filter.radius_outlier_removal</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>半径 radius 内の近傍数が min_neighbors 未満の点を除去する(孤立点除去)。</p>
-<p>各点を中心に半径 `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> の球を張り、その中に居る他点の数が </code><code style="color:#22d3bf">min_neighbors</code>`</p>
-<p>に満たない点を「孤立した粒」として落とす。統計的手法より局所的・直接的で、</p>
-<p>センサの実スケールが分かっているときにしきい値を決めやすい。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>各点を中心に半径 <code style="color:#22d3bf">radius</code> の球を張り、その中に居る他点の数が <code style="color:#22d3bf">min_neighbors</code> に満たない点を「孤立した粒」として落とす。統計的手法より局所的・直接的で、センサの実スケールが分かっているときにしきい値を決めやすい。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
 <p>入力点群。</p>
 <p>radius : float</p>
 <p>近傍とみなす球の半径(&gt; 0)。</p>
 <p>min_neighbors : int</p>
 <p>残すのに必要な近傍数(自分自身は数えない、既定 8)。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
 <p>生き残った点(元の順序を保持)。</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
 <p>各入力点を残すか(True=残す)。</p>
-<p>Notes</p>
-<p>-----</p>
-<p>`<code style="color:#22d3bf">radius &lt;= 0</code>` は ValueError。空入力は空を返す(graceful)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p><code style="color:#22d3bf">radius &lt;= 0</code> は ValueError。空入力は空を返す(graceful)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

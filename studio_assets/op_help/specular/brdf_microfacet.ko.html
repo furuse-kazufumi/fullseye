@@ -5,37 +5,17 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>GGX / Trowbridge-Reitz 미세면 정반사 BRDF. → (H, W), 단위 1/sr.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">f_s = D * G * F / (4 (n.l) (n.v))</code>` with</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">D</code>` the Trowbridge-Reitz (1975) / GGX normal distribution,</p>
-<p>`<code style="color:#22d3bf">a^2 / (pi * ((n.h)^2 (a^2 - 1) + 1)^2)</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">a = roughness^2</code>`, which</p>
-<p>integrates to 1 against `<code style="color:#22d3bf">(n.h) dw</code>` over the hemisphere — measured by</p>
-<p>20000-point midpoint quadrature in `<code style="color:#22d3bf">tests/test_specularity.py</code>` at</p>
-<p>relative errors 3.2e-07, 6.3e-08 and 4.0e-09 for roughness 0.2, 0.3 and</p>
-<p>0.6, all of it quadrature error (the 200000-point rule gives 3.2e-09,</p>
-<p>6.3e-10, 4.0e-11, exactly the 100x a midpoint rule predicts);</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">G</code>` the separable Smith (1967) masking-shadowing term with the GGX</p>
-<p>lambda;</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">F</code>` Schlick&#x27;s (1994) Fresnel approximation,</p>
-<p>`<code style="color:#22d3bf">f0 + (1 - f0) (1 - v.h)^5</code>`. *f0* is the normal-incidence reflectance:</p>
+<p><code style="color:#22d3bf">f_s = D * G * F / (4 (n.l) (n.v))</code> with</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">D</code> the Trowbridge-Reitz (1975) / GGX normal distribution, <code style="color:#22d3bf">a^2 / (pi * ((n.h)^2 (a^2 - 1) + 1)^2)</code> for <code style="color:#22d3bf">a = roughness^2</code>, which integrates to 1 against <code style="color:#22d3bf">(n.h) dw</code> over the hemisphere — measured by 20000-point midpoint quadrature in <code style="color:#22d3bf">tests/test_specularity.py</code> at relative errors 3.2e-07, 6.3e-08 and 4.0e-09 for roughness 0.2, 0.3 and 0.6, all of it quadrature error (the 200000-point rule gives 3.2e-09, 6.3e-10, 4.0e-11, exactly the 100x a midpoint rule predicts);</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">G</code> the separable Smith (1967) masking-shadowing term with the GGX lambda;</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">F</code> Schlick&#x27;s (1994) Fresnel approximation, <code style="color:#22d3bf">f0 + (1 - f0) (1 - v.h)^5</code>. *f0* is the normal-incidence reflectance:</p>
 <p>about 0.04 for common dielectrics, 0.5 to 1.0 for metals. When the exact</p>
-<p>Fresnel curve matters, use `<code style="color:#22d3bf">match3d.fresnel_reflectance</code>` instead — this</p>
+<p>Fresnel curve matters, use <code style="color:#22d3bf">match3d.fresnel_reflectance</code> instead — this</p>
 <p>is the approximation the microfacet literature specifies, and it is named</p>
 <p>rather than hidden.</p>
-<p>Exact ground truth it reproduces: at normal incidence with light, view and</p>
-<p>normal aligned, every geometric factor is 1 and the value collapses to</p>
-<p>`<code style="color:#22d3bf">f0 / (4 pi roughness^4)</code>` in closed form — reproduced <b>bit for bit</b> at</p>
-<p>roughness 0.3, 0.5 and 1.0 and to 3.3e-16 relative at roughness 0.1, which</p>
-<p>took rewriting the GGX denominator to avoid a cancellation (see the comment</p>
-<p>at the code; the textbook arrangement was off by 2.2e-13 relative at the</p>
-<p>peak). The lobe is reciprocal in light and view to machine precision</p>
-<p>(measured 1.7e-16), and its maximum sits at the half-vector.</p>
-<p>`<code style="color:#22d3bf">roughness</code>` is the perceptual parameter, squared once to reach the GGX</p>
-<p>`<code style="color:#22d3bf">alpha</code>` — the convention that makes a linear slider feel linear. A</p>
-<p>perfectly smooth surface (`<code style="color:#22d3bf">roughness = 0</code>`) is a delta function, not a</p>
-<p>finite BRDF, so it is refused rather than returned as an infinity.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: geometry problems as in</p>
-<p>:func:<code style="color:#22d3bf">brdf_blinn_phong</code>; *roughness* outside `<code style="color:#22d3bf">(0, 1]</code>`; *f0* outside</p>
-<p>`<code style="color:#22d3bf">[0, 1]</code>`.</p>
+<p>Exact ground truth it reproduces: at normal incidence with light, view and normal aligned, every geometric factor is 1 and the value collapses to <code style="color:#22d3bf">f0 / (4 pi roughness^4)</code> in closed form — reproduced <b>bit for bit</b> at roughness 0.3, 0.5 and 1.0 and to 3.3e-16 relative at roughness 0.1, which took rewriting the GGX denominator to avoid a cancellation (see the comment at the code; the textbook arrangement was off by 2.2e-13 relative at the peak). The lobe is reciprocal in light and view to machine precision (measured 1.7e-16), and its maximum sits at the half-vector.</p>
+<p><code style="color:#22d3bf">roughness</code> is the perceptual parameter, squared once to reach the GGX <code style="color:#22d3bf">alpha</code> — the convention that makes a linear slider feel linear. A perfectly smooth surface (<code style="color:#22d3bf">roughness = 0</code>) is a delta function, not a finite BRDF, so it is refused rather than returned as an infinity.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: geometry problems as in <code style="color:#22d3bf">brdf_blinn_phong</code>; *roughness* outside <code style="color:#22d3bf">(0, 1]</code>; *f0* outside <code style="color:#22d3bf">[0, 1]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

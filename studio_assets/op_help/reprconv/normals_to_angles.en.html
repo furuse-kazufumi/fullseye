@@ -3,15 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Normals `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → azimuth/elevation pairs </code><code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> **[deg]**. The exit from </code><code style="color:#22d3bf">normals</code>`.</p>
+<p>Normals <code style="color:#22d3bf">(N,3)</code> → azimuth/elevation pairs <code style="color:#22d3bf">(N,2)</code> <b>[deg]</b>. The exit from <code style="color:#22d3bf">normals</code>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">az = atan2(c1, c0)</code><code style="color:#22d3bf"> を軸0-軸1 平面内の方位、</code><code style="color:#22d3bf">el = asin(c2/|v|)</code>` を</p>
-<p>軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に</p>
-<p>(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された</p>
-<p>配列がどちらの流儀かに依存して意味が変わってしまう。</p>
-<p>可逆: :func:<code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測</p>
-<p>max|Δ| = 6.1e-16、`<code style="color:#22d3bf">selftest</code>` が毎回測る)。<b>戻らないのは長さだけ</b> ——</p>
-<p>法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
+<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> を軸0-軸1 平面内の方位、<code style="color:#22d3bf">el = asin(c2/|v|)</code> を軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された配列がどちらの流儀かに依存して意味が変わってしまう。</p>
+<p>可逆: <code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測 max|Δ| = 6.1e-16、<code style="color:#22d3bf">selftest</code> が毎回測る)。<b>戻らないのは長さだけ</b> —— 法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
 <p>Args:</p>
 <p>normals: (N, 3) 実配列。零ベクトルは拒否(方位が定義できない)。</p>
 <p>Returns:</p>

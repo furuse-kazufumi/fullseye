@@ -4,20 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tree_morphometry(tree)</code>(要直接调用实现,<code style="color:#22d3bf">import treemorph; treemorph.tree_morphometry(tree)</code>;从台账取用则 <code style="color:#22d3bf">opsgraph.get(&quot;tree_morphometry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Counts and lengths of a tree table (from :func:<code style="color:#22d3bf">tree_from_swc</code>).</p>
-<p>Returns `<code style="color:#22d3bf">nodes</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">bifurcations</code>` (nodes with two or more children),</p>
-<p>`<code style="color:#22d3bf">tips</code><code style="color:#22d3bf"> (nodes with no child), </code><code style="color:#22d3bf">cable_length</code>` (sum of segment lengths),</p>
-<p>`<code style="color:#22d3bf">max_path_length</code><code style="color:#22d3bf"> (longest root-to-node path along the tree) and </code><code style="color:#22d3bf">max_radial</code>`</p>
-<p>(largest straight distance from the root).</p>
-<p>Identities (checked inside, fail-closed): `<code style="color:#22d3bf">nodes == edges + 1</code>`, and</p>
-<p>`<code style="color:#22d3bf">tips == 1 + sum(children - 1)</code>` over the nodes that have children — tips are counted</p>
-<p>from the child counts directly, the right side from the branching nodes, so a bug in</p>
-<p>either count breaks the equality. A root with one child is not a tip.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: not a tree table (see :func:</code>tree_from_swc`).</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>Counts and lengths of a tree table (from <code style="color:#22d3bf">tree_from_swc</code>).</p>
+<p>Returns <code style="color:#22d3bf">nodes</code>, <code style="color:#22d3bf">edges</code>, <code style="color:#22d3bf">bifurcations</code> (nodes with two or more children), <code style="color:#22d3bf">tips</code> (nodes with no child), <code style="color:#22d3bf">cable_length</code> (sum of segment lengths), <code style="color:#22d3bf">max_path_length</code> (longest root-to-node path along the tree) and <code style="color:#22d3bf">max_radial</code> (largest straight distance from the root).</p>
+<p>Identities (checked inside, fail-closed): <code style="color:#22d3bf">nodes == edges + 1</code>, and <code style="color:#22d3bf">tips == 1 + sum(children - 1)</code> over the nodes that have children — tips are counted from the child counts directly, the right side from the branching nodes, so a bug in either count breaks the equality. A root with one child is not a tip.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not a tree table (see <code style="color:#22d3bf">tree_from_swc</code>).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swc_tree_truth">poc_swc_tree_truth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swc_tree_truth.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_worm_neurites_grow">poc_worm_neurites_grow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_worm_neurites_grow.py</code></p>

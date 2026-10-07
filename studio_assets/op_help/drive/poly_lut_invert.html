@@ -3,11 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rgb × table × image2d</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poly_lut_invert(rgb, poly: &#x27;dict&#x27;, mask=None, method: &#x27;str&#x27; = &#x27;coarse&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacscalib; tacscalib.poly_lut_invert(rgb, poly: &#x27;dict&#x27;, mask=None, method: &#x27;str&#x27; = &#x27;coarse&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;poly_lut_invert&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>アダプタ: 外部の<b>位置依存</b>多項式 LUT(`<code style="color:#22d3bf">bins</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">grad_r</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">grad_g</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">grad_b</code>` = (bins, bins, 6)、ビンごとに</p>
-<p>6 係数 [x², y², xy, x, y, 1]・x = 列・y = 行を<b>画素のまま</b>で背景差分の各チャネルを表す書式)を、</p>
-<p>:func:<code style="color:#22d3bf">gradient_lut_invert</code> と同じ逆引き(同じビン割り・同じ粗 → 細)に通す。`<code style="color:#22d3bf">rgb</code>` は外部の手順と同じ背景処理をした差分。</p>
-<p>外部の表は全ビンが埋まっているので全ビンを使う。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: キー欠落 / 係数の形が (bins, bins, 6) でない / 非有限。</p>
+<p>アダプタ: 外部の<b>位置依存</b>多項式 LUT(<code style="color:#22d3bf">bins</code> と <code style="color:#22d3bf">grad_r</code> / <code style="color:#22d3bf">grad_g</code> / <code style="color:#22d3bf">grad_b</code> = (bins, bins, 6)、ビンごとに 6 係数 [x², y², xy, x, y, 1]・x = 列・y = 行を<b>画素のまま</b>で背景差分の各チャネルを表す書式)を、<code style="color:#22d3bf">gradient_lut_invert</code> と同じ逆引き(同じビン割り・同じ粗 → 細)に通す。<code style="color:#22d3bf">rgb</code> は外部の手順と同じ背景処理をした差分。外部の表は全ビンが埋まっているので全ビンを使う。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: キー欠落 / 係数の形が (bins, bins, 6) でない / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

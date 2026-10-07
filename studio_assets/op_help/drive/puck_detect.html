@@ -3,13 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_detect(frame, cam: &#x27;dict&#x27;, *, mode: &#x27;str&#x27; = &#x27;dark&#x27;, thresh: &#x27;float&#x27; = 0.85, radius_tol: &#x27;float&#x27; = 0.5, color=None, color_tol: &#x27;float&#x27; = 0.25)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import puck; puck.puck_detect(frame, cam: &#x27;dict&#x27;, *, mode: &#x27;str&#x27; = &#x27;dark&#x27;, thresh: &#x27;float&#x27; = 0.85, radius_tol: &#x27;float&#x27; = 0.5, color=None, color_tol: &#x27;float&#x27; = 0.25)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;puck_detect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>:func:<code style="color:#22d3bf">balltrack.ball_detect</code> の facade: 真上のコマから円盤を 1 つ取り、ホモグラフィで台の平面 (x, y) [m] に写す。</p>
-<p>`<code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> = &quot;dark&quot;(白い台に暗いパック、合成)/ &quot;color&quot;・&quot;chroma&quot;(色で、MuJoCo の赤いパック)。</code><code style="color:#22d3bf">thresh</code>` は台の値</p>
-<p>(0.92)の少し下に置く: `<code style="color:#22d3bf">ball_detect</code>` の重みは (thresh − 画素値) なので、しきい値が台に近いほど重み ∝ 被覆率で</p>
-<p>重心が面積重心に一致する。中間の 0.5 では縁の画素が切れて位相依存の偏りが出る(実測 2026-10-04、r = 6.3 px:</p>
-<p>thresh 0.5 → 最大 0.08 px / 0.7 → 0.03 / 0.85 → 0.005、雑音 σ 0.01 でも 0.014)。半径が期待</p>
-<p>(puck_radius·px_per_m)の (1 ± radius_tol) 倍から外れる塊は捨てる。返り値 `<code style="color:#22d3bf">{&quot;col&quot;,&quot;row&quot;,&quot;radius&quot;,&quot;fill&quot;,&quot;x&quot;,&quot;y&quot;}</code>` か、</p>
-<p>見つからなければ `<code style="color:#22d3bf">None</code><code style="color:#22d3bf">(fail-closed)。知らない </code><code style="color:#22d3bf">mode</code>` は ValueError。</p>
+<p><code style="color:#22d3bf">balltrack.ball_detect</code> の facade: 真上のコマから円盤を 1 つ取り、ホモグラフィで台の平面 (x, y) [m] に写す。</p>
+<p><code style="color:#22d3bf">mode</code> = &quot;dark&quot;(白い台に暗いパック、合成)/ &quot;color&quot;・&quot;chroma&quot;(色で、MuJoCo の赤いパック)。<code style="color:#22d3bf">thresh</code> は台の値(0.92)の少し下に置く: <code style="color:#22d3bf">ball_detect</code> の重みは (thresh − 画素値) なので、しきい値が台に近いほど重み ∝ 被覆率で重心が面積重心に一致する。中間の 0.5 では縁の画素が切れて位相依存の偏りが出る(実測 2026-10-04、r = 6.3 px:</p>
+<p>thresh 0.5 → 最大 0.08 px / 0.7 → 0.03 / 0.85 → 0.005、雑音 σ 0.01 でも 0.014)。半径が期待(puck_radius·px_per_m)の (1 ± radius_tol) 倍から外れる塊は捨てる。返り値 <code style="color:#22d3bf">{&quot;col&quot;,&quot;row&quot;,&quot;radius&quot;,&quot;fill&quot;,&quot;x&quot;,&quot;y&quot;}</code> か、見つからなければ <code style="color:#22d3bf">None</code>(fail-closed)。知らない <code style="color:#22d3bf">mode</code> は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

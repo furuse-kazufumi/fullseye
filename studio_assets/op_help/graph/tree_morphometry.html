@@ -3,16 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tree_morphometry(tree)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import treemorph; treemorph.tree_morphometry(tree)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;tree_morphometry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Counts and lengths of a tree table (from :func:<code style="color:#22d3bf">tree_from_swc</code>).</p>
-<p>Returns `<code style="color:#22d3bf">nodes</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">bifurcations</code>` (nodes with two or more children),</p>
-<p>`<code style="color:#22d3bf">tips</code><code style="color:#22d3bf"> (nodes with no child), </code><code style="color:#22d3bf">cable_length</code>` (sum of segment lengths),</p>
-<p>`<code style="color:#22d3bf">max_path_length</code><code style="color:#22d3bf"> (longest root-to-node path along the tree) and </code><code style="color:#22d3bf">max_radial</code>`</p>
-<p>(largest straight distance from the root).</p>
-<p>Identities (checked inside, fail-closed): `<code style="color:#22d3bf">nodes == edges + 1</code>`, and</p>
-<p>`<code style="color:#22d3bf">tips == 1 + sum(children - 1)</code>` over the nodes that have children — tips are counted</p>
-<p>from the child counts directly, the right side from the branching nodes, so a bug in</p>
-<p>either count breaks the equality. A root with one child is not a tip.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: not a tree table (see :func:</code>tree_from_swc`).</p>
+<p>Counts and lengths of a tree table (from <code style="color:#22d3bf">tree_from_swc</code>).</p>
+<p>Returns <code style="color:#22d3bf">nodes</code>, <code style="color:#22d3bf">edges</code>, <code style="color:#22d3bf">bifurcations</code> (nodes with two or more children), <code style="color:#22d3bf">tips</code> (nodes with no child), <code style="color:#22d3bf">cable_length</code> (sum of segment lengths), <code style="color:#22d3bf">max_path_length</code> (longest root-to-node path along the tree) and <code style="color:#22d3bf">max_radial</code> (largest straight distance from the root).</p>
+<p>Identities (checked inside, fail-closed): <code style="color:#22d3bf">nodes == edges + 1</code>, and <code style="color:#22d3bf">tips == 1 + sum(children - 1)</code> over the nodes that have children — tips are counted from the child counts directly, the right side from the branching nodes, so a bug in either count breaks the equality. A root with one child is not a tip.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not a tree table (see <code style="color:#22d3bf">tree_from_swc</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

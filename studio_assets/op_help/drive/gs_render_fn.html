@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;gs_render_fn&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>`<code style="color:#22d3bf">render_fn(world, cam) → (H, W, 3)</code><code style="color:#22d3bf">(:func:</code>kendamaworld.camera_perceiver` の描画の差し替え口)を返す: 呼ばれるたびに</p>
-<p>:func:<code style="color:#22d3bf">gs_update</code> で世界のいまの頂点へガウシアンを付け直し、`<code style="color:#22d3bf">cam</code><code style="color:#22d3bf">(dict: pose, K, width, height)で :func:</code>gs_render` する。</p>
-<p>`<code style="color:#22d3bf">render_kw</code><code style="color:#22d3bf"> は gs_render へそのまま渡す。属性 </code><code style="color:#22d3bf">n_calls</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n_pairs</code>`(累計)を持つ。</p>
+<p><code style="color:#22d3bf">render_fn(world, cam) → (H, W, 3)</code>(<code style="color:#22d3bf">kendamaworld.camera_perceiver</code> の描画の差し替え口)を返す: 呼ばれるたびに <code style="color:#22d3bf">gs_update</code> で世界のいまの頂点へガウシアンを付け直し、<code style="color:#22d3bf">cam</code>(dict: pose, K, width, height)で <code style="color:#22d3bf">gs_render</code> する。<code style="color:#22d3bf">render_kw</code> は gs_render へそのまま渡す。属性 <code style="color:#22d3bf">n_calls</code>・<code style="color:#22d3bf">n_pairs</code>(累計)を持つ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

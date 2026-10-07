@@ -16,16 +16,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Compute depth Z = f*baseline/disparity from a disparity image (focal length and baseline vary with a, b). Normalised Z.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">v</code><code style="color:#22d3bf">(0〜1)を視差 </code><code style="color:#22d3bf">disp = v*63 + 0.5</code><code style="color:#22d3bf"> 画素相当に写し、</code><code style="color:#22d3bf">Z = f * baseline / disp</code>` を計算して min-max で</p>
-<p>[0,1] に正規化した画像を返す。X, Y は計算しない(Z のみ)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 焦点距離 </code><code style="color:#22d3bf">f = 200 + 600*a</code>`。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 基線長 </code><code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>`。</p>
+<p><code style="color:#22d3bf">v</code>(0〜1)を視差 <code style="color:#22d3bf">disp = v*63 + 0.5</code> 画素相当に写し、<code style="color:#22d3bf">Z = f * baseline / disp</code> を計算して min-max で [0,1] に正規化した画像を返す。X, Y は計算しない(Z のみ)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 焦点距離 <code style="color:#22d3bf">f = 200 + 600*a</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基線長 <code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>。</p>
 <p style="margin:2px 0 2px 12px">• 視差の下限を 0.5 に置いているのでゼロ除算は起きない。</p>
-<p>注意: `<code style="color:#22d3bf">f * baseline</code><code style="color:#22d3bf"> は全画素共通の定数倍で、最後の min-max 正規化で打ち消されるため、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` を変えても</p>
-<p>出力は変わらない(実測で完全一致)。出力は実質「視差の逆数を正規化したもの」で、視差最大(`<code style="color:#22d3bf">v = 1</code>`)が 0、</p>
-<p>視差最小(`<code style="color:#22d3bf">v = 0</code>`)が 1 になる(近い物ほど暗い)。絶対的な深度が要る用途には使えない。逆数変換で遠方の</p>
-<p>量子化が粗くなるので、`<code style="color:#22d3bf">v</code>` が小さい領域の値は不安定。</p>
-<p><b>Knobs (measured)</b>: sweeping `<code style="color:#22d3bf">a</code>` from 0 to 1 <b>does not change the output</b> (measured on five different inputs).</p>
+<p>注意: <code style="color:#22d3bf">f * baseline</code> は全画素共通の定数倍で、最後の min-max 正規化で打ち消されるため、<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> を変えても出力は変わらない(実測で完全一致)。出力は実質「視差の逆数を正規化したもの」で、視差最大(<code style="color:#22d3bf">v = 1</code>)が 0、視差最小(<code style="color:#22d3bf">v = 0</code>)が 1 になる(近い物ほど暗い)。絶対的な深度が要る用途には使えない。逆数変換で遠方の量子化が粗くなるので、<code style="color:#22d3bf">v</code> が小さい領域の値は不安定。</p>
+<p><b>Knobs (measured)</b>: sweeping <code style="color:#22d3bf">a</code> from 0 to 1 <b>does not change the output</b> (measured on five different inputs).</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

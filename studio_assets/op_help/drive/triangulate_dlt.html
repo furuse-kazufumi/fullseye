@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import balltrack; balltrack.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_dlt&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>1 点の多視点三角測量(線形 DLT、SVD): `<code style="color:#22d3bf">uvs</code><code style="color:#22d3bf"> (C, 2)、</code><code style="color:#22d3bf">poses</code><code style="color:#22d3bf"> (C, 4, 4)、</code><code style="color:#22d3bf">Ks</code>` (C, 3, 3)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;p&quot; (3,), &quot;reproj_rms&quot; px, &quot;n_views&quot;}</code>`。NaN の視点は飛ばす。2 視点未満なら ValueError。</p>
+<p>1 点の多視点三角測量(線形 DLT、SVD): <code style="color:#22d3bf">uvs</code> (C, 2)、<code style="color:#22d3bf">poses</code> (C, 4, 4)、<code style="color:#22d3bf">Ks</code> (C, 3, 3)。返り値 <code style="color:#22d3bf">{&quot;p&quot; (3,), &quot;reproj_rms&quot; px, &quot;n_views&quot;}</code>。NaN の視点は飛ばす。2 視点未満なら ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

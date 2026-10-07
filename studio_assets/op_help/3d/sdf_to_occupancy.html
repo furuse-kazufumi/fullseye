@@ -4,20 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_to_occupancy(sdf, iso=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.sdf_to_occupancy(sdf, iso=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;sdf_to_occupancy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>SDF → occupancy voxel(iso 以下=内側=1)。SDF から voxel へ戻す。</p>
-<p>`<code style="color:#22d3bf">(sdf &lt;= iso).astype(float64)</code><code style="color:#22d3bf"> だけの op。</code><code style="color:#22d3bf">signed_distance_field</code>` の規約(内側 &lt;0)なら</p>
-<p>`<code style="color:#22d3bf">iso=0.0</code><code style="color:#22d3bf"> で内側=1、外側=0。**等号を含む**ので、ちょうど </code><code style="color:#22d3bf">iso</code>` の voxel は内側に入る。</p>
-<p>`<code style="color:#22d3bf">iso</code><code style="color:#22d3bf"> を正にすると外側へ </code><code style="color:#22d3bf">iso</code>` voxel ぶん膨らんだ占有、負にすると縮んだ占有になる</p>
-<p>(SDF が真の距離なら等方 dilation/erosion と同じ)。`<code style="color:#22d3bf">tsdf_from_depth</code>` の出力(表面手前 +・</p>
-<p>奥 −・未観測 +1)にも同じ `<code style="color:#22d3bf">iso=0.0</code>` で使えるが、未観測領域は 0 側(外)になる。</p>
-<p>入力の形は問わず、返り値は同形の float64(0.0 / 1.0)。NaN は比較が偽なので 0 になる</p>
-<p>(警告なし)。</p>
-<p>★<b>ラベル volume を渡すと背景が「内側」になる</b>。`<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code>` は</p>
-<p>`<code style="color:#22d3bf">sdf</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">voxel</code><code style="color:#22d3bf"> を同じ </code><code style="color:#22d3bf">volume</code>` に畳むので、</p>
-<p>`<code style="color:#22d3bf">label_components</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">vol_label</code>` の出力をそのまま繋いでも例外は出ない。</p>
-<p>ラベルは 0 が背景・1 以上が前景なので `<code style="color:#22d3bf">&lt;= 0</code>` は<b>背景そのもの</b>。実測</p>
-<p>(2026-09-08、24³ の立方体、真の内側 1,728 voxel): SDF を渡すと 1,728、</p>
-<p>同じ形の 0/1/2 ラベルを渡すと <b>9,504</b>(5.5 倍)—— 符号が反転している。</p>
-<p>ラベルから占有を作るなら `<code style="color:#22d3bf">iso</code><code style="color:#22d3bf"> でなく </code><code style="color:#22d3bf">labels &gt; 0</code>` を自分で書くこと。</p>
+<p><code style="color:#22d3bf">(sdf &lt;= iso).astype(float64)</code> だけの op。<code style="color:#22d3bf">signed_distance_field</code> の規約(内側 &lt;0)なら <code style="color:#22d3bf">iso=0.0</code> で内側=1、外側=0。<b>等号を含む</b>ので、ちょうど <code style="color:#22d3bf">iso</code> の voxel は内側に入る。<code style="color:#22d3bf">iso</code> を正にすると外側へ <code style="color:#22d3bf">iso</code> voxel ぶん膨らんだ占有、負にすると縮んだ占有になる(SDF が真の距離なら等方 dilation/erosion と同じ)。<code style="color:#22d3bf">tsdf_from_depth</code> の出力(表面手前 +・奥 −・未観測 +1)にも同じ <code style="color:#22d3bf">iso=0.0</code> で使えるが、未観測領域は 0 側(外)になる。入力の形は問わず、返り値は同形の float64(0.0 / 1.0)。NaN は比較が偽なので 0 になる(警告なし)。</p>
+<p>★<b>ラベル volume を渡すと背景が「内側」になる</b>。<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> は <code style="color:#22d3bf">sdf</code> / <code style="color:#22d3bf">labels</code> / <code style="color:#22d3bf">voxel</code> を同じ <code style="color:#22d3bf">volume</code> に畳むので、<code style="color:#22d3bf">label_components</code> や <code style="color:#22d3bf">vol_label</code> の出力をそのまま繋いでも例外は出ない。ラベルは 0 が背景・1 以上が前景なので <code style="color:#22d3bf">&lt;= 0</code> は<b>背景そのもの</b>。実測(2026-09-08、24³ の立方体、真の内側 1,728 voxel): SDF を渡すと 1,728、同じ形の 0/1/2 ラベルを渡すと <b>9,504</b>(5.5 倍)—— 符号が反転している。ラベルから占有を作るなら <code style="color:#22d3bf">iso</code> でなく <code style="color:#22d3bf">labels &gt; 0</code> を自分で書くこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

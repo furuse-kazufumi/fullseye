@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.terrain_params(seed: &#x27;int&#x27; = 0, hurst: &#x27;float&#x27; = 0.8, amplitude: &#x27;float&#x27; = 2.0, f_min: &#x27;float&#x27; = 0.008333333333333333, f_max: &#x27;float&#x27; = 0.16666666666666666, n_waves: &#x27;int&#x27; = 128, flat: &#x27;float&#x27; = 2.0, blend: &#x27;float&#x27; = 10.0, road_amp: &#x27;float&#x27; = 0.0, road_len=(160.0, 110.0), road_phase=(0.0, 1.0)) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveterrain; driveterrain.terrain_params(seed: &#x27;int&#x27; = 0, hurst: &#x27;float&#x27; = 0.8, amplitude: &#x27;float&#x27; = 2.0, f_min: &#x27;float&#x27; = 0.008333333333333333, f_max: &#x27;float&#x27; = 0.16666666666666666, n_waves: &#x27;int&#x27; = 128, flat: &#x27;float&#x27; = 2.0, blend: &#x27;float&#x27; = 10.0, road_amp: &#x27;float&#x27; = 0.0, road_len=(160.0, 110.0), road_phase=(0.0, 1.0)) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;terrain_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>地形の表: fBm の起伏(道から `<code style="color:#22d3bf">flat</code><code style="color:#22d3bf"> m は 0、そこから </code><code style="color:#22d3bf">blend</code>` m で smoothstep)+ 路面のうねり</p>
-<p>`<code style="color:#22d3bf">road_amp·½[sin(2πx/L₁+φ₁) + sin(2πy/L₂+φ₂)]</code>`(道にも掛かる、勾配の上限 = road_amp·π/min(L))。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>地形の表: fBm の起伏(道から <code style="color:#22d3bf">flat</code> m は 0、そこから <code style="color:#22d3bf">blend</code> m で smoothstep)+ 路面のうねり <code style="color:#22d3bf">road_amp·½[sin(2πx/L₁+φ₁) + sin(2πy/L₂+φ₂)]</code>(道にも掛かる、勾配の上限 = road_amp·π/min(L))。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_world_terrain">poc_world_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_world_terrain.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

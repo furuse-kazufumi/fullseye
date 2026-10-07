@@ -5,19 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>追い越した前車の <b>全体がルームミラーに映る</b> ときの車間(自車の後端と前車の前端の間)。場面 S086・S145。</p>
-<p>教則 5-6-3(6)「追い越した車がルームミラーで見えるくらいの距離までそのまま進み」・7-2-3「追い越した車全体が</p>
-<p>ルームミラーに映ってから」を幾何にする。座標は自車(x = 前、y = 左、原点 = 眼の真横の車の中心線)。前車は左の車線</p>
-<p>(横の中心 = `<code style="color:#22d3bf">lane_offset</code><code style="color:#22d3bf">、幅 </code><code style="color:#22d3bf">lead_width</code><code style="color:#22d3bf">)で自車の後ろ。ルームミラーは平面鏡(中心 </code><code style="color:#22d3bf">mirror_center_xy</code>`、</p>
-<p>幅 `<code style="color:#22d3bf">mirror_width</code>`、法線は眼の側)。法線を省くと、眼から鏡の中心への光線を真後ろ(−x)へ返す向き</p>
-<p>(`<code style="color:#22d3bf">drivedecide.mirror_aim_normal</code>`)。</p>
-<p>映る ⇔ 仮想の眼 E&#x27;(眼を鏡の直線で折り返した点)と点を結ぶ線分が鏡の線分を通る。道に平行な直線の上では境目は 1 次</p>
-<p>方程式の根で、前の辺の両端(2 隅)で決まる。返り値: `<code style="color:#22d3bf">gap</code><code style="color:#22d3bf"> = 眼の後ろ </code><code style="color:#22d3bf">eye_to_rear</code>` の自車の後端から、前の 2 隅が</p>
-<p>映る前車の前端までの距離、`<code style="color:#22d3bf">corner_limit_x</code><code style="color:#22d3bf">(各隅が映る x の上限)、</code><code style="color:#22d3bf">straight_back_s</code>`(真後ろの方向が鏡のどこを通るか。</p>
-<p>鏡の外なら真後ろが映らない = ValueError)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>教則 5-6-3(6)「追い越した車がルームミラーで見えるくらいの距離までそのまま進み」・7-2-3「追い越した車全体がルームミラーに映ってから」を幾何にする。座標は自車(x = 前、y = 左、原点 = 眼の真横の車の中心線)。前車は左の車線(横の中心 = <code style="color:#22d3bf">lane_offset</code>、幅 <code style="color:#22d3bf">lead_width</code>)で自車の後ろ。ルームミラーは平面鏡(中心 <code style="color:#22d3bf">mirror_center_xy</code>、幅 <code style="color:#22d3bf">mirror_width</code>、法線は眼の側)。法線を省くと、眼から鏡の中心への光線を真後ろ(−x)へ返す向き(<code style="color:#22d3bf">drivedecide.mirror_aim_normal</code>)。</p>
+<p>映る ⇔ 仮想の眼 E&#x27;(眼を鏡の直線で折り返した点)と点を結ぶ線分が鏡の線分を通る。道に平行な直線の上では境目は 1 次方程式の根で、前の辺の両端(2 隅)で決まる。返り値: <code style="color:#22d3bf">gap</code> = 眼の後ろ <code style="color:#22d3bf">eye_to_rear</code> の自車の後端から、前の 2 隅が映る前車の前端までの距離、<code style="color:#22d3bf">corner_limit_x</code>(各隅が映る x の上限)、<code style="color:#22d3bf">straight_back_s</code>(真後ろの方向が鏡のどこを通るか。鏡の外なら真後ろが映らない = ValueError)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

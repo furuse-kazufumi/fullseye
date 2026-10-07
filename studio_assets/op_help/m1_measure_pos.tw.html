@@ -6,27 +6,27 @@
 <p><img src="fig/m1_measure_pos.png" alt="m1_measure_pos: input → output"></p>
 <p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
 <p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_pos.a.jpg">m1_measure_pos: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_pos.a.jpg">m1_measure_pos: 旋鈕 a 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_pos.b.jpg">m1_measure_pos: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_pos.b.jpg">m1_measure_pos: 旋鈕 b 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_pos.inputs.jpg">m1_measure_pos: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_pos.inputs.jpg">m1_measure_pos: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>擷取穿過中心的卡尺線上的子像素邊緣位置(相當於 HALCON `<code style="color:#22d3bf">measure_pos</code>`:偵測垂直於矩形/圓弧的直線邊緣)。</p>
+<p>擷取穿過中心的卡尺線上的子像素邊緣位置(相當於 HALCON <code style="color:#22d3bf">measure_pos</code>:偵測垂直於矩形/圓弧的直線邊緣)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>線は画像中心を通り、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で向きを </code><code style="color:#22d3bf">theta = a*pi</code><code style="color:#22d3bf"> に振る。輝度プロファイルをガウシアンで軽く平滑化してから </code><code style="color:#22d3bf">|d/ds gray|</code><code style="color:#22d3bf"> のピークをサブピクセル（3 点放物線補間）で検出し、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">（0〜1）を最大振幅に対する相対しきい値として弱いエッジを捨てる。戻り値は CONTOUR（</code><code style="color:#22d3bf">{&quot;shape&quot;: (H,W), &quot;cs&quot;: [1x2 の (row, col) 点, ...]}</code><code style="color:#22d3bf">）、座標単位は入力画像のピクセル。主な使い道はエッジ数を </code><code style="color:#22d3bf">count_contours</code>`で数えること。</p>
+<p>線は画像中心を通り、<code style="color:#22d3bf">a</code> で向きを <code style="color:#22d3bf">theta = a*pi</code> に振る。輝度プロファイルをガウシアンで軽く平滑化してから <code style="color:#22d3bf">|d/ds gray|</code> のピークをサブピクセル（3 点放物線補間）で検出し、<code style="color:#22d3bf">b</code>（0〜1）を最大振幅に対する相対しきい値として弱いエッジを捨てる。戻り値は CONTOUR（<code style="color:#22d3bf">{&quot;shape&quot;: (H,W), &quot;cs&quot;: [1x2 の (row, col) 点, ...]}</code>）、座標単位は入力画像のピクセル。主な使い道はエッジ数を <code style="color:#22d3bf">count_contours</code>で数えること。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 量測不確定度與校正知識 —— 為了能主張「量得準」</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">m1_measure_pos 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:m1_measure_pos%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:m1_measure_pos%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">m1_measure_pos 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:m1_measure_pos%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:m1_measure_pos%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_contour_measure">gallery2d_contour_measure</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_contour_measure.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>

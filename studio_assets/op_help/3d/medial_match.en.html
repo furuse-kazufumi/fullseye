@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A coarse matching score between two voxel shapes based on their medial (topology + radius distribution). Returns [0,1].</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>骨格の位相記述子(端点/分岐/通常/孤立の割合)の距離と、medial 半径分布(内接半径の</p>
-<p>ヒストグラム)の距離を重み付き合成し、類似度 = 1 - 距離 として返す。1 に近いほど似ている。</p>
-<p>平行移動・回転(90 度)に対して概ね不変で、位相ベースの初期照合(粗いふるい)に使う。</p>
+<p>骨格の位相記述子(端点/分岐/通常/孤立の割合)の距離と、medial 半径分布(内接半径のヒストグラム)の距離を重み付き合成し、類似度 = 1 - 距離 として返す。1 に近いほど似ている。平行移動・回転(90 度)に対して概ね不変で、位相ベースの初期照合(粗いふるい)に使う。</p>
 <p>Args:</p>
 <p>vol_a, vol_b: バイナリ voxel(bool / 0-1 の 3D)。</p>
 <p>w_topology: 位相距離の重み(既定 0.6)。</p>

@@ -5,13 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Subaperturansicht — das Bild, das man durch einen Punkt der Pupille sieht.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Returns a copy of `<code style="color:#22d3bf">L[v, u]</code><code style="color:#22d3bf"> as a plain </code><code style="color:#22d3bf">(H, W)</code>` 2-D image, so every</p>
-<p>other fullseye image operator applies to it unchanged. Indices are</p>
-<p><b>not</b> wrapped: a negative or out-of-range index is a `<code style="color:#22d3bf">ValueError</code>`, not a</p>
-<p>silent Python wrap-around to the opposite corner of the pupil (which is the</p>
-<p>single easiest way to get a mirrored disparity sign downstream).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, and *v* / *u* not</p>
-<p>an int in `<code style="color:#22d3bf">[0, V)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">[0, U)</code>`.</p>
+<p>Returns a copy of <code style="color:#22d3bf">L[v, u]</code> as a plain <code style="color:#22d3bf">(H, W)</code> 2-D image, so every other fullseye image operator applies to it unchanged. Indices are <b>not</b> wrapped: a negative or out-of-range index is a <code style="color:#22d3bf">ValueError</code>, not a silent Python wrap-around to the opposite corner of the pupil (which is the single easiest way to get a mirrored disparity sign downstream).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not a valid light field, and *v* / *u* not an int in <code style="color:#22d3bf">[0, V)</code> / <code style="color:#22d3bf">[0, U)</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">Leitfaden zur Familie lightfield_depth</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

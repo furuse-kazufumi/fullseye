@@ -9,14 +9,10 @@
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Lee-Rosenfeld: 光源の slant を推定(天頂角、0=正面〜pi/2=真横)。[0,1] 正規化。</p>
-<p>画像の平均輝度 `<code style="color:#22d3bf">&lt;I&gt;</code><code style="color:#22d3bf"> を反射率 1 の Lambertian 面の関係 </code><code style="color:#22d3bf">&lt;I&gt; = albedo * cos(slant)</code>` に当てはめ、</p>
-<p>`<code style="color:#22d3bf">slant = arccos(&lt;I&gt;)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">pi/2</code><code style="color:#22d3bf"> で割った </code><code style="color:#22d3bf">np.float64</code>`(0〜1)で返す。0 が正面光(平均 1.0)、1 が真横</p>
-<p>(平均 0)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 平均は [0,1] に clip してから `<code style="color:#22d3bf">arccos</code>` に渡すので範囲外にはならない。</p>
-<p>実質「平均輝度が低いほど slant が大きい」という 1 対 1 の写像で、反射率は 1 と仮定している(暗い素材も</p>
-<p>斜光と区別できない)。勾配で補正する版は `<code style="color:#22d3bf">hx_estimate_sl_al_zc</code><code style="color:#22d3bf">、反射率の代理値は </code><code style="color:#22d3bf">hx_estimate_al_am</code>`。</p>
-<p>`<code style="color:#22d3bf">hx_shade_height_field</code><code style="color:#22d3bf"> の仰角 </code><code style="color:#22d3bf">b</code>` と組み合わせて陰影を再現する際の目安に使う。</p>
+<p>画像の平均輝度 <code style="color:#22d3bf">&lt;I&gt;</code> を反射率 1 の Lambertian 面の関係 <code style="color:#22d3bf">&lt;I&gt; = albedo * cos(slant)</code> に当てはめ、<code style="color:#22d3bf">slant = arccos(&lt;I&gt;)</code> を <code style="color:#22d3bf">pi/2</code> で割った <code style="color:#22d3bf">np.float64</code>(0〜1)で返す。0 が正面光(平均 1.0)、1 が真横(平均 0)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 平均は [0,1] に clip してから <code style="color:#22d3bf">arccos</code> に渡すので範囲外にはならない。</p>
+<p>実質「平均輝度が低いほど slant が大きい」という 1 対 1 の写像で、反射率は 1 と仮定している(暗い素材も斜光と区別できない)。勾配で補正する版は <code style="color:#22d3bf">hx_estimate_sl_al_zc</code>、反射率の代理値は <code style="color:#22d3bf">hx_estimate_al_am</code>。<code style="color:#22d3bf">hx_shade_height_field</code> の仰角 <code style="color:#22d3bf">b</code> と組み合わせて陰影を再現する際の目安に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -25,7 +21,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_estimate_sl_al_lr 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_estimate_sl_al_lr%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_estimate_sl_al_lr%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_estimate_sl_al_lr 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_estimate_sl_al_lr%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_estimate_sl_al_lr%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>

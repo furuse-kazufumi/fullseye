@@ -5,13 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>球の表。既定は卓球の球(ITTF: 直径 40 mm、2.7 g、薄殻)。</p>
-<p>`<code style="color:#22d3bf">cd</code><code style="color:#22d3bf"> = 抗力係数(数、または &quot;sphere&quot; で Re 依存の経験式 :func:</code>drag_coefficient_sphere<code style="color:#22d3bf">)、</code><code style="color:#22d3bf">cl</code>` = 揚力(マグヌス)係数</p>
-<p>(None なら :func:<code style="color:#22d3bf">magnus_lift_coefficient</code> のスピン比モデル、数なら定数)、`<code style="color:#22d3bf">rho</code>` = 空気密度 [kg/m³]、</p>
-<p>`<code style="color:#22d3bf">spin_decay</code>` = スピンの減衰率 [1/s] (dω/dt = −spin_decay·ω。0 なら減衰なし。実測から同定する量)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">cd</code> = 抗力係数(数、または &quot;sphere&quot; で Re 依存の経験式 <code style="color:#22d3bf">drag_coefficient_sphere</code>)、<code style="color:#22d3bf">cl</code> = 揚力(マグヌス)係数(None なら <code style="color:#22d3bf">magnus_lift_coefficient</code> のスピン比モデル、数なら定数)、<code style="color:#22d3bf">rho</code> = 空気密度 [kg/m³]、<code style="color:#22d3bf">spin_decay</code> = スピンの減衰率 [1/s] (dω/dt = −spin_decay·ω。0 なら減衰なし。実測から同定する量)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ball_bounce">poc_ball_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ball_bounce.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_table_tennis_bounce">poc_table_tennis_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_table_tennis_bounce.py</code></p>

@@ -3,19 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_funct_1d_mean(y, size=3, iterations=1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import funct1d; funct1d.smooth_funct_1d_mean(y, size=3, iterations=1)</code>、台帳から引くなら <code style="color:#22d3bf">ops1d.get(&quot;smooth_funct_1d_mean&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Iterated moving-average smoothing (HALCON `<code style="color:#22d3bf">smooth_funct_1d_mean</code>`).</p>
-<p>Applies a length-*size* uniform (box) filter *iterations* times with</p>
-<p>`<code style="color:#22d3bf">nearest</code>` (edge-replicating) boundary handling. Repeated box filtering</p>
-<p>approaches a Gaussian (central limit theorem).</p>
-<p>:param y: 1-D function, at least 1 sample.</p>
-<p>:param size: window length in samples; truncated to int, must be &gt;= 1.</p>
+<p>Iterated moving-average smoothing (HALCON <code style="color:#22d3bf">smooth_funct_1d_mean</code>).</p>
+<p>Applies a length-*size* uniform (box) filter *iterations* times with <code style="color:#22d3bf">nearest</code> (edge-replicating) boundary handling. Repeated box filtering approaches a Gaussian (central limit theorem).</p>
+<p>:param y: 1-D function, at least 1 sample. :param size: window length in samples; truncated to int, must be &gt;= 1.</p>
 <p><b>Even sizes are accepted but shift the window origin by half a sample</b></p>
 <p>(scipy&#x27;s origin convention) — prefer odd sizes for a symmetric window.</p>
 <p>:param iterations: number of passes; truncated to int, must be &gt;= 0.</p>
-<p>`<code style="color:#22d3bf">iterations=0</code>` returns the (float64-coerced) input unchanged.</p>
-<p>:returns: smoothed float64 array, same length as *y*.</p>
-<p>:raises ValueError: non-1-D / NaN / Inf input, empty input, `<code style="color:#22d3bf">size &lt; 1</code>`,</p>
-<p>or `<code style="color:#22d3bf">iterations &lt; 0</code>`.</p>
+<p><code style="color:#22d3bf">iterations=0</code> returns the (float64-coerced) input unchanged.</p>
+<p>:returns: smoothed float64 array, same length as *y*. :raises ValueError: non-1-D / NaN / Inf input, empty input, <code style="color:#22d3bf">size &lt; 1</code>,</p>
+<p>or <code style="color:#22d3bf">iterations &lt; 0</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

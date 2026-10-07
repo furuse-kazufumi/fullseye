@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.clothoid_design(radius: &#x27;float&#x27;, length: &#x27;float&#x27;, speed: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.clothoid_design(radius: &#x27;float&#x27;, length: &#x27;float&#x27;, speed: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;clothoid_design&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>直線 → 円(半径 R)を長さ L のクロソイドで繋ぐときの量。</p>
-<p>返り値: `<code style="color:#22d3bf">A</code><code style="color:#22d3bf"> = √(R L)、</code><code style="color:#22d3bf">end_angle</code><code style="color:#22d3bf"> τ = L/(2R)、</code><code style="color:#22d3bf">end_point</code><code style="color:#22d3bf">(終点の (x, y)、フレネル積分)、</code><code style="color:#22d3bf">shift</code>`</p>
-<p>ΔR = y_end − R(1 − cos τ)(円が直線から離れる量。近似 L²/(24R))、`<code style="color:#22d3bf">lateral_jerk</code>`(速さ v を与えたとき</p>
-<p>v³/(R L) [m/s³] = Shortt 式の P)、`<code style="color:#22d3bf">min_length_3s</code>`(v を与えたとき 3 秒の走行長 3v [m])。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: R ≤ 0、L ≤ 0、v ≤ 0。</p>
+<p>返り値: <code style="color:#22d3bf">A</code> = √(R L)、<code style="color:#22d3bf">end_angle</code> τ = L/(2R)、<code style="color:#22d3bf">end_point</code>(終点の (x, y)、フレネル積分)、<code style="color:#22d3bf">shift</code> ΔR = y_end − R(1 − cos τ)(円が直線から離れる量。近似 L²/(24R))、<code style="color:#22d3bf">lateral_jerk</code>(速さ v を与えたとき v³/(R L) [m/s³] = Shortt 式の P)、<code style="color:#22d3bf">min_length_3s</code>(v を与えたとき 3 秒の走行長 3v [m])。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ 0、L ≤ 0、v ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -2,36 +2,23 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">align_frames — ASTROSTACK <code style="color:#22d3bf">align</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">images</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.align_frames(frames, reference=0, order=3, **align_kw)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import astrostack; astrostack.align_frames(frames, reference=0, order=3, **align_kw)</code>、台帳から引くなら <code style="color:#22d3bf">opsastrostack.get(&quot;align_frames&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.align_frames(...)</code> は**宣言 out 型 <code style="color:#22d3bf">images</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.align_frames.raw(...)</code>、または <code style="color:#22d3bf">astrostack.align_frames</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.align_frames(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">images</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.align_frames.raw(...)</code>、または <code style="color:#22d3bf">astrostack.align_frames</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(aligned, matrices) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>フレーム列を 1 枚の基準へ重ね合わせる。</p>
-<p>各フレームについて :func:<code style="color:#22d3bf">frame_align</code> で変換を推定し、</p>
-<p>:func:<code style="color:#22d3bf">scipy.ndimage.affine_transform</code> で逆写像・再標本化する。</p>
-<p><b>正直な注意</b>: 補間は像を保存しない。ノイズ無しの 64x64 / 12 星を</p>
-<p>`<code style="color:#22d3bf">(0.5, 0.5)</code>` px だけずらして戻した実測::</p>
+<p>各フレームについて <code style="color:#22d3bf">frame_align</code> で変換を推定し、<code style="color:#22d3bf">scipy.ndimage.affine_transform</code> で逆写像・再標本化する。</p>
+<p><b>正直な注意</b>: 補間は像を保存しない。ノイズ無しの 64x64 / 12 星を <code style="color:#22d3bf">(0.5, 0.5)</code> px だけずらして戻した実測::</p>
 <p>order=1 (双一次)   総フラックス -0.016 %   星のピーク -11.437 %</p>
 <p>order=3 (スプライン) 総フラックス -0.016 %   星のピーク  -0.312 %</p>
-<p>総フラックスはどちらでもほぼ保たれるのに、**星のピークは双一次だと 1 割</p>
-<p>以上落ちる** —— 0.5 px ずらしは双一次にとって最悪の位相で、隣り合う</p>
-<p>4 画素の単純平均になるからである。既定を `<code style="color:#22d3bf">order=3</code>` にしてあるのはこの</p>
-<p>実測による(`<code style="color:#22d3bf">order=3</code>` は星の周りに極小の負の縁を作るが、上の測定では</p>
-<p>最小値 -0.0000 で目に見える量ではなかった)。</p>
-<p><b>フラックスもピークも厳密に保ちたいなら補間せず</b> :func:<code style="color:#22d3bf">drizzle_resample</code></p>
-<p>へ渡すこと —— 補間しないことが drizzle の存在理由そのもの。ただし</p>
-<p><b>推定シフトをそのまま渡してはいけない</b>: ここで返す `<code style="color:#22d3bf">matrices</code>` の並進は</p>
-<p>「基準へ戻す」向きで、drizzle が要る向きとは符号が逆。</p>
-<p>:func:<code style="color:#22d3bf">drizzle_shifts</code> を通すこと::</p>
+<p>総フラックスはどちらでもほぼ保たれるのに、<b>星のピークは双一次だと 1 割以上落ちる</b> —— 0.5 px ずらしは双一次にとって最悪の位相で、隣り合う 4 画素の単純平均になるからである。既定を <code style="color:#22d3bf">order=3</code> にしてあるのはこの実測による(<code style="color:#22d3bf">order=3</code> は星の周りに極小の負の縁を作るが、上の測定では最小値 -0.0000 で目に見える量ではなかった)。</p>
+<p><b>フラックスもピークも厳密に保ちたいなら補間せず</b> <code style="color:#22d3bf">drizzle_resample</code> へ渡すこと —— 補間しないことが drizzle の存在理由そのもの。ただし</p>
+<p><b>推定シフトをそのまま渡してはいけない</b>: ここで返す <code style="color:#22d3bf">matrices</code> の並進は「基準へ戻す」向きで、drizzle が要る向きとは符号が逆。<code style="color:#22d3bf">drizzle_shifts</code> を通すこと::</p>
 <p>aligned, mats = align_frames(frames)</p>
 <p>sci, wht = drizzle_resample(frames, drizzle_shifts(mats), scale=2.0)</p>
-<p>Returns `<code style="color:#22d3bf">(aligned, matrices)</code>`:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">aligned</code><code style="color:#22d3bf"> —— 長さ </code><code style="color:#22d3bf">N</code><code style="color:#22d3bf"> の list、各 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> float64(</code><code style="color:#22d3bf">images</code>` 語彙)。</p>
-<p>基準フレームは<b>変換を通さずそのまま</b>返す(恒等変換でも補間は像を鈍らせる</p>
-<p>ので、通す理由が無い)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">matrices</code><code style="color:#22d3bf"> —— 長さ </code><code style="color:#22d3bf">N</code><code style="color:#22d3bf"> の list、各 </code><code style="color:#22d3bf">(3, 3)</code>`。基準は単位行列。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *frames* が list / tuple でない / 枚数が 2 未満 /</p>
-<p>*reference* が範囲外 / *order* が 0〜5 の外 / :func:<code style="color:#22d3bf">frame_align</code> が</p>
-<p>どれか 1 枚で失敗した場合(<b>失敗を黙って恒等変換に落とさない</b>)。</p>
+<p>Returns <code style="color:#22d3bf">(aligned, matrices)</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aligned</code> —— 長さ <code style="color:#22d3bf">N</code> の list、各 <code style="color:#22d3bf">(H, W)</code> float64(<code style="color:#22d3bf">images</code> 語彙)。基準フレームは<b>変換を通さずそのまま</b>返す(恒等変換でも補間は像を鈍らせるので、通す理由が無い)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">matrices</code> —— 長さ <code style="color:#22d3bf">N</code> の list、各 <code style="color:#22d3bf">(3, 3)</code>。基準は単位行列。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *frames* が list / tuple でない / 枚数が 2 未満 / *reference* が範囲外 / *order* が 0〜5 の外 / <code style="color:#22d3bf">frame_align</code> がどれか 1 枚で失敗した場合(<b>失敗を黙って恒等変換に落とさない</b>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

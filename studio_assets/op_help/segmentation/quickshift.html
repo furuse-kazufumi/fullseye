@@ -3,12 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quickshift(image, *, kernel_size: &#x27;float&#x27; = 3.0, max_dist: &#x27;float&#x27; = 6.0, ratio: &#x27;float&#x27; = 1.0, search_radius: &#x27;int&#x27; = 10) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import seggraph; seggraph.quickshift(image, *, kernel_size: &#x27;float&#x27; = 3.0, max_dist: &#x27;float&#x27; = 6.0, ratio: &#x27;float&#x27; = 1.0, search_radius: &#x27;int&#x27; = 10) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;quickshift&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>quick shift(Vedaldi–Soatto 2008): 特徴 (y, x, ratio · I) で Parzen 密度 P_i = Σ_j exp(−D_ij²/(2σ²))(窓 3σ、σ =</p>
-<p>`<code style="color:#22d3bf">kernel_size</code><code style="color:#22d3bf">)を見積もり、各画素を「密度が上の点のうち最も近い点」(半径 </code><code style="color:#22d3bf">search_radius</code>` の窓の中)に繋ぎ、</p>
-<p>長さ &gt; `<code style="color:#22d3bf">max_dist</code>` の枝を切った木の成分を領域にする。</p>
-<p>密度の同点は画素番号で決める(乱数なし)。木は `<code style="color:#22d3bf">max_dist</code>` に依らない(search_radius を固定すれば)ので、</p>
-<p>max_dist を増やした分割は入れ子になる(切る枝が減るだけ)。返す: `<code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..k)、</code><code style="color:#22d3bf">n_segments</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">parent</code>`</p>
-<p>(平らな添字、根は自分)、`<code style="color:#22d3bf">link</code><code style="color:#22d3bf">(親までの距離、根は inf)、</code><code style="color:#22d3bf">density</code>`。</p>
+<p>quick shift(Vedaldi–Soatto 2008): 特徴 (y, x, ratio · I) で Parzen 密度 P_i = Σ_j exp(−D_ij²/(2σ²))(窓 3σ、σ = <code style="color:#22d3bf">kernel_size</code>)を見積もり、各画素を「密度が上の点のうち最も近い点」(半径 <code style="color:#22d3bf">search_radius</code> の窓の中)に繋ぎ、長さ &gt; <code style="color:#22d3bf">max_dist</code> の枝を切った木の成分を領域にする。</p>
+<p>密度の同点は画素番号で決める(乱数なし)。木は <code style="color:#22d3bf">max_dist</code> に依らない(search_radius を固定すれば)ので、max_dist を増やした分割は入れ子になる(切る枝が減るだけ)。返す: <code style="color:#22d3bf">labels</code>(1..k)、<code style="color:#22d3bf">n_segments</code>、<code style="color:#22d3bf">parent</code> (平らな添字、根は自分)、<code style="color:#22d3bf">link</code>(親までの距離、根は inf)、<code style="color:#22d3bf">density</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

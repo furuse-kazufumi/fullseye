@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_ik(E, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;out&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import puck; puck.fivebar_ik(E, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;out&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_ik&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>逆運動学: 先端 E → (q₁, q₂)。腕 i の肘 = 円(Aᵢ, l₁) ∩ 円(E, l₂)、&quot;out&quot; は肘が外側(腕 1 は −y 側、腕 2 は +y 側)、</p>
-<p>&quot;in&quot; はその逆。届かなければ `<code style="color:#22d3bf">None</code><code style="color:#22d3bf">(fail-closed)。FK∘IK = 恒等になる領域が作業域(:func:</code>fivebar_workspace`)。</p>
+<p>逆運動学: 先端 E → (q₁, q₂)。腕 i の肘 = 円(Aᵢ, l₁) ∩ 円(E, l₂)、&quot;out&quot; は肘が外側(腕 1 は −y 側、腕 2 は +y 側)、&quot;in&quot; はその逆。届かなければ <code style="color:#22d3bf">None</code>(fail-closed)。FK∘IK = 恒等になる領域が作業域(<code style="color:#22d3bf">fivebar_workspace</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

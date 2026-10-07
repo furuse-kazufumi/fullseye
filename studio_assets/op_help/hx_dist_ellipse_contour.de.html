@@ -8,19 +8,14 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_ellipse_contour.chain.jpg">hx_dist_ellipse_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_ellipse_contour.chain.jpg">hx_dist_ellipse_contour: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Mittlerer Abstand der Konturpunkte vom angepassten Ellipsenrand (klein = ellipsennah; ein Merkmal).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>全 contour の点をまとめ、重心と座標共分散の固有分解から主軸系に移し、半軸を `<code style="color:#22d3bf">2*sqrt(λ)</code>`(各主軸の 2σ)とする</p>
-<p>楕円を当てて、各点の正規化半径 `<code style="color:#22d3bf">rad = sqrt((u/ax0)^2 + (v/ax1)^2)</code><code style="color:#22d3bf"> と 1 との差 </code><code style="color:#22d3bf">|rad - 1|</code>` の平均を 1 で</p>
-<p>頭打ちした `<code style="color:#22d3bf">np.float64</code>` で返す。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 4 個未満なら 0.0。固有値は `<code style="color:#22d3bf">1e-9</code>` で下から clip。</p>
-<p>注意: 値は画素距離ではなく楕円の正規化座標での差(無次元)。また半軸 2σ は「一様に塗られた楕円」に合う値で、</p>
-<p>境界だけの点群では `<code style="color:#22d3bf">σ = 半軸/sqrt(2)</code>` になるため、完全な楕円輪郭でも 0 にならず約 0.29 の下駄が乗る(実測</p>
-<p>0.2938)。比較用の相対指標として使い、絶対値で「楕円かどうか」を切らない。最大値版は `<code style="color:#22d3bf">hx_dist_ellipse_points</code>`、</p>
-<p>軸比は `<code style="color:#22d3bf">hx_fit_ellipse_contour</code>`。</p>
+<p>全 contour の点をまとめ、重心と座標共分散の固有分解から主軸系に移し、半軸を <code style="color:#22d3bf">2*sqrt(λ)</code>(各主軸の 2σ)とする楕円を当てて、各点の正規化半径 <code style="color:#22d3bf">rad = sqrt((u/ax0)^2 + (v/ax1)^2)</code> と 1 との差 <code style="color:#22d3bf">|rad - 1|</code> の平均を 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点が 4 個未満なら 0.0。固有値は <code style="color:#22d3bf">1e-9</code> で下から clip。</p>
+<p>注意: 値は画素距離ではなく楕円の正規化座標での差(無次元)。また半軸 2σ は「一様に塗られた楕円」に合う値で、境界だけの点群では <code style="color:#22d3bf">σ = 半軸/sqrt(2)</code> になるため、完全な楕円輪郭でも 0 にならず約 0.29 の下駄が乗る(実測 0.2938)。比較用の相対指標として使い、絶対値で「楕円かどうか」を切らない。最大値版は <code style="color:#22d3bf">hx_dist_ellipse_points</code>、軸比は <code style="color:#22d3bf">hx_fit_ellipse_contour</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -31,7 +26,7 @@
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-hx_dist_ellipse_contour 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_dist_ellipse_contour%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_dist_ellipse_contour%200.50%200.50">Load &amp; run</a></p>
+hx_dist_ellipse_contour 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_dist_ellipse_contour%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_dist_ellipse_contour%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>

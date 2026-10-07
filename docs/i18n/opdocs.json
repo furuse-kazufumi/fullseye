@@ -25,8 +25,8 @@
   },
   "## 参考(サンプルデータ・文献)": {
    "en": "## References (sample data, literature)",
-   "zh": "## 参考(示例数据・文献)",
-   "tw": "## 參考(範例資料・文獻)",
+   "zh": "## 参考(示例数据、文献)",
+   "tw": "## 參考(範例資料、文獻)",
    "ko": "## 참고(샘플 데이터·문헌)",
    "de": "## Referenzen (Beispieldaten, Literatur)"
   },
@@ -214,8 +214,8 @@
   },
   "- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。": {
    "en": "- The canonical algorithm (author, year) and its uses are named in the **family usage guide** above.",
-   "zh": "- 算法的正典(作者・年份)与用途见上面的**族使用指南**。",
-   "tw": "- 演算法的正典(作者・年份)與用途見上面的**族使用指南**。",
+   "zh": "- 算法的正典(作者、年份)与用途见上面的**族使用指南**。",
+   "tw": "- 演算法的正典(作者、年份)與用途見上面的**族使用指南**。",
    "ko": "- 알고리즘의 정전(저자·연도)과 용도는 위의 **패밀리 사용 가이드**에 적혀 있습니다.",
    "de": "- Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im **Familienleitfaden** oben."
   },
@@ -575,6 +575,76 @@
    "tw": "**精度（實測）**：內部**量化為 8 bit（256 階）**——輸出恰好落在 k/255 的格點上。即使以 float64 傳入，**該精度也不會被保留**：16-bit 相機的階差（約 1.5e-5）被捨入到 1/255 ≈ 3.9e-3，相差小於 1/255 的兩張影像會回傳相同結果。在量測微小灰階差、或將輸出繼續送入微分與迴歸時，量化台階會顯現——請選用不經過 8 bit 的 op。",
    "ko": "**정밀도(실측)**: 내부에서 **8 bit(256단계)로 양자화**한다(출력이 k/255 격자에 정확히 올라온다). float64로 넘겨도 **그 정밀도는 유지되지 않는다** —— 16-bit 카메라의 계조(약 1.5e-5)는 1/255 ≈ 3.9e-3로 반올림되고, 1/255보다 작은 차이만 있는 두 장은 같은 답을 돌려준다. 미세한 농담 차를 재는 용도나 출력을 다시 미분·회귀에 넘기는 용도에서는 양자화 계단이 드러나므로, 8 bit를 거치지 않는 op를 고를 것.",
    "de": "**Genauigkeit (gemessen)**: intern auf **8 Bit (256 Stufen) quantisiert** — die Ausgabe liegt exakt auf dem Raster k/255. Eine Übergabe als float64 **erhält diese Genauigkeit nicht**: die Stufung einer 16-Bit-Kamera (etwa 1,5e-5) wird auf 1/255 ≈ 3,9e-3 gerundet, und zwei Bilder, die sich um weniger als 1/255 unterscheiden, liefern dieselbe Antwort. Wo feine Helligkeitsunterschiede gemessen werden oder die Ausgabe in Ableitung oder Regression weiterläuft, werden die Quantisierungsstufen sichtbar — dann einen Operator wählen, der nicht über 8 Bit geht."
+  },
+  "▸ このパイプラインを読み込む": {
+   "en": "▸ Load this pipeline",
+   "zh": "▸ 载入此流水线",
+   "tw": "▸ 載入此管線",
+   "ko": "▸ 이 파이프라인 불러오기",
+   "de": "▸ Diese Pipeline laden"
+  },
+  "読み込んで実行": {
+   "en": "Load & run",
+   "zh": "载入并运行",
+   "tw": "載入並執行",
+   "ko": "불러와서 실행",
+   "de": "Laden & ausführen"
+  },
+  "Mermaid 図(ソース):": {
+   "en": "Mermaid diagram (source):",
+   "zh": "Mermaid 图(源码):",
+   "tw": "Mermaid 圖(原始碼):",
+   "ko": "Mermaid 다이어그램(소스):",
+   "de": "Mermaid-Diagramm (Quelltext):"
+  },
+  "数式(LaTeX)(ソース):": {
+   "en": "Formula (LaTeX source):",
+   "zh": "公式(LaTeX 源码):",
+   "tw": "公式(LaTeX 原始碼):",
+   "ko": "수식(LaTeX 소스):",
+   "de": "Formel (LaTeX-Quelltext):"
+  },
+  "(docs サイト)": {
+   "en": "(docs site)",
+   "zh": "(文档网站)",
+   "tw": "(文件網站)",
+   "ko": "(문서 사이트)",
+   "de": "(Doku-Website)"
+  },
+  "つまみ a を振った図": {
+   "en": "knob a sweep",
+   "zh": "旋钮 a 扫描",
+   "tw": "旋鈕 a 掃描",
+   "ko": "노브 a 스윕",
+   "de": "Regler a durchfahren"
+  },
+  "つまみ b を振った図": {
+   "en": "knob b sweep",
+   "zh": "旋钮 b 扫描",
+   "tw": "旋鈕 b 掃描",
+   "ko": "노브 b 스윕",
+   "de": "Regler b durchfahren"
+  },
+  "段階の図": {
+   "en": "stages",
+   "zh": "处理阶段",
+   "tw": "處理階段",
+   "ko": "단계",
+   "de": "Stufen"
+  },
+  "別の画像での出力": {
+   "en": "other inputs",
+   "zh": "其他输入图像",
+   "tw": "其他輸入影像",
+   "ko": "다른 입력 이미지",
+   "de": "andere Eingaben"
+  },
+  "動き(GIF)": {
+   "en": "animation",
+   "zh": "动画(GIF)",
+   "tw": "動畫(GIF)",
+   "ko": "애니메이션(GIF)",
+   "de": "Animation (GIF)"
   }
  }
 }

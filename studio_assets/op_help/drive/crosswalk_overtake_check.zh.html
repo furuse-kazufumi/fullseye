@@ -4,15 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crosswalk_overtake_check(ego, others, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, zone: &#x27;float&#x27; = 30.0, v_moving: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecrossing; drivecrossing.crosswalk_overtake_check(ego, others, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, zone: &#x27;float&#x27; = 30.0, v_moving: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;crosswalk_overtake_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>横断歩道等とその手前 `<code style="color:#22d3bf">zone</code>` m の中で、前方を進行している車の前に出たか(38 条 3 項)。</p>
-<p>ego, others[i] = {&quot;t&quot;, &quot;x&quot;[, &quot;v&quot;], &quot;kind&quot;}(x = 前端)。他の車の前端を自分の前端が後ろから越えた瞬間(線形補間)を</p>
-<p>「前方に出た」とし、そのときの自分の前端の位置が [crosswalk_start − zone, crosswalk_end] で、相手が進行中(速さ &gt;</p>
-<p>`<code style="color:#22d3bf">v_moving</code><code style="color:#22d3bf">、**仮定**)かつ特定小型原動機付自転車等(</code><code style="color:#22d3bf">EXEMPT_KINDS</code>`)でなければ違反。</p>
-<p>返り値: `<code style="color:#22d3bf">ok</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">events</code>` = [{&quot;other&quot;, &quot;t&quot;, &quot;x&quot;, &quot;in_zone&quot;, &quot;exempt&quot;, &quot;moving&quot;, &quot;violation&quot;}]。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>横断歩道等とその手前 <code style="color:#22d3bf">zone</code> m の中で、前方を進行している車の前に出たか(38 条 3 項)。</p>
+<p>ego, others[i] = {&quot;t&quot;, &quot;x&quot;[, &quot;v&quot;], &quot;kind&quot;}(x = 前端)。他の車の前端を自分の前端が後ろから越えた瞬間(線形補間)を「前方に出た」とし、そのときの自分の前端の位置が [crosswalk_start − zone, crosswalk_end] で、相手が進行中(速さ &gt; <code style="color:#22d3bf">v_moving</code>、<b>仮定</b>)かつ特定小型原動機付自転車等(<code style="color:#22d3bf">EXEMPT_KINDS</code>)でなければ違反。</p>
+<p>返り値: <code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">events</code> = [{&quot;other&quot;, &quot;t&quot;, &quot;x&quot;, &quot;in_zone&quot;, &quot;exempt&quot;, &quot;moving&quot;, &quot;violation&quot;}]。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

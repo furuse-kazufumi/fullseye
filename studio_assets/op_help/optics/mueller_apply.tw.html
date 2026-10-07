@@ -3,53 +3,32 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × stokes</code> → <code style="color:#22d3bf">stokes</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mueller_apply(mueller, stokes)</code>(要直接呼叫實作,<code style="color:#22d3bf">import optics; optics.mueller_apply(mueller, stokes)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;mueller_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>讓 Stokes 向量通過 Mueller 矩陣:`<code style="color:#22d3bf">S&#x27; = M @ S</code>`。</p>
+<p>讓 Stokes 向量通過 Mueller 矩陣:<code style="color:#22d3bf">S&#x27; = M @ S</code>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>*mueller* is a `<code style="color:#22d3bf">(4, 4)</code>` real matrix (build one with</p>
-<p>:func:<code style="color:#22d3bf">mueller_element</code>, or multiply several together) and *stokes* a</p>
-<p>4-component Stokes vector `<code style="color:#22d3bf">[S0, S1, S2, S3]</code>`.</p>
-<p>The <b>input</b> is checked for physical realisability: `<code style="color:#22d3bf">S0 &gt;= 0</code>` and</p>
-<p>`<code style="color:#22d3bf">sqrt(S1^2+S2^2+S3^2) &lt;= S0</code>` (degree of polarisation at most 1). Handing</p>
-<p>an impossible state to a Mueller matrix returns a plausible-looking result</p>
-<p>that means nothing, so it is refused instead. The <b>output</b> is not</p>
-<p>re-checked, deliberately: an unphysical output is real evidence that</p>
-<p>*mueller* is not a physical Mueller matrix, and swallowing it would hide</p>
-<p>the bug — inspect it with :func:<code style="color:#22d3bf">stokes_analyze</code>, which will say so.</p>
-<p>Returns a `<code style="color:#22d3bf">(4,)</code>` float64 Stokes vector.</p>
+<p>*mueller* is a <code style="color:#22d3bf">(4, 4)</code> real matrix (build one with <code style="color:#22d3bf">mueller_element</code>, or multiply several together) and *stokes* a 4-component Stokes vector <code style="color:#22d3bf">[S0, S1, S2, S3]</code>.</p>
+<p>The <b>input</b> is checked for physical realisability: <code style="color:#22d3bf">S0 &gt;= 0</code> and <code style="color:#22d3bf">sqrt(S1^2+S2^2+S3^2) &lt;= S0</code> (degree of polarisation at most 1). Handing an impossible state to a Mueller matrix returns a plausible-looking result that means nothing, so it is refused instead. The <b>output</b> is not re-checked, deliberately: an unphysical output is real evidence that *mueller* is not a physical Mueller matrix, and swallowing it would hide the bug — inspect it with <code style="color:#22d3bf">stokes_analyze</code>, which will say so.</p>
+<p>Returns a <code style="color:#22d3bf">(4,)</code> float64 Stokes vector.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">画像として通す(2026-09-06 追加)</h3>
-<p>`<code style="color:#22d3bf">mueller</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">(..., 4, 4)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">stokes</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">(..., 4)</code>` にすると</p>
-<p><b>画素ごとに違う行列</b>を通せる。両者は numpy の規則で broadcast するので、</p>
-<p>`<code style="color:#22d3bf">(H, W, 4, 4)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(4,)</code>` の組(素子だけが場所で変わる)や、</p>
-<p>`<code style="color:#22d3bf">(4, 4)</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">(H, W, 4)</code>` の組(光だけが場所で変わる)も書ける。</p>
-<p>足した理由は実測。`<code style="color:#22d3bf">examples/poc_photoelasticity.py</code>` は画素ごとに</p>
-<p>位相差の変わる位相子を通す必要があり、**この口が無いために (H,W,4,4) を</p>
-<p>自分で組む羽目になっていた**。行列そのものは正しい(暗視野円偏光系を</p>
-<p>組んで教科書の `<code style="color:#22d3bf">I = sin²(δ/2)</code>` と 125 通りで最大差 2.2e-16)ので、</p>
-<p>足りなかったのは形だけだった。</p>
-<p>実現可能性の検査は<b>画素ごとに</b>行い、破っている画素があれば</p>
-<p>その数と最悪値を挙げて拒否する(1 点でも通さない = fail-closed)。</p>
-<p>Ground truth it reproduces exactly: unpolarised `<code style="color:#22d3bf">[1,0,0,0]</code>` through an</p>
-<p>ideal polariser gives `<code style="color:#22d3bf">S0 = 0.5</code>` with degree of polarisation 1; through</p>
-<p>two polarisers at relative angle theta, `<code style="color:#22d3bf">0.5*cos^2(theta)</code>` (Malus, to</p>
-<p>1e-16 over a full sweep); the identity matrix returns the input unchanged.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *mueller* is not </code><code style="color:#22d3bf">(4, 4)</code>`, *stokes* is not a</p>
-<p>1-D 4-vector, either is complex / masked / non-finite, the input Stokes</p>
-<p>vector is unphysical, or the product overflows float64.</p>
+<p><code style="color:#22d3bf">mueller</code> を <code style="color:#22d3bf">(..., 4, 4)</code>、<code style="color:#22d3bf">stokes</code> を <code style="color:#22d3bf">(..., 4)</code> にすると <b>画素ごとに違う行列</b>を通せる。両者は numpy の規則で broadcast するので、<code style="color:#22d3bf">(H, W, 4, 4)</code> と <code style="color:#22d3bf">(4,)</code> の組(素子だけが場所で変わる)や、<code style="color:#22d3bf">(4, 4)</code> と <code style="color:#22d3bf">(H, W, 4)</code> の組(光だけが場所で変わる)も書ける。</p>
+<p>足した理由は実測。<code style="color:#22d3bf">examples/poc_photoelasticity.py</code> は画素ごとに位相差の変わる位相子を通す必要があり、<b>この口が無いために (H,W,4,4) を自分で組む羽目になっていた</b>。行列そのものは正しい(暗視野円偏光系を組んで教科書の <code style="color:#22d3bf">I = sin²(δ/2)</code> と 125 通りで最大差 2.2e-16)ので、足りなかったのは形だけだった。</p>
+<p>実現可能性の検査は<b>画素ごとに</b>行い、破っている画素があればその数と最悪値を挙げて拒否する(1 点でも通さない = fail-closed)。</p>
+<p>Ground truth it reproduces exactly: unpolarised <code style="color:#22d3bf">[1,0,0,0]</code> through an ideal polariser gives <code style="color:#22d3bf">S0 = 0.5</code> with degree of polarisation 1; through two polarisers at relative angle theta, <code style="color:#22d3bf">0.5*cos^2(theta)</code> (Malus, to 1e-16 over a full sweep); the identity matrix returns the input unchanged.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *mueller* is not <code style="color:#22d3bf">(4, 4)</code>, *stokes* is not a 1-D 4-vector, either is complex / masked / non-finite, the input Stokes vector is unphysical, or the product overflows float64.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>
-<p style="margin:2px 0 2px 12px">• **字串一律 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 會成功,於是未解析的設定值會被當成長度混進來(實測:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾回傳看似合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隱式提升拒絕。</p>
-<p style="margin:2px 0 2px 12px">• **complex / masked array 一律 <code style="color:#22d3bf">ValueError</code><b>(僅接受實數槽位;拒絕無聲丟棄虛部或剝掉遮罩)。</b>所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>字串一律 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 會成功,於是未解析的設定值會被當成長度混進來(實測:<code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 曾回傳看似合理的 66.667 mm)。bool 也按 <code style="color:#22d3bf">True == 1</code> 的隱式提升拒絕。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 一律 <code style="color:#22d3bf">ValueError</code></b>(僅接受實數槽位;拒絕無聲丟棄虛部或剝掉遮罩)。<b>所有輸入中的 NaN/Inf 一律 <code style="color:#22d3bf">ValueError</code></b>。</p>
 <p style="margin:2px 0 2px 12px">• <b>逐項點名拒絕除零及其近親</b>:焦距 0、曲率半徑 0、折射率 &lt;= 0、全不透明光闌(全為 0,正規化變成 0/0)、總和 &lt;= 0 的 PSF、S0 = 0 的 Stokes 向量、物體位於前焦點(像在無窮遠)。</p>
-<p style="margin:2px 0 2px 12px">• <b>只有兩個運算子會回傳非有限值,而且都寫進了契約</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外回傳 <code style="color:#22d3bf">far_mm = inf</code>(這正是超焦距的定義),<code style="color:#22d3bf">gaussian_beam</code> 在束腰處回傳 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半徑)。兩者都同時回傳一個有限的夥伴(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。**除此之外的無聲 NaN/Inf 都在內部檢出並 <code style="color:#22d3bf">ValueError</code>** ——「float64 溢位了」和「答案是無窮大」是兩種不同的主張,不能拿後者的臉去交付前者。</p>
+<p style="margin:2px 0 2px 12px">• <b>只有兩個運算子會回傳非有限值,而且都寫進了契約</b>:<code style="color:#22d3bf">depth_of_field</code> 在超焦距以外回傳 <code style="color:#22d3bf">far_mm = inf</code>(這正是超焦距的定義),<code style="color:#22d3bf">gaussian_beam</code> 在束腰處回傳 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波前的曲率半徑)。兩者都同時回傳一個有限的夥伴(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)。<b>除此之外的無聲 NaN/Inf 都在內部檢出並 <code style="color:#22d3bf">ValueError</code></b> ——「float64 溢位了」和「答案是無窮大」是兩種不同的主張,不能拿後者的臉去交付前者。</p>
 <p style="margin:2px 0 2px 12px">• <b>尺寸上限</b>:生成網格受 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)限制,傳入的場/PSF/光闌受 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24),ABCD 元件序列受 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024),Zernike 受 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。以 fail-closed 堵住「小參數引發巨大內部配置」的路徑(實測:n_max=40 × 4096² 需要 108 GB)。</p>
 <p style="margin:2px 0 2px 12px">• <b>物理上不可能的狀態同樣拒絕</b>:偏振度 &gt; 1 的 Stokes 向量、負穿透率、負強度、n-|m| 為奇數等非法 Zernike 指標。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_photoelasticity">poc_photoelasticity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_photoelasticity.py</code></p>

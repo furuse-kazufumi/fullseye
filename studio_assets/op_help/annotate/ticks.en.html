@@ -3,19 +3,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × axes</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ticks(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, tick_len=5, label=True, label_fmt=&#x27;{:g}&#x27;, font_size=11, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None, style=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.ticks(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, tick_len=5, label=True, label_fmt=&#x27;{:g}&#x27;, font_size=11, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None, style=None)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;ticks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Tick marks and their values. <b>The positions are closed form</b> (:func:<code style="color:#22d3bf">data_to_pixel</code> itself).</p>
+<p>Tick marks and their values. <b>The positions are closed form</b> (<code style="color:#22d3bf">data_to_pixel</code> itself).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>目盛りは枠の<b>外側</b>へ `<code style="color:#22d3bf">tick_len</code>` px 出す。ラベルは目盛りの外側に置くので、</p>
-<p>軸の周りに余白が無ければ :func:<code style="color:#22d3bf">text_box</code> の境界検査が例外にする</p>
-<p>(= 図の外に文字が消える事故が起きない)。</p>
-<p>Raises</p>
-<p>------</p>
+<p>目盛りは枠の<b>外側</b>へ <code style="color:#22d3bf">tick_len</code> px 出す。ラベルは目盛りの外側に置くので、</p>
+<p>軸の周りに余白が無ければ <code style="color:#22d3bf">text_box</code> の境界検査が例外にする(= 図の外に文字が消える事故が起きない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>tick_len が負、ラベルが画像に収まらない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training-dataset conventions — COCO / YOLO / VOC and pitfalls in visual inspection</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

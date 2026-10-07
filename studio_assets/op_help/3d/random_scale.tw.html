@@ -2,18 +2,13 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">random_scale — 3D <code style="color:#22d3bf">augment</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.random_scale(points, lo: &#x27;float&#x27;, hi: &#x27;float&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pcl_augment; pcl_augment.random_scale(points, lo: &#x27;float&#x27;, hi: &#x27;float&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;random_scale&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.random_scale(...)</code> 只回傳**宣告的 out 型別 <code style="color:#22d3bf">points</code> 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.random_scale.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">pcl_augment.random_scale</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.random_scale(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">points</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.random_scale.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">pcl_augment.random_scale</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>繞原點施加均勻縮放 `<code style="color:#22d3bf">s ~ U(lo, hi)</code><code style="color:#22d3bf"> 並回傳 </code><code style="color:#22d3bf">(scaled, s)</code>`。</p>
+<p>繞原點施加均勻縮放 <code style="color:#22d3bf">s ~ U(lo, hi)</code> 並回傳 <code style="color:#22d3bf">(scaled, s)</code>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">scaled = points * s</code><code style="color:#22d3bf">。bbox 対角長はちょうど </code><code style="color:#22d3bf">s</code><code style="color:#22d3bf"> 倍になる(</code><code style="color:#22d3bf">s &gt; 0</code>` なので</p>
-<p>`<code style="color:#22d3bf">max</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">min</code><code style="color:#22d3bf"> が共に </code><code style="color:#22d3bf">s</code><code style="color:#22d3bf"> 倍 → 対角 </code><code style="color:#22d3bf">‖max-min‖</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">s</code>` 倍)。物体スケールの</p>
-<p>ばらつき(距離/センサ倍率)を学習に注入する。`<code style="color:#22d3bf">0 &lt; lo &lt;= hi</code>` を要求(fail-closed)。</p>
-<p>`<code style="color:#22d3bf">lo &lt;= 0</code><code style="color:#22d3bf"> または </code><code style="color:#22d3bf">hi &lt; lo</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">lo == hi</code><code style="color:#22d3bf"> は許され常に </code><code style="color:#22d3bf">s = lo</code>`)。</p>
-<p>原点まわりの拡大なので、雲が原点から離れていれば重心も `<code style="color:#22d3bf">s</code>` 倍の位置へ動く(位置と</p>
-<p>大きさが同時に変わる)。大きさだけ変えたいなら事前に重心を原点へ寄せる。`<code style="color:#22d3bf">s</code>` は</p>
-<p>Python float、返り値の点群は float64。`<code style="color:#22d3bf">seed</code>` で決定論的。空入力は空を返す。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">scaled = points * s</code>。bbox 対角長はちょうど <code style="color:#22d3bf">s</code> 倍になる(<code style="color:#22d3bf">s &gt; 0</code> なので <code style="color:#22d3bf">max</code>/<code style="color:#22d3bf">min</code> が共に <code style="color:#22d3bf">s</code> 倍 → 対角 <code style="color:#22d3bf">‖max-min‖</code> も <code style="color:#22d3bf">s</code> 倍)。物体スケールのばらつき(距離/センサ倍率)を学習に注入する。<code style="color:#22d3bf">0 &lt; lo &lt;= hi</code> を要求(fail-closed)。</p>
+<p><code style="color:#22d3bf">lo &lt;= 0</code> または <code style="color:#22d3bf">hi &lt; lo</code> は <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">lo == hi</code> は許され常に <code style="color:#22d3bf">s = lo</code>)。原点まわりの拡大なので、雲が原点から離れていれば重心も <code style="color:#22d3bf">s</code> 倍の位置へ動く(位置と大きさが同時に変わる)。大きさだけ変えたいなら事前に重心を原点へ寄せる。<code style="color:#22d3bf">s</code> は Python float、返り値の点群は float64。<code style="color:#22d3bf">seed</code> で決定論的。空入力は空を返す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

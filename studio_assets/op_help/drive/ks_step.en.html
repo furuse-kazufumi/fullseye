@@ -5,11 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>運動学単線(KS)モデルを区分一定入力 u = (δ̇, a) で dt だけ RK4 で進める。参照点 = 後軸中心。</p>
-<p>state = (x_rear, y_rear, δ, v, ψ)。式: ẋ = v cos ψ、ẏ = v sin ψ、δ̇ = u₀、v̇ = u₁、ψ̇ = v / l_wb · tan δ</p>
-<p>(commonroad-vehicle-models `<code style="color:#22d3bf">vehicle_dynamics_ks</code><code style="color:#22d3bf">、入力の飽和 </code><code style="color:#22d3bf">steering_constraints</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">acceleration_constraints</code>` も同じ)。</p>
-<p>門: δ = 0 で x = x₀ + v t(1e-9)、一定 δ で半径 l_wb / tan δ の円(1 周で始点へ 1e-6)、commonroad-io があれば</p>
-<p>`<code style="color:#22d3bf">vehicle_dynamics_ks</code>` の odeint と 1 step で 1e-6 一致。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: state が (5,) でない・非有限、u が (2,) でない、dt ≤ 0、params が不正。</p>
+<p>state = (x_rear, y_rear, δ, v, ψ)。式: ẋ = v cos ψ、ẏ = v sin ψ、δ̇ = u₀、v̇ = u₁、ψ̇ = v / l_wb · tan δ (commonroad-vehicle-models <code style="color:#22d3bf">vehicle_dynamics_ks</code>、入力の飽和 <code style="color:#22d3bf">steering_constraints</code> / <code style="color:#22d3bf">acceleration_constraints</code> も同じ)。</p>
+<p>門: δ = 0 で x = x₀ + v t(1e-9)、一定 δ で半径 l_wb / tan δ の円(1 周で始点へ 1e-6)、commonroad-io があれば <code style="color:#22d3bf">vehicle_dynamics_ks</code> の odeint と 1 step で 1e-6 一致。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: state が (5,) でない・非有限、u が (2,) でない、dt ≤ 0、params が不正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

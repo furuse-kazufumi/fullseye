@@ -7,39 +7,24 @@
 <p>*旋钮 a 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>阶段</b>(前置算子 → 本算子，从左到右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_free_transform.chain.jpg">tb_specular_free_transform: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_free_transform.chain.jpg">tb_specular_free_transform: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p><b>换别的图像</b>(合成场景 / 照片 / 硬币。上排为输入，下排为对应输出。旋钮取默认):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_free_transform.inputs.jpg">tb_specular_free_transform: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_specular_free_transform.inputs.jpg">tb_specular_free_transform: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>投影去除光源方向：图像中高光无法触及的部分。→ (H, W, 3)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">I - (I.G) G</code><code style="color:#22d3bf"> for the unit illuminant colour </code><code style="color:#22d3bf">G</code>`. Under the dichromatic</p>
-<p>model the interface term is `<code style="color:#22d3bf">m_s * G</code>`, so it lies entirely in the removed</p>
-<p>direction and the result is <b>invariant to any specular term whatsoever</b> —</p>
-<p>exactly, for any lobe shape, any strength, any spatial pattern. That is the</p>
-<p>specular-invariant subspace of Mallick et al. (2005); this operator is the</p>
-<p>projection itself, with no rotation into named channels, so it stays in RGB</p>
-<p>and composes with the rest of the family.</p>
-<p>Use it when the *shape* of the specular lobe is unknown or the surface is</p>
-<p>textured — feature matching, edge detection and correlation all work in this</p>
-<p>subspace without any of the assumptions</p>
-<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> needs.</p>
-<p><b>This is a projection, not a picture.</b> The result loses one of three</p>
-<p>degrees of freedom (its component along `<code style="color:#22d3bf">G</code>` is exactly zero everywhere)</p>
-<p>and, for an image with negative values after black-level subtraction, keeps</p>
-<p>them. It is not a displayable &quot;highlight-removed photo&quot; and does not claim</p>
-<p>to be; for that, use :func:<code style="color:#22d3bf">specular_diffuse_split</code>.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image_rgb* is not a valid </code><code style="color:#22d3bf">(H, W, 3)</code>` linear</p>
-<p>RGB image (see :func:<code style="color:#22d3bf">specular_diffuse_split</code>); *illuminant_rgb* is not a</p>
-<p>non-zero 3-vector.</p>
-<p>Typed bridge of the specular op `<code style="color:#22d3bf">specular_free_transform</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">I - (I.G) G</code> for the unit illuminant colour <code style="color:#22d3bf">G</code>. Under the dichromatic model the interface term is <code style="color:#22d3bf">m_s * G</code>, so it lies entirely in the removed direction and the result is <b>invariant to any specular term whatsoever</b> — exactly, for any lobe shape, any strength, any spatial pattern. That is the specular-invariant subspace of Mallick et al. (2005); this operator is the projection itself, with no rotation into named channels, so it stays in RGB and composes with the rest of the family.</p>
+<p>Use it when the *shape* of the specular lobe is unknown or the surface is textured — feature matching, edge detection and correlation all work in this subspace without any of the assumptions <code style="color:#22d3bf">specular_diffuse_split</code> needs.</p>
+<p><b>This is a projection, not a picture.</b> The result loses one of three degrees of freedom (its component along <code style="color:#22d3bf">G</code> is exactly zero everywhere) and, for an image with negative values after black-level subtraction, keeps them. It is not a displayable &quot;highlight-removed photo&quot; and does not claim to be; for that, use <code style="color:#22d3bf">specular_diffuse_split</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *image_rgb* is not a valid <code style="color:#22d3bf">(H, W, 3)</code> linear RGB image (see <code style="color:#22d3bf">specular_diffuse_split</code>); *illuminant_rgb* is not a non-zero 3-vector.</p>
+<p>Typed bridge of the specular op <code style="color:#22d3bf">specular_free_transform</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中试试</h3>
 <p>下面的程序已确认可以运行(与图相同的输入)。在 Studio 帮助中，此块会变成按钮，可当场加载并运行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_rgb 0.50 0.50
-tb_specular_free_transform 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_specular_free_transform%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_specular_free_transform%200.50%200.50">Load &amp; run</a></p>
+tb_specular_free_transform 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_rgb%200.50%200.50%0Atb_specular_free_transform%200.50%200.50">▸ 载入此流水线</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_rgb%200.50%200.50%0Atb_specular_free_transform%200.50%200.50">载入并运行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p>下面的示例调用的是底层账本算子 <code style="color:#22d3bf">specular_free_transform</code>。此桥接算子只是把同一实现适配为 <code style="color:#22d3bf">fn(v, a, b)</code> 约定，行为完全相同(只是调用形式不同)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_leaf_disease_area">poc_leaf_disease_area</a> — <code style="color:#22d3bf">py -3.11 examples/poc_leaf_disease_area.py</code></p>

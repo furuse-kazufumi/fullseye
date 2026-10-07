@@ -12,9 +12,9 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/thinning_golay.inputs.jpg">thinning_golay: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Thins a region. The implementation uses skimage&#x27;s `<code style="color:#22d3bf">thin</code>` (Guo-Hall-type iterative thinning), repeated until the region is completely 1 pixel wide; a and b are unused.</p>
+<p>Thins a region. The implementation uses skimage&#x27;s <code style="color:#22d3bf">thin</code> (Guo-Hall-type iterative thinning), repeated until the region is completely 1 pixel wide; a and b are unused.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の `<code style="color:#22d3bf">thinning_golay</code>`（Golay アルファベットの構造要素を使ったヒット・オア・ミス変換で 1 ステップぶんだけ細線化する演算、通常は反復して使う）とはアルゴリズムも粒度も異なる近似 —— 単一ステップではなく収束するまで細線化してしまう。</p>
+<p>HALCON の <code style="color:#22d3bf">thinning_golay</code>（Golay アルファベットの構造要素を使ったヒット・オア・ミス変換で 1 ステップぶんだけ細線化する演算、通常は反復して使う）とはアルゴリズムも粒度も異なる近似 —— 単一ステップではなく収束するまで細線化してしまう。</p>
 <p><b>Border handling</b>: treat everything outside the image as background (0) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

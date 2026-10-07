@@ -5,13 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>欠陥画素の地図: 同色 8 近傍の全部から同じ向きに閾値以上ずれた画素。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>&quot;Every neighbour, same sign&quot; is what separates a defect from an edge: at an</p>
-<p>edge some same-colour neighbours are on the pixel&#x27;s own side. The rule is</p>
-<p>the one openISP documents for its DPC stage; here it is pattern-free</p>
-<p>because same-colour neighbours are simply the pixels two steps away.</p>
-<p>Ground truth: dead pixels planted in a smooth frame are recovered exactly</p>
-<p>(no misses, no false alarms) while a hard edge produces none.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: bad *raw* or a *threshold* outside </code><code style="color:#22d3bf">(0, 1]</code>`.</p>
+<p>&quot;Every neighbour, same sign&quot; is what separates a defect from an edge: at an edge some same-colour neighbours are on the pixel&#x27;s own side. The rule is the one openISP documents for its DPC stage; here it is pattern-free because same-colour neighbours are simply the pixels two steps away.</p>
+<p>Ground truth: dead pixels planted in a smooth frame are recovered exactly (no misses, no false alarms) while a hard edge produces none. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: bad *raw* or a *threshold* outside <code style="color:#22d3bf">(0, 1]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

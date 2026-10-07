@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vision_boundary_flip(kp, eps_true, sigma: &#x27;float&#x27;, n: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegfail; pegfail.vision_boundary_flip(kp, eps_true, sigma: &#x27;float&#x27;, n: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;vision_boundary_flip&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>「どこで壊れるか」: 真のずれ ε に標準偏差 σ の計測雑音を足したとき、offset の欄(small/large、境目 W + c_r)が真と<b>反転する</b></p>
-<p>確率を各 ε で数える(numpy だけ)。境目から σ の何倍離れているか(`<code style="color:#22d3bf">z</code>`)と理論値 Φ(−|z|) も返す(雑音が正規なら一致する門)。</p>
-<p>返り: `<code style="color:#22d3bf">eps</code><code style="color:#22d3bf">(m)、</code><code style="color:#22d3bf">flip_rate</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">z</code><code style="color:#22d3bf"> = (|ε| − eps_max)/σ、</code><code style="color:#22d3bf">flip_theory</code><code style="color:#22d3bf"> = Φ(−|z|)、</code><code style="color:#22d3bf">eps_max</code><code style="color:#22d3bf">。**Raises** </code><code style="color:#22d3bf">ValueError</code>`: σ ≤ 0。</p>
+<p>「どこで壊れるか」: 真のずれ ε に標準偏差 σ の計測雑音を足したとき、offset の欄(small/large、境目 W + c_r)が真と<b>反転する</b> 確率を各 ε で数える(numpy だけ)。境目から σ の何倍離れているか(<code style="color:#22d3bf">z</code>)と理論値 Φ(−|z|) も返す(雑音が正規なら一致する門)。</p>
+<p>返り: <code style="color:#22d3bf">eps</code>(m)、<code style="color:#22d3bf">flip_rate</code>、<code style="color:#22d3bf">z</code> = (|ε| − eps_max)/σ、<code style="color:#22d3bf">flip_theory</code> = Φ(−|z|)、<code style="color:#22d3bf">eps_max</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: σ ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -5,16 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>真のペグ姿勢(先端中心と軸の向き)から、接触点の数と場所を<b>幾何だけで</b>予測する(接触計算と独立な第 2 実装)。</p>
-<p>先端の縁の円(半径 r、水平投影は e₁ 方向 r・傾き方向 r cos θ の楕円)が穴の最狭部の円 R(面取り帯では高さに応じた円錐の半径)に</p>
-<p>届けば「tip」、胴の最狭部(z = −W)での水平断面(半径 r と r/cos θ の楕円)が R に届けば「mouth」。胴が面取りの円錐に触れる</p>
-<p>場所は tan θ &lt; 1 なら必ず最狭部の縁になる(円錐の半径は高さに 1 で増え、断面の中心は tan θ でしか動かない)。</p>
-<p>返り: `<code style="color:#22d3bf">n</code><code style="color:#22d3bf">(0/1/2)、</code><code style="color:#22d3bf">where</code><code style="color:#22d3bf">(&quot;none&quot; / &quot;chamfer&quot; / &quot;tip&quot; / &quot;mouth&quot; / &quot;tip+mouth&quot;)、</code><code style="color:#22d3bf">depth</code>`(口の面からの先端深さ、</p>
-<p>負なら空中)、`<code style="color:#22d3bf">depth_below_chamfer</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">tilt</code><code style="color:#22d3bf"> [rad]。</code><code style="color:#22d3bf">tol</code>` は「届いた」とみなす半径方向の余裕。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: axis がゼロ、tip_xyz の形が (3,) でない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>先端の縁の円(半径 r、水平投影は e₁ 方向 r・傾き方向 r cos θ の楕円)が穴の最狭部の円 R(面取り帯では高さに応じた円錐の半径)に届けば「tip」、胴の最狭部(z = −W)での水平断面(半径 r と r/cos θ の楕円)が R に届けば「mouth」。胴が面取りの円錐に触れる場所は tan θ &lt; 1 なら必ず最狭部の縁になる(円錐の半径は高さに 1 で増え、断面の中心は tan θ でしか動かない)。</p>
+<p>返り: <code style="color:#22d3bf">n</code>(0/1/2)、<code style="color:#22d3bf">where</code>(&quot;none&quot; / &quot;chamfer&quot; / &quot;tip&quot; / &quot;mouth&quot; / &quot;tip+mouth&quot;)、<code style="color:#22d3bf">depth</code>(口の面からの先端深さ、負なら空中)、<code style="color:#22d3bf">depth_below_chamfer</code>、<code style="color:#22d3bf">tilt</code> [rad]。<code style="color:#22d3bf">tol</code> は「届いた」とみなす半径方向の余裕。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: axis がゼロ、tip_xyz の形が (3,) でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pegsim_insertion">poc_pegsim_insertion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pegsim_insertion.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

@@ -4,25 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ford_circles(max_denominator=12, lo=0, hi=1)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.ford_circles(max_denominator=12, lo=0, hi=1)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;ford_circles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Ford circles for the Farey fractions — tangency *is* an integer identity.</p>
-<p>For a fraction `<code style="color:#22d3bf">p/q</code>` in lowest terms the Ford circle sits at</p>
-<p>`<code style="color:#22d3bf">(p/q, 1/(2q**2))</code><code style="color:#22d3bf"> with radius </code><code style="color:#22d3bf">1/(2q**2)</code>`. Two such circles are</p>
-<p><b>tangent if and only if</b> `<code style="color:#22d3bf">|p*s - q*r| == 1</code>` — the Farey-neighbour</p>
-<p>condition — and otherwise strictly disjoint. They never overlap.</p>
-<p>★<b>Why this earns its place</b>: the picture&#x27;s correctness is an identity</p>
-<p>between integers, not a tolerance. `<code style="color:#22d3bf">|p*s - q*r|</code>` is computed in exact</p>
-<p>integer arithmetic and compared with the *geometric* tangency</p>
-<p>`<code style="color:#22d3bf">|c_i - c_j| == r_i + r_j</code>` measured from the coordinates; the two must</p>
-<p>agree on every pair. The number of fractions is the Farey length</p>
-<p>`<code style="color:#22d3bf">1 + sum(phi(q) for q in 1..n)</code>`, another exact integer.</p>
-<p>Returns a `<code style="color:#22d3bf">table</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">x</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">y</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">p</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">q</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">max_denominator &lt; 1</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">lo &gt;= hi</code>`; the</p>
-<p>interval or denominator would exceed the cap.</p>
+<p>For a fraction <code style="color:#22d3bf">p/q</code> in lowest terms the Ford circle sits at <code style="color:#22d3bf">(p/q, 1/(2q**2))</code> with radius <code style="color:#22d3bf">1/(2q**2)</code>. Two such circles are <b>tangent if and only if</b> <code style="color:#22d3bf">|p*s - q*r| == 1</code> — the Farey-neighbour condition — and otherwise strictly disjoint. They never overlap.</p>
+<p>★<b>Why this earns its place</b>: the picture&#x27;s correctness is an identity between integers, not a tolerance. <code style="color:#22d3bf">|p*s - q*r|</code> is computed in exact integer arithmetic and compared with the *geometric* tangency <code style="color:#22d3bf">|c_i - c_j| == r_i + r_j</code> measured from the coordinates; the two must agree on every pair. The number of fractions is the Farey length <code style="color:#22d3bf">1 + sum(phi(q) for q in 1..n)</code>, another exact integer.</p>
+<p>Returns a <code style="color:#22d3bf">table</code>: <code style="color:#22d3bf">x</code>, <code style="color:#22d3bf">y</code>, <code style="color:#22d3bf">radius</code>, <code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">q</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">max_denominator &lt; 1</code>; <code style="color:#22d3bf">lo &gt;= hi</code>; the interval or denominator would exceed the cap.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

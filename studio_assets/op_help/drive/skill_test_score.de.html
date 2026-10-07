@@ -6,18 +6,15 @@
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>技能試験の減点を集計する(警察庁 丙運発第 12 号 令和 4 年の減点細目)。</p>
 <p>events : dict の列。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;stop&quot;, &quot;gap&quot;: 前端から停止線 [m] (負 = 越えた), &quot;signal&quot;: &quot;red&quot; など(任意)}</code>` →</p>
-<p>gap &lt; 0 または gap &gt; stop_gap_max で 停止位置不適。赤信号で越え幅 &gt; signal_violation_over なら 信号無視(試験中止)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;brake&quot;, &quot;stages&quot;: 段数}</code>` → 1 段以下で 制動操作不良(「ブレーキを数回に分けて踏まない場合」)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;start&quot;, &quot;rollback&quot;: 逆行 [m] (その場所の累計), &quot;delay&quot;: 発進の合図から動き出すまで [s] (任意)}</code>` →</p>
-<p>逆行小・中・大(大は試験中止)、delay &gt; start_delay_max で 発進手間どり。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">{&quot;kind&quot;: &quot;hold&quot;, &quot;creep&quot;: 保持中に動いた距離 [m]}</code>` → creep &gt; creep_eps で 制動操作不良(クリープ)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;stop&quot;, &quot;gap&quot;: 前端から停止線 [m] (負 = 越えた), &quot;signal&quot;: &quot;red&quot; など(任意)}</code> → gap &lt; 0 または gap &gt; stop_gap_max で 停止位置不適。赤信号で越え幅 &gt; signal_violation_over なら 信号無視(試験中止)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;brake&quot;, &quot;stages&quot;: 段数}</code> → 1 段以下で 制動操作不良(「ブレーキを数回に分けて踏まない場合」)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;start&quot;, &quot;rollback&quot;: 逆行 [m] (その場所の累計), &quot;delay&quot;: 発進の合図から動き出すまで [s] (任意)}</code> → 逆行小・中・大(大は試験中止)、delay &gt; start_delay_max で 発進手間どり。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;hold&quot;, &quot;creep&quot;: 保持中に動いた距離 [m]}</code> → creep &gt; creep_eps で 制動操作不良(クリープ)。</p>
 <p>venue : &quot;場内&quot; か &quot;路上&quot;(点数が違う細目がある)。</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : `<code style="color:#22d3bf">deductions</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">(細目, 点, 説明)</code><code style="color:#22d3bf"> の列。点 None = 試験中止)、</code><code style="color:#22d3bf">total</code><code style="color:#22d3bf">(減点の合計)、</code><code style="color:#22d3bf">score</code>`(100 − 合計、</p>
-<p>試験中止なら None)、`<code style="color:#22d3bf">test_stopped</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">passed</code><code style="color:#22d3bf">(第一種 70 点以上)、</code><code style="color:#22d3bf">thresholds</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: venue が不正、event の kind が不明・値が非有限。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">deductions</code>(<code style="color:#22d3bf">(細目, 点, 説明)</code> の列。点 None = 試験中止)、<code style="color:#22d3bf">total</code>(減点の合計)、<code style="color:#22d3bf">score</code>(100 − 合計、</p>
+<p>試験中止なら None)、<code style="color:#22d3bf">test_stopped</code>、<code style="color:#22d3bf">passed</code>(第一種 70 点以上)、<code style="color:#22d3bf">thresholds</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: venue が不正、event の kind が不明・値が非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

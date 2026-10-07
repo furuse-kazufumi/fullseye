@@ -5,15 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Welt industrieller Teile (gedrehte Rechtecke mit kreisförmigen Löchern) mit Schatten durch schräge Beleuchtung, Flächenschattierung und Glanzlichtern (world_parts_with_shadow).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>光は `<code style="color:#22d3bf">light_angle</code><code style="color:#22d3bf">(度、画像の x 軸から y 軸へ)の向きに差す平行光。影 = 部品のマスクを光の向きに </code><code style="color:#22d3bf">shadow_length</code>`</p>
-<p>だけずらした集合から部品を除いた画素(穴は光を通す)。部品の面は光に向く側が明るく、遠い側は影と同じくらい暗い</p>
-<p>(閾値が欺かれる理由)。ハイライトは光に向く側の縁の近くのガウス。</p>
-<p>返り値: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(部品 1..n)、</code><code style="color:#22d3bf">shadow</code><code style="color:#22d3bf">(bool)、</code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> = {</code><code style="color:#22d3bf">n_parts</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">parts</code>`(center, w, h, angle, holes)、</p>
-<p>`<code style="color:#22d3bf">areas</code><code style="color:#22d3bf">(w h − Σ π r²)、</code><code style="color:#22d3bf">shadow_offset</code><code style="color:#22d3bf"> (dy, dx)、</code><code style="color:#22d3bf">shadow_area</code><code style="color:#22d3bf">(測った画素数)、</code><code style="color:#22d3bf">light_angle</code>`}。</p>
+<p>光は <code style="color:#22d3bf">light_angle</code>(度、画像の x 軸から y 軸へ)の向きに差す平行光。影 = 部品のマスクを光の向きに <code style="color:#22d3bf">shadow_length</code> だけずらした集合から部品を除いた画素(穴は光を通す)。部品の面は光に向く側が明るく、遠い側は影と同じくらい暗い(閾値が欺かれる理由)。ハイライトは光に向く側の縁の近くのガウス。</p>
+<p>返り値: <code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">labels</code>(部品 1..n)、<code style="color:#22d3bf">shadow</code>(bool)、<code style="color:#22d3bf">truth</code> = {<code style="color:#22d3bf">n_parts</code>、<code style="color:#22d3bf">parts</code>(center, w, h, angle, holes)、<code style="color:#22d3bf">areas</code>(w h − Σ π r²)、<code style="color:#22d3bf">shadow_offset</code> (dy, dx)、<code style="color:#22d3bf">shadow_area</code>(測った画素数)、<code style="color:#22d3bf">light_angle</code>}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — Segmentierungen bewerten und synthetische Welten mit Ground Truth — welches Maß für welchen Fehler blind ist</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

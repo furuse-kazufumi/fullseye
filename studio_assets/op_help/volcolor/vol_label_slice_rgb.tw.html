@@ -5,20 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從彩色體中取出一張斷面 RGB(軸位 / 冠狀 / 矢狀)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>*axis* は `<code style="color:#22d3bf">&quot;z&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;axial&quot;</code><code style="color:#22d3bf">/0(</code><code style="color:#22d3bf">(H, W, 3)</code><code style="color:#22d3bf"> が返る)、</code><code style="color:#22d3bf">&quot;y&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;coronal&quot;</code>`/1</p>
-<p>(`<code style="color:#22d3bf">(D, W, 3)</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">&quot;x&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;sagittal&quot;</code><code style="color:#22d3bf">/2(</code><code style="color:#22d3bf">(D, H, 3)</code>`)。**返る 2 軸が</p>
-<p>軸ごとに違う**のは `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> から 1 軸抜くのだから当然だが、</code><code style="color:#22d3bf">(H, W)</code>` を</p>
-<p>期待して受けると縦横が入れ替わった絵が例外なしに出る。3 通りの形は</p>
-<p>`<code style="color:#22d3bf">tests/test_volcolor.py::test_slice_axes_shapes_and_content</code>` が固定している。</p>
-<p>*index* は<b>非負</b>でなければならない。`<code style="color:#22d3bf">-1</code>` を「最後の断面」として黙って</p>
-<p>受けると、範囲外の指定が最後の断面として通ってしまう(切り出す位置が</p>
-<p>1 箇所ずれた図は、機械にも目にも「壊れている」と見えない)。</p>
-<p>Returns a contiguous float64 `<code style="color:#22d3bf">(..., 3)</code><code style="color:#22d3bf"> copy. Raises </code><code style="color:#22d3bf">ValueError</code>` for a bad</p>
-<p>volume, an unknown *axis*, or an out-of-range / negative *index*.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>*axis* は <code style="color:#22d3bf">&quot;z&quot;</code>/<code style="color:#22d3bf">&quot;axial&quot;</code>/0(<code style="color:#22d3bf">(H, W, 3)</code> が返る)、<code style="color:#22d3bf">&quot;y&quot;</code>/<code style="color:#22d3bf">&quot;coronal&quot;</code>/1 (<code style="color:#22d3bf">(D, W, 3)</code>)、<code style="color:#22d3bf">&quot;x&quot;</code>/<code style="color:#22d3bf">&quot;sagittal&quot;</code>/2(<code style="color:#22d3bf">(D, H, 3)</code>)。<b>返る 2 軸が軸ごとに違う</b>のは <code style="color:#22d3bf">(D, H, W)</code> から 1 軸抜くのだから当然だが、<code style="color:#22d3bf">(H, W)</code> を期待して受けると縦横が入れ替わった絵が例外なしに出る。3 通りの形は <code style="color:#22d3bf">tests/test_volcolor.py::test_slice_axes_shapes_and_content</code> が固定している。</p>
+<p>*index* は<b>非負</b>でなければならない。<code style="color:#22d3bf">-1</code> を「最後の断面」として黙って受けると、範囲外の指定が最後の断面として通ってしまう(切り出す位置が 1 箇所ずれた図は、機械にも目にも「壊れている」と見えない)。</p>
+<p>Returns a contiguous float64 <code style="color:#22d3bf">(..., 3)</code> copy. Raises <code style="color:#22d3bf">ValueError</code> for a bad volume, an unknown *axis*, or an out-of-range / negative *index*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:voxel_labels_color">voxel_labels_color</a> — <code style="color:#22d3bf">py -3.11 examples/voxel_labels_color.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">rgbimage</code> 作為輸入)</h3>

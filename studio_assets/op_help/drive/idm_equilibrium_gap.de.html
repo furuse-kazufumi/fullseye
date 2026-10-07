@@ -5,10 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>IDM の平衡車間 s_e(v) = (s0 + v T) / sqrt(1 − (v/v0)^δ)(0 ≤ v &lt; v0)。</p>
-<p>Δv = 0 で `<code style="color:#22d3bf">idm_accel</code>` = 0 と置いて解いたもの(s* = s0 + vT)。v → v0 で発散する(希望速度では車間は要らない</p>
-<p>= 前が無限に遠い)。a, b に依らない。</p>
-<p>門: 先行車が一定速度のとき `<code style="color:#22d3bf">idm_platoon_simulate</code>` が収束した車間と rtol 1e-6 で一致。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: v &lt; 0 または v ≥ v0。</p>
+<p>Δv = 0 で <code style="color:#22d3bf">idm_accel</code> = 0 と置いて解いたもの(s* = s0 + vT)。v → v0 で発散する(希望速度では車間は要らない = 前が無限に遠い)。a, b に依らない。</p>
+<p>門: 先行車が一定速度のとき <code style="color:#22d3bf">idm_platoon_simulate</code> が収束した車間と rtol 1e-6 で一致。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0 または v ≥ v0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

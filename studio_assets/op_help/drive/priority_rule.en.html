@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>交通整理の行われていない交差点で、自分(own)が交差道路(cross)の車に譲るか(36 条 1〜3 項)。</p>
-<p>own, cross = {&quot;width&quot;: 幅員 [m], &quot;priority_sign&quot;: 優先道路の標識, &quot;centre_line&quot;: 交差点の中まで中央線・車両通行帯}。</p>
-<p>優先道路 = 標識 or 中央線(36 条 2 項のかっこ書き)。明らかに広い = 幅の比 ≥ `<code style="color:#22d3bf">wide_ratio</code>`(<b>仮定</b>)。</p>
-<p>返り値: `<code style="color:#22d3bf">yield_to</code>` ∈ {&quot;cross&quot;(交差道路の車すべてに譲る、36 条 2 項)、&quot;left&quot;(左方から来る車に譲る、36 条 1 項)、</p>
-<p>&quot;none&quot;(相手が譲る)}、`<code style="color:#22d3bf">must_slow</code><code style="color:#22d3bf">(36 条 3 項の徐行)、</code><code style="color:#22d3bf">own_priority</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cross_priority</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cross_clearly_wider</code>` /</p>
-<p>`<code style="color:#22d3bf">own_clearly_wider</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">article</code>`。交通整理あり(信号)は ValueError(信号に従う)。</p>
+<p>own, cross = {&quot;width&quot;: 幅員 [m], &quot;priority_sign&quot;: 優先道路の標識, &quot;centre_line&quot;: 交差点の中まで中央線・車両通行帯}。優先道路 = 標識 or 中央線(36 条 2 項のかっこ書き)。明らかに広い = 幅の比 ≥ <code style="color:#22d3bf">wide_ratio</code>(<b>仮定</b>)。</p>
+<p>返り値: <code style="color:#22d3bf">yield_to</code> ∈ {&quot;cross&quot;(交差道路の車すべてに譲る、36 条 2 項)、&quot;left&quot;(左方から来る車に譲る、36 条 1 項)、&quot;none&quot;(相手が譲る)}、<code style="color:#22d3bf">must_slow</code>(36 条 3 項の徐行)、<code style="color:#22d3bf">own_priority</code> / <code style="color:#22d3bf">cross_priority</code> / <code style="color:#22d3bf">cross_clearly_wider</code> / <code style="color:#22d3bf">own_clearly_wider</code>、<code style="color:#22d3bf">article</code>。交通整理あり(信号)は ValueError(信号に従う)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

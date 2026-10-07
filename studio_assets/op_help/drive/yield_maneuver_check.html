@@ -4,18 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.yield_maneuver_check(trajectory, *, t_approach: &#x27;float&#x27;, t_passed: &#x27;float&#x27;, intersections=(), near_margin: &#x27;float&#x27; = 30.0, left_tol: &#x27;float&#x27; = 1.0, stop_speed: &#x27;float&#x27; = 0.1, car_length: &#x27;float&#x27; = 4.5) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivedecide; drivedecide.yield_maneuver_check(trajectory, *, t_approach: &#x27;float&#x27;, t_passed: &#x27;float&#x27;, intersections=(), near_margin: &#x27;float&#x27; = 30.0, left_tol: &#x27;float&#x27; = 1.0, stop_speed: &#x27;float&#x27; = 0.1, car_length: &#x27;float&#x27; = 4.5) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;yield_maneuver_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>緊急自動車が近づいたときの自車の動きを道路交通法 40 条で採点する。</p>
-<p>40 条 1 項: 交差点又はその附近 → 交差点を避け、道路の左側に寄って <b>一時停止</b>。</p>
-<p>40 条 2 項: それ以外 → 道路の左側に寄って進路を譲る(停止までは求めない)。</p>
-<p>(一方通行で左に寄ると妨げる場合の右寄せは扱わない。)</p>
-<p>`<code style="color:#22d3bf">trajectory</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">{&quot;t&quot;, &quot;x&quot;, &quot;y&quot;, &quot;v&quot;}</code>`。x = 道に沿った前端の位置、y = 車の左側面と道路の左端の距離(≥ 0)、</p>
-<p>v = 速さ。`<code style="color:#22d3bf">intersections</code>` = [(x_in, x_out), ...] (交差点の範囲)。車は [x − car_length, x] を占める。</p>
-<p>`<code style="color:#22d3bf">t_approach</code><code style="color:#22d3bf"> = 近づきに気づくべき時刻、</code><code style="color:#22d3bf">t_passed</code>` = 緊急自動車が通り過ぎた時刻。</p>
+<p>40 条 1 項: 交差点又はその附近 → 交差点を避け、道路の左側に寄って <b>一時停止</b>。40 条 2 項: それ以外 → 道路の左側に寄って進路を譲る(停止までは求めない)。(一方通行で左に寄ると妨げる場合の右寄せは扱わない。)</p>
+<p><code style="color:#22d3bf">trajectory</code>: <code style="color:#22d3bf">{&quot;t&quot;, &quot;x&quot;, &quot;y&quot;, &quot;v&quot;}</code>。x = 道に沿った前端の位置、y = 車の左側面と道路の左端の距離(≥ 0)、v = 速さ。<code style="color:#22d3bf">intersections</code> = [(x_in, x_out), ...] (交差点の範囲)。車は [x − car_length, x] を占める。<code style="color:#22d3bf">t_approach</code> = 近づきに気づくべき時刻、<code style="color:#22d3bf">t_passed</code> = 緊急自動車が通り過ぎた時刻。</p>
 <p>判定(閾値はすべて <b>仮定</b>、法は数値を定めていない):</p>
 <p style="margin:2px 0 2px 12px">• 「附近」= t_approach の自車の前端が [x_in − near_margin, x_out + near_margin] に入る交差点がある。</p>
-<p style="margin:2px 0 2px 12px">• 「左に寄る」= 期間中に y ≤ `<code style="color:#22d3bf">left_tol</code><code style="color:#22d3bf">。「一時停止」= 期間中に v ≤ </code><code style="color:#22d3bf">stop_speed</code>` の刻みがある。</p>
+<p style="margin:2px 0 2px 12px">• 「左に寄る」= 期間中に y ≤ <code style="color:#22d3bf">left_tol</code>。「一時停止」= 期間中に v ≤ <code style="color:#22d3bf">stop_speed</code> の刻みがある。</p>
 <p style="margin:2px 0 2px 12px">• 「交差点を避け」= 期間中に止まっている刻み(v ≤ stop_speed)で車体が交差点の範囲に重ならない。</p>
-<p>返り値: `<code style="color:#22d3bf">case</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">&quot;40-1&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;40-2&quot;</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">violations</code><code style="color:#22d3bf">(各 </code><code style="color:#22d3bf">{&quot;rule&quot;, &quot;detail&quot;, &quot;article&quot;}</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">ok</code>`、</p>
-<p>`<code style="color:#22d3bf">min_y</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">stopped</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">stopped_in_intersection</code>`。</p>
+<p>返り値: <code style="color:#22d3bf">case</code>(<code style="color:#22d3bf">&quot;40-1&quot;</code> / <code style="color:#22d3bf">&quot;40-2&quot;</code>)、<code style="color:#22d3bf">violations</code>(各 <code style="color:#22d3bf">{&quot;rule&quot;, &quot;detail&quot;, &quot;article&quot;}</code>)、<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">min_y</code>、<code style="color:#22d3bf">stopped</code>、<code style="color:#22d3bf">stopped_in_intersection</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -5,18 +5,13 @@
 <p><img src="fig/xcv_orb_count.png" alt="xcv_orb_count: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_orb_count.a.jpg">xcv_orb_count: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_orb_count.a.jpg">xcv_orb_count: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Anzahl der von OpenCVs ORB (Oriented FAST and Rotated BRIEF) erkannten Schlüsselpunkte.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">cv2.ORB_create</code>` で検出のみ行い(記述子は計算しない)、検出できた</p>
-<p>キーポイント数を返す(feature 出力)。`<code style="color:#22d3bf">xsk_orb_count</code>`(skimage 版)</p>
-<p>と同じ発想の別実装で、検出器の実装が異なるため件数が一致するとは</p>
-<p>限らない。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が要求する最大特徴点数 </code><code style="color:#22d3bf">nfeatures</code>` を 50〜500 の範囲で振る</p>
-<p>(上限であり、実際の検出数は画像内容に依存してそれより少なくなる)。</p>
-<p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><code style="color:#22d3bf">cv2.ORB_create</code> で検出のみ行い(記述子は計算しない)、検出できたキーポイント数を返す(feature 出力)。<code style="color:#22d3bf">xsk_orb_count</code>(skimage 版) と同じ発想の別実装で、検出器の実装が異なるため件数が一致するとは限らない。</p>
+<p><code style="color:#22d3bf">a</code> が要求する最大特徴点数 <code style="color:#22d3bf">nfeatures</code> を 50〜500 の範囲で振る(上限であり、実際の検出数は画像内容に依存してそれより少なくなる)。<code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -25,7 +20,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv_orb_count 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv_orb_count%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv_orb_count%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv_orb_count 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv_orb_count%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv_orb_count%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">feature</code> als Eingabe)</h3>

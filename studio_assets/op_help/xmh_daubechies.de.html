@@ -5,16 +5,16 @@
 <p><img src="fig/xmh_daubechies.png" alt="xmh_daubechies: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_daubechies.a.jpg">xmh_daubechies: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_daubechies.a.jpg">xmh_daubechies: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_daubechies.inputs.jpg">xmh_daubechies: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xmh_daubechies.inputs.jpg">xmh_daubechies: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Daubechies-Wavelet-Transformation (`<code style="color:#22d3bf">mahotas.daubechies</code>`). Gleiches Layout wie xmh_haar (eine Stufe, Koeffizienten in ein Array der ursprünglichen Bildgröße gepackt und Min-Max-normalisiert), jedoch mit einer Basis aus der Daubechies-Familie.</p>
+<p>Daubechies-Wavelet-Transformation (<code style="color:#22d3bf">mahotas.daubechies</code>). Gleiches Layout wie xmh_haar (eine Stufe, Koeffizienten in ein Array der ursprünglichen Bildgröße gepackt und Min-Max-normalisiert), jedoch mit einer Basis aus der Daubechies-Familie.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> はウェーブレットの種類を </code><code style="color:#22d3bf">D2</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D4</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D6</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">D8</code><code style="color:#22d3bf"> の 4 択で切り替える(タップ数が増えるほど滑らかで長いフィルタになる)。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p><b>Regler (gemessen)</b>: `<code style="color:#22d3bf">a</code>` wirkt <b>stufenweise</b>; die Umschaltpunkte liegen bei a ≈ 0.25、0.51、0.75 (gemessen mit Schrittweite 0.02).</p>
+<p><code style="color:#22d3bf">a</code> はウェーブレットの種類を <code style="color:#22d3bf">D2</code>/<code style="color:#22d3bf">D4</code>/<code style="color:#22d3bf">D6</code>/<code style="color:#22d3bf">D8</code> の 4 択で切り替える(タップ数が増えるほど滑らかで長いフィルタになる)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><b>Regler (gemessen)</b>: <code style="color:#22d3bf">a</code> wirkt <b>stufenweise</b>; die Umschaltpunkte liegen bei a ≈ 0.25、0.51、0.75 (gemessen mit Schrittweite 0.02).</p>
 <p><b>Vergleichbarkeit der Werte (gemessen)</b>: Die Ausgabe wird <b>auf das Maximum des jeweiligen Bildes normiert</b> (das Ausgabemaximum ist stets 1.0, und eine Skalierung der Eingabe lässt die Ausgabe unverändert). Werte sind daher <b>nicht bildübergreifend vergleichbar</b> — ein Merkmal gleicher Stärke erhält je nach dem stärksten Merkmal im Bild einen anderen Wert, und in einem Bild mit nur schwachen Merkmalen wird das Rauschen auf 1.0 angehoben. Für einen Vergleich über Bilder hinweg auf eine gemeinsame Referenz umskalieren.</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
@@ -25,7 +25,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xmh_daubechies 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xmh_daubechies%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xmh_daubechies%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xmh_daubechies 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xmh_daubechies%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xmh_daubechies%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>

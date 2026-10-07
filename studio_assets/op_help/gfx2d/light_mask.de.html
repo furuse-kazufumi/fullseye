@@ -3,15 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb × rgb</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.light_mask(base, light, ambient=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.light_mask(base, light, ambient=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;light_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Moduliert ein `<code style="color:#22d3bf">rgb</code><code style="color:#22d3bf">-Bild mit einer </code><code style="color:#22d3bf">rgb</code><code style="color:#22d3bf">-Lichtkarte: </code><code style="color:#22d3bf">base * (ambient + light)</code>`.</p>
+<p>Moduliert ein <code style="color:#22d3bf">rgb</code>-Bild mit einer <code style="color:#22d3bf">rgb</code>-Lichtkarte: <code style="color:#22d3bf">base * (ambient + light)</code>.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">ambient</code><code style="color:#22d3bf"> is the light that reaches everything; </code><code style="color:#22d3bf">ambient=1</code>` with a black</p>
-<p>light map returns the base <b>exactly</b>, which is the identity the test suite</p>
-<p>pins.</p>
-<p>The product is clipped to `<code style="color:#22d3bf">[0, 1]</code>`; the clipped amount is not returned.</p>
-<p>Both arguments should be in the same encoding — mixing an sRGB base with a</p>
-<p>linear light map is the second silent-error trap of this family, and the</p>
-<p>only defence is that both arguments are named.</p>
+<p><code style="color:#22d3bf">ambient</code> is the light that reaches everything; <code style="color:#22d3bf">ambient=1</code> with a black light map returns the base <b>exactly</b>, which is the identity the test suite pins.</p>
+<p>The product is clipped to <code style="color:#22d3bf">[0, 1]</code>; the clipped amount is not returned. Both arguments should be in the same encoding — mixing an sRGB base with a linear light map is the second silent-error trap of this family, and the only defence is that both arguments are named.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

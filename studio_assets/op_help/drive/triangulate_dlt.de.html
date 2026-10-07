@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import balltrack; balltrack.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_dlt&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>1 点の多視点三角測量(線形 DLT、SVD): `<code style="color:#22d3bf">uvs</code><code style="color:#22d3bf"> (C, 2)、</code><code style="color:#22d3bf">poses</code><code style="color:#22d3bf"> (C, 4, 4)、</code><code style="color:#22d3bf">Ks</code>` (C, 3, 3)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;p&quot; (3,), &quot;reproj_rms&quot; px, &quot;n_views&quot;}</code>`。NaN の視点は飛ばす。2 視点未満なら ValueError。</p>
+<p>1 点の多視点三角測量(線形 DLT、SVD): <code style="color:#22d3bf">uvs</code> (C, 2)、<code style="color:#22d3bf">poses</code> (C, 4, 4)、<code style="color:#22d3bf">Ks</code> (C, 3, 3)。返り値 <code style="color:#22d3bf">{&quot;p&quot; (3,), &quot;reproj_rms&quot; px, &quot;n_views&quot;}</code>。NaN の視点は飛ばす。2 視点未満なら ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

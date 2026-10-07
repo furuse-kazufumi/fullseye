@@ -3,11 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.threshold_triangle(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import seggraph; seggraph.threshold_triangle(image, *, nbins: &#x27;int&#x27; = 256) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;threshold_triangle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>삼각법(Zack–Rogers–Latt 1977): 정점 (b_p, h_p)과 긴 꼬리 쪽 끝 빈 (b_e, 0)을 잇는 선에서, 그 사이 빈 (b, h_b)까지의 부호 있는 수직 거리가 최대인 빈을 임계값으로 한다(선의 아래쪽이 양). 반환: `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">(그 빈의 중심), </code><code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> = image &gt; threshold, </code><code style="color:#22d3bf">bin</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">distance</code>`(빈마다의 거리, 범위 밖은 nan). 끝점의 높이 0과 꼬리 쪽 선택은 skimage / ImageJ와 같은 규약(원전은 확인 필요)(threshold_triangle).</p>
+<p>삼각법(Zack–Rogers–Latt 1977): 정점 (b_p, h_p)과 긴 꼬리 쪽 끝 빈 (b_e, 0)을 잇는 선에서, 그 사이 빈 (b, h_b)까지의 부호 있는 수직 거리가 최대인 빈을 임계값으로 한다(선의 아래쪽이 양). 반환: <code style="color:#22d3bf">threshold</code>(그 빈의 중심), <code style="color:#22d3bf">mask</code> = image &gt; threshold, <code style="color:#22d3bf">bin</code>, <code style="color:#22d3bf">distance</code>(빈마다의 거리, 범위 밖은 nan). 끝점의 높이 0과 꼬리 쪽 선택은 skimage / ImageJ와 같은 규약(원전은 확인 필요)(threshold_triangle).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — 그래프·계층·임계값 정리로 만드는 분할 — 무엇이 엄밀하고 어디서 분할이 무너지는가</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

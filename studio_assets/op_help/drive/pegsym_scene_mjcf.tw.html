@@ -4,17 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pegsym_scene_mjcf(peg_vertices, hole_vertices, chamfer: &#x27;float&#x27; = 0.0005, hole_depth: &#x27;float&#x27; = 0.02, peg_length: &#x27;float&#x27; = 0.04, mu: &#x27;float&#x27; = 0.3, k_trans: &#x27;float&#x27; = 600.0, k_rot: &#x27;float&#x27; = 1.5, k_yaw: &#x27;float&#x27; = 0.01, timestep: &#x27;float&#x27; = 0.0005, image_size=(480, 480), fovy_deg: &#x27;float&#x27; = 40.0, station=(0.1, 0.0), offsamples: &#x27;int&#x27; = 4) -&gt; &#x27;str&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsym; pegsym.pegsym_scene_mjcf(peg_vertices, hole_vertices, chamfer: &#x27;float&#x27; = 0.0005, hole_depth: &#x27;float&#x27; = 0.02, peg_length: &#x27;float&#x27; = 0.04, mu: &#x27;float&#x27; = 0.3, k_trans: &#x27;float&#x27; = 600.0, k_rot: &#x27;float&#x27; = 1.5, k_yaw: &#x27;float&#x27; = 0.01, timestep: &#x27;float&#x27; = 0.0005, image_size=(480, 480), fovy_deg: &#x27;float&#x27; = 40.0, station=(0.1, 0.0), offsamples: &#x27;int&#x27; = 4) -&gt; &#x27;str&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;pegsym_scene_mjcf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>多角形ペグの場面の MJCF 文字列(mujoco 不要): 穴 = 辺ごとに壁の箱(最狭部より下)・45° の面取りの板・明るい襟(口の面 z = 0)、</p>
-<p>ペグ = 凸メッシュの角柱(断面 `<code style="color:#22d3bf">peg_vertices</code>`、ペグ系、軸が原点)。搬送台は x・y・z のスライドと yaw のヒンジ(位置制御)、</p>
-<p>その先に 6 自由度のばねの手首(傾き `<code style="color:#22d3bf">k_rot</code><code style="color:#22d3bf">・ねじり </code><code style="color:#22d3bf">k_yaw</code>` [N m/rad] は別。把持はねじりに柔らかい)。カメラは</p>
-<p>手首(搬送台の 30 mm 横、真下向き)と、穴から `<code style="color:#22d3bf">station</code>` [m] の上向きカメラ(床の面、ペグの端面を下から見る)、</p>
-<p>図のための斜め上の固定カメラ `<code style="color:#22d3bf">side</code>`。</p>
-<p>箱は自分の辺の外側の半平面にだけあるので、角を越えて伸ばしても穴の中に入らない(凸の穴ならどの形でも同じ作り方)。</p>
-<p><b>Raises</b> ValueError: 多角形が凸でない、面取り &lt; 0、穴の深さ ≤ 面取り、摩擦 &lt; 0、剛性 ≤ 0。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>多角形ペグの場面の MJCF 文字列(mujoco 不要): 穴 = 辺ごとに壁の箱(最狭部より下)・45° の面取りの板・明るい襟(口の面 z = 0)、ペグ = 凸メッシュの角柱(断面 <code style="color:#22d3bf">peg_vertices</code>、ペグ系、軸が原点)。搬送台は x・y・z のスライドと yaw のヒンジ(位置制御)、その先に 6 自由度のばねの手首(傾き <code style="color:#22d3bf">k_rot</code>・ねじり <code style="color:#22d3bf">k_yaw</code> [N m/rad] は別。把持はねじりに柔らかい)。カメラは手首(搬送台の 30 mm 横、真下向き)と、穴から <code style="color:#22d3bf">station</code> [m] の上向きカメラ(床の面、ペグの端面を下から見る)、図のための斜め上の固定カメラ <code style="color:#22d3bf">side</code>。箱は自分の辺の外側の半平面にだけあるので、角を越えて伸ばしても穴の中に入らない(凸の穴ならどの形でも同じ作り方)。<b>Raises</b> ValueError: 多角形が凸でない、面取り &lt; 0、穴の深さ ≤ 面取り、摩擦 &lt; 0、剛性 ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_symmetry_search">poc_peg_symmetry_search</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_symmetry_search.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">any</code> 作為輸入)</h3>

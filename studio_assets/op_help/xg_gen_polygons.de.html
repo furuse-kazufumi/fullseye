@@ -6,27 +6,17 @@
 <p><img src="fig/xg_gen_polygons.png" alt="xg_gen_polygons: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.a.jpg">xg_gen_polygons: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.a.jpg">xg_gen_polygons: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.chain.jpg">xg_gen_polygons: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.chain.jpg">xg_gen_polygons: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.inputs.jpg">xg_gen_polygons: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_gen_polygons.inputs.jpg">xg_gen_polygons: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Douglas-Peucker-Polylinienvereinfachung; eps = a × Diagonale der Kontur-Bounding-Box.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各輪郭を Ramer-Douglas-Peucker 法で間引いて頂点数の少ない折れ線(多角形)に</p>
-<p>する。始点と終点は必ず残し、区間の弦から最も離れた点の距離が `<code style="color:#22d3bf">eps</code>` を</p>
-<p>超えればその点を採用して再帰的に分割する。`<code style="color:#22d3bf">eps</code>` は輪郭ごとに、その輪郭の</p>
-<p>bbox の対角長 `<code style="color:#22d3bf">hypot(Δrow, Δcol)</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">a</code>`([0,1] に clip)を掛けた値。</p>
-<p>`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">eps=0</code><code style="color:#22d3bf">(弦上に完全に乗る点だけ落ちる)、</code><code style="color:#22d3bf">a</code>` を上げるほど粗く</p>
-<p>なり、`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> では両端の 2 点だけになる。</code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>返り値は `<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code>` の輪郭辞書。点が 3 個未満の輪郭はコピーのまま。</p>
-<p>閉輪郭(先頭=末尾)は始点と終点が同じ点なので、`<code style="color:#22d3bf">a</code>` が大きいと 2 点(同一点)に</p>
-<p>退化し、面積や向きの特徴量が 0 になる。閉輪郭の形を保ちたい場合は `<code style="color:#22d3bf">a</code>` を</p>
-<p>小さめにする(実測では半径 5〜8 の楕円 101 点が `<code style="color:#22d3bf">a=0.05</code>` で 9 点)。</p>
-<p>間引きは元の点の部分集合を返し、新しい点は作らない。後段の `<code style="color:#22d3bf">xg_area_center</code>`</p>
-<p>や `<code style="color:#22d3bf">xg_regress_contours</code>` の計算量を減らす前処理、折れ線の角(頂点)検出に。</p>
+<p>各輪郭を Ramer-Douglas-Peucker 法で間引いて頂点数の少ない折れ線(多角形)にする。始点と終点は必ず残し、区間の弦から最も離れた点の距離が <code style="color:#22d3bf">eps</code> を超えればその点を採用して再帰的に分割する。<code style="color:#22d3bf">eps</code> は輪郭ごとに、その輪郭の bbox の対角長 <code style="color:#22d3bf">hypot(Δrow, Δcol)</code> に <code style="color:#22d3bf">a</code>([0,1] に clip)を掛けた値。<code style="color:#22d3bf">a=0</code> で <code style="color:#22d3bf">eps=0</code>(弦上に完全に乗る点だけ落ちる)、<code style="color:#22d3bf">a</code> を上げるほど粗くなり、<code style="color:#22d3bf">a=1</code> では両端の 2 点だけになる。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>返り値は <code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code> の輪郭辞書。点が 3 個未満の輪郭はコピーのまま。閉輪郭(先頭=末尾)は始点と終点が同じ点なので、<code style="color:#22d3bf">a</code> が大きいと 2 点(同一点)に退化し、面積や向きの特徴量が 0 になる。閉輪郭の形を保ちたい場合は <code style="color:#22d3bf">a</code> を小さめにする(実測では半径 5〜8 の楕円 101 点が <code style="color:#22d3bf">a=0.05</code> で 9 点)。間引きは元の点の部分集合を返し、新しい点は作らない。後段の <code style="color:#22d3bf">xg_area_center</code> や <code style="color:#22d3bf">xg_regress_contours</code> の計算量を減らす前処理、折れ線の角(頂点)検出に。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -37,7 +27,7 @@
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-xg_gen_polygons 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_gen_polygons%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_gen_polygons%200.50%200.50">Load &amp; run</a></p>
+xg_gen_polygons 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_gen_polygons%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_gen_polygons%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">contour</code> als Eingabe)</h3>

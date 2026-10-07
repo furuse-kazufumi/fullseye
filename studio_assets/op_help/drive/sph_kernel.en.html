@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_kernel(r, h: &#x27;float&#x27;, dim: &#x27;int&#x27; = 2, derivative: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import swarmflow; swarmflow.sph_kernel(r, h: &#x27;float&#x27;, dim: &#x27;int&#x27; = 2, derivative: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sph_kernel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>3 次スプライン核 W(r, h)(M4、台の半径 2h)。`<code style="color:#22d3bf">derivative=True</code>` で dW/dr(r の向きの微分、0 以下)。</p>
-<p>W = σ_d [1 − 1.5 q² + 0.75 q³] (0 ≤ q &lt; 1)、σ_d · 0.25 (2 − q)³(1 ≤ q &lt; 2)、0(q ≥ 2)、q = r/h。</p>
-<p>σ_1 = 2/(3h)、σ_2 = 10/(7π h²)、σ_3 = 1/(π h³)。この定数で ∫ W dV = 1(恒等式。門で数値の求積と照らす)。</p>
+<p>3 次スプライン核 W(r, h)(M4、台の半径 2h)。<code style="color:#22d3bf">derivative=True</code> で dW/dr(r の向きの微分、0 以下)。</p>
+<p>W = σ_d [1 − 1.5 q² + 0.75 q³] (0 ≤ q &lt; 1)、σ_d · 0.25 (2 − q)³(1 ≤ q &lt; 2)、0(q ≥ 2)、q = r/h。σ_1 = 2/(3h)、σ_2 = 10/(7π h²)、σ_3 = 1/(π h³)。この定数で ∫ W dV = 1(恒等式。門で数値の求積と照らす)。</p>
 <p>Args:</p>
 <p>r: 距離の配列(0 以上、形は任意)。</p>
 <p>h: 平滑化の長さ(&gt; 0)。</p>

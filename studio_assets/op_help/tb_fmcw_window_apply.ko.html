@@ -7,17 +7,13 @@
 <p>*노브 a 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fmcw_window_apply.chain.jpg">tb_fmcw_window_apply: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fmcw_window_apply.chain.jpg">tb_fmcw_window_apply: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fmcw_window_apply.inputs.jpg">tb_fmcw_window_apply: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fmcw_window_apply.inputs.jpg">tb_fmcw_window_apply: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>비트 큐브(beat cube)의 range 및/또는 도플러 축을 따라 주기적 윈도우를 적용.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The sidelobes of a rectangular (unwindowed) transform are -13.3 dB, so a</p>
-<p>strong target buries a weak one 20 dB down at a completely different range.</p>
-<p>Windowing trades main-lobe width for sidelobe level; the published figures</p>
-<p>(Harris 1978, Table 1) and the levels <b>measured</b> in this repository on a</p>
-<p>single bin-centred target are:</p>
+<p>The sidelobes of a rectangular (unwindowed) transform are -13.3 dB, so a strong target buries a weak one 20 dB down at a completely different range. Windowing trades main-lobe width for sidelobe level; the published figures (Harris 1978, Table 1) and the levels <b>measured</b> in this repository on a single bin-centred target are:</p>
 <p>==========  ==============  ==============  ==================</p>
 <p>window      published PSL   measured PSL    measured -3 dB lobe</p>
 <p>==========  ==============  ==============  ==================</p>
@@ -26,33 +22,19 @@
 <p>hamming     -42.7 dB        -42.45 dB       1.301 bin</p>
 <p>blackman    -58.1 dB        -58.11 dB       1.641 bin</p>
 <p>==========  ==============  ==============  ==================</p>
-<p>Measured by transforming each window on its own with 2^18-point zero padding</p>
-<p>and taking the highest lobe past the first null — that *is* the definition of</p>
-<p>peak sidelobe level, so these are the module&#x27;s own numbers, not copied ones.</p>
-<p>Hamming lands 0.25 dB off the published figure because the published one is</p>
-<p>for the optimal 0.53836/0.46164 pair; the 0.54/0.46 coefficients written here</p>
-<p>are the textbook ones and this is what they actually give.</p>
-<p>What it buys, measured end to end: a target 45 dB below a strong one, seven</p>
-<p>range bins away, is <b>undetectable</b> unwindowed (its cell sits 24.6 dB down</p>
-<p>in the leakage skirt and is not even a local maximum) and becomes a clean</p>
-<p>local maximum at -43.6 dB with `<code style="color:#22d3bf">hann</code>`. That comparison is step 4 of</p>
-<p>`<code style="color:#22d3bf">examples/fmcw_range_doppler.py</code>`.</p>
-<p>*axis* is named by <b>role</b> — `<code style="color:#22d3bf">&quot;range&quot;</code>` (fast time, the last axis),</p>
-<p>`<code style="color:#22d3bf">&quot;doppler&quot;</code><code style="color:#22d3bf"> (slow time, the middle axis) or </code><code style="color:#22d3bf">&quot;both&quot;</code>` — never by number,</p>
-<p>because a transposed cube is the mistake this naming is defending against.</p>
-<p>The window is *not* folded into :func:<code style="color:#22d3bf">range_doppler_map</code>: keeping it a</p>
-<p>separate op is what lets the sidelobe table above be measured as a</p>
-<p>difference, and keeps the transform op a pure 2-D FFT.</p>
-<p>Returns a new complex cube of the same shape. <b>Raises</b> `<code style="color:#22d3bf">ValueError</code>` on a</p>
-<p>real-valued or malformed cube, or an unknown *window* / *axis*.</p>
-<p>Typed bridge of the rangedoppler op `<code style="color:#22d3bf">fmcw_window_apply</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>Measured by transforming each window on its own with 2^18-point zero padding and taking the highest lobe past the first null — that *is* the definition of peak sidelobe level, so these are the module&#x27;s own numbers, not copied ones. Hamming lands 0.25 dB off the published figure because the published one is for the optimal 0.53836/0.46164 pair; the 0.54/0.46 coefficients written here are the textbook ones and this is what they actually give.</p>
+<p>What it buys, measured end to end: a target 45 dB below a strong one, seven range bins away, is <b>undetectable</b> unwindowed (its cell sits 24.6 dB down in the leakage skirt and is not even a local maximum) and becomes a clean local maximum at -43.6 dB with <code style="color:#22d3bf">hann</code>. That comparison is step 4 of <code style="color:#22d3bf">examples/fmcw_range_doppler.py</code>.</p>
+<p>*axis* is named by <b>role</b> — <code style="color:#22d3bf">&quot;range&quot;</code> (fast time, the last axis), <code style="color:#22d3bf">&quot;doppler&quot;</code> (slow time, the middle axis) or <code style="color:#22d3bf">&quot;both&quot;</code> — never by number, because a transposed cube is the mistake this naming is defending against.</p>
+<p>The window is *not* folded into <code style="color:#22d3bf">range_doppler_map</code>: keeping it a separate op is what lets the sidelobe table above be measured as a difference, and keeps the transform op a pure 2-D FFT.</p>
+<p>Returns a new complex cube of the same shape. <b>Raises</b> <code style="color:#22d3bf">ValueError</code> on a real-valued or malformed cube, or an unknown *window* / *axis*.</p>
+<p>Typed bridge of the rangedoppler op <code style="color:#22d3bf">fmcw_window_apply</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio에서 시도하기</h3>
 <p>아래 프로그램은 실제로 실행됨을 확인했습니다(그림과 같은 입력). Studio 도움말에서는 이 블록이 버튼이 되어 즉시 불러와 실행할 수 있습니다.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_beatcube 0.50 0.50
-tb_fmcw_window_apply 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_beatcube%200.50%200.50%0Atb_fmcw_window_apply%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_beatcube%200.50%200.50%0Atb_fmcw_window_apply%200.50%200.50">Load &amp; run</a></p>
+tb_fmcw_window_apply 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_beatcube%200.50%200.50%0Atb_fmcw_window_apply%200.50%200.50">▸ 이 파이프라인 불러오기</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_beatcube%200.50%200.50%0Atb_fmcw_window_apply%200.50%200.50">불러와서 실행</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
 <p>아래 예제는 원래의 대장 op <code style="color:#22d3bf">fmcw_window_apply</code>를 호출한다. 이 브리지 op는 같은 구현을 <code style="color:#22d3bf">fn(v, a, b)</code> 규약에 맞춘 것뿐이므로 동작은 그대로 적용된다(호출 형식만 다름).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fmcw_range_doppler">fmcw_range_doppler</a> — <code style="color:#22d3bf">py -3.11 examples/fmcw_range_doppler.py</code></p>

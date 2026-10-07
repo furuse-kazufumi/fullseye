@@ -7,27 +7,21 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_to_mla.chain.jpg">tb_lf_to_mla: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_to_mla.chain.jpg">tb_lf_to_mla: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_to_mla.inputs.jpg">tb_lf_to_mla: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_to_mla.inputs.jpg">tb_lf_to_mla: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Re-interleave a light field into a microlens-array raw frame (exact inverse).</p>
-<p>Inverse of :func:<code style="color:#22d3bf">lf_from_mla</code> with `<code style="color:#22d3bf">offset=(0, 0)</code>`: the returned frame has</p>
-<p>shape `<code style="color:#22d3bf">(H*V, W*U)</code><code style="color:#22d3bf"> and puts </code><code style="color:#22d3bf">L[v, u, t, s]</code>` back at raw pixel</p>
-<p>`<code style="color:#22d3bf">(t*V + v, s*U + u)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">lf_from_mla(lf_to_mla(L), (V, U))</code><code style="color:#22d3bf"> returns </code><code style="color:#22d3bf">L</code>`</p>
-<p>bit-for-bit (verified with `<code style="color:#22d3bf">np.array_equal</code>`), which is the cheapest</p>
-<p>possible check that the decode&#x27;s index arithmetic has no off-by-one.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not 4-D / non-finite / over the shape and</p>
-<p>element caps (see :func:<code style="color:#22d3bf">lf_from_mla</code>), and a raw frame whose side would</p>
-<p>exceed `<code style="color:#22d3bf">MAX_SPATIAL * MAX_ANGULAR</code>`.</p>
-<p>Typed bridge of the lightfield op `<code style="color:#22d3bf">lf_to_mla</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>Inverse of <code style="color:#22d3bf">lf_from_mla</code> with <code style="color:#22d3bf">offset=(0, 0)</code>: the returned frame has shape <code style="color:#22d3bf">(H*V, W*U)</code> and puts <code style="color:#22d3bf">L[v, u, t, s]</code> back at raw pixel <code style="color:#22d3bf">(t*V + v, s*U + u)</code>. <code style="color:#22d3bf">lf_from_mla(lf_to_mla(L), (V, U))</code> returns <code style="color:#22d3bf">L</code> bit-for-bit (verified with <code style="color:#22d3bf">np.array_equal</code>), which is the cheapest possible check that the decode&#x27;s index arithmetic has no off-by-one.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not 4-D / non-finite / over the shape and element caps (see <code style="color:#22d3bf">lf_from_mla</code>), and a raw frame whose side would exceed <code style="color:#22d3bf">MAX_SPATIAL * MAX_ANGULAR</code>.</p>
+<p>Typed bridge of the lightfield op <code style="color:#22d3bf">lf_to_mla</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_lightfield 0.50 0.50
-tb_lf_to_mla 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_lightfield%200.50%200.50%0Atb_lf_to_mla%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_lightfield%200.50%200.50%0Atb_lf_to_mla%200.50%200.50">Load &amp; run</a></p>
+tb_lf_to_mla 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_lightfield%200.50%200.50%0Atb_lf_to_mla%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_lightfield%200.50%200.50%0Atb_lf_to_mla%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">lf_to_mla</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>

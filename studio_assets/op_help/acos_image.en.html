@@ -11,11 +11,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/acos_image.inputs.jpg">acos_image: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>An arccosine LUT mapping [0,1] to [0,1] via `<code style="color:#22d3bf">arccos(x) / pi</code><code style="color:#22d3bf">. An inverted form of </code><code style="color:#22d3bf">asin_image</code><code style="color:#22d3bf"> (monotonically decreasing): it is maximal (1) at x=0 and minimal (0) at x=1. Stands in for HALCON&#x27;s </code><code style="color:#22d3bf">acos_image</code>` (Calculate the arccosine of an image.).</p>
+<p>An arccosine LUT mapping [0,1] to [0,1] via <code style="color:#22d3bf">arccos(x) / pi</code>. An inverted form of <code style="color:#22d3bf">asin_image</code> (monotonically decreasing): it is maximal (1) at x=0 and minimal (0) at x=1. Stands in for HALCON&#x27;s <code style="color:#22d3bf">acos_image</code> (Calculate the arccosine of an image.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。</code><code style="color:#22d3bf">asin_image</code>` と同様に端点近傍で傾きが急峻になる</p>
-<p>(数値的に敏感)。単純な階調反転がしたいだけなら `<code style="color:#22d3bf">invert_image</code>` の方が</p>
-<p>挙動が読みやすい。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">asin_image</code> と同様に端点近傍で傾きが急峻になる(数値的に敏感)。単純な階調反転がしたいだけなら <code style="color:#22d3bf">invert_image</code> の方が挙動が読みやすい。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

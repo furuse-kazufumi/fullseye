@@ -6,14 +6,13 @@
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>Intelligent Driver Model の加速度(Treiber, Hennecke, Helbing 2000)。</p>
 <p>a_IDM = a [ 1 − (v/v0)^δ − (s*/s)² ],   s* = s0 + max(0, v T + v Δv / (2 sqrt(a b)))</p>
-<p>`<code style="color:#22d3bf">dv</code><code style="color:#22d3bf"> = Δv = v − v_lead(近づいていれば正)、</code><code style="color:#22d3bf">gap</code><code style="color:#22d3bf"> = s = 先行車の後端までの距離(&gt; 0、</code><code style="color:#22d3bf">inf</code>` = 前が空き)。</p>
-<p>`<code style="color:#22d3bf">v</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">gap</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">dv</code>` は numpy の放送で配列でも動く(スカラーを渡せば float を返す)。</p>
-<p>門: 平衡車間 `<code style="color:#22d3bf">idm_equilibrium_gap</code>` で Δv = 0 なら 0、gap = inf で a(1 − (v/v0)^δ)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: v &lt; 0、gap ≤ 0、非有限、母数が正でない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">dv</code> = Δv = v − v_lead(近づいていれば正)、<code style="color:#22d3bf">gap</code> = s = 先行車の後端までの距離(&gt; 0、<code style="color:#22d3bf">inf</code> = 前が空き)。<code style="color:#22d3bf">v</code>, <code style="color:#22d3bf">gap</code>, <code style="color:#22d3bf">dv</code> は numpy の放送で配列でも動く(スカラーを渡せば float を返す)。</p>
+<p>門: 平衡車間 <code style="color:#22d3bf">idm_equilibrium_gap</code> で Δv = 0 なら 0、gap = inf で a(1 − (v/v0)^δ)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0、gap ≤ 0、非有限、母数が正でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>

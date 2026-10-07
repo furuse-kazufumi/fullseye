@@ -4,16 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_worst_case_gap(d0: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import rsssafety; rsssafety.rss_worst_case_gap(d0: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;rss_worst_case_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>同方向の最悪ケース(論文 Definition 4)を時間で追う。</p>
-<p>先行車は t = 0 から `<code style="color:#22d3bf">brake_max</code><code style="color:#22d3bf"> で停止まで減速。後続車は ρ の間 </code><code style="color:#22d3bf">accel_max</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">v_max_accel</code>` で頭打ち)、</p>
-<p>その後 `<code style="color:#22d3bf">brake_min</code>` で停止まで減速。各時刻の位置は区分ごとの等加速度の厳密式で、時刻列には ρ・頭打ち時刻・</p>
-<p>各車の停止時刻を必ず含める(`<code style="color:#22d3bf">dt</code>` は表示密度で、min_gap は dt に依らない)。</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : `<code style="color:#22d3bf">t, x_rear, x_front, v_rear, v_front, gap</code><code style="color:#22d3bf"> (ndarray)、</code><code style="color:#22d3bf">min_gap, t_min</code>` (float)、</p>
-<p>`<code style="color:#22d3bf">collided</code><code style="color:#22d3bf"> (min_gap &lt; 0)、</code><code style="color:#22d3bf">t_stop_rear, t_stop_front</code>`。gap = x_front − x_rear</p>
+<p>先行車は t = 0 から <code style="color:#22d3bf">brake_max</code> で停止まで減速。後続車は ρ の間 <code style="color:#22d3bf">accel_max</code>(<code style="color:#22d3bf">v_max_accel</code> で頭打ち)、その後 <code style="color:#22d3bf">brake_min</code> で停止まで減速。各時刻の位置は区分ごとの等加速度の厳密式で、時刻列には ρ・頭打ち時刻・各車の停止時刻を必ず含める(<code style="color:#22d3bf">dt</code> は表示密度で、min_gap は dt に依らない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">t, x_rear, x_front, v_rear, v_front, gap</code> (ndarray)、<code style="color:#22d3bf">min_gap, t_min</code> (float)、</p>
+<p><code style="color:#22d3bf">collided</code> (min_gap &lt; 0)、<code style="color:#22d3bf">t_stop_rear, t_stop_front</code>。gap = x_front − x_rear</p>
 <p>(後続の前端と先行の後端の間隔、後続は x = 0、先行は x = d0 から出発)。</p>
-<p>`<code style="color:#22d3bf">min_gap = d0 − max(d_min − min_distance, 0)</code><code style="color:#22d3bf"> が成り立つ(d_min = </code><code style="color:#22d3bf">rss_longitudinal_same</code>`)。</p>
-<p>`<code style="color:#22d3bf">t_max</code>` を与えると(両車の停止より前で)打ち切る。</p>
+<p><code style="color:#22d3bf">min_gap = d0 − max(d_min − min_distance, 0)</code> が成り立つ(d_min = <code style="color:#22d3bf">rss_longitudinal_same</code>)。</p>
+<p><code style="color:#22d3bf">t_max</code> を与えると(両車の停止より前で)打ち切る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

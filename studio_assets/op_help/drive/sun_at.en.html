@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveenv; driveenv.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sun_at&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>日時(タイムゾーンつき datetime かユリウス日)の太陽の高度・方位。式は :func:<code style="color:#22d3bf">geocam.sun_position</code>(NOAA の太陽位置の式</p>
-<p>= Meeus &quot;Astronomical Algorithms&quot; 第 25 章の低精度版、NOAA の大気差)をそのまま使い、日時の受け方と地球–太陽の距離を足す。</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : `<code style="color:#22d3bf">elevation</code><code style="color:#22d3bf">(度、</code><code style="color:#22d3bf">refraction</code><code style="color:#22d3bf"> なら大気差つきの見かけ)、</code><code style="color:#22d3bf">elevation_geometric</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">azimuth</code>`(北から時計回り 度)、</p>
-<p>`<code style="color:#22d3bf">declination</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">eq_time</code><code style="color:#22d3bf">(均時差 分)、</code><code style="color:#22d3bf">hour_angle</code><code style="color:#22d3bf">(度)、</code><code style="color:#22d3bf">jd</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">distance_au</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">semidiameter</code>`(度)。</p>
+<p>日時(タイムゾーンつき datetime かユリウス日)の太陽の高度・方位。式は <code style="color:#22d3bf">geocam.sun_position</code>(NOAA の太陽位置の式 = Meeus &quot;Astronomical Algorithms&quot; 第 25 章の低精度版、NOAA の大気差)をそのまま使い、日時の受け方と地球–太陽の距離を足す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">elevation</code>(度、<code style="color:#22d3bf">refraction</code> なら大気差つきの見かけ)、<code style="color:#22d3bf">elevation_geometric</code>、<code style="color:#22d3bf">azimuth</code>(北から時計回り 度)、</p>
+<p><code style="color:#22d3bf">declination</code>、<code style="color:#22d3bf">eq_time</code>(均時差 分)、<code style="color:#22d3bf">hour_angle</code>(度)、<code style="color:#22d3bf">jd</code>、<code style="color:#22d3bf">distance_au</code>、<code style="color:#22d3bf">semidiameter</code>(度)。</p>
 <p>NOAA が述べる精度は、日の出入りの時刻で緯度 ±72° 以内 1 分以内(1800〜2100 年)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 素朴な datetime・範囲外の緯度経度。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 素朴な datetime・範囲外の緯度経度。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

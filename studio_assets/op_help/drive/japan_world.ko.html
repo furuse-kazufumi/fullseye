@@ -5,14 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
 <p>道路網から日本の町の 3-D 世界(driveworld 形式)を組む。</p>
-<p>路面 = 全体の格子平面(z 0、ラベル 0)。道路の和集合の <b>穴</b> = 街区: 歩道の面(z = kerb_height、ラベル 15)と縁石の帯(ラベル 1)。</p>
-<p>外側の縁にも縁石。車線の印(ラベル 9): 2 車線の両方向路は中央線を白の破線(5 m / 5 m)、4 車線以上は実線、車線境界は破線。交差点では</p>
-<p>他の辺の半幅ぶん印を切る。`<code style="color:#22d3bf">props</code><code style="color:#22d3bf"> なら節点の特徴に: 信号機(</code><code style="color:#22d3bf">traffic_signals</code>`、進入する辺ごと、交差点の向こう側・左)、横断歩道</p>
-<p>(`<code style="color:#22d3bf">crossing</code><code style="color:#22d3bf">、進行方向に平行な 0.45 m の縞、ラベル 12)、一時停止(</code><code style="color:#22d3bf">stop</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">give_way</code>`: 標識 + 停止線 + 「止まれ」、進入する辺ごと)、</p>
-<p>踏切(`<code style="color:#22d3bf">level_crossing</code>`: 2 本のレール(ラベル 8)+ 踏切警標 + 停止線)。生活道路(residential / unclassified / living_street)の</p>
-<p>通行側の縁に `<code style="color:#22d3bf">pole_pitch</code><code style="color:#22d3bf"> 間隔で電柱(ラベル 16)。</code><code style="color:#22d3bf">buildings</code>` = plateau_parse の建物の列なら押し出し柱(ラベル 14)。</p>
-<p>返り値 = driveworld の世界 + `<code style="color:#22d3bf">{&quot;graph&quot;, &quot;roadmask&quot;, &quot;loops&quot;, &quot;signals&quot;: [{&quot;node&quot;, &quot;edge&quot;, &quot;object&quot;, &quot;pose&quot;}], &quot;stats&quot;: {...}}</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: side が left/right 以外、kerb/step が不正。</p>
+<p>路面 = 全体の格子平面(z 0、ラベル 0)。道路の和集合の <b>穴</b> = 街区: 歩道の面(z = kerb_height、ラベル 15)と縁石の帯(ラベル 1)。外側の縁にも縁石。車線の印(ラベル 9): 2 車線の両方向路は中央線を白の破線(5 m / 5 m)、4 車線以上は実線、車線境界は破線。交差点では他の辺の半幅ぶん印を切る。<code style="color:#22d3bf">props</code> なら節点の特徴に: 信号機(<code style="color:#22d3bf">traffic_signals</code>、進入する辺ごと、交差点の向こう側・左)、横断歩道(<code style="color:#22d3bf">crossing</code>、進行方向に平行な 0.45 m の縞、ラベル 12)、一時停止(<code style="color:#22d3bf">stop</code> / <code style="color:#22d3bf">give_way</code>: 標識 + 停止線 + 「止まれ」、進入する辺ごと)、踏切(<code style="color:#22d3bf">level_crossing</code>: 2 本のレール(ラベル 8)+ 踏切警標 + 停止線)。生活道路(residential / unclassified / living_street)の通行側の縁に <code style="color:#22d3bf">pole_pitch</code> 間隔で電柱(ラベル 16)。<code style="color:#22d3bf">buildings</code> = plateau_parse の建物の列なら押し出し柱(ラベル 14)。返り値 = driveworld の世界 + <code style="color:#22d3bf">{&quot;graph&quot;, &quot;roadmask&quot;, &quot;loops&quot;, &quot;signals&quot;: [{&quot;node&quot;, &quot;edge&quot;, &quot;object&quot;, &quot;pose&quot;}], &quot;stats&quot;: {...}}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: side が left/right 以外、kerb/step が不正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

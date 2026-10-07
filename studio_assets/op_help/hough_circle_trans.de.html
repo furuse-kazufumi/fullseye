@@ -7,23 +7,16 @@
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p>*Die Ausgabe ist in einer viridis-artigen Falschfarbe dargestellt (dunkles Violett = klein, Gelb = groß), damit ein Feld von Größen — Abstand, Phase, Orientierung, Tiefe — lesbar ist.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hough_circle_trans.a.jpg">hough_circle_trans: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hough_circle_trans.a.jpg">hough_circle_trans: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hough_circle_trans.b.jpg">hough_circle_trans: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hough_circle_trans.b.jpg">hough_circle_trans: Regler b durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hough_circle_trans.inputs.jpg">hough_circle_trans: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hough_circle_trans.inputs.jpg">hough_circle_trans: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Die Hough-Transformation zur Kreiserkennung. Berechnet `<code style="color:#22d3bf">skimage.transform.hough_circle</code><code style="color:#22d3bf"> auf der Kantenmaske mit einer Reihe von Kreisvorlagen mit Radius 4 bis 19 (in Schritten von 3) und gibt die maximale Antwort über alle Radien, normiert auf [0,1], zurück. Entspricht HALCONs </code><code style="color:#22d3bf">hough_circle_trans</code>` (Return the Hough-Transform for circles with a given radius.) (HALCON gibt den Radius explizit an, hier handelt es sich jedoch um eine Annäherung, die einen festen Bereich per Brute-Force durchsucht).</p>
+<p>Die Hough-Transformation zur Kreiserkennung. Berechnet <code style="color:#22d3bf">skimage.transform.hough_circle</code> auf der Kantenmaske mit einer Reihe von Kreisvorlagen mit Radius 4 bis 19 (in Schritten von 3) und gibt die maximale Antwort über alle Radien, normiert auf [0,1], zurück. Entspricht HALCONs <code style="color:#22d3bf">hough_circle_trans</code> (Return the Hough-Transform for circles with a given radius.) (HALCON gibt den Radius explizit an, hier handelt es sich jedoch um eine Annäherung, die einen festen Bereich per Brute-Force durchsucht).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> がエッジ抽出の閾値を振り、</code><code style="color:#22d3bf">b</code>` が探索する半径の上限を決める</p>
-<p>(`<code style="color:#22d3bf">radii = arange(4, max(7, round(4 + 32*b)), 3)</code><code style="color:#22d3bf">。既定の </code><code style="color:#22d3bf">b=0.5</code>` は</p>
-<p>従来どおり半径 4〜19)。★**対象より小さい半径しか探していないと、この op は</p>
-<p>落ちずに意味の無い累算器を返す**。実写のコイン 24 枚(半径 19〜31 px)で</p>
-<p>非極大抑制して数えると `<code style="color:#22d3bf">b=0.5</code><code style="color:#22d3bf"> で 13 峰、上限まで広げた </code><code style="color:#22d3bf">b=1.0</code>` でも</p>
-<p>19 峰にしかならない ―― 半径の刻みが 3 で、しかも全半径の最大に潰して</p>
-<p>いるため。<b>半径を明示できる HALCON の同名 op の代わりにはならない</b></p>
-<p>(`<code style="color:#22d3bf">examples/poc_real_coin_metrology.py</code>` が数字で示す)。</p>
+<p><code style="color:#22d3bf">a</code> がエッジ抽出の閾値を振り、<code style="color:#22d3bf">b</code> が探索する半径の上限を決める(<code style="color:#22d3bf">radii = arange(4, max(7, round(4 + 32*b)), 3)</code>。既定の <code style="color:#22d3bf">b=0.5</code> は従来どおり半径 4〜19)。★<b>対象より小さい半径しか探していないと、この op は落ちずに意味の無い累算器を返す</b>。実写のコイン 24 枚(半径 19〜31 px)で非極大抑制して数えると <code style="color:#22d3bf">b=0.5</code> で 13 峰、上限まで広げた <code style="color:#22d3bf">b=1.0</code> でも 19 峰にしかならない ―― 半径の刻みが 3 で、しかも全半径の最大に潰しているため。<b>半径を明示できる HALCON の同名 op の代わりにはならない</b> (<code style="color:#22d3bf">examples/poc_real_coin_metrology.py</code> が数字で示す)。</p>
 <p><b>Vergleichbarkeit der Werte (gemessen)</b>: Die Ausgabe wird <b>auf das Maximum des jeweiligen Bildes normiert</b> (das Ausgabemaximum ist stets 1.0, und eine Skalierung der Eingabe lässt die Ausgabe unverändert). Werte sind daher <b>nicht bildübergreifend vergleichbar</b> — ein Merkmal gleicher Stärke erhält je nach dem stärksten Merkmal im Bild einen anderen Wert, und in einem Bild mit nur schwachen Merkmalen wird das Rauschen auf 1.0 angehoben. Für einen Vergleich über Bilder hinweg auf eine gemeinsame Referenz umskalieren.</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
@@ -34,7 +27,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hough_circle_trans 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hough_circle_trans%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hough_circle_trans%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hough_circle_trans 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hough_circle_trans%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hough_circle_trans%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_coin_metrology">poc_real_coin_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_coin_metrology.py</code></p>

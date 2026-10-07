@@ -6,16 +6,16 @@
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p>*Die Ausgabe ist in einer viridis-artigen Falschfarbe dargestellt (dunkles Violett = klein, Gelb = groß), damit ein Feld von Größen — Abstand, Phase, Orientierung, Tiefe — lesbar ist.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv3_pyr_laplacian.a.jpg">xcv3_pyr_laplacian: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv3_pyr_laplacian.a.jpg">xcv3_pyr_laplacian: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv3_pyr_laplacian.inputs.jpg">xcv3_pyr_laplacian: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv3_pyr_laplacian.inputs.jpg">xcv3_pyr_laplacian: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Schärfezeichnung mittels Laplace-Pyramide. Eine Art Unscharfmaskierung, die das Bild verstärkt, indem sie die Differenz (eine Ebene der Laplace-Pyramide, entsprechend einer Bandpass-Komponente) zum Originalbild addiert, die man erhält, wenn man das mit `<code style="color:#22d3bf">pyrDown</code><code style="color:#22d3bf"> verkleinerte und mit </code><code style="color:#22d3bf">pyrUp</code>` wieder vergrößerte Bild (die Tiefpasskomponente) vom Originalbild abzieht.</p>
+<p>Schärfezeichnung mittels Laplace-Pyramide. Eine Art Unscharfmaskierung, die das Bild verstärkt, indem sie die Differenz (eine Ebene der Laplace-Pyramide, entsprechend einer Bandpass-Komponente) zum Originalbild addiert, die man erhält, wenn man das mit <code style="color:#22d3bf">pyrDown</code> verkleinerte und mit <code style="color:#22d3bf">pyrUp</code> wieder vergrößerte Bild (die Tiefpasskomponente) vom Originalbild abzieht.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は強調係数(</code><code style="color:#22d3bf">0.5+2.5*a</code><code style="color:#22d3bf"> で 0.5〜3.0)を振る —— 大きいほど強くシャープになる(オーバーシュートも増える)。</code><code style="color:#22d3bf">b</code>` は未使用。結果は [0,1] にクリップ。</p>
-<p><b>Randbehandlung</b>: ohne Wiederholung des Randpixels spiegeln (d c b | a b c d — OpenCVs `<code style="color:#22d3bf">BORDER_REFLECT_101</code><code style="color:#22d3bf">) (gemessen; </code>tools/impl2/border_probe.py`).</p>
+<p><code style="color:#22d3bf">a</code> は強調係数(<code style="color:#22d3bf">0.5+2.5*a</code> で 0.5〜3.0)を振る —— 大きいほど強くシャープになる(オーバーシュートも増える)。<code style="color:#22d3bf">b</code> は未使用。結果は [0,1] にクリップ。</p>
+<p><b>Randbehandlung</b>: ohne Wiederholung des Randpixels spiegeln (d c b | a b c d — OpenCVs <code style="color:#22d3bf">BORDER_REFLECT_101</code>) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -24,7 +24,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv3_pyr_laplacian 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:xcv3_pyr_laplacian%200.35%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv3_pyr_laplacian%200.35%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv3_pyr_laplacian 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:xcv3_pyr_laplacian%200.35%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv3_pyr_laplacian%200.35%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_smoothing_rank.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>

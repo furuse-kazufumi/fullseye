@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_delta_from_normals(normals, X, Y, pitch: &#x27;float&#x27;, tail: &#x27;str&#x27; = &#x27;boussinesq&#x27;, centre_xy=None) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacsim; tacsim.membrane_delta_from_normals(normals, X, Y, pitch: &#x27;float&#x27;, tail: &#x27;str&#x27; = &#x27;boussinesq&#x27;, centre_xy=None) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;membrane_delta_from_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>中心の沈み込み δ を法線場から: 半径方向スロープ s̄(r) を中心から窓の端まで 1D 積分(∫ s̄ dr = ū_z(0) − ū_z(r_max))し、</p>
-<p>`<code style="color:#22d3bf">tail=&quot;boussinesq&quot;</code>` なら遠方場 ū_z ≈ C/r(点荷重の Boussinesq 解、Johnson §3.2)から残りの裾 ū_z(r_max) = r_max · s̄(r_max)</p>
-<p>を足す(窓の端の最後の 3 ビンの中央値)。`<code style="color:#22d3bf">tail=&quot;none&quot;</code>` は裾なし(有限窓の過小評価をそのまま返す —— 間違いの量を測るため)。</p>
-<p>高さの FFT 積分を通らないので振幅の減衰を受けない。返り: δ [m]。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 未知の tail、pitch ≤ 0。</p>
+<p>中心の沈み込み δ を法線場から: 半径方向スロープ s̄(r) を中心から窓の端まで 1D 積分(∫ s̄ dr = ū_z(0) − ū_z(r_max))し、<code style="color:#22d3bf">tail=&quot;boussinesq&quot;</code> なら遠方場 ū_z ≈ C/r(点荷重の Boussinesq 解、Johnson §3.2)から残りの裾 ū_z(r_max) = r_max · s̄(r_max) を足す(窓の端の最後の 3 ビンの中央値)。<code style="color:#22d3bf">tail=&quot;none&quot;</code> は裾なし(有限窓の過小評価をそのまま返す —— 間違いの量を測るため)。</p>
+<p>高さの FFT 積分を通らないので振幅の減衰を受けない。返り: δ [m]。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 未知の tail、pitch ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

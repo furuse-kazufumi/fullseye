@@ -5,12 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>2 つのパッドがペグに加えるレンチ(グリッパ系、把持点まわり)→ 各パッドの (法線力 P、膜が受けるせん断 q = (q_u, q_v))。</p>
-<p>釣り合い(導出): パッド R(+x)はペグに −N_R x̂ と T_R、L(−x)は +N_L x̂ と T_L。F_x = N_L − N_R、F_y = T_Ry + T_Ly、</p>
-<p>F_z = T_Rz + T_Lz、M_y = −w(T_Rz − T_Lz)、M_z = w(T_Ry − T_Ly)、M_x = ねじり(半分ずつ)。法線は把持力で N = G₀ ∓ F_x/2。</p>
-<p>返り: `<code style="color:#22d3bf">R</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">L</code><code style="color:#22d3bf">(各 </code><code style="color:#22d3bf">P</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">q</code><code style="color:#22d3bf">(膜が受ける = −T)・</code><code style="color:#22d3bf">slip_ratio</code><code style="color:#22d3bf"> = |q|/(μP)・</code><code style="color:#22d3bf">torsion</code><code style="color:#22d3bf">(膜が受けるねじり)・</code><code style="color:#22d3bf">torsion_ratio</code>`</p>
-<p>= |ねじり| / 全滑りトルク (3π/16)μPa)、`<code style="color:#22d3bf">torsion</code><code style="color:#22d3bf">(ペグへのねじりの半分 M_x/2)、</code><code style="color:#22d3bf">ok</code><code style="color:#22d3bf">(両方 |q| &lt; μP)、</code><code style="color:#22d3bf">min_margin</code>`、</p>
-<p>`<code style="color:#22d3bf">torsion_ok</code>`。滑り(|q| ≥ μP)とねじりの全滑りは<b>印</b>で返す(例外にしない: 合成は比例載荷・無滑りねじりの模型)。</p>
-<p><b>Raises</b> ValueError: 形が (3,) でない・有限でない、どちらかのパッドの法線力が 0 以下(パッドが離れる = この写像の外。fail-closed)。</p>
+<p>釣り合い(導出): パッド R(+x)はペグに −N_R x̂ と T_R、L(−x)は +N_L x̂ と T_L。F_x = N_L − N_R、F_y = T_Ry + T_Ly、F_z = T_Rz + T_Lz、M_y = −w(T_Rz − T_Lz)、M_z = w(T_Ry − T_Ly)、M_x = ねじり(半分ずつ)。法線は把持力で N = G₀ ∓ F_x/2。</p>
+<p>返り: <code style="color:#22d3bf">R</code>・<code style="color:#22d3bf">L</code>(各 <code style="color:#22d3bf">P</code>・<code style="color:#22d3bf">q</code>(膜が受ける = −T)・<code style="color:#22d3bf">slip_ratio</code> = |q|/(μP)・<code style="color:#22d3bf">torsion</code>(膜が受けるねじり)・<code style="color:#22d3bf">torsion_ratio</code> = |ねじり| / 全滑りトルク (3π/16)μPa)、<code style="color:#22d3bf">torsion</code>(ペグへのねじりの半分 M_x/2)、<code style="color:#22d3bf">ok</code>(両方 |q| &lt; μP)、<code style="color:#22d3bf">min_margin</code>、<code style="color:#22d3bf">torsion_ok</code>。滑り(|q| ≥ μP)とねじりの全滑りは<b>印</b>で返す(例外にしない: 合成は比例載荷・無滑りねじりの模型)。<b>Raises</b> ValueError: 形が (3,) でない・有限でない、どちらかのパッドの法線力が 0 以下(パッドが離れる = この写像の外。fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

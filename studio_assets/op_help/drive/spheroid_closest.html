@@ -3,11 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spheroid_closest(x, sph: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import diabolo; diabolo.spheroid_closest(x, sph: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;spheroid_closest&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>点 x → 回転楕円体の面の最近点 `<code style="color:#22d3bf">point</code><code style="color:#22d3bf">・符号つき距離 </code><code style="color:#22d3bf">s</code><code style="color:#22d3bf">(内側 &gt; 0、論文の s の定義)・外向きの単位法線 </code><code style="color:#22d3bf">normal</code>`</p>
-<p>(最近点での勾配の向き)。</p>
-<p>最近点は子午面の楕円への Eberly の二分法。★公開実装は中心から放射方向に縮めて戻し(最近点ではない、楕円体の外 5 mm の点で</p>
-<p>最大 2.2 mm 違う)、法線を (x/b, y/a, z/b) で近似する(勾配なら 2 乗、軸の上以外では最大 12.2° ずれる)。ここでは本文の</p>
-<p>「最も近い点へ動かす」と真の法線で書く。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: x が有限の 3-vector でない、sph が楕円体の dict でない。</p>
+<p>点 x → 回転楕円体の面の最近点 <code style="color:#22d3bf">point</code>・符号つき距離 <code style="color:#22d3bf">s</code>(内側 &gt; 0、論文の s の定義)・外向きの単位法線 <code style="color:#22d3bf">normal</code> (最近点での勾配の向き)。</p>
+<p>最近点は子午面の楕円への Eberly の二分法。★公開実装は中心から放射方向に縮めて戻し(最近点ではない、楕円体の外 5 mm の点で最大 2.2 mm 違う)、法線を (x/b, y/a, z/b) で近似する(勾配なら 2 乗、軸の上以外では最大 12.2° ずれる)。ここでは本文の「最も近い点へ動かす」と真の法線で書く。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: x が有限の 3-vector でない、sph が楕円体の dict でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

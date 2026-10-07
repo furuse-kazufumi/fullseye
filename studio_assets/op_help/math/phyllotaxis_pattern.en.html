@@ -4,29 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phyllotaxis_pattern(n_points=400, angle_deg=None, scale=1.0, power=0.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.phyllotaxis_pattern(n_points=400, angle_deg=None, scale=1.0, power=0.5)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;phyllotaxis_pattern&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Vogel&#x27;s spiral — the angle that packs best, and the spirals it makes.</p>
-<p>Point `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> sits at </code><code style="color:#22d3bf">r = scale * k**power</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">theta = k * angle_deg</code>`. With</p>
-<p>the <b>golden angle</b> `<code style="color:#22d3bf">180*(3 - sqrt 5) = 137.50776...</code>` degrees (the default)</p>
-<p>this is the arrangement of sunflower florets, pine-cone scales and the leaves</p>
-<p>of most plants.</p>
-<p>★**Why this earns its place — two independent theorems, each with a control</p>
-<p>group**:</p>
-<p style="margin:2px 0 2px 12px">• *The golden angle packs best.* Sweep the divergence angle and the minimum</p>
-<p>nearest-neighbour distance is <b>maximised</b> at 137.50776 deg; a fraction</p>
-<p>of a degree either side is measurably worse. Nothing in the formula says</p>
-<p>this — it has to be measured.</p>
-<p style="margin:2px 0 2px 12px">• *The visible spirals are consecutive Fibonacci numbers.* Take each point&#x27;s</p>
-<p>nearest neighbours and look at the <b>difference of their indices</b>: the</p>
-<p>differences concentrate on 1, 2, 3, 5, 8, 13, 21, 34... At a non-golden</p>
-<p>angle they do not.</p>
-<p>Returns `<code style="color:#22d3bf">pairs</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(n, 2)</code><code style="color:#22d3bf"> of </code><code style="color:#22d3bf">(x, y)</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">n_points &lt; 1</code>` or over the cap; non-finite angle</p>
-<p>or scale; `<code style="color:#22d3bf">power</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">(0, 1]</code>`.</p>
+<p>Point <code style="color:#22d3bf">k</code> sits at <code style="color:#22d3bf">r = scale * k**power</code>, <code style="color:#22d3bf">theta = k * angle_deg</code>. With the <b>golden angle</b> <code style="color:#22d3bf">180*(3 - sqrt 5) = 137.50776...</code> degrees (the default) this is the arrangement of sunflower florets, pine-cone scales and the leaves of most plants.</p>
+<p>★<b>Why this earns its place — two independent theorems, each with a control group</b>:</p>
+<p style="margin:2px 0 2px 12px">• *The golden angle packs best.* Sweep the divergence angle and the minimum nearest-neighbour distance is <b>maximised</b> at 137.50776 deg; a fraction of a degree either side is measurably worse. Nothing in the formula says this — it has to be measured.</p>
+<p style="margin:2px 0 2px 12px">• *The visible spirals are consecutive Fibonacci numbers.* Take each point&#x27;s nearest neighbours and look at the <b>difference of their indices</b>: the differences concentrate on 1, 2, 3, 5, 8, 13, 21, 34... At a non-golden angle they do not.</p>
+<p>Returns <code style="color:#22d3bf">pairs</code> <code style="color:#22d3bf">(n, 2)</code> of <code style="color:#22d3bf">(x, y)</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">n_points &lt; 1</code> or over the cap; non-finite angle or scale; <code style="color:#22d3bf">power</code> outside <code style="color:#22d3bf">(0, 1]</code>.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

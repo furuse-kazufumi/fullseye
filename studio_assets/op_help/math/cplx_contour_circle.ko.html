@@ -5,28 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원을 닫힌 폐곡선으로 표본화합니다 —— 표준적인 적분 경로.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Returns `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> complex points </code><code style="color:#22d3bf">center + radius * exp(±i * 2*pi*k/n)</code>`,</p>
-<p>`<code style="color:#22d3bf">k = 0..n-1</code><code style="color:#22d3bf">. The closing segment </code><code style="color:#22d3bf">z[-1] -&gt; z[0]</code>` is <b>implicit</b>: the</p>
-<p>first point is *not* repeated (every contour op in this family closes the</p>
-<p>polygon itself; repeating it would only add a zero-length segment).</p>
-<p>*orientation* is explicit because in complex analysis the sign of every</p>
-<p>result depends on it: `<code style="color:#22d3bf">&#x27;ccw&#x27;</code>` (default) is the positive/mathematical</p>
-<p>direction — the one for which the residue theorem, the Cauchy formula and</p>
-<p>the argument principle carry a `<code style="color:#22d3bf">+</code><code style="color:#22d3bf"> sign — and </code><code style="color:#22d3bf">&#x27;cw&#x27;</code>` negates all three.</p>
-<p>Honest limitation: this is a <b>polygon</b> through samples of the circle, not</p>
-<p>the circle. Its enclosed area is short by a factor `<code style="color:#22d3bf">sinc</code>`-like in</p>
-<p>`<code style="color:#22d3bf">2*pi/n</code><code style="color:#22d3bf">, and every quadrature on it converges as </code><code style="color:#22d3bf">O(n^-2)</code>`</p>
-<p>(:func:<code style="color:#22d3bf">cplx_contour_integral</code> documents the measured rate).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: non-finite *center*/*radius*, </code><code style="color:#22d3bf">radius &lt;= 0</code>`,</p>
-<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> not an integer in </code><code style="color:#22d3bf">[3, MAX_CONTOUR_POINTS]</code>` (a fail-closed size cap</p>
-<p>— `<code style="color:#22d3bf">n=10**9</code>` would allocate 16 GB), unknown *orientation*.</p>
-<p>HALCON: no complex-plane operator (`<code style="color:#22d3bf">gen_circle_contour_xld</code>` draws the</p>
-<p>same geometry as an XLD contour for image space).</p>
+<p>Returns <code style="color:#22d3bf">n</code> complex points <code style="color:#22d3bf">center + radius * exp(±i * 2*pi*k/n)</code>, <code style="color:#22d3bf">k = 0..n-1</code>. The closing segment <code style="color:#22d3bf">z[-1] -&gt; z[0]</code> is <b>implicit</b>: the first point is *not* repeated (every contour op in this family closes the polygon itself; repeating it would only add a zero-length segment).</p>
+<p>*orientation* is explicit because in complex analysis the sign of every result depends on it: <code style="color:#22d3bf">&#x27;ccw&#x27;</code> (default) is the positive/mathematical direction — the one for which the residue theorem, the Cauchy formula and the argument principle carry a <code style="color:#22d3bf">+</code> sign — and <code style="color:#22d3bf">&#x27;cw&#x27;</code> negates all three.</p>
+<p>Honest limitation: this is a <b>polygon</b> through samples of the circle, not the circle. Its enclosed area is short by a factor <code style="color:#22d3bf">sinc</code>-like in <code style="color:#22d3bf">2*pi/n</code>, and every quadrature on it converges as <code style="color:#22d3bf">O(n^-2)</code> (<code style="color:#22d3bf">cplx_contour_integral</code> documents the measured rate).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-finite *center*/*radius*, <code style="color:#22d3bf">radius &lt;= 0</code>, <code style="color:#22d3bf">n</code> not an integer in <code style="color:#22d3bf">[3, MAX_CONTOUR_POINTS]</code> (a fail-closed size cap — <code style="color:#22d3bf">n=10**9</code> would allocate 16 GB), unknown *orientation*.</p>
+<p>HALCON: no complex-plane operator (<code style="color:#22d3bf">gen_circle_contour_xld</code> draws the same geometry as an XLD contour for image space).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
-<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
-<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code></b> —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
 <p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

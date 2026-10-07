@@ -5,31 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 점에서 출발한 뉴턴법은 다항식의 어느 근으로 떨어지는가?</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Labels the window `<code style="color:#22d3bf">1..len(roots)</code><code style="color:#22d3bf"> by the root reached, and </code><code style="color:#22d3bf">0</code>` where the</p>
-<p>iteration has not converged within `<code style="color:#22d3bf">max_iter</code>` (the Julia set and its</p>
-<p>neighbourhood). Roots come from `<code style="color:#22d3bf">numpy.roots</code>` — the same routine behind</p>
-<p>this family&#x27;s `<code style="color:#22d3bf">poly_roots</code><code style="color:#22d3bf"> — and are sorted by </code><code style="color:#22d3bf">(Re, Im)</code>` so the label</p>
-<p>of a given root does not change between runs.</p>
-<p>★**Degree 2 has a closed-form answer, so the operator can be checked</p>
-<p>exactly rather than plausibly.** Cayley (1879): for `<code style="color:#22d3bf">z**2 - 1</code>` the basins</p>
-<p>are the two open half-planes `<code style="color:#22d3bf">Re z &gt; 0</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">Re z &lt; 0</code>`, and the boundary</p>
-<p>is the imaginary axis — no fractal. The famous fractal boundary appears at</p>
-<p>degree 3, which Cayley could not settle; there the honest checks are</p>
-<p>structural (every root&#x27;s basin is non-empty; `<code style="color:#22d3bf">z**3 - 1</code>` is invariant under</p>
-<p>rotation by `<code style="color:#22d3bf">2*pi/3</code>`, and so is its labelling, up to the cyclic</p>
-<p>relabelling of the roots).</p>
-<p>`<code style="color:#22d3bf">coeffs</code><code style="color:#22d3bf"> is highest-degree-first, as </code><code style="color:#22d3bf">numpy.roots</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">poly_roots</code>`</p>
-<p>take it.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: text, non-finite or all-zero coefficients; a</p>
-<p>non-zero constant (no roots); `<code style="color:#22d3bf">max_iter &lt; 1</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">tol &lt;= 0</code>`; degenerate</p>
-<p>window. Points where the derivative vanishes are left unconverged (label</p>
-<p>`<code style="color:#22d3bf">0</code>`) rather than divided by — a critical point is genuinely undecided.</p>
+<p>Labels the window <code style="color:#22d3bf">1..len(roots)</code> by the root reached, and <code style="color:#22d3bf">0</code> where the iteration has not converged within <code style="color:#22d3bf">max_iter</code> (the Julia set and its neighbourhood). Roots come from <code style="color:#22d3bf">numpy.roots</code> — the same routine behind this family&#x27;s <code style="color:#22d3bf">poly_roots</code> — and are sorted by <code style="color:#22d3bf">(Re, Im)</code> so the label of a given root does not change between runs.</p>
+<p>★<b>Degree 2 has a closed-form answer, so the operator can be checked exactly rather than plausibly.</b> Cayley (1879): for <code style="color:#22d3bf">z**2 - 1</code> the basins are the two open half-planes <code style="color:#22d3bf">Re z &gt; 0</code> and <code style="color:#22d3bf">Re z &lt; 0</code>, and the boundary is the imaginary axis — no fractal. The famous fractal boundary appears at degree 3, which Cayley could not settle; there the honest checks are structural (every root&#x27;s basin is non-empty; <code style="color:#22d3bf">z**3 - 1</code> is invariant under rotation by <code style="color:#22d3bf">2*pi/3</code>, and so is its labelling, up to the cyclic relabelling of the roots).</p>
+<p><code style="color:#22d3bf">coeffs</code> is highest-degree-first, as <code style="color:#22d3bf">numpy.roots</code> and <code style="color:#22d3bf">poly_roots</code> take it.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: text, non-finite or all-zero coefficients; a non-zero constant (no roots); <code style="color:#22d3bf">max_iter &lt; 1</code>; <code style="color:#22d3bf">tol &lt;= 0</code>; degenerate window. Points where the derivative vanishes are left unconverged (label <code style="color:#22d3bf">0</code>) rather than divided by — a critical point is genuinely undecided.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
-<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
-<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code></b> —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
 <p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

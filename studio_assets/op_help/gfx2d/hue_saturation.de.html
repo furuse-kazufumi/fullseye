@@ -5,13 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Dreht den Farbton und skaliert die Sättigung (BT.601 YCbCr, Luma bleibt erhalten).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Ground truth: `<code style="color:#22d3bf">hue_deg=0, saturation=1</code>` is the identity to 1e-15;</p>
-<p>rotating by `<code style="color:#22d3bf">+t</code><code style="color:#22d3bf"> then </code><code style="color:#22d3bf">-t</code><code style="color:#22d3bf"> returns the input; </code><code style="color:#22d3bf">saturation=0</code>` gives a</p>
-<p>grey image whose value is the BT.601 luma of the input. A hue rotation is</p>
-<p><b>not</b> a channel permutation (120 degrees does not swap R-&gt;G-&gt;B exactly),</p>
-<p>because the RGB cube is not a cylinder around the grey axis — said here so</p>
-<p>nobody tests for it.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-finite *hue_deg*, or *saturation* &lt; 0.</p>
+<p>Ground truth: <code style="color:#22d3bf">hue_deg=0, saturation=1</code> is the identity to 1e-15; rotating by <code style="color:#22d3bf">+t</code> then <code style="color:#22d3bf">-t</code> returns the input; <code style="color:#22d3bf">saturation=0</code> gives a grey image whose value is the BT.601 luma of the input. A hue rotation is <b>not</b> a channel permutation (120 degrees does not swap R-&gt;G-&gt;B exactly), because the RGB cube is not a cylinder around the grey axis — said here so nobody tests for it. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-finite *hue_deg*, or *saturation* &lt; 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

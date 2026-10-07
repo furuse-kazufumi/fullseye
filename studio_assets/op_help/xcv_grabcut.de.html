@@ -7,19 +7,14 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_grabcut.inputs.jpg">xcv_grabcut: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv_grabcut.inputs.jpg">xcv_grabcut: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Automatische Trennung von Vorder- und Hintergrund mittels GrabCut (iterativer Graph-Cut).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>画像中央 70%×70%の固定矩形を「たぶん前景」の初期領域として与え、</p>
-<p>色分布の GMM とグラフカットで前景/背景を反復的に分離する</p>
-<p>(`<code style="color:#22d3bf">cv2.GC_INIT_WITH_RECT</code>`)。「確実な前景」と「たぶん前景」の画素を</p>
-<p>合わせて前景 region として返す。</p>
-<p>`<code style="color:#22d3bf">a</code>` が反復回数を 2〜5 回の範囲で振る(多いほど収束するが遅い)。</p>
-<p>`<code style="color:#22d3bf">b</code>` は未使用。矩形が画像中央固定のため、被写体が縁に寄っている</p>
-<p>画像では抽出に失敗しやすい。</p>
-<p><b>Regler (gemessen)</b>: `<code style="color:#22d3bf">a</code>` von 0 bis 1 zu variieren <b>ändert die Ausgabe nicht</b> (an fünf verschiedenen Eingaben gemessen).</p>
+<p>画像中央 70%×70%の固定矩形を「たぶん前景」の初期領域として与え、色分布の GMM とグラフカットで前景/背景を反復的に分離する(<code style="color:#22d3bf">cv2.GC_INIT_WITH_RECT</code>)。「確実な前景」と「たぶん前景」の画素を合わせて前景 region として返す。</p>
+<p><code style="color:#22d3bf">a</code> が反復回数を 2〜5 回の範囲で振る(多いほど収束するが遅い)。<code style="color:#22d3bf">b</code> は未使用。矩形が画像中央固定のため、被写体が縁に寄っている画像では抽出に失敗しやすい。</p>
+<p><b>Regler (gemessen)</b>: <code style="color:#22d3bf">a</code> von 0 bis 1 zu variieren <b>ändert die Ausgabe nicht</b> (an fünf verschiedenen Eingaben gemessen).</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
@@ -29,7 +24,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv_grabcut 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv_grabcut%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv_grabcut%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv_grabcut 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv_grabcut%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv_grabcut%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_segmentation">gallery2d_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_segmentation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">region</code> als Eingabe)</h3>

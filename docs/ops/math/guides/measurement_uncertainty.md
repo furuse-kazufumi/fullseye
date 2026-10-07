@@ -2,6 +2,11 @@
 guide: measurement_uncertainty
 dim: math
 title: 計測の不確かさと校正の知識 — 「測れている」を主張するために
+title_en: Measurement uncertainty and calibration — what it takes to claim you are measuring
+title_zh: 测量不确定度与校准知识 —— 为了能主张“测得准”
+title_tw: 量測不確定度與校正知識 —— 為了能主張「量得準」
+title_ko: 측정 불확도와 교정 지식 — ‘측정되고 있다’고 주장하려면
+title_de: Messunsicherheit und Kalibrierung — was nötig ist, um zu behaupten, dass man misst
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

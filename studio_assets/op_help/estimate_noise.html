@@ -8,14 +8,9 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>加法性ノイズの標準偏差 σ をロバスト推定する(`<code style="color:#22d3bf">_noise_sigma</code>`:</p>
-<p>ラプラシアン応答の MAD を正規分布換算し、5 点ラプラシアン核のノイズ利得</p>
-<p>`<code style="color:#22d3bf">sqrt(20)</code>` で割る)。エッジ由来の外れ値には鈍く、平坦部のノイズだけを</p>
-<p>拾う設計(2026-09-02 に旧実装の「σ が単位を持たず σ≈0.08 以上で 1.0 に</p>
-<p>張り付く」不具合を修正済み、詳細は `<code style="color:#22d3bf">_noise_sigma</code>` の docstring)。HALCON</p>
-<p>の `<code style="color:#22d3bf">estimate_noise</code>`（Estimate the image noise from a single image.）に</p>
-<p>相当。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>加法性ノイズの標準偏差 σ をロバスト推定する(<code style="color:#22d3bf">_noise_sigma</code>:</p>
+<p>ラプラシアン応答の MAD を正規分布換算し、5 点ラプラシアン核のノイズ利得 <code style="color:#22d3bf">sqrt(20)</code> で割る)。エッジ由来の外れ値には鈍く、平坦部のノイズだけを拾う設計(2026-09-02 に旧実装の「σ が単位を持たず σ≈0.08 以上で 1.0 に張り付く」不具合を修正済み、詳細は <code style="color:#22d3bf">_noise_sigma</code> の docstring)。HALCON の <code style="color:#22d3bf">estimate_noise</code>（Estimate the image noise from a single image.）に相当。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -24,7 +19,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">estimate_noise 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:estimate_noise%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:estimate_noise%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">estimate_noise 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:estimate_noise%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:estimate_noise%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weld_radiograph_porosity">poc_weld_radiograph_porosity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weld_radiograph_porosity.py</code></p>

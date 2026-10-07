@@ -4,15 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wipe_coverage(image, res: &#x27;float&#x27;, threshold=&#x27;otsu&#x27;, coat=None, optical_depth: &#x27;float&#x27; = 1.3862943611198906, bare: &#x27;float&#x27; = 0.85, min_area: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import polish; polish.wipe_coverage(image, res: &#x27;float&#x27;, threshold=&#x27;otsu&#x27;, coat=None, optical_depth: &#x27;float&#x27; = 1.3862943611198906, bare: &#x27;float&#x27; = 0.85, min_area: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;wipe_coverage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>拭けた所(明るい = 膜が消えた所)の面積を画像から読む。2 値化と連結成分は detect.segment_objects(Otsu が既定)。</p>
-<p>返り `<code style="color:#22d3bf">area</code><code style="color:#22d3bf">(拭けた画素 × res² [m²])、</code><code style="color:#22d3bf">fraction</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">largest_area</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_regions</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mask</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">threshold</code>`(Otsu の</p>
-<p>しきい値 = 拭けた側の最小と残った側の最大の中点で推定)、`<code style="color:#22d3bf">coat</code><code style="color:#22d3bf"> を渡せば </code><code style="color:#22d3bf">residual_at_threshold</code>`(しきい値の明るさが意味する</p>
-<p>残った膜の厚さ —— 読んだ帯は「除去 ≥ h0 − この厚さ」の所)。<b>Raises</b> ValueError: 画像の検査、res ≤ 0、拭けた所も残った所も</p>
-<p>無い(しきい値が決まらない)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>拭けた所(明るい = 膜が消えた所)の面積を画像から読む。2 値化と連結成分は detect.segment_objects(Otsu が既定)。返り <code style="color:#22d3bf">area</code>(拭けた画素 × res² [m²])、<code style="color:#22d3bf">fraction</code>、<code style="color:#22d3bf">largest_area</code>、<code style="color:#22d3bf">n_regions</code>、<code style="color:#22d3bf">mask</code>、<code style="color:#22d3bf">threshold</code>(Otsu のしきい値 = 拭けた側の最小と残った側の最大の中点で推定)、<code style="color:#22d3bf">coat</code> を渡せば <code style="color:#22d3bf">residual_at_threshold</code>(しきい値の明るさが意味する残った膜の厚さ —— 読んだ帯は「除去 ≥ h0 − この厚さ」の所)。<b>Raises</b> ValueError: 画像の検査、res ≤ 0、拭けた所も残った所も無い(しきい値が決まらない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_polish_wipe_measure">poc_polish_wipe_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_polish_wipe_measure.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

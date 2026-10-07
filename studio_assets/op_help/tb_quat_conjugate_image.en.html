@@ -11,11 +11,9 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_quat_conjugate_image.inputs.jpg">tb_quat_conjugate_image: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Per-pixel quaternion conjugate `<code style="color:#22d3bf">(w, -x, -y, -z)</code>`. → (H, W, 4).</p>
-<p>Exact and involutive: `<code style="color:#22d3bf">quat_conjugate_image(quat_conjugate_image(q)) is q</code>`</p>
-<p>to the last bit (a sign flip is exact in IEEE 754). Agrees with</p>
-<p>`<code style="color:#22d3bf">pose_quat.quat_conjugate</code>` per pixel, asserted in the tests.</p>
-<p>Typed bridge of the quat op `<code style="color:#22d3bf">quat_conjugate_image</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>Per-pixel quaternion conjugate <code style="color:#22d3bf">(w, -x, -y, -z)</code>. → (H, W, 4).</p>
+<p>Exact and involutive: <code style="color:#22d3bf">quat_conjugate_image(quat_conjugate_image(q)) is q</code> to the last bit (a sign flip is exact in IEEE 754). Agrees with <code style="color:#22d3bf">pose_quat.quat_conjugate</code> per pixel, asserted in the tests.</p>
+<p>Typed bridge of the quat op <code style="color:#22d3bf">quat_conjugate_image</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

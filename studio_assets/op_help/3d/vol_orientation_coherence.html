@@ -4,24 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_orientation_coherence(vol, sigma=1.0, rho=3.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volops; volops.vol_orientation_coherence(vol, sigma=1.0, rho=3.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_orientation_coherence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>How strongly the local structure points <b>one way</b> (3-D structure tensor).</p>
-<p>Builds `<code style="color:#22d3bf">J = G_rho * (grad I)(grad I)^T</code>` and returns</p>
+<p>Builds <code style="color:#22d3bf">J = G_rho * (grad I)(grad I)^T</code> and returns</p>
 <p>(l1 - l3) / (l1 + l2 + l3),   l1 &gt;= l2 &gt;= l3</p>
-<p>in `<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">1</code>` where one direction dominates (a fibre, a lamella edge,</p>
-<p>a crack face), `<code style="color:#22d3bf">0</code>` where the gradient is isotropic (a uniform block, white</p>
-<p>noise) or where two directions are equally strong.  *sigma* smooths before</p>
-<p>differentiating (so noise is not differentiated into structure); *rho* is the</p>
-<p>integration width — make it larger than the spacing of the structure you are</p>
-<p>measuring.</p>
-<p><b>HALCON computes this tensor and throws it away</b>: `<code style="color:#22d3bf">coherence_enhancing_diff</code>`</p>
-<p>uses it to steer a diffusion but exposes neither the orientation nor the</p>
-<p>coherence.  Returning the measurement is the point of this operator.</p>
-<p><b>Applicability.</b> (1) `<code style="color:#22d3bf">rho</code>` too small collapses the tensor to rank 1 and</p>
-<p>the answer sticks at 1 everywhere — that is *not* perfect alignment, it is a</p>
-<p>failure to measure.  (2) Two fibre families crossing at equal strength read</p>
-<p>as 0, indistinguishable from a uniform block; pair it with `<code style="color:#22d3bf">vol_local_std</code>`</p>
-<p>to tell &quot;no direction&quot; from &quot;no structure&quot;.  (3) Voxels whose tensor trace is</p>
-<p>below `<code style="color:#22d3bf">1e-6</code>` of the volume maximum return 0.</p>
-<p>Returns a `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> float64 volume in </code><code style="color:#22d3bf">[0, 1]</code>`.</p>
+<p>in <code style="color:#22d3bf">[0, 1]</code>: <code style="color:#22d3bf">1</code> where one direction dominates (a fibre, a lamella edge, a crack face), <code style="color:#22d3bf">0</code> where the gradient is isotropic (a uniform block, white noise) or where two directions are equally strong.  *sigma* smooths before differentiating (so noise is not differentiated into structure); *rho* is the integration width — make it larger than the spacing of the structure you are measuring.</p>
+<p><b>HALCON computes this tensor and throws it away</b>: <code style="color:#22d3bf">coherence_enhancing_diff</code> uses it to steer a diffusion but exposes neither the orientation nor the coherence.  Returning the measurement is the point of this operator.</p>
+<p><b>Applicability.</b> (1) <code style="color:#22d3bf">rho</code> too small collapses the tensor to rank 1 and the answer sticks at 1 everywhere — that is *not* perfect alignment, it is a failure to measure.  (2) Two fibre families crossing at equal strength read as 0, indistinguishable from a uniform block; pair it with <code style="color:#22d3bf">vol_local_std</code> to tell &quot;no direction&quot; from &quot;no structure&quot;.  (3) Voxels whose tensor trace is below <code style="color:#22d3bf">1e-6</code> of the volume maximum return 0.</p>
+<p>Returns a <code style="color:#22d3bf">(D, H, W)</code> float64 volume in <code style="color:#22d3bf">[0, 1]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

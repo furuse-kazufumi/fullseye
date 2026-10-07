@@ -12,7 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/aug_read_noise.inputs.jpg">aug_read_noise: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Additive Gaussian READ noise (amplifier + ADC noise), sigma-independent of signal (unlike shot noise). `<code style="color:#22d3bf">sigma = 0.005 + 0.15*a</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> mixes in a row-correlated component: a per-row bias of std </code><code style="color:#22d3bf">0.5*b*sigma</code>` shared by the whole row, which is what a shared row amplifier / row-wise ADC produces (visible as horizontal banding). Seeded from (a, b).</p>
+<p>Additive Gaussian READ noise (amplifier + ADC noise), sigma-independent of signal (unlike shot noise). <code style="color:#22d3bf">sigma = 0.005 + 0.15*a</code>. <code style="color:#22d3bf">b</code> mixes in a row-correlated component: a per-row bias of std <code style="color:#22d3bf">0.5*b*sigma</code> shared by the whole row, which is what a shared row amplifier / row-wise ADC produces (visible as horizontal banding). Seeded from (a, b).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

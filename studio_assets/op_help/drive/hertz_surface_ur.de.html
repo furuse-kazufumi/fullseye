@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_surface_ur(r, a: &#x27;float&#x27;, p0: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacslip; tacslip.hertz_surface_ur(r, a: &#x27;float&#x27;, p0: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;hertz_surface_ur&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>法線荷重(Hertz 圧 p0√(1−r²/a²))が作る半空間表面の<b>半径方向</b>変位 ūr [m] (Johnson 1985 式 3.41b を E = 2G(1+ν) で書き直し)。</p>
-<p>負 = 中心向き。内側 −(1−2ν)p0a²/(6Gr)[1 − (1−r²/a²)^{3/2}]、外側 −(1−2ν)p0a²/(6Gr)(= 点荷重 −(1−2ν)P/(4πGr))、r → 0 で 0。</p>
-<p>最大は縁でなく r ≈ 0.93a(ūr(a) の 1.022 倍)。ūr(a)/δ = 2(1−2ν)/(3π(1−ν))(ν 0.48 で 1.6 %、ν 0.3 で 12 %)—— ほぼ非圧縮のゲルでは</p>
-<p>法線荷重でマーカーはほとんど動かない。<b>Raises</b> ValueError: a, p0, G ≤ 0。</p>
+<p>法線荷重(Hertz 圧 p0√(1−r²/a²))が作る半空間表面の<b>半径方向</b>変位 ūr [m] (Johnson 1985 式 3.41b を E = 2G(1+ν) で書き直し)。負 = 中心向き。内側 −(1−2ν)p0a²/(6Gr)[1 − (1−r²/a²)^{3/2}]、外側 −(1−2ν)p0a²/(6Gr)(= 点荷重 −(1−2ν)P/(4πGr))、r → 0 で 0。最大は縁でなく r ≈ 0.93a(ūr(a) の 1.022 倍)。ūr(a)/δ = 2(1−2ν)/(3π(1−ν))(ν 0.48 で 1.6 %、ν 0.3 で 12 %)—— ほぼ非圧縮のゲルでは法線荷重でマーカーはほとんど動かない。<b>Raises</b> ValueError: a, p0, G ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

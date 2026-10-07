@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>踏切の状態機械(警報機 + 遮断機)を時刻 t(配列)で評価する。</p>
-<p>状態: 0 idle(警報なし・かん上)、1 warning(警報中・かん上)、2 lowering(降下中)、3 closed(遮断中)、</p>
-<p>4 raising(列車が過ぎて警報が止まり、かんが上昇中)。警報灯は 1〜3 で点く(解釈基準 5(5)「通過後に警報を停止」)。</p>
-<p>かんの角 [rad]: 上 π/2 → 下 0。降下・上昇は余弦の滑らかな形(<b>仮定</b>: 実機の降下曲線は資料なし)。</p>
-<p>`<code style="color:#22d3bf">entry_forbidden</code>` = 1〜4(33 条 2 項。上昇中も含めるのは保守側の解釈)。</p>
-<p>返り値: `<code style="color:#22d3bf">state</code><code style="color:#22d3bf">(int)、</code><code style="color:#22d3bf">boom_angle</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">lamps_on</code><code style="color:#22d3bf">(bool)、</code><code style="color:#22d3bf">entry_forbidden</code><code style="color:#22d3bf">(bool)、</code><code style="color:#22d3bf">t_closed</code>`(降下の終わり)。</p>
+<p>状態: 0 idle(警報なし・かん上)、1 warning(警報中・かん上)、2 lowering(降下中)、3 closed(遮断中)、4 raising(列車が過ぎて警報が止まり、かんが上昇中)。警報灯は 1〜3 で点く(解釈基準 5(5)「通過後に警報を停止」)。かんの角 [rad]: 上 π/2 → 下 0。降下・上昇は余弦の滑らかな形(<b>仮定</b>: 実機の降下曲線は資料なし)。<code style="color:#22d3bf">entry_forbidden</code> = 1〜4(33 条 2 項。上昇中も含めるのは保守側の解釈)。</p>
+<p>返り値: <code style="color:#22d3bf">state</code>(int)、<code style="color:#22d3bf">boom_angle</code>、<code style="color:#22d3bf">lamps_on</code>(bool)、<code style="color:#22d3bf">entry_forbidden</code>(bool)、<code style="color:#22d3bf">t_closed</code>(降下の終わり)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

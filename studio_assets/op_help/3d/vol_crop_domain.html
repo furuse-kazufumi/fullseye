@@ -2,26 +2,14 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">vol_crop_domain — 3D <code style="color:#22d3bf">domain</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_crop_domain(vol, domain=None, margin=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volops; volops.vol_crop_domain(vol, domain=None, margin=0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_crop_domain&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.vol_crop_domain(...)</code> は**宣言 out 型 <code style="color:#22d3bf">voxel</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.vol_crop_domain.raw(...)</code>、または <code style="color:#22d3bf">volops.vol_crop_domain</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.vol_crop_domain(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">voxel</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.vol_crop_domain.raw(...)</code>、または <code style="color:#22d3bf">volops.vol_crop_domain</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(part, offset)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Crop a volume to the tight bounding box of a domain (HALCON `<code style="color:#22d3bf">crop_domain</code>`).</p>
-<p><b>This is the memory lever of the domain family</b>: a 512**3 CT scan whose</p>
-<p>part of interest fits in 128**3 costs 64x less memory and compute once</p>
-<p>cropped — and the Hessian operators (:func:<code style="color:#22d3bf">vol_frangi</code> / :func:<code style="color:#22d3bf">vol_sato</code>),</p>
-<p>capped at `<code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>`, often become *possible* only after this</p>
-<p>step. Gray values inside the box are kept verbatim (the box, not the mask,</p>
-<p>defines the crop — pair with :func:<code style="color:#22d3bf">vol_reduce_domain</code> first if voxels</p>
-<p>outside the mask but inside the box must read 0).</p>
-<p>*domain* defaults to the volume&#x27;s own <b>non-zero support</b> (`<code style="color:#22d3bf">vol != 0</code>` —</p>
-<p>a gray volume is cropped to wherever it has any signal; note this differs</p>
-<p>from the `<code style="color:#22d3bf">&gt; 0.5</code>` convention used when an explicit binary *domain* is</p>
-<p>passed). *margin* is forwarded to :func:<code style="color:#22d3bf">vol_bounding_box</code>.</p>
-<p>Returns `<code style="color:#22d3bf">(cropped, offset)</code><code style="color:#22d3bf"> — the </code><code style="color:#22d3bf">(d, h, w)</code>` float64 sub-volume and the</p>
-<p>`<code style="color:#22d3bf">(z0, y0, x0)</code>` voxel offset of its origin in the input frame. Keep the</p>
-<p>offset: :func:<code style="color:#22d3bf">vol_uncrop</code> maps results back, and</p>
-<p>:func:<code style="color:#22d3bf">vol_boundary_points</code> accepts it as *origin* so point coordinates stay</p>
-<p>in the uncropped frame. An empty domain raises `<code style="color:#22d3bf">ValueError</code>` (fail-closed).</p>
+<p>Crop a volume to the tight bounding box of a domain (HALCON <code style="color:#22d3bf">crop_domain</code>).</p>
+<p><b>This is the memory lever of the domain family</b>: a 512**3 CT scan whose part of interest fits in 128**3 costs 64x less memory and compute once cropped — and the Hessian operators (<code style="color:#22d3bf">vol_frangi</code> / <code style="color:#22d3bf">vol_sato</code>), capped at <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>, often become *possible* only after this step. Gray values inside the box are kept verbatim (the box, not the mask, defines the crop — pair with <code style="color:#22d3bf">vol_reduce_domain</code> first if voxels outside the mask but inside the box must read 0).</p>
+<p>*domain* defaults to the volume&#x27;s own <b>non-zero support</b> (<code style="color:#22d3bf">vol != 0</code> — a gray volume is cropped to wherever it has any signal; note this differs from the <code style="color:#22d3bf">&gt; 0.5</code> convention used when an explicit binary *domain* is passed). *margin* is forwarded to <code style="color:#22d3bf">vol_bounding_box</code>.</p>
+<p>Returns <code style="color:#22d3bf">(cropped, offset)</code> — the <code style="color:#22d3bf">(d, h, w)</code> float64 sub-volume and the <code style="color:#22d3bf">(z0, y0, x0)</code> voxel offset of its origin in the input frame. Keep the</p>
+<p>offset: <code style="color:#22d3bf">vol_uncrop</code> maps results back, and <code style="color:#22d3bf">vol_boundary_points</code> accepts it as *origin* so point coordinates stay in the uncropped frame. An empty domain raises <code style="color:#22d3bf">ValueError</code> (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

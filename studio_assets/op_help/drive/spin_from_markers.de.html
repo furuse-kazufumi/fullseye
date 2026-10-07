@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>模様の向きの組(前 (M, 3)、後 (M, 3)、単位ベクトル)から角速度ベクトル ω [rad/s] を出す。</p>
-<p>M ≥ 2 なら Kabsch(SVD)で回転 R を当て、回転角 θ と軸から ω = θ/dt·軸(既知の ω で回した向きを入れると 1e-9 で戻る = 門)。</p>
-<p>M = 1 なら d₀ → d₁ の最小回転(軸 = d₀ × d₁)を返す(&quot;full&quot; = False): 模様の向きまわりの成分は原理的に決まらず、</p>
-<p>コマ間の回転角が大きいと ω の直交成分の近似としても外れる(模様は ω の軸まわりの小円を描くので、最小回転の大円と違う)。</p>
-<p>正直に: 1 つの模様で ω を出したいなら dt を小さく(回転角 ≪ 1 rad)、それでも軸まわりの成分は別の模様が要る。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;omega&quot;, &quot;angle&quot;, &quot;axis&quot;, &quot;R&quot;, &quot;full&quot;, &quot;rms&quot;}</code>`。</p>
+<p>M ≥ 2 なら Kabsch(SVD)で回転 R を当て、回転角 θ と軸から ω = θ/dt·軸(既知の ω で回した向きを入れると 1e-9 で戻る = 門)。M = 1 なら d₀ → d₁ の最小回転(軸 = d₀ × d₁)を返す(&quot;full&quot; = False): 模様の向きまわりの成分は原理的に決まらず、コマ間の回転角が大きいと ω の直交成分の近似としても外れる(模様は ω の軸まわりの小円を描くので、最小回転の大円と違う)。</p>
+<p>正直に: 1 つの模様で ω を出したいなら dt を小さく(回転角 ≪ 1 rad)、それでも軸まわりの成分は別の模様が要る。返り値 <code style="color:#22d3bf">{&quot;omega&quot;, &quot;angle&quot;, &quot;axis&quot;, &quot;R&quot;, &quot;full&quot;, &quot;rms&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

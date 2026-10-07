@@ -3,15 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_image2d(pairs, shape=(64, 64))</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.pairs_to_image2d(pairs, shape=(64, 64))</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>對 `<code style="color:#22d3bf">(N,2)</code><code style="color:#22d3bf"> → 散點密度影像 </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">pairs</code>` 的第三個出口。</p>
+<p>對 <code style="color:#22d3bf">(N,2)</code> → 散點密度影像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">pairs</code> 的第三個出口。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>列 0 を行方向、列 1 を列方向に、それぞれの最小-最大で正規化して bin へ落とす</p>
-<p>(2-D ヒストグラム)。位相図・相関図として見るためのもので、<b>不可逆</b></p>
-<p>(bin 幅ぶんの量子化 + 正規化で絶対値のスケールを捨てる)。</p>
-<p>捨てたスケールは戻せるように `<code style="color:#22d3bf">extent</code><code style="color:#22d3bf"> を…返さない —— 返すと </code><code style="color:#22d3bf">image2d</code>`</p>
-<p>でなくなる。必要なら :func:<code style="color:#22d3bf">pairs_to_table</code> の `<code style="color:#22d3bf">x_min</code>` などを使う。</p>
-<p>定数列(最小 == 最大)は 0.5 の位置へ集める(0 除算を避けるが、</p>
-<p>それを「密度が中央に集中している」と読まれないよう、bin は 1 本だけ立つ)。</p>
+<p>列 0 を行方向、列 1 を列方向に、それぞれの最小-最大で正規化して bin へ落とす(2-D ヒストグラム)。位相図・相関図として見るためのもので、<b>不可逆</b> (bin 幅ぶんの量子化 + 正規化で絶対値のスケールを捨てる)。捨てたスケールは戻せるように <code style="color:#22d3bf">extent</code> を…返さない —— 返すと <code style="color:#22d3bf">image2d</code></p>
+<p>でなくなる。必要なら <code style="color:#22d3bf">pairs_to_table</code> の <code style="color:#22d3bf">x_min</code> などを使う。</p>
+<p>定数列(最小 == 最大)は 0.5 の位置へ集める(0 除算を避けるが、それを「密度が中央に集中している」と読まれないよう、bin は 1 本だけ立つ)。</p>
 <p>Args:</p>
 <p>pairs: (N, 2)。</p>
 <p>shape: (H, W)。</p>
@@ -19,10 +15,10 @@
 <p>(H, W) float64、最大値 1.0 に正規化した密度。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正 / 非有限 / shape が上限超。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>

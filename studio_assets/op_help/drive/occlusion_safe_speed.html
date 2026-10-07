@@ -4,11 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_safe_speed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>見えた瞬間から距離 d 以内に止まれる最大速度 v = b(−ρ + sqrt(ρ² + 2d/b))。</p>
-<p>v ρ + v²/(2b) = d(空走 + 制動。`<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code>` と同じ式)を v について</p>
-<p>解いた正の根。桁落ちを避けて v = 2d / (ρ + sqrt(ρ² + 2d/b)) で計算する(ρ = 0 で sqrt(2 b d))。</p>
-<p>d は配列でもよい。d ≤ 0 なら 0(見えた時には既に間に合わない)。</p>
-<p>門: `<code style="color:#22d3bf">rss_stopping_distance(v, ρ, 0, b)</code>` == d(第 2 実装、rtol 1e-12)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: reaction &lt; 0、brake ≤ 0、d が非有限(inf は許して inf を返す)。</p>
+<p>v ρ + v²/(2b) = d(空走 + 制動。<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code> と同じ式)を v について解いた正の根。桁落ちを避けて v = 2d / (ρ + sqrt(ρ² + 2d/b)) で計算する(ρ = 0 で sqrt(2 b d))。d は配列でもよい。d ≤ 0 なら 0(見えた時には既に間に合わない)。</p>
+<p>門: <code style="color:#22d3bf">rss_stopping_distance(v, ρ, 0, b)</code> == d(第 2 実装、rtol 1e-12)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: reaction &lt; 0、brake ≤ 0、d が非有限(inf は許して inf を返す)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

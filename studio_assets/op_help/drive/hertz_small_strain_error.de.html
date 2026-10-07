@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>小変形の線形解(Hertz)を大変形に当てたときの誤差 [%] (d だけで決まり、L・寸法・弾性率に依らない)。</p>
-<p>`<code style="color:#22d3bf">force_from_delta</code><code style="color:#22d3bf"> = 1/κₙ − 1(押し込みから力を読む)、</code><code style="color:#22d3bf">radius_from_delta</code><code style="color:#22d3bf"> = 1/(a/a_L) − 1、</code><code style="color:#22d3bf">force_from_radius</code>` =</p>
-<p>(a/a_L)^{p+1}/κₙ − 1(接触半径から力を読む = 視触覚センサの読み方、平頭は nan)、`<code style="color:#22d3bf">force_universal</code>` = 普遍形 (1 − k d)⁻¹ で読んだ力の誤差</p>
-<p>κ_universal/κₙ − 1(k·d ≥ 1 は nan)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: d が [0, 1) の外、p が範囲外。</p>
+<p><code style="color:#22d3bf">force_from_delta</code> = 1/κₙ − 1(押し込みから力を読む)、<code style="color:#22d3bf">radius_from_delta</code> = 1/(a/a_L) − 1、<code style="color:#22d3bf">force_from_radius</code> = (a/a_L)^{p+1}/κₙ − 1(接触半径から力を読む = 視触覚センサの読み方、平頭は nan)、<code style="color:#22d3bf">force_universal</code> = 普遍形 (1 − k d)⁻¹ で読んだ力の誤差 κ_universal/κₙ − 1(k·d ≥ 1 は nan)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、p が範囲外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

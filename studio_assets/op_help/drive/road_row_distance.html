@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × scalar × scalar × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_row_distance(rows, horizon_row: &#x27;float&#x27;, focal: &#x27;float&#x27;, cam_height: &#x27;float&#x27;, pitch: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveenv; driveenv.road_row_distance(rows, horizon_row: &#x27;float&#x27;, focal: &#x27;float&#x27;, cam_height: &#x27;float&#x27;, pitch: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;road_row_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>平らな路面の上の行 → カメラから路面の点までの水平距離(厳密)。地平線より上の行は `<code style="color:#22d3bf">inf</code>`。</p>
-<p>俯角 α(下向き +、ラジアン)のピンホール: 地平線の行 v_h = c_y − f tan α、路面の水平距離 d の点の行は</p>
-<p>v − v_h = f H (1 + tan²α) / (d + H tan α) —— よって d = λ/(v − v_h) − H tan α、λ = f H / cos²α</p>
-<p>(Hautière ら 2006 の λ/(v − v_h) は第 1 項だけの形)。行は下向きが +。</p>
+<p>平らな路面の上の行 → カメラから路面の点までの水平距離(厳密)。地平線より上の行は <code style="color:#22d3bf">inf</code>。</p>
+<p>俯角 α(下向き +、ラジアン)のピンホール: 地平線の行 v_h = c_y − f tan α、路面の水平距離 d の点の行は v − v_h = f H (1 + tan²α) / (d + H tan α) —— よって d = λ/(v − v_h) − H tan α、λ = f H / cos²α (Hautière ら 2006 の λ/(v − v_h) は第 1 項だけの形)。行は下向きが +。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

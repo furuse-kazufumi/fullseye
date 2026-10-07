@@ -12,14 +12,13 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rgb3_to_gray.inputs.jpg">rgb3_to_gray: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Converts an RGB image to luminance (grayscale). Both HALCON&#x27;s `<code style="color:#22d3bf">rgb1_to_gray</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">rgb3_to_gray</code>` (convert an RGB image to a grayscale image) are mapped to this single implementation.</p>
+<p>Converts an RGB image to luminance (grayscale). Both HALCON&#x27;s <code style="color:#22d3bf">rgb1_to_gray</code> and <code style="color:#22d3bf">rgb3_to_gray</code> (convert an RGB image to a grayscale image) are mapped to this single implementation.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>ITU-R BT.601 系の重み `<code style="color:#22d3bf">0.299 R + 0.587 G + 0.114 B</code>` で輝度を計算する</p>
-<p>固定式。a, b は未使用。</p>
+<p>ITU-R BT.601 系の重み <code style="color:#22d3bf">0.299 R + 0.587 G + 0.114 B</code> で輝度を計算する固定式。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:colorimetry">colorimetry</a> — Colorimetry and spectra — colour is fixed only by spectrum × illuminant × observer</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

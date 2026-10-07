@@ -11,7 +11,7 @@
 <p>ハエの脳の EM 断面を積んだスタックも、先頭軸を時刻でなく奥行きと読むだけで同じ道具で見えます(<code style="color:#22d3bf">mode=&quot;dark&quot;</code>、PoC の図 6)。</p>
 <p>既存の <code style="color:#22d3bf">render_volume_projection</code>(X 線 / MIP)では背景と動きを分けられず、<code style="color:#22d3bf">videostream</code> の時間フィルタは 1 フレームずつしか返さないので、その間を埋めます。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">連鎖</h3>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid diagram (source):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
     clip[動画 video T,H,W] --&gt; A[video_spacetime_cube mode=motion] --&gt; R[vol_render_transfer] --&gt; rgb[立体の絵 rgb]
     clip --&gt; C[video_spacetime_cube mode=intensity] --&gt; R
     clip --&gt; O[video_cube_orbit] --&gt; gif[回す動画 rgbvideo]

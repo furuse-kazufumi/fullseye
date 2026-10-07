@@ -7,13 +7,9 @@
 <p>*Knob a does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Focus (blur) metric based on Laplacian variance (variance of `<code style="color:#22d3bf">cv2.Laplacian</code>`).</p>
+<p>Focus (blur) metric based on Laplacian variance (variance of <code style="color:#22d3bf">cv2.Laplacian</code>).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>画像全体に Laplacian を掛けた結果の分散を計算し、`<code style="color:#22d3bf">min(1.0, 分散*20)</code>` で</p>
-<p>[0,1] にクリップしたスカラーを返す。`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。値が大きいほど</p>
-<p>エッジ/テクスチャが豊富＝合焦、小さいほどボケている可能性が高い、という</p>
-<p>古典的なオートフォーカス評価指標。倍率 20 は経験的なスケーリングで、</p>
-<p>絶対的なボケ量ではなく相対比較に向く。</p>
+<p>画像全体に Laplacian を掛けた結果の分散を計算し、<code style="color:#22d3bf">min(1.0, 分散*20)</code> で [0,1] にクリップしたスカラーを返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。値が大きいほどエッジ/テクスチャが豊富＝合焦、小さいほどボケている可能性が高い、という古典的なオートフォーカス評価指標。倍率 20 は経験的なスケーリングで、絶対的なボケ量ではなく相対比較に向く。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

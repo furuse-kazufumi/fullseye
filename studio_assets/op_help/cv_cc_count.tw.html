@@ -8,21 +8,21 @@
 <p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cv_cc_count.chain.jpg">cv_cc_count: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cv_cc_count.chain.jpg">cv_cc_count: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>連通元件數量計數（單一純量特徵，OpenCV 實作）。統計二值區域中連通元件（前景團塊）的個數 —— 會先減去背景標籤所占的 1，再回傳結果。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">connection</code>(Compute connected components of a region.)に相当(近似。分割結果ではなく個数のみを返す)。実装は `<code style="color:#22d3bf">cv2.connectedComponents(_u8(binm(v)))[0] - 1</code>`。a, b は未使用。connectivity は OpenCV の既定(8 連結)のまま。</p>
+<p>HALCON の <code style="color:#22d3bf">connection</code>(Compute connected components of a region.)に相当(近似。分割結果ではなく個数のみを返す)。実装は <code style="color:#22d3bf">cv2.connectedComponents(_u8(binm(v)))[0] - 1</code>。a, b は未使用。connectivity は OpenCV の既定(8 連結)のまま。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-cv_cc_count 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Acv_cc_count%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Acv_cc_count%200.50%200.50">Load &amp; run</a></p>
+cv_cc_count 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Acv_cc_count%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Acv_cc_count%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:genspark_external_review">genspark_external_review</a> — <code style="color:#22d3bf">py -3.11 examples/genspark_external_review.py</code></p>

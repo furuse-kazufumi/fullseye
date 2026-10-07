@@ -8,29 +8,25 @@
 <p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_circle_xld.chain.jpg">hx_smallest_circle_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_circle_xld.chain.jpg">hx_smallest_circle_xld: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>全部 contour 點最小包圍圓(近似=以重心為心)的半徑,正規化 feature。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>contour dict の全 contour の点をまとめ、点の平均(重心)を中心として最も遠い点までの距離 `<code style="color:#22d3bf">r</code>` を求め、</p>
-<p>`<code style="color:#22d3bf">r / max(H, W)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">np.float64</code>` で返す。真の最小包含円(中心も最適化)ではなく「重心を中心とする包含円」の</p>
-<p>近似で、半径は真値以上になる。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>contour dict の全 contour の点をまとめ、点の平均(重心)を中心として最も遠い点までの距離 <code style="color:#22d3bf">r</code> を求め、<code style="color:#22d3bf">r / max(H, W)</code> を <code style="color:#22d3bf">np.float64</code> で返す。真の最小包含円(中心も最適化)ではなく「重心を中心とする包含円」の近似で、半径は真値以上になる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <p style="margin:2px 0 2px 12px">• 点が 1 つも無ければ 0.0(有効な値 0 と区別できない)。</p>
-<p>複数 contour があっても 1 つの円で包む(contour ごとではない)。正規化は画像の長辺なので、同じ形でも画像サイズが</p>
-<p>変わると値が変わる。円らしさを測りたいなら `<code style="color:#22d3bf">hx_fit_circle_contour</code><code style="color:#22d3bf">(残差)や </code><code style="color:#22d3bf">circularity_xld</code>`。</p>
-<p>region 版の厳密解は `<code style="color:#22d3bf">r2_smallest_circle</code>`。</p>
+<p>複数 contour があっても 1 つの円で包む(contour ごとではない)。正規化は画像の長辺なので、同じ形でも画像サイズが変わると値が変わる。円らしさを測りたいなら <code style="color:#22d3bf">hx_fit_circle_contour</code>(残差)や <code style="color:#22d3bf">circularity_xld</code>。region 版の厳密解は <code style="color:#22d3bf">r2_smallest_circle</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-hx_smallest_circle_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_smallest_circle_xld%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_smallest_circle_xld%200.50%200.50">Load &amp; run</a></p>
+hx_smallest_circle_xld 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_smallest_circle_xld%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_smallest_circle_xld%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">feature</code> 作為輸入)</h3>

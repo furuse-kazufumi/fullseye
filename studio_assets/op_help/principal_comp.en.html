@@ -12,17 +12,13 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/principal_comp.inputs.jpg">principal_comp: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Performs principal component analysis (PCA) on 3 channels and reorders the color space in descending order of variance. Corresponds to HALCON&#x27;s `<code style="color:#22d3bf">principal_comp</code>` (computes the principal components of a multichannel image).</p>
+<p>Performs principal component analysis (PCA) on 3 channels and reorders the color space in descending order of variance. Corresponds to HALCON&#x27;s <code style="color:#22d3bf">principal_comp</code> (computes the principal components of a multichannel image).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>画素を (H*W, 3) の行列とみなして平均を引き、共分散行列の固有値分解</p>
-<p>（`<code style="color:#22d3bf">np.linalg.eigh</code>`）で固有ベクトルを求め、固有値の降順に射影する。</p>
-<p>各成分は画像内で min-max により個別に [0,1] へ正規化するため、</p>
-<p>出力の明るさは元画像のスケールと無関係になる（正規化後は毎回フルレンジ）。</p>
-<p>a, b は未使用。</p>
+<p>画素を (H*W, 3) の行列とみなして平均を引き、共分散行列の固有値分解（<code style="color:#22d3bf">np.linalg.eigh</code>）で固有ベクトルを求め、固有値の降順に射影する。各成分は画像内で min-max により個別に [0,1] へ正規化するため、出力の明るさは元画像のスケールと無関係になる（正規化後は毎回フルレンジ）。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:colorimetry">colorimetry</a> — Colorimetry and spectra — colour is fixed only by spectrum × illuminant × observer</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

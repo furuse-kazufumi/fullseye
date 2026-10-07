@@ -5,51 +5,37 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>알려진 표면 높이에 대한 화소 하나의 z 주사 인터페로그램을 합성합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The coherence-scanning forward model, and the reason every other operator here</p>
-<p>has an exact answer to be checked against::</p>
+<p>The coherence-scanning forward model, and the reason every other operator here has an exact answer to be checked against::</p>
 <p>I(z) = bias + amplitude*reflectivity * exp(-(z-z0)^2 / 2 sigma^2)</p>
 <p style="margin:2px 0 2px 12px">• cos(4*pi*(z-z0)/wavelength)</p>
-<p>with `<code style="color:#22d3bf">z0 = surface_um</code>`. The <b>4</b> is the double pass — light goes down to the</p>
-<p>surface and back, so one fringe is `<code style="color:#22d3bf">wavelength/2</code>` of *height*, not a whole</p>
-<p>wavelength. Getting that factor wrong is a clean 2x in every height this</p>
-<p>module produces, which is why it is written out here rather than hidden in a</p>
-<p>constant.</p>
-<p>surface_um:           the true surface height `<code style="color:#22d3bf">z0</code>`, in the scan&#x27;s own</p>
+<p>with <code style="color:#22d3bf">z0 = surface_um</code>. The <b>4</b> is the double pass — light goes down to the surface and back, so one fringe is <code style="color:#22d3bf">wavelength/2</code> of *height*, not a whole wavelength. Getting that factor wrong is a clean 2x in every height this module produces, which is why it is written out here rather than hidden in a constant.</p>
+<p>surface_um:           the true surface height <code style="color:#22d3bf">z0</code>, in the scan&#x27;s own</p>
 <p>coordinate. Need not land on a scan plane — the</p>
 <p>sub-step case is the interesting one and the tests use</p>
 <p>it deliberately.</p>
 <p>z_start_um/z_step_um/n_planes: the scan grid,</p>
-<p>`<code style="color:#22d3bf">z_k = z_start_um + k*z_step_um</code>`.</p>
+<p><code style="color:#22d3bf">z_k = z_start_um + k*z_step_um</code>.</p>
 <p>wavelength_um:        mean wavelength of the source.</p>
 <p>envelope_fwhm_um:     the FWHM of the envelope <b>along the scan axis</b>. Give</p>
-<p>this *or* `<code style="color:#22d3bf">envelope_sigma_um</code>`, never both. It is</p>
+<p>this *or* <code style="color:#22d3bf">envelope_sigma_um</code>, never both. It is</p>
 <p><b>half</b> the source coherence length, because the</p>
 <p>double pass makes OPD = 2z;</p>
-<p>:func:<code style="color:#22d3bf">csi_design</code> returns both under separate names</p>
+<p><code style="color:#22d3bf">csi_design</code> returns both under separate names</p>
 <p>for exactly that reason.</p>
-<p>bias/amplitude:       the intensity pedestal `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and fringe amplitude </code><code style="color:#22d3bf">b</code>`.</p>
+<p>bias/amplitude:       the intensity pedestal <code style="color:#22d3bf">a</code> and fringe amplitude <code style="color:#22d3bf">b</code>.</p>
 <p>reflectivity:         per-pixel scale on the fringe amplitude (&gt;= 0). It</p>
 <p>scales the envelope and therefore</p>
-<p>:func:<code style="color:#22d3bf">csi_contrast_map</code>, and — this is the honest part</p>
+<p><code style="color:#22d3bf">csi_contrast_map</code>, and — this is the honest part</p>
 <p>— it does <b>not</b> move the envelope peak, so it does not</p>
-<p>bias :func:<code style="color:#22d3bf">csi_peak_position</code>. A *spatially varying*</p>
+<p>bias <code style="color:#22d3bf">csi_peak_position</code>. A *spatially varying*</p>
 <p>reflectivity biases nothing either; what does bias the</p>
 <p>centroid is where the peak sits in the window, and that</p>
-<p>is documented on :func:<code style="color:#22d3bf">csi_peak_position</code>.</p>
+<p>is documented on <code style="color:#22d3bf">csi_peak_position</code>.</p>
 <p>noise:                additive Gaussian sigma (0 = the exact model).</p>
-<p>seed:                 integer seed for that noise (no `<code style="color:#22d3bf">None</code>`).</p>
-<p>Returns a 1-D float64 array of `<code style="color:#22d3bf">n_planes</code>` intensities.</p>
-<p>Ground truth: with `<code style="color:#22d3bf">noise=0</code>` and the surface centred in the scan, the</p>
-<p>`<code style="color:#22d3bf">&quot;gaussian&quot;</code><code style="color:#22d3bf"> estimator of :func:</code>csi_peak_position` returns *surface_um* to</p>
-<p>1.43e-07 um over sub-step offsets, and to 2.9e-14 um when the envelope is</p>
-<p>given analytically instead of through the Hilbert transform (both pinned in</p>
-<p>the tests).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-real / non-finite / string / bool parameter,</p>
-<p>a non-positive `<code style="color:#22d3bf">z_step_um</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">wavelength_um</code>` / envelope width, a negative</p>
-<p>`<code style="color:#22d3bf">bias</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">amplitude</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">reflectivity</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">noise</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_planes</code>` outside</p>
-<p>`<code style="color:#22d3bf">[3, MAX_SCAN_POINTS]</code><code style="color:#22d3bf">, a </code><code style="color:#22d3bf">z_step_um</code><code style="color:#22d3bf"> at or past the </code><code style="color:#22d3bf">wavelength_um/4</code>`</p>
-<p>Nyquist ceiling, and a *surface_um* outside the scan range (which is the case</p>
-<p>a real instrument reports as &quot;no surface found&quot;, not as a height).</p>
+<p>seed:                 integer seed for that noise (no <code style="color:#22d3bf">None</code>).</p>
+<p>Returns a 1-D float64 array of <code style="color:#22d3bf">n_planes</code> intensities.</p>
+<p>Ground truth: with <code style="color:#22d3bf">noise=0</code> and the surface centred in the scan, the <code style="color:#22d3bf">&quot;gaussian&quot;</code> estimator of <code style="color:#22d3bf">csi_peak_position</code> returns *surface_um* to 1.43e-07 um over sub-step offsets, and to 2.9e-14 um when the envelope is given analytically instead of through the Hilbert transform (both pinned in the tests).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-real / non-finite / string / bool parameter, a non-positive <code style="color:#22d3bf">z_step_um</code> / <code style="color:#22d3bf">wavelength_um</code> / envelope width, a negative <code style="color:#22d3bf">bias</code> / <code style="color:#22d3bf">amplitude</code> / <code style="color:#22d3bf">reflectivity</code> / <code style="color:#22d3bf">noise</code>, <code style="color:#22d3bf">n_planes</code> outside <code style="color:#22d3bf">[3, MAX_SCAN_POINTS]</code>, a <code style="color:#22d3bf">z_step_um</code> at or past the <code style="color:#22d3bf">wavelength_um/4</code> Nyquist ceiling, and a *surface_um* outside the scan range (which is the case a real instrument reports as &quot;no surface found&quot;, not as a height).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideinterferometry:coherence_scanning">coherence_scanning 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

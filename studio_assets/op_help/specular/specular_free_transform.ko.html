@@ -5,25 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>광원 방향을 사영으로 빼냅니다: 하이라이트가 건드릴 수 없는 부분의 이미지. → (H, W, 3).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">I - (I.G) G</code><code style="color:#22d3bf"> for the unit illuminant colour </code><code style="color:#22d3bf">G</code>`. Under the dichromatic</p>
-<p>model the interface term is `<code style="color:#22d3bf">m_s * G</code>`, so it lies entirely in the removed</p>
-<p>direction and the result is <b>invariant to any specular term whatsoever</b> —</p>
-<p>exactly, for any lobe shape, any strength, any spatial pattern. That is the</p>
-<p>specular-invariant subspace of Mallick et al. (2005); this operator is the</p>
-<p>projection itself, with no rotation into named channels, so it stays in RGB</p>
-<p>and composes with the rest of the family.</p>
-<p>Use it when the *shape* of the specular lobe is unknown or the surface is</p>
-<p>textured — feature matching, edge detection and correlation all work in this</p>
-<p>subspace without any of the assumptions</p>
-<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> needs.</p>
-<p><b>This is a projection, not a picture.</b> The result loses one of three</p>
-<p>degrees of freedom (its component along `<code style="color:#22d3bf">G</code>` is exactly zero everywhere)</p>
-<p>and, for an image with negative values after black-level subtraction, keeps</p>
-<p>them. It is not a displayable &quot;highlight-removed photo&quot; and does not claim</p>
-<p>to be; for that, use :func:<code style="color:#22d3bf">specular_diffuse_split</code>.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image_rgb* is not a valid </code><code style="color:#22d3bf">(H, W, 3)</code>` linear</p>
-<p>RGB image (see :func:<code style="color:#22d3bf">specular_diffuse_split</code>); *illuminant_rgb* is not a</p>
-<p>non-zero 3-vector.</p>
+<p><code style="color:#22d3bf">I - (I.G) G</code> for the unit illuminant colour <code style="color:#22d3bf">G</code>. Under the dichromatic model the interface term is <code style="color:#22d3bf">m_s * G</code>, so it lies entirely in the removed direction and the result is <b>invariant to any specular term whatsoever</b> — exactly, for any lobe shape, any strength, any spatial pattern. That is the specular-invariant subspace of Mallick et al. (2005); this operator is the projection itself, with no rotation into named channels, so it stays in RGB and composes with the rest of the family.</p>
+<p>Use it when the *shape* of the specular lobe is unknown or the surface is textured — feature matching, edge detection and correlation all work in this subspace without any of the assumptions <code style="color:#22d3bf">specular_diffuse_split</code> needs.</p>
+<p><b>This is a projection, not a picture.</b> The result loses one of three degrees of freedom (its component along <code style="color:#22d3bf">G</code> is exactly zero everywhere) and, for an image with negative values after black-level subtraction, keeps them. It is not a displayable &quot;highlight-removed photo&quot; and does not claim to be; for that, use <code style="color:#22d3bf">specular_diffuse_split</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *image_rgb* is not a valid <code style="color:#22d3bf">(H, W, 3)</code> linear RGB image (see <code style="color:#22d3bf">specular_diffuse_split</code>); *illuminant_rgb* is not a non-zero 3-vector.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

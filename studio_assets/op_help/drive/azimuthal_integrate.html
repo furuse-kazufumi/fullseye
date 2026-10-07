@@ -4,13 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True, polarization=None, chi_range=None, supersample=2)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pxrd; pxrd.azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True, polarization=None, chi_range=None, supersample=2)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;azimuthal_integrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2-D の検出器像を 2θ の 1-D プロファイルに落とす(方位積分、マスクと補正つき)。</p>
-<p>各画素を `<code style="color:#22d3bf">supersample</code>`² 個の副画素に分け(値は等分)、副画素の中心の 2θ でビンに振り分けて、ビンごとに <b>平均</b></p>
-<p>する(画素の分け方の粗さによる縞を減らす)。`<code style="color:#22d3bf">solid_angle=True</code><code style="color:#22d3bf"> で相対立体角を、</code><code style="color:#22d3bf">polarization</code>` が数(0 = 無偏光、</p>
-<p>1 = 水平偏光)なら偏光因子を、平均の前に割り戻す。`<code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> は True の画素を **除く**(同じ形の bool)。</code><code style="color:#22d3bf">chi_range</code>`</p>
-<p>= (χ₀, χ₁) [deg] で扇形だけを積分(χ は `<code style="color:#22d3bf">atan2</code>` の (−180, 180])。非有限の画素は mask に入っていなければ拒否する。</p>
-<p>`<code style="color:#22d3bf">n_bins</code><code style="color:#22d3bf"> の既定は画素 1 個の角の半分の幅になる数(</code><code style="color:#22d3bf">0.5·pixel/distance</code>` [rad])。</p>
-<p>返り値(dict): `<code style="color:#22d3bf">two_theta</code><code style="color:#22d3bf">(ビンの中心 [deg])・</code><code style="color:#22d3bf">intensity</code><code style="color:#22d3bf">(平均)・</code><code style="color:#22d3bf">count</code>`(副画素の重みの和、0 のビンは</p>
-<p>`<code style="color:#22d3bf">intensity</code><code style="color:#22d3bf"> が nan —— 埋めない)・</code><code style="color:#22d3bf">sigma</code>`(Poisson を仮定した平均の標準誤差)。</p>
+<p>各画素を <code style="color:#22d3bf">supersample</code>² 個の副画素に分け(値は等分)、副画素の中心の 2θ でビンに振り分けて、ビンごとに <b>平均</b> する(画素の分け方の粗さによる縞を減らす)。<code style="color:#22d3bf">solid_angle=True</code> で相対立体角を、<code style="color:#22d3bf">polarization</code> が数(0 = 無偏光、1 = 水平偏光)なら偏光因子を、平均の前に割り戻す。<code style="color:#22d3bf">mask</code> は True の画素を <b>除く</b>(同じ形の bool)。<code style="color:#22d3bf">chi_range</code> = (χ₀, χ₁) [deg] で扇形だけを積分(χ は <code style="color:#22d3bf">atan2</code> の (−180, 180])。非有限の画素は mask に入っていなければ拒否する。</p>
+<p><code style="color:#22d3bf">n_bins</code> の既定は画素 1 個の角の半分の幅になる数(<code style="color:#22d3bf">0.5·pixel/distance</code> [rad])。返り値(dict): <code style="color:#22d3bf">two_theta</code>(ビンの中心 [deg])・<code style="color:#22d3bf">intensity</code>(平均)・<code style="color:#22d3bf">count</code>(副画素の重みの和、0 のビンは <code style="color:#22d3bf">intensity</code> が nan —— 埋めない)・<code style="color:#22d3bf">sigma</code>(Poisson を仮定した平均の標準誤差)。</p>
 <p>Raises ValueError: 2-D でない、mask の形の不一致、非有限の画素、範囲が空、扇形が空、ビン数 &lt; 8。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>

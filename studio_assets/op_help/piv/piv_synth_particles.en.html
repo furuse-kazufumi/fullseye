@@ -2,26 +2,22 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_synth_particles — PIV <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">image2d</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_synth_particles(shape, density=0.02, diameter_px=2.5, seed=0, intensity=(0.6, 1.0), background=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_synth_particles(shape, density=0.02, diameter_px=2.5, seed=0, intensity=(0.6, 1.0), background=0.0)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_particles&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles(...)</code> returns **only the declared out type <code style="color:#22d3bf">image2d</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles.raw(...)</code> or call <code style="color:#22d3bf">pivops.piv_synth_particles</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">image2d</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles.raw(...)</code> or call <code style="color:#22d3bf">pivops.piv_synth_particles</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(image, positions) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>トレーサ粒子を撒いた 1 枚を作る。返りは `<code style="color:#22d3bf">(image, positions)</code>`。</p>
-<p>粒子はガウス輝点(直径 = 1/e^2 幅ではなく<b>標準偏差の 2 倍</b>を</p>
-<p>`<code style="color:#22d3bf">diameter_px</code>` と呼ぶ、PIV の慣行)。位置は連続値なので、サブピクセルの</p>
-<p>真値を持つ画像が作れる。</p>
-<p>`<code style="color:#22d3bf">density</code>` は 1 画素あたりの粒子数。PIV の経験則では<b>窓あたり 5-10 個</b>が</p>
-<p>目安で、32x32 窓なら 0.005-0.01 に当たる。少なすぎると相関ピークが立たず、</p>
-<p>多すぎると粒子像が重なって個々の対応が失われる。</p>
+<p>トレーサ粒子を撒いた 1 枚を作る。返りは <code style="color:#22d3bf">(image, positions)</code>。</p>
+<p>粒子はガウス輝点(直径 = 1/e^2 幅ではなく<b>標準偏差の 2 倍</b>を <code style="color:#22d3bf">diameter_px</code> と呼ぶ、PIV の慣行)。位置は連続値なので、サブピクセルの真値を持つ画像が作れる。</p>
+<p><code style="color:#22d3bf">density</code> は 1 画素あたりの粒子数。PIV の経験則では<b>窓あたり 5-10 個</b>が目安で、32x32 窓なら 0.005-0.01 に当たる。少なすぎると相関ピークが立たず、多すぎると粒子像が重なって個々の対応が失われる。</p>
 <p>Args:</p>
-<p>shape: `<code style="color:#22d3bf">(H, W)</code>`。</p>
+<p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
 <p>density: 画素あたりの粒子数(&gt; 0)。</p>
 <p>diameter_px: 粒子像の直径 [px] (&gt; 0)。</p>
 <p>seed: 乱数種。</p>
-<p>intensity: 粒子の明るさの範囲 `<code style="color:#22d3bf">(lo, hi)</code>`。</p>
+<p>intensity: 粒子の明るさの範囲 <code style="color:#22d3bf">(lo, hi)</code>。</p>
 <p>background: 一様な下駄。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(image (H, W) float64, positions (N, 2) の (row, col))</code>`。</p>
+<p><code style="color:#22d3bf">(image (H, W) float64, positions (N, 2) の (row, col))</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

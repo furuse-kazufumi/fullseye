@@ -3,13 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivedecide; drivedecide.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_fov&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>凸面鏡(球面、半径 `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf">、開口の直径 </code><code style="color:#22d3bf">aperture</code><code style="color:#22d3bf">)を軸上 </code><code style="color:#22d3bf">eye_distance</code>`(頂点から)の眼で見たときの視野角。</p>
-<p>厳密(軸を含む断面): h = a/2、α = asin(h/R)、s = R − sqrt(R² − h²)、β = atan(h/(D + s))、</p>
-<p><b>全視野角 = 2(β + 2α)</b>。`<code style="color:#22d3bf">radius = inf</code>` は平面鏡 2 atan(h/D)。</p>
+<p>凸面鏡(球面、半径 <code style="color:#22d3bf">radius</code>、開口の直径 <code style="color:#22d3bf">aperture</code>)を軸上 <code style="color:#22d3bf">eye_distance</code>(頂点から)の眼で見たときの視野角。</p>
+<p>厳密(軸を含む断面): h = a/2、α = asin(h/R)、s = R − sqrt(R² − h²)、β = atan(h/(D + s))、<b>全視野角 = 2(β + 2α)</b>。<code style="color:#22d3bf">radius = inf</code> は平面鏡 2 atan(h/D)。</p>
 <p>近軸: ≈ a (1/D + 2/R)(誤差は h³ の桁。h/R ≲ 0.2 かつ h/D ≲ 0.2 で相対誤差が数 % 以内が目安)。</p>
-<p>返り値: `<code style="color:#22d3bf">fov_rad</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fov_deg</code><code style="color:#22d3bf">(厳密)、</code><code style="color:#22d3bf">fov_paraxial_rad</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">flat_fov_rad</code>`(同じ開口の平面鏡)、</p>
-<p>`<code style="color:#22d3bf">widening</code><code style="color:#22d3bf">(= fov / flat_fov、凸面で何倍広く見えるか)、</code><code style="color:#22d3bf">edge_tilt_rad</code><code style="color:#22d3bf"> = α、</code><code style="color:#22d3bf">eye_angle_rad</code>` = β。</p>
-<p>h ≥ R(半球より大きい開口)は ValueError。</p>
+<p>返り値: <code style="color:#22d3bf">fov_rad</code> / <code style="color:#22d3bf">fov_deg</code>(厳密)、<code style="color:#22d3bf">fov_paraxial_rad</code>、<code style="color:#22d3bf">flat_fov_rad</code>(同じ開口の平面鏡)、<code style="color:#22d3bf">widening</code>(= fov / flat_fov、凸面で何倍広く見えるか)、<code style="color:#22d3bf">edge_tilt_rad</code> = α、<code style="color:#22d3bf">eye_angle_rad</code> = β。h ≥ R(半球より大きい開口)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

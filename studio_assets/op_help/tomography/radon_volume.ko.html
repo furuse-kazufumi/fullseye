@@ -3,23 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sinostack</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tomography; tomography.radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opstomography.get(&quot;radon_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>`<code style="color:#22d3bf">(Z, H, W)</code><code style="color:#22d3bf"> 볼륨의 모든 슬라이스를 투영 -&gt; </code><code style="color:#22d3bf">(Z, A, D)</code>` 스택.</p>
+<p><code style="color:#22d3bf">(Z, H, W)</code> 볼륨의 모든 슬라이스를 투영 -&gt; <code style="color:#22d3bf">(Z, A, D)</code> 스택.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Parallel-beam geometry with the rotation axis along `<code style="color:#22d3bf">Z</code>`, which is the case</p>
-<p>where the 3-D problem really is a stack of independent 2-D ones — each slice</p>
-<p>projects into its own sinogram and nothing crosses between them. (A cone beam</p>
-<p>does not have this property and is not implemented; saying so is cheaper than</p>
-<p>a wrong `<code style="color:#22d3bf">FDK</code>`.)</p>
-<p>The output&#x27;s axis order is `<code style="color:#22d3bf">(slice, angle, detector)</code><code style="color:#22d3bf"> so that </code><code style="color:#22d3bf">stack[k]</code>`</p>
-<p>is a sinogram in this module&#x27;s own convention and every 2-D operator here</p>
-<p>applies to it unchanged.</p>
-<p>:param volume: `<code style="color:#22d3bf">(Z, H, W)</code><code style="color:#22d3bf"> float volume, </code><code style="color:#22d3bf">Z &gt;= 1</code>`.</p>
-<p>:param angles_deg: view angles; `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> -&gt; uniform </code><code style="color:#22d3bf">[0, 180)</code>`, 180 views.</p>
-<p>:param n_detectors: bins; `<code style="color:#22d3bf">None</code>` -&gt; covers the in-plane diagonal.</p>
-<p>:param oversample: ray samples per pixel, `<code style="color:#22d3bf">1 .. 8</code>`.</p>
-<p>:returns: `<code style="color:#22d3bf">(Z, n_angles, n_detectors)</code>` float64 stack.</p>
-<p>:raises ValueError: on a non-3-D input or a stack over</p>
-<p>:data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>.</p>
+<p>Parallel-beam geometry with the rotation axis along <code style="color:#22d3bf">Z</code>, which is the case where the 3-D problem really is a stack of independent 2-D ones — each slice projects into its own sinogram and nothing crosses between them. (A cone beam does not have this property and is not implemented; saying so is cheaper than a wrong <code style="color:#22d3bf">FDK</code>.)</p>
+<p>The output&#x27;s axis order is <code style="color:#22d3bf">(slice, angle, detector)</code> so that <code style="color:#22d3bf">stack[k]</code> is a sinogram in this module&#x27;s own convention and every 2-D operator here applies to it unchanged.</p>
+<p>:param volume: <code style="color:#22d3bf">(Z, H, W)</code> float volume, <code style="color:#22d3bf">Z &gt;= 1</code>. :param angles_deg: view angles; <code style="color:#22d3bf">None</code> -&gt; uniform <code style="color:#22d3bf">[0, 180)</code>, 180 views. :param n_detectors: bins; <code style="color:#22d3bf">None</code> -&gt; covers the in-plane diagonal. :param oversample: ray samples per pixel, <code style="color:#22d3bf">1 .. 8</code>. :returns: <code style="color:#22d3bf">(Z, n_angles, n_detectors)</code> float64 stack. :raises ValueError: on a non-3-D input or a stack over</p>
+<p><code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

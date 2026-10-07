@@ -2,30 +2,23 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gicp — 3D <code style="color:#22d3bf">gicp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gicp(source, target, max_iter: &#x27;int&#x27; = 30, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001, tol: &#x27;float&#x27; = 1e-08, init=None, reproducible: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import gicp; gicp.gicp(source, target, max_iter: &#x27;int&#x27; = 30, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001, tol: &#x27;float&#x27; = 1e-08, init=None, reproducible: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;gicp&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.gicp(...)</code> 只回傳**宣告的 out 型別 <code style="color:#22d3bf">pose</code> 的值**(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.gicp.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">gicp.gicp</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.gicp(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">pose</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.gicp.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">gicp.gicp</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Generalized-ICP(共變異數加權馬氏 ICP)估計剛體變換 (R,t)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各反復で source→target の最近傍対応を張り、残差 `<code style="color:#22d3bf">d_i = R·s_i + t - q_i</code>` を</p>
-<p>重み `<code style="color:#22d3bf">W_i = (C_target[q_i] + R·C_source[s_i]·Rᵀ)⁻¹</code>` で測るマハラノビス</p>
-<p>コスト `<code style="color:#22d3bf">Σ d_iᵀ W_i d_i</code><code style="color:#22d3bf"> を、小角線形化 </code><code style="color:#22d3bf">R ← (I+[ω]×)R</code>` の Gauss-Newton で</p>
-<p>最小化する。各対応のヤコビアン `<code style="color:#22d3bf">J_i = [-[R·s_i+t]× | I]</code>`(3×6)から</p>
-<p>正規方程式 `<code style="color:#22d3bf">(Σ J_iᵀ W_i J_i) x = -(Σ J_iᵀ W_i d_i)</code>`(6×6)を解いて増分</p>
-<p>`<code style="color:#22d3bf">x=[ω|τ]</code>` を得、Rodrigues で回転に戻して累積する。</p>
-<p>共分散は plane-to-plane(`<code style="color:#22d3bf">estimate_covariances</code>`)。point-to-plane が target の</p>
-<p>法線方向へ残差を射影する(rank-1)のに対し、GICP は source・target 双方の</p>
-<p>full 3×3 共分散を合成した重みを使うため、平面的・ノイズを含む点群で頑健。</p>
-<p>ICP はローカル最適化なので <b>近い初期化を前提</b>(粗マッチや `<code style="color:#22d3bf">init</code>` を渡す)。</p>
+<p>各反復で source→target の最近傍対応を張り、残差 <code style="color:#22d3bf">d_i = R·s_i + t - q_i</code> を重み <code style="color:#22d3bf">W_i = (C_target[q_i] + R·C_source[s_i]·Rᵀ)⁻¹</code> で測るマハラノビスコスト <code style="color:#22d3bf">Σ d_iᵀ W_i d_i</code> を、小角線形化 <code style="color:#22d3bf">R ← (I+[ω]×)R</code> の Gauss-Newton で最小化する。各対応のヤコビアン <code style="color:#22d3bf">J_i = [-[R·s_i+t]× | I]</code>(3×6)から正規方程式 <code style="color:#22d3bf">(Σ J_iᵀ W_i J_i) x = -(Σ J_iᵀ W_i d_i)</code>(6×6)を解いて増分 <code style="color:#22d3bf">x=[ω|τ]</code> を得、Rodrigues で回転に戻して累積する。</p>
+<p>共分散は plane-to-plane(<code style="color:#22d3bf">estimate_covariances</code>)。point-to-plane が target の法線方向へ残差を射影する(rank-1)のに対し、GICP は source・target 双方の full 3×3 共分散を合成した重みを使うため、平面的・ノイズを含む点群で頑健。</p>
+<p>ICP はローカル最適化なので <b>近い初期化を前提</b>(粗マッチや <code style="color:#22d3bf">init</code> を渡す)。</p>
 <p>引数:</p>
 <p>source (N,3): 動かす側の点群。</p>
 <p>target (M,3): 参照側(固定)の点群。</p>
 <p>max_iter: 最大反復数。</p>
 <p>k: 共分散推定の近傍数。</p>
 <p>epsilon: plane-to-plane の法線方向小分散(0&lt;ε&lt;1)。</p>
-<p>tol: 収束閾値。増分並進 ‖τ‖ が `<code style="color:#22d3bf">tol×(target のRMS半径)</code>` 未満かつ</p>
-<p>増分回転 ‖ω‖(rad)が `<code style="color:#22d3bf">tol</code>` 未満で打ち切り(スケール相対)。</p>
+<p>tol: 収束閾値。増分並進 ‖τ‖ が <code style="color:#22d3bf">tol×(target のRMS半径)</code> 未満かつ</p>
+<p>増分回転 ‖ω‖(rad)が <code style="color:#22d3bf">tol</code> 未満で打ち切り(スケール相対)。</p>
 <p>init: (R0(3,3), t0(3,)) の初期姿勢タプル、または None(単位)。</p>
-<p>reproducible: True なら N 点の和 `<code style="color:#22d3bf">Σ J_iᵀ W_i J_i</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">Σ J_iᵀ W_i d_i</code>` を ozakimm(Ozaki スキーム)の縮約に、</p>
+<p>reproducible: True なら N 点の和 <code style="color:#22d3bf">Σ J_iᵀ W_i J_i</code>・<code style="color:#22d3bf">Σ J_iᵀ W_i d_i</code> を ozakimm(Ozaki スキーム)の縮約に、</p>
 <p>姿勢の適用を要素ごとの演算に、RMSE を math.fsum にする。source の点の順・BLAS のスレッド数に依らず</p>
 <p>R・t・rmse がビット単位で同じ(共分散の近傍に距離がちょうど同点の点があると近傍の選ばれ方が変わりうる)。</p>
 <p>既定 False は従来どおり。</p>
@@ -37,7 +30,7 @@
 <p>&quot;iterations&quot; int   — 実反復数。</p>
 <p>例外:</p>
 <p>ValueError: 入力形状不正 / 点数不足 / 数値発散(非有限)= fail-closed。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

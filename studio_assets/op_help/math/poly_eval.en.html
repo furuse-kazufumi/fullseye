@@ -4,23 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poly_eval(coeffs, x)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.poly_eval(coeffs, x)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;poly_eval&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Evaluate a polynomial (coefficients highest-power-first) at *x*.</p>
-<p>*coeffs* is the 1-D array :func:<code style="color:#22d3bf">poly_fit</code> returns in `<code style="color:#22d3bf">&quot;coeffs&quot;</code>` (or any</p>
-<p>hand-written one, `<code style="color:#22d3bf">[c_d, ..., c_1, c_0]</code>`); *x* is a finite scalar or 1-D</p>
-<p>array. A scalar returns a Python float, an array returns float64.</p>
-<p>Evaluation is by Horner&#x27;s scheme (`<code style="color:#22d3bf">np.polyval</code>`) — numerically the right</p>
-<p>way to evaluate, though it cannot repair a badly-conditioned *fit* (see</p>
-<p>:func:<code style="color:#22d3bf">poly_fit</code>&#x27;s `<code style="color:#22d3bf">cond</code>`).</p>
-<p>HALCON: no polynomial tuple operator (compose `<code style="color:#22d3bf">tuple_pow</code>` + arithmetic).</p>
-<p>Raises ValueError when a finite input overflows float64 — a degree-*d*</p>
-<p>polynomial at `<code style="color:#22d3bf">|x|</code><code style="color:#22d3bf"> well above 1 grows like </code><code style="color:#22d3bf">|x|**d</code>`, so mixing up the</p>
-<p>two arguments (a long signal used as coefficients) silently produced `<code style="color:#22d3bf">inf</code>`</p>
-<p>before this guard (chain fuzzer wave-7: 256 coefficients evaluated at</p>
-<p>`<code style="color:#22d3bf">|x|&lt;=22</code><code style="color:#22d3bf"> -&gt; </code><code style="color:#22d3bf">22**255</code><code style="color:#22d3bf">). An unusable </code><code style="color:#22d3bf">inf</code>` must not flow downstream.</p>
+<p>*coeffs* is the 1-D array <code style="color:#22d3bf">poly_fit</code> returns in <code style="color:#22d3bf">&quot;coeffs&quot;</code> (or any hand-written one, <code style="color:#22d3bf">[c_d, ..., c_1, c_0]</code>); *x* is a finite scalar or 1-D array. A scalar returns a Python float, an array returns float64. Evaluation is by Horner&#x27;s scheme (<code style="color:#22d3bf">np.polyval</code>) — numerically the right way to evaluate, though it cannot repair a badly-conditioned *fit* (see <code style="color:#22d3bf">poly_fit</code>&#x27;s <code style="color:#22d3bf">cond</code>).</p>
+<p>HALCON: no polynomial tuple operator (compose <code style="color:#22d3bf">tuple_pow</code> + arithmetic).</p>
+<p>Raises ValueError when a finite input overflows float64 — a degree-*d* polynomial at <code style="color:#22d3bf">|x|</code> well above 1 grows like <code style="color:#22d3bf">|x|**d</code>, so mixing up the two arguments (a long signal used as coefficients) silently produced <code style="color:#22d3bf">inf</code> before this guard (chain fuzzer wave-7: 256 coefficients evaluated at <code style="color:#22d3bf">|x|&lt;=22</code> -&gt; <code style="color:#22d3bf">22**255</code>). An unusable <code style="color:#22d3bf">inf</code> must not flow downstream.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

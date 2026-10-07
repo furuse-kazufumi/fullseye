@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flight_vacuum(p0, v0, t, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballistics; ballistics.flight_vacuum(p0, v0, t, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;flight_vacuum&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>真空の放物線(閉形式): p(t) = p₀ + v₀ t − ½ g t² ẑ。`<code style="color:#22d3bf">t</code>` はスカラか (N,)、返り値 (3,) か (N, 3)。</p>
+<p>真空の放物線(閉形式): p(t) = p₀ + v₀ t − ½ g t² ẑ。<code style="color:#22d3bf">t</code> はスカラか (N,)、返り値 (3,) か (N, 3)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

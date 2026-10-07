@@ -5,9 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>片勾配 i・横すべり摩擦係数 f の曲線(半径 R)で外へ滑らない上限速度 v = √(g R (i + f)/(1 − i f)) [m/s]。</p>
-<p>道路構造令の解説 (2) 式 Z cos α − G sin α ≤ f (Z sin α + G cos α)(Z = G v²/(gR)、i = tan α)を v について解いた</p>
-<p>厳密な形。i f ≥ 1 なら(どの速さでも外へは滑らない)`<code style="color:#22d3bf">inf</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">radius</code>` は配列でもよい(&gt; 0)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: R ≤ 0、f &lt; 0、|i| ≥ 1、i + f ≤ 0(止まっていても内へ滑る)。</p>
+<p>道路構造令の解説 (2) 式 Z cos α − G sin α ≤ f (Z sin α + G cos α)(Z = G v²/(gR)、i = tan α)を v について解いた厳密な形。i f ≥ 1 なら(どの速さでも外へは滑らない)<code style="color:#22d3bf">inf</code>。<code style="color:#22d3bf">radius</code> は配列でもよい(&gt; 0)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ 0、f &lt; 0、|i| ≥ 1、i + f ≤ 0(止まっていても内へ滑る)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -5,23 +5,18 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die 1-D-p-Wasserstein-Distanz. <b>Exakt.</b></p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>1 次元では最適輸送に閉じた形があり、累積分布の逆関数どうしの</p>
-<p>`<code style="color:#22d3bf">L^p</code>` 距離になる ―― 反復も近似も要らない。総当たりの割当問題</p>
-<p>(`<code style="color:#22d3bf">scipy.optimize.linear_sum_assignment</code>`)と厳密に一致することを</p>
-<p>テストで固定してある。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>1 次元では最適輸送に閉じた形があり、累積分布の逆関数どうしの <code style="color:#22d3bf">L^p</code> 距離になる ―― 反復も近似も要らない。総当たりの割当問題(<code style="color:#22d3bf">scipy.optimize.linear_sum_assignment</code>)と厳密に一致することをテストで固定してある。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>u_values, v_values : array_like</p>
 <p>標本(1 次元に潰される)。長さは違ってよい。</p>
 <p>p : float</p>
-<p>次数。`<code style="color:#22d3bf">p=1</code><code style="color:#22d3bf"> が Earth Mover 距離、</code><code style="color:#22d3bf">p=2</code>` が 2-Wasserstein。</p>
+<p>次数。<code style="color:#22d3bf">p=1</code> が Earth Mover 距離、<code style="color:#22d3bf">p=2</code> が 2-Wasserstein。</p>
 <p>u_weights, v_weights : array_like, optional</p>
 <p>標本ごとの重み(和は内部で 1 に正規化する)。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>float</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Farbmetrik und Spektren — Farbe ist nur durch Spektrum × Lichtart × Beobachter bestimmt</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

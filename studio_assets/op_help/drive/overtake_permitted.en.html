@@ -5,15 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>追越しを始めてよいか(条文と教則の判定)。場面 S077・S078・S079・S080・S081・S083。</p>
-<p>`<code style="color:#22d3bf">maneuver_start</code><code style="color:#22d3bf"> .. </code><code style="color:#22d3bf">maneuver_end</code>` = 進路を変え始めてから前車の側方を通り終えるまでの自車の前端の位置。</p>
-<p>理由(code, 根拠):</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">no_passing_zone</code><code style="color:#22d3bf">(30 条): その区間が </code><code style="color:#22d3bf">no_overtaking_zones</code><code style="color:#22d3bf"> の禁止区間と重なる(前車が </code><code style="color:#22d3bf">EXEMPT_KINDS</code>` なら除く)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">double_overtaking</code>`(29 条): 前車が他の自動車を追い越そうとしている。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">wrong_side</code><code style="color:#22d3bf">(28 条 1・2 項): 前車が右折のため中央(右側端)に寄っている(</code><code style="color:#22d3bf">lead_keeping_right</code>`)なら左、それ以外は右。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">oncoming_too_close</code><code style="color:#22d3bf">(28 条 4 項 + 閉形式): </code><code style="color:#22d3bf">dist_oncoming</code><code style="color:#22d3bf"> &lt; </code><code style="color:#22d3bf">requirement[&quot;d_required&quot;]</code>`</p>
-<p>(`<code style="color:#22d3bf">overtake_requirement</code>` の返り値)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">being_overtaken</code>`(教則 5-6-1(2)エ。<b>法の明文なし</b>、場面 S080): 後ろの車が自車を追い越そうとしている。</p>
-<p>返り値: `<code style="color:#22d3bf">ok</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">reasons</code><code style="color:#22d3bf"> = [(code, 根拠)]、</code><code style="color:#22d3bf">required_side</code>`。</p>
+<p><code style="color:#22d3bf">maneuver_start</code> .. <code style="color:#22d3bf">maneuver_end</code> = 進路を変え始めてから前車の側方を通り終えるまでの自車の前端の位置。理由(code, 根拠):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">no_passing_zone</code>(30 条): その区間が <code style="color:#22d3bf">no_overtaking_zones</code> の禁止区間と重なる(前車が <code style="color:#22d3bf">EXEMPT_KINDS</code> なら除く)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">double_overtaking</code>(29 条): 前車が他の自動車を追い越そうとしている。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">wrong_side</code>(28 条 1・2 項): 前車が右折のため中央(右側端)に寄っている(<code style="color:#22d3bf">lead_keeping_right</code>)なら左、それ以外は右。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">oncoming_too_close</code>(28 条 4 項 + 閉形式): <code style="color:#22d3bf">dist_oncoming</code> &lt; <code style="color:#22d3bf">requirement[&quot;d_required&quot;]</code> (<code style="color:#22d3bf">overtake_requirement</code> の返り値)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">being_overtaken</code>(教則 5-6-1(2)エ。<b>法の明文なし</b>、場面 S080): 後ろの車が自車を追い越そうとしている。</p>
+<p>返り値: <code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">reasons</code> = [(code, 根拠)]、<code style="color:#22d3bf">required_side</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

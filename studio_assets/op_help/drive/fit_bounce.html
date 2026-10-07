@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballistics; ballistics.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;fit_bounce&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>跳ねの前後の (v, ω) から (e, μ) を閉形式で戻す(同定)。e = −v_n&#x27;/v_n。接線力積 J_t = m(v_t&#x27; − v_t) の大きさと</p>
-<p>J_n = m(v_n&#x27; − v_n) の比が μ —— 滑ったままの領域なら等号、途中で転がりに移った(grip)領域なら <b>下界</b>(μ ≥ |J_t|/J_n)。</p>
-<p>どちらかは、跳ねた後の接触点の滑り速度が 0 か(grip)で判る。返り値 `<code style="color:#22d3bf">{&quot;e&quot;, &quot;mu&quot;, &quot;mu_is_lower_bound&quot;, &quot;regime&quot;, &quot;J_n&quot;, &quot;J_t&quot;}</code>`。</p>
+<p>跳ねの前後の (v, ω) から (e, μ) を閉形式で戻す(同定)。e = −v_n&#x27;/v_n。接線力積 J_t = m(v_t&#x27; − v_t) の大きさと J_n = m(v_n&#x27; − v_n) の比が μ —— 滑ったままの領域なら等号、途中で転がりに移った(grip)領域なら <b>下界</b>(μ ≥ |J_t|/J_n)。どちらかは、跳ねた後の接触点の滑り速度が 0 か(grip)で判る。返り値 <code style="color:#22d3bf">{&quot;e&quot;, &quot;mu&quot;, &quot;mu_is_lower_bound&quot;, &quot;regime&quot;, &quot;J_n&quot;, &quot;J_t&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

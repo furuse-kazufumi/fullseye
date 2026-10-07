@@ -6,14 +6,14 @@
 <p>用途をひとことで言うと「ノイズ除去・エッジ保存平滑(physics/macro)」「テクスチャ・模様の生成(alife)」「疎ビュー/限定角 CT の再構成(tomography)」「3-D スタックの前処理と投影(3d)」です。入出力の型は op ごとに異なり、image→image が大半ですが、断層の前方投影は image(スライス)→image(サイノグラム)、ボリューム投影は volume→image、<code style="color:#22d3bf">macro_edge</code> は image→region、<code style="color:#22d3bf">decode_barcode</code> は image→feature(スカラ)になります。挙動はすべて決定的(同一入力→ビット一致)で、<code style="color:#22d3bf">examples/gallery2d_physics_alife_3d.py</code> が全 op を叩いて契約(有限・型・[0,1]・決定性)と既知挙動 GT を検証済みです。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
 <p>断層撮影は「スライス→サイノグラム→スライス」のデータ変換が明確な連鎖です。</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid-Diagramm (Quelltext):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
   slice[&quot;スライス画像&lt;br/&gt;(image)&quot;] --&gt;|tm_radon_forward| sino[&quot;サイノグラム&lt;br/&gt;(image: 行=角度, 列=検出器)&quot;]
   sino --&gt;|tm_sinogram_denoise| sino2[&quot;平滑サイノグラム&lt;br/&gt;(image)&quot;]
   sino2 --&gt;|tm_fbp_reconstruct| rec[&quot;再構成スライス&lt;br/&gt;(image)&quot;]
   sino2 --&gt;|tm_backproject_unfiltered| blur[&quot;ぼけた逆投影&lt;br/&gt;(image, 対照)&quot;]
   sino2 --&gt;|tm_sart_reconstruct| rec2[&quot;代数再構成&lt;br/&gt;(image)&quot;]</pre>
 <p>PDE 平滑と 3-D 前処理は「場を整えてから測る/投影する」連鎖になります。</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid-Diagramm (Quelltext):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
   noisy[&quot;ノイズ画像&lt;br/&gt;(image)&quot;] --&gt;|ph_perona_malik / ph_total_variation_flow| clean[&quot;エッジ保存平滑&lt;br/&gt;(image)&quot;]
   clean --&gt;|macro_edge| reg[&quot;エッジ領域&lt;br/&gt;(region 0/1)&quot;]
   vol[&quot;ボリューム&lt;br/&gt;(volume)&quot;] --&gt;|vol_gaussian| vols[&quot;平滑ボリューム&lt;br/&gt;(volume)&quot;]

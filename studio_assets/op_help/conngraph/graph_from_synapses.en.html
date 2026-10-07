@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>シナプス表 (m, 3) = (pre_id, post_id, count) を n×n の重みつき有向隣接行列にする。</p>
-<p>`<code style="color:#22d3bf">W[pre, post] += count * sign</code>`。同じ (pre, post) の行は足し合わせる。</p>
-<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> を省くと </code><code style="color:#22d3bf">max(id) + 1</code>`。id は 0 始まりの整数値(float で持っていてよい)</p>
-<p>で、範囲外・非整数・負の id は拒否する。`<code style="color:#22d3bf">sign</code>` は抑制性シナプスを負で</p>
-<p>入れたいときの係数(count 自体は符号を持たない量として扱う)。</p>
+<p><code style="color:#22d3bf">W[pre, post] += count * sign</code>。同じ (pre, post) の行は足し合わせる。<code style="color:#22d3bf">n</code> を省くと <code style="color:#22d3bf">max(id) + 1</code>。id は 0 始まりの整数値(float で持っていてよい) で、範囲外・非整数・負の id は拒否する。<code style="color:#22d3bf">sign</code> は抑制性シナプスを負で入れたいときの係数(count 自体は符号を持たない量として扱う)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

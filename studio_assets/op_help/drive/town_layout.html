@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_layout(name: &#x27;str&#x27; = &#x27;default&#x27;, *, overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetown; drivetown.town_layout(name: &#x27;str&#x27; = &#x27;default&#x27;, *, overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;town_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>既定の町。`<code style="color:#22d3bf">&quot;default&quot;</code>` = road(30) → intersection → road(20) → crossing(踏切) → road(20) → slope → road(20) →</p>
-<p>parallel_parking → road(30)(全部幅 7 m、停止線は交差点 1 本と踏切 1 本)。`<code style="color:#22d3bf">&quot;short&quot;</code>` = road(20) → crossing → road(20)</p>
-<p>(テストの速い門)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 名前が :data:</code>TOWN_NAMES` に無い。</p>
+<p>既定の町。<code style="color:#22d3bf">&quot;default&quot;</code> = road(30) → intersection → road(20) → crossing(踏切) → road(20) → slope → road(20) → parallel_parking → road(30)(全部幅 7 m、停止線は交差点 1 本と踏切 1 本)。<code style="color:#22d3bf">&quot;short&quot;</code> = road(20) → crossing → road(20) (テストの速い門)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 名前が <code style="color:#22d3bf">TOWN_NAMES</code> に無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

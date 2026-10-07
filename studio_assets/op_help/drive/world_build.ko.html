@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
 <p>コース(要素か layout)から世界を組む。</p>
-<p>路面 = 全体を覆う平面(z = 0、ラベル 0)。各要素の多角形の縁に縁石(ラベル 1、継ぎ目の辺は除く)、</p>
-<p>縁の内側 0.15 m に白線(ラベル 9)。坂道は斜面のメッシュ(ラベル 0)。交差点の `<code style="color:#22d3bf">signal_poses</code>` には信号機を立て</p>
-<p>(初期状態 &quot;red&quot;、日本式: 向こう側の柱 + アームで車線上に横型 3 灯、roadjp)、`<code style="color:#22d3bf">stop_lines</code><code style="color:#22d3bf"> に停止線、</code><code style="color:#22d3bf">crosswalks</code><code style="color:#22d3bf"> に横断歩道の縞。</code><code style="color:#22d3bf">props</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(asset_name, x, y, yaw)</code>` か</p>
-<p>`<code style="color:#22d3bf">(asset_name, x, y, yaw[, dims[, paint]])</code><code style="color:#22d3bf"> の並び(paint = 車の車体色、:data:</code>CAR_PAINTS<code style="color:#22d3bf">)。返り値 = </code><code style="color:#22d3bf">{&quot;V&quot;,&quot;F&quot;,&quot;face_label&quot;,&quot;face_color&quot;,&quot;objects&quot;,&quot;bounds&quot;,&quot;course&quot;}</code>`。</p>
+<p>路面 = 全体を覆う平面(z = 0、ラベル 0)。各要素の多角形の縁に縁石(ラベル 1、継ぎ目の辺は除く)、縁の内側 0.15 m に白線(ラベル 9)。坂道は斜面のメッシュ(ラベル 0)。交差点の <code style="color:#22d3bf">signal_poses</code> には信号機を立て(初期状態 &quot;red&quot;、日本式: 向こう側の柱 + アームで車線上に横型 3 灯、roadjp)、<code style="color:#22d3bf">stop_lines</code> に停止線、<code style="color:#22d3bf">crosswalks</code> に横断歩道の縞。<code style="color:#22d3bf">props</code> は <code style="color:#22d3bf">(asset_name, x, y, yaw)</code> か <code style="color:#22d3bf">(asset_name, x, y, yaw[, dims[, paint]])</code> の並び(paint = 車の車体色、<code style="color:#22d3bf">CAR_PAINTS</code>)。返り値 = <code style="color:#22d3bf">{&quot;V&quot;,&quot;F&quot;,&quot;face_label&quot;,&quot;face_color&quot;,&quot;objects&quot;,&quot;bounds&quot;,&quot;course&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

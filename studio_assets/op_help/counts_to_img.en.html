@@ -15,14 +15,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>非負整数の 1-D カウント列を<b>棒グラフ</b>にして画像へ戻す。</p>
-<p>`<code style="color:#22d3bf">counts</code>` を画像に落とせる op は <b>1 本も無かった</b>(作る op は 13 本ある)。</p>
-<p>既定を棒にしてあるのは、カウントが<b>整数の度数</b>だからで、折れ線で結ぶと</p>
-<p>「間の値」が在るように見えてしまう。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 縦軸の余白(</code><code style="color:#22d3bf">signal_to_img</code>` と同じ式)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 描き方。</code><code style="color:#22d3bf">b &lt; 1/3</code><code style="color:#22d3bf"> で**折れ線**、</code><code style="color:#22d3bf">&lt; 2/3</code>` で<b>棒</b>(既定)、それ以上で</p>
-<p><b>点</b>。`<code style="color:#22d3bf">signal_to_img</code>` と<b>並びが違う</b>のは、既定のノブ 0.5 でその型に</p>
-<p>素直な描き方になるようにしているから —— カウントは棒が素直。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(128, 128)</code>` float64。</p>
+<p><code style="color:#22d3bf">counts</code> を画像に落とせる op は <b>1 本も無かった</b>(作る op は 13 本ある)。既定を棒にしてあるのは、カウントが<b>整数の度数</b>だからで、折れ線で結ぶと「間の値」が在るように見えてしまう。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 縦軸の余白(<code style="color:#22d3bf">signal_to_img</code> と同じ式)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 描き方。<code style="color:#22d3bf">b &lt; 1/3</code> で<b>折れ線</b>、<code style="color:#22d3bf">&lt; 2/3</code> で<b>棒</b>(既定)、それ以上で <b>点</b>。<code style="color:#22d3bf">signal_to_img</code> と<b>並びが違う</b>のは、既定のノブ 0.5 でその型に素直な描き方になるようにしているから —— カウントは棒が素直。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(128, 128)</code> float64。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

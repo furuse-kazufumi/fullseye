@@ -3,34 +3,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">cscalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_contour_integral(z, fz)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.cplx_contour_integral(z, fz)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;cplx_contour_integral&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Geschlossenes Konturintegral `<code style="color:#22d3bf">∮ f(z) dz</code>` mit der Sehnen-Trapezregel.</p>
+<p>Geschlossenes Konturintegral <code style="color:#22d3bf">∮ f(z) dz</code> mit der Sehnen-Trapezregel.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>*z* are the contour vertices (closing segment implicit, see</p>
-<p>:func:<code style="color:#22d3bf">cplx_contour_circle</code>) and *fz* the function sampled at exactly those</p>
-<p>points — the op never calls back into Python, so any `<code style="color:#22d3bf">f</code>` is allowed as</p>
-<p>long as you can sample it. The quadrature is</p>
-<p>`<code style="color:#22d3bf">sum_k (f_k + f_{k+1})/2 * (z_{k+1} - z_k)</code>`, i.e. the trapezoidal rule</p>
-<p>along the *chords*; it is exact for a piecewise-linear integrand and second</p>
-<p>order otherwise.</p>
-<p>Ground truth it reproduces: `<code style="color:#22d3bf">f = 1/(z - a)</code>` around a circle enclosing</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> integrates to </code><code style="color:#22d3bf">2*pi*i</code>` (Cauchy); measured on the unit circle with</p>
-<p>`<code style="color:#22d3bf">a = 0</code><code style="color:#22d3bf">, the relative error is 1.0e-4 at </code><code style="color:#22d3bf">n = 256</code>` and</p>
-<p>6.3e-6 at `<code style="color:#22d3bf">n = 1024</code>` — a factor 16.0 for 4x</p>
-<p>refinement, i.e. the `<code style="color:#22d3bf">O(n^-2)</code>` rate, *not* the spectral accuracy the</p>
-<p>trapezoid rule enjoys when applied in the angle parameter. That difference</p>
-<p>is the honest price of accepting an arbitrary point list instead of a</p>
-<p>parametrisation.</p>
-<p>Orientation follows the sample order: a clockwise contour returns the</p>
-<p>negative of the counter-clockwise one.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: fewer than 3 points, </code><code style="color:#22d3bf">len(z) != len(fz)</code>`, a</p>
-<p>degenerate contour (all points coincide), non-finite/masked input, or a sum</p>
-<p>that overflowed (`<code style="color:#22d3bf">|f|</code>` near a pole *on* the path).</p>
+<p>*z* are the contour vertices (closing segment implicit, see <code style="color:#22d3bf">cplx_contour_circle</code>) and *fz* the function sampled at exactly those points — the op never calls back into Python, so any <code style="color:#22d3bf">f</code> is allowed as long as you can sample it. The quadrature is <code style="color:#22d3bf">sum_k (f_k + f_{k+1})/2 * (z_{k+1} - z_k)</code>, i.e. the trapezoidal rule along the *chords*; it is exact for a piecewise-linear integrand and second order otherwise.</p>
+<p>Ground truth it reproduces: <code style="color:#22d3bf">f = 1/(z - a)</code> around a circle enclosing <code style="color:#22d3bf">a</code> integrates to <code style="color:#22d3bf">2*pi*i</code> (Cauchy); measured on the unit circle with <code style="color:#22d3bf">a = 0</code>, the relative error is 1.0e-4 at <code style="color:#22d3bf">n = 256</code> and 6.3e-6 at <code style="color:#22d3bf">n = 1024</code> — a factor 16.0 for 4x refinement, i.e. the <code style="color:#22d3bf">O(n^-2)</code> rate, *not* the spectral accuracy the trapezoid rule enjoys when applied in the angle parameter. That difference is the honest price of accepting an arbitrary point list instead of a parametrisation.</p>
+<p>Orientation follows the sample order: a clockwise contour returns the negative of the counter-clockwise one.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: fewer than 3 points, <code style="color:#22d3bf">len(z) != len(fz)</code>, a degenerate contour (all points coincide), non-finite/masked input, or a sum that overflowed (<code style="color:#22d3bf">|f|</code> near a pole *on* the path).</p>
 <p>HALCON: no operator (contour integration is not part of its tuple/XLD API).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

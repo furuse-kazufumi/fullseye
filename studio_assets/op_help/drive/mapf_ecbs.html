@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;mapf_ecbs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>上段を焦点探索にした CBS(ECBS の上段と同じ考え方、Barer ら 2014)。総コストが <b>最適の w 倍以内</b>。</p>
-<p>開いている節のうち最小の総コスト `<code style="color:#22d3bf">LB</code>` は最適値以下(最適解はどれかの節の下にある)。そこで</p>
-<p>`<code style="color:#22d3bf">コスト ≤ w · LB</code>` の節(焦点)の中から<b>衝突の少ない</b>ものを展開する。返す計画は</p>
-<p>`<code style="color:#22d3bf">cost ≤ w · LB ≤ w · 最適</code><code style="color:#22d3bf">(門)。返りは :func:</code>mapf_cbs<code style="color:#22d3bf"> の dict に </code><code style="color:#22d3bf">lower_bound</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">w</code>` を足したもの。</p>
-<p>細い通路で最適の CBS が同じ長さの譲り合いの組を全部調べて止まるのを、衝突の少ない側へ寄せて抜ける。</p>
+<p>開いている節のうち最小の総コスト <code style="color:#22d3bf">LB</code> は最適値以下(最適解はどれかの節の下にある)。そこで <code style="color:#22d3bf">コスト ≤ w · LB</code> の節(焦点)の中から<b>衝突の少ない</b>ものを展開する。返す計画は <code style="color:#22d3bf">cost ≤ w · LB ≤ w · 最適</code>(門)。返りは <code style="color:#22d3bf">mapf_cbs</code> の dict に <code style="color:#22d3bf">lower_bound</code> と <code style="color:#22d3bf">w</code> を足したもの。細い通路で最適の CBS が同じ長さの譲り合いの組を全部調べて止まるのを、衝突の少ない側へ寄せて抜ける。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

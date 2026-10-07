@@ -3,36 +3,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_argument_principle(z, fz)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.cplx_argument_principle(z, fz)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;cplx_argument_principle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Argument principle: count zeros minus poles enclosed by a contour, from sampled values of `<code style="color:#22d3bf">f</code>` alone.</p>
-<p>`<code style="color:#22d3bf">Z - P = 1/(2*pi*i) ∮ f&#x27;/f dz</code>` equals the winding number of the **image</p>
-<p>curve** `<code style="color:#22d3bf">f(z)</code>` around the origin (Cauchy 1831 / Riemann): as the contour</p>
-<p>is traversed once counter-clockwise, the argument of `<code style="color:#22d3bf">f</code>` increases by</p>
-<p>`<code style="color:#22d3bf">2*pi (Z - P)</code>`, counting multiplicities. Computing it as a winding number</p>
-<p>of the image needs no derivative and no root finding — only `<code style="color:#22d3bf">f</code>` sampled</p>
-<p>on the path — and returns an exact integer.</p>
+<p>Argument principle: count zeros minus poles enclosed by a contour, from sampled values of <code style="color:#22d3bf">f</code> alone.</p>
+<p><code style="color:#22d3bf">Z - P = 1/(2*pi*i) ∮ f&#x27;/f dz</code> equals the winding number of the <b>image curve</b> <code style="color:#22d3bf">f(z)</code> around the origin (Cauchy 1831 / Riemann): as the contour is traversed once counter-clockwise, the argument of <code style="color:#22d3bf">f</code> increases by <code style="color:#22d3bf">2*pi (Z - P)</code>, counting multiplicities. Computing it as a winding number of the image needs no derivative and no root finding — only <code style="color:#22d3bf">f</code> sampled on the path — and returns an exact integer.</p>
 <p>Honest limitations, all of them real:</p>
-<p style="margin:2px 0 2px 12px">• It returns the <b>difference</b> `<code style="color:#22d3bf">Z - P</code>`, never the two separately. A</p>
-<p>simple zero and a simple pole inside cancel to 0.</p>
-<p style="margin:2px 0 2px 12px">• The result is multiplied by the winding number of the contour itself,</p>
-<p>so it equals `<code style="color:#22d3bf">Z - P</code>` only for a <b>simple, positively-oriented</b></p>
-<p>contour (a clockwise one returns `<code style="color:#22d3bf">-(Z - P)</code>`).</p>
-<p style="margin:2px 0 2px 12px">• It is the winding of the *sampled* image polygon, so it <b>aliases low</b></p>
-<p>on a coarse contour. A half-turn jump between samples is detected and</p>
-<p>raised; anything below that is indistinguishable from a genuine slower</p>
-<p>turn — `<code style="color:#22d3bf">f = z**5</code>` on a 4-point circle returns 1, not 5 (measured).</p>
-<p>A `<code style="color:#22d3bf">RuntimeWarning</code><code style="color:#22d3bf"> fires from </code><code style="color:#22d3bf">pi/2</code>` per step onward</p>
-<p>(:data:<code style="color:#22d3bf">WIND_ALIAS_WARN</code>); the verification that actually works is to</p>
-<p>double `<code style="color:#22d3bf">n</code>` until the count repeats.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">f</code>` vanishes at a sample point (a zero *on*</p>
-<p>the path — the count is undefined there), the image curve is undersampled</p>
-<p>(a half-turn between consecutive samples: refine the contour), plus the</p>
-<p>usual shape/finiteness contracts.</p>
+<p style="margin:2px 0 2px 12px">• It returns the <b>difference</b> <code style="color:#22d3bf">Z - P</code>, never the two separately. A simple zero and a simple pole inside cancel to 0.</p>
+<p style="margin:2px 0 2px 12px">• The result is multiplied by the winding number of the contour itself, so it equals <code style="color:#22d3bf">Z - P</code> only for a <b>simple, positively-oriented</b> contour (a clockwise one returns <code style="color:#22d3bf">-(Z - P)</code>).</p>
+<p style="margin:2px 0 2px 12px">• It is the winding of the *sampled* image polygon, so it <b>aliases low</b> on a coarse contour. A half-turn jump between samples is detected and raised; anything below that is indistinguishable from a genuine slower turn — <code style="color:#22d3bf">f = z**5</code> on a 4-point circle returns 1, not 5 (measured). A <code style="color:#22d3bf">RuntimeWarning</code> fires from <code style="color:#22d3bf">pi/2</code> per step onward (<code style="color:#22d3bf">WIND_ALIAS_WARN</code>); the verification that actually works is to double <code style="color:#22d3bf">n</code> until the count repeats.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">f</code> vanishes at a sample point (a zero *on* the path — the count is undefined there), the image curve is undersampled (a half-turn between consecutive samples: refine the contour), plus the usual shape/finiteness contracts.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

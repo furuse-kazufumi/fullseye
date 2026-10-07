@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_volume_cone(R: &#x27;float | None&#x27; = None, H: &#x27;float | None&#x27; = None, phi_deg: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import granular; granular.heap_volume_cone(R: &#x27;float | None&#x27; = None, H: &#x27;float | None&#x27; = None, phi_deg: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;heap_volume_cone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>円錐の山の閉形式 —— `<code style="color:#22d3bf">R</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">H</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">phi_deg</code>` のうち <b>ちょうど 2 つ</b> を与えると残りと体積を返す。</p>
-<p>`<code style="color:#22d3bf">V = (π/3) R² H</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">H = R tan φ</code><code style="color:#22d3bf">。返り: </code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">H</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">phi_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">V</code><code style="color:#22d3bf"> [m³]、</code><code style="color:#22d3bf">A</code>`(底面積 πR²)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 与えた数が 2 つでない、または ≤ 0 / 非有限 / 角が (0, 90) の外。</p>
-<p>3 つ全部渡されたときも拒否する(矛盾した 3 つ組を黙って片方で上書きしない)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>円錐の山の閉形式 —— <code style="color:#22d3bf">R</code>・<code style="color:#22d3bf">H</code>・<code style="color:#22d3bf">phi_deg</code> のうち <b>ちょうど 2 つ</b> を与えると残りと体積を返す。</p>
+<p><code style="color:#22d3bf">V = (π/3) R² H</code>、<code style="color:#22d3bf">H = R tan φ</code>。返り: <code style="color:#22d3bf">R</code>, <code style="color:#22d3bf">H</code>, <code style="color:#22d3bf">phi_deg</code>, <code style="color:#22d3bf">V</code> [m³]、<code style="color:#22d3bf">A</code>(底面積 πR²)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 与えた数が 2 つでない、または ≤ 0 / 非有限 / 角が (0, 90) の外。3 つ全部渡されたときも拒否する(矛盾した 3 つ組を黙って片方で上書きしない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_scoop_pour">poc_powder_scoop_pour</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_scoop_pour.py</code></p>

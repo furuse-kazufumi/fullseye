@@ -4,16 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swing_up_plan(kp: &#x27;dict&#x27;, *, lift: &#x27;float&#x27; = 0.265, T_lift: &#x27;float&#x27; = 0.15, kind: &#x27;str&#x27; = &#x27;bang&#x27;, origin=(0.0, 0.0, 0.0), dodge=(0.0, 0.0, 0.0))</code> (die Implementierung direkt: <code style="color:#22d3bf">import kendama; kendama.swing_up_plan(kp: &#x27;dict&#x27;, *, lift: &#x27;float&#x27; = 0.265, T_lift: &#x27;float&#x27; = 0.15, kind: &#x27;str&#x27; = &#x27;bang&#x27;, origin=(0.0, 0.0, 0.0), dodge=(0.0, 0.0, 0.0))</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;swing_up_plan&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>手元(皿胴の中心。ひもの支点と大皿はそこから kp の offset だけずれて一緒に動く)の開ループ軌道: `<code style="color:#22d3bf">origin</code><code style="color:#22d3bf"> から真上へ </code><code style="color:#22d3bf">lift</code><code style="color:#22d3bf"> だけ </code><code style="color:#22d3bf">T_lift</code>` 秒で持ち上げ、以後静止。</p>
-<p>返り値は t → (3,) の関数(t ≤ 0 で origin、t ≥ T_lift で origin + lift·ẑ で静止)。</p>
-<p>`<code style="color:#22d3bf">kind=&quot;bang&quot;</code><code style="color:#22d3bf">: 加速 a = 4·lift/T² を T/2、減速 −a を T/2(速度三角形)。</code><code style="color:#22d3bf">kind=&quot;trap&quot;</code>`: 加速・等速・減速を T/3 ずつ</p>
-<p>(速度台形、a = 9·lift/(2T²))。玉が昇るには減速の加速度が g を超える必要がある(:func:<code style="color:#22d3bf">swing_up_apex</code> が閉形式で答える)。</p>
-<p>既定 lift = 0.265 m、T = 0.15 s(a = 47 m/s² ≈ 4.8 g、手元の最高速 3.5 m/s)で玉の頂点は大皿の縁の 4.9 cm 上</p>
-<p>(ひもの有効長 0.42 m、大皿の縁は手元の 35 mm 上: :func:<code style="color:#22d3bf">swing_up_apex</code>)。</p>
-<p>`<code style="color:#22d3bf">dodge</code><code style="color:#22d3bf"> (3,)(水平): 減速に入って玉が離れた後(bang: T/2 → T、trap: 2T/3 → T)に手元を横へ </code><code style="color:#22d3bf">dodge</code>` だけ逃がす</p>
-<p>(S 字の bang-bang)。玉は皿胴の糸穴の真下から真っ直ぐ昇るので、逃がさないと皿胴・小皿を突き抜ける(物理は玉とけん玉の衝突を</p>
-<p>解かない —— :func:<code style="color:#22d3bf">kendamaworld.kendama_clearance</code> で数える)。逃がした分は :func:<code style="color:#22d3bf">catch_plan_ballistic</code> の `<code style="color:#22d3bf">clearance</code>` が</p>
-<p>玉が大皿の縁より上に出てから戻す。</p>
+<p>手元(皿胴の中心。ひもの支点と大皿はそこから kp の offset だけずれて一緒に動く)の開ループ軌道: <code style="color:#22d3bf">origin</code> から真上へ <code style="color:#22d3bf">lift</code> だけ <code style="color:#22d3bf">T_lift</code> 秒で持ち上げ、以後静止。返り値は t → (3,) の関数(t ≤ 0 で origin、t ≥ T_lift で origin + lift·ẑ で静止)。</p>
+<p><code style="color:#22d3bf">kind=&quot;bang&quot;</code>: 加速 a = 4·lift/T² を T/2、減速 −a を T/2(速度三角形)。<code style="color:#22d3bf">kind=&quot;trap&quot;</code>: 加速・等速・減速を T/3 ずつ(速度台形、a = 9·lift/(2T²))。玉が昇るには減速の加速度が g を超える必要がある(<code style="color:#22d3bf">swing_up_apex</code> が閉形式で答える)。既定 lift = 0.265 m、T = 0.15 s(a = 47 m/s² ≈ 4.8 g、手元の最高速 3.5 m/s)で玉の頂点は大皿の縁の 4.9 cm 上(ひもの有効長 0.42 m、大皿の縁は手元の 35 mm 上: <code style="color:#22d3bf">swing_up_apex</code>)。</p>
+<p><code style="color:#22d3bf">dodge</code> (3,)(水平): 減速に入って玉が離れた後(bang: T/2 → T、trap: 2T/3 → T)に手元を横へ <code style="color:#22d3bf">dodge</code> だけ逃がす(S 字の bang-bang)。玉は皿胴の糸穴の真下から真っ直ぐ昇るので、逃がさないと皿胴・小皿を突き抜ける(物理は玉とけん玉の衝突を解かない —— <code style="color:#22d3bf">kendamaworld.kendama_clearance</code> で数える)。逃がした分は <code style="color:#22d3bf">catch_plan_ballistic</code> の <code style="color:#22d3bf">clearance</code> が玉が大皿の縁より上に出てから戻す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

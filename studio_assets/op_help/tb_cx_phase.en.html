@@ -12,15 +12,10 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_phase.inputs.jpg">tb_cx_phase: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Wrapped phase of `<code style="color:#22d3bf">cx</code><code style="color:#22d3bf"> -&gt; real </code><code style="color:#22d3bf">(H, W)</code>` float64.</p>
-<p>`<code style="color:#22d3bf">display=True</code><code style="color:#22d3bf"> (default) maps the wrapped phase </code><code style="color:#22d3bf">angle(cx)</code>` in</p>
-<p>`<code style="color:#22d3bf">(-pi, pi]</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">[0, 1]</code>` for viewing, with <b>0.5 at zero phase</b></p>
-<p>(`<code style="color:#22d3bf">(angle + pi) / (2*pi)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">-pi -&gt; 0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">0 -&gt; 0.5</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">+pi -&gt; 1</code>`).</p>
-<p>`<code style="color:#22d3bf">display=False</code><code style="color:#22d3bf"> returns the **raw wrapped radians** in </code><code style="color:#22d3bf">(-pi, pi]</code>` — the</p>
-<p>quantity :func:<code style="color:#22d3bf">cx_from_mag_phase</code> and :func:<code style="color:#22d3bf">phase_unwrap</code> consume. Note the</p>
-<p>default output is *wrapped* and *display-scaled*; :func:<code style="color:#22d3bf">phase_unwrap</code> returns</p>
-<p>raw, continuous, un-scaled radians instead.</p>
-<p>Typed bridge of the 2d op `<code style="color:#22d3bf">cx_phase</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>Wrapped phase of <code style="color:#22d3bf">cx</code> -&gt; real <code style="color:#22d3bf">(H, W)</code> float64.</p>
+<p><code style="color:#22d3bf">display=True</code> (default) maps the wrapped phase <code style="color:#22d3bf">angle(cx)</code> in <code style="color:#22d3bf">(-pi, pi]</code> to <code style="color:#22d3bf">[0, 1]</code> for viewing, with <b>0.5 at zero phase</b> (<code style="color:#22d3bf">(angle + pi) / (2*pi)</code>: <code style="color:#22d3bf">-pi -&gt; 0</code>, <code style="color:#22d3bf">0 -&gt; 0.5</code>, <code style="color:#22d3bf">+pi -&gt; 1</code>). <code style="color:#22d3bf">display=False</code> returns the <b>raw wrapped radians</b> in <code style="color:#22d3bf">(-pi, pi]</code> — the</p>
+<p>quantity <code style="color:#22d3bf">cx_from_mag_phase</code> and <code style="color:#22d3bf">phase_unwrap</code> consume. Note the default output is *wrapped* and *display-scaled*; <code style="color:#22d3bf">phase_unwrap</code> returns raw, continuous, un-scaled radians instead.</p>
+<p>Typed bridge of the 2d op <code style="color:#22d3bf">cx_phase</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -5,22 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>梯度矢量流（Xu–Prince 1998）：把边缘图 f 的梯度平滑地扩散到远离边缘处的场 (u, v)（gvf_field）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>E = ∬ μ(u_x² + u_y² + v_x² + v_y²) + |∇f|² |(u, v) − ∇f|² の最小化。Euler 方程式</p>
-<p>μ∇²u − (u − f_x)(f_x² + f_y²) = 0、μ∇²v − (v − f_y)(f_x² + f_y²) = 0(線形)。</p>
-<p>`<code style="color:#22d3bf">method=&quot;iterate&quot;</code>` = 論文の時間発展 u ← u + Δt(μ∇²u − b(u − f_x))、b = |∇f|²(陽的、Δt ≤ 1/(4μ + max b))。</p>
-<p>`<code style="color:#22d3bf">method=&quot;direct&quot;</code>` = 同じ離散方程式 (μL − diag b) u = −b f_x を疎行列で直接解く(定常解そのもの)。</p>
-<p>辺の地図 f は既定で |∇(G_σ * I)| を最大 1 に正規化したもの(`<code style="color:#22d3bf">edge_map</code>` で直接与えてもよい)。境界は Neumann。</p>
-<p>u = 列(x)方向、v = 行(y)方向の成分。</p>
-<p>返り値: `<code style="color:#22d3bf">u</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">v</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">edge_map</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fx</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">fy</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">residual_max</code><code style="color:#22d3bf">(Euler 方程式の残差の最大)、</code><code style="color:#22d3bf">residual_rel</code>`</p>
-<p>(残差 / max(b |∇f|))、`<code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">method</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mu</code>`。f が平坦なら場は 0(残差 0)。</p>
+<p>E = ∬ μ(u_x² + u_y² + v_x² + v_y²) + |∇f|² |(u, v) − ∇f|² の最小化。Euler 方程式 μ∇²u − (u − f_x)(f_x² + f_y²) = 0、μ∇²v − (v − f_y)(f_x² + f_y²) = 0(線形)。<code style="color:#22d3bf">method=&quot;iterate&quot;</code> = 論文の時間発展 u ← u + Δt(μ∇²u − b(u − f_x))、b = |∇f|²(陽的、Δt ≤ 1/(4μ + max b))。<code style="color:#22d3bf">method=&quot;direct&quot;</code> = 同じ離散方程式 (μL − diag b) u = −b f_x を疎行列で直接解く(定常解そのもの)。辺の地図 f は既定で |∇(G_σ * I)| を最大 1 に正規化したもの(<code style="color:#22d3bf">edge_map</code> で直接与えてもよい)。境界は Neumann。u = 列(x)方向、v = 行(y)方向の成分。</p>
+<p>返り値: <code style="color:#22d3bf">u</code> / <code style="color:#22d3bf">v</code>、<code style="color:#22d3bf">edge_map</code>、<code style="color:#22d3bf">fx</code> / <code style="color:#22d3bf">fy</code>、<code style="color:#22d3bf">residual_max</code>(Euler 方程式の残差の最大)、<code style="color:#22d3bf">residual_rel</code> (残差 / max(b |∇f|))、<code style="color:#22d3bf">n_iter</code>、<code style="color:#22d3bf">method</code>、<code style="color:#22d3bf">mu</code>。f が平坦なら場は 0(残差 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 变分、主动轮廓与水平集 —— 哪种轮廓停在哪里、保证什么</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

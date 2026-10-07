@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_sobel3x3(image, *, border, constant_value=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import vxcore; vxcore.vx_sobel3x3(image, *, border, constant_value=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsvx.get(&quot;vx_sobel3x3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Sobel 3×3(3.46 節): G_x = [[−1,0,1],[−2,0,2],[−1,0,1]]、G_y = [[−1,−2,−1],[0,0,0],[1,2,1]] (REQ-0415)を相関として当てる。</p>
-<p>*image*: U8。*border*(必須): `<code style="color:#22d3bf">&quot;replicate&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;constant&quot;</code><code style="color:#22d3bf">(*constant_value* で埋める)/ </code><code style="color:#22d3bf">&quot;undefined&quot;</code>`(端 1 画素は</p>
-<p>規格上未定義 —— 0 を入れ、`<code style="color:#22d3bf">valid</code>` の外として返す)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;gx&quot;: S16, &quot;gy&quot;: S16, &quot;valid&quot;: (y0, y1, x0, x1)}</code>`(U8 の 3×3 Sobel は |値| ≤ 1020 なので S16 で飽和しない)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 2-D の U8 でない / border が一覧に無い / constant_value が 0〜255 の外。</p>
+<p>*image*: U8。*border*(必須): <code style="color:#22d3bf">&quot;replicate&quot;</code> / <code style="color:#22d3bf">&quot;constant&quot;</code>(*constant_value* で埋める)/ <code style="color:#22d3bf">&quot;undefined&quot;</code>(端 1 画素は規格上未定義 —— 0 を入れ、<code style="color:#22d3bf">valid</code> の外として返す)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;gx&quot;: S16, &quot;gy&quot;: S16, &quot;valid&quot;: (y0, y1, x0, x1)}</code>(U8 の 3×3 Sobel は |値| ≤ 1020 なので S16 で飽和しない)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D の U8 でない / border が一覧に無い / constant_value が 0〜255 の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

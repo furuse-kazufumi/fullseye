@@ -6,8 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Sub-voxel refinement of the translation (plus isotropic scale / intensity gain) by Levenberg-Marquardt.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>粗いマッチ位置 init_pos(テンプレ中心の scene 内座標 [z,y,x])を出発点に、</p>
-<p>forward-additive Lucas-Kanade を減衰付き Gauss-Newton(LM)で解き SSD</p>
+<p>粗いマッチ位置 init_pos(テンプレ中心の scene 内座標 [z,y,x])を出発点に、forward-additive Lucas-Kanade を減衰付き Gauss-Newton(LM)で解き SSD</p>
 <p>E(p) = Σ_x [ I(W(x;p)) - g·T(x) ]²</p>
 <p>を最小化する。整数 NCC / Fourier-Mellin / Hough の粗推定を連続座標へ収束させる後段。</p>
 <p>ワープ        W(x;p) = t + s·(x - c_T)   (c_T=テンプレ中心, t=並進, s=等方スケール)</p>

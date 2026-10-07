@@ -3,24 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_linear(x, y, xq, out_of_range=&#x27;raise&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.interp_linear(x, y, xq, out_of_range=&#x27;raise&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;interp_linear&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Piecewise-linear interpolation of `<code style="color:#22d3bf">(x, y)</code>` samples at query *xq*.</p>
-<p>*x* must be strictly increasing (fail-closed: an unsorted or duplicated</p>
-<p>grid raises rather than being silently reordered). *xq* is a scalar or a</p>
-<p>1-D array; a scalar query returns a Python float, an array returns float64.</p>
-<p><b>Out-of-range is an explicit choice</b>, never silent: `<code style="color:#22d3bf">&#x27;raise&#x27;</code>` (default)</p>
-<p>refuses any query outside `<code style="color:#22d3bf">[x[0], x[-1]]</code>` — a calibration table queried</p>
-<p>beyond its calibrated range is a wrong answer waiting to happen — while</p>
-<p>`<code style="color:#22d3bf">&#x27;clamp&#x27;</code>` holds the boundary values (the honest flat extension; there is</p>
-<p>deliberately no silent linear extrapolation mode).</p>
+<p>Piecewise-linear interpolation of <code style="color:#22d3bf">(x, y)</code> samples at query *xq*.</p>
+<p>*x* must be strictly increasing (fail-closed: an unsorted or duplicated grid raises rather than being silently reordered). *xq* is a scalar or a 1-D array; a scalar query returns a Python float, an array returns float64.</p>
+<p><b>Out-of-range is an explicit choice</b>, never silent: <code style="color:#22d3bf">&#x27;raise&#x27;</code> (default) refuses any query outside <code style="color:#22d3bf">[x[0], x[-1]]</code> — a calibration table queried beyond its calibrated range is a wrong answer waiting to happen — while <code style="color:#22d3bf">&#x27;clamp&#x27;</code> holds the boundary values (the honest flat extension; there is deliberately no silent linear extrapolation mode).</p>
 <p>Exact on the nodes and exact for data that is genuinely piecewise linear.</p>
-<p>HALCON: `<code style="color:#22d3bf">get_y_value_funct_1d</code>` interpolates function pairs the same way</p>
-<p>(see :mod:<code style="color:#22d3bf">funct1d</code>, which works HALCON&#x27;s index-grid convention; this op</p>
-<p>takes an arbitrary strictly-increasing x grid).</p>
+<p>HALCON: <code style="color:#22d3bf">get_y_value_funct_1d</code> interpolates function pairs the same way (see <code style="color:#22d3bf">funct1d</code>, which works HALCON&#x27;s index-grid convention; this op takes an arbitrary strictly-increasing x grid).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

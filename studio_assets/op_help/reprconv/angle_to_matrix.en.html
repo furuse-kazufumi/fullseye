@@ -3,15 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">angle</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_to_matrix(angle)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.angle_to_matrix(angle)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;angle_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Angle <b>[deg]</b> → the rotation `<code style="color:#22d3bf">matrix (3,3)</code><code style="color:#22d3bf"> about the z-axis. The exit from </code><code style="color:#22d3bf">angle</code>`.</p>
+<p>Angle <b>[deg]</b> → the rotation <code style="color:#22d3bf">matrix (3,3)</code> about the z-axis. The exit from <code style="color:#22d3bf">angle</code>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">angle_to_matrix(90)</code>` は軸1(y)を軸2(x)へ送り、軸2(x)を <b>−軸1</b>(−y)へ</p>
-<p>送る(`<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>`、実測)。</p>
-<p>2-D の :func:<code style="color:#22d3bf">rot_scale_to_matrix</code> と同じ `<code style="color:#22d3bf">[[c,-s],[s,c]]</code>` の向き</p>
-<p>(軸 0 → 軸 1)を軸 (1, 2) に置いたもので、:func:<code style="color:#22d3bf">matrix_to_angle</code> の</p>
-<p>`<code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code>` もこの向きで往復する。<b>度</b>であることと</p>
-<p><b>どちらの軸へ回るか</b>が、この段落の全内容である。ラジアンを渡すと</p>
-<p>例外は出ず、ただ 57.3 分の 1 だけ回った行列が返る。</p>
+<p><code style="color:#22d3bf">angle_to_matrix(90)</code> は軸1(y)を軸2(x)へ送り、軸2(x)を <b>−軸1</b>(−y)へ送る(<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code>、<code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>、実測)。2-D の <code style="color:#22d3bf">rot_scale_to_matrix</code> と同じ <code style="color:#22d3bf">[[c,-s],[s,c]]</code> の向き(軸 0 → 軸 1)を軸 (1, 2) に置いたもので、<code style="color:#22d3bf">matrix_to_angle</code> の <code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> もこの向きで往復する。<b>度</b>であることと <b>どちらの軸へ回るか</b>が、この段落の全内容である。ラジアンを渡すと例外は出ず、ただ 57.3 分の 1 だけ回った行列が返る。</p>
 <p>Args:</p>
 <p>angle: 度。</p>
 <p>Returns:</p>

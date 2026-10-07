@@ -3,25 +3,19 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">angle</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_to_matrix(angle)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.angle_to_matrix(angle)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;angle_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>角度 <b>[度]</b> → 繞 z 軸的旋轉矩陣 `<code style="color:#22d3bf">matrix (3,3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">angle</code>` 的出口。</p>
+<p>角度 <b>[度]</b> → 繞 z 軸的旋轉矩陣 <code style="color:#22d3bf">matrix (3,3)</code>。<code style="color:#22d3bf">angle</code> 的出口。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">angle_to_matrix(90)</code>` は軸1(y)を軸2(x)へ送り、軸2(x)を <b>−軸1</b>(−y)へ</p>
-<p>送る(`<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>`、実測)。</p>
-<p>2-D の :func:<code style="color:#22d3bf">rot_scale_to_matrix</code> と同じ `<code style="color:#22d3bf">[[c,-s],[s,c]]</code>` の向き</p>
-<p>(軸 0 → 軸 1)を軸 (1, 2) に置いたもので、:func:<code style="color:#22d3bf">matrix_to_angle</code> の</p>
-<p>`<code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code>` もこの向きで往復する。<b>度</b>であることと</p>
-<p><b>どちらの軸へ回るか</b>が、この段落の全内容である。ラジアンを渡すと</p>
-<p>例外は出ず、ただ 57.3 分の 1 だけ回った行列が返る。</p>
+<p><code style="color:#22d3bf">angle_to_matrix(90)</code> は軸1(y)を軸2(x)へ送り、軸2(x)を <b>−軸1</b>(−y)へ送る(<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code>、<code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>、実測)。2-D の <code style="color:#22d3bf">rot_scale_to_matrix</code> と同じ <code style="color:#22d3bf">[[c,-s],[s,c]]</code> の向き(軸 0 → 軸 1)を軸 (1, 2) に置いたもので、<code style="color:#22d3bf">matrix_to_angle</code> の <code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> もこの向きで往復する。<b>度</b>であることと <b>どちらの軸へ回るか</b>が、この段落の全内容である。ラジアンを渡すと例外は出ず、ただ 57.3 分の 1 だけ回った行列が返る。</p>
 <p>Args:</p>
 <p>angle: 度。</p>
 <p>Returns:</p>
 <p>(3, 3) float64、行列式 1 の直交行列。</p>
 <p>Raises:</p>
 <p>ValueError: スカラでない / 非有限。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">matrix</code> 作為輸入)</h3>

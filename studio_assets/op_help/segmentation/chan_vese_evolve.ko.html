@@ -6,27 +6,13 @@
 <p>Chan–Vese 2001의 2상 에너지를 최소화한다(기본은 볼록 완화의 교대 최소화, 레벨셋 경사 하강도 선택 가능)(chan_vese_evolve).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>2 つの方法:</p>
-<p>`<code style="color:#22d3bf">method=&quot;convex&quot;</code>`(既定)= c の更新(内外の平均 = 最適)と、c を固定した分割の更新の交互最小化。分割の更新は</p>
-<p>Chan–Esedoglu–Nikolova 2006 の凸緩和 min_(u∈[0,1]) μ TV(u) + Σ (ν + λ1 (I − c1)² − λ2 (I − c2)²) u を</p>
-<p>Chambolle–Pock で `<code style="color:#22d3bf">n_inner</code>` 回解いて 1/2 で 2 値化する(TV は異方的な前進差分 = 2 値なら 4 近傍の割れ目の数 =</p>
-<p>`<code style="color:#22d3bf">chan_vese_energy</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">perimeter_sharp</code>`。離散の余面積公式で、緩和の最小解をどの閾値で切っても 2 値の最小解)。</p>
-<p>鋭いエネルギー(`<code style="color:#22d3bf">energy</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">chan_vese_energy</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">energy_sharp</code>`)は交互最小化で単調非増加 —— 内側の解法の誤差で</p>
-<p>増えそうなら更新を捨てて止める(`<code style="color:#22d3bf">n_guard</code>`、0 のはず)。</p>
-<p>`<code style="color:#22d3bf">method=&quot;level_set&quot;</code><code style="color:#22d3bf"> = 滑らかなエネルギー(</code><code style="color:#22d3bf">chan_vese_energy</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">energy</code>`)を <b>離散エネルギーの厳密な勾配</b> で降下する。</p>
-<p>勾配 = μ(δ_ε&#x27;(φ) |Dφ|_η + Dᵀ(δ_ε(φ) Dφ / |Dφ|_η)) − δ_ε(φ)(ν + λ1 (I − c1)² − λ2 (I − c2)²)(D = 前進差分、</p>
-<p>Dᵀ = その随伴。連続の極限で −δ_ε κ μ の項になり論文の式 (9) の右辺の符号反転と一致)。c1, c2 は φ ごとの最適値なので</p>
-<p>包絡線定理で勾配に入らない。刻みは `<code style="color:#22d3bf">dt</code>` から始め、Armijo 条件 E_new ≤ E − 10⁻⁴ dt |∇E|² を満たすまで半分にする</p>
-<p>(満たしたら次の反復は 1.1 倍、上限 dt)。よってエネルギーは単調非増加(`<code style="color:#22d3bf">n_increase</code>` は 0 のはず、後退の回数は</p>
-<p>`<code style="color:#22d3bf">n_rejected</code>`)。<b>実測の限界</b>: 厳密な勾配は界面を動かすより |φ| を膨らませて H_ε を鋭くする向きにも下がるので、</p>
-<p>遠い画素(δ_ε が小さい)は事実上動かず局所解で止まる(楕円 + 雑音 σ = 0.2 で 300 反復後も誤り約 800 画素、convex は</p>
-<p>数十画素)。論文が再初期化を「任意」として載せている理由の 1 つ。`<code style="color:#22d3bf">init</code>` = bool のマスク(内側)か φ(内側 φ &lt; 0)。</p>
-<p>返り値: `<code style="color:#22d3bf">mask</code><code style="color:#22d3bf">(φ &lt; 0)、</code><code style="color:#22d3bf">phi</code><code style="color:#22d3bf">(convex は 2 値の符号付き距離)、</code><code style="color:#22d3bf">energy</code><code style="color:#22d3bf">(先頭 = 初期)、</code><code style="color:#22d3bf">c1</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">c2</code>`、</p>
-<p>`<code style="color:#22d3bf">n_rejected</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_guard</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_increase</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">duality_gap</code>`(convex の内側の解法の主双対ギャップ、外側の反復ごと)、</p>
-<p>`<code style="color:#22d3bf">history</code><code style="color:#22d3bf">(record_every ごとのマスク)、</code><code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">converged</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">method</code>`。</p>
+<p><code style="color:#22d3bf">method=&quot;convex&quot;</code>(既定)= c の更新(内外の平均 = 最適)と、c を固定した分割の更新の交互最小化。分割の更新は Chan–Esedoglu–Nikolova 2006 の凸緩和 min_(u∈[0,1]) μ TV(u) + Σ (ν + λ1 (I − c1)² − λ2 (I − c2)²) u を Chambolle–Pock で <code style="color:#22d3bf">n_inner</code> 回解いて 1/2 で 2 値化する(TV は異方的な前進差分 = 2 値なら 4 近傍の割れ目の数 = <code style="color:#22d3bf">chan_vese_energy</code> の <code style="color:#22d3bf">perimeter_sharp</code>。離散の余面積公式で、緩和の最小解をどの閾値で切っても 2 値の最小解)。鋭いエネルギー(<code style="color:#22d3bf">energy</code> = <code style="color:#22d3bf">chan_vese_energy</code> の <code style="color:#22d3bf">energy_sharp</code>)は交互最小化で単調非増加 —— 内側の解法の誤差で増えそうなら更新を捨てて止める(<code style="color:#22d3bf">n_guard</code>、0 のはず)。<code style="color:#22d3bf">method=&quot;level_set&quot;</code> = 滑らかなエネルギー(<code style="color:#22d3bf">chan_vese_energy</code> の <code style="color:#22d3bf">energy</code>)を <b>離散エネルギーの厳密な勾配</b> で降下する。</p>
+<p>勾配 = μ(δ_ε&#x27;(φ) |Dφ|_η + Dᵀ(δ_ε(φ) Dφ / |Dφ|_η)) − δ_ε(φ)(ν + λ1 (I − c1)² − λ2 (I − c2)²)(D = 前進差分、Dᵀ = その随伴。連続の極限で −δ_ε κ μ の項になり論文の式 (9) の右辺の符号反転と一致)。c1, c2 は φ ごとの最適値なので包絡線定理で勾配に入らない。刻みは <code style="color:#22d3bf">dt</code> から始め、Armijo 条件 E_new ≤ E − 10⁻⁴ dt |∇E|² を満たすまで半分にする(満たしたら次の反復は 1.1 倍、上限 dt)。よってエネルギーは単調非増加(<code style="color:#22d3bf">n_increase</code> は 0 のはず、後退の回数は <code style="color:#22d3bf">n_rejected</code>)。<b>実測の限界</b>: 厳密な勾配は界面を動かすより |φ| を膨らませて H_ε を鋭くする向きにも下がるので、遠い画素(δ_ε が小さい)は事実上動かず局所解で止まる(楕円 + 雑音 σ = 0.2 で 300 反復後も誤り約 800 画素、convex は数十画素)。論文が再初期化を「任意」として載せている理由の 1 つ。<code style="color:#22d3bf">init</code> = bool のマスク(内側)か φ(内側 φ &lt; 0)。</p>
+<p>返り値: <code style="color:#22d3bf">mask</code>(φ &lt; 0)、<code style="color:#22d3bf">phi</code>(convex は 2 値の符号付き距離)、<code style="color:#22d3bf">energy</code>(先頭 = 初期)、<code style="color:#22d3bf">c1</code> / <code style="color:#22d3bf">c2</code>、<code style="color:#22d3bf">n_rejected</code>、<code style="color:#22d3bf">n_guard</code>、<code style="color:#22d3bf">n_increase</code>、<code style="color:#22d3bf">duality_gap</code>(convex の内側の解法の主双対ギャップ、外側の反復ごと)、<code style="color:#22d3bf">history</code>(record_every ごとのマスク)、<code style="color:#22d3bf">n_iter</code>、<code style="color:#22d3bf">converged</code>、<code style="color:#22d3bf">method</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 変分・動的輪郭とレベルセット — どの輪郭がどこで止まり、何を保証するか</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:active_contours_and_level_sets">active_contours_and_level_sets</a> — 변분·동적 윤곽과 레벨셋 — 어떤 윤곽이 어디서 멈추고 무엇을 보장하는가</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

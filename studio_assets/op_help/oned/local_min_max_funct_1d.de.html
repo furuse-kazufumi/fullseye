@@ -4,17 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.local_min_max_funct_1d(y)</code> (die Implementierung direkt: <code style="color:#22d3bf">import funct1d; funct1d.local_min_max_funct_1d(y)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;local_min_max_funct_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Indices of strict local maxima / minima (HALCON `<code style="color:#22d3bf">local_min_max_funct_1d</code>`).</p>
-<p>`<code style="color:#22d3bf">{&quot;max&quot;: indices, &quot;min&quot;: indices}</code><code style="color:#22d3bf"> where index </code><code style="color:#22d3bf">i</code>` is a maximum iff</p>
-<p>`<code style="color:#22d3bf">y[i] &gt; y[i-1] and y[i] &gt; y[i+1]</code>` (mirrored for minima). Inputs shorter</p>
-<p>than 3 samples have no interior point and return two empty arrays</p>
-<p>(degenerate case, not an error).</p>
-<p>Honest limitation: inequalities are <b>strict</b> — plateau extrema (equal</p>
-<p>neighbouring samples at the top/bottom) are not reported, and the boundary</p>
-<p>samples `<code style="color:#22d3bf">0</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">n-1</code>` are never extrema.</p>
-<p>:param y: 1-D function (may be empty).</p>
-<p>:returns: dict `<code style="color:#22d3bf">{&quot;max&quot;: int array, &quot;min&quot;: int array}</code>`.</p>
-<p>:raises ValueError: non-1-D / NaN / Inf input.</p>
+<p>Indices of strict local maxima / minima (HALCON <code style="color:#22d3bf">local_min_max_funct_1d</code>).</p>
+<p><code style="color:#22d3bf">{&quot;max&quot;: indices, &quot;min&quot;: indices}</code> where index <code style="color:#22d3bf">i</code> is a maximum iff <code style="color:#22d3bf">y[i] &gt; y[i-1] and y[i] &gt; y[i+1]</code> (mirrored for minima). Inputs shorter than 3 samples have no interior point and return two empty arrays (degenerate case, not an error).</p>
+<p>Honest limitation: inequalities are <b>strict</b> — plateau extrema (equal neighbouring samples at the top/bottom) are not reported, and the boundary samples <code style="color:#22d3bf">0</code> and <code style="color:#22d3bf">n-1</code> are never extrema.</p>
+<p>:param y: 1-D function (may be empty). :returns: dict <code style="color:#22d3bf">{&quot;max&quot;: int array, &quot;min&quot;: int array}</code>. :raises ValueError: non-1-D / NaN / Inf input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

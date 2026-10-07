@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>非圧縮 neo-Hookean の円柱を摩擦なしで一軸に圧縮する厳密解(連続体の教科書の結果、模型と独立)。</p>
-<p>伸び λ = 1 − d、横は λ^{−1/2}(体積一定)。公称応力 P = μ(λ⁻² − λ)(圧縮を正)、Cauchy 応力 σ = μ(λ⁻¹ − λ²)、力 F = P·area、</p>
-<p>線形の力 3μ·d·area(E = 3μ)、`<code style="color:#22d3bf">kappa</code><code style="color:#22d3bf"> = F/線形、</code><code style="color:#22d3bf">radius_ratio</code>` = λ^{−1/2}。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: d が [0, 1) の外、μ・area ≤ 0。</p>
+<p>伸び λ = 1 − d、横は λ^{−1/2}(体積一定)。公称応力 P = μ(λ⁻² − λ)(圧縮を正)、Cauchy 応力 σ = μ(λ⁻¹ − λ²)、力 F = P·area、線形の力 3μ·d·area(E = 3μ)、<code style="color:#22d3bf">kappa</code> = F/線形、<code style="color:#22d3bf">radius_ratio</code> = λ^{−1/2}。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、μ・area ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

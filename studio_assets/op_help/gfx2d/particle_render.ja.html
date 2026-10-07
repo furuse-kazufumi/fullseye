@@ -3,18 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">rgba</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_render(state, height, width, mode=&#x27;add&#x27;, fade=True)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.particle_render(state, height, width, mode=&#x27;add&#x27;, fade=True)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>粒子の状態を `<code style="color:#22d3bf">rgba</code>` 画像へ splat する。</p>
+<p>粒子の状態を <code style="color:#22d3bf">rgba</code> 画像へ splat する。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Each particle is a radially symmetric `<code style="color:#22d3bf">(1 - (r/R)^2)^2</code>` kernel of radius</p>
-<p>`<code style="color:#22d3bf">size</code><code style="color:#22d3bf">, weighted by its alpha and, when </code><code style="color:#22d3bf">fade</code>` is set, by the remaining</p>
-<p>fraction of its life `<code style="color:#22d3bf">(1 - age/life)</code>`. Particles past their lifetime</p>
-<p>contribute nothing.</p>
-<p>`<code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">&quot;add&quot;</code>` (premultiplied additive — what a spark does; the</p>
-<p>result is clipped at 1 and the clipped energy is *not* returned) or</p>
-<p>`<code style="color:#22d3bf">&quot;over&quot;</code>` (each particle composited in array order, which is what a soft</p>
-<p>smoke puff does).</p>
-<p>Pure function of the state: no randomness enters here, so two calls on the</p>
-<p>same state produce identical bytes.</p>
+<p>Each particle is a radially symmetric <code style="color:#22d3bf">(1 - (r/R)^2)^2</code> kernel of radius <code style="color:#22d3bf">size</code>, weighted by its alpha and, when <code style="color:#22d3bf">fade</code> is set, by the remaining fraction of its life <code style="color:#22d3bf">(1 - age/life)</code>. Particles past their lifetime contribute nothing.</p>
+<p><code style="color:#22d3bf">mode</code> is <code style="color:#22d3bf">&quot;add&quot;</code> (premultiplied additive — what a spark does; the result is clipped at 1 and the clipped energy is *not* returned) or <code style="color:#22d3bf">&quot;over&quot;</code> (each particle composited in array order, which is what a soft smoke puff does).</p>
+<p>Pure function of the state: no randomness enters here, so two calls on the same state produce identical bytes.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

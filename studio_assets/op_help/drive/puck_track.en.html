@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import puck; puck.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;puck_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>コマ列 → コマごとの候補 → :func:<code style="color:#22d3bf">balltrack.ball_track</code>(等速予測で繋ぐ、`<code style="color:#22d3bf">max_jump_px</code>` 超えは落とす)→ world 座標。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot;,&quot;row&quot; (N,), &quot;xy&quot; (N,2), &quot;found&quot; (K,) bool}</code>`。速いパック(1 コマの移動 &gt; max_jump_px)では</p>
-<p>対応が切れてコマが落ちる —— その破れ方は門で測る。</p>
+<p>コマ列 → コマごとの候補 → <code style="color:#22d3bf">balltrack.ball_track</code>(等速予測で繋ぐ、<code style="color:#22d3bf">max_jump_px</code> 超えは落とす)→ world 座標。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot;,&quot;row&quot; (N,), &quot;xy&quot; (N,2), &quot;found&quot; (K,) bool}</code>。速いパック(1 コマの移動 &gt; max_jump_px)では対応が切れてコマが落ちる —— その破れ方は門で測る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

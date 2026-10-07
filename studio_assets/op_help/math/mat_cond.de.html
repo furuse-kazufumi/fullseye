@@ -3,32 +3,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_cond(a)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.mat_cond(a)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;mat_cond&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Spektrale (2-Norm-)Konditionszahl `<code style="color:#22d3bf">s_max / s_min</code>` — der numerische Warnkanarienvogel der ganzen Linalg-Familie.</p>
+<p>Spektrale (2-Norm-)Konditionszahl <code style="color:#22d3bf">s_max / s_min</code> — der numerische Warnkanarienvogel der ganzen Linalg-Familie.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">cond == 1</code>` for an orthogonal/orthonormal matrix (the best possible);</p>
-<p>`<code style="color:#22d3bf">inf</code>` (returned, not raised — the question &quot;how conditioned is it?&quot; has</p>
-<p>that honest answer) for an exactly singular one. A solve against *A* loses</p>
-<p>roughly `<code style="color:#22d3bf">log10(cond(A))</code>` significant digits (Golub &amp; Van Loan §2.6):</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cond ~ 1e3</code>`  — comfortable, ~13 digits survive.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cond ~ 1e8</code>`  — half the digits are gone; residuals may still look</p>
-<p>small while parameters are off.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">cond &gt; 1e12</code><code style="color:#22d3bf"> — **do not trust** :func:</code>mat_solve` here: at best ~3</p>
-<p>digits remain. Rescale/centre the problem, or switch to</p>
-<p>:func:<code style="color:#22d3bf">mat_lstsq</code> / :func:<code style="color:#22d3bf">mat_pinv</code> with an honest `<code style="color:#22d3bf">rcond</code>`.</p>
-<p>Defined for any rectangular `<code style="color:#22d3bf">(m, n)</code>` matrix (via its singular values).</p>
-<p>HALCON: no direct operator (combine `<code style="color:#22d3bf">norm_matrix</code>` of *A* and of its</p>
-<p>inverse).</p>
+<p><code style="color:#22d3bf">cond == 1</code> for an orthogonal/orthonormal matrix (the best possible); <code style="color:#22d3bf">inf</code> (returned, not raised — the question &quot;how conditioned is it?&quot; has that honest answer) for an exactly singular one. A solve against *A* loses roughly <code style="color:#22d3bf">log10(cond(A))</code> significant digits (Golub &amp; Van Loan §2.6):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cond ~ 1e3</code>  — comfortable, ~13 digits survive.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cond ~ 1e8</code>  — half the digits are gone; residuals may still look small while parameters are off.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cond &gt; 1e12</code> — <b>do not trust</b> <code style="color:#22d3bf">mat_solve</code> here: at best ~3 digits remain. Rescale/centre the problem, or switch to <code style="color:#22d3bf">mat_lstsq</code> / <code style="color:#22d3bf">mat_pinv</code> with an honest <code style="color:#22d3bf">rcond</code>.</p>
+<p>Defined for any rectangular <code style="color:#22d3bf">(m, n)</code> matrix (via its singular values).</p>
+<p>HALCON: no direct operator (combine <code style="color:#22d3bf">norm_matrix</code> of *A* and of its inverse).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">Leitfaden zur Familie math_metrology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

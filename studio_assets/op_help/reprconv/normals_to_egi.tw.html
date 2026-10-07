@@ -3,28 +3,16 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_egi(normals, n_az=36, n_el=18)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.normals_to_egi(normals, n_az=36, n_el=18)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_egi&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>法線 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 擴展高斯像 </code><code style="color:#22d3bf">(n_el, n_az)</code><code style="color:#22d3bf"> 的 </code><code style="color:#22d3bf">image2d</code>`。</p>
+<p>法線 <code style="color:#22d3bf">(N,3)</code> → 擴展高斯像 <code style="color:#22d3bf">(n_el, n_az)</code> 的 <code style="color:#22d3bf">image2d</code>。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12)</p>
-<p>1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では</p>
-<p>1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
-<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、</p>
-<p>既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(`<code style="color:#22d3bf">selftest</code>` が出す)。</p>
-<p>仰角の bin は `<code style="color:#22d3bf">sin(el)</code>` で等分する(等立体角)。度で等分すると極が過剰に</p>
-<p>細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
+<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では 1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
+<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(<code style="color:#22d3bf">selftest</code> が出す)。</p>
+<p>仰角の bin は <code style="color:#22d3bf">sin(el)</code> で等分する(等立体角)。度で等分すると極が過剰に細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
 <p>Args:</p>
 <p>normals: (N, 3)。</p>
 <p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
 <p>n_el: 仰角の bin 数(既定 18)。</p>
-<p>★<b>位置の点群を渡しても例外は出ない</b>。`<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code>` が</p>
-<p>`<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">points</code>` に畳んでいるので、進化器も台帳も両者を区別しない。</p>
-<p>この op は方向しか見ない(長さは捨てる)ので、`<code style="color:#22d3bf">(N,3)</code>` の座標を渡すと</p>
-<p>「原点から各点を見た向き」のヒストグラムが<b>もっともらしく</b>返る。実測</p>
-<p>(2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、</p>
-<p>最大 bin が 200 → 44 に変わるだけで、<b>総和はどちらも 200</b>。</p>
-<p>「総和が点数と合うから正しい」では区別がつかない。</p>
-<p>`<code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code>` にすると、単位長から外れた</p>
-<p>ベクトルを<b>拒否</b>する(下の Raises)。</p>
+<p>★<b>位置の点群を渡しても例外は出ない</b>。<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> が <code style="color:#22d3bf">normals</code> を <code style="color:#22d3bf">points</code> に畳んでいるので、進化器も台帳も両者を区別しない。この op は方向しか見ない(長さは捨てる)ので、<code style="color:#22d3bf">(N,3)</code> の座標を渡すと「原点から各点を見た向き」のヒストグラムが<b>もっともらしく</b>返る。実測(2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、最大 bin が 200 → 44 に変わるだけで、<b>総和はどちらも 200</b>。「総和が点数と合うから正しい」では区別がつかない。<code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> にすると、単位長から外れたベクトルを<b>拒否</b>する(下の Raises)。</p>
 <p>Args:</p>
 <p>normals: (N, 3)。</p>
 <p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
@@ -33,12 +21,12 @@
 <p>(n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。</p>
 <p>Raises:</p>
 <p>ValueError: bin 数が 1 未満 / 上限超 / 入力不正。</p>
-<p>ValueError: `<code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code>` で、長さが 1 から 1e-6 を超えて外れる</p>
+<p>ValueError: <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code> で、長さが 1 から 1e-6 を超えて外れる</p>
 <p>ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>

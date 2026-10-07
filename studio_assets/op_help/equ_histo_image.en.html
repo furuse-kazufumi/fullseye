@@ -11,10 +11,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/equ_histo_image.inputs.jpg">equ_histo_image: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Global histogram equalization of the whole image (tone curve generated from the cumulative distribution function, 256 bins). A classic technique that flattens a tonal distribution skewed toward shadows or highlights to increase apparent contrast. Equivalent to HALCON&#x27;s `<code style="color:#22d3bf">equ_histo_image</code>` (Histogram linearization of images).</p>
+<p>Global histogram equalization of the whole image (tone curve generated from the cumulative distribution function, 256 bins). A classic technique that flattens a tonal distribution skewed toward shadows or highlights to increase apparent contrast. Equivalent to HALCON&#x27;s <code style="color:#22d3bf">equ_histo_image</code> (Histogram linearization of images).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。局所版(ブロックごとに平坦化)が欲しい場合は</p>
-<p>`<code style="color:#22d3bf">equ_histo_image_rect</code>` を使う。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。局所版(ブロックごとに平坦化)が欲しい場合は <code style="color:#22d3bf">equ_histo_image_rect</code> を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

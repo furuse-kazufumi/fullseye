@@ -3,21 +3,19 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_to_position(points)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.points_to_position(points)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>点群 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 重心 </code><code style="color:#22d3bf">(z, y, x)</code>`。<b>不可逆</b>(丢弃了分布)。</p>
+<p>点群 <code style="color:#22d3bf">(N,3)</code> → 重心 <code style="color:#22d3bf">(z, y, x)</code>。<b>不可逆</b>(丢弃了分布)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>捨てた量は測れる: 重心まわりの RMS 距離が「1 点に潰したときに失った広がり」</p>
-<p>そのもので、`<code style="color:#22d3bf">selftest</code>` はこれを数字で出す。N = 1 のときだけ</p>
-<p>:func:<code style="color:#22d3bf">position_to_points</code> との往復が bit 一致する。</p>
+<p>捨てた量は測れる: 重心まわりの RMS 距離が「1 点に潰したときに失った広がり」そのもので、<code style="color:#22d3bf">selftest</code> はこれを数字で出す。N = 1 のときだけ <code style="color:#22d3bf">position_to_points</code> との往復が bit 一致する。</p>
 <p>Args:</p>
 <p>points: (N, 3) の (z, y, x)。</p>
 <p>Returns:</p>
 <p>3-tuple の float (z, y, x)。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正 / 非有限。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>

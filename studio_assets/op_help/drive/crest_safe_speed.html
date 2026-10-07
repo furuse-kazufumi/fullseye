@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crest_safe_speed(sight, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665, crawl: &#x27;float&#x27; = 2.7777777777777777) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivepass; drivepass.crest_safe_speed(sight, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665, crawl: &#x27;float&#x27; = 2.7777777777777777) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;crest_safe_speed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>見えている距離の中で止まれる上限の速さ(停止距離の逆関数、閉形式、配列可)。場面 S065。</p>
-<p>v ρ + v²/(2A) = S、A = brake + g sin θ + c_rr g cos θ(θ &gt; 0 = 上り。`<code style="color:#22d3bf">drivelong.stopping_distance_grade</code>` の空気抵抗なしの式)</p>
-<p>を解いた v = 2S/(ρ + √(ρ² + 2S/A))。A ≤ 0 は ValueError。返り値: `<code style="color:#22d3bf">speed</code><code style="color:#22d3bf"> [m/s]、</code><code style="color:#22d3bf">speed_kmh</code>`、</p>
-<p>`<code style="color:#22d3bf">crawl_required</code><code style="color:#22d3bf">(42 条 2 号は頂上付近では速さによらず徐行 = True)、</code><code style="color:#22d3bf">crawl_sufficient</code><code style="color:#22d3bf">(徐行 </code><code style="color:#22d3bf">crawl</code>`(<b>仮定</b>)で</p>
-<p>視距の中に止まれるか)。</p>
+<p>v ρ + v²/(2A) = S、A = brake + g sin θ + c_rr g cos θ(θ &gt; 0 = 上り。<code style="color:#22d3bf">drivelong.stopping_distance_grade</code> の空気抵抗なしの式) を解いた v = 2S/(ρ + √(ρ² + 2S/A))。A ≤ 0 は ValueError。返り値: <code style="color:#22d3bf">speed</code> [m/s]、<code style="color:#22d3bf">speed_kmh</code>、<code style="color:#22d3bf">crawl_required</code>(42 条 2 号は頂上付近では速さによらず徐行 = True)、<code style="color:#22d3bf">crawl_sufficient</code>(徐行 <code style="color:#22d3bf">crawl</code>(<b>仮定</b>)で視距の中に止まれるか)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -3,13 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sample_funct_1d(y, step=2)</code> (to call the implementation directly, <code style="color:#22d3bf">import funct1d; funct1d.sample_funct_1d(y, step=2)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;sample_funct_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Every *step*-th sample (HALCON `<code style="color:#22d3bf">sample_funct_1d</code>`).</p>
-<p>Keeps samples `<code style="color:#22d3bf">0, step, 2*step, ...</code>` — decimation without an</p>
-<p>anti-aliasing filter (smooth first if the signal has content above the new</p>
-<p>Nyquist rate).</p>
-<p>:param y: 1-D function (may be empty).</p>
-<p>:param step: truncated to int, must be &gt;= 1 (`<code style="color:#22d3bf">step=1</code>` copies).</p>
-<p>:raises ValueError: non-1-D / NaN / Inf input, or `<code style="color:#22d3bf">step &lt; 1</code>`.</p>
+<p>Every *step*-th sample (HALCON <code style="color:#22d3bf">sample_funct_1d</code>).</p>
+<p>Keeps samples <code style="color:#22d3bf">0, step, 2*step, ...</code> — decimation without an anti-aliasing filter (smooth first if the signal has content above the new Nyquist rate).</p>
+<p>:param y: 1-D function (may be empty). :param step: truncated to int, must be &gt;= 1 (<code style="color:#22d3bf">step=1</code> copies). :raises ValueError: non-1-D / NaN / Inf input, or <code style="color:#22d3bf">step &lt; 1</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

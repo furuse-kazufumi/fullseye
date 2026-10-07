@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import polish; polish.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;band_width_profile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>直線の一筆(`<code style="color:#22d3bf">along</code>` の向き)で拭けた帯の幅を、帯に直交する線ごとに副画素で読む: しきい値を最初に越える所と最後に越える所を</p>
-<p>隣の画素との線形補間で求め、その差 × res。返り `<code style="color:#22d3bf">widths</code><code style="color:#22d3bf">(線ごと、読めない線は NaN)、</code><code style="color:#22d3bf">centres</code>`(帯の中心の位置 [m]、</p>
-<p>地図の座標)、`<code style="color:#22d3bf">valid</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">median</code>`。帯が 1 本である前提(複数の帯は外側どうしの幅になる)。</p>
-<p><b>Raises</b> ValueError: 画像の検査、res ≤ 0、along が x / y でない、しきい値が非有限。</p>
+<p>直線の一筆(<code style="color:#22d3bf">along</code> の向き)で拭けた帯の幅を、帯に直交する線ごとに副画素で読む: しきい値を最初に越える所と最後に越える所を隣の画素との線形補間で求め、その差 × res。返り <code style="color:#22d3bf">widths</code>(線ごと、読めない線は NaN)、<code style="color:#22d3bf">centres</code>(帯の中心の位置 [m]、地図の座標)、<code style="color:#22d3bf">valid</code>、<code style="color:#22d3bf">median</code>。帯が 1 本である前提(複数の帯は外側どうしの幅になる)。<b>Raises</b> ValueError: 画像の検査、res ≤ 0、along が x / y でない、しきい値が非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

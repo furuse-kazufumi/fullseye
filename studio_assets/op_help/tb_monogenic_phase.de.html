@@ -8,37 +8,24 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_monogenic_phase.chain.jpg">tb_monogenic_phase: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_monogenic_phase.chain.jpg">tb_monogenic_phase: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_monogenic_phase.inputs.jpg">tb_monogenic_phase: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_monogenic_phase.inputs.jpg">tb_monogenic_phase: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Lokale Phase `<code style="color:#22d3bf">atan2(|R|, f)</code>` eines monogenen Signals. → (H, W).</p>
+<p>Lokale Phase <code style="color:#22d3bf">atan2(|R|, f)</code> eines monogenen Signals. → (H, W).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>In `<code style="color:#22d3bf">[0, pi]</code>` — the monogenic phase is measured against the *magnitude* of</p>
-<p>the Riesz vector, whose sign is carried by the orientation instead, so the</p>
-<p>range is a half turn rather than a full one. That is the standard</p>
-<p>convention (Felsberg &amp; Sommer) and it is stated here because a caller</p>
-<p>arriving from `<code style="color:#22d3bf">complexops.cx_phase</code><code style="color:#22d3bf"> (whose raw range is </code><code style="color:#22d3bf">(-pi, pi]</code>`) will</p>
-<p>otherwise assume a full turn and see a &quot;wrapped&quot; map that is not wrapped.</p>
-<p>`<code style="color:#22d3bf">display=True</code><code style="color:#22d3bf"> maps </code><code style="color:#22d3bf">[0, pi]</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">[0, 1]</code>` for viewing; the default is</p>
-<p>`<code style="color:#22d3bf">False</code><code style="color:#22d3bf"> — the **opposite** of </code><code style="color:#22d3bf">cx_phase</code>`&#x27;s default, deliberately,</p>
-<p>because the consumers of this quantity in this module are numerical, and a</p>
-<p>display scaling that arrives silently in a measurement is a factor of `<code style="color:#22d3bf">pi</code>`</p>
-<p>that nothing announces.</p>
-<p>Phase is the quantity a translation shifts linearly, which is why the whole</p>
-<p>motion half of this module reads it. For an edge, phase 0 means the peak of</p>
-<p>a bright line, `<code style="color:#22d3bf">pi/2</code><code style="color:#22d3bf"> a step edge and </code><code style="color:#22d3bf">pi</code>` the peak of a dark line — the</p>
-<p>local *structure type*, independent of contrast.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the input is not a valid quaternion field, or its</p>
-<p>`<code style="color:#22d3bf">k</code>` component is non-zero; *display* is not a bool.</p>
-<p>Typed bridge of the quat op `<code style="color:#22d3bf">monogenic_phase</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>In <code style="color:#22d3bf">[0, pi]</code> — the monogenic phase is measured against the *magnitude* of the Riesz vector, whose sign is carried by the orientation instead, so the range is a half turn rather than a full one. That is the standard convention (Felsberg &amp; Sommer) and it is stated here because a caller arriving from <code style="color:#22d3bf">complexops.cx_phase</code> (whose raw range is <code style="color:#22d3bf">(-pi, pi]</code>) will otherwise assume a full turn and see a &quot;wrapped&quot; map that is not wrapped.</p>
+<p><code style="color:#22d3bf">display=True</code> maps <code style="color:#22d3bf">[0, pi]</code> to <code style="color:#22d3bf">[0, 1]</code> for viewing; the default is <code style="color:#22d3bf">False</code> — the <b>opposite</b> of <code style="color:#22d3bf">cx_phase</code>&#x27;s default, deliberately, because the consumers of this quantity in this module are numerical, and a display scaling that arrives silently in a measurement is a factor of <code style="color:#22d3bf">pi</code> that nothing announces.</p>
+<p>Phase is the quantity a translation shifts linearly, which is why the whole motion half of this module reads it. For an edge, phase 0 means the peak of a bright line, <code style="color:#22d3bf">pi/2</code> a step edge and <code style="color:#22d3bf">pi</code> the peak of a dark line — the local *structure type*, independent of contrast.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: the input is not a valid quaternion field, or its <code style="color:#22d3bf">k</code> component is non-zero; *display* is not a bool.</p>
+<p>Typed bridge of the quat op <code style="color:#22d3bf">monogenic_phase</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_monogenic 0.50 0.50
-tb_monogenic_phase 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_monogenic%200.50%200.50%0Atb_monogenic_phase%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_monogenic%200.50%200.50%0Atb_monogenic_phase%200.50%200.50">Load &amp; run</a></p>
+tb_monogenic_phase 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_monogenic%200.50%200.50%0Atb_monogenic_phase%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_monogenic%200.50%200.50%0Atb_monogenic_phase%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">monogenic_phase</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>

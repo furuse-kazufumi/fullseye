@@ -5,26 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gewinnt die wahre Photonenrate aus einer totzeitverzerrten Messrate zurück.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The exact inverse of the <b>non-paralysable</b> law of</p>
-<p>:func:<code style="color:#22d3bf">spad_deadtime_apply</code>::</p>
+<p>The exact inverse of the <b>non-paralysable</b> law of <code style="color:#22d3bf">spad_deadtime_apply</code>::</p>
 <p>n = m / (1 - m*tau)</p>
-<p>A round trip `<code style="color:#22d3bf">apply -&gt; correct</code>` is exact to machine precision (measured max</p>
-<p>elementwise relative error 6.0e-16 over 2000 rates spanning 1e3 to 5e7 Hz at</p>
-<p>`<code style="color:#22d3bf">tau = 50 ns</code>`, where the measured rate reaches 71.4% of the 20 MHz</p>
-<p>saturation rate).</p>
-<p><b>There is deliberately no paralysable inverse.</b> `<code style="color:#22d3bf">m = n*exp(-n*tau)</code>` is not</p>
-<p>injective — every measured rate below the maximum `<code style="color:#22d3bf">1/(e*tau)</code>` corresponds to</p>
-<p>*two* true rates, one below and one above `<code style="color:#22d3bf">1/tau</code>` — so returning one of them</p>
-<p>would be a fabrication dressed as a correction. Resolve the branch with an</p>
-<p>independent measurement (e.g. an attenuator step) and invert it yourself.</p>
-<p>*measured_hz* is a 1-D array of measured rates in counts per second;</p>
-<p>*dead_time_ns* the dead time in nanoseconds (default 50, the same</p>
-<p>placeholder :func:<code style="color:#22d3bf">spad_deadtime_apply</code> uses — replace it with the</p>
-<p>datasheet value). Returns the corrected true rates as a float64 1-D array.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *measured_hz*, a</p>
-<p>non-positive *dead_time_ns*, and — instead of returning `<code style="color:#22d3bf">inf</code>` or a negative</p>
-<p>rate — any measured rate at or above the saturation rate `<code style="color:#22d3bf">1/tau</code>`, which no</p>
-<p>non-paralysable detector can ever produce.</p>
+<p>A round trip <code style="color:#22d3bf">apply -&gt; correct</code> is exact to machine precision (measured max elementwise relative error 6.0e-16 over 2000 rates spanning 1e3 to 5e7 Hz at <code style="color:#22d3bf">tau = 50 ns</code>, where the measured rate reaches 71.4% of the 20 MHz saturation rate).</p>
+<p><b>There is deliberately no paralysable inverse.</b> <code style="color:#22d3bf">m = n*exp(-n*tau)</code> is not injective — every measured rate below the maximum <code style="color:#22d3bf">1/(e*tau)</code> corresponds to *two* true rates, one below and one above <code style="color:#22d3bf">1/tau</code> — so returning one of them would be a fabrication dressed as a correction. Resolve the branch with an independent measurement (e.g. an attenuator step) and invert it yourself.</p>
+<p>*measured_hz* is a 1-D array of measured rates in counts per second; *dead_time_ns* the dead time in nanoseconds (default 50, the same</p>
+<p>placeholder <code style="color:#22d3bf">spad_deadtime_apply</code> uses — replace it with the datasheet value). Returns the corrected true rates as a float64 1-D array.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: negative, non-finite or non-1-D *measured_hz*, a non-positive *dead_time_ns*, and — instead of returning <code style="color:#22d3bf">inf</code> or a negative rate — any measured rate at or above the saturation rate <code style="color:#22d3bf">1/tau</code>, which no non-paralysable detector can ever produce.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">Leitfaden zur Familie photon_timeresolved</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

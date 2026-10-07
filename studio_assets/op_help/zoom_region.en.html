@@ -13,9 +13,9 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/zoom_region.inputs.jpg">zoom_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Zooms the region isotropically (same scale on both axes). Scales it about the center by a factor `<code style="color:#22d3bf">s = 0.7+0.6a</code><code style="color:#22d3bf"> (0.7x to 1.3x), fills out-of-bounds areas by reflection, then converts back to a binary region via </code><code style="color:#22d3bf">_rebinarise</code>` with a 0.5 threshold. b is unused.</p>
+<p>Zooms the region isotropically (same scale on both axes). Scales it about the center by a factor <code style="color:#22d3bf">s = 0.7+0.6a</code> (0.7x to 1.3x), fills out-of-bounds areas by reflection, then converts back to a binary region via <code style="color:#22d3bf">_rebinarise</code> with a 0.5 threshold. b is unused.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の `<code style="color:#22d3bf">zoom_region</code><code style="color:#22d3bf">（領域を指定倍率でズームする演算）に相当する近似。縦横独立の倍率を持つ </code><code style="color:#22d3bf">zoom_image_factor</code>` とは異なり単一倍率のみ。</p>
+<p>HALCON の <code style="color:#22d3bf">zoom_region</code>（領域を指定倍率でズームする演算）に相当する近似。縦横独立の倍率を持つ <code style="color:#22d3bf">zoom_image_factor</code> とは異なり単一倍率のみ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

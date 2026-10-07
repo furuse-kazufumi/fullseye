@@ -5,18 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>日本式の信号機を立てる: 柱 + 水平アーム + 灯器(横型 3 灯、yaw の向きへ進んで来る車に表示面が向く)。</p>
-<p>配置(信号機設置の指針の解説: 一般の車両用灯器は交差点の向こう側 = 出口側): 柱を (x, y) に立て</p>
-<p>(高さ lamp_bottom + 0.7)、アームを進入車の運転者から見て <b>右</b>(車線の上。yaw 0 で −y)へ水平に `<code style="color:#22d3bf">arm</code>` だけ出し</p>
-<p>(標準 2.0 m、最大 3.5 m 超は ValueError)、灯器の中心をアームの先に吊る(灯器の底 = `<code style="color:#22d3bf">lamp_bottom</code>`、</p>
-<p>既定 5.0 m、4.5 m 未満は ValueError — 交通信号機工事仕様書、一次資料で要確認)。`<code style="color:#22d3bf">arm_side=&quot;right&quot;</code>` なら柱が</p>
-<p>運転者の右側にあり、アームは左へ出る。表示面の法線 = (−cos yaw, −sin yaw)、レンズは運転者から見て左から青・黄・赤。</p>
-<p>objects: 柱 + アーム(ラベル 3、name &quot;signal_pole&quot;)と灯器(ラベル 3、name &quot;traffic_light&quot;、</p>
-<p>`<code style="color:#22d3bf">extra = {&quot;state&quot;, &quot;lamp_faces&quot;(世界の面索引), &quot;arm&quot;, &quot;lamp_bottom&quot;, &quot;kind&quot;: &quot;jp&quot;}</code>`)。返り値 = 灯器の索引</p>
-<p>(:func:<code style="color:#22d3bf">driveworld.set_signal_state</code> はこれに対して使う)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>配置(信号機設置の指針の解説: 一般の車両用灯器は交差点の向こう側 = 出口側): 柱を (x, y) に立て(高さ lamp_bottom + 0.7)、アームを進入車の運転者から見て <b>右</b>(車線の上。yaw 0 で −y)へ水平に <code style="color:#22d3bf">arm</code> だけ出し(標準 2.0 m、最大 3.5 m 超は ValueError)、灯器の中心をアームの先に吊る(灯器の底 = <code style="color:#22d3bf">lamp_bottom</code>、既定 5.0 m、4.5 m 未満は ValueError — 交通信号機工事仕様書、一次資料で要確認)。<code style="color:#22d3bf">arm_side=&quot;right&quot;</code> なら柱が運転者の右側にあり、アームは左へ出る。表示面の法線 = (−cos yaw, −sin yaw)、レンズは運転者から見て左から青・黄・赤。</p>
+<p>objects: 柱 + アーム(ラベル 3、name &quot;signal_pole&quot;)と灯器(ラベル 3、name &quot;traffic_light&quot;、<code style="color:#22d3bf">extra = {&quot;state&quot;, &quot;lamp_faces&quot;(世界の面索引), &quot;arm&quot;, &quot;lamp_bottom&quot;, &quot;kind&quot;: &quot;jp&quot;}</code>)。返り値 = 灯器の索引(<code style="color:#22d3bf">driveworld.set_signal_state</code> はこれに対して使う)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• (暂无)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">scalar</code> 作为输入)</h3>

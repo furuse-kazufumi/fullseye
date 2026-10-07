@@ -5,29 +5,21 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>正規化中央値検定(Westerweel &amp; Scarano 2005)で外れベクトルを見つける。</p>
-<p>各ベクトルについて、8 近傍の中央値からの残差を<b>近傍残差の中央値</b>で割る。</p>
-<p>分母に `<code style="color:#22d3bf">epsilon</code>`(既定 0.1 px、PIV の測定不確かさの目安)を足すのは、</p>
-<p>一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が</p>
-<p>無いと、<b>理想的な入力ほど検定が壊れる</b>。</p>
-<p>★<b>勾配の急な場では害になる</b>(2026-09-06 実測)。Rankine 型の渦</p>
-<p>(芯の半径 28 px)で多段 PIV を掛けたところ、閾値 2 が拾った 5 本は</p>
-<p>すべて<b>芯の縁</b>(中心から 32 px)に並び、実際の誤差は 0.07-0.45 px ——</p>
-<p>外れ値ではなく<b>速度分布が折れている場所</b>だった。近傍中央値で均すと</p>
-<p>RMS が 0.134 から 0.230 へ<b>悪化</b>する(閾値 5 では 1 本も拾わず 0.134 のまま)。</p>
-<p>検定は「近傍と違う = 間違い」という仮定に立つので、**本物の不連続を</p>
-<p>間違いと呼ぶ**。掛けるかどうかは場の性質を見て決めること。</p>
+<p>各ベクトルについて、8 近傍の中央値からの残差を<b>近傍残差の中央値</b>で割る。分母に <code style="color:#22d3bf">epsilon</code>(既定 0.1 px、PIV の測定不確かさの目安)を足すのは、一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が無いと、<b>理想的な入力ほど検定が壊れる</b>。</p>
+<p>★<b>勾配の急な場では害になる</b>(2026-09-06 実測)。Rankine 型の渦(芯の半径 28 px)で多段 PIV を掛けたところ、閾値 2 が拾った 5 本はすべて<b>芯の縁</b>(中心から 32 px)に並び、実際の誤差は 0.07-0.45 px —— 外れ値ではなく<b>速度分布が折れている場所</b>だった。近傍中央値で均すと RMS が 0.134 から 0.230 へ<b>悪化</b>する(閾値 5 では 1 本も拾わず 0.134 のまま)。</p>
+<p>検定は「近傍と違う = 間違い」という仮定に立つので、<b>本物の不連続を間違いと呼ぶ</b>。掛けるかどうかは場の性質を見て決めること。</p>
 <p>Args:</p>
-<p>flow: `<code style="color:#22d3bf">(2, h, w)</code>`。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
 <p>threshold: この値を超えたら外れ値。慣行は 2。</p>
 <p>epsilon: 分母の下駄 [px]。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(h, w)</code><code style="color:#22d3bf"> の bool。</code><code style="color:#22d3bf">True</code><code style="color:#22d3bf"> が外れ値(</code><code style="color:#22d3bf">nan</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">True</code>`)。</p>
+<p><code style="color:#22d3bf">(h, w)</code> の bool。<code style="color:#22d3bf">True</code> が外れ値(<code style="color:#22d3bf">nan</code> も <code style="color:#22d3bf">True</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_flow_from_particles">piv_flow_from_particles</a> — <code style="color:#22d3bf">py -3.11 examples/piv_flow_from_particles.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_change_detection_misreg">poc_change_detection_misreg</a> — <code style="color:#22d3bf">py -3.11 examples/poc_change_detection_misreg.py</code></p>

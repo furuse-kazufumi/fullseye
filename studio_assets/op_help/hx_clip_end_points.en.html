@@ -15,13 +15,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Cut k points off each end of every contour (k from a).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>contour dict の各 contour から先頭と末尾の `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> 点ずつを落とし </code><code style="color:#22d3bf">c[k:len-k]</code>` を返す。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 切り落とす点数 </code><code style="color:#22d3bf">k = 1 + int(a*5)</code>`(1〜6 点)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点数が `<code style="color:#22d3bf">2k+1</code>` 以下の contour は短くするのではなく丸ごと捨てる。短い contour が多いと出力が空になりうる。</p>
-<p>エッジ抽出の端に出るかぎ状の乱れや、閉じた contour の始点重複を落とすのに使う。単位は「点数」であって画素距離</p>
-<p>ではないので、点の密度(`<code style="color:#22d3bf">edges_sub_pix</code>` は 1 画素刻み)を意識する。閉じた contour に掛けると閉じなくなる</p>
-<p>(`<code style="color:#22d3bf">hx_test_closed_xld</code>` の判定が変わる)。</p>
+<p>contour dict の各 contour から先頭と末尾の <code style="color:#22d3bf">k</code> 点ずつを落とし <code style="color:#22d3bf">c[k:len-k]</code> を返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 切り落とす点数 <code style="color:#22d3bf">k = 1 + int(a*5)</code>(1〜6 点)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点数が <code style="color:#22d3bf">2k+1</code> 以下の contour は短くするのではなく丸ごと捨てる。短い contour が多いと出力が空になりうる。</p>
+<p>エッジ抽出の端に出るかぎ状の乱れや、閉じた contour の始点重複を落とすのに使う。単位は「点数」であって画素距離ではないので、点の密度(<code style="color:#22d3bf">edges_sub_pix</code> は 1 画素刻み)を意識する。閉じた contour に掛けると閉じなくなる(<code style="color:#22d3bf">hx_test_closed_xld</code> の判定が変わる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

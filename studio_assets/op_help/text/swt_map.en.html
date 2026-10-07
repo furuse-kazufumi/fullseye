@@ -5,13 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Stroke Width Transform — writes, at every pixel, the width of the stroke that contains it.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>文字側の境界画素から、勾配の向きに沿って文字の内側へ光線を飛ばし、向かい合う境界</p>
-<p>画素(勾配がほぼ逆向き)に当たったら、光線上の全画素に幅(境界画素の中心間距離 + 1)</p>
-<p>を書く(既に小さい値があれば小さい方)。Epshtein 2010 §3 の手順で、2 回目の走査で</p>
-<p>光線上の中央値より大きい値を中央値に置き換える(角の過大を抑える)。エッジの規約は</p>
-<p>:func:<code style="color:#22d3bf">_edges_and_gradient</code> に書いた(矩形ストロークで幅が厳密に整数になる)。</p>
-<p>Returns dict: `<code style="color:#22d3bf">swt</code><code style="color:#22d3bf">(幅の配列、ストローク外は 0)/ </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_rays</code>` /</p>
-<p>`<code style="color:#22d3bf">n_hits</code>`(向かい合うエッジに当たった光線の数)。</p>
+<p>文字側の境界画素から、勾配の向きに沿って文字の内側へ光線を飛ばし、向かい合う境界画素(勾配がほぼ逆向き)に当たったら、光線上の全画素に幅(境界画素の中心間距離 + 1) を書く(既に小さい値があれば小さい方)。Epshtein 2010 §3 の手順で、2 回目の走査で光線上の中央値より大きい値を中央値に置き換える(角の過大を抑える)。エッジの規約は <code style="color:#22d3bf">_edges_and_gradient</code> に書いた(矩形ストロークで幅が厳密に整数になる)。</p>
+<p>Returns dict: <code style="color:#22d3bf">swt</code>(幅の配列、ストローク外は 0)/ <code style="color:#22d3bf">edges</code> / <code style="color:#22d3bf">n_rays</code> / <code style="color:#22d3bf">n_hits</code>(向かい合うエッジに当たった光線の数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

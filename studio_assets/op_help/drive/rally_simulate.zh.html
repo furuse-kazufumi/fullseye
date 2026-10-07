@@ -5,16 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>2 本のラケット(x = −x_r と +x_r、板は相手を向く)で打ち合う。</p>
-<p>各コマ(1/fps)で受け手側の知覚 `<code style="color:#22d3bf">perceive(t, p, v, ω)</code>` が球の状態を返し、そこから運動方程式 + 台の跳ねで自分の面</p>
-<p>x = ±x_r への到達点・時刻を予測してラケットを動かす(上限つき)。球が面に届いたら、相手コートの (∓target_x, y*) に</p>
-<p>T_flight で落ちる速度を狙って打つ(y* は乱数、`<code style="color:#22d3bf">plan_spin</code>` なら打球後のスピンを込みで狙いを合わせる)。</p>
-<p>`<code style="color:#22d3bf">strategies</code><code style="color:#22d3bf"> = (side 0 の戦略, side 1 の戦略)(None なら両方 :func:</code>strategy_feeder<code style="color:#22d3bf">)。</code><code style="color:#22d3bf">retries</code>` &gt; 0 なら打つ前に</p>
-<p>:func:<code style="color:#22d3bf">shot_is_legal</code> で先読みし、外す狙いは巻き戻して別の狙い(戦略を引き直す)でやり直す。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;hits&quot;, &quot;end_reason&quot;, &quot;shots&quot;: [...], &quot;t&quot;, &quot;p&quot; (N,3), &quot;racket_pos&quot; (N,2,3), &quot;hit_times&quot;, &quot;rewinds&quot;}</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>各コマ(1/fps)で受け手側の知覚 <code style="color:#22d3bf">perceive(t, p, v, ω)</code> が球の状態を返し、そこから運動方程式 + 台の跳ねで自分の面 x = ±x_r への到達点・時刻を予測してラケットを動かす(上限つき)。球が面に届いたら、相手コートの (∓target_x, y*) に T_flight で落ちる速度を狙って打つ(y* は乱数、<code style="color:#22d3bf">plan_spin</code> なら打球後のスピンを込みで狙いを合わせる)。<code style="color:#22d3bf">strategies</code> = (side 0 の戦略, side 1 の戦略)(None なら両方 <code style="color:#22d3bf">strategy_feeder</code>)。<code style="color:#22d3bf">retries</code> &gt; 0 なら打つ前に <code style="color:#22d3bf">shot_is_legal</code> で先読みし、外す狙いは巻き戻して別の狙い(戦略を引き直す)でやり直す。返り値 <code style="color:#22d3bf">{&quot;hits&quot;, &quot;end_reason&quot;, &quot;shots&quot;: [...], &quot;t&quot;, &quot;p&quot; (N,3), &quot;racket_pos&quot; (N,2,3), &quot;hit_times&quot;, &quot;rewinds&quot;}</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ball_bounce">poc_ball_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ball_bounce.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_table_tennis_rally_loop">poc_table_tennis_rally_loop</a> — <code style="color:#22d3bf">py -3.11 examples/poc_table_tennis_rally_loop.py</code></p>

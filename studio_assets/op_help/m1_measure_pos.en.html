@@ -13,13 +13,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_pos.inputs.jpg">m1_measure_pos: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Extracts sub-pixel edge positions along a caliper line through the centre (equivalent to HALCON `<code style="color:#22d3bf">measure_pos</code>`: detects straight edges perpendicular to a rectangle/arc).</p>
+<p>Extracts sub-pixel edge positions along a caliper line through the centre (equivalent to HALCON <code style="color:#22d3bf">measure_pos</code>: detects straight edges perpendicular to a rectangle/arc).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>線は画像中心を通り、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> で向きを </code><code style="color:#22d3bf">theta = a*pi</code><code style="color:#22d3bf"> に振る。輝度プロファイルをガウシアンで軽く平滑化してから </code><code style="color:#22d3bf">|d/ds gray|</code><code style="color:#22d3bf"> のピークをサブピクセル（3 点放物線補間）で検出し、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">（0〜1）を最大振幅に対する相対しきい値として弱いエッジを捨てる。戻り値は CONTOUR（</code><code style="color:#22d3bf">{&quot;shape&quot;: (H,W), &quot;cs&quot;: [1x2 の (row, col) 点, ...]}</code><code style="color:#22d3bf">）、座標単位は入力画像のピクセル。主な使い道はエッジ数を </code><code style="color:#22d3bf">count_contours</code>`で数えること。</p>
+<p>線は画像中心を通り、<code style="color:#22d3bf">a</code> で向きを <code style="color:#22d3bf">theta = a*pi</code> に振る。輝度プロファイルをガウシアンで軽く平滑化してから <code style="color:#22d3bf">|d/ds gray|</code> のピークをサブピクセル（3 点放物線補間）で検出し、<code style="color:#22d3bf">b</code>（0〜1）を最大振幅に対する相対しきい値として弱いエッジを捨てる。戻り値は CONTOUR（<code style="color:#22d3bf">{&quot;shape&quot;: (H,W), &quot;cs&quot;: [1x2 の (row, col) 点, ...]}</code>）、座標単位は入力画像のピクセル。主な使い道はエッジ数を <code style="color:#22d3bf">count_contours</code>で数えること。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty and calibration — what it takes to claim you are measuring</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

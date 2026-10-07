@@ -4,23 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_quiver&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>矢印図(MATLAB の `<code style="color:#22d3bf">quiver</code><code style="color:#22d3bf">)。返りは </code><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>`。</p>
-<p>`<code style="color:#22d3bf">spacing</code><code style="color:#22d3bf"> 格子ごとに 1 本、起点を格子点に置き、先端を </code><code style="color:#22d3bf">起点 + scale * v</code>`</p>
-<p>に引く。`<code style="color:#22d3bf">scale</code>` を省くと <b>最も長い矢印が間隔の 0.9 倍</b> になる(MATLAB の</p>
-<p>自動倍率と同じ考え方で、隣の矢印に重ならない)。<b>倍率は図ごとに変わる</b></p>
-<p>ので、並べて比べる図では `<code style="color:#22d3bf">scale</code>` を固定する。長さが 1 画素に満たない</p>
-<p>矢印は描かない(向きの無い点は印と読まれる)。</p>
+<p>矢印図(MATLAB の <code style="color:#22d3bf">quiver</code>)。返りは <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>。</p>
+<p><code style="color:#22d3bf">spacing</code> 格子ごとに 1 本、起点を格子点に置き、先端を <code style="color:#22d3bf">起点 + scale * v</code> に引く。<code style="color:#22d3bf">scale</code> を省くと <b>最も長い矢印が間隔の 0.9 倍</b> になる(MATLAB の自動倍率と同じ考え方で、隣の矢印に重ならない)。<b>倍率は図ごとに変わる</b> ので、並べて比べる図では <code style="color:#22d3bf">scale</code> を固定する。長さが 1 画素に満たない矢印は描かない(向きの無い点は印と読まれる)。</p>
 <p>Args:</p>
-<p>flow: `<code style="color:#22d3bf">(2, h, w)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">dy, dx</code>`)。</p>
-<p>spacing: 矢印の間隔 [格子]。`<code style="color:#22d3bf">None</code>` で長い辺に約 20 本。</p>
-<p>scale: 矢印の長さ = `<code style="color:#22d3bf">scale * 速さ</code>` [格子]。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">dy, dx</code>)。</p>
+<p>spacing: 矢印の間隔 [格子]。<code style="color:#22d3bf">None</code> で長い辺に約 20 本。</p>
+<p>scale: 矢印の長さ = <code style="color:#22d3bf">scale * 速さ</code> [格子]。</p>
 <p>upsample: 出力の倍率(矢じりを描ける大きさにする)。</p>
-<p>background: `<code style="color:#22d3bf">(h*upsample, w*upsample)</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">(…, 3)</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">None</code>` で白。</p>
-<p>色相図(`<code style="color:#22d3bf">piv_flow_to_rgbimage</code>` を拡大したもの)や LIC を敷ける。</p>
+<p>background: <code style="color:#22d3bf">(h*upsample, w*upsample)</code> か <code style="color:#22d3bf">(…, 3)</code>。<code style="color:#22d3bf">None</code> で白。</p>
+<p>色相図(<code style="color:#22d3bf">piv_flow_to_rgbimage</code> を拡大したもの)や LIC を敷ける。</p>
 <p>color / width: 矢印の色(palette の役割名か RGB)と軸の太さ [px]。</p>
 <p>既定は黒に近い墨色(色相図を敷いても読める)。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>` float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64、値域 [0, 1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_worst_case_gap_opposite(d0: &#x27;float&#x27;, v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import rsssafety; rsssafety.rss_worst_case_gap_opposite(d0: &#x27;float&#x27;, v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;rss_worst_case_gap_opposite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>対向の最悪ケース: 両車 ρ の間 `<code style="color:#22d3bf">accel_max</code><code style="color:#22d3bf"> で加速 → c_1 は </code><code style="color:#22d3bf">brake_min_correct</code><code style="color:#22d3bf">、c_2 は </code><code style="color:#22d3bf">brake_min</code>` で停止。</p>
-<p>c_1 は x = 0 から +x へ、c_2 は x = d0 から −x へ(v2 は絶対値)。gap = x_2 − x_1。</p>
-<p>Returns `<code style="color:#22d3bf">t, x1, x2, v1, v2, gap, min_gap, t_min, collided, t_stop_1, t_stop_2</code>`。</p>
-<p>`<code style="color:#22d3bf">min_gap = d0 − (d_min − max(min_distance))</code><code style="color:#22d3bf"> が成り立つ(d_min = </code><code style="color:#22d3bf">rss_longitudinal_opposite</code>`)。</p>
+<p>対向の最悪ケース: 両車 ρ の間 <code style="color:#22d3bf">accel_max</code> で加速 → c_1 は <code style="color:#22d3bf">brake_min_correct</code>、c_2 は <code style="color:#22d3bf">brake_min</code> で停止。</p>
+<p>c_1 は x = 0 から +x へ、c_2 は x = d0 から −x へ(v2 は絶対値)。gap = x_2 − x_1。Returns <code style="color:#22d3bf">t, x1, x2, v1, v2, gap, min_gap, t_min, collided, t_stop_1, t_stop_2</code>。<code style="color:#22d3bf">min_gap = d0 − (d_min − max(min_distance))</code> が成り立つ(d_min = <code style="color:#22d3bf">rss_longitudinal_opposite</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

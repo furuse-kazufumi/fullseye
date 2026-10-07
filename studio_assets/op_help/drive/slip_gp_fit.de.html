@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>斜面の角 → 滑り率のガウス過程(RBF の核 + 一様な観測雑音)。超パラメータは対数周辺尤度の格子探索。</p>
-<p>y は平均を引いて標準偏差で割ってから当てはめる(信号の分散 σ_f² = 1 に固定、ℓ と雑音 σ_n を探す)。</p>
-<p>`<code style="color:#22d3bf">length_scales</code><code style="color:#22d3bf"> の既定は角の範囲の 0.05〜2 倍の 16 段(対数)、</code><code style="color:#22d3bf">noise_levels</code>` は 0.01〜1(正規化した y の単位)の</p>
-<p>16 段。返り値は予測に使う dict(`<code style="color:#22d3bf">kind = &quot;gp&quot;</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">x</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">alpha</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">L</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">ell</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">noise</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">y_mean</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">y_scale</code>`・</p>
-<p>`<code style="color:#22d3bf">log_marginal_likelihood</code>`)。雑音が角によって変わる(異分散)データでは、帯は全体の平均の幅になる(門の罠)。</p>
+<p>y は平均を引いて標準偏差で割ってから当てはめる(信号の分散 σ_f² = 1 に固定、ℓ と雑音 σ_n を探す)。<code style="color:#22d3bf">length_scales</code> の既定は角の範囲の 0.05〜2 倍の 16 段(対数)、<code style="color:#22d3bf">noise_levels</code> は 0.01〜1(正規化した y の単位)の 16 段。返り値は予測に使う dict(<code style="color:#22d3bf">kind = &quot;gp&quot;</code>、<code style="color:#22d3bf">x</code>・<code style="color:#22d3bf">alpha</code>・<code style="color:#22d3bf">L</code>・<code style="color:#22d3bf">ell</code>・<code style="color:#22d3bf">noise</code>・<code style="color:#22d3bf">y_mean</code>・<code style="color:#22d3bf">y_scale</code>・ <code style="color:#22d3bf">log_marginal_likelihood</code>)。雑音が角によって変わる(異分散)データでは、帯は全体の平均の幅になる(門の罠)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

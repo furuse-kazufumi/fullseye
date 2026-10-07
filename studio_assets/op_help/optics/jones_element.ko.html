@@ -5,47 +5,20 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>편광 소자 하나의 2x2 복소 존스 행렬.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*kind* is one of :data:<code style="color:#22d3bf">JONES_KINDS</code>:</p>
-<p>`<code style="color:#22d3bf">&quot;polarizer&quot;</code>` ideal linear polariser, transmission axis at *angle_deg*</p>
-<p>from x · `<code style="color:#22d3bf">&quot;retarder&quot;</code>` linear retarder, fast axis at *angle_deg*,</p>
-<p>retardance *retardance_deg* · `<code style="color:#22d3bf">&quot;quarter_wave&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;half_wave&quot;</code>`</p>
-<p>retarders with the retardance fixed at 90 / 180 degrees (*retardance_deg*</p>
-<p>is then <b>ignored</b> — stated here so a caller who passes one is not left</p>
-<p>wondering) · `<code style="color:#22d3bf">&quot;rotator&quot;</code>` optical rotator turning the polarisation by</p>
-<p>*angle_deg*.</p>
-<p>The retarder is written symmetrically, `<code style="color:#22d3bf">diag(exp(-i*d/2), exp(+i*d/2))</code>`</p>
-<p>before rotation, so it introduces no common phase — the fast axis leads.</p>
-<p>(Cross-checked 2026-09-18: Jones phase and handedness conventions differ</p>
-<p>per library — pypolar carries two and this matches neither away from</p>
-<p>0 degrees — so the comparison is made in the Mueller domain: every kind,</p>
-<p>pushed through :func:<code style="color:#22d3bf">stokes_from_jones</code>, equals pypolar&#x27;s Mueller element</p>
-<p>to 1e-15. The rotator turns the <b>state</b> by +angle, so pypolar</p>
-<p>`<code style="color:#22d3bf">op_rotation</code><code style="color:#22d3bf"> / polanalyser </code><code style="color:#22d3bf">rotator</code>` — coordinate rotations — equal</p>
-<p>ours at `<code style="color:#22d3bf">-angle</code><code style="color:#22d3bf">. See </code><code style="color:#22d3bf">tests/test_polarization_external_diff.py</code>`.)</p>
-<p>Elements are built as `<code style="color:#22d3bf">R(+a) @ J0 @ R(-a)</code>`.</p>
-<p>Returns a `<code style="color:#22d3bf">(2, 2)</code>` complex128 matrix acting on a Jones vector</p>
-<p>`<code style="color:#22d3bf">[Ex, Ey]</code><code style="color:#22d3bf">; compose a train with </code><code style="color:#22d3bf">J_total = J_last @ ... @ J_first</code>` and</p>
-<p>apply it with :func:<code style="color:#22d3bf">jones_apply</code>.</p>
-<p>Ground truth it reproduces exactly (machine precision): two crossed ideal</p>
-<p>polarisers multiply to the zero matrix; a polariser is idempotent</p>
-<p>(`<code style="color:#22d3bf">P @ P == P</code>`); a half-wave plate is an involution up to a global phase</p>
-<p>(`<code style="color:#22d3bf">H @ H == -I</code>` in this symmetric convention); a quarter-wave plate at 45</p>
-<p>degrees turns horizontal linear light into circular (`<code style="color:#22d3bf">|S3| == 1</code>`); the</p>
-<p>Malus law `<code style="color:#22d3bf">cos^2(theta)</code>` falls out of two polarisers at relative angle</p>
-<p>theta.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: an unknown *kind* (the message lists the valid</p>
-<p>ones); non-finite *angle_deg* or *retardance_deg*.</p>
-<p>Ideal, lossless, normal-incidence elements. A real polariser has a finite</p>
-<p>extinction ratio and a real waveplate is chromatic; neither is modelled, and</p>
-<p>neither is silently approximated. Jones algebra can only carry **fully</p>
-<p>polarised** light — for partial polarisation use :func:<code style="color:#22d3bf">mueller_element</code>.</p>
+<p>*kind* is one of <code style="color:#22d3bf">JONES_KINDS</code>:</p>
+<p><code style="color:#22d3bf">&quot;polarizer&quot;</code> ideal linear polariser, transmission axis at *angle_deg* from x · <code style="color:#22d3bf">&quot;retarder&quot;</code> linear retarder, fast axis at *angle_deg*, retardance *retardance_deg* · <code style="color:#22d3bf">&quot;quarter_wave&quot;</code> / <code style="color:#22d3bf">&quot;half_wave&quot;</code> retarders with the retardance fixed at 90 / 180 degrees (*retardance_deg* is then <b>ignored</b> — stated here so a caller who passes one is not left wondering) · <code style="color:#22d3bf">&quot;rotator&quot;</code> optical rotator turning the polarisation by *angle_deg*.</p>
+<p>The retarder is written symmetrically, <code style="color:#22d3bf">diag(exp(-i*d/2), exp(+i*d/2))</code> before rotation, so it introduces no common phase — the fast axis leads. (Cross-checked 2026-09-18: Jones phase and handedness conventions differ per library — pypolar carries two and this matches neither away from 0 degrees — so the comparison is made in the Mueller domain: every kind, pushed through <code style="color:#22d3bf">stokes_from_jones</code>, equals pypolar&#x27;s Mueller element to 1e-15. The rotator turns the <b>state</b> by +angle, so pypolar <code style="color:#22d3bf">op_rotation</code> / polanalyser <code style="color:#22d3bf">rotator</code> — coordinate rotations — equal ours at <code style="color:#22d3bf">-angle</code>. See <code style="color:#22d3bf">tests/test_polarization_external_diff.py</code>.) Elements are built as <code style="color:#22d3bf">R(+a) @ J0 @ R(-a)</code>.</p>
+<p>Returns a <code style="color:#22d3bf">(2, 2)</code> complex128 matrix acting on a Jones vector <code style="color:#22d3bf">[Ex, Ey]</code>; compose a train with <code style="color:#22d3bf">J_total = J_last @ ... @ J_first</code> and apply it with <code style="color:#22d3bf">jones_apply</code>.</p>
+<p>Ground truth it reproduces exactly (machine precision): two crossed ideal polarisers multiply to the zero matrix; a polariser is idempotent (<code style="color:#22d3bf">P @ P == P</code>); a half-wave plate is an involution up to a global phase (<code style="color:#22d3bf">H @ H == -I</code> in this symmetric convention); a quarter-wave plate at 45 degrees turns horizontal linear light into circular (<code style="color:#22d3bf">|S3| == 1</code>); the Malus law <code style="color:#22d3bf">cos^2(theta)</code> falls out of two polarisers at relative angle theta.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: an unknown *kind* (the message lists the valid ones); non-finite *angle_deg* or *retardance_deg*.</p>
+<p>Ideal, lossless, normal-incidence elements. A real polariser has a finite extinction ratio and a real waveplate is chromatic; neither is modelled, and neither is silently approximated. Jones algebra can only carry <b>fully polarised</b> light — for partial polarisation use <code style="color:#22d3bf">mueller_element</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>
-<p style="margin:2px 0 2px 12px">• **문자열은 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 은 성공하므로 파싱되지 않은 설정값이 길이로 통과해 버립니다(실측: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 이 그럴듯한 66.667 mm 를 돌려주고 있었습니다). bool 도 <code style="color:#22d3bf">True == 1</code> 의 암묵 승격으로 보고 거부합니다.</p>
-<p style="margin:2px 0 2px 12px">• **complex / masked array 는 <code style="color:#22d3bf">ValueError</code><b>(실수 슬롯만. 허수부의 무언 절삭·마스크 벗기기를 거부).</b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**.</p>
+<p style="margin:2px 0 2px 12px">• <b>문자열은 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 은 성공하므로 파싱되지 않은 설정값이 길이로 통과해 버립니다(실측: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 이 그럴듯한 66.667 mm 를 돌려주고 있었습니다). bool 도 <code style="color:#22d3bf">True == 1</code> 의 암묵 승격으로 보고 거부합니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 는 <code style="color:#22d3bf">ValueError</code></b>(실수 슬롯만. 허수부의 무언 절삭·마스크 벗기기를 거부).<b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>.</p>
 <p style="margin:2px 0 2px 12px">• <b>0 나눗셈과 그 친척들을 이름을 들어 거부</b>: 초점거리 0, 곡률반경 0, 굴절률 &lt;= 0, 불투명한 조리개(전부 0 이라 정규화가 0/0), 총합 &lt;= 0 인 PSF, S0 = 0 인 스토크스 벡터, 물체가 앞쪽 초점에 있는 경우(상이 무한대).</p>
-<p style="margin:2px 0 2px 12px">• <b>비유한 값을 돌려주는 것은 2 개 연산자뿐이며, 둘 다 계약으로 명시</b>: <code style="color:#22d3bf">depth_of_field</code> 의 과초점거리 너머 <code style="color:#22d3bf">far_mm = inf</code>(그것이 과초점거리의 정의)와 <code style="color:#22d3bf">gaussian_beam</code> 의 허리에서의 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(평면 파면의 곡률반경). 둘 다 유한한 짝(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)을 함께 돌려줍니다. **그 밖의 무언 NaN/Inf 는 내부에서 검출해 <code style="color:#22d3bf">ValueError</code>** —— 「float64 가 넘쳤다」와 「답이 무한대다」는 다른 주장이므로, 후자의 얼굴로 전자를 돌려주지 않습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>비유한 값을 돌려주는 것은 2 개 연산자뿐이며, 둘 다 계약으로 명시</b>: <code style="color:#22d3bf">depth_of_field</code> 의 과초점거리 너머 <code style="color:#22d3bf">far_mm = inf</code>(그것이 과초점거리의 정의)와 <code style="color:#22d3bf">gaussian_beam</code> 의 허리에서의 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(평면 파면의 곡률반경). 둘 다 유한한 짝(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)을 함께 돌려줍니다. <b>그 밖의 무언 NaN/Inf 는 내부에서 검출해 <code style="color:#22d3bf">ValueError</code></b> —— 「float64 가 넘쳤다」와 「답이 무한대다」는 다른 주장이므로, 후자의 얼굴로 전자를 돌려주지 않습니다.</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 생성 격자는 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096), 넘겨받은 필드/PSF/조리개는 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24), ABCD 소자열은 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024), Zernike 는 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25). 작은 인자에서 거대한 내부 할당이 일어나는 경로(실측: n_max=40 × 4096² 로 108 GB)를 fail-closed 로 막습니다.</p>
 <p style="margin:2px 0 2px 12px">• <b>물리적으로 불가능한 상태도 거부</b>: 편광도 &gt; 1 인 스토크스 벡터, 음의 투과율, 음의 강도, n-|m| 이 홀수인 잘못된 Zernike 첨자 등.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

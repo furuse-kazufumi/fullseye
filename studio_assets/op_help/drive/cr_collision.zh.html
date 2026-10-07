@@ -5,15 +5,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>障害物との衝突(矩形同士の SAT、time_step ごと)と道路境界(車両 4 角が lanelet 多角形の和集合に入るか)。</p>
-<p>`<code style="color:#22d3bf">lanelets=&quot;all&quot;</code><code style="color:#22d3bf">(既定)は場面の全 lanelet(採点器の boundary_collision と同じ範囲)、</code><code style="color:#22d3bf">&quot;route&quot;</code>` は経路の lanelet だけ。</p>
-<p>`<code style="color:#22d3bf">margin</code>` は障害物の SAT を膨らませる距離(m)。</p>
-<p>返り値 ``{&quot;obstacle_collision&quot;, &quot;first_collision&quot;: (time_step, obstacle_id) | None, &quot;boundary_violation&quot;,</p>
-<p>&quot;first_outside&quot;: time_step | None, &quot;n_collisions&quot;, &quot;n_outside&quot;}``。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: scene / run が不正、lanelets が &quot;all&quot;/&quot;route&quot; 以外、margin &lt; 0。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p><code style="color:#22d3bf">lanelets=&quot;all&quot;</code>(既定)は場面の全 lanelet(採点器の boundary_collision と同じ範囲)、<code style="color:#22d3bf">&quot;route&quot;</code> は経路の lanelet だけ。<code style="color:#22d3bf">margin</code> は障害物の SAT を膨らませる距離(m)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;obstacle_collision&quot;, &quot;first_collision&quot;: (time_step, obstacle_id) | None, &quot;boundary_violation&quot;, &quot;first_outside&quot;: time_step | None, &quot;n_collisions&quot;, &quot;n_outside&quot;}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: scene / run が不正、lanelets が &quot;all&quot;/&quot;route&quot; 以外、margin &lt; 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_commonroad">poc_driving_commonroad</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_commonroad.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

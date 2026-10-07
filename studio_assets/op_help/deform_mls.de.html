@@ -5,28 +5,16 @@
 <p><img src="fig/deform_mls.png" alt="deform_mls: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.a.jpg">deform_mls: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.a.jpg">deform_mls: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.b.jpg">deform_mls: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.b.jpg">deform_mls: Regler b durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.inputs.jpg">deform_mls: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_mls.inputs.jpg">deform_mls: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bildverformung mittels bewegter kleinster Quadrate (moving-least-squares), affine Variante (Schaefer 2006).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>A 5x5 grid of control points `<code style="color:#22d3bf">p_i</code>` is displaced to</p>
-<p>`<code style="color:#22d3bf">q_i = p_i + amp*[sin(2 pi gx), cos(2 pi gy)]</code>` (gy, gx = normalised</p>
-<p>control coordinates). For every destination pixel the weighted</p>
-<p>least-squares affine map is re-solved with the weights</p>
-<p>`<code style="color:#22d3bf">w_i = 1/|p_i - v|^(2 alpha)</code>`, so the warp is a *different* affine at every</p>
-<p>pixel -- smooth, interpolating at the control points, and exact on affine</p>
-<p>data. The backward map is obtained by solving the same MLS problem with the</p>
-<p>roles of `<code style="color:#22d3bf">p</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">q</code>` swapped (the resampling formulation of the paper&#x27;s</p>
-<p>section 4), which is the exact inverse whenever the control data is affine</p>
-<p>and a smooth approximation of it otherwise. `<code style="color:#22d3bf">a</code>` sets the amplitude</p>
-<p>`<code style="color:#22d3bf">amp = 0.12*a*min(H,W)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> the falloff </code><code style="color:#22d3bf">alpha = 0.5 + 1.5b</code>` (large</p>
-<p>alpha = tightly local deformation). `<code style="color:#22d3bf">a = 0</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">q = p</code>`, hence the</p>
-<p>identity (up to sub-pixel resampling error).</p>
+<p>A 5x5 grid of control points <code style="color:#22d3bf">p_i</code> is displaced to <code style="color:#22d3bf">q_i = p_i + amp*[sin(2 pi gx), cos(2 pi gy)]</code> (gy, gx = normalised control coordinates). For every destination pixel the weighted least-squares affine map is re-solved with the weights <code style="color:#22d3bf">w_i = 1/|p_i - v|^(2 alpha)</code>, so the warp is a *different* affine at every pixel -- smooth, interpolating at the control points, and exact on affine data. The backward map is obtained by solving the same MLS problem with the roles of <code style="color:#22d3bf">p</code> and <code style="color:#22d3bf">q</code> swapped (the resampling formulation of the paper&#x27;s section 4), which is the exact inverse whenever the control data is affine and a smooth approximation of it otherwise. <code style="color:#22d3bf">a</code> sets the amplitude <code style="color:#22d3bf">amp = 0.12*a*min(H,W)</code>, <code style="color:#22d3bf">b</code> the falloff <code style="color:#22d3bf">alpha = 0.5 + 1.5b</code> (large alpha = tightly local deformation). <code style="color:#22d3bf">a = 0</code> gives <code style="color:#22d3bf">q = p</code>, hence the identity (up to sub-pixel resampling error).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -35,7 +23,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">deform_mls 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:deform_mls%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:deform_mls%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">deform_mls 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:deform_mls%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:deform_mls%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>

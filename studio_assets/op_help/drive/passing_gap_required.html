@@ -4,18 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.passing_gap_required(parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, pet_min: &#x27;float&#x27; = 0.0, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetraffic; drivetraffic.passing_gap_required(parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, pet_min: &#x27;float&#x27; = 0.0, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;passing_gap_required&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>駐車車両を避けて対向車線にはみ出す区間を抜ける時間と、対向車がそれまでに来ない境目の距離(閉形式)。</p>
-<p>自車は駐車車両の後端の `<code style="color:#22d3bf">margin_back</code><code style="color:#22d3bf"> 手前(x_in)で対向車線に出始め、前端の </code><code style="color:#22d3bf">margin_front</code>` 先(x_out)を</p>
-<p>過ぎてから `<code style="color:#22d3bf">lane_change_time</code>` かけて自車線へ戻り切る。はみ出す長さ L_occ = margin_back + parked_len +</p>
-<p>margin_front + ego_length、はみ出している時間 t_occ = L_occ / v_ego + T_lc。戻り切った地点</p>
-<p>P = x_in + L_occ + v_ego T_lc に対向車が着くのが戻り切った時刻より `<code style="color:#22d3bf">pet_min</code>` 以上後(PET ≥ pet_min)である</p>
-<p>ための、判断時(自車が x_in)の対向車までの距離の境目:</p>
+<p>自車は駐車車両の後端の <code style="color:#22d3bf">margin_back</code> 手前(x_in)で対向車線に出始め、前端の <code style="color:#22d3bf">margin_front</code> 先(x_out)を過ぎてから <code style="color:#22d3bf">lane_change_time</code> かけて自車線へ戻り切る。はみ出す長さ L_occ = margin_back + parked_len + margin_front + ego_length、はみ出している時間 t_occ = L_occ / v_ego + T_lc。戻り切った地点 P = x_in + L_occ + v_ego T_lc に対向車が着くのが戻り切った時刻より <code style="color:#22d3bf">pet_min</code> 以上後(PET ≥ pet_min)であるための、判断時(自車が x_in)の対向車までの距離の境目:</p>
 <p>D* = t_occ (v_ego + v_on) + v_on · pet_min</p>
-<p><b>走っている障害物</b>(自転車など、同じ向きに `<code style="color:#22d3bf">v_obstacle</code>` で進む): はみ出す長さは障害物に対する相対の距離なので</p>
-<p>t_occ = L_occ / (v_ego − v_obstacle) + T_lc、戻り切った地点 P = x_in + v_ego t_occ。D* の式は同じ形。</p>
-<p>v_obstacle = 0 で止まっている車の式に戻る。</p>
-<p>戻り値 dict: `<code style="color:#22d3bf">L_occ</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">t_occupy</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">d_required</code><code style="color:#22d3bf"> (= D*)、</code><code style="color:#22d3bf">clear_point</code>`(x_in から P までの距離)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 負の長さ・余裕、v_ego ≤ 0、v_oncoming &lt; 0、lane_change_time &lt; 0、</p>
-<p>v_obstacle &lt; 0 か v_obstacle ≥ v_ego(追いつけない)。</p>
+<p><b>走っている障害物</b>(自転車など、同じ向きに <code style="color:#22d3bf">v_obstacle</code> で進む): はみ出す長さは障害物に対する相対の距離なので t_occ = L_occ / (v_ego − v_obstacle) + T_lc、戻り切った地点 P = x_in + v_ego t_occ。D* の式は同じ形。v_obstacle = 0 で止まっている車の式に戻る。</p>
+<p>戻り値 dict: <code style="color:#22d3bf">L_occ</code>, <code style="color:#22d3bf">t_occupy</code>, <code style="color:#22d3bf">d_required</code> (= D*)、<code style="color:#22d3bf">clear_point</code>(x_in から P までの距離)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 負の長さ・余裕、v_ego ≤ 0、v_oncoming &lt; 0、lane_change_time &lt; 0、v_obstacle &lt; 0 か v_obstacle ≥ v_ego(追いつけない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

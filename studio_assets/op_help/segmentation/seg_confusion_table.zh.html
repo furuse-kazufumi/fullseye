@@ -5,22 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>标签对应的混淆表（行 = 真值，列 = 预测），并给出最大重叠匹配与一一对应（唯一性）标志（seg_confusion_table）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">table[i, j]</code><code style="color:#22d3bf"> = 真のラベル </code><code style="color:#22d3bf">labels_true[i]</code><code style="color:#22d3bf"> と予測のラベル </code><code style="color:#22d3bf">labels_pred[j]</code>` を同時に持つ画素数。</p>
-<p>対応は <b>最大重なり</b>: 真 i の相手 = 背景でない列のうち `<code style="color:#22d3bf">table[i, :]</code><code style="color:#22d3bf"> が最大の列(</code><code style="color:#22d3bf">pred_of_true</code>`、ラベル値、無ければ −1)、</p>
-<p>予測 j の相手 = 背景でない行のうち最大の行(`<code style="color:#22d3bf">true_of_pred</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">mutual_true[i]</code>` = 真 i の相手が真 i を選び返す、</p>
-<p>`<code style="color:#22d3bf">mutual_pred[j]</code><code style="color:#22d3bf"> も同様。</code><code style="color:#22d3bf">claims[j]</code><code style="color:#22d3bf"> = 予測 j を相手に選んだ真の数。</code><code style="color:#22d3bf">unique_matching</code>` = 背景でない行・列がすべて相互に</p>
-<p>選び合う(= 1 対 1 の全単射)。背景の行・列は表には残り、対応からは外す。</p>
-<p>Hungarian(総和最大の割当)でなく argmax なので、1 つの大きな予測を複数の真が選ぶことがある —— それが `<code style="color:#22d3bf">claims</code>` ≥ 2 の印。</p>
-<p>返り値: `<code style="color:#22d3bf">table</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">labels_pred</code><code style="color:#22d3bf">(行・列のラベル値)、</code><code style="color:#22d3bf">row_sums</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">col_sums</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">pred_of_true</code>` /</p>
-<p>`<code style="color:#22d3bf">true_of_pred</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mutual_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mutual_pred</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">claims</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">unique_matching</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_pred</code><code style="color:#22d3bf">(背景を除く個数)、</code><code style="color:#22d3bf">n</code>`。</p>
+<p><code style="color:#22d3bf">table[i, j]</code> = 真のラベル <code style="color:#22d3bf">labels_true[i]</code> と予測のラベル <code style="color:#22d3bf">labels_pred[j]</code> を同時に持つ画素数。対応は <b>最大重なり</b>: 真 i の相手 = 背景でない列のうち <code style="color:#22d3bf">table[i, :]</code> が最大の列(<code style="color:#22d3bf">pred_of_true</code>、ラベル値、無ければ −1)、予測 j の相手 = 背景でない行のうち最大の行(<code style="color:#22d3bf">true_of_pred</code>)。<code style="color:#22d3bf">mutual_true[i]</code> = 真 i の相手が真 i を選び返す、<code style="color:#22d3bf">mutual_pred[j]</code> も同様。<code style="color:#22d3bf">claims[j]</code> = 予測 j を相手に選んだ真の数。<code style="color:#22d3bf">unique_matching</code> = 背景でない行・列がすべて相互に選び合う(= 1 対 1 の全単射)。背景の行・列は表には残り、対応からは外す。Hungarian(総和最大の割当)でなく argmax なので、1 つの大きな予測を複数の真が選ぶことがある —— それが <code style="color:#22d3bf">claims</code> ≥ 2 の印。</p>
+<p>返り値: <code style="color:#22d3bf">table</code>、<code style="color:#22d3bf">labels_true</code> / <code style="color:#22d3bf">labels_pred</code>(行・列のラベル値)、<code style="color:#22d3bf">row_sums</code> / <code style="color:#22d3bf">col_sums</code>、<code style="color:#22d3bf">pred_of_true</code> / <code style="color:#22d3bf">true_of_pred</code>、<code style="color:#22d3bf">mutual_true</code> / <code style="color:#22d3bf">mutual_pred</code>、<code style="color:#22d3bf">claims</code>、<code style="color:#22d3bf">unique_matching</code>、<code style="color:#22d3bf">n_true</code> / <code style="color:#22d3bf">n_pred</code>(背景を除く個数)、<code style="color:#22d3bf">n</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割评分与带真值的合成世界 —— 哪种度量对哪种失效视而不见</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• (暂无)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

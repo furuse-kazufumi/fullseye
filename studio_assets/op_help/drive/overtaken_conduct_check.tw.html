@@ -5,16 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>追い越される側の義務(27 条)。場面 S085。</p>
-<p>`<code style="color:#22d3bf">trajectory</code><code style="color:#22d3bf"> = {&quot;t&quot;, &quot;v&quot;}(追い越される車の速さ)。27 条 1 項の対象 = 乗合自動車・トロリーバス(</code><code style="color:#22d3bf">kind</code>` が</p>
-<p>&quot;route_bus&quot; / &quot;trolleybus&quot;)以外で、追いついた車の最高速度が高い(`<code style="color:#22d3bf">overtaker_higher_limit</code>`)か、同じか低くても</p>
-<p>その速さより遅く進み続ける(`<code style="color:#22d3bf">continuing_slower</code>`)とき。その間 [t_caught, t_passed] に <b>速度を増した量</b> =</p>
-<p>max_t (v(t) − min_{s ≤ t} v(s)) が `<code style="color:#22d3bf">tol</code><code style="color:#22d3bf">(**仮定** 0.2 m/s)を超えると </code><code style="color:#22d3bf">speed_increased</code>`。</p>
-<p>27 条 2 項: 車両通行帯の無い道路(`<code style="color:#22d3bf">lanes</code><code style="color:#22d3bf"> が偽)で中央との間の余地 </code><code style="color:#22d3bf">room</code><code style="color:#22d3bf"> &lt; </code><code style="color:#22d3bf">room_needed</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">must_yield_left</code>`。</p>
-<p>返り値: `<code style="color:#22d3bf">applies</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">increase</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">violations</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">must_yield_left</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">trajectory</code> = {&quot;t&quot;, &quot;v&quot;}(追い越される車の速さ)。27 条 1 項の対象 = 乗合自動車・トロリーバス(<code style="color:#22d3bf">kind</code> が &quot;route_bus&quot; / &quot;trolleybus&quot;)以外で、追いついた車の最高速度が高い(<code style="color:#22d3bf">overtaker_higher_limit</code>)か、同じか低くてもその速さより遅く進み続ける(<code style="color:#22d3bf">continuing_slower</code>)とき。その間 [t_caught, t_passed] に <b>速度を増した量</b> = max_t (v(t) − min_{s ≤ t} v(s)) が <code style="color:#22d3bf">tol</code>(<b>仮定</b> 0.2 m/s)を超えると <code style="color:#22d3bf">speed_increased</code>。27 条 2 項: 車両通行帯の無い道路(<code style="color:#22d3bf">lanes</code> が偽)で中央との間の余地 <code style="color:#22d3bf">room</code> &lt; <code style="color:#22d3bf">room_needed</code> なら <code style="color:#22d3bf">must_yield_left</code>。</p>
+<p>返り値: <code style="color:#22d3bf">applies</code>、<code style="color:#22d3bf">increase</code>、<code style="color:#22d3bf">violations</code>、<code style="color:#22d3bf">must_yield_left</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

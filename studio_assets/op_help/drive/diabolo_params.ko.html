@@ -4,13 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_params(kind: &#x27;str&#x27; = &#x27;red&#x27;, **override) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import diabolo; diabolo.diabolo_params(kind: &#x27;str&#x27; = &#x27;red&#x27;, **override) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ディアボロと糸の寸法の辞書。`<code style="color:#22d3bf">kind</code>` = red / blue / patterned / green(論文の表 I の質量・直径・長さ・軸受)。</p>
-<p>論文に無い値は仮定として `<code style="color:#22d3bf">assumed</code>` に名前を残す: 軸の半径 6.5 mm(公開実装の既定値)、糸 1.45 m(本文の「145 cm」)、</p>
-<p>μ_acc = 1/r(転がりの極限、rad/m)、μ_dec = 0.8/r、c_L = 1 cm・c_F = 5 cm(論文の図の説明)、張りつめの余裕 3 cm(公開実装)、</p>
-<p>面の規則の余裕 5 cm(本文)、カップの底の板 半径 12 mm・中心から 12 mm、マーカーは内面の 55 % の半径に 8 か所(うち反射は</p>
-<p>0, 1, 3 番 = 回転の向きが一意に決まる非対称の並び。論文は反射しない印刷のダミーで質量の対称を保った)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 知らない </code><code style="color:#22d3bf">kind</code>`、綴りの違う鍵(fail-closed)、質量・寸法が有限の正でない、底の板がカップの外、</p>
-<p>c_L ≥ c_F。</p>
+<p>ディアボロと糸の寸法の辞書。<code style="color:#22d3bf">kind</code> = red / blue / patterned / green(論文の表 I の質量・直径・長さ・軸受)。</p>
+<p>論文に無い値は仮定として <code style="color:#22d3bf">assumed</code> に名前を残す: 軸の半径 6.5 mm(公開実装の既定値)、糸 1.45 m(本文の「145 cm」)、μ_acc = 1/r(転がりの極限、rad/m)、μ_dec = 0.8/r、c_L = 1 cm・c_F = 5 cm(論文の図の説明)、張りつめの余裕 3 cm(公開実装)、面の規則の余裕 5 cm(本文)、カップの底の板 半径 12 mm・中心から 12 mm、マーカーは内面の 55 % の半径に 8 か所(うち反射は 0, 1, 3 番 = 回転の向きが一意に決まる非対称の並び。論文は反射しない印刷のダミーで質量の対称を保った)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 知らない <code style="color:#22d3bf">kind</code>、綴りの違う鍵(fail-closed)、質量・寸法が有限の正でない、底の板がカップの外、c_L ≥ c_F。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

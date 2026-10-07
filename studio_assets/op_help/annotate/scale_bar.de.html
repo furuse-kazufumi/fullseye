@@ -5,32 +5,28 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein Maßstabsbalken in physikalischer Länge. <b>Die Umrechnung Pixel↔Physik wird als Argument übergeben</b> (nie angenommen).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>バーの画素長は `<code style="color:#22d3bf">round(length / units_per_pixel)</code>` ―― これが構成的な真値で、</p>
-<p>:mod:<code style="color:#22d3bf">tests.test_annotate</code> はこの一致を数字で確かめている。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>バーの画素長は <code style="color:#22d3bf">round(length / units_per_pixel)</code> ―― これが構成的な真値で、<code style="color:#22d3bf">tests.test_annotate</code> はこの一致を数字で確かめている。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>length : float</p>
-<p>バーが表す物理長(`<code style="color:#22d3bf">unit</code>` の単位で)。</p>
+<p>バーが表す物理長(<code style="color:#22d3bf">unit</code> の単位で)。</p>
 <p>units_per_pixel : float</p>
-<p>1 画素が何 `<code style="color:#22d3bf">unit</code>` に相当するか。倍率ではなく<b>分解能</b>を渡す。</p>
+<p>1 画素が何 <code style="color:#22d3bf">unit</code> に相当するか。倍率ではなく<b>分解能</b>を渡す。</p>
 <p>unit : str</p>
-<p>単位の表記(`<code style="color:#22d3bf">&#x27;µm&#x27;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&#x27;mm&#x27;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&#x27;px&#x27;</code>` など)。</p>
+<p>単位の表記(<code style="color:#22d3bf">&#x27;µm&#x27;</code>, <code style="color:#22d3bf">&#x27;mm&#x27;</code>, <code style="color:#22d3bf">&#x27;px&#x27;</code> など)。</p>
 <p>xy : (x,y) or None</p>
-<p>バーの基準点。None なら `<code style="color:#22d3bf">anchor</code><code style="color:#22d3bf"> 側の隅から </code><code style="color:#22d3bf">margin</code>` 内側。</p>
+<p>バーの基準点。None なら <code style="color:#22d3bf">anchor</code> 側の隅から <code style="color:#22d3bf">margin</code> 内側。</p>
 <p>label : bool</p>
-<p>`<code style="color:#22d3bf">&quot;200 µm&quot;</code>` のラベルを併記するか。</p>
-<p>Returns</p>
-<p>-------</p>
+<p><code style="color:#22d3bf">&quot;200 µm&quot;</code> のラベルを併記するか。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>Raises</p>
-<p>------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>length / units_per_pixel が非正・非有限、画素長が 1 未満、</p>
 <p>バー(とラベル)が画像に収まらない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Konventionen für Trainingsdatensätze — COCO / YOLO / VOC und Fallstricke in der Sichtprüfung</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

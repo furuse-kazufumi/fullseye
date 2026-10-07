@@ -3,17 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">deformation</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deformation_to_points(deformation)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.deformation_to_points(deformation)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;deformation_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>A TPS `<code style="color:#22d3bf">deformation</code><code style="color:#22d3bf"> → its control </code><code style="color:#22d3bf">points (N,3)</code><code style="color:#22d3bf">. The exit from </code><code style="color:#22d3bf">deformation</code>`.</p>
+<p>A TPS <code style="color:#22d3bf">deformation</code> → its control <code style="color:#22d3bf">points (N,3)</code>. The exit from <code style="color:#22d3bf">deformation</code>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">tps_fit</code><code style="color:#22d3bf"> が返す dict の </code><code style="color:#22d3bf">ctrl</code>` を取り出す。「この歪みはどこに</p>
-<p>固定されているか」を点群語彙で見るためのもので、<b>一方向</b></p>
-<p>(制御点だけからは重み `<code style="color:#22d3bf">w</code><code style="color:#22d3bf"> とアフィン項 </code><code style="color:#22d3bf">a</code>` は復元できない)。</p>
+<p><code style="color:#22d3bf">tps_fit</code> が返す dict の <code style="color:#22d3bf">ctrl</code> を取り出す。「この歪みはどこに固定されているか」を点群語彙で見るためのもので、<b>一方向</b> (制御点だけからは重み <code style="color:#22d3bf">w</code> とアフィン項 <code style="color:#22d3bf">a</code> は復元できない)。</p>
 <p>Args:</p>
-<p>deformation: `<code style="color:#22d3bf">ctrl</code><code style="color:#22d3bf"> を持つ dict(</code><code style="color:#22d3bf">tps_fit</code>` の返り)。</p>
+<p>deformation: <code style="color:#22d3bf">ctrl</code> を持つ dict(<code style="color:#22d3bf">tps_fit</code> の返り)。</p>
 <p>Returns:</p>
 <p>(N, 3) float64。</p>
 <p>Raises:</p>
-<p>ValueError: dict でない / `<code style="color:#22d3bf">ctrl</code>` が無い / 形状不正 / 非有限。</p>
+<p>ValueError: dict でない / <code style="color:#22d3bf">ctrl</code> が無い / 形状不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

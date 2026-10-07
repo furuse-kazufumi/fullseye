@@ -5,35 +5,23 @@
 <p><img src="fig/tb_normals_to_egi.png" alt="tb_normals_to_egi: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.a.jpg">tb_normals_to_egi: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.a.jpg">tb_normals_to_egi: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.b.jpg">tb_normals_to_egi: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.b.jpg">tb_normals_to_egi: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.chain.jpg">tb_normals_to_egi: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.chain.jpg">tb_normals_to_egi: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.inputs.jpg">tb_normals_to_egi: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.inputs.jpg">tb_normals_to_egi: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>法線 `<code style="color:#22d3bf">(N,3)</code><code style="color:#22d3bf"> → 拡張ガウス像 </code><code style="color:#22d3bf">(n_el, n_az)</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">image2d</code>`。</p>
-<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12)</p>
-<p>1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では</p>
-<p>1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
-<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、</p>
-<p>既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(`<code style="color:#22d3bf">selftest</code>` が出す)。</p>
-<p>仰角の bin は `<code style="color:#22d3bf">sin(el)</code>` で等分する(等立体角)。度で等分すると極が過剰に</p>
-<p>細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
+<p>法線 <code style="color:#22d3bf">(N,3)</code> → 拡張ガウス像 <code style="color:#22d3bf">(n_el, n_az)</code> の <code style="color:#22d3bf">image2d</code>。</p>
+<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では 1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
+<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(<code style="color:#22d3bf">selftest</code> が出す)。</p>
+<p>仰角の bin は <code style="color:#22d3bf">sin(el)</code> で等分する(等立体角)。度で等分すると極が過剰に細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
 <p>Args:</p>
 <p>normals: (N, 3)。</p>
 <p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
 <p>n_el: 仰角の bin 数(既定 18)。</p>
-<p>★<b>位置の点群を渡しても例外は出ない</b>。`<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code>` が</p>
-<p>`<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">points</code>` に畳んでいるので、進化器も台帳も両者を区別しない。</p>
-<p>この op は方向しか見ない(長さは捨てる)ので、`<code style="color:#22d3bf">(N,3)</code>` の座標を渡すと</p>
-<p>「原点から各点を見た向き」のヒストグラムが<b>もっともらしく</b>返る。実測</p>
-<p>(2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、</p>
-<p>最大 bin が 200 → 44 に変わるだけで、<b>総和はどちらも 200</b>。</p>
-<p>「総和が点数と合うから正しい」では区別がつかない。</p>
-<p>`<code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code>` にすると、単位長から外れた</p>
-<p>ベクトルを<b>拒否</b>する(下の Raises)。</p>
+<p>★<b>位置の点群を渡しても例外は出ない</b>。<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> が <code style="color:#22d3bf">normals</code> を <code style="color:#22d3bf">points</code> に畳んでいるので、進化器も台帳も両者を区別しない。この op は方向しか見ない(長さは捨てる)ので、<code style="color:#22d3bf">(N,3)</code> の座標を渡すと「原点から各点を見た向き」のヒストグラムが<b>もっともらしく</b>返る。実測(2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、最大 bin が 200 → 44 に変わるだけで、<b>総和はどちらも 200</b>。「総和が点数と合うから正しい」では区別がつかない。<code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> にすると、単位長から外れたベクトルを<b>拒否</b>する(下の Raises)。</p>
 <p>Args:</p>
 <p>normals: (N, 3)。</p>
 <p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
@@ -42,16 +30,16 @@
 <p>(n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。</p>
 <p>Raises:</p>
 <p>ValueError: bin 数が 1 未満 / 上限超 / 入力不正。</p>
-<p>ValueError: `<code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code>` で、長さが 1 から 1e-6 を超えて外れる</p>
+<p>ValueError: <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code> で、長さが 1 から 1e-6 を超えて外れる</p>
 <p>ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op `<code style="color:#22d3bf">normals_to_egi</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">n_az</code><code style="color:#22d3bf">(既定 36)、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">n_el</code>`(既定 18)を振る。</p>
+<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">normals_to_egi</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">n_az</code>(既定 36)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">n_el</code>(既定 18)を振る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
-tb_normals_to_egi 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_normals_to_egi%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_normals_to_egi%200.50%200.50">Load &amp; run</a></p>
+tb_normals_to_egi 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_normals_to_egi%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_normals_to_egi%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">normals_to_egi</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>

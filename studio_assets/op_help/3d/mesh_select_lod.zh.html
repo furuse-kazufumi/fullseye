@@ -3,15 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_select_lod(lod, distance, focal_px, pixel_tolerance=0.5, use=&#x27;max_error&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import meshres; meshres.mesh_select_lod(lod, distance, focal_px, pixel_tolerance=0.5, use=&#x27;max_error&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mesh_select_lod&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>几何误差投影后低于 *pixel_tolerance* 的最粗 LOD 级(`<code style="color:#22d3bf">table</code>`)。</p>
+<p>几何误差投影后低于 *pixel_tolerance* 的最粗 LOD 级(<code style="color:#22d3bf">table</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Screen-space error `<code style="color:#22d3bf">e_px = error × focal_px / distance</code>` (pinhole, mesh</p>
-<p>units for *distance*). Returns ``{&quot;level&quot;, &quot;error_px&quot;, &quot;n_faces&quot;,</p>
-<p>&quot;candidates&quot;: [e_px per level]}`<code style="color:#22d3bf">; </code><code style="color:#22d3bf">use</code><code style="color:#22d3bf"> picks </code><code style="color:#22d3bf">&quot;max_error&quot;</code>` (safe) or</p>
-<p>`<code style="color:#22d3bf">&quot;rms_error&quot;</code>`. Level 0 (the input) is chosen when nothing else fits.</p>
+<p>Screen-space error <code style="color:#22d3bf">e_px = error × focal_px / distance</code> (pinhole, mesh units for *distance*). Returns <code style="color:#22d3bf">{&quot;level&quot;, &quot;error_px&quot;, &quot;n_faces&quot;, &quot;candidates&quot;: [e_px per level]}</code>; <code style="color:#22d3bf">use</code> picks <code style="color:#22d3bf">&quot;max_error&quot;</code> (safe) or <code style="color:#22d3bf">&quot;rms_error&quot;</code>. Level 0 (the input) is chosen when nothing else fits.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

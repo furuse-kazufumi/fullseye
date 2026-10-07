@@ -3,16 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_hull(V)</code>(要直接调用实现,<code style="color:#22d3bf">import meshrepair; meshrepair.convex_hull(V)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;convex_hull&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>点集的凸包 -&gt; `<code style="color:#22d3bf">(V, F)</code>`,三角形朝外定向。</p>
+<p>点集的凸包 -&gt; <code style="color:#22d3bf">(V, F)</code>,三角形朝外定向。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Thin wrapper over :class:<code style="color:#22d3bf">scipy.spatial.ConvexHull</code> (Qhull): interior points</p>
-<p>are dropped, faces are triangulated, and each triangle is wound so its normal</p>
-<p>points away from the hull centroid (outward, positive signed volume) — so the</p>
-<p>result feeds straight into :func:<code style="color:#22d3bf">inertia_tensor</code> or a MuJoCo convex collider.</p>
-<p>Needs at least 4 non-coplanar points.</p>
+<p>Thin wrapper over <code style="color:#22d3bf">scipy.spatial.ConvexHull</code> (Qhull): interior points are dropped, faces are triangulated, and each triangle is wound so its normal points away from the hull centroid (outward, positive signed volume) — so the result feeds straight into <code style="color:#22d3bf">inertia_tensor</code> or a MuJoCo convex collider. Needs at least 4 non-coplanar points.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

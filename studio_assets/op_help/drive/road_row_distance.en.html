@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_row_distance(rows, horizon_row: &#x27;float&#x27;, focal: &#x27;float&#x27;, cam_height: &#x27;float&#x27;, pitch: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveenv; driveenv.road_row_distance(rows, horizon_row: &#x27;float&#x27;, focal: &#x27;float&#x27;, cam_height: &#x27;float&#x27;, pitch: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;road_row_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>平らな路面の上の行 → カメラから路面の点までの水平距離(厳密)。地平線より上の行は `<code style="color:#22d3bf">inf</code>`。</p>
-<p>俯角 α(下向き +、ラジアン)のピンホール: 地平線の行 v_h = c_y − f tan α、路面の水平距離 d の点の行は</p>
-<p>v − v_h = f H (1 + tan²α) / (d + H tan α) —— よって d = λ/(v − v_h) − H tan α、λ = f H / cos²α</p>
-<p>(Hautière ら 2006 の λ/(v − v_h) は第 1 項だけの形)。行は下向きが +。</p>
+<p>平らな路面の上の行 → カメラから路面の点までの水平距離(厳密)。地平線より上の行は <code style="color:#22d3bf">inf</code>。</p>
+<p>俯角 α(下向き +、ラジアン)のピンホール: 地平線の行 v_h = c_y − f tan α、路面の水平距離 d の点の行は v − v_h = f H (1 + tan²α) / (d + H tan α) —— よって d = λ/(v − v_h) − H tan α、λ = f H / cos²α (Hautière ら 2006 の λ/(v − v_h) は第 1 項だけの形)。行は下向きが +。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

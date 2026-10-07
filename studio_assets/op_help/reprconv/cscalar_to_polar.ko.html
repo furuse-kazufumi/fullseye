@@ -3,12 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">cscalar</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cscalar_to_polar(cscalar)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.cscalar_to_polar(cscalar)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;cscalar_to_polar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>복소 스칼라 → 극형식 `<code style="color:#22d3bf">pairs (1,2) = [|z|, arg z[도]]</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">cscalar</code>` 의 출구.</p>
+<p>복소 스칼라 → 극형식 <code style="color:#22d3bf">pairs (1,2) = [|z|, arg z[도]]</code>. <code style="color:#22d3bf">cscalar</code> 의 출구.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">cplx_contour_integral</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cplx_cauchy_value</code>` が返す複素スカラは、</p>
-<p>`<code style="color:#22d3bf">measurement</code>`(実スカラのみ)へ混ぜると下流が生 TypeError で落ちるので</p>
-<p>型が分かれている。極形式の対にすると 1-D 語彙へ渡せる。</p>
-<p><b>角度は度</b>。:func:<code style="color:#22d3bf">polar_to_cscalar</code> と往復して実測 max|Δ| = 8.9e-16。</p>
+<p><code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> が返す複素スカラは、<code style="color:#22d3bf">measurement</code>(実スカラのみ)へ混ぜると下流が生 TypeError で落ちるので型が分かれている。極形式の対にすると 1-D 語彙へ渡せる。</p>
+<p><b>角度は度</b>。<code style="color:#22d3bf">polar_to_cscalar</code> と往復して実測 max|Δ| = 8.9e-16。</p>
 <p>Args:</p>
 <p>cscalar: complex(または複素 0-d 配列)。</p>
 <p>Returns:</p>

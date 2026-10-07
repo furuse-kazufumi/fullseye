@@ -5,16 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Färbt jede Voronoi-Zelle mit dem <b>Mittelwert</b> der ihr gehörenden Pixel.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>★<b>Why the mean and not something prettier</b>: for a fixed partition the mean</p>
-<p>is the `<code style="color:#22d3bf">L2</code>`-optimal constant — no other value lowers the squared error</p>
-<p>inside the cell. The tile colour is therefore a solution, not a taste, and any</p>
-<p>alternative can be *shown* to be worse by evaluating the same sum.</p>
-<p>Returns an `<code style="color:#22d3bf">image2d</code>`: the mosaic.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: sites not (N, 2) with N &gt;= 1; sites outside the</p>
-<p>image; a non-finite or oversized image.</p>
-<p>Limits: cells are convex polygons, so this does not imitate the irregular</p>
-<p>tesserae of real mosaic and never runs a single tile along an edge the way a</p>
-<p>mosaicist would.</p>
+<p>★<b>Why the mean and not something prettier</b>: for a fixed partition the mean is the <code style="color:#22d3bf">L2</code>-optimal constant — no other value lowers the squared error inside the cell. The tile colour is therefore a solution, not a taste, and any alternative can be *shown* to be worse by evaluating the same sum.</p>
+<p>Returns an <code style="color:#22d3bf">image2d</code>: the mosaic.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: sites not (N, 2) with N &gt;= 1; sites outside the image; a non-finite or oversized image.</p>
+<p>Limits: cells are convex polygons, so this does not imitate the irregular tesserae of real mosaic and never runs a single tile along an edge the way a mosaicist would.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">Leitfaden zur Familie printpath</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

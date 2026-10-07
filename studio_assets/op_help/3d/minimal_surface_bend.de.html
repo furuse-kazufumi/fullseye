@@ -5,18 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Katenoid-Helikoid-Biegung — jedes Mitglied der Familie bleibt minimal.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The *associate family* `<code style="color:#22d3bf">cos(t) * helicoid + sin(t) * catenoid</code>` (in the</p>
-<p>Weierstrass sense) deforms one into the other <b>without stretching</b>: the</p>
-<p>surfaces are isometric at every `<code style="color:#22d3bf">t</code>`, and every one of them is minimal.</p>
-<p>`<code style="color:#22d3bf">t = 0</code><code style="color:#22d3bf"> is the helicoid, </code><code style="color:#22d3bf">t = pi/2</code>` the catenoid.</p>
-<p>★<b>Why this earns its place</b>: it turns &quot;minimal&quot; from a property of two</p>
-<p>named surfaces into a <b>one-parameter claim that must hold throughout</b>. If</p>
-<p>an implementation is only accidentally right at the endpoints, the middle of</p>
-<p>the family exposes it — and the intrinsic geometry (first fundamental form)</p>
-<p>must not change along the way, which is a second, independent check.</p>
-<p>Returns a `<code style="color:#22d3bf">mesh</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the same shape/scale contracts as</p>
-<p>:func:<code style="color:#22d3bf">minimal_surface</code>; a non-finite `<code style="color:#22d3bf">t</code>`.</p>
+<p>The *associate family* <code style="color:#22d3bf">cos(t) * helicoid + sin(t) * catenoid</code> (in the Weierstrass sense) deforms one into the other <b>without stretching</b>: the surfaces are isometric at every <code style="color:#22d3bf">t</code>, and every one of them is minimal. <code style="color:#22d3bf">t = 0</code> is the helicoid, <code style="color:#22d3bf">t = pi/2</code> the catenoid.</p>
+<p>★<b>Why this earns its place</b>: it turns &quot;minimal&quot; from a property of two named surfaces into a <b>one-parameter claim that must hold throughout</b>. If an implementation is only accidentally right at the endpoints, the middle of the family exposes it — and the intrinsic geometry (first fundamental form) must not change along the way, which is a second, independent check.</p>
+<p>Returns a <code style="color:#22d3bf">mesh</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: the same shape/scale contracts as <code style="color:#22d3bf">minimal_surface</code>; a non-finite <code style="color:#22d3bf">t</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

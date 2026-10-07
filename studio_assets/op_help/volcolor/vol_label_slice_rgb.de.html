@@ -5,16 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Entnimmt einem eingefärbten Volumen einen RGB-Querschnitt (axial / koronal / sagittal).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>*axis* は `<code style="color:#22d3bf">&quot;z&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;axial&quot;</code><code style="color:#22d3bf">/0(</code><code style="color:#22d3bf">(H, W, 3)</code><code style="color:#22d3bf"> が返る)、</code><code style="color:#22d3bf">&quot;y&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;coronal&quot;</code>`/1</p>
-<p>(`<code style="color:#22d3bf">(D, W, 3)</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">&quot;x&quot;</code><code style="color:#22d3bf">/</code><code style="color:#22d3bf">&quot;sagittal&quot;</code><code style="color:#22d3bf">/2(</code><code style="color:#22d3bf">(D, H, 3)</code>`)。**返る 2 軸が</p>
-<p>軸ごとに違う**のは `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> から 1 軸抜くのだから当然だが、</code><code style="color:#22d3bf">(H, W)</code>` を</p>
-<p>期待して受けると縦横が入れ替わった絵が例外なしに出る。3 通りの形は</p>
-<p>`<code style="color:#22d3bf">tests/test_volcolor.py::test_slice_axes_shapes_and_content</code>` が固定している。</p>
-<p>*index* は<b>非負</b>でなければならない。`<code style="color:#22d3bf">-1</code>` を「最後の断面」として黙って</p>
-<p>受けると、範囲外の指定が最後の断面として通ってしまう(切り出す位置が</p>
-<p>1 箇所ずれた図は、機械にも目にも「壊れている」と見えない)。</p>
-<p>Returns a contiguous float64 `<code style="color:#22d3bf">(..., 3)</code><code style="color:#22d3bf"> copy. Raises </code><code style="color:#22d3bf">ValueError</code>` for a bad</p>
-<p>volume, an unknown *axis*, or an out-of-range / negative *index*.</p>
+<p>*axis* は <code style="color:#22d3bf">&quot;z&quot;</code>/<code style="color:#22d3bf">&quot;axial&quot;</code>/0(<code style="color:#22d3bf">(H, W, 3)</code> が返る)、<code style="color:#22d3bf">&quot;y&quot;</code>/<code style="color:#22d3bf">&quot;coronal&quot;</code>/1 (<code style="color:#22d3bf">(D, W, 3)</code>)、<code style="color:#22d3bf">&quot;x&quot;</code>/<code style="color:#22d3bf">&quot;sagittal&quot;</code>/2(<code style="color:#22d3bf">(D, H, 3)</code>)。<b>返る 2 軸が軸ごとに違う</b>のは <code style="color:#22d3bf">(D, H, W)</code> から 1 軸抜くのだから当然だが、<code style="color:#22d3bf">(H, W)</code> を期待して受けると縦横が入れ替わった絵が例外なしに出る。3 通りの形は <code style="color:#22d3bf">tests/test_volcolor.py::test_slice_axes_shapes_and_content</code> が固定している。</p>
+<p>*index* は<b>非負</b>でなければならない。<code style="color:#22d3bf">-1</code> を「最後の断面」として黙って受けると、範囲外の指定が最後の断面として通ってしまう(切り出す位置が 1 箇所ずれた図は、機械にも目にも「壊れている」と見えない)。</p>
+<p>Returns a contiguous float64 <code style="color:#22d3bf">(..., 3)</code> copy. Raises <code style="color:#22d3bf">ValueError</code> for a bad volume, an unknown *axis*, or an out-of-range / negative *index*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

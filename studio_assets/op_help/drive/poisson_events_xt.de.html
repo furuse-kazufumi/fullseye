@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>[0, x_max] × [0, t_max] の時空の非一様ポアソン過程(率 λ(x, t) [件/(m·s)])を thinning で 1 本引く。</p>
-<p>停車中のバスのように、出現率が場所と時刻の両方に依る場合(λ(x, t) = bus_stop_rate(x) · [t &lt; 発車] + base)。</p>
-<p>率 rate_max の一様な候補(件数 ~ Poisson(rate_max · x_max · t_max)、位置・時刻は一様)を確率 λ/rate_max で残す。</p>
-<p>件数 ~ Poisson(Λ)、Λ = ∫∫λ dx dt。`<code style="color:#22d3bf">rate_fn(x, t)</code>` は同じ形の配列 2 つを受けて率を返す関数。</p>
-<p><b>引く前に</b> `<code style="color:#22d3bf">n_grid = (nx, nt)</code>` の格子で λ ≤ rate_max を確かめ、候補の所でも確かめる(超えれば ValueError)。</p>
+<p>停車中のバスのように、出現率が場所と時刻の両方に依る場合(λ(x, t) = bus_stop_rate(x) · [t &lt; 発車] + base)。率 rate_max の一様な候補(件数 ~ Poisson(rate_max · x_max · t_max)、位置・時刻は一様)を確率 λ/rate_max で残す。件数 ~ Poisson(Λ)、Λ = ∫∫λ dx dt。<code style="color:#22d3bf">rate_fn(x, t)</code> は同じ形の配列 2 つを受けて率を返す関数。<b>引く前に</b> <code style="color:#22d3bf">n_grid = (nx, nt)</code> の格子で λ ≤ rate_max を確かめ、候補の所でも確かめる(超えれば ValueError)。</p>
 <p>戻り値: (N, 2) の配列 [[x, t], ...] (時刻の昇順)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

@@ -5,18 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>集水セル数。各セルへ流れ込む上流セルの個数(自セルを 1 と数える)。</p>
-<p>`<code style="color:#22d3bf">fill=True</code>` なら先に窪地を埋める(埋めないと窪地で流れが止まり、</p>
-<p>下流の集水量が<b>静かに小さく出る</b>)。欠測セルの集水量は `<code style="color:#22d3bf">nan</code>`。</p>
-<p>グラフの構築はベクトル化してある。ただし<b>効果は小さい</b>: 1024x1024 で</p>
-<p>2.71 秒 -&gt; 2.39 秒。支配しているのは構築ではなく、そのあとのトポロジカル</p>
-<p>走査(セル数ぶんの Python ループ)のほうだった。速くしたいならそこを</p>
-<p>書き換える必要がある —— 直したつもりで直っていない、を残さないため明記する。</p>
+<p><code style="color:#22d3bf">fill=True</code> なら先に窪地を埋める(埋めないと窪地で流れが止まり、下流の集水量が<b>静かに小さく出る</b>)。欠測セルの集水量は <code style="color:#22d3bf">nan</code>。</p>
+<p>グラフの構築はベクトル化してある。ただし<b>効果は小さい</b>: 1024x1024 で 2.71 秒 -&gt; 2.39 秒。支配しているのは構築ではなく、そのあとのトポロジカル走査(セル数ぶんの Python ループ)のほうだった。速くしたいならそこを書き換える必要がある —— 直したつもりで直っていない、を残さないため明記する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:dem_terrain_analysis_tour">dem_terrain_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/dem_terrain_analysis_tour.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dem_terrain">poc_dem_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dem_terrain.py</code></p>

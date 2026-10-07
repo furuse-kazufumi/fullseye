@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;no_stopping_zones&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>道に沿った施設から、44 条 1 項の駐停車禁止の区間を作る。</p>
-<p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(バス停は &quot;at&quot; = 標示板の位置でもよい)。kind ∈ `<code style="color:#22d3bf">NO_STOP_DISTANCE</code>`。</p>
-<p>区間 = [start − d, end + d] (d = その号の距離)。バス停は運行時間中(`<code style="color:#22d3bf">in_service</code>`)だけ。</p>
-<p>返り値: `<code style="color:#22d3bf">zones</code><code style="color:#22d3bf"> = [(a, b, kind, 号)] (元の順)、</code><code style="color:#22d3bf">merged</code>` = 重なりを併せた (k, 2) の配列(昇順・互いに素)。</p>
+<p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(バス停は &quot;at&quot; = 標示板の位置でもよい)。kind ∈ <code style="color:#22d3bf">NO_STOP_DISTANCE</code>。区間 = [start − d, end + d] (d = その号の距離)。バス停は運行時間中(<code style="color:#22d3bf">in_service</code>)だけ。</p>
+<p>返り値: <code style="color:#22d3bf">zones</code> = [(a, b, kind, 号)] (元の順)、<code style="color:#22d3bf">merged</code> = 重なりを併せた (k, 2) の配列(昇順・互いに素)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

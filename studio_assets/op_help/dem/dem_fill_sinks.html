@@ -4,12 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import demops; demops.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">opsdem.get(&quot;dem_fill_sinks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>窪地を埋めた DEM。Barnes, Lehman &amp; Mulla (2014) の priority-flood。</p>
-<p>`<code style="color:#22d3bf">epsilon</code>` に微小値(例 1e-6)を与えると、埋めた平坦面にわずかな傾斜を付ける</p>
-<p>(これが無いと平坦面で流向が決まらず、集水量が途中で消える)。</p>
-<p>`<code style="color:#22d3bf">nodata</code><code style="color:#22d3bf"> は :data:</code>NODATA_POLICIES<code style="color:#22d3bf">。</code><code style="color:#22d3bf">&quot;outlet&quot;</code>` なら欠測セルを外周と同じ</p>
-<p><b>種</b>として扱う(水域に流れ込んだ水はそこで系を出る)。`<code style="color:#22d3bf">&quot;barrier&quot;</code>` なら</p>
-<p>欠測は埋めの対象から外し、値を `<code style="color:#22d3bf">nan</code>` のまま返す。</p>
-<p>出力は入力以上(`<code style="color:#22d3bf">filled &gt;= dem</code>`、欠測を除く)。</p>
+<p><code style="color:#22d3bf">epsilon</code> に微小値(例 1e-6)を与えると、埋めた平坦面にわずかな傾斜を付ける(これが無いと平坦面で流向が決まらず、集水量が途中で消える)。</p>
+<p><code style="color:#22d3bf">nodata</code> は <code style="color:#22d3bf">NODATA_POLICIES</code>。<code style="color:#22d3bf">&quot;outlet&quot;</code> なら欠測セルを外周と同じ <b>種</b>として扱う(水域に流れ込んだ水はそこで系を出る)。<code style="color:#22d3bf">&quot;barrier&quot;</code> なら欠測は埋めの対象から外し、値を <code style="color:#22d3bf">nan</code> のまま返す。</p>
+<p>出力は入力以上(<code style="color:#22d3bf">filled &gt;= dem</code>、欠測を除く)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

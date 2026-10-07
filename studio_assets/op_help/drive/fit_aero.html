@@ -3,10 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × points × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_aero(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 15, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballistics; ballistics.fit_aero(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 15, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;fit_aero&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>軌跡から <b>空力係数も</b> 同定する: (p₀, v₀, C_d, C_L) の 8 パラメータを Gauss–Newton(ω は既知、C_L は定数として当てる)。</p>
-<p>抗力は速さの 2 乗、マグヌスは ω × v なので、直線的でない軌跡(スピンあり・十分な長さ)でないと C_L は決まりにくい</p>
-<p>(`<code style="color:#22d3bf">rms</code><code style="color:#22d3bf"> と一緒に </code><code style="color:#22d3bf">cond</code><code style="color:#22d3bf"> = ヤコビアンの条件数を返すので、それで判る)。返り値 </code><code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;cd&quot;, &quot;cl&quot;, &quot;rms&quot;, &quot;cond&quot;, &quot;iters&quot;}</code>`。</p>
-<p>真値の軌跡(C_L 定数で作った)なら 1e-6 で戻る(門)。</p>
+<p>軌跡から <b>空力係数も</b> 同定する: (p₀, v₀, C_d, C_L) の 8 パラメータを Gauss–Newton(ω は既知、C_L は定数として当てる)。抗力は速さの 2 乗、マグヌスは ω × v なので、直線的でない軌跡(スピンあり・十分な長さ)でないと C_L は決まりにくい(<code style="color:#22d3bf">rms</code> と一緒に <code style="color:#22d3bf">cond</code> = ヤコビアンの条件数を返すので、それで判る)。返り値 <code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;cd&quot;, &quot;cl&quot;, &quot;rms&quot;, &quot;cond&quot;, &quot;iters&quot;}</code>。真値の軌跡(C_L 定数で作った)なら 1e-6 で戻る(門)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -8,18 +8,13 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_plane_deviation.inputs.jpg">hx_plane_deviation: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_plane_deviation.inputs.jpg">hx_plane_deviation: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>gray 値の 1 次平面近似からの偏差 |v - plane|(平坦度/欠陥検査)。</p>
-<p>座標を [-1,1] に正規化した基底 `<code style="color:#22d3bf">[1, x, y]</code><code style="color:#22d3bf"> で gray 値を最小二乗の平面に当て(</code><code style="color:#22d3bf">hx_fit_surface1</code>` と同じ</p>
-<p>回帰)、残差の絶対値 `<code style="color:#22d3bf">|v - plane|</code>` を [0,1] に clip して返す。正規化はしない(純粋な平面なら丸め誤差程度の</p>
-<p>ほぼ 0 画像になる)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>平面からの偏差が大きい画素=照明の傾きでは説明できない構造(傷・打痕・異物)。出力は符号を捨てているので</p>
-<p>「平面より明るい/暗い」は区別しない。区別が要るなら `<code style="color:#22d3bf">hx_fit_surface1</code>` の結果と元画像を別途引く。</p>
-<p>1 次面なので緩やかに曲がった背景は残差に出る。その場合は `<code style="color:#22d3bf">hx_fit_surface2</code>` 側で背景を推定する。</p>
-<p>後段は `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf"> で欠陥 region 化、あるいは </code><code style="color:#22d3bf">hx_char_threshold</code>` の前処理として背景差し引き代わりに使える。</p>
+<p>座標を [-1,1] に正規化した基底 <code style="color:#22d3bf">[1, x, y]</code> で gray 値を最小二乗の平面に当て(<code style="color:#22d3bf">hx_fit_surface1</code> と同じ回帰)、残差の絶対値 <code style="color:#22d3bf">|v - plane|</code> を [0,1] に clip して返す。正規化はしない(純粋な平面なら丸め誤差程度のほぼ 0 画像になる)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>平面からの偏差が大きい画素=照明の傾きでは説明できない構造(傷・打痕・異物)。出力は符号を捨てているので「平面より明るい/暗い」は区別しない。区別が要るなら <code style="color:#22d3bf">hx_fit_surface1</code> の結果と元画像を別途引く。1 次面なので緩やかに曲がった背景は残差に出る。その場合は <code style="color:#22d3bf">hx_fit_surface2</code> 側で背景を推定する。後段は <code style="color:#22d3bf">threshold</code> で欠陥 region 化、あるいは <code style="color:#22d3bf">hx_char_threshold</code> の前処理として背景差し引き代わりに使える。</p>
 <p><b>何も写っていないフレーム(実測)</b>: 明るさが一様な画像を入れると、<b>明るさに関係なく空(全画素が背景 0)</b>になる。真っ白でも真っ黒でも同じで、明るさそのものでは何も検出しない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
@@ -29,7 +24,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_plane_deviation 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_plane_deviation%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_plane_deviation%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_plane_deviation 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_plane_deviation%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_plane_deviation%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

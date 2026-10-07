@@ -4,9 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stanley_steer(front_pose, path, *, gain: &#x27;float&#x27;, speed, softening: &#x27;float&#x27; = 0.0, max_steer: &#x27;float&#x27; = inf, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.stanley_steer(front_pose, path, *, gain: &#x27;float&#x27;, speed, softening: &#x27;float&#x27; = 0.0, max_steer: &#x27;float&#x27; = inf, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;stanley_steer&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Stanley の舵角 δ = ψ_e + atan2(−k e, k_s + v)(前車軸の中心の横ずれ e は経路の左が正、ψ_e = 経路の向き − ψ)。</p>
-<p>`<code style="color:#22d3bf">front_pose</code><code style="color:#22d3bf">: (3,) または (N, 3)。</code><code style="color:#22d3bf">max_steer</code><code style="color:#22d3bf"> で切る(切ると :func:</code>stanley_straight_decay` の閉形式から外れる)。</p>
-<p>返り値: `<code style="color:#22d3bf">steer</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">lateral</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">heading_error</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">index</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形の誤り、k ≤ 0、v &lt; 0、k_s &lt; 0、max_steer ≤ 0。</p>
+<p><code style="color:#22d3bf">front_pose</code>: (3,) または (N, 3)。<code style="color:#22d3bf">max_steer</code> で切る(切ると <code style="color:#22d3bf">stanley_straight_decay</code> の閉形式から外れる)。</p>
+<p>返り値: <code style="color:#22d3bf">steer</code>, <code style="color:#22d3bf">lateral</code>, <code style="color:#22d3bf">heading_error</code>, <code style="color:#22d3bf">index</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、k ≤ 0、v &lt; 0、k_s &lt; 0、max_steer ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

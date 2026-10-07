@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>糸の V 字(棒の先 2 点と軸の位置)から張力を出す(摩擦のない滑車 = 両側の張力が等しい)。</p>
-<p>T (û_L + û_R) = m (a − g⃗) の最小二乗: T = m (a − g⃗)·n / |n|²、n = û_L + û_R(û は軸 → 棒の単位ベクトル)。静止(accel = None)</p>
-<p>なら T = m g / (sin α_L + sin α_R)(α = 糸の水平からの角)と同じ。残差(釣り合いの破れ)も返す —— 大きければ「加速度の入れ忘れ /</p>
-<p>摩擦 / 弾性」の警報。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形、質量 ≤ 0、軸が棒と重なる。</p>
+<p>T (û_L + û_R) = m (a − g⃗) の最小二乗: T = m (a − g⃗)·n / |n|²、n = û_L + û_R(û は軸 → 棒の単位ベクトル)。静止(accel = None) なら T = m g / (sin α_L + sin α_R)(α = 糸の水平からの角)と同じ。残差(釣り合いの破れ)も返す —— 大きければ「加速度の入れ忘れ / 摩擦 / 弾性」の警報。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形、質量 ≤ 0、軸が棒と重なる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

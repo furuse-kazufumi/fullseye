@@ -5,11 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>斜面の角(度、登りが正)ごとに、車体の重さを支えつつ斜面方向の重力成分を牽引力で釣り合わせる定常の滑り率。</p>
-<p>1 輪あたり `<code style="color:#22d3bf">F_z = m g cos β / N</code><code style="color:#22d3bf">、必要な牽引力 </code><code style="color:#22d3bf">m g sin β / N</code>`。滑り率を [s_min, s_max] で二分法</p>
-<p>(内側で沈下も二分法)。`<code style="color:#22d3bf">s_max</code><code style="color:#22d3bf"> でも牽引力が足りない角は </code><code style="color:#22d3bf">feasible = False</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">slip = nan</code>`(立ち往生)、</p>
-<p>下りで `<code style="color:#22d3bf">s_min</code>` でも止まれない角も同じ。既定の重力は火星 3.72 m/s²。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;slope&quot;, &quot;slip&quot;, &quot;sinkage&quot;, &quot;feasible&quot;, &quot;max_slope&quot;}</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">max_slope</code>` は登れる最大の角の内挿 [deg]、</p>
-<p>範囲内に限界が無ければ nan)。</p>
+<p>1 輪あたり <code style="color:#22d3bf">F_z = m g cos β / N</code>、必要な牽引力 <code style="color:#22d3bf">m g sin β / N</code>。滑り率を [s_min, s_max] で二分法(内側で沈下も二分法)。<code style="color:#22d3bf">s_max</code> でも牽引力が足りない角は <code style="color:#22d3bf">feasible = False</code>・<code style="color:#22d3bf">slip = nan</code>(立ち往生)、下りで <code style="color:#22d3bf">s_min</code> でも止まれない角も同じ。既定の重力は火星 3.72 m/s²。返り値 <code style="color:#22d3bf">{&quot;slope&quot;, &quot;slip&quot;, &quot;sinkage&quot;, &quot;feasible&quot;, &quot;max_slope&quot;}</code>(<code style="color:#22d3bf">max_slope</code> は登れる最大の角の内挿 [deg]、範囲内に限界が無ければ nan)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

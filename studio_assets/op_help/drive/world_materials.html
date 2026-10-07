@@ -3,11 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table × matrix × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_materials(world: &#x27;dict&#x27;, view: &#x27;dict&#x27;, pose, K, m: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveterrain; driveterrain.world_materials(world: &#x27;dict&#x27;, view: &#x27;dict&#x27;, pose, K, m: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;world_materials&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>描画結果 `<code style="color:#22d3bf">view</code>`(world_camera、&quot;shade&quot; を含む)に路面の材質を画素ごとに掛ける。</p>
-<p>路面(ラベル 0)と地形(10)の画素は世界座標で材質を評価し直す: アスファルトの粒(Perlin 8 周期/m)、草の色むら、</p>
-<p>染み(暗い斑、ラベルは 0 のまま)、水溜り(空の写り込み、ラベル 11)。白線・横断歩道(9・12)は摩耗率 wear で</p>
-<p>路面の色に混ぜる(ラベルは不変、真値 &quot;wear&quot; に残る)。水溜りの写り込みの強さ(0.1〜0.9、Perlin 1.5 周期/m)は真値 &quot;refl&quot;。</p>
-<p>返り値 = `<code style="color:#22d3bf">{&quot;color&quot;, &quot;label&quot;, &quot;puddle&quot;, &quot;refl&quot;, &quot;stain&quot;, &quot;wear&quot;, &quot;xyz&quot;}</code>`。</p>
+<p>描画結果 <code style="color:#22d3bf">view</code>(world_camera、&quot;shade&quot; を含む)に路面の材質を画素ごとに掛ける。</p>
+<p>路面(ラベル 0)と地形(10)の画素は世界座標で材質を評価し直す: アスファルトの粒(Perlin 8 周期/m)、草の色むら、染み(暗い斑、ラベルは 0 のまま)、水溜り(空の写り込み、ラベル 11)。白線・横断歩道(9・12)は摩耗率 wear で路面の色に混ぜる(ラベルは不変、真値 &quot;wear&quot; に残る)。水溜りの写り込みの強さ(0.1〜0.9、Perlin 1.5 周期/m)は真値 &quot;refl&quot;。返り値 = <code style="color:#22d3bf">{&quot;color&quot;, &quot;label&quot;, &quot;puddle&quot;, &quot;refl&quot;, &quot;stain&quot;, &quot;wear&quot;, &quot;xyz&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

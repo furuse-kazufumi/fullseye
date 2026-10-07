@@ -4,14 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.env_render(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, env: &#x27;Optional[dict]&#x27; = None, *, ego=None, ego_pose=None, shadows: &#x27;bool&#x27; = True, shadow_cache: &#x27;Optional[dict]&#x27; = None, shadow_res: &#x27;int&#x27; = 1024) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveenv; driveenv.env_render(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, env: &#x27;Optional[dict]&#x27; = None, *, ego=None, ego_pose=None, shadows: &#x27;bool&#x27; = True, shadow_cache: &#x27;Optional[dict]&#x27; = None, shadow_res: &#x27;int&#x27; = 1024) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;env_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>太陽・空・影・灯火・前照灯・霧・雨・まぶしさを物理の単位で描く。</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : `<code style="color:#22d3bf">color</code><code style="color:#22d3bf">(カメラの線形 RGB [0,1]、:func:</code>tone_map<code style="color:#22d3bf"> で圧縮 —— 画像処理はこれを読む)、</code><code style="color:#22d3bf">display</code>`(sRGB に符号化した</p>
-<p>表示用、図だけに使う)、`<code style="color:#22d3bf">radiance</code><code style="color:#22d3bf">(RGB の輝度 cd/m²、線形)、</code><code style="color:#22d3bf">depth</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">label</code>`・</p>
-<p>`<code style="color:#22d3bf">face</code><code style="color:#22d3bf">(driveworld.world_camera と同じ)、</code><code style="color:#22d3bf">shadow</code><code style="color:#22d3bf">(bool、太陽の影の画素)、</code><code style="color:#22d3bf">exposure</code>`(使った倍率)、</p>
-<p>`<code style="color:#22d3bf">veil</code><code style="color:#22d3bf">(光幕輝度 cd/m² (H,W))、</code><code style="color:#22d3bf">illuminance</code>`(面の照度 lx (H,W))。</p>
-<p>`<code style="color:#22d3bf">ego_pose=(x, y, yaw)</code>` = 前照灯を付ける自車の姿勢(前端 2.25 m・左右 ±0.6 m・高さ 0.65 m に 2 灯)。</p>
-<p>`<code style="color:#22d3bf">shadow_cache</code>` に dict を渡すと太陽のシャドウマップを使い回す(太陽と世界が変わらない間)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">color</code>(カメラの線形 RGB [0,1]、<code style="color:#22d3bf">tone_map</code> で圧縮 —— 画像処理はこれを読む)、<code style="color:#22d3bf">display</code>(sRGB に符号化した</p>
+<p>表示用、図だけに使う)、<code style="color:#22d3bf">radiance</code>(RGB の輝度 cd/m²、線形)、<code style="color:#22d3bf">depth</code>・<code style="color:#22d3bf">label</code>・ <code style="color:#22d3bf">face</code>(driveworld.world_camera と同じ)、<code style="color:#22d3bf">shadow</code>(bool、太陽の影の画素)、<code style="color:#22d3bf">exposure</code>(使った倍率)、<code style="color:#22d3bf">veil</code>(光幕輝度 cd/m² (H,W))、<code style="color:#22d3bf">illuminance</code>(面の照度 lx (H,W))。</p>
+<p><code style="color:#22d3bf">ego_pose=(x, y, yaw)</code> = 前照灯を付ける自車の姿勢(前端 2.25 m・左右 ±0.6 m・高さ 0.65 m に 2 灯)。<code style="color:#22d3bf">shadow_cache</code> に dict を渡すと太陽のシャドウマップを使い回す(太陽と世界が変わらない間)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

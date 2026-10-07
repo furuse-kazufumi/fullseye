@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_hash(i: &#x27;int&#x27;, j: &#x27;int&#x27;, seed: &#x27;int&#x27;, salt: &#x27;int&#x27; = 0) -&gt; &#x27;int&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveinf; driveinf.tile_hash(i: &#x27;int&#x27;, j: &#x27;int&#x27;, seed: &#x27;int&#x27;, salt: &#x27;int&#x27; = 0) -&gt; &#x27;int&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;tile_hash&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>区画(か格子点・辺)の番号 (i, j) と世界の種・用途の塩から 64 ビットの整数を出す(SplitMix64 を 4 回、整数だけ)。</p>
-<p>負の番号も扱う(2 の補数で 64 ビットに折る)。同じ入力なら環境に依らず同じ値。</p>
+<p>区画(か格子点・辺)の番号 (i, j) と世界の種・用途の塩から 64 ビットの整数を出す(SplitMix64 を 4 回、整数だけ)。負の番号も扱う(2 の補数で 64 ビットに折る)。同じ入力なら環境に依らず同じ値。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

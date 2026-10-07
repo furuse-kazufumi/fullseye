@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lowpass(x, rate, cutoff, order=4)</code> (to call the implementation directly, <code style="color:#22d3bf">import dsp; dsp.lowpass(x, rate, cutoff, order=4)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;lowpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside `<code style="color:#22d3bf">(0, rate/2)</code>`; an out-of-Nyquist cutoff raises instead of passing the signal through. A signal too short for zero-phase filtfilt also raises (the message names the exact minimum) instead of silently coming back unfiltered.</p>
+<p>Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside <code style="color:#22d3bf">(0, rate/2)</code>; an out-of-Nyquist cutoff raises instead of passing the signal through. A signal too short for zero-phase filtfilt also raises (the message names the exact minimum) instead of silently coming back unfiltered.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

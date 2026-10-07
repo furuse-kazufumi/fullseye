@@ -14,9 +14,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Haralick topographic primal sketch: classify every pixel from its gradient magnitude and the two Hessian eigenvalue signs into peak / pit / ridge / ravine / saddle / flat / hillside and emit the class as a gray code.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the derivative smoothing scale; </code><code style="color:#22d3bf">b</code>` sets the &quot;flat gradient&quot;</p>
-<p>tolerance. Codes: flat=0.0, pit=0.14, ravine=0.30, saddle=0.45,</p>
-<p>hillside=0.55, ridge=0.75, peak=1.0.</p>
+<p><code style="color:#22d3bf">a</code> sets the derivative smoothing scale; <code style="color:#22d3bf">b</code> sets the &quot;flat gradient&quot; tolerance. Codes: flat=0.0, pit=0.14, ravine=0.30, saddle=0.45, hillside=0.55, ridge=0.75, peak=1.0.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>

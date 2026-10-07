@@ -16,16 +16,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extrude the image as a height field into a (D,H,W) volume (z first).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>ボクセル `<code style="color:#22d3bf">(z, y, x)</code>` は、その高さが画素の高さ以下なら画素値、超えていれば 0:</p>
-<p>`<code style="color:#22d3bf">vol[z, y, x] = img[y, x] if z &lt;= img[y, x] * s * (D - 1) else 0</code>`。</p>
-<p>つまり <b>高さ場の「中身が詰まった」固体</b>(地形・段差・押し出し部品)で、</p>
-<p>体積の族(`<code style="color:#22d3bf">vol_dilate</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">vol_erosion_ball</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">macro_vol_denoise</code>` …)を</p>
-<p>1 枚の画像から試せる。軸順は 3-D 台帳の規約どおり <b>(depth, row, col)</b>。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 高さの倍率 </code><code style="color:#22d3bf">s = 0.25 + 1.75 * a</code>`(a=0.5 で 1.125。1 を超えた分は</p>
-<p>最上段 `<code style="color:#22d3bf">D-1</code>` で頭打ち)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 段数 </code><code style="color:#22d3bf">D = 8 + 2 * int(b * 28)</code>`(b=0.5 で 36、b=0 で 8、b=1 で 64)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(D, H, W)</code>` float64、値域は入力と同じ。**z=0 の底面は</p>
-<p>値 &gt; 0 の画素がすべて詰まる**(高さ 0 でも底面には乗る)。</p>
+<p>ボクセル <code style="color:#22d3bf">(z, y, x)</code> は、その高さが画素の高さ以下なら画素値、超えていれば 0:</p>
+<p><code style="color:#22d3bf">vol[z, y, x] = img[y, x] if z &lt;= img[y, x] * s * (D - 1) else 0</code>。つまり <b>高さ場の「中身が詰まった」固体</b>(地形・段差・押し出し部品)で、体積の族(<code style="color:#22d3bf">vol_dilate</code> / <code style="color:#22d3bf">vol_erosion_ball</code> / <code style="color:#22d3bf">macro_vol_denoise</code> …)を 1 枚の画像から試せる。軸順は 3-D 台帳の規約どおり <b>(depth, row, col)</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの倍率 <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code>(a=0.5 で 1.125。1 を超えた分は最上段 <code style="color:#22d3bf">D-1</code> で頭打ち)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 段数 <code style="color:#22d3bf">D = 8 + 2 * int(b * 28)</code>(b=0.5 で 36、b=0 で 8、b=1 で 64)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(D, H, W)</code> float64、値域は入力と同じ。<b>z=0 の底面は値 &gt; 0 の画素がすべて詰まる</b>(高さ 0 でも底面には乗る)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

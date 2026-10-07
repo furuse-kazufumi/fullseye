@@ -6,23 +6,12 @@
 <p>rich club 係数 φ(k) を全 k で一度に: 次数 &gt; k の節点が張る部分グラフの密度を、次数保存ヌルの平均で割る。比 &gt; 1 が rich club の帯。1 点の graph_rich_club と全 k で一致するのが門。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
 <p>φ(k) is the directed density of the subgraph spanned by the nodes whose degree exceeds</p>
-<p>k: `<code style="color:#22d3bf">edges among them / (r (r − 1))</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">r</code>` = their number (Colizza et al. 2006; the</p>
-<p>same formula as :func:<code style="color:#22d3bf">conngraph.graph_rich_club</code>, here for all k at once). `<code style="color:#22d3bf">mode</code>`</p>
-<p>is the degree used to rank nodes: `<code style="color:#22d3bf">&quot;total&quot;</code><code style="color:#22d3bf"> (in + out), </code><code style="color:#22d3bf">&quot;in&quot;</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">&quot;out&quot;</code>` (Yadav</p>
-<p>&amp; Singh 2026 rank by in- and out-degree separately). A rising φ(k) alone means little —</p>
-<p>high-degree nodes are dense in any graph — so φ is divided by its mean over `<code style="color:#22d3bf">n_null</code>`</p>
-<p>rewirings that keep every node&#x27;s in- and out-degree exactly (Maslov &amp; Sneppen 2002;</p>
-<p>every sample is checked, fail-closed). `<code style="color:#22d3bf">ratio &gt; 1</code>` is the rich-club regime; Towlson</p>
-<p>et al. 2013 call it significant where `<code style="color:#22d3bf">ratio &gt; 1 + sd</code>`.</p>
-<p>Returns a dict: `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> (all integers 0 .. max degree − 1), </code><code style="color:#22d3bf">count</code>` (nodes with degree</p>
-<p>&gt; k), `<code style="color:#22d3bf">phi</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">null_mean</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">null_sd</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ratio</code>` (nan where the null mean is 0),</p>
-<p>`<code style="color:#22d3bf">z</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">regime</code><code style="color:#22d3bf"> (bool: ratio &gt; 1 + null sd of the ratio), </code><code style="color:#22d3bf">n_null</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">mode</code>`.</p>
-<p>Identities: `<code style="color:#22d3bf">phi[k] == conngraph.graph_rich_club(adj, k)</code>` for every k with</p>
-<p>`<code style="color:#22d3bf">mode=&quot;total&quot;</code><code style="color:#22d3bf">; a complete graph has </code><code style="color:#22d3bf">phi == 1</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">ratio == 1</code>` everywhere</p>
-<p>(no swap can change it); a rewired sample of the graph itself has ratio ≈ 1.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>graph_degree_preserving_null` (non-square,</p>
-<p>negative, ... ; `<code style="color:#22d3bf">n_null &lt; 2</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">swaps_per_edge &lt; 1</code>`; fewer than 2 edges);</p>
-<p>`<code style="color:#22d3bf">mode</code>` not in / out / total.</p>
+<p>k: <code style="color:#22d3bf">edges among them / (r (r − 1))</code>, <code style="color:#22d3bf">r</code> = their number (Colizza et al. 2006; the same formula as <code style="color:#22d3bf">conngraph.graph_rich_club</code>, here for all k at once). <code style="color:#22d3bf">mode</code> is the degree used to rank nodes: <code style="color:#22d3bf">&quot;total&quot;</code> (in + out), <code style="color:#22d3bf">&quot;in&quot;</code> or <code style="color:#22d3bf">&quot;out&quot;</code> (Yadav &amp; Singh 2026 rank by in- and out-degree separately). A rising φ(k) alone means little — high-degree nodes are dense in any graph — so φ is divided by its mean over <code style="color:#22d3bf">n_null</code> rewirings that keep every node&#x27;s in- and out-degree exactly (Maslov &amp; Sneppen 2002; every sample is checked, fail-closed). <code style="color:#22d3bf">ratio &gt; 1</code> is the rich-club regime; Towlson et al. 2013 call it significant where <code style="color:#22d3bf">ratio &gt; 1 + sd</code>.</p>
+<p>Returns a dict: <code style="color:#22d3bf">k</code> (all integers 0 .. max degree − 1), <code style="color:#22d3bf">count</code> (nodes with degree</p>
+<p>&gt; k), <code style="color:#22d3bf">phi</code>, <code style="color:#22d3bf">null_mean</code>, <code style="color:#22d3bf">null_sd</code>, <code style="color:#22d3bf">ratio</code> (nan where the null mean is 0),</p>
+<p><code style="color:#22d3bf">z</code>, <code style="color:#22d3bf">regime</code> (bool: ratio &gt; 1 + null sd of the ratio), <code style="color:#22d3bf">n_null</code>, <code style="color:#22d3bf">mode</code>.</p>
+<p>Identities: <code style="color:#22d3bf">phi[k] == conngraph.graph_rich_club(adj, k)</code> for every k with <code style="color:#22d3bf">mode=&quot;total&quot;</code>; a complete graph has <code style="color:#22d3bf">phi == 1</code> and <code style="color:#22d3bf">ratio == 1</code> everywhere (no swap can change it); a rewired sample of the graph itself has ratio ≈ 1.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: as <code style="color:#22d3bf">graph_degree_preserving_null</code> (non-square, negative, ... ; <code style="color:#22d3bf">n_null &lt; 2</code>; <code style="color:#22d3bf">swaps_per_edge &lt; 1</code>; fewer than 2 edges); <code style="color:#22d3bf">mode</code> not in / out / total.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -5,18 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>太陽・空・影・灯火・前照灯・霧・雨・まぶしさを物理の単位で描く。</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : `<code style="color:#22d3bf">color</code><code style="color:#22d3bf">(カメラの線形 RGB [0,1]、:func:</code>tone_map<code style="color:#22d3bf"> で圧縮 —— 画像処理はこれを読む)、</code><code style="color:#22d3bf">display</code>`(sRGB に符号化した</p>
-<p>表示用、図だけに使う)、`<code style="color:#22d3bf">radiance</code><code style="color:#22d3bf">(RGB の輝度 cd/m²、線形)、</code><code style="color:#22d3bf">depth</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">label</code>`・</p>
-<p>`<code style="color:#22d3bf">face</code><code style="color:#22d3bf">(driveworld.world_camera と同じ)、</code><code style="color:#22d3bf">shadow</code><code style="color:#22d3bf">(bool、太陽の影の画素)、</code><code style="color:#22d3bf">exposure</code>`(使った倍率)、</p>
-<p>`<code style="color:#22d3bf">veil</code><code style="color:#22d3bf">(光幕輝度 cd/m² (H,W))、</code><code style="color:#22d3bf">illuminance</code>`(面の照度 lx (H,W))。</p>
-<p>`<code style="color:#22d3bf">ego_pose=(x, y, yaw)</code>` = 前照灯を付ける自車の姿勢(前端 2.25 m・左右 ±0.6 m・高さ 0.65 m に 2 灯)。</p>
-<p>`<code style="color:#22d3bf">shadow_cache</code>` に dict を渡すと太陽のシャドウマップを使い回す(太陽と世界が変わらない間)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">color</code>(カメラの線形 RGB [0,1]、<code style="color:#22d3bf">tone_map</code> で圧縮 —— 画像処理はこれを読む)、<code style="color:#22d3bf">display</code>(sRGB に符号化した</p>
+<p>表示用、図だけに使う)、<code style="color:#22d3bf">radiance</code>(RGB の輝度 cd/m²、線形)、<code style="color:#22d3bf">depth</code>・<code style="color:#22d3bf">label</code>・ <code style="color:#22d3bf">face</code>(driveworld.world_camera と同じ)、<code style="color:#22d3bf">shadow</code>(bool、太陽の影の画素)、<code style="color:#22d3bf">exposure</code>(使った倍率)、<code style="color:#22d3bf">veil</code>(光幕輝度 cd/m² (H,W))、<code style="color:#22d3bf">illuminance</code>(面の照度 lx (H,W))。</p>
+<p><code style="color:#22d3bf">ego_pose=(x, y, yaw)</code> = 前照灯を付ける自車の姿勢(前端 2.25 m・左右 ±0.6 m・高さ 0.65 m に 2 灯)。<code style="color:#22d3bf">shadow_cache</code> に dict を渡すと太陽のシャドウマップを使い回す(太陽と世界が変わらない間)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_weather">poc_driving_weather</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_weather.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

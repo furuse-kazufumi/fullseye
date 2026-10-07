@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.max_tree(image, *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import seggraph; seggraph.max_tree(image, *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;max_tree&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>成分木(max-tree): 上位集合 {f ≥ h} の連結成分の木を Union-Find で作る(画素を値の降順に処理)。</p>
-<p>返す: `<code style="color:#22d3bf">parent</code><code style="color:#22d3bf">(H, W の平らな添字。根は自分自身)、</code><code style="color:#22d3bf">order</code><code style="color:#22d3bf">(値の昇順、親は子より前)、</code><code style="color:#22d3bf">canonical</code>`(節の代表画素の印 =</p>
-<p>根か、親と値が違う画素)、`<code style="color:#22d3bf">area</code><code style="color:#22d3bf">(代表画素での成分の画素数)、</code><code style="color:#22d3bf">diameter</code>`(成分の外接矩形の長い辺 = skimage の diameter と同じ)、</p>
-<p>`<code style="color:#22d3bf">height</code><code style="color:#22d3bf">(成分の中の最大値 − 成分の値、参考)、</code><code style="color:#22d3bf">n_nodes</code>`。</p>
+<p>返す: <code style="color:#22d3bf">parent</code>(H, W の平らな添字。根は自分自身)、<code style="color:#22d3bf">order</code>(値の昇順、親は子より前)、<code style="color:#22d3bf">canonical</code>(節の代表画素の印 = 根か、親と値が違う画素)、<code style="color:#22d3bf">area</code>(代表画素での成分の画素数)、<code style="color:#22d3bf">diameter</code>(成分の外接矩形の長い辺 = skimage の diameter と同じ)、<code style="color:#22d3bf">height</code>(成分の中の最大値 − 成分の値、参考)、<code style="color:#22d3bf">n_nodes</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

@@ -4,14 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.datum_tilt_check(result, warn_deg: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import granular; granular.datum_tilt_check(result, warn_deg: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;datum_tilt_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>:func:<code style="color:#22d3bf">repose_angle_silhouette</code> の返り(左右の斜面角と地面の傾き)から <b>基準面が傾いていないか</b> を判定する。</p>
-<p>平らでない地面(datum)の傾き β は安息角に足し算される(既存の体積 PoC と同じ罠)。せん断型(`<code style="color:#22d3bf">z&#x27; = z + x tan β</code>`)</p>
-<p>なら左右の斜面は `<code style="color:#22d3bf">atan(tan φ ± tan β)</code><code style="color:#22d3bf">、カメラのロール(回転型)なら </code><code style="color:#22d3bf">φ ± β</code>` —— <b>どちらも左右差 ≈ 2β</b> なので、</p>
-<p>左右差が `<code style="color:#22d3bf">warn_deg</code>` を超えたら警報。2 つの模型は 1 次で違う(β = 5 度・φ = 30 度で左の斜面が 33.62 対 35.00 度、</p>
-<p>実測)ので、両方の補正値を返し、どちらを使うかは地面の由来(高さ図の datum か、カメラの傾きか)で決める:</p>
-<p>`<code style="color:#22d3bf">phi_shear_deg</code><code style="color:#22d3bf">(tan の引き算、</code><code style="color:#22d3bf">ground_deg</code><code style="color:#22d3bf"> を使う)、</code><code style="color:#22d3bf">phi_roll_deg</code>`(角の引き算 = 左右の平均そのもの)、</p>
-<p>`<code style="color:#22d3bf">beta_shear_deg</code><code style="color:#22d3bf">(左右の tan 差から読んだ β = atan((tan L − tan R)/2))、</code><code style="color:#22d3bf">beta_roll_deg</code>`(= 左右差 / 2)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 欄が無い / 角が範囲外 / </code><code style="color:#22d3bf">warn_deg ≤ 0</code>`。</p>
+<p><code style="color:#22d3bf">repose_angle_silhouette</code> の返り(左右の斜面角と地面の傾き)から <b>基準面が傾いていないか</b> を判定する。</p>
+<p>平らでない地面(datum)の傾き β は安息角に足し算される(既存の体積 PoC と同じ罠)。せん断型(<code style="color:#22d3bf">z&#x27; = z + x tan β</code>) なら左右の斜面は <code style="color:#22d3bf">atan(tan φ ± tan β)</code>、カメラのロール(回転型)なら <code style="color:#22d3bf">φ ± β</code> —— <b>どちらも左右差 ≈ 2β</b> なので、左右差が <code style="color:#22d3bf">warn_deg</code> を超えたら警報。2 つの模型は 1 次で違う(β = 5 度・φ = 30 度で左の斜面が 33.62 対 35.00 度、実測)ので、両方の補正値を返し、どちらを使うかは地面の由来(高さ図の datum か、カメラの傾きか)で決める:</p>
+<p><code style="color:#22d3bf">phi_shear_deg</code>(tan の引き算、<code style="color:#22d3bf">ground_deg</code> を使う)、<code style="color:#22d3bf">phi_roll_deg</code>(角の引き算 = 左右の平均そのもの)、<code style="color:#22d3bf">beta_shear_deg</code>(左右の tan 差から読んだ β = atan((tan L − tan R)/2))、<code style="color:#22d3bf">beta_roll_deg</code>(= 左右差 / 2)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 欄が無い / 角が範囲外 / <code style="color:#22d3bf">warn_deg ≤ 0</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

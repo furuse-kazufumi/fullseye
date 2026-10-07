@@ -3,12 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kendama_clearance(kp: &#x27;dict&#x27;, hand, p_ball, *, R_ken=None, grip=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import kendamaworld; kendamaworld.kendama_clearance(kp: &#x27;dict&#x27;, hand, p_ball, *, R_ken=None, grip=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;kendama_clearance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>玉の表面からけん玉(けん・皿胴の回転体)までの隙間 [m] (負 = 玉がけん玉にめり込んでいる)。kp の技の姿勢(R_ken、持つ所 grip)で</p>
-<p>手元 `<code style="color:#22d3bf">hand</code><code style="color:#22d3bf">、玉の中心 </code><code style="color:#22d3bf">p_ball</code>`(どちらも (3,) か (N, 3))。回転体までの距離は子午面の輪郭までの 2-D の距離と厳密に等しい</p>
-<p>ので、メッシュの離散化によらない。返り値 `<code style="color:#22d3bf">{&quot;gap&quot; (N,), &quot;ken&quot; (N,), &quot;cross&quot; (N,)}</code>`(ken / cross = 各部品までの隙間)。</p>
-<p>物理はけん玉と玉の衝突を解かないので、この量で「玉がけん玉を突き抜けた」step を数える(門・正直な報告に使う)。</p>
-<p>`<code style="color:#22d3bf">R_ken</code><code style="color:#22d3bf">(19 巡目、連続技の持ち替え): 姿勢を kp[&quot;R_ken&quot;] の代わりに (3, 3) か時刻ごとの (N, 3, 3) で渡す。</code><code style="color:#22d3bf">grip</code>` = 持つ所(局所)の</p>
-<p>上書き。どちらも None なら今まで通り。</p>
+<p>玉の表面からけん玉(けん・皿胴の回転体)までの隙間 [m] (負 = 玉がけん玉にめり込んでいる)。kp の技の姿勢(R_ken、持つ所 grip)で手元 <code style="color:#22d3bf">hand</code>、玉の中心 <code style="color:#22d3bf">p_ball</code>(どちらも (3,) か (N, 3))。回転体までの距離は子午面の輪郭までの 2-D の距離と厳密に等しいので、メッシュの離散化によらない。返り値 <code style="color:#22d3bf">{&quot;gap&quot; (N,), &quot;ken&quot; (N,), &quot;cross&quot; (N,)}</code>(ken / cross = 各部品までの隙間)。物理はけん玉と玉の衝突を解かないので、この量で「玉がけん玉を突き抜けた」step を数える(門・正直な報告に使う)。<code style="color:#22d3bf">R_ken</code>(19 巡目、連続技の持ち替え): 姿勢を kp[&quot;R_ken&quot;] の代わりに (3, 3) か時刻ごとの (N, 3, 3) で渡す。<code style="color:#22d3bf">grip</code> = 持つ所(局所)の上書き。どちらも None なら今まで通り。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

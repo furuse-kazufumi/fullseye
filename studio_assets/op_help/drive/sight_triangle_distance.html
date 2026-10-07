@@ -4,10 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sight_triangle_distance(eye_offset: &#x27;float&#x27;, eye_distance: &#x27;float&#x27;, corner_offset: &#x27;float&#x27;, corner_distance: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.sight_triangle_distance(eye_offset: &#x27;float&#x27;, eye_distance: &#x27;float&#x27;, corner_offset: &#x27;float&#x27;, corner_distance: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;sight_triangle_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>角の建物があるとき、線路の上でどこまで見えるか(見通しの三角形)。</p>
-<p>線路 = x 軸(y = 0)、道路の中心 = x = 0。目 = (eye_offset, −eye_distance)、建物の角 = (corner_offset, −corner_distance)、</p>
-<p>建物は x ≥ corner_offset かつ y ≤ −corner_distance を占める(角の向こうの側、corner_offset &gt; eye_offset)。</p>
-<p>返り値 = 見える線路の上の最も遠い点の x(道路の中心から)。corner_distance ≥ eye_distance(建物が目より線路寄りに</p>
-<p>出ていない)なら遮らず ∞。左側は x を反転して同じ式を使う。</p>
+<p>線路 = x 軸(y = 0)、道路の中心 = x = 0。目 = (eye_offset, −eye_distance)、建物の角 = (corner_offset, −corner_distance)、建物は x ≥ corner_offset かつ y ≤ −corner_distance を占める(角の向こうの側、corner_offset &gt; eye_offset)。返り値 = 見える線路の上の最も遠い点の x(道路の中心から)。corner_distance ≥ eye_distance(建物が目より線路寄りに出ていない)なら遮らず ∞。左側は x を反転して同じ式を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

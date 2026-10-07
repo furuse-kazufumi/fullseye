@@ -11,16 +11,16 @@
 <p>データ種は画像ではなく数値配列: <b>matrix</b>(厳密に 2-D)、<b>signal</b>(厳密に 1-D)、標本集合は <b>(N, D)</b>(行 = 観測、列 = 変数)。<b>table</b>(dict)・<b>pairs</b>(counts, edges)・<b>measurement</b>(スカラ)・<b>roots</b>(complex 配列)を返す op もあります。FFT / 複素演算(<code style="color:#22d3bf">complexops</code> / <code style="color:#22d3bf">volfreq</code> / <code style="color:#22d3bf">dsp</code>)、1-D フィルタ(<code style="color:#22d3bf">dsp</code> / <code style="color:#22d3bf">funct1d</code>)、幾何フィット(<code style="color:#22d3bf">measure</code> / <code style="color:#22d3bf">measure3d</code> / <code style="color:#22d3bf">pcseg</code>)、codegen 参照実装の数値計算(<code style="color:#22d3bf">algo</code>)は既存モジュールの持ち場なので、ここには <b>重複させていません</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>全 op が入力を検証してから計算します(2026-08 の敵対監査で確定したバグ族を、黙って通さず明示拒否):</p>
-<p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code> / <code style="color:#22d3bf">.imag</code> / <code style="color:#22d3bf">abs()</code> を明示するか、複素対応の <code style="color:#22d3bf">complexops</code> を使う。</p>
-<p style="margin:2px 0 2px 12px">• **例外は <code style="color:#22d3bf">cplx_*</code> 族だけ<b> — こちらは虚部こそがデータなので複素(実数も昇格して)を受けます。代わりに </b>str/bytes を拒否**(numpy は <code style="color:#22d3bf">&quot;0&quot;</code> を 0 と解釈してしまう)、そして <b>op の内部で溢れた結果</b>(Inf/NaN)も <code style="color:#22d3bf">ValueError</code>: 「積分が発散した」と「float64 が尽きた」は別の主張なので、後者を前者の顔で返さない。</p>
-<p style="margin:2px 0 2px 12px">• **masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code>** — マスクを剥がして下の生値を使う暗黙変換を拒否。</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**(非有限の件数を明示して拒否)。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code> / <code style="color:#22d3bf">.imag</code> / <code style="color:#22d3bf">abs()</code> を明示するか、複素対応の <code style="color:#22d3bf">complexops</code> を使う。</p>
+<p style="margin:2px 0 2px 12px">• <b>例外は <code style="color:#22d3bf">cplx_*</code> 族だけ</b> — こちらは虚部こそがデータなので複素(実数も昇格して)を受けます。代わりに <b>str/bytes を拒否</b>(numpy は <code style="color:#22d3bf">&quot;0&quot;</code> を 0 と解釈してしまう)、そして <b>op の内部で溢れた結果</b>(Inf/NaN)も <code style="color:#22d3bf">ValueError</code>: 「積分が発散した」と「float64 が尽きた」は別の主張なので、後者を前者の顔で返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code></b> — マスクを剥がして下の生値を使う暗黙変換を拒否。</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>(非有限の件数を明示して拒否)。</p>
 <p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D↔2-D の暗黙昇格・ブロードキャスト無し。vector 枠に matrix(逆も)は <code style="color:#22d3bf">ValueError</code>。</p>
 <p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 特異行列・定数列・空入力・範囲外クエリなどの数学的に未定義/危険なケースは、silent NaN・silent clamp・silent 0 除算ではなく **問題を名指しする <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• 特異行列・定数列・空入力・範囲外クエリなどの数学的に未定義/危険なケースは、silent NaN・silent clamp・silent 0 除算ではなく <b>問題を名指しする <code style="color:#22d3bf">ValueError</code></b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
 <p>深度カメラで平面(定盤)を測る計測ワークフロー(検証済み <code style="color:#22d3bf">examples/math_metrology.py</code> そのもの)。フィット → 残差統計 → 主軸化 → 較正 → 逆引きと、データ種が <code style="color:#22d3bf">matrix/signal → table → matrix → table → signal</code> で繋がります。</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 다이어그램(소스):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
     A[点群 x,y,z] --&gt;|設計行列 A| B[mat_lstsq 平面フィット]
     B --&gt;|残差 z - Ax| C[stat_describe / stat_histogram / stat_zscore]
     A --&gt;|2D ノイズ雲| D[stat_covariance]
@@ -29,7 +29,7 @@
     F --&gt;|coeffs| G[poly_eval 往路 / poly_roots 逆算]
     B2 --&gt; H[interp_linear / interp_cubic 逆引き表]</pre>
 <p>族の内部構造(裏の共有機構)。<code style="color:#22d3bf">mat_cond</code> は linalg 全体の健全性の見張り、SVD は <code style="color:#22d3bf">mat_lstsq</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> / <code style="color:#22d3bf">poly_fit</code>(Vandermonde の条件数)の共通土台です。</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TB
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 다이어그램(소스):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TB
     SVD[&quot;SVD(gesdd)&quot;] --&gt; LSQ[&quot;mat_lstsq(gelsd)&quot;]
     SVD --&gt; PINV[&quot;mat_pinv(rcond 明示)&quot;]
     SVD --&gt; COND[&quot;mat_cond = smax/smin&quot;]
@@ -54,17 +54,17 @@
 <p style="margin:2px 0 2px 12px">• <b>stat_describe</b><code style="color:#22d3bf">(x)</code> — 1-D 標本の要約 dict <code style="color:#22d3bf">{n, mean, std, min, max, percentiles{p5..p95}}</code>。<code style="color:#22d3bf">std</code> は母集団版(<code style="color:#22d3bf">ddof=0</code>)。計測では裾が重要: RMS で合格でも <code style="color:#22d3bf">p5</code>/<code style="color:#22d3bf">p95</code> で不合格のフィットがある — 両方報告する。</p>
 <p style="margin:2px 0 2px 12px">• <b>stat_histogram</b><code style="color:#22d3bf">(x, bins=10, range=None, density=False)</code> — ビニングを明示したヒストグラム。戻りは <code style="color:#22d3bf">(counts, edges)</code>(<code style="color:#22d3bf">edges</code> は <code style="color:#22d3bf">bins + 1</code> 個)。明示 <code style="color:#22d3bf">range</code> の外の値は <b>どのビンにも数えられない</b>(比較目的なら range 明示が正直)。<code style="color:#22d3bf">density=True</code> で全標本が range 外なら 0/0 になるため <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">density=False</code> は正直な全ゼロを返す)。</p>
 <p style="margin:2px 0 2px 12px">• <b>stat_covariance</b><code style="color:#22d3bf">(x)</code> — <code style="color:#22d3bf">(N, D)</code> 観測(行 = 観測。<code style="color:#22d3bf">np.cov</code> の既定とは転置の関係)の標本共分散 <code style="color:#22d3bf">(D, D)</code>。不偏 <code style="color:#22d3bf">ddof=1</code> なので <code style="color:#22d3bf">N &gt;= 2</code> 必須。構成的に対称 PSD → そのまま <code style="color:#22d3bf">mat_eigh</code> に渡せる(共分散楕円ワークフロー)。</p>
-<p style="margin:2px 0 2px 12px">• <b>stat_correlation</b><code style="color:#22d3bf">(x)</code> — Pearson 相関行列。対角は厳密に 1、値は [-1, 1] にクリップ。**定数列(分散ゼロ)は列番号を名指しして <code style="color:#22d3bf">ValueError</code>** — 0/0 の NaN を 3 op 下流に流さない。落とす/揺らすは呼び手が明示。</p>
-<p style="margin:2px 0 2px 12px">• <b>stat_zscore</b><code style="color:#22d3bf">(x)</code> — 標準化 <code style="color:#22d3bf">(x - mean)/std</code>(<code style="color:#22d3bf">ddof=0</code>)。外れ値ゲートの共通通貨(<code style="color:#22d3bf">|z| &gt; 3</code>)。**定数入力は <code style="color:#22d3bf">ValueError</code>** — 黙って全ゼロを返すと「全点が完璧に平均的」となり、一定値に張り付いたセンサが外れ値ゲートを素通りしてしまう。</p>
+<p style="margin:2px 0 2px 12px">• <b>stat_correlation</b><code style="color:#22d3bf">(x)</code> — Pearson 相関行列。対角は厳密に 1、値は [-1, 1] にクリップ。<b>定数列(分散ゼロ)は列番号を名指しして <code style="color:#22d3bf">ValueError</code></b> — 0/0 の NaN を 3 op 下流に流さない。落とす/揺らすは呼び手が明示。</p>
+<p style="margin:2px 0 2px 12px">• <b>stat_zscore</b><code style="color:#22d3bf">(x)</code> — 標準化 <code style="color:#22d3bf">(x - mean)/std</code>(<code style="color:#22d3bf">ddof=0</code>)。外れ値ゲートの共通通貨(<code style="color:#22d3bf">|z| &gt; 3</code>)。<b>定数入力は <code style="color:#22d3bf">ValueError</code></b> — 黙って全ゼロを返すと「全点が完璧に平均的」となり、一定値に張り付いたセンサが外れ値ゲートを素通りしてしまう。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">interp / poly(較正曲線と逆引き)</h3>
 <p style="margin:2px 0 2px 12px">• <b>interp_linear</b><code style="color:#22d3bf">(x, y, xq, out_of_range=&quot;raise&quot;)</code> — 区分線形補間。<code style="color:#22d3bf">x</code> は厳密に単調増加(未ソート・重複は <b>黙ってソートせず</b> <code style="color:#22d3bf">ValueError</code> — 黙ったソートは x と y を脱同期させる)。<b>範囲外は明示選択</b>: 既定 <code style="color:#22d3bf">&#x27;raise&#x27;</code>(較正表を較正範囲外で引くのは誤答予備軍)、<code style="color:#22d3bf">&#x27;clamp&#x27;</code> で端値保持。黙った線形外挿モードは意図的に無い。</p>
 <p style="margin:2px 0 2px 12px">• <b>interp_cubic</b><code style="color:#22d3bf">(x, y, xq, out_of_range=&quot;raise&quot;, bc_type=&quot;not-a-knot&quot;)</code> — 3 次スプライン(<code style="color:#22d3bf">scipy.interpolate.CubicSpline</code>、C² 滑らか、4 点以上)。既定 <code style="color:#22d3bf">&#x27;not-a-knot&#x27;</code> は大域 3 次多項式を<b>厳密に</b>再現(テストが pin する性質)。スプライン外挿は 3 次で発散するため範囲外は同じく拒否。正直な注記: ノード間でオーバーシュートしうる(形状保存ではない)— 単調性が要るなら PCHIP 系(ここには無い、と明記)。</p>
-<p style="margin:2px 0 2px 12px">• <b>poly_fit</b><code style="color:#22d3bf">(x, y, degree)</code> — Vandermonde 行列の SVD 最小二乗フィット。戻り dict <code style="color:#22d3bf">{coeffs(最高次から), degree, cond, rms_residual}</code> — フィットと健康診断を不可分に。**<code style="color:#22d3bf">cond &gt; POLY_COND_WARN</code>(1e10)で <code style="color:#22d3bf">RuntimeWarning</code>** かつ数値も結果に同梱。高次 × 生座標は二重の罠(Vandermonde 列の近共線 + Runge 振動)— x を [-1, 1] へ中心化・スケールするか次数 ≤ ~6 に。<code style="color:#22d3bf">degree + 1</code> 点未満(劣決定)は拒否。</p>
+<p style="margin:2px 0 2px 12px">• <b>poly_fit</b><code style="color:#22d3bf">(x, y, degree)</code> — Vandermonde 行列の SVD 最小二乗フィット。戻り dict <code style="color:#22d3bf">{coeffs(最高次から), degree, cond, rms_residual}</code> — フィットと健康診断を不可分に。<b><code style="color:#22d3bf">cond &gt; POLY_COND_WARN</code>(1e10)で <code style="color:#22d3bf">RuntimeWarning</code></b> かつ数値も結果に同梱。高次 × 生座標は二重の罠(Vandermonde 列の近共線 + Runge 振動)— x を [-1, 1] へ中心化・スケールするか次数 ≤ ~6 に。<code style="color:#22d3bf">degree + 1</code> 点未満(劣決定)は拒否。</p>
 <p style="margin:2px 0 2px 12px">• <b>poly_eval</b><code style="color:#22d3bf">(coeffs, x)</code> — Horner 法(<code style="color:#22d3bf">np.polyval</code>)で評価。係数は最高次から(<code style="color:#22d3bf">poly_fit</code> の <code style="color:#22d3bf">&quot;coeffs&quot;</code> そのまま)。スカラ入力はスカラ、配列は float64 を返す。評価は正しくできても悪条件な<b>フィット</b>は直せない(<code style="color:#22d3bf">poly_fit</code> の <code style="color:#22d3bf">cond</code> を見る)。</p>
 <p style="margin:2px 0 2px 12px">• <b>poly_roots</b><code style="color:#22d3bf">(coeffs, real_only=False, imag_tol=1e-9)</code> — companion 行列の固有値として全根(複素含む)を決定的順序(実部→虚部)で返す。<code style="color:#22d3bf">x² + 1</code> の根は本当に <code style="color:#22d3bf">±i</code> — 隠すと多項式を偽ることになる。<code style="color:#22d3bf">real_only=True</code> で実根のみ float64(<b>空も正解</b>: <code style="color:#22d3bf">x² + 1</code> に実根は無い)。先頭係数 0 は「宣言次数が嘘」なので <code style="color:#22d3bf">ValueError</code>(明示 trim を要求)。高次・接近根の条件数悪化(Wilkinson)にも正直な注記あり。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">complex(複素解析 — 閉曲線は「点列」である)</h3>
-<p>輪郭は **複素点の 1-D 配列(<code style="color:#22d3bf">cpoints</code>)**、閉じる辺は暗黙(先頭点を末尾で繰り返さない)。向きが答えの符号そのものなので <code style="color:#22d3bf">orientation</code> は明示引数です。</p>
-<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+<p>輪郭は <b>複素点の 1-D 配列(<code style="color:#22d3bf">cpoints</code>)</b>、閉じる辺は暗黙(先頭点を末尾で繰り返さない)。向きが答えの符号そのものなので <code style="color:#22d3bf">orientation</code> は明示引数です。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 다이어그램(소스):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
     C[cplx_contour_circle 閉曲線] --&gt; P[cplx_poly_eval 輪郭上で f をサンプル]
     P --&gt; I[cplx_contour_integral ∮f dz]
     P --&gt; AP[cplx_argument_principle 零点-極の数]
@@ -193,26 +193,13 @@ assert int(counts.sum()) == 500 and edges.size == 13
 print(&quot;PASS&quot;)</pre>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
 <p>最小二乗(<code style="color:#22d3bf">mat_lstsq</code>)と擬似逆行列(<code style="color:#22d3bf">mat_pinv</code>)は同じ問題の二つの顔:</p>
-<p>$$</p>
-<p>\hat{x} = \arg\min_x \lVert A x - b \rVert_2^2, \qquad</p>
-<p>A^{+} = V \, \Sigma^{+} U^{\top} \ \ (\sigma_i &lt; \mathrm{rcond}\cdot\sigma_{\max} \text{ は } 0 \text{ 扱い})</p>
-<p>$$</p>
+<p>$$ \hat{x} = \arg\min_x \lVert A x - b \rVert_2^2, \qquad A^{+} = V \, \Sigma^{+} U^{\top} \ \ (\sigma_i &lt; \mathrm{rcond}\cdot\sigma_{\max} \text{ は } 0 \text{ 扱い}) $$</p>
 <p>条件数(<code style="color:#22d3bf">mat_cond</code>)と「消える桁数」(Golub &amp; Van Loan §2.6 — <code style="color:#22d3bf">mat_solve</code> を信じてよいかの判定):</p>
-<p>$$</p>
-<p>\kappa_2(A) = \frac{\sigma_{\max}(A)}{\sigma_{\min}(A)}, \qquad</p>
-<p>\text{失う有効桁数} \approx \log_{10} \kappa_2(A)</p>
-<p>$$</p>
+<p>$$ \kappa_2(A) = \frac{\sigma_{\max}(A)}{\sigma_{\min}(A)}, \qquad \text{失う有効桁数} \approx \log_{10} \kappa_2(A) $$</p>
 <p>標本共分散(<code style="color:#22d3bf">stat_covariance</code>、<code style="color:#22d3bf">ddof=1</code>)と Pearson 相関(<code style="color:#22d3bf">stat_correlation</code>)、z-score(<code style="color:#22d3bf">stat_zscore</code>、<code style="color:#22d3bf">ddof=0</code>):</p>
-<p>$$</p>
-<p>C = \frac{1}{N-1} \sum_{i=1}^{N} (x_i - \bar{x})(x_i - \bar{x})^{\top}, \qquad</p>
-<p>R_{jk} = \frac{C_{jk}}{\sigma_j \sigma_k}, \qquad</p>
-<p>z_i = \frac{x_i - \bar{x}}{\sigma}</p>
-<p>$$</p>
+<p>$$ C = \frac{1}{N-1} \sum_{i=1}^{N} (x_i - \bar{x})(x_i - \bar{x})^{\top}, \qquad R_{jk} = \frac{C_{jk}}{\sigma_j \sigma_k}, \qquad z_i = \frac{x_i - \bar{x}}{\sigma} $$</p>
 <p>多項式(<code style="color:#22d3bf">poly_fit</code> / <code style="color:#22d3bf">poly_eval</code>、係数は最高次から)と、そのフィットの条件数(Vandermonde 行列 $V_{ij} = x_i^{\,d-j}$ の $\kappa_2$ — <code style="color:#22d3bf">POLY_COND_WARN</code> = 1e10 超で警告):</p>
-<p>$$</p>
-<p>p(x) = \sum_{k=0}^{d} c_k \, x^{\,d-k}, \qquad</p>
-<p>\hat{c} = \arg\min_c \lVert V c - y \rVert_2^2</p>
-<p>$$</p>
+<p>$$ p(x) = \sum_{k=0}^{d} c_k \, x^{\,d-k}, \qquad \hat{c} = \arg\min_c \lVert V c - y \rVert_2^2 $$</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
 <p>この族の入力は画像ではなく数値配列なので、<b>seed 固定の合成データ + 解析的グラウンドトゥルース</b>(真の係数・真の固有値・厳密根)がそのまま最良のテストデータです — 上の最小例と <code style="color:#22d3bf">examples/math_metrology.py</code> がその作り方の見本(平面 + 既知ノイズ、回転楕円雲、樽型歪み風の較正曲線)。実測データに繋ぐなら、<code style="color:#22d3bf">measure</code> / <code style="color:#22d3bf">measure3d</code> の出力(残差列・点群座標)をそのまま <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">(N, D)</code> として渡せます。画像系サンプルの台帳は <code style="color:#22d3bf">../../SAMPLES.md</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>

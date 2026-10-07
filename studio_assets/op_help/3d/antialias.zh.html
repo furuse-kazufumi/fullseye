@@ -3,17 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.antialias(hi_res_image, ss, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import render_ssaa; render_ssaa.antialias(hi_res_image, ss, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;antialias&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>按整数倍 `<code style="color:#22d3bf">ss</code>` 缩小高分辨率图像(面积平均抗锯齿)。</p>
+<p>按整数倍 <code style="color:#22d3bf">ss</code> 缩小高分辨率图像(面积平均抗锯齿)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">hi_res_image</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(H*ss, W*ss)</code><code style="color:#22d3bf"> または </code><code style="color:#22d3bf">(H*ss, W*ss, C)</code>` の float 画像。各</p>
-<p>`<code style="color:#22d3bf">ss×ss</code><code style="color:#22d3bf"> ブロックを重み付き平均して </code><code style="color:#22d3bf">(H, W[, C])</code><code style="color:#22d3bf"> を返す。</code><code style="color:#22d3bf">filter</code>`:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;box&quot;</code>`   — 等重み平均(正確な面積平均、SSAA の標準)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;gauss&quot;</code>` — ブロック中心を重く見るガウス重み(σ = ss/2、僅かに柔らかい)。</p>
-<p>Fail-closed: `<code style="color:#22d3bf">ss</code><code style="color:#22d3bf"> は 1 以上の整数、入力は 2D / 3D、各辺は </code><code style="color:#22d3bf">ss</code>` で割り切れること。</p>
-<p>非有限値があれば `<code style="color:#22d3bf">ValueError</code>`(平均で NaN が伝播しないよう確保前に拒否)。</p>
+<p><code style="color:#22d3bf">hi_res_image</code> は <code style="color:#22d3bf">(H*ss, W*ss)</code> または <code style="color:#22d3bf">(H*ss, W*ss, C)</code> の float 画像。各 <code style="color:#22d3bf">ss×ss</code> ブロックを重み付き平均して <code style="color:#22d3bf">(H, W[, C])</code> を返す。<code style="color:#22d3bf">filter</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;box&quot;</code>   — 等重み平均(正確な面積平均、SSAA の標準)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gauss&quot;</code> — ブロック中心を重く見るガウス重み(σ = ss/2、僅かに柔らかい)。</p>
+<p>Fail-closed: <code style="color:#22d3bf">ss</code> は 1 以上の整数、入力は 2D / 3D、各辺は <code style="color:#22d3bf">ss</code> で割り切れること。非有限値があれば <code style="color:#22d3bf">ValueError</code>(平均で NaN が伝播しないよう確保前に拒否)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

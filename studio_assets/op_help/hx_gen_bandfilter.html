@@ -6,22 +6,19 @@
 <p><img src="fig/hx_gen_bandfilter.png" alt="hx_gen_bandfilter: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.a.jpg">hx_gen_bandfilter: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.a.jpg">hx_gen_bandfilter: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.b.jpg">hx_gen_bandfilter: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.b.jpg">hx_gen_bandfilter: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.inputs.jpg">hx_gen_bandfilter: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_bandfilter.inputs.jpg">hx_gen_bandfilter: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>理想バンドフィルタ画像(周波数円環、中心半径 a・幅 b)。gen_bandpass と別 operator。</p>
-<p>`<code style="color:#22d3bf">hx_gen_lowpass</code><code style="color:#22d3bf"> と同じ </code><code style="color:#22d3bf">fftshift</code><code style="color:#22d3bf"> 済の正規化周波数半径 </code><code style="color:#22d3bf">r</code>`(中心=DC)に対し</p>
-<p>`<code style="color:#22d3bf">c - half &lt;= r &lt;= c + half</code><code style="color:#22d3bf"> の円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 </code><code style="color:#22d3bf">v</code>` は</p>
-<p>形状の取得にのみ使う。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 円環の中心半径 </code><code style="color:#22d3bf">c = 0.05 + 0.4*a</code>`(0.05〜0.45)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 半幅 </code><code style="color:#22d3bf">half = 0.03 + 0.15*b</code><code style="color:#22d3bf">(0.03〜0.18)。内半径 </code><code style="color:#22d3bf">c - half</code>` が負になる組み合わせ(小さい a と</p>
+<p><code style="color:#22d3bf">hx_gen_lowpass</code> と同じ <code style="color:#22d3bf">fftshift</code> 済の正規化周波数半径 <code style="color:#22d3bf">r</code>(中心=DC)に対し <code style="color:#22d3bf">c - half &lt;= r &lt;= c + half</code> の円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 <code style="color:#22d3bf">v</code> は形状の取得にのみ使う。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 円環の中心半径 <code style="color:#22d3bf">c = 0.05 + 0.4*a</code>(0.05〜0.45)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 半幅 <code style="color:#22d3bf">half = 0.03 + 0.15*b</code>(0.03〜0.18)。内半径 <code style="color:#22d3bf">c - half</code> が負になる組み合わせ(小さい a と</p>
 <p>大きい b)では DC を含む円板になり、実質ローパスになる。</p>
-<p>`<code style="color:#22d3bf">hx_gen_bandpass</code>` が「内半径と幅」なのに対し、こちらは「中心と半幅」で同じ円環を指定する。特定の空間周波数</p>
-<p>(縞の周期 `<code style="color:#22d3bf">1/c</code><code style="color:#22d3bf"> 画素)だけを抜き出すマスクを作り、</code><code style="color:#22d3bf">fft_generic</code>` などの中心=DC スペクトルと画素積で使う。</p>
+<p><code style="color:#22d3bf">hx_gen_bandpass</code> が「内半径と幅」なのに対し、こちらは「中心と半幅」で同じ円環を指定する。特定の空間周波数(縞の周期 <code style="color:#22d3bf">1/c</code> 画素)だけを抜き出すマスクを作り、<code style="color:#22d3bf">fft_generic</code> などの中心=DC スペクトルと画素積で使う。</p>
 <p><b>値の比較可能性(実測)</b>: 出力を<b>その画像の最大値で正規化</b>している(出力の最大が常に 1.0、入力を定数倍しても出力が変わらない)。したがって<b>画像をまたいで値を比較できない</b> —— 同じ強さの特徴でも、その画像の中で最も強い特徴が何かによって値が変わる。弱い特徴しか無い画像では雑音が 1.0 まで持ち上がる。画像間で比べたいときは、共通の基準で割り直すこと。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
@@ -31,7 +28,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_gen_bandfilter 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_gen_bandfilter%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_gen_bandfilter%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_gen_bandfilter 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_gen_bandfilter%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_gen_bandfilter%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

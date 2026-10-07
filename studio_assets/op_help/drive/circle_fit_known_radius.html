@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.circle_fit_known_radius(points, r: &#x27;float&#x27;, iters: &#x27;int&#x27; = 30) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsim; pegsim.circle_fit_known_radius(points, r: &#x27;float&#x27;, iters: &#x27;int&#x27; = 30) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;circle_fit_known_radius&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>半径 r が既知の円を 2-D 点列 (row, col) に当てる(中心だけを Gauss-Newton で解く。部分弧でも安定)。</p>
-<p>:func:<code style="color:#22d3bf">measure.fit_circle</code>(代数的、半径も未知)と同じ入出力の規約(`<code style="color:#22d3bf">cy</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">cx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rms</code>`)。ペグの断面のように半径が</p>
-<p>図面で分かっている対象は、半径を固定したほうが短い弧でも中心が決まる(自由な当てはめは弧が短いと半径と中心が相殺する)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 点が 2 つ未満、非有限、r ≤ 0。</p>
+<p><code style="color:#22d3bf">measure.fit_circle</code>(代数的、半径も未知)と同じ入出力の規約(<code style="color:#22d3bf">cy</code>・<code style="color:#22d3bf">cx</code>・<code style="color:#22d3bf">rms</code>)。ペグの断面のように半径が図面で分かっている対象は、半径を固定したほうが短い弧でも中心が決まる(自由な当てはめは弧が短いと半径と中心が相殺する)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 点が 2 つ未満、非有限、r ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

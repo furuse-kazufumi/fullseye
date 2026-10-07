@@ -3,17 +3,12 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_sample_points(V, F, spacing=None, n=None, method=&#x27;poisson&#x27;, seed=0, oversample=6)</code>(要直接调用实现,<code style="color:#22d3bf">import meshres; meshres.mesh_sample_points(V, F, spacing=None, n=None, method=&#x27;poisson&#x27;, seed=0, oversample=6)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mesh_sample_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>按给定间距在表面采样 —— 面积加权随机或 Poisson-disk(`<code style="color:#22d3bf">points</code>`)。</p>
+<p>按给定间距在表面采样 —— 面积加权随机或 Poisson-disk(<code style="color:#22d3bf">points</code>)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>`<code style="color:#22d3bf">method=&quot;area&quot;</code>` draws *n* points with probability ∝ face area (uniform</p>
-<p>per unit area, but with the clumps of any random sample). `<code style="color:#22d3bf">method=&quot;poisson&quot;</code>`</p>
-<p>draws `<code style="color:#22d3bf">oversample × A/spacing²</code>` area-weighted candidates and keeps them</p>
-<p>greedily so that no two samples are closer than *spacing* (blue noise —</p>
-<p>the spacing is a guarantee, the count ≈ 0.7·A/spacing²). Give *spacing*</p>
-<p>(mesh units) for Poisson, *n* for area sampling; deterministic per *seed*.</p>
+<p><code style="color:#22d3bf">method=&quot;area&quot;</code> draws *n* points with probability ∝ face area (uniform per unit area, but with the clumps of any random sample). <code style="color:#22d3bf">method=&quot;poisson&quot;</code> draws <code style="color:#22d3bf">oversample × A/spacing²</code> area-weighted candidates and keeps them greedily so that no two samples are closer than *spacing* (blue noise — the spacing is a guarantee, the count ≈ 0.7·A/spacing²). Give *spacing* (mesh units) for Poisson, *n* for area sampling; deterministic per *seed*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>

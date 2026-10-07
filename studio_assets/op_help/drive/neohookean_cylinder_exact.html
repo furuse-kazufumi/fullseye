@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.neohookean_cylinder_exact(d, mu: &#x27;float&#x27; = 1.0, area: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacdome; tacdome.neohookean_cylinder_exact(d, mu: &#x27;float&#x27; = 1.0, area: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;neohookean_cylinder_exact&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>非圧縮 neo-Hookean の円柱を摩擦なしで一軸に圧縮する厳密解(連続体の教科書の結果、模型と独立)。</p>
-<p>伸び λ = 1 − d、横は λ^{−1/2}(体積一定)。公称応力 P = μ(λ⁻² − λ)(圧縮を正)、Cauchy 応力 σ = μ(λ⁻¹ − λ²)、力 F = P·area、</p>
-<p>線形の力 3μ·d·area(E = 3μ)、`<code style="color:#22d3bf">kappa</code><code style="color:#22d3bf"> = F/線形、</code><code style="color:#22d3bf">radius_ratio</code>` = λ^{−1/2}。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: d が [0, 1) の外、μ・area ≤ 0。</p>
+<p>伸び λ = 1 − d、横は λ^{−1/2}(体積一定)。公称応力 P = μ(λ⁻² − λ)(圧縮を正)、Cauchy 応力 σ = μ(λ⁻¹ − λ²)、力 F = P·area、線形の力 3μ·d·area(E = 3μ)、<code style="color:#22d3bf">kappa</code> = F/線形、<code style="color:#22d3bf">radius_ratio</code> = λ^{−1/2}。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、μ・area ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

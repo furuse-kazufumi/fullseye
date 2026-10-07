@@ -5,12 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>スカイライン table と姿勢から、その向きのカメラが見る<b>空のマスク</b>(H, W)を描く → image2d(0/1)。</p>
-<p>各画素の光線を世界へ回し、その方位のスカイライン仰角より上なら空(1)、下なら地形(0)。</p>
-<p>合成の写真づくり(PoC)と、推定した姿勢を写真に重ねて目で確かめる図に使う。</p>
-<p>`<code style="color:#22d3bf">camera_orientation_from_skyline</code>` の予測と同じ幾何なので、<b>描いて → 抜いて → 当てる</b>の</p>
-<p>往復が閉じる(テストの真値)。</p>
+<p>各画素の光線を世界へ回し、その方位のスカイライン仰角より上なら空(1)、下なら地形(0)。合成の写真づくり(PoC)と、推定した姿勢を写真に重ねて目で確かめる図に使う。<code style="color:#22d3bf">camera_orientation_from_skyline</code> の予測と同じ幾何なので、<b>描いて → 抜いて → 当てる</b>の往復が閉じる(テストの真値)。</p>
 <p>Args:</p>
-<p>sky_table: `<code style="color:#22d3bf">dem_skyline</code><code style="color:#22d3bf"> の出力(</code><code style="color:#22d3bf">azimuth_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">elevation_deg</code>`)。</p>
+<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> の出力(<code style="color:#22d3bf">azimuth_deg</code> / <code style="color:#22d3bf">elevation_deg</code>)。</p>
 <p>K: (fx, fy, cx, cy)。shape: (H, W)。</p>
 <p>yaw_deg, pitch_deg, roll_deg: 姿勢(モジュール冒頭の規約)。</p>
 <p>Returns:</p>

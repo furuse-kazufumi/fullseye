@@ -4,25 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_with(report, a, b, ms=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import imgmetrics; imgmetrics.measure_with(report, a, b, ms=False)</code>、台帳から引くなら <code style="color:#22d3bf">opsimgmetrics.get(&quot;measure_with&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p><b>前の測定と厳密に同じ条件で</b>もう一組を測る。</p>
-<p>:func:<code style="color:#22d3bf">compare_images</code> の返り値(`<code style="color:#22d3bf">contract</code>` を含む)を受け取り、そこに</p>
-<p>記録された `<code style="color:#22d3bf">data_range</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">bins</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">ncd_levels</code>` をそのまま使って測り直す。</p>
-<p>これが要るのは、この repo で実際に起きた事故の型があるから ―― **数値だけを</p>
-<p>図注や表に写して、条件が消える**。別々に測った 2 つの PSNR を並べたとき、</p>
-<p>片方が `<code style="color:#22d3bf">data_range=1.0</code><code style="color:#22d3bf">、もう片方が </code><code style="color:#22d3bf">255</code>` なら **48.13 dB の差が「改善」に</p>
-<p>見える**。条件を持ち回れば、そもそも比べられない組合せは作れない。</p>
-<p>同時に、これが `<code style="color:#22d3bf">metrics</code><code style="color:#22d3bf"> 型の**消費側**でもある。</code><code style="color:#22d3bf">compare_images</code>` だけが</p>
-<p>`<code style="color:#22d3bf">metrics</code>` を産んで誰も食わない状態は、この repo が繰り返し踏んできた</p>
-<p>「入口はあるが消費 op が無い型」そのものだった(2026-09-02 の点検で検出)。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p><code style="color:#22d3bf">compare_images</code> の返り値(<code style="color:#22d3bf">contract</code> を含む)を受け取り、そこに記録された <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">ncd_levels</code> をそのまま使って測り直す。</p>
+<p>これが要るのは、この repo で実際に起きた事故の型があるから ―― <b>数値だけを図注や表に写して、条件が消える</b>。別々に測った 2 つの PSNR を並べたとき、片方が <code style="color:#22d3bf">data_range=1.0</code>、もう片方が <code style="color:#22d3bf">255</code> なら <b>48.13 dB の差が「改善」に見える</b>。条件を持ち回れば、そもそも比べられない組合せは作れない。</p>
+<p>同時に、これが <code style="color:#22d3bf">metrics</code> 型の<b>消費側</b>でもある。<code style="color:#22d3bf">compare_images</code> だけが <code style="color:#22d3bf">metrics</code> を産んで誰も食わない状態は、この repo が繰り返し踏んできた「入口はあるが消費 op が無い型」そのものだった(2026-09-02 の点検で検出)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>report : dict</p>
-<p>:func:<code style="color:#22d3bf">compare_images</code> の返り値、または `<code style="color:#22d3bf">contract</code>` そのもの。</p>
+<p><code style="color:#22d3bf">compare_images</code> の返り値、または <code style="color:#22d3bf">contract</code> そのもの。</p>
 <p>a, b : array_like</p>
 <p>測り直す 2 枚。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>同じ形の報告。`<code style="color:#22d3bf">contract</code>` は受け取ったものと<b>同一</b>。</p>
+<p>同じ形の報告。<code style="color:#22d3bf">contract</code> は受け取ったものと<b>同一</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

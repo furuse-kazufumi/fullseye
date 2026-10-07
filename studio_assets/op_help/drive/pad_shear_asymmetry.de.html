@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_shear_asymmetry(qR, qL) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegtactile; pegtactile.pad_shear_asymmetry(qR, qL) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;pad_shear_asymmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>2 パッドの膜のせん断を共通成分(= 軸方向の力、F_z/2 の向き)と差分(= 偶力、M/(2w))に分ける: 共通 = (q_R + q_L)/2、</p>
-<p>差分 = (q_R − q_L)/2。`<code style="color:#22d3bf">ratio_v</code><code style="color:#22d3bf"> = |差分_v| / (|共通_v| + |差分_v|)(0 = 同じ向き、1 = 純粋な偶力)、</code><code style="color:#22d3bf">opposite_v</code>` = v 成分の</p>
-<p>符号が左右で逆か。<b>Raises</b> ValueError: 有限の 2 成分でない。</p>
+<p>2 パッドの膜のせん断を共通成分(= 軸方向の力、F_z/2 の向き)と差分(= 偶力、M/(2w))に分ける: 共通 = (q_R + q_L)/2、差分 = (q_R − q_L)/2。<code style="color:#22d3bf">ratio_v</code> = |差分_v| / (|共通_v| + |差分_v|)(0 = 同じ向き、1 = 純粋な偶力)、<code style="color:#22d3bf">opposite_v</code> = v 成分の符号が左右で逆か。<b>Raises</b> ValueError: 有限の 2 成分でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

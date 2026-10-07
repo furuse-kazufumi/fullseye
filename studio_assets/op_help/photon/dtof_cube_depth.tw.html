@@ -3,48 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">histcube</code> → <code style="color:#22d3bf">depth</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dtof_cube_depth(cube, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_depth(cube, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>由 `<code style="color:#22d3bf">(H, W, T)</code>` 光子直方圖立方體得到深度圖 —— dToF 的反演。</p>
+<p>由 <code style="color:#22d3bf">(H, W, T)</code> 光子直方圖立方體得到深度圖 —— dToF 的反演。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>The array version of :func:<code style="color:#22d3bf">dtof_depth</code>, with the same four *mode* estimators</p>
-<p>and the same `<code style="color:#22d3bf">t_flight = t_measured - offset_ps</code>` sign convention. The time</p>
-<p>axis is <b>last</b>: a `<code style="color:#22d3bf">(D, H, W)</code>` voxel volume passed in here would be read as</p>
-<p>`<code style="color:#22d3bf">W</code>` time bins and return a plausible-wrong depth map, so the shape is</p>
-<p>checked and the error message says exactly that.</p>
-<p>Pixels whose total counts are below *min_counts* — and, in the peak-based</p>
-<p>modes, pixels whose histogram is exactly <b>flat</b> (no peak to find, so</p>
-<p>`<code style="color:#22d3bf">argmax</code>` would report bin 0 for every one of them) — are set to</p>
-<p>*empty_value* (default 0.0, a value no real return can have since</p>
-<p>`<code style="color:#22d3bf">d &gt; 0</code>`). Set</p>
-<p>`<code style="color:#22d3bf">empty_value=float(&#x27;nan&#x27;)</code>` if you would rather propagate a NaN — that is an</p>
-<p>opt-in, never the default, because a NaN depth map silently poisons every</p>
-<p>downstream reduction.</p>
-<p>Where a sub-bin *mode* cannot be applied to a pixel — the peak is in the</p>
-<p>first or last bin, or the three samples are flat / non-positive for the log</p>
-<p>fit — that pixel **falls back to the bin-centre (`<code style="color:#22d3bf">&quot;peak&quot;</code>`) estimate**. A</p>
-<p>per-pixel exception would be useless on a megapixel cube; the fallback is</p>
-<p>documented here and pinned in the tests, and it degrades to the coarser</p>
-<p>estimator rather than to a wrong one.</p>
-<p>Ground truth: on a noiseless simulated cube of a tilted plane from 1.0 to</p>
-<p>3.0 m (32x32 pixels, 256 bins x 100 ps, 500 ps IRF) the RMS depth error is</p>
-<p>4.39 mm for `<code style="color:#22d3bf">&quot;peak&quot;</code><code style="color:#22d3bf">, 3.2e-16 m for </code><code style="color:#22d3bf">&quot;centroid&quot;</code>`, 0.114 mm for</p>
-<p>`<code style="color:#22d3bf">&quot;parabolic&quot;</code><code style="color:#22d3bf"> and 1.6e-8 m for </code><code style="color:#22d3bf">&quot;gaussian&quot;</code>`. With Poisson noise (20</p>
-<p>signal + 5 ambient photons per pixel, seed 0) the same four give 19.9 mm,</p>
-<p>164.8 mm (background subtracted), 18.7 mm and 19.2 mm — at 20 photons the</p>
-<p>estimator choice is worth about 6%, and the centroid is 8x worse than doing</p>
-<p>nothing clever at all.</p>
-<p>Returns a float64 `<code style="color:#22d3bf">(H, W)</code>` depth map in metres.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a cube that is not 3-D / has fewer than 2 time</p>
-<p>bins / holds negative counts / exceeds :data:<code style="color:#22d3bf">MAX_CUBE_ELEMENTS</code>, a</p>
-<p>non-positive *bin_ps*, an unknown *mode*, a negative *min_counts*, a</p>
-<p>non-finite *empty_value* other than NaN, and — instead of returning negative</p>
-<p>distances — an *offset_ps* that exceeds the measured arrival time of any</p>
-<p>valid pixel (a mis-signed or mis-scaled calibration delay).</p>
+<p>The array version of <code style="color:#22d3bf">dtof_depth</code>, with the same four *mode* estimators and the same <code style="color:#22d3bf">t_flight = t_measured - offset_ps</code> sign convention. The time axis is <b>last</b>: a <code style="color:#22d3bf">(D, H, W)</code> voxel volume passed in here would be read as <code style="color:#22d3bf">W</code> time bins and return a plausible-wrong depth map, so the shape is checked and the error message says exactly that.</p>
+<p>Pixels whose total counts are below *min_counts* — and, in the peak-based modes, pixels whose histogram is exactly <b>flat</b> (no peak to find, so <code style="color:#22d3bf">argmax</code> would report bin 0 for every one of them) — are set to *empty_value* (default 0.0, a value no real return can have since <code style="color:#22d3bf">d &gt; 0</code>). Set <code style="color:#22d3bf">empty_value=float(&#x27;nan&#x27;)</code> if you would rather propagate a NaN — that is an opt-in, never the default, because a NaN depth map silently poisons every downstream reduction.</p>
+<p>Where a sub-bin *mode* cannot be applied to a pixel — the peak is in the first or last bin, or the three samples are flat / non-positive for the log fit — that pixel <b>falls back to the bin-centre (<code style="color:#22d3bf">&quot;peak&quot;</code>) estimate</b>. A per-pixel exception would be useless on a megapixel cube; the fallback is documented here and pinned in the tests, and it degrades to the coarser estimator rather than to a wrong one.</p>
+<p>Ground truth: on a noiseless simulated cube of a tilted plane from 1.0 to 3.0 m (32x32 pixels, 256 bins x 100 ps, 500 ps IRF) the RMS depth error is 4.39 mm for <code style="color:#22d3bf">&quot;peak&quot;</code>, 3.2e-16 m for <code style="color:#22d3bf">&quot;centroid&quot;</code>, 0.114 mm for <code style="color:#22d3bf">&quot;parabolic&quot;</code> and 1.6e-8 m for <code style="color:#22d3bf">&quot;gaussian&quot;</code>. With Poisson noise (20 signal + 5 ambient photons per pixel, seed 0) the same four give 19.9 mm, 164.8 mm (background subtracted), 18.7 mm and 19.2 mm — at 20 photons the estimator choice is worth about 6%, and the centroid is 8x worse than doing nothing clever at all.</p>
+<p>Returns a float64 <code style="color:#22d3bf">(H, W)</code> depth map in metres.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a cube that is not 3-D / has fewer than 2 time bins / holds negative counts / exceeds <code style="color:#22d3bf">MAX_CUBE_ELEMENTS</code>, a non-positive *bin_ps*, an unknown *mode*, a negative *min_counts*, a non-finite *empty_value* other than NaN, and — instead of returning negative distances — an *offset_ps* that exceeds the measured arrival time of any valid pixel (a mis-signed or mis-scaled calibration delay).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dtof_ranging">poc_dtof_ranging</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dtof_ranging.py</code></p>

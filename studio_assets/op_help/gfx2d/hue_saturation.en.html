@@ -3,14 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hue_saturation(rgb, hue_deg=0.0, saturation=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.hue_saturation(rgb, hue_deg=0.0, saturation=1.0)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;hue_saturation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Rotate the hue by *hue_deg* and scale the saturation by *saturation*, in BT.601 YCbCr: luma is kept, the chroma vector `<code style="color:#22d3bf">(Cb, Cr)</code><code style="color:#22d3bf"> is rotated and scaled. Output clipped to </code><code style="color:#22d3bf">[0, 1]</code>`.</p>
-<p>Ground truth: `<code style="color:#22d3bf">hue_deg=0, saturation=1</code>` is the identity to 1e-15;</p>
-<p>rotating by `<code style="color:#22d3bf">+t</code><code style="color:#22d3bf"> then </code><code style="color:#22d3bf">-t</code><code style="color:#22d3bf"> returns the input; </code><code style="color:#22d3bf">saturation=0</code>` gives a</p>
-<p>grey image whose value is the BT.601 luma of the input. A hue rotation is</p>
-<p><b>not</b> a channel permutation (120 degrees does not swap R-&gt;G-&gt;B exactly),</p>
-<p>because the RGB cube is not a cylinder around the grey axis — said here so</p>
-<p>nobody tests for it.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-finite *hue_deg*, or *saturation* &lt; 0.</p>
+<p>Rotate the hue by *hue_deg* and scale the saturation by *saturation*, in BT.601 YCbCr: luma is kept, the chroma vector <code style="color:#22d3bf">(Cb, Cr)</code> is rotated and scaled. Output clipped to <code style="color:#22d3bf">[0, 1]</code>.</p>
+<p>Ground truth: <code style="color:#22d3bf">hue_deg=0, saturation=1</code> is the identity to 1e-15; rotating by <code style="color:#22d3bf">+t</code> then <code style="color:#22d3bf">-t</code> returns the input; <code style="color:#22d3bf">saturation=0</code> gives a grey image whose value is the BT.601 luma of the input. A hue rotation is <b>not</b> a channel permutation (120 degrees does not swap R-&gt;G-&gt;B exactly), because the RGB cube is not a cylinder around the grey axis — said here so nobody tests for it. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-finite *hue_deg*, or *saturation* &lt; 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,20 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;mirror_virtual_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>平面鏡に映る像を撮る <b>仮想カメラ</b>。</p>
-<p>`<code style="color:#22d3bf">cam_pose</code><code style="color:#22d3bf"> は world→camera の 4×4(</code><code style="color:#22d3bf">render3d.look_at</code><code style="color:#22d3bf"> の規約: X_cam = P X、−Z 前方)。</code><code style="color:#22d3bf">mirror_plane</code>` は</p>
-<p>(n_x, n_y, n_z, d)(n·X = d)。</p>
+<p><code style="color:#22d3bf">cam_pose</code> は world→camera の 4×4(<code style="color:#22d3bf">render3d.look_at</code> の規約: X_cam = P X、−Z 前方)。<code style="color:#22d3bf">mirror_plane</code> は(n_x, n_y, n_z, d)(n·X = d)。</p>
 <p>返り値(dict):</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">reflection</code><code style="color:#22d3bf">: 折り返し S(</code><code style="color:#22d3bf">mirror_reflection_matrix</code>`)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">pose_mirrored</code>` = P·S: 実物の場面をこれで写すと、実カメラが <b>鏡越しに見る像そのもの</b>(画素の位置まで同じ)。</p>
-<p>回転部の行列式は −1(左右が反転した座標系。描画器によっては面の表裏の判定が逆になる)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">pose</code>` = F·P·S、F = diag(−1, 1, 1, 1): 普通の右手系のカメラ(行列式 +1)= 鏡の向こうにいる仮想カメラ。</p>
-<p>これで撮った画像は鏡に映る像の <b>左右反転</b>(画素では u&#x27; = 2c_x − u)。バックミラーを「後ろ向きのカメラ」と</p>
-<p>して扱うときはこちら(運転者が見る像に戻すには左右を反転する)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">eye</code><code style="color:#22d3bf">: 仮想カメラの位置 S(C)(C = 実カメラの位置)。</code><code style="color:#22d3bf">eye_real</code>`: C。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">flip</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">&quot;x&quot;</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">pose</code>` の画像は x を反転すると鏡像になる)。</p>
-<p>閉形式: S(X) = X − 2(n·X − d)n。鏡に映る点 Q の像の位置は S(Q)(鏡の向こう側、鏡面から同じ距離)。</p>
-<p>門(テスト): 入射角 = 反射角を満たす鏡面上の点 M を数値で解き(Fermat の最短経路)、C + (|CM| + |MQ|)·unit(M − C)</p>
-<p>が S(Q) と一致すること。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: 折り返し S(<code style="color:#22d3bf">mirror_reflection_matrix</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_mirrored</code> = P·S: 実物の場面をこれで写すと、実カメラが <b>鏡越しに見る像そのもの</b>(画素の位置まで同じ)。回転部の行列式は −1(左右が反転した座標系。描画器によっては面の表裏の判定が逆になる)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose</code> = F·P·S、F = diag(−1, 1, 1, 1): 普通の右手系のカメラ(行列式 +1)= 鏡の向こうにいる仮想カメラ。これで撮った画像は鏡に映る像の <b>左右反転</b>(画素では u&#x27; = 2c_x − u)。バックミラーを「後ろ向きのカメラ」として扱うときはこちら(運転者が見る像に戻すには左右を反転する)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eye</code>: 仮想カメラの位置 S(C)(C = 実カメラの位置)。<code style="color:#22d3bf">eye_real</code>: C。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flip</code>: <code style="color:#22d3bf">&quot;x&quot;</code>(<code style="color:#22d3bf">pose</code> の画像は x を反転すると鏡像になる)。</p>
+<p>閉形式: S(X) = X − 2(n·X − d)n。鏡に映る点 Q の像の位置は S(Q)(鏡の向こう側、鏡面から同じ距離)。門(テスト): 入射角 = 反射角を満たす鏡面上の点 M を数値で解き(Fermat の最短経路)、C + (|CM| + |MQ|)·unit(M − C) が S(Q) と一致すること。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

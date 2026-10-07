@@ -8,18 +8,13 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rectangularity.chain.jpg">rectangularity: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rectangularity.chain.jpg">rectangularity: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Rechteckigkeit. Es wird ein Rechteck mit <b>denselben Momenten erster und zweiter Ordnung</b> konstruiert; die Fläche der Differenz zur Region wird auf die Fläche dieses Rechtecks normiert (`<code style="color:#22d3bf">1 - |Region XOR Rechteck| / |Rechteck|</code><code style="color:#22d3bf">) und ist für ein Rechteck 1. **Dieselbe Definition wie** HALCONs </code><code style="color:#22d3bf">rectangularity</code>` (Shape factor for the rectangularity of a region.).</p>
+<p>Rechteckigkeit. Es wird ein Rechteck mit <b>denselben Momenten erster und zweiter Ordnung</b> konstruiert; die Fläche der Differenz zur Region wird auf die Fläche dieses Rechtecks normiert (<code style="color:#22d3bf">1 - |Region XOR Rechteck| / |Rechteck|</code>) und ist für ein Rechteck 1. <b>Dieselbe Definition wie</b> HALCONs <code style="color:#22d3bf">rectangularity</code> (Shape factor for the rectangularity of a region.).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>★2026-09-26 まで<b>軸平行の</b>外接矩形との比(`<code style="color:#22d3bf">skimage</code><code style="color:#22d3bf"> の </code><code style="color:#22d3bf">extent</code>`)だった。</p>
-<p>向きを見ないので、<b>同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた</b></p>
-<p>(HALCON は 0.998 のまま)。`<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>`。</p>
-<p>★正方形や円のように 2 次モーメントで向きが決まらない形では、「同じモーメントを</p>
-<p>持つ矩形」が向きの数だけ在って定義が向きを決めない。ここでは重なりが最大に</p>
-<p>なる向きを選ぶ —— そのまま任意の向きで当てると正方形が 0.651 になり、HALCON の</p>
-<p>「矩形なら 1」と食い違う。HALCON もこの形では最大 10% 過小評価すると明記する。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p>★2026-09-26 まで<b>軸平行の</b>外接矩形との比(<code style="color:#22d3bf">skimage</code> の <code style="color:#22d3bf">extent</code>)だった。向きを見ないので、<b>同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた</b> (HALCON は 0.998 のまま)。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
+<p>★正方形や円のように 2 次モーメントで向きが決まらない形では、「同じモーメントを持つ矩形」が向きの数だけ在って定義が向きを決めない。ここでは重なりが最大になる向きを選ぶ —— そのまま任意の向きで当てると正方形が 0.651 になり、HALCON の「矩形なら 1」と食い違う。HALCON もこの形では最大 10% 過小評価すると明記する。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -29,7 +24,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-rectangularity 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Arectangularity%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Arectangularity%200.50%200.50">Load &amp; run</a></p>
+rectangularity 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Arectangularity%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Arectangularity%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape_factors_closed_form">shape_factors_closed_form</a> — <code style="color:#22d3bf">py -3.11 examples/shape_factors_closed_form.py</code></p>

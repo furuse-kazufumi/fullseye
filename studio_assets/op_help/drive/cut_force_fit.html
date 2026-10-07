@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_force_fit(F_n, w_eff_mm, xi: &#x27;float&#x27;, min_w_mm: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import cutting; cutting.cut_force_fit(F_n, w_eff_mm, xi: &#x27;float&#x27;, min_w_mm: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;cut_force_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>切断中の力の列 F(N)と切っている幅 w_eff(mm)から靱性 R(J/m²)を原点を通る最小二乗で出す。</p>
-<p>模型: `<code style="color:#22d3bf">F = R · w_eff · g(ξ)</code><code style="color:#22d3bf">、g = 1/(1+ξ²)(:func:</code>cut_force_atkins<code style="color:#22d3bf"> の slice_push、摩擦なし)。w_eff &lt; </code><code style="color:#22d3bf">min_w_mm</code>` の点</p>
-<p>(入り始め)は使わない。★ 合成の真値を同じ模型で作るとこの当てはめは配管の検査にしかならず、摩擦の分は R に吸い込まれる</p>
-<p>(返り値の `<code style="color:#22d3bf">model</code><code style="color:#22d3bf"> に書く)。返り値: </code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rms_n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">g</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">model</code>`。</p>
+<p>模型: <code style="color:#22d3bf">F = R · w_eff · g(ξ)</code>、g = 1/(1+ξ²)(<code style="color:#22d3bf">cut_force_atkins</code> の slice_push、摩擦なし)。w_eff &lt; <code style="color:#22d3bf">min_w_mm</code> の点(入り始め)は使わない。★ 合成の真値を同じ模型で作るとこの当てはめは配管の検査にしかならず、摩擦の分は R に吸い込まれる(返り値の <code style="color:#22d3bf">model</code> に書く)。返り値: <code style="color:#22d3bf">R</code>、<code style="color:#22d3bf">rms_n</code>、<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">g</code>、<code style="color:#22d3bf">model</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

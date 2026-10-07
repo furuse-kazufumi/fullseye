@@ -4,9 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_world_to_cv(cam_xmat, cam_xpos) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsim; pegsim.camera_world_to_cv(cam_xmat, cam_xpos) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;camera_world_to_cv&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>MuJoCo のカメラ姿勢(`<code style="color:#22d3bf">d.cam_xmat</code><code style="color:#22d3bf"> 3×3 = 世界でのカメラ軸、</code><code style="color:#22d3bf">d.cam_xpos</code>`)を OpenCV / Fullseye の外部パラメータに:</p>
+<p>MuJoCo のカメラ姿勢(<code style="color:#22d3bf">d.cam_xmat</code> 3×3 = 世界でのカメラ軸、<code style="color:#22d3bf">d.cam_xpos</code>)を OpenCV / Fullseye の外部パラメータに:</p>
 <p>X_cv = R X_w + t、R = diag(1, −1, −1) Rwcᵀ、t = −R p(MuJoCo は −Z を見て +Y が上、OpenCV は +Z 前で +Y 下)。</p>
-<p>返り: `<code style="color:#22d3bf">R</code><code style="color:#22d3bf">(3×3)、</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf">(3,)、</code><code style="color:#22d3bf">R_cam_to_world</code><code style="color:#22d3bf"> = Rᵀ。numpy だけ(mujoco 不要)。**Raises** </code><code style="color:#22d3bf">ValueError</code>`: 形が違う、R が回転でない。</p>
+<p>返り: <code style="color:#22d3bf">R</code>(3×3)、<code style="color:#22d3bf">t</code>(3,)、<code style="color:#22d3bf">R_cam_to_world</code> = Rᵀ。numpy だけ(mujoco 不要)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形が違う、R が回転でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

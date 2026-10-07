@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kalman_ca(z, dt: &#x27;float&#x27;, *, q: &#x27;float&#x27; = 1.0, r: &#x27;float&#x27; = 1.0, x0=None, P0: &#x27;float&#x27; = 1000.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import balltrack; balltrack.kalman_ca(z, dt: &#x27;float&#x27;, *, q: &#x27;float&#x27; = 1.0, r: &#x27;float&#x27; = 1.0, x0=None, P0: &#x27;float&#x27; = 1000.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;kalman_ca&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>等加速度モデルの Kalman フィルタ(位置の観測 (N, D)、状態 = 位置・速度・加速度 × D)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;x&quot; (N, 3D) 更新後, &quot;x_pred&quot; (N, 3D) 予測, &quot;P&quot; (N, 3D, 3D), &quot;innovation&quot; (N, D)}</code>`。</p>
-<p>`<code style="color:#22d3bf">q</code><code style="color:#22d3bf"> = 加速度の変化の分散(白色ジャーク)、</code><code style="color:#22d3bf">r</code>` = 観測の分散。放物線の真値を入れると(モデルが厳密なので)収束後の</p>
-<p>新息 → 0、r → 0 で更新後の位置 = 観測(門)。NaN の観測は予測だけ(欠測)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;x&quot; (N, 3D) 更新後, &quot;x_pred&quot; (N, 3D) 予測, &quot;P&quot; (N, 3D, 3D), &quot;innovation&quot; (N, D)}</code>。<code style="color:#22d3bf">q</code> = 加速度の変化の分散(白色ジャーク)、<code style="color:#22d3bf">r</code> = 観測の分散。放物線の真値を入れると(モデルが厳密なので)収束後の新息 → 0、r → 0 で更新後の位置 = 観測(門)。NaN の観測は予測だけ(欠測)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

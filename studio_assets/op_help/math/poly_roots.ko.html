@@ -5,26 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>다항식의 모든 근(계수는 최고차항부터) —— 복소근 포함.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Roots are the eigenvalues of the companion matrix (`<code style="color:#22d3bf">np.roots</code>`); the</p>
-<p>polynomial must have degree ≥ 1 and a <b>non-zero leading coefficient</b></p>
-<p>(fail-closed: a zero leading coefficient means the stated degree is a lie —</p>
-<p>trim it explicitly rather than have it silently dropped).</p>
-<p>Returns complex128, sorted by real part then imaginary part</p>
-<p>(deterministic). Complex answers are honest answers: `<code style="color:#22d3bf">x² + 1</code>` really does</p>
-<p>have roots `<code style="color:#22d3bf">±i</code>`, and hiding them would misreport the polynomial. Pass</p>
-<p>`<code style="color:#22d3bf">real_only=True</code>` to keep only roots whose imaginary part is negligible</p>
-<p>(`<code style="color:#22d3bf">|imag| &lt;= imag_tol * max(1, |root|)</code>`) and get them back as a sorted</p>
-<p>float64 array — possibly <b>empty</b>, which is the correct answer for</p>
-<p>`<code style="color:#22d3bf">x² + 1</code>`.</p>
-<p>Numerical note: root-finding conditioning degrades with degree and with</p>
-<p>clustered roots (a double root moves ~`<code style="color:#22d3bf">sqrt(eps)</code>` under coefficient</p>
-<p>noise — Wilkinson&#x27;s classic analysis); treat high-degree roots as</p>
-<p>approximate. HALCON: no root-finding tuple operator.</p>
+<p>Roots are the eigenvalues of the companion matrix (<code style="color:#22d3bf">np.roots</code>); the polynomial must have degree ≥ 1 and a <b>non-zero leading coefficient</b> (fail-closed: a zero leading coefficient means the stated degree is a lie — trim it explicitly rather than have it silently dropped).</p>
+<p>Returns complex128, sorted by real part then imaginary part (deterministic). Complex answers are honest answers: <code style="color:#22d3bf">x² + 1</code> really does have roots <code style="color:#22d3bf">±i</code>, and hiding them would misreport the polynomial. Pass <code style="color:#22d3bf">real_only=True</code> to keep only roots whose imaginary part is negligible (<code style="color:#22d3bf">|imag| &lt;= imag_tol * max(1, |root|)</code>) and get them back as a sorted float64 array — possibly <b>empty</b>, which is the correct answer for <code style="color:#22d3bf">x² + 1</code>.</p>
+<p>Numerical note: root-finding conditioning degrades with degree and with clustered roots (a double root moves ~<code style="color:#22d3bf">sqrt(eps)</code> under coefficient noise — Wilkinson&#x27;s classic analysis); treat high-degree roots as approximate. HALCON: no root-finding tuple operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
-<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
-<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code></b> —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
 <p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

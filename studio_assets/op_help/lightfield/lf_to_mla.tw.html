@@ -5,20 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把光場重新交織成微透鏡陣列的原始影格(精確逆變換)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Inverse of :func:<code style="color:#22d3bf">lf_from_mla</code> with `<code style="color:#22d3bf">offset=(0, 0)</code>`: the returned frame has</p>
-<p>shape `<code style="color:#22d3bf">(H*V, W*U)</code><code style="color:#22d3bf"> and puts </code><code style="color:#22d3bf">L[v, u, t, s]</code>` back at raw pixel</p>
-<p>`<code style="color:#22d3bf">(t*V + v, s*U + u)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">lf_from_mla(lf_to_mla(L), (V, U))</code><code style="color:#22d3bf"> returns </code><code style="color:#22d3bf">L</code>`</p>
-<p>bit-for-bit (verified with `<code style="color:#22d3bf">np.array_equal</code>`), which is the cheapest</p>
-<p>possible check that the decode&#x27;s index arithmetic has no off-by-one.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not 4-D / non-finite / over the shape and</p>
-<p>element caps (see :func:<code style="color:#22d3bf">lf_from_mla</code>), and a raw frame whose side would</p>
-<p>exceed `<code style="color:#22d3bf">MAX_SPATIAL * MAX_ANGULAR</code>`.</p>
+<p>Inverse of <code style="color:#22d3bf">lf_from_mla</code> with <code style="color:#22d3bf">offset=(0, 0)</code>: the returned frame has shape <code style="color:#22d3bf">(H*V, W*U)</code> and puts <code style="color:#22d3bf">L[v, u, t, s]</code> back at raw pixel <code style="color:#22d3bf">(t*V + v, s*U + u)</code>. <code style="color:#22d3bf">lf_from_mla(lf_to_mla(L), (V, U))</code> returns <code style="color:#22d3bf">L</code> bit-for-bit (verified with <code style="color:#22d3bf">np.array_equal</code>), which is the cheapest possible check that the decode&#x27;s index arithmetic has no off-by-one.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not 4-D / non-finite / over the shape and element caps (see <code style="color:#22d3bf">lf_from_mla</code>), and a raw frame whose side would exceed <code style="color:#22d3bf">MAX_SPATIAL * MAX_ANGULAR</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>

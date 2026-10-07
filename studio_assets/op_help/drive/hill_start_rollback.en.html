@@ -5,13 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>上り坂(θ &gt; 0)で止まった車がブレーキを離し、τ 秒後に駆動 a_drive が入るときのずり下がり(空気抵抗なしの閉形式)。</p>
-<p>τ の間の下向きの加速度 a₁ = g sin θ − c_rr g cos θ − a_creep(≤ 0 ならずり下がらない)。距離 ½ a₁ τ²、速さ a₁ τ。</p>
-<p>駆動が入ると後ろ向きの動きを a₂ = a_drive − g sin θ + c_rr g cos θ で止める(転がり抵抗も動きに逆らう)→ (a₁ τ)²/(2 a₂)。</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : `<code style="color:#22d3bf">rollback</code><code style="color:#22d3bf">(合計 [m])、</code><code style="color:#22d3bf">during_gap</code><code style="color:#22d3bf">(½ a₁ τ²)、</code><code style="color:#22d3bf">recovery</code><code style="color:#22d3bf">((a₁τ)²/(2a₂))、</code><code style="color:#22d3bf">a1</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">a2</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">v_back</code>`。</p>
+<p>τ の間の下向きの加速度 a₁ = g sin θ − c_rr g cos θ − a_creep(≤ 0 ならずり下がらない)。距離 ½ a₁ τ²、速さ a₁ τ。駆動が入ると後ろ向きの動きを a₂ = a_drive − g sin θ + c_rr g cos θ で止める(転がり抵抗も動きに逆らう)→ (a₁ τ)²/(2 a₂)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">rollback</code>(合計 [m])、<code style="color:#22d3bf">during_gap</code>(½ a₁ τ²)、<code style="color:#22d3bf">recovery</code>((a₁τ)²/(2a₂))、<code style="color:#22d3bf">a1</code>、<code style="color:#22d3bf">a2</code>、<code style="color:#22d3bf">v_back</code>。</p>
 <p>a₂ ≤ 0(駆動が坂に負ける)なら rollback = inf。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: τ &lt; 0、a_drive ≤ 0、非有限。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: τ &lt; 0、a_drive ≤ 0、非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

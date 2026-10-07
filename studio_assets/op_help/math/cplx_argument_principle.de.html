@@ -3,37 +3,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_argument_principle(z, fz)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.cplx_argument_principle(z, fz)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;cplx_argument_principle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Argumentprinzip: zählt allein aus abgetasteten Werten von `<code style="color:#22d3bf">f</code>` die von einer Kontur umschlossenen Nullstellen minus Polstellen.</p>
+<p>Argumentprinzip: zählt allein aus abgetasteten Werten von <code style="color:#22d3bf">f</code> die von einer Kontur umschlossenen Nullstellen minus Polstellen.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">Z - P = 1/(2*pi*i) ∮ f&#x27;/f dz</code>` equals the winding number of the **image</p>
-<p>curve** `<code style="color:#22d3bf">f(z)</code>` around the origin (Cauchy 1831 / Riemann): as the contour</p>
-<p>is traversed once counter-clockwise, the argument of `<code style="color:#22d3bf">f</code>` increases by</p>
-<p>`<code style="color:#22d3bf">2*pi (Z - P)</code>`, counting multiplicities. Computing it as a winding number</p>
-<p>of the image needs no derivative and no root finding — only `<code style="color:#22d3bf">f</code>` sampled</p>
-<p>on the path — and returns an exact integer.</p>
+<p><code style="color:#22d3bf">Z - P = 1/(2*pi*i) ∮ f&#x27;/f dz</code> equals the winding number of the <b>image curve</b> <code style="color:#22d3bf">f(z)</code> around the origin (Cauchy 1831 / Riemann): as the contour is traversed once counter-clockwise, the argument of <code style="color:#22d3bf">f</code> increases by <code style="color:#22d3bf">2*pi (Z - P)</code>, counting multiplicities. Computing it as a winding number of the image needs no derivative and no root finding — only <code style="color:#22d3bf">f</code> sampled on the path — and returns an exact integer.</p>
 <p>Honest limitations, all of them real:</p>
-<p style="margin:2px 0 2px 12px">• It returns the <b>difference</b> `<code style="color:#22d3bf">Z - P</code>`, never the two separately. A</p>
-<p>simple zero and a simple pole inside cancel to 0.</p>
-<p style="margin:2px 0 2px 12px">• The result is multiplied by the winding number of the contour itself,</p>
-<p>so it equals `<code style="color:#22d3bf">Z - P</code>` only for a <b>simple, positively-oriented</b></p>
-<p>contour (a clockwise one returns `<code style="color:#22d3bf">-(Z - P)</code>`).</p>
-<p style="margin:2px 0 2px 12px">• It is the winding of the *sampled* image polygon, so it <b>aliases low</b></p>
-<p>on a coarse contour. A half-turn jump between samples is detected and</p>
-<p>raised; anything below that is indistinguishable from a genuine slower</p>
-<p>turn — `<code style="color:#22d3bf">f = z**5</code>` on a 4-point circle returns 1, not 5 (measured).</p>
-<p>A `<code style="color:#22d3bf">RuntimeWarning</code><code style="color:#22d3bf"> fires from </code><code style="color:#22d3bf">pi/2</code>` per step onward</p>
-<p>(:data:<code style="color:#22d3bf">WIND_ALIAS_WARN</code>); the verification that actually works is to</p>
-<p>double `<code style="color:#22d3bf">n</code>` until the count repeats.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">f</code>` vanishes at a sample point (a zero *on*</p>
-<p>the path — the count is undefined there), the image curve is undersampled</p>
-<p>(a half-turn between consecutive samples: refine the contour), plus the</p>
-<p>usual shape/finiteness contracts.</p>
+<p style="margin:2px 0 2px 12px">• It returns the <b>difference</b> <code style="color:#22d3bf">Z - P</code>, never the two separately. A simple zero and a simple pole inside cancel to 0.</p>
+<p style="margin:2px 0 2px 12px">• The result is multiplied by the winding number of the contour itself, so it equals <code style="color:#22d3bf">Z - P</code> only for a <b>simple, positively-oriented</b> contour (a clockwise one returns <code style="color:#22d3bf">-(Z - P)</code>).</p>
+<p style="margin:2px 0 2px 12px">• It is the winding of the *sampled* image polygon, so it <b>aliases low</b> on a coarse contour. A half-turn jump between samples is detected and raised; anything below that is indistinguishable from a genuine slower turn — <code style="color:#22d3bf">f = z**5</code> on a 4-point circle returns 1, not 5 (measured). A <code style="color:#22d3bf">RuntimeWarning</code> fires from <code style="color:#22d3bf">pi/2</code> per step onward (<code style="color:#22d3bf">WIND_ALIAS_WARN</code>); the verification that actually works is to double <code style="color:#22d3bf">n</code> until the count repeats.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">f</code> vanishes at a sample point (a zero *on* the path — the count is undefined there), the image curve is undersampled (a half-turn between consecutive samples: refine the contour), plus the usual shape/finiteness contracts.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
-<p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
-<p style="margin:2px 0 2px 12px">• **Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus** — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus** (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
+<p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>
+<p style="margin:2px 0 2px 12px">• <b>Masked Arrays mit maskierten Elementen lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die implizite Umwandlung, die die Maske abstreift und die Rohwerte darunter verwendet, wird abgelehnt. Geben Sie explizit an, ob gefüllt oder verworfen wird.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf löst bei jeder Eingabe <code style="color:#22d3bf">ValueError</code> aus</b> (mit Anzahl abgelehnt — es pflanzt sich durch das gesamte Ergebnis fort).</p>
 <p style="margin:2px 0 2px 12px">• <b>Formen sind strikt</b>: 1-D und 2-D werden nie implizit hochgestuft oder gebroadcastet (eine Matrix im Vektor-Slot oder ein Vektor im Matrix-Slot löst <code style="color:#22d3bf">ValueError</code> aus; reshapen Sie explizit).</p>
 <p style="margin:2px 0 2px 12px">• <b>Größenobergrenze</b>: Operatoren, die eine Matrix nehmen, sowie die <code style="color:#22d3bf">stat_histogram</code>-Bins lösen jenseits von <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 Mio. Elemente) <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

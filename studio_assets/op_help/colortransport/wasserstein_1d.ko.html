@@ -5,23 +5,18 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>1 차원 p-바서슈타인 거리. <b>엄밀해</b>.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>1 次元では最適輸送に閉じた形があり、累積分布の逆関数どうしの</p>
-<p>`<code style="color:#22d3bf">L^p</code>` 距離になる ―― 反復も近似も要らない。総当たりの割当問題</p>
-<p>(`<code style="color:#22d3bf">scipy.optimize.linear_sum_assignment</code>`)と厳密に一致することを</p>
-<p>テストで固定してある。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>1 次元では最適輸送に閉じた形があり、累積分布の逆関数どうしの <code style="color:#22d3bf">L^p</code> 距離になる ―― 反復も近似も要らない。総当たりの割当問題(<code style="color:#22d3bf">scipy.optimize.linear_sum_assignment</code>)と厳密に一致することをテストで固定してある。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>u_values, v_values : array_like</p>
 <p>標本(1 次元に潰される)。長さは違ってよい。</p>
 <p>p : float</p>
-<p>次数。`<code style="color:#22d3bf">p=1</code><code style="color:#22d3bf"> が Earth Mover 距離、</code><code style="color:#22d3bf">p=2</code>` が 2-Wasserstein。</p>
+<p>次数。<code style="color:#22d3bf">p=1</code> が Earth Mover 距離、<code style="color:#22d3bf">p=2</code> が 2-Wasserstein。</p>
 <p>u_weights, v_weights : array_like, optional</p>
 <p>標本ごとの重み(和は内部で 1 に正規化する)。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>float</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 측색과 분광 지식 — 색은 ‘분광 × 광원 × 관찰자’로만 정해진다</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

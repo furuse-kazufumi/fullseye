@@ -5,12 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>正解と候補の 2 つの分割の分割表(同時に現れるラベルの対と画素数)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Returns `<code style="color:#22d3bf">labels_a</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">labels_b</code><code style="color:#22d3bf"> (the distinct labels), </code><code style="color:#22d3bf">rows</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">cols</code>` (indices</p>
-<p>into them) and `<code style="color:#22d3bf">counts</code><code style="color:#22d3bf"> for every co-occurring pair, plus </code><code style="color:#22d3bf">n</code>` (pixels counted),</p>
-<p>`<code style="color:#22d3bf">row_sums</code><code style="color:#22d3bf"> (size of each truth object) and </code><code style="color:#22d3bf">col_sums</code>` (size of each candidate object).</p>
-<p>`<code style="color:#22d3bf">counts.sum() == n</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">row_sums.sum() == col_sums.sum() == n</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-integer, non-finite, boolean-free-but-string or masked input;</p>
-<p>not 2-D / 3-D; empty; different shapes; every pixel ignored.</p>
+<p>Returns <code style="color:#22d3bf">labels_a</code> / <code style="color:#22d3bf">labels_b</code> (the distinct labels), <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> (indices into them) and <code style="color:#22d3bf">counts</code> for every co-occurring pair, plus <code style="color:#22d3bf">n</code> (pixels counted), <code style="color:#22d3bf">row_sums</code> (size of each truth object) and <code style="color:#22d3bf">col_sums</code> (size of each candidate object). <code style="color:#22d3bf">counts.sum() == n</code>, <code style="color:#22d3bf">row_sums.sum() == col_sums.sum() == n</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-integer, non-finite, boolean-free-but-string or masked input; not 2-D / 3-D; empty; different shapes; every pixel ignored.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

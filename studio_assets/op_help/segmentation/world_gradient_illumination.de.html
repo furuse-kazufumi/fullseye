@@ -5,14 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Welt dunkler Objekte über einem Beleuchtungsgradienten plus Rauschen (globaler Schwellwert bricht; lokaler Schwellwert / Flat-Field trennt) (world_gradient_illumination).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>I(x, y) = i0 + g_x x/(W−1) + g_y y/(H−1)(i0 + g_x + g_y ≤ 1)、画像 = I · R + 雑音。R = 背景 1、物体 `<code style="color:#22d3bf">reflectance</code>`。</p>
-<p>物体は円(半径 8〜14)と整数辺の矩形(14〜28)、互いに離す。</p>
-<p>返り値: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">labels</code><code style="color:#22d3bf">(1..n)、</code><code style="color:#22d3bf">illumination</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">reflectance_map</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">truth</code><code style="color:#22d3bf"> = {</code><code style="color:#22d3bf">n_objects</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">objects</code>`(kind, params)、</p>
-<p>`<code style="color:#22d3bf">areas</code><code style="color:#22d3bf">(πr² / w h)、</code><code style="color:#22d3bf">i0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">gradient</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">reflectance</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">noise</code>`}。</p>
+<p>I(x, y) = i0 + g_x x/(W−1) + g_y y/(H−1)(i0 + g_x + g_y ≤ 1)、画像 = I · R + 雑音。R = 背景 1、物体 <code style="color:#22d3bf">reflectance</code>。物体は円(半径 8〜14)と整数辺の矩形(14〜28)、互いに離す。</p>
+<p>返り値: <code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">labels</code>(1..n)、<code style="color:#22d3bf">illumination</code>、<code style="color:#22d3bf">reflectance_map</code>、<code style="color:#22d3bf">truth</code> = {<code style="color:#22d3bf">n_objects</code>、<code style="color:#22d3bf">objects</code>(kind, params)、<code style="color:#22d3bf">areas</code>(πr² / w h)、<code style="color:#22d3bf">i0</code>、<code style="color:#22d3bf">gradient</code>、<code style="color:#22d3bf">reflectance</code>、<code style="color:#22d3bf">noise</code>}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — 分割の採点と真値つき合成世界 — どの物差しがどの壊れ方に盲目か</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — Segmentierungen bewerten und synthetische Welten mit Ground Truth — welches Maß für welchen Fehler blind ist</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

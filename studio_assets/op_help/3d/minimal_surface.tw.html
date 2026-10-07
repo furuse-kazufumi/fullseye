@@ -5,35 +5,21 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由精確參數化生成的經典極小曲面。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">catenoid</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(c cosh(u/c) cos v, c cosh(u/c) sin v, u)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">helicoid</code>`</p>
-<p>`<code style="color:#22d3bf">(u cos v, u sin v, c v)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">enneper</code>`</p>
-<p>`<code style="color:#22d3bf">(u - u^3/3 + u v^2, v - v^3/3 + v u^2, u^2 - v^2)</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">scherk</code>`</p>
-<p>`<code style="color:#22d3bf">z = log(cos y / cos x)</code>` (the doubly periodic surface, over one cell).</p>
-<p>★★<b>Why this earns its place — the definition is the gate.</b> A minimal surface</p>
-<p>is one whose <b>mean curvature vanishes everywhere</b>, and the existing</p>
-<p>`<code style="color:#22d3bf">vertex_curvature</code>` op measures exactly that. So the claim &quot;this is a minimal</p>
-<p>surface&quot; is checked by an op that knows nothing about how the surface was</p>
-<p>built. ★A trap worth naming: the catenoid and the helicoid are *isometric*, so</p>
-<p>their <b>Gaussian</b> curvatures agree pointwise — but that is a **necessary, not</p>
-<p>sufficient** condition for minimality (a sphere and a plane differ in K, yet</p>
-<p>matching K would not make either minimal). Grade on H.</p>
-<p>Parameters</p>
-<p>----------</p>
+<p><code style="color:#22d3bf">catenoid</code> <code style="color:#22d3bf">(c cosh(u/c) cos v, c cosh(u/c) sin v, u)</code>, <code style="color:#22d3bf">helicoid</code> <code style="color:#22d3bf">(u cos v, u sin v, c v)</code>, <code style="color:#22d3bf">enneper</code> <code style="color:#22d3bf">(u - u^3/3 + u v^2, v - v^3/3 + v u^2, u^2 - v^2)</code> and <code style="color:#22d3bf">scherk</code> <code style="color:#22d3bf">z = log(cos y / cos x)</code> (the doubly periodic surface, over one cell).</p>
+<p>★★<b>Why this earns its place — the definition is the gate.</b> A minimal surface is one whose <b>mean curvature vanishes everywhere</b>, and the existing <code style="color:#22d3bf">vertex_curvature</code> op measures exactly that. So the claim &quot;this is a minimal surface&quot; is checked by an op that knows nothing about how the surface was built. ★A trap worth naming: the catenoid and the helicoid are *isometric*, so their <b>Gaussian</b> curvatures agree pointwise — but that is a <b>necessary, not sufficient</b> condition for minimality (a sphere and a plane differ in K, yet matching K would not make either minimal). Grade on H.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>kind : str</p>
-<p>One of `<code style="color:#22d3bf">MINIMAL_SURFACES</code>`.</p>
+<p>One of <code style="color:#22d3bf">MINIMAL_SURFACES</code>.</p>
 <p>nu, nv : int</p>
 <p>Grid resolution along the two parameters.</p>
 <p>extent : float</p>
 <p>Half-range of the first parameter (how much of the surface to take).</p>
 <p>scale : float</p>
-<p>The surface&#x27;s own scale parameter (`<code style="color:#22d3bf">c</code>` for catenoid and helicoid).</p>
-<p>Returns a `<code style="color:#22d3bf">mesh</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">(vertices, faces)</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: unknown kind; a grid below 4x4 or over the cap;</p>
-<p>non-positive scale; an extent that reaches the singularity (Scherk&#x27;s surface</p>
-<p>is only defined where `<code style="color:#22d3bf">cos x</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">cos y</code>` share a sign, so an extent at or</p>
-<p>beyond `<code style="color:#22d3bf">pi/2</code>` is refused rather than silently clipped to infinity).</p>
+<p>The surface&#x27;s own scale parameter (<code style="color:#22d3bf">c</code> for catenoid and helicoid).</p>
+<p>Returns a <code style="color:#22d3bf">mesh</code>: <code style="color:#22d3bf">(vertices, faces)</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown kind; a grid below 4x4 or over the cap; non-positive scale; an extent that reaches the singularity (Scherk&#x27;s surface is only defined where <code style="color:#22d3bf">cos x</code> and <code style="color:#22d3bf">cos y</code> share a sign, so an extent at or beyond <code style="color:#22d3bf">pi/2</code> is refused rather than silently clipped to infinity).</p>
 <p>HALCON: no operator.</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>

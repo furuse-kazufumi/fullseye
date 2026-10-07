@@ -8,27 +8,22 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_phase.chain.jpg">tb_cx_phase: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_phase.chain.jpg">tb_cx_phase: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_phase.inputs.jpg">tb_cx_phase: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_phase.inputs.jpg">tb_cx_phase: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Gewickelte Phase von `<code style="color:#22d3bf">cx</code><code style="color:#22d3bf"> -&gt; reelles </code><code style="color:#22d3bf">(H, W)</code>` float64.</p>
+<p>Gewickelte Phase von <code style="color:#22d3bf">cx</code> -&gt; reelles <code style="color:#22d3bf">(H, W)</code> float64.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>`<code style="color:#22d3bf">display=True</code><code style="color:#22d3bf"> (default) maps the wrapped phase </code><code style="color:#22d3bf">angle(cx)</code>` in</p>
-<p>`<code style="color:#22d3bf">(-pi, pi]</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">[0, 1]</code>` for viewing, with <b>0.5 at zero phase</b></p>
-<p>(`<code style="color:#22d3bf">(angle + pi) / (2*pi)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">-pi -&gt; 0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">0 -&gt; 0.5</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">+pi -&gt; 1</code>`).</p>
-<p>`<code style="color:#22d3bf">display=False</code><code style="color:#22d3bf"> returns the **raw wrapped radians** in </code><code style="color:#22d3bf">(-pi, pi]</code>` — the</p>
-<p>quantity :func:<code style="color:#22d3bf">cx_from_mag_phase</code> and :func:<code style="color:#22d3bf">phase_unwrap</code> consume. Note the</p>
-<p>default output is *wrapped* and *display-scaled*; :func:<code style="color:#22d3bf">phase_unwrap</code> returns</p>
-<p>raw, continuous, un-scaled radians instead.</p>
-<p>Typed bridge of the 2d op `<code style="color:#22d3bf">cx_phase</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p><code style="color:#22d3bf">display=True</code> (default) maps the wrapped phase <code style="color:#22d3bf">angle(cx)</code> in <code style="color:#22d3bf">(-pi, pi]</code> to <code style="color:#22d3bf">[0, 1]</code> for viewing, with <b>0.5 at zero phase</b> (<code style="color:#22d3bf">(angle + pi) / (2*pi)</code>: <code style="color:#22d3bf">-pi -&gt; 0</code>, <code style="color:#22d3bf">0 -&gt; 0.5</code>, <code style="color:#22d3bf">+pi -&gt; 1</code>). <code style="color:#22d3bf">display=False</code> returns the <b>raw wrapped radians</b> in <code style="color:#22d3bf">(-pi, pi]</code> — the</p>
+<p>quantity <code style="color:#22d3bf">cx_from_mag_phase</code> and <code style="color:#22d3bf">phase_unwrap</code> consume. Note the default output is *wrapped* and *display-scaled*; <code style="color:#22d3bf">phase_unwrap</code> returns raw, continuous, un-scaled radians instead.</p>
+<p>Typed bridge of the 2d op <code style="color:#22d3bf">cx_phase</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_cimage 0.50 0.50
-tb_cx_phase 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_cimage%200.50%200.50%0Atb_cx_phase%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_cimage%200.50%200.50%0Atb_cx_phase%200.50%200.50">Load &amp; run</a></p>
+tb_cx_phase 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_cimage%200.50%200.50%0Atb_cx_phase%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_cimage%200.50%200.50%0Atb_cx_phase%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• (noch keine)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>

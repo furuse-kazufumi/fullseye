@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_stream(cache: &#x27;dict&#x27;, i: &#x27;int&#x27;, j: &#x27;int&#x27;, tp: &#x27;dict&#x27;, radius: &#x27;int&#x27; = 1, step: &#x27;float&#x27; = 10.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveinf; driveinf.tile_stream(cache: &#x27;dict&#x27;, i: &#x27;int&#x27;, j: &#x27;int&#x27;, tp: &#x27;dict&#x27;, radius: &#x27;int&#x27; = 1, step: &#x27;float&#x27; = 10.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;tile_stream&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>車のいる区画 (i, j) の周り (2·radius + 1)² 区画を持ち、外れた区画を捨てる(`<code style="color:#22d3bf">cache</code>` をその場で書き換える)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;loaded&quot;: [(i, j)], &quot;evicted&quot;: [(i, j)], &quot;n&quot;: 持っている区画の数}</code>`。</p>
+<p>車のいる区画 (i, j) の周り (2·radius + 1)² 区画を持ち、外れた区画を捨てる(<code style="color:#22d3bf">cache</code> をその場で書き換える)。返り値 <code style="color:#22d3bf">{&quot;loaded&quot;: [(i, j)], &quot;evicted&quot;: [(i, j)], &quot;n&quot;: 持っている区画の数}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -3,19 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_eig(a)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.mat_eig(a)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;mat_eig&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p><b>一般の</b>正方行列の固有分解 `<code style="color:#22d3bf">A V = V diag(w)</code>`(一般に複素数)。</p>
+<p><b>一般の</b>正方行列の固有分解 <code style="color:#22d3bf">A V = V diag(w)</code>(一般に複素数)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>The non-symmetric companion of :func:<code style="color:#22d3bf">mat_eigh</code>: a rotation has eigenvalues e^{±iθ}, a Markov</p>
-<p>matrix has eigenvalue 1 with the stationary distribution as eigenvector. Also returns the</p>
-<p>eigenvector condition number `<code style="color:#22d3bf">cond_V</code>` = κ(V): near-defective matrices (a Jordan block nudged by</p>
-<p>1e-10) have κ(V) ~ 1e5+ and their eigenvalues move by √ of a perturbation — computed, not hidden.</p>
-<p>Returns a dict: `<code style="color:#22d3bf">w</code><code style="color:#22d3bf"> (complex, sorted by descending |w|), </code><code style="color:#22d3bf">V</code>` (columns, unit 2-norm),</p>
-<p>`<code style="color:#22d3bf">residual</code><code style="color:#22d3bf"> = max|AV − V diag(w)| / max|A|, </code><code style="color:#22d3bf">cond_V</code>`.</p>
+<p>The non-symmetric companion of <code style="color:#22d3bf">mat_eigh</code>: a rotation has eigenvalues e^{±iθ}, a Markov matrix has eigenvalue 1 with the stationary distribution as eigenvector. Also returns the eigenvector condition number <code style="color:#22d3bf">cond_V</code> = κ(V): near-defective matrices (a Jordan block nudged by 1e-10) have κ(V) ~ 1e5+ and their eigenvalues move by √ of a perturbation — computed, not hidden.</p>
+<p>Returns a dict: <code style="color:#22d3bf">w</code> (complex, sorted by descending |w|), <code style="color:#22d3bf">V</code> (columns, unit 2-norm), <code style="color:#22d3bf">residual</code> = max|AV − V diag(w)| / max|A|, <code style="color:#22d3bf">cond_V</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
-<p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
-<p style="margin:2px 0 2px 12px">• **masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code>** — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**(件数を明示して拒否 — 結果全体に伝播するため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code></b> — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>(件数を明示して拒否 — 結果全体に伝播するため)。</p>
 <p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は <code style="color:#22d3bf">ValueError</code>。reshape を明示する)。</p>
 <p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

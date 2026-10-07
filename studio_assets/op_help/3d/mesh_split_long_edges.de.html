@@ -3,16 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">mesh</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_split_long_edges(V, F, max_edge, max_passes=20)</code> (die Implementierung direkt: <code style="color:#22d3bf">import meshres; meshres.mesh_split_long_edges(V, F, max_edge, max_passes=20)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;mesh_split_long_edges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Halbiert Kanten länger als *max_edge*, bis keine mehr übrig ist — adaptive Verfeinerung (`<code style="color:#22d3bf">mesh</code>`).</p>
+<p>Halbiert Kanten länger als *max_edge*, bis keine mehr übrig ist — adaptive Verfeinerung (<code style="color:#22d3bf">mesh</code>).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Each pass splits every over-long edge at its midpoint and re-triangulates</p>
-<p>each affected face by the number of split edges (1 → 2, 2 → 3, 3 → 4</p>
-<p>triangles), so there are never T-junctions and faces that are already fine</p>
-<p>are untouched: the refinement lands exactly where the mesh is coarse.</p>
-<p>Stops after *max_passes* (`<code style="color:#22d3bf">ValueError</code>` if edges still exceed the target</p>
-<p>then). Vertex positions are not moved — the shape is preserved exactly.</p>
+<p>Each pass splits every over-long edge at its midpoint and re-triangulates each affected face by the number of split edges (1 → 2, 2 → 3, 3 → 4 triangles), so there are never T-junctions and faces that are already fine are untouched: the refinement lands exactly where the mesh is coarse. Stops after *max_passes* (<code style="color:#22d3bf">ValueError</code> if edges still exceed the target then). Vertex positions are not moved — the shape is preserved exactly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

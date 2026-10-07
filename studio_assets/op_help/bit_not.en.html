@@ -11,9 +11,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/bit_not.inputs.jpg">bit_not: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Tone inversion (negative/positive inversion). Implemented as `<code style="color:#22d3bf">1 - x</code>` (inversion as a continuous value in [0,1]); a and b are unused.</p>
+<p>Tone inversion (negative/positive inversion). Implemented as <code style="color:#22d3bf">1 - x</code> (inversion as a continuous value in [0,1]); a and b are unused.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の `<code style="color:#22d3bf">bit_not</code>`（画素の全ビットを反転するビット単位演算）とは動作原理が異なる近似 —— 8bit 整数のビット補数ではなく浮動小数の線形反転なので、量子化された画像でのビットパターンは再現しない。明るい/暗いを単純に入れ替えたい用途には使える。</p>
+<p>HALCON の <code style="color:#22d3bf">bit_not</code>（画素の全ビットを反転するビット単位演算）とは動作原理が異なる近似 —— 8bit 整数のビット補数ではなく浮動小数の線形反転なので、量子化された画像でのビットパターンは再現しない。明るい/暗いを単純に入れ替えたい用途には使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

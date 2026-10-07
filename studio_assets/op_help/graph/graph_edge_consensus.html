@@ -4,40 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import graphinv; graphinv.graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;graph_edge_consensus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>How many individuals share each connection — K wiring matrices on one node order.</p>
-<p>`<code style="color:#22d3bf">adjs</code><code style="color:#22d3bf"> is either a list of K square matrices or a table </code><code style="color:#22d3bf">{name: matrix}</code>` (its</p>
-<p>insertion order is the individual order), all on the <b>same</b> node order (align</p>
-<p>the cell names first; a node absent from an individual is a zero row and column).</p>
-<p>Weights (synapse counts) are kept for the synapse shares; presence is `<code style="color:#22d3bf">&gt; 0</code>`.</p>
-<p>Self-loops are dropped.</p>
+<p><code style="color:#22d3bf">adjs</code> is either a list of K square matrices or a table <code style="color:#22d3bf">{name: matrix}</code> (its insertion order is the individual order), all on the <b>same</b> node order (align the cell names first; a node absent from an individual is a zero row and column). Weights (synapse counts) are kept for the synapse shares; presence is <code style="color:#22d3bf">&gt; 0</code>. Self-loops are dropped.</p>
 <p>Returns a dict with:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> (K), </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">names</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">edges_per_individual</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">union</code>` (edges</p>
-<p>seen in at least one individual)</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">occupancy_hist</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">h[c]</code><code style="color:#22d3bf"> = number of edges present in exactly </code><code style="color:#22d3bf">c</code>`</p>
-<p>individuals, `<code style="color:#22d3bf">c = 0..K</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">h[0]</code>` is always 0: only the union is counted)</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">jaccard</code><code style="color:#22d3bf"> — the K x K pairwise overlap </code><code style="color:#22d3bf">|Ei ∩ Ej| / |Ei ∪ Ej|</code>`</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">synapse_share</code><code style="color:#22d3bf"> — for each </code><code style="color:#22d3bf">c</code>`, the fraction of all synapses (summed over</p>
-<p>individuals) on edges of occupancy `<code style="color:#22d3bf">c</code>` (with a 0/1 input: the edge share)</p>
-<p style="margin:2px 0 2px 12px">• with `<code style="color:#22d3bf">ordered=True</code>` (individuals listed in developmental order): the union is</p>
-<p>split by its presence pattern along the order into `<code style="color:#22d3bf">stable</code>` (present in all),</p>
-<p>`<code style="color:#22d3bf">added</code><code style="color:#22d3bf"> (absent, then present to the end: </code><code style="color:#22d3bf">0..01..1</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">lost</code>`</p>
-<p>(`<code style="color:#22d3bf">1..10..0</code><code style="color:#22d3bf">) and </code><code style="color:#22d3bf">flicker</code><code style="color:#22d3bf"> (anything else). The four sum to </code><code style="color:#22d3bf">union</code>`.</p>
-<p style="margin:2px 0 2px 12px">• with `<code style="color:#22d3bf">n_null &gt;= 2</code>`: every individual is rewired <b>independently</b> by</p>
-<p>degree-preserving swaps (each node&#x27;s in/out degree kept exactly, checked per</p>
-<p>sample, fail-closed) and the occupancy histogram is re-counted. Reports</p>
-<p>`<code style="color:#22d3bf">occupancy_null_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">occupancy_null_sd</code><code style="color:#22d3bf"> per </code><code style="color:#22d3bf">c</code>` and</p>
-<p>`<code style="color:#22d3bf">shared_all_ratio</code>` (edges present in all K, observed over the null mean; inf</p>
-<p>when the null never shares one, so `<code style="color:#22d3bf">shared_all_null_max</code>` is reported too):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> (K), <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">names</code>, <code style="color:#22d3bf">edges_per_individual</code> and <code style="color:#22d3bf">union</code> (edges seen in at least one individual)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">occupancy_hist</code> — <code style="color:#22d3bf">h[c]</code> = number of edges present in exactly <code style="color:#22d3bf">c</code> individuals, <code style="color:#22d3bf">c = 0..K</code> (<code style="color:#22d3bf">h[0]</code> is always 0: only the union is counted)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">jaccard</code> — the K x K pairwise overlap <code style="color:#22d3bf">|Ei ∩ Ej| / |Ei ∪ Ej|</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">synapse_share</code> — for each <code style="color:#22d3bf">c</code>, the fraction of all synapses (summed over individuals) on edges of occupancy <code style="color:#22d3bf">c</code> (with a 0/1 input: the edge share)</p>
+<p style="margin:2px 0 2px 12px">• with <code style="color:#22d3bf">ordered=True</code> (individuals listed in developmental order): the union is split by its presence pattern along the order into <code style="color:#22d3bf">stable</code> (present in all), <code style="color:#22d3bf">added</code> (absent, then present to the end: <code style="color:#22d3bf">0..01..1</code>), <code style="color:#22d3bf">lost</code> (<code style="color:#22d3bf">1..10..0</code>) and <code style="color:#22d3bf">flicker</code> (anything else). The four sum to <code style="color:#22d3bf">union</code>.</p>
+<p style="margin:2px 0 2px 12px">• with <code style="color:#22d3bf">n_null &gt;= 2</code>: every individual is rewired <b>independently</b> by degree-preserving swaps (each node&#x27;s in/out degree kept exactly, checked per sample, fail-closed) and the occupancy histogram is re-counted. Reports <code style="color:#22d3bf">occupancy_null_mean</code> / <code style="color:#22d3bf">occupancy_null_sd</code> per <code style="color:#22d3bf">c</code> and <code style="color:#22d3bf">shared_all_ratio</code> (edges present in all K, observed over the null mean; inf when the null never shares one, so <code style="color:#22d3bf">shared_all_null_max</code> is reported too):</p>
 <p>the chance level of &quot;the same connection in every animal&quot; given only each</p>
 <p>animal&#x27;s degrees.</p>
 <p>Identities (the tests are built on these, not on fitted numbers):</p>
-<p>`<code style="color:#22d3bf">sum_c c * h[c] == sum_i |E_i|</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">sum_c h[c] == union</code>`; K identical inputs give</p>
-<p>`<code style="color:#22d3bf">h[K] == union</code>` and every Jaccard == 1; the Jaccard matrix is symmetric with a unit</p>
-<p>diagonal; `<code style="color:#22d3bf">stable + added + lost + flicker == union</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">synapse_share</code>` sums to 1.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">adjs</code>` not a list / table; fewer than 2 individuals;</p>
-<p>matrices of different sizes; any refusal of :func:<code style="color:#22d3bf">graph_degree_summary</code></p>
-<p>(non-square, negative, non-finite, string / bool / complex / masked input); an</p>
-<p>individual with no edges; `<code style="color:#22d3bf">n_null</code>` equal to 1 (no spread) or negative;</p>
-<p>`<code style="color:#22d3bf">swaps_per_edge &lt; 1</code>`.</p>
+<p><code style="color:#22d3bf">sum_c c * h[c] == sum_i |E_i|</code>; <code style="color:#22d3bf">sum_c h[c] == union</code>; K identical inputs give <code style="color:#22d3bf">h[K] == union</code> and every Jaccard == 1; the Jaccard matrix is symmetric with a unit diagonal; <code style="color:#22d3bf">stable + added + lost + flicker == union</code>; <code style="color:#22d3bf">synapse_share</code> sums to 1.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">adjs</code> not a list / table; fewer than 2 individuals; matrices of different sizes; any refusal of <code style="color:#22d3bf">graph_degree_summary</code> (non-square, negative, non-finite, string / bool / complex / masked input); an individual with no edges; <code style="color:#22d3bf">n_null</code> equal to 1 (no spread) or negative; <code style="color:#22d3bf">swaps_per_edge &lt; 1</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

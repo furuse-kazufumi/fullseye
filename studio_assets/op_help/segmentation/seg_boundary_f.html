@@ -3,12 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_boundary_f(labels_pred, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import segeval; segeval.seg_boundary_f(labels_pred, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;seg_boundary_f&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>境界 F 値(許容距離 τ): 予測の境界画素のうち真の境界から τ 以内にあるものの割合 = `<code style="color:#22d3bf">precision</code><code style="color:#22d3bf">、逆が </code><code style="color:#22d3bf">recall</code>`。</p>
-<p>F = 2PR/(P+R)。境界は :func:<code style="color:#22d3bf">_boundary</code> の規約(ラベルの割れ目、1 画素幅)なので、ラベルの番号や背景の区別によらない</p>
-<p>(分割の形だけを見る)。距離は距離変換(ユークリッド、画素の中心)。τ = 0 で画素の一致。</p>
-<p>両方の境界が空(どちらも 1 色)なら P = R = F = 1、片方だけ空なら 0。</p>
-<p>返り値: `<code style="color:#22d3bf">f</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">precision</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">recall</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">tau</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_pred_boundary</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_true_boundary</code>`、</p>
-<p>`<code style="color:#22d3bf">dist_pred_to_true</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">dist_true_to_pred</code>`(境界画素ごとの距離)。</p>
+<p>境界 F 値(許容距離 τ): 予測の境界画素のうち真の境界から τ 以内にあるものの割合 = <code style="color:#22d3bf">precision</code>、逆が <code style="color:#22d3bf">recall</code>。</p>
+<p>F = 2PR/(P+R)。境界は <code style="color:#22d3bf">_boundary</code> の規約(ラベルの割れ目、1 画素幅)なので、ラベルの番号や背景の区別によらない(分割の形だけを見る)。距離は距離変換(ユークリッド、画素の中心)。τ = 0 で画素の一致。両方の境界が空(どちらも 1 色)なら P = R = F = 1、片方だけ空なら 0。</p>
+<p>返り値: <code style="color:#22d3bf">f</code>、<code style="color:#22d3bf">precision</code>、<code style="color:#22d3bf">recall</code>、<code style="color:#22d3bf">tau</code>、<code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>、<code style="color:#22d3bf">dist_pred_to_true</code> / <code style="color:#22d3bf">dist_true_to_pred</code>(境界画素ごとの距離)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × signal × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.field_position_sweep(centres, errors, image_shape) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacscalib; tacscalib.field_position_sweep(centres, errors, image_shape) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;field_position_sweep&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>誤差の位置依存: 各画像の接触中心 (行, 列) と誤差(中央値など)を画像中心からの距離に対して並べ、最小二乗の傾き</p>
-<p>[誤差 / 100 px] と Spearman の順位相関(同順位は平均順位)を返す(numpy だけ)。</p>
-<p>返り: `<code style="color:#22d3bf">dist_px</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">err</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">slope_per_100px</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">intercept</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">spearman</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 3 組未満 / 形の不一致 / 非有限 / image_shape の形。</p>
+<p>誤差の位置依存: 各画像の接触中心 (行, 列) と誤差(中央値など)を画像中心からの距離に対して並べ、最小二乗の傾き [誤差 / 100 px] と Spearman の順位相関(同順位は平均順位)を返す(numpy だけ)。</p>
+<p>返り: <code style="color:#22d3bf">dist_px</code>・<code style="color:#22d3bf">err</code>・<code style="color:#22d3bf">slope_per_100px</code>・<code style="color:#22d3bf">intercept</code>・<code style="color:#22d3bf">spearman</code>・<code style="color:#22d3bf">n</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 3 組未満 / 形の不一致 / 非有限 / image_shape の形。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

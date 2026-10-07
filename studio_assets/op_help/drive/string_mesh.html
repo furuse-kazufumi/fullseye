@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">any</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_mesh(p_ball, p_cup, radius: &#x27;float&#x27; = 0.0015)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import kendamaworld; kendamaworld.string_mesh(p_ball, p_cup, radius: &#x27;float&#x27; = 0.0015)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;string_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>2 点(玉の糸穴 p_ball と皿胴の糸穴 p_cup)を結ぶ細い角柱(4 面 + 両端、8 頂点 12 面、外向き)。断面は 2·radius 角。</p>
-<p>両点が一致すると ValueError。</p>
+<p>2 点(玉の糸穴 p_ball と皿胴の糸穴 p_cup)を結ぶ細い角柱(4 面 + 両端、8 頂点 12 面、外向き)。断面は 2·radius 角。両点が一致すると ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -3,17 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">rgba</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_render(state, height, width, mode=&#x27;add&#x27;, fade=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.particle_render(state, height, width, mode=&#x27;add&#x27;, fade=True)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Splat a particle state into an `<code style="color:#22d3bf">rgba</code>` image.</p>
-<p>Each particle is a radially symmetric `<code style="color:#22d3bf">(1 - (r/R)^2)^2</code>` kernel of radius</p>
-<p>`<code style="color:#22d3bf">size</code><code style="color:#22d3bf">, weighted by its alpha and, when </code><code style="color:#22d3bf">fade</code>` is set, by the remaining</p>
-<p>fraction of its life `<code style="color:#22d3bf">(1 - age/life)</code>`. Particles past their lifetime</p>
-<p>contribute nothing.</p>
-<p>`<code style="color:#22d3bf">mode</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">&quot;add&quot;</code>` (premultiplied additive — what a spark does; the</p>
-<p>result is clipped at 1 and the clipped energy is *not* returned) or</p>
-<p>`<code style="color:#22d3bf">&quot;over&quot;</code>` (each particle composited in array order, which is what a soft</p>
-<p>smoke puff does).</p>
-<p>Pure function of the state: no randomness enters here, so two calls on the</p>
-<p>same state produce identical bytes.</p>
+<p>Splat a particle state into an <code style="color:#22d3bf">rgba</code> image.</p>
+<p>Each particle is a radially symmetric <code style="color:#22d3bf">(1 - (r/R)^2)^2</code> kernel of radius <code style="color:#22d3bf">size</code>, weighted by its alpha and, when <code style="color:#22d3bf">fade</code> is set, by the remaining fraction of its life <code style="color:#22d3bf">(1 - age/life)</code>. Particles past their lifetime contribute nothing.</p>
+<p><code style="color:#22d3bf">mode</code> is <code style="color:#22d3bf">&quot;add&quot;</code> (premultiplied additive — what a spark does; the result is clipped at 1 and the clipped energy is *not* returned) or <code style="color:#22d3bf">&quot;over&quot;</code> (each particle composited in array order, which is what a soft smoke puff does).</p>
+<p>Pure function of the state: no randomness enters here, so two calls on the same state produce identical bytes.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

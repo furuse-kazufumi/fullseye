@@ -10,9 +10,9 @@
 <p><b>Stages</b> (the ops that come before → this op, left to right):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_thickness.chain.jpg">get_region_thickness: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>An approximation of region thickness: `<code style="color:#22d3bf">2 x max inscribed circle radius / max side length</code><code style="color:#22d3bf"> (twice the maximum of </code><code style="color:#22d3bf">distance_transform_edt</code><code style="color:#22d3bf">, normalized by the image size). Unlike HALCON&#x27;s </code><code style="color:#22d3bf">get_region_thickness</code>` (Access the thickness of a region along the main axis.), which defines a &#x27;thickness profile along the main axis,&#x27; this is a simplification that only looks at the direction-independent, global maximum inscribed radius (information about the main-axis direction is lost).</p>
+<p>An approximation of region thickness: <code style="color:#22d3bf">2 x max inscribed circle radius / max side length</code> (twice the maximum of <code style="color:#22d3bf">distance_transform_edt</code>, normalized by the image size). Unlike HALCON&#x27;s <code style="color:#22d3bf">get_region_thickness</code> (Access the thickness of a region along the main axis.), which defines a &#x27;thickness profile along the main axis,&#x27; this is a simplification that only looks at the direction-independent, global maximum inscribed radius (information about the main-axis direction is lost).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

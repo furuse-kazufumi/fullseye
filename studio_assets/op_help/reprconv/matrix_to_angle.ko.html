@@ -3,10 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">angle</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matrix_to_angle(matrix)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.matrix_to_angle(matrix)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>z 축 둘레의 회전행렬 → 각도 <b>[도]</b>. :func:<code style="color:#22d3bf">angle_to_matrix</code> 의 역.</p>
+<p>z 축 둘레의 회전행렬 → 각도 <b>[도]</b>. <code style="color:#22d3bf">angle_to_matrix</code> 의 역.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code>` を度で返す(-180, 180]。往復は</p>
-<p>(-180, 180] の範囲で <b>bit 一致に近い</b>(実測 max|Δ| = 2.8e-14 度)。</p>
+<p><code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> を度で返す(-180, 180]。往復は(-180, 180] の範囲で <b>bit 一致に近い</b>(実測 max|Δ| = 2.8e-14 度)。</p>
 <p>Args:</p>
 <p>matrix: (3, 3)。</p>
 <p>Returns:</p>

@@ -5,19 +5,15 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>FSIM と FSIMc を一度に(位相一致は 1 枚 1 回しか計算しない —— 評価器や PoC はこちらを呼ぶ)。</p>
-<p>手順(論文 §III): (1) F = max(1, round(min(H, W)/256)) で F×F 平均 + 間引き(TID2013 の 384×512 は F = 2 → 192×256)、(2) Y の位相一致 PC と</p>
-<p>Scharr([3 0 −3; 10 0 −10; 3 0 −3]/16)勾配の大きさ G、(3) S_PC = (2 PC1 PC2 + T1)/(PC1² + PC2² + T1)、S_G = (2 G1 G2 + T2)/(G1² + G2² + T2)、</p>
-<p>(4) FSIM = Σ S_G S_PC PC_m / Σ PC_m(PC_m = max(PC1, PC2))、(5) FSIMc は彩度 I / Q の S_I S_Q(T3 = T4 = 200)の λ = 0.03 乗の実部を掛ける。</p>
-<p>入力は同じ形の (H, W) か (H, W, 3)(0–255; `<code style="color:#22d3bf">data_range</code>` で尺度を宣言)。<b>(H, W) のときは FSIMc = FSIM</b>(彩度の項が無い)。</p>
-<p>TID2013 の作者値: FSIM.txt は <b>Y′ limited の灰色画像</b>、FSIMc.txt は色画像(モジュール docstring の表)—— 色画像 1 枚から両方を出すと FSIM の方は</p>
-<p>FSIM.txt と合わない(max 0.0318)。返り値 `<code style="color:#22d3bf">{&quot;fsim&quot;, &quot;fsimc&quot;, &quot;f&quot;}</code>`(f = 間引き係数)。恒等で 1。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形が違う、2×2 未満、位相一致が全画素 0(平坦画像: FSIM は 0/0 で定義されない)。</p>
+<p>手順(論文 §III): (1) F = max(1, round(min(H, W)/256)) で F×F 平均 + 間引き(TID2013 の 384×512 は F = 2 → 192×256)、(2) Y の位相一致 PC と Scharr([3 0 −3; 10 0 −10; 3 0 −3]/16)勾配の大きさ G、(3) S_PC = (2 PC1 PC2 + T1)/(PC1² + PC2² + T1)、S_G = (2 G1 G2 + T2)/(G1² + G2² + T2)、</p>
+<p style="margin:2px 0 2px 12px">(4) FSIM = Σ S_G S_PC PC_m / Σ PC_m(PC_m = max(PC1, PC2))、(5) FSIMc は彩度 I / Q の S_I S_Q(T3 = T4 = 200)の λ = 0.03 乗の実部を掛ける。</p>
+<p>入力は同じ形の (H, W) か (H, W, 3)(0–255; <code style="color:#22d3bf">data_range</code> で尺度を宣言)。<b>(H, W) のときは FSIMc = FSIM</b>(彩度の項が無い)。TID2013 の作者値: FSIM.txt は <b>Y′ limited の灰色画像</b>、FSIMc.txt は色画像(モジュール docstring の表)—— 色画像 1 枚から両方を出すと FSIM の方は FSIM.txt と合わない(max 0.0318)。返り値 <code style="color:#22d3bf">{&quot;fsim&quot;, &quot;fsimc&quot;, &quot;f&quot;}</code>(f = 間引き係数)。恒等で 1。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形が違う、2×2 未満、位相一致が全画素 0(平坦画像: FSIM は 0/0 で定義されない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_iqa_fsim_gmsd_vif">poc_iqa_fsim_gmsd_vif</a> — <code style="color:#22d3bf">py -3.11 examples/poc_iqa_fsim_gmsd_vif.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

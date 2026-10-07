@@ -5,13 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>서브 조리개 뷰 한 장 —— 동공의 한 점을 통해 본 이미지.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Returns a copy of `<code style="color:#22d3bf">L[v, u]</code><code style="color:#22d3bf"> as a plain </code><code style="color:#22d3bf">(H, W)</code>` 2-D image, so every</p>
-<p>other fullseye image operator applies to it unchanged. Indices are</p>
-<p><b>not</b> wrapped: a negative or out-of-range index is a `<code style="color:#22d3bf">ValueError</code>`, not a</p>
-<p>silent Python wrap-around to the opposite corner of the pupil (which is the</p>
-<p>single easiest way to get a mirrored disparity sign downstream).</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, and *v* / *u* not</p>
-<p>an int in `<code style="color:#22d3bf">[0, V)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">[0, U)</code>`.</p>
+<p>Returns a copy of <code style="color:#22d3bf">L[v, u]</code> as a plain <code style="color:#22d3bf">(H, W)</code> 2-D image, so every other fullseye image operator applies to it unchanged. Indices are <b>not</b> wrapped: a negative or out-of-range index is a <code style="color:#22d3bf">ValueError</code>, not a silent Python wrap-around to the opposite corner of the pupil (which is the single easiest way to get a mirrored disparity sign downstream).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not a valid light field, and *v* / *u* not an int in <code style="color:#22d3bf">[0, V)</code> / <code style="color:#22d3bf">[0, U)</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

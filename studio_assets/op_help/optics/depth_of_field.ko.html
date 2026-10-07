@@ -5,40 +5,21 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>사진적 피사계 심도: 근점·원점·과초점거리.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The classical circle-of-confusion model. With `<code style="color:#22d3bf">H = f^2/(N*c) + f</code>` the</p>
-<p>hyperfocal distance and `<code style="color:#22d3bf">s</code>` the focused subject distance:</p>
-<p>`<code style="color:#22d3bf">near = s*(H - f) / (H + s - 2f)</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">far = s*(H - f) / (H - s)</code>`.</p>
-<p>Returns a dict: `<code style="color:#22d3bf">near_mm</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">far_mm</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">depth_mm</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">far - near</code>`) ·</p>
-<p>`<code style="color:#22d3bf">hyperfocal_mm</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">far_is_infinite</code>` (a bool, so a caller never has to</p>
-<p>test for `<code style="color:#22d3bf">inf</code>` by accident).</p>
-<p>**`<code style="color:#22d3bf">far_mm</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">inf</code>` at or beyond the hyperfocal distance, by contract,</p>
-<p>not by accident** — focus at `<code style="color:#22d3bf">H</code><code style="color:#22d3bf"> and everything from </code><code style="color:#22d3bf">H/2</code>` to infinity</p>
-<p>is acceptably sharp, which is the whole point of the hyperfocal distance.</p>
-<p>`<code style="color:#22d3bf">depth_mm</code><code style="color:#22d3bf"> is then </code><code style="color:#22d3bf">inf</code><code style="color:#22d3bf"> too. </code><code style="color:#22d3bf">far_is_infinite</code>` says so explicitly,</p>
-<p>and the identity `<code style="color:#22d3bf">near(H) == H/2</code>` is exact (verified in the tests).</p>
-<p>*coc_mm* is the acceptable circle of confusion <b>in the image plane</b>: the</p>
-<p>35 mm convention is 0.03 mm, a machine-vision rule of thumb is 1-2 pixel</p>
-<p>pitches. It is a *choice*, not a property of the lens — halve it and the</p>
-<p>depth of field halves with it, which is why two depth-of-field calculators</p>
-<p>disagree.</p>
-<p>Ground truth: `<code style="color:#22d3bf">f = 50, N = 8, c = 0.03</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">H = 10466.67 mm</code>`; at</p>
-<p>`<code style="color:#22d3bf">s = H</code><code style="color:#22d3bf"> the near limit is exactly </code><code style="color:#22d3bf">H/2 = 5233.33 mm</code>` and the far limit</p>
-<p>is `<code style="color:#22d3bf">inf</code><code style="color:#22d3bf">; the near/far limits bracket the subject for every </code><code style="color:#22d3bf">s &lt; H</code>`.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive or non-finite *focal_mm*,</p>
-<p>*f_number*, *subject_mm*, *coc_mm*; `<code style="color:#22d3bf">subject_mm &lt;= focal_mm</code>` (an object</p>
-<p>inside the front focal length cannot be imaged by this lens — see</p>
-<p>:func:<code style="color:#22d3bf">thin_lens</code>); a hyperfocal distance that is not greater than the</p>
-<p>focal length (a degenerate combination of `<code style="color:#22d3bf">N</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">c</code>`).</p>
-<p>Paraxial, thin, and blur-circle based: it ignores diffraction, which for</p>
-<p>small apertures becomes the real resolution limit — compare with</p>
-<p>:func:<code style="color:#22d3bf">mtf_diffraction</code> before trusting an `<code style="color:#22d3bf">N = 22</code>` calculation.</p>
+<p>The classical circle-of-confusion model. With <code style="color:#22d3bf">H = f^2/(N*c) + f</code> the hyperfocal distance and <code style="color:#22d3bf">s</code> the focused subject distance:</p>
+<p><code style="color:#22d3bf">near = s*(H - f) / (H + s - 2f)</code> and <code style="color:#22d3bf">far = s*(H - f) / (H - s)</code>.</p>
+<p>Returns a dict: <code style="color:#22d3bf">near_mm</code> · <code style="color:#22d3bf">far_mm</code> · <code style="color:#22d3bf">depth_mm</code> (<code style="color:#22d3bf">far - near</code>) · <code style="color:#22d3bf">hyperfocal_mm</code> · <code style="color:#22d3bf">far_is_infinite</code> (a bool, so a caller never has to test for <code style="color:#22d3bf">inf</code> by accident).</p>
+<p><b><code style="color:#22d3bf">far_mm</code> is <code style="color:#22d3bf">inf</code> at or beyond the hyperfocal distance, by contract, not by accident</b> — focus at <code style="color:#22d3bf">H</code> and everything from <code style="color:#22d3bf">H/2</code> to infinity is acceptably sharp, which is the whole point of the hyperfocal distance. <code style="color:#22d3bf">depth_mm</code> is then <code style="color:#22d3bf">inf</code> too. <code style="color:#22d3bf">far_is_infinite</code> says so explicitly, and the identity <code style="color:#22d3bf">near(H) == H/2</code> is exact (verified in the tests).</p>
+<p>*coc_mm* is the acceptable circle of confusion <b>in the image plane</b>: the 35 mm convention is 0.03 mm, a machine-vision rule of thumb is 1-2 pixel pitches. It is a *choice*, not a property of the lens — halve it and the depth of field halves with it, which is why two depth-of-field calculators disagree.</p>
+<p>Ground truth: <code style="color:#22d3bf">f = 50, N = 8, c = 0.03</code> gives <code style="color:#22d3bf">H = 10466.67 mm</code>; at <code style="color:#22d3bf">s = H</code> the near limit is exactly <code style="color:#22d3bf">H/2 = 5233.33 mm</code> and the far limit is <code style="color:#22d3bf">inf</code>; the near/far limits bracket the subject for every <code style="color:#22d3bf">s &lt; H</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-positive or non-finite *focal_mm*, *f_number*, *subject_mm*, *coc_mm*; <code style="color:#22d3bf">subject_mm &lt;= focal_mm</code> (an object inside the front focal length cannot be imaged by this lens — see <code style="color:#22d3bf">thin_lens</code>); a hyperfocal distance that is not greater than the focal length (a degenerate combination of <code style="color:#22d3bf">N</code> and <code style="color:#22d3bf">c</code>).</p>
+<p>Paraxial, thin, and blur-circle based: it ignores diffraction, which for small apertures becomes the real resolution limit — compare with <code style="color:#22d3bf">mtf_diffraction</code> before trusting an <code style="color:#22d3bf">N = 22</code> calculation.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>
-<p style="margin:2px 0 2px 12px">• **문자열은 <code style="color:#22d3bf">ValueError</code>** —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 은 성공하므로 파싱되지 않은 설정값이 길이로 통과해 버립니다(실측: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 이 그럴듯한 66.667 mm 를 돌려주고 있었습니다). bool 도 <code style="color:#22d3bf">True == 1</code> 의 암묵 승격으로 보고 거부합니다.</p>
-<p style="margin:2px 0 2px 12px">• **complex / masked array 는 <code style="color:#22d3bf">ValueError</code><b>(실수 슬롯만. 허수부의 무언 절삭·마스크 벗기기를 거부).</b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**.</p>
+<p style="margin:2px 0 2px 12px">• <b>문자열은 <code style="color:#22d3bf">ValueError</code></b> —— <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> 은 성공하므로 파싱되지 않은 설정값이 길이로 통과해 버립니다(실측: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> 이 그럴듯한 66.667 mm 를 돌려주고 있었습니다). bool 도 <code style="color:#22d3bf">True == 1</code> 의 암묵 승격으로 보고 거부합니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>complex / masked array 는 <code style="color:#22d3bf">ValueError</code></b>(실수 슬롯만. 허수부의 무언 절삭·마스크 벗기기를 거부).<b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>.</p>
 <p style="margin:2px 0 2px 12px">• <b>0 나눗셈과 그 친척들을 이름을 들어 거부</b>: 초점거리 0, 곡률반경 0, 굴절률 &lt;= 0, 불투명한 조리개(전부 0 이라 정규화가 0/0), 총합 &lt;= 0 인 PSF, S0 = 0 인 스토크스 벡터, 물체가 앞쪽 초점에 있는 경우(상이 무한대).</p>
-<p style="margin:2px 0 2px 12px">• <b>비유한 값을 돌려주는 것은 2 개 연산자뿐이며, 둘 다 계약으로 명시</b>: <code style="color:#22d3bf">depth_of_field</code> 의 과초점거리 너머 <code style="color:#22d3bf">far_mm = inf</code>(그것이 과초점거리의 정의)와 <code style="color:#22d3bf">gaussian_beam</code> 의 허리에서의 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(평면 파면의 곡률반경). 둘 다 유한한 짝(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)을 함께 돌려줍니다. **그 밖의 무언 NaN/Inf 는 내부에서 검출해 <code style="color:#22d3bf">ValueError</code>** —— 「float64 가 넘쳤다」와 「답이 무한대다」는 다른 주장이므로, 후자의 얼굴로 전자를 돌려주지 않습니다.</p>
+<p style="margin:2px 0 2px 12px">• <b>비유한 값을 돌려주는 것은 2 개 연산자뿐이며, 둘 다 계약으로 명시</b>: <code style="color:#22d3bf">depth_of_field</code> 의 과초점거리 너머 <code style="color:#22d3bf">far_mm = inf</code>(그것이 과초점거리의 정의)와 <code style="color:#22d3bf">gaussian_beam</code> 의 허리에서의 <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(평면 파면의 곡률반경). 둘 다 유한한 짝(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)을 함께 돌려줍니다. <b>그 밖의 무언 NaN/Inf 는 내부에서 검출해 <code style="color:#22d3bf">ValueError</code></b> —— 「float64 가 넘쳤다」와 「답이 무한대다」는 다른 주장이므로, 후자의 얼굴로 전자를 돌려주지 않습니다.</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 생성 격자는 <code style="color:#22d3bf">optics.MAX_GRID</code>(4096), 넘겨받은 필드/PSF/조리개는 <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24), ABCD 소자열은 <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024), Zernike 는 <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25). 작은 인자에서 거대한 내부 할당이 일어나는 경로(실측: n_max=40 × 4096² 로 108 GB)를 fail-closed 로 막습니다.</p>
 <p style="margin:2px 0 2px 12px">• <b>물리적으로 불가능한 상태도 거부</b>: 편광도 &gt; 1 인 스토크스 벡터, 음의 투과율, 음의 강도, n-|m| 이 홀수인 잘못된 Zernike 첨자 등.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

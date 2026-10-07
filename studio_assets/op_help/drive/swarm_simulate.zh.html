@@ -5,10 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>障害物のある周期の流路を流れる群れ(SPH の弱圧縮流体として動く個体)。障害物は個体には「ぶつかる壁」として効くだけ。</p>
-<p>個体 i の加速度 = (U e_x − v_i)/τ(自由流の速さへ戻る)− Σ_j m (p_i/ρ_i² + p_j/ρ_j²) ∇W_ij(圧力 = 押し合い)</p>
-<p>− Σ_j m Π_ij ∇W_ij(Monaghan の人工粘性、近づく組だけ)+ 揺らぎ(標準偏差 `<code style="color:#22d3bf">noise</code>` [m/s²] の白色)。</p>
-<p>壁: 円の内側に入った個体は表面へ戻し、内向きの速度だけ消す(滑る壁)。周期境界(x も y も)。積分は symplectic Euler、</p>
-<p>刻みは CFL 0.25 h/(c + U)。U τ ≪ R・c ≫ U のとき定常の流れは円柱まわりのポテンシャル流に近い(module docstring の導出)。</p>
+<p>個体 i の加速度 = (U e_x − v_i)/τ(自由流の速さへ戻る)− Σ_j m (p_i/ρ_i² + p_j/ρ_j²) ∇W_ij(圧力 = 押し合い) − Σ_j m Π_ij ∇W_ij(Monaghan の人工粘性、近づく組だけ)+ 揺らぎ(標準偏差 <code style="color:#22d3bf">noise</code> [m/s²] の白色)。</p>
+<p>壁: 円の内側に入った個体は表面へ戻し、内向きの速度だけ消す(滑る壁)。周期境界(x も y も)。積分は symplectic Euler、刻みは CFL 0.25 h/(c + U)。U τ ≪ R・c ≫ U のとき定常の流れは円柱まわりのポテンシャル流に近い(module docstring の導出)。</p>
 <p>Args:</p>
 <p>obstacle: (xc, yc, R) [m] か None(障害物なし)。</p>
 <p>speed: 自由流の速さ U [m/s]。</p>
@@ -24,17 +22,15 @@
 <p>noise: 加速度の揺らぎ [m/s²]。</p>
 <p>seed: 乱数の種。</p>
 <p>Returns:</p>
-<p>dict: `<code style="color:#22d3bf">frames</code><code style="color:#22d3bf"> (T, N, 2) 位置 [m] (箱の中へ折り返し済み)、</code><code style="color:#22d3bf">velocities</code><code style="color:#22d3bf"> (T, N, 2)、</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (T,)、</code><code style="color:#22d3bf">box</code>`、</p>
-<p>`<code style="color:#22d3bf">obstacle</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">h</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">dt</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rho0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">density_range</code><code style="color:#22d3bf">(記録の間の ρ/ρ₀ の 1〜99 % 点)、</code><code style="color:#22d3bf">n_agents</code>`、</p>
-<p>`<code style="color:#22d3bf">t_total</code><code style="color:#22d3bf">(流した時間)、</code><code style="color:#22d3bf">t_wake_reenters</code>`(障害物の後ろの空洞が箱の右端から左端へ回り込み始める時刻</p>
+<p>dict: <code style="color:#22d3bf">frames</code> (T, N, 2) 位置 [m] (箱の中へ折り返し済み)、<code style="color:#22d3bf">velocities</code> (T, N, 2)、<code style="color:#22d3bf">t</code> (T,)、<code style="color:#22d3bf">box</code>、</p>
+<p><code style="color:#22d3bf">obstacle</code>、<code style="color:#22d3bf">h</code>、<code style="color:#22d3bf">dt</code>、<code style="color:#22d3bf">rho0</code>、<code style="color:#22d3bf">density_range</code>(記録の間の ρ/ρ₀ の 1〜99 % 点)、<code style="color:#22d3bf">n_agents</code>、</p>
+<p><code style="color:#22d3bf">t_total</code>(流した時間)、<code style="color:#22d3bf">t_wake_reenters</code>(障害物の後ろの空洞が箱の右端から左端へ回り込み始める時刻</p>
 <p>(Lx/2 − x_c − R)/U。これより長く流すと、上流の端に空洞の個体が入ってきて自由流が汚れる)。</p>
-<p>★障害物の後ろには個体の入らない空洞が長く伸びる(押し合いの圧力は引っ張らないほど弱く、抵抗で U に戻るだけなので</p>
-<p>横から埋まらない)。俯瞰の映像では障害物の所の「穴」と空洞そのものが見える —— 速度だけで推定するという主張は、</p>
-<p>推定がこの穴を使わない(速度場の欠測として捨てる)という意味で、映像に障害物の手がかりが無いという意味ではない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>★障害物の後ろには個体の入らない空洞が長く伸びる(押し合いの圧力は引っ張らないほど弱く、抵抗で U に戻るだけなので横から埋まらない)。俯瞰の映像では障害物の所の「穴」と空洞そのものが見える —— 速度だけで推定するという主張は、推定がこの穴を使わない(速度場の欠測として捨てる)という意味で、映像に障害物の手がかりが無いという意味ではない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

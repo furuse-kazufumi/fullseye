@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Plane-to-plane covariances (N,3,3): each point&#x27;s local covariance with its eigenvalues replaced by (ε,1,1).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>k 近傍(自身を含む)の標本共分散を固有分解し、固有値を **接平面内は 1・</p>
-<p>表面法線方向(最小固有値方向)は ε** に置き換えて再構成する。共分散の</p>
-<p>大きさは近傍の広がりに依らず一定(ε,1,1)で、スケール不変な「面的な</p>
-<p>確からしさ」モデルになる(GICP の中核)。</p>
+<p>k 近傍(自身を含む)の標本共分散を固有分解し、固有値を <b>接平面内は 1・表面法線方向(最小固有値方向)は ε</b> に置き換えて再構成する。共分散の大きさは近傍の広がりに依らず一定(ε,1,1)で、スケール不変な「面的な確からしさ」モデルになる(GICP の中核)。</p>
 <p>引数:</p>
 <p>points (N,3): 点群。</p>
 <p>k: 近傍数(自身を含む)。共分散推定は k≥4 程度が安定。</p>

@@ -7,31 +7,29 @@
 <p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_jitter.chain.jpg">tb_jitter: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_jitter.chain.jpg">tb_jitter: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_jitter.inputs.jpg">tb_jitter: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_jitter.inputs.jpg">tb_jitter: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>為每個點加入各向同性高斯雜訊 `<code style="color:#22d3bf">N(0, sigma)</code>`（模擬感測器位置雜訊）。</p>
+<p>為每個點加入各向同性高斯雜訊 <code style="color:#22d3bf">N(0, sigma)</code>（模擬感測器位置雜訊）。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>`<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf"> はワールド単位の標準偏差(ユーザ指定パラメータ)。</code><code style="color:#22d3bf">clip</code>` を与えると</p>
-<p>各成分の変位を `<code style="color:#22d3bf">[-clip, clip]</code>` に切り詰める(外れ変位の抑制)。大 N ではノイズの</p>
-<p>平均≈0・標準偏差≈sigma となる。返り値は入力と同形状 `<code style="color:#22d3bf">(N,3)</code>`。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">sigma &lt; 0</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">sigma == 0</code>` または空入力は入力のコピーを返す。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">clip</code><code style="color:#22d3bf"> は与えるなら </code><code style="color:#22d3bf">&gt; 0</code><code style="color:#22d3bf">(それ以外は </code><code style="color:#22d3bf">ValueError</code>`)。切り詰めは成分ごとなので</p>
-<p>変位ベクトルの長さは最大 `<code style="color:#22d3bf">√3·clip</code>`。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> で決定論的(</code><code style="color:#22d3bf">np.random.default_rng(seed)</code>`)。同 seed・同形状なら同じノイズ。</p>
-<p style="margin:2px 0 2px 12px">• 入力は `<code style="color:#22d3bf">(N,3)</code>` の有限値のみ(長さ 3 の 1-D は 1 点に昇格、それ以外や NaN は</p>
-<p>`<code style="color:#22d3bf">ValueError</code>`)。返り値は float64。</p>
-<p style="margin:2px 0 2px 12px">• 位置合わせ(`<code style="color:#22d3bf">register_fpfh</code><code style="color:#22d3bf"> 等)のノイズ耐性を測るとき、</code><code style="color:#22d3bf">sigma</code>` を点間隔</p>
-<p>(`<code style="color:#22d3bf">voxel_grid_downsample</code>` の格子幅など)に対する比で決めると条件を比較しやすい。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op `<code style="color:#22d3bf">jitter</code><code style="color:#22d3bf">。実装は同じで、呼び出し規約だけ </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> に合わせてある。この op に調整点は無く、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> も </code><code style="color:#22d3bf">b</code>` も使われない。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">sigma</code> はワールド単位の標準偏差(ユーザ指定パラメータ)。<code style="color:#22d3bf">clip</code> を与えると各成分の変位を <code style="color:#22d3bf">[-clip, clip]</code> に切り詰める(外れ変位の抑制)。大 N ではノイズの平均≈0・標準偏差≈sigma となる。返り値は入力と同形状 <code style="color:#22d3bf">(N,3)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sigma &lt; 0</code> は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">sigma == 0</code> または空入力は入力のコピーを返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">clip</code> は与えるなら <code style="color:#22d3bf">&gt; 0</code>(それ以外は <code style="color:#22d3bf">ValueError</code>)。切り詰めは成分ごとなので</p>
+<p>変位ベクトルの長さは最大 <code style="color:#22d3bf">√3·clip</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code> で決定論的(<code style="color:#22d3bf">np.random.default_rng(seed)</code>)。同 seed・同形状なら同じノイズ。</p>
+<p style="margin:2px 0 2px 12px">• 入力は <code style="color:#22d3bf">(N,3)</code> の有限値のみ(長さ 3 の 1-D は 1 点に昇格、それ以外や NaN は</p>
+<p><code style="color:#22d3bf">ValueError</code>)。返り値は float64。</p>
+<p style="margin:2px 0 2px 12px">• 位置合わせ(<code style="color:#22d3bf">register_fpfh</code> 等)のノイズ耐性を測るとき、<code style="color:#22d3bf">sigma</code> を点間隔</p>
+<p>(<code style="color:#22d3bf">voxel_grid_downsample</code> の格子幅など)に対する比で決めると条件を比較しやすい。</p>
+<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">jitter</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_points 0.50 0.50
-tb_jitter 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_jitter%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_jitter%200.50%200.50">Load &amp; run</a></p>
+tb_jitter 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_points%200.50%200.50%0Atb_jitter%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_points%200.50%200.50%0Atb_jitter%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p>下面的範例呼叫的是底層帳本運算子 <code style="color:#22d3bf">jitter</code>。此橋接運算子只是把同一實作適配為 <code style="color:#22d3bf">fn(v, a, b)</code> 慣例，行為完全相同(只是呼叫形式不同)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:augment_pointcloud">augment_pointcloud</a> — <code style="color:#22d3bf">py -3.11 examples_3d/augment_pointcloud.py</code></p>

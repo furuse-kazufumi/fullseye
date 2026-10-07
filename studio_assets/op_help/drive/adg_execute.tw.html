@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code>(要直接呼叫實作,<code style="color:#22d3bf">import agvfleet; agvfleet.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;adg_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ADG に従って実行する。各時刻、各車両は確率 `<code style="color:#22d3bf">delay_prob</code>` で止まる(滑り・人・荷役の遅れ)。</p>
-<p>次の行動の依存がすべて済んでいる車両だけが 1 マス進む。返りは dict: `<code style="color:#22d3bf">trajectories</code>`(実際の位置の列)、</p>
-<p>`<code style="color:#22d3bf">makespan</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">collisions</code><code style="color:#22d3bf">(同じマス・すれ違い)、</code><code style="color:#22d3bf">deadlock</code><code style="color:#22d3bf">(誰も進めず未了)、</code><code style="color:#22d3bf">finished</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>ADG に従って実行する。各時刻、各車両は確率 <code style="color:#22d3bf">delay_prob</code> で止まる(滑り・人・荷役の遅れ)。</p>
+<p>次の行動の依存がすべて済んでいる車両だけが 1 マス進む。返りは dict: <code style="color:#22d3bf">trajectories</code>(実際の位置の列)、<code style="color:#22d3bf">makespan</code>、<code style="color:#22d3bf">collisions</code>(同じマス・すれ違い)、<code style="color:#22d3bf">deadlock</code>(誰も進めず未了)、<code style="color:#22d3bf">finished</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_agv_fleet">poc_agv_fleet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_agv_fleet.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

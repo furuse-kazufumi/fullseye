@@ -13,29 +13,13 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Robust-PCA low-rank (background) part.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>画像行列 `<code style="color:#22d3bf">M</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">M = L + S</code><code style="color:#22d3bf">(低ランク </code><code style="color:#22d3bf">L</code><code style="color:#22d3bf"> + スパース </code><code style="color:#22d3bf">S</code>`)に分解する</p>
-<p>Principal Component Pursuit を inexact ALM(Lin/Chen/Ma 2010)で解き、`<code style="color:#22d3bf">L</code>`</p>
-<p>を返す。スパース項の重みは `<code style="color:#22d3bf">λ = (0.5 + 1.5*a) / sqrt(max(m, n))</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">m, n</code>`</p>
-<p>は分解時の行列寸法)で、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が大きいほど </code><code style="color:#22d3bf">S</code><code style="color:#22d3bf"> が疎になり、その分 </code><code style="color:#22d3bf">L</code>` に</p>
-<p>残る成分(ランク)が増える。`<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> では </code><code style="color:#22d3bf">λ</code>` が小さく、ほとんどの変動が</p>
-<p>`<code style="color:#22d3bf">S</code><code style="color:#22d3bf"> に吸われて </code><code style="color:#22d3bf">L</code><code style="color:#22d3bf"> はのっぺりする。</code><code style="color:#22d3bf">b</code>` は未使用。反復は最大 60 回、</p>
-<p>収束判定は `<code style="color:#22d3bf">||M - L - S||_F &lt;= 1e-7 * ||M||_F</code>`。</p>
-<p>長辺が 64 を超える画像は 64 に縮小して分解し、`<code style="color:#22d3bf">L</code>` だけを線形補間で元の</p>
-<p>大きさに戻す(低ランク部は縮小に耐えるため)。入力は [0,1] の 2 次元 float64</p>
-<p>に揃え(3 次元はチャネル平均)、返り値も同形・[0,1] に clip。全零画像は入力を</p>
-<p>そのまま返す。BLAS のスレッド数は分解中だけ `<code style="color:#22d3bf">fsthreads</code>` で絞る(小行列の</p>
-<p>SVD ではスレッドが多いほど遅いため)。例外時は fail-soft で入力のクリップ版が</p>
-<p>返り、台帳に記録される。</p>
-<p>「行や列にわたって繰り返す構造」(縞、グラデーション、周期パターン)を背景と</p>
-<p>みなす分解なので、単一の 2 次元画像でも織物・シート・ディスプレイ画素などの</p>
-<p>周期背景から孤立欠陥を分離するのに向く。自然画像のような非周期背景では</p>
-<p>`<code style="color:#22d3bf">L</code>` は単なる低ランク近似で、意味のある背景にならない。対になる欠陥側は</p>
-<p>`<code style="color:#22d3bf">dc_rpca_sparse</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">L + (S - 0.5) == 入力</code>`)。エッジ保存の平滑で構造を</p>
-<p>取りたいなら `<code style="color:#22d3bf">dc_structure_texture</code>`。</p>
+<p>画像行列 <code style="color:#22d3bf">M</code> を <code style="color:#22d3bf">M = L + S</code>(低ランク <code style="color:#22d3bf">L</code> + スパース <code style="color:#22d3bf">S</code>)に分解する Principal Component Pursuit を inexact ALM(Lin/Chen/Ma 2010)で解き、<code style="color:#22d3bf">L</code> を返す。スパース項の重みは <code style="color:#22d3bf">λ = (0.5 + 1.5*a) / sqrt(max(m, n))</code>(<code style="color:#22d3bf">m, n</code> は分解時の行列寸法)で、<code style="color:#22d3bf">a</code> が大きいほど <code style="color:#22d3bf">S</code> が疎になり、その分 <code style="color:#22d3bf">L</code> に残る成分(ランク)が増える。<code style="color:#22d3bf">a=0</code> では <code style="color:#22d3bf">λ</code> が小さく、ほとんどの変動が <code style="color:#22d3bf">S</code> に吸われて <code style="color:#22d3bf">L</code> はのっぺりする。<code style="color:#22d3bf">b</code> は未使用。反復は最大 60 回、収束判定は <code style="color:#22d3bf">||M - L - S||_F &lt;= 1e-7 * ||M||_F</code>。</p>
+<p>長辺が 64 を超える画像は 64 に縮小して分解し、<code style="color:#22d3bf">L</code> だけを線形補間で元の大きさに戻す(低ランク部は縮小に耐えるため)。入力は [0,1] の 2 次元 float64 に揃え(3 次元はチャネル平均)、返り値も同形・[0,1] に clip。全零画像は入力をそのまま返す。BLAS のスレッド数は分解中だけ <code style="color:#22d3bf">fsthreads</code> で絞る(小行列の SVD ではスレッドが多いほど遅いため)。例外時は fail-soft で入力のクリップ版が返り、台帳に記録される。</p>
+<p>「行や列にわたって繰り返す構造」(縞、グラデーション、周期パターン)を背景とみなす分解なので、単一の 2 次元画像でも織物・シート・ディスプレイ画素などの周期背景から孤立欠陥を分離するのに向く。自然画像のような非周期背景では <code style="color:#22d3bf">L</code> は単なる低ランク近似で、意味のある背景にならない。対になる欠陥側は <code style="color:#22d3bf">dc_rpca_sparse</code>(<code style="color:#22d3bf">L + (S - 0.5) == 入力</code>)。エッジ保存の平滑で構造を取りたいなら <code style="color:#22d3bf">dc_structure_texture</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Why matrix decompositions are slow — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

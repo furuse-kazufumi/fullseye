@@ -4,16 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tilt_pour_rate(theta_deg: &#x27;float&#x27;, omega_deg_s: &#x27;float&#x27;, phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;, B: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import scoop; scoop.tilt_pour_rate(theta_deg: &#x27;float&#x27;, omega_deg_s: &#x27;float&#x27;, phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;, B: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;tilt_pour_rate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>:func:<code style="color:#22d3bf">tilt_wedge_retained</code> の器を角速度 ω で傾けたときの準静的な流量 `<code style="color:#22d3bf">W = ρ_b B (−dA/dθ) ω</code>` [kg/s]</p>
-<p>(供給で決まる流量: 口の通す力より遅く傾けている限り、流量は傾ける速さで決まる)。</p>
-<p>`<code style="color:#22d3bf">dA/dθ</code><code style="color:#22d3bf">: 斜面が奥に届く前(</code><code style="color:#22d3bf">x_k = h₀ / t &lt; L</code><code style="color:#22d3bf">)は </code><code style="color:#22d3bf">−h₀² sec²(φ−θ) / (2 t²)</code><code style="color:#22d3bf">、届いた後は </code><code style="color:#22d3bf">−½ L² sec²(φ−θ)</code>`</p>
-<p>(`<code style="color:#22d3bf">t = tan(φ − θ)</code><code style="color:#22d3bf">)。θ = 0 では </code><code style="color:#22d3bf">h₀² / (2 sin² φ)</code><code style="color:#22d3bf">(前面の斜面の長さ </code><code style="color:#22d3bf">h₀ / sin φ</code>` の楔)。</p>
-<p>返り: `<code style="color:#22d3bf">rate</code><code style="color:#22d3bf"> [kg/s]、</code><code style="color:#22d3bf">rate_area</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">−dA/dθ·ω</code><code style="color:#22d3bf"> [m²/s])、</code><code style="color:#22d3bf">fraction</code><code style="color:#22d3bf">(出た割合)、</code><code style="color:#22d3bf">theta_back_deg</code>`。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 引数の範囲(ω ≤ 0 を含む)。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p><code style="color:#22d3bf">tilt_wedge_retained</code> の器を角速度 ω で傾けたときの準静的な流量 <code style="color:#22d3bf">W = ρ_b B (−dA/dθ) ω</code> [kg/s] (供給で決まる流量: 口の通す力より遅く傾けている限り、流量は傾ける速さで決まる)。</p>
+<p><code style="color:#22d3bf">dA/dθ</code>: 斜面が奥に届く前(<code style="color:#22d3bf">x_k = h₀ / t &lt; L</code>)は <code style="color:#22d3bf">−h₀² sec²(φ−θ) / (2 t²)</code>、届いた後は <code style="color:#22d3bf">−½ L² sec²(φ−θ)</code> (<code style="color:#22d3bf">t = tan(φ − θ)</code>)。θ = 0 では <code style="color:#22d3bf">h₀² / (2 sin² φ)</code>(前面の斜面の長さ <code style="color:#22d3bf">h₀ / sin φ</code> の楔)。</p>
+<p>返り: <code style="color:#22d3bf">rate</code> [kg/s]、<code style="color:#22d3bf">rate_area</code>(<code style="color:#22d3bf">−dA/dθ·ω</code> [m²/s])、<code style="color:#22d3bf">fraction</code>(出た割合)、<code style="color:#22d3bf">theta_back_deg</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 引数の範囲(ω ≤ 0 を含む)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_scoop_pour">poc_powder_scoop_pour</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_scoop_pour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

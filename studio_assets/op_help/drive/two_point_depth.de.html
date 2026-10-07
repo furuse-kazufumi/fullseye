@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>傾き θ [rad] で二点接触が始まる挿入深さ l₂ [m] (最狭部から先端中心まで)。3 つの模型を名前で選ぶ。</p>
-<p>`<code style="color:#22d3bf">&quot;exact&quot;</code><code style="color:#22d3bf">: 3-D の円柱で厳密 l₂ = (2R − r(cos θ + sec θ)) / tan θ(導出 (1′))。</code><code style="color:#22d3bf">&quot;small_angle&quot;</code>`: l₂ = 2c_r / sin θ</p>
-<p>(OCW p.9 の l/d = c/θ を半径 clearance で書いたもの)。`<code style="color:#22d3bf">&quot;rectangle&quot;</code>`: 2-D の長方形近似 (D − d/cos θ)/tan θ(縁の点の</p>
-<p>高さ r sin θ を無視するので θ = 6° で 0.5 mm 浅く出る —— 間違いの量を測るために残す)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: θ ≤ 0、θ ≥ θ_m_exact(入口にすら入らない)、未知の model。</p>
+<p><code style="color:#22d3bf">&quot;exact&quot;</code>: 3-D の円柱で厳密 l₂ = (2R − r(cos θ + sec θ)) / tan θ(導出 (1′))。<code style="color:#22d3bf">&quot;small_angle&quot;</code>: l₂ = 2c_r / sin θ (OCW p.9 の l/d = c/θ を半径 clearance で書いたもの)。<code style="color:#22d3bf">&quot;rectangle&quot;</code>: 2-D の長方形近似 (D − d/cos θ)/tan θ(縁の点の高さ r sin θ を無視するので θ = 6° で 0.5 mm 浅く出る —— 間違いの量を測るために残す)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: θ ≤ 0、θ ≥ θ_m_exact(入口にすら入らない)、未知の model。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

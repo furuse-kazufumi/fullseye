@@ -5,17 +5,16 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>isodata（Ridler–Calvard 1978）：<b>在像素值上</b>反复执行 t ← (μ_≤t + μ_&gt;t)/2，直到划分不再变化（初值 = 平均值）（threshold_isodata）。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>分割が止まれば t は μ を計算し直しても動かない = 不動点 t = (μ_low + μ_high)/2 が厳密に成り立つ(`<code style="color:#22d3bf">residual</code>` = 0)。</p>
-<p>ヒストグラムの上の不動点(skimage と同じ「ビンの中心 c で 0 ≤ (μ_≤c + μ_&gt;c)/2 − c &lt; ビン幅」)も `<code style="color:#22d3bf">fixed_points</code>` で返す。</p>
-<p>返す: `<code style="color:#22d3bf">threshold</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> = image &gt; t、</code><code style="color:#22d3bf">mu_low</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mu_high</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">residual</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_iter</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">fixed_points</code>`。</p>
+<p>分割が止まれば t は μ を計算し直しても動かない = 不動点 t = (μ_low + μ_high)/2 が厳密に成り立つ(<code style="color:#22d3bf">residual</code> = 0)。ヒストグラムの上の不動点(skimage と同じ「ビンの中心 c で 0 ≤ (μ_≤c + μ_&gt;c)/2 − c &lt; ビン幅」)も <code style="color:#22d3bf">fixed_points</code> で返す。</p>
+<p>返す: <code style="color:#22d3bf">threshold</code>、<code style="color:#22d3bf">mask</code> = image &gt; t、<code style="color:#22d3bf">mu_low</code> / <code style="color:#22d3bf">mu_high</code>、<code style="color:#22d3bf">residual</code>、<code style="color:#22d3bf">n_iter</code>、<code style="color:#22d3bf">fixed_points</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — グラフ・階層・閾値の定理でつくる分割 — 何が厳密で、どこで割れ方が倒れるか</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — 用图、层次与阈值定理做分割 —— 什么是严格的,分割在哪里失效</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

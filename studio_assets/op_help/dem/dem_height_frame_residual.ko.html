@@ -4,23 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_residual&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>`<code style="color:#22d3bf">h - H - N</code><code style="color:#22d3bf"> の残差 —— 高さの取り違えを**静かにさせない**検出器(</code><code style="color:#22d3bf">table</code>`)。</p>
-<p>楕円体高・標高・ジオイド高は 1 つの恒等式で結ばれている(`<code style="color:#22d3bf">h = H + N</code>`)。</p>
-<p>3 つそろった点でその残差を測れば、**どれかが別の基準・別のモデル・別の版で</p>
-<p>作られている**ことが数値で出る。測量成果どうしなら残差は cm 級に収まり、</p>
-<p>楕円体高をそのまま標高として使っていれば残差は `<code style="color:#22d3bf">-N</code>`(日本付近で −30〜−40 m)</p>
-<p>に張り付く。</p>
+<p><code style="color:#22d3bf">h - H - N</code> の残差 —— 高さの取り違えを<b>静かにさせない</b>検出器(<code style="color:#22d3bf">table</code>)。</p>
+<p>楕円体高・標高・ジオイド高は 1 つの恒等式で結ばれている(<code style="color:#22d3bf">h = H + N</code>)。3 つそろった点でその残差を測れば、<b>どれかが別の基準・別のモデル・別の版で作られている</b>ことが数値で出る。測量成果どうしなら残差は cm 級に収まり、楕円体高をそのまま標高として使っていれば残差は <code style="color:#22d3bf">-N</code>(日本付近で −30〜−40 m) に張り付く。</p>
 <p>Args:</p>
 <p>h_ellipsoidal_m: 楕円体高 [m] (GNSS の返り)。配列可。</p>
 <p>h_orthometric_m: 同じ点の標高 [m] (地図・水準測量)。</p>
 <p>geoid_height_m: 同じ点のジオイド高 [m]。</p>
 <p>tol_m: 「合っている」とみなす閾値 [m]。既定 0.10 m。</p>
 <p>Returns:</p>
-<p>``{&quot;residual_m&quot;: (n,), &quot;rms_m&quot;, &quot;max_abs_m&quot;, &quot;median_m&quot;, &quot;n&quot;,</p>
-<p>&quot;n_over_tol&quot;, &quot;tol_m&quot;, &quot;fraction_over_tol&quot;}``。</p>
-<p>閉じた式で検査できること: 恒等式どおりに作った 3 つ組では残差は 0 になる</p>
-<p>(実測 rms 1.2e-14 m。丸めの分だけ厳密な 0 ではない)。標高の列に楕円体高を</p>
-<p>そのまま入れると残差は <b>−N</b> に張り付く —— 取り違えの量がそのまま出る。</p>
+<p><code style="color:#22d3bf">{&quot;residual_m&quot;: (n,), &quot;rms_m&quot;, &quot;max_abs_m&quot;, &quot;median_m&quot;, &quot;n&quot;, &quot;n_over_tol&quot;, &quot;tol_m&quot;, &quot;fraction_over_tol&quot;}</code>。</p>
+<p>閉じた式で検査できること: 恒等式どおりに作った 3 つ組では残差は 0 になる(実測 rms 1.2e-14 m。丸めの分だけ厳密な 0 ではない)。標高の列に楕円体高をそのまま入れると残差は <b>−N</b> に張り付く —— 取り違えの量がそのまま出る。</p>
 <p><b>ValueError</b>: 長さの食い違い、非有限、負の *tol_m*。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>

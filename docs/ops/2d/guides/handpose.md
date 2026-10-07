@@ -2,6 +2,11 @@
 guide: handpose
 dim: 2d
 title: 手の 21 キーポイントと指屈曲角 — 使い方ガイド
+title_en: The 21 hand keypoints and finger flexion angles — usage guide
+title_zh: 手部 21 个关键点与手指屈曲角 —— 使用指南
+title_tw: 手部 21 個關鍵點與手指屈曲角 —— 使用指南
+title_ko: 손의 21개 키포인트와 손가락 굴곡각 — 사용 가이드
+title_de: Die 21 Hand-Keypoints und Fingerbeugewinkel — Anleitung
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

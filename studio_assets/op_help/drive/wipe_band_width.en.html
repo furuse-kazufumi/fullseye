@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wipe_band_width(force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, coat: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, estar=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import polish; polish.wipe_band_width(force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, coat: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, estar=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;wipe_band_width&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>厚さ `<code style="color:#22d3bf">coat</code><code style="color:#22d3bf"> の膜を回らない工具の直線の一筆で拭いた時、膜が消える帯の幅(閉形式)。返り </code><code style="color:#22d3bf">width</code>`(0 なら拭けない)、</p>
-<p>`<code style="color:#22d3bf">half_width</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">force_min</code><code style="color:#22d3bf">(帯ができ始める力)、</code><code style="color:#22d3bf">centre_depth</code><code style="color:#22d3bf">(中心の除去の深さ)、</code><code style="color:#22d3bf">a</code>`(接触半径)。</p>
-<p>平板: D = 2 a k_p p、半幅 a √(1 − (h0/D)²)、F_min = π a h0/(2 k_p)。Hertz: D = k_p E* a²/R、半幅 √(a² − h0 R/(k_p E*))、</p>
-<p>F_min = (4E*/3R)(h0 R/(k_p E*))^{3/2}。速さに依らない(回らない時)。<b>Raises</b> ValueError: 数の検査。</p>
+<p>厚さ <code style="color:#22d3bf">coat</code> の膜を回らない工具の直線の一筆で拭いた時、膜が消える帯の幅(閉形式)。返り <code style="color:#22d3bf">width</code>(0 なら拭けない)、<code style="color:#22d3bf">half_width</code>、<code style="color:#22d3bf">force_min</code>(帯ができ始める力)、<code style="color:#22d3bf">centre_depth</code>(中心の除去の深さ)、<code style="color:#22d3bf">a</code>(接触半径)。</p>
+<p>平板: D = 2 a k_p p、半幅 a √(1 − (h0/D)²)、F_min = π a h0/(2 k_p)。Hertz: D = k_p E* a²/R、半幅 √(a² − h0 R/(k_p E*))、F_min = (4E*/3R)(h0 R/(k_p E*))^{3/2}。速さに依らない(回らない時)。<b>Raises</b> ValueError: 数の検査。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

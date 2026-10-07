@@ -4,20 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_fit(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.procrustes_fit(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>*source* を *target* へ重ねる相似変換。→ `<code style="color:#22d3bf">(4, 4)</code>` の同次行列。</p>
-<p><b>点の並びが対応していること</b>が前提(i 番目どうしが同じ解剖学的位置)。</p>
-<p>対応が無い点群では例外は出ず、意味の無い変換が返る —— 対応の有無は</p>
-<p>この関数からは見えない。対応が無いなら ICP 系(`<code style="color:#22d3bf">registration</code>`)を使う。</p>
-<p>`<code style="color:#22d3bf">scaling=True</code><code style="color:#22d3bf"> なら大きさの違いも吸収する。</code><code style="color:#22d3bf">reflection=False</code>`(既定)は</p>
-<p>`<code style="color:#22d3bf">det(R) = +1</code>` を強制する —— 許すと左手系の個体が右手系の平均に重なり、</p>
-<p>左右非対称性という測りたいものが消える。</p>
-<p>行列は同次座標で `<code style="color:#22d3bf">target ~ source @ M[:3,:3].T + M[:3,3]</code>` の向き。</p>
+<p>*source* を *target* へ重ねる相似変換。→ <code style="color:#22d3bf">(4, 4)</code> の同次行列。</p>
+<p><b>点の並びが対応していること</b>が前提(i 番目どうしが同じ解剖学的位置)。対応が無い点群では例外は出ず、意味の無い変換が返る —— 対応の有無はこの関数からは見えない。対応が無いなら ICP 系(<code style="color:#22d3bf">registration</code>)を使う。</p>
+<p><code style="color:#22d3bf">scaling=True</code> なら大きさの違いも吸収する。<code style="color:#22d3bf">reflection=False</code>(既定)は <code style="color:#22d3bf">det(R) = +1</code> を強制する —— 許すと左手系の個体が右手系の平均に重なり、左右非対称性という測りたいものが消える。</p>
+<p>行列は同次座標で <code style="color:#22d3bf">target ~ source @ M[:3,:3].T + M[:3,3]</code> の向き。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_change_detection_misreg">poc_change_detection_misreg</a> — <code style="color:#22d3bf">py -3.11 examples/poc_change_detection_misreg.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_die_tilt_tsv_overlay">poc_die_tilt_tsv_overlay</a> — <code style="color:#22d3bf">py -3.11 examples/poc_die_tilt_tsv_overlay.py</code></p>

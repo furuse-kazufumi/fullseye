@@ -5,33 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Lambert 모델이 화소별로 얼마나 어긋나는지. → (H, W) RMS 잔차.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">sqrt(mean_n (albedo * (n.L_n) - I_n)^2)</code>` — the root-mean-square</p>
-<p>disagreement between the linear model and the measurements, in the units of</p>
-<p>the input radiance. On a synthetic Lambertian surface with the true</p>
-<p>float64 normals and albedo supplied it measures 1.4e-16 at worst; with them</p>
-<p>omitted the floor rises to 4.5e-08, because</p>
-<p>:func:<code style="color:#22d3bf">photometric.photometric_stereo</code> returns float32 and that is its</p>
-<p>precision, not a modelling error (supplying the *same* truth cast to</p>
-<p>float32 reproduces 4.5e-08 exactly). It is large where the assumption</p>
-<p>actually broke: 0.50 at worst on the same scene with 3 of 8 lights blocked</p>
-<p>by a cast shadow — fifteen orders of magnitude above the clean floor. All</p>
-<p>four numbers measured in `<code style="color:#22d3bf">tests/test_specularity.py</code>`.</p>
-<p>This is the diagnostic that tells you *whether* you need</p>
-<p>:func:<code style="color:#22d3bf">photometric_stereo_robust</code> before you reach for it, and it is the</p>
-<p>map an inspection routine thresholds to find glossy defects.</p>
-<p>With *normals* and *albedo* omitted it solves them first with</p>
-<p>:func:<code style="color:#22d3bf">photometric.photometric_stereo</code> and reports the residual of that fit</p>
-<p>— the honest self-assessment of the plain estimator. Pass them to score an</p>
-<p>estimate that came from somewhere else (a robust fit, a CAD model, a</p>
-<p>previous frame).</p>
-<p>Note the residual uses `<code style="color:#22d3bf">n.L</code><code style="color:#22d3bf"> **without** the </code><code style="color:#22d3bf">max(., 0)</code>` clamp, because</p>
-<p>that is the linear system the solver actually inverted; a pixel in attached</p>
-<p>shadow therefore shows a residual, which is the intended signal rather than</p>
-<p>an artefact.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *images* / *lights* problems as in</p>
-<p>:func:<code style="color:#22d3bf">photometric_stereo_robust</code>; *normals* is not `<code style="color:#22d3bf">(H, W, 3)</code>` matching</p>
-<p>the images; *albedo* is not `<code style="color:#22d3bf">(H, W)</code>`; exactly one of *normals* / *albedo*</p>
-<p>is given (the pair is meaningless apart — the model is `<code style="color:#22d3bf">albedo * n</code>`).</p>
+<p><code style="color:#22d3bf">sqrt(mean_n (albedo * (n.L_n) - I_n)^2)</code> — the root-mean-square disagreement between the linear model and the measurements, in the units of the input radiance. On a synthetic Lambertian surface with the true float64 normals and albedo supplied it measures 1.4e-16 at worst; with them omitted the floor rises to 4.5e-08, because <code style="color:#22d3bf">photometric.photometric_stereo</code> returns float32 and that is its precision, not a modelling error (supplying the *same* truth cast to float32 reproduces 4.5e-08 exactly). It is large where the assumption actually broke: 0.50 at worst on the same scene with 3 of 8 lights blocked by a cast shadow — fifteen orders of magnitude above the clean floor. All four numbers measured in <code style="color:#22d3bf">tests/test_specularity.py</code>.</p>
+<p>This is the diagnostic that tells you *whether* you need <code style="color:#22d3bf">photometric_stereo_robust</code> before you reach for it, and it is the map an inspection routine thresholds to find glossy defects.</p>
+<p>With *normals* and *albedo* omitted it solves them first with <code style="color:#22d3bf">photometric.photometric_stereo</code> and reports the residual of that fit — the honest self-assessment of the plain estimator. Pass them to score an estimate that came from somewhere else (a robust fit, a CAD model, a previous frame).</p>
+<p>Note the residual uses <code style="color:#22d3bf">n.L</code> <b>without</b> the <code style="color:#22d3bf">max(., 0)</code> clamp, because that is the linear system the solver actually inverted; a pixel in attached shadow therefore shows a residual, which is the intended signal rather than an artefact.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *images* / *lights* problems as in <code style="color:#22d3bf">photometric_stereo_robust</code>; *normals* is not <code style="color:#22d3bf">(H, W, 3)</code> matching the images; *albedo* is not <code style="color:#22d3bf">(H, W)</code>; exactly one of *normals* / *albedo* is given (the pair is meaningless apart — the model is <code style="color:#22d3bf">albedo * n</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

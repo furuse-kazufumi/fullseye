@@ -15,13 +15,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Shrink the image&#x27;s domain to an axis-aligned rectangle (the central a×b fraction), as a region.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>入力 `<code style="color:#22d3bf">v</code><code style="color:#22d3bf"> と同じ形状で、画像中央に置いた高さ </code><code style="color:#22d3bf">hh</code><code style="color:#22d3bf">・幅 </code><code style="color:#22d3bf">ww</code>` の軸並行矩形を 1 とする 0/1 の float 配列</p>
-<p>(region)を返す。入力の中身は見ない。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 高さの割合 </code><code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code>`(20%〜90%)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 幅の割合 </code><code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code>`(20%〜90%)。</p>
-<p style="margin:2px 0 2px 12px">• 左上は `<code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code>` で、中央からのずれは整数切り捨てぶんだけ。</p>
-<p>画像の周辺(照明落ち・レンズ端)を検査対象から外す ROI を作るのに使う。画像全面が欲しければ `<code style="color:#22d3bf">hx_full_domain</code>`、</p>
-<p>既存 region の周辺を削るなら `<code style="color:#22d3bf">hx_clip_region_rel</code>`。</p>
+<p>入力 <code style="color:#22d3bf">v</code> と同じ形状で、画像中央に置いた高さ <code style="color:#22d3bf">hh</code>・幅 <code style="color:#22d3bf">ww</code> の軸並行矩形を 1 とする 0/1 の float 配列(region)を返す。入力の中身は見ない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの割合 <code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code>(20%〜90%)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 幅の割合 <code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code>(20%〜90%)。</p>
+<p style="margin:2px 0 2px 12px">• 左上は <code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code> で、中央からのずれは整数切り捨てぶんだけ。</p>
+<p>画像の周辺(照明落ち・レンズ端)を検査対象から外す ROI を作るのに使う。画像全面が欲しければ <code style="color:#22d3bf">hx_full_domain</code>、既存 region の周辺を削るなら <code style="color:#22d3bf">hx_clip_region_rel</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

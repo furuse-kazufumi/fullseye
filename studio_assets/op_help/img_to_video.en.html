@@ -16,17 +16,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turn the image into a T-frame video (T,H,W) translated at constant speed.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>フレーム `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> は入力を </code><code style="color:#22d3bf">(dy, dx) = t * step * (sin θ, cos θ)</code>` だけ動かしたもの</p>
-<p>(`<code style="color:#22d3bf">scipy.ndimage.shift</code>`、線形補間、縁は最近傍で延長)。**変位が閉形式で</p>
-<p>分かる**ので、動画の族(`<code style="color:#22d3bf">tb_frame_difference_causal</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tb_motion_energy_image</code>` /</p>
-<p>`<code style="color:#22d3bf">tb_background_subtraction_window</code>` …)の検算に使える。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 1 フレームあたりの歩幅 </code><code style="color:#22d3bf">step = 4 * a</code>` 画素(a=0.5 で 2 px/frame)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 移動方向 </code><code style="color:#22d3bf">θ = 2π * b</code>`(b=0 で +x、b=0.25 で +y(下)、b=0.5 で −x)。</p>
-<p style="margin:2px 0 2px 12px">• フレーム数 `<code style="color:#22d3bf">T = VIDEO_FRAMES</code>`(8)。フレーム 0 は入力そのもの。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: `<code style="color:#22d3bf">(T, H, W)</code>` float64、値域は入力と同じ([0,1] なら [0,1] のまま。</p>
-<p>線形補間は値域を広げない)。</p>
-<p>注意: 動くのは<b>画面全体</b>(カメラのパン)であって、物体だけではない。</p>
-<p>背景差分の族は「動かない背景」を仮定するので、全体パンでは前景が全画素に出る。</p>
+<p>フレーム <code style="color:#22d3bf">t</code> は入力を <code style="color:#22d3bf">(dy, dx) = t * step * (sin θ, cos θ)</code> だけ動かしたもの(<code style="color:#22d3bf">scipy.ndimage.shift</code>、線形補間、縁は最近傍で延長)。<b>変位が閉形式で分かる</b>ので、動画の族(<code style="color:#22d3bf">tb_frame_difference_causal</code> / <code style="color:#22d3bf">tb_motion_energy_image</code> / <code style="color:#22d3bf">tb_background_subtraction_window</code> …)の検算に使える。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 1 フレームあたりの歩幅 <code style="color:#22d3bf">step = 4 * a</code> 画素(a=0.5 で 2 px/frame)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 移動方向 <code style="color:#22d3bf">θ = 2π * b</code>(b=0 で +x、b=0.25 で +y(下)、b=0.5 で −x)。</p>
+<p style="margin:2px 0 2px 12px">• フレーム数 <code style="color:#22d3bf">T = VIDEO_FRAMES</code>(8)。フレーム 0 は入力そのもの。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64、値域は入力と同じ([0,1] なら [0,1] のまま。線形補間は値域を広げない)。</p>
+<p>注意: 動くのは<b>画面全体</b>(カメラのパン)であって、物体だけではない。背景差分の族は「動かない背景」を仮定するので、全体パンでは前景が全画素に出る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

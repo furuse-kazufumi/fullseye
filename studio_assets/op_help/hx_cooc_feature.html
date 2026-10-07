@@ -6,20 +6,16 @@
 <p><img src="fig/hx_cooc_feature.png" alt="hx_cooc_feature: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_cooc_feature.a.jpg">hx_cooc_feature: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_cooc_feature.a.jpg">hx_cooc_feature: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_cooc_feature.b.jpg">hx_cooc_feature: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_cooc_feature.b.jpg">hx_cooc_feature: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>量子化して距離 d の水平共起行列を作り、Haralick contrast を返す(a=距離, b は角度選択)。</p>
-<p>入力 `<code style="color:#22d3bf">v</code><code style="color:#22d3bf">([0,1] 画像)を </code><code style="color:#22d3bf">int(v*8)</code><code style="color:#22d3bf"> で 8 階調に量子化し(clip で 0〜7)、距離 </code><code style="color:#22d3bf">d</code>` だけ離れた画素対の</p>
-<p>出現回数を 8×8 の共起行列にして転置を足し(対称化)、総和で割って確率にする。返すのは Haralick の</p>
-<p>contrast `<code style="color:#22d3bf">sum p(i,j)*(i-j)^2</code><code style="color:#22d3bf"> を最大値 </code><code style="color:#22d3bf">(8-1)^2 = 49</code><code style="color:#22d3bf"> で割った </code><code style="color:#22d3bf">np.float64</code>`(値域 [0,1])。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 距離 </code><code style="color:#22d3bf">d = 1 + int(a*3)</code>`(1〜4 画素)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> → 方向。</code><code style="color:#22d3bf">b &lt; 0.5</code><code style="color:#22d3bf"> で水平(同じ行で </code><code style="color:#22d3bf">d</code><code style="color:#22d3bf"> 列右)、</code><code style="color:#22d3bf">b &gt;= 0.5</code><code style="color:#22d3bf"> で垂直(同じ列で </code><code style="color:#22d3bf">d</code>` 行下)。斜め方向は無い。</p>
-<p style="margin:2px 0 2px 12px">• 画像の幅(または高さ)が `<code style="color:#22d3bf">d</code>` 以下で画素対が 1 つも作れないと総和 0 とみなして 0.0 を返す(例外は出さない)。</p>
-<p>値が大きいほど隣接画素の階調差が大きい(粗い/コントラストの高いテクスチャ)。8 階調のため微妙な濃淡差は同じ</p>
-<p>階調に潰れる。16 階調の `<code style="color:#22d3bf">skimage</code><code style="color:#22d3bf"> 実装 </code><code style="color:#22d3bf">cooc_feature_matrix</code>` とは階調数・正規化が異なり数値は一致しない。</p>
-<p>前段に `<code style="color:#22d3bf">hx_gabor</code><code style="color:#22d3bf"> や </code><code style="color:#22d3bf">mean_image</code>` など画像 op、後段は feature として比較・しきい値に使う。</p>
+<p>入力 <code style="color:#22d3bf">v</code>([0,1] 画像)を <code style="color:#22d3bf">int(v*8)</code> で 8 階調に量子化し(clip で 0〜7)、距離 <code style="color:#22d3bf">d</code> だけ離れた画素対の出現回数を 8×8 の共起行列にして転置を足し(対称化)、総和で割って確率にする。返すのは Haralick の contrast <code style="color:#22d3bf">sum p(i,j)*(i-j)^2</code> を最大値 <code style="color:#22d3bf">(8-1)^2 = 49</code> で割った <code style="color:#22d3bf">np.float64</code>(値域 [0,1])。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 距離 <code style="color:#22d3bf">d = 1 + int(a*3)</code>(1〜4 画素)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 方向。<code style="color:#22d3bf">b &lt; 0.5</code> で水平(同じ行で <code style="color:#22d3bf">d</code> 列右)、<code style="color:#22d3bf">b &gt;= 0.5</code> で垂直(同じ列で <code style="color:#22d3bf">d</code> 行下)。斜め方向は無い。</p>
+<p style="margin:2px 0 2px 12px">• 画像の幅(または高さ)が <code style="color:#22d3bf">d</code> 以下で画素対が 1 つも作れないと総和 0 とみなして 0.0 を返す(例外は出さない)。</p>
+<p>値が大きいほど隣接画素の階調差が大きい(粗い/コントラストの高いテクスチャ)。8 階調のため微妙な濃淡差は同じ階調に潰れる。16 階調の <code style="color:#22d3bf">skimage</code> 実装 <code style="color:#22d3bf">cooc_feature_matrix</code> とは階調数・正規化が異なり数値は一致しない。前段に <code style="color:#22d3bf">hx_gabor</code> や <code style="color:#22d3bf">mean_image</code> など画像 op、後段は feature として比較・しきい値に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -28,7 +24,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_cooc_feature 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_cooc_feature%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_cooc_feature%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_cooc_feature 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_cooc_feature%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_cooc_feature%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">feature</code> を入力に取れる)</h3>

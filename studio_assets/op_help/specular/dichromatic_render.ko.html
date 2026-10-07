@@ -5,26 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이색성 모델의 순방향: 알려진 하이라이트를 렌더링해 분리 결과를 대조할 수 있게 합니다. → (H, W, 3).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>`<code style="color:#22d3bf">I = albedo_rgb * max(n.l, 0) + specular * lobe(n) * illuminant_unit</code>`, the</p>
-<p>body term coming straight from :func:<code style="color:#22d3bf">photometric.render_lambertian</code> (called,</p>
-<p>not re-implemented, so the two modules cannot drift apart in convention) and</p>
-<p>the interface term carrying the <b>illuminant</b> colour, which is what makes</p>
-<p>the image obey the dichromatic model exactly.</p>
-<p>*albedo_rgb* may be a single `<code style="color:#22d3bf">(3,)</code>` colour — the single-material case that</p>
-<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> handles without help — or an `<code style="color:#22d3bf">(H, W, 3)</code>`</p>
-<p>map, which is the textured case that needs `<code style="color:#22d3bf">body_rgb</code>` passed to the split.</p>
-<p>*model* selects the lobe: `<code style="color:#22d3bf">&quot;blinn_phong&quot;</code>` (*shininess*) or</p>
-<p>`<code style="color:#22d3bf">&quot;microfacet&quot;</code>` (*roughness*, *f0*). Both are available on purpose: the</p>
-<p>separation operators must be blind to the lobe shape, and swapping the model</p>
-<p>is how that is tested rather than asserted.</p>
-<p><b>This is a shading model, not light transport.</b> No interreflection, no</p>
-<p>cast shadow, no subsurface term, no occlusion between pixels — the same</p>
-<p>boundary :mod:<code style="color:#22d3bf">visiondesign</code> draws. Its purpose is a synthetic image whose</p>
-<p>decomposition is known exactly.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: geometry problems as in</p>
-<p>:func:<code style="color:#22d3bf">brdf_blinn_phong</code>; *albedo_rgb* is neither `<code style="color:#22d3bf">(3,)</code>` nor</p>
-<p>`<code style="color:#22d3bf">(H, W, 3)</code>`; *specular* or *ambient* is negative, non-finite, a string or</p>
-<p>a bool; *model* is not in :data:<code style="color:#22d3bf">BRDF_MODELS</code>.</p>
+<p><code style="color:#22d3bf">I = albedo_rgb * max(n.l, 0) + specular * lobe(n) * illuminant_unit</code>, the body term coming straight from <code style="color:#22d3bf">photometric.render_lambertian</code> (called, not re-implemented, so the two modules cannot drift apart in convention) and the interface term carrying the <b>illuminant</b> colour, which is what makes the image obey the dichromatic model exactly.</p>
+<p>*albedo_rgb* may be a single <code style="color:#22d3bf">(3,)</code> colour — the single-material case that <code style="color:#22d3bf">specular_diffuse_split</code> handles without help — or an <code style="color:#22d3bf">(H, W, 3)</code> map, which is the textured case that needs <code style="color:#22d3bf">body_rgb</code> passed to the split.</p>
+<p>*model* selects the lobe: <code style="color:#22d3bf">&quot;blinn_phong&quot;</code> (*shininess*) or <code style="color:#22d3bf">&quot;microfacet&quot;</code> (*roughness*, *f0*). Both are available on purpose: the separation operators must be blind to the lobe shape, and swapping the model is how that is tested rather than asserted.</p>
+<p><b>This is a shading model, not light transport.</b> No interreflection, no cast shadow, no subsurface term, no occlusion between pixels — the same</p>
+<p>boundary <code style="color:#22d3bf">visiondesign</code> draws. Its purpose is a synthetic image whose decomposition is known exactly.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: geometry problems as in <code style="color:#22d3bf">brdf_blinn_phong</code>; *albedo_rgb* is neither <code style="color:#22d3bf">(3,)</code> nor <code style="color:#22d3bf">(H, W, 3)</code>; *specular* or *ambient* is negative, non-finite, a string or a bool; *model* is not in <code style="color:#22d3bf">BRDF_MODELS</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

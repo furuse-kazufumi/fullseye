@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>무작위 두 점 쌍의 유클리드 거리 분포(Osada 2002 의 D2).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>N 点から <code style="color:#22d3bf">samples</code> 組の相異なる点対 (i, j) を乱択し、その距離を集計する。</p>
-<p>距離は<b>平均距離で割って正規化</b>するため、回転・平行移動・<b>スケール</b>に不変。</p>
-<p>固定レンジ [0, _D2_MAX] の正規化ヒストグラム (bins,) を返す(総和 1)。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>N 点から <code style="color:#22d3bf">samples</code> 組の相異なる点対 (i, j) を乱択し、その距離を集計する。距離は<b>平均距離で割って正規化</b>するため、回転・平行移動・<b>スケール</b>に不変。固定レンジ [0, _D2_MAX] の正規化ヒストグラム (bins,) を返す(総和 1)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
 <p>点群。N &gt;= 2 が必要。</p>
 <p>bins : int</p>
@@ -18,8 +15,7 @@
 <p>乱択する点対の数。多いほど分散が下がる(サンプリング誤差 ~ 1/sqrt(samples))。</p>
 <p>seed : int</p>
 <p>乱数シード。同 seed・同点群なら決定論的に同一。</p>
-<p>Returns</p>
-<p>-------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (bins,)</p>
 <p>正規化距離ヒストグラム。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

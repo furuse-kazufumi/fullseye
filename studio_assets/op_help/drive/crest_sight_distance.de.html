@@ -5,11 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>凸形縦断曲線(放物線)を越える最小の視距(閉形式)。場面 S065・S081(上り坂の頂上付近)。</p>
-<p>`<code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> だけなら長さ無限の曲線(視距が曲線の中に収まる): S = √(2R)(√h₁ + √h₂)。</code><code style="color:#22d3bf">grade_in</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">grade_out</code>`</p>
-<p>(比、上りが正)と `<code style="color:#22d3bf">length</code>` = 曲線の水平の長さ L なら A = grade_in − grade_out(&gt; 0)、R = L/A で、</p>
-<p>S ≤ L なら上の式、S &gt; L なら S = L/2 + (√h₁ + √h₂)²/A。h₁ = `<code style="color:#22d3bf">eye_height</code><code style="color:#22d3bf">、h₂ = </code><code style="color:#22d3bf">object_height</code>`</p>
-<p>(既定 1.2 m・0.1 m = 道路構造令 2 条 24 号。対向車を見るなら h₂ = 車の高さ)。</p>
-<p>返り値: `<code style="color:#22d3bf">sight</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">within_curve</code>`(S ≤ L)。</p>
+<p><code style="color:#22d3bf">radius</code> だけなら長さ無限の曲線(視距が曲線の中に収まる): S = √(2R)(√h₁ + √h₂)。<code style="color:#22d3bf">grade_in</code> / <code style="color:#22d3bf">grade_out</code> (比、上りが正)と <code style="color:#22d3bf">length</code> = 曲線の水平の長さ L なら A = grade_in − grade_out(&gt; 0)、R = L/A で、S ≤ L なら上の式、S &gt; L なら S = L/2 + (√h₁ + √h₂)²/A。h₁ = <code style="color:#22d3bf">eye_height</code>、h₂ = <code style="color:#22d3bf">object_height</code> (既定 1.2 m・0.1 m = 道路構造令 2 条 24 号。対向車を見るなら h₂ = 車の高さ)。</p>
+<p>返り値: <code style="color:#22d3bf">sight</code>、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">within_curve</code>(S ≤ L)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

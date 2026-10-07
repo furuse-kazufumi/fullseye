@@ -6,26 +6,17 @@
 <p><img src="fig/r2_sort_region.png" alt="r2_sort_region: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_sort_region.a.jpg">r2_sort_region: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_sort_region.a.jpg">r2_sort_region: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_sort_region.chain.jpg">r2_sort_region: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_sort_region.chain.jpg">r2_sort_region: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_sort_region.inputs.jpg">r2_sort_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_sort_region.inputs.jpg">r2_sort_region: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Behält die k-größte Zusammenhangskomponente; k = round(a*(n-1)).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>前景マスク(`<code style="color:#22d3bf">&gt; 0.5</code><code style="color:#22d3bf">)を </code><code style="color:#22d3bf">scipy.ndimage.label</code>`(既定の 4 連結)で連結成分に</p>
-<p>分け、面積(画素数)の降順に並べて `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> 番目の成分だけを残す。</code><code style="color:#22d3bf">k</code>` は</p>
-<p>`<code style="color:#22d3bf">round(a*(n-1))</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">[0, n-1]</code><code style="color:#22d3bf"> に clip した整数で、</code><code style="color:#22d3bf">a=0</code>` で最大成分、</p>
-<p>`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> で最小成分、</code><code style="color:#22d3bf">a=0.5</code><code style="color:#22d3bf"> でおおよそ中央の順位の成分。</code><code style="color:#22d3bf">n</code>` は成分数。</p>
-<p>`<code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>返り値は入力と同形の float64 0/1 マスク。成分が無ければ全零。同面積の成分が</p>
-<p>複数あるときの順位は保証されない(`<code style="color:#22d3bf">numpy.argsort</code>` の順序に依存)。成分数</p>
-<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> が変わると同じ </code><code style="color:#22d3bf">a</code>` でも選ばれる順位が変わる(相対指定)ので、</p>
-<p>「最大成分」を確実に取りたいだけなら `<code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> か </code><code style="color:#22d3bf">select_largest</code>` を使う。</p>
-<p>斜め接続だけでつながった画素は別成分として数えられる(4 連結)。前段に</p>
-<p>`<code style="color:#22d3bf">opening_circle</code>` でくびれを切っておくと成分単位の選択が安定する。</p>
+<p>前景マスク(<code style="color:#22d3bf">&gt; 0.5</code>)を <code style="color:#22d3bf">scipy.ndimage.label</code>(既定の 4 連結)で連結成分に分け、面積(画素数)の降順に並べて <code style="color:#22d3bf">k</code> 番目の成分だけを残す。<code style="color:#22d3bf">k</code> は <code style="color:#22d3bf">round(a*(n-1))</code> を <code style="color:#22d3bf">[0, n-1]</code> に clip した整数で、<code style="color:#22d3bf">a=0</code> で最大成分、<code style="color:#22d3bf">a=1</code> で最小成分、<code style="color:#22d3bf">a=0.5</code> でおおよそ中央の順位の成分。<code style="color:#22d3bf">n</code> は成分数。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>返り値は入力と同形の float64 0/1 マスク。成分が無ければ全零。同面積の成分が複数あるときの順位は保証されない(<code style="color:#22d3bf">numpy.argsort</code> の順序に依存)。成分数 <code style="color:#22d3bf">n</code> が変わると同じ <code style="color:#22d3bf">a</code> でも選ばれる順位が変わる(相対指定)ので、「最大成分」を確実に取りたいだけなら <code style="color:#22d3bf">a=0</code> か <code style="color:#22d3bf">select_largest</code> を使う。斜め接続だけでつながった画素は別成分として数えられる(4 連結)。前段に <code style="color:#22d3bf">opening_circle</code> でくびれを切っておくと成分単位の選択が安定する。</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
@@ -36,7 +27,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-r2_sort_region 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ar2_sort_region%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ar2_sort_region%200.50%200.50">Load &amp; run</a></p>
+r2_sort_region 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ar2_sort_region%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ar2_sort_region%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">region</code> als Eingabe)</h3>

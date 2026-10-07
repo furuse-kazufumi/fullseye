@@ -5,10 +5,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>画素(または領域の平均)の明るさの時系列から点滅の周波数を推定する(FFT のいちばん高い山)。</p>
-<p>平均を引き、Hann 窓をかけ、`<code style="color:#22d3bf">pad</code><code style="color:#22d3bf"> 倍に 0 を詰めて rFFT。</code><code style="color:#22d3bf">f_min</code>` 以上でいちばん高い山を対数振幅の放物線で</p>
-<p>補間する。返る周波数は <b>見かけの</b> 周波数(fps/2 を超える点滅は `<code style="color:#22d3bf">aliased_frequency</code>` の値に折り返って見える)。</p>
-<p>返り値: `<code style="color:#22d3bf">frequency</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">bin_width</code><code style="color:#22d3bf"> = fps / n(窓の分解能の目安)、</code><code style="color:#22d3bf">nyquist</code><code style="color:#22d3bf"> = fps/2、</code><code style="color:#22d3bf">peak_ratio</code>`(山の高さ /</p>
-<p>山以外の中央値。点滅していない画素は小さい)。一定の系列(振れ幅 0)は ValueError。</p>
+<p>平均を引き、Hann 窓をかけ、<code style="color:#22d3bf">pad</code> 倍に 0 を詰めて rFFT。<code style="color:#22d3bf">f_min</code> 以上でいちばん高い山を対数振幅の放物線で補間する。返る周波数は <b>見かけの</b> 周波数(fps/2 を超える点滅は <code style="color:#22d3bf">aliased_frequency</code> の値に折り返って見える)。</p>
+<p>返り値: <code style="color:#22d3bf">frequency</code>、<code style="color:#22d3bf">bin_width</code> = fps / n(窓の分解能の目安)、<code style="color:#22d3bf">nyquist</code> = fps/2、<code style="color:#22d3bf">peak_ratio</code>(山の高さ / 山以外の中央値。点滅していない画素は小さい)。一定の系列(振れ幅 0)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

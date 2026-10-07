@@ -5,23 +5,17 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>中心視點 —— 全光相機同時給出的那張普通 2-D 影像。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>For odd `<code style="color:#22d3bf">V</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">U</code>` the centre is a single view and both modes return it</p>
-<p>exactly. For an <b>even</b> axis the centre falls *between* two views, and this</p>
-<p>operator does not pretend otherwise:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mode=&quot;average&quot;</code>` (default) returns the mean of the 2 (or 4) views</p>
-<p>straddling the centre — the correctly-centred estimate for a Lambertian</p>
-<p>scene, at the cost of a slight blur proportional to the disparity.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mode=&quot;nearest&quot;</code><code style="color:#22d3bf"> returns the single view at </code><code style="color:#22d3bf">floor((N-1)/2)</code>`, which</p>
-<p>is sharp but sits half an angular step off centre; every disparity</p>
-<p>measured against it carries that half-step bias.</p>
-<p>Returns a `<code style="color:#22d3bf">(H, W)</code>` 2-D image.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, unknown *mode*.</p>
+<p>For odd <code style="color:#22d3bf">V</code> and <code style="color:#22d3bf">U</code> the centre is a single view and both modes return it exactly. For an <b>even</b> axis the centre falls *between* two views, and this operator does not pretend otherwise:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mode=&quot;average&quot;</code> (default) returns the mean of the 2 (or 4) views straddling the centre — the correctly-centred estimate for a Lambertian scene, at the cost of a slight blur proportional to the disparity.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mode=&quot;nearest&quot;</code> returns the single view at <code style="color:#22d3bf">floor((N-1)/2)</code>, which is sharp but sits half an angular step off centre; every disparity measured against it carries that half-step bias.</p>
+<p>Returns a <code style="color:#22d3bf">(H, W)</code> 2-D image.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not a valid light field, unknown *mode*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>

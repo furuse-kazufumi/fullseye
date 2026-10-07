@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.long_params(mass: &#x27;float&#x27; = 1300.0, c_rr: &#x27;float&#x27; = 0.012, cda: &#x27;float&#x27; = 0.65, rho_air: &#x27;float&#x27; = 1.2, a_drive_max: &#x27;float&#x27; = 3.0, a_brake_max: &#x27;float&#x27; = 6.0, reaction: &#x27;float&#x27; = 0.75, mu: &#x27;float&#x27; = 0.8, a_creep: &#x27;float&#x27; = 0.3, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelong; drivelong.long_params(mass: &#x27;float&#x27; = 1300.0, c_rr: &#x27;float&#x27; = 0.012, cda: &#x27;float&#x27; = 0.65, rho_air: &#x27;float&#x27; = 1.2, a_drive_max: &#x27;float&#x27; = 3.0, a_brake_max: &#x27;float&#x27; = 6.0, reaction: &#x27;float&#x27; = 0.75, mu: &#x27;float&#x27; = 0.8, a_creep: &#x27;float&#x27; = 0.3, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;long_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>縦の運動のパラメータ(既定値はすべて <b>仮定</b>。出典はモジュールの docstring)。</p>
-<p>Parameters</p>
-<p>----------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>mass : 車両質量 [kg] (&gt; 0)。空気抵抗の係数 k = ρ_air C_d A / (2 m) にだけ効く。</p>
 <p>c_rr : 転がり抵抗係数(≥ 0、文献値 0.010〜0.015)</p>
 <p>cda : C_d × 前面投影面積 [m²] (≥ 0。0 で空気抵抗なし)</p>
@@ -15,10 +14,9 @@
 <p>mu : 路面とタイヤの摩擦係数(&gt; 0。乾燥 0.7〜0.8・湿潤 0.4〜0.6 —— 要確認)</p>
 <p>a_creep : AT のクリープの駆動 [m/s²] (≥ 0。保持の間だけ)</p>
 <p>g : 重力加速度 [m/s²] (&gt; 0)</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : 引数と同じキー + `<code style="color:#22d3bf">k</code>`(空気抵抗の係数 [1/m])。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 非有限・範囲外。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : 引数と同じキー + <code style="color:#22d3bf">k</code>(空気抵抗の係数 [1/m])。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 非有限・範囲外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

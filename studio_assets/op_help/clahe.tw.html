@@ -5,45 +5,30 @@
 <p><img src="fig/clahe.png" alt="clahe: input → output"></p>
 <p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
 <p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/clahe.a.jpg">clahe: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/clahe.a.jpg">clahe: 旋鈕 a 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/clahe.b.jpg">clahe: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/clahe.b.jpg">clahe: 旋鈕 b 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/clahe.inputs.jpg">clahe: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/clahe.inputs.jpg">clahe: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對比度受限的自適應直方圖均衡(分塊,雙線性拼接)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> — タイル数 </code><code style="color:#22d3bf">nb = 2 + int(3a)</code>` (画像を nb×nb に分割)</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> — **clip limit**。ビン平均カウントに対する倍率 </code><code style="color:#22d3bf">256**b</code>` で与える</p>
-<p>(`<code style="color:#22d3bf">b=0</code>` → 1 倍 = 完全に平坦化されたヒストグラム = トーンマップ直線 =</p>
-<p>強調ゼロ、`<code style="color:#22d3bf">b=1</code>` → 256 倍 = 1 ビンが取り得る最大値なので切り取りが</p>
-<p>効かない = 素の AHE、`<code style="color:#22d3bf">b=0.5</code><code style="color:#22d3bf"> → 16 倍。OpenCV の既定 </code><code style="color:#22d3bf">clipLimit=40</code>` は</p>
-<p>おおよそ `<code style="color:#22d3bf">b=0.665</code>`)。</p>
-<p>★2026-09-02(この修正): それまで `<code style="color:#22d3bf">b</code>` は <b>完全に死んでいた</b>(実測:</p>
-<p>`<code style="color:#22d3bf">max|clahe(x,0.5,0.0) - clahe(x,0.5,1.0)| == 0.0</code>` きっかり)。CLAHE の</p>
-<p>&quot;C&quot; は contrast <b>limited</b> の C であり、clip limit こそが AHE と CLAHE を</p>
-<p>分ける当のものなので、<b>実装は AHE であって CLAHE ではなかった</b> ——</p>
-<p>名前が嘘をついていた。ここで clip limit を実装して `<code style="color:#22d3bf">b</code>` に割り当て、</p>
-<p>`<code style="color:#22d3bf">b=1</code>` が旧実装とビット一致する端になるよう倍率を選んである</p>
-<p>(切り取りが起きない上限 = ビン数 256 倍)。</p>
-<p>Tiles PARTITION the image (linspace boundaries, so the last tile absorbs the</p>
-<p>H % nb / W % nb remainder), each tile&#x27;s clip-limited CDF is its local tone map,</p>
-<p>and every pixel blends the maps of its (up to) 4 nearest tile centres with</p>
-<p>bilinear weights — the standard CLAHE interpolation (Zuiderveld 1994).</p>
-<p>2026-08-30: 補間を追加(KNOWN_ISSUES #4 — 旧実装はタイルごとに独立に平坦化</p>
-<p>しており、タイル境界に不連続(肉眼で見える格子)が出ていた)。タイル中心の</p>
-<p>近傍領域ではそのタイルの CDF がそのまま支配的なので、旧実装と同じ写像族の</p>
-<p>連続版になっている。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> — タイル数 <code style="color:#22d3bf">nb = 2 + int(3a)</code> (画像を nb×nb に分割)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> — <b>clip limit</b>。ビン平均カウントに対する倍率 <code style="color:#22d3bf">256**b</code> で与える(<code style="color:#22d3bf">b=0</code> → 1 倍 = 完全に平坦化されたヒストグラム = トーンマップ直線 = 強調ゼロ、<code style="color:#22d3bf">b=1</code> → 256 倍 = 1 ビンが取り得る最大値なので切り取りが効かない = 素の AHE、<code style="color:#22d3bf">b=0.5</code> → 16 倍。OpenCV の既定 <code style="color:#22d3bf">clipLimit=40</code> はおおよそ <code style="color:#22d3bf">b=0.665</code>)。</p>
+<p>★2026-09-02(この修正): それまで <code style="color:#22d3bf">b</code> は <b>完全に死んでいた</b>(実測:</p>
+<p><code style="color:#22d3bf">max|clahe(x,0.5,0.0) - clahe(x,0.5,1.0)| == 0.0</code> きっかり)。CLAHE の &quot;C&quot; は contrast <b>limited</b> の C であり、clip limit こそが AHE と CLAHE を分ける当のものなので、<b>実装は AHE であって CLAHE ではなかった</b> —— 名前が嘘をついていた。ここで clip limit を実装して <code style="color:#22d3bf">b</code> に割り当て、<code style="color:#22d3bf">b=1</code> が旧実装とビット一致する端になるよう倍率を選んである(切り取りが起きない上限 = ビン数 256 倍)。</p>
+<p>Tiles PARTITION the image (linspace boundaries, so the last tile absorbs the H % nb / W % nb remainder), each tile&#x27;s clip-limited CDF is its local tone map, and every pixel blends the maps of its (up to) 4 nearest tile centres with bilinear weights — the standard CLAHE interpolation (Zuiderveld 1994).</p>
+<p>2026-08-30: 補間を追加(KNOWN_ISSUES #4 — 旧実装はタイルごとに独立に平坦化しており、タイル境界に不連続(肉眼で見える格子)が出ていた)。タイル中心の近傍領域ではそのタイルの CDF がそのまま支配的なので、旧実装と同じ写像族の連続版になっている。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">clahe 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:clahe%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:clahe%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">clahe 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:clahe%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:clahe%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_gray_arith">gallery2d_gray_arith</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_gray_arith.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dehazing">poc_dehazing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dehazing.py</code></p>

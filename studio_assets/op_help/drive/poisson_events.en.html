@@ -5,11 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>[0, x_max] の非一様ポアソン過程を thinning(Lewis &amp; Shedler 1979)で 1 本引く(昇順の位置の配列)。</p>
-<p>率 rate_max の一様ポアソン過程の候補を引き、各候補 x を確率 λ(x)/rate_max で残す。残った点は率 λ の非一様</p>
-<p>ポアソン過程 → 件数 N ~ Poisson(Λ)、Λ = ∫₀^{x_max} λ(x) dx(門: 多数の試行で平均 = 分散 = Λ、位置の分布 = λ/Λ)。</p>
-<p>`<code style="color:#22d3bf">rate_fn</code><code style="color:#22d3bf"> は numpy 配列を受けて同じ形の率を返す関数。**引く前に** </code><code style="color:#22d3bf">n_grid</code>` 点の等間隔格子で λ ≤ rate_max を確かめ、</p>
-<p>引いた候補の所でも確かめる。どちらかで超えれば ValueError(fail-closed。上限を守らないと thinning は静かに少なく数える)。</p>
-<p>`<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> は int か </code><code style="color:#22d3bf">np.random.Generator</code>`。</p>
+<p>率 rate_max の一様ポアソン過程の候補を引き、各候補 x を確率 λ(x)/rate_max で残す。残った点は率 λ の非一様ポアソン過程 → 件数 N ~ Poisson(Λ)、Λ = ∫₀^{x_max} λ(x) dx(門: 多数の試行で平均 = 分散 = Λ、位置の分布 = λ/Λ)。<code style="color:#22d3bf">rate_fn</code> は numpy 配列を受けて同じ形の率を返す関数。<b>引く前に</b> <code style="color:#22d3bf">n_grid</code> 点の等間隔格子で λ ≤ rate_max を確かめ、引いた候補の所でも確かめる。どちらかで超えれば ValueError(fail-closed。上限を守らないと thinning は静かに少なく数える)。<code style="color:#22d3bf">seed</code> は int か <code style="color:#22d3bf">np.random.Generator</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

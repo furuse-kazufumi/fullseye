@@ -5,20 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각도 평균 프로파일을 평탄화해 검출기 빈별 오프셋을 제거합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The mean of a sinogram column over all angles is a smooth function of the</p>
-<p>detector position for any object that stays inside the field of view — it is</p>
-<p>essentially the object&#x27;s mass seen from every side. A gain error adds a</p>
-<p>*constant* to one column, so it appears in that mean as a spike on a smooth</p>
-<p>curve. Smoothing the mean profile and subtracting the difference removes the</p>
-<p>spike and leaves the object.</p>
-<p>Measured on the Shepp-Logan phantom scaled to a peak line integral of 1.18</p>
-<p>(i.e. CT-realistic, see the note below) with `<code style="color:#22d3bf">gain_sigma=0.02</code>`: the</p>
-<p>reconstruction&#x27;s normalised RMS error against the truth goes 0.0250 (clean)</p>
-<p>-&gt; 0.0643 (with rings) -&gt; <b>0.0358</b> (removed at the default window), so</p>
-<p><b>72 %</b> of the damage is undone.</p>
-<p>The window is the whole argument, and it was chosen by measurement rather</p>
-<p>than by taste. Removed fraction, against the damage the same call does to an</p>
-<p>already-clean sinogram:</p>
+<p>The mean of a sinogram column over all angles is a smooth function of the detector position for any object that stays inside the field of view — it is essentially the object&#x27;s mass seen from every side. A gain error adds a *constant* to one column, so it appears in that mean as a spike on a smooth curve. Smoothing the mean profile and subtracting the difference removes the spike and leaves the object.</p>
+<p>Measured on the Shepp-Logan phantom scaled to a peak line integral of 1.18 (i.e. CT-realistic, see the note below) with <code style="color:#22d3bf">gain_sigma=0.02</code>: the reconstruction&#x27;s normalised RMS error against the truth goes 0.0250 (clean) -&gt; 0.0643 (with rings) -&gt; <b>0.0358</b> (removed at the default window), so <b>72 %</b> of the damage is undone.</p>
+<p>The window is the whole argument, and it was chosen by measurement rather than by taste. Removed fraction, against the damage the same call does to an already-clean sinogram:</p>
 <p>window   median: undone / damage    mean: undone / damage</p>
 <p>3       61.0 % / +0.0000           70.4 % / +0.0004</p>
 <p>5       72.3 % / +0.0002           82.6 % / +0.0019</p>
@@ -26,26 +15,9 @@
 <p>11       73.6 % / +0.0025           74.0 % / +0.0091</p>
 <p>31       73.3 % / +0.0043           37.4 % / +0.0244</p>
 <p>61       58.2 % / +0.0109            9.0 % / +0.0356</p>
-<p>The default is `<code style="color:#22d3bf">window=5, mode=&quot;median&quot;</code>` because it is the setting that</p>
-<p>removes most of the rings while doing almost nothing to a sinogram that did</p>
-<p>not need it — and *that* is the property that matters, because this operator</p>
-<p>will be run on scans whose rings nobody has measured. `<code style="color:#22d3bf">mean</code>` at the same</p>
-<p>window removes 10 points more and costs 10x the collateral damage; wide</p>
-<p>windows are worse at both.</p>
-<p>Two failure modes are stated rather than hidden. This <b>cannot</b> separate a</p>
-<p>real object feature that is thin in the detector direction and present at</p>
-<p>every angle — the axis of rotation itself is the extreme case — from a gain</p>
-<p>error. And *gain_sigma is in line-integral units*, so how much a given gain</p>
-<p>error matters depends entirely on how large the line integrals are: on the</p>
-<p>same phantom left in raw pixel units (peak line integral 70.9 rather than</p>
-<p>1.18) the identical 2 % gain error changes the reconstruction&#x27;s error by less</p>
-<p>than 0.0001 and this operator has nothing to do. That is not a bug in either</p>
-<p>place — it is what &quot;2 % of the signal&quot; means when the signal is 60x larger.</p>
-<p>:param sinogram: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>`.</p>
-<p>:param window: smoothing width in detector bins, an <b>odd</b> int `<code style="color:#22d3bf">3 .. n_det</code>`.</p>
-<p>:param mode: `<code style="color:#22d3bf">&quot;median&quot;</code><code style="color:#22d3bf"> (robust, the default) or </code><code style="color:#22d3bf">&quot;mean&quot;</code>`.</p>
-<p>:returns: `<code style="color:#22d3bf">(n_angles, n_detectors)</code>` float64 sinogram.</p>
-<p>:raises ValueError: on an even or out-of-range window, or an unknown mode.</p>
+<p>The default is <code style="color:#22d3bf">window=5, mode=&quot;median&quot;</code> because it is the setting that removes most of the rings while doing almost nothing to a sinogram that did not need it — and *that* is the property that matters, because this operator will be run on scans whose rings nobody has measured. <code style="color:#22d3bf">mean</code> at the same window removes 10 points more and costs 10x the collateral damage; wide windows are worse at both.</p>
+<p>Two failure modes are stated rather than hidden. This <b>cannot</b> separate a real object feature that is thin in the detector direction and present at every angle — the axis of rotation itself is the extreme case — from a gain error. And *gain_sigma is in line-integral units*, so how much a given gain error matters depends entirely on how large the line integrals are: on the same phantom left in raw pixel units (peak line integral 70.9 rather than 1.18) the identical 2 % gain error changes the reconstruction&#x27;s error by less than 0.0001 and this operator has nothing to do. That is not a bug in either place — it is what &quot;2 % of the signal&quot; means when the signal is 60x larger.</p>
+<p>:param sinogram: <code style="color:#22d3bf">(n_angles, n_detectors)</code>. :param window: smoothing width in detector bins, an <b>odd</b> int <code style="color:#22d3bf">3 .. n_det</code>. :param mode: <code style="color:#22d3bf">&quot;median&quot;</code> (robust, the default) or <code style="color:#22d3bf">&quot;mean&quot;</code>. :returns: <code style="color:#22d3bf">(n_angles, n_detectors)</code> float64 sinogram. :raises ValueError: on an even or out-of-range window, or an unknown mode.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

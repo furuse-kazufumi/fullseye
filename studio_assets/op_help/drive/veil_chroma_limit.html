@@ -3,11 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veil_chroma_limit(color, luminance: &#x27;float&#x27;, tol: &#x27;float&#x27; = 0.15) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveenv; driveenv.veil_chroma_limit(color, luminance: &#x27;float&#x27;, tol: &#x27;float&#x27; = 0.15) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;veil_chroma_limit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>色 `<code style="color:#22d3bf">color</code><code style="color:#22d3bf">(RGB の比)で輝度 </code><code style="color:#22d3bf">luminance</code>` の灯火に白い光(光幕・霧の大気光)W を足したとき、色度の距離</p>
-<p>|(c L + W·1)/|c L + W·1| − c/|c||(balltrack.ball_detect の chroma と同じ量)が `<code style="color:#22d3bf">tol</code>` に達する W* [cd/m²]。</p>
-<p>距離は W に単調に増える(W → ∞ で灰色 (1,1,1)/√3 との距離に漸近)。漸近値が tol 以下なら `<code style="color:#22d3bf">inf</code>`(どれだけ白を足しても</p>
-<p>色は読める)。二分法で相対 1e-12。使い道: 逆光の閾値 θ* = √(10 E_glare / W*)(Stiles–Holladay)、霧の中で色が読める距離</p>
-<p>d* = ln(1 + W*/L_h)/β(灯火 c L e^{−βd} + 大気光 L_h (1 − e^{−βd}) の色度は c L + L_h (e^{βd} − 1)·1 と同じ)。</p>
+<p>色 <code style="color:#22d3bf">color</code>(RGB の比)で輝度 <code style="color:#22d3bf">luminance</code> の灯火に白い光(光幕・霧の大気光)W を足したとき、色度の距離 |(c L + W·1)/|c L + W·1| − c/|c||(balltrack.ball_detect の chroma と同じ量)が <code style="color:#22d3bf">tol</code> に達する W* [cd/m²]。</p>
+<p>距離は W に単調に増える(W → ∞ で灰色 (1,1,1)/√3 との距離に漸近)。漸近値が tol 以下なら <code style="color:#22d3bf">inf</code>(どれだけ白を足しても色は読める)。二分法で相対 1e-12。使い道: 逆光の閾値 θ* = √(10 E_glare / W*)(Stiles–Holladay)、霧の中で色が読める距離 d* = ln(1 + W*/L_h)/β(灯火 c L e^{−βd} + 大気光 L_h (1 − e^{−βd}) の色度は c L + L_h (e^{βd} − 1)·1 と同じ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

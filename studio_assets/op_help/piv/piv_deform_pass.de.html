@@ -2,23 +2,20 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_deform_pass — PIV <code style="color:#22d3bf">estimate</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d × flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, order=3)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, order=3)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_deform_pass&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">flow2d</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass.raw(...)</code> oder rufe <code style="color:#22d3bf">pivops.piv_deform_pass</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">flow2d</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass.raw(...)</code> oder rufe <code style="color:#22d3bf">pivops.piv_deform_pass</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>窓変形つきの 1 段。予測変位で<b>画像そのものを歪めてから</b>相関を取る。</p>
-<p>整数ずらし(:func:<code style="color:#22d3bf">piv_cross_correlate</code> の `<code style="color:#22d3bf">shift</code>`)は、窓の中で変位が</p>
-<p>一定という仮定を置く。回転やせん断のように<b>窓の中で変位が変わる</b>場では</p>
-<p>相関ピークが潰れるので、2 枚を予測の半分ずつ逆向きに歪めてから相関する</p>
-<p>(中央差分の変形)。</p>
+<p>整数ずらし(<code style="color:#22d3bf">piv_cross_correlate</code> の <code style="color:#22d3bf">shift</code>)は、窓の中で変位が一定という仮定を置く。回転やせん断のように<b>窓の中で変位が変わる</b>場では相関ピークが潰れるので、2 枚を予測の半分ずつ逆向きに歪めてから相関する(中央差分の変形)。</p>
 <p>Args:</p>
 <p>a, b: 画像対。</p>
-<p>flow: 予測変位 `<code style="color:#22d3bf">(2, h, w)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">piv_multipass</code>` などの出力)。</p>
-<p>info: その `<code style="color:#22d3bf">info</code>`(窓中心の座標が要る)。</p>
+<p>flow: 予測変位 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_multipass</code> などの出力)。</p>
+<p>info: その <code style="color:#22d3bf">info</code>(窓中心の座標が要る)。</p>
 <p>window / overlap / peak / window_func: 新しい段の設定。</p>
 <p>order: 変形に使う補間の次数(3 = 3 次スプライン)。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(flow (2, h&#x27;, w&#x27;), info)</code>`。返る変位は<b>元の画像座標での総変位</b>。</p>
+<p><code style="color:#22d3bf">(flow (2, h&#x27;, w&#x27;), info)</code>。返る変位は<b>元の画像座標での総変位</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

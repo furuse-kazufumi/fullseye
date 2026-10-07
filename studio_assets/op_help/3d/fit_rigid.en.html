@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimate the rigid transform (R, t) from correspondences by the closed-form Kabsch algorithm (pts_from[i] -&gt; pts_to[i]).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>行 i どうしが対応する (N, 3) 2 点集合から、`<code style="color:#22d3bf">|| (R·p + t) - q ||</code>` を最小化する</p>
-<p>proper rotation(det = +1, 反射なし)と並進を返す。:func:<code style="color:#22d3bf">registration.kabsch</code> の</p>
-<p>薄いラッパで、入力検証を付す(N &gt;= 3 で回転が一意)。</p>
+<p>行 i どうしが対応する (N, 3) 2 点集合から、<code style="color:#22d3bf">|| (R·p + t) - q ||</code> を最小化する proper rotation(det = +1, 反射なし)と並進を返す。<code style="color:#22d3bf">registration.kabsch</code> の薄いラッパで、入力検証を付す(N &gt;= 3 で回転が一意)。</p>
 <p>Args:</p>
 <p>pts_from: (N, 3) 変換元(対応順)。</p>
 <p>pts_to: (N, 3) 変換先(対応順)。</p>

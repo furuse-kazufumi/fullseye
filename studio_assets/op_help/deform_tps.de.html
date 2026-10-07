@@ -5,25 +5,16 @@
 <p><img src="fig/deform_tps.png" alt="deform_tps: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_tps.a.jpg">deform_tps: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_tps.a.jpg">deform_tps: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Regler b durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_tps.b.jpg">deform_tps: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_tps.b.jpg">deform_tps: Regler b durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_tps.inputs.jpg">deform_tps: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/deform_tps.inputs.jpg">deform_tps: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Thin-Plate-Spline-Verzerrung über ein 5x5-Kontrollgitter (Bookstein, TPAMI 1989).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The 3x3 interior control points are displaced by the deterministic smooth</p>
-<p>field `<code style="color:#22d3bf">d = amp * [sin(2 pi f gx), cos(2 pi f gy)]</code>` (gy, gx = the control</p>
-<p>point&#x27;s normalised coordinates), the 16 border control points are pinned so</p>
-<p>the frame stays anchored. The backward map is the TPS interpolant fitted</p>
-<p>from the *displaced* control points back to the original ones -- the unique</p>
-<p>minimum-bending-energy interpolant, i.e. the surface a thin metal plate</p>
-<p>would take -- and it is evaluated at every destination pixel before bilinear</p>
-<p>resampling. `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> sets the amplitude </code><code style="color:#22d3bf">amp = 0.15*a*min(H,W)</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` the</p>
-<p>spatial frequency `<code style="color:#22d3bf">f = 0.5 + 1.5b</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">a = 0</code>` leaves the control points</p>
-<p>where they are, so the solved map is the identity (up to sub-pixel resampling error).</p>
+<p>The 3x3 interior control points are displaced by the deterministic smooth field <code style="color:#22d3bf">d = amp * [sin(2 pi f gx), cos(2 pi f gy)]</code> (gy, gx = the control point&#x27;s normalised coordinates), the 16 border control points are pinned so the frame stays anchored. The backward map is the TPS interpolant fitted from the *displaced* control points back to the original ones -- the unique minimum-bending-energy interpolant, i.e. the surface a thin metal plate would take -- and it is evaluated at every destination pixel before bilinear resampling. <code style="color:#22d3bf">a</code> sets the amplitude <code style="color:#22d3bf">amp = 0.15*a*min(H,W)</code>, <code style="color:#22d3bf">b</code> the spatial frequency <code style="color:#22d3bf">f = 0.5 + 1.5b</code>. <code style="color:#22d3bf">a = 0</code> leaves the control points where they are, so the solved map is the identity (up to sub-pixel resampling error).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -32,7 +23,7 @@
 <p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">deform_tps 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:deform_tps%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:deform_tps%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">deform_tps 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:deform_tps%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:deform_tps%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image</code> als Eingabe)</h3>

@@ -4,14 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nine_slice(sprite, left, right, top, bottom, out_height, out_width)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.nine_slice(sprite, left, right, top, bottom, out_height, out_width)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;nine_slice&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Stretch a frame to a new size without deforming its corners.</p>
-<p>The four corners are copied <b>bit for bit</b>, the four edges are stretched</p>
-<p>along one axis only, and the centre is stretched along both. This is the</p>
-<p>standard way a UI panel grows: the border keeps its thickness at any size.</p>
-<p>Stretching is nearest-neighbour on the interior spans, so an output the same</p>
-<p>size as the input is the exact identity — no resampling blur creeps in when</p>
-<p>a panel happens not to need stretching.</p>
-<p>Raises ValueError: borders that meet or cross (`<code style="color:#22d3bf">left + right &gt;= width</code>`),</p>
-<p>an output smaller than the borders it must preserve.</p>
+<p>The four corners are copied <b>bit for bit</b>, the four edges are stretched along one axis only, and the centre is stretched along both. This is the standard way a UI panel grows: the border keeps its thickness at any size.</p>
+<p>Stretching is nearest-neighbour on the interior spans, so an output the same size as the input is the exact identity — no resampling blur creeps in when a panel happens not to need stretching.</p>
+<p>Raises ValueError: borders that meet or cross (<code style="color:#22d3bf">left + right &gt;= width</code>), an output smaller than the borders it must preserve.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ball_track(detections, *, max_jump: &#x27;float&#x27; = 40.0, min_score: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import balltrack; balltrack.ball_track(detections, *, max_jump: &#x27;float&#x27; = 40.0, min_score: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ball_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>コマごとの候補列 `<code style="color:#22d3bf">detections[k] = ball_detect(frame_k)</code><code style="color:#22d3bf"> を 1 本の軌跡に繋ぐ(等速予測に最も近い候補、</code><code style="color:#22d3bf">max_jump</code>` px 以内)。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot; (N,), &quot;row&quot; (N,), &quot;radius&quot; (N,), &quot;found&quot; (K,) bool}</code>`(見つからないコマは飛ばす)。</p>
+<p>コマごとの候補列 <code style="color:#22d3bf">detections[k] = ball_detect(frame_k)</code> を 1 本の軌跡に繋ぐ(等速予測に最も近い候補、<code style="color:#22d3bf">max_jump</code> px 以内)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot; (N,), &quot;row&quot; (N,), &quot;radius&quot; (N,), &quot;found&quot; (K,) bool}</code>(見つからないコマは飛ばす)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

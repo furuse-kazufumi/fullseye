@@ -5,9 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>テストと fuzz 用の最小の OSM XML(本物と同じ要素: bounds / node / way / tag)。</p>
-<p>&quot;grid&quot; = n × n の格子(東西 = primary、lanes=2、南北 = residential、幅は既定)。中央の交差点に `<code style="color:#22d3bf">highway=traffic_signals</code>`、</p>
-<p>東の縁の中段(T 字路)に `<code style="color:#22d3bf">highway=stop</code><code style="color:#22d3bf">、西の辺の途中に </code><code style="color:#22d3bf">highway=crossing</code><code style="color:#22d3bf">、南の辺の途中に </code><code style="color:#22d3bf">railway=level_crossing</code>`。</p>
-<p>&quot;line&quot; = 東西 1 本の residential(長さ pitch × (n − 1))。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: kind が未知、n &lt; 2、pitch ≤ 0。</p>
+<p>&quot;grid&quot; = n × n の格子(東西 = primary、lanes=2、南北 = residential、幅は既定)。中央の交差点に <code style="color:#22d3bf">highway=traffic_signals</code>、東の縁の中段(T 字路)に <code style="color:#22d3bf">highway=stop</code>、西の辺の途中に <code style="color:#22d3bf">highway=crossing</code>、南の辺の途中に <code style="color:#22d3bf">railway=level_crossing</code>。&quot;line&quot; = 東西 1 本の residential(長さ pitch × (n − 1))。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: kind が未知、n &lt; 2、pitch ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

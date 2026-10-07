@@ -1,15 +1,13 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">平滑化・ランク・復元フィルタ — 使い方ガイド</h2>
-<p>&gt; 呼び出しモデル: 2-D op は「1 画像 + 2 つのつまみ <code style="color:#22d3bf">a</code>,<code style="color:#22d3bf">b</code>∈[0,1]」。</p>
-<p>&gt; <code style="color:#22d3bf">out = fullseye.apply(img, &quot;&lt;op名&gt;&quot;, a, b)</code>。すべて <b>image → image</b>(2-D float、入力と同形状)。</p>
-<p>&gt; 検証済みサンプル: <a style="color:#22d3bf" href="example2d:gallery2d_smoothing_rank"><code style="color:#22d3bf">examples/gallery2d_smoothing_rank.py</code></a>(この族 86 op を全数、有限性・型・決定性・効果 GT で assert)。</p>
+<p>&gt; 呼び出しモデル: 2-D op は「1 画像 + 2 つのつまみ <code style="color:#22d3bf">a</code>,<code style="color:#22d3bf">b</code>∈[0,1]」。<code style="color:#22d3bf">out = fullseye.apply(img, &quot;&lt;op名&gt;&quot;, a, b)</code>。すべて <b>image → image</b>(2-D float、入力と同形状)。検証済みサンプル: <a style="color:#22d3bf" href="example2d:gallery2d_smoothing_rank"><code style="color:#22d3bf">examples/gallery2d_smoothing_rank.py</code></a>(この族 86 op を全数、有限性・型・決定性・効果 GT で assert)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
 <p>画像を <b>「均す / 直す / 汚す」</b> ための道具箱です。入力も出力も 2-D の濃淡画像(grayscale)で、撮像・計測の前処理の中核を担います。用途は 4 つに分かれます。</p>
 <p style="margin:2px 0 2px 12px">• <b>平滑化(smoothing)</b> — ぼかしてノイズを消す。線形(Gaussian・箱型平均)、エッジを残す非線形(bilateral・sigma フィルタ・拡散 PDE)、強力な非局所/変分/変換ドメイン denoiser(NLM・全変動 TV・ウェーブレット収縮)まで段階がある。</p>
 <p style="margin:2px 0 2px 12px">• <b>ランク(rank)</b> — 近傍画素を並べ替えて順位統計を取り、外れ値を叩く。中央値(median、salt-pepper に強い)/ 最小・最大(= グレー erosion・dilation)/ 任意の p 分位・トリム平均など。</p>
 <p style="margin:2px 0 2px 12px">• <b>復元(restoration)</b> — 劣化した画像を逆問題として直す。逆畳み込み(Richardson-Lucy・Wiener)、欠損補間(inpaint)、超解像、位相アンラップ。</p>
 <p style="margin:2px 0 2px 12px">• <b>ノイズ注入(noise)</b> — 逆にノイズやブレを<b>人工的に加える</b>。学習データ拡張やロバスト性評価の入力を作るための劣化シミュレータ。</p>
-<p>つまみ <code style="color:#22d3bf">a</code>,<code style="color:#22d3bf">b</code> の割り当ては op ごとに違いますが、多くの近傍フィルタで **<code style="color:#22d3bf">a</code> = 窓の大きさや平滑化強度**、<code style="color:#22d3bf">b</code> = 二次パラメータ(分位・レンジ幅・ノイズ強度など)です。出力は設計上 [0,1] を超えることを許容します(先鋭化・逆畳み込みはレンジを越えうる。クリップはパイプライン境界側の責任)。</p>
+<p>つまみ <code style="color:#22d3bf">a</code>,<code style="color:#22d3bf">b</code> の割り当ては op ごとに違いますが、多くの近傍フィルタで <b><code style="color:#22d3bf">a</code> = 窓の大きさや平滑化強度</b>、<code style="color:#22d3bf">b</code> = 二次パラメータ(分位・レンジ幅・ノイズ強度など)です。出力は設計上 [0,1] を超えることを許容します(先鋭化・逆畳み込みはレンジを越えうる。クリップはパイプライン境界側の責任)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
 <p>前処理の王道は「均す → 先鋭化 → 次段(閾値・エッジ)」。データ種は image のまま繋がります。</p>
 <p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
@@ -146,18 +144,18 @@ for name in (&quot;bilateral&quot;, &quot;sigma_image&quot;, &quot;anisotropic_d
 
 print(&quot;PASS&quot;)</pre>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
-<p>**Gaussian(<code style="color:#22d3bf">gaussian</code>, <code style="color:#22d3bf">gauss_filter</code>)** — 分離 Gaussian カーネルとの畳み込み。σ はつまみ <code style="color:#22d3bf">a</code> で決まる($\sigma = 0.3 + 2.7a$)。</p>
+<p><b>Gaussian(<code style="color:#22d3bf">gaussian</code>, <code style="color:#22d3bf">gauss_filter</code>)</b> — 分離 Gaussian カーネルとの畳み込み。σ はつまみ <code style="color:#22d3bf">a</code> で決まる($\sigma = 0.3 + 2.7a$)。</p>
 <p>$$G_\sigma(x,y)=\frac{1}{2\pi\sigma^2}\exp\!\left(-\frac{x^2+y^2}{2\sigma^2}\right),\qquad I&#x27;=G_\sigma * I$$</p>
-<p>**Bilateral(<code style="color:#22d3bf">bilateral</code>)** — 空間の近さと輝度の近さの積を重みにする(エッジを跨いだ平均を避ける)。</p>
+<p><b>Bilateral(<code style="color:#22d3bf">bilateral</code>)</b> — 空間の近さと輝度の近さの積を重みにする(エッジを跨いだ平均を避ける)。</p>
 <p>$$I&#x27;(p)=\frac{1}{W_p}\sum_{q\in\Omega} \exp\!\left(-\frac{\lVert p-q\rVert^2}{2\sigma_s^2}\right)\exp\!\left(-\frac{(I(p)-I(q))^2}{2\sigma_r^2}\right) I(q)$$</p>
 <p>ここで $\sigma_s$ は空間つまみ <code style="color:#22d3bf">a</code>、$\sigma_r$ は値域つまみ <code style="color:#22d3bf">b</code>、$W_p$ は重みの総和。</p>
-<p>**Unsharp mask(<code style="color:#22d3bf">unsharp</code>)** — 元画像に「元 − ぼかし」(高域)を足し戻す。$\text{amount}=1.5a$、マスクの $\sigma=0.5+1.5b$。</p>
+<p><b>Unsharp mask(<code style="color:#22d3bf">unsharp</code>)</b> — 元画像に「元 − ぼかし」(高域)を足し戻す。$\text{amount}=1.5a$、マスクの $\sigma=0.5+1.5b$。</p>
 <p>$$I&#x27; = I + \text{amount}\,\bigl(I - G_\sigma * I\bigr)$$</p>
-<p>**σ フィルタ(<code style="color:#22d3bf">sigma_image</code>, <code style="color:#22d3bf">eliminate_sp</code>)** — 局所平均 $\mu$ から $\pm\sigma$ 以内の近傍だけで平均を取る(外れ値を混ぜない、Lee 1983)。</p>
+<p><b>σ フィルタ(<code style="color:#22d3bf">sigma_image</code>, <code style="color:#22d3bf">eliminate_sp</code>)</b> — 局所平均 $\mu$ から $\pm\sigma$ 以内の近傍だけで平均を取る(外れ値を混ぜない、Lee 1983)。</p>
 <p>$$I&#x27;(p)=\frac{\sum_{q:\,|I(q)-\mu(p)|&lt;\sigma} I(q)}{\#\{q:\,|I(q)-\mu(p)|&lt;\sigma\}}$$</p>
-<p>**Perona-Malik 異方性拡散(<code style="color:#22d3bf">anisotropic_diffusion</code>)** — 伝導率 $c$ を勾配で抑え、エッジを保ちながら平坦部だけ拡散させる反復 PDE($K$ はつまみ <code style="color:#22d3bf">b</code>)。</p>
+<p><b>Perona-Malik 異方性拡散(<code style="color:#22d3bf">anisotropic_diffusion</code>)</b> — 伝導率 $c$ を勾配で抑え、エッジを保ちながら平坦部だけ拡散させる反復 PDE($K$ はつまみ <code style="color:#22d3bf">b</code>)。</p>
 <p>$$\frac{\partial u}{\partial t}=\operatorname{div}\!\bigl(c(\lVert\nabla u\rVert)\,\nabla u\bigr),\qquad c(s)=\exp\!\left(-\left(\frac{s}{K}\right)^2\right)$$</p>
-<p>**Richardson-Lucy 逆畳み込み(<code style="color:#22d3bf">iv_richardson_lucy</code>)** — 観測 $d=\text{psf}\otimes u$ を満たすよう推定 $u$ を乗算的に更新(反復数はつまみ <code style="color:#22d3bf">a</code>)。</p>
+<p><b>Richardson-Lucy 逆畳み込み(<code style="color:#22d3bf">iv_richardson_lucy</code>)</b> — 観測 $d=\text{psf}\otimes u$ を満たすよう推定 $u$ を乗算的に更新(反復数はつまみ <code style="color:#22d3bf">a</code>)。</p>
 <p>$$u^{(t+1)} = u^{(t)}\cdot\left(\text{psf}^{\!*} \otimes \frac{d}{\text{psf}\otimes u^{(t)}}\right)$$</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
 <p>デバッグ・動作確認には <code style="color:#22d3bf">../../SAMPLES.md</code> の 2-D 画像源が使えます(外部 DL 不要)。合成の <code style="color:#22d3bf">checker_noisy</code> / <code style="color:#22d3bf">blobs</code>(<code style="color:#22d3bf">import sample_images; sample_images.load(&quot;checker_noisy&quot;)</code>)は平滑化・ランク除去の効果を見るのに向き、<code style="color:#22d3bf">skimage.data</code> の <code style="color:#22d3bf">coins</code> / <code style="color:#22d3bf">camera</code>(BSD/public domain)はエッジ保存や先鋭化・復元(逆畳み込み・inpaint)の題材になります。</p>

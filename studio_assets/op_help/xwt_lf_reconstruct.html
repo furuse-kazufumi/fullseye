@@ -5,14 +5,14 @@
 <p><img src="fig/xwt_lf_reconstruct.png" alt="xwt_lf_reconstruct: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xwt_lf_reconstruct.a.jpg">xwt_lf_reconstruct: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xwt_lf_reconstruct.a.jpg">xwt_lf_reconstruct: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xwt_lf_reconstruct.inputs.jpg">xwt_lf_reconstruct: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xwt_lf_reconstruct.inputs.jpg">xwt_lf_reconstruct: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>低周波再構成画像。`<code style="color:#22d3bf">db2</code>` で分解し、全ての詳細係数を 0 に潰して近似成分だけから逆変換で再構成する —— ガウシアンぼかしに近い、多段ウェーブレットによる平滑化画像になる。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は分解段数(</code><code style="color:#22d3bf">1+int(a*3)</code><code style="color:#22d3bf"> で 1〜4 段)を振る —— 段数を増やすほど強くぼける。</code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
+<p>低周波再構成画像。<code style="color:#22d3bf">db2</code> で分解し、全ての詳細係数を 0 に潰して近似成分だけから逆変換で再構成する —— ガウシアンぼかしに近い、多段ウェーブレットによる平滑化画像になる。</p>
+<p><code style="color:#22d3bf">a</code> は分解段数(<code style="color:#22d3bf">1+int(a*3)</code> で 1〜4 段)を振る —— 段数を増やすほど強くぼける。<code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -21,7 +21,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xwt_lf_reconstruct 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:xwt_lf_reconstruct%200.35%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xwt_lf_reconstruct%200.35%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xwt_lf_reconstruct 0.35 0.50</pre><p><a style="color:#f5a524" href="sample:xwt_lf_reconstruct%200.35%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xwt_lf_reconstruct%200.35%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_smoothing_rank.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image</code> を入力に取れる)</h3>

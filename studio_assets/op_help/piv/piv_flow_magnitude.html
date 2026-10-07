@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_flow_magnitude(flow)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pivops; pivops.piv_flow_magnitude(flow)</code>、台帳から引くなら <code style="color:#22d3bf">opspiv.get(&quot;piv_flow_magnitude&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>`<code style="color:#22d3bf">sqrt(dy^2 + dx^2)</code>`。向きを捨てる<b>一方向</b>の変換。</p>
-<p>`<code style="color:#22d3bf">reprconv.flow_magnitude</code><code style="color:#22d3bf"> の 2 次元版。あちらは </code><code style="color:#22d3bf">(3, D, H, W)</code>` 専用で、</p>
-<p>ここへ渡すと形で弾かれる(型を分けてある理由がこれ)。</p>
+<p><code style="color:#22d3bf">sqrt(dy^2 + dx^2)</code>。向きを捨てる<b>一方向</b>の変換。</p>
+<p><code style="color:#22d3bf">reprconv.flow_magnitude</code> の 2 次元版。あちらは <code style="color:#22d3bf">(3, D, H, W)</code> 専用で、ここへ渡すと形で弾かれる(型を分けてある理由がこれ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

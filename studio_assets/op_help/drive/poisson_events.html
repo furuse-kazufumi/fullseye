@@ -4,11 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_events(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetraffic; drivetraffic.poisson_events(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;poisson_events&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>[0, x_max] の非一様ポアソン過程を thinning(Lewis &amp; Shedler 1979)で 1 本引く(昇順の位置の配列)。</p>
-<p>率 rate_max の一様ポアソン過程の候補を引き、各候補 x を確率 λ(x)/rate_max で残す。残った点は率 λ の非一様</p>
-<p>ポアソン過程 → 件数 N ~ Poisson(Λ)、Λ = ∫₀^{x_max} λ(x) dx(門: 多数の試行で平均 = 分散 = Λ、位置の分布 = λ/Λ)。</p>
-<p>`<code style="color:#22d3bf">rate_fn</code><code style="color:#22d3bf"> は numpy 配列を受けて同じ形の率を返す関数。**引く前に** </code><code style="color:#22d3bf">n_grid</code>` 点の等間隔格子で λ ≤ rate_max を確かめ、</p>
-<p>引いた候補の所でも確かめる。どちらかで超えれば ValueError(fail-closed。上限を守らないと thinning は静かに少なく数える)。</p>
-<p>`<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> は int か </code><code style="color:#22d3bf">np.random.Generator</code>`。</p>
+<p>率 rate_max の一様ポアソン過程の候補を引き、各候補 x を確率 λ(x)/rate_max で残す。残った点は率 λ の非一様ポアソン過程 → 件数 N ~ Poisson(Λ)、Λ = ∫₀^{x_max} λ(x) dx(門: 多数の試行で平均 = 分散 = Λ、位置の分布 = λ/Λ)。<code style="color:#22d3bf">rate_fn</code> は numpy 配列を受けて同じ形の率を返す関数。<b>引く前に</b> <code style="color:#22d3bf">n_grid</code> 点の等間隔格子で λ ≤ rate_max を確かめ、引いた候補の所でも確かめる。どちらかで超えれば ValueError(fail-closed。上限を守らないと thinning は静かに少なく数える)。<code style="color:#22d3bf">seed</code> は int か <code style="color:#22d3bf">np.random.Generator</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

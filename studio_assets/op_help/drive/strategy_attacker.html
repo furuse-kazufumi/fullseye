@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.strategy_attacker(side: &#x27;int&#x27;, ctx: &#x27;dict&#x27;, rng) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import racket; racket.strategy_attacker(side: &#x27;int&#x27;, ctx: &#x27;dict&#x27;, rng) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;strategy_attacker&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>勝つための打ち方: 相手のラケットから遠い隅(左右の端、前後を交互)へ、短い滞空時間で。スピンの狙いも交互に変える。</p>
-<p>`<code style="color:#22d3bf">ctx</code>` = {&quot;opp_pos&quot; (3,), &quot;shot_index&quot;, &quot;tp&quot;}。返り値 {&quot;target&quot; (x, y), &quot;T&quot;, &quot;spin&quot;}。</p>
+<p>勝つための打ち方: 相手のラケットから遠い隅(左右の端、前後を交互)へ、短い滞空時間で。スピンの狙いも交互に変える。<code style="color:#22d3bf">ctx</code> = {&quot;opp_pos&quot; (3,), &quot;shot_index&quot;, &quot;tp&quot;}。返り値 {&quot;target&quot; (x, y), &quot;T&quot;, &quot;spin&quot;}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

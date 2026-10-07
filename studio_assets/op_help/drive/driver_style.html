@@ -4,13 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.driver_style(kind: &#x27;str&#x27;, seed: &#x27;Optional[int]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivetraffic; drivetraffic.driver_style(kind: &#x27;str&#x27;, seed: &#x27;Optional[int]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;driver_style&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>運転の癖 3 種(&quot;careful&quot; / &quot;normal&quot; / &quot;sloppy&quot;)の母数を返す。<b>値はすべて仮定</b>(出典なし)。</p>
-<p>キー: IDM の `<code style="color:#22d3bf">v0, T, a, b, s0, delta</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">reaction_delay</code><code style="color:#22d3bf"> [s]、横ふらつき(OU 過程)の </code><code style="color:#22d3bf">wobble_theta</code>` [1/s]</p>
-<p>と `<code style="color:#22d3bf">wobble_sigma</code><code style="color:#22d3bf"> [m/√s] (定常の標準偏差は σ/sqrt(2θ) = 0.05 / 0.11 / 0.28 m)、</code><code style="color:#22d3bf">speed_noise</code>`(希望速度の</p>
-<p>相対むら)、`<code style="color:#22d3bf">length</code><code style="color:#22d3bf"> 4.5 m(仮定)、</code><code style="color:#22d3bf">kind</code><code style="color:#22d3bf">。返り値はそのまま </code><code style="color:#22d3bf">idm_platoon_simulate</code>` の 1 台分に渡せる。</p>
-<p>`<code style="color:#22d3bf">seed</code><code style="color:#22d3bf"> を与えると、主要な値に一様 ±10% の個人差を掛ける(</code><code style="color:#22d3bf">default_rng(seed)</code>` で決定的)。None なら名目値。</p>
-<p>順序の性質(門): 名目値で careful の T・s0 が最大で反応遅れが最小、sloppy がその逆、ふらつきの定常 SD は</p>
-<p>careful &lt; normal &lt; sloppy。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 未知の kind。</p>
+<p>キー: IDM の <code style="color:#22d3bf">v0, T, a, b, s0, delta</code>、<code style="color:#22d3bf">reaction_delay</code> [s]、横ふらつき(OU 過程)の <code style="color:#22d3bf">wobble_theta</code> [1/s] と <code style="color:#22d3bf">wobble_sigma</code> [m/√s] (定常の標準偏差は σ/sqrt(2θ) = 0.05 / 0.11 / 0.28 m)、<code style="color:#22d3bf">speed_noise</code>(希望速度の相対むら)、<code style="color:#22d3bf">length</code> 4.5 m(仮定)、<code style="color:#22d3bf">kind</code>。返り値はそのまま <code style="color:#22d3bf">idm_platoon_simulate</code> の 1 台分に渡せる。</p>
+<p><code style="color:#22d3bf">seed</code> を与えると、主要な値に一様 ±10% の個人差を掛ける(<code style="color:#22d3bf">default_rng(seed)</code> で決定的)。None なら名目値。順序の性質(門): 名目値で careful の T・s0 が最大で反応遅れが最小、sloppy がその逆、ふらつきの定常 SD は careful &lt; normal &lt; sloppy。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 未知の kind。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

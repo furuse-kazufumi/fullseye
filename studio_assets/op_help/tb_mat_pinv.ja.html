@@ -7,29 +7,23 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mat_pinv.chain.jpg">tb_mat_pinv: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mat_pinv.chain.jpg">tb_mat_pinv: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mat_pinv.inputs.jpg">tb_mat_pinv: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mat_pinv.inputs.jpg">tb_mat_pinv: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>SVD（特異値分解）によるムーア・ペンローズ擬似逆行列。カットオフ値は<b>明示的</b>に指定する。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Singular values below `<code style="color:#22d3bf">rcond * s_max</code>` are treated as zero — that cutoff</p>
-<p>*is* the regularisation, so it is a named, documented parameter here</p>
-<p>(default `<code style="color:#22d3bf">1e-12</code>`) rather than a hidden library default: raising it</p>
-<p>discards noisy directions (stabler, more biased), lowering it keeps them</p>
-<p>(exact for well-conditioned *A*, explosive near rank deficiency).</p>
-<p>Works for any `<code style="color:#22d3bf">(m, n)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">pinv(A) @ b</code>` is the least-squares solution for</p>
-<p>`<code style="color:#22d3bf">m &gt; n</code><code style="color:#22d3bf"> and the minimum-norm solution for </code><code style="color:#22d3bf">m &lt; n</code>`.</p>
-<p>HALCON: no direct operator — HALCON reaches the same result through</p>
-<p>`<code style="color:#22d3bf">svd_matrix</code>` + reciprocal singular values.</p>
-<p>Typed bridge of the math op `<code style="color:#22d3bf">mat_pinv</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> drives </code><code style="color:#22d3bf">rcond</code><code style="color:#22d3bf"> (default 1e-12); </code><code style="color:#22d3bf">b</code>` is unused.</p>
+<p>Singular values below <code style="color:#22d3bf">rcond * s_max</code> are treated as zero — that cutoff *is* the regularisation, so it is a named, documented parameter here (default <code style="color:#22d3bf">1e-12</code>) rather than a hidden library default: raising it discards noisy directions (stabler, more biased), lowering it keeps them (exact for well-conditioned *A*, explosive near rank deficiency).</p>
+<p>Works for any <code style="color:#22d3bf">(m, n)</code>: <code style="color:#22d3bf">pinv(A) @ b</code> is the least-squares solution for <code style="color:#22d3bf">m &gt; n</code> and the minimum-norm solution for <code style="color:#22d3bf">m &lt; n</code>.</p>
+<p>HALCON: no direct operator — HALCON reaches the same result through <code style="color:#22d3bf">svd_matrix</code> + reciprocal singular values.</p>
+<p>Typed bridge of the math op <code style="color:#22d3bf">mat_pinv</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> drives <code style="color:#22d3bf">rcond</code> (default 1e-12); <code style="color:#22d3bf">b</code> is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_matrix 0.50 0.50
-tb_mat_pinv 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_matrix%200.50%200.50%0Atb_mat_pinv%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_matrix%200.50%200.50%0Atb_mat_pinv%200.50%200.50">Load &amp; run</a></p>
+tb_mat_pinv 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_matrix%200.50%200.50%0Atb_mat_pinv%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_matrix%200.50%200.50%0Atb_mat_pinv%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p>次の例は元の台帳 op <code style="color:#22d3bf">mat_pinv</code> を呼ぶもの。この橋渡し op は同じ実装を <code style="color:#22d3bf">fn(v, a, b)</code> 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>

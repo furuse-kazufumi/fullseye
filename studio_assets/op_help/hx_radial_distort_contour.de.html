@@ -6,23 +6,20 @@
 <p><img src="fig/hx_radial_distort_contour.png" alt="hx_radial_distort_contour: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.a.jpg">hx_radial_distort_contour: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.a.jpg">hx_radial_distort_contour: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.chain.jpg">hx_radial_distort_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.chain.jpg">hx_radial_distort_contour: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.inputs.jpg">hx_radial_distort_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.inputs.jpg">hx_radial_distort_contour: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wendet radiale Verzeichnung r&#x27; = r(1 + k r^2) auf eine Kontur an (k aus (a−0,5): tonnen- oder kissenförmig).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各 contour の点を画像中心 `<code style="color:#22d3bf">(H/2, W/2)</code><code style="color:#22d3bf"> からの相対座標 </code><code style="color:#22d3bf">d</code><code style="color:#22d3bf"> にし、正規化半径 </code><code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code>` に</p>
-<p>対して `<code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code>` と伸縮させた contour を返す(放射歪みモデルの 1 次項)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 歪み係数 </code><code style="color:#22d3bf">k = (a - 0.5) * 1.5</code><code style="color:#22d3bf">(-0.75〜+0.75)。</code><code style="color:#22d3bf">k &lt; 0</code><code style="color:#22d3bf"> で点が中心に寄る(樽型)、</code><code style="color:#22d3bf">k &gt; 0</code>` で</p>
+<p>各 contour の点を画像中心 <code style="color:#22d3bf">(H/2, W/2)</code> からの相対座標 <code style="color:#22d3bf">d</code> にし、正規化半径 <code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code> に対して <code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code> と伸縮させた contour を返す(放射歪みモデルの 1 次項)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 歪み係数 <code style="color:#22d3bf">k = (a - 0.5) * 1.5</code>(-0.75〜+0.75)。<code style="color:#22d3bf">k &lt; 0</code> で点が中心に寄る(樽型)、<code style="color:#22d3bf">k &gt; 0</code> で</p>
 <p>外へ広がる(糸巻き型)、a=0.5 で無変化。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>半径は画像長辺の半分で正規化しているので、画像の隅で `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> が 1 前後になり、</code><code style="color:#22d3bf">k = ±0.75</code>` なら隅の点は</p>
-<p>1.75 倍/0.25 倍まで動く。逆変換は無い(`<code style="color:#22d3bf">k</code>` の符号を反転しても厳密には戻らない)。レンズ歪みの影響を contour</p>
-<p>計測(`<code style="color:#22d3bf">hx_fit_circle_contour</code>` 等)で試す、あるいは合成的にデータを増やす用途。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>半径は画像長辺の半分で正規化しているので、画像の隅で <code style="color:#22d3bf">r</code> が 1 前後になり、<code style="color:#22d3bf">k = ±0.75</code> なら隅の点は 1.75 倍/0.25 倍まで動く。逆変換は無い(<code style="color:#22d3bf">k</code> の符号を反転しても厳密には戻らない)。レンズ歪みの影響を contour 計測(<code style="color:#22d3bf">hx_fit_circle_contour</code> 等)で試す、あるいは合成的にデータを増やす用途。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -33,7 +30,7 @@
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
 sk_find_contours 0.50 0.50
-hx_radial_distort_contour 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_radial_distort_contour%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_radial_distort_contour%200.50%200.50">Load &amp; run</a></p>
+hx_radial_distort_contour 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_radial_distort_contour%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_radial_distort_contour%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">contour</code> als Eingabe)</h3>

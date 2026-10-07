@@ -3,33 +3,17 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">cpoints × cpoints</code> → <code style="color:#22d3bf">cscalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cplx_cauchy_value(z, fz, w)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import mathops; mathops.cplx_cauchy_value(z, fz, w)</code>、台帳から引くなら <code style="color:#22d3bf">opsmath.get(&quot;cplx_cauchy_value&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Cauchy の積分公式: 閉曲線<b>上</b>の値から閉曲線の<b>内側</b>の `<code style="color:#22d3bf">f(w)</code>` を復元する。</p>
+<p>Cauchy の積分公式: 閉曲線<b>上</b>の値から閉曲線の<b>内側</b>の <code style="color:#22d3bf">f(w)</code> を復元する。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>`<code style="color:#22d3bf">f(w) = 1/(2*pi*i*n) ∮ f(zeta)/(zeta - w) dzeta</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">n</code>` is the</p>
-<p>winding number of the contour around *w* (Cauchy 1831; the division by</p>
-<p>`<code style="color:#22d3bf">n</code>` is what makes a doubly-wound contour give the same answer). Valid</p>
-<p>only if `<code style="color:#22d3bf">f</code>` is holomorphic on and inside the contour — nothing here can</p>
-<p>check that, and this is the honest limit of the op: fed values of a</p>
-<p>non-holomorphic `<code style="color:#22d3bf">f</code>` (or of one with a pole inside) it returns the</p>
-<p>integral, which is then simply *not* `<code style="color:#22d3bf">f(w)</code>`.</p>
-<p>Accuracy inherits the `<code style="color:#22d3bf">O(n^-2)</code>` chordal quadrature of</p>
-<p>:func:<code style="color:#22d3bf">cplx_contour_integral</code> and degrades as *w* approaches the path</p>
-<p>(the integrand&#x27;s peak sharpens): measured for `<code style="color:#22d3bf">f(z) = z**2</code>` on a</p>
-<p>256-point unit circle, the absolute error is 9.0e-6 at `<code style="color:#22d3bf">w = 0.3</code>` and</p>
-<p>8.1e-5 at `<code style="color:#22d3bf">w = 0.9</code>` — 9x worse for a point 7x closer to the path</p>
-<p>(0.7 -&gt; 0.1 of clearance). The blow-up is real but gradual; what it does</p>
-<p>*not* survive is clearance below one sampling step, which is refused.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *w* outside the contour (winding 0 — the</p>
-<p>integral is then 0 and returning it as &quot;f(w)&quot; would be a lie), *w* closer</p>
-<p>to the contour than one sampling step (the quadrature is meaningless</p>
-<p>there — refine the contour), plus everything</p>
-<p>:func:<code style="color:#22d3bf">cplx_winding_number</code> and :func:<code style="color:#22d3bf">cplx_contour_integral</code> refuse.</p>
+<p><code style="color:#22d3bf">f(w) = 1/(2*pi*i*n) ∮ f(zeta)/(zeta - w) dzeta</code> where <code style="color:#22d3bf">n</code> is the winding number of the contour around *w* (Cauchy 1831; the division by <code style="color:#22d3bf">n</code> is what makes a doubly-wound contour give the same answer). Valid only if <code style="color:#22d3bf">f</code> is holomorphic on and inside the contour — nothing here can check that, and this is the honest limit of the op: fed values of a non-holomorphic <code style="color:#22d3bf">f</code> (or of one with a pole inside) it returns the integral, which is then simply *not* <code style="color:#22d3bf">f(w)</code>.</p>
+<p>Accuracy inherits the <code style="color:#22d3bf">O(n^-2)</code> chordal quadrature of <code style="color:#22d3bf">cplx_contour_integral</code> and degrades as *w* approaches the path (the integrand&#x27;s peak sharpens): measured for <code style="color:#22d3bf">f(z) = z**2</code> on a 256-point unit circle, the absolute error is 9.0e-6 at <code style="color:#22d3bf">w = 0.3</code> and 8.1e-5 at <code style="color:#22d3bf">w = 0.9</code> — 9x worse for a point 7x closer to the path (0.7 -&gt; 0.1 of clearance). The blow-up is real but gradual; what it does *not* survive is clearance below one sampling step, which is refused.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *w* outside the contour (winding 0 — the integral is then 0 and returning it as &quot;f(w)&quot; would be a lie), *w* closer to the contour than one sampling step (the quadrature is meaningless there — refine the contour), plus everything <code style="color:#22d3bf">cplx_winding_number</code> and <code style="color:#22d3bf">cplx_contour_integral</code> refuse.</p>
 <p>HALCON: no operator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
-<p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
-<p style="margin:2px 0 2px 12px">• **masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code>** — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**(件数を明示して拒否 — 結果全体に伝播するため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code></b> — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>(件数を明示して拒否 — 結果全体に伝播するため)。</p>
 <p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は <code style="color:#22d3bf">ValueError</code>。reshape を明示する)。</p>
 <p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

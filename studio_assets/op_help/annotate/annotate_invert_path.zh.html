@@ -5,29 +5,22 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>折れ線(line)を<b>反転色</b>で描く。アンチエイリアスつき。</p>
-<p>線は領域より不利で、そこがこの op を分けている理由 —— 太さ 1.5 画素の</p>
-<p>線は端の画素の被覆率が 0.3 程度しかないため、**反転しても被覆の分しか</p>
-<p>動かない**。中間調の地では領域よりさらに先に消える。判定は「被覆率</p>
-<p>0.5 以上の画素」で行う(それ未満は元から半透明なので、見えなくても</p>
-<p>それは反転のせいではない)。</p>
-<p>Parameters</p>
-<p>----------</p>
+<p>線は領域より不利で、そこがこの op を分けている理由 —— 太さ 1.5 画素の線は端の画素の被覆率が 0.3 程度しかないため、<b>反転しても被覆の分しか動かない</b>。中間調の地では領域よりさらに先に消える。判定は「被覆率 0.5 以上の画素」で行う(それ未満は元から半透明なので、見えなくてもそれは反転のせいではない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : (N,2)</p>
-<p>折れ線の頂点 `<code style="color:#22d3bf">(x, y)</code>`(画素座標)。</p>
+<p>折れ線の頂点 <code style="color:#22d3bf">(x, y)</code>(画素座標)。</p>
 <p>width : float</p>
 <p>線の太さ(画素、0.5 以上)。</p>
 <p>closed : bool</p>
 <p>真なら最後の点と最初の点を結ぶ。</p>
 <p>dash : (on, off) or None</p>
-<p>破線の刻み(画素)。:func:<code style="color:#22d3bf">_dash_pieces</code> と同じ規則。</p>
+<p>破線の刻み(画素)。<code style="color:#22d3bf">_dash_pieces</code> と同じ規則。</p>
 <p>mode, alpha, min_contrast, on_invisible :</p>
-<p>:func:<code style="color:#22d3bf">annotate_invert</code> と同じ。</p>
-<p>Returns</p>
-<p>-------</p>
+<p><code style="color:#22d3bf">annotate_invert</code> と同じ。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(H,W[,C]) float64</p>
 <p>反転を乗せた複製。</p>
-<p>Examples</p>
-<p>--------</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np, annotate</p>
 <p>&gt;&gt;&gt; img = np.zeros((16, 32))</p>
 <p>&gt;&gt;&gt; out = annotate.annotate_invert_path(img, [(2, 8), (29, 8)], width=3)</p>
@@ -38,11 +31,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 学習データセット規約の知識 — COCO / YOLO / VOC と外観検査での落とし穴</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — 训练数据集规范知识 —— COCO / YOLO / VOC 及外观检测中的陷阱</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image2d</code> 作为输入)</h3>

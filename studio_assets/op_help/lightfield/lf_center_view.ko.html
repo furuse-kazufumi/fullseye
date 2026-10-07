@@ -5,17 +5,11 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>중앙 시점 —— 플렌옵틱 카메라가 함께 주는 평범한 2-D 이미지.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>For odd `<code style="color:#22d3bf">V</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">U</code>` the centre is a single view and both modes return it</p>
-<p>exactly. For an <b>even</b> axis the centre falls *between* two views, and this</p>
-<p>operator does not pretend otherwise:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mode=&quot;average&quot;</code>` (default) returns the mean of the 2 (or 4) views</p>
-<p>straddling the centre — the correctly-centred estimate for a Lambertian</p>
-<p>scene, at the cost of a slight blur proportional to the disparity.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mode=&quot;nearest&quot;</code><code style="color:#22d3bf"> returns the single view at </code><code style="color:#22d3bf">floor((N-1)/2)</code>`, which</p>
-<p>is sharp but sits half an angular step off centre; every disparity</p>
-<p>measured against it carries that half-step bias.</p>
-<p>Returns a `<code style="color:#22d3bf">(H, W)</code>` 2-D image.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, unknown *mode*.</p>
+<p>For odd <code style="color:#22d3bf">V</code> and <code style="color:#22d3bf">U</code> the centre is a single view and both modes return it exactly. For an <b>even</b> axis the centre falls *between* two views, and this operator does not pretend otherwise:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mode=&quot;average&quot;</code> (default) returns the mean of the 2 (or 4) views straddling the centre — the correctly-centred estimate for a Lambertian scene, at the cost of a slight blur proportional to the disparity.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mode=&quot;nearest&quot;</code> returns the single view at <code style="color:#22d3bf">floor((N-1)/2)</code>, which is sharp but sits half an angular step off centre; every disparity measured against it carries that half-step bias.</p>
+<p>Returns a <code style="color:#22d3bf">(H, W)</code> 2-D image.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not a valid light field, unknown *mode*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

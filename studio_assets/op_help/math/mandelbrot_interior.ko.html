@@ -5,19 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>주 카디오이드와 주기 2 구에 대한 내부 판정을 닫힌 형식으로.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Returns a boolean array: `<code style="color:#22d3bf">True</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">c</code>` is <b>provably</b> in the</p>
-<p>Mandelbrot set, because the period-1 fixed point is attracting</p>
-<p>(`<code style="color:#22d3bf">|1 - sqrt(1 - 4c)| &lt; 1</code><code style="color:#22d3bf">) or </code><code style="color:#22d3bf">c</code>` lies in the period-2 bulb</p>
-<p>(`<code style="color:#22d3bf">|c + 1| &lt; 1/4</code><code style="color:#22d3bf">). </code><code style="color:#22d3bf">False</code>` means &quot;not proven by these two tests&quot; — the</p>
-<p>smaller bulbs and the filaments are not covered, so this is a **lower</p>
-<p>bound** on the set, which is exactly what makes it usable as a gate:</p>
-<p>:func:<code style="color:#22d3bf">cplx_escape_time</code> must return `<code style="color:#22d3bf">max_iter</code>` everywhere this is True,</p>
-<p>and no tolerance is involved.</p>
+<p>Returns a boolean array: <code style="color:#22d3bf">True</code> where <code style="color:#22d3bf">c</code> is <b>provably</b> in the Mandelbrot set, because the period-1 fixed point is attracting (<code style="color:#22d3bf">|1 - sqrt(1 - 4c)| &lt; 1</code>) or <code style="color:#22d3bf">c</code> lies in the period-2 bulb (<code style="color:#22d3bf">|c + 1| &lt; 1/4</code>). <code style="color:#22d3bf">False</code> means &quot;not proven by these two tests&quot; — the smaller bulbs and the filaments are not covered, so this is a <b>lower bound</b> on the set, which is exactly what makes it usable as a gate: <code style="color:#22d3bf">cplx_escape_time</code> must return <code style="color:#22d3bf">max_iter</code> everywhere this is True, and no tolerance is involved.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
-<p style="margin:2px 0 2px 12px">• **complex 입력은 <code style="color:#22d3bf">ValueError</code>** —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
-<p style="margin:2px 0 2px 12px">• **masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code>** —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code>**(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked 요소가 있는 masked array 는 <code style="color:#22d3bf">ValueError</code></b> —— 마스크를 벗겨 아래 원값을 쓰는 암묵 변환을 거부합니다. 채울지 버릴지를 명시하세요.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf 는 모든 입력에서 <code style="color:#22d3bf">ValueError</code></b>(개수를 명시하고 거부 —— 결과 전체로 전파되므로).</p>
 <p style="margin:2px 0 2px 12px">• <b>형상은 엄격</b>: 1-D 와 2-D 를 암묵적으로 승격·브로드캐스트하지 않습니다(vector 슬롯에 matrix, matrix 슬롯에 vector 는 <code style="color:#22d3bf">ValueError</code>. reshape 를 명시하세요).</p>
 <p style="margin:2px 0 2px 12px">• <b>크기 상한</b>: 행렬을 받는 연산자와 <code style="color:#22d3bf">stat_histogram</code> 의 bins 는 <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 만 요소)를 넘으면 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

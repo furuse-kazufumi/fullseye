@@ -5,16 +5,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>その(窓, ホップ)の組は COLA を満たすか、どれだけ厳密に満たすか。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>COLA — the analysis windows summing to a constant over the hop lattice — is</p>
-<p>what lets plain overlap-add work without a division. It is *not* required by</p>
-<p>:func:<code style="color:#22d3bf">istft</code>, which is weighted, but it is required by anything that</p>
-<p>overlap-adds modified frames without renormalising, and getting it wrong</p>
-<p>produces a periodic amplitude ripple at `<code style="color:#22d3bf">rate/hop</code>` Hz that looks like</p>
-<p>tremolo rather than like a bug.</p>
-<p>Returns a dict: `<code style="color:#22d3bf">cola</code><code style="color:#22d3bf"> (bool), </code><code style="color:#22d3bf">constant</code>` (the mean of the overlap sum),</p>
-<p>`<code style="color:#22d3bf">max_deviation</code><code style="color:#22d3bf"> (absolute), </code><code style="color:#22d3bf">relative_deviation</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">nola</code>` (bool),</p>
-<p>`<code style="color:#22d3bf">min_squared_sum</code>`, plus the geometry.</p>
-<p>Measured (periodic windows, `<code style="color:#22d3bf">relative_deviation</code>` of the plain sum):</p>
+<p>COLA — the analysis windows summing to a constant over the hop lattice — is what lets plain overlap-add work without a division. It is *not* required by <code style="color:#22d3bf">istft</code>, which is weighted, but it is required by anything that overlap-adds modified frames without renormalising, and getting it wrong produces a periodic amplitude ripple at <code style="color:#22d3bf">rate/hop</code> Hz that looks like tremolo rather than like a bug.</p>
+<p>Returns a dict: <code style="color:#22d3bf">cola</code> (bool), <code style="color:#22d3bf">constant</code> (the mean of the overlap sum), <code style="color:#22d3bf">max_deviation</code> (absolute), <code style="color:#22d3bf">relative_deviation</code>, <code style="color:#22d3bf">nola</code> (bool), <code style="color:#22d3bf">min_squared_sum</code>, plus the geometry.</p>
+<p>Measured (periodic windows, <code style="color:#22d3bf">relative_deviation</code> of the plain sum):</p>
 <p>========  ====  ====  ==================  ========  ====</p>
 <p>window    win   hop   relative_deviation  constant  COLA</p>
 <p>========  ====  ====  ==================  ========  ====</p>
@@ -26,15 +19,9 @@
 <p>blackman  256   64    3.97e-16            1.68      yes</p>
 <p>boxcar    256   128   0.00e+00            2.00      yes</p>
 <p>========  ====  ====  ==================  ========  ====</p>
-<p>The two blackman rows are the useful ones: the same window is COLA at</p>
-<p>hop = win/4 and 19 % off at hop = win/2, so &quot;which window&quot; is not the</p>
-<p>question — the pair is. The boxcar row was worth measuring rather than</p>
-<p>assuming: a rectangular window at 50 % overlap sums to exactly 2 and is</p>
-<p>COLA, which is the opposite of the usual intuition about it. Note also that</p>
-<p>the constant is not 1 in general — an overlap-add that does not divide by it</p>
-<p>is off by a *gain*, which is the failure that looks like a working system.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: unknown / all-zero window, </code><code style="color:#22d3bf">hop</code>` outside</p>
-<p>`<code style="color:#22d3bf">[1, win]</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">win</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">[2, MAX_WINDOW]</code>`.</p>
+<p>The two blackman rows are the useful ones: the same window is COLA at hop = win/4 and 19 % off at hop = win/2, so &quot;which window&quot; is not the question — the pair is. The boxcar row was worth measuring rather than</p>
+<p>assuming: a rectangular window at 50 % overlap sums to exactly 2 and is COLA, which is the opposite of the usual intuition about it. Note also that the constant is not 1 in general — an overlap-add that does not divide by it is off by a *gain*, which is the failure that looks like a working system.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown / all-zero window, <code style="color:#22d3bf">hop</code> outside <code style="color:#22d3bf">[1, win]</code>, <code style="color:#22d3bf">win</code> outside <code style="color:#22d3bf">[2, MAX_WINDOW]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

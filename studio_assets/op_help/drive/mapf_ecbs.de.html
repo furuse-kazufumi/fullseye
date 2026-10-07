@@ -5,10 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>上段を焦点探索にした CBS(ECBS の上段と同じ考え方、Barer ら 2014)。総コストが <b>最適の w 倍以内</b>。</p>
-<p>開いている節のうち最小の総コスト `<code style="color:#22d3bf">LB</code>` は最適値以下(最適解はどれかの節の下にある)。そこで</p>
-<p>`<code style="color:#22d3bf">コスト ≤ w · LB</code>` の節(焦点)の中から<b>衝突の少ない</b>ものを展開する。返す計画は</p>
-<p>`<code style="color:#22d3bf">cost ≤ w · LB ≤ w · 最適</code><code style="color:#22d3bf">(門)。返りは :func:</code>mapf_cbs<code style="color:#22d3bf"> の dict に </code><code style="color:#22d3bf">lower_bound</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">w</code>` を足したもの。</p>
-<p>細い通路で最適の CBS が同じ長さの譲り合いの組を全部調べて止まるのを、衝突の少ない側へ寄せて抜ける。</p>
+<p>開いている節のうち最小の総コスト <code style="color:#22d3bf">LB</code> は最適値以下(最適解はどれかの節の下にある)。そこで <code style="color:#22d3bf">コスト ≤ w · LB</code> の節(焦点)の中から<b>衝突の少ない</b>ものを展開する。返す計画は <code style="color:#22d3bf">cost ≤ w · LB ≤ w · 最適</code>(門)。返りは <code style="color:#22d3bf">mapf_cbs</code> の dict に <code style="color:#22d3bf">lower_bound</code> と <code style="color:#22d3bf">w</code> を足したもの。細い通路で最適の CBS が同じ長さの譲り合いの組を全部調べて止まるのを、衝突の少ない側へ寄せて抜ける。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

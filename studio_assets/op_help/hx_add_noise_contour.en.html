@@ -15,13 +15,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Add white Gaussian noise to the contour points (std from a; deterministic with a fixed seed).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各 contour の全点座標 (row, col) に、平均 0・標準偏差 `<code style="color:#22d3bf">std</code>` のガウス雑音を独立に加えて返す。乱数は</p>
-<p>`<code style="color:#22d3bf">np.random.default_rng(12345)</code>` を呼ぶたびに作り直すので、同じ入力なら常に同じ雑音が出る(決定的)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> → 標準偏差 </code><code style="color:#22d3bf">std = a*3</code>`(0〜3 画素。a=0 なら無変化)。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>雑音列は contour の順番と点数に依存するため、前段で点の順序や本数が変わると同じ `<code style="color:#22d3bf">a</code>` でも雑音の当たり方が</p>
-<p>変わる。ロバスト性の検証(`<code style="color:#22d3bf">hx_fit_circle_contour</code><code style="color:#22d3bf"> の残差がどれだけ増えるか等)や、</code><code style="color:#22d3bf">smooth_contours_xld</code>` の</p>
-<p>効果確認に使う。</p>
+<p>各 contour の全点座標 (row, col) に、平均 0・標準偏差 <code style="color:#22d3bf">std</code> のガウス雑音を独立に加えて返す。乱数は <code style="color:#22d3bf">np.random.default_rng(12345)</code> を呼ぶたびに作り直すので、同じ入力なら常に同じ雑音が出る(決定的)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 標準偏差 <code style="color:#22d3bf">std = a*3</code>(0〜3 画素。a=0 なら無変化)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>雑音列は contour の順番と点数に依存するため、前段で点の順序や本数が変わると同じ <code style="color:#22d3bf">a</code> でも雑音の当たり方が変わる。ロバスト性の検証(<code style="color:#22d3bf">hx_fit_circle_contour</code> の残差がどれだけ増えるか等)や、<code style="color:#22d3bf">smooth_contours_xld</code> の効果確認に使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -2,25 +2,22 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">piv_synth_pair — PIV <code style="color:#22d3bf">synth</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">image2d</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_synth_pair(shape, displacement, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_synth_pair(shape, displacement, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_pair&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">image2d</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair.raw(...)</code> oder rufe <code style="color:#22d3bf">pivops.piv_synth_pair</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">image2d</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair.raw(...)</code> oder rufe <code style="color:#22d3bf">pivops.piv_synth_pair</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(a, b, truth) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>既知の変位場を持つ画像対を作る。返りは `<code style="color:#22d3bf">(image_a, image_b, truth)</code>`。</p>
-<p><b>粒子を動かしてから 2 枚目を描く</b>(1 枚目を補間で歪めるのではない)。</p>
-<p>補間で作ると、補間の平滑化が「PIV が当てやすい絵」を作ってしまい、</p>
-<p>自分の実装を自分に有利な入力で測ることになる。</p>
+<p>既知の変位場を持つ画像対を作る。返りは <code style="color:#22d3bf">(image_a, image_b, truth)</code>。</p>
+<p><b>粒子を動かしてから 2 枚目を描く</b>(1 枚目を補間で歪めるのではない)。補間で作ると、補間の平滑化が「PIV が当てやすい絵」を作ってしまい、自分の実装を自分に有利な入力で測ることになる。</p>
 <p>Args:</p>
-<p>shape: `<code style="color:#22d3bf">(H, W)</code>`。</p>
+<p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
 <p>displacement: 変位の与え方。次のいずれか。</p>
-<p style="margin:2px 0 2px 12px">• 長さ 2 の列 —— 一様並進 `<code style="color:#22d3bf">(dy, dx)</code>` [px]。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">callable(rows, cols) -&gt; (dy, dx)</code>` —— 位置に依存する場。</p>
-<p>引数は粒子の連続座標の配列。</p>
-<p>density / diameter_px / seed / intensity / background: :func:<code style="color:#22d3bf">piv_synth_particles</code> と同じ。</p>
+<p style="margin:2px 0 2px 12px">• 長さ 2 の列 —— 一様並進 <code style="color:#22d3bf">(dy, dx)</code> [px]。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">callable(rows, cols) -&gt; (dy, dx)</code> —— 位置に依存する場。引数は粒子の連続座標の配列。</p>
+<p>density / diameter_px / seed / intensity / background: <code style="color:#22d3bf">piv_synth_particles</code> と同じ。</p>
 <p>noise_sigma: 2 枚それぞれに独立に足す加法ガウス雑音の標準偏差。</p>
 <p>Returns:</p>
-<p>`<code style="color:#22d3bf">(a (H, W), b (H, W), truth (2, H, W))</code><code style="color:#22d3bf">。</code><code style="color:#22d3bf">truth</code>` は<b>画素ごと</b>の</p>
-<p>真の変位で、窓の格子に落とすには :func:<code style="color:#22d3bf">piv_sample_at_windows</code> を使う。</p>
+<p><code style="color:#22d3bf">(a (H, W), b (H, W), truth (2, H, W))</code>。<code style="color:#22d3bf">truth</code> は<b>画素ごと</b>の</p>
+<p>真の変位で、窓の格子に落とすには <code style="color:#22d3bf">piv_sample_at_windows</code> を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

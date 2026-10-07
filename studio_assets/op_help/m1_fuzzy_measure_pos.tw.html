@@ -6,26 +6,26 @@
 <p><img src="fig/m1_fuzzy_measure_pos.png" alt="m1_fuzzy_measure_pos: input → output"></p>
 <p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
 <p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_fuzzy_measure_pos.a.jpg">m1_fuzzy_measure_pos: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_fuzzy_measure_pos.a.jpg">m1_fuzzy_measure_pos: 旋鈕 a 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_fuzzy_measure_pos.inputs.jpg">m1_fuzzy_measure_pos: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_fuzzy_measure_pos.inputs.jpg">m1_fuzzy_measure_pos: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>對穿過中心的卡尺線上的邊緣按模糊隸屬度分數篩選後傳回(相當於 HALCON `<code style="color:#22d3bf">fuzzy_measure_pos</code>`:以模糊判定偵測垂直於矩形/圓弧的直線邊緣)。</p>
+<p>對穿過中心的卡尺線上的邊緣按模糊隸屬度分數篩選後傳回(相當於 HALCON <code style="color:#22d3bf">fuzzy_measure_pos</code>:以模糊判定偵測垂直於矩形/圓弧的直線邊緣)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>エッジ検出は `<code style="color:#22d3bf">m1_measure_pos</code><code style="color:#22d3bf"> と同じ。各エッジの振幅を</code><code style="color:#22d3bf">(amp - lo) / (gmax - lo)</code><code style="color:#22d3bf">（</code><code style="color:#22d3bf">lo = 0.05*gmax</code><code style="color:#22d3bf">）で [0,1] のファジィスコアに写像し、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf">（0〜1）以上のものだけを残す（0/1 のハードしきい値ではなく振幅に応じた連続的な信頼度で選別する点が </code><code style="color:#22d3bf">measure_pos</code><code style="color:#22d3bf"> と違う）。</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> は線の向き（</code><code style="color:#22d3bf">theta = a*pi</code>`）。戻り値は CONTOUR、座標単位はピクセル。</p>
+<p>エッジ検出は <code style="color:#22d3bf">m1_measure_pos</code> と同じ。各エッジの振幅を<code style="color:#22d3bf">(amp - lo) / (gmax - lo)</code>（<code style="color:#22d3bf">lo = 0.05*gmax</code>）で [0,1] のファジィスコアに写像し、<code style="color:#22d3bf">b</code>（0〜1）以上のものだけを残す（0/1 のハードしきい値ではなく振幅に応じた連続的な信頼度で選別する点が <code style="color:#22d3bf">measure_pos</code> と違う）。<code style="color:#22d3bf">a</code> は線の向き（<code style="color:#22d3bf">theta = a*pi</code>）。戻り値は CONTOUR、座標単位はピクセル。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 量測不確定度與校正知識 —— 為了能主張「量得準」</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
 <p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">m1_fuzzy_measure_pos 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:m1_fuzzy_measure_pos%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:m1_fuzzy_measure_pos%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">m1_fuzzy_measure_pos 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:m1_fuzzy_measure_pos%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:m1_fuzzy_measure_pos%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_contour_measure">gallery2d_contour_measure</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_contour_measure.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">contour</code> 作為輸入)</h3>

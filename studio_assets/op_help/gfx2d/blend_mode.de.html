@@ -3,18 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb × rgb</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blend_mode(base, top, mode=&#x27;normal&#x27;, opacity=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.blend_mode(base, top, mode=&#x27;normal&#x27;, opacity=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;blend_mode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Mischt zwei undurchsichtige `<code style="color:#22d3bf">rgb</code>`-Bilder mit einem benannten Modus (W3C Level 1).</p>
+<p>Mischt zwei undurchsichtige <code style="color:#22d3bf">rgb</code>-Bilder mit einem benannten Modus (W3C Level 1).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>With an opaque backdrop the specification reduces to a lerp,</p>
-<p>`<code style="color:#22d3bf">Co = (1 - opacity)*Cb + opacity*B(Cb, Cs)</code><code style="color:#22d3bf">, so </code><code style="color:#22d3bf">opacity=0</code>` returns the</p>
-<p>backdrop <b>exactly</b> and `<code style="color:#22d3bf">mode=&quot;normal&quot;, opacity=1</code>` returns the source</p>
-<p>exactly. Both identities are checked bit-for-bit in the test suite.</p>
-<p>Named `<code style="color:#22d3bf">blend_mode</code><code style="color:#22d3bf"> and not </code><code style="color:#22d3bf">blend</code><code style="color:#22d3bf"> because :func:</code>imagemorph.blend`</p>
-<p>already owns that name for a two-image cross-fade; two functions called</p>
-<p>`<code style="color:#22d3bf">blend</code>` with different signatures is exactly the kind of collision this</p>
-<p>library&#x27;s naming test exists to prevent.</p>
-<p>Raises ValueError: unknown mode, mismatched shapes, opacity outside</p>
-<p>`<code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf">, values outside </code><code style="color:#22d3bf">[0, 1]</code>`.</p>
+<p>With an opaque backdrop the specification reduces to a lerp, <code style="color:#22d3bf">Co = (1 - opacity)*Cb + opacity*B(Cb, Cs)</code>, so <code style="color:#22d3bf">opacity=0</code> returns the backdrop <b>exactly</b> and <code style="color:#22d3bf">mode=&quot;normal&quot;, opacity=1</code> returns the source exactly. Both identities are checked bit-for-bit in the test suite.</p>
+<p>Named <code style="color:#22d3bf">blend_mode</code> and not <code style="color:#22d3bf">blend</code> because <code style="color:#22d3bf">imagemorph.blend</code> already owns that name for a two-image cross-fade; two functions called <code style="color:#22d3bf">blend</code> with different signatures is exactly the kind of collision this library&#x27;s naming test exists to prevent.</p>
+<p>Raises ValueError: unknown mode, mismatched shapes, opacity outside <code style="color:#22d3bf">[0, 1]</code>, values outside <code style="color:#22d3bf">[0, 1]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

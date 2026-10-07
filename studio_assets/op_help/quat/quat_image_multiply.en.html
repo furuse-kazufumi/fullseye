@@ -4,21 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quat_image_multiply(qimage, other, side) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import quatimage; quatimage.quat_image_multiply(qimage, other, side) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsquat.get(&quot;quat_image_multiply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Hamilton product of a quaternion image with a quaternion or a field. → (H, W, 4).</p>
-<p>`<code style="color:#22d3bf">side=&quot;left&quot;</code><code style="color:#22d3bf"> computes </code><code style="color:#22d3bf">other * qimage</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">side=&quot;right&quot;</code>` computes</p>
-<p>`<code style="color:#22d3bf">qimage * other</code><code style="color:#22d3bf">. **There is no default** — see :func:</code>_require_side`. The</p>
-<p>two results are genuinely different objects, not a sign convention: measured</p>
-<p>on a standard-normal `<code style="color:#22d3bf">(32, 32, 4)</code>` field against a unit rotor,</p>
-<p>`<code style="color:#22d3bf">max|left - right| = 3.143</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">mean|left - right| = 0.4948</code>` on data</p>
-<p>whose own extreme is 3.372 — that is, the two answers differ by as much as</p>
-<p>the data itself. Neither raises, neither is NaN, and both look like a</p>
-<p>perfectly good quaternion image.</p>
-<p>*other* is either a single quaternion (a `<code style="color:#22d3bf">(4,)</code>` array-like) or a full</p>
-<p>`<code style="color:#22d3bf">(H, W, 4)</code>` field of the same shape; anything else is refused rather than</p>
-<p>broadcast, because NumPy would happily broadcast a `<code style="color:#22d3bf">(H, 4)</code>` array along the</p>
-<p>wrong axis and produce an image-shaped answer to a different question.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: either input is not a valid quaternion field;</p>
-<p>*other* is neither `<code style="color:#22d3bf">(4,)</code><code style="color:#22d3bf"> nor exactly </code><code style="color:#22d3bf">qimage</code>`&#x27;s shape; *side* is not</p>
-<p>`<code style="color:#22d3bf">&#x27;left&#x27;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&#x27;right&#x27;</code>`.</p>
+<p><code style="color:#22d3bf">side=&quot;left&quot;</code> computes <code style="color:#22d3bf">other * qimage</code>; <code style="color:#22d3bf">side=&quot;right&quot;</code> computes <code style="color:#22d3bf">qimage * other</code>. <b>There is no default</b> — see <code style="color:#22d3bf">_require_side</code>. The two results are genuinely different objects, not a sign convention: measured on a standard-normal <code style="color:#22d3bf">(32, 32, 4)</code> field against a unit rotor, <code style="color:#22d3bf">max|left - right| = 3.143</code> and <code style="color:#22d3bf">mean|left - right| = 0.4948</code> on data whose own extreme is 3.372 — that is, the two answers differ by as much as the data itself. Neither raises, neither is NaN, and both look like a perfectly good quaternion image.</p>
+<p>*other* is either a single quaternion (a <code style="color:#22d3bf">(4,)</code> array-like) or a full <code style="color:#22d3bf">(H, W, 4)</code> field of the same shape; anything else is refused rather than broadcast, because NumPy would happily broadcast a <code style="color:#22d3bf">(H, 4)</code> array along the wrong axis and produce an image-shaped answer to a different question.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: either input is not a valid quaternion field; *other* is neither <code style="color:#22d3bf">(4,)</code> nor exactly <code style="color:#22d3bf">qimage</code>&#x27;s shape; *side* is not <code style="color:#22d3bf">&#x27;left&#x27;</code> / <code style="color:#22d3bf">&#x27;right&#x27;</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

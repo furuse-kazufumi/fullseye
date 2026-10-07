@@ -2,28 +2,22 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">fscore — 3D <code style="color:#22d3bf">metrics</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fscore(a, b, tau)</code> (die Implementierung direkt: <code style="color:#22d3bf">import metrics3d; metrics3d.fscore(a, b, tau)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;fscore&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.fscore(...)</code> liefert **nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">measurement</code>** (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.fscore.raw(...)</code> oder rufe <code style="color:#22d3bf">metrics3d.fscore</code> direkt auf.</p>
+<p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.fscore(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">measurement</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.fscore.raw(...)</code> oder rufe <code style="color:#22d3bf">metrics3d.fscore</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(f, precision, recall) → F 値</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>F-Score @ tau = das harmonische Mittel aus Precision und Recall. → (f, precision, recall). Die Standardmetrik der Rekonstruktion.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Raises ValueError: どちらかが空 or (N,3) でない場合(accuracy/completeness 経由)。</p>
-<p>計算(`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> = 再構成/推定、</code><code style="color:#22d3bf">b</code>` = 参照/GT の慣習):</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">precision</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> の点のうち、</code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> への最近傍距離が </code><code style="color:#22d3bf">tau</code>` <b>未満</b></p>
-<p>(`<code style="color:#22d3bf">&lt; tau</code>`、等号は含まない)の割合。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">recall</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> の点のうち、</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> への最近傍距離が </code><code style="color:#22d3bf">tau</code>` 未満の割合。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">f = 2 p r / (p + r)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">p + r == 0</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">0.0</code>`(0 除算にしない)。</p>
-<p>引数: `<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">(N, 3)</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">(M, 3)</code>` 点群(対応不要、点数は異なってよい)。</p>
-<p>`<code style="color:#22d3bf">tau</code><code style="color:#22d3bf"> は距離閾値(座標と同じ単位、正の値を想定。</code><code style="color:#22d3bf">tau &lt;= 0</code>` だと距離 0 の点も</p>
-<p>`<code style="color:#22d3bf">&lt; tau</code>` にならず precision = recall = 0 になる。検査はしない)。</p>
-<p>返り値: `<code style="color:#22d3bf">(f, precision, recall)</code><code style="color:#22d3bf"> の 3 つの </code><code style="color:#22d3bf">float</code><code style="color:#22d3bf">、それぞれ </code><code style="color:#22d3bf">[0, 1]</code>`。</p>
-<p>1 が完全一致。</p>
-<p>注意: `<code style="color:#22d3bf">tau</code>` の選び方が結果を決める(voxel サイズ・スキャン分解能の 1〜2 倍が</p>
-<p>目安)。片方の雲だけ密だと precision と recall が乖離する — その非対称性を見る</p>
-<p>のがこの指標の価値で、1 数字で良ければ `<code style="color:#22d3bf">chamfer_distance</code>`。</p>
+<p>計算(<code style="color:#22d3bf">a</code> = 再構成/推定、<code style="color:#22d3bf">b</code> = 参照/GT の慣習):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">precision</code> = <code style="color:#22d3bf">a</code> の点のうち、<code style="color:#22d3bf">b</code> への最近傍距離が <code style="color:#22d3bf">tau</code> <b>未満</b> (<code style="color:#22d3bf">&lt; tau</code>、等号は含まない)の割合。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">recall</code> = <code style="color:#22d3bf">b</code> の点のうち、<code style="color:#22d3bf">a</code> への最近傍距離が <code style="color:#22d3bf">tau</code> 未満の割合。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f = 2 p r / (p + r)</code>、<code style="color:#22d3bf">p + r == 0</code> なら <code style="color:#22d3bf">0.0</code>(0 除算にしない)。</p>
+<p>引数: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は <code style="color:#22d3bf">(N, 3)</code> / <code style="color:#22d3bf">(M, 3)</code> 点群(対応不要、点数は異なってよい)。<code style="color:#22d3bf">tau</code> は距離閾値(座標と同じ単位、正の値を想定。<code style="color:#22d3bf">tau &lt;= 0</code> だと距離 0 の点も <code style="color:#22d3bf">&lt; tau</code> にならず precision = recall = 0 になる。検査はしない)。</p>
+<p>返り値: <code style="color:#22d3bf">(f, precision, recall)</code> の 3 つの <code style="color:#22d3bf">float</code>、それぞれ <code style="color:#22d3bf">[0, 1]</code>。1 が完全一致。</p>
+<p>注意: <code style="color:#22d3bf">tau</code> の選び方が結果を決める(voxel サイズ・スキャン分解能の 1〜2 倍が目安)。片方の雲だけ密だと precision と recall が乖離する — その非対称性を見るのがこの指標の価値で、1 数字で良ければ <code style="color:#22d3bf">chamfer_distance</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 計測の不確かさと校正の知識 — 「測れている」を主張するために</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Messunsicherheit und Kalibrierung — was nötig ist, um zu behaupten, dass man misst</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

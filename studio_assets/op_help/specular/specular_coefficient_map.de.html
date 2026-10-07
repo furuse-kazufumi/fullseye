@@ -5,22 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der skalare Grenzflächen-(Glanz-)Koeffizient des dichromatischen Modells. → (H, W).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The same decomposition as :func:<code style="color:#22d3bf">specular_diffuse_split</code>, returning the</p>
-<p>scalar `<code style="color:#22d3bf">m_s(x)</code><code style="color:#22d3bf"> instead of the coloured image </code><code style="color:#22d3bf">m_s(x) * G</code>`. That scalar</p>
-<p>is what an inspection routine thresholds: it is the amount of light the</p>
-<p>surface reflected *as a mirror does*, in the units of the input radiance,</p>
-<p>and it is zero wherever the surface behaved as a Lambertian body.</p>
-<p>`<code style="color:#22d3bf">specular_coefficient_map(...) * illuminant_unit</code>` equals the second return</p>
-<p>value of :func:<code style="color:#22d3bf">specular_diffuse_split</code> exactly, by construction — the two</p>
-<p>operators share one core.</p>
-<p>Arguments, guards and honest limits are identical to</p>
-<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> — including the fact that the two guards</p>
-<p>bound gross violations only.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: exactly the same conditions as</p>
-<p>:func:<code style="color:#22d3bf">specular_diffuse_split</code> (invalid image, invalid illuminant,</p>
-<p>identically zero image, body colour parallel to the illuminant, either</p>
-<p>guard firing, fewer than 3 pixels on the uniform-body route, invalid</p>
-<p>*body_rgb*).</p>
+<p>The same decomposition as <code style="color:#22d3bf">specular_diffuse_split</code>, returning the scalar <code style="color:#22d3bf">m_s(x)</code> instead of the coloured image <code style="color:#22d3bf">m_s(x) * G</code>. That scalar is what an inspection routine thresholds: it is the amount of light the surface reflected *as a mirror does*, in the units of the input radiance, and it is zero wherever the surface behaved as a Lambertian body.</p>
+<p><code style="color:#22d3bf">specular_coefficient_map(...) * illuminant_unit</code> equals the second return value of <code style="color:#22d3bf">specular_diffuse_split</code> exactly, by construction — the two operators share one core.</p>
+<p>Arguments, guards and honest limits are identical to <code style="color:#22d3bf">specular_diffuse_split</code> — including the fact that the two guards bound gross violations only.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: exactly the same conditions as <code style="color:#22d3bf">specular_diffuse_split</code> (invalid image, invalid illuminant, identically zero image, body colour parallel to the illuminant, either guard firing, fewer than 3 pixels on the uniform-body route, invalid *body_rgb*).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">Leitfaden zur Familie specular_photometric</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

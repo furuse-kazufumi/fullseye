@@ -3,13 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">normalmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_map_decode(rgb)</code> (to call the implementation directly, <code style="color:#22d3bf">import gfx2d; gfx2d.normal_map_decode(rgb)</code>; from the registry, <code style="color:#22d3bf">opsgfx2d.get(&quot;normal_map_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Tangent-space normal map `<code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">[0, 1]</code><code style="color:#22d3bf"> to unit vectors </code><code style="color:#22d3bf">(H, W, 3)</code>`.</p>
-<p>The usual encoding `<code style="color:#22d3bf">n = 2c - 1</code>` followed by normalisation. The result is</p>
-<p>the `<code style="color:#22d3bf">normalmap</code>` sort the rest of the library already speaks, so a decoded</p>
-<p>map can go straight into the 3-D normals family.</p>
-<p>Raises ValueError: a pixel whose decoded vector has zero length (the encoded</p>
-<p>colour was exactly mid-grey), because normalising it would silently invent a</p>
-<p>direction.</p>
+<p>Tangent-space normal map <code style="color:#22d3bf">rgb</code> in <code style="color:#22d3bf">[0, 1]</code> to unit vectors <code style="color:#22d3bf">(H, W, 3)</code>.</p>
+<p>The usual encoding <code style="color:#22d3bf">n = 2c - 1</code> followed by normalisation. The result is the <code style="color:#22d3bf">normalmap</code> sort the rest of the library already speaks, so a decoded map can go straight into the 3-D normals family.</p>
+<p>Raises ValueError: a pixel whose decoded vector has zero length (the encoded colour was exactly mid-grey), because normalising it would silently invent a direction.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

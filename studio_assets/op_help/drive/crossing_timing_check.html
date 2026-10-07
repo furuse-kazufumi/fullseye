@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivecrossing; drivecrossing.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;crossing_timing_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>踏切の 3 つの時刻(警報開始・遮断動作の終了・列車の到達)を解釈基準の標準と最小に照らす(配列 = 列車ごと)。</p>
-<p>警報→到達の 30 / 20 秒は解釈基準 5(3) の<b>踏切警報機</b>(遮断機なし)の値。遮断機のある踏切では 4(3)(5) の 2 つ</p>
-<p>(15 + 20 = 35 秒が標準)が効き、30 / 20 秒の側は自動的に満たされる。</p>
-<p>返り値: `<code style="color:#22d3bf">warn_to_closed</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">closed_to_arrival</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">warn_to_arrival</code><code style="color:#22d3bf">(各 [s])、</code><code style="color:#22d3bf">meets_minimum</code>`(3 つとも最小以上)、</p>
-<p>`<code style="color:#22d3bf">deviation</code><code style="color:#22d3bf">(標準からのずれ、3 つ)、</code><code style="color:#22d3bf">spread</code>`(列車ごとの警報開始→到達の最大 − 最小。解釈基準 5(4)「速度等により</p>
-<p>大きく異なるものでない」の量)。時刻の順が逆(遮断終了が警報より前など)は ValueError。</p>
+<p>警報→到達の 30 / 20 秒は解釈基準 5(3) の<b>踏切警報機</b>(遮断機なし)の値。遮断機のある踏切では 4(3)(5) の 2 つ(15 + 20 = 35 秒が標準)が効き、30 / 20 秒の側は自動的に満たされる。</p>
+<p>返り値: <code style="color:#22d3bf">warn_to_closed</code> / <code style="color:#22d3bf">closed_to_arrival</code> / <code style="color:#22d3bf">warn_to_arrival</code>(各 [s])、<code style="color:#22d3bf">meets_minimum</code>(3 つとも最小以上)、<code style="color:#22d3bf">deviation</code>(標準からのずれ、3 つ)、<code style="color:#22d3bf">spread</code>(列車ごとの警報開始→到達の最大 − 最小。解釈基準 5(4)「速度等により大きく異なるものでない」の量)。時刻の順が逆(遮断終了が警報より前など)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

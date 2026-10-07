@@ -6,26 +6,17 @@
 <p><img src="fig/r2_partition_rectangle.png" alt="r2_partition_rectangle: input → output"></p>
 <p>*Die Abbildung ist die tatsächliche Ausgabe auf einer synthetischen 128×128-Eingabe. Links Eingabe, rechts Ausgabe. Punktwolken als Draufsicht-Streudiagramm (Helligkeit = z), 1-D-Reihen als Linie, Volumen als Maximum-Projektion entlang z, Videos als mittleres Bild, komplexe Bilder als Betrag; Rückgabewerte, die kein Bild ergeben, werden als Werte gezeigt.*</p>
 <p><b>Regler a durchfahren</b> (0,1 / 0,5 / 0,9, der andere Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.a.jpg">r2_partition_rectangle: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.a.jpg">r2_partition_rectangle: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.chain.jpg">r2_partition_rectangle: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.chain.jpg">r2_partition_rectangle: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.inputs.jpg">r2_partition_rectangle: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.inputs.jpg">r2_partition_rectangle: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Teilt die Bounding Box der Region in ein NxN-Raster; behält die Zellen, die die Region schneiden.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>領域の外接軸並行矩形を `<code style="color:#22d3bf">N x N</code>` の格子に等分し、領域と 1 画素でも重なる</p>
-<p>セルを丸ごと 1.0 で塗ったマスクを返す。`<code style="color:#22d3bf">N = 2 + int(a*4)</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">a=0</code>` → 2、</p>
-<p>`<code style="color:#22d3bf">a=1</code><code style="color:#22d3bf"> → 6 分割(</code><code style="color:#22d3bf">a</code>` は [0,1] に clip)。セル境界は</p>
-<p>`<code style="color:#22d3bf">numpy.linspace(top, bottom+1, N+1)</code>` を整数化したもので、bbox がセル数より</p>
-<p>小さいと幅 0 のセルが生じ、そのセルはスキップされる。`<code style="color:#22d3bf">b</code>` は未使用。</p>
-<p>返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。出力は「領域を</p>
-<p>覆うセルの和」なので入力領域を必ず含み、bbox の外は塗られない。中身が凸で</p>
-<p>bbox いっぱいに詰まった領域では全セルが該当し、`<code style="color:#22d3bf">a</code>` を変えても出力は bbox</p>
-<p>そのものになる。孔や凹みが大きい領域で初めて格子の粗さが見える。用途は</p>
-<p>粗いタイル分割(局所処理の窓決め)や占有パターンの粗視化。隣接セルは</p>
-<p>つながって 1 つの塊になるため、セル単位で分けて扱う用途には向かない。</p>
+<p>領域の外接軸並行矩形を <code style="color:#22d3bf">N x N</code> の格子に等分し、領域と 1 画素でも重なるセルを丸ごと 1.0 で塗ったマスクを返す。<code style="color:#22d3bf">N = 2 + int(a*4)</code> で <code style="color:#22d3bf">a=0</code> → 2、<code style="color:#22d3bf">a=1</code> → 6 分割(<code style="color:#22d3bf">a</code> は [0,1] に clip)。セル境界は <code style="color:#22d3bf">numpy.linspace(top, bottom+1, N+1)</code> を整数化したもので、bbox がセル数より小さいと幅 0 のセルが生じ、そのセルはスキップされる。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。出力は「領域を覆うセルの和」なので入力領域を必ず含み、bbox の外は塗られない。中身が凸で bbox いっぱいに詰まった領域では全セルが該当し、<code style="color:#22d3bf">a</code> を変えても出力は bbox そのものになる。孔や凹みが大きい領域で初めて格子の粗さが見える。用途は粗いタイル分割(局所処理の窓決め)や占有パターンの粗視化。隣接セルはつながって 1 つの塊になるため、セル単位で分けて扱う用途には向かない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
@@ -35,7 +26,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
-r2_partition_rectangle 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ar2_partition_rectangle%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ar2_partition_rectangle%200.50%200.50">Load &amp; run</a></p>
+r2_partition_rectangle 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ar2_partition_rectangle%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ar2_partition_rectangle%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_region">gallery2d_region</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_region.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">region</code> als Eingabe)</h3>

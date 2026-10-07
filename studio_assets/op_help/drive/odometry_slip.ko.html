@@ -4,11 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roverslip; roverslip.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;odometry_slip&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>視覚オドメトリの位置の列と車輪の累積回転角から、実際の滑り率 `<code style="color:#22d3bf">s = 1 − Δx / (r Δφ)</code>`。</p>
-<p>`<code style="color:#22d3bf">position</code><code style="color:#22d3bf"> は (T,) の進んだ距離か (T, 2) の平面の位置 [m]、</code><code style="color:#22d3bf">wheel_angle</code>` は (T,) の車輪の累積回転角 [rad]、</p>
-<p>`<code style="color:#22d3bf">radius</code><code style="color:#22d3bf"> = r [m]。</code><code style="color:#22d3bf">window</code>` 個ぶんの区間でまとめて割る(短い区間は雑音を拾う)。車輪がほとんど回らない</p>
-<p>区間(`<code style="color:#22d3bf">r Δφ</code><code style="color:#22d3bf"> が全体の中央値の 1 % 未満)は nan。返り値 </code>`{&quot;slip&quot;: (T − window,), &quot;slip_total&quot;: 全区間の 1 個,</p>
-<p>&quot;distance&quot;: 区間ごとの車体の移動 [m], &quot;wheel_travel&quot;: 区間ごとの r Δφ [m]}``。</p>
+<p>視覚オドメトリの位置の列と車輪の累積回転角から、実際の滑り率 <code style="color:#22d3bf">s = 1 − Δx / (r Δφ)</code>。</p>
+<p><code style="color:#22d3bf">position</code> は (T,) の進んだ距離か (T, 2) の平面の位置 [m]、<code style="color:#22d3bf">wheel_angle</code> は (T,) の車輪の累積回転角 [rad]、<code style="color:#22d3bf">radius</code> = r [m]。<code style="color:#22d3bf">window</code> 個ぶんの区間でまとめて割る(短い区間は雑音を拾う)。車輪がほとんど回らない区間(<code style="color:#22d3bf">r Δφ</code> が全体の中央値の 1 % 未満)は nan。返り値 <code style="color:#22d3bf">{&quot;slip&quot;: (T − window,), &quot;slip_total&quot;: 全区間の 1 個, &quot;distance&quot;: 区間ごとの車体の移動 [m], &quot;wheel_travel&quot;: 区間ごとの r Δφ [m]}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

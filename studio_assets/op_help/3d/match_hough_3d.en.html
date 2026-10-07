@@ -2,28 +2,22 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">match_hough_3d — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_hough_3d(scene, template, device=&#x27;cpu&#x27;, ndir=26, mc=0.05, topk=1, nms=3, subvoxel=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.match_hough_3d(scene, template, device=&#x27;cpu&#x27;, ndir=26, mc=0.05, topk=1, nms=3, subvoxel=True)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;match_hough_3d&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.match_hough_3d(...)</code> returns **only the declared out type <code style="color:#22d3bf">position</code>** (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.match_hough_3d.raw(...)</code> or call <code style="color:#22d3bf">match3d.match_hough_3d</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.match_hough_3d(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">position</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.match_hough_3d.raw(...)</code> or call <code style="color:#22d3bf">match3d.match_hough_3d</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Generalized Hough 3-D (Ballard R-table voting). The voxel × Hough column.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>GHT を <b>向きビンごとの相関の総和</b> として GPU ネイティブに定式化:</p>
-<p>accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin )。各エッジが勾配方向に応じて投票し、</p>
-<p>欠けたエッジはピークを下げるだけ(<b>遮蔽・クラッタに頑健</b>)。shape-based(連続内積の単一解)</p>
-<p>と違い <b>投票 accumulator を返し、NMS で複数ピーク = 複数インスタンス</b> を取れるのが差別化。</p>
-<p>返り値 (topk,4) の [votes, d, h, w] (votes 降順)。</p>
-<p>手順: 両 volume の単位勾配(`<code style="color:#22d3bf">mc</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">sobel3d</code><code style="color:#22d3bf"> の生出力への閾値)を </code><code style="color:#22d3bf">ndir</code>` 本の参照方向の</p>
-<p>うち最も近いものに量子化し、方向ビンごとに「scene のそのビンの 2 値場 ⋆ テンプレのそのビンの</p>
-<p>2 値場」を conv3d で足し合わせる。テンプレの有効エッジ数で割るので votes は <b>[0, 1]</b>、1 で</p>
-<p>全エッジが一致。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ndir</code><code style="color:#22d3bf">: 26 以下は 26 近傍方向のリストの先頭 </code><code style="color:#22d3bf">ndir</code>` 本(26 未満は方向が偏る)、27 以上は</p>
+<p>accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin )。各エッジが勾配方向に応じて投票し、欠けたエッジはピークを下げるだけ(<b>遮蔽・クラッタに頑健</b>)。shape-based(連続内積の単一解) と違い <b>投票 accumulator を返し、NMS で複数ピーク = 複数インスタンス</b> を取れるのが差別化。返り値 (topk,4) の [votes, d, h, w] (votes 降順)。</p>
+<p>手順: 両 volume の単位勾配(<code style="color:#22d3bf">mc</code> は <code style="color:#22d3bf">sobel3d</code> の生出力への閾値)を <code style="color:#22d3bf">ndir</code> 本の参照方向のうち最も近いものに量子化し、方向ビンごとに「scene のそのビンの 2 値場 ⋆ テンプレのそのビンの 2 値場」を conv3d で足し合わせる。テンプレの有効エッジ数で割るので votes は <b>[0, 1]</b>、1 で全エッジが一致。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ndir</code>: 26 以下は 26 近傍方向のリストの先頭 <code style="color:#22d3bf">ndir</code> 本(26 未満は方向が偏る)、27 以上は</p>
 <p>fibonacci 球で一様。方向が粗いほど回転に寛容だが偽ピークも増える。</p>
-<p style="margin:2px 0 2px 12px">• 返り値 `<code style="color:#22d3bf">(topk, 4)</code><code style="color:#22d3bf"> の各行 </code><code style="color:#22d3bf">[votes, z, y, x]</code>`、votes 降順。座標は <b>テンプレ中心 (T//2)</b></p>
-<p>の scene 座標、`<code style="color:#22d3bf">subvoxel=True</code>` なら ±2 近傍重心。</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">nms</code><code style="color:#22d3bf">: ピークを取るたびに </code><code style="color:#22d3bf">±nms</code>` voxel の立方体を −1 で潰してから次を探す。近接する</p>
-<p>複数インスタンスは `<code style="color:#22d3bf">nms</code>` を小さく。</p>
-<p style="margin:2px 0 2px 12px">• テンプレにエッジが無ければ全 0 の `<code style="color:#22d3bf">(topk,4)</code>`。テンプレが完全に収まらない位置は 0。</p>
-<p>後段: 各ピークを `<code style="color:#22d3bf">refine_translation_lk</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">refine_peak_newton</code>` で精緻化。</p>
+<p style="margin:2px 0 2px 12px">• 返り値 <code style="color:#22d3bf">(topk, 4)</code> の各行 <code style="color:#22d3bf">[votes, z, y, x]</code>、votes 降順。座標は <b>テンプレ中心 (T//2)</b></p>
+<p>の scene 座標、<code style="color:#22d3bf">subvoxel=True</code> なら ±2 近傍重心。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms</code>: ピークを取るたびに <code style="color:#22d3bf">±nms</code> voxel の立方体を −1 で潰してから次を探す。近接する</p>
+<p>複数インスタンスは <code style="color:#22d3bf">nms</code> を小さく。</p>
+<p style="margin:2px 0 2px 12px">• テンプレにエッジが無ければ全 0 の <code style="color:#22d3bf">(topk,4)</code>。テンプレが完全に収まらない位置は 0。</p>
+<p>後段: 各ピークを <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_peak_newton</code> で精緻化。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

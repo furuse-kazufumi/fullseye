@@ -5,18 +5,14 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>1-D の回折プロファイルから山を拾い、ガウス + 直線の局所の当てはめで位置・高さ・FWHM・面積を出す。</p>
-<p>手順: 窓 `<code style="color:#22d3bf">baseline_window</code>` [deg] (既定 = 範囲の 4 %)の転がり最小 → 転がり平均で背景を作り、背景を引いた値の</p>
-<p>局所の最大のうち `<code style="color:#22d3bf">min_snr</code><code style="color:#22d3bf"> × 雑音を超えるものを候補にする(雑音は間隔 1〜8 の差分の MAD の最大から。</code><code style="color:#22d3bf">noise</code>` に</p>
-<p>数か、:func:<code style="color:#22d3bf">azimuthal_integrate</code> の `<code style="color:#22d3bf">sigma</code>` のようなビンごとの配列を渡してもよい —— 中心の近くや隅のように画素の</p>
-<p>少ないビンの揺れを山と取り違えないためには配列が要る)。各候補の半値幅を目で測る代わりに半値の交点で見積もり、隣の候補との中点で切った窓でガウス + 直線を</p>
-<p>`<code style="color:#22d3bf">scipy.optimize.least_squares</code><code style="color:#22d3bf"> で当てる。重なった山は窓が切られるぶん偏る(分けたいなら :func:</code>phase_fractions`)。</p>
-<p>返り値(dict): `<code style="color:#22d3bf">two_theta</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">height</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">fwhm</code><code style="color:#22d3bf"> [deg]・</code><code style="color:#22d3bf">area</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">snr</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">fit_ok</code>`(当てはめが収束し窓の中に</p>
-<p>収まったか)、`<code style="color:#22d3bf">noise</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">baseline</code>`(格子と同じ長さ)。山が無ければ長さ 0 の配列(空 = 失敗ではない)。</p>
-<p>Raises ValueError: 長さの不一致・非有限・2θ が増えない、`<code style="color:#22d3bf">min_snr &lt;= 0</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>手順: 窓 <code style="color:#22d3bf">baseline_window</code> [deg] (既定 = 範囲の 4 %)の転がり最小 → 転がり平均で背景を作り、背景を引いた値の局所の最大のうち <code style="color:#22d3bf">min_snr</code> × 雑音を超えるものを候補にする(雑音は間隔 1〜8 の差分の MAD の最大から。<code style="color:#22d3bf">noise</code> に</p>
+<p>数か、<code style="color:#22d3bf">azimuthal_integrate</code> の <code style="color:#22d3bf">sigma</code> のようなビンごとの配列を渡してもよい —— 中心の近くや隅のように画素の少ないビンの揺れを山と取り違えないためには配列が要る)。各候補の半値幅を目で測る代わりに半値の交点で見積もり、隣の候補との中点で切った窓でガウス + 直線を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で当てる。重なった山は窓が切られるぶん偏る(分けたいなら <code style="color:#22d3bf">phase_fractions</code>)。</p>
+<p>返り値(dict): <code style="color:#22d3bf">two_theta</code>・<code style="color:#22d3bf">height</code>・<code style="color:#22d3bf">fwhm</code> [deg]・<code style="color:#22d3bf">area</code>・<code style="color:#22d3bf">snr</code>・<code style="color:#22d3bf">fit_ok</code>(当てはめが収束し窓の中に収まったか)、<code style="color:#22d3bf">noise</code>、<code style="color:#22d3bf">baseline</code>(格子と同じ長さ)。山が無ければ長さ 0 の配列(空 = 失敗ではない)。</p>
+<p>Raises ValueError: 長さの不一致・非有限・2θ が増えない、<code style="color:#22d3bf">min_snr &lt;= 0</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pxrd_phase_peel">poc_pxrd_phase_peel</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pxrd_phase_peel.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

@@ -3,10 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveenv; driveenv.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;sun_illuminance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>晴天(雲量 `<code style="color:#22d3bf">cloud</code><code style="color:#22d3bf"> ∈ [0, 1])の太陽の照度 [lx]: </code><code style="color:#22d3bf">direct_normal</code><code style="color:#22d3bf">(太陽に正対する面)・</code><code style="color:#22d3bf">diffuse</code><code style="color:#22d3bf">(水平面の散乱)・</code><code style="color:#22d3bf">air_mass</code>`。</p>
-<p>直達 = 1361 W/m² × 0.7^{AM^0.678}(Meinel)× 105 lm/W × (1 − cloud)、AM = Kasten &amp; Young 1989</p>
-<p>1 / (sin h + 0.50572 (h + 6.07995°)^{−1.6364})。散乱 = 薄明の表(高度 ≤ 0)/ 400 + 16000 sin h(高度 &gt; 0)に</p>
-<p>雲で (1 + 0.5 cloud) を掛ける —— 仮定(モジュールの docstring)。</p>
+<p>晴天(雲量 <code style="color:#22d3bf">cloud</code> ∈ [0, 1])の太陽の照度 [lx]: <code style="color:#22d3bf">direct_normal</code>(太陽に正対する面)・<code style="color:#22d3bf">diffuse</code>(水平面の散乱)・<code style="color:#22d3bf">air_mass</code>。</p>
+<p>直達 = 1361 W/m² × 0.7^{AM^0.678}(Meinel)× 105 lm/W × (1 − cloud)、AM = Kasten &amp; Young 1989 1 / (sin h + 0.50572 (h + 6.07995°)^{−1.6364})。散乱 = 薄明の表(高度 ≤ 0)/ 400 + 16000 sin h(高度 &gt; 0)に雲で (1 + 0.5 cloud) を掛ける —— 仮定(モジュールの docstring)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

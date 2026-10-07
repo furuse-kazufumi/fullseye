@@ -4,24 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.turn_maneuver_check(trajectory: &#x27;dict&#x27;, *, kind: &#x27;str&#x27;, x_entry: &#x27;float&#x27;, edge_y: &#x27;float&#x27;, center_y: &#x27;float&#x27; = 0.0, corner_center=None, corner_radius: &#x27;float&#x27; = 0.0, intersection_center=None, approach: &#x27;float&#x27; = 30.0, keep_tol: &#x27;float&#x27; = 0.5, side_tol: &#x27;float&#x27; = 1.5, inside_tol: &#x27;float&#x27; = 3.0, jokou: &#x27;float&#x27; = 2.7777777777777777, clearance: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.turn_maneuver_check(trajectory: &#x27;dict&#x27;, *, kind: &#x27;str&#x27;, x_entry: &#x27;float&#x27;, edge_y: &#x27;float&#x27;, center_y: &#x27;float&#x27; = 0.0, corner_center=None, corner_radius: &#x27;float&#x27; = 0.0, intersection_center=None, approach: &#x27;float&#x27; = 30.0, keep_tol: &#x27;float&#x27; = 0.5, side_tol: &#x27;float&#x27; = 1.5, inside_tol: &#x27;float&#x27; = 3.0, jokou: &#x27;float&#x27; = 2.7777777777777777, clearance: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;turn_maneuver_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>左折・右折の通り方の判定(道交法 34 条 1・2 項 / 教則 5-7-2)。数値の幅はすべて仮定(`<code style="color:#22d3bf">SOURCES</code>`)。</p>
-<p>道は +x へ進む(左 = +y)。車道の左端 y = `<code style="color:#22d3bf">edge_y</code><code style="color:#22d3bf">、中央線 y = </code><code style="color:#22d3bf">center_y</code><code style="color:#22d3bf">、交差点の手前の縁 x = </code><code style="color:#22d3bf">x_entry</code>`。</p>
-<p>`<code style="color:#22d3bf">trajectory</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">t</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">front</code><code style="color:#22d3bf"> (N, 2)(前車軸の中心)、</code><code style="color:#22d3bf">rear</code><code style="color:#22d3bf"> (N, 2)(後車軸の中心)、</code><code style="color:#22d3bf">speed</code><code style="color:#22d3bf"> (N,)、</code><code style="color:#22d3bf">width</code>`(車幅)、</p>
-<p>`<code style="color:#22d3bf">track</code><code style="color:#22d3bf">(輪距)、</code><code style="color:#22d3bf">front_overhang</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rear_overhang</code>`(車軸から車体の端まで)。</p>
+<p>左折・右折の通り方の判定(道交法 34 条 1・2 項 / 教則 5-7-2)。数値の幅はすべて仮定(<code style="color:#22d3bf">SOURCES</code>)。</p>
+<p>道は +x へ進む(左 = +y)。車道の左端 y = <code style="color:#22d3bf">edge_y</code>、中央線 y = <code style="color:#22d3bf">center_y</code>、交差点の手前の縁 x = <code style="color:#22d3bf">x_entry</code>。<code style="color:#22d3bf">trajectory</code>: <code style="color:#22d3bf">t</code>, <code style="color:#22d3bf">front</code> (N, 2)(前車軸の中心)、<code style="color:#22d3bf">rear</code> (N, 2)(後車軸の中心)、<code style="color:#22d3bf">speed</code> (N,)、<code style="color:#22d3bf">width</code>(車幅)、<code style="color:#22d3bf">track</code>(輪距)、<code style="color:#22d3bf">front_overhang</code>・<code style="color:#22d3bf">rear_overhang</code>(車軸から車体の端まで)。</p>
 <p>判定:</p>
-<p style="margin:2px 0 2px 12px">• 寄る(あらかじめ): x_entry − approach ≤ 前端 &lt; x_entry の間、左折は車体の左側と左端の距離が [0, keep_tol]</p>
-<p>(0 未満 = 路肩・路側帯へはみ出す)、右折は車体の右側と中央線の距離が [0, keep_tol] (0 未満 = 中央線をまたぐ)。</p>
-<p style="margin:2px 0 2px 12px">• 徐行: 前端が x_entry を越えてから曲がり終える(向きが ±80° を超える)までの速さ ≤ `<code style="color:#22d3bf">jokou</code>`。</p>
-<p style="margin:2px 0 2px 12px">• 左折の「側端に沿って」: 曲がる間(向き 10°〜80°)の後輪の内側と隅切りの円(中心 `<code style="color:#22d3bf">corner_center</code>`・半径</p>
-<p>`<code style="color:#22d3bf">corner_radius</code><code style="color:#22d3bf">)の距離が [</code><code style="color:#22d3bf">clearance</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">side_tol</code>`]。clearance を下回る = 内輪差で隅の人・自転車の場所に入る。</p>
-<p style="margin:2px 0 2px 12px">• 右折の「交差点の中心のすぐ内側」: 前車軸の中心の軌跡が交差点の中心 `<code style="color:#22d3bf">intersection_center</code>` を **右(旋回の内側)に</p>
-<p>見ずに** 通り(中心が軌跡の外側 = 左)、最も近いときの距離 ≤ `<code style="color:#22d3bf">inside_tol</code>`。</p>
-<p>返り値: `<code style="color:#22d3bf">ok</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">violations</code><code style="color:#22d3bf">(理由の文字列のリスト)、</code><code style="color:#22d3bf">metrics</code>`(dict)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: kind が &quot;left&quot; / &quot;right&quot; 以外、必要な値の欠け、形の誤り。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 寄る(あらかじめ): x_entry − approach ≤ 前端 &lt; x_entry の間、左折は車体の左側と左端の距離が [0, keep_tol] (0 未満 = 路肩・路側帯へはみ出す)、右折は車体の右側と中央線の距離が [0, keep_tol] (0 未満 = 中央線をまたぐ)。</p>
+<p style="margin:2px 0 2px 12px">• 徐行: 前端が x_entry を越えてから曲がり終える(向きが ±80° を超える)までの速さ ≤ <code style="color:#22d3bf">jokou</code>。</p>
+<p style="margin:2px 0 2px 12px">• 左折の「側端に沿って」: 曲がる間(向き 10°〜80°)の後輪の内側と隅切りの円(中心 <code style="color:#22d3bf">corner_center</code>・半径 <code style="color:#22d3bf">corner_radius</code>)の距離が [<code style="color:#22d3bf">clearance</code>, <code style="color:#22d3bf">side_tol</code>]。clearance を下回る = 内輪差で隅の人・自転車の場所に入る。</p>
+<p style="margin:2px 0 2px 12px">• 右折の「交差点の中心のすぐ内側」: 前車軸の中心の軌跡が交差点の中心 <code style="color:#22d3bf">intersection_center</code> を <b>右(旋回の内側)に見ずに</b> 通り(中心が軌跡の外側 = 左)、最も近いときの距離 ≤ <code style="color:#22d3bf">inside_tol</code>。</p>
+<p>返り値: <code style="color:#22d3bf">ok</code>, <code style="color:#22d3bf">violations</code>(理由の文字列のリスト)、<code style="color:#22d3bf">metrics</code>(dict)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: kind が &quot;left&quot; / &quot;right&quot; 以外、必要な値の欠け、形の誤り。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_lateral">poc_driving_lateral</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_lateral.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>

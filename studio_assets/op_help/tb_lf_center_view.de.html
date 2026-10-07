@@ -7,31 +7,25 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p><b>Stufen</b> (die vorangehenden Ops → dieser Op, von links nach rechts):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_center_view.chain.jpg">tb_lf_center_view: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_center_view.chain.jpg">tb_lf_center_view: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p><b>Auf anderen Bildern</b> (synthetische Szene / Foto / Münzen. Obere Reihe: Eingaben, untere Reihe: deren Ausgaben. Regler auf Standard):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_center_view.inputs.jpg">tb_lf_center_view: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_lf_center_view.inputs.jpg">tb_lf_center_view: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der zentrale Blickpunkt — das gewöhnliche 2-D-Bild, das eine plenoptische Kamera ebenfalls liefert.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>For odd `<code style="color:#22d3bf">V</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">U</code>` the centre is a single view and both modes return it</p>
-<p>exactly. For an <b>even</b> axis the centre falls *between* two views, and this</p>
-<p>operator does not pretend otherwise:</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mode=&quot;average&quot;</code>` (default) returns the mean of the 2 (or 4) views</p>
-<p>straddling the centre — the correctly-centred estimate for a Lambertian</p>
-<p>scene, at the cost of a slight blur proportional to the disparity.</p>
-<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">mode=&quot;nearest&quot;</code><code style="color:#22d3bf"> returns the single view at </code><code style="color:#22d3bf">floor((N-1)/2)</code>`, which</p>
-<p>is sharp but sits half an angular step off centre; every disparity</p>
-<p>measured against it carries that half-step bias.</p>
-<p>Returns a `<code style="color:#22d3bf">(H, W)</code>` 2-D image.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *lf* not a valid light field, unknown *mode*.</p>
-<p>Typed bridge of the lightfield op `<code style="color:#22d3bf">lf_center_view</code><code style="color:#22d3bf"> into the 2-D evolution registry: the same implementation, called under the </code><code style="color:#22d3bf">op(v, a, b)</code><code style="color:#22d3bf"> convention. This op has no tunable parameter; </code><code style="color:#22d3bf">a</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">b</code>` are unused.</p>
+<p>For odd <code style="color:#22d3bf">V</code> and <code style="color:#22d3bf">U</code> the centre is a single view and both modes return it exactly. For an <b>even</b> axis the centre falls *between* two views, and this operator does not pretend otherwise:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mode=&quot;average&quot;</code> (default) returns the mean of the 2 (or 4) views straddling the centre — the correctly-centred estimate for a Lambertian scene, at the cost of a slight blur proportional to the disparity.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mode=&quot;nearest&quot;</code> returns the single view at <code style="color:#22d3bf">floor((N-1)/2)</code>, which is sharp but sits half an angular step off centre; every disparity measured against it carries that half-step bias.</p>
+<p>Returns a <code style="color:#22d3bf">(H, W)</code> 2-D image.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not a valid light field, unknown *mode*.</p>
+<p>Typed bridge of the lightfield op <code style="color:#22d3bf">lf_center_view</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">In Studio ausprobieren</h3>
 <p>Das Programm unten ist nachweislich lauffähig (gleiche Eingabe wie die Abbildung). In der Studio-Hilfe wird dieser Block zu Schaltflächen, die es sofort laden und ausführen.</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_lightfield 0.50 0.50
-tb_lf_center_view 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_lightfield%200.50%200.50%0Atb_lf_center_view%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_lightfield%200.50%200.50%0Atb_lf_center_view%200.50%200.50">Load &amp; run</a></p>
+tb_lf_center_view 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_lightfield%200.50%200.50%0Atb_lf_center_view%200.50%200.50">▸ Diese Pipeline laden</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_lightfield%200.50%200.50%0Atb_lf_center_view%200.50%200.50">Laden &amp; ausführen</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
 <p>Die folgenden Beispiele rufen den zugrunde liegenden Ledger-Op <code style="color:#22d3bf">lf_center_view</code> auf. Dieser Brücken-Op ist dieselbe Implementierung, angepasst an die Konvention <code style="color:#22d3bf">fn(v, a, b)</code>; das Verhalten gilt unverändert (nur die Aufrufform unterscheidet sich).</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>

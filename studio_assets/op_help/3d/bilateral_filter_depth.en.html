@@ -5,13 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A bilateral filter for depth images (edge-preserving denoising). → float64 (H,W).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>range 重みは深度自身の差で作る。無効画素(非有限 or sentinel=invalid)は近傍として寄与せず、</p>
-<p>中心が無効なら元値のまま(穴埋めは :func:<code style="color:#22d3bf">fill_holes</code> の役目)。spatial_sigma は画素単位、</p>
-<p>range_sigma は深度値の単位(段差 &gt; range_sigma なら段差を跨がず、ノイズ std &lt; range_sigma</p>
-<p>ならノイズを平滑する)。truncate=3 でガウス窓半径 = ceil(3*spatial_sigma)。</p>
+<p>range 重みは深度自身の差で作る。無効画素(非有限 or sentinel=invalid)は近傍として寄与せず、中心が無効なら元値のまま(穴埋めは <code style="color:#22d3bf">fill_holes</code> の役目)。spatial_sigma は画素単位、range_sigma は深度値の単位(段差 &gt; range_sigma なら段差を跨がず、ノイズ std &lt; range_sigma ならノイズを平滑する)。truncate=3 でガウス窓半径 = ceil(3*spatial_sigma)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

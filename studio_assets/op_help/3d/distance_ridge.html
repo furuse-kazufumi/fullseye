@@ -2,17 +2,15 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">distance_ridge — 3D <code style="color:#22d3bf">medial</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_ridge(vol, min_radius=0.0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import medial; medial.distance_ridge(vol, min_radius=0.0)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;distance_ridge&quot;)</code>)</p>
-<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.distance_ridge(...)</code> は**宣言 out 型 <code style="color:#22d3bf">voxel</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.distance_ridge.raw(...)</code>、または <code style="color:#22d3bf">medial.distance_ridge</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.distance_ridge(...)</code> は<b>宣言 out 型 <code style="color:#22d3bf">voxel</code> の値だけ</b>を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.distance_ridge.raw(...)</code>、または <code style="color:#22d3bf">medial.distance_ridge</code> を直接呼ぶ。</p>
 <p style="margin:2px 0 2px 12px">• 本体の返り: <code style="color:#22d3bf">(ridge, dist)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。</p>
-<p>各前景 voxel の EDT を計算し、<b>26 近傍の局所極大</b>(自分の EDT が周囲 26 voxel の最大以上)を</p>
-<p>medial とみなす。この基準は物体の局所次元に応じて自然に次元を出し分ける:</p>
+<p>各前景 voxel の EDT を計算し、<b>26 近傍の局所極大</b>(自分の EDT が周囲 26 voxel の最大以上)を medial とみなす。この基準は物体の局所次元に応じて自然に次元を出し分ける:</p>
 <p>塊(球)  -&gt; EDT が単峰 -&gt; 点状の medial(中心 1 点)。</p>
 <p>管(円柱)-&gt; 軸方向に平坦・半径方向に単峰 -&gt; 線状の medial(軸線)。</p>
 <p>板(スラブ)-&gt; 面内で平坦・厚み方向に単峰 -&gt; 面状の medial(中心面)。</p>
-<p>境界 voxel は内側の隣が必ず大きいため極大にならず、外殻は自然に除かれる。平坦な尾根</p>
-<p>(軸/面)は同値の隣接を許容(&gt;=)することで連続した線/面として残る。</p>
+<p>境界 voxel は内側の隣が必ず大きいため極大にならず、外殻は自然に除かれる。平坦な尾根(軸/面)は同値の隣接を許容(&gt;=)することで連続した線/面として残る。</p>
 <p>Args:</p>
 <p>vol: バイナリ voxel(bool / 0-1 の 3D)。</p>
 <p>min_radius: この EDT 値以下の弱い尾根を捨てる閾値(既定 0 = 捨てない)。ノイズ抑制用。</p>

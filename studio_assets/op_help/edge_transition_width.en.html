@@ -14,24 +14,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p><b>エッジの遷移幅</b>(= その場の実効 PSF の広がり)を画素単位で測る。</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> が測定窓の一辺を </code><code style="color:#22d3bf">3,5,7,9</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">_k(a)</code><code style="color:#22d3bf">)に振る。</code><code style="color:#22d3bf">b</code>` が振幅と勾配の推定量を</p>
-<p>選ぶ: `<code style="color:#22d3bf">b &lt;= 0.5</code>` は窓内の<b>最大 − 最小</b>(素直・鋭いが外れ値に弱い)、</p>
-<p>`<code style="color:#22d3bf">b &gt; 0.5</code><code style="color:#22d3bf"> は**分位点**で、</code><code style="color:#22d3bf">b</code>` を上げるほど分位が 90/10 から 60/40 へ寄って</p>
-<p>雑音に鈍くなる(そのぶん段差も丸まる = 取引になっている)。</p>
-<p>幅 ≒ 局所の振幅 ÷ 局所の最大勾配。段差が 1 画素で立ち上がれば幅は 1 付近、</p>
-<p>ぼけて 5 画素かけて立ち上がれば 5 付近になる。ぼけを<b>作る</b> `<code style="color:#22d3bf">simulate_defocus</code>`</p>
-<p>の対で、こちらは<b>測る</b>側。合焦判定・モーションブラー量・解像限界・</p>
-<p>文字が読める大きさかの判定に使える。</p>
-<p><b>窓が遷移より狭いと過小評価になる</b>(窓の中に振幅の全部が入らないため)。</p>
-<p>出力が 0.7 を超えたら `<code style="color:#22d3bf">a</code>` を上げて測り直すのが実用則。</p>
-<p><b>正規化は画像ごとではない</b>(窓の一辺という定数で割るだけ)ので、**値は画像間で</p>
-<p>比較できる<b>。出力 1.0 は「遷移幅が窓と同じ = 窓より広いかもしれず</b>測り切れていない**」</p>
-<p>の意味で、`<code style="color:#22d3bf">a</code>` を上げて測り直す合図。平坦部やエッジの無い場所は 0。</p>
-<p>★<b>空フレームでは全 0 を返す</b>(「端が無い」)。床を画像自身の振幅に対する相対量</p>
-<p>だけで置くと、一様な画像では基準まで丸め屑になり、屑どうしの比が構造に化ける ——</p>
-<p>実測で 0.5 一色に 1e-12 の雑音を乗せただけの画像が幅 3.49(= 窓の半分)を返した。</p>
-<p><b>振幅そのものが絶対床 1e-6 に届かない画像には端が無い</b>と言い切る。</p>
-<p>端の扱いは `<code style="color:#22d3bf">scipy.ndimage</code><code style="color:#22d3bf"> の既定 </code><code style="color:#22d3bf">reflect</code>`。内部で 8 bit に落とす処理は無い。</p>
+<p><code style="color:#22d3bf">a</code> が測定窓の一辺を <code style="color:#22d3bf">3,5,7,9</code>(<code style="color:#22d3bf">_k(a)</code>)に振る。<code style="color:#22d3bf">b</code> が振幅と勾配の推定量を</p>
+<p>選ぶ: <code style="color:#22d3bf">b &lt;= 0.5</code> は窓内の<b>最大 − 最小</b>(素直・鋭いが外れ値に弱い)、<code style="color:#22d3bf">b &gt; 0.5</code> は<b>分位点</b>で、<code style="color:#22d3bf">b</code> を上げるほど分位が 90/10 から 60/40 へ寄って雑音に鈍くなる(そのぶん段差も丸まる = 取引になっている)。</p>
+<p>幅 ≒ 局所の振幅 ÷ 局所の最大勾配。段差が 1 画素で立ち上がれば幅は 1 付近、ぼけて 5 画素かけて立ち上がれば 5 付近になる。ぼけを<b>作る</b> <code style="color:#22d3bf">simulate_defocus</code> の対で、こちらは<b>測る</b>側。合焦判定・モーションブラー量・解像限界・文字が読める大きさかの判定に使える。</p>
+<p><b>窓が遷移より狭いと過小評価になる</b>(窓の中に振幅の全部が入らないため)。出力が 0.7 を超えたら <code style="color:#22d3bf">a</code> を上げて測り直すのが実用則。</p>
+<p><b>正規化は画像ごとではない</b>(窓の一辺という定数で割るだけ)ので、<b>値は画像間で比較できる</b>。出力 1.0 は「遷移幅が窓と同じ = 窓より広いかもしれず<b>測り切れていない</b>」の意味で、<code style="color:#22d3bf">a</code> を上げて測り直す合図。平坦部やエッジの無い場所は 0。</p>
+<p>★<b>空フレームでは全 0 を返す</b>(「端が無い」)。床を画像自身の振幅に対する相対量だけで置くと、一様な画像では基準まで丸め屑になり、屑どうしの比が構造に化ける —— 実測で 0.5 一色に 1e-12 の雑音を乗せただけの画像が幅 3.49(= 窓の半分)を返した。<b>振幅そのものが絶対床 1e-6 に届かない画像には端が無い</b>と言い切る。端の扱いは <code style="color:#22d3bf">scipy.ndimage</code> の既定 <code style="color:#22d3bf">reflect</code>。内部で 8 bit に落とす処理は無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

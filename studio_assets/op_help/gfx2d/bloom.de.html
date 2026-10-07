@@ -5,19 +5,10 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lässt die hellen Teile eines Bildes in ihre Umgebung ausbluten.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>The classical three steps: isolate what is above `<code style="color:#22d3bf">threshold</code>`, blur it by a</p>
-<p>Gaussian of `<code style="color:#22d3bf">sigma</code><code style="color:#22d3bf">, add </code><code style="color:#22d3bf">intensity</code>` times the result back, clip.</p>
-<p>A *linear-light* operator: light spreading in a lens adds radiance. Running</p>
-<p>it on sRGB-encoded values makes the halo too strong in the mid-tones —</p>
-<p>`<code style="color:#22d3bf">srgb_to_linear</code><code style="color:#22d3bf"> first, </code><code style="color:#22d3bf">linear_to_srgb</code>` after.</p>
-<p>Exact identities: `<code style="color:#22d3bf">intensity=0</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">threshold &gt;= 1</code>` both return the</p>
-<p>input bit for bit, and a black image stays black.</p>
-<p>The added energy is *not* conserved by the clip at the end. The suite</p>
-<p>measures both halves: on a centred bright blob the Gaussian preserves the</p>
-<p>bright mass to <b>5.0e-16</b> relative, so everything lost after that is the</p>
-<p>clip — on a random scene with a saturated square, 2.69 % of the pixels clip</p>
-<p>and 1.65 % of the total energy is thrown away, and neither number is</p>
-<p>returned to the caller.</p>
+<p>The classical three steps: isolate what is above <code style="color:#22d3bf">threshold</code>, blur it by a Gaussian of <code style="color:#22d3bf">sigma</code>, add <code style="color:#22d3bf">intensity</code> times the result back, clip.</p>
+<p>A *linear-light* operator: light spreading in a lens adds radiance. Running it on sRGB-encoded values makes the halo too strong in the mid-tones — <code style="color:#22d3bf">srgb_to_linear</code> first, <code style="color:#22d3bf">linear_to_srgb</code> after.</p>
+<p>Exact identities: <code style="color:#22d3bf">intensity=0</code> and <code style="color:#22d3bf">threshold &gt;= 1</code> both return the input bit for bit, and a black image stays black.</p>
+<p>The added energy is *not* conserved by the clip at the end. The suite measures both halves: on a centred bright blob the Gaussian preserves the bright mass to <b>5.0e-16</b> relative, so everything lost after that is the clip — on a random scene with a saturated square, 2.69 % of the pixels clip and 1.65 % of the total energy is thrown away, and neither number is returned to the caller.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

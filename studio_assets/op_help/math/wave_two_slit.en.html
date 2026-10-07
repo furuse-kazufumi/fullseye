@@ -4,26 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wave_two_slit(wavelength_nm=550.0, slit_sep_um=20.0, distance_mm=200.0, shape=(256, 512), pixel_um=5.0, slit_width_um=2.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import mathops; mathops.wave_two_slit(wavelength_nm=550.0, slit_sep_um=20.0, distance_mm=200.0, shape=(256, 512), pixel_um=5.0, slit_width_um=2.0)</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;wave_two_slit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Two-slit interference on a screen — built from the physics, not the fringe formula.</p>
-<p>Each slit is treated as a line source of the given width; the screen intensity</p>
-<p>is `<code style="color:#22d3bf">|sum over slit of exp(i k R) / sqrt(R)|**2</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">R</code>` the true distance</p>
-<p>from each source point. **The textbook spacing `<code style="color:#22d3bf">lambda D / d</code>` is nowhere in</p>
-<p>this computation** — which is the point: it is then available as an</p>
-<p>independent prediction to check the picture against.</p>
-<p>★<b>Why this earns its place</b>: :func:<code style="color:#22d3bf">wave_fringe_period</code> measures the period</p>
-<p>of the produced image, and it must land on `<code style="color:#22d3bf">lambda D / d</code>` (in pixels,</p>
-<p>`<code style="color:#22d3bf">lambda D / (d * pixel)</code>`). Two ways to the same number, only one of which</p>
-<p>was used to draw.</p>
-<p>Returns an `<code style="color:#22d3bf">image2d</code>` normalised to a peak of 1.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-positive wavelength, separation, distance,</p>
-<p>pixel or width; a grid over the cap; a geometry so coarse that fewer than</p>
-<p>three fringes fit on the screen (reported, not silently aliased).</p>
-<p>Limits: scalar, monochromatic, far-from-paraxial geometries are not modelled;</p>
-<p>the slits are lines, so there is no vertical structure.</p>
+<p>Each slit is treated as a line source of the given width; the screen intensity is <code style="color:#22d3bf">|sum over slit of exp(i k R) / sqrt(R)|**2</code> with <code style="color:#22d3bf">R</code> the true distance from each source point. <b>The textbook spacing <code style="color:#22d3bf">lambda D / d</code> is nowhere in this computation</b> — which is the point: it is then available as an independent prediction to check the picture against.</p>
+<p>★<b>Why this earns its place</b>: <code style="color:#22d3bf">wave_fringe_period</code> measures the period of the produced image, and it must land on <code style="color:#22d3bf">lambda D / d</code> (in pixels, <code style="color:#22d3bf">lambda D / (d * pixel)</code>). Two ways to the same number, only one of which was used to draw.</p>
+<p>Returns an <code style="color:#22d3bf">image2d</code> normalised to a peak of 1.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-positive wavelength, separation, distance, pixel or width; a grid over the cap; a geometry so coarse that fewer than three fringes fit on the screen (reported, not silently aliased).</p>
+<p>Limits: scalar, monochromatic, far-from-paraxial geometries are not modelled; the slits are lines, so there is no vertical structure.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
-<p style="margin:2px 0 2px 12px">• **complex input raises <code style="color:#22d3bf">ValueError</code>** — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
-<p style="margin:2px 0 2px 12px">• **masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code>** — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
-<p style="margin:2px 0 2px 12px">• **NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input** (refused with the count stated — it propagates through the whole result).</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>
+<p style="margin:2px 0 2px 12px">• <b>masked arrays with masked elements raise <code style="color:#22d3bf">ValueError</code></b> — the implicit conversion that peels off the mask and uses the raw values underneath is refused. Say explicitly whether to fill or to drop.</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf raises <code style="color:#22d3bf">ValueError</code> on every input</b> (refused with the count stated — it propagates through the whole result).</p>
 <p style="margin:2px 0 2px 12px">• <b>Shapes are strict</b>: 1-D and 2-D are never implicitly promoted or broadcast (a matrix in a vector slot, or a vector in a matrix slot, raises <code style="color:#22d3bf">ValueError</code>; reshape explicitly).</p>
 <p style="margin:2px 0 2px 12px">• <b>Size cap</b>: ops that take a matrix, and the <code style="color:#22d3bf">stat_histogram</code> bins, raise <code style="color:#22d3bf">ValueError</code> beyond <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 67 million elements).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

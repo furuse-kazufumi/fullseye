@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_restitution_from_wall(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.puck_restitution_from_wall(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;puck_restitution_from_wall&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>壁で跳ねた軌跡から e(法線)と kₜ(接線): 向きが最も変わるコマで前後に分け、両側を :func:<code style="color:#22d3bf">puck_velocity_estimate</code> で</p>
-<p>衝突時刻へ外挿。壁は衝突点に最も近い壁。`<code style="color:#22d3bf">{&quot;e&quot;, &quot;kt&quot;, &quot;t_hit&quot;, &quot;wall&quot;, &quot;n_before&quot;, &quot;n_after&quot;, &quot;v_in&quot;, &quot;v_out&quot;}</code>`。両側 3 点未満は ValueError。</p>
+<p>壁で跳ねた軌跡から e(法線)と kₜ(接線): 向きが最も変わるコマで前後に分け、両側を <code style="color:#22d3bf">puck_velocity_estimate</code> で衝突時刻へ外挿。壁は衝突点に最も近い壁。<code style="color:#22d3bf">{&quot;e&quot;, &quot;kt&quot;, &quot;t_hit&quot;, &quot;wall&quot;, &quot;n_before&quot;, &quot;n_after&quot;, &quot;v_in&quot;, &quot;v_out&quot;}</code>。両側 3 点未満は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

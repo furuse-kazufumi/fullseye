@@ -3,17 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">rgba</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sprite_synthesize(kind=&#x27;disc&#x27;, size=32, color=&#x27;emphasis&#x27;, thickness=0.25, scheme=&#x27;okabe_ito&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gfx2d; gfx2d.sprite_synthesize(kind=&#x27;disc&#x27;, size=32, color=&#x27;emphasis&#x27;, thickness=0.25, scheme=&#x27;okabe_ito&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgfx2d.get(&quot;sprite_synthesize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>결정적인 안티에일리어싱 테스트 스프라이트 `<code style="color:#22d3bf">rgba</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(size, size, 4)</code>`.</p>
+<p>결정적인 안티에일리어싱 테스트 스프라이트 <code style="color:#22d3bf">rgba</code> <code style="color:#22d3bf">(size, size, 4)</code>.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>The entry point of the sprite sort: it needs no asset on disk, and because</p>
-<p>the silhouette comes from an implicit equation the alpha channel *is* the</p>
-<p>ground-truth coverage mask — which is the whole reason this family belongs</p>
-<p>in a vision library.</p>
-<p>`<code style="color:#22d3bf">kind</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">&quot;disc&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;ring&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;box&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;diamond&quot;</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">&quot;star&quot;</code>`.</p>
-<p>`<code style="color:#22d3bf">color</code><code style="color:#22d3bf"> is a :mod:</code>palette` role name (default) or an explicit 3/4-tuple.</p>
-<p>`<code style="color:#22d3bf">thickness</code>` is the ring&#x27;s wall as a fraction of the radius.</p>
-<p>Coverage is computed by 4x4 regular supersampling, so alpha takes values on</p>
-<p>the exact lattice `<code style="color:#22d3bf">k/16</code>`.</p>
+<p>The entry point of the sprite sort: it needs no asset on disk, and because the silhouette comes from an implicit equation the alpha channel *is* the ground-truth coverage mask — which is the whole reason this family belongs in a vision library.</p>
+<p><code style="color:#22d3bf">kind</code> is <code style="color:#22d3bf">&quot;disc&quot;</code>, <code style="color:#22d3bf">&quot;ring&quot;</code>, <code style="color:#22d3bf">&quot;box&quot;</code>, <code style="color:#22d3bf">&quot;diamond&quot;</code> or <code style="color:#22d3bf">&quot;star&quot;</code>. <code style="color:#22d3bf">color</code> is a <code style="color:#22d3bf">palette</code> role name (default) or an explicit 3/4-tuple. <code style="color:#22d3bf">thickness</code> is the ring&#x27;s wall as a fraction of the radius.</p>
+<p>Coverage is computed by 4x4 regular supersampling, so alpha takes values on the exact lattice <code style="color:#22d3bf">k/16</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

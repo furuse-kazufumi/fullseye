@@ -5,15 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>模様の向きの組(前 (M, 3)、後 (M, 3)、単位ベクトル)から角速度ベクトル ω [rad/s] を出す。</p>
-<p>M ≥ 2 なら Kabsch(SVD)で回転 R を当て、回転角 θ と軸から ω = θ/dt·軸(既知の ω で回した向きを入れると 1e-9 で戻る = 門)。</p>
-<p>M = 1 なら d₀ → d₁ の最小回転(軸 = d₀ × d₁)を返す(&quot;full&quot; = False): 模様の向きまわりの成分は原理的に決まらず、</p>
-<p>コマ間の回転角が大きいと ω の直交成分の近似としても外れる(模様は ω の軸まわりの小円を描くので、最小回転の大円と違う)。</p>
-<p>正直に: 1 つの模様で ω を出したいなら dt を小さく(回転角 ≪ 1 rad)、それでも軸まわりの成分は別の模様が要る。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;omega&quot;, &quot;angle&quot;, &quot;axis&quot;, &quot;R&quot;, &quot;full&quot;, &quot;rms&quot;}</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>M ≥ 2 なら Kabsch(SVD)で回転 R を当て、回転角 θ と軸から ω = θ/dt·軸(既知の ω で回した向きを入れると 1e-9 で戻る = 門)。M = 1 なら d₀ → d₁ の最小回転(軸 = d₀ × d₁)を返す(&quot;full&quot; = False): 模様の向きまわりの成分は原理的に決まらず、コマ間の回転角が大きいと ω の直交成分の近似としても外れる(模様は ω の軸まわりの小円を描くので、最小回転の大円と違う)。</p>
+<p>正直に: 1 つの模様で ω を出したいなら dt を小さく(回転角 ≪ 1 rad)、それでも軸まわりの成分は別の模様が要る。返り値 <code style="color:#22d3bf">{&quot;omega&quot;, &quot;angle&quot;, &quot;axis&quot;, &quot;R&quot;, &quot;full&quot;, &quot;rms&quot;}</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ball_bounce">poc_ball_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ball_bounce.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

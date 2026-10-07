@@ -86,23 +86,11 @@ assert abs(ao[:, 24:].mean() - g[:, 24:].mean()) &lt; 0.05      # 大面積の�
 print(&quot;PASS&quot;)</pre>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
 <p>構造要素 $B$ とグレースケール画像 $f$ に対し、この族の中核は次の通り(コード上は erosion/dilation が SE 内の min/max、他はその合成・差分)。</p>
-<p>$$</p>
-<p>(\varepsilon_B f)(x) = \min_{s\in B} f(x+s), \qquad</p>
-<p>(\delta_B f)(x) = \max_{s\in B} f(x+s)</p>
-<p>$$</p>
-<p>$$</p>
-<p>\gamma_B f = \delta_B(\varepsilon_B f)\ \text{(opening)}, \qquad</p>
-<p>\phi_B f = \varepsilon_B(\delta_B f)\ \text{(closing)}</p>
-<p>$$</p>
-<p>$$</p>
-<p>\mathrm{WTH}(f) = f - \gamma_B f, \qquad</p>
-<p>\mathrm{BTH}(f) = \phi_B f - f, \qquad</p>
-<p>g_B f = \delta_B f - \varepsilon_B f</p>
-<p>$$</p>
+<p>$$ (\varepsilon_B f)(x) = \min_{s\in B} f(x+s), \qquad (\delta_B f)(x) = \max_{s\in B} f(x+s) $$</p>
+<p>$$ \gamma_B f = \delta_B(\varepsilon_B f)\ \text{(opening)}, \qquad \phi_B f = \varepsilon_B(\delta_B f)\ \text{(closing)} $$</p>
+<p>$$ \mathrm{WTH}(f) = f - \gamma_B f, \qquad \mathrm{BTH}(f) = \phi_B f - f, \qquad g_B f = \delta_B f - \varepsilon_B f $$</p>
 <p>これらから、同一 SE のもとで常に成り立つ <b>順序律</b>(examples の GT でも検証):</p>
-<p>$$</p>
-<p>\varepsilon_B f \ \le\ \gamma_B f \ \le\ f \ \le\ \phi_B f \ \le\ \delta_B f</p>
-<p>$$</p>
+<p>$$ \varepsilon_B f \ \le\ \gamma_B f \ \le\ f \ \le\ \phi_B f \ \le\ \delta_B f $$</p>
 <p>なお <code style="color:#22d3bf">tophat</code>/<code style="color:#22d3bf">bothat</code>/<code style="color:#22d3bf">morph_grad</code> の出力は実装上 $\max|\cdot|$ で割って [0,1] に正規化されます。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
 <p>デバッグには合成画像が扱いやすい: <code style="color:#22d3bf">blobs</code>(大小の塊 → opening/面積フィルタで粒径選別)、<code style="color:#22d3bf">shapes</code>(境界が明快 → morph_grad で確認)。文字・線構造なら <code style="color:#22d3bf">page</code>(skimage.data、細線 → f2_gray_skeleton / bothat 向き)。取得は <code style="color:#22d3bf">import sample_images; sample_images.load(&quot;blobs&quot;)</code>。一覧・ライセンスは <code style="color:#22d3bf">../../SAMPLES.md</code>。</p>

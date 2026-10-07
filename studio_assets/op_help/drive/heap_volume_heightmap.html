@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_volume_heightmap(hm, pitch: &#x27;float&#x27;, ground=None) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import granular; granular.heap_volume_heightmap(hm, pitch: &#x27;float&#x27;, ground=None) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;heap_volume_heightmap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>高さ図の山の体積 `<code style="color:#22d3bf">Σ (z − z_ground) pitch²</code><code style="color:#22d3bf"> [m³]。</code><code style="color:#22d3bf">ground</code>` は同形の地面高さ(None = 0)。</p>
-<p>負の高さ(地面より下)は 0 に切る —— 穴を山から引き算しない。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形・pitch。</p>
+<p>高さ図の山の体積 <code style="color:#22d3bf">Σ (z − z_ground) pitch²</code> [m³]。<code style="color:#22d3bf">ground</code> は同形の地面高さ(None = 0)。負の高さ(地面より下)は 0 に切る —— 穴を山から引き算しない。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・pitch。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

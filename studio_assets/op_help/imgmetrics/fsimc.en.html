@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fsimc(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import iqafsim; iqafsim.fsimc(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;fsimc&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>FSIMc(彩度 I / Q を含む、1 = 同一、<b>higher is better</b>)。TID2013 の FSIMc.txt と 4 桁一致するのは色画像(RGB → YIQ full range)を渡したとき</p>
-<p>(`<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, fsimc, luma=&quot;rgb&quot;)</code><code style="color:#22d3bf">、3,000 組 max |差| 5.0e-5)。(H, W) 入力なら FSIM と同じ値。詳細 :func:</code>fsim_pair`。</p>
+<p>FSIMc(彩度 I / Q を含む、1 = 同一、<b>higher is better</b>)。TID2013 の FSIMc.txt と 4 桁一致するのは色画像(RGB → YIQ full range)を渡したとき(<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, fsimc, luma=&quot;rgb&quot;)</code>、3,000 組 max |差| 5.0e-5)。(H, W) 入力なら FSIM と同じ値。詳細 <code style="color:#22d3bf">fsim_pair</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

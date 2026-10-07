@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import drivelateral; drivelateral.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;lateral_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点の、折線の経路に沿った弧長 s と横ずれ n(進行方向の左が正)。最も近い区間への射影。</p>
-<p>`<code style="color:#22d3bf">start_index</code><code style="color:#22d3bf">(点ごと、または 1 つ)を与えると、その区間の前後 </code><code style="color:#22d3bf">window</code>` 区間だけを調べる(繰り返しを速くする。</p>
-<p>窓の外に本当の最寄りがあると誤るので、点が少しずつ動くときに使う)。None なら全区間を調べる。</p>
-<p>返り値: `<code style="color:#22d3bf">s</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">index</code><code style="color:#22d3bf">(区間)、</code><code style="color:#22d3bf">heading</code>`(その区間の向き)。点 (2,) なら スカラー。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形の誤り、start_index が範囲外。</p>
+<p><code style="color:#22d3bf">start_index</code>(点ごと、または 1 つ)を与えると、その区間の前後 <code style="color:#22d3bf">window</code> 区間だけを調べる(繰り返しを速くする。窓の外に本当の最寄りがあると誤るので、点が少しずつ動くときに使う)。None なら全区間を調べる。</p>
+<p>返り値: <code style="color:#22d3bf">s</code>, <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">index</code>(区間)、<code style="color:#22d3bf">heading</code>(その区間の向き)。点 (2,) なら スカラー。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、start_index が範囲外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

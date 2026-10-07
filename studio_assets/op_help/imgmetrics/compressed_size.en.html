@@ -3,11 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compressed_size(a, compressor=&#x27;lzma&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.compressed_size(a, compressor=&#x27;lzma&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;compressed_size&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Size in bytes of the array after lossless compression. The raw material for `<code style="color:#22d3bf">ncd</code>`.</p>
+<p>Size in bytes of the array after lossless compression. The raw material for <code style="color:#22d3bf">ncd</code>.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>画像コーデックは<b>使わない</b> ―― 挟むとその実装の癖を測ってしまう。</p>
-<p>stdlib の `<code style="color:#22d3bf">zlib</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">lzma</code>` のみ。dtype と shape の違いが結果を変える</p>
-<p>ので、比べる 2 枚は同じ dtype・同じ shape であること。</p>
+<p>画像コーデックは<b>使わない</b> ―― 挟むとその実装の癖を測ってしまう。stdlib の <code style="color:#22d3bf">zlib</code> / <code style="color:#22d3bf">lzma</code> のみ。dtype と shape の違いが結果を変えるので、比べる 2 枚は同じ dtype・同じ shape であること。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

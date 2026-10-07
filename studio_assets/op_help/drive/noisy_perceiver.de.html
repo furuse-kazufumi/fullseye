@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noisy_perceiver(rng, noise_pos: &#x27;float&#x27; = 0.0, noise_vel: &#x27;float&#x27; = 0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import kendama; kendama.noisy_perceiver(rng, noise_pos: &#x27;float&#x27; = 0.0, noise_vel: &#x27;float&#x27; = 0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;noisy_perceiver&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>知覚に等方ガウス雑音を足す `<code style="color:#22d3bf">perceive(t, p, v) → (p̂, v̂)</code>`(位置 σ = noise_pos [m]、速度 σ = noise_vel [m/s])。</p>
-<p>負の σ は ValueError。rng = numpy.random.Generator。</p>
+<p>知覚に等方ガウス雑音を足す <code style="color:#22d3bf">perceive(t, p, v) → (p̂, v̂)</code>(位置 σ = noise_pos [m]、速度 σ = noise_vel [m/s])。負の σ は ValueError。rng = numpy.random.Generator。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

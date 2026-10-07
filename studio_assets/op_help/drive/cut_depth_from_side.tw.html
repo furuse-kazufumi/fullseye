@@ -5,12 +5,12 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
 <p>正面像の食材の上面(彩度の縁、列ごと副画素 → 中央値)と刃先の直線から切り込み深さ(mm)。</p>
-<p>深さ = 上面の z − 食材の幅の中央での刃先の z(:func:<code style="color:#22d3bf">knife_edge_track</code> の直線の内挿)。刃が曲がっていればそのまま誤差になる。</p>
-<p>返り値: `<code style="color:#22d3bf">depth_mm</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">top_z_mm</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">edge_z_mm</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">food_cols</code><code style="color:#22d3bf">(左右)、</code><code style="color:#22d3bf">n_cols</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">centre_col</code>`。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p>深さ = 上面の z − 食材の幅の中央での刃先の z(<code style="color:#22d3bf">knife_edge_track</code> の直線の内挿)。刃が曲がっていればそのまま誤差になる。</p>
+<p>返り値: <code style="color:#22d3bf">depth_mm</code>、<code style="color:#22d3bf">top_z_mm</code>、<code style="color:#22d3bf">edge_z_mm</code>、<code style="color:#22d3bf">food_cols</code>(左右)、<code style="color:#22d3bf">n_cols</code>、<code style="color:#22d3bf">centre_col</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
-<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者、年份)與用途見上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_food_cutting_measure">poc_food_cutting_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_food_cutting_measure.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>

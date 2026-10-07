@@ -5,27 +5,16 @@
 <p><img src="fig/alife_dla.png" alt="alife_dla: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_dla.a.jpg">alife_dla: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_dla.a.jpg">alife_dla: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_dla.b.jpg">alife_dla: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_dla.b.jpg">alife_dla: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_dla.inputs.jpg">alife_dla: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/alife_dla.inputs.jpg">alife_dla: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>決定論的な拡散律速凝集（diffusion-limited aggregation, DLA）成長の疑似モデル。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
-<p>Witten-Sander DLA grows a cluster by releasing random walkers that stick on</p>
-<p>contact; the walker density obeys a Laplace equation, so this op replaces the</p>
-<p>random walkers by their *deterministic* mean field: the unclaimed image</p>
-<p>brightness is diffused with a Gaussian Green&#x27;s function to give a</p>
-<p>concentration u, and each generation the cluster&#x27;s Moore boundary attaches</p>
-<p>exactly those cells whose concentration clears a stickiness threshold</p>
-<p>(with the single strongest boundary cell always attaching, so growth never</p>
-<p>stalls). Bright pixels (&gt;= 0.75 of the image maximum, or the single brightest</p>
-<p>pixel) are the seed. `<code style="color:#22d3bf">a</code>` sets the number of growth generations</p>
-<p>1 + int(11a), `<code style="color:#22d3bf">b</code>` the stickiness: high b selects only the highest-</p>
-<p>concentration tips (dendritic, screened growth), low b attaches nearly the</p>
-<p>whole boundary (compact, Eden-like growth). Returns the 0/1 cluster.</p>
+<p>Witten-Sander DLA grows a cluster by releasing random walkers that stick on contact; the walker density obeys a Laplace equation, so this op replaces the random walkers by their *deterministic* mean field: the unclaimed image brightness is diffused with a Gaussian Green&#x27;s function to give a concentration u, and each generation the cluster&#x27;s Moore boundary attaches exactly those cells whose concentration clears a stickiness threshold (with the single strongest boundary cell always attaching, so growth never stalls). Bright pixels (&gt;= 0.75 of the image maximum, or the single brightest pixel) are the seed. <code style="color:#22d3bf">a</code> sets the number of growth generations 1 + int(11a), <code style="color:#22d3bf">b</code> the stickiness: high b selects only the highest- concentration tips (dendritic, screened growth), low b attaches nearly the whole boundary (compact, Eden-like growth). Returns the 0/1 cluster.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
@@ -34,7 +23,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">alife_dla 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:alife_dla%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:alife_dla%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">alife_dla 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:alife_dla%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:alife_dla%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_physics_alife_3d.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sim2real_and_alife">sim2real_and_alife</a> — <code style="color:#22d3bf">py -3.11 examples/sim2real_and_alife.py</code></p>

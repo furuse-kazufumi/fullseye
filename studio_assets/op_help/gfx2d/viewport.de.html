@@ -3,17 +3,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.viewport(img, x, y, width, height, scale=1.0, interp=&#x27;bilinear&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import gfx2d; gfx2d.viewport(img, x, y, width, height, scale=1.0, interp=&#x27;bilinear&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsgfx2d.get(&quot;viewport&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Schneidet das Rechteck bei `<code style="color:#22d3bf">(x, y, width, height)</code><code style="color:#22d3bf"> aus und tastet es mit </code><code style="color:#22d3bf">scale</code>` um.</p>
+<p>Schneidet das Rechteck bei <code style="color:#22d3bf">(x, y, width, height)</code> aus und tastet es mit <code style="color:#22d3bf">scale</code> um.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Accepts `<code style="color:#22d3bf">rgb</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">rgba</code>` (straight alpha; the crop is a copy, so no</p>
-<p>premultiplication is involved) and returns the same channel count.</p>
-<p><b>Out-of-bounds raises</b>, unlike :func:<code style="color:#22d3bf">sprite_blit</code>, which clips. The</p>
-<p>asymmetry is the point: a sprite leaving the screen is the normal case,</p>
-<p>while a camera asking for rows the image does not have is arithmetic that</p>
-<p>has already gone wrong somewhere upstream, and returning a partly black</p>
-<p>frame would let it keep going.</p>
-<p>`<code style="color:#22d3bf">scale=1</code>` with integer bounds returns an exact sub-array copy — no</p>
-<p>interpolation touches it.</p>
+<p>Accepts <code style="color:#22d3bf">rgb</code> or <code style="color:#22d3bf">rgba</code> (straight alpha; the crop is a copy, so no premultiplication is involved) and returns the same channel count.</p>
+<p><b>Out-of-bounds raises</b>, unlike <code style="color:#22d3bf">sprite_blit</code>, which clips. The asymmetry is the point: a sprite leaving the screen is the normal case, while a camera asking for rows the image does not have is arithmetic that has already gone wrong somewhere upstream, and returning a partly black frame would let it keep going.</p>
+<p><code style="color:#22d3bf">scale=1</code> with integer bounds returns an exact sub-array copy — no interpolation touches it.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

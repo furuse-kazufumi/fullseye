@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveterrain; driveterrain.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;course_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点 (N, 2) からコース(走れる多角形の和)への距離と、最寄り点から外へ向く単位ベクトル。</p>
-<p>`<code style="color:#22d3bf">{&quot;d&quot; (N,), &quot;nx&quot; (N,), &quot;ny&quot; (N,)}</code>`。内側は d = 0、n = 0。外側の d は最寄りの辺への点-線分距離の閉形式で、</p>
-<p>中心軸(最寄り点が 2 つある所)を除いて |∇d| = 1(eikonal)。</p>
+<p><code style="color:#22d3bf">{&quot;d&quot; (N,), &quot;nx&quot; (N,), &quot;ny&quot; (N,)}</code>。内側は d = 0、n = 0。外側の d は最寄りの辺への点-線分距離の閉形式で、中心軸(最寄り点が 2 つある所)を除いて |∇d| = 1(eikonal)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

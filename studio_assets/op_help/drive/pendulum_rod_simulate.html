@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pendulum_rod_simulate(L: &#x27;float&#x27;, theta0: &#x27;float&#x27;, t_end: &#x27;float&#x27;, dt: &#x27;float&#x27; = 0.001, g: &#x27;float&#x27; = 9.81, omega0: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import kendama; kendama.pendulum_rod_simulate(L: &#x27;float&#x27;, theta0: &#x27;float&#x27;, t_end: &#x27;float&#x27;, dt: &#x27;float&#x27; = 0.001, g: &#x27;float&#x27; = 9.81, omega0: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;pendulum_rod_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>棒の振り子(拘束が両側に効く: 弛まない)θ̈ = −(g/L) sin θ を RK4 で。返り値 `<code style="color:#22d3bf">{&quot;t&quot;, &quot;theta&quot;, &quot;omega&quot;, &quot;energy&quot;}</code>`</p>
-<p>(energy = ½L²ω² − gL cos θ、単位質量)。ひもでは弛む θ₀ &gt; π/2 の周期の定理を確かめる比較用。</p>
+<p>棒の振り子(拘束が両側に効く: 弛まない)θ̈ = −(g/L) sin θ を RK4 で。返り値 <code style="color:#22d3bf">{&quot;t&quot;, &quot;theta&quot;, &quot;omega&quot;, &quot;energy&quot;}</code> (energy = ½L²ω² − gL cos θ、単位質量)。ひもでは弛む θ₀ &gt; π/2 の周期の定理を確かめる比較用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

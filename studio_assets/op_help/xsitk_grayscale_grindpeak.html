@@ -7,11 +7,11 @@
 <p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
-<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsitk_grayscale_grindpeak.inputs.jpg">xsitk_grayscale_grindpeak: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsitk_grayscale_grindpeak.inputs.jpg">xsitk_grayscale_grindpeak: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p>*4 列目はカラー (H,W,3) の入力。この op は色を跨がずに扱える(色チャネルを 3 本目の空間軸として畳み込まない)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>グレースケール山削り(SimpleITK `<code style="color:#22d3bf">GrayscaleGrindPeak</code>`、xsitk_grayscale_fillhole の双対)。モルフォロジー再構成により、周囲より明るい局所的な山(ピーク)を周囲の高さまで削り落とす。ハイライトのスパイク除去に使う。</p>
-<p>パラメータは無く、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code>` は未使用。出力は [0,1] にクリップ。</p>
+<p>グレースケール山削り(SimpleITK <code style="color:#22d3bf">GrayscaleGrindPeak</code>、xsitk_grayscale_fillhole の双対)。モルフォロジー再構成により、周囲より明るい局所的な山(ピーク)を周囲の高さまで削り落とす。ハイライトのスパイク除去に使う。</p>
+<p>パラメータは無く、<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
 <p><b>端の扱い</b>: 端の画素を複製する(最近傍)(実測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic ファミリ ガイド</a></p>
@@ -21,7 +21,7 @@
 <p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
 <p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xsitk_grayscale_grindpeak 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xsitk_grayscale_grindpeak%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xsitk_grayscale_grindpeak%200.50%200.50">Load &amp; run</a></p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xsitk_grayscale_grindpeak 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xsitk_grayscale_grindpeak%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xsitk_grayscale_grindpeak%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_color_artistic">gallery2d_color_artistic</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_color_artistic.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weld_radiograph_porosity">poc_weld_radiograph_porosity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weld_radiograph_porosity.py</code></p>

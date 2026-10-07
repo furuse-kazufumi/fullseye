@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ozakimm; ozakimm.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ozaki_error_bound&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>`<code style="color:#22d3bf">matmul_ozaki(A, B, n_slices)</code>`(Ozaki-I)の打ち切り誤差の要素ごとの保証上界(行列)。</p>
-<p>切り捨ての残りと捨てた切れ端の組の和の上界で、最後の float64 の組み立ての丸め(`<code style="color:#22d3bf">(s+1) u |A||B|</code>` 程度)は含めない。</p>
-<p>門では 26 万点余りの要素で破れ 0(PoC と tests)。並べ替えた和で計算するので、上界そのものも内側の順に依らない。</p>
+<p><code style="color:#22d3bf">matmul_ozaki(A, B, n_slices)</code>(Ozaki-I)の打ち切り誤差の要素ごとの保証上界(行列)。</p>
+<p>切り捨ての残りと捨てた切れ端の組の和の上界で、最後の float64 の組み立ての丸め(<code style="color:#22d3bf">(s+1) u |A||B|</code> 程度)は含めない。門では 26 万点余りの要素で破れ 0(PoC と tests)。並べ替えた和で計算するので、上界そのものも内側の順に依らない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

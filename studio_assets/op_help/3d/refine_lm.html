@@ -5,8 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Levenberg-Marquardt による並進(+等方スケール/輝度ゲイン)サブボクセル精緻化。</p>
-<p>粗いマッチ位置 init_pos(テンプレ中心の scene 内座標 [z,y,x])を出発点に、</p>
-<p>forward-additive Lucas-Kanade を減衰付き Gauss-Newton(LM)で解き SSD</p>
+<p>粗いマッチ位置 init_pos(テンプレ中心の scene 内座標 [z,y,x])を出発点に、forward-additive Lucas-Kanade を減衰付き Gauss-Newton(LM)で解き SSD</p>
 <p>E(p) = Σ_x [ I(W(x;p)) - g·T(x) ]²</p>
 <p>を最小化する。整数 NCC / Fourier-Mellin / Hough の粗推定を連続座標へ収束させる後段。</p>
 <p>ワープ        W(x;p) = t + s·(x - c_T)   (c_T=テンプレ中心, t=並進, s=等方スケール)</p>

@@ -3,12 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import seggraph; seggraph.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opssegmentation.get(&quot;area_opening_attr&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>属性開放(Salembier ら 1998): 成分木の節のうち属性 &lt; `<code style="color:#22d3bf">threshold</code>` を消し、各画素を「属性 ≥ 閾値の最も近い祖先」の値にする。</p>
-<p>`<code style="color:#22d3bf">attribute</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">&quot;area&quot;</code><code style="color:#22d3bf">(画素数、skimage の area_opening と同じ「面積が閾値未満の明るい構造を消す」)か </code><code style="color:#22d3bf">&quot;diameter&quot;</code>`</p>
-<p>(外接矩形の長い辺、skimage の diameter_opening)。どちらも <b>2 値の集合の</b> 増加する属性なので、結果は代数的開放 =</p>
-<p>冪等・反拡大・増加。成分の中の最大値に依る「高さ」は集合の属性でなく(h-maxima と同じく)冪等にならないので載せない</p>
-<p>(実測で 2 回目に値が変わった)。</p>
-<p>返す: `<code style="color:#22d3bf">image</code><code style="color:#22d3bf">(開放の結果)、</code><code style="color:#22d3bf">n_nodes_kept</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">n_nodes</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">removed</code>`(値が下がった画素の数)。</p>
+<p>属性開放(Salembier ら 1998): 成分木の節のうち属性 &lt; <code style="color:#22d3bf">threshold</code> を消し、各画素を「属性 ≥ 閾値の最も近い祖先」の値にする。</p>
+<p><code style="color:#22d3bf">attribute</code> = <code style="color:#22d3bf">&quot;area&quot;</code>(画素数、skimage の area_opening と同じ「面積が閾値未満の明るい構造を消す」)か <code style="color:#22d3bf">&quot;diameter&quot;</code> (外接矩形の長い辺、skimage の diameter_opening)。どちらも <b>2 値の集合の</b> 増加する属性なので、結果は代数的開放 = 冪等・反拡大・増加。成分の中の最大値に依る「高さ」は集合の属性でなく(h-maxima と同じく)冪等にならないので載せない(実測で 2 回目に値が変わった)。</p>
+<p>返す: <code style="color:#22d3bf">image</code>(開放の結果)、<code style="color:#22d3bf">n_nodes_kept</code> / <code style="color:#22d3bf">n_nodes</code>、<code style="color:#22d3bf">removed</code>(値が下がった画素の数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

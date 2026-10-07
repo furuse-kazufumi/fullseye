@@ -4,13 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_events(year: &#x27;int&#x27;, month: &#x27;int&#x27;, day: &#x27;int&#x27;, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, tz_hours: &#x27;float&#x27; = 9.0, *, h0: &#x27;float&#x27; = -0.8333) -&gt; &#x27;Dict[str, object]&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveenv; driveenv.sun_events(year: &#x27;int&#x27;, month: &#x27;int&#x27;, day: &#x27;int&#x27;, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, tz_hours: &#x27;float&#x27; = 9.0, *, h0: &#x27;float&#x27; = -0.8333) -&gt; &#x27;Dict[str, object]&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;sun_events&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>その日(地方の暦日)の日の出・南中・日の入りの時刻と、日の出入りの方位・南中の高度。</p>
-<p>日の出入り = 太陽の中心の <b>幾何の</b> 高度が `<code style="color:#22d3bf">h0</code>`(既定 −0.8333° = 大気差 34′ + 視半径 16′、上辺が地平線に接する)を</p>
-<p>横切る時刻。`<code style="color:#22d3bf">h0=&quot;naoj&quot;</code>` で国立天文台 暦計算室の定義(太陽の上辺が視地平線、地平大気差 35′8″、視半径は距離から)。</p>
-<p>南中 = 時角 0。どちらも sun_at を時刻について解く(二分法、1e-6 日 ≈ 0.1 秒まで)。</p>
-<p>Returns</p>
-<p>-------</p>
-<p>dict : `<code style="color:#22d3bf">sunrise</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">transit</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sunset</code>`(タイムゾーンつき datetime、日の出入りが無ければ None)、</p>
-<p>`<code style="color:#22d3bf">sunrise_azimuth</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">sunset_azimuth</code><code style="color:#22d3bf">(度)、</code><code style="color:#22d3bf">transit_altitude</code><code style="color:#22d3bf">(度、大気差なしの幾何の高度と、</code><code style="color:#22d3bf">transit_altitude_apparent</code>`)。</p>
+<p>日の出入り = 太陽の中心の <b>幾何の</b> 高度が <code style="color:#22d3bf">h0</code>(既定 −0.8333° = 大気差 34′ + 視半径 16′、上辺が地平線に接する)を横切る時刻。<code style="color:#22d3bf">h0=&quot;naoj&quot;</code> で国立天文台 暦計算室の定義(太陽の上辺が視地平線、地平大気差 35′8″、視半径は距離から)。南中 = 時角 0。どちらも sun_at を時刻について解く(二分法、1e-6 日 ≈ 0.1 秒まで)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">sunrise</code> / <code style="color:#22d3bf">transit</code> / <code style="color:#22d3bf">sunset</code>(タイムゾーンつき datetime、日の出入りが無ければ None)、</p>
+<p><code style="color:#22d3bf">sunrise_azimuth</code> / <code style="color:#22d3bf">sunset_azimuth</code>(度)、<code style="color:#22d3bf">transit_altitude</code>(度、大気差なしの幾何の高度と、<code style="color:#22d3bf">transit_altitude_apparent</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

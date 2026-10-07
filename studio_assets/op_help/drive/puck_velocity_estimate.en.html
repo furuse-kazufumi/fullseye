@@ -6,8 +6,7 @@
 <p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
 <p>N 点の位置から速度を最小二乗で: 向き û を固定した等減速模型 p(τ) = p_ref + v_ref τ − ½ μg τ² û(τ = t − t_ref)。</p>
 <p>û は v_ref から取るので 3 回反復(初期値 = 端点の差)。&quot;viscous&quot; は基底 (1 − e^{−kτ})/k で線形、&quot;none&quot; は直線。</p>
-<p>雑音の見積り: 残差から σ_pos、(AᵀA)⁻¹ から v_ref の分散(`<code style="color:#22d3bf">sigma_v</code>`、等方)。返り値</p>
-<p>`<code style="color:#22d3bf">{&quot;p_ref&quot;,&quot;v_ref&quot;,&quot;speed&quot;,&quot;u&quot;,&quot;t_ref&quot;,&quot;sigma_pos&quot;,&quot;sigma_v&quot;,&quot;sigma_p&quot;,&quot;resid_rms&quot;,&quot;n&quot;,&quot;model&quot;}</code>`。N &lt; 3 は ValueError。</p>
+<p>雑音の見積り: 残差から σ_pos、(AᵀA)⁻¹ から v_ref の分散(<code style="color:#22d3bf">sigma_v</code>、等方)。返り値 <code style="color:#22d3bf">{&quot;p_ref&quot;,&quot;v_ref&quot;,&quot;speed&quot;,&quot;u&quot;,&quot;t_ref&quot;,&quot;sigma_pos&quot;,&quot;sigma_v&quot;,&quot;sigma_p&quot;,&quot;resid_rms&quot;,&quot;n&quot;,&quot;model&quot;}</code>。N &lt; 3 は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

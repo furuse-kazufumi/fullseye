@@ -3,13 +3,10 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_cycle3(adj)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import graphinv; graphinv.graph_cycle3(adj)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;graph_cycle3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Number of directed 3-cycles `<code style="color:#22d3bf">i -&gt; j -&gt; k -&gt; i</code><code style="color:#22d3bf"> as </code><code style="color:#22d3bf">tr(B^3) / 3</code>`.</p>
-<p>Each cycle is counted once (the trace visits it from each of its three starting</p>
-<p>nodes). Self-loops are removed first. Returns a dict with `<code style="color:#22d3bf">cycles3</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">n</code>`.</p>
-<p>A second, independent implementation (brute-force enumeration) agrees exactly on</p>
-<p>small graphs — pinned in the tests, because a single implementation of a counting</p>
-<p>formula cannot catch its own off-by-three.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>graph_degree_summary`.</p>
+<p>Number of directed 3-cycles <code style="color:#22d3bf">i -&gt; j -&gt; k -&gt; i</code> as <code style="color:#22d3bf">tr(B^3) / 3</code>.</p>
+<p>Each cycle is counted once (the trace visits it from each of its three starting nodes). Self-loops are removed first. Returns a dict with <code style="color:#22d3bf">cycles3</code> and <code style="color:#22d3bf">n</code>.</p>
+<p>A second, independent implementation (brute-force enumeration) agrees exactly on small graphs — pinned in the tests, because a single implementation of a counting formula cannot catch its own off-by-three.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: as <code style="color:#22d3bf">graph_degree_summary</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

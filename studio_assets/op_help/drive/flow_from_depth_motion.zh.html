@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_from_depth_motion(depth, K, T_rel) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivettc; drivettc.flow_from_depth_motion(depth, K, T_rel) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;flow_from_depth_motion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>深度像と剛体運動から <b>真の像の流れ</b>: `<code style="color:#22d3bf">{&quot;u&quot;, &quot;v&quot;, &quot;valid&quot;, &quot;depth1&quot;}</code>`(各 (H, W))。</p>
-<p>画素の 3-D 点を `<code style="color:#22d3bf">T_rel</code><code style="color:#22d3bf"> で動かして再投影し、</code><code style="color:#22d3bf">u = col₁ − col₀</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">v = row₁ − row₀</code>`。動かした後に</p>
-<p>カメラの背後へ行く点や深度の無い画素は `<code style="color:#22d3bf">valid = False</code><code style="color:#22d3bf">(u, v は NaN)。</code><code style="color:#22d3bf">depth1</code>` は動かした後の深度。</p>
-<p>光学流の推定器の採点に使う真値(推定器と同じ規約: (x, y) → (x + u, y + v))。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p>深度像と剛体運動から <b>真の像の流れ</b>: <code style="color:#22d3bf">{&quot;u&quot;, &quot;v&quot;, &quot;valid&quot;, &quot;depth1&quot;}</code>(各 (H, W))。</p>
+<p>画素の 3-D 点を <code style="color:#22d3bf">T_rel</code> で動かして再投影し、<code style="color:#22d3bf">u = col₁ − col₀</code>、<code style="color:#22d3bf">v = row₁ − row₀</code>。動かした後にカメラの背後へ行く点や深度の無い画素は <code style="color:#22d3bf">valid = False</code>(u, v は NaN)。<code style="color:#22d3bf">depth1</code> は動かした後の深度。光学流の推定器の採点に使う真値(推定器と同じ規約: (x, y) → (x + u, y + v))。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ttc_rss">poc_ttc_rss</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ttc_rss.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_world_terrain">poc_world_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_world_terrain.py</code></p>

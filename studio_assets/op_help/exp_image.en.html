@@ -11,10 +11,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/exp_image.inputs.jpg">exp_image: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Maps [0,1] to [0,1] with the exponential mapping `<code style="color:#22d3bf">(exp(x) - 1) / (e - 1)</code><code style="color:#22d3bf"> (normalized so that x=1 gives exactly 1). This is a contrast enhancement that compresses low tones and emphasizes the highlights, a curve running opposite to </code><code style="color:#22d3bf">log_image</code><code style="color:#22d3bf">. Stands in for HALCON&#x27;s </code><code style="color:#22d3bf">exp_image</code>` (Calculate the exponentiation of an image.).</p>
+<p>Maps [0,1] to [0,1] with the exponential mapping <code style="color:#22d3bf">(exp(x) - 1) / (e - 1)</code> (normalized so that x=1 gives exactly 1). This is a contrast enhancement that compresses low tones and emphasizes the highlights, a curve running opposite to <code style="color:#22d3bf">log_image</code>. Stands in for HALCON&#x27;s <code style="color:#22d3bf">exp_image</code> (Calculate the exponentiation of an image.).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> は未使用。底(</code><code style="color:#22d3bf">e</code>`)や倍率を変える調整点は無い —— 曲率を変えたい</p>
-<p>場合は `<code style="color:#22d3bf">gamma_image</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">a</code>` でべき指数を振れる)を使う。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。底(<code style="color:#22d3bf">e</code>)や倍率を変える調整点は無い —— 曲率を変えたい場合は <code style="color:#22d3bf">gamma_image</code>(<code style="color:#22d3bf">a</code> でべき指数を振れる)を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

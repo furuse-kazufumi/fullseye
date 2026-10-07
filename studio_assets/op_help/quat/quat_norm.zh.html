@@ -3,20 +3,15 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quat_norm(qimage) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import quatimage; quatimage.quat_norm(qimage) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsquat.get(&quot;quat_norm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>逐像素的四元数模 `<code style="color:#22d3bf">|q| = sqrt(w^2+x^2+y^2+z^2)</code>`。→ (H, W)。</p>
+<p>逐像素的四元数模 <code style="color:#22d3bf">|q| = sqrt(w^2+x^2+y^2+z^2)</code>。→ (H, W)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>Raw / unnormalised</b>, following `<code style="color:#22d3bf">complexops.cx_magnitude</code>`: a modulus is a</p>
-<p>metric quantity and routinely exceeds one (a QFT spectrum&#x27;s DC term is huge).</p>
-<p>For a colour quaternion it is the colour *magnitude* — the length of the RGB</p>
-<p>vector, i.e. luminance in the L2 sense; for a monogenic signal it is the</p>
-<p>local amplitude and :func:<code style="color:#22d3bf">monogenic_amplitude</code> is the name that says so.</p>
-<p>Use `<code style="color:#22d3bf">imgio.normalize</code>` for a displayable view.</p>
+<p><b>Raw / unnormalised</b>, following <code style="color:#22d3bf">complexops.cx_magnitude</code>: a modulus is a metric quantity and routinely exceeds one (a QFT spectrum&#x27;s DC term is huge). For a colour quaternion it is the colour *magnitude* — the length of the RGB vector, i.e. luminance in the L2 sense; for a monogenic signal it is the local amplitude and <code style="color:#22d3bf">monogenic_amplitude</code> is the name that says so. Use <code style="color:#22d3bf">imgio.normalize</code> for a displayable view.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic 族使用指南</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
-<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者、年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">image2d</code> 作为输入)</h3>

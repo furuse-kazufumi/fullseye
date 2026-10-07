@@ -15,7 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Distance transform (OpenCV implementation, L2/Euclidean approximation). For each pixel in the foreground region, computes the distance to the nearest background pixel and returns it as an image - used as preprocessing for extracting a region&#x27;s &quot;thickness&quot; or its centerline.</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">distance_transform</code>(Compute the distance transformation of a region.)に相当。実装は `<code style="color:#22d3bf">cv2.distanceTransform(_u8(binm(v)), DIST_L2, maskSize=3)</code>` を正規化したもの(cv2 は float32 で返すが、契約に合わせて float64 化 —— 2026-09-03 実測でベンチマーク済み)。maskSize=3 は 3x3 近傍での近似計算(厳密なユークリッド距離ではなく高速近似)。a, b は未使用。</p>
+<p>HALCON の <code style="color:#22d3bf">distance_transform</code>(Compute the distance transformation of a region.)に相当。実装は <code style="color:#22d3bf">cv2.distanceTransform(_u8(binm(v)), DIST_L2, maskSize=3)</code> を正規化したもの(cv2 は float32 で返すが、契約に合わせて float64 化 —— 2026-09-03 実測でベンチマーク済み)。maskSize=3 は 3x3 近傍での近似計算(厳密なユークリッド距離ではなく高速近似)。a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

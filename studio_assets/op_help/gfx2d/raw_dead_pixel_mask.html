@@ -3,16 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.raw_dead_pixel_mask(raw, threshold=0.1)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gfx2d; gfx2d.raw_dead_pixel_mask(raw, threshold=0.1)</code>、台帳から引くなら <code style="color:#22d3bf">opsgfx2d.get(&quot;raw_dead_pixel_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Where the dead (stuck / hot) pixels are: `<code style="color:#22d3bf">1.0</code>` at a pixel that differs</p>
-<p>from <b>every one</b> of its 8 same-colour neighbours by more than *threshold*</p>
-<p>in the same direction, `<code style="color:#22d3bf">0.0</code><code style="color:#22d3bf"> elsewhere. </code><code style="color:#22d3bf">(H, W)</code>` float64.</p>
-<p>&quot;Every neighbour, same sign&quot; is what separates a defect from an edge: at an</p>
-<p>edge some same-colour neighbours are on the pixel&#x27;s own side. The rule is</p>
-<p>the one openISP documents for its DPC stage; here it is pattern-free</p>
-<p>because same-colour neighbours are simply the pixels two steps away.</p>
-<p>Ground truth: dead pixels planted in a smooth frame are recovered exactly</p>
-<p>(no misses, no false alarms) while a hard edge produces none.</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: bad *raw* or a *threshold* outside </code><code style="color:#22d3bf">(0, 1]</code>`.</p>
+<p>Where the dead (stuck / hot) pixels are: <code style="color:#22d3bf">1.0</code> at a pixel that differs from <b>every one</b> of its 8 same-colour neighbours by more than *threshold* in the same direction, <code style="color:#22d3bf">0.0</code> elsewhere. <code style="color:#22d3bf">(H, W)</code> float64.</p>
+<p>&quot;Every neighbour, same sign&quot; is what separates a defect from an edge: at an edge some same-colour neighbours are on the pixel&#x27;s own side. The rule is the one openISP documents for its DPC stage; here it is pattern-free because same-colour neighbours are simply the pixels two steps away.</p>
+<p>Ground truth: dead pixels planted in a smooth frame are recovered exactly (no misses, no false alarms) while a hard edge produces none. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: bad *raw* or a *threshold* outside <code style="color:#22d3bf">(0, 1]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

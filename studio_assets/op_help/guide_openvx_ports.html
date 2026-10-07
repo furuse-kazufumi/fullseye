@@ -2,12 +2,9 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">OpenVX の素の口 — 使い方ガイド</h2>
 <p>Copyright (c) 2026 Kazufumi Furuse.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
-<p>OpenVX 1.3.1(Khronos の視覚処理 API の規格)は、視覚関数ごとに<b>何を受け取り何を返すか</b>を番号つきの規範文 [REQ-NNNN] で決めています。</p>
-<p>2026-09-25 に 61 本を本文まで読んで照合したら、17 本は「Fullseye にも似た op はあるが、入口か出口の形が違う」でした。たとえば <code style="color:#22d3bf">sobel_mag</code> は</p>
-<p>大きさを [0, 1] に正規化して返すので、規格の順序 —— Sobel で gx と gy を出し、別々に大きさと位相へ —— では使えません。</p>
+<p>OpenVX 1.3.1(Khronos の視覚処理 API の規格)は、視覚関数ごとに<b>何を受け取り何を返すか</b>を番号つきの規範文 [REQ-NNNN] で決めています。2026-09-25 に 61 本を本文まで読んで照合したら、17 本は「Fullseye にも似た op はあるが、入口か出口の形が違う」でした。たとえば <code style="color:#22d3bf">sobel_mag</code> は大きさを [0, 1] に正規化して返すので、規格の順序 —— Sobel で gx と gy を出し、別々に大きさと位相へ —— では使えません。</p>
 <p>この族は、その<b>素の口</b>を規範文どおりに開けます(合成 op は消しません)。第 1 陣 6 op と第 2 陣 4 op:</p>
-<p style="margin:2px 0 2px 12px">• <b>gradient(3)</b> — <code style="color:#22d3bf">vx_sobel3x3</code>(REQ-0415 の核で gx・gy を別々に、境界は必須の引数)/ <code style="color:#22d3bf">vx_magnitude</code>(REQ-0270: <code style="color:#22d3bf">uint16(sqrt(x²+y²) + 0.5)</code>、32767 で飽和)/</p>
-<p><code style="color:#22d3bf">vx_phase</code>(REQ-0364: 0 ≤ ϕ &lt; 2π を 0〜255 へ。★規格は丸めを決めていないので <code style="color:#22d3bf">mapping=&quot;floor&quot;|&quot;round&quot;</code> を呼び手が選ぶ)。</p>
+<p style="margin:2px 0 2px 12px">• <b>gradient(3)</b> — <code style="color:#22d3bf">vx_sobel3x3</code>(REQ-0415 の核で gx・gy を別々に、境界は必須の引数)/ <code style="color:#22d3bf">vx_magnitude</code>(REQ-0270: <code style="color:#22d3bf">uint16(sqrt(x²+y²) + 0.5)</code>、32767 で飽和)/ <code style="color:#22d3bf">vx_phase</code>(REQ-0364: 0 ≤ ϕ &lt; 2π を 0〜255 へ。★規格は丸めを決めていないので <code style="color:#22d3bf">mapping=&quot;floor&quot;|&quot;round&quot;</code> を呼び手が選ぶ)。</p>
 <p style="margin:2px 0 2px 12px">• <b>pixel(2)</b> — <code style="color:#22d3bf">vx_table_lookup</code>(REQ-0421: 任意の表を引く、S16 は offset を足して引く、表の外は止める)/ <code style="color:#22d3bf">vx_histogram</code>(REQ-0230: <code style="color:#22d3bf">(I − offset) × numBins / range</code> の升)。</p>
 <p style="margin:2px 0 2px 12px">• <b>suppress(1)</b> — <code style="color:#22d3bf">vx_nonmax_suppression</code>(REQ-0337: 窓の中で<b>前の隣には ≥、後ろの隣には &gt;</b> で勝てば残る。マスクの画素は比べない REQ-0336、抑制した S16 は INT16_MIN REQ-0335)。</p>
 <p style="margin:2px 0 2px 12px">• <b>geometry(3)</b> — <code style="color:#22d3bf">vx_warp_affine</code>(REQ-0498)/ <code style="color:#22d3bf">vx_warp_perspective</code>(REQ-0508)/ <code style="color:#22d3bf">vx_remap</code>(REQ-0392): どれも<b>逆写像</b>(出力の画素がどこから来るか)。標本は画素の中心、補間は最近傍か双線形、境界は UNDEFINED か CONSTANT だけ(REQ-0506)。★規格の C の宣言は行列を転置した並び(<code style="color:#22d3bf">mat[3][2]</code>)で持つので、そのまま渡すと形が (3, 2) になって止まります —— 渡すのは数学の並びの 2×3。</p>
@@ -37,12 +34,10 @@ peaks = V.vx_nonmax_suppression(mag, window=3)                     # REQ-0337: �
 print(int((peaks &gt; 0).sum()))          # 1 —— 幅 2・長さ 7 の平らな稜線が右下の 1 画素に潰れる
 print(V.vx_histogram(img, num_bins=4, offset=0, range_=256)[:, 1].tolist())        # [28.0, 35.0, 0.0, 0.0] —— REQ-0230 の升</pre>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">気をつけること</h3>
-<p style="margin:2px 0 2px 12px">• <b>非極大の抑制は「点」のための op です。</b> ≥ と &gt; の非対称のおかげで平らな頂上から 1 画素だけが残りますが、同じ理由で、**平らな稜線(エッジ)も</p>
-<p>1 画素に潰れます**(上の例: 幅 2・長さ 7 の稜線が 1 画素)。エッジを細くしたいときは勾配の向きに沿って比べる Canny の段(<code style="color:#22d3bf">hx_nonmax_dir</code>)を使います。</p>
+<p style="margin:2px 0 2px 12px">• <b>非極大の抑制は「点」のための op です。</b> ≥ と &gt; の非対称のおかげで平らな頂上から 1 画素だけが残りますが、同じ理由で、<b>平らな稜線(エッジ)も 1 画素に潰れます</b>(上の例: 幅 2・長さ 7 の稜線が 1 画素)。エッジを細くしたいときは勾配の向きに沿って比べる Canny の段(<code style="color:#22d3bf">hx_nonmax_dir</code>)を使います。</p>
 <p style="margin:2px 0 2px 12px">• <b>位相の丸めは規格が決めていません。</b> <code style="color:#22d3bf">floor</code> と <code style="color:#22d3bf">round</code> は 2π の直前で 255 と 0 に分かれます。他の実装と突き合わせるときは、どちらかを確かめてから。</p>
 <p style="margin:2px 0 2px 12px">• <b>最近傍のちょうど真ん中。</b> 規格は「中心がいちばん近い画素」としか書いていないので、x.5 は +∞ 側(⌊x + 0.5⌋)に寄せています。偶数丸めの実装とは半画素ずれた行列で答えが分かれます(試験で壊した版が落ちることを確かめてあります)。</p>
 <p style="margin:2px 0 2px 12px">• <b>双線形の CONSTANT は「外の近傍を定数とみなす」。</b> scipy の <code style="color:#22d3bf">map_coordinates(mode=&quot;constant&quot;)</code> は標本点が格子の外に出ると丸ごと定数にするので、縁の 1 画素で食い違います。同じ約束は <code style="color:#22d3bf">mode=&quot;grid-constant&quot;</code>。</p>
 <p style="margin:2px 0 2px 12px">• <b>大きさの 0.5 の足し方。</b> 整数の x² + y² の平方根はちょうど n + 0.5 にならないので、REQ-0270 の「+ 0.5 して切り捨て」と四捨五入は整数の入力では常に同じ答えです。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">真値</h3>
-<p>試験(<code style="color:#22d3bf">tests/test_vxcore.py</code>)は、規範文の式を<b>画素ごとの素朴なループ</b>で写した別の実装と突き合わせます: Sobel は scipy の相関、大きさは REQ-0270 の C の式、</p>
-<p>位相は <code style="color:#22d3bf">math.atan2</code>、ヒストグラムは REQ-0230 の式、非極大の抑制は 3.39 節の 8 つの不等式。≥ と &gt; を入れ替えた壊れた版で 3 件落ちることも確かめてあります。</p>
+<p>試験(<code style="color:#22d3bf">tests/test_vxcore.py</code>)は、規範文の式を<b>画素ごとの素朴なループ</b>で写した別の実装と突き合わせます: Sobel は scipy の相関、大きさは REQ-0270 の C の式、位相は <code style="color:#22d3bf">math.atan2</code>、ヒストグラムは REQ-0230 の式、非極大の抑制は 3.39 節の 8 つの不等式。≥ と &gt; を入れ替えた壊れた版で 3 件落ちることも確かめてあります。</p>
