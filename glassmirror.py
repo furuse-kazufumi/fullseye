@@ -261,13 +261,18 @@ def slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0
     d = float(thickness_mm)
     if not np.isfinite(d) or d < 0.0:
         raise ValueError(f"{op}: thickness_mm must be >= 0: got {thickness_mm!r}")
-    R = fresnel_dielectric(ci, a, b)
     sin2t = (a / b) ** 2 * (1.0 - ci ** 2)
     tir = sin2t > 1.0
     ct = np.sqrt(np.maximum(1.0 - sin2t, 1e-300))
     path = d / ct
     inner = beer_lambert_transmittance(path, sigma_per_mm)
-    T = (1.0 - R) ** 2 * inner / np.maximum(1.0 - (R * inner) ** 2, 1e-300)
+    # 多重反射の和は偏光ごとに取ってから平均する。★ 以前は Rs と Rp を先に平均して
+    # 1 本の R で和を取っていたので、斜め入射で透過率を過小評価した(air→1.5、
+    # 60° で 0.836 対 正しい 0.848)。垂直入射では Rs = Rp なので値は変わらない。
+    T = 0.0
+    for pol in ("s", "p"):
+        R = fresnel_dielectric(ci, a, b, polarization=pol)
+        T = T + 0.5 * (1.0 - R) ** 2 * inner / np.maximum(1.0 - (R * inner) ** 2, 1e-300)
     return np.where(tir, 0.0, T)
 
 
@@ -341,6 +346,9 @@ def prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass="N-BK7") -
         n = n.reshape(w.shape) if w.shape else n[0]
     else:
         n = np.broadcast_to(_index(glass, "glass", op), w.shape if w.shape else ())
+    if np.any(np.asarray(n) < 1.0):
+        # 空気中のプリズム: n < 1 では最小偏角の式が負の偏角を返す(物理的に無意味)
+        raise ValueError(f"{op}: glass refractive index must be >= 1 (prism in air): got {glass!r}")
     half = np.radians(A / 2.0)
     s = n * np.sin(half)
     with np.errstate(invalid="ignore"):

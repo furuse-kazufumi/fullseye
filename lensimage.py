@@ -204,18 +204,16 @@ def _integrate_pixels(psf, dx_um, pitch_um, normalise=True):
     if dx_um > pitch_um * (1.0 + 1e-9):
         raise ValueError("PSF sample spacing %.3g um is coarser than the pixel pitch %.3g um; "
                          "raise oversample" % (dx_um, pitch_um))
-    x = (np.arange(M) - M // 2) * dx_um
-    k = np.floor(x / pitch_um + 0.5).astype(int)
-    half = int(max(abs(k.min()), abs(k.max())))
-    K = 2 * half + 1
-    idx = k + half
-    out = np.zeros((K, K))
-    np.add.at(out, (idx[:, None], idx[None, :]), psf)
-    if normalise:
-        s = out.sum()
-        if s <= 0:
-            raise ValueError("the PSF has no energy")
-        out /= s
+    # Overlap-split binning (optics._bin_to_pixels). Nearest-pixel binning
+    # (floor(x/pitch + 0.5)) is asymmetric when samples land on pixel
+    # boundaries (even samples per pixel) and slid the PSF by up to 1/4 pixel.
+    import optics                                         # lazy: optics does not import lensimage
+    total = float(np.sum(psf))
+    if not total > 0:
+        raise ValueError("the PSF has no energy")
+    out = optics._bin_to_pixels(np.asarray(psf, dtype=np.float64), dx_um, pitch_um)
+    if not normalise:
+        out = out * total                                 # the split conserves energy
     return out
 
 

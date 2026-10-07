@@ -861,12 +861,20 @@ def fourier_plane_filter(size=64, kind="derivative_x", order=1, charge=1,
         return np.ones((n, n), dtype=np.complex128)
     if kind == "block":
         return np.zeros((n, n), dtype=np.complex128)
-    if kind == "derivative_x":
-        return np.asarray((two_pi_i * fx) ** k * np.ones((n, 1)),
-                          dtype=np.complex128)
-    if kind == "derivative_y":
-        return np.asarray((two_pi_i * fy) ** k * np.ones((1, n)),
-                          dtype=np.complex128)
+    if kind in ("derivative_x", "derivative_y"):
+        if kind == "derivative_x":
+            h = np.asarray((two_pi_i * fx) ** k * np.ones((n, 1)), dtype=np.complex128)
+        else:
+            h = np.asarray((two_pi_i * fy) ** k * np.ones((1, n)), dtype=np.complex128)
+        # ★奇数次の微分は奇関数。偶数長の ``fftfreq`` はナイキストの ``-1/2`` だけを
+        #   持ち対の ``+1/2`` が無いので、そこを残すと実の場の「微分」に虚部が出た
+        #   (実測 max|Im| 0.34)。hilbert_x と同じくそのビンを 0 にする。
+        if k % 2 == 1 and n % 2 == 0:
+            if kind == "derivative_x":
+                h[:, n // 2] = 0.0
+            else:
+                h[n // 2, :] = 0.0
+        return h
     if kind == "laplacian":
         return np.asarray(-(2.0 * np.pi) ** 2 * (fx * fx + fy * fy),
                           dtype=np.complex128)
@@ -1104,8 +1112,12 @@ def _bin_to_pixels(psf, dx_um, pitch_um):
     x = (np.arange(m, dtype=np.float64) - m // 2) * dx_um
     lo = x - 0.5 * dx_um
     hi = x + 0.5 * dx_um
-    k_lo = np.floor(lo / pitch_um + 0.5).astype(int)      # pixel holding the interval start
-    k_hi = np.floor(hi / pitch_um + 0.5).astype(int)      # pixel holding the interval end
+    # An interval that starts exactly on a pixel boundary belongs to the upper
+    # pixel and one that ends on it to the lower; the 1e-9 (in pixels) keeps
+    # the rounding of x/pitch from pushing it across (at pitch == dx it did,
+    # and one sample in two spilled into the neighbour).
+    k_lo = np.floor(lo / pitch_um + 0.5 + 1e-9).astype(int)       # pixel holding the interval start
+    k_hi = np.ceil(hi / pitch_um + 0.5 - 1e-9).astype(int) - 1    # pixel holding the interval end
     edge = (k_lo + 0.5) * pitch_um                        # boundary between k_lo and k_lo + 1
     w_hi = np.where(k_hi > k_lo, (hi - edge) / dx_um, 0.0)
     w_hi = np.clip(w_hi, 0.0, 1.0)

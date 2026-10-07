@@ -290,6 +290,8 @@ def optical_camera(focal_mm: float = 25.0, pixel_um: float = 3.45,
         raise ValueError(f"resolution must be (width >= 2, height >= 1), got {resolution!r}")
     wd = _pos(working_distance_mm, "working_distance_mm")
     tgt = _arr(look_at_mm, "look_at_mm", 3)
+    if not np.isfinite(float(azimuth_deg)):                     # NaN が R・t・eye を全部 NaN にしていた
+        raise ValueError(f"azimuth_deg must be finite, got {azimuth_deg!r}")
     tilt, az = np.radians(float(tilt_deg)), np.radians(float(azimuth_deg))
     if not (0.0 <= float(tilt_deg) < 90.0):
         raise ValueError("tilt_deg must be in [0, 90) (the camera must look down on the stage)")
@@ -2149,7 +2151,8 @@ def diffraction_blur(image, camera, f_number: float = 5.6,
     _check_camera(camera, "diffraction_blur")
     img = np.asarray(image, dtype=np.float64)
     r_um = airy_radius_um(f_number, wavelength_nm)
-    sigma_px = 0.42 * r_um * 1e-3 / camera["pixel_mm"]
+    # σ = 0.42·λN(Airy 強度の最良ガウス近似)。★ 以前は 0.42·(1.22λN) で 22 % 太かった
+    sigma_px = 0.42 * (r_um / 1.22) * 1e-3 / camera["pixel_mm"]
     if sigma_px < 0.3:                                   # 画素より十分小さければ何もしない
         return img.copy()
     flat = img if img.ndim == 3 else img[..., None]
@@ -2399,9 +2402,12 @@ def sensor_spec(pixel_um: float = 3.45, resolution=(1024, 1024),
     bits = int(bit_depth)
     if not (1 <= bits <= 16):
         raise ValueError(f"bit_depth must be in [1, 16], got {bit_depth!r}")
+    rn = float(read_noise_e)
+    if not np.isfinite(rn) or rn < 0.0:                          # 負・NaN の雑音がそのまま辞書に入っていた
+        raise ValueError(f"read_noise_e must be finite and >= 0, got {read_noise_e!r}")
     return {"kind": "sensor", "pixel_um": px, "width": int(res[0]), "height": int(res[1]),
             "quantum_efficiency": qe, "full_well_e": _pos(full_well_e, "full_well_e"),
-            "read_noise_e": float(read_noise_e), "dark_e_per_s": dk, "bit_depth": bits,
+            "read_noise_e": rn, "dark_e_per_s": dk, "bit_depth": bits,
             "gain_e_per_unit": _pos(gain_e_per_unit, "gain_e_per_unit"), "shutter": shutter,
             "model": model,
             # 値の出所を残す(実測か典型値かを後から追跡できるように)
@@ -2683,12 +2689,16 @@ def light_spec(kind: str = "coaxial", source: str = "led",
         raise ValueError(f"bandwidth_nm must be finite and >= 0, got {bandwidth_nm!r}")
     if source == "laser" and bw > 0.0:
         bw = 0.0                                       # レーザーは単一波長として扱う
+    # 負・0・NaN の波長は light_wavelengths で負の波長の束になっていた
+    wl = _pos(wavelength_nm, "wavelength_nm")
+    if size_mm is not None:
+        size_mm = _pos(size_mm, "size_mm")
     import illumdesign as _id
     geo = _id.light_source(kind=kind, radius_mm=_pos(radius_mm, "radius_mm"),
                            height_mm=_pos(height_mm, "height_mm"), n=int(n),
                            intensity=float(intensity), cos_exponent=float(cos_exponent))
     geo["size_mm"] = float(size_mm) if size_mm is not None else float(radius_mm) * 0.5
-    geo.update(source=source, wavelength_nm=float(wavelength_nm), bandwidth_nm=bw,
+    geo.update(source=source, wavelength_nm=wl, bandwidth_nm=bw,
                coherent=source == "laser", polarization=polarization,
                model=model, maker=maker)
     return geo

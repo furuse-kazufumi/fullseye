@@ -213,7 +213,12 @@ def thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0,
     for nm_, v in (("n_out", n0), ("n_film", n1), ("n_sub", n2)):
         if not np.isfinite(v) or v <= 0.0:
             raise ValueError(f"thin_film_reflectance: {nm_} must be a positive real index: got {v}")
-    c0 = np.clip(np.asarray(cos_theta, dtype=np.float64), 1e-9, 1.0)
+    c0 = np.asarray(cos_theta, dtype=np.float64)
+    # ★ 範囲外は黙って clip せず拒否する(cos=5 が垂直入射、cos=-0.5 が全反射に化けていた)。
+    #   丸めの屑(1 + 1e-15 など)だけは許す。
+    if not np.all(np.isfinite(c0)) or np.any(c0 < -1e-9) or np.any(c0 > 1.0 + 1e-9):
+        raise ValueError("thin_film_reflectance: cos_theta must be finite and lie in [0, 1]")
+    c0 = np.clip(c0, 1e-9, 1.0)
     sin0 = np.sqrt(np.maximum(1.0 - c0 ** 2, 0.0))
     sin1 = np.clip(n0 * sin0 / n1, 0.0, 1.0)             # Snell
     c1 = np.sqrt(np.maximum(1.0 - sin1 ** 2, 0.0))
@@ -327,7 +332,7 @@ def thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33
     op = "thin_film_rgb"
     N, mask = _normal_map(normals, op)
     V = _unit(view, "view", op)
-    cos_t = np.abs(np.sum(N * V[None, None, :], axis=-1))
+    cos_t = np.clip(np.abs(np.sum(N * V[None, None, :], axis=-1)), 0.0, 1.0)
     grid = np.linspace(380.0, 720.0, 69)
     R = thin_film_reflectance(grid[None, None, :], thickness_nm, n_film, n_sub,
                               cos_theta=cos_t[..., None])
