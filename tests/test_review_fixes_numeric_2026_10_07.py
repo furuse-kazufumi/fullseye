@@ -197,3 +197,17 @@ def test_doa_refuses_non_positive_or_non_finite_spacing(fn, spacing):
 def test_doa_valid_spacing_still_finds_the_sources(fn):
     doa = fn(_snapshots(), 2, spacing=0.5)["doa_deg"]
     assert np.abs(np.sort(doa) - np.array([-20.0, 10.0])).max() < 0.1
+
+
+def test_complex_sort_ops_keep_the_imaginary_part():
+    """★2026-10-07: cimage / beatcube を名乗る registry op が、guard の sanitize で実部だけにされていた。"""
+    import ops
+    rng = np.random.default_rng(0)
+    z = rng.random((32, 32)) + 1j * rng.random((32, 32))
+    names = [o.name for o in ops.REGISTRY if o.out_sort == "cimage" and o.in_sort == "cimage"]
+    assert len(names) >= 2, names
+    for n in names:
+        op = [o for o in ops.REGISTRY if o.name == n][0]
+        r = op.fn(z, 0.5, 0.5)
+        assert np.iscomplexobj(r), "%s が複素を返していない(%s)" % (n, r.dtype)
+        assert float(np.abs(r.imag).max()) > 0.0, n

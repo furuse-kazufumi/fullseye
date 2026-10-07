@@ -440,6 +440,23 @@ def region01(out):
 NONFINITE_BY_DESIGN: frozenset = frozenset({"tb_fly_tau_from_expansion"})
 
 
+def keep_complex(out, v, out_sort, name):
+    """複素の sort(cimage / beatcube)用の ``finish``: 虚部を残したまま、非有限だけは記録して 0 で埋める。
+
+    ★2026-10-07: ``sanitize`` は実 sort 向けの規約で**実部だけ**を返すので、複素の op を通すと位相が
+    黙って消えていた。素通しにすると今度は NaN / Inf がそのまま出る(全体スイートの非有限入力の門が
+    捕まえた)。ここでは「記録し、黙らない」(``_note_nonfinite``)を守ったうえで、複素のまま返す。
+    """
+    if out is None:
+        return fallback(v, out_sort)
+    _note_nonfinite(out, v, out_sort, name)
+    a = np.asarray(out)
+    if a.dtype.kind == "c" and a.size and not np.isfinite(a).all():
+        a = np.where(np.isfinite(a), a, 0.0 + 0.0j)
+        return a
+    return out
+
+
 def _note_nonfinite(out, v, out_sort, name) -> None:
     """``sanitize`` が NaN/Inf を置き換える**前に**、その事実を台帳に残す(strict では例外)。
 

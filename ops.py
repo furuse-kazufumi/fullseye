@@ -2526,6 +2526,10 @@ UNIT_RANGE_IS_NOT_THE_CONTRACT = {
 }
 
 
+#: 複素数を返す sort(``backends_bridge._COMPLEX_SORTS`` と同じ集合)。
+_COMPLEX_OUT_SORTS = frozenset({"cimage", "beatcube"})
+
+
 def _wrap_unguarded() -> int:
     """登録済みで未ガードの op を ``guard`` で包む。包んだ数を返す。"""
     import backend_safe as _bs
@@ -2541,6 +2545,14 @@ def _wrap_unguarded() -> int:
                 return _bs.fallback(v, _s) if out is None else out
 
             _op.fn = _bs.guard(_op.fn, _sort, name=_op.name, finish=_keep)
+        elif _op.out_sort in _COMPLEX_OUT_SORTS:
+            # ★2026-10-07: 複素の sort は sanitize(実 sort 向けの規約で**実部だけ**を返す)を通さない。
+            #   以前は tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が
+            #   cimage / beatcube を名乗りながら float64 を返していた(虚部を黙って捨てる = 位相が消える)。
+            #   backends_bridge の橋は同じ理由で既に素通しにしていた —— その規約をこちらにも揃える。
+            _op.fn = _bs.guard(_op.fn, _op.out_sort, name=_op.name,
+                               finish=lambda out, v, _s=_op.out_sort, _n=_op.name, _bs=_bs:
+                               _bs.keep_complex(out, v, _s, _n))
         else:
             _op.fn = _bs.guard(_op.fn, _op.out_sort, name=_op.name)
         n += 1
