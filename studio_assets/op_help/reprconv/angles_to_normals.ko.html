@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angles_to_normals(pairs)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.angles_to_normals(pairs)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;angles_to_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>방위·고도 쌍 <code style="color:#22d3bf">(N,2)</code> <b>[도]</b> → 단위 법선 <code style="color:#22d3bf">(N,3)</code>. <code style="color:#22d3bf">pairs</code> 의 출구.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">normals_to_angles</code> の厳密な逆(単位長に正規化した意味で)。仰角は [-90, 90] の外を拒否する —— 100 度の仰角は「反対側の 80 度」に折り返して<b>もっともらしく間違う</b>ので、黙って受けない。</p>
+<p><code style="color:#22d3bf">normals_to_angles</code> 의 엄밀한 역(단위 길이로 정규화한다는 의미에서). 앙각은 [-90, 90] 밖을 거부한다 —— 100 도의 앙각은 &quot;반대쪽의 80 도&quot;로접혀서 <b>그럴듯하게 틀리므로</b>, 조용히 받지 않는다.</p>
 <p>Args:</p>
-<p>pairs: (N, 2) [方位度, 仰角度]、または 2 本の等長 1-D のタプル。</p>
+<p>pairs: (N, 2) [방위 도, 앙각 도], 또는 2 개의 같은 길이 1-D 의 튜플.</p>
 <p>Returns:</p>
-<p>(N, 3) float64、行ごとに単位長。</p>
+<p>(N, 3) float64, 행마다 단위 길이.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限 / 仰角が [-90, 90] 外。</p>
+<p>ValueError: 형태 부정 / 비유한 / 앙각이 [-90, 90] 밖.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

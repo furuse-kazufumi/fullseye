@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_matrix(descriptor)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>描述子 → <code style="color:#22d3bf">matrix</code>。<code style="color:#22d3bf">descriptor</code> 的出口(<b>可逆</b>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>1-D の記述子 (n,) は <b>(1, n)</b> の 1 行行列にする。2-D の記述子束(<code style="color:#22d3bf">sh_descriptor</code> の (12, 9) のような「点 x 次元」)はそのまま通す。こうしておくと記述子バンクに <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> がそのまま掛かる —— 記述子は本質的にベクトルなので、行列語彙へ渡すのは梱包の付け替えであって変形ではない。</p>
-<p><code style="color:#22d3bf">matrix_to_descriptor</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。</p>
+<p>1-D 的描述子 (n,) 变为 <b>(1, n)</b> 的 1 行矩阵。2-D 的描述子束(像 <code style="color:#22d3bf">sh_descriptor</code> 的 (12, 9) 那样的&quot;点 x 维度&quot;)原样通过。这样一来,<code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> 就能直接作用于描述子库 —— 描述子本质上是向量,把它交给矩阵词汇只是换个包装,而不是变形。</p>
+<p>与 <code style="color:#22d3bf">matrix_to_descriptor</code> 往返时<b>按位一致</b>(实测 max|Δ| = 0.0)。</p>
 <p>Args:</p>
-<p>descriptor: (n,) または (m, n) の実配列。</p>
+<p>descriptor: (n,) 或 (m, n) 的实数组。</p>
 <p>Returns:</p>
-<p>(1, n) または (m, n) float64。</p>
+<p>(1, n) 或 (m, n) float64。</p>
 <p>Raises:</p>
-<p>ValueError: 3-D 以上 / 非有限 / dict(<code style="color:#22d3bf">fit_zernike</code> は dict を返すので</p>
-<p>ここで拒否される —— 詳細は本モジュール docstring)。</p>
+<p>ValueError: 3-D 以上 / 非有限 / dict(<code style="color:#22d3bf">fit_zernike</code> 返回 dict,所以</p>
+<p>在这里被拒绝 —— 详见本模块 docstring)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

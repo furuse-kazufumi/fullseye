@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_image2d(score, axis=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.score_to_image2d(score, axis=0)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein <code style="color:#22d3bf">score</code>-Volumen → seine Maximumintensitätsprojektion, ein <code style="color:#22d3bf">image2d</code>. Der zweite Ausgang aus <code style="color:#22d3bf">score</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>指定軸に沿った最大値投影(MIP)。<b>一方向</b>。相関ピークが「どの面から見ても 1 本に見えるか」を確かめるのに使う —— 2 本見えたら対応が曖昧という意味。</p>
+<p>Maximumprojektion (MIP) entlang der angegebenen Achse. <b>Einseitig</b>. Dient zur Prüfung, ob der Korrelationspeak &quot;von jeder Seite aus als 1 einziger erscheint&quot; -- sieht man 2, ist die Zuordnung mehrdeutig.</p>
 <p>Args:</p>
-<p>score: (D, H, W)。</p>
-<p>axis: 潰す軸(0/1/2)。</p>
+<p>score: (D, H, W).</p>
+<p>axis: zu kollabierende Achse (0/1/2).</p>
 <p>Returns:</p>
-<p>(H, W) 等の 2-D float64。</p>
+<p>2-D float64 wie (H, W).</p>
 <p>Raises:</p>
-<p>ValueError: 3-D でない / axis が範囲外 / 非有限。</p>
+<p>ValueError: nicht 3-D / axis außerhalb des Bereichs / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

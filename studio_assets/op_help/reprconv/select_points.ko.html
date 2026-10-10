@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.select_points(points, indices)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 <code style="color:#22d3bf">(N,3)</code> 과 인덱스 <code style="color:#22d3bf">(M,)</code> → 부분 점군 <code style="color:#22d3bf">(M,3)</code>. <code style="color:#22d3bf">indices</code> 의 소비 쪽.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">indices</code> を産む op は 6 つあるのに(<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>)、<b>添字を食う単入力 op が 1 つも無かった</b> —— 添字は「元の集合とセットで初めて意味を持つ」ので、単入力では原理的に作れない。よってこれは 2 入力にしてある。</p>
+<p><code style="color:#22d3bf">indices</code> 를 낳는 op 는 6 개나 있는데(<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>), <b>첨자를 먹는 단입력 op 가 1 개도 없었다</b> —— 첨자는 &quot;원래의 집합과 세트로 비로소 의미를 갖는다&quot;므로, 단입력으로는 원리적으로 만들 수 없다. 따라서 이것은 2 입력으로 했다.</p>
 <p>Args:</p>
-<p>points: (N, 3)。</p>
-<p>indices: (M,) の非負整数、N 未満。</p>
+<p>points: (N, 3).</p>
+<p>indices: (M,) 의 음이 아닌 정수, N 미만.</p>
 <p>Returns:</p>
-<p>(M, 3) float64。</p>
+<p>(M, 3) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 範囲外の添字 / 形状不正 / 非有限。</p>
+<p>ValueError: 범위 밖의 첨자 / 형태 부정 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,28 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_voxel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><code style="color:#22d3bf">gaussians</code> → a density <code style="color:#22d3bf">voxel (D,H,W)</code>. The second exit from <code style="color:#22d3bf">gaussians</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各ガウシアンを <code style="color:#22d3bf">truncate * sigma</code> で打ち切って加算する。<b>格子の原点と刻みを明示引数にしてある</b>のが要点で、既定の <code style="color:#22d3bf">spacing=(1,1,1)</code> をそのまま使うと「世界座標をそのまま添字にする」ことになり、実データではまず間違う —— しかも例外は出ず、密度が別の場所に立つだけなので気づけない。<code style="color:#22d3bf">tests/test_reprconv.py</code> はこの取り違えを明示的に測っている。</p>
-<p><b>不可逆</b>。損失は 3 つあり、どれも数字で測れる:</p>
-<p style="margin:2px 0 2px 12px">• <b>打ち切り</b> —— 打ち切りは<b>軸並行の箱</b>(各軸 ±truncate*sigma)なので、残る質量は <code style="color:#22d3bf">erf(t/sqrt(2))**3</code>。t = 3 で <b>99.194%</b>。</p>
-<p>★ここは一度間違えた: 最初「3 sigma の<b>球</b>の質量 97.07%」と書いたが、</p>
-<p>実装は箱なので値が違う。刻みを 1.0 → 0.125 と細かくして極限を取ると</p>
-<p>99.30% → 99.19% へ収束し、球の 97.07% には<b>近づかない</b>ことで反証できた</p>
-<p>(<code style="color:#22d3bf">tests/test_reprconv.py::test_gaussians_to_voxel_mass_matches_box_truncation</code>)。</p>
-<p>例外も NaN も出ない、まさに「黙って間違った数字を返す」種類の誤り。</p>
-<p style="margin:2px 0 2px 12px">• <b>格子求積</b> —— 中点則なので刻みが sigma に対して粗いと<b>上振れ</b>する(実測: sigma = 1.5 で刻み 1.0 のとき 99.94%、0.125 で 99.30%)。</p>
-<p style="margin:2px 0 2px 12px">• <b>境界の切り落とし</b> —— 箱が volume の外へ出た分は落ちる。中心が縁に近いガウシアンでは打ち切りより遥かに大きい損失になる。</p>
+<p>Truncates each Gaussian at <code style="color:#22d3bf">truncate * sigma</code> and accumulates. The key point is that <b>the grid origin and step are explicit arguments</b>: using the default <code style="color:#22d3bf">spacing=(1,1,1)</code> as is means &quot;using world coordinates directly as indices&quot;, which with real data is almost always wrong -- and since no exception is raised and the density just appears somewhere else, you cannot notice. <code style="color:#22d3bf">tests/test_reprconv.py</code> measures this mix-up explicitly.</p>
+<p><b>Irreversible</b>. There are 3 losses, each measurable as a number:</p>
+<p style="margin:2px 0 2px 12px">• <b>Truncation</b> -- the truncation is an <b>axis-parallel box</b> (±truncate*sigma on each axis), so the remaining mass is <code style="color:#22d3bf">erf(t/sqrt(2))**3</code>. At t = 3 it is <b>99.194%</b>. ★This was once wrong: at first it said &quot;the mass of a 3 sigma <b>sphere</b>, 97.07%&quot;, but the implementation is a box, so the value differs. Refining the step 1.0 → 0.125 and taking the limit, it converges 99.30% → 99.19% and does <b>not approach</b> the sphere&#x27;s 97.07%, which refuted it (<code style="color:#22d3bf">tests/test_reprconv.py::test_gaussians_to_voxel_mass_matches_box_truncation</code>). No exception and no NaN -- exactly the kind of error that &quot;silently returns a wrong number&quot;.</p>
+<p style="margin:2px 0 2px 12px">• <b>Grid quadrature</b> -- it is the midpoint rule, so when the step is coarse relative to sigma it <b>overshoots</b> (measured: with sigma = 1.5, 99.94% at step 1.0, 99.30% at 0.125).</p>
+<p style="margin:2px 0 2px 12px">• <b>Boundary clipping</b> -- whatever part of the box leaves the volume is dropped. For Gaussians whose centre is close to the edge, this loss is far larger than the truncation.</p>
 <p>Args:</p>
-<p>gaussians: <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code> を持つ dict。<code style="color:#22d3bf">mu</code> は (z, y, x)。</p>
-<p>shape: (D, H, W)。</p>
-<p>origin: 格子の (z, y, x) 原点(世界座標)。</p>
-<p>spacing: 格子の (dz, dy, dx) 刻み(世界単位 / voxel)。</p>
-<p>truncate: 何 sigma で打ち切るか(既定 3)。</p>
+<p>gaussians: dict with <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code>. <code style="color:#22d3bf">mu</code> is (z, y, x).</p>
+<p>shape: (D, H, W).</p>
+<p>origin: (z, y, x) origin of the grid (world coordinates).</p>
+<p>spacing: (dz, dy, dx) step of the grid (world units / voxel).</p>
+<p>truncate: at how many sigma to truncate (default 3).</p>
 <p>Returns:</p>
-<p>(D, H, W) float64 の密度(値は「voxel あたりの重み和」で、体積積分が</p>
-<p><code style="color:#22d3bf">sum(w)</code> に近づく)。</p>
+<p>(D, H, W) float64 density (values are &quot;weight sum per voxel&quot;, and the volume integral</p>
+<p>approaches <code style="color:#22d3bf">sum(w)</code>).</p>
 <p>Raises:</p>
-<p>ValueError: shape/spacing 不正 / truncate &lt;= 0 / gaussians 不正。</p>
+<p>ValueError: bad shape/spacing / truncate &lt;= 0 / bad gaussians.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

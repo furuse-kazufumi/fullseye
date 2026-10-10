@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_layer_dimension(X: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import conngraph; conngraph.states_layer_dimension(X: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsconngraph.get(&quot;states_layer_dimension&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>每層有效維度的表：欄 layer / n / participation_ratio / ratio(= PR / n)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">X</code> = <code style="color:#22d3bf">graph_layer_propagate</code> の返り (N, n)、<code style="color:#22d3bf">labels</code> = ノードの層 id。「脳 → 首 → 腹髄 → 筋」で次元がどこで落ちるか(動きの量子化)を 1 つの数式で読む。</p>
+<p><code style="color:#22d3bf">X</code> = <code style="color:#22d3bf">graph_layer_propagate</code> 回傳的 (N, n),<code style="color:#22d3bf">labels</code> = 節點的層 id。用 1 個公式讀出在「腦 → 頸 → 腹髓 → 肌肉」中維度在哪裡下降(動作的量化)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

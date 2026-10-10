@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_modularity(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import conngraph; conngraph.graph_modularity(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconngraph.get(&quot;graph_modularity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>directed, weighted modularity Q (Leicht–Newman 2008)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Q = (1/m) Σ_ij (W_ij − k_i^out k_j^in / m) δ(c_i, c_j)、m = Σ W。全ノードが 1 つの群なら厳密に 0。対角(自己結合)は落とす。重みは非負であること。</p>
+<p>Q = (1/m) Σ_ij (W_ij − k_i^out k_j^in / m) δ(c_i, c_j), m = Σ W। अगर सभी nodes 1 ही group में हों तो यह ठीक 0 होता है। diagonal (self-loops) हटा दिया जाता है। weights non-negative होने चाहिए।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

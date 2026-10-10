@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code>;從台帳取用則 <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_skyline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由照片的天際線(每欄的列)與 DEM 的天際線決定 (yaw, pitch, roll) → table。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>写真の境界画素 (u, v) をカメラ光線にし、仮の姿勢で世界へ回すと、各列は (方位, 仰角) の点になる。その仰角と、DEM のスカイラインをその方位で引いた仰角の差の RMS が姿勢のコスト。yaw を <code style="color:#22d3bf">yaw_step_deg</code> 刻みで一周、pitch・roll を <code style="color:#22d3bf">coarse_step_deg</code> 刻みで格子探索し、最小の点から Nelder–Mead で連続値に詰める(scipy)。Baatz ら 2012 のスカイライン照合を、位置既知・ 1 台のカメラに絞った形。</p>
-<p><b>曖昧さを返す</b>: yaw ごとの最良コストの曲線(<code style="color:#22d3bf">yaw_profile_deg</code> / <code style="color:#22d3bf">yaw_profile_residual_deg</code>) と、最良と 2 番目の谷の差 <code style="color:#22d3bf">margin_deg</code>(2 番目の谷 = 最良から 20° 以上離れた最小)。平地・対称な尾根・半円しか写らない写真では谷が複数あり、margin が小さい。<b>margin が <code style="color:#22d3bf">coarse</code> の残差程度なら向きは決まっていない</b>と読む(黙って 1 つを返さない: <code style="color:#22d3bf">ambiguous</code>)。</p>
+<p>把照片的邊界像素 (u, v) 變為相機光線,用假定的位姿旋轉到世界中,每一行就成為 (方位, 仰角) 的點。該仰角與在該方位查 DEM 天際線得到的仰角之差的 RMS 就是位姿的代價。yaw 以 <code style="color:#22d3bf">yaw_step_deg</code> 步長繞一周,pitch、roll 以 <code style="color:#22d3bf">coarse_step_deg</code> 步長做網格搜尋,再從最小點出發用 Nelder–Mead 細化到連續值(scipy)。這是把 Baatz 等 2012 的天際線比對,縮小到位置已知、1 台相機的形式。</p>
+<p><b>回傳歧義度</b>:每個 yaw 的最佳代價曲線(<code style="color:#22d3bf">yaw_profile_deg</code> / <code style="color:#22d3bf">yaw_profile_residual_deg</code>) 以及最佳谷與第 2 個谷之差 <code style="color:#22d3bf">margin_deg</code>(第 2 個谷 = 離最佳 20° 以上的最小值)。只拍到平地、對稱山脊或半圓的照片會有多個谷,margin 很小。<b>margin 若與 <code style="color:#22d3bf">coarse</code> 的殘差相當,就應理解為朝向未確定</b>(不默默回傳 1 個:<code style="color:#22d3bf">ambiguous</code>)。</p>
 <p>Args:</p>
-<p>skyline_rows: (W,) <code style="color:#22d3bf">skyline_extract</code> の出力(列ごとの行)。</p>
+<p>skyline_rows: (W,) <code style="color:#22d3bf">skyline_extract</code> 的輸出(每行的列)。</p>
 <p>K: (fx, fy, cx, cy)。</p>
-<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> の出力。</p>
-<p>yaw_step_deg / coarse_step_deg: 粗い格子の刻み。pitch_range / roll_range: 探索範囲 [度]。</p>
+<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> 的輸出。</p>
+<p>yaw_step_deg / coarse_step_deg: 粗網格的步長。pitch_range / roll_range: 搜尋範圍 [度]。</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code>(仰角残差 RMS)/</p>
+<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code>(仰角殘差 RMS)/</p>
 <p><code style="color:#22d3bf">margin_deg</code> / <code style="color:#22d3bf">runner_up_yaw_deg</code> / <code style="color:#22d3bf">ambiguous</code>(bool)/ <code style="color:#22d3bf">yaw_profile_deg</code> (M,) /</p>
 <p><code style="color:#22d3bf">yaw_profile_residual_deg</code> (M,) / <code style="color:#22d3bf">n_columns</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

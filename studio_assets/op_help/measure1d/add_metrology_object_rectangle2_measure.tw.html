@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_rectangle2_measure(model, row, col, phi, l1, l2, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import metrology; metrology.add_metrology_object_rectangle2_measure(model, row, col, phi, l1, l2, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_rectangle2_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>新增矩形量測物件(add_metrology_object_rectangle2_measure)。<code style="color:#22d3bf">phi</code> = <code style="color:#22d3bf">l1</code> 邊的方向(從 col 軸起算，弧度)，<code style="color:#22d3bf">l1</code>/<code style="color:#22d3bf">l2</code> = 半邊長。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>参照矩形(中心 <code style="color:#22d3bf">(row, col)</code> [px]、<code style="color:#22d3bf">phi</code> 方向の半辺長 <code style="color:#22d3bf">l1</code>、直交方向の半辺長 <code style="color:#22d3bf">l2</code>)を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> は 4 辺それぞれに <code style="color:#22d3bf">max(2, n // 4)</code> 点を <b>角を避けて</b> 等間隔に置き、各辺の外向き法線に沿ってエッジを測り、矩形フィットで中心・向き・半辺長を出し直す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phi</code>: col 軸(x)から row 軸(画像下向き)へ測ったラジアン(<code style="color:#22d3bf">gen_measure_rectangle2</code> と同じ規約)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">l1</code>, <code style="color:#22d3bf">l2</code>: 半辺長 [px] (全長ではない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 総サンプル数の目安(既定 40 → 各辺 10 点)。4 未満でも各辺 2 点は置く。</p>
-<p style="margin:2px 0 2px 12px">• 引数は検証しない。返り値は追加位置の index(0 始まり)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">apply</code> 結果の <code style="color:#22d3bf">params</code> は <code style="color:#22d3bf">row / col / phi / l1 / l2</code> で、再フィット後は <b><code style="color:#22d3bf">l1 &gt;= l2</code>(長辺が <code style="color:#22d3bf">l1</code>)に並び替えられる</b> ―― 参照で <code style="color:#22d3bf">l1 &lt; l2</code> と与えても結果の <code style="color:#22d3bf">phi</code> は長辺の向きになる。</p>
+<p>把參考矩形(中心 <code style="color:#22d3bf">(row, col)</code> [px]、<code style="color:#22d3bf">phi</code> 方向的半邊長 <code style="color:#22d3bf">l1</code>、正交方向的半邊長 <code style="color:#22d3bf">l2</code>)堆疊到 <code style="color:#22d3bf">model[&quot;objects&quot;]</code>(原地更新 dict)。<code style="color:#22d3bf">apply_metrology_model</code> 在 4 條邊上各<b>避開角點</b>等間隔放置 <code style="color:#22d3bf">max(2, n // 4)</code> 個點，沿各邊的外法線量測邊緣，再用矩形擬合重新求出中心、朝向、半邊長。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phi</code>: 從 col 軸(x)向 row 軸(影像向下)量測的弧度(與 <code style="color:#22d3bf">gen_measure_rectangle2</code> 相同的約定)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">l1</code>, <code style="color:#22d3bf">l2</code>: 半邊長 [px]（不是全長）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 總取樣數的參考值(預設 40 → 每邊 10 點)。小於 4 時每邊也至少放 2 點。</p>
+<p style="margin:2px 0 2px 12px">• 參數不做驗證。回傳值是新增位置的 index(從 0 開始)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">apply</code> 結果的 <code style="color:#22d3bf">params</code> 為 <code style="color:#22d3bf">row / col / phi / l1 / l2</code>，重新擬合後 <b>會重排為 <code style="color:#22d3bf">l1 &gt;= l2</code>(長邊為 <code style="color:#22d3bf">l1</code>)</b> —— 即使參考中給出 <code style="color:#22d3bf">l1 &lt; l2</code>, 結果的 <code style="color:#22d3bf">phi</code> 也是長邊的方向。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

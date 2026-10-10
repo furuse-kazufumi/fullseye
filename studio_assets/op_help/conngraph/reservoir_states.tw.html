@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reservoir_states(W: &#x27;Any&#x27;, U: &#x27;Any&#x27;, in_scale: &#x27;float&#x27; = 1.0, leak: &#x27;float&#x27; = 1.0, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0, washout: &#x27;int&#x27; = 0, W_in: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import conngraph; conngraph.reservoir_states(W: &#x27;Any&#x27;, U: &#x27;Any&#x27;, in_scale: &#x27;float&#x27; = 1.0, leak: &#x27;float&#x27; = 1.0, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0, washout: &#x27;int&#x27; = 0, W_in: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsconngraph.get(&quot;reservoir_states&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>reservoir 的狀態序列：x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in u_t)。回傳 (T − washout, n)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">U</code> は (T, d) の入力列(1-D は (T, 1))。<code style="color:#22d3bf">W_in</code> は seed で決まる一様 (−in_scale, in_scale) の (n, d) 行列。<code style="color:#22d3bf">nonlinearity</code> は tanh / linear。x_0 = 0 から始め、各ステップの更新後の状態を並べる。<code style="color:#22d3bf">washout</code> 行を先頭から捨てる(T 以上は拒否)。</p>
-<p><code style="color:#22d3bf">W_in</code> を渡すと乱数の代わりにその (n, d) 行列を使う(<code style="color:#22d3bf">in_scale</code> / <code style="color:#22d3bf">seed</code> は無視)—— 決まったノード群に刺激を入れる(列 = 刺激するノードの指示子)のはこちら。</p>
+<p><code style="color:#22d3bf">U</code> 是 (T, d) 的輸入序列(1-D 視為 (T, 1))。<code style="color:#22d3bf">W_in</code> 是由 seed 決定、均勻分布於 (−in_scale, in_scale) 的 (n, d) 矩陣。<code style="color:#22d3bf">nonlinearity</code> 為 tanh / linear。從 x_0 = 0 開始,把每一步更新後的狀態排列起來。從開頭捨棄 <code style="color:#22d3bf">washout</code> 列(T 以上則拒絕)。</p>
+<p>傳入 <code style="color:#22d3bf">W_in</code> 時,用該 (n, d) 矩陣取代亂數(忽略 <code style="color:#22d3bf">in_scale</code> / <code style="color:#22d3bf">seed</code>)—— 要對固定的一組節點施加刺激(行 = 受刺激節點的指示向量)時用這個。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

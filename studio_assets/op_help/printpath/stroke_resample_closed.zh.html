@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_resample_closed(points, n_points, allow_shortening=False)</code>(要直接调用实现,<code style="color:#22d3bf">import printpath; printpath.stroke_resample_closed(points, n_points, allow_shortening=False)</code>;从台账取用则 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_resample_closed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把闭合的线按<b>等弧长</b>重新采样。→ <code style="color:#22d3bf">pairs</code></p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>フーリエへ渡す前段。★媒介変数の取り方で係数が変わる(実測で最大 47 倍)ので、ここは<b>弧長で等間隔</b>と明示する。弧長の間隔は機械精度で一定(実測 cv 1e-14)。</p>
-<p>★<b>ただし打ち直すと線は短くなる</b>: 標本と標本を結ぶのは弦なので、折れ点で角を切る。実測(300 頂点の巡回路): 標本 4000 で長さ 99.1 %、1024 で 96.9 %、300(頂点と同数)で 89.3 %、100 で 72.8 %、50 で <b>57.7 %</b>。長さが変われば濃淡の再現も壊れるので、<b>入力の頂点数より少ない標本は既定で拒否する</b> (意図してならば <code style="color:#22d3bf">allow_shortening=True</code>)。</p>
+<p>传给傅里叶之前的一段。★参数化方式不同,系数就会改变(实测最大 47 倍),所以这里明确规定为<b>按弧长等间隔</b>。弧长间隔在机器精度内恒定(实测 cv 1e-14)。</p>
+<p>★<b>但重新采样会使线变短</b>:连接样本与样本的是弦,所以在折点处会把角切掉。实测(300 个顶点的巡回路径):样本 4000 时长度 99.1 %,1024 时 96.9 %, 300(与顶点数相同)时 89.3 %,100 时 72.8 %,50 时 <b>57.7 %</b>。长度一变, 浓淡的再现也会被破坏,所以<b>少于输入顶点数的样本默认拒绝</b> (若是有意为之则 <code style="color:#22d3bf">allow_shortening=True</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

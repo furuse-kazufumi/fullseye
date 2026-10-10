@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_mahalanobis(model, shape, align: &#x27;bool&#x27; = True, cumulative: &#x27;float&#x27; = 0.99, n_modes: &#x27;int&#x27; = 0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.shape_mahalanobis(model, shape, align: &#x27;bool&#x27; = True, cumulative: &#x27;float&#x27; = 0.99, n_modes: &#x27;int&#x27; = 0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_mahalanobis&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>모델 관점에서 그 형상이 얼마나 <b>이상</b>한지. → float.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">sqrt(sum(score_i^2 / variance_i))</code> を<b>先頭の何本かに限って</b>足す。</p>
-<p>★ <b>全成分を足してはいけない。</b> K 個体の群から出る主成分は K-1 本だが、後ろのほうは分散が数値的なゼロまで落ちる。実測(K=12、N=80、真のモードは 2 本)の分散: <code style="color:#22d3bf">3.2e-02, 5.6e-03, 4.0e-05, 6.7e-13, 9.7e-14, 9.9e-17, …, 1.0e-31</code>。この裾で割ると値が意味を失う:</p>
+<p><code style="color:#22d3bf">sqrt(sum(score_i^2 / variance_i))</code> 를 <b>앞쪽 몇 개로 한정해</b> 더한다.</p>
+<p>★ <b>전 성분을 더해서는 안 된다.</b> K 개체의 군에서 나오는 주성분은 K-1 개지만, 뒤쪽은 분산이 수치적인 0 까지 떨어진다. 실측(K=12, N=80, 참 모드는 2 개)의 분산: <code style="color:#22d3bf">3.2e-02, 5.6e-03, 4.0e-05, 6.7e-13, 9.7e-14, 9.9e-17, …, 1.0e-31</code>. 이 꼬리로 나누면 값이 의미를 잃는다:</p>
 <p>==========  ===========  ==================</p>
-<p>使う本数    群内の個体   0.5 の膨らみを注入</p>
+<p>사용 개수       군 내 개체       0.5 부풂 주입</p>
 <p>==========  ===========  ==================</p>
 <p>1                 0.428               1.821</p>
 <p>2                 0.885               2.617</p>
 <p>3                 1.035              18.134</p>
-<p>5                 1.373        1393035.060</p>
-<p>11(全部)      46613.636       9.3e+13</p>
+<p>5                 1.373         1393035.060</p>
+<p>11(전부)        46613.636             9.3e+13</p>
 <p>==========  ===========  ==================</p>
-<p>5 本で群内の個体が 1.37 なのに外れが 100 万、11 本では<b>群内ですら 46614</b>。「異常度」ではなく「数値ゼロで割った回数」を測っている。</p>
-<p>そこで既定は<b>累積寄与率 <code style="color:#22d3bf">cumulative</code>(0.99)までの成分だけ</b>を使う。上の群では 2 本(0.99895)が選ばれ、群内 0.885 / 外れ 2.617 と素直に並ぶ。<code style="color:#22d3bf">n_modes</code> を正の数で与えればその本数に固定する(比較のため本数を揃えたいときに使う)。<b>どちらを使ったかで値が変わる</b>ので、報告するときは本数も一緒に。</p>
+<p>5 개에서 군 내 개체가 1.37 인데 이탈은 100 만, 11 개에서는 <b>군 내조차 46614</b>. &quot;이상도&quot;가 아니라 &quot;수치 0 으로 나눈 횟수&quot;를 재고 있다.</p>
+<p>그래서 기본값은 <b>누적 기여율 <code style="color:#22d3bf">cumulative</code>(0.99)까지의 성분만</b>을 쓴다. 위의 군에서는 2 개(0.99895)가 선택되어, 군 내 0.885 / 이탈 2.617 로 순순히 나열된다. <code style="color:#22d3bf">n_modes</code> 를 양수로 주면 그 개수로 고정한다(비교를 위해 개수를 맞추고 싶을때 쓴다). <b>어느 쪽을 썼는지에 따라 값이 바뀌므로</b>, 보고할 때는 개수도 함께.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

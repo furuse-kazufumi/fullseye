@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_reaction_diffusion(size: &#x27;int&#x27; = 220, steps: &#x27;int&#x27; = 1600, feed: &#x27;float&#x27; = 0.037, kill: &#x27;float&#x27; = 0.06, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_reaction_diffusion(size: &#x27;int&#x27; = 220, steps: &#x27;int&#x27; = 1600, feed: &#x27;float&#x27; = 0.037, kill: &#x27;float&#x27; = 0.06, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_reaction_diffusion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gray–Scott reaction-diffusion — pattern बनते हैं, बँटते हैं और बढ़ते रहते हैं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>不変量: <b>餌も死も 0(<code style="color:#22d3bf">feed = kill = 0</code>)なら、総量は厳密に保存される</b> —— 拡散は再分配であって生成ではないから。数値解法が壊れていれば、ここが真っ先に崩れる(<code style="color:#22d3bf">perpetual_identities</code>)。</p>
+<p>invariant: <b>feed और kill दोनों 0 हों (<code style="color:#22d3bf">feed = kill = 0</code>) तो कुल मात्रा ठीक-ठीक संरक्षित रहती है</b> -- क्योंकि diffusion पुनर्वितरण है, उत्पादन नहीं। numerical method टूटी हो, तो सबसे पहले यहीं गड़बड़ होती है (<code style="color:#22d3bf">perpetual_identities</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

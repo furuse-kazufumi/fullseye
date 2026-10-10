@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;filled_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>भरा हुआ polygon (even-odd crossing rule — <code style="color:#22d3bf">imagedraw</code> केवल outline बनाता है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : (N,2)</p>
-<p><b>(x,y)</b> の頂点列(自動的に閉じる)。3 点未満は ValueError。</p>
+<p><b>(x,y)</b> vertices का क्रम (अपने-आप बंद होता है)। 3 से कम points पर ValueError।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点が 3 未満 / 非有限 / alpha が [0,1] の外。</p>
+<p>points 3 से कम / non-finite / alpha [0,1] के बाहर।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

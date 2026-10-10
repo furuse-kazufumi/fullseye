@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polar_to_cscalar(pairs)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.polar_to_cscalar(pairs)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;polar_to_cscalar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>极形式 <code style="color:#22d3bf">pairs (1,2) = [r, theta[度]]</code> → 复标量。<code style="color:#22d3bf">cscalar_to_polar</code> 的逆。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
 <p>pairs: (1, 2)。r &gt;= 0。</p>
 <p>Returns:</p>
 <p>complex。</p>
 <p>Raises:</p>
-<p>ValueError: 形状が (1,2) でない / r &lt; 0 / 非有限。</p>
+<p>ValueError: 形状不是 (1,2) / r &lt; 0 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

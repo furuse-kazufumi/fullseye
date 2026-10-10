@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_harmonograph(size: &#x27;int&#x27; = 520, a: &#x27;float&#x27; = 3.0, b: &#x27;float&#x27; = 2.0, phase: &#x27;float&#x27; = 0.35, decay: &#x27;float&#x27; = 0.0018, turns: &#x27;float&#x27; = 36.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_harmonograph(size: &#x27;int&#x27; = 520, a: &#x27;float&#x27; = 3.0, b: &#x27;float&#x27; = 2.0, phase: &#x27;float&#x27; = 0.35, decay: &#x27;float&#x27; = 0.0018, turns: &#x27;float&#x27; = 36.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_harmonograph&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Harmonograph — 2 damped pendulums keep drawing a curve that never closes.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>不変量: 減衰が 0 のとき、曲線が閉じるのは <b><code style="color:#22d3bf">a/b</code> が有理数のとき</b>だけで、そのときの周期は <code style="color:#22d3bf">2π/gcd</code> ちょうど。</p>
+<p>Invariant: with damping 0, the curve closes <b>only when <code style="color:#22d3bf">a/b</code> is rational</b>, and its period is then exactly <code style="color:#22d3bf">2π/gcd</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

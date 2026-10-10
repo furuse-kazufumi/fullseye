@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.states_participation_ratio(X: &#x27;Any&#x27;) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;states_participation_ratio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>상태 열 <code style="color:#22d3bf">X</code> (N, n)의 <b>실효 차원</b> = participation ratio <code style="color:#22d3bf">PR = (Σλ)² / Σλ²</code>(λ는 공분산의 고유값, Gao et al. 2017). 모든 열이 독립이고 분산이 같으면 n, 1개의 방향에 놓여 있으면 1.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>標本数 N に依存する(N が小さいと PR ≤ N に頭打ち)ので、比べるときは N を揃える。定数(分散 0)なら 0。</p>
+<p>표본 수 N 에 의존하므로(N 이 작으면 PR ≤ N 에서 포화), 비교할 때는 N 을 맞춘다. 상수(분산 0)이면 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

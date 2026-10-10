@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import videocube; videocube.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsvideocube.get(&quot;video_cube_cut&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein Schnitt durch den Würfel (<code style="color:#22d3bf">image2d</code>). <code style="color:#22d3bf">&quot;xt&quot;</code> = Slit-Scan der Zeile <code style="color:#22d3bf">position</code> (T, W), <code style="color:#22d3bf">&quot;yt&quot;</code> = (T, H) einer Spalte, <code style="color:#22d3bf">&quot;xy&quot;</code> = Frame zum Zeitpunkt <code style="color:#22d3bf">position</code> (H, W). <code style="color:#22d3bf">position</code> ist ein Anteil in [0, 1] (bei welchem Bruchteil der Zeilen, Spalten bzw. der Zeit).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>x–t 断面では、右へ動く物体は右下がりの筋、止まっている物体は縦の帯になる —— <b>速度が傾きとして読める</b>。</p>
-<p>&gt;&gt;&gt; streak = video_cube_cut(clip, &quot;xt&quot;, position=0.4)      # 4 割目の行を横切ったものの記録</p>
+<p>In einem x–t-Schnitt wird ein nach rechts bewegtes Objekt zu einem nach rechts unten geneigten Streifen, ein stillstehendes zu einem senkrechten Band -- <b>Geschwindigkeit lässt sich als Steigung ablesen</b>.</p>
+<p>&gt;&gt;&gt; streak = video_cube_cut(clip, &quot;xt&quot;, position=0.4)      # Aufzeichnung dessen, was die Zeile bei 4/10 gekreuzt hat</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideocube:videocube">Leitfaden zur Familie videocube</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

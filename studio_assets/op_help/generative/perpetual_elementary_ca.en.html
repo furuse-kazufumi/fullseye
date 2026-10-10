@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_elementary_ca&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Elementary cellular automaton (Wolfram&#x27;s 256 rules), extended endlessly from top to bottom.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">seed &lt; 0</code> で<b>中央 1 点</b>から始める(規則 90 ならシェルピンスキー、規則 30 なら擬似乱数、規則 110 なら万能計算)。</p>
-<p>不変量(規則 90・1 点始動): 第 n 行の第 k セルは <b>C(n,k) mod 2</b>。</p>
+<p><code style="color:#22d3bf">seed &lt; 0</code> starts from <b>a single central cell (1 point)</b> (rule 90 gives Sierpinski, rule 30 pseudo-randomness, rule 110 universal computation).</p>
+<p>Invariant (rule 90, 1-point start): cell k of row n is <b>C(n,k) mod 2</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

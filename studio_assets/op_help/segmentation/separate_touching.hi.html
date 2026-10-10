@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import watershed3d; watershed3d.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;separate_touching&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>genuinely-new (B): छूते हुए object को 1 call में अपने-आप अलग करने वाला रोज़मर्रा का wrapper।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>「複数物体が接触して 1 連結成分に融合している」典型ケースを、距離変換→極大 NMS シード化→ 分水嶺という定型パイプラインを畳んで 1 コールで割る(公開 API では 3 op を手で繋ぐ必要があるところを常用ケース向けに 1 関数化)。中身は <code style="color:#22d3bf">watershed_vol(..., markers=None)</code>。</p>
+<p>&quot;कई objects एक-दूसरे को छूकर 1 connected component में मिल गए हैं&quot; वाले सामान्य मामले को, distance transform → maxima NMS seeding → watershed वाली मानक pipeline को समेटकर 1 call में अलग करता है (public API में जहाँ 3 ops को हाथ से जोड़ना पड़ता है, उसे आम मामले के लिए 1 function बना दिया गया है)। अंदर <code style="color:#22d3bf">watershed_vol(..., markers=None)</code> है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>binary : array_like</p>
-<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>bool या 0/1 का 3D foreground volume।</p>
 <p>min_distance : float</p>
-<p>分離シードの最小間隔(voxel)。想定物体半径程度が目安。</p>
+<p>अलग करने वाले seeds के बीच न्यूनतम अंतर (voxel)। अपेक्षित object radius के आसपास रखना अच्छा अनुमान है।</p>
 <p>method : {&quot;auto&quot;, &quot;skimage&quot;, &quot;scipy&quot;}</p>
-<p>バックエンド選択。</p>
+<p>backend का चुनाव।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>labels : ndarray(int32)</p>
-<p>binary と同形状。背景 0、分離された各物体に 1..k のラベル。</p>
+<p>binary जैसा ही shape। background 0, अलग किए गए हर object को 1..k का label।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

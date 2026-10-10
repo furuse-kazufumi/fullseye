@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.select_points(points, indices)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Punktmenge <code style="color:#22d3bf">(N,3)</code> und Indizes <code style="color:#22d3bf">(M,)</code> → die Teilmenge <code style="color:#22d3bf">(M,3)</code>. Die verbrauchende Seite von <code style="color:#22d3bf">indices</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">indices</code> を産む op は 6 つあるのに(<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>)、<b>添字を食う単入力 op が 1 つも無かった</b> —— 添字は「元の集合とセットで初めて意味を持つ」ので、単入力では原理的に作れない。よってこれは 2 入力にしてある。</p>
+<p>Es gibt 6 ops, die <code style="color:#22d3bf">indices</code> erzeugen (<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>), aber <b>es gab kein einziges op mit 1 Eingang, das Indizes verarbeitet</b> -- Indizes &quot;haben erst zusammen mit der ursprünglichen Menge eine Bedeutung&quot;, daher lässt sich ein op mit einem Eingang grundsätzlich nicht bauen. Deshalb hat dieses 2 Eingänge.</p>
 <p>Args:</p>
-<p>points: (N, 3)。</p>
-<p>indices: (M,) の非負整数、N 未満。</p>
+<p>points: (N, 3).</p>
+<p>indices: (M,) nichtnegative Ganzzahlen, kleiner als N.</p>
 <p>Returns:</p>
-<p>(M, 3) float64。</p>
+<p>(M, 3) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 範囲外の添字 / 形状不正 / 非有限。</p>
+<p>ValueError: Index außerhalb des Bereichs / ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

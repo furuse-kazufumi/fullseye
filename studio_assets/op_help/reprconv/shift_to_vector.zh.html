@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shift_to_vector(shift)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.shift_to_vector(shift)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;shift_to_vector&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>整数位移 <code style="color:#22d3bf">(dz, dy, dx)</code> → <code style="color:#22d3bf">vector (3,)</code>。<code style="color:#22d3bf">shift</code> 的出口(<b>可逆</b>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">match_phase_3d</code> は整数 3-tuple を返す。<code style="color:#22d3bf">vector</code> へ載せると <code style="color:#22d3bf">points</code> 語彙へ繋がる(<code style="color:#22d3bf">vector -&gt; points</code> の既存 op がある)。</p>
+<p><code style="color:#22d3bf">match_phase_3d</code> 返回整数 3-tuple。放到 <code style="color:#22d3bf">vector</code> 上就能接入 <code style="color:#22d3bf">points</code> 词汇(已有现成的 <code style="color:#22d3bf">vector -&gt; points</code> op)。</p>
 <p>Args:</p>
-<p>shift: 長さ 3 の整数列 (dz, dy, dx)。</p>
+<p>shift: 长度为 3 的整数序列 (dz, dy, dx)。</p>
 <p>Returns:</p>
 <p>(3,) float64。</p>
 <p>Raises:</p>
-<p>ValueError: 長さが 3 でない / 非有限。</p>
+<p>ValueError: 长度不是 3 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

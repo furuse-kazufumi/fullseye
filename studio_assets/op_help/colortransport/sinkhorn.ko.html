@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>엔트로피 정칙화가 붙은 최적수송 계획(Cuturi, NIPS 2013).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><b>厳密解ではない。</b> <code style="color:#22d3bf">reg</code> を小さくすると厳密解に近づくが、同時に数値的に不安定になる(指数がアンダーフローする)。<code style="color:#22d3bf">reg</code> を下げると厳密解との差が縮むこと自体をテストで固定してある。</p>
+<p><b>엄밀해가 아니다.</b> <code style="color:#22d3bf">reg</code>를 작게 하면 엄밀해에 가까워지지만, 동시에수치적으로 불안정해진다(지수가 언더플로한다). <code style="color:#22d3bf">reg</code>를 내리면엄밀해와의 차이가 줄어드는 것 자체를 테스트로 고정해 두었다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p><code style="color:#22d3bf">(n, m)</code> の輸送計画。行和・列和は <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code> に一致する</p>
-<p>(<code style="color:#22d3bf">tol</code> まで)。収束しなければ <code style="color:#22d3bf">RuntimeError</code> ―― 収束しないまま</p>
-<p>最後の反復を返すと、行和が合っていない計画が黙って下流へ流れる。</p>
+<p><code style="color:#22d3bf">(n, m)</code>의 수송 계획. 행 합, 열 합은 <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code>에 일치한다</p>
+<p>(<code style="color:#22d3bf">tol</code>까지). 수렴하지 않으면 <code style="color:#22d3bf">RuntimeError</code> -- 수렴하지 않은 채</p>
+<p>마지막 반복을 반환하면, 행 합이 맞지 않는 계획이 말없이 하류로 흘러간다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 측색과 분광 지식 — 색은 ‘분광 × 광원 × 관찰자’로만 정해진다</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

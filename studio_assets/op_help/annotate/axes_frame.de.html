@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_frame(img, axes, color=&#x27;neutral&#x27;, width=1, box=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.axes_frame(img, axes, color=&#x27;neutral&#x27;, width=1, box=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;axes_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Achsenrahmen (mit <code style="color:#22d3bf">box=True</code> alle vier Seiten, mit False nur links und unten).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">style</code> は <code style="color:#22d3bf">imagedraw.draw_polyline</code> / <code style="color:#22d3bf">imagedraw.draw_line</code> へ素通し。</p>
+<p><code style="color:#22d3bf">style</code> wird an <code style="color:#22d3bf">imagedraw.draw_polyline</code> / <code style="color:#22d3bf">imagedraw.draw_line</code> durchgereicht.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>枠が画像からはみ出す。</p>
+<p>Rahmen ragt aus dem Bild.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

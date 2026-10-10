@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_score_card(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, tau: &#x27;float&#x27; = 2.0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, float]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segeval; segeval.seg_score_card(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, tau: &#x27;float&#x27; = 2.0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, float]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;seg_score_card&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Alle Maße auf einer Karte: Dice/Jaccard, VI/Split/Merge, Rand/ARI, Grenz-F, Hausdorff/HD95/ASSD, Über-/Untersegmentierung, Split/Merge/Missed/False/Matched und Anzahlen (seg_score_card).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">segcompare</code> には a = 真、b = 予測で渡す(split = 予測が真を切った量、merge = 予測が真を貼った量)。値は float か int の平らな dict(表にそのまま並ぶ)。</p>
+<p>An <code style="color:#22d3bf">segcompare</code> wird a = Wahrheit, b = Vorhersage übergeben (split = wie stark die Vorhersage die Wahrheit zerschnitten hat, merge = wie stark sie sie zusammengeklebt hat). Die Werte bilden ein flaches dict aus float oder int (direkt in einer Tabelle aufreihbar).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

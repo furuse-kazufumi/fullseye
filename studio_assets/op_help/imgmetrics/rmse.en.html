@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rmse(a, b)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.rmse(a, b)</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;rmse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Root mean squared error (in the same units as the pixel values).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>式: <code style="color:#22d3bf">sqrt(mse(a, b))</code>。検証と失敗条件は <code style="color:#22d3bf">mse</code> と同じ ―― 同じ形 / 空でない / 有限、を満たさなければ <code style="color:#22d3bf">MetricContractError</code>。次元と dtype は問わない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: Python の <code style="color:#22d3bf">float</code>。入力が <code style="color:#22d3bf">[0, 1]</code> の float なら値も <code style="color:#22d3bf">[0, 1]</code>、uint8 なら 0〜255 の尺度。「平均して何階調ずれているか」と読める。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code> に依らない生の量なので、尺度の違う 2 組の rmse を並べても比較にならない。正規化した指標が要るなら <code style="color:#22d3bf">psnr</code> か <code style="color:#22d3bf">ssim</code>。</p>
-<p style="margin:2px 0 2px 12px">• 深度・CT・再投影など「画素値 = 物理量」の場面では、その物理単位そのものになる。</p>
+<p>Formula: <code style="color:#22d3bf">sqrt(mse(a, b))</code>. Validation and failure conditions are the same as <code style="color:#22d3bf">mse</code> -- unless the shapes match / it is non-empty / finite, <code style="color:#22d3bf">MetricContractError</code>. Dimensionality and dtype do not matter.</p>
+<p style="margin:2px 0 2px 12px">• Return value: a Python <code style="color:#22d3bf">float</code>. If the input is float in <code style="color:#22d3bf">[0, 1]</code>, the value is also in <code style="color:#22d3bf">[0, 1]</code>; for uint8 it is on the 0-255 scale. It reads as &quot;how many grey levels off on average&quot;.</p>
+<p style="margin:2px 0 2px 12px">• It is a raw quantity independent of <code style="color:#22d3bf">data_range</code>, so placing the rmse of 2 pairs on different scales side by side is no comparison. If you need a normalised metric, <code style="color:#22d3bf">psnr</code> or <code style="color:#22d3bf">ssim</code>.</p>
+<p style="margin:2px 0 2px 12px">• For depth, CT, reprojection and other cases where &quot;pixel value = physical quantity&quot;, it is in that physical unit itself.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

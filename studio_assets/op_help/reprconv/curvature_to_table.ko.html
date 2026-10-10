@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_table(curvature)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.curvature_to_table(curvature)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>곡률 → 분포의 요약 <code style="color:#22d3bf">table</code>. <b>일방향</b>(통계는 정보를 버리는 것이 일).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>(N,) の単独曲率も (N,2) の主曲率対も受ける —— 統計を出すだけなら対である必要が無いため。<code style="color:#22d3bf">kind</code> に受けた形を書き戻すので、下流は「対だったのか」を後から判別できる。</p>
+<p>(N,) 의 단독 곡률도 (N,2) 의 주곡률 쌍도 받는다 —— 통계를 내기만 한다면 쌍일필요가 없기 때문. <code style="color:#22d3bf">kind</code> 에 받은 형태를 적어 돌려주므로, 하류는 &quot;쌍이었는가&quot; 를 나중에 판별할 수 있다.</p>
 <p>Args:</p>
-<p>curvature: (N,) / (N, 2) / 2 本の等長 1-D のタプル。</p>
+<p>curvature: (N,) / (N, 2) / 2 개의 같은 길이 1-D 의 튜플.</p>
 <p>Returns:</p>
-<p>dict。<code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">rms</code> /</p>
-<p><code style="color:#22d3bf">p05</code> / <code style="color:#22d3bf">p50</code> / <code style="color:#22d3bf">p95</code>、対なら <code style="color:#22d3bf">gauss_mean</code>(K = k1*k2 の平均)と</p>
-<p><code style="color:#22d3bf">mean_curvature_mean</code>((k1+k2)/2 の平均)。</p>
+<p>dict. <code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">rms</code> /</p>
+<p><code style="color:#22d3bf">p05</code> / <code style="color:#22d3bf">p50</code> / <code style="color:#22d3bf">p95</code>, 쌍이라면 <code style="color:#22d3bf">gauss_mean</code>(K = k1*k2 의 평균)과</p>
+<p><code style="color:#22d3bf">mean_curvature_mean</code>((k1+k2)/2 의 평균).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: 형태 부정 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

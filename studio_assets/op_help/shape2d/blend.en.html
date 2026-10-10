@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blend(a, b, alpha)</code> (to call the implementation directly, <code style="color:#22d3bf">import imagemorph; imagemorph.blend(a, b, alpha)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;blend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Cross-dissolve (1-alpha)·a + alpha·b (a, b have the same shape and lie in [0,1]).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>画素ごとの線形補間。対応点でのワープは<b>しない</b>ので、目や輪郭がずれた 2 枚では二重像になる ―― 特徴を 1 つに重ねたいなら <code style="color:#22d3bf">morph</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: <code style="color:#22d3bf">(H, W)</code> または <code style="color:#22d3bf">(H, W, C)</code>、同じ形。float64 に変換する。<b>NaN は 0、+Inf は 1、-Inf は 0 に無言で置き換える</b>(例外は出ない)。値域の検査はせず、結果を <code style="color:#22d3bf">[0, 1]</code> にクリップするだけなので、0〜255 の画像を渡すと白飛びした絵が返る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: 合成比。<code style="color:#22d3bf">[0, 1]</code> に<b>無言でクリップ</b>(0 で <code style="color:#22d3bf">a</code>、1 で <code style="color:#22d3bf">b</code>)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64、<code style="color:#22d3bf">[0, 1]</code>。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(次元が 2/3 でない、空、形の不一致)。</p>
-<p><code style="color:#22d3bf">morph_sequence</code> の各フレームは、ワープ後の 2 枚をこれと同じ式で混ぜている。</p>
+<p>Per-pixel linear interpolation. It does <b>not</b> warp by corresponding points, so with 2 images whose eyes or contours are misaligned you get a double image -- if you want features to overlap into 1, use <code style="color:#22d3bf">morph</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: <code style="color:#22d3bf">(H, W)</code> or <code style="color:#22d3bf">(H, W, C)</code>, same shape. Converted to float64. <b>NaN is silently replaced by 0, +Inf by 1, -Inf by 0</b> (no exception is raised). The value range is not checked; the result is only clipped to <code style="color:#22d3bf">[0, 1]</code>, so passing a 0-255 image returns a blown-out picture.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: blend ratio. <b>Silently clipped</b> to <code style="color:#22d3bf">[0, 1]</code> (0 gives <code style="color:#22d3bf">a</code>, 1 gives <code style="color:#22d3bf">b</code>).</p>
+<p style="margin:2px 0 2px 12px">• Returns: float64 of the same shape as the input, <code style="color:#22d3bf">[0, 1]</code>.</p>
+<p style="margin:2px 0 2px 12px">• Failure: <code style="color:#22d3bf">ValueError</code> (number of dimensions not 2/3, empty, shape mismatch).</p>
+<p>Each frame of <code style="color:#22d3bf">morph_sequence</code> mixes the 2 warped images with the same formula as this.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_dimension(img, p0, p1, units_per_pixel=1.0, unit=&#x27;px&#x27;, offset=20.0, extension=6.0, color=&#x27;neutral&#x27;, width=1.5, head_len=9.0, head_width=6.0, label_fmt=&#x27;{:.1f}&#x27;, font_size=11, box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_dimension(img, p0, p1, units_per_pixel=1.0, unit=&#x27;px&#x27;, offset=20.0, extension=6.0, color=&#x27;neutral&#x27;, width=1.5, head_len=9.0, head_width=6.0, label_fmt=&#x27;{:.1f}&#x27;, font_size=11, box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_dimension&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지(image2d)를 돌려줍니다: 치수선(양끝 화살촉 + 보조선 + 값과 단위).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>値は <code style="color:#22d3bf">|p1-p0| * units_per_pixel</code>(閉形式)。幾何は <code style="color:#22d3bf">annotate_dimension_layout</code>。</p>
+<p>값은 <code style="color:#22d3bf">|p1-p0| * units_per_pixel</code>(닫힌 식). 기하는 <code style="color:#22d3bf">annotate_dimension_layout</code>가 정한다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_dimension_layout</code> と同じ + units_per_pixel が非正、</p>
-<p>寸法線が画像の外、文字が収まらない。</p>
+<p><code style="color:#22d3bf">annotate_dimension_layout</code>와 같음 + units_per_pixel이 양수가 아님,</p>
+<p>치수선이 영상 밖, 문자가 들어가지 않음.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_magnitude(gx, gy)</code> (to call the implementation directly, <code style="color:#22d3bf">import vxcore; vxcore.vx_magnitude(gx, gy)</code>; from the registry, <code style="color:#22d3bf">opsvx.get(&quot;vx_magnitude&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Gradient magnitude (Section 3.31). The conceptual definition of REQ-0270 as is: <code style="color:#22d3bf">z = uint16(sqrt(double(uint32(x·x) + uint32(y·y))) + 0.5)</code>, <code style="color:#22d3bf">mag = z &gt; 32767 ? 32767 : z</code>. Both input and output are S16.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: S16 の 2-D でない / 形が違う。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not a 2-D S16 / shapes differ.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

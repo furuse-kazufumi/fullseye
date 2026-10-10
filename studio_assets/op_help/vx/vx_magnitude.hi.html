@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_magnitude(gx, gy)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import vxcore; vxcore.vx_magnitude(gx, gy)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvx.get(&quot;vx_magnitude&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>gradient magnitude (section 3.31)। REQ-0270 की conceptual परिभाषा जैसी की तैसी: <code style="color:#22d3bf">z = uint16(sqrt(double(uint32(x·x) + uint32(y·y))) + 0.5)</code>, <code style="color:#22d3bf">mag = z &gt; 32767 ? 32767 : z</code>। इनपुट और आउटपुट दोनों S16।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: S16 の 2-D でない / 形が違う。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: S16 का 2-D नहीं है / shape अलग हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

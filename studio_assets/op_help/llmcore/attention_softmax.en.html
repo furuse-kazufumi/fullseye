@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import llmcore; llmcore.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsllmcore.get(&quot;attention_softmax&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Attention in one batch (reference implementation) → tokens. <b>The reference against which this family is checked</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>(T, T) のスコア行列を実際に作ってから softmax する、いちばん素直な書き方。<code style="color:#22d3bf">attention_tiled</code> / <code style="color:#22d3bf">attention_linear</code> / <code style="color:#22d3bf">attention_grouped</code> はこれと一致することで正しさを示す。</p>
+<p>The most straightforward way of writing it: actually build the (T, T) score matrix and then apply softmax. <code style="color:#22d3bf">attention_tiled</code> / <code style="color:#22d3bf">attention_linear</code> / <code style="color:#22d3bf">attention_grouped</code> show their correctness by agreeing with this.</p>
 <p>Args:</p>
-<p>query: (T, d) float。</p>
-<p>key: (S, d) float。</p>
-<p>value: (S, dv) float。</p>
-<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) の bool 配列。</p>
-<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅。</p>
-<p>scale: スコアの倍率。None なら 1/√d。</p>
+<p>query: (T, d) float.</p>
+<p>key: (S, d) float.</p>
+<p>value: (S, dv) float.</p>
+<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / a (T, S) bool array.</p>
+<p>window: window width when <code style="color:#22d3bf">mask=&quot;window&quot;</code>.</p>
+<p>scale: score multiplier. None means 1/√d.</p>
 <p>Returns:</p>
-<p>tokens (T, dv) float: 注意で混ぜた列。</p>
+<p>tokens (T, dv) float: the sequence mixed by attention.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

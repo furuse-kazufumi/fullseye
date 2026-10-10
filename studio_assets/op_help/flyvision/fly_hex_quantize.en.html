@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code> (to call the implementation directly, <code style="color:#22d3bf">import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>; from the registry, <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_quantize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Quantizes the ommatidial signals the same way the eye does: logarithmic compression followed by n bits per ommatidium (<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> gives 2 channels, ON / OFF).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>複眼は生まれつき量子化器で、片眼およそ 800 個眼(間隔 4.6°)、光受容器は強度を対数圧縮して平均に適応し、ラミナの L1 / L2 が平均からの偏差を ON と OFF に分ける。この op はその予算を再現し、下流のモデル(reservoir・網膜部位対応の検査)に「本当に何ビット要るか」を問えるようにする。</p>
+<p>A compound eye is a quantizer by nature: roughly 800 ommatidia per eye (spacing 4.6°), photoreceptors log-compress intensity and adapt to the mean, and lamina cells L1 / L2 split the deviation from the mean into ON and OFF. This op reproduces that budget so that a downstream model (reservoir, retinotopy test) can be asked &quot;how many bits does it really need&quot;.</p>
 <p>A compound eye is a quantizer by construction: ~800 ommatidia per eye at 4.6 deg spacing, photoreceptors that log-compress intensity and adapt to the mean, and lamina cells (L1/L2) that split the deviation into ON and OFF channels. This op reproduces that budget so a downstream model (reservoir, retinotopy test) can be asked how many bits it really needs.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>signal : (n,) float</p>

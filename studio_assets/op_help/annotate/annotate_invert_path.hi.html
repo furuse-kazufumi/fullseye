@@ -4,29 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>polyline (line) को <b>inverted रंग</b> से बनाता है। anti-aliasing सहित।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>線は領域より不利で、そこがこの op を分けている理由 —— 太さ 1.5 画素の線は端の画素の被覆率が 0.3 程度しかないため、<b>反転しても被覆の分しか動かない</b>。中間調の地では領域よりさらに先に消える。判定は「被覆率 0.5 以上の画素」で行う(それ未満は元から半透明なので、見えなくてもそれは反転のせいではない)。</p>
+<p>line region की तुलना में नुकसान में रहती है, और इसी कारण यह op अलग है -- 1.5 pixel मोटी line के किनारे वाले pixels की coverage केवल लगभग 0.3 होती है, इसलिए <b>invert करने पर भी वे केवल coverage जितना ही बदलते हैं</b>। mid-tone पृष्ठभूमि पर ये region से भी पहले गायब हो जाती हैं। निर्णय &quot;coverage 0.5 या अधिक वाले pixels&quot; से होता है (उससे कम वाले शुरू से ही अर्ध-पारदर्शी हैं, इसलिए न दिखें तो भी यह inversion का दोष नहीं है)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : (N,2)</p>
-<p>折れ線の頂点 <code style="color:#22d3bf">(x, y)</code>(画素座標)。</p>
+<p>polyline के vertices <code style="color:#22d3bf">(x, y)</code> (pixel coordinates)।</p>
 <p>width : float</p>
-<p>線の太さ(画素、0.5 以上)。</p>
+<p>line की मोटाई (pixels, 0.5 या अधिक)।</p>
 <p>closed : bool</p>
-<p>真なら最後の点と最初の点を結ぶ。</p>
+<p>true हो तो आखिरी point को पहले point से जोड़ता है।</p>
 <p>dash : (on, off) or None</p>
-<p>破線の刻み(画素)。<code style="color:#22d3bf">_dash_pieces</code> と同じ規則。</p>
+<p>dashed line का step (pixels)। <code style="color:#22d3bf">_dash_pieces</code> वाला ही नियम।</p>
 <p>mode, alpha, min_contrast, on_invisible :</p>
-<p><code style="color:#22d3bf">annotate_invert</code> と同じ。</p>
+<p><code style="color:#22d3bf">annotate_invert</code> के समान।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(H,W[,C]) float64</p>
-<p>反転を乗せた複製。</p>
+<p>inversion लगी हुई copy।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np, annotate</p>
 <p>&gt;&gt;&gt; img = np.zeros((16, 32))</p>
 <p>&gt;&gt;&gt; out = annotate.annotate_invert_path(img, [(2, 8), (29, 8)], width=3)</p>
-<p>&gt;&gt;&gt; float(out[8, 15])                       # 黒地の上なので白い線になる</p>
+<p>&gt;&gt;&gt; float(out[8, 15])                       # काली पृष्ठभूमि पर है, इसलिए सफ़ेद line बनती है</p>
 <p>1.0</p>
-<p>&gt;&gt;&gt; float(out[2, 15])                       # 線から離れたところは元のまま</p>
+<p>&gt;&gt;&gt; float(out[2, 15])                       # line से दूर की जगह वैसी ही रहती है</p>
 <p>0.0</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>

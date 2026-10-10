@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_outline_layout(mask)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_outline_layout(mask)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_outline_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns a table (dict): the boundary loops of a binary mask (closed polygons along pixel edges) and its centroid.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>輪郭は <code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>(外側 + 穴、成分ごと)。多角形の面積はマスクの画素数と厳密に一致する。</p>
+<p>Contours come from <code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code> (outer + holes, per component). The polygon area matches the mask&#x27;s pixel count exactly.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;contours&quot;: [(K,2) の (x,y)], &quot;centroid&quot;: (x,y), &quot;area&quot;: int, &quot;bbox&quot;: (x,y,w,h), &quot;n_loops&quot;: int}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;contours&quot;: [(K,2) arrays of (x,y)], &quot;centroid&quot;: (x,y), &quot;area&quot;: int, &quot;bbox&quot;: (x,y,w,h), &quot;n_loops&quot;: int}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>mask が 2-D でない、真の画素が無い、非有限。</p>
+<p>mask is not 2-D, has no true pixels, or is non-finite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

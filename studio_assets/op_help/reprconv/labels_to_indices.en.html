@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.labels_to_indices(labels)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.labels_to_indices(labels)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;labels_to_indices&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><code style="color:#22d3bf">labels</code> → the indices <code style="color:#22d3bf">(N,)</code> of the non-background. The other direction of <code style="color:#22d3bf">indices_to_labels</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>2-D 以上のラベル画像も受ける —— その場合の添字は <b><code style="color:#22d3bf">labels.ravel()</code> への添字</b>(C 順)である。<code style="color:#22d3bf">np.unravel_index</code> で座標へ戻せるが、<b>戻すには元の shape が要る</b>ので、この向きは <code style="color:#22d3bf">shape</code> を捨てている(不可逆)。</p>
+<p>Also accepts label images of 2-D or more -- in that case the indices are <b>indices into <code style="color:#22d3bf">labels.ravel()</code></b> (C order). They can be turned back into coordinates with <code style="color:#22d3bf">np.unravel_index</code>, but <b>turning them back needs the original shape</b>, so this direction discards <code style="color:#22d3bf">shape</code> (irreversible).</p>
 <p>Args:</p>
-<p>labels: 任意次元の整数/実ラベル配列。</p>
+<p>labels: integer/real label array of any dimension.</p>
 <p>Returns:</p>
-<p>(N,) int64。ラベルが 0 でない位置の平坦添字(昇順)。</p>
+<p>(N,) int64. Flat indices (ascending) of the positions where the label is not 0.</p>
 <p>Raises:</p>
-<p>ValueError: 空 / 非有限 / 非背景が 1 つも無い。</p>
+<p>ValueError: empty / non-finite / not even 1 non-background element.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compare_frame(left, right, layout=&#x27;h&#x27;, labels=None, divider=3, gap=0, divider_color=&#x27;neutral&#x27;, background=0.0, label_anchor=&#x27;lt&#x27;, label_margin=8, scheme=&#x27;okabe_ito&#x27;, **text_kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.compare_frame(left, right, layout=&#x27;h&#x27;, labels=None, divider=3, gap=0, divider_color=&#x27;neutral&#x27;, background=0.0, label_anchor=&#x27;lt&#x27;, label_margin=8, scheme=&#x27;okabe_ito&#x27;, **text_kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;compare_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 image साथ-साथ रखता है, सीमा पर <b>divider</b> और <b>label</b> के साथ।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>left, right : ndarray</p>
-<p>比べる 2 枚。大きさが違ってもよい(足りない側は <code style="color:#22d3bf">background</code> で埋める)。</p>
-<p>チャンネル数は揃っていること。</p>
+<p>तुलना की जाने वाली 2 images। size अलग हो सकता है (कम वाला हिस्सा <code style="color:#22d3bf">background</code> से भरा जाता है)।</p>
+<p>channels की संख्या समान होनी चाहिए।</p>
 <p>layout : {&#x27;h&#x27;,&#x27;v&#x27;}</p>
-<p><code style="color:#22d3bf">&#x27;h&#x27;</code> = 左右、<code style="color:#22d3bf">&#x27;v&#x27;</code> = 上下。</p>
+<p><code style="color:#22d3bf">&#x27;h&#x27;</code> = बाएँ-दाएँ, <code style="color:#22d3bf">&#x27;v&#x27;</code> = ऊपर-नीचे।</p>
 <p>labels : (str, str) or None</p>
-<p>それぞれの見出し。</p>
+<p>हर एक का शीर्षक।</p>
 <p>divider : int</p>
-<p>仕切りの太さ [px] (0 で無し)。</p>
+<p>विभाजक की मोटाई [px] (0 पर नहीं)।</p>
 <p>gap : int</p>
-<p>仕切りの両側に空ける余白[px]。</p>
+<p>विभाजक के दोनों ओर छोड़ा गया margin [px]।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>新しい合成画像。</p>
+<p>नई composite image।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>チャンネル数の不一致 / 未知の layout / 負の divider・gap /</p>
-<p>labels が 2 要素でない。</p>
+<p>channels की संख्या मेल नहीं खाती / अज्ञात layout / negative divider या gap /</p>
+<p>labels 2 elements नहीं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

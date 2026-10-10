@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matrix_to_descriptor(matrix)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.matrix_to_descriptor(matrix)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_descriptor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">matrix</code> → 기술자. <code style="color:#22d3bf">descriptor_to_matrix</code> 의 역.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>1 行の行列 (1, n) は (n,) へ戻す(それが元の 1-D 記述子だから)。2 行以上はそのまま。<b>この非対称は意図的</b>で、これが無いと <code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code> の往復が (n,) から (1,n) へ静かに形を変える = 型の嘘そのものになる。</p>
-<p>★<b>測って残す非可逆点</b>: そのぶん、元から <b>(1, n) の 2-D だった記述子</b>は往復で (n,) の 1-D になる —— (1,n) の行列は「1-D 記述子を包んだもの」と「行が 1 本しかない記述子束」の区別を持たないので、<b>この 1 ケースだけは原理的に戻せない</b>。値は全て保存されるので損失は「行が 1 本だった」というメタ情報のみ。どちらを非可逆にするか選ばされる状況で、<code style="color:#22d3bf">descriptor</code> の圧倒的多数(実測 14 producers 中 12 が 1-D)を厳密側に倒した。<code style="color:#22d3bf">tests/test_reprconv.py::test_one_row_descriptor_ambiguity_is_documented</code> がこの穴を<b>塞がずに固定</b>している(隠すと、いつか黙って形が変わる)。</p>
+<p>1 행의 행렬 (1, n) 은 (n,) 로 되돌린다(그것이 원래의 1-D 기술자이므로). 2 행 이상은 그대로. <b>이 비대칭은 의도적</b>이며, 이것이 없으면 <code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code> 의 왕복이 (n,) 에서 (1,n) 으로조용히 형태를 바꾼다 = 형의 거짓말 그 자체가 된다.</p>
+<p>★<b>측정해서 남기는 비가역점</b>: 그 대신, 원래부터 <b>(1, n) 의 2-D 였던 기술자</b>는왕복으로 (n,) 의 1-D 가 된다 —— (1,n) 의 행렬은 &quot;1-D 기술자를 감싼 것&quot;과 &quot;행이 1 개뿐인 기술자 묶음&quot;의 구별을 갖지 않으므로, <b>이 1 경우만은원리적으로 되돌릴 수 없다</b>. 값은 모두 보존되므로 손실은 &quot;행이 1 개였다&quot;는메타 정보뿐. 어느 쪽을 비가역으로 할지 선택을 강요받는 상황에서, <code style="color:#22d3bf">descriptor</code> 의 압도적 다수(실측 14 producers 중 12 가 1-D)를 엄밀한 쪽에두었다. <code style="color:#22d3bf">tests/test_reprconv.py::test_one_row_descriptor_ambiguity_is_documented</code> 가 이 구멍을 <b>막지 않고 고정</b>하고 있다(숨기면 언젠가 조용히 형태가 바뀐다).</p>
 <p>Args:</p>
-<p>matrix: (m, n) の実配列。</p>
+<p>matrix: (m, n) 의 실수 배열.</p>
 <p>Returns:</p>
-<p>m == 1 なら (n,)、それ以外は (m, n)。</p>
+<p>m == 1 이면 (n,), 그 외는 (m, n).</p>
 <p>Raises:</p>
-<p>ValueError: 2-D でない / 非有限。</p>
+<p>ValueError: 2-D 가 아니다 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

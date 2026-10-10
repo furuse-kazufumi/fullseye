@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;nice_ticks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>&quot;Round&quot; tick values covering [lo, hi] (1/2/5 × 10^k, <b>closed form</b>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>端は<b>含める</b>(<code style="color:#22d3bf">lo</code> や <code style="color:#22d3bf">hi</code> がちょうど目盛りに乗るなら必ず出る)。浮動小数の丸めで端が 1 個落ちる off-by-one を避けるため、判定には <code style="color:#22d3bf">step*1e-9</code> の許容を使う。</p>
-<p><code style="color:#22d3bf">scale=&#x27;log&#x27;</code> では 1/2/5 × 10^k の<b>十進の刻み</b>を返す(等間隔の刻みを log 軸に置くと、目盛りが右へ行くほど潰れて読めなくなる)。</p>
+<p>The ends are <b>included</b> (if <code style="color:#22d3bf">lo</code> or <code style="color:#22d3bf">hi</code> falls exactly on a tick, it always appears). To avoid the off-by-one where floating-point rounding drops 1 end, the test uses a tolerance of <code style="color:#22d3bf">step*1e-9</code>.</p>
+<p>With <code style="color:#22d3bf">scale=&#x27;log&#x27;</code> it returns <b>decade steps</b> of 1/2/5 × 10^k (placing equally spaced ticks on a log axis squashes them more and more towards the right until they are unreadable).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>lo == hi、非有限、n &lt; 1、log で lo か hi が 0 以下。</p>
+<p>lo == hi, non-finite, n &lt; 1, lo or hi at or below 0 with log.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

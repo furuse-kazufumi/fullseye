@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.countrate_to_counts(countrate, gate_s=0.001)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.countrate_to_counts(countrate, gate_s=0.001)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;countrate_to_counts&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>計數率 <code style="color:#22d3bf">[Hz]</code> → 計數 <code style="color:#22d3bf">counts</code>。<code style="color:#22d3bf">countrate</code> 的出口(<b>可逆</b>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><b>単位が変換の全内容</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>。<code style="color:#22d3bf">gate_s</code> は積算窓の秒数で、既定 1 ms。<code style="color:#22d3bf">counts</code> は「時間 bin ごとの光子数」の型なので、レート列をそのまま counts と名乗らせると<b>桁が 7 つずれたまま黙って通る</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> はどちらも「非負の 1-D」としか見ていない)。</p>
-<p><code style="color:#22d3bf">counts_to_countrate</code> と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので <b>相対</b> 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、レートのように桁が広い量は相対で言う)。</p>
-<p>★<b>2 度掛けても例外は出ない</b>。<code style="color:#22d3bf">TYPE_TO_SORT</code> が <code style="color:#22d3bf">countrate</code> を <code style="color:#22d3bf">counts</code> に畳んでいるので、出口が入口にそのまま繋がる。実測(2026-09-08、1,200 Hz を gate 1 ms で): 1 回で 1.2000 counts、もう 1 回通すと 0.0012 counts —— <b>1,000 倍の取り違えが、負の値も NaN も出さずに通る</b>。値だけを見て「レートか計数か」を判定する方法は無いので、この 1 件は検査でなく <b>呼ぶ側の規律</b>で守るしかない(繋いだ経路を書き残すこと)。</p>
+<p><b>單位就是轉換的全部內容</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>。<code style="color:#22d3bf">gate_s</code> 是積分視窗的秒數, 預設 1 ms。<code style="color:#22d3bf">counts</code> 是「每個時間 bin 的光子數」的型別,所以若讓速率序列直接冒充 counts,<b>會在數量級偏差 7 位的情況下悄悄通過</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> 對兩者都只檢查「非負的 1-D」)。</p>
+<p>與 <code style="color:#22d3bf">counts_to_countrate</code> 往返實測 max|Δ| = 9.3e-10(值域為 1e3-1e7 Hz,所以是<b>相對</b> 1e-16 = 倍精度捨入 1 個單位。只看絕對值會顯得很大,所以像速率這樣數量級跨度大的量以相對值來說)。</p>
+<p>★<b>用 2 次也不會拋出例外</b>。<code style="color:#22d3bf">TYPE_TO_SORT</code> 把 <code style="color:#22d3bf">countrate</code> 摺疊進 <code style="color:#22d3bf">counts</code>, 所以出口直接接回入口。實測(2026-09-08,1,200 Hz 以 gate 1 ms): 1 次得 1.2000 counts,再通過 1 次得 0.0012 counts —— <b>1,000 倍的混淆,既不產生負值也不產生 NaN 就通過了</b>。僅看值無法判定「是速率還是計數」,所以這 1 件只能不靠檢查而靠 <b>呼叫端的紀律</b>來守(把連接的路徑記錄下來)。</p>
 <p>Args:</p>
-<p>countrate: (N,) の非負レート [Hz]。</p>
-<p>gate_s: 積算窓 [s]。&gt; 0。</p>
+<p>countrate: (N,) 的非負速率 [Hz]。</p>
+<p>gate_s: 積分視窗 [s]。&gt; 0。</p>
 <p>Returns:</p>
-<p>(N,) float64 の非負計数。</p>
+<p>(N,) float64 的非負計數。</p>
 <p>Raises:</p>
-<p>ValueError: 負のレート / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
+<p>ValueError: 負速率 / gate_s &lt;= 0 / 形狀不正確 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

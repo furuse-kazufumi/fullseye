@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_explained_variance(model)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.shape_explained_variance(model)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_explained_variance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 주성분의 기여율(합계 1). → <code style="color:#22d3bf">(k,)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>式: <code style="color:#22d3bf">variance / total_variance</code>。分母は <code style="color:#22d3bf">model[&quot;total_variance&quot;]</code>(<code style="color:#22d3bf">shape_pca</code> が<b>全</b>特異値から計算した総分散)で、無ければ <code style="color:#22d3bf">variance.sum()</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">shape_pca</code> の返り値。必須キーが無ければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(k,)</code> float64、各要素は <code style="color:#22d3bf">[0, 1]</code>。<code style="color:#22d3bf">shape_pca(n_components=0)</code> (全成分)なら合計は 1。<b><code style="color:#22d3bf">n_components</code> で打ち切ったモデルでは合計が 1 未満</b> になる(切り捨てた成分の分だけ足りない)―― 「上位 k 本でどれだけ説明できるか」を読むにはむしろその方が正しい。</p>
-<p style="margin:2px 0 2px 12px">• 総分散が 0(全個体が同じ形)なら全要素 0 を返す(0 除算にしない)。</p>
-<p><code style="color:#22d3bf">shape_pca</code> の分散は標本分散(<code style="color:#22d3bf">K-1</code> で割る)なので、個体数が少ないと固有値の絶対値は膨らむが、比であるこの量は影響を受けにくい。累積和(<code style="color:#22d3bf">cumsum</code>)で「99 % に何本要るか」を決め、<code style="color:#22d3bf">shape_mahalanobis</code> の <code style="color:#22d3bf">cumulative</code> や <code style="color:#22d3bf">shape_synthesize</code> の <code style="color:#22d3bf">n_modes</code> に渡す。</p>
+<p>식: <code style="color:#22d3bf">variance / total_variance</code>. 분모는 <code style="color:#22d3bf">model[&quot;total_variance&quot;]</code>(<code style="color:#22d3bf">shape_pca</code> 가 <b>전</b> 특이값에서 계산한 총분산)이며, 없으면 <code style="color:#22d3bf">variance.sum()</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">shape_pca</code> 의 반환값. 필수 키가 없으면 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(k,)</code> float64, 각 요소는 <code style="color:#22d3bf">[0, 1]</code>. <code style="color:#22d3bf">shape_pca(n_components=0)</code> (전 성분)이면 합계는 1. <b><code style="color:#22d3bf">n_components</code> 로 자른 모델에서는 합계가 1 미만</b> 이 된다(잘라 낸 성분만큼 모자란다) ―― &quot;상위 k 개로 얼마나 설명할 수 있는가&quot; 를 읽기에는 오히려 그쪽이 옳다.</p>
+<p style="margin:2px 0 2px 12px">• 총분산이 0(전 개체가 같은 형상)이면 전 요소 0 을 반환한다(0 나눗셈을 하지 않는다).</p>
+<p><code style="color:#22d3bf">shape_pca</code> 의 분산은 표본분산(<code style="color:#22d3bf">K-1</code> 로 나눈다)이므로, 개체 수가 적으면고윳값의 절댓값은 부풀지만, 비인 이 양은 영향을 받기 어렵다. 누적합(<code style="color:#22d3bf">cumsum</code>)으로 &quot;99 % 에 몇 개 필요한가&quot;를 정하고, <code style="color:#22d3bf">shape_mahalanobis</code> 의 <code style="color:#22d3bf">cumulative</code> 나 <code style="color:#22d3bf">shape_synthesize</code> 의 <code style="color:#22d3bf">n_modes</code> 에 넘긴다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

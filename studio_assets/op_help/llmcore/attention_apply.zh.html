@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import llmcore; llmcore.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用注意力权重混合值 → tokens。<b>由于行和为 1，输出是输入的凸组合</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
-<p>weights: (T, S) float。行和が 1 であること(<code style="color:#22d3bf">attention_weights</code> の出力)。</p>
-<p>value: (S, dv) float。混ぜられる側。</p>
+<p>weights: (T, S) float。行和必须为 1(<code style="color:#22d3bf">attention_weights</code> 的输出)。</p>
+<p>value: (S, dv) float。被混合的一侧。</p>
 <p>Returns:</p>
-<p>tokens (T, dv) float: 各行が value の行の凸結合。<b>値域は value を出ない</b></p>
-<p>(同時に幅は縮む —— 平均は対比を潰す)。</p>
+<p>tokens (T, dv) float: 每行是 value 各行的凸组合。<b>值域不会超出 value</b></p>
+<p>(同时幅度会缩小 —— 平均会压平对比)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_flow(phi, *, t_end: &#x27;float&#x27; = 50.0, dt: &#x27;float&#x27; = 0.2, eta: &#x27;float&#x27; = 1e-08, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segcontour; segcontour.curvature_flow(phi, *, t_end: &#x27;float&#x27; = 50.0, dt: &#x27;float&#x27; = 0.2, eta: &#x27;float&#x27; = 1e-08, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;curvature_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평균 곡률 흐름(곡선 단축 흐름)의 레벨셋 형태 φ_t = |∇φ| div(∇φ/|∇φ|)(φ &lt; 0이 내부, 볼록한 곳부터 줄어든다)(curvature_flow).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>陽的な中心差分: φ_t = (φ_xx φ_y² − 2 φ_x φ_y φ_xy + φ_yy φ_x²) / (φ_x² + φ_y² + η)、刻み dt ≤ 0.25(安定条件)。<code style="color:#22d3bf">phi</code> = φ か bool のマスク(符号付き距離に直す)。面積は各刻みで <code style="color:#22d3bf">clip(0.5 − φ/|∇φ|, 0, 1)</code> の和。</p>
-<p>門: 単純閉曲線の囲む面積は dA/dt = −∮ κ ds = −2π(回転数 1、凸でなくても)。円なら r(t)² = r0² − 2t。</p>
-<p>返り値: <code style="color:#22d3bf">phi</code>、<code style="color:#22d3bf">mask</code>、<code style="color:#22d3bf">times</code>、<code style="color:#22d3bf">areas</code>、<code style="color:#22d3bf">area_rate</code>(面積 vs 時間の最小二乗の傾き)、<code style="color:#22d3bf">area_rate_theory</code> = −2π、<code style="color:#22d3bf">history</code>(record_every 刻みごとのマスク)、<code style="color:#22d3bf">n_steps</code>。</p>
+<p>양적 중심 차분: φ_t = (φ_xx φ_y² − 2 φ_x φ_y φ_xy + φ_yy φ_x²) / (φ_x² + φ_y² + η), 스텝 dt ≤ 0.25(안정 조건). <code style="color:#22d3bf">phi</code> = φ 또는 bool 마스크(부호 있는 거리로 변환). 면적은 각 스텝에서 <code style="color:#22d3bf">clip(0.5 − φ/|∇φ|, 0, 1)</code>의 합.</p>
+<p>게이트: 단순 닫힌 곡선이 둘러싸는 면적은 dA/dt = −∮ κ ds = −2π(회전수 1, 볼록하지 않아도). 원이면 r(t)² = r0² − 2t.</p>
+<p>반환값: <code style="color:#22d3bf">phi</code>, <code style="color:#22d3bf">mask</code>, <code style="color:#22d3bf">times</code>, <code style="color:#22d3bf">areas</code>, <code style="color:#22d3bf">area_rate</code>(면적 vs 시간의 최소제곱 기울기), <code style="color:#22d3bf">area_rate_theory</code> = −2π, <code style="color:#22d3bf">history</code>(record_every 스텝마다의 마스크), <code style="color:#22d3bf">n_steps</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

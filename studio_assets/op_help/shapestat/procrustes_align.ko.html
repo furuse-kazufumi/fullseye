@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_align(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.procrustes_align(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_align&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>*source*를 *target*에 겹친 점. → <code style="color:#22d3bf">(N, 3)</code>(<code style="color:#22d3bf">procrustes_fit</code>의 적용).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">M = procrustes_fit(source, target, scaling, reflection)</code> を求め、<code style="color:#22d3bf">source @ M[:3, :3].T + M[:3, 3]</code> を返す。変換は重心合わせ + SVD による回転(+ 任意でスケール)の相似変換で、<b>i 番目どうしが対応している</b>ことが前提。対応の無い点群を渡しても例外は出ず、意味の無い配置が返る(その場合は ICP 系の登録を使う)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>, <code style="color:#22d3bf">target</code>: <code style="color:#22d3bf">(N, 3)</code>、同じ <code style="color:#22d3bf">N</code>、有限。<code style="color:#22d3bf">N = 1</code> でも通る(並進のみ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scaling=True</code>: 大きさの違いも吸収する。<code style="color:#22d3bf">False</code> なら剛体変換。<code style="color:#22d3bf">source</code> が全点同一(広がり 0)のときスケールは 1 のまま。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection=False</code>(既定): <code style="color:#22d3bf">det(R) = +1</code> を強制。<code style="color:#22d3bf">True</code> にすると鏡像も許す ―― 左右非対称性を測る用途では消えてしまうので通常は既定のまま。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(N, 3)</code> float64。残差を数値で欲しいなら <code style="color:#22d3bf">procrustes_distance</code>、変換行列そのものは <code style="color:#22d3bf">procrustes_fit</code>。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形が <code style="color:#22d3bf">(N, 3)</code> でない、<code style="color:#22d3bf">N</code> 不一致、非有限)。</p>
-<p>多数の形を同時に揃えるなら <code style="color:#22d3bf">generalized_procrustes</code>。</p>
+<p><code style="color:#22d3bf">M = procrustes_fit(source, target, scaling, reflection)</code> 를 구하고, <code style="color:#22d3bf">source @ M[:3, :3].T + M[:3, 3]</code> 를 반환한다. 변환은 무게중심 맞춤 + SVD 에 의한 회전(+ 임의로 스케일)의 닮음 변환이며, <b>i 번째끼리가 대응하고 있음</b>이 전제. 대응이 없는 점군을 넘겨도 예외는 발생하지 않고 의미 없는 배치가 반환된다(그 경우에는 ICP 계열의 정합을 쓴다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>, <code style="color:#22d3bf">target</code>: <code style="color:#22d3bf">(N, 3)</code>, 같은 <code style="color:#22d3bf">N</code>, 유한. <code style="color:#22d3bf">N = 1</code> 이어도 통과한다(평행이동만).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scaling=True</code>: 크기 차이도 흡수한다. <code style="color:#22d3bf">False</code> 면 강체 변환. <code style="color:#22d3bf">source</code> 가 전 점 동일(퍼짐 0)일 때 스케일은 1 그대로.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection=False</code>(기본값): <code style="color:#22d3bf">det(R) = +1</code> 을 강제. <code style="color:#22d3bf">True</code> 로 하면 거울상도허용한다 ―― 좌우 비대칭성을 측정하는 용도에서는 사라져 버리므로 보통은 기본값 그대로.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(N, 3)</code> float64. 잔차를 수치로 원하면 <code style="color:#22d3bf">procrustes_distance</code>, 변환 행렬 자체는 <code style="color:#22d3bf">procrustes_fit</code>.</p>
+<p style="margin:2px 0 2px 12px">• 실패: <code style="color:#22d3bf">ValueError</code>(형태가 <code style="color:#22d3bf">(N, 3)</code> 이 아님, <code style="color:#22d3bf">N</code> 불일치, 비유한).</p>
+<p>다수의 형상을 동시에 맞추려면 <code style="color:#22d3bf">generalized_procrustes</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

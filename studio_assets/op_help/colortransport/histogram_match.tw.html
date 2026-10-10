@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import colortransport; colortransport.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opscolortransport.get(&quot;histogram_match&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 <code style="color:#22d3bf">src</code> 的取值分布匹配到 <code style="color:#22d3bf">ref</code>(一維精確最佳輸運)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>順位を保ったまま参照の分位点に置き換える。<code style="color:#22d3bf">bins</code> を指定すると、その段数の累積分布で近似する ―― 速いが<b>厳密ではなくなる</b>ので、既定は <code style="color:#22d3bf">None</code> (厳密)にしてある。</p>
-<p><b>同じ値の画素をどう扱うかで、絵の意味が変わる。</b> 単調写像なら「等しい入力は等しい出力に写る」はずだが、素朴に順位で置き換えると<b>同値が引き裂かれる</b>。実測(値 2 が 4 画素ある整数画像):出力は <code style="color:#22d3bf">0.2222 / 0.3333 / 0.4444 / 0.5556</code> の 4 つに分かれた。つまり<b>平坦だった領域に、元の絵に無い濃淡が生える</b>。整数画像は同値だらけなので、これは例外ではなく常態。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;average&quot;</code>(既定)—— 同値の画素には、そこに割り当たった参照値の <b>平均</b>を与える。等しい入力は等しい出力に写り、単調性が保たれる。その代わり<b>出力の分布は参照と厳密には一致しなくなる</b>(同値の塊のぶん、分布が階段状に丸まる)。連続な入力(同値が無い)なら厳密一致のまま。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;break&quot;</code> —— 順位そのままで引き裂く。<b>出力の分布は参照と厳密に一致する</b>が、平坦部に偽の濃淡が出る。分布を厳密に合わせることが目的で、絵として見ないと分かっているときだけ。</p>
-<p>どちらを選んでも失うものがある(分布の厳密さ か 平坦部の平坦さ)ので、<b>黙って片方に決めず引数にした</b>。</p>
-<p>多チャネルの絵に<b>そのまま掛けるとチャネル間の相関を壊す</b>。各軸の周辺分布は合うのに、色の組合せが元に無かったものになりうる。</p>
-<p>相関ごと運びたいときは <code style="color:#22d3bf">color_transfer</code> の <code style="color:#22d3bf">method=&quot;gaussian&quot;</code>。</p>
+<p>保持秩不變,替換為參考的分位點。指定 <code style="color:#22d3bf">bins</code> 時,用該級數的累積分布近似 —— 更快但<b>不再嚴格</b>,所以預設為 <code style="color:#22d3bf">None</code> (嚴格)。</p>
+<p><b>如何處理同值像素,會改變圖的含義。</b>單調映射本應「相等的輸入映射為相等的輸出」,但樸素地按秩替換會<b>把同值撕開</b>。實測(值 2 的像素有 4 個的整數影像):輸出分成了 <code style="color:#22d3bf">0.2222 / 0.3333 / 0.4444 / 0.5556</code> 這 4 個值。也就是說,<b>原本平坦的區域裡長出了原圖中沒有的濃淡</b>。整數影像到處都是同值,所以這不是例外而是常態。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;average&quot;</code>(預設)—— 給同值像素分配落在它們身上的參考值的 <b>平均</b>。相等的輸入映射為相等的輸出,單調性得以保持。作為代價,<b>輸出的分布不再與參考嚴格一致</b>(按同值的團塊, 分布被圓成階梯狀)。對連續的輸入(無同值)則仍嚴格一致。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;break&quot;</code> —— 按秩原樣撕開。<b>輸出的分布與參考嚴格一致</b>,但平坦部分會出現虛假的濃淡。只在目的是嚴格匹配分布、且明知不會當作圖來看時使用。</p>
+<p>無論選哪個都會失去一些東西(分布的嚴格性 或 平坦部的平坦性),所以 <b>沒有默默選定一方,而是做成了參數</b>。</p>
+<p><b>直接作用於多通道影像會破壞通道間的相關</b>。各軸的邊緣分布雖然吻合,顏色組合卻可能變成原本沒有的。</p>
+<p>要連同相關一起傳輸,請用 <code style="color:#22d3bf">color_transfer</code> 的 <code style="color:#22d3bf">method=&quot;gaussian&quot;</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色與光譜知識 —— 顏色只由「光譜 × 光源 × 觀察者」決定</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

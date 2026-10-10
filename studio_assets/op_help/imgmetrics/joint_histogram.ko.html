@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.joint_histogram(a, b, bins=64, data_range=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.joint_histogram(a, b, bins=64, data_range=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;joint_histogram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 이미지의 결합 히스토그램(정규화한 결합 확률).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>ビン幅は <code style="color:#22d3bf">data_range</code> から決める ―― 画像ごとに min/max で伸縮させると、<b>一様に暗い絵と一様に明るい絵の相互情報量が同じになる</b>ので。</p>
-<p>手順: 2 枚を平坦化し、両方に <b>同じ</b> ビン境界 <code style="color:#22d3bf">[lo, lo + data_range]</code> (<code style="color:#22d3bf">lo</code> = 2 枚の最小値の小さいほう、<code style="color:#22d3bf">bins</code> 等分)で <code style="color:#22d3bf">numpy.histogram2d</code> を取り、総数で割って同時確率にする。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: 同じ形(次元は問わない)、有限。dtype は同じでなければ <code style="color:#22d3bf">data_range</code> を明示する(混在 dtype からの推定は拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bins</code>: 2 以上の整数。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code>: 整数 dtype は自動(uint8 = 255 など)、float は <code style="color:#22d3bf">[0, 1]</code> のときだけ 1.0、それ以外は明示必須。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(bins, bins)</code> の float64、和は 1。行が <code style="color:#22d3bf">a</code> のビン、列が <code style="color:#22d3bf">b</code> のビン。<code style="color:#22d3bf">lo + data_range</code> を超える値はビンに入らない(数えられない)。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): 形が違う / 空 / 非有限 / <code style="color:#22d3bf">bins &lt; 2</code> / 範囲に入る標本が 0。</p>
-<p><code style="color:#22d3bf">joint_entropy</code> / <code style="color:#22d3bf">mutual_information</code> / <code style="color:#22d3bf">image_entropy</code> はこの表から計算する。</p>
+<p>빈 폭은 <code style="color:#22d3bf">data_range</code>에서 정한다 -- 영상마다 min/max로 늘리고 줄이면, <b>균일하게 어두운 그림과 균일하게 밝은 그림의 상호 정보량이 같아지므로</b>.</p>
+<p>절차: 2장을 평탄화하고, 둘 다에 <b>같은</b> 빈 경계 <code style="color:#22d3bf">[lo, lo + data_range]</code> (<code style="color:#22d3bf">lo</code> = 2장의 최솟값 중 작은 쪽, <code style="color:#22d3bf">bins</code> 등분)로 <code style="color:#22d3bf">numpy.histogram2d</code>를 취하고, 총수로 나누어 결합 확률로 한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: 같은 형태(차원은 묻지 않음), 유한. dtype이 같지 않으면 <code style="color:#22d3bf">data_range</code>를 명시한다(혼재 dtype에서의 추정은 거부).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bins</code>: 2 이상의 정수.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code>: 정수 dtype은 자동(uint8 = 255 등), float는 <code style="color:#22d3bf">[0, 1]</code>일때만 1.0, 그 외에는 명시 필수.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(bins, bins)</code>의 float64, 합은 1. 행이 <code style="color:#22d3bf">a</code>의 빈, 열이 <code style="color:#22d3bf">b</code>의 빈. <code style="color:#22d3bf">lo + data_range</code>를 넘는 값은 빈에 들어가지 않는다(세어지지 않는다).</p>
+<p style="margin:2px 0 2px 12px">• 실패(<code style="color:#22d3bf">MetricContractError</code>): 형태가 다름 / 비어 있음 / 비유한 / <code style="color:#22d3bf">bins &lt; 2</code> / 범위에 드는 표본이 0.</p>
+<p><code style="color:#22d3bf">joint_entropy</code> / <code style="color:#22d3bf">mutual_information</code> / <code style="color:#22d3bf">image_entropy</code>는 이 표에서 계산한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_shape_index(curvature)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.curvature_to_shape_index(curvature)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_shape_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>주곡률 <code style="color:#22d3bf">(N,2)</code> → 형상 지수와 굽음 <code style="color:#22d3bf">(N,2)</code> 의 <code style="color:#22d3bf">pairs</code>. <code style="color:#22d3bf">curvature</code> 의 출구.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Koenderink &amp; van Doorn, *Surface shape and curvature scales*, Image and Vision Computing 10(8) 1992 の (S, C):</p>
+<p>Koenderink &amp; van Doorn, *Surface shape and curvature scales*, Image and Vision Computing 10(8) 1992 의 (S, C):</p>
 <p>S = (2/pi) * atan2(k1 + k2, k1 - k2)      (k1 &gt;= k2, S in [-1, 1])</p>
-<p>C = sqrt((k1^2 + k2^2) / 2)               (曲がりの大きさ)</p>
-<p><b>除算でなく atan2 で書いてある</b>のが要点で、球状臍点 (k1 == k2) でも平面 (k1 == k2 == 0) でもゼロ除算にならず、<code style="color:#22d3bf">shape_index_to_curvature</code> との往復が<b>全域で厳密</b>になる(実測 max|Δ| = 4.6e-16)。教科書の <code style="color:#22d3bf">atan((k1+k2)/(k1-k2))</code> をそのまま実装すると臍点で NaN が出て、その NaN が下流で「暗い画素」に化ける。</p>
-<p>S = -1 は杯、0 は鞍、+1 は帽子。C は形と独立な「どれだけ曲がっているか」。</p>
-<p><b>入力順の情報だけは戻らない</b>: (k2, k1) の順で渡しても内部で k1 &gt;= k2 へ並べ替えるので、往復すると必ず降順で返る(向きの規約であり、値の損失ではない)。</p>
+<p>C = sqrt((k1^2 + k2^2) / 2)               (굽은 정도의 크기)</p>
+<p><b>나눗셈이 아니라 atan2 로 쓰여 있는</b> 것이 요점으로, 구형 배꼽점 (k1 == k2) 에서도평면 (k1 == k2 == 0) 에서도 0 으로 나누기가 되지 않으며, <code style="color:#22d3bf">shape_index_to_curvature</code> 와의 왕복이 <b>전역에서 엄밀</b>해진다(실측 max|Δ| = 4.6e-16). 교과서의 <code style="color:#22d3bf">atan((k1+k2)/(k1-k2))</code> 를 그대로 구현하면 배꼽점에서 NaN 이 나오고, 그 NaN 이 하류에서 &quot;어두운 화소&quot;로 둔갑한다.</p>
+<p>S = -1 은 컵, 0 은 안장, +1 은 모자. C 는 형태와 독립인 &quot;얼마나 굽어 있는가&quot;.</p>
+<p><b>입력 순서의 정보만은 돌아오지 않는다</b>: (k2, k1) 순서로 넘겨도 내부에서 k1 &gt;= k2 로재배열하므로, 왕복하면 반드시 내림차순으로 반환된다(방향의 규약이지, 값의 손실이 아니다).</p>
 <p>Args:</p>
-<p>curvature: (N, 2) の <code style="color:#22d3bf">[k1, k2]</code>、または 2 本の等長 1-D のタプル</p>
-<p>(<code style="color:#22d3bf">principal_curvatures</code> の素の返りがこれ)。</p>
+<p>curvature: (N, 2) 의 <code style="color:#22d3bf">[k1, k2]</code>, 또는 2 개의 같은 길이 1-D 의 튜플</p>
+<p>(<code style="color:#22d3bf">principal_curvatures</code> 의 원래 반환이 이것).</p>
 <p>Returns:</p>
-<p>(N, 2) float64。列 0 = S in [-1, 1]、列 1 = C &gt;= 0。</p>
+<p>(N, 2) float64. 열 0 = S in [-1, 1], 열 1 = C &gt;= 0.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: 형태 부정 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

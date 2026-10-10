@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.labels_to_indices(labels)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.labels_to_indices(labels)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;labels_to_indices&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><code style="color:#22d3bf">labels</code> → die Indizes <code style="color:#22d3bf">(N,)</code> des Nicht-Hintergrunds. Die Gegenrichtung von <code style="color:#22d3bf">indices_to_labels</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>2-D 以上のラベル画像も受ける —— その場合の添字は <b><code style="color:#22d3bf">labels.ravel()</code> への添字</b>(C 順)である。<code style="color:#22d3bf">np.unravel_index</code> で座標へ戻せるが、<b>戻すには元の shape が要る</b>ので、この向きは <code style="color:#22d3bf">shape</code> を捨てている(不可逆)。</p>
+<p>Nimmt auch Labelbilder ab 2-D an -- in diesem Fall sind die Indizes <b>Indizes in <code style="color:#22d3bf">labels.ravel()</code></b> (C-Reihenfolge). Mit <code style="color:#22d3bf">np.unravel_index</code> lassen sie sich in Koordinaten zurückführen, aber <b>dafür braucht man die ursprüngliche shape</b>, daher verwirft diese Richtung <code style="color:#22d3bf">shape</code> (nicht umkehrbar).</p>
 <p>Args:</p>
-<p>labels: 任意次元の整数/実ラベル配列。</p>
+<p>labels: ganzzahliges/reelles Labelarray beliebiger Dimension.</p>
 <p>Returns:</p>
-<p>(N,) int64。ラベルが 0 でない位置の平坦添字(昇順)。</p>
+<p>(N,) int64. Flache Indizes (aufsteigend) der Positionen, an denen das Label nicht 0 ist.</p>
 <p>Raises:</p>
-<p>ValueError: 空 / 非有限 / 非背景が 1 つも無い。</p>
+<p>ValueError: leer / nicht endlich / nicht einmal 1 Nicht-Hintergrund-Element.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

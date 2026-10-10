@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_truncation_energy(spectrum, orders=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_truncation_energy(spectrum, orders=None)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_truncation_energy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>predicted</b> error for each truncation order (<code style="color:#22d3bf">table</code>) — Parseval&#x27;s exact formula.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>次数 <code style="color:#22d3bf">K</code> で打ち切った再構成 <code style="color:#22d3bf">z^K</code> について、標本上の二乗平均誤差は <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code> に<b>厳密に等しい</b>。だから再構成を 1 度もせずに「何項あれば何画素まで似るか」を先に言える。</p>
-<p>★<b>予言が厳密なのは、係数列が完全なときだけ</b>である(<code style="color:#22d3bf">contour_fourier_complex</code> を <code style="color:#22d3bf">n_harmonics=None</code> で呼んだ場合)。打ち切った係数列を渡されると、捨てられた側のエネルギーは<b>知りようがない</b>ので、返る誤差は<b>下界</b>になる —— 過小に見える誤差を「厳密」と言わないために、ここに書いておく。</p>
-<p>返り値: dict(<code style="color:#22d3bf">table</code>)</p>
-<p>&quot;order&quot;: 打ち切り次数 <code style="color:#22d3bf">K</code> の 1-D</p>
-<p>&quot;rms_error&quot;: 予言される rms 誤差[入力の単位]</p>
-<p>&quot;energy_fraction&quot;: 残した項が担うエネルギーの割合(<code style="color:#22d3bf">0..1</code>、単調増加)</p>
-<p>&quot;total_energy&quot;: <code style="color:#22d3bf">Σ_{k≠0} |c_k|^2</code>(位置 <code style="color:#22d3bf">c_0</code> を除いた形のエネルギー)</p>
-<p>&quot;k_max&quot;: スペクトルが持つ最大次数</p>
+<p>For the reconstruction <code style="color:#22d3bf">z^K</code> truncated at order <code style="color:#22d3bf">K</code>, the mean squared error over the samples <b>is exactly equal</b> to <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code>. Hence you can say in advance &quot;how many terms make it resemble to how many pixels&quot; without doing the reconstruction even 1 time.</p>
+<p>★<b>The prediction is exact only when the coefficient sequence is complete</b> (when <code style="color:#22d3bf">contour_fourier_complex</code> was called with <code style="color:#22d3bf">n_harmonics=None</code>). If a truncated coefficient sequence is passed, the energy of the discarded part <b>cannot be known</b>, so the returned error is a <b>lower bound</b> —— this is written here so that an error that looks too small is not called &quot;exact&quot;.</p>
+<p>Returns: dict (<code style="color:#22d3bf">table</code>)</p>
+<p>&quot;order&quot;: 1-D of truncation orders <code style="color:#22d3bf">K</code></p>
+<p>&quot;rms_error&quot;: predicted rms error [units of the input]</p>
+<p>&quot;energy_fraction&quot;: fraction of energy carried by the kept terms (<code style="color:#22d3bf">0..1</code>, monotonically increasing)</p>
+<p>&quot;total_energy&quot;: <code style="color:#22d3bf">Σ_{k≠0} |c_k|^2</code> (shape energy excluding the position <code style="color:#22d3bf">c_0</code>)</p>
+<p>&quot;k_max&quot;: the highest order the spectrum holds</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

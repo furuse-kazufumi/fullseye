@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_overlay(image: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, alpha: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_overlay(image: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, alpha: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_overlay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>मूल image पर object को अलग-अलग रंगों में overlay करके <code style="color:#22d3bf">(H, W, 3)</code> का float RGB लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>この族の<b>出口</b>。作れて測れるが見られない型にしないために置く。</p>
-<p>色は <code style="color:#22d3bf">fullseye.colorize_labels</code> と同じ規則で、背景は元画像のまま。</p>
+<p>इस family का <b>exit</b>। यह इसलिए रखा गया है ताकि यह ऐसा type न बने जिसे बनाया और मापा जा सके पर देखा न जा सके।</p>
+<p>रंग <code style="color:#22d3bf">fullseye.colorize_labels</code> वाले नियम से ही हैं, और background मूल image ही रहता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

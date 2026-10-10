@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_to_gaussians(points, k=6, scale=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.points_to_gaussians(points, k=6, scale=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_gaussians&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 <code style="color:#22d3bf">(N,3)</code> → 등방 <code style="color:#22d3bf">gaussians</code>. <b>이 타입의 유일한 입구</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">gaussians</code> は台帳で <code style="color:#22d3bf">fuse3d.to_points</code> が食う型だが、<b>産む op が 1 つも無かった</b>(実測)—— 消費側だけがある型は、生成器を種として置かない限り一度も実行されない。ここでは 3D Gaussian Splatting の初期化と同じやり方で</p>
-<p>作る: 各点の k 近傍までの<b>平均距離</b>を sigma、重みを 1/N の等分にする。</p>
-<p><code style="color:#22d3bf">mu</code> は入力点そのものなので <code style="color:#22d3bf">gaussians_to_points</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。sigma と w は往復で戻らない —— 点群にはもともと無かった量だからで、これは損失ではなく<b>追加</b>である。</p>
+<p><code style="color:#22d3bf">gaussians</code>는 대장에서 <code style="color:#22d3bf">fuse3d.to_points</code>가 소비하는 타입이지만, <b>생산하는 op이 1개도 없었다</b>(실측) —— 소비 측만 있는 타입은 생성기를 씨앗으로 두지 않는 한한 번도 실행되지 않는다. 여기서는 3D Gaussian Splatting의 초기화와 같은 방식으로</p>
+<p>만든다: 각 점의 k 근방까지의 <b>평균 거리</b>를 sigma, 가중치를 1/N 균등 분할로 한다.</p>
+<p><code style="color:#22d3bf">mu</code>는 입력 점 그 자체이므로 <code style="color:#22d3bf">gaussians_to_points</code>와 왕복하여 <b>bit 일치</b>(실측 max|Δ| = 0.0). sigma와 w는 왕복으로 돌아오지 않는다 —— 점군에는원래 없던 양이기 때문이며, 이것은 손실이 아니라 <b>추가</b>이다.</p>
 <p>Args:</p>
-<p>points: (N, 3)。N &gt;= 2。</p>
-<p>k: sigma を決める近傍数(既定 6)。N-1 を超えると N-1 に丸める。</p>
-<p>scale: sigma に掛ける係数(既定 1.0)。</p>
+<p>points: (N, 3). N &gt;= 2.</p>
+<p>k: sigma를 정하는 근방 수(기본값 6). N-1을 넘으면 N-1로 자른다.</p>
+<p>scale: sigma에 곱하는 계수(기본값 1.0).</p>
 <p>Returns:</p>
-<p>dict(<code style="color:#22d3bf">mu</code> (N,3) / <code style="color:#22d3bf">sigma</code> (N,) / <code style="color:#22d3bf">w</code> (N,))。</p>
+<p>dict(<code style="color:#22d3bf">mu</code> (N,3) / <code style="color:#22d3bf">sigma</code> (N,) / <code style="color:#22d3bf">w</code> (N,)).</p>
 <p>Raises:</p>
-<p>ValueError: N &lt; 2 / k &lt; 1 / scale &lt;= 0 / 形状不正 / 非有限。</p>
+<p>ValueError: N &lt; 2 / k &lt; 1 / scale &lt;= 0 / 형상 부정 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

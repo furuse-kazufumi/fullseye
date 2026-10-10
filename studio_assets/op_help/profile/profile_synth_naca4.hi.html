@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_synth_naca4(code=&#x27;2412&#x27;, n=161, closed_te=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_synth_naca4(code=&#x27;2412&#x27;, n=161, closed_te=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_synth_naca4&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>NACA 4-अंक airfoil closed form में बनाता है। <code style="color:#22d3bf">(N, 2)</code> की एक लगातार stroke वाली outline लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">code</code> は 4 桁(例 <code style="color:#22d3bf">&quot;2412&quot;</code> = キャンバー 2 %、位置 40 %、厚み 12 %)。点は前縁を密にするために余弦分布で置く。</p>
-<p><code style="color:#22d3bf">closed_te</code> は後縁を閉じる係数を使うかどうか。<b>既定は歴史的な係数</b> (0.1015)で、後縁がわずかに開く。閉じる版は 0.1036。どちらを使ったかで後縁付近の計測が変わるので、真値として使うなら固定して書き残すこと。</p>
+<p><code style="color:#22d3bf">code</code> 4 अंकों का है (उदा. <code style="color:#22d3bf">&quot;2412&quot;</code> = camber 2 %, स्थिति 40 %, मोटाई 12 %)। leading edge को घना करने के लिए points cosine distribution से रखे जाते हैं।</p>
+<p><code style="color:#22d3bf">closed_te</code> बताता है कि trailing edge को बंद करने वाला coefficient इस्तेमाल हो या नहीं। <b>default ऐतिहासिक coefficient है</b> (0.1015), जिससे trailing edge थोड़ा खुला रहता है। बंद करने वाला संस्करण 0.1036 है। कौन-सा इस्तेमाल हुआ, इससे trailing edge के पास की माप बदल जाती है, इसलिए ground truth के रूप में इस्तेमाल करें तो इसे तय करके लिख कर रखें।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(2*n-1, 2)</code>。後縁 → 上面 → 前縁 → 下面 → 後縁 の順(Selig 流)。</p>
+<p><code style="color:#22d3bf">(2*n-1, 2)</code>। trailing edge → upper surface → leading edge → lower surface → trailing edge के क्रम में (Selig शैली)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

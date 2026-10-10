@@ -6,11 +6,10 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(aligned, info) -&gt; pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将实测轮廓对准设计轮廓。返回 <code style="color:#22d3bf">(aligned, info)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">mode</code> は <code style="color:#22d3bf">ALIGN_MODES</code>。<b>相似(スケール推定)は提供しない</b> —— 大きさの誤差そのものを吸収してしまうため(モジュール docstring の実測表)。</p>
+<p><code style="color:#22d3bf">mode</code> 取 <code style="color:#22d3bf">ALIGN_MODES</code> 之一。<b>不提供相似变换(尺度估计)</b> —— 因为它会把大小误差本身吸收掉(见模块 docstring 中的实测表)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(aligned (N, 2), info)</code>。<code style="color:#22d3bf">info</code> は <code style="color:#22d3bf">mode</code> / <code style="color:#22d3bf">angle_deg</code> /</p>
-<p><code style="color:#22d3bf">translation</code> / <code style="color:#22d3bf">scale</code>(常に 1.0。<b>推定していないことの明示</b>)。</p>
+<p><code style="color:#22d3bf">(aligned (N, 2), info)</code>。<code style="color:#22d3bf">info</code> 含 <code style="color:#22d3bf">mode</code> / <code style="color:#22d3bf">angle_deg</code> /</p>
+<p><code style="color:#22d3bf">translation</code> / <code style="color:#22d3bf">scale</code>(恒为 1.0,<b>明确表示未做估计</b>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

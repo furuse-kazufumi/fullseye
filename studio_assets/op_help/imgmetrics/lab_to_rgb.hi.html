@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lab_to_rgb(lab, white=(0.95047, 1.0, 1.08883))</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.lab_to_rgb(lab, white=(0.95047, 1.0, 1.08883))</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;lab_to_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>CIE L*a*b* → sRGB <code style="color:#22d3bf">[0, 1]</code>। <b>gamut से बाहर के रंग clip हो जाते हैं</b>, इसलिए <code style="color:#22d3bf">rgb_to_lab</code> के साथ round trip केवल gamut के अंदर मेल खाता है (test से तय)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>手順: <code style="color:#22d3bf">fy = (L + 16) / 116</code>、<code style="color:#22d3bf">fx = fy + a / 500</code>、<code style="color:#22d3bf">fz = fy - b / 200</code> を <code style="color:#22d3bf">xyz_to_lab</code> の逆関数で XYZ に戻し(<code style="color:#22d3bf">white</code> を掛ける)、XYZ→線形 RGB の逆行列を掛けてから sRGB の伝達関数を掛ける。伝達関数の手前で線形 RGB を <code style="color:#22d3bf">[0, 1]</code> に <b>無言でクリップ</b>する ―― ここが「色域外は切り詰め」の実体で、例外は出ない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab</code>: 最後の軸が 3 の任意の形。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: <code style="color:#22d3bf">rgb_to_lab</code> で使ったものと同じ白色点を渡す(検証はしない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64、値域 <code style="color:#22d3bf">[0, 1]</code> のガンマ付き sRGB。8 bit にするなら呼び出し側で 255 倍して丸める。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): 最後の軸が 3 でない。</p>
+<p>प्रक्रिया: <code style="color:#22d3bf">fy = (L + 16) / 116</code>, <code style="color:#22d3bf">fx = fy + a / 500</code>, <code style="color:#22d3bf">fz = fy - b / 200</code> को <code style="color:#22d3bf">xyz_to_lab</code> के inverse function से XYZ में वापस लाया जाता है (<code style="color:#22d3bf">white</code> से गुणा), फिर XYZ→linear RGB का inverse matrix लगाया जाता है और उसके बाद sRGB transfer function। transfer function से पहले linear RGB को <code style="color:#22d3bf">[0, 1]</code> में <b>चुपचाप clip</b> किया जाता है -- &quot;gamut से बाहर के रंग काटे जाते हैं&quot; का असली रूप यही है, और कोई exception नहीं आता।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab</code>: कोई भी shape जिसकी आख़िरी axis 3 हो।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: वही white point दें जो <code style="color:#22d3bf">rgb_to_lab</code> में इस्तेमाल हुआ था (जाँच नहीं होती)।</p>
+<p style="margin:2px 0 2px 12px">• return value: input जैसे ही shape का float64, <code style="color:#22d3bf">[0, 1]</code> range का gamma वाला sRGB। 8 bit के लिए caller 255 से गुणा करके round करे।</p>
+<p style="margin:2px 0 2px 12px">• विफलता (<code style="color:#22d3bf">MetricContractError</code>): आख़िरी axis 3 नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

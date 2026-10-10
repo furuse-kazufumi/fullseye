@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imagemorph; imagemorph.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;morph_sequence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>alpha를 0→1로 n단계에 걸쳐 바꾼 모프 열(A에서 B로 매끄럽게 변하는 각 프레임).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返り値: 長さ n の list。先頭が A、末尾が B に一致する。</p>
-<p><code style="color:#22d3bf">alpha = linspace(0, 1, n)</code> の各値で <code style="color:#22d3bf">morph(imgA, imgB, ptsA, ptsB, alpha, method, lam, with_corners)</code> を呼ぶだけ。各フレームは (1) 中間点 <code style="color:#22d3bf">(1-α) ptsA + α ptsB</code> を作り、(2) A と B をそれぞれそこへワープし、</p>
-<p style="margin:2px 0 2px 12px">(3) <code style="color:#22d3bf">α</code> でクロスディゾルブ、の 3 段。フレームごとにワープ 2 回なので、</p>
-<p>コストは <code style="color:#22d3bf">n</code> に比例する(<code style="color:#22d3bf">n=7</code> で 14 回)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">imgA</code>, <code style="color:#22d3bf">imgB</code>: <code style="color:#22d3bf">(H, W[, C])</code>、同じ形、<code style="color:#22d3bf">[0, 1]</code>。NaN/Inf は無言で 0 / 1 に置換される。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ptsA</code>, <code style="color:#22d3bf">ptsB</code>: <code style="color:#22d3bf">(K, 2)</code> の <b>(x, y)</b>、同数・同順の対応点。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 2 以上(1 以下は <code style="color:#22d3bf">ValueError</code>)。<code style="color:#22d3bf">int</code> に切られる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;affine&quot;</code>(Delaunay 区分アフィン、速い)/ <code style="color:#22d3bf">&quot;tps&quot;</code>(薄板スプライン、滑らか)。それ以外は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">lam</code> は TPS の平滑化係数(0 で厳密補間)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">with_corners</code>: True で <code style="color:#22d3bf">add_frame_corners</code> を両点群に足し、枠の外側の穴を防ぐ。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: float64 配列 <code style="color:#22d3bf">n</code> 枚の list(<code style="color:#22d3bf">images</code> 型)。<code style="color:#22d3bf">[0, 1]</code> にクリップ済み。</p>
-<p>1 枚だけ欲しい(例: <code style="color:#22d3bf">α = 0.5</code> の中間顔)なら <code style="color:#22d3bf">morph</code> を直接。</p>
+<p>반환값: 길이 n 의 list. 처음이 A, 끝이 B 에 일치한다.</p>
+<p><code style="color:#22d3bf">alpha = linspace(0, 1, n)</code> 의 각 값으로 <code style="color:#22d3bf">morph(imgA, imgB, ptsA, ptsB, alpha, method, lam, with_corners)</code> 를 부를 뿐. 각 프레임은 (1) 중간점 <code style="color:#22d3bf">(1-α) ptsA + α ptsB</code> 를 만들고, (2) A 와 B 를 각각 그곳으로 워프하고,</p>
+<p style="margin:2px 0 2px 12px">(3) <code style="color:#22d3bf">α</code> 로 크로스 디졸브, 의 3 단계. 프레임마다 워프 2 회이므로,</p>
+<p>비용은 <code style="color:#22d3bf">n</code> 에 비례한다(<code style="color:#22d3bf">n=7</code> 에서 14 회).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">imgA</code>, <code style="color:#22d3bf">imgB</code>: <code style="color:#22d3bf">(H, W[, C])</code>, 같은 형태, <code style="color:#22d3bf">[0, 1]</code>. NaN/Inf 는 말없이 0 / 1 로 치환된다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ptsA</code>, <code style="color:#22d3bf">ptsB</code>: <code style="color:#22d3bf">(K, 2)</code> 의 <b>(x, y)</b>, 같은 수·같은 순서의 대응점.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 2 이상(1 이하는 <code style="color:#22d3bf">ValueError</code>). <code style="color:#22d3bf">int</code> 로 잘린다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;affine&quot;</code>(Delaunay 구분 아핀, 빠름) / <code style="color:#22d3bf">&quot;tps&quot;</code>(박판 스플라인, 매끄러움). 그 외는 <code style="color:#22d3bf">ValueError</code>. <code style="color:#22d3bf">lam</code> 은 TPS 의 평활화 계수(0 이면 엄밀 보간).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">with_corners</code>: True 로 <code style="color:#22d3bf">add_frame_corners</code> 를 양 점군에 더해, 틀 바깥의구멍을 막는다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: float64 배열 <code style="color:#22d3bf">n</code> 장의 list(<code style="color:#22d3bf">images</code> 형). <code style="color:#22d3bf">[0, 1]</code> 로 클립 완료.</p>
+<p>1 장만 원한다면(예: <code style="color:#22d3bf">α = 0.5</code> 의 중간 얼굴) <code style="color:#22d3bf">morph</code> 를 직접.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

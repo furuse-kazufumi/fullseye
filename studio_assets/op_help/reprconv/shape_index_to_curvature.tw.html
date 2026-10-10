@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index_to_curvature(pairs)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.shape_index_to_curvature(pairs)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;shape_index_to_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>形狀指數與彎曲度 <code style="color:#22d3bf">(N,2)</code> → 主曲率 <code style="color:#22d3bf">(N,2)</code>。<code style="color:#22d3bf">curvature_to_shape_index</code> 的逆。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>theta = pi*S/2 として <code style="color:#22d3bf">k1 = C(sin+cos)</code>, <code style="color:#22d3bf">k2 = C(sin-cos)</code>。(S, C) の定義式を解いた閉形式で、近似も反復も入っていない。</p>
+<p>令 theta = pi*S/2,則 <code style="color:#22d3bf">k1 = C(sin+cos)</code>, <code style="color:#22d3bf">k2 = C(sin-cos)</code>。這是解 (S, C) 定義式得到的閉合式,不含近似也不含迭代。</p>
 <p>Args:</p>
-<p>pairs: (N, 2) の <code style="color:#22d3bf">[S, C]</code>。</p>
+<p>pairs: (N, 2) 的 <code style="color:#22d3bf">[S, C]</code>。</p>
 <p>Returns:</p>
-<p>(N, 2) float64 の <code style="color:#22d3bf">[k1, k2]</code>(k1 &gt;= k2)。</p>
+<p>(N, 2) float64 的 <code style="color:#22d3bf">[k1, k2]</code>(k1 &gt;= k2)。</p>
 <p>Raises:</p>
-<p>ValueError: |S| &gt; 1 / C &lt; 0 / 形状不正 / 非有限。</p>
+<p>ValueError: |S| &gt; 1 / C &lt; 0 / 形狀不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

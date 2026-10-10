@@ -4,21 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.arrow(img, p0, p1, color=&#x27;emphasis&#x27;, width=2, head_len=12.0, head_width=9.0, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.arrow(img, p0, p1, color=&#x27;emphasis&#x27;, width=2, head_len=12.0, head_width=9.0, scheme=&#x27;okabe_ito&#x27;, style=None)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;arrow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>An arrow from <code style="color:#22d3bf">p0</code> to <code style="color:#22d3bf">p1</code> (the shaft via <code style="color:#22d3bf">imagedraw.draw_line</code>, the head filled).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>p0, p1 : (x, y)</p>
-<p>起点・先端。<b>x=col, y=row</b>。</p>
+<p>Start point and tip. <b>x=col, y=row</b>.</p>
 <p>head_len, head_width : float</p>
-<p>矢じりの長さ・幅[px]。<code style="color:#22d3bf">0</code> で線分のみ。軸より矢じりが長い短距離の</p>
-<p>矢印では、矢じりを軸長の 8 割まで<b>相似に縮める</b>(そうしないと</p>
-<p>矢じりの根元が起点の手前に来て、軸が逆向きに描かれる)。</p>
+<p>Arrowhead length and width [px]. <code style="color:#22d3bf">0</code> gives a plain line segment. For short arrows whose arrowhead is longer than the shaft,</p>
+<p>the arrowhead is <b>shrunk similarly</b> to 8/10 of the shaft length (otherwise</p>
+<p>the base of the arrowhead would lie behind the start point and the shaft would be drawn backwards).</p>
 <p>style : dict or None</p>
-<p>軸線を引く <code style="color:#22d3bf">imagedraw.draw_line</code> への素通し引数(破線など)。</p>
+<p>Pass-through arguments to <code style="color:#22d3bf">imagedraw.draw_line</code>, which draws the shaft (dashes etc.).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>端点が非有限/一致、負の太さ・矢じり寸法、両端とも画像の外。</p>
+<p>end points non-finite or identical, negative thickness or arrowhead size, both ends outside the image.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;gum_propagate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fortpflanzungsgesetz der Messunsicherheit (GUM 5.2, mit Korrelationen) (<code style="color:#22d3bf">table</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>u_c^2 = sum_i (c_i u_i)^2 + 2 sum_{i&lt;j} c_i c_j u_i u_j r_ij</p>
-<p>*table* は列 *u*(標準不確かさ)と *sensitivity*(感度係数 <code style="color:#22d3bf">c_i = df/dx_i</code>)を持つ表。*correlation* に (n, n) の相関行列を渡すと相関項を含める。</p>
-<p>★門にできる閉形式: <code style="color:#22d3bf">f = x y</code> なら <code style="color:#22d3bf">c_x = y</code> / <code style="color:#22d3bf">c_y = x</code> なので <code style="color:#22d3bf">u_c/|f| = sqrt((u_x/x)^2 + (u_y/y)^2)</code> —— 相対不確かさの二乗和。相関 <code style="color:#22d3bf">r = +1</code> の 2 成分では <code style="color:#22d3bf">u_c = |c1 u1 + c2 u2||</code> に<b>厳密に</b>一致し、<code style="color:#22d3bf">r = -1</code> では <code style="color:#22d3bf">|c1 u1 - c2 u2|</code>(打ち消し)。無相関なら寄与の合計が <code style="color:#22d3bf">u_c^2</code> にぴったり閉じる。</p>
-<p>★★<b>相関を無視した誤りの向きは一定ではない</b>。「独立として扱うと過小評価になる」はよく言われるが、<b>偽である</b>。規格の worked example(電圧・電流・位相差から抵抗とリアクタンスを同時に出す例、3 量すべてに相関がある)で相関を落として測ると:</p>
-<p>u_c(R)  0.0702 -&gt; 0.1945   <b>2.8 倍の過大</b></p>
-<p>u_c(X)  0.2961 -&gt; 0.2009   過小</p>
-<p>u_c(Z)  0.2367 -&gt; 0.2041   過小</p>
-<p>同じ 1 つのデータで、量によって向きが逆に出る —— 感度係数の符号と相関の符号の積で決まるので、当たり前といえば当たり前だが、「安全側に外れる」と思って相関を省くと <b>R では 3 倍近く過大な不確かさを報告</b>することになる。</p>
+<p>*table* ist eine Tabelle mit den Spalten *u* (Standardunsicherheit) und *sensitivity* (Sensitivitätskoeffizient <code style="color:#22d3bf">c_i = df/dx_i</code>). Wird *correlation* eine (n, n)-Korrelationsmatrix übergeben, werden die Korrelationsterme einbezogen.</p>
+<p>★ Eine geschlossene Form, die als Gate taugt: bei <code style="color:#22d3bf">f = x y</code> ist <code style="color:#22d3bf">c_x = y</code> / <code style="color:#22d3bf">c_y = x</code>, daher <code style="color:#22d3bf">u_c/|f| = sqrt((u_x/x)^2 + (u_y/y)^2)</code> -- die Quadratsumme der relativen Unsicherheiten. Bei 2 Komponenten mit Korrelation <code style="color:#22d3bf">r = +1</code> stimmt es <b>exakt</b> mit <code style="color:#22d3bf">u_c = |c1 u1 + c2 u2||</code> überein, bei <code style="color:#22d3bf">r = -1</code> ist es <code style="color:#22d3bf">|c1 u1 - c2 u2|</code> (Auslöschung). Ohne Korrelation schließt die Summe der Beiträge genau mit <code style="color:#22d3bf">u_c^2</code>.</p>
+<p>★★ <b>Die Richtung des Fehlers durch Ignorieren der Korrelation ist nicht fest</b>. &quot;Als unabhängig behandelt wird unterschätzt&quot; hört man oft, aber <b>es ist falsch</b>. Misst man im worked example der Norm (aus Spannung, Strom und Phasendifferenz gleichzeitig Widerstand und Reaktanz, alle 3 Größen korreliert) mit weggelassener Korrelation:</p>
+<p>u_c(R)  0.0702 -&gt; 0.1945   <b>2.8-fache Überschätzung</b></p>
+<p>u_c(X)  0.2961 -&gt; 0.2009   Unterschätzung</p>
+<p>u_c(Z)  0.2367 -&gt; 0.2041   Unterschätzung</p>
+<p>Bei denselben 1 Daten kehrt sich die Richtung je nach Größe um -- sie wird durch das Produkt aus dem Vorzeichen des Sensitivitätskoeffizienten und dem der Korrelation bestimmt, also eigentlich selbstverständlich, aber wer die Korrelation weglässt in der Annahme &quot;das liegt auf der sicheren Seite&quot;, <b>meldet für R eine fast 3-fach zu große Unsicherheit</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

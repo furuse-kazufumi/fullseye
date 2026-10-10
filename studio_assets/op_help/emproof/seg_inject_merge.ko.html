@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import emproof; emproof.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsemproof.get(&quot;seg_inject_merge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평가용으로 <b>융합</b>을 심는다: 인접한 큰 라벨 쌍을 <code style="color:#22d3bf">n</code>개 골라 한쪽의 id를 다른 쪽으로 바꿔 쓴다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">min_area</code> px 以上のラベルだけを候補にし(小さな断片の融合は弦が短くて検出できず、評価が「仕込めない誤り」に引っ張られる)、乱数(<code style="color:#22d3bf">seed</code>)で対を選ぶ。同じラベルは 1 回しか使わない。<code style="color:#22d3bf">n</code> 組取れなければ ValueError(黙って少ない数で返すと AUC の分母が変わる)。仕込んだ対は <code style="color:#22d3bf">seg_label_changes(labels, out)[&quot;merge_before&quot;]</code> で取り出せる。</p>
+<p><code style="color:#22d3bf">min_area</code> px 이상의 라벨만을 후보로 하고(작은 단편의 융합은 현이 짧아서 검출할 수 없어, 평가가 &quot;심을 수 없는 오류&quot;에 끌려간다), 난수(<code style="color:#22d3bf">seed</code>)로 쌍을 고른다. 같은 라벨은 1 번밖에 쓰지 않는다. <code style="color:#22d3bf">n</code> 쌍을 얻지 못하면 ValueError(조용히 적은 수로 반환하면 AUC 의 분모가 바뀐다). 심은 쌍은 <code style="color:#22d3bf">seg_label_changes(labels, out)[&quot;merge_before&quot;]</code> 로 꺼낼 수 있다.</p>
 <p>&gt;&gt;&gt; merged = seg_inject_merge(labels, n=1, seed=3)</p>
-<p>&gt;&gt;&gt; seg_label_changes(labels, merged)[&quot;merge_before&quot;]     # 吸われた id</p>
+<p>&gt;&gt;&gt; seg_label_changes(labels, merged)[&quot;merge_before&quot;]     # 흡수된 id</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

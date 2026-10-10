@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code> (die Implementierung direkt: <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code>; aus dem Register: <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der entropisch regularisierte Optimaltransportplan (Cuturi, NIPS 2013).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>厳密解ではない。</b> <code style="color:#22d3bf">reg</code> を小さくすると厳密解に近づくが、同時に数値的に不安定になる(指数がアンダーフローする)。<code style="color:#22d3bf">reg</code> を下げると厳密解との差が縮むこと自体をテストで固定してある。</p>
+<p><b>Es ist nicht die exakte Lösung.</b> Ein kleineres <code style="color:#22d3bf">reg</code> nähert sich der exakten Lösung, macht es aber zugleich numerisch instabil (die Exponentialfunktionen unterlaufen). Dass ein kleineres <code style="color:#22d3bf">reg</code> den Abstand zur exakten Lösung verringert, ist selbst per Test festgenagelt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p><code style="color:#22d3bf">(n, m)</code> の輸送計画。行和・列和は <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code> に一致する</p>
-<p>(<code style="color:#22d3bf">tol</code> まで)。収束しなければ <code style="color:#22d3bf">RuntimeError</code> ―― 収束しないまま</p>
-<p>最後の反復を返すと、行和が合っていない計画が黙って下流へ流れる。</p>
+<p>Ein Transportplan der Form <code style="color:#22d3bf">(n, m)</code>. Zeilen- und Spaltensummen stimmen mit <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code> überein</p>
+<p>(bis <code style="color:#22d3bf">tol</code>). Konvergiert es nicht, <code style="color:#22d3bf">RuntimeError</code> -- gäbe man ohne Konvergenz</p>
+<p>die letzte Iteration zurück, flösse stillschweigend ein Plan mit nicht passenden Zeilensummen weiter.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Farbmetrik und Spektren — Farbe ist nur durch Spektrum × Lichtart × Beobachter bestimmt</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

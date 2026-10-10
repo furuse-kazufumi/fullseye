@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rounded_rect(img, rect, radius=8, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.rounded_rect(img, rect, radius=8, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;rounded_rect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>모서리가 둥근 사각형(<code style="color:#22d3bf">fill=True</code> 면 칠하기). 밑판이나 둘러싸기에 씁니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>矩形が画像の外、radius が負か辺の半分を超える、alpha が [0,1] の外。</p>
-<p>描画: 画素中心から「角を丸めた矩形」までの距離で内側判定し、<code style="color:#22d3bf">fill=False</code> なら外周から <code style="color:#22d3bf">max(1, width)</code> px 幅の帯だけを載せる(距離判定の 1 段階、アンチエイリアスは無し)。合成は <code style="color:#22d3bf">out = m*color + (1-m)*img</code> に <code style="color:#22d3bf">alpha</code> を掛けたもの。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code>: <code style="color:#22d3bf">(H, W)</code> / <code style="color:#22d3bf">(H, W, 1|3|4)</code>。float64 に変換し <code style="color:#22d3bf">[0, 1]</code> にクリップした <b>複製</b>を返す(入力は変えない)。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rect</code>: <code style="color:#22d3bf">(x, y, w, h)</code>、x = 列・y = 行。丸めて整数化し、<code style="color:#22d3bf">w, h &gt; 0</code>、画像内に完全に収まること(はみ出しは切り詰めず <code style="color:#22d3bf">ValueError</code>)。占める画素は <code style="color:#22d3bf">x .. x+w-1</code>、<code style="color:#22d3bf">y .. y+h-1</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 角の半径 [px]、<code style="color:#22d3bf">0 &lt;= radius &lt;= min(w, h)/2</code>。0 で普通の矩形。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">color</code>: <code style="color:#22d3bf">palette</code> の役割名(<code style="color:#22d3bf">&quot;neutral&quot;</code> 等、<code style="color:#22d3bf">scheme</code> で解決)か <code style="color:#22d3bf">[0, 1]</code> の RGB。グレー画像には RGB の平均を使う。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
-<p><code style="color:#22d3bf">text_box</code> の下敷きや <code style="color:#22d3bf">annotate_legend</code> の囲みと同じ見た目を手で組むときに。</p>
+<p>사각형이 영상 밖, radius가 음이거나 변의 절반을 넘음, alpha가 [0,1] 밖.</p>
+<p>그리기: 화소 중심에서 &quot;모서리를 둥글게 한 사각형&quot;까지의 거리로 안쪽을 판정하며, <code style="color:#22d3bf">fill=False</code> 이면 외곽에서 <code style="color:#22d3bf">max(1, width)</code> px 폭의 띠만 얹는다(거리 판정 1단계, 안티에일리어싱 없음). 합성은 <code style="color:#22d3bf">out = m*color + (1-m)*img</code>에 <code style="color:#22d3bf">alpha</code>를곱한 것.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code>: <code style="color:#22d3bf">(H, W)</code> / <code style="color:#22d3bf">(H, W, 1|3|4)</code>. float64로 변환하고 <code style="color:#22d3bf">[0, 1]</code>로 클립한 <b>복제</b>를 반환한다(입력은 바꾸지 않는다). NaN/Inf는 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rect</code>: <code style="color:#22d3bf">(x, y, w, h)</code>, x = 열·y = 행. 반올림하여 정수화하고, <code style="color:#22d3bf">w, h &gt; 0</code>, 영상 안에 완전히 들어갈 것(삐져나옴은 잘라내지 않고 <code style="color:#22d3bf">ValueError</code>). 차지하는 화소는 <code style="color:#22d3bf">x .. x+w-1</code>, <code style="color:#22d3bf">y .. y+h-1</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 모서리 반경 [px], <code style="color:#22d3bf">0 &lt;= radius &lt;= min(w, h)/2</code>. 0이면 보통의 사각형.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">color</code>: <code style="color:#22d3bf">palette</code>의 역할명(<code style="color:#22d3bf">&quot;neutral&quot;</code> 등, <code style="color:#22d3bf">scheme</code>으로 해결) 또는 <code style="color:#22d3bf">[0, 1]</code>의 RGB. 그레이 영상에는 RGB의 평균을 사용한다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 입력과 같은 형태의 float64.</p>
+<p><code style="color:#22d3bf">text_box</code>의 밑판이나 <code style="color:#22d3bf">annotate_legend</code>의 테두리와 같은 모양을 손으로 짤 때.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_resample(contour, n=200, kind=&#x27;arclength&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import profileops; profileops.profile_resample(contour, n=200, kind=&#x27;arclength&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsprofile.get(&quot;profile_resample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Resamples the contour at equal spacing. <code style="color:#22d3bf">kind</code> is <code style="color:#22d3bf">&quot;arclength&quot;</code> only (for now).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>点の密度が場所で違うと、厚みやキャンバーの当てはめが密なところに引きずられる。比較する 2 本は<b>同じ取り方</b>で取り直してから比べること。</p>
+<p>If the point density varies by location, fits of thickness and camber are dragged toward the dense parts. Resample the 2 curves to compare <b>in the same way</b> before comparing them.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

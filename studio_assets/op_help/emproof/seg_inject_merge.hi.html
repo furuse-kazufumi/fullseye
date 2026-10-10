@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import emproof; emproof.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsemproof.get(&quot;seg_inject_merge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>मूल्यांकन के लिए <b>merge</b> डालता है: पड़ोसी बड़े label के <code style="color:#22d3bf">n</code> जोड़े चुनकर एक का id दूसरे में बदल देता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">min_area</code> px 以上のラベルだけを候補にし(小さな断片の融合は弦が短くて検出できず、評価が「仕込めない誤り」に引っ張られる)、乱数(<code style="color:#22d3bf">seed</code>)で対を選ぶ。同じラベルは 1 回しか使わない。<code style="color:#22d3bf">n</code> 組取れなければ ValueError(黙って少ない数で返すと AUC の分母が変わる)。仕込んだ対は <code style="color:#22d3bf">seg_label_changes(labels, out)[&quot;merge_before&quot;]</code> で取り出せる。</p>
+<p>केवल <code style="color:#22d3bf">min_area</code> px या उससे बड़े labels candidates होते हैं (छोटे टुकड़ों के merge का chord छोटा होता है और detect नहीं होता, जिससे evaluation &quot;जो error डाले ही नहीं जा सके&quot; की ओर खिंच जाता है), और random numbers (<code style="color:#22d3bf">seed</code>) से जोड़े चुने जाते हैं। एक ही label केवल 1 बार इस्तेमाल होता है। <code style="color:#22d3bf">n</code> जोड़े न मिलें तो ValueError (चुपचाप कम संख्या लौटाने से AUC का denominator बदल जाता है)। डाले गए जोड़े <code style="color:#22d3bf">seg_label_changes(labels, out)[&quot;merge_before&quot;]</code> से निकाले जा सकते हैं।</p>
 <p>&gt;&gt;&gt; merged = seg_inject_merge(labels, n=1, seed=3)</p>
-<p>&gt;&gt;&gt; seg_label_changes(labels, merged)[&quot;merge_before&quot;]     # 吸われた id</p>
+<p>&gt;&gt;&gt; seg_label_changes(labels, merged)[&quot;merge_before&quot;]     # जो id निगल लिए गए</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

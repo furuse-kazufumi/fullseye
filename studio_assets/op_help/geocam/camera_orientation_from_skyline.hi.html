@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_skyline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>photo की skyline (हर column की row) और DEM की skyline से (yaw, pitch, roll) तय करता है → table।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>写真の境界画素 (u, v) をカメラ光線にし、仮の姿勢で世界へ回すと、各列は (方位, 仰角) の点になる。その仰角と、DEM のスカイラインをその方位で引いた仰角の差の RMS が姿勢のコスト。yaw を <code style="color:#22d3bf">yaw_step_deg</code> 刻みで一周、pitch・roll を <code style="color:#22d3bf">coarse_step_deg</code> 刻みで格子探索し、最小の点から Nelder–Mead で連続値に詰める(scipy)。Baatz ら 2012 のスカイライン照合を、位置既知・ 1 台のカメラに絞った形。</p>
-<p><b>曖昧さを返す</b>: yaw ごとの最良コストの曲線(<code style="color:#22d3bf">yaw_profile_deg</code> / <code style="color:#22d3bf">yaw_profile_residual_deg</code>) と、最良と 2 番目の谷の差 <code style="color:#22d3bf">margin_deg</code>(2 番目の谷 = 最良から 20° 以上離れた最小)。平地・対称な尾根・半円しか写らない写真では谷が複数あり、margin が小さい。<b>margin が <code style="color:#22d3bf">coarse</code> の残差程度なら向きは決まっていない</b>と読む(黙って 1 つを返さない: <code style="color:#22d3bf">ambiguous</code>)。</p>
+<p>photo के boundary pixels (u, v) को camera rays बनाकर किसी अस्थायी pose से world में घुमाने पर हर column एक (azimuth, elevation) point बन जाता है। उस elevation और उसी azimuth पर DEM skyline से निकाली गई elevation के अंतर का RMS ही pose की cost है। yaw को <code style="color:#22d3bf">yaw_step_deg</code> के step से पूरा एक चक्कर, और pitch, roll को <code style="color:#22d3bf">coarse_step_deg</code> के step से grid search किया जाता है, फिर minimum point से Nelder–Mead द्वारा continuous values तक refine किया जाता है (scipy)। यह Baatz आदि 2012 की skyline matching को ज्ञात position और 1 camera तक सीमित किया गया रूप है।</p>
+<p><b>ambiguity लौटाई जाती है</b>: हर yaw पर सबसे अच्छी cost का curve (<code style="color:#22d3bf">yaw_profile_deg</code> / <code style="color:#22d3bf">yaw_profile_residual_deg</code>) और सबसे अच्छी तथा 2nd valley का अंतर <code style="color:#22d3bf">margin_deg</code> (2nd valley = सबसे अच्छे से कम से कम 20° दूर वाला minimum)। केवल समतल ज़मीन, symmetric ridges या आधा गोला दिखाने वाली photos में कई valleys होती हैं और margin छोटा होता है। <b>अगर margin <code style="color:#22d3bf">coarse</code> के residual जितना हो तो दिशा तय नहीं है</b> ऐसा पढ़ें (चुपचाप 1 नहीं लौटाया जाता: <code style="color:#22d3bf">ambiguous</code>)।</p>
 <p>Args:</p>
-<p>skyline_rows: (W,) <code style="color:#22d3bf">skyline_extract</code> の出力(列ごとの行)。</p>
-<p>K: (fx, fy, cx, cy)。</p>
-<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> の出力。</p>
-<p>yaw_step_deg / coarse_step_deg: 粗い格子の刻み。pitch_range / roll_range: 探索範囲 [度]。</p>
+<p>skyline_rows: (W,) <code style="color:#22d3bf">skyline_extract</code> का output (हर column की row)।</p>
+<p>K: (fx, fy, cx, cy)।</p>
+<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> का output।</p>
+<p>yaw_step_deg / coarse_step_deg: coarse grid का step। pitch_range / roll_range: search range [degree]।</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code>(仰角残差 RMS)/</p>
-<p><code style="color:#22d3bf">margin_deg</code> / <code style="color:#22d3bf">runner_up_yaw_deg</code> / <code style="color:#22d3bf">ambiguous</code>(bool)/ <code style="color:#22d3bf">yaw_profile_deg</code> (M,) /</p>
-<p><code style="color:#22d3bf">yaw_profile_residual_deg</code> (M,) / <code style="color:#22d3bf">n_columns</code>。</p>
+<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code> (elevation residual RMS) /</p>
+<p><code style="color:#22d3bf">margin_deg</code> / <code style="color:#22d3bf">runner_up_yaw_deg</code> / <code style="color:#22d3bf">ambiguous</code> (bool) / <code style="color:#22d3bf">yaw_profile_deg</code> (M,) /</p>
+<p><code style="color:#22d3bf">yaw_profile_residual_deg</code> (M,) / <code style="color:#22d3bf">n_columns</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

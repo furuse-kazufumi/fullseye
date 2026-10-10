@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_cost(plan, cost)</code> (die Implementierung direkt: <code style="color:#22d3bf">import colortransport; colortransport.transport_cost(plan, cost)</code>; aus dem Register: <code style="color:#22d3bf">opscolortransport.get(&quot;transport_cost&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gesamtkosten eines Transportplans, <code style="color:#22d3bf">&lt;plan, cost&gt;</code>. Der Operator, der einen Plan <b>verbraucht</b>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>計画は「行和・列和が周辺分布に一致する」という意味を持つ行列で、普通の <code style="color:#22d3bf">matrix</code> として扱うと質量保存が黙って壊れる。ここは計画としての検査(非負・和が 1 前後)を通してから費用を出す。</p>
+<p>Ein Plan ist eine Matrix mit der Bedeutung &quot;Zeilen- und Spaltensummen gleich den Randverteilungen&quot;; behandelt man ihn als gewöhnliche <code style="color:#22d3bf">matrix</code>, bricht die Massenerhaltung stillschweigend. Hier werden die Kosten erst nach den Prüfungen als Plan (nicht negativ, Summe etwa 1) berechnet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Farbmetrik und Spektren — Farbe ist nur durch Spektrum × Lichtart × Beobachter bestimmt</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

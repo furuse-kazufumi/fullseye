@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_label(region: &#x27;Any&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_label(region: &#x27;Any&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_label&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>binary region को connected component में बाँटकर <code style="color:#22d3bf">int32</code> label image (background 0, object 1..n) लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>region : array_like</p>
-<p>2-D。<code style="color:#22d3bf">&gt; 0</code> が前景(bool でも実数でもよい。NaN は背景)。</p>
+<p>2-D। <code style="color:#22d3bf">&gt; 0</code> foreground है (bool या real दोनों चलेंगे। NaN background है)।</p>
 <p>connectivity : {4, 8}</p>
-<p>斜めに触れる 2 画素をつなぐか。既定 8 は <code style="color:#22d3bf">ndimage.label</code> と</p>
-<p>HALCON <code style="color:#22d3bf">connection</code> の既定に一致する。<b>4 にすると斜めに接した塊が別々に数えられる</b>。</p>
+<p>तिरछे छूने वाले 2 pixels को जोड़ना है या नहीं। default 8 <code style="color:#22d3bf">ndimage.label</code> और</p>
+<p>HALCON <code style="color:#22d3bf">connection</code> के default से मेल खाता है। <b>4 करने पर तिरछे छूने वाले blobs अलग-अलग गिने जाते हैं</b> ।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">(H, W)</code> の <code style="color:#22d3bf">int32</code>。番号は 1 から連番で歯抜けが無い。</p>
+<p><code style="color:#22d3bf">(H, W)</code> का <code style="color:#22d3bf">int32</code>। नंबर 1 से लगातार हैं, बीच में कोई गायब नहीं।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>
 <p>&gt;&gt;&gt; m = np.zeros((6, 9), bool); m[1:4, 1:4] = True; m[1:4, 5:8] = True</p>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.keypoints_uv_to_points(keypoints, z=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.keypoints_uv_to_points(keypoints, z=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_uv_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image coordinate <code style="color:#22d3bf">(N,2) = (u, v)</code> → point set <code style="color:#22d3bf">(N,3) = (z, y, x)</code>। <code style="color:#22d3bf">keypoints</code> से निकास।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>op 名に軸の約束が書いてある</b>のは、この repo で <code style="color:#22d3bf">keypoints</code> を産む <code style="color:#22d3bf">match3d.project_points</code> が <b>(u, v) = (列, 行)</b> を返し、<code style="color:#22d3bf">points</code> を産む <code style="color:#22d3bf">fuse3d.to_points(voxel)</code> が <b>(z, y, x)</b> を返すから —— 素直に「先頭 2 列」として繋ぐと<b>例外も NaN も出ないまま行と列が入れ替わる</b>。ここでは <code style="color:#22d3bf">y = v</code>、<code style="color:#22d3bf">x = u</code> と明示的に入れ替えて渡す。</p>
-<p><code style="color:#22d3bf">points_zyx_to_keypoints_uv</code> と往復して <b>bit 一致</b>(z を渡した向き)。</p>
+<p><b>op के नाम में axis की परंपरा लिखी है</b>, क्योंकि इस repo में <code style="color:#22d3bf">keypoints</code> बनाने वाला <code style="color:#22d3bf">match3d.project_points</code> <b>(u, v) = (column, row)</b> लौटाता है, और <code style="color:#22d3bf">points</code> बनाने वाला <code style="color:#22d3bf">fuse3d.to_points(voxel)</code> <b>(z, y, x)</b> लौटाता है -- सीधे-सीधे &quot;पहले 2 column&quot; मानकर जोड़ने पर <b>बिना exception और बिना NaN के row और column अदला-बदली हो जाते हैं</b>। यहाँ <code style="color:#22d3bf">y = v</code> और <code style="color:#22d3bf">x = u</code> को स्पष्ट रूप से बदलकर आगे दिया जाता है।</p>
+<p><code style="color:#22d3bf">points_zyx_to_keypoints_uv</code> के साथ round trip <b>bit-दर-bit मेल</b> खाता है (z देने वाली दिशा में)।</p>
 <p>Args:</p>
-<p>keypoints: (N, 2) の (u, v)。</p>
-<p>z: 載せる平面の z(スカラ、または (N,) の配列)。</p>
+<p>keypoints: (N, 2) का (u, v)।</p>
+<p>z: जिस plane पर रखना है उसका z (scalar, या (N,) array)।</p>
 <p>Returns:</p>
-<p>(N, 3) float64 の (z, y, x)。</p>
+<p>(N, 3) float64 का (z, y, x)।</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限 / z の長さ不一致。</p>
+<p>ValueError: shape ग़लत / non-finite / z की length मेल नहीं खाती।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

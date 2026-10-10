@@ -5,22 +5,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.poisson_blend(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">image2d</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.poisson_blend.raw(...)</code> oder rufe <code style="color:#22d3bf">colortransport.poisson_blend</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Nahtloses Compositing, das das Gradientenfeld überträgt (Pérez, Gangnet &amp; Blake, SIGGRAPH 2003).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">mask</code> の内部で <b><code style="color:#22d3bf">src</code> の勾配</b>を保ちつつ、<b>境界で <code style="color:#22d3bf">dst</code> の値</b>に一致する像を解く。よって出力は次の 2 つを<b>構成上</b>満たし、</p>
-<p>それが正しさの検算になる:</p>
-<p style="margin:2px 0 2px 12px">• 内部のラプラシアンが <code style="color:#22d3bf">src</code> のラプラシアンと一致(解の残差ぶんまで)</p>
-<p style="margin:2px 0 2px 12px">• マスクの外は <code style="color:#22d3bf">dst</code> と<b>厳密に一致</b>(1 画素も触らない)</p>
-<p><b>貼った物の色は変わる。</b> それが目的の処理だが、「貼った物体の色を測る」用途にそのまま流すと<b>測っているのは貼り先の色</b>になる。返り値は <code style="color:#22d3bf">(blended, info)</code> で、<code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code> と <code style="color:#22d3bf">info[&quot;max_shift&quot;]</code> が実際にどれだけ動いたかを言う。</p>
+<p>Innerhalb von <code style="color:#22d3bf">mask</code> wird <b>der Gradient von <code style="color:#22d3bf">src</code></b> beibehalten und ein Bild gelöst, das <b>auf dem Rand den Werten von <code style="color:#22d3bf">dst</code></b> entspricht. Die Ausgabe erfüllt daher die folgenden 2 Eigenschaften <b>konstruktionsbedingt</b>, und genau das dient als Gegenprobe der Korrektheit:</p>
+<p style="margin:2px 0 2px 12px">• der Laplace-Operator im Inneren stimmt mit dem Laplace-Operator von <code style="color:#22d3bf">src</code> überein (bis auf das Residuum der Lösung)</p>
+<p style="margin:2px 0 2px 12px">• außerhalb der Maske <b>stimmt sie exakt mit <code style="color:#22d3bf">dst</code> überein</b> (kein 1 Pixel wird angefasst)</p>
+<p><b>Die Farbe des eingefügten Objekts ändert sich.</b> Genau das ist Zweck der Operation, aber wer sie unverändert für &quot;die Farbe des eingefügten Objekts messen&quot; verwendet, <b>misst in Wahrheit die Farbe des Ziels</b>. Der Rückgabewert ist <code style="color:#22d3bf">(blended, info)</code>; <code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code> und <code style="color:#22d3bf">info[&quot;max_shift&quot;]</code> geben an, wie viel sich tatsächlich bewegt hat.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>src : array_like</p>
-<p>貼る絵。<code style="color:#22d3bf">(H, W)</code> または <code style="color:#22d3bf">(H, W, C)</code>。</p>
+<p>Das einzufügende Bild. <code style="color:#22d3bf">(H, W)</code> oder <code style="color:#22d3bf">(H, W, C)</code>.</p>
 <p>dst : array_like</p>
-<p>貼り先。<code style="color:#22d3bf">src</code> 以上の大きさ。</p>
+<p>Das Ziel. Mindestens so groß wie <code style="color:#22d3bf">src</code>.</p>
 <p>mask : array_like</p>
-<p><code style="color:#22d3bf">src</code> と同じ <code style="color:#22d3bf">(H, W)</code> の真偽値。<b>縁に接していてはいけない</b></p>
-<p>(境界条件が取れないため明示的に拒否する)。</p>
+<p>Boolesch, gleiches <code style="color:#22d3bf">(H, W)</code> wie <code style="color:#22d3bf">src</code>. <b>Sie darf den Rand nicht berühren</b></p>
+<p>(wird ausdrücklich abgewiesen, da sich keine Randbedingung bilden lässt).</p>
 <p>offset : (int, int)</p>
-<p><code style="color:#22d3bf">dst</code> の中で <code style="color:#22d3bf">src</code> の左上を置く <code style="color:#22d3bf">(row, col)</code>。</p>
+<p><code style="color:#22d3bf">(row, col)</code>, an dem die linke obere Ecke von <code style="color:#22d3bf">src</code> in <code style="color:#22d3bf">dst</code> platziert wird.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(ndarray, dict)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

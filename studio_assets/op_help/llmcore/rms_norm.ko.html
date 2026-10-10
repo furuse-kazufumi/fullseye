@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import llmcore; llmcore.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsllmcore.get(&quot;rms_norm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>RMS 정규화 → tokens. <b>기본값(eps=0, weight 없음)에서는 출력의 RMS가 엄밀히 1</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Zhang・Sennrich 2019。LayerNorm から平均を引く段を落としたもので、残るのは「行のノルムを揃える」だけ —— だから <b>RMS が 1 になることが検算になる</b> (実測 2.2e-16)。<code style="color:#22d3bf">eps</code> を入れると 1 からずれる。それが <code style="color:#22d3bf">eps</code> の値段。</p>
+<p>Zhang·Sennrich 2019. LayerNorm 에서 평균을 빼는 단을 떨어뜨린 것으로, 남는 것은 &quot;행의 노름을 맞춘다&quot;뿐 —— 그래서 <b>RMS 가 1 이 되는 것이 검산이 된다</b> (실측 2.2e-16). <code style="color:#22d3bf">eps</code> 를 넣으면 1 에서 벗어난다. 그것이 <code style="color:#22d3bf">eps</code> 의 값.</p>
 <p>Args:</p>
-<p>tokens: (T, d) float。1 行が 1 トークン。</p>
-<p>eps: 平方根の中に足す下駄。0 なら RMS は厳密に 1、正なら 1 未満に縮む。</p>
-<p>weight: (d,) float か None。学習で付く軸ごとの倍率(掛けるだけなので RMS は動く)。</p>
+<p>tokens: (T, d) float. 1 행이 1 토큰.</p>
+<p>eps: 제곱근 안에 더하는 바닥값. 0 이면 RMS 는 엄밀히 1, 양이면 1 미만으로 줄어든다.</p>
+<p>weight: (d,) float 나 None. 학습으로 붙는 축마다의 배율(곱할 뿐이므로 RMS 는 움직인다).</p>
 <p>Returns:</p>
-<p>tokens (T, d) float: 各行を自分の RMS で割ったもの(<code style="color:#22d3bf">weight</code> があれば掛けたもの)。</p>
-<p><b>全成分が 0 の行</b>は割れないので ValueError(黙って 0/0 の NaN を返さない)。</p>
+<p>tokens (T, d) float: 각 행을 자신의 RMS 로 나눈 것(<code style="color:#22d3bf">weight</code> 가 있으면 곱한 것).</p>
+<p><b>전 성분이 0 인 행</b>은 나눌 수 없으므로 ValueError(조용히 0/0 의 NaN 을 반환하지 않는다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

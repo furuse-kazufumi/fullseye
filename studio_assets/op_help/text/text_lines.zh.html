@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_lines(boxes, stroke_width=None, overlap_ratio: &#x27;float&#x27; = 0.5, gap_ratio: &#x27;float&#x27; = 3.0, width_ratio: &#x27;float&#x27; = 3.0)</code>(要直接调用实现,<code style="color:#22d3bf">import textregion; textregion.text_lines(boxes, stroke_width=None, overlap_ratio: &#x27;float&#x27; = 0.5, gap_ratio: &#x27;float&#x27; = 3.0, width_ratio: &#x27;float&#x27; = 3.0)</code>;从台账取用则 <code style="color:#22d3bf">opstext.get(&quot;text_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把字符候选矩形合并成文本行（纵向重叠、横向相近、笔画宽度相近）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★規則の根拠(2026-09-27 実測): 候補は字画ごとの断片になる(横棒と &#x27;l&#x27; では高さが 5 倍違う)ので「高さが近い」を条件にすると 3 行が 30〜60 行に割れた。行の同一性は<b>縦の重なり</b>(小さい方の高さの <code style="color:#22d3bf">overlap_ratio</code> 以上)で判定し、横の隙間は大きい方の高さの <code style="color:#22d3bf">gap_ratio</code> 倍以内、ストローク幅は <code style="color:#22d3bf">width_ratio</code> 倍以内。</p>
-<p>Returns dict: <code style="color:#22d3bf">lines</code>(M×4 の矩形)/ <code style="color:#22d3bf">members</code>(各行の候補 index のリスト)。</p>
+<p>★规则的依据(2026-09-27 实测): 候选会成为按笔画的碎片(横杠与 &#x27;l&#x27; 的高度相差 5 倍), 因此以&quot;高度相近&quot;为条件时 3 行被拆成了 30〜60 行。行的同一性由<b>纵向重叠</b>(不小于较小高度的 <code style="color:#22d3bf">overlap_ratio</code>)判定,横向间隙在较大高度的 <code style="color:#22d3bf">gap_ratio</code> 倍以内,笔画宽度在 <code style="color:#22d3bf">width_ratio</code> 倍以内。</p>
+<p>返回 dict: <code style="color:#22d3bf">lines</code>(M×4 的矩形)/ <code style="color:#22d3bf">members</code>(各行候选 index 的列表)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

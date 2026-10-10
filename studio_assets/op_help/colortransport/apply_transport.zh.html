@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.apply_transport(plan, target_values)</code>(要直接调用实现,<code style="color:#22d3bf">import colortransport; colortransport.apply_transport(plan, target_values)</code>;从台账取用则 <code style="color:#22d3bf">opscolortransport.get(&quot;apply_transport&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用输运计划把 <code style="color:#22d3bf">target_values</code> 拉回到源点上(重心映射)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各行(送り元)について、運んだ質量で重み付けした行き先の値の平均を返す。これが「計画を<b>使って絵を直す</b>」入口 ―― 計画を作るだけで使い道が無いと、<code style="color:#22d3bf">sinkhorn</code> の出力は台帳の袋小路になる(この repo が繰り返し踏んできた「入口はあるが消費 op が無い型」の形)。</p>
-<p>質量ゼロの行は行き先が無い ―― 0 で埋めると「黒い画素」が黙って混ざるので <code style="color:#22d3bf">ValueError</code>。</p>
+<p>对每一行(送出方),返回以运送质量加权的去向值的平均。这是“<b>用计划来修正图</b>”的入口 —— 若只制作计划而没有用途, <code style="color:#22d3bf">sinkhorn</code> 的输出就成了台账里的死胡同(本 repo 反复踩到的 “有入口却没有消费 op 的类型”的形态)。</p>
+<p>质量为零的行没有去向 —— 若填 0,就会默默混入“黑色像素”,所以为 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 测色与光谱知识 —— 颜色只由“光谱 × 光源 × 观察者”决定</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

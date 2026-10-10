@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_angle(img, a, vertex, b, radius=30.0, color=&#x27;emphasis&#x27;, width=1.5, draw_rays=True, label_fmt=&#x27;{:.1f}°&#x27;, font_size=11, box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_angle(img, a, vertex, b, radius=30.0, color=&#x27;emphasis&#x27;, width=1.5, draw_rays=True, label_fmt=&#x27;{:.1f}°&#x27;, font_size=11, box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns an image (image2d): the angle at three points, shown as an arc and a value (with the two arms if wanted).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">label_fmt=None</code> なら値の文字を描かない(弧だけ)。</p>
+<p>With <code style="color:#22d3bf">label_fmt=None</code> the value text is not drawn (arc only).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_angle_layout</code> と同じ + 頂点が画像の外、文字が収まらない。</p>
+<p>Same as <code style="color:#22d3bf">annotate_angle_layout</code> + the vertex is outside the image, or the text does not fit.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

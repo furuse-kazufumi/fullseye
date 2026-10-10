@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_bloom_fit(image, threshold=0.97, ignore_top_rows=0, min_area=30, max_area_frac=0.15, min_rim_fraction=0.3)</code> (die Implementierung direkt: <code style="color:#22d3bf">import geocam; geocam.sun_bloom_fit(image, threshold=0.97, ignore_top_rows=0, min_area=30, max_area_frac=0.15, min_rim_fraction=0.3)</code>; aus dem Register: <code style="color:#22d3bf">opsgeocam.get(&quot;sun_bloom_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Sonne in realen Aufnahmen = ein <b>Bloom</b>, der den Sensor sättigt (größer als die Scheibe, seine Größe ändert sich mit der Belichtung, und er wird vom Bildrand oder von Textbändern abgeschnitten). Passt einen Kreis an den <b>Rand</b> des größten gesättigten Blobs an und gibt den Mittelpunkt zurück → table. Der Schwerpunkt verschiebt sich bei abgeschnittenem Blob von der abgeschnittenen Seite weg (gemessen 15 px), daher werden die abgeschnittenen Ränder (Pixel, die den Bildrand und das <code style="color:#22d3bf">ignore_top_rows</code>-Band berühren) verworfen und an den verbleibenden Bogen per algebraischen kleinsten Quadraten (Kåsa 1976) ein Kreis angepasst.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">sun_pixel_position</code> は「詰まった小さな円盤」を前提にした合成向けの門で、実写の道路カメラでは局名の白い文字・標識・白い車を太陽と読む(Fintraffic 天候カメラで 24/24 が誤検出、2026-09-21)。この op は<b>太陽と決めない</b>:</p>
-<p>円の中心と半径・残差・切れの有無を返し、太陽かどうかは時刻どおりに動くかで決める(<code style="color:#22d3bf">camera_orientation_from_sun_candidates</code>)。</p>
+<p><code style="color:#22d3bf">sun_pixel_position</code> ist ein Gate für synthetische Daten, das &quot;eine kompakte kleine Scheibe&quot; voraussetzt; bei echten Straßenkameras liest es die weiße Beschriftung des Stationsnamens, Verkehrszeichen und weiße Autos als Sonne (24/24 Fehldetektionen bei Fintraffic-Wetterkameras, 2026-09-21). Dieses op <b>legt nicht fest, dass es die Sonne ist</b>:</p>
+<p>Es gibt Kreismittelpunkt und Radius, das Residuum und ob er abgeschnitten ist zurück; ob es die Sonne ist, entscheidet sich daran, ob es sich zeitgemäß bewegt (<code style="color:#22d3bf">camera_orientation_from_sun_candidates</code>).</p>
 <p>Args:</p>
-<p>image: (H, W) float、0〜1。</p>
-<p>threshold: 飽和とみなす絶対値。</p>
-<p>ignore_top_rows: 上端の何行を無視するか(局名などの文字の帯)。</p>
-<p>min_area: 塊の最小画素数。</p>
-<p>max_area_frac: 塊の最大面積(画像に対する比)—— 空全体が飛んだ写真を拒む。</p>
-<p>min_rim_fraction: 切れていない縁が円周の何割以上要るか(これ未満は「切れすぎ」で ValueError)。</p>
+<p>image: (H, W) float, 0 bis 1.</p>
+<p>threshold: Absolutwert, der als Sättigung gilt.</p>
+<p>ignore_top_rows: wie viele Zeilen am oberen Rand ignoriert werden (ein Textband wie der Stationsname).</p>
+<p>min_area: minimale Pixelanzahl eines Klumpens.</p>
+<p>max_area_frac: maximale Fläche eines Klumpens (als Verhältnis zum Bild) -- weist Fotos ab, in denen der ganze Himmel ausgebrannt ist.</p>
+<p>min_rim_fraction: welcher Anteil des Umfangs als nicht abgeschnittener Rand nötig ist (darunter &quot;zu stark abgeschnitten&quot;, ValueError).</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">u</code> / <code style="color:#22d3bf">v</code>(円の中心)/ <code style="color:#22d3bf">r</code>(半径 px)/ <code style="color:#22d3bf">rms_px</code>(縁の半径残差)/ <code style="color:#22d3bf">area</code>(塊の画素数)/</p>
-<p><code style="color:#22d3bf">clipped</code>(1 = 縁のどこかが切れている)/ <code style="color:#22d3bf">rim_fraction</code> / <code style="color:#22d3bf">centroid_u</code> / <code style="color:#22d3bf">centroid_v</code>(比較用の重心)。</p>
+<p>table: <code style="color:#22d3bf">u</code> / <code style="color:#22d3bf">v</code> (Kreismittelpunkt) / <code style="color:#22d3bf">r</code> (Radius px) / <code style="color:#22d3bf">rms_px</code> (Radiusresiduum des Rands) / <code style="color:#22d3bf">area</code> (Pixelanzahl des Klumpens) /</p>
+<p><code style="color:#22d3bf">clipped</code> (1 = der Rand ist irgendwo abgeschnitten) / <code style="color:#22d3bf">rim_fraction</code> / <code style="color:#22d3bf">centroid_u</code> / <code style="color:#22d3bf">centroid_v</code> (Schwerpunkt zum Vergleich).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">Leitfaden zur Familie geocam</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

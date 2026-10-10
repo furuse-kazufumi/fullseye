@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_standard_uncertainty(table, halfwidth=&#x27;halfwidth&#x27;, distribution=&#x27;distribution&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.gum_standard_uncertainty(table, halfwidth=&#x27;halfwidth&#x27;, distribution=&#x27;distribution&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;gum_standard_uncertainty&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>uncertainty components को <b>distribution के आकार</b> से standard uncertainty में बदलता है (<code style="color:#22d3bf">table</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>校正証明書や規格が与えるのは「半幅 a」「95 % で ±U」のような形であって標準偏差ではない。伝播則が食えるのは標準不確かさだけなので、ここで揃える:</p>
-<p>矩形(一様)  u = a / sqrt(3)      三角      u = a / sqrt(6)</p>
-<p>U 字(逆正弦) u = a / sqrt(2)      normal_95 u = a / 1.959964</p>
-<p>★どれも分布の分散の定義から出る<b>厳密</b>な値で、モンテカルロで標本標準偏差を取れば同じ数に収束する(<code style="color:#22d3bf">gum_monte_carlo</code> が独立に確かめる)。</p>
-<p>★★<b>既定の分布を置かない</b>。一番よく使うからといって矩形を既定にすると、形を書き忘れた成分が黙って a/sqrt(3) になる —— 三角のつもりなら 1.41 倍、95 % 区間のつもりなら 1.13 倍ずれた不確かさが、例外を出さずに下流へ流れる。</p>
+<p>calibration certificate या standard जो देते हैं वह &quot;half-width a&quot; या &quot;95 % पर ±U&quot; जैसा रूप होता है, standard deviation नहीं। propagation law केवल standard uncertainty ले सकता है, इसलिए उन्हें यहाँ एक रूप में लाया जाता है:</p>
+<p>rectangular (uniform)  u = a / sqrt(3)      triangular  u = a / sqrt(6)</p>
+<p>U-shaped (arcsine)     u = a / sqrt(2)      normal_95   u = a / 1.959964</p>
+<p>★ हर एक distribution के variance की परिभाषा से निकलने वाला <b>सटीक</b> मान है, और Monte Carlo से sample standard deviation लेने पर वही संख्या converge होती है (<code style="color:#22d3bf">gum_monte_carlo</code> इसे स्वतंत्र रूप से जाँचता है)।</p>
+<p>★★ <b>कोई default distribution नहीं रखा गया</b>। सबसे ज़्यादा इस्तेमाल होने के कारण rectangular को default बनाने पर, जिस component का shape लिखना भूल गए वह चुपचाप a/sqrt(3) बन जाएगा -- triangular का इरादा हो तो 1.41 गुना, 95 % interval का इरादा हो तो 1.13 गुना ग़लत uncertainty बिना exception के downstream में बह जाएगी।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

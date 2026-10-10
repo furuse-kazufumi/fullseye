@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>시각이 붙은 태양의 화소 위치 ≥ 2점 → 카메라의 (yaw, pitch, roll)(Wahba 문제의 SVD 해 = Kabsch).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各観測で、画素 → カメラ座標の光線 d_c(K から)、時刻 → 世界の太陽方向 s_w(<code style="color:#22d3bf">sun_position</code>、<b>屈折込み</b>の仰角を使う: カメラが見るのは見かけの太陽)。<code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code> を SVD で閉形式に解き(Kabsch 1976 / Markley 1988)、<code style="color:#22d3bf">(yaw, pitch, roll)</code> に分解する。</p>
-<p>2 点で一意に決まる(2 本の方向が張る面が要る)。観測が 1 点、または全部が同じ方向(共線)なら ValueError —— 例えば同じ時刻の 2 枚、あるいは正午だけを何日も。太陽は 1 日で方位が大きく動くので、<b>同じ日の朝と夕の 2 枚</b>があれば足りる。</p>
+<p>각 관측에서, 화소 → 카메라 좌표의 광선 d_c(K 로부터), 시각 → 월드의 태양 방향 s_w(<code style="color:#22d3bf">sun_position</code>, <b>굴절 포함</b>의 앙각을 쓴다: 카메라가 보는 것은 겉보기 태양). <code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code> 를 SVD 로 닫힌 식으로 풀고(Kabsch 1976 / Markley 1988), <code style="color:#22d3bf">(yaw, pitch, roll)</code> 로 분해한다.</p>
+<p>2 점으로 유일하게 정해진다(2 개의 방향이 펼치는 면이 필요하다). 관측이 1 점, 또는 전부가 같은 방향(공선)이면 ValueError —— 예를 들어 같은 시각의 2 장, 혹은 정오만을 며칠이고. 태양은 1 일에 방위가 크게움직이므로, <b>같은 날 아침과 저녁의 2 장</b>이 있으면 충분하다.</p>
 <p>Args:</p>
-<p>sun_pixels: (N, 2) の (u, v)。<code style="color:#22d3bf">sun_pixel_position</code> の出力を積んだもの。</p>
-<p>unix_times: (N,) UNIX 秒(UTC)。</p>
-<p>lat_deg, lon_deg: カメラの位置。</p>
-<p>K: (fx, fy, cx, cy)。</p>
+<p>sun_pixels: (N, 2) 의 (u, v). <code style="color:#22d3bf">sun_pixel_position</code> 의 출력을 쌓은 것.</p>
+<p>unix_times: (N,) UNIX 초(UTC).</p>
+<p>lat_deg, lon_deg: 카메라의 위치.</p>
+<p>K: (fx, fy, cx, cy).</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code>(光線と太陽方向の</p>
-<p>角度残差の RMS)/ <code style="color:#22d3bf">max_residual_deg</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">condition</code>(観測方向の張る面の広さ =</p>
-<p>2 番目の特異値、0 に近いほど不定)。</p>
+<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code>(광선과 태양 방향의</p>
+<p>각도 잔차의 RMS)/ <code style="color:#22d3bf">max_residual_deg</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">condition</code>(관측 방향이 펼치는 면의 넓이 =</p>
+<p>2 번째 특이값, 0 에 가까울수록 부정).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

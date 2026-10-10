@@ -5,18 +5,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.data_to_pixel(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">pairs</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.data_to_pixel.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">annotate.data_to_pixel</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">axes_transform</code> के mapping से data point को pixel (x,y) पर ले जाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>クリップしない</b> ―― <code style="color:#22d3bf">np.clip(v, lo, hi)</code> は <code style="color:#22d3bf">lo &gt; hi</code>(反転軸)のとき黙って <code style="color:#22d3bf">hi</code> を返し、全点が端に貼り付いた「もっともらしい嘘の図」になる(この repo の生成器で実際に一度騙されている)。範囲外を弾くのは <code style="color:#22d3bf">plot_series</code> の <code style="color:#22d3bf">clip=True</code> の仕事で、そこでは<b>例外</b>にする。</p>
+<p><b>clip नहीं करता</b> -- <code style="color:#22d3bf">lo &gt; hi</code> (उल्टा axis) होने पर <code style="color:#22d3bf">np.clip(v, lo, hi)</code> चुपचाप <code style="color:#22d3bf">hi</code> लौटाता है, और सभी points किनारे से चिपके हुए &quot;विश्वसनीय दिखने वाला झूठा figure&quot; बन जाता है (इस repo का generator सच में एक बार इससे धोखा खा चुका है)। range से बाहर के मानों को रोकना <code style="color:#22d3bf">plot_series</code> के <code style="color:#22d3bf">clip=True</code> का काम है, और वहाँ यह <b>exception</b> होता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(ndarray, ndarray)</p>
-<p><code style="color:#22d3bf">px</code>, <code style="color:#22d3bf">py</code>(float、丸めない ―― 丸めは描画側の仕事)。</p>
+<p><code style="color:#22d3bf">px</code>, <code style="color:#22d3bf">py</code> (float, round नहीं किया जाता -- rounding बनाने वाले पक्ष का काम है)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>log 軸に 0 以下の値を渡したとき(-inf を「端」として描く図は嘘になる)。</p>
-<p><code style="color:#22d3bf">x</code> と <code style="color:#22d3bf">y</code> の長さが違うとき(下記)。</p>
+<p>जब log axis को 0 या उससे कम मान दिया जाए (-inf को &quot;किनारा&quot; मानकर बनाया गया figure झूठ होता है)।</p>
+<p>जब <code style="color:#22d3bf">x</code> और <code style="color:#22d3bf">y</code> की लंबाई अलग हो (नीचे देखें)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p><b>長さの不一致を拒否するのは 2026-09-02 に足した</b>。連鎖ファザーがこの op を実行できるようになった直後、長さの違う 2 本の signal を渡す経路で採掘器が <code style="color:#22d3bf">np.stack</code> の生の ValueError で落ちて発覚した。それまでは <code style="color:#22d3bf">x</code> 7 点・ <code style="color:#22d3bf">y</code> 3 点でも<b>例外を出さず、長さの違う 2 本をそのまま返していた</b>。</p>
-<p>危ないのは落ちることではなく、落ちないこと ―― 返った 2 本を <code style="color:#22d3bf">zip</code> すると <b>3 点だけが、x の先頭 3 つの位置に</b>描かれる。点が消えたことも、x がずれたことも図からは分からない。兄弟の <code style="color:#22d3bf">plot_series</code> は同じ状況を <code style="color:#22d3bf">&quot;x and y must have the same length&quot;</code> で拒否していたので、<b>同じ族の中で規律が割れていた</b>(片方だけ直しても再発する型なので、文言も揃えてある)。</p>
+<p><b>लंबाई के अंतर को reject करना 2026-09-02 को जोड़ा गया</b>। chain fuzzer के इस op को चला पाने के ठीक बाद, अलग लंबाई के 2 signals देने वाले path पर miner <code style="color:#22d3bf">np.stack</code> के कच्चे ValueError से गिर गया, और यह पकड़ में आया। उससे पहले <code style="color:#22d3bf">x</code> में 7 points और <code style="color:#22d3bf">y</code> में 3 points होने पर भी यह <b>कोई exception नहीं देता था और अलग लंबाई के 2 arrays वैसे ही लौटा देता था</b>।</p>
+<p>खतरा गिरने में नहीं, न गिरने में है -- लौटे 2 arrays को <code style="color:#22d3bf">zip</code> करने पर <b>केवल 3 points, x के पहले 3 स्थानों पर</b> बनते हैं। points गायब हुए, या x खिसक गया, यह figure से पता नहीं चलता। sibling <code style="color:#22d3bf">plot_series</code> इसी स्थिति को <code style="color:#22d3bf">&quot;x and y must have the same length&quot;</code> से reject करता था, इसलिए <b>एक ही family के अंदर अनुशासन बँटा हुआ था</b> (यह ऐसी गलती है जो एक ही तरफ़ ठीक करने पर दोबारा आती है, इसलिए शब्द भी एक जैसे किए गए हैं)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

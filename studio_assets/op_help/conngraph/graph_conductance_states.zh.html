@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_conductance_states(W: &#x27;Any&#x27;, drive: &#x27;Any&#x27;, dt_s: &#x27;float&#x27; = 0.001, tau_s: &#x27;float&#x27; = 0.02, e_rest: &#x27;float&#x27; = 0.0, e_exc: &#x27;float&#x27; = 1.0, e_inh: &#x27;float&#x27; = -1.0, release: &#x27;str&#x27; = &#x27;relu&#x27;, v_half: &#x27;float&#x27; = 0.5, slope: &#x27;float&#x27; = 4.0, gain: &#x27;float&#x27; = 1.0, v0: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.graph_conductance_states(W: &#x27;Any&#x27;, drive: &#x27;Any&#x27;, dt_s: &#x27;float&#x27; = 0.001, tau_s: &#x27;float&#x27; = 0.02, e_rest: &#x27;float&#x27; = 0.0, e_exc: &#x27;float&#x27; = 1.0, e_inh: &#x27;float&#x27; = -1.0, release: &#x27;str&#x27; = &#x27;relu&#x27;, v_half: &#x27;float&#x27; = 0.5, slope: &#x27;float&#x27; = 4.0, gain: &#x27;float&#x27; = 1.0, v0: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_conductance_states&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把连线 <code style="color:#22d3bf">W</code> <b>直接当作电路运行</b>得到的膜电位时间序列 <code style="color:#22d3bf">(T, n)</code>(<code style="color:#22d3bf">matrix</code>，无学习)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>ハエの視葉で「掛け算」に見えていた非線形の正体は、樹状突起のコンダクタンス比だった(Groschner ら 2022: 定常では <code style="color:#22d3bf">Vm = Σgᵢ Eᵢ / Σgᵢ</code>)。同じ形の式が、コネクトームを配線として固定した全脳モデルの標準形でもある(Lappalainen ら 2024:</p>
-<p><code style="color:#22d3bf">τᵢ V̇ᵢ = −Vᵢ + Σ sᵢⱼ + V_rest</code>)。この op はその<b>動的な版</b>を、<code style="color:#22d3bf">conn_graph</code> 1 枚と外部入力 1 枚だけで回す:</p>
+<p>果蝇视叶中看起来像“乘法”的非线性,其本质是树突的电导比(Groschner 等 2022:稳态下 <code style="color:#22d3bf">Vm = Σgᵢ Eᵢ / Σgᵢ</code>)。同样形式的式子,也是把连接组作为布线固定的全脑模型的标准形式(Lappalainen 等 2024:</p>
+<p><code style="color:#22d3bf">τᵢ V̇ᵢ = −Vᵢ + Σ sᵢⱼ + V_rest</code>)。本 op 只用 1 张 <code style="color:#22d3bf">conn_graph</code> 和 1 张外部输入来运行它的<b>动态版本</b>:</p>
 <p>τ dVᵢ/dt = −(Vᵢ − e_rest) + g⁺ᵢ (e_exc − Vᵢ) + g⁻ᵢ (e_inh − Vᵢ)</p>
-<p><code style="color:#22d3bf">g⁺</code> は <code style="color:#22d3bf">W</code> の<b>正の重み</b>、<code style="color:#22d3bf">g⁻</code> は<b>負の重み</b>の絶対値を、前シナプス側の放出 <code style="color:#22d3bf">f(V)</code> で重みづけて足したもの(<code style="color:#22d3bf">drive</code> の正負も同じ向きに足す)。重みは与えられたまま使う —— <b>学習も当てはめも一切しない</b>。時定数が入力で縮む(実効 τ = <code style="color:#22d3bf">τ/(1+g⁺+g⁻)</code>)ので、これは liquid time-constant 型の力学そのものだが、パラメータは配線と定数だけで、勾配で決めた数は 1 つも無い。</p>
-<p>W: <code style="color:#22d3bf">(n, n)</code> の重みつき隣接行列(<code style="color:#22d3bf">W[pre, post]</code>、正 = 興奮性、負 = 抑制性)。</p>
-<p>drive: <code style="color:#22d3bf">(T, n)</code> の外部入力。正はそのノードを <code style="color:#22d3bf">e_exc</code> へ、負は <code style="color:#22d3bf">e_inh</code> へ引く</p>
-<p>コンダクタンスとして入る(電流ではない —— 電流だと下の有界性が壊れる)。</p>
-<p>dt_s / tau_s: 刻みと膜時定数[秒]。e_rest / e_exc / e_inh: 静止電位と 2 つの反転電位。</p>
-<p>release: 前シナプス放出 <code style="color:#22d3bf">f(V)</code>。<code style="color:#22d3bf">&quot;relu&quot;</code> は <code style="color:#22d3bf">gain·max(V, 0)</code>、<code style="color:#22d3bf">&quot;sigmoid&quot;</code> は</p>
-<p><code style="color:#22d3bf">gain/(1+exp(−slope(V−v_half)))</code>。<b>どちらも非負</b>で、負のコンダクタンス</p>
-<p>(物理的に存在しない)を作らない —— それが下の有界性の前提。</p>
-<p>v_half / slope: シグモイドの半値と傾き。gain: 放出の利得(非負)。</p>
-<p>v0: 初期状態 <code style="color:#22d3bf">(n,)</code>。既定は全ノード <code style="color:#22d3bf">e_rest</code>。</p>
-<p>各段は<b>コンダクタンスを固定した厳密解</b>で進める(<code style="color:#22d3bf">V ← V∞ + (V − V∞)e^{−dt·g_tot/τ}</code>) ので、刻みを粗くしても発散しない。</p>
-<p>閉じた式で検査できること:</p>
-<p style="margin:2px 0 2px 12px">• <b>有界性</b>: 放出が非負である限り、<code style="color:#22d3bf">V∞</code> は 3 つの反転電位の<b>凸結合</b>なので <code style="color:#22d3bf">[min(e_rest, e_exc, e_inh), max(...)]</code> の中にある。各段は <code style="color:#22d3bf">V</code> をその <code style="color:#22d3bf">V∞</code> へ指数で寄せるだけなので、<b>箱の中から始めれば必ず箱の中に留まり、箱の外から始めても外へは行かず箱へ向かう</b>。どんな配線・どんな入力でも発散しない、が構造で保証される(<code style="color:#22d3bf">v0</code> の既定は <code style="color:#22d3bf">e_rest</code> = 箱の中)。</p>
-<p style="margin:2px 0 2px 12px">• <b>減衰</b>: 入力も結合も無ければ <code style="color:#22d3bf">V(t) = e_rest + (V₀ − e_rest)e^{−t/τ}</code> ちょうど。</p>
-<p style="margin:2px 0 2px 12px">• <b>定常</b>: 一定の入力 <code style="color:#22d3bf">d &gt; 0</code> を 1 ノードに入れると <code style="color:#22d3bf">V∞ = (e_rest + d·e_exc)/(1 + d)</code>、そこへ向かう実効時定数は <code style="color:#22d3bf">τ/(1 + d)</code> ちょうど(入力で時定数が縮む、の数値)。</p>
-<p><b>ValueError</b>: 正方でない / 非有限の <code style="color:#22d3bf">W</code>、<code style="color:#22d3bf">(T, n)</code> でない <code style="color:#22d3bf">drive</code>、非正の <code style="color:#22d3bf">dt_s</code> / <code style="color:#22d3bf">tau_s</code>、負の <code style="color:#22d3bf">gain</code>、未知の <code style="color:#22d3bf">release</code>、長さの合わない <code style="color:#22d3bf">v0</code>。</p>
+<p><code style="color:#22d3bf">g⁺</code> 是 <code style="color:#22d3bf">W</code> 的<b>正权重</b>,<code style="color:#22d3bf">g⁻</code> 是<b>负权重</b>的绝对值,分别以突触前一侧的释放 <code style="color:#22d3bf">f(V)</code> 加权后求和(<code style="color:#22d3bf">drive</code> 的正负也按同一方向相加)。权重按给定值使用 —— <b>完全不做学习,也不做拟合</b>。时间常数随输入缩短(有效 τ = <code style="color:#22d3bf">τ/(1+g⁺+g⁻)</code>),所以这正是 liquid time-constant 型的动力学,但参数只有布线和常数,没有 1 个数是由梯度决定的。</p>
+<p>W:<code style="color:#22d3bf">(n, n)</code> 的带权邻接矩阵(<code style="color:#22d3bf">W[pre, post]</code>,正 = 兴奋性,负 = 抑制性)。</p>
+<p>drive:<code style="color:#22d3bf">(T, n)</code> 的外部输入。正值作为把该节点拉向 <code style="color:#22d3bf">e_exc</code> 的电导、负值作为拉向 <code style="color:#22d3bf">e_inh</code> 的</p>
+<p>电导进入(不是电流 —— 若用电流,下面的有界性就会被破坏)。</p>
+<p>dt_s / tau_s:步长与膜时间常数[秒]。e_rest / e_exc / e_inh:静息电位与 2 个反转电位。</p>
+<p>release:突触前释放 <code style="color:#22d3bf">f(V)</code>。<code style="color:#22d3bf">&quot;relu&quot;</code> 为 <code style="color:#22d3bf">gain·max(V, 0)</code>,<code style="color:#22d3bf">&quot;sigmoid&quot;</code> 为</p>
+<p><code style="color:#22d3bf">gain/(1+exp(−slope(V−v_half)))</code>。<b>两者都非负</b>,不会产生负电导</p>
+<p>(物理上不存在)—— 这是下面有界性的前提。</p>
+<p>v_half / slope:sigmoid 的半值点与斜率。gain:释放的增益(非负)。</p>
+<p>v0:初始状态 <code style="color:#22d3bf">(n,)</code>。默认所有节点为 <code style="color:#22d3bf">e_rest</code>。</p>
+<p>每一段都用<b>固定电导下的精确解</b>推进(<code style="color:#22d3bf">V ← V∞ + (V − V∞)e^{−dt·g_tot/τ}</code>), 所以即使步长取得粗也不会发散。</p>
+<p>可以用闭式检验的性质:</p>
+<p style="margin:2px 0 2px 12px">• <b>有界性</b>:只要释放非负,<code style="color:#22d3bf">V∞</code> 就是 3 个反转电位的<b>凸组合</b>,因此位于 <code style="color:#22d3bf">[min(e_rest, e_exc, e_inh), max(...)]</code> 之内。每一段只是把 <code style="color:#22d3bf">V</code> 指数式地拉向该 <code style="color:#22d3bf">V∞</code>,所以<b>从箱内出发必定留在箱内, 从箱外出发也不会往外走,而是朝箱子靠近</b>。无论什么布线、什么输入都不会发散,这一点由结构保证(<code style="color:#22d3bf">v0</code> 的默认值 <code style="color:#22d3bf">e_rest</code> = 箱内)。</p>
+<p style="margin:2px 0 2px 12px">• <b>衰减</b>:没有输入也没有耦合时,恰好 <code style="color:#22d3bf">V(t) = e_rest + (V₀ − e_rest)e^{−t/τ}</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>稳态</b>:向 1 个节点施加恒定输入 <code style="color:#22d3bf">d &gt; 0</code> 时 <code style="color:#22d3bf">V∞ = (e_rest + d·e_exc)/(1 + d)</code>, 趋向它的有效时间常数恰好为 <code style="color:#22d3bf">τ/(1 + d)</code>(“输入使时间常数缩短”的数值)。</p>
+<p><b>ValueError</b>:非方阵 / 非有限的 <code style="color:#22d3bf">W</code>、不是 <code style="color:#22d3bf">(T, n)</code> 的 <code style="color:#22d3bf">drive</code>、非正的 <code style="color:#22d3bf">dt_s</code> / <code style="color:#22d3bf">tau_s</code>、负的 <code style="color:#22d3bf">gain</code>、未知的 <code style="color:#22d3bf">release</code>、长度不符的 <code style="color:#22d3bf">v0</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

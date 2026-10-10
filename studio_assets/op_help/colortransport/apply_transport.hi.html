@@ -4,9 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.apply_transport(plan, target_values)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.apply_transport(plan, target_values)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;apply_transport&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>transport plan से <code style="color:#22d3bf">target_values</code> को मूल point पर वापस खींचता है (barycentric map)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各行(送り元)について、運んだ質量で重み付けした行き先の値の平均を返す。これが「計画を<b>使って絵を直す</b>」入口 ―― 計画を作るだけで使い道が無いと、<code style="color:#22d3bf">sinkhorn</code> の出力は台帳の袋小路になる(この repo が繰り返し踏んできた「入口はあるが消費 op が無い型」の形)。</p>
-<p>質量ゼロの行は行き先が無い ―― 0 で埋めると「黒い画素」が黙って混ざるので <code style="color:#22d3bf">ValueError</code>。</p>
+<p>हर row (स्रोत) के लिए, ले जाए गए mass से weighted गंतव्य मानों का औसत लौटाता है। यही &quot;<b>plan का उपयोग करके तस्वीर सुधारने</b>&quot; का प्रवेश द्वार है -- अगर plan केवल बनाया जाए और उसका कोई उपयोग न हो,</p>
+<p>तो <code style="color:#22d3bf">sinkhorn</code> का output ledger में बंद गली बन जाता है (वही &quot;प्रवेश द्वार है पर consumer op नहीं&quot; वाला रूप, जिसमें यह repo बार-बार फँसा है)।</p>
+<p>शून्य mass वाली row का कोई गंतव्य नहीं होता -- 0 भरने पर &quot;काले pixels&quot; चुपचाप मिल जाते, इसलिए <code style="color:#22d3bf">ValueError</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Colorimetry और spectra — रंग केवल spectrum × illuminant × observer से तय होता है</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_data(x) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import iqatid; iqatid.rank_data(x) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_data&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平均秩(从 1 开始)。并列者取其秩的平均(与 scipy.stats.rankdata 的 &#x27;average&#x27; 定义相同)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>例: [10, 20, 20, 30] → [1, 2.5, 2.5, 4]。±inf は最大 / 最小の順位(互いに同順位)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さ 2 未満・nan。</p>
+<p>例:[10, 20, 20, 30] → [1, 2.5, 2.5, 4]。±inf 为最大 / 最小的秩(彼此同秩)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:长度不足 2、nan。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

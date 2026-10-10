@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segworld; segworld.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;voronoi_cells&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>사각형 안 씨앗의 보로노이 분할을 다각형(넓이·내부 변 길이 포함)으로 반환(반평면 완전탐색, O(n^2))(voronoi_cells).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返り値: <code style="color:#22d3bf">polygons</code>(多角形の列、各 (k, 2) [y, x])、<code style="color:#22d3bf">areas</code>(靴紐)、<code style="color:#22d3bf">edge_length_total</code>(内部の辺の長さの和)、<code style="color:#22d3bf">n_edges</code>(内部の辺の数)、<code style="color:#22d3bf">perimeter_internal</code> (n,)(各セルの内部の辺の長さ)。</p>
+<p>반환값: <code style="color:#22d3bf">polygons</code>(다각형의 열, 각 (k, 2) [y, x]), <code style="color:#22d3bf">areas</code>(신발끈 공식), <code style="color:#22d3bf">edge_length_total</code>(내부 변 길이의 합), <code style="color:#22d3bf">n_edges</code>(내부 변의 수), <code style="color:#22d3bf">perimeter_internal</code> (n,)(각 셀의 내부 변 길이).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

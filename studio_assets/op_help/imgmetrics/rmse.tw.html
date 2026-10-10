@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rmse(a, b)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgmetrics; imgmetrics.rmse(a, b)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;rmse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>均方根誤差(與像素值同單位)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>式: <code style="color:#22d3bf">sqrt(mse(a, b))</code>。検証と失敗条件は <code style="color:#22d3bf">mse</code> と同じ ―― 同じ形 / 空でない / 有限、を満たさなければ <code style="color:#22d3bf">MetricContractError</code>。次元と dtype は問わない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: Python の <code style="color:#22d3bf">float</code>。入力が <code style="color:#22d3bf">[0, 1]</code> の float なら値も <code style="color:#22d3bf">[0, 1]</code>、uint8 なら 0〜255 の尺度。「平均して何階調ずれているか」と読める。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code> に依らない生の量なので、尺度の違う 2 組の rmse を並べても比較にならない。正規化した指標が要るなら <code style="color:#22d3bf">psnr</code> か <code style="color:#22d3bf">ssim</code>。</p>
-<p style="margin:2px 0 2px 12px">• 深度・CT・再投影など「画素値 = 物理量」の場面では、その物理単位そのものになる。</p>
+<p>公式:<code style="color:#22d3bf">sqrt(mse(a, b))</code>。驗證與失敗條件與 <code style="color:#22d3bf">mse</code> 相同 —— 不滿足同形 / 非空 / 有限,就是 <code style="color:#22d3bf">MetricContractError</code>。維數和 dtype 不限。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值:Python 的 <code style="color:#22d3bf">float</code>。輸入為 <code style="color:#22d3bf">[0, 1]</code> 的 float 時值也在 <code style="color:#22d3bf">[0, 1]</code>,uint8 時為 0〜255 的尺度。可以讀作「平均偏差了多少個灰階」。</p>
+<p style="margin:2px 0 2px 12px">• 它是與 <code style="color:#22d3bf">data_range</code> 無關的原始量,所以把尺度不同的 2 組 rmse 並列也無法比較。需要正規化指標時用 <code style="color:#22d3bf">psnr</code> 或 <code style="color:#22d3bf">ssim</code>。</p>
+<p style="margin:2px 0 2px 12px">• 在深度、CT、重投影等「像素值 = 物理量」的場景中,它就是那個物理單位本身。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.running_gaussian_background(video, alpha: &#x27;float&#x27; = 0.02, k: &#x27;float&#x27; = 2.5, var_init: &#x27;float&#x27; = 0.01, selective: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import videostream; videostream.running_gaussian_background(video, alpha: &#x27;float&#x27; = 0.02, k: &#x27;float&#x27; = 2.5, var_init: &#x27;float&#x27; = 0.01, selective: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsvideostream.get(&quot;running_gaussian_background&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>自適應單高斯背景(滑動平均)逐影格 → <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>画素ごとに平均 <code style="color:#22d3bf">mean</code> と分散 <code style="color:#22d3bf">var</code> を持つ単一ガウス背景(Wren の Pfinder)を回し、各フレーム後の <code style="color:#22d3bf">mean</code> を返す。前景判定は <code style="color:#22d3bf">(frame - mean)^2 &gt; k^2 var</code>。<code style="color:#22d3bf">selective=True</code>(既定)では前景と判定した画素の <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">var</code> を<b>更新しない</b>ので、ゆっくり動く物体が背景に溶けない。更新式は <code style="color:#22d3bf">mean += α diff</code>、<code style="color:#22d3bf">var += α (diff^2 - var)</code>、<code style="color:#22d3bf">var</code> の下限は 1e-4。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 配列か 2-D フレームの list。整数は最大値で <code style="color:#22d3bf">[0, 1]</code> に正規化、float はクリップ。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code> の学習率。既定 0.02(時定数およそ 50 枚)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: <code style="color:#22d3bf">[0, 100]</code>。前景とみなす標準偏差の倍数。既定 2.5。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">var_init</code>: <code style="color:#22d3bf">[1e-9, 1]</code>。先頭フレームでの分散の初期値(<code style="color:#22d3bf">[0, 1]</code> 強度の 2 乗)。小さすぎると 2 枚目から全画素が前景になり、<code style="color:#22d3bf">selective</code> で更新が止まる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">selective</code>: 前景画素の更新を止めるか。<code style="color:#22d3bf">False</code> なら全画素を常に更新。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64。<code style="color:#22d3bf">t = 0</code> は先頭フレームそのもの。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形・dtype・各範囲)。</p>
-<p>同じモデルの前景マスクは <code style="color:#22d3bf">running_gaussian_foreground</code>(同じ引数で対にするとフレームごとに整合する)。</p>
+<p>執行逐像素持有平均值 <code style="color:#22d3bf">mean</code> 與變異數 <code style="color:#22d3bf">var</code> 的單高斯背景(Wren 的 Pfinder), 回傳每幀之後的 <code style="color:#22d3bf">mean</code>。前景判定為 <code style="color:#22d3bf">(frame - mean)^2 &gt; k^2 var</code>。<code style="color:#22d3bf">selective=True</code>(預設)時，被判為前景的像素的 <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">var</code> <b>不更新</b>，因此緩慢移動的物體不會融入背景。更新式為 <code style="color:#22d3bf">mean += α diff</code>、<code style="color:#22d3bf">var += α (diff^2 - var)</code>,<code style="color:#22d3bf">var</code> 的下限為 1e-4。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 陣列或 2-D 幀的 list。整數依最大值正規化到 <code style="color:#22d3bf">[0, 1]</code>,float 做截斷。NaN/Inf 拋出 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code> 的學習率。預設 0.02(時間常數約 50 幀)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: <code style="color:#22d3bf">[0, 100]</code>。視為前景的標準差倍數。預設 2.5。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">var_init</code>: <code style="color:#22d3bf">[1e-9, 1]</code>。第一幀時變異數的初始值(<code style="color:#22d3bf">[0, 1]</code> 強度的 2 次方)。過小則從第 2 幀起全部像素都成為前景，<code style="color:#22d3bf">selective</code> 會使更新停止。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">selective</code>: 是否停止更新前景像素。為 <code style="color:#22d3bf">False</code> 時始終更新全部像素。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: <code style="color:#22d3bf">(T, H, W)</code> float64。<code style="color:#22d3bf">t = 0</code> 即第一幀本身。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形狀、dtype、各範圍)。</p>
+<p>同一模型的前景遮罩為 <code style="color:#22d3bf">running_gaussian_foreground</code>(以相同參數配對使用時，逐幀保持一致)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

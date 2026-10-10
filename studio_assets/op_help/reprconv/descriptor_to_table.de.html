@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_table(descriptor)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_table(descriptor)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Deskriptor → eine zusammenfassende <code style="color:#22d3bf">table</code>. <b>Einwegs.</b></p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>次元・ノルム・エネルギー集中(正規化した二乗和の上位 10% が占める割合)を出す。記述子が「実質何次元使っているか」を見るためのもので、次元だけ多くてほぼ全部 0 という失敗を可視化する。</p>
+<p>Liefert Dimension, Norm und Energiekonzentration (Anteil der obersten 10% an der normierten Quadratsumme). Es dient dazu zu sehen, &quot;wie viele Dimensionen ein Deskriptor effektiv nutzt&quot;, und macht das Versagen sichtbar, viele Dimensionen zu haben, die fast alle 0 sind.</p>
 <p>Args:</p>
-<p>descriptor: (n,) または (m, n)。</p>
+<p>descriptor: (n,) oder (m, n).</p>
 <p>Returns:</p>
-<p>dict(<code style="color:#22d3bf">shape</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">l2</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">min</code> /</p>
-<p><code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">top10pct_energy</code> / <code style="color:#22d3bf">nonzero_fraction</code>)。</p>
+<p>dict (<code style="color:#22d3bf">shape</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">l2</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">min</code> /</p>
+<p><code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">top10pct_energy</code> / <code style="color:#22d3bf">nonzero_fraction</code>).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

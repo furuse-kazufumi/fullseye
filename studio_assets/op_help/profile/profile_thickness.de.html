@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_thickness(contour, n=101)</code> (die Implementierung direkt: <code style="color:#22d3bf">import profileops; profileops.profile_thickness(contour, n=101)</code>; aus dem Register: <code style="color:#22d3bf">opsprofile.get(&quot;profile_thickness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Dickenverteilung <code style="color:#22d3bf">t(x)</code>. Rückgabe: <code style="color:#22d3bf">(x, t)</code> als <code style="color:#22d3bf">(n, 2)</code>-Array.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">pairs</code> として返すので、<code style="color:#22d3bf">pairs_to_signal</code> や <code style="color:#22d3bf">plot_series</code> へそのまま</p>
-<p>渡せる。最大厚みとその位置は <code style="color:#22d3bf">profile_thickness_stats</code> ではなく返り値から取る(<code style="color:#22d3bf">t</code> の最大 = 最大厚み比)。</p>
+<p>Wird als <code style="color:#22d3bf">pairs</code> zurückgegeben und kann daher direkt an <code style="color:#22d3bf">pairs_to_signal</code> oder <code style="color:#22d3bf">plot_series</code> übergeben werden. Maximale Dicke und ihre Lage nicht aus <code style="color:#22d3bf">profile_thickness_stats</code>, sondern aus dem Rückgabewert entnehmen (Maximum von <code style="color:#22d3bf">t</code> = maximales Dickenverhältnis).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">Leitfaden zur Familie profile_metrology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

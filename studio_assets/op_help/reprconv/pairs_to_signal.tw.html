@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_signal(pairs)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.pairs_to_signal(pairs)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_signal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對 <code style="color:#22d3bf">(N,2)</code> → 應變數的 <code style="color:#22d3bf">signal (N,)</code>。<code style="color:#22d3bf">pairs</code> 的第二個出口。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>列 1(y)だけを取り出す。<code style="color:#22d3bf">funct_1d_to_pairs</code> が (x, y) を並べた(N,2) を返すので、その逆向きにあたる —— <b>x が等間隔ならば</b> <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> は bit 一致する。等間隔でない x を持つ対を通すと、<b>x の情報が黙って落ちる</b>(<code style="color:#22d3bf">signal</code> は添字が等間隔だという前提の型)。</p>
-<p>だから <code style="color:#22d3bf">pairs_to_table</code> が <code style="color:#22d3bf">x_uniform</code> を必ず一緒に出す。</p>
+<p>只取出行 1(y)。<code style="color:#22d3bf">funct_1d_to_pairs</code> 回傳把 (x, y) 並排的(N,2),這相當於它的反方向 —— <b>只要 x 是等間隔的</b>, <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> 就逐位元一致。傳入 x 不等間隔的對時, <b>x 的資訊會默默遺失</b>(<code style="color:#22d3bf">signal</code> 是以索引等間隔為前提的型別)。</p>
+<p>所以 <code style="color:#22d3bf">pairs_to_table</code> 必定一併輸出 <code style="color:#22d3bf">x_uniform</code>。</p>
 <p>Args:</p>
-<p>pairs: (N, 2) または 2 本の等長 1-D のタプル。</p>
+<p>pairs: (N, 2) 或 2 個等長 1-D 的 tuple。</p>
 <p>Returns:</p>
 <p>(N,) float64。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: 形狀不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

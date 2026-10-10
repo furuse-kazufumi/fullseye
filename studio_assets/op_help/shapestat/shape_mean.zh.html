@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_mean&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>经 GPA 对齐之后的平均形状。→ <code style="color:#22d3bf">(N, 3)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★ <b>生の平均(<code style="color:#22d3bf">shapes.mean(0)</code>)と混同しないこと</b>。位置と向きを揃えずに平均すると、個体がばらばらに置かれているぶんだけ形が縮む。合わせてから平均するのが「平均形状」。</p>
+<p>★ <b>不要与原始平均(<code style="color:#22d3bf">shapes.mean(0)</code>)混淆</b>。不对齐位置和朝向就求平均，个体散布多少，形状就缩小多少。先对齐再求平均，才是「平均形状」。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

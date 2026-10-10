@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.linear_to_srgb(img)</code>(要直接调用实现,<code style="color:#22d3bf">import gfx2d; gfx2d.linear_to_srgb(img)</code>;从台账取用则 <code style="color:#22d3bf">opsgfx2d.get(&quot;linear_to_srgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把线性光转回 sRGB 编码。<code style="color:#22d3bf">srgb_to_linear</code> 的精确逆。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>式(IEC 61966-2-1): <code style="color:#22d3bf">c &lt;= 0.0031308</code> なら <code style="color:#22d3bf">12.92 c</code>、それ以外は <code style="color:#22d3bf">1.055 c^(1/2.4) - 0.055</code>。チャネルごと・画素ごとに独立。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code>: <code style="color:#22d3bf">(H, W)</code> / <code style="color:#22d3bf">(H, W, 1)</code> / <code style="color:#22d3bf">(H, W, 3)</code> / <code style="color:#22d3bf">(H, W, 4)</code> の float。値は <code style="color:#22d3bf">[0, 1]</code>(許容 1e-9)でなければ <code style="color:#22d3bf">ValueError</code> ―― 線形光の HDR 値(1 超)は先に露光を掛けて収めること。整数配列は最大値が 1 以下のときだけ通る(0〜255 のバッファは拒否)。bool は 0/1 として通る。NaN/Inf、複素数、マスク配列は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(H, W, 4)</code> のアルファ(4 チャネル目)は<b>変換しない</b>(被覆率は元々線形)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 同形の float64 の複製、<code style="color:#22d3bf">[0, 1]</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(3,)</code> の 1 色や <code style="color:#22d3bf">(N, 3)</code> の色表はこの op では受けない(画像 API)。任意の形に掛けたいときは <code style="color:#22d3bf">imgmetrics</code> 側の同名関数がここへ委譲している。</p>
-<p><code style="color:#22d3bf">radial_light</code> / <code style="color:#22d3bf">light_mask</code> / <code style="color:#22d3bf">bloom</code> など線形光で計算した結果を、ファイルに書く・画面に出す直前に 1 回だけ掛ける。二度掛けると中間調が浮く(例外は出ない)。</p>
+<p>公式(IEC 61966-2-1):<code style="color:#22d3bf">c &lt;= 0.0031308</code> 时为 <code style="color:#22d3bf">12.92 c</code>,否则为 <code style="color:#22d3bf">1.055 c^(1/2.4) - 0.055</code>。按通道、按像素独立。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code>:<code style="color:#22d3bf">(H, W)</code> / <code style="color:#22d3bf">(H, W, 1)</code> / <code style="color:#22d3bf">(H, W, 3)</code> / <code style="color:#22d3bf">(H, W, 4)</code> 的 float。值必须在 <code style="color:#22d3bf">[0, 1]</code> 内(容差 1e-9),否则 <code style="color:#22d3bf">ValueError</code> —— 线性光的 HDR 值(超过 1)要先施加曝光使其落入范围。整数数组仅在最大值不超过 1 时通过(0〜255 的缓冲区会被拒绝)。bool 按 0/1 通过。NaN/Inf、复数、掩码数组为 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(H, W, 4)</code> 的 alpha(第 4 通道)<b>不转换</b>(覆盖率本来就是线性的)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值:同形的 float64 副本,<code style="color:#22d3bf">[0, 1]</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(3,)</code> 的 1 种颜色或 <code style="color:#22d3bf">(N, 3)</code> 的颜色表本 op 不接受(图像 API)。想作用于任意形状时,<code style="color:#22d3bf">imgmetrics</code> 侧的同名函数会委托到这里。</p>
+<p>对 <code style="color:#22d3bf">radial_light</code> / <code style="color:#22d3bf">light_mask</code> / <code style="color:#22d3bf">bloom</code> 等在线性光中计算的结果, 在写入文件、显示到屏幕之前只施加 1 次。施加两次会使中间调发飘(不会抛出异常)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

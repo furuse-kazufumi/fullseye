@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tour_closed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point को ऐसे <b>बंद tour</b> में फिर से क्रमित करता है जो हर point से ठीक 1 बार गुज़रकर वापस आता है। → <code style="color:#22d3bf">pairs</code></p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返るのは入力と同じ点を並べ替えた <code style="color:#22d3bf">(N, 2)</code>。<b>最後の点から最初の点へ戻る</b> ことで閉じる(末尾に先頭を重複させない)。</p>
-<p>★これは最適な巡回路ではない(TSP は NP 困難)。<b>下界と比べて質を言う</b>:</p>
-<p>閉じた巡回路は最小全域木より短くなれないので <code style="color:#22d3bf">length / mst_length</code> が 1 に近いほど良い。一様な点なら Beardwood–Halton–Hammersley の <code style="color:#22d3bf">0.7124 √(n A)</code> も目安になる。<b>黄金ファイルは使わない。</b></p>
+<p>लौटता है <code style="color:#22d3bf">(N, 2)</code>: input जैसे ही points, नए क्रम में। यह <b>आख़िरी point से पहले point पर लौटकर</b> बंद होता है (अंत में पहला point दोहराया नहीं जाता)।</p>
+<p>★यह optimal tour नहीं है (TSP NP-hard है)। <b>quality को lower bound से तुलना करके बताया जाता है</b>:</p>
+<p>closed tour minimum spanning tree से छोटा नहीं हो सकता, इसलिए <code style="color:#22d3bf">length / mst_length</code> जितना 1 के क़रीब हो उतना अच्छा। uniform points के लिए Beardwood–Halton–Hammersley का <code style="color:#22d3bf">0.7124 √(n A)</code> भी एक संकेत है। <b>golden files इस्तेमाल नहीं होतीं।</b></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_sides(contour, n=101, normalise=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import profileops; profileops.profile_sides(contour, n=101, normalise=True)</code>; from the registry, <code style="color:#22d3bf">opsprofile.get(&quot;profile_sides&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extracts the upper and lower surfaces as functions of the chordwise coordinate. Returns a dict.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>弦を <code style="color:#22d3bf">n</code> 等分し、各位置で輪郭と交わる上下の点を線形補間で拾う。</p>
-<p><b>開いた曲線はここで拒否される</b> —— 1 価の関数(MTF 曲線のような)を渡すと下面が取れないので、「これは閉じた断面ではない」と明示して落とす。型ではなく検証で守っている(<code style="color:#22d3bf">pairs</code> は関数データにも閉輪郭にも使われる語彙なので、型を分けると既存の輪郭生成 op から繋がらなくなる)。</p>
+<p>Divides the chord into <code style="color:#22d3bf">n</code> equal parts and, at each position, picks the upper and lower points where the contour crosses, by linear interpolation.</p>
+<p><b>An open curve is rejected here</b> -- if you pass a 1-valued (single-valued) function (such as an MTF curve), the lower surface cannot be obtained, so it fails explicitly, stating &quot;this is not a closed section&quot;. This is guarded by validation, not by type (<code style="color:#22d3bf">pairs</code> is vocabulary used both for function data and for closed contours, so splitting the type would disconnect it from the existing contour-generating ops).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">x</code>(<code style="color:#22d3bf">(n,)</code>)、<code style="color:#22d3bf">upper</code> / <code style="color:#22d3bf">lower</code>(<code style="color:#22d3bf">(n,)</code>)、<code style="color:#22d3bf">normalised</code>。</p>
+<p>dict: <code style="color:#22d3bf">x</code> (<code style="color:#22d3bf">(n,)</code>), <code style="color:#22d3bf">upper</code> / <code style="color:#22d3bf">lower</code> (<code style="color:#22d3bf">(n,)</code>), <code style="color:#22d3bf">normalised</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

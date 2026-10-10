@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import segeval; segeval.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;seg_hausdorff&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Hausdorff distance between the two boundary pixel sets, with a percentile variant such as HD95 (seg_hausdorff).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>境界は <code style="color:#22d3bf">_boundary</code> の規約。どちらかの境界が空(1 色の画像)なら測るものが無いので ValueError。</p>
-<p>返り値: <code style="color:#22d3bf">hausdorff</code>、<code style="color:#22d3bf">hausdorff_percentile</code>、<code style="color:#22d3bf">percentile</code>、<code style="color:#22d3bf">directed_pred_to_true</code> / <code style="color:#22d3bf">directed_true_to_pred</code>(各最大)。</p>
+<p>Boundaries follow the convention of <code style="color:#22d3bf">_boundary</code>. If either boundary is empty (an image of 1 colour) there is nothing to measure, so ValueError.</p>
+<p>Returns: <code style="color:#22d3bf">hausdorff</code>, <code style="color:#22d3bf">hausdorff_percentile</code>, <code style="color:#22d3bf">percentile</code>, <code style="color:#22d3bf">directed_pred_to_true</code> / <code style="color:#22d3bf">directed_true_to_pred</code> (each a maximum).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

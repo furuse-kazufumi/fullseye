@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import llmcore; llmcore.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsllmcore.get(&quot;kv_cache_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Inference that advances by only 1 token (KV Cache) → tokens (1, dv).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>因果マスクの下では<b>未来を書き換えても前の出力が 1 ビットも動かない</b>(実測 0.0e+00) ので、済んだ key/value を取っておいて 1 行だけ計算すればよい —— 逐次に 1 行ずつ進めた結果は、全系列を一括で通した結果と一致する(相対差 1.6e-16)。計算量は 1 歩あたり O(T d) で、一括の O(T² d) を T 歩に割ったものに等しい。</p>
+<p>Under a causal mask, <b>rewriting the future does not move the earlier outputs by even 1 bit</b> (measured 0.0e+00), so you can keep the finished key/value and compute just 1 row — advancing sequentially 1 row at a time gives the same result as passing the whole sequence at once (relative difference 1.6e-16). The cost for 1 step is O(T d), equal to the batch O(T² d) divided over T steps.</p>
 <p>Args:</p>
-<p>query_step: (1, d) float。いま生成しようとしている 1 トークン。</p>
-<p>key_cache: (T, d) float。ここまでに見た key(自分を含む)。</p>
-<p>value_cache: (T, dv) float。同じ長さの value。</p>
-<p>scale: スコアの倍率。None なら 1/√d。</p>
+<p>query_step: (1, d) float. The 1 token about to be generated.</p>
+<p>key_cache: (T, d) float. The keys seen so far (including itself).</p>
+<p>value_cache: (T, dv) float. Values of the same length.</p>
+<p>scale: score multiplier. None means 1/√d.</p>
 <p>Returns:</p>
-<p>tokens (1, dv) float: 一括で通した最終行と一致する。</p>
+<p>tokens (1, dv) float: matches the last row of the batch pass.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

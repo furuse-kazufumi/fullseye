@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_ground_truth(name: &#x27;str&#x27; = &#x27;&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import illusion; illusion.illusion_ground_truth(name: &#x27;str&#x27; = &#x27;&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_ground_truth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>illusion जिन <b>exact invariant</b> को बनाए रखते हैं, उन्हें table के रूप में लौटाता है (<code style="color:#22d3bf">name</code> खाली हो तो सभी)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★これがこの族の芯。図だけを配ると「きれいだね」で終わるが、<b>図と一緒に真値が出てくる</b>と、測る側を採点できる。返り値の <code style="color:#22d3bf">value</code> はすべて「あるべき値」であって、測った値ではない(測るのは呼んだ側の仕事)。</p>
+<p>★यही इस family का मूल है। केवल चित्र बाँटें तो बात &quot;कितना सुंदर&quot; पर ख़त्म हो जाती है, लेकिन <b>चित्र के साथ ground truth भी निकले</b> तो मापने वाले पक्ष को score किया जा सकता है। return value के सभी <code style="color:#22d3bf">value</code> &quot;जो होना चाहिए वह मान&quot; हैं, मापे गए मान नहीं (मापना caller का काम है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

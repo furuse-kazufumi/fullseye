@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;zoom_inset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A magnified inset — adds a <b>frame</b> and a <b>leader line</b> to the original figure.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>拡大は <code style="color:#22d3bf">np.repeat</code> の<b>最近傍</b>(整数倍)。補間しないのは、拡大図が「元の画素そのもの」であることを保証するため(滑らかにすると、無かった構造が生まれたように見える)。</p>
+<p>Magnification is <code style="color:#22d3bf">np.repeat</code> <b>nearest neighbour</b> (integer multiples). It does not interpolate, in order to guarantee that the inset is &quot;the original pixels themselves&quot; (smoothing would make it look as if structure appeared that was not there).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>src_rect : (x, y, w, h)</p>
-<p>拡大元。</p>
+<p>Source region to magnify.</p>
 <p>dst_xy : (x, y)</p>
-<p>差し込み先の<b>左上</b>。</p>
+<p><b>Top-left</b> of the inset destination.</p>
 <p>factor : int</p>
-<p>整数の拡大率(&gt;= 1)。</p>
+<p>Integer magnification (&gt;= 1).</p>
 <p>connect : bool</p>
-<p>True なら元枠と差し込み枠の対応する角を 2 本の線で結ぶ。</p>
+<p>If True, connects corresponding corners of the source frame and the inset frame with 2 lines.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>factor が 1 未満か非整数、元枠/差し込みが画像からはみ出す。</p>
+<p>factor below 1 or non-integer, source frame/inset sticks out of the image.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

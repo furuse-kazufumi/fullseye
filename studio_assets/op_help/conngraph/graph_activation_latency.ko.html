@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_activation_latency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 노드가 처음 &#x27;켜진&#x27; 스텝(0부터 시작)의 열 (n,), 정수. 켜지지 않은 노드는 −1.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">X</code> は reservoir_states の (T, n)。「点いた」= |x| ≥ <b>全体の最大値</b> × thresh(thresh は(0, 1])。尺度はノードごとでなく 1 つ —— ノードごとに伸ばすと、ほとんど動かないノードの丸め屑も「点いた」になる。全零の X はすべて −1。</p>
+<p><code style="color:#22d3bf">X</code> 는 reservoir_states 의 (T, n). &quot;켜졌다&quot; = |x| ≥ <b>전체의 최댓값</b> × thresh(thresh 는(0, 1]). 척도는 노드마다가 아니라 1 개 —— 노드마다 늘리면 거의 움직이지 않는 노드의반올림 부스러기도 &quot;켜졌다&quot;가 된다. 전부 0 인 X 는 모두 −1.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

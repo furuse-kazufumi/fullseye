@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05, title=None, title_h=0, font_size=15, min_font_size=9, font_path=None, text_color=None, border=0, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, style=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05, title=None, title_h=0, font_size=15, min_font_size=9, font_path=None, text_color=None, border=0, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, style=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;panel_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>패널을 격자로 늘어놓고 각 틀 아래에 라벨을 깝니다(montage / 콘택트 시트).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>生成器 6 本がそれぞれ別実装を持っていた、<b>この repo で最も重複していた図の部品</b>。ここでの流儀:</p>
-<p style="margin:2px 0 2px 12px">• <b>拡大しない</b> ―― 小さいパネルは中央に置いて余白で埋める。引き伸ばすと「無い解像度がある」ように見える。</p>
-<p style="margin:2px 0 2px 12px">• <b>ラベルは測ってから描く</b> ―― 入らなければ縮め、駄目なら例外(<code style="color:#22d3bf">text_box</code> の境界検査に載る)。</p>
-<p style="margin:2px 0 2px 12px">• セルの大きさは全パネルの最大寸で、<b>格子は常に矩形</b>。</p>
+<p>생성기 6개가 각각 별도 구현을 갖고 있던, <b>이 repo에서 가장 중복되어 있던 그림의부품</b>. 여기서의 방식:</p>
+<p style="margin:2px 0 2px 12px">• <b>확대하지 않는다</b> —— 작은 패널은 중앙에 두고 여백으로 채운다. 늘이면 &quot;없는 해상도가 있는&quot; 것처럼 보인다.</p>
+<p style="margin:2px 0 2px 12px">• <b>라벨은 재고 나서 그린다</b> —— 들어가지 않으면 줄이고, 안 되면 예외(<code style="color:#22d3bf">text_box</code>의 경계 검사에 걸린다).</p>
+<p style="margin:2px 0 2px 12px">• 셀의 크기는 모든 패널의 최대 치수이며, <b>격자는 항상 직사각형</b>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>panels : sequence of ndarray</p>
-<p>並べる画像(<code style="color:#22d3bf">(H,W)</code> / <code style="color:#22d3bf">(H,W,C)</code>、大きさはばらばらでよい)。</p>
-<p>チャンネルの並びは揃っていること。</p>
+<p>늘어놓을 영상(<code style="color:#22d3bf">(H,W)</code> / <code style="color:#22d3bf">(H,W,C)</code>, 크기는 제각각이어도 된다).</p>
+<p>채널의 배열은 맞춰져 있을 것.</p>
 <p>labels : sequence of str or None</p>
-<p>各パネルの見出し。<code style="color:#22d3bf">label_h</code> が 0 なら描かない。</p>
+<p>각 패널의 제목. <code style="color:#22d3bf">label_h</code>가 0이면 그리지 않는다.</p>
 <p>ncols : int</p>
-<p>列数。行数は <code style="color:#22d3bf">ceil(n/ncols)</code>。</p>
+<p>열 수. 행 수는 <code style="color:#22d3bf">ceil(n/ncols)</code>.</p>
 <p>title : str or None</p>
-<p>全体の表題(<code style="color:#22d3bf">title_h</code> が 0 なら <code style="color:#22d3bf">font_size+14</code> を自動で確保)。</p>
+<p>전체의 표제(<code style="color:#22d3bf">title_h</code>가 0이면 <code style="color:#22d3bf">font_size+14</code>를 자동으로 확보).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>新しい合成画像(float [0,1])。大きさは</p>
-<p><code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>、</p>
-<p><code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+label_h) + (nrows-1)*pad</code>。</p>
+<p>새 합성 영상(float [0,1]). 크기는</p>
+<p><code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>,</p>
+<p><code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+label_h) + (nrows-1)*pad</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>panels が空 / チャンネル不一致 / ncols &lt; 1 / 負の余白 /</p>
-<p>labels の数が合わない。</p>
+<p>panels가 비어 있음 / 채널 불일치 / ncols &lt; 1 / 음의 여백 /</p>
+<p>labels의 수가 맞지 않음.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

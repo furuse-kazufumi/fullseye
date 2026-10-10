@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import geocam; geocam.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code>; aus dem Register: <code style="color:#22d3bf">opsgeocam.get(&quot;dem_skyline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Rundum-Skyline</b>, gesehen von 1 Punkt des DEM (Horizontelevation je Azimut) → table.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">dem_horizon_angle</code> は「全セル × 1 方位」、これは「1 点 × 全方位」—— 固定カメラの向きを決めるのに要るのは後者。各方位へ <code style="color:#22d3bf">cell_size / 2</code> 刻みで視線を進め(標高は双一次補間)、<code style="color:#22d3bf">atan((z_j − z_0 − drop(d)) / d)</code> の最大値をその方位の仰角にする。<code style="color:#22d3bf">drop(d) = d² / (2 R_eff)</code> は地球の丸みと大気屈折(有効半径 R / (1 − 0.13))で遠くの山が沈む分。視線が DEM の外に出たらそこで止める(<code style="color:#22d3bf">max_distance</code> でも止まる)。<b>DEM の外側</b>は「DEM の最低標高の平面が地平線まで続く」と仮定し、仰角の下限を地平線の沈み <code style="color:#22d3bf">−sqrt(2 h / R_eff)</code>(h = 観測点の最低標高からの高さ)にする —— 有限の DEM の端でたまたま低い点を見て、実際には地球の丸みで見えない −7° のような「穴」を空にしないため(<code style="color:#22d3bf">horizon_dip_deg</code> に返す)。</p>
+<p><code style="color:#22d3bf">dem_horizon_angle</code> ist &quot;alle Zellen × 1 Azimut&quot;, dies ist &quot;1 Punkt × alle Azimute&quot; -- um die Ausrichtung einer festen Kamera zu bestimmen, braucht man Letzteres. In jedem Azimut wird die Sichtlinie in Schritten von <code style="color:#22d3bf">cell_size / 2</code> vorgeschoben (Höhe per bilinearer Interpolation), und das Maximum von <code style="color:#22d3bf">atan((z_j − z_0 − drop(d)) / d)</code> wird der Höhenwinkel dieses Azimuts. <code style="color:#22d3bf">drop(d) = d² / (2 R_eff)</code> ist, wie stark ferne Berge durch Erdkrümmung und atmosphärische Refraktion (effektiver Radius R / (1 − 0.13)) absinken. Verlässt die Sichtlinie das DEM, stoppt sie dort (sie stoppt auch bei <code style="color:#22d3bf">max_distance</code>). <b>Außerhalb des DEM</b> wird angenommen, dass &quot;die Ebene auf der niedrigsten Höhe des DEM bis zum Horizont weiterläuft&quot;, und die Untergrenze des Höhenwinkels wird auf die Kimmtiefe <code style="color:#22d3bf">−sqrt(2 h / R_eff)</code> gesetzt (h = Höhe des Beobachters über der niedrigsten Höhe) -- damit nicht, weil man am Rand eines endlichen DEM zufällig einen tiefen Punkt sieht, ein &quot;Loch&quot; wie −7°, das in Wirklichkeit wegen der Erdkrümmung unsichtbar ist, zu Himmel wird (zurückgegeben in <code style="color:#22d3bf">horizon_dip_deg</code>).</p>
 <p>Args:</p>
-<p>dem: (H, W) 標高 [m]。行 0 が北端。</p>
-<p>cell_size: [m/セル]。</p>
-<p>observer_rc: 観測点 (row, col)。float 可(セルの中に立てる)。</p>
-<p>eye_height: 地面からのカメラ高さ [m]。</p>
-<p>az_step_deg: 方位の刻み [度]。</p>
-<p>max_distance: 視線の最大距離 [m] (None = DEM の端まで)。</p>
-<p>earth_curvature: False なら平らな地球。</p>
+<p>dem: (H, W) Höhe [m]. Zeile 0 ist der Nordrand.</p>
+<p>cell_size: [m/Zelle].</p>
+<p>observer_rc: Beobachtungspunkt (row, col). float erlaubt (innerhalb einer Zelle stehend).</p>
+<p>eye_height: Kamerahöhe über dem Boden [m].</p>
+<p>az_step_deg: Azimutschritt [Grad].</p>
+<p>max_distance: maximale Länge der Sichtlinie [m] (None = bis zum Rand des DEM).</p>
+<p>earth_curvature: False bedeutet eine flache Erde.</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">azimuth_deg</code> (M,) / <code style="color:#22d3bf">elevation_deg</code> (M,) / <code style="color:#22d3bf">distance_m</code> (M,)(仰角を決めた</p>
-<p>地点までの距離)/ <code style="color:#22d3bf">observer_elevation_m</code> / <code style="color:#22d3bf">horizon_dip_deg</code> / <code style="color:#22d3bf">n</code>。方位は 0 以上</p>
-<p>360 未満、昇順。</p>
+<p>table: <code style="color:#22d3bf">azimuth_deg</code> (M,) / <code style="color:#22d3bf">elevation_deg</code> (M,) / <code style="color:#22d3bf">distance_m</code> (M,) (Entfernung zu dem Punkt,</p>
+<p>der den Höhenwinkel bestimmt hat) / <code style="color:#22d3bf">observer_elevation_m</code> / <code style="color:#22d3bf">horizon_dip_deg</code> / <code style="color:#22d3bf">n</code>. Das Azimut ist mindestens 0 und</p>
+<p>kleiner als 360, aufsteigend.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">Leitfaden zur Familie geocam</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

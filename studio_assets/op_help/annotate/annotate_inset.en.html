@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_inset(img, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, color=&#x27;emphasis&#x27;, width=2, connect=True, label=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, style=None, layout=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_inset(img, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, color=&#x27;emphasis&#x27;, width=2, connect=True, label=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, style=None, layout=None)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_inset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns an image (image2d): a magnified inset in a corner, with lines joining the matching corners.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>倍率と位置は <code style="color:#22d3bf">annotate_inset_layout</code>、描画は <code style="color:#22d3bf">zoom_inset</code> (最近傍の整数倍 = 元の画素そのもの)。</p>
+<p>Magnification and position come from <code style="color:#22d3bf">annotate_inset_layout</code>, drawing from <code style="color:#22d3bf">zoom_inset</code> (integer-factor nearest neighbour = the original pixels themselves).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_inset_layout</code> と同じ。</p>
+<p>Same as <code style="color:#22d3bf">annotate_inset_layout</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

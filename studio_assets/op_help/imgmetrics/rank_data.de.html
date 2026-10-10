@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_data(x) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import iqatid; iqatid.rank_data(x) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_data&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Mittlere Ränge (beginnend bei 1). Bindungen erhalten den Mittelwert ihrer Ränge (gleiche Definition wie &#x27;average&#x27; in scipy.stats.rankdata).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>例: [10, 20, 20, 30] → [1, 2.5, 2.5, 4]。±inf は最大 / 最小の順位(互いに同順位)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さ 2 未満・nan。</p>
+<p>Beispiel: [10, 20, 20, 30] → [1, 2.5, 2.5, 4]. ±inf erhalten den maximalen / minimalen Rang (untereinander gleichrangig). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Länge unter 2, nan.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

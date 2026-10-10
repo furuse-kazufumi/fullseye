@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_figure_grid_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표(dict)를 돌려줍니다: 다패널 그림의 조판(셀·패널·표제 띠의 사각형)을 닫힌 식으로.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">panel_grid</code> と同じ式: <code style="color:#22d3bf">cw/ch</code> は最大パネル寸、<code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>、<code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad</code>。パネルは拡大せずセルの中央に置く。</p>
+<p><code style="color:#22d3bf">panel_grid</code>와 같은 식: <code style="color:#22d3bf">cw/ch</code>는 최대 패널 치수, <code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>, <code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad</code>. 패널은 확대하지 않고 셀의 중앙에 둔다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;size&quot;:(H,W), &quot;cells&quot;:[(x,y,cw,ch)], &quot;panels&quot;:[(x,y,w,h)], &quot;captions&quot;:[(x,y,cw,caption_h)], &quot;letters&quot;:[str], &quot;ncols&quot;, &quot;nrows&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;size&quot;:(H,W), &quot;cells&quot;:[(x,y,cw,ch)], &quot;panels&quot;:[(x,y,w,h)], &quot;captions&quot;:[(x,y,cw,caption_h)], &quot;letters&quot;:[str], &quot;ncols&quot;, &quot;nrows&quot;}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>shapes が空、ncols &lt; 1、負の余白、26 枚を超える。</p>
+<p>shapes가 비어 있음, ncols &lt; 1, 음의 여백, 26장 초과.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

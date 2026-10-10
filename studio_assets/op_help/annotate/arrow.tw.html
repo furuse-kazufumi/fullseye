@@ -4,21 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.arrow(img, p0, p1, color=&#x27;emphasis&#x27;, width=2, head_len=12.0, head_width=9.0, scheme=&#x27;okabe_ito&#x27;, style=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.arrow(img, p0, p1, color=&#x27;emphasis&#x27;, width=2, head_len=12.0, head_width=9.0, scheme=&#x27;okabe_ito&#x27;, style=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;arrow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從 <code style="color:#22d3bf">p0</code> 到 <code style="color:#22d3bf">p1</code> 的箭頭(軸用 <code style="color:#22d3bf">imagedraw.draw_line</code>,箭頭為填充)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>p0, p1 : (x, y)</p>
-<p>起点・先端。<b>x=col, y=row</b>。</p>
+<p>起點、尖端。<b>x=col, y=row</b>。</p>
 <p>head_len, head_width : float</p>
-<p>矢じりの長さ・幅[px]。<code style="color:#22d3bf">0</code> で線分のみ。軸より矢じりが長い短距離の</p>
-<p>矢印では、矢じりを軸長の 8 割まで<b>相似に縮める</b>(そうしないと</p>
-<p>矢じりの根元が起点の手前に来て、軸が逆向きに描かれる)。</p>
+<p>箭頭尖的長度、寬度[px]。<code style="color:#22d3bf">0</code> 時只有線段。對箭頭尖比箭桿還長的短距離</p>
+<p>箭頭,會把箭頭尖<b>依相似比縮小</b>到箭桿長度的 8 成(否則</p>
+<p>箭頭尖的根部會落到起點之前,箭桿會被反向繪製)。</p>
 <p>style : dict or None</p>
-<p>軸線を引く <code style="color:#22d3bf">imagedraw.draw_line</code> への素通し引数(破線など)。</p>
+<p>原樣傳給繪製箭桿的 <code style="color:#22d3bf">imagedraw.draw_line</code> 的引數(虛線等)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>端点が非有限/一致、負の太さ・矢じり寸法、両端とも画像の外。</p>
+<p>端點非有限/重合,負的粗細、箭頭尖尺寸,兩端都在影像外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

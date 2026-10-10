@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segeval; segeval.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;seg_hausdorff&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Hausdorff-Abstand zwischen den beiden Grenzpixelmengen, mit einer Perzentil-Variante wie HD95 (seg_hausdorff).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>境界は <code style="color:#22d3bf">_boundary</code> の規約。どちらかの境界が空(1 色の画像)なら測るものが無いので ValueError。</p>
-<p>返り値: <code style="color:#22d3bf">hausdorff</code>、<code style="color:#22d3bf">hausdorff_percentile</code>、<code style="color:#22d3bf">percentile</code>、<code style="color:#22d3bf">directed_pred_to_true</code> / <code style="color:#22d3bf">directed_true_to_pred</code>(各最大)。</p>
+<p>Ränder folgen der Konvention von <code style="color:#22d3bf">_boundary</code>. Ist einer der Ränder leer (Bild mit 1 Farbe), gibt es nichts zu messen, daher ValueError.</p>
+<p>Rückgabewert: <code style="color:#22d3bf">hausdorff</code>, <code style="color:#22d3bf">hausdorff_percentile</code>, <code style="color:#22d3bf">percentile</code>, <code style="color:#22d3bf">directed_pred_to_true</code> / <code style="color:#22d3bf">directed_true_to_pred</code> (jeweils das Maximum).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

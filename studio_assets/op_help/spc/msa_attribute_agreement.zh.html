@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;msa_attribute_agreement&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>计数型(合格/不合格)检验中检验员之间的一致性(<code style="color:#22d3bf">table</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>同じ部品を複数の検査員が判定した表から、<b>検査員の対ごとの Cohen のカッパ</b>と全体の <b>Fleiss のカッパ</b>、および素の一致率を返す。</p>
-<p>★カッパは一致率そのものではない。<code style="color:#22d3bf">kappa = (p_o - p_e)/(1 - p_e)</code> で、<b>偶然でも起きる一致 p_e を割り引いた</b>残りを測る —— 合格率 95 % の工程ではでたらめに判を押しても素の一致率は 90 % を超えるので、一致率だけ見ると「よく合っている」と読めてしまう。</p>
-<p>★門にできる厳密な値: 全員が同じ判定 → <code style="color:#22d3bf">kappa = 1</code>(厳密)。2 人 x 2 カテゴリの Cohen のカッパは <code style="color:#22d3bf">2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))</code> という閉形式と一致する。独立でたらめな判定では期待値 0(こちらは標本ごとに揺れるので区間で見る)。</p>
+<p>从多名检验员对同一部件作出判定的表中,返回<b>检验员两两之间的 Cohen kappa</b>、整体的 <b>Fleiss kappa</b>,以及原始一致率。</p>
+<p>★kappa 并不是一致率本身。<code style="color:#22d3bf">kappa = (p_o - p_e)/(1 - p_e)</code> 衡量的是 <b>扣除了偶然也会发生的一致 p_e</b> 之后的剩余部分 —— 在合格率 95 % 的工序中, 即使胡乱盖章,原始一致率也超过 90 %,所以只看一致率就会读成&quot;很一致&quot;。</p>
+<p>★可作为门禁的严格值: 所有人判定相同 → <code style="color:#22d3bf">kappa = 1</code>(严格)。2 人 x 2 类别的 Cohen kappa 与闭式 <code style="color:#22d3bf">2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))</code> 一致。对于独立随机的判定,期望值为 0(这个随样本波动,所以用区间来看)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import blob2d; blob2d.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsblob.get(&quot;blob_select&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>특징량이 <code style="color:#22d3bf">[vmin, vmax]</code>에 드는 물체만 남긴다(<b>번호는 1부터 다시 매긴다</b>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : array_like</p>
-<p><code style="color:#22d3bf">blob_label</code> の出力。</p>
+<p><code style="color:#22d3bf">blob_label</code> 의 출력.</p>
 <p>feature : str</p>
-<p><code style="color:#22d3bf">FEATURE_KEYS</code> のどれか。知らない鍵は<b>候補を並べて拒否する</b>。</p>
+<p><code style="color:#22d3bf">FEATURE_KEYS</code> 중 하나. 모르는 키는 <b>후보를 나열하고 거부한다</b>.</p>
 <p>vmin, vmax : float or None</p>
-<p>両端(含む)。<code style="color:#22d3bf">None</code> は片側を開ける。両方 <code style="color:#22d3bf">None</code> は</p>
-<p>「何も選んでいない」ので拒否する —— 全部通す意図なら呼ばなければよい。</p>
+<p>양 끝(포함). <code style="color:#22d3bf">None</code> 은 그쪽을 열어 둔다. 둘 다 <code style="color:#22d3bf">None</code> 이면</p>
+<p>&quot;아무것도 선택하지 않은&quot; 것이므로 거부한다 —— 전부 통과시킬 의도라면 호출하지 않으면 된다.</p>
 <p>spacing : float</p>
-<p><code style="color:#22d3bf">blob_features</code> と同じ意味。<code style="color:#22d3bf">area</code> や <code style="color:#22d3bf">perimeter</code> を</p>
-<p>物理単位で切るときに要る。</p>
+<p><code style="color:#22d3bf">blob_features</code> 와 같은 의미. <code style="color:#22d3bf">area</code> 나 <code style="color:#22d3bf">perimeter</code> 를</p>
+<p>물리 단위로 자를 때 필요하다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">int32</code> のラベル画像。<b>残った物体は 1..k の連番</b>になる</p>
-<p>(元の番号は残さない)。元の番号が要るなら</p>
-<p><code style="color:#22d3bf">blob_features(labels)[&quot;label&quot;]</code> を先に取っておくこと。</p>
+<p><code style="color:#22d3bf">int32</code> 라벨 영상. <b>남은 물체는 1..k 의 연번</b>이 된다</p>
+<p>(원래 번호는 남기지 않는다). 원래 번호가 필요하면</p>
+<p><code style="color:#22d3bf">blob_features(labels)[&quot;label&quot;]</code> 을 먼저 받아 둘 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

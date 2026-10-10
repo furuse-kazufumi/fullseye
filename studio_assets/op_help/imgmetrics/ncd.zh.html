@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>(要直接调用实现,<code style="color:#22d3bf">import imgmetrics; imgmetrics.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;ncd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>归一化压缩距离(Li, Chen, Li, Ma &amp; Vitányi, IEEE TIT 50(12), 2004)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))</code>。同じものなら 0 に近づき、無関係なら 1 に近づく ―― ただし <b>実際の圧縮器は理想的な Kolmogorov 複雑度ではない</b>ので、同一入力でも厳密に 0 にはならない(ヘッダぶんの下駄がある)。その下駄の実測値はテストに残してある。</p>
-<p><b>生の float 配列は受け付けない。</b> 圧縮器はバイト列の繰り返しを見るので、値がごくわずか違うだけで float の仮数部が総取っ替えになり、<b>似ている 2 枚でも共通のバイト列が消える</b>。実測(2026-09-02、<code style="color:#22d3bf">linspace</code> の勾配とそれを +0.02 した絵、PSNR 34.0 dB = よく似ている):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">float64</code> のまま:8 バイト語の共有率 <b>0.02 %</b> → <b>NCD 1.0959</b> (「まったく無関係」と読める値。しかも 1 を超える)</p>
-<p style="margin:2px 0 2px 12px">• 256 段に量子化:<b>NCD 0.1290</b>(正しく「よく似ている」)</p>
-<p style="margin:2px 0 2px 12px">• 本当に無関係な 2 枚:<b>NCD 0.9981</b></p>
-<p>つまり float のまま測ると<b>例外なく逆の結論</b>が出る。よって float には <code style="color:#22d3bf">levels</code> の明示を要求する(<code style="color:#22d3bf">levels=256</code> なら <code style="color:#22d3bf">data_range</code> を 256 段に量子化してから測る)。整数 dtype はそのまま測れる。</p>
-<p><code style="color:#22d3bf">symmetric=True</code>(既定)は <b>両向きを測って平均する</b>。圧縮器は前から順に辞書を作るので <code style="color:#22d3bf">C(xy) != C(yx)</code> になり、素朴に実装すると「距離」を名乗りながら引数の順で値が変わる(実測: 縦縞と横縞で 0.571429 対 0.595238、相対 4 %)。<b>一様乱数どうしでは差 0.000e+00 になるので、乱数で試している限り気づけない</b> ―― 構造のある実データで初めて破れる型の欠陥。</p>
+<p><code style="color:#22d3bf">NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))</code>。相同的输入趋近 0,无关的趋近 1 —— 但<b>实际的压缩器不是理想的 Kolmogorov 复杂度</b>,所以即使输入相同也不会严格为 0 (有头部带来的偏置)。该偏置的实测值记录在测试中。</p>
+<p><b>不接受原始的 float 数组。</b>压缩器看的是字节序列的重复,所以值只要有极细微的差别,float 的尾数部分就会全部换掉,<b>即使是相似的 2 幅图共同的字节序列也会消失</b>。实测(2026-09-02,<code style="color:#22d3bf">linspace</code> 的渐变与它 +0.02 后的图,PSNR 34.0 dB = 非常相似):</p>
+<p style="margin:2px 0 2px 12px">• 保持 <code style="color:#22d3bf">float64</code>:8 字节字的共享率 <b>0.02 %</b> → <b>NCD 1.0959</b> (读起来是“完全无关”的值,而且超过 1)</p>
+<p style="margin:2px 0 2px 12px">• 量化为 256 级:<b>NCD 0.1290</b>(正确地“非常相似”)</p>
+<p style="margin:2px 0 2px 12px">• 真正无关的 2 幅图:<b>NCD 0.9981</b></p>
+<p>也就是说,以 float 原样测量会<b>无一例外地得出相反的结论</b>。因此对 float 要求显式给出 <code style="color:#22d3bf">levels</code>(<code style="color:#22d3bf">levels=256</code> 时把 <code style="color:#22d3bf">data_range</code> 量化为 256 级后再测)。整数 dtype 可以原样测量。</p>
+<p><code style="color:#22d3bf">symmetric=True</code>(默认)<b>测量两个方向并取平均</b>。压缩器从前往后依次建立字典,所以 <code style="color:#22d3bf">C(xy) != C(yx)</code>,朴素实现会一边自称“距离” 一边随参数顺序改变数值(实测:竖条纹与横条纹 0.571429 对 0.595238, 相对 4 %)。<b>均匀随机数之间差为 0.000e+00,所以只要用随机数测试就无法察觉</b> —— 这是在有结构的真实数据上才会暴露的那类缺陷。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

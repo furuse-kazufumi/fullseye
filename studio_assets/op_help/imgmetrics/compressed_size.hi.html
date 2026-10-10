@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compressed_size(a, compressor=&#x27;lzma&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.compressed_size(a, compressor=&#x27;lzma&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;compressed_size&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>array को lossless compress करने के बाद byte संख्या। <code style="color:#22d3bf">ncd</code> की सामग्री।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>画像コーデックは<b>使わない</b> ―― 挟むとその実装の癖を測ってしまう。stdlib の <code style="color:#22d3bf">zlib</code> / <code style="color:#22d3bf">lzma</code> のみ。dtype と shape の違いが結果を変えるので、比べる 2 枚は同じ dtype・同じ shape であること。</p>
+<p>image codecs का <b>उपयोग नहीं होता</b> -- बीच में रखने पर उस implementation की आदतें मपने लगती हैं। केवल stdlib के <code style="color:#22d3bf">zlib</code> / <code style="color:#22d3bf">lzma</code>। dtype और shape का अंतर परिणाम बदल देता है, इसलिए तुलना की जाने वाली 2 images का dtype और shape समान होना चाहिए।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

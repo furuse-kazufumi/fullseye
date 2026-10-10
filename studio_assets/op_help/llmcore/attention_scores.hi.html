@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_scores(query, key, scale=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.attention_scores(query, key, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;attention_scores&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>raw attention score QKᵀ/√d → attnmap (T, S)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>query: (T, d) float。問い合わせる側。</p>
-<p>key: (S, d) float。引かれる側。d は query と同じ。</p>
-<p>scale: スコアの倍率。None なら 1/√d(Vaswani ら 2017 —— 内積が d に比例して</p>
-<p>育ち softmax が尖るのを打ち消す)。</p>
+<p>query: (T, d) float। query करने वाली तरफ़।</p>
+<p>key: (S, d) float। जिसे देखा जाता है वह तरफ़। d वही जो query का।</p>
+<p>scale: score का गुणक। None हो तो 1/√d (Vaswani आदि 2017 -- inner product के d के अनुपात में</p>
+<p>बढ़ने और softmax के नुकीला होने को रद्द करता है)।</p>
 <p>Returns:</p>
-<p>attnmap (T, S) float: softmax にかける前の生のスコア。</p>
+<p>attnmap (T, S) float: softmax से पहले के raw scores।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

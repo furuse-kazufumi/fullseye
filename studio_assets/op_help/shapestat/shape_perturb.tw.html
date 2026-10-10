@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import shapestats; shapestats.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code>;從台帳取用則 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_perturb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對形狀施加 1 個<b>已知的</b>變形。→ <code style="color:#22d3bf">(N, 3)</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">mode</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;bulge&quot;</code>  —— *center* のまわりをガウス重みで外向きに膨らませる。片側だけに入れれば左右非対称性の真値になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;shift&quot;</code>  —— *center* 方向へ一様に平行移動(Procrustes が消す成分)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;scale&quot;</code>  —— 一様拡大(<code style="color:#22d3bf">scaling=True</code> の Procrustes が消す成分)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;noise&quot;</code>  —— 等方ガウス雑音(どの手法でも消えない床)。</p>
-<p>「Procrustes が消してくれる変形」と「消してはいけない変形」を分けて試せるように 4 つ置いてある。位置合わせの検算はこの区別が要る。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;bulge&quot;</code>  —— 在 *center* 周圍以高斯權重向外鼓起。只加在一側，就成為左右不對稱性的真值。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;shift&quot;</code>  —— 向 *center* 方向均勻平移(Procrustes 會消除的成分)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;scale&quot;</code>  —— 均勻放大(<code style="color:#22d3bf">scaling=True</code> 的 Procrustes 會消除的成分)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;noise&quot;</code>  —— 等向性高斯雜訊(任何方法都消除不了的下限)。</p>
+<p>為了能分開測試「Procrustes 會替你消除的變形」與「不該被消除的變形」，準備了這 4 種。對位的驗算需要這種區分。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

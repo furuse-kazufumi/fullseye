@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_to_gaussians(points, k=6, scale=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.points_to_gaussians(points, k=6, scale=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_gaussians&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點群 <code style="color:#22d3bf">(N,3)</code> → 等向性的 <code style="color:#22d3bf">gaussians</code>。<b>該型別的唯一入口</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">gaussians</code> は台帳で <code style="color:#22d3bf">fuse3d.to_points</code> が食う型だが、<b>産む op が 1 つも無かった</b>(実測)—— 消費側だけがある型は、生成器を種として置かない限り一度も実行されない。ここでは 3D Gaussian Splatting の初期化と同じやり方で</p>
-<p>作る: 各点の k 近傍までの<b>平均距離</b>を sigma、重みを 1/N の等分にする。</p>
-<p><code style="color:#22d3bf">mu</code> は入力点そのものなので <code style="color:#22d3bf">gaussians_to_points</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。sigma と w は往復で戻らない —— 点群にはもともと無かった量だからで、これは損失ではなく<b>追加</b>である。</p>
+<p><code style="color:#22d3bf">gaussians</code> 是台帳中 <code style="color:#22d3bf">fuse3d.to_points</code> 消費的型別,但<b>產生它的 op 1 個也沒有</b>(實測)—— 只有消費端的型別,除非把產生器當作種子放置,否則一次也不會被執行。這裡以與 3D Gaussian Splatting 初始化相同的方式</p>
+<p>產生: 以各點到 k 近鄰的<b>平均距離</b>為 sigma,權重為 1/N 均分。</p>
+<p><code style="color:#22d3bf">mu</code> 就是輸入點本身,因此與 <code style="color:#22d3bf">gaussians_to_points</code> 往返 <b>bit 一致</b>(實測 max|Δ| = 0.0)。sigma 和 w 往返後不會還原 —— 因為它們是點雲原本就沒有的量,所以這不是損失而是<b>追加</b>。</p>
 <p>Args:</p>
 <p>points: (N, 3)。N &gt;= 2。</p>
-<p>k: sigma を決める近傍数(既定 6)。N-1 を超えると N-1 に丸める。</p>
-<p>scale: sigma に掛ける係数(既定 1.0)。</p>
+<p>k: 決定 sigma 的近鄰數(預設 6)。超過 N-1 時截為 N-1。</p>
+<p>scale: 乘到 sigma 上的係數(預設 1.0)。</p>
 <p>Returns:</p>
 <p>dict(<code style="color:#22d3bf">mu</code> (N,3) / <code style="color:#22d3bf">sigma</code> (N,) / <code style="color:#22d3bf">w</code> (N,))。</p>
 <p>Raises:</p>
-<p>ValueError: N &lt; 2 / k &lt; 1 / scale &lt;= 0 / 形状不正 / 非有限。</p>
+<p>ValueError: N &lt; 2 / k &lt; 1 / scale &lt;= 0 / 形狀不正確 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

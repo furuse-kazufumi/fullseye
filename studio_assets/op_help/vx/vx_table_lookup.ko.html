@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_table_lookup(image, table, *, offset=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import vxcore; vxcore.vx_table_lookup(image, table, *, offset=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvx.get(&quot;vx_table_lookup&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표 참조(3.47절): 출력 = table[화소값 + offset] (REQ-0421). U8과 S16을 받는다(REQ-0422). 출력의 dtype은 표의 dtype.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*offset*: S16 の表は負の画素値を引くために中央を 0 に置く(VX_LUT_OFFSET、典型は 32768)。U8 は 0。★表の外を引く画素があれば止める(黙って端に寄せない)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像が U8/S16 の 2-D でない / 表が 1-D でない・空 / 表の外を引く画素がある。</p>
+<p>*offset*: S16 의 표는 음의 화소값을 찾기 위해 중앙을 0 으로 둔다(VX_LUT_OFFSET, 전형적으로 32768). U8 은 0. ★표 바깥을 찾는 화소가 있으면 멈춘다(조용히 끝으로 붙이지 않는다).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 영상이 U8/S16 의 2-D 가 아니다 / 표가 1-D 가 아니다 · 비었다 / 표 바깥을 찾는 화소가 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

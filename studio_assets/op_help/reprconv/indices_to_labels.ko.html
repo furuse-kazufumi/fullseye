@@ -4,15 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.indices_to_labels(indices)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.indices_to_labels(indices)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;indices_to_labels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>인덱스 <code style="color:#22d3bf">(N,)</code> → 선택 마스크 <code style="color:#22d3bf">labels</code>. <code style="color:#22d3bf">indices</code> 의 출구(<b>가역</b>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">max(indices) + 1</code> 長の 1-D ラベル配列を作り、選ばれた位置に 1 を置く。<code style="color:#22d3bf">indices -&gt; labels -&gt; indices</code> は <b>bit 一致</b>(重複と順序を除く)。逆向き <code style="color:#22d3bf">labels -&gt; indices -&gt; labels</code> は<b>末尾の背景を落とす</b> (長さが <code style="color:#22d3bf">max_index + 1</code> に切り詰まる)—— これは情報の損失であって</p>
-<p>バグではないので、<code style="color:#22d3bf">labels_to_indices</code> の docstring に量を書いてある。</p>
+<p><code style="color:#22d3bf">max(indices) + 1</code> 길이의 1-D 라벨 배열을 만들고, 선택된 위치에 1 을 둔다. <code style="color:#22d3bf">indices -&gt; labels -&gt; indices</code> 는 <b>bit 일치</b>(중복과 순서를 제외하고). 역방향 <code style="color:#22d3bf">labels -&gt; indices -&gt; labels</code> 는 <b>끝의 배경을 떨어뜨린다</b> (길이가 <code style="color:#22d3bf">max_index + 1</code> 로 잘린다) —— 이는 정보의 손실이지버그가 아니므로, <code style="color:#22d3bf">labels_to_indices</code> 의 docstring 에 양을 적어 두었다.</p>
 <p>Args:</p>
-<p>indices: (N,) の非負整数配列。</p>
+<p>indices: (N,) 의 음이 아닌 정수 배열.</p>
 <p>Returns:</p>
-<p>(max + 1,) の int64 ラベル配列(選択 = 1、背景 = 0)。</p>
+<p>(max + 1,) 의 int64 라벨 배열(선택 = 1, 배경 = 0).</p>
 <p>Raises:</p>
-<p>ValueError: 1-D でない / 負 / 空 / 上限超。</p>
+<p>ValueError: 1-D 가 아니다 / 음수 / 비었다 / 상한 초과.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

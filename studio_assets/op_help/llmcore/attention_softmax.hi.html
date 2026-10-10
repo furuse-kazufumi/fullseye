@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;attention_softmax&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>एक बार में attention (reference implementation) → tokens। <b>इस family के मिलान का आधार</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>(T, T) のスコア行列を実際に作ってから softmax する、いちばん素直な書き方。<code style="color:#22d3bf">attention_tiled</code> / <code style="color:#22d3bf">attention_linear</code> / <code style="color:#22d3bf">attention_grouped</code> はこれと一致することで正しさを示す。</p>
+<p>(T, T) score matrix को सच में बनाकर फिर softmax करना, लिखने का सबसे सीधा तरीका। <code style="color:#22d3bf">attention_tiled</code> / <code style="color:#22d3bf">attention_linear</code> / <code style="color:#22d3bf">attention_grouped</code> इससे मेल खाकर अपनी सही होने को दिखाते हैं।</p>
 <p>Args:</p>
-<p>query: (T, d) float。</p>
-<p>key: (S, d) float。</p>
-<p>value: (S, dv) float。</p>
-<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) の bool 配列。</p>
-<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅。</p>
-<p>scale: スコアの倍率。None なら 1/√d。</p>
+<p>query: (T, d) float।</p>
+<p>key: (S, d) float।</p>
+<p>value: (S, dv) float।</p>
+<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) का bool array।</p>
+<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> होने पर window की चौड़ाई।</p>
+<p>scale: score का गुणक। None हो तो 1/√d।</p>
 <p>Returns:</p>
-<p>tokens (T, dv) float: 注意で混ぜた列。</p>
+<p>tokens (T, dv) float: attention से मिलाई गई sequence।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.label_points(img, points, labels=None, color=&#x27;reference&#x27;, font_size=12, pad=3, marker_size=0, scheme=&#x27;okabe_ito&#x27;, allow_overlap=False, **text_kw)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.label_points(img, points, labels=None, color=&#x27;reference&#x27;, font_size=12, pad=3, marker_size=0, scheme=&#x27;okabe_ito&#x27;, allow_overlap=False, **text_kw)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;label_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Nummeriert oder beschriftet eine Punktmenge. <b>Überlappungsfrei platziert</b> (sonst eine Ausnahme).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : (N,2)</p>
-<p><b>(x,y)</b> の点列。</p>
+<p>Folge von <b>(x,y)</b>-Punkten.</p>
 <p>labels : sequence or None</p>
-<p>各点の文字。None なら 1 始まりの番号。</p>
+<p>Text für jeden Punkt. Bei None Nummern ab 1.</p>
 <p>marker_size : int</p>
-<p>0 より大きければ各点に十字マーカーも打つ。</p>
+<p>Ist er größer als 0, wird an jedem Punkt zusätzlich ein Kreuz-Marker gesetzt.</p>
 <p>allow_overlap : bool</p>
-<p>True なら重なりを許して最初の候補に置く(既定は False = 例外)。</p>
+<p>Bei True werden Überlappungen erlaubt und das Label an den ersten Kandidaten gesetzt (Standard ist False = Exception).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点が空 / 非有限 / labels の数が合わない / どの候補位置でも</p>
-<p>既存のラベルと重なる(<code style="color:#22d3bf">allow_overlap=False</code> のとき)。</p>
+<p>keine Punkte / nicht endlich / Anzahl der labels passt nicht / an jeder Kandidatenposition</p>
+<p>Überlappung mit einem bestehenden Label (bei <code style="color:#22d3bf">allow_overlap=False</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

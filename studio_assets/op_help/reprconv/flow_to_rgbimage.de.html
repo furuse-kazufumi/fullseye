@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_to_rgbimage(flow, index=None, scale=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.flow_to_rgbimage(flow, index=None, scale=None)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;flow_to_rgbimage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Schicht eines dichten Szenenflusses → ein <code style="color:#22d3bf">rgbimage</code> mit Farbton = Richtung und Hellwert = Geschwindigkeit.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>光学フローの標準的な可視化(色相環)を 3-D フローの z スライスに当てる:</p>
-<p><code style="color:#22d3bf">hue = atan2(dy, dx)</code>(度で 0-360)、<code style="color:#22d3bf">value = |(dy, dx)| / scale</code>、彩度は 1。<b>dz は捨てる</b> —— 面内成分だけの図であることを明示する(捨てた成分を色に混ぜると「見えている色が何の量か」が誰にも言えなくなる)。</p>
-<p><b>一方向</b>。色相環の凡例は図の側で必ず一緒に焼くこと(色の意味が書いていないフロー図は、綺麗なだけで読めない)。</p>
+<p>Wendet die Standardvisualisierung des optischen Flusses (Farbkreis) auf eine z-Scheibe eines 3-D-Flusses an:</p>
+<p><code style="color:#22d3bf">hue = atan2(dy, dx)</code> (in Grad, 0-360), <code style="color:#22d3bf">value = |(dy, dx)| / scale</code>, Sättigung 1. <b>dz wird verworfen</b> -- das macht explizit, dass die Abbildung nur die Komponenten in der Ebene zeigt (mischte man die verworfene Komponente in die Farbe, könnte niemand mehr sagen, &quot;welche Größe die sichtbare Farbe ist&quot;).</p>
+<p><b>Einseitig</b>. Die Farbkreis-Legende unbedingt mit in die Abbildung einbrennen (eine Flussabbildung, auf der die Bedeutung der Farben nicht steht, ist nur hübsch und nicht lesbar).</p>
 <p>Args:</p>
-<p>flow: (3, D, H, W)。</p>
-<p>index: 取り出す z スライス(既定 = 中央)。</p>
-<p>scale: 明度 1.0 に対応する面内速さ(既定 = そのスライスの最大値。</p>
-<p>0 なら全面黒を返す)。</p>
+<p>flow: (3, D, H, W).</p>
+<p>index: zu entnehmende z-Scheibe (Standard = Mitte).</p>
+<p>scale: Geschwindigkeit in der Ebene, die Helligkeit 1.0 entspricht (Standard = Maximum dieser Scheibe.</p>
+<p>Bei 0 wird ein vollständig schwarzes Bild zurückgegeben).</p>
 <p>Returns:</p>
-<p>(H, W, 3) float64、値域 [0, 1]。</p>
+<p>(H, W, 3) float64, Wertebereich [0, 1].</p>
 <p>Raises:</p>
-<p>ValueError: 密フローでない / index が範囲外 / scale &lt;= 0。</p>
+<p>ValueError: kein dichter Fluss / index außerhalb des Bereichs / scale &lt;= 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

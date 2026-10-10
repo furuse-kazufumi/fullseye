@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import llmcore; llmcore.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_softmax&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>一次性计算的注意力(参考实现)→ tokens。<b>本族核对答案的基准</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>(T, T) のスコア行列を実際に作ってから softmax する、いちばん素直な書き方。<code style="color:#22d3bf">attention_tiled</code> / <code style="color:#22d3bf">attention_linear</code> / <code style="color:#22d3bf">attention_grouped</code> はこれと一致することで正しさを示す。</p>
+<p>实际构造出 (T, T) 的分数矩阵再做 softmax,是最直白的写法。<code style="color:#22d3bf">attention_tiled</code> / <code style="color:#22d3bf">attention_linear</code> / <code style="color:#22d3bf">attention_grouped</code> 通过与它一致来证明自身的正确性。</p>
 <p>Args:</p>
 <p>query: (T, d) float。</p>
 <p>key: (S, d) float。</p>
 <p>value: (S, dv) float。</p>
-<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) の bool 配列。</p>
-<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅。</p>
-<p>scale: スコアの倍率。None なら 1/√d。</p>
+<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) 的 bool 数组。</p>
+<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> 时的窗口宽度。</p>
+<p>scale: 分数的倍率。None 则为 1/√d。</p>
 <p>Returns:</p>
-<p>tokens (T, dv) float: 注意で混ぜた列。</p>
+<p>tokens (T, dv) float: 用注意力混合后的序列。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

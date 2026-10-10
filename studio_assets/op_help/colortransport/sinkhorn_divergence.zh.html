@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)</code>(要直接调用实现,<code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_divergence(a, b, cost, cost_aa=None, cost_bb=None, reg=0.05, **kw)</code>;从台账取用则 <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_divergence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>去偏</b>的 Sinkhorn 距离(Genevay, Peyré &amp; Cuturi, AISTATS 2018)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">S(a,b) - (S(a,a) + S(b,b)) / 2</code>。<code style="color:#22d3bf">sinkhorn_distance</code> は正則化のぶん系統的に上振れし、<b>自分自身との「距離」が 0 にならない</b>(実測 reg=0.2 で 0.05 超)。同じ偏りを自分自身との距離から引くと相殺され、<b>自分自身との値が 0 に戻る</b> ―― TRIZ でいう釣り合い(反作用で打ち消す)そのもの。</p>
-<p><code style="color:#22d3bf">cost_aa</code> / <code style="color:#22d3bf">cost_bb</code> は <code style="color:#22d3bf">a</code> 同士・<code style="color:#22d3bf">b</code> 同士の費用行列。1 点集合を自分自身と比べる意味なので、<b>省略すると <code style="color:#22d3bf">cost</code> が正方のときだけ</b> それを流用する(非正方で省略したら例外 ―― 適当な行列で埋めると、引き算する量が別物になり、打ち消したつもりで別の偏りが載る)。</p>
+<p><code style="color:#22d3bf">S(a,b) - (S(a,a) + S(b,b)) / 2</code>。<code style="color:#22d3bf">sinkhorn_distance</code> 因正则化而系统性偏高,<b>与自身的“距离”不为 0</b>(实测 reg=0.2 时超过 0.05)。从与自身的距离中减去同样的偏差即可抵消,<b>与自身的值回到 0</b> —— 正是 TRIZ 所说的平衡(用反作用抵消)。</p>
+<p><code style="color:#22d3bf">cost_aa</code> / <code style="color:#22d3bf">cost_bb</code> 是 <code style="color:#22d3bf">a</code> 与 <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 与 <code style="color:#22d3bf">b</code> 之间的费用矩阵。含义是把 1 个点集与自身比较,所以<b>省略时仅当 <code style="color:#22d3bf">cost</code> 为方阵时</b> 才沿用它(非方阵时省略则抛出异常 —— 若随便填一个矩阵, 相减的量就成了别的东西,自以为抵消了却叠加了另一种偏差)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 测色与光谱知识 —— 颜色只由“光谱 × 光源 × 观察者”决定</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polar_to_cscalar(pairs)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.polar_to_cscalar(pairs)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;polar_to_cscalar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>polar रूप <code style="color:#22d3bf">pairs (1,2) = [r, theta [deg]]</code> → complex scalar। <code style="color:#22d3bf">cscalar_to_polar</code> का उल्टा।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>pairs: (1, 2)。r &gt;= 0。</p>
+<p>pairs: (1, 2)। r &gt;= 0।</p>
 <p>Returns:</p>
-<p>complex。</p>
+<p>complex।</p>
 <p>Raises:</p>
-<p>ValueError: 形状が (1,2) でない / r &lt; 0 / 非有限。</p>
+<p>ValueError: shape (1,2) नहीं / r &lt; 0 / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

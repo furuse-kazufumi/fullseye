@@ -4,42 +4,41 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;measure_text&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>글자를 <b>그리기 전에</b> 잽니다. 들어가지 않으면 접거나 줄이고, 그래도 안 되면 예외.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>text : str</p>
-<p>測る文字列(<code style="color:#22d3bf">\n</code> で改行)。</p>
+<p>잴 문자열(<code style="color:#22d3bf">\n</code>으로 줄바꿈).</p>
 <p>font_size : int</p>
-<p>希望のサイズ。<code style="color:#22d3bf">max_width</code> に入らなければ 1pt ずつ縮める。</p>
+<p>희망 크기. <code style="color:#22d3bf">max_width</code>에 들어가지 않으면 1pt씩 줄인다.</p>
 <p>font_path : str or None</p>
-<p>明示すると機械をまたいでも同じ結果になる。None は <code style="color:#22d3bf">FONT_CANDIDATES</code></p>
-<p>を固定順で探す。</p>
+<p>명시하면 기계를 넘나들어도 같은 결과가 된다. None은 <code style="color:#22d3bf">FONT_CANDIDATES</code></p>
+<p>를 고정 순서로 찾는다.</p>
 <p>max_width : int or None</p>
-<p>入れたい幅[px]。None なら縮小も折り返しもしない。</p>
+<p>넣고 싶은 폭[px]. None이면 축소도 줄바꿈도 하지 않는다.</p>
 <p>min_font_size : int</p>
-<p>ここまで縮めても入らなければ <b>ValueError</b>(黙って切らない)。</p>
+<p>여기까지 줄여도 들어가지 않으면 <b>ValueError</b>(조용히 자르지 않는다).</p>
 <p>line_spacing : float</p>
-<p>行送り係数。</p>
+<p>행간 계수.</p>
 <p>bold, italic : bool or int</p>
-<p><b>合成</b>の太字・斜体(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。本物の</p>
-<p>Bold / Italic 書体ではないので字形は違う ―― 本物が要るときは</p>
-<p><code style="color:#22d3bf">font_path</code> にその書体のファイルを渡すこと。<code style="color:#22d3bf">bold</code> に整数を渡すと</p>
-<p>重ね打ちの回数を直に指定できる。<b>太さと傾きのぶんは <code style="color:#22d3bf">width</code> に入る</b></p>
-<p>ので、板や表の桁はそのまま広がる(重ね打ちは横にだけ太るので</p>
-<p><code style="color:#22d3bf">height</code> は変わらない)。</p>
+<p><b>합성</b>의 굵게·기울임(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>). 진짜</p>
+<p>Bold / Italic 서체가 아니므로 자형은 다르다 —— 진짜가 필요할 때는</p>
+<p><code style="color:#22d3bf">font_path</code>에 그 서체의 파일을 넘길 것. <code style="color:#22d3bf">bold</code>에 정수를 넘기면</p>
+<p>겹쳐 찍기 횟수를 직접 지정할 수 있다. <b>굵기와 기울기만큼은 <code style="color:#22d3bf">width</code>에 들어간다</b></p>
+<p>따라서 판이나 표의 칸은 그대로 넓어진다(겹쳐 찍기는 가로로만 굵어지므로</p>
+<p><code style="color:#22d3bf">height</code>는 변하지 않는다).</p>
 <p>wrap : bool</p>
-<p>True(既定)なら <code style="color:#22d3bf">max_width</code> で<b>折り返す</b>。False なら折り返さず</p>
-<p><b>行を増やさずフォントを縮めて</b>収める(格子のラベルのように、2 行に</p>
-<p>なると版が崩れる場所で使う ―― <code style="color:#22d3bf">exhibit_tile._fit_label</code> と同じ流儀)。</p>
-<p>どちらでも <code style="color:#22d3bf">min_font_size</code> まで来て入らなければ例外。</p>
-<p><code style="color:#22d3bf">\n</code> の改行は <code style="color:#22d3bf">max_width</code> の有無・<code style="color:#22d3bf">wrap</code> の値に<b>よらず常に</b>効く</p>
-<p>(幅を与えないと 1 行に潰れる、という事故は起きない)。</p>
+<p>True(기본값)이면 <code style="color:#22d3bf">max_width</code>에서 <b>줄바꿈한다</b>. False이면 줄바꿈하지 않고</p>
+<p><b>행을 늘리지 않고 폰트를 줄여</b> 맞춘다(격자의 라벨처럼, 2행이</p>
+<p>되면 판이 무너지는 곳에서 사용 —— <code style="color:#22d3bf">exhibit_tile._fit_label</code>과 같은 방식).</p>
+<p>어느 쪽이든 <code style="color:#22d3bf">min_font_size</code>까지 와서 들어가지 않으면 예외.</p>
+<p><code style="color:#22d3bf">\n</code>의 줄바꿈은 <code style="color:#22d3bf">max_width</code>의 유무·<code style="color:#22d3bf">wrap</code>의 값에 <b>관계없이 항상</b> 효과가 있다</p>
+<p>(폭을 주지 않으면 1행으로 뭉개진다는 사고는 일어나지 않는다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;lines&quot;, &quot;font&quot;, &quot;font_size&quot;, &quot;width&quot;, &quot;height&quot;, &quot;line_height&quot;}</code>。</p>
-<p><code style="color:#22d3bf">width</code>/<code style="color:#22d3bf">height</code> は実測[px]。</p>
+<p><code style="color:#22d3bf">{&quot;lines&quot;, &quot;font&quot;, &quot;font_size&quot;, &quot;width&quot;, &quot;height&quot;, &quot;line_height&quot;}</code>.</p>
+<p><code style="color:#22d3bf">width</code>/<code style="color:#22d3bf">height</code>는 실측[px].</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">max_width</code> が非正 / <code style="color:#22d3bf">min_font_size</code> まで縮めても 1 行が入らない。</p>
+<p><code style="color:#22d3bf">max_width</code>가 양이 아님 / <code style="color:#22d3bf">min_font_size</code>까지 줄여도 1행이 들어가지 않음.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

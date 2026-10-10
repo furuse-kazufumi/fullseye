@@ -4,16 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_magnitude(flow)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.flow_magnitude(flow)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;flow_magnitude&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Dichter Szenenfluss <code style="color:#22d3bf">(3,D,H,W)</code> → ein Geschwindigkeitsvolumen <code style="color:#22d3bf">voxel (D,H,W)</code>. Der Ausgang aus <code style="color:#22d3bf">flow</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">sqrt(dz^2 + dy^2 + dx^2)</code>。<b>一方向</b>(向きを捨てるので戻せない)。</p>
-<p>捨てた量は明示できる: 3 成分のうち 2 自由度ぶんの方向が消え、残るのは</p>
-<p>大きさだけ。方向まで見たいときは <code style="color:#22d3bf">flow_to_rgbimage</code>。</p>
+<p><code style="color:#22d3bf">sqrt(dz^2 + dy^2 + dx^2)</code>. <b>Einseitig</b> (die Richtung wird verworfen, daher nicht umkehrbar). Das Verworfene lässt sich explizit benennen: Von den 3 Komponenten verschwindet die Richtung im Umfang von 2 Freiheitsgraden, übrig bleibt nur der Betrag. Wer auch die Richtung sehen will: <code style="color:#22d3bf">flow_to_rgbimage</code>.</p>
 <p>Args:</p>
-<p>flow: (3, D, H, W)。成分順は (dz, dy, dx)(<code style="color:#22d3bf">scene_flow_lk</code> の約束)。</p>
+<p>flow: (3, D, H, W). Komponentenreihenfolge (dz, dy, dx) (Konvention von <code style="color:#22d3bf">scene_flow_lk</code>).</p>
 <p>Returns:</p>
-<p>(D, H, W) float64。</p>
+<p>(D, H, W) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 密フローでない / 非有限。</p>
+<p>ValueError: kein dichter Fluss / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

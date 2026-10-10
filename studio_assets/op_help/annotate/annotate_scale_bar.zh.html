@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_scale_bar(img, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, color=&#x27;neutral&#x27;, thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.annotate_scale_bar(img, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, color=&#x27;neutral&#x27;, thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_scale_bar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回图像(image2d):在角落放置取整长度的比例尺(带数值与单位)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">scale_bar</code> は長さを<b>呼び手が決める</b>のに対し、こちらは画素分解能から長さを選ぶ(<code style="color:#22d3bf">annotate_scale_bar_layout</code>)。上隅では文字をバーの下に、下隅では上に置く。</p>
+<p><code style="color:#22d3bf">scale_bar</code> 的长度<b>由调用方决定</b>,而本函数根据像素分辨率选择长度(<code style="color:#22d3bf">annotate_scale_bar_layout</code>)。在上方角落文字放在比例尺下方, 在下方角落放在上方。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_scale_bar_layout</code> と同じ + 文字が画像に収まらない。</p>
+<p>与 <code style="color:#22d3bf">annotate_scale_bar_layout</code> 相同 + 文字放不进图像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

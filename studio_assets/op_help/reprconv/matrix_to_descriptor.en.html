@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matrix_to_descriptor(matrix)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.matrix_to_descriptor(matrix)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_descriptor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><code style="color:#22d3bf">matrix</code> → descriptor. The inverse of <code style="color:#22d3bf">descriptor_to_matrix</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>1 行の行列 (1, n) は (n,) へ戻す(それが元の 1-D 記述子だから)。2 行以上はそのまま。<b>この非対称は意図的</b>で、これが無いと <code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code> の往復が (n,) から (1,n) へ静かに形を変える = 型の嘘そのものになる。</p>
-<p>★<b>測って残す非可逆点</b>: そのぶん、元から <b>(1, n) の 2-D だった記述子</b>は往復で (n,) の 1-D になる —— (1,n) の行列は「1-D 記述子を包んだもの」と「行が 1 本しかない記述子束」の区別を持たないので、<b>この 1 ケースだけは原理的に戻せない</b>。値は全て保存されるので損失は「行が 1 本だった」というメタ情報のみ。どちらを非可逆にするか選ばされる状況で、<code style="color:#22d3bf">descriptor</code> の圧倒的多数(実測 14 producers 中 12 が 1-D)を厳密側に倒した。<code style="color:#22d3bf">tests/test_reprconv.py::test_one_row_descriptor_ambiguity_is_documented</code> がこの穴を<b>塞がずに固定</b>している(隠すと、いつか黙って形が変わる)。</p>
+<p>A 1-row matrix (1, n) goes back to (n,) (because that is the original 1-D descriptor). 2 or more rows pass unchanged. <b>This asymmetry is intentional</b>: without it, the round trip <code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code> would silently change shape from (n,) to (1,n) = a type lie in its purest form.</p>
+<p>★ <b>An irreversible point that is measured and kept</b>: in exchange, a descriptor <b>that was originally a 2-D (1, n)</b> becomes a 1-D (n,) after the round trip -- a (1,n) matrix has no way to distinguish &quot;a wrapped 1-D descriptor&quot; from &quot;a descriptor bundle with only 1 row&quot;, so <b>this 1 case alone cannot in principle be restored</b>. All values are kept, so the loss is only the meta-information &quot;there was 1 row&quot;. Forced to choose which side becomes irreversible, the overwhelming majority of <code style="color:#22d3bf">descriptor</code> (measured: 12 of 14 producers are 1-D) was put on the exact side. <code style="color:#22d3bf">tests/test_reprconv.py::test_one_row_descriptor_ambiguity_is_documented</code> pins this hole <b>without plugging it</b> (hide it, and one day the shape will silently change).</p>
 <p>Args:</p>
-<p>matrix: (m, n) の実配列。</p>
+<p>matrix: (m, n) real array.</p>
 <p>Returns:</p>
-<p>m == 1 なら (n,)、それ以外は (m, n)。</p>
+<p>(n,) if m == 1, otherwise (m, n).</p>
 <p>Raises:</p>
-<p>ValueError: 2-D でない / 非有限。</p>
+<p>ValueError: not 2-D / non-finite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

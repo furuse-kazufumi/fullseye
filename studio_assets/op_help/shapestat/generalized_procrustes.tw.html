@@ -4,10 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.generalized_procrustes(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import shapestats; shapestats.generalized_procrustes(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>;從台帳取用則 <code style="color:#22d3bf">opsshapestat.get(&quot;generalized_procrustes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>廣義 Procrustes 分析(GPA)。將所有個體放入共同的座標框架。→ <code style="color:#22d3bf">(K, N, 3)</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>手順は教科書どおり: 1 個体を仮の平均にして全員を合わせ、平均を取り直し、その平均を<b>最初の個体に合わせ直して</b>枠の漂流を止め、収束まで繰り返す。最後の一手が無いと平均が毎回ゆっくり回り、<code style="color:#22d3bf">tol</code> に到達しない。</p>
-<p>収束の判定は平均形状の移動量(点ごと RMS)。反復数と収束の可否は <code style="color:#22d3bf">shape_mean</code> ではなくこちらには返らない —— 群を返す関数なので、</p>
-<p>診断が要るときは前後で <code style="color:#22d3bf">procrustes_distance</code> を測ること。</p>
+<p>步驟與教科書一致:以 1 個個體為暫定平均，將所有個體對齊，重新求平均，再把該平均<b>重新對齊到第一個個體</b>以阻止座標框漂移，重複直到收斂。缺少最後這一步，平均每次都會緩慢旋轉，達不到 <code style="color:#22d3bf">tol</code>。</p>
+<p>收斂判定依據平均形狀的移動量(逐點 RMS)。迭代次數與是否收斂</p>
+<p>既不由 <code style="color:#22d3bf">shape_mean</code> 也不由本函式回傳 —— 因為它是回傳群體的函式，</p>
+<p>需要診斷時，請在前後量測 <code style="color:#22d3bf">procrustes_distance</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

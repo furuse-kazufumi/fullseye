@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.create_metrology_model() -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metrology; metrology.create_metrology_model() -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;create_metrology_model&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>빈 계측 모델을 만든다(create_metrology_model).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返り値は <code style="color:#22d3bf">{&quot;objects&quot;: []}</code> の dict(<code style="color:#22d3bf">metrologymodel</code> 型)。ここに <code style="color:#22d3bf">add_metrology_object_line_measure</code> / <code style="color:#22d3bf">..._circle_measure</code> / <code style="color:#22d3bf">..._rectangle2_measure</code> / <code style="color:#22d3bf">..._ellipse_measure</code> / <code style="color:#22d3bf">..._generic</code> で参照形状を積み、<code style="color:#22d3bf">apply_metrology_model(model, image)</code> で一括計測する。</p>
-<p style="margin:2px 0 2px 12px">• 引数は無い。画像サイズや座標系はモデルに持たず、<code style="color:#22d3bf">apply</code> 時の画像で決まる。</p>
-<p style="margin:2px 0 2px 12px">• 各 <code style="color:#22d3bf">add_*</code> は <b>この dict をその場で書き換え</b>、追加した位置(0 始まり)を返す。<code style="color:#22d3bf">apply_metrology_model</code> の結果 list はこの順に並ぶ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> は書き換えず、平行移動した新しいモデルを返す。</p>
-<p>座標は (row, col) [px]、角度 <code style="color:#22d3bf">phi</code> は col 軸から row 軸(画像下向き)へ測ったラジアン。この規約はモデル全体で共通。</p>
+<p>반환값은 <code style="color:#22d3bf">{&quot;objects&quot;: []}</code> 의 dict(<code style="color:#22d3bf">metrologymodel</code> 형). 여기에 <code style="color:#22d3bf">add_metrology_object_line_measure</code> / <code style="color:#22d3bf">..._circle_measure</code> / <code style="color:#22d3bf">..._rectangle2_measure</code> / <code style="color:#22d3bf">..._ellipse_measure</code> / <code style="color:#22d3bf">..._generic</code> 으로참조 형상을 쌓고, <code style="color:#22d3bf">apply_metrology_model(model, image)</code> 로 일괄 계측한다.</p>
+<p style="margin:2px 0 2px 12px">• 인수는 없다. 영상 크기나 좌표계는 모델에 갖지 않으며, <code style="color:#22d3bf">apply</code> 시의 영상으로 정해진다.</p>
+<p style="margin:2px 0 2px 12px">• 각 <code style="color:#22d3bf">add_*</code> 는 <b>이 dict 를 제자리에서 수정하고</b>, 추가한 위치(0 시작)를반환한다. <code style="color:#22d3bf">apply_metrology_model</code> 의 결과 list 는 이 순서로 나열된다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> 은 수정하지 않고, 평행이동한 새 모델을 반환한다.</p>
+<p>좌표는 (row, col) [px], 각도 <code style="color:#22d3bf">phi</code> 는 col 축에서 row 축(영상 아래 방향)으로 잰라디안. 이 규약은 모델 전체에서 공통.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

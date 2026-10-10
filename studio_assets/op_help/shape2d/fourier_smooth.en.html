@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fourier_smooth(points, keep)</code> (to call the implementation directly, <code style="color:#22d3bf">import fourierdesc; fourierdesc.fourier_smooth(points, keep)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;fourier_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Smooths a contour by band-limiting it with a complex FFT.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>輪郭を複素信号 z(t)=x(t)+i·y(t) と見て FFT し、低周波 <code style="color:#22d3bf">keep</code> 本(と対称成分) だけ残して逆変換する。keep が小さいほど滑らか(高周波=細部/ノイズを落とす)。keep が全周波数以上なら恒等。返り値は入力と同点数の (N,2)。</p>
+<p>Treats the contour as the complex signal z(t)=x(t)+i·y(t), applies an FFT, keeps only the <code style="color:#22d3bf">keep</code> low frequencies (and their symmetric components), and transforms back. The smaller keep is, the smoother (high frequencies = detail/noise are dropped). If keep is at least the total number of frequencies, it is the identity. Returns (N,2) with the same number of points as the input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳表(dict):沿折線逐字的位置與傾角(按弧長確定)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>文字 i の中心は弧長 <code style="color:#22d3bf">s_i = s0 + Σ_{j&lt;i} a_j*spacing + a_i/2</code>、傾きはその位置の線分の接線角(画面座標、度)。経路より長い文字列は ValueError。</p>
-<p><b>位置の決め方</b>(2026-09-08 に追加。既定はそれまでの動作と同じ):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">anchor</code> —— 経路に沿ったそろえ方。<code style="color:#22d3bf">&quot;start&quot;</code>(既定・従来どおり)/ <code style="color:#22d3bf">&quot;center&quot;</code>(経路の中央にそろえる)/ <code style="color:#22d3bf">&quot;end&quot;</code>(終端にそろえる)。<code style="color:#22d3bf">start</code> はアンカーで決めた位置から<b>さらにずらす</b>量として効く。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">offset</code> —— 経路に<b>垂直</b>なずらし [px]。正が<b>進行方向の右</b> (画面座標。y が下向きなので、左→右に進む文字なら「下」)。線に触れさせずに脇へ置く用途。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">\n</code> で<b>改行</b>。2 行目以降は <code style="color:#22d3bf">line_spacing</code> を掛けた行高だけ <code style="color:#22d3bf">offset</code> と同じ向き(進行方向の右)へずれる。★この 1 つの規則で、横書きは「下へ」、縦書きは「左へ」と<b>どちらも組版どおり</b>になる(縦書きは進行方向が下なので、その右は画面の左)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">upright</code> —— 字を接線角に回さず<b>正立</b>させる。経路が主に縦向き(始点→終点の |dy| &gt; |dx|)なら送りを字幅でなく<b>字高</b>にするので、これが<b>縦書き</b>になる。<code style="color:#22d3bf">VERTICAL_ROTATED_CHARS</code> の字だけは 90 度回す。</p>
-<p>句読点(<code style="color:#22d3bf">、。，．</code>)は縦組みの作法どおり<b>右上へ寄せる</b> (<code style="color:#22d3bf">VERTICAL_SHIFTED_CHARS</code>、寄せ量は送りの <code style="color:#22d3bf">_VPUNCT_SHIFT</code> 倍)。Windows の <code style="color:#22d3bf">@</code> 付きフォントが font 側でやっていたことを、ここでは合成で行う —— Pillow はフォントをファイルパスで開くので <code style="color:#22d3bf">@</code> の顔に到達できず、HarfBuzz の <code style="color:#22d3bf">direction=&quot;ttb&quot;</code> も Raqm の有無で結果が変わるため、<b>プラットフォームで揃うほう</b>を採った。</p>
-<p>★<b>縦書きで実装していないこと</b>(黙って近似しない): 小書き仮名の位置補正、縦中横、行末の禁則。短い注記のための機能で、本文組版ではない。</p>
+<p>第 i 個字元的中心位於弧長 <code style="color:#22d3bf">s_i = s0 + Σ_{j&lt;i} a_j*spacing + a_i/2</code> 處,傾斜為該位置線段的切線角(螢幕座標,度)。比路徑長的字串會引發 ValueError。</p>
+<p><b>位置的決定方式</b>(2026-09-08 新增。預設與此前的行為相同):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">anchor</code> —— 沿路徑的對齊方式。<code style="color:#22d3bf">&quot;start&quot;</code>(預設、與以往相同)/ <code style="color:#22d3bf">&quot;center&quot;</code>(對齊到路徑中央)/ <code style="color:#22d3bf">&quot;end&quot;</code>(對齊到終端)。<code style="color:#22d3bf">start</code> 作為從錨點決定的位置<b>再偏移</b>的量起作用。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">offset</code> —— 與路徑<b>垂直</b>的偏移 [px]。正方向為<b>前進方向的右側</b> (螢幕座標。y 朝下,所以對於從左→右排列的文字就是「下」)。用於不碰線而放在旁邊。</p>
+<p style="margin:2px 0 2px 12px">• 用 <code style="color:#22d3bf">\n</code> <b>換行</b>。第 2 行及以後按乘以 <code style="color:#22d3bf">line_spacing</code> 的行高, 向與 <code style="color:#22d3bf">offset</code> 相同的方向(前進方向的右側)偏移。★憑這 1 條規則, 橫排「向下」、直排「向左」,<b>都符合排版規範</b> (直排的前進方向朝下,所以它的右側就是螢幕的左側)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">upright</code> —— 不把字元轉到切線角,而是<b>保持正立</b>。若路徑主要為縱向(起點→終點的 |dy| &gt; |dx|),則步進量用<b>字高</b>而不是字寬, 這就成為<b>直排</b>。只有 <code style="color:#22d3bf">VERTICAL_ROTATED_CHARS</code> 中的字元旋轉 90 度。</p>
+<p>標點(<code style="color:#22d3bf">、。，．</code>)按直排的規範<b>向右上靠</b> (<code style="color:#22d3bf">VERTICAL_SHIFTED_CHARS</code>,偏移量為步進量的 <code style="color:#22d3bf">_VPUNCT_SHIFT</code> 倍)。Windows 中帶 <code style="color:#22d3bf">@</code> 的字型在字型端所做的事,這裡用合成來完成 —— Pillow 按檔案路徑開啟字型,無法到達 <code style="color:#22d3bf">@</code> 字面, HarfBuzz 的 <code style="color:#22d3bf">direction=&quot;ttb&quot;</code> 結果也會因有無 Raqm 而變化, 所以採用了<b>在各平台上一致的方式</b>。</p>
+<p>★<b>直排中未實作的內容</b>(不默默近似):小寫假名的位置修正、縱中橫、行末禁則。這是為簡短註記準備的功能,不是正文排版。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;chars&quot;: [{&quot;char&quot;,&quot;s&quot;,&quot;xy&quot;,&quot;angle_deg&quot;,&quot;width&quot;,&quot;advance&quot;,&quot;line&quot;}], &quot;length&quot;: 経路長, &quot;used&quot;: 最も長い行の**送りの合計**(従来どおり </code>Σ advance*spacing<code style="color:#22d3bf">), &quot;span&quot;: 最も長い行が**実際に占める**弧長(最後の字の後ろの送りを含まない —— アンカーはこちらで揃える), &quot;lines&quot;: 行数, &quot;line_height&quot;: 行送り [px], &quot;vertical&quot;: 縦書きか}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;chars&quot;: [{&quot;char&quot;,&quot;s&quot;,&quot;xy&quot;,&quot;angle_deg&quot;,&quot;width&quot;,&quot;advance&quot;,&quot;line&quot;}], &quot;length&quot;: 路徑長, &quot;used&quot;: 最長一行的**步進量總和**(與以往相同 </code>Σ advance*spacing<code style="color:#22d3bf">), &quot;span&quot;: 最長一行**實際佔據**的弧長(不含最後一個字元之後的步進量 —— 錨點按這個對齊), &quot;lines&quot;: 行數, &quot;line_height&quot;: 行距 [px], &quot;vertical&quot;: 是否直排}</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>文字が空、経路が 2 点未満か長さゼロ、非有限、行が経路より長い、</p>
-<p>アンカーと <code style="color:#22d3bf">start</code> の組み合わせで行が経路から外れる場合。</p>
+<p>文字為空、路徑少於 2 點或長度為零、非有限、某行比路徑長、</p>
+<p>錨點與 <code style="color:#22d3bf">start</code> 的組合使某行超出路徑的情況。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volcolor; volcolor.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_colorize_labels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3-D 레이블 볼륨 -&gt; <code style="color:#22d3bf">(D, H, W, 3)</code> float64 의 RGB 볼륨.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>「切ってから色を付ける」のではなく「<b>色を付けてから切る</b>」ための入口。ラベル <code style="color:#22d3bf">k</code> の色は <code style="color:#22d3bf">vol_label_palette</code> の行 <code style="color:#22d3bf">k</code> そのもので、<code style="color:#22d3bf">imgio.colorize_labels(labels, seed)</code> を同じ配列に対して呼んだ結果と <b>バイト単位で一致する</b>(<code style="color:#22d3bf">tests/test_volcolor.py</code> が固定)。</p>
-<p>切る順序が効くこと自体は <code style="color:#22d3bf">vol_label_color_flicker</code> が数える。実測(16 球・<code style="color:#22d3bf">(24, 48, 48)</code> の参照ファントム、<code style="color:#22d3bf">connectivity=26</code>、seed=0):</p>
-<p>スライスごとに色を付け直すと <b>24 スライス中 20 スライス</b>で少なくとも 1 成分の色が変わり、(成分, スライス) の変化は 108 組中 <b>62 件</b>、<b>16 成分すべて</b>が一度は色を変える。ボリュームで色を付けてから切ると 3 つとも 0。</p>
-<p>Raises <code style="color:#22d3bf">ValueError</code> on a non-3-D, float, or negative label volume, on a label</p>
-<p>over <code style="color:#22d3bf">MAX_LABELS</code>, or on more than <code style="color:#22d3bf">MAX_COLOR_VOXELS</code> voxels.</p>
+<p>&quot;자르고 나서 색을 칠한다&quot;가 아니라 &quot;<b>색을 칠하고 나서 자른다</b>&quot;를 위한 입구. 라벨 <code style="color:#22d3bf">k</code> 의 색은 <code style="color:#22d3bf">vol_label_palette</code> 의 행 <code style="color:#22d3bf">k</code> 그 자체이며, <code style="color:#22d3bf">imgio.colorize_labels(labels, seed)</code> 를 같은 배열에 대해 호출한 결과와 <b>바이트 단위로 일치한다</b>(<code style="color:#22d3bf">tests/test_volcolor.py</code> 가 고정).</p>
+<p>자르는 순서가 효과를 낸다는 것 자체는 <code style="color:#22d3bf">vol_label_color_flicker</code> 가 센다. 실측(16 구 · <code style="color:#22d3bf">(24, 48, 48)</code> 의 참조 팬텀, <code style="color:#22d3bf">connectivity=26</code>, seed=0):</p>
+<p>슬라이스마다 색을 다시 칠하면 <b>24 슬라이스 중 20 슬라이스</b>에서 적어도 1 성분의 색이 바뀌고, (성분, 슬라이스) 의 변화는 108 쌍 중 <b>62 건</b>, <b>16 성분 모두</b>가 한 번은 색을 바꾼다. 볼륨에서 색을 칠한 뒤 자르면 3 가지 모두 0.</p>
+<p>3-D 가 아니거나 float 이거나 음수인 라벨 볼륨, <code style="color:#22d3bf">MAX_LABELS</code> 를 넘는 라벨,</p>
+<p>또는 <code style="color:#22d3bf">MAX_COLOR_VOXELS</code> 개를 넘는 복셀에 대해 <code style="color:#22d3bf">ValueError</code> 를 낸다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

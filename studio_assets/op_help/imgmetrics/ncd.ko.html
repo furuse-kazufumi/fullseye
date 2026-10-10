@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;ncd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정규화 압축 거리(Li, Chen, Li, Ma &amp; Vitányi, IEEE TIT 50(12), 2004).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))</code>。同じものなら 0 に近づき、無関係なら 1 に近づく ―― ただし <b>実際の圧縮器は理想的な Kolmogorov 複雑度ではない</b>ので、同一入力でも厳密に 0 にはならない(ヘッダぶんの下駄がある)。その下駄の実測値はテストに残してある。</p>
-<p><b>生の float 配列は受け付けない。</b> 圧縮器はバイト列の繰り返しを見るので、値がごくわずか違うだけで float の仮数部が総取っ替えになり、<b>似ている 2 枚でも共通のバイト列が消える</b>。実測(2026-09-02、<code style="color:#22d3bf">linspace</code> の勾配とそれを +0.02 した絵、PSNR 34.0 dB = よく似ている):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">float64</code> のまま:8 バイト語の共有率 <b>0.02 %</b> → <b>NCD 1.0959</b> (「まったく無関係」と読める値。しかも 1 を超える)</p>
-<p style="margin:2px 0 2px 12px">• 256 段に量子化:<b>NCD 0.1290</b>(正しく「よく似ている」)</p>
-<p style="margin:2px 0 2px 12px">• 本当に無関係な 2 枚:<b>NCD 0.9981</b></p>
-<p>つまり float のまま測ると<b>例外なく逆の結論</b>が出る。よって float には <code style="color:#22d3bf">levels</code> の明示を要求する(<code style="color:#22d3bf">levels=256</code> なら <code style="color:#22d3bf">data_range</code> を 256 段に量子化してから測る)。整数 dtype はそのまま測れる。</p>
-<p><code style="color:#22d3bf">symmetric=True</code>(既定)は <b>両向きを測って平均する</b>。圧縮器は前から順に辞書を作るので <code style="color:#22d3bf">C(xy) != C(yx)</code> になり、素朴に実装すると「距離」を名乗りながら引数の順で値が変わる(実測: 縦縞と横縞で 0.571429 対 0.595238、相対 4 %)。<b>一様乱数どうしでは差 0.000e+00 になるので、乱数で試している限り気づけない</b> ―― 構造のある実データで初めて破れる型の欠陥。</p>
+<p><code style="color:#22d3bf">NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))</code>. 같은 것이면 0에 가까워지고, 무관하면 1에 가까워진다 -- 단 <b>실제 압축기는이상적인 Kolmogorov 복잡도가 아니므로</b>, 같은 입력이라도 엄밀히 0이 되지는 않는다(헤더만큼의 덧값이 있다). 그 덧값의 실측값은 테스트에 남겨 두었다.</p>
+<p><b>날것의 float 배열은 받지 않는다.</b> 압축기는 바이트열의 반복을 보므로, 값이 아주 조금만 달라도 float의 가수부가 통째로 바뀌어, <b>비슷한 2장이라도공통의 바이트열이 사라진다</b>. 실측(2026-09-02, <code style="color:#22d3bf">linspace</code>의 그라디언트와그것에 +0.02 한 그림, PSNR 34.0 dB = 매우 비슷함):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">float64</code> 그대로: 8바이트 워드의 공유율 <b>0.02 %</b> → <b>NCD 1.0959</b> (&quot;전혀 무관&quot;으로 읽히는 값. 게다가 1을 넘는다)</p>
+<p style="margin:2px 0 2px 12px">• 256 단계로 양자화: <b>NCD 0.1290</b>(올바르게 &quot;매우 비슷함&quot;)</p>
+<p style="margin:2px 0 2px 12px">• 정말로 무관한 2장: <b>NCD 0.9981</b></p>
+<p>즉 float 그대로 재면 <b>예외 없이 반대의 결론</b>이 나온다. 따라서 float에는 <code style="color:#22d3bf">levels</code>의 명시를 요구한다(<code style="color:#22d3bf">levels=256</code>이면 <code style="color:#22d3bf">data_range</code>를 256 단계로양자화한 뒤 잰다). 정수 dtype은 그대로 잴 수 있다.</p>
+<p><code style="color:#22d3bf">symmetric=True</code>(기본값)는 <b>양방향을 재서 평균한다</b>. 압축기는 앞에서부터 차례로사전을 만들므로 <code style="color:#22d3bf">C(xy) != C(yx)</code>가 되며, 소박하게 구현하면 &quot;거리&quot;를 자칭하면서인수의 순서로 값이 바뀐다(실측: 세로 줄무늬와 가로 줄무늬에서 0.571429 대 0.595238, 상대 4 %). <b>균일 난수끼리는 차이 0.000e+00이 되므로, 난수로 시험하는한 알아챌 수 없다</b> -- 구조가 있는 실데이터에서 비로소 드러나는 유형의 결함.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

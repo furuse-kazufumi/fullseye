@@ -165,7 +165,7 @@ def rank_kendall_b(x, y, chunk: int = 512) -> float:
 def tid2013_published() -> Dict[str, Tuple[float, float]]:
     """公表の順位相関表 {metric: (SROCC, KROCC)}(14 本)。
 
-    出典: https://www.ponomarenko.info/tid2013.htm(Last changed 2015-03-23)の「Ranking of compared metrics in accordance with
+    出典: https://www.ponomarenko.info/tid2013.htm (Last changed 2015-03-23)の「Ranking of compared metrics in accordance with
     Spearman / Kendall correlation with MOS」、配布物 readme の TABLE III / IV と同一。鍵は配布物 ``metrics_values/<鍵>.txt`` の
     ファイル名(小文字)。**同梱の作者値と mos.txt から、Spearman = 平均順位・Kendall = τ_b で 14 本すべて 3 桁一致**
     (|差| ≤ 0.0005 / 0.00044、2026-10-04)。ページ冒頭の「PSNR … is 0.69」と使用例の「FSIMc Full : 0.666」は表と食い違う

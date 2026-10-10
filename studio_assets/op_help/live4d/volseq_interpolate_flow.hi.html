@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_interpolate_flow(volseq, factor: &#x27;int&#x27; = 2, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001, occlusion_tau: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import live4d; live4d.volseq_interpolate_flow(volseq, factor: &#x27;int&#x27; = 2, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001, occlusion_tau: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opslive4d.get(&quot;volseq_interpolate_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>volume time series <code style="color:#22d3bf">(T, Z, Y, X)</code> को 3-D flow के साथ interpolate करके <code style="color:#22d3bf">(T + (T − 1)(factor − 1), Z, Y, X)</code> बनाता है (<code style="color:#22d3bf">volseq</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">video_interpolate_flow</code> と同じ手順の 3 次元版(流れは <code style="color:#22d3bf">vol_flow_3d</code>)。ライトシートの z-stack は時間方向が粗い(1 体積に秒単位)ので、ここを埋めると「回しながら動く」動画になる。</p>
+<p><code style="color:#22d3bf">video_interpolate_flow</code> जैसी ही प्रक्रिया का 3-D version (flow <code style="color:#22d3bf">vol_flow_3d</code> से)। light-sheet का z-stack time direction में मोटा होता है (1 volume सेकंडों में), इसलिए इसे भरने पर &quot;घूमते हुए हिलने वाला&quot; video बनता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

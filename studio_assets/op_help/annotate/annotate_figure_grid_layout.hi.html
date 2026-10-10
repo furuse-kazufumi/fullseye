@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_figure_grid_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (dict) लौटाता है: multi-panel figure का layout (cell, panel और caption पट्टी के rectangle) closed form में।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">panel_grid</code> と同じ式: <code style="color:#22d3bf">cw/ch</code> は最大パネル寸、<code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>、<code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad</code>。パネルは拡大せずセルの中央に置く。</p>
+<p><code style="color:#22d3bf">panel_grid</code> जैसे ही सूत्र: <code style="color:#22d3bf">cw/ch</code> सबसे बड़े panel का आकार है, <code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>, <code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad</code>। panels बड़े नहीं किए जाते, cell के बीच में रखे जाते हैं।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;size&quot;:(H,W), &quot;cells&quot;:[(x,y,cw,ch)], &quot;panels&quot;:[(x,y,w,h)], &quot;captions&quot;:[(x,y,cw,caption_h)], &quot;letters&quot;:[str], &quot;ncols&quot;, &quot;nrows&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;size&quot;:(H,W), &quot;cells&quot;:[(x,y,cw,ch)], &quot;panels&quot;:[(x,y,w,h)], &quot;captions&quot;:[(x,y,cw,caption_h)], &quot;letters&quot;:[str], &quot;ncols&quot;, &quot;nrows&quot;}</code>।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>shapes が空、ncols &lt; 1、負の余白、26 枚を超える。</p>
+<p>shapes ख़ाली, ncols &lt; 1, ऋणात्मक padding, या 26 से अधिक panels।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

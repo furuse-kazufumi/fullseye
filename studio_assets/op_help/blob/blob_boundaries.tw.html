@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_boundaries(labels: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import blob2d; blob2d.blob_boundaries(labels: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsblob.get(&quot;blob_boundaries&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>物體的輪廓(1 像素寬，bool)。<b>相鄰物體之間的分界也會保留</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>内側の縁を取る(自分と違うラベルに隣接する前景画素)ので、輪郭は必ず物体の内部にある —— 外側を取ると隣の物体の画素を輪郭だと言うことになる。</p>
-<p>手順: 3x3(8 近傍)のグレー収縮 <code style="color:#22d3bf">lo</code> と膨張 <code style="color:#22d3bf">hi</code> をラベル画像に掛け、<code style="color:#22d3bf">(labels &gt; 0) &amp; ((lo != labels) | (hi != labels))</code>。「近傍に自分と違う番号(背景 0 も含む)がある前景画素」= 内側 1 画素幅の縁。収縮だけだと番号の小さい物体側の境目が消えるので、膨張も見て対称にしてある。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>: 2-D の整数ラベル画像(<code style="color:#22d3bf">blob_label</code> の出力)。bool / float / 負の番号は <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">blob_region</code> と同じ契約)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> の bool。全物体の縁が 1 枚に重なる(物体ごとに分けたいなら <code style="color:#22d3bf">blob_region</code> で抜いてから掛ける)。</p>
-<p style="margin:2px 0 2px 12px">• 画像の縁に接する物体は、scipy の既定(反射境界)で画像端の外を自分の値とみなすため、<b>画像端に沿った辺は縁として出ない</b>。</p>
-<p style="margin:2px 0 2px 12px">• 1 画素幅の細い物体は全画素が縁になる。</p>
-<p><code style="color:#22d3bf">blob_features</code> の周長は別の係数法で測っており、この縁の画素数とは一致しない。輪郭を折れ線として使うなら <code style="color:#22d3bf">annotate_outline_layout</code> が (x, y) の閉多角形を返す。</p>
+<p>取內側邊緣(與自身不同標籤相鄰的前景像素),因此輪廓必定位於物體內部 —— 若取外側,就等於把相鄰物體的像素稱作輪廓。</p>
+<p>步驟:對標籤影像施加 3x3(8 鄰域)的灰階侵蝕 <code style="color:#22d3bf">lo</code> 和膨脹 <code style="color:#22d3bf">hi</code>, <code style="color:#22d3bf">(labels &gt; 0) &amp; ((lo != labels) | (hi != labels))</code>。「鄰域中有與自身不同編號(包括背景 0)的前景像素」= 內側 1 像素寬的邊緣。只用侵蝕的話,編號較小的物體一側的分界會消失,因此也看膨脹以保持對稱。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>:2-D 整數標籤影像(<code style="color:#22d3bf">blob_label</code> 的輸出)。bool / float / 負編號則 <code style="color:#22d3bf">ValueError</code>(與 <code style="color:#22d3bf">blob_region</code> 相同的約定)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值:<code style="color:#22d3bf">(H, W)</code> 的 bool。所有物體的邊緣疊在 1 張上(若要依物體分開, 先用 <code style="color:#22d3bf">blob_region</code> 取出再套用)。</p>
+<p style="margin:2px 0 2px 12px">• 與影像邊緣相接的物體,由於 scipy 的預設(反射邊界)把影像邊緣之外視為自身的值, <b>沿影像邊緣的邊不會作為邊緣輸出</b>。</p>
+<p style="margin:2px 0 2px 12px">• 1 像素寬的細物體,所有像素都是邊緣。</p>
+<p><code style="color:#22d3bf">blob_features</code> 的周長以另一種係數法量測,與此邊緣的像素數不一致。若要把輪廓當作折線使用,<code style="color:#22d3bf">annotate_outline_layout</code> 會回傳 (x, y) 的封閉多邊形。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

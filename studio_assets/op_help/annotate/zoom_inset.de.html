@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.zoom_inset(img, src_rect, dst_xy, factor=3, color=&#x27;emphasis&#x27;, width=2, connect=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;zoom_inset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine vergrößerte Einblendung — fügt der Originalabbildung einen <b>Rahmen</b> und eine <b>Hinweislinie</b> hinzu.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>拡大は <code style="color:#22d3bf">np.repeat</code> の<b>最近傍</b>(整数倍)。補間しないのは、拡大図が「元の画素そのもの」であることを保証するため(滑らかにすると、無かった構造が生まれたように見える)。</p>
+<p>Vergrößert wird per <code style="color:#22d3bf">np.repeat</code> mit <b>nächstem Nachbarn</b> (ganzzahlige Vielfache). Es wird nicht interpoliert, um zu garantieren, dass der Ausschnitt &quot;die Originalpixel selbst&quot; ist (Glätten ließe es so aussehen, als sei Struktur entstanden, die es nicht gab).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>src_rect : (x, y, w, h)</p>
-<p>拡大元。</p>
+<p>Zu vergrößernde Quelle.</p>
 <p>dst_xy : (x, y)</p>
-<p>差し込み先の<b>左上</b>。</p>
+<p><b>Obere linke Ecke</b> des Einfügeziels.</p>
 <p>factor : int</p>
-<p>整数の拡大率(&gt;= 1)。</p>
+<p>Ganzzahlige Vergrößerung (&gt;= 1).</p>
 <p>connect : bool</p>
-<p>True なら元枠と差し込み枠の対応する角を 2 本の線で結ぶ。</p>
+<p>Bei True werden die entsprechenden Ecken von Quellrahmen und Einfügerahmen mit 2 Linien verbunden.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>factor が 1 未満か非整数、元枠/差し込みが画像からはみ出す。</p>
+<p>factor unter 1 oder nicht ganzzahlig, Quellrahmen/Einfügung ragt aus dem Bild.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

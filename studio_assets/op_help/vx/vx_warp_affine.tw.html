@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import vxcore; vxcore.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code>;從台帳取用則 <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_affine&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>仿射變換(3.56 節)。<b>逆映射</b>：輸出像素 (x, y) 取自輸入的 (x0, y0)(REQ-0498)：<code style="color:#22d3bf">x0 = M[0,0]·x + M[0,1]·y + M[0,2]</code>、<code style="color:#22d3bf">y0 = M[1,0]·x + M[1,1]·y + M[1,2]</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>*matrix*: 数学の並びの 2×3(1 行目が x0 の係数 a, b, c)。★規格の C の宣言は <code style="color:#22d3bf">mat[3][2] = { {a,d}, {b,e}, {c,f} }</code> (転置した並び)—— C の配列をそのまま渡すと形が (3, 2) になるので止める。*interpolation*(必須): <code style="color:#22d3bf">&quot;nearest&quot;</code> / <code style="color:#22d3bf">&quot;bilinear&quot;</code>。*border*(必須): <code style="color:#22d3bf">&quot;constant&quot;</code>(*constant_value* で埋める)/ <code style="color:#22d3bf">&quot;undefined&quot;</code>(0 で埋める、値は規格上未定義)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / matrix が 2×3 の有限でない / interpolation・border が一覧に無い。</p>
+<p>*matrix*: 數學排列的 2×3(第 1 列為 x0 的係數 a, b, c)。★規格的 C 宣告是 <code style="color:#22d3bf">mat[3][2] = { {a,d}, {b,e}, {c,f} }</code> (轉置的排列)—— 直接傳 C 的陣列時形狀為 (3, 2),因此停止。*interpolation*(必要): <code style="color:#22d3bf">&quot;nearest&quot;</code> / <code style="color:#22d3bf">&quot;bilinear&quot;</code>。*border*(必要): <code style="color:#22d3bf">&quot;constant&quot;</code>(以 *constant_value* 填充)/ <code style="color:#22d3bf">&quot;undefined&quot;</code>(以 0 填充,值依規格未定義)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 不是 U8 的 2-D / matrix 不是有限的 2×3 / interpolation、border 不在清單中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

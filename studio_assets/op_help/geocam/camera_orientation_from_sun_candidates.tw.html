@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun_candidates(candidates, frame_index, unix_times, lat_deg, lon_deg, shape, K=None, hfov_range_deg=(25.0, 120.0), tol_px=20.0, roll_max_deg=12.0, pitch_range_deg=(-40.0, 0.0), min_dt=1800.0, max_pairs=600, seed=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun_candidates(candidates, frame_index, unix_times, lat_deg, lon_deg, shape, K=None, hfov_range_deg=(25.0, 120.0), tol_px=20.0, roll_max_deg=12.0, pitch_range_deg=(-40.0, 0.0), min_dt=1800.0, max_pairs=600, seed=0)</code>;從台帳取用則 <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun_candidates&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從每個影格中多個「亮團塊」候選(混有太陽、白色汽車、標誌、文字)中，以 RANSAC 選出<b>依時刻規律運動的 1 條</b>，同時決定 (yaw, pitch, roll) 與焦距 → table。固定相機中只有太陽以太陽的速度運動， 因此不憑外觀、而憑運動來認定太陽(在 Fintraffic 天氣相機上，基於外觀的門檻曾 24/24 誤檢，2026-09-21)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>仮説 = 時刻差 ≥ <code style="color:#22d3bf">min_dt</code> の 2 フレームから候補を 1 つずつ → <code style="color:#22d3bf">camera_orientation_from_sun</code> と同じ Wahba の 2 点解。<b>道路カメラの事前知識</b>(|roll| ≤ <code style="color:#22d3bf">roll_max_deg</code>、pitch が <code style="color:#22d3bf">pitch_range_deg</code>、水平画角が <code style="color:#22d3bf">hfov_range_deg</code>)を満たさない仮説は捨てる —— 自由度 4(回転 3 + 焦点距離)に対して候補が多いと、偶然の 3 点で非物理な姿勢が通るため。票 = 予測位置から <code style="color:#22d3bf">tol_px</code> 以内に候補があるフレーム数(地平線下の時刻は投票しない)。実写のブルーム中心は 5〜13 px ぶれる(雲・露出)ので既定 20 px。最良仮説のインライアで焦点距離を 1 次元最適化し、回転を全点で引き直す(2 回)。</p>
-<p><b>濡れた路面に映った太陽の反射も太陽の速さで動く</b>(鏡像)ので、動きだけでは区別できない。反射は画像の下側(路面)にあるから、それを太陽として当てはめると「カメラが上を向く」姿勢(pitch &gt; 0)になる —— 既定の <code style="color:#22d3bf">pitch_range_deg</code> の上限 0 はそのための門(道路カメラは上を向かない)。上を向くカメラなら広げること。独立な検算(車線の消失点の仰角 ≈ 0)も勧める。</p>
-<p><code style="color:#22d3bf">K</code> を渡せばそれを使う(焦点距離は探索しない)。<code style="color:#22d3bf">K=None</code> なら主点は画像中心、<code style="color:#22d3bf">fx = fy = f</code> を <code style="color:#22d3bf">hfov_range_deg</code> の範囲で探索する —— 公開カメラは内部パラメータが無いのが普通。</p>
+<p>假設 = 從時刻差 ≥ <code style="color:#22d3bf">min_dt</code> 的 2 影格中各取 1 個候選 → 與 <code style="color:#22d3bf">camera_orientation_from_sun</code> 相同的 Wahba 2 點解。不滿足<b>道路相機先驗知識</b>(|roll| ≤ <code style="color:#22d3bf">roll_max_deg</code>,pitch 在 <code style="color:#22d3bf">pitch_range_deg</code> 內,水平視角在 <code style="color:#22d3bf">hfov_range_deg</code> 內)的假設會被捨棄 —— 相對於自由度 4(旋轉 3 + 焦距)而候選過多時,偶然的 3 點會讓非物理的位姿通過。票數 = 在預測位置 <code style="color:#22d3bf">tol_px</code> 以內有候選的影格數(地平線以下的時刻不投票)。實拍的光暈(bloom)中心會抖動 5~13 px(雲、曝光),所以預設 20 px。用最佳假設的內點把焦距做 1 維最佳化,並用全部點重新擬合旋轉(2 次)。</p>
+<p><b>濕路面上映出的太陽反射也以太陽的速度移動</b>(鏡像),所以僅憑運動無法區分。反射位於影像下側(路面), 因此把它當作太陽擬合就會得到「相機朝上」的位姿(pitch &gt; 0)—— 預設 <code style="color:#22d3bf">pitch_range_deg</code> 的上限 0 就是為此設的門檻(道路相機不會朝上)。若是朝上的相機請放寬。也建議做獨立的驗算(車道消失點的仰角 ≈ 0)。</p>
+<p>傳入 <code style="color:#22d3bf">K</code> 時就用它(不搜尋焦距)。<code style="color:#22d3bf">K=None</code> 時主點為影像中心,把 <code style="color:#22d3bf">fx = fy = f</code> 在 <code style="color:#22d3bf">hfov_range_deg</code> 的範圍內搜尋 —— 公開相機通常沒有內部參數。</p>
 <p>Args:</p>
-<p>candidates: (N, 2) の (u, v)。全フレームの候補を積んだもの(<code style="color:#22d3bf">sun_bloom_fit</code> や <code style="color:#22d3bf">sun_pixel_position</code> の出力)。</p>
-<p>frame_index: (N,) 各候補がどのフレームか(<code style="color:#22d3bf">unix_times</code> の添字、整数値)。</p>
-<p>unix_times: (F,) 各フレームの UNIX 秒(UTC)。</p>
-<p>lat_deg, lon_deg: カメラの位置。</p>
+<p>candidates: (N, 2) 的 (u, v)。把全部影格的候選堆疊而成(<code style="color:#22d3bf">sun_bloom_fit</code> 或 <code style="color:#22d3bf">sun_pixel_position</code> 的輸出)。</p>
+<p>frame_index: (N,) 各候選屬於哪一影格(<code style="color:#22d3bf">unix_times</code> 的索引,整數值)。</p>
+<p>unix_times: (F,) 各影格的 UNIX 秒(UTC)。</p>
+<p>lat_deg, lon_deg: 相機的位置。</p>
 <p>shape: (H, W)。</p>
-<p>K: (fx, fy, cx, cy) か None。</p>
+<p>K: (fx, fy, cx, cy) 或 None。</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">f_px</code> / <code style="color:#22d3bf">hfov_deg</code> / <code style="color:#22d3bf">K</code>(4,)/ <code style="color:#22d3bf">inlier</code>(N,、1 = 採用)/</p>
-<p><code style="color:#22d3bf">n_inliers</code> / <code style="color:#22d3bf">n_frames</code> / <code style="color:#22d3bf">n_frames_with_candidates</code> / <code style="color:#22d3bf">residual_deg</code>(採用点の角度残差 RMS)/</p>
-<p><code style="color:#22d3bf">max_residual_deg</code> / <code style="color:#22d3bf">residual_px</code> / <code style="color:#22d3bf">loo_px</code>(1 点抜き予測誤差の平均)/ <code style="color:#22d3bf">loo_max_px</code> / <code style="color:#22d3bf">span_h</code></p>
-<p>(採用点の時間幅)/ <code style="color:#22d3bf">n_hypotheses</code>(事前知識を通った仮説の数)/ <code style="color:#22d3bf">at_prior_bound</code>(1 = 答えが事前知識の縁に張り付いている: 信用しない)。</p>
+<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">f_px</code> / <code style="color:#22d3bf">hfov_deg</code> / <code style="color:#22d3bf">K</code>(4,)/ <code style="color:#22d3bf">inlier</code>(N,,1 = 採用)/</p>
+<p><code style="color:#22d3bf">n_inliers</code> / <code style="color:#22d3bf">n_frames</code> / <code style="color:#22d3bf">n_frames_with_candidates</code> / <code style="color:#22d3bf">residual_deg</code>(採用點的角度殘差 RMS)/</p>
+<p><code style="color:#22d3bf">max_residual_deg</code> / <code style="color:#22d3bf">residual_px</code> / <code style="color:#22d3bf">loo_px</code>(留 1 法預測誤差的平均)/ <code style="color:#22d3bf">loo_max_px</code> / <code style="color:#22d3bf">span_h</code></p>
+<p>(採用點的時間跨度)/ <code style="color:#22d3bf">n_hypotheses</code>(通過先驗知識的假設數)/ <code style="color:#22d3bf">at_prior_bound</code>(1 = 答案貼在先驗知識的邊緣:不可信)。</p>
 <p>Raises:</p>
-<p>ValueError: 候補が 2 フレーム未満、事前知識を通る仮説が無い、インライアが 3 未満。</p>
+<p>ValueError: 候選少於 2 影格、沒有通過先驗知識的假設、內點少於 3。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.joint_entropy(a, b, bins=64, data_range=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgmetrics; imgmetrics.joint_entropy(a, b, bins=64, data_range=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;joint_entropy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>聯合熵 H(A, B) [bit]。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>式: <code style="color:#22d3bf">-sum(p log2 p)</code> を <code style="color:#22d3bf">joint_histogram(a, b, bins, data_range)</code> の全セル(<code style="color:#22d3bf">p &gt; 0</code> のみ)について取る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: 同じ形、有限。dtype と <code style="color:#22d3bf">data_range</code> の扱いは <code style="color:#22d3bf">joint_histogram</code> と同じ(float は <code style="color:#22d3bf">[0, 1]</code> 以外なら明示必須)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bins</code>: 2 以上の整数。<b>値はビン数に依存する</b> ―― 上限は <code style="color:#22d3bf">2 log2(bins)</code> (既定 64 で 12 bit)。他所の数値と比べるときは <code style="color:#22d3bf">bins</code> と <code style="color:#22d3bf">data_range</code> を揃える。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: Python の <code style="color:#22d3bf">float</code>、単位 bit、<code style="color:#22d3bf">0</code> 以上。2 枚とも一様なら 0。<code style="color:#22d3bf">H(A) + H(B) - H(A, B)</code> が相互情報量(<code style="color:#22d3bf">mutual_information</code>)。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): 形が違う / 空 / 非有限 / <code style="color:#22d3bf">bins &lt; 2</code> / <code style="color:#22d3bf">data_range</code> を推定できない。</p>
-<p>位置合わせ(レジストレーション)の目的関数として、<code style="color:#22d3bf">mutual_information</code> / <code style="color:#22d3bf">normalized_mutual_information</code> と併せて使う。</p>
+<p>公式:對 <code style="color:#22d3bf">joint_histogram(a, b, bins, data_range)</code> 的全部格子(僅 <code style="color:#22d3bf">p &gt; 0</code>)取 <code style="color:#22d3bf">-sum(p log2 p)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code>:同形、有限。dtype 和 <code style="color:#22d3bf">data_range</code> 的處理與 <code style="color:#22d3bf">joint_histogram</code> 相同(float 不在 <code style="color:#22d3bf">[0, 1]</code> 時必須明確給出)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bins</code>:2 以上的整數。<b>值依賴於分箱數</b> —— 上限為 <code style="color:#22d3bf">2 log2(bins)</code> (預設 64 時為 12 bit)。與別處的數值比較時要統一 <code style="color:#22d3bf">bins</code> 和 <code style="color:#22d3bf">data_range</code>。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值:Python 的 <code style="color:#22d3bf">float</code>,單位 bit,<code style="color:#22d3bf">0</code> 以上。2 張都均勻時為 0。<code style="color:#22d3bf">H(A) + H(B) - H(A, B)</code> 即互資訊(<code style="color:#22d3bf">mutual_information</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>):形狀不同 / 為空 / 非有限 / <code style="color:#22d3bf">bins &lt; 2</code> / 無法推定 <code style="color:#22d3bf">data_range</code>。</p>
+<p>作為對位(registration)的目標函數,與 <code style="color:#22d3bf">mutual_information</code> / <code style="color:#22d3bf">normalized_mutual_information</code> 一起使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

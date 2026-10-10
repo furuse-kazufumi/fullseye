@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph(imgA, imgB, ptsA, ptsB, alpha, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imagemorph; imagemorph.morph(imgA, imgB, ptsA, ptsB, alpha, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsshape2d.get(&quot;morph&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過對應點對 2 張影像 A、B 進行變形(morph)，產生比例 alpha 的中間影像。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>手順(Beier–Neely 流のメッシュ・モーフ):</p>
-<p style="margin:2px 0 2px 12px">1. 中間形状 mid = (1-alpha)·ptsA + alpha·ptsB を作る。</p>
-<p style="margin:2px 0 2px 12px">2. A を ptsA→mid へ、B を ptsB→mid へワープ(両者の特徴を mid に揃える)。</p>
-<p style="margin:2px 0 2px 12px">3. warp(A), warp(B) を alpha でクロスディゾルブ。</p>
-<p>alpha=0 で A、alpha=1 で B に一致する。単純な blend(A,B,alpha) と違い、目・鼻などの特徴が二重像にならず 1 つに重なる(=「本物の中間」)。</p>
-<p>引数:</p>
-<p>imgA, imgB: (H,W[,C])、同 shape、[0,1]。</p>
-<p>ptsA, ptsB: (K,2) の (x,y)。A と B の対応点(同数・同順)。</p>
-<p>alpha: 合成比率 [0,1]。</p>
-<p>method: &quot;affine&quot;(区分アフィン, 速い)か &quot;tps&quot;(滑らか)。</p>
-<p>lam: TPS の平滑化係数(method=&quot;tps&quot; のとき)。</p>
-<p>with_corners: True で四隅を固定点に足し、端の穴を防ぐ。</p>
-<p>返り値: (H,W[,C]) の中間画像([0,1])。</p>
+<p>步驟(Beier–Neely 式網格變形):</p>
+<p style="margin:2px 0 2px 12px">1. 建構中間形狀 mid = (1-alpha)·ptsA + alpha·ptsB。</p>
+<p style="margin:2px 0 2px 12px">2. 把 A 依 ptsA→mid、把 B 依 ptsB→mid 變形(使兩者的特徵對齊到 mid)。</p>
+<p style="margin:2px 0 2px 12px">3. 用 alpha 對 warp(A)、warp(B) 做交叉溶接。</p>
+<p>alpha=0 時與 A 一致，alpha=1 時與 B 一致。與單純的 blend(A,B,alpha) 不同，眼、鼻等特徵不會成為重影，而是重疊為 1 個(=「真正的中間」)。</p>
+<p>參數:</p>
+<p>imgA, imgB: (H,W[,C])，同 shape,[0,1]。</p>
+<p>ptsA, ptsB: (K,2) 的 (x,y)。A 與 B 的對應點(數量相同、順序相同)。</p>
+<p>alpha: 合成比例 [0,1]。</p>
+<p>method: &quot;affine&quot;(分段仿射，快)或 &quot;tps&quot;(平滑)。</p>
+<p>lam: TPS 的平滑係數(method=&quot;tps&quot; 時)。</p>
+<p>with_corners: 為 True 時把四角加為固定點，防止邊緣出現空洞。</p>
+<p>回傳值: (H,W[,C]) 的中間影像([0,1])。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import blob2d; blob2d.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsblob.get(&quot;blob_select&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>只保留特征量落在 <code style="color:#22d3bf">[vmin, vmax]</code> 内的物体(<b>编号从 1 开始重新分配</b>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : array_like</p>
-<p><code style="color:#22d3bf">blob_label</code> の出力。</p>
+<p><code style="color:#22d3bf">blob_label</code> 的输出。</p>
 <p>feature : str</p>
-<p><code style="color:#22d3bf">FEATURE_KEYS</code> のどれか。知らない鍵は<b>候補を並べて拒否する</b>。</p>
+<p><code style="color:#22d3bf">FEATURE_KEYS</code> 之一。未知的键会<b>列出候选项并拒绝</b>。</p>
 <p>vmin, vmax : float or None</p>
-<p>両端(含む)。<code style="color:#22d3bf">None</code> は片側を開ける。両方 <code style="color:#22d3bf">None</code> は</p>
-<p>「何も選んでいない」ので拒否する —— 全部通す意図なら呼ばなければよい。</p>
+<p>两端(含)。<code style="color:#22d3bf">None</code> 表示该侧不设限。两者都为 <code style="color:#22d3bf">None</code> 意味着</p>
+<p>“什么都没选”,因此拒绝 —— 若本意是全部通过,不调用即可。</p>
 <p>spacing : float</p>
-<p><code style="color:#22d3bf">blob_features</code> と同じ意味。<code style="color:#22d3bf">area</code> や <code style="color:#22d3bf">perimeter</code> を</p>
-<p>物理単位で切るときに要る。</p>
+<p>与 <code style="color:#22d3bf">blob_features</code> 含义相同。按物理单位截取 <code style="color:#22d3bf">area</code> 或 <code style="color:#22d3bf">perimeter</code></p>
+<p>时需要。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">int32</code> のラベル画像。<b>残った物体は 1..k の連番</b>になる</p>
-<p>(元の番号は残さない)。元の番号が要るなら</p>
-<p><code style="color:#22d3bf">blob_features(labels)[&quot;label&quot;]</code> を先に取っておくこと。</p>
+<p><code style="color:#22d3bf">int32</code> 标签图像。<b>保留下来的物体按 1..k 连续编号</b></p>
+<p>(不保留原编号)。若需要原编号,</p>
+<p>请事先取出 <code style="color:#22d3bf">blob_features(labels)[&quot;label&quot;]</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

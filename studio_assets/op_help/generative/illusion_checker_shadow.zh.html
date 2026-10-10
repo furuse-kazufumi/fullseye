@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_checker_shadow(size: &#x27;int&#x27; = 46, n: &#x27;int&#x27; = 8, light: &#x27;float&#x27; = 0.62, dark: &#x27;float&#x27; = 0.31) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import illusion; illusion.illusion_checker_shadow(size: &#x27;int&#x27; = 46, n: &#x27;int&#x27; = 8, light: &#x27;float&#x27; = 0.62, dark: &#x27;float&#x27; = 0.31) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_checker_shadow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>棋盘阴影错觉。<b>标记的 2 个方格像素值严格相同</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>影の係数を <code style="color:#22d3bf">dark / light</code> に取ると、影の中の明マスは影の外の暗マスと <b>数として同じ</b>になる。★この図は <code style="color:#22d3bf">aa=0</code>(反エイリアスなし)で描く —— 縁の混色が入ると「厳密に同値」という主張のほうが嘘になるため。</p>
-<p>不変量: <code style="color:#22d3bf">CHECKER_PATCHES</code> の 2 マス —— <b>影の外の暗マス</b> (2,3) と <b>影の中の明マス</b> (5,5) —— の画素値が完全に一致(差が厳密に 0)。</p>
-<p>★ここは一度間違えた。対にすべきは「暗マス × 影なし」と「明マス × 影あり」で、同じ明暗のマスを 2 つ選んでも当然ながら一致しない(実測 0.31 の差が出た)。絵は「それらしく」見えてしまうので、<b>数で確かめるまで気づけない</b> —— この族が守ろうとしているのと同じ型の事故。</p>
+<p>把阴影系数取为 <code style="color:#22d3bf">dark / light</code>,阴影中的亮格与阴影外的暗格就会 <b>在数值上相同</b>。★本图以 <code style="color:#22d3bf">aa=0</code>(无抗锯齿)绘制 —— 因为一旦混入边缘的混色,“严格相等”这一主张反而成了假的。</p>
+<p>不变量:<code style="color:#22d3bf">CHECKER_PATCHES</code> 的 2 格 —— <b>阴影外的暗格</b> (2,3) 与 <b>阴影中的亮格</b> (5,5) —— 像素值完全一致(差严格为 0)。</p>
+<p>★这里曾经弄错过一次。应该配对的是“暗格 × 无阴影”与“亮格 × 有阴影”, 选 2 个明暗相同的格子当然不会一致(实测出现了 0.31 的差)。图看起来“像那么回事”,所以<b>在用数值确认之前无法察觉</b> —— 正是这个家族所要防范的同一类事故。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

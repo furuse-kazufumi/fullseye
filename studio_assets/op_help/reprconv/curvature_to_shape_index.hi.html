@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_shape_index(curvature)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.curvature_to_shape_index(curvature)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_shape_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>principal curvature <code style="color:#22d3bf">(N,2)</code> → shape index और curvedness, <code style="color:#22d3bf">(N,2)</code> के <code style="color:#22d3bf">pairs</code>। <code style="color:#22d3bf">curvature</code> से निकास।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Koenderink &amp; van Doorn, *Surface shape and curvature scales*, Image and Vision Computing 10(8) 1992 の (S, C):</p>
+<p>Koenderink &amp; van Doorn, *Surface shape and curvature scales*, Image and Vision Computing 10(8) 1992 का (S, C):</p>
 <p>S = (2/pi) * atan2(k1 + k2, k1 - k2)      (k1 &gt;= k2, S in [-1, 1])</p>
-<p>C = sqrt((k1^2 + k2^2) / 2)               (曲がりの大きさ)</p>
-<p><b>除算でなく atan2 で書いてある</b>のが要点で、球状臍点 (k1 == k2) でも平面 (k1 == k2 == 0) でもゼロ除算にならず、<code style="color:#22d3bf">shape_index_to_curvature</code> との往復が<b>全域で厳密</b>になる(実測 max|Δ| = 4.6e-16)。教科書の <code style="color:#22d3bf">atan((k1+k2)/(k1-k2))</code> をそのまま実装すると臍点で NaN が出て、その NaN が下流で「暗い画素」に化ける。</p>
-<p>S = -1 は杯、0 は鞍、+1 は帽子。C は形と独立な「どれだけ曲がっているか」。</p>
-<p><b>入力順の情報だけは戻らない</b>: (k2, k1) の順で渡しても内部で k1 &gt;= k2 へ並べ替えるので、往復すると必ず降順で返る(向きの規約であり、値の損失ではない)。</p>
+<p>C = sqrt((k1^2 + k2^2) / 2)               (मुड़ने की मात्रा)</p>
+<p>मुख्य बात यह है कि <b>इसे division से नहीं, atan2 से लिखा गया है</b>: spherical umbilic (k1 == k2) पर भी और plane (k1 == k2 == 0) पर भी zero से भाग नहीं होता, और <code style="color:#22d3bf">shape_index_to_curvature</code> के साथ round trip <b>पूरे domain में सटीक</b> होता है (measured max|Δ| = 4.6e-16)। textbook के <code style="color:#22d3bf">atan((k1+k2)/(k1-k2))</code> को जस का तस implement करने पर umbilic पर NaN आता है, और वह NaN downstream में &quot;अंधेरे pixel&quot; बन जाता है।</p>
+<p>S = -1 cup है, 0 saddle, +1 cap। C shape से स्वतंत्र &quot;कितना मुड़ा है&quot; है।</p>
+<p><b>केवल input क्रम की जानकारी वापस नहीं आती</b>: (k2, k1) क्रम में देने पर भी भीतर k1 &gt;= k2 में फिर से क्रमित किया जाता है, इसलिए round trip के बाद हमेशा घटते क्रम में लौटता है (यह दिशा की परंपरा है, मान का loss नहीं)।</p>
 <p>Args:</p>
-<p>curvature: (N, 2) の <code style="color:#22d3bf">[k1, k2]</code>、または 2 本の等長 1-D のタプル</p>
-<p>(<code style="color:#22d3bf">principal_curvatures</code> の素の返りがこれ)。</p>
+<p>curvature: (N, 2) का <code style="color:#22d3bf">[k1, k2]</code>, या समान लंबाई वाले 2 1-D array का tuple</p>
+<p>(<code style="color:#22d3bf">principal_curvatures</code> का कच्चा return यही है)।</p>
 <p>Returns:</p>
-<p>(N, 2) float64。列 0 = S in [-1, 1]、列 1 = C &gt;= 0。</p>
+<p>(N, 2) float64। column 0 = S in [-1, 1], column 1 = C &gt;= 0।</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: shape ग़लत / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

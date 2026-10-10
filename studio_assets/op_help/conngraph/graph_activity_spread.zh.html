@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_activity_spread(X: &#x27;Any&#x27;, P: &#x27;Any&#x27;, source: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.graph_activity_spread(X: &#x27;Any&#x27;, P: &#x27;Any&#x27;, source: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_activity_spread&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>活动扩散范围的时间序列表：列 step / mean_distance / active_fraction / source_fraction。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">X</code> = (T, n) の状態列、<code style="color:#22d3bf">P</code> = (n, 3) の座標、<code style="color:#22d3bf">source</code> = 刺激したノードの指示子(長さ n の整数、非零 = 刺激。1 つ以上)。mean_distance[t] = Σ|x_i(t)| ‖P_i − c‖ / Σ|x_i(t)|(c = 刺激ノードの重心、|x| で重みづけた活動の平均距離、単位は P と同じ。活動が全零のステップは 0)。active_fraction[t] = |x_i(t)| ≥ 全体最大 × thresh のノードの割合。source_fraction[t] = 活動のうち刺激ノードにある分 Σ_source |x| / Σ|x|(全零なら 0)。</p>
+<p><code style="color:#22d3bf">X</code> = (T, n) 的状态序列,<code style="color:#22d3bf">P</code> = (n, 3) 的坐标,<code style="color:#22d3bf">source</code> = 受刺激节点的指示向量(长度 n 的整数,非零 = 刺激。至少 1 个)。mean_distance[t] = Σ|x_i(t)| ‖P_i − c‖ / Σ|x_i(t)|(c = 受刺激节点的质心,以 |x| 加权的活动平均距离,单位与 P 相同。活动全零的步为 0)。active_fraction[t] = 满足 |x_i(t)| ≥ 全体最大 × thresh 的节点比例。source_fraction[t] = 活动中位于受刺激节点的份额 Σ_source |x| / Σ|x|(全零则为 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_slice_stack(mesh: &#x27;Any&#x27;, layer_mm: &#x27;float&#x27; = 0.2, px_per_mm: &#x27;float&#x27; = 10.0, bounds=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import printpath; printpath.mesh_slice_stack(mesh: &#x27;Any&#x27;, layer_mm: &#x27;float&#x27; = 0.2, px_per_mm: &#x27;float&#x27; = 10.0, bounds=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsprintpath.get(&quot;mesh_slice_stack&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 <code style="color:#22d3bf">layer_mm</code> 為步長切割網格得到的<b>層遮罩堆疊</b> <code style="color:#22d3bf">voxel</code> (Z, Y, X)(0 / 1，Z 由下而上)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各層は <code style="color:#22d3bf">mesh_slice_contours</code> の輪郭を <b>nonzero winding</b> で塗る(外向き法線の輪は中身、内向き法線 = 穴の輪は引く。穴だけが残る層は空)。メッシュの面の向きが揃っていることが前提(STL / 3MF の規約)。<code style="color:#22d3bf">bounds</code> は x–y の範囲(mm)、無ければメッシュ全体 + 2 mm。形に触れない層(上下の端)は 0 のまま。</p>
+<p>各層以 <b>nonzero winding</b> 填充 <code style="color:#22d3bf">mesh_slice_contours</code> 的輪廓(外向法線的環為實體,內向法線 = 孔的環則扣除。只剩孔的層為空)。前提是網格(mesh)的面朝向一致(STL / 3MF 的約定)。<code style="color:#22d3bf">bounds</code> 是 x–y 的範圍(mm),沒有則為整個網格(mesh)+ 2 mm。不接觸形狀的層(上下兩端)保持為 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

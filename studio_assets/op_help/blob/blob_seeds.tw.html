@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import blob2d; blob2d.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsblob.get(&quot;blob_seeds&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>h-maxima 種子。<b><code style="color:#22d3bf">h</code> 是與 <code style="color:#22d3bf">distance</code> 同單位的絕對值</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>「高さ <code style="color:#22d3bf">h</code> 以上そびえている極大」だけを残し、連結成分に番号を振って返す。融合した塊を割るときの種として使う。</p>
-<p><b>既存の <code style="color:#22d3bf">fs.op.xsk2_h_maxima</code> と違う点</b>(<code style="color:#22d3bf">poc_cell_counting</code> が</p>
-<p>記録した穴):</p>
-<p style="margin:2px 0 2px 12px">• あちらは入力を <code style="color:#22d3bf">[0, 1]</code> に<b>切り詰める</b>ので、生の距離マップを渡すと壊れる(2 px も 20 px も 1.0 になる)。ここは切り詰めない。</p>
-<p style="margin:2px 0 2px 12px">• あちらの <code style="color:#22d3bf">h</code> は <code style="color:#22d3bf">0.05 + 0.3a</code> = <b>正規化画像に対する比</b>なので、画像に大きい物体が 1 つ入るだけで小さい物体側の実効 <code style="color:#22d3bf">h</code> が上がる(実測で下限が 0.42 → 0.80 px へ動いた)。ここは画素(または物理単位)。</p>
-<p><b>速さ</b>: 再構成は<b>連結成分ごとの外接箱の中でだけ</b>回す。背景を通る伝播が消えるので、512x512 に 200 個の円で <b>237.7 ms → 15.3 ms(15.5 倍)</b>、結果は全画素一致(2026-09-06 実測)。</p>
+<p>只保留「隆起高度不低於 <code style="color:#22d3bf">h</code> 的極大值」,為連通元件編號後回傳。用作分割融合團塊時的種子。</p>
+<p><b>與現有 <code style="color:#22d3bf">fs.op.xsk2_h_maxima</code> 的不同之處</b>(<code style="color:#22d3bf">poc_cell_counting</code></p>
+<p>記錄下的漏洞):</p>
+<p style="margin:2px 0 2px 12px">• 那個 op 會把輸入<b>截斷</b>到 <code style="color:#22d3bf">[0, 1]</code>,若傳入原始距離圖就會失效(2 px 和 20 px 都變成 1.0)。這裡不截斷。</p>
+<p style="margin:2px 0 2px 12px">• 那個 op 的 <code style="color:#22d3bf">h</code> 是 <code style="color:#22d3bf">0.05 + 0.3a</code> = <b>相對於正規化影像的比值</b>,因此只要影像中出現 1 個大物體,小物體一側的實際 <code style="color:#22d3bf">h</code> 就會升高(實測下限移動了 0.42 → 0.80 px)。這裡用像素(或物理單位)。</p>
+<p><b>速度</b>:重建<b>只在每個連通元件的外接框內</b>進行。穿過背景的傳播消失,512x512 中 200 個圓從 <b>237.7 ms → 15.3 ms(15.5 倍)</b>, 結果逐像素一致(2026-09-06 實測)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>distance : array_like</p>
-<p>2-D の実数場。ふつうは <code style="color:#22d3bf">blob_distance</code> の出力。</p>
+<p>2-D 實數場。通常是 <code style="color:#22d3bf">blob_distance</code> 的輸出。</p>
 <p>h : float</p>
-<p>そびえの高さ。<code style="color:#22d3bf">distance</code> と同じ単位で、<b>0 より大きいこと</b>。</p>
-<p>大きくすると種が減る(= 割りすぎが減り、割り残しが増える)。</p>
+<p>隆起高度。與 <code style="color:#22d3bf">distance</code> 同單位,<b>必須大於 0</b>。</p>
+<p>越大種子越少(= 過度分割減少,分割不足增加)。</p>
 <p>connectivity : {4, 8}</p>
-<p>極大の連結の取り方。</p>
+<p>極大值的連通方式。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">int32</code> のラベル画像(背景 0、種 1..n)。</p>
+<p><code style="color:#22d3bf">int32</code> 標籤影像(背景 0,種子 1..n)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

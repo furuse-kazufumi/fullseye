@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_rich_club(W: &#x27;Any&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import conngraph; conngraph.graph_rich_club(W: &#x27;Any&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconngraph.get(&quot;graph_rich_club&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>rich club coefficient φ(k): कुल degree (in+out, binary) &gt; k वाले node से बने subgraph की directed density।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>φ = 辺数 / (r (r − 1))、r = 該当ノード数。r &lt; 2 なら 0(NaN を返さない)。</p>
+<p>φ = edges की संख्या / (r (r − 1)), r = संबंधित nodes की संख्या। r &lt; 2 हो तो 0 (NaN नहीं लौटाता)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

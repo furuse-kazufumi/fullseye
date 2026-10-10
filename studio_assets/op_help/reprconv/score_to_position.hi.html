@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_position(score)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.score_to_position(score)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">score</code> volume → अधिकतम मान की position <code style="color:#22d3bf">position (z, y, x)</code>। <code style="color:#22d3bf">score</code> से निकास।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>整数格子上の argmax(副画素精緻化はしない —— それは既存の <code style="color:#22d3bf">refine_peak_newton</code> の仕事で、ここで真似ると 2 か所で別の答えが出る)。<b>一方向</b>(1 つの位置から volume は戻せない)。</p>
+<p>integer grid पर argmax (subpixel refinement नहीं करता -- वह मौजूदा <code style="color:#22d3bf">refine_peak_newton</code> का काम है; यहाँ उसकी नकल करने से 2 जगह अलग उत्तर आएँगे)। <b>एकतरफ़ा (one-way)</b> (1 position से volume वापस नहीं मिल सकता)।</p>
 <p>Args:</p>
-<p>score: (D, H, W)。</p>
+<p>score: (D, H, W)।</p>
 <p>Returns:</p>
-<p>3-tuple の float (z, y, x)。</p>
+<p>float का 3-tuple (z, y, x)।</p>
 <p>Raises:</p>
-<p>ValueError: 3-D でない / 非有限。</p>
+<p>ValueError: 3-D नहीं / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

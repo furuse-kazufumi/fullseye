@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_speed(flow)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.flow_speed(flow)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;flow_speed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verstreuter Fluss <code style="color:#22d3bf">(N,3)</code> → ein Geschwindigkeits-<code style="color:#22d3bf">signal (N,)</code>. Der Ausgang aus verstreutem <code style="color:#22d3bf">flow</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>一方向</b>(向きを捨てる)。密フローを渡すと fail-closed —— 同じ <code style="color:#22d3bf">flow</code> という型名の下に別物が 2 つ入っているため、受け側で必ず選ばせる。</p>
+<p><b>Einseitig</b> (die Richtung wird verworfen). Ein dichter Fluss wird fail-closed abgewiesen -- unter demselben Typnamen <code style="color:#22d3bf">flow</code> stecken 2 verschiedene Dinge, daher muss die empfangende Seite immer wählen.</p>
 <p>Args:</p>
-<p>flow: (N, 3) の変位ベクトル場。</p>
+<p>flow: (N, 3)-Verschiebungsvektorfeld.</p>
 <p>Returns:</p>
-<p>(N,) float64。</p>
+<p>(N,) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 散在フローでない / 非有限。</p>
+<p>ValueError: kein gestreuter Fluss / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

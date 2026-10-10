@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_frame(img, axes, color=&#x27;neutral&#x27;, width=1, box=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.axes_frame(img, axes, color=&#x27;neutral&#x27;, width=1, box=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;axes_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>坐标轴框(<code style="color:#22d3bf">box=True</code> 为四边,False 时只有左边与下边)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">style</code> は <code style="color:#22d3bf">imagedraw.draw_polyline</code> / <code style="color:#22d3bf">imagedraw.draw_line</code> へ素通し。</p>
+<p><code style="color:#22d3bf">style</code> 传给 <code style="color:#22d3bf">imagedraw.draw_polyline</code> / <code style="color:#22d3bf">imagedraw.draw_line</code> (原样透传)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>枠が画像からはみ出す。</p>
+<p>边框超出图像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

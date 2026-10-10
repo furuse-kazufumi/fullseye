@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;signed_surface_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Signed</b> distance from the query points to the surface. → <code style="color:#22d3bf">(N,)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>符号は面の法線から決める(外側が正)。1-D の輪郭には <code style="color:#22d3bf">profileops.profile_deviation</code> があるのに 3-D に相当が無かった、というのが 2026-09-06 に PoC が出した穴。</p>
-<p>法線を省くと <code style="color:#22d3bf">normals_orient.estimate_oriented_normals</code> で推定する —— <b>向き付き</b>でなければ符号が点ごとにばらつく(素の PCA 法線は符号が任意で、回転すると 4 割が裏返る。<code style="color:#22d3bf">pointcloud.fpfh</code> が踏んだのと同じ穴)。</p>
-<p><code style="color:#22d3bf">k</code> は符号を決めるときに使う最近傍の数。1 だと最近傍 1 点の法線に賭けることになり、雑音のある面では符号が飛ぶ。2 以上にすると距離で重みを付けた平均の向きで決める(距離そのものは最近傍のまま)。</p>
+<p>The sign is determined from the surface normal (outside is positive). For 1-D contours there is <code style="color:#22d3bf">profileops.profile_deviation</code>, but there was no 3-D equivalent -- that was the gap the PoC exposed on 2026-09-06.</p>
+<p>If normals are omitted, they are estimated with <code style="color:#22d3bf">normals_orient.estimate_oriented_normals</code> -- <b>unless oriented</b>, the sign varies from point to point (plain PCA normals have an arbitrary sign, and on rotation 4 in 10 of them flip. The same gap <code style="color:#22d3bf">pointcloud.fpfh</code> stepped into).</p>
+<p><code style="color:#22d3bf">k</code> is the number of nearest neighbours used to decide the sign. With 1 you bet on the normal of the 1 nearest point, and on a noisy surface the sign jumps. With 2 or more, the sign is decided by the distance-weighted mean orientation (the distance itself remains that of the nearest neighbour).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

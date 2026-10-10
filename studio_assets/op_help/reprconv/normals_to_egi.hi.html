@@ -4,21 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_egi(normals, n_az=36, n_el=18)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.normals_to_egi(normals, n_az=36, n_el=18)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_egi&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normal <code style="color:#22d3bf">(N,3)</code> → extended Gaussian image, <code style="color:#22d3bf">(n_el, n_az)</code> का <code style="color:#22d3bf">image2d</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では 1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
-<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(<code style="color:#22d3bf">selftest</code> が出す)。</p>
-<p>仰角の bin は <code style="color:#22d3bf">sin(el)</code> で等分する(等立体角)。度で等分すると極が過剰に細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
-<p>★<b>位置の点群を渡しても例外は出ない</b>。<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> が <code style="color:#22d3bf">normals</code> を <code style="color:#22d3bf">points</code> に畳んでいるので、進化器も台帳も両者を区別しない。この op は方向しか見ない(長さは捨てる)ので、<code style="color:#22d3bf">(N,3)</code> の座標を渡すと「原点から各点を見た向き」のヒストグラムが<b>もっともらしく</b>返る。実測(2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、最大 bin が 200 → 44 に変わるだけで、<b>総和はどちらも 200</b>。「総和が点数と合うから正しい」では区別がつかない。<code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> にすると、単位長から外れたベクトルを<b>拒否</b>する(下の Raises)。</p>
+<p>दिशाओं का 2-D histogram (Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)। &quot;किस दिशा की surface कितनी है&quot; का नक़्शा; जिन object में plane हावी हों उनमें 1 bin में peak खड़ा होता है। <b>irreversible</b> -- bin width जितना direction resolution छोड़ दिया जाता है। छोड़ी गई मात्रा मापी जा सकती है: सबसे भरे bin की केंद्र दिशा और input की औसत दिशा के बीच का कोण quantization error है, default (36, 18) पर 10 degree bin width के मुक़ाबले measured 3.7 degree (<code style="color:#22d3bf">selftest</code> देता है)।</p>
+<p>elevation के bin <code style="color:#22d3bf">sin(el)</code> में बराबर बाँटे जाते हैं (बराबर solid angle)। degree में बराबर बाँटने पर pole बहुत ज़्यादा बारीक हो जाते हैं, और &quot;surface उत्तरी ध्रुव पर केंद्रित हैं&quot; वाला झूठा peak खड़ा होता है।</p>
+<p>★ <b>position का point cloud देने पर भी exception नहीं आता</b>। <code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> <code style="color:#22d3bf">normals</code> को <code style="color:#22d3bf">points</code> में मिला देता है, इसलिए न evolver और न ledger दोनों में अंतर करते हैं। यह op केवल दिशा देखता है (length छोड़ देता है), इसलिए <code style="color:#22d3bf">(N,3)</code> के coordinate देने पर &quot;origin से हर point को देखने की दिशा&quot; वाला histogram <b>विश्वसनीय दिखते हुए</b> लौटता है। measured (2026-09-08, 200 point का curve बनाम सब सीधे ऊपर की ओर वाले normal): non-zero bin केवल 1 → 12, सबसे बड़ा bin 200 → 44 बदलता है, और <b>योग दोनों में 200 है</b>। &quot;योग point की संख्या से मेल खाता है, इसलिए सही है&quot; से इनमें अंतर नहीं किया जा सकता। <code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> करने पर unit length से हटे हुए vector <b>अस्वीकार</b> किए जाते हैं (नीचे Raises देखें)।</p>
 <p>Args:</p>
-<p>normals: (N, 3)。</p>
-<p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
-<p>n_el: 仰角の bin 数(既定 18)。</p>
+<p>normals: (N, 3)।</p>
+<p>n_az: azimuth के bin की संख्या (default 36 = 10 degree के step)।</p>
+<p>n_el: elevation के bin की संख्या (default 18)।</p>
 <p>Returns:</p>
-<p>(n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。</p>
+<p>(n_el, n_az) float64 count map (row = elevation, column = azimuth)।</p>
 <p>Raises:</p>
-<p>ValueError: bin 数が 1 未満 / 上限超 / 入力不正。</p>
-<p>ValueError: <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code> で、長さが 1 から 1e-6 を超えて外れる</p>
-<p>ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。</p>
+<p>ValueError: bin की संख्या 1 से कम / सीमा से अधिक / input ग़लत।</p>
+<p>ValueError: <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code> पर, जब ऐसे vector हों जिनकी length 1 से 1e-6 से अधिक हटी हो</p>
+<p>(position के point cloud को normal के रूप में देने की दुर्घटना पकड़ता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

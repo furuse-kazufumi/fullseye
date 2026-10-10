@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import spc; spc.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;msa_attribute_agreement&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Agreement between appraisers on attribute (pass/fail) inspection (<code style="color:#22d3bf">table</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>同じ部品を複数の検査員が判定した表から、<b>検査員の対ごとの Cohen のカッパ</b>と全体の <b>Fleiss のカッパ</b>、および素の一致率を返す。</p>
-<p>★カッパは一致率そのものではない。<code style="color:#22d3bf">kappa = (p_o - p_e)/(1 - p_e)</code> で、<b>偶然でも起きる一致 p_e を割り引いた</b>残りを測る —— 合格率 95 % の工程ではでたらめに判を押しても素の一致率は 90 % を超えるので、一致率だけ見ると「よく合っている」と読めてしまう。</p>
-<p>★門にできる厳密な値: 全員が同じ判定 → <code style="color:#22d3bf">kappa = 1</code>(厳密)。2 人 x 2 カテゴリの Cohen のカッパは <code style="color:#22d3bf">2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))</code> という閉形式と一致する。独立でたらめな判定では期待値 0(こちらは標本ごとに揺れるので区間で見る)。</p>
+<p>From a table in which several inspectors judged the same parts, returns <b>Cohen&#x27;s kappa for each pair of inspectors</b>, the overall <b>Fleiss&#x27; kappa</b>, and the raw agreement rate.</p>
+<p>★ Kappa is not the agreement rate itself. <code style="color:#22d3bf">kappa = (p_o - p_e)/(1 - p_e)</code> measures what remains <b>after discounting the agreement p_e that happens even by chance</b> -- in a process with a 95 % pass rate, even stamping at random gives a raw agreement above 90 %, so looking only at the agreement rate reads as &quot;they agree well&quot;.</p>
+<p>★ Exact values usable as a gate: everyone gives the same judgement → <code style="color:#22d3bf">kappa = 1</code> (exact). For 2 raters x 2 categories, Cohen&#x27;s kappa matches the closed form <code style="color:#22d3bf">2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))</code>. For independent random judgements the expectation is 0 (this one fluctuates per sample, so check it with an interval).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import printpath; printpath.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tone_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wie stark der aus dem Zeichnen der Linien resultierende <b>Tonwert</b> vom Ziel abweicht. → <code style="color:#22d3bf">table</code></p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>★これが一筆書きの<b>本当の目的関数</b>。「絵として似ている」を人の目に任せず、ペン幅で描いて目の尺度にぼかし、目標の暗さと比べて数で返す。</p>
-<p>返り値: dict</p>
-<p>&quot;rms&quot; / &quot;max_abs&quot; / &quot;bias&quot; —— 暗さの差(<code style="color:#22d3bf">[0, 1]</code> の尺度)</p>
-<p>&quot;corr&quot; —— 目標の暗さと描いた暗さの相関(1 に近いほど濃淡を追えている)</p>
-<p>&quot;ink_fraction&quot; —— 紙に乗ったインクの面積率</p>
-<p>&quot;target_darkness&quot; —— 目標の平均暗さ(インク率と釣り合うべき量)</p>
-<p>&quot;length_px&quot; —— 線の長さ[px]</p>
-<p>★<b>ペン幅は連続なノブ</b>(被覆率で塗る)。線が重ならない範囲では <code style="color:#22d3bf">インク率 ≈ 線長 × ペン幅 / 画像の面積</code> が成り立つので、目標の濃さに合うペン幅を <b>閉形式で解いてから</b>確かめられる:</p>
-<p><code style="color:#22d3bf">pen_width ≈ target_darkness × area / length_px</code>。</p>
+<p>★Dies ist die <b>eigentliche Zielfunktion</b> des Zeichnens in einem durchgehenden Zug. Statt &quot;es ähnelt dem Bild&quot; dem menschlichen Auge zu überlassen, wird mit der Stiftbreite gezeichnet, auf den Maßstab des Auges weichgezeichnet, mit der Zieldunkelheit verglichen und als Zahl zurückgegeben.</p>
+<p>Rückgabewert: dict</p>
+<p>&quot;rms&quot; / &quot;max_abs&quot; / &quot;bias&quot; -- Differenz der Dunkelheit (auf der <code style="color:#22d3bf">[0, 1]</code>-Skala)</p>
+<p>&quot;corr&quot; -- Korrelation zwischen Zieldunkelheit und gezeichneter Dunkelheit (je näher an 1, desto besser wird der Tonwert verfolgt)</p>
+<p>&quot;ink_fraction&quot; -- Flächenanteil der Tinte auf dem Papier</p>
+<p>&quot;target_darkness&quot; -- mittlere Dunkelheit des Ziels (die Größe, mit der der Tintenanteil im Gleichgewicht sein sollte)</p>
+<p>&quot;length_px&quot; -- Länge der Linie [px]</p>
+<p>★<b>Die Stiftbreite ist ein stetiger Regler</b> (gemalt nach Bedeckungsgrad). Wo sich Linien nicht überlappen, gilt <code style="color:#22d3bf">Tintenanteil ≈ Linienlänge × Stiftbreite / Bildfläche</code>, daher lässt sich die zur Zieldunkelheit passende Stiftbreite <b>zuerst in geschlossener Form lösen</b> und dann prüfen:</p>
+<p><code style="color:#22d3bf">pen_width ≈ target_darkness × area / length_px</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">Leitfaden zur Familie printpath</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,14 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.histogram_match(src, ref, bins=None, ties=&#x27;average&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;histogram_match&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">src</code> 의 값 분포를 <code style="color:#22d3bf">ref</code> 에 맞춥니다(1 차원 엄밀 최적수송).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>順位を保ったまま参照の分位点に置き換える。<code style="color:#22d3bf">bins</code> を指定すると、その段数の累積分布で近似する ―― 速いが<b>厳密ではなくなる</b>ので、既定は <code style="color:#22d3bf">None</code> (厳密)にしてある。</p>
-<p><b>同じ値の画素をどう扱うかで、絵の意味が変わる。</b> 単調写像なら「等しい入力は等しい出力に写る」はずだが、素朴に順位で置き換えると<b>同値が引き裂かれる</b>。実測(値 2 が 4 画素ある整数画像):出力は <code style="color:#22d3bf">0.2222 / 0.3333 / 0.4444 / 0.5556</code> の 4 つに分かれた。つまり<b>平坦だった領域に、元の絵に無い濃淡が生える</b>。整数画像は同値だらけなので、これは例外ではなく常態。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;average&quot;</code>(既定)—— 同値の画素には、そこに割り当たった参照値の <b>平均</b>を与える。等しい入力は等しい出力に写り、単調性が保たれる。その代わり<b>出力の分布は参照と厳密には一致しなくなる</b>(同値の塊のぶん、分布が階段状に丸まる)。連続な入力(同値が無い)なら厳密一致のまま。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;break&quot;</code> —— 順位そのままで引き裂く。<b>出力の分布は参照と厳密に一致する</b>が、平坦部に偽の濃淡が出る。分布を厳密に合わせることが目的で、絵として見ないと分かっているときだけ。</p>
-<p>どちらを選んでも失うものがある(分布の厳密さ か 平坦部の平坦さ)ので、<b>黙って片方に決めず引数にした</b>。</p>
-<p>多チャネルの絵に<b>そのまま掛けるとチャネル間の相関を壊す</b>。各軸の周辺分布は合うのに、色の組合せが元に無かったものになりうる。</p>
-<p>相関ごと運びたいときは <code style="color:#22d3bf">color_transfer</code> の <code style="color:#22d3bf">method=&quot;gaussian&quot;</code>。</p>
+<p>순위를 유지한 채 참조의 분위점으로 바꿔 넣는다. <code style="color:#22d3bf">bins</code>를 지정하면, 그 단수의누적 분포로 근사한다 -- 빠르지만 <b>엄밀하지 않게 되므로</b>, 기본값은 <code style="color:#22d3bf">None</code> (엄밀)으로 해 두었다.</p>
+<p><b>같은 값의 화소를 어떻게 다루느냐로, 그림의 의미가 바뀐다.</b> 단조 사상이라면 &quot;같은 입력은 같은 출력에 사상된다&quot;여야 하지만, 소박하게 순위로 바꿔 넣으면 <b>같은 값이 찢어진다</b>. 실측(값 2가 4 화소 있는 정수 영상): 출력은 <code style="color:#22d3bf">0.2222 / 0.3333 / 0.4444 / 0.5556</code>의 4개로 나뉘었다. 즉 <b>평탄했던 영역에, 원래 그림에 없던 농담이돋아난다</b>. 정수 영상은 같은 값투성이이므로, 이것은 예외가 아니라 일상적인 상태.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;average&quot;</code>(기본값) -- 같은 값의 화소에는, 거기에 할당된 참조값의 <b>평균</b>을 준다. 같은 입력은 같은 출력에 사상되어, 단조성이 유지된다. 그 대신 <b>출력의 분포는 참조와 엄밀히는 일치하지 않게 된다</b>(같은 값의 덩어리만큼, 분포가 계단 모양으로 뭉개진다). 연속인 입력(같은 값이 없음)이라면 엄밀 일치 그대로.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ties=&quot;break&quot;</code> -- 순위 그대로 찢는다. <b>출력의 분포는 참조와 엄밀히일치하지만</b>, 평탄부에 가짜 농담이 나온다. 분포를 엄밀히 맞추는 것이 목적이고, 그림으로 보지 않는다고 알고 있을 때만.</p>
+<p>어느 쪽을 골라도 잃는 것이 있으므로(분포의 엄밀함 또는 평탄부의 평탄함), <b>말없이 한쪽으로 정하지 않고 인수로 했다</b>.</p>
+<p><b>다채널 그림에 그대로 걸면 채널 간 상관을 깨뜨린다</b>. 각 축의 주변 분포는 맞지만, 색의 조합이 원래 없던 것이 될 수 있다. 상관째로 나르고 싶을 때는 <code style="color:#22d3bf">color_transfer</code>의 <code style="color:#22d3bf">method=&quot;gaussian&quot;</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 측색과 분광 지식 — 색은 ‘분광 × 광원 × 관찰자’로만 정해진다</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

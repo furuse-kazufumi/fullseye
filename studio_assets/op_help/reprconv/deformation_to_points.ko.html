@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deformation_to_points(deformation)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.deformation_to_points(deformation)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;deformation_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>TPS 변형 <code style="color:#22d3bf">deformation</code> → 제어점 <code style="color:#22d3bf">points (N,3)</code>. <code style="color:#22d3bf">deformation</code> 의 출구.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">tps_fit</code> が返す dict の <code style="color:#22d3bf">ctrl</code> を取り出す。「この歪みはどこに固定されているか」を点群語彙で見るためのもので、<b>一方向</b> (制御点だけからは重み <code style="color:#22d3bf">w</code> とアフィン項 <code style="color:#22d3bf">a</code> は復元できない)。</p>
+<p><code style="color:#22d3bf">tps_fit</code>이 반환하는 dict의 <code style="color:#22d3bf">ctrl</code>을 꺼낸다. &quot;이 왜곡은 어디에고정되어 있는가&quot;를 점군 어휘로 보기 위한 것이며, <b>단방향</b> (제어점만으로는 가중치 <code style="color:#22d3bf">w</code>와 아핀 항 <code style="color:#22d3bf">a</code>를 복원할 수 없다).</p>
 <p>Args:</p>
-<p>deformation: <code style="color:#22d3bf">ctrl</code> を持つ dict(<code style="color:#22d3bf">tps_fit</code> の返り)。</p>
+<p>deformation: <code style="color:#22d3bf">ctrl</code>을 가진 dict(<code style="color:#22d3bf">tps_fit</code>의 반환).</p>
 <p>Returns:</p>
-<p>(N, 3) float64。</p>
+<p>(N, 3) float64.</p>
 <p>Raises:</p>
-<p>ValueError: dict でない / <code style="color:#22d3bf">ctrl</code> が無い / 形状不正 / 非有限。</p>
+<p>ValueError: dict가 아님 / <code style="color:#22d3bf">ctrl</code>이 없음 / 형상 부정 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

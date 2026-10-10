@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;mirror_plane_from_pairs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बाएँ/दाएँ के संगत landmark से median (midsagittal) plane निकालता है। → <code style="color:#22d3bf">(2, 3)</code> (row 1 = point, row 2 = normal)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>左右の対 <code style="color:#22d3bf">(i, j)</code> の<b>中点</b>は、どれも正中面の上に乗る。だからその中点集合に平面を当てればよい —— 変形の量に依らず面が決まるのが要点で、残差を最小にする面(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)とは別物である。</p>
-<p>★ 2026-09-06 の実測: 6.4 mm の片側変形を入れると、<b>残差最適面は真の正中面から 2.92 mm / 1.72 度ずれ、非対称量の 46 % を消した</b>(利得 0.54)。このランドマーク面なら利得 1.03。<b>見つけるなら残差最適面、量を言うならこちら</b>。</p>
-<p>*midline* は正中線上にある(対にならない)ランドマークの添字。与えると中点集合に足して面の当てはめを安定させる。</p>
-<p><code style="color:#22d3bf">pairs=None</code> は<b>前半と後半を対にする</b>規約(<code style="color:#22d3bf">i</code> と <code style="color:#22d3bf">i + N//2</code>)。左のランドマークを全部並べてから右を同じ順で並べる、という保存形式が形態計測では一般的なので、それに合わせてある。<b>点数が奇数なら拒否する</b> —— 半分に割れない並びを黙って切り詰めると、対が 1 つずつずれて全部の符号が入れ替わる。</p>
+<p>बाएँ-दाएँ जोड़ों <code style="color:#22d3bf">(i, j)</code> के <b>मध्यबिंदु</b> सभी midsagittal plane पर स्थित होते हैं। इसलिए उस मध्यबिंदु-समूह पर plane fit कर देना काफ़ी है -- मुख्य बात यह है कि plane deformation की मात्रा से स्वतंत्र तय होता है, और यह residual को न्यूनतम करने वाले plane (<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>) से अलग चीज़ है।</p>
+<p>★ 2026-09-06 का मापन: 6.4 mm का एक-तरफ़ा deformation डालने पर, <b>residual-optimal plane असली midsagittal plane से 2.92 mm / 1.72 degree हट गया, और asymmetry का 46 % मिटा दिया</b> (gain 0.54)। इस landmark plane से gain 1.03 है। <b>ढूँढना हो तो residual-optimal plane, मात्रा बतानी हो तो यह</b>।</p>
+<p>*midline* midline पर स्थित (जोड़ा न बनाने वाले) landmarks के index हैं। देने पर इन्हें मध्यबिंदु-समूह में जोड़कर plane fit को स्थिर किया जाता है।</p>
+<p><code style="color:#22d3bf">pairs=None</code> <b>पहले आधे को दूसरे आधे से जोड़ने</b> की परंपरा है (<code style="color:#22d3bf">i</code> और <code style="color:#22d3bf">i + N//2</code>)। morphometrics में सभी बाएँ landmarks पहले और फिर दाएँ उसी क्रम में रखने वाला storage format आम है, इसलिए यह उसी के अनुसार है। <b>points की संख्या विषम हो तो reject किया जाता है</b> -- आधे में न बँटने वाले क्रम को चुपचाप काटने पर हर जोड़ा 1 से खिसक जाता है और सभी के चिह्न उलट जाते हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

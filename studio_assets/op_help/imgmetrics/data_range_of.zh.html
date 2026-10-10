@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.data_range_of(*arrays, data_range=None)</code>(要直接调用实现,<code style="color:#22d3bf">import imgmetrics; imgmetrics.data_range_of(*arrays, data_range=None)</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;data_range_of&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>确定像素值可取的范围。<b>不做猜测。</b></p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>整数 dtype は dtype から一意に決まる。float は <code style="color:#22d3bf">[0, 1]</code> に収まっているときだけ 1.0 とみなし、それ以外は <code style="color:#22d3bf">data_range</code> の明示を要求する。</p>
-<p><code style="color:#22d3bf">[0, 1]</code> の float を 255 だと思って PSNR を測ると <b>48.13 dB</b> ずれるが例外は出ない ―― それらしい数値が出るだけなので、ここで止める。</p>
+<p>整数 dtype 由 dtype 唯一确定。float 只有在落在 <code style="color:#22d3bf">[0, 1]</code> 内时才视为 1.0,其他情况要求显式给出 <code style="color:#22d3bf">data_range</code>。</p>
+<p>把 <code style="color:#22d3bf">[0, 1]</code> 的 float 当作 255 来测 PSNR 会偏差 <b>48.13 dB</b>,却不会抛出异常 —— 只会得到一个像模像样的数值,所以在这里拦下。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>*arrays : ndarray</p>
-<p>同じ画素値の約束を共有するはずの配列(通常 2 枚)。</p>
+<p>应共享同一像素值约定的数组(通常 2 幅)。</p>
 <p>data_range : float, optional</p>
-<p>明示する場合の幅。正の有限値でなければ <code style="color:#22d3bf">ValueError</code>。</p>
+<p>显式给出时的范围。若不是正的有限值则 <code style="color:#22d3bf">ValueError</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>float</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

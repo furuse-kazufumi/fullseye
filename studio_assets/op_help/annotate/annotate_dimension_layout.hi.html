@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_dimension_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (dict) लौटाता है: dimension line की geometry (dimension line, extension line, text position) closed form में तय करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">n</code> を p0→p1 の左法線(画面座標)として、寸法線は <code style="color:#22d3bf">p + n*offset</code>、補助線は <code style="color:#22d3bf">p</code> から <code style="color:#22d3bf">p + n*(offset+extension)</code>、文字は寸法線の中点から <code style="color:#22d3bf">n*text_gap</code>。<code style="color:#22d3bf">offset</code> の符号で側を選ぶ。</p>
+<p><code style="color:#22d3bf">n</code> को p0→p1 का बायाँ normal (screen coordinates) मानकर, dimension line <code style="color:#22d3bf">p + n*offset</code> है, extension lines <code style="color:#22d3bf">p</code> से <code style="color:#22d3bf">p + n*(offset+extension)</code> तक हैं, और text dimension line के मध्यबिंदु से <code style="color:#22d3bf">n*text_gap</code> पर है। <code style="color:#22d3bf">offset</code> का sign तय करता है कि कौन-सी ओर।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;p0&quot;,&quot;p1&quot;,&quot;line&quot;:(q0,q1),&quot;ext0&quot;,&quot;ext1&quot;,&quot;text_xy&quot;,&quot;normal&quot;, &quot;angle_deg&quot;,&quot;length_px&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;p0&quot;,&quot;p1&quot;,&quot;line&quot;:(q0,q1),&quot;ext0&quot;,&quot;ext1&quot;,&quot;text_xy&quot;,&quot;normal&quot;, &quot;angle_deg&quot;,&quot;length_px&quot;}</code>।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>2 点が一致(向きが無い)、非有限、offset が 0。</p>
+<p>2 points एक ही हैं (कोई दिशा नहीं), non-finite, offset 0 है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

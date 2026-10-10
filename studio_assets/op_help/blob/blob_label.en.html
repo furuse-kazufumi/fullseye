@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_label(region: &#x27;Any&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import blob2d; blob2d.blob_label(region: &#x27;Any&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsblob.get(&quot;blob_label&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Splits a binary region into connected components and returns an <code style="color:#22d3bf">int32</code> label image (background 0, objects 1..n).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>region : array_like</p>
-<p>2-D。<code style="color:#22d3bf">&gt; 0</code> が前景(bool でも実数でもよい。NaN は背景)。</p>
+<p>2-D. <code style="color:#22d3bf">&gt; 0</code> is foreground (bool or real both fine; NaN is background).</p>
 <p>connectivity : {4, 8}</p>
-<p>斜めに触れる 2 画素をつなぐか。既定 8 は <code style="color:#22d3bf">ndimage.label</code> と</p>
-<p>HALCON <code style="color:#22d3bf">connection</code> の既定に一致する。<b>4 にすると斜めに接した塊が別々に数えられる</b>。</p>
+<p>Whether 2 pixels touching diagonally are connected. The default 8 matches the defaults of <code style="color:#22d3bf">ndimage.label</code> and</p>
+<p>HALCON <code style="color:#22d3bf">connection</code>. <b>With 4, blobs touching diagonally are counted separately</b>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">(H, W)</code> の <code style="color:#22d3bf">int32</code>。番号は 1 から連番で歯抜けが無い。</p>
+<p><code style="color:#22d3bf">int32</code> of <code style="color:#22d3bf">(H, W)</code>. Labels are consecutive from 1 with no gaps.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>
 <p>&gt;&gt;&gt; m = np.zeros((6, 9), bool); m[1:4, 1:4] = True; m[1:4, 5:8] = True</p>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_dimension(img, p0, p1, units_per_pixel=1.0, unit=&#x27;px&#x27;, offset=20.0, extension=6.0, color=&#x27;neutral&#x27;, width=1.5, head_len=9.0, head_width=6.0, label_fmt=&#x27;{:.1f}&#x27;, font_size=11, box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_dimension(img, p0, p1, units_per_pixel=1.0, unit=&#x27;px&#x27;, offset=20.0, extension=6.0, color=&#x27;neutral&#x27;, width=1.5, head_len=9.0, head_width=6.0, label_fmt=&#x27;{:.1f}&#x27;, font_size=11, box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_dimension&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns an image (image2d): a dimension line (arrowheads at both ends, extension lines, value and unit).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>値は <code style="color:#22d3bf">|p1-p0| * units_per_pixel</code>(閉形式)。幾何は <code style="color:#22d3bf">annotate_dimension_layout</code>。</p>
+<p>The value is <code style="color:#22d3bf">|p1-p0| * units_per_pixel</code> (closed form). The geometry comes from <code style="color:#22d3bf">annotate_dimension_layout</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_dimension_layout</code> と同じ + units_per_pixel が非正、</p>
-<p>寸法線が画像の外、文字が収まらない。</p>
+<p>Same as <code style="color:#22d3bf">annotate_dimension_layout</code> + units_per_pixel is not positive,</p>
+<p>the dimension line is outside the image, or the text does not fit.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

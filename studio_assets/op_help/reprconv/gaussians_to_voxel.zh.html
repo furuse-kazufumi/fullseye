@@ -4,28 +4,27 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_voxel(gaussians, shape=(32, 32, 32), origin=(0.0, 0.0, 0.0), spacing=(1.0, 1.0, 1.0), truncate=3.0)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_voxel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">gaussians</code> → 密度 <code style="color:#22d3bf">voxel (D,H,W)</code>。<code style="color:#22d3bf">gaussians</code> 的第二个出口。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各ガウシアンを <code style="color:#22d3bf">truncate * sigma</code> で打ち切って加算する。<b>格子の原点と刻みを明示引数にしてある</b>のが要点で、既定の <code style="color:#22d3bf">spacing=(1,1,1)</code> をそのまま使うと「世界座標をそのまま添字にする」ことになり、実データではまず間違う —— しかも例外は出ず、密度が別の場所に立つだけなので気づけない。<code style="color:#22d3bf">tests/test_reprconv.py</code> はこの取り違えを明示的に測っている。</p>
-<p><b>不可逆</b>。損失は 3 つあり、どれも数字で測れる:</p>
-<p style="margin:2px 0 2px 12px">• <b>打ち切り</b> —— 打ち切りは<b>軸並行の箱</b>(各軸 ±truncate*sigma)なので、残る質量は <code style="color:#22d3bf">erf(t/sqrt(2))**3</code>。t = 3 で <b>99.194%</b>。</p>
-<p>★ここは一度間違えた: 最初「3 sigma の<b>球</b>の質量 97.07%」と書いたが、</p>
-<p>実装は箱なので値が違う。刻みを 1.0 → 0.125 と細かくして極限を取ると</p>
-<p>99.30% → 99.19% へ収束し、球の 97.07% には<b>近づかない</b>ことで反証できた</p>
+<p>将各高斯在 <code style="color:#22d3bf">truncate * sigma</code> 处截断后累加。要点是<b>网格的原点和步长都作为显式参数</b>,若直接使用默认的 <code style="color:#22d3bf">spacing=(1,1,1)</code>, 就等于“把世界坐标直接当作下标”,对真实数据几乎必错 —— 而且不会抛异常,密度只是出现在别处,所以察觉不到。<code style="color:#22d3bf">tests/test_reprconv.py</code> 明确地测量了这种混淆。</p>
+<p><b>不可逆</b>。损失有 3 种,每种都能用数字测量:</p>
+<p style="margin:2px 0 2px 12px">• <b>截断</b> —— 截断是<b>轴平行的盒子</b>(各轴 ±truncate*sigma),因此剩余质量为 <code style="color:#22d3bf">erf(t/sqrt(2))**3</code>。t = 3 时为 <b>99.194%</b>。</p>
+<p>★这里曾经写错: 最初写成“3 sigma <b>球</b>的质量 97.07%”,但</p>
+<p>实现是盒子,所以值不同。把步长从 1.0 → 0.125 细化取极限,</p>
+<p>会由 99.30% → 99.19% 收敛,而<b>不会接近</b>球的 97.07%,由此得以反证</p>
 <p>(<code style="color:#22d3bf">tests/test_reprconv.py::test_gaussians_to_voxel_mass_matches_box_truncation</code>)。</p>
-<p>例外も NaN も出ない、まさに「黙って間違った数字を返す」種類の誤り。</p>
-<p style="margin:2px 0 2px 12px">• <b>格子求積</b> —— 中点則なので刻みが sigma に対して粗いと<b>上振れ</b>する(実測: sigma = 1.5 で刻み 1.0 のとき 99.94%、0.125 で 99.30%)。</p>
-<p style="margin:2px 0 2px 12px">• <b>境界の切り落とし</b> —— 箱が volume の外へ出た分は落ちる。中心が縁に近いガウシアンでは打ち切りより遥かに大きい損失になる。</p>
+<p>既不抛异常也不出 NaN,正是“悄悄返回错误数字”那一类错误。</p>
+<p style="margin:2px 0 2px 12px">• <b>网格求积</b> —— 由于是中点法则,步长相对 sigma 较粗时会<b>偏高</b> (实测: sigma = 1.5 时步长 1.0 为 99.94%,0.125 为 99.30%)。</p>
+<p style="margin:2px 0 2px 12px">• <b>边界截掉</b> —— 盒子超出 volume 的部分会被丢掉。中心靠近边缘的高斯,这部分损失远大于截断。</p>
 <p>Args:</p>
-<p>gaussians: <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code> を持つ dict。<code style="color:#22d3bf">mu</code> は (z, y, x)。</p>
+<p>gaussians: 含 <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code> 的 dict。<code style="color:#22d3bf">mu</code> 为 (z, y, x)。</p>
 <p>shape: (D, H, W)。</p>
-<p>origin: 格子の (z, y, x) 原点(世界座標)。</p>
-<p>spacing: 格子の (dz, dy, dx) 刻み(世界単位 / voxel)。</p>
-<p>truncate: 何 sigma で打ち切るか(既定 3)。</p>
+<p>origin: 网格的 (z, y, x) 原点(世界坐标)。</p>
+<p>spacing: 网格的 (dz, dy, dx) 步长(世界单位 / voxel)。</p>
+<p>truncate: 在几个 sigma 处截断(默认 3)。</p>
 <p>Returns:</p>
-<p>(D, H, W) float64 の密度(値は「voxel あたりの重み和」で、体積積分が</p>
-<p><code style="color:#22d3bf">sum(w)</code> に近づく)。</p>
+<p>(D, H, W) float64 的密度(值为“每个 voxel 的权重和”,体积积分</p>
+<p>趋近 <code style="color:#22d3bf">sum(w)</code>)。</p>
 <p>Raises:</p>
-<p>ValueError: shape/spacing 不正 / truncate &lt;= 0 / gaussians 不正。</p>
+<p>ValueError: shape/spacing 不正确 / truncate &lt;= 0 / gaussians 不正确。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

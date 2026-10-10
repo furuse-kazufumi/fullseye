@@ -4,11 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_stop_g(image, *, sigma: &#x27;float&#x27; = 1.0, k: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segcontour; segcontour.edge_stop_g(image, *, sigma: &#x27;float&#x27; = 1.0, k: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;edge_stop_g&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>에지 정지 함수 g = 1 / (1 + |∇(G_σ * I)|² / k²)(Caselles–Kimmel–Sapiro 1997의 p = 2 형태)(edge_stop_g).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">sigma</code> = ガウスの標準偏差(0 なら平滑化なしの中心差分)、<code style="color:#22d3bf">k</code> = 勾配の尺度(k = 1 で g = 1/(1 + |∇G_σ*I|²))。</p>
-<p>画像の値域に依存する: Li ら 2010 の配布例は 0〜255 の画像で k = 1 なので、[0, 1] の画像なら k = 1/255 が同じ挙動。</p>
-<p>返り値: <code style="color:#22d3bf">g</code>(0 &lt; g ≤ 1、平坦で 1)、<code style="color:#22d3bf">grad_mag</code>、<code style="color:#22d3bf">g_min</code> / <code style="color:#22d3bf">g_max</code>、<code style="color:#22d3bf">sigma</code>、<code style="color:#22d3bf">k</code>。</p>
-<p>門: g ∈ (0, 1] —— 分母 ≥ 1、平坦な画像で g ≡ 1(勾配 0)。</p>
+<p><code style="color:#22d3bf">sigma</code> = 가우스의 표준편차(0이면 평활화 없는 중심 차분), <code style="color:#22d3bf">k</code> = 기울기의 척도(k = 1에서 g = 1/(1 + |∇G_σ*I|²)). 영상의 값 범위에 의존한다: Li 등 2010의 배포 예는 0~255 영상에서 k = 1이므로, [0, 1] 영상이라면 k = 1/255가 같은 동작.</p>
+<p>반환값: <code style="color:#22d3bf">g</code>(0 &lt; g ≤ 1, 평탄하면 1), <code style="color:#22d3bf">grad_mag</code>, <code style="color:#22d3bf">g_min</code> / <code style="color:#22d3bf">g_max</code>, <code style="color:#22d3bf">sigma</code>, <code style="color:#22d3bf">k</code>.</p>
+<p>게이트: g ∈ (0, 1] — 분모 ≥ 1, 평탄한 영상에서 g ≡ 1(기울기 0).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

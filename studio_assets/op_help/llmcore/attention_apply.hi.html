@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;attention_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>attention weight से value मिलाता है → tokens। <b>row का योग 1 है, इसलिए आउटपुट इनपुट का convex combination है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>weights: (T, S) float。行和が 1 であること(<code style="color:#22d3bf">attention_weights</code> の出力)。</p>
-<p>value: (S, dv) float。混ぜられる側。</p>
+<p>weights: (T, S) float। rows का योग 1 होना चाहिए (<code style="color:#22d3bf">attention_weights</code> का output)।</p>
+<p>value: (S, dv) float। जिसे मिलाया जाता है वह तरफ़।</p>
 <p>Returns:</p>
-<p>tokens (T, dv) float: 各行が value の行の凸結合。<b>値域は value を出ない</b></p>
-<p>(同時に幅は縮む —— 平均は対比を潰す)。</p>
+<p>tokens (T, dv) float: हर row value की rows का convex combination है। <b>value range कभी value से बाहर नहीं जाती</b></p>
+<p>(साथ ही फैलाव घटता है -- औसत contrast को दबा देता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

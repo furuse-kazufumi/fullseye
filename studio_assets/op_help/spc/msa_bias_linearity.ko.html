@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spc; spc.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;msa_bias_linearity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>기준값에 대한 편의와 그 편의의 기준값 의존성(직선성) (<code style="color:#22d3bf">table</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>偏り <code style="color:#22d3bf">bias = measured - reference</code> を基準値に回帰する(<code style="color:#22d3bf">bias = intercept + slope * reference</code>)。傾きが 0 でなければ、測定系は測定範囲の<b>場所によって違う量だけずれている</b> = 直線性の問題。</p>
-<p>返りは基準値ごとの平均偏り(<code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">bias_mean</code> / <code style="color:#22d3bf">n</code>)と、回帰の <code style="color:#22d3bf">intercept</code> / <code style="color:#22d3bf">slope</code> / それぞれの標準誤差・t 値・p 値、全体平均偏り。</p>
-<p>★門にできる厳密な性質: 雑音の無い <code style="color:#22d3bf">bias = a + b*ref</code> を渡すと最小二乗は a と b を<b>厳密に</b>返す(残差 0)。そのとき標準誤差は 0 なので t は <code style="color:#22d3bf">inf</code> / p は 0 —— これは欠陥ではなく完全適合の正しい報告なので、そのまま返す。</p>
+<p>치우침 <code style="color:#22d3bf">bias = measured - reference</code> 를 기준값에 회귀한다(<code style="color:#22d3bf">bias = intercept + slope * reference</code>). 기울기가 0 이 아니면 측정계는측정 범위의 <b>위치에 따라 다른 양만큼 어긋나 있다</b> = 직선성 문제.</p>
+<p>반환은 기준값별 평균 치우침(<code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">bias_mean</code> / <code style="color:#22d3bf">n</code>)과 회귀의 <code style="color:#22d3bf">intercept</code> / <code style="color:#22d3bf">slope</code> / 각각의 표준오차 · t 값 · p 값, 전체 평균 치우침.</p>
+<p>★게이트로 쓸 수 있는 엄밀한 성질: 잡음 없는 <code style="color:#22d3bf">bias = a + b*ref</code> 를 넘기면 최소제곱은 a 와 b 를 <b>엄밀하게</b> 반환한다(잔차 0). 이때 표준오차는 0 이므로 t 는 <code style="color:#22d3bf">inf</code> / p 는 0 —— 이는 결함이 아니라 완전 적합의 올바른 보고이므로 그대로 반환한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

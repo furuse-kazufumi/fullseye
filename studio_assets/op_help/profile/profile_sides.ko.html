@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_sides(contour, n=101, normalise=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import profileops; profileops.profile_sides(contour, n=101, normalise=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprofile.get(&quot;profile_sides&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>윗면과 아랫면을 시위 방향 좌표의 함수로 추출한다. 반환값은 dict.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>弦を <code style="color:#22d3bf">n</code> 等分し、各位置で輪郭と交わる上下の点を線形補間で拾う。</p>
-<p><b>開いた曲線はここで拒否される</b> —— 1 価の関数(MTF 曲線のような)を渡すと下面が取れないので、「これは閉じた断面ではない」と明示して落とす。型ではなく検証で守っている(<code style="color:#22d3bf">pairs</code> は関数データにも閉輪郭にも使われる語彙なので、型を分けると既存の輪郭生成 op から繋がらなくなる)。</p>
+<p>시위를 <code style="color:#22d3bf">n</code> 등분하고, 각 위치에서 윤곽과 교차하는 위아래 점을 선형 보간으로 구한다.</p>
+<p><b>열린 곡선은 여기서 거부된다</b> —— 1 가 함수(MTF 곡선 같은)를 넘기면아랫면을 구할 수 없으므로, &quot;이것은 닫힌 단면이 아니다&quot;라고 명시하고 실패시킨다. 타입이 아니라검증으로 지키고 있다(<code style="color:#22d3bf">pairs</code> 는 함수 데이터에도 닫힌 윤곽에도 쓰이는 어휘이므로, 타입을 나누면 기존의 윤곽 생성 op 에서 연결되지 않게 된다).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">x</code>(<code style="color:#22d3bf">(n,)</code>)、<code style="color:#22d3bf">upper</code> / <code style="color:#22d3bf">lower</code>(<code style="color:#22d3bf">(n,)</code>)、<code style="color:#22d3bf">normalised</code>。</p>
+<p>dict: <code style="color:#22d3bf">x</code>(<code style="color:#22d3bf">(n,)</code>), <code style="color:#22d3bf">upper</code> / <code style="color:#22d3bf">lower</code>(<code style="color:#22d3bf">(n,)</code>), <code style="color:#22d3bf">normalised</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

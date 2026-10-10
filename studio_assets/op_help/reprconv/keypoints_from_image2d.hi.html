@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.keypoints_from_image2d(image2d, threshold=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.keypoints_from_image2d(image2d, threshold=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_from_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>count/response image <code style="color:#22d3bf">(H, W)</code> → image coordinate <code style="color:#22d3bf">(N,2) = (u, v)</code>। round trip का वापसी रास्ता।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">&gt; threshold</code> の画素を 8 近傍で連結成分に分け、各成分の<b>強度重み付き重心</b>を返す。重み付きにするのは、副画素の情報が残っている応答画像(相関ピーク等)で往復誤差を量子化以下へ落とせるようにするため。</p>
-<p><b>8 近傍の連結が損失の主犯</b>である点に注意: 隣り合う画素に落ちた 2 点は 1 つの成分に融合し、重心が 2 点の中間へ動く。<code style="color:#22d3bf">selftest</code> は「よく離れた点だけの量子化誤差」と「融合を含む全体」を<b>別々に</b>測る(混ぜると量子化の理論値 0.2887 px と比較できなくなる)。</p>
+<p><code style="color:#22d3bf">&gt; threshold</code> वाले pixel को 8-neighbourhood से connected component में बाँटकर हर component का <b>intensity-weighted centroid</b> लौटाता है। weighted इसलिए है ताकि जिन response image में subpixel जानकारी बची हो (correlation peak आदि) उनमें round trip error को quantization से नीचे लाया जा सके।</p>
+<p>ध्यान दें कि <b>8-neighbourhood connectivity ही loss का मुख्य कारण है</b>: पड़ोसी pixel पर पड़े 2 point 1 component में जुड़ जाते हैं, और centroid 2 point के बीच में चला जाता है। <code style="color:#22d3bf">selftest</code> &quot;केवल दूर-दूर वाले point का quantization error&quot; और &quot;fusion सहित कुल&quot; को <b>अलग-अलग</b> मापता है (मिलाने पर quantization के सैद्धांतिक मान 0.2887 px से तुलना संभव नहीं रहती)।</p>
 <p>Args:</p>
-<p>image2d: (H, W) の実画像。</p>
-<p>threshold: この値を超えた画素だけを拾う。</p>
+<p>image2d: (H, W) real image।</p>
+<p>threshold: केवल इस मान से अधिक वाले pixel लिए जाते हैं।</p>
 <p>Returns:</p>
-<p>(N, 2) float64 の (u, v)。行順は <code style="color:#22d3bf">scipy.ndimage.label</code> のラベル順。</p>
+<p>(N, 2) float64 का (u, v)। row का क्रम <code style="color:#22d3bf">scipy.ndimage.label</code> के label क्रम जैसा है।</p>
 <p>Raises:</p>
-<p>ValueError: 2-D でない / 非有限 / 閾値を超える画素が 1 つも無い。</p>
+<p>ValueError: 2-D नहीं है / non-finite / threshold से अधिक 1 भी pixel नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

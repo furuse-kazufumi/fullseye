@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_circle_measure(model, row, col, radius, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import metrology; metrology.add_metrology_object_circle_measure(model, row, col, radius, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_circle_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>新增圓量測物件(add_metrology_object_circle_measure)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>参照円(中心 <code style="color:#22d3bf">(row, col)</code>、半径 <code style="color:#22d3bf">radius</code> [px])を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> は円周を <code style="color:#22d3bf">n</code> 等分した角度に点を置き、各点で <b>半径方向</b>(外向き法線)に測定線を張ってサブピクセルのエッジを取り、最小二乗の円フィットで中心と半径を出し直す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 参照半径 [px]。実物とのずれは <code style="color:#22d3bf">apply</code> の <code style="color:#22d3bf">measure_length</code> (既定 ±6 px)以内に収まっている必要がある ―― それより外のエッジは見つからない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 円周のサンプル数(既定 40)。半径が大きい円ほど増やす。</p>
-<p style="margin:2px 0 2px 12px">• 引数はここでは検証しない(0 以下の半径も積めるが意味を持たない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 追加位置の index(0 始まり)。<code style="color:#22d3bf">apply</code> 結果の <code style="color:#22d3bf">params</code> は <code style="color:#22d3bf">row / col / radius</code>、<code style="color:#22d3bf">rms</code> は円からの半径方向残差 [px]。</p>
-<p>穴径・ピン径の検査、円形部品の中心出しに使う。</p>
+<p>把參考圓(中心 <code style="color:#22d3bf">(row, col)</code>、半徑 <code style="color:#22d3bf">radius</code> [px])堆疊到 <code style="color:#22d3bf">model[&quot;objects&quot;]</code> (原地更新 dict)。<code style="color:#22d3bf">apply_metrology_model</code> 在把圓周 <code style="color:#22d3bf">n</code> 等分的角度上放置點，在各點<b>沿半徑方向</b>(外法線)拉出量測線，取得次像素邊緣，用最小平方圓擬合重新求出中心與半徑。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 參考半徑 [px]。與實物的偏差必須落在 <code style="color:#22d3bf">apply</code> 的 <code style="color:#22d3bf">measure_length</code> (預設 ±6 px)以內 —— 超出範圍的邊緣找不到。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 圓周上的取樣數(預設 40)。半徑越大的圓越應增加。</p>
+<p style="margin:2px 0 2px 12px">• 參數在此不做驗證(0 以下的半徑也能堆疊，但沒有意義)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: 新增位置的 index(從 0 開始)。<code style="color:#22d3bf">apply</code> 結果的 <code style="color:#22d3bf">params</code> 為 <code style="color:#22d3bf">row / col / radius</code>,<code style="color:#22d3bf">rms</code> 為距圓的徑向殘差 [px]。</p>
+<p>用於孔徑、銷徑的檢查以及圓形零件的定心。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

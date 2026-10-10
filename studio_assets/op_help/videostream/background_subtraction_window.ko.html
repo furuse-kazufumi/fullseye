@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import videostream; videostream.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvideostream.get(&quot;background_subtraction_window&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>인과적 윈도 중앙값 배경 → 프레임별 0/1 전경 마스크 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>フレーム <code style="color:#22d3bf">t</code> ごとに、直近 <code style="color:#22d3bf">window</code> 枚(<code style="color:#22d3bf">max(0, t-window+1) .. t</code>、<b>そのフレーム自身を含む</b>)の画素ごとの中央値を背景 <code style="color:#22d3bf">bg</code> とし、<code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code> を 1、それ以外を 0 にする。未来のフレームは見ない(因果的)ので、先頭では枚数が足りないぶん窓が短い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> の配列、または同形・同 dtype の 2-D フレームの list。uint8/uint16 は dtype の最大値で <code style="color:#22d3bf">[0, 1]</code> に、float はそのまま <code style="color:#22d3bf">[0, 1]</code> にクリップ。カラー <code style="color:#22d3bf">(T, H, W, C)</code> は受けない。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>: 1〜4096 の int(bool 不可)。1 だと背景 = 自分なので全画素 0。偶数枚のときの中央値は中間 2 値の平均。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code>: <code style="color:#22d3bf">[0, 1]</code> の強度単位(uint8 なら <code style="color:#22d3bf">/255</code> 換算)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64 の 0 / 1。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形・dtype・範囲・非有限)。</p>
-<p>ゆっくり動く物体は <code style="color:#22d3bf">window</code> 枚以内に背景へ溶けるので、その場合は <code style="color:#22d3bf">running_gaussian_foreground</code>(選択的更新)か <code style="color:#22d3bf">exponential_foreground</code> を。背景そのものが要るなら <code style="color:#22d3bf">temporal_median_window</code>。</p>
+<p>프레임 <code style="color:#22d3bf">t</code> 마다 직전 <code style="color:#22d3bf">window</code> 장(<code style="color:#22d3bf">max(0, t-window+1) .. t</code>, <b>그 프레임자신을 포함</b>)의 화소별 중앙값을 배경 <code style="color:#22d3bf">bg</code> 로 하고, <code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code> 를 1, 그 외를 0 으로 한다. 미래 프레임은 보지 않으므로(인과적) 앞부분에서는장수가 모자라는 만큼 창이 짧다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 배열, 또는 같은 형태·같은 dtype 의 2-D 프레임 list. uint8/uint16 은 dtype 최댓값으로 <code style="color:#22d3bf">[0, 1]</code> 로, float 는 그대로 <code style="color:#22d3bf">[0, 1]</code> 로클립. 컬러 <code style="color:#22d3bf">(T, H, W, C)</code> 는 받지 않는다. NaN/Inf 는 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>: 1~4096 의 int(bool 불가). 1 이면 배경 = 자기 자신이므로 전 화소 0. 짝수 장일 때의 중앙값은 가운데 2 값의 평균.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code>: <code style="color:#22d3bf">[0, 1]</code> 의 강도 단위(uint8 이면 <code style="color:#22d3bf">/255</code> 환산).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(T, H, W)</code> float64 의 0 / 1.</p>
+<p style="margin:2px 0 2px 12px">• 실패: <code style="color:#22d3bf">ValueError</code>(형태·dtype·범위·비유한).</p>
+<p>천천히 움직이는 물체는 <code style="color:#22d3bf">window</code> 장 이내에 배경으로 녹아들므로, 그 경우에는 <code style="color:#22d3bf">running_gaussian_foreground</code>(선택적 갱신)나 <code style="color:#22d3bf">exponential_foreground</code> 를. 배경 자체가 필요하면 <code style="color:#22d3bf">temporal_median_window</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

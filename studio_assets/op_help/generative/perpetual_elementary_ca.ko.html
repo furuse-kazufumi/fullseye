@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import perpetual; perpetual.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_elementary_ca&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>기본 셀룰러 오토마톤(Wolfram의 256 규칙)을 위에서 아래로 무한히 뻗어 나가게 한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">seed &lt; 0</code> で<b>中央 1 点</b>から始める(規則 90 ならシェルピンスキー、規則 30 なら擬似乱数、規則 110 なら万能計算)。</p>
-<p>不変量(規則 90・1 点始動): 第 n 行の第 k セルは <b>C(n,k) mod 2</b>。</p>
+<p><code style="color:#22d3bf">seed &lt; 0</code>이면 <b>중앙 1점</b>에서 시작한다(규칙 90이면 시에르핀스키, 규칙 30이면 의사난수, 규칙 110이면 만능 계산).</p>
+<p>불변량(규칙 90, 1점 시작): 제 n 행의 제 k 셀은 <b>C(n,k) mod 2</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

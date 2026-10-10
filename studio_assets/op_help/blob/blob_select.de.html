@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import blob2d; blob2d.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsblob.get(&quot;blob_select&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Behält nur die Objekte, deren Merkmalswert in <code style="color:#22d3bf">[vmin, vmax]</code> liegt (<b>die Nummern werden ab 1 neu vergeben</b>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : array_like</p>
-<p><code style="color:#22d3bf">blob_label</code> の出力。</p>
+<p>Ausgabe von <code style="color:#22d3bf">blob_label</code>.</p>
 <p>feature : str</p>
-<p><code style="color:#22d3bf">FEATURE_KEYS</code> のどれか。知らない鍵は<b>候補を並べて拒否する</b>。</p>
+<p>Einer der <code style="color:#22d3bf">FEATURE_KEYS</code>. Ein unbekannter Schlüssel wird <b>mit Auflistung der Kandidaten abgewiesen</b>.</p>
 <p>vmin, vmax : float or None</p>
-<p>両端(含む)。<code style="color:#22d3bf">None</code> は片側を開ける。両方 <code style="color:#22d3bf">None</code> は</p>
-<p>「何も選んでいない」ので拒否する —— 全部通す意図なら呼ばなければよい。</p>
+<p>Beide Enden (inklusive). <code style="color:#22d3bf">None</code> lässt diese Seite offen. Beide <code style="color:#22d3bf">None</code> bedeutet</p>
+<p>&quot;nichts ausgewählt&quot; und wird abgewiesen -- wer alles durchlassen will, ruft es einfach nicht auf.</p>
 <p>spacing : float</p>
-<p><code style="color:#22d3bf">blob_features</code> と同じ意味。<code style="color:#22d3bf">area</code> や <code style="color:#22d3bf">perimeter</code> を</p>
-<p>物理単位で切るときに要る。</p>
+<p>Gleiche Bedeutung wie bei <code style="color:#22d3bf">blob_features</code>. Nötig, wenn <code style="color:#22d3bf">area</code> oder <code style="color:#22d3bf">perimeter</code></p>
+<p>in physikalischen Einheiten geschnitten werden.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">int32</code> のラベル画像。<b>残った物体は 1..k の連番</b>になる</p>
-<p>(元の番号は残さない)。元の番号が要るなら</p>
-<p><code style="color:#22d3bf">blob_features(labels)[&quot;label&quot;]</code> を先に取っておくこと。</p>
+<p><code style="color:#22d3bf">int32</code>-Labelbild. <b>Die verbleibenden Objekte werden fortlaufend 1..k nummeriert</b></p>
+<p>(die ursprünglichen Nummern bleiben nicht erhalten). Wer die ursprünglichen Nummern braucht,</p>
+<p>holt vorher <code style="color:#22d3bf">blob_features(labels)[&quot;label&quot;]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">Leitfaden zur Familie blob_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

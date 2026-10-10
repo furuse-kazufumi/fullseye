@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_scores(query, key, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import llmcore; llmcore.attention_scores(query, key, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_scores&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>原始注意力分數 QKᵀ/√d → attnmap (T, S)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Args:</p>
-<p>query: (T, d) float。問い合わせる側。</p>
-<p>key: (S, d) float。引かれる側。d は query と同じ。</p>
-<p>scale: スコアの倍率。None なら 1/√d(Vaswani ら 2017 —— 内積が d に比例して</p>
-<p>育ち softmax が尖るのを打ち消す)。</p>
+<p>query: (T, d) float。發起查詢的一側。</p>
+<p>key: (S, d) float。被查詢的一側。d 與 query 相同。</p>
+<p>scale: 分數的倍率。None 則為 1/√d(Vaswani 等 2017 —— 抵消內積隨 d 成比例</p>
+<p>增大而使 softmax 變尖)。</p>
 <p>Returns:</p>
-<p>attnmap (T, S) float: softmax にかける前の生のスコア。</p>
+<p>attnmap (T, S) float: 送入 softmax 之前的原始分數。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

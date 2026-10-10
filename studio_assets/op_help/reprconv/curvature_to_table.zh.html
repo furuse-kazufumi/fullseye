@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_table(curvature)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.curvature_to_table(curvature)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲率 → 分布的汇总 <code style="color:#22d3bf">table</code>。<b>单向</b>(统计的职责就是丢弃信息)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>(N,) の単独曲率も (N,2) の主曲率対も受ける —— 統計を出すだけなら対である必要が無いため。<code style="color:#22d3bf">kind</code> に受けた形を書き戻すので、下流は「対だったのか」を後から判別できる。</p>
+<p>既接受 (N,) 的单个曲率,也接受 (N,2) 的主曲率对 —— 只是求统计的话,并不需要成对。把接收到的形式写回 <code style="color:#22d3bf">kind</code>,所以下游事后能判别&quot;是否为对&quot;。</p>
 <p>Args:</p>
-<p>curvature: (N,) / (N, 2) / 2 本の等長 1-D のタプル。</p>
+<p>curvature: (N,) / (N, 2) / 2 个等长 1-D 的元组。</p>
 <p>Returns:</p>
 <p>dict。<code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">rms</code> /</p>
-<p><code style="color:#22d3bf">p05</code> / <code style="color:#22d3bf">p50</code> / <code style="color:#22d3bf">p95</code>、対なら <code style="color:#22d3bf">gauss_mean</code>(K = k1*k2 の平均)と</p>
-<p><code style="color:#22d3bf">mean_curvature_mean</code>((k1+k2)/2 の平均)。</p>
+<p><code style="color:#22d3bf">p05</code> / <code style="color:#22d3bf">p50</code> / <code style="color:#22d3bf">p95</code>,若为对则另有 <code style="color:#22d3bf">gauss_mean</code>(K = k1*k2 的平均)与</p>
+<p><code style="color:#22d3bf">mean_curvature_mean</code>((k1+k2)/2 的平均)。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

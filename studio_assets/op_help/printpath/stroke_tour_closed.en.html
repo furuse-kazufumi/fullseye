@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import printpath; printpath.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>; from the registry, <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tour_closed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reorders the points into a <b>closed tour</b> that visits each point exactly 1 time and returns. → <code style="color:#22d3bf">pairs</code></p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返るのは入力と同じ点を並べ替えた <code style="color:#22d3bf">(N, 2)</code>。<b>最後の点から最初の点へ戻る</b> ことで閉じる(末尾に先頭を重複させない)。</p>
-<p>★これは最適な巡回路ではない(TSP は NP 困難)。<b>下界と比べて質を言う</b>:</p>
-<p>閉じた巡回路は最小全域木より短くなれないので <code style="color:#22d3bf">length / mst_length</code> が 1 に近いほど良い。一様な点なら Beardwood–Halton–Hammersley の <code style="color:#22d3bf">0.7124 √(n A)</code> も目安になる。<b>黄金ファイルは使わない。</b></p>
+<p>Returns <code style="color:#22d3bf">(N, 2)</code>: the same points as the input, reordered. It is closed by <b>returning from the last point to the first</b> (the first point is not duplicated at the end).</p>
+<p>★This is not an optimal tour (TSP is NP-hard). <b>State its quality by comparing with a lower bound</b>:</p>
+<p>a closed tour cannot be shorter than the minimum spanning tree, so the closer <code style="color:#22d3bf">length / mst_length</code> is to 1 the better. For uniform points, Beardwood–Halton–Hammersley&#x27;s <code style="color:#22d3bf">0.7124 √(n A)</code> is also a guide. <b>No golden files are used.</b></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_pixel_position(image, threshold=0.98, min_area=4)</code> (to call the implementation directly, <code style="color:#22d3bf">import geocam; geocam.sun_pixel_position(image, threshold=0.98, min_area=4)</code>; from the registry, <code style="color:#22d3bf">opsgeocam.get(&quot;sun_pixel_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Centroid of the sun in the image (a disk that <b>saturates</b> the sensor) → keypoints (1, 2) = (u, v).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>前提は「太陽はセンサを飽和させ、雲や雪は飽和の手前で止まる」。値が <code style="color:#22d3bf">threshold</code>(絶対値、画像は 0〜1)以上の画素を 8 近傍で連結し、<b>最大の塊</b>の輝度重心を返す。塊が <code style="color:#22d3bf">min_area</code> 未満、または飽和画素が無ければ「太陽が写っていない」として ValueError(黙って雲の反射を返さない —— 太陽が山に隠れた時刻の写真で、雲を太陽と読んで姿勢を汚さないための門)。<b>画像の最大値に対する比ではない</b>(比にすると、太陽の無い写真で一番明るい雲が必ず「太陽」になる)。夜景の人工光源や太陽の水面反射は飽和しうるので、その場面では使えない。塊は<b>詰まった丸</b>であること(充填率 ≥ 0.4、縦横比 ≤ 2.5)—— 露出過多で空の帯が飽和した写真は細長い塊になり、拒否される。</p>
+<p>The premise is &quot;the sun saturates the sensor; clouds and snow stop short of saturation&quot;. Pixels whose value is at least <code style="color:#22d3bf">threshold</code> (absolute, image is 0 to 1) are connected in the 8-neighbourhood, and the luminance centroid of <b>the largest blob</b> is returned. If the blob is smaller than <code style="color:#22d3bf">min_area</code>, or there are no saturated pixels, it is &quot;the sun is not in the picture&quot; and raises ValueError (it does not silently return a cloud reflection -- a gate so that, in photos taken when the sun is hidden behind a mountain, a cloud is not read as the sun and does not corrupt the pose). <b>It is not a ratio to the image maximum</b> (with a ratio, in a photo without the sun the brightest cloud would always become &quot;the sun&quot;). Artificial light sources in night scenes and reflections of the sun on water can saturate, so it cannot be used in those scenes. The blob must be <b>a compact disc</b> (fill fraction ≥ 0.4, aspect ratio ≤ 2.5) -- a photo where an overexposed band of sky is saturated gives an elongated blob and is rejected.</p>
 <p>Args:</p>
-<p>image: (H, W) float、0〜1(範囲外は ValueError)。</p>
-<p>threshold: 飽和とみなす絶対値(既定 0.98)。</p>
-<p>min_area: 塊の最小画素数。</p>
+<p>image: (H, W) float, 0 to 1 (out of range is ValueError).</p>
+<p>threshold: absolute value regarded as saturation (default 0.98).</p>
+<p>min_area: minimum pixel count of a blob.</p>
 <p>Returns:</p>
-<p>keypoints (1, 2) float: (u, v)。</p>
+<p>keypoints (1, 2) float: (u, v).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

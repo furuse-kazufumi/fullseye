@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_interpolate_flow(volseq, factor: &#x27;int&#x27; = 2, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001, occlusion_tau: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import live4d; live4d.volseq_interpolate_flow(volseq, factor: &#x27;int&#x27; = 2, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001, occlusion_tau: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opslive4d.get(&quot;volseq_interpolate_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>沿3 維流動對體積時間序列 <code style="color:#22d3bf">(T, Z, Y, X)</code> 內插，得到 <code style="color:#22d3bf">(T + (T − 1)(factor − 1), Z, Y, X)</code>(<code style="color:#22d3bf">volseq</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">video_interpolate_flow</code> と同じ手順の 3 次元版(流れは <code style="color:#22d3bf">vol_flow_3d</code>)。ライトシートの z-stack は時間方向が粗い(1 体積に秒単位)ので、ここを埋めると「回しながら動く」動画になる。</p>
+<p>與 <code style="color:#22d3bf">video_interpolate_flow</code> 相同步驟的 3 維版本(流用 <code style="color:#22d3bf">vol_flow_3d</code>)。光片的 z-stack 在時間方向上很粗(1 個體積以秒計),所以填補之後就成為「一邊旋轉一邊運動」的影片。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

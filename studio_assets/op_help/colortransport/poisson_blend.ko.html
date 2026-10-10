@@ -5,22 +5,20 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.poisson_blend(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">image2d</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.poisson_blend.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">colortransport.poisson_blend</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>기울기장을 옮기는 이음매 없는 합성(Pérez, Gangnet &amp; Blake, SIGGRAPH 2003).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">mask</code> の内部で <b><code style="color:#22d3bf">src</code> の勾配</b>を保ちつつ、<b>境界で <code style="color:#22d3bf">dst</code> の値</b>に一致する像を解く。よって出力は次の 2 つを<b>構成上</b>満たし、</p>
-<p>それが正しさの検算になる:</p>
-<p style="margin:2px 0 2px 12px">• 内部のラプラシアンが <code style="color:#22d3bf">src</code> のラプラシアンと一致(解の残差ぶんまで)</p>
-<p style="margin:2px 0 2px 12px">• マスクの外は <code style="color:#22d3bf">dst</code> と<b>厳密に一致</b>(1 画素も触らない)</p>
-<p><b>貼った物の色は変わる。</b> それが目的の処理だが、「貼った物体の色を測る」用途にそのまま流すと<b>測っているのは貼り先の色</b>になる。返り値は <code style="color:#22d3bf">(blended, info)</code> で、<code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code> と <code style="color:#22d3bf">info[&quot;max_shift&quot;]</code> が実際にどれだけ動いたかを言う。</p>
+<p><code style="color:#22d3bf">mask</code> 내부에서 <b><code style="color:#22d3bf">src</code> 의 기울기</b>를 유지하면서 <b>경계에서 <code style="color:#22d3bf">dst</code> 의 값</b>과일치하는 상을 푼다. 따라서 출력은 다음 2 가지를 <b>구성상</b> 만족하며, 그것이 정확성의 검산이 된다:</p>
+<p style="margin:2px 0 2px 12px">• 내부의 라플라시안이 <code style="color:#22d3bf">src</code> 의 라플라시안과 일치(해의 잔차만큼까지)</p>
+<p style="margin:2px 0 2px 12px">• 마스크 밖은 <code style="color:#22d3bf">dst</code> 와 <b>엄밀히 일치</b>(1 화소도 건드리지 않는다)</p>
+<p><b>붙인 물체의 색은 바뀐다.</b> 그것이 목적인 처리이지만, &quot;붙인 물체의 색을 측정하는&quot; 용도에 그대로 흘리면 <b>측정하는 것은 붙여 넣은 곳의 색</b>이 된다. 반환값은 <code style="color:#22d3bf">(blended, info)</code> 이고, <code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code> 와 <code style="color:#22d3bf">info[&quot;max_shift&quot;]</code> 가 실제로 얼마나 움직였는지를 알려 준다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>src : array_like</p>
-<p>貼る絵。<code style="color:#22d3bf">(H, W)</code> または <code style="color:#22d3bf">(H, W, C)</code>。</p>
+<p>붙일 그림. <code style="color:#22d3bf">(H, W)</code> 또는 <code style="color:#22d3bf">(H, W, C)</code>.</p>
 <p>dst : array_like</p>
-<p>貼り先。<code style="color:#22d3bf">src</code> 以上の大きさ。</p>
+<p>붙여 넣을 곳. <code style="color:#22d3bf">src</code> 이상의 크기.</p>
 <p>mask : array_like</p>
-<p><code style="color:#22d3bf">src</code> と同じ <code style="color:#22d3bf">(H, W)</code> の真偽値。<b>縁に接していてはいけない</b></p>
-<p>(境界条件が取れないため明示的に拒否する)。</p>
+<p><code style="color:#22d3bf">src</code> 와 같은 <code style="color:#22d3bf">(H, W)</code> 의 불리언. <b>가장자리에 닿아서는 안 된다</b></p>
+<p>(경계 조건을 잡을 수 없으므로 명시적으로 거부한다).</p>
 <p>offset : (int, int)</p>
-<p><code style="color:#22d3bf">dst</code> の中で <code style="color:#22d3bf">src</code> の左上を置く <code style="color:#22d3bf">(row, col)</code>。</p>
+<p><code style="color:#22d3bf">dst</code> 안에서 <code style="color:#22d3bf">src</code> 의 왼쪽 위를 놓을 <code style="color:#22d3bf">(row, col)</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(ndarray, dict)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

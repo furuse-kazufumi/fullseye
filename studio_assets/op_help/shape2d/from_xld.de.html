@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.from_xld(contour, i=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.from_xld(contour, i=0)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;from_xld&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Entnimmt die i-te Kontur aus einem XLD-Kontur-dict (<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;:[Nx2,...]}</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>返るのは XLD と同じ <b>(row, col)</b> 順の (N,2)。<code style="color:#22d3bf">imagemorph</code> へ渡すときは <code style="color:#22d3bf">[:, ::-1]</code> で (x, y) に入れ替えること(モジュール冒頭の「座標順の落とし穴」)。</p>
+<p>Zurückgegeben wird (N,2) in <b>(row, col)</b>-Reihenfolge, wie bei XLD. Bei der Übergabe an <code style="color:#22d3bf">imagemorph</code> mit <code style="color:#22d3bf">[:, ::-1]</code> auf (x, y) umstellen (die &quot;Falle der Koordinatenreihenfolge&quot; am Anfang des Moduls).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">Leitfaden zur Familie shape_description_2d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

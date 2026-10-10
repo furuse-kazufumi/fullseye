@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segworld; segworld.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;voronoi_cells&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>rectangle [−0.5, W − 0.5] × [−0.5, H − 0.5] के अंदर seed का Voronoi विभाजन polygon के रूप में लौटाता है (half-plane का brute force, O(n²))।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返り値: <code style="color:#22d3bf">polygons</code>(多角形の列、各 (k, 2) [y, x])、<code style="color:#22d3bf">areas</code>(靴紐)、<code style="color:#22d3bf">edge_length_total</code>(内部の辺の長さの和)、<code style="color:#22d3bf">n_edges</code>(内部の辺の数)、<code style="color:#22d3bf">perimeter_internal</code> (n,)(各セルの内部の辺の長さ)。</p>
+<p>Returns: <code style="color:#22d3bf">polygons</code> (polygons की सूची, हर एक (k, 2) [y, x]), <code style="color:#22d3bf">areas</code> (shoelace formula), <code style="color:#22d3bf">edge_length_total</code> (भीतरी edges की लंबाइयों का योग), <code style="color:#22d3bf">n_edges</code> (भीतरी edges की संख्या), <code style="color:#22d3bf">perimeter_internal</code> (n,) (हर cell के भीतरी edges की लंबाई)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

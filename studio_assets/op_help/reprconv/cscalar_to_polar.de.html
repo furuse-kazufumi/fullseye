@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cscalar_to_polar(cscalar)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.cscalar_to_polar(cscalar)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;cscalar_to_polar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Komplexer Skalar → Polarform <code style="color:#22d3bf">pairs (1,2) = [|z|, arg z [Grad]]</code>. Der Ausgang aus <code style="color:#22d3bf">cscalar</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> が返す複素スカラは、<code style="color:#22d3bf">measurement</code>(実スカラのみ)へ混ぜると下流が生 TypeError で落ちるので型が分かれている。極形式の対にすると 1-D 語彙へ渡せる。</p>
-<p><b>角度は度</b>。<code style="color:#22d3bf">polar_to_cscalar</code> と往復して実測 max|Δ| = 8.9e-16。</p>
+<p>Der komplexe Skalar, den <code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> liefern, hat einen eigenen Typ, weil er, in <code style="color:#22d3bf">measurement</code> (nur reelle Skalare) gemischt, nachgelagert mit einem rohen TypeError abstürzen würde. Als Paar in Polarform lässt er sich an das 1-D-Vokabular übergeben.</p>
+<p><b>Der Winkel ist in Grad</b>. Hin- und Rückweg mit <code style="color:#22d3bf">polar_to_cscalar</code> gemessen max|Δ| = 8.9e-16.</p>
 <p>Args:</p>
-<p>cscalar: complex(または複素 0-d 配列)。</p>
+<p>cscalar: complex (oder komplexes 0-d-Array).</p>
 <p>Returns:</p>
-<p>(1, 2) float64。</p>
+<p>(1, 2) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 複素スカラでない / 非有限。</p>
+<p>ValueError: kein komplexer Skalar / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

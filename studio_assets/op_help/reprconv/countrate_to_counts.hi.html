@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.countrate_to_counts(countrate, gate_s=0.001)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.countrate_to_counts(countrate, gate_s=0.001)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;countrate_to_counts&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>count rate <code style="color:#22d3bf">[Hz]</code> → गिनती <code style="color:#22d3bf">counts</code>। <code style="color:#22d3bf">countrate</code> से निकास (<b>उलटने योग्य</b>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>単位が変換の全内容</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>。<code style="color:#22d3bf">gate_s</code> は積算窓の秒数で、既定 1 ms。<code style="color:#22d3bf">counts</code> は「時間 bin ごとの光子数」の型なので、レート列をそのまま counts と名乗らせると<b>桁が 7 つずれたまま黙って通る</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> はどちらも「非負の 1-D」としか見ていない)。</p>
-<p><code style="color:#22d3bf">counts_to_countrate</code> と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので <b>相対</b> 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、レートのように桁が広い量は相対で言う)。</p>
-<p>★<b>2 度掛けても例外は出ない</b>。<code style="color:#22d3bf">TYPE_TO_SORT</code> が <code style="color:#22d3bf">countrate</code> を <code style="color:#22d3bf">counts</code> に畳んでいるので、出口が入口にそのまま繋がる。実測(2026-09-08、1,200 Hz を gate 1 ms で): 1 回で 1.2000 counts、もう 1 回通すと 0.0012 counts —— <b>1,000 倍の取り違えが、負の値も NaN も出さずに通る</b>。値だけを見て「レートか計数か」を判定する方法は無いので、この 1 件は検査でなく <b>呼ぶ側の規律</b>で守るしかない(繋いだ経路を書き残すこと)。</p>
+<p><b>unit ही conversion की पूरी सामग्री है</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>। <code style="color:#22d3bf">gate_s</code> integration window के seconds हैं, default 1 ms। <code style="color:#22d3bf">counts</code> &quot;हर time bin में photon count&quot; का type है, इसलिए rate series को सीधे counts कहलाने देने पर <b>यह 7 orders of magnitude के अंतर के साथ चुपचाप पार हो जाता है</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> दोनों को केवल &quot;non-negative 1-D&quot; के रूप में देखता है)।</p>
+<p><code style="color:#22d3bf">counts_to_countrate</code> के साथ round trip में measured max|Δ| = 9.3e-10 (मान की range 1e3-1e7 Hz है, इसलिए यह <b>relative</b> 1e-16 = double precision rounding की 1 unit है। केवल absolute value देखें तो बड़ा लगता है, इसलिए rate जैसी बहुत चौड़ी range वाली मात्राएँ relative में बताई जाती हैं)।</p>
+<p>★<b>2 बार लगाने पर भी exception नहीं आता</b>। <code style="color:#22d3bf">TYPE_TO_SORT</code> <code style="color:#22d3bf">countrate</code> को <code style="color:#22d3bf">counts</code> में fold करता है, इसलिए exit सीधे entrance से जुड़ जाता है। measured (2026-09-08, 1,200 Hz को gate 1 ms से): 1 बार में 1.2000 counts, 1 बार और गुज़ारने पर 0.0012 counts -- <b>1,000 गुना की गड़बड़ी, बिना negative value या NaN के पार हो जाती है</b>। केवल मानों से &quot;rate है या count&quot; तय करने का कोई तरीका नहीं है, इसलिए इस 1 मामले को check से नहीं बल्कि केवल <b>caller के अनुशासन</b> से बचाया जा सकता है (जोड़ा गया path लिखकर रखें)।</p>
 <p>Args:</p>
-<p>countrate: (N,) の非負レート [Hz]。</p>
-<p>gate_s: 積算窓 [s]。&gt; 0。</p>
+<p>countrate: (N,) non-negative rate [Hz]।</p>
+<p>gate_s: integration window [s]। &gt; 0।</p>
 <p>Returns:</p>
-<p>(N,) float64 の非負計数。</p>
+<p>(N,) float64 non-negative counts।</p>
 <p>Raises:</p>
-<p>ValueError: 負のレート / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
+<p>ValueError: negative rate / gate_s &lt;= 0 / गलत shape / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

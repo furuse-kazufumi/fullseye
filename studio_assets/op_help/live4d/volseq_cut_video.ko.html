@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_cut_video(volseq, plane: &#x27;str&#x27; = &#x27;xy&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import live4d; live4d.volseq_cut_video(volseq, plane: &#x27;str&#x27; = &#x27;xy&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opslive4d.get(&quot;volseq_cut_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>체적 시계열을 단면 1장으로 자른 동영상 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">plane</code> は <code style="color:#22d3bf">&quot;xy&quot;</code>(z を固定)/ <code style="color:#22d3bf">&quot;xz&quot;</code>(y を固定)/ <code style="color:#22d3bf">&quot;yz&quot;</code>(x を固定)、<code style="color:#22d3bf">position</code> は固定する軸に沿った相対位置 [0, 1]。断面は最大値投影と違って重なりを失わないが、断面から外れた動きは見えない。</p>
+<p><code style="color:#22d3bf">plane</code> 은 <code style="color:#22d3bf">&quot;xy&quot;</code>(z 를 고정)/ <code style="color:#22d3bf">&quot;xz&quot;</code>(y 를 고정)/ <code style="color:#22d3bf">&quot;yz&quot;</code>(x 를 고정), <code style="color:#22d3bf">position</code> 은 고정하는축을 따른 상대 위치 [0, 1]. 단면은 최댓값 투영과 달리 겹침을 잃지 않지만, 단면에서 벗어난 움직임은 보이지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

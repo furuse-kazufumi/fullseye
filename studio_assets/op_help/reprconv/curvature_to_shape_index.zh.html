@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_shape_index(curvature)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.curvature_to_shape_index(curvature)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_shape_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>主曲率 <code style="color:#22d3bf">(N,2)</code> → 形状指数与弯曲度 <code style="color:#22d3bf">(N,2)</code> 的 <code style="color:#22d3bf">pairs</code>。<code style="color:#22d3bf">curvature</code> 的出口。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Koenderink &amp; van Doorn, *Surface shape and curvature scales*, Image and Vision Computing 10(8) 1992 の (S, C):</p>
+<p>Koenderink &amp; van Doorn, *Surface shape and curvature scales*, Image and Vision Computing 10(8) 1992 的 (S, C):</p>
 <p>S = (2/pi) * atan2(k1 + k2, k1 - k2)      (k1 &gt;= k2, S in [-1, 1])</p>
-<p>C = sqrt((k1^2 + k2^2) / 2)               (曲がりの大きさ)</p>
-<p><b>除算でなく atan2 で書いてある</b>のが要点で、球状臍点 (k1 == k2) でも平面 (k1 == k2 == 0) でもゼロ除算にならず、<code style="color:#22d3bf">shape_index_to_curvature</code> との往復が<b>全域で厳密</b>になる(実測 max|Δ| = 4.6e-16)。教科書の <code style="color:#22d3bf">atan((k1+k2)/(k1-k2))</code> をそのまま実装すると臍点で NaN が出て、その NaN が下流で「暗い画素」に化ける。</p>
-<p>S = -1 は杯、0 は鞍、+1 は帽子。C は形と独立な「どれだけ曲がっているか」。</p>
-<p><b>入力順の情報だけは戻らない</b>: (k2, k1) の順で渡しても内部で k1 &gt;= k2 へ並べ替えるので、往復すると必ず降順で返る(向きの規約であり、値の損失ではない)。</p>
+<p>C = sqrt((k1^2 + k2^2) / 2)               (弯曲的大小)</p>
+<p><b>用 atan2 而不是除法来写</b>是要点,在球状脐点 (k1 == k2) 和平面 (k1 == k2 == 0) 上都不会除以零,与 <code style="color:#22d3bf">shape_index_to_curvature</code> 的往返<b>在全域上严格</b>(实测 max|Δ| = 4.6e-16)。若照搬教科书的 <code style="color:#22d3bf">atan((k1+k2)/(k1-k2))</code> 来实现,在脐点会出现 NaN, 该 NaN 在下游会变成&quot;暗像素&quot;。</p>
+<p>S = -1 是杯,0 是鞍,+1 是帽。C 是与形状无关的&quot;弯曲了多少&quot;。</p>
+<p><b>只有输入顺序的信息无法复原</b>: 即使按 (k2, k1) 的顺序传入,内部也会排成 k1 &gt;= k2,所以往返后必定按降序返回(这是朝向的约定,不是值的损失)。</p>
 <p>Args:</p>
-<p>curvature: (N, 2) の <code style="color:#22d3bf">[k1, k2]</code>、または 2 本の等長 1-D のタプル</p>
-<p>(<code style="color:#22d3bf">principal_curvatures</code> の素の返りがこれ)。</p>
+<p>curvature: (N, 2) 的 <code style="color:#22d3bf">[k1, k2]</code>,或 2 个等长 1-D 的元组</p>
+<p>(<code style="color:#22d3bf">principal_curvatures</code> 的原始返回就是这个)。</p>
 <p>Returns:</p>
-<p>(N, 2) float64。列 0 = S in [-1, 1]、列 1 = C &gt;= 0。</p>
+<p>(N, 2) float64。列 0 = S in [-1, 1],列 1 = C &gt;= 0。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

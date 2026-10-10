@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import shapestats; shapestats.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code>; aus dem Register: <code style="color:#22d3bf">opsshapestat.get(&quot;shape_perturb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bringt 1 <b>bekannte</b> Deformation in eine Form ein. → <code style="color:#22d3bf">(N, 3)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">mode</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;bulge&quot;</code>  —— *center* のまわりをガウス重みで外向きに膨らませる。片側だけに入れれば左右非対称性の真値になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;shift&quot;</code>  —— *center* 方向へ一様に平行移動(Procrustes が消す成分)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;scale&quot;</code>  —— 一様拡大(<code style="color:#22d3bf">scaling=True</code> の Procrustes が消す成分)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;noise&quot;</code>  —— 等方ガウス雑音(どの手法でも消えない床)。</p>
-<p>「Procrustes が消してくれる変形」と「消してはいけない変形」を分けて試せるように 4 つ置いてある。位置合わせの検算はこの区別が要る。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;bulge&quot;</code>  —— wölbt mit Gaußgewichten um *center* nach außen. Nur auf einer Seite angewendet, wird es zur Ground Truth für Links-rechts-Asymmetrie.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;shift&quot;</code>  —— gleichförmige Verschiebung in Richtung *center* (ein Anteil, den Procrustes entfernt).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;scale&quot;</code>  —— gleichförmige Vergrößerung (ein Anteil, den Procrustes mit <code style="color:#22d3bf">scaling=True</code> entfernt).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;noise&quot;</code>  —— isotropes Gaußrauschen (ein Boden, den keine Methode entfernt).</p>
+<p>Die 4 gibt es, damit sich &quot;Deformationen, die Procrustes für einen entfernt&quot; und &quot;Deformationen, die nicht entfernt werden dürfen&quot; getrennt testen lassen. Die Gegenprobe einer Registrierung braucht diese Unterscheidung.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">Leitfaden zur Familie shape_statistics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

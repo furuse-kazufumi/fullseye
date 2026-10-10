@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_align(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.procrustes_align(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_align&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将 *source* 叠合到 *target* 上之后的点。→ <code style="color:#22d3bf">(N, 3)</code>(应用 <code style="color:#22d3bf">procrustes_fit</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">M = procrustes_fit(source, target, scaling, reflection)</code> を求め、<code style="color:#22d3bf">source @ M[:3, :3].T + M[:3, 3]</code> を返す。変換は重心合わせ + SVD による回転(+ 任意でスケール)の相似変換で、<b>i 番目どうしが対応している</b>ことが前提。対応の無い点群を渡しても例外は出ず、意味の無い配置が返る(その場合は ICP 系の登録を使う)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>, <code style="color:#22d3bf">target</code>: <code style="color:#22d3bf">(N, 3)</code>、同じ <code style="color:#22d3bf">N</code>、有限。<code style="color:#22d3bf">N = 1</code> でも通る(並進のみ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scaling=True</code>: 大きさの違いも吸収する。<code style="color:#22d3bf">False</code> なら剛体変換。<code style="color:#22d3bf">source</code> が全点同一(広がり 0)のときスケールは 1 のまま。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection=False</code>(既定): <code style="color:#22d3bf">det(R) = +1</code> を強制。<code style="color:#22d3bf">True</code> にすると鏡像も許す ―― 左右非対称性を測る用途では消えてしまうので通常は既定のまま。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(N, 3)</code> float64。残差を数値で欲しいなら <code style="color:#22d3bf">procrustes_distance</code>、変換行列そのものは <code style="color:#22d3bf">procrustes_fit</code>。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形が <code style="color:#22d3bf">(N, 3)</code> でない、<code style="color:#22d3bf">N</code> 不一致、非有限)。</p>
-<p>多数の形を同時に揃えるなら <code style="color:#22d3bf">generalized_procrustes</code>。</p>
+<p>求出 <code style="color:#22d3bf">M = procrustes_fit(source, target, scaling, reflection)</code>, 返回 <code style="color:#22d3bf">source @ M[:3, :3].T + M[:3, 3]</code>。变换是质心对齐 + 基于 SVD 的旋转(+ 可选的缩放)的相似变换，前提是<b>第 i 个点彼此对应</b>。传入无对应关系的点集也不会抛出异常，而是返回无意义的配置(这种情况下请使用 ICP 系的配准)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>, <code style="color:#22d3bf">target</code>: <code style="color:#22d3bf">(N, 3)</code>，相同的 <code style="color:#22d3bf">N</code>，有限值。<code style="color:#22d3bf">N = 1</code> 也能通过(仅平移)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scaling=True</code>: 也吸收大小的差异。<code style="color:#22d3bf">False</code> 则为刚体变换。<code style="color:#22d3bf">source</code> 所有点相同(展布为 0)时，尺度保持为 1。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection=False</code>(默认): 强制 <code style="color:#22d3bf">det(R) = +1</code>。设为 <code style="color:#22d3bf">True</code> 则也允许镜像 —— 在测量左右不对称性的用途中它会因此消失，所以通常保持默认。</p>
+<p style="margin:2px 0 2px 12px">• 返回值: <code style="color:#22d3bf">(N, 3)</code> float64。想要残差的数值用 <code style="color:#22d3bf">procrustes_distance</code>, 想要变换矩阵本身用 <code style="color:#22d3bf">procrustes_fit</code>。</p>
+<p style="margin:2px 0 2px 12px">• 失败: <code style="color:#22d3bf">ValueError</code>(形状不是 <code style="color:#22d3bf">(N, 3)</code>、<code style="color:#22d3bf">N</code> 不一致、非有限值)。</p>
+<p>若要同时对齐多个形状，用 <code style="color:#22d3bf">generalized_procrustes</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

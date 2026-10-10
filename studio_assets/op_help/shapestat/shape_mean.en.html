@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.shape_mean(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;shape_mean&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Mean shape after alignment by GPA. → <code style="color:#22d3bf">(N, 3)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>★ <b>生の平均(<code style="color:#22d3bf">shapes.mean(0)</code>)と混同しないこと</b>。位置と向きを揃えずに平均すると、個体がばらばらに置かれているぶんだけ形が縮む。合わせてから平均するのが「平均形状」。</p>
+<p>★ <b>Do not confuse it with the raw mean (<code style="color:#22d3bf">shapes.mean(0)</code>)</b>. Averaging without aligning position and orientation shrinks the shape by as much as the individuals are scattered. Aligning first and then averaging is the &quot;mean shape&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

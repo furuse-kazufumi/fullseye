@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_inset_layout(shape, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, max_fraction=0.4)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_inset_layout(shape, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, max_fraction=0.4)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_inset_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표(dict)를 돌려줍니다: 확대 삽입의 놓을 자리와 배율을 닫힌 식으로.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">factor=None</code> なら「幅・高さとも画像の <code style="color:#22d3bf">max_fraction</code> 以下」で最大の整数倍率。差し込みが元枠に重なる隅は ValueError(自分の元を隠す)。</p>
+<p><code style="color:#22d3bf">factor=None</code>이면 &quot;폭, 높이 모두 영상의 <code style="color:#22d3bf">max_fraction</code> 이하&quot;인 최대정수 배율. 삽입 그림이 원래 틀과 겹치는 모서리는 ValueError(자기 원본을 가림).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;src_rect&quot;,&quot;dst_rect&quot;,&quot;factor&quot;,&quot;corner&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;src_rect&quot;,&quot;dst_rect&quot;,&quot;factor&quot;,&quot;corner&quot;}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>元枠が画像外、倍率 &lt; 1 か非整数、差し込みが収まらない/元枠と重なる。</p>
+<p>원래 틀이 영상 밖, 배율 &lt; 1 또는 비정수, 삽입 그림이 들어가지 않음/원래 틀과 겹침.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code>(要直接呼叫實作,<code style="color:#22d3bf">import volcolor; volcolor.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code>;從台帳取用則 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_colorize_labels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3-D 標籤體 -&gt; <code style="color:#22d3bf">(D, H, W, 3)</code> float64 的 RGB 體。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>「切ってから色を付ける」のではなく「<b>色を付けてから切る</b>」ための入口。ラベル <code style="color:#22d3bf">k</code> の色は <code style="color:#22d3bf">vol_label_palette</code> の行 <code style="color:#22d3bf">k</code> そのもので、<code style="color:#22d3bf">imgio.colorize_labels(labels, seed)</code> を同じ配列に対して呼んだ結果と <b>バイト単位で一致する</b>(<code style="color:#22d3bf">tests/test_volcolor.py</code> が固定)。</p>
-<p>切る順序が効くこと自体は <code style="color:#22d3bf">vol_label_color_flicker</code> が数える。実測(16 球・<code style="color:#22d3bf">(24, 48, 48)</code> の参照ファントム、<code style="color:#22d3bf">connectivity=26</code>、seed=0):</p>
-<p>スライスごとに色を付け直すと <b>24 スライス中 20 スライス</b>で少なくとも 1 成分の色が変わり、(成分, スライス) の変化は 108 組中 <b>62 件</b>、<b>16 成分すべて</b>が一度は色を変える。ボリュームで色を付けてから切ると 3 つとも 0。</p>
-<p>Raises <code style="color:#22d3bf">ValueError</code> on a non-3-D, float, or negative label volume, on a label</p>
-<p>over <code style="color:#22d3bf">MAX_LABELS</code>, or on more than <code style="color:#22d3bf">MAX_COLOR_VOXELS</code> voxels.</p>
+<p>不是「先切再上色」,而是「<b>先上色再切</b>」的入口。標籤 <code style="color:#22d3bf">k</code> 的顏色就是 <code style="color:#22d3bf">vol_label_palette</code> 的第 <code style="color:#22d3bf">k</code> 列本身,與對同一陣列呼叫 <code style="color:#22d3bf">imgio.colorize_labels(labels, seed)</code> 的結果 <b>逐位元組一致</b>(由 <code style="color:#22d3bf">tests/test_volcolor.py</code> 固定)。</p>
+<p>切的順序本身會起作用,由 <code style="color:#22d3bf">vol_label_color_flicker</code> 計數。實測(16 個球、<code style="color:#22d3bf">(24, 48, 48)</code> 的參考假體,<code style="color:#22d3bf">connectivity=26</code>,seed=0):</p>
+<p>逐切片重新上色時,<b>24 張切片中有 20 張</b>至少有 1 個成分的顏色改變,(成分, 切片) 的變化在 108 組中有 <b>62 件</b>, <b>16 個成分全部</b>至少變過一次顏色。對體資料上色後再切, 這 3 項全為 0。</p>
+<p>對非 3-D、float 或負的標籤體資料,超過 <code style="color:#22d3bf">MAX_LABELS</code> 的標籤,</p>
+<p>或超過 <code style="color:#22d3bf">MAX_COLOR_VOXELS</code> 個體素時,拋出 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

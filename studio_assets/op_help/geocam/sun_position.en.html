@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_position(lat_deg, lon_deg, unix_times)</code> (to call the implementation directly, <code style="color:#22d3bf">import geocam; geocam.sun_position(lat_deg, lon_deg, unix_times)</code>; from the registry, <code style="color:#22d3bf">opsgeocam.get(&quot;sun_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Latitude, longitude, time (UNIX seconds, UTC) → azimuth and elevation of the sun [degrees] (NOAA solar position algorithm, the low-accuracy formula of Meeus 1998).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>公開された閉形式(NOAA Global Monitoring Laboratory の Solar Calculator と同じ式:</p>
-<p>ユリウス世紀 → 平均黄経・平均近点角・中心差 → 視黄経 → 黄道傾斜 → 赤緯 と均時差 → 時角 → 天頂角・方位角)。精度は 2000 年 ± 1 世紀で <b>0.01° 程度</b>(NOAA の記述)、大気屈折は仰角に足す(NOAA の区分式、水平近くで最大 0.57°)。時刻は UTC の UNIX 秒(1-D、float でよい)。うるう秒・ΔT は無視する(0.01° に効かない)。</p>
+<p>A published closed form (the same formulas as the Solar Calculator of the NOAA Global Monitoring Laboratory:</p>
+<p>Julian century → mean longitude, mean anomaly, equation of centre → apparent longitude → obliquity of the ecliptic → declination and equation of time → hour angle → zenith angle, azimuth). Accuracy is <b>about 0.01°</b> for 2000 ± 1 century (NOAA&#x27;s statement); atmospheric refraction is added to the elevation (NOAA&#x27;s piecewise formula, at most 0.57° near the horizon). Times are UNIX seconds in UTC (1-D, float is fine). Leap seconds and ΔT are ignored (they do not matter at 0.01°).</p>
 <p>Args:</p>
-<p>lat_deg, lon_deg: 観測点。経度は東が正。</p>
-<p>unix_times: (N,) UNIX 秒(UTC)。スカラも可。</p>
+<p>lat_deg, lon_deg: observation point. Longitude is positive east.</p>
+<p>unix_times: (N,) UNIX seconds (UTC). A scalar is also accepted.</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">azimuth_deg</code> (N,)(北 0°、時計回り)/ <code style="color:#22d3bf">elevation_deg</code> (N,)(屈折込み)/</p>
-<p><code style="color:#22d3bf">elevation_true_deg</code> (N,)(屈折なし)/ <code style="color:#22d3bf">declination_deg</code> / <code style="color:#22d3bf">equation_of_time_min</code> /</p>
-<p><code style="color:#22d3bf">hour_angle_deg</code> / <code style="color:#22d3bf">n</code>。</p>
-<p>真値で確かめてある性質(tests/test_geocam.py): 春分の正午に仰角 = 90 − |緯度|、正午の方位は北半球で 180°(南)、方位は東 → 南 → 西と単調、日の出と日の入りの仰角が対称、赤緯は ±23.44° に収まる。</p>
+<p>table: <code style="color:#22d3bf">azimuth_deg</code> (N,) (north 0°, clockwise) / <code style="color:#22d3bf">elevation_deg</code> (N,) (refraction included) /</p>
+<p><code style="color:#22d3bf">elevation_true_deg</code> (N,) (without refraction) / <code style="color:#22d3bf">declination_deg</code> / <code style="color:#22d3bf">equation_of_time_min</code> /</p>
+<p><code style="color:#22d3bf">hour_angle_deg</code> / <code style="color:#22d3bf">n</code>.</p>
+<p>Properties checked against ground truth (tests/test_geocam.py): at noon on the equinox, elevation = 90 − |latitude|; the noon azimuth in the northern hemisphere is 180° (south); azimuth is monotonic east → south → west; sunrise and sunset elevations are symmetric; declination stays within ±23.44°.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

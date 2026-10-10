@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_points(gaussians)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_points(gaussians)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">gaussians</code> → 中心的点群 <code style="color:#22d3bf">(N,3)</code>。<code style="color:#22d3bf">gaussians</code> 的出口(<b>中心可逆</b>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
-<p>gaussians: <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code> を持つ dict。</p>
+<p>gaussians: 含 <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code> 的 dict。</p>
 <p>Returns:</p>
-<p>(N, 3) float64(<code style="color:#22d3bf">mu</code> のコピー)。</p>
+<p>(N, 3) float64(<code style="color:#22d3bf">mu</code> 的副本)。</p>
 <p>Raises:</p>
-<p>ValueError: キー欠落 / 形状不整合 / sigma &lt;= 0 / 非有限。</p>
+<p>ValueError: 缺少键 / 形状不一致 / sigma &lt;= 0 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

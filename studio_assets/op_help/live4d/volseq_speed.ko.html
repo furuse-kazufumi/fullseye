@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_speed(volseq, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import live4d; live4d.volseq_speed(volseq, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opslive4d.get(&quot;volseq_speed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>체적 시계열의 인접 프레임 간 <b>속력</b> <code style="color:#22d3bf">|d|</code> [voxel/frame]을 <code style="color:#22d3bf">(T − 1, Z, Y, X)</code>로 반환한다(<code style="color:#22d3bf">volseq</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各フレーム対に <code style="color:#22d3bf">vol_flow_3d</code> を当てた大きさ。どこが・いつ動いたかの地図で、<code style="color:#22d3bf">volseq_render_orbit(mode=&quot;speed&quot;)</code> の色もこれ。T &gt;= 3 が要る(返りも <code style="color:#22d3bf">volseq</code> = T − 1 &gt;= 2 枚)。</p>
+<p>각 프레임 쌍에 <code style="color:#22d3bf">vol_flow_3d</code> 를 적용한 크기. 어디가·언제 움직였는지의 지도로, <code style="color:#22d3bf">volseq_render_orbit(mode=&quot;speed&quot;)</code> 의 색도 이것. T &gt;= 3 이 필요하다(반환도 <code style="color:#22d3bf">volseq</code> = T − 1 &gt;= 2 장).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

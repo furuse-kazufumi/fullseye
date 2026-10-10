@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matrix_to_descriptor(matrix)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.matrix_to_descriptor(matrix)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_descriptor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">matrix</code> → 描述子。<code style="color:#22d3bf">descriptor_to_matrix</code> 的逆。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>1 行の行列 (1, n) は (n,) へ戻す(それが元の 1-D 記述子だから)。2 行以上はそのまま。<b>この非対称は意図的</b>で、これが無いと <code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code> の往復が (n,) から (1,n) へ静かに形を変える = 型の嘘そのものになる。</p>
-<p>★<b>測って残す非可逆点</b>: そのぶん、元から <b>(1, n) の 2-D だった記述子</b>は往復で (n,) の 1-D になる —— (1,n) の行列は「1-D 記述子を包んだもの」と「行が 1 本しかない記述子束」の区別を持たないので、<b>この 1 ケースだけは原理的に戻せない</b>。値は全て保存されるので損失は「行が 1 本だった」というメタ情報のみ。どちらを非可逆にするか選ばされる状況で、<code style="color:#22d3bf">descriptor</code> の圧倒的多数(実測 14 producers 中 12 が 1-D)を厳密側に倒した。<code style="color:#22d3bf">tests/test_reprconv.py::test_one_row_descriptor_ambiguity_is_documented</code> がこの穴を<b>塞がずに固定</b>している(隠すと、いつか黙って形が変わる)。</p>
+<p>1 列的矩陣 (1, n) 還原為 (n,)(因為那就是原來的 1-D 描述子)。2 列以上原樣保留。<b>這一不對稱是有意的</b>,沒有它的話, <code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code> 的往返會把形狀從 (n,) 默默變成(1,n) = 型別謊言本身。</p>
+<p>★<b>量測並保留的不可逆點</b>: 相應地,原本就是 <b>(1, n) 的 2-D 描述子</b> 往返後會變成 (n,) 的 1-D —— (1,n) 的矩陣無法區分「包著 1-D 描述子的東西」與「只有 1 列的描述子束」,所以<b>只有這 1 種情況原理上無法還原</b>。值全部保留,所以損失僅為「只有 1 列」這項後設資訊。在被迫選擇讓哪一側不可逆的情況下, 把 <code style="color:#22d3bf">descriptor</code> 的壓倒性多數(實測 14 個 producer 中有 12 個是 1-D)放在了嚴格一側。<code style="color:#22d3bf">tests/test_reprconv.py::test_one_row_descriptor_ambiguity_is_documented</code> <b>不堵上</b>而是把這個洞固定下來(若隱藏起來,總有一天形狀會默默改變)。</p>
 <p>Args:</p>
-<p>matrix: (m, n) の実配列。</p>
+<p>matrix: (m, n) 的實數陣列。</p>
 <p>Returns:</p>
-<p>m == 1 なら (n,)、それ以外は (m, n)。</p>
+<p>m == 1 時為 (n,),否則為 (m, n)。</p>
 <p>Raises:</p>
-<p>ValueError: 2-D でない / 非有限。</p>
+<p>ValueError: 不是 2-D / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

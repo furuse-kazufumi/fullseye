@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_perturb(contour, kind=&#x27;thicken&#x27;, amount=0.001, extent=0.1, cycles=6.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_perturb(contour, kind=&#x27;thicken&#x27;, amount=0.001, extent=0.1, cycles=6.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_perturb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ज्ञात मात्रा के defect डाला गया contour लौटाता है। <code style="color:#22d3bf">PERTURB_KINDS</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>これが無い形状検査は、静かに合格を出す</b>。0.001 翼弦の厚み増を入れて、検出器がそれを 0.001 として返すかを確かめるために使う。</p>
+<p><b>इसके बिना shape inspection चुपचाप pass दे देता है</b> । इसका उपयोग 0.001 chord की मोटाई-वृद्धि डालकर यह जाँचने के लिए करें कि detector उसे 0.001 के रूप में लौटाता है या नहीं।</p>
 <p>Args:</p>
-<p>contour: 元の輪郭。</p>
-<p>kind: 欠陥の種類。</p>
-<p>amount: 大きさ(翼弦比)。<code style="color:#22d3bf">&quot;twist&quot;</code> だけは度。</p>
-<p>extent: <code style="color:#22d3bf">&quot;le_erosion&quot;</code> が及ぶ弦方向の範囲。</p>
-<p>cycles: <code style="color:#22d3bf">&quot;waviness&quot;</code> の波数。</p>
+<p>contour: मूल contour।</p>
+<p>kind: defect का प्रकार।</p>
+<p>amount: परिमाण (chord के अनुपात में)। केवल <code style="color:#22d3bf">&quot;twist&quot;</code> degree में है।</p>
+<p>extent: chord दिशा में वह range जहाँ तक <code style="color:#22d3bf">&quot;le_erosion&quot;</code> फैलता है।</p>
+<p>cycles: <code style="color:#22d3bf">&quot;waviness&quot;</code> की तरंगों की संख्या।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matrix_to_angle(matrix)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.matrix_to_angle(matrix)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>繞 z 軸的旋轉矩陣 → 角度 <b>[度]</b>。<code style="color:#22d3bf">angle_to_matrix</code> 的逆。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> を度で返す(-180, 180]。往復は(-180, 180] の範囲で <b>bit 一致に近い</b>(実測 max|Δ| = 2.8e-14 度)。</p>
+<p>以度回傳 <code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code>,範圍 (-180, 180]。往返在(-180, 180] 範圍內<b>接近 bit 一致</b>(實測 max|Δ| = 2.8e-14 度)。</p>
 <p>Args:</p>
 <p>matrix: (3, 3)。</p>
 <p>Returns:</p>
 <p>float(度)。</p>
 <p>Raises:</p>
-<p>ValueError: (3,3) でない / 非有限。</p>
+<p>ValueError: 不是 (3,3) / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

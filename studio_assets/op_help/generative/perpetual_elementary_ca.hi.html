@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_elementary_ca&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>elementary cellular automaton (Wolfram के 256 नियम), ऊपर से नीचे अनंत तक बढ़ाया गया।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">seed &lt; 0</code> で<b>中央 1 点</b>から始める(規則 90 ならシェルピンスキー、規則 30 なら擬似乱数、規則 110 なら万能計算)。</p>
-<p>不変量(規則 90・1 点始動): 第 n 行の第 k セルは <b>C(n,k) mod 2</b>。</p>
+<p><code style="color:#22d3bf">seed &lt; 0</code> होने पर <b>बीच के 1 बिंदु</b> से शुरू होता है (rule 90 से Sierpinski, rule 30 से pseudo-random, rule 110 से universal computation)।</p>
+<p>invariant (rule 90, 1 बिंदु से शुरुआत): row n का cell k <b>C(n,k) mod 2</b> है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

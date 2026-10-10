@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_chaos_game(points: &#x27;int&#x27; = 400000, size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, vertices: &#x27;int&#x27; = 3, ratio: &#x27;float&#x27; = 0.5, sub: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import perpetual; perpetual.perpetual_chaos_game(points: &#x27;int&#x27; = 400000, size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, vertices: &#x27;int&#x27; = 3, ratio: &#x27;float&#x27; = 0.5, sub: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_chaos_game&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>카오스 게임 — 주사위를 굴려 매번 절반씩 다가가기만 해도 시에르핀스키 삼각형이 나온다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>不変量: 3 頂点・比 1/2 の吸引子の箱数次元は <b>log3/log2 = 1.5850</b>。</p>
-<p>★描き方が測れる真値を変える。同じ点列でも、切り捨てて積んだ絵から測った次元は真値から <b>−0.032</b> ずれるのに、双一次 + asinh で描くと <b>−0.0030</b> —— <b>10 倍</b>正確になる(しきい値 0.1、実測)。濃淡は飾りではない。</p>
+<p>불변량: 3 꼭짓점, 비 1/2인 끌개의 상자 세기 차원은 <b>log3/log2 = 1.5850</b>.</p>
+<p>★그리는 방식이 잴 수 있는 참값을 바꾼다. 같은 점열이라도, 잘라 버리고 쌓은 그림에서 잰차원은 참값에서 <b>−0.032</b> 어긋나는데, 쌍선형 + asinh로 그리면 <b>−0.0030</b> -- <b>10배</b> 정확해진다(임계값 0.1, 실측). 농담은 장식이 아니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

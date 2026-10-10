@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;signed_surface_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>query point से सतह तक <b>sign सहित</b> दूरी। → <code style="color:#22d3bf">(N,)</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>符号は面の法線から決める(外側が正)。1-D の輪郭には <code style="color:#22d3bf">profileops.profile_deviation</code> があるのに 3-D に相当が無かった、というのが 2026-09-06 に PoC が出した穴。</p>
-<p>法線を省くと <code style="color:#22d3bf">normals_orient.estimate_oriented_normals</code> で推定する —— <b>向き付き</b>でなければ符号が点ごとにばらつく(素の PCA 法線は符号が任意で、回転すると 4 割が裏返る。<code style="color:#22d3bf">pointcloud.fpfh</code> が踏んだのと同じ穴)。</p>
-<p><code style="color:#22d3bf">k</code> は符号を決めるときに使う最近傍の数。1 だと最近傍 1 点の法線に賭けることになり、雑音のある面では符号が飛ぶ。2 以上にすると距離で重みを付けた平均の向きで決める(距離そのものは最近傍のまま)。</p>
+<p>चिह्न surface के normal से तय होता है (बाहर धनात्मक)। 1-D contour के लिए <code style="color:#22d3bf">profileops.profile_deviation</code> है, पर 3-D में उसका समकक्ष नहीं था -- यही वह gap था जो 2026-09-06 को PoC ने उजागर किया।</p>
+<p>normals छोड़ने पर <code style="color:#22d3bf">normals_orient.estimate_oriented_normals</code> से estimate किए जाते हैं -- <b>oriented न हों तो</b> चिह्न point-दर-point बिखर जाता है (सादे PCA normals का चिह्न मनमाना होता है, और rotate करने पर 10 में से 4 उलट जाते हैं। वही gap जिसमें <code style="color:#22d3bf">pointcloud.fpfh</code> फँसा था)।</p>
+<p><code style="color:#22d3bf">k</code> चिह्न तय करने में इस्तेमाल होने वाले nearest neighbours की संख्या है। 1 होने पर सबसे पास के 1 point के normal पर दाँव लगता है, और noisy surface पर चिह्न उछलता है। 2 या अधिक करने पर दूरी से weighted औसत orientation से तय होता है (दूरी स्वयं nearest neighbour वाली ही रहती है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

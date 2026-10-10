@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vector_to_shift(vector)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.vector_to_shift(vector)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;vector_to_shift&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">vector (3,)</code> → integer shift <code style="color:#22d3bf">(dz, dy, dx)</code>। <code style="color:#22d3bf">shift_to_vector</code> की उल्टी दिशा।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>不可逆</b>(最近接整数へ丸める)。落ちる量は丸め残差そのもので、<code style="color:#22d3bf">|v - round(v)| &lt;= 0.5</code> が各軸の上界。整数を渡した往復だけが bit 一致する。</p>
+<p><b>अपरिवर्तनीय (irreversible)</b> (निकटतम integer पर round करता है)। जो खोता है वह ठीक rounding residual है, और <code style="color:#22d3bf">|v - round(v)| &lt;= 0.5</code> हर axis की ऊपरी सीमा है। केवल integer देकर किया गया round trip ही bit-identical होता है।</p>
 <p>Args:</p>
-<p>vector: (3,)。</p>
+<p>vector: (3,)।</p>
 <p>Returns:</p>
-<p>3-tuple の int。</p>
+<p>int का 3-tuple।</p>
 <p>Raises:</p>
-<p>ValueError: (3,) でない / 非有限。</p>
+<p>ValueError: (3,) नहीं / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

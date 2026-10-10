@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import llmcore; llmcore.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_grouped&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把頭分組共享的注意力(GQA)→ tokens。<b>n_kv_heads == n_heads 時與 MHA、== 1 時與 MQA 嚴格一致</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Ainslie ら 2023。query は <code style="color:#22d3bf">n_heads</code> 本に割り、key/value は <code style="color:#22d3bf">n_kv_heads</code> 本しか持たずに使い回す。両端が既存の 2 つ(MHA / MQA)に<b>厳密に</b>落ちる(どちらも 0.0e+00) ので、「中間を取る」という主張が端で検算できる。</p>
+<p>Ainslie 等 2023。query 分成 <code style="color:#22d3bf">n_heads</code> 個頭,key/value 只有 <code style="color:#22d3bf">n_kv_heads</code> 個頭並被重複使用。兩端<b>嚴格地</b>退化為既有的 2 種(MHA / MQA)(兩者都是 0.0e+00), 所以「取中間」這一主張可以在端點處驗算。</p>
 <p>Args:</p>
-<p>query: (T, n_heads·dh) float。頭ごとに幅 dh で並んでいる。</p>
+<p>query: (T, n_heads·dh) float。按頭以寬度 dh 排列。</p>
 <p>key: (S, n_kv_heads·dh) float。</p>
 <p>value: (S, n_kv_heads·dh) float。</p>
-<p>n_heads: query の頭の数。<code style="color:#22d3bf">n_kv_heads</code> の倍数であること。</p>
-<p>n_kv_heads: key/value の頭の数。1 なら MQA、<code style="color:#22d3bf">n_heads</code> なら MHA。</p>
-<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) の bool 配列。</p>
-<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅。</p>
+<p>n_heads: query 的頭數。必須是 <code style="color:#22d3bf">n_kv_heads</code> 的倍數。</p>
+<p>n_kv_heads: key/value 的頭數。1 為 MQA,<code style="color:#22d3bf">n_heads</code> 為 MHA。</p>
+<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) 的 bool 陣列。</p>
+<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> 時的視窗寬度。</p>
 <p>Returns:</p>
-<p>tokens (T, n_heads·dh) float: 頭ごとの出力を横に連結したもの。</p>
+<p>tokens (T, n_heads·dh) float: 各頭的輸出橫向串接而成。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

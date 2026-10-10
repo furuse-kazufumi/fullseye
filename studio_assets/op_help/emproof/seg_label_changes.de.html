@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import emproof; emproof.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsemproof.get(&quot;seg_label_changes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt den Unterschied zweier Labelbilder <b>als Paare von Verschmelzungen und Trennungen</b> zurück (vor/nach der Kalibrierung oder Abgleich eingebauter Fehler mit der Lösung).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">before</code> のラベル b と <code style="color:#22d3bf">after</code> のラベル a が同じ画素を <code style="color:#22d3bf">min_pixels</code> 以上共有する対を数え、</p>
-<p style="margin:2px 0 2px 12px">• 融合 = after の 1 ラベルが before の 2 ラベル以上を覆う → <code style="color:#22d3bf">merge_after</code> / <code style="color:#22d3bf">merge_before</code>(対ごとに 1 行。吸った側の id 自身も before の 1 つとして並ぶ)</p>
-<p style="margin:2px 0 2px 12px">• 分断 = before の 1 ラベルが after の 2 ラベル以上に割れる → <code style="color:#22d3bf">split_before</code> / <code style="color:#22d3bf">split_after</code>(同様に残った側の id も並ぶ)</p>
-<p><code style="color:#22d3bf">n_merged</code> / <code style="color:#22d3bf">n_split</code> は誤りの数(after 側・before 側の id で数える)。id の一致は見ない(ラベルを振り直した 2 枚でも使える)。</p>
+<p>Zählt Paare, bei denen Label b von <code style="color:#22d3bf">before</code> und Label a von <code style="color:#22d3bf">after</code> mindestens <code style="color:#22d3bf">min_pixels</code> gleiche Pixel teilen;</p>
+<p style="margin:2px 0 2px 12px">• Verschmelzung = 1 Label von after überdeckt 2 oder mehr Labels von before → <code style="color:#22d3bf">merge_after</code> / <code style="color:#22d3bf">merge_before</code> (1 Zeile pro Paar; die id der aufsaugenden Seite selbst wird ebenfalls als 1 der before-Labels aufgeführt)</p>
+<p style="margin:2px 0 2px 12px">• Trennung = 1 Label von before zerfällt in 2 oder mehr Labels von after → <code style="color:#22d3bf">split_before</code> / <code style="color:#22d3bf">split_after</code> (ebenso wird die id der verbleibenden Seite aufgeführt)</p>
+<p><code style="color:#22d3bf">n_merged</code> / <code style="color:#22d3bf">n_split</code> sind die Anzahl der Fehler (gezählt nach ids auf after- bzw. before-Seite). Gleichheit der ids wird nicht geprüft (funktioniert auch mit 2 Bildern, deren Labels neu nummeriert wurden).</p>
 <p>&gt;&gt;&gt; ch = seg_label_changes(truth, seg_inject_merge(truth))</p>
 <p>&gt;&gt;&gt; int(ch[&quot;n_merged&quot;])</p>
 <p>1</p>

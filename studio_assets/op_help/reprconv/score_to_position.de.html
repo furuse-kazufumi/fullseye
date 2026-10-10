@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_position(score)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.score_to_position(score)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein <code style="color:#22d3bf">score</code>-Volumen → die Position seines Maximums, <code style="color:#22d3bf">position (z, y, x)</code>. Der Ausgang aus <code style="color:#22d3bf">score</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>整数格子上の argmax(副画素精緻化はしない —— それは既存の <code style="color:#22d3bf">refine_peak_newton</code> の仕事で、ここで真似ると 2 か所で別の答えが出る)。<b>一方向</b>(1 つの位置から volume は戻せない)。</p>
+<p>argmax auf dem ganzzahligen Gitter (keine Subpixel-Verfeinerung -- das ist Aufgabe des bestehenden <code style="color:#22d3bf">refine_peak_newton</code>; sie hier nachzubauen, ergäbe an 2 Stellen verschiedene Antworten). <b>Einseitig</b> (aus 1 Position lässt sich das volume nicht zurückgewinnen).</p>
 <p>Args:</p>
-<p>score: (D, H, W)。</p>
+<p>score: (D, H, W).</p>
 <p>Returns:</p>
-<p>3-tuple の float (z, y, x)。</p>
+<p>3-tuple aus float (z, y, x).</p>
 <p>Raises:</p>
-<p>ValueError: 3-D でない / 非有限。</p>
+<p>ValueError: nicht 3-D / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_camber(contour, n=101)</code>(要直接调用实现,<code style="color:#22d3bf">import profileops; profileops.profile_camber(contour, n=101)</code>;从台账取用则 <code style="color:#22d3bf">opsprofile.get(&quot;profile_camber&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>中弧线(上下表面的中线)。返回 <code style="color:#22d3bf">(n, 2)</code> 的 <code style="color:#22d3bf">(x, yc)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★<b>定義の差を承知で使うこと</b>。ここが返すのは「弦の各位置での上下面の中点」で、NACA が翼型を<b>作るときに使う</b>キャンバー線(厚みを法線方向に載せる前の中心線)とは厳密には別物です。加えて弦の取り方も違う —— 幾何的な弦は「後縁の中点から最も遠い点」を前縁とするので、キャンバーのある翼では生成座標の原点からわずかにずれ、弦が 0.1 度ほど傾きます。</p>
-<p>実測(閉形式の最大キャンバー比 対 本 op の返り):</p>
+<p>★<b>使用时须清楚定义上的差别</b>。这里返回的是「弦上各位置处上下表面的中点」，与 NACA 构造翼型时<b>所使用的</b>中弧线(沿法线方向叠加厚度之前的中心线)严格来说并不相同。此外，弦的取法也不同 —— 几何弦把「离后缘中点最远的点」作为前缘，因此对有弯度的翼型，会稍稍偏离生成坐标的原点，弦倾斜约 0.1 度。</p>
+<p>实测(闭式的最大弯度比 对 本 op 的返回值):</p>
 <p>==========  ==========  ==========  ==========</p>
-<p>翼型        閉形式      実測        比</p>
+<p>翼型          闭式          实测          比</p>
 <p>==========  ==========  ==========  ==========</p>
 <p>NACA 0012   0.0000      0.00001     ——</p>
 <p>NACA 2412   0.0200      0.01882     0.94</p>
 <p>NACA 4412   0.0400      0.03786     0.95</p>
 <p>==========  ==========  ==========  ==========</p>
-<p><b>対称翼で 0 になること</b>は確認済み(0.00001)。有翼で 5-6 % 低く出るのは上の定義差で、実装の誤りではありません。設計値と比べるときは、同じ定義で測った基準形状(<code style="color:#22d3bf">profile_synth_naca4</code> の出力)と比べること —— <code style="color:#22d3bf">profile_deviation</code> はまさにそれをします。</p>
+<p><b>对称翼型上为 0</b> 已确认(0.00001)。有弯度的翼型偏低 5-6 %，是上述定义差别所致，并非实现错误。与设计值比较时，应与按同一定义测得的基准形状(<code style="color:#22d3bf">profile_synth_naca4</code> 的输出)比较 —— <code style="color:#22d3bf">profile_deviation</code> 做的正是这件事。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

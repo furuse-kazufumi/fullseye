@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_scale_bar(img, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, color=&#x27;neutral&#x27;, thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_scale_bar(img, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, color=&#x27;neutral&#x27;, thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_scale_bar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (image2d) लौटाता है: कोने में रखा गोल लंबाई का scale bar (मान और इकाई सहित)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">scale_bar</code> は長さを<b>呼び手が決める</b>のに対し、こちらは画素分解能から長さを選ぶ(<code style="color:#22d3bf">annotate_scale_bar_layout</code>)。上隅では文字をバーの下に、下隅では上に置く。</p>
+<p><code style="color:#22d3bf">scale_bar</code> में लंबाई <b>caller तय करता है</b>, जबकि यह pixel resolution से लंबाई चुनता है (<code style="color:#22d3bf">annotate_scale_bar_layout</code>)। ऊपरी कोनों में text bar के नीचे, निचले कोनों में ऊपर रखा जाता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_scale_bar_layout</code> と同じ + 文字が画像に収まらない。</p>
+<p><code style="color:#22d3bf">annotate_scale_bar_layout</code> जैसा ही + text image में फ़िट नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

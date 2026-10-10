@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_distance(m1, m2, n_harmonics=None, scale_invariant=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import fourierdesc; fourierdesc.descriptor_distance(m1, m2, n_harmonics=None, scale_invariant=True)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;descriptor_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Distance between 2 shapes (smaller means more similar). Invariant to rotation/translation/starting point/(optionally) scale.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各高調波の楕円 (長軸, 短軸) 特異値不変量(<code style="color:#22d3bf">invariants</code>)の L2 距離。m1, m2 は <code style="color:#22d3bf">elliptic_fourier</code> の出力 dict。</p>
+<p>L2 distance of the (major axis, minor axis) singular-value invariants of each harmonic&#x27;s ellipse (<code style="color:#22d3bf">invariants</code>). m1, m2 are output dicts of <code style="color:#22d3bf">elliptic_fourier</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,54 +4,53 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_box(img, text, xy, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, anchor=&#x27;lt&#x27;, pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.text_box(img, text, xy, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, anchor=&#x27;lt&#x27;, pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;text_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>밑판(반투명 판)이 붙은 글자. <b>넘치면 조용히 자르지 않고 예외</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>img : ndarray</p>
-<p><code style="color:#22d3bf">(H,W)</code> か <code style="color:#22d3bf">(H,W,C)</code>、float [0,1]。</p>
+<p><code style="color:#22d3bf">(H,W)</code> 또는 <code style="color:#22d3bf">(H,W,C)</code>, float [0,1].</p>
 <p>text : str</p>
-<p>描く文字列。</p>
+<p>그릴 문자열.</p>
 <p>xy : (x, y)</p>
-<p>アンカーの位置(<b>x=col, y=row</b>、row は下向き)。</p>
+<p>앵커 위치(<b>x=col, y=row</b>, row는 아래 방향).</p>
 <p>color : str or sequence</p>
-<p>役割名または RGB。<code style="color:#22d3bf">text_color</code> 未指定ならこれが<b>枠の色</b>として</p>
-<p>使われ、文字は読みやすい既定色になる。</p>
+<p>역할명 또는 RGB. <code style="color:#22d3bf">text_color</code>가 지정되지 않으면 이것이 <b>테두리 색</b>으로</p>
+<p>쓰이고, 글자는 읽기 쉬운 기본색이 된다.</p>
 <p>text_color, box_color : str/sequence or None</p>
-<p>文字色・板の色。None なら既定(明るい文字 × 暗い板)。文字色が None の</p>
-<p>ときは、<b>実際に下に出る色</b>に対して明るい既定色が <code style="color:#22d3bf">min_contrast</code> を</p>
-<p>割る場合に限り、暗い文字(板の色)へ自動で切り替える ―― 板なし</p>
-<p>(<code style="color:#22d3bf">box_alpha=0</code>)で白地に置く目盛り・カラーバー・凡例のラベルが</p>
-<p>白に溶けないため。<code style="color:#22d3bf">text_color</code> を明示したときは切り替えない</p>
-<p>(色は図の意味なので勝手に変えず、読めなければ例外にする)。</p>
+<p>글자색·판의 색. None이면 기본값(밝은 글자 × 어두운 판). 글자색이 None일</p>
+<p>때는, <b>실제로 아래에 나오는 색</b>에 대해 밝은 기본색이 <code style="color:#22d3bf">min_contrast</code>를</p>
+<p>밑도는 경우에 한해, 어두운 글자(판의 색)로 자동 전환한다 —— 판 없이</p>
+<p>(<code style="color:#22d3bf">box_alpha=0</code>) 흰 바탕에 놓는 눈금·컬러바·범례의 라벨이</p>
+<p>흰색에 녹아들지 않도록. <code style="color:#22d3bf">text_color</code>를 명시했을 때는 전환하지 않는다</p>
+<p>(색은 그림의 의미이므로 멋대로 바꾸지 않고, 읽을 수 없으면 예외로 한다).</p>
 <p>box_alpha : float</p>
-<p>板の不透明度 [0,1]。<code style="color:#22d3bf">0</code> なら板を描かない(目盛りラベル向け)。</p>
+<p>판의 불투명도 [0,1]. <code style="color:#22d3bf">0</code>이면 판을 그리지 않는다(눈금 라벨용).</p>
 <p>anchor : str</p>
-<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> の 9 通り。</p>
+<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code>의 9가지.</p>
 <p>pad : int</p>
-<p>板の内側余白[px]。</p>
+<p>판의 안쪽 여백[px].</p>
 <p>max_width : int or None</p>
-<p>文字の折り返し幅。None なら 1 行のまま。</p>
+<p>글자의 줄바꿈 폭. None이면 1행 그대로.</p>
 <p>wrap : bool</p>
-<p>False なら折り返さず 1 行のまま縮めて <code style="color:#22d3bf">max_width</code> に収める。</p>
+<p>False이면 줄바꿈하지 않고 1행 그대로 줄여서 <code style="color:#22d3bf">max_width</code>에 맞춘다.</p>
 <p>min_contrast : float</p>
-<p>文字と「実際にその下に出る色」のコントラスト比の下限。下回れば</p>
-<p><b>ValueError</b>(背景と同化した文字は誰も気づけないので通さない)。</p>
-<p><b>限界(正直に)</b>: 比べる相手は板の下の<b>平均色</b>なので、</p>
-<p>白と黒が半々に混じった写真の上に <code style="color:#22d3bf">box_alpha=0</code> で置くと、平均は</p>
-<p>中間灰になり検査を通ってしまう(白い部分の上の文字は読めない)。</p>
-<p>地が荒れている場所では <code style="color:#22d3bf">box_alpha</code> を上げて板を効かせること ――</p>
-<p>この検査は「板を忘れた」を捕まえるためのもので、</p>
-<p>「板があっても読めない」まで保証はしない。</p>
+<p>글자와 &quot;실제로 그 아래에 나오는 색&quot;의 대비비 하한. 밑돌면</p>
+<p><b>ValueError</b>(배경과 동화한 글자는 아무도 알아챌 수 없으므로 통과시키지 않는다).</p>
+<p><b>한계(정직하게)</b>: 비교하는 상대는 판 아래의 <b>평균색</b>이므로,</p>
+<p>흰색과 검정이 반반 섞인 사진 위에 <code style="color:#22d3bf">box_alpha=0</code>으로 놓으면, 평균은</p>
+<p>중간 회색이 되어 검사를 통과해 버린다(흰 부분 위의 글자는 읽을 수 없다).</p>
+<p>바탕이 거친 곳에서는 <code style="color:#22d3bf">box_alpha</code>를 올려 판이 효과를 내게 할 것 ——</p>
+<p>이 검사는 &quot;판을 잊었다&quot;를 잡기 위한 것이며,</p>
+<p>&quot;판이 있어도 읽을 수 없다&quot;까지는 보장하지 않는다.</p>
 <p>border : int</p>
-<p>板の枠線の太さ(0 で枠なし)。色は <code style="color:#22d3bf">border_color</code> か <code style="color:#22d3bf">color</code>。</p>
+<p>판의 테두리선 굵기(0이면 테두리 없음). 색은 <code style="color:#22d3bf">border_color</code> 또는 <code style="color:#22d3bf">color</code>.</p>
 <p>style : dict or None</p>
-<p>枠線を引く <code style="color:#22d3bf">imagedraw.draw_polyline</code> へ<b>素通し</b>する引数。</p>
+<p>테두리선을 긋는 <code style="color:#22d3bf">imagedraw.draw_polyline</code>에 <b>그대로 넘기는</b> 인수.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>同じ shape の新しい配列。</p>
+<p>같은 shape의 새 배열.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>板が画像からはみ出す / 文字が収まらない / コントラスト不足 /</p>
-<p>未知の役割名・アンカー / 負の余白。</p>
+<p>판이 영상에서 삐져나옴 / 글자가 들어가지 않음 / 대비 부족 /</p>
+<p>알 수 없는 역할명·앵커 / 음의 여백.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

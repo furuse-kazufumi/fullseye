@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;compare_images&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Misst mehrere Metriken auf einmal und <b>liefert zusammen mit den Zahlen, was wie gemessen wurde</b>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>返り値の <code style="color:#22d3bf">contract</code> に <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">crop_border</code> / SSIM の窓を入れてあるのは、数値だけを図注に写して<b>条件が消える</b>のを防ぐため(この repo で実際に起きた事故の型)。</p>
+<p>Das <code style="color:#22d3bf">contract</code> im Rückgabewert enthält <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">crop_border</code> / das SSIM-Fenster, um zu verhindern, dass <b>die Bedingungen verschwinden</b>, wenn nur die Zahlen in eine Bildunterschrift übernommen werden (ein Unfalltyp, der in diesem repo tatsächlich passiert ist).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;mse&quot;, &quot;rmse&quot;, &quot;psnr&quot;, &quot;ssim&quot;, &quot;mutual_information&quot;, &quot;normalized_mutual_information&quot;, &quot;ncd&quot;, &quot;contract&quot;: {...}}</code>。</p>
-<p><code style="color:#22d3bf">ms=True</code> なら <code style="color:#22d3bf">ms_ssim</code> も(成立しない大きさなら <code style="color:#22d3bf">ValueError</code>)。</p>
-<p>カラー画像で <code style="color:#22d3bf">channel_axis</code> を渡すと <code style="color:#22d3bf">delta_e_2000_mean</code> も入る。</p>
+<p><code style="color:#22d3bf">{&quot;mse&quot;, &quot;rmse&quot;, &quot;psnr&quot;, &quot;ssim&quot;, &quot;mutual_information&quot;, &quot;normalized_mutual_information&quot;, &quot;ncd&quot;, &quot;contract&quot;: {...}}</code>.</p>
+<p>Mit <code style="color:#22d3bf">ms=True</code> auch <code style="color:#22d3bf">ms_ssim</code> (<code style="color:#22d3bf">ValueError</code>, wenn die Größe es nicht zulässt).</p>
+<p>Bei Farbbildern kommt mit <code style="color:#22d3bf">channel_axis</code> auch <code style="color:#22d3bf">delta_e_2000_mean</code> hinzu.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

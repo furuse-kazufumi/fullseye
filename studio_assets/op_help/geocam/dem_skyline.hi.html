@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;dem_skyline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>DEM के 1 point से दिखने वाली <b>सभी दिशाओं की skyline</b> (हर azimuth पर horizon elevation) → table।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">dem_horizon_angle</code> は「全セル × 1 方位」、これは「1 点 × 全方位」—— 固定カメラの向きを決めるのに要るのは後者。各方位へ <code style="color:#22d3bf">cell_size / 2</code> 刻みで視線を進め(標高は双一次補間)、<code style="color:#22d3bf">atan((z_j − z_0 − drop(d)) / d)</code> の最大値をその方位の仰角にする。<code style="color:#22d3bf">drop(d) = d² / (2 R_eff)</code> は地球の丸みと大気屈折(有効半径 R / (1 − 0.13))で遠くの山が沈む分。視線が DEM の外に出たらそこで止める(<code style="color:#22d3bf">max_distance</code> でも止まる)。<b>DEM の外側</b>は「DEM の最低標高の平面が地平線まで続く」と仮定し、仰角の下限を地平線の沈み <code style="color:#22d3bf">−sqrt(2 h / R_eff)</code>(h = 観測点の最低標高からの高さ)にする —— 有限の DEM の端でたまたま低い点を見て、実際には地球の丸みで見えない −7° のような「穴」を空にしないため(<code style="color:#22d3bf">horizon_dip_deg</code> に返す)。</p>
+<p><code style="color:#22d3bf">dem_horizon_angle</code> &quot;सभी cells × 1 azimuth&quot; है, और यह &quot;1 point × सभी azimuths&quot; -- fixed camera की दिशा तय करने के लिए बाद वाला चाहिए। हर azimuth में <code style="color:#22d3bf">cell_size / 2</code> के step से line of sight आगे बढ़ाई जाती है (elevation bilinear interpolation से), और <code style="color:#22d3bf">atan((z_j − z_0 − drop(d)) / d)</code> का maximum उस azimuth का elevation angle बनता है। <code style="color:#22d3bf">drop(d) = d² / (2 R_eff)</code> वह मात्रा है जितना पृथ्वी की गोलाई और atmospheric refraction (effective radius R / (1 − 0.13)) से दूर के पहाड़ नीचे डूबते हैं। line of sight DEM से बाहर निकले तो वहीं रुकती है (<code style="color:#22d3bf">max_distance</code> पर भी रुकती है)। <b>DEM के बाहर</b> यह माना जाता है कि &quot;DEM की सबसे कम elevation वाला plane horizon तक चलता है&quot;, और elevation angle की निचली सीमा horizon dip <code style="color:#22d3bf">−sqrt(2 h / R_eff)</code> रखी जाती है (h = observer की सबसे कम elevation से ऊँचाई) -- ताकि finite DEM के किनारे पर संयोग से कोई नीचा point देखकर, −7° जैसा &quot;छेद&quot; जो असल में पृथ्वी की गोलाई के कारण दिखता ही नहीं, आसमान न बन जाए (<code style="color:#22d3bf">horizon_dip_deg</code> में लौटाया जाता है)।</p>
 <p>Args:</p>
-<p>dem: (H, W) 標高 [m]。行 0 が北端。</p>
-<p>cell_size: [m/セル]。</p>
-<p>observer_rc: 観測点 (row, col)。float 可(セルの中に立てる)。</p>
-<p>eye_height: 地面からのカメラ高さ [m]。</p>
-<p>az_step_deg: 方位の刻み [度]。</p>
-<p>max_distance: 視線の最大距離 [m] (None = DEM の端まで)。</p>
-<p>earth_curvature: False なら平らな地球。</p>
+<p>dem: (H, W) elevation [m]। row 0 उत्तरी किनारा है।</p>
+<p>cell_size: [m/cell]।</p>
+<p>observer_rc: observation point (row, col)। float चलेगा (cell के अंदर खड़ा)।</p>
+<p>eye_height: ज़मीन से camera की ऊँचाई [m]।</p>
+<p>az_step_deg: azimuth का step [degree]।</p>
+<p>max_distance: line of sight की अधिकतम दूरी [m] (None = DEM के किनारे तक)।</p>
+<p>earth_curvature: False हो तो सपाट पृथ्वी।</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">azimuth_deg</code> (M,) / <code style="color:#22d3bf">elevation_deg</code> (M,) / <code style="color:#22d3bf">distance_m</code> (M,)(仰角を決めた</p>
-<p>地点までの距離)/ <code style="color:#22d3bf">observer_elevation_m</code> / <code style="color:#22d3bf">horizon_dip_deg</code> / <code style="color:#22d3bf">n</code>。方位は 0 以上</p>
-<p>360 未満、昇順。</p>
+<p>table: <code style="color:#22d3bf">azimuth_deg</code> (M,) / <code style="color:#22d3bf">elevation_deg</code> (M,) / <code style="color:#22d3bf">distance_m</code> (M,) (elevation angle तय करने वाले</p>
+<p>point तक की दूरी) / <code style="color:#22d3bf">observer_elevation_m</code> / <code style="color:#22d3bf">horizon_dip_deg</code> / <code style="color:#22d3bf">n</code>। azimuth 0 या उससे ज़्यादा और</p>
+<p>360 से कम, बढ़ते क्रम में।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

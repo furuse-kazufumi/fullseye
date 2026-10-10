@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tone_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선을 그은 결과의 <b>농담</b>이 목표와 얼마나 다른가. → <code style="color:#22d3bf">table</code></p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>★これが一筆書きの<b>本当の目的関数</b>。「絵として似ている」を人の目に任せず、ペン幅で描いて目の尺度にぼかし、目標の暗さと比べて数で返す。</p>
-<p>返り値: dict</p>
-<p>&quot;rms&quot; / &quot;max_abs&quot; / &quot;bias&quot; —— 暗さの差(<code style="color:#22d3bf">[0, 1]</code> の尺度)</p>
-<p>&quot;corr&quot; —— 目標の暗さと描いた暗さの相関(1 に近いほど濃淡を追えている)</p>
-<p>&quot;ink_fraction&quot; —— 紙に乗ったインクの面積率</p>
-<p>&quot;target_darkness&quot; —— 目標の平均暗さ(インク率と釣り合うべき量)</p>
-<p>&quot;length_px&quot; —— 線の長さ[px]</p>
-<p>★<b>ペン幅は連続なノブ</b>(被覆率で塗る)。線が重ならない範囲では <code style="color:#22d3bf">インク率 ≈ 線長 × ペン幅 / 画像の面積</code> が成り立つので、目標の濃さに合うペン幅を <b>閉形式で解いてから</b>確かめられる:</p>
-<p><code style="color:#22d3bf">pen_width ≈ target_darkness × area / length_px</code>。</p>
+<p>★이것이 한붓그리기의 <b>진짜 목적 함수</b>. &quot;그림으로서 닮았다&quot;를 사람의 눈에 맡기지 않고, 펜 폭으로 그려서 눈의 척도로 흐리고, 목표의 어두움과 비교하여 수로 반환한다.</p>
+<p>반환값: dict</p>
+<p>&quot;rms&quot; / &quot;max_abs&quot; / &quot;bias&quot; —— 어두움의 차(<code style="color:#22d3bf">[0, 1]</code> 의 척도)</p>
+<p>&quot;corr&quot; —— 목표의 어두움과 그린 어두움의 상관(1 에 가까울수록 농담을 따라가고 있다)</p>
+<p>&quot;ink_fraction&quot; —— 종이에 올라간 잉크의 면적률</p>
+<p>&quot;target_darkness&quot; —— 목표의 평균 어두움(잉크율과 균형을 이뤄야 할 양)</p>
+<p>&quot;length_px&quot; —— 선의 길이[px]</p>
+<p>★<b>펜 폭은 연속적인 노브</b>(피복률로 칠한다). 선이 겹치지 않는 범위에서는 <code style="color:#22d3bf">잉크율 ≈ 선 길이 × 펜 폭 / 영상의 면적</code> 이 성립하므로, 목표의 농도에 맞는펜 폭을 <b>닫힌 식으로 푼 다음</b> 확인할 수 있다:</p>
+<p><code style="color:#22d3bf">pen_width ≈ target_darkness × area / length_px</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

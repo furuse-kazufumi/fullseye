@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_texture_regions(seed: &#x27;int&#x27; = 0, *, size=(192, 192), n_regions: &#x27;int&#x27; = 3, mean: &#x27;float&#x27; = 0.5, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import segworld; segworld.world_texture_regions(seed: &#x27;int&#x27; = 0, *, size=(192, 192), n_regions: &#x27;int&#x27; = 3, mean: &#x27;float&#x27; = 0.5, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;world_texture_regions&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>2-4 个区域的世界：均值相同、仅方差与周期不同（阈值切不开）（world_texture_regions）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>領域 = 離した種の最近傍(ボロノイ)。模様は順に: 小さい雑音(σ = noise)、大きい雑音(σ = 4 noise)、縞(周期 P₁・向き θ₁、振幅 0.2)+ 雑音、縞(周期 P₂・向き θ₂)+ 雑音。どれも零平均で <code style="color:#22d3bf">mean</code> に足す(クリップは ±0.45 で対称 = 平均を保つ)。</p>
-<p>返り値: <code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">labels</code>、<code style="color:#22d3bf">truth</code> = {<code style="color:#22d3bf">n_regions</code>、<code style="color:#22d3bf">mean</code>、<code style="color:#22d3bf">seeds</code>、<code style="color:#22d3bf">specs</code>(kind, std(理論)、period、angle(度)、amp)}。</p>
+<p>区域 = 彼此分开的种子点的最近邻(Voronoi)。纹样依次为: 细噪声(σ = noise)、粗噪声(σ = 4 noise)、条纹(周期 P₁、方向 θ₁, 振幅 0.2)+ 噪声、条纹(周期 P₂、方向 θ₂)+ 噪声。全部为零均值,加到 <code style="color:#22d3bf">mean</code> 上(裁剪在 ±0.45 处对称 = 保持均值)。</p>
+<p>返回值: <code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">labels</code>、<code style="color:#22d3bf">truth</code> = {<code style="color:#22d3bf">n_regions</code>、<code style="color:#22d3bf">mean</code>、<code style="color:#22d3bf">seeds</code>、<code style="color:#22d3bf">specs</code>(kind, std(理论)、period、angle(度)、amp)}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

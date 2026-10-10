@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_kendall_b(x, y, chunk: &#x27;int&#x27; = 512) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import iqatid; iqatid.rank_kendall_b(x, y, chunk: &#x27;int&#x27; = 512) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_kendall_b&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Kendall 的 τ_b(含同等級校正)= (C − D) / sqrt((n0 − n1)(n0 − n2))。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>C / D = 一致 / 不一致の対の数、n0 = n(n−1)/2、n1 / n2 = x 側 / y 側で同順位の対の数。O(n²) を <code style="color:#22d3bf">chunk</code> 行ずつの放送で数える(n = 3000 で 4.5e6 対、数秒)。単調増加で 1、反転で −1。どちらかが定数なら <code style="color:#22d3bf">nan</code>。TID2013 の公表 Kendall は τ_b(14 本が 3 桁一致、τ_a だと 4 本外れる)。±inf は順序だけ使う。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さ不一致・2 未満・nan。</p>
+<p>C / D = 一致 / 不一致對的數量,n0 = n(n−1)/2,n1 / n2 = x 側 / y 側同秩對的數量。O(n²) 以每 <code style="color:#22d3bf">chunk</code> 列的廣播來計數(n = 3000 時 4.5e6 對,數秒)。單調遞增為 1,反轉為 −1。任一方為常數則 <code style="color:#22d3bf">nan</code>。TID2013 公布的 Kendall 是 τ_b(14 個指標 3 位一致,用 τ_a 則有 4 個不符)。±inf 只用其順序。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>:長度不一致、不足 2、nan。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

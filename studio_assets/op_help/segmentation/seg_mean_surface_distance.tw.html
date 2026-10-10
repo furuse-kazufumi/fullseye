@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_mean_surface_distance(labels_pred, labels_true) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segeval; segeval.seg_mean_surface_distance(labels_pred, labels_true) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;seg_mean_surface_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平均對稱表面距離（ASSD）：雙向邊界距離合併後的均值，另給 RMS（seg_mean_surface_distance）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>境界は <code style="color:#22d3bf">_boundary</code> の規約。どちらかの境界が空なら ValueError。</p>
-<p>返り値: <code style="color:#22d3bf">assd</code>、<code style="color:#22d3bf">rms</code>、<code style="color:#22d3bf">mean_pred_to_true</code> / <code style="color:#22d3bf">mean_true_to_pred</code>、<code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>。</p>
+<p>邊界遵循 <code style="color:#22d3bf">_boundary</code> 的慣例。任一邊界為空時 ValueError。</p>
+<p>回傳值: <code style="color:#22d3bf">assd</code>、<code style="color:#22d3bf">rms</code>、<code style="color:#22d3bf">mean_pred_to_true</code> / <code style="color:#22d3bf">mean_true_to_pred</code>、<code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

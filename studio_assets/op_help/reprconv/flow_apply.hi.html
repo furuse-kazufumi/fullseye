@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_apply(points, flow)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.flow_apply(points, flow)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;flow_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point set <code style="color:#22d3bf">(N,3)</code> में scattered flow <code style="color:#22d3bf">(N,3)</code> जोड़ता है → <code style="color:#22d3bf">points</code>। <code style="color:#22d3bf">flow</code> का उपभोग करने वाला पक्ष।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">estimate_flow(a, b)</code> が「a の各点から b の最近傍への変位」を返すので、<code style="color:#22d3bf">flow_apply(a, estimate_flow(a, b))</code> は <b>b の点のうち a から最近傍として選ばれたもの</b>へ移る。往復が厳密になるのは対応が全単射のときだけで、そうでなければ「a の 2 点が b の同じ点へ落ちる」ぶんだけ形が縮む —— <code style="color:#22d3bf">selftest</code> はこの残差を数字で出す。</p>
+<p>चूँकि <code style="color:#22d3bf">estimate_flow(a, b)</code> &quot;a के हर point से b में उसके nearest neighbour तक का displacement&quot; लौटाता है, <code style="color:#22d3bf">flow_apply(a, estimate_flow(a, b))</code> <b>b के उन points पर जाता है जिन्हें a से nearest neighbour के रूप में चुना गया</b>। round trip तभी सटीक होता है जब correspondence bijection हो; अन्यथा &quot;a के 2 points b के एक ही point पर पड़ते हैं&quot; उतना shape सिकुड़ जाता है -- <code style="color:#22d3bf">selftest</code> इस residual को संख्या में दिखाता है।</p>
 <p>Args:</p>
-<p>points: (N, 3)。</p>
-<p>flow: (N, 3)。</p>
+<p>points: (N, 3)।</p>
+<p>flow: (N, 3)।</p>
 <p>Returns:</p>
-<p>(N, 3) float64。</p>
+<p>(N, 3) float64।</p>
 <p>Raises:</p>
-<p>ValueError: 行数不一致 / 形状不正 / 非有限。</p>
+<p>ValueError: row संख्या मेल नहीं खाती / गलत shape / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import printpath; printpath.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsprintpath.get(&quot;stipple_points_from_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bildet Grauwerte auf die <b>Punktdichte</b> ab (gewichtetes Lloyd-Verfahren = zentroidale Voronoi-Zerlegung). → <code style="color:#22d3bf">pairs</code></p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>暗いところに点が密に集まる。返るのは <code style="color:#22d3bf">(n_points, 2)</code> の <b>(row, col)</b>。</p>
-<p>引数:</p>
-<p>image: 明るさ <code style="color:#22d3bf">[0, 1]</code> の 2-D(または色。輝度に落とす)。</p>
-<p>n_points: 点の数。</p>
-<p>iterations: Lloyd の反復回数。</p>
-<p>gamma: 重みを <code style="color:#22d3bf">darkness ** gamma</code> にする(1 = 暗さそのまま)。</p>
-<p>floor: 重みの下限。<b>0 にしない</b> —— 真っ白な領域の重みが厳密に 0 だと</p>
-<p>そこへ入った点が動けず(重心が 0/0)、位置が入力に依らなくなる。</p>
-<p>seed: 初期配置の乱数。</p>
-<p>metric: いまは <code style="color:#22d3bf">&quot;euclidean&quot;</code> のみ。</p>
-<p>返り値のほかに、収束の様子は <code style="color:#22d3bf">stipple_points_from_image</code> を <code style="color:#22d3bf">iterations</code> を変えて呼び比べれば測れる(Lloyd のエネルギーは単調減少する)。</p>
-<p>★<b>真っ白な画像でも点は等間隔に散る</b>(密度が一定なら重心ボロノイは均等)。そこが「濃淡を読めている」ことの対照群になる。</p>
+<p>Punkte sammeln sich dicht, wo es dunkel ist. Zurückgegeben wird <code style="color:#22d3bf">(n_points, 2)</code> als <b>(row, col)</b>.</p>
+<p>Args:</p>
+<p>image: 2-D-Helligkeit in <code style="color:#22d3bf">[0, 1]</code> (oder Farbe; auf Leuchtdichte reduziert).</p>
+<p>n_points: Anzahl der Punkte.</p>
+<p>iterations: Anzahl der Iterationen von Lloyd.</p>
+<p>gamma: setzt das Gewicht auf <code style="color:#22d3bf">darkness ** gamma</code> (1 = Dunkelheit unverändert).</p>
+<p>floor: Untergrenze des Gewichts. <b>Nicht auf 0 setzen</b> -- ist das Gewicht einer reinweißen Region exakt 0,</p>
+<p>können Punkte, die hineingeraten, sich nicht bewegen (Schwerpunkt 0/0), und ihre Position hängt nicht mehr von der Eingabe ab.</p>
+<p>seed: Zufallszahlen für die Anfangsplatzierung.</p>
+<p>metric: derzeit nur <code style="color:#22d3bf">&quot;euclidean&quot;</code>.</p>
+<p>Neben dem Rückgabewert lässt sich die Konvergenz messen, indem man <code style="color:#22d3bf">stipple_points_from_image</code> mit unterschiedlichen <code style="color:#22d3bf">iterations</code> aufruft und vergleicht (Lloyds Energie nimmt monoton ab).</p>
+<p>★<b>Selbst auf einem reinweißen Bild verteilen sich die Punkte gleichmäßig</b> (bei konstanter Dichte ist das zentroidale Voronoi gleichmäßig). Das dient als Kontrollgruppe dafür, dass &quot;es den Tonwert tatsächlich lesen kann&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">Leitfaden zur Familie printpath</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

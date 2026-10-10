@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_nonmax_suppression(image, *, window, mask=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import vxcore; vxcore.vx_nonmax_suppression(image, *, window, mask=None)</code>; aus dem Register: <code style="color:#22d3bf">opsvx.get(&quot;vx_nonmax_suppression&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Non-Maximum-Unterdrückung (Abschnitt 3.39). Ein Pixel (x, y) bleibt nur erhalten, wenn es im Fenster <b>≥ seinen vorangehenden Nachbarn (Zeile darüber und links in derselben Zeile) und &gt; seinen nachfolgenden Nachbarn</b> ist (REQ-0337). Wegen dieser Asymmetrie bleibt auf einem flachen Gipfel genau 1 Pixel übrig. Pixel ungleich null in *mask* werden nicht verglichen und unverändert beibehalten (auch nicht für den Vergleich anderer Pixel verwendet, REQ-0336). Unterdrückte Pixel werden bei U8 zu 0, bei S16 zu INT16_MIN (REQ-0335). Nachbarn außerhalb des Fensters werden nicht verglichen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>*window*(必須): 奇数の窓の一辺(3, 5, …)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8/S16 の 2-D でない / window が 3 以上の奇数でない / mask の形が違う。</p>
+<p>*window* (erforderlich): Seitenlänge eines ungeraden Fensters (3, 5, …).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: kein 2-D-U8/S16 / window ist keine ungerade Zahl ab 3 / Form der mask verschieden.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">Leitfaden zur Familie openvx_ports</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

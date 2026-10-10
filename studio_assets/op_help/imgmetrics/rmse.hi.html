@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rmse(a, b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.rmse(a, b)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;rmse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>root mean squared error (pixel मान वाली ही इकाई में)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>式: <code style="color:#22d3bf">sqrt(mse(a, b))</code>。検証と失敗条件は <code style="color:#22d3bf">mse</code> と同じ ―― 同じ形 / 空でない / 有限、を満たさなければ <code style="color:#22d3bf">MetricContractError</code>。次元と dtype は問わない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: Python の <code style="color:#22d3bf">float</code>。入力が <code style="color:#22d3bf">[0, 1]</code> の float なら値も <code style="color:#22d3bf">[0, 1]</code>、uint8 なら 0〜255 の尺度。「平均して何階調ずれているか」と読める。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code> に依らない生の量なので、尺度の違う 2 組の rmse を並べても比較にならない。正規化した指標が要るなら <code style="color:#22d3bf">psnr</code> か <code style="color:#22d3bf">ssim</code>。</p>
-<p style="margin:2px 0 2px 12px">• 深度・CT・再投影など「画素値 = 物理量」の場面では、その物理単位そのものになる。</p>
+<p>सूत्र: <code style="color:#22d3bf">sqrt(mse(a, b))</code>। जाँच और विफलता की शर्तें <code style="color:#22d3bf">mse</code> जैसी ही -- समान shape / ख़ाली नहीं / finite, ये पूरे न हों तो <code style="color:#22d3bf">MetricContractError</code>। dimensions और dtype कोई भी।</p>
+<p style="margin:2px 0 2px 12px">• return value: Python का <code style="color:#22d3bf">float</code>। input <code style="color:#22d3bf">[0, 1]</code> का float हो तो मान भी <code style="color:#22d3bf">[0, 1]</code> में, uint8 हो तो 0-255 के पैमाने पर। इसे &quot;औसतन कितने grey levels का अंतर&quot; के रूप में पढ़ा जा सकता है।</p>
+<p style="margin:2px 0 2px 12px">• यह <code style="color:#22d3bf">data_range</code> से स्वतंत्र कच्ची मात्रा है, इसलिए अलग पैमानों वाली 2 जोड़ियों के rmse साथ रखने से तुलना नहीं होती। normalised metric चाहिए तो <code style="color:#22d3bf">psnr</code> या <code style="color:#22d3bf">ssim</code>।</p>
+<p style="margin:2px 0 2px 12px">• depth, CT, reprojection आदि जहाँ &quot;pixel मान = भौतिक मात्रा&quot; हो, वहाँ यह सीधे उसी भौतिक इकाई में होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

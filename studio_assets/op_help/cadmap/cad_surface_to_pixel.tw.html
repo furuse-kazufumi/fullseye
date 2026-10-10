@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None, cull_backfaces=True, depth_tol=1e-06, strict=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import cadmap; cadmap.cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None, cull_backfaces=True, depth_tol=1e-06, strict=False)</code>;從台帳取用則 <code style="color:#22d3bf">opscadmap.get(&quot;cad_surface_to_pixel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3-D 點 (N,3) → 像素 + <b>可見性</b>(遮蔽・背面・出畫分別回傳)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">camera.project_points</code> で投影したうえで、<b>同じ画素へ光線を撃ち直して</b> 手前に別の面が無いかを確かめる。これをやらないと、隠れている点の画素座標を「そこに見えている」かのように返してしまう。返りは dict:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">uv</code>            (N,2) — 画素 <code style="color:#22d3bf">(u=列, v=行)</code>。<code style="color:#22d3bf">depth &lt;= 0</code> の点でも投影値は返るが <code style="color:#22d3bf">in_front = False</code> が立つ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth</code>         (N,) — カメラ座標 Z。</p>
+<p>以 <code style="color:#22d3bf">camera.project_points</code> 投影後,<b>再向同一像素重新發射光線</b>, 確認前方沒有別的面。不這樣做的話,會把被遮擋點的像素座標當作「在那裡看得見」一樣回傳。回傳值是 dict:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">uv</code>            (N,2) — 像素 <code style="color:#22d3bf">(u=行, v=列)</code>。即使是 <code style="color:#22d3bf">depth &lt;= 0</code> 的點也會回傳投影值,但會設定 <code style="color:#22d3bf">in_front = False</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth</code>         (N,) — 相機座標 Z。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">in_front</code>      (N,) bool — <code style="color:#22d3bf">depth &gt; 0</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">in_image</code>      (N,) bool — 画枠内(<code style="color:#22d3bf">0 &lt;= u &lt;= width-1</code> かつ <code style="color:#22d3bf">0 &lt;= v &lt;= height-1</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">occluded</code>      (N,) bool — 同じ視線上で、その点より手前に面がある。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">occluder_face</code> (N,) int64 — 遮っている面。無ければ <code style="color:#22d3bf">-1</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">in_image</code>      (N,) bool — 在畫框內(<code style="color:#22d3bf">0 &lt;= u &lt;= width-1</code> 且 <code style="color:#22d3bf">0 &lt;= v &lt;= height-1</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">occluded</code>      (N,) bool — 在同一視線上,該點前方有面。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">occluder_face</code> (N,) int64 — 遮擋的面。沒有則為 <code style="color:#22d3bf">-1</code>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">visible</code>       (N,) bool — <code style="color:#22d3bf">in_front &amp; in_image &amp; ~occluded</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">camera</code>        実際に使われたカメラ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">winding_fixed</code> bool — 内向きに巻かれた閉メッシュを検出して直したか。</p>
-<p><code style="color:#22d3bf">depth_tol</code> は「自分自身の面に遮られた」と誤判定しないための相対許容で、遮蔽と判定するのは <code style="color:#22d3bf">z_hit &lt; depth * (1 - depth_tol) - depth_tol</code> のとき。閉じた mesh の<b>裏側</b>にある点は、手前の壁に遮られて <code style="color:#22d3bf">occluded = True</code> になる — これは仕様であって取りこぼしではない。</p>
-<p><b>遮蔽判定は巻き方向に依存する</b>(手前の壁が裏面としてカリングされると、裏側の点まで <code style="color:#22d3bf">visible</code> になる)。そのため <code style="color:#22d3bf">cull_backfaces=True</code> では内向きに巻かれた閉メッシュを検出し、既定では巻きを直して <code style="color:#22d3bf">winding_fixed=True</code> を返す。<code style="color:#22d3bf">strict=True</code> で <code style="color:#22d3bf">ValueError</code>、<code style="color:#22d3bf">cull_backfaces=False</code> では検査そのものをしない(詳細は <code style="color:#22d3bf">_orient_for_culling</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">camera</code>        實際使用的相機。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">winding_fixed</code> bool — 是否偵測到向內繞的封閉網格(mesh)並修正。</p>
+<p><code style="color:#22d3bf">depth_tol</code> 是為了不誤判為「被自身的面遮擋」的相對容差, 當 <code style="color:#22d3bf">z_hit &lt; depth * (1 - depth_tol) - depth_tol</code> 時判定為遮擋。位於封閉 mesh <b>背面</b>的點會被前方的牆遮擋而成為 <code style="color:#22d3bf">occluded = True</code> —— 這是規格,而不是遺漏。</p>
+<p><b>遮擋判定取決於繞向</b>(若前方的牆作為背面被剔除, 連背面的點也會變成 <code style="color:#22d3bf">visible</code>)。因此在 <code style="color:#22d3bf">cull_backfaces=True</code> 時會偵測向內繞的封閉網格(mesh),預設修正繞向並回傳 <code style="color:#22d3bf">winding_fixed=True</code>。<code style="color:#22d3bf">strict=True</code> 時拋出 <code style="color:#22d3bf">ValueError</code>, <code style="color:#22d3bf">cull_backfaces=False</code> 時根本不做檢查(詳見 <code style="color:#22d3bf">_orient_for_culling</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

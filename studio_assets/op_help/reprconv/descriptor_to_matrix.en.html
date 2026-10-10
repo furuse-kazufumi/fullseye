@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_matrix(descriptor)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Descriptor → <code style="color:#22d3bf">matrix</code>. The exit from <code style="color:#22d3bf">descriptor</code> (<b>invertible</b>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>1-D の記述子 (n,) は <b>(1, n)</b> の 1 行行列にする。2-D の記述子束(<code style="color:#22d3bf">sh_descriptor</code> の (12, 9) のような「点 x 次元」)はそのまま通す。こうしておくと記述子バンクに <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> がそのまま掛かる —— 記述子は本質的にベクトルなので、行列語彙へ渡すのは梱包の付け替えであって変形ではない。</p>
-<p><code style="color:#22d3bf">matrix_to_descriptor</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。</p>
+<p>A 1-D descriptor (n,) becomes a 1-row matrix <b>(1, n)</b>. A 2-D descriptor bundle (&quot;points x dimensions&quot;, like the (12, 9) of <code style="color:#22d3bf">sh_descriptor</code>) passes through unchanged. This way <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> can be applied to a descriptor bank directly -- a descriptor is essentially a vector, so handing it to the matrix vocabulary is a change of packaging, not a transformation.</p>
+<p>Round trip with <code style="color:#22d3bf">matrix_to_descriptor</code> is <b>bit-identical</b> (measured max|Δ| = 0.0).</p>
 <p>Args:</p>
-<p>descriptor: (n,) または (m, n) の実配列。</p>
+<p>descriptor: (n,) or (m, n) real array.</p>
 <p>Returns:</p>
-<p>(1, n) または (m, n) float64。</p>
+<p>(1, n) or (m, n) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 3-D 以上 / 非有限 / dict(<code style="color:#22d3bf">fit_zernike</code> は dict を返すので</p>
-<p>ここで拒否される —— 詳細は本モジュール docstring)。</p>
+<p>ValueError: 3-D or more / non-finite / dict (<code style="color:#22d3bf">fit_zernike</code> returns a dict, so</p>
+<p>it is rejected here -- details in this module&#x27;s docstring).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

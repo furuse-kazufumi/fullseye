@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_image2d(score, axis=0)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.score_to_image2d(score, axis=0)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">score</code> 体 → 最大值投影 <code style="color:#22d3bf">image2d</code>。<code style="color:#22d3bf">score</code> 的第二个出口。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>指定軸に沿った最大値投影(MIP)。<b>一方向</b>。相関ピークが「どの面から見ても 1 本に見えるか」を確かめるのに使う —— 2 本見えたら対応が曖昧という意味。</p>
+<p>沿指定轴的最大值投影(MIP)。<b>单向</b>。用于确认相关峰“从任何面看都是 1 根”—— 若看到 2 根,则意味着对应是模糊的。</p>
 <p>Args:</p>
 <p>score: (D, H, W)。</p>
-<p>axis: 潰す軸(0/1/2)。</p>
+<p>axis: 压扁的轴(0/1/2)。</p>
 <p>Returns:</p>
-<p>(H, W) 等の 2-D float64。</p>
+<p>(H, W) 等 2-D float64。</p>
 <p>Raises:</p>
-<p>ValueError: 3-D でない / axis が範囲外 / 非有限。</p>
+<p>ValueError: 不是 3-D / axis 超出范围 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

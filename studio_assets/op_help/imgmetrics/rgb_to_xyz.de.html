@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rgb_to_xyz(rgb)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.rgb_to_xyz(rgb)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;rgb_to_xyz&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>sRGB (<code style="color:#22d3bf">(..., 3)</code>) → CIE XYZ. Zuerst wird die Übertragungsfunktion entfernt, dann die Matrix angewendet.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>手順: <code style="color:#22d3bf">srgb_to_linear</code> で整数 dtype を <code style="color:#22d3bf">[0, 1]</code> に正規化しつつ伝達関数を外し(IEC 61966-2-1)、線形 RGB に sRGB(D65)→XYZ の 3x3 行列を掛ける。白 <code style="color:#22d3bf">(1, 1, 1)</code> は <code style="color:#22d3bf">(0.9505, 1.0, 1.0890)</code> に写る(Y を 1 に正規化した尺度)。</p>
-<p style="margin:2px 0 2px 12px">• 入力: 最後の軸が 3 なら形は任意(<code style="color:#22d3bf">(3,)</code> の 1 色、<code style="color:#22d3bf">(N, 3)</code> の色表、<code style="color:#22d3bf">(H, W, 3)</code> の画像)。整数 dtype(uint8/uint16 など)は dtype の最大値で割る。float は <code style="color:#22d3bf">[0, 1]</code> に収まっていなければ <code style="color:#22d3bf">MetricContractError</code>(<code style="color:#22d3bf">ValueError</code> の部分型)。ガンマを外した線形値を渡すと二重にガンマを外すので注意。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: 最後の軸が 3 でない / float が <code style="color:#22d3bf">[0, 1]</code> の外 / 非有限。</p>
-<p>次に <code style="color:#22d3bf">xyz_to_lab</code> を繋ぐのが常道(まとめて <code style="color:#22d3bf">rgb_to_lab</code>)。</p>
+<p>Ablauf: <code style="color:#22d3bf">srgb_to_linear</code> normiert Integer-dtypes auf <code style="color:#22d3bf">[0, 1]</code> und entfernt dabei die Übertragungsfunktion (IEC 61966-2-1), dann wird auf lineares RGB die 3x3-Matrix sRGB (D65)→XYZ angewendet. Weiß <code style="color:#22d3bf">(1, 1, 1)</code> wird auf <code style="color:#22d3bf">(0.9505, 1.0, 1.0890)</code> abgebildet (Skala mit Y auf 1 normiert).</p>
+<p style="margin:2px 0 2px 12px">• Eingabe: beliebige Form, solange die letzte Achse 3 ist (1 Farbe <code style="color:#22d3bf">(3,)</code>, eine Farbtabelle <code style="color:#22d3bf">(N, 3)</code>, ein Bild <code style="color:#22d3bf">(H, W, 3)</code>). Integer-dtypes (uint8/uint16 usw.) werden durch das dtype-Maximum geteilt. float außerhalb von <code style="color:#22d3bf">[0, 1]</code> ergibt <code style="color:#22d3bf">MetricContractError</code> (Untertyp von <code style="color:#22d3bf">ValueError</code>, siehe oben). Achtung: Übergibt man lineare Werte mit bereits entferntem Gamma, wird das Gamma doppelt entfernt.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: float64 in derselben Form wie die Eingabe.</p>
+<p style="margin:2px 0 2px 12px">• Fehler: letzte Achse nicht 3 / float außerhalb von <code style="color:#22d3bf">[0, 1]</code> / nicht endlich.</p>
+<p>Üblicherweise folgt <code style="color:#22d3bf">xyz_to_lab</code> (zusammen <code style="color:#22d3bf">rgb_to_lab</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

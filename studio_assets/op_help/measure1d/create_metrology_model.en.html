@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.create_metrology_model() -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import metrology; metrology.create_metrology_model() -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmeasure1d.get(&quot;create_metrology_model&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Creates an empty metrology model (create_metrology_model).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返り値は <code style="color:#22d3bf">{&quot;objects&quot;: []}</code> の dict(<code style="color:#22d3bf">metrologymodel</code> 型)。ここに <code style="color:#22d3bf">add_metrology_object_line_measure</code> / <code style="color:#22d3bf">..._circle_measure</code> / <code style="color:#22d3bf">..._rectangle2_measure</code> / <code style="color:#22d3bf">..._ellipse_measure</code> / <code style="color:#22d3bf">..._generic</code> で参照形状を積み、<code style="color:#22d3bf">apply_metrology_model(model, image)</code> で一括計測する。</p>
-<p style="margin:2px 0 2px 12px">• 引数は無い。画像サイズや座標系はモデルに持たず、<code style="color:#22d3bf">apply</code> 時の画像で決まる。</p>
-<p style="margin:2px 0 2px 12px">• 各 <code style="color:#22d3bf">add_*</code> は <b>この dict をその場で書き換え</b>、追加した位置(0 始まり)を返す。<code style="color:#22d3bf">apply_metrology_model</code> の結果 list はこの順に並ぶ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> は書き換えず、平行移動した新しいモデルを返す。</p>
-<p>座標は (row, col) [px]、角度 <code style="color:#22d3bf">phi</code> は col 軸から row 軸(画像下向き)へ測ったラジアン。この規約はモデル全体で共通。</p>
+<p>The return value is the dict <code style="color:#22d3bf">{&quot;objects&quot;: []}</code> (type <code style="color:#22d3bf">metrologymodel</code>). Onto it you stack reference shapes with <code style="color:#22d3bf">add_metrology_object_line_measure</code> / <code style="color:#22d3bf">..._circle_measure</code> / <code style="color:#22d3bf">..._rectangle2_measure</code> / <code style="color:#22d3bf">..._ellipse_measure</code> / <code style="color:#22d3bf">..._generic</code>, and measure them all at once with <code style="color:#22d3bf">apply_metrology_model(model, image)</code>.</p>
+<p style="margin:2px 0 2px 12px">• There are no arguments. The model holds no image size or coordinate system; these are decided by the image at <code style="color:#22d3bf">apply</code> time.</p>
+<p style="margin:2px 0 2px 12px">• Each <code style="color:#22d3bf">add_*</code> <b>modifies this dict in place</b> and returns the position where it was added (starting at 0). The result list of <code style="color:#22d3bf">apply_metrology_model</code> is in this order.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> does not modify it; it returns a new, translated model.</p>
+<p>Coordinates are (row, col) [px]; the angle <code style="color:#22d3bf">phi</code> is measured from the col axis toward the row axis (image downward) in radians. This convention is common to the whole model.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

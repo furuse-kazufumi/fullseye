@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Normals <code style="color:#22d3bf">(N,3)</code> → azimuth/elevation pairs <code style="color:#22d3bf">(N,2)</code> <b>[deg]</b>. The exit from <code style="color:#22d3bf">normals</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> を軸0-軸1 平面内の方位、<code style="color:#22d3bf">el = asin(c2/|v|)</code> を軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された配列がどちらの流儀かに依存して意味が変わってしまう。</p>
-<p>可逆: <code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測 max|Δ| = 6.1e-16、<code style="color:#22d3bf">selftest</code> が毎回測る)。<b>戻らないのは長さだけ</b> —— 法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
+<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> is the azimuth in the axis0-axis1 plane, <code style="color:#22d3bf">el = asin(c2/|v|)</code> is the elevation from axis 2. <b>It is defined with &quot;axis 0/1/2&quot;, not x/y/z</b>, because this repo has both point clouds in (z,y,x) order and point clouds in (x,y,z) order -- written with names, the meaning would change depending on which convention the passed array follows.</p>
+<p>Invertible: round-tripping with <code style="color:#22d3bf">angles_to_normals</code> <b>returns the direction exactly</b> (measured max|Δ| = 6.1e-16, <code style="color:#22d3bf">selftest</code> measures it every time). <b>Only the length does not come back</b> -- a normal is a direction, so a non-unit vector becomes a unit vector after the round trip.</p>
 <p>Args:</p>
-<p>normals: (N, 3) 実配列。零ベクトルは拒否(方位が定義できない)。</p>
+<p>normals: (N, 3) real array. Zero vectors are rejected (the azimuth cannot be defined).</p>
 <p>Returns:</p>
-<p>(N, 2) float64。列 0 = 方位 (-180, 180]、列 1 = 仰角 [-90, 90]。</p>
+<p>(N, 2) float64. Column 0 = azimuth (-180, 180], column 1 = elevation [-90, 90].</p>
 <p>Raises:</p>
-<p>ValueError: 形状が (N,3) でない / 非有限 / 長さ 0 のベクトルを含む。</p>
+<p>ValueError: shape is not (N,3) / non-finite / contains a vector of length 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

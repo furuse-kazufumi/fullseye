@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import llmcore; llmcore.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsllmcore.get(&quot;rope_rotate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Rotary position encoding (RoPE) → tokens. <b>Being a rotation, it preserves the norm</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Su ら 2021。偶奇の対 (x₂ᵢ, x₂ᵢ₊₁) を角度 <code style="color:#22d3bf">pos · base**(−2i/d)</code> だけ回す。平面回転の直和なので <code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> が<b>厳密に</b>成り立ち(実測 8.9e-16)、しかも回した 2 本の内積は<b>位置の差だけ</b>で決まる(絶対位置を 40 通り動かして幅 8.9e-15) —— 「相対位置を内積に埋める」という主張が、そのまま検算になる。</p>
+<p>Su et al. 2021. Each even/odd pair (x₂ᵢ, x₂ᵢ₊₁) is rotated by the angle <code style="color:#22d3bf">pos · base**(−2i/d)</code>. It is a direct sum of plane rotations, so <code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> holds <b>exactly</b> (measured 8.9e-16), and the inner product of 2 rotated vectors is determined <b>only by the difference in position</b> (shifting the absolute position 40 ways gives a spread of 8.9e-15) — the claim &quot;relative position is embedded in the inner product&quot; becomes the cross-check as it stands.</p>
 <p>Args:</p>
-<p>tokens: (T, d) float。<b>d は偶数</b>(対にして回すため)。</p>
-<p>positions: (T,) の位置。None なら 0..T−1。飛び飛びの位置(切り出した窓)も渡せる。</p>
-<p>base: 角度の底。大きいほど低い軸がゆっくり回る(長い文脈向け)。</p>
+<p>tokens: (T, d) float. <b>d is even</b> (to rotate in pairs).</p>
+<p>positions: (T,) positions. None means 0..T−1. Non-contiguous positions (a cut-out window) can also be passed.</p>
+<p>base: base of the angles. The larger it is, the more slowly the low axes rotate (for long contexts).</p>
 <p>Returns:</p>
-<p>tokens (T, d) float: 対ごとに回したもの。行ごとのノルムは入力と同じ。</p>
+<p>tokens (T, d) float: rotated per pair. The norm of each row is the same as the input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

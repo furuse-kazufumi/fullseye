@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normalize(model, size_invariant=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fourierdesc; fourierdesc.normalize(model, size_invariant=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsshape2d.get(&quot;normalize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將 EFD 係數轉換為「標準姿態」的係數(以第 1 諧波為基準對齊)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Kuhl–Giardina の正準化: (1) 第1高調波の位相で <b>始点</b> の任意性を除去、(2) 第1 楕円の長軸を基準軸へ回して <b>向き</b> を揃え、(3) 第1高調波の長軸長で割って <b>大きさ</b> を揃える。複数形状を重ねる/平均する等の「正準ポーズ再構成」向け。</p>
-<p>注意(honest): 第1高調波がほぼ <b>円形</b>(長軸≈短軸)の形状では位相 (theta/psi) が悪条件で不安定になる。<b>不変マッチングには本関数でなく</b> <code style="color:#22d3bf">invariants</code> / <code style="color:#22d3bf">descriptor_distance</code>(特異値ベース)を使うこと。</p>
+<p>Kuhl–Giardina 的正準化: (1) 用第1諧波的相位消除<b>起點</b>的任意性，(2) 把第1 橢圓的長軸轉到基準軸以統一<b>朝向</b>,(3) 除以第1諧波的長軸長以統一<b>大小</b>。適用於把多個形狀疊加/求平均等「正準姿態重建」。</p>
+<p>注意(honest): 第1諧波幾乎為<b>圓形</b>(長軸≈短軸)的形狀，相位 (theta/psi) 病態而不穩定。<b>不變匹配請不要用本函式</b>，而用 <code style="color:#22d3bf">invariants</code> / <code style="color:#22d3bf">descriptor_distance</code>(基於奇異值)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

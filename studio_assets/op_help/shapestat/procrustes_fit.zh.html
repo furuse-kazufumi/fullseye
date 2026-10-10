@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_fit(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.procrustes_fit(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将 *source* 叠合到 *target* 上的相似变换。→ <code style="color:#22d3bf">(4, 4)</code> 的齐次矩阵。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>点の並びが対応していること</b>が前提(i 番目どうしが同じ解剖学的位置)。対応が無い点群では例外は出ず、意味の無い変換が返る —— 対応の有無はこの関数からは見えない。対応が無いなら ICP 系(<code style="color:#22d3bf">registration</code>)を使う。</p>
-<p><code style="color:#22d3bf">scaling=True</code> なら大きさの違いも吸収する。<code style="color:#22d3bf">reflection=False</code>(既定)は <code style="color:#22d3bf">det(R) = +1</code> を強制する —— 許すと左手系の個体が右手系の平均に重なり、左右非対称性という測りたいものが消える。</p>
-<p>行列は同次座標で <code style="color:#22d3bf">target ~ source @ M[:3,:3].T + M[:3,3]</code> の向き。</p>
+<p><b>前提是点的排列相互对应</b>(第 i 个点彼此位于相同的解剖学位置)。对无对应关系的点集不会抛出异常，而是返回无意义的变换 —— 是否有对应关系从本函数是看不出来的。若无对应关系，请使用 ICP 系(<code style="color:#22d3bf">registration</code>)。</p>
+<p><code style="color:#22d3bf">scaling=True</code> 时也吸收大小的差异。<code style="color:#22d3bf">reflection=False</code>(默认)强制 <code style="color:#22d3bf">det(R) = +1</code> —— 若允许反射，左手系的个体会与右手系的平均重合，左右不对称性这一要测量的东西就会消失。</p>
+<p>矩阵为齐次坐标，方向为 <code style="color:#22d3bf">target ~ source @ M[:3,:3].T + M[:3,3]</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

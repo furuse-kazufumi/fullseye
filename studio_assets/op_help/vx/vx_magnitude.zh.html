@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_magnitude(gx, gy)</code>(要直接调用实现,<code style="color:#22d3bf">import vxcore; vxcore.vx_magnitude(gx, gy)</code>;从台账取用则 <code style="color:#22d3bf">opsvx.get(&quot;vx_magnitude&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>梯度幅值(3.31 节)。原样采用 REQ-0270 的概念定义：<code style="color:#22d3bf">z = uint16(sqrt(double(uint32(x·x) + uint32(y·y))) + 0.5)</code>、 <code style="color:#22d3bf">mag = z &gt; 32767 ? 32767 : z</code>。输入与输出均为 S16。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: S16 の 2-D でない / 形が違う。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 不是 S16 的 2-D / 形状不同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

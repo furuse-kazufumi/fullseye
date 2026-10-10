@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ellipse(img, center, radii, angle_deg=0.0, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.ellipse(img, center, radii, angle_deg=0.0, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;ellipse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>타원(<code style="color:#22d3bf">angle_deg</code> 로 회전, <code style="color:#22d3bf">fill=True</code> 면 칠하기).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>半径が非正、非有限、alpha が [0,1] の外。</p>
-<p>描画: 画素を <code style="color:#22d3bf">angle_deg</code> だけ回した局所座標 <code style="color:#22d3bf">(u, v)</code> に写し、<code style="color:#22d3bf">q = (u/ra)^2 + (v/rb)^2</code> で判定する。<code style="color:#22d3bf">fill=True</code> は <code style="color:#22d3bf">q &lt;= 1</code>、<code style="color:#22d3bf">fill=False</code> は <code style="color:#22d3bf">|sqrt(q) - 1| &lt;= max(1, width) / (2 min(ra, rb))</code> の帯(アンチエイリアス無し)。帯の幅を<b>短軸で正規化</b>しているので、扁平な楕円では長軸の端ほど線が太く見える(近似)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>、x = 列・y = 行。画像外でもよい。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radii</code>: <code style="color:#22d3bf">(ra, rb)</code> [px]。<code style="color:#22d3bf">ra</code> が <code style="color:#22d3bf">angle_deg</code> 方向、<code style="color:#22d3bf">rb</code> がその直交方向。両方とも正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle_deg</code>: 回転角 [度]。x 軸から時計回り(画面座標、y が下向き)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線幅 [px] (<code style="color:#22d3bf">fill=False</code> のとき)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code> の扱いは <code style="color:#22d3bf">rounded_rect</code> と同じ(float64 複製、<code style="color:#22d3bf">[0, 1]</code>、役割名か RGB)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
-<p><code style="color:#22d3bf">ra == rb</code> なら円。計測結果(楕円フィットの <code style="color:#22d3bf">row, col, phi, ra, rb</code>)を重ねるときは <code style="color:#22d3bf">center=(col, row)</code>、<code style="color:#22d3bf">angle_deg=degrees(phi)</code> に読み替える。</p>
+<p>반경이 양이 아님, 비유한, alpha가 [0,1] 밖.</p>
+<p>그리기: 화소를 <code style="color:#22d3bf">angle_deg</code>만큼 돌린 국소 좌표 <code style="color:#22d3bf">(u, v)</code>로 옮기고, <code style="color:#22d3bf">q = (u/ra)^2 + (v/rb)^2</code>로 판정한다. <code style="color:#22d3bf">fill=True</code>는 <code style="color:#22d3bf">q &lt;= 1</code>, <code style="color:#22d3bf">fill=False</code>는 <code style="color:#22d3bf">|sqrt(q) - 1| &lt;= max(1, width) / (2 min(ra, rb))</code>의 띠(안티에일리어싱 없음). 띠의 폭을 <b>단축으로 정규화</b>하고 있으므로, 납작한 타원에서는장축의 끝일수록 선이 굵어 보인다(근사).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>, x = 열·y = 행. 영상 밖이어도 된다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radii</code>: <code style="color:#22d3bf">(ra, rb)</code> [px]. <code style="color:#22d3bf">ra</code>가 <code style="color:#22d3bf">angle_deg</code> 방향, <code style="color:#22d3bf">rb</code>가 그 직교 방향. 둘 다 양.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle_deg</code>: 회전각 [도]. x축에서 시계 방향(화면 좌표, y가 아래 방향).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 선폭 [px] (<code style="color:#22d3bf">fill=False</code>일 때).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code>의 취급은 <code style="color:#22d3bf">rounded_rect</code>와 같다(float64 복제, <code style="color:#22d3bf">[0, 1]</code>, 역할명 또는 RGB).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 입력과 같은 형태의 float64.</p>
+<p><code style="color:#22d3bf">ra == rb</code>이면 원. 계측 결과(타원 피팅의 <code style="color:#22d3bf">row, col, phi, ra, rb</code>)를겹칠 때는 <code style="color:#22d3bf">center=(col, row)</code>, <code style="color:#22d3bf">angle_deg=degrees(phi)</code>로 바꿔 읽는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

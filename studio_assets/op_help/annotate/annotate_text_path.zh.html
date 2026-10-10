@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回图像(image2d):沿折线排布文字(每个字按切线角旋转)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>文字の板は敷かない(経路の上に載せる用途なので)。配置と、<code style="color:#22d3bf">anchor</code> / <code style="color:#22d3bf">offset</code> / <code style="color:#22d3bf">upright</code>(縦書き)/ <code style="color:#22d3bf">\n</code> による改行の意味は <code style="color:#22d3bf">annotate_text_path_layout</code> に書いてある。</p>
-<p><code style="color:#22d3bf">layout</code> を渡した場合、そちらが<b>そのまま使われる</b> —— <code style="color:#22d3bf">anchor</code> などは無視されるので、両方を渡さないこと。</p>
-<p><code style="color:#22d3bf">bold</code> / <code style="color:#22d3bf">italic</code> は<b>合成</b>(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。1 字ずつ焼いてから回すので、傾きは<b>字の縦軸に対して</b>掛かる(経路が斜めでも斜体が経路の向きに歪まない)。</p>
+<p>不铺文字衬底(因为用途是叠在路径上)。布局,以及 <code style="color:#22d3bf">anchor</code> / <code style="color:#22d3bf">offset</code> / <code style="color:#22d3bf">upright</code>(竖排)/ <code style="color:#22d3bf">\n</code> 换行的含义,写在 <code style="color:#22d3bf">annotate_text_path_layout</code> 中。</p>
+<p>传入 <code style="color:#22d3bf">layout</code> 时,它会<b>原样使用</b> —— <code style="color:#22d3bf">anchor</code> 等会被忽略,所以不要两者都传。</p>
+<p><code style="color:#22d3bf">bold</code> / <code style="color:#22d3bf">italic</code> 是<b>合成</b>的(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。每 1 个字符渲染后再旋转,所以倾斜是<b>相对于字符的纵轴</b>施加的(即使路径是斜的,斜体也不会顺着路径方向扭曲)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_text_path_layout</code> と同じ + 回転した字が画像の外に出る。</p>
+<p>与 <code style="color:#22d3bf">annotate_text_path_layout</code> 相同 + 旋转后的字符超出图像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

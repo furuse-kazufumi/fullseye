@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_table(curvature)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.curvature_to_table(curvature)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Krümmung → eine <code style="color:#22d3bf">table</code>, die ihre Verteilung zusammenfasst. <b>Einwegs</b> (eine Statistik hat die Aufgabe, Information wegzuwerfen).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>(N,) の単独曲率も (N,2) の主曲率対も受ける —— 統計を出すだけなら対である必要が無いため。<code style="color:#22d3bf">kind</code> に受けた形を書き戻すので、下流は「対だったのか」を後から判別できる。</p>
+<p>Nimmt sowohl (N,) einzelne Krümmungen als auch (N,2) Hauptkrümmungspaare an -- um nur Statistiken zu bilden, muss es kein Paar sein. Die empfangene Form wird in <code style="color:#22d3bf">kind</code> zurückgeschrieben, sodass nachgelagert später erkennbar ist, &quot;ob es ein Paar war&quot;.</p>
 <p>Args:</p>
-<p>curvature: (N,) / (N, 2) / 2 本の等長 1-D のタプル。</p>
+<p>curvature: (N,) / (N, 2) / ein Tupel aus 2 gleich langen 1-D-Arrays.</p>
 <p>Returns:</p>
-<p>dict。<code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">rms</code> /</p>
-<p><code style="color:#22d3bf">p05</code> / <code style="color:#22d3bf">p50</code> / <code style="color:#22d3bf">p95</code>、対なら <code style="color:#22d3bf">gauss_mean</code>(K = k1*k2 の平均)と</p>
-<p><code style="color:#22d3bf">mean_curvature_mean</code>((k1+k2)/2 の平均)。</p>
+<p>dict. <code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">rms</code> /</p>
+<p><code style="color:#22d3bf">p05</code> / <code style="color:#22d3bf">p50</code> / <code style="color:#22d3bf">p95</code>, bei Paaren zusätzlich <code style="color:#22d3bf">gauss_mean</code> (Mittel von K = k1*k2) und</p>
+<p><code style="color:#22d3bf">mean_curvature_mean</code> (Mittel von (k1+k2)/2).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,18 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_to_gaussians(points, k=6, scale=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.points_to_gaussians(points, k=6, scale=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_gaussians&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Punktmenge <code style="color:#22d3bf">(N,3)</code> → isotrope <code style="color:#22d3bf">gaussians</code>. <b>Der einzige Eingang in diesen Typ.</b></p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">gaussians</code> は台帳で <code style="color:#22d3bf">fuse3d.to_points</code> が食う型だが、<b>産む op が 1 つも無かった</b>(実測)—— 消費側だけがある型は、生成器を種として置かない限り一度も実行されない。ここでは 3D Gaussian Splatting の初期化と同じやり方で</p>
-<p>作る: 各点の k 近傍までの<b>平均距離</b>を sigma、重みを 1/N の等分にする。</p>
-<p><code style="color:#22d3bf">mu</code> は入力点そのものなので <code style="color:#22d3bf">gaussians_to_points</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。sigma と w は往復で戻らない —— 点群にはもともと無かった量だからで、これは損失ではなく<b>追加</b>である。</p>
+<p><code style="color:#22d3bf">gaussians</code> ist im Register (Ledger) ein Typ, den <code style="color:#22d3bf">fuse3d.to_points</code> konsumiert, aber <b>nicht 1 einziger op hat ihn erzeugt</b> (gemessen) -- ein Typ, der nur Konsumenten hat, wird nie ausgeführt, solange kein Generator als Saat gesetzt wird. Hier wird er wie bei der Initialisierung von 3D Gaussian Splatting erzeugt: sigma ist der <b>mittlere Abstand</b> zu den k nächsten Nachbarn jedes Punkts, die Gewichte sind eine Gleichverteilung von 1/N.</p>
+<p><code style="color:#22d3bf">mu</code> sind die Eingabepunkte selbst, daher ist der Hin- und Rückweg mit <code style="color:#22d3bf">gaussians_to_points</code> <b>bitgleich</b> (gemessen max|Δ| = 0.0). sigma und w kehren im Hin- und Rückweg nicht zurück -- es sind Größen, die die Punktwolke ursprünglich gar nicht hatte, daher ist das kein Verlust, sondern eine <b>Ergänzung</b>.</p>
 <p>Args:</p>
-<p>points: (N, 3)。N &gt;= 2。</p>
-<p>k: sigma を決める近傍数(既定 6)。N-1 を超えると N-1 に丸める。</p>
-<p>scale: sigma に掛ける係数(既定 1.0)。</p>
+<p>points: (N, 3). N &gt;= 2.</p>
+<p>k: Anzahl der Nachbarn, die sigma bestimmt (Standard 6). Werte über N-1 werden auf N-1 begrenzt.</p>
+<p>scale: Faktor, mit dem sigma multipliziert wird (Standard 1.0).</p>
 <p>Returns:</p>
-<p>dict(<code style="color:#22d3bf">mu</code> (N,3) / <code style="color:#22d3bf">sigma</code> (N,) / <code style="color:#22d3bf">w</code> (N,))。</p>
+<p>dict(<code style="color:#22d3bf">mu</code> (N,3) / <code style="color:#22d3bf">sigma</code> (N,) / <code style="color:#22d3bf">w</code> (N,)).</p>
 <p>Raises:</p>
-<p>ValueError: N &lt; 2 / k &lt; 1 / scale &lt;= 0 / 形状不正 / 非有限。</p>
+<p>ValueError: N &lt; 2 / k &lt; 1 / scale &lt;= 0 / ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

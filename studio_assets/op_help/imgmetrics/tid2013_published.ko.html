@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_published() -&gt; &#x27;Dict[str, Tuple[float, float]]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import iqatid; iqatid.tid2013_published() -&gt; &#x27;Dict[str, Tuple[float, float]]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_published&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>공표된 순위 상관표 {metric: (SROCC, KROCC)}(14개).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>出典: https://www.ponomarenko.info/tid2013.htm(Last changed 2015-03-23)の「Ranking of compared metrics in accordance with Spearman / Kendall correlation with MOS」、配布物 readme の TABLE III / IV と同一。鍵は配布物 <code style="color:#22d3bf">metrics_values/&lt;鍵&gt;.txt</code> のファイル名(小文字)。<b>同梱の作者値と mos.txt から、Spearman = 平均順位・Kendall = τ_b で 14 本すべて 3 桁一致</b> (|差| ≤ 0.0005 / 0.00044、2026-10-04)。ページ冒頭の「PSNR … is 0.69」と使用例の「FSIMc Full : 0.666」は表と食い違う(前者は TID2008 の名残、後者は τ_a 0.66626 に一致 —— どちらも推測)ので門には使わない。</p>
+<p>출처: https://www.ponomarenko.info/tid2013.htm(Last changed 2015-03-23)의 &quot;Ranking of compared metrics in accordance with Spearman / Kendall correlation with MOS&quot;, 배포물 readme의 TABLE III / IV와 동일. 키는 배포물 <code style="color:#22d3bf">metrics_values/&lt;키&gt;.txt</code>의파일 이름(소문자). <b>동봉된 작성자 값과 mos.txt로부터, Spearman = 평균 순위, Kendall = τ_b로 14개 모두 3자리 일치</b> (|차| ≤ 0.0005 / 0.00044, 2026-10-04). 페이지 첫머리의 &quot;PSNR … is 0.69&quot;와 사용 예의 &quot;FSIMc Full : 0.666&quot;은 표와 어긋난다(전자는 TID2008의 잔재, 후자는 τ_a 0.66626과 일치 -- 둘 다 추측)이므로 게이트에는 쓰지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

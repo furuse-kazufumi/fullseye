@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import volcolor; volcolor.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_labels_to_meshes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Run marching cubes per component, giving a <b>set of coloured meshes</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返りは <code style="color:#22d3bf">list[dict]</code>、各要素が <code style="color:#22d3bf">{&quot;label&quot;, &quot;vertices&quot; (nv, 3) float64, &quot;faces&quot; (nf, 3) int64, &quot;color&quot; (r, g, b)}</code>。色は <code style="color:#22d3bf">vol_colorize_labels</code> と同じパレットなので、<b>断面図と 3-D 表示で同じ部品が同じ色</b>になる。</p>
-<p>成分ごとに <b>bbox を 1 ボクセル分パディングした部分体</b>だけを切り出して marching cubes を回す(全ボリュームを成分数だけ舐めない)。パディングはボリューム端に接する成分の面を閉じるためで、これをしないと端の成分だけ穴の開いたメッシュになる。</p>
+<p>Returns <code style="color:#22d3bf">list[dict]</code>, each element being <code style="color:#22d3bf">{&quot;label&quot;, &quot;vertices&quot; (nv, 3) float64, &quot;faces&quot; (nf, 3) int64, &quot;color&quot; (r, g, b)}</code>. The colours use the same palette as <code style="color:#22d3bf">vol_colorize_labels</code>, so <b>in section views and in the 3-D display the same part has the same colour</b>.</p>
+<p>Per component, only <b>the sub-volume of the bbox padded by 1 voxel</b> is cut out and marching cubes is run on it (it does not sweep the whole volume once per component). The padding closes the surfaces of components touching the volume edge; without it, only the edge components become meshes with holes.</p>
 <p><code style="color:#22d3bf">axes</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;xyz&quot;</code>(既定)―― 頂点を <code style="color:#22d3bf">(x, y, z)</code> で返す。<code style="color:#22d3bf">render3d</code> / <code style="color:#22d3bf">mesh</code> の頂点順がこれで、<code style="color:#22d3bf">render3d.render_mesh</code> へ直接渡せる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;zyx&quot;</code> ―― ボリュームの添字順のまま返す。<code style="color:#22d3bf">vol_label_shape_stats</code> の <code style="color:#22d3bf">centroid</code> と同じ並びになる。</p>
-<p><b>黙って取り違えると例外は出ない</b> ―― 出るのは上下と前後が入れ替わった、</p>
-<p>それらしい絵である。<code style="color:#22d3bf">tests/test_volcolor.py::test_mesh_axes_order_is_explicit</code> が</p>
-<p>両方の重心を stats の重心と突き合わせて固定している。</p>
-<p>*spacing* を渡すと頂点は物理座標(mm)になる。*ids* で成分を絞れる(<code style="color:#22d3bf">None</code> なら実在する全ラベル、ただし <code style="color:#22d3bf">MAX_MESHES</code> 件まで)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;xyz&quot;</code> (default) -- returns vertices as <code style="color:#22d3bf">(x, y, z)</code>. This is the vertex order of <code style="color:#22d3bf">render3d</code> / <code style="color:#22d3bf">mesh</code>, so they can be passed straight to <code style="color:#22d3bf">render3d.render_mesh</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;zyx&quot;</code> -- returns them in the volume&#x27;s index order. This matches the order of <code style="color:#22d3bf">centroid</code> in <code style="color:#22d3bf">vol_label_shape_stats</code>.</p>
+<p><b>Mixing them up silently raises no exception</b> -- what comes out is a plausible picture with up/down and front/back</p>
+<p>swapped. <code style="color:#22d3bf">tests/test_volcolor.py::test_mesh_axes_order_is_explicit</code></p>
+<p>pins this by checking both centroids against the stats centroids.</p>
+<p>Passing *spacing* gives vertices in physical coordinates (mm). *ids* narrows the components (<code style="color:#22d3bf">None</code> means all labels that exist, but at most <code style="color:#22d3bf">MAX_MESHES</code>).</p>
 <p>Raises <code style="color:#22d3bf">ImportError</code> (with the <code style="color:#22d3bf">pip install scikit-image</code> message) when marching cubes is unavailable, and <code style="color:#22d3bf">ValueError</code> for a bad *axes*, a *level* outside <code style="color:#22d3bf">(0, 1)</code>, an *ids* naming an absent label, or more than <code style="color:#22d3bf">MAX_MESHES</code> components.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

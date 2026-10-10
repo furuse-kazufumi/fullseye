@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_candidates(swt, min_area: &#x27;int&#x27; = 8, max_var_ratio: &#x27;float&#x27; = 0.5, aspect_range=(0.1, 10.0), max_height: &#x27;int&#x27; = 300)</code>(要直接呼叫實作,<code style="color:#22d3bf">import textregion; textregion.text_candidates(swt, min_area: &#x27;int&#x27; = 8, max_var_ratio: &#x27;float&#x27; = 0.5, aspect_range=(0.1, 10.0), max_height: &#x27;int&#x27; = 300)</code>;從台帳取用則 <code style="color:#22d3bf">opstext.get(&quot;text_candidates&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 SWT 的連通分量篩選為字元候選（寬度離散度、長寬比、大小）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Epshtein 2010 §4 の規則: 成分内のストローク幅の分散が平均に対して小さい / 縦横比が極端でない / 大きすぎない。<code style="color:#22d3bf">swt</code> は <code style="color:#22d3bf">swt_map</code> の <code style="color:#22d3bf">swt</code>。Returns dict: <code style="color:#22d3bf">boxes</code>(N×4 の [y0, x0, y1, x1]、半開区間)/ <code style="color:#22d3bf">labels</code> / <code style="color:#22d3bf">stroke_width</code>(各成分の中央値)/ <code style="color:#22d3bf">n_components</code>(絞る前の数)。</p>
+<p>Epshtein 2010 §4 的規則: 成分內筆畫寬度的變異數相對平均值較小 / 長寬比不極端 / 不過大。<code style="color:#22d3bf">swt</code> 是 <code style="color:#22d3bf">swt_map</code> 的 <code style="color:#22d3bf">swt</code>。回傳 dict: <code style="color:#22d3bf">boxes</code>(N×4 的 [y0, x0, y1, x1],半開區間)/ <code style="color:#22d3bf">labels</code> / <code style="color:#22d3bf">stroke_width</code>(各成分的中位數)/ <code style="color:#22d3bf">n_components</code>(篩選前的數量)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

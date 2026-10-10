@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_loop(kind: &#x27;str&#x27; = &#x27;harmonograph&#x27;, frames: &#x27;int&#x27; = 48, size: &#x27;int&#x27; = 360, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import perpetual; perpetual.perpetual_loop(kind: &#x27;str&#x27; = &#x27;harmonograph&#x27;, frames: &#x27;int&#x27; = 48, size: &#x27;int&#x27; = 360, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_loop&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成<b>无接缝的循环视频</b> → <code style="color:#22d3bf">rgbvideo</code> (T,H,W,3)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★循環を「最後に頭へ戻す」で作らない。時間依存の量を<b>すべて θ の関数</b>にして θ = 2πt/T を回すと、t = T は t = 0 と<b>同じ式</b>になる —— つまり継ぎ目は最初から存在しない。これは編集で消す種類のものではなく、<b>構成から従う</b>。<code style="color:#22d3bf">perpetual_loop_seam</code> がその継ぎ目を数で出す(厳密に 0 になる)。</p>
-<p><code style="color:#22d3bf">frames</code> コマ返す(t = 0 .. T-1)。t = T は t = 0 と一致するので含めない。</p>
+<p>★循环不是靠“最后回到开头”做出来的。把依赖时间的量<b>全部作为 θ 的函数</b>, 让 θ = 2πt/T 转动,t = T 就与 t = 0 是<b>同一个式子</b> —— 也就是说接缝从一开始就不存在。这不是靠编辑消除的那类东西,而是<b>由构造推出</b>。<code style="color:#22d3bf">perpetual_loop_seam</code> 以数值给出该接缝(严格为 0)。</p>
+<p>返回 <code style="color:#22d3bf">frames</code> 帧(t = 0 .. T-1)。t = T 与 t = 0 一致,所以不包含。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

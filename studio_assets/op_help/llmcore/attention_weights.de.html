@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;attention_weights&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zeilenweiser Softmax (mit Maske) → attnmap. <b>Zeilensummen sind 1, Maskenpositionen exakt 0</b>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>行ごとに最大値を引いてから指数を取る。これは飾りではない —— 引かずに <code style="color:#22d3bf">exp</code> するとスコアが大きいとき<b>全行が inf/NaN になる</b>(実測: 96 行中 96 行)。引けば 0 行。</p>
+<p>Pro Zeile wird zuerst das Maximum abgezogen, dann die Exponentialfunktion genommen. Das ist keine Dekoration -- wendet man <code style="color:#22d3bf">exp</code> ohne Abzug an, werden bei großen Scores <b>alle Zeilen inf/NaN</b> (gemessen: 96 von 96 Zeilen). Mit Abzug 0 Zeilen.</p>
 <p>Args:</p>
-<p>scores: (T, T) float の生スコア(<code style="color:#22d3bf">attention_scores</code> の出力)。</p>
-<p>mask: None(全対)/ <code style="color:#22d3bf">&quot;causal&quot;</code>(下三角)/ <code style="color:#22d3bf">&quot;window&quot;</code>(幅 <code style="color:#22d3bf">window</code> の因果窓)/</p>
-<p>(T, T) の bool 配列。True が「見てよい」。</p>
-<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅(自分を含む個数)。</p>
+<p>scores: (T, T) float rohe Scores (Ausgabe von <code style="color:#22d3bf">attention_scores</code>).</p>
+<p>mask: None (alle Paare) / <code style="color:#22d3bf">&quot;causal&quot;</code> (unteres Dreieck) / <code style="color:#22d3bf">&quot;window&quot;</code> (kausales Fenster der Breite <code style="color:#22d3bf">window</code>) /</p>
+<p>ein (T, T)-bool-Array. True bedeutet &quot;darf hinsehen&quot;.</p>
+<p>window: Fensterbreite bei <code style="color:#22d3bf">mask=&quot;window&quot;</code> (Anzahl einschließlich sich selbst).</p>
 <p>Returns:</p>
-<p>attnmap (T, T) float: 各行が確率分布(和 1)。mask が False の位置は厳密に 0。</p>
+<p>attnmap (T, T) float: jede Zeile ist eine Wahrscheinlichkeitsverteilung (Summe 1). Positionen, an denen mask False ist, sind exakt 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">Leitfaden zur Familie llmcore</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

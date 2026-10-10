@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_matrix(descriptor)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>기술자 → <code style="color:#22d3bf">matrix</code>. <code style="color:#22d3bf">descriptor</code> 의 출구(<b>가역</b>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>1-D の記述子 (n,) は <b>(1, n)</b> の 1 行行列にする。2-D の記述子束(<code style="color:#22d3bf">sh_descriptor</code> の (12, 9) のような「点 x 次元」)はそのまま通す。こうしておくと記述子バンクに <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> がそのまま掛かる —— 記述子は本質的にベクトルなので、行列語彙へ渡すのは梱包の付け替えであって変形ではない。</p>
-<p><code style="color:#22d3bf">matrix_to_descriptor</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。</p>
+<p>1-D 기술자 (n,) 는 <b>(1, n)</b> 의 1 행 행렬로 만든다. 2-D 기술자 묶음(<code style="color:#22d3bf">sh_descriptor</code> 의 (12, 9) 같은 &quot;점 x 차원&quot;)은 그대로 통과시킨다. 이렇게 해 두면 기술자 뱅크에 <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> 가 그대로 걸린다 —— 기술자는 본질적으로 벡터이므로, 행렬 어휘로 넘기는 것은포장을 바꾸는 것이지 변형이 아니다.</p>
+<p><code style="color:#22d3bf">matrix_to_descriptor</code> 와 왕복하여 <b>bit 일치</b>(실측 max|Δ| = 0.0).</p>
 <p>Args:</p>
-<p>descriptor: (n,) または (m, n) の実配列。</p>
+<p>descriptor: (n,) 또는 (m, n) 의 실수 배열.</p>
 <p>Returns:</p>
-<p>(1, n) または (m, n) float64。</p>
+<p>(1, n) 또는 (m, n) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 3-D 以上 / 非有限 / dict(<code style="color:#22d3bf">fit_zernike</code> は dict を返すので</p>
-<p>ここで拒否される —— 詳細は本モジュール docstring)。</p>
+<p>ValueError: 3-D 이상 / 비유한 / dict(<code style="color:#22d3bf">fit_zernike</code> 는 dict 를 반환하므로</p>
+<p>여기서 거부된다 —— 자세한 것은 본 모듈 docstring).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

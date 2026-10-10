@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.countrate_to_counts(countrate, gate_s=0.001)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.countrate_to_counts(countrate, gate_s=0.001)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;countrate_to_counts&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>계수율 <code style="color:#22d3bf">[Hz]</code> → 계수 <code style="color:#22d3bf">counts</code>. <code style="color:#22d3bf">countrate</code> 의 출구(<b>가역</b>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><b>単位が変換の全内容</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>。<code style="color:#22d3bf">gate_s</code> は積算窓の秒数で、既定 1 ms。<code style="color:#22d3bf">counts</code> は「時間 bin ごとの光子数」の型なので、レート列をそのまま counts と名乗らせると<b>桁が 7 つずれたまま黙って通る</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> はどちらも「非負の 1-D」としか見ていない)。</p>
-<p><code style="color:#22d3bf">counts_to_countrate</code> と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので <b>相対</b> 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、レートのように桁が広い量は相対で言う)。</p>
-<p>★<b>2 度掛けても例外は出ない</b>。<code style="color:#22d3bf">TYPE_TO_SORT</code> が <code style="color:#22d3bf">countrate</code> を <code style="color:#22d3bf">counts</code> に畳んでいるので、出口が入口にそのまま繋がる。実測(2026-09-08、1,200 Hz を gate 1 ms で): 1 回で 1.2000 counts、もう 1 回通すと 0.0012 counts —— <b>1,000 倍の取り違えが、負の値も NaN も出さずに通る</b>。値だけを見て「レートか計数か」を判定する方法は無いので、この 1 件は検査でなく <b>呼ぶ側の規律</b>で守るしかない(繋いだ経路を書き残すこと)。</p>
+<p><b>단위가 변환의 전체 내용</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>. <code style="color:#22d3bf">gate_s</code>는 적산 창의 초 수이며, 기본값 1 ms. <code style="color:#22d3bf">counts</code>는 &quot;시간 bin마다의 광자 수&quot;의 타입이므로, 레이트 열을그대로 counts라고 칭하게 하면 <b>자릿수가 7자리 어긋난 채 조용히 통과한다</b> (<code style="color:#22d3bf">TYPE_CHECKS</code>는 둘 다 &quot;음이 아닌 1-D&quot;로만 보고 있다).</p>
+<p><code style="color:#22d3bf">counts_to_countrate</code>와 왕복하여 실측 max|Δ| = 9.3e-10(값 범위가 1e3-1e7 Hz이므로 <b>상대</b> 1e-16 = 배정밀도 반올림 1단위분. 절댓값만 보면 크게 보이므로, 레이트처럼 자릿수 폭이 넓은 양은 상대로 말한다).</p>
+<p>★<b>2번 적용해도 예외는 나지 않는다</b>. <code style="color:#22d3bf">TYPE_TO_SORT</code>가 <code style="color:#22d3bf">countrate</code>를 <code style="color:#22d3bf">counts</code>로접고 있으므로, 출구가 입구로 그대로 이어진다. 실측(2026-09-08, 1,200 Hz를 gate 1 ms로): 1회에 1.2000 counts, 1회 더 통과시키면 0.0012 counts —— <b>1,000배의 혼동이, 음수 값도 NaN도 내지 않고 통과한다</b>. 값만 보고 &quot;레이트인가 계수인가&quot;를 판정하는 방법은 없으므로, 이 1건은 검사가 아니라 <b>호출하는 쪽의 규율</b>로 지킬 수밖에 없다(연결한 경로를 기록해 둘 것).</p>
 <p>Args:</p>
-<p>countrate: (N,) の非負レート [Hz]。</p>
-<p>gate_s: 積算窓 [s]。&gt; 0。</p>
+<p>countrate: (N,)의 음이 아닌 레이트 [Hz].</p>
+<p>gate_s: 적산 창 [s]. &gt; 0.</p>
 <p>Returns:</p>
-<p>(N,) float64 の非負計数。</p>
+<p>(N,) float64의 음이 아닌 계수.</p>
 <p>Raises:</p>
-<p>ValueError: 負のレート / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
+<p>ValueError: 음의 레이트 / gate_s &lt;= 0 / 형상 부정 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

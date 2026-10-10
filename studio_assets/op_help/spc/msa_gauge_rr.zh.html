@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;msa_gauge_rr&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基于方差分析法的量具重复性与再现性(<code style="color:#22d3bf">table</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>繰り返し性 EV(同じ人が同じ物を測り直したときの散らばり)、再現性 AV(人が変わったときの散らばり。交互作用を含む)、その合成 GRR、部品間 PV、総変動 TV、<code style="color:#22d3bf">%GRR = 100 GRR/TV</code>、区別できる階級数 <code style="color:#22d3bf">ndc = 1.41 PV/GRR</code>。</p>
-<p>*tolerance* を渡すと公差に対する比 <code style="color:#22d3bf">%tolerance = 100 GRR/tolerance</code> も返す。</p>
-<p>★分散成分は<b>釣り合った交差計画の期待平均平方</b>から出す:</p>
+<p>重复性 EV(同一人重新测量同一物体时的离散)、再现性 AV(换人时的离散。含交互作用)、两者合成的 GRR、部件间 PV、总变差 TV、<code style="color:#22d3bf">%GRR = 100 GRR/TV</code>、可区分的类别数 <code style="color:#22d3bf">ndc = 1.41 PV/GRR</code>。</p>
+<p>传入 *tolerance* 时还返回相对于公差的比 <code style="color:#22d3bf">%tolerance = 100 GRR/tolerance</code>。</p>
+<p>★方差分量由<b>均衡交叉设计的期望均方</b>求得:</p>
 <p>var_repeat = MS_err</p>
 <p>var_inter  = (MS_inter - MS_err) / r</p>
 <p>var_oper   = (MS_oper - MS_inter) / (p r)</p>
 <p>var_part   = (MS_part - MS_inter) / (o r)</p>
-<p>★★<b>負の分散成分は 0 に丸めるが、丸めたことを隠さない</b>(<code style="color:#22d3bf">clamped</code> 列)。期待平均平方の差は推定量なので、真の成分が 0 に近いと負になりうる。黙って 0 にすると「測定者差は無い」と読めてしまうが、正しくは「<b>推定できなかった</b>」。しかもこれは稀な端ではない —— 部品 60 x 測定者 4 x 繰り返し 5 で測定者差を <b>厳密に 0</b> にした合成データを種 40 本で回すと、<b>31 本</b>で再現性成分が負に出る(実測 2026-09-23)。丸めを申告しない実装は、この 31 本すべてで「差が無い」と言い切ってしまう。</p>
-<p>★推定量の揺れも隠さない。同じ 60x4x5 で真値 0.4 の繰り返し性は種 40 本で平均 0.39710・標準偏差 0.00788 に出る —— 理論の <code style="color:#22d3bf">sigma/sqrt(2 df)</code> (df = 960 で 0.00913)と同じ桁で、<b>1 本の種を 1 % の精度で信じてはいけない</b>。再現性はもっと悪く、測定者 4 人(自由度 3)からの推定なので真値 0.5 に対して標準偏差 0.159 —— 桁が合えば上等という量である。</p>
-<p>★★<b>交互作用を残すか、誤差にプールするかで答えが変わる</b>。規格の手順は「交互作用の F 検定が有意でなければ交互作用項を落として再計算する」で、*pool_interaction* がその選択:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;auto&quot;</code>(既定)—— 交互作用の p 値が *pool_alpha*(既定 0.25)を<b>超えたら</b> プールする。</p>
-<p>★★<b>0.25 は規格が明記した数ではない</b>。参考マニュアル本文が言うのは「交互作用を見落とす危険を下げるため<b>高い有意水準を選べ</b>」という定性的な指示だけで、数値は書かれていない。0.25 はソフトウェア側の慣行の多数派で、別の実装は 0.05 を既定にしている。α を<b>大きく</b>すると <code style="color:#22d3bf">p &gt; alpha</code> が成りにくくなる = <b>交互作用を残しやすい</b>ので、0.25 は本文の方針に忠実な(保守的な)側。一方で規格の worked example の表は脚注に「α = 0.05 で判定」と書いてあるので、<b>その表を再現すると名乗る検査は <code style="color:#22d3bf">pool_alpha=0.05</code> を明示して通すべき</b>である(既定値の話と、公表例題の再現条件の話は別)。この例題では F = 0.434 がどちらの α でも非有意なので結果は変わらないが、境界付近のデータでは既定の違いが EV / AV を数 % 動かす —— 実測でモデル切替は EV を 7.3 % 動かした。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">False</code> —— 常に交互作用を残す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">True</code> —— 常にプールする。</p>
-<p>返りの <code style="color:#22d3bf">interaction_pooled</code> / <code style="color:#22d3bf">interaction_p</code> / <code style="color:#22d3bf">pool_alpha</code> に<b>どちらを使ったかを必ず載せる</b>。黙って切り替えると、同じ道具が同じ工程について別の数字を返し、その理由が出力のどこにも残らない。</p>
-<p>★実測(規格の例題、10 部品 x 3 測定者 x 3 回の 90 点): 交互作用を残すと EV = 0.214435、プールすると EV = 0.199933 —— <b>7.3 % 違う</b>。選択は p 値の閾値で決まるので、データがわずかに動けばモデルが飛ぶ。この例題では <code style="color:#22d3bf">F = 0.4337 / p = 0.9741</code> と交互作用がまったく効いていないため、規格はプールした側を公表値にしている(その値をこの実装は 3e-7 で再現する)。</p>
-<p>★門にできる厳密な関係: <code style="color:#22d3bf">TV^2 == GRR^2 + PV^2</code> と <code style="color:#22d3bf">GRR^2 == EV^2 + AV^2</code> (定義そのもの)、寄与率の合計 100 %、そして<b>測定者が 1 人のときの EV は升目ごとの標本分散の平均に厳密に一致する</b>(numpy が真値になる)。</p>
+<p>★★<b>负的方差分量截为 0,但不隐瞒截断这件事</b>(<code style="color:#22d3bf">clamped</code> 列)。期望均方之差是估计量,所以真实分量接近 0 时可能为负。默默设为 0 会被读成&quot;不存在测量者差异&quot;,正确的读法是&quot;<b>无法估计</b>&quot;。而且这并非罕见的边界情况 —— 部件 60 x 测量者 4 x 重复 5、测量者差异 <b>严格为 0</b> 的合成数据用 40 个种子运行,有 <b>31 个</b>的再现性分量为负(实测 2026-09-23)。不申报截断的实现会在这 31 个中全部断言 &quot;没有差异&quot;。</p>
+<p>★估计量的波动也不隐瞒。同样 60x4x5 下,真值 0.4 的重复性在 40 个种子上得到均值 0.39710、标准差 0.00788 —— 与理论的 <code style="color:#22d3bf">sigma/sqrt(2 df)</code> (df = 960 时为 0.00913)同一数量级,<b>不能以 1 % 的精度相信 1 个种子</b>。再现性更差,它是从 4 名测量者(自由度 3)估计的,因此相对真值 0.5 标准差为 0.159 —— 数量级对上就算不错的量。</p>
+<p>★★<b>保留交互作用还是并入误差,答案会变</b>。标准的步骤是 &quot;交互作用的 F 检验不显著时,去掉交互作用项重新计算&quot;, *pool_interaction* 就是这一选择:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;auto&quot;</code>(默认)—— 交互作用的 p 值<b>超过</b> *pool_alpha*(默认 0.25)时合并。</p>
+<p>★★<b>0.25 不是标准明确写出的数</b>。参考手册正文所说的只是 &quot;为降低漏掉交互作用的风险,<b>应选择较高的显著性水平</b>&quot;这一定性的指示, 没有写数值。0.25 是软件方面惯例的多数派, 另一种实现以 0.05 为默认。把 α <b>调大</b>会使 <code style="color:#22d3bf">p &gt; alpha</code> 更难成立 = <b>更容易保留交互作用</b>,所以 0.25 是忠于正文方针的(保守的)一侧。另一方面,标准的 worked example 表在脚注中写着&quot;以 α = 0.05 判定&quot;,所以 <b>声称再现该表的检验应明确传入 <code style="color:#22d3bf">pool_alpha=0.05</code></b> (默认值的问题与再现公开例题的条件是两回事)。此例题中 F = 0.434 在任一 α 下都不显著,结果不变,但在边界附近的数据上默认值的差异会使 EV / AV 变动几 % —— 实测中模型切换使 EV 变动了 7.3 %。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">False</code> —— 始终保留交互作用。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">True</code> —— 始终合并。</p>
+<p>返回的 <code style="color:#22d3bf">interaction_pooled</code> / <code style="color:#22d3bf">interaction_p</code> / <code style="color:#22d3bf">pool_alpha</code> 中<b>必定记录用了哪一种</b>。若默默切换,同一工具对同一工序会返回不同的数字, 而其原因在输出中无处可寻。</p>
+<p>★实测(标准的例题,10 部件 x 3 测量者 x 3 次共 90 点): 保留交互作用时 EV = 0.214435,合并时 EV = 0.199933 —— <b>相差 7.3 %</b>。选择由 p 值的阈值决定,所以数据稍有变动模型就会跳变。此例题中 <code style="color:#22d3bf">F = 0.4337 / p = 0.9741</code>,交互作用完全没有作用,因此标准以合并一侧作为公开值(本实现以 3e-7 再现该值)。</p>
+<p>★可作为门禁的严格关系: <code style="color:#22d3bf">TV^2 == GRR^2 + PV^2</code> 与 <code style="color:#22d3bf">GRR^2 == EV^2 + AV^2</code> (即定义本身)、贡献率合计 100 %,以及<b>测量者为 1 人时的 EV 严格等于各格子样本方差的平均</b>(numpy 成为真值)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

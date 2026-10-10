@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import conngraph; conngraph.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_layout_spectral&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>譜佈局：以摺疊方向後的 Laplacian 的 Fiedler 向量(第 2..dim+1 特徵向量)為座標的點雲 (n, 3)，各軸 [0, 1]。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">dim</code> は 2 か 3(2 なら z = 0)。連結成分ごとに配置してから格子に並べる —— 非連結のグラフでは零固有空間が縮退して Fiedler ベクトルが成分を分けるとは限らないので、成分は明示的に分ける(成分内は箱の 0.3 倍、成分間は 1 の間隔)。</p>
+<p><code style="color:#22d3bf">dim</code> 為 2 或 3(2 時 z = 0)。依連通元件分別配置後再排成網格 —— 對於非連通圖,零特徵空間退化,Fiedler 向量不一定能把元件分開,所以明確地分開元件(元件內為盒子的 0.3 倍,元件間間隔 1)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

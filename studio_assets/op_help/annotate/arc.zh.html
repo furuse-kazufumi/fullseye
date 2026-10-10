@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.arc(img, center, radius, start_deg, end_deg, color=&#x27;neutral&#x27;, width=2, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.arc(img, center, radius, start_deg, end_deg, color=&#x27;neutral&#x27;, width=2, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;arc&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>圆弧。角度以度计,<b>从屏幕 x 轴顺时针</b>(因为 row 朝下)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>radius が非正、角度が非有限、start == end、alpha が [0,1] の外。</p>
-<p>描画: 中心からの距離 <code style="color:#22d3bf">d</code> が <code style="color:#22d3bf">|d - radius| &lt;= max(0.6, width/2)</code> で、かつ画素の方位角が <code style="color:#22d3bf">start_deg</code> から時計回りに <code style="color:#22d3bf">(end_deg - start_deg) mod 360</code> の範囲にある画素を塗る(アンチエイリアス無し)。方位角は <code style="color:#22d3bf">atan2(y - cy, x - cx)</code> で、0 度 = 右(+x)、90 度 = 下(+y)、時計回りが正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>、x = 列・y = 行。画像外でもよい(はみ出しは切れるだけ)。</p>
+<p>radius 非正、角度非有限、start == end、alpha 在 [0,1] 之外。</p>
+<p>绘制: 对到中心的距离 <code style="color:#22d3bf">d</code> 满足 <code style="color:#22d3bf">|d - radius| &lt;= max(0.6, width/2)</code>,且像素方位角位于从 <code style="color:#22d3bf">start_deg</code> 顺时针 <code style="color:#22d3bf">(end_deg - start_deg) mod 360</code> 的范围内的像素上色(无抗锯齿)。方位角为 <code style="color:#22d3bf">atan2(y - cy, x - cx)</code>,0 度 = 右(+x),90 度 = 下(+y),顺时针为正。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>,x = 列、y = 行。可以在图像外(超出部分只是被截掉)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 正 [px]。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">start_deg</code>, <code style="color:#22d3bf">end_deg</code>: 度。<code style="color:#22d3bf">start</code> から時計回りに <code style="color:#22d3bf">end</code> まで描く。差が 360 の倍数(<code style="color:#22d3bf">end - start</code> が 0 でなく 360 など)は全周。<code style="color:#22d3bf">start == end</code> は「長さ 0」なので <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線幅 [px]。<code style="color:#22d3bf">max(0.6, width/2)</code> を半幅にするので 1 px 未満でも途切れない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code> の扱いは <code style="color:#22d3bf">rounded_rect</code> と同じ(float64 複製、<code style="color:#22d3bf">[0, 1]</code>、役割名か RGB)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
-<p>角度を書き込む学術図の作法は <code style="color:#22d3bf">annotate_angle</code> が引き出し文字まで面倒を見る。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">start_deg</code>, <code style="color:#22d3bf">end_deg</code>: 度。从 <code style="color:#22d3bf">start</code> 顺时针画到 <code style="color:#22d3bf">end</code>。差为 360 的倍数(<code style="color:#22d3bf">end - start</code> 不为 0 而是 360 等)时为整圆。<code style="color:#22d3bf">start == end</code> 是“长度 0”,所以 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 线宽 [px]。以 <code style="color:#22d3bf">max(0.6, width/2)</code> 为半宽,所以即使小于 1 px 也不会断开。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code> 的处理与 <code style="color:#22d3bf">rounded_rect</code> 相同(float64 副本、<code style="color:#22d3bf">[0, 1]</code>、角色名或 RGB)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值: 与输入同形的 float64。</p>
+<p>写入角度的学术图的规范,由 <code style="color:#22d3bf">annotate_angle</code> 一直照顾到引出文字。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

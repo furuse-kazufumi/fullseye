@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_figure_grid_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回表(dict):以闭式给出多面板图的排版(单元格・面板・标题带的矩形)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">panel_grid</code> と同じ式: <code style="color:#22d3bf">cw/ch</code> は最大パネル寸、<code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>、<code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad</code>。パネルは拡大せずセルの中央に置く。</p>
+<p>与 <code style="color:#22d3bf">panel_grid</code> 相同的公式:<code style="color:#22d3bf">cw/ch</code> 是最大面板尺寸, <code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>, <code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad</code>。面板不放大,置于单元格中央。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
 <p><code style="color:#22d3bf">{&quot;size&quot;:(H,W), &quot;cells&quot;:[(x,y,cw,ch)], &quot;panels&quot;:[(x,y,w,h)], &quot;captions&quot;:[(x,y,cw,caption_h)], &quot;letters&quot;:[str], &quot;ncols&quot;, &quot;nrows&quot;}</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>shapes が空、ncols &lt; 1、負の余白、26 枚を超える。</p>
+<p>shapes 为空、ncols &lt; 1、负的边距、超过 26 张。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

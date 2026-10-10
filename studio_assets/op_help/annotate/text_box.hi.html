@@ -4,54 +4,53 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_box(img, text, xy, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, anchor=&#x27;lt&#x27;, pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.text_box(img, text, xy, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, anchor=&#x27;lt&#x27;, pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;text_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>backing plate (अर्ध-पारदर्शी पट्टी) सहित text। <b>बाहर निकलने पर चुपचाप काटा नहीं जाता, exception आता है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>img : ndarray</p>
-<p><code style="color:#22d3bf">(H,W)</code> か <code style="color:#22d3bf">(H,W,C)</code>、float [0,1]。</p>
+<p><code style="color:#22d3bf">(H,W)</code> या <code style="color:#22d3bf">(H,W,C)</code>, float [0,1]।</p>
 <p>text : str</p>
-<p>描く文字列。</p>
+<p>बनाई जाने वाली string।</p>
 <p>xy : (x, y)</p>
-<p>アンカーの位置(<b>x=col, y=row</b>、row は下向き)。</p>
+<p>anchor की position (<b>x=col, y=row</b>, row नीचे की ओर)।</p>
 <p>color : str or sequence</p>
-<p>役割名または RGB。<code style="color:#22d3bf">text_color</code> 未指定ならこれが<b>枠の色</b>として</p>
-<p>使われ、文字は読みやすい既定色になる。</p>
+<p>role name या RGB। <code style="color:#22d3bf">text_color</code> न दिया हो तो यही <b>frame का रंग</b> के रूप में</p>
+<p>इस्तेमाल होता है, और text को पढ़ने में आसान default रंग मिलता है।</p>
 <p>text_color, box_color : str/sequence or None</p>
-<p>文字色・板の色。None なら既定(明るい文字 × 暗い板)。文字色が None の</p>
-<p>ときは、<b>実際に下に出る色</b>に対して明るい既定色が <code style="color:#22d3bf">min_contrast</code> を</p>
-<p>割る場合に限り、暗い文字(板の色)へ自動で切り替える ―― 板なし</p>
-<p>(<code style="color:#22d3bf">box_alpha=0</code>)で白地に置く目盛り・カラーバー・凡例のラベルが</p>
-<p>白に溶けないため。<code style="color:#22d3bf">text_color</code> を明示したときは切り替えない</p>
-<p>(色は図の意味なので勝手に変えず、読めなければ例外にする)。</p>
+<p>text का रंग और plate का रंग। None हो तो default (हल्का text × गहरी plate)। text का रंग None</p>
+<p>होने पर, केवल तब जब हल्का default रंग <b>वास्तव में नीचे दिखने वाले रंग</b> के मुकाबले <code style="color:#22d3bf">min_contrast</code> से</p>
+<p>नीचे जाए, अपने-आप गहरे text (plate के रंग) पर बदल जाता है -- ताकि plate के बिना</p>
+<p>(<code style="color:#22d3bf">box_alpha=0</code>) सफ़ेद पृष्ठभूमि पर रखे ticks, colour bar और legend के labels</p>
+<p>सफ़ेद में घुल न जाएँ। <code style="color:#22d3bf">text_color</code> स्पष्ट रूप से देने पर बदलाव नहीं होता</p>
+<p>(रंग figure का अर्थ है, इसलिए मनमाने ढंग से नहीं बदला जाता; न पढ़ा जा सके तो exception)।</p>
 <p>box_alpha : float</p>
-<p>板の不透明度 [0,1]。<code style="color:#22d3bf">0</code> なら板を描かない(目盛りラベル向け)。</p>
+<p>plate की opacity [0,1]। <code style="color:#22d3bf">0</code> हो तो plate नहीं बनती (tick labels के लिए)।</p>
 <p>anchor : str</p>
-<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> の 9 通り。</p>
+<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> के 9 विकल्प।</p>
 <p>pad : int</p>
-<p>板の内側余白[px]。</p>
+<p>plate के अंदर का padding [px]।</p>
 <p>max_width : int or None</p>
-<p>文字の折り返し幅。None なら 1 行のまま。</p>
+<p>text की wrap width। None हो तो 1 line ही रहती है।</p>
 <p>wrap : bool</p>
-<p>False なら折り返さず 1 行のまま縮めて <code style="color:#22d3bf">max_width</code> に収める。</p>
+<p>False हो तो wrap नहीं करता, 1 line में ही छोटा करके <code style="color:#22d3bf">max_width</code> में समाता है।</p>
 <p>min_contrast : float</p>
-<p>文字と「実際にその下に出る色」のコントラスト比の下限。下回れば</p>
-<p><b>ValueError</b>(背景と同化した文字は誰も気づけないので通さない)。</p>
-<p><b>限界(正直に)</b>: 比べる相手は板の下の<b>平均色</b>なので、</p>
-<p>白と黒が半々に混じった写真の上に <code style="color:#22d3bf">box_alpha=0</code> で置くと、平均は</p>
-<p>中間灰になり検査を通ってしまう(白い部分の上の文字は読めない)。</p>
-<p>地が荒れている場所では <code style="color:#22d3bf">box_alpha</code> を上げて板を効かせること ――</p>
-<p>この検査は「板を忘れた」を捕まえるためのもので、</p>
-<p>「板があっても読めない」まで保証はしない。</p>
+<p>text और &quot;वास्तव में उसके नीचे दिखने वाले रंग&quot; के contrast ratio की निचली सीमा। इससे नीचे हो तो</p>
+<p><b>ValueError</b> (background में घुला text किसी को नहीं दिखता, इसलिए पास नहीं होने दिया जाता)।</p>
+<p><b>सीमा (ईमानदारी से)</b>: तुलना plate के नीचे के <b>औसत रंग</b> से होती है, इसलिए</p>
+<p>आधे सफ़ेद और आधे काले photo पर <code style="color:#22d3bf">box_alpha=0</code> से रखने पर औसत</p>
+<p>बीच का grey बन जाता है और जाँच पास हो जाती है (सफ़ेद हिस्से पर का text पढ़ा नहीं जाता)।</p>
+<p>जहाँ पृष्ठभूमि अशांत हो, वहाँ <code style="color:#22d3bf">box_alpha</code> बढ़ाकर plate को असरदार बनाएँ --</p>
+<p>यह जाँच &quot;plate भूल गए&quot; को पकड़ने के लिए है, और</p>
+<p>&quot;plate होने पर भी न पढ़ा जाए&quot; तक की guarantee नहीं देती।</p>
 <p>border : int</p>
-<p>板の枠線の太さ(0 で枠なし)。色は <code style="color:#22d3bf">border_color</code> か <code style="color:#22d3bf">color</code>。</p>
+<p>plate की frame line की मोटाई (0 पर frame नहीं)। रंग <code style="color:#22d3bf">border_color</code> या <code style="color:#22d3bf">color</code> है।</p>
 <p>style : dict or None</p>
-<p>枠線を引く <code style="color:#22d3bf">imagedraw.draw_polyline</code> へ<b>素通し</b>する引数。</p>
+<p>frame line बनाने वाले <code style="color:#22d3bf">imagedraw.draw_polyline</code> को <b>सीधे आगे भेजे जाने वाले</b> arguments।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>同じ shape の新しい配列。</p>
+<p>समान shape का नया array।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>板が画像からはみ出す / 文字が収まらない / コントラスト不足 /</p>
-<p>未知の役割名・アンカー / 負の余白。</p>
+<p>plate image से बाहर निकलती है / text नहीं समाता / contrast कम /</p>
+<p>अज्ञात role name या anchor / negative padding।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

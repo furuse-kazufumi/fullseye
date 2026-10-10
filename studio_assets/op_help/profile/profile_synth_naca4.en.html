@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_synth_naca4(code=&#x27;2412&#x27;, n=161, closed_te=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import profileops; profileops.profile_synth_naca4(code=&#x27;2412&#x27;, n=161, closed_te=False)</code>; from the registry, <code style="color:#22d3bf">opsprofile.get(&quot;profile_synth_naca4&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Generates a NACA 4-digit airfoil in closed form. Returns an <code style="color:#22d3bf">(N, 2)</code> outline traced in a single continuous stroke.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">code</code> は 4 桁(例 <code style="color:#22d3bf">&quot;2412&quot;</code> = キャンバー 2 %、位置 40 %、厚み 12 %)。点は前縁を密にするために余弦分布で置く。</p>
-<p><code style="color:#22d3bf">closed_te</code> は後縁を閉じる係数を使うかどうか。<b>既定は歴史的な係数</b> (0.1015)で、後縁がわずかに開く。閉じる版は 0.1036。どちらを使ったかで後縁付近の計測が変わるので、真値として使うなら固定して書き残すこと。</p>
+<p><code style="color:#22d3bf">code</code> is 4 digits (e.g. <code style="color:#22d3bf">&quot;2412&quot;</code> = camber 2 %, position 40 %, thickness 12 %). Points are placed with a cosine distribution to make the leading edge dense.</p>
+<p><code style="color:#22d3bf">closed_te</code> selects whether to use the coefficient that closes the trailing edge. <b>The default is the historical coefficient</b> (0.1015), with which the trailing edge is slightly open. The closing version is 0.1036. Which one is used changes measurements near the trailing edge, so if you use it as ground truth, fix it and write it down.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(2*n-1, 2)</code>。後縁 → 上面 → 前縁 → 下面 → 後縁 の順(Selig 流)。</p>
+<p><code style="color:#22d3bf">(2*n-1, 2)</code>. In the order trailing edge → upper surface → leading edge → lower surface → trailing edge (Selig style).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

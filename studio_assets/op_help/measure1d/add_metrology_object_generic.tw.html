@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_generic(model, otype, params, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import metrology; metrology.add_metrology_object_generic(model, otype, params, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_generic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>新增通用量測物件(add_metrology_object_generic)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>形状の種類を文字列で指定する入口。<code style="color:#22d3bf">otype</code> と <code style="color:#22d3bf">params</code> の組は専用 op と</p>
-<p>同じ並びでなければならない:</p>
+<p>以字串指定形狀種類的入口。<code style="color:#22d3bf">otype</code> 與 <code style="color:#22d3bf">params</code> 的組合必須與專用 op</p>
+<p>的排列相同:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;line&quot;</code>: <code style="color:#22d3bf">(row1, col1, row2, col2)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;circle&quot;</code>: <code style="color:#22d3bf">(row, col, radius)</code></p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;rect&quot;</code>: <code style="color:#22d3bf">(row, col, phi, l1, l2)</code>(<code style="color:#22d3bf">phi</code> ラジアン、<code style="color:#22d3bf">l1</code>/<code style="color:#22d3bf">l2</code> 半辺長)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;rect&quot;</code>: <code style="color:#22d3bf">(row, col, phi, l1, l2)</code>(<code style="color:#22d3bf">phi</code> 為弧度，<code style="color:#22d3bf">l1</code>/<code style="color:#22d3bf">l2</code> 為半邊長)</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;ellipse&quot;</code>: <code style="color:#22d3bf">(row, col, phi, ra, rb)</code></p>
-<p><code style="color:#22d3bf">params</code> は <code style="color:#22d3bf">tuple</code> にして積むだけで、<b>ここでは <code style="color:#22d3bf">otype</code> も要素数も検証しない</b>。未知の <code style="color:#22d3bf">otype</code> は <code style="color:#22d3bf">apply_metrology_model</code> が <code style="color:#22d3bf">ValueError</code> で拒否し、要素数が違えば同じく <code style="color:#22d3bf">apply</code> 時に展開で失敗する。設定ファイルから形状を読み込むときは、積む前に上の表で確認すること。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: サンプル数(既定 40。矩形は 4 辺に分配)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 追加位置の index(0 始まり)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> は <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> を row/col として動かす(<code style="color:#22d3bf">&quot;line&quot;</code> のみ <code style="color:#22d3bf">[2]</code>/<code style="color:#22d3bf">[3]</code> も)。</p>
+<p><code style="color:#22d3bf">params</code> 只是轉成 <code style="color:#22d3bf">tuple</code> 後堆疊，<b>此處既不驗證 <code style="color:#22d3bf">otype</code> 也不驗證元素數</b>。未知的 <code style="color:#22d3bf">otype</code> 會被 <code style="color:#22d3bf">apply_metrology_model</code> 以 <code style="color:#22d3bf">ValueError</code> 拒絕，元素數不對同樣會在 <code style="color:#22d3bf">apply</code> 時展開失敗。從設定檔讀取形狀時，請在堆疊前對照上表確認。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 取樣數(預設 40。矩形分配到 4 條邊)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: 新增位置的 index(從 0 開始)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> 把 <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> 視為 row/col 移動(僅 <code style="color:#22d3bf">&quot;line&quot;</code> 還移動 <code style="color:#22d3bf">[2]</code>/<code style="color:#22d3bf">[3]</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

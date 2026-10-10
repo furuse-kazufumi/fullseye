@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reservoir_encode(W: &#x27;Any&#x27;, X: &#x27;Any&#x27;, steps: &#x27;int&#x27; = 6, in_scale: &#x27;float&#x27; = 0.1, leak: &#x27;float&#x27; = 0.3, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.reservoir_encode(W: &#x27;Any&#x27;, X: &#x27;Any&#x27;, steps: &#x27;int&#x27; = 6, in_scale: &#x27;float&#x27; = 0.1, leak: &#x27;float&#x27; = 0.3, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;reservoir_encode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정적 입력의 일괄 reservoir 부호화(분류용): X의 각 행을 영 상태에서 steps회 돌린 최종 상태 (N, n).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>行 x ごとに x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in x) を steps 回。<code style="color:#22d3bf">W_in</code> は reservoir_states と同じ seed 付き一様 (−in_scale, in_scale) の (n, d)。行のループは書かず、1 ステップ = (N, n) @ (n, n) の行列積 1 回で全行を同時に進める。linear・leak 1・steps 1 なら X W_inᵀ、steps 2 なら (X W_inᵀ) W + X W_inᵀ に厳密一致。</p>
+<p>행 x 마다 x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in x) 를 steps 회. <code style="color:#22d3bf">W_in</code> 은 reservoir_states 와 같은 seed 붙은 균일 (−in_scale, in_scale) 의 (n, d). 행의 루프는 쓰지 않고, 1 스텝 = (N, n) @ (n, n) 의 행렬곱 1 회로 모든 행을 동시에 진행한다. linear·leak 1·steps 1 이면 X W_inᵀ, steps 2 이면 (X W_inᵀ) W + X W_inᵀ 에 엄밀히 일치.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

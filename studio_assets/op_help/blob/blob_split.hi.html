@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_split(labels: &#x27;Any&#x27;, seeds: &#x27;Any&#x27;, distance: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_split(labels: &#x27;Any&#x27;, seeds: &#x27;Any&#x27;, distance: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_split&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>seed से <b>ऊँचे स्थानों के क्रम में</b> region बढ़ाकर जुड़े हुए ढेर को बाँटता है (watershed)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">distance</code> の高い画素から順に、隣接する既知のラベルを取り込んでいく(immersion 型の分水嶺を、距離の降順で回す形)。<b>種を持たない塊はそのまま残す</b> —— 割る材料が無いのに消すのは嘘になるため。</p>
-<p><code style="color:#22d3bf">segmentation.watersheds_marker</code> を使わないのは、<b>skimage が無い環境で黙って別の算法(マーカーからの最近傍)に落ちる</b>から。落ちた先は画像を一切見ないので、同じ関数名で違うものが返る。ここは numpy と scipy だけで閉じる。</p>
+<p>सबसे ऊँचे <code style="color:#22d3bf">distance</code> वाले pixels से शुरू करके, हर pixel पास के पहले से ज्ञात label को अपना लेता है (immersion-प्रकार का watershed, distance के घटते क्रम में चलाया गया)। <b>जिन गुच्छों के पास seed नहीं है उन्हें वैसा ही छोड़ा जाता है</b> -- बाँटने का कोई आधार न होने पर उन्हें मिटा देना झूठ होगा।</p>
+<p><code style="color:#22d3bf">segmentation.watersheds_marker</code> का इस्तेमाल इसलिए नहीं किया जाता क्योंकि <b>skimage न होने पर यह चुपचाप दूसरे algorithm (markers से nearest neighbour) पर गिर जाता है</b>। वह fallback image को बिल्कुल नहीं देखता, इसलिए उसी function नाम से कुछ और लौटता है। यहाँ सब कुछ केवल numpy और scipy में सीमित है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : array_like</p>
-<p>割る対象。<code style="color:#22d3bf">blob_label</code> の出力(<code style="color:#22d3bf">&gt; 0</code> の画素だけが割られる)。</p>
+<p>जिसे बाँटना है। <code style="color:#22d3bf">blob_label</code> का output (केवल <code style="color:#22d3bf">&gt; 0</code> वाले pixels बाँटे जाते हैं)।</p>
 <p>seeds : array_like</p>
-<p><code style="color:#22d3bf">blob_seeds</code> の出力。<code style="color:#22d3bf">labels</code> の外にある種は無視する。</p>
+<p><code style="color:#22d3bf">blob_seeds</code> का output। <code style="color:#22d3bf">labels</code> के बाहर के seeds को ignore किया जाता है।</p>
 <p>distance : array_like</p>
-<p>優先度。ふつうは <code style="color:#22d3bf">blob_distance</code> の出力。</p>
+<p>priority। आमतौर पर <code style="color:#22d3bf">blob_distance</code> का output।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">int32</code> のラベル画像。番号は 1 から振り直す。</p>
+<p><code style="color:#22d3bf">int32</code> label image। नंबर 1 से दोबारा दिए जाते हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

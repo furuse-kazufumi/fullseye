@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_figure_grid_layout(shapes, ncols=2, pad=10, caption_h=32, title_h=0, letter_style=&#x27;paren&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_figure_grid_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns a table (dict): the typesetting of a multi-panel figure (cell, panel and caption-band rectangles) in closed form.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">panel_grid</code> と同じ式: <code style="color:#22d3bf">cw/ch</code> は最大パネル寸、<code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>、<code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad</code>。パネルは拡大せずセルの中央に置く。</p>
+<p>The same formulas as <code style="color:#22d3bf">panel_grid</code>: <code style="color:#22d3bf">cw/ch</code> is the largest panel size, <code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>, <code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+caption_h) + (nrows-1)*pad</code>. Panels are not enlarged; they are centred in their cells.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;size&quot;:(H,W), &quot;cells&quot;:[(x,y,cw,ch)], &quot;panels&quot;:[(x,y,w,h)], &quot;captions&quot;:[(x,y,cw,caption_h)], &quot;letters&quot;:[str], &quot;ncols&quot;, &quot;nrows&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;size&quot;:(H,W), &quot;cells&quot;:[(x,y,cw,ch)], &quot;panels&quot;:[(x,y,w,h)], &quot;captions&quot;:[(x,y,cw,caption_h)], &quot;letters&quot;:[str], &quot;ncols&quot;, &quot;nrows&quot;}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>shapes が空、ncols &lt; 1、負の余白、26 枚を超える。</p>
+<p>shapes is empty, ncols &lt; 1, negative padding, or more than 26 panels.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

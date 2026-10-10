@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import llmcore; llmcore.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsllmcore.get(&quot;rms_norm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>RMS 正規化 → tokens。<b>預設(eps=0，無 weight)時輸出的 RMS 嚴格為 1</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Zhang・Sennrich 2019。LayerNorm から平均を引く段を落としたもので、残るのは「行のノルムを揃える」だけ —— だから <b>RMS が 1 になることが検算になる</b> (実測 2.2e-16)。<code style="color:#22d3bf">eps</code> を入れると 1 からずれる。それが <code style="color:#22d3bf">eps</code> の値段。</p>
+<p>Zhang、Sennrich 2019。去掉了 LayerNorm 中減去平均值的一段,剩下的只是「把列的範數統一」—— 所以 <b>RMS 變為 1 就成了驗算</b> (實測 2.2e-16)。加入 <code style="color:#22d3bf">eps</code> 會偏離 1。這就是 <code style="color:#22d3bf">eps</code> 的代價。</p>
 <p>Args:</p>
-<p>tokens: (T, d) float。1 行が 1 トークン。</p>
-<p>eps: 平方根の中に足す下駄。0 なら RMS は厳密に 1、正なら 1 未満に縮む。</p>
-<p>weight: (d,) float か None。学習で付く軸ごとの倍率(掛けるだけなので RMS は動く)。</p>
+<p>tokens: (T, d) float。1 列是 1 個 token。</p>
+<p>eps: 加在平方根內的底數。為 0 時 RMS 嚴格為 1,為正時縮小到 1 以下。</p>
+<p>weight: (d,) float 或 None。透過學習得到的逐軸倍率(只是相乘,所以 RMS 會變)。</p>
 <p>Returns:</p>
-<p>tokens (T, d) float: 各行を自分の RMS で割ったもの(<code style="color:#22d3bf">weight</code> があれば掛けたもの)。</p>
-<p><b>全成分が 0 の行</b>は割れないので ValueError(黙って 0/0 の NaN を返さない)。</p>
+<p>tokens (T, d) float: 把各列除以其自身 RMS 的結果(有 <code style="color:#22d3bf">weight</code> 則再相乘)。</p>
+<p><b>所有分量都為 0 的列</b>無法相除,因此 ValueError(不默默回傳 0/0 的 NaN)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

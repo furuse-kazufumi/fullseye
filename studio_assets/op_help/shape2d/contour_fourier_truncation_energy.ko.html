@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_truncation_energy(spectrum, orders=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_truncation_energy(spectrum, orders=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_truncation_energy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>절단 차수마다 <b>예측되는</b> 오차(<code style="color:#22d3bf">table</code>) —— 파스발의 엄밀식.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>次数 <code style="color:#22d3bf">K</code> で打ち切った再構成 <code style="color:#22d3bf">z^K</code> について、標本上の二乗平均誤差は <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code> に<b>厳密に等しい</b>。だから再構成を 1 度もせずに「何項あれば何画素まで似るか」を先に言える。</p>
-<p>★<b>予言が厳密なのは、係数列が完全なときだけ</b>である(<code style="color:#22d3bf">contour_fourier_complex</code> を <code style="color:#22d3bf">n_harmonics=None</code> で呼んだ場合)。打ち切った係数列を渡されると、捨てられた側のエネルギーは<b>知りようがない</b>ので、返る誤差は<b>下界</b>になる —— 過小に見える誤差を「厳密」と言わないために、ここに書いておく。</p>
-<p>返り値: dict(<code style="color:#22d3bf">table</code>)</p>
-<p>&quot;order&quot;: 打ち切り次数 <code style="color:#22d3bf">K</code> の 1-D</p>
-<p>&quot;rms_error&quot;: 予言される rms 誤差[入力の単位]</p>
-<p>&quot;energy_fraction&quot;: 残した項が担うエネルギーの割合(<code style="color:#22d3bf">0..1</code>、単調増加)</p>
-<p>&quot;total_energy&quot;: <code style="color:#22d3bf">Σ_{k≠0} |c_k|^2</code>(位置 <code style="color:#22d3bf">c_0</code> を除いた形のエネルギー)</p>
-<p>&quot;k_max&quot;: スペクトルが持つ最大次数</p>
+<p>차수 <code style="color:#22d3bf">K</code> 에서 자른 재구성 <code style="color:#22d3bf">z^K</code> 에 대해, 표본 위의 제곱평균 오차는 <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code> 와 <b>엄밀히 같다</b>. 그러므로재구성을 1 번도 하지 않고 &quot;몇 항이 있으면 몇 화소까지 닮는가&quot;를 먼저 말할 수 있다.</p>
+<p>★<b>예언이 엄밀한 것은 계수열이 완전할 때뿐</b>이다(<code style="color:#22d3bf">contour_fourier_complex</code> 를 <code style="color:#22d3bf">n_harmonics=None</code> 으로 호출한 경우). 잘라 낸 계수열을 받으면, 버려진 쪽의 에너지는 <b>알 길이 없으므로</b>, 반환되는 오차는 <b>하계</b>가 된다 —— 과소하게 보이는 오차를 &quot;엄밀&quot;이라고 말하지 않기 위해 여기에 적어 둔다.</p>
+<p>반환값: dict(<code style="color:#22d3bf">table</code>)</p>
+<p>&quot;order&quot;: 자르는 차수 <code style="color:#22d3bf">K</code> 의 1-D</p>
+<p>&quot;rms_error&quot;: 예언되는 rms 오차[입력의 단위]</p>
+<p>&quot;energy_fraction&quot;: 남긴 항이 담당하는 에너지의 비율(<code style="color:#22d3bf">0..1</code>, 단조 증가)</p>
+<p>&quot;total_energy&quot;: <code style="color:#22d3bf">Σ_{k≠0} |c_k|^2</code>(위치 <code style="color:#22d3bf">c_0</code> 를 제외한 형상의 에너지)</p>
+<p>&quot;k_max&quot;: 스펙트럼이 갖는 최대 차수</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_leading_edge_radius&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>leading-edge त्रिज्या (chord के अनुपात में)। leading edge के पास के point पर वृत्त fit करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">frac</code> は前縁から弦方向にどこまでを「前縁付近」とみなすか。<b>この値で答えが変わる</b>。鼻先は円だが、少し離れると円ではないので、窓を広げると系統的に<b>過大</b>になる。NACA 4 桁の閉形式 <code style="color:#22d3bf">1.1019 * t^2</code> と突き合わせた実測(点数 4001 で生成):</p>
-<p>==========  ==========  ==========  ==========  ==========</p>
-<p>frac        NACA 0012   NACA 2412   NACA 0021   NACA 0008</p>
-<p>==========  ==========  ==========  ==========  ==========</p>
-<p>閉形式      0.01587     0.01587     0.04859     0.00705</p>
-<p>0.001       0.01590     0.01594     0.04780     0.00730</p>
-<p>0.005       0.01708     0.01716     0.04801     0.00870</p>
-<p>0.01        0.01872     0.01880     0.04897     0.01042</p>
-<p>0.03        0.02517     0.02526     0.05412     0.01688</p>
-<p>==========  ==========  ==========  ==========  ==========</p>
-<p>★ 既定は <b>0.001</b>。最初 0.03 を既定にしていて、閉形式の <b>1.6 倍</b>の値を返していた(「1 % 以内」と docstring に書いたのは確かめる前の推測だった)。厚い翼(0021)ほど鈍いので窓の影響が小さく、薄い翼(0008)ほど敏感。</p>
-<p>実データのように点が疎な輪郭では、この窓に点が 5 つ入らないことがある —— そのときは自動で等弧長に取り直してから当てはめる。</p>
+<p><code style="color:#22d3bf">frac</code> बताता है कि leading edge से chord दिशा में कहाँ तक को &quot;leading edge के पास&quot; माना जाए। <b>इस मान से उत्तर बदल जाता है</b> । नाक का सिरा वृत्त है, पर थोड़ा दूर जाने पर वृत्त नहीं रहता, इसलिए window चौड़ा करने पर परिणाम व्यवस्थित रूप से <b>बहुत बड़ा</b> हो जाता है। NACA 4-अंक के closed form <code style="color:#22d3bf">1.1019 * t^2</code> से मिलान किया गया मापन (4001 points से generate किया गया):</p>
+<p>===========  ==========  ==========  ==========  ==========</p>
+<p>frac         NACA 0012   NACA 2412   NACA 0021   NACA 0008</p>
+<p>===========  ==========  ==========  ==========  ==========</p>
+<p>closed form  0.01587     0.01587     0.04859     0.00705</p>
+<p>0.001        0.01590     0.01594     0.04780     0.00730</p>
+<p>0.005        0.01708     0.01716     0.04801     0.00870</p>
+<p>0.01         0.01872     0.01880     0.04897     0.01042</p>
+<p>0.03         0.02517     0.02526     0.05412     0.01688</p>
+<p>===========  ==========  ==========  ==========  ==========</p>
+<p>★ default <b>0.001</b> है। शुरू में 0.03 default था, और यह closed form के <b>1.6 गुना</b> मान लौटा रहा था (docstring में &quot;1 % के भीतर&quot; लिखना जाँच से पहले का अनुमान था)। मोटा airfoil (0021) जितना कुंद होता है, window का असर उतना कम; पतला airfoil (0008) उतना संवेदनशील।</p>
+<p>real data जैसे विरल points वाले contour में इस window में 5 points न आएँ, ऐसा हो सकता है -- तब यह अपने-आप समान arc length पर दोबारा sample करके fit करता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

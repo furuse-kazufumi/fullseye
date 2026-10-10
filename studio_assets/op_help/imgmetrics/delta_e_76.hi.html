@@ -4,13 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delta_e_76(lab1, lab2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.delta_e_76(lab1, lab2)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;delta_e_76&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>CIE76 रंग अंतर — Lab space में Euclidean दूरी।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>単純だが<b>知覚と合わない</b>(特に彩度の高い青)ので、比較の基準としてのみ</p>
-<p>置いてある。実用は <code style="color:#22d3bf">delta_e_2000</code>。</p>
-<p>式: <code style="color:#22d3bf">sqrt((L1 - L2)^2 + (a1 - a2)^2 + (b1 - b2)^2)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab1</code>, <code style="color:#22d3bf">lab2</code>: 最後の軸が 3 の配列。形は numpy の規則でブロードキャストする(1 色 <code style="color:#22d3bf">(3,)</code> と画像 <code style="color:#22d3bf">(H, W, 3)</code> の組も可)。<code style="color:#22d3bf">rgb_to_lab</code> の出力を渡す。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 最後の軸を落とした形の float64(画像なら <code style="color:#22d3bf">(H, W)</code>)。0 が同一色。目安として 1 前後が判別閾、2.3 が JND と言われるが、この式では色相・彩度によって同じ数値でも見え方が違う。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): どちらかの最後の軸が 3 でない。値の有限性は検査しない(NaN はそのまま伝播する)。</p>
+<p>सरल है, लेकिन <b>धारणा (perception) से मेल नहीं खाता</b> (ख़ासकर अधिक saturation वाले नीले रंग में), इसलिए इसे केवल तुलना के आधार के रूप में रखा गया है। व्यावहारिक उपयोग के लिए <code style="color:#22d3bf">delta_e_2000</code>।</p>
+<p>सूत्र: <code style="color:#22d3bf">sqrt((L1 - L2)^2 + (a1 - a2)^2 + (b1 - b2)^2)</code>।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab1</code>, <code style="color:#22d3bf">lab2</code>: arrays जिनकी आख़िरी axis 3 है। shapes numpy के नियमों से broadcast होते हैं (1 रंग <code style="color:#22d3bf">(3,)</code> और image <code style="color:#22d3bf">(H, W, 3)</code> की जोड़ी भी चलती है)। <code style="color:#22d3bf">rgb_to_lab</code> का output दें।</p>
+<p style="margin:2px 0 2px 12px">• return value: आख़िरी axis हटाए गए shape का float64 (image के लिए <code style="color:#22d3bf">(H, W)</code>)। 0 का अर्थ एक ही रंग। मोटे तौर पर 1 के आसपास भेद की सीमा और 2.3 को JND कहा जाता है, लेकिन इस सूत्र में hue और chroma के अनुसार एक ही संख्या अलग दिख सकती है।</p>
+<p style="margin:2px 0 2px 12px">• विफलता (<code style="color:#22d3bf">MetricContractError</code>): किसी एक की आख़िरी axis 3 नहीं है। मानों की finiteness जाँची नहीं जाती (NaN वैसे ही propagate होता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

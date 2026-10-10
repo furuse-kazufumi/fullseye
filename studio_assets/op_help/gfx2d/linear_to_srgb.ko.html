@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.linear_to_srgb(img)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import gfx2d; gfx2d.linear_to_srgb(img)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgfx2d.get(&quot;linear_to_srgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선형 광을 sRGB 부호화로 되돌립니다. <code style="color:#22d3bf">srgb_to_linear</code> 의 엄밀한 역.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>式(IEC 61966-2-1): <code style="color:#22d3bf">c &lt;= 0.0031308</code> なら <code style="color:#22d3bf">12.92 c</code>、それ以外は <code style="color:#22d3bf">1.055 c^(1/2.4) - 0.055</code>。チャネルごと・画素ごとに独立。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code>: <code style="color:#22d3bf">(H, W)</code> / <code style="color:#22d3bf">(H, W, 1)</code> / <code style="color:#22d3bf">(H, W, 3)</code> / <code style="color:#22d3bf">(H, W, 4)</code> の float。値は <code style="color:#22d3bf">[0, 1]</code>(許容 1e-9)でなければ <code style="color:#22d3bf">ValueError</code> ―― 線形光の HDR 値(1 超)は先に露光を掛けて収めること。整数配列は最大値が 1 以下のときだけ通る(0〜255 のバッファは拒否)。bool は 0/1 として通る。NaN/Inf、複素数、マスク配列は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(H, W, 4)</code> のアルファ(4 チャネル目)は<b>変換しない</b>(被覆率は元々線形)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 同形の float64 の複製、<code style="color:#22d3bf">[0, 1]</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(3,)</code> の 1 色や <code style="color:#22d3bf">(N, 3)</code> の色表はこの op では受けない(画像 API)。任意の形に掛けたいときは <code style="color:#22d3bf">imgmetrics</code> 側の同名関数がここへ委譲している。</p>
-<p><code style="color:#22d3bf">radial_light</code> / <code style="color:#22d3bf">light_mask</code> / <code style="color:#22d3bf">bloom</code> など線形光で計算した結果を、ファイルに書く・画面に出す直前に 1 回だけ掛ける。二度掛けると中間調が浮く(例外は出ない)。</p>
+<p>식(IEC 61966-2-1): <code style="color:#22d3bf">c &lt;= 0.0031308</code>이면 <code style="color:#22d3bf">12.92 c</code>, 그 외에는 <code style="color:#22d3bf">1.055 c^(1/2.4) - 0.055</code>. 채널별, 화소별로 독립.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code>: <code style="color:#22d3bf">(H, W)</code> / <code style="color:#22d3bf">(H, W, 1)</code> / <code style="color:#22d3bf">(H, W, 3)</code> / <code style="color:#22d3bf">(H, W, 4)</code>의 float. 값은 <code style="color:#22d3bf">[0, 1]</code>(허용 1e-9)이어야 하며 아니면 <code style="color:#22d3bf">ValueError</code> -- 선형광의 HDR 값(1 초과)은 먼저 노출을 걸어 범위 안에 넣을 것. 정수 배열은 최댓값이 1 이하일 때만통과(0~255의 버퍼는 거부). bool은 0/1로 통과. NaN/Inf, 복소수, 마스크 배열은 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(H, W, 4)</code>의 알파(4번째 채널)는 <b>변환하지 않는다</b>(피복률은 원래 선형).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 같은 형태의 float64 복제, <code style="color:#22d3bf">[0, 1]</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(3,)</code>의 1색이나 <code style="color:#22d3bf">(N, 3)</code>의 색표는 이 op에서는 받지 않는다(영상 API). 임의의 형태에 적용하고 싶을 때는 <code style="color:#22d3bf">imgmetrics</code> 쪽의 같은 이름 함수가 여기에 위임하고 있다.</p>
+<p><code style="color:#22d3bf">radial_light</code> / <code style="color:#22d3bf">light_mask</code> / <code style="color:#22d3bf">bloom</code> 등 선형광으로 계산한 결과를, 파일에 쓰거나 화면에 내기 직전에 1번만 적용한다. 두 번 적용하면 중간조가들뜬다(예외는 나지 않는다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

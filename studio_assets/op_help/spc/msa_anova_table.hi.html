@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;msa_anova_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>crossed 2-factor design (part x operator x repetition) की analysis of variance table (<code style="color:#22d3bf">table</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>*table* は列 *part* / *operator* / *value* を持つ表。設計は<b>釣り合っている</b> こと(升目ごとの繰り返し数が同じ)——釣り合っていなければ拒む。</p>
-<p>返りは source / ss / df / ms / f / p の 6 列。<code style="color:#22d3bf">f</code> と <code style="color:#22d3bf">p</code> は測定者と交互作用を交互作用平均平方で、交互作用を誤差平均平方で検定した値(規格の慣行)。</p>
-<p>★門にできる厳密な恒等式: <code style="color:#22d3bf">ss_total == ss_part + ss_oper + ss_inter + ss_err</code>。これは代数的な分解なので、分散成分をどう出そうと必ず成り立つ —— 片方が壊れれば一致しない。自由度も <code style="color:#22d3bf">df_total == 和</code> で閉じる。</p>
+<p>*table* एक table है जिसमें column *part* / *operator* / *value* हैं। design <b>balanced</b> होना चाहिए (हर cell में repeat की संख्या समान) -- balanced न हो तो अस्वीकार किया जाता है।</p>
+<p>लौटाया गया result source / ss / df / ms / f / p के 6 column हैं। <code style="color:#22d3bf">f</code> और <code style="color:#22d3bf">p</code> वे मान हैं जिनमें operator और interaction को interaction mean square से, और interaction को error mean square से test किया गया है (standard की परंपरा)।</p>
+<p>★ gate के रूप में इस्तेमाल होने वाली सटीक identity: <code style="color:#22d3bf">ss_total == ss_part + ss_oper + ss_inter + ss_err</code>। यह एक algebraic decomposition है, इसलिए variance component कैसे भी निकाले जाएँ, यह हमेशा सही रहती है -- एक तरफ़ टूटे तो मेल नहीं खाती। degrees of freedom भी <code style="color:#22d3bf">df_total == योग</code> से बंद होते हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.invariants(model, scale_invariant=True)</code>(要直接调用实现,<code style="color:#22d3bf">import fourierdesc; fourierdesc.invariants(model, scale_invariant=True)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;invariants&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对旋转、平移、起点以及(可选)尺度不变的形状描述子((N,2))。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各高調波の楕円の (長軸, 短軸) = 特異値を並べたもの。DC を含まないので平行移動に不変、特異値なので空間回転と始点シフトに不変、第1高調波の長軸で割ればスケール不変。形状マッチング(<code style="color:#22d3bf">descriptor_distance</code>)の土台。</p>
+<p>把各谐波椭圆的 (长轴，短轴) = 奇异值排列起来。不含 DC，因此对平移不变;由于是奇异值，对空间旋转和起点平移不变;除以第1谐波的长轴则对尺度不变。是形状匹配(<code style="color:#22d3bf">descriptor_distance</code>)的基础。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,25 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_color_flicker(vol_binary, axis=&#x27;z&#x27;, seed: &#x27;int&#x27; = 0, connectivity: &#x27;int&#x27; = 26, connectivity_2d: &#x27;int&#x27; = 8)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volcolor; volcolor.vol_label_color_flicker(vol_binary, axis=&#x27;z&#x27;, seed: &#x27;int&#x27; = 0, connectivity: &#x27;int&#x27; = 26, connectivity_2d: &#x27;int&#x27; = 8)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_color_flicker&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>「자르고 나서 색을 입힌다」와 「색을 입히고 나서 자른다」의 차이를 <b>셉니다</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>同じ 2 値ボリュームに対して 2 通りの手順を踏む:</p>
-<p>A. <b>スライスごと</b> ―― 各断面を 2-D で連結成分ラベリングし、</p>
-<p><code style="color:#22d3bf">imgio.colorize_labels</code> と同じパレットで色を付ける。</p>
-<p>断面ごとに番号が振り直されるので、同じ部品でも層が変われば色が変わりうる。</p>
-<p>B. <b>ボリュームで</b> ―― <code style="color:#22d3bf">volops.vol_label</code> でラベリングしてから</p>
-<p><code style="color:#22d3bf">vol_colorize_labels</code> で色を付け、あとで切る。</p>
-<p>返りは dict:</p>
-<p><code style="color:#22d3bf">n_components</code> 3-D 成分数 · <code style="color:#22d3bf">n_slices</code> 断面の数 ·</p>
-<p><code style="color:#22d3bf">slices_with_change</code> <b>A で 1 つ以上の成分の色が変わった断面の本数</b> ·</p>
-<p><code style="color:#22d3bf">changed_pairs</code> A で色が変わった (成分, 断面) の組の数 ·</p>
-<p><code style="color:#22d3bf">changed_components</code> A で一度でも色が変わった成分の数 ·</p>
+<p>같은 2 값 볼륨에 대해 2 가지 절차를 밟는다:</p>
+<p>A. <b>슬라이스마다</b> ―― 각 단면을 2-D 로 연결 성분 라벨링하고,</p>
+<p><code style="color:#22d3bf">imgio.colorize_labels</code> 와 같은 팔레트로 색을 칠한다.</p>
+<p>단면마다 번호가 다시 매겨지므로 같은 부품이라도 층이 바뀌면 색이 바뀔 수 있다.</p>
+<p>B. <b>볼륨에서</b> ―― <code style="color:#22d3bf">volops.vol_label</code> 로 라벨링한 다음</p>
+<p><code style="color:#22d3bf">vol_colorize_labels</code> 로 색을 칠하고, 나중에 자른다.</p>
+<p>반환은 dict:</p>
+<p><code style="color:#22d3bf">n_components</code> 3-D 성분 수 · <code style="color:#22d3bf">n_slices</code> 단면 수 ·</p>
+<p><code style="color:#22d3bf">slices_with_change</code> <b>A 에서 1 개 이상의 성분 색이 바뀐 단면의 개수</b> ·</p>
+<p><code style="color:#22d3bf">changed_pairs</code> A 에서 색이 바뀐 (성분, 단면) 쌍의 수 ·</p>
+<p><code style="color:#22d3bf">changed_components</code> A 에서 한 번이라도 색이 바뀐 성분 수 ·</p>
 <p><code style="color:#22d3bf">volume_slices_with_change</code> / <code style="color:#22d3bf">volume_changed_pairs</code> /</p>
-<p><code style="color:#22d3bf">volume_changed_components</code> B の同じ量(<b>構造上 0</b>) ·</p>
-<p><code style="color:#22d3bf">pairs_checked</code> 比較した (成分, 断面) の総数 ·</p>
-<p><code style="color:#22d3bf">flicker_rate</code> <code style="color:#22d3bf">changed_pairs / pairs_checked</code>。</p>
-<p>比較の定義:各 3-D 成分 <code style="color:#22d3bf">c</code> について、<code style="color:#22d3bf">c</code> が現れる最初の断面での色を基準とし、以降の断面で <code style="color:#22d3bf">c</code> の画素の<b>最頻色</b>が基準と違えば 1 件と数える(1 つの 3-D 成分が 1 断面で複数の 2-D 片に割れることがあるため、代表は最頻色。同数の場合は RGB の辞書順で小さい方 = 決定的)。</p>
-<p>実測(<code style="color:#22d3bf">(24, 48, 48)</code>・16 球の参照ファントム、seed=0、axis=&quot;z&quot;、<code style="color:#22d3bf">connectivity=26</code> / <code style="color:#22d3bf">connectivity_2d=8</code>):<code style="color:#22d3bf">pairs_checked=108</code>、<code style="color:#22d3bf">slices_with_change=20 / 24</code>、<code style="color:#22d3bf">changed_pairs=62</code>(57.4 %)、<code style="color:#22d3bf">changed_components=16 / 16</code>。B 側は 3 つとも 0 ―― <b>構造上 0 であって、たまたま 0 なのではない</b>(ラベル番号がボリューム全体で一意だから)。</p>
-<p>Raises <code style="color:#22d3bf">ValueError</code> for a bad volume, an unknown *axis*, or a *connectivity* that is not 6 / 18 / 26 (2-D: 4 / 8).</p>
+<p><code style="color:#22d3bf">volume_changed_components</code> B 의 같은 양(<b>구조상 0</b>) ·</p>
+<p><code style="color:#22d3bf">pairs_checked</code> 비교한 (성분, 단면) 의 총수 ·</p>
+<p><code style="color:#22d3bf">flicker_rate</code> <code style="color:#22d3bf">changed_pairs / pairs_checked</code>.</p>
+<p>비교의 정의: 각 3-D 성분 <code style="color:#22d3bf">c</code> 에 대해, <code style="color:#22d3bf">c</code> 가 나타나는 첫 단면에서의 색을기준으로 하고, 이후 단면에서 <code style="color:#22d3bf">c</code> 화소의 <b>최빈색</b>이 기준과 다르면 1 건으로 센다(1 개의 3-D 성분이 1 단면에서 여러 2-D 조각으로 갈라질 수 있으므로 대표는최빈색. 같은 수인 경우는 RGB 사전순으로 작은 쪽 = 결정적).</p>
+<p>실측(<code style="color:#22d3bf">(24, 48, 48)</code> · 16 구의 참조 팬텀, seed=0, axis=&quot;z&quot;, <code style="color:#22d3bf">connectivity=26</code> / <code style="color:#22d3bf">connectivity_2d=8</code>): <code style="color:#22d3bf">pairs_checked=108</code>, <code style="color:#22d3bf">slices_with_change=20 / 24</code>, <code style="color:#22d3bf">changed_pairs=62</code>(57.4 %), <code style="color:#22d3bf">changed_components=16 / 16</code>. B 쪽은 3 가지 모두 0 ―― <b>구조상 0 이지, 우연히 0 인 것이 아니다</b>(라벨 번호가 볼륨 전체에서 유일하므로).</p>
+<p>잘못된 볼륨, 알 수 없는 *axis*, 또는 6 / 18 / 26 (2-D: 4 / 8)이 아닌 *connectivity* 에 대해 <code style="color:#22d3bf">ValueError</code> 를 낸다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_table(W: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import conngraph; conngraph.graph_degree_table(W: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconngraph.get(&quot;graph_degree_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर node के in_degree / out_degree (binary) और in_strength / out_strength (weight का योग) की table।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>度数は <code style="color:#22d3bf">W != 0</code> の本数(対角は除く)、strength は重みの和(対角は除く)。返りは列名 → 長さ n の配列の dict(この repo の <code style="color:#22d3bf">table</code>)。</p>
+<p>degree <code style="color:#22d3bf">W != 0</code> वाली entries की गिनती है (diagonal छोड़कर), strength weights का योग है (diagonal छोड़कर)। return value column name → लंबाई n का array वाला dict है (इस repo का <code style="color:#22d3bf">table</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

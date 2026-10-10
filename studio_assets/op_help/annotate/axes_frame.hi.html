@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_frame(img, axes, color=&#x27;neutral&#x27;, width=1, box=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.axes_frame(img, axes, color=&#x27;neutral&#x27;, width=1, box=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;axes_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>axis का frame (<code style="color:#22d3bf">box=True</code> से चारों भुजाएँ, False से केवल बाईं और नीचे की 2 भुजाएँ)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">style</code> は <code style="color:#22d3bf">imagedraw.draw_polyline</code> / <code style="color:#22d3bf">imagedraw.draw_line</code> へ素通し。</p>
+<p><code style="color:#22d3bf">style</code> को <code style="color:#22d3bf">imagedraw.draw_polyline</code> / <code style="color:#22d3bf">imagedraw.draw_line</code> को सीधे आगे भेजा जाता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>枠が画像からはみ出す。</p>
+<p>frame image से बाहर निकलता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

@@ -4,21 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_egi(normals, n_az=36, n_el=18)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.normals_to_egi(normals, n_az=36, n_el=18)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_egi&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法線 <code style="color:#22d3bf">(N,3)</code> → 擴展高斯像 <code style="color:#22d3bf">(n_el, n_az)</code> 的 <code style="color:#22d3bf">image2d</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では 1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
-<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(<code style="color:#22d3bf">selftest</code> が出す)。</p>
-<p>仰角の bin は <code style="color:#22d3bf">sin(el)</code> で等分する(等立体角)。度で等分すると極が過剰に細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
-<p>★<b>位置の点群を渡しても例外は出ない</b>。<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> が <code style="color:#22d3bf">normals</code> を <code style="color:#22d3bf">points</code> に畳んでいるので、進化器も台帳も両者を区別しない。この op は方向しか見ない(長さは捨てる)ので、<code style="color:#22d3bf">(N,3)</code> の座標を渡すと「原点から各点を見た向き」のヒストグラムが<b>もっともらしく</b>返る。実測(2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、最大 bin が 200 → 44 に変わるだけで、<b>総和はどちらも 200</b>。「総和が点数と合うから正しい」では区別がつかない。<code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> にすると、単位長から外れたベクトルを<b>拒否</b>する(下の Raises)。</p>
+<p>方向的 2-D 直方圖(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。是「哪個朝向的面有多少」的地圖,在平面占主導的物體上會在 1 個 bin 中立起峰。<b>不可逆</b> —— 捨棄 bin 寬度程度的方向解析度。</p>
+<p>捨棄的量可以量測: 最頻 bin 的中心方向與輸入平均方向的角度差就是量化誤差, 預設 (36, 18) 下相對 bin 寬 10 度,實測為 3.7 度(由 <code style="color:#22d3bf">selftest</code> 給出)。</p>
+<p>仰角的 bin 依 <code style="color:#22d3bf">sin(el)</code> 等分(等立體角)。若依度數等分,極點處會過度精細,立起「面集中在北極」這種虛假的峰。</p>
+<p>★<b>傳入位置點雲也不會拋例外</b>。<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> 把 <code style="color:#22d3bf">normals</code> 摺疊到 <code style="color:#22d3bf">points</code>,所以演化器和台帳都不區分兩者。此 op 只看方向(捨棄長度),所以傳入 <code style="color:#22d3bf">(N,3)</code> 的座標時, 會<b>似是而非地</b>回傳「從原點看各點的朝向」的直方圖。實測(2026-09-08,200 點的曲線 vs 全部朝正上方的法線): 非零 bin 只是 1 → 12、最大 bin 200 → 44 的變化,<b>總和兩者都是 200</b>。「總和與點數一致所以正確」無法區分兩者。設為 <code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> 時,偏離單位長度的向量會被<b>拒絕</b>(見下方的 Raises)。</p>
 <p>Args:</p>
 <p>normals: (N, 3)。</p>
-<p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
-<p>n_el: 仰角の bin 数(既定 18)。</p>
+<p>n_az: 方位角的 bin 數(預設 36 = 10 度步長)。</p>
+<p>n_el: 仰角的 bin 數(預設 18)。</p>
 <p>Returns:</p>
-<p>(n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。</p>
+<p>(n_el, n_az) float64 的計數圖(列 = 仰角,行 = 方位角)。</p>
 <p>Raises:</p>
-<p>ValueError: bin 数が 1 未満 / 上限超 / 入力不正。</p>
-<p>ValueError: <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code> で、長さが 1 から 1e-6 を超えて外れる</p>
-<p>ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。</p>
+<p>ValueError: bin 數小於 1 / 超過上限 / 輸入不正。</p>
+<p>ValueError: <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code> 下,含有長度偏離 1 超過 1e-6 的</p>
+<p>向量時(捕捉把位置點雲當作法線傳入的事故)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

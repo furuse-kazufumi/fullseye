@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;msa_bias_linearity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>相对于参考值的偏倚,以及该偏倚随参考值的变化(线性)(<code style="color:#22d3bf">table</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>偏り <code style="color:#22d3bf">bias = measured - reference</code> を基準値に回帰する(<code style="color:#22d3bf">bias = intercept + slope * reference</code>)。傾きが 0 でなければ、測定系は測定範囲の<b>場所によって違う量だけずれている</b> = 直線性の問題。</p>
-<p>返りは基準値ごとの平均偏り(<code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">bias_mean</code> / <code style="color:#22d3bf">n</code>)と、回帰の <code style="color:#22d3bf">intercept</code> / <code style="color:#22d3bf">slope</code> / それぞれの標準誤差・t 値・p 値、全体平均偏り。</p>
-<p>★門にできる厳密な性質: 雑音の無い <code style="color:#22d3bf">bias = a + b*ref</code> を渡すと最小二乗は a と b を<b>厳密に</b>返す(残差 0)。そのとき標準誤差は 0 なので t は <code style="color:#22d3bf">inf</code> / p は 0 —— これは欠陥ではなく完全適合の正しい報告なので、そのまま返す。</p>
+<p>将偏差 <code style="color:#22d3bf">bias = measured - reference</code> 对基准值作回归(<code style="color:#22d3bf">bias = intercept + slope * reference</code>)。斜率不为 0 时,测量系统 <b>在测量范围的不同位置偏移不同的量</b> = 线性问题。</p>
+<p>返回每个基准值的平均偏差(<code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">bias_mean</code> / <code style="color:#22d3bf">n</code>),回归的 <code style="color:#22d3bf">intercept</code> / <code style="color:#22d3bf">slope</code> / 各自的标准误差、t 值、p 值,以及整体平均偏差。</p>
+<p>★可作为门禁的严格性质: 传入无噪声的 <code style="color:#22d3bf">bias = a + b*ref</code> 时,最小二乘 <b>严格</b>返回 a 和 b(残差 0)。此时标准误差为 0,因此 t 为 <code style="color:#22d3bf">inf</code> / p 为 0 —— 这不是缺陷,而是对完全拟合的正确报告,因此原样返回。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

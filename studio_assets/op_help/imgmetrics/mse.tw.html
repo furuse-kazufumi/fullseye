@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mse(a, b)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgmetrics; imgmetrics.mse(a, b)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;mse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>均方誤差。不依賴 <code style="color:#22d3bf">data_range</code> 的原始量。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>式: <code style="color:#22d3bf">mean((a - b)^2)</code>(全要素、float64 で計算)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: 同じ形なら次元は問わない(2-D グレー、<code style="color:#22d3bf">(H, W, 3)</code>、3-D 体積)。dtype も問わないが <b>画素値の尺度をそのまま引き継ぐ</b> ―― uint8 の 2 枚と、それを <code style="color:#22d3bf">/255</code> した float の 2 枚では値が <code style="color:#22d3bf">255^2</code> 倍違う。尺度を揃えて比べたいなら <code style="color:#22d3bf">psnr</code>(<code style="color:#22d3bf">data_range</code> で正規化)を使う。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: Python の <code style="color:#22d3bf">float</code>。0 が完全一致、上限は <code style="color:#22d3bf">data_range^2</code>。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): 形が違う / 空 / NaN・Inf を含む(黙って伝播させない)。</p>
-<p>平方根が要るなら <code style="color:#22d3bf">rmse</code>。まとめて測るなら <code style="color:#22d3bf">compare_images</code>。</p>
+<p>公式:<code style="color:#22d3bf">mean((a - b)^2)</code>(全部元素,以 float64 計算)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code>:只要形狀相同,維數不限(2-D 灰階、<code style="color:#22d3bf">(H, W, 3)</code>、3-D 體資料)。dtype 也不限,但<b>原樣沿用像素值的尺度</b> —— uint8 的 2 張圖,與把它們 <code style="color:#22d3bf">/255</code> 後的 float 2 張圖,值相差 <code style="color:#22d3bf">255^2</code> 倍。想統一尺度比較, 就用 <code style="color:#22d3bf">psnr</code>(用 <code style="color:#22d3bf">data_range</code> 正規化)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值:Python 的 <code style="color:#22d3bf">float</code>。0 為完全一致,上限為 <code style="color:#22d3bf">data_range^2</code>。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>):形狀不同 / 為空 / 含 NaN、Inf(不會默默傳播)。</p>
+<p>需要平方根就用 <code style="color:#22d3bf">rmse</code>。要一次量全部就用 <code style="color:#22d3bf">compare_images</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

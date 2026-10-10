@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_select&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>केवल वे object रखता है जिनका feature <code style="color:#22d3bf">[vmin, vmax]</code> में आता है (<b>क्रमांक 1 से फिर से दिए जाते हैं</b>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : array_like</p>
-<p><code style="color:#22d3bf">blob_label</code> の出力。</p>
+<p><code style="color:#22d3bf">blob_label</code> का output।</p>
 <p>feature : str</p>
-<p><code style="color:#22d3bf">FEATURE_KEYS</code> のどれか。知らない鍵は<b>候補を並べて拒否する</b>。</p>
+<p><code style="color:#22d3bf">FEATURE_KEYS</code> में से कोई एक। अनजान key को <b>candidates की सूची दिखाकर reject किया जाता है</b>।</p>
 <p>vmin, vmax : float or None</p>
-<p>両端(含む)。<code style="color:#22d3bf">None</code> は片側を開ける。両方 <code style="color:#22d3bf">None</code> は</p>
-<p>「何も選んでいない」ので拒否する —— 全部通す意図なら呼ばなければよい。</p>
+<p>दोनों सिरे (शामिल)। <code style="color:#22d3bf">None</code> उस तरफ़ को खुला छोड़ता है। दोनों <code style="color:#22d3bf">None</code> का मतलब</p>
+<p>&quot;कुछ भी नहीं चुना&quot; है, इसलिए reject किया जाता है -- अगर सब कुछ पास करना है तो इसे call ही न करें।</p>
 <p>spacing : float</p>
-<p><code style="color:#22d3bf">blob_features</code> と同じ意味。<code style="color:#22d3bf">area</code> や <code style="color:#22d3bf">perimeter</code> を</p>
-<p>物理単位で切るときに要る。</p>
+<p><code style="color:#22d3bf">blob_features</code> जैसा ही अर्थ। <code style="color:#22d3bf">area</code> या <code style="color:#22d3bf">perimeter</code> को</p>
+<p>physical units में काटते समय ज़रूरी है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">int32</code> のラベル画像。<b>残った物体は 1..k の連番</b>になる</p>
-<p>(元の番号は残さない)。元の番号が要るなら</p>
-<p><code style="color:#22d3bf">blob_features(labels)[&quot;label&quot;]</code> を先に取っておくこと。</p>
+<p><code style="color:#22d3bf">int32</code> label image। <b>बचे हुए objects को 1..k क्रम से नंबर मिलते हैं</b></p>
+<p>(मूल नंबर नहीं रखे जाते)। अगर मूल नंबर चाहिए तो</p>
+<p><code style="color:#22d3bf">blob_features(labels)[&quot;label&quot;]</code> पहले ही निकाल लें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

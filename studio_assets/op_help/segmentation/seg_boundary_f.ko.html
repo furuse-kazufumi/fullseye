@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_boundary_f(labels_pred, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segeval; segeval.seg_boundary_f(labels_pred, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;seg_boundary_f&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>허용거리 tau의 경계 F 값: precision = 예측 경계 화소 중 참 경계로부터 tau 이내인 비율, recall은 그 반대(seg_boundary_f).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>F = 2PR/(P+R)。境界は <code style="color:#22d3bf">_boundary</code> の規約(ラベルの割れ目、1 画素幅)なので、ラベルの番号や背景の区別によらない(分割の形だけを見る)。距離は距離変換(ユークリッド、画素の中心)。τ = 0 で画素の一致。両方の境界が空(どちらも 1 色)なら P = R = F = 1、片方だけ空なら 0。</p>
-<p>返り値: <code style="color:#22d3bf">f</code>、<code style="color:#22d3bf">precision</code>、<code style="color:#22d3bf">recall</code>、<code style="color:#22d3bf">tau</code>、<code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>、<code style="color:#22d3bf">dist_pred_to_true</code> / <code style="color:#22d3bf">dist_true_to_pred</code>(境界画素ごとの距離)。</p>
+<p>F = 2PR/(P+R). 경계는 <code style="color:#22d3bf">_boundary</code>의 규약(라벨 사이의 균열, 1화소 폭)이므로, 라벨 번호나 배경의 구별과 무관하다(분할의 형태만 본다). 거리는 거리 변환(유클리드, 화소 중심). τ = 0이면 화소 일치. 양쪽 경계가 비어 있으면(둘 다 1색) P = R = F = 1, 한쪽만 비어 있으면 0.</p>
+<p>반환값: <code style="color:#22d3bf">f</code>, <code style="color:#22d3bf">precision</code>, <code style="color:#22d3bf">recall</code>, <code style="color:#22d3bf">tau</code>, <code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>, <code style="color:#22d3bf">dist_pred_to_true</code> / <code style="color:#22d3bf">dist_true_to_pred</code>(경계 화소별 거리).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

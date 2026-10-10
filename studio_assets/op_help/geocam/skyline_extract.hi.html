@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>photo से dynamic programming द्वारा <b>हर column के लिए आकाश–terrain सीमा की row</b> वाली 1 line निकालता है → signal (W,)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Lie・Lin・Hsu 2005(*Pattern Recognition*: 航法のための頑健なスカイライン抽出)と同じ考え:</p>
-<p>垂直方向の明るさの変化(空が上で明るければ <code style="color:#22d3bf">I[v−1] − I[v+1]</code> が正)を「境界らしさ」にし、隣の列から行が <code style="color:#22d3bf">max_jump</code> 以上飛ばない連続な経路のうちコストが最小のものを選ぶ(<code style="color:#22d3bf">jump_penalty</code> × 行の飛び)。雲や建物の縦の縁で局所的に強い応答が出ても、経路の連続性が本物の稜線を残す。</p>
+<p>Lie, Lin और Hsu 2005 (*Pattern Recognition*: navigation के लिए robust skyline extraction) जैसा ही विचार:</p>
+<p>vertical दिशा में brightness के बदलाव (आसमान ऊपर ज़्यादा bright हो तो <code style="color:#22d3bf">I[v−1] − I[v+1]</code> positive) को &quot;boundary जैसापन&quot; माना जाता है, और उन continuous paths में से, जिनमें पास के column से row <code style="color:#22d3bf">max_jump</code> या उससे ज़्यादा नहीं उछलती, सबसे कम cost वाला चुना जाता है (<code style="color:#22d3bf">jump_penalty</code> × row की उछाल)। बादलों या इमारतों के vertical किनारों पर locally तेज़ response आए तब भी path की continuity असली ridge line को बचाए रखती है।</p>
 <p>Args:</p>
-<p>image: (H, W) float。RGB なら先に灰色にする。</p>
-<p>sky_is_bright: 空が地形より明るい(昼)。夜景・逆光で反転するなら False。</p>
-<p>smooth: 縦方向の Gaussian σ [画素] (雑音)。0 で無効。</p>
-<p>max_jump: 隣の列で許す行の飛び [画素]。</p>
-<p>jump_penalty: 飛び 1 画素あたりのコスト(境界らしさは 0〜1 に正規化してある)。</p>
+<p>image: (H, W) float। RGB हो तो पहले grey में बदला जाता है।</p>
+<p>sky_is_bright: आसमान terrain से ज़्यादा bright है (दिन)। रात के दृश्य या backlight से उलटा हो तो False।</p>
+<p>smooth: vertical दिशा का Gaussian σ [pixels] (noise)। 0 पर बंद।</p>
+<p>max_jump: पास के columns के बीच अनुमत row की उछाल [pixels]।</p>
+<p>jump_penalty: हर 1 pixel उछाल की cost (boundary जैसापन 0 से 1 पर normalise है)।</p>
 <p>Returns:</p>
-<p>signal (W,) float: 列ごとの境界の行(0 が最上段)。<b>空しか写っていない・地形しか写っていない</b>画像では境界の応答が弱く、経路の平均コストが 0 に近いので ValueError</p>
-<p>で止める(黙って雑音の線を返さない)。</p>
+<p>signal (W,) float: हर column की boundary वाली row (0 सबसे ऊपर)। <b>जिनमें केवल आसमान या केवल terrain दिखता है</b> ऐसी images में boundary response कमज़ोर होता है और path की औसत cost 0 के पास होती है, इसलिए ValueError</p>
+<p>से रुकता है (चुपचाप noise की line नहीं लौटाता)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

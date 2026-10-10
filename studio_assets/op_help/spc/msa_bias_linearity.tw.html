@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import spc; spc.msa_bias_linearity(table, reference=&#x27;reference&#x27;, measured=&#x27;measured&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsspc.get(&quot;msa_bias_linearity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>相對於參考值的偏倚,以及該偏倚隨參考值的變化(線性)(<code style="color:#22d3bf">table</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>偏り <code style="color:#22d3bf">bias = measured - reference</code> を基準値に回帰する(<code style="color:#22d3bf">bias = intercept + slope * reference</code>)。傾きが 0 でなければ、測定系は測定範囲の<b>場所によって違う量だけずれている</b> = 直線性の問題。</p>
-<p>返りは基準値ごとの平均偏り(<code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">bias_mean</code> / <code style="color:#22d3bf">n</code>)と、回帰の <code style="color:#22d3bf">intercept</code> / <code style="color:#22d3bf">slope</code> / それぞれの標準誤差・t 値・p 値、全体平均偏り。</p>
-<p>★門にできる厳密な性質: 雑音の無い <code style="color:#22d3bf">bias = a + b*ref</code> を渡すと最小二乗は a と b を<b>厳密に</b>返す(残差 0)。そのとき標準誤差は 0 なので t は <code style="color:#22d3bf">inf</code> / p は 0 —— これは欠陥ではなく完全適合の正しい報告なので、そのまま返す。</p>
+<p>將偏差 <code style="color:#22d3bf">bias = measured - reference</code> 對基準值作迴歸(<code style="color:#22d3bf">bias = intercept + slope * reference</code>)。斜率不為 0 時,量測系統 <b>在量測範圍的不同位置偏移不同的量</b> = 線性問題。</p>
+<p>回傳每個基準值的平均偏差(<code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">bias_mean</code> / <code style="color:#22d3bf">n</code>),迴歸的 <code style="color:#22d3bf">intercept</code> / <code style="color:#22d3bf">slope</code> / 各自的標準誤差、t 值、p 值,以及整體平均偏差。</p>
+<p>★可作為門檻的嚴格性質: 傳入無雜訊的 <code style="color:#22d3bf">bias = a + b*ref</code> 時,最小平方 <b>嚴格</b>回傳 a 與 b(殘差 0)。此時標準誤差為 0,因此 t 為 <code style="color:#22d3bf">inf</code> / p 為 0 —— 這不是瑕疵,而是對完全擬合的正確回報,因此原樣回傳。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

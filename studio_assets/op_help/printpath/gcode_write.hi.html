@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_write&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>line segment की table को G-code (G21 / G90 / M82, G1 के absolute coordinate और absolute E) में लिखता है। लिखा गया path (<code style="color:#22d3bf">text</code>) लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">gcode_read</code> と往復できる(層は <code style="color:#22d3bf">;LAYER:n</code> で書く)。移動だけの線分は E を進めない。</p>
+<p><code style="color:#22d3bf">gcode_read</code> के साथ round-trip होता है (layers <code style="color:#22d3bf">;LAYER:n</code> के रूप में लिखी जाती हैं)। केवल travel वाले segments E को आगे नहीं बढ़ाते।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

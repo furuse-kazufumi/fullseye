@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph(imgA, imgB, ptsA, ptsB, alpha, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imagemorph; imagemorph.morph(imgA, imgB, ptsA, ptsB, alpha, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;morph&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 image A, B को संगत point से morph करता है और अनुपात alpha पर बीच की image बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>手順(Beier–Neely 流のメッシュ・モーフ):</p>
-<p style="margin:2px 0 2px 12px">1. 中間形状 mid = (1-alpha)·ptsA + alpha·ptsB を作る。</p>
-<p style="margin:2px 0 2px 12px">2. A を ptsA→mid へ、B を ptsB→mid へワープ(両者の特徴を mid に揃える)。</p>
-<p style="margin:2px 0 2px 12px">3. warp(A), warp(B) を alpha でクロスディゾルブ。</p>
-<p>alpha=0 で A、alpha=1 で B に一致する。単純な blend(A,B,alpha) と違い、目・鼻などの特徴が二重像にならず 1 つに重なる(=「本物の中間」)。</p>
-<p>引数:</p>
-<p>imgA, imgB: (H,W[,C])、同 shape、[0,1]。</p>
-<p>ptsA, ptsB: (K,2) の (x,y)。A と B の対応点(同数・同順)。</p>
-<p>alpha: 合成比率 [0,1]。</p>
-<p>method: &quot;affine&quot;(区分アフィン, 速い)か &quot;tps&quot;(滑らか)。</p>
-<p>lam: TPS の平滑化係数(method=&quot;tps&quot; のとき)。</p>
-<p>with_corners: True で四隅を固定点に足し、端の穴を防ぐ。</p>
-<p>返り値: (H,W[,C]) の中間画像([0,1])。</p>
+<p>प्रक्रिया (Beier–Neely शैली का mesh morph):</p>
+<p style="margin:2px 0 2px 12px">1. मध्य shape mid = (1-alpha)·ptsA + alpha·ptsB बनाएँ।</p>
+<p style="margin:2px 0 2px 12px">2. A को ptsA→mid पर, B को ptsB→mid पर warp करें (दोनों के features को mid पर मिलाना)।</p>
+<p style="margin:2px 0 2px 12px">3. warp(A), warp(B) को alpha से cross-dissolve करें।</p>
+<p>alpha=0 पर A से, alpha=1 पर B से मेल खाता है। सादे blend(A,B,alpha) के विपरीत, आँख, नाक जैसे features दोहरी छवि नहीं बनते बल्कि 1 में मिल जाते हैं (= &quot;असली मध्य&quot;)।</p>
+<p>arguments:</p>
+<p>imgA, imgB: (H,W[,C]), समान shape, [0,1]।</p>
+<p>ptsA, ptsB: (K,2) के (x,y)। A और B के corresponding points (समान संख्या, समान क्रम)।</p>
+<p>alpha: मिश्रण अनुपात [0,1]।</p>
+<p>method: &quot;affine&quot; (piecewise affine, तेज़) या &quot;tps&quot; (smooth)।</p>
+<p>lam: TPS का smoothing coefficient (method=&quot;tps&quot; होने पर)।</p>
+<p>with_corners: True पर चारों कोनों को fixed points के रूप में जोड़कर किनारों के छेद रोकता है।</p>
+<p>return value: (H,W[,C]) की मध्य image ([0,1])।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

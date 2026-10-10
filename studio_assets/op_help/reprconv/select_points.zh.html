@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.select_points(points, indices)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群 <code style="color:#22d3bf">(N,3)</code> 与索引 <code style="color:#22d3bf">(M,)</code> → 子点群 <code style="color:#22d3bf">(M,3)</code>。<code style="color:#22d3bf">indices</code> 的消费侧。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">indices</code> を産む op は 6 つあるのに(<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>)、<b>添字を食う単入力 op が 1 つも無かった</b> —— 添字は「元の集合とセットで初めて意味を持つ」ので、単入力では原理的に作れない。よってこれは 2 入力にしてある。</p>
+<p>产出 <code style="color:#22d3bf">indices</code> 的 op 有 6 个(<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>),<b>却连 1 个消费下标的单输入 op 都没有</b> —— 下标&quot;只有与原集合配套才有意义&quot;,所以单输入在原理上做不出来。因此这个 op 做成了 2 输入。</p>
 <p>Args:</p>
 <p>points: (N, 3)。</p>
-<p>indices: (M,) の非負整数、N 未満。</p>
+<p>indices: (M,) 的非负整数,小于 N。</p>
 <p>Returns:</p>
 <p>(M, 3) float64。</p>
 <p>Raises:</p>
-<p>ValueError: 範囲外の添字 / 形状不正 / 非有限。</p>
+<p>ValueError: 范围外的下标 / 形状不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

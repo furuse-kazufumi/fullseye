@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import watershed3d; watershed3d.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;watershed_vol&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Splits a 3D foreground into per-object labels with a watershed seeded from the distance transform (a thin composition of public ops).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>連結成分では 1 個に融合する<b>接触/僅かな重なり</b>を割るのが目的。EDT は <code style="color:#22d3bf">volops.vol_distance_transform</code>、skimage 分水嶺は <code style="color:#22d3bf">volops.vol_watershed</code> に委譲し、本モジュールは (A) skimage 不在時の純 scipy フォールバックと、シード自動生成のグルーだけを足す。<code style="color:#22d3bf">markers</code> を省略すると距離変換の局所極大(<code style="color:#22d3bf">min_distance</code> NMS)を自動シードにする。</p>
+<p>The goal is to split <b>contacts / slight overlaps</b> that connected components would fuse into 1. The EDT is delegated to <code style="color:#22d3bf">volops.vol_distance_transform</code> and the skimage watershed to <code style="color:#22d3bf">volops.vol_watershed</code>; this module only adds (A) a pure-scipy fallback when skimage is absent and the glue for automatic seed generation. If <code style="color:#22d3bf">markers</code> is omitted, the local maxima of the distance transform (<code style="color:#22d3bf">min_distance</code> NMS) become automatic seeds.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>binary : array_like</p>
-<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>3D foreground volume, bool or 0/1.</p>
 <p>markers : ndarray or None</p>
-<p>シードを外部指定する場合の int ラベル配列(binary と同形状、0=無し, 1..n=シード)。</p>
-<p>None なら距離変換の極大から自動生成する。</p>
+<p>int label array when seeds are specified externally (same shape as binary, 0 = none, 1..n = seeds).</p>
+<p>If None, generated automatically from the maxima of the distance transform.</p>
 <p>min_distance : float</p>
-<p><code style="color:#22d3bf">markers=None</code> のときのシード最小間隔(voxel)。</p>
+<p>Minimum seed spacing (voxel) when <code style="color:#22d3bf">markers=None</code>.</p>
 <p>method : {&quot;auto&quot;, &quot;skimage&quot;, &quot;scipy&quot;}</p>
-<p>バックエンド選択。&quot;skimage&quot; 指定で不在なら fail-closed(ImportError)。</p>
+<p>Backend selection. If &quot;skimage&quot; is specified but absent, fail-closed (ImportError).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>labels : ndarray(int32)</p>
-<p>binary と同形状。背景 0、各物体に 1..k のラベル(前景を過不足なく被覆)。</p>
+<p>Same shape as binary. Background 0, labels 1..k for each object (covering the foreground exactly).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形状不正・退化入力・不正 method のとき(fail-closed)。</p>
+<p>On invalid shape, degenerate input or invalid method (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

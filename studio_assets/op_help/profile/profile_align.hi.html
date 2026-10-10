@@ -6,11 +6,10 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(aligned, info) -&gt; pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>मापे गए contour को design contour से align करता है। <code style="color:#22d3bf">(aligned, info)</code> लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">mode</code> は <code style="color:#22d3bf">ALIGN_MODES</code>。<b>相似(スケール推定)は提供しない</b> —— 大きさの誤差そのものを吸収してしまうため(モジュール docstring の実測表)。</p>
+<p><code style="color:#22d3bf">mode</code> <code style="color:#22d3bf">ALIGN_MODES</code> में से एक है। <b>similarity (scale estimation) उपलब्ध नहीं है</b> -- क्योंकि यह आकार की त्रुटि को ही सोख लेगा (module docstring की measured table देखें)।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(aligned (N, 2), info)</code>。<code style="color:#22d3bf">info</code> は <code style="color:#22d3bf">mode</code> / <code style="color:#22d3bf">angle_deg</code> /</p>
-<p><code style="color:#22d3bf">translation</code> / <code style="color:#22d3bf">scale</code>(常に 1.0。<b>推定していないことの明示</b>)。</p>
+<p><code style="color:#22d3bf">(aligned (N, 2), info)</code>। <code style="color:#22d3bf">info</code> में <code style="color:#22d3bf">mode</code> / <code style="color:#22d3bf">angle_deg</code> /</p>
+<p><code style="color:#22d3bf">translation</code> / <code style="color:#22d3bf">scale</code> (हमेशा 1.0, <b>यह स्पष्ट बताने के लिए कि estimate नहीं किया गया</b>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code> (to call the implementation directly, <code style="color:#22d3bf">import profileops; profileops.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code>; from the registry, <code style="color:#22d3bf">opsprofile.get(&quot;profile_leading_edge_radius&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Leading-edge radius (as a fraction of the chord). Fits a circle to the points near the leading edge.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">frac</code> は前縁から弦方向にどこまでを「前縁付近」とみなすか。<b>この値で答えが変わる</b>。鼻先は円だが、少し離れると円ではないので、窓を広げると系統的に<b>過大</b>になる。NACA 4 桁の閉形式 <code style="color:#22d3bf">1.1019 * t^2</code> と突き合わせた実測(点数 4001 で生成):</p>
-<p>==========  ==========  ==========  ==========  ==========</p>
-<p>frac        NACA 0012   NACA 2412   NACA 0021   NACA 0008</p>
-<p>==========  ==========  ==========  ==========  ==========</p>
-<p>閉形式      0.01587     0.01587     0.04859     0.00705</p>
-<p>0.001       0.01590     0.01594     0.04780     0.00730</p>
-<p>0.005       0.01708     0.01716     0.04801     0.00870</p>
-<p>0.01        0.01872     0.01880     0.04897     0.01042</p>
-<p>0.03        0.02517     0.02526     0.05412     0.01688</p>
-<p>==========  ==========  ==========  ==========  ==========</p>
-<p>★ 既定は <b>0.001</b>。最初 0.03 を既定にしていて、閉形式の <b>1.6 倍</b>の値を返していた(「1 % 以内」と docstring に書いたのは確かめる前の推測だった)。厚い翼(0021)ほど鈍いので窓の影響が小さく、薄い翼(0008)ほど敏感。</p>
-<p>実データのように点が疎な輪郭では、この窓に点が 5 つ入らないことがある —— そのときは自動で等弧長に取り直してから当てはめる。</p>
+<p><code style="color:#22d3bf">frac</code> is how far along the chord from the leading edge counts as &quot;near the leading edge&quot;. <b>This value changes the answer</b>. The nose is a circle, but a little away from it the shape is not a circle, so widening the window makes the result systematically <b>too large</b>. Measured against the NACA 4-digit closed form <code style="color:#22d3bf">1.1019 * t^2</code> (generated with 4001 points):</p>
+<p>===========  ==========  ==========  ==========  ==========</p>
+<p>frac         NACA 0012   NACA 2412   NACA 0021   NACA 0008</p>
+<p>===========  ==========  ==========  ==========  ==========</p>
+<p>closed form  0.01587     0.01587     0.04859     0.00705</p>
+<p>0.001        0.01590     0.01594     0.04780     0.00730</p>
+<p>0.005        0.01708     0.01716     0.04801     0.00870</p>
+<p>0.01         0.01872     0.01880     0.04897     0.01042</p>
+<p>0.03         0.02517     0.02526     0.05412     0.01688</p>
+<p>===========  ==========  ==========  ==========  ==========</p>
+<p>★ The default is <b>0.001</b>. At first 0.03 was the default, and it returned <b>1.6 times</b> the closed-form value (writing &quot;within 1 %&quot; in the docstring was a guess made before checking). Thicker airfoils (0021) are blunter, so the window matters less; thinner airfoils (0008) are more sensitive.</p>
+<p>On contours with sparse points, like real data, fewer than 5 points may fall inside this window -- in that case it automatically resamples to equal arc length before fitting.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

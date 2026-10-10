@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.focus_sweep_surface_video(volseq, window: &#x27;int&#x27; = 5, zscale: &#x27;float&#x27; = 1.0, light=(0.4, 0.4, 0.8), ambient: &#x27;float&#x27; = 0.25) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import live4d; live4d.focus_sweep_surface_video(volseq, window: &#x27;int&#x27; = 5, zscale: &#x27;float&#x27; = 1.0, light=(0.4, 0.4, 0.8), ambient: &#x27;float&#x27; = 0.25) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opslive4d.get(&quot;focus_sweep_surface_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>초점 스윕(각 프레임이 z 방향 합초 스택)의 시계열로부터 <b>음영 처리된 높이장 동영상</b> <code style="color:#22d3bf">(T, Y, X, 3)</code>을 만든다(<code style="color:#22d3bf">rgbvideo</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>高さは <code style="color:#22d3bf">focus_sweep_height_video</code> と同じ(合焦度の最大を放物線で副ボクセルに)。高さ場の勾配から法線を作り(<code style="color:#22d3bf">zscale</code> は z 1 枚の実長 / 画素の実長)、<code style="color:#22d3bf">light</code> 方向のランバート陰影(<code style="color:#22d3bf">ambient</code> を下駄に)を<b>高さの色</b>(青 = 低い → 赤 = 高い)に掛ける。掃引の途中で対象が動くと層の整合が崩れて高さが跳ぶ(その時刻だけ疑う)。</p>
+<p>높이는 <code style="color:#22d3bf">focus_sweep_height_video</code> 와 같다(합초도의 최대를 포물선으로 부복셀로). 높이장의 기울기로부터법선을 만들고(<code style="color:#22d3bf">zscale</code> 은 z 1 장의 실제 길이 / 화소의 실제 길이), <code style="color:#22d3bf">light</code> 방향의 램버트 음영(<code style="color:#22d3bf">ambient</code> 를바닥값으로)을 <b>높이의 색</b>(파랑 = 낮음 → 빨강 = 높음)에 곱한다. 스윕 도중에 대상이 움직이면 층의 정합이 무너져높이가 튄다(그 시각만 의심한다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

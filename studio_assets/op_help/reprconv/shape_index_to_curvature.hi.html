@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index_to_curvature(pairs)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.shape_index_to_curvature(pairs)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;shape_index_to_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>shape index और curvedness <code style="color:#22d3bf">(N,2)</code> → principal curvature <code style="color:#22d3bf">(N,2)</code>। <code style="color:#22d3bf">curvature_to_shape_index</code> का उल्टा।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>theta = pi*S/2 として <code style="color:#22d3bf">k1 = C(sin+cos)</code>, <code style="color:#22d3bf">k2 = C(sin-cos)</code>。(S, C) の定義式を解いた閉形式で、近似も反復も入っていない。</p>
+<p>theta = pi*S/2 लेकर <code style="color:#22d3bf">k1 = C(sin+cos)</code>, <code style="color:#22d3bf">k2 = C(sin-cos)</code>। यह (S, C) के परिभाषा वाले समीकरण हल करके मिला closed form है, इसमें न approximation है न iteration।</p>
 <p>Args:</p>
-<p>pairs: (N, 2) の <code style="color:#22d3bf">[S, C]</code>。</p>
+<p>pairs: (N, 2) का <code style="color:#22d3bf">[S, C]</code>।</p>
 <p>Returns:</p>
-<p>(N, 2) float64 の <code style="color:#22d3bf">[k1, k2]</code>(k1 &gt;= k2)。</p>
+<p>(N, 2) float64 का <code style="color:#22d3bf">[k1, k2]</code> (k1 &gt;= k2)।</p>
 <p>Raises:</p>
-<p>ValueError: |S| &gt; 1 / C &lt; 0 / 形状不正 / 非有限。</p>
+<p>ValueError: |S| &gt; 1 / C &lt; 0 / shape ग़लत / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

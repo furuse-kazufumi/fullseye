@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delta_e_2000(lab1, lab2, kL=1.0, kC=1.0, kH=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.delta_e_2000(lab1, lab2, kL=1.0, kC=1.0, kH=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;delta_e_2000&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>CIEDE2000-Farbabstand (CIE 142-2001).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>実装が踏み外しやすい 3 か所 ―― <b>色相角の平均</b>(0/360 をまたぐ扱い)、<b>275° の回転項</b>、<b>彩度ゼロ近傍</b>(<code style="color:#22d3bf">atan2(0, 0)</code> の扱い)―― は Sharma, Wu &amp; Dalal (2005) の 34 組の検証対で固定してある(<code style="color:#22d3bf">CIEDE2000_TEST_PAIRS</code> / <code style="color:#22d3bf">tests/test_imgmetrics.py</code>)。</p>
+<p>Die 3 Stellen, an denen Implementierungen leicht danebengreifen -- <b>der mittlere Bunttonwinkel</b> (Behandlung des Übergangs 0/360), <b>der 275°-Rotationsterm</b> und <b>Buntheit nahe null</b> (Behandlung von <code style="color:#22d3bf">atan2(0, 0)</code>) -- sind mit den 34 Prüfpaaren von Sharma, Wu &amp; Dalal (2005) festgenagelt (<code style="color:#22d3bf">CIEDE2000_TEST_PAIRS</code> / <code style="color:#22d3bf">tests/test_imgmetrics.py</code>).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>lab1, lab2 : array_like</p>
-<p>最後の軸が <code style="color:#22d3bf">(L*, a*, b*)</code> の配列。ブロードキャストされる。</p>
+<p>Arrays, deren letzte Achse <code style="color:#22d3bf">(L*, a*, b*)</code> ist. Sie werden gebroadcastet.</p>
 <p>kL, kC, kH : float</p>
-<p>観察条件のパラメトリック係数。既定は基準条件の 1。</p>
+<p>Parametrische Faktoren der Betrachtungsbedingungen. Standard ist 1, die Referenzbedingung.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>ΔE00(最後の軸が落ちた形)。</p>
+<p>ΔE00 (Form ohne die letzte Achse).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

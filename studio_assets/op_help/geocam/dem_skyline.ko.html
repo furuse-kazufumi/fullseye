@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;dem_skyline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>DEM의 1점에서 본 <b>전방위 스카이라인</b>(방위마다의 지평선 앙각) → table.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">dem_horizon_angle</code> は「全セル × 1 方位」、これは「1 点 × 全方位」—— 固定カメラの向きを決めるのに要るのは後者。各方位へ <code style="color:#22d3bf">cell_size / 2</code> 刻みで視線を進め(標高は双一次補間)、<code style="color:#22d3bf">atan((z_j − z_0 − drop(d)) / d)</code> の最大値をその方位の仰角にする。<code style="color:#22d3bf">drop(d) = d² / (2 R_eff)</code> は地球の丸みと大気屈折(有効半径 R / (1 − 0.13))で遠くの山が沈む分。視線が DEM の外に出たらそこで止める(<code style="color:#22d3bf">max_distance</code> でも止まる)。<b>DEM の外側</b>は「DEM の最低標高の平面が地平線まで続く」と仮定し、仰角の下限を地平線の沈み <code style="color:#22d3bf">−sqrt(2 h / R_eff)</code>(h = 観測点の最低標高からの高さ)にする —— 有限の DEM の端でたまたま低い点を見て、実際には地球の丸みで見えない −7° のような「穴」を空にしないため(<code style="color:#22d3bf">horizon_dip_deg</code> に返す)。</p>
+<p><code style="color:#22d3bf">dem_horizon_angle</code> 은 &quot;전 셀 × 1 방위&quot;, 이것은 &quot;1 점 × 전 방위&quot;—— 고정 카메라의 방향을정하는 데 필요한 것은 후자. 각 방위로 <code style="color:#22d3bf">cell_size / 2</code> 스텝으로 시선을 진행시키고(표고는 쌍선형 보간), <code style="color:#22d3bf">atan((z_j − z_0 − drop(d)) / d)</code> 의 최댓값을 그 방위의 앙각으로 한다. <code style="color:#22d3bf">drop(d) = d² / (2 R_eff)</code> 는 지구의 곡률과 대기 굴절(유효 반지름 R / (1 − 0.13))로 먼 산이 가라앉는 몫. 시선이 DEM 밖으로나가면 거기서 멈춘다(<code style="color:#22d3bf">max_distance</code> 에서도 멈춘다). <b>DEM 의 바깥</b>은 &quot;DEM 의 최저 표고의 평면이지평선까지 이어진다&quot;고 가정하고, 앙각의 하한을 지평선의 가라앉음 <code style="color:#22d3bf">−sqrt(2 h / R_eff)</code>(h = 관측점의최저 표고로부터의 높이)로 한다 —— 유한한 DEM 의 끝에서 우연히 낮은 점을 보고, 실제로는 지구의 곡률로보이지 않는 −7° 같은 &quot;구멍&quot;을 하늘로 만들지 않기 위해(<code style="color:#22d3bf">horizon_dip_deg</code> 에 반환한다).</p>
 <p>Args:</p>
-<p>dem: (H, W) 標高 [m]。行 0 が北端。</p>
-<p>cell_size: [m/セル]。</p>
-<p>observer_rc: 観測点 (row, col)。float 可(セルの中に立てる)。</p>
-<p>eye_height: 地面からのカメラ高さ [m]。</p>
-<p>az_step_deg: 方位の刻み [度]。</p>
-<p>max_distance: 視線の最大距離 [m] (None = DEM の端まで)。</p>
-<p>earth_curvature: False なら平らな地球。</p>
+<p>dem: (H, W) 표고 [m]. 행 0 이 북쪽 끝.</p>
+<p>cell_size: [m/셀].</p>
+<p>observer_rc: 관측점 (row, col). float 가능(셀 안에 세운다).</p>
+<p>eye_height: 지면으로부터의 카메라 높이 [m].</p>
+<p>az_step_deg: 방위의 스텝 [도].</p>
+<p>max_distance: 시선의 최대 거리 [m] (None = DEM 의 끝까지).</p>
+<p>earth_curvature: False 이면 평평한 지구.</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">azimuth_deg</code> (M,) / <code style="color:#22d3bf">elevation_deg</code> (M,) / <code style="color:#22d3bf">distance_m</code> (M,)(仰角を決めた</p>
-<p>地点までの距離)/ <code style="color:#22d3bf">observer_elevation_m</code> / <code style="color:#22d3bf">horizon_dip_deg</code> / <code style="color:#22d3bf">n</code>。方位は 0 以上</p>
-<p>360 未満、昇順。</p>
+<p>table: <code style="color:#22d3bf">azimuth_deg</code> (M,) / <code style="color:#22d3bf">elevation_deg</code> (M,) / <code style="color:#22d3bf">distance_m</code> (M,)(앙각을 정한</p>
+<p>지점까지의 거리)/ <code style="color:#22d3bf">observer_elevation_m</code> / <code style="color:#22d3bf">horizon_dip_deg</code> / <code style="color:#22d3bf">n</code>. 방위는 0 이상</p>
+<p>360 미만, 오름차순.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

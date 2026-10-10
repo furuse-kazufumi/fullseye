@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_betweenness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>매개 중심성(Brandes 2001, 이진 유향, 정규화 없음). 노드별 길이 n의 배열.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>ノード v の値 = Σ_{s≠v≠t} σ_st(v) / σ_st(最短路の本数比)。二値構造が対称(すべての辺が相互)なら無向グラフとして (s, t) と (t, s) を 1 対と数え 2 で割る —— 無向スター(n 個)の中心が (n−1)(n−2)/2、葉が 0 になる教科書の値。有向(非対称)なら順序対のまま数える。</p>
+<p>노드 v 의 값 = Σ_{s≠v≠t} σ_st(v) / σ_st(최단 경로 수의 비). 이진 구조가 대칭(모든 변이 상호)이면 무향 그래프로서 (s, t) 와 (t, s) 를 1 쌍으로 세고 2 로 나눈다 —— 무향 스타(n 개)의 중심이 (n−1)(n−2)/2, 잎이 0 이 되는 교과서의 값. 유향(비대칭)이면 순서쌍 그대로 센다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

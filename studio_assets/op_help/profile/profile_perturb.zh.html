@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_perturb(contour, kind=&#x27;thicken&#x27;, amount=0.001, extent=0.1, cycles=6.0)</code>(要直接调用实现,<code style="color:#22d3bf">import profileops; profileops.profile_perturb(contour, kind=&#x27;thicken&#x27;, amount=0.001, extent=0.1, cycles=6.0)</code>;从台账取用则 <code style="color:#22d3bf">opsprofile.get(&quot;profile_perturb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回植入了已知量缺陷的轮廓。<code style="color:#22d3bf">PERTURB_KINDS</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>これが無い形状検査は、静かに合格を出す</b>。0.001 翼弦の厚み増を入れて、検出器がそれを 0.001 として返すかを確かめるために使う。</p>
+<p><b>没有它的形状检查会悄无声息地判为合格</b>。用它加入 0.001 弦长的厚度增量，确认检测器是否把它作为 0.001 返回。</p>
 <p>Args:</p>
-<p>contour: 元の輪郭。</p>
-<p>kind: 欠陥の種類。</p>
-<p>amount: 大きさ(翼弦比)。<code style="color:#22d3bf">&quot;twist&quot;</code> だけは度。</p>
-<p>extent: <code style="color:#22d3bf">&quot;le_erosion&quot;</code> が及ぶ弦方向の範囲。</p>
-<p>cycles: <code style="color:#22d3bf">&quot;waviness&quot;</code> の波数。</p>
+<p>contour: 原始轮廓。</p>
+<p>kind: 缺陷的种类。</p>
+<p>amount: 大小(弦长比)。只有 <code style="color:#22d3bf">&quot;twist&quot;</code> 以度为单位。</p>
+<p>extent: <code style="color:#22d3bf">&quot;le_erosion&quot;</code> 波及的弦向范围。</p>
+<p>cycles: <code style="color:#22d3bf">&quot;waviness&quot;</code> 的波数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

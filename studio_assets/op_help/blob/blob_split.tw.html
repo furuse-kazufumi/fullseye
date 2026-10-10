@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_split(labels: &#x27;Any&#x27;, seeds: &#x27;Any&#x27;, distance: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import blob2d; blob2d.blob_split(labels: &#x27;Any&#x27;, seeds: &#x27;Any&#x27;, distance: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsblob.get(&quot;blob_split&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從種子出發<b>依由高到低的順序</b>擴展區域，分割融合在一起的團塊(分水嶺)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">distance</code> の高い画素から順に、隣接する既知のラベルを取り込んでいく(immersion 型の分水嶺を、距離の降順で回す形)。<b>種を持たない塊はそのまま残す</b> —— 割る材料が無いのに消すのは嘘になるため。</p>
-<p><code style="color:#22d3bf">segmentation.watersheds_marker</code> を使わないのは、<b>skimage が無い環境で黙って別の算法(マーカーからの最近傍)に落ちる</b>から。落ちた先は画像を一切見ないので、同じ関数名で違うものが返る。ここは numpy と scipy だけで閉じる。</p>
+<p>從 <code style="color:#22d3bf">distance</code> 高的像素開始,依序併入相鄰的已知標籤(依距離降序執行的 immersion 型分水嶺)。<b>沒有種子的團塊保持原樣</b> —— 沒有分割依據卻把它刪掉,就是在說謊。</p>
+<p>不使用 <code style="color:#22d3bf">segmentation.watersheds_marker</code> 的原因是:<b>在沒有 skimage 的環境中,它會默默退化成另一種演算法(從標記出發的最近鄰)</b>。退化後的演算法完全不看影像, 因此同一個函式名稱回傳的是不同的東西。這裡只用 numpy 和 scipy 自成一體。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : array_like</p>
-<p>割る対象。<code style="color:#22d3bf">blob_label</code> の出力(<code style="color:#22d3bf">&gt; 0</code> の画素だけが割られる)。</p>
+<p>分割對象。<code style="color:#22d3bf">blob_label</code> 的輸出(只有 <code style="color:#22d3bf">&gt; 0</code> 的像素會被分割)。</p>
 <p>seeds : array_like</p>
-<p><code style="color:#22d3bf">blob_seeds</code> の出力。<code style="color:#22d3bf">labels</code> の外にある種は無視する。</p>
+<p><code style="color:#22d3bf">blob_seeds</code> 的輸出。位於 <code style="color:#22d3bf">labels</code> 之外的種子會被忽略。</p>
 <p>distance : array_like</p>
-<p>優先度。ふつうは <code style="color:#22d3bf">blob_distance</code> の出力。</p>
+<p>優先度。通常是 <code style="color:#22d3bf">blob_distance</code> 的輸出。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">int32</code> のラベル画像。番号は 1 から振り直す。</p>
+<p><code style="color:#22d3bf">int32</code> 標籤影像。編號從 1 重新分配。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

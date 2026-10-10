@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_complex&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將封閉輪廓轉換為複數傅立葉級數的係數 —— <code style="color:#22d3bf">z(t) = Σ c_k exp(2πi k t)</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>引数:</p>
-<p>points: (N,2) の閉輪郭頂点。<b>(row, col) 順</b>(<code style="color:#22d3bf">fourierdesc</code> と同じ)。</p>
-<p>n_harmonics: 残す次数 <code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">|k| &lt;= K</code>)。<code style="color:#22d3bf">None</code> なら表せる上限まで。</p>
-<p>parametrisation: <code style="color:#22d3bf">&quot;index&quot;</code> = 点の添字を等間隔の媒介変数にする /</p>
-<p><code style="color:#22d3bf">&quot;arclength&quot;</code> = <b>弧長</b>で等間隔に打ち直してから変換する。</p>
-<p>返り値: <code style="color:#22d3bf">(2K+1, 3)</code> の実配列(<code style="color:#22d3bf">matrix</code>)。行は <code style="color:#22d3bf">[k, Re c_k, Im c_k]</code> で <code style="color:#22d3bf">k</code> は <code style="color:#22d3bf">0, 1, -1, 2, -2, …</code>(低い周波数から)。</p>
-<p>★<b>媒介変数の取り方を既定で黙って決めない</b>のがこの op の肝。不均一に標本化された輪郭を <code style="color:#22d3bf">&quot;index&quot;</code> で読むと、点が密なところに余分な時間が割り当てられ、<b>絵は似ているのに係数が別物</b>になる(実測で <code style="color:#22d3bf">k=3</code> の係数が 47 倍ちがった)。既定は <code style="color:#22d3bf">&quot;index&quot;</code>(FFT の素の意味)だが、形の記述として使うなら <code style="color:#22d3bf">&quot;arclength&quot;</code> を選ぶこと。</p>
-<p>★★<code style="color:#22d3bf">&quot;arclength&quot;</code> を選ぶと <b>op の内部で輪郭を打ち直す</b>ので、返る係数は渡した配列ではなく<b>打ち直した輪郭</b>を記述する。だから <code style="color:#22d3bf">contour_fourier_truncation_energy</code> の予言は「打ち直した輪郭に対して」厳密で、呼び手が手元の配列で誤差を測ると合わない(実測: 512 点で 1.15 ずれた)。手元の配列に対して厳密な予言が欲しいときは、<b>先に弧長で打ち直してから</b> <code style="color:#22d3bf">&quot;index&quot;</code> で呼ぶこと。</p>
-<p>★<b>弧長の打ち直しは冪等ではない</b>: 標本を弦で結ぶので、すでに等弧長の輪郭にもう 1 度かけると点が最大 3.73 px 動き(平均 0.84 px)、長さがさらに 3.25 % 縮む。二度かけないこと。</p>
+<p>參數:</p>
+<p>points: (N,2) 的閉合輪廓頂點。<b>(row, col) 順序</b>(與 <code style="color:#22d3bf">fourierdesc</code> 相同)。</p>
+<p>n_harmonics: 保留的階數 <code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">|k| &lt;= K</code>)。為 <code style="color:#22d3bf">None</code> 時保留到可表示的上限。</p>
+<p>parametrisation: <code style="color:#22d3bf">&quot;index&quot;</code> = 把點的索引作為等間隔的參數 /</p>
+<p><code style="color:#22d3bf">&quot;arclength&quot;</code> = 先依<b>弧長</b>等間隔重新取樣再變換。</p>
+<p>回傳值: <code style="color:#22d3bf">(2K+1, 3)</code> 的實數陣列(<code style="color:#22d3bf">matrix</code>)。列為 <code style="color:#22d3bf">[k, Re c_k, Im c_k]</code>, <code style="color:#22d3bf">k</code> 依序為 <code style="color:#22d3bf">0, 1, -1, 2, -2, …</code>(從低頻開始)。</p>
+<p>★<b>不在預設值裡悄悄決定參數的取法</b>是本 op 的要點。對不均勻取樣的輪廓用 <code style="color:#22d3bf">&quot;index&quot;</code> 讀取時，點密集處會被分配多餘的時間，<b>圖看起來相似，係數卻是另一回事</b>(實測中 <code style="color:#22d3bf">k=3</code> 的係數相差 47 倍)。預設是 <code style="color:#22d3bf">&quot;index&quot;</code>(FFT 的原始含義)，但若用作形狀的描述，請選擇 <code style="color:#22d3bf">&quot;arclength&quot;</code>。</p>
+<p>★★選擇 <code style="color:#22d3bf">&quot;arclength&quot;</code> 時會<b>在 op 內部重新取樣輪廓</b>，因此回傳的係數描述的不是傳入的陣列，而是<b>重新取樣後的輪廓</b>。因此 <code style="color:#22d3bf">contour_fourier_truncation_energy</code> 的預言「對重新取樣後的輪廓」是嚴格的，呼叫方若用手邊的陣列量測誤差就會對不上(實測: 512 點時偏差 1.15)。想要對手邊陣列嚴格成立的預言時，請<b>先依弧長重新取樣</b>, 再以 <code style="color:#22d3bf">&quot;index&quot;</code> 呼叫。</p>
+<p>★<b>弧長重新取樣不是冪等的</b>: 由於用弦連接取樣點，對已經等弧長的輪廓再做 1 次，點最多會移動 3.73 px(平均 0.84 px)，長度還會再縮短 3.25 %。不要做兩次。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

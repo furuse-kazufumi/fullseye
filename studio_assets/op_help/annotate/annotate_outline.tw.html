@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_outline(img, mask, label=None, color=&#x27;emphasis&#x27;, width=1.5, alpha=1.0, dash=None, font_size=12, label_offset=(0, 0), box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_outline(img, mask, label=None, color=&#x27;emphasis&#x27;, width=1.5, alpha=1.0, dash=None, font_size=12, label_offset=(0, 0), box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_outline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳影像(image2d):把遮罩輪廓畫成(抗鋸齒的)閉合折線,並在重心處放文字。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>mask の形が画像と違う、真の画素が無い、alpha が [0,1] の外。</p>
-<p>手順: <code style="color:#22d3bf">layout</code> が無ければ <code style="color:#22d3bf">annotate_outline_layout(mask)</code> で境界ループ(画素の辺に沿う <code style="color:#22d3bf">(x, y)</code> の閉多角形、外周と穴の両方、成分ごと)と重心を求め、各ループを距離被覆率のアンチエイリアス折れ線で載せる。<code style="color:#22d3bf">label</code> があれば重心 + <code style="color:#22d3bf">label_offset</code> に <code style="color:#22d3bf">text_box</code>(<code style="color:#22d3bf">anchor=&quot;cm&quot;</code>、下敷き付き)を置く。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code>: <code style="color:#22d3bf">(H, W)</code> / <code style="color:#22d3bf">(H, W, 1|3|4)</code>、float64 複製・<code style="color:#22d3bf">[0, 1]</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code>: <code style="color:#22d3bf">(H, W)</code>、画像と同じ形(<code style="color:#22d3bf">[row, col]</code> 添字)。bool 以外は <code style="color:#22d3bf">&gt; 0.5</code> で二値化、非有限は <code style="color:#22d3bf">ValueError</code>。真の画素が無ければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線幅 [px]、0.5 以上。<code style="color:#22d3bf">dash=(on, off)</code> [px] で破線(<code style="color:#22d3bf">on &gt; 0</code>、<code style="color:#22d3bf">off &gt;= 0</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code>。<code style="color:#22d3bf">box_alpha</code> は文字の下敷きの不透明度。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">label_offset</code>: <code style="color:#22d3bf">(dx, dy)</code> [px]。重心が輪郭の外に落ちる形(三日月など)はここでずらす。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">layout</code>: <code style="color:#22d3bf">annotate_outline_layout</code> の返り値を渡すと再計算せず同じ配置を別の絵に使い回せる(<code style="color:#22d3bf">contours</code> / <code style="color:#22d3bf">centroid</code> を読む)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
-<p>塗りで示すなら <code style="color:#22d3bf">overlay_mask</code>、複数領域に番号を振るなら <code style="color:#22d3bf">annotate_markers</code>。</p>
+<p>mask 的形狀與影像不同、沒有為真的像素、alpha 在 [0,1] 之外。</p>
+<p>步驟:若無 <code style="color:#22d3bf">layout</code>,則用 <code style="color:#22d3bf">annotate_outline_layout(mask)</code> 求邊界環(沿像素邊的 <code style="color:#22d3bf">(x, y)</code> 封閉多邊形,外周和孔都有,按連通分量)和質心, 再把各環以距離覆蓋率的抗鋸齒折線疊加上去。若有 <code style="color:#22d3bf">label</code>, 則在質心 + <code style="color:#22d3bf">label_offset</code> 處放置 <code style="color:#22d3bf">text_box</code>(<code style="color:#22d3bf">anchor=&quot;cm&quot;</code>,帶襯底)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code>:<code style="color:#22d3bf">(H, W)</code> / <code style="color:#22d3bf">(H, W, 1|3|4)</code>,float64 副本、<code style="color:#22d3bf">[0, 1]</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code>:<code style="color:#22d3bf">(H, W)</code>,與影像同形(<code style="color:#22d3bf">[row, col]</code> 索引)。非 bool 用 <code style="color:#22d3bf">&gt; 0.5</code> 二值化,非有限則 <code style="color:#22d3bf">ValueError</code>。沒有為真的像素則 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>:線寬 [px],0.5 以上。<code style="color:#22d3bf">dash=(on, off)</code> [px] 為虛線(<code style="color:#22d3bf">on &gt; 0</code>、<code style="color:#22d3bf">off &gt;= 0</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>:<code style="color:#22d3bf">[0, 1]</code>。<code style="color:#22d3bf">box_alpha</code> 是文字襯底的不透明度。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">label_offset</code>:<code style="color:#22d3bf">(dx, dy)</code> [px]。質心落在輪廓外的形狀(新月形等) 在這裡偏移。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">layout</code>:傳入 <code style="color:#22d3bf">annotate_outline_layout</code> 的回傳值即可不重新計算,把同一配置用於另一張圖(讀取 <code style="color:#22d3bf">contours</code> / <code style="color:#22d3bf">centroid</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值:與輸入同形的 float64。</p>
+<p>若要用填色表示則用 <code style="color:#22d3bf">overlay_mask</code>,若要為多個區域編號則用 <code style="color:#22d3bf">annotate_markers</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

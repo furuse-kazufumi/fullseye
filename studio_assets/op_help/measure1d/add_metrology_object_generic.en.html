@@ -4,17 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_generic(model, otype, params, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_generic(model, otype, params, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_generic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Adds a generic metrology object (add_metrology_object_generic).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>形状の種類を文字列で指定する入口。<code style="color:#22d3bf">otype</code> と <code style="color:#22d3bf">params</code> の組は専用 op と</p>
-<p>同じ並びでなければならない:</p>
+<p>An entry point that specifies the shape type by string. The pair <code style="color:#22d3bf">otype</code> and <code style="color:#22d3bf">params</code> must be in the same order as for the dedicated ops:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;line&quot;</code>: <code style="color:#22d3bf">(row1, col1, row2, col2)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;circle&quot;</code>: <code style="color:#22d3bf">(row, col, radius)</code></p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;rect&quot;</code>: <code style="color:#22d3bf">(row, col, phi, l1, l2)</code>(<code style="color:#22d3bf">phi</code> ラジアン、<code style="color:#22d3bf">l1</code>/<code style="color:#22d3bf">l2</code> 半辺長)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;rect&quot;</code>: <code style="color:#22d3bf">(row, col, phi, l1, l2)</code> (<code style="color:#22d3bf">phi</code> in radians, <code style="color:#22d3bf">l1</code>/<code style="color:#22d3bf">l2</code> half side lengths)</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;ellipse&quot;</code>: <code style="color:#22d3bf">(row, col, phi, ra, rb)</code></p>
-<p><code style="color:#22d3bf">params</code> は <code style="color:#22d3bf">tuple</code> にして積むだけで、<b>ここでは <code style="color:#22d3bf">otype</code> も要素数も検証しない</b>。未知の <code style="color:#22d3bf">otype</code> は <code style="color:#22d3bf">apply_metrology_model</code> が <code style="color:#22d3bf">ValueError</code> で拒否し、要素数が違えば同じく <code style="color:#22d3bf">apply</code> 時に展開で失敗する。設定ファイルから形状を読み込むときは、積む前に上の表で確認すること。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: サンプル数(既定 40。矩形は 4 辺に分配)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 追加位置の index(0 始まり)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> は <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> を row/col として動かす(<code style="color:#22d3bf">&quot;line&quot;</code> のみ <code style="color:#22d3bf">[2]</code>/<code style="color:#22d3bf">[3]</code> も)。</p>
+<p><code style="color:#22d3bf">params</code> is just turned into a <code style="color:#22d3bf">tuple</code> and stacked; <b>neither <code style="color:#22d3bf">otype</code> nor the number of elements is validated here</b>. An unknown <code style="color:#22d3bf">otype</code> is rejected by <code style="color:#22d3bf">apply_metrology_model</code> with <code style="color:#22d3bf">ValueError</code>, and a wrong number of elements likewise fails during unpacking at <code style="color:#22d3bf">apply</code> time. When loading shapes from a configuration file, check them against the table above before stacking.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: number of samples (default 40; for a rectangle, distributed over the 4 sides).</p>
+<p style="margin:2px 0 2px 12px">• Returns: index of the added position (starting at 0).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> moves <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> as row/col (for <code style="color:#22d3bf">&quot;line&quot;</code> only, also <code style="color:#22d3bf">[2]</code>/<code style="color:#22d3bf">[3]</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

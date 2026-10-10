@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;annotate_dimension_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert eine Tabelle (dict): die Geometrie einer Maßlinie (Maßlinie, Hilfslinien, Textposition) in geschlossener Form.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">n</code> を p0→p1 の左法線(画面座標)として、寸法線は <code style="color:#22d3bf">p + n*offset</code>、補助線は <code style="color:#22d3bf">p</code> から <code style="color:#22d3bf">p + n*(offset+extension)</code>、文字は寸法線の中点から <code style="color:#22d3bf">n*text_gap</code>。<code style="color:#22d3bf">offset</code> の符号で側を選ぶ。</p>
+<p>Mit <code style="color:#22d3bf">n</code> als linker Normale von p0→p1 (Bildschirmkoordinaten) ist die Maßlinie <code style="color:#22d3bf">p + n*offset</code>, die Hilfslinien verlaufen von <code style="color:#22d3bf">p</code> bis <code style="color:#22d3bf">p + n*(offset+extension)</code>, und der Text steht <code style="color:#22d3bf">n*text_gap</code> vom Mittelpunkt der Maßlinie entfernt. Das Vorzeichen von <code style="color:#22d3bf">offset</code> wählt die Seite.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;p0&quot;,&quot;p1&quot;,&quot;line&quot;:(q0,q1),&quot;ext0&quot;,&quot;ext1&quot;,&quot;text_xy&quot;,&quot;normal&quot;, &quot;angle_deg&quot;,&quot;length_px&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;p0&quot;,&quot;p1&quot;,&quot;line&quot;:(q0,q1),&quot;ext0&quot;,&quot;ext1&quot;,&quot;text_xy&quot;,&quot;normal&quot;, &quot;angle_deg&quot;,&quot;length_px&quot;}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>2 点が一致(向きが無い)、非有限、offset が 0。</p>
+<p>die 2 Punkte fallen zusammen (keine Richtung), nicht endlich, offset ist 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

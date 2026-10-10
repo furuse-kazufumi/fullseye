@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_mean_surface_distance(labels_pred, labels_true) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import segeval; segeval.seg_mean_surface_distance(labels_pred, labels_true) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;seg_mean_surface_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Average symmetric surface distance (ASSD): mean of the both-direction boundary distances, plus the RMS (seg_mean_surface_distance).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>境界は <code style="color:#22d3bf">_boundary</code> の規約。どちらかの境界が空なら ValueError。</p>
-<p>返り値: <code style="color:#22d3bf">assd</code>、<code style="color:#22d3bf">rms</code>、<code style="color:#22d3bf">mean_pred_to_true</code> / <code style="color:#22d3bf">mean_true_to_pred</code>、<code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>。</p>
+<p>Boundaries follow the convention of <code style="color:#22d3bf">_boundary</code>. If either boundary is empty, ValueError.</p>
+<p>Returns: <code style="color:#22d3bf">assd</code>, <code style="color:#22d3bf">rms</code>, <code style="color:#22d3bf">mean_pred_to_true</code> / <code style="color:#22d3bf">mean_true_to_pred</code>, <code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

@@ -4,21 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_bar(img, lut, rect, vmin=0.0, vmax=1.0, unit=&#x27;&#x27;, label_fmt=&#x27;{:g}&#x27;, orientation=&#x27;vertical&#x27;, font_size=12, font_path=None, scheme=&#x27;okabe_ito&#x27;, border=1, border_color=&#x27;neutral&#x27;, text_color=None, style=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.color_bar(img, lut, rect, vmin=0.0, vmax=1.0, unit=&#x27;&#x27;, label_fmt=&#x27;{:g}&#x27;, orientation=&#x27;vertical&#x27;, font_size=12, font_path=None, scheme=&#x27;okabe_ito&#x27;, border=1, border_color=&#x27;neutral&#x27;, text_color=None, style=None)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;color_bar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Legende einer LUT (eine Farbskala), beschriftet mit Minimum, Maximum und Einheit.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>lut : (n,3) or (n,)</p>
-<p>色対応表。float [0,1]。<code style="color:#22d3bf">palette.diverging_lut</code> の出力をそのまま。</p>
+<p>Farbzuordnungstabelle. float [0,1]. Die Ausgabe von <code style="color:#22d3bf">palette.diverging_lut</code> unverändert.</p>
 <p>rect : (x, y, w, h)</p>
-<p>バーの矩形(左上基準)。</p>
+<p>Rechteck des Balkens (Bezug oben links).</p>
 <p>vmin, vmax : float</p>
-<p>両端の値。<code style="color:#22d3bf">vmin == vmax</code> は<b>目盛りの意味が消える</b>ので ValueError。</p>
+<p>Werte an beiden Enden. <code style="color:#22d3bf">vmin == vmax</code> <b>nimmt den Skalenstrichen ihre Bedeutung</b>, daher ValueError.</p>
 <p>orientation : {&#x27;vertical&#x27;,&#x27;horizontal&#x27;}</p>
-<p><code style="color:#22d3bf">&#x27;vertical&#x27;</code> は <b>上が vmax</b>(row は下向きなので LUT を反転する)。</p>
+<p>Bei <code style="color:#22d3bf">&#x27;vertical&#x27;</code> ist <b>oben vmax</b> (row zeigt nach unten, daher wird die LUT umgekehrt).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>LUT の形/値域、矩形のはみ出し、vmin==vmax、未知の orientation。</p>
+<p>Form/Wertebereich der LUT, Rechteck ragt heraus, vmin==vmax, unbekannte orientation.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_boundary_f(labels_pred, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import segeval; segeval.seg_boundary_f(labels_pred, labels_true, *, tau: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;seg_boundary_f&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>容差 tau 下的边界 F 值：precision = 预测边界像素中落在真边界 tau 距离内的比例，recall 反之（seg_boundary_f）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>F = 2PR/(P+R)。境界は <code style="color:#22d3bf">_boundary</code> の規約(ラベルの割れ目、1 画素幅)なので、ラベルの番号や背景の区別によらない(分割の形だけを見る)。距離は距離変換(ユークリッド、画素の中心)。τ = 0 で画素の一致。両方の境界が空(どちらも 1 色)なら P = R = F = 1、片方だけ空なら 0。</p>
-<p>返り値: <code style="color:#22d3bf">f</code>、<code style="color:#22d3bf">precision</code>、<code style="color:#22d3bf">recall</code>、<code style="color:#22d3bf">tau</code>、<code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>、<code style="color:#22d3bf">dist_pred_to_true</code> / <code style="color:#22d3bf">dist_true_to_pred</code>(境界画素ごとの距離)。</p>
+<p>F = 2PR/(P+R)。边界遵循 <code style="color:#22d3bf">_boundary</code> 的约定(标签之间的裂缝,1 像素宽),因此与标签编号和背景的区分无关(只看分割的形状)。距离用距离变换(欧几里得,像素中心)。τ = 0 即像素重合。两边的边界都为空(都是 1 种颜色)时 P = R = F = 1,只有一边为空时为 0。</p>
+<p>返回值: <code style="color:#22d3bf">f</code>、<code style="color:#22d3bf">precision</code>、<code style="color:#22d3bf">recall</code>、<code style="color:#22d3bf">tau</code>、<code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>、<code style="color:#22d3bf">dist_pred_to_true</code> / <code style="color:#22d3bf">dist_true_to_pred</code>(每个边界像素的距离)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

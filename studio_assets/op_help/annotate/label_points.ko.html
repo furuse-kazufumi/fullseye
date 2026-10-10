@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.label_points(img, points, labels=None, color=&#x27;reference&#x27;, font_size=12, pad=3, marker_size=0, scheme=&#x27;okabe_ito&#x27;, allow_overlap=False, **text_kw)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.label_points(img, points, labels=None, color=&#x27;reference&#x27;, font_size=12, pad=3, marker_size=0, scheme=&#x27;okabe_ito&#x27;, allow_overlap=False, **text_kw)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;label_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군에 번호나 값을 붙입니다. <b>겹치지 않게 배치</b>(피할 수 없으면 예외).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : (N,2)</p>
-<p><b>(x,y)</b> の点列。</p>
+<p><b>(x,y)</b>의 점열.</p>
 <p>labels : sequence or None</p>
-<p>各点の文字。None なら 1 始まりの番号。</p>
+<p>각 점의 문자. None이면 1부터 시작하는 번호.</p>
 <p>marker_size : int</p>
-<p>0 より大きければ各点に十字マーカーも打つ。</p>
+<p>0보다 크면 각 점에 십자 마커도 찍는다.</p>
 <p>allow_overlap : bool</p>
-<p>True なら重なりを許して最初の候補に置く(既定は False = 例外)。</p>
+<p>True이면 겹침을 허용하고 첫 후보에 둔다(기본값은 False = 예외).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点が空 / 非有限 / labels の数が合わない / どの候補位置でも</p>
-<p>既存のラベルと重なる(<code style="color:#22d3bf">allow_overlap=False</code> のとき)。</p>
+<p>점이 비어 있음 / 비유한 / labels의 수가 맞지 않음 / 어느 후보 위치에서도</p>
+<p>기존 라벨과 겹침(<code style="color:#22d3bf">allow_overlap=False</code>일 때).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

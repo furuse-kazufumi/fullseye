@@ -4,11 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_stop_g(image, *, sigma: &#x27;float&#x27; = 1.0, k: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segcontour; segcontour.edge_stop_g(image, *, sigma: &#x27;float&#x27; = 1.0, k: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opssegmentation.get(&quot;edge_stop_g&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kanten-Stoppfunktion g = 1 / (1 + |∇(G_σ * I)|² / k²) (die p = 2-Form von Caselles–Kimmel–Sapiro 1997) (edge_stop_g).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">sigma</code> = ガウスの標準偏差(0 なら平滑化なしの中心差分)、<code style="color:#22d3bf">k</code> = 勾配の尺度(k = 1 で g = 1/(1 + |∇G_σ*I|²))。</p>
-<p>画像の値域に依存する: Li ら 2010 の配布例は 0〜255 の画像で k = 1 なので、[0, 1] の画像なら k = 1/255 が同じ挙動。</p>
-<p>返り値: <code style="color:#22d3bf">g</code>(0 &lt; g ≤ 1、平坦で 1)、<code style="color:#22d3bf">grad_mag</code>、<code style="color:#22d3bf">g_min</code> / <code style="color:#22d3bf">g_max</code>、<code style="color:#22d3bf">sigma</code>、<code style="color:#22d3bf">k</code>。</p>
-<p>門: g ∈ (0, 1] —— 分母 ≥ 1、平坦な画像で g ≡ 1(勾配 0)。</p>
+<p><code style="color:#22d3bf">sigma</code> = Standardabweichung des Gauß (0 heißt zentrale Differenzen ohne Glättung), <code style="color:#22d3bf">k</code> = Skala des Gradienten (k = 1 ergibt g = 1/(1 + |∇G_σ*I|²)). Hängt vom Wertebereich des Bildes ab: Das mitgelieferte Beispiel von Li et al. 2010 nutzt k = 1 auf Bildern mit 0-255, daher ergibt bei einem [0, 1]-Bild k = 1/255 dasselbe Verhalten.</p>
+<p>Rückgabewert: <code style="color:#22d3bf">g</code> (0 &lt; g ≤ 1, 1 wo flach), <code style="color:#22d3bf">grad_mag</code>, <code style="color:#22d3bf">g_min</code> / <code style="color:#22d3bf">g_max</code>, <code style="color:#22d3bf">sigma</code>, <code style="color:#22d3bf">k</code>.</p>
+<p>Gate: g ∈ (0, 1] — Nenner ≥ 1, g ≡ 1 auf einem flachen Bild (Gradient 0).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">Leitfaden zur Familie halcon_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

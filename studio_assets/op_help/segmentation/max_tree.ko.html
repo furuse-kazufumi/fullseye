@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.max_tree(image, *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import seggraph; seggraph.max_tree(image, *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;max_tree&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>성분 트리(max-tree): 상위 집합 {f ≥ h}의 연결 성분 트리를 Union-Find로 만든다(화소를 값의 내림차순으로 처리)(max_tree).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返す: <code style="color:#22d3bf">parent</code>(H, W の平らな添字。根は自分自身)、<code style="color:#22d3bf">order</code>(値の昇順、親は子より前)、<code style="color:#22d3bf">canonical</code>(節の代表画素の印 = 根か、親と値が違う画素)、<code style="color:#22d3bf">area</code>(代表画素での成分の画素数)、<code style="color:#22d3bf">diameter</code>(成分の外接矩形の長い辺 = skimage の diameter と同じ)、<code style="color:#22d3bf">height</code>(成分の中の最大値 − 成分の値、参考)、<code style="color:#22d3bf">n_nodes</code>。</p>
+<p>반환: <code style="color:#22d3bf">parent</code>(H, W의 평평한 첨자. 루트는 자기 자신), <code style="color:#22d3bf">order</code>(값의 오름차순, 부모가 자식보다 앞), <code style="color:#22d3bf">canonical</code>(노드의 대표 화소 표시 = 루트이거나 부모와 값이 다른 화소), <code style="color:#22d3bf">area</code>(대표 화소에서의 성분의 화소 수), <code style="color:#22d3bf">diameter</code>(성분 외접 직사각형의 긴 변 = skimage의 diameter와 같음), <code style="color:#22d3bf">height</code>(성분 안의 최댓값 − 성분의 값, 참고), <code style="color:#22d3bf">n_nodes</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

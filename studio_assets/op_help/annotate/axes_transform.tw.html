@@ -4,29 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;axes_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>建構資料座標 → 像素座標的(<b>閉合式</b>)映射。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">row は下向き</code> という画像の事実と、<code style="color:#22d3bf">y は上向き</code> というグラフの慣習のずれを、<b>この 1 か所だけ</b>で吸収する。図のコードはこの辞書を持ち回る。</p>
+<p>把影像的事實 <code style="color:#22d3bf">row 向下</code> 與圖表的慣例 <code style="color:#22d3bf">y 向上</code> 之間的偏差,<b>只在這 1 處</b>吸收。繪圖程式碼隨身攜帶這個字典。</p>
 <p>px = x0 + (x - xmin)/(xmax - xmin) * (w - 1)</p>
 <p>py = y0 + (h - 1) - (y - ymin)/(ymax - ymin) * (h - 1)     # invert_y</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>rect : (x, y, w, h)</p>
-<p>描画域(左上基準、画素)。</p>
+<p>繪圖區(以左上為基準,像素)。</p>
 <p>xlim, ylim : (lo, hi)</p>
-<p>データ範囲。lo == hi は<b>傾きが無限大</b>になるので ValueError。</p>
-<p><b>lo &gt; hi(反転軸)も許す</b> ―― 深度やランクを上下逆に描くため。</p>
+<p>資料範圍。lo == hi 會使<b>斜率為無窮大</b>,所以拋出 ValueError。</p>
+<p><b>也允許 lo &gt; hi(反轉軸)</b> —— 用於上下顛倒地繪製深度或排名。</p>
 <p>invert_y : bool</p>
-<p>True(既定)なら <code style="color:#22d3bf">ylim[0]</code> が<b>下端</b>に来る = 普通のグラフ。</p>
-<p>False なら画像そのままの向き(上端が <code style="color:#22d3bf">ylim[0]</code>)。</p>
+<p>True(預設)時 <code style="color:#22d3bf">ylim[0]</code> 位於<b>下端</b> = 普通的圖表。</p>
+<p>False 時為影像原本的方向(上端是 <code style="color:#22d3bf">ylim[0]</code>)。</p>
 <p>xscale, yscale : {&#x27;linear&#x27;,&#x27;log&#x27;}</p>
-<p><code style="color:#22d3bf">&#x27;log&#x27;</code> は常用対数。範囲に 0 以下が入れば ValueError</p>
-<p>(log 軸に 0 を渡して -inf を「端」として描く図は嘘になる)。</p>
+<p><code style="color:#22d3bf">&#x27;log&#x27;</code> 為常用對數。範圍內含 0 以下的值則 ValueError</p>
+<p>(把 0 傳給 log 軸、把 -inf 當作「端」來畫的圖是謊言)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
 <p><code style="color:#22d3bf">{&quot;rect&quot;, &quot;xlim&quot;, &quot;ylim&quot;, &quot;invert_y&quot;, &quot;xscale&quot;, &quot;yscale&quot;}</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>矩形が不正、範囲が非有限か幅ゼロ、w か h が 2 未満、</p>
-<p>未知の scale、log 軸で範囲に 0 以下。</p>
+<p>矩形不正確,範圍非有限或寬度為零,w 或 h 小於 2,</p>
+<p>未知的 scale,log 軸的範圍含 0 以下。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

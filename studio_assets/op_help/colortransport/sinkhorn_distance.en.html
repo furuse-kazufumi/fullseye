@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code> (to call the implementation directly, <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code>; from the registry, <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The regularised transport cost <code style="color:#22d3bf">&lt;plan, cost&gt;</code>. <b>Not a true distance.</b></p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>正則化のぶん系統的に偏るので、自分自身との「距離」も 0 にならない(そのずれ幅はテストに実測で残してある)。1 次元で厳密が要るときは <code style="color:#22d3bf">wasserstein_1d</code>。</p>
+<p>Because of the regularisation it is systematically biased, so even the &quot;distance&quot; to itself is not 0 (the size of that offset is kept in the tests as a measured value). When exactness is needed in 1 dimension, <code style="color:#22d3bf">wasserstein_1d</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Colorimetry and spectra — colour is fixed only by spectrum × illuminant × observer</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

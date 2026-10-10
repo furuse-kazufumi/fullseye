@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_to_matrix(angle)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.angle_to_matrix(angle)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;angle_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>角度 <b>[度]</b> → 绕 z 轴的旋转矩阵 <code style="color:#22d3bf">matrix (3,3)</code>。<code style="color:#22d3bf">angle</code> 的出口。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">angle_to_matrix(90)</code> は軸1(y)を軸2(x)へ送り、軸2(x)を <b>−軸1</b>(−y)へ送る(<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code>、<code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>、実測)。2-D の <code style="color:#22d3bf">rot_scale_to_matrix</code> と同じ <code style="color:#22d3bf">[[c,-s],[s,c]]</code> の向き(軸 0 → 軸 1)を軸 (1, 2) に置いたもので、<code style="color:#22d3bf">matrix_to_angle</code> の <code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> もこの向きで往復する。<b>度</b>であることと <b>どちらの軸へ回るか</b>が、この段落の全内容である。ラジアンを渡すと例外は出ず、ただ 57.3 分の 1 だけ回った行列が返る。</p>
+<p><code style="color:#22d3bf">angle_to_matrix(90)</code> 把轴1(y)送到轴2(x),把轴2(x)送到 <b>−轴1</b>(−y) (<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code>、<code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>,实测)。它是把与 2-D 的 <code style="color:#22d3bf">rot_scale_to_matrix</code> 相同的 <code style="color:#22d3bf">[[c,-s],[s,c]]</code> 方向(轴 0 → 轴 1)放到轴 (1, 2) 上,<code style="color:#22d3bf">matrix_to_angle</code> 的 <code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> 也按这个方向往返。单位是<b>度</b>,以及 <b>朝哪个轴旋转</b>,就是这一段的全部内容。传入弧度时不会抛异常,只会返回只转了 1/57.3 的矩阵。</p>
 <p>Args:</p>
 <p>angle: 度。</p>
 <p>Returns:</p>
-<p>(3, 3) float64、行列式 1 の直交行列。</p>
+<p>(3, 3) float64,行列式为 1 的正交矩阵。</p>
 <p>Raises:</p>
-<p>ValueError: スカラでない / 非有限。</p>
+<p>ValueError: 不是标量 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

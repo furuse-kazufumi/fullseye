@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;attention_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Mischt die Werte mit den Attention-Gewichten → tokens. <b>Da die Zeilensummen 1 sind, ist die Ausgabe eine konvexe Kombination der Eingaben</b>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
-<p>weights: (T, S) float。行和が 1 であること(<code style="color:#22d3bf">attention_weights</code> の出力)。</p>
-<p>value: (S, dv) float。混ぜられる側。</p>
+<p>weights: (T, S) float. Die Zeilensummen müssen 1 sein (Ausgabe von <code style="color:#22d3bf">attention_weights</code>).</p>
+<p>value: (S, dv) float. Die Seite, die gemischt wird.</p>
 <p>Returns:</p>
-<p>tokens (T, dv) float: 各行が value の行の凸結合。<b>値域は value を出ない</b></p>
-<p>(同時に幅は縮む —— 平均は対比を潰す)。</p>
+<p>tokens (T, dv) float: jede Zeile ist eine konvexe Kombination der Zeilen von value. <b>Der Wertebereich verlässt den von value nie</b></p>
+<p>(gleichzeitig schrumpft die Spanne -- Mittelung zerdrückt Kontrast).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">Leitfaden zur Familie llmcore</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

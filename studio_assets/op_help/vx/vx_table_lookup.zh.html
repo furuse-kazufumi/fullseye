@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_table_lookup(image, table, *, offset=0)</code>(要直接调用实现,<code style="color:#22d3bf">import vxcore; vxcore.vx_table_lookup(image, table, *, offset=0)</code>;从台账取用则 <code style="color:#22d3bf">opsvx.get(&quot;vx_table_lookup&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>查表(3.47 节)：输出 = table[像素值 + offset] (REQ-0421)。接受 U8 与 S16(REQ-0422)。输出的 dtype 为表的 dtype。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>*offset*: S16 の表は負の画素値を引くために中央を 0 に置く(VX_LUT_OFFSET、典型は 32768)。U8 は 0。★表の外を引く画素があれば止める(黙って端に寄せない)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像が U8/S16 の 2-D でない / 表が 1-D でない・空 / 表の外を引く画素がある。</p>
+<p>*offset*: S16 的表为了查负的像素值而把 0 放在中央(VX_LUT_OFFSET,典型为 32768)。U8 为 0。★若有像素查到表外则停止(不会默默贴到端点)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 图像不是 U8/S16 的 2-D / 表不是 1-D、为空 / 有像素查到表外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

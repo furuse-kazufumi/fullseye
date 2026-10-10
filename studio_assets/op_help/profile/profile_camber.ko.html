@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_camber(contour, n=101)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import profileops; profileops.profile_camber(contour, n=101)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprofile.get(&quot;profile_camber&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>캠버선(윗면과 아랫면의 중앙선). 반환값은 <code style="color:#22d3bf">(n, 2)</code>의 <code style="color:#22d3bf">(x, yc)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>★<b>定義の差を承知で使うこと</b>。ここが返すのは「弦の各位置での上下面の中点」で、NACA が翼型を<b>作るときに使う</b>キャンバー線(厚みを法線方向に載せる前の中心線)とは厳密には別物です。加えて弦の取り方も違う —— 幾何的な弦は「後縁の中点から最も遠い点」を前縁とするので、キャンバーのある翼では生成座標の原点からわずかにずれ、弦が 0.1 度ほど傾きます。</p>
-<p>実測(閉形式の最大キャンバー比 対 本 op の返り):</p>
+<p>★<b>정의의 차이를 알고 쓸 것</b>. 여기서 반환하는 것은 &quot;시위 각 위치에서의 윗면·아랫면의 중점&quot; 이며, NACA 가 익형을 <b>만들 때 쓰는</b> 캠버선(두께를 법선 방향으로 얹기 전의중심선)과는 엄밀히는 다른 것입니다. 게다가 시위를 잡는 방법도 다르다 —— 기하적 시위는 &quot;뒷전의 중점에서 가장 먼 점&quot;을 앞전으로 하므로, 캠버가 있는 날개에서는생성 좌표의 원점에서 약간 어긋나고, 시위가 0.1 도 정도 기웁니다.</p>
+<p>실측(닫힌 식의 최대 캠버비 대 본 op 의 반환):</p>
 <p>==========  ==========  ==========  ==========</p>
-<p>翼型        閉形式      実測        比</p>
+<p>익형          닫힌 식        실측          비</p>
 <p>==========  ==========  ==========  ==========</p>
 <p>NACA 0012   0.0000      0.00001     ——</p>
 <p>NACA 2412   0.0200      0.01882     0.94</p>
 <p>NACA 4412   0.0400      0.03786     0.95</p>
 <p>==========  ==========  ==========  ==========</p>
-<p><b>対称翼で 0 になること</b>は確認済み(0.00001)。有翼で 5-6 % 低く出るのは上の定義差で、実装の誤りではありません。設計値と比べるときは、同じ定義で測った基準形状(<code style="color:#22d3bf">profile_synth_naca4</code> の出力)と比べること —— <code style="color:#22d3bf">profile_deviation</code> はまさにそれをします。</p>
+<p><b>대칭 날개에서 0 이 되는 것</b>은 확인 완료(0.00001). 캠버 있는 날개에서 5-6 % 낮게 나오는 것은위의 정의 차이 때문이며, 구현의 오류가 아닙니다. 설계값과 비교할 때는 같은 정의로측정한 기준 형상(<code style="color:#22d3bf">profile_synth_naca4</code> 의 출력)과 비교할 것 —— <code style="color:#22d3bf">profile_deviation</code> 이 바로 그것을 합니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

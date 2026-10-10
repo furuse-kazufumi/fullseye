@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_score_card(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, tau: &#x27;float&#x27; = 2.0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segeval; segeval.seg_score_card(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, tau: &#x27;float&#x27; = 2.0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;seg_score_card&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>모든 척도를 한 장에: Dice/Jaccard, VI/split/merge, Rand/ARI, 경계 F, Hausdorff/HD95/ASSD, 과/미분할, 분열/융합/누락/오검/일치와 개수(seg_score_card).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">segcompare</code> には a = 真、b = 予測で渡す(split = 予測が真を切った量、merge = 予測が真を貼った量)。値は float か int の平らな dict(表にそのまま並ぶ)。</p>
+<p><code style="color:#22d3bf">segcompare</code>에는 a = 참, b = 예측으로 넘긴다(split = 예측이 참을 자른 양, merge = 예측이 참을 붙인 양). 값은 float 또는 int의 평평한 dict(표에 그대로 나열된다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

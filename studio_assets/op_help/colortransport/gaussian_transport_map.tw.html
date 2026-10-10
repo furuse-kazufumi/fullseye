@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.gaussian_transport_map(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">matrix</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.gaussian_transport_map.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">colortransport.gaussian_transport_map</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把兩個點集視為常態分布時的 Monge 映射 <code style="color:#22d3bf">(A, b)</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">x -&gt; A (x - m1) + m2</code> で、<code style="color:#22d3bf">A</code> は <code style="color:#22d3bf">S1^-1/2 (S1^1/2 S2 S1^1/2)^1/2 S1^-1/2</code>(Bures 幾何の閉じた形)。<b>共分散ごと運ぶ</b>ので、チャネル間の相関が保たれる。</p>
-<p>退化(片方の共分散が特異)では逆平方根が作れない ―― 疑似逆で誤魔化すと「運べていないのに運んだ顔をした」写像になるので <code style="color:#22d3bf">ValueError</code>。</p>
+<p><code style="color:#22d3bf">x -&gt; A (x - m1) + m2</code>，其中 <code style="color:#22d3bf">A</code> 為 <code style="color:#22d3bf">S1^-1/2 (S1^1/2 S2 S1^1/2)^1/2 S1^-1/2</code>(Bures 幾何的閉合式)。由於<b>連同共變異數一起搬運</b>，通道間的相關性得以保持。</p>
+<p>退化時(其中一個共變異數為奇異)無法構造反平方根 —— 若用虛擬反矩陣矇混過去，就會得到「明明沒搬運過去卻裝作搬運了」的映射，因此拋出 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 測色與光譜知識 —— 顏色只由「光譜 × 光源 × 觀察者」決定</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

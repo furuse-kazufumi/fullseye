@@ -4,15 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_angle_layout(a, vertex, b, radius=30.0, text_gap=12.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_angle_layout(a, vertex, b, radius=30.0, text_gap=12.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_angle_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (dict) लौटाता है: 3 point <code style="color:#22d3bf">a, vertex, b</code> से बने कोण (छोटे वाले) का चाप और text position।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>角度は画面座標(x 右・y 下)で <code style="color:#22d3bf">atan2</code> から出すので、<code style="color:#22d3bf">start_deg</code>/<code style="color:#22d3bf">end_deg</code></p>
-<p>は <code style="color:#22d3bf">arc</code> と同じ「x 軸から時計回り」の度。</p>
+<p>कोण screen coordinates (x दाएँ, y नीचे) में <code style="color:#22d3bf">atan2</code> से निकलते हैं, इसलिए <code style="color:#22d3bf">start_deg</code>/<code style="color:#22d3bf">end_deg</code> <code style="color:#22d3bf">arc</code> की तरह &quot;x axis से clockwise&quot; डिग्री में हैं।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;vertex&quot;,&quot;angle_deg&quot;,&quot;start_deg&quot;,&quot;end_deg&quot;,&quot;radius&quot;,&quot;text_xy&quot;, &quot;bisector_deg&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;vertex&quot;,&quot;angle_deg&quot;,&quot;start_deg&quot;,&quot;end_deg&quot;,&quot;radius&quot;,&quot;text_xy&quot;, &quot;bisector_deg&quot;}</code>।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>a か b が vertex と一致、非有限、radius が非正。</p>
+<p>a या b vertex के बराबर है, non-finite मान, या radius धनात्मक नहीं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

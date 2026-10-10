@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, channel_axis=None, crop_border=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgmetrics; imgmetrics.ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, channel_axis=None, crop_border=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;ssim&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>結構相似性(Wang, Bovik, Sheikh &amp; Simoncelli, IEEE TIP 13(4), 2004)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>既定は原論文の設定 ―― <b>11x11 のガウシアン窓 σ=1.5、K1=0.01、K2=0.03</b>、重み付き<b>母</b>分散(標本分散への <code style="color:#22d3bf">n/(n-1)</code> 補正を入れない)。</p>
-<p><code style="color:#22d3bf">crop_border=True</code>(既定)は窓の半径ぶんの縁を平均から落とす。縁では鏡像で埋めた画素が統計に混ざるため。<b>落とすかどうかで値が変わる</b>ので、他所の数値と比べるときは必ずこの設定を揃えること(小さい絵ほど差が出る)。</p>
+<p>預設是原論文的設定 —— <b>11x11 的高斯視窗 σ=1.5、K1=0.01、K2=0.03</b>, 加權<b>母體</b>變異數(不對樣本變異數做 <code style="color:#22d3bf">n/(n-1)</code> 校正)。</p>
+<p><code style="color:#22d3bf">crop_border=True</code>(預設)會把視窗半徑寬度的邊緣從平均中去掉。因為在邊緣以鏡像填補的像素會混入統計。<b>去不去掉會改變數值</b>,所以與別處的數值比較時務必統一這個設定(圖越小差異越大)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>float</p>
-<p>1.0 が完全一致。</p>
+<p>1.0 為完全一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

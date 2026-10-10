@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>(要直接呼叫實作,<code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>;從台帳取用則 <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>根據天際線 table 與姿態，繪製該朝向的相機所看到的<b>天空遮罩</b>(H, W)→ image2d(0/1)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各画素の光線を世界へ回し、その方位のスカイライン仰角より上なら空(1)、下なら地形(0)。合成の写真づくり(PoC)と、推定した姿勢を写真に重ねて目で確かめる図に使う。<code style="color:#22d3bf">camera_orientation_from_skyline</code> の予測と同じ幾何なので、<b>描いて → 抜いて → 当てる</b>の往復が閉じる(テストの真値)。</p>
+<p>把各像素的光線旋轉到世界中,若高於該方位的天際線仰角則為天空(1),低於則為地形(0)。用於製作合成照片(PoC),以及把估計的位姿疊到照片上用眼睛確認的圖。與 <code style="color:#22d3bf">camera_orientation_from_skyline</code> 的預測是同一幾何,所以<b>畫出 → 擷取 → 擬合</b>的往返是閉合的(測試的真值)。</p>
 <p>Args:</p>
-<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> の出力(<code style="color:#22d3bf">azimuth_deg</code> / <code style="color:#22d3bf">elevation_deg</code>)。</p>
+<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> 的輸出(<code style="color:#22d3bf">azimuth_deg</code> / <code style="color:#22d3bf">elevation_deg</code>)。</p>
 <p>K: (fx, fy, cx, cy)。shape: (H, W)。</p>
-<p>yaw_deg, pitch_deg, roll_deg: 姿勢(モジュール冒頭の規約)。</p>
+<p>yaw_deg, pitch_deg, roll_deg: 位姿(模組開頭的約定)。</p>
 <p>Returns:</p>
-<p>image2d (H, W) float {0, 1}: 1 = 空。</p>
+<p>image2d (H, W) float {0, 1}: 1 = 天空。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

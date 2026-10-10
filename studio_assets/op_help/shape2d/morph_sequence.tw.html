@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imagemorph; imagemorph.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsshape2d.get(&quot;morph_sequence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將 alpha 以 n 步從 0→1 變化得到的變形序列(從 A 平滑變化到 B 的各影格)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>返り値: 長さ n の list。先頭が A、末尾が B に一致する。</p>
-<p><code style="color:#22d3bf">alpha = linspace(0, 1, n)</code> の各値で <code style="color:#22d3bf">morph(imgA, imgB, ptsA, ptsB, alpha, method, lam, with_corners)</code> を呼ぶだけ。各フレームは (1) 中間点 <code style="color:#22d3bf">(1-α) ptsA + α ptsB</code> を作り、(2) A と B をそれぞれそこへワープし、</p>
-<p style="margin:2px 0 2px 12px">(3) <code style="color:#22d3bf">α</code> でクロスディゾルブ、の 3 段。フレームごとにワープ 2 回なので、</p>
-<p>コストは <code style="color:#22d3bf">n</code> に比例する(<code style="color:#22d3bf">n=7</code> で 14 回)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">imgA</code>, <code style="color:#22d3bf">imgB</code>: <code style="color:#22d3bf">(H, W[, C])</code>、同じ形、<code style="color:#22d3bf">[0, 1]</code>。NaN/Inf は無言で 0 / 1 に置換される。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ptsA</code>, <code style="color:#22d3bf">ptsB</code>: <code style="color:#22d3bf">(K, 2)</code> の <b>(x, y)</b>、同数・同順の対応点。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 2 以上(1 以下は <code style="color:#22d3bf">ValueError</code>)。<code style="color:#22d3bf">int</code> に切られる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;affine&quot;</code>(Delaunay 区分アフィン、速い)/ <code style="color:#22d3bf">&quot;tps&quot;</code>(薄板スプライン、滑らか)。それ以外は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">lam</code> は TPS の平滑化係数(0 で厳密補間)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">with_corners</code>: True で <code style="color:#22d3bf">add_frame_corners</code> を両点群に足し、枠の外側の穴を防ぐ。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: float64 配列 <code style="color:#22d3bf">n</code> 枚の list(<code style="color:#22d3bf">images</code> 型)。<code style="color:#22d3bf">[0, 1]</code> にクリップ済み。</p>
-<p>1 枚だけ欲しい(例: <code style="color:#22d3bf">α = 0.5</code> の中間顔)なら <code style="color:#22d3bf">morph</code> を直接。</p>
+<p>回傳值: 長度為 n 的 list。首個與 A 一致，末個與 B 一致。</p>
+<p>只是對 <code style="color:#22d3bf">alpha = linspace(0, 1, n)</code> 的各值呼叫 <code style="color:#22d3bf">morph(imgA, imgB, ptsA, ptsB, alpha, method, lam, with_corners)</code>。每幀分 3 步:(1) 建構中間點 <code style="color:#22d3bf">(1-α) ptsA + α ptsB</code>,(2) 把 A 與 B 分別變形到那裡，</p>
+<p style="margin:2px 0 2px 12px">(3) 用 <code style="color:#22d3bf">α</code> 做交叉溶接。每幀變形 2 次，因此</p>
+<p>成本與 <code style="color:#22d3bf">n</code> 成正比(<code style="color:#22d3bf">n=7</code> 時 14 次)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">imgA</code>, <code style="color:#22d3bf">imgB</code>: <code style="color:#22d3bf">(H, W[, C])</code>，形狀相同，<code style="color:#22d3bf">[0, 1]</code>。NaN/Inf 被靜默替換為 0 / 1。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ptsA</code>, <code style="color:#22d3bf">ptsB</code>: <code style="color:#22d3bf">(K, 2)</code> 的 <b>(x, y)</b>，數量相同、順序相同的對應點。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 2 以上(1 以下拋出 <code style="color:#22d3bf">ValueError</code>)。截斷為 <code style="color:#22d3bf">int</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;affine&quot;</code>(Delaunay 分段仿射，快)/ <code style="color:#22d3bf">&quot;tps&quot;</code>(薄板樣條，平滑)。其他值拋出 <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">lam</code> 為 TPS 的平滑係數(0 為嚴格內插)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">with_corners</code>: 為 True 時對兩組點集加上 <code style="color:#22d3bf">add_frame_corners</code>，防止框外側的空洞。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: <code style="color:#22d3bf">n</code> 個 float64 陣列的 list(<code style="color:#22d3bf">images</code> 型別)。已截斷到 <code style="color:#22d3bf">[0, 1]</code>。</p>
+<p>若只要 1 張(例: <code style="color:#22d3bf">α = 0.5</code> 的中間臉)，直接用 <code style="color:#22d3bf">morph</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

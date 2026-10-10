@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;filled_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein gefülltes Polygon (Even-Odd-Regel — <code style="color:#22d3bf">imagedraw</code> zeichnet nur Umrisse).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : (N,2)</p>
-<p><b>(x,y)</b> の頂点列(自動的に閉じる)。3 点未満は ValueError。</p>
+<p>Folge von <b>(x,y)</b>-Eckpunkten (wird automatisch geschlossen). Weniger als 3 Punkte ist ein ValueError.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点が 3 未満 / 非有限 / alpha が [0,1] の外。</p>
+<p>weniger als 3 Punkte / nicht endlich / alpha außerhalb von [0,1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

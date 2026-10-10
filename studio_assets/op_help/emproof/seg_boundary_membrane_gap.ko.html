@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_boundary_membrane_gap(labels, membrane, tau: &#x27;float&#x27; = 0.2, min_len: &#x27;int&#x27; = 60, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import emproof; emproof.seg_boundary_membrane_gap(labels, membrane, tau: &#x27;float&#x27; = 0.2, min_len: &#x27;int&#x27; = 60, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsemproof.get(&quot;seg_boundary_membrane_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>분단 의심</b>: 인접한 2개 라벨의 경계 화소 중 막 응답이 <code style="color:#22d3bf">tau</code> 미만인 비율. 인접 쌍마다 1행.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>細胞の境目には必ず膜(暗い線)がある。膜が無いのにラベルが変わる境界は、1 細胞を 2 つに切った分断の跡(<code style="color:#22d3bf">seg_inject_split</code> の直線はまさにこれ)。4 近傍で異ラベルが接する画素を数え、境界の膜応答は両側の強い方をとる。CREMI sample A の試作で人工分断 vs 他: <b>AUC 0.99</b>(tau 0.2、境界長 ≥ 60)。</p>
-<p>列: <code style="color:#22d3bf">label_a</code> / <code style="color:#22d3bf">label_b</code>(a &lt; b)/ <code style="color:#22d3bf">length</code> / <code style="color:#22d3bf">gap_fraction</code> / <code style="color:#22d3bf">membrane_mean</code>(gap_fraction 降順)。<code style="color:#22d3bf">min_len</code> px 未満の短い境界は数えない(数画素の接触は膜の有無を言えない)。</p>
+<p>세포의 경계에는 반드시 막(어두운 선)이 있다. 막이 없는데 라벨이 바뀌는 경계는, 1 세포를 2 개로 자른분단의 흔적(<code style="color:#22d3bf">seg_inject_split</code> 의 직선이 바로 이것). 4 근방에서 다른 라벨이 접하는 화소를 세고, 경계의 막 응답은양쪽 중 강한 쪽을 취한다. CREMI sample A 의 시작품에서 인공 분단 vs 그 외: <b>AUC 0.99</b>(tau 0.2, 경계 길이 ≥ 60).</p>
+<p>열: <code style="color:#22d3bf">label_a</code> / <code style="color:#22d3bf">label_b</code>(a &lt; b)/ <code style="color:#22d3bf">length</code> / <code style="color:#22d3bf">gap_fraction</code> / <code style="color:#22d3bf">membrane_mean</code>(gap_fraction 내림차순). <code style="color:#22d3bf">min_len</code> px 미만의 짧은 경계는 세지 않는다(몇 화소의 접촉으로는 막의 유무를 말할 수 없다).</p>
 <p>&gt;&gt;&gt; table = seg_boundary_membrane_gap(labels, seg_membrane_response(raw))</p>
-<p>&gt;&gt;&gt; table[&quot;label_a&quot;][0], table[&quot;label_b&quot;][0], table[&quot;gap_fraction&quot;][0]   # いちばん怪しい対</p>
+<p>&gt;&gt;&gt; table[&quot;label_a&quot;][0], table[&quot;label_b&quot;][0], table[&quot;gap_fraction&quot;][0]   # 가장 의심스러운 쌍</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

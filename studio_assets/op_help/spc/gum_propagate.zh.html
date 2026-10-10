@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code>(要直接调用实现,<code style="color:#22d3bf">import spc; spc.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code>;从台账取用则 <code style="color:#22d3bf">opsspc.get(&quot;gum_propagate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>不确定度传播律(GUM 5.2,含相关性)(<code style="color:#22d3bf">table</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>u_c^2 = sum_i (c_i u_i)^2 + 2 sum_{i&lt;j} c_i c_j u_i u_j r_ij</p>
-<p>*table* は列 *u*(標準不確かさ)と *sensitivity*(感度係数 <code style="color:#22d3bf">c_i = df/dx_i</code>)を持つ表。*correlation* に (n, n) の相関行列を渡すと相関項を含める。</p>
-<p>★門にできる閉形式: <code style="color:#22d3bf">f = x y</code> なら <code style="color:#22d3bf">c_x = y</code> / <code style="color:#22d3bf">c_y = x</code> なので <code style="color:#22d3bf">u_c/|f| = sqrt((u_x/x)^2 + (u_y/y)^2)</code> —— 相対不確かさの二乗和。相関 <code style="color:#22d3bf">r = +1</code> の 2 成分では <code style="color:#22d3bf">u_c = |c1 u1 + c2 u2||</code> に<b>厳密に</b>一致し、<code style="color:#22d3bf">r = -1</code> では <code style="color:#22d3bf">|c1 u1 - c2 u2|</code>(打ち消し)。無相関なら寄与の合計が <code style="color:#22d3bf">u_c^2</code> にぴったり閉じる。</p>
-<p>★★<b>相関を無視した誤りの向きは一定ではない</b>。「独立として扱うと過小評価になる」はよく言われるが、<b>偽である</b>。規格の worked example(電圧・電流・位相差から抵抗とリアクタンスを同時に出す例、3 量すべてに相関がある)で相関を落として測ると:</p>
-<p>u_c(R)  0.0702 -&gt; 0.1945   <b>2.8 倍の過大</b></p>
-<p>u_c(X)  0.2961 -&gt; 0.2009   過小</p>
-<p>u_c(Z)  0.2367 -&gt; 0.2041   過小</p>
-<p>同じ 1 つのデータで、量によって向きが逆に出る —— 感度係数の符号と相関の符号の積で決まるので、当たり前といえば当たり前だが、「安全側に外れる」と思って相関を省くと <b>R では 3 倍近く過大な不確かさを報告</b>することになる。</p>
+<p>*table* 是含有列 *u*(标准不确定度)与 *sensitivity*(灵敏系数 <code style="color:#22d3bf">c_i = df/dx_i</code>)的表。向 *correlation* 传入 (n, n) 的相关矩阵时包含相关项。</p>
+<p>★可作为门禁的闭式: <code style="color:#22d3bf">f = x y</code> 时 <code style="color:#22d3bf">c_x = y</code> / <code style="color:#22d3bf">c_y = x</code>,因此 <code style="color:#22d3bf">u_c/|f| = sqrt((u_x/x)^2 + (u_y/y)^2)</code> —— 相对不确定度的平方和。相关 <code style="color:#22d3bf">r = +1</code> 的 2 个分量<b>严格</b>等于 <code style="color:#22d3bf">u_c = |c1 u1 + c2 u2||</code>, <code style="color:#22d3bf">r = -1</code> 时为 <code style="color:#22d3bf">|c1 u1 - c2 u2|</code>(相互抵消)。无相关时各贡献之和恰好闭合为 <code style="color:#22d3bf">u_c^2</code>。</p>
+<p>★★<b>忽略相关所造成误差的方向并不固定</b>。&quot;按独立处理会低估&quot; 是常见说法,但<b>这是错的</b>。在标准的 worked example(由电压、电流、相位差同时求电阻与电抗的例子,3 个量全部相关)中去掉相关来测量:</p>
+<p>u_c(R)  0.0702 -&gt; 0.1945   <b>高估 2.8 倍</b></p>
+<p>u_c(X)  0.2961 -&gt; 0.2009   低估</p>
+<p>u_c(Z)  0.2367 -&gt; 0.2041   低估</p>
+<p>同 1 组数据,方向因量而反 —— 由灵敏系数的符号与相关的符号之积决定,说当然也是当然,但若以为&quot;会偏向安全侧&quot;而省略相关,就会<b>对 R 报告近 3 倍过大的不确定度</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

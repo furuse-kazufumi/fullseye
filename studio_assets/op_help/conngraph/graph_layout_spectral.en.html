@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;graph_layout_spectral&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Spectral layout: a point cloud (n, 3) whose coordinates are the Fiedler vectors (eigenvectors 2..dim+1) of the Laplacian with directions collapsed, each axis in [0, 1].</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">dim</code> は 2 か 3(2 なら z = 0)。連結成分ごとに配置してから格子に並べる —— 非連結のグラフでは零固有空間が縮退して Fiedler ベクトルが成分を分けるとは限らないので、成分は明示的に分ける(成分内は箱の 0.3 倍、成分間は 1 の間隔)。</p>
+<p><code style="color:#22d3bf">dim</code> is 2 or 3 (with 2, z = 0). Each connected component is laid out first and then arranged on a grid -- for a disconnected graph the zero eigenspace is degenerate and the Fiedler vector does not necessarily separate the components, so components are separated explicitly (within a component 0.3 times the box, between components a spacing of 1).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

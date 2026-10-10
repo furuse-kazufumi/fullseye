@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cscalar_to_polar(cscalar)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.cscalar_to_polar(cscalar)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;cscalar_to_polar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>복소 스칼라 → 극형식 <code style="color:#22d3bf">pairs (1,2) = [|z|, arg z[도]]</code>. <code style="color:#22d3bf">cscalar</code> 의 출구.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> が返す複素スカラは、<code style="color:#22d3bf">measurement</code>(実スカラのみ)へ混ぜると下流が生 TypeError で落ちるので型が分かれている。極形式の対にすると 1-D 語彙へ渡せる。</p>
-<p><b>角度は度</b>。<code style="color:#22d3bf">polar_to_cscalar</code> と往復して実測 max|Δ| = 8.9e-16。</p>
+<p><code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code>가 반환하는 복소 스칼라는, <code style="color:#22d3bf">measurement</code>(실수 스칼라만)에 섞으면 하류가 날것의 TypeError로 떨어지므로타입이 나뉘어 있다. 극형식의 쌍으로 만들면 1-D 어휘로 넘길 수 있다.</p>
+<p><b>각도는 도</b>. <code style="color:#22d3bf">polar_to_cscalar</code>와 왕복하여 실측 max|Δ| = 8.9e-16.</p>
 <p>Args:</p>
-<p>cscalar: complex(または複素 0-d 配列)。</p>
+<p>cscalar: complex(또는 복소 0-d 배열).</p>
 <p>Returns:</p>
-<p>(1, 2) float64。</p>
+<p>(1, 2) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 複素スカラでない / 非有限。</p>
+<p>ValueError: 복소 스칼라가 아님 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

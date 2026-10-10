@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code> (die Implementierung direkt: <code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>; aus dem Register: <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extrahiert aus einem Foto per dynamischer Programmierung 1 Linie mit <b>der Zeile der Grenze zwischen Himmel und Gelände für jede Spalte</b> → signal (W,).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Lie・Lin・Hsu 2005(*Pattern Recognition*: 航法のための頑健なスカイライン抽出)と同じ考え:</p>
-<p>垂直方向の明るさの変化(空が上で明るければ <code style="color:#22d3bf">I[v−1] − I[v+1]</code> が正)を「境界らしさ」にし、隣の列から行が <code style="color:#22d3bf">max_jump</code> 以上飛ばない連続な経路のうちコストが最小のものを選ぶ(<code style="color:#22d3bf">jump_penalty</code> × 行の飛び)。雲や建物の縦の縁で局所的に強い応答が出ても、経路の連続性が本物の稜線を残す。</p>
+<p>Dieselbe Idee wie Lie, Lin und Hsu 2005 (*Pattern Recognition*: robuste Skyline-Extraktion für die Navigation):</p>
+<p>Die vertikale Helligkeitsänderung (<code style="color:#22d3bf">I[v−1] − I[v+1]</code> positiv, wenn der Himmel oben heller ist) wird als &quot;Grenzähnlichkeit&quot; genommen, und unter den stetigen Pfaden, deren Zeile gegenüber der Nachbarspalte nicht um <code style="color:#22d3bf">max_jump</code> oder mehr springt, wird der mit minimalen Kosten gewählt (<code style="color:#22d3bf">jump_penalty</code> × Zeilensprung). Selbst wenn Wolken oder senkrechte Gebäudekanten lokal starke Antworten liefern, bewahrt die Stetigkeit des Pfads den echten Grat.</p>
 <p>Args:</p>
-<p>image: (H, W) float。RGB なら先に灰色にする。</p>
-<p>sky_is_bright: 空が地形より明るい(昼)。夜景・逆光で反転するなら False。</p>
-<p>smooth: 縦方向の Gaussian σ [画素] (雑音)。0 で無効。</p>
-<p>max_jump: 隣の列で許す行の飛び [画素]。</p>
-<p>jump_penalty: 飛び 1 画素あたりのコスト(境界らしさは 0〜1 に正規化してある)。</p>
+<p>image: (H, W) float. RGB wird zuerst in Grau umgewandelt.</p>
+<p>sky_is_bright: der Himmel ist heller als das Gelände (tagsüber). False, wenn er bei Nachtszenen oder Gegenlicht invertiert ist.</p>
+<p>smooth: vertikales Gaussian σ [Pixel] (Rauschen). 0 deaktiviert es.</p>
+<p>max_jump: zwischen Nachbarspalten erlaubter Zeilensprung [Pixel].</p>
+<p>jump_penalty: Kosten pro 1 Pixel Sprung (die Grenzähnlichkeit ist auf 0 bis 1 normiert).</p>
 <p>Returns:</p>
-<p>signal (W,) float: 列ごとの境界の行(0 が最上段)。<b>空しか写っていない・地形しか写っていない</b>画像では境界の応答が弱く、経路の平均コストが 0 に近いので ValueError</p>
-<p>で止める(黙って雑音の線を返さない)。</p>
+<p>signal (W,) float: Grenzzeile pro Spalte (0 ist ganz oben). Bei Bildern, die <b>nur Himmel oder nur Gelände zeigen</b>, ist die Grenzantwort schwach und die mittleren Pfadkosten liegen nahe 0, daher stoppt es mit ValueError</p>
+<p>(es wird nicht stillschweigend eine Rauschlinie zurückgegeben).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">Leitfaden zur Familie geocam</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

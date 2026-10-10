@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ellipse(img, center, radii, angle_deg=0.0, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.ellipse(img, center, radii, angle_deg=0.0, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;ellipse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Ellipse (um <code style="color:#22d3bf">angle_deg</code> gedreht, mit <code style="color:#22d3bf">fill=True</code> gefüllt).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>半径が非正、非有限、alpha が [0,1] の外。</p>
-<p>描画: 画素を <code style="color:#22d3bf">angle_deg</code> だけ回した局所座標 <code style="color:#22d3bf">(u, v)</code> に写し、<code style="color:#22d3bf">q = (u/ra)^2 + (v/rb)^2</code> で判定する。<code style="color:#22d3bf">fill=True</code> は <code style="color:#22d3bf">q &lt;= 1</code>、<code style="color:#22d3bf">fill=False</code> は <code style="color:#22d3bf">|sqrt(q) - 1| &lt;= max(1, width) / (2 min(ra, rb))</code> の帯(アンチエイリアス無し)。帯の幅を<b>短軸で正規化</b>しているので、扁平な楕円では長軸の端ほど線が太く見える(近似)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>、x = 列・y = 行。画像外でもよい。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radii</code>: <code style="color:#22d3bf">(ra, rb)</code> [px]。<code style="color:#22d3bf">ra</code> が <code style="color:#22d3bf">angle_deg</code> 方向、<code style="color:#22d3bf">rb</code> がその直交方向。両方とも正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle_deg</code>: 回転角 [度]。x 軸から時計回り(画面座標、y が下向き)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線幅 [px] (<code style="color:#22d3bf">fill=False</code> のとき)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code> の扱いは <code style="color:#22d3bf">rounded_rect</code> と同じ(float64 複製、<code style="color:#22d3bf">[0, 1]</code>、役割名か RGB)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
-<p><code style="color:#22d3bf">ra == rb</code> なら円。計測結果(楕円フィットの <code style="color:#22d3bf">row, col, phi, ra, rb</code>)を重ねるときは <code style="color:#22d3bf">center=(col, row)</code>、<code style="color:#22d3bf">angle_deg=degrees(phi)</code> に読み替える。</p>
+<p>Radius nicht positiv, nicht endlich, alpha außerhalb von [0,1].</p>
+<p>Zeichnen: Jedes Pixel wird in lokale Koordinaten <code style="color:#22d3bf">(u, v)</code> abgebildet, die um <code style="color:#22d3bf">angle_deg</code> gedreht sind, und mit <code style="color:#22d3bf">q = (u/ra)^2 + (v/rb)^2</code> getestet. <code style="color:#22d3bf">fill=True</code> ist <code style="color:#22d3bf">q &lt;= 1</code>, <code style="color:#22d3bf">fill=False</code> ist das Band <code style="color:#22d3bf">|sqrt(q) - 1| &lt;= max(1, width) / (2 min(ra, rb))</code> (kein Anti-Aliasing). Da die Bandbreite <b>auf die kleine Halbachse normiert</b> ist, wirkt die Linie bei einer flachen Ellipse zu den Enden der großen Halbachse hin dicker (Näherung).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>, x = Spalte, y = Zeile. Darf außerhalb des Bilds liegen.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radii</code>: <code style="color:#22d3bf">(ra, rb)</code> [px]. <code style="color:#22d3bf">ra</code> in Richtung <code style="color:#22d3bf">angle_deg</code>, <code style="color:#22d3bf">rb</code> senkrecht dazu. Beide positiv.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle_deg</code>: Drehwinkel [Grad]. Im Uhrzeigersinn ab der x-Achse (Bildschirmkoordinaten, y zeigt nach unten).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: Linienbreite [px] (bei <code style="color:#22d3bf">fill=False</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code> werden wie bei <code style="color:#22d3bf">rounded_rect</code> behandelt (float64-Kopie, <code style="color:#22d3bf">[0, 1]</code>, Rollenname oder RGB).</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: float64 in derselben Form wie die Eingabe.</p>
+<p><code style="color:#22d3bf">ra == rb</code> ergibt einen Kreis. Beim Überlagern von Messergebnissen (<code style="color:#22d3bf">row, col, phi, ra, rb</code> einer Ellipsenanpassung) umdeuten zu <code style="color:#22d3bf">center=(col, row)</code>, <code style="color:#22d3bf">angle_deg=degrees(phi)</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;gum_propagate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>uncertainty के propagation का नियम (GUM 5.2, correlation सहित) (<code style="color:#22d3bf">table</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>u_c^2 = sum_i (c_i u_i)^2 + 2 sum_{i&lt;j} c_i c_j u_i u_j r_ij</p>
-<p>*table* は列 *u*(標準不確かさ)と *sensitivity*(感度係数 <code style="color:#22d3bf">c_i = df/dx_i</code>)を持つ表。*correlation* に (n, n) の相関行列を渡すと相関項を含める。</p>
-<p>★門にできる閉形式: <code style="color:#22d3bf">f = x y</code> なら <code style="color:#22d3bf">c_x = y</code> / <code style="color:#22d3bf">c_y = x</code> なので <code style="color:#22d3bf">u_c/|f| = sqrt((u_x/x)^2 + (u_y/y)^2)</code> —— 相対不確かさの二乗和。相関 <code style="color:#22d3bf">r = +1</code> の 2 成分では <code style="color:#22d3bf">u_c = |c1 u1 + c2 u2||</code> に<b>厳密に</b>一致し、<code style="color:#22d3bf">r = -1</code> では <code style="color:#22d3bf">|c1 u1 - c2 u2|</code>(打ち消し)。無相関なら寄与の合計が <code style="color:#22d3bf">u_c^2</code> にぴったり閉じる。</p>
-<p>★★<b>相関を無視した誤りの向きは一定ではない</b>。「独立として扱うと過小評価になる」はよく言われるが、<b>偽である</b>。規格の worked example(電圧・電流・位相差から抵抗とリアクタンスを同時に出す例、3 量すべてに相関がある)で相関を落として測ると:</p>
-<p>u_c(R)  0.0702 -&gt; 0.1945   <b>2.8 倍の過大</b></p>
-<p>u_c(X)  0.2961 -&gt; 0.2009   過小</p>
-<p>u_c(Z)  0.2367 -&gt; 0.2041   過小</p>
-<p>同じ 1 つのデータで、量によって向きが逆に出る —— 感度係数の符号と相関の符号の積で決まるので、当たり前といえば当たり前だが、「安全側に外れる」と思って相関を省くと <b>R では 3 倍近く過大な不確かさを報告</b>することになる。</p>
+<p>*table* एक table है जिसमें column *u* (standard uncertainty) और *sensitivity* (sensitivity coefficient <code style="color:#22d3bf">c_i = df/dx_i</code>) हैं। *correlation* में (n, n) correlation matrix देने पर correlation term शामिल होते हैं।</p>
+<p>★ gate के रूप में इस्तेमाल होने वाला closed form: <code style="color:#22d3bf">f = x y</code> हो तो <code style="color:#22d3bf">c_x = y</code> / <code style="color:#22d3bf">c_y = x</code>, इसलिए <code style="color:#22d3bf">u_c/|f| = sqrt((u_x/x)^2 + (u_y/y)^2)</code> -- relative uncertainty का root sum of squares। correlation <code style="color:#22d3bf">r = +1</code> वाले 2 component में यह <code style="color:#22d3bf">u_c = |c1 u1 + c2 u2||</code> से <b>बिल्कुल सटीक</b> मेल खाता है, और <code style="color:#22d3bf">r = -1</code> पर <code style="color:#22d3bf">|c1 u1 - c2 u2|</code> (cancellation)। correlation न हो तो contribution का योग ठीक <code style="color:#22d3bf">u_c^2</code> पर बंद होता है।</p>
+<p>★★ <b>correlation को नज़रअंदाज़ करने से होने वाली ग़लती की दिशा एक नहीं होती</b>। &quot;independent मानने पर underestimate होता है&quot; अक्सर कहा जाता है, पर <b>यह ग़लत है</b>। standard के worked example (voltage, current और phase difference से resistance और reactance एक साथ निकालने वाला example, सभी 3 मात्राओं में correlation) में correlation हटाकर मापने पर:</p>
+<p>u_c(R)  0.0702 -&gt; 0.1945   <b>2.8 गुना overestimate</b></p>
+<p>u_c(X)  0.2961 -&gt; 0.2009   underestimate</p>
+<p>u_c(Z)  0.2367 -&gt; 0.2041   underestimate</p>
+<p>उसी 1 data में मात्रा के अनुसार दिशा उलट जाती है -- यह sensitivity coefficient के sign और correlation के sign के गुणनफल से तय होती है, इसलिए एक तरह से स्वाभाविक है, पर &quot;safe side पर चूकेगा&quot; सोचकर correlation छोड़ देने पर <b>R के लिए लगभग 3 गुना बड़ी uncertainty report</b> हो जाती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

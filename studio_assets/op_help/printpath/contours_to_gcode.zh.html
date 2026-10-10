@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contours_to_gcode(contours: &#x27;Any&#x27;, z: &#x27;float&#x27;, layer: &#x27;int&#x27; = 0, layer_mm: &#x27;float&#x27; = 0.2, line_width_mm: &#x27;float&#x27; = 0.4, filament_mm: &#x27;float&#x27; = 1.75, feed_mm_min: &#x27;float&#x27; = 1800.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import printpath; printpath.contours_to_gcode(contours: &#x27;Any&#x27;, z: &#x27;float&#x27;, layer: &#x27;int&#x27; = 0, layer_mm: &#x27;float&#x27; = 0.2, line_width_mm: &#x27;float&#x27; = 0.4, filament_mm: &#x27;float&#x27; = 1.75, feed_mm_min: &#x27;float&#x27; = 1800.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsprintpath.get(&quot;contours_to_gcode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把轮廓(<code style="color:#22d3bf">mesh_slice_contours</code> 的表)转换为<b>环绕一周的路径表</b>(与 <code style="color:#22d3bf">gcode_read</code> 相同的列)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>最小のスライサ: 各輪を順に一周し、押し出し量は <code style="color:#22d3bf">線分長 × 線幅 × 層厚 / フィラメント断面積</code>。輪と輪の間は移動(e = 0)。真値つきの合成 G-code を作るための道具で、インフィルやリトラクトは持たない。</p>
+<p>最小的切片器:依次绕各环一周,挤出量为 <code style="color:#22d3bf">线段长 × 线宽 × 层厚 / 耗材截面积</code>。环与环之间是移动(e = 0)。这是用来生成带真值的合成 G-code 的工具,不具备填充和回抽。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

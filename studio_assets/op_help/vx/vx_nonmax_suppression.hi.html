@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_nonmax_suppression(image, *, window, mask=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import vxcore; vxcore.vx_nonmax_suppression(image, *, window, mask=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvx.get(&quot;vx_nonmax_suppression&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>non-maximum suppression (section 3.39)। pixel (x, y) केवल तभी बचता है जब window के अंदर वह <b>अपने से पहले वाले पड़ोसियों (ऊपर की row और उसी row में बाईं ओर) से ≥ और बाद वाले पड़ोसियों से &gt;</b> हो (REQ-0337)। इसी असममिति के कारण समतल शिखर पर केवल 1 pixel बचता है। *mask* के non-zero pixels की तुलना नहीं की जाती, वे जैसे के तैसे रखे जाते हैं (दूसरे pixels की तुलना में भी उपयोग नहीं होते, REQ-0336)। दबाए गए pixels U8 में 0 और S16 में INT16_MIN बन जाते हैं (REQ-0335)। window से बाहर जाने वाले पड़ोसियों की तुलना नहीं की जाती।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>*window*(必須): 奇数の窓の一辺(3, 5, …)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8/S16 の 2-D でない / window が 3 以上の奇数でない / mask の形が違う。</p>
+<p>*window* (ज़रूरी): odd window की side length (3, 5, …)।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D U8/S16 नहीं है / window 3 या उससे बड़ी odd संख्या नहीं है / mask का shape अलग है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

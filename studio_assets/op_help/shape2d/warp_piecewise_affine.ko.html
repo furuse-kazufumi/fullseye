@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imagemorph; imagemorph.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;warp_piecewise_affine&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>img의 src_pts에 있는 내용을 dst_pts로 옮기는 구간별 아핀 워프.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>dst_pts を Delaunay 三角形分割し、各出力画素が属す三角形の重心座標を求め、同じ重心座標で src_pts 側の対応三角形へ写して逆写像サンプルする。凸包の外側(三角形に属さない画素)は恒等(元位置)でサンプルするため、四隅を対応点に含める(<code style="color:#22d3bf">add_frame_corners</code>)と穴なく画像全体を覆える。</p>
-<p>引数:</p>
-<p>img: (H,W) か (H,W,C)、[0,1]。</p>
-<p>src_pts, dst_pts: (K,2) の (x,y)。同数・同順の対応点。</p>
-<p>order: 補間次数(1=バイリニア)。</p>
-<p>返り値: img と同 shape・[0,1] の float64。</p>
+<p>dst_pts 를 Delaunay 삼각형 분할하고, 각 출력 화소가 속한 삼각형의 무게중심 좌표를 구해, 같은 무게중심 좌표로 src_pts 쪽의 대응 삼각형으로 옮겨 역사상 샘플한다. 볼록 껍질의 바깥(삼각형에 속하지 않는 화소)은 항등(원래 위치)으로 샘플하므로, 네 모서리를 대응점에 포함하면(<code style="color:#22d3bf">add_frame_corners</code>) 구멍 없이 영상 전체를 덮을 수 있다.</p>
+<p>인수:</p>
+<p>img: (H,W) 나 (H,W,C), [0,1].</p>
+<p>src_pts, dst_pts: (K,2) 의 (x,y). 같은 수·같은 순서의 대응점.</p>
+<p>order: 보간 차수(1=바이리니어).</p>
+<p>반환값: img 와 같은 shape·[0,1] 의 float64.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_flow_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Flow field — particle को field के साथ लगातार बहाता रहता है (रोका न जाए तो खत्म नहीं होता)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★場は<b>ポテンシャル ψ の回転</b>として作る。だから <b>発散が恒等的に 0</b> (非圧縮)で、粒子が湧いたり消えたりしない。「それらしい雑音」で作った</p>
-<p>流れ場との違いはここで、<code style="color:#22d3bf">perpetual_identities</code> が数で出す。</p>
-<p>★線の色と太さは<b>流速</b> |∇ψ| に結びつけてある(太さも濃さも一定だと、同じ場から描いても「落書き」にしかならない)。</p>
+<p>★field को <b>potential ψ के curl</b> के रूप में बनाया जाता है। इसलिए <b>divergence सर्वत्र 0</b> है (incompressible), और कण न अपने आप प्रकट होते हैं न गायब होते हैं। &quot;विश्वसनीय दिखने वाले noise&quot; से बने flow field से यही अंतर है, और <code style="color:#22d3bf">perpetual_identities</code> इसे संख्या के रूप में देता है।</p>
+<p>★line का रंग और मोटाई <b>प्रवाह की गति</b> |∇ψ| से जुड़ी है (मोटाई और गहराई दोनों स्थिर हों, तो उसी field से बनाने पर भी केवल &quot;घसीटा&quot; बनता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

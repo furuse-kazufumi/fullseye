@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import profileops; profileops.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprofile.get(&quot;profile_leading_edge_radius&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>앞전 반경(시위 길이 대비 비율). 앞전 근방의 점에 원을 피팅한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">frac</code> は前縁から弦方向にどこまでを「前縁付近」とみなすか。<b>この値で答えが変わる</b>。鼻先は円だが、少し離れると円ではないので、窓を広げると系統的に<b>過大</b>になる。NACA 4 桁の閉形式 <code style="color:#22d3bf">1.1019 * t^2</code> と突き合わせた実測(点数 4001 で生成):</p>
+<p><code style="color:#22d3bf">frac</code> 는 앞전에서 시위 방향으로 어디까지를 &quot;앞전 부근&quot;으로 볼지. <b>이 값으로답이 바뀐다</b>. 코끝은 원이지만 조금 떨어지면 원이 아니므로, 창을 넓히면계통적으로 <b>과대</b>해진다. NACA 4 자리의 닫힌 식 <code style="color:#22d3bf">1.1019 * t^2</code> 와 대조한실측(점 수 4001 로 생성):</p>
 <p>==========  ==========  ==========  ==========  ==========</p>
 <p>frac        NACA 0012   NACA 2412   NACA 0021   NACA 0008</p>
 <p>==========  ==========  ==========  ==========  ==========</p>
-<p>閉形式      0.01587     0.01587     0.04859     0.00705</p>
+<p>닫힌 식        0.01587     0.01587     0.04859     0.00705</p>
 <p>0.001       0.01590     0.01594     0.04780     0.00730</p>
 <p>0.005       0.01708     0.01716     0.04801     0.00870</p>
 <p>0.01        0.01872     0.01880     0.04897     0.01042</p>
 <p>0.03        0.02517     0.02526     0.05412     0.01688</p>
 <p>==========  ==========  ==========  ==========  ==========</p>
-<p>★ 既定は <b>0.001</b>。最初 0.03 を既定にしていて、閉形式の <b>1.6 倍</b>の値を返していた(「1 % 以内」と docstring に書いたのは確かめる前の推測だった)。厚い翼(0021)ほど鈍いので窓の影響が小さく、薄い翼(0008)ほど敏感。</p>
-<p>実データのように点が疎な輪郭では、この窓に点が 5 つ入らないことがある —— そのときは自動で等弧長に取り直してから当てはめる。</p>
+<p>★ 기본값은 <b>0.001</b>. 처음에는 0.03 을 기본값으로 했고, 닫힌 식의 <b>1.6 배</b>의 값을반환하고 있었다(&quot;1 % 이내&quot;라고 docstring 에 쓴 것은 확인하기 전의 추측이었다). 두꺼운 날개(0021)일수록 뭉툭하므로 창의 영향이 작고, 얇은 날개(0008)일수록 민감하다.</p>
+<p>실데이터처럼 점이 성긴 윤곽에서는 이 창에 점이 5 개 들어가지 않을 수 있다 —— 그때는 자동으로 등호장으로 다시 샘플링한 뒤 피팅한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

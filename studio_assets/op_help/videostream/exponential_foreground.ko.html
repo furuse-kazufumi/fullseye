@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exponential_foreground(video, alpha: &#x27;float&#x27; = 0.05, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import videostream; videostream.exponential_foreground(video, alpha: &#x27;float&#x27; = 0.05, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvideostream.get(&quot;exponential_foreground&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>전경 마스크 <code style="color:#22d3bf">|frame − 지수 배경| &gt; threshold</code> → 0/1 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">exponential_background</code> と同じ指数移動平均 <code style="color:#22d3bf">bg += α (frame - bg)</code> を回し、各フレームで <b>更新後の</b> <code style="color:#22d3bf">bg</code> との差 <code style="color:#22d3bf">|frame - bg| &gt; threshold</code> を 1 にする。先頭フレームは <code style="color:#22d3bf">bg</code> の初期化に使われ差が 0 なので、<code style="color:#22d3bf">t = 0</code> は全画素 0。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 配列か 2-D フレームの list。整数 dtype は最大値で <code style="color:#22d3bf">[0, 1]</code> に正規化、float はクリップ。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code>。大きいほど背景が速く追従し、止まった物体は約 <code style="color:#22d3bf">1/α</code> 枚で消える。1 だと <code style="color:#22d3bf">bg == frame</code> になり常に全画素 0。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code>: <code style="color:#22d3bf">[0, 1]</code> の強度単位。<b>全画素共通の絶対閾</b>なので、暗部の雑音と明部の雑音を同じ閾で切ることになる。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64 の 0 / 1。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>。</p>
-<p>画素ごとの分散で閾を決めたいなら <code style="color:#22d3bf">running_gaussian_foreground</code>。ゴーストの無い動き検出なら <code style="color:#22d3bf">three_frame_difference</code>。</p>
+<p><code style="color:#22d3bf">exponential_background</code> 와 같은 지수 이동 평균 <code style="color:#22d3bf">bg += α (frame - bg)</code> 를 돌리고, 각 프레임에서 <b>갱신 후의</b> <code style="color:#22d3bf">bg</code> 와의 차 <code style="color:#22d3bf">|frame - bg| &gt; threshold</code> 를 1 로 한다. 첫 프레임은 <code style="color:#22d3bf">bg</code> 의 초기화에 쓰여 차가 0 이므로 <code style="color:#22d3bf">t = 0</code> 은 전 화소 0.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 배열 또는 2-D 프레임 list. 정수 dtype 은 최댓값으로 <code style="color:#22d3bf">[0, 1]</code> 로 정규화, float 는 클립. NaN/Inf 는 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code>. 클수록 배경이 빨리 따라오고, 멈춘 물체는약 <code style="color:#22d3bf">1/α</code> 장에서 사라진다. 1 이면 <code style="color:#22d3bf">bg == frame</code> 이 되어 항상 전 화소 0.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code>: <code style="color:#22d3bf">[0, 1]</code> 의 강도 단위. <b>전 화소 공통의 절대 임계값</b>이므로 어두운 부분의잡음과 밝은 부분의 잡음을 같은 임계값으로 자르게 된다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(T, H, W)</code> float64 의 0 / 1.</p>
+<p style="margin:2px 0 2px 12px">• 실패: <code style="color:#22d3bf">ValueError</code>.</p>
+<p>화소별 분산으로 임계값을 정하고 싶다면 <code style="color:#22d3bf">running_gaussian_foreground</code>. 고스트가없는 움직임 검출이라면 <code style="color:#22d3bf">three_frame_difference</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

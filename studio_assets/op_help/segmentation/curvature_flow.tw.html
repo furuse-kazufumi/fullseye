@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_flow(phi, *, t_end: &#x27;float&#x27; = 50.0, dt: &#x27;float&#x27; = 0.2, eta: &#x27;float&#x27; = 1e-08, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segcontour; segcontour.curvature_flow(phi, *, t_end: &#x27;float&#x27; = 50.0, dt: &#x27;float&#x27; = 0.2, eta: &#x27;float&#x27; = 1e-08, record_every: &#x27;int&#x27; = 0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;curvature_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平均曲率流（曲線縮短流）的水平集形式 φ_t = |∇φ| div(∇φ/|∇φ|)（φ &lt; 0 為內側，從凸處開始收縮）（curvature_flow）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>陽的な中心差分: φ_t = (φ_xx φ_y² − 2 φ_x φ_y φ_xy + φ_yy φ_x²) / (φ_x² + φ_y² + η)、刻み dt ≤ 0.25(安定条件)。<code style="color:#22d3bf">phi</code> = φ か bool のマスク(符号付き距離に直す)。面積は各刻みで <code style="color:#22d3bf">clip(0.5 − φ/|∇φ|, 0, 1)</code> の和。</p>
-<p>門: 単純閉曲線の囲む面積は dA/dt = −∮ κ ds = −2π(回転数 1、凸でなくても)。円なら r(t)² = r0² − 2t。</p>
-<p>返り値: <code style="color:#22d3bf">phi</code>、<code style="color:#22d3bf">mask</code>、<code style="color:#22d3bf">times</code>、<code style="color:#22d3bf">areas</code>、<code style="color:#22d3bf">area_rate</code>(面積 vs 時間の最小二乗の傾き)、<code style="color:#22d3bf">area_rate_theory</code> = −2π、<code style="color:#22d3bf">history</code>(record_every 刻みごとのマスク)、<code style="color:#22d3bf">n_steps</code>。</p>
+<p>顯式中心差分: φ_t = (φ_xx φ_y² − 2 φ_x φ_y φ_xy + φ_yy φ_x²) / (φ_x² + φ_y² + η),步長 dt ≤ 0.25(穩定條件)。<code style="color:#22d3bf">phi</code> = φ 或 bool 遮罩(轉換為符號距離)。每一步的面積是 <code style="color:#22d3bf">clip(0.5 − φ/|∇φ|, 0, 1)</code> 的和。</p>
+<p>門檻: 簡單閉曲線所圍面積滿足 dA/dt = −∮ κ ds = −2π(環繞數 1,即使不是凸的)。圓則 r(t)² = r0² − 2t。</p>
+<p>回傳值: <code style="color:#22d3bf">phi</code>、<code style="color:#22d3bf">mask</code>、<code style="color:#22d3bf">times</code>、<code style="color:#22d3bf">areas</code>、<code style="color:#22d3bf">area_rate</code>(面積 vs 時間的最小平方斜率)、<code style="color:#22d3bf">area_rate_theory</code> = −2π、<code style="color:#22d3bf">history</code>(每 record_every 步的遮罩)、<code style="color:#22d3bf">n_steps</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

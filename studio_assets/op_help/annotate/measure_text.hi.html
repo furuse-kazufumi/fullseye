@@ -4,42 +4,41 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;measure_text&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>text को <b>बनाने से पहले</b> मापता है। न समाए तो wrap करता है या छोटा करता है, फिर भी न हो तो exception।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>text : str</p>
-<p>測る文字列(<code style="color:#22d3bf">\n</code> で改行)。</p>
+<p>मापी जाने वाली string (<code style="color:#22d3bf">\n</code> से line break)।</p>
 <p>font_size : int</p>
-<p>希望のサイズ。<code style="color:#22d3bf">max_width</code> に入らなければ 1pt ずつ縮める。</p>
+<p>इच्छित size। <code style="color:#22d3bf">max_width</code> में न समाए तो 1pt करके छोटा किया जाता है।</p>
 <p>font_path : str or None</p>
-<p>明示すると機械をまたいでも同じ結果になる。None は <code style="color:#22d3bf">FONT_CANDIDATES</code></p>
-<p>を固定順で探す。</p>
+<p>स्पष्ट रूप से देने पर अलग-अलग machines पर भी एक जैसा परिणाम मिलता है। None पर <code style="color:#22d3bf">FONT_CANDIDATES</code></p>
+<p>को तय क्रम में खोजा जाता है।</p>
 <p>max_width : int or None</p>
-<p>入れたい幅[px]。None なら縮小も折り返しもしない。</p>
+<p>जिस width [px] में समाना है। None हो तो न छोटा करता है, न wrap करता है।</p>
 <p>min_font_size : int</p>
-<p>ここまで縮めても入らなければ <b>ValueError</b>(黙って切らない)。</p>
+<p>यहाँ तक छोटा करने पर भी न समाए तो <b>ValueError</b> (चुपचाप काटता नहीं)।</p>
 <p>line_spacing : float</p>
-<p>行送り係数。</p>
+<p>line spacing factor।</p>
 <p>bold, italic : bool or int</p>
-<p><b>合成</b>の太字・斜体(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。本物の</p>
-<p>Bold / Italic 書体ではないので字形は違う ―― 本物が要るときは</p>
-<p><code style="color:#22d3bf">font_path</code> にその書体のファイルを渡すこと。<code style="color:#22d3bf">bold</code> に整数を渡すと</p>
-<p>重ね打ちの回数を直に指定できる。<b>太さと傾きのぶんは <code style="color:#22d3bf">width</code> に入る</b></p>
-<p>ので、板や表の桁はそのまま広がる(重ね打ちは横にだけ太るので</p>
-<p><code style="color:#22d3bf">height</code> は変わらない)。</p>
+<p><b>synthetic</b> bold और italic (<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)। ये असली</p>
+<p>Bold / Italic typeface नहीं हैं, इसलिए glyph की आकृति अलग होती है -- असली चाहिए तो</p>
+<p><code style="color:#22d3bf">font_path</code> में उस typeface की file दें। <code style="color:#22d3bf">bold</code> में integer देने पर</p>
+<p>overstrike की संख्या सीधे तय की जा सकती है। <b>मोटाई और झुकाव का हिस्सा <code style="color:#22d3bf">width</code> में जुड़ता है</b>,</p>
+<p>इसलिए plate और table के column उतने ही चौड़े होते हैं (overstrike केवल horizontal मोटा करता है, इसलिए</p>
+<p><code style="color:#22d3bf">height</code> नहीं बदलता)।</p>
 <p>wrap : bool</p>
-<p>True(既定)なら <code style="color:#22d3bf">max_width</code> で<b>折り返す</b>。False なら折り返さず</p>
-<p><b>行を増やさずフォントを縮めて</b>収める(格子のラベルのように、2 行に</p>
-<p>なると版が崩れる場所で使う ―― <code style="color:#22d3bf">exhibit_tile._fit_label</code> と同じ流儀)。</p>
-<p>どちらでも <code style="color:#22d3bf">min_font_size</code> まで来て入らなければ例外。</p>
-<p><code style="color:#22d3bf">\n</code> の改行は <code style="color:#22d3bf">max_width</code> の有無・<code style="color:#22d3bf">wrap</code> の値に<b>よらず常に</b>効く</p>
-<p>(幅を与えないと 1 行に潰れる、という事故は起きない)。</p>
+<p>True (default) हो तो <code style="color:#22d3bf">max_width</code> पर <b>wrap करता है</b>। False हो तो wrap नहीं करता बल्कि</p>
+<p><b>lines बढ़ाए बिना font छोटा करके</b> समाता है (grid labels की तरह, जहाँ 2 lines</p>
+<p>होने पर layout बिगड़ जाता है -- <code style="color:#22d3bf">exhibit_tile._fit_label</code> जैसा ही तरीका)।</p>
+<p>दोनों में <code style="color:#22d3bf">min_font_size</code> तक पहुँचकर भी न समाए तो exception।</p>
+<p><code style="color:#22d3bf">\n</code> वाला line break <code style="color:#22d3bf">max_width</code> हो या न हो, <code style="color:#22d3bf">wrap</code> का मान कुछ भी हो, <b>इससे स्वतंत्र हमेशा</b> लागू होता है</p>
+<p>(width न देने पर सब 1 line में दब जाए, ऐसी दुर्घटना नहीं होती)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;lines&quot;, &quot;font&quot;, &quot;font_size&quot;, &quot;width&quot;, &quot;height&quot;, &quot;line_height&quot;}</code>。</p>
-<p><code style="color:#22d3bf">width</code>/<code style="color:#22d3bf">height</code> は実測[px]。</p>
+<p><code style="color:#22d3bf">{&quot;lines&quot;, &quot;font&quot;, &quot;font_size&quot;, &quot;width&quot;, &quot;height&quot;, &quot;line_height&quot;}</code>।</p>
+<p><code style="color:#22d3bf">width</code>/<code style="color:#22d3bf">height</code> measured [px] हैं।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">max_width</code> が非正 / <code style="color:#22d3bf">min_font_size</code> まで縮めても 1 行が入らない。</p>
+<p><code style="color:#22d3bf">max_width</code> positive नहीं / <code style="color:#22d3bf">min_font_size</code> तक छोटा करने पर भी 1 line नहीं समाती।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_sides(contour, n=101, normalise=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import profileops; profileops.profile_sides(contour, n=101, normalise=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsprofile.get(&quot;profile_sides&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將上表面與下表面擷取為沿弦向座標的函數。回傳 dict。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>弦を <code style="color:#22d3bf">n</code> 等分し、各位置で輪郭と交わる上下の点を線形補間で拾う。</p>
-<p><b>開いた曲線はここで拒否される</b> —— 1 価の関数(MTF 曲線のような)を渡すと下面が取れないので、「これは閉じた断面ではない」と明示して落とす。型ではなく検証で守っている(<code style="color:#22d3bf">pairs</code> は関数データにも閉輪郭にも使われる語彙なので、型を分けると既存の輪郭生成 op から繋がらなくなる)。</p>
+<p>把弦 <code style="color:#22d3bf">n</code> 等分，在各位置用線性內插取出與輪廓相交的上下點。</p>
+<p><b>開曲線在這裡被拒絕</b> —— 若傳入 1 值(單值)函數(如 MTF 曲線), 就取不到下表面，因此會明確聲明「這不是閉合截面」並失敗。這是靠驗證而非型別來保護的(<code style="color:#22d3bf">pairs</code> 是函數資料與閉合輪廓都使用的詞彙，若拆分型別，就無法與既有的輪廓生成 op 相連)。</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">x</code>(<code style="color:#22d3bf">(n,)</code>)、<code style="color:#22d3bf">upper</code> / <code style="color:#22d3bf">lower</code>(<code style="color:#22d3bf">(n,)</code>)、<code style="color:#22d3bf">normalised</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

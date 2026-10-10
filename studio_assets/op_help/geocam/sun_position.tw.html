@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_position(lat_deg, lon_deg, unix_times)</code>(要直接呼叫實作,<code style="color:#22d3bf">import geocam; geocam.sun_position(lat_deg, lon_deg, unix_times)</code>;從台帳取用則 <code style="color:#22d3bf">opsgeocam.get(&quot;sun_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>緯度、經度、時刻(UNIX 秒，UTC)→ 太陽的方位角、仰角 [度] (NOAA 太陽位置演算法，Meeus 1998 的低精度公式)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>公開された閉形式(NOAA Global Monitoring Laboratory の Solar Calculator と同じ式:</p>
-<p>ユリウス世紀 → 平均黄経・平均近点角・中心差 → 視黄経 → 黄道傾斜 → 赤緯 と均時差 → 時角 → 天頂角・方位角)。精度は 2000 年 ± 1 世紀で <b>0.01° 程度</b>(NOAA の記述)、大気屈折は仰角に足す(NOAA の区分式、水平近くで最大 0.57°)。時刻は UTC の UNIX 秒(1-D、float でよい)。うるう秒・ΔT は無視する(0.01° に効かない)。</p>
+<p>公開的閉合式(與 NOAA Global Monitoring Laboratory 的 Solar Calculator 相同的公式:</p>
+<p>儒略世紀 → 平黃經、平近點角、中心差 → 視黃經 → 黃赤交角 → 赤緯 與均時差 → 時角 → 天頂角、方位角)。精度在 2000 年 ± 1 世紀內為 <b>0.01° 左右</b>(NOAA 的說明), 大氣折射加到仰角上(NOAA 的分段公式,接近水平時最大 0.57°)。時刻為 UTC 的 UNIX 秒(1-D,float 即可)。忽略閏秒與 ΔT(對 0.01° 沒有影響)。</p>
 <p>Args:</p>
-<p>lat_deg, lon_deg: 観測点。経度は東が正。</p>
-<p>unix_times: (N,) UNIX 秒(UTC)。スカラも可。</p>
+<p>lat_deg, lon_deg: 觀測點。經度以東為正。</p>
+<p>unix_times: (N,) UNIX 秒(UTC)。也可為純量。</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">azimuth_deg</code> (N,)(北 0°、時計回り)/ <code style="color:#22d3bf">elevation_deg</code> (N,)(屈折込み)/</p>
-<p><code style="color:#22d3bf">elevation_true_deg</code> (N,)(屈折なし)/ <code style="color:#22d3bf">declination_deg</code> / <code style="color:#22d3bf">equation_of_time_min</code> /</p>
+<p>table: <code style="color:#22d3bf">azimuth_deg</code> (N,)(北 0°,順時針)/ <code style="color:#22d3bf">elevation_deg</code> (N,)(含折射)/</p>
+<p><code style="color:#22d3bf">elevation_true_deg</code> (N,)(不含折射)/ <code style="color:#22d3bf">declination_deg</code> / <code style="color:#22d3bf">equation_of_time_min</code> /</p>
 <p><code style="color:#22d3bf">hour_angle_deg</code> / <code style="color:#22d3bf">n</code>。</p>
-<p>真値で確かめてある性質(tests/test_geocam.py): 春分の正午に仰角 = 90 − |緯度|、正午の方位は北半球で 180°(南)、方位は東 → 南 → 西と単調、日の出と日の入りの仰角が対称、赤緯は ±23.44° に収まる。</p>
+<p>已用真值確認的性質(tests/test_geocam.py):春分正午仰角 = 90 − |緯度|, 北半球正午的方位為 180°(南),方位依東 → 南 → 西單調變化,日出與日落的仰角對稱,赤緯在 ±23.44° 以內。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

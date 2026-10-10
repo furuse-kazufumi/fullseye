@@ -4,25 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>(要直接呼叫實作,<code style="color:#22d3bf">import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>;從台帳取用則 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_quantize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以與眼睛相同的方式量化小眼訊號：先做對數壓縮，再對每個小眼取 n 位元(<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> 為 ON / OFF 2 個通道)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>複眼は生まれつき量子化器で、片眼およそ 800 個眼(間隔 4.6°)、光受容器は強度を対数圧縮して平均に適応し、ラミナの L1 / L2 が平均からの偏差を ON と OFF に分ける。この op はその予算を再現し、下流のモデル(reservoir・網膜部位対応の検査)に「本当に何ビット要るか」を問えるようにする。</p>
-<p>A compound eye is a quantizer by construction: ~800 ommatidia per eye at 4.6 deg spacing, photoreceptors that log-compress intensity and adapt to the mean, and lamina cells (L1/L2) that split the deviation into ON and OFF channels. This op reproduces that budget so a downstream model (reservoir, retinotopy test) can be asked how many bits it really needs.</p>
+<p>複眼天生就是量化器:每隻眼約 800 個小眼(間隔 4.6°),光受器對強度作對數壓縮並適應平均值, lamina 的 L1 / L2 把相對平均值的偏差分成 ON 與 OFF。此 op 重現這項預算,使下游模型(reservoir、視網膜拓撲對應檢驗)能被問到「究竟需要多少位元」。</p>
+<p>複眼天生就是量化器: 每隻眼約 800 個小眼,間隔 4.6 deg, 光受器對強度作對數壓縮並適應平均值,lamina 細胞(L1/L2) 把偏差分成 ON 與 OFF 通道。此 op 重現這項預算,使下游模型(reservoir、視網膜拓撲檢驗)能被問到真正需要多少位元。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>signal : (n,) float</p>
-<p>Per-ommatidium intensities &gt;= 0 (<code style="color:#22d3bf">fly_hex_resample</code> output).</p>
+<p>每個小眼的強度 &gt;= 0(<code style="color:#22d3bf">fly_hex_resample</code> 的輸出)。</p>
 <p>bits : int</p>
-<p>1..8 levels = 2**bits (<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> ignores it: the output is the signed pair below).</p>
+<p>1..8 級 = 2**bits(<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> 時忽略: 輸出為下方的帶符號對)。</p>
 <p>mode : str</p>
-<p><code style="color:#22d3bf">&quot;log&quot;</code>: log1p-compress relative to the mean, shift the darkest ommatidium to 0, then</p>
-<p>uniform levels over the compressed range; <code style="color:#22d3bf">&quot;linear&quot;</code>: uniform levels over [0, max]; <code style="color:#22d3bf">&quot;onoff&quot;</code>: deviation from the mean</p>
-<p>relative to <code style="color:#22d3bf">contrast</code> clipped to [-1, 1] and returned as <code style="color:#22d3bf">2 * n</code> values <code style="color:#22d3bf">[ON..., OFF...]</code></p>
-<p>(ON = positive part, OFF = negative part), each &gt;= 0.</p>
+<p><code style="color:#22d3bf">&quot;log&quot;</code>: 相對平均值作 log1p 壓縮,把最暗的小眼移到 0,然後</p>
+<p>在壓縮後的範圍上均勻分級; <code style="color:#22d3bf">&quot;linear&quot;</code>: 在 [0, max] 上均勻分級; <code style="color:#22d3bf">&quot;onoff&quot;</code>: 相對平均值的偏差</p>
+<p>以 <code style="color:#22d3bf">contrast</code> 正規化並裁切到 [-1, 1],作為 <code style="color:#22d3bf">2 * n</code> 個值 <code style="color:#22d3bf">[ON..., OFF...]</code> 回傳</p>
+<p>(ON = 正部分,OFF = 負部分),各值 &gt;= 0。</p>
 <p>contrast : float</p>
-<p>Michelson-style contrast that saturates the ON/OFF channels (<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> only).</p>
+<p>使 ON/OFF 通道飽和的 Michelson 式對比(僅 <code style="color:#22d3bf">mode=&quot;onoff&quot;</code>)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>(n,) float in [0, 1] (levels / (2**bits - 1)); for <code style="color:#22d3bf">&quot;onoff&quot;</code> (2n,) in [0, 1].</p>
+<p>(n,) float,取值 [0, 1] (級數 / (2**bits - 1));<code style="color:#22d3bf">&quot;onoff&quot;</code> 時為 (2n,),取值 [0, 1]。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>Non-finite or negative inputs are refused. A constant signal quantizes to all-zeros (<code style="color:#22d3bf">&quot;log&quot;</code> / <code style="color:#22d3bf">&quot;onoff&quot;</code>) — there is no contrast to encode.</p>
+<p>拒絕非有限或負的輸入。常數訊號量化為全零(<code style="color:#22d3bf">&quot;log&quot;</code> / <code style="color:#22d3bf">&quot;onoff&quot;</code>)—— 沒有可編碼的對比。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

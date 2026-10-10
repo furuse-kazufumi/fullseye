@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metrics_table(report, order=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgmetrics; imgmetrics.metrics_table(report, order=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;metrics_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把報告整理成 <code style="color:#22d3bf">(名稱, 數值)</code> 的表 —— 描述測量條件的列<b>必定一併列出</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>数値だけの表を作れないようにしてあるのがこの op の主旨。<code style="color:#22d3bf">contract</code> の各項目が <code style="color:#22d3bf">条件: &lt;名前&gt;</code> として同じ表に入る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">report</code>: <code style="color:#22d3bf">compare_images</code> または <code style="color:#22d3bf">measure_with</code> の返り値(<code style="color:#22d3bf">contract</code> キーを持つ dict)。それ以外は <code style="color:#22d3bf">MetricContractError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code>: 先頭に並べる指標名の並び(省略時はキーの辞書順)。<code style="color:#22d3bf">report</code> に無い名前は黙って飛ばし、<code style="color:#22d3bf">&quot;contract&quot;</code> は指標として並べない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(名前, 値)</code> タプルの list。指標行のあと、<code style="color:#22d3bf">contract</code> の各項目を <code style="color:#22d3bf">&quot;条件: data_range&quot;</code> のようにキーの辞書順で追加する。値は変換しない(<code style="color:#22d3bf">None</code> や <code style="color:#22d3bf">inf</code> もそのまま)。</p>
-<p>図注や Markdown の表に落とす直前に置く。<b>条件行を削ってから貼らない</b>こと ―― <code style="color:#22d3bf">data_range</code> が違う 2 つの PSNR を並べると 48 dB の見かけの差が出る。</p>
+<p>本 op 的主旨是讓人無法做出只有數值的表。<code style="color:#22d3bf">contract</code> 的各項會作為 <code style="color:#22d3bf">条件: &lt;名稱&gt;</code> 進入同一張表。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">report</code>:<code style="color:#22d3bf">compare_images</code> 或 <code style="color:#22d3bf">measure_with</code> 的回傳值(含 <code style="color:#22d3bf">contract</code> 鍵的 dict)。其他則為 <code style="color:#22d3bf">MetricContractError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code>:排在前面的指標名序列(省略時按鍵的字典序)。<code style="color:#22d3bf">report</code> 中沒有的名稱默默跳過,<code style="color:#22d3bf">&quot;contract&quot;</code> 不作為指標列出。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值:<code style="color:#22d3bf">(名稱, 值)</code> tuple 的 list。在指標列之後,把 <code style="color:#22d3bf">contract</code> 的各項以 <code style="color:#22d3bf">&quot;条件: data_range&quot;</code> 的形式按鍵的字典序追加。值不做轉換(<code style="color:#22d3bf">None</code> 和 <code style="color:#22d3bf">inf</code> 也原樣保留)。</p>
+<p>放在落到圖註或 Markdown 表格之前。<b>不要刪掉條件列再貼</b> —— 把 <code style="color:#22d3bf">data_range</code> 不同的 2 個 PSNR 並列,會出現 48 dB 的表面差異。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

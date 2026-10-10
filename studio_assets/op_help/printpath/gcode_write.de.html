@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import printpath; printpath.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_write&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schreibt eine Tabelle von Liniensegmenten als G-code (G21 / G90 / M82, G1 mit absoluten Koordinaten und absolutem E). Rückgabe ist der geschriebene Pfad (<code style="color:#22d3bf">text</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">gcode_read</code> と往復できる(層は <code style="color:#22d3bf">;LAYER:n</code> で書く)。移動だけの線分は E を進めない。</p>
+<p>Lässt sich mit <code style="color:#22d3bf">gcode_read</code> hin und zurück umwandeln (Schichten werden als <code style="color:#22d3bf">;LAYER:n</code> geschrieben). Reine Verfahrsegmente erhöhen E nicht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">Leitfaden zur Familie printpath</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import watershed3d; watershed3d.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;watershed_vol&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以距离变换为种子的分水岭把 3D 前景分割为每个物体的标签(公开 op 的轻量组合)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>連結成分では 1 個に融合する<b>接触/僅かな重なり</b>を割るのが目的。EDT は <code style="color:#22d3bf">volops.vol_distance_transform</code>、skimage 分水嶺は <code style="color:#22d3bf">volops.vol_watershed</code> に委譲し、本モジュールは (A) skimage 不在時の純 scipy フォールバックと、シード自動生成のグルーだけを足す。<code style="color:#22d3bf">markers</code> を省略すると距離変換の局所極大(<code style="color:#22d3bf">min_distance</code> NMS)を自動シードにする。</p>
+<p>目的是把连通分量会融合为 1 个的<b>接触/轻微重叠</b>分开。EDT 委托给 <code style="color:#22d3bf">volops.vol_distance_transform</code>,skimage 分水岭委托给 <code style="color:#22d3bf">volops.vol_watershed</code>, 本模块只添加 (A) skimage 不存在时的纯 scipy 回退,以及种子点自动生成的粘合代码。省略 <code style="color:#22d3bf">markers</code> 时把距离变换的局部极大(<code style="color:#22d3bf">min_distance</code> NMS) 作为自动种子点。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>binary : array_like</p>
-<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>bool 或 0/1 的 3D 前景体数据。</p>
 <p>markers : ndarray or None</p>
-<p>シードを外部指定する場合の int ラベル配列(binary と同形状、0=無し, 1..n=シード)。</p>
-<p>None なら距離変換の極大から自動生成する。</p>
+<p>从外部指定种子点时的 int 标签数组(与 binary 形状相同,0=无,1..n=种子点)。</p>
+<p>None 时从距离变换的极大自动生成。</p>
 <p>min_distance : float</p>
-<p><code style="color:#22d3bf">markers=None</code> のときのシード最小間隔(voxel)。</p>
+<p><code style="color:#22d3bf">markers=None</code> 时种子点的最小间隔(voxel)。</p>
 <p>method : {&quot;auto&quot;, &quot;skimage&quot;, &quot;scipy&quot;}</p>
-<p>バックエンド選択。&quot;skimage&quot; 指定で不在なら fail-closed(ImportError)。</p>
+<p>后端选择。指定 &quot;skimage&quot; 而不存在时 fail-closed(失败即拒绝)(ImportError)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>labels : ndarray(int32)</p>
-<p>binary と同形状。背景 0、各物体に 1..k のラベル(前景を過不足なく被覆)。</p>
+<p>与 binary 形状相同。背景 0,各物体为 1..k 的标签(恰好覆盖前景,不多不少)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形状不正・退化入力・不正 method のとき(fail-closed)。</p>
+<p>形状不正确、退化输入、method 不正确时(fail-closed(失败即拒绝))。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

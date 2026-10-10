@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_complex&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बंद contour को complex Fourier series के गुणांकों में बदलता है — <code style="color:#22d3bf">z(t) = Σ c_k exp(2πi k t)</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>引数:</p>
-<p>points: (N,2) の閉輪郭頂点。<b>(row, col) 順</b>(<code style="color:#22d3bf">fourierdesc</code> と同じ)。</p>
-<p>n_harmonics: 残す次数 <code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">|k| &lt;= K</code>)。<code style="color:#22d3bf">None</code> なら表せる上限まで。</p>
-<p>parametrisation: <code style="color:#22d3bf">&quot;index&quot;</code> = 点の添字を等間隔の媒介変数にする /</p>
-<p><code style="color:#22d3bf">&quot;arclength&quot;</code> = <b>弧長</b>で等間隔に打ち直してから変換する。</p>
-<p>返り値: <code style="color:#22d3bf">(2K+1, 3)</code> の実配列(<code style="color:#22d3bf">matrix</code>)。行は <code style="color:#22d3bf">[k, Re c_k, Im c_k]</code> で <code style="color:#22d3bf">k</code> は <code style="color:#22d3bf">0, 1, -1, 2, -2, …</code>(低い周波数から)。</p>
-<p>★<b>媒介変数の取り方を既定で黙って決めない</b>のがこの op の肝。不均一に標本化された輪郭を <code style="color:#22d3bf">&quot;index&quot;</code> で読むと、点が密なところに余分な時間が割り当てられ、<b>絵は似ているのに係数が別物</b>になる(実測で <code style="color:#22d3bf">k=3</code> の係数が 47 倍ちがった)。既定は <code style="color:#22d3bf">&quot;index&quot;</code>(FFT の素の意味)だが、形の記述として使うなら <code style="color:#22d3bf">&quot;arclength&quot;</code> を選ぶこと。</p>
-<p>★★<code style="color:#22d3bf">&quot;arclength&quot;</code> を選ぶと <b>op の内部で輪郭を打ち直す</b>ので、返る係数は渡した配列ではなく<b>打ち直した輪郭</b>を記述する。だから <code style="color:#22d3bf">contour_fourier_truncation_energy</code> の予言は「打ち直した輪郭に対して」厳密で、呼び手が手元の配列で誤差を測ると合わない(実測: 512 点で 1.15 ずれた)。手元の配列に対して厳密な予言が欲しいときは、<b>先に弧長で打ち直してから</b> <code style="color:#22d3bf">&quot;index&quot;</code> で呼ぶこと。</p>
-<p>★<b>弧長の打ち直しは冪等ではない</b>: 標本を弦で結ぶので、すでに等弧長の輪郭にもう 1 度かけると点が最大 3.73 px 動き(平均 0.84 px)、長さがさらに 3.25 % 縮む。二度かけないこと。</p>
+<p>arguments:</p>
+<p>points: (N,2) के closed contour के शीर्ष। <b>(row, col) क्रम</b> (<code style="color:#22d3bf">fourierdesc</code> जैसा)।</p>
+<p>n_harmonics: रखा जाने वाला order <code style="color:#22d3bf">K</code> (<code style="color:#22d3bf">|k| &lt;= K</code>)। <code style="color:#22d3bf">None</code> हो तो जहाँ तक दर्शाया जा सके।</p>
+<p>parametrisation: <code style="color:#22d3bf">&quot;index&quot;</code> = point के index को बराबर अंतराल वाला parameter बनाना /</p>
+<p><code style="color:#22d3bf">&quot;arclength&quot;</code> = पहले <b>arc length</b> पर बराबर अंतराल से दोबारा sample करके फिर transform करना।</p>
+<p>return value: <code style="color:#22d3bf">(2K+1, 3)</code> का real array (<code style="color:#22d3bf">matrix</code>)। rows <code style="color:#22d3bf">[k, Re c_k, Im c_k]</code> हैं, और <code style="color:#22d3bf">k</code> <code style="color:#22d3bf">0, 1, -1, 2, -2, …</code> है (कम आवृत्ति से)।</p>
+<p>★<b>parameter चुनने का तरीका default में चुपचाप तय न करना</b> इस op का मूल है। असमान रूप से sample किए गए contour को <code style="color:#22d3bf">&quot;index&quot;</code> से पढ़ने पर, जहाँ points घने हैं वहाँ अतिरिक्त समय बँट जाता है, और <b>तस्वीर मिलती-जुलती दिखती है पर coefficients अलग होते हैं</b> (मापन में <code style="color:#22d3bf">k=3</code> का coefficient 47 गुना अलग था)। default <code style="color:#22d3bf">&quot;index&quot;</code> है (FFT का सीधा अर्थ), पर shape के वर्णन के रूप में इस्तेमाल करना हो तो <code style="color:#22d3bf">&quot;arclength&quot;</code> चुनें।</p>
+<p>★★<code style="color:#22d3bf">&quot;arclength&quot;</code> चुनने पर <b>op के अंदर contour दोबारा sample होता है</b>, इसलिए लौटे coefficients दिए गए array का नहीं, बल्कि <b>दोबारा sample किए गए contour</b> का वर्णन करते हैं। इसलिए <code style="color:#22d3bf">contour_fourier_truncation_energy</code> की भविष्यवाणी &quot;दोबारा sample किए गए contour के लिए&quot; सटीक है, और caller अपने array पर error मापे तो मेल नहीं खाता (मापन: 512 points पर 1.15 का अंतर)। अपने array के लिए सटीक भविष्यवाणी चाहिए तो <b>पहले arc length से दोबारा sample करें</b> और फिर <code style="color:#22d3bf">&quot;index&quot;</code> से call करें।</p>
+<p>★<b>arc length resampling idempotent नहीं है</b>: samples को chord से जोड़ा जाता है, इसलिए पहले से समान arc length वाले contour पर 1 बार और लगाने पर points अधिकतम 3.73 px खिसकते हैं (औसत 0.84 px), और लंबाई और 3.25 % सिकुड़ जाती है। दो बार न लगाएँ।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

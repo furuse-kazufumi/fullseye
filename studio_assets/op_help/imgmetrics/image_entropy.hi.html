@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.image_entropy(a, bins=64, data_range=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.image_entropy(a, bins=64, data_range=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;image_entropy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>1 image की Shannon entropy [bit]।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">mutual_information</code> と<b>同じビン割り</b>で出すので、<code style="color:#22d3bf">mutual_information(a, a) == image_entropy(a)</code> が厳密に成り立つ(テストで固定)。既存の <code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">entropy_image</code>(backends)は別のビン割りなので値は一致しない ―― こちらは同時分布と整合する側。</p>
+<p>यह <code style="color:#22d3bf">mutual_information</code> जैसी ही <b>bin विभाजन</b> इस्तेमाल करता है, इसलिए <code style="color:#22d3bf">mutual_information(a, a) == image_entropy(a)</code> ठीक-ठीक सही रहता है (test से fix किया गया)। मौजूदा <code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">entropy_image</code> (backends) अलग bin विभाजन इस्तेमाल करते हैं, इसलिए मान मेल नहीं खाते -- यह joint distribution के साथ संगत पक्ष है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_stop_g(image, *, sigma: &#x27;float&#x27; = 1.0, k: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segcontour; segcontour.edge_stop_g(image, *, sigma: &#x27;float&#x27; = 1.0, k: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;edge_stop_g&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>邊緣停止函數 g = 1 / (1 + |∇(G_σ * I)|² / k²)（Caselles–Kimmel–Sapiro 1997 中 p = 2 的形式）（edge_stop_g）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">sigma</code> = ガウスの標準偏差(0 なら平滑化なしの中心差分)、<code style="color:#22d3bf">k</code> = 勾配の尺度(k = 1 で g = 1/(1 + |∇G_σ*I|²))。</p>
-<p>画像の値域に依存する: Li ら 2010 の配布例は 0〜255 の画像で k = 1 なので、[0, 1] の画像なら k = 1/255 が同じ挙動。</p>
-<p>返り値: <code style="color:#22d3bf">g</code>(0 &lt; g ≤ 1、平坦で 1)、<code style="color:#22d3bf">grad_mag</code>、<code style="color:#22d3bf">g_min</code> / <code style="color:#22d3bf">g_max</code>、<code style="color:#22d3bf">sigma</code>、<code style="color:#22d3bf">k</code>。</p>
-<p>門: g ∈ (0, 1] —— 分母 ≥ 1、平坦な画像で g ≡ 1(勾配 0)。</p>
+<p><code style="color:#22d3bf">sigma</code> = 高斯的標準差(0 時為不平滑的中心差分),<code style="color:#22d3bf">k</code> = 梯度的尺度(k = 1 時 g = 1/(1 + |∇G_σ*I|²))。</p>
+<p>依賴於影像的值域: Li 等 2010 的發佈範例在 0~255 的影像上用 k = 1,所以 [0, 1] 的影像用 k = 1/255 得到相同的行為。</p>
+<p>回傳值: <code style="color:#22d3bf">g</code>(0 &lt; g ≤ 1,平坦處為 1)、<code style="color:#22d3bf">grad_mag</code>、<code style="color:#22d3bf">g_min</code> / <code style="color:#22d3bf">g_max</code>、<code style="color:#22d3bf">sigma</code>、<code style="color:#22d3bf">k</code>。</p>
+<p>門檻: g ∈ (0, 1] —— 分母 ≥ 1,平坦的影像上 g ≡ 1(梯度 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

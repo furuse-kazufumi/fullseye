@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import spc; spc.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code>; from the registry, <code style="color:#22d3bf">opsspc.get(&quot;gum_propagate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Law of propagation of uncertainty (GUM 5.2, with correlations) (<code style="color:#22d3bf">table</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>u_c^2 = sum_i (c_i u_i)^2 + 2 sum_{i&lt;j} c_i c_j u_i u_j r_ij</p>
-<p>*table* は列 *u*(標準不確かさ)と *sensitivity*(感度係数 <code style="color:#22d3bf">c_i = df/dx_i</code>)を持つ表。*correlation* に (n, n) の相関行列を渡すと相関項を含める。</p>
-<p>★門にできる閉形式: <code style="color:#22d3bf">f = x y</code> なら <code style="color:#22d3bf">c_x = y</code> / <code style="color:#22d3bf">c_y = x</code> なので <code style="color:#22d3bf">u_c/|f| = sqrt((u_x/x)^2 + (u_y/y)^2)</code> —— 相対不確かさの二乗和。相関 <code style="color:#22d3bf">r = +1</code> の 2 成分では <code style="color:#22d3bf">u_c = |c1 u1 + c2 u2||</code> に<b>厳密に</b>一致し、<code style="color:#22d3bf">r = -1</code> では <code style="color:#22d3bf">|c1 u1 - c2 u2|</code>(打ち消し)。無相関なら寄与の合計が <code style="color:#22d3bf">u_c^2</code> にぴったり閉じる。</p>
-<p>★★<b>相関を無視した誤りの向きは一定ではない</b>。「独立として扱うと過小評価になる」はよく言われるが、<b>偽である</b>。規格の worked example(電圧・電流・位相差から抵抗とリアクタンスを同時に出す例、3 量すべてに相関がある)で相関を落として測ると:</p>
-<p>u_c(R)  0.0702 -&gt; 0.1945   <b>2.8 倍の過大</b></p>
-<p>u_c(X)  0.2961 -&gt; 0.2009   過小</p>
-<p>u_c(Z)  0.2367 -&gt; 0.2041   過小</p>
-<p>同じ 1 つのデータで、量によって向きが逆に出る —— 感度係数の符号と相関の符号の積で決まるので、当たり前といえば当たり前だが、「安全側に外れる」と思って相関を省くと <b>R では 3 倍近く過大な不確かさを報告</b>することになる。</p>
+<p>*table* is a table with columns *u* (standard uncertainty) and *sensitivity* (sensitivity coefficient <code style="color:#22d3bf">c_i = df/dx_i</code>). Passing an (n, n) correlation matrix as *correlation* includes the correlation terms.</p>
+<p>★ A closed form usable as a gate: for <code style="color:#22d3bf">f = x y</code>, <code style="color:#22d3bf">c_x = y</code> / <code style="color:#22d3bf">c_y = x</code>, so <code style="color:#22d3bf">u_c/|f| = sqrt((u_x/x)^2 + (u_y/y)^2)</code> -- the root sum of squares of the relative uncertainties. For 2 components with correlation <code style="color:#22d3bf">r = +1</code> it matches <code style="color:#22d3bf">u_c = |c1 u1 + c2 u2||</code> <b>exactly</b>, and for <code style="color:#22d3bf">r = -1</code> it is <code style="color:#22d3bf">|c1 u1 - c2 u2|</code> (cancellation). Without correlation the sum of contributions closes exactly to <code style="color:#22d3bf">u_c^2</code>.</p>
+<p>★★ <b>The direction of the error from ignoring correlation is not fixed</b>. &quot;Treating them as independent underestimates&quot; is often said, but <b>it is false</b>. Measuring on the standard&#x27;s worked example (voltage, current and phase difference -&gt; resistance and reactance simultaneously, all 3 quantities correlated) with the correlation dropped:</p>
+<p>u_c(R)  0.0702 -&gt; 0.1945   <b>2.8x overestimate</b></p>
+<p>u_c(X)  0.2961 -&gt; 0.2009   underestimate</p>
+<p>u_c(Z)  0.2367 -&gt; 0.2041   underestimate</p>
+<p>On the same 1 data set the direction flips depending on the quantity -- it is decided by the product of the sign of the sensitivity coefficient and the sign of the correlation, so it is obvious in a sense, but if you omit the correlation thinking &quot;it errs on the safe side&quot;, you end up <b>reporting an uncertainty nearly 3x too large for R</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

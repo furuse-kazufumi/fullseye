@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matrix_to_angle(matrix)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.matrix_to_angle(matrix)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Rotationsmatrix um die z-Achse → der Winkel <b>[Grad]</b>. Die Umkehrung von <code style="color:#22d3bf">angle_to_matrix</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> を度で返す(-180, 180]。往復は(-180, 180] の範囲で <b>bit 一致に近い</b>(実測 max|Δ| = 2.8e-14 度)。</p>
+<p>Gibt <code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> in Grad zurück, (-180, 180]. Der Hin- und Rückweg ist im Bereich (-180, 180] <b>nahezu bitgleich</b> (gemessen max|Δ| = 2.8e-14 Grad).</p>
 <p>Args:</p>
-<p>matrix: (3, 3)。</p>
+<p>matrix: (3, 3).</p>
 <p>Returns:</p>
-<p>float(度)。</p>
+<p>float (Grad).</p>
 <p>Raises:</p>
-<p>ValueError: (3,3) でない / 非有限。</p>
+<p>ValueError: nicht (3,3) / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

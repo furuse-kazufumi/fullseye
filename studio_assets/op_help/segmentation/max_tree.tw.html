@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.max_tree(image, *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import seggraph; seggraph.max_tree(image, *, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;max_tree&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>成分樹（max-tree）：以 Union-Find 建構上水平集 {f ≥ h} 的連通成分樹（依像素值遞減順序處理）（max_tree）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>返す: <code style="color:#22d3bf">parent</code>(H, W の平らな添字。根は自分自身)、<code style="color:#22d3bf">order</code>(値の昇順、親は子より前)、<code style="color:#22d3bf">canonical</code>(節の代表画素の印 = 根か、親と値が違う画素)、<code style="color:#22d3bf">area</code>(代表画素での成分の画素数)、<code style="color:#22d3bf">diameter</code>(成分の外接矩形の長い辺 = skimage の diameter と同じ)、<code style="color:#22d3bf">height</code>(成分の中の最大値 − 成分の値、参考)、<code style="color:#22d3bf">n_nodes</code>。</p>
+<p>回傳: <code style="color:#22d3bf">parent</code>(H, W 的扁平索引。根是自身)、<code style="color:#22d3bf">order</code>(依值升冪,父在子之前)、<code style="color:#22d3bf">canonical</code>(節點代表像素的標記 = 根,或與父的值不同的像素)、<code style="color:#22d3bf">area</code>(代表像素處成分的像素數)、<code style="color:#22d3bf">diameter</code>(成分外接矩形的長邊 = 與 skimage 的 diameter 相同)、<code style="color:#22d3bf">height</code>(成分中的最大值 − 成分的值,參考)、<code style="color:#22d3bf">n_nodes</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

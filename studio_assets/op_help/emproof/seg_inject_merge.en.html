@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import emproof; emproof.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsemproof.get(&quot;seg_inject_merge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Plants <b>merges</b> for evaluation: picks <code style="color:#22d3bf">n</code> pairs of adjacent large labels and rewrites the id of one to the other.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">min_area</code> px 以上のラベルだけを候補にし(小さな断片の融合は弦が短くて検出できず、評価が「仕込めない誤り」に引っ張られる)、乱数(<code style="color:#22d3bf">seed</code>)で対を選ぶ。同じラベルは 1 回しか使わない。<code style="color:#22d3bf">n</code> 組取れなければ ValueError(黙って少ない数で返すと AUC の分母が変わる)。仕込んだ対は <code style="color:#22d3bf">seg_label_changes(labels, out)[&quot;merge_before&quot;]</code> で取り出せる。</p>
+<p>Only labels of at least <code style="color:#22d3bf">min_area</code> px are candidates (merges of small fragments have short chords and cannot be detected, which would drag the evaluation towards &quot;errors that could not be planted&quot;), and pairs are chosen by random numbers (<code style="color:#22d3bf">seed</code>). The same label is used only 1 time. If <code style="color:#22d3bf">n</code> pairs cannot be obtained, ValueError (silently returning fewer would change the AUC denominator). The planted pairs can be retrieved with <code style="color:#22d3bf">seg_label_changes(labels, out)[&quot;merge_before&quot;]</code>.</p>
 <p>&gt;&gt;&gt; merged = seg_inject_merge(labels, n=1, seed=3)</p>
-<p>&gt;&gt;&gt; seg_label_changes(labels, merged)[&quot;merge_before&quot;]     # 吸われた id</p>
+<p>&gt;&gt;&gt; seg_label_changes(labels, merged)[&quot;merge_before&quot;]     # ids that were absorbed</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

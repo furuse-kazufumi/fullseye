@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_image2d(score, axis=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.score_to_image2d(score, axis=0)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A <code style="color:#22d3bf">score</code> volume → its maximum-intensity projection, an <code style="color:#22d3bf">image2d</code>. The second exit from <code style="color:#22d3bf">score</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>指定軸に沿った最大値投影(MIP)。<b>一方向</b>。相関ピークが「どの面から見ても 1 本に見えるか」を確かめるのに使う —— 2 本見えたら対応が曖昧という意味。</p>
+<p>Maximum intensity projection (MIP) along the given axis. <b>One-way</b>. Used to check whether the correlation peak &quot;looks like 1 single peak from every face&quot; -- if you see 2, the correspondence is ambiguous.</p>
 <p>Args:</p>
-<p>score: (D, H, W)。</p>
-<p>axis: 潰す軸(0/1/2)。</p>
+<p>score: (D, H, W).</p>
+<p>axis: axis to collapse (0/1/2).</p>
 <p>Returns:</p>
-<p>(H, W) 等の 2-D float64。</p>
+<p>2-D float64 such as (H, W).</p>
 <p>Raises:</p>
-<p>ValueError: 3-D でない / axis が範囲外 / 非有限。</p>
+<p>ValueError: not 3-D / axis out of range / non-finite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

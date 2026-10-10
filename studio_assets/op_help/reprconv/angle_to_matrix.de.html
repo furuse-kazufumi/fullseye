@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_to_matrix(angle)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.angle_to_matrix(angle)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;angle_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Winkel <b>[Grad]</b> → die Rotations-<code style="color:#22d3bf">matrix (3,3)</code> um die z-Achse. Der Ausgang aus <code style="color:#22d3bf">angle</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">angle_to_matrix(90)</code> は軸1(y)を軸2(x)へ送り、軸2(x)を <b>−軸1</b>(−y)へ送る(<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code>、<code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>、実測)。2-D の <code style="color:#22d3bf">rot_scale_to_matrix</code> と同じ <code style="color:#22d3bf">[[c,-s],[s,c]]</code> の向き(軸 0 → 軸 1)を軸 (1, 2) に置いたもので、<code style="color:#22d3bf">matrix_to_angle</code> の <code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> もこの向きで往復する。<b>度</b>であることと <b>どちらの軸へ回るか</b>が、この段落の全内容である。ラジアンを渡すと例外は出ず、ただ 57.3 分の 1 だけ回った行列が返る。</p>
+<p><code style="color:#22d3bf">angle_to_matrix(90)</code> schickt Achse 1 (y) auf Achse 2 (x) und Achse 2 (x) auf <b>−Achse 1</b> (−y) (<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code>, <code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>, gemessen). Es ist dieselbe <code style="color:#22d3bf">[[c,-s],[s,c]]</code>-Orientierung wie beim 2-D <code style="color:#22d3bf">rot_scale_to_matrix</code> (Achse 0 → Achse 1), auf die Achsen (1, 2) gesetzt; auch <code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> von <code style="color:#22d3bf">matrix_to_angle</code> läuft in dieser Orientierung hin und zurück. Dass es <b>Grad</b> sind und <b>zu welcher Achse hin gedreht wird</b>, ist der gesamte Inhalt dieses Absatzes. Übergibt man Bogenmaß, kommt keine Exception, man erhält nur eine Matrix, die um 1/57.3 des gemeinten Winkels gedreht ist.</p>
 <p>Args:</p>
-<p>angle: 度。</p>
+<p>angle: Grad.</p>
 <p>Returns:</p>
-<p>(3, 3) float64、行列式 1 の直交行列。</p>
+<p>(3, 3) float64, orthogonale Matrix mit Determinante 1.</p>
 <p>Raises:</p>
-<p>ValueError: スカラでない / 非有限。</p>
+<p>ValueError: kein Skalar / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

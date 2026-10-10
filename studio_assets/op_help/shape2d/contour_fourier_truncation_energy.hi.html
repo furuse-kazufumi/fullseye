@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_truncation_energy(spectrum, orders=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_truncation_energy(spectrum, orders=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_truncation_energy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर truncation order के लिए <b>पूर्वानुमानित</b> त्रुटि (<code style="color:#22d3bf">table</code>) — Parseval का exact सूत्र।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>次数 <code style="color:#22d3bf">K</code> で打ち切った再構成 <code style="color:#22d3bf">z^K</code> について、標本上の二乗平均誤差は <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code> に<b>厳密に等しい</b>。だから再構成を 1 度もせずに「何項あれば何画素まで似るか」を先に言える。</p>
-<p>★<b>予言が厳密なのは、係数列が完全なときだけ</b>である(<code style="color:#22d3bf">contour_fourier_complex</code> を <code style="color:#22d3bf">n_harmonics=None</code> で呼んだ場合)。打ち切った係数列を渡されると、捨てられた側のエネルギーは<b>知りようがない</b>ので、返る誤差は<b>下界</b>になる —— 過小に見える誤差を「厳密」と言わないために、ここに書いておく。</p>
-<p>返り値: dict(<code style="color:#22d3bf">table</code>)</p>
-<p>&quot;order&quot;: 打ち切り次数 <code style="color:#22d3bf">K</code> の 1-D</p>
-<p>&quot;rms_error&quot;: 予言される rms 誤差[入力の単位]</p>
-<p>&quot;energy_fraction&quot;: 残した項が担うエネルギーの割合(<code style="color:#22d3bf">0..1</code>、単調増加)</p>
-<p>&quot;total_energy&quot;: <code style="color:#22d3bf">Σ_{k≠0} |c_k|^2</code>(位置 <code style="color:#22d3bf">c_0</code> を除いた形のエネルギー)</p>
-<p>&quot;k_max&quot;: スペクトルが持つ最大次数</p>
+<p>order <code style="color:#22d3bf">K</code> पर काटे गए reconstruction <code style="color:#22d3bf">z^K</code> के लिए, samples पर mean squared error <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code> के <b>बिल्कुल बराबर</b> है। इसलिए reconstruction 1 बार भी किए बिना पहले से बताया जा सकता है कि &quot;कितने terms हों तो कितने pixel तक मिलता-जुलता होगा&quot;।</p>
+<p>★<b>भविष्यवाणी तभी सटीक है जब coefficient sequence पूरा हो</b> (जब <code style="color:#22d3bf">contour_fourier_complex</code> को <code style="color:#22d3bf">n_harmonics=None</code> के साथ call किया गया हो)। काटा हुआ coefficient sequence देने पर, छोड़े गए हिस्से की energy <b>जानने का कोई तरीका नहीं</b>, इसलिए लौटाया गया error एक <b>निचली सीमा</b> होता है —— कम दिखने वाले error को &quot;सटीक&quot; न कहा जाए, इसलिए यह यहाँ लिखा है।</p>
+<p>return value: dict (<code style="color:#22d3bf">table</code>)</p>
+<p>&quot;order&quot;: truncation order <code style="color:#22d3bf">K</code> का 1-D</p>
+<p>&quot;rms_error&quot;: भविष्यवाणी किया गया rms error [input की इकाई]</p>
+<p>&quot;energy_fraction&quot;: रखे गए terms द्वारा उठाई गई energy का अनुपात (<code style="color:#22d3bf">0..1</code>, monotonically बढ़ता)</p>
+<p>&quot;total_energy&quot;: <code style="color:#22d3bf">Σ_{k≠0} |c_k|^2</code> (position <code style="color:#22d3bf">c_0</code> को छोड़कर shape की energy)</p>
+<p>&quot;k_max&quot;: spectrum में मौजूद अधिकतम order</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

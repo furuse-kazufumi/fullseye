@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_orientation(img, angle_deg=0.0, corner=&#x27;rt&#x27;, xy=None, size=26.0, margin=16, label=&#x27;N&#x27;, color=&#x27;neutral&#x27;, width=2, font_size=12, box_alpha=0.0, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_orientation(img, angle_deg=0.0, corner=&#x27;rt&#x27;, xy=None, size=26.0, margin=16, label=&#x27;N&#x27;, color=&#x27;neutral&#x27;, width=2, font_size=12, box_alpha=0.0, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_orientation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (image2d) लौटाता है: दिशा (उत्तर) या orientation दिखाने वाला तीर + text।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">angle_deg</code> は <b>画面の上を 0、時計回りが正</b>(地図の方位と同じ)。矢印は <code style="color:#22d3bf">xy</code>(中心)か <code style="color:#22d3bf">corner</code> の隅に置く。</p>
+<p><code style="color:#22d3bf">angle_deg</code> में <b>screen का ऊपर 0 है, clockwise धनात्मक</b> (map की दिशा जैसा)। तीर <code style="color:#22d3bf">xy</code> (केंद्र) पर या <code style="color:#22d3bf">corner</code> वाले कोने में रखा जाता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>size が非正、矢印が画像に収まらない、未知の corner。</p>
+<p>size धनात्मक नहीं, तीर image में फ़िट नहीं होता, या अज्ञात corner।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

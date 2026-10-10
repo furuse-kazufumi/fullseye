@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_points(gaussians)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_points(gaussians)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><code style="color:#22d3bf">gaussians</code> → die Punktmenge ihrer Zentren <code style="color:#22d3bf">(N,3)</code>. Der Ausgang aus <code style="color:#22d3bf">gaussians</code> (<b>die Zentren sind invertierbar</b>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
-<p>gaussians: <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code> を持つ dict。</p>
+<p>gaussians: dict mit <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code>.</p>
 <p>Returns:</p>
-<p>(N, 3) float64(<code style="color:#22d3bf">mu</code> のコピー)。</p>
+<p>(N, 3) float64 (Kopie von <code style="color:#22d3bf">mu</code>).</p>
 <p>Raises:</p>
-<p>ValueError: キー欠落 / 形状不整合 / sigma &lt;= 0 / 非有限。</p>
+<p>ValueError: fehlender Schlüssel / inkonsistente Formen / sigma &lt;= 0 / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

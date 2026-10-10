@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_membrane_response(image, sigma: &#x27;float&#x27; = 1.5, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import emproof; emproof.seg_membrane_response(image, sigma: &#x27;float&#x27; = 1.5, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsemproof.get(&quot;seg_membrane_response&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>EM section की <b>गहरी line</b> (cell membrane) का response [0, ∞)। Gaussian smoothing वाले Hessian के eigenvalue λ1 ≥ λ2 से <code style="color:#22d3bf">max(λ1 − |λ2|, 0)</code> (Steger के line detection का closed form, σ² से scale-normalized)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>暗い線の上では横断方向の 2 階微分が大きく正(λ1)、線に沿う方向は 0(λ2)なので λ1 − |λ2| が立つ。暗い<b>塊</b>(ミトコンドリア内部・シナプス小胞)は λ1 ≈ λ2 &gt; 0 で打ち消し合って 0 に近い ―― 膜だけを拾う。<code style="color:#22d3bf">normalize=True</code> で断面の 99.5 percentile を 1 にする(<code style="color:#22d3bf">seg_*</code> の閾値はその尺度で書く)。scikit-image があるならレジストリの <code style="color:#22d3bf">sk_frangi</code>(<code style="color:#22d3bf">fs.apply(img, &quot;sk_frangi&quot;, a=0.5, b=0.5)</code>)も同じ席に使える(試作はそちらで AUC を測った)。</p>
+<p>किसी dark line पर, उसके आर-पार दिशा में 2nd-order derivative बड़ा और positive (λ1) होता है, line के साथ वाली दिशा में 0 (λ2), इसलिए λ1 − |λ2| उभरता है। dark <b>clumps</b> (mitochondria के अंदर का भाग, synaptic vesicles) में λ1 ≈ λ2 &gt; 0 होता है, जो एक-दूसरे को काटकर 0 के पास आ जाते हैं -- केवल membrane पकड़ी जाती है। <code style="color:#22d3bf">normalize=True</code> से section का 99.5 percentile 1 किया जाता है (<code style="color:#22d3bf">seg_*</code> के threshold उसी scale में लिखे जाते हैं)। scikit-image हो तो registry का <code style="color:#22d3bf">sk_frangi</code> (<code style="color:#22d3bf">fs.apply(img, &quot;sk_frangi&quot;, a=0.5, b=0.5)</code>) भी उसी जगह इस्तेमाल हो सकता है (prototype ने उसी से AUC मापा था)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>image : (H, W) float</p>
-<p>生 EM(明るい = 細胞質、暗い = 膜)。範囲は問わない(勾配の比だけを見る)。</p>
+<p>raw EM (bright = cytoplasm, dark = membrane)। range कोई भी हो (केवल gradient का अनुपात देखा जाता है)।</p>
 <p>sigma : float</p>
-<p>平滑の σ [px]。膜の太さの半分程度(CREMI 4 nm/px なら 1.5〜2.5)。</p>
+<p>smoothing का σ [px]। membrane की मोटाई का लगभग आधा (CREMI 4 nm/px के लिए 1.5-2.5)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

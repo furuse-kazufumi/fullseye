@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.counts_to_countrate(counts, gate_s=0.001)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.counts_to_countrate(counts, gate_s=0.001)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;counts_to_countrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Counts → count rate <code style="color:#22d3bf">[Hz]</code>. The inverse of <code style="color:#22d3bf">countrate_to_counts</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>Args:</p>
-<p>counts: (N,) の非負計数。</p>
-<p>gate_s: 積算窓 [s]。&gt; 0。</p>
+<p>counts: (N,) non-negative counts.</p>
+<p>gate_s: integration window [s]. &gt; 0.</p>
 <p>Returns:</p>
-<p>(N,) float64 の非負レート [Hz]。</p>
+<p>(N,) float64 non-negative rate [Hz].</p>
 <p>Raises:</p>
-<p>ValueError: 負の計数 / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
+<p>ValueError: negative count / gate_s &lt;= 0 / bad shape / non-finite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

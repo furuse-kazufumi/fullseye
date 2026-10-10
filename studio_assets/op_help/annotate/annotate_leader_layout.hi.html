@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, font_path=None, min_font_size=9)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, font_path=None, min_font_size=9)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_leader_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (dict) लौटाता है: leader line की placement (कोहनी, text position, plate का rectangle) closed form में तय करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各点について候補側を固定順に試し、<b>板が画像に収まり・他の板と重ならず・他の点を覆わない</b>最初の候補を採る。どの候補も駄目なら肘を 1.6 倍、2.4 倍に伸ばして再試行し、それでも駄目なら <b>ValueError</b>(黙って重ねない)。</p>
+<p>हर point के लिए candidate sides को तय क्रम में आज़माता है, और पहला candidate लेता है <b>जिसकी plate image में समाए, किसी दूसरी plate से overlap न करे और किसी दूसरे point को न ढके</b>। कोई candidate काम न करे तो elbow को 1.6 गुना, फिर 2.4 गुना बढ़ाकर फिर कोशिश करता है, फिर भी न हो तो <b>ValueError</b> (चुपचाप overlap नहीं करता)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>shape : (H, W)</p>
-<p>描く画像の大きさ。</p>
+<p>बनाई जाने वाली image का size।</p>
 <p>points : (N, 2)</p>
-<p>指す点 <b>(x, y)</b>。</p>
+<p>जिन points की ओर इशारा करना है, <b>(x, y)</b>।</p>
 <p>labels : sequence of str or None</p>
-<p>各点の文字。None なら 1 始まりの番号。</p>
+<p>हर point का text। None हो तो 1 से शुरू होने वाले नंबर।</p>
 <p>gap : float</p>
-<p>肘の長さ[px]。斜め腕 = gap、水平腕 = 0.6*gap。</p>
+<p>elbow की लंबाई [px]। तिरछा arm = gap, horizontal arm = 0.6*gap।</p>
 <p>side : {&#x27;auto&#x27;,&#x27;left&#x27;,&#x27;right&#x27;}</p>
-<p><code style="color:#22d3bf">&#x27;auto&#x27;</code> は画像中心から<b>遠ざかる</b>側を先に試す(対象の上に文字を</p>
-<p>載せないため)。</p>
+<p><code style="color:#22d3bf">&#x27;auto&#x27;</code> पहले image केंद्र से <b>दूर जाने वाली</b> side आज़माता है (ताकि वस्तु के ऊपर text</p>
+<p>न रखा जाए)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;n&quot;, &quot;gap&quot;, &quot;items&quot;: [{&quot;point&quot;, &quot;elbow&quot;, &quot;text_xy&quot;, &quot;anchor&quot;, &quot;box&quot;, &quot;side&quot;}]}</code>。<code style="color:#22d3bf">box</code> は板の <code style="color:#22d3bf">(x, y, w, h)</code>。</p>
+<p><code style="color:#22d3bf">{&quot;n&quot;, &quot;gap&quot;, &quot;items&quot;: [{&quot;point&quot;, &quot;elbow&quot;, &quot;text_xy&quot;, &quot;anchor&quot;, &quot;box&quot;, &quot;side&quot;}]}</code>। <code style="color:#22d3bf">box</code> plate का <code style="color:#22d3bf">(x, y, w, h)</code> है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点が空・非有限、labels の数が合わない、未知の side、配置できない点。</p>
+<p>points खाली या non-finite, labels की संख्या मेल नहीं खाती, अज्ञात side, ऐसा point जिसे रखा नहीं जा सकता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

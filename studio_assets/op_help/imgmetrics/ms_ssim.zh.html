@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code>(要直接调用实现,<code style="color:#22d3bf">import imgmetrics; imgmetrics.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;ms_ssim&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>多尺度 SSIM(Wang, Simoncelli &amp; Bovik, Asilomar Conf. 2003)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>5 段の縮小を経るので、最終段で 11 画素の窓が成立するには<b>各辺 176 画素</b>が要る。足りないときに<b>段数を黙って減らさない</b> ―― 段数の違う MS-SSIM は別の指標であり、比べると嘘になる。足りなければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p>2 次元のグレー画像専用(色は <code style="color:#22d3bf">channel_axis</code> ではなくチャネルごとに呼ぶ)。</p>
+<p>要经过 5 级缩小,所以要使最后一级 11 像素的窗口成立,<b>每边 176 像素</b> 是必需的。不够时<b>不会默默减少级数</b> —— 级数不同的 MS-SSIM 是另一个指标,拿来比较就是谎言。不够则 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>仅用于 2 维灰度图像(彩色不用 <code style="color:#22d3bf">channel_axis</code>,而是逐通道调用)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

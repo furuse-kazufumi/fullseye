@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_linear(query, key, value, causal: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.attention_linear(query, key, value, causal: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;attention_linear&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Attention ohne Softmax → tokens. <b>(QKᵀ)V == Q(KᵀV) — das Assoziativgesetz selbst</b>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Katharopoulos ら 2020。softmax を外すと行列積の結合則が使え、(T, T) を作らずに(d, dv) の状態だけで足りる。<b>同じ数の別の括り方</b>なので答えは一致し(相対差 7.1e-16)、計算量は O(T²d) から O(Td²) に移る —— 交差点は <b>T == d</b>(実測: T=d=64 で比 0.9、T=1024 で 14.6 倍)。★T を 2048 にしても比は 14.4 で頭打ちになる。式が言う 32 倍には届かない —— 二次の側が帯域律速に入るから。</p>
+<p>Katharopoulos et al. 2020. Ohne softmax gilt das Assoziativgesetz des Matrixprodukts, sodass ohne (T, T) zu bilden ein Zustand der Größe (d, dv) genügt. <b>Es ist dieselbe Zahl, nur anders geklammert</b>, daher stimmen die Ergebnisse überein (relative Abweichung 7.1e-16), und der Aufwand wandert von O(T²d) zu O(Td²) — der Schnittpunkt liegt bei <b>T == d</b> (gemessen: Verhältnis 0.9 bei T=d=64, 14.6-fach bei T=1024). ★Auch bei T = 2048 sättigt das Verhältnis bei 14.4. Die von der Formel vorhergesagten 32-fach werden nicht erreicht — weil die quadratische Seite bandbreitenbegrenzt wird.</p>
 <p>Args:</p>
-<p>query: (T, d) float。</p>
-<p>key: (S, d) float。</p>
-<p>value: (S, dv) float。<code style="color:#22d3bf">causal=True</code> では S == T。</p>
-<p>causal: True なら「自分より前だけ」を累積状態で足す(逐次 1 回で線形時間)。</p>
+<p>query: (T, d) float.</p>
+<p>key: (S, d) float.</p>
+<p>value: (S, dv) float. Bei <code style="color:#22d3bf">causal=True</code> gilt S == T.</p>
+<p>causal: bei True wird &quot;nur das Frühere&quot; über einen kumulativen Zustand addiert (1 sequenzieller Durchlauf, lineare Zeit).</p>
 <p>Returns:</p>
-<p>tokens (T, dv) float: <b>softmax を通していない</b>ので行和 1 の凸結合ではない。</p>
-<p><code style="color:#22d3bf">attention_softmax</code> の代わりではなく、<b>別の注意</b>。</p>
+<p>tokens (T, dv) float: <b>geht nicht durch eine softmax</b>, ist also keine Konvexkombination mit Zeilensumme 1.</p>
+<p>Kein Ersatz für <code style="color:#22d3bf">attention_softmax</code>, sondern <b>eine andere Attention</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">Leitfaden zur Familie llmcore</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

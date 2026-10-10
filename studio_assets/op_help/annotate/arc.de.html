@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.arc(img, center, radius, start_deg, end_deg, color=&#x27;neutral&#x27;, width=2, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.arc(img, center, radius, start_deg, end_deg, color=&#x27;neutral&#x27;, width=2, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;arc&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein Kreisbogen. Winkel in Grad, <b>im Uhrzeigersinn ab der Bildschirm-x-Achse</b> (weil row nach unten zeigt).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>radius が非正、角度が非有限、start == end、alpha が [0,1] の外。</p>
-<p>描画: 中心からの距離 <code style="color:#22d3bf">d</code> が <code style="color:#22d3bf">|d - radius| &lt;= max(0.6, width/2)</code> で、かつ画素の方位角が <code style="color:#22d3bf">start_deg</code> から時計回りに <code style="color:#22d3bf">(end_deg - start_deg) mod 360</code> の範囲にある画素を塗る(アンチエイリアス無し)。方位角は <code style="color:#22d3bf">atan2(y - cy, x - cx)</code> で、0 度 = 右(+x)、90 度 = 下(+y)、時計回りが正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>、x = 列・y = 行。画像外でもよい(はみ出しは切れるだけ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 正 [px]。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">start_deg</code>, <code style="color:#22d3bf">end_deg</code>: 度。<code style="color:#22d3bf">start</code> から時計回りに <code style="color:#22d3bf">end</code> まで描く。差が 360 の倍数(<code style="color:#22d3bf">end - start</code> が 0 でなく 360 など)は全周。<code style="color:#22d3bf">start == end</code> は「長さ 0」なので <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線幅 [px]。<code style="color:#22d3bf">max(0.6, width/2)</code> を半幅にするので 1 px 未満でも途切れない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code> の扱いは <code style="color:#22d3bf">rounded_rect</code> と同じ(float64 複製、<code style="color:#22d3bf">[0, 1]</code>、役割名か RGB)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
-<p>角度を書き込む学術図の作法は <code style="color:#22d3bf">annotate_angle</code> が引き出し文字まで面倒を見る。</p>
+<p>radius nicht positiv, Winkel nicht endlich, start == end, alpha außerhalb von [0,1].</p>
+<p>Zeichnen: Es werden Pixel gefärbt, deren Abstand <code style="color:#22d3bf">d</code> vom Zentrum <code style="color:#22d3bf">|d - radius| &lt;= max(0.6, width/2)</code> erfüllt und deren Azimut im Bereich <code style="color:#22d3bf">(end_deg - start_deg) mod 360</code> im Uhrzeigersinn ab <code style="color:#22d3bf">start_deg</code> liegt (kein Anti-Aliasing). Der Azimut ist <code style="color:#22d3bf">atan2(y - cy, x - cx)</code>, mit 0 Grad = rechts (+x), 90 Grad = unten (+y), im Uhrzeigersinn positiv.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>, x = Spalte, y = Zeile. Darf außerhalb des Bilds liegen (Überstand wird nur abgeschnitten).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: positiv [px].</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">start_deg</code>, <code style="color:#22d3bf">end_deg</code>: Grad. Gezeichnet wird im Uhrzeigersinn von <code style="color:#22d3bf">start</code> bis <code style="color:#22d3bf">end</code>. Ist die Differenz ein Vielfaches von 360 (<code style="color:#22d3bf">end - start</code> ungleich 0, etwa 360), ergibt sich ein Vollkreis. <code style="color:#22d3bf">start == end</code> ist &quot;Länge 0&quot;, daher <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: Linienbreite [px]. <code style="color:#22d3bf">max(0.6, width/2)</code> dient als halbe Breite, daher reißt die Linie auch unter 1 px nicht ab.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code> werden wie bei <code style="color:#22d3bf">rounded_rect</code> behandelt (float64-Kopie, <code style="color:#22d3bf">[0, 1]</code>, Rollenname oder RGB).</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: float64 in derselben Form wie die Eingabe.</p>
+<p>Für die Konventionen wissenschaftlicher Abbildungen, in die Winkel eingetragen werden, kümmert sich <code style="color:#22d3bf">annotate_angle</code> bis hin zum Beschriftungstext.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

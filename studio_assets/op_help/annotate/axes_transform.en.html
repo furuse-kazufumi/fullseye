@@ -4,29 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;axes_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Build the (<b>closed-form</b>) mapping from data coordinates to pixel coordinates.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">row は下向き</code> という画像の事実と、<code style="color:#22d3bf">y は上向き</code> というグラフの慣習のずれを、<b>この 1 か所だけ</b>で吸収する。図のコードはこの辞書を持ち回る。</p>
+<p>The mismatch between the image fact <code style="color:#22d3bf">row points down</code> and the graph convention <code style="color:#22d3bf">y points up</code> is absorbed <b>in this 1 place only</b>. Figure code carries this dict around.</p>
 <p>px = x0 + (x - xmin)/(xmax - xmin) * (w - 1)</p>
 <p>py = y0 + (h - 1) - (y - ymin)/(ymax - ymin) * (h - 1)     # invert_y</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>rect : (x, y, w, h)</p>
-<p>描画域(左上基準、画素)。</p>
+<p>Drawing area (top-left origin, pixels).</p>
 <p>xlim, ylim : (lo, hi)</p>
-<p>データ範囲。lo == hi は<b>傾きが無限大</b>になるので ValueError。</p>
-<p><b>lo &gt; hi(反転軸)も許す</b> ―― 深度やランクを上下逆に描くため。</p>
+<p>Data range. lo == hi makes <b>the slope infinite</b>, so ValueError.</p>
+<p><b>lo &gt; hi (inverted axis) is also allowed</b> -- for drawing depth or rank upside down.</p>
 <p>invert_y : bool</p>
-<p>True(既定)なら <code style="color:#22d3bf">ylim[0]</code> が<b>下端</b>に来る = 普通のグラフ。</p>
-<p>False なら画像そのままの向き(上端が <code style="color:#22d3bf">ylim[0]</code>)。</p>
+<p>If True (default), <code style="color:#22d3bf">ylim[0]</code> comes at the <b>bottom edge</b> = an ordinary graph.</p>
+<p>If False, the image&#x27;s own orientation (<code style="color:#22d3bf">ylim[0]</code> at the top edge).</p>
 <p>xscale, yscale : {&#x27;linear&#x27;,&#x27;log&#x27;}</p>
-<p><code style="color:#22d3bf">&#x27;log&#x27;</code> は常用対数。範囲に 0 以下が入れば ValueError</p>
-<p>(log 軸に 0 を渡して -inf を「端」として描く図は嘘になる)。</p>
+<p><code style="color:#22d3bf">&#x27;log&#x27;</code> is the common logarithm. If the range includes values at or below 0, ValueError</p>
+<p>(a figure that passes 0 to a log axis and draws -inf as &quot;the edge&quot; is a lie).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;rect&quot;, &quot;xlim&quot;, &quot;ylim&quot;, &quot;invert_y&quot;, &quot;xscale&quot;, &quot;yscale&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;rect&quot;, &quot;xlim&quot;, &quot;ylim&quot;, &quot;invert_y&quot;, &quot;xscale&quot;, &quot;yscale&quot;}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>矩形が不正、範囲が非有限か幅ゼロ、w か h が 2 未満、</p>
-<p>未知の scale、log 軸で範囲に 0 以下。</p>
+<p>invalid rectangle, range non-finite or of zero width, w or h below 2,</p>
+<p>unknown scale, range at or below 0 on a log axis.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

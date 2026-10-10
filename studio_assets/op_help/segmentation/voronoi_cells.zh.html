@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import segworld; segworld.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;voronoi_cells&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>矩形内种子的 Voronoi 分割，以多边形返回（含面积与内部边长；半平面暴力法，O(n^2)）（voronoi_cells）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返り値: <code style="color:#22d3bf">polygons</code>(多角形の列、各 (k, 2) [y, x])、<code style="color:#22d3bf">areas</code>(靴紐)、<code style="color:#22d3bf">edge_length_total</code>(内部の辺の長さの和)、<code style="color:#22d3bf">n_edges</code>(内部の辺の数)、<code style="color:#22d3bf">perimeter_internal</code> (n,)(各セルの内部の辺の長さ)。</p>
+<p>返回值: <code style="color:#22d3bf">polygons</code>(多边形的列表,各为 (k, 2) [y, x])、<code style="color:#22d3bf">areas</code>(鞋带公式)、<code style="color:#22d3bf">edge_length_total</code>(内部边长之和)、<code style="color:#22d3bf">n_edges</code>(内部边的数量)、<code style="color:#22d3bf">perimeter_internal</code> (n,)(各单元的内部边长)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

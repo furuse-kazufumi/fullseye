@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import perpetual; perpetual.perpetual_elementary_ca(rule: &#x27;int&#x27; = 90, width: &#x27;int&#x27; = 401, rows: &#x27;int&#x27; = 200, seed: &#x27;int&#x27; = -1, cell: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_elementary_ca&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>初等細胞自動機(Wolfram 的 256 條規則)，從上往下無限延伸。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">seed &lt; 0</code> で<b>中央 1 点</b>から始める(規則 90 ならシェルピンスキー、規則 30 なら擬似乱数、規則 110 なら万能計算)。</p>
-<p>不変量(規則 90・1 点始動): 第 n 行の第 k セルは <b>C(n,k) mod 2</b>。</p>
+<p><code style="color:#22d3bf">seed &lt; 0</code> 時從<b>中央 1 點</b>開始(規則 90 為謝爾賓斯基, 規則 30 為偽隨機,規則 110 為通用計算)。</p>
+<p>不變量(規則 90、1 點起始):第 n 列第 k 個細胞為 <b>C(n,k) mod 2</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

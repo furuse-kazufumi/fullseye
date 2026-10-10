@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import watershed3d; watershed3d.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;watershed_vol&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>거리 변환 시드의 분수령으로 3D 전경을 물체별 라벨로 분할한다(공개 op의 얇은 합성).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>連結成分では 1 個に融合する<b>接触/僅かな重なり</b>を割るのが目的。EDT は <code style="color:#22d3bf">volops.vol_distance_transform</code>、skimage 分水嶺は <code style="color:#22d3bf">volops.vol_watershed</code> に委譲し、本モジュールは (A) skimage 不在時の純 scipy フォールバックと、シード自動生成のグルーだけを足す。<code style="color:#22d3bf">markers</code> を省略すると距離変換の局所極大(<code style="color:#22d3bf">min_distance</code> NMS)を自動シードにする。</p>
+<p>연결 성분에서는 1개로 융합되는 <b>접촉/약간의 겹침</b>을 나누는 것이 목적. EDT는 <code style="color:#22d3bf">volops.vol_distance_transform</code>, skimage 분수령은 <code style="color:#22d3bf">volops.vol_watershed</code>에위임하고, 이 모듈은 (A) skimage 부재 시의 순수 scipy 폴백과 시드 자동 생성의글루만 더한다. <code style="color:#22d3bf">markers</code>를 생략하면 거리 변환의 국소 극대(<code style="color:#22d3bf">min_distance</code> NMS)를자동 시드로 한다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>binary : array_like</p>
-<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>bool 또는 0/1의 3D 전경 볼륨.</p>
 <p>markers : ndarray or None</p>
-<p>シードを外部指定する場合の int ラベル配列(binary と同形状、0=無し, 1..n=シード)。</p>
-<p>None なら距離変換の極大から自動生成する。</p>
+<p>시드를 외부에서 지정할 경우의 int 라벨 배열(binary와 같은 형상, 0=없음, 1..n=시드).</p>
+<p>None이면 거리 변환의 극대에서 자동 생성한다.</p>
 <p>min_distance : float</p>
-<p><code style="color:#22d3bf">markers=None</code> のときのシード最小間隔(voxel)。</p>
+<p><code style="color:#22d3bf">markers=None</code>일 때의 시드 최소 간격(voxel).</p>
 <p>method : {&quot;auto&quot;, &quot;skimage&quot;, &quot;scipy&quot;}</p>
-<p>バックエンド選択。&quot;skimage&quot; 指定で不在なら fail-closed(ImportError)。</p>
+<p>백엔드 선택. &quot;skimage&quot;를 지정했는데 없으면 fail-closed(실패 시 거부)(ImportError).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>labels : ndarray(int32)</p>
-<p>binary と同形状。背景 0、各物体に 1..k のラベル(前景を過不足なく被覆)。</p>
+<p>binary와 같은 형상. 배경 0, 각 물체에 1..k의 라벨(전경을 과부족 없이 피복).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形状不正・退化入力・不正 method のとき(fail-closed)。</p>
+<p>형상 부정·퇴화 입력·부정 method일 때(fail-closed(실패 시 거부)).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>사진에서 <b>열마다의 하늘과 지형 경계의 행</b>을 동적 계획법으로 1개 뽑는다 → signal (W,).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Lie・Lin・Hsu 2005(*Pattern Recognition*: 航法のための頑健なスカイライン抽出)と同じ考え:</p>
-<p>垂直方向の明るさの変化(空が上で明るければ <code style="color:#22d3bf">I[v−1] − I[v+1]</code> が正)を「境界らしさ」にし、隣の列から行が <code style="color:#22d3bf">max_jump</code> 以上飛ばない連続な経路のうちコストが最小のものを選ぶ(<code style="color:#22d3bf">jump_penalty</code> × 行の飛び)。雲や建物の縦の縁で局所的に強い応答が出ても、経路の連続性が本物の稜線を残す。</p>
+<p>Lie·Lin·Hsu 2005(*Pattern Recognition*: 항법을 위한 강건한 스카이라인 추출)와 같은 생각:</p>
+<p>수직 방향의 밝기 변화(하늘이 위에서 밝으면 <code style="color:#22d3bf">I[v−1] − I[v+1]</code> 가 양)를 &quot;경계다움&quot;으로 하고, 이웃 열에서 행이 <code style="color:#22d3bf">max_jump</code> 이상 튀지 않는 연속적인 경로 중 비용이 최소인 것을 고른다(<code style="color:#22d3bf">jump_penalty</code> × 행의 튐). 구름이나 건물의 세로 가장자리에서 국소적으로 강한 응답이 나와도, 경로의연속성이 진짜 능선을 남긴다.</p>
 <p>Args:</p>
-<p>image: (H, W) float。RGB なら先に灰色にする。</p>
-<p>sky_is_bright: 空が地形より明るい(昼)。夜景・逆光で反転するなら False。</p>
-<p>smooth: 縦方向の Gaussian σ [画素] (雑音)。0 で無効。</p>
-<p>max_jump: 隣の列で許す行の飛び [画素]。</p>
-<p>jump_penalty: 飛び 1 画素あたりのコスト(境界らしさは 0〜1 に正規化してある)。</p>
+<p>image: (H, W) float. RGB 라면 먼저 회색으로 한다.</p>
+<p>sky_is_bright: 하늘이 지형보다 밝다(낮). 야경·역광으로 반전한다면 False.</p>
+<p>smooth: 세로 방향의 Gaussian σ [화소] (잡음). 0 으로 무효.</p>
+<p>max_jump: 이웃 열에서 허용하는 행의 튐 [화소].</p>
+<p>jump_penalty: 튐 1 화소당 비용(경계다움은 0~1 로 정규화되어 있다).</p>
 <p>Returns:</p>
-<p>signal (W,) float: 列ごとの境界の行(0 が最上段)。<b>空しか写っていない・地形しか写っていない</b>画像では境界の応答が弱く、経路の平均コストが 0 に近いので ValueError</p>
-<p>で止める(黙って雑音の線を返さない)。</p>
+<p>signal (W,) float: 열마다의 경계 행(0 이 맨 위). <b>하늘만 찍혀 있거나·지형만찍혀 있는</b> 영상에서는 경계의 응답이 약하고, 경로의 평균 비용이 0 에 가까우므로 ValueError</p>
+<p>로 멈춘다(조용히 잡음의 선을 반환하지 않는다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

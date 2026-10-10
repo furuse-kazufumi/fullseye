@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_scale_bar_layout(shape, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, thickness=5)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_scale_bar_layout(shape, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, thickness=5)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_scale_bar_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns a table (dict): a bar of a <b>round</b> length, at most <code style="color:#22d3bf">target_fraction</code> of the image width.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>長さは <code style="color:#22d3bf">1/2/5 × 10^k</code> のうち <code style="color:#22d3bf">target_fraction * W * units_per_pixel</code> 以下の最大値。画素長 = <code style="color:#22d3bf">round(length / units_per_pixel)</code>。</p>
+<p>Of <code style="color:#22d3bf">1/2/5 × 10^k</code>, the length is the one at or below <code style="color:#22d3bf">target_fraction * W * units_per_pixel</code> with the largest value. Pixel length = <code style="color:#22d3bf">round(length / units_per_pixel)</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;length&quot;,&quot;px&quot;,&quot;rect&quot;:(x,y,w,h),&quot;unit&quot;,&quot;corner&quot;,&quot;label&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;length&quot;,&quot;px&quot;,&quot;rect&quot;:(x,y,w,h),&quot;unit&quot;,&quot;corner&quot;,&quot;label&quot;}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>units_per_pixel / target_fraction が非正、未知の corner、</p>
-<p>バーが 1 画素未満か画像に収まらない。</p>
+<p>units_per_pixel / target_fraction is not positive, unknown corner,</p>
+<p>or the bar is shorter than 1 pixel or does not fit in the image.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

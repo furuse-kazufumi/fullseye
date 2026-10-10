@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_truncation_energy(spectrum, orders=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_truncation_energy(spectrum, orders=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_truncation_energy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>每個截斷階數<b>預測的</b>誤差(<code style="color:#22d3bf">table</code>)—— 帕塞瓦爾的精確式。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>次数 <code style="color:#22d3bf">K</code> で打ち切った再構成 <code style="color:#22d3bf">z^K</code> について、標本上の二乗平均誤差は <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code> に<b>厳密に等しい</b>。だから再構成を 1 度もせずに「何項あれば何画素まで似るか」を先に言える。</p>
-<p>★<b>予言が厳密なのは、係数列が完全なときだけ</b>である(<code style="color:#22d3bf">contour_fourier_complex</code> を <code style="color:#22d3bf">n_harmonics=None</code> で呼んだ場合)。打ち切った係数列を渡されると、捨てられた側のエネルギーは<b>知りようがない</b>ので、返る誤差は<b>下界</b>になる —— 過小に見える誤差を「厳密」と言わないために、ここに書いておく。</p>
-<p>返り値: dict(<code style="color:#22d3bf">table</code>)</p>
-<p>&quot;order&quot;: 打ち切り次数 <code style="color:#22d3bf">K</code> の 1-D</p>
-<p>&quot;rms_error&quot;: 予言される rms 誤差[入力の単位]</p>
-<p>&quot;energy_fraction&quot;: 残した項が担うエネルギーの割合(<code style="color:#22d3bf">0..1</code>、単調増加)</p>
-<p>&quot;total_energy&quot;: <code style="color:#22d3bf">Σ_{k≠0} |c_k|^2</code>(位置 <code style="color:#22d3bf">c_0</code> を除いた形のエネルギー)</p>
-<p>&quot;k_max&quot;: スペクトルが持つ最大次数</p>
+<p>對於在階數 <code style="color:#22d3bf">K</code> 處截斷的重建 <code style="color:#22d3bf">z^K</code>，樣本上的均方誤差 <b>嚴格等於</b> <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code>。因此無需做 1 次重建，就能預先說出「需要幾項才能相似到幾個像素」。</p>
+<p>★<b>只有係數列完整時預言才是嚴格的</b>(以 <code style="color:#22d3bf">n_harmonics=None</code> 呼叫 <code style="color:#22d3bf">contour_fourier_complex</code> 的情況)。若傳入截斷後的係數列，被丟棄一側的能量<b>無從得知</b>，因此回傳的誤差是<b>下界</b> —— 為了不把看起來偏小的誤差稱為「嚴格」，特在此註明。</p>
+<p>回傳值: dict(<code style="color:#22d3bf">table</code>)</p>
+<p>&quot;order&quot;: 截斷階數 <code style="color:#22d3bf">K</code> 的 1-D</p>
+<p>&quot;rms_error&quot;: 預言的 rms 誤差[輸入的單位]</p>
+<p>&quot;energy_fraction&quot;: 保留項所承擔的能量比例(<code style="color:#22d3bf">0..1</code>，單調遞增)</p>
+<p>&quot;total_energy&quot;: <code style="color:#22d3bf">Σ_{k≠0} |c_k|^2</code>(除去位置 <code style="color:#22d3bf">c_0</code> 後的形狀能量)</p>
+<p>&quot;k_max&quot;: 頻譜所含的最大階數</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

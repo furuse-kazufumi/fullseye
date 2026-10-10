@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, channel_axis=None, crop_border=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, channel_axis=None, crop_border=True)</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;ssim&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Structural similarity (Wang, Bovik, Sheikh &amp; Simoncelli, IEEE TIP 13(4), 2004).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>既定は原論文の設定 ―― <b>11x11 のガウシアン窓 σ=1.5、K1=0.01、K2=0.03</b>、重み付き<b>母</b>分散(標本分散への <code style="color:#22d3bf">n/(n-1)</code> 補正を入れない)。</p>
-<p><code style="color:#22d3bf">crop_border=True</code>(既定)は窓の半径ぶんの縁を平均から落とす。縁では鏡像で埋めた画素が統計に混ざるため。<b>落とすかどうかで値が変わる</b>ので、他所の数値と比べるときは必ずこの設定を揃えること(小さい絵ほど差が出る)。</p>
+<p>The defaults are the original paper&#x27;s settings -- <b>11x11 Gaussian window σ=1.5, K1=0.01, K2=0.03</b>, weighted <b>population</b> variance (no <code style="color:#22d3bf">n/(n-1)</code> correction to sample variance).</p>
+<p><code style="color:#22d3bf">crop_border=True</code> (default) drops a border as wide as the window radius from the mean. At the border, mirror-padded pixels mix into the statistics. <b>Whether you drop it changes the value</b>, so when comparing with numbers from elsewhere, always match this setting (the smaller the picture, the bigger the difference).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>float</p>
-<p>1.0 が完全一致。</p>
+<p>1.0 is a perfect match.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

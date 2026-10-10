@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lab_to_rgb(lab, white=(0.95047, 1.0, 1.08883))</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.lab_to_rgb(lab, white=(0.95047, 1.0, 1.08883))</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;lab_to_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>CIE L*a*b* → sRGB <code style="color:#22d3bf">[0, 1]</code>. <b>Out-of-gamut colours are clipped</b>, so a round trip through <code style="color:#22d3bf">rgb_to_lab</code> only matches inside the gamut (pinned by a test).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>手順: <code style="color:#22d3bf">fy = (L + 16) / 116</code>、<code style="color:#22d3bf">fx = fy + a / 500</code>、<code style="color:#22d3bf">fz = fy - b / 200</code> を <code style="color:#22d3bf">xyz_to_lab</code> の逆関数で XYZ に戻し(<code style="color:#22d3bf">white</code> を掛ける)、XYZ→線形 RGB の逆行列を掛けてから sRGB の伝達関数を掛ける。伝達関数の手前で線形 RGB を <code style="color:#22d3bf">[0, 1]</code> に <b>無言でクリップ</b>する ―― ここが「色域外は切り詰め」の実体で、例外は出ない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab</code>: 最後の軸が 3 の任意の形。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: <code style="color:#22d3bf">rgb_to_lab</code> で使ったものと同じ白色点を渡す(検証はしない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64、値域 <code style="color:#22d3bf">[0, 1]</code> のガンマ付き sRGB。8 bit にするなら呼び出し側で 255 倍して丸める。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): 最後の軸が 3 でない。</p>
+<p>Procedure: <code style="color:#22d3bf">fy = (L + 16) / 116</code>, <code style="color:#22d3bf">fx = fy + a / 500</code>, <code style="color:#22d3bf">fz = fy - b / 200</code> are turned back into XYZ with the inverse of <code style="color:#22d3bf">xyz_to_lab</code> (multiplying by <code style="color:#22d3bf">white</code>), the inverse of the XYZ→linear RGB matrix is applied, and then the sRGB transfer function. Before the transfer function, linear RGB is <b>silently clipped</b> to <code style="color:#22d3bf">[0, 1]</code> -- this is what &quot;out-of-gamut colours are clipped&quot; actually is, and no exception is raised.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab</code>: any shape whose last axis is 3.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: pass the same white point as used in <code style="color:#22d3bf">rgb_to_lab</code> (not validated).</p>
+<p style="margin:2px 0 2px 12px">• Return value: float64 of the same shape as the input, gamma-encoded sRGB in the range <code style="color:#22d3bf">[0, 1]</code>. For 8 bit, the caller multiplies by 255 and rounds.</p>
+<p style="margin:2px 0 2px 12px">• Failure (<code style="color:#22d3bf">MetricContractError</code>): the last axis is not 3.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

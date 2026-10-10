@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_points(gaussians)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_points(gaussians)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">gaussians</code> → 중심의 점군 <code style="color:#22d3bf">(N,3)</code>. <code style="color:#22d3bf">gaussians</code> 의 출구(<b>중심은 가역</b>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Args:</p>
-<p>gaussians: <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code> を持つ dict。</p>
+<p>gaussians: <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code>를 가진 dict.</p>
 <p>Returns:</p>
-<p>(N, 3) float64(<code style="color:#22d3bf">mu</code> のコピー)。</p>
+<p>(N, 3) float64(<code style="color:#22d3bf">mu</code>의 사본).</p>
 <p>Raises:</p>
-<p>ValueError: キー欠落 / 形状不整合 / sigma &lt;= 0 / 非有限。</p>
+<p>ValueError: 키 누락 / 형상 불일치 / sigma &lt;= 0 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_reconstruct(model, scores)</code>(要直接呼叫實作,<code style="color:#22d3bf">import shapestats; shapestats.shape_reconstruct(model, scores)</code>;從台帳取用則 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_reconstruct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由分數還原形狀。→ <code style="color:#22d3bf">(N, 3)</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>与えたスコアが本数より少なければ残りは 0(= 平均のまま)として扱う。多ければ <code style="color:#22d3bf">ValueError</code> —— 黙って切り捨てると「入れたはずのモードが効かない」という追いにくい形になる。</p>
+<p>給出的分數少於成分數時，其餘視為 0(= 保持平均)。多於成分數則拋出 <code style="color:#22d3bf">ValueError</code> —— 若悄悄截斷，就會形成「明明加入的模態卻不起作用」這種難以追查的狀況。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

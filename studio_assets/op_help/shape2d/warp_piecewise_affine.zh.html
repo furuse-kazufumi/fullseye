@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>(要直接调用实现,<code style="color:#22d3bf">import imagemorph; imagemorph.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;warp_piecewise_affine&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将 img 中 src_pts 处的内容移动到 dst_pts 的分段仿射变形。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>dst_pts を Delaunay 三角形分割し、各出力画素が属す三角形の重心座標を求め、同じ重心座標で src_pts 側の対応三角形へ写して逆写像サンプルする。凸包の外側(三角形に属さない画素)は恒等(元位置)でサンプルするため、四隅を対応点に含める(<code style="color:#22d3bf">add_frame_corners</code>)と穴なく画像全体を覆える。</p>
-<p>引数:</p>
-<p>img: (H,W) か (H,W,C)、[0,1]。</p>
-<p>src_pts, dst_pts: (K,2) の (x,y)。同数・同順の対応点。</p>
-<p>order: 補間次数(1=バイリニア)。</p>
-<p>返り値: img と同 shape・[0,1] の float64。</p>
+<p>对 dst_pts 做 Delaunay 三角剖分，求出各输出像素所属三角形中的重心坐标，以相同的重心坐标映射到 src_pts 一侧的对应三角形，做逆映射采样。凸包外侧(不属于任何三角形的像素)以恒等(原位置)采样，因此把四角加入对应点(<code style="color:#22d3bf">add_frame_corners</code>)即可无空洞地覆盖整幅图像。</p>
+<p>参数:</p>
+<p>img: (H,W) 或 (H,W,C),[0,1]。</p>
+<p>src_pts, dst_pts: (K,2) 的 (x,y)。数量相同、顺序相同的对应点。</p>
+<p>order: 插值阶数(1=双线性)。</p>
+<p>返回值: 与 img 同 shape、[0,1] 的 float64。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,25 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scale_bar(img, length, units_per_pixel, unit=&#x27;µm&#x27;, xy=None, anchor=&#x27;rb&#x27;, color=&#x27;neutral&#x27;, thickness=5, margin=14, font_size=13, label=True, label_fmt=&#x27;{:g}&#x27;, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.scale_bar(img, length, units_per_pixel, unit=&#x27;µm&#x27;, xy=None, anchor=&#x27;rb&#x27;, color=&#x27;neutral&#x27;, thickness=5, margin=14, font_size=13, label=True, label_fmt=&#x27;{:g}&#x27;, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;scale_bar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>物理长度的比例尺。<b>像素↔物理的换算由参数给出</b>(不自行假定)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>バーの画素長は <code style="color:#22d3bf">round(length / units_per_pixel)</code> ―― これが構成的な真値で、<code style="color:#22d3bf">tests.test_annotate</code> はこの一致を数字で確かめている。</p>
+<p>比例尺的像素长度为 <code style="color:#22d3bf">round(length / units_per_pixel)</code> —— 这是构造上的真值, <code style="color:#22d3bf">tests.test_annotate</code> 用数字确认了这一一致。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>length : float</p>
-<p>バーが表す物理長(<code style="color:#22d3bf">unit</code> の単位で)。</p>
+<p>比例尺所表示的物理长度(以 <code style="color:#22d3bf">unit</code> 为单位)。</p>
 <p>units_per_pixel : float</p>
-<p>1 画素が何 <code style="color:#22d3bf">unit</code> に相当するか。倍率ではなく<b>分解能</b>を渡す。</p>
+<p>1 个像素相当于多少 <code style="color:#22d3bf">unit</code>。传入的是<b>分辨率</b>,而不是倍率。</p>
 <p>unit : str</p>
-<p>単位の表記(<code style="color:#22d3bf">&#x27;µm&#x27;</code>, <code style="color:#22d3bf">&#x27;mm&#x27;</code>, <code style="color:#22d3bf">&#x27;px&#x27;</code> など)。</p>
+<p>单位的写法(<code style="color:#22d3bf">&#x27;µm&#x27;</code>, <code style="color:#22d3bf">&#x27;mm&#x27;</code>, <code style="color:#22d3bf">&#x27;px&#x27;</code> 等)。</p>
 <p>xy : (x,y) or None</p>
-<p>バーの基準点。None なら <code style="color:#22d3bf">anchor</code> 側の隅から <code style="color:#22d3bf">margin</code> 内側。</p>
+<p>比例尺的基准点。None 时为从 <code style="color:#22d3bf">anchor</code> 一侧的角向内 <code style="color:#22d3bf">margin</code>。</p>
 <p>label : bool</p>
-<p><code style="color:#22d3bf">&quot;200 µm&quot;</code> のラベルを併記するか。</p>
+<p>是否同时标注 <code style="color:#22d3bf">&quot;200 µm&quot;</code> 的标签。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>length / units_per_pixel が非正・非有限、画素長が 1 未満、</p>
-<p>バー(とラベル)が画像に収まらない。</p>
+<p>length / units_per_pixel 非正、非有限,像素长度小于 1,</p>
+<p>比例尺(及标签)放不进图像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

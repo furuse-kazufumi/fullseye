@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;rms_norm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>RMS normalization → tokens। <b>default (eps=0, weight नहीं) में आउटपुट का RMS बिल्कुल 1 है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Zhang・Sennrich 2019。LayerNorm から平均を引く段を落としたもので、残るのは「行のノルムを揃える」だけ —— だから <b>RMS が 1 になることが検算になる</b> (実測 2.2e-16)。<code style="color:#22d3bf">eps</code> を入れると 1 からずれる。それが <code style="color:#22d3bf">eps</code> の値段。</p>
+<p>Zhang और Sennrich 2019। LayerNorm में से mean घटाने वाला चरण हटाया गया रूप है; बचता है केवल &quot;हर row का norm बराबर करना&quot; -- इसलिए <b>RMS का 1 होना ही cross-check है</b> (measured 2.2e-16)। <code style="color:#22d3bf">eps</code> डालने पर यह 1 से हटता है। यही <code style="color:#22d3bf">eps</code> की क़ीमत है।</p>
 <p>Args:</p>
-<p>tokens: (T, d) float。1 行が 1 トークン。</p>
-<p>eps: 平方根の中に足す下駄。0 なら RMS は厳密に 1、正なら 1 未満に縮む。</p>
-<p>weight: (d,) float か None。学習で付く軸ごとの倍率(掛けるだけなので RMS は動く)。</p>
+<p>tokens: (T, d) float। 1 row 1 token है।</p>
+<p>eps: square root के अंदर जोड़ा गया offset। 0 पर RMS ठीक 1, positive पर 1 से कम हो जाता है।</p>
+<p>weight: (d,) float या None। learning से मिलने वाला हर axis का गुणक (केवल गुणा होता है, इसलिए RMS बदलता है)।</p>
 <p>Returns:</p>
-<p>tokens (T, d) float: 各行を自分の RMS で割ったもの(<code style="color:#22d3bf">weight</code> があれば掛けたもの)。</p>
-<p><b>全成分が 0 の行</b>は割れないので ValueError(黙って 0/0 の NaN を返さない)。</p>
+<p>tokens (T, d) float: हर row को उसके अपने RMS से भाग देकर (<code style="color:#22d3bf">weight</code> हो तो गुणा करके)।</p>
+<p><b>जिन rows के सभी components 0 हों</b> उन्हें भाग नहीं दिया जा सकता, इसलिए ValueError (चुपचाप 0/0 का NaN नहीं लौटाया जाता)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

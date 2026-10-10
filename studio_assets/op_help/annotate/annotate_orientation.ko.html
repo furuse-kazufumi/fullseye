@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_orientation(img, angle_deg=0.0, corner=&#x27;rt&#x27;, xy=None, size=26.0, margin=16, label=&#x27;N&#x27;, color=&#x27;neutral&#x27;, width=2, font_size=12, box_alpha=0.0, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_orientation(img, angle_deg=0.0, corner=&#x27;rt&#x27;, xy=None, size=26.0, margin=16, label=&#x27;N&#x27;, color=&#x27;neutral&#x27;, width=2, font_size=12, box_alpha=0.0, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_orientation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지(image2d)를 돌려줍니다: 방위(북)나 방향을 나타내는 화살표 + 글자.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">angle_deg</code> は <b>画面の上を 0、時計回りが正</b>(地図の方位と同じ)。矢印は <code style="color:#22d3bf">xy</code>(中心)か <code style="color:#22d3bf">corner</code> の隅に置く。</p>
+<p><code style="color:#22d3bf">angle_deg</code>는 <b>화면 위쪽이 0, 시계 방향이 양수</b>(지도의 방위와 같음). 화살표는 <code style="color:#22d3bf">xy</code>(중심) 또는 <code style="color:#22d3bf">corner</code>의 모서리에 둔다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>size が非正、矢印が画像に収まらない、未知の corner。</p>
+<p>size가 양수가 아님, 화살표가 영상에 들어가지 않음, 알 수 없는 corner.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

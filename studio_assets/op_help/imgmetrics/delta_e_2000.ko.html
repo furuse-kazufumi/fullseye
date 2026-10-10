@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delta_e_2000(lab1, lab2, kL=1.0, kC=1.0, kH=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.delta_e_2000(lab1, lab2, kL=1.0, kC=1.0, kH=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;delta_e_2000&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>CIEDE2000 색차(CIE 142-2001).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>実装が踏み外しやすい 3 か所 ―― <b>色相角の平均</b>(0/360 をまたぐ扱い)、<b>275° の回転項</b>、<b>彩度ゼロ近傍</b>(<code style="color:#22d3bf">atan2(0, 0)</code> の扱い)―― は Sharma, Wu &amp; Dalal (2005) の 34 組の検証対で固定してある(<code style="color:#22d3bf">CIEDE2000_TEST_PAIRS</code> / <code style="color:#22d3bf">tests/test_imgmetrics.py</code>)。</p>
+<p>구현이 헛디디기 쉬운 3곳 -- <b>색상각의 평균</b>(0/360을 넘는 처리), <b>275°의 회전 항</b>, <b>채도 0 근방</b>(<code style="color:#22d3bf">atan2(0, 0)</code>의 처리) -- 은 Sharma, Wu &amp; Dalal (2005)의 34쌍 검증 쌍으로 고정해 두었다(<code style="color:#22d3bf">CIEDE2000_TEST_PAIRS</code> / <code style="color:#22d3bf">tests/test_imgmetrics.py</code>).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>lab1, lab2 : array_like</p>
-<p>最後の軸が <code style="color:#22d3bf">(L*, a*, b*)</code> の配列。ブロードキャストされる。</p>
+<p>마지막 축이 <code style="color:#22d3bf">(L*, a*, b*)</code>인 배열. 브로드캐스트된다.</p>
 <p>kL, kC, kH : float</p>
-<p>観察条件のパラメトリック係数。既定は基準条件の 1。</p>
+<p>관찰 조건의 파라메트릭 계수. 기본값은 기준 조건의 1.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>ΔE00(最後の軸が落ちた形)。</p>
+<p>ΔE00(마지막 축이 빠진 형태).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

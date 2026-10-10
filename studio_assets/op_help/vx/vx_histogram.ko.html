@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_histogram(image, *, num_bins, offset, range_)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import vxcore; vxcore.vx_histogram(image, *, num_bins, offset, range_)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvx.get(&quot;vx_histogram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>히스토그램(3.26절): 화소값 I는 <code style="color:#22d3bf">i = (I − offset) × numBins / range</code> 빈에 들어간다(offset ≤ I &lt; offset + range, REQ-0230). 범위 밖의 화소는 세지 않는다. 정수 나눗셈(버림)으로 빈을 정한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返り値 <code style="color:#22d3bf">(num_bins, 2)</code> の pairs: 列 0 = 升の下端の画素値(offset + i·range/numBins)、列 1 = 数。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / num_bins・range_ が正でない / num_bins &gt; range_ / offset が負。</p>
+<p>반환값 <code style="color:#22d3bf">(num_bins, 2)</code> 의 pairs: 열 0 = 빈 하단의 화소값(offset + i·range/numBins), 열 1 = 개수.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 의 2-D 가 아니다 / num_bins · range_ 가 양수가 아니다 / num_bins &gt; range_ / offset 이 음수.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

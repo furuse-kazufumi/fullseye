@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_resample_closed(points, n_points, allow_shortening=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.stroke_resample_closed(points, n_points, allow_shortening=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_resample_closed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>닫힌 선을 <b>등호장</b>으로 다시 찍는다. → <code style="color:#22d3bf">pairs</code></p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>フーリエへ渡す前段。★媒介変数の取り方で係数が変わる(実測で最大 47 倍)ので、ここは<b>弧長で等間隔</b>と明示する。弧長の間隔は機械精度で一定(実測 cv 1e-14)。</p>
-<p>★<b>ただし打ち直すと線は短くなる</b>: 標本と標本を結ぶのは弦なので、折れ点で角を切る。実測(300 頂点の巡回路): 標本 4000 で長さ 99.1 %、1024 で 96.9 %、300(頂点と同数)で 89.3 %、100 で 72.8 %、50 で <b>57.7 %</b>。長さが変われば濃淡の再現も壊れるので、<b>入力の頂点数より少ない標本は既定で拒否する</b> (意図してならば <code style="color:#22d3bf">allow_shortening=True</code>)。</p>
+<p>푸리에로 넘기기 전 단계. ★매개변수를 잡는 방식으로 계수가 바뀌므로(실측으로 최대 47 배), 여기는 <b>호 길이로 등간격</b>이라고 명시한다. 호 길이의 간격은 기계 정밀도로 일정(실측 cv 1e-14).</p>
+<p>★<b>단, 다시 찍으면 선은 짧아진다</b>: 표본과 표본을 잇는 것은 현이므로, 꺾인 점에서 모서리를자른다. 실측(300 꼭짓점의 순회로): 표본 4000 으로 길이 99.1 %, 1024 로 96.9 %, 300(꼭짓점과 같은 수)으로 89.3 %, 100 으로 72.8 %, 50 으로 <b>57.7 %</b>. 길이가 바뀌면농담의 재현도 망가지므로, <b>입력의 꼭짓점 수보다 적은 표본은 기본값으로 거부한다</b> (의도한 것이라면 <code style="color:#22d3bf">allow_shortening=True</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

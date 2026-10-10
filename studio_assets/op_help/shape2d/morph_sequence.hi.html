@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imagemorph; imagemorph.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;morph_sequence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>alpha को 0→1 तक n step में बदलकर बना morph क्रम (A से B तक smooth रूप से बदलते frame)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返り値: 長さ n の list。先頭が A、末尾が B に一致する。</p>
-<p><code style="color:#22d3bf">alpha = linspace(0, 1, n)</code> の各値で <code style="color:#22d3bf">morph(imgA, imgB, ptsA, ptsB, alpha, method, lam, with_corners)</code> を呼ぶだけ。各フレームは (1) 中間点 <code style="color:#22d3bf">(1-α) ptsA + α ptsB</code> を作り、(2) A と B をそれぞれそこへワープし、</p>
-<p style="margin:2px 0 2px 12px">(3) <code style="color:#22d3bf">α</code> でクロスディゾルブ、の 3 段。フレームごとにワープ 2 回なので、</p>
-<p>コストは <code style="color:#22d3bf">n</code> に比例する(<code style="color:#22d3bf">n=7</code> で 14 回)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">imgA</code>, <code style="color:#22d3bf">imgB</code>: <code style="color:#22d3bf">(H, W[, C])</code>、同じ形、<code style="color:#22d3bf">[0, 1]</code>。NaN/Inf は無言で 0 / 1 に置換される。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ptsA</code>, <code style="color:#22d3bf">ptsB</code>: <code style="color:#22d3bf">(K, 2)</code> の <b>(x, y)</b>、同数・同順の対応点。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 2 以上(1 以下は <code style="color:#22d3bf">ValueError</code>)。<code style="color:#22d3bf">int</code> に切られる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;affine&quot;</code>(Delaunay 区分アフィン、速い)/ <code style="color:#22d3bf">&quot;tps&quot;</code>(薄板スプライン、滑らか)。それ以外は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">lam</code> は TPS の平滑化係数(0 で厳密補間)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">with_corners</code>: True で <code style="color:#22d3bf">add_frame_corners</code> を両点群に足し、枠の外側の穴を防ぐ。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: float64 配列 <code style="color:#22d3bf">n</code> 枚の list(<code style="color:#22d3bf">images</code> 型)。<code style="color:#22d3bf">[0, 1]</code> にクリップ済み。</p>
-<p>1 枚だけ欲しい(例: <code style="color:#22d3bf">α = 0.5</code> の中間顔)なら <code style="color:#22d3bf">morph</code> を直接。</p>
+<p>return value: लंबाई n की list। पहला A से और अंतिम B से मेल खाता है।</p>
+<p><code style="color:#22d3bf">alpha = linspace(0, 1, n)</code> के हर मान पर बस <code style="color:#22d3bf">morph(imgA, imgB, ptsA, ptsB, alpha, method, lam, with_corners)</code> call करता है। हर frame के 3 चरण हैं: (1) मध्य points <code style="color:#22d3bf">(1-α) ptsA + α ptsB</code> बनाना, (2) A और B को अलग-अलग वहाँ warp करना,</p>
+<p style="margin:2px 0 2px 12px">(3) <code style="color:#22d3bf">α</code> से cross-dissolve करना। हर frame में 2 warps, इसलिए</p>
+<p>लागत <code style="color:#22d3bf">n</code> के अनुपात में है (<code style="color:#22d3bf">n=7</code> पर 14 बार)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">imgA</code>, <code style="color:#22d3bf">imgB</code>: <code style="color:#22d3bf">(H, W[, C])</code>, समान shape, <code style="color:#22d3bf">[0, 1]</code>। NaN/Inf चुपचाप 0 / 1 से बदल दिए जाते हैं।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ptsA</code>, <code style="color:#22d3bf">ptsB</code>: <code style="color:#22d3bf">(K, 2)</code> के <b>(x, y)</b>, समान संख्या और समान क्रम के corresponding points।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 2 या अधिक (1 या कम पर <code style="color:#22d3bf">ValueError</code>)। <code style="color:#22d3bf">int</code> में काटा जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;affine&quot;</code> (Delaunay piecewise affine, तेज़) / <code style="color:#22d3bf">&quot;tps&quot;</code> (thin-plate spline, smooth)। इसके अलावा कुछ भी हो तो <code style="color:#22d3bf">ValueError</code>। <code style="color:#22d3bf">lam</code> TPS का smoothing coefficient है (0 पर सटीक interpolation)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">with_corners</code>: True पर <code style="color:#22d3bf">add_frame_corners</code> को दोनों point sets में जोड़कर frame के बाहर के छेद रोकता है।</p>
+<p style="margin:2px 0 2px 12px">• return value: <code style="color:#22d3bf">n</code> float64 arrays की list (<code style="color:#22d3bf">images</code> type)। <code style="color:#22d3bf">[0, 1]</code> में पहले से clip।</p>
+<p>केवल 1 image चाहिए (उदा. <code style="color:#22d3bf">α = 0.5</code> का मध्य चेहरा) तो सीधे <code style="color:#22d3bf">morph</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

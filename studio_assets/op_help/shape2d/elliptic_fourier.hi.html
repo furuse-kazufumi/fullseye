@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.elliptic_fourier(points, n_harmonics=10)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fourierdesc; fourierdesc.elliptic_fourier(points, n_harmonics=10)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;elliptic_fourier&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बंद contour के elliptic Fourier गुणांक Kuhl–Giardina closed form से निकालता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>引数:</p>
-<p>points: (N,2) の閉輪郭頂点。閉じていなければ内部で先頭点を末尾に補う。</p>
-<p>n_harmonics: 高調波数 N(多いほど細部まで表現)。</p>
-<p>返り値: dict</p>
-<p>&quot;coeffs&quot;: (N,4) 配列。行 n が [a_n, b_n, c_n, d_n]。&quot;a0&quot;, &quot;c0&quot;: DC 成分(輪郭の中心オフセット)。</p>
-<p>&quot;n_harmonics&quot;: N。</p>
-<p>再構成 <code style="color:#22d3bf">reconstruct</code> は x(t)=a0+Σ a_n cos(2πnt)+b_n sin(2πnt),  y(t)=c0+Σ c_n cos+d_n sin  (t∈[0,1))。</p>
+<p>arguments:</p>
+<p>points: (N,2) के closed contour के शीर्ष। बंद न हो तो अंदर पहला point अंत में जोड़ दिया जाता है।</p>
+<p>n_harmonics: harmonics की संख्या N (जितनी ज़्यादा, उतना बारीक विवरण)।</p>
+<p>return value: dict</p>
+<p>&quot;coeffs&quot;: (N,4) array। row n [a_n, b_n, c_n, d_n] है। &quot;a0&quot;, &quot;c0&quot;: DC components (contour के केंद्र का offset)।</p>
+<p>&quot;n_harmonics&quot;: N।</p>
+<p>reconstruction <code style="color:#22d3bf">reconstruct</code> है x(t)=a0+Σ a_n cos(2πnt)+b_n sin(2πnt),  y(t)=c0+Σ c_n cos+d_n sin  (t∈[0,1))।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

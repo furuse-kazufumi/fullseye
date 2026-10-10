@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_to_rgbimage(flow, index=None, scale=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.flow_to_rgbimage(flow, index=None, scale=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;flow_to_rgbimage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>稠密場景流的一個切片 → 色相=方向、明度=速度的 <code style="color:#22d3bf">rgbimage</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>光学フローの標準的な可視化(色相環)を 3-D フローの z スライスに当てる:</p>
-<p><code style="color:#22d3bf">hue = atan2(dy, dx)</code>(度で 0-360)、<code style="color:#22d3bf">value = |(dy, dx)| / scale</code>、彩度は 1。<b>dz は捨てる</b> —— 面内成分だけの図であることを明示する(捨てた成分を色に混ぜると「見えている色が何の量か」が誰にも言えなくなる)。</p>
-<p><b>一方向</b>。色相環の凡例は図の側で必ず一緒に焼くこと(色の意味が書いていないフロー図は、綺麗なだけで読めない)。</p>
+<p>將光流的標準視覺化(色相環)套用到 3-D 流的 z 切片:</p>
+<p><code style="color:#22d3bf">hue = atan2(dy, dx)</code>(以度計,0-360)、<code style="color:#22d3bf">value = |(dy, dx)| / scale</code>、飽和度為 1。<b>捨棄 dz</b> —— 明確表示這是只含面內分量的圖(若把捨棄的分量混入顏色,就沒有人能說清「看到的顏色是什麼量」)。</p>
+<p><b>單向</b>。色相環圖例務必在圖上一併繪入(沒有寫明顏色含義的流圖,只是好看而無法判讀)。</p>
 <p>Args:</p>
 <p>flow: (3, D, H, W)。</p>
-<p>index: 取り出す z スライス(既定 = 中央)。</p>
-<p>scale: 明度 1.0 に対応する面内速さ(既定 = そのスライスの最大値。</p>
-<p>0 なら全面黒を返す)。</p>
+<p>index: 取出的 z 切片(預設 = 中央)。</p>
+<p>scale: 對應明度 1.0 的面內速度(預設 = 該切片的最大值。</p>
+<p>為 0 時回傳全黑)。</p>
 <p>Returns:</p>
-<p>(H, W, 3) float64、値域 [0, 1]。</p>
+<p>(H, W, 3) float64,值域 [0, 1]。</p>
 <p>Raises:</p>
-<p>ValueError: 密フローでない / index が範囲外 / scale &lt;= 0。</p>
+<p>ValueError: 不是稠密流 / index 超出範圍 / scale &lt;= 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

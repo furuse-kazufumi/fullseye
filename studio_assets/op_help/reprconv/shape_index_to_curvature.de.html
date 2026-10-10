@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index_to_curvature(pairs)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.shape_index_to_curvature(pairs)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;shape_index_to_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Formindex und Gekrümmtheit <code style="color:#22d3bf">(N,2)</code> → Hauptkrümmungen <code style="color:#22d3bf">(N,2)</code>. Die Umkehrung von <code style="color:#22d3bf">curvature_to_shape_index</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>theta = pi*S/2 として <code style="color:#22d3bf">k1 = C(sin+cos)</code>, <code style="color:#22d3bf">k2 = C(sin-cos)</code>。(S, C) の定義式を解いた閉形式で、近似も反復も入っていない。</p>
+<p>Mit theta = pi*S/2 gilt <code style="color:#22d3bf">k1 = C(sin+cos)</code>, <code style="color:#22d3bf">k2 = C(sin-cos)</code>. Die geschlossene Form durch Auflösen der Definitionsgleichungen von (S, C); weder Näherung noch Iteration ist enthalten.</p>
 <p>Args:</p>
-<p>pairs: (N, 2) の <code style="color:#22d3bf">[S, C]</code>。</p>
+<p>pairs: (N, 2) <code style="color:#22d3bf">[S, C]</code>.</p>
 <p>Returns:</p>
-<p>(N, 2) float64 の <code style="color:#22d3bf">[k1, k2]</code>(k1 &gt;= k2)。</p>
+<p>(N, 2) float64 <code style="color:#22d3bf">[k1, k2]</code> (k1 &gt;= k2).</p>
 <p>Raises:</p>
-<p>ValueError: |S| &gt; 1 / C &lt; 0 / 形状不正 / 非有限。</p>
+<p>ValueError: |S| &gt; 1 / C &lt; 0 / ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

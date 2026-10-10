@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_to_matrix(angle)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.angle_to_matrix(angle)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;angle_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>कोण <b>[degree]</b> → z axis के चारों ओर rotation matrix <code style="color:#22d3bf">matrix (3,3)</code>। <code style="color:#22d3bf">angle</code> से निकास।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">angle_to_matrix(90)</code> は軸1(y)を軸2(x)へ送り、軸2(x)を <b>−軸1</b>(−y)へ送る(<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code>、<code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>、実測)。2-D の <code style="color:#22d3bf">rot_scale_to_matrix</code> と同じ <code style="color:#22d3bf">[[c,-s],[s,c]]</code> の向き(軸 0 → 軸 1)を軸 (1, 2) に置いたもので、<code style="color:#22d3bf">matrix_to_angle</code> の <code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> もこの向きで往復する。<b>度</b>であることと <b>どちらの軸へ回るか</b>が、この段落の全内容である。ラジアンを渡すと例外は出ず、ただ 57.3 分の 1 だけ回った行列が返る。</p>
+<p><code style="color:#22d3bf">angle_to_matrix(90)</code> axis 1 (y) को axis 2 (x) पर भेजता है, और axis 2 (x) को <b>−axis 1</b> (−y) पर भेजता है (<code style="color:#22d3bf">R @ [0,1,0] = [0,0,1]</code>, <code style="color:#22d3bf">R @ [0,0,1] = [0,-1,0]</code>, measured)। यह 2-D <code style="color:#22d3bf">rot_scale_to_matrix</code> वाला ही <code style="color:#22d3bf">[[c,-s],[s,c]]</code> orientation (axis 0 → axis 1) axes (1, 2) पर रखा गया है, और <code style="color:#22d3bf">matrix_to_angle</code> का <code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> भी इसी orientation में round trip करता है। कि यह <b>degree</b> में है और <b>किस axis की ओर घूमता है</b>, यही इस paragraph की पूरी सामग्री है। radian देने पर कोई exception नहीं आता, बस इच्छित कोण के केवल 1/57.3 जितना घूमा matrix लौटता है।</p>
 <p>Args:</p>
-<p>angle: 度。</p>
+<p>angle: degree।</p>
 <p>Returns:</p>
-<p>(3, 3) float64、行列式 1 の直交行列。</p>
+<p>(3, 3) float64, determinant 1 वाला orthogonal matrix।</p>
 <p>Raises:</p>
-<p>ValueError: スカラでない / 非有限。</p>
+<p>ValueError: scalar नहीं / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

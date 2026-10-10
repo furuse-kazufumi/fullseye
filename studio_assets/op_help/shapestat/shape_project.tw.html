@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_project(model, shape, align: &#x27;bool&#x27; = True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import shapestats; shapestats.shape_project(model, shape, align: &#x27;bool&#x27; = True)</code>;從台帳取用則 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_project&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將形狀映射到模型座標(主成分分數)。→ <code style="color:#22d3bf">(k,)</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">align=True</code> なら先に平均形状へ Procrustes で合わせる。合わせずに投影すると位置と向きの違いがスコアに漏れ、<b>同じ形なのに別の個体に見える</b>。</p>
-<p>式: <code style="color:#22d3bf">scores = components @ (shape - mean).ravel()</code>(<code style="color:#22d3bf">components</code> は <code style="color:#22d3bf">(k, N*3)</code> の正規直交行、<code style="color:#22d3bf">mean</code> は <code style="color:#22d3bf">(N, 3)</code>)。<code style="color:#22d3bf">align=True</code> のときは <code style="color:#22d3bf">procrustes_align(shape, mean)</code>(スケール込み・鏡像なし)を先に掛ける。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">shape_pca</code> の返り値(<code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">components</code> / <code style="color:#22d3bf">variance</code> / <code style="color:#22d3bf">n_points</code> を持つ dict)。欠けていれば <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code>: <code style="color:#22d3bf">(N, 3)</code>、<code style="color:#22d3bf">N == model[&quot;n_points&quot;]</code>、有限。点の並びは学習に使ったランドマークと同じ順であること(対応が違っても例外は出ない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align</code>: 既定 True。<code style="color:#22d3bf">shape_pca(align=False)</code> で作ったモデル(大きさを形質に含める)に投影するときは、ここも <code style="color:#22d3bf">False</code> にしないとスケールが消える。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(k,)</code> float64。各成分の単位は座標と同じ。<code style="color:#22d3bf">sqrt(variance)</code> で割れば標準偏差単位(何 σ 外れているか)になる。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(モデルの形式、点数の不一致、非有限)。</p>
-<p>逆写像は <code style="color:#22d3bf">shape_reconstruct</code>、外れ具合の 1 数値は <code style="color:#22d3bf">shape_mahalanobis</code>。</p>
+<p><code style="color:#22d3bf">align=True</code> 時先用 Procrustes 對齊到平均形狀。不對齊就投影，位置與朝向的差異會漏進分數，<b>同一形狀看起來像另一個個體</b>。</p>
+<p>公式: <code style="color:#22d3bf">scores = components @ (shape - mean).ravel()</code>(<code style="color:#22d3bf">components</code> 為 <code style="color:#22d3bf">(k, N*3)</code> 的正交歸一列，<code style="color:#22d3bf">mean</code> 為 <code style="color:#22d3bf">(N, 3)</code>)。<code style="color:#22d3bf">align=True</code> 時先套用 <code style="color:#22d3bf">procrustes_align(shape, mean)</code>(含縮放、無鏡像)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">shape_pca</code> 的回傳值(含 <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">components</code> / <code style="color:#22d3bf">variance</code> / <code style="color:#22d3bf">n_points</code> 的 dict)。缺少則拋出 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code>: <code style="color:#22d3bf">(N, 3)</code>,<code style="color:#22d3bf">N == model[&quot;n_points&quot;]</code>，有限值。點的排列須與訓練所用的特徵點順序相同(對應關係不同也不會拋出例外)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align</code>: 預設 True。投影到用 <code style="color:#22d3bf">shape_pca(align=False)</code> 建立的模型(把大小算作形質) 時，這裡也必須設為 <code style="color:#22d3bf">False</code>，否則尺度會消失。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: <code style="color:#22d3bf">(k,)</code> float64。各成分的單位與座標相同。除以 <code style="color:#22d3bf">sqrt(variance)</code> 即為標準差單位(偏離了幾個 σ)。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(模型格式、點數不一致、非有限值)。</p>
+<p>逆映射是 <code style="color:#22d3bf">shape_reconstruct</code>，表示偏離程度的 1 個數值是 <code style="color:#22d3bf">shape_mahalanobis</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

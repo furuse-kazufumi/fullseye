@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_bloom_fit(image, threshold=0.97, ignore_top_rows=0, min_area=30, max_area_frac=0.15, min_rim_fraction=0.3)</code>(要直接调用实现,<code style="color:#22d3bf">import geocam; geocam.sun_bloom_fit(image, threshold=0.97, ignore_top_rows=0, min_area=30, max_area_frac=0.15, min_rim_fraction=0.3)</code>;从台账取用则 <code style="color:#22d3bf">opsgeocam.get(&quot;sun_bloom_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>实拍中的太阳 = 使传感器饱和的<b>光晕(bloom)</b>(比圆盘大，大小随曝光变化，会被图像边缘或文字带截断)。 对最大的饱和团块的<b>边缘</b>拟合圆并返回圆心 → table。团块被截断时重心会偏向截断侧的反方向(实测 15 px)，因此 舍弃被截断的边缘(接触图像外周和 <code style="color:#22d3bf">ignore_top_rows</code> 带的像素)，对剩余的弧用代数最小二乘(Kåsa 1976)拟合圆。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">sun_pixel_position</code> は「詰まった小さな円盤」を前提にした合成向けの門で、実写の道路カメラでは局名の白い文字・標識・白い車を太陽と読む(Fintraffic 天候カメラで 24/24 が誤検出、2026-09-21)。この op は<b>太陽と決めない</b>:</p>
-<p>円の中心と半径・残差・切れの有無を返し、太陽かどうかは時刻どおりに動くかで決める(<code style="color:#22d3bf">camera_orientation_from_sun_candidates</code>)。</p>
+<p><code style="color:#22d3bf">sun_pixel_position</code> 是以“紧凑的小圆盘”为前提、面向合成数据的门禁,在实拍的道路相机上会把台名的白色文字、交通标志、白色车辆读成太阳(Fintraffic 气象相机上 24/24 误检,2026-09-21)。本 op <b>不判定是太阳</b>:</p>
+<p>只返回圆的中心与半径、残差、是否被截断,是否为太阳由它是否按时刻移动来决定(<code style="color:#22d3bf">camera_orientation_from_sun_candidates</code>)。</p>
 <p>Args:</p>
-<p>image: (H, W) float、0〜1。</p>
-<p>threshold: 飽和とみなす絶対値。</p>
-<p>ignore_top_rows: 上端の何行を無視するか(局名などの文字の帯)。</p>
-<p>min_area: 塊の最小画素数。</p>
-<p>max_area_frac: 塊の最大面積(画像に対する比)—— 空全体が飛んだ写真を拒む。</p>
-<p>min_rim_fraction: 切れていない縁が円周の何割以上要るか(これ未満は「切れすぎ」で ValueError)。</p>
+<p>image: (H, W) float,0~1。</p>
+<p>threshold: 视为饱和的绝对值。</p>
+<p>ignore_top_rows: 忽略上端多少行(台名等文字的带)。</p>
+<p>min_area: 团块的最小像素数。</p>
+<p>max_area_frac: 团块的最大面积(相对于图像的比值)—— 拒绝整个天空过曝的照片。</p>
+<p>min_rim_fraction: 未被截断的边缘需占圆周的多少比例以上(低于此则“截断过多”而 ValueError)。</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">u</code> / <code style="color:#22d3bf">v</code>(円の中心)/ <code style="color:#22d3bf">r</code>(半径 px)/ <code style="color:#22d3bf">rms_px</code>(縁の半径残差)/ <code style="color:#22d3bf">area</code>(塊の画素数)/</p>
-<p><code style="color:#22d3bf">clipped</code>(1 = 縁のどこかが切れている)/ <code style="color:#22d3bf">rim_fraction</code> / <code style="color:#22d3bf">centroid_u</code> / <code style="color:#22d3bf">centroid_v</code>(比較用の重心)。</p>
+<p>table: <code style="color:#22d3bf">u</code> / <code style="color:#22d3bf">v</code>(圆心)/ <code style="color:#22d3bf">r</code>(半径 px)/ <code style="color:#22d3bf">rms_px</code>(边缘的半径残差)/ <code style="color:#22d3bf">area</code>(团块像素数)/</p>
+<p><code style="color:#22d3bf">clipped</code>(1 = 边缘某处被截断)/ <code style="color:#22d3bf">rim_fraction</code> / <code style="color:#22d3bf">centroid_u</code> / <code style="color:#22d3bf">centroid_v</code>(用于比较的质心)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

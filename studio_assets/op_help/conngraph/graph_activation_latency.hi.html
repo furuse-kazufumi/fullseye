@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import conngraph; conngraph.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconngraph.get(&quot;graph_activation_latency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर node पहली बार जिस step (0 से शुरू) पर &quot;जला&quot;, उसका क्रम (n,), integer। जो node कभी नहीं जले उन्हें −1।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">X</code> は reservoir_states の (T, n)。「点いた」= |x| ≥ <b>全体の最大値</b> × thresh(thresh は(0, 1])。尺度はノードごとでなく 1 つ —— ノードごとに伸ばすと、ほとんど動かないノードの丸め屑も「点いた」になる。全零の X はすべて −1。</p>
+<p><code style="color:#22d3bf">X</code> reservoir_states का (T, n) है। &quot;जला&quot; = |x| ≥ <b>पूरे data का maximum</b> × thresh (thresh (0, 1] में)। scale हर node के लिए अलग नहीं, 1 ही है -- हर node के हिसाब से फैलाने पर लगभग न हिलने वाले nodes की rounding dust भी &quot;जला&quot; गिनी जाएगी। पूरी तरह शून्य X के लिए सब −1।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

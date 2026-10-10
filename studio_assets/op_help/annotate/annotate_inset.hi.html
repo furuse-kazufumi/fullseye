@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_inset(img, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, color=&#x27;emphasis&#x27;, width=2, connect=True, label=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, style=None, layout=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_inset(img, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, color=&#x27;emphasis&#x27;, width=2, connect=True, label=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, style=None, layout=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_inset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (image2d) लौटाता है: मूल frame का बड़ा रूप कोने में लगाता है, और संगत कोनों को line से जोड़ता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>倍率と位置は <code style="color:#22d3bf">annotate_inset_layout</code>、描画は <code style="color:#22d3bf">zoom_inset</code> (最近傍の整数倍 = 元の画素そのもの)。</p>
+<p>magnification और स्थिति <code style="color:#22d3bf">annotate_inset_layout</code> से, drawing <code style="color:#22d3bf">zoom_inset</code> से (nearest neighbour का पूर्णांक गुणा = मूल pixel ही)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_inset_layout</code> と同じ。</p>
+<p><code style="color:#22d3bf">annotate_inset_layout</code> जैसा ही।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

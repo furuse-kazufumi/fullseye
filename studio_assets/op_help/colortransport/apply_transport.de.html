@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.apply_transport(plan, target_values)</code> (die Implementierung direkt: <code style="color:#22d3bf">import colortransport; colortransport.apply_transport(plan, target_values)</code>; aus dem Register: <code style="color:#22d3bf">opscolortransport.get(&quot;apply_transport&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zieht <code style="color:#22d3bf">target_values</code> über einen Transportplan auf die Quellpunkte zurück (die baryzentrische Abbildung).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各行(送り元)について、運んだ質量で重み付けした行き先の値の平均を返す。これが「計画を<b>使って絵を直す</b>」入口 ―― 計画を作るだけで使い道が無いと、<code style="color:#22d3bf">sinkhorn</code> の出力は台帳の袋小路になる(この repo が繰り返し踏んできた「入口はあるが消費 op が無い型」の形)。</p>
-<p>質量ゼロの行は行き先が無い ―― 0 で埋めると「黒い画素」が黙って混ざるので <code style="color:#22d3bf">ValueError</code>。</p>
+<p>Für jede Zeile (Quelle) wird der mit der transportierten Masse gewichtete Mittelwert der Zielwerte zurückgegeben. Das ist der Einstieg, um &quot;<b>mit dem Plan das Bild zu korrigieren</b>&quot; -- wird ein Plan nur erzeugt und nie verwendet, wird die Ausgabe von <code style="color:#22d3bf">sinkhorn</code> zur Sackgasse im Register (die Gestalt des Typs &quot;Einstieg vorhanden, aber keine verbrauchende op&quot;, in den dieses repo wiederholt getreten ist).</p>
+<p>Eine Zeile mit Masse null hat kein Ziel -- mit 0 aufzufüllen würde stillschweigend &quot;schwarze Pixel&quot; einmischen, daher <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Farbmetrik und Spektren — Farbe ist nur durch Spektrum × Lichtart × Beobachter bestimmt</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

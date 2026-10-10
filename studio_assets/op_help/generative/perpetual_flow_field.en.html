@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_flow_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Flow field — keeps advecting particles along the field (it does not end unless stopped).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>★場は<b>ポテンシャル ψ の回転</b>として作る。だから <b>発散が恒等的に 0</b> (非圧縮)で、粒子が湧いたり消えたりしない。「それらしい雑音」で作った</p>
-<p>流れ場との違いはここで、<code style="color:#22d3bf">perpetual_identities</code> が数で出す。</p>
-<p>★線の色と太さは<b>流速</b> |∇ψ| に結びつけてある(太さも濃さも一定だと、同じ場から描いても「落書き」にしかならない)。</p>
+<p>★The field is built <b>as the curl of a potential ψ</b>. Hence <b>the divergence is identically 0</b> (incompressible), and particles neither appear nor vanish. This is the difference from a flow field built from &quot;plausible noise&quot;,</p>
+<p>and <code style="color:#22d3bf">perpetual_identities</code> reports it as a number.</p>
+<p>★Line colour and width are tied to the <b>flow speed</b> |∇ψ| (if width and darkness were both constant, drawing from the same field would give nothing but &quot;scribbles&quot;).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

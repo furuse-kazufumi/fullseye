@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.select_points(points, indices)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點群 <code style="color:#22d3bf">(N,3)</code> 與索引 <code style="color:#22d3bf">(M,)</code> → 子點群 <code style="color:#22d3bf">(M,3)</code>。<code style="color:#22d3bf">indices</code> 的消費側。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">indices</code> を産む op は 6 つあるのに(<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>)、<b>添字を食う単入力 op が 1 つも無かった</b> —— 添字は「元の集合とセットで初めて意味を持つ」ので、単入力では原理的に作れない。よってこれは 2 入力にしてある。</p>
+<p>產出 <code style="color:#22d3bf">indices</code> 的 op 有 6 個(<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>),<b>卻連 1 個消費索引的單輸入 op 都沒有</b> —— 索引「只有與原集合配套才有意義」,所以單輸入在原理上做不出來。因此這個 op 做成了 2 輸入。</p>
 <p>Args:</p>
 <p>points: (N, 3)。</p>
-<p>indices: (M,) の非負整数、N 未満。</p>
+<p>indices: (M,) 的非負整數,小於 N。</p>
 <p>Returns:</p>
 <p>(M, 3) float64。</p>
 <p>Raises:</p>
-<p>ValueError: 範囲外の添字 / 形状不正 / 非有限。</p>
+<p>ValueError: 範圍外的索引 / 形狀不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

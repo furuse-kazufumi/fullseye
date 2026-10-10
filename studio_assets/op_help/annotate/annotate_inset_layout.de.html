@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_inset_layout(shape, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, max_fraction=0.4)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.annotate_inset_layout(shape, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, max_fraction=0.4)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;annotate_inset_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert eine Tabelle (dict): Ort und Vergrößerungsfaktor der Einblendung, in geschlossener Form.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">factor=None</code> なら「幅・高さとも画像の <code style="color:#22d3bf">max_fraction</code> 以下」で最大の整数倍率。差し込みが元枠に重なる隅は ValueError(自分の元を隠す)。</p>
+<p>Mit <code style="color:#22d3bf">factor=None</code>: unter &quot;Breite und Höhe jeweils höchstens <code style="color:#22d3bf">max_fraction</code> des Bildes&quot; der größte ganzzahlige Vergrößerungsfaktor. Eine Ecke, in der der Einschub den Quellrahmen überdeckt, ergibt ValueError (er würde seine eigene Quelle verdecken).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;src_rect&quot;,&quot;dst_rect&quot;,&quot;factor&quot;,&quot;corner&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;src_rect&quot;,&quot;dst_rect&quot;,&quot;factor&quot;,&quot;corner&quot;}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>元枠が画像外、倍率 &lt; 1 か非整数、差し込みが収まらない/元枠と重なる。</p>
+<p>Quellrahmen außerhalb des Bildes, Faktor &lt; 1 oder nicht ganzzahlig, Einschub passt nicht / überlappt den Quellrahmen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.leader_line(img, anchor_xy, target_xy, text=None, color=&#x27;emphasis&#x27;, width=2, cap=&#x27;dot&#x27;, cap_size=4, elbow=True, scheme=&#x27;okabe_ito&#x27;, style=None, **text_kw)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.leader_line(img, anchor_xy, target_xy, text=None, color=&#x27;emphasis&#x27;, width=2, cap=&#x27;dot&#x27;, cap_size=4, elbow=True, scheme=&#x27;okabe_ito&#x27;, style=None, **text_kw)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;leader_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>지시선 —— 주기의 위치(<code style="color:#22d3bf">anchor_xy</code>)에서 대상(<code style="color:#22d3bf">target_xy</code>)으로.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">elbow=True</code> なら水平 → 斜めの 2 折れで引く(注記が本体に被りにくい)。端点には <code style="color:#22d3bf">cap</code> の印(<code style="color:#22d3bf">&#x27;dot&#x27;</code>/<code style="color:#22d3bf">&#x27;arrow&#x27;</code>/<code style="color:#22d3bf">&#x27;cross&#x27;</code>/<code style="color:#22d3bf">&#x27;none&#x27;</code>)を置く。<code style="color:#22d3bf">text</code> を渡すと <code style="color:#22d3bf">anchor_xy</code> 側に <code style="color:#22d3bf">text_box</code> を置く。追加の <code style="color:#22d3bf">**text_kw</code> は <code style="color:#22d3bf">text_box</code> へそのまま渡す。</p>
+<p><code style="color:#22d3bf">elbow=True</code>이면 수평 → 사선의 2단 꺾임으로 긋는다(주석이 본체에 겹치기 어렵다). 끝점에는 <code style="color:#22d3bf">cap</code>의 표시(<code style="color:#22d3bf">&#x27;dot&#x27;</code>/<code style="color:#22d3bf">&#x27;arrow&#x27;</code>/<code style="color:#22d3bf">&#x27;cross&#x27;</code>/<code style="color:#22d3bf">&#x27;none&#x27;</code>)를 둔다. <code style="color:#22d3bf">text</code>를 넘기면 <code style="color:#22d3bf">anchor_xy</code> 쪽에 <code style="color:#22d3bf">text_box</code>를 둔다. 추가 <code style="color:#22d3bf">**text_kw</code>는 <code style="color:#22d3bf">text_box</code>에 그대로 넘긴다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>未知の <code style="color:#22d3bf">cap</code>、非有限な座標、線が画像の外。</p>
+<p>알 수 없는 <code style="color:#22d3bf">cap</code>, 비유한 좌표, 선이 영상 밖.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

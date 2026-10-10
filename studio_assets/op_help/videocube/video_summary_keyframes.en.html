@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import videocube; videocube.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsvideocube.get(&quot;video_summary_keyframes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Indices of representative frames <code style="color:#22d3bf">(k,)</code> int64, ascending (<code style="color:#22d3bf">indices</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>フレームごとの得点 = 動きの量(|I_t − I_{t−1}| の平均、[0, 1] に正規化)+ 場面の変化(ヒストグラムの χ² 距離、正規化)。得点の高い順に、既に選んだフレームから <code style="color:#22d3bf">min_gap</code>(既定 T // (2k))以上離れたものを貪欲に <code style="color:#22d3bf">k</code> 枚選ぶ。T &lt; k なら全フレーム。学習なしの「何かが起きたフレーム」であって、意味の要約ではない。</p>
+<p>Per-frame score = amount of motion (mean of |I_t − I_{t−1}|, normalised to [0, 1]) + scene change (histogram χ² distance, normalised). In descending order of score, <code style="color:#22d3bf">k</code> frames are chosen greedily that are at least <code style="color:#22d3bf">min_gap</code> (default T // (2k)) away from frames already chosen. If T &lt; k, all frames. These are learning-free &quot;frames where something happened&quot;, not a semantic summary.</p>
 <p>&gt;&gt;&gt; idx = video_summary_keyframes(clip, k=4)</p>
 <p>&gt;&gt;&gt; thumbnails = clip[idx]</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

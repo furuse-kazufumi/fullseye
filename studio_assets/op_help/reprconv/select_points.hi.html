@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.select_points(points, indices)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.select_points(points, indices)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;select_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point set <code style="color:#22d3bf">(N,3)</code> और index <code style="color:#22d3bf">(M,)</code> → उप-point set <code style="color:#22d3bf">(M,3)</code>। <code style="color:#22d3bf">indices</code> का उपभोग करने वाला पक्ष।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">indices</code> を産む op は 6 つあるのに(<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>)、<b>添字を食う単入力 op が 1 つも無かった</b> —— 添字は「元の集合とセットで初めて意味を持つ」ので、単入力では原理的に作れない。よってこれは 2 入力にしてある。</p>
+<p><code style="color:#22d3bf">indices</code> बनाने वाले op 6 हैं (<code style="color:#22d3bf">iss_keypoints</code> / <code style="color:#22d3bf">farthest_point_sampling</code> / <code style="color:#22d3bf">alpha_shape_boundary</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">zero_crossings_funct_1d</code> / <code style="color:#22d3bf">cad_visible_faces</code>), फिर भी <b>index लेने वाला single-input op 1 भी नहीं था</b> -- index &quot;मूल set के साथ ही अर्थ रखते हैं&quot;, इसलिए single-input से सिद्धांततः बनाया नहीं जा सकता। इसलिए इसे 2 input वाला बनाया गया है।</p>
 <p>Args:</p>
-<p>points: (N, 3)。</p>
-<p>indices: (M,) の非負整数、N 未満。</p>
+<p>points: (N, 3)।</p>
+<p>indices: (M,) non-negative integer, N से कम।</p>
 <p>Returns:</p>
-<p>(M, 3) float64。</p>
+<p>(M, 3) float64।</p>
 <p>Raises:</p>
-<p>ValueError: 範囲外の添字 / 形状不正 / 非有限。</p>
+<p>ValueError: range के बाहर का index / shape ग़लत / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

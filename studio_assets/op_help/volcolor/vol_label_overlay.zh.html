@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_overlay(vol, labels, seed: &#x27;int&#x27; = 0, alpha: &#x27;float&#x27; = 0.5, vmin=None, vmax=None, mode: &#x27;str&#x27; = &#x27;fill&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import volcolor; volcolor.vol_label_overlay(vol, labels, seed: &#x27;int&#x27; = 0, alpha: &#x27;float&#x27; = 0.5, vmin=None, vmax=None, mode: &#x27;str&#x27; = &#x27;fill&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_overlay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在原灰度体上叠加彩色标签,返回 <code style="color:#22d3bf">(D, H, W, 3)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>医用 CT / 産業 CT で実際に使う形 ―― 「セグメンテーションだけの絵」はどこを切り出したのかが分からず、「元画像だけの絵」は何を測ったのかが分からない。</p>
-<p>*vol* は <code style="color:#22d3bf">(D, H, W)</code>。表示窓は <code style="color:#22d3bf">vmin</code> / <code style="color:#22d3bf">vmax</code> で<b>明示</b>する(<code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">vol</code> の最小 / 最大)。窓を暗黙に決めないのは、窓が違えば同じ組織が別の明るさで出るからで、CT の window/level と同じ理由である。</p>
-<p>*alpha* は <code style="color:#22d3bf">0</code>(元画像のまま)から <code style="color:#22d3bf">1</code>(色で塗り潰す)。*mode* は <code style="color:#22d3bf">&quot;fill&quot;</code>(成分全体を塗る)か <code style="color:#22d3bf">&quot;boundary&quot;</code>(6 近傍で隣が別ラベルのボクセルだけを塗る = 輪郭表示、下の構造が完全に見える)。</p>
-<p><b><code style="color:#22d3bf">background</code> 引数は無い</b>。この op はラベル 0 のボクセルに一切色を置かず(そこは元画像そのもの)、パレット行 0 を一度も引かない。受け取っておいて何もしない引数は「背景色を指定したのに効かない」という形の静かな嘘になる。</p>
-<p>実測(<code style="color:#22d3bf">(24, 48, 48)</code>・16 成分・ノイズ入りグレー体、seed=0、<code style="color:#22d3bf">mode=&quot;fill&quot;</code>):</p>
-<p>前景ボクセルにおける元画像との平均絶対差は alpha=0.00 で 0.0000、0.25 で 0.0679、0.50 で 0.1359、0.75 で 0.2038、1.00 で 0.2718 ―― alpha に対して直線(合成が線形であることの確認)。<b>背景ボクセルは alpha に依らず 0.0000</b>(色は前景にしか乗らない)。</p>
-<p>Raises <code style="color:#22d3bf">ValueError</code> when *vol* and *labels* differ in shape, on a non-finite *vol*, on <code style="color:#22d3bf">vmin &gt;= vmax</code>, on an *alpha* outside [0, 1], or on an unknown *mode*.</p>
+<p>医用 CT / 工业 CT 中实际使用的形式 —— &quot;只有分割的图&quot; 看不出切出的是哪里,&quot;只有原图的图&quot;看不出测的是什么。</p>
+<p>*vol* 为 <code style="color:#22d3bf">(D, H, W)</code>。显示窗口以 <code style="color:#22d3bf">vmin</code> / <code style="color:#22d3bf">vmax</code> <b>明确</b>指定(<code style="color:#22d3bf">None</code> 时为 <code style="color:#22d3bf">vol</code> 的最小 / 最大)。之所以不隐式决定窗口,是因为窗口不同同一组织就会以不同亮度呈现,与 CT 的 window/level 是同一个理由。</p>
+<p>*alpha* 从 <code style="color:#22d3bf">0</code>(保持原图)到 <code style="color:#22d3bf">1</code>(用颜色涂满)。*mode* 为 <code style="color:#22d3bf">&quot;fill&quot;</code>(涂满整个成分)或 <code style="color:#22d3bf">&quot;boundary&quot;</code>(只涂 6 邻域中相邻为其他标签的体素 = 轮廓显示,下面的结构完全可见)。</p>
+<p><b>没有 <code style="color:#22d3bf">background</code> 参数</b>。本 op 对标签 0 的体素完全不着色(那里就是原图本身),一次也不读取调色板第 0 行。接收了却什么也不做的参数,会变成&quot;指定了背景色却不起作用&quot;这种形式的无声谎言。</p>
+<p>实测(<code style="color:#22d3bf">(24, 48, 48)</code>、16 个成分、带噪声的灰色体,seed=0,<code style="color:#22d3bf">mode=&quot;fill&quot;</code>):</p>
+<p>前景体素上与原图的平均绝对差在 alpha=0.00 时为 0.0000, 0.25 时为 0.0679,0.50 时为 0.1359,0.75 时为 0.2038,1.00 时为 0.2718 —— 相对 alpha 为直线(确认合成是线性的)。<b>背景体素不论 alpha 均为 0.0000</b>(颜色只加在前景上)。</p>
+<p>当 *vol* 与 *labels* 形状不同、*vol* 非有限、<code style="color:#22d3bf">vmin &gt;= vmax</code>、*alpha* 在 [0, 1] 之外或 *mode* 未知时,抛出 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

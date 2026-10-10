@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_block_shuffle(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_block_shuffle(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_block_shuffle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>층(라벨)의 블록마다 <b>송신자를 섞은</b> 대조용 <code style="color:#22d3bf">conn_graph</code>: 각 수신자가 받는 가중치의 다중집합과 층 간 총 결선량은 유지한 채 &#x27;누구로부터&#x27;만 깨뜨린다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">graph_degree_preserving_shuffle</code> が全体の次数列を保つのに対し、こちらは<b>層構造を保つ</b>(脳 → 首 → 腹髄 → 筋 のブロックは動かさず、ブロックの中で行を並べ替える)。層の大きさと収束(fan-in)の効果を残して「配線の特異性」だけを消した対照として使う。同じ <code style="color:#22d3bf">seed</code> で再現。</p>
+<p><code style="color:#22d3bf">graph_degree_preserving_shuffle</code> 가 전체의 차수열을 보존하는 데 비해, 이쪽은 <b>층 구조를 보존한다</b>(뇌 → 목 → 복수 → 근육 의 블록은 움직이지 않고, 블록 안에서 행을 재배열한다). 층의 크기와 수렴(fan-in)의 효과를 남기고 &quot;배선의 특이성&quot;만 지운 대조로 쓴다. 같은 <code style="color:#22d3bf">seed</code> 로 재현.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

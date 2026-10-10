@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_motif_count(W: &#x27;Any&#x27;, motif: &#x27;str&#x27; = &#x27;ffl&#x27;) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.graph_motif_count(W: &#x27;Any&#x27;, motif: &#x27;str&#x27; = &#x27;ffl&#x27;) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;graph_motif_count&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Counts of 3-node motifs (binary directed, diagonal excluded): reciprocal / ffl / cycle3.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>reciprocal = 相互結合の対の数 (Σ A∧Aᵀ)/2、ffl = Σ_ac (A²)_ac A_ac (a→b, b→c, a→c)、cycle3 = tr(A³)/3。各インスタンスを 1 回だけ数える。</p>
+<p>reciprocal = number of reciprocally connected pairs (Σ A∧Aᵀ)/2, ffl = Σ_ac (A²)_ac A_ac (a→b, b→c, a→c), cycle3 = tr(A³)/3. Each instance is counted only 1 time.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

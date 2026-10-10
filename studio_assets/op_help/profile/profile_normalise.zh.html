@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_normalise(contour)</code>(要直接调用实现,<code style="color:#22d3bf">import profileops; profileops.profile_normalise(contour)</code>;从台账取用则 <code style="color:#22d3bf">opsprofile.get(&quot;profile_normalise&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过旋转和平移进行归一化，使弦长为 1、前缘位于原点、弦朝向 +x。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>スケールは弦長でしか変えない</b>(形を歪めない)。返りは正規化した輪郭。</p>
-<p>手順: <code style="color:#22d3bf">profile_chord_frame</code> で前縁 <code style="color:#22d3bf">le</code>・後縁 <code style="color:#22d3bf">te</code>(開いた後縁は隙間の中点)・弦長 <code style="color:#22d3bf">chord</code>・弦の向き <code style="color:#22d3bf">angle_deg</code> を求め、<code style="color:#22d3bf">((contour - le) @ R(-angle).T) / chord</code> を返す。回転・並進・一様スケールの相似変換だけで、点の数と順序は保つ(再標本化しない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">contour</code>: <code style="color:#22d3bf">(N, 2)</code> の <b>(x, y)</b>、8 点以上、有限。<code style="color:#22d3bf">(row, col)</code> を渡すと弦は見つかるが上下が入れ替わる(例外は出ない)。閉じているかはここでは検査しない(<code style="color:#22d3bf">profile_sides</code> 以降が検査する)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(N, 2)</code> float64。前縁が <code style="color:#22d3bf">(0, 0)</code>、後縁が <code style="color:#22d3bf">(1, 0)</code> 付近、<code style="color:#22d3bf">x</code> は <code style="color:#22d3bf">[0, 1]</code> の弦比。<code style="color:#22d3bf">y</code> の符号(上面が正か負か)は入力の周回方向で決まり、反転はしない。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形、点数不足、非有限、弦長が 0 = 全点一致)。</p>
-<p>前縁・後縁の判定は「最遠点対のうち、少し内側で断面が太いほう = 前縁」なので、前後で太さが同じ対称な断面(楕円など)では前後が入れ替わることがある。<code style="color:#22d3bf">profile_sides</code> / <code style="color:#22d3bf">profile_thickness</code> / <code style="color:#22d3bf">profile_camber</code> は内部でこれを呼ぶ。</p>
+<p><b>只按弦长改变尺度</b>(不使形状变形)。返回归一化后的轮廓。</p>
+<p>步骤:用 <code style="color:#22d3bf">profile_chord_frame</code> 求出前缘 <code style="color:#22d3bf">le</code>、后缘 <code style="color:#22d3bf">te</code>(后缘张开时取缝隙的中点)、弦长 <code style="color:#22d3bf">chord</code>、弦的方向 <code style="color:#22d3bf">angle_deg</code>，然后返回 <code style="color:#22d3bf">((contour - le) @ R(-angle).T) / chord</code>。只是旋转、平移、均匀缩放的相似变换，保持点的数量与顺序(不重新采样)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">contour</code>: <code style="color:#22d3bf">(N, 2)</code> 的 <b>(x, y)</b>,8 点以上，有限值。若传入 <code style="color:#22d3bf">(row, col)</code>, 弦能找到但上下会对调(不会抛出异常)。是否闭合在此不检查(由 <code style="color:#22d3bf">profile_sides</code> 及之后的处理检查)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值: <code style="color:#22d3bf">(N, 2)</code> float64。前缘在 <code style="color:#22d3bf">(0, 0)</code>，后缘在 <code style="color:#22d3bf">(1, 0)</code> 附近，<code style="color:#22d3bf">x</code> 为 <code style="color:#22d3bf">[0, 1]</code> 的弦长比。<code style="color:#22d3bf">y</code> 的符号(上表面为正还是负)由输入的环绕方向决定，不做翻转。</p>
+<p style="margin:2px 0 2px 12px">• 失败: <code style="color:#22d3bf">ValueError</code>(形状、点数不足、非有限值、弦长为 0 = 所有点重合)。</p>
+<p>前缘、后缘的判定是「最远点对中，稍靠内侧截面较厚的一方 = 前缘」，因此在前后厚度相同的对称截面(椭圆等)上，前后可能会对调。<code style="color:#22d3bf">profile_sides</code> / <code style="color:#22d3bf">profile_thickness</code> / <code style="color:#22d3bf">profile_camber</code> 在内部调用本函数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

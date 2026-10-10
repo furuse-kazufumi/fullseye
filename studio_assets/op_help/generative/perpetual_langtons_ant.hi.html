@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_langtons_ant&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Langton&#x27;s ant — केवल 2 नियमों से, 10,000 step के बाद &quot;highway&quot; बनाता रहता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>不変量: 高速道路に入ったあとは <b>周期 104 で斜めに (-2,-2) 進む</b>。</p>
-<p>★塗りは「そのマスが黒でいた時間」。高速道路は最後にできるので薄く、最初の混沌は濃い —— <b>時間の順序が絵に出る</b>。</p>
+<p>invariant: highway में पहुँचने के बाद यह <b>period 104 के साथ तिरछा (-2,-2) बढ़ती है</b>।</p>
+<p>★रंग &quot;वह cell कितने समय काली रही&quot; दिखाता है। highway सबसे अंत में बनता है इसलिए हल्का है, और शुरुआती अराजकता गहरी है -- <b>समय का क्रम चित्र में दिखता है</b>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

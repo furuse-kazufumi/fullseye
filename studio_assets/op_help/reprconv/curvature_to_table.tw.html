@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_table(curvature)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.curvature_to_table(curvature)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲率 → 分布的彙總 <code style="color:#22d3bf">table</code>。<b>單向</b>(統計的職責就是丟棄資訊)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>(N,) の単独曲率も (N,2) の主曲率対も受ける —— 統計を出すだけなら対である必要が無いため。<code style="color:#22d3bf">kind</code> に受けた形を書き戻すので、下流は「対だったのか」を後から判別できる。</p>
+<p>既接受 (N,) 的單一曲率,也接受 (N,2) 的主曲率對 —— 只是求統計的話,並不需要成對。把接收到的形式寫回 <code style="color:#22d3bf">kind</code>,所以下游事後能判別「是否為對」。</p>
 <p>Args:</p>
-<p>curvature: (N,) / (N, 2) / 2 本の等長 1-D のタプル。</p>
+<p>curvature: (N,) / (N, 2) / 2 個等長 1-D 的 tuple。</p>
 <p>Returns:</p>
 <p>dict。<code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">rms</code> /</p>
-<p><code style="color:#22d3bf">p05</code> / <code style="color:#22d3bf">p50</code> / <code style="color:#22d3bf">p95</code>、対なら <code style="color:#22d3bf">gauss_mean</code>(K = k1*k2 の平均)と</p>
-<p><code style="color:#22d3bf">mean_curvature_mean</code>((k1+k2)/2 の平均)。</p>
+<p><code style="color:#22d3bf">p05</code> / <code style="color:#22d3bf">p50</code> / <code style="color:#22d3bf">p95</code>,若為對則另有 <code style="color:#22d3bf">gauss_mean</code>(K = k1*k2 的平均)與</p>
+<p><code style="color:#22d3bf">mean_curvature_mean</code>((k1+k2)/2 的平均)。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: 形狀不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

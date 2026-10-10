@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, font_path=None, min_font_size=9)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_leader_layout(shape, points, labels=None, font_size=12, pad=4, gap=22, side=&#x27;auto&#x27;, font_path=None, min_font_size=9)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_leader_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳表(dict):以閉合式確定引出線的佈置(折點・文字位置・襯板矩形)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各点について候補側を固定順に試し、<b>板が画像に収まり・他の板と重ならず・他の点を覆わない</b>最初の候補を採る。どの候補も駄目なら肘を 1.6 倍、2.4 倍に伸ばして再試行し、それでも駄目なら <b>ValueError</b>(黙って重ねない)。</p>
+<p>對每個點依固定順序嘗試候選側,採用第一個<b>底板收在影像內、不與其他底板重疊、不遮住其他點</b>的候選。所有候選都不行時,把肘部伸長到 1.6 倍、2.4 倍再試,仍不行則 <b>ValueError</b>(不會悄悄重疊)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>shape : (H, W)</p>
-<p>描く画像の大きさ。</p>
+<p>繪製的影像尺寸。</p>
 <p>points : (N, 2)</p>
-<p>指す点 <b>(x, y)</b>。</p>
+<p>所指的點 <b>(x, y)</b>。</p>
 <p>labels : sequence of str or None</p>
-<p>各点の文字。None なら 1 始まりの番号。</p>
+<p>各點的文字。None 時為從 1 開始的編號。</p>
 <p>gap : float</p>
-<p>肘の長さ[px]。斜め腕 = gap、水平腕 = 0.6*gap。</p>
+<p>肘部長度[px]。斜臂 = gap,水平臂 = 0.6*gap。</p>
 <p>side : {&#x27;auto&#x27;,&#x27;left&#x27;,&#x27;right&#x27;}</p>
-<p><code style="color:#22d3bf">&#x27;auto&#x27;</code> は画像中心から<b>遠ざかる</b>側を先に試す(対象の上に文字を</p>
-<p>載せないため)。</p>
+<p><code style="color:#22d3bf">&#x27;auto&#x27;</code> 先嘗試<b>遠離</b>影像中心的一側(為了不把文字</p>
+<p>放在對象上面)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;n&quot;, &quot;gap&quot;, &quot;items&quot;: [{&quot;point&quot;, &quot;elbow&quot;, &quot;text_xy&quot;, &quot;anchor&quot;, &quot;box&quot;, &quot;side&quot;}]}</code>。<code style="color:#22d3bf">box</code> は板の <code style="color:#22d3bf">(x, y, w, h)</code>。</p>
+<p><code style="color:#22d3bf">{&quot;n&quot;, &quot;gap&quot;, &quot;items&quot;: [{&quot;point&quot;, &quot;elbow&quot;, &quot;text_xy&quot;, &quot;anchor&quot;, &quot;box&quot;, &quot;side&quot;}]}</code>。<code style="color:#22d3bf">box</code> 是底板的 <code style="color:#22d3bf">(x, y, w, h)</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点が空・非有限、labels の数が合わない、未知の side、配置できない点。</p>
+<p>點為空、非有限,labels 數量不符,未知的 side,無法放置的點。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

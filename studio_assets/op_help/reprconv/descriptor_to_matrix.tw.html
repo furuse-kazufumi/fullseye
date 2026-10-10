@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_matrix(descriptor)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>描述子 → <code style="color:#22d3bf">matrix</code>。<code style="color:#22d3bf">descriptor</code> 的出口(<b>可逆</b>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>1-D の記述子 (n,) は <b>(1, n)</b> の 1 行行列にする。2-D の記述子束(<code style="color:#22d3bf">sh_descriptor</code> の (12, 9) のような「点 x 次元」)はそのまま通す。こうしておくと記述子バンクに <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> がそのまま掛かる —— 記述子は本質的にベクトルなので、行列語彙へ渡すのは梱包の付け替えであって変形ではない。</p>
-<p><code style="color:#22d3bf">matrix_to_descriptor</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。</p>
+<p>1-D 的描述子 (n,) 變為 <b>(1, n)</b> 的 1 列矩陣。2-D 的描述子束(像 <code style="color:#22d3bf">sh_descriptor</code> 的 (12, 9) 那樣的「點 x 維度」)原樣通過。這樣一來,<code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> 就能直接作用於描述子庫 —— 描述子本質上是向量,把它交給矩陣詞彙只是換個包裝,而不是變形。</p>
+<p>與 <code style="color:#22d3bf">matrix_to_descriptor</code> 往返時<b>逐位元一致</b>(實測 max|Δ| = 0.0)。</p>
 <p>Args:</p>
-<p>descriptor: (n,) または (m, n) の実配列。</p>
+<p>descriptor: (n,) 或 (m, n) 的實數陣列。</p>
 <p>Returns:</p>
-<p>(1, n) または (m, n) float64。</p>
+<p>(1, n) 或 (m, n) float64。</p>
 <p>Raises:</p>
-<p>ValueError: 3-D 以上 / 非有限 / dict(<code style="color:#22d3bf">fit_zernike</code> は dict を返すので</p>
-<p>ここで拒否される —— 詳細は本モジュール docstring)。</p>
+<p>ValueError: 3-D 以上 / 非有限 / dict(<code style="color:#22d3bf">fit_zernike</code> 回傳 dict,所以</p>
+<p>在這裡被拒絕 —— 詳見本模組 docstring)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import llmcore; llmcore.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsllmcore.get(&quot;attention_grouped&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Attention that groups heads (GQA) → tokens. <b>Exactly matches MHA when n_kv_heads == n_heads, and MQA when == 1</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Ainslie ら 2023。query は <code style="color:#22d3bf">n_heads</code> 本に割り、key/value は <code style="color:#22d3bf">n_kv_heads</code> 本しか持たずに使い回す。両端が既存の 2 つ(MHA / MQA)に<b>厳密に</b>落ちる(どちらも 0.0e+00) ので、「中間を取る」という主張が端で検算できる。</p>
+<p>Ainslie et al. 2023. The query is split into <code style="color:#22d3bf">n_heads</code> heads, while key/value hold only <code style="color:#22d3bf">n_kv_heads</code> heads and are reused. Both extremes fall <b>exactly</b> onto the 2 existing schemes (MHA / MQA) (0.0e+00 for both), so the claim &quot;it takes the middle ground&quot; can be cross-checked at the ends.</p>
 <p>Args:</p>
-<p>query: (T, n_heads·dh) float。頭ごとに幅 dh で並んでいる。</p>
-<p>key: (S, n_kv_heads·dh) float。</p>
-<p>value: (S, n_kv_heads·dh) float。</p>
-<p>n_heads: query の頭の数。<code style="color:#22d3bf">n_kv_heads</code> の倍数であること。</p>
-<p>n_kv_heads: key/value の頭の数。1 なら MQA、<code style="color:#22d3bf">n_heads</code> なら MHA。</p>
-<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) の bool 配列。</p>
-<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅。</p>
+<p>query: (T, n_heads·dh) float. Laid out per head with width dh.</p>
+<p>key: (S, n_kv_heads·dh) float.</p>
+<p>value: (S, n_kv_heads·dh) float.</p>
+<p>n_heads: number of query heads. Must be a multiple of <code style="color:#22d3bf">n_kv_heads</code>.</p>
+<p>n_kv_heads: number of key/value heads. 1 gives MQA, <code style="color:#22d3bf">n_heads</code> gives MHA.</p>
+<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) bool array.</p>
+<p>window: window width when <code style="color:#22d3bf">mask=&quot;window&quot;</code>.</p>
 <p>Returns:</p>
-<p>tokens (T, n_heads·dh) float: 頭ごとの出力を横に連結したもの。</p>
+<p>tokens (T, n_heads·dh) float: the per-head outputs concatenated side by side.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

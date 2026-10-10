@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_apply(points, flow)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.flow_apply(points, flow)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;flow_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Addiert einen verstreuten Fluss <code style="color:#22d3bf">(N,3)</code> zu einer Punktmenge <code style="color:#22d3bf">(N,3)</code> → <code style="color:#22d3bf">points</code>. Die verbrauchende Seite von <code style="color:#22d3bf">flow</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">estimate_flow(a, b)</code> が「a の各点から b の最近傍への変位」を返すので、<code style="color:#22d3bf">flow_apply(a, estimate_flow(a, b))</code> は <b>b の点のうち a から最近傍として選ばれたもの</b>へ移る。往復が厳密になるのは対応が全単射のときだけで、そうでなければ「a の 2 点が b の同じ点へ落ちる」ぶんだけ形が縮む —— <code style="color:#22d3bf">selftest</code> はこの残差を数字で出す。</p>
+<p>Da <code style="color:#22d3bf">estimate_flow(a, b)</code> &quot;die Verschiebung von jedem Punkt von a zu seinem nächsten Nachbarn in b&quot; liefert, bewegt <code style="color:#22d3bf">flow_apply(a, estimate_flow(a, b))</code> auf <b>diejenigen Punkte von b, die von a aus als nächste Nachbarn gewählt wurden</b>. Der Hin- und Rückweg ist nur exakt, wenn die Zuordnung bijektiv ist; andernfalls schrumpft die Form genau um das Maß, in dem &quot;2 Punkte von a auf denselben Punkt von b fallen&quot; -- <code style="color:#22d3bf">selftest</code> gibt dieses Residuum als Zahl aus.</p>
 <p>Args:</p>
-<p>points: (N, 3)。</p>
-<p>flow: (N, 3)。</p>
+<p>points: (N, 3).</p>
+<p>flow: (N, 3).</p>
 <p>Returns:</p>
-<p>(N, 3) float64。</p>
+<p>(N, 3) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 行数不一致 / 形状不正 / 非有限。</p>
+<p>ValueError: Zeilenzahl stimmt nicht / ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

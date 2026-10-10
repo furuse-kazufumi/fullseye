@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_panel_label(img, letter=&#x27;a&#x27;, corner=&#x27;lt&#x27;, margin=8, style=&#x27;paren&#x27;, font_size=16, color=&#x27;neutral&#x27;, box_alpha=0.72, text_color=None, box_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_panel_label(img, letter=&#x27;a&#x27;, corner=&#x27;lt&#x27;, margin=8, style=&#x27;paren&#x27;, font_size=16, color=&#x27;neutral&#x27;, box_alpha=0.72, text_color=None, box_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_panel_label&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지(image2d)를 돌려줍니다: 패널 문자 <code style="color:#22d3bf">(a)</code>/<code style="color:#22d3bf">(b)</code> 를 구석에 놓습니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">letter</code> は 1 文字(<code style="color:#22d3bf">&#x27;a&#x27;</code>)か 0 始まりの番号(<code style="color:#22d3bf">0</code> → a)。<code style="color:#22d3bf">style</code> で <code style="color:#22d3bf">(a)</code> / <code style="color:#22d3bf">a)</code> / <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">A</code> を選ぶ。</p>
+<p><code style="color:#22d3bf">letter</code>는 1 문자(<code style="color:#22d3bf">&#x27;a&#x27;</code>) 또는 0부터 시작하는 번호(<code style="color:#22d3bf">0</code> → a). <code style="color:#22d3bf">style</code>로 <code style="color:#22d3bf">(a)</code> / <code style="color:#22d3bf">a)</code> / <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">A</code>를 고른다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>未知の corner / style、文字が画像に収まらない。</p>
+<p>알 수 없는 corner / style, 문자가 영상에 들어가지 않음.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

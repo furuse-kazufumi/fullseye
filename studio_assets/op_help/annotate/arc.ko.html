@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.arc(img, center, radius, start_deg, end_deg, color=&#x27;neutral&#x27;, width=2, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.arc(img, center, radius, start_deg, end_deg, color=&#x27;neutral&#x27;, width=2, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;arc&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원호. 각도는 <b>화면 x 축에서 시계 방향</b>(row 가 아래를 향하므로), 단위는 도.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>radius が非正、角度が非有限、start == end、alpha が [0,1] の外。</p>
-<p>描画: 中心からの距離 <code style="color:#22d3bf">d</code> が <code style="color:#22d3bf">|d - radius| &lt;= max(0.6, width/2)</code> で、かつ画素の方位角が <code style="color:#22d3bf">start_deg</code> から時計回りに <code style="color:#22d3bf">(end_deg - start_deg) mod 360</code> の範囲にある画素を塗る(アンチエイリアス無し)。方位角は <code style="color:#22d3bf">atan2(y - cy, x - cx)</code> で、0 度 = 右(+x)、90 度 = 下(+y)、時計回りが正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>、x = 列・y = 行。画像外でもよい(はみ出しは切れるだけ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 正 [px]。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">start_deg</code>, <code style="color:#22d3bf">end_deg</code>: 度。<code style="color:#22d3bf">start</code> から時計回りに <code style="color:#22d3bf">end</code> まで描く。差が 360 の倍数(<code style="color:#22d3bf">end - start</code> が 0 でなく 360 など)は全周。<code style="color:#22d3bf">start == end</code> は「長さ 0」なので <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線幅 [px]。<code style="color:#22d3bf">max(0.6, width/2)</code> を半幅にするので 1 px 未満でも途切れない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code> の扱いは <code style="color:#22d3bf">rounded_rect</code> と同じ(float64 複製、<code style="color:#22d3bf">[0, 1]</code>、役割名か RGB)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
-<p>角度を書き込む学術図の作法は <code style="color:#22d3bf">annotate_angle</code> が引き出し文字まで面倒を見る。</p>
+<p>radius가 양이 아님, 각도가 비유한, start == end, alpha가 [0,1] 밖.</p>
+<p>그리기: 중심으로부터의 거리 <code style="color:#22d3bf">d</code>가 <code style="color:#22d3bf">|d - radius| &lt;= max(0.6, width/2)</code>이고, 또한화소의 방위각이 <code style="color:#22d3bf">start_deg</code>로부터 시계 방향으로 <code style="color:#22d3bf">(end_deg - start_deg) mod 360</code>의범위에 있는 화소를 칠한다(안티에일리어싱 없음). 방위각은 <code style="color:#22d3bf">atan2(y - cy, x - cx)</code> 이며, 0도 = 오른쪽(+x), 90도 = 아래(+y), 시계 방향이 양.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>, x = 열·y = 행. 영상 밖이어도 된다(삐져나온 부분은 잘릴 뿐).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 양 [px].</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">start_deg</code>, <code style="color:#22d3bf">end_deg</code>: 도. <code style="color:#22d3bf">start</code>에서 시계 방향으로 <code style="color:#22d3bf">end</code>까지 그린다. 차가 360의 배수(<code style="color:#22d3bf">end - start</code>가 0이 아니라 360 등)이면 전체 원. <code style="color:#22d3bf">start == end</code>는 &quot;길이 0&quot;이므로 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 선폭 [px]. <code style="color:#22d3bf">max(0.6, width/2)</code>를 반폭으로 하므로 1 px 미만이어도끊기지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code>의 취급은 <code style="color:#22d3bf">rounded_rect</code>와 같다(float64 복제, <code style="color:#22d3bf">[0, 1]</code>, 역할명 또는 RGB).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 입력과 같은 형태의 float64.</p>
+<p>각도를 써 넣는 학술 그림의 작법은 <code style="color:#22d3bf">annotate_angle</code>이 인출 문자까지 챙겨 준다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

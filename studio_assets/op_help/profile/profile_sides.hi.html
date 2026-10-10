@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_sides(contour, n=101, normalise=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_sides(contour, n=101, normalise=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_sides&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ऊपरी और निचली सतह को chord दिशा के function के रूप में निकालता है। dict लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>弦を <code style="color:#22d3bf">n</code> 等分し、各位置で輪郭と交わる上下の点を線形補間で拾う。</p>
-<p><b>開いた曲線はここで拒否される</b> —— 1 価の関数(MTF 曲線のような)を渡すと下面が取れないので、「これは閉じた断面ではない」と明示して落とす。型ではなく検証で守っている(<code style="color:#22d3bf">pairs</code> は関数データにも閉輪郭にも使われる語彙なので、型を分けると既存の輪郭生成 op から繋がらなくなる)。</p>
+<p>chord को <code style="color:#22d3bf">n</code> बराबर भागों में बाँटकर, हर position पर contour को काटने वाले ऊपर और नीचे के points linear interpolation से लेता है।</p>
+<p><b>खुला curve यहाँ reject होता है</b> -- 1-valued (single-valued) function (जैसे MTF curve) देने पर lower surface नहीं मिलता, इसलिए &quot;यह closed section नहीं है&quot; स्पष्ट बताकर fail किया जाता है। यह type से नहीं, validation से सुरक्षित है (<code style="color:#22d3bf">pairs</code> ऐसा vocabulary है जो function data और closed contour दोनों में इस्तेमाल होता है, इसलिए type अलग करने पर मौजूदा contour बनाने वाले ops से जुड़ाव टूट जाएगा)।</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">x</code>(<code style="color:#22d3bf">(n,)</code>)、<code style="color:#22d3bf">upper</code> / <code style="color:#22d3bf">lower</code>(<code style="color:#22d3bf">(n,)</code>)、<code style="color:#22d3bf">normalised</code>。</p>
+<p>dict: <code style="color:#22d3bf">x</code> (<code style="color:#22d3bf">(n,)</code>), <code style="color:#22d3bf">upper</code> / <code style="color:#22d3bf">lower</code> (<code style="color:#22d3bf">(n,)</code>), <code style="color:#22d3bf">normalised</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

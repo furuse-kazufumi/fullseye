@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import watershed3d; watershed3d.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;separate_touching&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>genuinely-new (B)：以 1 次呼叫自動分離接觸物體的常用包裝。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>「複数物体が接触して 1 連結成分に融合している」典型ケースを、距離変換→極大 NMS シード化→ 分水嶺という定型パイプラインを畳んで 1 コールで割る(公開 API では 3 op を手で繋ぐ必要があるところを常用ケース向けに 1 関数化)。中身は <code style="color:#22d3bf">watershed_vol(..., markers=None)</code>。</p>
+<p>把「多個物體相互接觸而融合為 1 個連通元件」的典型情況,用距離轉換→極大 NMS 種子化→ 分水嶺這一固定管線摺疊成 1 次呼叫來分開(公開 API 中需要手動連接 3 個 op 的地方,針對常用情況做成 1 個函式)。內部是 <code style="color:#22d3bf">watershed_vol(..., markers=None)</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>binary : array_like</p>
-<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>bool 或 0/1 的 3D 前景體資料。</p>
 <p>min_distance : float</p>
-<p>分離シードの最小間隔(voxel)。想定物体半径程度が目安。</p>
+<p>分離種子點的最小間隔(voxel)。以預期的物體半徑左右為參考。</p>
 <p>method : {&quot;auto&quot;, &quot;skimage&quot;, &quot;scipy&quot;}</p>
-<p>バックエンド選択。</p>
+<p>後端選擇。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>labels : ndarray(int32)</p>
-<p>binary と同形状。背景 0、分離された各物体に 1..k のラベル。</p>
+<p>與 binary 形狀相同。背景 0,分離出的各物體為 1..k 的標籤。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,47 +4,46 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;annotate_table_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt eine table (dict) zurück: die Spalten- und Zeilenpositionen, an denen ein tabulatorgetrennter String als <b>Tabelle</b> platziert wird.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>行は <code style="color:#22d3bf">\n</code>、桁は <code style="color:#22d3bf">\t</code> で切る。桁幅は<b>指定されたサイズの実フォントで 1 セルずつ測った幅の最大</b>で決まる —— 文字数で数えると和文と英数字で必ずずれるので、測る以外に正しくやりようがない。</p>
+<p>Zeilen werden an <code style="color:#22d3bf">\n</code>, Spalten an <code style="color:#22d3bf">\t</code> getrennt. Die Spaltenbreite ist <b>das Maximum der Breiten, gemessen mit der echten Schrift in der angegebenen Größe, 1 Zelle nach der anderen</b> -- Zählen der Zeichen geht zwischen Japanisch und alphanumerischen Zeichen immer schief, daher ist Messen der einzige korrekte Weg.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>text : str</p>
-<p>タブ区切り。全行の桁数が同じであること(違えば <b>ValueError</b>)。</p>
+<p>Tabulatorgetrennt. Alle Zeilen müssen dieselbe Spaltenzahl haben (sonst <b>ValueError</b>).</p>
 <p>xy : (x, y)</p>
-<p><code style="color:#22d3bf">anchor</code> で指す位置(<b>x=col, y=row</b>)。</p>
+<p>Die Position, auf die <code style="color:#22d3bf">anchor</code> zeigt (<b>x=col, y=row</b>).</p>
 <p>anchor : str</p>
-<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> の 9 通り。</p>
+<p>Eine der 9 Varianten <code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code>.</p>
 <p>pad : int</p>
-<p>表の内側余白 [px]。</p>
+<p>Innenabstand der Tabelle [px].</p>
 <p>col_gap : int or None</p>
-<p>桁の間 [px]。<b>None(既定)なら行高 ×0.6 を四捨五入</b>するので、</p>
-<p>フォントサイズを変えれば間隔も一緒に動く。</p>
+<p>Abstand zwischen Spalten [px]. <b>None (Standard) rundet Zeilenhöhe ×0.6</b>, daher</p>
+<p>ändert sich der Abstand mit der Schriftgröße.</p>
 <p>row_gap : int</p>
-<p>行の間に足す [px] (0 なら行送りのまま)。</p>
+<p>Zusätzlich zwischen Zeilen [px] (0 belässt den normalen Zeilenabstand).</p>
 <p>align : str or sequence</p>
-<p><code style="color:#22d3bf">TABLE_ALIGNS</code> のいずれか、または桁ごとの並び。<code style="color:#22d3bf">&quot;auto&quot;</code></p>
-<p>(既定)は<b>その桁の値がすべて数に見えるときだけ右そろえ</b>にする。</p>
-<p><code style="color:#22d3bf">header=True</code> なら見出し行は判定から外す。</p>
+<p>Einer der Werte aus <code style="color:#22d3bf">TABLE_ALIGNS</code> oder eine Folge pro Spalte. <code style="color:#22d3bf">&quot;auto&quot;</code></p>
+<p>(Standard) <b>richtet eine Spalte nur rechtsbündig aus, wenn alle ihre Werte wie Zahlen aussehen</b>.</p>
+<p>Bei <code style="color:#22d3bf">header=True</code> wird die Kopfzeile von dieser Prüfung ausgenommen.</p>
 <p>header : bool</p>
-<p>真なら 1 行目を見出しとして<b>太字</b>にし、下に罫を 1 本引く。</p>
+<p>Wenn wahr, wird die 1. Zeile als Kopfzeile <b>fett</b> gesetzt und darunter 1 Linie gezogen.</p>
 <p>bold, italic : bool or int</p>
-<p>合成字体(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。<code style="color:#22d3bf">header</code> の</p>
-<p>太字はこれとは別で、見出し行にだけ掛かる。</p>
+<p>Synthetische Schriftschnitte (<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>). Der Fettdruck von <code style="color:#22d3bf">header</code></p>
+<p>ist davon unabhängig und gilt nur für die Kopfzeile.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;rect&quot;: (x,y,w,h), &quot;ncols&quot;, &quot;nrows&quot;, &quot;col_w&quot;: [...], &quot;col_x&quot;: [...], &quot;row_y&quot;: [...], &quot;row_h&quot;, &quot;col_gap&quot;, &quot;align&quot;: [...], &quot;header&quot;, &quot;rule_y&quot;: 見出しの罫の y(header が偽なら None), &quot;cells&quot;: [{&quot;text&quot;,&quot;row&quot;,&quot;col&quot;,&quot;xy&quot;,&quot;width&quot;,&quot;bold&quot;}]}</code>。</p>
-<p><code style="color:#22d3bf">col_x</code> / <code style="color:#22d3bf">row_y</code> / <code style="color:#22d3bf">cells[i][&quot;xy&quot;]</code> はすべて<b>画像座標</b>。</p>
+<p><code style="color:#22d3bf">{&quot;rect&quot;: (x,y,w,h), &quot;ncols&quot;, &quot;nrows&quot;, &quot;col_w&quot;: [...], &quot;col_x&quot;: [...], &quot;row_y&quot;: [...], &quot;row_h&quot;, &quot;col_gap&quot;, &quot;align&quot;: [...], &quot;header&quot;, &quot;rule_y&quot;: y der Kopfzeilenlinie (None, wenn header falsch ist), &quot;cells&quot;: [{&quot;text&quot;,&quot;row&quot;,&quot;col&quot;,&quot;xy&quot;,&quot;width&quot;,&quot;bold&quot;}]}</code>.</p>
+<p><code style="color:#22d3bf">col_x</code> / <code style="color:#22d3bf">row_y</code> / <code style="color:#22d3bf">cells[i][&quot;xy&quot;]</code> sind alle in <b>Bildkoordinaten</b>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>桁数が行でそろわない / 空 / 未知の <code style="color:#22d3bf">align</code> <code style="color:#22d3bf">anchor</code> /</p>
-<p><code style="color:#22d3bf">align</code> の長さが桁数と違う。</p>
+<p>Spaltenzahl je Zeile verschieden / leer / unbekanntes <code style="color:#22d3bf">align</code> <code style="color:#22d3bf">anchor</code> /</p>
+<p>Länge von <code style="color:#22d3bf">align</code> weicht von der Spaltenzahl ab.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import annotate</p>
-<p>&gt;&gt;&gt; lay = annotate.annotate_table_layout(&quot;名前\t値\nA\t1.5\nB\t22.25&quot;, (10, 10))</p>
+<p>&gt;&gt;&gt; lay = annotate.annotate_table_layout(&quot;Name\tWert\nA\t1.5\nB\t22.25&quot;, (10, 10))</p>
 <p>&gt;&gt;&gt; lay[&quot;ncols&quot;], lay[&quot;nrows&quot;], lay[&quot;align&quot;]</p>
 <p>(2, 3, [&#x27;left&#x27;, &#x27;left&#x27;])</p>
-<p>&gt;&gt;&gt; lay2 = annotate.annotate_table_layout(&quot;名前\t値\nA\t1.5\nB\t22.25&quot;, (10, 10),</p>
+<p>&gt;&gt;&gt; lay2 = annotate.annotate_table_layout(&quot;Name\tWert\nA\t1.5\nB\t22.25&quot;, (10, 10),</p>
 <p>...                                       header=True)</p>
-<p>&gt;&gt;&gt; lay2[&quot;align&quot;]                        # 見出しを外すと 2 桁目は数だけ</p>
+<p>&gt;&gt;&gt; lay2[&quot;align&quot;]                        # ohne Kopfzeile enthält Spalte 2 nur Zahlen</p>
 <p>[&#x27;left&#x27;, &#x27;right&#x27;]</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>

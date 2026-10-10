@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;compare_images&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>कई metric एक साथ मापता है, और <b>क्या और कैसे मापा गया, यह भी साथ में लौटाता है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返り値の <code style="color:#22d3bf">contract</code> に <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">crop_border</code> / SSIM の窓を入れてあるのは、数値だけを図注に写して<b>条件が消える</b>のを防ぐため(この repo で実際に起きた事故の型)。</p>
+<p>return value के <code style="color:#22d3bf">contract</code> में <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">crop_border</code> / SSIM window रखे गए हैं, ताकि केवल संख्याएँ figure caption में उतारने पर <b>शर्तें गायब होने</b> से बचा जा सके (इस repo में सचमुच हुई दुर्घटना का प्रकार)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;mse&quot;, &quot;rmse&quot;, &quot;psnr&quot;, &quot;ssim&quot;, &quot;mutual_information&quot;, &quot;normalized_mutual_information&quot;, &quot;ncd&quot;, &quot;contract&quot;: {...}}</code>。</p>
-<p><code style="color:#22d3bf">ms=True</code> なら <code style="color:#22d3bf">ms_ssim</code> も(成立しない大きさなら <code style="color:#22d3bf">ValueError</code>)。</p>
-<p>カラー画像で <code style="color:#22d3bf">channel_axis</code> を渡すと <code style="color:#22d3bf">delta_e_2000_mean</code> も入る。</p>
+<p><code style="color:#22d3bf">{&quot;mse&quot;, &quot;rmse&quot;, &quot;psnr&quot;, &quot;ssim&quot;, &quot;mutual_information&quot;, &quot;normalized_mutual_information&quot;, &quot;ncd&quot;, &quot;contract&quot;: {...}}</code>।</p>
+<p><code style="color:#22d3bf">ms=True</code> हो तो <code style="color:#22d3bf">ms_ssim</code> भी (size पर्याप्त न हो तो <code style="color:#22d3bf">ValueError</code>)।</p>
+<p>रंगीन image में <code style="color:#22d3bf">channel_axis</code> देने पर <code style="color:#22d3bf">delta_e_2000_mean</code> भी शामिल होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

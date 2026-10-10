@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.position_to_points(position)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.position_to_points(position)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;position_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>位置 <code style="color:#22d3bf">(z, y, x)</code> → 单点点群 <code style="color:#22d3bf">(1, 3)</code>。<code style="color:#22d3bf">position</code> 的出口(<b>可逆</b>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">position</code> は <code style="color:#22d3bf">volregion.vol_rle_centroid</code> などが返す 3-tuple で、順序は <b>(z, y, x)</b>(<code style="color:#22d3bf">vol_rle_centroid</code> の docstring が明示している)。点群も voxel 由来なら同じ順なので、そのまま 1 行の点群にできる。</p>
+<p><code style="color:#22d3bf">position</code> 是 <code style="color:#22d3bf">volregion.vol_rle_centroid</code> 等返回的 3-tuple, 顺序为 <b>(z, y, x)</b>(<code style="color:#22d3bf">vol_rle_centroid</code> 的 docstring 中明确写着)。点云若来自 voxel 也是同样的顺序,所以可以直接变成 1 行的点云。</p>
 <p>Args:</p>
-<p>position: 長さ 3 の列 (z, y, x)。</p>
+<p>position: 长度 3 的序列 (z, y, x)。</p>
 <p>Returns:</p>
 <p>(1, 3) float64。</p>
 <p>Raises:</p>
-<p>ValueError: 長さが 3 でない / 非有限。</p>
+<p>ValueError: 长度不是 3 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

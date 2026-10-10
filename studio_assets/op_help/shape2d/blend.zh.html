@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blend(a, b, alpha)</code>(要直接调用实现,<code style="color:#22d3bf">import imagemorph; imagemorph.blend(a, b, alpha)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;blend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>交叉溶解 (1-alpha)·a + alpha·b(a、b 形状相同，取值 [0,1])。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>画素ごとの線形補間。対応点でのワープは<b>しない</b>ので、目や輪郭がずれた 2 枚では二重像になる ―― 特徴を 1 つに重ねたいなら <code style="color:#22d3bf">morph</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: <code style="color:#22d3bf">(H, W)</code> または <code style="color:#22d3bf">(H, W, C)</code>、同じ形。float64 に変換する。<b>NaN は 0、+Inf は 1、-Inf は 0 に無言で置き換える</b>(例外は出ない)。値域の検査はせず、結果を <code style="color:#22d3bf">[0, 1]</code> にクリップするだけなので、0〜255 の画像を渡すと白飛びした絵が返る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: 合成比。<code style="color:#22d3bf">[0, 1]</code> に<b>無言でクリップ</b>(0 で <code style="color:#22d3bf">a</code>、1 で <code style="color:#22d3bf">b</code>)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64、<code style="color:#22d3bf">[0, 1]</code>。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(次元が 2/3 でない、空、形の不一致)。</p>
-<p><code style="color:#22d3bf">morph_sequence</code> の各フレームは、ワープ後の 2 枚をこれと同じ式で混ぜている。</p>
+<p>逐像素的线性插值。<b>不</b>按对应点做变形，因此眼睛或轮廓错位的 2 幅图会成为重影 —— 若想把特征重叠为 1 个，请用 <code style="color:#22d3bf">morph</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: <code style="color:#22d3bf">(H, W)</code> 或 <code style="color:#22d3bf">(H, W, C)</code>，形状相同。转换为 float64。<b>NaN 被静默替换为 0,+Inf 为 1,-Inf 为 0</b>(不会抛出异常)。不检查值域，只是把结果裁剪到 <code style="color:#22d3bf">[0, 1]</code>，因此传入 0~255 的图像会返回过曝的图。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: 合成比。<b>静默裁剪</b>到 <code style="color:#22d3bf">[0, 1]</code>(0 为 <code style="color:#22d3bf">a</code>,1 为 <code style="color:#22d3bf">b</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值: 与输入同形的 float64,<code style="color:#22d3bf">[0, 1]</code>。</p>
+<p style="margin:2px 0 2px 12px">• 失败: <code style="color:#22d3bf">ValueError</code>(维数不是 2/3、为空、形状不一致)。</p>
+<p><code style="color:#22d3bf">morph_sequence</code> 的各帧用与此相同的公式混合变形后的 2 幅图。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

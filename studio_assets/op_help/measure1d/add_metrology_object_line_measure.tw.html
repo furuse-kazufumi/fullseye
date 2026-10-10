@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_line_measure(model, row1, col1, row2, col2, n: &#x27;int&#x27; = 25) -&gt; &#x27;int&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import metrology; metrology.add_metrology_object_line_measure(model, row1, col1, row2, col2, n: &#x27;int&#x27; = 25) -&gt; &#x27;int&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_line_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>新增直線量測物件(add_metrology_object_line_measure)。回傳 index。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>参照線分 <code style="color:#22d3bf">(row1, col1) → (row2, col2)</code> [px] を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> はこの線分上に <code style="color:#22d3bf">n</code> 点を等間隔(両端を含む)に置き、各点から <b>線分の法線方向</b> に短い測定線を張ってサブピクセルのエッジを探し、得た点に直線を最小二乗で当て直す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: サンプル点数(既定 25)。多いほどフィットは安定するが計測時間は比例。</p>
-<p style="margin:2px 0 2px 12px">• 端点が一致する(長さ <code style="color:#22d3bf">&lt; 1e-9</code>)線分は積めるが、<code style="color:#22d3bf">apply</code> 時にサンプル 0 個 → フィット失敗として <code style="color:#22d3bf">params=None</code>、<code style="color:#22d3bf">rms=inf</code> で返る(例外にはならない)。</p>
-<p style="margin:2px 0 2px 12px">• 引数の型・範囲はここでは検証しない(画像外の座標も積める。<code style="color:#22d3bf">apply</code> 時に最近傍で外挿されるだけで例外は出ない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 追加したオブジェクトの index(0 始まり)。<code style="color:#22d3bf">apply</code> の結果 list の同じ位置に <code style="color:#22d3bf">type=&quot;line&quot;</code> の結果(<code style="color:#22d3bf">row1/col1/row2/col2/angle_deg</code>)が入る。</p>
-<p><code style="color:#22d3bf">align_metrology_model</code> で平行移動するときは両端点が一緒に動く。</p>
+<p>把參考線段 <code style="color:#22d3bf">(row1, col1) → (row2, col2)</code> [px] 堆疊到 <code style="color:#22d3bf">model[&quot;objects&quot;]</code> (原地更新 dict)。<code style="color:#22d3bf">apply_metrology_model</code> 在此線段上等間隔(含兩端)放置 <code style="color:#22d3bf">n</code> 個點，從各點<b>沿線段的法線方向</b>拉出短量測線，尋找次像素邊緣，再對所得點用最小平方重新擬合直線。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 取樣點數(預設 25)。越多擬合越穩定，但量測時間成正比增加。</p>
+<p style="margin:2px 0 2px 12px">• 端點重合(長度 <code style="color:#22d3bf">&lt; 1e-9</code>)的線段可以堆疊，但 <code style="color:#22d3bf">apply</code> 時取樣為 0 個 → 視為擬合失敗，以 <code style="color:#22d3bf">params=None</code>、<code style="color:#22d3bf">rms=inf</code> 回傳(不會成為例外)。</p>
+<p style="margin:2px 0 2px 12px">• 參數的型別、範圍在此不做驗證(影像外的座標也能堆疊;<code style="color:#22d3bf">apply</code> 時只會用最近鄰外插，不會拋出例外)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: 所新增物件的 index(從 0 開始)。<code style="color:#22d3bf">apply</code> 結果 list 的同一位置是 <code style="color:#22d3bf">type=&quot;line&quot;</code> 的結果(<code style="color:#22d3bf">row1/col1/row2/col2/angle_deg</code>)。</p>
+<p>用 <code style="color:#22d3bf">align_metrology_model</code> 平移時，兩端點一起移動。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

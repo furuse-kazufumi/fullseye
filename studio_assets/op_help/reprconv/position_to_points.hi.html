@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.position_to_points(position)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.position_to_points(position)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;position_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>position <code style="color:#22d3bf">(z, y, x)</code> → 1 point वाला point set <code style="color:#22d3bf">(1, 3)</code>। <code style="color:#22d3bf">position</code> से निकास (<b>उलटने योग्य</b>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">position</code> は <code style="color:#22d3bf">volregion.vol_rle_centroid</code> などが返す 3-tuple で、順序は <b>(z, y, x)</b>(<code style="color:#22d3bf">vol_rle_centroid</code> の docstring が明示している)。点群も voxel 由来なら同じ順なので、そのまま 1 行の点群にできる。</p>
+<p><code style="color:#22d3bf">position</code> <code style="color:#22d3bf">volregion.vol_rle_centroid</code> आदि से लौटने वाला 3-tuple है, और उसका क्रम <b>(z, y, x)</b> है (<code style="color:#22d3bf">vol_rle_centroid</code> का docstring इसे स्पष्ट रूप से बताता है)। voxel से बने point cloud का भी यही क्रम होता है, इसलिए इसे सीधे 1 row वाले point cloud में बदला जा सकता है।</p>
 <p>Args:</p>
-<p>position: 長さ 3 の列 (z, y, x)。</p>
+<p>position: लंबाई 3 का sequence (z, y, x)।</p>
 <p>Returns:</p>
-<p>(1, 3) float64。</p>
+<p>(1, 3) float64।</p>
 <p>Raises:</p>
-<p>ValueError: 長さが 3 でない / 非有限。</p>
+<p>ValueError: लंबाई 3 नहीं है / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

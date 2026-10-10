@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_layer_propagate(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, U: &#x27;Any&#x27;, activation: &#x27;str&#x27; = &#x27;kwta&#x27;, active_frac: &#x27;float&#x27; = 0.1, gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import conngraph; conngraph.graph_layer_propagate(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, U: &#x27;Any&#x27;, activation: &#x27;str&#x27; = &#x27;kwta&#x27;, active_frac: &#x27;float&#x27; = 0.1, gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_layer_propagate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將層 0 的狀態 <code style="color:#22d3bf">U</code> (N, n_0) 經由區塊 <code style="color:#22d3bf">W[layer a → layer a+1]</code> <b>逐級向前</b>傳遞，得到所有層的狀態 <code style="color:#22d3bf">(N, n)</code>(<code style="color:#22d3bf">matrix</code>，欄依節點順序，層 0 的欄就是 <code style="color:#22d3bf">U</code> 本身)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>受け手ごとに入力重みの和を 1 に正規化してから重みつき和を取り(層の大きさに依らない)、<code style="color:#22d3bf">activation</code> で</p>
-<p>活性化する: <code style="color:#22d3bf">&quot;linear&quot;</code> はそのまま(平均絶対値を <code style="color:#22d3bf">gain</code> に)、<code style="color:#22d3bf">&quot;tanh&quot;</code> は飽和、<code style="color:#22d3bf">&quot;kwta&quot;</code> は各刺激で入力が上位 <code style="color:#22d3bf">active_frac</code> の受け手だけが(閾値上の余剰で)発火し、平均が 1 になるよう正規化する。層をまたぐ結線(層 a → a+2)と層内の再帰は<b>使わない</b>(前向きの一段ごとの写像だけを見る道具)。</p>
+<p>對每個接收者,先把輸入權重之和正規化為 1 再取加權和(與層的大小無關),然後用 <code style="color:#22d3bf">activation</code></p>
+<p>活化:<code style="color:#22d3bf">&quot;linear&quot;</code> 原樣輸出(平均絕對值設為 <code style="color:#22d3bf">gain</code>),<code style="color:#22d3bf">&quot;tanh&quot;</code> 飽和,<code style="color:#22d3bf">&quot;kwta&quot;</code> 對每個刺激只讓輸入位於前 <code style="color:#22d3bf">active_frac</code> 的接收者(以超過閾值的餘量)發放,並正規化使平均為 1。跨層的連線(層 a → a+2)與層內遞迴<b>不使用</b>(只看前向逐級映射的工具)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

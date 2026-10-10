@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blend(a, b, alpha)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imagemorph; imagemorph.blend(a, b, alpha)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;blend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>크로스 디졸브 (1-alpha)·a + alpha·b(a, b는 같은 shape, [0,1]).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>画素ごとの線形補間。対応点でのワープは<b>しない</b>ので、目や輪郭がずれた 2 枚では二重像になる ―― 特徴を 1 つに重ねたいなら <code style="color:#22d3bf">morph</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: <code style="color:#22d3bf">(H, W)</code> または <code style="color:#22d3bf">(H, W, C)</code>、同じ形。float64 に変換する。<b>NaN は 0、+Inf は 1、-Inf は 0 に無言で置き換える</b>(例外は出ない)。値域の検査はせず、結果を <code style="color:#22d3bf">[0, 1]</code> にクリップするだけなので、0〜255 の画像を渡すと白飛びした絵が返る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: 合成比。<code style="color:#22d3bf">[0, 1]</code> に<b>無言でクリップ</b>(0 で <code style="color:#22d3bf">a</code>、1 で <code style="color:#22d3bf">b</code>)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64、<code style="color:#22d3bf">[0, 1]</code>。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(次元が 2/3 でない、空、形の不一致)。</p>
-<p><code style="color:#22d3bf">morph_sequence</code> の各フレームは、ワープ後の 2 枚をこれと同じ式で混ぜている。</p>
+<p>화소별 선형 보간. 대응점에 의한 워프는 <b>하지 않으므로</b>, 눈이나 윤곽이 어긋난 2 장에서는 이중상이 된다 ―― 특징을 1 개로 겹치고 싶다면 <code style="color:#22d3bf">morph</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: <code style="color:#22d3bf">(H, W)</code> 또는 <code style="color:#22d3bf">(H, W, C)</code>, 같은 형태. float64 로 변환한다. <b>NaN 은 0, +Inf 는 1, -Inf 는 0 으로 말없이 바꾼다</b>(예외는 발생하지 않는다). 값 범위의 검사는 하지 않고 결과를 <code style="color:#22d3bf">[0, 1]</code> 로 클립할 뿐이므로, 0~255 의영상을 넘기면 하얗게 날아간 그림이 반환된다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: 합성비. <code style="color:#22d3bf">[0, 1]</code> 로 <b>말없이 클립</b>(0 이면 <code style="color:#22d3bf">a</code>, 1 이면 <code style="color:#22d3bf">b</code>).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 입력과 같은 형태의 float64, <code style="color:#22d3bf">[0, 1]</code>.</p>
+<p style="margin:2px 0 2px 12px">• 실패: <code style="color:#22d3bf">ValueError</code>(차원이 2/3 이 아님, 비어 있음, 형태 불일치).</p>
+<p><code style="color:#22d3bf">morph_sequence</code> 의 각 프레임은 워프 후의 2 장을 이것과 같은 식으로 섞고 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

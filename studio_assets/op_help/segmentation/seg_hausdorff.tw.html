@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segeval; segeval.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;seg_hausdorff&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>兩組邊界像素集合之間的 Hausdorff 距離，並給出其分位數版本（如 HD95）（seg_hausdorff）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>境界は <code style="color:#22d3bf">_boundary</code> の規約。どちらかの境界が空(1 色の画像)なら測るものが無いので ValueError。</p>
-<p>返り値: <code style="color:#22d3bf">hausdorff</code>、<code style="color:#22d3bf">hausdorff_percentile</code>、<code style="color:#22d3bf">percentile</code>、<code style="color:#22d3bf">directed_pred_to_true</code> / <code style="color:#22d3bf">directed_true_to_pred</code>(各最大)。</p>
+<p>邊界遵循 <code style="color:#22d3bf">_boundary</code> 的慣例。任一邊界為空(1 種顏色的影像)時沒有可量測的東西,因此 ValueError。</p>
+<p>回傳值: <code style="color:#22d3bf">hausdorff</code>、<code style="color:#22d3bf">hausdorff_percentile</code>、<code style="color:#22d3bf">percentile</code>、<code style="color:#22d3bf">directed_pred_to_true</code> / <code style="color:#22d3bf">directed_true_to_pred</code>(各自的最大值)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

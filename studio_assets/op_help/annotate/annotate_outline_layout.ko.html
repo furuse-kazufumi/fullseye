@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_outline_layout(mask)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_outline_layout(mask)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_outline_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표(dict)를 돌려줍니다: 이진 마스크의 경계 루프(화소 변을 따르는 닫힌 다각형)와 무게중심.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>輪郭は <code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>(外側 + 穴、成分ごと)。多角形の面積はマスクの画素数と厳密に一致する。</p>
+<p>윤곽은 <code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>(바깥쪽 + 구멍, 성분별). 다각형의 면적은 마스크의 화소 수와 엄밀히 일치한다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;contours&quot;: [(K,2) の (x,y)], &quot;centroid&quot;: (x,y), &quot;area&quot;: int, &quot;bbox&quot;: (x,y,w,h), &quot;n_loops&quot;: int}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;contours&quot;: [(K,2)의 (x,y)], &quot;centroid&quot;: (x,y), &quot;area&quot;: int, &quot;bbox&quot;: (x,y,w,h), &quot;n_loops&quot;: int}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>mask が 2-D でない、真の画素が無い、非有限。</p>
+<p>mask가 2-D가 아님, 참인 화소가 없음, 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

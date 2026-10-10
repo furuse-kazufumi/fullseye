@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imagemorph; imagemorph.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;warp_piecewise_affine&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Stückweise affine Verzerrung, die den Inhalt an src_pts von img nach dst_pts bewegt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>dst_pts を Delaunay 三角形分割し、各出力画素が属す三角形の重心座標を求め、同じ重心座標で src_pts 側の対応三角形へ写して逆写像サンプルする。凸包の外側(三角形に属さない画素)は恒等(元位置)でサンプルするため、四隅を対応点に含める(<code style="color:#22d3bf">add_frame_corners</code>)と穴なく画像全体を覆える。</p>
-<p>引数:</p>
-<p>img: (H,W) か (H,W,C)、[0,1]。</p>
-<p>src_pts, dst_pts: (K,2) の (x,y)。同数・同順の対応点。</p>
-<p>order: 補間次数(1=バイリニア)。</p>
-<p>返り値: img と同 shape・[0,1] の float64。</p>
+<p>Trianguliert dst_pts nach Delaunay, bestimmt für jedes Ausgabepixel die baryzentrischen Koordinaten im zugehörigen Dreieck, bildet sie mit denselben baryzentrischen Koordinaten auf das entsprechende Dreieck auf der src_pts-Seite ab und tastet per inverser Abbildung ab. Außerhalb der konvexen Hülle (Pixel, die zu keinem Dreieck gehören) wird mit der Identität (ursprüngliche Position) abgetastet; nimmt man daher die vier Ecken in die Korrespondenzpunkte auf (<code style="color:#22d3bf">add_frame_corners</code>), wird das ganze Bild lückenlos abgedeckt.</p>
+<p>Argumente:</p>
+<p>img: (H,W) oder (H,W,C), [0,1].</p>
+<p>src_pts, dst_pts: (K,2) als (x,y). Korrespondenzpunkte gleicher Anzahl und Reihenfolge.</p>
+<p>order: Interpolationsordnung (1=bilinear).</p>
+<p>Rückgabewert: float64 in derselben shape wie img, [0,1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">Leitfaden zur Familie shape_description_2d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

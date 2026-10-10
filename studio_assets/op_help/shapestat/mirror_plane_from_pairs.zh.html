@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;mirror_plane_from_pairs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由左右对应的标志点求出正中面。→ <code style="color:#22d3bf">(2, 3)</code>(第 1 行 = 点，第 2 行 = 法线)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>左右の対 <code style="color:#22d3bf">(i, j)</code> の<b>中点</b>は、どれも正中面の上に乗る。だからその中点集合に平面を当てればよい —— 変形の量に依らず面が決まるのが要点で、残差を最小にする面(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)とは別物である。</p>
-<p>★ 2026-09-06 の実測: 6.4 mm の片側変形を入れると、<b>残差最適面は真の正中面から 2.92 mm / 1.72 度ずれ、非対称量の 46 % を消した</b>(利得 0.54)。このランドマーク面なら利得 1.03。<b>見つけるなら残差最適面、量を言うならこちら</b>。</p>
-<p>*midline* は正中線上にある(対にならない)ランドマークの添字。与えると中点集合に足して面の当てはめを安定させる。</p>
-<p><code style="color:#22d3bf">pairs=None</code> は<b>前半と後半を対にする</b>規約(<code style="color:#22d3bf">i</code> と <code style="color:#22d3bf">i + N//2</code>)。左のランドマークを全部並べてから右を同じ順で並べる、という保存形式が形態計測では一般的なので、それに合わせてある。<b>点数が奇数なら拒否する</b> —— 半分に割れない並びを黙って切り詰めると、対が 1 つずつずれて全部の符号が入れ替わる。</p>
+<p>左右点对 <code style="color:#22d3bf">(i, j)</code> 的<b>中点</b>全都位于正中面上。因此只需对该中点集合拟合平面即可 —— 要点在于平面的确定与变形量无关，它与使残差最小的平面(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)是不同的东西。</p>
+<p>★ 2026-09-06 的实测:加入 6.4 mm 的单侧变形后，<b>残差最优平面偏离真实正中面 2.92 mm / 1.72 度，抹掉了 46 % 的不对称量</b>(增益 0.54)。用这个特征点平面则增益为 1.03。<b>要找平面用残差最优平面，要说量用这个</b>。</p>
+<p>*midline* 是位于正中线上(不成对)的特征点的下标。给出时会加入中点集合，使平面拟合更稳定。</p>
+<p><code style="color:#22d3bf">pairs=None</code> 是<b>前半与后半配对</b>的约定(<code style="color:#22d3bf">i</code> 与 <code style="color:#22d3bf">i + N//2</code>)。形态测量中普遍采用先排列全部左侧特征点、再按相同顺序排列右侧的保存格式，本约定与之相符。<b>点数为奇数时拒绝</b> —— 若把无法对半分的排列悄悄截断，点对会逐个错开 1 位，所有的符号都会颠倒。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

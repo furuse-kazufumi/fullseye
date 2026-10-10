@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.apply_transport(plan, target_values)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.apply_transport(plan, target_values)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;apply_transport&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>수송 계획으로 <code style="color:#22d3bf">target_values</code> 를 원래 점으로 되끌어옵니다(무게중심 사상).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各行(送り元)について、運んだ質量で重み付けした行き先の値の平均を返す。これが「計画を<b>使って絵を直す</b>」入口 ―― 計画を作るだけで使い道が無いと、<code style="color:#22d3bf">sinkhorn</code> の出力は台帳の袋小路になる(この repo が繰り返し踏んできた「入口はあるが消費 op が無い型」の形)。</p>
-<p>質量ゼロの行は行き先が無い ―― 0 で埋めると「黒い画素」が黙って混ざるので <code style="color:#22d3bf">ValueError</code>。</p>
+<p>각 행(보내는 쪽)에 대해, 나른 질량으로 가중한 행선지 값의 평균을 반환한다. 이것이 &quot;계획을 <b>써서 그림을 고치는</b>&quot; 입구 -- 계획을 만들기만 하고 쓸 데가 없으면, <code style="color:#22d3bf">sinkhorn</code>의 출력은 대장의 막다른 골목이 된다(이 repo가 반복해서 밟아 온 &quot;입구는 있지만 소비 op가 없는 유형&quot;의 형태).</p>
+<p>질량 0인 행은 행선지가 없다 -- 0으로 채우면 &quot;검은 화소&quot;가 말없이 섞이므로 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 측색과 분광 지식 — 색은 ‘분광 × 광원 × 관찰자’로만 정해진다</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

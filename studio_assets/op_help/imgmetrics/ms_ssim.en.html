@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgmetrics; imgmetrics.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;ms_ssim&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Multi-scale SSIM (Wang, Simoncelli &amp; Bovik, Asilomar Conf. 2003).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>5 段の縮小を経るので、最終段で 11 画素の窓が成立するには<b>各辺 176 画素</b>が要る。足りないときに<b>段数を黙って減らさない</b> ―― 段数の違う MS-SSIM は別の指標であり、比べると嘘になる。足りなければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p>2 次元のグレー画像専用(色は <code style="color:#22d3bf">channel_axis</code> ではなくチャネルごとに呼ぶ)。</p>
+<p>It goes through 5 levels of downsampling, so for an 11-pixel window to be valid at the last level, <b>176 pixels per side</b> are required. When that is not met, <b>the number of levels is not silently reduced</b> -- an MS-SSIM with a different number of levels is a different metric, and comparing them would be a lie. If too small, <code style="color:#22d3bf">ValueError</code>.</p>
+<p>Only for 2-D grey images (for colour, call it per channel rather than via <code style="color:#22d3bf">channel_axis</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

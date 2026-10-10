@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法線 <code style="color:#22d3bf">(N,3)</code> → 方位・仰角對 <code style="color:#22d3bf">(N,2)</code> <b>[度]</b>。<code style="color:#22d3bf">normals</code> 的出口。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> を軸0-軸1 平面内の方位、<code style="color:#22d3bf">el = asin(c2/|v|)</code> を軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された配列がどちらの流儀かに依存して意味が変わってしまう。</p>
-<p>可逆: <code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測 max|Δ| = 6.1e-16、<code style="color:#22d3bf">selftest</code> が毎回測る)。<b>戻らないのは長さだけ</b> —— 法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
+<p>以 <code style="color:#22d3bf">az = atan2(c1, c0)</code> 為軸0-軸1 平面內的方位角,<code style="color:#22d3bf">el = asin(c2/|v|)</code> 為從軸2 起的仰角。<b>不用 x/y/z 而用「軸0/1/2」來定義</b>,是因為本 repo 中(z,y,x) 順序的點雲與 (x,y,z) 順序的點雲同時存在 —— 若以名稱來寫,含義就會隨傳入的陣列屬於哪種流派而改變。</p>
+<p>可逆: 與 <code style="color:#22d3bf">angles_to_normals</code> 往返時<b>方向嚴格復原</b>(實測 max|Δ| = 6.1e-16,<code style="color:#22d3bf">selftest</code> 每次都測)。<b>不能復原的只有長度</b> —— 法線是方向,所以傳入非單位向量時往返後會變成單位向量。</p>
 <p>Args:</p>
-<p>normals: (N, 3) 実配列。零ベクトルは拒否(方位が定義できない)。</p>
+<p>normals: (N, 3) 實數陣列。零向量被拒絕(方位角無法定義)。</p>
 <p>Returns:</p>
-<p>(N, 2) float64。列 0 = 方位 (-180, 180]、列 1 = 仰角 [-90, 90]。</p>
+<p>(N, 2) float64。行 0 = 方位角 (-180, 180],行 1 = 仰角 [-90, 90]。</p>
 <p>Raises:</p>
-<p>ValueError: 形状が (N,3) でない / 非有限 / 長さ 0 のベクトルを含む。</p>
+<p>ValueError: 形狀不是 (N,3) / 非有限 / 含長度為 0 的向量。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deformation_to_points(deformation)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.deformation_to_points(deformation)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;deformation_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>TPS deformation <code style="color:#22d3bf">deformation</code> → control point <code style="color:#22d3bf">points (N,3)</code>। <code style="color:#22d3bf">deformation</code> से निकास।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">tps_fit</code> が返す dict の <code style="color:#22d3bf">ctrl</code> を取り出す。「この歪みはどこに固定されているか」を点群語彙で見るためのもので、<b>一方向</b> (制御点だけからは重み <code style="color:#22d3bf">w</code> とアフィン項 <code style="color:#22d3bf">a</code> は復元できない)。</p>
+<p><code style="color:#22d3bf">tps_fit</code> जो dict लौटाता है, उससे <code style="color:#22d3bf">ctrl</code> निकालता है। यह &quot;यह warp कहाँ स्थिर (anchored) है&quot; को point cloud vocabulary में देखने के लिए है, और <b>एकतरफ़ा (one-way)</b> है (केवल control points से weights <code style="color:#22d3bf">w</code> और affine term <code style="color:#22d3bf">a</code> वापस नहीं मिल सकते)।</p>
 <p>Args:</p>
-<p>deformation: <code style="color:#22d3bf">ctrl</code> を持つ dict(<code style="color:#22d3bf">tps_fit</code> の返り)。</p>
+<p>deformation: <code style="color:#22d3bf">ctrl</code> वाला dict (<code style="color:#22d3bf">tps_fit</code> का return)।</p>
 <p>Returns:</p>
-<p>(N, 3) float64。</p>
+<p>(N, 3) float64।</p>
 <p>Raises:</p>
-<p>ValueError: dict でない / <code style="color:#22d3bf">ctrl</code> が無い / 形状不正 / 非有限。</p>
+<p>ValueError: dict नहीं / <code style="color:#22d3bf">ctrl</code> नहीं / गलत shape / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

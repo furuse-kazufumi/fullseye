@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import watershed3d; watershed3d.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;separate_touching&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>genuinely-new (B): 접촉한 물체를 1번 호출로 자동 분리하는 상용 래퍼.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>「複数物体が接触して 1 連結成分に融合している」典型ケースを、距離変換→極大 NMS シード化→ 分水嶺という定型パイプラインを畳んで 1 コールで割る(公開 API では 3 op を手で繋ぐ必要があるところを常用ケース向けに 1 関数化)。中身は <code style="color:#22d3bf">watershed_vol(..., markers=None)</code>。</p>
+<p>&quot;여러 물체가 접촉해 1개의 연결 성분으로 융합된&quot; 전형적인 경우를, 거리 변환→극대 NMS 시드화→ 분수령이라는 정형 파이프라인을 접어 1번의 호출로 나눈다(공개 API에서는 3개의 op를 손으로 이어야하는 부분을 상용 경우용으로 1 함수화). 내용은 <code style="color:#22d3bf">watershed_vol(..., markers=None)</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>binary : array_like</p>
-<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>bool 또는 0/1의 3D 전경 볼륨.</p>
 <p>min_distance : float</p>
-<p>分離シードの最小間隔(voxel)。想定物体半径程度が目安。</p>
+<p>분리 시드의 최소 간격(voxel). 예상 물체 반지름 정도가 기준.</p>
 <p>method : {&quot;auto&quot;, &quot;skimage&quot;, &quot;scipy&quot;}</p>
-<p>バックエンド選択。</p>
+<p>백엔드 선택.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>labels : ndarray(int32)</p>
-<p>binary と同形状。背景 0、分離された各物体に 1..k のラベル。</p>
+<p>binary와 같은 형상. 배경 0, 분리된 각 물체에 1..k의 라벨.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

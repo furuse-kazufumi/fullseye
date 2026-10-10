@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussians_to_points(gaussians)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.gaussians_to_points(gaussians)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;gaussians_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">gaussians</code> → केंद्रों का point set <code style="color:#22d3bf">(N,3)</code>। <code style="color:#22d3bf">gaussians</code> से निकास (<b>केंद्र उलटने योग्य हैं</b>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>gaussians: <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code> を持つ dict。</p>
+<p>gaussians: <code style="color:#22d3bf">mu</code> / <code style="color:#22d3bf">sigma</code> / <code style="color:#22d3bf">w</code> वाला dict।</p>
 <p>Returns:</p>
-<p>(N, 3) float64(<code style="color:#22d3bf">mu</code> のコピー)。</p>
+<p>(N, 3) float64 (<code style="color:#22d3bf">mu</code> की copy)।</p>
 <p>Raises:</p>
-<p>ValueError: キー欠落 / 形状不整合 / sigma &lt;= 0 / 非有限。</p>
+<p>ValueError: key गायब / shapes असंगत / sigma &lt;= 0 / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

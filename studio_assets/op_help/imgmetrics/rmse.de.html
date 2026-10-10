@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rmse(a, b)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.rmse(a, b)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;rmse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wurzel des mittleren quadratischen Fehlers (in denselben Einheiten wie die Pixelwerte).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>式: <code style="color:#22d3bf">sqrt(mse(a, b))</code>。検証と失敗条件は <code style="color:#22d3bf">mse</code> と同じ ―― 同じ形 / 空でない / 有限、を満たさなければ <code style="color:#22d3bf">MetricContractError</code>。次元と dtype は問わない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: Python の <code style="color:#22d3bf">float</code>。入力が <code style="color:#22d3bf">[0, 1]</code> の float なら値も <code style="color:#22d3bf">[0, 1]</code>、uint8 なら 0〜255 の尺度。「平均して何階調ずれているか」と読める。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code> に依らない生の量なので、尺度の違う 2 組の rmse を並べても比較にならない。正規化した指標が要るなら <code style="color:#22d3bf">psnr</code> か <code style="color:#22d3bf">ssim</code>。</p>
-<p style="margin:2px 0 2px 12px">• 深度・CT・再投影など「画素値 = 物理量」の場面では、その物理単位そのものになる。</p>
+<p>Formel: <code style="color:#22d3bf">sqrt(mse(a, b))</code>. Prüfung und Fehlerbedingungen wie bei <code style="color:#22d3bf">mse</code> -- ohne gleiche Form / nicht leer / endlich <code style="color:#22d3bf">MetricContractError</code>. Dimension und dtype sind egal.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: ein Python-<code style="color:#22d3bf">float</code>. Ist die Eingabe float in <code style="color:#22d3bf">[0, 1]</code>, liegt auch der Wert in <code style="color:#22d3bf">[0, 1]</code>; bei uint8 auf der Skala 0-255. Lesbar als &quot;um wie viele Graustufen im Mittel daneben&quot;.</p>
+<p style="margin:2px 0 2px 12px">• Es ist eine rohe Größe unabhängig von <code style="color:#22d3bf">data_range</code>, daher ist das Nebeneinanderstellen der rmse von 2 Paaren mit unterschiedlicher Skala kein Vergleich. Wird eine normierte Kennzahl gebraucht, <code style="color:#22d3bf">psnr</code> oder <code style="color:#22d3bf">ssim</code>.</p>
+<p style="margin:2px 0 2px 12px">• Bei Tiefe, CT, Reprojektion usw., wo &quot;Pixelwert = physikalische Größe&quot; gilt, ist sie direkt in dieser physikalischen Einheit.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

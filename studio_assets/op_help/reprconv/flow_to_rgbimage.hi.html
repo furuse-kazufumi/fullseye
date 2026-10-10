@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_to_rgbimage(flow, index=None, scale=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.flow_to_rgbimage(flow, index=None, scale=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;flow_to_rgbimage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>dense scene flow की 1 slice → hue = दिशा और brightness = speed वाला <code style="color:#22d3bf">rgbimage</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>光学フローの標準的な可視化(色相環)を 3-D フローの z スライスに当てる:</p>
-<p><code style="color:#22d3bf">hue = atan2(dy, dx)</code>(度で 0-360)、<code style="color:#22d3bf">value = |(dy, dx)| / scale</code>、彩度は 1。<b>dz は捨てる</b> —— 面内成分だけの図であることを明示する(捨てた成分を色に混ぜると「見えている色が何の量か」が誰にも言えなくなる)。</p>
-<p><b>一方向</b>。色相環の凡例は図の側で必ず一緒に焼くこと(色の意味が書いていないフロー図は、綺麗なだけで読めない)。</p>
+<p>optical flow के मानक visualisation (colour wheel) को 3-D flow के z slice पर लागू करता है:</p>
+<p><code style="color:#22d3bf">hue = atan2(dy, dx)</code> (degree में, 0-360), <code style="color:#22d3bf">value = |(dy, dx)| / scale</code>, saturation 1। <b>dz छोड़ दिया जाता है</b> -- यह स्पष्ट करता है कि figure में केवल in-plane components हैं (छोड़े गए component को रंग में मिलाने पर कोई नहीं बता पाएगा कि &quot;दिख रहा रंग किस मात्रा का है&quot;)।</p>
+<p><b>एकतरफ़ा (one-way)</b>। colour wheel का legend figure में हमेशा साथ में बनाएँ (जिस flow figure में रंगों का अर्थ लिखा न हो, वह केवल सुंदर दिखता है, पढ़ा नहीं जा सकता)।</p>
 <p>Args:</p>
-<p>flow: (3, D, H, W)。</p>
-<p>index: 取り出す z スライス(既定 = 中央)。</p>
-<p>scale: 明度 1.0 に対応する面内速さ(既定 = そのスライスの最大値。</p>
-<p>0 なら全面黒を返す)。</p>
+<p>flow: (3, D, H, W)।</p>
+<p>index: निकाला जाने वाला z slice (default = केंद्र)।</p>
+<p>scale: brightness 1.0 के संगत in-plane speed (default = उस slice का अधिकतम मान।</p>
+<p>0 हो तो पूरी तरह काली image लौटाता है)।</p>
 <p>Returns:</p>
-<p>(H, W, 3) float64、値域 [0, 1]。</p>
+<p>(H, W, 3) float64, range [0, 1]।</p>
 <p>Raises:</p>
-<p>ValueError: 密フローでない / index が範囲外 / scale &lt;= 0。</p>
+<p>ValueError: dense flow नहीं / index range से बाहर / scale &lt;= 0।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_3mf(path: &#x27;str&#x27;) -&gt; &#x27;tuple[np.ndarray, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.read_3mf(path: &#x27;str&#x27;) -&gt; &#x27;tuple[np.ndarray, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;read_3mf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3MF(zip 안의 <code style="color:#22d3bf">3D/3dmodel.model</code>, 3MF Core Specification)를 삼각형 메시 <code style="color:#22d3bf">mesh</code> = (V, F)로 읽는다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>複数の <code style="color:#22d3bf">&lt;object&gt;</code> は頂点を連結して 1 つのメッシュに(<code style="color:#22d3bf">&lt;build&gt;</code> の変換行列は 3×4 の <code style="color:#22d3bf">transform</code> を適用)。単位は <code style="color:#22d3bf">&lt;model unit&gt;</code>(既定 millimeter、inch / centimeter / meter / micron は mm に換算)。</p>
+<p>여러 <code style="color:#22d3bf">&lt;object&gt;</code> 는 꼭짓점을 연결하여 1 개의 메시로(<code style="color:#22d3bf">&lt;build&gt;</code> 의 변환 행렬은 3×4 의 <code style="color:#22d3bf">transform</code> 을 적용). 단위는 <code style="color:#22d3bf">&lt;model unit&gt;</code>(기본값 millimeter, inch / centimeter / meter / micron 은 mm 로 환산).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

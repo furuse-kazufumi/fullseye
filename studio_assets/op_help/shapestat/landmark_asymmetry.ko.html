@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.landmark_asymmetry(landmarks, pairs=None, plane=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.landmark_asymmetry(landmarks, pairs=None, plane=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;landmark_asymmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>좌우 쌍마다의 <b>부호 있는</b> 비대칭량. → <code style="color:#22d3bf">(M,)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各対について、片方を面で鏡映してもう片方と比べ、面の法線方向の差を返す。符号は「右が外側なら正」(<code style="color:#22d3bf">mirror_plane_from_pairs</code> が法線をその向きに揃えている)。<b>絶対値にまとめない</b> —— 左右どちらが張り出しているかは臨床でも検査でも意味が違う。</p>
-<p><code style="color:#22d3bf">pairs=None</code> / <code style="color:#22d3bf">plane=None</code> はどちらも <code style="color:#22d3bf">mirror_plane_from_pairs</code> と同じ既定(前半/後半の対、その対から出した正中面)。<b>面を省くと、面自体が同じ対から決まる</b>ので「面を決めた材料で面からのずれを測る」ことになる —— それでも左右差は測れる(中点は定義上どちらの側にも寄らない)が、別の情報源から面が決まるなら渡したほうが強い。</p>
+<p>각 쌍에 대해 한쪽을 면으로 거울 반사하여 다른 쪽과 비교하고, 면의 법선 방향 차를 반환한다. 부호는 &quot;오른쪽이 바깥이면 양&quot;(<code style="color:#22d3bf">mirror_plane_from_pairs</code> 가 법선을 그 방향으로맞추어 두었다). <b>절댓값으로 합치지 않는다</b> —— 좌우 어느 쪽이 튀어나와 있는지는임상에서도 검사에서도 의미가 다르다.</p>
+<p><code style="color:#22d3bf">pairs=None</code> / <code style="color:#22d3bf">plane=None</code> 은 둘 다 <code style="color:#22d3bf">mirror_plane_from_pairs</code> 와 같은 기본값(전반/후반의 쌍, 그 쌍에서 낸 정중면). <b>면을 생략하면 면 자체가같은 쌍으로부터 정해지므로</b> &quot;면을 정한 재료로 면으로부터의 어긋남을 재는&quot; 셈이 된다 —— 그래도 좌우 차는 잴 수 있지만(중점은 정의상 어느 쪽으로도 치우치지 않는다), 다른 정보원으로부터 면이 정해진다면 넘기는 편이 강하다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

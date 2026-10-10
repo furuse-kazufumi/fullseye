@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_epicycle_chain(spectrum, phase, order=&#x27;frequency&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_epicycle_chain(spectrum, phase, order=&#x27;frequency&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;contour_epicycle_chain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt die <b>Kette rotierender Pendel</b> bei Phase <code style="color:#22d3bf">t</code> zurück (<code style="color:#22d3bf">pairs</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>引数:</p>
-<p>spectrum: <code style="color:#22d3bf">contour_fourier_complex</code> の <code style="color:#22d3bf">(2K+1, 3)</code>。</p>
-<p>phase: <code style="color:#22d3bf">t</code>(1 周 = 1.0)。</p>
-<p>order: <code style="color:#22d3bf">&quot;frequency&quot;</code> = 低い周波数から積む(教科書の絵)/</p>
-<p><code style="color:#22d3bf">&quot;amplitude&quot;</code> = 振幅の大きい順(少ない項で似せる)。</p>
-<p>返り値: <code style="color:#22d3bf">(M+1, 2)</code> の <code style="color:#22d3bf">pairs</code>((row, col) 順)。行 0 が最初の腕の中心、行 <code style="color:#22d3bf">m</code> が <code style="color:#22d3bf">m</code> 番目の腕の先(= 次の腕の中心)、<b>最後の行が筆先</b>で、これが再構成された輪郭の点そのものになる。腕 <code style="color:#22d3bf">m</code> の長さは <code style="color:#22d3bf">|c_k|</code>、角度は <code style="color:#22d3bf">2π k t + arg c_k</code>。</p>
+<p>Argumente:</p>
+<p>spectrum: <code style="color:#22d3bf">(2K+1, 3)</code> aus <code style="color:#22d3bf">contour_fourier_complex</code>.</p>
+<p>phase: <code style="color:#22d3bf">t</code> (1 Umlauf = 1.0).</p>
+<p>order: <code style="color:#22d3bf">&quot;frequency&quot;</code> = ab niedriger Frequenz stapeln (das Lehrbuchbild) /</p>
+<p><code style="color:#22d3bf">&quot;amplitude&quot;</code> = nach absteigender Amplitude (Ähnlichkeit mit wenigen Termen).</p>
+<p>Rückgabewert: <code style="color:#22d3bf">pairs</code> von <code style="color:#22d3bf">(M+1, 2)</code> ((row, col)-Reihenfolge). Zeile 0 ist der Mittelpunkt des ersten Arms, Zeile <code style="color:#22d3bf">m</code> die Spitze des <code style="color:#22d3bf">m</code>-ten Arms (= Mittelpunkt des nächsten Arms), <b>die letzte Zeile ist die Stiftspitze</b>, und sie ist genau ein Punkt der rekonstruierten Kontur. Die Länge von Arm <code style="color:#22d3bf">m</code> ist <code style="color:#22d3bf">|c_k|</code>, der Winkel <code style="color:#22d3bf">2π k t + arg c_k</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">Leitfaden zur Familie shape_description_2d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

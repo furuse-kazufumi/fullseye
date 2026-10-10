@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import llmcore; llmcore.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsllmcore.get(&quot;kv_cache_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>只前进 1 个 token 的推理(KV Cache)→ tokens (1, dv)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>因果マスクの下では<b>未来を書き換えても前の出力が 1 ビットも動かない</b>(実測 0.0e+00) ので、済んだ key/value を取っておいて 1 行だけ計算すればよい —— 逐次に 1 行ずつ進めた結果は、全系列を一括で通した結果と一致する(相対差 1.6e-16)。計算量は 1 歩あたり O(T d) で、一括の O(T² d) を T 歩に割ったものに等しい。</p>
+<p>在因果掩模下,<b>改写未来不会让之前的输出变动哪怕 1 位</b>(实测 0.0e+00), 所以只要保存已完成的 key/value,只计算 1 行即可 —— 按顺序每次推进 1 行得到的结果,与一次性通过整个序列的结果一致(相对差 1.6e-16)。每 1 步的计算量是 O(T d),等于把一次性的 O(T² d) 分摊到 T 步。</p>
 <p>Args:</p>
-<p>query_step: (1, d) float。いま生成しようとしている 1 トークン。</p>
-<p>key_cache: (T, d) float。ここまでに見た key(自分を含む)。</p>
-<p>value_cache: (T, dv) float。同じ長さの value。</p>
-<p>scale: スコアの倍率。None なら 1/√d。</p>
+<p>query_step: (1, d) float。现在要生成的 1 个 token。</p>
+<p>key_cache: (T, d) float。到目前为止看到的 key(包括自己)。</p>
+<p>value_cache: (T, dv) float。相同长度的 value。</p>
+<p>scale: 分数的倍率。None 时为 1/√d。</p>
 <p>Returns:</p>
-<p>tokens (1, dv) float: 一括で通した最終行と一致する。</p>
+<p>tokens (1, dv) float: 与一次性通过时的最后一行一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

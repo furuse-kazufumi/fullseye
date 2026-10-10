@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_langtons_ant(steps: &#x27;int&#x27; = 12000, size: &#x27;int&#x27; = 301) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_langtons_ant&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Langton&#x27;s ant — with just 2 rules, after 10,000 steps it keeps building a &quot;highway&quot;.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>不変量: 高速道路に入ったあとは <b>周期 104 で斜めに (-2,-2) 進む</b>。</p>
-<p>★塗りは「そのマスが黒でいた時間」。高速道路は最後にできるので薄く、最初の混沌は濃い —— <b>時間の順序が絵に出る</b>。</p>
+<p>Invariant: once on the highway, it <b>advances diagonally by (-2,-2) with period 104</b>.</p>
+<p>★The shading is &quot;the time that cell spent black&quot;. The highway forms last, so it is light, and the initial chaos is dark -- <b>the order of time shows in the picture</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plot_series(img, axes, x, y, kind=&#x27;line&#x27;, color=&#x27;reference&#x27;, width=2, marker_size=3, baseline=None, bar_width=0.7, clip=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.plot_series(img, axes, x, y, kind=&#x27;line&#x27;, color=&#x27;reference&#x27;, width=2, marker_size=3, baseline=None, bar_width=0.7, clip=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;plot_series&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>꺾은선·산점·막대를 그립니다. <b>데이터 좌표</b>로 받습니다(화소는 axes 가 정함).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>axes : dict</p>
-<p><code style="color:#22d3bf">axes_transform</code> の返り。</p>
+<p><code style="color:#22d3bf">axes_transform</code>의 반환.</p>
 <p>x, y : 1-D</p>
-<p>同じ長さの系列。<b>空は ValueError</b>(空のグラフは「データが無い」のか</p>
-<p>「描き忘れ」なのか区別がつかない)。</p>
+<p>같은 길이의 계열. <b>비어 있으면 ValueError</b>(빈 그래프는 &quot;데이터가 없는&quot; 것인지</p>
+<p>&quot;그리는 것을 잊은&quot; 것인지 구별이 안 된다).</p>
 <p>kind : {&#x27;line&#x27;,&#x27;scatter&#x27;,&#x27;bar&#x27;}</p>
 <p>baseline : float or None</p>
-<p><code style="color:#22d3bf">kind=&#x27;bar&#x27;</code> の基準値。None なら <code style="color:#22d3bf">ylim</code> の下端。</p>
+<p><code style="color:#22d3bf">kind=&#x27;bar&#x27;</code>의 기준값. None이면 <code style="color:#22d3bf">ylim</code>의 아래 끝.</p>
 <p>bar_width : float</p>
-<p>棒の幅(隣り合う x 間隔に対する比 ∈ (0,1])。</p>
+<p>막대의 폭(이웃한 x 간격에 대한 비 ∈ (0,1]).</p>
 <p>clip : bool</p>
-<p>True なら描画域の外に出る点を<b>例外</b>にする(黙って端に張り付く</p>
-<p><code style="color:#22d3bf">imagedraw</code> のクランプは、嘘の折れ線を描いてしまう)。</p>
+<p>True이면 그리기 영역 밖으로 나가는 점을 <b>예외</b>로 한다(조용히 끝에 달라붙는</p>
+<p><code style="color:#22d3bf">imagedraw</code>의 클램프는 거짓 꺾은선을 그려 버린다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>長さ不一致 / 空 / 非有限 / 未知の kind / clip=True で範囲外。</p>
+<p>길이 불일치 / 비어 있음 / 비유한 / 알 수 없는 kind / clip=True에서 범위 밖.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

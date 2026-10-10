@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.threshold_isodata(image, *, nbins: &#x27;int&#x27; = 256, max_iter: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import seggraph; seggraph.threshold_isodata(image, *, nbins: &#x27;int&#x27; = 256, max_iter: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;threshold_isodata&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>isodata（Ridler–Calvard 1978）：<b>在像素值上</b>反覆執行 t ← (μ_≤t + μ_&gt;t)/2，直到分割不再變化（初值 = 平均值）（threshold_isodata）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>分割が止まれば t は μ を計算し直しても動かない = 不動点 t = (μ_low + μ_high)/2 が厳密に成り立つ(<code style="color:#22d3bf">residual</code> = 0)。ヒストグラムの上の不動点(skimage と同じ「ビンの中心 c で 0 ≤ (μ_≤c + μ_&gt;c)/2 − c &lt; ビン幅」)も <code style="color:#22d3bf">fixed_points</code> で返す。</p>
-<p>返す: <code style="color:#22d3bf">threshold</code>、<code style="color:#22d3bf">mask</code> = image &gt; t、<code style="color:#22d3bf">mu_low</code> / <code style="color:#22d3bf">mu_high</code>、<code style="color:#22d3bf">residual</code>、<code style="color:#22d3bf">n_iter</code>、<code style="color:#22d3bf">fixed_points</code>。</p>
+<p>分割一旦不再變化,即使重新計算 μ,t 也不動 = 不動點 t = (μ_low + μ_high)/2 嚴格成立(<code style="color:#22d3bf">residual</code> = 0)。直方圖上的不動點(與 skimage 相同的「在 bin 中心 c 處 0 ≤ (μ_≤c + μ_&gt;c)/2 − c &lt; bin 寬」)也透過 <code style="color:#22d3bf">fixed_points</code> 回傳。</p>
+<p>回傳: <code style="color:#22d3bf">threshold</code>、<code style="color:#22d3bf">mask</code> = image &gt; t、<code style="color:#22d3bf">mu_low</code> / <code style="color:#22d3bf">mu_high</code>、<code style="color:#22d3bf">residual</code>、<code style="color:#22d3bf">n_iter</code>、<code style="color:#22d3bf">fixed_points</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

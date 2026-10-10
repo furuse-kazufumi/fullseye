@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vector_to_shift(vector)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.vector_to_shift(vector)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;vector_to_shift&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein <code style="color:#22d3bf">vector (3,)</code> → eine ganzzahlige Verschiebung <code style="color:#22d3bf">(dz, dy, dx)</code>. Die Gegenrichtung von <code style="color:#22d3bf">shift_to_vector</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>不可逆</b>(最近接整数へ丸める)。落ちる量は丸め残差そのもので、<code style="color:#22d3bf">|v - round(v)| &lt;= 0.5</code> が各軸の上界。整数を渡した往復だけが bit 一致する。</p>
+<p><b>Irreversibel</b> (rundet auf die nächste ganze Zahl). Verloren geht genau das Rundungsresiduum, und <code style="color:#22d3bf">|v - round(v)| &lt;= 0.5</code> ist die obere Schranke je Achse. Nur ein Hin- und Rückweg mit ganzzahliger Eingabe ist bitgleich.</p>
 <p>Args:</p>
-<p>vector: (3,)。</p>
+<p>vector: (3,).</p>
 <p>Returns:</p>
-<p>3-tuple の int。</p>
+<p>3-tuple aus int.</p>
 <p>Raises:</p>
-<p>ValueError: (3,) でない / 非有限。</p>
+<p>ValueError: nicht (3,) / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.snic_superpixels(image, *, n_segments: &#x27;int&#x27; = 100, compactness: &#x27;float&#x27; = 0.1, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import seggraph; seggraph.snic_superpixels(image, *, n_segments: &#x27;int&#x27; = 100, compactness: &#x27;float&#x27; = 0.1, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;snic_superpixels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SNIC(Achanta–Süsstrunk 2017의 Algorithm 1): 격자 씨앗에서 우선순위 큐로 키우는 비반복 슈퍼픽셀(snic_superpixels).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>距離 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K)、m = <code style="color:#22d3bf">compactness</code>、c は画素の値。SLIC の正規化の形、式 (1) の表記は要確認)。待ち行列から最小の d を取り出し、未ラベルならラベルを付け、重心(位置と値)をその場で更新し、未ラベルの近傍を今の重心との距離で積む。同点は (距離, 積んだ順) で決める(決定的)。</p>
-<p>返す: <code style="color:#22d3bf">labels</code>(1..K)、<code style="color:#22d3bf">n_segments</code>、<code style="color:#22d3bf">all_connected</code>(全ラベルが 4-連結 = 構成上の保証を数えて確かめた印)、<code style="color:#22d3bf">n_disconnected</code>、<code style="color:#22d3bf">sizes</code>、<code style="color:#22d3bf">seeds</code>((K, 2) の [row, col])、<code style="color:#22d3bf">s</code>。</p>
+<p>거리 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K), m = <code style="color:#22d3bf">compactness</code>, c는 화소 값. SLIC의 정규화 형태, 식 (1)의 표기는 확인 필요). 대기열에서 최소 d를 꺼내, 라벨이 없으면 라벨을 붙이고 무게중심(위치와 값)을 그 자리에서 갱신하며, 라벨 없는 근방을 현재 무게중심과의거리로 쌓는다. 동점은 (거리, 쌓은 순서)로 정한다(결정적).</p>
+<p>반환: <code style="color:#22d3bf">labels</code>(1..K), <code style="color:#22d3bf">n_segments</code>, <code style="color:#22d3bf">all_connected</code>(모든 라벨이 4-연결 = 구성상의 보장을 세어서 확인한 표시), <code style="color:#22d3bf">n_disconnected</code>, <code style="color:#22d3bf">sizes</code>, <code style="color:#22d3bf">seeds</code>((K, 2)의 [row, col]), <code style="color:#22d3bf">s</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

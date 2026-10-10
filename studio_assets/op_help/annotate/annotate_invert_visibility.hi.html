@@ -4,28 +4,27 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_visibility&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बनाने से पहले मापता है कि inverted रंग <b>उस background पर वास्तव में दिखता है</b> या नहीं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>反転色の利点は「地の色を知らなくてよい」ことだが、弱点はたった 1 つで、しかも致命的 —— <b>中間調では反転しても同じ色になる</b>。8bit グレーの v=128 に対する補色は v=127 で、WCAG のコントラスト比は <b>1.014</b> (比 1.0 が「同じ色」。実測 2026-09-08)。比 1.5 を下回る帯は v ∈ [113, 142] の 30/256 階調 = 全階調の 12 % に及ぶ。</p>
-<p><code style="color:#22d3bf">annotate_invert</code> と <code style="color:#22d3bf">annotate_invert_path</code> は内部でこれを呼んで警告するが、<b>自分で fail-closed にしたいとき</b>はこの op で測ってから描く(<code style="color:#22d3bf">min_contrast</code> を見て、低ければ <code style="color:#22d3bf">mode=&quot;contrast&quot;</code> に倒す)。</p>
+<p>inverted colour का लाभ यह है कि &quot;पृष्ठभूमि का रंग जानना ज़रूरी नहीं&quot;, लेकिन इसकी कमज़ोरी केवल 1 है, और वह घातक है -- <b>mid-tones में invert करने पर भी वही रंग बनता है</b>। 8bit grey में v=128 का complement v=127 है, और WCAG contrast ratio <b>1.014</b> है (ratio 1.0 का अर्थ &quot;वही रंग&quot;; measured 2026-09-08)। ratio 1.5 से नीचे की band v ∈ [113, 142] के 30/256 levels = सभी levels का 12 % है।</p>
+<p><code style="color:#22d3bf">annotate_invert</code> और <code style="color:#22d3bf">annotate_invert_path</code> अंदर से इसे call करके warning देते हैं, लेकिन <b>जब आप स्वयं fail-closed चाहते हों</b>, तो इस op से मापकर फिर बनाएँ (<code style="color:#22d3bf">min_contrast</code> देखें, कम हो तो <code style="color:#22d3bf">mode=&quot;contrast&quot;</code> पर जाएँ)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>img : (H,W) または (H,W,C)</p>
-<p>地。値域 [0,1]。</p>
+<p>img : (H,W) या (H,W,C)</p>
+<p>पृष्ठभूमि। मान की range [0,1]।</p>
 <p>mask : (H,W)</p>
-<p>反転を乗せるところ。真偽か [0,1] の重み。<b>形が違えば例外</b>。</p>
+<p>जहाँ inversion रखना है। boolean या [0,1] के weights। <b>shape अलग हो तो exception</b>।</p>
 <p>mode : str</p>
-<p><code style="color:#22d3bf">INVERT_MODES</code> のいずれか。</p>
+<p><code style="color:#22d3bf">INVERT_MODES</code> में से एक।</p>
 <p>alpha : float</p>
-<p>反転の効き。描くときと同じ値を渡すこと —— 見え方は「反転色」ではなく</p>
-<p><b>実際に置かれる色</b>で決まるので、<code style="color:#22d3bf">alpha</code> を落とすと答えが変わる。</p>
+<p>inversion की तीव्रता। बनाते समय वाला ही मान दें -- दिखना &quot;inverted colour&quot; से नहीं बल्कि</p>
+<p><b>वास्तव में रखे गए रंग</b> से तय होता है, इसलिए <code style="color:#22d3bf">alpha</code> घटाने पर उत्तर बदल जाता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">pixels</code>(重み &gt;= 0.5 の画素数) / <code style="color:#22d3bf">min_contrast</code> /</p>
-<p><code style="color:#22d3bf">median_contrast</code> / <code style="color:#22d3bf">invisible_fraction</code>(比が</p>
-<p><code style="color:#22d3bf">INVERT_MIN_CONTRAST</code> 未満の割合) / <code style="color:#22d3bf">worst_xy</code>(最悪の画素、</p>
-<p>無ければ <code style="color:#22d3bf">None</code>)。</p>
+<p><code style="color:#22d3bf">pixels</code> (weight &gt;= 0.5 वाले pixels की संख्या) / <code style="color:#22d3bf">min_contrast</code> /</p>
+<p><code style="color:#22d3bf">median_contrast</code> / <code style="color:#22d3bf">invisible_fraction</code> (जिनका ratio</p>
+<p><code style="color:#22d3bf">INVERT_MIN_CONTRAST</code> से कम है उनका अनुपात) / <code style="color:#22d3bf">worst_xy</code> (सबसे खराब pixel,</p>
+<p>न हो तो <code style="color:#22d3bf">None</code>)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np, annotate</p>
-<p>&gt;&gt;&gt; flat = np.full((8, 8), 128 / 255.0)          # 中間調 —— 反転が消える地</p>
+<p>&gt;&gt;&gt; flat = np.full((8, 8), 128 / 255.0)          # mid-tone -- ऐसी पृष्ठभूमि जहाँ inversion गायब हो जाता है</p>
 <p>&gt;&gt;&gt; rep = annotate.annotate_invert_visibility(flat, np.ones((8, 8), bool))</p>
 <p>&gt;&gt;&gt; round(rep[&quot;min_contrast&quot;], 3)</p>
 <p>1.014</p>

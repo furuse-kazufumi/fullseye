@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.countrate_to_counts(countrate, gate_s=0.001)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.countrate_to_counts(countrate, gate_s=0.001)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;countrate_to_counts&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Count rate <code style="color:#22d3bf">[Hz]</code> → <code style="color:#22d3bf">counts</code>. The exit from <code style="color:#22d3bf">countrate</code> (<b>invertible</b>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><b>単位が変換の全内容</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>。<code style="color:#22d3bf">gate_s</code> は積算窓の秒数で、既定 1 ms。<code style="color:#22d3bf">counts</code> は「時間 bin ごとの光子数」の型なので、レート列をそのまま counts と名乗らせると<b>桁が 7 つずれたまま黙って通る</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> はどちらも「非負の 1-D」としか見ていない)。</p>
-<p><code style="color:#22d3bf">counts_to_countrate</code> と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので <b>相対</b> 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、レートのように桁が広い量は相対で言う)。</p>
-<p>★<b>2 度掛けても例外は出ない</b>。<code style="color:#22d3bf">TYPE_TO_SORT</code> が <code style="color:#22d3bf">countrate</code> を <code style="color:#22d3bf">counts</code> に畳んでいるので、出口が入口にそのまま繋がる。実測(2026-09-08、1,200 Hz を gate 1 ms で): 1 回で 1.2000 counts、もう 1 回通すと 0.0012 counts —— <b>1,000 倍の取り違えが、負の値も NaN も出さずに通る</b>。値だけを見て「レートか計数か」を判定する方法は無いので、この 1 件は検査でなく <b>呼ぶ側の規律</b>で守るしかない(繋いだ経路を書き残すこと)。</p>
+<p><b>The unit is the entire content of the conversion</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>. <code style="color:#22d3bf">gate_s</code> is the integration window in seconds, default 1 ms. <code style="color:#22d3bf">counts</code> is the type for &quot;photon count per time bin&quot;, so if a rate series is simply allowed to call itself counts, <b>it passes silently with the magnitude off by 7 orders</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> checks both only as &quot;non-negative 1-D&quot;).</p>
+<p>Round trip with <code style="color:#22d3bf">counts_to_countrate</code> measured max|Δ| = 9.3e-10 (the value range is 1e3-1e7 Hz, so this is <b>relative</b> 1e-16 = 1 unit of double-precision rounding. Looking only at the absolute value it seems large, so quantities spanning many orders of magnitude, like rates, are stated in relative terms).</p>
+<p>★<b>Applying it 2 times raises no exception</b>. <code style="color:#22d3bf">TYPE_TO_SORT</code> folds <code style="color:#22d3bf">countrate</code> into <code style="color:#22d3bf">counts</code>, so the exit connects straight back to the entrance. Measured (2026-09-08, 1,200 Hz at gate 1 ms): 1 pass gives 1.2000 counts, 1 more pass gives 0.0012 counts -- <b>a 1,000-fold mix-up passes without producing negative values or NaN</b>. There is no way to tell &quot;rate or count&quot; from the values alone, so this 1 case can be guarded not by a check but only by <b>the caller&#x27;s discipline</b> (write down the path you connected).</p>
 <p>Args:</p>
-<p>countrate: (N,) の非負レート [Hz]。</p>
-<p>gate_s: 積算窓 [s]。&gt; 0。</p>
+<p>countrate: (N,) non-negative rate [Hz].</p>
+<p>gate_s: integration window [s]. &gt; 0.</p>
 <p>Returns:</p>
-<p>(N,) float64 の非負計数。</p>
+<p>(N,) float64 non-negative counts.</p>
 <p>Raises:</p>
-<p>ValueError: 負のレート / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
+<p>ValueError: negative rate / gate_s &lt;= 0 / bad shape / non-finite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,42 +4,41 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;measure_text&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Measure text <b>before</b> drawing it. If it does not fit, wrap or shrink it; if that fails, raise.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>text : str</p>
-<p>測る文字列(<code style="color:#22d3bf">\n</code> で改行)。</p>
+<p>String to measure (<code style="color:#22d3bf">\n</code> for line breaks).</p>
 <p>font_size : int</p>
-<p>希望のサイズ。<code style="color:#22d3bf">max_width</code> に入らなければ 1pt ずつ縮める。</p>
+<p>Desired size. If it does not fit <code style="color:#22d3bf">max_width</code>, it is shrunk 1pt at a time.</p>
 <p>font_path : str or None</p>
-<p>明示すると機械をまたいでも同じ結果になる。None は <code style="color:#22d3bf">FONT_CANDIDATES</code></p>
-<p>を固定順で探す。</p>
+<p>Giving it explicitly yields the same result across machines. None searches <code style="color:#22d3bf">FONT_CANDIDATES</code></p>
+<p>in a fixed order.</p>
 <p>max_width : int or None</p>
-<p>入れたい幅[px]。None なら縮小も折り返しもしない。</p>
+<p>Width [px] it should fit into. If None, neither shrinking nor wrapping is done.</p>
 <p>min_font_size : int</p>
-<p>ここまで縮めても入らなければ <b>ValueError</b>(黙って切らない)。</p>
+<p>If it still does not fit after shrinking down to this, <b>ValueError</b> (no silent truncation).</p>
 <p>line_spacing : float</p>
-<p>行送り係数。</p>
+<p>Line-spacing factor.</p>
 <p>bold, italic : bool or int</p>
-<p><b>合成</b>の太字・斜体(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。本物の</p>
-<p>Bold / Italic 書体ではないので字形は違う ―― 本物が要るときは</p>
-<p><code style="color:#22d3bf">font_path</code> にその書体のファイルを渡すこと。<code style="color:#22d3bf">bold</code> に整数を渡すと</p>
-<p>重ね打ちの回数を直に指定できる。<b>太さと傾きのぶんは <code style="color:#22d3bf">width</code> に入る</b></p>
-<p>ので、板や表の桁はそのまま広がる(重ね打ちは横にだけ太るので</p>
-<p><code style="color:#22d3bf">height</code> は変わらない)。</p>
+<p><b>Synthetic</b> bold and italic (<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>). These are not real</p>
+<p>Bold / Italic typefaces, so the glyph shapes differ -- when you need the real thing,</p>
+<p>pass that typeface&#x27;s file as <code style="color:#22d3bf">font_path</code>. Passing an integer to <code style="color:#22d3bf">bold</code></p>
+<p>directly specifies the number of overstrike passes. <b>The extra width from weight and slant goes into <code style="color:#22d3bf">width</code></b>,</p>
+<p>so plate and table columns widen accordingly (overstriking only thickens horizontally, so</p>
+<p><code style="color:#22d3bf">height</code> does not change).</p>
 <p>wrap : bool</p>
-<p>True(既定)なら <code style="color:#22d3bf">max_width</code> で<b>折り返す</b>。False なら折り返さず</p>
-<p><b>行を増やさずフォントを縮めて</b>収める(格子のラベルのように、2 行に</p>
-<p>なると版が崩れる場所で使う ―― <code style="color:#22d3bf">exhibit_tile._fit_label</code> と同じ流儀)。</p>
-<p>どちらでも <code style="color:#22d3bf">min_font_size</code> まで来て入らなければ例外。</p>
-<p><code style="color:#22d3bf">\n</code> の改行は <code style="color:#22d3bf">max_width</code> の有無・<code style="color:#22d3bf">wrap</code> の値に<b>よらず常に</b>効く</p>
-<p>(幅を与えないと 1 行に潰れる、という事故は起きない)。</p>
+<p>If True (default), <b>wraps</b> at <code style="color:#22d3bf">max_width</code>. If False, it does not wrap but</p>
+<p>fits by <b>shrinking the font without adding lines</b> (used where 2 lines</p>
+<p>would break the layout, like grid labels -- the same approach as <code style="color:#22d3bf">exhibit_tile._fit_label</code>).</p>
+<p>Either way, if it does not fit by <code style="color:#22d3bf">min_font_size</code>, an exception is raised.</p>
+<p><code style="color:#22d3bf">\n</code> line breaks take effect <b>always, regardless</b> of whether <code style="color:#22d3bf">max_width</code> is given or the value of <code style="color:#22d3bf">wrap</code></p>
+<p>(the accident &quot;without a width it collapses into 1 line&quot; does not happen).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;lines&quot;, &quot;font&quot;, &quot;font_size&quot;, &quot;width&quot;, &quot;height&quot;, &quot;line_height&quot;}</code>。</p>
-<p><code style="color:#22d3bf">width</code>/<code style="color:#22d3bf">height</code> は実測[px]。</p>
+<p><code style="color:#22d3bf">{&quot;lines&quot;, &quot;font&quot;, &quot;font_size&quot;, &quot;width&quot;, &quot;height&quot;, &quot;line_height&quot;}</code>.</p>
+<p><code style="color:#22d3bf">width</code>/<code style="color:#22d3bf">height</code> are measured [px].</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">max_width</code> が非正 / <code style="color:#22d3bf">min_font_size</code> まで縮めても 1 行が入らない。</p>
+<p><code style="color:#22d3bf">max_width</code> is not positive / 1 line does not fit even after shrinking to <code style="color:#22d3bf">min_font_size</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

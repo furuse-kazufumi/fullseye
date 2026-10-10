@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import vxcore; vxcore.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_perspective&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>perspective transform (section 3.57)। inverse mapping: <code style="color:#22d3bf">x0 = M[0]·(x, y, 1)</code>, <code style="color:#22d3bf">y0 = M[1]·(x, y, 1)</code>, <code style="color:#22d3bf">z0 = M[2]·(x, y, 1)</code>, आउटपुट (x, y) = इनपुट (x0/z0, y0/z0) (REQ-0508)। z0 = 0 वाले pixels को बाहर वाले मानकर भरा जाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>*matrix*: 数学の並びの 3×3(規格の C の宣言 <code style="color:#22d3bf">mat[3][3]</code> は転置した並び)。他の引数は <code style="color:#22d3bf">vx_warp_affine</code> と同じ。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / matrix が 3×3 の有限でない / interpolation・border が一覧に無い。</p>
+<p>*matrix*: गणितीय क्रम का 3×3 (specification का C declaration <code style="color:#22d3bf">mat[3][3]</code> transposed क्रम में है)। बाक़ी argument <code style="color:#22d3bf">vx_warp_affine</code> जैसे ही हैं।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D U8 नहीं है / matrix finite 3×3 नहीं है / interpolation या border सूची में नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

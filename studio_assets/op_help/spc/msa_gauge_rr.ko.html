@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spc; spc.msa_gauge_rr(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;, tolerance=None, pool_interaction=&#x27;auto&#x27;, pool_alpha=0.25)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;msa_gauge_rr&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>분산분석법에 의한 게이지 반복성·재현성(R&amp;R) (<code style="color:#22d3bf">table</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>繰り返し性 EV(同じ人が同じ物を測り直したときの散らばり)、再現性 AV(人が変わったときの散らばり。交互作用を含む)、その合成 GRR、部品間 PV、総変動 TV、<code style="color:#22d3bf">%GRR = 100 GRR/TV</code>、区別できる階級数 <code style="color:#22d3bf">ndc = 1.41 PV/GRR</code>。</p>
-<p>*tolerance* を渡すと公差に対する比 <code style="color:#22d3bf">%tolerance = 100 GRR/tolerance</code> も返す。</p>
-<p>★分散成分は<b>釣り合った交差計画の期待平均平方</b>から出す:</p>
+<p>반복성 EV(같은 사람이 같은 물건을 다시 측정했을 때의 흩어짐), 재현성 AV(사람이바뀌었을 때의 흩어짐. 교호작용 포함), 그 합성 GRR, 부품 간 PV, 총변동 TV, <code style="color:#22d3bf">%GRR = 100 GRR/TV</code>, 구별 가능한 계급 수 <code style="color:#22d3bf">ndc = 1.41 PV/GRR</code>.</p>
+<p>*tolerance* 를 넘기면 공차에 대한 비 <code style="color:#22d3bf">%tolerance = 100 GRR/tolerance</code> 도 반환한다.</p>
+<p>★분산 성분은 <b>균형 교차 설계의 기대 평균제곱</b>으로부터 구한다:</p>
 <p>var_repeat = MS_err</p>
 <p>var_inter  = (MS_inter - MS_err) / r</p>
 <p>var_oper   = (MS_oper - MS_inter) / (p r)</p>
 <p>var_part   = (MS_part - MS_inter) / (o r)</p>
-<p>★★<b>負の分散成分は 0 に丸めるが、丸めたことを隠さない</b>(<code style="color:#22d3bf">clamped</code> 列)。期待平均平方の差は推定量なので、真の成分が 0 に近いと負になりうる。黙って 0 にすると「測定者差は無い」と読めてしまうが、正しくは「<b>推定できなかった</b>」。しかもこれは稀な端ではない —— 部品 60 x 測定者 4 x 繰り返し 5 で測定者差を <b>厳密に 0</b> にした合成データを種 40 本で回すと、<b>31 本</b>で再現性成分が負に出る(実測 2026-09-23)。丸めを申告しない実装は、この 31 本すべてで「差が無い」と言い切ってしまう。</p>
-<p>★推定量の揺れも隠さない。同じ 60x4x5 で真値 0.4 の繰り返し性は種 40 本で平均 0.39710・標準偏差 0.00788 に出る —— 理論の <code style="color:#22d3bf">sigma/sqrt(2 df)</code> (df = 960 で 0.00913)と同じ桁で、<b>1 本の種を 1 % の精度で信じてはいけない</b>。再現性はもっと悪く、測定者 4 人(自由度 3)からの推定なので真値 0.5 に対して標準偏差 0.159 —— 桁が合えば上等という量である。</p>
-<p>★★<b>交互作用を残すか、誤差にプールするかで答えが変わる</b>。規格の手順は「交互作用の F 検定が有意でなければ交互作用項を落として再計算する」で、*pool_interaction* がその選択:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;auto&quot;</code>(既定)—— 交互作用の p 値が *pool_alpha*(既定 0.25)を<b>超えたら</b> プールする。</p>
-<p>★★<b>0.25 は規格が明記した数ではない</b>。参考マニュアル本文が言うのは「交互作用を見落とす危険を下げるため<b>高い有意水準を選べ</b>」という定性的な指示だけで、数値は書かれていない。0.25 はソフトウェア側の慣行の多数派で、別の実装は 0.05 を既定にしている。α を<b>大きく</b>すると <code style="color:#22d3bf">p &gt; alpha</code> が成りにくくなる = <b>交互作用を残しやすい</b>ので、0.25 は本文の方針に忠実な(保守的な)側。一方で規格の worked example の表は脚注に「α = 0.05 で判定」と書いてあるので、<b>その表を再現すると名乗る検査は <code style="color:#22d3bf">pool_alpha=0.05</code> を明示して通すべき</b>である(既定値の話と、公表例題の再現条件の話は別)。この例題では F = 0.434 がどちらの α でも非有意なので結果は変わらないが、境界付近のデータでは既定の違いが EV / AV を数 % 動かす —— 実測でモデル切替は EV を 7.3 % 動かした。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">False</code> —— 常に交互作用を残す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">True</code> —— 常にプールする。</p>
-<p>返りの <code style="color:#22d3bf">interaction_pooled</code> / <code style="color:#22d3bf">interaction_p</code> / <code style="color:#22d3bf">pool_alpha</code> に<b>どちらを使ったかを必ず載せる</b>。黙って切り替えると、同じ道具が同じ工程について別の数字を返し、その理由が出力のどこにも残らない。</p>
-<p>★実測(規格の例題、10 部品 x 3 測定者 x 3 回の 90 点): 交互作用を残すと EV = 0.214435、プールすると EV = 0.199933 —— <b>7.3 % 違う</b>。選択は p 値の閾値で決まるので、データがわずかに動けばモデルが飛ぶ。この例題では <code style="color:#22d3bf">F = 0.4337 / p = 0.9741</code> と交互作用がまったく効いていないため、規格はプールした側を公表値にしている(その値をこの実装は 3e-7 で再現する)。</p>
-<p>★門にできる厳密な関係: <code style="color:#22d3bf">TV^2 == GRR^2 + PV^2</code> と <code style="color:#22d3bf">GRR^2 == EV^2 + AV^2</code> (定義そのもの)、寄与率の合計 100 %、そして<b>測定者が 1 人のときの EV は升目ごとの標本分散の平均に厳密に一致する</b>(numpy が真値になる)。</p>
+<p>★★<b>음의 분산 성분은 0 으로 자르지만, 자른 사실을 숨기지 않는다</b>(<code style="color:#22d3bf">clamped</code> 열). 기대 평균제곱의 차는 추정량이므로 참 성분이 0 에 가까우면 음이 될 수 있다. 조용히 0 으로하면 &quot;측정자 차이는 없다&quot;고 읽히지만, 올바르게는 &quot;<b>추정할 수 없었다</b>&quot;이다. 게다가 이는 드문 끝단이 아니다 —— 부품 60 x 측정자 4 x 반복 5 로 측정자 차이를 <b>엄밀히 0</b> 으로 둔 합성 데이터를 시드 40 개로 돌리면, <b>31 개</b>에서 재현성 성분이 음으로 나온다(실측 2026-09-23). 자름을 신고하지 않는 구현은 이 31 개 모두에서 &quot;차이가 없다&quot;고단언해 버린다.</p>
+<p>★추정량의 흔들림도 숨기지 않는다. 같은 60x4x5 에서 참값 0.4 인 반복성은 시드 40 개에서평균 0.39710 · 표준편차 0.00788 로 나온다 —— 이론의 <code style="color:#22d3bf">sigma/sqrt(2 df)</code> (df = 960 에서 0.00913)와 같은 자릿수이며, <b>1 개 시드를 1 % 정밀도로 믿어서는 안 된다</b>. 재현성은 더 나빠서, 측정자 4 명(자유도 3)으로부터의 추정이므로 참값 0.5 에 대해표준편차 0.159 —— 자릿수만 맞아도 훌륭한 양이다.</p>
+<p>★★<b>교호작용을 남기느냐, 오차에 풀링하느냐에 따라 답이 바뀐다</b>. 규격의 절차는 &quot;교호작용의 F 검정이 유의하지 않으면 교호작용 항을 빼고 재계산한다&quot;이고, *pool_interaction* 이 그 선택이다:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;auto&quot;</code>(기본값) —— 교호작용의 p 값이 *pool_alpha*(기본값 0.25)를 <b>넘으면</b> 풀링한다.</p>
+<p>★★<b>0.25 는 규격이 명기한 수가 아니다</b>. 참고 매뉴얼 본문이 말하는 것은 &quot;교호작용을 놓칠 위험을 낮추기 위해 <b>높은 유의수준을 골라라</b>&quot;라는 정성적인 지시뿐이며, 수치는 쓰여 있지 않다. 0.25 는 소프트웨어 측 관행의 다수파이고, 다른 구현은 0.05 를 기본값으로 한다. α 를 <b>크게</b> 하면 <code style="color:#22d3bf">p &gt; alpha</code> 가 성립하기 어려워진다 = <b>교호작용을 남기기 쉽다</b>, 따라서 0.25 는 본문의 방침에 충실한(보수적인) 쪽. 한편 규격의 worked example 표는 각주에 &quot;α = 0.05 로 판정&quot;이라고 쓰여 있으므로, <b>그 표를 재현한다고 자처하는 검사는 <code style="color:#22d3bf">pool_alpha=0.05</code> 를 명시해 통과시켜야 한다</b> (기본값의 이야기와 공표 예제의 재현 조건 이야기는 별개). 이 예제에서는 F = 0.434 가어느 α 에서도 비유의이므로 결과는 바뀌지 않지만, 경계 부근의 데이터에서는 기본값의 차이가 EV / AV 를 몇 % 움직인다 —— 실측으로 모델 전환은 EV 를 7.3 % 움직였다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">False</code> —— 항상 교호작용을 남긴다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">True</code> —— 항상 풀링한다.</p>
+<p>반환의 <code style="color:#22d3bf">interaction_pooled</code> / <code style="color:#22d3bf">interaction_p</code> / <code style="color:#22d3bf">pool_alpha</code> 에 <b>어느 쪽을썼는지 반드시 싣는다</b>. 조용히 전환하면 같은 도구가 같은 공정에 대해 다른 숫자를반환하고, 그 이유가 출력 어디에도 남지 않는다.</p>
+<p>★실측(규격의 예제, 10 부품 x 3 측정자 x 3 회의 90 점): 교호작용을 남기면 EV = 0.214435, 풀링하면 EV = 0.199933 —— <b>7.3 % 다르다</b>. 선택은 p 값의임계값으로 정해지므로, 데이터가 조금만 움직여도 모델이 튄다. 이 예제에서는 <code style="color:#22d3bf">F = 0.4337 / p = 0.9741</code> 로 교호작용이 전혀 효과가 없으므로, 규격은풀링한 쪽을 공표값으로 삼고 있다(그 값을 이 구현은 3e-7 로 재현한다).</p>
+<p>★게이트로 쓸 수 있는 엄밀한 관계: <code style="color:#22d3bf">TV^2 == GRR^2 + PV^2</code> 와 <code style="color:#22d3bf">GRR^2 == EV^2 + AV^2</code> (정의 그 자체), 기여율 합계 100 %, 그리고 <b>측정자가 1 명일 때의 EV 는칸마다의 표본분산 평균과 엄밀히 일치한다</b>(numpy 가 참값이 된다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

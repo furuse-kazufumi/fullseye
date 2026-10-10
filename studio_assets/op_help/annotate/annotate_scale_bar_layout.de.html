@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_scale_bar_layout(shape, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, thickness=5)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.annotate_scale_bar_layout(shape, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, thickness=5)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;annotate_scale_bar_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert eine Tabelle (dict): einen Balken <b>runder</b> Länge, höchstens <code style="color:#22d3bf">target_fraction</code> der Bildbreite.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>長さは <code style="color:#22d3bf">1/2/5 × 10^k</code> のうち <code style="color:#22d3bf">target_fraction * W * units_per_pixel</code> 以下の最大値。画素長 = <code style="color:#22d3bf">round(length / units_per_pixel)</code>。</p>
+<p>Die Länge ist der größte Wert aus <code style="color:#22d3bf">1/2/5 × 10^k</code>, der <code style="color:#22d3bf">target_fraction * W * units_per_pixel</code> nicht überschreitet. Pixellänge = <code style="color:#22d3bf">round(length / units_per_pixel)</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;length&quot;,&quot;px&quot;,&quot;rect&quot;:(x,y,w,h),&quot;unit&quot;,&quot;corner&quot;,&quot;label&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;length&quot;,&quot;px&quot;,&quot;rect&quot;:(x,y,w,h),&quot;unit&quot;,&quot;corner&quot;,&quot;label&quot;}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>units_per_pixel / target_fraction が非正、未知の corner、</p>
-<p>バーが 1 画素未満か画像に収まらない。</p>
+<p>units_per_pixel / target_fraction nicht positiv, unbekannte corner,</p>
+<p>Balken kürzer als 1 Pixel oder passt nicht ins Bild.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

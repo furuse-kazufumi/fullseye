@@ -4,21 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.legend_box(img, entries, xy, anchor=&#x27;lt&#x27;, swatch=14, row_gap=4, pad=8, font_size=13, box_color=None, box_alpha=0.72, markers=False, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, style=None, border=1, border_color=&#x27;neutral&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.legend_box(img, entries, xy, anchor=&#x27;lt&#x27;, swatch=14, row_gap=4, pad=8, font_size=13, box_color=None, box_alpha=0.72, markers=False, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, style=None, border=1, border_color=&#x27;neutral&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;legend_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>顏色 × 說明的圖例。<b>框高由條目數以閉合式確定</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">height = 2*pad + n*row_h + (n-1)*row_gap</code> (<code style="color:#22d3bf">row_h = max(swatch, 文字高)</code>)。</p>
+<p><code style="color:#22d3bf">height = 2*pad + n*row_h + (n-1)*row_gap</code> (<code style="color:#22d3bf">row_h = max(swatch, 文字高度)</code>)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>entries : sequence</p>
-<p><code style="color:#22d3bf">(color, text)</code> の並び。<code style="color:#22d3bf">color</code> は役割名でも RGB でもよい。</p>
+<p><code style="color:#22d3bf">(color, text)</code> 的序列。<code style="color:#22d3bf">color</code> 可以是角色名稱也可以是 RGB。</p>
 <p>markers : bool</p>
-<p>True なら役割名に対応する <code style="color:#22d3bf">palette.ROLE_MARKERS</code> の記号を</p>
-<p>説明の前に付ける(<b>色だけに意味を載せない</b>ため)。役割名でない</p>
-<p>要素には記号が無いので付かない。</p>
+<p>True 時在說明前加上與角色名稱對應的 <code style="color:#22d3bf">palette.ROLE_MARKERS</code> 符號</p>
+<p>(為了<b>不只用顏色承載含義</b>)。不是角色名稱的</p>
+<p>元素沒有符號,所以不加。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>entries が空 / 形が <code style="color:#22d3bf">(color, text)</code> でない / 箱が画像からはみ出す /</p>
-<p>未知の役割名。</p>
+<p>entries 為空 / 形式不是 <code style="color:#22d3bf">(color, text)</code> / 框超出影像 /</p>
+<p>未知的角色名稱。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

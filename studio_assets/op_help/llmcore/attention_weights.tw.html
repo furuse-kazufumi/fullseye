@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import llmcore; llmcore.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_weights&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>逐列 softmax(帶遮罩)→ attnmap。<b>列和為 1，mask 位置嚴格為 0</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>行ごとに最大値を引いてから指数を取る。これは飾りではない —— 引かずに <code style="color:#22d3bf">exp</code> するとスコアが大きいとき<b>全行が inf/NaN になる</b>(実測: 96 行中 96 行)。引けば 0 行。</p>
+<p>依列先減去最大值再取指數。這不是裝飾 —— 不減就 <code style="color:#22d3bf">exp</code> 的話, 分數大時<b>所有列都會變成 inf/NaN</b>(實測:96 列中 96 列)。減了則為 0 列。</p>
 <p>Args:</p>
-<p>scores: (T, T) float の生スコア(<code style="color:#22d3bf">attention_scores</code> の出力)。</p>
-<p>mask: None(全対)/ <code style="color:#22d3bf">&quot;causal&quot;</code>(下三角)/ <code style="color:#22d3bf">&quot;window&quot;</code>(幅 <code style="color:#22d3bf">window</code> の因果窓)/</p>
-<p>(T, T) の bool 配列。True が「見てよい」。</p>
-<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅(自分を含む個数)。</p>
+<p>scores: (T, T) float 的原始分數(<code style="color:#22d3bf">attention_scores</code> 的輸出)。</p>
+<p>mask: None(全部對)/ <code style="color:#22d3bf">&quot;causal&quot;</code>(下三角)/ <code style="color:#22d3bf">&quot;window&quot;</code>(寬 <code style="color:#22d3bf">window</code> 的因果視窗)/</p>
+<p>(T, T) 的 bool 陣列。True 表示「可以看」。</p>
+<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> 時的視窗寬度(包含自身的個數)。</p>
 <p>Returns:</p>
-<p>attnmap (T, T) float: 各行が確率分布(和 1)。mask が False の位置は厳密に 0。</p>
+<p>attnmap (T, T) float: 每列是機率分布(和為 1)。mask 為 False 的位置嚴格為 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

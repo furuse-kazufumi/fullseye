@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shift_to_vector(shift)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.shift_to_vector(shift)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;shift_to_vector&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정수 시프트 <code style="color:#22d3bf">(dz, dy, dx)</code> → <code style="color:#22d3bf">vector (3,)</code>. <code style="color:#22d3bf">shift</code> 의 출구(<b>가역</b>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">match_phase_3d</code> は整数 3-tuple を返す。<code style="color:#22d3bf">vector</code> へ載せると <code style="color:#22d3bf">points</code> 語彙へ繋がる(<code style="color:#22d3bf">vector -&gt; points</code> の既存 op がある)。</p>
+<p><code style="color:#22d3bf">match_phase_3d</code>는 정수 3-tuple을 반환한다. <code style="color:#22d3bf">vector</code>에 올리면 <code style="color:#22d3bf">points</code> 어휘로 이어진다(<code style="color:#22d3bf">vector -&gt; points</code>의 기존 op이 있다).</p>
 <p>Args:</p>
-<p>shift: 長さ 3 の整数列 (dz, dy, dx)。</p>
+<p>shift: 길이 3의 정수 열 (dz, dy, dx).</p>
 <p>Returns:</p>
-<p>(3,) float64。</p>
+<p>(3,) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 長さが 3 でない / 非有限。</p>
+<p>ValueError: 길이가 3이 아님 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

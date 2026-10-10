@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code>(要直接调用实现,<code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code>;从台账取用则 <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>正则化输运代价 <code style="color:#22d3bf">&lt;plan, cost&gt;</code>。<b>不是严格意义的距离</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>正則化のぶん系統的に偏るので、自分自身との「距離」も 0 にならない(そのずれ幅はテストに実測で残してある)。1 次元で厳密が要るときは <code style="color:#22d3bf">wasserstein_1d</code>。</p>
+<p>由于正则化会产生系统性偏差,所以与自身的“距离”也不为 0 (该偏差幅度以实测值记录在测试中)。1 维中需要严格值时用 <code style="color:#22d3bf">wasserstein_1d</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 测色与光谱知识 —— 颜色只由“光谱 × 光源 × 观察者”决定</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

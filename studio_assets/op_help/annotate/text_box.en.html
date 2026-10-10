@@ -4,54 +4,53 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_box(img, text, xy, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, anchor=&#x27;lt&#x27;, pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.text_box(img, text, xy, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, anchor=&#x27;lt&#x27;, pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;text_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Text on a backing plate (a translucent panel). <b>Overflow raises instead of being silently clipped.</b></p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>img : ndarray</p>
-<p><code style="color:#22d3bf">(H,W)</code> か <code style="color:#22d3bf">(H,W,C)</code>、float [0,1]。</p>
+<p><code style="color:#22d3bf">(H,W)</code> or <code style="color:#22d3bf">(H,W,C)</code>, float [0,1].</p>
 <p>text : str</p>
-<p>描く文字列。</p>
+<p>String to draw.</p>
 <p>xy : (x, y)</p>
-<p>アンカーの位置(<b>x=col, y=row</b>、row は下向き)。</p>
+<p>Anchor position (<b>x=col, y=row</b>, row points down).</p>
 <p>color : str or sequence</p>
-<p>役割名または RGB。<code style="color:#22d3bf">text_color</code> 未指定ならこれが<b>枠の色</b>として</p>
-<p>使われ、文字は読みやすい既定色になる。</p>
+<p>Role name or RGB. If <code style="color:#22d3bf">text_color</code> is not given, this is used as the <b>frame colour</b></p>
+<p>and the text gets a readable default colour.</p>
 <p>text_color, box_color : str/sequence or None</p>
-<p>文字色・板の色。None なら既定(明るい文字 × 暗い板)。文字色が None の</p>
-<p>ときは、<b>実際に下に出る色</b>に対して明るい既定色が <code style="color:#22d3bf">min_contrast</code> を</p>
-<p>割る場合に限り、暗い文字(板の色)へ自動で切り替える ―― 板なし</p>
-<p>(<code style="color:#22d3bf">box_alpha=0</code>)で白地に置く目盛り・カラーバー・凡例のラベルが</p>
-<p>白に溶けないため。<code style="color:#22d3bf">text_color</code> を明示したときは切り替えない</p>
-<p>(色は図の意味なので勝手に変えず、読めなければ例外にする)。</p>
+<p>Text colour and plate colour. None means default (light text × dark plate). When the text colour is None,</p>
+<p>it switches automatically to dark text (the plate colour) only if the light default colour falls below <code style="color:#22d3bf">min_contrast</code></p>
+<p>against <b>the colour that actually appears underneath</b> -- so that labels of ticks, colour bars and legends placed</p>
+<p>without a plate (<code style="color:#22d3bf">box_alpha=0</code>) on a white background do not</p>
+<p>dissolve into the white. When <code style="color:#22d3bf">text_color</code> is given explicitly, it does not switch</p>
+<p>(colour carries meaning in the figure, so it is not changed arbitrarily; if unreadable, an exception is raised).</p>
 <p>box_alpha : float</p>
-<p>板の不透明度 [0,1]。<code style="color:#22d3bf">0</code> なら板を描かない(目盛りラベル向け)。</p>
+<p>Plate opacity [0,1]. <code style="color:#22d3bf">0</code> draws no plate (for tick labels).</p>
 <p>anchor : str</p>
-<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> の 9 通り。</p>
+<p>9 options <code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code>.</p>
 <p>pad : int</p>
-<p>板の内側余白[px]。</p>
+<p>Inner padding of the plate [px].</p>
 <p>max_width : int or None</p>
-<p>文字の折り返し幅。None なら 1 行のまま。</p>
+<p>Wrap width of the text. If None, it stays on 1 line.</p>
 <p>wrap : bool</p>
-<p>False なら折り返さず 1 行のまま縮めて <code style="color:#22d3bf">max_width</code> に収める。</p>
+<p>If False, it does not wrap but stays on 1 line and shrinks to fit <code style="color:#22d3bf">max_width</code>.</p>
 <p>min_contrast : float</p>
-<p>文字と「実際にその下に出る色」のコントラスト比の下限。下回れば</p>
-<p><b>ValueError</b>(背景と同化した文字は誰も気づけないので通さない)。</p>
-<p><b>限界(正直に)</b>: 比べる相手は板の下の<b>平均色</b>なので、</p>
-<p>白と黒が半々に混じった写真の上に <code style="color:#22d3bf">box_alpha=0</code> で置くと、平均は</p>
-<p>中間灰になり検査を通ってしまう(白い部分の上の文字は読めない)。</p>
-<p>地が荒れている場所では <code style="color:#22d3bf">box_alpha</code> を上げて板を効かせること ――</p>
-<p>この検査は「板を忘れた」を捕まえるためのもので、</p>
-<p>「板があっても読めない」まで保証はしない。</p>
+<p>Lower bound on the contrast ratio between the text and &quot;the colour that actually appears beneath it&quot;. Below it,</p>
+<p><b>ValueError</b> (text that blends into the background is noticed by nobody, so it is not let through).</p>
+<p><b>Limit (honestly)</b>: what it compares against is the <b>mean colour</b> under the plate, so</p>
+<p>placed with <code style="color:#22d3bf">box_alpha=0</code> on a photo that is half white and half black, the mean</p>
+<p>becomes mid grey and passes the check (the text over the white part is unreadable).</p>
+<p>Where the ground is busy, raise <code style="color:#22d3bf">box_alpha</code> to let the plate work --</p>
+<p>this check is meant to catch &quot;forgot the plate&quot;, and</p>
+<p>does not guarantee against &quot;unreadable even with a plate&quot;.</p>
 <p>border : int</p>
-<p>板の枠線の太さ(0 で枠なし)。色は <code style="color:#22d3bf">border_color</code> か <code style="color:#22d3bf">color</code>。</p>
+<p>Thickness of the plate&#x27;s frame line (0 for no frame). Colour is <code style="color:#22d3bf">border_color</code> or <code style="color:#22d3bf">color</code>.</p>
 <p>style : dict or None</p>
-<p>枠線を引く <code style="color:#22d3bf">imagedraw.draw_polyline</code> へ<b>素通し</b>する引数。</p>
+<p>Arguments <b>passed through</b> to <code style="color:#22d3bf">imagedraw.draw_polyline</code>, which draws the frame line.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>同じ shape の新しい配列。</p>
+<p>New array of the same shape.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>板が画像からはみ出す / 文字が収まらない / コントラスト不足 /</p>
-<p>未知の役割名・アンカー / 負の余白。</p>
+<p>plate sticks out of the image / text does not fit / insufficient contrast /</p>
+<p>unknown role name or anchor / negative padding.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

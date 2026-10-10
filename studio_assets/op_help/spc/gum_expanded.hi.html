@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_expanded(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, dof=&#x27;dof&#x27;, level=0.95, correlation=None, estimate=None, lower_bound=None, upper_bound=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.gum_expanded(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, dof=&#x27;dof&#x27;, level=0.95, correlation=None, estimate=None, lower_bound=None, upper_bound=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;gum_expanded&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Welch-Satterthwaite की effective degrees of freedom, coverage factor k, और expanded uncertainty U (<code style="color:#22d3bf">table</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>nu_eff = u_c^4 / sum_i (c_i u_i)^4 / nu_i        U = k u_c,  k = t_{p}(nu_eff)</p>
-<p>★門にできる厳密な性質が 3 つある:</p>
-<p style="margin:2px 0 2px 12px">• 成分が 1 つだけなら <code style="color:#22d3bf">nu_eff == nu</code>(厳密)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nu_eff &gt;= min_i nu_i</code> が<b>常に</b>成り立つ。証明は <code style="color:#22d3bf">sum u_i^4/nu_i &lt;= (1/nu_min) sum u_i^4 &lt;= (1/nu_min)(sum u_i^2)^2</code>。有効自由度が最小の成分より小さくなったら計算が壊れている。</p>
-<p style="margin:2px 0 2px 12px">• すべての自由度が無限大なら <code style="color:#22d3bf">k</code> は正規分布の分位点へ収束する(95 % で 1.959964)。</p>
-<p>無限自由度(既知の定数など)は <code style="color:#22d3bf">numpy.inf</code> を入れる。</p>
+<p>★ gate के रूप में इस्तेमाल होने वाले 3 सटीक गुण हैं:</p>
+<p style="margin:2px 0 2px 12px">• केवल 1 component हो तो <code style="color:#22d3bf">nu_eff == nu</code> (सटीक)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nu_eff &gt;= min_i nu_i</code> <b>हमेशा</b> सही रहता है। प्रमाण: <code style="color:#22d3bf">sum u_i^4/nu_i &lt;= (1/nu_min) sum u_i^4 &lt;= (1/nu_min)(sum u_i^2)^2</code>। effective degrees of freedom सबसे छोटे component से कम हो जाएँ तो गणना टूटी हुई है।</p>
+<p style="margin:2px 0 2px 12px">• सभी degrees of freedom अनंत हों तो <code style="color:#22d3bf">k</code> normal distribution के quantile पर converge होता है (95 % पर 1.959964)।</p>
+<p>अनंत degrees of freedom (ज्ञात constant आदि) के लिए <code style="color:#22d3bf">numpy.inf</code> डालें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

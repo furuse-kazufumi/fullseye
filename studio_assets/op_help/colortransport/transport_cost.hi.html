@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_cost(plan, cost)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.transport_cost(plan, cost)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;transport_cost&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>transport plan की कुल cost <code style="color:#22d3bf">&lt;plan, cost&gt;</code>। <b>plan का उपभोग करने वाला</b> op।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>計画は「行和・列和が周辺分布に一致する」という意味を持つ行列で、普通の <code style="color:#22d3bf">matrix</code> として扱うと質量保存が黙って壊れる。ここは計画としての検査(非負・和が 1 前後)を通してから費用を出す。</p>
+<p>plan एक ऐसा matrix है जिसका अर्थ है &quot;row sums और column sums marginals के बराबर हैं&quot;, और इसे साधारण <code style="color:#22d3bf">matrix</code> की तरह बरतने पर mass conservation चुपचाप टूट जाता है। यहाँ plan के रूप में जाँच (ऋणात्मक नहीं, योग लगभग 1) पास करने के बाद ही cost निकाली जाती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Colorimetry और spectra — रंग केवल spectrum × illuminant × observer से तय होता है</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

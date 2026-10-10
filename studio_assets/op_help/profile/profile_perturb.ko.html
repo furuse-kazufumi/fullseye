@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_perturb(contour, kind=&#x27;thicken&#x27;, amount=0.001, extent=0.1, cycles=6.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import profileops; profileops.profile_perturb(contour, kind=&#x27;thicken&#x27;, amount=0.001, extent=0.1, cycles=6.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprofile.get(&quot;profile_perturb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>크기를 아는 결함을 넣은 윤곽을 반환한다. <code style="color:#22d3bf">PERTURB_KINDS</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><b>これが無い形状検査は、静かに合格を出す</b>。0.001 翼弦の厚み増を入れて、検出器がそれを 0.001 として返すかを確かめるために使う。</p>
+<p><b>이것이 없는 형상 검사는 조용히 합격을 낸다</b>. 0.001 시위의 두께 증가를 넣어, 검출기가 그것을 0.001 로 반환하는지 확인하는 데 쓴다.</p>
 <p>Args:</p>
-<p>contour: 元の輪郭。</p>
-<p>kind: 欠陥の種類。</p>
-<p>amount: 大きさ(翼弦比)。<code style="color:#22d3bf">&quot;twist&quot;</code> だけは度。</p>
-<p>extent: <code style="color:#22d3bf">&quot;le_erosion&quot;</code> が及ぶ弦方向の範囲。</p>
-<p>cycles: <code style="color:#22d3bf">&quot;waviness&quot;</code> の波数。</p>
+<p>contour: 원래 윤곽.</p>
+<p>kind: 결함의 종류.</p>
+<p>amount: 크기(시위 비). <code style="color:#22d3bf">&quot;twist&quot;</code> 만은 도.</p>
+<p>extent: <code style="color:#22d3bf">&quot;le_erosion&quot;</code> 이 미치는 시위 방향 범위.</p>
+<p>cycles: <code style="color:#22d3bf">&quot;waviness&quot;</code> 의 파수.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

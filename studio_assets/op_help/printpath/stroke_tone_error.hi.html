@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tone_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>line खींचने से बना <b>tone</b> लक्ष्य से कितना अलग है। → <code style="color:#22d3bf">table</code></p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★これが一筆書きの<b>本当の目的関数</b>。「絵として似ている」を人の目に任せず、ペン幅で描いて目の尺度にぼかし、目標の暗さと比べて数で返す。</p>
-<p>返り値: dict</p>
-<p>&quot;rms&quot; / &quot;max_abs&quot; / &quot;bias&quot; —— 暗さの差(<code style="color:#22d3bf">[0, 1]</code> の尺度)</p>
-<p>&quot;corr&quot; —— 目標の暗さと描いた暗さの相関(1 に近いほど濃淡を追えている)</p>
-<p>&quot;ink_fraction&quot; —— 紙に乗ったインクの面積率</p>
-<p>&quot;target_darkness&quot; —— 目標の平均暗さ(インク率と釣り合うべき量)</p>
-<p>&quot;length_px&quot; —— 線の長さ[px]</p>
-<p>★<b>ペン幅は連続なノブ</b>(被覆率で塗る)。線が重ならない範囲では <code style="color:#22d3bf">インク率 ≈ 線長 × ペン幅 / 画像の面積</code> が成り立つので、目標の濃さに合うペン幅を <b>閉形式で解いてから</b>確かめられる:</p>
-<p><code style="color:#22d3bf">pen_width ≈ target_darkness × area / length_px</code>。</p>
+<p>★यही single-stroke drawing का <b>असली objective function</b> है। &quot;तस्वीर जैसा दिखता है&quot; को इंसानी आँख पर छोड़ने के बजाय, pen width से बनाकर, आँख के scale पर blur करके, target darkness से तुलना करके संख्या लौटाई जाती है।</p>
+<p>return value: dict</p>
+<p>&quot;rms&quot; / &quot;max_abs&quot; / &quot;bias&quot; -- darkness का अंतर (<code style="color:#22d3bf">[0, 1]</code> scale पर)</p>
+<p>&quot;corr&quot; -- target darkness और बनाई गई darkness का correlation (1 के जितना क़रीब, tone उतना अच्छे से follow हो रहा है)</p>
+<p>&quot;ink_fraction&quot; -- काग़ज़ पर ink का area fraction</p>
+<p>&quot;target_darkness&quot; -- target की औसत darkness (वह मात्रा जिसके बराबर ink fraction होना चाहिए)</p>
+<p>&quot;length_px&quot; -- line की लंबाई [px]</p>
+<p>★<b>pen width एक continuous knob है</b> (coverage से रंगा जाता है)। जहाँ lines overlap नहीं करतीं वहाँ <code style="color:#22d3bf">ink fraction ≈ line length × pen width / image area</code> लागू होता है, इसलिए target darkness से मेल खाने वाली pen width को <b>पहले closed form में हल करके</b> फिर जाँचा जा सकता है:</p>
+<p><code style="color:#22d3bf">pen_width ≈ target_darkness × area / length_px</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

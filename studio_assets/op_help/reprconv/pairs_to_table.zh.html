@@ -4,16 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_table(pairs)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.pairs_to_table(pairs)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对 <code style="color:#22d3bf">(N,2)</code> → 汇总 <code style="color:#22d3bf">table</code>。<b>单向</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">x_uniform</code> は「列 0 が等間隔か」の判定で、これが False の対を <code style="color:#22d3bf">pairs_to_signal</code> に通すと x が黙って落ちる(上の docstring 参照)。判定は最大差分と最小差分の比で行い、閾値は 1e-9(相対)。</p>
+<p><code style="color:#22d3bf">x_uniform</code> 是“列 0 是否等间隔”的判定,判定为 False 的对</p>
+<p>若通过 <code style="color:#22d3bf">pairs_to_signal</code>,x 会被悄悄丢掉(参见上面的 docstring)。判定使用最大差分与最小差分之比,阈值为 1e-9(相对)。</p>
 <p>Args:</p>
 <p>pairs: (N, 2)。</p>
 <p>Returns:</p>
 <p>dict(<code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">x_min</code> / <code style="color:#22d3bf">x_max</code> / <code style="color:#22d3bf">y_min</code> / <code style="color:#22d3bf">y_max</code> /</p>
-<p><code style="color:#22d3bf">y_mean</code> / <code style="color:#22d3bf">x_uniform</code> / <code style="color:#22d3bf">x_step</code>(等間隔のときのみ) /</p>
-<p><code style="color:#22d3bf">pearson_r</code>(N &gt;= 2 かつ両列が定数でないとき))。</p>
+<p><code style="color:#22d3bf">y_mean</code> / <code style="color:#22d3bf">x_uniform</code> / <code style="color:#22d3bf">x_step</code>(仅等间隔时) /</p>
+<p><code style="color:#22d3bf">pearson_r</code>(N &gt;= 2 且两列都不是常数时))。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: 形状不正确 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.focus_sweep_surface_video(volseq, window: &#x27;int&#x27; = 5, zscale: &#x27;float&#x27; = 1.0, light=(0.4, 0.4, 0.8), ambient: &#x27;float&#x27; = 0.25) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import live4d; live4d.focus_sweep_surface_video(volseq, window: &#x27;int&#x27; = 5, zscale: &#x27;float&#x27; = 1.0, light=(0.4, 0.4, 0.8), ambient: &#x27;float&#x27; = 0.25) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opslive4d.get(&quot;focus_sweep_surface_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由焦点扫描(每帧是 z 方向的对焦堆栈)的时间序列生成<b>带阴影的高度场视频</b> <code style="color:#22d3bf">(T, Y, X, 3)</code>(<code style="color:#22d3bf">rgbvideo</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>高さは <code style="color:#22d3bf">focus_sweep_height_video</code> と同じ(合焦度の最大を放物線で副ボクセルに)。高さ場の勾配から法線を作り(<code style="color:#22d3bf">zscale</code> は z 1 枚の実長 / 画素の実長)、<code style="color:#22d3bf">light</code> 方向のランバート陰影(<code style="color:#22d3bf">ambient</code> を下駄に)を<b>高さの色</b>(青 = 低い → 赤 = 高い)に掛ける。掃引の途中で対象が動くと層の整合が崩れて高さが跳ぶ(その時刻だけ疑う)。</p>
+<p>高度与 <code style="color:#22d3bf">focus_sweep_height_video</code> 相同(用抛物线把聚焦度最大处细化到亚体素)。由高度场的梯度构成法线(<code style="color:#22d3bf">zscale</code> 为 z 方向 1 张的实际长度 / 像素的实际长度),把 <code style="color:#22d3bf">light</code> 方向的朗伯着色(以 <code style="color:#22d3bf">ambient</code> 作为底数)乘到<b>高度的颜色</b>(蓝 = 低 → 红 = 高)上。扫掠途中对象移动的话,层间一致性被破坏, 高度会跳变(只怀疑那些时刻)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

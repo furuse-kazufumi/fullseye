@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6, mask=None, unit=&#x27;&#x27;, label_fmt=&#x27;{:.3g}&#x27;, orientation=&#x27;vertical&#x27;, font_size=12, scheme=&#x27;okabe_ito&#x27;, font_path=None, text_color=None, nan_transparent=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6, mask=None, unit=&#x27;&#x27;, label_fmt=&#x27;{:.3g}&#x27;, orientation=&#x27;vertical&#x27;, font_size=12, scheme=&#x27;okabe_ito&#x27;, font_path=None, text_color=None, nan_transparent=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_colorbar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지(image2d)를 돌려줍니다: 스칼라장을 LUT 로 색 입혀 겹치고 컬러바를 붙입니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">t = (field - vmin)/(vmax - vmin)</code> を [0,1] に<b>クリップ</b>し <code style="color:#22d3bf">lut[round(t*(n-1))]</code> で色にする(範囲外の値は端の色 —— カラーバーの端と同じなので嘘にならない)。重ねは <code style="color:#22d3bf">alpha</code> の α 合成、<code style="color:#22d3bf">mask</code> を渡せばその画素だけ。</p>
+<p><code style="color:#22d3bf">t = (field - vmin)/(vmax - vmin)</code>를 [0,1]로 <b>클립</b>하고 <code style="color:#22d3bf">lut[round(t*(n-1))]</code> 로 색을 만든다(범위 밖의 값은 끝의 색 -- 컬러바의 끝과 같으므로 거짓이 되지 않는다). 겹치기는 <code style="color:#22d3bf">alpha</code>의 α 합성, <code style="color:#22d3bf">mask</code>를 넘기면 그 화소만.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>field : (H, W)</p>
-<p>画像と同じ大きさのスカラ場。非有限は <code style="color:#22d3bf">nan_transparent=True</code> のときだけ</p>
-<p>透明として許す(既定は ValueError)。</p>
+<p>영상과 같은 크기의 스칼라장. 비유한 값은 <code style="color:#22d3bf">nan_transparent=True</code>일 때만</p>
+<p>투명으로 허용(기본값은 ValueError).</p>
 <p>lut : (n, 3) or None</p>
-<p>None なら <code style="color:#22d3bf">palette.diverging_lut</code> の 256 段。</p>
+<p>None이면 <code style="color:#22d3bf">palette.diverging_lut</code>의 256 단계.</p>
 <p>vmin, vmax : float or None</p>
-<p>None なら場の(有限値の)最小・最大。等しければ ValueError。</p>
+<p>None이면 장의 (유한값의) 최솟값, 최댓값. 같으면 ValueError.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形の不一致、非有限(許可なし)、vmin == vmax、alpha が [0,1] の外、</p>
-<p>バーの矩形が画像外、LUT の形。</p>
+<p>형태 불일치, 비유한(허가 없음), vmin == vmax, alpha가 [0,1] 밖,</p>
+<p>막대의 사각형이 영상 밖, LUT의 형태.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

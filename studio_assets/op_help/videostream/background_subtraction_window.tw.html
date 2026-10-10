@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import videostream; videostream.background_subtraction_window(video, window: &#x27;int&#x27; = 5, threshold: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsvideostream.get(&quot;background_subtraction_window&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>因果視窗中位數背景 → 逐影格 0/1 前景遮罩 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>フレーム <code style="color:#22d3bf">t</code> ごとに、直近 <code style="color:#22d3bf">window</code> 枚(<code style="color:#22d3bf">max(0, t-window+1) .. t</code>、<b>そのフレーム自身を含む</b>)の画素ごとの中央値を背景 <code style="color:#22d3bf">bg</code> とし、<code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code> を 1、それ以外を 0 にする。未来のフレームは見ない(因果的)ので、先頭では枚数が足りないぶん窓が短い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> の配列、または同形・同 dtype の 2-D フレームの list。uint8/uint16 は dtype の最大値で <code style="color:#22d3bf">[0, 1]</code> に、float はそのまま <code style="color:#22d3bf">[0, 1]</code> にクリップ。カラー <code style="color:#22d3bf">(T, H, W, C)</code> は受けない。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>: 1〜4096 の int(bool 不可)。1 だと背景 = 自分なので全画素 0。偶数枚のときの中央値は中間 2 値の平均。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code>: <code style="color:#22d3bf">[0, 1]</code> の強度単位(uint8 なら <code style="color:#22d3bf">/255</code> 換算)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64 の 0 / 1。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形・dtype・範囲・非有限)。</p>
-<p>ゆっくり動く物体は <code style="color:#22d3bf">window</code> 枚以内に背景へ溶けるので、その場合は <code style="color:#22d3bf">running_gaussian_foreground</code>(選択的更新)か <code style="color:#22d3bf">exponential_foreground</code> を。背景そのものが要るなら <code style="color:#22d3bf">temporal_median_window</code>。</p>
+<p>對每一幀 <code style="color:#22d3bf">t</code>，把最近 <code style="color:#22d3bf">window</code> 幀(<code style="color:#22d3bf">max(0, t-window+1) .. t</code>,<b>包含該幀本身</b>)的逐像素中位數作為背景 <code style="color:#22d3bf">bg</code>，將 <code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code> 設為 1，其餘設為 0。不看未來的幀(因果的)，因此在開頭幀數不足的部分視窗較短。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 陣列，或形狀相同、dtype 相同的 2-D 幀的 list。uint8/uint16 依 dtype 最大值正規化到 <code style="color:#22d3bf">[0, 1]</code>,float 則直接截斷到 <code style="color:#22d3bf">[0, 1]</code>。不接受彩色 <code style="color:#22d3bf">(T, H, W, C)</code>。NaN/Inf 拋出 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>: 1~4096 的 int(不可為 bool)。為 1 時背景 = 自身，因此全部像素為 0。幀數為偶數時的中位數取中間 2 個值的平均。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code>: <code style="color:#22d3bf">[0, 1]</code> 的強度單位(uint8 時依 <code style="color:#22d3bf">/255</code> 換算)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: <code style="color:#22d3bf">(T, H, W)</code> float64 的 0 / 1。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形狀、dtype、範圍、非有限值)。</p>
+<p>緩慢移動的物體會在 <code style="color:#22d3bf">window</code> 幀之內融入背景，這種情況下請用 <code style="color:#22d3bf">running_gaussian_foreground</code>(選擇性更新)或 <code style="color:#22d3bf">exponential_foreground</code>。若需要背景本身，用 <code style="color:#22d3bf">temporal_median_window</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

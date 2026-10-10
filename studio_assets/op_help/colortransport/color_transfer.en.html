@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_transfer(src, ref, method=&#x27;reinhard&#x27;, space=&#x27;lab&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import colortransport; colortransport.color_transfer(src, ref, method=&#x27;reinhard&#x27;, space=&#x27;lab&#x27;)</code>; from the registry, <code style="color:#22d3bf">opscolortransport.get(&quot;color_transfer&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Move the colour cast of <code style="color:#22d3bf">src</code> toward <code style="color:#22d3bf">ref</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>src, ref : array_like</p>
-<p><code style="color:#22d3bf">(..., 3)</code> の sRGB(<code style="color:#22d3bf">[0, 1]</code> の float、または整数 dtype)。</p>
-<p>大きさは違ってよい(統計だけを使う)。</p>
+<p><code style="color:#22d3bf">(..., 3)</code> sRGB (float in <code style="color:#22d3bf">[0, 1]</code>, or an integer dtype).</p>
+<p>The sizes may differ (only statistics are used).</p>
 <p>method : {&quot;reinhard&quot;, &quot;gaussian&quot;, &quot;histogram&quot;}</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reinhard&quot;</code> —— 各チャネルの平均と標準偏差だけ合わせる(Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001)。<b>各チャネルが単峰の正規分布</b>という仮定が効いている。前景と背景がはっきり分かれた 二峰の絵では、平均と分散は合うのに <b>どちらの峰にも当たらない色</b>になる(例外は出ない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gaussian&quot;</code> —— 共分散ごと運ぶ Monge 写像。<b>相関が保たれる</b>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;histogram&quot;</code> —— チャネルごとに厳密なヒストグラム整合。周辺分布は完全に一致するが、<b>チャネル間の相関は壊れる</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reinhard&quot;</code> —— matches only the mean and standard deviation of each channel (Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001). It relies on the assumption that <b>each channel is a unimodal normal distribution</b>. On a bimodal picture with clearly separated foreground and background, the mean and variance match, yet the result is <b>a colour that hits neither peak</b> (no exception is raised).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gaussian&quot;</code> —— Monge map that transports the covariance as a whole. <b>Correlation is preserved</b>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;histogram&quot;</code> —— exact histogram matching per channel. The marginal distributions match perfectly, but <b>the correlation between channels is destroyed</b>.</p>
 <p>space : {&quot;lab&quot;, &quot;rgb&quot;}</p>
-<p>統計を取る空間。既定の <code style="color:#22d3bf">lab</code> は <code style="color:#22d3bf">imgmetrics</code> の実体を使う。</p>
+<p>The space in which the statistics are taken. The default <code style="color:#22d3bf">lab</code> uses the implementation in <code style="color:#22d3bf">imgmetrics</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p><code style="color:#22d3bf">src</code> と同じ形の sRGB <code style="color:#22d3bf">[0, 1]</code>(色域外は切り詰められる)。</p>
+<p>sRGB <code style="color:#22d3bf">[0, 1]</code> of the same shape as <code style="color:#22d3bf">src</code> (out-of-gamut values are clipped).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Colorimetry and spectra — colour is fixed only by spectrum × illuminant × observer</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

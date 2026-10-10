@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code>(要直接呼叫實作,<code style="color:#22d3bf">import profileops; profileops.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code>;從台帳取用則 <code style="color:#22d3bf">opsprofile.get(&quot;profile_leading_edge_radius&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>前緣半徑(與弦長之比)。對前緣附近的點擬合圓。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">frac</code> は前縁から弦方向にどこまでを「前縁付近」とみなすか。<b>この値で答えが変わる</b>。鼻先は円だが、少し離れると円ではないので、窓を広げると系統的に<b>過大</b>になる。NACA 4 桁の閉形式 <code style="color:#22d3bf">1.1019 * t^2</code> と突き合わせた実測(点数 4001 で生成):</p>
+<p><code style="color:#22d3bf">frac</code> 表示從前緣沿弦向多遠的範圍視為「前緣附近」。<b>答案隨這個值而變</b>。鼻尖是圓，但稍離開就不再是圓，因此擴大視窗會使結果系統性地<b>偏大</b>。與 NACA 4 位數翼型的閉合式 <code style="color:#22d3bf">1.1019 * t^2</code> 對照的實測(以 4001 個點生成):</p>
 <p>==========  ==========  ==========  ==========  ==========</p>
 <p>frac        NACA 0012   NACA 2412   NACA 0021   NACA 0008</p>
 <p>==========  ==========  ==========  ==========  ==========</p>
-<p>閉形式      0.01587     0.01587     0.04859     0.00705</p>
+<p>閉合式         0.01587     0.01587     0.04859     0.00705</p>
 <p>0.001       0.01590     0.01594     0.04780     0.00730</p>
 <p>0.005       0.01708     0.01716     0.04801     0.00870</p>
 <p>0.01        0.01872     0.01880     0.04897     0.01042</p>
 <p>0.03        0.02517     0.02526     0.05412     0.01688</p>
 <p>==========  ==========  ==========  ==========  ==========</p>
-<p>★ 既定は <b>0.001</b>。最初 0.03 を既定にしていて、閉形式の <b>1.6 倍</b>の値を返していた(「1 % 以内」と docstring に書いたのは確かめる前の推測だった)。厚い翼(0021)ほど鈍いので窓の影響が小さく、薄い翼(0008)ほど敏感。</p>
-<p>実データのように点が疎な輪郭では、この窓に点が 5 つ入らないことがある —— そのときは自動で等弧長に取り直してから当てはめる。</p>
+<p>★ 預設為 <b>0.001</b>。最初以 0.03 為預設，回傳的是閉合式的 <b>1.6 倍</b>的值(在 docstring 中寫「1 % 以內」是驗證之前的猜測)。越厚的翼型(0021)越鈍，視窗的影響越小;越薄的翼型(0008)越敏感。</p>
+<p>像實際資料那樣點稀疏的輪廓，此視窗內可能不足 5 個點 —— 此時會自動依等弧長重新取樣後再擬合。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

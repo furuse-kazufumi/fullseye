@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import llmcore; llmcore.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>어텐션 가중치로 값을 섞는다 → tokens. <b>행 합이 1이므로 출력은 입력의 볼록 결합</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Args:</p>
-<p>weights: (T, S) float。行和が 1 であること(<code style="color:#22d3bf">attention_weights</code> の出力)。</p>
-<p>value: (S, dv) float。混ぜられる側。</p>
+<p>weights: (T, S) float. 행 합이 1 이어야 한다(<code style="color:#22d3bf">attention_weights</code> 의 출력).</p>
+<p>value: (S, dv) float. 섞이는 쪽.</p>
 <p>Returns:</p>
-<p>tokens (T, dv) float: 各行が value の行の凸結合。<b>値域は value を出ない</b></p>
-<p>(同時に幅は縮む —— 平均は対比を潰す)。</p>
+<p>tokens (T, dv) float: 각 행이 value 의 행의 볼록 결합. <b>값 범위는 value 를 벗어나지 않는다</b></p>
+<p>(동시에 폭은 줄어든다 —— 평균은 대비를 뭉갠다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

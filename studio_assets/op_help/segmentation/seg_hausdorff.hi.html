@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segeval; segeval.seg_hausdorff(labels_pred, labels_true, *, percentile: &#x27;float&#x27; = 95.0) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;seg_hausdorff&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>boundary pixel के समूहों के बीच Hausdorff दूरी = max(max prediction→truth, max truth→prediction), और उसका <code style="color:#22d3bf">percentile</code> रूप (जैसे HD95)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>境界は <code style="color:#22d3bf">_boundary</code> の規約。どちらかの境界が空(1 色の画像)なら測るものが無いので ValueError。</p>
-<p>返り値: <code style="color:#22d3bf">hausdorff</code>、<code style="color:#22d3bf">hausdorff_percentile</code>、<code style="color:#22d3bf">percentile</code>、<code style="color:#22d3bf">directed_pred_to_true</code> / <code style="color:#22d3bf">directed_true_to_pred</code>(各最大)。</p>
+<p>boundary <code style="color:#22d3bf">_boundary</code> की convention के अनुसार। किसी भी एक की boundary ख़ाली हो (1 रंग की image) तो मापने को कुछ नहीं, इसलिए ValueError।</p>
+<p>Returns: <code style="color:#22d3bf">hausdorff</code>, <code style="color:#22d3bf">hausdorff_percentile</code>, <code style="color:#22d3bf">percentile</code>, <code style="color:#22d3bf">directed_pred_to_true</code> / <code style="color:#22d3bf">directed_true_to_pred</code> (हर एक का maximum)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_distance(region: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import blob2d; blob2d.blob_distance(region: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsblob.get(&quot;blob_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Distance from each foreground pixel <b>to the nearest background</b>. The unit is multiples of <code style="color:#22d3bf">spacing</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code> そのもの。<b>わざわざ口を作った理由</b>は、進化 op の <code style="color:#22d3bf">distance_transform</code> が最大値で正規化して返すため(<code style="color:#22d3bf">poc_cell_counting</code> の実測: 出力の最大が常に 1.0)、<b>画素単位の距離が取れない</b>こと。分水嶺の種を作るには絶対値が要る。</p>
+<p>Exactly <code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>. <b>The reason for making a dedicated entry point</b> is that the evolved op <code style="color:#22d3bf">distance_transform</code> returns its result normalised by the maximum (measured in <code style="color:#22d3bf">poc_cell_counting</code>: the output maximum is always 1.0), so <b>distances in pixel units cannot be obtained</b>. Building watershed seeds needs absolute values.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>
 <p>&gt;&gt;&gt; m = np.zeros((21, 21), bool); m[5:16, 5:16] = True</p>
-<p>&gt;&gt;&gt; float(blob_distance(m).max())      # 11x11 の正方形の中心まで</p>
+<p>&gt;&gt;&gt; float(blob_distance(m).max())      # to the centre of the 11x11 square</p>
 <p>6.0</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>

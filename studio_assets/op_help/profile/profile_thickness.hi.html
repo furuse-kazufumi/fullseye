@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_thickness(contour, n=101)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_thickness(contour, n=101)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_thickness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>मोटाई का distribution <code style="color:#22d3bf">t(x)</code>। <code style="color:#22d3bf">(n, 2)</code> के रूप में <code style="color:#22d3bf">(x, t)</code> लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">pairs</code> として返すので、<code style="color:#22d3bf">pairs_to_signal</code> や <code style="color:#22d3bf">plot_series</code> へそのまま</p>
-<p>渡せる。最大厚みとその位置は <code style="color:#22d3bf">profile_thickness_stats</code> ではなく返り値から取る(<code style="color:#22d3bf">t</code> の最大 = 最大厚み比)。</p>
+<p><code style="color:#22d3bf">pairs</code> के रूप में लौटाया जाता है, इसलिए <code style="color:#22d3bf">pairs_to_signal</code> या <code style="color:#22d3bf">plot_series</code> को सीधे दिया जा सकता है। अधिकतम मोटाई और उसकी स्थिति <code style="color:#22d3bf">profile_thickness_stats</code> से नहीं, return value से लें (<code style="color:#22d3bf">t</code> का अधिकतम = अधिकतम मोटाई अनुपात)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

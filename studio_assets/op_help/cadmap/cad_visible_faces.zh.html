@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64, cull_backfaces=True, strict=True)</code>(要直接调用实现,<code style="color:#22d3bf">import cadmap; cadmap.cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64, cull_backfaces=True, strict=True)</code>;从台账取用则 <code style="color:#22d3bf">opscadmap.get(&quot;cad_visible_faces&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从该相机<b>实际可见</b>的面 ID(升序,<code style="color:#22d3bf">indices</code> sort)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>画像格子(<code style="color:#22d3bf">width</code> x <code style="color:#22d3bf">height</code>、画素中心は整数座標)へ光線を撃ち、最も手前に来た面を集める。裏面(法線がカメラを向いていない)と、手前の面に完全に隠れた面は入らない。検査カバレッジ — 「この視点で CAD のどの面を見たことになるか」— をそのまま返す量で、<code style="color:#22d3bf">mesh_area</code> と組み合わせれば「未検査の面積」が出る。</p>
-<p>格子の分解能より小さく写る面は取りこぼす(標本化なので当然)。<b>取りこぼしを「隠れている」と言い換えない</b>ために、返るのは「見えた面」であって「見えない面の補集合」ではない。</p>
-<p>★ここだけ <code style="color:#22d3bf">strict</code> の既定が <code style="color:#22d3bf">True</code>(他の 3 つは <code style="color:#22d3bf">False</code>)。返りが素の添字配列なので、<b>巻きを直したという事実を載せる先が無い</b>からで、「黙って直す」を避けるにはここは拒否するしかない。<code style="color:#22d3bf">cull_backfaces=True</code> のまま内向きの閉メッシュを渡すと <code style="color:#22d3bf">ValueError</code> になる。自動修正が欲しいときは <code style="color:#22d3bf">strict=False</code> を<b>呼び出し側で明示</b>すること — そのときは利用者が修正を要求したのだから、返り値に載らなくても黙ってはいない。<code style="color:#22d3bf">cull_backfaces=False</code> なら巻き方向は結果に効かないので検査もしない。</p>
+<p>向图像网格(<code style="color:#22d3bf">width</code> x <code style="color:#22d3bf">height</code>,像素中心在整数坐标)发射光线,收集最靠前的面。背面(法线不朝向相机)以及完全被前方的面遮住的面不包括在内。直接返回检测覆盖率 —— “从这个视点看,CAD 的哪些面算是看过了”—— 的量,与 <code style="color:#22d3bf">mesh_area</code> 组合即可得到 “未检测的面积”。</p>
+<p>在图像中小于网格分辨率的面会被漏掉(因为是采样,理所当然)。<b>为了不把遗漏说成“被遮住”</b>,返回的是“看到的面”,而不是 “看不到的面的补集”。</p>
+<p>★只有这里 <code style="color:#22d3bf">strict</code> 的默认值是 <code style="color:#22d3bf">True</code>(其他 3 个是 <code style="color:#22d3bf">False</code>)。返回值是裸的下标数组,所以<b>没有地方记载修正了绕向这一事实</b>, 要避免“悄悄修正”,这里只能拒绝。在 <code style="color:#22d3bf">cull_backfaces=True</code> 不变的情况下传入向内绕的闭合网格(mesh)会抛出 <code style="color:#22d3bf">ValueError</code>。想要自动修正时,请<b>在调用方显式指定</b> <code style="color:#22d3bf">strict=False</code> —— 那时是使用者要求了修正,所以即使不出现在返回值中,也不算悄悄进行。<code style="color:#22d3bf">cull_backfaces=False</code> 时绕向不影响结果,因此也不做检查。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

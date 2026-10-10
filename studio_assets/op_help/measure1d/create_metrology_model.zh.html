@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.create_metrology_model() -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import metrology; metrology.create_metrology_model() -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;create_metrology_model&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>创建空的计量模型(create_metrology_model)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返り値は <code style="color:#22d3bf">{&quot;objects&quot;: []}</code> の dict(<code style="color:#22d3bf">metrologymodel</code> 型)。ここに <code style="color:#22d3bf">add_metrology_object_line_measure</code> / <code style="color:#22d3bf">..._circle_measure</code> / <code style="color:#22d3bf">..._rectangle2_measure</code> / <code style="color:#22d3bf">..._ellipse_measure</code> / <code style="color:#22d3bf">..._generic</code> で参照形状を積み、<code style="color:#22d3bf">apply_metrology_model(model, image)</code> で一括計測する。</p>
-<p style="margin:2px 0 2px 12px">• 引数は無い。画像サイズや座標系はモデルに持たず、<code style="color:#22d3bf">apply</code> 時の画像で決まる。</p>
-<p style="margin:2px 0 2px 12px">• 各 <code style="color:#22d3bf">add_*</code> は <b>この dict をその場で書き換え</b>、追加した位置(0 始まり)を返す。<code style="color:#22d3bf">apply_metrology_model</code> の結果 list はこの順に並ぶ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> は書き換えず、平行移動した新しいモデルを返す。</p>
-<p>座標は (row, col) [px]、角度 <code style="color:#22d3bf">phi</code> は col 軸から row 軸(画像下向き)へ測ったラジアン。この規約はモデル全体で共通。</p>
+<p>返回值是 <code style="color:#22d3bf">{&quot;objects&quot;: []}</code> 的 dict(<code style="color:#22d3bf">metrologymodel</code> 类型)。用 <code style="color:#22d3bf">add_metrology_object_line_measure</code> / <code style="color:#22d3bf">..._circle_measure</code> / <code style="color:#22d3bf">..._rectangle2_measure</code> / <code style="color:#22d3bf">..._ellipse_measure</code> / <code style="color:#22d3bf">..._generic</code> 在此堆叠参考形状，再用 <code style="color:#22d3bf">apply_metrology_model(model, image)</code> 一次性测量。</p>
+<p style="margin:2px 0 2px 12px">• 没有参数。模型不持有图像尺寸或坐标系，由 <code style="color:#22d3bf">apply</code> 时的图像决定。</p>
+<p style="margin:2px 0 2px 12px">• 各 <code style="color:#22d3bf">add_*</code> <b>原地修改此 dict</b>，并返回添加的位置(从 0 开始)。<code style="color:#22d3bf">apply_metrology_model</code> 的结果 list 按此顺序排列。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> 不修改它，而是返回平移后的新模型。</p>
+<p>坐标为 (row, col) [px]，角度 <code style="color:#22d3bf">phi</code> 是从 col 轴向 row 轴(图像向下)测量的弧度。此约定在整个模型中通用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

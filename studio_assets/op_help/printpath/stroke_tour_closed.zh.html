@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>(要直接调用实现,<code style="color:#22d3bf">import printpath; printpath.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>;从台账取用则 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tour_closed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把点重新排列成<b>闭合巡回路径</b>，每个点经过 1 次后回到起点。→ <code style="color:#22d3bf">pairs</code></p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返るのは入力と同じ点を並べ替えた <code style="color:#22d3bf">(N, 2)</code>。<b>最後の点から最初の点へ戻る</b> ことで閉じる(末尾に先頭を重複させない)。</p>
-<p>★これは最適な巡回路ではない(TSP は NP 困難)。<b>下界と比べて質を言う</b>:</p>
-<p>閉じた巡回路は最小全域木より短くなれないので <code style="color:#22d3bf">length / mst_length</code> が 1 に近いほど良い。一様な点なら Beardwood–Halton–Hammersley の <code style="color:#22d3bf">0.7124 √(n A)</code> も目安になる。<b>黄金ファイルは使わない。</b></p>
+<p>返回把与输入相同的点重新排序后的 <code style="color:#22d3bf">(N, 2)</code>。<b>从最后一个点回到第一个点</b> 来闭合(不在末尾重复首点)。</p>
+<p>★这不是最优巡回路径(TSP 是 NP 困难的)。<b>通过与下界比较来说明质量</b>:</p>
+<p>闭合巡回路径不可能比最小生成树更短,所以 <code style="color:#22d3bf">length / mst_length</code> 越接近 1 越好。对于均匀分布的点,Beardwood–Halton–Hammersley 的 <code style="color:#22d3bf">0.7124 √(n A)</code> 也可作参考。<b>不使用黄金文件。</b></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

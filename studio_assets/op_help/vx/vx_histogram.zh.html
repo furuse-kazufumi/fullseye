@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_histogram(image, *, num_bins, offset, range_)</code>(要直接调用实现,<code style="color:#22d3bf">import vxcore; vxcore.vx_histogram(image, *, num_bins, offset, range_)</code>;从台账取用则 <code style="color:#22d3bf">opsvx.get(&quot;vx_histogram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>直方图(3.26 节)：像素值 I 落入区间(bin) <code style="color:#22d3bf">i = (I − offset) × numBins / range</code> (offset ≤ I &lt; offset + range，REQ-0230)。范围外的像素不计数。区间由整数除法(截断)决定。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返り値 <code style="color:#22d3bf">(num_bins, 2)</code> の pairs: 列 0 = 升の下端の画素値(offset + i·range/numBins)、列 1 = 数。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / num_bins・range_ が正でない / num_bins &gt; range_ / offset が負。</p>
+<p>返回值为 <code style="color:#22d3bf">(num_bins, 2)</code> 的 pairs: 列 0 = 箱下端的像素值(offset + i·range/numBins),列 1 = 计数。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 不是 U8 的 2-D / num_bins、range_ 不为正 / num_bins &gt; range_ / offset 为负。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

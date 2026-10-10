@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_line_measure(model, row1, col1, row2, col2, n: &#x27;int&#x27; = 25) -&gt; &#x27;int&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_line_measure(model, row1, col1, row2, col2, n: &#x27;int&#x27; = 25) -&gt; &#x27;int&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_line_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>직선 계측 객체를 추가한다(add_metrology_object_line_measure). index를 반환한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>参照線分 <code style="color:#22d3bf">(row1, col1) → (row2, col2)</code> [px] を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> はこの線分上に <code style="color:#22d3bf">n</code> 点を等間隔(両端を含む)に置き、各点から <b>線分の法線方向</b> に短い測定線を張ってサブピクセルのエッジを探し、得た点に直線を最小二乗で当て直す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: サンプル点数(既定 25)。多いほどフィットは安定するが計測時間は比例。</p>
-<p style="margin:2px 0 2px 12px">• 端点が一致する(長さ <code style="color:#22d3bf">&lt; 1e-9</code>)線分は積めるが、<code style="color:#22d3bf">apply</code> 時にサンプル 0 個 → フィット失敗として <code style="color:#22d3bf">params=None</code>、<code style="color:#22d3bf">rms=inf</code> で返る(例外にはならない)。</p>
-<p style="margin:2px 0 2px 12px">• 引数の型・範囲はここでは検証しない(画像外の座標も積める。<code style="color:#22d3bf">apply</code> 時に最近傍で外挿されるだけで例外は出ない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 追加したオブジェクトの index(0 始まり)。<code style="color:#22d3bf">apply</code> の結果 list の同じ位置に <code style="color:#22d3bf">type=&quot;line&quot;</code> の結果(<code style="color:#22d3bf">row1/col1/row2/col2/angle_deg</code>)が入る。</p>
-<p><code style="color:#22d3bf">align_metrology_model</code> で平行移動するときは両端点が一緒に動く。</p>
+<p>참조 선분 <code style="color:#22d3bf">(row1, col1) → (row2, col2)</code> [px] 를 <code style="color:#22d3bf">model[&quot;objects&quot;]</code> 에 쌓는다(dict 를 제자리에서 갱신). <code style="color:#22d3bf">apply_metrology_model</code> 은 이 선분 위에 <code style="color:#22d3bf">n</code> 점을등간격(양 끝 포함)으로 두고, 각 점에서 <b>선분의 법선 방향</b>으로 짧은 측정선을 쳐서서브픽셀 에지를 찾고, 얻은 점에 직선을 최소제곱으로 다시 맞춘다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 샘플 점 수(기본값 25). 많을수록 피팅은 안정되지만 계측 시간은 비례한다.</p>
+<p style="margin:2px 0 2px 12px">• 끝점이 일치하는(길이 <code style="color:#22d3bf">&lt; 1e-9</code>) 선분은 쌓을 수 있지만, <code style="color:#22d3bf">apply</code> 시에 샘플 0 개 → 피팅 실패로서 <code style="color:#22d3bf">params=None</code>, <code style="color:#22d3bf">rms=inf</code> 로 반환된다(예외는 되지 않는다).</p>
+<p style="margin:2px 0 2px 12px">• 인수의 형·범위는 여기서는 검증하지 않는다(영상 밖의 좌표도 쌓을 수 있다. <code style="color:#22d3bf">apply</code> 시에최근접으로 외삽될 뿐 예외는 발생하지 않는다).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 추가한 오브젝트의 index(0 시작). <code style="color:#22d3bf">apply</code> 결과 list 의같은 위치에 <code style="color:#22d3bf">type=&quot;line&quot;</code> 의 결과(<code style="color:#22d3bf">row1/col1/row2/col2/angle_deg</code>)가 들어간다.</p>
+<p><code style="color:#22d3bf">align_metrology_model</code> 로 평행이동할 때는 양 끝점이 함께 움직인다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_boundaries(labels: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_boundaries(labels: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_boundaries&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>object की outline (1 pixel चौड़ी, bool)। <b>पास-पास के object के बीच की सीमा भी रहती है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>内側の縁を取る(自分と違うラベルに隣接する前景画素)ので、輪郭は必ず物体の内部にある —— 外側を取ると隣の物体の画素を輪郭だと言うことになる。</p>
-<p>手順: 3x3(8 近傍)のグレー収縮 <code style="color:#22d3bf">lo</code> と膨張 <code style="color:#22d3bf">hi</code> をラベル画像に掛け、<code style="color:#22d3bf">(labels &gt; 0) &amp; ((lo != labels) | (hi != labels))</code>。「近傍に自分と違う番号(背景 0 も含む)がある前景画素」= 内側 1 画素幅の縁。収縮だけだと番号の小さい物体側の境目が消えるので、膨張も見て対称にしてある。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>: 2-D の整数ラベル画像(<code style="color:#22d3bf">blob_label</code> の出力)。bool / float / 負の番号は <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">blob_region</code> と同じ契約)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> の bool。全物体の縁が 1 枚に重なる(物体ごとに分けたいなら <code style="color:#22d3bf">blob_region</code> で抜いてから掛ける)。</p>
-<p style="margin:2px 0 2px 12px">• 画像の縁に接する物体は、scipy の既定(反射境界)で画像端の外を自分の値とみなすため、<b>画像端に沿った辺は縁として出ない</b>。</p>
-<p style="margin:2px 0 2px 12px">• 1 画素幅の細い物体は全画素が縁になる。</p>
-<p><code style="color:#22d3bf">blob_features</code> の周長は別の係数法で測っており、この縁の画素数とは一致しない。輪郭を折れ線として使うなら <code style="color:#22d3bf">annotate_outline_layout</code> が (x, y) の閉多角形を返す。</p>
+<p>यह भीतरी किनारा लेता है (अपने से अलग label के बगल वाले foreground pixels), इसलिए contour हमेशा object के अंदर रहता है -- बाहरी किनारा लेने का मतलब होगा पड़ोसी object के pixels को contour कहना।</p>
+<p>प्रक्रिया: label image पर 3x3 (8-neighbourhood) grey erosion <code style="color:#22d3bf">lo</code> और dilation <code style="color:#22d3bf">hi</code> लगाएँ, फिर <code style="color:#22d3bf">(labels &gt; 0) &amp; ((lo != labels) | (hi != labels))</code>। &quot;जिन foreground pixels के neighbourhood में अलग नंबर (background 0 सहित) हो&quot; = भीतरी 1 pixel चौड़ा किनारा। सिर्फ़ erosion से छोटे नंबर वाले object की तरफ़ की सीमा ग़ायब हो जाती है, इसलिए dilation भी देखकर इसे symmetric बनाया गया है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>: 2-D integer label image (<code style="color:#22d3bf">blob_label</code> का output)। bool / float / negative नंबर पर <code style="color:#22d3bf">ValueError</code> (<code style="color:#22d3bf">blob_region</code> जैसा ही contract)।</p>
+<p style="margin:2px 0 2px 12px">• return value: <code style="color:#22d3bf">(H, W)</code> का bool। सभी objects के किनारे 1 ही sheet पर एक-दूसरे पर आते हैं (अगर हर object अलग चाहिए तो पहले <code style="color:#22d3bf">blob_region</code> से निकालें, फिर लगाएँ)।</p>
+<p style="margin:2px 0 2px 12px">• image के किनारे को छूने वाले objects के लिए scipy का default (reflective boundary) image के किनारे के बाहर को उसी object की value मानता है, इसलिए <b>image के किनारे के साथ चलने वाली भुजाएँ किनारे के रूप में नहीं आतीं</b>।</p>
+<p style="margin:2px 0 2px 12px">• 1 pixel चौड़े पतले object के सभी pixels किनारा बन जाते हैं।</p>
+<p><code style="color:#22d3bf">blob_features</code> की परिधि एक अलग coefficient method से मापी जाती है, और यह इस किनारे के pixel count से मेल नहीं खाती। contour को polyline की तरह इस्तेमाल करना हो तो <code style="color:#22d3bf">annotate_outline_layout</code> (x, y) का closed polygon लौटाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,29 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;axes_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>data coordinate → pixel coordinate का (<b>closed-form</b>) mapping बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">row は下向き</code> という画像の事実と、<code style="color:#22d3bf">y は上向き</code> というグラフの慣習のずれを、<b>この 1 か所だけ</b>で吸収する。図のコードはこの辞書を持ち回る。</p>
+<p>image के तथ्य <code style="color:#22d3bf">row नीचे की ओर</code> और graph की परंपरा <code style="color:#22d3bf">y ऊपर की ओर</code> के बीच के अंतर को <b>केवल इसी 1 जगह</b> संभाला जाता है। figure का code इसी dict को साथ लेकर चलता है।</p>
 <p>px = x0 + (x - xmin)/(xmax - xmin) * (w - 1)</p>
 <p>py = y0 + (h - 1) - (y - ymin)/(ymax - ymin) * (h - 1)     # invert_y</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>rect : (x, y, w, h)</p>
-<p>描画域(左上基準、画素)。</p>
+<p>drawing area (ऊपर-बाएँ आधार, pixels)।</p>
 <p>xlim, ylim : (lo, hi)</p>
-<p>データ範囲。lo == hi は<b>傾きが無限大</b>になるので ValueError。</p>
-<p><b>lo &gt; hi(反転軸)も許す</b> ―― 深度やランクを上下逆に描くため。</p>
+<p>data range। lo == hi पर <b>slope अनंत</b> हो जाता है, इसलिए ValueError।</p>
+<p><b>lo &gt; hi (उल्टा axis) की भी अनुमति है</b> -- depth या rank को ऊपर-नीचे उल्टा बनाने के लिए।</p>
 <p>invert_y : bool</p>
-<p>True(既定)なら <code style="color:#22d3bf">ylim[0]</code> が<b>下端</b>に来る = 普通のグラフ。</p>
-<p>False なら画像そのままの向き(上端が <code style="color:#22d3bf">ylim[0]</code>)。</p>
+<p>True (default) हो तो <code style="color:#22d3bf">ylim[0]</code> <b>निचले किनारे</b> पर आता है = सामान्य graph।</p>
+<p>False हो तो image की अपनी दिशा (ऊपरी किनारे पर <code style="color:#22d3bf">ylim[0]</code>)।</p>
 <p>xscale, yscale : {&#x27;linear&#x27;,&#x27;log&#x27;}</p>
-<p><code style="color:#22d3bf">&#x27;log&#x27;</code> は常用対数。範囲に 0 以下が入れば ValueError</p>
-<p>(log 軸に 0 を渡して -inf を「端」として描く図は嘘になる)。</p>
+<p><code style="color:#22d3bf">&#x27;log&#x27;</code> common logarithm है। range में 0 या उससे कम हो तो ValueError</p>
+<p>(log axis को 0 देकर -inf को &quot;किनारा&quot; मानकर बनाया गया figure झूठ होता है)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;rect&quot;, &quot;xlim&quot;, &quot;ylim&quot;, &quot;invert_y&quot;, &quot;xscale&quot;, &quot;yscale&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;rect&quot;, &quot;xlim&quot;, &quot;ylim&quot;, &quot;invert_y&quot;, &quot;xscale&quot;, &quot;yscale&quot;}</code>।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>矩形が不正、範囲が非有限か幅ゼロ、w か h が 2 未満、</p>
-<p>未知の scale、log 軸で範囲に 0 以下。</p>
+<p>आयत गलत, range non-finite या शून्य चौड़ाई, w या h 2 से कम,</p>
+<p>अज्ञात scale, log axis पर range में 0 या उससे कम।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

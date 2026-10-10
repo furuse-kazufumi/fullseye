@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;attention_grouped&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>head को समूहित करने वाला attention (GQA) → tokens। <b>n_kv_heads == n_heads पर MHA से, और == 1 पर MQA से बिल्कुल मेल खाता है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Ainslie ら 2023。query は <code style="color:#22d3bf">n_heads</code> 本に割り、key/value は <code style="color:#22d3bf">n_kv_heads</code> 本しか持たずに使い回す。両端が既存の 2 つ(MHA / MQA)に<b>厳密に</b>落ちる(どちらも 0.0e+00) ので、「中間を取る」という主張が端で検算できる。</p>
+<p>Ainslie et al. 2023। query को <code style="color:#22d3bf">n_heads</code> heads में बाँटा जाता है, जबकि key/value के पास केवल <code style="color:#22d3bf">n_kv_heads</code> heads होते हैं और उन्हें दोबारा इस्तेमाल किया जाता है। दोनों छोर मौजूदा 2 तरीकों (MHA / MQA) पर <b>ठीक-ठीक</b> आ जाते हैं (दोनों 0.0e+00), इसलिए &quot;बीच का रास्ता&quot; वाले दावे की जाँच छोरों पर cross-check से की जा सकती है।</p>
 <p>Args:</p>
-<p>query: (T, n_heads·dh) float。頭ごとに幅 dh で並んでいる。</p>
-<p>key: (S, n_kv_heads·dh) float。</p>
-<p>value: (S, n_kv_heads·dh) float。</p>
-<p>n_heads: query の頭の数。<code style="color:#22d3bf">n_kv_heads</code> の倍数であること。</p>
-<p>n_kv_heads: key/value の頭の数。1 なら MQA、<code style="color:#22d3bf">n_heads</code> なら MHA。</p>
-<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) の bool 配列。</p>
-<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅。</p>
+<p>query: (T, n_heads·dh) float। हर head के लिए चौड़ाई dh में क्रम से रखा है।</p>
+<p>key: (S, n_kv_heads·dh) float।</p>
+<p>value: (S, n_kv_heads·dh) float।</p>
+<p>n_heads: query के heads की संख्या। <code style="color:#22d3bf">n_kv_heads</code> का गुणज होना चाहिए।</p>
+<p>n_kv_heads: key/value के heads की संख्या। 1 होने पर MQA, <code style="color:#22d3bf">n_heads</code> होने पर MHA।</p>
+<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) का bool array।</p>
+<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> होने पर window की चौड़ाई।</p>
 <p>Returns:</p>
-<p>tokens (T, n_heads·dh) float: 頭ごとの出力を横に連結したもの。</p>
+<p>tokens (T, n_heads·dh) float: हर head के output को अगल-बगल जोड़ा गया रूप।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

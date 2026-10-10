@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_table(curvature)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.curvature_to_table(curvature)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>curvature → distribution का सारांश <code style="color:#22d3bf">table</code>। <b>एक-तरफ़ा</b> (statistic का काम ही जानकारी फेंकना है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>(N,) の単独曲率も (N,2) の主曲率対も受ける —— 統計を出すだけなら対である必要が無いため。<code style="color:#22d3bf">kind</code> に受けた形を書き戻すので、下流は「対だったのか」を後から判別できる。</p>
+<p>(N,) की अकेली curvature और (N,2) की principal curvature जोड़ी, दोनों लेता है -- केवल statistics निकालने के लिए जोड़ी होना ज़रूरी नहीं। <code style="color:#22d3bf">kind</code> में मिला हुआ रूप वापस लिखा जाता है, इसलिए downstream बाद में पहचान सकता है कि &quot;क्या यह जोड़ी थी&quot;।</p>
 <p>Args:</p>
-<p>curvature: (N,) / (N, 2) / 2 本の等長 1-D のタプル。</p>
+<p>curvature: (N,) / (N, 2) / समान लंबाई वाले 2 1-D array का tuple।</p>
 <p>Returns:</p>
-<p>dict。<code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">rms</code> /</p>
-<p><code style="color:#22d3bf">p05</code> / <code style="color:#22d3bf">p50</code> / <code style="color:#22d3bf">p95</code>、対なら <code style="color:#22d3bf">gauss_mean</code>(K = k1*k2 の平均)と</p>
-<p><code style="color:#22d3bf">mean_curvature_mean</code>((k1+k2)/2 の平均)。</p>
+<p>dict। <code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">rms</code> /</p>
+<p><code style="color:#22d3bf">p05</code> / <code style="color:#22d3bf">p50</code> / <code style="color:#22d3bf">p95</code>, और जोड़ी हो तो <code style="color:#22d3bf">gauss_mean</code> (K = k1*k2 का औसत) और</p>
+<p><code style="color:#22d3bf">mean_curvature_mean</code> ((k1+k2)/2 का औसत)।</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: shape ग़लत / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

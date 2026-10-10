@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imagemorph; imagemorph.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;warp_tps_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Glatte Verzerrung, die src_pts von img mittels Thin-Plate-Spline nach dst_pts bewegt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>出力座標 → 入力座標の逆写像 TPS(dst→src)を当てはめ、出力全格子で評価してサンプルする。lam=0 なら制御点上で厳密に対応(特徴が正しく着地)、lam&gt;0 で変形を平滑化。区分アフィンより滑らかだが、全画素×制御点のカーネル評価コスト。</p>
-<p>引数・返り値は <code style="color:#22d3bf">warp_piecewise_affine</code> と同じ。</p>
+<p>Passt den TPS der inversen Abbildung von Ausgabekoordinaten → Eingabekoordinaten (dst→src) an, wertet ihn auf dem gesamten Ausgabegitter aus und tastet ab. Mit lam=0 entsprechen sich die Kontrollpunkte exakt (Merkmale landen korrekt); lam&gt;0 glättet die Deformation. Glatter als stückweise affin, aber mit den Kosten der Kernelauswertung für alle Pixel × Kontrollpunkte.</p>
+<p>Argumente und Rückgabewert wie bei <code style="color:#22d3bf">warp_piecewise_affine</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">Leitfaden zur Familie shape_description_2d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

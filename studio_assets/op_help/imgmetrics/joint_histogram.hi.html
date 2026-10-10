@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.joint_histogram(a, b, bins=64, data_range=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.joint_histogram(a, b, bins=64, data_range=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;joint_histogram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 image का joint histogram (normalised joint probability)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>ビン幅は <code style="color:#22d3bf">data_range</code> から決める ―― 画像ごとに min/max で伸縮させると、<b>一様に暗い絵と一様に明るい絵の相互情報量が同じになる</b>ので。</p>
-<p>手順: 2 枚を平坦化し、両方に <b>同じ</b> ビン境界 <code style="color:#22d3bf">[lo, lo + data_range]</code> (<code style="color:#22d3bf">lo</code> = 2 枚の最小値の小さいほう、<code style="color:#22d3bf">bins</code> 等分)で <code style="color:#22d3bf">numpy.histogram2d</code> を取り、総数で割って同時確率にする。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: 同じ形(次元は問わない)、有限。dtype は同じでなければ <code style="color:#22d3bf">data_range</code> を明示する(混在 dtype からの推定は拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bins</code>: 2 以上の整数。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code>: 整数 dtype は自動(uint8 = 255 など)、float は <code style="color:#22d3bf">[0, 1]</code> のときだけ 1.0、それ以外は明示必須。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(bins, bins)</code> の float64、和は 1。行が <code style="color:#22d3bf">a</code> のビン、列が <code style="color:#22d3bf">b</code> のビン。<code style="color:#22d3bf">lo + data_range</code> を超える値はビンに入らない(数えられない)。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): 形が違う / 空 / 非有限 / <code style="color:#22d3bf">bins &lt; 2</code> / 範囲に入る標本が 0。</p>
-<p><code style="color:#22d3bf">joint_entropy</code> / <code style="color:#22d3bf">mutual_information</code> / <code style="color:#22d3bf">image_entropy</code> はこの表から計算する。</p>
+<p>bin की चौड़ाई <code style="color:#22d3bf">data_range</code> से तय होती है -- हर image के min/max से फैलाने-सिकोड़ने पर <b>एकसमान अंधेरी तस्वीर और एकसमान चमकीली तस्वीर की mutual information समान हो जाती</b>।</p>
+<p>प्रक्रिया: 2 images को flatten करके, दोनों पर <b>एक ही</b> bin सीमाओं <code style="color:#22d3bf">[lo, lo + data_range]</code> (<code style="color:#22d3bf">lo</code> = 2 images के न्यूनतम मानों में से छोटा, <code style="color:#22d3bf">bins</code> बराबर भागों में) से <code style="color:#22d3bf">numpy.histogram2d</code> लिया जाता है, और कुल संख्या से भाग देकर joint probability बनाई जाती है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: समान shape (dimensions कोई भी), finite। dtype समान न हों तो <code style="color:#22d3bf">data_range</code> स्पष्ट दें (मिश्रित dtypes से अनुमान अस्वीकार होता है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bins</code>: 2 या अधिक का पूर्णांक।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code>: integer dtype के लिए स्वचालित (uint8 = 255 आदि), float के लिए केवल <code style="color:#22d3bf">[0, 1]</code> में होने पर 1.0, अन्यथा स्पष्ट देना आवश्यक।</p>
+<p style="margin:2px 0 2px 12px">• return value: <code style="color:#22d3bf">(bins, bins)</code> का float64, योग 1। rows <code style="color:#22d3bf">a</code> के bins हैं, columns <code style="color:#22d3bf">b</code> के bins। <code style="color:#22d3bf">lo + data_range</code> से ऊपर के मान किसी bin में नहीं जाते (गिने नहीं जाते)।</p>
+<p style="margin:2px 0 2px 12px">• विफलता (<code style="color:#22d3bf">MetricContractError</code>): shape अलग / ख़ाली / non-finite / <code style="color:#22d3bf">bins &lt; 2</code> / range में आने वाले samples 0 हैं।</p>
+<p><code style="color:#22d3bf">joint_entropy</code> / <code style="color:#22d3bf">mutual_information</code> / <code style="color:#22d3bf">image_entropy</code> इसी तालिका से गणना करते हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

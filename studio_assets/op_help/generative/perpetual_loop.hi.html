@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_loop(kind: &#x27;str&#x27; = &#x27;harmonograph&#x27;, frames: &#x27;int&#x27; = 48, size: &#x27;int&#x27; = 360, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_loop(kind: &#x27;str&#x27; = &#x27;harmonograph&#x27;, frames: &#x27;int&#x27; = 48, size: &#x27;int&#x27; = 360, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_loop&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><b>बिना जोड़ का looping video</b> बनाता है → <code style="color:#22d3bf">rgbvideo</code> (T,H,W,3)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★循環を「最後に頭へ戻す」で作らない。時間依存の量を<b>すべて θ の関数</b>にして θ = 2πt/T を回すと、t = T は t = 0 と<b>同じ式</b>になる —— つまり継ぎ目は最初から存在しない。これは編集で消す種類のものではなく、<b>構成から従う</b>。<code style="color:#22d3bf">perpetual_loop_seam</code> がその継ぎ目を数で出す(厳密に 0 になる)。</p>
-<p><code style="color:#22d3bf">frames</code> コマ返す(t = 0 .. T-1)。t = T は t = 0 と一致するので含めない。</p>
+<p>★loop को &quot;अंत में शुरुआत पर लौटाकर&quot; नहीं बनाया जाता। समय पर निर्भर सभी मात्राओं को <b>θ के function</b> बनाकर θ = 2πt/T घुमाने पर t = T, t = 0 के साथ <b>एक ही सूत्र</b> बन जाता है -- यानी seam शुरू से ही मौजूद नहीं होता। यह editing से मिटाई जाने वाली चीज़ नहीं है, यह <b>construction से ही निकलता है</b>। <code style="color:#22d3bf">perpetual_loop_seam</code> उस seam को संख्या के रूप में देता है (यह ठीक 0 आता है)।</p>
+<p><code style="color:#22d3bf">frames</code> frames लौटाता है (t = 0 .. T-1)। t = T, t = 0 के बराबर है, इसलिए शामिल नहीं किया जाता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

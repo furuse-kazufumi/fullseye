@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6, mask=None, unit=&#x27;&#x27;, label_fmt=&#x27;{:.3g}&#x27;, orientation=&#x27;vertical&#x27;, font_size=12, scheme=&#x27;okabe_ito&#x27;, font_path=None, text_color=None, nan_transparent=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6, mask=None, unit=&#x27;&#x27;, label_fmt=&#x27;{:.3g}&#x27;, orientation=&#x27;vertical&#x27;, font_size=12, scheme=&#x27;okabe_ito&#x27;, font_path=None, text_color=None, nan_transparent=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_colorbar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳影像(image2d):用 LUT 給純量場上色並疊加,附上色條。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">t = (field - vmin)/(vmax - vmin)</code> を [0,1] に<b>クリップ</b>し <code style="color:#22d3bf">lut[round(t*(n-1))]</code> で色にする(範囲外の値は端の色 —— カラーバーの端と同じなので嘘にならない)。重ねは <code style="color:#22d3bf">alpha</code> の α 合成、<code style="color:#22d3bf">mask</code> を渡せばその画素だけ。</p>
+<p>把 <code style="color:#22d3bf">t = (field - vmin)/(vmax - vmin)</code> <b>截斷</b>到 [0,1],再用 <code style="color:#22d3bf">lut[round(t*(n-1))]</code> 轉成顏色(範圍外的值取端點顏色 —— 與色條的端點相同,所以不會造假)。疊加是用 <code style="color:#22d3bf">alpha</code> 的 α 合成,傳入 <code style="color:#22d3bf">mask</code> 則只作用於這些像素。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>field : (H, W)</p>
-<p>画像と同じ大きさのスカラ場。非有限は <code style="color:#22d3bf">nan_transparent=True</code> のときだけ</p>
-<p>透明として許す(既定は ValueError)。</p>
+<p>與影像同樣大小的純量場。非有限值僅在 <code style="color:#22d3bf">nan_transparent=True</code> 時</p>
+<p>作為透明允許(預設為 ValueError)。</p>
 <p>lut : (n, 3) or None</p>
-<p>None なら <code style="color:#22d3bf">palette.diverging_lut</code> の 256 段。</p>
+<p>None 時為 <code style="color:#22d3bf">palette.diverging_lut</code> 的 256 級。</p>
 <p>vmin, vmax : float or None</p>
-<p>None なら場の(有限値の)最小・最大。等しければ ValueError。</p>
+<p>None 時取場的(有限值的)最小、最大值。兩者相等則 ValueError。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形の不一致、非有限(許可なし)、vmin == vmax、alpha が [0,1] の外、</p>
-<p>バーの矩形が画像外、LUT の形。</p>
+<p>形狀不一致、非有限(未允許)、vmin == vmax、alpha 在 [0,1] 之外、</p>
+<p>色條的矩形在影像外、LUT 的形狀。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

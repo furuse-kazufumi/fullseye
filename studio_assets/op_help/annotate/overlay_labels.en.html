@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.overlay_labels(img, labels, alpha=0.5, colors=None, scheme=&#x27;okabe_ito&#x27;, background=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.overlay_labels(img, labels, alpha=0.5, colors=None, scheme=&#x27;okabe_ito&#x27;, background=0)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;overlay_labels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Overlay a colour label map with alpha. <b>The same label number always gets the same colour.</b></p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : (H,W) int</p>
-<p>ラベル番号の地図。<code style="color:#22d3bf">background</code>(既定 0)は透明。</p>
+<p>Map of label numbers. <code style="color:#22d3bf">background</code> (default 0) is transparent.</p>
 <p>colors : (k,3) or None</p>
-<p>番号 → 色。None なら Okabe–Ito 8 色を番号順に周回する</p>
-<p>(乱数を使わないので、同じラベル図なら常に同じ絵になる)。</p>
+<p>Number → colour. If None, cycles through the 8 Okabe–Ito colours in number order</p>
+<p>(no random numbers are used, so the same label map always gives the same picture).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形の不一致 / 負のラベル / alpha が [0,1] の外 / colors の形。</p>
+<p>shape mismatch / negative label / alpha outside [0,1] / shape of colors.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

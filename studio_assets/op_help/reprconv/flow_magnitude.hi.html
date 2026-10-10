@@ -4,16 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_magnitude(flow)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.flow_magnitude(flow)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;flow_magnitude&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>dense scene flow <code style="color:#22d3bf">(3,D,H,W)</code> → speed का volume <code style="color:#22d3bf">voxel (D,H,W)</code>। <code style="color:#22d3bf">flow</code> से निकास।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">sqrt(dz^2 + dy^2 + dx^2)</code>。<b>一方向</b>(向きを捨てるので戻せない)。</p>
-<p>捨てた量は明示できる: 3 成分のうち 2 自由度ぶんの方向が消え、残るのは</p>
-<p>大きさだけ。方向まで見たいときは <code style="color:#22d3bf">flow_to_rgbimage</code>。</p>
+<p><code style="color:#22d3bf">sqrt(dz^2 + dy^2 + dx^2)</code>। <b>एकतरफ़ा (one-way)</b> (direction छोड़ दी जाती है, इसलिए वापस नहीं बदला जा सकता)। क्या छोड़ा गया, यह स्पष्ट बताया जा सकता है: 3 components में से 2 degrees of freedom जितनी direction गायब हो जाती है, और बचता है केवल magnitude। direction भी देखनी हो तो <code style="color:#22d3bf">flow_to_rgbimage</code>।</p>
 <p>Args:</p>
-<p>flow: (3, D, H, W)。成分順は (dz, dy, dx)(<code style="color:#22d3bf">scene_flow_lk</code> の約束)。</p>
+<p>flow: (3, D, H, W)। component क्रम (dz, dy, dx) है (<code style="color:#22d3bf">scene_flow_lk</code> की convention)।</p>
 <p>Returns:</p>
-<p>(D, H, W) float64。</p>
+<p>(D, H, W) float64।</p>
 <p>Raises:</p>
-<p>ValueError: 密フローでない / 非有限。</p>
+<p>ValueError: dense flow नहीं / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

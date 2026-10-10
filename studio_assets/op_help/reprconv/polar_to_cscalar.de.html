@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polar_to_cscalar(pairs)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.polar_to_cscalar(pairs)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;polar_to_cscalar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Polarform <code style="color:#22d3bf">pairs (1,2) = [r, theta [Grad]]</code> → ein komplexer Skalar. Die Umkehrung von <code style="color:#22d3bf">cscalar_to_polar</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
-<p>pairs: (1, 2)。r &gt;= 0。</p>
+<p>pairs: (1, 2). r &gt;= 0.</p>
 <p>Returns:</p>
-<p>complex。</p>
+<p>complex.</p>
 <p>Raises:</p>
-<p>ValueError: 形状が (1,2) でない / r &lt; 0 / 非有限。</p>
+<p>ValueError: Form ist nicht (1,2) / r &lt; 0 / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

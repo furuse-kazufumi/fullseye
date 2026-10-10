@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;ms_ssim&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Multiskalen-SSIM (Wang, Simoncelli &amp; Bovik, Asilomar Conf. 2003).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>5 段の縮小を経るので、最終段で 11 画素の窓が成立するには<b>各辺 176 画素</b>が要る。足りないときに<b>段数を黙って減らさない</b> ―― 段数の違う MS-SSIM は別の指標であり、比べると嘘になる。足りなければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p>2 次元のグレー画像専用(色は <code style="color:#22d3bf">channel_axis</code> ではなくチャネルごとに呼ぶ)。</p>
+<p>Es durchläuft 5 Stufen der Verkleinerung, daher braucht ein 11-Pixel-Fenster auf der letzten Stufe <b>176 Pixel je Seite</b> als Minimum. Reicht das nicht, <b>wird die Stufenzahl nicht stillschweigend verringert</b> -- ein MS-SSIM mit anderer Stufenzahl ist eine andere Kennzahl, und ein Vergleich wäre eine Lüge. Reicht es nicht, <code style="color:#22d3bf">ValueError</code>.</p>
+<p>Nur für 2-dimensionale Graubilder (Farbe pro Kanal aufrufen, nicht über <code style="color:#22d3bf">channel_axis</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_position(score)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.score_to_position(score)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">score</code> 볼륨 → 최대값의 위치 <code style="color:#22d3bf">position (z, y, x)</code>. <code style="color:#22d3bf">score</code> 의 출구.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>整数格子上の argmax(副画素精緻化はしない —— それは既存の <code style="color:#22d3bf">refine_peak_newton</code> の仕事で、ここで真似ると 2 か所で別の答えが出る)。<b>一方向</b>(1 つの位置から volume は戻せない)。</p>
+<p>정수 격자 위의 argmax(서브픽셀 정밀화는 하지 않는다 —— 그것은 기존 <code style="color:#22d3bf">refine_peak_newton</code>의 일이며, 여기서 흉내 내면 2곳에서 다른 답이 나온다). <b>단방향</b>(1개의 위치로부터 volume은 되돌릴 수 없다).</p>
 <p>Args:</p>
-<p>score: (D, H, W)。</p>
+<p>score: (D, H, W).</p>
 <p>Returns:</p>
-<p>3-tuple の float (z, y, x)。</p>
+<p>float의 3-tuple (z, y, x).</p>
 <p>Raises:</p>
-<p>ValueError: 3-D でない / 非有限。</p>
+<p>ValueError: 3-D가 아님 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

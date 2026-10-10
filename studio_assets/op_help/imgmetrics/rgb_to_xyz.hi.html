@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rgb_to_xyz(rgb)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.rgb_to_xyz(rgb)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;rgb_to_xyz&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>sRGB (<code style="color:#22d3bf">(..., 3)</code>) → CIE XYZ। पहले transfer function हटाया जाता है, फिर matrix से गुणा किया जाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>手順: <code style="color:#22d3bf">srgb_to_linear</code> で整数 dtype を <code style="color:#22d3bf">[0, 1]</code> に正規化しつつ伝達関数を外し(IEC 61966-2-1)、線形 RGB に sRGB(D65)→XYZ の 3x3 行列を掛ける。白 <code style="color:#22d3bf">(1, 1, 1)</code> は <code style="color:#22d3bf">(0.9505, 1.0, 1.0890)</code> に写る(Y を 1 に正規化した尺度)。</p>
-<p style="margin:2px 0 2px 12px">• 入力: 最後の軸が 3 なら形は任意(<code style="color:#22d3bf">(3,)</code> の 1 色、<code style="color:#22d3bf">(N, 3)</code> の色表、<code style="color:#22d3bf">(H, W, 3)</code> の画像)。整数 dtype(uint8/uint16 など)は dtype の最大値で割る。float は <code style="color:#22d3bf">[0, 1]</code> に収まっていなければ <code style="color:#22d3bf">MetricContractError</code>(<code style="color:#22d3bf">ValueError</code> の部分型)。ガンマを外した線形値を渡すと二重にガンマを外すので注意。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: 最後の軸が 3 でない / float が <code style="color:#22d3bf">[0, 1]</code> の外 / 非有限。</p>
-<p>次に <code style="color:#22d3bf">xyz_to_lab</code> を繋ぐのが常道(まとめて <code style="color:#22d3bf">rgb_to_lab</code>)。</p>
+<p>प्रक्रिया: <code style="color:#22d3bf">srgb_to_linear</code> integer dtype को <code style="color:#22d3bf">[0, 1]</code> में normalise करते हुए transfer function हटाता है (IEC 61966-2-1), फिर linear RGB पर sRGB (D65)→XYZ का 3x3 matrix लगाया जाता है। सफ़ेद <code style="color:#22d3bf">(1, 1, 1)</code> <code style="color:#22d3bf">(0.9505, 1.0, 1.0890)</code> पर map होता है (Y को 1 पर normalise किया गया पैमाना)।</p>
+<p style="margin:2px 0 2px 12px">• input: आख़िरी axis 3 हो तो कोई भी shape (<code style="color:#22d3bf">(3,)</code> का 1 रंग, <code style="color:#22d3bf">(N, 3)</code> की रंग तालिका, <code style="color:#22d3bf">(H, W, 3)</code> की image)। integer dtype (uint8/uint16 आदि) को dtype के अधिकतम मान से भाग दिया जाता है। float <code style="color:#22d3bf">[0, 1]</code> में न हो तो <code style="color:#22d3bf">MetricContractError</code> (<code style="color:#22d3bf">ValueError</code> का subtype)। ध्यान दें: gamma हटाए गए linear मान देने पर gamma दो बार हटता है।</p>
+<p style="margin:2px 0 2px 12px">• return value: input जैसे ही shape का float64।</p>
+<p style="margin:2px 0 2px 12px">• विफलता: आख़िरी axis 3 नहीं / float <code style="color:#22d3bf">[0, 1]</code> के बाहर / non-finite।</p>
+<p>आगे <code style="color:#22d3bf">xyz_to_lab</code> जोड़ना सामान्य तरीका है (दोनों मिलाकर <code style="color:#22d3bf">rgb_to_lab</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

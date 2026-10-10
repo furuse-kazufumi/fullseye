@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.align_metrology_model(model, drow=0.0, dcol=0.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import metrology; metrology.align_metrology_model(model, drow=0.0, dcol=0.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;align_metrology_model&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平移量測模型的所有物件以進行對齊(align_metrology_model)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>全オブジェクトの位置に <code style="color:#22d3bf">(drow, dcol)</code> [px] を足した <b>新しいモデル</b> を返す(入力の dict は書き換えない)。<code style="color:#22d3bf">line</code> は両端点 <code style="color:#22d3bf">(row1, col1)</code>・<code style="color:#22d3bf">(row2, col2)</code> が動き、<code style="color:#22d3bf">circle</code> / <code style="color:#22d3bf">rect</code> / <code style="color:#22d3bf">ellipse</code> は中心 <code style="color:#22d3bf">(row, col)</code> が動く。半径・半辺長・<code style="color:#22d3bf">phi</code>・<code style="color:#22d3bf">n</code> は変えない ―― <b>回転とスケールは扱わない</b>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">drow</code>, <code style="color:#22d3bf">dcol</code>: 変位 [px]。既定 0(写しを作るだけになる)。</p>
-<p style="margin:2px 0 2px 12px">• 型は検証しない。<code style="color:#22d3bf">add_metrology_object_generic</code> で積んだ未知型は <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> を row/col とみなして動かす。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">{&quot;objects&quot;: [...]}</code>(<code style="color:#22d3bf">metrologymodel</code> 型)。</p>
-<p>典型例: 形状マッチングや基準マークの検出で得た位置ずれをここでモデルに反映し、<code style="color:#22d3bf">apply_metrology_model</code> を掛ける。傾いたワークには使えない(参照形状の法線が実物の法線からずれ、探索半幅 <code style="color:#22d3bf">measure_length</code> の外に出る)。</p>
+<p>回傳在所有物件的位置上加上 <code style="color:#22d3bf">(drow, dcol)</code> [px] 的<b>新模型</b> (不修改輸入的 dict)。<code style="color:#22d3bf">line</code> 移動兩端點 <code style="color:#22d3bf">(row1, col1)</code>、<code style="color:#22d3bf">(row2, col2)</code>, <code style="color:#22d3bf">circle</code> / <code style="color:#22d3bf">rect</code> / <code style="color:#22d3bf">ellipse</code> 移動中心 <code style="color:#22d3bf">(row, col)</code>。半徑、半邊長、<code style="color:#22d3bf">phi</code>、<code style="color:#22d3bf">n</code> 不變 —— <b>不處理旋轉與縮放</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">drow</code>, <code style="color:#22d3bf">dcol</code>: 位移 [px]。預設 0(此時只是複製)。</p>
+<p style="margin:2px 0 2px 12px">• 不驗證型別。用 <code style="color:#22d3bf">add_metrology_object_generic</code> 堆疊的未知型別，把 <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> 視為 row/col 移動。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: <code style="color:#22d3bf">{&quot;objects&quot;: [...]}</code>(<code style="color:#22d3bf">metrologymodel</code> 型別)。</p>
+<p>典型例: 把形狀匹配或基準標記偵測得到的位置偏移在此反映到模型中，再執行 <code style="color:#22d3bf">apply_metrology_model</code>。不能用於傾斜的工件(參考形狀的法線偏離實物的法線，超出搜尋半寬 <code style="color:#22d3bf">measure_length</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

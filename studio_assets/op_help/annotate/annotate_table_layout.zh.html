@@ -4,47 +4,46 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_table_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回 table(dict)：将制表符分隔的字符串作为<b>表格</b>放置时的列与行位置。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>行は <code style="color:#22d3bf">\n</code>、桁は <code style="color:#22d3bf">\t</code> で切る。桁幅は<b>指定されたサイズの実フォントで 1 セルずつ測った幅の最大</b>で決まる —— 文字数で数えると和文と英数字で必ずずれるので、測る以外に正しくやりようがない。</p>
+<p>行按 <code style="color:#22d3bf">\n</code>、列按 <code style="color:#22d3bf">\t</code> 切分。列宽由<b>用指定大小的实际字体逐 1 个单元格测得的宽度的最大值</b>决定 —— 按字符数计算的话,日文与英文数字之间必然出现偏差,所以除了实测没有其他正确做法。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>text : str</p>
-<p>タブ区切り。全行の桁数が同じであること(違えば <b>ValueError</b>)。</p>
+<p>制表符分隔。所有行的列数必须相同(不同则 <b>ValueError</b>)。</p>
 <p>xy : (x, y)</p>
-<p><code style="color:#22d3bf">anchor</code> で指す位置(<b>x=col, y=row</b>)。</p>
+<p><code style="color:#22d3bf">anchor</code> 所指的位置(<b>x=col, y=row</b>)。</p>
 <p>anchor : str</p>
-<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> の 9 通り。</p>
+<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> 共 9 种。</p>
 <p>pad : int</p>
-<p>表の内側余白 [px]。</p>
+<p>表格内侧边距 [px]。</p>
 <p>col_gap : int or None</p>
-<p>桁の間 [px]。<b>None(既定)なら行高 ×0.6 を四捨五入</b>するので、</p>
-<p>フォントサイズを変えれば間隔も一緒に動く。</p>
+<p>列间距 [px]。<b>None(默认)时取行高 ×0.6 四舍五入</b>,所以</p>
+<p>改变字体大小时间距也随之变化。</p>
 <p>row_gap : int</p>
-<p>行の間に足す [px] (0 なら行送りのまま)。</p>
+<p>行之间追加的量 [px] (0 则保持原行距)。</p>
 <p>align : str or sequence</p>
-<p><code style="color:#22d3bf">TABLE_ALIGNS</code> のいずれか、または桁ごとの並び。<code style="color:#22d3bf">&quot;auto&quot;</code></p>
-<p>(既定)は<b>その桁の値がすべて数に見えるときだけ右そろえ</b>にする。</p>
-<p><code style="color:#22d3bf">header=True</code> なら見出し行は判定から外す。</p>
+<p><code style="color:#22d3bf">TABLE_ALIGNS</code> 之一,或逐列的序列。<code style="color:#22d3bf">&quot;auto&quot;</code></p>
+<p>(默认)<b>仅当该列的值全部看起来是数字时才右对齐</b>。</p>
+<p><code style="color:#22d3bf">header=True</code> 时标题行不参与判定。</p>
 <p>header : bool</p>
-<p>真なら 1 行目を見出しとして<b>太字</b>にし、下に罫を 1 本引く。</p>
+<p>为真时把第 1 行作为标题设为<b>粗体</b>,并在其下画 1 条线。</p>
 <p>bold, italic : bool or int</p>
-<p>合成字体(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。<code style="color:#22d3bf">header</code> の</p>
-<p>太字はこれとは別で、見出し行にだけ掛かる。</p>
+<p>合成字形(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。<code style="color:#22d3bf">header</code> 的</p>
+<p>粗体与此无关,只作用于标题行。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;rect&quot;: (x,y,w,h), &quot;ncols&quot;, &quot;nrows&quot;, &quot;col_w&quot;: [...], &quot;col_x&quot;: [...], &quot;row_y&quot;: [...], &quot;row_h&quot;, &quot;col_gap&quot;, &quot;align&quot;: [...], &quot;header&quot;, &quot;rule_y&quot;: 見出しの罫の y(header が偽なら None), &quot;cells&quot;: [{&quot;text&quot;,&quot;row&quot;,&quot;col&quot;,&quot;xy&quot;,&quot;width&quot;,&quot;bold&quot;}]}</code>。</p>
-<p><code style="color:#22d3bf">col_x</code> / <code style="color:#22d3bf">row_y</code> / <code style="color:#22d3bf">cells[i][&quot;xy&quot;]</code> はすべて<b>画像座標</b>。</p>
+<p><code style="color:#22d3bf">{&quot;rect&quot;: (x,y,w,h), &quot;ncols&quot;, &quot;nrows&quot;, &quot;col_w&quot;: [...], &quot;col_x&quot;: [...], &quot;row_y&quot;: [...], &quot;row_h&quot;, &quot;col_gap&quot;, &quot;align&quot;: [...], &quot;header&quot;, &quot;rule_y&quot;: 标题线的 y(header 为假时为 None), &quot;cells&quot;: [{&quot;text&quot;,&quot;row&quot;,&quot;col&quot;,&quot;xy&quot;,&quot;width&quot;,&quot;bold&quot;}]}</code>。</p>
+<p><code style="color:#22d3bf">col_x</code> / <code style="color:#22d3bf">row_y</code> / <code style="color:#22d3bf">cells[i][&quot;xy&quot;]</code> 全部是<b>图像坐标</b>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>桁数が行でそろわない / 空 / 未知の <code style="color:#22d3bf">align</code> <code style="color:#22d3bf">anchor</code> /</p>
-<p><code style="color:#22d3bf">align</code> の長さが桁数と違う。</p>
+<p>各行列数不一致 / 为空 / 未知的 <code style="color:#22d3bf">align</code> <code style="color:#22d3bf">anchor</code> /</p>
+<p><code style="color:#22d3bf">align</code> 的长度与列数不同。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import annotate</p>
-<p>&gt;&gt;&gt; lay = annotate.annotate_table_layout(&quot;名前\t値\nA\t1.5\nB\t22.25&quot;, (10, 10))</p>
+<p>&gt;&gt;&gt; lay = annotate.annotate_table_layout(&quot;名称\t值\nA\t1.5\nB\t22.25&quot;, (10, 10))</p>
 <p>&gt;&gt;&gt; lay[&quot;ncols&quot;], lay[&quot;nrows&quot;], lay[&quot;align&quot;]</p>
 <p>(2, 3, [&#x27;left&#x27;, &#x27;left&#x27;])</p>
-<p>&gt;&gt;&gt; lay2 = annotate.annotate_table_layout(&quot;名前\t値\nA\t1.5\nB\t22.25&quot;, (10, 10),</p>
+<p>&gt;&gt;&gt; lay2 = annotate.annotate_table_layout(&quot;名称\t值\nA\t1.5\nB\t22.25&quot;, (10, 10),</p>
 <p>...                                       header=True)</p>
-<p>&gt;&gt;&gt; lay2[&quot;align&quot;]                        # 見出しを外すと 2 桁目は数だけ</p>
+<p>&gt;&gt;&gt; lay2[&quot;align&quot;]                        # 去掉标题后第 2 列只有数字</p>
 <p>[&#x27;left&#x27;, &#x27;right&#x27;]</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>

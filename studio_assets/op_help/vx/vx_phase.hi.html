@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_phase(gx, gy, *, mapping)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import vxcore; vxcore.vx_phase(gx, gy, *, mapping)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvx.get(&quot;vx_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>gradient का phase (section 3.41): ϕ = atan2(gy, gx) को 0 ≤ ϕ &lt; 2π में ले जाता है और 0–255 पर map करता है (REQ-0364)। आउटपुट U8।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>*mapping*(必須): 規格は写し方の丸めを書いていない。<code style="color:#22d3bf">&quot;floor&quot;</code> = ⌊ϕ·256/(2π)⌋(0 ≤ 値 ≤ 255 が自動で成り立つ)、<code style="color:#22d3bf">&quot;round&quot;</code> = ⌊ϕ·256/(2π) + 0.5⌋ mod 256(2π の手前は 0 に巻く)。gx = gy = 0 の画素は atan2 の約束で ϕ = 0。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: S16 の 2-D でない / 形が違う / mapping が一覧に無い。</p>
+<p>*mapping* (ज़रूरी): specification mapping की rounding नहीं बताता। <code style="color:#22d3bf">&quot;floor&quot;</code> = ⌊ϕ·256/(2π)⌋ (0 ≤ मान ≤ 255 अपने-आप सही रहता है), <code style="color:#22d3bf">&quot;round&quot;</code> = ⌊ϕ·256/(2π) + 0.5⌋ mod 256 (2π से ठीक पहले का मान 0 पर लिपट जाता है)। gx = gy = 0 वाले pixel में atan2 की परंपरा से ϕ = 0।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: S16 का 2-D नहीं है / shape अलग हैं / mapping सूची में नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

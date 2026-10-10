@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;kv_cache_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Inferenz, die nur um 1 Token voranschreitet (KV Cache) → tokens (1, dv).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>因果マスクの下では<b>未来を書き換えても前の出力が 1 ビットも動かない</b>(実測 0.0e+00) ので、済んだ key/value を取っておいて 1 行だけ計算すればよい —— 逐次に 1 行ずつ進めた結果は、全系列を一括で通した結果と一致する(相対差 1.6e-16)。計算量は 1 歩あたり O(T d) で、一括の O(T² d) を T 歩に割ったものに等しい。</p>
+<p>Unter einer kausalen Maske <b>bewegt ein Umschreiben der Zukunft die früheren Ausgaben um nicht einmal 1 Bit</b> (gemessen 0.0e+00), daher kann man die fertigen key/value aufbewahren und nur 1 Zeile berechnen — sequenziell Zeile für Zeile (1 pro Schritt) fortzuschreiten ergibt dasselbe wie die ganze Sequenz auf einmal (relative Abweichung 1.6e-16). Der Aufwand für 1 Schritt ist O(T d), gleich dem Gesamtaufwand O(T² d) verteilt auf T Schritte.</p>
 <p>Args:</p>
-<p>query_step: (1, d) float。いま生成しようとしている 1 トークン。</p>
-<p>key_cache: (T, d) float。ここまでに見た key(自分を含む)。</p>
-<p>value_cache: (T, dv) float。同じ長さの value。</p>
-<p>scale: スコアの倍率。None なら 1/√d。</p>
+<p>query_step: (1, d) float. Das 1 Token, das gerade erzeugt werden soll.</p>
+<p>key_cache: (T, d) float. Die bisher gesehenen keys (einschließlich des eigenen).</p>
+<p>value_cache: (T, dv) float. values derselben Länge.</p>
+<p>scale: Faktor der Scores. None bedeutet 1/√d.</p>
 <p>Returns:</p>
-<p>tokens (1, dv) float: 一括で通した最終行と一致する。</p>
+<p>tokens (1, dv) float: stimmt mit der letzten Zeile des Gesamtdurchlaufs überein.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">Leitfaden zur Familie llmcore</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

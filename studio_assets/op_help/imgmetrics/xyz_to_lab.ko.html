@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;xyz_to_lab&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>CIE XYZ → CIE 1976 L*a*b*. 기본 백색점은 D65 2°.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>式: <code style="color:#22d3bf">t = XYZ / white</code> として <code style="color:#22d3bf">f(t) = cbrt(t)</code>(<code style="color:#22d3bf">t &gt; (6/29)^3</code>)、それ以外は <code style="color:#22d3bf">t / (3 (6/29)^2) + 4/29</code>。<code style="color:#22d3bf">L = 116 f(Y) - 16</code>、<code style="color:#22d3bf">a = 500 (f(X) - f(Y))</code>、<code style="color:#22d3bf">b = 200 (f(Y) - f(Z))</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xyz</code>: 最後の軸が 3 の任意の形。<code style="color:#22d3bf">rgb_to_xyz</code> の出力と同じ、Y = 1 が白の尺度。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: 白色点 <code style="color:#22d3bf">(Xn, Yn, Zn)</code> の 3 つの正の数。既定 <code style="color:#22d3bf">D65_WHITE</code> = <code style="color:#22d3bf">(0.95047, 1.0, 1.08883)</code>。別の光源(D50 など)で撮った XYZ ならここを変える。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64。<code style="color:#22d3bf">L</code> は白で 100、黒で 0。<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> は符号つき。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): 最後の軸が 3 でない / <code style="color:#22d3bf">white</code> が 3 要素でない、または 0 以下を含む。XYZ の値域は検査しない(負や 1 超もそのまま計算する)。</p>
-<p><code style="color:#22d3bf">delta_e_76</code> / <code style="color:#22d3bf">delta_e_2000</code> はこの Lab を入力にする。</p>
+<p>식: <code style="color:#22d3bf">t = XYZ / white</code>로 두고 <code style="color:#22d3bf">f(t) = cbrt(t)</code>(<code style="color:#22d3bf">t &gt; (6/29)^3</code>), 그 외에는 <code style="color:#22d3bf">t / (3 (6/29)^2) + 4/29</code>. <code style="color:#22d3bf">L = 116 f(Y) - 16</code>, <code style="color:#22d3bf">a = 500 (f(X) - f(Y))</code>, <code style="color:#22d3bf">b = 200 (f(Y) - f(Z))</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xyz</code>: 마지막 축이 3인 임의의 형태. <code style="color:#22d3bf">rgb_to_xyz</code>의 출력과 같은, Y = 1이 흰색인 척도.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: 백색점 <code style="color:#22d3bf">(Xn, Yn, Zn)</code>의 3개 양수. 기본값 <code style="color:#22d3bf">D65_WHITE</code> = <code style="color:#22d3bf">(0.95047, 1.0, 1.08883)</code>. 다른 광원(D50 등)에서 찍은 XYZ라면 여기를 바꾼다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 입력과 같은 형태의 float64. <code style="color:#22d3bf">L</code>은 흰색에서 100, 검은색에서 0. <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code>는 부호 있는 값.</p>
+<p style="margin:2px 0 2px 12px">• 실패(<code style="color:#22d3bf">MetricContractError</code>): 마지막 축이 3이 아님 / <code style="color:#22d3bf">white</code>가 3요소가 아님, 또는 0 이하를 포함. XYZ의 값 범위는 검사하지 않는다(음수나 1 초과도 그대로 계산한다).</p>
+<p><code style="color:#22d3bf">delta_e_76</code> / <code style="color:#22d3bf">delta_e_2000</code>은 이 Lab을 입력으로 한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

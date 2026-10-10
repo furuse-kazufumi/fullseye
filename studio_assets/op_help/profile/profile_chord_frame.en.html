@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_chord_frame(contour)</code> (to call the implementation directly, <code style="color:#22d3bf">import profileops; profileops.profile_chord_frame(contour)</code>; from the registry, <code style="color:#22d3bf">opsprofile.get(&quot;profile_chord_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Finds the chord (the 2 points farthest apart). Returns a dict.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>翼型の慣行どおり、<b>最も離れた 2 点</b>を前縁・後縁とみなす。どちらが前縁かは <b>その点の近傍の曲率が大きいほう</b>で決める(前縁は丸く、後縁は尖る)。</p>
+<p>Following airfoil convention, <b>the 2 points farthest apart</b> are taken as leading and trailing edge. Which one is the leading edge is decided by <b>whichever has the larger curvature in the neighbourhood of that point</b> (the leading edge is round, the trailing edge sharp).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">le</code> / <code style="color:#22d3bf">te</code>(座標)、<code style="color:#22d3bf">le_index</code> / <code style="color:#22d3bf">te_index</code>、</p>
-<p><code style="color:#22d3bf">chord</code>(長さ)、<code style="color:#22d3bf">angle_deg</code>(弦の向き)。</p>
+<p>dict: <code style="color:#22d3bf">le</code> / <code style="color:#22d3bf">te</code> (coordinates), <code style="color:#22d3bf">le_index</code> / <code style="color:#22d3bf">te_index</code>,</p>
+<p><code style="color:#22d3bf">chord</code> (length), <code style="color:#22d3bf">angle_deg</code> (direction of the chord).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

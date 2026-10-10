@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.overlay_mask(img, mask, color=&#x27;wrong&#x27;, alpha=0.45, outline=0, outline_color=None, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.overlay_mask(img, mask, color=&#x27;wrong&#x27;, alpha=0.45, outline=0, outline_color=None, scheme=&#x27;okabe_ito&#x27;, style=None)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;overlay_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Overlay a binary mask with alpha. <b>Exactly <code style="color:#22d3bf">a*f + (1-a)*b</code>.</b></p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>mask : (H,W)</p>
-<p>画像と同じ大きさの真偽(または [0,1] の重み)。</p>
-<p><b>形が違えば例外</b> ―― (row,col) と (x,y) の取り違えはここで死ぬ。</p>
+<p>Boolean of the same size as the image (or weights in [0,1]).</p>
+<p><b>A different shape is an exception</b> -- a mix-up of (row,col) and (x,y) dies here.</p>
 <p>alpha : float</p>
-<p>マスク側の重み。</p>
+<p>Weight of the mask side.</p>
 <p>outline : int</p>
-<p>0 より大きければマスクの輪郭を太さ <code style="color:#22d3bf">outline</code> で描く。</p>
+<p>If greater than 0, the mask contour is drawn with thickness <code style="color:#22d3bf">outline</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形の不一致 / alpha が [0,1] の外 / mask に非有限。</p>
+<p>shape mismatch / alpha outside [0,1] / non-finite in mask.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

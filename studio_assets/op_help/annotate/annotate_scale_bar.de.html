@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_scale_bar(img, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, color=&#x27;neutral&#x27;, thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.annotate_scale_bar(img, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, color=&#x27;neutral&#x27;, thickness=5, font_size=13, box_alpha=0.55, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;annotate_scale_bar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert ein Bild (image2d): einen Maßstabsbalken runder Länge in einer Ecke (mit Wert und Einheit).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">scale_bar</code> は長さを<b>呼び手が決める</b>のに対し、こちらは画素分解能から長さを選ぶ(<code style="color:#22d3bf">annotate_scale_bar_layout</code>)。上隅では文字をバーの下に、下隅では上に置く。</p>
+<p>Während bei <code style="color:#22d3bf">scale_bar</code> <b>der Aufrufer die Länge festlegt</b>, wählt diese Funktion die Länge aus der Pixelauflösung (<code style="color:#22d3bf">annotate_scale_bar_layout</code>). In oberen Ecken steht der Text unter dem Balken, in unteren Ecken darüber.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_scale_bar_layout</code> と同じ + 文字が画像に収まらない。</p>
+<p>Wie <code style="color:#22d3bf">annotate_scale_bar_layout</code> + Text passt nicht ins Bild.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

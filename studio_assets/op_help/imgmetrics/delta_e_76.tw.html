@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delta_e_76(lab1, lab2)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgmetrics; imgmetrics.delta_e_76(lab1, lab2)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;delta_e_76&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>CIE76 色差 —— Lab 空間中的歐幾里得距離。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>単純だが<b>知覚と合わない</b>(特に彩度の高い青)ので、比較の基準としてのみ</p>
-<p>置いてある。実用は <code style="color:#22d3bf">delta_e_2000</code>。</p>
-<p>式: <code style="color:#22d3bf">sqrt((L1 - L2)^2 + (a1 - a2)^2 + (b1 - b2)^2)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab1</code>, <code style="color:#22d3bf">lab2</code>: 最後の軸が 3 の配列。形は numpy の規則でブロードキャストする(1 色 <code style="color:#22d3bf">(3,)</code> と画像 <code style="color:#22d3bf">(H, W, 3)</code> の組も可)。<code style="color:#22d3bf">rgb_to_lab</code> の出力を渡す。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 最後の軸を落とした形の float64(画像なら <code style="color:#22d3bf">(H, W)</code>)。0 が同一色。目安として 1 前後が判別閾、2.3 が JND と言われるが、この式では色相・彩度によって同じ数値でも見え方が違う。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): どちらかの最後の軸が 3 でない。値の有限性は検査しない(NaN はそのまま伝播する)。</p>
+<p>簡單,但<b>與知覺不符</b>(尤其是高彩度的藍色),所以僅作為比較的基準</p>
+<p>而提供。實際使用請用 <code style="color:#22d3bf">delta_e_2000</code>。</p>
+<p>公式:<code style="color:#22d3bf">sqrt((L1 - L2)^2 + (a1 - a2)^2 + (b1 - b2)^2)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab1</code>、<code style="color:#22d3bf">lab2</code>:最後一軸為 3 的陣列。形狀按 numpy 的規則廣播(1 種顏色 <code style="color:#22d3bf">(3,)</code> 與影像 <code style="color:#22d3bf">(H, W, 3)</code> 的組合也可以)。傳入 <code style="color:#22d3bf">rgb_to_lab</code> 的輸出。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值:去掉最後一軸的 float64(影像則為 <code style="color:#22d3bf">(H, W)</code>)。0 為同一顏色。一般認為 1 左右是辨別閾、2.3 是 JND,但在此公式中,因色相、彩度不同,同樣的數值看起來也不一樣。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>):任一方的最後一軸不是 3。不檢查值的有限性(NaN 會原樣傳播)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_score(voxel_a, voxel_b)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.correlation_score(voxel_a, voxel_b)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;correlation_score&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zwei <code style="color:#22d3bf">voxel</code> → ein normiertes Kreuzkorrelations-<code style="color:#22d3bf">score</code>-Volumen. <b>Der einzige Eingang in diesen Typ.</b></p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">score</code> は <code style="color:#22d3bf">refine_peak_newton</code> が食う型だが、<b>台帳のどの op も <code style="color:#22d3bf">score</code> を産まなかった</b>(実測。生成器の種を置いてようやく到達していた)。ここでは FFT による循環相互相関を返す:</p>
+<p><code style="color:#22d3bf">score</code> ist ein Typ, den <code style="color:#22d3bf">refine_peak_newton</code> konsumiert, aber <b>kein op im Register hat <code style="color:#22d3bf">score</code> erzeugt</b> (gemessen; erreicht wurde er erst, nachdem eine Generator-Saat gesetzt war). Hier wird die zirkuläre Kreuzkorrelation per FFT zurückgegeben:</p>
 <p>score[s] = sum_x (a[x] - mean_a) * (b[x + s] - mean_b) / (N * std_a * std_b)</p>
-<p>したがって <code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">a</code> を <code style="color:#22d3bf">s0</code> だけ <code style="color:#22d3bf">np.roll</code> したものなら、ピークは<b>厳密に</b> <code style="color:#22d3bf">s0</code> に立つ(閉形式の真値。テストがこれを使う)。循環相関なので端は巻き込む —— <b>打ち切り相関ではない</b>ことを明記しておく。</p>
+<p>Ist <code style="color:#22d3bf">b</code> also <code style="color:#22d3bf">a</code>, per <code style="color:#22d3bf">np.roll</code> um <code style="color:#22d3bf">s0</code> verschoben, steht der Peak <b>exakt</b> bei <code style="color:#22d3bf">s0</code> (Ground Truth in geschlossener Form; der Test nutzt das). Da es eine zirkuläre Korrelation ist, werden die Ränder umgeschlagen -- ausdrücklich: Es ist <b>keine abgeschnittene Korrelation</b>.</p>
 <p>Args:</p>
-<p>voxel_a: (D, H, W)。</p>
-<p>voxel_b: (D, H, W)、<code style="color:#22d3bf">voxel_a</code> と同形。</p>
+<p>voxel_a: (D, H, W).</p>
+<p>voxel_b: (D, H, W), gleiche Form wie <code style="color:#22d3bf">voxel_a</code>.</p>
 <p>Returns:</p>
-<p>(D, H, W) float64、値域は概ね [-1, 1] (完全一致で 1.0)。</p>
+<p>(D, H, W) float64, Wertebereich etwa [-1, 1] (1.0 bei perfekter Übereinstimmung).</p>
 <p>Raises:</p>
-<p>ValueError: 3-D でない / 形が違う / 定数体積(標準偏差 0)/ 非有限。</p>
+<p>ValueError: nicht 3-D / Formen verschieden / konstantes Volumen (Standardabweichung 0) / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

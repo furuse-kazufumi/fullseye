@@ -5,22 +5,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.poisson_blend(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">image2d</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.poisson_blend.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">colortransport.poisson_blend</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>gradient field को ले जाने वाला बिना जोड़ का compositing (Pérez, Gangnet &amp; Blake, SIGGRAPH 2003)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">mask</code> の内部で <b><code style="color:#22d3bf">src</code> の勾配</b>を保ちつつ、<b>境界で <code style="color:#22d3bf">dst</code> の値</b>に一致する像を解く。よって出力は次の 2 つを<b>構成上</b>満たし、</p>
-<p>それが正しさの検算になる:</p>
-<p style="margin:2px 0 2px 12px">• 内部のラプラシアンが <code style="color:#22d3bf">src</code> のラプラシアンと一致(解の残差ぶんまで)</p>
-<p style="margin:2px 0 2px 12px">• マスクの外は <code style="color:#22d3bf">dst</code> と<b>厳密に一致</b>(1 画素も触らない)</p>
-<p><b>貼った物の色は変わる。</b> それが目的の処理だが、「貼った物体の色を測る」用途にそのまま流すと<b>測っているのは貼り先の色</b>になる。返り値は <code style="color:#22d3bf">(blended, info)</code> で、<code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code> と <code style="color:#22d3bf">info[&quot;max_shift&quot;]</code> が実際にどれだけ動いたかを言う。</p>
+<p><code style="color:#22d3bf">mask</code> के अंदर <b><code style="color:#22d3bf">src</code> का gradient</b> बनाए रखते हुए, ऐसी image हल की जाती है जो <b>boundary पर <code style="color:#22d3bf">dst</code> के मानों</b> से मेल खाती है। इसलिए output नीचे की 2 बातें <b>construction से ही</b> पूरी करता है, और यही सही होने का cross-check है:</p>
+<p style="margin:2px 0 2px 12px">• अंदर का Laplacian <code style="color:#22d3bf">src</code> के Laplacian से मेल खाता है (solve के residual तक)</p>
+<p style="margin:2px 0 2px 12px">• mask के बाहर यह <code style="color:#22d3bf">dst</code> से <b>बिल्कुल मेल खाता है</b> (1 pixel भी नहीं छुआ जाता)</p>
+<p><b>चिपकाई गई वस्तु का रंग बदल जाता है।</b> यही इस processing का उद्देश्य है, पर अगर इसे सीधे &quot;चिपकाई गई वस्तु का रंग मापने&quot; जैसे उपयोग में डाला जाए, तो <b>जो मापा जा रहा है वह destination का रंग है</b> । return value है <code style="color:#22d3bf">(blended, info)</code>, और <code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code> तथा <code style="color:#22d3bf">info[&quot;max_shift&quot;]</code> बताते हैं कि वास्तव में कितना बदला।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>src : array_like</p>
-<p>貼る絵。<code style="color:#22d3bf">(H, W)</code> または <code style="color:#22d3bf">(H, W, C)</code>。</p>
+<p>चिपकाने वाली picture। <code style="color:#22d3bf">(H, W)</code> या <code style="color:#22d3bf">(H, W, C)</code>।</p>
 <p>dst : array_like</p>
-<p>貼り先。<code style="color:#22d3bf">src</code> 以上の大きさ。</p>
+<p>destination। आकार <code style="color:#22d3bf">src</code> के बराबर या बड़ा।</p>
 <p>mask : array_like</p>
-<p><code style="color:#22d3bf">src</code> と同じ <code style="color:#22d3bf">(H, W)</code> の真偽値。<b>縁に接していてはいけない</b></p>
-<p>(境界条件が取れないため明示的に拒否する)。</p>
+<p><code style="color:#22d3bf">src</code> जैसा ही <code style="color:#22d3bf">(H, W)</code> का boolean। <b>यह border को नहीं छूना चाहिए</b></p>
+<p>(boundary condition नहीं ली जा सकती, इसलिए इसे स्पष्ट रूप से reject किया जाता है)।</p>
 <p>offset : (int, int)</p>
-<p><code style="color:#22d3bf">dst</code> の中で <code style="color:#22d3bf">src</code> の左上を置く <code style="color:#22d3bf">(row, col)</code>。</p>
+<p><code style="color:#22d3bf">dst</code> के अंदर <code style="color:#22d3bf">(row, col)</code> जहाँ <code style="color:#22d3bf">src</code> का top-left रखा जाता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(ndarray, dict)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

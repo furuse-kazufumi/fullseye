@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import videocube; videocube.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvideocube.get(&quot;video_summary_keyframes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>대표 프레임의 첨자 <code style="color:#22d3bf">(k,)</code> int64, 오름차순(<code style="color:#22d3bf">indices</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>フレームごとの得点 = 動きの量(|I_t − I_{t−1}| の平均、[0, 1] に正規化)+ 場面の変化(ヒストグラムの χ² 距離、正規化)。得点の高い順に、既に選んだフレームから <code style="color:#22d3bf">min_gap</code>(既定 T // (2k))以上離れたものを貪欲に <code style="color:#22d3bf">k</code> 枚選ぶ。T &lt; k なら全フレーム。学習なしの「何かが起きたフレーム」であって、意味の要約ではない。</p>
+<p>프레임마다의 득점 = 움직임의 양(|I_t − I_{t−1}| 의 평균, [0, 1] 로 정규화)+ 장면의 변화(히스토그램의 χ² 거리, 정규화). 득점이 높은 순으로, 이미 고른 프레임에서 <code style="color:#22d3bf">min_gap</code>(기본값 T // (2k)) 이상 떨어진 것을탐욕적으로 <code style="color:#22d3bf">k</code> 장 고른다. T &lt; k 이면 전 프레임. 학습 없는 &quot;무언가가 일어난 프레임&quot;이지, 의미의 요약은 아니다.</p>
 <p>&gt;&gt;&gt; idx = video_summary_keyframes(clip, k=4)</p>
 <p>&gt;&gt;&gt; thumbnails = clip[idx]</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

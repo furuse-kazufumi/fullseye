@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_legend(img, labels, xy, anchor=&#x27;lt&#x27;, start=1, radius=7.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, numbers=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_legend(img, labels, xy, anchor=&#x27;lt&#x27;, start=1, radius=7.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, numbers=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_legend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳影像(image2d):帶編號圓形標記 × 說明的圖例(<code style="color:#22d3bf">annotate_markers</code> 的夥伴)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>箱の高さは閉形式 <code style="color:#22d3bf">2*pad + n*row_h + (n-1)*row_gap</code>(<code style="color:#22d3bf">row_h = max(2r, 文字高)</code>)。</p>
+<p>框的高度為閉合式 <code style="color:#22d3bf">2*pad + n*row_h + (n-1)*row_gap</code>(<code style="color:#22d3bf">row_h = max(2r, 文字高度)</code>)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : sequence of str</p>
-<p>各行の説明。</p>
+<p>各列的說明。</p>
 <p>numbers : sequence of str or None</p>
-<p>各行のマーカー文字。None なら <code style="color:#22d3bf">start</code> から連番。</p>
+<p>各列的標記文字。None 時從 <code style="color:#22d3bf">start</code> 開始連續編號。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>labels が空、箱が画像からはみ出す、負の余白。</p>
+<p>labels 為空,框超出影像,負的空白。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

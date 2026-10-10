@@ -4,29 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;axes_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>데이터 좌표 → 화소 좌표의 대응(<b>닫힌 식</b>)을 만듭니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">row は下向き</code> という画像の事実と、<code style="color:#22d3bf">y は上向き</code> というグラフの慣習のずれを、<b>この 1 か所だけ</b>で吸収する。図のコードはこの辞書を持ち回る。</p>
+<p><code style="color:#22d3bf">row는 아래 방향</code>이라는 영상의 사실과, <code style="color:#22d3bf">y는 위 방향</code>이라는 그래프 관습의어긋남을 <b>이 1곳에서만</b> 흡수한다. 그림 코드는 이 사전을 들고 다닌다.</p>
 <p>px = x0 + (x - xmin)/(xmax - xmin) * (w - 1)</p>
 <p>py = y0 + (h - 1) - (y - ymin)/(ymax - ymin) * (h - 1)     # invert_y</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>rect : (x, y, w, h)</p>
-<p>描画域(左上基準、画素)。</p>
+<p>그리기 영역(좌상단 기준, 화소).</p>
 <p>xlim, ylim : (lo, hi)</p>
-<p>データ範囲。lo == hi は<b>傾きが無限大</b>になるので ValueError。</p>
-<p><b>lo &gt; hi(反転軸)も許す</b> ―― 深度やランクを上下逆に描くため。</p>
+<p>데이터 범위. lo == hi는 <b>기울기가 무한대</b>가 되므로 ValueError.</p>
+<p><b>lo &gt; hi(반전 축)도 허용한다</b> —— 깊이나 순위를 위아래 거꾸로 그리기 위해.</p>
 <p>invert_y : bool</p>
-<p>True(既定)なら <code style="color:#22d3bf">ylim[0]</code> が<b>下端</b>に来る = 普通のグラフ。</p>
-<p>False なら画像そのままの向き(上端が <code style="color:#22d3bf">ylim[0]</code>)。</p>
+<p>True(기본값)이면 <code style="color:#22d3bf">ylim[0]</code>이 <b>아래 끝</b>에 온다 = 보통의 그래프.</p>
+<p>False이면 영상 그대로의 방향(위 끝이 <code style="color:#22d3bf">ylim[0]</code>).</p>
 <p>xscale, yscale : {&#x27;linear&#x27;,&#x27;log&#x27;}</p>
-<p><code style="color:#22d3bf">&#x27;log&#x27;</code> は常用対数。範囲に 0 以下が入れば ValueError</p>
-<p>(log 軸に 0 を渡して -inf を「端」として描く図は嘘になる)。</p>
+<p><code style="color:#22d3bf">&#x27;log&#x27;</code>는 상용로그. 범위에 0 이하가 들어가면 ValueError</p>
+<p>(log 축에 0을 넘겨 -inf를 &quot;끝&quot;으로 그리는 그림은 거짓이 된다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;rect&quot;, &quot;xlim&quot;, &quot;ylim&quot;, &quot;invert_y&quot;, &quot;xscale&quot;, &quot;yscale&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;rect&quot;, &quot;xlim&quot;, &quot;ylim&quot;, &quot;invert_y&quot;, &quot;xscale&quot;, &quot;yscale&quot;}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>矩形が不正、範囲が非有限か幅ゼロ、w か h が 2 未満、</p>
-<p>未知の scale、log 軸で範囲に 0 以下。</p>
+<p>사각형이 부정, 범위가 비유한이거나 폭 0, w나 h가 2 미만,</p>
+<p>알 수 없는 scale, log 축에서 범위에 0 이하.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_harmonograph(size: &#x27;int&#x27; = 520, a: &#x27;float&#x27; = 3.0, b: &#x27;float&#x27; = 2.0, phase: &#x27;float&#x27; = 0.35, decay: &#x27;float&#x27; = 0.0018, turns: &#x27;float&#x27; = 36.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_harmonograph(size: &#x27;int&#x27; = 520, a: &#x27;float&#x27; = 3.0, b: &#x27;float&#x27; = 2.0, phase: &#x27;float&#x27; = 0.35, decay: &#x27;float&#x27; = 0.0018, turns: &#x27;float&#x27; = 36.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_harmonograph&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Harmonograph — damped होते 2 pendulum कभी बंद न होने वाला curve बनाते रहते हैं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>不変量: 減衰が 0 のとき、曲線が閉じるのは <b><code style="color:#22d3bf">a/b</code> が有理数のとき</b>だけで、そのときの周期は <code style="color:#22d3bf">2π/gcd</code> ちょうど。</p>
+<p>invariant: damping 0 होने पर curve <b>केवल तब बंद होती है जब <code style="color:#22d3bf">a/b</code> परिमेय हो</b>, और तब period ठीक <code style="color:#22d3bf">2π/gcd</code> होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

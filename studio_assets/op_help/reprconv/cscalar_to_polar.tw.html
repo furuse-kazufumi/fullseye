@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cscalar_to_polar(cscalar)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.cscalar_to_polar(cscalar)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;cscalar_to_polar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>複純量 → 極形式 <code style="color:#22d3bf">pairs (1,2) = [|z|, arg z[度]]</code>。<code style="color:#22d3bf">cscalar</code> 的出口。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> が返す複素スカラは、<code style="color:#22d3bf">measurement</code>(実スカラのみ)へ混ぜると下流が生 TypeError で落ちるので型が分かれている。極形式の対にすると 1-D 語彙へ渡せる。</p>
-<p><b>角度は度</b>。<code style="color:#22d3bf">polar_to_cscalar</code> と往復して実測 max|Δ| = 8.9e-16。</p>
+<p><code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> 回傳的複數純量, 若混入 <code style="color:#22d3bf">measurement</code>(僅實數純量),下游會以原始的 TypeError 崩潰,所以型別是分開的。變成極座標形式的對後就能傳給 1-D 詞彙。</p>
+<p><b>角度以度計</b>。與 <code style="color:#22d3bf">polar_to_cscalar</code> 往返實測 max|Δ| = 8.9e-16。</p>
 <p>Args:</p>
-<p>cscalar: complex(または複素 0-d 配列)。</p>
+<p>cscalar: complex(或複數 0-d 陣列)。</p>
 <p>Returns:</p>
 <p>(1, 2) float64。</p>
 <p>Raises:</p>
-<p>ValueError: 複素スカラでない / 非有限。</p>
+<p>ValueError: 不是複數純量 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

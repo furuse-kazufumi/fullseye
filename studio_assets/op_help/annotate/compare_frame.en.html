@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compare_frame(left, right, layout=&#x27;h&#x27;, labels=None, divider=3, gap=0, divider_color=&#x27;neutral&#x27;, background=0.0, label_anchor=&#x27;lt&#x27;, label_margin=8, scheme=&#x27;okabe_ito&#x27;, **text_kw)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.compare_frame(left, right, layout=&#x27;h&#x27;, labels=None, divider=3, gap=0, divider_color=&#x27;neutral&#x27;, background=0.0, label_anchor=&#x27;lt&#x27;, label_margin=8, scheme=&#x27;okabe_ito&#x27;, **text_kw)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;compare_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Put two images side by side, with a <b>divider</b> and <b>labels</b> at the boundary.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>left, right : ndarray</p>
-<p>比べる 2 枚。大きさが違ってもよい(足りない側は <code style="color:#22d3bf">background</code> で埋める)。</p>
-<p>チャンネル数は揃っていること。</p>
+<p>The 2 images to compare. Sizes may differ (the smaller side is filled with <code style="color:#22d3bf">background</code>).</p>
+<p>The channel counts must match.</p>
 <p>layout : {&#x27;h&#x27;,&#x27;v&#x27;}</p>
-<p><code style="color:#22d3bf">&#x27;h&#x27;</code> = 左右、<code style="color:#22d3bf">&#x27;v&#x27;</code> = 上下。</p>
+<p><code style="color:#22d3bf">&#x27;h&#x27;</code> = side by side, <code style="color:#22d3bf">&#x27;v&#x27;</code> = top and bottom.</p>
 <p>labels : (str, str) or None</p>
-<p>それぞれの見出し。</p>
+<p>Heading for each.</p>
 <p>divider : int</p>
-<p>仕切りの太さ [px] (0 で無し)。</p>
+<p>Thickness of the divider [px] (0 for none).</p>
 <p>gap : int</p>
-<p>仕切りの両側に空ける余白[px]。</p>
+<p>Margin left on both sides of the divider [px].</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>新しい合成画像。</p>
+<p>New composite image.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>チャンネル数の不一致 / 未知の layout / 負の divider・gap /</p>
-<p>labels が 2 要素でない。</p>
+<p>channel count mismatch / unknown layout / negative divider or gap /</p>
+<p>labels not 2 elements.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

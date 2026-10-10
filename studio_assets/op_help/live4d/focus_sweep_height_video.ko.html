@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.focus_sweep_height_video(volseq, window: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import live4d; live4d.focus_sweep_height_video(volseq, window: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opslive4d.get(&quot;focus_sweep_height_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>초점 스윕(각 프레임이 z 방향 합초 스택)의 시계열로부터 <b>높이장 동영상</b> <code style="color:#22d3bf">(T, Y, X)</code>을 만든다(<code style="color:#22d3bf">video</code>, 단위는 z의 장수).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>合焦度は局所ラプラシアン絶対値の平均(<code style="color:#22d3bf">window</code>、Sum-Modified-Laplacian)、各画素の高さは合焦度が最大の z を放物線で副ボクセル精度にしたもの(<code style="color:#22d3bf">depth_from_focus</code> の時系列版)。数値が欲しいときはこちら、絵が欲しいときは <code style="color:#22d3bf">focus_sweep_surface_video</code>。テクスチャの無い画素は合焦度が平らで高さが決まらない。</p>
+<p>합초도는 국소 라플라시안 절댓값의 평균(<code style="color:#22d3bf">window</code>, Sum-Modified-Laplacian), 각 화소의 높이는 합초도가최대인 z 를 포물선으로 부복셀 정밀도로 한 것(<code style="color:#22d3bf">depth_from_focus</code> 의 시계열판). 수치가 필요할 때는 이쪽, 그림이 필요할 때는 <code style="color:#22d3bf">focus_sweep_surface_video</code>. 텍스처가 없는 화소는 합초도가 평평하여 높이가 정해지지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_position(lat_deg, lon_deg, unix_times)</code> (die Implementierung direkt: <code style="color:#22d3bf">import geocam; geocam.sun_position(lat_deg, lon_deg, unix_times)</code>; aus dem Register: <code style="color:#22d3bf">opsgeocam.get(&quot;sun_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Breite, Länge, Zeitpunkt (UNIX-Sekunden, UTC) → Azimut und Elevation der Sonne [Grad] (NOAA-Sonnenstandsalgorithmus, die Formel geringer Genauigkeit nach Meeus 1998).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>公開された閉形式(NOAA Global Monitoring Laboratory の Solar Calculator と同じ式:</p>
-<p>ユリウス世紀 → 平均黄経・平均近点角・中心差 → 視黄経 → 黄道傾斜 → 赤緯 と均時差 → 時角 → 天頂角・方位角)。精度は 2000 年 ± 1 世紀で <b>0.01° 程度</b>(NOAA の記述)、大気屈折は仰角に足す(NOAA の区分式、水平近くで最大 0.57°)。時刻は UTC の UNIX 秒(1-D、float でよい)。うるう秒・ΔT は無視する(0.01° に効かない)。</p>
+<p>Eine veröffentlichte geschlossene Form (dieselben Formeln wie der Solar Calculator des NOAA Global Monitoring Laboratory:</p>
+<p>julianisches Jahrhundert → mittlere Länge, mittlere Anomalie, Mittelpunktsgleichung → scheinbare Länge → Schiefe der Ekliptik → Deklination und Zeitgleichung → Stundenwinkel → Zenitwinkel, Azimut). Die Genauigkeit beträgt <b>etwa 0.01°</b> für 2000 ± 1 Jahrhundert (Angabe der NOAA); die atmosphärische Refraktion wird zur Elevation addiert (stückweise Formel der NOAA, maximal 0.57° nahe dem Horizont). Zeiten sind UNIX-Sekunden in UTC (1-D, float ist in Ordnung). Schaltsekunden und ΔT werden ignoriert (sie spielen bei 0.01° keine Rolle).</p>
 <p>Args:</p>
-<p>lat_deg, lon_deg: 観測点。経度は東が正。</p>
-<p>unix_times: (N,) UNIX 秒(UTC)。スカラも可。</p>
+<p>lat_deg, lon_deg: Beobachtungspunkt. Längengrad ist nach Osten positiv.</p>
+<p>unix_times: (N,) UNIX-Sekunden (UTC). Ein Skalar ist ebenfalls möglich.</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">azimuth_deg</code> (N,)(北 0°、時計回り)/ <code style="color:#22d3bf">elevation_deg</code> (N,)(屈折込み)/</p>
-<p><code style="color:#22d3bf">elevation_true_deg</code> (N,)(屈折なし)/ <code style="color:#22d3bf">declination_deg</code> / <code style="color:#22d3bf">equation_of_time_min</code> /</p>
-<p><code style="color:#22d3bf">hour_angle_deg</code> / <code style="color:#22d3bf">n</code>。</p>
-<p>真値で確かめてある性質(tests/test_geocam.py): 春分の正午に仰角 = 90 − |緯度|、正午の方位は北半球で 180°(南)、方位は東 → 南 → 西と単調、日の出と日の入りの仰角が対称、赤緯は ±23.44° に収まる。</p>
+<p>table: <code style="color:#22d3bf">azimuth_deg</code> (N,) (Nord 0°, im Uhrzeigersinn) / <code style="color:#22d3bf">elevation_deg</code> (N,) (mit Refraktion) /</p>
+<p><code style="color:#22d3bf">elevation_true_deg</code> (N,) (ohne Refraktion) / <code style="color:#22d3bf">declination_deg</code> / <code style="color:#22d3bf">equation_of_time_min</code> /</p>
+<p><code style="color:#22d3bf">hour_angle_deg</code> / <code style="color:#22d3bf">n</code>.</p>
+<p>Gegen Ground Truth geprüfte Eigenschaften (tests/test_geocam.py): Mittags zur Tagundnachtgleiche ist die Elevation = 90 − |Breite|; das Mittagsazimut auf der Nordhalbkugel ist 180° (Süd); das Azimut verläuft monoton Ost → Süd → West; die Elevationen von Sonnenaufgang und Sonnenuntergang sind symmetrisch; die Deklination bleibt innerhalb von ±23.44°.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">Leitfaden zur Familie geocam</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

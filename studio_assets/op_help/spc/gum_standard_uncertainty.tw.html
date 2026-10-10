@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_standard_uncertainty(table, halfwidth=&#x27;halfwidth&#x27;, distribution=&#x27;distribution&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import spc; spc.gum_standard_uncertainty(table, halfwidth=&#x27;halfwidth&#x27;, distribution=&#x27;distribution&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsspc.get(&quot;gum_standard_uncertainty&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>依據<b>分布的形狀</b>將不確定度分量換算為標準不確定度(<code style="color:#22d3bf">table</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>校正証明書や規格が与えるのは「半幅 a」「95 % で ±U」のような形であって標準偏差ではない。伝播則が食えるのは標準不確かさだけなので、ここで揃える:</p>
-<p>矩形(一様)  u = a / sqrt(3)      三角      u = a / sqrt(6)</p>
-<p>U 字(逆正弦) u = a / sqrt(2)      normal_95 u = a / 1.959964</p>
-<p>★どれも分布の分散の定義から出る<b>厳密</b>な値で、モンテカルロで標本標準偏差を取れば同じ数に収束する(<code style="color:#22d3bf">gum_monte_carlo</code> が独立に確かめる)。</p>
-<p>★★<b>既定の分布を置かない</b>。一番よく使うからといって矩形を既定にすると、形を書き忘れた成分が黙って a/sqrt(3) になる —— 三角のつもりなら 1.41 倍、95 % 区間のつもりなら 1.13 倍ずれた不確かさが、例外を出さずに下流へ流れる。</p>
+<p>校正證書或標準給出的是「半寬 a」「95 % 下 ±U」這樣的形式,而不是標準差。傳播律只能使用標準不確定度,所以在這裡統一:</p>
+<p>矩形(均勻)  u = a / sqrt(3)      三角      u = a / sqrt(6)</p>
+<p>U 形(反正弦) u = a / sqrt(2)      normal_95 u = a / 1.959964</p>
+<p>★每一個都是由分布變異數的定義得出的<b>嚴格</b>值,以蒙地卡羅取樣本標準差也會收斂到同一個數(<code style="color:#22d3bf">gum_monte_carlo</code> 獨立地確認這一點)。</p>
+<p>★★<b>不設定預設分布</b>。若因為最常用就把矩形設為預設,那麼忘寫形狀的成分會默默變成 a/sqrt(3) —— 本意是三角時偏 1.41 倍, 本意是 95 % 區間時偏 1.13 倍的不確定度,會不拋例外地流向下游。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

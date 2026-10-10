@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_synth_family(n_shapes: &#x27;int&#x27; = 8, n_points: &#x27;int&#x27; = 64, n_modes: &#x27;int&#x27; = 2, mode_scale=(0.3, 0.12), noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.shape_synth_family(n_shapes: &#x27;int&#x27; = 8, n_points: &#x27;int&#x27; = 64, n_modes: &#x27;int&#x27; = 2, mode_scale=(0.3, 0.12), noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_synth_family&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>알려진 변형 모드를 가진 형상 집단을 만든다. → <code style="color:#22d3bf">(n_shapes, n_points, 3)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>基準形は楕円体上の準一様な点で、そこに <b>正規直交な変形モード</b>を既知の重みで足す。モード 1 は長軸方向の伸び、モード 2 は左右の曲げ。<code style="color:#22d3bf">shape_pca</code> に食わせると、<b>主成分の分散比が <code style="color:#22d3bf">mode_scale</code> の 2 乗比に一致する</b>はずで、これが統計形状モデルの検算になる。</p>
-<p><code style="color:#22d3bf">noise</code> は点ごとの等方ガウス雑音の標準偏差(モデルに乗らない成分)。</p>
+<p>기준형은 타원체 위의 준균일한 점이며, 거기에 <b>정규직교인 변형 모드</b>를알려진 가중치로 더한다. 모드 1 은 장축 방향의 늘어남, 모드 2 는 좌우 굽힘. <code style="color:#22d3bf">shape_pca</code> 에 넣으면 <b>주성분의 분산비가 <code style="color:#22d3bf">mode_scale</code> 의 2 제곱비와일치할</b> 것이며, 이것이 통계적 형상 모델의 검산이 된다.</p>
+<p><code style="color:#22d3bf">noise</code> 는 점별 등방 가우스 잡음의 표준편차(모델에 실리지 않는 성분).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

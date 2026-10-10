@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_membrane_response(image, sigma: &#x27;float&#x27; = 1.5, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import emproof; emproof.seg_membrane_response(image, sigma: &#x27;float&#x27; = 1.5, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsemproof.get(&quot;seg_membrane_response&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Antwort [0, ∞) auf die <b>dunklen Linien</b> (Zellmembranen) eines EM-Schnitts. Aus den Eigenwerten λ1 ≥ λ2 der Gauß-geglätteten Hesse-Matrix <code style="color:#22d3bf">max(λ1 − |λ2|, 0)</code> (geschlossene Form der Liniendetektion nach Steger, mit σ² skalennormiert).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>暗い線の上では横断方向の 2 階微分が大きく正(λ1)、線に沿う方向は 0(λ2)なので λ1 − |λ2| が立つ。暗い<b>塊</b>(ミトコンドリア内部・シナプス小胞)は λ1 ≈ λ2 &gt; 0 で打ち消し合って 0 に近い ―― 膜だけを拾う。<code style="color:#22d3bf">normalize=True</code> で断面の 99.5 percentile を 1 にする(<code style="color:#22d3bf">seg_*</code> の閾値はその尺度で書く)。scikit-image があるならレジストリの <code style="color:#22d3bf">sk_frangi</code>(<code style="color:#22d3bf">fs.apply(img, &quot;sk_frangi&quot;, a=0.5, b=0.5)</code>)も同じ席に使える(試作はそちらで AUC を測った)。</p>
+<p>Auf einer dunklen Linie ist die 2. Ableitung quer dazu groß und positiv (λ1), längs dazu 0 (λ2), daher steigt λ1 − |λ2| an. Dunkle <b>Klumpen</b> (Inneres von Mitochondrien, synaptische Vesikel) haben λ1 ≈ λ2 &gt; 0, was sich zu nahezu 0 aufhebt -- nur Membranen werden erfasst. <code style="color:#22d3bf">normalize=True</code> setzt das 99.5-Perzentil des Schnitts auf 1 (die Schwellwerte von <code style="color:#22d3bf">seg_*</code> sind auf dieser Skala angegeben). Ist scikit-image vorhanden, kann auch <code style="color:#22d3bf">sk_frangi</code> aus der Registry (<code style="color:#22d3bf">fs.apply(img, &quot;sk_frangi&quot;, a=0.5, b=0.5)</code>) denselben Platz einnehmen (der Prototyp hat die AUC damit gemessen).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>image : (H, W) float</p>
-<p>生 EM(明るい = 細胞質、暗い = 膜)。範囲は問わない(勾配の比だけを見る)。</p>
+<p>Rohes EM (hell = Zytoplasma, dunkel = Membran). Beliebiger Bereich (nur Gradientenverhältnisse werden betrachtet).</p>
 <p>sigma : float</p>
-<p>平滑の σ [px]。膜の太さの半分程度(CREMI 4 nm/px なら 1.5〜2.5)。</p>
+<p>Glättungs-σ [px]. Etwa die halbe Membrandicke (1.5-2.5 bei CREMI mit 4 nm/px).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">Leitfaden zur Familie emproof</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

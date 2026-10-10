@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法线 <code style="color:#22d3bf">(N,3)</code> → 方位・仰角对 <code style="color:#22d3bf">(N,2)</code> <b>[度]</b>。<code style="color:#22d3bf">normals</code> 的出口。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> を軸0-軸1 平面内の方位、<code style="color:#22d3bf">el = asin(c2/|v|)</code> を軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された配列がどちらの流儀かに依存して意味が変わってしまう。</p>
-<p>可逆: <code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測 max|Δ| = 6.1e-16、<code style="color:#22d3bf">selftest</code> が毎回測る)。<b>戻らないのは長さだけ</b> —— 法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
+<p>以 <code style="color:#22d3bf">az = atan2(c1, c0)</code> 为轴0-轴1 平面内的方位角,<code style="color:#22d3bf">el = asin(c2/|v|)</code> 为从轴2 起的仰角。<b>不用 x/y/z 而用&quot;轴0/1/2&quot;来定义</b>,是因为本 repo 中(z,y,x) 顺序的点云与 (x,y,z) 顺序的点云同时存在 —— 若用名称来写,含义就会随传入的数组属于哪种流派而改变。</p>
+<p>可逆: 与 <code style="color:#22d3bf">angles_to_normals</code> 往返时<b>方向严格复原</b>(实测 max|Δ| = 6.1e-16,<code style="color:#22d3bf">selftest</code> 每次都测)。<b>不能复原的只有长度</b> —— 法线是方向,所以传入非单位向量时往返后会变成单位向量。</p>
 <p>Args:</p>
-<p>normals: (N, 3) 実配列。零ベクトルは拒否(方位が定義できない)。</p>
+<p>normals: (N, 3) 实数组。零向量被拒绝(方位角无法定义)。</p>
 <p>Returns:</p>
-<p>(N, 2) float64。列 0 = 方位 (-180, 180]、列 1 = 仰角 [-90, 90]。</p>
+<p>(N, 2) float64。列 0 = 方位角 (-180, 180],列 1 = 仰角 [-90, 90]。</p>
 <p>Raises:</p>
-<p>ValueError: 形状が (N,3) でない / 非有限 / 長さ 0 のベクトルを含む。</p>
+<p>ValueError: 形状不是 (N,3) / 非有限 / 含长度为 0 的向量。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

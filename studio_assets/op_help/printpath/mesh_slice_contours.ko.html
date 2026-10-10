@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_slice_contours(mesh: &#x27;Any&#x27;, z: &#x27;float&#x27;, tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.mesh_slice_contours(mesh: &#x27;Any&#x27;, z: &#x27;float&#x27;, tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;mesh_slice_contours&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삼각형 메시를 평면 <code style="color:#22d3bf">z</code>로 자른 <b>윤곽 표</b> <code style="color:#22d3bf">table</code>: 열 <code style="color:#22d3bf">ring</code>(고리 번호), <code style="color:#22d3bf">x</code>, <code style="color:#22d3bf">y</code>(mm).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各三角形と平面の交差を線分にし、三角形の法線で向きを付けて(外輪郭は反時計回り、穴は時計回り)、端点を突き合わせて閉じた輪(閉じなければ開いた鎖)に繋ぐ(古典のスライサ)。輪の符号つき面積で中身と穴が分かる。頂点がちょうど平面に乗るときは <code style="color:#22d3bf">tol</code> だけ持ち上げて退化を避ける。平面が形に触れなければ ValueError (空の層は「無い」と言う)。</p>
+<p>각 삼각형과 평면의 교차를 선분으로 하고, 삼각형의 법선으로 방향을 붙여(외윤곽은 반시계 방향, 구멍은 시계 방향), 끝점을맞대어 닫힌 고리(닫히지 않으면 열린 사슬)로 잇는다(고전적인 슬라이서). 고리의 부호 있는 면적으로 속과 구멍을 알 수 있다. 꼭짓점이 정확히 평면에 놓일 때는 <code style="color:#22d3bf">tol</code> 만큼 들어 올려 퇴화를 피한다. 평면이 형태에 닿지 않으면 ValueError (빈 층은 &quot;없다&quot;고 말한다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

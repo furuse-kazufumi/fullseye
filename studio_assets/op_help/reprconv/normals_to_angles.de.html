@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Normalen <code style="color:#22d3bf">(N,3)</code> → Azimut-/Elevationspaare <code style="color:#22d3bf">(N,2)</code> <b>[Grad]</b>. Der Ausgang aus <code style="color:#22d3bf">normals</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> を軸0-軸1 平面内の方位、<code style="color:#22d3bf">el = asin(c2/|v|)</code> を軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された配列がどちらの流儀かに依存して意味が変わってしまう。</p>
-<p>可逆: <code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測 max|Δ| = 6.1e-16、<code style="color:#22d3bf">selftest</code> が毎回測る)。<b>戻らないのは長さだけ</b> —— 法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
+<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> ist der Azimut in der Ebene Achse0-Achse1, <code style="color:#22d3bf">el = asin(c2/|v|)</code> ist die Elevation ab Achse 2. <b>Definiert wird mit &quot;Achse 0/1/2&quot;, nicht mit x/y/z</b>, weil es in diesem repo sowohl Punktwolken in (z,y,x)-Reihenfolge als auch in (x,y,z)-Reihenfolge gibt -- mit Namen geschrieben, würde sich die Bedeutung je nach Konvention des übergebenen Arrays ändern.</p>
+<p>Umkehrbar: Der Hin- und Rückweg mit <code style="color:#22d3bf">angles_to_normals</code> <b>stellt die Richtung exakt wieder her</b> (gemessen max|Δ| = 6.1e-16, <code style="color:#22d3bf">selftest</code> misst es jedes Mal). <b>Nur die Länge kommt nicht zurück</b> -- eine Normale ist eine Richtung, also wird ein Nicht-Einheitsvektor nach dem Hin- und Rückweg zum Einheitsvektor.</p>
 <p>Args:</p>
-<p>normals: (N, 3) 実配列。零ベクトルは拒否(方位が定義できない)。</p>
+<p>normals: (N, 3) reelles Array. Nullvektoren werden abgewiesen (der Azimut ist nicht definierbar).</p>
 <p>Returns:</p>
-<p>(N, 2) float64。列 0 = 方位 (-180, 180]、列 1 = 仰角 [-90, 90]。</p>
+<p>(N, 2) float64. Spalte 0 = Azimut (-180, 180], Spalte 1 = Elevation [-90, 90].</p>
 <p>Raises:</p>
-<p>ValueError: 形状が (N,3) でない / 非有限 / 長さ 0 のベクトルを含む。</p>
+<p>ValueError: Form ist nicht (N,3) / nicht endlich / enthält einen Vektor der Länge 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

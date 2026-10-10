@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import perpetual; perpetual.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_loop_seam&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以数值给出循环视频的<b>接缝</b>(<code style="color:#22d3bf">table</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">seam</code> = 最終コマ → 初コマの差、<code style="color:#22d3bf">typical</code> = コマ間の差の中央値。継ぎ目の無い動画では <code style="color:#22d3bf">ratio = seam / typical</code> が <b>1 に近い</b>(最後のまたぎが、ほかのまたぎと見分けが付かない)。<b>0 ではなく 1 が正解</b>なのがここの読みどころ —— 0 は「動きが止まっている」という意味になる。</p>
+<p><code style="color:#22d3bf">seam</code> = 最后一帧 → 第一帧的差,<code style="color:#22d3bf">typical</code> = 帧间差的中位数。无接缝的视频中 <code style="color:#22d3bf">ratio = seam / typical</code> <b>接近 1</b>(最后的跨越与其他跨越无法区分)。<b>正确答案是 1 而不是 0</b>,这正是这里值得细读之处 —— 0 意味着“运动停止了”。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

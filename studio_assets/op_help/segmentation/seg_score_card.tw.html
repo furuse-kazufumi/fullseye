@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_score_card(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, tau: &#x27;float&#x27; = 2.0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import segeval; segeval.seg_score_card(labels_pred, labels_true, *, background: &#x27;int&#x27; = 0, tau: &#x27;float&#x27; = 2.0, min_overlap: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;seg_score_card&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把所有度量彙成一張表：Dice/Jaccard、VI/split/merge、Rand/ARI、邊界 F、Hausdorff/HD95/ASSD、過/欠分割、分裂/融合/漏檢/誤檢/匹配與個數（seg_score_card）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">segcompare</code> には a = 真、b = 予測で渡す(split = 予測が真を切った量、merge = 予測が真を貼った量)。値は float か int の平らな dict(表にそのまま並ぶ)。</p>
+<p>傳給 <code style="color:#22d3bf">segcompare</code> 時 a = 真,b = 預測(split = 預測切開真的量,merge = 預測黏合真的量)。值是 float 或 int 的扁平 dict(直接排成表)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

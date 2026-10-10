@@ -4,33 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_table(img, text, xy, anchor=&#x27;lt&#x27;, font_size=13, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, grid=False, border=0, border_color=None, font_path=None, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, bold=False, italic=False, line_spacing=1.15, style=None, layout=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_table(img, text, xy, anchor=&#x27;lt&#x27;, font_size=13, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, grid=False, border=0, border_color=None, font_path=None, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, bold=False, italic=False, line_spacing=1.15, style=None, layout=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (image2d) लौटाता है: tab से अलग की गई string को <b>table</b> के रूप में बनाता है (अर्ध-पारदर्शी backing plate सहित)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>桁幅は <code style="color:#22d3bf">annotate_table_layout</code> が実フォントで測って決める。既定の桁間は行高の 0.6 倍なので、<code style="color:#22d3bf">font_size</code> を変えれば間隔も一緒に動く。板は既定で半透明(<code style="color:#22d3bf">box_alpha=0.72</code>、0 で板なし)。</p>
+<p>column width <code style="color:#22d3bf">annotate_table_layout</code> असली font से मापकर तय करता है। default column gap row height का 0.6 गुना है, इसलिए <code style="color:#22d3bf">font_size</code> बदलने पर दूरी भी साथ बदलती है। पृष्ठभूमि panel default रूप से अर्ध-पारदर्शी है (<code style="color:#22d3bf">box_alpha=0.72</code>, 0 पर कोई panel नहीं)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>box_alpha : float</p>
-<p>板の不透明度 [0,1]。<b>0 で板を描かない</b>。半透明にすると下の絵が</p>
-<p>透けるので、文字色は「実際に下に出る色」に対して検査される。</p>
+<p>panel की opacity [0,1]। <b>0 पर panel नहीं बनता</b>। अर्ध-पारदर्शी होने पर नीचे की तस्वीर</p>
+<p>झलकती है, इसलिए text का रंग &quot;वास्तव में नीचे दिखने वाले रंग&quot; के विरुद्ध जाँचा जाता है।</p>
 <p>grid : bool</p>
-<p>真なら桁と行の境に薄い罫を引く。既定は引かない(罫の無い表のほうが</p>
-<p>読みやすいことが多く、必要なときだけ足せばよい)。</p>
+<p>true हो तो columns और rows की सीमाओं पर हल्की lines खींचता है। default में नहीं खींचता (बिना lines की table</p>
+<p>अक्सर पढ़ने में आसान होती है, ज़रूरत हो तभी जोड़ें)।</p>
 <p>header : bool</p>
-<p>真なら 1 行目を太字にし、下に罫を 1 本引く。</p>
+<p>true हो तो row 1 को bold करता है और उसके नीचे 1 line खींचता है।</p>
 <p>align : str or sequence</p>
-<p><code style="color:#22d3bf">TABLE_ALIGNS</code>。既定 <code style="color:#22d3bf">&quot;auto&quot;</code> は数の桁だけ右そろえ。</p>
+<p><code style="color:#22d3bf">TABLE_ALIGNS</code>। default <code style="color:#22d3bf">&quot;auto&quot;</code> केवल संख्या वाले columns को right-align करता है।</p>
 <p>layout : dict or None</p>
-<p><code style="color:#22d3bf">annotate_table_layout</code> の返りを渡すと再計算しない。</p>
-<p><b>渡した場合、<code style="color:#22d3bf">anchor</code> などは無視される</b>(両方渡さないこと)。</p>
+<p><code style="color:#22d3bf">annotate_table_layout</code> का return value देने पर दोबारा गणना नहीं होती।</p>
+<p><b>देने पर <code style="color:#22d3bf">anchor</code> आदि अनदेखे किए जाते हैं</b> (दोनों न दें)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(H,W[,C]) float64</p>
-<p>表を描いた複製。<b>入力は書き換えない</b>。</p>
+<p>table बनी हुई copy। <b>input बदला नहीं जाता</b>।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_table_layout</code> と同じ + 表が画像からはみ出す +</p>
-<p>文字が下地に対して <code style="color:#22d3bf">min_contrast</code> を割る(<b>黙って切らない</b>)。</p>
+<p><code style="color:#22d3bf">annotate_table_layout</code> जैसा ही + table image से बाहर निकलती है +</p>
+<p>text पृष्ठभूमि के मुक़ाबले <code style="color:#22d3bf">min_contrast</code> से नीचे जाता है (<b>चुपचाप काटा नहीं जाता</b>)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np, annotate</p>
 <p>&gt;&gt;&gt; img = np.zeros((120, 260, 3))</p>
-<p>&gt;&gt;&gt; out = annotate.annotate_table(img, &quot;項目\t値\n面積\t12.5\n周長\t9.75&quot;,</p>
+<p>&gt;&gt;&gt; out = annotate.annotate_table(img, &quot;Item\tValue\nArea\t12.5\nPerimeter\t9.75&quot;,</p>
 <p>...                               (10, 10), header=True)</p>
 <p>&gt;&gt;&gt; out.shape</p>
 <p>(120, 260, 3)</p>

@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.msa_anova_table(table, part=&#x27;part&#x27;, operator=&#x27;operator&#x27;, value=&#x27;value&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;msa_anova_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Varianzanalysetabelle für einen gekreuzten zweifaktoriellen Versuchsplan (Teil x Prüfer x Wiederholung) (<code style="color:#22d3bf">table</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>*table* は列 *part* / *operator* / *value* を持つ表。設計は<b>釣り合っている</b> こと(升目ごとの繰り返し数が同じ)——釣り合っていなければ拒む。</p>
-<p>返りは source / ss / df / ms / f / p の 6 列。<code style="color:#22d3bf">f</code> と <code style="color:#22d3bf">p</code> は測定者と交互作用を交互作用平均平方で、交互作用を誤差平均平方で検定した値(規格の慣行)。</p>
-<p>★門にできる厳密な恒等式: <code style="color:#22d3bf">ss_total == ss_part + ss_oper + ss_inter + ss_err</code>。これは代数的な分解なので、分散成分をどう出そうと必ず成り立つ —— 片方が壊れれば一致しない。自由度も <code style="color:#22d3bf">df_total == 和</code> で閉じる。</p>
+<p>*table* ist eine Tabelle mit den Spalten *part* / *operator* / *value*. Das Design muss <b>balanciert</b> sein (gleiche Anzahl Wiederholungen in jeder Zelle) -- ist es nicht balanciert, wird es abgewiesen.</p>
+<p>Rückgabe sind die 6 Spalten source / ss / df / ms / f / p. <code style="color:#22d3bf">f</code> und <code style="color:#22d3bf">p</code> sind die Werte, mit denen Prüfer und Wechselwirkung gegen das mittlere Quadrat der Wechselwirkung und die Wechselwirkung gegen das mittlere Quadrat des Fehlers getestet wird (Konvention der Norm).</p>
+<p>★ Eine exakte Identität, die als Gate taugt: <code style="color:#22d3bf">ss_total == ss_part + ss_oper + ss_inter + ss_err</code>. Das ist eine algebraische Zerlegung, sie gilt also immer, wie auch immer die Varianzkomponenten bestimmt werden -- geht eine Seite kaputt, stimmt sie nicht mehr. Auch die Freiheitsgrade schließen mit <code style="color:#22d3bf">df_total == Summe</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

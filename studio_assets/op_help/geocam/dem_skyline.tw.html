@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import geocam; geocam.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsgeocam.get(&quot;dem_skyline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從 DEM 的 1 個點看到的<b>全方位天際線</b>(各方位的地平線仰角)→ table。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">dem_horizon_angle</code> は「全セル × 1 方位」、これは「1 点 × 全方位」—— 固定カメラの向きを決めるのに要るのは後者。各方位へ <code style="color:#22d3bf">cell_size / 2</code> 刻みで視線を進め(標高は双一次補間)、<code style="color:#22d3bf">atan((z_j − z_0 − drop(d)) / d)</code> の最大値をその方位の仰角にする。<code style="color:#22d3bf">drop(d) = d² / (2 R_eff)</code> は地球の丸みと大気屈折(有効半径 R / (1 − 0.13))で遠くの山が沈む分。視線が DEM の外に出たらそこで止める(<code style="color:#22d3bf">max_distance</code> でも止まる)。<b>DEM の外側</b>は「DEM の最低標高の平面が地平線まで続く」と仮定し、仰角の下限を地平線の沈み <code style="color:#22d3bf">−sqrt(2 h / R_eff)</code>(h = 観測点の最低標高からの高さ)にする —— 有限の DEM の端でたまたま低い点を見て、実際には地球の丸みで見えない −7° のような「穴」を空にしないため(<code style="color:#22d3bf">horizon_dip_deg</code> に返す)。</p>
+<p><code style="color:#22d3bf">dem_horizon_angle</code> 是「全部網格單元 × 1 個方位」,這個是「1 個點 × 全部方位」—— 確定固定相機的朝向需要的是後者。在各方位上以 <code style="color:#22d3bf">cell_size / 2</code> 的步長推進視線(高程用雙線性內插), 把 <code style="color:#22d3bf">atan((z_j − z_0 − drop(d)) / d)</code> 的最大值作為該方位的仰角。<code style="color:#22d3bf">drop(d) = d² / (2 R_eff)</code> 是由於地球曲率與大氣折射(有效半徑 R / (1 − 0.13))遠處的山下沉的量。視線一旦走出 DEM 就在那裡停止(到 <code style="color:#22d3bf">max_distance</code> 也停止)。<b>DEM 之外</b>假定「DEM 最低高程的平面一直延續到地平線」,把仰角的下限設為地平線的俯角 <code style="color:#22d3bf">−sqrt(2 h / R_eff)</code>(h = 觀測點距最低高程的高度)—— 為了不因在有限 DEM 的邊緣恰好看到低點,而把實際上因地球曲率看不到的 −7° 那樣的「洞」當作天空(在 <code style="color:#22d3bf">horizon_dip_deg</code> 中回傳)。</p>
 <p>Args:</p>
-<p>dem: (H, W) 標高 [m]。行 0 が北端。</p>
-<p>cell_size: [m/セル]。</p>
-<p>observer_rc: 観測点 (row, col)。float 可(セルの中に立てる)。</p>
-<p>eye_height: 地面からのカメラ高さ [m]。</p>
-<p>az_step_deg: 方位の刻み [度]。</p>
-<p>max_distance: 視線の最大距離 [m] (None = DEM の端まで)。</p>
-<p>earth_curvature: False なら平らな地球。</p>
+<p>dem: (H, W) 高程 [m]。第 0 列是北端。</p>
+<p>cell_size: [m/單元]。</p>
+<p>observer_rc: 觀測點 (row, col)。可為 float(立在單元內部)。</p>
+<p>eye_height: 相機離地高度 [m]。</p>
+<p>az_step_deg: 方位步長 [度]。</p>
+<p>max_distance: 視線的最大距離 [m] (None = 到 DEM 的邊緣)。</p>
+<p>earth_curvature: False 則為平坦的地球。</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">azimuth_deg</code> (M,) / <code style="color:#22d3bf">elevation_deg</code> (M,) / <code style="color:#22d3bf">distance_m</code> (M,)(仰角を決めた</p>
-<p>地点までの距離)/ <code style="color:#22d3bf">observer_elevation_m</code> / <code style="color:#22d3bf">horizon_dip_deg</code> / <code style="color:#22d3bf">n</code>。方位は 0 以上</p>
-<p>360 未満、昇順。</p>
+<p>table: <code style="color:#22d3bf">azimuth_deg</code> (M,) / <code style="color:#22d3bf">elevation_deg</code> (M,) / <code style="color:#22d3bf">distance_m</code> (M,)(到決定仰角的</p>
+<p>地點的距離)/ <code style="color:#22d3bf">observer_elevation_m</code> / <code style="color:#22d3bf">horizon_dip_deg</code> / <code style="color:#22d3bf">n</code>。方位不小於 0、</p>
+<p>小於 360,升冪。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

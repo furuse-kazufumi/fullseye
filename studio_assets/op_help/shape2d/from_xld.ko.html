@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.from_xld(contour, i=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fourierdesc; fourierdesc.from_xld(contour, i=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;from_xld&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>XLD 윤곽 dict(<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;:[Nx2,...]}</code>)에서 i번째 윤곽을 꺼낸다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返るのは XLD と同じ <b>(row, col)</b> 順の (N,2)。<code style="color:#22d3bf">imagemorph</code> へ渡すときは <code style="color:#22d3bf">[:, ::-1]</code> で (x, y) に入れ替えること(モジュール冒頭の「座標順の落とし穴」)。</p>
+<p>반환되는 것은 XLD 와 같은 <b>(row, col)</b> 순서의 (N,2). <code style="color:#22d3bf">imagemorph</code> 에 넘길 때는 <code style="color:#22d3bf">[:, ::-1]</code> 로 (x, y) 로 바꿀 것(모듈 첫머리의 &quot;좌표 순서의 함정&quot;).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

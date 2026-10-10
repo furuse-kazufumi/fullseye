@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code>(要直接调用实现,<code style="color:#22d3bf">import volcolor; volcolor.vol_colorize_labels(labels, seed: &#x27;int&#x27; = 0, background=(0.0, 0.0, 0.0))</code>;从台账取用则 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_colorize_labels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3-D 标签体 -&gt; <code style="color:#22d3bf">(D, H, W, 3)</code> float64 的 RGB 体。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>「切ってから色を付ける」のではなく「<b>色を付けてから切る</b>」ための入口。ラベル <code style="color:#22d3bf">k</code> の色は <code style="color:#22d3bf">vol_label_palette</code> の行 <code style="color:#22d3bf">k</code> そのもので、<code style="color:#22d3bf">imgio.colorize_labels(labels, seed)</code> を同じ配列に対して呼んだ結果と <b>バイト単位で一致する</b>(<code style="color:#22d3bf">tests/test_volcolor.py</code> が固定)。</p>
-<p>切る順序が効くこと自体は <code style="color:#22d3bf">vol_label_color_flicker</code> が数える。実測(16 球・<code style="color:#22d3bf">(24, 48, 48)</code> の参照ファントム、<code style="color:#22d3bf">connectivity=26</code>、seed=0):</p>
-<p>スライスごとに色を付け直すと <b>24 スライス中 20 スライス</b>で少なくとも 1 成分の色が変わり、(成分, スライス) の変化は 108 組中 <b>62 件</b>、<b>16 成分すべて</b>が一度は色を変える。ボリュームで色を付けてから切ると 3 つとも 0。</p>
-<p>Raises <code style="color:#22d3bf">ValueError</code> on a non-3-D, float, or negative label volume, on a label</p>
-<p>over <code style="color:#22d3bf">MAX_LABELS</code>, or on more than <code style="color:#22d3bf">MAX_COLOR_VOXELS</code> voxels.</p>
+<p>不是&quot;先切再上色&quot;,而是&quot;<b>先上色再切</b>&quot;的入口。标签 <code style="color:#22d3bf">k</code> 的颜色就是 <code style="color:#22d3bf">vol_label_palette</code> 的第 <code style="color:#22d3bf">k</code> 行本身,与对同一数组调用 <code style="color:#22d3bf">imgio.colorize_labels(labels, seed)</code> 的结果 <b>按字节一致</b>(由 <code style="color:#22d3bf">tests/test_volcolor.py</code> 固定)。</p>
+<p>切的顺序本身会起作用,由 <code style="color:#22d3bf">vol_label_color_flicker</code> 计数。实测(16 个球、<code style="color:#22d3bf">(24, 48, 48)</code> 的参考体模,<code style="color:#22d3bf">connectivity=26</code>,seed=0):</p>
+<p>逐切片重新上色时,<b>24 张切片中有 20 张</b>至少有 1 个成分的颜色改变,(成分, 切片) 的变化在 108 组中有 <b>62 件</b>, <b>16 个成分全部</b>至少变过一次颜色。对体数据上色后再切, 这 3 项全为 0。</p>
+<p>对非 3-D、float 或负的标签体数据,超过 <code style="color:#22d3bf">MAX_LABELS</code> 的标签,</p>
+<p>或超过 <code style="color:#22d3bf">MAX_COLOR_VOXELS</code> 个体素时,抛出 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

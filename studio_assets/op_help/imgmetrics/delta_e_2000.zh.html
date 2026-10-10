@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delta_e_2000(lab1, lab2, kL=1.0, kC=1.0, kH=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import imgmetrics; imgmetrics.delta_e_2000(lab1, lab2, kL=1.0, kC=1.0, kH=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;delta_e_2000&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>CIEDE2000 色差(CIE 142-2001)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>実装が踏み外しやすい 3 か所 ―― <b>色相角の平均</b>(0/360 をまたぐ扱い)、<b>275° の回転項</b>、<b>彩度ゼロ近傍</b>(<code style="color:#22d3bf">atan2(0, 0)</code> の扱い)―― は Sharma, Wu &amp; Dalal (2005) の 34 組の検証対で固定してある(<code style="color:#22d3bf">CIEDE2000_TEST_PAIRS</code> / <code style="color:#22d3bf">tests/test_imgmetrics.py</code>)。</p>
+<p>实现容易出错的 3 处 —— <b>色相角的平均</b>(跨越 0/360 的处理)、<b>275° 的旋转项</b>、<b>彩度接近零</b>(<code style="color:#22d3bf">atan2(0, 0)</code> 的处理)—— 已用 Sharma, Wu &amp; Dalal (2005) 的 34 组验证对固定(<code style="color:#22d3bf">CIEDE2000_TEST_PAIRS</code> / <code style="color:#22d3bf">tests/test_imgmetrics.py</code>)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>lab1, lab2 : array_like</p>
-<p>最後の軸が <code style="color:#22d3bf">(L*, a*, b*)</code> の配列。ブロードキャストされる。</p>
+<p>最后一轴为 <code style="color:#22d3bf">(L*, a*, b*)</code> 的数组。会进行广播。</p>
 <p>kL, kC, kH : float</p>
-<p>観察条件のパラメトリック係数。既定は基準条件の 1。</p>
+<p>观察条件的参数系数。默认为基准条件的 1。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>ΔE00(最後の軸が落ちた形)。</p>
+<p>ΔE00(去掉最后一轴的形状)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

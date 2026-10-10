@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_deviation(measured, reference, n=200, align=&#x27;chord&#x27;, oversample=8)</code>(要直接呼叫實作,<code style="color:#22d3bf">import profileops; profileops.profile_deviation(measured, reference, n=200, align=&#x27;chord&#x27;, oversample=8)</code>;從台帳取用則 <code style="color:#22d3bf">opsprofile.get(&quot;profile_deviation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>相對設計形狀的<b>帶正負號法向偏差</b>。回傳 dict。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>正が「太い側(外向き)」、負が「痩せた側」。設計輪郭の外向き法線を基準にする。</p>
+<p>正為「偏厚的一側(向外)」，負為「偏薄的一側」。以設計輪廓的外法線為基準。</p>
 <p>Args:</p>
-<p>measured / reference: <code style="color:#22d3bf">(N, 2)</code> の閉輪郭。</p>
-<p>n: 比較に使う等弧長の点数(両方を取り直す)。</p>
+<p>measured / reference: <code style="color:#22d3bf">(N, 2)</code> 的閉合輪廓。</p>
+<p>n: 比較所用的等弧長點數(兩者都重新取樣)。</p>
 <p>align: <code style="color:#22d3bf">ALIGN_MODES</code>。</p>
-<p>oversample: 相手側を基準の何倍の密度で取り直すか(既定 8)。</p>
-<p>折れ線が弧を切る分だけ偏差に床ができるので、<b>相手側は細かく</b>取る。</p>
+<p>oversample: 對方以基準的幾倍密度重新取樣(預設 8)。</p>
+<p>折線截弧會使偏差出現下限，因此<b>對方要取得細</b>。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">points</code>(基準側の点、<code style="color:#22d3bf">(n, 2)</code>)、<code style="color:#22d3bf">deviation</code>(<code style="color:#22d3bf">(n,)</code>)、</p>
+<p>dict: <code style="color:#22d3bf">points</code>(基準側的點，<code style="color:#22d3bf">(n, 2)</code>)、<code style="color:#22d3bf">deviation</code>(<code style="color:#22d3bf">(n,)</code>)、</p>
 <p><code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">rms</code> / <code style="color:#22d3bf">mean</code>、<code style="color:#22d3bf">align</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 族使用指南</a></p>

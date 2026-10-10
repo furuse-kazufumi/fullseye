@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.counts_to_countrate(counts, gate_s=0.001)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.counts_to_countrate(counts, gate_s=0.001)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;counts_to_countrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>计数 → 计数率 <code style="color:#22d3bf">[Hz]</code>。<code style="color:#22d3bf">countrate_to_counts</code> 的逆。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
-<p>counts: (N,) の非負計数。</p>
-<p>gate_s: 積算窓 [s]。&gt; 0。</p>
+<p>counts: (N,) 的非负计数。</p>
+<p>gate_s: 积分窗口 [s]。&gt; 0。</p>
 <p>Returns:</p>
-<p>(N,) float64 の非負レート [Hz]。</p>
+<p>(N,) float64 的非负速率 [Hz]。</p>
 <p>Raises:</p>
-<p>ValueError: 負の計数 / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
+<p>ValueError: 负计数 / gate_s &lt;= 0 / 形状不正确 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

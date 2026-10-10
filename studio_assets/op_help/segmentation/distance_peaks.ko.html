@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import watershed3d; watershed3d.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;distance_peaks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>전경 거리 변환의 국소 극대를 <code style="color:#22d3bf">min_distance</code> NMS로 솎아 낸 int 마커 배열을 반환한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">volops.vol_distance_transform</code> + <code style="color:#22d3bf">volops.vol_local_maxima</code> の薄い合成に、「極大座標→ラベル配列(1 物体 1 シード)」の後処理を足したもの(<code style="color:#22d3bf">watershed_vol</code> が内部で使うシード生成を単体で公開=可視化・検証用)。</p>
+<p><code style="color:#22d3bf">volops.vol_distance_transform</code> + <code style="color:#22d3bf">volops.vol_local_maxima</code>의 얇은 합성에, &quot;극대 좌표→라벨 배열(1 물체 1 시드)&quot;의 후처리를 더한 것(<code style="color:#22d3bf">watershed_vol</code>이내부에서 쓰는 시드 생성을 단독으로 공개 = 시각화·검증용).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>binary : array_like</p>
-<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>bool 또는 0/1의 3D 전경 볼륨.</p>
 <p>min_distance : float</p>
-<p>採用シード間の最小ユークリッド距離(voxel)。物体間隔より小さく、物体内ノイズ極大の</p>
-<p>間隔より大きく取る。</p>
+<p>채택 시드 사이의 최소 유클리드 거리(voxel). 물체 간격보다 작고, 물체 내 잡음 극대의</p>
+<p>간격보다 크게 잡는다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>markers : ndarray(int32)</p>
-<p>binary と同形状。0=シード無し、1..k=各シードラベル。</p>
+<p>binary와 같은 형상. 0=시드 없음, 1..k=각 시드 라벨.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

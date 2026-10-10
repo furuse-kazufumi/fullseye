@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cscalar_to_polar(cscalar)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.cscalar_to_polar(cscalar)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;cscalar_to_polar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>复标量 → 极形式 <code style="color:#22d3bf">pairs (1,2) = [|z|, arg z[度]]</code>。<code style="color:#22d3bf">cscalar</code> 的出口。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> が返す複素スカラは、<code style="color:#22d3bf">measurement</code>(実スカラのみ)へ混ぜると下流が生 TypeError で落ちるので型が分かれている。極形式の対にすると 1-D 語彙へ渡せる。</p>
-<p><b>角度は度</b>。<code style="color:#22d3bf">polar_to_cscalar</code> と往復して実測 max|Δ| = 8.9e-16。</p>
+<p><code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> 返回的复数标量, 若混入 <code style="color:#22d3bf">measurement</code>(仅实数标量),下游会以原始的 TypeError 崩溃,所以类型是分开的。变成极坐标形式的对后就能传给 1-D 词汇。</p>
+<p><b>角度以度计</b>。与 <code style="color:#22d3bf">polar_to_cscalar</code> 往返实测 max|Δ| = 8.9e-16。</p>
 <p>Args:</p>
-<p>cscalar: complex(または複素 0-d 配列)。</p>
+<p>cscalar: complex(或复数 0-d 数组)。</p>
 <p>Returns:</p>
 <p>(1, 2) float64。</p>
 <p>Raises:</p>
-<p>ValueError: 複素スカラでない / 非有限。</p>
+<p>ValueError: 不是复数标量 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

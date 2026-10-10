@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05, title=None, title_h=0, font_size=15, min_font_size=9, font_path=None, text_color=None, border=0, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05, title=None, title_h=0, font_size=15, min_font_size=9, font_path=None, text_color=None, border=0, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, style=None)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;panel_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ordnet Panels in einem Raster an, mit einem Beschriftungsstreifen unter jedem Rahmen (Montage / Kontaktbogen).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>生成器 6 本がそれぞれ別実装を持っていた、<b>この repo で最も重複していた図の部品</b>。ここでの流儀:</p>
-<p style="margin:2px 0 2px 12px">• <b>拡大しない</b> ―― 小さいパネルは中央に置いて余白で埋める。引き伸ばすと「無い解像度がある」ように見える。</p>
-<p style="margin:2px 0 2px 12px">• <b>ラベルは測ってから描く</b> ―― 入らなければ縮め、駄目なら例外(<code style="color:#22d3bf">text_box</code> の境界検査に載る)。</p>
-<p style="margin:2px 0 2px 12px">• セルの大きさは全パネルの最大寸で、<b>格子は常に矩形</b>。</p>
+<p>6 Generatoren hatten jeweils eine eigene Implementierung -- <b>die am häufigsten duplizierte Abbildungskomponente in diesem repo</b>. Die Konventionen hier:</p>
+<p style="margin:2px 0 2px 12px">• <b>Kein Hochskalieren</b> -- kleine Panels werden zentriert und mit Rand aufgefüllt. Strecken würde so aussehen, als &quot;gäbe es Auflösung, die nicht existiert&quot;.</p>
+<p style="margin:2px 0 2px 12px">• <b>Labels erst messen, dann zeichnen</b> -- passen sie nicht, werden sie verkleinert, und klappt das nicht, gibt es eine Exception (über die Randprüfung von <code style="color:#22d3bf">text_box</code>).</p>
+<p style="margin:2px 0 2px 12px">• Die Zellgröße ist das größte Maß über alle Panels, und <b>das Gitter ist immer rechteckig</b>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>panels : sequence of ndarray</p>
-<p>並べる画像(<code style="color:#22d3bf">(H,W)</code> / <code style="color:#22d3bf">(H,W,C)</code>、大きさはばらばらでよい)。</p>
-<p>チャンネルの並びは揃っていること。</p>
+<p>Anzuordnende Bilder (<code style="color:#22d3bf">(H,W)</code> / <code style="color:#22d3bf">(H,W,C)</code>, Größen dürfen variieren).</p>
+<p>Die Kanalanordnung muss übereinstimmen.</p>
 <p>labels : sequence of str or None</p>
-<p>各パネルの見出し。<code style="color:#22d3bf">label_h</code> が 0 なら描かない。</p>
+<p>Überschrift jedes Panels. Ist <code style="color:#22d3bf">label_h</code> 0, wird nichts gezeichnet.</p>
 <p>ncols : int</p>
-<p>列数。行数は <code style="color:#22d3bf">ceil(n/ncols)</code>。</p>
+<p>Spaltenzahl. Die Zeilenzahl ist <code style="color:#22d3bf">ceil(n/ncols)</code>.</p>
 <p>title : str or None</p>
-<p>全体の表題(<code style="color:#22d3bf">title_h</code> が 0 なら <code style="color:#22d3bf">font_size+14</code> を自動で確保)。</p>
+<p>Gesamttitel (ist <code style="color:#22d3bf">title_h</code> 0, wird automatisch <code style="color:#22d3bf">font_size+14</code> reserviert).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>新しい合成画像(float [0,1])。大きさは</p>
-<p><code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>、</p>
-<p><code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+label_h) + (nrows-1)*pad</code>。</p>
+<p>Neues zusammengesetztes Bild (float [0,1]). Die Größe ist</p>
+<p><code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>,</p>
+<p><code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+label_h) + (nrows-1)*pad</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>panels が空 / チャンネル不一致 / ncols &lt; 1 / 負の余白 /</p>
-<p>labels の数が合わない。</p>
+<p>panels leer / Kanäle ungleich / ncols &lt; 1 / negativer Rand /</p>
+<p>Anzahl der labels passt nicht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

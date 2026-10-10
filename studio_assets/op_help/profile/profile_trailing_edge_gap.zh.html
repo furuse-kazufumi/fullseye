@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_trailing_edge_gap(contour, n=201)</code>(要直接调用实现,<code style="color:#22d3bf">import profileops; profileops.profile_trailing_edge_gap(contour, n=201)</code>;从台账取用则 <code style="color:#22d3bf">opsprofile.get(&quot;profile_trailing_edge_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>后缘开口(与弦长之比)。上表面与下表面后缘端点之间的距离。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>NACA 4 桁の既定係数(-0.1015)は後縁を<b>わずかに開く</b>ので、0 にならないのが正しい。閉じる係数(-0.1036)なら 0 に近づく。</p>
-<p>手順: <code style="color:#22d3bf">profile_sides(contour, n)</code>(弦長 1 に正規化し、弦を <code style="color:#22d3bf">n</code> 等分した各位置で上面・下面を線形補間)を取り、<b><code style="color:#22d3bf">x = 1</code> 側から見て上下両方が取れた最初の位置</b>の <code style="color:#22d3bf">upper - lower</code> を返す。単位は弦長比(無次元)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">contour</code>: <code style="color:#22d3bf">(N, 2)</code> の <b>(x, y)</b>、8 点以上、有限、<b>閉じた断面</b>であること(端点間の隙間が全体の 20 % を超えると「閉じていない」として <code style="color:#22d3bf">ValueError</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 弦の分割数、5 以上(既定 201)。<b>粗いと後縁から手前の位置で測る</b>ことになり、テーパした後縁では実際の隙間より大きく出る。細かいほど後縁に寄る。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: float(弦長比)。実測(<code style="color:#22d3bf">n=201</code>): <code style="color:#22d3bf">profile_synth_naca4(&quot;2412&quot;)</code> で 0.0039、<code style="color:#22d3bf">closed_te=True</code> でも 0.0015 ―― 閉じた後縁でも 0 にならないのは、上下両方が取れる最後の位置が後縁のわずかに手前で、そこにはまだ厚みがあるため。符号は上面の <code style="color:#22d3bf">y</code> が下面より大きい限り正。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形、閉じていない、上下が取れる位置が 1 つも無い、上下面が一致して厚み 0)。</p>
-<p><code style="color:#22d3bf">profile_thickness</code> の末尾の値と同じ量を「後縁の 1 点だけ」で返すもの。<code style="color:#22d3bf">profile_synth_naca4(closed_te=True)</code> で作った真値と比べれば検算になる。</p>
+<p>NACA 4 位数翼型的默认系数(-0.1015)使后缘<b>稍微张开</b>，因此结果不为 0 才是正确的。若用闭合系数(-0.1036)，则接近 0。</p>
+<p>步骤:取 <code style="color:#22d3bf">profile_sides(contour, n)</code>(归一化为弦长 1，在把弦 <code style="color:#22d3bf">n</code> 等分的各位置对上表面、下表面做线性插值)，返回<b>从 <code style="color:#22d3bf">x = 1</code> 一侧看去上下两面都能取到的第一个位置</b>处的 <code style="color:#22d3bf">upper - lower</code>。单位为弦长比(无量纲)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">contour</code>: <code style="color:#22d3bf">(N, 2)</code> 的 <b>(x, y)</b>,8 点以上，有限值，且须为<b>闭合截面</b> (端点间的缝隙超过整体的 20 % 时视为「未闭合」，抛出 <code style="color:#22d3bf">ValueError</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 弦的分割数，5 以上(默认 201)。<b>分割粗时会在比后缘靠前的位置测量</b>, 对于渐缩的后缘，结果会大于实际的缝隙。越细越靠近后缘。</p>
+<p style="margin:2px 0 2px 12px">• 返回值: float(弦长比)。实测(<code style="color:#22d3bf">n=201</code>):<code style="color:#22d3bf">profile_synth_naca4(&quot;2412&quot;)</code> 为 0.0039,<code style="color:#22d3bf">closed_te=True</code> 也为 0.0015 —— 后缘闭合也不为 0，是因为上下两面都能取到的最后位置稍靠后缘之前，那里仍有厚度。只要上表面的 <code style="color:#22d3bf">y</code> 大于下表面，符号即为正。</p>
+<p style="margin:2px 0 2px 12px">• 失败: <code style="color:#22d3bf">ValueError</code>(形状、未闭合、上下都能取到的位置 1 个也没有、上下表面重合而厚度为 0)。</p>
+<p>用「仅后缘 1 点」返回与 <code style="color:#22d3bf">profile_thickness</code> 末尾值相同的量。与用 <code style="color:#22d3bf">profile_synth_naca4(closed_te=True)</code> 生成的真值比较即可验算。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

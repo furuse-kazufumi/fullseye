@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ultrametric_contour_map(image, *, mask=None, connectivity: &#x27;int&#x27; = 4, distance_matrix: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import seggraph; seggraph.ultrametric_contour_map(image, *, mask=None, connectivity: &#x27;int&#x27; = 4, distance_matrix: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;ultrametric_contour_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>dynamics 层次的超度量轮廓图（UCM）：相邻像素 p、q 的值 =“p 与 q 成为同一区域的最小阈值”（ultrametric_contour_map）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>盆地の中の辺は 0、盆地の境の辺は第 2 の Kruskal(盆地の木を saliency の昇順に併合)で 2 つの盆地が出会う高さ。</p>
-<p>返す: <code style="color:#22d3bf">ucm_h</code>(H, W − 1:画素とその右)、<code style="color:#22d3bf">ucm_v</code>(H − 1, W:画素とその下)、<code style="color:#22d3bf">ucm</code>(画素ごとに右と下の大きい方 = 境界を左上の画素で代表、segeval と同じ)、<code style="color:#22d3bf">basins</code>、<code style="color:#22d3bf">levels</code>、<code style="color:#22d3bf">distance</code>(<code style="color:#22d3bf">distance_matrix=True</code> かつ盆地が 2500 以下なら盆地の全組の ultrametric 距離の行列)。閾値 θ で ucm &gt; θ の辺を切った成分 = hierarchical_watershed(θ)。</p>
+<p>盆地内部的边为 0,盆地边界上的边为第 2 次 Kruskal(把盆地的树按 saliency 升序合并)中 2 个盆地相遇的高度。</p>
+<p>返回: <code style="color:#22d3bf">ucm_h</code>(H, W − 1: 像素与其右侧)、<code style="color:#22d3bf">ucm_v</code>(H − 1, W: 像素与其下方)、<code style="color:#22d3bf">ucm</code>(每个像素取右与下中较大者 = 以左上像素代表边界,与 segeval 相同)、<code style="color:#22d3bf">basins</code>、<code style="color:#22d3bf">levels</code>、<code style="color:#22d3bf">distance</code>(<code style="color:#22d3bf">distance_matrix=True</code> 且盆地数不超过 2500 时,所有盆地对的 ultrametric 距离矩阵)。在阈值 θ 处切断 ucm &gt; θ 的边所得的成分 = hierarchical_watershed(θ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_circle_measure(model, row, col, radius, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_circle_measure(model, row, col, radius, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_circle_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원 계측 객체를 추가한다(add_metrology_object_circle_measure).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>参照円(中心 <code style="color:#22d3bf">(row, col)</code>、半径 <code style="color:#22d3bf">radius</code> [px])を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> は円周を <code style="color:#22d3bf">n</code> 等分した角度に点を置き、各点で <b>半径方向</b>(外向き法線)に測定線を張ってサブピクセルのエッジを取り、最小二乗の円フィットで中心と半径を出し直す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 参照半径 [px]。実物とのずれは <code style="color:#22d3bf">apply</code> の <code style="color:#22d3bf">measure_length</code> (既定 ±6 px)以内に収まっている必要がある ―― それより外のエッジは見つからない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 円周のサンプル数(既定 40)。半径が大きい円ほど増やす。</p>
-<p style="margin:2px 0 2px 12px">• 引数はここでは検証しない(0 以下の半径も積めるが意味を持たない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 追加位置の index(0 始まり)。<code style="color:#22d3bf">apply</code> 結果の <code style="color:#22d3bf">params</code> は <code style="color:#22d3bf">row / col / radius</code>、<code style="color:#22d3bf">rms</code> は円からの半径方向残差 [px]。</p>
-<p>穴径・ピン径の検査、円形部品の中心出しに使う。</p>
+<p>참조 원(중심 <code style="color:#22d3bf">(row, col)</code>, 반지름 <code style="color:#22d3bf">radius</code> [px])을 <code style="color:#22d3bf">model[&quot;objects&quot;]</code> 에 쌓는다(dict 를 제자리에서 갱신). <code style="color:#22d3bf">apply_metrology_model</code> 은 원주를 <code style="color:#22d3bf">n</code> 등분한 각도에점을 두고, 각 점에서 <b>반지름 방향</b>(바깥 법선)으로 측정선을 쳐서 서브픽셀에지를 얻고, 최소제곱 원 피팅으로 중심과 반지름을 다시 구한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 참조 반지름 [px]. 실물과의 어긋남은 <code style="color:#22d3bf">apply</code> 의 <code style="color:#22d3bf">measure_length</code> (기본값 ±6 px) 이내에 들어가 있어야 한다 ―― 그보다 바깥의 에지는 찾지 못한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 원주의 샘플 수(기본값 40). 반지름이 큰 원일수록 늘린다.</p>
+<p style="margin:2px 0 2px 12px">• 인수는 여기서는 검증하지 않는다(0 이하의 반지름도 쌓을 수 있지만 의미를 갖지 않는다).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 추가 위치의 index(0 시작). <code style="color:#22d3bf">apply</code> 결과의 <code style="color:#22d3bf">params</code> 는 <code style="color:#22d3bf">row / col / radius</code>, <code style="color:#22d3bf">rms</code> 는 원으로부터의 반지름 방향 잔차 [px].</p>
+<p>구멍 지름·핀 지름의 검사, 원형 부품의 중심 잡기에 쓴다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

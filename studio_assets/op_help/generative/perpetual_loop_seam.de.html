@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import perpetual; perpetual.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_loop_seam&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt die <b>Nahtstelle</b> eines Loop-Videos als Zahlen aus (<code style="color:#22d3bf">table</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">seam</code> = 最終コマ → 初コマの差、<code style="color:#22d3bf">typical</code> = コマ間の差の中央値。継ぎ目の無い動画では <code style="color:#22d3bf">ratio = seam / typical</code> が <b>1 に近い</b>(最後のまたぎが、ほかのまたぎと見分けが付かない)。<b>0 ではなく 1 が正解</b>なのがここの読みどころ —— 0 は「動きが止まっている」という意味になる。</p>
+<p><code style="color:#22d3bf">seam</code> = Differenz letzter Frame → erster Frame, <code style="color:#22d3bf">typical</code> = Median der Differenzen zwischen Frames. In einem nahtlosen Video ist <code style="color:#22d3bf">ratio = seam / typical</code> <b>nahe 1</b> (der letzte Übergang ist von den anderen Übergängen nicht zu unterscheiden). Der springende Punkt ist, dass <b>1, nicht 0, richtig ist</b> -- 0 würde bedeuten &quot;die Bewegung steht still&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">Leitfaden zur Familie generative_art</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_sun(sun_pixels, unix_times, lat_deg, lon_deg, K)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_sun&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>समय सहित सूर्य की pixel position, ≥ 2 point → camera का (yaw, pitch, roll) (Wahba समस्या का SVD हल = Kabsch)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各観測で、画素 → カメラ座標の光線 d_c(K から)、時刻 → 世界の太陽方向 s_w(<code style="color:#22d3bf">sun_position</code>、<b>屈折込み</b>の仰角を使う: カメラが見るのは見かけの太陽)。<code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code> を SVD で閉形式に解き(Kabsch 1976 / Markley 1988)、<code style="color:#22d3bf">(yaw, pitch, roll)</code> に分解する。</p>
-<p>2 点で一意に決まる(2 本の方向が張る面が要る)。観測が 1 点、または全部が同じ方向(共線)なら ValueError —— 例えば同じ時刻の 2 枚、あるいは正午だけを何日も。太陽は 1 日で方位が大きく動くので、<b>同じ日の朝と夕の 2 枚</b>があれば足りる。</p>
+<p>हर observation में: pixel → camera coordinates में ray d_c (K से), समय → world में सूरज की दिशा s_w (<code style="color:#22d3bf">sun_position</code>, <b>refraction सहित</b> elevation इस्तेमाल होता है: camera apparent sun देखता है)। <code style="color:#22d3bf">R = argmin Σ |R d_c − s_w|²</code> को SVD से closed form में हल करके (Kabsch 1976 / Markley 1988), <code style="color:#22d3bf">(yaw, pitch, roll)</code> में तोड़ा जाता है।</p>
+<p>2 points से यह अद्वितीय रूप से तय होता है (2 दिशाओं से बना plane चाहिए)। observation 1 ही point हो, या सभी एक ही दिशा में हों (collinear), तो ValueError -- जैसे एक ही समय की 2 images, या कई दिनों तक सिर्फ़ दोपहर। सूरज का azimuth 1 दिन में काफ़ी बदलता है, इसलिए <b>एक ही दिन की सुबह और शाम की 2 images</b> काफ़ी हैं।</p>
 <p>Args:</p>
-<p>sun_pixels: (N, 2) の (u, v)。<code style="color:#22d3bf">sun_pixel_position</code> の出力を積んだもの。</p>
-<p>unix_times: (N,) UNIX 秒(UTC)。</p>
-<p>lat_deg, lon_deg: カメラの位置。</p>
-<p>K: (fx, fy, cx, cy)。</p>
+<p>sun_pixels: (N, 2) के (u, v)। <code style="color:#22d3bf">sun_pixel_position</code> के outputs को जोड़कर बना।</p>
+<p>unix_times: (N,) UNIX seconds (UTC)।</p>
+<p>lat_deg, lon_deg: camera की position।</p>
+<p>K: (fx, fy, cx, cy)।</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code>(光線と太陽方向の</p>
-<p>角度残差の RMS)/ <code style="color:#22d3bf">max_residual_deg</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">condition</code>(観測方向の張る面の広さ =</p>
-<p>2 番目の特異値、0 に近いほど不定)。</p>
+<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code> (rays और सूरज की दिशा के बीच</p>
+<p>angular residual का RMS) / <code style="color:#22d3bf">max_residual_deg</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">condition</code> (observation दिशाओं से बने plane का फैलाव =</p>
+<p>2nd singular value; 0 के जितना क़रीब, उतना अनिश्चित)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,21 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.legend_box(img, entries, xy, anchor=&#x27;lt&#x27;, swatch=14, row_gap=4, pad=8, font_size=13, box_color=None, box_alpha=0.72, markers=False, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, style=None, border=1, border_color=&#x27;neutral&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.legend_box(img, entries, xy, anchor=&#x27;lt&#x27;, swatch=14, row_gap=4, pad=8, font_size=13, box_color=None, box_alpha=0.72, markers=False, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, style=None, border=1, border_color=&#x27;neutral&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;legend_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>색 × 설명의 범례. <b>상자 높이는 항목 수에서 닫힌 식으로 정해집니다</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">height = 2*pad + n*row_h + (n-1)*row_gap</code> (<code style="color:#22d3bf">row_h = max(swatch, 文字高)</code>)。</p>
+<p><code style="color:#22d3bf">height = 2*pad + n*row_h + (n-1)*row_gap</code> (<code style="color:#22d3bf">row_h = max(swatch, 문자 높이)</code>).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>entries : sequence</p>
-<p><code style="color:#22d3bf">(color, text)</code> の並び。<code style="color:#22d3bf">color</code> は役割名でも RGB でもよい。</p>
+<p><code style="color:#22d3bf">(color, text)</code>의 나열. <code style="color:#22d3bf">color</code>는 역할명이든 RGB든 좋다.</p>
 <p>markers : bool</p>
-<p>True なら役割名に対応する <code style="color:#22d3bf">palette.ROLE_MARKERS</code> の記号を</p>
-<p>説明の前に付ける(<b>色だけに意味を載せない</b>ため)。役割名でない</p>
-<p>要素には記号が無いので付かない。</p>
+<p>True이면 역할명에 대응하는 <code style="color:#22d3bf">palette.ROLE_MARKERS</code>의 기호를</p>
+<p>설명 앞에 붙인다(<b>색만으로 의미를 싣지 않기</b> 위해). 역할명이 아닌</p>
+<p>요소에는 기호가 없으므로 붙지 않는다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>entries が空 / 形が <code style="color:#22d3bf">(color, text)</code> でない / 箱が画像からはみ出す /</p>
-<p>未知の役割名。</p>
+<p>entries가 비어 있음 / 형태가 <code style="color:#22d3bf">(color, text)</code>가 아님 / 상자가 영상에서 삐져나옴 /</p>
+<p>알 수 없는 역할명.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

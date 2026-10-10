@@ -4,17 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_generic(model, otype, params, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_generic(model, otype, params, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_generic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>범용 계측 객체를 추가한다(add_metrology_object_generic).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>形状の種類を文字列で指定する入口。<code style="color:#22d3bf">otype</code> と <code style="color:#22d3bf">params</code> の組は専用 op と</p>
-<p>同じ並びでなければならない:</p>
+<p>형상의 종류를 문자열로 지정하는 입구. <code style="color:#22d3bf">otype</code> 과 <code style="color:#22d3bf">params</code> 의 조는 전용 op 와같은 나열이어야 한다:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;line&quot;</code>: <code style="color:#22d3bf">(row1, col1, row2, col2)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;circle&quot;</code>: <code style="color:#22d3bf">(row, col, radius)</code></p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;rect&quot;</code>: <code style="color:#22d3bf">(row, col, phi, l1, l2)</code>(<code style="color:#22d3bf">phi</code> ラジアン、<code style="color:#22d3bf">l1</code>/<code style="color:#22d3bf">l2</code> 半辺長)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;rect&quot;</code>: <code style="color:#22d3bf">(row, col, phi, l1, l2)</code>(<code style="color:#22d3bf">phi</code> 라디안, <code style="color:#22d3bf">l1</code>/<code style="color:#22d3bf">l2</code> 반변 길이)</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;ellipse&quot;</code>: <code style="color:#22d3bf">(row, col, phi, ra, rb)</code></p>
-<p><code style="color:#22d3bf">params</code> は <code style="color:#22d3bf">tuple</code> にして積むだけで、<b>ここでは <code style="color:#22d3bf">otype</code> も要素数も検証しない</b>。未知の <code style="color:#22d3bf">otype</code> は <code style="color:#22d3bf">apply_metrology_model</code> が <code style="color:#22d3bf">ValueError</code> で拒否し、要素数が違えば同じく <code style="color:#22d3bf">apply</code> 時に展開で失敗する。設定ファイルから形状を読み込むときは、積む前に上の表で確認すること。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: サンプル数(既定 40。矩形は 4 辺に分配)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 追加位置の index(0 始まり)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> は <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> を row/col として動かす(<code style="color:#22d3bf">&quot;line&quot;</code> のみ <code style="color:#22d3bf">[2]</code>/<code style="color:#22d3bf">[3]</code> も)。</p>
+<p><code style="color:#22d3bf">params</code> 는 <code style="color:#22d3bf">tuple</code> 로 만들어 쌓기만 하며, <b>여기서는 <code style="color:#22d3bf">otype</code> 도 요소 수도 검증하지 않는다</b>. 미지의 <code style="color:#22d3bf">otype</code> 은 <code style="color:#22d3bf">apply_metrology_model</code> 이 <code style="color:#22d3bf">ValueError</code> 로 거부하고, 요소 수가 다르면 마찬가지로 <code style="color:#22d3bf">apply</code> 시에 전개에서 실패한다. 설정 파일에서 형상을읽어 들일 때는 쌓기 전에 위의 표로 확인할 것.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 샘플 수(기본값 40. 사각형은 4 변에 분배).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 추가 위치의 index(0 시작).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> 은 <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> 을 row/col 로서움직인다(<code style="color:#22d3bf">&quot;line&quot;</code> 만 <code style="color:#22d3bf">[2]</code>/<code style="color:#22d3bf">[3]</code> 도).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05, title=None, title_h=0, font_size=15, min_font_size=9, font_path=None, text_color=None, border=0, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05, title=None, title_h=0, font_size=15, min_font_size=9, font_path=None, text_color=None, border=0, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, style=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;panel_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>panel को grid पर सजाता है, हर frame के नीचे label की पट्टी के साथ (montage / contact sheet)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>生成器 6 本がそれぞれ別実装を持っていた、<b>この repo で最も重複していた図の部品</b>。ここでの流儀:</p>
-<p style="margin:2px 0 2px 12px">• <b>拡大しない</b> ―― 小さいパネルは中央に置いて余白で埋める。引き伸ばすと「無い解像度がある」ように見える。</p>
-<p style="margin:2px 0 2px 12px">• <b>ラベルは測ってから描く</b> ―― 入らなければ縮め、駄目なら例外(<code style="color:#22d3bf">text_box</code> の境界検査に載る)。</p>
-<p style="margin:2px 0 2px 12px">• セルの大きさは全パネルの最大寸で、<b>格子は常に矩形</b>。</p>
+<p>6 generators में हर एक का अपना अलग implementation था -- <b>यह इस repo का सबसे अधिक duplicate हुआ figure component</b> है। यहाँ के नियम:</p>
+<p style="margin:2px 0 2px 12px">• <b>upscale नहीं करता</b> -- छोटे panels को केंद्र में रखकर margin से भरता है। खींचने पर ऐसा लगता है मानो &quot;जो resolution है ही नहीं, वह मौजूद है&quot;।</p>
+<p style="margin:2px 0 2px 12px">• <b>labels को मापकर फिर बनाता है</b> -- न समाएँ तो छोटा करता है, फिर भी न हो तो exception (<code style="color:#22d3bf">text_box</code> की boundary जाँच में पकड़ा जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• cell का size सभी panels का अधिकतम माप है, और <b>grid हमेशा आयताकार</b> होता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>panels : sequence of ndarray</p>
-<p>並べる画像(<code style="color:#22d3bf">(H,W)</code> / <code style="color:#22d3bf">(H,W,C)</code>、大きさはばらばらでよい)。</p>
-<p>チャンネルの並びは揃っていること。</p>
+<p>क्रम से रखी जाने वाली images (<code style="color:#22d3bf">(H,W)</code> / <code style="color:#22d3bf">(H,W,C)</code>, size अलग-अलग हो सकते हैं)।</p>
+<p>channels का क्रम समान होना चाहिए।</p>
 <p>labels : sequence of str or None</p>
-<p>各パネルの見出し。<code style="color:#22d3bf">label_h</code> が 0 なら描かない。</p>
+<p>हर panel का शीर्षक। <code style="color:#22d3bf">label_h</code> 0 हो तो नहीं बनता।</p>
 <p>ncols : int</p>
-<p>列数。行数は <code style="color:#22d3bf">ceil(n/ncols)</code>。</p>
+<p>columns की संख्या। rows की संख्या <code style="color:#22d3bf">ceil(n/ncols)</code> है।</p>
 <p>title : str or None</p>
-<p>全体の表題(<code style="color:#22d3bf">title_h</code> が 0 なら <code style="color:#22d3bf">font_size+14</code> を自動で確保)。</p>
+<p>पूरे का शीर्षक (<code style="color:#22d3bf">title_h</code> 0 हो तो <code style="color:#22d3bf">font_size+14</code> अपने-आप reserve होता है)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>新しい合成画像(float [0,1])。大きさは</p>
-<p><code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>、</p>
-<p><code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+label_h) + (nrows-1)*pad</code>。</p>
+<p>नई composite image (float [0,1])। size है</p>
+<p><code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>,</p>
+<p><code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+label_h) + (nrows-1)*pad</code>।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>panels が空 / チャンネル不一致 / ncols &lt; 1 / 負の余白 /</p>
-<p>labels の数が合わない。</p>
+<p>panels खाली / channels मेल नहीं खाते / ncols &lt; 1 / negative margin /</p>
+<p>labels की संख्या मेल नहीं खाती।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

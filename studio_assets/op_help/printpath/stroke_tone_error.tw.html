@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import printpath; printpath.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tone_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>畫線所得的<b>濃淡</b>與目標相差多少。→ <code style="color:#22d3bf">table</code></p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>★これが一筆書きの<b>本当の目的関数</b>。「絵として似ている」を人の目に任せず、ペン幅で描いて目の尺度にぼかし、目標の暗さと比べて数で返す。</p>
-<p>返り値: dict</p>
-<p>&quot;rms&quot; / &quot;max_abs&quot; / &quot;bias&quot; —— 暗さの差(<code style="color:#22d3bf">[0, 1]</code> の尺度)</p>
-<p>&quot;corr&quot; —— 目標の暗さと描いた暗さの相関(1 に近いほど濃淡を追えている)</p>
-<p>&quot;ink_fraction&quot; —— 紙に乗ったインクの面積率</p>
-<p>&quot;target_darkness&quot; —— 目標の平均暗さ(インク率と釣り合うべき量)</p>
-<p>&quot;length_px&quot; —— 線の長さ[px]</p>
-<p>★<b>ペン幅は連続なノブ</b>(被覆率で塗る)。線が重ならない範囲では <code style="color:#22d3bf">インク率 ≈ 線長 × ペン幅 / 画像の面積</code> が成り立つので、目標の濃さに合うペン幅を <b>閉形式で解いてから</b>確かめられる:</p>
+<p>★這才是一筆畫的<b>真正目標函數</b>。不把「畫得像不像」交給人眼, 而是用筆寬畫出、依人眼的尺度模糊,與目標暗度比較後以數值回傳。</p>
+<p>回傳值: dict</p>
+<p>&quot;rms&quot; / &quot;max_abs&quot; / &quot;bias&quot; —— 暗度之差(<code style="color:#22d3bf">[0, 1]</code> 的尺度)</p>
+<p>&quot;corr&quot; —— 目標暗度與所畫暗度的相關(越接近 1 越能跟上濃淡)</p>
+<p>&quot;ink_fraction&quot; —— 紙上墨水的面積率</p>
+<p>&quot;target_darkness&quot; —— 目標的平均暗度(應與墨水率相當的量)</p>
+<p>&quot;length_px&quot; —— 線的長度[px]</p>
+<p>★<b>筆寬是連續的旋鈕</b>(依覆蓋率塗色)。在線不重疊的範圍內 <code style="color:#22d3bf">墨水率 ≈ 線長 × 筆寬 / 影像面積</code> 成立,因此與目標濃度相符的筆寬可以<b>先用閉合式解出</b>再加以確認:</p>
 <p><code style="color:#22d3bf">pen_width ≈ target_darkness × area / length_px</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>

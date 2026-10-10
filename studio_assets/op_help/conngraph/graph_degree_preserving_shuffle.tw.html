@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_preserving_shuffle(W: &#x27;Any&#x27;, n_swaps: &#x27;int | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import conngraph; conngraph.graph_degree_preserving_shuffle(W: &#x27;Any&#x27;, n_swaps: &#x27;int | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_degree_preserving_shuffle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>保度洗牌(虛無模型)：保持各節點的入度、出度及權重的多重集合不變，重新連接邊。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>有向 double-edge swap(Maslov &amp; Sneppen 2002): 辺 (a→b, w1) と (c→d, w2) を(a→d, w1) と (c→b, w2) に替える。自己結合と重複辺を作る組は捨てる。<code style="color:#22d3bf">n_swaps</code> の既定は 10 × 辺数。<b>二値構造の次数</b>を保つ(重みは辺に付いて移動するので strength は変わりうる)。対角(自己結合)は動かさずそのまま残す。辺が 2 本未満なら複製を返す。</p>
+<p>有向 double-edge swap(Maslov &amp; Sneppen 2002):把邊 (a→b, w1) 和 (c→d, w2) 換成(a→d, w1) 和 (c→b, w2)。會產生自連接或重複邊的組合會被捨棄。<code style="color:#22d3bf">n_swaps</code> 的預設值是 10 × 邊數。保持<b>二值結構的度</b>(權重隨邊移動,因此 strength 可能改變)。對角(自連接)不動,原樣保留。邊少於 2 條時回傳副本。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.snic_superpixels(image, *, n_segments: &#x27;int&#x27; = 100, compactness: &#x27;float&#x27; = 0.1, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import seggraph; seggraph.snic_superpixels(image, *, n_segments: &#x27;int&#x27; = 100, compactness: &#x27;float&#x27; = 0.1, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;snic_superpixels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>SNIC（Achanta–Süsstrunk 2017 的 Algorithm 1）：从网格种子出发、用优先队列生长的非迭代超像素（snic_superpixels）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>距離 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K)、m = <code style="color:#22d3bf">compactness</code>、c は画素の値。SLIC の正規化の形、式 (1) の表記は要確認)。待ち行列から最小の d を取り出し、未ラベルならラベルを付け、重心(位置と値)をその場で更新し、未ラベルの近傍を今の重心との距離で積む。同点は (距離, 積んだ順) で決める(決定的)。</p>
-<p>返す: <code style="color:#22d3bf">labels</code>(1..K)、<code style="color:#22d3bf">n_segments</code>、<code style="color:#22d3bf">all_connected</code>(全ラベルが 4-連結 = 構成上の保証を数えて確かめた印)、<code style="color:#22d3bf">n_disconnected</code>、<code style="color:#22d3bf">sizes</code>、<code style="color:#22d3bf">seeds</code>((K, 2) の [row, col])、<code style="color:#22d3bf">s</code>。</p>
+<p>距离 d² = |Δx|²/s² + |Δc|²/m²(s = √(N/K),m = <code style="color:#22d3bf">compactness</code>,c 为像素值。SLIC 的归一化形式,式 (1) 的写法有待确认)。从优先队列取出最小的 d,若未标记就打上标签,当场更新质心(位置与值),把未标记的邻域按与当前质心的距离压入队列。同值按 (距离, 压入顺序) 决定(确定性)。</p>
+<p>返回: <code style="color:#22d3bf">labels</code>(1..K)、<code style="color:#22d3bf">n_segments</code>、<code style="color:#22d3bf">all_connected</code>(所有标签都是 4 连通 = 通过计数确认构造上保证的标志)、<code style="color:#22d3bf">n_disconnected</code>、<code style="color:#22d3bf">sizes</code>、<code style="color:#22d3bf">seeds</code>((K, 2) 的 [row, col])、<code style="color:#22d3bf">s</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

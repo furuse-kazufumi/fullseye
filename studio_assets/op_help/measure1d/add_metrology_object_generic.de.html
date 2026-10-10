@@ -4,17 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_generic(model, otype, params, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_generic(model, otype, params, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_generic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fügt ein generisches Messobjekt hinzu (add_metrology_object_generic).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>形状の種類を文字列で指定する入口。<code style="color:#22d3bf">otype</code> と <code style="color:#22d3bf">params</code> の組は専用 op と</p>
-<p>同じ並びでなければならない:</p>
+<p>Ein Einstiegspunkt, der die Formart per String angibt. Das Paar <code style="color:#22d3bf">otype</code> und <code style="color:#22d3bf">params</code> muss dieselbe Reihenfolge wie bei den dedizierten ops haben:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;line&quot;</code>: <code style="color:#22d3bf">(row1, col1, row2, col2)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;circle&quot;</code>: <code style="color:#22d3bf">(row, col, radius)</code></p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;rect&quot;</code>: <code style="color:#22d3bf">(row, col, phi, l1, l2)</code>(<code style="color:#22d3bf">phi</code> ラジアン、<code style="color:#22d3bf">l1</code>/<code style="color:#22d3bf">l2</code> 半辺長)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;rect&quot;</code>: <code style="color:#22d3bf">(row, col, phi, l1, l2)</code> (<code style="color:#22d3bf">phi</code> in Radiant, <code style="color:#22d3bf">l1</code>/<code style="color:#22d3bf">l2</code> halbe Seitenlängen)</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;ellipse&quot;</code>: <code style="color:#22d3bf">(row, col, phi, ra, rb)</code></p>
-<p><code style="color:#22d3bf">params</code> は <code style="color:#22d3bf">tuple</code> にして積むだけで、<b>ここでは <code style="color:#22d3bf">otype</code> も要素数も検証しない</b>。未知の <code style="color:#22d3bf">otype</code> は <code style="color:#22d3bf">apply_metrology_model</code> が <code style="color:#22d3bf">ValueError</code> で拒否し、要素数が違えば同じく <code style="color:#22d3bf">apply</code> 時に展開で失敗する。設定ファイルから形状を読み込むときは、積む前に上の表で確認すること。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: サンプル数(既定 40。矩形は 4 辺に分配)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 追加位置の index(0 始まり)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> は <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> を row/col として動かす(<code style="color:#22d3bf">&quot;line&quot;</code> のみ <code style="color:#22d3bf">[2]</code>/<code style="color:#22d3bf">[3]</code> も)。</p>
+<p><code style="color:#22d3bf">params</code> wird nur in ein <code style="color:#22d3bf">tuple</code> umgewandelt und abgelegt; <b>hier werden weder <code style="color:#22d3bf">otype</code> noch die Elementanzahl validiert</b>. Ein unbekanntes <code style="color:#22d3bf">otype</code> weist <code style="color:#22d3bf">apply_metrology_model</code> mit <code style="color:#22d3bf">ValueError</code> ab, und eine falsche Elementanzahl scheitert ebenso beim Entpacken zur <code style="color:#22d3bf">apply</code>-Zeit. Beim Laden von Formen aus einer Konfigurationsdatei vor dem Ablegen mit der obigen Tabelle abgleichen.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: Anzahl der Abtastwerte (Standard 40; beim Rechteck auf die 4 Seiten verteilt).</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: Index der hinzugefügten Position (ab 0).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">align_metrology_model</code> verschiebt <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> als row/col (nur bei <code style="color:#22d3bf">&quot;line&quot;</code> auch <code style="color:#22d3bf">[2]</code>/<code style="color:#22d3bf">[3]</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">Leitfaden zur Familie subpixel_measuring</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

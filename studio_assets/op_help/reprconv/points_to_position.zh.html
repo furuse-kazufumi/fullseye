@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_to_position(points)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.points_to_position(points)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群 <code style="color:#22d3bf">(N,3)</code> → 重心 <code style="color:#22d3bf">(z, y, x)</code>。<b>不可逆</b>(丢弃了分布)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>捨てた量は測れる: 重心まわりの RMS 距離が「1 点に潰したときに失った広がり」そのもので、<code style="color:#22d3bf">selftest</code> はこれを数字で出す。N = 1 のときだけ <code style="color:#22d3bf">position_to_points</code> との往復が bit 一致する。</p>
+<p>舍弃的量可以测量: 绕质心的 RMS 距离就是&quot;压缩成 1 点时失去的分布范围&quot; 本身,<code style="color:#22d3bf">selftest</code> 以数字给出。只有 N = 1 时,与 <code style="color:#22d3bf">position_to_points</code> 的往返才按位一致。</p>
 <p>Args:</p>
-<p>points: (N, 3) の (z, y, x)。</p>
+<p>points: (N, 3) 的 (z, y, x)。</p>
 <p>Returns:</p>
-<p>3-tuple の float (z, y, x)。</p>
+<p>3-tuple 的 float (z, y, x)。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

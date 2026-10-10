@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-09)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>entropy regularisation वाले optimal transport का plan (Cuturi, NIPS 2013)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>厳密解ではない。</b> <code style="color:#22d3bf">reg</code> を小さくすると厳密解に近づくが、同時に数値的に不安定になる(指数がアンダーフローする)。<code style="color:#22d3bf">reg</code> を下げると厳密解との差が縮むこと自体をテストで固定してある。</p>
+<p><b>यह exact solution नहीं है।</b> <code style="color:#22d3bf">reg</code> छोटा करने पर यह exact solution के क़रीब आता है, लेकिन साथ ही numerically अस्थिर हो जाता है (exponentials underflow होते हैं)। <code style="color:#22d3bf">reg</code> घटाने से exact solution से अंतर घटता है, यह बात भी test से fix की गई है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p><code style="color:#22d3bf">(n, m)</code> の輸送計画。行和・列和は <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code> に一致する</p>
-<p>(<code style="color:#22d3bf">tol</code> まで)。収束しなければ <code style="color:#22d3bf">RuntimeError</code> ―― 収束しないまま</p>
-<p>最後の反復を返すと、行和が合っていない計画が黙って下流へ流れる。</p>
+<p><code style="color:#22d3bf">(n, m)</code> का transport plan। row sums और column sums <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code> से मेल खाते हैं</p>
+<p>(<code style="color:#22d3bf">tol</code> तक)। converge न हो तो <code style="color:#22d3bf">RuntimeError</code> -- बिना converge हुए</p>
+<p>आख़िरी iteration लौटाने पर, ग़लत row sums वाला plan चुपचाप आगे बह जाता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Colorimetry और spectra — रंग केवल spectrum × illuminant × observer से तय होता है</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

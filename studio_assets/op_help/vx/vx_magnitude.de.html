@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_magnitude(gx, gy)</code> (die Implementierung direkt: <code style="color:#22d3bf">import vxcore; vxcore.vx_magnitude(gx, gy)</code>; aus dem Register: <code style="color:#22d3bf">opsvx.get(&quot;vx_magnitude&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gradientenbetrag (Abschnitt 3.31). Die konzeptionelle Definition aus REQ-0270 unverändert: <code style="color:#22d3bf">z = uint16(sqrt(double(uint32(x·x) + uint32(y·y))) + 0.5)</code>, <code style="color:#22d3bf">mag = z &gt; 32767 ? 32767 : z</code>. Eingabe und Ausgabe sind beide S16.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: S16 の 2-D でない / 形が違う。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: kein 2-D-S16 / Formen verschieden.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">Leitfaden zur Familie openvx_ports</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

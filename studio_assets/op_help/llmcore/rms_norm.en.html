@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import llmcore; llmcore.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsllmcore.get(&quot;rms_norm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>RMS normalization → tokens. <b>With the defaults (eps=0, no weight) the RMS of the output is exactly 1</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Zhang・Sennrich 2019。LayerNorm から平均を引く段を落としたもので、残るのは「行のノルムを揃える」だけ —— だから <b>RMS が 1 になることが検算になる</b> (実測 2.2e-16)。<code style="color:#22d3bf">eps</code> を入れると 1 からずれる。それが <code style="color:#22d3bf">eps</code> の値段。</p>
+<p>Zhang and Sennrich 2019. LayerNorm with the mean-subtraction stage dropped; what remains is only &quot;equalise the norm of each row&quot; -- so <b>RMS becoming 1 serves as the cross-check</b> (measured 2.2e-16). Adding <code style="color:#22d3bf">eps</code> shifts it away from 1. That is the price of <code style="color:#22d3bf">eps</code>.</p>
 <p>Args:</p>
-<p>tokens: (T, d) float。1 行が 1 トークン。</p>
-<p>eps: 平方根の中に足す下駄。0 なら RMS は厳密に 1、正なら 1 未満に縮む。</p>
-<p>weight: (d,) float か None。学習で付く軸ごとの倍率(掛けるだけなので RMS は動く)。</p>
+<p>tokens: (T, d) float. 1 row is 1 token.</p>
+<p>eps: an offset added inside the square root. With 0 the RMS is exactly 1; if positive it shrinks below 1.</p>
+<p>weight: (d,) float or None. A learned per-axis scale (it is only multiplied, so the RMS moves).</p>
 <p>Returns:</p>
-<p>tokens (T, d) float: 各行を自分の RMS で割ったもの(<code style="color:#22d3bf">weight</code> があれば掛けたもの)。</p>
-<p><b>全成分が 0 の行</b>は割れないので ValueError(黙って 0/0 の NaN を返さない)。</p>
+<p>tokens (T, d) float: each row divided by its own RMS (multiplied by <code style="color:#22d3bf">weight</code> if given).</p>
+<p><b>Rows whose components are all 0</b> cannot be divided, so ValueError (it does not silently return NaN from 0/0).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

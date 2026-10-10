@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matrix_to_descriptor(matrix)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.matrix_to_descriptor(matrix)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_descriptor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">matrix</code> → descriptor। <code style="color:#22d3bf">descriptor_to_matrix</code> का उल्टा।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>1 行の行列 (1, n) は (n,) へ戻す(それが元の 1-D 記述子だから)。2 行以上はそのまま。<b>この非対称は意図的</b>で、これが無いと <code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code> の往復が (n,) から (1,n) へ静かに形を変える = 型の嘘そのものになる。</p>
-<p>★<b>測って残す非可逆点</b>: そのぶん、元から <b>(1, n) の 2-D だった記述子</b>は往復で (n,) の 1-D になる —— (1,n) の行列は「1-D 記述子を包んだもの」と「行が 1 本しかない記述子束」の区別を持たないので、<b>この 1 ケースだけは原理的に戻せない</b>。値は全て保存されるので損失は「行が 1 本だった」というメタ情報のみ。どちらを非可逆にするか選ばされる状況で、<code style="color:#22d3bf">descriptor</code> の圧倒的多数(実測 14 producers 中 12 が 1-D)を厳密側に倒した。<code style="color:#22d3bf">tests/test_reprconv.py::test_one_row_descriptor_ambiguity_is_documented</code> がこの穴を<b>塞がずに固定</b>している(隠すと、いつか黙って形が変わる)。</p>
+<p>1 row वाली matrix (1, n) को (n,) में वापस किया जाता है (क्योंकि वही मूल 1-D descriptor है)। 2 या अधिक row जस की तस रहती हैं। <b>यह असममिति जान-बूझकर है</b>: इसके बिना <code style="color:#22d3bf">descriptor -&gt; matrix -&gt; descriptor</code> का round trip shape को (n,) से (1,n) में चुपचाप बदल देता = type का शुद्ध झूठ।</p>
+<p>★ <b>मापकर रखा गया irreversible बिंदु</b>: बदले में, जो descriptor <b>मूल रूप से (1, n) का 2-D था</b>, वह round trip के बाद (n,) का 1-D बन जाता है -- (1,n) matrix &quot;1-D descriptor को लपेटा हुआ&quot; और &quot;केवल 1 row वाला descriptor bundle&quot; में अंतर नहीं रखती, इसलिए <b>केवल यह 1 स्थिति सिद्धांततः वापस नहीं लाई जा सकती</b>। सभी मान सुरक्षित रहते हैं, इसलिए loss केवल &quot;1 row थी&quot; की meta-जानकारी है। कौन-सा पक्ष irreversible हो, यह चुनने को मजबूर होने पर, <code style="color:#22d3bf">descriptor</code> के भारी बहुमत (measured: 14 producer में से 12 1-D) को सटीक पक्ष में रखा गया। <code style="color:#22d3bf">tests/test_reprconv.py::test_one_row_descriptor_ambiguity_is_documented</code> इस छेद को <b>बंद किए बिना पक्का</b> करता है (छिपाने पर किसी दिन shape चुपचाप बदल जाएगा)।</p>
 <p>Args:</p>
-<p>matrix: (m, n) の実配列。</p>
+<p>matrix: (m, n) real array।</p>
 <p>Returns:</p>
-<p>m == 1 なら (n,)、それ以外は (m, n)。</p>
+<p>m == 1 हो तो (n,), वरना (m, n)।</p>
 <p>Raises:</p>
-<p>ValueError: 2-D でない / 非有限。</p>
+<p>ValueError: 2-D नहीं है / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

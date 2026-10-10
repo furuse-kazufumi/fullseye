@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_table(descriptor)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_table(descriptor)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>描述子 → 彙總 <code style="color:#22d3bf">table</code>。<b>單向</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>次元・ノルム・エネルギー集中(正規化した二乗和の上位 10% が占める割合)を出す。記述子が「実質何次元使っているか」を見るためのもので、次元だけ多くてほぼ全部 0 という失敗を可視化する。</p>
+<p>輸出維度、範數、能量集中度(正規化平方和中前 10% 所占的比例)。用於查看描述子「實際用了幾個維度」,把維度很多卻幾乎全為 0 的失敗視覺化。</p>
 <p>Args:</p>
-<p>descriptor: (n,) または (m, n)。</p>
+<p>descriptor: (n,) 或 (m, n)。</p>
 <p>Returns:</p>
 <p>dict(<code style="color:#22d3bf">shape</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">l2</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">min</code> /</p>
 <p><code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">top10pct_energy</code> / <code style="color:#22d3bf">nonzero_fraction</code>)。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: 形狀不正 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

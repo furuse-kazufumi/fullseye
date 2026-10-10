@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_table(pairs)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_table(pairs)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>쌍 <code style="color:#22d3bf">(N,2)</code> → 요약 <code style="color:#22d3bf">table</code>. <b>일방향</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">x_uniform</code> は「列 0 が等間隔か」の判定で、これが False の対を <code style="color:#22d3bf">pairs_to_signal</code> に通すと x が黙って落ちる(上の docstring 参照)。判定は最大差分と最小差分の比で行い、閾値は 1e-9(相対)。</p>
+<p><code style="color:#22d3bf">x_uniform</code>은 &quot;열 0이 등간격인가&quot;의 판정이며, 이것이 False인 쌍을 <code style="color:#22d3bf">pairs_to_signal</code>에 통과시키면 x가 조용히 사라진다(위의 docstring 참조). 판정은 최대 차분과 최소 차분의 비로 하며, 임계값은 1e-9(상대).</p>
 <p>Args:</p>
-<p>pairs: (N, 2)。</p>
+<p>pairs: (N, 2).</p>
 <p>Returns:</p>
 <p>dict(<code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">x_min</code> / <code style="color:#22d3bf">x_max</code> / <code style="color:#22d3bf">y_min</code> / <code style="color:#22d3bf">y_max</code> /</p>
-<p><code style="color:#22d3bf">y_mean</code> / <code style="color:#22d3bf">x_uniform</code> / <code style="color:#22d3bf">x_step</code>(等間隔のときのみ) /</p>
-<p><code style="color:#22d3bf">pearson_r</code>(N &gt;= 2 かつ両列が定数でないとき))。</p>
+<p><code style="color:#22d3bf">y_mean</code> / <code style="color:#22d3bf">x_uniform</code> / <code style="color:#22d3bf">x_step</code>(등간격일 때만) /</p>
+<p><code style="color:#22d3bf">pearson_r</code>(N &gt;= 2이고 두 열이 모두 상수가 아닐 때)).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: 형상 부정 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

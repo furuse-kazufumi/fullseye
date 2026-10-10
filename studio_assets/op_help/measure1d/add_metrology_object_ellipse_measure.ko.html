@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_ellipse_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>타원 계측 객체를 추가한다(add_metrology_object_ellipse_measure). <code style="color:#22d3bf">phi</code> = <code style="color:#22d3bf">ra</code> 축의 방향(col 축 기준, 라디안).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>参照楕円(中心 <code style="color:#22d3bf">(row, col)</code> [px]、<code style="color:#22d3bf">phi</code> 方向の半径 <code style="color:#22d3bf">ra</code>、直交方向の半径 <code style="color:#22d3bf">rb</code>)を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> はパラメータ角 <code style="color:#22d3bf">t</code> を <code style="color:#22d3bf">n</code> 等分した点を置き(弧長等分ではないので、扁平な楕円では長軸端が密になる)、各点で楕円の外向き法線 <code style="color:#22d3bf">∇F</code> に沿ってエッジを測り、楕円フィットで出し直す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phi</code>: col 軸(x)から row 軸(画像下向き)へ測ったラジアン(矩形の <code style="color:#22d3bf">phi</code> と同じ規約)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ra</code>, <code style="color:#22d3bf">rb</code>: 半径 [px]。0 を入れると法線計算で 0 除算になるので避ける(ここでは検証しない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: サンプル数(既定 40)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 追加位置の index(0 始まり)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">apply</code> 結果の <code style="color:#22d3bf">params</code> は <code style="color:#22d3bf">row / col / phi / ra / rb</code> で <b><code style="color:#22d3bf">ra &gt;= rb</code> (長軸が <code style="color:#22d3bf">ra</code>)</b> に正規化され、<code style="color:#22d3bf">rms</code> は代数残差ではなく中心からの半径方向の幾何残差 [px]。</p>
+<p>참조 타원(중심 <code style="color:#22d3bf">(row, col)</code> [px], <code style="color:#22d3bf">phi</code> 방향의 반지름 <code style="color:#22d3bf">ra</code>, 직교 방향의 반지름 <code style="color:#22d3bf">rb</code>)을 <code style="color:#22d3bf">model[&quot;objects&quot;]</code> 에 쌓는다(dict 를 제자리에서 갱신). <code style="color:#22d3bf">apply_metrology_model</code> 은 매개변수 각 <code style="color:#22d3bf">t</code> 를 <code style="color:#22d3bf">n</code> 등분한 점을 두고(호 길이 등분이 아니므로, 납작한 타원에서는 장축 끝이 조밀해진다), 각 점에서 타원의바깥 법선 <code style="color:#22d3bf">∇F</code> 를 따라 에지를 재어, 타원 피팅으로 다시 구한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phi</code>: col 축(x)에서 row 축(영상 아래 방향)으로 잰 라디안(사각형의 <code style="color:#22d3bf">phi</code> 와 같은 규약).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ra</code>, <code style="color:#22d3bf">rb</code>: 반지름 [px]. 0 을 넣으면 법선 계산에서 0 나눗셈이 되므로 피한다(여기서는 검증하지 않는다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 샘플 수(기본값 40).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 추가 위치의 index(0 시작).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">apply</code> 결과의 <code style="color:#22d3bf">params</code> 는 <code style="color:#22d3bf">row / col / phi / ra / rb</code> 로 <b><code style="color:#22d3bf">ra &gt;= rb</code> (장축이 <code style="color:#22d3bf">ra</code>)</b> 로 정규화되며, <code style="color:#22d3bf">rms</code> 는 대수 잔차가 아니라 중심으로부터의반지름 방향 기하 잔차 [px].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

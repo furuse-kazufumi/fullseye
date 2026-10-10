@@ -4,20 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_mahalanobis(model, shape, align: &#x27;bool&#x27; = True, cumulative: &#x27;float&#x27; = 0.99, n_modes: &#x27;int&#x27; = 0)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.shape_mahalanobis(model, shape, align: &#x27;bool&#x27; = True, cumulative: &#x27;float&#x27; = 0.99, n_modes: &#x27;int&#x27; = 0)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;shape_mahalanobis&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>How <b>abnormal</b> the shape is as seen from the model. → float.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">sqrt(sum(score_i^2 / variance_i))</code> を<b>先頭の何本かに限って</b>足す。</p>
-<p>★ <b>全成分を足してはいけない。</b> K 個体の群から出る主成分は K-1 本だが、後ろのほうは分散が数値的なゼロまで落ちる。実測(K=12、N=80、真のモードは 2 本)の分散: <code style="color:#22d3bf">3.2e-02, 5.6e-03, 4.0e-05, 6.7e-13, 9.7e-14, 9.9e-17, …, 1.0e-31</code>。この裾で割ると値が意味を失う:</p>
+<p>Adds up <code style="color:#22d3bf">sqrt(sum(score_i^2 / variance_i))</code> <b>restricted to the first few components</b>.</p>
+<p>★ <b>Do not add up all components.</b> A group of K individuals yields K-1 principal components, but toward the end the variance drops to numerical zero. Variances measured (K=12, N=80, true modes:</p>
+<p>2): <code style="color:#22d3bf">3.2e-02, 5.6e-03, 4.0e-05, 6.7e-13, 9.7e-14, 9.9e-17, …, 1.0e-31</code>. Dividing by this tail makes the value meaningless:</p>
 <p>==========  ===========  ==================</p>
-<p>使う本数    群内の個体   0.5 の膨らみを注入</p>
+<p>modes used  in group     0.5 bulge injected</p>
 <p>==========  ===========  ==================</p>
 <p>1                 0.428               1.821</p>
 <p>2                 0.885               2.617</p>
 <p>3                 1.035              18.134</p>
-<p>5                 1.373        1393035.060</p>
-<p>11(全部)      46613.636       9.3e+13</p>
+<p>5                 1.373         1393035.060</p>
+<p>11 (all)      46613.636             9.3e+13</p>
 <p>==========  ===========  ==================</p>
-<p>5 本で群内の個体が 1.37 なのに外れが 100 万、11 本では<b>群内ですら 46614</b>。「異常度」ではなく「数値ゼロで割った回数」を測っている。</p>
-<p>そこで既定は<b>累積寄与率 <code style="color:#22d3bf">cumulative</code>(0.99)までの成分だけ</b>を使う。上の群では 2 本(0.99895)が選ばれ、群内 0.885 / 外れ 2.617 と素直に並ぶ。<code style="color:#22d3bf">n_modes</code> を正の数で与えればその本数に固定する(比較のため本数を揃えたいときに使う)。<b>どちらを使ったかで値が変わる</b>ので、報告するときは本数も一緒に。</p>
+<p>With 5 components an in-group individual scores 1.37 while the outlier scores in the millions, and with 11 <b>even the in-group scores 46614</b>. What is measured is not &quot;abnormality&quot; but &quot;how many times it divided by numerical zero&quot;.</p>
+<p>Hence the default uses <b>only the components up to the cumulative contribution <code style="color:#22d3bf">cumulative</code> (0.99)</b>. For the group above 2 components (0.99895) are chosen, and in-group 0.885 / outlier 2.617 line up sensibly. Giving <code style="color:#22d3bf">n_modes</code> a positive number fixes the count to that number (used when you want the same count for comparison). <b>The value changes depending on which you used</b>, so when reporting, give the count too.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

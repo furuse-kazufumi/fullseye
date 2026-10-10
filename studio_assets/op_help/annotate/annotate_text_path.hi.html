@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (image2d) लौटाता है: polyline के साथ text रखता है (हर अक्षर tangent कोण पर घुमाया गया)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>文字の板は敷かない(経路の上に載せる用途なので)。配置と、<code style="color:#22d3bf">anchor</code> / <code style="color:#22d3bf">offset</code> / <code style="color:#22d3bf">upright</code>(縦書き)/ <code style="color:#22d3bf">\n</code> による改行の意味は <code style="color:#22d3bf">annotate_text_path_layout</code> に書いてある。</p>
-<p><code style="color:#22d3bf">layout</code> を渡した場合、そちらが<b>そのまま使われる</b> —— <code style="color:#22d3bf">anchor</code> などは無視されるので、両方を渡さないこと。</p>
-<p><code style="color:#22d3bf">bold</code> / <code style="color:#22d3bf">italic</code> は<b>合成</b>(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。1 字ずつ焼いてから回すので、傾きは<b>字の縦軸に対して</b>掛かる(経路が斜めでも斜体が経路の向きに歪まない)。</p>
+<p>text के नीचे पृष्ठभूमि box नहीं बिछाया जाता (क्योंकि उपयोग path के ऊपर रखने का है)। placement, और <code style="color:#22d3bf">anchor</code> / <code style="color:#22d3bf">offset</code> / <code style="color:#22d3bf">upright</code> (ऊर्ध्वाधर लेखन) / <code style="color:#22d3bf">\n</code> से नई line का अर्थ <code style="color:#22d3bf">annotate_text_path_layout</code> में लिखा है।</p>
+<p><code style="color:#22d3bf">layout</code> देने पर वही <b>जैसा का तैसा इस्तेमाल होता है</b> -- <code style="color:#22d3bf">anchor</code> आदि अनदेखे किए जाते हैं, इसलिए दोनों न दें।</p>
+<p><code style="color:#22d3bf">bold</code> / <code style="color:#22d3bf">italic</code> <b>synthesised</b> हैं (<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)। एक बार में 1 अक्षर render करके फिर घुमाया जाता है, इसलिए झुकाव <b>अक्षर की ऊर्ध्वाधर axis के सापेक्ष</b> लगता है (path तिरछा हो तब भी italic path की दिशा में विकृत नहीं होता)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_text_path_layout</code> と同じ + 回転した字が画像の外に出る。</p>
+<p><code style="color:#22d3bf">annotate_text_path_layout</code> जैसा ही + घुमाया गया अक्षर image के बाहर चला जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

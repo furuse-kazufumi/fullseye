@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.image_entropy(a, bins=64, data_range=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgmetrics; imgmetrics.image_entropy(a, bins=64, data_range=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;image_entropy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>單張影像的夏農熵 [bit]。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">mutual_information</code> と<b>同じビン割り</b>で出すので、<code style="color:#22d3bf">mutual_information(a, a) == image_entropy(a)</code> が厳密に成り立つ(テストで固定)。既存の <code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">entropy_image</code>(backends)は別のビン割りなので値は一致しない ―― こちらは同時分布と整合する側。</p>
+<p>與 <code style="color:#22d3bf">mutual_information</code> 使用<b>相同的分箱</b>,所以 <code style="color:#22d3bf">mutual_information(a, a) == image_entropy(a)</code> 嚴格成立(已用測試固定)。現有的 <code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">entropy_image</code>(backends) 分箱不同,所以值不一致 —— 本函式是與聯合分布一致的那一方。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

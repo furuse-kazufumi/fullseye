@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_cost(plan, cost)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import colortransport; colortransport.transport_cost(plan, cost)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opscolortransport.get(&quot;transport_cost&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>수송 계획의 총비용 <code style="color:#22d3bf">&lt;plan, cost&gt;</code>. <b>계획을 소비하는</b> 쪽 연산자.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>計画は「行和・列和が周辺分布に一致する」という意味を持つ行列で、普通の <code style="color:#22d3bf">matrix</code> として扱うと質量保存が黙って壊れる。ここは計画としての検査(非負・和が 1 前後)を通してから費用を出す。</p>
+<p>계획은 &quot;행 합, 열 합이 주변 분포에 일치한다&quot;는 의미를 가진 행렬이며, 보통의 <code style="color:#22d3bf">matrix</code>로 다루면 질량 보존이 말없이 깨진다. 여기서는 계획으로서의 검사(비음, 합이 1 전후)를 통과시킨 뒤 비용을 낸다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 측색과 분광 지식 — 색은 ‘분광 × 광원 × 관찰자’로만 정해진다</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

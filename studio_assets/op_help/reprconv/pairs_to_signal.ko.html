@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_signal(pairs)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_signal(pairs)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_signal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>쌍 <code style="color:#22d3bf">(N,2)</code> → 종속변수의 <code style="color:#22d3bf">signal (N,)</code>. <code style="color:#22d3bf">pairs</code> 의 두 번째 출구.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>列 1(y)だけを取り出す。<code style="color:#22d3bf">funct_1d_to_pairs</code> が (x, y) を並べた(N,2) を返すので、その逆向きにあたる —— <b>x が等間隔ならば</b> <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> は bit 一致する。等間隔でない x を持つ対を通すと、<b>x の情報が黙って落ちる</b>(<code style="color:#22d3bf">signal</code> は添字が等間隔だという前提の型)。</p>
-<p>だから <code style="color:#22d3bf">pairs_to_table</code> が <code style="color:#22d3bf">x_uniform</code> を必ず一緒に出す。</p>
+<p>열 1(y)만 꺼낸다. <code style="color:#22d3bf">funct_1d_to_pairs</code> 가 (x, y) 를 늘어놓은(N,2) 를 반환하므로 그 역방향에 해당한다 —— <b>x 가 등간격이라면</b> <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> 은 bit 일치한다. 등간격이 아닌 x 를 가진 쌍을통과시키면 <b>x 의 정보가 조용히 떨어진다</b>(<code style="color:#22d3bf">signal</code> 은 첨자가 등간격이라는 전제의 형).</p>
+<p>그래서 <code style="color:#22d3bf">pairs_to_table</code> 이 <code style="color:#22d3bf">x_uniform</code> 을 반드시 함께 낸다.</p>
 <p>Args:</p>
-<p>pairs: (N, 2) または 2 本の等長 1-D のタプル。</p>
+<p>pairs: (N, 2) 또는 2 개의 같은 길이 1-D 의 튜플.</p>
 <p>Returns:</p>
-<p>(N,) float64。</p>
+<p>(N,) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: 형태 부정 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_distance(region: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import blob2d; blob2d.blob_distance(region: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsblob.get(&quot;blob_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>전경의 각 픽셀에서 <b>가장 가까운 배경까지</b>의 거리. 단위는 <code style="color:#22d3bf">spacing</code>의 배수.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code> そのもの。<b>わざわざ口を作った理由</b>は、進化 op の <code style="color:#22d3bf">distance_transform</code> が最大値で正規化して返すため(<code style="color:#22d3bf">poc_cell_counting</code> の実測: 出力の最大が常に 1.0)、<b>画素単位の距離が取れない</b>こと。分水嶺の種を作るには絶対値が要る。</p>
+<p><code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code> 그 자체. <b>일부러 입구를 만든이유</b>는 진화 op 의 <code style="color:#22d3bf">distance_transform</code> 이 최댓값으로 정규화해서 반환하기 때문에(<code style="color:#22d3bf">poc_cell_counting</code> 의 실측: 출력의 최댓값이 항상 1.0) <b>화소 단위의 거리를얻을 수 없다</b>는 것. 분수령의 씨앗을 만들려면 절댓값이 필요하다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>
 <p>&gt;&gt;&gt; m = np.zeros((21, 21), bool); m[5:16, 5:16] = True</p>
-<p>&gt;&gt;&gt; float(blob_distance(m).max())      # 11x11 の正方形の中心まで</p>
+<p>&gt;&gt;&gt; float(blob_distance(m).max())      # 11x11 정사각형의 중심까지</p>
 <p>6.0</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 패밀리 가이드</a></p>

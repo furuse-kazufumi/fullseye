@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스카이라인 table과 자세로부터 그 방향의 카메라가 보는 <b>하늘 마스크</b>(H, W)를 그린다 → image2d(0/1).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各画素の光線を世界へ回し、その方位のスカイライン仰角より上なら空(1)、下なら地形(0)。合成の写真づくり(PoC)と、推定した姿勢を写真に重ねて目で確かめる図に使う。<code style="color:#22d3bf">camera_orientation_from_skyline</code> の予測と同じ幾何なので、<b>描いて → 抜いて → 当てる</b>の往復が閉じる(テストの真値)。</p>
+<p>각 화소의 광선을 월드로 돌려, 그 방위의 스카이라인 앙각보다 위면 하늘(1), 아래면 지형(0). 합성 사진 만들기(PoC)와, 추정한 자세를 사진에 겹쳐 눈으로 확인하는 그림에 쓴다. <code style="color:#22d3bf">camera_orientation_from_skyline</code> 의 예측과 같은 기하이므로, <b>그리고 → 뽑고 → 맞추는</b> 왕복이 닫힌다(테스트의 참값).</p>
 <p>Args:</p>
-<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> の出力(<code style="color:#22d3bf">azimuth_deg</code> / <code style="color:#22d3bf">elevation_deg</code>)。</p>
-<p>K: (fx, fy, cx, cy)。shape: (H, W)。</p>
-<p>yaw_deg, pitch_deg, roll_deg: 姿勢(モジュール冒頭の規約)。</p>
+<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> 의 출력(<code style="color:#22d3bf">azimuth_deg</code> / <code style="color:#22d3bf">elevation_deg</code>).</p>
+<p>K: (fx, fy, cx, cy). shape: (H, W).</p>
+<p>yaw_deg, pitch_deg, roll_deg: 자세(모듈 첫머리의 규약).</p>
 <p>Returns:</p>
-<p>image2d (H, W) float {0, 1}: 1 = 空。</p>
+<p>image2d (H, W) float {0, 1}: 1 = 하늘.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

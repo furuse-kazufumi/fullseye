@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.sinkhorn_distance(a, b, cost, reg=0.05, **kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;sinkhorn_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>regularised transport cost <code style="color:#22d3bf">&lt;plan, cost&gt;</code>। <b>यह exact दूरी नहीं है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>正則化のぶん系統的に偏るので、自分自身との「距離」も 0 にならない(そのずれ幅はテストに実測で残してある)。1 次元で厳密が要るときは <code style="color:#22d3bf">wasserstein_1d</code>。</p>
+<p>regularisation के कारण इसमें व्यवस्थित bias होता है, इसलिए स्वयं से &quot;दूरी&quot; भी 0 नहीं होती (उस अंतर का माप tests में दर्ज है)। 1 आयाम में exact मान चाहिए तो <code style="color:#22d3bf">wasserstein_1d</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Colorimetry और spectra — रंग केवल spectrum × illuminant × observer से तय होता है</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -5,22 +5,21 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.poisson_blend(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.poisson_blend.raw(...)</code>,或直接调用 <code style="color:#22d3bf">colortransport.poisson_blend</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>搬运梯度场的无缝合成(Pérez, Gangnet &amp; Blake, SIGGRAPH 2003)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">mask</code> の内部で <b><code style="color:#22d3bf">src</code> の勾配</b>を保ちつつ、<b>境界で <code style="color:#22d3bf">dst</code> の値</b>に一致する像を解く。よって出力は次の 2 つを<b>構成上</b>満たし、</p>
-<p>それが正しさの検算になる:</p>
-<p style="margin:2px 0 2px 12px">• 内部のラプラシアンが <code style="color:#22d3bf">src</code> のラプラシアンと一致(解の残差ぶんまで)</p>
-<p style="margin:2px 0 2px 12px">• マスクの外は <code style="color:#22d3bf">dst</code> と<b>厳密に一致</b>(1 画素も触らない)</p>
-<p><b>貼った物の色は変わる。</b> それが目的の処理だが、「貼った物体の色を測る」用途にそのまま流すと<b>測っているのは貼り先の色</b>になる。返り値は <code style="color:#22d3bf">(blended, info)</code> で、<code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code> と <code style="color:#22d3bf">info[&quot;max_shift&quot;]</code> が実際にどれだけ動いたかを言う。</p>
+<p>在 <code style="color:#22d3bf">mask</code> 内部保持<b><code style="color:#22d3bf">src</code> 的梯度</b>，同时求解一个<b>在边界上等于 <code style="color:#22d3bf">dst</code> 的值</b>的图像。因此输出<b>按构造</b>满足下面 2 条，</p>
+<p>这正是正确性的验算:</p>
+<p style="margin:2px 0 2px 12px">• 内部的拉普拉斯与 <code style="color:#22d3bf">src</code> 的拉普拉斯一致(至多相差求解的残差)</p>
+<p style="margin:2px 0 2px 12px">• 掩模之外与 <code style="color:#22d3bf">dst</code> <b>严格一致</b>(连 1 个像素都不动)</p>
+<p><b>贴上去的物体颜色会改变。</b> 这正是该处理的目的，但若直接用于「测量所贴物体的颜色」这类用途，<b>测到的其实是贴入目标处的颜色</b>。返回值为 <code style="color:#22d3bf">(blended, info)</code>,<code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code> 和 <code style="color:#22d3bf">info[&quot;max_shift&quot;]</code> 说明实际变动了多少。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>src : array_like</p>
-<p>貼る絵。<code style="color:#22d3bf">(H, W)</code> または <code style="color:#22d3bf">(H, W, C)</code>。</p>
+<p>要贴的图。<code style="color:#22d3bf">(H, W)</code> 或 <code style="color:#22d3bf">(H, W, C)</code>。</p>
 <p>dst : array_like</p>
-<p>貼り先。<code style="color:#22d3bf">src</code> 以上の大きさ。</p>
+<p>贴入目标。尺寸不小于 <code style="color:#22d3bf">src</code>。</p>
 <p>mask : array_like</p>
-<p><code style="color:#22d3bf">src</code> と同じ <code style="color:#22d3bf">(H, W)</code> の真偽値。<b>縁に接していてはいけない</b></p>
-<p>(境界条件が取れないため明示的に拒否する)。</p>
+<p>与 <code style="color:#22d3bf">src</code> 相同 <code style="color:#22d3bf">(H, W)</code> 的布尔值。<b>不得接触边缘</b></p>
+<p>(因无法取得边界条件而明确拒绝)。</p>
 <p>offset : (int, int)</p>
-<p><code style="color:#22d3bf">dst</code> の中で <code style="color:#22d3bf">src</code> の左上を置く <code style="color:#22d3bf">(row, col)</code>。</p>
+<p>在 <code style="color:#22d3bf">dst</code> 中放置 <code style="color:#22d3bf">src</code> 左上角的 <code style="color:#22d3bf">(row, col)</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(ndarray, dict)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

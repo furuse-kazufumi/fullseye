@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code>(要直接调用实现,<code style="color:#22d3bf">import vxcore; vxcore.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code>;从台账取用则 <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_perspective&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>射影变换(3.57 节)。逆映射：<code style="color:#22d3bf">x0 = M[0]·(x, y, 1)</code>、<code style="color:#22d3bf">y0 = M[1]·(x, y, 1)</code>、<code style="color:#22d3bf">z0 = M[2]·(x, y, 1)</code>， 输出 (x, y) = 输入 (x0/z0, y0/z0)(REQ-0508)。z0 = 0 的像素按外部填充。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>*matrix*: 数学の並びの 3×3(規格の C の宣言 <code style="color:#22d3bf">mat[3][3]</code> は転置した並び)。他の引数は <code style="color:#22d3bf">vx_warp_affine</code> と同じ。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / matrix が 3×3 の有限でない / interpolation・border が一覧に無い。</p>
+<p>*matrix*: 数学排列的 3×3(规格的 C 声明 <code style="color:#22d3bf">mat[3][3]</code> 是转置的排列)。其他参数与 <code style="color:#22d3bf">vx_warp_affine</code> 相同。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 不是 U8 的 2-D / matrix 不是有限的 3×3 / interpolation、border 不在列表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_conductance_states(W: &#x27;Any&#x27;, drive: &#x27;Any&#x27;, dt_s: &#x27;float&#x27; = 0.001, tau_s: &#x27;float&#x27; = 0.02, e_rest: &#x27;float&#x27; = 0.0, e_exc: &#x27;float&#x27; = 1.0, e_inh: &#x27;float&#x27; = -1.0, release: &#x27;str&#x27; = &#x27;relu&#x27;, v_half: &#x27;float&#x27; = 0.5, slope: &#x27;float&#x27; = 4.0, gain: &#x27;float&#x27; = 1.0, v0: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_conductance_states(W: &#x27;Any&#x27;, drive: &#x27;Any&#x27;, dt_s: &#x27;float&#x27; = 0.001, tau_s: &#x27;float&#x27; = 0.02, e_rest: &#x27;float&#x27; = 0.0, e_exc: &#x27;float&#x27; = 1.0, e_inh: &#x27;float&#x27; = -1.0, release: &#x27;str&#x27; = &#x27;relu&#x27;, v_half: &#x27;float&#x27; = 0.5, slope: &#x27;float&#x27; = 4.0, gain: &#x27;float&#x27; = 1.0, v0: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_conductance_states&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>배선 <code style="color:#22d3bf">W</code>를 <b>그대로 회로로 돌린</b> 막전위의 시계열 <code style="color:#22d3bf">(T, n)</code>(<code style="color:#22d3bf">matrix</code>, 학습 없음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>ハエの視葉で「掛け算」に見えていた非線形の正体は、樹状突起のコンダクタンス比だった(Groschner ら 2022: 定常では <code style="color:#22d3bf">Vm = Σgᵢ Eᵢ / Σgᵢ</code>)。同じ形の式が、コネクトームを配線として固定した全脳モデルの標準形でもある(Lappalainen ら 2024:</p>
-<p><code style="color:#22d3bf">τᵢ V̇ᵢ = −Vᵢ + Σ sᵢⱼ + V_rest</code>)。この op はその<b>動的な版</b>を、<code style="color:#22d3bf">conn_graph</code> 1 枚と外部入力 1 枚だけで回す:</p>
+<p>초파리 시엽에서 &quot;곱셈&quot;으로 보였던 비선형의 정체는 수상돌기의 컨덕턴스 비였다(Groschner 등 2022: 정상 상태에서는 <code style="color:#22d3bf">Vm = Σgᵢ Eᵢ / Σgᵢ</code>). 같은 형태의 식이, 커넥톰을배선으로 고정한 전뇌 모델의 표준형이기도 하다(Lappalainen 등 2024:</p>
+<p><code style="color:#22d3bf">τᵢ V̇ᵢ = −Vᵢ + Σ sᵢⱼ + V_rest</code>). 이 op 는 그 <b>동적인 판</b>을, <code style="color:#22d3bf">conn_graph</code> 1 장과 외부 입력 1 장만으로 돌린다:</p>
 <p>τ dVᵢ/dt = −(Vᵢ − e_rest) + g⁺ᵢ (e_exc − Vᵢ) + g⁻ᵢ (e_inh − Vᵢ)</p>
-<p><code style="color:#22d3bf">g⁺</code> は <code style="color:#22d3bf">W</code> の<b>正の重み</b>、<code style="color:#22d3bf">g⁻</code> は<b>負の重み</b>の絶対値を、前シナプス側の放出 <code style="color:#22d3bf">f(V)</code> で重みづけて足したもの(<code style="color:#22d3bf">drive</code> の正負も同じ向きに足す)。重みは与えられたまま使う —— <b>学習も当てはめも一切しない</b>。時定数が入力で縮む(実効 τ = <code style="color:#22d3bf">τ/(1+g⁺+g⁻)</code>)ので、これは liquid time-constant 型の力学そのものだが、パラメータは配線と定数だけで、勾配で決めた数は 1 つも無い。</p>
-<p>W: <code style="color:#22d3bf">(n, n)</code> の重みつき隣接行列(<code style="color:#22d3bf">W[pre, post]</code>、正 = 興奮性、負 = 抑制性)。</p>
-<p>drive: <code style="color:#22d3bf">(T, n)</code> の外部入力。正はそのノードを <code style="color:#22d3bf">e_exc</code> へ、負は <code style="color:#22d3bf">e_inh</code> へ引く</p>
-<p>コンダクタンスとして入る(電流ではない —— 電流だと下の有界性が壊れる)。</p>
-<p>dt_s / tau_s: 刻みと膜時定数[秒]。e_rest / e_exc / e_inh: 静止電位と 2 つの反転電位。</p>
-<p>release: 前シナプス放出 <code style="color:#22d3bf">f(V)</code>。<code style="color:#22d3bf">&quot;relu&quot;</code> は <code style="color:#22d3bf">gain·max(V, 0)</code>、<code style="color:#22d3bf">&quot;sigmoid&quot;</code> は</p>
-<p><code style="color:#22d3bf">gain/(1+exp(−slope(V−v_half)))</code>。<b>どちらも非負</b>で、負のコンダクタンス</p>
-<p>(物理的に存在しない)を作らない —— それが下の有界性の前提。</p>
-<p>v_half / slope: シグモイドの半値と傾き。gain: 放出の利得(非負)。</p>
-<p>v0: 初期状態 <code style="color:#22d3bf">(n,)</code>。既定は全ノード <code style="color:#22d3bf">e_rest</code>。</p>
-<p>各段は<b>コンダクタンスを固定した厳密解</b>で進める(<code style="color:#22d3bf">V ← V∞ + (V − V∞)e^{−dt·g_tot/τ}</code>) ので、刻みを粗くしても発散しない。</p>
-<p>閉じた式で検査できること:</p>
-<p style="margin:2px 0 2px 12px">• <b>有界性</b>: 放出が非負である限り、<code style="color:#22d3bf">V∞</code> は 3 つの反転電位の<b>凸結合</b>なので <code style="color:#22d3bf">[min(e_rest, e_exc, e_inh), max(...)]</code> の中にある。各段は <code style="color:#22d3bf">V</code> をその <code style="color:#22d3bf">V∞</code> へ指数で寄せるだけなので、<b>箱の中から始めれば必ず箱の中に留まり、箱の外から始めても外へは行かず箱へ向かう</b>。どんな配線・どんな入力でも発散しない、が構造で保証される(<code style="color:#22d3bf">v0</code> の既定は <code style="color:#22d3bf">e_rest</code> = 箱の中)。</p>
-<p style="margin:2px 0 2px 12px">• <b>減衰</b>: 入力も結合も無ければ <code style="color:#22d3bf">V(t) = e_rest + (V₀ − e_rest)e^{−t/τ}</code> ちょうど。</p>
-<p style="margin:2px 0 2px 12px">• <b>定常</b>: 一定の入力 <code style="color:#22d3bf">d &gt; 0</code> を 1 ノードに入れると <code style="color:#22d3bf">V∞ = (e_rest + d·e_exc)/(1 + d)</code>、そこへ向かう実効時定数は <code style="color:#22d3bf">τ/(1 + d)</code> ちょうど(入力で時定数が縮む、の数値)。</p>
-<p><b>ValueError</b>: 正方でない / 非有限の <code style="color:#22d3bf">W</code>、<code style="color:#22d3bf">(T, n)</code> でない <code style="color:#22d3bf">drive</code>、非正の <code style="color:#22d3bf">dt_s</code> / <code style="color:#22d3bf">tau_s</code>、負の <code style="color:#22d3bf">gain</code>、未知の <code style="color:#22d3bf">release</code>、長さの合わない <code style="color:#22d3bf">v0</code>。</p>
+<p><code style="color:#22d3bf">g⁺</code> 는 <code style="color:#22d3bf">W</code> 의 <b>양의 가중치</b>, <code style="color:#22d3bf">g⁻</code> 는 <b>음의 가중치</b>의 절댓값을, 시냅스 전 쪽의방출 <code style="color:#22d3bf">f(V)</code> 로 가중하여 더한 것(<code style="color:#22d3bf">drive</code> 의 양음도 같은 방향으로 더한다). 가중치는주어진 그대로 쓴다 —— <b>학습도 피팅도 일절 하지 않는다</b>. 시정수가 입력으로 줄어들므로(실효 τ = <code style="color:#22d3bf">τ/(1+g⁺+g⁻)</code>), 이것은 liquid time-constant 형의 역학 그 자체이지만, 파라미터는 배선과 상수뿐이며, 기울기로 정한 수는 1 개도 없다.</p>
+<p>W: <code style="color:#22d3bf">(n, n)</code> 의 가중 인접 행렬(<code style="color:#22d3bf">W[pre, post]</code>, 양 = 흥분성, 음 = 억제성).</p>
+<p>drive: <code style="color:#22d3bf">(T, n)</code> 의 외부 입력. 양은 그 노드를 <code style="color:#22d3bf">e_exc</code> 로, 음은 <code style="color:#22d3bf">e_inh</code> 로 끄는</p>
+<p>컨덕턴스로서 들어간다(전류가 아니다 —— 전류라면 아래의 유계성이 깨진다).</p>
+<p>dt_s / tau_s: 스텝과 막 시정수[초]. e_rest / e_exc / e_inh: 정지 전위와 2 개의 역전 전위.</p>
+<p>release: 시냅스 전 방출 <code style="color:#22d3bf">f(V)</code>. <code style="color:#22d3bf">&quot;relu&quot;</code> 는 <code style="color:#22d3bf">gain·max(V, 0)</code>, <code style="color:#22d3bf">&quot;sigmoid&quot;</code> 는</p>
+<p><code style="color:#22d3bf">gain/(1+exp(−slope(V−v_half)))</code>. <b>둘 다 음이 아니며</b>, 음의 컨덕턴스</p>
+<p>(물리적으로 존재하지 않는다)를 만들지 않는다 —— 그것이 아래 유계성의 전제.</p>
+<p>v_half / slope: 시그모이드의 반값과 기울기. gain: 방출의 이득(음이 아님).</p>
+<p>v0: 초기 상태 <code style="color:#22d3bf">(n,)</code>. 기본값은 전 노드 <code style="color:#22d3bf">e_rest</code>.</p>
+<p>각 단은 <b>컨덕턴스를 고정한 엄밀해</b>로 진행한다(<code style="color:#22d3bf">V ← V∞ + (V − V∞)e^{−dt·g_tot/τ}</code>) 그래서 스텝을 거칠게 해도 발산하지 않는다.</p>
+<p>닫힌 식으로 검사할 수 있는 것:</p>
+<p style="margin:2px 0 2px 12px">• <b>유계성</b>: 방출이 음이 아닌 한, <code style="color:#22d3bf">V∞</code> 는 3 개의 역전 전위의 <b>볼록 결합</b>이므로 <code style="color:#22d3bf">[min(e_rest, e_exc, e_inh), max(...)]</code> 안에 있다. 각 단은 <code style="color:#22d3bf">V</code> 를 그 <code style="color:#22d3bf">V∞</code> 로 지수적으로 끌어당길 뿐이므로, <b>상자 안에서 시작하면 반드시 상자 안에 머물고, 상자 밖에서 시작해도 밖으로는 가지 않고 상자로 향한다</b>. 어떤 배선·어떤 입력에서도발산하지 않는다는 것이 구조로 보장된다(<code style="color:#22d3bf">v0</code> 의 기본값은 <code style="color:#22d3bf">e_rest</code> = 상자 안).</p>
+<p style="margin:2px 0 2px 12px">• <b>감쇠</b>: 입력도 결합도 없으면 <code style="color:#22d3bf">V(t) = e_rest + (V₀ − e_rest)e^{−t/τ}</code> 정확히.</p>
+<p style="margin:2px 0 2px 12px">• <b>정상</b>: 일정한 입력 <code style="color:#22d3bf">d &gt; 0</code> 을 1 노드에 넣으면 <code style="color:#22d3bf">V∞ = (e_rest + d·e_exc)/(1 + d)</code>, 그곳으로 향하는 실효 시정수는 정확히 <code style="color:#22d3bf">τ/(1 + d)</code>(&quot;입력으로 시정수가 줄어든다&quot;의 수치).</p>
+<p><b>ValueError</b>: 정방이 아닌 / 비유한인 <code style="color:#22d3bf">W</code>, <code style="color:#22d3bf">(T, n)</code> 이 아닌 <code style="color:#22d3bf">drive</code>, 양이 아닌 <code style="color:#22d3bf">dt_s</code> / <code style="color:#22d3bf">tau_s</code>, 음의 <code style="color:#22d3bf">gain</code>, 미지의 <code style="color:#22d3bf">release</code>, 길이가 맞지 않는 <code style="color:#22d3bf">v0</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,15 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_zyx_to_keypoints_uv(points)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.points_zyx_to_keypoints_uv(points)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;points_zyx_to_keypoints_uv&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Punktmenge <code style="color:#22d3bf">(N,3) = (z, y, x)</code> → Bildkoordinaten <code style="color:#22d3bf">(N,2) = (u, v)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">keypoints_uv_to_points</code> の逆向き。<b>不可逆</b> —— z が落ちる。</p>
-<p>落ちる量は測れる: 往復して戻ってこない値は z 列そのもので、<code style="color:#22d3bf">selftest</code> は「z の RMS = 落とした情報量」として数字で出す。</p>
+<p>Die Gegenrichtung von <code style="color:#22d3bf">keypoints_uv_to_points</code>. <b>Nicht umkehrbar</b> -- z fällt weg. Die weggefallene Menge ist messbar: Die Werte, die nach dem Hin- und Rückweg nicht zurückkommen, sind genau die z-Spalte, und <code style="color:#22d3bf">selftest</code> gibt sie als Zahl aus: &quot;RMS von z = weggefallene Informationsmenge&quot;.</p>
 <p>Args:</p>
-<p>points: (N, 3) の (z, y, x)。</p>
+<p>points: (N, 3) (z, y, x).</p>
 <p>Returns:</p>
-<p>(N, 2) float64 の (u, v) = (x, y)。</p>
+<p>(N, 2) float64 (u, v) = (x, y).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

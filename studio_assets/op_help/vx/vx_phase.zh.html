@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_phase(gx, gy, *, mapping)</code>(要直接调用实现,<code style="color:#22d3bf">import vxcore; vxcore.vx_phase(gx, gy, *, mapping)</code>;从台账取用则 <code style="color:#22d3bf">opsvx.get(&quot;vx_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>梯度相位(3.41 节)：将 ϕ = atan2(gy, gx) 移到 0 ≤ ϕ &lt; 2π，再映射到 0〜255(REQ-0364)。输出 U8。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>*mapping*(必須): 規格は写し方の丸めを書いていない。<code style="color:#22d3bf">&quot;floor&quot;</code> = ⌊ϕ·256/(2π)⌋(0 ≤ 値 ≤ 255 が自動で成り立つ)、<code style="color:#22d3bf">&quot;round&quot;</code> = ⌊ϕ·256/(2π) + 0.5⌋ mod 256(2π の手前は 0 に巻く)。gx = gy = 0 の画素は atan2 の約束で ϕ = 0。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: S16 の 2-D でない / 形が違う / mapping が一覧に無い。</p>
+<p>*mapping*(必需): 规格没有写映射时的舍入。<code style="color:#22d3bf">&quot;floor&quot;</code> = ⌊ϕ·256/(2π)⌋(0 ≤ 值 ≤ 255 自动成立), <code style="color:#22d3bf">&quot;round&quot;</code> = ⌊ϕ·256/(2π) + 0.5⌋ mod 256(2π 之前回卷为 0)。gx = gy = 0 的像素按 atan2 的约定取 ϕ = 0。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 不是 S16 的 2-D / 形状不同 / mapping 不在列表中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

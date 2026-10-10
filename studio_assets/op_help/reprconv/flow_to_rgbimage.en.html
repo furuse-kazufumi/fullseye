@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_to_rgbimage(flow, index=None, scale=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.flow_to_rgbimage(flow, index=None, scale=None)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;flow_to_rgbimage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>One slice of a dense scene flow → an <code style="color:#22d3bf">rgbimage</code> with hue = direction and value = speed.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>光学フローの標準的な可視化(色相環)を 3-D フローの z スライスに当てる:</p>
-<p><code style="color:#22d3bf">hue = atan2(dy, dx)</code>(度で 0-360)、<code style="color:#22d3bf">value = |(dy, dx)| / scale</code>、彩度は 1。<b>dz は捨てる</b> —— 面内成分だけの図であることを明示する(捨てた成分を色に混ぜると「見えている色が何の量か」が誰にも言えなくなる)。</p>
-<p><b>一方向</b>。色相環の凡例は図の側で必ず一緒に焼くこと(色の意味が書いていないフロー図は、綺麗なだけで読めない)。</p>
+<p>Applies the standard visualisation of optical flow (colour wheel) to a z slice of a 3-D flow:</p>
+<p><code style="color:#22d3bf">hue = atan2(dy, dx)</code> (in degrees, 0-360), <code style="color:#22d3bf">value = |(dy, dx)| / scale</code>, saturation 1. <b>dz is discarded</b> -- this makes explicit that the figure shows only the in-plane components (mixing the discarded component into the colour would leave nobody able to say &quot;what quantity the visible colour is&quot;).</p>
+<p><b>One-way</b>. Always burn the colour-wheel legend into the figure together with it (a flow figure that does not state what the colours mean is merely pretty and cannot be read).</p>
 <p>Args:</p>
-<p>flow: (3, D, H, W)。</p>
-<p>index: 取り出す z スライス(既定 = 中央)。</p>
-<p>scale: 明度 1.0 に対応する面内速さ(既定 = そのスライスの最大値。</p>
-<p>0 なら全面黒を返す)。</p>
+<p>flow: (3, D, H, W).</p>
+<p>index: z slice to extract (default = centre).</p>
+<p>scale: in-plane speed that corresponds to brightness 1.0 (default = maximum of that slice.</p>
+<p>If 0, an all-black image is returned).</p>
 <p>Returns:</p>
-<p>(H, W, 3) float64、値域 [0, 1]。</p>
+<p>(H, W, 3) float64, range [0, 1].</p>
 <p>Raises:</p>
-<p>ValueError: 密フローでない / index が範囲外 / scale &lt;= 0。</p>
+<p>ValueError: not a dense flow / index out of range / scale &lt;= 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

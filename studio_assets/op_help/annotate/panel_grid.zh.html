@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05, title=None, title_h=0, font_size=15, min_font_size=9, font_path=None, text_color=None, border=0, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, style=None)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05, title=None, title_h=0, font_size=15, min_font_size=9, font_path=None, text_color=None, border=0, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, style=None)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;panel_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把面板排成网格,并在每个框下铺一条标签带(montage / 印相表)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>生成器 6 本がそれぞれ別実装を持っていた、<b>この repo で最も重複していた図の部品</b>。ここでの流儀:</p>
-<p style="margin:2px 0 2px 12px">• <b>拡大しない</b> ―― 小さいパネルは中央に置いて余白で埋める。引き伸ばすと「無い解像度がある」ように見える。</p>
-<p style="margin:2px 0 2px 12px">• <b>ラベルは測ってから描く</b> ―― 入らなければ縮め、駄目なら例外(<code style="color:#22d3bf">text_box</code> の境界検査に載る)。</p>
-<p style="margin:2px 0 2px 12px">• セルの大きさは全パネルの最大寸で、<b>格子は常に矩形</b>。</p>
+<p>6 个生成器各自持有不同的实现,是<b>本 repo 中重复最多的图的部件</b>。这里的做法:</p>
+<p style="margin:2px 0 2px 12px">• <b>不放大</b> —— 小的面板放在中央,用空白填充。拉伸的话, 看起来就像“有并不存在的分辨率”。</p>
+<p style="margin:2px 0 2px 12px">• <b>标签先测量再绘制</b> —— 放不下就缩小,还不行就抛出异常(由 <code style="color:#22d3bf">text_box</code> 的边界检查捕获)。</p>
+<p style="margin:2px 0 2px 12px">• 单元格尺寸取所有面板的最大尺寸,<b>网格始终是矩形</b>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>panels : sequence of ndarray</p>
-<p>並べる画像(<code style="color:#22d3bf">(H,W)</code> / <code style="color:#22d3bf">(H,W,C)</code>、大きさはばらばらでよい)。</p>
-<p>チャンネルの並びは揃っていること。</p>
+<p>要排列的图像(<code style="color:#22d3bf">(H,W)</code> / <code style="color:#22d3bf">(H,W,C)</code>,尺寸可以各不相同)。</p>
+<p>通道排列必须一致。</p>
 <p>labels : sequence of str or None</p>
-<p>各パネルの見出し。<code style="color:#22d3bf">label_h</code> が 0 なら描かない。</p>
+<p>各面板的标题。<code style="color:#22d3bf">label_h</code> 为 0 时不绘制。</p>
 <p>ncols : int</p>
-<p>列数。行数は <code style="color:#22d3bf">ceil(n/ncols)</code>。</p>
+<p>列数。行数为 <code style="color:#22d3bf">ceil(n/ncols)</code>。</p>
 <p>title : str or None</p>
-<p>全体の表題(<code style="color:#22d3bf">title_h</code> が 0 なら <code style="color:#22d3bf">font_size+14</code> を自動で確保)。</p>
+<p>整体的标题(<code style="color:#22d3bf">title_h</code> 为 0 时自动预留 <code style="color:#22d3bf">font_size+14</code>)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>新しい合成画像(float [0,1])。大きさは</p>
-<p><code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>、</p>
+<p>新的合成图像(float [0,1])。尺寸为</p>
+<p><code style="color:#22d3bf">W = 2*pad + ncols*cw + (ncols-1)*pad</code>,</p>
 <p><code style="color:#22d3bf">H = title_h + 2*pad + nrows*(ch+label_h) + (nrows-1)*pad</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>panels が空 / チャンネル不一致 / ncols &lt; 1 / 負の余白 /</p>
-<p>labels の数が合わない。</p>
+<p>panels 为空 / 通道不一致 / ncols &lt; 1 / 负的空白 /</p>
+<p>labels 的数量不符。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

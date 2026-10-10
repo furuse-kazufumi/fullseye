@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;nice_ticks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>[lo, hi] 를 덮는 「딱 떨어지는」 눈금값(1/2/5 × 10^k, <b>닫힌 식</b>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>端は<b>含める</b>(<code style="color:#22d3bf">lo</code> や <code style="color:#22d3bf">hi</code> がちょうど目盛りに乗るなら必ず出る)。浮動小数の丸めで端が 1 個落ちる off-by-one を避けるため、判定には <code style="color:#22d3bf">step*1e-9</code> の許容を使う。</p>
-<p><code style="color:#22d3bf">scale=&#x27;log&#x27;</code> では 1/2/5 × 10^k の<b>十進の刻み</b>を返す(等間隔の刻みを log 軸に置くと、目盛りが右へ行くほど潰れて読めなくなる)。</p>
+<p>끝은 <b>포함한다</b>(<code style="color:#22d3bf">lo</code>나 <code style="color:#22d3bf">hi</code>가 정확히 눈금에 올라가면 반드시 나온다). 부동소수의 반올림으로 끝이 1개 빠지는 off-by-one을 피하기 위해, 판정에는 <code style="color:#22d3bf">step*1e-9</code>의 허용치를 사용한다.</p>
+<p><code style="color:#22d3bf">scale=&#x27;log&#x27;</code>에서는 1/2/5 × 10^k의 <b>십진 눈금</b>을 반환한다(등간격 눈금을 log 축에 두면, 눈금이 오른쪽으로 갈수록 뭉개져 읽을 수 없게 된다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>lo == hi、非有限、n &lt; 1、log で lo か hi が 0 以下。</p>
+<p>lo == hi, 비유한, n &lt; 1, log에서 lo나 hi가 0 이하.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

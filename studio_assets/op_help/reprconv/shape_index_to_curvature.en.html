@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index_to_curvature(pairs)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.shape_index_to_curvature(pairs)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;shape_index_to_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Shape index and curvedness <code style="color:#22d3bf">(N,2)</code> → principal curvatures <code style="color:#22d3bf">(N,2)</code>. The inverse of <code style="color:#22d3bf">curvature_to_shape_index</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>theta = pi*S/2 として <code style="color:#22d3bf">k1 = C(sin+cos)</code>, <code style="color:#22d3bf">k2 = C(sin-cos)</code>。(S, C) の定義式を解いた閉形式で、近似も反復も入っていない。</p>
+<p>With theta = pi*S/2, <code style="color:#22d3bf">k1 = C(sin+cos)</code>, <code style="color:#22d3bf">k2 = C(sin-cos)</code>. The closed form obtained by solving the defining equations of (S, C); no approximation or iteration is involved.</p>
 <p>Args:</p>
-<p>pairs: (N, 2) の <code style="color:#22d3bf">[S, C]</code>。</p>
+<p>pairs: (N, 2) <code style="color:#22d3bf">[S, C]</code>.</p>
 <p>Returns:</p>
-<p>(N, 2) float64 の <code style="color:#22d3bf">[k1, k2]</code>(k1 &gt;= k2)。</p>
+<p>(N, 2) float64 <code style="color:#22d3bf">[k1, k2]</code> (k1 &gt;= k2).</p>
 <p>Raises:</p>
-<p>ValueError: |S| &gt; 1 / C &lt; 0 / 形状不正 / 非有限。</p>
+<p>ValueError: |S| &gt; 1 / C &lt; 0 / invalid shape / non-finite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

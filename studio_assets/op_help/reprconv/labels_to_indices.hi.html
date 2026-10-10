@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.labels_to_indices(labels)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.labels_to_indices(labels)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;labels_to_indices&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">labels</code> → non-background के index <code style="color:#22d3bf">(N,)</code>। <code style="color:#22d3bf">indices_to_labels</code> की उल्टी दिशा।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>2-D 以上のラベル画像も受ける —— その場合の添字は <b><code style="color:#22d3bf">labels.ravel()</code> への添字</b>(C 順)である。<code style="color:#22d3bf">np.unravel_index</code> で座標へ戻せるが、<b>戻すには元の shape が要る</b>ので、この向きは <code style="color:#22d3bf">shape</code> を捨てている(不可逆)。</p>
+<p>2-D या उससे अधिक की label image भी लेता है -- उस स्थिति में index <b><code style="color:#22d3bf">labels.ravel()</code> में index</b> (C order) होते हैं। <code style="color:#22d3bf">np.unravel_index</code> से इन्हें coordinate में वापस बदला जा सकता है, पर <b>वापस बदलने के लिए मूल shape चाहिए</b>, इसलिए यह दिशा <code style="color:#22d3bf">shape</code> को छोड़ देती है (irreversible)।</p>
 <p>Args:</p>
-<p>labels: 任意次元の整数/実ラベル配列。</p>
+<p>labels: किसी भी dimension का integer/real label array।</p>
 <p>Returns:</p>
-<p>(N,) int64。ラベルが 0 でない位置の平坦添字(昇順)。</p>
+<p>(N,) int64। जिन जगहों पर label 0 नहीं है उनके flat index (बढ़ते क्रम में)।</p>
 <p>Raises:</p>
-<p>ValueError: 空 / 非有限 / 非背景が 1 つも無い。</p>
+<p>ValueError: ख़ाली / non-finite / 1 भी non-background नहीं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

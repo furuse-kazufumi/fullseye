@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import perpetual; perpetual.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_loop_seam&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>순환 동영상의 <b>이음매</b>를 수치로 낸다(<code style="color:#22d3bf">table</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">seam</code> = 最終コマ → 初コマの差、<code style="color:#22d3bf">typical</code> = コマ間の差の中央値。継ぎ目の無い動画では <code style="color:#22d3bf">ratio = seam / typical</code> が <b>1 に近い</b>(最後のまたぎが、ほかのまたぎと見分けが付かない)。<b>0 ではなく 1 が正解</b>なのがここの読みどころ —— 0 は「動きが止まっている」という意味になる。</p>
+<p><code style="color:#22d3bf">seam</code> = 마지막 프레임 → 첫 프레임의 차이, <code style="color:#22d3bf">typical</code> = 프레임 간 차이의 중앙값. 이음매 없는 동영상에서는 <code style="color:#22d3bf">ratio = seam / typical</code>이 <b>1에 가깝다</b>(마지막넘어감이 다른 넘어감과 구별되지 않는다). <b>0이 아니라 1이 정답</b>이라는 것이여기서 읽어야 할 점 -- 0은 &quot;움직임이 멈춰 있다&quot;는 뜻이 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

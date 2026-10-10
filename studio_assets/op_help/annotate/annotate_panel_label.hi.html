@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_panel_label(img, letter=&#x27;a&#x27;, corner=&#x27;lt&#x27;, margin=8, style=&#x27;paren&#x27;, font_size=16, color=&#x27;neutral&#x27;, box_alpha=0.72, text_color=None, box_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_panel_label(img, letter=&#x27;a&#x27;, corner=&#x27;lt&#x27;, margin=8, style=&#x27;paren&#x27;, font_size=16, color=&#x27;neutral&#x27;, box_alpha=0.72, text_color=None, box_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_panel_label&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (image2d) लौटाता है: panel अक्षर <code style="color:#22d3bf">(a)</code>/<code style="color:#22d3bf">(b)</code> कोने में रखता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">letter</code> は 1 文字(<code style="color:#22d3bf">&#x27;a&#x27;</code>)か 0 始まりの番号(<code style="color:#22d3bf">0</code> → a)。<code style="color:#22d3bf">style</code> で <code style="color:#22d3bf">(a)</code> / <code style="color:#22d3bf">a)</code> / <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">A</code> を選ぶ。</p>
+<p><code style="color:#22d3bf">letter</code> 1 अक्षर (<code style="color:#22d3bf">&#x27;a&#x27;</code>) या 0 से शुरू होने वाली संख्या (<code style="color:#22d3bf">0</code> → a) है। <code style="color:#22d3bf">style</code> से <code style="color:#22d3bf">(a)</code> / <code style="color:#22d3bf">a)</code> / <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">A</code> चुना जाता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>未知の corner / style、文字が画像に収まらない。</p>
+<p>अज्ञात corner / style, या text image में फ़िट नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

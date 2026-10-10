@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_cafe_wall(size: &#x27;int&#x27; = 40, rows: &#x27;int&#x27; = 8, cols: &#x27;int&#x27; = 10, mortar: &#x27;float&#x27; = 2.0, shift: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import illusion; illusion.illusion_cafe_wall(size: &#x27;int&#x27; = 40, rows: &#x27;int&#x27; = 8, cols: &#x27;int&#x27; = 10, mortar: &#x27;float&#x27; = 2.0, shift: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_cafe_wall&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Café wall illusion। <b>mortar की line बिल्कुल horizontal हैं</b>, फिर भी झुकी हुई दिखती हैं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">shift</code> は 1 行ごとの市松のずれ(<code style="color:#22d3bf">size</code> 比)。ずれが 0 または 0.5 では錯視は消える —— <b>0.25 前後が最も強い</b>というのが古典的な観察で、この op はそのままずらし量を振れるようにしてある(<code style="color:#22d3bf">shift=0.25</code> が既定ではないのは、生成器の既定値で「効果が最大」を主張したくないため)。</p>
-<p>不変量: 目地の中心 y は <code style="color:#22d3bf">k * size</code>(k = 1..rows-1)<b>ちょうど</b>。</p>
+<p><code style="color:#22d3bf">shift</code> हर 1 row पर checkerboard का खिसकाव है (<code style="color:#22d3bf">size</code> के अनुपात में)। खिसकाव 0 या 0.5 हो तो illusion गायब हो जाता है -- शास्त्रीय अवलोकन यह है कि यह <b>0.25 के आसपास सबसे प्रबल</b> होता है, और यह op खिसकाव की मात्रा को सीधे बदलने देता है (<code style="color:#22d3bf">shift=0.25</code> default नहीं है, क्योंकि हम generator के default मान से &quot;अधिकतम प्रभाव&quot; का दावा नहीं करना चाहते)।</p>
+<p>invariant: हर जोड़ (mortar line) का केंद्र y <b>ठीक</b> <code style="color:#22d3bf">k * size</code> (k = 1..rows-1) है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

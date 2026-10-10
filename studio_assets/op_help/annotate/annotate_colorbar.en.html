@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6, mask=None, unit=&#x27;&#x27;, label_fmt=&#x27;{:.3g}&#x27;, orientation=&#x27;vertical&#x27;, font_size=12, scheme=&#x27;okabe_ito&#x27;, font_path=None, text_color=None, nan_transparent=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_colorbar(img, field, rect, lut=None, vmin=None, vmax=None, alpha=0.6, mask=None, unit=&#x27;&#x27;, label_fmt=&#x27;{:.3g}&#x27;, orientation=&#x27;vertical&#x27;, font_size=12, scheme=&#x27;okabe_ito&#x27;, font_path=None, text_color=None, nan_transparent=False)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_colorbar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns an image (image2d): a scalar field colour-mapped through a LUT and overlaid, with a colour bar.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">t = (field - vmin)/(vmax - vmin)</code> を [0,1] に<b>クリップ</b>し <code style="color:#22d3bf">lut[round(t*(n-1))]</code> で色にする(範囲外の値は端の色 —— カラーバーの端と同じなので嘘にならない)。重ねは <code style="color:#22d3bf">alpha</code> の α 合成、<code style="color:#22d3bf">mask</code> を渡せばその画素だけ。</p>
+<p><code style="color:#22d3bf">t = (field - vmin)/(vmax - vmin)</code> is <b>clipped</b> to [0,1] and turned into colour by <code style="color:#22d3bf">lut[round(t*(n-1))]</code> (out-of-range values get the end colour -- the same as the end of the colour bar, so it does not lie). Overlaying is α compositing with <code style="color:#22d3bf">alpha</code>; passing <code style="color:#22d3bf">mask</code> restricts it to those pixels.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>field : (H, W)</p>
-<p>画像と同じ大きさのスカラ場。非有限は <code style="color:#22d3bf">nan_transparent=True</code> のときだけ</p>
-<p>透明として許す(既定は ValueError)。</p>
+<p>A scalar field the same size as the image. Non-finite values are allowed as transparent only when <code style="color:#22d3bf">nan_transparent=True</code></p>
+<p>(the default is ValueError).</p>
 <p>lut : (n, 3) or None</p>
-<p>None なら <code style="color:#22d3bf">palette.diverging_lut</code> の 256 段。</p>
+<p>If None, the 256 steps of <code style="color:#22d3bf">palette.diverging_lut</code>.</p>
 <p>vmin, vmax : float or None</p>
-<p>None なら場の(有限値の)最小・最大。等しければ ValueError。</p>
+<p>If None, the minimum / maximum of the field (over finite values). If they are equal, ValueError.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形の不一致、非有限(許可なし)、vmin == vmax、alpha が [0,1] の外、</p>
-<p>バーの矩形が画像外、LUT の形。</p>
+<p>Shape mismatch, non-finite values (without permission), vmin == vmax, alpha outside [0,1],</p>
+<p>the bar rectangle outside the image, or the LUT shape.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

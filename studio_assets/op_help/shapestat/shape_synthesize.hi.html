@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_synthesize(model, sigmas=None, n_modes: &#x27;int&#x27; = 3, seed: &#x27;int&#x27; = 0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.shape_synthesize(model, sigmas=None, n_modes: &#x27;int&#x27; = 3, seed: &#x27;int&#x27; = 0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;shape_synthesize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>model से 1 <b>विश्वसनीय नया shape</b> बनाता है। → <code style="color:#22d3bf">(N, 3)</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">sigmas</code> を与えればその標準偏差倍のスコア、省けば先頭 <code style="color:#22d3bf">n_modes</code> 本を正規乱数で引く。3 標準偏差を超える形は群の中に 1 つも無かった形なので、既定では引かない(<code style="color:#22d3bf">sigmas</code> で明示すれば作れる)。</p>
+<p><code style="color:#22d3bf">sigmas</code> देने पर उतने standard deviation गुना score लिया जाता है, छोड़ने पर शुरुआती <code style="color:#22d3bf">n_modes</code> components को normal random numbers से निकाला जाता है। 3 standard deviation से आगे का shape ऐसा है जो group में 1 भी नहीं था, इसलिए default में उसे नहीं निकाला जाता (<code style="color:#22d3bf">sigmas</code> से स्पष्ट रूप से देने पर बनाया जा सकता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

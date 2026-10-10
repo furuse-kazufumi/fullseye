@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선 <code style="color:#22d3bf">(N,3)</code> → 방위·고도 쌍 <code style="color:#22d3bf">(N,2)</code> <b>[도]</b>. <code style="color:#22d3bf">normals</code> 의 출구.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> を軸0-軸1 平面内の方位、<code style="color:#22d3bf">el = asin(c2/|v|)</code> を軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された配列がどちらの流儀かに依存して意味が変わってしまう。</p>
-<p>可逆: <code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測 max|Δ| = 6.1e-16、<code style="color:#22d3bf">selftest</code> が毎回測る)。<b>戻らないのは長さだけ</b> —— 法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
+<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> 를 축0-축1 평면 내의 방위, <code style="color:#22d3bf">el = asin(c2/|v|)</code> 를축2 로부터의 앙각으로 한다. <b>x/y/z 가 아니라 &quot;축0/1/2&quot;로 정의하는</b> 것은, 이 repo 에(z,y,x) 순서의 점군과 (x,y,z) 순서의 점군이 둘 다 있기 때문이다 —— 이름으로 쓰면, 넘겨받은배열이 어느 쪽 방식인지에 따라 의미가 바뀌어 버린다.</p>
+<p>가역: <code style="color:#22d3bf">angles_to_normals</code> 와 왕복하면 <b>방향은 엄밀히 돌아온다</b>(실측 max|Δ| = 6.1e-16, <code style="color:#22d3bf">selftest</code> 가 매번 잰다). <b>돌아오지 않는 것은 길이뿐</b> —— 법선은 방향이므로, 비단위 벡터를 넘기면 왕복 후 단위 벡터가 된다.</p>
 <p>Args:</p>
-<p>normals: (N, 3) 実配列。零ベクトルは拒否(方位が定義できない)。</p>
+<p>normals: (N, 3) 실수 배열. 영벡터는 거부(방위를 정의할 수 없다).</p>
 <p>Returns:</p>
-<p>(N, 2) float64。列 0 = 方位 (-180, 180]、列 1 = 仰角 [-90, 90]。</p>
+<p>(N, 2) float64. 열 0 = 방위 (-180, 180], 열 1 = 앙각 [-90, 90].</p>
 <p>Raises:</p>
-<p>ValueError: 形状が (N,3) でない / 非有限 / 長さ 0 のベクトルを含む。</p>
+<p>ValueError: 형태가 (N,3) 이 아니다 / 비유한 / 길이 0 인 벡터를 포함한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

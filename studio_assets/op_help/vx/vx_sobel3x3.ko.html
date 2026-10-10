@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_sobel3x3(image, *, border, constant_value=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import vxcore; vxcore.vx_sobel3x3(image, *, border, constant_value=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvx.get(&quot;vx_sobel3x3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Sobel 3×3(3.46절): G_x = [[−1,0,1],[−2,0,2],[−1,0,1]], G_y = [[−1,−2,−1],[0,0,0],[1,2,1]] (REQ-0415)를 상관으로 적용한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*image*: U8。*border*(必須): <code style="color:#22d3bf">&quot;replicate&quot;</code> / <code style="color:#22d3bf">&quot;constant&quot;</code>(*constant_value* で埋める)/ <code style="color:#22d3bf">&quot;undefined&quot;</code>(端 1 画素は規格上未定義 —— 0 を入れ、<code style="color:#22d3bf">valid</code> の外として返す)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;gx&quot;: S16, &quot;gy&quot;: S16, &quot;valid&quot;: (y0, y1, x0, x1)}</code>(U8 の 3×3 Sobel は |値| ≤ 1020 なので S16 で飽和しない)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D の U8 でない / border が一覧に無い / constant_value が 0〜255 の外。</p>
+<p>*image*: U8. *border*(필수): <code style="color:#22d3bf">&quot;replicate&quot;</code> / <code style="color:#22d3bf">&quot;constant&quot;</code>(*constant_value* 로 채움)/ <code style="color:#22d3bf">&quot;undefined&quot;</code>(끝 1 화소는규격상 미정의 —— 0 을 넣고 <code style="color:#22d3bf">valid</code> 바깥으로 반환).</p>
+<p>반환값 <code style="color:#22d3bf">{&quot;gx&quot;: S16, &quot;gy&quot;: S16, &quot;valid&quot;: (y0, y1, x0, x1)}</code>(U8 의 3×3 Sobel 은 |값| ≤ 1020 이므로 S16 에서 포화하지 않는다).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D 의 U8 이 아니다 / border 가 목록에 없다 / constant_value 가 0〜255 밖.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ellipse(img, center, radii, angle_deg=0.0, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.ellipse(img, center, radii, angle_deg=0.0, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;ellipse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>橢圓(用 <code style="color:#22d3bf">angle_deg</code> 旋轉,<code style="color:#22d3bf">fill=True</code> 時填充)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>半径が非正、非有限、alpha が [0,1] の外。</p>
-<p>描画: 画素を <code style="color:#22d3bf">angle_deg</code> だけ回した局所座標 <code style="color:#22d3bf">(u, v)</code> に写し、<code style="color:#22d3bf">q = (u/ra)^2 + (v/rb)^2</code> で判定する。<code style="color:#22d3bf">fill=True</code> は <code style="color:#22d3bf">q &lt;= 1</code>、<code style="color:#22d3bf">fill=False</code> は <code style="color:#22d3bf">|sqrt(q) - 1| &lt;= max(1, width) / (2 min(ra, rb))</code> の帯(アンチエイリアス無し)。帯の幅を<b>短軸で正規化</b>しているので、扁平な楕円では長軸の端ほど線が太く見える(近似)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>、x = 列・y = 行。画像外でもよい。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radii</code>: <code style="color:#22d3bf">(ra, rb)</code> [px]。<code style="color:#22d3bf">ra</code> が <code style="color:#22d3bf">angle_deg</code> 方向、<code style="color:#22d3bf">rb</code> がその直交方向。両方とも正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle_deg</code>: 回転角 [度]。x 軸から時計回り(画面座標、y が下向き)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線幅 [px] (<code style="color:#22d3bf">fill=False</code> のとき)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code> の扱いは <code style="color:#22d3bf">rounded_rect</code> と同じ(float64 複製、<code style="color:#22d3bf">[0, 1]</code>、役割名か RGB)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
-<p><code style="color:#22d3bf">ra == rb</code> なら円。計測結果(楕円フィットの <code style="color:#22d3bf">row, col, phi, ra, rb</code>)を重ねるときは <code style="color:#22d3bf">center=(col, row)</code>、<code style="color:#22d3bf">angle_deg=degrees(phi)</code> に読み替える。</p>
+<p>半徑非正、非有限、alpha 在 [0,1] 之外。</p>
+<p>繪製: 把像素映射到旋轉了 <code style="color:#22d3bf">angle_deg</code> 的局部座標 <code style="color:#22d3bf">(u, v)</code>, 以 <code style="color:#22d3bf">q = (u/ra)^2 + (v/rb)^2</code> 判定。<code style="color:#22d3bf">fill=True</code> 為 <code style="color:#22d3bf">q &lt;= 1</code>, <code style="color:#22d3bf">fill=False</code> 為 <code style="color:#22d3bf">|sqrt(q) - 1| &lt;= max(1, width) / (2 min(ra, rb))</code> 的帶(無反鋸齒)。由於帶寬<b>以短軸正規化</b>,在扁平的橢圓上, 越靠近長軸兩端線看起來越粗(近似)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>,x = 行、y = 列。可以在影像外。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radii</code>: <code style="color:#22d3bf">(ra, rb)</code> [px]。<code style="color:#22d3bf">ra</code> 為 <code style="color:#22d3bf">angle_deg</code> 方向,<code style="color:#22d3bf">rb</code> 為其正交方向。兩者皆為正。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle_deg</code>: 旋轉角 [度]。從 x 軸順時針(螢幕座標,y 向下)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線寬 [px] (<code style="color:#22d3bf">fill=False</code> 時)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code> 的處理與 <code style="color:#22d3bf">rounded_rect</code> 相同(float64 副本、<code style="color:#22d3bf">[0, 1]</code>、角色名稱或 RGB)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: 與輸入同形的 float64。</p>
+<p><code style="color:#22d3bf">ra == rb</code> 則為圓。疊加量測結果(橢圓擬合的 <code style="color:#22d3bf">row, col, phi, ra, rb</code>) 時,換讀為 <code style="color:#22d3bf">center=(col, row)</code>、<code style="color:#22d3bf">angle_deg=degrees(phi)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

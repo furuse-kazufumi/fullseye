@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_legend(labels, props=None, seed: &#x27;int&#x27; = 0, spacing=None, measure: &#x27;str&#x27; = &#x27;volume&#x27;, top=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volcolor; volcolor.vol_label_legend(labels, props=None, seed: &#x27;int&#x27; = 0, spacing=None, measure: &#x27;str&#x27; = &#x27;volume&#x27;, top=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_legend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>&quot;कौन सा रंग कौन सा component है, और उसके माप कितने हैं&quot; की legend table लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>色だけを出して意味の読めない図を作らないための op。返りは <code style="color:#22d3bf">list[dict]</code>:</p>
+<p>ऐसा op जिससे केवल रंग दिखाने वाली और अर्थ न पढ़ी जा सकने वाली figure न बने। <code style="color:#22d3bf">list[dict]</code> लौटाता है:</p>
 <p><code style="color:#22d3bf">label</code> · <code style="color:#22d3bf">rgb</code> <code style="color:#22d3bf">(r, g, b)</code> float <code style="color:#22d3bf">[0, 1]</code> · <code style="color:#22d3bf">hex</code> <code style="color:#22d3bf">&quot;#rrggbb&quot;</code> ·</p>
-<p><code style="color:#22d3bf">voxel_count</code> · <code style="color:#22d3bf">volume</code> · <code style="color:#22d3bf">measure</code> 並べ替えに使った量の名前 ·</p>
-<p><code style="color:#22d3bf">value</code> その値 · <code style="color:#22d3bf">rank</code> 1 始まりの順位 · <code style="color:#22d3bf">share</code> 全成分の</p>
-<p>*measure* 合計に対する割合。</p>
-<p>*measure* は props に載っている数値キーなら何でもよい(<code style="color:#22d3bf">&quot;volume&quot;</code> <code style="color:#22d3bf">&quot;voxel_count&quot;</code> <code style="color:#22d3bf">&quot;equivalent_diameter&quot;</code>、<code style="color:#22d3bf">volops.vol_region_props</code> を渡したなら <code style="color:#22d3bf">&quot;sphericity&quot;</code> も)。降順に並べ、同点はラベル番号の昇順で割る(<b>決定的</b>)。*top* を与えると上位 N 件だけ返す。</p>
-<p>実在するラベルは <code style="color:#22d3bf">np.bincount</code> の非ゼロから取る。<code style="color:#22d3bf">labels.max()</code> を成分数と見なさないので、番号に欠番があっても件数も順位も狂わない(<code style="color:#22d3bf">tests/test_volcolor.py::test_stats_do_not_invent_the_component_count_from_max</code>)。</p>
-<p>Raises <code style="color:#22d3bf">ValueError</code> when *measure* is not a numeric key of *props*, when *props* does not cover the labels present, or on a bad *top*.</p>
+<p><code style="color:#22d3bf">voxel_count</code> · <code style="color:#22d3bf">volume</code> · <code style="color:#22d3bf">measure</code> sort के लिए इस्तेमाल हुई मात्रा का नाम ·</p>
+<p><code style="color:#22d3bf">value</code> उसका मान · <code style="color:#22d3bf">rank</code> 1 से शुरू होने वाला क्रम · <code style="color:#22d3bf">share</code> सभी component के</p>
+<p>*measure* योग में हिस्सा।</p>
+<p>*measure* props में मौजूद कोई भी numeric key हो सकती है (<code style="color:#22d3bf">&quot;volume&quot;</code> <code style="color:#22d3bf">&quot;voxel_count&quot;</code> <code style="color:#22d3bf">&quot;equivalent_diameter&quot;</code>, और <code style="color:#22d3bf">volops.vol_region_props</code> दिया हो तो <code style="color:#22d3bf">&quot;sphericity&quot;</code> भी)। घटते क्रम में sort होता है, बराबरी label number के बढ़ते क्रम से तोड़ी जाती है (<b>deterministic</b>)। *top* देने पर केवल ऊपर के N लौटते हैं।</p>
+<p>मौजूद label <code style="color:#22d3bf">np.bincount</code> की non-zero entries से लिए जाते हैं। <code style="color:#22d3bf">labels.max()</code> को component की संख्या नहीं माना जाता, इसलिए numbering में ख़ाली नंबर हों तो भी गिनती और क्रम नहीं बिगड़ते (<code style="color:#22d3bf">tests/test_volcolor.py::test_stats_do_not_invent_the_component_count_from_max</code>)।</p>
+<p>जब *measure* *props* की numeric key न हो, जब *props* मौजूद label को cover न करे, या ग़लत *top* पर <code style="color:#22d3bf">ValueError</code> देता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

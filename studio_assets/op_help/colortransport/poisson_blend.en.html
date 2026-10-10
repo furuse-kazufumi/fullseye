@@ -5,22 +5,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.poisson_blend(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">image2d</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.poisson_blend.raw(...)</code> or call <code style="color:#22d3bf">colortransport.poisson_blend</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Seamless compositing that carries the gradient field (Pérez, Gangnet &amp; Blake, SIGGRAPH 2003).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">mask</code> の内部で <b><code style="color:#22d3bf">src</code> の勾配</b>を保ちつつ、<b>境界で <code style="color:#22d3bf">dst</code> の値</b>に一致する像を解く。よって出力は次の 2 つを<b>構成上</b>満たし、</p>
-<p>それが正しさの検算になる:</p>
-<p style="margin:2px 0 2px 12px">• 内部のラプラシアンが <code style="color:#22d3bf">src</code> のラプラシアンと一致(解の残差ぶんまで)</p>
-<p style="margin:2px 0 2px 12px">• マスクの外は <code style="color:#22d3bf">dst</code> と<b>厳密に一致</b>(1 画素も触らない)</p>
-<p><b>貼った物の色は変わる。</b> それが目的の処理だが、「貼った物体の色を測る」用途にそのまま流すと<b>測っているのは貼り先の色</b>になる。返り値は <code style="color:#22d3bf">(blended, info)</code> で、<code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code> と <code style="color:#22d3bf">info[&quot;max_shift&quot;]</code> が実際にどれだけ動いたかを言う。</p>
+<p>Inside <code style="color:#22d3bf">mask</code> it keeps <b>the gradient of <code style="color:#22d3bf">src</code></b> and solves for the image that equals <b>the values of <code style="color:#22d3bf">dst</code> on the boundary</b>. Hence the output satisfies the following 2 properties <b>by construction</b>, and that serves as a cross-check of correctness:</p>
+<p style="margin:2px 0 2px 12px">• the Laplacian inside matches the Laplacian of <code style="color:#22d3bf">src</code> (up to the residual of the solve)</p>
+<p style="margin:2px 0 2px 12px">• outside the mask it <b>matches <code style="color:#22d3bf">dst</code> exactly</b> (not 1 pixel is touched)</p>
+<p><b>The colour of the pasted object changes.</b> That is the purpose of the operation, but if you feed it as-is into a use such as &quot;measure the colour of the pasted object&quot;, <b>what you measure is the colour of the destination</b>. The return value is <code style="color:#22d3bf">(blended, info)</code>, and <code style="color:#22d3bf">info[&quot;changed_pixels&quot;]</code> and <code style="color:#22d3bf">info[&quot;max_shift&quot;]</code> tell how much actually moved.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>src : array_like</p>
-<p>貼る絵。<code style="color:#22d3bf">(H, W)</code> または <code style="color:#22d3bf">(H, W, C)</code>。</p>
+<p>The picture to paste. <code style="color:#22d3bf">(H, W)</code> or <code style="color:#22d3bf">(H, W, C)</code>.</p>
 <p>dst : array_like</p>
-<p>貼り先。<code style="color:#22d3bf">src</code> 以上の大きさ。</p>
+<p>The destination. At least as large as <code style="color:#22d3bf">src</code>.</p>
 <p>mask : array_like</p>
-<p><code style="color:#22d3bf">src</code> と同じ <code style="color:#22d3bf">(H, W)</code> の真偽値。<b>縁に接していてはいけない</b></p>
-<p>(境界条件が取れないため明示的に拒否する)。</p>
+<p>Boolean of the same <code style="color:#22d3bf">(H, W)</code> as <code style="color:#22d3bf">src</code>. <b>It must not touch the border</b></p>
+<p>(explicitly rejected, because the boundary condition cannot be taken).</p>
 <p>offset : (int, int)</p>
-<p><code style="color:#22d3bf">dst</code> の中で <code style="color:#22d3bf">src</code> の左上を置く <code style="color:#22d3bf">(row, col)</code>。</p>
+<p><code style="color:#22d3bf">(row, col)</code> at which the top-left of <code style="color:#22d3bf">src</code> is placed within <code style="color:#22d3bf">dst</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(ndarray, dict)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

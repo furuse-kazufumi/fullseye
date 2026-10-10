@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deformation_to_points(deformation)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.deformation_to_points(deformation)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;deformation_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine TPS-<code style="color:#22d3bf">deformation</code> → ihre Kontroll-<code style="color:#22d3bf">points (N,3)</code>. Der Ausgang aus <code style="color:#22d3bf">deformation</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">tps_fit</code> が返す dict の <code style="color:#22d3bf">ctrl</code> を取り出す。「この歪みはどこに固定されているか」を点群語彙で見るためのもので、<b>一方向</b> (制御点だけからは重み <code style="color:#22d3bf">w</code> とアフィン項 <code style="color:#22d3bf">a</code> は復元できない)。</p>
+<p>Entnimmt <code style="color:#22d3bf">ctrl</code> aus dem von <code style="color:#22d3bf">tps_fit</code> zurückgegebenen dict. Dient dazu, &quot;wo diese Verzerrung verankert ist&quot; im Punktwolken-Vokabular zu sehen, und ist <b>einseitig</b> (aus den Kontrollpunkten allein lassen sich die Gewichte <code style="color:#22d3bf">w</code> und der affine Term <code style="color:#22d3bf">a</code> nicht rekonstruieren).</p>
 <p>Args:</p>
-<p>deformation: <code style="color:#22d3bf">ctrl</code> を持つ dict(<code style="color:#22d3bf">tps_fit</code> の返り)。</p>
+<p>deformation: dict mit <code style="color:#22d3bf">ctrl</code> (Rückgabe von <code style="color:#22d3bf">tps_fit</code>).</p>
 <p>Returns:</p>
-<p>(N, 3) float64。</p>
+<p>(N, 3) float64.</p>
 <p>Raises:</p>
-<p>ValueError: dict でない / <code style="color:#22d3bf">ctrl</code> が無い / 形状不正 / 非有限。</p>
+<p>ValueError: kein dict / kein <code style="color:#22d3bf">ctrl</code> / ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

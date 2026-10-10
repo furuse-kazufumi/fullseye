@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_distance(region: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import blob2d; blob2d.blob_distance(region: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsblob.get(&quot;blob_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Abstand jedes Vordergrundpixels <b>zum nächstgelegenen Hintergrund</b>. Die Einheit ist ein Vielfaches von <code style="color:#22d3bf">spacing</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code> そのもの。<b>わざわざ口を作った理由</b>は、進化 op の <code style="color:#22d3bf">distance_transform</code> が最大値で正規化して返すため(<code style="color:#22d3bf">poc_cell_counting</code> の実測: 出力の最大が常に 1.0)、<b>画素単位の距離が取れない</b>こと。分水嶺の種を作るには絶対値が要る。</p>
+<p>Genau <code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code>. <b>Der Grund für einen eigenen Einstiegspunkt</b> ist, dass das evolvierte op <code style="color:#22d3bf">distance_transform</code> sein Ergebnis auf das Maximum normiert zurückgibt (gemessen in <code style="color:#22d3bf">poc_cell_counting</code>: das Ausgabemaximum ist immer 1.0), sodass <b>Abstände in Pixeleinheiten nicht zu bekommen sind</b>. Für Wasserscheiden-Saaten braucht man absolute Werte.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>
 <p>&gt;&gt;&gt; m = np.zeros((21, 21), bool); m[5:16, 5:16] = True</p>
-<p>&gt;&gt;&gt; float(blob_distance(m).max())      # 11x11 の正方形の中心まで</p>
+<p>&gt;&gt;&gt; float(blob_distance(m).max())      # bis zur Mitte des 11x11-Quadrats</p>
 <p>6.0</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">Leitfaden zur Familie blob_analysis</a></p>

@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import imagemorph; imagemorph.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;morph_sequence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Morph sequence with alpha swept 0→1 in n steps (frames that change smoothly from A to B).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返り値: 長さ n の list。先頭が A、末尾が B に一致する。</p>
-<p><code style="color:#22d3bf">alpha = linspace(0, 1, n)</code> の各値で <code style="color:#22d3bf">morph(imgA, imgB, ptsA, ptsB, alpha, method, lam, with_corners)</code> を呼ぶだけ。各フレームは (1) 中間点 <code style="color:#22d3bf">(1-α) ptsA + α ptsB</code> を作り、(2) A と B をそれぞれそこへワープし、</p>
-<p style="margin:2px 0 2px 12px">(3) <code style="color:#22d3bf">α</code> でクロスディゾルブ、の 3 段。フレームごとにワープ 2 回なので、</p>
-<p>コストは <code style="color:#22d3bf">n</code> に比例する(<code style="color:#22d3bf">n=7</code> で 14 回)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">imgA</code>, <code style="color:#22d3bf">imgB</code>: <code style="color:#22d3bf">(H, W[, C])</code>、同じ形、<code style="color:#22d3bf">[0, 1]</code>。NaN/Inf は無言で 0 / 1 に置換される。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ptsA</code>, <code style="color:#22d3bf">ptsB</code>: <code style="color:#22d3bf">(K, 2)</code> の <b>(x, y)</b>、同数・同順の対応点。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 2 以上(1 以下は <code style="color:#22d3bf">ValueError</code>)。<code style="color:#22d3bf">int</code> に切られる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;affine&quot;</code>(Delaunay 区分アフィン、速い)/ <code style="color:#22d3bf">&quot;tps&quot;</code>(薄板スプライン、滑らか)。それ以外は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">lam</code> は TPS の平滑化係数(0 で厳密補間)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">with_corners</code>: True で <code style="color:#22d3bf">add_frame_corners</code> を両点群に足し、枠の外側の穴を防ぐ。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: float64 配列 <code style="color:#22d3bf">n</code> 枚の list(<code style="color:#22d3bf">images</code> 型)。<code style="color:#22d3bf">[0, 1]</code> にクリップ済み。</p>
-<p>1 枚だけ欲しい(例: <code style="color:#22d3bf">α = 0.5</code> の中間顔)なら <code style="color:#22d3bf">morph</code> を直接。</p>
+<p>Returns: a list of length n. The first matches A, the last matches B.</p>
+<p>It simply calls <code style="color:#22d3bf">morph(imgA, imgB, ptsA, ptsB, alpha, method, lam, with_corners)</code> for each value of <code style="color:#22d3bf">alpha = linspace(0, 1, n)</code>. Each frame has 3 stages: (1) build the intermediate points <code style="color:#22d3bf">(1-α) ptsA + α ptsB</code>, (2) warp A and B each onto them,</p>
+<p style="margin:2px 0 2px 12px">(3) cross-dissolve with <code style="color:#22d3bf">α</code>. Each frame does 2 warps, so</p>
+<p>the cost is proportional to <code style="color:#22d3bf">n</code> (14 warps for <code style="color:#22d3bf">n=7</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">imgA</code>, <code style="color:#22d3bf">imgB</code>: <code style="color:#22d3bf">(H, W[, C])</code>, same shape, <code style="color:#22d3bf">[0, 1]</code>. NaN/Inf are silently replaced by 0 / 1.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ptsA</code>, <code style="color:#22d3bf">ptsB</code>: <code style="color:#22d3bf">(K, 2)</code> <b>(x, y)</b>, corresponding points of same count and order.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 2 or more (1 or less gives <code style="color:#22d3bf">ValueError</code>). Truncated to <code style="color:#22d3bf">int</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;affine&quot;</code> (Delaunay piecewise affine, fast) / <code style="color:#22d3bf">&quot;tps&quot;</code> (thin-plate spline, smooth). Anything else gives <code style="color:#22d3bf">ValueError</code>. <code style="color:#22d3bf">lam</code> is the TPS smoothing coefficient (0 for exact interpolation).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">with_corners</code>: True adds <code style="color:#22d3bf">add_frame_corners</code> to both point sets, preventing holes outside the frame.</p>
+<p style="margin:2px 0 2px 12px">• Returns: a list of <code style="color:#22d3bf">n</code> float64 arrays (type <code style="color:#22d3bf">images</code>). Already clipped to <code style="color:#22d3bf">[0, 1]</code>.</p>
+<p>If you want just 1 image (e.g. the intermediate face at <code style="color:#22d3bf">α = 0.5</code>), use <code style="color:#22d3bf">morph</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

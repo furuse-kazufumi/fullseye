@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import perpetual; perpetual.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_flow_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>流场 —— 让粒子随场持续流动(不停止就不会结束)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★場は<b>ポテンシャル ψ の回転</b>として作る。だから <b>発散が恒等的に 0</b> (非圧縮)で、粒子が湧いたり消えたりしない。「それらしい雑音」で作った</p>
-<p>流れ場との違いはここで、<code style="color:#22d3bf">perpetual_identities</code> が数で出す。</p>
-<p>★線の色と太さは<b>流速</b> |∇ψ| に結びつけてある(太さも濃さも一定だと、同じ場から描いても「落書き」にしかならない)。</p>
+<p>★场<b>作为势 ψ 的旋度</b>构造。因此<b>散度恒为 0</b> (不可压缩),粒子不会凭空出现或消失。与用“看似合理的噪声”构造的</p>
+<p>流场的区别就在这里,<code style="color:#22d3bf">perpetual_identities</code> 会以数值给出。</p>
+<p>★线的颜色和粗细与<b>流速</b> |∇ψ| 关联(若粗细和浓度都恒定, 即使由同一场绘制也只会是“涂鸦”)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

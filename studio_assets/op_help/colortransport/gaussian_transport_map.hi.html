@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.gaussian_transport_map(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">matrix</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.gaussian_transport_map.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">colortransport.gaussian_transport_map</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 point set को normal distribution मानने पर Monge map <code style="color:#22d3bf">(A, b)</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">x -&gt; A (x - m1) + m2</code> で、<code style="color:#22d3bf">A</code> は <code style="color:#22d3bf">S1^-1/2 (S1^1/2 S2 S1^1/2)^1/2 S1^-1/2</code>(Bures 幾何の閉じた形)。<b>共分散ごと運ぶ</b>ので、チャネル間の相関が保たれる。</p>
-<p>退化(片方の共分散が特異)では逆平方根が作れない ―― 疑似逆で誤魔化すと「運べていないのに運んだ顔をした」写像になるので <code style="color:#22d3bf">ValueError</code>。</p>
+<p><code style="color:#22d3bf">x -&gt; A (x - m1) + m2</code>, जहाँ <code style="color:#22d3bf">A</code> है <code style="color:#22d3bf">S1^-1/2 (S1^1/2 S2 S1^1/2)^1/2 S1^-1/2</code> (Bures geometry का closed form)। चूँकि यह <b>covariance समेत transport करता है</b>, channels के बीच का correlation बना रहता है।</p>
+<p>degenerate स्थिति (किसी एक covariance के singular होने) में inverse square root नहीं बन सकता -- pseudo-inverse से बात टालने पर ऐसा map बनेगा जो &quot;transport न कर पाने पर भी transport करने का दिखावा करता है&quot;, इसलिए <code style="color:#22d3bf">ValueError</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Colorimetry और spectra — रंग केवल spectrum × illuminant × observer से तय होता है</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

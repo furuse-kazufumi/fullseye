@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import videocube; videocube.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsvideocube.get(&quot;video_cube_cut&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>One cross-section of the cube (<code style="color:#22d3bf">image2d</code>). <code style="color:#22d3bf">&quot;xt&quot;</code> = slit scan of row <code style="color:#22d3bf">position</code> (T, W), <code style="color:#22d3bf">&quot;yt&quot;</code> = (T, H) of a column, <code style="color:#22d3bf">&quot;xy&quot;</code> = the frame at time <code style="color:#22d3bf">position</code> (H, W). <code style="color:#22d3bf">position</code> is a fraction in [0, 1] (what fraction along the rows, columns or time).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>x–t 断面では、右へ動く物体は右下がりの筋、止まっている物体は縦の帯になる —— <b>速度が傾きとして読める</b>。</p>
-<p>&gt;&gt;&gt; streak = video_cube_cut(clip, &quot;xt&quot;, position=0.4)      # 4 割目の行を横切ったものの記録</p>
+<p>In an x–t section, an object moving right becomes a streak slanting down to the right and a stationary object a vertical band -- <b>velocity can be read as slope</b>.</p>
+<p>&gt;&gt;&gt; streak = video_cube_cut(clip, &quot;xt&quot;, position=0.4)      # record of what crossed the row at the 4/10 mark</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideocube:videocube">videocube family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

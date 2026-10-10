@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_table(W: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_degree_table(W: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_degree_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tabelle je Knoten mit in_degree / out_degree (binär) und in_strength / out_strength (Summe der Gewichte).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>度数は <code style="color:#22d3bf">W != 0</code> の本数(対角は除く)、strength は重みの和(対角は除く)。返りは列名 → 長さ n の配列の dict(この repo の <code style="color:#22d3bf">table</code>)。</p>
+<p>Der Grad ist die Anzahl der Einträge mit <code style="color:#22d3bf">W != 0</code> (ohne Diagonale), strength ist die Summe der Gewichte (ohne Diagonale). Rückgabe ist ein dict Spaltenname → Array der Länge n (das <code style="color:#22d3bf">table</code> dieses Repos).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

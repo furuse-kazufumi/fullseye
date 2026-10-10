@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>; from the registry, <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extracts from a photo, by dynamic programming, 1 line giving <b>the row of the sky–terrain boundary for each column</b> → signal (W,).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Lie・Lin・Hsu 2005(*Pattern Recognition*: 航法のための頑健なスカイライン抽出)と同じ考え:</p>
-<p>垂直方向の明るさの変化(空が上で明るければ <code style="color:#22d3bf">I[v−1] − I[v+1]</code> が正)を「境界らしさ」にし、隣の列から行が <code style="color:#22d3bf">max_jump</code> 以上飛ばない連続な経路のうちコストが最小のものを選ぶ(<code style="color:#22d3bf">jump_penalty</code> × 行の飛び)。雲や建物の縦の縁で局所的に強い応答が出ても、経路の連続性が本物の稜線を残す。</p>
+<p>The same idea as Lie, Lin and Hsu 2005 (*Pattern Recognition*: robust skyline extraction for navigation):</p>
+<p>the vertical change in brightness (positive <code style="color:#22d3bf">I[v−1] − I[v+1]</code> if the sky above is brighter) is taken as &quot;boundary-likeness&quot;, and among continuous paths whose row does not jump by <code style="color:#22d3bf">max_jump</code> or more from the neighbouring column, the one with minimum cost is chosen (<code style="color:#22d3bf">jump_penalty</code> × row jump). Even if clouds or vertical edges of buildings give locally strong responses, the continuity of the path keeps the real ridge line.</p>
 <p>Args:</p>
-<p>image: (H, W) float。RGB なら先に灰色にする。</p>
-<p>sky_is_bright: 空が地形より明るい(昼)。夜景・逆光で反転するなら False。</p>
-<p>smooth: 縦方向の Gaussian σ [画素] (雑音)。0 で無効。</p>
-<p>max_jump: 隣の列で許す行の飛び [画素]。</p>
-<p>jump_penalty: 飛び 1 画素あたりのコスト(境界らしさは 0〜1 に正規化してある)。</p>
+<p>image: (H, W) float. RGB is converted to grey first.</p>
+<p>sky_is_bright: the sky is brighter than the terrain (daytime). False if inverted in night scenes or backlight.</p>
+<p>smooth: vertical Gaussian σ [pixels] (noise). 0 disables it.</p>
+<p>max_jump: row jump allowed between neighbouring columns [pixels].</p>
+<p>jump_penalty: cost per 1 pixel of jump (boundary-likeness is normalised to 0 to 1).</p>
 <p>Returns:</p>
-<p>signal (W,) float: 列ごとの境界の行(0 が最上段)。<b>空しか写っていない・地形しか写っていない</b>画像では境界の応答が弱く、経路の平均コストが 0 に近いので ValueError</p>
-<p>で止める(黙って雑音の線を返さない)。</p>
+<p>signal (W,) float: the boundary row for each column (0 is the top). For images that <b>show only sky, or only terrain</b>, the boundary response is weak and the mean path cost is close to 0, so it stops with ValueError</p>
+<p>(it does not silently return a line of noise).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_speed(flow)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.flow_speed(flow)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;flow_speed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>scattered flow <code style="color:#22d3bf">(N,3)</code> → speed का <code style="color:#22d3bf">signal</code> <code style="color:#22d3bf">(N,)</code>। scattered <code style="color:#22d3bf">flow</code> से निकास।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>一方向</b>(向きを捨てる)。密フローを渡すと fail-closed —— 同じ <code style="color:#22d3bf">flow</code> という型名の下に別物が 2 つ入っているため、受け側で必ず選ばせる。</p>
+<p><b>एकतरफ़ा (one-way)</b> (direction छोड़ दी जाती है)। dense flow देने पर fail-closed -- एक ही <code style="color:#22d3bf">flow</code> type name के नीचे 2 अलग चीज़ें हैं, इसलिए लेने वाले पक्ष को हमेशा चुनना पड़ता है।</p>
 <p>Args:</p>
-<p>flow: (N, 3) の変位ベクトル場。</p>
+<p>flow: (N, 3) displacement vector field।</p>
 <p>Returns:</p>
-<p>(N,) float64。</p>
+<p>(N,) float64।</p>
 <p>Raises:</p>
-<p>ValueError: 散在フローでない / 非有限。</p>
+<p>ValueError: scattered flow नहीं / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

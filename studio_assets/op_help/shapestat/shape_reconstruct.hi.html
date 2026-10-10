@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_reconstruct(model, scores)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.shape_reconstruct(model, scores)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;shape_reconstruct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>score से shape को वापस बनाता है। → <code style="color:#22d3bf">(N, 3)</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>与えたスコアが本数より少なければ残りは 0(= 平均のまま)として扱う。多ければ <code style="color:#22d3bf">ValueError</code> —— 黙って切り捨てると「入れたはずのモードが効かない」という追いにくい形になる。</p>
+<p>दिए गए scores components की संख्या से कम हों तो बाकी को 0 (= mean जैसा ही) माना जाता है। ज़्यादा हों तो <code style="color:#22d3bf">ValueError</code> -- चुपचाप काट देने पर &quot;जो mode डाला था उसका असर नहीं होता&quot; जैसी मुश्किल से पकड़ में आने वाली स्थिति बनती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

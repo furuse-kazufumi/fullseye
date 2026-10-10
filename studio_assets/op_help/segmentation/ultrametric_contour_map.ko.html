@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ultrametric_contour_map(image, *, mask=None, connectivity: &#x27;int&#x27; = 4, distance_matrix: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import seggraph; seggraph.ultrametric_contour_map(image, *, mask=None, connectivity: &#x27;int&#x27; = 4, distance_matrix: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opssegmentation.get(&quot;ultrametric_contour_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>dynamics 계층의 초거리 윤곽 지도(UCM): 이웃한 화소 p, q의 값 = &#x27;p와 q가 같은 영역이 되는 최소 임계값&#x27;(ultrametric_contour_map).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>盆地の中の辺は 0、盆地の境の辺は第 2 の Kruskal(盆地の木を saliency の昇順に併合)で 2 つの盆地が出会う高さ。</p>
-<p>返す: <code style="color:#22d3bf">ucm_h</code>(H, W − 1:画素とその右)、<code style="color:#22d3bf">ucm_v</code>(H − 1, W:画素とその下)、<code style="color:#22d3bf">ucm</code>(画素ごとに右と下の大きい方 = 境界を左上の画素で代表、segeval と同じ)、<code style="color:#22d3bf">basins</code>、<code style="color:#22d3bf">levels</code>、<code style="color:#22d3bf">distance</code>(<code style="color:#22d3bf">distance_matrix=True</code> かつ盆地が 2500 以下なら盆地の全組の ultrametric 距離の行列)。閾値 θ で ucm &gt; θ の辺を切った成分 = hierarchical_watershed(θ)。</p>
+<p>분지 안의 변은 0, 분지 경계의 변은 2번째 Kruskal(분지의 트리를 saliency의 오름차순으로 병합)에서 2개의 분지가 만나는 높이.</p>
+<p>반환: <code style="color:#22d3bf">ucm_h</code>(H, W − 1: 화소와 그 오른쪽), <code style="color:#22d3bf">ucm_v</code>(H − 1, W: 화소와 그 아래), <code style="color:#22d3bf">ucm</code>(화소마다 오른쪽과 아래 중 큰 쪽 = 경계를 왼쪽 위 화소로 대표, segeval과 같음), <code style="color:#22d3bf">basins</code>, <code style="color:#22d3bf">levels</code>, <code style="color:#22d3bf">distance</code>(<code style="color:#22d3bf">distance_matrix=True</code>이고 분지가 2500 이하이면 분지 모든 쌍의 ultrametric 거리 행렬). 임계값 θ에서 ucm &gt; θ인 변을 자른 성분 = hierarchical_watershed(θ).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

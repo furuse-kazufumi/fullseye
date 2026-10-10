@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;compare_images&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>여러 지표를 한 번에 재고, <b>무엇을 어떻게 쟀는지를 값과 함께 돌려줍니다</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返り値の <code style="color:#22d3bf">contract</code> に <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">crop_border</code> / SSIM の窓を入れてあるのは、数値だけを図注に写して<b>条件が消える</b>のを防ぐため(この repo で実際に起きた事故の型)。</p>
+<p>반환값의 <code style="color:#22d3bf">contract</code>에 <code style="color:#22d3bf">data_range</code> / <code style="color:#22d3bf">bins</code> / <code style="color:#22d3bf">crop_border</code> / SSIM의 창을 넣어 둔 것은, 수치만 그림 주석에 옮겨 적어 <b>조건이 사라지는</b> 것을막기 위해서(이 repo에서 실제로 일어난 사고의 유형).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;mse&quot;, &quot;rmse&quot;, &quot;psnr&quot;, &quot;ssim&quot;, &quot;mutual_information&quot;, &quot;normalized_mutual_information&quot;, &quot;ncd&quot;, &quot;contract&quot;: {...}}</code>。</p>
-<p><code style="color:#22d3bf">ms=True</code> なら <code style="color:#22d3bf">ms_ssim</code> も(成立しない大きさなら <code style="color:#22d3bf">ValueError</code>)。</p>
-<p>カラー画像で <code style="color:#22d3bf">channel_axis</code> を渡すと <code style="color:#22d3bf">delta_e_2000_mean</code> も入る。</p>
+<p><code style="color:#22d3bf">{&quot;mse&quot;, &quot;rmse&quot;, &quot;psnr&quot;, &quot;ssim&quot;, &quot;mutual_information&quot;, &quot;normalized_mutual_information&quot;, &quot;ncd&quot;, &quot;contract&quot;: {...}}</code>.</p>
+<p><code style="color:#22d3bf">ms=True</code>이면 <code style="color:#22d3bf">ms_ssim</code>도(성립하지 않는 크기면 <code style="color:#22d3bf">ValueError</code>).</p>
+<p>컬러 영상에서 <code style="color:#22d3bf">channel_axis</code>를 넘기면 <code style="color:#22d3bf">delta_e_2000_mean</code>도 들어간다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_markers(img, points, labels=None, start=1, radius=9.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_contrast=2.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_markers(img, points, labels=None, start=1, radius=9.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_contrast=2.0)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns an image (image2d): a round marker carrying a number (or a short string) at each point.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">annotate_legend</code> と同じ <code style="color:#22d3bf">start</code> / <code style="color:#22d3bf">labels</code> を渡せば、図中の番号と凡例の番号が必ず一致する。</p>
+<p>If you pass the same <code style="color:#22d3bf">start</code> / <code style="color:#22d3bf">labels</code> as to <code style="color:#22d3bf">annotate_legend</code>, the numbers in the figure and the numbers in the legend always match.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : (N, 2)</p>
-<p><b>(x, y)</b>。画像の外の点は ValueError。</p>
+<p><b>(x, y)</b>. Points outside the image are a ValueError.</p>
 <p>labels : sequence of str or None</p>
-<p>None なら <code style="color:#22d3bf">start</code> から連番。</p>
+<p>If None, consecutive numbers from <code style="color:#22d3bf">start</code>.</p>
 <p>radius : float</p>
-<p>円の半径[px]。文字が入らなければ ValueError。</p>
+<p>Circle radius [px]. If the text does not fit, ValueError.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点が空・非有限・画像外、labels の数不一致、文字が円に入らない、</p>
-<p>文字色と円色のコントラスト不足。</p>
+<p>points empty, non-finite or outside the image, number of labels mismatched, text does not fit in the circle,</p>
+<p>insufficient contrast between text colour and circle colour.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;ms_ssim&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>multi-scale SSIM (Wang, Simoncelli &amp; Bovik, Asilomar Conf. 2003)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>5 段の縮小を経るので、最終段で 11 画素の窓が成立するには<b>各辺 176 画素</b>が要る。足りないときに<b>段数を黙って減らさない</b> ―― 段数の違う MS-SSIM は別の指標であり、比べると嘘になる。足りなければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p>2 次元のグレー画像専用(色は <code style="color:#22d3bf">channel_axis</code> ではなくチャネルごとに呼ぶ)。</p>
+<p>यह 5 स्तरों के downsampling से गुज़रता है, इसलिए आख़िरी स्तर पर 11 pixel का window बनने के लिए <b>हर भुजा पर 176 pixel</b> चाहिए। कम हों तो <b>स्तरों की संख्या चुपचाप घटाई नहीं जाती</b> -- अलग स्तर-संख्या वाला MS-SSIM एक अलग metric है, और तुलना करना झूठ होगा। कम हों तो <code style="color:#22d3bf">ValueError</code>।</p>
+<p>केवल 2-आयामी grey images के लिए (रंगीन के लिए <code style="color:#22d3bf">channel_axis</code> नहीं, बल्कि हर channel के लिए अलग से call करें)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

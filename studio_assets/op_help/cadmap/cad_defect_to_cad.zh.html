@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>(要直接调用实现,<code style="color:#22d3bf">import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>;从台账取用则 <code style="color:#22d3bf">opscadmap.get(&quot;cad_defect_to_cad&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>2-D 缺陷标签图 → <b>CAD 面上的表</b>(面 ID / 面上面积 / 3-D 重心)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">labels</code> は (H, W) の整数ラベル画像(<code style="color:#22d3bf">background</code> は無視、bool マスクも可)。ラベルごとに全画素の視線を撃ち、当たった面と、その画素が<b>面の上で占める実面積</b>を積む。面積は画素数ではなく</p>
+<p><code style="color:#22d3bf">labels</code> 是 (H, W) 的整数标签图像(忽略 <code style="color:#22d3bf">background</code>,bool 掩模也可以)。对每个标签发射所有像素的视线,累计命中的面以及这些像素<b>在面上所占的实际面积</b>。面积不是像素数,而是</p>
 <p>dA = Z^2 * cosα / (fx * fy * |cosθ|)</p>
-<p>で、<code style="color:#22d3bf">cosα</code> は光軸からの傾き、<code style="color:#22d3bf">cosθ</code> は視線と面法線のなす角。<b>斜めから見た面ほど 1 画素が広い面積を覆う</b>という透視投影のヤコビアンそのもので、ここを <code style="color:#22d3bf">Z^2/(fx*fy)</code> のままにすると傾いた面の欠陥が小さく出る(60 度でちょうど半分になる)。</p>
-<p>返りはラベルごとの dict の list(<code style="color:#22d3bf">table</code> sort):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">label</code>        ラベル値。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_pixels</code>     そのラベルの画素数。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_hit</code>        CAD に当たった画素数。<code style="color:#22d3bf">hit_fraction</code> = その比。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area</code>         面上の実面積(mesh の長さ単位の 2 乗)。当たった画素分だけの和で、当たらなかった画素は<b>足さない</b>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area_naive</code>   <code style="color:#22d3bf">Z^2/(fx*fy)</code> だけの和(= 傾きを無視した値)。両方返すのは、傾き補正が効いているかを利用者が自分で確かめられるようにするため。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">face_ids</code>     当たった面の昇順一意リスト(int64 配列)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">face_areas</code>   <code style="color:#22d3bf">face_ids</code> と同じ並びの面ごとの面積。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">centroid</code>     面積重みの 3-D 重心(世界座標)。当たり 0 なら <code style="color:#22d3bf">NaN</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth_mean</code>   当たった画素の平均 Z。当たり 0 なら <code style="color:#22d3bf">NaN</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">winding_fixed</code> bool — 内向きに巻かれた閉メッシュを検出して直したか。<b>全レコードに同じ値</b>が入る(mesh 単位の性質なので)。</p>
-<p><code style="color:#22d3bf">min_pixels</code> 未満の領域は落とす。当たり 0 の領域は<b>消さずに</b> <code style="color:#22d3bf">area = 0.0</code>, <code style="color:#22d3bf">hit_fraction = 0.0</code> で残す — 消すと「CAD の外にあった欠陥」が表から静かに消えるため。</p>
-<p>巻き方向の扱いは他の op と同じ(<code style="color:#22d3bf">cull_backfaces=True</code> で閉じた内向きメッシュを検出 → 既定は自動修正 + <code style="color:#22d3bf">winding_fixed</code>、<code style="color:#22d3bf">strict=True</code> で <code style="color:#22d3bf">ValueError</code>)。<b>正直な限界</b>: 返るのがレコードの list なので、<code style="color:#22d3bf">labels</code> が全部背景だったり全領域が <code style="color:#22d3bf">min_pixels</code> 未満だったりして <b>list が空</b>になると、修正の事実を載せる先が無い。その場合はそもそも 1 つも欠陥を写していない(誤った数を返しようがない)。載せる先が要るなら <code style="color:#22d3bf">strict=True</code> にするか、同じ mesh で <code style="color:#22d3bf">cad_pixel_to_surface</code> を 1 画素だけ引くこと。</p>
+<p>其中 <code style="color:#22d3bf">cosα</code> 是相对光轴的倾斜,<code style="color:#22d3bf">cosθ</code> 是视线与面法线的夹角。<b>越是斜着看的面,1 个像素覆盖的面积越大</b>,这正是透视投影的雅可比行列式, 若这里保持 <code style="color:#22d3bf">Z^2/(fx*fy)</code>,倾斜面上的缺陷就会显得偏小(60 度时正好减半)。</p>
+<p>返回值是每个标签一个 dict 的 list(<code style="color:#22d3bf">table</code> sort):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">label</code>        标签值。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_pixels</code>     该标签的像素数。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_hit</code>        命中 CAD 的像素数。<code style="color:#22d3bf">hit_fraction</code> = 其比例。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area</code>         面上的实际面积(mesh 长度单位的 2 次方)。只是命中像素部分的和,未命中的像素<b>不计入</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area_naive</code>   仅 <code style="color:#22d3bf">Z^2/(fx*fy)</code> 的和(= 忽略倾斜的值)。两者都返回,是为了让使用者能自己确认倾斜校正是否生效。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">face_ids</code>     命中面的升序唯一列表(int64 数组)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">face_areas</code>   与 <code style="color:#22d3bf">face_ids</code> 同顺序的各面面积。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">centroid</code>     面积加权的 3-D 质心(世界坐标)。命中为 0 时为 <code style="color:#22d3bf">NaN</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth_mean</code>   命中像素的平均 Z。命中为 0 时为 <code style="color:#22d3bf">NaN</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">winding_fixed</code> bool — 是否检测到向内绕的闭合网格(mesh)并修正。<b>所有记录都填入相同的值</b>(因为这是以 mesh 为单位的性质)。</p>
+<p>小于 <code style="color:#22d3bf">min_pixels</code> 的区域会被丢弃。命中为 0 的区域<b>不删除</b>,以 <code style="color:#22d3bf">area = 0.0</code>, <code style="color:#22d3bf">hit_fraction = 0.0</code> 保留 —— 若删除,“位于 CAD 之外的缺陷”就会从表中悄悄消失。</p>
+<p>绕向的处理与其他 op 相同(<code style="color:#22d3bf">cull_backfaces=True</code> 时检测闭合的向内网格 → 默认自动修正 + <code style="color:#22d3bf">winding_fixed</code>,<code style="color:#22d3bf">strict=True</code> 时 <code style="color:#22d3bf">ValueError</code>)。<b>坦白的局限</b>: 由于返回的是记录的 list,若 <code style="color:#22d3bf">labels</code> 全是背景或所有区域都小于 <code style="color:#22d3bf">min_pixels</code>,导致 <b>list 为空</b>, 就没有地方记载修正的事实。这种情况下本来就连 1 个缺陷都没有拍到(不可能返回错误的数)。若需要记载之处,请设为 <code style="color:#22d3bf">strict=True</code>, 或在同一 mesh 上用 <code style="color:#22d3bf">cad_pixel_to_surface</code> 只查询 1 个像素。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

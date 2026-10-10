@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matrix_to_angle(matrix)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.matrix_to_angle(matrix)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;matrix_to_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>z axis के चारों ओर rotation matrix → कोण <b>[degree]</b> में। <code style="color:#22d3bf">angle_to_matrix</code> का उल्टा।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> を度で返す(-180, 180]。往復は(-180, 180] の範囲で <b>bit 一致に近い</b>(実測 max|Δ| = 2.8e-14 度)。</p>
+<p><code style="color:#22d3bf">atan2(R[2,1], R[1,1])</code> को degree में लौटाता है, (-180, 180]। round trip (-180, 180] की range में <b>लगभग bit-identical</b> है (measured max|Δ| = 2.8e-14 degree)।</p>
 <p>Args:</p>
-<p>matrix: (3, 3)。</p>
+<p>matrix: (3, 3)।</p>
 <p>Returns:</p>
-<p>float(度)。</p>
+<p>float (degree)।</p>
 <p>Raises:</p>
-<p>ValueError: (3,3) でない / 非有限。</p>
+<p>ValueError: (3,3) नहीं / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,9 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swt_map(img, dark_on_light: &#x27;bool&#x27; = True, sigma: &#x27;float&#x27; = 1.0, max_width: &#x27;int&#x27; = 64, angle_tol: &#x27;float&#x27; = 0.5235987755982988)</code>(要直接调用实现,<code style="color:#22d3bf">import textregion; textregion.swt_map(img, dark_on_light: &#x27;bool&#x27; = True, sigma: &#x27;float&#x27; = 1.0, max_width: &#x27;int&#x27; = 64, angle_tol: &#x27;float&#x27; = 0.5235987755982988)</code>;从台账取用则 <code style="color:#22d3bf">opstext.get(&quot;swt_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>笔画宽度变换——在每个像素写入包含该像素的笔画宽度。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>文字側の境界画素から、勾配の向きに沿って文字の内側へ光線を飛ばし、向かい合う境界画素(勾配がほぼ逆向き)に当たったら、光線上の全画素に幅(境界画素の中心間距離 + 1) を書く(既に小さい値があれば小さい方)。Epshtein 2010 §3 の手順で、2 回目の走査で光線上の中央値より大きい値を中央値に置き換える(角の過大を抑える)。エッジの規約は <code style="color:#22d3bf">_edges_and_gradient</code> に書いた(矩形ストロークで幅が厳密に整数になる)。</p>
-<p>Returns dict: <code style="color:#22d3bf">swt</code>(幅の配列、ストローク外は 0)/ <code style="color:#22d3bf">edges</code> / <code style="color:#22d3bf">n_rays</code> / <code style="color:#22d3bf">n_hits</code>(向かい合うエッジに当たった光線の数)。</p>
+<p>从文字一侧的边界像素出发,沿梯度方向向文字内侧发射光线,命中相对的边界像素(梯度大致反向)时,向光线上的全部像素写入宽度(边界像素中心间距离 + 1) (若已有更小的值则取较小者)。按 Epshtein 2010 §3 的步骤,第 2 遍扫描把光线上大于中位数的值替换为中位数(抑制角部的过大值)。边缘的约定</p>
+<p>写在 <code style="color:#22d3bf">_edges_and_gradient</code> 中(矩形笔画的宽度严格为整数)。</p>
+<p>返回 dict: <code style="color:#22d3bf">swt</code>(宽度数组,笔画外为 0)/ <code style="color:#22d3bf">edges</code> / <code style="color:#22d3bf">n_rays</code> / <code style="color:#22d3bf">n_hits</code>(命中相对边缘的光线数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

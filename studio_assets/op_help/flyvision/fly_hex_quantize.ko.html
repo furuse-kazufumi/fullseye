@@ -4,25 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_quantize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>낱눈 신호를 눈과 같은 방식으로 양자화한다: 로그 압축한 뒤 낱눈당 n비트(<code style="color:#22d3bf">mode=&quot;onoff&quot;</code>는 ON / OFF의 2채널).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>複眼は生まれつき量子化器で、片眼およそ 800 個眼(間隔 4.6°)、光受容器は強度を対数圧縮して平均に適応し、ラミナの L1 / L2 が平均からの偏差を ON と OFF に分ける。この op はその予算を再現し、下流のモデル(reservoir・網膜部位対応の検査)に「本当に何ビット要るか」を問えるようにする。</p>
-<p>A compound eye is a quantizer by construction: ~800 ommatidia per eye at 4.6 deg spacing, photoreceptors that log-compress intensity and adapt to the mean, and lamina cells (L1/L2) that split the deviation into ON and OFF channels. This op reproduces that budget so a downstream model (reservoir, retinotopy test) can be asked how many bits it really needs.</p>
+<p>겹눈은 태생적으로 양자화기다. 한쪽 눈에 약 800 개의 낱눈(간격 4.6°)이 있고, 광수용기는 강도를 로그 압축해 평균에 적응하며, 라미나의 L1 / L2 가 평균으로부터의 편차를 ON 과 OFF 로 나눈다. 이 op 는 그 예산을 재현하여, 하류 모델(reservoir · 망막 부위 대응 검사)에 &quot;정말로 몇 비트가 필요한가&quot;를 물을 수 있게 한다.</p>
+<p>겹눈은 태생적으로 양자화기다: 한쪽 눈에 약 800 개의 낱눈이 4.6 deg 간격으로 있고, 광수용기는 강도를 로그 압축해 평균에 적응하며, 라미나 세포(L1/L2)는편차를 ON 과 OFF 채널로 나눈다. 이 op 는 그 예산을 재현하여, 하류 모델(reservoir, 망막 부위 대응 검사)에 정말로 몇 비트가 필요한지 물을 수 있게 한다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>signal : (n,) float</p>
-<p>Per-ommatidium intensities &gt;= 0 (<code style="color:#22d3bf">fly_hex_resample</code> output).</p>
+<p>낱눈마다의 강도 &gt;= 0(<code style="color:#22d3bf">fly_hex_resample</code> 의 출력).</p>
 <p>bits : int</p>
-<p>1..8 levels = 2**bits (<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> ignores it: the output is the signed pair below).</p>
+<p>1..8 단계 = 2**bits(<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> 에서는 무시: 출력은 아래의 부호 있는 쌍).</p>
 <p>mode : str</p>
-<p><code style="color:#22d3bf">&quot;log&quot;</code>: log1p-compress relative to the mean, shift the darkest ommatidium to 0, then</p>
-<p>uniform levels over the compressed range; <code style="color:#22d3bf">&quot;linear&quot;</code>: uniform levels over [0, max]; <code style="color:#22d3bf">&quot;onoff&quot;</code>: deviation from the mean</p>
-<p>relative to <code style="color:#22d3bf">contrast</code> clipped to [-1, 1] and returned as <code style="color:#22d3bf">2 * n</code> values <code style="color:#22d3bf">[ON..., OFF...]</code></p>
-<p>(ON = positive part, OFF = negative part), each &gt;= 0.</p>
+<p><code style="color:#22d3bf">&quot;log&quot;</code>: 평균에 대해 log1p 압축하고, 가장 어두운 낱눈을 0 으로 옮긴 뒤,</p>
+<p>압축된 범위에서 균일하게 단계화; <code style="color:#22d3bf">&quot;linear&quot;</code>: [0, max] 에서 균일하게 단계화; <code style="color:#22d3bf">&quot;onoff&quot;</code>: 평균으로부터의 편차를</p>
+<p><code style="color:#22d3bf">contrast</code> 에 대해 상대화해 [-1, 1] 로 자르고 <code style="color:#22d3bf">2 * n</code> 개의 값 <code style="color:#22d3bf">[ON..., OFF...]</code> 로 반환</p>
+<p>(ON = 양의 부분, OFF = 음의 부분), 각각 &gt;= 0.</p>
 <p>contrast : float</p>
-<p>Michelson-style contrast that saturates the ON/OFF channels (<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> only).</p>
+<p>ON/OFF 채널을 포화시키는 Michelson 식 대비(<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> 에서만).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>(n,) float in [0, 1] (levels / (2**bits - 1)); for <code style="color:#22d3bf">&quot;onoff&quot;</code> (2n,) in [0, 1].</p>
+<p>(n,) float, 범위 [0, 1] (단계 / (2**bits - 1)); <code style="color:#22d3bf">&quot;onoff&quot;</code> 에서는 (2n,), 범위 [0, 1].</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>Non-finite or negative inputs are refused. A constant signal quantizes to all-zeros (<code style="color:#22d3bf">&quot;log&quot;</code> / <code style="color:#22d3bf">&quot;onoff&quot;</code>) — there is no contrast to encode.</p>
+<p>비유한 또는 음의 입력은 거부한다. 상수 신호는 전부 0 으로 양자화된다(<code style="color:#22d3bf">&quot;log&quot;</code> / <code style="color:#22d3bf">&quot;onoff&quot;</code>) —— 부호화할 대비가 없다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

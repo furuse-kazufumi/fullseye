@@ -4,47 +4,46 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_table_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>table (dict) लौटाता है: tab से अलग की गई string को <b>table</b> के रूप में रखने के लिए column और row की position।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>行は <code style="color:#22d3bf">\n</code>、桁は <code style="color:#22d3bf">\t</code> で切る。桁幅は<b>指定されたサイズの実フォントで 1 セルずつ測った幅の最大</b>で決まる —— 文字数で数えると和文と英数字で必ずずれるので、測る以外に正しくやりようがない。</p>
+<p>rows <code style="color:#22d3bf">\n</code> पर और columns <code style="color:#22d3bf">\t</code> पर बाँटे जाते हैं। column width <b>दिए गए size के असली font से 1 cell एक बार में मापी गई चौड़ाइयों का अधिकतम</b> होती है -- अक्षरों की गिनती से जापानी और alphanumeric के बीच हमेशा अंतर आता है, इसलिए मापने के अलावा सही करने का कोई तरीका नहीं है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>text : str</p>
-<p>タブ区切り。全行の桁数が同じであること(違えば <b>ValueError</b>)。</p>
+<p>tab से अलग किया गया। सभी rows में columns की संख्या समान होनी चाहिए (अलग हो तो <b>ValueError</b>)।</p>
 <p>xy : (x, y)</p>
-<p><code style="color:#22d3bf">anchor</code> で指す位置(<b>x=col, y=row</b>)。</p>
+<p><code style="color:#22d3bf">anchor</code> जिस स्थिति को दर्शाता है (<b>x=col, y=row</b>)।</p>
 <p>anchor : str</p>
-<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> の 9 通り。</p>
+<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> में से 9 विकल्प।</p>
 <p>pad : int</p>
-<p>表の内側余白 [px]。</p>
+<p>table के अंदर का margin [px]।</p>
 <p>col_gap : int or None</p>
-<p>桁の間 [px]。<b>None(既定)なら行高 ×0.6 を四捨五入</b>するので、</p>
-<p>フォントサイズを変えれば間隔も一緒に動く。</p>
+<p>columns के बीच की दूरी [px]। <b>None (default) होने पर row height ×0.6 को round किया जाता है</b>, इसलिए</p>
+<p>font size बदलने पर दूरी भी साथ बदलती है।</p>
 <p>row_gap : int</p>
-<p>行の間に足す [px] (0 なら行送りのまま)。</p>
+<p>rows के बीच जोड़ी जाने वाली दूरी [px] (0 हो तो सामान्य line pitch ही)।</p>
 <p>align : str or sequence</p>
-<p><code style="color:#22d3bf">TABLE_ALIGNS</code> のいずれか、または桁ごとの並び。<code style="color:#22d3bf">&quot;auto&quot;</code></p>
-<p>(既定)は<b>その桁の値がすべて数に見えるときだけ右そろえ</b>にする。</p>
-<p><code style="color:#22d3bf">header=True</code> なら見出し行は判定から外す。</p>
+<p><code style="color:#22d3bf">TABLE_ALIGNS</code> में से कोई, या हर column का क्रम। <code style="color:#22d3bf">&quot;auto&quot;</code></p>
+<p>(default) <b>किसी column को तभी right-align करता है जब उसके सभी मान संख्या जैसे दिखें</b>।</p>
+<p><code style="color:#22d3bf">header=True</code> हो तो header row इस जाँच से बाहर रहती है।</p>
 <p>header : bool</p>
-<p>真なら 1 行目を見出しとして<b>太字</b>にし、下に罫を 1 本引く。</p>
+<p>true हो तो row 1 को header के रूप में <b>bold</b> करता है और उसके नीचे 1 line खींचता है।</p>
 <p>bold, italic : bool or int</p>
-<p>合成字体(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。<code style="color:#22d3bf">header</code> の</p>
-<p>太字はこれとは別で、見出し行にだけ掛かる。</p>
+<p>synthetic font style (<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)। <code style="color:#22d3bf">header</code> का</p>
+<p>bold इससे अलग है और केवल header row पर लगता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;rect&quot;: (x,y,w,h), &quot;ncols&quot;, &quot;nrows&quot;, &quot;col_w&quot;: [...], &quot;col_x&quot;: [...], &quot;row_y&quot;: [...], &quot;row_h&quot;, &quot;col_gap&quot;, &quot;align&quot;: [...], &quot;header&quot;, &quot;rule_y&quot;: 見出しの罫の y(header が偽なら None), &quot;cells&quot;: [{&quot;text&quot;,&quot;row&quot;,&quot;col&quot;,&quot;xy&quot;,&quot;width&quot;,&quot;bold&quot;}]}</code>。</p>
-<p><code style="color:#22d3bf">col_x</code> / <code style="color:#22d3bf">row_y</code> / <code style="color:#22d3bf">cells[i][&quot;xy&quot;]</code> はすべて<b>画像座標</b>。</p>
+<p><code style="color:#22d3bf">{&quot;rect&quot;: (x,y,w,h), &quot;ncols&quot;, &quot;nrows&quot;, &quot;col_w&quot;: [...], &quot;col_x&quot;: [...], &quot;row_y&quot;: [...], &quot;row_h&quot;, &quot;col_gap&quot;, &quot;align&quot;: [...], &quot;header&quot;, &quot;rule_y&quot;: header line का y (header false हो तो None), &quot;cells&quot;: [{&quot;text&quot;,&quot;row&quot;,&quot;col&quot;,&quot;xy&quot;,&quot;width&quot;,&quot;bold&quot;}]}</code>।</p>
+<p><code style="color:#22d3bf">col_x</code> / <code style="color:#22d3bf">row_y</code> / <code style="color:#22d3bf">cells[i][&quot;xy&quot;]</code> सभी <b>image coordinates</b> में हैं।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>桁数が行でそろわない / 空 / 未知の <code style="color:#22d3bf">align</code> <code style="color:#22d3bf">anchor</code> /</p>
-<p><code style="color:#22d3bf">align</code> の長さが桁数と違う。</p>
+<p>rows में columns की संख्या अलग / ख़ाली / अज्ञात <code style="color:#22d3bf">align</code> <code style="color:#22d3bf">anchor</code> /</p>
+<p><code style="color:#22d3bf">align</code> की लंबाई columns की संख्या से अलग।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import annotate</p>
-<p>&gt;&gt;&gt; lay = annotate.annotate_table_layout(&quot;名前\t値\nA\t1.5\nB\t22.25&quot;, (10, 10))</p>
+<p>&gt;&gt;&gt; lay = annotate.annotate_table_layout(&quot;Name\tValue\nA\t1.5\nB\t22.25&quot;, (10, 10))</p>
 <p>&gt;&gt;&gt; lay[&quot;ncols&quot;], lay[&quot;nrows&quot;], lay[&quot;align&quot;]</p>
 <p>(2, 3, [&#x27;left&#x27;, &#x27;left&#x27;])</p>
-<p>&gt;&gt;&gt; lay2 = annotate.annotate_table_layout(&quot;名前\t値\nA\t1.5\nB\t22.25&quot;, (10, 10),</p>
+<p>&gt;&gt;&gt; lay2 = annotate.annotate_table_layout(&quot;Name\tValue\nA\t1.5\nB\t22.25&quot;, (10, 10),</p>
 <p>...                                       header=True)</p>
-<p>&gt;&gt;&gt; lay2[&quot;align&quot;]                        # 見出しを外すと 2 桁目は数だけ</p>
+<p>&gt;&gt;&gt; lay2[&quot;align&quot;]                        # header हटाने पर column 2 में केवल संख्याएँ</p>
 <p>[&#x27;left&#x27;, &#x27;right&#x27;]</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>

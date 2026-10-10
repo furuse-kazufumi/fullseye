@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rmse(a, b)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.rmse(a, b)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;rmse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평균 제곱 오차의 제곱근(화소값과 같은 단위).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>式: <code style="color:#22d3bf">sqrt(mse(a, b))</code>。検証と失敗条件は <code style="color:#22d3bf">mse</code> と同じ ―― 同じ形 / 空でない / 有限、を満たさなければ <code style="color:#22d3bf">MetricContractError</code>。次元と dtype は問わない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: Python の <code style="color:#22d3bf">float</code>。入力が <code style="color:#22d3bf">[0, 1]</code> の float なら値も <code style="color:#22d3bf">[0, 1]</code>、uint8 なら 0〜255 の尺度。「平均して何階調ずれているか」と読める。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code> に依らない生の量なので、尺度の違う 2 組の rmse を並べても比較にならない。正規化した指標が要るなら <code style="color:#22d3bf">psnr</code> か <code style="color:#22d3bf">ssim</code>。</p>
-<p style="margin:2px 0 2px 12px">• 深度・CT・再投影など「画素値 = 物理量」の場面では、その物理単位そのものになる。</p>
+<p>식: <code style="color:#22d3bf">sqrt(mse(a, b))</code>. 검증과 실패 조건은 <code style="color:#22d3bf">mse</code>와 같다 -- 같은 형태 / 비어 있지 않음 / 유한, 을 만족하지 않으면 <code style="color:#22d3bf">MetricContractError</code>. 차원과 dtype은 묻지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: Python의 <code style="color:#22d3bf">float</code>. 입력이 <code style="color:#22d3bf">[0, 1]</code>의 float이면 값도 <code style="color:#22d3bf">[0, 1]</code>, uint8 이면 0~255의 척도. &quot;평균해서 몇 계조 어긋나 있는가&quot;로 읽을 수 있다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code>에 의존하지 않는 날것의 양이므로, 척도가 다른 2쌍의 rmse를 나란히 놓아도비교가 되지 않는다. 정규화한 지표가 필요하면 <code style="color:#22d3bf">psnr</code> 또는 <code style="color:#22d3bf">ssim</code>.</p>
+<p style="margin:2px 0 2px 12px">• 깊이, CT, 재투영 등 &quot;화소값 = 물리량&quot;인 경우에는, 그 물리 단위 그 자체가 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

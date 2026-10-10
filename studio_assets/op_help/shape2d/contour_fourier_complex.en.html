@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_complex&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turns a closed contour into the coefficients of a complex Fourier series — <code style="color:#22d3bf">z(t) = Σ c_k exp(2πi k t)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>引数:</p>
-<p>points: (N,2) の閉輪郭頂点。<b>(row, col) 順</b>(<code style="color:#22d3bf">fourierdesc</code> と同じ)。</p>
-<p>n_harmonics: 残す次数 <code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">|k| &lt;= K</code>)。<code style="color:#22d3bf">None</code> なら表せる上限まで。</p>
-<p>parametrisation: <code style="color:#22d3bf">&quot;index&quot;</code> = 点の添字を等間隔の媒介変数にする /</p>
-<p><code style="color:#22d3bf">&quot;arclength&quot;</code> = <b>弧長</b>で等間隔に打ち直してから変換する。</p>
-<p>返り値: <code style="color:#22d3bf">(2K+1, 3)</code> の実配列(<code style="color:#22d3bf">matrix</code>)。行は <code style="color:#22d3bf">[k, Re c_k, Im c_k]</code> で <code style="color:#22d3bf">k</code> は <code style="color:#22d3bf">0, 1, -1, 2, -2, …</code>(低い周波数から)。</p>
-<p>★<b>媒介変数の取り方を既定で黙って決めない</b>のがこの op の肝。不均一に標本化された輪郭を <code style="color:#22d3bf">&quot;index&quot;</code> で読むと、点が密なところに余分な時間が割り当てられ、<b>絵は似ているのに係数が別物</b>になる(実測で <code style="color:#22d3bf">k=3</code> の係数が 47 倍ちがった)。既定は <code style="color:#22d3bf">&quot;index&quot;</code>(FFT の素の意味)だが、形の記述として使うなら <code style="color:#22d3bf">&quot;arclength&quot;</code> を選ぶこと。</p>
-<p>★★<code style="color:#22d3bf">&quot;arclength&quot;</code> を選ぶと <b>op の内部で輪郭を打ち直す</b>ので、返る係数は渡した配列ではなく<b>打ち直した輪郭</b>を記述する。だから <code style="color:#22d3bf">contour_fourier_truncation_energy</code> の予言は「打ち直した輪郭に対して」厳密で、呼び手が手元の配列で誤差を測ると合わない(実測: 512 点で 1.15 ずれた)。手元の配列に対して厳密な予言が欲しいときは、<b>先に弧長で打ち直してから</b> <code style="color:#22d3bf">&quot;index&quot;</code> で呼ぶこと。</p>
-<p>★<b>弧長の打ち直しは冪等ではない</b>: 標本を弦で結ぶので、すでに等弧長の輪郭にもう 1 度かけると点が最大 3.73 px 動き(平均 0.84 px)、長さがさらに 3.25 % 縮む。二度かけないこと。</p>
+<p>Arguments:</p>
+<p>points: (N,2) closed-contour vertices. <b>(row, col) order</b> (same as <code style="color:#22d3bf">fourierdesc</code>).</p>
+<p>n_harmonics: order <code style="color:#22d3bf">K</code> to keep (<code style="color:#22d3bf">|k| &lt;= K</code>). <code style="color:#22d3bf">None</code> keeps up to the representable limit.</p>
+<p>parametrisation: <code style="color:#22d3bf">&quot;index&quot;</code> = use the point index as an equally spaced parameter /</p>
+<p><code style="color:#22d3bf">&quot;arclength&quot;</code> = resample to equal <b>arc length</b> first, then transform.</p>
+<p>Returns: real array of <code style="color:#22d3bf">(2K+1, 3)</code> (<code style="color:#22d3bf">matrix</code>). Rows are <code style="color:#22d3bf">[k, Re c_k, Im c_k]</code>, with <code style="color:#22d3bf">k</code> being <code style="color:#22d3bf">0, 1, -1, 2, -2, …</code> (from low frequency).</p>
+<p>★<b>Not silently deciding the parametrisation by default</b> is the crux of this op. If a non-uniformly sampled contour is read with <code style="color:#22d3bf">&quot;index&quot;</code>, extra time is allotted where points are dense, and <b>the picture looks similar but the coefficients are something else</b> (measured: the <code style="color:#22d3bf">k=3</code> coefficient differed by a factor of 47). The default is <code style="color:#22d3bf">&quot;index&quot;</code> (the plain meaning of the FFT), but if you use it as a description of shape, choose <code style="color:#22d3bf">&quot;arclength&quot;</code>.</p>
+<p>★★Choosing <code style="color:#22d3bf">&quot;arclength&quot;</code> <b>resamples the contour inside the op</b>, so the returned coefficients describe <b>the resampled contour</b>, not the array you passed. Hence the prediction of <code style="color:#22d3bf">contour_fourier_truncation_energy</code> is exact &quot;for the resampled contour&quot;, and if the caller measures the error on their own array, it does not match (measured: off by 1.15 at 512 points). When you want an exact prediction for your own array, <b>resample by arc length first</b> and then call with <code style="color:#22d3bf">&quot;index&quot;</code>.</p>
+<p>★<b>Arc-length resampling is not idempotent</b>: samples are joined by chords, so applying it 1 more time to a contour that is already equal-arc-length moves points by up to 3.73 px (mean 0.84 px), and the length shrinks by a further 3.25 %. Do not apply it twice.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

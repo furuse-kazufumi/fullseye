@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import emproof; emproof.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsemproof.get(&quot;seg_label_changes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把两张标签图像的差异<b>作为融合与分割的对</b>返回(校正前后对比，或核对植入的错误)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">before</code> のラベル b と <code style="color:#22d3bf">after</code> のラベル a が同じ画素を <code style="color:#22d3bf">min_pixels</code> 以上共有する対を数え、</p>
-<p style="margin:2px 0 2px 12px">• 融合 = after の 1 ラベルが before の 2 ラベル以上を覆う → <code style="color:#22d3bf">merge_after</code> / <code style="color:#22d3bf">merge_before</code>(対ごとに 1 行。吸った側の id 自身も before の 1 つとして並ぶ)</p>
-<p style="margin:2px 0 2px 12px">• 分断 = before の 1 ラベルが after の 2 ラベル以上に割れる → <code style="color:#22d3bf">split_before</code> / <code style="color:#22d3bf">split_after</code>(同様に残った側の id も並ぶ)</p>
-<p><code style="color:#22d3bf">n_merged</code> / <code style="color:#22d3bf">n_split</code> は誤りの数(after 側・before 側の id で数える)。id の一致は見ない(ラベルを振り直した 2 枚でも使える)。</p>
+<p>统计 <code style="color:#22d3bf">before</code> 的标签 b 与 <code style="color:#22d3bf">after</code> 的标签 a 共享相同像素不少于 <code style="color:#22d3bf">min_pixels</code> 的对,</p>
+<p style="margin:2px 0 2px 12px">• 融合 = after 的 1 个标签覆盖 before 的 2 个以上标签 → <code style="color:#22d3bf">merge_after</code> / <code style="color:#22d3bf">merge_before</code>(每对 1 行。吞并一方的 id 本身也作为 before 的 1 个列出)</p>
+<p style="margin:2px 0 2px 12px">• 分割 = before 的 1 个标签裂成 after 的 2 个以上标签 → <code style="color:#22d3bf">split_before</code> / <code style="color:#22d3bf">split_after</code>(同样保留一方的 id 也会列出)</p>
+<p><code style="color:#22d3bf">n_merged</code> / <code style="color:#22d3bf">n_split</code> 是错误数(按 after 侧、before 侧的 id 计数)。不看 id 是否一致(对重新编号过标签的 2 张图也能用)。</p>
 <p>&gt;&gt;&gt; ch = seg_label_changes(truth, seg_inject_merge(truth))</p>
 <p>&gt;&gt;&gt; int(ch[&quot;n_merged&quot;])</p>
 <p>1</p>

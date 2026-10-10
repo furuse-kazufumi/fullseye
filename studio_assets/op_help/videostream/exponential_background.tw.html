@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exponential_background(video, alpha: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import videostream; videostream.exponential_background(video, alpha: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsvideostream.get(&quot;exponential_background&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>遞迴背景 <code style="color:#22d3bf">bg ← (1−α)·bg + α·frame</code> 逐影格 → <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>最初のフレームで <code style="color:#22d3bf">bg</code> を初期化し、以後 <code style="color:#22d3bf">bg += α (frame - bg)</code> を画素ごとに繰り返す指数移動平均。状態は背景 1 枚だけ(窓を持たない)。フレーム <code style="color:#22d3bf">t</code> の出力はその時点の <code style="color:#22d3bf">bg</code> の写しで、<code style="color:#22d3bf">t = 0</code> は入力の先頭フレームそのもの。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 配列か 2-D フレームの list。整数 dtype は最大値で <code style="color:#22d3bf">[0, 1]</code> に正規化、float は <code style="color:#22d3bf">[0, 1]</code> にクリップ。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code>。時定数はおよそ <code style="color:#22d3bf">1/α</code> フレーム(0.05 → 約 20 枚)。0 なら背景は先頭フレームのまま固定、1 なら常に現在のフレーム。<b>物体が止まると <code style="color:#22d3bf">1/α</code> 枚ほどで背景に吸収される</b>(選択的更新は無い)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64、<code style="color:#22d3bf">[0, 1]</code>。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形・dtype・<code style="color:#22d3bf">alpha</code> の範囲)。</p>
-<p>前景マスクまで欲しいなら同じモデルの <code style="color:#22d3bf">exponential_foreground</code>。画素ごとの雑音に閾値を合わせたいなら <code style="color:#22d3bf">running_gaussian_background</code>。</p>
+<p>用第一幀初始化 <code style="color:#22d3bf">bg</code>，之後逐像素重複 <code style="color:#22d3bf">bg += α (frame - bg)</code> 的指數移動平均。狀態只有 1 張背景(不持有視窗)。幀 <code style="color:#22d3bf">t</code> 的輸出是該時刻 <code style="color:#22d3bf">bg</code> 的複本，<code style="color:#22d3bf">t = 0</code> 即輸入的第一幀本身。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 陣列或 2-D 幀的 list。整數 dtype 依最大值正規化到 <code style="color:#22d3bf">[0, 1]</code>,float 截斷到 <code style="color:#22d3bf">[0, 1]</code>。NaN/Inf 拋出 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code>。時間常數約為 <code style="color:#22d3bf">1/α</code> 幀(0.05 → 約 20 幀)。為 0 時背景固定為第一幀，為 1 時始終為目前的幀。<b>物體停下後約 <code style="color:#22d3bf">1/α</code> 幀就會被背景吸收</b>(沒有選擇性更新)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: <code style="color:#22d3bf">(T, H, W)</code> float64,<code style="color:#22d3bf">[0, 1]</code>。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形狀、dtype、<code style="color:#22d3bf">alpha</code> 的範圍)。</p>
+<p>若還需要前景遮罩，用同一模型的 <code style="color:#22d3bf">exponential_foreground</code>。若想讓閾值與逐像素的雜訊相匹配，用 <code style="color:#22d3bf">running_gaussian_background</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

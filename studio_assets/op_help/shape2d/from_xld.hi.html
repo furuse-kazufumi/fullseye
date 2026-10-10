@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.from_xld(contour, i=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fourierdesc; fourierdesc.from_xld(contour, i=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;from_xld&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>XLD contour dict (<code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;:[Nx2,...]}</code>) से i-वाँ contour निकालता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返るのは XLD と同じ <b>(row, col)</b> 順の (N,2)。<code style="color:#22d3bf">imagemorph</code> へ渡すときは <code style="color:#22d3bf">[:, ::-1]</code> で (x, y) に入れ替えること(モジュール冒頭の「座標順の落とし穴」)。</p>
+<p>लौटाया जाने वाला (N,2) XLD जैसे ही <b>(row, col)</b> क्रम में है। <code style="color:#22d3bf">imagemorph</code> को देते समय <code style="color:#22d3bf">[:, ::-1]</code> से (x, y) में बदलें (module की शुरुआत में &quot;coordinate क्रम का जाल&quot;)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

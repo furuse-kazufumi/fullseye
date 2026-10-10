@@ -6,11 +6,10 @@
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(aligned, info) -&gt; pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Richtet eine gemessene Kontur an der Sollkontur aus. Rückgabe: <code style="color:#22d3bf">(aligned, info)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">mode</code> は <code style="color:#22d3bf">ALIGN_MODES</code>。<b>相似(スケール推定)は提供しない</b> —— 大きさの誤差そのものを吸収してしまうため(モジュール docstring の実測表)。</p>
+<p><code style="color:#22d3bf">mode</code> ist eines von <code style="color:#22d3bf">ALIGN_MODES</code>. <b>Ähnlichkeit (Skalenschätzung) wird nicht angeboten</b> -- denn sie würde den Größenfehler selbst absorbieren (Messtabelle im Modul-docstring).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(aligned (N, 2), info)</code>。<code style="color:#22d3bf">info</code> は <code style="color:#22d3bf">mode</code> / <code style="color:#22d3bf">angle_deg</code> /</p>
-<p><code style="color:#22d3bf">translation</code> / <code style="color:#22d3bf">scale</code>(常に 1.0。<b>推定していないことの明示</b>)。</p>
+<p><code style="color:#22d3bf">(aligned (N, 2), info)</code>. <code style="color:#22d3bf">info</code> enthält <code style="color:#22d3bf">mode</code> / <code style="color:#22d3bf">angle_deg</code> /</p>
+<p><code style="color:#22d3bf">translation</code> / <code style="color:#22d3bf">scale</code> (immer 1.0, <b>als ausdrücklicher Hinweis, dass nicht geschätzt wurde</b>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">Leitfaden zur Familie profile_metrology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_perturb(contour, kind=&#x27;thicken&#x27;, amount=0.001, extent=0.1, cycles=6.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import profileops; profileops.profile_perturb(contour, kind=&#x27;thicken&#x27;, amount=0.001, extent=0.1, cycles=6.0)</code>; aus dem Register: <code style="color:#22d3bf">opsprofile.get(&quot;profile_perturb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt eine Kontur mit eingefügten Defekten bekannter Größe zurück. <code style="color:#22d3bf">PERTURB_KINDS</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>これが無い形状検査は、静かに合格を出す</b>。0.001 翼弦の厚み増を入れて、検出器がそれを 0.001 として返すかを確かめるために使う。</p>
+<p><b>Eine Formprüfung ohne dies besteht stillschweigend</b>. Damit fügt man eine Dickenzunahme von 0.001 Sehne ein und prüft, ob der Detektor sie als 0.001 zurückgibt.</p>
 <p>Args:</p>
-<p>contour: 元の輪郭。</p>
-<p>kind: 欠陥の種類。</p>
-<p>amount: 大きさ(翼弦比)。<code style="color:#22d3bf">&quot;twist&quot;</code> だけは度。</p>
-<p>extent: <code style="color:#22d3bf">&quot;le_erosion&quot;</code> が及ぶ弦方向の範囲。</p>
-<p>cycles: <code style="color:#22d3bf">&quot;waviness&quot;</code> の波数。</p>
+<p>contour: die ursprüngliche Kontur.</p>
+<p>kind: Art des Defekts.</p>
+<p>amount: Größe (Verhältnis zur Sehne). Nur <code style="color:#22d3bf">&quot;twist&quot;</code> ist in Grad.</p>
+<p>extent: Bereich in Sehnenrichtung, über den <code style="color:#22d3bf">&quot;le_erosion&quot;</code> reicht.</p>
+<p>cycles: Anzahl der Wellen von <code style="color:#22d3bf">&quot;waviness&quot;</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">Leitfaden zur Familie profile_metrology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

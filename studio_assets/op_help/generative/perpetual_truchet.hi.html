@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_truchet(cols: &#x27;int&#x27; = 16, rows: &#x27;int&#x27; = 12, cell: &#x27;int&#x27; = 34, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_truchet(cols: &#x27;int&#x27; = 16, rows: &#x27;int&#x27; = 12, cell: &#x27;int&#x27; = 34, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_truchet&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Truchet tile — 2 quarter-circle (1/4 वृत्त) चाप की दिशा केवल random करने से ही बिना टूटे curve का जाल बन जाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>不変量: 弧の端点は<b>必ず辺の中点</b>に来るので、隣とどう組んでも接続が切れない。</p>
+<p>invariant: arc के छोर <b>हमेशा किनारे के मध्य-बिंदु</b> पर आते हैं, इसलिए पड़ोसी से कैसे भी जोड़ें, जुड़ाव नहीं टूटता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

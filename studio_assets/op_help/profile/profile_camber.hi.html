@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_camber(contour, n=101)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_camber(contour, n=101)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_camber&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>camber line (ऊपरी और निचली सतह के बीच की रेखा)। <code style="color:#22d3bf">(n, 2)</code> के रूप में <code style="color:#22d3bf">(x, yc)</code> लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★<b>定義の差を承知で使うこと</b>。ここが返すのは「弦の各位置での上下面の中点」で、NACA が翼型を<b>作るときに使う</b>キャンバー線(厚みを法線方向に載せる前の中心線)とは厳密には別物です。加えて弦の取り方も違う —— 幾何的な弦は「後縁の中点から最も遠い点」を前縁とするので、キャンバーのある翼では生成座標の原点からわずかにずれ、弦が 0.1 度ほど傾きます。</p>
-<p>実測(閉形式の最大キャンバー比 対 本 op の返り):</p>
-<p>==========  ==========  ==========  ==========</p>
-<p>翼型        閉形式      実測        比</p>
-<p>==========  ==========  ==========  ==========</p>
-<p>NACA 0012   0.0000      0.00001     ——</p>
-<p>NACA 2412   0.0200      0.01882     0.94</p>
-<p>NACA 4412   0.0400      0.03786     0.95</p>
-<p>==========  ==========  ==========  ==========</p>
-<p><b>対称翼で 0 になること</b>は確認済み(0.00001)。有翼で 5-6 % 低く出るのは上の定義差で、実装の誤りではありません。設計値と比べるときは、同じ定義で測った基準形状(<code style="color:#22d3bf">profile_synth_naca4</code> の出力)と比べること —— <code style="color:#22d3bf">profile_deviation</code> はまさにそれをします。</p>
+<p>★<b>definition के अंतर को जानते हुए इस्तेमाल करें</b> । यह जो लौटाता है वह &quot;chord की हर position पर upper और lower surface का मध्यबिंदु&quot; है, जो NACA द्वारा airfoil <b>बनाते समय इस्तेमाल होने वाली</b> camber line (normal दिशा में मोटाई चढ़ाने से पहले की centerline) से सख्ती से कहें तो अलग चीज़ है। इसके अलावा chord लेने का तरीका भी अलग है -- geometric chord &quot;trailing edge के मध्यबिंदु से सबसे दूर के point&quot; को leading edge मानता है, इसलिए camber वाले airfoil में यह generating coordinates के origin से थोड़ा खिसक जाता है, और chord लगभग 0.1 degree झुक जाता है।</p>
+<p>मापा गया (closed form का अधिकतम camber अनुपात बनाम इस op का return):</p>
+<p>==========  ===========  ==========  ==========</p>
+<p>airfoil     closed form  measured    ratio</p>
+<p>==========  ===========  ==========  ==========</p>
+<p>NACA 0012   0.0000       0.00001     ——</p>
+<p>NACA 2412   0.0200       0.01882     0.94</p>
+<p>NACA 4412   0.0400       0.03786     0.95</p>
+<p>==========  ===========  ==========  ==========</p>
+<p><b>symmetric airfoil पर 0 आना</b> पुष्ट है (0.00001)। camber वाले airfoil में 5-6 % कम आना ऊपर बताए definition के अंतर से है, implementation की गलती नहीं। design मानों से तुलना करते समय, उसी definition से मापे गए reference shape (<code style="color:#22d3bf">profile_synth_naca4</code> का output) से तुलना करें -- <code style="color:#22d3bf">profile_deviation</code> ठीक यही करता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

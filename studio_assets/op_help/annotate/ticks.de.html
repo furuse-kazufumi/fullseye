@@ -4,12 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ticks(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, tick_len=5, label=True, label_fmt=&#x27;{:g}&#x27;, font_size=11, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None, style=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.ticks(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, tick_len=5, label=True, label_fmt=&#x27;{:g}&#x27;, font_size=11, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None, style=None)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;ticks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Teilstriche und ihre Werte. <b>Die Positionen sind geschlossene Form</b> (<code style="color:#22d3bf">data_to_pixel</code> selbst).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>目盛りは枠の<b>外側</b>へ <code style="color:#22d3bf">tick_len</code> px 出す。ラベルは目盛りの外側に置くので、</p>
-<p>軸の周りに余白が無ければ <code style="color:#22d3bf">text_box</code> の境界検査が例外にする(= 図の外に文字が消える事故が起きない)。</p>
+<p>Skalenstriche ragen <code style="color:#22d3bf">tick_len</code> px nach <b>außen</b> über den Rahmen. Labels sitzen außerhalb der Striche, daher löst die Randprüfung von <code style="color:#22d3bf">text_box</code> eine Exception aus, wenn um die Achsen kein Rand frei ist (= der Unfall, dass Text außerhalb der Abbildung verschwindet, kann nicht passieren).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>tick_len が負、ラベルが画像に収まらない。</p>
+<p>tick_len negativ, Labels passen nicht ins Bild.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

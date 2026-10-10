@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_dimension_layout(p0, p1, offset=20.0, extension=6.0, text_gap=8.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_dimension_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표(dict)를 돌려줍니다: 치수선의 기하(치수선·보조선·글자 위치)를 닫힌 식으로.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">n</code> を p0→p1 の左法線(画面座標)として、寸法線は <code style="color:#22d3bf">p + n*offset</code>、補助線は <code style="color:#22d3bf">p</code> から <code style="color:#22d3bf">p + n*(offset+extension)</code>、文字は寸法線の中点から <code style="color:#22d3bf">n*text_gap</code>。<code style="color:#22d3bf">offset</code> の符号で側を選ぶ。</p>
+<p><code style="color:#22d3bf">n</code>을 p0→p1의 왼쪽 법선(화면 좌표)으로 하여, 치수선은 <code style="color:#22d3bf">p + n*offset</code>, 보조선은 <code style="color:#22d3bf">p</code>에서 <code style="color:#22d3bf">p + n*(offset+extension)</code>, 글자는 치수선의 중점에서 <code style="color:#22d3bf">n*text_gap</code>. <code style="color:#22d3bf">offset</code>의 부호로 쪽을 고른다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;p0&quot;,&quot;p1&quot;,&quot;line&quot;:(q0,q1),&quot;ext0&quot;,&quot;ext1&quot;,&quot;text_xy&quot;,&quot;normal&quot;, &quot;angle_deg&quot;,&quot;length_px&quot;}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;p0&quot;,&quot;p1&quot;,&quot;line&quot;:(q0,q1),&quot;ext0&quot;,&quot;ext1&quot;,&quot;text_xy&quot;,&quot;normal&quot;, &quot;angle_deg&quot;,&quot;length_px&quot;}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>2 点が一致(向きが無い)、非有限、offset が 0。</p>
+<p>2점이 일치(방향이 없음), 비유한, offset이 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

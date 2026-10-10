@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_score(voxel_a, voxel_b)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.correlation_score(voxel_a, voxel_b)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;correlation_score&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>兩個 <code style="color:#22d3bf">voxel</code> → 正規化互相關的 <code style="color:#22d3bf">score</code> 體。<b>該型別的唯一入口</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">score</code> は <code style="color:#22d3bf">refine_peak_newton</code> が食う型だが、<b>台帳のどの op も <code style="color:#22d3bf">score</code> を産まなかった</b>(実測。生成器の種を置いてようやく到達していた)。ここでは FFT による循環相互相関を返す:</p>
+<p><code style="color:#22d3bf">score</code> 是 <code style="color:#22d3bf">refine_peak_newton</code> 消費的型別,但<b>台帳中沒有任何 op 產生 <code style="color:#22d3bf">score</code></b>(實測。放置產生器種子後才終於到達)。這裡回傳以 FFT 計算的循環互相關:</p>
 <p>score[s] = sum_x (a[x] - mean_a) * (b[x + s] - mean_b) / (N * std_a * std_b)</p>
-<p>したがって <code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">a</code> を <code style="color:#22d3bf">s0</code> だけ <code style="color:#22d3bf">np.roll</code> したものなら、ピークは<b>厳密に</b> <code style="color:#22d3bf">s0</code> に立つ(閉形式の真値。テストがこれを使う)。循環相関なので端は巻き込む —— <b>打ち切り相関ではない</b>ことを明記しておく。</p>
+<p>因此若 <code style="color:#22d3bf">b</code> 是把 <code style="color:#22d3bf">a</code> 以 <code style="color:#22d3bf">np.roll</code> 平移 <code style="color:#22d3bf">s0</code> 得到的, 峰值會<b>嚴格地</b>立在 <code style="color:#22d3bf">s0</code>(閉合式真值。測試使用了這一點)。由於是循環相關,邊緣會捲入 —— 特此註明這<b>不是截斷相關</b>。</p>
 <p>Args:</p>
 <p>voxel_a: (D, H, W)。</p>
-<p>voxel_b: (D, H, W)、<code style="color:#22d3bf">voxel_a</code> と同形。</p>
+<p>voxel_b: (D, H, W),與 <code style="color:#22d3bf">voxel_a</code> 同形。</p>
 <p>Returns:</p>
-<p>(D, H, W) float64、値域は概ね [-1, 1] (完全一致で 1.0)。</p>
+<p>(D, H, W) float64,值域大致為 [-1, 1] (完全一致時為 1.0)。</p>
 <p>Raises:</p>
-<p>ValueError: 3-D でない / 形が違う / 定数体積(標準偏差 0)/ 非有限。</p>
+<p>ValueError: 不是 3-D / 形狀不同 / 常數體積(標準差 0)/ 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_boundary_membrane_gap(labels, membrane, tau: &#x27;float&#x27; = 0.2, min_len: &#x27;int&#x27; = 60, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import emproof; emproof.seg_boundary_membrane_gap(labels, membrane, tau: &#x27;float&#x27; = 0.2, min_len: &#x27;int&#x27; = 60, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsemproof.get(&quot;seg_boundary_membrane_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>疑似分割</b>：相邻两个标签的边界像素中，膜响应低于 <code style="color:#22d3bf">tau</code> 的比例。每个相邻对一行。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>細胞の境目には必ず膜(暗い線)がある。膜が無いのにラベルが変わる境界は、1 細胞を 2 つに切った分断の跡(<code style="color:#22d3bf">seg_inject_split</code> の直線はまさにこれ)。4 近傍で異ラベルが接する画素を数え、境界の膜応答は両側の強い方をとる。CREMI sample A の試作で人工分断 vs 他: <b>AUC 0.99</b>(tau 0.2、境界長 ≥ 60)。</p>
-<p>列: <code style="color:#22d3bf">label_a</code> / <code style="color:#22d3bf">label_b</code>(a &lt; b)/ <code style="color:#22d3bf">length</code> / <code style="color:#22d3bf">gap_fraction</code> / <code style="color:#22d3bf">membrane_mean</code>(gap_fraction 降順)。<code style="color:#22d3bf">min_len</code> px 未満の短い境界は数えない(数画素の接触は膜の有無を言えない)。</p>
+<p>细胞的分界处必定有膜(暗线)。没有膜而标签却变化的边界,是把 1 个细胞切成 2 个的分割痕迹(<code style="color:#22d3bf">seg_inject_split</code> 的直线正是如此)。统计 4 邻域中不同标签相接的像素,边界的膜响应取两侧中较强的一方。在 CREMI sample A 的原型上,人工分割 vs 其他:<b>AUC 0.99</b>(tau 0.2,边界长 ≥ 60)。</p>
+<p>列:<code style="color:#22d3bf">label_a</code> / <code style="color:#22d3bf">label_b</code>(a &lt; b)/ <code style="color:#22d3bf">length</code> / <code style="color:#22d3bf">gap_fraction</code> / <code style="color:#22d3bf">membrane_mean</code>(按 gap_fraction 降序)。短于 <code style="color:#22d3bf">min_len</code> px 的边界不计(几个像素的接触无法判断有无膜)。</p>
 <p>&gt;&gt;&gt; table = seg_boundary_membrane_gap(labels, seg_membrane_response(raw))</p>
-<p>&gt;&gt;&gt; table[&quot;label_a&quot;][0], table[&quot;label_b&quot;][0], table[&quot;gap_fraction&quot;][0]   # いちばん怪しい対</p>
+<p>&gt;&gt;&gt; table[&quot;label_a&quot;][0], table[&quot;label_b&quot;][0], table[&quot;gap_fraction&quot;][0]   # 最可疑的一对</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

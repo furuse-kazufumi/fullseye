@@ -4,17 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_image2d(pairs, shape=(64, 64))</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_image2d(pairs, shape=(64, 64))</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>जोड़े <code style="color:#22d3bf">(N,2)</code> → scatter-density image <code style="color:#22d3bf">(H, W)</code>। <code style="color:#22d3bf">pairs</code> से 3रा निकास।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>列 0 を行方向、列 1 を列方向に、それぞれの最小-最大で正規化して bin へ落とす(2-D ヒストグラム)。位相図・相関図として見るためのもので、<b>不可逆</b> (bin 幅ぶんの量子化 + 正規化で絶対値のスケールを捨てる)。捨てたスケールは戻せるように <code style="color:#22d3bf">extent</code> を…返さない —— 返すと <code style="color:#22d3bf">image2d</code></p>
-<p>でなくなる。必要なら <code style="color:#22d3bf">pairs_to_table</code> の <code style="color:#22d3bf">x_min</code> などを使う。</p>
-<p>定数列(最小 == 最大)は 0.5 の位置へ集める(0 除算を避けるが、それを「密度が中央に集中している」と読まれないよう、bin は 1 本だけ立つ)。</p>
+<p>column 0 को row direction में और column 1 को column direction में रखकर, हर एक को उसके अपने min-max से normalise करता है और bin में डालता है (2-D histogram)। यह phase plot या correlation plot के रूप में देखने के लिए है, और <b>अपरिवर्तनीय (irreversible)</b> है (bin width जितना quantization + normalisation absolute value का scale छोड़ देते हैं)। छोड़े गए scale को वापस पाने के लिए <code style="color:#22d3bf">extent</code> ... नहीं लौटाया जाता -- लौटाने पर यह <code style="color:#22d3bf">image2d</code> नहीं रहेगा। ज़रूरत हो तो <code style="color:#22d3bf">pairs_to_table</code> का <code style="color:#22d3bf">x_min</code> आदि इस्तेमाल करें।</p>
+<p>constant column (min == max) को 0.5 की position पर इकट्ठा करता है (0 से भाग से बचता है, लेकिन ताकि इसे &quot;density केंद्र में केंद्रित है&quot; न पढ़ा जाए, केवल 1 bin खड़ा होता है)।</p>
 <p>Args:</p>
-<p>pairs: (N, 2)。</p>
-<p>shape: (H, W)。</p>
+<p>pairs: (N, 2)।</p>
+<p>shape: (H, W)।</p>
 <p>Returns:</p>
-<p>(H, W) float64、最大値 1.0 に正規化した密度。</p>
+<p>(H, W) float64, अधिकतम मान 1.0 पर normalise की गई density।</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限 / shape が上限超。</p>
+<p>ValueError: गलत shape / non-finite / shape सीमा से अधिक।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

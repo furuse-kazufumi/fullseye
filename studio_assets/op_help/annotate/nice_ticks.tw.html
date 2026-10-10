@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.nice_ticks(lo, hi, n=5, scale=&#x27;linear&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;nice_ticks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>涵蓋 [lo, hi] 的「取整」刻度值(1/2/5 × 10^k,<b>閉合式</b>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>端は<b>含める</b>(<code style="color:#22d3bf">lo</code> や <code style="color:#22d3bf">hi</code> がちょうど目盛りに乗るなら必ず出る)。浮動小数の丸めで端が 1 個落ちる off-by-one を避けるため、判定には <code style="color:#22d3bf">step*1e-9</code> の許容を使う。</p>
-<p><code style="color:#22d3bf">scale=&#x27;log&#x27;</code> では 1/2/5 × 10^k の<b>十進の刻み</b>を返す(等間隔の刻みを log 軸に置くと、目盛りが右へ行くほど潰れて読めなくなる)。</p>
+<p>端點<b>包含在內</b>(<code style="color:#22d3bf">lo</code> 或 <code style="color:#22d3bf">hi</code> 恰好落在刻度上時必定出現)。為避免浮點捨入導致端點少 1 個的 off-by-one,判定時使用 <code style="color:#22d3bf">step*1e-9</code> 的容差。</p>
+<p><code style="color:#22d3bf">scale=&#x27;log&#x27;</code> 時回傳 1/2/5 × 10^k 的<b>十進刻度</b>(若把等間隔刻度放在 log 軸上,刻度越往右越擠,直至無法閱讀)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>lo == hi、非有限、n &lt; 1、log で lo か hi が 0 以下。</p>
+<p>lo == hi、非有限、n &lt; 1、log 時 lo 或 hi 在 0 以下。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

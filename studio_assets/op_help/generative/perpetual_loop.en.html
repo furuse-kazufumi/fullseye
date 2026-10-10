@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_loop(kind: &#x27;str&#x27; = &#x27;harmonograph&#x27;, frames: &#x27;int&#x27; = 48, size: &#x27;int&#x27; = 360, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import perpetual; perpetual.perpetual_loop(kind: &#x27;str&#x27; = &#x27;harmonograph&#x27;, frames: &#x27;int&#x27; = 48, size: &#x27;int&#x27; = 360, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_loop&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Creates a <b>seamless looping video</b> → <code style="color:#22d3bf">rgbvideo</code> (T,H,W,3).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>★循環を「最後に頭へ戻す」で作らない。時間依存の量を<b>すべて θ の関数</b>にして θ = 2πt/T を回すと、t = T は t = 0 と<b>同じ式</b>になる —— つまり継ぎ目は最初から存在しない。これは編集で消す種類のものではなく、<b>構成から従う</b>。<code style="color:#22d3bf">perpetual_loop_seam</code> がその継ぎ目を数で出す(厳密に 0 になる)。</p>
-<p><code style="color:#22d3bf">frames</code> コマ返す(t = 0 .. T-1)。t = T は t = 0 と一致するので含めない。</p>
+<p>★The loop is not made by &quot;returning to the start at the end&quot;. Make every time-dependent quantity <b>a function of θ</b> and rotate θ = 2πt/T; then t = T is <b>the same formula</b> as t = 0 -- that is, the seam never exists in the first place. This is not something removed by editing; it <b>follows from the construction</b>. <code style="color:#22d3bf">perpetual_loop_seam</code> reports that seam as a number (it comes out exactly 0).</p>
+<p>Returns <code style="color:#22d3bf">frames</code> frames (t = 0 .. T-1). t = T coincides with t = 0, so it is not included.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

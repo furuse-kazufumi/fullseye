@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rgb_to_xyz(rgb)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.rgb_to_xyz(rgb)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;rgb_to_xyz&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>sRGB(<code style="color:#22d3bf">(..., 3)</code>)→ CIE XYZ. 전달 함수를 먼저 벗긴 뒤 행렬을 곱합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>手順: <code style="color:#22d3bf">srgb_to_linear</code> で整数 dtype を <code style="color:#22d3bf">[0, 1]</code> に正規化しつつ伝達関数を外し(IEC 61966-2-1)、線形 RGB に sRGB(D65)→XYZ の 3x3 行列を掛ける。白 <code style="color:#22d3bf">(1, 1, 1)</code> は <code style="color:#22d3bf">(0.9505, 1.0, 1.0890)</code> に写る(Y を 1 に正規化した尺度)。</p>
-<p style="margin:2px 0 2px 12px">• 入力: 最後の軸が 3 なら形は任意(<code style="color:#22d3bf">(3,)</code> の 1 色、<code style="color:#22d3bf">(N, 3)</code> の色表、<code style="color:#22d3bf">(H, W, 3)</code> の画像)。整数 dtype(uint8/uint16 など)は dtype の最大値で割る。float は <code style="color:#22d3bf">[0, 1]</code> に収まっていなければ <code style="color:#22d3bf">MetricContractError</code>(<code style="color:#22d3bf">ValueError</code> の部分型)。ガンマを外した線形値を渡すと二重にガンマを外すので注意。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: 最後の軸が 3 でない / float が <code style="color:#22d3bf">[0, 1]</code> の外 / 非有限。</p>
-<p>次に <code style="color:#22d3bf">xyz_to_lab</code> を繋ぐのが常道(まとめて <code style="color:#22d3bf">rgb_to_lab</code>)。</p>
+<p>절차: <code style="color:#22d3bf">srgb_to_linear</code>로 정수 dtype을 <code style="color:#22d3bf">[0, 1]</code>로 정규화하면서 전달 함수를제거하고(IEC 61966-2-1), 선형 RGB에 sRGB(D65)→XYZ의 3x3 행렬을 곱한다. 흰색 <code style="color:#22d3bf">(1, 1, 1)</code>은 <code style="color:#22d3bf">(0.9505, 1.0, 1.0890)</code>에 사상된다(Y를 1로 정규화한 척도).</p>
+<p style="margin:2px 0 2px 12px">• 입력: 마지막 축이 3이면 형태는 임의(<code style="color:#22d3bf">(3,)</code>의 1색, <code style="color:#22d3bf">(N, 3)</code>의 색표, <code style="color:#22d3bf">(H, W, 3)</code>의 영상). 정수 dtype(uint8/uint16 등)은 dtype의 최댓값으로 나눈다. float는 <code style="color:#22d3bf">[0, 1]</code>에 들어 있지 않으면 <code style="color:#22d3bf">MetricContractError</code>(<code style="color:#22d3bf">ValueError</code> 의 하위 형). 감마를 제거한 선형값을 넘기면 감마를 이중으로 제거하므로 주의.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 입력과 같은 형태의 float64.</p>
+<p style="margin:2px 0 2px 12px">• 실패: 마지막 축이 3이 아님 / float가 <code style="color:#22d3bf">[0, 1]</code> 밖 / 비유한.</p>
+<p>다음에 <code style="color:#22d3bf">xyz_to_lab</code>을 잇는 것이 정석(합쳐서 <code style="color:#22d3bf">rgb_to_lab</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

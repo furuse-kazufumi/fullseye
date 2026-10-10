@@ -4,24 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import blob2d; blob2d.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsblob.get(&quot;blob_seeds&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>h-maxima 시드. <b><code style="color:#22d3bf">h</code>는 <code style="color:#22d3bf">distance</code>와 같은 단위의 절댓값</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>「高さ <code style="color:#22d3bf">h</code> 以上そびえている極大」だけを残し、連結成分に番号を振って返す。融合した塊を割るときの種として使う。</p>
-<p><b>既存の <code style="color:#22d3bf">fs.op.xsk2_h_maxima</code> と違う点</b>(<code style="color:#22d3bf">poc_cell_counting</code> が</p>
-<p>記録した穴):</p>
-<p style="margin:2px 0 2px 12px">• あちらは入力を <code style="color:#22d3bf">[0, 1]</code> に<b>切り詰める</b>ので、生の距離マップを渡すと壊れる(2 px も 20 px も 1.0 になる)。ここは切り詰めない。</p>
-<p style="margin:2px 0 2px 12px">• あちらの <code style="color:#22d3bf">h</code> は <code style="color:#22d3bf">0.05 + 0.3a</code> = <b>正規化画像に対する比</b>なので、画像に大きい物体が 1 つ入るだけで小さい物体側の実効 <code style="color:#22d3bf">h</code> が上がる(実測で下限が 0.42 → 0.80 px へ動いた)。ここは画素(または物理単位)。</p>
-<p><b>速さ</b>: 再構成は<b>連結成分ごとの外接箱の中でだけ</b>回す。背景を通る伝播が消えるので、512x512 に 200 個の円で <b>237.7 ms → 15.3 ms(15.5 倍)</b>、結果は全画素一致(2026-09-06 実測)。</p>
+<p>&quot;높이 <code style="color:#22d3bf">h</code> 이상 솟은 극대&quot;만 남기고, 연결 성분에 번호를 매겨 반환한다. 융합된 덩어리를 나눌 때의 씨앗으로 쓴다.</p>
+<p><b>기존 <code style="color:#22d3bf">fs.op.xsk2_h_maxima</code> 와 다른 점</b>(<code style="color:#22d3bf">poc_cell_counting</code> 이기록한 구멍):</p>
+<p style="margin:2px 0 2px 12px">• 그쪽은 입력을 <code style="color:#22d3bf">[0, 1]</code> 로 <b>잘라 버리므로</b>, 원시 거리 맵을 넘기면망가진다(2 px 도 20 px 도 1.0 이 된다). 여기는 자르지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 그쪽의 <code style="color:#22d3bf">h</code> 는 <code style="color:#22d3bf">0.05 + 0.3a</code> = <b>정규화 영상에 대한 비</b>이므로, 영상에 큰 물체가 1 개 들어오기만 해도 작은 물체 쪽의 실효 <code style="color:#22d3bf">h</code> 가 올라간다(실측으로 하한이 0.42 → 0.80 px 로 움직였다). 여기는 화소(또는 물리 단위).</p>
+<p><b>속도</b>: 재구성은 <b>연결 성분마다 외접 상자 안에서만</b> 돌린다. 배경을 통한전파가 사라지므로, 512x512 에 200 개의 원으로 <b>237.7 ms → 15.3 ms(15.5 배)</b>, 결과는 전 화소 일치(2026-09-06 실측).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>distance : array_like</p>
-<p>2-D の実数場。ふつうは <code style="color:#22d3bf">blob_distance</code> の出力。</p>
+<p>2-D 실수장. 보통은 <code style="color:#22d3bf">blob_distance</code> 의 출력.</p>
 <p>h : float</p>
-<p>そびえの高さ。<code style="color:#22d3bf">distance</code> と同じ単位で、<b>0 より大きいこと</b>。</p>
-<p>大きくすると種が減る(= 割りすぎが減り、割り残しが増える)。</p>
+<p>솟은 높이. <code style="color:#22d3bf">distance</code> 와 같은 단위이며, <b>0 보다 커야 한다</b>.</p>
+<p>크게 하면 씨앗이 줄어든다(= 과분할이 줄고, 미분할이 늘어난다).</p>
 <p>connectivity : {4, 8}</p>
-<p>極大の連結の取り方。</p>
+<p>극대의 연결 방식.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">int32</code> のラベル画像(背景 0、種 1..n)。</p>
+<p><code style="color:#22d3bf">int32</code> 라벨 영상(배경 0, 씨앗 1..n).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

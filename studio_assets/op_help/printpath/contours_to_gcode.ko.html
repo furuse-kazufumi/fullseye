@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contours_to_gcode(contours: &#x27;Any&#x27;, z: &#x27;float&#x27;, layer: &#x27;int&#x27; = 0, layer_mm: &#x27;float&#x27; = 0.2, line_width_mm: &#x27;float&#x27; = 0.4, filament_mm: &#x27;float&#x27; = 1.75, feed_mm_min: &#x27;float&#x27; = 1800.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.contours_to_gcode(contours: &#x27;Any&#x27;, z: &#x27;float&#x27;, layer: &#x27;int&#x27; = 0, layer_mm: &#x27;float&#x27; = 0.2, line_width_mm: &#x27;float&#x27; = 0.4, filament_mm: &#x27;float&#x27; = 1.75, feed_mm_min: &#x27;float&#x27; = 1800.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;contours_to_gcode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>윤곽(<code style="color:#22d3bf">mesh_slice_contours</code>의 표)을 <b>둘레를 도는 경로의 표</b>로 만든다(<code style="color:#22d3bf">gcode_read</code>와 같은 열).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>最小のスライサ: 各輪を順に一周し、押し出し量は <code style="color:#22d3bf">線分長 × 線幅 × 層厚 / フィラメント断面積</code>。輪と輪の間は移動(e = 0)。真値つきの合成 G-code を作るための道具で、インフィルやリトラクトは持たない。</p>
+<p>최소한의 슬라이서: 각 고리를 차례로 한 바퀴 돌고, 압출량은 <code style="color:#22d3bf">선분 길이 × 선폭 × 층 두께 / 필라멘트 단면적</code>. 고리와 고리 사이는이동(e = 0). 참값 붙은 합성 G-code 를 만들기 위한 도구이며, 인필이나 리트랙트는 갖지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

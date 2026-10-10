@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import printpath; printpath.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsprintpath.get(&quot;stipple_points_from_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Maps grey levels to <b>point density</b> (weighted Lloyd = centroidal Voronoi). → <code style="color:#22d3bf">pairs</code></p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>暗いところに点が密に集まる。返るのは <code style="color:#22d3bf">(n_points, 2)</code> の <b>(row, col)</b>。</p>
-<p>引数:</p>
-<p>image: 明るさ <code style="color:#22d3bf">[0, 1]</code> の 2-D(または色。輝度に落とす)。</p>
-<p>n_points: 点の数。</p>
-<p>iterations: Lloyd の反復回数。</p>
-<p>gamma: 重みを <code style="color:#22d3bf">darkness ** gamma</code> にする(1 = 暗さそのまま)。</p>
-<p>floor: 重みの下限。<b>0 にしない</b> —— 真っ白な領域の重みが厳密に 0 だと</p>
-<p>そこへ入った点が動けず(重心が 0/0)、位置が入力に依らなくなる。</p>
-<p>seed: 初期配置の乱数。</p>
-<p>metric: いまは <code style="color:#22d3bf">&quot;euclidean&quot;</code> のみ。</p>
-<p>返り値のほかに、収束の様子は <code style="color:#22d3bf">stipple_points_from_image</code> を <code style="color:#22d3bf">iterations</code> を変えて呼び比べれば測れる(Lloyd のエネルギーは単調減少する)。</p>
-<p>★<b>真っ白な画像でも点は等間隔に散る</b>(密度が一定なら重心ボロノイは均等)。そこが「濃淡を読めている」ことの対照群になる。</p>
+<p>Points gather densely where it is dark. Returns <code style="color:#22d3bf">(n_points, 2)</code> as <b>(row, col)</b>.</p>
+<p>Args:</p>
+<p>image: 2-D brightness in <code style="color:#22d3bf">[0, 1]</code> (or colour; reduced to luminance).</p>
+<p>n_points: number of points.</p>
+<p>iterations: number of iterations of Lloyd.</p>
+<p>gamma: makes the weight <code style="color:#22d3bf">darkness ** gamma</code> (1 = darkness as is).</p>
+<p>floor: lower bound of the weight. <b>Do not set it to 0</b> -- if the weight of a pure-white region is exactly 0,</p>
+<p>points that enter it cannot move (centroid 0/0) and their positions stop depending on the input.</p>
+<p>seed: random numbers for the initial placement.</p>
+<p>metric: currently only <code style="color:#22d3bf">&quot;euclidean&quot;</code>.</p>
+<p>Besides the return value, convergence can be measured by calling <code style="color:#22d3bf">stipple_points_from_image</code> with different <code style="color:#22d3bf">iterations</code> and comparing (Lloyd&#x27;s energy decreases monotonically).</p>
+<p>★<b>Even on a pure-white image the points spread evenly</b> (with constant density, centroidal Voronoi is uniform). That serves as the control group for &quot;it can actually read tone&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

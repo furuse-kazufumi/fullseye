@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curvature_to_shape_index(curvature)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.curvature_to_shape_index(curvature)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;curvature_to_shape_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Hauptkrümmungen <code style="color:#22d3bf">(N,2)</code> → Formindex und Gekrümmtheit als <code style="color:#22d3bf">pairs (N,2)</code>. Der Ausgang aus <code style="color:#22d3bf">curvature</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Koenderink &amp; van Doorn, *Surface shape and curvature scales*, Image and Vision Computing 10(8) 1992 の (S, C):</p>
+<p>Das (S, C) von Koenderink &amp; van Doorn, *Surface shape and curvature scales*, Image and Vision Computing 10(8) 1992:</p>
 <p>S = (2/pi) * atan2(k1 + k2, k1 - k2)      (k1 &gt;= k2, S in [-1, 1])</p>
-<p>C = sqrt((k1^2 + k2^2) / 2)               (曲がりの大きさ)</p>
-<p><b>除算でなく atan2 で書いてある</b>のが要点で、球状臍点 (k1 == k2) でも平面 (k1 == k2 == 0) でもゼロ除算にならず、<code style="color:#22d3bf">shape_index_to_curvature</code> との往復が<b>全域で厳密</b>になる(実測 max|Δ| = 4.6e-16)。教科書の <code style="color:#22d3bf">atan((k1+k2)/(k1-k2))</code> をそのまま実装すると臍点で NaN が出て、その NaN が下流で「暗い画素」に化ける。</p>
-<p>S = -1 は杯、0 は鞍、+1 は帽子。C は形と独立な「どれだけ曲がっているか」。</p>
-<p><b>入力順の情報だけは戻らない</b>: (k2, k1) の順で渡しても内部で k1 &gt;= k2 へ並べ替えるので、往復すると必ず降順で返る(向きの規約であり、値の損失ではない)。</p>
+<p>C = sqrt((k1^2 + k2^2) / 2)               (Stärke der Krümmung)</p>
+<p>Der Kern ist, dass <b>es mit atan2 statt mit einer Division geschrieben ist</b>: Weder an einem Kugel-Nabelpunkt (k1 == k2) noch auf einer Ebene (k1 == k2 == 0) tritt eine Division durch null auf, und der Hin- und Rückweg mit <code style="color:#22d3bf">shape_index_to_curvature</code> ist <b>im ganzen Bereich exakt</b> (gemessen max|Δ| = 4.6e-16). Implementiert man das Lehrbuch- <code style="color:#22d3bf">atan((k1+k2)/(k1-k2))</code> unverändert, entsteht an Nabelpunkten NaN, und dieses NaN wird nachgelagert zu &quot;dunklen Pixeln&quot;.</p>
+<p>S = -1 ist eine Schale, 0 ein Sattel, +1 eine Kappe. C ist das formunabhängige &quot;wie stark es gekrümmt ist&quot;.</p>
+<p><b>Nur die Information über die Eingabereihenfolge kommt nicht zurück</b>: Auch in der Reihenfolge (k2, k1) übergeben, wird intern auf k1 &gt;= k2 umsortiert, daher kommt ein Hin- und Rückweg immer absteigend zurück (eine Konvention der Orientierung, kein Werteverlust).</p>
 <p>Args:</p>
-<p>curvature: (N, 2) の <code style="color:#22d3bf">[k1, k2]</code>、または 2 本の等長 1-D のタプル</p>
-<p>(<code style="color:#22d3bf">principal_curvatures</code> の素の返りがこれ)。</p>
+<p>curvature: (N, 2) <code style="color:#22d3bf">[k1, k2]</code> oder ein Tupel aus 2 gleich langen 1-D-Arrays</p>
+<p>(das ist die rohe Rückgabe von <code style="color:#22d3bf">principal_curvatures</code>).</p>
 <p>Returns:</p>
-<p>(N, 2) float64。列 0 = S in [-1, 1]、列 1 = C &gt;= 0。</p>
+<p>(N, 2) float64. Spalte 0 = S in [-1, 1], Spalte 1 = C &gt;= 0.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

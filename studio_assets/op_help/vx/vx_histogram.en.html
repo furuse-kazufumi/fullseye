@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_histogram(image, *, num_bins, offset, range_)</code> (to call the implementation directly, <code style="color:#22d3bf">import vxcore; vxcore.vx_histogram(image, *, num_bins, offset, range_)</code>; from the registry, <code style="color:#22d3bf">opsvx.get(&quot;vx_histogram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Histogram (Section 3.26): a pixel value I goes into the bin <code style="color:#22d3bf">i = (I − offset) × numBins / range</code> (offset ≤ I &lt; offset + range, REQ-0230). Pixels outside the range are not counted. The bin is determined by integer division (truncation).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返り値 <code style="color:#22d3bf">(num_bins, 2)</code> の pairs: 列 0 = 升の下端の画素値(offset + i·range/numBins)、列 1 = 数。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / num_bins・range_ が正でない / num_bins &gt; range_ / offset が負。</p>
+<p>Returns the pairs <code style="color:#22d3bf">(num_bins, 2)</code>: column 0 = pixel value at the lower edge of the bin (offset + i·range/numBins), column 1 = count.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not a 2-D U8 / num_bins or range_ not positive / num_bins &gt; range_ / offset negative.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

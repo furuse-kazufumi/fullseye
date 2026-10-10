@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import watershed3d; watershed3d.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;distance_peaks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>foreground distance transform के local maxima को <code style="color:#22d3bf">min_distance</code> NMS से छाँटकर बना int marker array लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">volops.vol_distance_transform</code> + <code style="color:#22d3bf">volops.vol_local_maxima</code> の薄い合成に、「極大座標→ラベル配列(1 物体 1 シード)」の後処理を足したもの(<code style="color:#22d3bf">watershed_vol</code> が内部で使うシード生成を単体で公開=可視化・検証用)。</p>
+<p><code style="color:#22d3bf">volops.vol_distance_transform</code> + <code style="color:#22d3bf">volops.vol_local_maxima</code> की पतली composition, और उसमें &quot;maxima coordinates → label array (1 object पर 1 seed)&quot; की post-processing जोड़ी गई है (<code style="color:#22d3bf">watershed_vol</code> जिस seed generation को भीतर इस्तेमाल करता है उसे अलग से उपलब्ध कराता है = visualisation और जाँच के लिए)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>binary : array_like</p>
-<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>bool या 0/1 का 3D foreground volume।</p>
 <p>min_distance : float</p>
-<p>採用シード間の最小ユークリッド距離(voxel)。物体間隔より小さく、物体内ノイズ極大の</p>
-<p>間隔より大きく取る。</p>
+<p>स्वीकार किए गए seeds के बीच न्यूनतम Euclidean दूरी (voxel)। इसे objects के बीच की दूरी से छोटा, और object के अंदर noise maxima की</p>
+<p>दूरी से बड़ा रखें।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>markers : ndarray(int32)</p>
-<p>binary と同形状。0=シード無し、1..k=各シードラベル。</p>
+<p>binary जैसा ही shape। 0 = कोई seed नहीं, 1..k = हर seed का label।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

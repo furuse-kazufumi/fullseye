@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_synth_naca4(code=&#x27;2412&#x27;, n=161, closed_te=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import profileops; profileops.profile_synth_naca4(code=&#x27;2412&#x27;, n=161, closed_te=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprofile.get(&quot;profile_synth_naca4&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>NACA 4자리 익형을 닫힌 식으로 생성한다. 반환값은 <code style="color:#22d3bf">(N, 2)</code>의 한붓그리기 윤곽.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">code</code> は 4 桁(例 <code style="color:#22d3bf">&quot;2412&quot;</code> = キャンバー 2 %、位置 40 %、厚み 12 %)。点は前縁を密にするために余弦分布で置く。</p>
-<p><code style="color:#22d3bf">closed_te</code> は後縁を閉じる係数を使うかどうか。<b>既定は歴史的な係数</b> (0.1015)で、後縁がわずかに開く。閉じる版は 0.1036。どちらを使ったかで後縁付近の計測が変わるので、真値として使うなら固定して書き残すこと。</p>
+<p><code style="color:#22d3bf">code</code> 는 4 자리(예 <code style="color:#22d3bf">&quot;2412&quot;</code> = 캠버 2 %, 위치 40 %, 두께 12 %). 점은 앞전을 조밀하게 하기 위해 코사인 분포로 배치한다.</p>
+<p><code style="color:#22d3bf">closed_te</code> 는 뒷전을 닫는 계수를 쓸지 여부. <b>기본값은 역사적인 계수</b> (0.1015)이며, 뒷전이 약간 열린다. 닫는 버전은 0.1036. 어느 쪽을 썼는지에 따라뒷전 부근의 계측이 달라지므로, 참값으로 쓴다면 고정하고 기록해 둘 것.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(2*n-1, 2)</code>。後縁 → 上面 → 前縁 → 下面 → 後縁 の順(Selig 流)。</p>
+<p><code style="color:#22d3bf">(2*n-1, 2)</code>. 뒷전 → 윗면 → 앞전 → 아랫면 → 뒷전 순서(Selig 방식).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

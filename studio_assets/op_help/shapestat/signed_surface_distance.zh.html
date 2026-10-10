@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;signed_surface_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>查询点到曲面的<b>带符号</b>距离。→ <code style="color:#22d3bf">(N,)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>符号は面の法線から決める(外側が正)。1-D の輪郭には <code style="color:#22d3bf">profileops.profile_deviation</code> があるのに 3-D に相当が無かった、というのが 2026-09-06 に PoC が出した穴。</p>
-<p>法線を省くと <code style="color:#22d3bf">normals_orient.estimate_oriented_normals</code> で推定する —— <b>向き付き</b>でなければ符号が点ごとにばらつく(素の PCA 法線は符号が任意で、回転すると 4 割が裏返る。<code style="color:#22d3bf">pointcloud.fpfh</code> が踏んだのと同じ穴)。</p>
-<p><code style="color:#22d3bf">k</code> は符号を決めるときに使う最近傍の数。1 だと最近傍 1 点の法線に賭けることになり、雑音のある面では符号が飛ぶ。2 以上にすると距離で重みを付けた平均の向きで決める(距離そのものは最近傍のまま)。</p>
+<p>符号由面的法线决定(外侧为正)。1-D 轮廓有 <code style="color:#22d3bf">profileops.profile_deviation</code>，而 3-D 却没有相应的东西 —— 这是 2026-09-06 PoC 暴露出的漏洞。</p>
+<p>省略法线时用 <code style="color:#22d3bf">normals_orient.estimate_oriented_normals</code> 估计 —— <b>若不带朝向</b>，符号会逐点散乱(朴素的 PCA 法线符号任意，旋转后 4 成会翻面。与 <code style="color:#22d3bf">pointcloud.fpfh</code> 踩过的是同一个坑)。</p>
+<p><code style="color:#22d3bf">k</code> 是确定符号时使用的最近邻个数。为 1 时就是押注于最近邻 1 点的法线，在有噪声的面上符号会跳变。设为 2 以上时，按距离加权的平均朝向来决定(距离本身仍取最近邻)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

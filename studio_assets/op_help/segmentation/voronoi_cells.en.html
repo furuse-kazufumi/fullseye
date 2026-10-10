@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import segworld; segworld.voronoi_cells(seeds, size) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;voronoi_cells&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Voronoi partition of seeds inside a rectangle, returned as polygons with areas and internal edge lengths (brute-force half-planes, O(n^2)) (voronoi_cells).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返り値: <code style="color:#22d3bf">polygons</code>(多角形の列、各 (k, 2) [y, x])、<code style="color:#22d3bf">areas</code>(靴紐)、<code style="color:#22d3bf">edge_length_total</code>(内部の辺の長さの和)、<code style="color:#22d3bf">n_edges</code>(内部の辺の数)、<code style="color:#22d3bf">perimeter_internal</code> (n,)(各セルの内部の辺の長さ)。</p>
+<p>Returns: <code style="color:#22d3bf">polygons</code> (list of polygons, each (k, 2) [y, x]), <code style="color:#22d3bf">areas</code> (shoelace), <code style="color:#22d3bf">edge_length_total</code> (sum of internal edge lengths), <code style="color:#22d3bf">n_edges</code> (number of internal edges), <code style="color:#22d3bf">perimeter_internal</code> (n,) (internal edge length of each cell).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

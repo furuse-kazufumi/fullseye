@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_image2d(score, axis=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.score_to_image2d(score, axis=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">score</code> volume → maximum intensity projection <code style="color:#22d3bf">image2d</code>। <code style="color:#22d3bf">score</code> से 2रा निकास।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>指定軸に沿った最大値投影(MIP)。<b>一方向</b>。相関ピークが「どの面から見ても 1 本に見えるか」を確かめるのに使う —— 2 本見えたら対応が曖昧という意味。</p>
+<p>दिए गए axis के साथ maximum intensity projection (MIP)। <b>एकतरफ़ा (one-way)</b>। यह जाँचने के लिए कि correlation peak &quot;हर face से 1 ही दिखता है या नहीं&quot; -- 2 दिखें तो correspondence अस्पष्ट है।</p>
 <p>Args:</p>
-<p>score: (D, H, W)。</p>
-<p>axis: 潰す軸(0/1/2)。</p>
+<p>score: (D, H, W)।</p>
+<p>axis: दबाया जाने वाला axis (0/1/2)।</p>
 <p>Returns:</p>
-<p>(H, W) 等の 2-D float64。</p>
+<p>(H, W) जैसा 2-D float64।</p>
 <p>Raises:</p>
-<p>ValueError: 3-D でない / axis が範囲外 / 非有限。</p>
+<p>ValueError: 3-D नहीं / axis range से बाहर / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

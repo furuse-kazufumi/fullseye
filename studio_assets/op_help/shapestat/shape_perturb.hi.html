@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;shape_perturb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>shape पर 1 <b>ज्ञात</b> deformation लगाता है। → <code style="color:#22d3bf">(N, 3)</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p><code style="color:#22d3bf">mode</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;bulge&quot;</code>  —— *center* のまわりをガウス重みで外向きに膨らませる。片側だけに入れれば左右非対称性の真値になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;shift&quot;</code>  —— *center* 方向へ一様に平行移動(Procrustes が消す成分)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;scale&quot;</code>  —— 一様拡大(<code style="color:#22d3bf">scaling=True</code> の Procrustes が消す成分)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;noise&quot;</code>  —— 等方ガウス雑音(どの手法でも消えない床)。</p>
-<p>「Procrustes が消してくれる変形」と「消してはいけない変形」を分けて試せるように 4 つ置いてある。位置合わせの検算はこの区別が要る。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;bulge&quot;</code>  —— *center* के आसपास Gaussian weights से बाहर की ओर फुलाता है। केवल एक ओर लगाने पर यह बाएँ-दाएँ asymmetry का ground truth बन जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;shift&quot;</code>  —— *center* की दिशा में uniform translation (वह component जिसे Procrustes हटा देता है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;scale&quot;</code>  —— uniform enlargement (वह component जिसे <code style="color:#22d3bf">scaling=True</code> वाला Procrustes हटा देता है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;noise&quot;</code>  —— isotropic Gaussian noise (एक floor जिसे कोई भी method नहीं हटाता)।</p>
+<p>&quot;Procrustes जिन deformations को हटा देता है&quot; और &quot;जिन्हें हटाना नहीं चाहिए&quot;, इन्हें अलग-अलग test कर सकें, इसलिए ये 4 रखे गए हैं। registration के cross-check के लिए यह भेद ज़रूरी है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_fit(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.procrustes_fit(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Similarity transform that superimposes *source* onto *target*. → <code style="color:#22d3bf">(4, 4)</code> homogeneous matrix.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><b>点の並びが対応していること</b>が前提(i 番目どうしが同じ解剖学的位置)。対応が無い点群では例外は出ず、意味の無い変換が返る —— 対応の有無はこの関数からは見えない。対応が無いなら ICP 系(<code style="color:#22d3bf">registration</code>)を使う。</p>
-<p><code style="color:#22d3bf">scaling=True</code> なら大きさの違いも吸収する。<code style="color:#22d3bf">reflection=False</code>(既定)は <code style="color:#22d3bf">det(R) = +1</code> を強制する —— 許すと左手系の個体が右手系の平均に重なり、左右非対称性という測りたいものが消える。</p>
-<p>行列は同次座標で <code style="color:#22d3bf">target ~ source @ M[:3,:3].T + M[:3,3]</code> の向き。</p>
+<p><b>It assumes the points are in correspondence</b> (the i-th points are at the same anatomical position). For point sets without correspondence no exception is raised and a meaningless transform is returned -- whether there is correspondence cannot be seen from this function. Without correspondence, use the ICP family (<code style="color:#22d3bf">registration</code>).</p>
+<p>With <code style="color:#22d3bf">scaling=True</code> size differences are also absorbed. <code style="color:#22d3bf">reflection=False</code> (default) enforces <code style="color:#22d3bf">det(R) = +1</code> -- if it were allowed, a left-handed individual would overlap a right-handed mean, and left-right asymmetry, the very thing you want to measure, would vanish.</p>
+<p>The matrix is in homogeneous coordinates, oriented as <code style="color:#22d3bf">target ~ source @ M[:3,:3].T + M[:3,3]</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_legend(img, labels, xy, anchor=&#x27;lt&#x27;, start=1, radius=7.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, numbers=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_legend(img, labels, xy, anchor=&#x27;lt&#x27;, start=1, radius=7.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=12, pad=8, row_gap=4, box_color=None, box_alpha=0.72, border=1, border_color=&#x27;neutral&#x27;, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_font_size=9, numbers=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_legend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (image2d) लौटाता है: क्रमांक वाले गोल marker × विवरण की legend (<code style="color:#22d3bf">annotate_markers</code> का जोड़ीदार)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>箱の高さは閉形式 <code style="color:#22d3bf">2*pad + n*row_h + (n-1)*row_gap</code>(<code style="color:#22d3bf">row_h = max(2r, 文字高)</code>)。</p>
+<p>box की ऊँचाई closed form <code style="color:#22d3bf">2*pad + n*row_h + (n-1)*row_gap</code> है (<code style="color:#22d3bf">row_h = max(2r, text height)</code>)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : sequence of str</p>
-<p>各行の説明。</p>
+<p>हर row का विवरण।</p>
 <p>numbers : sequence of str or None</p>
-<p>各行のマーカー文字。None なら <code style="color:#22d3bf">start</code> から連番。</p>
+<p>हर row का marker text। None हो तो <code style="color:#22d3bf">start</code> से क्रमागत नंबर।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>labels が空、箱が画像からはみ出す、負の余白。</p>
+<p>labels खाली, box image से बाहर निकलता है, negative margin।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

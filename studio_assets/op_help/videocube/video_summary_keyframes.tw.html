@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import videocube; videocube.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsvideocube.get(&quot;video_summary_keyframes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>代表影格的索引 <code style="color:#22d3bf">(k,)</code> int64，遞增(<code style="color:#22d3bf">indices</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>フレームごとの得点 = 動きの量(|I_t − I_{t−1}| の平均、[0, 1] に正規化)+ 場面の変化(ヒストグラムの χ² 距離、正規化)。得点の高い順に、既に選んだフレームから <code style="color:#22d3bf">min_gap</code>(既定 T // (2k))以上離れたものを貪欲に <code style="color:#22d3bf">k</code> 枚選ぶ。T &lt; k なら全フレーム。学習なしの「何かが起きたフレーム」であって、意味の要約ではない。</p>
+<p>每影格的得分 = 運動量(|I_t − I_{t−1}| 的平均,正規化到 [0, 1])+ 場景變化(直方圖的 χ² 距離,正規化)。依得分由高到低,貪婪地選出 <code style="color:#22d3bf">k</code> 影格,要求與已選影格相距 <code style="color:#22d3bf">min_gap</code>(預設 T // (2k))以上。T &lt; k 時取全部影格。這是無學習的「發生了某事的影格」,而不是語意上的摘要。</p>
 <p>&gt;&gt;&gt; idx = video_summary_keyframes(clip, k=4)</p>
 <p>&gt;&gt;&gt; thumbnails = clip[idx]</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

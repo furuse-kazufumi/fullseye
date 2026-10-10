@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tour_closed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점을 1번씩 지나 되돌아오는 <b>닫힌 순회로</b>로 재배열한다. → <code style="color:#22d3bf">pairs</code></p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返るのは入力と同じ点を並べ替えた <code style="color:#22d3bf">(N, 2)</code>。<b>最後の点から最初の点へ戻る</b> ことで閉じる(末尾に先頭を重複させない)。</p>
-<p>★これは最適な巡回路ではない(TSP は NP 困難)。<b>下界と比べて質を言う</b>:</p>
-<p>閉じた巡回路は最小全域木より短くなれないので <code style="color:#22d3bf">length / mst_length</code> が 1 に近いほど良い。一様な点なら Beardwood–Halton–Hammersley の <code style="color:#22d3bf">0.7124 √(n A)</code> も目安になる。<b>黄金ファイルは使わない。</b></p>
+<p>반환되는 것은 입력과 같은 점을 재배열한 <code style="color:#22d3bf">(N, 2)</code>. <b>마지막 점에서 첫 점으로 돌아가는</b> 것으로 닫는다(끝에 첫 점을 중복시키지 않는다).</p>
+<p>★이것은 최적의 순회로가 아니다(TSP 는 NP 곤란). <b>하계와 비교하여 질을 말한다</b>:</p>
+<p>닫힌 순회로는 최소 신장 트리보다 짧아질 수 없으므로 <code style="color:#22d3bf">length / mst_length</code> 가 1 에 가까울수록 좋다. 균일한 점이라면 Beardwood–Halton–Hammersley 의 <code style="color:#22d3bf">0.7124 √(n A)</code> 도 기준이 된다. <b>골든 파일은 쓰지 않는다.</b></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

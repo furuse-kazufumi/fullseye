@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_linear(query, key, value, causal: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import llmcore; llmcore.attention_linear(query, key, value, causal: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsllmcore.get(&quot;attention_linear&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Attention with the softmax removed → tokens. <b>(QKᵀ)V == Q(KᵀV) — the associative law itself</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Katharopoulos ら 2020。softmax を外すと行列積の結合則が使え、(T, T) を作らずに(d, dv) の状態だけで足りる。<b>同じ数の別の括り方</b>なので答えは一致し(相対差 7.1e-16)、計算量は O(T²d) から O(Td²) に移る —— 交差点は <b>T == d</b>(実測: T=d=64 で比 0.9、T=1024 で 14.6 倍)。★T を 2048 にしても比は 14.4 で頭打ちになる。式が言う 32 倍には届かない —— 二次の側が帯域律速に入るから。</p>
+<p>Katharopoulos et al. 2020. Removing the softmax lets the associativity of matrix products apply, so without building (T, T) a state of just (d, dv) suffices. <b>It is the same number bracketed differently</b>, so the answers agree (relative difference 7.1e-16), and the cost moves from O(T²d) to O(Td²) — the crossover is at <b>T == d</b> (measured: ratio 0.9 at T=d=64, 14.6 times at T=1024). ★Even at T = 2048 the ratio levels off at 14.4. It does not reach the 32 times the formula predicts — because the quadratic side becomes band(width)-bound.</p>
 <p>Args:</p>
-<p>query: (T, d) float。</p>
-<p>key: (S, d) float。</p>
-<p>value: (S, dv) float。<code style="color:#22d3bf">causal=True</code> では S == T。</p>
-<p>causal: True なら「自分より前だけ」を累積状態で足す(逐次 1 回で線形時間)。</p>
+<p>query: (T, d) float.</p>
+<p>key: (S, d) float.</p>
+<p>value: (S, dv) float. With <code style="color:#22d3bf">causal=True</code>, S == T.</p>
+<p>causal: if True, adds &quot;only what comes before me&quot; through a cumulative state (1 sequential pass, linear time).</p>
 <p>Returns:</p>
-<p>tokens (T, dv) float: <b>softmax を通していない</b>ので行和 1 の凸結合ではない。</p>
-<p><code style="color:#22d3bf">attention_softmax</code> の代わりではなく、<b>別の注意</b>。</p>
+<p>tokens (T, dv) float: <b>it does not pass through a softmax</b>, so it is not a convex combination with row sums of 1.</p>
+<p>Not a substitute for <code style="color:#22d3bf">attention_softmax</code>, but <b>a different attention</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

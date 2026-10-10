@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_membrane_response(image, sigma: &#x27;float&#x27; = 1.5, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import emproof; emproof.seg_membrane_response(image, sigma: &#x27;float&#x27; = 1.5, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsemproof.get(&quot;seg_membrane_response&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>EM 切片中<b>暗线</b>(细胞膜)的响应 [0, ∞)。由高斯平滑后的 Hessian 的特征值 λ1 ≥ λ2 计算 <code style="color:#22d3bf">max(λ1 − |λ2|, 0)</code> (Steger 线检测的闭式，用 σ² 做尺度归一化)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>暗い線の上では横断方向の 2 階微分が大きく正(λ1)、線に沿う方向は 0(λ2)なので λ1 − |λ2| が立つ。暗い<b>塊</b>(ミトコンドリア内部・シナプス小胞)は λ1 ≈ λ2 &gt; 0 で打ち消し合って 0 に近い ―― 膜だけを拾う。<code style="color:#22d3bf">normalize=True</code> で断面の 99.5 percentile を 1 にする(<code style="color:#22d3bf">seg_*</code> の閾値はその尺度で書く)。scikit-image があるならレジストリの <code style="color:#22d3bf">sk_frangi</code>(<code style="color:#22d3bf">fs.apply(img, &quot;sk_frangi&quot;, a=0.5, b=0.5)</code>)も同じ席に使える(試作はそちらで AUC を測った)。</p>
+<p>在暗线上,横断方向的 2 阶导数大且为正(λ1),沿线方向为 0(λ2),因此 λ1 − |λ2| 升起。暗的<b>团块</b>(线粒体内部、突触小泡)λ1 ≈ λ2 &gt; 0,相互抵消而接近 0 —— 只拾取膜。<code style="color:#22d3bf">normalize=True</code> 把截面的 99.5 percentile 设为 1(<code style="color:#22d3bf">seg_*</code> 的阈值按该尺度书写)。若有 scikit-image,注册表中的 <code style="color:#22d3bf">sk_frangi</code>(<code style="color:#22d3bf">fs.apply(img, &quot;sk_frangi&quot;, a=0.5, b=0.5)</code>)也可用于同一位置(原型用它测了 AUC)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>image : (H, W) float</p>
-<p>生 EM(明るい = 細胞質、暗い = 膜)。範囲は問わない(勾配の比だけを見る)。</p>
+<p>原始 EM(亮 = 细胞质,暗 = 膜)。范围不限(只看梯度之比)。</p>
 <p>sigma : float</p>
-<p>平滑の σ [px]。膜の太さの半分程度(CREMI 4 nm/px なら 1.5〜2.5)。</p>
+<p>平滑的 σ [px]。约为膜厚的一半(CREMI 4 nm/px 时为 1.5~2.5)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

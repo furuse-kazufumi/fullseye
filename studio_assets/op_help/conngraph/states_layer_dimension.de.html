@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_layer_dimension(X: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.states_layer_dimension(X: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;states_layer_dimension&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tabelle der effektiven Dimension je Schicht: Spalten layer / n / participation_ratio / ratio (= PR / n).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">X</code> = <code style="color:#22d3bf">graph_layer_propagate</code> の返り (N, n)、<code style="color:#22d3bf">labels</code> = ノードの層 id。「脳 → 首 → 腹髄 → 筋」で次元がどこで落ちるか(動きの量子化)を 1 つの数式で読む。</p>
+<p><code style="color:#22d3bf">X</code> = das von <code style="color:#22d3bf">graph_layer_propagate</code> zurückgegebene (N, n), <code style="color:#22d3bf">labels</code> = Schicht-ids der Knoten. Liest mit 1 Formel ab, wo entlang &quot;Gehirn → Hals → ventrales Nervenmark → Muskel&quot; die Dimension abfällt (die Quantisierung der Bewegung).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

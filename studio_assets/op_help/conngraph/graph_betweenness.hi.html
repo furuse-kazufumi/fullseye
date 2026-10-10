@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import conngraph; conngraph.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconngraph.get(&quot;graph_betweenness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>betweenness centrality (Brandes 2001, binary directed, normalisation नहीं)। हर node के लिए एक मान, लंबाई n का array।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>ノード v の値 = Σ_{s≠v≠t} σ_st(v) / σ_st(最短路の本数比)。二値構造が対称(すべての辺が相互)なら無向グラフとして (s, t) と (t, s) を 1 対と数え 2 で割る —— 無向スター(n 個)の中心が (n−1)(n−2)/2、葉が 0 になる教科書の値。有向(非対称)なら順序対のまま数える。</p>
+<p>node v का मान = Σ_{s≠v≠t} σ_st(v) / σ_st (shortest paths की संख्या का अनुपात)। अगर binary structure symmetric है (सभी edges परस्पर हैं), तो इसे undirected graph मानकर (s, t) और (t, s) को 1 जोड़ा गिना जाता है और 2 से भाग दिया जाता है -- यही textbook मान हैं जिनमें undirected star (n nodes) का center (n−1)(n−2)/2 और leaves 0 होते हैं। अगर directed (asymmetric) है, तो ordered pairs जैसे हैं वैसे गिने जाते हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

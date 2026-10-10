@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swt_map(img, dark_on_light: &#x27;bool&#x27; = True, sigma: &#x27;float&#x27; = 1.0, max_width: &#x27;int&#x27; = 64, angle_tol: &#x27;float&#x27; = 0.5235987755982988)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import textregion; textregion.swt_map(img, dark_on_light: &#x27;bool&#x27; = True, sigma: &#x27;float&#x27; = 1.0, max_width: &#x27;int&#x27; = 64, angle_tol: &#x27;float&#x27; = 0.5235987755982988)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opstext.get(&quot;swt_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스트로크 폭 변환 — 각 화소에 그 화소를 포함하는 스트로크의 폭을 기록한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>文字側の境界画素から、勾配の向きに沿って文字の内側へ光線を飛ばし、向かい合う境界画素(勾配がほぼ逆向き)に当たったら、光線上の全画素に幅(境界画素の中心間距離 + 1) を書く(既に小さい値があれば小さい方)。Epshtein 2010 §3 の手順で、2 回目の走査で光線上の中央値より大きい値を中央値に置き換える(角の過大を抑える)。エッジの規約は <code style="color:#22d3bf">_edges_and_gradient</code> に書いた(矩形ストロークで幅が厳密に整数になる)。</p>
-<p>Returns dict: <code style="color:#22d3bf">swt</code>(幅の配列、ストローク外は 0)/ <code style="color:#22d3bf">edges</code> / <code style="color:#22d3bf">n_rays</code> / <code style="color:#22d3bf">n_hits</code>(向かい合うエッジに当たった光線の数)。</p>
+<p>문자 쪽 경계 화소에서 기울기 방향을 따라 문자 안쪽으로 광선을 쏘고, 마주 보는 경계화소(기울기가 거의 반대 방향)에 맞으면 광선 위의 모든 화소에 폭(경계 화소 중심 간 거리 + 1) 을 쓴다(이미 더 작은 값이 있으면 작은 쪽). Epshtein 2010 §3 의 절차로, 2 번째 주사에서광선 위의 중앙값보다 큰 값을 중앙값으로 바꾼다(모서리의 과대를 억제). 에지의 규약은 <code style="color:#22d3bf">_edges_and_gradient</code> 에 적었다(직사각형 획에서 폭이 엄밀히 정수가 된다).</p>
+<p>반환 dict: <code style="color:#22d3bf">swt</code>(폭 배열, 획 바깥은 0)/ <code style="color:#22d3bf">edges</code> / <code style="color:#22d3bf">n_rays</code> / <code style="color:#22d3bf">n_hits</code>(마주 보는 에지에 맞은 광선 수).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

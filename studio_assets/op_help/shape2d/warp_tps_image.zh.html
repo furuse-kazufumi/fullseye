@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code>(要直接调用实现,<code style="color:#22d3bf">import imagemorph; imagemorph.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;warp_tps_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用薄板样条将 img 的 src_pts 移动到 dst_pts 的平滑变形。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>出力座標 → 入力座標の逆写像 TPS(dst→src)を当てはめ、出力全格子で評価してサンプルする。lam=0 なら制御点上で厳密に対応(特徴が正しく着地)、lam&gt;0 で変形を平滑化。区分アフィンより滑らかだが、全画素×制御点のカーネル評価コスト。</p>
-<p>引数・返り値は <code style="color:#22d3bf">warp_piecewise_affine</code> と同じ。</p>
+<p>拟合输出坐标 → 输入坐标的逆映射 TPS(dst→src)，在整个输出网格上求值并采样。lam=0 时在控制点上严格对应(特征正确落位),lam&gt;0 时使变形平滑。比分段仿射更平滑，但要付出全部像素×控制点的核求值成本。</p>
+<p>参数、返回值与 <code style="color:#22d3bf">warp_piecewise_affine</code> 相同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

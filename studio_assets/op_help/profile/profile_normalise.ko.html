@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_normalise(contour)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import profileops; profileops.profile_normalise(contour)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprofile.get(&quot;profile_normalise&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>시위 길이 1, 앞전이 원점, 시위가 +x 방향이 되도록 회전과 평행 이동으로 정규화한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><b>スケールは弦長でしか変えない</b>(形を歪めない)。返りは正規化した輪郭。</p>
-<p>手順: <code style="color:#22d3bf">profile_chord_frame</code> で前縁 <code style="color:#22d3bf">le</code>・後縁 <code style="color:#22d3bf">te</code>(開いた後縁は隙間の中点)・弦長 <code style="color:#22d3bf">chord</code>・弦の向き <code style="color:#22d3bf">angle_deg</code> を求め、<code style="color:#22d3bf">((contour - le) @ R(-angle).T) / chord</code> を返す。回転・並進・一様スケールの相似変換だけで、点の数と順序は保つ(再標本化しない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">contour</code>: <code style="color:#22d3bf">(N, 2)</code> の <b>(x, y)</b>、8 点以上、有限。<code style="color:#22d3bf">(row, col)</code> を渡すと弦は見つかるが上下が入れ替わる(例外は出ない)。閉じているかはここでは検査しない(<code style="color:#22d3bf">profile_sides</code> 以降が検査する)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(N, 2)</code> float64。前縁が <code style="color:#22d3bf">(0, 0)</code>、後縁が <code style="color:#22d3bf">(1, 0)</code> 付近、<code style="color:#22d3bf">x</code> は <code style="color:#22d3bf">[0, 1]</code> の弦比。<code style="color:#22d3bf">y</code> の符号(上面が正か負か)は入力の周回方向で決まり、反転はしない。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形、点数不足、非有限、弦長が 0 = 全点一致)。</p>
-<p>前縁・後縁の判定は「最遠点対のうち、少し内側で断面が太いほう = 前縁」なので、前後で太さが同じ対称な断面(楕円など)では前後が入れ替わることがある。<code style="color:#22d3bf">profile_sides</code> / <code style="color:#22d3bf">profile_thickness</code> / <code style="color:#22d3bf">profile_camber</code> は内部でこれを呼ぶ。</p>
+<p><b>스케일은 시위 길이로만 바꾼다</b>(형상을 왜곡하지 않는다). 반환은 정규화한 윤곽.</p>
+<p>절차: <code style="color:#22d3bf">profile_chord_frame</code> 으로 앞전 <code style="color:#22d3bf">le</code>·뒷전 <code style="color:#22d3bf">te</code>(열린 뒷전은 틈의중점)·시위 길이 <code style="color:#22d3bf">chord</code>·시위 방향 <code style="color:#22d3bf">angle_deg</code> 를 구하고, <code style="color:#22d3bf">((contour - le) @ R(-angle).T) / chord</code> 를 반환한다. 회전·평행이동·균일 스케일의닮음 변환뿐이며, 점의 수와 순서는 유지한다(재샘플링하지 않는다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">contour</code>: <code style="color:#22d3bf">(N, 2)</code> 의 <b>(x, y)</b>, 8 점 이상, 유한. <code style="color:#22d3bf">(row, col)</code> 을 넘기면시위는 찾지만 위아래가 뒤바뀐다(예외는 발생하지 않는다). 닫혀 있는지는 여기서는검사하지 않는다(<code style="color:#22d3bf">profile_sides</code> 이후가 검사한다).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(N, 2)</code> float64. 앞전이 <code style="color:#22d3bf">(0, 0)</code>, 뒷전이 <code style="color:#22d3bf">(1, 0)</code> 부근, <code style="color:#22d3bf">x</code> 는 <code style="color:#22d3bf">[0, 1]</code> 의 시위 비. <code style="color:#22d3bf">y</code> 의 부호(윗면이 양인지 음인지)는 입력의 순회 방향으로 정해지며 반전하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 실패: <code style="color:#22d3bf">ValueError</code>(형태, 점 수 부족, 비유한, 시위 길이 0 = 전 점 일치).</p>
+<p>앞전·뒷전 판정은 &quot;최원점 쌍 중 조금 안쪽에서 단면이 두꺼운 쪽 = 앞전&quot;이므로, 앞뒤 두께가 같은 대칭 단면(타원 등)에서는 앞뒤가 뒤바뀔 수 있다. <code style="color:#22d3bf">profile_sides</code> / <code style="color:#22d3bf">profile_thickness</code> / <code style="color:#22d3bf">profile_camber</code> 는 내부에서 이것을 호출한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

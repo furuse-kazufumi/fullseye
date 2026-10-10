@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;attention_weights&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर row पर softmax (mask सहित) → attnmap। <b>row का योग 1, mask वाली जगहें बिल्कुल 0</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>行ごとに最大値を引いてから指数を取る。これは飾りではない —— 引かずに <code style="color:#22d3bf">exp</code> するとスコアが大きいとき<b>全行が inf/NaN になる</b>(実測: 96 行中 96 行)。引けば 0 行。</p>
+<p>हर row में पहले maximum घटाया जाता है, फिर exponential लिया जाता है। यह सजावट नहीं है -- बिना घटाए <code style="color:#22d3bf">exp</code> करने पर scores बड़े हों तो <b>सभी rows inf/NaN बन जाती हैं</b> (measured: 96 में से 96 rows)। घटाने पर 0 rows।</p>
 <p>Args:</p>
-<p>scores: (T, T) float の生スコア(<code style="color:#22d3bf">attention_scores</code> の出力)。</p>
-<p>mask: None(全対)/ <code style="color:#22d3bf">&quot;causal&quot;</code>(下三角)/ <code style="color:#22d3bf">&quot;window&quot;</code>(幅 <code style="color:#22d3bf">window</code> の因果窓)/</p>
-<p>(T, T) の bool 配列。True が「見てよい」。</p>
-<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅(自分を含む個数)。</p>
+<p>scores: (T, T) float raw scores (<code style="color:#22d3bf">attention_scores</code> का output)।</p>
+<p>mask: None (सभी जोड़े) / <code style="color:#22d3bf">&quot;causal&quot;</code> (निचला triangle) / <code style="color:#22d3bf">&quot;window&quot;</code> (चौड़ाई <code style="color:#22d3bf">window</code> वाला causal window) /</p>
+<p>(T, T) का bool array। True का मतलब &quot;देख सकते हैं&quot;।</p>
+<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> होने पर window की चौड़ाई (ख़ुद को मिलाकर गिनती)।</p>
 <p>Returns:</p>
-<p>attnmap (T, T) float: 各行が確率分布(和 1)。mask が False の位置は厳密に 0。</p>
+<p>attnmap (T, T) float: हर row एक probability distribution है (योग 1)। जहाँ mask False है वहाँ ठीक 0।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

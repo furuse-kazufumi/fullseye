@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plot_series(img, axes, x, y, kind=&#x27;line&#x27;, color=&#x27;reference&#x27;, width=2, marker_size=3, baseline=None, bar_width=0.7, clip=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.plot_series(img, axes, x, y, kind=&#x27;line&#x27;, color=&#x27;reference&#x27;, width=2, marker_size=3, baseline=None, bar_width=0.7, clip=True, scheme=&#x27;okabe_ito&#x27;, style=None)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;plot_series&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>画折线・散点・柱状。以<b>数据坐标</b>接收(像素由 axes 决定)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>axes : dict</p>
-<p><code style="color:#22d3bf">axes_transform</code> の返り。</p>
+<p><code style="color:#22d3bf">axes_transform</code> 的返回值。</p>
 <p>x, y : 1-D</p>
-<p>同じ長さの系列。<b>空は ValueError</b>(空のグラフは「データが無い」のか</p>
-<p>「描き忘れ」なのか区別がつかない)。</p>
+<p>长度相同的序列。<b>为空则 ValueError</b>(空的图表无法区分是“没有数据”</p>
+<p>还是“忘了画”)。</p>
 <p>kind : {&#x27;line&#x27;,&#x27;scatter&#x27;,&#x27;bar&#x27;}</p>
 <p>baseline : float or None</p>
-<p><code style="color:#22d3bf">kind=&#x27;bar&#x27;</code> の基準値。None なら <code style="color:#22d3bf">ylim</code> の下端。</p>
+<p><code style="color:#22d3bf">kind=&#x27;bar&#x27;</code> 的基准值。None 时为 <code style="color:#22d3bf">ylim</code> 的下端。</p>
 <p>bar_width : float</p>
-<p>棒の幅(隣り合う x 間隔に対する比 ∈ (0,1])。</p>
+<p>柱的宽度(相对相邻 x 间隔的比例 ∈ (0,1])。</p>
 <p>clip : bool</p>
-<p>True なら描画域の外に出る点を<b>例外</b>にする(黙って端に張り付く</p>
-<p><code style="color:#22d3bf">imagedraw</code> のクランプは、嘘の折れ線を描いてしまう)。</p>
+<p>True 时把超出绘图区的点作为<b>异常</b>(悄悄贴到边缘的</p>
+<p><code style="color:#22d3bf">imagedraw</code> 的钳位会画出谎言的折线)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>長さ不一致 / 空 / 非有限 / 未知の kind / clip=True で範囲外。</p>
+<p>长度不一致 / 空 / 非有限 / 未知的 kind / clip=True 时超出范围。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

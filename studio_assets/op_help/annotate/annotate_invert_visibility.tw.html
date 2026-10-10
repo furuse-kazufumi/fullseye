@@ -4,28 +4,27 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_visibility&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在繪製之前量測反色<b>在該底色上是否真的看得見</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>反転色の利点は「地の色を知らなくてよい」ことだが、弱点はたった 1 つで、しかも致命的 —— <b>中間調では反転しても同じ色になる</b>。8bit グレーの v=128 に対する補色は v=127 で、WCAG のコントラスト比は <b>1.014</b> (比 1.0 が「同じ色」。実測 2026-09-08)。比 1.5 を下回る帯は v ∈ [113, 142] の 30/256 階調 = 全階調の 12 % に及ぶ。</p>
-<p><code style="color:#22d3bf">annotate_invert</code> と <code style="color:#22d3bf">annotate_invert_path</code> は内部でこれを呼んで警告するが、<b>自分で fail-closed にしたいとき</b>はこの op で測ってから描く(<code style="color:#22d3bf">min_contrast</code> を見て、低ければ <code style="color:#22d3bf">mode=&quot;contrast&quot;</code> に倒す)。</p>
+<p>反色的優點是「不需要知道底色」,但弱點只有 1 個, 而且是致命的 —— <b>在中間調上,反轉後仍是同樣的顏色</b>。8bit 灰階 v=128 的補色是 v=127,WCAG 對比度為 <b>1.014</b> (比值 1.0 即「同一顏色」。實測 2026-09-08)。比值低於 1.5 的區段涵蓋 v ∈ [113, 142] 共 30/256 個灰階 = 全部灰階的 12 %。</p>
+<p><code style="color:#22d3bf">annotate_invert</code> 和 <code style="color:#22d3bf">annotate_invert_path</code> 會在內部呼叫它並發出警告,但<b>想自己做成 fail-closed(失敗即拒絕)時</b>,請先用這個 op 量測再繪製(查看 <code style="color:#22d3bf">min_contrast</code>,若偏低則改用 <code style="color:#22d3bf">mode=&quot;contrast&quot;</code>)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>img : (H,W) または (H,W,C)</p>
-<p>地。値域 [0,1]。</p>
+<p>img : (H,W) 或 (H,W,C)</p>
+<p>底圖。值域 [0,1]。</p>
 <p>mask : (H,W)</p>
-<p>反転を乗せるところ。真偽か [0,1] の重み。<b>形が違えば例外</b>。</p>
+<p>要疊加反轉的地方。布林值或 [0,1] 的權重。<b>形狀不同則拋出例外</b>。</p>
 <p>mode : str</p>
-<p><code style="color:#22d3bf">INVERT_MODES</code> のいずれか。</p>
+<p><code style="color:#22d3bf">INVERT_MODES</code> 之一。</p>
 <p>alpha : float</p>
-<p>反転の効き。描くときと同じ値を渡すこと —— 見え方は「反転色」ではなく</p>
-<p><b>実際に置かれる色</b>で決まるので、<code style="color:#22d3bf">alpha</code> を落とすと答えが変わる。</p>
+<p>反轉的強度。請傳入與繪製時相同的值 —— 可見性不是由「反色」而是由</p>
+<p><b>實際放上去的顏色</b>決定的,所以降低 <code style="color:#22d3bf">alpha</code> 答案就會變。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">pixels</code>(重み &gt;= 0.5 の画素数) / <code style="color:#22d3bf">min_contrast</code> /</p>
-<p><code style="color:#22d3bf">median_contrast</code> / <code style="color:#22d3bf">invisible_fraction</code>(比が</p>
-<p><code style="color:#22d3bf">INVERT_MIN_CONTRAST</code> 未満の割合) / <code style="color:#22d3bf">worst_xy</code>(最悪の画素、</p>
-<p>無ければ <code style="color:#22d3bf">None</code>)。</p>
+<p><code style="color:#22d3bf">pixels</code>(權重 &gt;= 0.5 的像素數) / <code style="color:#22d3bf">min_contrast</code> /</p>
+<p><code style="color:#22d3bf">median_contrast</code> / <code style="color:#22d3bf">invisible_fraction</code>(比值低於</p>
+<p><code style="color:#22d3bf">INVERT_MIN_CONTRAST</code> 的比例) / <code style="color:#22d3bf">worst_xy</code>(最差的像素,</p>
+<p>沒有則為 <code style="color:#22d3bf">None</code>)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np, annotate</p>
-<p>&gt;&gt;&gt; flat = np.full((8, 8), 128 / 255.0)          # 中間調 —— 反転が消える地</p>
+<p>&gt;&gt;&gt; flat = np.full((8, 8), 128 / 255.0)          # 中間調 —— 反轉會消失的底色</p>
 <p>&gt;&gt;&gt; rep = annotate.annotate_invert_visibility(flat, np.ones((8, 8), bool))</p>
 <p>&gt;&gt;&gt; round(rep[&quot;min_contrast&quot;], 3)</p>
 <p>1.014</p>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_frame_corners(pts, shape)</code>(要直接调用实现,<code style="color:#22d3bf">import imagemorph; imagemorph.add_frame_corners(pts, shape)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;add_frame_corners&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将图像的四个角(+各边中点)作为固定点加入点集。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>ワープの三角形分割が画像全体を覆い、凸包の外側にできる穴を防ぐための定番処置。src/dst の両方に同じ順序で足せば、四隅は「動かない対応点」として働く。</p>
-<p>足す 8 点は画素中心座標 <code style="color:#22d3bf">(x, y)</code> で、<code style="color:#22d3bf">W-1</code> / <code style="color:#22d3bf">H-1</code> を端とする:</p>
-<p><code style="color:#22d3bf">(0,0) (xm,0) (W-1,0) (0,ym) (W-1,ym) (0,H-1) (xm,H-1) (W-1,H-1)</code> (<code style="color:#22d3bf">xm = (W-1)/2</code>、<code style="color:#22d3bf">ym = (H-1)/2</code>)。この順で末尾に連結する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pts</code>: <code style="color:#22d3bf">(N, 2)</code> の <b>(x, y)</b>(x = 列、y = 行)、有限。<code style="color:#22d3bf">(row, col)</code> を渡すと x と y が入れ替わったまま通る(例外は出ない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code>: 画像の <code style="color:#22d3bf">shape</code>(<code style="color:#22d3bf">(H, W)</code> でも <code style="color:#22d3bf">(H, W, C)</code> でも先頭 2 つを使う)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(N + 8, 2)</code> float64。</p>
-<p style="margin:2px 0 2px 12px">• 元の点が既に枠上や枠外にあっても検査しない。枠外の対応点は Delaunay 分割で枠の三角形と交差し、ワープが歪む。</p>
-<p><code style="color:#22d3bf">morph</code> / <code style="color:#22d3bf">morph_sequence</code> は <code style="color:#22d3bf">with_corners=True</code> で内部的にこれを両方の点群に掛ける。<code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">warp_tps_image</code> を直接呼ぶときは自分で <code style="color:#22d3bf">src</code> と <code style="color:#22d3bf">dst</code> の両方に足すこと。</p>
+<p>使变形的三角剖分覆盖整幅图像、防止凸包外侧出现空洞的常规处理。以相同顺序加到 src/dst 两边，四角就作为「不动的对应点」起作用。</p>
+<p>添加的 8 点为像素中心坐标 <code style="color:#22d3bf">(x, y)</code>，以 <code style="color:#22d3bf">W-1</code> / <code style="color:#22d3bf">H-1</code> 为边界:</p>
+<p><code style="color:#22d3bf">(0,0) (xm,0) (W-1,0) (0,ym) (W-1,ym) (0,H-1) (xm,H-1) (W-1,H-1)</code> (<code style="color:#22d3bf">xm = (W-1)/2</code>、<code style="color:#22d3bf">ym = (H-1)/2</code>)。按此顺序连接到末尾。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pts</code>: <code style="color:#22d3bf">(N, 2)</code> 的 <b>(x, y)</b>(x = 列，y = 行)，有限值。若传入 <code style="color:#22d3bf">(row, col)</code>, x 与 y 会以对调的状态通过(不会抛出异常)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code>: 图像的 <code style="color:#22d3bf">shape</code>(<code style="color:#22d3bf">(H, W)</code> 或 <code style="color:#22d3bf">(H, W, C)</code> 都使用前 2 个)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值: <code style="color:#22d3bf">(N + 8, 2)</code> float64。</p>
+<p style="margin:2px 0 2px 12px">• 不检查原有点是否已位于框上或框外。框外的对应点会在 Delaunay 剖分中与框的三角形相交，使变形扭曲。</p>
+<p><code style="color:#22d3bf">morph</code> / <code style="color:#22d3bf">morph_sequence</code> 在 <code style="color:#22d3bf">with_corners=True</code> 时会在内部对两组点集应用此处理。直接调用 <code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">warp_tps_image</code> 时，请自行把它加到 <code style="color:#22d3bf">src</code> 和 <code style="color:#22d3bf">dst</code> 两边。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

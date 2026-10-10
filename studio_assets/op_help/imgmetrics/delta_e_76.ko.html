@@ -4,13 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delta_e_76(lab1, lab2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.delta_e_76(lab1, lab2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;delta_e_76&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>CIE76 색차 —— Lab 공간에서의 유클리드 거리.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>単純だが<b>知覚と合わない</b>(特に彩度の高い青)ので、比較の基準としてのみ</p>
-<p>置いてある。実用は <code style="color:#22d3bf">delta_e_2000</code>。</p>
-<p>式: <code style="color:#22d3bf">sqrt((L1 - L2)^2 + (a1 - a2)^2 + (b1 - b2)^2)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab1</code>, <code style="color:#22d3bf">lab2</code>: 最後の軸が 3 の配列。形は numpy の規則でブロードキャストする(1 色 <code style="color:#22d3bf">(3,)</code> と画像 <code style="color:#22d3bf">(H, W, 3)</code> の組も可)。<code style="color:#22d3bf">rgb_to_lab</code> の出力を渡す。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 最後の軸を落とした形の float64(画像なら <code style="color:#22d3bf">(H, W)</code>)。0 が同一色。目安として 1 前後が判別閾、2.3 が JND と言われるが、この式では色相・彩度によって同じ数値でも見え方が違う。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): どちらかの最後の軸が 3 でない。値の有限性は検査しない(NaN はそのまま伝播する)。</p>
+<p>단순하지만 <b>지각과 맞지 않으므로</b>(특히 채도가 높은 파랑), 비교의 기준으로서만두었다. 실용은 <code style="color:#22d3bf">delta_e_2000</code>.</p>
+<p>식: <code style="color:#22d3bf">sqrt((L1 - L2)^2 + (a1 - a2)^2 + (b1 - b2)^2)</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab1</code>, <code style="color:#22d3bf">lab2</code>: 마지막 축이 3인 배열. 형태는 numpy의 규칙으로 브로드캐스트한다(1색 <code style="color:#22d3bf">(3,)</code>과 영상 <code style="color:#22d3bf">(H, W, 3)</code>의 조합도 가능). <code style="color:#22d3bf">rgb_to_lab</code>의 출력을 넘긴다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 마지막 축을 뺀 형태의 float64(영상이면 <code style="color:#22d3bf">(H, W)</code>). 0이 같은 색. 기준으로 1 전후가 판별 문턱, 2.3이 JND라고 하지만, 이 식에서는 색상, 채도에따라 같은 수치라도 보이는 방식이 다르다.</p>
+<p style="margin:2px 0 2px 12px">• 실패(<code style="color:#22d3bf">MetricContractError</code>): 어느 한쪽의 마지막 축이 3이 아님. 값의 유한성은검사하지 않는다(NaN은 그대로 전파된다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

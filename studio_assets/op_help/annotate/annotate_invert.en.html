@@ -4,42 +4,40 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fills / outlines a region in <b>inverted color</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>「地が明るいか暗いか判らないので、どちらでも見える色で描きたい」というときの古典手。塗り色を決めずに済むかわりに、<b>中間調で消える</b>ので <code style="color:#22d3bf">annotate_invert_visibility</code> の測定を内側で必ず通す。</p>
-<p>★<b>地がモノクロ(グレー)なら、まず彩度のある色を検討すること</b>。灰色には彩度が無いので、彩度のある色はどの階調とも<b>色相で</b>区別がつく —— 反転色より確実で、しかも「これは重ねた線だ」と一目で判る(<code style="color:#22d3bf">annotate_outline</code> / <code style="color:#22d3bf">overlay_mask</code> に役割色を渡す)。反転色が本領を発揮するのは、地がカラーで<b>どの色を選んでも衝突しうる</b>とき。</p>
-<p>なお <code style="color:#22d3bf">annotate_invert_visibility</code> が測るのは WCAG の<b>輝度</b>比なので、「輝度は同じだが色相が違う」ような見え方は評価できない —— 色で描くなら、この op の数字は当てにしないこと。</p>
+<p>The classic trick for when &quot;you do not know whether the ground is light or dark, so you want to draw in a colour visible on either&quot;. It spares you choosing a fill colour, but in exchange it <b>vanishes in mid-tones</b>, so the measurement of <code style="color:#22d3bf">annotate_invert_visibility</code> is always run internally.</p>
+<p>★<b>If the ground is monochrome (grey), first consider a saturated colour</b>. Grey has no saturation, so a saturated colour is distinguishable from every level <b>by hue</b> -- more reliable than inverted colour, and moreover you can tell at a glance &quot;this is an overlaid line&quot; (pass a role colour to <code style="color:#22d3bf">annotate_outline</code> / <code style="color:#22d3bf">overlay_mask</code>). Inverted colour comes into its own when the ground is in colour and <b>any colour you pick could clash</b>. Note that what <code style="color:#22d3bf">annotate_invert_visibility</code> measures is the WCAG <b>luminance</b> ratio, so it cannot evaluate looks like &quot;same luminance but different hue&quot; -- if you draw with colour, do not rely on this op&#x27;s numbers.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>mask : (H,W)</p>
-<p>領域。真偽か [0,1] の重み。<b>画像と形が違えば例外</b>。</p>
+<p>Region. Boolean or weights in [0,1]. <b>A shape different from the image is an exception</b>.</p>
 <p>draw : {&quot;fill&quot;, &quot;margin&quot;}</p>
-<p>HALCON の <code style="color:#22d3bf">set_draw</code> と同じ語。<code style="color:#22d3bf">&quot;fill&quot;</code> は中身ごと、<code style="color:#22d3bf">&quot;margin&quot;</code></p>
-<p>は<b>輪郭だけ</b>を反転する。輪郭は太さ <code style="color:#22d3bf">width</code> 画素(整数に丸める)の</p>
-<p>帯で、領域の内外へ半分ずつ広がる。</p>
+<p>Same word as HALCON&#x27;s <code style="color:#22d3bf">set_draw</code>. <code style="color:#22d3bf">&quot;fill&quot;</code> inverts including the interior, <code style="color:#22d3bf">&quot;margin&quot;</code></p>
+<p>inverts <b>only the contour</b>. The contour is a band <code style="color:#22d3bf">width</code> pixels thick (rounded to an integer)</p>
+<p>that extends half inward and half outward from the region.</p>
 <p>width : float</p>
-<p><code style="color:#22d3bf">draw=&quot;margin&quot;</code> のときの帯の太さ(画素)。</p>
+<p>Band thickness (pixels) when <code style="color:#22d3bf">draw=&quot;margin&quot;</code>.</p>
 <p>mode : str</p>
-<p><code style="color:#22d3bf">INVERT_MODES</code>。<code style="color:#22d3bf">&quot;complement&quot;</code> は地の模様を残し、<code style="color:#22d3bf">&quot;xor&quot;</code> は</p>
-<p>模様を残したまま消えないことを保証し、<code style="color:#22d3bf">&quot;contrast&quot;</code> は白黒に倒して</p>
-<p>見えることを保証する。</p>
+<p><code style="color:#22d3bf">INVERT_MODES</code>. <code style="color:#22d3bf">&quot;complement&quot;</code> keeps the ground&#x27;s pattern, <code style="color:#22d3bf">&quot;xor&quot;</code></p>
+<p>keeps the pattern while guaranteeing it does not vanish, and <code style="color:#22d3bf">&quot;contrast&quot;</code> falls back to black and white and</p>
+<p>guarantees visibility.</p>
 <p>bits : int</p>
-<p><code style="color:#22d3bf">mode=&quot;xor&quot;</code> の bit マスク(1..255)。既定 <code style="color:#22d3bf">0x80</code> は最上位 bit だけを</p>
-<p>反転する ―― <b>必ず 128 階調跳ぶので消えない</b>。<code style="color:#22d3bf">0xFF</code> にすると</p>
-<p><code style="color:#22d3bf">complement</code> と同じ(崖ごと同じ)、<code style="color:#22d3bf">0x0F</code> のような下位だけの</p>
-<p>マスクは<b>どの階調でも見えない</b>(実測: 全 256 階調で比 1.5 未満)。</p>
+<p>Bit mask for <code style="color:#22d3bf">mode=&quot;xor&quot;</code> (1..255). The default <code style="color:#22d3bf">0x80</code> inverts only the most significant bit</p>
+<p>-- <b>it always jumps 128 levels, so it never vanishes</b>. <code style="color:#22d3bf">0xFF</code> is</p>
+<p>the same as <code style="color:#22d3bf">complement</code> (cliff and all), and a mask of only low bits like <code style="color:#22d3bf">0x0F</code></p>
+<p>is <b>invisible at every level</b> (measured: ratio below 1.5 at all 256 levels).</p>
 <p>alpha : float</p>
-<p>反転の効き。1.0 で完全に反転、0.5 なら地と反転色の中間</p>
-<p>(<b><code style="color:#22d3bf">mode=&quot;complement&quot;</code> の 0.5 は必ず中間調になる</b> —— 反転色を</p>
-<p>半分にすると消えるのは道理なので、警告はそれを拾う)。</p>
+<p>Strength of the inversion. 1.0 inverts fully, 0.5 is midway between ground and inverted colour</p>
+<p>(<b><code style="color:#22d3bf">mode=&quot;complement&quot;</code> at 0.5 always yields a mid-tone</b> -- halving the inverted colour</p>
+<p>naturally makes it vanish, and the warning catches that).</p>
 <p>min_contrast, on_invisible :</p>
-<p>見えないと判ったときの扱い。<code style="color:#22d3bf">&quot;warn&quot;</code>(既定)/ <code style="color:#22d3bf">&quot;raise&quot;</code>(fail-closed)</p>
-<p>/ <code style="color:#22d3bf">&quot;ignore&quot;</code>。</p>
+<p>What to do when it turns out invisible. <code style="color:#22d3bf">&quot;warn&quot;</code> (default) / <code style="color:#22d3bf">&quot;raise&quot;</code> (fail-closed)</p>
+<p>/ <code style="color:#22d3bf">&quot;ignore&quot;</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(H,W[,C]) float64</p>
-<p>反転を乗せた複製。<b>入力は書き換えない</b>。</p>
+<p>A copy with the inversion applied. <b>The input is not modified</b>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形の不一致 / 値域外 / 未知の <code style="color:#22d3bf">draw</code> <code style="color:#22d3bf">mode</code> <code style="color:#22d3bf">on_invisible</code> /</p>
-<p><code style="color:#22d3bf">on_invisible=&quot;raise&quot;</code> で不可視。</p>
+<p>shape mismatch / out of value range / unknown <code style="color:#22d3bf">draw</code> <code style="color:#22d3bf">mode</code> <code style="color:#22d3bf">on_invisible</code> /</p>
+<p>invisible with <code style="color:#22d3bf">on_invisible=&quot;raise&quot;</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np, annotate</p>
 <p>&gt;&gt;&gt; img = np.zeros((16, 16)); img[4:12, 4:12] = 1.0</p>
@@ -48,7 +46,7 @@
 <p>&gt;&gt;&gt; float(out[7, 7]), float(out[1, 1])</p>
 <p>(0.0, 0.0)</p>
 <p>&gt;&gt;&gt; ring = annotate.annotate_invert(img, m, draw=&quot;margin&quot;, width=1)</p>
-<p>&gt;&gt;&gt; float(ring[7, 7])                      # 中身は触らない</p>
+<p>&gt;&gt;&gt; float(ring[7, 7])                      # interior is untouched</p>
 <p>1.0</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>

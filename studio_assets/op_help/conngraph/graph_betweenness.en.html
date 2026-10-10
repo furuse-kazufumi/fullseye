@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;graph_betweenness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Betweenness centrality (Brandes 2001, binary directed, unnormalised). An array of length n, one value per node.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>ノード v の値 = Σ_{s≠v≠t} σ_st(v) / σ_st(最短路の本数比)。二値構造が対称(すべての辺が相互)なら無向グラフとして (s, t) と (t, s) を 1 対と数え 2 で割る —— 無向スター(n 個)の中心が (n−1)(n−2)/2、葉が 0 になる教科書の値。有向(非対称)なら順序対のまま数える。</p>
+<p>Value of node v = Σ_{s≠v≠t} σ_st(v) / σ_st (ratio of shortest-path counts). If the binary structure is symmetric (every edge is reciprocal), it is treated as an undirected graph: (s, t) and (t, s) count as 1 pair and the total is divided by 2 -- the textbook values where the centre of an undirected star (n nodes) gets (n−1)(n−2)/2 and the leaves get 0. If directed (asymmetric), ordered pairs are counted as they are.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

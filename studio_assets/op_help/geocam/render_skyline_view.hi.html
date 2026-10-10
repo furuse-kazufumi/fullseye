@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>skyline table और orientation से, उस दिशा में देखते camera को दिखने वाला <b>आकाश का mask</b> (H, W) बनाता है → image2d (0/1)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各画素の光線を世界へ回し、その方位のスカイライン仰角より上なら空(1)、下なら地形(0)。合成の写真づくり(PoC)と、推定した姿勢を写真に重ねて目で確かめる図に使う。<code style="color:#22d3bf">camera_orientation_from_skyline</code> の予測と同じ幾何なので、<b>描いて → 抜いて → 当てる</b>の往復が閉じる(テストの真値)。</p>
+<p>हर pixel की ray को world में घुमाया जाता है; अगर वह उस azimuth की skyline elevation से ऊपर हो तो आसमान (1), नीचे हो तो terrain (0)। synthetic photos बनाने (PoC) और अनुमानित pose को photo पर रखकर आँख से जाँचने वाले चित्रों के लिए इस्तेमाल होता है। यह <code style="color:#22d3bf">camera_orientation_from_skyline</code> की prediction वाली ही geometry है, इसलिए <b>बनाना → निकालना → fit करना</b> का round trip बंद होता है (tests का ground truth)।</p>
 <p>Args:</p>
-<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> の出力(<code style="color:#22d3bf">azimuth_deg</code> / <code style="color:#22d3bf">elevation_deg</code>)。</p>
-<p>K: (fx, fy, cx, cy)。shape: (H, W)。</p>
-<p>yaw_deg, pitch_deg, roll_deg: 姿勢(モジュール冒頭の規約)。</p>
+<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> का output (<code style="color:#22d3bf">azimuth_deg</code> / <code style="color:#22d3bf">elevation_deg</code>)।</p>
+<p>K: (fx, fy, cx, cy)। shape: (H, W)।</p>
+<p>yaw_deg, pitch_deg, roll_deg: pose (module की शुरुआत वाला convention)।</p>
 <p>Returns:</p>
-<p>image2d (H, W) float {0, 1}: 1 = 空。</p>
+<p>image2d (H, W) float {0, 1}: 1 = आसमान।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

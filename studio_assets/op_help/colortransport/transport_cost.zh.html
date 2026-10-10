@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transport_cost(plan, cost)</code>(要直接调用实现,<code style="color:#22d3bf">import colortransport; colortransport.transport_cost(plan, cost)</code>;从台账取用则 <code style="color:#22d3bf">opscolortransport.get(&quot;transport_cost&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>输运计划的总代价 <code style="color:#22d3bf">&lt;plan, cost&gt;</code>。<b>消费计划</b>的那一侧算子。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>計画は「行和・列和が周辺分布に一致する」という意味を持つ行列で、普通の <code style="color:#22d3bf">matrix</code> として扱うと質量保存が黙って壊れる。ここは計画としての検査(非負・和が 1 前後)を通してから費用を出す。</p>
+<p>计划是带有“行和、列和与边缘分布一致”含义的矩阵,若当作普通的 <code style="color:#22d3bf">matrix</code> 处理,质量守恒就会被默默破坏。这里先通过作为计划的检查(非负、和约为 1),再计算费用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 测色与光谱知识 —— 颜色只由“光谱 × 光源 × 观察者”决定</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

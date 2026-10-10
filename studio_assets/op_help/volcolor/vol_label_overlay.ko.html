@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_overlay(vol, labels, seed: &#x27;int&#x27; = 0, alpha: &#x27;float&#x27; = 0.5, vmin=None, vmax=None, mode: &#x27;str&#x27; = &#x27;fill&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volcolor; volcolor.vol_label_overlay(vol, labels, seed: &#x27;int&#x27; = 0, alpha: &#x27;float&#x27; = 0.5, vmin=None, vmax=None, mode: &#x27;str&#x27; = &#x27;fill&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_overlay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원래 그레이 볼륨에 색 레이블을 겹친 <code style="color:#22d3bf">(D, H, W, 3)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>医用 CT / 産業 CT で実際に使う形 ―― 「セグメンテーションだけの絵」はどこを切り出したのかが分からず、「元画像だけの絵」は何を測ったのかが分からない。</p>
-<p>*vol* は <code style="color:#22d3bf">(D, H, W)</code>。表示窓は <code style="color:#22d3bf">vmin</code> / <code style="color:#22d3bf">vmax</code> で<b>明示</b>する(<code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">vol</code> の最小 / 最大)。窓を暗黙に決めないのは、窓が違えば同じ組織が別の明るさで出るからで、CT の window/level と同じ理由である。</p>
-<p>*alpha* は <code style="color:#22d3bf">0</code>(元画像のまま)から <code style="color:#22d3bf">1</code>(色で塗り潰す)。*mode* は <code style="color:#22d3bf">&quot;fill&quot;</code>(成分全体を塗る)か <code style="color:#22d3bf">&quot;boundary&quot;</code>(6 近傍で隣が別ラベルのボクセルだけを塗る = 輪郭表示、下の構造が完全に見える)。</p>
-<p><b><code style="color:#22d3bf">background</code> 引数は無い</b>。この op はラベル 0 のボクセルに一切色を置かず(そこは元画像そのもの)、パレット行 0 を一度も引かない。受け取っておいて何もしない引数は「背景色を指定したのに効かない」という形の静かな嘘になる。</p>
-<p>実測(<code style="color:#22d3bf">(24, 48, 48)</code>・16 成分・ノイズ入りグレー体、seed=0、<code style="color:#22d3bf">mode=&quot;fill&quot;</code>):</p>
-<p>前景ボクセルにおける元画像との平均絶対差は alpha=0.00 で 0.0000、0.25 で 0.0679、0.50 で 0.1359、0.75 で 0.2038、1.00 で 0.2718 ―― alpha に対して直線(合成が線形であることの確認)。<b>背景ボクセルは alpha に依らず 0.0000</b>(色は前景にしか乗らない)。</p>
-<p>Raises <code style="color:#22d3bf">ValueError</code> when *vol* and *labels* differ in shape, on a non-finite *vol*, on <code style="color:#22d3bf">vmin &gt;= vmax</code>, on an *alpha* outside [0, 1], or on an unknown *mode*.</p>
+<p>의료 CT / 산업 CT 에서 실제로 쓰는 형태 ―― &quot;분할만 있는 그림&quot;은어디를 잘라냈는지 알 수 없고, &quot;원 영상만 있는 그림&quot;은 무엇을 쟀는지 알 수 없다.</p>
+<p>*vol* 은 <code style="color:#22d3bf">(D, H, W)</code>. 표시 창은 <code style="color:#22d3bf">vmin</code> / <code style="color:#22d3bf">vmax</code> 로 <b>명시</b>한다(<code style="color:#22d3bf">None</code> 이면 <code style="color:#22d3bf">vol</code> 의 최소 / 최대). 창을 암묵적으로 정하지 않는 것은, 창이 다르면같은 조직이 다른 밝기로 나오기 때문이며, CT 의 window/level 과 같은 이유이다.</p>
+<p>*alpha* 는 <code style="color:#22d3bf">0</code>(원 영상 그대로)에서 <code style="color:#22d3bf">1</code>(색으로 칠해 메움)까지. *mode* 는 <code style="color:#22d3bf">&quot;fill&quot;</code>(성분 전체를 칠함)이나 <code style="color:#22d3bf">&quot;boundary&quot;</code>(6 근방에서 이웃이 다른 라벨인복셀만 칠함 = 윤곽 표시, 아래 구조가 완전히 보인다).</p>
+<p><b><code style="color:#22d3bf">background</code> 인수는 없다</b>. 이 op 는 라벨 0 의 복셀에 일절 색을 두지 않으며(그곳은 원 영상 그 자체), 팔레트 행 0 을 한 번도 읽지 않는다. 받아 두고아무것도 하지 않는 인수는 &quot;배경색을 지정했는데 효과가 없다&quot;는 형태의 조용한 거짓말이 된다.</p>
+<p>실측(<code style="color:#22d3bf">(24, 48, 48)</code> · 16 성분 · 잡음이 든 회색 몸체, seed=0, <code style="color:#22d3bf">mode=&quot;fill&quot;</code>):</p>
+<p>전경 복셀에서 원 영상과의 평균 절대 차는 alpha=0.00 에서 0.0000, 0.25 에서 0.0679, 0.50 에서 0.1359, 0.75 에서 0.2038, 1.00 에서 0.2718 ―― alpha 에 대해 직선(합성이 선형임을 확인). <b>배경 복셀은 alpha 와 상관없이 0.0000</b>(색은 전경에만 얹힌다).</p>
+<p>*vol* 과 *labels* 의 형태가 다를 때, 비유한 *vol*, <code style="color:#22d3bf">vmin &gt;= vmax</code>, [0, 1] 밖의 *alpha*, 또는 알 수 없는 *mode* 에 대해 <code style="color:#22d3bf">ValueError</code> 를 낸다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

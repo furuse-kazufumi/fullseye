@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.labels_to_indices(labels)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.labels_to_indices(labels)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;labels_to_indices&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">labels</code> → 배경이 아닌 인덱스 <code style="color:#22d3bf">(N,)</code>. <code style="color:#22d3bf">indices_to_labels</code> 의 반대 방향.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>2-D 以上のラベル画像も受ける —— その場合の添字は <b><code style="color:#22d3bf">labels.ravel()</code> への添字</b>(C 順)である。<code style="color:#22d3bf">np.unravel_index</code> で座標へ戻せるが、<b>戻すには元の shape が要る</b>ので、この向きは <code style="color:#22d3bf">shape</code> を捨てている(不可逆)。</p>
+<p>2-D 이상의 라벨 영상도 받는다 —— 그 경우의 첨자는 <b><code style="color:#22d3bf">labels.ravel()</code> 에 대한 첨자</b>(C 순서)이다. <code style="color:#22d3bf">np.unravel_index</code> 로좌표로 되돌릴 수 있지만, <b>되돌리려면 원래의 shape 가 필요</b>하므로, 이 방향은 <code style="color:#22d3bf">shape</code> 를 버리고 있다(비가역).</p>
 <p>Args:</p>
-<p>labels: 任意次元の整数/実ラベル配列。</p>
+<p>labels: 임의 차원의 정수/실수 라벨 배열.</p>
 <p>Returns:</p>
-<p>(N,) int64。ラベルが 0 でない位置の平坦添字(昇順)。</p>
+<p>(N,) int64. 라벨이 0 이 아닌 위치의 평탄 첨자(오름차순).</p>
 <p>Raises:</p>
-<p>ValueError: 空 / 非有限 / 非背景が 1 つも無い。</p>
+<p>ValueError: 비었다 / 비유한 / 비배경이 1 개도 없다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

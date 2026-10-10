@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imagemorph; imagemorph.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;warp_tps_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>thin-plate spline से img के src_pts को dst_pts तक ले जाने वाला smooth warp।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>出力座標 → 入力座標の逆写像 TPS(dst→src)を当てはめ、出力全格子で評価してサンプルする。lam=0 なら制御点上で厳密に対応(特徴が正しく着地)、lam&gt;0 で変形を平滑化。区分アフィンより滑らかだが、全画素×制御点のカーネル評価コスト。</p>
-<p>引数・返り値は <code style="color:#22d3bf">warp_piecewise_affine</code> と同じ。</p>
+<p>output coordinates → input coordinates का inverse mapping TPS (dst→src) fit करके, पूरे output grid पर evaluate करके sample करता है। lam=0 पर control points पर सटीक मेल (features सही जगह उतरते हैं), lam&gt;0 पर deformation smooth होता है। piecewise affine से अधिक smooth, पर सभी pixels × control points के kernel evaluation की लागत।</p>
+<p>arguments और return value <code style="color:#22d3bf">warp_piecewise_affine</code> जैसे ही हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

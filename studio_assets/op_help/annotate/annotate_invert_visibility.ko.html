@@ -4,28 +4,27 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_visibility&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>반전색이 <b>그 바탕 위에서 실제로 보이는지</b>를 그리기 전에 측정한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>反転色の利点は「地の色を知らなくてよい」ことだが、弱点はたった 1 つで、しかも致命的 —— <b>中間調では反転しても同じ色になる</b>。8bit グレーの v=128 に対する補色は v=127 で、WCAG のコントラスト比は <b>1.014</b> (比 1.0 が「同じ色」。実測 2026-09-08)。比 1.5 を下回る帯は v ∈ [113, 142] の 30/256 階調 = 全階調の 12 % に及ぶ。</p>
-<p><code style="color:#22d3bf">annotate_invert</code> と <code style="color:#22d3bf">annotate_invert_path</code> は内部でこれを呼んで警告するが、<b>自分で fail-closed にしたいとき</b>はこの op で測ってから描く(<code style="color:#22d3bf">min_contrast</code> を見て、低ければ <code style="color:#22d3bf">mode=&quot;contrast&quot;</code> に倒す)。</p>
+<p>반전색의 이점은 &quot;바탕색을 몰라도 된다&quot;는 것이지만, 약점은 단 1개이고, 게다가 치명적이다 —— <b>중간조에서는 반전해도 같은 색이 된다</b>. 8bit 그레이의 v=128에 대한 보색은 v=127이며, WCAG의 대비비는 <b>1.014</b> (비 1.0이 &quot;같은 색&quot;. 실측 2026-09-08). 비 1.5를 밑도는 대역은 v ∈ [113, 142]의 30/256 계조 = 전체 계조의 12 %에 이른다.</p>
+<p><code style="color:#22d3bf">annotate_invert</code>와 <code style="color:#22d3bf">annotate_invert_path</code>는 내부에서 이것을호출해 경고하지만, <b>직접 fail-closed(실패 시 거부)로 하고 싶을 때</b>는 이 op으로 측정한뒤 그린다(<code style="color:#22d3bf">min_contrast</code>를 보고, 낮으면 <code style="color:#22d3bf">mode=&quot;contrast&quot;</code>로 바꾼다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>img : (H,W) または (H,W,C)</p>
-<p>地。値域 [0,1]。</p>
+<p>img : (H,W) 또는 (H,W,C)</p>
+<p>바탕. 값 범위 [0,1].</p>
 <p>mask : (H,W)</p>
-<p>反転を乗せるところ。真偽か [0,1] の重み。<b>形が違えば例外</b>。</p>
+<p>반전을 얹을 곳. 참거짓 또는 [0,1]의 가중치. <b>형태가 다르면 예외</b>.</p>
 <p>mode : str</p>
-<p><code style="color:#22d3bf">INVERT_MODES</code> のいずれか。</p>
+<p><code style="color:#22d3bf">INVERT_MODES</code> 중 하나.</p>
 <p>alpha : float</p>
-<p>反転の効き。描くときと同じ値を渡すこと —— 見え方は「反転色」ではなく</p>
-<p><b>実際に置かれる色</b>で決まるので、<code style="color:#22d3bf">alpha</code> を落とすと答えが変わる。</p>
+<p>반전의 효과. 그릴 때와 같은 값을 넘길 것 —— 보이는 방식은 &quot;반전색&quot;이 아니라</p>
+<p><b>실제로 놓이는 색</b>으로 정해지므로, <code style="color:#22d3bf">alpha</code>를 낮추면 답이 바뀐다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">pixels</code>(重み &gt;= 0.5 の画素数) / <code style="color:#22d3bf">min_contrast</code> /</p>
-<p><code style="color:#22d3bf">median_contrast</code> / <code style="color:#22d3bf">invisible_fraction</code>(比が</p>
-<p><code style="color:#22d3bf">INVERT_MIN_CONTRAST</code> 未満の割合) / <code style="color:#22d3bf">worst_xy</code>(最悪の画素、</p>
-<p>無ければ <code style="color:#22d3bf">None</code>)。</p>
+<p><code style="color:#22d3bf">pixels</code>(가중치 &gt;= 0.5인 화소 수) / <code style="color:#22d3bf">min_contrast</code> /</p>
+<p><code style="color:#22d3bf">median_contrast</code> / <code style="color:#22d3bf">invisible_fraction</code>(비가</p>
+<p><code style="color:#22d3bf">INVERT_MIN_CONTRAST</code> 미만인 비율) / <code style="color:#22d3bf">worst_xy</code>(최악의 화소,</p>
+<p>없으면 <code style="color:#22d3bf">None</code>).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np, annotate</p>
-<p>&gt;&gt;&gt; flat = np.full((8, 8), 128 / 255.0)          # 中間調 —— 反転が消える地</p>
+<p>&gt;&gt;&gt; flat = np.full((8, 8), 128 / 255.0)          # 중간조 —— 반전이 사라지는 바탕</p>
 <p>&gt;&gt;&gt; rep = annotate.annotate_invert_visibility(flat, np.ones((8, 8), bool))</p>
 <p>&gt;&gt;&gt; round(rep[&quot;min_contrast&quot;], 3)</p>
 <p>1.014</p>

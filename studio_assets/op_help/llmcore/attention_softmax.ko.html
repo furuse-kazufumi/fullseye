@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import llmcore; llmcore.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_softmax&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>일괄 어텐션(참조 구현) → tokens. <b>이 패밀리의 정답 대조 기준</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>(T, T) のスコア行列を実際に作ってから softmax する、いちばん素直な書き方。<code style="color:#22d3bf">attention_tiled</code> / <code style="color:#22d3bf">attention_linear</code> / <code style="color:#22d3bf">attention_grouped</code> はこれと一致することで正しさを示す。</p>
+<p>(T, T) 의 점수 행렬을 실제로 만든 다음 softmax 하는, 가장 솔직한 작성법. <code style="color:#22d3bf">attention_tiled</code> / <code style="color:#22d3bf">attention_linear</code> / <code style="color:#22d3bf">attention_grouped</code> 는 이것과일치함으로써 올바름을 보인다.</p>
 <p>Args:</p>
-<p>query: (T, d) float。</p>
-<p>key: (S, d) float。</p>
-<p>value: (S, dv) float。</p>
-<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) の bool 配列。</p>
-<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅。</p>
-<p>scale: スコアの倍率。None なら 1/√d。</p>
+<p>query: (T, d) float.</p>
+<p>key: (S, d) float.</p>
+<p>value: (S, dv) float.</p>
+<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) 의 bool 배열.</p>
+<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> 일 때의 창 폭.</p>
+<p>scale: 점수의 배율. None 이면 1/√d.</p>
 <p>Returns:</p>
-<p>tokens (T, dv) float: 注意で混ぜた列。</p>
+<p>tokens (T, dv) float: 어텐션으로 섞은 열.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

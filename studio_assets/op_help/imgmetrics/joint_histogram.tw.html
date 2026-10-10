@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.joint_histogram(a, b, bins=64, data_range=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgmetrics; imgmetrics.joint_histogram(a, b, bins=64, data_range=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;joint_histogram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>兩張影像的聯合直方圖(正規化後的聯合機率)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>ビン幅は <code style="color:#22d3bf">data_range</code> から決める ―― 画像ごとに min/max で伸縮させると、<b>一様に暗い絵と一様に明るい絵の相互情報量が同じになる</b>ので。</p>
-<p>手順: 2 枚を平坦化し、両方に <b>同じ</b> ビン境界 <code style="color:#22d3bf">[lo, lo + data_range]</code> (<code style="color:#22d3bf">lo</code> = 2 枚の最小値の小さいほう、<code style="color:#22d3bf">bins</code> 等分)で <code style="color:#22d3bf">numpy.histogram2d</code> を取り、総数で割って同時確率にする。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: 同じ形(次元は問わない)、有限。dtype は同じでなければ <code style="color:#22d3bf">data_range</code> を明示する(混在 dtype からの推定は拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bins</code>: 2 以上の整数。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code>: 整数 dtype は自動(uint8 = 255 など)、float は <code style="color:#22d3bf">[0, 1]</code> のときだけ 1.0、それ以外は明示必須。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(bins, bins)</code> の float64、和は 1。行が <code style="color:#22d3bf">a</code> のビン、列が <code style="color:#22d3bf">b</code> のビン。<code style="color:#22d3bf">lo + data_range</code> を超える値はビンに入らない(数えられない)。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): 形が違う / 空 / 非有限 / <code style="color:#22d3bf">bins &lt; 2</code> / 範囲に入る標本が 0。</p>
-<p><code style="color:#22d3bf">joint_entropy</code> / <code style="color:#22d3bf">mutual_information</code> / <code style="color:#22d3bf">image_entropy</code> はこの表から計算する。</p>
+<p>分箱寬度由 <code style="color:#22d3bf">data_range</code> 決定 —— 若按每張影像的 min/max 伸縮, <b>均勻偏暗的圖與均勻偏亮的圖的互資訊就會相同</b>。</p>
+<p>步驟:把 2 張圖攤平,對兩者用<b>相同的</b>分箱邊界 <code style="color:#22d3bf">[lo, lo + data_range]</code> (<code style="color:#22d3bf">lo</code> = 2 張圖最小值中較小者,<code style="color:#22d3bf">bins</code> 等分)求 <code style="color:#22d3bf">numpy.histogram2d</code>, 再除以總數得到聯合機率。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code>:同形(維數不限)、有限。dtype 不同時須明確給出 <code style="color:#22d3bf">data_range</code>(拒絕從混合 dtype 推定)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bins</code>:2 以上的整數。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code>:整數 dtype 自動(uint8 = 255 等),float 僅在 <code style="color:#22d3bf">[0, 1]</code> 時為 1.0,其他情況必須明確給出。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值:<code style="color:#22d3bf">(bins, bins)</code> 的 float64,和為 1。列是 <code style="color:#22d3bf">a</code> 的分箱,欄是 <code style="color:#22d3bf">b</code> 的分箱。超過 <code style="color:#22d3bf">lo + data_range</code> 的值不進入任何分箱(不計數)。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>):形狀不同 / 為空 / 非有限 / <code style="color:#22d3bf">bins &lt; 2</code> / 落入範圍的樣本為 0。</p>
+<p><code style="color:#22d3bf">joint_entropy</code> / <code style="color:#22d3bf">mutual_information</code> / <code style="color:#22d3bf">image_entropy</code> 都由此表計算。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

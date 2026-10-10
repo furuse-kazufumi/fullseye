@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_magnitude(flow)</code>(要直接呼叫實作,<code style="color:#22d3bf">import reprconv; reprconv.flow_magnitude(flow)</code>;從台帳取用則 <code style="color:#22d3bf">opsreprconv.get(&quot;flow_magnitude&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>稠密場景流 <code style="color:#22d3bf">(3,D,H,W)</code> → 速度體 <code style="color:#22d3bf">voxel (D,H,W)</code>。<code style="color:#22d3bf">flow</code> 的出口。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">sqrt(dz^2 + dy^2 + dx^2)</code>。<b>一方向</b>(向きを捨てるので戻せない)。</p>
-<p>捨てた量は明示できる: 3 成分のうち 2 自由度ぶんの方向が消え、残るのは</p>
-<p>大きさだけ。方向まで見たいときは <code style="color:#22d3bf">flow_to_rgbimage</code>。</p>
+<p><code style="color:#22d3bf">sqrt(dz^2 + dy^2 + dx^2)</code>。<b>單向</b>(捨棄方向,因此無法還原)。</p>
+<p>捨棄的量可以明確說明: 3 個分量中相當於 2 個自由度的方向消失,剩下的只有</p>
+<p>大小。若還想看方向,請用 <code style="color:#22d3bf">flow_to_rgbimage</code>。</p>
 <p>Args:</p>
-<p>flow: (3, D, H, W)。成分順は (dz, dy, dx)(<code style="color:#22d3bf">scene_flow_lk</code> の約束)。</p>
+<p>flow: (3, D, H, W)。分量順序為 (dz, dy, dx)(<code style="color:#22d3bf">scene_flow_lk</code> 的約定)。</p>
 <p>Returns:</p>
 <p>(D, H, W) float64。</p>
 <p>Raises:</p>
-<p>ValueError: 密フローでない / 非有限。</p>
+<p>ValueError: 不是稠密流 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

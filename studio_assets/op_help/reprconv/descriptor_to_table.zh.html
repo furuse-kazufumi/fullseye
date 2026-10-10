@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_table(descriptor)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_table(descriptor)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>描述子 → 汇总 <code style="color:#22d3bf">table</code>。<b>单向</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>次元・ノルム・エネルギー集中(正規化した二乗和の上位 10% が占める割合)を出す。記述子が「実質何次元使っているか」を見るためのもので、次元だけ多くてほぼ全部 0 という失敗を可視化する。</p>
+<p>输出维度、范数、能量集中度(归一化平方和中前 10% 所占的比例)。用于查看描述子&quot;实际用了几个维度&quot;,把维度很多却几乎全为 0 的失败可视化。</p>
 <p>Args:</p>
-<p>descriptor: (n,) または (m, n)。</p>
+<p>descriptor: (n,) 或 (m, n)。</p>
 <p>Returns:</p>
 <p>dict(<code style="color:#22d3bf">shape</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">l2</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">min</code> /</p>
 <p><code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">top10pct_energy</code> / <code style="color:#22d3bf">nonzero_fraction</code>)。</p>

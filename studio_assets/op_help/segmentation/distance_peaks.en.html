@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import watershed3d; watershed3d.distance_peaks(binary, min_distance: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;distance_peaks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns an int marker array of the local maxima of the foreground distance transform, thinned out by <code style="color:#22d3bf">min_distance</code> NMS.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">volops.vol_distance_transform</code> + <code style="color:#22d3bf">volops.vol_local_maxima</code> の薄い合成に、「極大座標→ラベル配列(1 物体 1 シード)」の後処理を足したもの(<code style="color:#22d3bf">watershed_vol</code> が内部で使うシード生成を単体で公開=可視化・検証用)。</p>
+<p><code style="color:#22d3bf">volops.vol_distance_transform</code> + <code style="color:#22d3bf">volops.vol_local_maxima</code> as a thin composition, plus the post-processing &quot;maximum coordinates → label array (1 seed per 1 object)&quot; (exposes on its own the seed generation that <code style="color:#22d3bf">watershed_vol</code> uses internally = for visualisation and verification).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>binary : array_like</p>
-<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>3D foreground volume, bool or 0/1.</p>
 <p>min_distance : float</p>
-<p>採用シード間の最小ユークリッド距離(voxel)。物体間隔より小さく、物体内ノイズ極大の</p>
-<p>間隔より大きく取る。</p>
+<p>Minimum Euclidean distance between accepted seeds (voxel). Choose it smaller than the spacing between objects and larger than the spacing of</p>
+<p>noise maxima inside an object.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>markers : ndarray(int32)</p>
-<p>binary と同形状。0=シード無し、1..k=各シードラベル。</p>
+<p>Same shape as binary. 0 = no seed, 1..k = seed labels.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

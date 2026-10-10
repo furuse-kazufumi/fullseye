@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.counts_to_countrate(counts, gate_s=0.001)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.counts_to_countrate(counts, gate_s=0.001)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;counts_to_countrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zählungen → Zählrate <code style="color:#22d3bf">[Hz]</code>. Die Umkehrung von <code style="color:#22d3bf">countrate_to_counts</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
-<p>counts: (N,) の非負計数。</p>
-<p>gate_s: 積算窓 [s]。&gt; 0。</p>
+<p>counts: (N,) nicht-negative Zählwerte.</p>
+<p>gate_s: Integrationsfenster [s]. &gt; 0.</p>
 <p>Returns:</p>
-<p>(N,) float64 の非負レート [Hz]。</p>
+<p>(N,) float64 nicht-negative Rate [Hz].</p>
 <p>Raises:</p>
-<p>ValueError: 負の計数 / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
+<p>ValueError: negativer Zählwert / gate_s &lt;= 0 / ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

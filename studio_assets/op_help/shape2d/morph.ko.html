@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph(imgA, imgB, ptsA, ptsB, alpha, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imagemorph; imagemorph.morph(imgA, imgB, ptsA, ptsB, alpha, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;morph&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상 2장 A, B를 대응점으로 모핑하여 비율 alpha의 중간 영상을 만든다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>手順(Beier–Neely 流のメッシュ・モーフ):</p>
-<p style="margin:2px 0 2px 12px">1. 中間形状 mid = (1-alpha)·ptsA + alpha·ptsB を作る。</p>
-<p style="margin:2px 0 2px 12px">2. A を ptsA→mid へ、B を ptsB→mid へワープ(両者の特徴を mid に揃える)。</p>
-<p style="margin:2px 0 2px 12px">3. warp(A), warp(B) を alpha でクロスディゾルブ。</p>
-<p>alpha=0 で A、alpha=1 で B に一致する。単純な blend(A,B,alpha) と違い、目・鼻などの特徴が二重像にならず 1 つに重なる(=「本物の中間」)。</p>
-<p>引数:</p>
-<p>imgA, imgB: (H,W[,C])、同 shape、[0,1]。</p>
-<p>ptsA, ptsB: (K,2) の (x,y)。A と B の対応点(同数・同順)。</p>
-<p>alpha: 合成比率 [0,1]。</p>
-<p>method: &quot;affine&quot;(区分アフィン, 速い)か &quot;tps&quot;(滑らか)。</p>
-<p>lam: TPS の平滑化係数(method=&quot;tps&quot; のとき)。</p>
-<p>with_corners: True で四隅を固定点に足し、端の穴を防ぐ。</p>
-<p>返り値: (H,W[,C]) の中間画像([0,1])。</p>
+<p>절차(Beier–Neely 방식의 메시 모프):</p>
+<p style="margin:2px 0 2px 12px">1. 중간 형상 mid = (1-alpha)·ptsA + alpha·ptsB 를 만든다.</p>
+<p style="margin:2px 0 2px 12px">2. A 를 ptsA→mid 로, B 를 ptsB→mid 로 워프(양쪽의 특징을 mid 에 맞춘다).</p>
+<p style="margin:2px 0 2px 12px">3. warp(A), warp(B) 를 alpha 로 크로스 디졸브.</p>
+<p>alpha=0 이면 A, alpha=1 이면 B 에 일치한다. 단순한 blend(A,B,alpha) 와 달리, 눈·코 등의 특징이 이중상이 되지 않고 1 개로 겹친다(=&quot;진짜 중간&quot;).</p>
+<p>인수:</p>
+<p>imgA, imgB: (H,W[,C]), 같은 shape, [0,1].</p>
+<p>ptsA, ptsB: (K,2) 의 (x,y). A 와 B 의 대응점(같은 수·같은 순서).</p>
+<p>alpha: 합성 비율 [0,1].</p>
+<p>method: &quot;affine&quot;(구분 아핀, 빠름)이나 &quot;tps&quot;(매끄러움).</p>
+<p>lam: TPS 의 평활화 계수(method=&quot;tps&quot; 일 때).</p>
+<p>with_corners: True 로 네 모서리를 고정점에 더해 가장자리의 구멍을 막는다.</p>
+<p>반환값: (H,W[,C]) 의 중간 영상([0,1]).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,25 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_color_flicker(vol_binary, axis=&#x27;z&#x27;, seed: &#x27;int&#x27; = 0, connectivity: &#x27;int&#x27; = 26, connectivity_2d: &#x27;int&#x27; = 8)</code>(要直接调用实现,<code style="color:#22d3bf">import volcolor; volcolor.vol_label_color_flicker(vol_binary, axis=&#x27;z&#x27;, seed: &#x27;int&#x27; = 0, connectivity: &#x27;int&#x27; = 26, connectivity_2d: &#x27;int&#x27; = 8)</code>;从台账取用则 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_color_flicker&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>数出</b>「先分割再上色」与「先上色再分割」的差异。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>同じ 2 値ボリュームに対して 2 通りの手順を踏む:</p>
-<p>A. <b>スライスごと</b> ―― 各断面を 2-D で連結成分ラベリングし、</p>
-<p><code style="color:#22d3bf">imgio.colorize_labels</code> と同じパレットで色を付ける。</p>
-<p>断面ごとに番号が振り直されるので、同じ部品でも層が変われば色が変わりうる。</p>
-<p>B. <b>ボリュームで</b> ―― <code style="color:#22d3bf">volops.vol_label</code> でラベリングしてから</p>
-<p><code style="color:#22d3bf">vol_colorize_labels</code> で色を付け、あとで切る。</p>
-<p>返りは dict:</p>
-<p><code style="color:#22d3bf">n_components</code> 3-D 成分数 · <code style="color:#22d3bf">n_slices</code> 断面の数 ·</p>
-<p><code style="color:#22d3bf">slices_with_change</code> <b>A で 1 つ以上の成分の色が変わった断面の本数</b> ·</p>
-<p><code style="color:#22d3bf">changed_pairs</code> A で色が変わった (成分, 断面) の組の数 ·</p>
-<p><code style="color:#22d3bf">changed_components</code> A で一度でも色が変わった成分の数 ·</p>
+<p>对同一个 2 值体数据走 2 种流程:</p>
+<p>A. <b>逐切片</b> —— 对各断面做 2-D 连通分量标注,</p>
+<p>用与 <code style="color:#22d3bf">imgio.colorize_labels</code> 相同的调色板上色。</p>
+<p>每个断面都会重新编号,所以即使是同一部件,层一变颜色也可能改变。</p>
+<p>B. <b>在体数据上</b> —— 用 <code style="color:#22d3bf">volops.vol_label</code> 标注后</p>
+<p>用 <code style="color:#22d3bf">vol_colorize_labels</code> 上色,之后再切。</p>
+<p>返回 dict:</p>
+<p><code style="color:#22d3bf">n_components</code> 3-D 成分数 · <code style="color:#22d3bf">n_slices</code> 断面数 ·</p>
+<p><code style="color:#22d3bf">slices_with_change</code> <b>在 A 中有 1 个以上成分的颜色改变的断面数</b> ·</p>
+<p><code style="color:#22d3bf">changed_pairs</code> 在 A 中颜色改变的 (成分, 断面) 组数 ·</p>
+<p><code style="color:#22d3bf">changed_components</code> 在 A 中颜色至少变过一次的成分数 ·</p>
 <p><code style="color:#22d3bf">volume_slices_with_change</code> / <code style="color:#22d3bf">volume_changed_pairs</code> /</p>
-<p><code style="color:#22d3bf">volume_changed_components</code> B の同じ量(<b>構造上 0</b>) ·</p>
-<p><code style="color:#22d3bf">pairs_checked</code> 比較した (成分, 断面) の総数 ·</p>
+<p><code style="color:#22d3bf">volume_changed_components</code> B 的同样的量(<b>结构上为 0</b>) ·</p>
+<p><code style="color:#22d3bf">pairs_checked</code> 比较过的 (成分, 断面) 总数 ·</p>
 <p><code style="color:#22d3bf">flicker_rate</code> <code style="color:#22d3bf">changed_pairs / pairs_checked</code>。</p>
-<p>比較の定義:各 3-D 成分 <code style="color:#22d3bf">c</code> について、<code style="color:#22d3bf">c</code> が現れる最初の断面での色を基準とし、以降の断面で <code style="color:#22d3bf">c</code> の画素の<b>最頻色</b>が基準と違えば 1 件と数える(1 つの 3-D 成分が 1 断面で複数の 2-D 片に割れることがあるため、代表は最頻色。同数の場合は RGB の辞書順で小さい方 = 決定的)。</p>
-<p>実測(<code style="color:#22d3bf">(24, 48, 48)</code>・16 球の参照ファントム、seed=0、axis=&quot;z&quot;、<code style="color:#22d3bf">connectivity=26</code> / <code style="color:#22d3bf">connectivity_2d=8</code>):<code style="color:#22d3bf">pairs_checked=108</code>、<code style="color:#22d3bf">slices_with_change=20 / 24</code>、<code style="color:#22d3bf">changed_pairs=62</code>(57.4 %)、<code style="color:#22d3bf">changed_components=16 / 16</code>。B 側は 3 つとも 0 ―― <b>構造上 0 であって、たまたま 0 なのではない</b>(ラベル番号がボリューム全体で一意だから)。</p>
-<p>Raises <code style="color:#22d3bf">ValueError</code> for a bad volume, an unknown *axis*, or a *connectivity* that is not 6 / 18 / 26 (2-D: 4 / 8).</p>
+<p>比较的定义: 对各 3-D 成分 <code style="color:#22d3bf">c</code>,以 <code style="color:#22d3bf">c</code> 首次出现的断面上的颜色为基准,之后的断面上若 <code style="color:#22d3bf">c</code> 像素的<b>众数颜色</b>与基准不同则计为 1 件(1 个 3-D 成分可能在 1 个断面上裂成多个 2-D 碎片,所以代表取众数颜色。数量相同时取 RGB 字典序较小者 = 确定性)。</p>
+<p>实测(<code style="color:#22d3bf">(24, 48, 48)</code>、16 个球的参考体模,seed=0,axis=&quot;z&quot;, <code style="color:#22d3bf">connectivity=26</code> / <code style="color:#22d3bf">connectivity_2d=8</code>): <code style="color:#22d3bf">pairs_checked=108</code>, <code style="color:#22d3bf">slices_with_change=20 / 24</code>,<code style="color:#22d3bf">changed_pairs=62</code>(57.4 %), <code style="color:#22d3bf">changed_components=16 / 16</code>。B 一侧 3 项全为 0 —— <b>是结构上的 0, 不是碰巧为 0</b>(因为标签编号在整个体数据中唯一)。</p>
+<p>对不正确的体数据、未知的 *axis*,或不是 6 / 18 / 26 (2-D: 4 / 8)的 *connectivity*,抛出 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

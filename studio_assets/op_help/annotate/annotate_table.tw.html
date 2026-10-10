@@ -4,33 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_table(img, text, xy, anchor=&#x27;lt&#x27;, font_size=13, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, grid=False, border=0, border_color=None, font_path=None, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, bold=False, italic=False, line_spacing=1.15, style=None, layout=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_table(img, text, xy, anchor=&#x27;lt&#x27;, font_size=13, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, grid=False, border=0, border_color=None, font_path=None, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, bold=False, italic=False, line_spacing=1.15, style=None, layout=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳影像(image2d)：將以 Tab 分隔的字串繪製成<b>表格</b>(帶半透明底板)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>桁幅は <code style="color:#22d3bf">annotate_table_layout</code> が実フォントで測って決める。既定の桁間は行高の 0.6 倍なので、<code style="color:#22d3bf">font_size</code> を変えれば間隔も一緒に動く。板は既定で半透明(<code style="color:#22d3bf">box_alpha=0.72</code>、0 で板なし)。</p>
+<p>欄寬由 <code style="color:#22d3bf">annotate_table_layout</code> 用實際字型量測決定。預設的欄間距是列高的 0.6 倍,所以改變 <code style="color:#22d3bf">font_size</code> 時間距也隨之變化。襯板預設半透明(<code style="color:#22d3bf">box_alpha=0.72</code>,0 表示無襯板)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>box_alpha : float</p>
-<p>板の不透明度 [0,1]。<b>0 で板を描かない</b>。半透明にすると下の絵が</p>
-<p>透けるので、文字色は「実際に下に出る色」に対して検査される。</p>
+<p>襯板的不透明度 [0,1]。<b>0 時不繪製襯板</b>。半透明時下方的圖會</p>
+<p>透出來,所以文字顏色是針對「實際出現在下方的顏色」檢查的。</p>
 <p>grid : bool</p>
-<p>真なら桁と行の境に薄い罫を引く。既定は引かない(罫の無い表のほうが</p>
-<p>読みやすいことが多く、必要なときだけ足せばよい)。</p>
+<p>為真時在欄與列的邊界畫淺色線。預設不畫(沒有線的表格往往</p>
+<p>更易讀,需要時再加即可)。</p>
 <p>header : bool</p>
-<p>真なら 1 行目を太字にし、下に罫を 1 本引く。</p>
+<p>為真時把第 1 列設為粗體,並在其下畫 1 條線。</p>
 <p>align : str or sequence</p>
-<p><code style="color:#22d3bf">TABLE_ALIGNS</code>。既定 <code style="color:#22d3bf">&quot;auto&quot;</code> は数の桁だけ右そろえ。</p>
+<p><code style="color:#22d3bf">TABLE_ALIGNS</code>。預設 <code style="color:#22d3bf">&quot;auto&quot;</code> 只把數字欄靠右對齊。</p>
 <p>layout : dict or None</p>
-<p><code style="color:#22d3bf">annotate_table_layout</code> の返りを渡すと再計算しない。</p>
-<p><b>渡した場合、<code style="color:#22d3bf">anchor</code> などは無視される</b>(両方渡さないこと)。</p>
+<p>傳入 <code style="color:#22d3bf">annotate_table_layout</code> 的回傳值即不重新計算。</p>
+<p><b>傳入時 <code style="color:#22d3bf">anchor</code> 等會被忽略</b>(不要兩者都傳)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(H,W[,C]) float64</p>
-<p>表を描いた複製。<b>入力は書き換えない</b>。</p>
+<p>繪製了表格的副本。<b>不修改輸入</b>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_table_layout</code> と同じ + 表が画像からはみ出す +</p>
-<p>文字が下地に対して <code style="color:#22d3bf">min_contrast</code> を割る(<b>黙って切らない</b>)。</p>
+<p>與 <code style="color:#22d3bf">annotate_table_layout</code> 相同 + 表格超出影像 +</p>
+<p>文字相對於底色低於 <code style="color:#22d3bf">min_contrast</code>(<b>不會默默截掉</b>)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np, annotate</p>
 <p>&gt;&gt;&gt; img = np.zeros((120, 260, 3))</p>
-<p>&gt;&gt;&gt; out = annotate.annotate_table(img, &quot;項目\t値\n面積\t12.5\n周長\t9.75&quot;,</p>
+<p>&gt;&gt;&gt; out = annotate.annotate_table(img, &quot;項目\t值\n面積\t12.5\n周長\t9.75&quot;,</p>
 <p>...                               (10, 10), header=True)</p>
 <p>&gt;&gt;&gt; out.shape</p>
 <p>(120, 260, 3)</p>

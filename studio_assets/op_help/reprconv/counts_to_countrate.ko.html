@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.counts_to_countrate(counts, gate_s=0.001)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.counts_to_countrate(counts, gate_s=0.001)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;counts_to_countrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>계수 → 계수율 <code style="color:#22d3bf">[Hz]</code>. <code style="color:#22d3bf">countrate_to_counts</code> 의 역.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Args:</p>
-<p>counts: (N,) の非負計数。</p>
-<p>gate_s: 積算窓 [s]。&gt; 0。</p>
+<p>counts: (N,)의 음이 아닌 계수.</p>
+<p>gate_s: 적산 창 [s]. &gt; 0.</p>
 <p>Returns:</p>
-<p>(N,) float64 の非負レート [Hz]。</p>
+<p>(N,) float64의 음이 아닌 레이트 [Hz].</p>
 <p>Raises:</p>
-<p>ValueError: 負の計数 / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
+<p>ValueError: 음의 계수 / gate_s &lt;= 0 / 형상 부정 / 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

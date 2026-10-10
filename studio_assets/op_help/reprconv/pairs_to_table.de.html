@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_table(pairs)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_table(pairs)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Paare <code style="color:#22d3bf">(N,2)</code> → eine zusammenfassende <code style="color:#22d3bf">table</code>. <b>Einwegs.</b></p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">x_uniform</code> は「列 0 が等間隔か」の判定で、これが False の対を <code style="color:#22d3bf">pairs_to_signal</code> に通すと x が黙って落ちる(上の docstring 参照)。判定は最大差分と最小差分の比で行い、閾値は 1e-9(相対)。</p>
+<p><code style="color:#22d3bf">x_uniform</code> ist der Test &quot;ist Spalte 0 äquidistant&quot;; Paare, bei denen er False ist, verlieren beim Durchlauf durch <code style="color:#22d3bf">pairs_to_signal</code> stillschweigend x (siehe Docstring oben). Getestet wird über das Verhältnis von größter zu kleinster Differenz, Schwellwert 1e-9 (relativ).</p>
 <p>Args:</p>
-<p>pairs: (N, 2)。</p>
+<p>pairs: (N, 2).</p>
 <p>Returns:</p>
 <p>dict(<code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">x_min</code> / <code style="color:#22d3bf">x_max</code> / <code style="color:#22d3bf">y_min</code> / <code style="color:#22d3bf">y_max</code> /</p>
-<p><code style="color:#22d3bf">y_mean</code> / <code style="color:#22d3bf">x_uniform</code> / <code style="color:#22d3bf">x_step</code>(等間隔のときのみ) /</p>
-<p><code style="color:#22d3bf">pearson_r</code>(N &gt;= 2 かつ両列が定数でないとき))。</p>
+<p><code style="color:#22d3bf">y_mean</code> / <code style="color:#22d3bf">x_uniform</code> / <code style="color:#22d3bf">x_step</code> (nur bei Äquidistanz) /</p>
+<p><code style="color:#22d3bf">pearson_r</code> (wenn N &gt;= 2 und keine Spalte konstant ist)).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_score(voxel_a, voxel_b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.correlation_score(voxel_a, voxel_b)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;correlation_score&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 <code style="color:#22d3bf">voxel</code> → normalised cross-correlation का <code style="color:#22d3bf">score</code> volume। <b>इस type में आने का एकमात्र रास्ता</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">score</code> は <code style="color:#22d3bf">refine_peak_newton</code> が食う型だが、<b>台帳のどの op も <code style="color:#22d3bf">score</code> を産まなかった</b>(実測。生成器の種を置いてようやく到達していた)。ここでは FFT による循環相互相関を返す:</p>
+<p><code style="color:#22d3bf">score</code> वह type है जिसे <code style="color:#22d3bf">refine_peak_newton</code> consume करता है, लेकिन <b>ledger के किसी भी op ने <code style="color:#22d3bf">score</code> नहीं बनाया</b> (measured; generator का seed रखने के बाद ही यहाँ तक पहुँचा गया)। यहाँ FFT से circular cross-correlation लौटाया जाता है:</p>
 <p>score[s] = sum_x (a[x] - mean_a) * (b[x + s] - mean_b) / (N * std_a * std_b)</p>
-<p>したがって <code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">a</code> を <code style="color:#22d3bf">s0</code> だけ <code style="color:#22d3bf">np.roll</code> したものなら、ピークは<b>厳密に</b> <code style="color:#22d3bf">s0</code> に立つ(閉形式の真値。テストがこれを使う)。循環相関なので端は巻き込む —— <b>打ち切り相関ではない</b>ことを明記しておく。</p>
+<p>इसलिए यदि <code style="color:#22d3bf">b</code> वह है जो <code style="color:#22d3bf">a</code> को <code style="color:#22d3bf">np.roll</code> से <code style="color:#22d3bf">s0</code> खिसकाकर मिला है, तो peak <b>ठीक</b> <code style="color:#22d3bf">s0</code> पर बनता है (closed form ground truth; test इसी का उपयोग करता है)। circular correlation होने से किनारे लिपट जाते हैं -- स्पष्ट रूप से लिखा गया है कि यह <b>truncated correlation नहीं</b> है।</p>
 <p>Args:</p>
-<p>voxel_a: (D, H, W)。</p>
-<p>voxel_b: (D, H, W)、<code style="color:#22d3bf">voxel_a</code> と同形。</p>
+<p>voxel_a: (D, H, W)।</p>
+<p>voxel_b: (D, H, W), <code style="color:#22d3bf">voxel_a</code> के समान shape।</p>
 <p>Returns:</p>
-<p>(D, H, W) float64、値域は概ね [-1, 1] (完全一致で 1.0)。</p>
+<p>(D, H, W) float64, range लगभग [-1, 1] (पूर्ण मेल पर 1.0)।</p>
 <p>Raises:</p>
-<p>ValueError: 3-D でない / 形が違う / 定数体積(標準偏差 0)/ 非有限。</p>
+<p>ValueError: 3-D नहीं / shape अलग / constant volume (standard deviation 0) / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.position_to_points(position)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.position_to_points(position)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;position_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A position <code style="color:#22d3bf">(z, y, x)</code> → a one-point set <code style="color:#22d3bf">(1, 3)</code>. The exit from <code style="color:#22d3bf">position</code> (<b>invertible</b>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">position</code> は <code style="color:#22d3bf">volregion.vol_rle_centroid</code> などが返す 3-tuple で、順序は <b>(z, y, x)</b>(<code style="color:#22d3bf">vol_rle_centroid</code> の docstring が明示している)。点群も voxel 由来なら同じ順なので、そのまま 1 行の点群にできる。</p>
+<p><code style="color:#22d3bf">position</code> is a 3-tuple returned by <code style="color:#22d3bf">volregion.vol_rle_centroid</code> and the like, and its order is <b>(z, y, x)</b> (the docstring of <code style="color:#22d3bf">vol_rle_centroid</code> states this explicitly). Point clouds derived from voxels have the same order, so it can be turned directly into a 1-row point cloud.</p>
 <p>Args:</p>
-<p>position: 長さ 3 の列 (z, y, x)。</p>
+<p>position: a sequence of length 3 (z, y, x).</p>
 <p>Returns:</p>
-<p>(1, 3) float64。</p>
+<p>(1, 3) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 長さが 3 でない / 非有限。</p>
+<p>ValueError: length is not 3 / non-finite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

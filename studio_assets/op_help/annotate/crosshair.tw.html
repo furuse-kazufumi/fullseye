@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crosshair(img, xy, color=&#x27;emphasis&#x27;, width=1, gap=6, extent=None, scheme=&#x27;okabe_ito&#x27;, style=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.crosshair(img, xy, color=&#x27;emphasis&#x27;, width=1, gap=6, extent=None, scheme=&#x27;okabe_ito&#x27;, style=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;crosshair&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>斷面的交叉線(用於 MPR)。留出 <code style="color:#22d3bf">gap</code> 讓中心空出,不遮擋視點。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>xy : (x, y)</p>
-<p>交点。</p>
+<p>交點。</p>
 <p>gap : int</p>
-<p>中心を空ける半径 [px] (0 で全通し)。</p>
+<p>中心留空的半徑 [px] (0 為全貫通)。</p>
 <p>extent : int or None</p>
-<p>中心からの腕の長さ[px]。None なら画像の端まで。</p>
+<p>從中心起的臂長[px]。None 時延伸到影像邊緣。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>交点が画像の外、負の gap/extent。</p>
+<p>交點在影像外、負的 gap/extent。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

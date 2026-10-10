@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_image2d(pairs, shape=(64, 64))</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.pairs_to_image2d(pairs, shape=(64, 64))</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对 <code style="color:#22d3bf">(N,2)</code> → 散点密度图像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">pairs</code> 的第三个出口。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>列 0 を行方向、列 1 を列方向に、それぞれの最小-最大で正規化して bin へ落とす(2-D ヒストグラム)。位相図・相関図として見るためのもので、<b>不可逆</b> (bin 幅ぶんの量子化 + 正規化で絶対値のスケールを捨てる)。捨てたスケールは戻せるように <code style="color:#22d3bf">extent</code> を…返さない —— 返すと <code style="color:#22d3bf">image2d</code></p>
-<p>でなくなる。必要なら <code style="color:#22d3bf">pairs_to_table</code> の <code style="color:#22d3bf">x_min</code> などを使う。</p>
-<p>定数列(最小 == 最大)は 0.5 の位置へ集める(0 除算を避けるが、それを「密度が中央に集中している」と読まれないよう、bin は 1 本だけ立つ)。</p>
+<p>将列 0 映射到行方向、列 1 映射到列方向,各自按最小-最大归一化后落入 bin (2-D 直方图)。用于作为相图、相关图来查看,<b>不可逆</b> (bin 宽度的量化 + 归一化会丢弃绝对值的尺度)。为了能恢复被丢弃的尺度而返回 <code style="color:#22d3bf">extent</code>……并不这样做 —— 一旦返回就不再是 <code style="color:#22d3bf">image2d</code></p>
+<p>了。如有需要,请使用 <code style="color:#22d3bf">pairs_to_table</code> 的 <code style="color:#22d3bf">x_min</code> 等。</p>
+<p>常数列(最小 == 最大)集中到 0.5 的位置(避免除以 0,但为了不被解读为“密度集中在中央”,只立起 1 个 bin)。</p>
 <p>Args:</p>
 <p>pairs: (N, 2)。</p>
 <p>shape: (H, W)。</p>
 <p>Returns:</p>
-<p>(H, W) float64、最大値 1.0 に正規化した密度。</p>
+<p>(H, W) float64,归一化到最大值 1.0 的密度。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限 / shape が上限超。</p>
+<p>ValueError: 形状不正确 / 非有限 / shape 超过上限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

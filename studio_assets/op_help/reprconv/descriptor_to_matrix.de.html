@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_matrix(descriptor)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Deskriptor → <code style="color:#22d3bf">matrix</code>. Der Ausgang aus <code style="color:#22d3bf">descriptor</code> (<b>invertierbar</b>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>1-D の記述子 (n,) は <b>(1, n)</b> の 1 行行列にする。2-D の記述子束(<code style="color:#22d3bf">sh_descriptor</code> の (12, 9) のような「点 x 次元」)はそのまま通す。こうしておくと記述子バンクに <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> がそのまま掛かる —— 記述子は本質的にベクトルなので、行列語彙へ渡すのは梱包の付け替えであって変形ではない。</p>
-<p><code style="color:#22d3bf">matrix_to_descriptor</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。</p>
+<p>Ein 1-D-Deskriptor (n,) wird zur 1-zeiligen Matrix <b>(1, n)</b>. Ein 2-D-Deskriptorbündel (&quot;Punkte x Dimensionen&quot;, wie das (12, 9) von <code style="color:#22d3bf">sh_descriptor</code>) wird unverändert durchgereicht. So lassen sich <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> direkt auf eine Deskriptorbank anwenden -- ein Deskriptor ist im Wesen ein Vektor, ihn an das Matrix-Vokabular zu geben ist ein Wechsel der Verpackung, keine Umformung.</p>
+<p>Der Hin- und Rückweg mit <code style="color:#22d3bf">matrix_to_descriptor</code> ist <b>bitidentisch</b> (gemessen max|Δ| = 0.0).</p>
 <p>Args:</p>
-<p>descriptor: (n,) または (m, n) の実配列。</p>
+<p>descriptor: (n,) oder (m, n) reelles Array.</p>
 <p>Returns:</p>
-<p>(1, n) または (m, n) float64。</p>
+<p>(1, n) oder (m, n) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 3-D 以上 / 非有限 / dict(<code style="color:#22d3bf">fit_zernike</code> は dict を返すので</p>
-<p>ここで拒否される —— 詳細は本モジュール docstring)。</p>
+<p>ValueError: 3-D oder mehr / nicht endlich / dict (<code style="color:#22d3bf">fit_zernike</code> liefert ein dict und</p>
+<p>wird deshalb hier abgewiesen -- Details im Docstring dieses Moduls).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

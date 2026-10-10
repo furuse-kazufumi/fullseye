@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cscalar_to_polar(cscalar)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.cscalar_to_polar(cscalar)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;cscalar_to_polar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>complex scalar → polar रूप <code style="color:#22d3bf">pairs (1,2) = [|z|, arg z [deg]]</code>। <code style="color:#22d3bf">cscalar</code> से निकास।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> が返す複素スカラは、<code style="color:#22d3bf">measurement</code>(実スカラのみ)へ混ぜると下流が生 TypeError で落ちるので型が分かれている。極形式の対にすると 1-D 語彙へ渡せる。</p>
-<p><b>角度は度</b>。<code style="color:#22d3bf">polar_to_cscalar</code> と往復して実測 max|Δ| = 8.9e-16。</p>
+<p><code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> जो complex scalar लौटाते हैं, उसे <code style="color:#22d3bf">measurement</code> (केवल real scalar) में मिलाने पर downstream कच्चे TypeError से गिर जाता है, इसलिए type अलग रखा गया है। polar रूप के pair में बदलने पर इसे 1-D vocabulary को दिया जा सकता है।</p>
+<p><b>कोण degree में है</b>। <code style="color:#22d3bf">polar_to_cscalar</code> के साथ round trip में measured max|Δ| = 8.9e-16।</p>
 <p>Args:</p>
-<p>cscalar: complex(または複素 0-d 配列)。</p>
+<p>cscalar: complex (या complex 0-d array)।</p>
 <p>Returns:</p>
-<p>(1, 2) float64。</p>
+<p>(1, 2) float64।</p>
 <p>Raises:</p>
-<p>ValueError: 複素スカラでない / 非有限。</p>
+<p>ValueError: complex scalar नहीं / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_text_path(img, text, path, font_size=13, color=&#x27;neutral&#x27;, spacing=1.0, start=0.0, draw_path=False, width=1.0, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15, bold=False, italic=False)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns an image (image2d): text set along a polyline (each glyph rotated to the tangent angle).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>文字の板は敷かない(経路の上に載せる用途なので)。配置と、<code style="color:#22d3bf">anchor</code> / <code style="color:#22d3bf">offset</code> / <code style="color:#22d3bf">upright</code>(縦書き)/ <code style="color:#22d3bf">\n</code> による改行の意味は <code style="color:#22d3bf">annotate_text_path_layout</code> に書いてある。</p>
-<p><code style="color:#22d3bf">layout</code> を渡した場合、そちらが<b>そのまま使われる</b> —— <code style="color:#22d3bf">anchor</code> などは無視されるので、両方を渡さないこと。</p>
-<p><code style="color:#22d3bf">bold</code> / <code style="color:#22d3bf">italic</code> は<b>合成</b>(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。1 字ずつ焼いてから回すので、傾きは<b>字の縦軸に対して</b>掛かる(経路が斜めでも斜体が経路の向きに歪まない)。</p>
+<p>No text backing box is laid down (it is meant to sit on top of the path). Placement, and the meaning of <code style="color:#22d3bf">anchor</code> / <code style="color:#22d3bf">offset</code> / <code style="color:#22d3bf">upright</code> (vertical writing) / line breaks via <code style="color:#22d3bf">\n</code>, are described in <code style="color:#22d3bf">annotate_text_path_layout</code>.</p>
+<p>If <code style="color:#22d3bf">layout</code> is passed, it is <b>used as is</b> -- <code style="color:#22d3bf">anchor</code> and the like are ignored, so do not pass both.</p>
+<p><code style="color:#22d3bf">bold</code> / <code style="color:#22d3bf">italic</code> are <b>synthesised</b> (<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>). Glyphs are rendered 1 at a time and then rotated, so the slant applies <b>relative to the glyph&#x27;s vertical axis</b> (even if the path is diagonal, the italic is not skewed along the path direction).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_text_path_layout</code> と同じ + 回転した字が画像の外に出る。</p>
+<p>Same as <code style="color:#22d3bf">annotate_text_path_layout</code> + a rotated glyph goes outside the image.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

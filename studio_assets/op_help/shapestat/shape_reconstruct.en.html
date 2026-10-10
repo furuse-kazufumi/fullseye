@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_reconstruct(model, scores)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.shape_reconstruct(model, scores)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;shape_reconstruct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reconstructs a shape from scores. → <code style="color:#22d3bf">(N, 3)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>与えたスコアが本数より少なければ残りは 0(= 平均のまま)として扱う。多ければ <code style="color:#22d3bf">ValueError</code> —— 黙って切り捨てると「入れたはずのモードが効かない」という追いにくい形になる。</p>
+<p>If fewer scores than components are given, the rest are treated as 0 (= left at the mean). If more, <code style="color:#22d3bf">ValueError</code> -- silently truncating would produce the hard-to-trace symptom &quot;a mode I put in has no effect&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

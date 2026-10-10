@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_synthesize(model, sigmas=None, n_modes: &#x27;int&#x27; = 3, seed: &#x27;int&#x27; = 0)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.shape_synthesize(model, sigmas=None, n_modes: &#x27;int&#x27; = 3, seed: &#x27;int&#x27; = 0)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;shape_synthesize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Generates 1 <b>plausible new shape</b> from the model. → <code style="color:#22d3bf">(N, 3)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">sigmas</code> を与えればその標準偏差倍のスコア、省けば先頭 <code style="color:#22d3bf">n_modes</code> 本を正規乱数で引く。3 標準偏差を超える形は群の中に 1 つも無かった形なので、既定では引かない(<code style="color:#22d3bf">sigmas</code> で明示すれば作れる)。</p>
+<p>If <code style="color:#22d3bf">sigmas</code> is given, scores of that many standard deviations are used; if omitted, the first <code style="color:#22d3bf">n_modes</code> components are drawn from a normal distribution. A shape beyond 3 standard deviations is one of which the group contained not even 1, so by default it is not drawn (it can be made by stating it explicitly via <code style="color:#22d3bf">sigmas</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.ms_ssim(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, weights=(0.0448, 0.2856, 0.3001, 0.2363, 0.1333), crop_border=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;ms_ssim&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>다중 스케일 SSIM(Wang, Simoncelli &amp; Bovik, Asilomar Conf. 2003).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>5 段の縮小を経るので、最終段で 11 画素の窓が成立するには<b>各辺 176 画素</b>が要る。足りないときに<b>段数を黙って減らさない</b> ―― 段数の違う MS-SSIM は別の指標であり、比べると嘘になる。足りなければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p>2 次元のグレー画像専用(色は <code style="color:#22d3bf">channel_axis</code> ではなくチャネルごとに呼ぶ)。</p>
+<p>5단의 축소를 거치므로, 마지막 단에서 11 화소의 창이 성립하려면 <b>각 변 176 화소</b>가필요하다. 부족할 때 <b>단수를 말없이 줄이지 않는다</b> -- 단수가 다른 MS-SSIM은다른 지표이며, 비교하면 거짓이 된다. 부족하면 <code style="color:#22d3bf">ValueError</code>.</p>
+<p>2차원 그레이 영상 전용(색은 <code style="color:#22d3bf">channel_axis</code>가 아니라 채널별로 호출).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

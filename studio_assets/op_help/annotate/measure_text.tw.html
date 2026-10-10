@@ -4,42 +4,41 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.measure_text(text, font_size=14, font_path=None, max_width=None, min_font_size=9, line_spacing=1.15, wrap=True, bold=False, italic=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;measure_text&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在<b>畫之前</b>先測量文字。放不下就折行或縮小,再不行就擲出例外。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>text : str</p>
-<p>測る文字列(<code style="color:#22d3bf">\n</code> で改行)。</p>
+<p>要量測的字串(以 <code style="color:#22d3bf">\n</code> 換行)。</p>
 <p>font_size : int</p>
-<p>希望のサイズ。<code style="color:#22d3bf">max_width</code> に入らなければ 1pt ずつ縮める。</p>
+<p>期望的字級。若放不進 <code style="color:#22d3bf">max_width</code>,則每次縮小 1pt。</p>
 <p>font_path : str or None</p>
-<p>明示すると機械をまたいでも同じ結果になる。None は <code style="color:#22d3bf">FONT_CANDIDATES</code></p>
-<p>を固定順で探す。</p>
+<p>明確指定後,跨機器也能得到相同結果。None 時依固定順序</p>
+<p>搜尋 <code style="color:#22d3bf">FONT_CANDIDATES</code>。</p>
 <p>max_width : int or None</p>
-<p>入れたい幅[px]。None なら縮小も折り返しもしない。</p>
+<p>想要放入的寬度[px]。None 時既不縮小也不換行。</p>
 <p>min_font_size : int</p>
-<p>ここまで縮めても入らなければ <b>ValueError</b>(黙って切らない)。</p>
+<p>縮到這裡仍放不進則 <b>ValueError</b>(不會悄悄截斷)。</p>
 <p>line_spacing : float</p>
-<p>行送り係数。</p>
+<p>行距係數。</p>
 <p>bold, italic : bool or int</p>
-<p><b>合成</b>の太字・斜体(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。本物の</p>
-<p>Bold / Italic 書体ではないので字形は違う ―― 本物が要るときは</p>
-<p><code style="color:#22d3bf">font_path</code> にその書体のファイルを渡すこと。<code style="color:#22d3bf">bold</code> に整数を渡すと</p>
-<p>重ね打ちの回数を直に指定できる。<b>太さと傾きのぶんは <code style="color:#22d3bf">width</code> に入る</b></p>
-<p>ので、板や表の桁はそのまま広がる(重ね打ちは横にだけ太るので</p>
-<p><code style="color:#22d3bf">height</code> は変わらない)。</p>
+<p><b>合成</b>的粗體、斜體(<code style="color:#22d3bf">_bold_px</code> / <code style="color:#22d3bf">_italic_tile</code>)。並非真正的</p>
+<p>Bold / Italic 字體,所以字形不同 —— 需要真正的字體時,</p>
+<p>請把該字體的檔案傳給 <code style="color:#22d3bf">font_path</code>。給 <code style="color:#22d3bf">bold</code> 傳整數,</p>
+<p>可直接指定疊印次數。<b>粗細與傾斜所增加的部分計入 <code style="color:#22d3bf">width</code></b>,</p>
+<p>因此底板和表格的欄寬會相應變寬(疊印只在橫向變粗,所以</p>
+<p><code style="color:#22d3bf">height</code> 不變)。</p>
 <p>wrap : bool</p>
-<p>True(既定)なら <code style="color:#22d3bf">max_width</code> で<b>折り返す</b>。False なら折り返さず</p>
-<p><b>行を増やさずフォントを縮めて</b>収める(格子のラベルのように、2 行に</p>
-<p>なると版が崩れる場所で使う ―― <code style="color:#22d3bf">exhibit_tile._fit_label</code> と同じ流儀)。</p>
-<p>どちらでも <code style="color:#22d3bf">min_font_size</code> まで来て入らなければ例外。</p>
-<p><code style="color:#22d3bf">\n</code> の改行は <code style="color:#22d3bf">max_width</code> の有無・<code style="color:#22d3bf">wrap</code> の値に<b>よらず常に</b>効く</p>
-<p>(幅を与えないと 1 行に潰れる、という事故は起きない)。</p>
+<p>True(預設)時在 <code style="color:#22d3bf">max_width</code> 處<b>換行</b>。False 時不換行,</p>
+<p>而是<b>不增加行數、縮小字型</b>來放入(用於像網格標籤那樣,變成 2 行</p>
+<p>就會破壞版面的地方 —— 與 <code style="color:#22d3bf">exhibit_tile._fit_label</code> 同樣的做法)。</p>
+<p>無論哪種,縮到 <code style="color:#22d3bf">min_font_size</code> 仍放不進就拋出例外。</p>
+<p><code style="color:#22d3bf">\n</code> 換行與 <code style="color:#22d3bf">max_width</code> 有無、<code style="color:#22d3bf">wrap</code> 取值如何<b>無關,一律</b>生效</p>
+<p>(不會發生「不給寬度就壓成 1 行」的事故)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
 <p><code style="color:#22d3bf">{&quot;lines&quot;, &quot;font&quot;, &quot;font_size&quot;, &quot;width&quot;, &quot;height&quot;, &quot;line_height&quot;}</code>。</p>
-<p><code style="color:#22d3bf">width</code>/<code style="color:#22d3bf">height</code> は実測[px]。</p>
+<p><code style="color:#22d3bf">width</code>/<code style="color:#22d3bf">height</code> 為實測值[px]。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">max_width</code> が非正 / <code style="color:#22d3bf">min_font_size</code> まで縮めても 1 行が入らない。</p>
+<p><code style="color:#22d3bf">max_width</code> 非正 / 縮到 <code style="color:#22d3bf">min_font_size</code> 仍放不進 1 行。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

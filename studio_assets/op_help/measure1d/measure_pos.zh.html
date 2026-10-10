@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition=&#x27;all&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import measuring1d; measuring1d.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition=&#x27;all&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;measure_pos&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>提取测量线上的边缘位置(亚像素)和幅值(measure_pos)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各エッジ: <code style="color:#22d3bf">pos</code>(サンプル index、矩形は始点からの px)/ <code style="color:#22d3bf">dist</code>(始点からの距離 [px])/ <code style="color:#22d3bf">row</code>, <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">amplitude</code>(符号つきグレー差)/ <code style="color:#22d3bf">polarity</code> (&quot;positive&quot; = 測定方向に明るくなる)。<code style="color:#22d3bf">threshold</code> は |amplitude| の下限、<code style="color:#22d3bf">transition</code> は &quot;all&quot; / &quot;positive&quot; / &quot;negative&quot;。</p>
+<p>各边缘: <code style="color:#22d3bf">pos</code>(采样 index，矩形为距起点的 px)/ <code style="color:#22d3bf">dist</code>(距起点的距离 [px])/ <code style="color:#22d3bf">row</code>, <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">amplitude</code>(带符号的灰度差)/ <code style="color:#22d3bf">polarity</code> (&quot;positive&quot; = 沿测量方向变亮)。<code style="color:#22d3bf">threshold</code> 是 |amplitude| 的下限，<code style="color:#22d3bf">transition</code> 为 &quot;all&quot; / &quot;positive&quot; / &quot;negative&quot;。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

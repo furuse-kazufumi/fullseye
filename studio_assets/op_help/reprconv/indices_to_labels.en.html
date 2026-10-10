@@ -4,15 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.indices_to_labels(indices)</code> (to call the implementation directly, <code style="color:#22d3bf">import reprconv; reprconv.indices_to_labels(indices)</code>; from the registry, <code style="color:#22d3bf">opsreprconv.get(&quot;indices_to_labels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Indices <code style="color:#22d3bf">(N,)</code> → a selection mask <code style="color:#22d3bf">labels</code>. The exit from <code style="color:#22d3bf">indices</code> (<b>invertible</b>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">max(indices) + 1</code> 長の 1-D ラベル配列を作り、選ばれた位置に 1 を置く。<code style="color:#22d3bf">indices -&gt; labels -&gt; indices</code> は <b>bit 一致</b>(重複と順序を除く)。逆向き <code style="color:#22d3bf">labels -&gt; indices -&gt; labels</code> は<b>末尾の背景を落とす</b> (長さが <code style="color:#22d3bf">max_index + 1</code> に切り詰まる)—— これは情報の損失であって</p>
-<p>バグではないので、<code style="color:#22d3bf">labels_to_indices</code> の docstring に量を書いてある。</p>
+<p>Builds a 1-D label array of length <code style="color:#22d3bf">max(indices) + 1</code> and puts 1 at the selected positions. <code style="color:#22d3bf">indices -&gt; labels -&gt; indices</code> is <b>bit-identical</b> (apart from duplicates and order). The reverse <code style="color:#22d3bf">labels -&gt; indices -&gt; labels</code> <b>drops the trailing background</b> (the length is truncated to <code style="color:#22d3bf">max_index + 1</code>) -- this is a loss of information, not a bug, so the amount is written in the docstring of <code style="color:#22d3bf">labels_to_indices</code>.</p>
 <p>Args:</p>
-<p>indices: (N,) の非負整数配列。</p>
+<p>indices: (N,) non-negative integer array.</p>
 <p>Returns:</p>
-<p>(max + 1,) の int64 ラベル配列(選択 = 1、背景 = 0)。</p>
+<p>(max + 1,) int64 label array (selected = 1, background = 0).</p>
 <p>Raises:</p>
-<p>ValueError: 1-D でない / 負 / 空 / 上限超。</p>
+<p>ValueError: not 1-D / negative / empty / exceeds the limit.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

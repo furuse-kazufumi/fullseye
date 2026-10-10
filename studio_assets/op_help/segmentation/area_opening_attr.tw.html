@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import seggraph; seggraph.area_opening_attr(image, threshold: &#x27;float&#x27; = 16.0, *, attribute: &#x27;str&#x27; = &#x27;area&#x27;, connectivity: &#x27;int&#x27; = 4) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;area_opening_attr&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>屬性斷開（Salembier 等 1998）：刪除成分樹中屬性 &lt; <code style="color:#22d3bf">threshold</code> 的節點，並使每個像素取「屬性 ≥ 閾值的最近祖先」的值（area_opening_attr）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">attribute</code> = <code style="color:#22d3bf">&quot;area&quot;</code>(画素数、skimage の area_opening と同じ「面積が閾値未満の明るい構造を消す」)か <code style="color:#22d3bf">&quot;diameter&quot;</code> (外接矩形の長い辺、skimage の diameter_opening)。どちらも <b>2 値の集合の</b> 増加する属性なので、結果は代数的開放 = 冪等・反拡大・増加。成分の中の最大値に依る「高さ」は集合の属性でなく(h-maxima と同じく)冪等にならないので載せない(実測で 2 回目に値が変わった)。</p>
-<p>返す: <code style="color:#22d3bf">image</code>(開放の結果)、<code style="color:#22d3bf">n_nodes_kept</code> / <code style="color:#22d3bf">n_nodes</code>、<code style="color:#22d3bf">removed</code>(値が下がった画素の数)。</p>
+<p><code style="color:#22d3bf">attribute</code> = <code style="color:#22d3bf">&quot;area&quot;</code>(像素數,與 skimage 的 area_opening 相同的「消除面積小於閾值的明亮結構」)或 <code style="color:#22d3bf">&quot;diameter&quot;</code> (外接矩形的長邊,skimage 的 diameter_opening)。兩者都是 <b>2 值集合的</b> 遞增屬性,所以結果是代數斷開 = 冪等、反擴張、遞增。依賴成分中最大值的「高度」不是集合的屬性(與 h-maxima 一樣)不具冪等性,因此不收錄(實測第 2 次時值發生了變化)。</p>
+<p>回傳: <code style="color:#22d3bf">image</code>(斷開的結果)、<code style="color:#22d3bf">n_nodes_kept</code> / <code style="color:#22d3bf">n_nodes</code>、<code style="color:#22d3bf">removed</code>(值下降的像素數)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

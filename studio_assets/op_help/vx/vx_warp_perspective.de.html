@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import vxcore; vxcore.vx_warp_perspective(image, matrix, *, interpolation, border, constant_value=0)</code>; aus dem Register: <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_perspective&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Perspektivische Transformation (Abschnitt 3.57). Inverse Abbildung: <code style="color:#22d3bf">x0 = M[0]·(x, y, 1)</code>, <code style="color:#22d3bf">y0 = M[1]·(x, y, 1)</code>, <code style="color:#22d3bf">z0 = M[2]·(x, y, 1)</code>, Ausgabe (x, y) = Eingabe (x0/z0, y0/z0) (REQ-0508). Pixel mit z0 = 0 werden wie außerhalb liegende gefüllt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>*matrix*: 数学の並びの 3×3(規格の C の宣言 <code style="color:#22d3bf">mat[3][3]</code> は転置した並び)。他の引数は <code style="color:#22d3bf">vx_warp_affine</code> と同じ。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / matrix が 3×3 の有限でない / interpolation・border が一覧に無い。</p>
+<p>*matrix*: 3×3 in mathematischer Anordnung (die C-Deklaration <code style="color:#22d3bf">mat[3][3]</code> der Spezifikation ist transponiert). Die übrigen Argumente sind wie bei <code style="color:#22d3bf">vx_warp_affine</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: kein 2-D-U8 / matrix ist keine endliche 3×3 / interpolation oder border nicht in der Liste.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">Leitfaden zur Familie openvx_ports</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_cafe_wall(size: &#x27;int&#x27; = 40, rows: &#x27;int&#x27; = 8, cols: &#x27;int&#x27; = 10, mortar: &#x27;float&#x27; = 2.0, shift: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import illusion; illusion.illusion_cafe_wall(size: &#x27;int&#x27; = 40, rows: &#x27;int&#x27; = 8, cols: &#x27;int&#x27; = 10, mortar: &#x27;float&#x27; = 2.0, shift: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_cafe_wall&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>咖啡墙错觉。<b>砖缝明明是严格的水平线</b>，看起来却是倾斜的。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">shift</code> は 1 行ごとの市松のずれ(<code style="color:#22d3bf">size</code> 比)。ずれが 0 または 0.5 では錯視は消える —— <b>0.25 前後が最も強い</b>というのが古典的な観察で、この op はそのままずらし量を振れるようにしてある(<code style="color:#22d3bf">shift=0.25</code> が既定ではないのは、生成器の既定値で「効果が最大」を主張したくないため)。</p>
-<p>不変量: 目地の中心 y は <code style="color:#22d3bf">k * size</code>(k = 1..rows-1)<b>ちょうど</b>。</p>
+<p><code style="color:#22d3bf">shift</code> 是每 1 行棋盘格的错位(以 <code style="color:#22d3bf">size</code> 为单位的比例)。错位为 0 或 0.5 时错觉消失 —— <b>0.25 前后最强</b>是经典的观察,本 op 允许直接调节错位量(<code style="color:#22d3bf">shift=0.25</code> 不作为默认值,是因为不想用生成器的默认值宣称“效果最大”)。</p>
+<p>不变量:灰缝的中心 y <b>恰好</b>为 <code style="color:#22d3bf">k * size</code>(k = 1..rows-1)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

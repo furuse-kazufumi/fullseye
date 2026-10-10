@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;msa_attribute_agreement&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>attribute (pass/fail) inspection की agreement की मात्रा (<code style="color:#22d3bf">table</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>同じ部品を複数の検査員が判定した表から、<b>検査員の対ごとの Cohen のカッパ</b>と全体の <b>Fleiss のカッパ</b>、および素の一致率を返す。</p>
-<p>★カッパは一致率そのものではない。<code style="color:#22d3bf">kappa = (p_o - p_e)/(1 - p_e)</code> で、<b>偶然でも起きる一致 p_e を割り引いた</b>残りを測る —— 合格率 95 % の工程ではでたらめに判を押しても素の一致率は 90 % を超えるので、一致率だけ見ると「よく合っている」と読めてしまう。</p>
-<p>★門にできる厳密な値: 全員が同じ判定 → <code style="color:#22d3bf">kappa = 1</code>(厳密)。2 人 x 2 カテゴリの Cohen のカッパは <code style="color:#22d3bf">2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))</code> という閉形式と一致する。独立でたらめな判定では期待値 0(こちらは標本ごとに揺れるので区間で見る)。</p>
+<p>उस table से जिसमें कई inspector ने एक ही part को judge किया है, <b>हर inspector जोड़ी का Cohen kappa</b>, कुल <b>Fleiss kappa</b>, और raw agreement rate लौटाता है।</p>
+<p>★ kappa स्वयं agreement rate नहीं है। <code style="color:#22d3bf">kappa = (p_o - p_e)/(1 - p_e)</code> <b>संयोग से भी होने वाले agreement p_e को घटाने के बाद</b> बचे हिस्से को मापता है -- 95 % pass rate वाली process में बेतरतीब मुहर लगाने पर भी raw agreement 90 % से ऊपर जाता है, इसलिए केवल agreement rate देखने पर &quot;अच्छा मेल है&quot; पढ़ा जाता है।</p>
+<p>★ gate के रूप में इस्तेमाल होने वाले सटीक मान: सबका judgement एक जैसा → <code style="color:#22d3bf">kappa = 1</code> (सटीक)। 2 rater x 2 category का Cohen kappa closed form <code style="color:#22d3bf">2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))</code> से मेल खाता है। स्वतंत्र random judgement में अपेक्षित मान 0 है (यह हर sample पर बदलता है, इसलिए interval से देखें)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_3mf(path: &#x27;str&#x27;) -&gt; &#x27;tuple[np.ndarray, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.read_3mf(path: &#x27;str&#x27;) -&gt; &#x27;tuple[np.ndarray, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;read_3mf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3MF (zip के अंदर <code style="color:#22d3bf">3D/3dmodel.model</code>, 3MF Core Specification) को triangle mesh <code style="color:#22d3bf">mesh</code> = (V, F) में पढ़ता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>複数の <code style="color:#22d3bf">&lt;object&gt;</code> は頂点を連結して 1 つのメッシュに(<code style="color:#22d3bf">&lt;build&gt;</code> の変換行列は 3×4 の <code style="color:#22d3bf">transform</code> を適用)。単位は <code style="color:#22d3bf">&lt;model unit&gt;</code>(既定 millimeter、inch / centimeter / meter / micron は mm に換算)。</p>
+<p>कई <code style="color:#22d3bf">&lt;object&gt;</code> के vertices जोड़कर 1 mesh बनाया जाता है (<code style="color:#22d3bf">&lt;build&gt;</code> का transform matrix 3×4 वाला <code style="color:#22d3bf">transform</code> लागू करता है)। unit <code style="color:#22d3bf">&lt;model unit&gt;</code> है (default millimeter; inch / centimeter / meter / micron को mm में बदला जाता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

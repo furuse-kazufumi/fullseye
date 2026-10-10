@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_phase(gx, gy, *, mapping)</code> (die Implementierung direkt: <code style="color:#22d3bf">import vxcore; vxcore.vx_phase(gx, gy, *, mapping)</code>; aus dem Register: <code style="color:#22d3bf">opsvx.get(&quot;vx_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gradientenphase (Abschnitt 3.41): verschiebt ϕ = atan2(gy, gx) in 0 ≤ ϕ &lt; 2π und bildet sie auf 0–255 ab (REQ-0364). Ausgabe U8.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>*mapping*(必須): 規格は写し方の丸めを書いていない。<code style="color:#22d3bf">&quot;floor&quot;</code> = ⌊ϕ·256/(2π)⌋(0 ≤ 値 ≤ 255 が自動で成り立つ)、<code style="color:#22d3bf">&quot;round&quot;</code> = ⌊ϕ·256/(2π) + 0.5⌋ mod 256(2π の手前は 0 に巻く)。gx = gy = 0 の画素は atan2 の約束で ϕ = 0。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: S16 の 2-D でない / 形が違う / mapping が一覧に無い。</p>
+<p>*mapping* (erforderlich): Die Spezifikation legt die Rundung der Abbildung nicht fest. <code style="color:#22d3bf">&quot;floor&quot;</code> = ⌊ϕ·256/(2π)⌋ (0 ≤ Wert ≤ 255 gilt automatisch), <code style="color:#22d3bf">&quot;round&quot;</code> = ⌊ϕ·256/(2π) + 0.5⌋ mod 256 (knapp unter 2π wird auf 0 umgebrochen). Pixel mit gx = gy = 0 erhalten nach der atan2-Konvention ϕ = 0.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: kein 2-D-S16 / Formen verschieden / mapping nicht in der Liste.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">Leitfaden zur Familie openvx_ports</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

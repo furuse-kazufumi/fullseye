@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_inset_layout(shape, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, max_fraction=0.4)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_inset_layout(shape, src_rect, corner=&#x27;rt&#x27;, factor=None, margin=10, max_fraction=0.4)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_inset_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳表(dict):以閉合式確定放大嵌入圖的位置與倍率。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">factor=None</code> なら「幅・高さとも画像の <code style="color:#22d3bf">max_fraction</code> 以下」で最大の整数倍率。差し込みが元枠に重なる隅は ValueError(自分の元を隠す)。</p>
+<p><code style="color:#22d3bf">factor=None</code> 時取滿足「寬、高都不超過影像的 <code style="color:#22d3bf">max_fraction</code>」的最大整數倍率。插圖與原框重疊的角落會引發 ValueError(會遮住自己的來源)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
 <p><code style="color:#22d3bf">{&quot;src_rect&quot;,&quot;dst_rect&quot;,&quot;factor&quot;,&quot;corner&quot;}</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>元枠が画像外、倍率 &lt; 1 か非整数、差し込みが収まらない/元枠と重なる。</p>
+<p>原框在影像外、倍率 &lt; 1 或非整數、插圖放不下/與原框重疊。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

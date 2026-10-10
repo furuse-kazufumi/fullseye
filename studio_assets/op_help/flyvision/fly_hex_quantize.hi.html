@@ -4,25 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import flyvision; flyvision.fly_hex_quantize(signal, bits=3, mode=&#x27;log&#x27;, contrast=0.2)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_quantize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ommatidia के signals को आँख के ही तरीके से quantise करता है: logarithmic compression के बाद हर ommatidium पर n bits (<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> में ON / OFF के 2 channels)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>複眼は生まれつき量子化器で、片眼およそ 800 個眼(間隔 4.6°)、光受容器は強度を対数圧縮して平均に適応し、ラミナの L1 / L2 が平均からの偏差を ON と OFF に分ける。この op はその予算を再現し、下流のモデル(reservoir・網膜部位対応の検査)に「本当に何ビット要るか」を問えるようにする。</p>
-<p>A compound eye is a quantizer by construction: ~800 ommatidia per eye at 4.6 deg spacing, photoreceptors that log-compress intensity and adapt to the mean, and lamina cells (L1/L2) that split the deviation into ON and OFF channels. This op reproduces that budget so a downstream model (reservoir, retinotopy test) can be asked how many bits it really needs.</p>
+<p>compound eye जन्म से ही एक quantizer है: एक आँख में लगभग 800 ommatidia (अंतराल 4.6°), photoreceptor intensity को log-compress करके mean के अनुसार adapt होते हैं, और lamina के L1 / L2 mean से विचलन को ON और OFF में बाँटते हैं। यह op उसी budget को दोहराता है, ताकि downstream model (reservoir, retinotopy test) से पूछा जा सके कि &quot;सच में कितने bit चाहिए&quot;।</p>
+<p>compound eye स्वभाव से quantizer है: एक आँख में ~800 ommatidia, 4.6 deg के अंतराल पर, photoreceptor intensity को log-compress करके mean के अनुसार adapt होते हैं, और lamina cell (L1/L2) विचलन को ON और OFF channel में बाँटते हैं। यह op उसी budget को दोहराता है, ताकि downstream model (reservoir, retinotopy test) से पूछा जा सके कि उसे सच में कितने bit चाहिए।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>signal : (n,) float</p>
-<p>Per-ommatidium intensities &gt;= 0 (<code style="color:#22d3bf">fly_hex_resample</code> output).</p>
+<p>हर ommatidium की intensity &gt;= 0 (<code style="color:#22d3bf">fly_hex_resample</code> का output)।</p>
 <p>bits : int</p>
-<p>1..8 levels = 2**bits (<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> ignores it: the output is the signed pair below).</p>
+<p>1..8 level = 2**bits (<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> इसे नज़रअंदाज़ करता है: output नीचे वाली signed जोड़ी है)।</p>
 <p>mode : str</p>
-<p><code style="color:#22d3bf">&quot;log&quot;</code>: log1p-compress relative to the mean, shift the darkest ommatidium to 0, then</p>
-<p>uniform levels over the compressed range; <code style="color:#22d3bf">&quot;linear&quot;</code>: uniform levels over [0, max]; <code style="color:#22d3bf">&quot;onoff&quot;</code>: deviation from the mean</p>
-<p>relative to <code style="color:#22d3bf">contrast</code> clipped to [-1, 1] and returned as <code style="color:#22d3bf">2 * n</code> values <code style="color:#22d3bf">[ON..., OFF...]</code></p>
-<p>(ON = positive part, OFF = negative part), each &gt;= 0.</p>
+<p><code style="color:#22d3bf">&quot;log&quot;</code>: mean के सापेक्ष log1p-compress, सबसे अंधेरे ommatidium को 0 पर खिसकाना, फिर</p>
+<p>compressed range पर uniform level; <code style="color:#22d3bf">&quot;linear&quot;</code>: [0, max] पर uniform level; <code style="color:#22d3bf">&quot;onoff&quot;</code>: mean से विचलन</p>
+<p><code style="color:#22d3bf">contrast</code> के सापेक्ष, [-1, 1] पर clip करके <code style="color:#22d3bf">2 * n</code> मान <code style="color:#22d3bf">[ON..., OFF...]</code> के रूप में लौटाया जाता है</p>
+<p>(ON = positive भाग, OFF = negative भाग), हर एक &gt;= 0।</p>
 <p>contrast : float</p>
-<p>Michelson-style contrast that saturates the ON/OFF channels (<code style="color:#22d3bf">mode=&quot;onoff&quot;</code> only).</p>
+<p>Michelson-style contrast जो ON/OFF channel को saturate करता है (केवल <code style="color:#22d3bf">mode=&quot;onoff&quot;</code>)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>(n,) float in [0, 1] (levels / (2**bits - 1)); for <code style="color:#22d3bf">&quot;onoff&quot;</code> (2n,) in [0, 1].</p>
+<p>(n,) float, [0, 1] में (level / (2**bits - 1)); <code style="color:#22d3bf">&quot;onoff&quot;</code> के लिए (2n,), [0, 1] में।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>Non-finite or negative inputs are refused. A constant signal quantizes to all-zeros (<code style="color:#22d3bf">&quot;log&quot;</code> / <code style="color:#22d3bf">&quot;onoff&quot;</code>) — there is no contrast to encode.</p>
+<p>non-finite या negative input अस्वीकार किए जाते हैं। constant signal सब-शून्य में quantize होता है (<code style="color:#22d3bf">&quot;log&quot;</code> / <code style="color:#22d3bf">&quot;onoff&quot;</code>) -- encode करने लायक कोई contrast नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

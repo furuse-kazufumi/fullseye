@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crosshair(img, xy, color=&#x27;emphasis&#x27;, width=1, gap=6, extent=None, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.crosshair(img, xy, color=&#x27;emphasis&#x27;, width=1, gap=6, extent=None, scheme=&#x27;okabe_ito&#x27;, style=None)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;crosshair&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Schnittlinien einer Schnittebene (für MPR). Ein <code style="color:#22d3bf">gap</code> lässt die Mitte frei, damit nichts verdeckt wird.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>xy : (x, y)</p>
-<p>交点。</p>
+<p>Schnittpunkt.</p>
 <p>gap : int</p>
-<p>中心を空ける半径 [px] (0 で全通し)。</p>
+<p>In der Mitte freigelassener Radius [px] (0 = durchgehend).</p>
 <p>extent : int or None</p>
-<p>中心からの腕の長さ[px]。None なら画像の端まで。</p>
+<p>Armlänge ab der Mitte [px]. Bei None bis zum Bildrand.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>交点が画像の外、負の gap/extent。</p>
+<p>Schnittpunkt außerhalb des Bilds, negatives gap/extent.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

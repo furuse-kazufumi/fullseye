@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normalized_mutual_information(a, b, bins=64, data_range=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.normalized_mutual_information(a, b, bins=64, data_range=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;normalized_mutual_information&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normalised mutual information 2*I(A;B) / (H(A) + H(B))। समान image के लिए 1.0।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>周辺エントロピーが両方 0(どちらも一様な絵)のときは、<b>上限が 0 なので比が定義できない</b> ―― 0 除算を避けるために 0 や 1 を返さず <code style="color:#22d3bf">ValueError</code>。</p>
+<p>जब दोनों marginal entropies 0 हों (दोनों तस्वीरें एकसमान), तो <b>ऊपरी सीमा 0 है, इसलिए अनुपात परिभाषित नहीं होता</b> -- 0 से भाग टालने के लिए 0 या 1 लौटाने के बजाय <code style="color:#22d3bf">ValueError</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

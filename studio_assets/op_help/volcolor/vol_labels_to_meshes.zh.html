@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import volcolor; volcolor.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_labels_to_meshes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对每个成分做 marching cubes,得到<b>一组彩色网格</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返りは <code style="color:#22d3bf">list[dict]</code>、各要素が <code style="color:#22d3bf">{&quot;label&quot;, &quot;vertices&quot; (nv, 3) float64, &quot;faces&quot; (nf, 3) int64, &quot;color&quot; (r, g, b)}</code>。色は <code style="color:#22d3bf">vol_colorize_labels</code> と同じパレットなので、<b>断面図と 3-D 表示で同じ部品が同じ色</b>になる。</p>
-<p>成分ごとに <b>bbox を 1 ボクセル分パディングした部分体</b>だけを切り出して marching cubes を回す(全ボリュームを成分数だけ舐めない)。パディングはボリューム端に接する成分の面を閉じるためで、これをしないと端の成分だけ穴の開いたメッシュになる。</p>
+<p>返回 <code style="color:#22d3bf">list[dict]</code>,各元素为 <code style="color:#22d3bf">{&quot;label&quot;, &quot;vertices&quot; (nv, 3) float64, &quot;faces&quot; (nf, 3) int64, &quot;color&quot; (r, g, b)}</code>。颜色与 <code style="color:#22d3bf">vol_colorize_labels</code> 使用同一调色板,所以<b>在断面图和 3-D 显示中同一部件呈现同一颜色</b>。</p>
+<p>对每个成分只切出<b>把 bbox 填充 1 体素后的子体</b>, 再运行 marching cubes(不会按成分数遍历整个体数据)。填充是为了封闭接触体数据边缘的成分的面,不这样做的话,只有边缘的成分会成为有洞的网格。</p>
 <p><code style="color:#22d3bf">axes</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;xyz&quot;</code>(既定)―― 頂点を <code style="color:#22d3bf">(x, y, z)</code> で返す。<code style="color:#22d3bf">render3d</code> / <code style="color:#22d3bf">mesh</code> の頂点順がこれで、<code style="color:#22d3bf">render3d.render_mesh</code> へ直接渡せる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;zyx&quot;</code> ―― ボリュームの添字順のまま返す。<code style="color:#22d3bf">vol_label_shape_stats</code> の <code style="color:#22d3bf">centroid</code> と同じ並びになる。</p>
-<p><b>黙って取り違えると例外は出ない</b> ―― 出るのは上下と前後が入れ替わった、</p>
-<p>それらしい絵である。<code style="color:#22d3bf">tests/test_volcolor.py::test_mesh_axes_order_is_explicit</code> が</p>
-<p>両方の重心を stats の重心と突き合わせて固定している。</p>
-<p>*spacing* を渡すと頂点は物理座標(mm)になる。*ids* で成分を絞れる(<code style="color:#22d3bf">None</code> なら実在する全ラベル、ただし <code style="color:#22d3bf">MAX_MESHES</code> 件まで)。</p>
-<p>Raises <code style="color:#22d3bf">ImportError</code> (with the <code style="color:#22d3bf">pip install scikit-image</code> message) when marching cubes is unavailable, and <code style="color:#22d3bf">ValueError</code> for a bad *axes*, a *level* outside <code style="color:#22d3bf">(0, 1)</code>, an *ids* naming an absent label, or more than <code style="color:#22d3bf">MAX_MESHES</code> components.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;xyz&quot;</code>(默认)—— 以 <code style="color:#22d3bf">(x, y, z)</code> 返回顶点。<code style="color:#22d3bf">render3d</code> / <code style="color:#22d3bf">mesh</code> 的顶点顺序就是这样,可直接传给 <code style="color:#22d3bf">render3d.render_mesh</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;zyx&quot;</code> —— 保持体数据的下标顺序返回。与 <code style="color:#22d3bf">vol_label_shape_stats</code> 的 <code style="color:#22d3bf">centroid</code> 顺序相同。</p>
+<p><b>默默弄错也不会抛异常</b> —— 出来的是上下与前后互换的、</p>
+<p>看似合理的图。<code style="color:#22d3bf">tests/test_volcolor.py::test_mesh_axes_order_is_explicit</code></p>
+<p>把两者的质心与 stats 的质心对照,加以固定。</p>
+<p>传入 *spacing* 时顶点为物理坐标(mm)。可用 *ids* 筛选成分(<code style="color:#22d3bf">None</code> 时为实际存在的全部标签,但最多 <code style="color:#22d3bf">MAX_MESHES</code> 个)。</p>
+<p>marching cubes 不可用时抛出 <code style="color:#22d3bf">ImportError</code>(附带 <code style="color:#22d3bf">pip install scikit-image</code> 的提示); *axes* 不正确、*level* 在 <code style="color:#22d3bf">(0, 1)</code> 之外、*ids* 指定了不存在的标签,或成分超过 <code style="color:#22d3bf">MAX_MESHES</code> 个时,抛出 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

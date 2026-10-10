@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_mip_video(volseq, axis: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import live4d; live4d.volseq_mip_video(volseq, axis: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opslive4d.get(&quot;volseq_mip_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>volume time series को axis <code style="color:#22d3bf">axis</code> (1 = z, 2 = y, 3 = x) पर maximum intensity projection से video <code style="color:#22d3bf">(T, H, W)</code> में समेटता है (<code style="color:#22d3bf">video</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>畳んだ先は <code style="color:#22d3bf">video_spacetime_cube</code> / <code style="color:#22d3bf">video_cube_cut</code> / <code style="color:#22d3bf">motion_magnify</code> など 2D+t の op がそのまま使える。最大値投影は「奥行きのどこかにあれば見える」投影なので、重なりは失われる(何を失ったかは <code style="color:#22d3bf">volseq_cut_video</code> の断面と見比べる)。</p>
+<p>collapse करने के बाद <code style="color:#22d3bf">video_spacetime_cube</code> / <code style="color:#22d3bf">video_cube_cut</code> / <code style="color:#22d3bf">motion_magnify</code> जैसे 2D+t ops सीधे इस्तेमाल हो सकते हैं। maximum intensity projection ऐसा projection है जिसमें &quot;depth में कहीं भी हो तो दिखता है&quot;, इसलिए overlap खो जाता है (क्या खोया, यह <code style="color:#22d3bf">volseq_cut_video</code> के section से तुलना करके देखें)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

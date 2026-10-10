@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import vxcore; vxcore.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_affine&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>아핀 변환(3.56절). <b>역사상</b>: 출력 화소 (x, y)는 입력의 (x0, y0)에서 가져온다(REQ-0498): <code style="color:#22d3bf">x0 = M[0,0]·x + M[0,1]·y + M[0,2]</code>, <code style="color:#22d3bf">y0 = M[1,0]·x + M[1,1]·y + M[1,2]</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*matrix*: 数学の並びの 2×3(1 行目が x0 の係数 a, b, c)。★規格の C の宣言は <code style="color:#22d3bf">mat[3][2] = { {a,d}, {b,e}, {c,f} }</code> (転置した並び)—— C の配列をそのまま渡すと形が (3, 2) になるので止める。*interpolation*(必須): <code style="color:#22d3bf">&quot;nearest&quot;</code> / <code style="color:#22d3bf">&quot;bilinear&quot;</code>。*border*(必須): <code style="color:#22d3bf">&quot;constant&quot;</code>(*constant_value* で埋める)/ <code style="color:#22d3bf">&quot;undefined&quot;</code>(0 で埋める、値は規格上未定義)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / matrix が 2×3 の有限でない / interpolation・border が一覧に無い。</p>
+<p>*matrix*: 수학 순서의 2×3(1 행이 x0 의 계수 a, b, c). ★규격의 C 선언은 <code style="color:#22d3bf">mat[3][2] = { {a,d}, {b,e}, {c,f} }</code> (전치된 순서) —— C 의 배열을 그대로 넘기면 형태가 (3, 2) 가 되므로 멈춘다. *interpolation*(필수): <code style="color:#22d3bf">&quot;nearest&quot;</code> / <code style="color:#22d3bf">&quot;bilinear&quot;</code>. *border*(필수): <code style="color:#22d3bf">&quot;constant&quot;</code>(*constant_value* 로 채움)/ <code style="color:#22d3bf">&quot;undefined&quot;</code>(0 으로 채움, 값은 규격상 미정의).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 의 2-D 가 아니다 / matrix 가 유한한 2×3 이 아니다 / interpolation · border 가 목록에 없다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

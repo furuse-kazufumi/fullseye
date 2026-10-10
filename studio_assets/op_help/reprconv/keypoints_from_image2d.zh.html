@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.keypoints_from_image2d(image2d, threshold=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.keypoints_from_image2d(image2d, threshold=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;keypoints_from_image2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>计数/响应图像 <code style="color:#22d3bf">(H, W)</code> → 图像坐标 <code style="color:#22d3bf">(N,2) = (u, v)</code>。往返的回程。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">&gt; threshold</code> の画素を 8 近傍で連結成分に分け、各成分の<b>強度重み付き重心</b>を返す。重み付きにするのは、副画素の情報が残っている応答画像(相関ピーク等)で往復誤差を量子化以下へ落とせるようにするため。</p>
-<p><b>8 近傍の連結が損失の主犯</b>である点に注意: 隣り合う画素に落ちた 2 点は 1 つの成分に融合し、重心が 2 点の中間へ動く。<code style="color:#22d3bf">selftest</code> は「よく離れた点だけの量子化誤差」と「融合を含む全体」を<b>別々に</b>測る(混ぜると量子化の理論値 0.2887 px と比較できなくなる)。</p>
+<p>把 <code style="color:#22d3bf">&gt; threshold</code> 的像素按 8 邻域分成连通分量,返回各分量的<b>强度加权质心</b>。之所以加权,是为了在保留亚像素信息的响应图像(相关峰等)上能把往返误差降到量化以下。</p>
+<p>注意 <b>8 邻域连通是损失的主犯</b>: 落在相邻像素上的 2 个点会融合为 1 个分量,质心移到 2 点的中间。<code style="color:#22d3bf">selftest</code> 把 &quot;仅相互远离的点的量化误差&quot;与&quot;含融合的整体&quot;<b>分开</b>测量(混在一起就无法与量化的理论值 0.2887 px 比较)。</p>
 <p>Args:</p>
-<p>image2d: (H, W) の実画像。</p>
-<p>threshold: この値を超えた画素だけを拾う。</p>
+<p>image2d: (H, W) 的实数图像。</p>
+<p>threshold: 只拾取超过此值的像素。</p>
 <p>Returns:</p>
-<p>(N, 2) float64 の (u, v)。行順は <code style="color:#22d3bf">scipy.ndimage.label</code> のラベル順。</p>
+<p>(N, 2) float64 的 (u, v)。行顺序为 <code style="color:#22d3bf">scipy.ndimage.label</code> 的标签顺序。</p>
 <p>Raises:</p>
-<p>ValueError: 2-D でない / 非有限 / 閾値を超える画素が 1 つも無い。</p>
+<p>ValueError: 不是 2-D / 非有限 / 连 1 个超过阈值的像素都没有。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

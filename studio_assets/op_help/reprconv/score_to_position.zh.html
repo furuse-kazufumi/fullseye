@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.score_to_position(score)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.score_to_position(score)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;score_to_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">score</code> 体 → 最大值的位置 <code style="color:#22d3bf">position (z, y, x)</code>。<code style="color:#22d3bf">score</code> 的出口。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>整数格子上の argmax(副画素精緻化はしない —— それは既存の <code style="color:#22d3bf">refine_peak_newton</code> の仕事で、ここで真似ると 2 か所で別の答えが出る)。<b>一方向</b>(1 つの位置から volume は戻せない)。</p>
+<p>整数网格上的 argmax(不做亚像素精化 —— 那是现有 <code style="color:#22d3bf">refine_peak_newton</code> 的工作,在这里模仿会在 2 处得出不同的答案)。<b>单向</b>(无法从 1 个位置还原 volume)。</p>
 <p>Args:</p>
 <p>score: (D, H, W)。</p>
 <p>Returns:</p>
-<p>3-tuple の float (z, y, x)。</p>
+<p>float 的 3-tuple (z, y, x)。</p>
 <p>Raises:</p>
-<p>ValueError: 3-D でない / 非有限。</p>
+<p>ValueError: 不是 3-D / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_table(descriptor)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_table(descriptor)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>descriptor → सारांश <code style="color:#22d3bf">table</code>। <b>एक-तरफ़ा</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>次元・ノルム・エネルギー集中(正規化した二乗和の上位 10% が占める割合)を出す。記述子が「実質何次元使っているか」を見るためのもので、次元だけ多くてほぼ全部 0 という失敗を可視化する。</p>
+<p>dimension, norm और energy concentration (normalised sum of squares में ऊपर के 10% का हिस्सा) देता है। यह देखने के लिए है कि descriptor &quot;असल में कितने dimension इस्तेमाल करता है&quot;, और dimension तो बहुत पर लगभग सब 0 होने वाली विफलता को दिखाता है।</p>
 <p>Args:</p>
-<p>descriptor: (n,) または (m, n)。</p>
+<p>descriptor: (n,) या (m, n)।</p>
 <p>Returns:</p>
-<p>dict(<code style="color:#22d3bf">shape</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">l2</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">min</code> /</p>
-<p><code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">top10pct_energy</code> / <code style="color:#22d3bf">nonzero_fraction</code>)。</p>
+<p>dict (<code style="color:#22d3bf">shape</code> / <code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">l2</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">min</code> /</p>
+<p><code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">top10pct_energy</code> / <code style="color:#22d3bf">nonzero_fraction</code>)।</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: shape ग़लत / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

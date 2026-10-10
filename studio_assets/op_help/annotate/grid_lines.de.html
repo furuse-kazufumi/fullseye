@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grid_lines(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, alpha=0.35, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.grid_lines(img, axes, xticks=None, yticks=None, color=&#x27;neutral&#x27;, width=1, alpha=0.35, scheme=&#x27;okabe_ito&#x27;, style=None)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;grid_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gitterlinien. Ohne angegebene Teilstriche entscheidet <code style="color:#22d3bf">nice_ticks</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">alpha</code> は格子を薄く敷くための重み(データ線より前に出ないように)。</p>
+<p><code style="color:#22d3bf">alpha</code> ist das Gewicht, mit dem das Gitter blass unterlegt wird (damit es nicht vor die Datenlinien tritt).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>alpha が [0,1] の外。</p>
+<p>alpha außerhalb von [0,1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.print_layer_defect_map(observed: &#x27;Any&#x27;, expected: &#x27;Any&#x27;, tolerance_px: &#x27;int&#x27; = 2, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.print_layer_defect_map(observed: &#x27;Any&#x27;, expected: &#x27;Any&#x27;, tolerance_px: &#x27;int&#x27; = 2, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;print_layer_defect_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>관측한 층 영상과 기대 층 영상(<code style="color:#22d3bf">gcode_layer_image</code>)을 비교한 <b>부호 있는 결함도</b> <code style="color:#22d3bf">image2d</code>: +1 = 있어야 할 곳에 없음(결손·막힘), −1 = 없어야 할 곳에 있음(실 끌림·삐져나옴·spaghetti), 0 = 일치.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>両方を <code style="color:#22d3bf">threshold</code> で二値化し、<code style="color:#22d3bf">tolerance_px</code> だけ膨らませた相手に含まれない画素だけを欠陥にする(位置ずれと線幅の揺れを許す)。位置合わせはしない —— カメラ像は先に <code style="color:#22d3bf">gcode_layer_image</code> と同じ画素格子へ写しておく。</p>
+<p>양쪽을 <code style="color:#22d3bf">threshold</code> 로 이진화하고, <code style="color:#22d3bf">tolerance_px</code> 만큼 부풀린 상대에 포함되지 않는 화소만을 결함으로 한다(위치 어긋남과선폭의 흔들림을 허용한다). 위치 맞춤은 하지 않는다 —— 카메라 상은 먼저 <code style="color:#22d3bf">gcode_layer_image</code> 와 같은 화소 격자로 옮겨 둔다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

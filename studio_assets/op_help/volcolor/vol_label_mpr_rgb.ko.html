@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_label_mpr_rgb(rgbvol, center=None, gap: &#x27;int&#x27; = 4, background=(0.05, 0.05, 0.07))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volcolor; volcolor.vol_label_mpr_rgb(rgbvol, center=None, gap: &#x27;int&#x27; = 4, background=(0.05, 0.05, 0.07))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_label_mpr_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>색이 입혀진 볼륨의 직교 3 단면을 <b>한 장의 RGB</b> 로 늘어놓은 그림.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>左から axial <code style="color:#22d3bf">(H, W)</code> / coronal <code style="color:#22d3bf">(D, W)</code> / sagittal <code style="color:#22d3bf">(D, H)</code>。*center* は <code style="color:#22d3bf">(z, y, x)</code> の交点(既定は各軸の中央)。パネルの高さは最大値へ *background* で下詰めパディングし、間に *gap* 画素の隙間を空ける。</p>
-<p>ラベル色が<b>ボリューム由来</b>であることがこの図の意味である ―― 3 面で同じ部品が同じ色に見えることが、3 断面が同じラベリングから来ている証拠になる(断面ごとに色を付け直した図では 3 面の色は一致しない)。</p>
-<p>Returns float64 <code style="color:#22d3bf">(H_out, W_out, 3)</code>. Raises <code style="color:#22d3bf">ValueError</code> for a bad volume, a *center* outside the volume, or a negative *gap*.</p>
+<p>왼쪽부터 axial <code style="color:#22d3bf">(H, W)</code> / coronal <code style="color:#22d3bf">(D, W)</code> / sagittal <code style="color:#22d3bf">(D, H)</code>. *center* 는 <code style="color:#22d3bf">(z, y, x)</code> 의 교점(기본값은 각 축의 중앙). 패널 높이는 최댓값까지 *background* 로 아래쪽을 패딩하고, 사이에 *gap* 화소의 틈을 둔다.</p>
+<p>라벨 색이 <b>볼륨 유래</b>라는 것이 이 그림의 의미이다 ―― 3 면에서 같은 부품이같은 색으로 보이는 것이, 3 단면이 같은 라벨링에서 왔다는 증거가 된다(단면마다 색을 다시 칠한 그림에서는 3 면의 색이 일치하지 않는다).</p>
+<p>float64 <code style="color:#22d3bf">(H_out, W_out, 3)</code> 을 반환한다. 잘못된 볼륨, 볼륨 밖의 *center*, 또는 음수 *gap* 에 대해 <code style="color:#22d3bf">ValueError</code> 를 낸다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

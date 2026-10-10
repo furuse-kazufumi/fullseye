@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_synthesize(model, sigmas=None, n_modes: &#x27;int&#x27; = 3, seed: &#x27;int&#x27; = 0)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.shape_synthesize(model, sigmas=None, n_modes: &#x27;int&#x27; = 3, seed: &#x27;int&#x27; = 0)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_synthesize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由模型生成 1 个<b>合理可信的新形状</b>。→ <code style="color:#22d3bf">(N, 3)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">sigmas</code> を与えればその標準偏差倍のスコア、省けば先頭 <code style="color:#22d3bf">n_modes</code> 本を正規乱数で引く。3 標準偏差を超える形は群の中に 1 つも無かった形なので、既定では引かない(<code style="color:#22d3bf">sigmas</code> で明示すれば作れる)。</p>
+<p>给出 <code style="color:#22d3bf">sigmas</code> 时使用该标准差倍数的得分，省略时对前 <code style="color:#22d3bf">n_modes</code> 个成分用正态随机数抽取。超过 3 个标准差的形状是群体中 1 个也没有的形状，因此默认不抽取(通过 <code style="color:#22d3bf">sigmas</code> 明确指定即可生成)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

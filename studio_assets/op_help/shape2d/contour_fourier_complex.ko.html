@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_complex&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>닫힌 윤곽을 복소 푸리에 급수의 계수로 만든다 —— <code style="color:#22d3bf">z(t) = Σ c_k exp(2πi k t)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>引数:</p>
-<p>points: (N,2) の閉輪郭頂点。<b>(row, col) 順</b>(<code style="color:#22d3bf">fourierdesc</code> と同じ)。</p>
-<p>n_harmonics: 残す次数 <code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">|k| &lt;= K</code>)。<code style="color:#22d3bf">None</code> なら表せる上限まで。</p>
-<p>parametrisation: <code style="color:#22d3bf">&quot;index&quot;</code> = 点の添字を等間隔の媒介変数にする /</p>
-<p><code style="color:#22d3bf">&quot;arclength&quot;</code> = <b>弧長</b>で等間隔に打ち直してから変換する。</p>
-<p>返り値: <code style="color:#22d3bf">(2K+1, 3)</code> の実配列(<code style="color:#22d3bf">matrix</code>)。行は <code style="color:#22d3bf">[k, Re c_k, Im c_k]</code> で <code style="color:#22d3bf">k</code> は <code style="color:#22d3bf">0, 1, -1, 2, -2, …</code>(低い周波数から)。</p>
-<p>★<b>媒介変数の取り方を既定で黙って決めない</b>のがこの op の肝。不均一に標本化された輪郭を <code style="color:#22d3bf">&quot;index&quot;</code> で読むと、点が密なところに余分な時間が割り当てられ、<b>絵は似ているのに係数が別物</b>になる(実測で <code style="color:#22d3bf">k=3</code> の係数が 47 倍ちがった)。既定は <code style="color:#22d3bf">&quot;index&quot;</code>(FFT の素の意味)だが、形の記述として使うなら <code style="color:#22d3bf">&quot;arclength&quot;</code> を選ぶこと。</p>
-<p>★★<code style="color:#22d3bf">&quot;arclength&quot;</code> を選ぶと <b>op の内部で輪郭を打ち直す</b>ので、返る係数は渡した配列ではなく<b>打ち直した輪郭</b>を記述する。だから <code style="color:#22d3bf">contour_fourier_truncation_energy</code> の予言は「打ち直した輪郭に対して」厳密で、呼び手が手元の配列で誤差を測ると合わない(実測: 512 点で 1.15 ずれた)。手元の配列に対して厳密な予言が欲しいときは、<b>先に弧長で打ち直してから</b> <code style="color:#22d3bf">&quot;index&quot;</code> で呼ぶこと。</p>
-<p>★<b>弧長の打ち直しは冪等ではない</b>: 標本を弦で結ぶので、すでに等弧長の輪郭にもう 1 度かけると点が最大 3.73 px 動き(平均 0.84 px)、長さがさらに 3.25 % 縮む。二度かけないこと。</p>
+<p>인수:</p>
+<p>points: (N,2) 의 닫힌 윤곽 꼭짓점. <b>(row, col) 순서</b>(<code style="color:#22d3bf">fourierdesc</code> 와 같다).</p>
+<p>n_harmonics: 남길 차수 <code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">|k| &lt;= K</code>). <code style="color:#22d3bf">None</code> 이면 표현할 수 있는 상한까지.</p>
+<p>parametrisation: <code style="color:#22d3bf">&quot;index&quot;</code> = 점의 첨자를 등간격 매개변수로 한다 /</p>
+<p><code style="color:#22d3bf">&quot;arclength&quot;</code> = <b>호 길이</b>로 등간격으로 다시 찍은 뒤 변환한다.</p>
+<p>반환값: <code style="color:#22d3bf">(2K+1, 3)</code> 의 실수 배열(<code style="color:#22d3bf">matrix</code>). 행은 <code style="color:#22d3bf">[k, Re c_k, Im c_k]</code> 이고 <code style="color:#22d3bf">k</code> 는 <code style="color:#22d3bf">0, 1, -1, 2, -2, …</code>(낮은 주파수부터).</p>
+<p>★<b>매개변수 잡는 법을 기본값으로 말없이 정하지 않는</b> 것이 이 op 의 핵심. 불균일하게 샘플링된윤곽을 <code style="color:#22d3bf">&quot;index&quot;</code> 로 읽으면 점이 조밀한 곳에 여분의 시간이 할당되어, <b>그림은 비슷한데 계수가 다른 것</b>이 된다(실측에서 <code style="color:#22d3bf">k=3</code> 의 계수가 47 배 달랐다). 기본값은 <code style="color:#22d3bf">&quot;index&quot;</code>(FFT 의 본래 의미)이지만, 형상의 기술로서 쓴다면 <code style="color:#22d3bf">&quot;arclength&quot;</code> 를 고를 것.</p>
+<p>★★<code style="color:#22d3bf">&quot;arclength&quot;</code> 를 고르면 <b>op 내부에서 윤곽을 다시 찍으므로</b>, 반환되는 계수는넘긴 배열이 아니라 <b>다시 찍은 윤곽</b>을 기술한다. 그러므로 <code style="color:#22d3bf">contour_fourier_truncation_energy</code> 의 예언은 &quot;다시 찍은 윤곽에 대해&quot; 엄밀하며, 호출자가 수중의 배열로 오차를 재면 맞지 않는다(실측: 512 점에서 1.15 어긋났다). 수중의 배열에 대해 엄밀한 예언을 원할 때는 <b>먼저 호 길이로 다시 찍은 뒤</b> <code style="color:#22d3bf">&quot;index&quot;</code> 로 호출할 것.</p>
+<p>★<b>호 길이 재샘플링은 멱등이 아니다</b>: 표본을 현으로 잇기 때문에, 이미 등호장인 윤곽에 1 번 더 걸면 점이 최대 3.73 px 움직이고(평균 0.84 px), 길이가 다시 3.25 % 줄어든다. 두 번 걸지 말 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

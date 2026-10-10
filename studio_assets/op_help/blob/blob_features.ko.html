@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_features(labels: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import blob2d; blob2d.blob_features(labels: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsblob.get(&quot;blob_features&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>물체별 형상 특징량을 <b>키마다 1개의 배열</b>로 반환한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : array_like</p>
-<p><code style="color:#22d3bf">blob_label</code> の出力(整数、背景 0)。</p>
+<p><code style="color:#22d3bf">blob_label</code> 의 출력(정수, 배경 0).</p>
 <p>spacing : float</p>
-<p>画素 1 個の大きさ[単位/px]。長さにこれを、面積にその 2 乗を掛ける。</p>
-<p><b>既定 1.0 = 画素のまま</b>。</p>
+<p>화소 1 개의 크기[단위/px]. 길이에 이것을, 면적에 그 2 제곱을 곱한다.</p>
+<p><b>기본값 1.0 = 화소 그대로</b>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">n</code>(物体数)、<code style="color:#22d3bf">spacing</code>、<code style="color:#22d3bf">units</code>(項目 → 単位の対応)と、</p>
-<p>長さ <code style="color:#22d3bf">n</code> の配列 19 本(<code style="color:#22d3bf">FEATURE_KEYS</code>)。物体が 0 個でも</p>
-<p>鍵は全部揃えて空配列で返す(呼び手が分岐しなくて済む)。</p>
+<p><code style="color:#22d3bf">n</code>(물체 수), <code style="color:#22d3bf">spacing</code>, <code style="color:#22d3bf">units</code>(항목 → 단위의 대응)와,</p>
+<p>길이 <code style="color:#22d3bf">n</code> 의 배열 19 개(<code style="color:#22d3bf">FEATURE_KEYS</code>). 물체가 0 개여도</p>
+<p>키는 전부 갖추어 빈 배열로 반환한다(호출자가 분기하지 않아도 된다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle</code> は<b>行列座標系</b>の傾き(+列 → +行 が正 = 画面では時計回り)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> は<b>同じ 2 次モーメントを持つ楕円</b>の軸長(<code style="color:#22d3bf">4 sqrt(lambda)</code>)。画素の並びの外接ではないので、正方形に対しては辺長より少し長く出る —— これは定義どおりで、誤差ではない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> は <code style="color:#22d3bf">4 pi A / P^2</code>。<b>HALCON の <code style="color:#22d3bf">circularity</code> は「面積 / 最遠点を半径とする円の面積」で別物</b>なので、値を突き合わせるときは定義を確かめること。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">touches_border</code> が True の物体は、面積も周長も<b>切れた分だけ小さい</b>。数える前に捨てるか、真値の側も同じ規約で数えること。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle</code> 은 <b>행렬 좌표계</b>의 기울기(+열 → +행 이 양 = 화면에서는 시계 방향).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major</code> / <code style="color:#22d3bf">minor</code> 는 <b>같은 2 차 모멘트를 갖는 타원</b>의 축 길이(<code style="color:#22d3bf">4 sqrt(lambda)</code>). 화소 나열의 외접이 아니므로, 정사각형에 대해서는변 길이보다 조금 길게 나온다 —— 이것은 정의대로이며 오차가 아니다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> 는 <code style="color:#22d3bf">4 pi A / P^2</code>. <b>HALCON 의 <code style="color:#22d3bf">circularity</code> 는 &quot;면적 / 최원점을 반지름으로 하는 원의 면적&quot;으로 다른 것</b>이므로, 값을 대조할때는 정의를 확인할 것.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">touches_border</code> 가 True 인 물체는 면적도 둘레도 <b>잘린 만큼 작다</b>. 세기 전에 버리거나, 참값 쪽도 같은 규약으로 셀 것.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
 <p>&gt;&gt;&gt; import numpy as np</p>
 <p>&gt;&gt;&gt; m = np.zeros((20, 20), bool); m[4:14, 4:9] = True</p>

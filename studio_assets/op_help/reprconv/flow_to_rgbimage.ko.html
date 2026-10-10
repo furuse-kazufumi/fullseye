@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_to_rgbimage(flow, index=None, scale=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import reprconv; reprconv.flow_to_rgbimage(flow, index=None, scale=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsreprconv.get(&quot;flow_to_rgbimage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>조밀 신 플로의 한 슬라이스 → 색상=방향, 명도=속력의 <code style="color:#22d3bf">rgbimage</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>光学フローの標準的な可視化(色相環)を 3-D フローの z スライスに当てる:</p>
-<p><code style="color:#22d3bf">hue = atan2(dy, dx)</code>(度で 0-360)、<code style="color:#22d3bf">value = |(dy, dx)| / scale</code>、彩度は 1。<b>dz は捨てる</b> —— 面内成分だけの図であることを明示する(捨てた成分を色に混ぜると「見えている色が何の量か」が誰にも言えなくなる)。</p>
-<p><b>一方向</b>。色相環の凡例は図の側で必ず一緒に焼くこと(色の意味が書いていないフロー図は、綺麗なだけで読めない)。</p>
+<p>광학 플로의 표준 시각화(색상환)를 3-D 플로의 z 슬라이스에 적용한다:</p>
+<p><code style="color:#22d3bf">hue = atan2(dy, dx)</code>(도 단위, 0-360), <code style="color:#22d3bf">value = |(dy, dx)| / scale</code>, 채도는 1. <b>dz는 버린다</b> —— 면내 성분만의 그림임을 명시한다(버린 성분을 색에 섞으면 &quot;보이는 색이 무슨 양인지&quot;를 아무도 말할 수 없게 된다).</p>
+<p><b>단방향</b>. 색상환 범례는 그림 쪽에 반드시 함께 그려 넣을 것(색의 의미가 쓰여 있지 않은플로 그림은 예쁘기만 할 뿐 읽을 수 없다).</p>
 <p>Args:</p>
-<p>flow: (3, D, H, W)。</p>
-<p>index: 取り出す z スライス(既定 = 中央)。</p>
-<p>scale: 明度 1.0 に対応する面内速さ(既定 = そのスライスの最大値。</p>
-<p>0 なら全面黒を返す)。</p>
+<p>flow: (3, D, H, W).</p>
+<p>index: 꺼낼 z 슬라이스(기본값 = 중앙).</p>
+<p>scale: 명도 1.0에 대응하는 면내 속도(기본값 = 그 슬라이스의 최댓값.</p>
+<p>0이면 전면 검정을 반환).</p>
 <p>Returns:</p>
-<p>(H, W, 3) float64、値域 [0, 1]。</p>
+<p>(H, W, 3) float64, 값 범위 [0, 1].</p>
 <p>Raises:</p>
-<p>ValueError: 密フローでない / index が範囲外 / scale &lt;= 0。</p>
+<p>ValueError: 밀집 플로가 아님 / index가 범위 밖 / scale &lt;= 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

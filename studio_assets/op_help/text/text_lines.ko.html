@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_lines(boxes, stroke_width=None, overlap_ratio: &#x27;float&#x27; = 0.5, gap_ratio: &#x27;float&#x27; = 3.0, width_ratio: &#x27;float&#x27; = 3.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import textregion; textregion.text_lines(boxes, stroke_width=None, overlap_ratio: &#x27;float&#x27; = 0.5, gap_ratio: &#x27;float&#x27; = 3.0, width_ratio: &#x27;float&#x27; = 3.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opstext.get(&quot;text_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>문자 후보 상자를 줄로 묶는다(세로로 겹치고, 가로로 가깝고, 스트로크 폭이 비슷한 것).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>★規則の根拠(2026-09-27 実測): 候補は字画ごとの断片になる(横棒と &#x27;l&#x27; では高さが 5 倍違う)ので「高さが近い」を条件にすると 3 行が 30〜60 行に割れた。行の同一性は<b>縦の重なり</b>(小さい方の高さの <code style="color:#22d3bf">overlap_ratio</code> 以上)で判定し、横の隙間は大きい方の高さの <code style="color:#22d3bf">gap_ratio</code> 倍以内、ストローク幅は <code style="color:#22d3bf">width_ratio</code> 倍以内。</p>
-<p>Returns dict: <code style="color:#22d3bf">lines</code>(M×4 の矩形)/ <code style="color:#22d3bf">members</code>(各行の候補 index のリスト)。</p>
+<p>★규칙의 근거(2026-09-27 실측): 후보는 획마다의 조각이 되므로(가로 막대와 &#x27;l&#x27; 은 높이가 5 배다르다) &quot;높이가 비슷하다&quot;를 조건으로 하면 3 행이 30〜60 행으로 쪼개졌다. 행의 동일성은 <b>세로겹침</b>(작은 쪽 높이의 <code style="color:#22d3bf">overlap_ratio</code> 이상)으로 판정하고, 가로 간격은 큰 쪽 높이의 <code style="color:#22d3bf">gap_ratio</code> 배 이내, 획 폭은 <code style="color:#22d3bf">width_ratio</code> 배 이내.</p>
+<p>반환 dict: <code style="color:#22d3bf">lines</code>(M×4 의 직사각형)/ <code style="color:#22d3bf">members</code>(각 행의 후보 index 리스트).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

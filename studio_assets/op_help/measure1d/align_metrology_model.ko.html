@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.align_metrology_model(model, drow=0.0, dcol=0.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metrology; metrology.align_metrology_model(model, drow=0.0, dcol=0.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;align_metrology_model&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>계측 모델의 모든 객체를 평행 이동하여 정렬한다(align_metrology_model).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>全オブジェクトの位置に <code style="color:#22d3bf">(drow, dcol)</code> [px] を足した <b>新しいモデル</b> を返す(入力の dict は書き換えない)。<code style="color:#22d3bf">line</code> は両端点 <code style="color:#22d3bf">(row1, col1)</code>・<code style="color:#22d3bf">(row2, col2)</code> が動き、<code style="color:#22d3bf">circle</code> / <code style="color:#22d3bf">rect</code> / <code style="color:#22d3bf">ellipse</code> は中心 <code style="color:#22d3bf">(row, col)</code> が動く。半径・半辺長・<code style="color:#22d3bf">phi</code>・<code style="color:#22d3bf">n</code> は変えない ―― <b>回転とスケールは扱わない</b>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">drow</code>, <code style="color:#22d3bf">dcol</code>: 変位 [px]。既定 0(写しを作るだけになる)。</p>
-<p style="margin:2px 0 2px 12px">• 型は検証しない。<code style="color:#22d3bf">add_metrology_object_generic</code> で積んだ未知型は <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> を row/col とみなして動かす。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">{&quot;objects&quot;: [...]}</code>(<code style="color:#22d3bf">metrologymodel</code> 型)。</p>
-<p>典型例: 形状マッチングや基準マークの検出で得た位置ずれをここでモデルに反映し、<code style="color:#22d3bf">apply_metrology_model</code> を掛ける。傾いたワークには使えない(参照形状の法線が実物の法線からずれ、探索半幅 <code style="color:#22d3bf">measure_length</code> の外に出る)。</p>
+<p>전 오브젝트의 위치에 <code style="color:#22d3bf">(drow, dcol)</code> [px] 를 더한 <b>새 모델</b>을 반환한다(입력 dict 는 수정하지 않는다). <code style="color:#22d3bf">line</code> 은 양 끝점 <code style="color:#22d3bf">(row1, col1)</code>·<code style="color:#22d3bf">(row2, col2)</code> 가 움직이고, <code style="color:#22d3bf">circle</code> / <code style="color:#22d3bf">rect</code> / <code style="color:#22d3bf">ellipse</code> 는 중심 <code style="color:#22d3bf">(row, col)</code> 이 움직인다. 반지름· 반변 길이·<code style="color:#22d3bf">phi</code>·<code style="color:#22d3bf">n</code> 은 바꾸지 않는다 ―― <b>회전과 스케일은 다루지 않는다</b>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">drow</code>, <code style="color:#22d3bf">dcol</code>: 변위 [px]. 기본값 0(사본을 만들 뿐이 된다).</p>
+<p style="margin:2px 0 2px 12px">• 형은 검증하지 않는다. <code style="color:#22d3bf">add_metrology_object_generic</code> 으로 쌓은 미지형은 <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> 을 row/col 로 간주해 움직인다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">{&quot;objects&quot;: [...]}</code>(<code style="color:#22d3bf">metrologymodel</code> 형).</p>
+<p>전형적인 예: 형상 매칭이나 기준 마크 검출로 얻은 위치 어긋남을 여기서모델에 반영하고 <code style="color:#22d3bf">apply_metrology_model</code> 을 건다. 기울어진 워크에는 쓸 수 없다(참조 형상의 법선이 실물의 법선에서 어긋나, 탐색 반폭 <code style="color:#22d3bf">measure_length</code> 밖으로 나간다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ssim_map(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, channel_axis=None, crop_border=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgmetrics; imgmetrics.ssim_map(a, b, data_range=None, win_size=11, sigma=1.5, K1=0.01, K2=0.03, channel_axis=None, crop_border=True)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;ssim_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>SSIM 的<b>圖</b>(取平均之前)。用來看清哪裡不像。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">channel_axis</code> を指定するとチャネルごとに計算し、その平均マップを返す。</p>
-<p>計算: 局所平均 <code style="color:#22d3bf">mu</code> と分散・共分散を、幅 <code style="color:#22d3bf">win_size</code> に切った σ = <code style="color:#22d3bf">sigma</code> のガウシアン窓(境界は鏡像)で取り、画素ごとに <code style="color:#22d3bf">((2 mu_a mu_b + C1)(2 s_ab + C2)) / ((mu_a^2 + mu_b^2 + C1)(s_a + s_b + C2))</code>。<code style="color:#22d3bf">C1 = (K1 dr)^2</code>、<code style="color:#22d3bf">C2 = (K2 dr)^2</code>、<code style="color:#22d3bf">dr</code> は <code style="color:#22d3bf">data_range</code>。分散は母分散(<code style="color:#22d3bf">n/(n-1)</code> 補正なし)。この平均が <code style="color:#22d3bf">ssim</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code>: 整数 dtype は自動、float は <code style="color:#22d3bf">[0, 1]</code> のときだけ 1.0 と推定し、それ以外は明示必須(<code style="color:#22d3bf">data_range_of</code> の契約、外れると <code style="color:#22d3bf">MetricContractError</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">win_size</code>: 3 以上の奇数。各空間軸はこれ以上の長さが必要。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">crop_border=True</code>(既定)は窓半径 <code style="color:#22d3bf">(win_size-1)//2</code> ぶんの縁を落とすので、返り値は <code style="color:#22d3bf">(H - 2p, W - 2p)</code>。落とした後に何も残らない小画像は例外。<code style="color:#22d3bf">False</code> なら入力と同形だが、縁は鏡像埋めの影響を含む。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: float64 マップ。1 が局所的に一致、負にもなりうる(構造が反転)。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: 形の不一致 / 空 / 非有限 / <code style="color:#22d3bf">sigma &lt;= 0</code> / 偶数か 3 未満の <code style="color:#22d3bf">win_size</code>。</p>
+<p>指定 <code style="color:#22d3bf">channel_axis</code> 時逐通道計算,回傳其平均圖。</p>
+<p>計算:用寬度截為 <code style="color:#22d3bf">win_size</code>、σ = <code style="color:#22d3bf">sigma</code> 的高斯視窗(邊界取鏡像)求局部平均 <code style="color:#22d3bf">mu</code> 和變異數、共變異數,逐像素計算 <code style="color:#22d3bf">((2 mu_a mu_b + C1)(2 s_ab + C2)) / ((mu_a^2 + mu_b^2 + C1)(s_a + s_b + C2))</code>。<code style="color:#22d3bf">C1 = (K1 dr)^2</code>、<code style="color:#22d3bf">C2 = (K2 dr)^2</code>,<code style="color:#22d3bf">dr</code> 是 <code style="color:#22d3bf">data_range</code>。變異數為母體變異數(無 <code style="color:#22d3bf">n/(n-1)</code> 校正)。其平均即為 <code style="color:#22d3bf">ssim</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">data_range</code>:整數 dtype 自動,float 僅在 <code style="color:#22d3bf">[0, 1]</code> 時推定為 1.0, 其他情況必須明確給出(<code style="color:#22d3bf">data_range_of</code> 的約定,違反則 <code style="color:#22d3bf">MetricContractError</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">win_size</code>:3 以上的奇數。各空間軸的長度須不小於它。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">crop_border=True</code>(預設)會去掉視窗半徑 <code style="color:#22d3bf">(win_size-1)//2</code> 寬的邊緣,所以回傳值為 <code style="color:#22d3bf">(H - 2p, W - 2p)</code>。去掉後什麼都不剩的小影像會拋出例外。<code style="color:#22d3bf">False</code> 時與輸入同形,但邊緣含有鏡像填補的影響。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值:float64 的圖。1 為局部一致,也可能為負(結構反轉)。</p>
+<p style="margin:2px 0 2px 12px">• 失敗:形狀不一致 / 為空 / 非有限 / <code style="color:#22d3bf">sigma &lt;= 0</code> / 偶數或小於 3 的 <code style="color:#22d3bf">win_size</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

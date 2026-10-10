@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_nonlinear_filter(image, mask, *, function, border, constant_value=0, origin=None)</code>(要直接调用实现,<code style="color:#22d3bf">import vxcore; vxcore.vx_nonlinear_filter(image, mask, *, function, border, constant_value=0, origin=None)</code>;从台账取用则 <code style="color:#22d3bf">opsvx.get(&quot;vx_nonlinear_filter&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>非线性滤波(3.38 节)：掩模为真的像素值的中值 / 最小值(腐蚀)/ 最大值(膨胀)(REQ-0325、0330)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>*function*: <code style="color:#22d3bf">&quot;median&quot;</code> / <code style="color:#22d3bf">&quot;min&quot;</code> / <code style="color:#22d3bf">&quot;max&quot;</code>(vx_non_linear_filter_e)。*mask*: 2-D の bool(BOX / CROSS / DISK / OTHER のどれでも)。*origin*: マスクの原点 (行, 列)(VX_MATRIX_ORIGIN、既定は中央 <code style="color:#22d3bf">(rows // 2, cols // 2)</code>)。*border*(必須): <code style="color:#22d3bf">&quot;replicate&quot;</code> / <code style="color:#22d3bf">&quot;constant&quot;</code> / <code style="color:#22d3bf">&quot;undefined&quot;</code>(端は 0 で埋めて計算する —— 値は規格上未定義)。★マスクの画素数が偶数のときの中央値は規格に無い —— 昇順に並べた <code style="color:#22d3bf">n // 2</code> 番目(上側の中央値、scipy の median_filter と同じ)を取る。</p>
-<p>REQ-0327: 9×9 までのマスクは必ず扱う(この実装に上限は無い)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / function が一覧に無い / mask が 2-D の bool でない・空 / origin がマスクの外。</p>
+<p>*function*: <code style="color:#22d3bf">&quot;median&quot;</code> / <code style="color:#22d3bf">&quot;min&quot;</code> / <code style="color:#22d3bf">&quot;max&quot;</code>(vx_non_linear_filter_e)。*mask*: 2-D 的 bool(BOX / CROSS / DISK / OTHER 均可)。*origin*: 掩模的原点 (行, 列)(VX_MATRIX_ORIGIN,默认为中央 <code style="color:#22d3bf">(rows // 2, cols // 2)</code>)。*border*(必需): <code style="color:#22d3bf">&quot;replicate&quot;</code> / <code style="color:#22d3bf">&quot;constant&quot;</code> / <code style="color:#22d3bf">&quot;undefined&quot;</code>(边缘以 0 填充后计算 —— 值按规格未定义)。★掩模像素数为偶数时的中位数规格中没有 —— 取升序排列后的第 <code style="color:#22d3bf">n // 2</code> 个(上中位数,与 scipy 的 median_filter 相同)。</p>
+<p>REQ-0327: 9×9 以内的掩模必须处理(本实现没有上限)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 不是 U8 的 2-D / function 不在列表中 / mask 不是 2-D 的 bool、为空 / origin 在掩模之外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

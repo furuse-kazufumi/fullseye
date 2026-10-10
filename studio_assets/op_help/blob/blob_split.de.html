@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_split(labels: &#x27;Any&#x27;, seeds: &#x27;Any&#x27;, distance: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import blob2d; blob2d.blob_split(labels: &#x27;Any&#x27;, seeds: &#x27;Any&#x27;, distance: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsblob.get(&quot;blob_split&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lässt Regionen von den Saatpunkten aus <b>in der Reihenfolge von den höchsten Stellen an</b> wachsen und trennt verschmolzene Klumpen (Wasserscheide).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">distance</code> の高い画素から順に、隣接する既知のラベルを取り込んでいく(immersion 型の分水嶺を、距離の降順で回す形)。<b>種を持たない塊はそのまま残す</b> —— 割る材料が無いのに消すのは嘘になるため。</p>
-<p><code style="color:#22d3bf">segmentation.watersheds_marker</code> を使わないのは、<b>skimage が無い環境で黙って別の算法(マーカーからの最近傍)に落ちる</b>から。落ちた先は画像を一切見ないので、同じ関数名で違うものが返る。ここは numpy と scipy だけで閉じる。</p>
+<p>Beginnend bei den Pixeln mit dem höchsten <code style="color:#22d3bf">distance</code> übernimmt jedes ein benachbartes, bereits bekanntes Label (Wasserscheide vom Immersion-Typ, in absteigender Distanz durchlaufen). <b>Klumpen ohne Saat bleiben unverändert</b> -- sie zu löschen, obwohl nichts zum Auftrennen da ist, wäre eine Lüge.</p>
+<p><code style="color:#22d3bf">segmentation.watersheds_marker</code> wird nicht verwendet, weil es <b>in einer Umgebung ohne skimage stillschweigend auf einen anderen Algorithmus (nächster Nachbar ab den Markern) zurückfällt</b>. Dieser Rückfall sieht das Bild überhaupt nicht an, sodass unter demselben Funktionsnamen etwas anderes zurückkommt. Hier bleibt alles in numpy und scipy geschlossen.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : array_like</p>
-<p>割る対象。<code style="color:#22d3bf">blob_label</code> の出力(<code style="color:#22d3bf">&gt; 0</code> の画素だけが割られる)。</p>
+<p>Was aufgetrennt wird. Ausgabe von <code style="color:#22d3bf">blob_label</code> (nur Pixel <code style="color:#22d3bf">&gt; 0</code> werden aufgetrennt).</p>
 <p>seeds : array_like</p>
-<p><code style="color:#22d3bf">blob_seeds</code> の出力。<code style="color:#22d3bf">labels</code> の外にある種は無視する。</p>
+<p>Ausgabe von <code style="color:#22d3bf">blob_seeds</code>. Saaten außerhalb von <code style="color:#22d3bf">labels</code> werden ignoriert.</p>
 <p>distance : array_like</p>
-<p>優先度。ふつうは <code style="color:#22d3bf">blob_distance</code> の出力。</p>
+<p>Priorität. Üblicherweise die Ausgabe von <code style="color:#22d3bf">blob_distance</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">int32</code> のラベル画像。番号は 1 から振り直す。</p>
+<p><code style="color:#22d3bf">int32</code>-Labelbild. Die Nummern werden ab 1 neu vergeben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">Leitfaden zur Familie blob_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

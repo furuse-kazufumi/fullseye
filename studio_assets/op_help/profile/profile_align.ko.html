@@ -6,11 +6,10 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(aligned, info) -&gt; pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>측정한 윤곽을 설계 윤곽에 정합한다. 반환값은 <code style="color:#22d3bf">(aligned, info)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">mode</code> は <code style="color:#22d3bf">ALIGN_MODES</code>。<b>相似(スケール推定)は提供しない</b> —— 大きさの誤差そのものを吸収してしまうため(モジュール docstring の実測表)。</p>
+<p><code style="color:#22d3bf">mode</code> 는 <code style="color:#22d3bf">ALIGN_MODES</code>. <b>닮음(스케일 추정)은 제공하지 않는다</b> —— 크기 오차 자체를 흡수해 버리기 때문(모듈 docstring 의 실측표).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(aligned (N, 2), info)</code>。<code style="color:#22d3bf">info</code> は <code style="color:#22d3bf">mode</code> / <code style="color:#22d3bf">angle_deg</code> /</p>
-<p><code style="color:#22d3bf">translation</code> / <code style="color:#22d3bf">scale</code>(常に 1.0。<b>推定していないことの明示</b>)。</p>
+<p><code style="color:#22d3bf">(aligned (N, 2), info)</code>. <code style="color:#22d3bf">info</code> 는 <code style="color:#22d3bf">mode</code> / <code style="color:#22d3bf">angle_deg</code> /</p>
+<p><code style="color:#22d3bf">translation</code> / <code style="color:#22d3bf">scale</code>(항상 1.0. <b>추정하지 않았음의 명시</b>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

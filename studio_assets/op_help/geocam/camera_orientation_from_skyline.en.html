@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code>; from the registry, <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_skyline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Determines (yaw, pitch, roll) from the skyline of a photo (row per column) and the skyline of the DEM → table.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>写真の境界画素 (u, v) をカメラ光線にし、仮の姿勢で世界へ回すと、各列は (方位, 仰角) の点になる。その仰角と、DEM のスカイラインをその方位で引いた仰角の差の RMS が姿勢のコスト。yaw を <code style="color:#22d3bf">yaw_step_deg</code> 刻みで一周、pitch・roll を <code style="color:#22d3bf">coarse_step_deg</code> 刻みで格子探索し、最小の点から Nelder–Mead で連続値に詰める(scipy)。Baatz ら 2012 のスカイライン照合を、位置既知・ 1 台のカメラに絞った形。</p>
-<p><b>曖昧さを返す</b>: yaw ごとの最良コストの曲線(<code style="color:#22d3bf">yaw_profile_deg</code> / <code style="color:#22d3bf">yaw_profile_residual_deg</code>) と、最良と 2 番目の谷の差 <code style="color:#22d3bf">margin_deg</code>(2 番目の谷 = 最良から 20° 以上離れた最小)。平地・対称な尾根・半円しか写らない写真では谷が複数あり、margin が小さい。<b>margin が <code style="color:#22d3bf">coarse</code> の残差程度なら向きは決まっていない</b>と読む(黙って 1 つを返さない: <code style="color:#22d3bf">ambiguous</code>)。</p>
+<p>Turning the photo&#x27;s boundary pixels (u, v) into camera rays and rotating them into the world with a trial pose, each column becomes an (azimuth, elevation) point. The RMS of the difference between that elevation and the elevation looked up from the DEM skyline at that azimuth is the cost of the pose. yaw is swept through a full circle in steps of <code style="color:#22d3bf">yaw_step_deg</code> and pitch and roll are grid-searched in steps of <code style="color:#22d3bf">coarse_step_deg</code>; from the minimum point it is refined to continuous values with Nelder–Mead (scipy). The skyline matching of Baatz et al. 2012, narrowed to a known position and 1 camera.</p>
+<p><b>Returns the ambiguity</b>: the curve of the best cost per yaw (<code style="color:#22d3bf">yaw_profile_deg</code> / <code style="color:#22d3bf">yaw_profile_residual_deg</code>) and the difference between the best and the 2nd valley, <code style="color:#22d3bf">margin_deg</code> (2nd valley = the minimum at least 20° away from the best). Photos showing only flat land, symmetric ridges or a half circle have several valleys and a small margin. <b>If the margin is about the residual of <code style="color:#22d3bf">coarse</code>, the orientation is not determined</b> (it does not silently return 1: <code style="color:#22d3bf">ambiguous</code>).</p>
 <p>Args:</p>
-<p>skyline_rows: (W,) <code style="color:#22d3bf">skyline_extract</code> の出力(列ごとの行)。</p>
-<p>K: (fx, fy, cx, cy)。</p>
-<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> の出力。</p>
-<p>yaw_step_deg / coarse_step_deg: 粗い格子の刻み。pitch_range / roll_range: 探索範囲 [度]。</p>
+<p>skyline_rows: (W,) output of <code style="color:#22d3bf">skyline_extract</code> (row per column).</p>
+<p>K: (fx, fy, cx, cy).</p>
+<p>sky_table: output of <code style="color:#22d3bf">dem_skyline</code>.</p>
+<p>yaw_step_deg / coarse_step_deg: step of the coarse grid. pitch_range / roll_range: search range [deg].</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code>(仰角残差 RMS)/</p>
-<p><code style="color:#22d3bf">margin_deg</code> / <code style="color:#22d3bf">runner_up_yaw_deg</code> / <code style="color:#22d3bf">ambiguous</code>(bool)/ <code style="color:#22d3bf">yaw_profile_deg</code> (M,) /</p>
-<p><code style="color:#22d3bf">yaw_profile_residual_deg</code> (M,) / <code style="color:#22d3bf">n_columns</code>。</p>
+<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code> (elevation residual RMS) /</p>
+<p><code style="color:#22d3bf">margin_deg</code> / <code style="color:#22d3bf">runner_up_yaw_deg</code> / <code style="color:#22d3bf">ambiguous</code> (bool) / <code style="color:#22d3bf">yaw_profile_deg</code> (M,) /</p>
+<p><code style="color:#22d3bf">yaw_profile_residual_deg</code> (M,) / <code style="color:#22d3bf">n_columns</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

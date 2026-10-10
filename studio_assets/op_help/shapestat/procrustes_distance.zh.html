@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_distance(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False, normalize: &#x27;bool&#x27; = True)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.procrustes_distance(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False, normalize: &#x27;bool&#x27; = True)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Procrustes 距离 = 叠合之后逐点的 RMS。→ float。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">normalize=True</code>(既定)は *target* の重心距離 RMS で割った<b>無次元</b>の値。形どうしを大きさに依らず比べるならこちら。生の距離が要るなら False。</p>
+<p><code style="color:#22d3bf">normalize=True</code>(默认)是除以 *target* 的质心距离 RMS 后的<b>无量纲</b>值。若要不受大小影响地比较形状，用这个。需要原始距离则设为 False。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

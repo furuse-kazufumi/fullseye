@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_chord_frame(contour)</code>(要直接调用实现,<code style="color:#22d3bf">import profileops; profileops.profile_chord_frame(contour)</code>;从台账取用则 <code style="color:#22d3bf">opsprofile.get(&quot;profile_chord_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>求弦(相距最远的 2 个点)。返回 dict。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>翼型の慣行どおり、<b>最も離れた 2 点</b>を前縁・後縁とみなす。どちらが前縁かは <b>その点の近傍の曲率が大きいほう</b>で決める(前縁は丸く、後縁は尖る)。</p>
+<p>按照翼型的惯例，把<b>相距最远的 2 点</b>视为前缘和后缘。哪一个是前缘由<b>该点邻域内曲率较大的一方</b>决定(前缘圆钝，后缘尖锐)。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">le</code> / <code style="color:#22d3bf">te</code>(座標)、<code style="color:#22d3bf">le_index</code> / <code style="color:#22d3bf">te_index</code>、</p>
-<p><code style="color:#22d3bf">chord</code>(長さ)、<code style="color:#22d3bf">angle_deg</code>(弦の向き)。</p>
+<p>dict: <code style="color:#22d3bf">le</code> / <code style="color:#22d3bf">te</code>(坐标)、<code style="color:#22d3bf">le_index</code> / <code style="color:#22d3bf">te_index</code>、</p>
+<p><code style="color:#22d3bf">chord</code>(长度)、<code style="color:#22d3bf">angle_deg</code>(弦的方向)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

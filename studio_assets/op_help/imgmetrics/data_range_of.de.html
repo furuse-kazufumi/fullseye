@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.data_range_of(*arrays, data_range=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgmetrics; imgmetrics.data_range_of(*arrays, data_range=None)</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;data_range_of&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bestimmt die Spanne, die die Pixelwerte annehmen können. <b>Es wird nichts geraten.</b></p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>整数 dtype は dtype から一意に決まる。float は <code style="color:#22d3bf">[0, 1]</code> に収まっているときだけ 1.0 とみなし、それ以外は <code style="color:#22d3bf">data_range</code> の明示を要求する。</p>
-<p><code style="color:#22d3bf">[0, 1]</code> の float を 255 だと思って PSNR を測ると <b>48.13 dB</b> ずれるが例外は出ない ―― それらしい数値が出るだけなので、ここで止める。</p>
+<p>Bei Integer-dtypes ist er eindeutig durch den dtype bestimmt. float gilt nur dann als 1.0, wenn es in <code style="color:#22d3bf">[0, 1]</code> liegt; andernfalls ist die explizite Angabe von <code style="color:#22d3bf">data_range</code> erforderlich.</p>
+<p>Misst man das PSNR eines <code style="color:#22d3bf">[0, 1]</code>-float so, als wäre es 255, liegt man um <b>48.13 dB</b> daneben, doch es wird keine Ausnahme ausgelöst -- es kommt nur eine plausibel aussehende Zahl heraus, daher wird hier gestoppt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>*arrays : ndarray</p>
-<p>同じ画素値の約束を共有するはずの配列(通常 2 枚)。</p>
+<p>Arrays, die dieselbe Pixelwert-Konvention teilen sollten (meist 2 Bilder).</p>
 <p>data_range : float, optional</p>
-<p>明示する場合の幅。正の有限値でなければ <code style="color:#22d3bf">ValueError</code>。</p>
+<p>Die Spanne bei expliziter Angabe. <code style="color:#22d3bf">ValueError</code>, wenn sie kein positiver endlicher Wert ist.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>float</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

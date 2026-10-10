@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;kv_cache_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>केवल 1 token आगे बढ़ने वाला inference (KV Cache) → tokens (1, dv)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>因果マスクの下では<b>未来を書き換えても前の出力が 1 ビットも動かない</b>(実測 0.0e+00) ので、済んだ key/value を取っておいて 1 行だけ計算すればよい —— 逐次に 1 行ずつ進めた結果は、全系列を一括で通した結果と一致する(相対差 1.6e-16)。計算量は 1 歩あたり O(T d) で、一括の O(T² d) を T 歩に割ったものに等しい。</p>
+<p>causal mask के अंतर्गत <b>भविष्य को बदल देने पर भी पहले के outputs 1 bit भी नहीं हिलते</b> (measured 0.0e+00), इसलिए पूरे हो चुके key/value को रख लेना और केवल 1 row की गणना करना काफ़ी है — क्रम से 1-1 row आगे बढ़ने का परिणाम पूरे sequence को एक साथ चलाने के परिणाम से मेल खाता है (relative अंतर 1.6e-16)। प्रति 1 step computation O(T d) है, जो एक साथ वाले O(T² d) को T steps में बाँटने के बराबर है।</p>
 <p>Args:</p>
-<p>query_step: (1, d) float。いま生成しようとしている 1 トークン。</p>
-<p>key_cache: (T, d) float。ここまでに見た key(自分を含む)。</p>
-<p>value_cache: (T, dv) float。同じ長さの value。</p>
-<p>scale: スコアの倍率。None なら 1/√d。</p>
+<p>query_step: (1, d) float। अभी generate किया जाने वाला 1 token।</p>
+<p>key_cache: (T, d) float। अब तक देखी गई keys (स्वयं सहित)।</p>
+<p>value_cache: (T, dv) float। उतनी ही लंबाई की values।</p>
+<p>scale: score का गुणक। None होने पर 1/√d।</p>
 <p>Returns:</p>
-<p>tokens (1, dv) float: 一括で通した最終行と一致する。</p>
+<p>tokens (1, dv) float: एक साथ चलाने पर मिली आख़िरी row से मेल खाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

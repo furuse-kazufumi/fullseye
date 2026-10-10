@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import videocube; videocube.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvideocube.get(&quot;video_summary_keyframes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>प्रतिनिधि frame के index <code style="color:#22d3bf">(k,)</code> int64, आरोही क्रम (<code style="color:#22d3bf">indices</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>フレームごとの得点 = 動きの量(|I_t − I_{t−1}| の平均、[0, 1] に正規化)+ 場面の変化(ヒストグラムの χ² 距離、正規化)。得点の高い順に、既に選んだフレームから <code style="color:#22d3bf">min_gap</code>(既定 T // (2k))以上離れたものを貪欲に <code style="color:#22d3bf">k</code> 枚選ぶ。T &lt; k なら全フレーム。学習なしの「何かが起きたフレーム」であって、意味の要約ではない。</p>
+<p>हर frame का score = motion की मात्रा (|I_t − I_{t−1}| का औसत, [0, 1] पर normalise) + scene का बदलाव (histogram की χ² distance, normalise)। score के घटते क्रम में, पहले से चुने frames से कम से कम <code style="color:#22d3bf">min_gap</code> (default T // (2k)) दूर वाले <code style="color:#22d3bf">k</code> frames greedy तरीके से चुने जाते हैं। T &lt; k हो तो सभी frames। ये बिना learning के &quot;कुछ घटित हुआ ऐसे frames&quot; हैं, अर्थ का सारांश नहीं।</p>
 <p>&gt;&gt;&gt; idx = video_summary_keyframes(clip, k=4)</p>
 <p>&gt;&gt;&gt; thumbnails = clip[idx]</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

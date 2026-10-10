@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_frame_corners(pts, shape)</code> (to call the implementation directly, <code style="color:#22d3bf">import imagemorph; imagemorph.add_frame_corners(pts, shape)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;add_frame_corners&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Adds the four corners of the image (+ the edge midpoints) to the point set as fixed points.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>ワープの三角形分割が画像全体を覆い、凸包の外側にできる穴を防ぐための定番処置。src/dst の両方に同じ順序で足せば、四隅は「動かない対応点」として働く。</p>
-<p>足す 8 点は画素中心座標 <code style="color:#22d3bf">(x, y)</code> で、<code style="color:#22d3bf">W-1</code> / <code style="color:#22d3bf">H-1</code> を端とする:</p>
-<p><code style="color:#22d3bf">(0,0) (xm,0) (W-1,0) (0,ym) (W-1,ym) (0,H-1) (xm,H-1) (W-1,H-1)</code> (<code style="color:#22d3bf">xm = (W-1)/2</code>、<code style="color:#22d3bf">ym = (H-1)/2</code>)。この順で末尾に連結する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pts</code>: <code style="color:#22d3bf">(N, 2)</code> の <b>(x, y)</b>(x = 列、y = 行)、有限。<code style="color:#22d3bf">(row, col)</code> を渡すと x と y が入れ替わったまま通る(例外は出ない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code>: 画像の <code style="color:#22d3bf">shape</code>(<code style="color:#22d3bf">(H, W)</code> でも <code style="color:#22d3bf">(H, W, C)</code> でも先頭 2 つを使う)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(N + 8, 2)</code> float64。</p>
-<p style="margin:2px 0 2px 12px">• 元の点が既に枠上や枠外にあっても検査しない。枠外の対応点は Delaunay 分割で枠の三角形と交差し、ワープが歪む。</p>
-<p><code style="color:#22d3bf">morph</code> / <code style="color:#22d3bf">morph_sequence</code> は <code style="color:#22d3bf">with_corners=True</code> で内部的にこれを両方の点群に掛ける。<code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">warp_tps_image</code> を直接呼ぶときは自分で <code style="color:#22d3bf">src</code> と <code style="color:#22d3bf">dst</code> の両方に足すこと。</p>
+<p>The standard measure so that the warp&#x27;s triangulation covers the whole image and prevents holes outside the convex hull. Added to both src/dst in the same order, the four corners act as &quot;corresponding points that do not move&quot;.</p>
+<p>The 8 added points are in pixel-centre coordinates <code style="color:#22d3bf">(x, y)</code>, with <code style="color:#22d3bf">W-1</code> / <code style="color:#22d3bf">H-1</code> as the edges:</p>
+<p><code style="color:#22d3bf">(0,0) (xm,0) (W-1,0) (0,ym) (W-1,ym) (0,H-1) (xm,H-1) (W-1,H-1)</code> (<code style="color:#22d3bf">xm = (W-1)/2</code>, <code style="color:#22d3bf">ym = (H-1)/2</code>). They are concatenated at the end in this order.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pts</code>: <code style="color:#22d3bf">(N, 2)</code> <b>(x, y)</b> (x = column, y = row), finite. If you pass <code style="color:#22d3bf">(row, col)</code>, it goes through with x and y swapped (no exception is raised).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code>: the image&#x27;s <code style="color:#22d3bf">shape</code> (for <code style="color:#22d3bf">(H, W)</code> or <code style="color:#22d3bf">(H, W, C)</code> the first 2 are used).</p>
+<p style="margin:2px 0 2px 12px">• Returns: <code style="color:#22d3bf">(N + 8, 2)</code> float64.</p>
+<p style="margin:2px 0 2px 12px">• It is not checked whether the original points already lie on or outside the frame. Corresponding points outside the frame intersect the frame triangles in the Delaunay triangulation, and the warp is distorted.</p>
+<p><code style="color:#22d3bf">morph</code> / <code style="color:#22d3bf">morph_sequence</code> apply this internally to both point sets with <code style="color:#22d3bf">with_corners=True</code>. When calling <code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">warp_tps_image</code> directly, add them yourself to both <code style="color:#22d3bf">src</code> and <code style="color:#22d3bf">dst</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

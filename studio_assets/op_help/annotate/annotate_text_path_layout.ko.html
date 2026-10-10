@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.annotate_text_path_layout(text, path, font_size=13, font_path=None, spacing=1.0, start=0.0, anchor=&#x27;start&#x27;, offset=0.0, upright=False, line_spacing=1.15)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_text_path_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표(dict)를 돌려줍니다: 폴리라인을 따라 한 글자씩의 위치와 기울기(호 길이로 결정).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>文字 i の中心は弧長 <code style="color:#22d3bf">s_i = s0 + Σ_{j&lt;i} a_j*spacing + a_i/2</code>、傾きはその位置の線分の接線角(画面座標、度)。経路より長い文字列は ValueError。</p>
-<p><b>位置の決め方</b>(2026-09-08 に追加。既定はそれまでの動作と同じ):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">anchor</code> —— 経路に沿ったそろえ方。<code style="color:#22d3bf">&quot;start&quot;</code>(既定・従来どおり)/ <code style="color:#22d3bf">&quot;center&quot;</code>(経路の中央にそろえる)/ <code style="color:#22d3bf">&quot;end&quot;</code>(終端にそろえる)。<code style="color:#22d3bf">start</code> はアンカーで決めた位置から<b>さらにずらす</b>量として効く。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">offset</code> —— 経路に<b>垂直</b>なずらし [px]。正が<b>進行方向の右</b> (画面座標。y が下向きなので、左→右に進む文字なら「下」)。線に触れさせずに脇へ置く用途。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">\n</code> で<b>改行</b>。2 行目以降は <code style="color:#22d3bf">line_spacing</code> を掛けた行高だけ <code style="color:#22d3bf">offset</code> と同じ向き(進行方向の右)へずれる。★この 1 つの規則で、横書きは「下へ」、縦書きは「左へ」と<b>どちらも組版どおり</b>になる(縦書きは進行方向が下なので、その右は画面の左)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">upright</code> —— 字を接線角に回さず<b>正立</b>させる。経路が主に縦向き(始点→終点の |dy| &gt; |dx|)なら送りを字幅でなく<b>字高</b>にするので、これが<b>縦書き</b>になる。<code style="color:#22d3bf">VERTICAL_ROTATED_CHARS</code> の字だけは 90 度回す。</p>
-<p>句読点(<code style="color:#22d3bf">、。，．</code>)は縦組みの作法どおり<b>右上へ寄せる</b> (<code style="color:#22d3bf">VERTICAL_SHIFTED_CHARS</code>、寄せ量は送りの <code style="color:#22d3bf">_VPUNCT_SHIFT</code> 倍)。Windows の <code style="color:#22d3bf">@</code> 付きフォントが font 側でやっていたことを、ここでは合成で行う —— Pillow はフォントをファイルパスで開くので <code style="color:#22d3bf">@</code> の顔に到達できず、HarfBuzz の <code style="color:#22d3bf">direction=&quot;ttb&quot;</code> も Raqm の有無で結果が変わるため、<b>プラットフォームで揃うほう</b>を採った。</p>
-<p>★<b>縦書きで実装していないこと</b>(黙って近似しない): 小書き仮名の位置補正、縦中横、行末の禁則。短い注記のための機能で、本文組版ではない。</p>
+<p>문자 i의 중심은 호 길이 <code style="color:#22d3bf">s_i = s0 + Σ_{j&lt;i} a_j*spacing + a_i/2</code>, 기울기는그 위치 선분의 접선각(화면 좌표, 도). 경로보다 긴 문자열은 ValueError.</p>
+<p><b>위치 결정 방식</b>(2026-09-08 추가. 기본값은 그 이전의 동작과 같음):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">anchor</code> -- 경로를 따른 정렬 방식. <code style="color:#22d3bf">&quot;start&quot;</code>(기본값, 종전대로) / <code style="color:#22d3bf">&quot;center&quot;</code>(경로 중앙에 정렬) / <code style="color:#22d3bf">&quot;end&quot;</code>(끝에 정렬). <code style="color:#22d3bf">start</code>는 앵커로 정한 위치에서 <b>추가로 옮기는</b> 양으로 작용한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">offset</code> -- 경로에 <b>수직</b>인 이동 [px]. 양수가 <b>진행 방향의 오른쪽</b> (화면 좌표. y가 아래쪽이므로, 왼쪽→오른쪽으로 진행하는 문자라면 &quot;아래&quot;). 선에 닿지 않게 옆에 두는 용도.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">\n</code>으로 <b>줄바꿈</b>. 2번째 줄 이후는 <code style="color:#22d3bf">line_spacing</code>을 곱한 줄 높이만큼 <code style="color:#22d3bf">offset</code>과 같은 방향(진행 방향의 오른쪽)으로 옮겨진다. ★이 1개의 규칙으로, 가로쓰기는 &quot;아래로&quot;, 세로쓰기는 &quot;왼쪽으로&quot; <b>둘 다 조판 규칙대로</b> 된다(세로쓰기는 진행 방향이 아래이므로, 그 오른쪽은 화면의 왼쪽).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">upright</code> -- 글자를 접선각으로 돌리지 않고 <b>바로 세운다</b>. 경로가 주로 세로 방향(시작점→끝점의 |dy| &gt; |dx|)이면 전진량을 글자 폭이 아니라 <b>글자 높이</b>로 하므로, 이것이 <b>세로쓰기</b>가 된다. <code style="color:#22d3bf">VERTICAL_ROTATED_CHARS</code>의 글자만 90도 돌린다.</p>
+<p>구두점(<code style="color:#22d3bf">、。，．</code>)은 세로 조판의 관례대로 <b>오른쪽 위로 붙인다</b> (<code style="color:#22d3bf">VERTICAL_SHIFTED_CHARS</code>, 붙이는 양은 전진량의 <code style="color:#22d3bf">_VPUNCT_SHIFT</code>배). Windows의 <code style="color:#22d3bf">@</code> 붙은 글꼴이 글꼴 쪽에서 하던 일을, 여기서는 합성으로 한다 -- Pillow는 글꼴을 파일 경로로 열기 때문에 <code style="color:#22d3bf">@</code> 페이스에 도달할 수 없고, HarfBuzz의 <code style="color:#22d3bf">direction=&quot;ttb&quot;</code>도 Raqm 유무에 따라 결과가 달라지므로, <b>플랫폼 간에 일치하는 쪽</b>을 택했다.</p>
+<p>★<b>세로쓰기에서 구현하지 않은 것</b>(조용히 근사하지 않음): 작은 가나의 위치 보정, 세로 속 가로(다테추요코), 줄 끝 금칙. 짧은 주석을 위한 기능이며, 본문 조판이 아니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;chars&quot;: [{&quot;char&quot;,&quot;s&quot;,&quot;xy&quot;,&quot;angle_deg&quot;,&quot;width&quot;,&quot;advance&quot;,&quot;line&quot;}], &quot;length&quot;: 経路長, &quot;used&quot;: 最も長い行の**送りの合計**(従来どおり </code>Σ advance*spacing<code style="color:#22d3bf">), &quot;span&quot;: 最も長い行が**実際に占める**弧長(最後の字の後ろの送りを含まない —— アンカーはこちらで揃える), &quot;lines&quot;: 行数, &quot;line_height&quot;: 行送り [px], &quot;vertical&quot;: 縦書きか}</code>。</p>
+<p><code style="color:#22d3bf">{&quot;chars&quot;: [{&quot;char&quot;,&quot;s&quot;,&quot;xy&quot;,&quot;angle_deg&quot;,&quot;width&quot;,&quot;advance&quot;,&quot;line&quot;}], &quot;length&quot;: 경로 길이, &quot;used&quot;: 가장 긴 줄의 **전진량 합계**(종전대로 </code>Σ advance*spacing<code style="color:#22d3bf">), &quot;span&quot;: 가장 긴 줄이 **실제로 차지하는** 호 길이(마지막 글자 뒤의 전진량은 포함하지 않음 -- 앵커는 이쪽으로 정렬), &quot;lines&quot;: 줄 수, &quot;line_height&quot;: 줄 간격 [px], &quot;vertical&quot;: 세로쓰기 여부}</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>文字が空、経路が 2 点未満か長さゼロ、非有限、行が経路より長い、</p>
-<p>アンカーと <code style="color:#22d3bf">start</code> の組み合わせで行が経路から外れる場合。</p>
+<p>문자가 비어 있음, 경로가 2점 미만이거나 길이 0, 비유한, 줄이 경로보다 김,</p>
+<p>앵커와 <code style="color:#22d3bf">start</code>의 조합으로 줄이 경로를 벗어나는 경우.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_reconstruct(model, scores)</code> (die Implementierung direkt: <code style="color:#22d3bf">import shapestats; shapestats.shape_reconstruct(model, scores)</code>; aus dem Register: <code style="color:#22d3bf">opsshapestat.get(&quot;shape_reconstruct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Rekonstruiert eine Form aus Scores. → <code style="color:#22d3bf">(N, 3)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>与えたスコアが本数より少なければ残りは 0(= 平均のまま)として扱う。多ければ <code style="color:#22d3bf">ValueError</code> —— 黙って切り捨てると「入れたはずのモードが効かない」という追いにくい形になる。</p>
+<p>Werden weniger Scores als Komponenten übergeben, gelten die übrigen als 0 (= beim Mittelwert belassen). Bei mehr <code style="color:#22d3bf">ValueError</code> -- stillschweigendes Abschneiden führte zu dem schwer nachvollziehbaren Symptom &quot;ein eingegebener Mode wirkt nicht&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">Leitfaden zur Familie shape_statistics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

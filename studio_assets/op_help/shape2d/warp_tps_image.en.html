@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code> (to call the implementation directly, <code style="color:#22d3bf">import imagemorph; imagemorph.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;warp_tps_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Smooth warp that moves src_pts of img to dst_pts using a thin-plate spline.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>出力座標 → 入力座標の逆写像 TPS(dst→src)を当てはめ、出力全格子で評価してサンプルする。lam=0 なら制御点上で厳密に対応(特徴が正しく着地)、lam&gt;0 で変形を平滑化。区分アフィンより滑らかだが、全画素×制御点のカーネル評価コスト。</p>
-<p>引数・返り値は <code style="color:#22d3bf">warp_piecewise_affine</code> と同じ。</p>
+<p>Fits the inverse-mapping TPS from output coordinates → input coordinates (dst→src), evaluates it on the whole output grid, and samples. With lam=0 it corresponds exactly at the control points (features land correctly); lam&gt;0 smooths the deformation. Smoother than piecewise affine, but at the cost of evaluating the kernel for all pixels × control points.</p>
+<p>Arguments and return value are the same as <code style="color:#22d3bf">warp_piecewise_affine</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

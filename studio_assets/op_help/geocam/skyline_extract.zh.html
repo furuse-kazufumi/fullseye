@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>(要直接调用实现,<code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>;从台账取用则 <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用动态规划从照片中提取 1 条<b>每列的天空与地形分界所在行</b> → signal (W,)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Lie・Lin・Hsu 2005(*Pattern Recognition*: 航法のための頑健なスカイライン抽出)と同じ考え:</p>
-<p>垂直方向の明るさの変化(空が上で明るければ <code style="color:#22d3bf">I[v−1] − I[v+1]</code> が正)を「境界らしさ」にし、隣の列から行が <code style="color:#22d3bf">max_jump</code> 以上飛ばない連続な経路のうちコストが最小のものを選ぶ(<code style="color:#22d3bf">jump_penalty</code> × 行の飛び)。雲や建物の縦の縁で局所的に強い応答が出ても、経路の連続性が本物の稜線を残す。</p>
+<p>与 Lie、Lin、Hsu 2005(*Pattern Recognition*:用于导航的鲁棒天际线提取)相同的思路:</p>
+<p>把垂直方向的亮度变化(若天空在上方且较亮,则 <code style="color:#22d3bf">I[v−1] − I[v+1]</code> 为正)作为“边界相似度”, 在相对相邻列行跳变不超过 <code style="color:#22d3bf">max_jump</code> 的连续路径中选出代价最小的一条(<code style="color:#22d3bf">jump_penalty</code> × 行的跳变)。即使云或建筑物的竖直边缘产生局部强响应,路径的连续性也会保留真正的山脊线。</p>
 <p>Args:</p>
-<p>image: (H, W) float。RGB なら先に灰色にする。</p>
-<p>sky_is_bright: 空が地形より明るい(昼)。夜景・逆光で反転するなら False。</p>
-<p>smooth: 縦方向の Gaussian σ [画素] (雑音)。0 で無効。</p>
-<p>max_jump: 隣の列で許す行の飛び [画素]。</p>
-<p>jump_penalty: 飛び 1 画素あたりのコスト(境界らしさは 0〜1 に正規化してある)。</p>
+<p>image: (H, W) float。RGB 则先转为灰度。</p>
+<p>sky_is_bright: 天空比地形亮(白天)。夜景、逆光导致反转时为 False。</p>
+<p>smooth: 纵向的 Gaussian σ [像素] (噪声)。0 为禁用。</p>
+<p>max_jump: 相邻列之间允许的行跳变 [像素]。</p>
+<p>jump_penalty: 每跳变 1 像素的代价(边界相似度已归一化到 0~1)。</p>
 <p>Returns:</p>
-<p>signal (W,) float: 列ごとの境界の行(0 が最上段)。<b>空しか写っていない・地形しか写っていない</b>画像では境界の応答が弱く、経路の平均コストが 0 に近いので ValueError</p>
-<p>で止める(黙って雑音の線を返さない)。</p>
+<p>signal (W,) float: 每列边界所在的行(0 为最上端)。对<b>只拍到天空、或只拍到地形</b>的图像,边界响应弱,路径平均代价接近 0,因此以 ValueError</p>
+<p>终止(不悄悄返回噪声的线)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

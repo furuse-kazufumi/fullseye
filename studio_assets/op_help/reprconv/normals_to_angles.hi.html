@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normal <code style="color:#22d3bf">(N,3)</code> → azimuth/elevation जोड़े <code style="color:#22d3bf">(N,2)</code> <b>[degree]</b> में। <code style="color:#22d3bf">normals</code> से निकास।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> を軸0-軸1 平面内の方位、<code style="color:#22d3bf">el = asin(c2/|v|)</code> を軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された配列がどちらの流儀かに依存して意味が変わってしまう。</p>
-<p>可逆: <code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測 max|Δ| = 6.1e-16、<code style="color:#22d3bf">selftest</code> が毎回測る)。<b>戻らないのは長さだけ</b> —— 法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
+<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> को axis0-axis1 plane में azimuth, और <code style="color:#22d3bf">el = asin(c2/|v|)</code> को axis 2 से elevation माना जाता है। <b>x/y/z के बजाय &quot;axis 0/1/2&quot; से परिभाषित किया गया है</b>, क्योंकि इस repo में (z,y,x) क्रम वाले point cloud और (x,y,z) क्रम वाले point cloud दोनों हैं -- नाम से लिखने पर, अर्थ इस पर निर्भर हो जाता कि दिया गया array किस परंपरा का है।</p>
+<p>invertible: <code style="color:#22d3bf">angles_to_normals</code> के साथ round trip करने पर <b>दिशा बिल्कुल सटीक लौटती है</b> (measured max|Δ| = 6.1e-16, <code style="color:#22d3bf">selftest</code> हर बार मापता है)। <b>केवल length नहीं लौटती</b> -- normal एक दिशा है, इसलिए non-unit vector देने पर round trip के बाद वह unit vector बन जाता है।</p>
 <p>Args:</p>
-<p>normals: (N, 3) 実配列。零ベクトルは拒否(方位が定義できない)。</p>
+<p>normals: (N, 3) real array। zero vector अस्वीकार (azimuth परिभाषित नहीं हो सकता)।</p>
 <p>Returns:</p>
-<p>(N, 2) float64。列 0 = 方位 (-180, 180]、列 1 = 仰角 [-90, 90]。</p>
+<p>(N, 2) float64। column 0 = azimuth (-180, 180], column 1 = elevation [-90, 90]।</p>
 <p>Raises:</p>
-<p>ValueError: 形状が (N,3) でない / 非有限 / 長さ 0 のベクトルを含む。</p>
+<p>ValueError: shape (N,3) नहीं है / non-finite / length 0 वाला vector शामिल है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

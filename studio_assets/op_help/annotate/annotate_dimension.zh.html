@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_dimension(img, p0, p1, units_per_pixel=1.0, unit=&#x27;px&#x27;, offset=20.0, extension=6.0, color=&#x27;neutral&#x27;, width=1.5, head_len=9.0, head_width=6.0, label_fmt=&#x27;{:.1f}&#x27;, font_size=11, box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate; annotate.annotate_dimension(img, p0, p1, units_per_pixel=1.0, unit=&#x27;px&#x27;, offset=20.0, extension=6.0, color=&#x27;neutral&#x27;, width=1.5, head_len=9.0, head_width=6.0, label_fmt=&#x27;{:.1f}&#x27;, font_size=11, box_alpha=0.6, text_color=None, scheme=&#x27;okabe_ito&#x27;, font_path=None, layout=None)</code>;从台账取用则 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_dimension&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回图像(image2d):尺寸线(两端箭头 + 尺寸界线 + 数值与单位)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>値は <code style="color:#22d3bf">|p1-p0| * units_per_pixel</code>(閉形式)。幾何は <code style="color:#22d3bf">annotate_dimension_layout</code>。</p>
+<p>值为 <code style="color:#22d3bf">|p1-p0| * units_per_pixel</code>(闭式)。几何由 <code style="color:#22d3bf">annotate_dimension_layout</code> 给出。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p><code style="color:#22d3bf">annotate_dimension_layout</code> と同じ + units_per_pixel が非正、</p>
-<p>寸法線が画像の外、文字が収まらない。</p>
+<p>与 <code style="color:#22d3bf">annotate_dimension_layout</code> 相同 + units_per_pixel 非正、</p>
+<p>尺寸线在图像外、文字放不下。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

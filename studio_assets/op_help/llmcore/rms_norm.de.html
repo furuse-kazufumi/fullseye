@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;rms_norm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>RMS-Normierung → tokens. <b>Mit den Voreinstellungen (eps=0, ohne weight) ist der RMS der Ausgabe exakt 1</b>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Zhang・Sennrich 2019。LayerNorm から平均を引く段を落としたもので、残るのは「行のノルムを揃える」だけ —— だから <b>RMS が 1 になることが検算になる</b> (実測 2.2e-16)。<code style="color:#22d3bf">eps</code> を入れると 1 からずれる。それが <code style="color:#22d3bf">eps</code> の値段。</p>
+<p>Zhang und Sennrich 2019. LayerNorm ohne die Stufe, die den Mittelwert abzieht; übrig bleibt nur &quot;die Norm jeder Zeile angleichen&quot; -- daher <b>dient es als Gegenprobe, dass der RMS 1 wird</b> (gemessen 2.2e-16). Fügt man <code style="color:#22d3bf">eps</code> hinzu, weicht er von 1 ab. Das ist der Preis von <code style="color:#22d3bf">eps</code>.</p>
 <p>Args:</p>
-<p>tokens: (T, d) float。1 行が 1 トークン。</p>
-<p>eps: 平方根の中に足す下駄。0 なら RMS は厳密に 1、正なら 1 未満に縮む。</p>
-<p>weight: (d,) float か None。学習で付く軸ごとの倍率(掛けるだけなので RMS は動く)。</p>
+<p>tokens: (T, d) float. 1 Zeile ist 1 Token.</p>
+<p>eps: ein Sockel, der unter der Wurzel addiert wird. Bei 0 ist der RMS exakt 1, bei positivem Wert schrumpft er unter 1.</p>
+<p>weight: (d,) float oder None. Ein gelernter Faktor pro Achse (er wird nur multipliziert, daher bewegt sich der RMS).</p>
 <p>Returns:</p>
-<p>tokens (T, d) float: 各行を自分の RMS で割ったもの(<code style="color:#22d3bf">weight</code> があれば掛けたもの)。</p>
-<p><b>全成分が 0 の行</b>は割れないので ValueError(黙って 0/0 の NaN を返さない)。</p>
+<p>tokens (T, d) float: jede Zeile durch ihren eigenen RMS geteilt (mit <code style="color:#22d3bf">weight</code> multipliziert, falls gegeben).</p>
+<p><b>Zeilen, deren Komponenten alle 0 sind</b>, lassen sich nicht teilen, daher ValueError (es wird nicht stillschweigend NaN aus 0/0 zurückgegeben).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">Leitfaden zur Familie llmcore</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

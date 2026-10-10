@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate; annotate.filled_polygon(img, points, color=&#x27;neutral&#x27;, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsannotate.get(&quot;filled_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>다각형 칠하기(짝홀 규칙의 교차 판정 —— <code style="color:#22d3bf">imagedraw</code> 는 윤곽만).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : (N,2)</p>
-<p><b>(x,y)</b> の頂点列(自動的に閉じる)。3 点未満は ValueError。</p>
+<p><b>(x,y)</b>의 정점열(자동으로 닫힌다). 3점 미만은 ValueError.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点が 3 未満 / 非有限 / alpha が [0,1] の外。</p>
+<p>점이 3 미만 / 비유한 / alpha가 [0,1] 밖.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

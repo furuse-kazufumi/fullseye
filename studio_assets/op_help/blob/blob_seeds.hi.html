@@ -4,24 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_seeds&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>h-maxima seed। <b><code style="color:#22d3bf">h</code> <code style="color:#22d3bf">distance</code> वाली इकाई में absolute value है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>「高さ <code style="color:#22d3bf">h</code> 以上そびえている極大」だけを残し、連結成分に番号を振って返す。融合した塊を割るときの種として使う。</p>
-<p><b>既存の <code style="color:#22d3bf">fs.op.xsk2_h_maxima</code> と違う点</b>(<code style="color:#22d3bf">poc_cell_counting</code> が</p>
-<p>記録した穴):</p>
-<p style="margin:2px 0 2px 12px">• あちらは入力を <code style="color:#22d3bf">[0, 1]</code> に<b>切り詰める</b>ので、生の距離マップを渡すと壊れる(2 px も 20 px も 1.0 になる)。ここは切り詰めない。</p>
-<p style="margin:2px 0 2px 12px">• あちらの <code style="color:#22d3bf">h</code> は <code style="color:#22d3bf">0.05 + 0.3a</code> = <b>正規化画像に対する比</b>なので、画像に大きい物体が 1 つ入るだけで小さい物体側の実効 <code style="color:#22d3bf">h</code> が上がる(実測で下限が 0.42 → 0.80 px へ動いた)。ここは画素(または物理単位)。</p>
-<p><b>速さ</b>: 再構成は<b>連結成分ごとの外接箱の中でだけ</b>回す。背景を通る伝播が消えるので、512x512 に 200 個の円で <b>237.7 ms → 15.3 ms(15.5 倍)</b>、結果は全画素一致(2026-09-06 実測)。</p>
+<p>केवल &quot;कम से कम <code style="color:#22d3bf">h</code> ऊँचाई तक उठे maxima&quot; रखता है, उनके connected component को नंबर देकर लौटाता है। आपस में जुड़े गुच्छों को बाँटते समय seeds के रूप में इस्तेमाल होता है।</p>
+<p><b>मौजूदा <code style="color:#22d3bf">fs.op.xsk2_h_maxima</code> से अंतर</b> (<code style="color:#22d3bf">poc_cell_counting</code> ने जो कमी दर्ज की थी):</p>
+<p style="margin:2px 0 2px 12px">• वह op input को <code style="color:#22d3bf">[0, 1]</code> पर <b>clip कर देता है</b>, इसलिए raw distance map देने पर बिगड़ जाता है (2 px और 20 px दोनों 1.0 बन जाते हैं)। यहाँ clip नहीं किया जाता।</p>
+<p style="margin:2px 0 2px 12px">• उसका <code style="color:#22d3bf">h</code> <code style="color:#22d3bf">0.05 + 0.3a</code> = <b>normalised image के सापेक्ष अनुपात</b> है, इसलिए image में सिर्फ़ 1 बड़ा object आ जाने से छोटे objects की तरफ़ का effective <code style="color:#22d3bf">h</code> बढ़ जाता है (measurement में निचली सीमा 0.42 → 0.80 px खिसक गई)। यहाँ यह pixel (या physical units) में है।</p>
+<p><b>गति</b>: reconstruction <b>हर connected component के bounding box के अंदर ही</b> चलाया जाता है। background से होकर propagation ख़त्म हो जाता है, इसलिए 512x512 में 200 circles पर <b>237.7 ms → 15.3 ms (15.5 गुना)</b>, और result हर pixel पर समान है (2026-09-06 का measurement)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>distance : array_like</p>
-<p>2-D の実数場。ふつうは <code style="color:#22d3bf">blob_distance</code> の出力。</p>
+<p>2-D real-valued field। आमतौर पर <code style="color:#22d3bf">blob_distance</code> का output।</p>
 <p>h : float</p>
-<p>そびえの高さ。<code style="color:#22d3bf">distance</code> と同じ単位で、<b>0 より大きいこと</b>。</p>
-<p>大きくすると種が減る(= 割りすぎが減り、割り残しが増える)。</p>
+<p>उठान की ऊँचाई। <code style="color:#22d3bf">distance</code> वाली ही unit में, <b>0 से बड़ा होना चाहिए</b>।</p>
+<p>बड़ा करने पर seeds कम होते हैं (= over-splitting घटता है, under-splitting बढ़ता है)।</p>
 <p>connectivity : {4, 8}</p>
-<p>極大の連結の取り方。</p>
+<p>maxima किस तरह connected माने जाएँ।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p><code style="color:#22d3bf">int32</code> のラベル画像(背景 0、種 1..n)。</p>
+<p><code style="color:#22d3bf">int32</code> label image (background 0, seeds 1..n)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.overlay_mask(img, mask, color=&#x27;wrong&#x27;, alpha=0.45, outline=0, outline_color=None, scheme=&#x27;okabe_ito&#x27;, style=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.overlay_mask(img, mask, color=&#x27;wrong&#x27;, alpha=0.45, outline=0, outline_color=None, scheme=&#x27;okabe_ito&#x27;, style=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;overlay_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 α 疊加二值遮罩。<b>嚴格為 <code style="color:#22d3bf">a*f + (1-a)*b</code></b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>mask : (H,W)</p>
-<p>画像と同じ大きさの真偽(または [0,1] の重み)。</p>
-<p><b>形が違えば例外</b> ―― (row,col) と (x,y) の取り違えはここで死ぬ。</p>
+<p>與影像同尺寸的布林值(或 [0,1] 的權重)。</p>
+<p><b>形狀不同則拋出例外</b> —— (row,col) 與 (x,y) 的混淆在這裡就會被終止。</p>
 <p>alpha : float</p>
-<p>マスク側の重み。</p>
+<p>遮罩一側的權重。</p>
 <p>outline : int</p>
-<p>0 より大きければマスクの輪郭を太さ <code style="color:#22d3bf">outline</code> で描く。</p>
+<p>大於 0 時以粗細 <code style="color:#22d3bf">outline</code> 繪製遮罩的輪廓。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形の不一致 / alpha が [0,1] の外 / mask に非有限。</p>
+<p>形狀不一致 / alpha 在 [0,1] 之外 / mask 含非有限值。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

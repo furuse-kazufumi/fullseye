@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import llmcore; llmcore.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_weights&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>행별 softmax(마스크 포함) → attnmap. <b>행 합은 1, mask 위치는 엄밀히 0</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>行ごとに最大値を引いてから指数を取る。これは飾りではない —— 引かずに <code style="color:#22d3bf">exp</code> するとスコアが大きいとき<b>全行が inf/NaN になる</b>(実測: 96 行中 96 行)。引けば 0 行。</p>
+<p>행마다 최댓값을 뺀 다음 지수를 취한다. 이것은 장식이 아니다 —— 빼지 않고 <code style="color:#22d3bf">exp</code> 하면점수가 클 때 <b>전 행이 inf/NaN 이 된다</b>(실측: 96 행 중 96 행). 빼면 0 행.</p>
 <p>Args:</p>
-<p>scores: (T, T) float の生スコア(<code style="color:#22d3bf">attention_scores</code> の出力)。</p>
-<p>mask: None(全対)/ <code style="color:#22d3bf">&quot;causal&quot;</code>(下三角)/ <code style="color:#22d3bf">&quot;window&quot;</code>(幅 <code style="color:#22d3bf">window</code> の因果窓)/</p>
-<p>(T, T) の bool 配列。True が「見てよい」。</p>
-<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅(自分を含む個数)。</p>
+<p>scores: (T, T) float 의 날 점수(<code style="color:#22d3bf">attention_scores</code> 의 출력).</p>
+<p>mask: None(전 쌍)/ <code style="color:#22d3bf">&quot;causal&quot;</code>(하삼각)/ <code style="color:#22d3bf">&quot;window&quot;</code>(폭 <code style="color:#22d3bf">window</code> 의 인과 창)/</p>
+<p>(T, T) 의 bool 배열. True 가 &quot;봐도 된다&quot;.</p>
+<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> 일 때의 창 폭(자신을 포함한 개수).</p>
 <p>Returns:</p>
-<p>attnmap (T, T) float: 各行が確率分布(和 1)。mask が False の位置は厳密に 0。</p>
+<p>attnmap (T, T) float: 각 행이 확률 분포(합 1). mask 가 False 인 위치는 엄밀히 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

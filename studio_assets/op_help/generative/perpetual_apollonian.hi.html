@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_apollonian(depth: &#x27;int&#x27; = 6, size: &#x27;int&#x27; = 520) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_apollonian(depth: &#x27;int&#x27; = 6, size: &#x27;int&#x27; = 520) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_apollonian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Apollonian circle packing — खाली जगहों को छूने वाले वृत्त लगातार डालता रहता है (कभी खत्म नहीं होता)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>不変量: 互いに接する 4 円の曲率が <b>デカルトの円定理</b> <code style="color:#22d3bf">(Σk)² = 2Σk²</code> を厳密に満たす。<code style="color:#22d3bf">perpetual_identities</code> で確かめられる。</p>
-<p>★塗りの明るさは<b>曲率</b>(= 1/半径)。定理が試している量をそのまま色にしてあるので、絵の濃淡が主張と同じものを指している。</p>
+<p>invariant: एक-दूसरे को स्पर्श करने वाले 4 वृत्तों की curvature <b>Descartes के वृत्त प्रमेय</b> <code style="color:#22d3bf">(Σk)² = 2Σk²</code> को ठीक-ठीक संतुष्ट करती है। <code style="color:#22d3bf">perpetual_identities</code> से जाँचा जा सकता है।</p>
+<p>★भराव की चमक <b>curvature</b> (= 1/radius) है। प्रमेय जिस मात्रा को परखता है उसी को सीधे रंग बनाया गया है, इसलिए चित्र का shading उसी चीज़ की ओर इशारा करता है जिसका दावा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

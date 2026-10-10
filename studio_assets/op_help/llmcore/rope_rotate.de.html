@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;rope_rotate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Rotationsbasierte Positionskodierung (RoPE) → tokens. <b>Da es eine Rotation ist, bleibt die Norm erhalten</b>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Su ら 2021。偶奇の対 (x₂ᵢ, x₂ᵢ₊₁) を角度 <code style="color:#22d3bf">pos · base**(−2i/d)</code> だけ回す。平面回転の直和なので <code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> が<b>厳密に</b>成り立ち(実測 8.9e-16)、しかも回した 2 本の内積は<b>位置の差だけ</b>で決まる(絶対位置を 40 通り動かして幅 8.9e-15) —— 「相対位置を内積に埋める」という主張が、そのまま検算になる。</p>
+<p>Su et al. 2021. Jedes Gerade/Ungerade-Paar (x₂ᵢ, x₂ᵢ₊₁) wird um den Winkel <code style="color:#22d3bf">pos · base**(−2i/d)</code> gedreht. Es ist eine direkte Summe ebener Drehungen, daher gilt <code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> <b>exakt</b> (gemessen 8.9e-16), und das Skalarprodukt von 2 gedrehten Vektoren hängt <b>nur von der Positionsdifferenz</b> ab (verschiebt man die absolute Position auf 40 Arten, ist die Streuung 8.9e-15) — die Aussage &quot;die relative Position wird ins Skalarprodukt eingebettet&quot; wird unmittelbar zur Gegenprobe.</p>
 <p>Args:</p>
-<p>tokens: (T, d) float。<b>d は偶数</b>(対にして回すため)。</p>
-<p>positions: (T,) の位置。None なら 0..T−1。飛び飛びの位置(切り出した窓)も渡せる。</p>
-<p>base: 角度の底。大きいほど低い軸がゆっくり回る(長い文脈向け)。</p>
+<p>tokens: (T, d) float. <b>d ist gerade</b> (um paarweise zu drehen).</p>
+<p>positions: (T,) Positionen. None bedeutet 0..T−1. Auch nicht zusammenhängende Positionen (ein ausgeschnittenes Fenster) sind möglich.</p>
+<p>base: Basis der Winkel. Je größer, desto langsamer drehen sich die niedrigen Achsen (für lange Kontexte).</p>
 <p>Returns:</p>
-<p>tokens (T, d) float: 対ごとに回したもの。行ごとのノルムは入力と同じ。</p>
+<p>tokens (T, d) float: paarweise gedreht. Die Norm jeder Zeile ist gleich der der Eingabe.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">Leitfaden zur Familie llmcore</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

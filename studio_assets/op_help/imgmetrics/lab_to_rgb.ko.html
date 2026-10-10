@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lab_to_rgb(lab, white=(0.95047, 1.0, 1.08883))</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgmetrics; imgmetrics.lab_to_rgb(lab, white=(0.95047, 1.0, 1.08883))</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;lab_to_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>CIE L*a*b* → sRGB <code style="color:#22d3bf">[0, 1]</code>. <b>색역 밖은 잘립니다</b>. 따라서 <code style="color:#22d3bf">rgb_to_lab</code> 와의 왕복은 색역 안에서만 일치합니다(테스트로 고정).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>手順: <code style="color:#22d3bf">fy = (L + 16) / 116</code>、<code style="color:#22d3bf">fx = fy + a / 500</code>、<code style="color:#22d3bf">fz = fy - b / 200</code> を <code style="color:#22d3bf">xyz_to_lab</code> の逆関数で XYZ に戻し(<code style="color:#22d3bf">white</code> を掛ける)、XYZ→線形 RGB の逆行列を掛けてから sRGB の伝達関数を掛ける。伝達関数の手前で線形 RGB を <code style="color:#22d3bf">[0, 1]</code> に <b>無言でクリップ</b>する ―― ここが「色域外は切り詰め」の実体で、例外は出ない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab</code>: 最後の軸が 3 の任意の形。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: <code style="color:#22d3bf">rgb_to_lab</code> で使ったものと同じ白色点を渡す(検証はしない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64、値域 <code style="color:#22d3bf">[0, 1]</code> のガンマ付き sRGB。8 bit にするなら呼び出し側で 255 倍して丸める。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): 最後の軸が 3 でない。</p>
+<p>절차: <code style="color:#22d3bf">fy = (L + 16) / 116</code>, <code style="color:#22d3bf">fx = fy + a / 500</code>, <code style="color:#22d3bf">fz = fy - b / 200</code>를 <code style="color:#22d3bf">xyz_to_lab</code>의 역함수로 XYZ로 되돌리고(<code style="color:#22d3bf">white</code>를 곱함), XYZ→선형 RGB의역행렬을 곱한 다음 sRGB의 전달 함수를 건다. 전달 함수 앞에서 선형 RGB를 <code style="color:#22d3bf">[0, 1]</code>로 <b>말없이 클립</b>한다 -- 이것이 &quot;색역 밖은 잘려 나감&quot;의 실체이며, 예외는 나지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lab</code>: 마지막 축이 3인 임의의 형태.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: <code style="color:#22d3bf">rgb_to_lab</code>에서 쓴 것과 같은 백색점을 넘긴다(검증은 하지 않음).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 입력과 같은 형태의 float64, 값 범위 <code style="color:#22d3bf">[0, 1]</code>의 감마가 붙은 sRGB. 8 bit로 하려면 호출 측에서 255배 하여 반올림한다.</p>
+<p style="margin:2px 0 2px 12px">• 실패(<code style="color:#22d3bf">MetricContractError</code>): 마지막 축이 3이 아님.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

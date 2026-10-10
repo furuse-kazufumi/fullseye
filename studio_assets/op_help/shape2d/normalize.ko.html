@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normalize(model, size_invariant=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fourierdesc; fourierdesc.normalize(model, size_invariant=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;normalize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>EFD 계수를 &#x27;정준 자세&#x27;의 계수로 변환한다(제1고조파를 기준으로 정렬).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Kuhl–Giardina の正準化: (1) 第1高調波の位相で <b>始点</b> の任意性を除去、(2) 第1 楕円の長軸を基準軸へ回して <b>向き</b> を揃え、(3) 第1高調波の長軸長で割って <b>大きさ</b> を揃える。複数形状を重ねる/平均する等の「正準ポーズ再構成」向け。</p>
-<p>注意(honest): 第1高調波がほぼ <b>円形</b>(長軸≈短軸)の形状では位相 (theta/psi) が悪条件で不安定になる。<b>不変マッチングには本関数でなく</b> <code style="color:#22d3bf">invariants</code> / <code style="color:#22d3bf">descriptor_distance</code>(特異値ベース)を使うこと。</p>
+<p>Kuhl–Giardina 의 정준화: (1) 제1 고조파의 위상으로 <b>시작점</b>의 임의성을 제거, (2) 제1 타원의 장축을 기준축으로 돌려 <b>방향</b>을 맞추고, (3) 제1 고조파의 장축 길이로 나누어 <b>크기</b> 를 맞춘다. 여러 형상을 겹치기/평균하기 등의 &quot;정준 자세 재구성&quot;용.</p>
+<p>주의(honest): 제1 고조파가 거의 <b>원형</b>(장축≈단축)인 형상에서는 위상 (theta/psi) 이악조건으로 불안정해진다. <b>불변 매칭에는 이 함수가 아니라</b> <code style="color:#22d3bf">invariants</code> / <code style="color:#22d3bf">descriptor_distance</code>(특이값 기반)를 쓸 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

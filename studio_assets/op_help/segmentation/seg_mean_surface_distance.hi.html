@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_mean_surface_distance(labels_pred, labels_true) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segeval; segeval.seg_mean_surface_distance(labels_pred, labels_true) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;seg_mean_surface_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>average symmetric surface distance (ASSD): दोनों दिशाओं में boundary pixel की दूरियों का एक साथ औसत = (Σ prediction→truth + Σ truth→prediction)/(n_p + n_t)। RMS भी।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>境界は <code style="color:#22d3bf">_boundary</code> の規約。どちらかの境界が空なら ValueError。</p>
-<p>返り値: <code style="color:#22d3bf">assd</code>、<code style="color:#22d3bf">rms</code>、<code style="color:#22d3bf">mean_pred_to_true</code> / <code style="color:#22d3bf">mean_true_to_pred</code>、<code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>。</p>
+<p>boundary <code style="color:#22d3bf">_boundary</code> की convention के अनुसार। किसी भी एक की boundary ख़ाली हो तो ValueError।</p>
+<p>Returns: <code style="color:#22d3bf">assd</code>, <code style="color:#22d3bf">rms</code>, <code style="color:#22d3bf">mean_pred_to_true</code> / <code style="color:#22d3bf">mean_true_to_pred</code>, <code style="color:#22d3bf">n_pred_boundary</code> / <code style="color:#22d3bf">n_true_boundary</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

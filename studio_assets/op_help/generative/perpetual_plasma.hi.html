@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_plasma(size: &#x27;int&#x27; = 513, seed: &#x27;int&#x27; = 0, roughness: &#x27;float&#x27; = 0.55) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import perpetual; perpetual.perpetual_plasma(size: &#x27;int&#x27; = 513, seed: &#x27;int&#x27; = 0, roughness: &#x27;float&#x27; = 0.55) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_plasma&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Diamond-square algorithm (1980 के दशक का &quot;plasma&quot;) — बाँटते रहें तो अनंत तक बारीक होता जाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>不変量: <b>最初に置いた 4 隅の値は最後まで動かない</b>(中点変位は既存の値を書き換えない)。</p>
+<p>invariant: <b>4 कोनों पर पहले रखे गए मान अंत तक नहीं बदलते</b> (midpoint displacement मौजूदा मानों को दोबारा नहीं लिखता)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

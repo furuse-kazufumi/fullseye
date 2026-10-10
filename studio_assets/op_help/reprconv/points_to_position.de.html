@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.points_to_position(points)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.points_to_position(points)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;points_to_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Punktmenge <code style="color:#22d3bf">(N,3)</code> → ihr Schwerpunkt <code style="color:#22d3bf">(z, y, x)</code>. <b>Nicht invertierbar</b> (die Verteilung geht verloren).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>捨てた量は測れる: 重心まわりの RMS 距離が「1 点に潰したときに失った広がり」そのもので、<code style="color:#22d3bf">selftest</code> はこれを数字で出す。N = 1 のときだけ <code style="color:#22d3bf">position_to_points</code> との往復が bit 一致する。</p>
+<p>Die verworfene Menge ist messbar: Der RMS-Abstand um den Schwerpunkt ist genau &quot;die beim Zusammenziehen auf 1 Punkt verlorene Ausdehnung&quot;, und <code style="color:#22d3bf">selftest</code> gibt ihn als Zahl aus. Nur bei N = 1 ist der Hin- und Rückweg mit <code style="color:#22d3bf">position_to_points</code> bitidentisch.</p>
 <p>Args:</p>
-<p>points: (N, 3) の (z, y, x)。</p>
+<p>points: (N, 3) (z, y, x).</p>
 <p>Returns:</p>
-<p>3-tuple の float (z, y, x)。</p>
+<p>ein 3-Tupel aus float (z, y, x).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
+<p>ValueError: ungültige Form / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

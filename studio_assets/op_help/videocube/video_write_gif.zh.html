@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_write_gif(frames, path: &#x27;str&#x27;, fps: &#x27;float&#x27; = 10.0) -&gt; &#x27;str&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import videocube; videocube.video_write_gif(frames, path: &#x27;str&#x27;, fps: &#x27;float&#x27; = 10.0) -&gt; &#x27;str&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsvideocube.get(&quot;video_write_gif&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把帧序列写成动画 GIF(<code style="color:#22d3bf">text</code> = 写入的路径)。可复用的出口。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">frames</code> は灰の <code style="color:#22d3bf">video</code> (T, H, W) か色の <code style="color:#22d3bf">rgbvideo</code> (F, H, W, 3)。float は [0, 1] を 0..255 に、整数はそのまま uint8 に(範囲外は切る)。<b>全フレームを保存する</b>(Pillow は前と同じ絵を 1 コマに畳んで数を減らすので、<code style="color:#22d3bf">video.write_video</code> の全コマ保存経路を使い、書いた後に枚数を読み戻して確かめる)。Pillow が無ければ ImportError(optional 依存)。<code style="color:#22d3bf">path</code> は <code style="color:#22d3bf">.gif</code> で終わること。</p>
+<p><code style="color:#22d3bf">frames</code> 是灰度的 <code style="color:#22d3bf">video</code> (T, H, W) 或彩色的 <code style="color:#22d3bf">rgbvideo</code> (F, H, W, 3)。float 把 [0, 1] 映射到 0..255, 整数直接转为 uint8(超出范围的截断)。<b>保存全部帧</b>(Pillow 会把与前一帧相同的画面折叠成 1 帧以减少帧数,因此使用 <code style="color:#22d3bf">video.write_video</code> 的全帧保存路径,写入后再读回帧数加以确认)。没有 Pillow 则 ImportError(optional 依赖)。<code style="color:#22d3bf">path</code> 必须以 <code style="color:#22d3bf">.gif</code> 结尾。</p>
 <p>&gt;&gt;&gt; video_write_gif(video_cube_orbit(clip, n_frames=24), &quot;out/cube.gif&quot;, fps=12)</p>
 <p>&#x27;out/cube.gif&#x27;</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

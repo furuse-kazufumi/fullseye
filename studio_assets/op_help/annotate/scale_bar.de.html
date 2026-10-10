@@ -4,25 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scale_bar(img, length, units_per_pixel, unit=&#x27;µm&#x27;, xy=None, anchor=&#x27;rb&#x27;, color=&#x27;neutral&#x27;, thickness=5, margin=14, font_size=13, label=True, label_fmt=&#x27;{:g}&#x27;, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.scale_bar(img, length, units_per_pixel, unit=&#x27;µm&#x27;, xy=None, anchor=&#x27;rb&#x27;, color=&#x27;neutral&#x27;, thickness=5, margin=14, font_size=13, label=True, label_fmt=&#x27;{:g}&#x27;, font_path=None, scheme=&#x27;okabe_ito&#x27;, text_color=None)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;scale_bar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein Maßstabsbalken in physikalischer Länge. <b>Die Umrechnung Pixel↔Physik wird als Argument übergeben</b> (nie angenommen).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>バーの画素長は <code style="color:#22d3bf">round(length / units_per_pixel)</code> ―― これが構成的な真値で、<code style="color:#22d3bf">tests.test_annotate</code> はこの一致を数字で確かめている。</p>
+<p>Die Pixellänge des Balkens ist <code style="color:#22d3bf">round(length / units_per_pixel)</code> -- das ist die Ground Truth per Konstruktion, und <code style="color:#22d3bf">tests.test_annotate</code> prüft diese Übereinstimmung mit Zahlen.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>length : float</p>
-<p>バーが表す物理長(<code style="color:#22d3bf">unit</code> の単位で)。</p>
+<p>Physikalische Länge, die der Balken darstellt (in Einheiten von <code style="color:#22d3bf">unit</code>).</p>
 <p>units_per_pixel : float</p>
-<p>1 画素が何 <code style="color:#22d3bf">unit</code> に相当するか。倍率ではなく<b>分解能</b>を渡す。</p>
+<p>Wie vielen <code style="color:#22d3bf">unit</code> 1 Pixel entspricht. Übergeben wird die <b>Auflösung</b>, nicht die Vergrößerung.</p>
 <p>unit : str</p>
-<p>単位の表記(<code style="color:#22d3bf">&#x27;µm&#x27;</code>, <code style="color:#22d3bf">&#x27;mm&#x27;</code>, <code style="color:#22d3bf">&#x27;px&#x27;</code> など)。</p>
+<p>Schreibweise der Einheit (<code style="color:#22d3bf">&#x27;µm&#x27;</code>, <code style="color:#22d3bf">&#x27;mm&#x27;</code>, <code style="color:#22d3bf">&#x27;px&#x27;</code> usw.).</p>
 <p>xy : (x,y) or None</p>
-<p>バーの基準点。None なら <code style="color:#22d3bf">anchor</code> 側の隅から <code style="color:#22d3bf">margin</code> 内側。</p>
+<p>Bezugspunkt des Balkens. Bei None <code style="color:#22d3bf">margin</code> nach innen von der Ecke auf der <code style="color:#22d3bf">anchor</code>-Seite.</p>
 <p>label : bool</p>
-<p><code style="color:#22d3bf">&quot;200 µm&quot;</code> のラベルを併記するか。</p>
+<p>Ob das Label <code style="color:#22d3bf">&quot;200 µm&quot;</code> daneben gesetzt wird.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>length / units_per_pixel が非正・非有限、画素長が 1 未満、</p>
-<p>バー(とラベル)が画像に収まらない。</p>
+<p>length / units_per_pixel nicht positiv oder nicht endlich, Pixellänge unter 1,</p>
+<p>Balken (und Label) passen nicht ins Bild.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">Leitfaden zur Familie figure_annotation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

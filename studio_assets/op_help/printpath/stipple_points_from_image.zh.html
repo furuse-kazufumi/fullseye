@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import printpath; printpath.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsprintpath.get(&quot;stipple_points_from_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把浓淡映射为<b>点的密度</b>(加权 Lloyd = 重心 Voronoi)。→ <code style="color:#22d3bf">pairs</code></p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>暗いところに点が密に集まる。返るのは <code style="color:#22d3bf">(n_points, 2)</code> の <b>(row, col)</b>。</p>
-<p>引数:</p>
-<p>image: 明るさ <code style="color:#22d3bf">[0, 1]</code> の 2-D(または色。輝度に落とす)。</p>
-<p>n_points: 点の数。</p>
-<p>iterations: Lloyd の反復回数。</p>
-<p>gamma: 重みを <code style="color:#22d3bf">darkness ** gamma</code> にする(1 = 暗さそのまま)。</p>
-<p>floor: 重みの下限。<b>0 にしない</b> —— 真っ白な領域の重みが厳密に 0 だと</p>
-<p>そこへ入った点が動けず(重心が 0/0)、位置が入力に依らなくなる。</p>
-<p>seed: 初期配置の乱数。</p>
-<p>metric: いまは <code style="color:#22d3bf">&quot;euclidean&quot;</code> のみ。</p>
-<p>返り値のほかに、収束の様子は <code style="color:#22d3bf">stipple_points_from_image</code> を <code style="color:#22d3bf">iterations</code> を変えて呼び比べれば測れる(Lloyd のエネルギーは単調減少する)。</p>
-<p>★<b>真っ白な画像でも点は等間隔に散る</b>(密度が一定なら重心ボロノイは均等)。そこが「濃淡を読めている」ことの対照群になる。</p>
+<p>点在暗处密集聚集。返回 <code style="color:#22d3bf">(n_points, 2)</code> 的 <b>(row, col)</b>。</p>
+<p>Args:</p>
+<p>image: 亮度 <code style="color:#22d3bf">[0, 1]</code> 的 2-D(或彩色。转为亮度)。</p>
+<p>n_points: 点数。</p>
+<p>iterations: Lloyd 的迭代次数。</p>
+<p>gamma: 把权重设为 <code style="color:#22d3bf">darkness ** gamma</code>(1 = 暗度原样)。</p>
+<p>floor: 权重的下限。<b>不要设为 0</b> —— 纯白区域的权重若严格为 0,</p>
+<p>进入该处的点就无法移动(质心为 0/0),位置变得与输入无关。</p>
+<p>seed: 初始配置的随机数。</p>
+<p>metric: 目前只有 <code style="color:#22d3bf">&quot;euclidean&quot;</code>。</p>
+<p>除返回值外,收敛的情况可以通过改变 <code style="color:#22d3bf">iterations</code> 调用 <code style="color:#22d3bf">stipple_points_from_image</code> 相互比较来测量(Lloyd 的能量单调减少)。</p>
+<p>★<b>即使是纯白图像,点也会等间隔散开</b>(密度恒定时质心 Voronoi 是均匀的)。这就成为“能读出浓淡”的对照组。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

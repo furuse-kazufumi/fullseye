@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))</code>(要直接调用实现,<code style="color:#22d3bf">import imgmetrics; imgmetrics.xyz_to_lab(xyz, white=(0.95047, 1.0, 1.08883))</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;xyz_to_lab&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>CIE XYZ → CIE 1976 L*a*b*。默认白点为 D65 2°。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>式: <code style="color:#22d3bf">t = XYZ / white</code> として <code style="color:#22d3bf">f(t) = cbrt(t)</code>(<code style="color:#22d3bf">t &gt; (6/29)^3</code>)、それ以外は <code style="color:#22d3bf">t / (3 (6/29)^2) + 4/29</code>。<code style="color:#22d3bf">L = 116 f(Y) - 16</code>、<code style="color:#22d3bf">a = 500 (f(X) - f(Y))</code>、<code style="color:#22d3bf">b = 200 (f(Y) - f(Z))</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xyz</code>: 最後の軸が 3 の任意の形。<code style="color:#22d3bf">rgb_to_xyz</code> の出力と同じ、Y = 1 が白の尺度。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: 白色点 <code style="color:#22d3bf">(Xn, Yn, Zn)</code> の 3 つの正の数。既定 <code style="color:#22d3bf">D65_WHITE</code> = <code style="color:#22d3bf">(0.95047, 1.0, 1.08883)</code>。別の光源(D50 など)で撮った XYZ ならここを変える。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64。<code style="color:#22d3bf">L</code> は白で 100、黒で 0。<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> は符号つき。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">MetricContractError</code>): 最後の軸が 3 でない / <code style="color:#22d3bf">white</code> が 3 要素でない、または 0 以下を含む。XYZ の値域は検査しない(負や 1 超もそのまま計算する)。</p>
-<p><code style="color:#22d3bf">delta_e_76</code> / <code style="color:#22d3bf">delta_e_2000</code> はこの Lab を入力にする。</p>
+<p>公式:令 <code style="color:#22d3bf">t = XYZ / white</code>,<code style="color:#22d3bf">f(t) = cbrt(t)</code>(<code style="color:#22d3bf">t &gt; (6/29)^3</code>), 否则为 <code style="color:#22d3bf">t / (3 (6/29)^2) + 4/29</code>。<code style="color:#22d3bf">L = 116 f(Y) - 16</code>、<code style="color:#22d3bf">a = 500 (f(X) - f(Y))</code>、<code style="color:#22d3bf">b = 200 (f(Y) - f(Z))</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xyz</code>:最后一轴为 3 的任意形状。与 <code style="color:#22d3bf">rgb_to_xyz</code> 的输出相同,是 Y = 1 为白的尺度。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>:白点 <code style="color:#22d3bf">(Xn, Yn, Zn)</code>,3 个正数。默认 <code style="color:#22d3bf">D65_WHITE</code> = <code style="color:#22d3bf">(0.95047, 1.0, 1.08883)</code>。若 XYZ 是在其他光源(D50 等)下拍摄的,就改这里。</p>
+<p style="margin:2px 0 2px 12px">• 返回值:与输入同形的 float64。<code style="color:#22d3bf">L</code> 白为 100,黑为 0。<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> 带符号。</p>
+<p style="margin:2px 0 2px 12px">• 失败(<code style="color:#22d3bf">MetricContractError</code>):最后一轴不是 3 / <code style="color:#22d3bf">white</code> 不是 3 个元素, 或含有 0 以下的值。不检查 XYZ 的值域(负值或超过 1 的值也照样计算)。</p>
+<p><code style="color:#22d3bf">delta_e_76</code> / <code style="color:#22d3bf">delta_e_2000</code> 以此 Lab 为输入。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_circle_measure(model, row, col, radius, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_circle_measure(model, row, col, radius, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_circle_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Adds a circle metrology object (add_metrology_object_circle_measure).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>参照円(中心 <code style="color:#22d3bf">(row, col)</code>、半径 <code style="color:#22d3bf">radius</code> [px])を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> は円周を <code style="color:#22d3bf">n</code> 等分した角度に点を置き、各点で <b>半径方向</b>(外向き法線)に測定線を張ってサブピクセルのエッジを取り、最小二乗の円フィットで中心と半径を出し直す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 参照半径 [px]。実物とのずれは <code style="color:#22d3bf">apply</code> の <code style="color:#22d3bf">measure_length</code> (既定 ±6 px)以内に収まっている必要がある ―― それより外のエッジは見つからない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 円周のサンプル数(既定 40)。半径が大きい円ほど増やす。</p>
-<p style="margin:2px 0 2px 12px">• 引数はここでは検証しない(0 以下の半径も積めるが意味を持たない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 追加位置の index(0 始まり)。<code style="color:#22d3bf">apply</code> 結果の <code style="color:#22d3bf">params</code> は <code style="color:#22d3bf">row / col / radius</code>、<code style="color:#22d3bf">rms</code> は円からの半径方向残差 [px]。</p>
-<p>穴径・ピン径の検査、円形部品の中心出しに使う。</p>
+<p>Stacks the reference circle (centre <code style="color:#22d3bf">(row, col)</code>, radius <code style="color:#22d3bf">radius</code> [px]) onto <code style="color:#22d3bf">model[&quot;objects&quot;]</code> (the dict is updated in place). <code style="color:#22d3bf">apply_metrology_model</code> places points at the angles dividing the circumference into <code style="color:#22d3bf">n</code> equal parts, stretches a measuring line at each point <b>radially</b> (outward normal), takes the sub-pixel edge, and recomputes centre and radius by a least-squares circle fit.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: reference radius [px]. The deviation from the real object must be within <code style="color:#22d3bf">measure_length</code> of <code style="color:#22d3bf">apply</code> (default ±6 px) -- edges farther out than that are not found.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: number of samples on the circumference (default 40). Increase it for circles with larger radius.</p>
+<p style="margin:2px 0 2px 12px">• Arguments are not validated here (a radius of 0 or less can be stacked but is meaningless).</p>
+<p style="margin:2px 0 2px 12px">• Returns: index of the added position (starting at 0). <code style="color:#22d3bf">params</code> of the <code style="color:#22d3bf">apply</code> result is <code style="color:#22d3bf">row / col / radius</code>, and <code style="color:#22d3bf">rms</code> is the radial residual from the circle [px].</p>
+<p>Used for inspecting hole and pin diameters and for centring circular parts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

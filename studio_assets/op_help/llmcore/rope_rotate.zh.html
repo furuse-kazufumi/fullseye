@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import llmcore; llmcore.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsllmcore.get(&quot;rope_rotate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基于旋转的位置编码(RoPE)→ tokens。<b>由于是旋转，所以保持范数</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Su ら 2021。偶奇の対 (x₂ᵢ, x₂ᵢ₊₁) を角度 <code style="color:#22d3bf">pos · base**(−2i/d)</code> だけ回す。平面回転の直和なので <code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> が<b>厳密に</b>成り立ち(実測 8.9e-16)、しかも回した 2 本の内積は<b>位置の差だけ</b>で決まる(絶対位置を 40 通り動かして幅 8.9e-15) —— 「相対位置を内積に埋める」という主張が、そのまま検算になる。</p>
+<p>Su 等 2021。把偶奇对 (x₂ᵢ, x₂ᵢ₊₁) 旋转角度 <code style="color:#22d3bf">pos · base**(−2i/d)</code>。由于是平面旋转的直和,<code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> <b>严格</b>成立(实测 8.9e-16), 而且旋转后 2 个向量的内积<b>只由位置之差</b>决定(把绝对位置移动 40 种,幅度 8.9e-15) —— “把相对位置嵌入内积”这一主张,原样成为验算。</p>
 <p>Args:</p>
-<p>tokens: (T, d) float。<b>d は偶数</b>(対にして回すため)。</p>
-<p>positions: (T,) の位置。None なら 0..T−1。飛び飛びの位置(切り出した窓)も渡せる。</p>
-<p>base: 角度の底。大きいほど低い軸がゆっくり回る(長い文脈向け)。</p>
+<p>tokens: (T, d) float。<b>d 为偶数</b>(为了成对旋转)。</p>
+<p>positions: (T,) 的位置。None 则为 0..T−1。也可传入不连续的位置(截取的窗口)。</p>
+<p>base: 角度的底。越大,低轴转得越慢(面向长上下文)。</p>
 <p>Returns:</p>
-<p>tokens (T, d) float: 対ごとに回したもの。行ごとのノルムは入力と同じ。</p>
+<p>tokens (T, d) float: 按对旋转后的结果。每行的范数与输入相同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

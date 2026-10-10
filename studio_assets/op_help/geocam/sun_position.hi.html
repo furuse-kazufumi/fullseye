@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_position(lat_deg, lon_deg, unix_times)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.sun_position(lat_deg, lon_deg, unix_times)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;sun_position&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>latitude, longitude, समय (UNIX second, UTC) → सूर्य का azimuth और elevation [degree] (NOAA का solar position algorithm, Meeus 1998 का कम-सटीकता सूत्र)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>公開された閉形式(NOAA Global Monitoring Laboratory の Solar Calculator と同じ式:</p>
-<p>ユリウス世紀 → 平均黄経・平均近点角・中心差 → 視黄経 → 黄道傾斜 → 赤緯 と均時差 → 時角 → 天頂角・方位角)。精度は 2000 年 ± 1 世紀で <b>0.01° 程度</b>(NOAA の記述)、大気屈折は仰角に足す(NOAA の区分式、水平近くで最大 0.57°)。時刻は UTC の UNIX 秒(1-D、float でよい)。うるう秒・ΔT は無視する(0.01° に効かない)。</p>
+<p>एक प्रकाशित closed form (NOAA Global Monitoring Laboratory के Solar Calculator जैसे ही formulas:</p>
+<p>Julian century → mean longitude, mean anomaly, equation of centre → apparent longitude → obliquity of the ecliptic → declination और equation of time → hour angle → zenith angle, azimuth)। accuracy 2000 ± 1 century के लिए <b>लगभग 0.01°</b> है (NOAA का कथन), atmospheric refraction को elevation में जोड़ा जाता है (NOAA का piecewise formula, horizon के पास अधिकतम 0.57°)। समय UTC के UNIX seconds में (1-D, float चलेगा)। leap seconds और ΔT को ignore किया जाता है (0.01° पर इनका असर नहीं)।</p>
 <p>Args:</p>
-<p>lat_deg, lon_deg: 観測点。経度は東が正。</p>
-<p>unix_times: (N,) UNIX 秒(UTC)。スカラも可。</p>
+<p>lat_deg, lon_deg: observation point। longitude पूर्व की ओर positive।</p>
+<p>unix_times: (N,) UNIX seconds (UTC)। scalar भी चलेगा।</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">azimuth_deg</code> (N,)(北 0°、時計回り)/ <code style="color:#22d3bf">elevation_deg</code> (N,)(屈折込み)/</p>
-<p><code style="color:#22d3bf">elevation_true_deg</code> (N,)(屈折なし)/ <code style="color:#22d3bf">declination_deg</code> / <code style="color:#22d3bf">equation_of_time_min</code> /</p>
-<p><code style="color:#22d3bf">hour_angle_deg</code> / <code style="color:#22d3bf">n</code>。</p>
-<p>真値で確かめてある性質(tests/test_geocam.py): 春分の正午に仰角 = 90 − |緯度|、正午の方位は北半球で 180°(南)、方位は東 → 南 → 西と単調、日の出と日の入りの仰角が対称、赤緯は ±23.44° に収まる。</p>
+<p>table: <code style="color:#22d3bf">azimuth_deg</code> (N,) (उत्तर 0°, clockwise) / <code style="color:#22d3bf">elevation_deg</code> (N,) (refraction सहित) /</p>
+<p><code style="color:#22d3bf">elevation_true_deg</code> (N,) (refraction के बिना) / <code style="color:#22d3bf">declination_deg</code> / <code style="color:#22d3bf">equation_of_time_min</code> /</p>
+<p><code style="color:#22d3bf">hour_angle_deg</code> / <code style="color:#22d3bf">n</code>।</p>
+<p>ground truth से जाँचे गए गुण (tests/test_geocam.py): equinox की दोपहर में elevation = 90 − |latitude|, northern hemisphere में दोपहर का azimuth 180° (दक्षिण), azimuth पूर्व → दक्षिण → पश्चिम monotonic, sunrise और sunset की elevation symmetric, declination ±23.44° के अंदर रहता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

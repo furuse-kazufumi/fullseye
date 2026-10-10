@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_markers(img, points, labels=None, start=1, radius=9.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_contrast=2.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.annotate_markers(img, points, labels=None, start=1, radius=9.0, color=&#x27;emphasis&#x27;, text_color=None, font_size=11, scheme=&#x27;okabe_ito&#x27;, font_path=None, min_contrast=2.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;annotate_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳影像(image2d):在每個點放置帶編號(或短字串)的圓形標記。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">annotate_legend</code> と同じ <code style="color:#22d3bf">start</code> / <code style="color:#22d3bf">labels</code> を渡せば、図中の番号と凡例の番号が必ず一致する。</p>
+<p>若傳入與 <code style="color:#22d3bf">annotate_legend</code> 相同的 <code style="color:#22d3bf">start</code> / <code style="color:#22d3bf">labels</code>,圖中的編號與圖例的編號必定一致。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : (N, 2)</p>
-<p><b>(x, y)</b>。画像の外の点は ValueError。</p>
+<p><b>(x, y)</b>。影像外的點則 ValueError。</p>
 <p>labels : sequence of str or None</p>
-<p>None なら <code style="color:#22d3bf">start</code> から連番。</p>
+<p>None 時從 <code style="color:#22d3bf">start</code> 開始連續編號。</p>
 <p>radius : float</p>
-<p>円の半径[px]。文字が入らなければ ValueError。</p>
+<p>圓的半徑[px]。文字放不進則 ValueError。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点が空・非有限・画像外、labels の数不一致、文字が円に入らない、</p>
-<p>文字色と円色のコントラスト不足。</p>
+<p>點為空、非有限、在影像外,labels 數量不符,文字放不進圓,</p>
+<p>文字色與圓的顏色對比度不足。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

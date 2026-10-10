@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fourier_smooth(points, keep)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fourierdesc; fourierdesc.fourier_smooth(points, keep)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;fourier_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>복소 FFT로 윤곽의 대역을 제한하여 평활화한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>輪郭を複素信号 z(t)=x(t)+i·y(t) と見て FFT し、低周波 <code style="color:#22d3bf">keep</code> 本(と対称成分) だけ残して逆変換する。keep が小さいほど滑らか(高周波=細部/ノイズを落とす)。keep が全周波数以上なら恒等。返り値は入力と同点数の (N,2)。</p>
+<p>윤곽을 복소 신호 z(t)=x(t)+i·y(t) 로 보고 FFT 하여, 저주파 <code style="color:#22d3bf">keep</code> 개(와 대칭 성분) 만 남기고 역변환한다. keep 가 작을수록 매끄럽다(고주파=세부/노이즈를 떨군다). keep 가 전 주파수 이상이면 항등. 반환값은 입력과 같은 점 수의 (N,2).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vector_to_shift(vector)</code>(要直接调用实现,<code style="color:#22d3bf">import reprconv; reprconv.vector_to_shift(vector)</code>;从台账取用则 <code style="color:#22d3bf">opsreprconv.get(&quot;vector_to_shift&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">vector (3,)</code> → 整数位移 <code style="color:#22d3bf">(dz, dy, dx)</code>。<code style="color:#22d3bf">shift_to_vector</code> 的反向。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>不可逆</b>(最近接整数へ丸める)。落ちる量は丸め残差そのもので、<code style="color:#22d3bf">|v - round(v)| &lt;= 0.5</code> が各軸の上界。整数を渡した往復だけが bit 一致する。</p>
+<p><b>不可逆</b>(舍入到最近的整数)。丢掉的量正是舍入残差, <code style="color:#22d3bf">|v - round(v)| &lt;= 0.5</code> 是各轴的上界。只有传入整数的往返才 bit 一致。</p>
 <p>Args:</p>
 <p>vector: (3,)。</p>
 <p>Returns:</p>
-<p>3-tuple の int。</p>
+<p>int 的 3-tuple。</p>
 <p>Raises:</p>
-<p>ValueError: (3,) でない / 非有限。</p>
+<p>ValueError: 不是 (3,) / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

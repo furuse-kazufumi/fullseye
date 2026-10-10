@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import llmcore; llmcore.rope_rotate(tokens, positions=None, base: &#x27;float&#x27; = 10000.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsllmcore.get(&quot;rope_rotate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>회전에 의한 위치 부호(RoPE) → tokens. <b>회전이므로 노름을 보존한다</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Su ら 2021。偶奇の対 (x₂ᵢ, x₂ᵢ₊₁) を角度 <code style="color:#22d3bf">pos · base**(−2i/d)</code> だけ回す。平面回転の直和なので <code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> が<b>厳密に</b>成り立ち(実測 8.9e-16)、しかも回した 2 本の内積は<b>位置の差だけ</b>で決まる(絶対位置を 40 通り動かして幅 8.9e-15) —— 「相対位置を内積に埋める」という主張が、そのまま検算になる。</p>
+<p>Su 등 2021. 짝홀의 쌍 (x₂ᵢ, x₂ᵢ₊₁) 을 각도 <code style="color:#22d3bf">pos · base**(−2i/d)</code> 만큼 돌린다. 평면 회전의 직합이므로 <code style="color:#22d3bf">‖RoPE(x)‖ == ‖x‖</code> 가 <b>엄밀하게</b> 성립하고(실측 8.9e-16), 게다가 돌린 2 개의 내적은 <b>위치의 차만으로</b> 정해진다(절대 위치를 40 가지로 움직여 폭 8.9e-15) —— &quot;상대 위치를 내적에 심는다&quot;는 주장이, 그대로 검산이 된다.</p>
 <p>Args:</p>
-<p>tokens: (T, d) float。<b>d は偶数</b>(対にして回すため)。</p>
-<p>positions: (T,) の位置。None なら 0..T−1。飛び飛びの位置(切り出した窓)も渡せる。</p>
-<p>base: 角度の底。大きいほど低い軸がゆっくり回る(長い文脈向け)。</p>
+<p>tokens: (T, d) float. <b>d 는 짝수</b>(쌍으로 하여 돌리기 위해).</p>
+<p>positions: (T,) 의 위치. None 이면 0..T−1. 띄엄띄엄한 위치(잘라 낸 창)도 넘길 수 있다.</p>
+<p>base: 각도의 밑. 클수록 낮은 축이 천천히 돈다(긴 문맥용).</p>
 <p>Returns:</p>
-<p>tokens (T, d) float: 対ごとに回したもの。行ごとのノルムは入力と同じ。</p>
+<p>tokens (T, d) float: 쌍마다 돌린 것. 행마다의 노름은 입력과 같다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

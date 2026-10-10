@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.position_to_points(position)</code> (die Implementierung direkt: <code style="color:#22d3bf">import reprconv; reprconv.position_to_points(position)</code>; aus dem Register: <code style="color:#22d3bf">opsreprconv.get(&quot;position_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Position <code style="color:#22d3bf">(z, y, x)</code> → eine Ein-Punkt-Menge <code style="color:#22d3bf">(1, 3)</code>. Der Ausgang aus <code style="color:#22d3bf">position</code> (<b>invertierbar</b>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">position</code> は <code style="color:#22d3bf">volregion.vol_rle_centroid</code> などが返す 3-tuple で、順序は <b>(z, y, x)</b>(<code style="color:#22d3bf">vol_rle_centroid</code> の docstring が明示している)。点群も voxel 由来なら同じ順なので、そのまま 1 行の点群にできる。</p>
+<p><code style="color:#22d3bf">position</code> ist ein 3-Tupel, wie es <code style="color:#22d3bf">volregion.vol_rle_centroid</code> u. a. liefert, und die Reihenfolge ist <b>(z, y, x)</b> (der Docstring von <code style="color:#22d3bf">vol_rle_centroid</code> sagt das ausdrücklich). Aus Voxeln stammende Punktwolken haben dieselbe Reihenfolge, daher kann es direkt zu einer 1-zeiligen Punktwolke werden.</p>
 <p>Args:</p>
-<p>position: 長さ 3 の列 (z, y, x)。</p>
+<p>position: eine Folge der Länge 3 (z, y, x).</p>
 <p>Returns:</p>
-<p>(1, 3) float64。</p>
+<p>(1, 3) float64.</p>
 <p>Raises:</p>
-<p>ValueError: 長さが 3 でない / 非有限。</p>
+<p>ValueError: Länge ist nicht 3 / nicht endlich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

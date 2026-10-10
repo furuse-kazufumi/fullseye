@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;stipple_points_from_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>농담을 <b>점의 밀도</b>로 옮긴다(가중 Lloyd = 무게중심 보로노이). → <code style="color:#22d3bf">pairs</code></p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>暗いところに点が密に集まる。返るのは <code style="color:#22d3bf">(n_points, 2)</code> の <b>(row, col)</b>。</p>
-<p>引数:</p>
-<p>image: 明るさ <code style="color:#22d3bf">[0, 1]</code> の 2-D(または色。輝度に落とす)。</p>
-<p>n_points: 点の数。</p>
-<p>iterations: Lloyd の反復回数。</p>
-<p>gamma: 重みを <code style="color:#22d3bf">darkness ** gamma</code> にする(1 = 暗さそのまま)。</p>
-<p>floor: 重みの下限。<b>0 にしない</b> —— 真っ白な領域の重みが厳密に 0 だと</p>
-<p>そこへ入った点が動けず(重心が 0/0)、位置が入力に依らなくなる。</p>
-<p>seed: 初期配置の乱数。</p>
-<p>metric: いまは <code style="color:#22d3bf">&quot;euclidean&quot;</code> のみ。</p>
-<p>返り値のほかに、収束の様子は <code style="color:#22d3bf">stipple_points_from_image</code> を <code style="color:#22d3bf">iterations</code> を変えて呼び比べれば測れる(Lloyd のエネルギーは単調減少する)。</p>
-<p>★<b>真っ白な画像でも点は等間隔に散る</b>(密度が一定なら重心ボロノイは均等)。そこが「濃淡を読めている」ことの対照群になる。</p>
+<p>어두운 곳에 점이 조밀하게 모인다. 반환되는 것은 <code style="color:#22d3bf">(n_points, 2)</code> 의 <b>(row, col)</b>.</p>
+<p>Args:</p>
+<p>image: 밝기 <code style="color:#22d3bf">[0, 1]</code> 의 2-D(또는 색. 휘도로 떨어뜨린다).</p>
+<p>n_points: 점의 수.</p>
+<p>iterations: Lloyd 의 반복 횟수.</p>
+<p>gamma: 가중치를 <code style="color:#22d3bf">darkness ** gamma</code> 로 한다(1 = 어두움 그대로).</p>
+<p>floor: 가중치의 하한. <b>0 으로 하지 않는다</b> —— 새하얀 영역의 가중치가 엄밀히 0 이면</p>
+<p>그곳에 들어간 점이 움직일 수 없고(무게중심이 0/0), 위치가 입력에 의존하지 않게 된다.</p>
+<p>seed: 초기 배치의 난수.</p>
+<p>metric: 지금은 <code style="color:#22d3bf">&quot;euclidean&quot;</code> 만.</p>
+<p>반환값 외에, 수렴의 모습은 <code style="color:#22d3bf">stipple_points_from_image</code> 를 <code style="color:#22d3bf">iterations</code> 를 바꿔 호출해 비교하면 잴 수 있다(Lloyd 의 에너지는 단조 감소한다).</p>
+<p>★<b>새하얀 영상에서도 점은 등간격으로 흩어진다</b>(밀도가 일정하면 무게중심 보로노이는 균등). 그것이 &quot;농담을 읽을 수 있다&quot;는 것의 대조군이 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

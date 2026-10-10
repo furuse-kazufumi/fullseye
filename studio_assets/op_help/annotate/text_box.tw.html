@@ -4,54 +4,53 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_box(img, text, xy, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, anchor=&#x27;lt&#x27;, pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import annotate; annotate.text_box(img, text, xy, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, anchor=&#x27;lt&#x27;, pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsannotate.get(&quot;text_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>帶襯底(半透明板)的文字。<b>溢出不靜默裁切,而是擲出例外</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>img : ndarray</p>
-<p><code style="color:#22d3bf">(H,W)</code> か <code style="color:#22d3bf">(H,W,C)</code>、float [0,1]。</p>
+<p><code style="color:#22d3bf">(H,W)</code> 或 <code style="color:#22d3bf">(H,W,C)</code>,float [0,1]。</p>
 <p>text : str</p>
-<p>描く文字列。</p>
+<p>要繪製的字串。</p>
 <p>xy : (x, y)</p>
-<p>アンカーの位置(<b>x=col, y=row</b>、row は下向き)。</p>
+<p>錨點位置(<b>x=col, y=row</b>,row 向下)。</p>
 <p>color : str or sequence</p>
-<p>役割名または RGB。<code style="color:#22d3bf">text_color</code> 未指定ならこれが<b>枠の色</b>として</p>
-<p>使われ、文字は読みやすい既定色になる。</p>
+<p>角色名稱或 RGB。未指定 <code style="color:#22d3bf">text_color</code> 時,它被當作<b>邊框顏色</b>,</p>
+<p>文字則使用易讀的預設顏色。</p>
 <p>text_color, box_color : str/sequence or None</p>
-<p>文字色・板の色。None なら既定(明るい文字 × 暗い板)。文字色が None の</p>
-<p>ときは、<b>実際に下に出る色</b>に対して明るい既定色が <code style="color:#22d3bf">min_contrast</code> を</p>
-<p>割る場合に限り、暗い文字(板の色)へ自動で切り替える ―― 板なし</p>
-<p>(<code style="color:#22d3bf">box_alpha=0</code>)で白地に置く目盛り・カラーバー・凡例のラベルが</p>
-<p>白に溶けないため。<code style="color:#22d3bf">text_color</code> を明示したときは切り替えない</p>
-<p>(色は図の意味なので勝手に変えず、読めなければ例外にする)。</p>
+<p>文字顏色、底板顏色。None 時為預設(淺色文字 × 深色底板)。文字顏色為 None</p>
+<p>時,僅當明亮的預設色相對<b>實際出現在下方的顏色</b>低於 <code style="color:#22d3bf">min_contrast</code></p>
+<p>時,才自動切換為深色文字(底板顏色)—— 這是為了讓無底板</p>
+<p>(<code style="color:#22d3bf">box_alpha=0</code>)放在白底上的刻度、色條、圖例的標籤</p>
+<p>不融入白色。明確指定 <code style="color:#22d3bf">text_color</code> 時不切換</p>
+<p>(顏色是圖的含義,所以不擅自更改,讀不清就拋出例外)。</p>
 <p>box_alpha : float</p>
-<p>板の不透明度 [0,1]。<code style="color:#22d3bf">0</code> なら板を描かない(目盛りラベル向け)。</p>
+<p>底板的不透明度 [0,1]。<code style="color:#22d3bf">0</code> 時不繪製底板(用於刻度標籤)。</p>
 <p>anchor : str</p>
-<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> の 9 通り。</p>
+<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> 共 9 種。</p>
 <p>pad : int</p>
-<p>板の内側余白[px]。</p>
+<p>底板的內側邊距[px]。</p>
 <p>max_width : int or None</p>
-<p>文字の折り返し幅。None なら 1 行のまま。</p>
+<p>文字的換行寬度。None 時維持 1 行。</p>
 <p>wrap : bool</p>
-<p>False なら折り返さず 1 行のまま縮めて <code style="color:#22d3bf">max_width</code> に収める。</p>
+<p>False 時不換行,維持 1 行並縮小以放進 <code style="color:#22d3bf">max_width</code>。</p>
 <p>min_contrast : float</p>
-<p>文字と「実際にその下に出る色」のコントラスト比の下限。下回れば</p>
-<p><b>ValueError</b>(背景と同化した文字は誰も気づけないので通さない)。</p>
-<p><b>限界(正直に)</b>: 比べる相手は板の下の<b>平均色</b>なので、</p>
-<p>白と黒が半々に混じった写真の上に <code style="color:#22d3bf">box_alpha=0</code> で置くと、平均は</p>
-<p>中間灰になり検査を通ってしまう(白い部分の上の文字は読めない)。</p>
-<p>地が荒れている場所では <code style="color:#22d3bf">box_alpha</code> を上げて板を効かせること ――</p>
-<p>この検査は「板を忘れた」を捕まえるためのもので、</p>
-<p>「板があっても読めない」まで保証はしない。</p>
+<p>文字與「實際出現在其下方的顏色」的對比度下限。低於則</p>
+<p><b>ValueError</b>(與背景同化的文字誰也察覺不到,所以不放行)。</p>
+<p><b>限制(坦白說)</b>: 比較的對象是底板下方的<b>平均色</b>,所以</p>
+<p>在黑白各半混合的照片上以 <code style="color:#22d3bf">box_alpha=0</code> 放置時,平均值</p>
+<p>成為中間灰而通過檢查(白色部分上的文字讀不清)。</p>
+<p>在底色雜亂的地方,請提高 <code style="color:#22d3bf">box_alpha</code> 讓底板發揮作用 ——</p>
+<p>這項檢查是為了抓住「忘了底板」,</p>
+<p>並不保證「有底板也讀不清」的情況。</p>
 <p>border : int</p>
-<p>板の枠線の太さ(0 で枠なし)。色は <code style="color:#22d3bf">border_color</code> か <code style="color:#22d3bf">color</code>。</p>
+<p>底板邊框線的粗細(0 為無邊框)。顏色為 <code style="color:#22d3bf">border_color</code> 或 <code style="color:#22d3bf">color</code>。</p>
 <p>style : dict or None</p>
-<p>枠線を引く <code style="color:#22d3bf">imagedraw.draw_polyline</code> へ<b>素通し</b>する引数。</p>
+<p><b>原樣傳給</b>繪製邊框線的 <code style="color:#22d3bf">imagedraw.draw_polyline</code> 的引數。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray</p>
-<p>同じ shape の新しい配列。</p>
+<p>相同 shape 的新陣列。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>板が画像からはみ出す / 文字が収まらない / コントラスト不足 /</p>
-<p>未知の役割名・アンカー / 負の余白。</p>
+<p>底板超出影像 / 文字放不下 / 對比度不足 /</p>
+<p>未知的角色名稱、錨點 / 負的邊距。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

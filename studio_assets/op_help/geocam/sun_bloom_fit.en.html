@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_bloom_fit(image, threshold=0.97, ignore_top_rows=0, min_area=30, max_area_frac=0.15, min_rim_fraction=0.3)</code> (to call the implementation directly, <code style="color:#22d3bf">import geocam; geocam.sun_bloom_fit(image, threshold=0.97, ignore_top_rows=0, min_area=30, max_area_frac=0.15, min_rim_fraction=0.3)</code>; from the registry, <code style="color:#22d3bf">opsgeocam.get(&quot;sun_bloom_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The sun in real footage = a <b>bloom</b> that saturates the sensor (larger than the disk, its size changes with exposure, and it gets cut off by the image edge or by text bands). Fits a circle to the <b>edge</b> of the largest saturated blob and returns the center → table. The centroid is biased away from the cut side when the blob is cut off (measured 15 px), so the cut edges (pixels touching the image border or the <code style="color:#22d3bf">ignore_top_rows</code> band) are discarded and a circle is fitted to the remaining arc by algebraic least squares (Kåsa 1976).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">sun_pixel_position</code> は「詰まった小さな円盤」を前提にした合成向けの門で、実写の道路カメラでは局名の白い文字・標識・白い車を太陽と読む(Fintraffic 天候カメラで 24/24 が誤検出、2026-09-21)。この op は<b>太陽と決めない</b>:</p>
-<p>円の中心と半径・残差・切れの有無を返し、太陽かどうかは時刻どおりに動くかで決める(<code style="color:#22d3bf">camera_orientation_from_sun_candidates</code>)。</p>
+<p><code style="color:#22d3bf">sun_pixel_position</code> is a gate for synthetic data that presupposes &quot;a compact small disc&quot;; on real road cameras it reads the white lettering of the station name, road signs and white cars as the sun (24/24 false detections on Fintraffic weather cameras, 2026-09-21). This op <b>does not decide that it is the sun</b>:</p>
+<p>it returns the circle centre and radius, the residual and whether it is clipped, and whether it is the sun is decided by whether it moves on schedule (<code style="color:#22d3bf">camera_orientation_from_sun_candidates</code>).</p>
 <p>Args:</p>
-<p>image: (H, W) float、0〜1。</p>
-<p>threshold: 飽和とみなす絶対値。</p>
-<p>ignore_top_rows: 上端の何行を無視するか(局名などの文字の帯)。</p>
-<p>min_area: 塊の最小画素数。</p>
-<p>max_area_frac: 塊の最大面積(画像に対する比)—— 空全体が飛んだ写真を拒む。</p>
-<p>min_rim_fraction: 切れていない縁が円周の何割以上要るか(これ未満は「切れすぎ」で ValueError)。</p>
+<p>image: (H, W) float, 0 to 1.</p>
+<p>threshold: absolute value regarded as saturation.</p>
+<p>ignore_top_rows: how many rows at the top edge to ignore (a band of text such as the station name).</p>
+<p>min_area: minimum pixel count of a blob.</p>
+<p>max_area_frac: maximum area of a blob (as a ratio to the image) -- rejects photos where the whole sky is blown out.</p>
+<p>min_rim_fraction: what fraction of the circumference must be unclipped rim (below this, &quot;too clipped&quot;, ValueError).</p>
 <p>Returns:</p>
-<p>table: <code style="color:#22d3bf">u</code> / <code style="color:#22d3bf">v</code>(円の中心)/ <code style="color:#22d3bf">r</code>(半径 px)/ <code style="color:#22d3bf">rms_px</code>(縁の半径残差)/ <code style="color:#22d3bf">area</code>(塊の画素数)/</p>
-<p><code style="color:#22d3bf">clipped</code>(1 = 縁のどこかが切れている)/ <code style="color:#22d3bf">rim_fraction</code> / <code style="color:#22d3bf">centroid_u</code> / <code style="color:#22d3bf">centroid_v</code>(比較用の重心)。</p>
+<p>table: <code style="color:#22d3bf">u</code> / <code style="color:#22d3bf">v</code> (circle centre) / <code style="color:#22d3bf">r</code> (radius px) / <code style="color:#22d3bf">rms_px</code> (radius residual of the rim) / <code style="color:#22d3bf">area</code> (pixel count of the blob) /</p>
+<p><code style="color:#22d3bf">clipped</code> (1 = the rim is clipped somewhere) / <code style="color:#22d3bf">rim_fraction</code> / <code style="color:#22d3bf">centroid_u</code> / <code style="color:#22d3bf">centroid_v</code> (centroid, for comparison).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
