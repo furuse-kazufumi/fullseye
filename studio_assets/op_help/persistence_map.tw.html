@@ -15,7 +15,7 @@
 <p><b>不選取閾值</b>地測量「山峰的顯著程度」(0 維持續性)。</p>
 <p>只選 1 個閾值會讓適用範圍變窄 —— 這一矛盾可以透過「<b>試遍所有閾值，只保留結果不變的部分</b>」來解決。從高處逐步降低水位，把新山峰出現時的高度(誕生)與該山峰被更高山峰吞併時的高度(消亡)之差，作為該山峰的 <b>persistence(顯著程度)</b>。這正是地形學中所說的「突出度(prominence)」。</p>
 <p>輸出是在每個像素中存入「該像素所屬山峰的 persistence」的地圖。<code style="color:#22d3bf">a</code> 是保留的下限(低於它的山峰設為 0)，<code style="color:#22d3bf">b</code> 是連通方式(小於 0.5 為 4 鄰域，否則為 8 鄰域)。</p>
-<p><b><code style="color:#22d3bf">h_maxima</code> / MSER 的差異</b>：<code style="color:#22d3bf">xsk2_h_maxima</code> 選定 1 個 <code style="color:#22d3bf">h</code>，回傳「高於它的山峰」 —— 也就是選定了 1 個閾值。本 op 則是<b>把所有 h 的答案摺疊進 1 張圖</b>，因此之後可以在任意水準上切分。MSER 尋找「面積穩定的區域」，思路相近，但它看的是區域形狀，本 op 看的是高度。</p>
+<p><b><code style="color:#22d3bf">h_maxima</code> / MSER 的差異</b>：<code style="color:#22d3bf">xsk2_h_maxima</code> 選定 1 個 <code style="color:#22d3bf">h</code>，回傳「高於它的山峰」 —— 也就是選定了 1 個閾值。本 op 則是 <b>把所有 h 的答案摺疊進 1 張圖</b>，因此之後可以在任意水準上切分。MSER 尋找「面積穩定的區域」，思路相近，但它看的是區域形狀，本 op 看的是高度。</p>
 <p><b>適用條件</b>：(1) 整張影像中最高的山峰不會消亡，因此依慣例以 <code style="color:#22d3bf">最大值 - 最小值</code> 作為其 persistence。<b>因此背景具有全域最大值(1.0)</b> —— 背景最後才被處理，此時所有分量都已合併，因此在拓撲意義上它確實屬於全域分量。<b>這是讀取山峰高度的地圖，而不是把背景設為 0 的地圖</b>。若想去掉背景，可與閾值 op 相乘，或用 <code style="color:#22d3bf">a</code> 提高下限(實測：<code style="color:#22d3bf">a=0.45</code> 時只有高度 0.3 的山峰消失，1.0 和 0.6 保留)。(2) 平坦的台地(連續相同的值)被視為 1 個山峰。(3) 計算是依降序掃描像素的 union-find，因此在大影像上比 <code style="color:#22d3bf">h_maxima</code> 慢。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

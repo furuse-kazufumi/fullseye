@@ -15,6 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.inputs.jpg">hx_move_region: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>region 을 평행이동(dy=a, dx=b 를 0 을 중심으로 한 오프셋으로).</p>
+<p><code style="color:#22d3bf">v &gt; 0.5</code>를 region으로 하여, 행 방향으로 <code style="color:#22d3bf">dy = int((a - 0.5) * H)</code>, 열 방향으로 <code style="color:#22d3bf">dx = int((b - 0.5) * W)</code> 화소 옮긴 0/1 float 배열을 반환한다(<code style="color:#22d3bf">a = b = 0.5</code>이면 이동 없음. <code style="color:#22d3bf">int</code>는 0 방향으로 버림). 이동은 <code style="color:#22d3bf">np.roll</code>로 한다.</p>
 <p>np.roll이기 때문에 <b>끝은 순환</b>한다(삐져나온 region이 반대쪽에서 나타난다). HALCON의 move_region은 끝에서 사라지므로(클립) 끝에 닿는 이동에서는 동작이 다르다 — 진화 op의 특징량 용도에서는 순환으로 균일성을 유지하는 설계를 유지하며, 차이는 여기에 공개한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>

@@ -9,7 +9,7 @@
 <p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code> (अंदर निकटतम face तक ऋणात्मक मान),</p>
 <p><code style="color:#22d3bf">sdf = outside + inside</code>।</p>
 <p><code style="color:#22d3bf">half_extents</code> हर axis की <b>आधी भुजा-लंबाई</b> है (center से face तक)। बाहर exact distance देता है (corner पर diagonal, face के सामने लंबवत दूरी), और अंदर भी निकटतम face तक exact ऋणात्मक दूरी देता है।</p>
-<p>कोई भी half_extent&lt;0 हो या grid/center/half_extents गलत रूप में हों तो ValueError उठता है।</p>
+<p>कोई 1 भी half-extent ऋणात्मक हो, या grid / center / half_extents का आकार गलत हो, तो <code style="color:#22d3bf">ValueError</code> आता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -13,9 +13,9 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>임계값을 고르지 않고</b> &#x27;봉우리의 두드러짐&#x27;을 측정한다(0차원 지속성).</p>
-<p>임계값을 1개 고르면 적용 범위가 좁아진다 —— 이 모순은 &quot;<b>모든 임계값을 시도해 결과가변하지 않는 부분만 남기는</b>&quot; 것으로 풀린다. 높은 쪽에서부터 수위를 낮춰 가며, 새 봉우리가 나타난높이(탄생)와 그 봉우리가 더 높은 봉우리에 흡수된 높이(소멸)의 차를 그 봉우리의 <b>persistence(두드러진 정도)</b>로 삼는다. 지형에서 말하는 &quot;돌출도(prominence)&quot; 그 자체다.</p>
+<p>임계값을 1개 고르면 적용 범위가 좁아진다 —— 이 모순은 &quot;<b>모든 임계값을 시도해 결과가 변하지 않는 부분만 남기는</b>&quot; 것으로 풀린다. 높은 쪽에서부터 수위를 낮춰 가며, 새 봉우리가 나타난높이(탄생)와 그 봉우리가 더 높은 봉우리에 흡수된 높이(소멸)의 차를 그 봉우리의 <b>persistence(두드러진 정도)</b>로 삼는다. 지형에서 말하는 &quot;돌출도(prominence)&quot; 그 자체다.</p>
 <p>출력은 각 화소에 &quot;그 화소가 속한 봉우리의 persistence&quot;를 넣은 지도다. <code style="color:#22d3bf">a</code>는 남길 하한(이보다 낮은 봉우리는 0으로 한다), <code style="color:#22d3bf">b</code>는 연결 방식(0.5 미만이면 4 근방, 이상이면 8 근방).</p>
-<p><b><code style="color:#22d3bf">h_maxima</code> / MSER와의 차이</b>: <code style="color:#22d3bf">xsk2_h_maxima</code>는 <code style="color:#22d3bf">h</code>를 하나 골라 &quot;그 이상의 봉우리&quot;를 반환한다 —— 즉 임계값을 1개 고르는 것이다. 이쪽은 <b>모든 h에대한 답을 1장으로 접은 것</b>이므로 나중에 원하는 수준에서 자를 수 있다. MSER은 &quot;면적이 안정된 영역&quot;을 찾으므로 비슷한 발상이지만, 저쪽은 영역의 형태, 이쪽은 높이다.</p>
+<p><b><code style="color:#22d3bf">h_maxima</code> / MSER와의 차이</b>: <code style="color:#22d3bf">xsk2_h_maxima</code>는 <code style="color:#22d3bf">h</code>를 하나 골라 &quot;그 이상의 봉우리&quot;를 반환한다 —— 즉 임계값을 1개 고르는 것이다. 이쪽은 <b>모든 h에 대한 답을 1장으로 접은 것</b>이므로 나중에 원하는 수준에서 자를 수 있다. MSER은 &quot;면적이 안정된 영역&quot;을 찾으므로 비슷한 발상이지만, 저쪽은 영역의 형태, 이쪽은 높이다.</p>
 <p><b>적용 조건</b>: (1) 영상 전체에서 가장 높은 봉우리는 소멸하지 않으므로 <code style="color:#22d3bf">최댓값 - 최솟값</code>을 persistence로 한다(관례). <b>그래서 배경은 전체 최댓값(1.0)을 가진다</b> —— 배경은 맨 마지막에 처리되며 그때는 성분이 모두 병합되어 있으므로, 위상적으로는확실히 전체 성분에 속한다. <b>봉우리 높이를 읽는 지도이지, 배경을 0으로 만드는 지도가 아니다</b>. 배경을 없애고 싶다면 임계값 op와 곱하거나 <code style="color:#22d3bf">a</code>로 하한을 올릴 것(<code style="color:#22d3bf">a=0.45</code>에서높이 0.3의 봉우리만 사라지고 1.0과 0.6은 남는 것을 실측했다). (2) 평탄한 대지(같은 값이 이어지는 곳)는 1개의 봉우리로취급된다. (3) 계산은 화소를 내림차순으로 주사하는 union-find이므로, 큰 영상에서는 <code style="color:#22d3bf">h_maxima</code>보다 느리다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 패밀리 가이드</a></p>

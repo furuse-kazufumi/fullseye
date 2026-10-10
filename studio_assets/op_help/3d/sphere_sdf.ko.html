@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구의 부호 거리장: <code style="color:#22d3bf">|p - center| - R</code>(안쪽 음·바깥쪽 양).</p>
 <p><code style="color:#22d3bf">grid</code>는 마지막 축이 3인 좌표 배열 (..., 3)(<code style="color:#22d3bf">grid_coords</code>의 출력이나 (N,3) 점군). <code style="color:#22d3bf">center</code>는 길이 3, <code style="color:#22d3bf">R&gt;=0</code>은 반경. 반환값의 shape은 <code style="color:#22d3bf">grid.shape[:-1]</code>. 엄밀한 SDF (기울기 노름 1). <code style="color:#22d3bf">sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)</code>.</p>
-<p>R&lt;0이거나 grid/center 형식이 잘못되면 ValueError를 낸다.</p>
+<p><code style="color:#22d3bf">R &lt; 0</code>이거나 형태가 잘못된 grid / center는 <code style="color:#22d3bf">ValueError</code>.</p>
 <p>계산: <code style="color:#22d3bf">np.linalg.norm(grid - center, axis=-1) - R</code>. 좌표의 단위가 그대로 거리의단위가 된다(<code style="color:#22d3bf">grid_coords</code>의 world 좌표를 넘기면 world 단위). 좌표의 성분 순서는 <code style="color:#22d3bf">grid</code>의 마지막 축의 순서(<code style="color:#22d3bf">grid_coords</code>라면 <code style="color:#22d3bf">(x, y, z)</code>)이며, <code style="color:#22d3bf">center</code>도 같은 순서.</p>
 <p>인수와 검증(<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 마지막 축이 3인 float 배열 <code style="color:#22d3bf">(..., 3)</code>(1-D의 <code style="color:#22d3bf">(3,)</code>도 가능. 0-D나마지막 축이 3 이외인 것은 거부).</p>

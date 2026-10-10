@@ -15,6 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.inputs.jpg">hx_move_region: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平移 region(dy=a, dx=b,視為以 0 為中心的偏移)。</p>
+<p>把 <code style="color:#22d3bf">v &gt; 0.5</code> 當作 region，回傳上下平移 <code style="color:#22d3bf">dy = int((a - 0.5) * H)</code>、左右平移 <code style="color:#22d3bf">dx = int((b - 0.5) * W)</code> 像素後的 0/1 float 陣列(<code style="color:#22d3bf">a = b = 0.5</code> 時不移動。<code style="color:#22d3bf">int</code> 向 0 截斷)。平移以 <code style="color:#22d3bf">np.roll</code> 進行。</p>
 <p>由於 np.roll，<b>邊界是循環的</b>（溢出的 region 會從對側出現）。HALCON 的 move_region 在邊界處消失（截斷），因此在接觸邊界的移動中行為不同 — 在演化 op 的特徵量用途中，保持以循環維持一致性的設計，差異在此揭露。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

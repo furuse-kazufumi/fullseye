@@ -46,7 +46,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
     ``half_extents`` は各軸の**半辺長**(中心から面まで)。外側は厳密距離(角では対角、面前は
     垂直距離)、内側も最近面までの厳密負距離を与える。
 
-    Raises ValueError for any half_extent<0 or malformed grid/center/half_extents。
+    半辺長が 1 つでも負、または形の不正な grid / center / half_extents は ``ValueError``。
 
 2-D 進化レジストリへ橋渡しした 3d の op ``box_sdf``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 

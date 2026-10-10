@@ -13,7 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_contour_region_xld.inputs.jpg">gen_contour_region_xld: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将 region（像素掩膜）的外周作为保留追踪顺序（沿轮廓的顺序）的 XLD 轮廓提取出来。若有 skimage 则使用 <code style="color:#22d3bf">find_contours</code>（通过 marching squares 实现的亚像素轮廓），否则回退到自实现的 Moore 邻域追踪（8 邻域，Jacob 停止条件）。a、b 未使用。</p>
-<p>在 2026-08-30 的修正中，此前使用的通用 <code style="color:#22d3bf">edges_sub_pix</code> 路径按 <code style="color:#22d3bf">np.where</code> 的光栅顺序返回点，破坏了依赖顺序的后续处理（椭圆傅里叶描述子等）。相当于 HALCON 的 <code style="color:#22d3bf">gen_contour_region_xld</code>（由 region 生成 XLD 轮廓的运算）。</p>
+<p>在 2026-08-30 的修正中，弃用了此前使用的通用 <code style="color:#22d3bf">edges_sub_pix</code> 路径，改为上述按追踪顺序的提取。旧路径按 <code style="color:#22d3bf">np.where</code> 的光栅顺序返回点，破坏了依赖顺序的后续处理（椭圆傅里叶描述子等）。相当于 HALCON 的 <code style="color:#22d3bf">gen_contour_region_xld</code>（由 region 生成 XLD 轮廓的运算）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

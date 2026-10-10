@@ -11,6 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/blob_count.chain.jpg">blob_count: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Number of connected components in the region (HALCON <code style="color:#22d3bf">count_obj</code>).</p>
+<p><code style="color:#22d3bf">v &gt; 0.5</code> を前景として連結成分にラベルを付け、その個数を <code style="color:#22d3bf">np.float64</code> で返す(前景が無ければ 0)。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
 <p>2026-08-30: 8 連結既定に修正(HALCON パリティ — <code style="color:#22d3bf">connection</code>/計数の既定は 8 連結。従来は scipy.ndimage.label の既定 = 4 連結で、対角接触した 2 画素を 2 個と数えていた: KNOWN_ISSUES #1)。旧 4 連結は connectivity=4 で。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features ファミリ ガイド</a></p>

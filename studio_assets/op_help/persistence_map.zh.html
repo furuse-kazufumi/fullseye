@@ -13,9 +13,9 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>不选取阈值</b>地测量“山峰的显著程度”(0 维持续性)。</p>
-<p>只选 1 个阈值会让适用范围变窄 —— 这一矛盾可以通过“<b>试遍所有阈值，只保留结果不变的部分</b>”来解决。从高处逐步降低水位，把新山峰出现时的高度(诞生)与该山峰被更高山峰吞并时的高度(消亡)之差，作为该山峰的 <b>persistence(显著程度)</b>。这正是地形学中所说的“突出度(prominence)”。</p>
+<p>只选 1 个阈值会让适用范围变窄 —— 这一矛盾可以通过 “<b>试遍所有阈值，只保留结果不变的部分</b>”来解决。从高处逐步降低水位，把新山峰出现时的高度(诞生)与该山峰被更高山峰吞并时的高度(消亡)之差，作为该山峰的 <b>persistence(显著程度)</b>。这正是地形学中所说的“突出度(prominence)”。</p>
 <p>输出是在每个像素中存入“该像素所属山峰的 persistence”的地图。<code style="color:#22d3bf">a</code> 是保留的下限(低于它的山峰置为 0)，<code style="color:#22d3bf">b</code> 是连通方式(小于 0.5 为 4 邻域，否则为 8 邻域)。</p>
-<p><b><code style="color:#22d3bf">h_maxima</code> / MSER 的区别</b>：<code style="color:#22d3bf">xsk2_h_maxima</code> 选定 1 个 <code style="color:#22d3bf">h</code>，返回“高于它的山峰” —— 也就是选定了 1 个阈值。本 op 则是<b>把所有 h 的答案折叠进 1 张图</b>，因此之后可以在任意水平上切分。MSER 寻找“面积稳定的区域”，思路相近，但它看的是区域形状，本 op 看的是高度。</p>
+<p><b><code style="color:#22d3bf">h_maxima</code> / MSER 的区别</b>：<code style="color:#22d3bf">xsk2_h_maxima</code> 选定 1 个 <code style="color:#22d3bf">h</code>，返回“高于它的山峰” —— 也就是选定了 1 个阈值。本 op 则是 <b>把所有 h 的答案折叠进 1 张图</b>，因此之后可以在任意水平上切分。MSER 寻找“面积稳定的区域”，思路相近，但它看的是区域形状，本 op 看的是高度。</p>
 <p><b>适用条件</b>：(1) 整幅图像中最高的山峰不会消亡，因此按惯例以 <code style="color:#22d3bf">最大值 - 最小值</code> 作为其 persistence。<b>因此背景具有全局最大值(1.0)</b> —— 背景最后才被处理，此时所有分量都已合并，因此在拓扑意义上它确实属于全局分量。<b>这是读取山峰高度的地图，而不是把背景置 0 的地图</b>。若想去掉背景，可与阈值 op 相乘，或用 <code style="color:#22d3bf">a</code> 提高下限(实测：<code style="color:#22d3bf">a=0.45</code> 时只有高度 0.3 的山峰消失，1.0 和 0.6 保留)。(2) 平坦的台地(连续相同的值)被视为 1 个山峰。(3) 计算是按降序扫描像素的 union-find，因此在大图像上比 <code style="color:#22d3bf">h_maxima</code> 慢。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

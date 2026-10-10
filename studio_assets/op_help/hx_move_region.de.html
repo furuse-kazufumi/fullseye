@@ -15,6 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.inputs.jpg">hx_move_region: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verschiebt eine Region (dy = a, dx = b, als Versätze um null verstanden).</p>
+<p>Nimmt <code style="color:#22d3bf">v &gt; 0.5</code> als Region und gibt ein 0/1-Float-Array zurück, verschoben um <code style="color:#22d3bf">dy = int((a - 0.5) * H)</code> Zeilen und <code style="color:#22d3bf">dx = int((b - 0.5) * W)</code> Spalten (bei <code style="color:#22d3bf">a = b = 0.5</code> keine Verschiebung; <code style="color:#22d3bf">int</code> schneidet in Richtung 0 ab). Die Verschiebung erfolgt mit <code style="color:#22d3bf">np.roll</code>.</p>
 <p>Wegen np.roll <b>laufen die Ränder zyklisch um</b> (eine überstehende Region erscheint von der Gegenseite). HALCONs move_region verwirft, was den Rand verlässt (Clipping), daher unterscheidet sich das Verhalten bei Verschiebungen, die den Rand berühren -- für die Merkmalsnutzung der Evolutions-Ops wird das Design beibehalten, das die Gleichförmigkeit durch zyklisches Umlaufen wahrt, und der Unterschied wird hier offengelegt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>

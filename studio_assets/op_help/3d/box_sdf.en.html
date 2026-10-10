@@ -9,7 +9,7 @@
 <p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code> (negative value to the nearest face inside),</p>
 <p><code style="color:#22d3bf">sdf = outside + inside</code>.</p>
 <p><code style="color:#22d3bf">half_extents</code> is the <b>half side length</b> along each axis (from the centre to the face). Outside it gives the exact distance (diagonal at corners, perpendicular distance in front of faces), and inside it also gives the exact negative distance to the nearest face.</p>
-<p>Raises ValueError for any half_extent&lt;0 or malformed grid/center/half_extents.</p>
+<p>Any negative half-extent, or a malformed grid / center / half_extents, gives <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

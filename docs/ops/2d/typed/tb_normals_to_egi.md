@@ -48,10 +48,6 @@ version: 0.5.0  # fullseye lib version this note was generated for
     仰角の bin は ``sin(el)`` で等分する(等立体角)。度で等分すると極が過剰に
     細かくなり、「北極に面が集中している」という嘘の山が立つ。
 
-    Args:
-        normals: (N, 3)。
-        n_az: 方位の bin 数(既定 36 = 10 度刻み)。
-        n_el: 仰角の bin 数(既定 18)。
     ★**位置の点群を渡しても例外は出ない**。``backends_typed.TYPE_TO_SORT`` が
     ``normals`` を ``points`` に畳んでいるので、進化器も台帳も両者を区別しない。
     この op は方向しか見ない(長さは捨てる)ので、``(N,3)`` の座標を渡すと

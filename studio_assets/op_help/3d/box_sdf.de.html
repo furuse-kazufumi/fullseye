@@ -9,7 +9,7 @@
 <p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code> (innen negativer Wert bis zur nächsten Fläche),</p>
 <p><code style="color:#22d3bf">sdf = outside + inside</code>.</p>
 <p><code style="color:#22d3bf">half_extents</code> ist die <b>halbe Kantenlänge</b> je Achse (vom Zentrum bis zur Fläche). Außen liefert es den exakten Abstand (an Ecken diagonal, vor Flächen senkrecht), innen ebenfalls den exakten negativen Abstand zur nächsten Fläche.</p>
-<p>Bei einem half_extent&lt;0 oder fehlerhaftem grid/center/half_extents wird ValueError ausgelöst.</p>
+<p>Ist auch nur 1 halbe Kantenlänge negativ oder sind grid / center / half_extents fehlerhaft geformt, gibt es <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

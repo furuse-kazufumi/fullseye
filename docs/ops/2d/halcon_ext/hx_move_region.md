@@ -41,6 +41,10 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 region を平行移動(dy=a, dx=b を中心 0 のオフセットに)。
 
+``v > 0.5`` を region とし、行方向に ``dy = int((a - 0.5) * H)``、列方向に
+``dx = int((b - 0.5) * W)`` 画素ずらした 0/1 の float 配列を返す(``a = b = 0.5`` で移動なし。
+``int`` は 0 方向への切り捨て)。ずらしは ``np.roll`` で行う。
+
 np.roll ゆえ**端は循環**(はみ出た region が反対側から現れる)。HALCON の
 move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる —
 進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。

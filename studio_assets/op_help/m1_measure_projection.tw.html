@@ -11,7 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_projection.b.jpg">m1_measure_projection: 旋鈕 b 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在影像上放置量測用的卡尺線(直線),傳回沿垂直方向平均後的亮度剖面平均值(相當於 HALCON <code style="color:#22d3bf">measure_projection</code>:擷取垂直於矩形/圓弧的一維投影)。</p>
-<p>卡尺線從影像的一端拉到另一端，<code style="color:#22d3bf">a</code> 把方向調整為 <code style="color:#22d3bf">theta = a*pi</code>（0＝橫向，0.5＝斜 45 度，1＝橫向的反方向）。<code style="color:#22d3bf">b</code> 是沿法線方向平移該線的垂直偏移（0〜1，0.5 時通過影像中心）。沿線對 1px 寬的帶做平均取樣（真正的「投影」），並把其平均輝度（[0,1]）作為 feature 回傳。線不與影像相交或影像過小時回傳 0.0。</p>
+<p>卡尺線從影像的一端拉到另一端，<code style="color:#22d3bf">a</code> 把方向調整為 <code style="color:#22d3bf">theta = a*pi</code>（0＝橫向，0.25＝向右下傾斜 45 度，0.5＝縱向，1＝橫向的反方向）。<code style="color:#22d3bf">b</code> 是沿法線方向平移該線的垂直偏移（0〜1，0.5 時通過影像中心）。沿線對 1px 寬的帶做平均取樣（真正的「投影」），並把其平均輝度（[0,1]）作為 feature 回傳。線不與影像相交或影像過小時回傳 0.0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

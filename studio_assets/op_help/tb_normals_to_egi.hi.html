@@ -16,10 +16,6 @@
 <p>normals <code style="color:#22d3bf">(N,3)</code> → Extended Gaussian Image <code style="color:#22d3bf">(n_el, n_az)</code> का <code style="color:#22d3bf">image2d</code>।</p>
 <p>दिशाओं का 2-D histogram (Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)। &quot;किस दिशा की कितनी surface है&quot; का नक्शा; जिन वस्तुओं में plane हावी हों उनमें 1 bin पर peak बनता है। <b>अपरिवर्तनीय (irreversible)</b> —— bin चौड़ाई जितना direction resolution छोड़ दिया जाता है। छोड़ी गई मात्रा मापी जा सकती है: सबसे अधिक बार आने वाले bin की centre दिशा और input की mean दिशा के बीच का कोण quantization error है; default (36, 18) पर bin चौड़ाई 10 degree के मुकाबले मापा गया मान 3.7 degree है (<code style="color:#22d3bf">selftest</code> बताता है)।</p>
 <p>elevation के bin <code style="color:#22d3bf">sin(el)</code> से समान भागों में बाँटे जाते हैं (समान solid angle)। degree में समान भाग करने पर pole बहुत बारीक हो जाते हैं, और &quot;surface उत्तरी ध्रुव पर केंद्रित है&quot; जैसा झूठा peak बनता है।</p>
-<p>Args:</p>
-<p>normals: (N, 3)।</p>
-<p>n_az: azimuth bin की संख्या (default 36 = 10 degree के step)।</p>
-<p>n_el: elevation bin की संख्या (default 18)।</p>
 <p>★<b>position वाला point cloud देने पर भी exception नहीं आता</b>। <code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> <code style="color:#22d3bf">normals</code> को <code style="color:#22d3bf">points</code> में मिला देता है, इसलिए न evolver और न ledger दोनों में भेद करते हैं। यह op केवल दिशा देखता है (लंबाई छोड़ देता है), इसलिए <code style="color:#22d3bf">(N,3)</code> coordinate देने पर &quot;origin से हर point की दिशा&quot; का histogram <b>विश्वसनीय-सा दिखते हुए</b> लौटता है। मापा गया (2026-09-08, 200 point का curve बनाम सभी सीधे ऊपर वाले normal): non-zero bin केवल 1 → 12 और सबसे बड़ा bin 200 → 44 बदलता है, <b>दोनों में योग 200 ही है</b>। &quot;योग point की संख्या से मेल खाता है इसलिए सही है&quot; से भेद नहीं हो सकता। <code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> करने पर unit लंबाई से हटे हुए vector <b>अस्वीकार</b> किए जाते हैं (नीचे Raises)।</p>
 <p>Args:</p>
 <p>normals: (N, 3)।</p>

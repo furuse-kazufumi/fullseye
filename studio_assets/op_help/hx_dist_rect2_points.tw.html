@@ -10,11 +10,12 @@
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_rect2_points.chain.jpg">hx_dist_rect2_points: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>contour 各點到最小面積有向矩形中心的正規化距離的平均(feature)。</p>
-<p>把全部 contour 的點合在一起,求各點到點質心的歐氏距離的平均,除以 <code style="color:#22d3bf">max(H, W)</code> 並以 1 飽和截頂後回傳 <code style="color:#22d3bf">np.float64</code>。</p>
+<p>contour 各點到最小面積外接矩形各邊的正規化距離的平均(feature)。</p>
+<p>把全部 contour 的點合在一起，求嚴格的最小面積外接矩形(旋轉卡尺)，計算各點到該矩形最近一邊的歐氏距離的平均，除以 <code style="color:#22d3bf">max(H, W)</code> 並以 1 截頂後回傳 <code style="color:#22d3bf">np.float64</code>。矩形包住全部點，因此點 <code style="color:#22d3bf">(u, w)</code>(沿矩形軸的座標，原點在中心)的距離為 <code style="color:#22d3bf">min(h1 - |u|, h2 - |w|)</code>(<code style="color:#22d3bf">h1</code>/<code style="color:#22d3bf">h2</code> 為半邊長)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
-<p style="margin:2px 0 2px 12px">• 點少於 3 個時為 0.0。</p>
-<p>注意: 名稱是到最小面積外接矩形中心的距離,但目前實作並不求矩形,而是以點集的質心為中心。點分布有偏(圓弧缺失的輪廓等)時,矩形中心與質心不一致,因此不會得到名稱所示的值。實質是「到質心的平均半徑」,相當於 <code style="color:#22d3bf">hx_moments_any_xld</code>(平方平均)的 1 次方版。矩形本身見 <code style="color:#22d3bf">hx_smallest_rect2_xld</code> / <code style="color:#22d3bf">hx_fit_rectangle2_contour</code>。</p>
+<p style="margin:2px 0 2px 12px">• 點少於 3 個時為 0.0。全部點排成一條直線(寬度為 0 的矩形)時也為 0.0。</p>
+<p>此值表示「輪廓在多大程度上沿著矩形的邊」: 矩形輪廓本身為 0，圓為半徑的約 0.0997 倍(<code style="color:#22d3bf">1 - (4/π)·sin(π/4)</code>)，內部的點越多越大。與矩形的朝向無關(旋轉不變)。HALCON 的 <code style="color:#22d3bf">dist_rectangle2_contour_points_xld</code> 以參數接收矩形並回傳逐點距離，本 op 則使用擬合到 contour 自身的最小面積矩形，並把結果摺疊為 1 個平均值。</p>
+<p>2026-10-11 之前，它與名稱相反，不求矩形而回傳「到點質心的平均距離」(即使是矩形輪廓也不為 0，正方形輪廓約為 0.57·邊長/<code style="color:#22d3bf">max(H, W)</code>)。矩形本身見 <code style="color:#22d3bf">hx_smallest_rect2_xld</code> / <code style="color:#22d3bf">hx_fit_rectangle2_contour</code>，相對質心的分布見 <code style="color:#22d3bf">hx_moments_any_xld</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -15,7 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>球體的有號距離場: <code style="color:#22d3bf">|p - center| - R</code>(內部為負,外部為正)。</p>
 <p><code style="color:#22d3bf">grid</code> 是最後一軸為 3 的座標陣列 (..., 3)(<code style="color:#22d3bf">grid_coords</code> 的輸出或 (N,3) 點雲)。<code style="color:#22d3bf">center</code> 長度為 3，<code style="color:#22d3bf">R&gt;=0</code> 為半徑。回傳值的 shape 為 <code style="color:#22d3bf">grid.shape[:-1]</code>。精確的 SDF (梯度範數為 1)。<code style="color:#22d3bf">sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)</code>。</p>
-<p>當 R&lt;0 或 grid/center 格式錯誤時拋出 ValueError。</p>
+<p><code style="color:#22d3bf">R &lt; 0</code> 或 grid / center 形狀不正確時拋出 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>計算：<code style="color:#22d3bf">np.linalg.norm(grid - center, axis=-1) - R</code>。座標單位直接成為距離的單位(傳入 <code style="color:#22d3bf">grid_coords</code> 的 world 座標則為 world 單位)。座標分量順序為 <code style="color:#22d3bf">grid</code> 最後一軸的順序(<code style="color:#22d3bf">grid_coords</code> 時為 <code style="color:#22d3bf">(x, y, z)</code>)，<code style="color:#22d3bf">center</code> 也用相同順序。</p>
 <p>參數與檢查(<code style="color:#22d3bf">ValueError</code>)：</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>：最後一軸為 3 的 float 陣列 <code style="color:#22d3bf">(..., 3)</code>(也可為 1-D 的 <code style="color:#22d3bf">(3,)</code>。0-D 或最後一軸不是 3 時拒絕)。</p>

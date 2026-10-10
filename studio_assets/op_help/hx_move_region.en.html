@@ -15,6 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.inputs.jpg">hx_move_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Translate a region (dy = a, dx = b, taken as offsets around zero).</p>
+<p>Treats <code style="color:#22d3bf">v &gt; 0.5</code> as the region and returns a 0/1 float array shifted by <code style="color:#22d3bf">dy = int((a - 0.5) * H)</code> rows and <code style="color:#22d3bf">dx = int((b - 0.5) * W)</code> columns (no shift at <code style="color:#22d3bf">a = b = 0.5</code>; <code style="color:#22d3bf">int</code> truncates toward 0). The shift is done with <code style="color:#22d3bf">np.roll</code>.</p>
 <p>Because of np.roll, <b>the edges wrap around</b> (a region running off one side reappears from the opposite side). HALCON&#x27;s move_region drops what leaves the edge (clipping), so the behaviour differs for moves that touch the edge -- for the feature use of evolution ops, the design that keeps uniformity by wrapping is retained, and the difference is disclosed here.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

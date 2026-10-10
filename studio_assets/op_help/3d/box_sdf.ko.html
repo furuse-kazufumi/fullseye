@@ -9,7 +9,7 @@
 <p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code>(안쪽은 가장 가까운 면까지의 음수 값),</p>
 <p><code style="color:#22d3bf">sdf = outside + inside</code>.</p>
 <p><code style="color:#22d3bf">half_extents</code>는 각 축의 <b>반변 길이</b>(중심에서 면까지). 바깥쪽은 엄밀한 거리(모서리에서는 대각, 면 앞에서는수직 거리), 안쪽도 가장 가까운 면까지의 엄밀한 음의 거리를 준다.</p>
-<p>half_extent 중 하나라도 &lt;0이거나 grid/center/half_extents 형식이 잘못되면 ValueError를 낸다.</p>
+<p>반변 길이가 1개라도 음수이거나 형태가 잘못된 grid / center / half_extents는 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

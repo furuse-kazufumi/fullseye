@@ -11,6 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/blob_count.chain.jpg">blob_count: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region में connected components की संख्या (HALCON <code style="color:#22d3bf">count_obj</code>)।</p>
+<p><code style="color:#22d3bf">v &gt; 0.5</code> को foreground मानकर connected components को label करता है और उनकी संख्या <code style="color:#22d3bf">np.float64</code> के रूप में लौटाता है (foreground न हो तो 0)। <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
 <p>2026-08-30: default को 8-connectivity में ठीक किया गया (HALCON parity — <code style="color:#22d3bf">connection</code>/गिनती का default 8-connectivity है। पहले scipy.ndimage.label का default = 4-connectivity था, और तिरछे छूते 2 pixel को 2 गिना जाता था: KNOWN_ISSUES #1)। पुराना 4-connectivity connectivity=4 से मिलता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>

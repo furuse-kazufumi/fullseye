@@ -19,7 +19,7 @@
 <p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code> (अंदर सबसे पास के face तक ऋणात्मक मान),</p>
 <p><code style="color:#22d3bf">sdf = outside + inside</code>।</p>
 <p><code style="color:#22d3bf">half_extents</code> हर axis की <b>आधी भुजा लंबाई</b> है (centre से face तक)। बाहर exact दूरी (corner पर diagonal, face के सामने लंबवत दूरी), और अंदर भी सबसे पास के face तक exact ऋणात्मक दूरी मिलती है।</p>
-<p>किसी भी half_extent&lt;0 या गलत grid/center/half_extents पर ValueError raise होता है।</p>
+<p>कोई भी half extent ऋणात्मक हो, या grid / center / half_extents का आकार गलत हो, तो <code style="color:#22d3bf">ValueError</code> raise होता है।</p>
 <p>2-D evolution registry में bridge किया गया 3d का op <code style="color:#22d3bf">box_sdf</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। इस op में कोई tunable parameter नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

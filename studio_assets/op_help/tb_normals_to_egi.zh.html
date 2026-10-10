@@ -17,10 +17,6 @@
 <p>方向的 2-D 直方图(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。是&quot;哪个朝向的面有多少&quot;的地图，平面占主导的物体会在 1 个 bin 上出现峰。<b>不可逆</b> —— 舍弃 bin 宽度那么多的方向分辨率。</p>
 <p>舍弃的量可以测量：最频 bin 的中心方向与输入平均方向的角度差即量化误差，默认 (36, 18) 时相对 bin 宽 10 度实测为 3.7 度(由 <code style="color:#22d3bf">selftest</code> 输出)。</p>
 <p>仰角的 bin 按 <code style="color:#22d3bf">sin(el)</code> 等分(等立体角)。若按度等分，极区会过于细密，出现&quot;面集中在北极&quot;这种虚假的峰。</p>
-<p>Args:</p>
-<p>normals: (N, 3)。</p>
-<p>n_az: 方位的 bin 数(默认 36 = 10 度步长)。</p>
-<p>n_el: 仰角的 bin 数(默认 18)。</p>
 <p>★<b>传入位置点云也不会报异常</b>。<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> 把 <code style="color:#22d3bf">normals</code> 折叠进 <code style="color:#22d3bf">points</code>，因此进化器和台账都不区分两者。此 op 只看方向(舍弃长度)，所以传入 <code style="color:#22d3bf">(N,3)</code> 的坐标时，会<b>似是而非地</b>返回&quot;从原点看各点的方向&quot;的直方图。实测(2026-09-08，200 点的曲线 vs 全部朝正上方的法线)：非零 bin 仅从 1 → 12、最大 bin 从 200 → 44 变化，<b>总和两者都是 200</b>。靠&quot;总和与点数一致所以正确&quot;无法区分。设为 <code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> 时，偏离单位长度的向量会被<b>拒绝</b>(见下方 Raises)。</p>
 <p>Args:</p>
 <p>normals: (N, 3)。</p>

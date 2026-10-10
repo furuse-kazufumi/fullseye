@@ -15,6 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.inputs.jpg">hx_move_region: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>region を平行移動(dy=a, dx=b を中心 0 のオフセットに)。</p>
+<p><code style="color:#22d3bf">v &gt; 0.5</code> を region とし、行方向に <code style="color:#22d3bf">dy = int((a - 0.5) * H)</code>、列方向に <code style="color:#22d3bf">dx = int((b - 0.5) * W)</code> 画素ずらした 0/1 の float 配列を返す(<code style="color:#22d3bf">a = b = 0.5</code> で移動なし。<code style="color:#22d3bf">int</code> は 0 方向への切り捨て)。ずらしは <code style="color:#22d3bf">np.roll</code> で行う。</p>
 <p>np.roll ゆえ<b>端は循環</b>(はみ出た region が反対側から現れる)。HALCON の move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる — 進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>

@@ -43,7 +43,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
     ``center`` は長さ3、``R>=0`` は半径。返り値の shape は ``grid.shape[:-1]``。厳密な SDF
     (勾配ノルム 1)。``sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)``。
 
-    Raises ValueError for R<0 or malformed grid/center。
+    ``R < 0`` や形の不正な grid / center は ``ValueError``。
 
     計算: ``np.linalg.norm(grid - center, axis=-1) - R``。座標の単位はそのまま距離の
     単位になる(``grid_coords`` の world 座標を渡せば world 単位)。座標の成分順は

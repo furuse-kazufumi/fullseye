@@ -9,7 +9,7 @@
 <p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code> (内側は最近面までの負値),</p>
 <p><code style="color:#22d3bf">sdf = outside + inside</code>。</p>
 <p><code style="color:#22d3bf">half_extents</code> は各軸の<b>半辺長</b>(中心から面まで)。外側は厳密距離(角では対角、面前は垂直距離)、内側も最近面までの厳密負距離を与える。</p>
-<p>Raises ValueError for any half_extent&lt;0 or malformed grid/center/half_extents。</p>
+<p>半辺長が 1 つでも負、または形の不正な grid / center / half_extents は <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

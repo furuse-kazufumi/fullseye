@@ -2143,13 +2143,13 @@
    "hi": "Contour के हर point की fit किए गए ellipse की सीमा से अधिकतम दूरी लौटाता है (हर point की distance का aggregation = max, feature)।"
   },
   "2d/hx_dist_rect2_points": {
-   "fp": "20bd2b67104b",
-   "en": "The mean normalised distance of the contour points from the centre of the minimum-area oriented rectangle (a feature).",
-   "zh": "contour 各点到最小面积有向矩形中心的归一化距离的平均(feature)。",
-   "tw": "contour 各點到最小面積有向矩形中心的正規化距離的平均(feature)。",
-   "ko": "contour 각 점의 최소 면적 외접 사각형 중심으로부터의 정규화 거리의 평균(feature).",
-   "de": "Der mittlere normierte Abstand der Konturpunkte vom Zentrum des flächenminimalen orientierten Rechtecks (ein Merkmal).",
-   "hi": "Contour के हर point की न्यूनतम क्षेत्रफल वाले bounding rectangle के केंद्र से normalised दूरी का औसत (feature)।"
+   "fp": "d569c95c7dca",
+   "en": "The mean normalised distance from the contour points to the sides of the minimum-area bounding rectangle (a feature).",
+   "zh": "contour 各点到最小面积外接矩形各边的归一化距离的平均(feature)。",
+   "tw": "contour 各點到最小面積外接矩形各邊的正規化距離的平均(feature)。",
+   "ko": "contour 각 점에서 최소 면적 외접 사각형의 변까지의 정규화 거리의 평균(feature).",
+   "de": "Der mittlere normierte Abstand der Konturpunkte zu den Seiten des flächenminimalen umschreibenden Rechtecks (ein Merkmal).",
+   "hi": "Contour के हर point से न्यूनतम क्षेत्रफल वाले bounding rectangle की भुजाओं तक की normalised दूरी का औसत (feature)।"
   },
   "2d/hx_distance_pc": {
    "fp": "06e1fe8e2239",

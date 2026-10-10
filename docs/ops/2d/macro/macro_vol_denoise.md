@@ -39,7 +39,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 進化探索が発見した固定パイプライン（3-D ボリューム版）: ``vol_threshold(a=0.52,b=0.76)`` → ``vol_gaussian(a=0.08,b=0.89)``（3-D しきい値処理をかけてからガウシアン平滑化する 2 段）。
 
-``a``, ``b`` は凍結済みで未使用。in_sort/out_sort は volume。volume の denoise 課題（PSNR）でロック済みホールドアウト 25.74dB、手作りベースライン20.94dB を上回る。HALCON に対応する単一オペレータは無い。
+``a``, ``b`` は凍結済みで未使用。in_sort/out_sort は volume。volume の denoise 課題（PSNR）でロック済みホールドアウト 25.74dB、手作りベースライン 20.94dB を上回る。HALCON に対応する単一オペレータは無い。
 
 ## 詳しい使い方ガイド
 

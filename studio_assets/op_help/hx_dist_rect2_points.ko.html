@@ -10,11 +10,12 @@
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_rect2_points.chain.jpg">hx_dist_rect2_points: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>contour 각 점의 최소 면적 외접 사각형 중심으로부터의 정규화 거리의 평균(feature).</p>
-<p>모든 contour의 점을 모아 점의 무게중심으로부터 각 점의 유클리드 거리 평균을 <code style="color:#22d3bf">max(H, W)</code>로 나누고 1에서 포화시킨 <code style="color:#22d3bf">np.float64</code>를 반환한다.</p>
+<p>contour 각 점에서 최소 면적 외접 사각형의 변까지의 정규화 거리의 평균(feature).</p>
+<p>모든 contour의 점을 모아 엄밀한 최소 면적 외접 사각형(회전 캘리퍼스)을 구하고, 각 점에서 그 사각형의가장 가까운 변까지의 유클리드 거리 평균을 <code style="color:#22d3bf">max(H, W)</code>로 나누고 1에서 포화시킨 <code style="color:#22d3bf">np.float64</code>를 반환한다. 사각형이 모든 점을 감싸므로, 점 <code style="color:#22d3bf">(u, w)</code>(사각형 축 방향의 좌표, 중심이 원점)의 거리는 <code style="color:#22d3bf">min(h1 - |u|, h2 - |w|)</code>(<code style="color:#22d3bf">h1</code>/<code style="color:#22d3bf">h2</code>는 반변 길이)가 된다.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
-<p style="margin:2px 0 2px 12px">• 점이 3개 미만이면 0.0.</p>
-<p>주의: 이름은 최소 면적 외접 사각형의 중심으로부터의 거리지만, 현재 구현은 사각형을 구하지 않고 점군의 무게중심을 중심으로 한다. 점이 치우쳐 있는 경우(호가 빠진 윤곽 등)에는 사각형 중심과 무게중심이 어긋나므로 이름대로의 값이 되지 않는다. 실질은 &quot;무게중심으로부터의 평균 반지름&quot;으로, <code style="color:#22d3bf">hx_moments_any_xld</code>(제곱 평균)의 1제곱 버전에 해당한다. 사각형 자체는 <code style="color:#22d3bf">hx_smallest_rect2_xld</code> / <code style="color:#22d3bf">hx_fit_rectangle2_contour</code>.</p>
+<p style="margin:2px 0 2px 12px">• 점이 3개 미만이면 0.0. 모든 점이 한 직선 위에 있을 때(폭 0의 사각형)도 0.0.</p>
+<p>값은 &quot;윤곽이 사각형의 가장자리를 얼마나 따르는가&quot;를 나타낸다: 사각형 윤곽 자체면 0, 원이면 반지름의약 0.0997배(<code style="color:#22d3bf">1 - (4/π)·sin(π/4)</code>), 안쪽에 점이 많을수록 커진다. 사각형의 방향에 의존하지 않는다(회전 불변). HALCON의 <code style="color:#22d3bf">dist_rectangle2_contour_points_xld</code>는 사각형을 인수로 받아 점별 거리를반환하지만, 이 op는 contour 자신에 맞춘 최소 면적 사각형을 쓰고 평균 1개 값으로 접는다.</p>
+<p>2026-10-11까지는 이름과 달리 사각형을 구하지 않고 &quot;점의 무게중심으로부터의 평균 거리&quot;를 반환했다(사각형 윤곽이어도 0이 되지 않고, 정사각형 윤곽에서 약 0.57·변 길이/<code style="color:#22d3bf">max(H, W)</code>). 사각형 자체는 <code style="color:#22d3bf">hx_smallest_rect2_xld</code> / <code style="color:#22d3bf">hx_fit_rectangle2_contour</code>, 무게중심 주위의 퍼짐은 <code style="color:#22d3bf">hx_moments_any_xld</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

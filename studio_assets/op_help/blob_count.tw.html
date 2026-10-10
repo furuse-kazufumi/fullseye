@@ -11,6 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/blob_count.chain.jpg">blob_count: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>區域中連通成分的個數(HALCON <code style="color:#22d3bf">count_obj</code>)。</p>
+<p>把 <code style="color:#22d3bf">v &gt; 0.5</code> 當作前景標記連通分量，並以 <code style="color:#22d3bf">np.float64</code> 回傳其個數(沒有前景時為 0)。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <p>2026-08-30：改為預設 8 連通（HALCON 一致性 —— <code style="color:#22d3bf">connection</code>/計數的預設是 8 連通。以前用的是 scipy.ndimage.label 的預設 = 4 連通，把對角接觸的 2 個像素數成 2 個：KNOWN_ISSUES #1）。舊的 4 連通請用 connectivity=4。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

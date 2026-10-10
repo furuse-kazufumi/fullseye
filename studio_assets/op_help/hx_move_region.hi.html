@@ -15,6 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.inputs.jpg">hx_move_region: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region को translate करता है (dy=a, dx=b को केंद्र 0 वाले offset में)।</p>
+<p><code style="color:#22d3bf">v &gt; 0.5</code> को region मानकर, उसे पंक्ति दिशा में <code style="color:#22d3bf">dy = int((a - 0.5) * H)</code> और स्तंभ दिशा में <code style="color:#22d3bf">dx = int((b - 0.5) * W)</code> pixel खिसकाकर 0/1 float array लौटाता है (<code style="color:#22d3bf">a = b = 0.5</code> पर कोई खिसकाव नहीं; <code style="color:#22d3bf">int</code> 0 की ओर काटता है)। खिसकाना <code style="color:#22d3bf">np.roll</code> से होता है।</p>
 <p>np.roll के कारण <b>किनारे चक्रीय हैं</b> (बाहर निकला region विपरीत ओर से प्रकट होता है)। HALCON का move_region किनारे पर गायब हो जाता है (clip), इसलिए किनारे को छूने वाली movement में व्यवहार अलग होता है — evolution ops के feature उपयोग में चक्रीयता से एकरूपता बनाए रखने वाला design कायम रखा गया है, और अंतर यहाँ प्रकट किया गया है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

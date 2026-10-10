@@ -14,7 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把图像的亮点当作 FMCW 雷达目标(距离 = 列，速度 = 行)，合成复数拍频立方体 (A,C,S)。</p>
 <p>取平滑(σ=2)后图像的局部极大值，按值降序取 <code style="color:#22d3bf">K</code> 个，把每个点作为目标:</p>
-<p><code style="color:#22d3bf">range_m = 2 + 30 * col / W</code>，<code style="color:#22d3bf">velocity_ms = 15 * (2 * row / H - 1)</code>，振幅 = 像素值。前向模型就是台账中的 <code style="color:#22d3bf">fmcw_beat_simulate</code>(<code style="color:#22d3bf">rangedoppler</code>) 本身，<code style="color:#22d3bf">n_samples = 64、n_chirps = 32、n_antennas = 4</code>(阵元间距为默认的半波长，目标全部在正前方 = 到达角 0°)，其余为该函数的默认值(采样 10 MHz，扫掠 20 THz/s，啁啾周期 50 µs，波长 3.89 mm)。在这些默认值下，<b>距离 0〜37.5 m、速度 ±19.5 m/s 是无模糊范围</b>，上面的映射落在其内部。</p>
+<p><code style="color:#22d3bf">range_m = 2 + 30 * col / W</code>，<code style="color:#22d3bf">velocity_ms = 15 * (2 * row / H - 1)</code>，振幅 = 像素值。前向模型就是台账中的 <code style="color:#22d3bf">fmcw_beat_simulate</code>(<code style="color:#22d3bf">rangedoppler</code>) 本身，<code style="color:#22d3bf">n_samples = 64, n_chirps = 32, n_antennas = 4</code>(阵元间距为默认的半波长，目标全部在正前方 = 到达角 0°)，其余为该函数的默认值(采样 10 MHz，扫掠 20 THz/s，啁啾周期 50 µs，波长 3.89 mm)。在这些默认值下，<b>距离 0〜37.5 m、速度 ±19.5 m/s 是无模糊范围</b>，上面的映射落在其内部。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 复白噪声的 σ <code style="color:#22d3bf">= 0.5 * a</code>(a=0 时无噪声)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 目标数 <code style="color:#22d3bf">K = 1 + int(b * 6)</code>(b=0.5 时为 4。极大值不够时取实际数量)。</p>
 <p style="margin:2px 0 2px 12px">• 返回值: <code style="color:#22d3bf">(4, 32, 64)</code> complex128。用 <code style="color:#22d3bf">tb_range_doppler_map</code> 做 2-D FFT 后，每个目标的峰出现在“列 → 距离 bin，行 → 多普勒 bin”处，<code style="color:#22d3bf">tb_beamform_delay_sum</code> 用 4 个阵元返回到达角 0° 的峰。</p>

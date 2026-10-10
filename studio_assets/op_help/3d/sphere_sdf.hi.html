@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>sphere का signed distance field: <code style="color:#22d3bf">|p - center| - R</code> (अंदर ऋणात्मक, बाहर धनात्मक)।</p>
 <p><code style="color:#22d3bf">grid</code> अंतिम axis 3 वाला coordinate array (..., 3) है (<code style="color:#22d3bf">grid_coords</code> का output या (N,3) point cloud)। <code style="color:#22d3bf">center</code> की लंबाई 3, <code style="color:#22d3bf">R&gt;=0</code> radius है। return value का shape <code style="color:#22d3bf">grid.shape[:-1]</code> है। exact SDF (gradient norm 1)। <code style="color:#22d3bf">sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)</code>।</p>
-<p>R&lt;0 हो या grid/center गलत रूप में हों तो ValueError उठता है।</p>
+<p><code style="color:#22d3bf">R &lt; 0</code> या गलत आकार के grid / center पर <code style="color:#22d3bf">ValueError</code> आता है।</p>
 <p>गणना: <code style="color:#22d3bf">np.linalg.norm(grid - center, axis=-1) - R</code>। coordinates की unit ही दूरी की unit बन जाती है (<code style="color:#22d3bf">grid_coords</code> के world coordinates दें तो world unit)। coordinates के components का क्रम <code style="color:#22d3bf">grid</code> के अंतिम axis का क्रम है (<code style="color:#22d3bf">grid_coords</code> के लिए <code style="color:#22d3bf">(x, y, z)</code>), और <code style="color:#22d3bf">center</code> भी उसी क्रम में।</p>
 <p>arguments और validation (<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: अंतिम axis 3 वाला float array <code style="color:#22d3bf">(..., 3)</code> (1-D <code style="color:#22d3bf">(3,)</code> भी चलता है। 0-D या अंतिम axis 3 के अलावा हो तो reject)।</p>

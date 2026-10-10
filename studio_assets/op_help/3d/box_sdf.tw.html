@@ -9,7 +9,7 @@
 <p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code>(內側為到最近面的負值)，</p>
 <p><code style="color:#22d3bf">sdf = outside + inside</code>。</p>
 <p><code style="color:#22d3bf">half_extents</code> 是各軸的<b>半邊長</b>(從中心到面)。外側給出嚴格距離(角處為對角，面前為垂直距離)，內側也給出到最近面的嚴格負距離。</p>
-<p>任一 half_extent&lt;0 或 grid/center/half_extents 格式不對時拋出 ValueError。</p>
+<p>半邊長只要有 1 個為負，或 grid / center / half_extents 形狀不正確，都會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

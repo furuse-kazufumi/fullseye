@@ -11,6 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/blob_count.chain.jpg">blob_count: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Anzahl der Zusammenhangskomponenten in der Region (HALCON <code style="color:#22d3bf">count_obj</code>).</p>
+<p>Markiert die Zusammenhangskomponenten des Vordergrunds <code style="color:#22d3bf">v &gt; 0.5</code> und gibt ihre Anzahl als <code style="color:#22d3bf">np.float64</code> zurück (0, wenn kein Vordergrund vorhanden ist). <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
 <p>2026-08-30: auf 8-Zusammenhang als Standard korrigiert (HALCON-Parität - der Standard von <code style="color:#22d3bf">connection</code>/Zählung ist 8-Zusammenhang. Bisher galt der Standard von scipy.ndimage.label = 4-Zusammenhang, und 2 diagonal sich berührende Pixel wurden als 2 gezählt: KNOWN_ISSUES #1). Den alten 4-Zusammenhang gibt es mit connectivity=4.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>

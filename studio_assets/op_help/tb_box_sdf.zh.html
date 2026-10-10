@@ -19,7 +19,7 @@
 <p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code> (内侧为到最近面的负值)，</p>
 <p><code style="color:#22d3bf">sdf = outside + inside</code>。</p>
 <p><code style="color:#22d3bf">half_extents</code> 为各轴的<b>半边长</b>(从中心到面)。外侧给出精确距离(角处为对角，面前为垂直距离)，内侧也给出到最近面的精确负距离。</p>
-<p>当任一 half_extent&lt;0 或 grid/center/half_extents 格式错误时抛出 ValueError。</p>
+<p>任一半边长为负，或 grid / center / half_extents 形状不正确时抛出 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">box_sdf</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调参数，<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

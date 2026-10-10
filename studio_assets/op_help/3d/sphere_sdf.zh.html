@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>球的符号距离场:<code style="color:#22d3bf">|p - center| - R</code>(内负外正)。</p>
 <p><code style="color:#22d3bf">grid</code> 是最后一轴为 3 的坐标数组 (..., 3)(<code style="color:#22d3bf">grid_coords</code> 的输出或 (N,3) 点云)。<code style="color:#22d3bf">center</code> 长度为 3，<code style="color:#22d3bf">R&gt;=0</code> 为半径。返回值的 shape 为 <code style="color:#22d3bf">grid.shape[:-1]</code>。严格的 SDF (梯度范数 1)。<code style="color:#22d3bf">sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)</code>。</p>
-<p>R&lt;0 或 grid/center 格式不对时抛出 ValueError。</p>
+<p><code style="color:#22d3bf">R &lt; 0</code> 或形状不正确的 grid / center 会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>计算:<code style="color:#22d3bf">np.linalg.norm(grid - center, axis=-1) - R</code>。坐标单位直接成为距离的单位(传入 <code style="color:#22d3bf">grid_coords</code> 的 world 坐标即为 world 单位)。坐标分量的顺序为 <code style="color:#22d3bf">grid</code> 最后一轴的顺序(<code style="color:#22d3bf">grid_coords</code> 时为 <code style="color:#22d3bf">(x, y, z)</code>)，<code style="color:#22d3bf">center</code> 也用同样顺序。</p>
 <p>参数与检查(<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>:最后一轴为 3 的 float 数组 <code style="color:#22d3bf">(..., 3)</code>(也可为 1-D 的 <code style="color:#22d3bf">(3,)</code>。0-D 或最后一轴不为 3 的会被拒绝)。</p>

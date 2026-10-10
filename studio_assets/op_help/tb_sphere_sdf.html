@@ -15,7 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>球の符号付き距離場: <code style="color:#22d3bf">|p - center| - R</code>(内側負・外側正)。</p>
 <p><code style="color:#22d3bf">grid</code> は最終軸が 3 の座標配列 (..., 3)(<code style="color:#22d3bf">grid_coords</code> の出力や (N,3) 点群)。<code style="color:#22d3bf">center</code> は長さ3、<code style="color:#22d3bf">R&gt;=0</code> は半径。返り値の shape は <code style="color:#22d3bf">grid.shape[:-1]</code>。厳密な SDF (勾配ノルム 1)。<code style="color:#22d3bf">sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)</code>。</p>
-<p>Raises ValueError for R&lt;0 or malformed grid/center。</p>
+<p><code style="color:#22d3bf">R &lt; 0</code> や形の不正な grid / center は <code style="color:#22d3bf">ValueError</code>。</p>
 <p>計算: <code style="color:#22d3bf">np.linalg.norm(grid - center, axis=-1) - R</code>。座標の単位はそのまま距離の単位になる(<code style="color:#22d3bf">grid_coords</code> の world 座標を渡せば world 単位)。座標の成分順は <code style="color:#22d3bf">grid</code> の最終軸の順(<code style="color:#22d3bf">grid_coords</code> なら <code style="color:#22d3bf">(x, y, z)</code>)で、<code style="color:#22d3bf">center</code> も同じ順。</p>
 <p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>(1-D の <code style="color:#22d3bf">(3,)</code> も可。0-D や最終軸が 3 以外は拒否)。</p>

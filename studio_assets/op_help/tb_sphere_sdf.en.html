@@ -15,7 +15,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Signed distance field of a sphere: <code style="color:#22d3bf">|p - center| - R</code> (negative inside, positive outside).</p>
 <p><code style="color:#22d3bf">grid</code> is a coordinate array whose last axis is 3, (..., 3) (output of <code style="color:#22d3bf">grid_coords</code> or an (N,3) point cloud). <code style="color:#22d3bf">center</code> has length 3, <code style="color:#22d3bf">R&gt;=0</code> is the radius. The returned shape is <code style="color:#22d3bf">grid.shape[:-1]</code>. An exact SDF (gradient norm 1). <code style="color:#22d3bf">sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)</code>.</p>
-<p>Raises ValueError for R&lt;0 or malformed grid/center.</p>
+<p><code style="color:#22d3bf">R &lt; 0</code> or a malformed grid / center raises <code style="color:#22d3bf">ValueError</code>.</p>
 <p>Computation: <code style="color:#22d3bf">np.linalg.norm(grid - center, axis=-1) - R</code>. The coordinate unit becomes the distance unit as is (pass world coordinates from <code style="color:#22d3bf">grid_coords</code> and you get world units). The component order of the coordinates is the order of <code style="color:#22d3bf">grid</code>&#x27;s last axis (<code style="color:#22d3bf">(x, y, z)</code> for <code style="color:#22d3bf">grid_coords</code>), and <code style="color:#22d3bf">center</code> uses the same order.</p>
 <p>Arguments and validation (<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: float array <code style="color:#22d3bf">(..., 3)</code> whose last axis is 3 (a 1-D <code style="color:#22d3bf">(3,)</code> is also allowed; 0-D or a last axis other than 3 is rejected).</p>

@@ -16,10 +16,6 @@
 <p>법선 <code style="color:#22d3bf">(N,3)</code> → 확장 가우스 영상(Extended Gaussian Image) <code style="color:#22d3bf">(n_el, n_az)</code>의 <code style="color:#22d3bf">image2d</code>.</p>
 <p>방향의 2-D 히스토그램(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984). &quot;어느 방향의 면이 얼마나 있는가&quot;의 지도로, 평면이 지배적인 물체에서는 1개의 bin에 산이 선다. <b>비가역</b> —— bin 폭만큼의 방향 해상도를 버린다. 버린 양은 잴 수 있다: 최빈 bin의 중심 방향과 입력의 평균 방향의 각도 차가 양자화 오차이며, 기본값 (36, 18)에서는 bin 폭 10도에 대해 실측 3.7도(<code style="color:#22d3bf">selftest</code>가 출력한다).</p>
 <p>앙각의 bin은 <code style="color:#22d3bf">sin(el)</code>로 등분한다(등입체각). 도로 등분하면 극이 지나치게촘촘해져 &quot;북극에 면이 집중해 있다&quot;는 거짓 산이 선다.</p>
-<p>Args:</p>
-<p>normals: (N, 3).</p>
-<p>n_az: 방위의 bin 수(기본값 36 = 10도 간격).</p>
-<p>n_el: 앙각의 bin 수(기본값 18).</p>
 <p>★<b>위치의 점군을 넘겨도 예외는 나지 않는다</b>. <code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code>가 <code style="color:#22d3bf">normals</code>를 <code style="color:#22d3bf">points</code>로 접어 두었으므로 진화기도 대장도 둘을 구별하지 않는다. 이 op는 방향만 보므로(길이는 버린다) <code style="color:#22d3bf">(N,3)</code>의 좌표를 넘기면 &quot;원점에서 각 점을 본 방향&quot;의 히스토그램이 <b>그럴듯하게</b> 반환된다. 실측(2026-09-08, 200점의 곡선 vs 전부 바로 위를 향한 법선): 비영 bin이 1 → 12, 최대 bin이 200 → 44로 바뀔 뿐이며, <b>총합은 양쪽 모두 200</b>. &quot;총합이 점 수와 맞으니 옳다&quot;로는 구별할 수 없다. <code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code>으로 하면 단위 길이에서 벗어난벡터를 <b>거부</b>한다(아래 Raises).</p>
 <p>Args:</p>
 <p>normals: (N, 3).</p>

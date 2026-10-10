@@ -40,7 +40,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
 平滑化(σ=2)した画像の局所極大を値の降順に ``K`` 個拾い、各点を標的にする:
 ``range_m = 2 + 30 * col / W``、``velocity_ms = 15 * (2 * row / H - 1)``、
 振幅 = 画素値。前方モデルは台帳の ``fmcw_beat_simulate``(``rangedoppler``)
-そのもので、``n_samples = 64、n_chirps = 32、n_antennas = 4``(素子間隔は
+そのもので、``n_samples = 64, n_chirps = 32, n_antennas = 4``(素子間隔は
 既定の半波長、標的はすべて正面 = 到来角 0°)、その他は
 同関数の既定(標本化 10 MHz、掃引 20 THz/s、チャープ周期 50 µs、波長 3.89 mm)。
 この既定では **距離は 0〜37.5 m、速度は ±19.5 m/s が曖昧さの無い範囲** で、
