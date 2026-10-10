@@ -13,6 +13,7 @@
  "media_root": "articles/assets/poc",
  "categories": [
   {
+   "id": "inspection",
    "ja": "画像検査・外観計測",
    "en": "Inspection and appearance",
    "zh": "图像检测与外观测量",
@@ -22,6 +23,7 @@
    "hi": "Image inspection और appearance"
   },
   {
+   "id": "geometry3d",
    "ja": "三次元計測・幾何処理",
    "en": "3-D measurement and geometry",
    "zh": "三维测量与几何处理",
@@ -31,6 +33,7 @@
    "hi": "3-D measurement और geometry"
   },
   {
+   "id": "ct",
    "ja": "X線CT・ボリューム処理",
    "en": "X-ray CT and volumes",
    "zh": "X 射线 CT 与体数据处理",
@@ -40,6 +43,7 @@
    "hi": "X-ray CT और volume"
   },
   {
+   "id": "optics",
    "ja": "光学・干渉・偏光",
    "en": "Optics, interferometry, polarization",
    "zh": "光学、干涉、偏振",
@@ -49,6 +53,7 @@
    "hi": "Optics, interferometry, polarization"
   },
   {
+   "id": "thermal",
    "ja": "熱・音響・時系列",
    "en": "Thermal, acoustic, time series",
    "zh": "热、声学、时间序列",
@@ -58,6 +63,7 @@
    "hi": "Thermal, acoustic, time series"
   },
   {
+   "id": "robotics",
    "ja": "ロボット・空間知覚",
    "en": "Robotics and spatial perception",
    "zh": "机器人与空间感知",
@@ -65,6 +71,46 @@
    "ko": "로봇·공간 지각",
    "de": "Robotik und räumliche Wahrnehmung",
    "hi": "Robotics और spatial perception"
+  },
+  {
+   "id": "table_tennis",
+   "ja": "卓球・運動計測",
+   "en": "Table tennis and motion",
+   "zh": "乒乓球与运动测量",
+   "tw": "桌球與運動量測",
+   "ko": "탁구·운동 계측",
+   "de": "Tischtennis und Bewegung",
+   "hi": "Table tennis और motion"
+  },
+  {
+   "id": "driving",
+   "ja": "自動運転",
+   "en": "Autonomous driving",
+   "zh": "自动驾驶",
+   "tw": "自動駕駛",
+   "ko": "자율주행",
+   "de": "Autonomes Fahren",
+   "hi": "Autonomous driving"
+  },
+  {
+   "id": "connectome",
+   "ja": "コネクトーム・神経",
+   "en": "Connectome and neurons",
+   "zh": "连接组与神经",
+   "tw": "連接體與神經",
+   "ko": "커넥톰·신경",
+   "de": "Konnektom und Neuronen",
+   "hi": "Connectome और neurons"
+  },
+  {
+   "id": "robot_eyes",
+   "ja": "ロボットの目(Fullseye が知覚を担当)",
+   "en": "Robot eyes (Fullseye does the perceiving)",
+   "zh": "机器人之眼(由 Fullseye 负责感知)",
+   "tw": "機器人之眼(由 Fullseye 負責感知)",
+   "ko": "로봇의 눈(Fullseye가 지각 담당)",
+   "de": "Roboteraugen (Fullseye übernimmt die Wahrnehmung)",
+   "hi": "Robot की आँखें (perception Fullseye करता है)"
   }
  ],
  "ui": {
@@ -328,6 +374,60 @@
    "ko": "소스",
    "de": "Quelle",
    "hi": "source"
+  },
+  "h_highlights": {
+   "ja": "見どころ",
+   "en": "Highlights",
+   "zh": "精选",
+   "tw": "精選",
+   "ko": "하이라이트",
+   "de": "Highlights",
+   "hi": "मुख्य झलकियाँ"
+  },
+  "h_series": {
+   "ja": "シリーズ記事",
+   "en": "Article series",
+   "zh": "系列文章",
+   "tw": "系列文章",
+   "ko": "시리즈 기사",
+   "de": "Artikelserien",
+   "hi": "Article series"
+  },
+  "series_lang_note": {
+   "ja": "",
+   "en": "(articles on Qiita)",
+   "zh": "(Qiita 上的英文文章)",
+   "tw": "(Qiita 上的英文文章)",
+   "ko": "(Qiita의 영어 기사)",
+   "de": "(englische Artikel auf Qiita)",
+   "hi": "(Qiita पर English articles)"
+  },
+  "h_all": {
+   "ja": "ぜんぶ見る",
+   "en": "See everything",
+   "zh": "全部看",
+   "tw": "全部看",
+   "ko": "전부 보기",
+   "de": "Alles ansehen",
+   "hi": "सब कुछ देखें"
+  },
+  "all_count": {
+   "ja": "PoC {n} 本と、ロボットの目 {m} 本。グループを開くとサムネイルが出ます。",
+   "en": "{n} PoCs plus {m} robot-eye demos. Open a group to load its thumbnails.",
+   "zh": "PoC {n} 个,另有机器人之眼 {m} 个。展开分组即可加载缩略图。",
+   "tw": "PoC {n} 個,另有機器人之眼 {m} 個。展開分組即可載入縮圖。",
+   "ko": "PoC {n}개와 로봇의 눈 {m}개. 그룹을 펼치면 썸네일이 나옵니다.",
+   "de": "{n} PoCs und {m} Roboteraugen-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.",
+   "hi": "{n} PoCs और {m} robot-eye demos। group खोलने पर thumbnails load होते हैं।"
+  },
+  "all_nojs": {
+   "ja": "(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)",
+   "en": "(Without JavaScript, every figure is on the gallery page.)",
+   "zh": "(没有 JavaScript 时,可在图库页面查看全部图。)",
+   "tw": "(沒有 JavaScript 時,可在圖庫頁面查看全部圖。)",
+   "ko": "(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)",
+   "de": "(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)",
+   "hi": "(JavaScript के बिना सभी figures gallery page पर हैं।)"
   }
  },
  "paper": {
@@ -345,7 +445,7 @@
  "exhibits": [
   {
    "id": "poc_real_defect_floor",
-   "category": 0,
+   "category": "inspection",
    "media": "02_defect_floor_sweep.gif",
    "motion": true,
    "label": {
@@ -378,7 +478,7 @@
   },
   {
    "id": "poc_active_contours",
-   "category": 0,
+   "category": "inspection",
    "media": "06_u_shape_snakes.mp4",
    "motion": true,
    "label": {
@@ -411,7 +511,7 @@
   },
   {
    "id": "poc_dic_strain",
-   "category": 0,
+   "category": "inspection",
    "media": "05_tensile_ramp.mp4",
    "motion": true,
    "label": {
@@ -444,7 +544,7 @@
   },
   {
    "id": "poc_focus_stacking",
-   "category": 1,
+   "category": "geometry3d",
    "media": "05_focus_sweep.mp4",
    "motion": true,
    "label": {
@@ -477,7 +577,7 @@
   },
   {
    "id": "poc_registration_basin",
-   "category": 1,
+   "category": "geometry3d",
    "media": "05_icp_basin_iterations.mp4",
    "motion": true,
    "label": {
@@ -510,7 +610,7 @@
   },
   {
    "id": "poc_stockpile_volume",
-   "category": 1,
+   "category": "geometry3d",
    "media": "07_scan_orbit.mp4",
    "motion": true,
    "label": {
@@ -543,7 +643,7 @@
   },
   {
    "id": "poc_ct_fidelity",
-   "category": 2,
+   "category": "ct",
    "media": "01_recon_sweep.png",
    "motion": false,
    "label": {
@@ -576,7 +676,7 @@
   },
   {
    "id": "poc_ct_void_morphology",
-   "category": 2,
+   "category": "ct",
    "media": "13_section_sweep.mp4",
    "motion": true,
    "label": {
@@ -609,7 +709,7 @@
   },
   {
    "id": "poc_interferometry_step",
-   "category": 3,
+   "category": "optics",
    "media": "05_step_sweep.mp4",
    "motion": true,
    "label": {
@@ -642,7 +742,7 @@
   },
   {
    "id": "poc_polarization_specular",
-   "category": 3,
+   "category": "optics",
    "media": "03_separation.png",
    "motion": false,
    "label": {
@@ -675,7 +775,7 @@
   },
   {
    "id": "poc_photoelasticity",
-   "category": 3,
+   "category": "optics",
    "media": "03_load_and_isoclinics.mp4",
    "motion": true,
    "label": {
@@ -708,7 +808,7 @@
   },
   {
    "id": "poc_thermography_ndt",
-   "category": 4,
+   "category": "thermal",
    "media": "02_depth_map.png",
    "motion": false,
    "label": {
@@ -741,7 +841,7 @@
   },
   {
    "id": "poc_motion_magnification",
-   "category": 4,
+   "category": "thermal",
    "media": "05_magnify_video.mp4",
    "motion": true,
    "label": {
@@ -774,7 +874,7 @@
   },
   {
    "id": "poc_table_tennis_bounce",
-   "category": 4,
+   "category": "table_tennis",
    "media": "01_drop_test.mp4",
    "motion": true,
    "label": {
@@ -807,7 +907,7 @@
   },
   {
    "id": "poc_compound_eye",
-   "category": 5,
+   "category": "robotics",
    "media": "02_compound_eye_superposition.png",
    "motion": false,
    "label": {
@@ -820,13 +920,13 @@
     "hi": "Compound eye"
    },
    "see": {
-    "ja": "個眼アレイを光場センサとして合成し、同じ点を N 個眼で重ねる。",
-    "en": "A compound-eye array simulated as a light-field sensor, superposing N views of the same point.",
-    "zh": "把小眼阵列合成为光场传感器,用 N 个小眼叠加同一个点。",
-    "tw": "把小眼陣列合成為光場感測器,以 N 個小眼疊加同一點。",
-    "ko": "낱눈 배열을 라이트 필드 센서로 합성하고 같은 점을 N개 낱눈으로 겹친다.",
-    "de": "Ein Facettenaugen-Array als Lichtfeldsensor simuliert; derselbe Punkt wird aus N Ommatidien überlagert.",
-    "hi": "compound-eye array को light-field sensor की तरह simulate करके एक ही point के N views जोड़े जाते हैं।"
+    "ja": "個眼アレイを光場センサとして合成し、同じ点を N 個眼で重ねる。 この光場の後段をハエの配線図(コネクトーム)で処理するのが次の課題 —— 下のコネクトームの展示へ続く。",
+    "en": "A compound-eye array simulated as a light-field sensor, superposing N views of the same point. Processing this light field with the fly's wiring diagram (connectome) is the next step; see the connectome exhibits below.",
+    "zh": "把小眼阵列合成为光场传感器,用 N 个小眼叠加同一个点。 下一步是用苍蝇的接线图(连接组)处理这个光场 —— 见下方的连接组展品。",
+    "tw": "把小眼陣列合成為光場感測器,以 N 個小眼疊加同一點。 下一步是以蒼蠅的接線圖(連接體)處理這個光場 —— 見下方的連接體展品。",
+    "ko": "낱눈 배열을 라이트 필드 센서로 합성하고 같은 점을 N개 낱눈으로 겹친다. 이 라이트 필드를 파리의 배선도(커넥톰)로 처리하는 것이 다음 과제 —— 아래 커넥톰 전시로 이어진다.",
+    "de": "Ein Facettenaugen-Array als Lichtfeldsensor simuliert; derselbe Punkt wird aus N Ommatidien überlagert. Der nächste Schritt: dieses Lichtfeld mit dem Schaltplan der Fliege (Konnektom) verarbeiten; siehe die Konnektom-Exponate unten.",
+    "hi": "compound-eye array को light-field sensor की तरह simulate करके एक ही point के N views जोड़े जाते हैं। अगला कदम इस light field को मक्खी के wiring diagram (connectome) से process करना है; नीचे connectome exhibits देखें।"
    },
    "num": {
     "ja": "SNR 利得は N=5 で 2.25(√5 = 2.24)、N=49 で 5.33(√49 = 7.00)。",
@@ -840,7 +940,7 @@
   },
   {
    "id": "poc_pegsim_insertion",
-   "category": 5,
+   "category": "robotics",
    "media": "04_pegsim_insert_corrected.gif",
    "motion": true,
    "label": {
@@ -873,7 +973,7 @@
   },
   {
    "id": "poc_air_hockey_intercept",
-   "category": 5,
+   "category": "robotics",
    "media": "02_airhockey_prediction_cone_narrows.gif",
    "motion": true,
    "label": {
@@ -906,7 +1006,7 @@
   },
   {
    "id": "poc_tacsim_elastic_membrane",
-   "category": 5,
+   "category": "robotics",
    "media": "03_tacsim_force_sweep.gif",
    "motion": true,
    "label": {
@@ -936,6 +1036,4246 @@
     "de": "Gegenüber der geschlossenen Hertz-Form: Kontaktradius 0.05-0.26 %, Kraft 0.14-0.79 % (0.02-0.12 N).",
     "hi": "Hertz closed form के सापेक्ष: contact radius error 0.05-0.26 %, force error 0.14-0.79 % (0.02-0.12 N)।"
    }
+  },
+  {
+   "id": "poc_table_tennis_spin",
+   "category": "table_tennis",
+   "media": "01_side_three_serves.mp4",
+   "motion": true,
+   "label": {
+    "ja": "卓球の回転",
+    "en": "Ping-pong spin",
+    "zh": "乒乓球旋转",
+    "tw": "桌球旋轉",
+    "ko": "탁구공 회전",
+    "de": "Tischtennis-Spin",
+    "hi": "Table tennis spin"
+   },
+   "see": {
+    "ja": "同じ速さ・向きで打った 3 本: トップスピンは沈み、バックスピンは浮く。",
+    "en": "3 balls launched alike: topspin dips, backspin floats.",
+    "zh": "以相同速度和方向击出的 3 球:上旋下沉,下旋上浮。",
+    "tw": "以相同速度與方向擊出的 3 球:上旋下沉,下旋上浮。",
+    "ko": "같은 속도·방향으로 친 3개: 톱스핀은 가라앉고 백스핀은 뜬다.",
+    "de": "3 gleich geschlagene Bälle: Topspin taucht ab, Unterschnitt schwebt.",
+    "hi": "एक जैसे मारे गए 3 balls: topspin नीचे जाता है, backspin ऊपर तैरता है।"
+   },
+   "num": {
+    "ja": "着地点 x = 0.49 / 0.75 / 1.12 m。曲がり方から読んだ回転で先読みした着地点は 4 本とも真値と 2 cm 以内。",
+    "en": "Landing at x = 0.49 / 0.75 / 1.12 m. Landing points predicted from the spin read off the curve are within 2 cm of truth for all 4 balls.",
+    "zh": "落点 x = 0.49 / 0.75 / 1.12 m。用从弧线读出的旋转预测的落点,4 球都与真值相差 2 cm 以内。",
+    "tw": "落點 x = 0.49 / 0.75 / 1.12 m。以從弧線讀出的旋轉預測的落點,4 球都與真值相差 2 cm 以內。",
+    "ko": "착지점 x = 0.49 / 0.75 / 1.12 m. 휘는 모양에서 읽은 회전으로 예측한 착지점은 4개 모두 참값과 2 cm 이내.",
+    "de": "Aufprall bei x = 0.49 / 0.75 / 1.12 m. Aus der Kurve gelesener Spin sagt den Aufprall aller 4 Bälle auf 2 cm genau voraus.",
+    "hi": "landing x = 0.49 / 0.75 / 1.12 m। curve से पढ़े spin से अनुमानित landing point चारों 4 balls में ground truth से 2 cm के भीतर।"
+   }
+  },
+  {
+   "id": "poc_table_tennis_rally_loop",
+   "category": "table_tennis",
+   "media": "02_height_misread.mp4",
+   "motion": true,
+   "label": {
+    "ja": "ラリーと読み誤差",
+    "en": "Rally and misreads",
+    "zh": "回合与读取误差",
+    "tw": "來回與讀取誤差",
+    "ko": "랠리와 판독 오차",
+    "de": "Ballwechsel",
+    "hi": "Rally misreads"
+   },
+   "see": {
+    "ja": "球の高さを 5 cm 高く読むと、狙いの計算は低い弾道を選び、球は手前に落ちる。",
+    "en": "Reading the ball 5 cm too high makes the planner pick a lower arc, and the ball lands short.",
+    "zh": "把球高读高 5 cm,瞄准计算会选更低的弹道,球落得更近。",
+    "tw": "把球高讀高 5 cm,瞄準計算會選更低的彈道,球落得更近。",
+    "ko": "공 높이를 5 cm 높게 읽으면 조준 계산이 낮은 궤도를 골라 공이 짧게 떨어진다.",
+    "de": "Wird der Ball 5 cm zu hoch gelesen, wählt die Planung eine flachere Bahn und der Ball landet zu kurz.",
+    "hi": "ball की ऊँचाई 5 cm ज़्यादा पढ़ने पर planner नीचा arc चुनता है और ball पहले गिरती है।"
+   },
+   "num": {
+    "ja": "狙いより 10.2 cm 手前に落ちる。打つ前の一次予測 2.06 × 5 cm = 10.3 cm。",
+    "en": "It lands 10.2 cm short; the first-order prediction before the shot is 2.06 × 5 cm = 10.3 cm.",
+    "zh": "比目标近 10.2 cm。击球前的一阶预测 2.06 × 5 cm = 10.3 cm。",
+    "tw": "比目標近 10.2 cm。擊球前的一階預測 2.06 × 5 cm = 10.3 cm。",
+    "ko": "목표보다 10.2 cm 짧게 떨어진다. 치기 전 일차 예측 2.06 × 5 cm = 10.3 cm.",
+    "de": "Er landet 10.2 cm zu kurz; die Vorhersage erster Ordnung vor dem Schlag: 2.06 × 5 cm = 10.3 cm.",
+    "hi": "target से 10.2 cm पहले गिरती है; shot से पहले first-order अनुमान 2.06 × 5 cm = 10.3 cm।"
+   }
+  },
+  {
+   "id": "poc_driving_traffic",
+   "category": "driving",
+   "media": "01_dashcam_occlusion.mp4",
+   "motion": true,
+   "label": {
+    "ja": "交通と死角",
+    "en": "Traffic, blind spots",
+    "zh": "交通与盲区",
+    "tw": "交通與死角",
+    "ko": "교통과 사각",
+    "de": "Verkehr, toter Winkel",
+    "hi": "Traffic, blind spots"
+   },
+   "see": {
+    "ja": "路肩駐車の陰から子どもが走り出る。背景との差(学習なし)で検知して止まる。",
+    "en": "A child runs out from behind a parked car; detected by difference from the background (no learning), the car stops.",
+    "zh": "孩子从路边停车后跑出。用与背景的差(无学习)检测并停车。",
+    "tw": "孩子從路邊停車後跑出。以與背景的差(無學習)偵測並停車。",
+    "ko": "노상 주차 차량 뒤에서 아이가 뛰어나온다. 배경과의 차이(학습 없음)로 검지해 멈춘다.",
+    "de": "Ein Kind läuft hinter einem parkenden Auto hervor; erkannt per Hintergrunddifferenz (ohne Lernen), das Auto hält.",
+    "hi": "parked car के पीछे से बच्चा दौड़कर निकलता है; background difference (बिना learning) से detect करके car रुकती है।"
+   },
+   "num": {
+    "ja": "真値 t = 7.30 s に検知(遅れ 0.133 s)、子どもの線の 7.09 m 手前で停止。",
+    "en": "Detected at t = 7.30 s (lag 0.133 s behind truth); stops 7.09 m before the child's path.",
+    "zh": "在 t = 7.30 s 检出(比真值晚 0.133 s),在孩子路线前 7.09 m 停车。",
+    "tw": "在 t = 7.30 s 偵測到(比真值晚 0.133 s),在孩子路線前 7.09 m 停車。",
+    "ko": "t = 7.30 s에 검지(참값 대비 지연 0.133 s), 아이의 선 7.09 m 앞에서 정지.",
+    "de": "Erkannt bei t = 7.30 s (0.133 s Verzögerung), Halt 7.09 m vor dem Weg des Kindes.",
+    "hi": "t = 7.30 s पर detect (ground truth से 0.133 s देर), बच्चे के रास्ते से 7.09 m पहले रुकती है।"
+   }
+  },
+  {
+   "id": "poc_driving_crossing",
+   "category": "driving",
+   "media": "01_crossing_dashcam.mp4",
+   "motion": true,
+   "label": {
+    "ja": "踏切と交差点",
+    "en": "Level crossings",
+    "zh": "道口与路口",
+    "tw": "平交道與路口",
+    "ko": "건널목과 교차로",
+    "de": "Bahnübergänge",
+    "hi": "Level crossings"
+   },
+   "see": {
+    "ja": "踏切の直前で止まり、警報の間は待ち、左右を見て渡る(運転者の目)。",
+    "en": "Stop before the level crossing, wait out the alarm, look both ways, cross (driver's view).",
+    "zh": "在道口前停车,警报期间等待,左右确认后通过(驾驶员视角)。",
+    "tw": "在平交道前停車,警報期間等待,左右確認後通過(駕駛視角)。",
+    "ko": "건널목 앞에서 멈추고, 경보 중에는 기다리고, 좌우를 보고 건넌다(운전자 시점).",
+    "de": "Vor dem Bahnübergang halten, den Alarm abwarten, nach beiden Seiten sehen, queren (Fahrersicht).",
+    "hi": "level crossing से पहले रुकना, alarm के दौरान इंतज़ार, दोनों ओर देखकर पार करना (driver का view)।"
+   },
+   "num": {
+    "ja": "規則どおりの 240 人は違反 0、列車到着時に線路の上 0 人。警報中に入る版は 157 人が違反、うち 23 人が線路の上。",
+    "en": "240 rule-following drivers: 0 violations, 0 on the track when the train arrives. Entering during the alarm: 157 violations, 23 of them on the track.",
+    "zh": "守规则的 240 人违规 0、列车到达时轨道上 0 人。警报中进入的版本 157 人违规,其中 23 人在轨道上。",
+    "tw": "守規則的 240 人違規 0、列車到達時軌道上 0 人。警報中進入的版本 157 人違規,其中 23 人在軌道上。",
+    "ko": "규칙대로인 240명은 위반 0, 열차 도착 시 선로 위 0명. 경보 중 진입 버전은 157명 위반, 그중 23명이 선로 위.",
+    "de": "240 regeltreue Fahrer: 0 Verstöße, 0 auf dem Gleis bei Zugankunft. Einfahren während des Alarms: 157 Verstöße, 23 davon auf dem Gleis.",
+    "hi": "नियम मानने वाले 240 drivers: 0 violations, train आने पर track पर 0। alarm में घुसने वाले version में 157 violations, जिनमें 23 track पर।"
+   }
+  },
+  {
+   "id": "poc_driving_pass",
+   "category": "driving",
+   "media": "03_mirror_tjunction.mp4",
+   "motion": true,
+   "label": {
+    "ja": "カーブミラー",
+    "en": "Curve mirror",
+    "zh": "道路反射镜",
+    "tw": "道路反射鏡",
+    "ko": "커브 미러",
+    "de": "Verkehrsspiegel",
+    "hi": "Curve mirror"
+   },
+   "see": {
+    "ja": "見通しの悪い T 字路で、凸面のカーブミラーに映る車を光線追跡で描き、距離を読む。",
+    "en": "At a blind T-junction, a car in a convex curve mirror is ray-traced and its distance read.",
+    "zh": "在视线差的丁字路口,用光线追迹绘制凸面反射镜中的车并读取距离。",
+    "tw": "在視線差的 T 字路口,以光線追蹤繪製凸面反射鏡中的車並讀取距離。",
+    "ko": "시야가 나쁜 T자 교차로에서 볼록 커브 미러에 비친 차를 광선 추적으로 그려 거리를 읽는다.",
+    "de": "An einer unübersichtlichen T-Kreuzung wird ein Auto im konvexen Spiegel per Raytracing gezeichnet und seine Entfernung gelesen.",
+    "hi": "blind T-junction पर convex curve mirror में दिखती car को ray tracing से बनाकर दूरी पढ़ी जाती है।"
+   },
+   "num": {
+    "ja": "鏡から 29 m の車が、像の大きさで読むと 139 m 先に見える(閉形式の縦の読み 140 m)。",
+    "en": "A car 29 m from the mirror reads as 139 m away from its image size (closed-form vertical reading 140 m).",
+    "zh": "距镜子 29 m 的车,按像的大小读成 139 m 外(闭式纵向读数 140 m)。",
+    "tw": "距鏡子 29 m 的車,依像的大小讀成 139 m 外(閉合式縱向讀數 140 m)。",
+    "ko": "거울에서 29 m인 차가 상의 크기로 읽으면 139 m 앞으로 보인다(닫힌 식 세로 읽기 140 m).",
+    "de": "Ein Auto 29 m vor dem Spiegel wirkt nach Bildgröße 139 m entfernt (geschlossene Form, vertikal: 140 m).",
+    "hi": "mirror से 29 m दूर की car image size से 139 m दूर पढ़ी जाती है (closed form vertical reading 140 m)।"
+   }
+  },
+  {
+   "id": "poc_ttc_rss",
+   "category": "driving",
+   "media": "06_approach_gif.gif",
+   "motion": true,
+   "label": {
+    "ja": "衝突時間と RSS",
+    "en": "TTC and RSS",
+    "zh": "碰撞时间与 RSS",
+    "tw": "碰撞時間與 RSS",
+    "ko": "충돌 시간과 RSS",
+    "de": "TTC und RSS",
+    "hi": "TTC और RSS"
+   },
+   "see": {
+    "ja": "対向車の光学流から衝突までの時間 τ を出し、停車車両には RSS の安全距離で止まる。",
+    "en": "Time to collision τ from the optical flow of an oncoming car; for a stopped car, braking by the RSS safe distance.",
+    "zh": "由对向车的光流求出碰撞时间 τ,遇停止车辆按 RSS 安全距离停车。",
+    "tw": "由對向車的光流求出碰撞時間 τ,遇停止車輛依 RSS 安全距離停車。",
+    "ko": "대향차의 광학 흐름으로 충돌까지의 시간 τ를 구하고, 정차 차량에는 RSS 안전거리로 멈춘다.",
+    "de": "Zeit bis zur Kollision τ aus dem optischen Fluss eines Gegenfahrzeugs; vor einem stehenden Auto Bremsen nach RSS-Sicherheitsabstand.",
+    "hi": "सामने से आती car के optical flow से time to collision τ; खड़ी car के लिए RSS safe distance से braking।"
+   },
+   "num": {
+    "ja": "RSS が「危険」を出した t = 6.0 s に制動し、10.25 m 手前で停止。",
+    "en": "Braking when RSS flags danger at t = 6.0 s, it stops 10.25 m short.",
+    "zh": "在 RSS 判为危险的 t = 6.0 s 制动,于 10.25 m 前停车。",
+    "tw": "在 RSS 判為危險的 t = 6.0 s 制動,於 10.25 m 前停車。",
+    "ko": "RSS가 '위험'을 낸 t = 6.0 s에 제동해 10.25 m 앞에서 정지.",
+    "de": "Bremsen, als RSS bei t = 6.0 s Gefahr meldet; Halt 10.25 m davor.",
+    "hi": "RSS के danger बताने पर t = 6.0 s पर braking, 10.25 m पहले रुकती है।"
+   }
+  },
+  {
+   "id": "poc_eye_to_brain",
+   "category": "connectome",
+   "media": "01_eye_sweep.gif",
+   "motion": true,
+   "label": {
+    "ja": "複眼から脳へ",
+    "en": "Eye to brain",
+    "zh": "复眼到大脑",
+    "tw": "複眼到大腦",
+    "ko": "겹눈에서 뇌로",
+    "de": "Auge zum Gehirn",
+    "hi": "Eye से brain"
+   },
+   "see": {
+    "ja": "ハエの右眼の個眼 1 つ分の刺激を眼の一行に沿って動かし、脳の配線図(コネクトーム)に入れる(GIF 4.4 MB)。",
+    "en": "A stimulus of 1 ommatidium moves along a row of the fly's right eye and is fed into the brain's wiring diagram (connectome) (GIF 4.4 MB).",
+    "zh": "把苍蝇右眼 1 个小眼的刺激沿眼的一行移动,输入大脑接线图(连接组)(GIF 4.4 MB)。",
+    "tw": "把蒼蠅右眼 1 個小眼的刺激沿眼的一行移動,輸入大腦接線圖(連接體)(GIF 4.4 MB)。",
+    "ko": "파리 오른쪽 눈의 낱눈 1개 자극을 눈의 한 줄을 따라 움직여 뇌의 배선도(커넥톰)에 넣는다(GIF 4.4 MB).",
+    "de": "Ein Reiz von 1 Ommatidium wandert eine Reihe des rechten Fliegenauges entlang und speist den Schaltplan des Gehirns (Konnektom) (GIF 4.4 MB).",
+    "hi": "मक्खी की दाईं आँख के 1 ommatidium का stimulus आँख की एक पंक्ति पर चलाकर brain के wiring diagram (connectome) में दिया जाता है (GIF 4.4 MB)।"
+   },
+   "num": {
+    "ja": "刺激した柱の位置と応答の重心の相関: コネクトーム −0.92、次数保存シャッフル +0.01。",
+    "en": "Correlation of stimulated column and response centroid: connectome -0.92, degree-preserving shuffle +0.01.",
+    "zh": "刺激柱位置与响应重心的相关:连接组 -0.92,保度随机重连 +0.01。",
+    "tw": "刺激柱位置與響應重心的相關:連接體 -0.92,保度隨機重連 +0.01。",
+    "ko": "자극한 기둥 위치와 응답 중심의 상관: 커넥톰 -0.92, 차수 보존 셔플 +0.01.",
+    "de": "Korrelation von gereizter Säule und Antwortschwerpunkt: Konnektom -0.92, gradtreu gemischt +0.01.",
+    "hi": "stimulated column और response centroid का correlation: connectome -0.92, degree-preserving shuffle +0.01।"
+   }
+  },
+  {
+   "id": "poc_malecns_activity_wave",
+   "category": "connectome",
+   "media": "01_activity_wave_connectome_vs_shuffle.gif",
+   "motion": true,
+   "label": {
+    "ja": "ハエの脳の波",
+    "en": "Fly brain wave",
+    "zh": "苍蝇脑电波",
+    "tw": "蒼蠅腦波",
+    "ko": "파리 뇌의 파동",
+    "de": "Fliegenhirn-Welle",
+    "hi": "Fly brain wave"
+   },
+   "see": {
+    "ja": "右の視葉への刺激が、実際の配線(左)と、次数を保って繋ぎ替えた配線(右)を伝わる。",
+    "en": "A pulse into the right optic lobe travels through the real wiring (left) and through degree-preserving rewired wiring (right).",
+    "zh": "右视叶的刺激沿真实接线(左)与保度重连的接线(右)传播。",
+    "tw": "右視葉的刺激沿真實接線(左)與保度重連的接線(右)傳播。",
+    "ko": "오른쪽 시엽에 준 자극이 실제 배선(왼쪽)과 차수를 보존해 다시 연결한 배선(오른쪽)을 타고 퍼진다.",
+    "de": "Ein Reiz im rechten optischen Lobus läuft durch die echte Verdrahtung (links) und durch gradtreu neu verdrahtete (rechts).",
+    "hi": "right optic lobe में दिया pulse असली wiring (बाएँ) और degree-preserving rewired wiring (दाएँ) से फैलता है।"
+   },
+   "num": {
+    "ja": "実配線では活動の平均距離が 88 → 230 µm と 17 步かけて伸びる。繋ぎ替えでは 3 步で 300 µm に散る。",
+    "en": "In the real wiring the mean activity distance grows 88 -> 230 µm over 17 steps; rewired, it scatters to 300 µm in 3 steps.",
+    "zh": "真实接线中活动平均距离用 17 步从 88 → 230 µm 扩展;重连后 3 步就散到 300 µm。",
+    "tw": "真實接線中活動平均距離用 17 步從 88 → 230 µm 擴展;重連後 3 步就散到 300 µm。",
+    "ko": "실제 배선에서는 활동의 평균 거리가 17스텝에 걸쳐 88 → 230 µm로 늘어난다. 재연결은 3스텝 만에 300 µm로 흩어진다.",
+    "de": "In der echten Verdrahtung wächst der mittlere Abstand der Aktivität in 17 Schritten von 88 auf 230 µm; neu verdrahtet streut er in 3 Schritten auf 300 µm.",
+    "hi": "असली wiring में activity की औसत दूरी 17 steps में 88 -> 230 µm बढ़ती है; rewired में 3 steps में 300 µm तक बिखर जाती है।"
+   }
+  },
+  {
+   "id": "poc_microns_brain_wave",
+   "category": "connectome",
+   "media": "04_wave_on_wiring.gif",
+   "motion": true,
+   "label": {
+    "ja": "マウス視覚野の波",
+    "en": "Mouse cortex wave",
+    "zh": "小鼠视皮层波",
+    "tw": "小鼠視皮質波",
+    "ko": "마우스 시각피질 파동",
+    "de": "Mauskortex-Welle",
+    "hi": "Mouse cortex wave"
+   },
+   "see": {
+    "ja": "校正済みの軸索 148 本の実測応答を、マウス視覚野 1 mm³ の実配線に流す(MICrONS)。",
+    "en": "Measured responses of 148 proofread axons driven through the real wiring of 1 mm³ of mouse visual cortex (MICrONS).",
+    "zh": "把 148 根已校对轴突的实测响应,送入小鼠视皮层 1 mm³ 的真实接线(MICrONS)。",
+    "tw": "把 148 根已校對軸突的實測響應,送入小鼠視皮質 1 mm³ 的真實接線(MICrONS)。",
+    "ko": "교정된 축삭 148개의 실측 응답을 마우스 시각피질 1 mm³의 실제 배선에 흘린다(MICrONS).",
+    "de": "Gemessene Antworten von 148 geprüften Axonen, eingespeist in die echte Verdrahtung von 1 mm³ Mäuse-Sehrinde (MICrONS).",
+    "hi": "148 proofread axons के measured responses को mouse visual cortex के 1 mm³ की असली wiring में चलाया जाता है (MICrONS)।"
+   },
+   "num": {
+    "ja": "実測との相関は実配線 0.085、次数保存シャッフル 0.048。",
+    "en": "Correlation with the measurement: real wiring 0.085, degree-preserving shuffle 0.048.",
+    "zh": "与实测的相关:真实接线 0.085,保度随机重连 0.048。",
+    "tw": "與實測的相關:真實接線 0.085,保度隨機重連 0.048。",
+    "ko": "실측과의 상관: 실제 배선 0.085, 차수 보존 셔플 0.048.",
+    "de": "Korrelation mit der Messung: echte Verdrahtung 0.085, gradtreu gemischt 0.048.",
+    "hi": "measurement से correlation: असली wiring 0.085, degree-preserving shuffle 0.048।"
+   }
+  },
+  {
+   "id": "evis_stereo_depth",
+   "category": "robot_eyes",
+   "media": "",
+   "media_path": "articles/assets/media/evis_stereo_fullseye.mp4",
+   "thumb_path": "articles/assets/evis_stereo_fullseye_thumb.jpg",
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py",
+   "motion": true,
+   "label": {
+    "ja": "ヒューマノイドの両眼",
+    "en": "Humanoid stereo eyes",
+    "zh": "人形机器人双眼",
+    "tw": "人形機器人雙眼",
+    "ko": "휴머노이드 두 눈",
+    "de": "Stereoaugen",
+    "hi": "Humanoid stereo eyes"
+   },
+   "see": {
+    "ja": "筋骨格ヒューマノイドが箸で豆を打つ場面を、自分の両眼(瞳孔間距離 64 mm)で撮り、Fullseye がステレオ視差 → 深度を毎コマ計算する。",
+    "en": "A musculoskeletal humanoid strikes a bean with chopsticks, filmed by its own two eyes (64 mm apart); Fullseye computes stereo disparity -> depth every frame.",
+    "zh": "肌肉骨骼人形机器人用筷子击豆,以自己的双眼(瞳距 64 mm)拍摄,Fullseye 每帧计算立体视差 → 深度。",
+    "tw": "肌肉骨骼人形機器人用筷子擊豆,以自己的雙眼(瞳距 64 mm)拍攝,Fullseye 每影格計算立體視差 → 深度。",
+    "ko": "근골격 휴머노이드가 젓가락으로 콩을 치는 장면을 자기 두 눈(동공 간 거리 64 mm)으로 찍고, Fullseye가 매 프레임 스테레오 시차 → 깊이를 계산한다.",
+    "de": "Ein Muskel-Skelett-Humanoid schlägt mit Stäbchen eine Bohne, gefilmt mit den eigenen Augen (64 mm Abstand); Fullseye berechnet je Frame Stereo-Disparität -> Tiefe.",
+    "hi": "musculoskeletal humanoid chopsticks से bean मारता है, अपनी दोनों आँखों (64 mm दूरी) से filmed; Fullseye हर frame में stereo disparity -> depth निकालता है।"
+   },
+   "num": {
+    "ja": "豆までの距離の誤差は中央値 0.66 %・最大 1.91 %(読める 229 / 241 コマ)。",
+    "en": "Bean-distance error: median 0.66 %, max 1.91 % (229 / 241 frames readable).",
+    "zh": "到豆距离误差:中位数 0.66 %,最大 1.91 %(可读 229 / 241 帧)。",
+    "tw": "到豆距離誤差:中位數 0.66 %,最大 1.91 %(可讀 229 / 241 影格)。",
+    "ko": "콩까지 거리 오차: 중앙값 0.66 %, 최대 1.91 %(판독 가능 229 / 241 프레임).",
+    "de": "Fehler der Bohnenentfernung: Median 0.66 %, max. 1.91 % (229 / 241 Frames lesbar).",
+    "hi": "bean तक दूरी का error: median 0.66 %, max 1.91 % (229 / 241 frames पढ़ने योग्य)।"
+   }
+  },
+  {
+   "id": "evis_bean_track",
+   "category": "robot_eyes",
+   "media": "",
+   "media_path": "articles/assets/media/evis_bean_track_fullseye.mp4",
+   "thumb_path": "articles/assets/evis_bean_track_fullseye_thumb.jpg",
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py",
+   "motion": true,
+   "label": {
+    "ja": "箸先カメラの豆追跡",
+    "en": "Chopstick-cam tracking",
+    "zh": "筷尖相机追踪豆子",
+    "tw": "筷尖相機追蹤豆子",
+    "ko": "젓가락 끝 카메라 추적",
+    "de": "Stäbchenkamera-Tracking",
+    "hi": "Chopstick-cam tracking"
+   },
+   "see": {
+    "ja": "同じ場面の箸先カメラの映像で、Fullseye が豆を検出して追う。",
+    "en": "In the chopstick-tip camera of the same scene, Fullseye detects and tracks the bean.",
+    "zh": "在同一场景的筷尖相机画面中,Fullseye 检测并追踪豆子。",
+    "tw": "在同一場景的筷尖相機畫面中,Fullseye 偵測並追蹤豆子。",
+    "ko": "같은 장면의 젓가락 끝 카메라 영상에서 Fullseye가 콩을 검출해 추적한다.",
+    "de": "Im Video der Stäbchenspitzen-Kamera derselben Szene erkennt und verfolgt Fullseye die Bohne.",
+    "hi": "उसी scene के chopstick-tip camera में Fullseye bean को detect और track करता है।"
+   },
+   "num": {
+    "ja": "見えている 163 コマすべてで検出(163 / 163)、重心の誤差は真値比で中央値 0.10 px。",
+    "en": "Detected in all 163 visible frames (163 / 163); centroid error median 0.10 px against truth.",
+    "zh": "可见的 163 帧全部检出(163 / 163),重心误差相对真值中位数 0.10 px。",
+    "tw": "可見的 163 影格全部偵測到(163 / 163),重心誤差相對真值中位數 0.10 px。",
+    "ko": "보이는 163 프레임 모두 검출(163 / 163), 중심 오차는 참값 대비 중앙값 0.10 px.",
+    "de": "In allen 163 sichtbaren Frames erkannt (163 / 163); Schwerpunktfehler gegenüber der Wahrheit im Median 0.10 px.",
+    "hi": "दिखने वाले सभी 163 frames में detect (163 / 163); centroid error ground truth से median 0.10 px।"
+   }
   }
- ]
+ ],
+ "series": [
+  {
+   "id": "museum",
+   "thumb": "series_museum.gif",
+   "url": {
+    "ja": "https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6",
+    "en": "https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10"
+   },
+   "label": {
+    "ja": "紙面の計測館",
+    "en": "A Metrology Museum on Paper",
+    "zh": "纸上的测量馆",
+    "tw": "紙上的量測館",
+    "ko": "지면의 계측관",
+    "de": "Ein Messmuseum auf Papier",
+    "hi": "कागज़ पर Metrology Museum"
+   },
+   "desc": {
+    "ja": "真値を自分で仕込んだ PoC の展示館",
+    "en": "Every PoC with its own planted ground truth",
+    "zh": "自己植入真值的 PoC 展馆",
+    "tw": "自行植入真值的 PoC 展館",
+    "ko": "참값을 직접 심은 PoC 전시관",
+    "de": "PoCs mit selbst gesetzter Ground Truth",
+    "hi": "खुद रखे ground truth वाले PoCs"
+   }
+  },
+  {
+   "id": "table_tennis",
+   "thumb": "series_table_tennis.gif",
+   "url": {
+    "ja": "https://qiita.com/furuse-kazufumi/items/b6498dc822bf9eed100f",
+    "en": "https://qiita.com/furuse-kazufumi/items/a82bf9f341cc4f04ca75"
+   },
+   "label": {
+    "ja": "卓球",
+    "en": "Table tennis",
+    "zh": "乒乓球",
+    "tw": "桌球",
+    "ko": "탁구",
+    "de": "Tischtennis",
+    "hi": "Table tennis"
+   },
+   "desc": {
+    "ja": "跳ねと摩擦を映像から測る",
+    "en": "Bounce and friction measured from video",
+    "zh": "从视频测量弹跳与摩擦",
+    "tw": "從影片量測彈跳與摩擦",
+    "ko": "바운드와 마찰을 영상으로 측정",
+    "de": "Absprung und Reibung aus Video",
+    "hi": "video से bounce और friction"
+   }
+  },
+  {
+   "id": "driving",
+   "thumb": "series_driving.gif",
+   "url": {
+    "ja": "https://qiita.com/furuse-kazufumi/items/1f128b8a36df373c11c7",
+    "en": "https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c"
+   },
+   "label": {
+    "ja": "自動運転",
+    "en": "Autonomous driving",
+    "zh": "自动驾驶",
+    "tw": "自動駕駛",
+    "ko": "자율주행",
+    "de": "Autonomes Fahren",
+    "hi": "Autonomous driving"
+   },
+   "desc": {
+    "ja": "定理と第 2 実装で採点する",
+    "en": "Scored by theorems and second implementations",
+    "zh": "用定理与第二实现评分",
+    "tw": "以定理與第二實作評分",
+    "ko": "정리와 두 번째 구현으로 채점",
+    "de": "Bewertet mit Sätzen und Zweitimplementierungen",
+    "hi": "theorems और second implementations से scoring"
+   }
+  },
+  {
+   "id": "connectome",
+   "thumb": "series_connectome.gif",
+   "url": {
+    "ja": "https://qiita.com/furuse-kazufumi/items/331af639c2b9a1493576",
+    "en": "https://qiita.com/furuse-kazufumi/items/638f0b0aa7865e17c67c"
+   },
+   "label": {
+    "ja": "コネクトーム(脳の配線図)",
+    "en": "Connectome (brain wiring)",
+    "zh": "连接组(脑接线图)",
+    "tw": "連接體(腦接線圖)",
+    "ko": "커넥톰(뇌 배선도)",
+    "de": "Konnektom (Gehirnverdrahtung)",
+    "hi": "Connectome (brain wiring)"
+   },
+   "desc": {
+    "ja": "ハエの視覚モデルを体に載せて測る",
+    "en": "A fly visual model on a body, measured",
+    "zh": "把苍蝇视觉模型装到身体上测量",
+    "tw": "把蒼蠅視覺模型裝到身體上量測",
+    "ko": "파리 시각 모델을 몸에 얹어 측정",
+    "de": "Ein Fliegen-Sehmodell im Körper, gemessen",
+    "hi": "मक्खी का visual model शरीर पर, मापा गया"
+   }
+  },
+  {
+   "id": "humanoid",
+   "thumb": "series_humanoid.gif",
+   "url": {
+    "ja": "https://qiita.com/furuse-kazufumi/items/57e2f1e5a09165e58b65",
+    "en": "https://qiita.com/furuse-kazufumi/items/569720dbae0c6471c96e"
+   },
+   "label": {
+    "ja": "ヒューマノイド運動会",
+    "en": "Humanoid sports day",
+    "zh": "人形机器人运动会",
+    "tw": "人形機器人運動會",
+    "ko": "휴머노이드 운동회",
+    "de": "Humanoiden-Sportfest",
+    "hi": "Humanoid sports day"
+   },
+   "desc": {
+    "ja": "画像処理が審判をする自宅の運動会",
+    "en": "A home sports day refereed by image processing",
+    "zh": "由图像处理担任裁判的家庭运动会",
+    "tw": "由影像處理擔任裁判的家庭運動會",
+    "ko": "영상 처리가 심판을 보는 집 운동회",
+    "de": "Ein Sportfest daheim, Schiedsrichter ist die Bildverarbeitung",
+    "hi": "घर का sports day, जिसमें referee image processing है"
+   }
+  }
+ ],
+ "groups": [
+  {
+   "id": "robot_eyes",
+   "name": {
+    "ja": "ロボットの目(Fullseye が知覚を担当)",
+    "en": "Robot eyes (Fullseye does the perceiving)",
+    "zh": "机器人之眼(由 Fullseye 负责感知)",
+    "tw": "機器人之眼(由 Fullseye 負責感知)",
+    "ko": "로봇의 눈(Fullseye가 지각 담당)",
+    "de": "Roboteraugen (Fullseye übernimmt die Wahrnehmung)",
+    "hi": "Robot की आँखें (perception Fullseye करता है)"
+   }
+  },
+  {
+   "id": "wing_industrial",
+   "name": {
+    "ja": "産業検査",
+    "en": "Industrial inspection",
+    "zh": "工业检测",
+    "tw": "工業檢測",
+    "ko": "산업 검사",
+    "de": "Industrielle Prüfung",
+    "hi": "Industrial inspection"
+   }
+  },
+  {
+   "id": "wing_metrology",
+   "name": {
+    "ja": "寸法・形状計測",
+    "en": "Dimensional and shape metrology",
+    "zh": "尺寸与形状测量",
+    "tw": "尺寸與形狀量測",
+    "ko": "치수·형상 계측",
+    "de": "Maß- und Formmessung",
+    "hi": "Dimensional और shape metrology"
+   }
+  },
+  {
+   "id": "wing_threed",
+   "name": {
+    "ja": "3-D 形状",
+    "en": "3-D shape",
+    "zh": "三维形状",
+    "tw": "三維形狀",
+    "ko": "3-D 형상",
+    "de": "3-D-Form",
+    "hi": "3-D shape"
+   }
+  },
+  {
+   "id": "wing_geometry",
+   "name": {
+    "ja": "幾何・校正",
+    "en": "Geometry and calibration",
+    "zh": "几何与标定",
+    "tw": "幾何與校正",
+    "ko": "기하·보정",
+    "de": "Geometrie und Kalibrierung",
+    "hi": "Geometry और calibration"
+   }
+  },
+  {
+   "id": "wing_imaging",
+   "name": {
+    "ja": "撮像品質・復元",
+    "en": "Image quality and restoration",
+    "zh": "成像质量与复原",
+    "tw": "成像品質與復原",
+    "ko": "촬상 품질·복원",
+    "de": "Bildqualität und Restaurierung",
+    "hi": "Image quality और restoration"
+   }
+  },
+  {
+   "id": "wing_color",
+   "name": {
+    "ja": "色・分離",
+    "en": "Colour and separation",
+    "zh": "颜色与分离",
+    "tw": "顏色與分離",
+    "ko": "색·분리",
+    "de": "Farbe und Trennung",
+    "hi": "Colour और separation"
+   }
+  },
+  {
+   "id": "wing_xyt",
+   "name": {
+    "ja": "時系列を 3-D として測る",
+    "en": "Time as 3-D",
+    "zh": "把时间序列当作三维测量",
+    "tw": "把時間序列當作三維量測",
+    "ko": "시계열을 3-D로 측정",
+    "de": "Zeit als 3-D",
+    "hi": "Time को 3-D की तरह"
+   }
+  },
+  {
+   "id": "connectome",
+   "name": {
+    "ja": "コネクトーム・神経",
+    "en": "Connectome and neurons",
+    "zh": "连接组与神经",
+    "tw": "連接體與神經",
+    "ko": "커넥톰·신경",
+    "de": "Konnektom und Neuronen",
+    "hi": "Connectome और neurons"
+   }
+  },
+  {
+   "id": "wing_bio",
+   "name": {
+    "ja": "医用・生物",
+    "en": "Medical and biological",
+    "zh": "医学与生物",
+    "tw": "醫學與生物",
+    "ko": "의료·생물",
+    "de": "Medizin und Biologie",
+    "hi": "Medical और biological"
+   }
+  },
+  {
+   "id": "wing_astroenv",
+   "name": {
+    "ja": "天文・環境",
+    "en": "Astronomy and environment",
+    "zh": "天文与环境",
+    "tw": "天文與環境",
+    "ko": "천문·환경",
+    "de": "Astronomie und Umwelt",
+    "hi": "Astronomy और environment"
+   }
+  },
+  {
+   "id": "wing_forensics",
+   "name": {
+    "ja": "法科学・文書",
+    "en": "Forensics and documents",
+    "zh": "法证与文档",
+    "tw": "鑑識與文件",
+    "ko": "법과학·문서",
+    "de": "Forensik und Dokumente",
+    "hi": "Forensics और documents"
+   }
+  },
+  {
+   "id": "lane_drive",
+   "name": {
+    "ja": "自動運転",
+    "en": "Autonomous driving",
+    "zh": "自动驾驶",
+    "tw": "自動駕駛",
+    "ko": "자율주행",
+    "de": "Autonomes Fahren",
+    "hi": "Autonomous driving"
+   }
+  },
+  {
+   "id": "lane_math",
+   "name": {
+    "ja": "数学の絵",
+    "en": "Mathematical pictures",
+    "zh": "数学图像",
+    "tw": "數學圖像",
+    "ko": "수학 그림",
+    "de": "Mathematische Bilder",
+    "hi": "Mathematical pictures"
+   }
+  }
+ ],
+ "all": [
+  {
+   "id": "evis_stereo_depth",
+   "group": "robot_eyes",
+   "media": "",
+   "media_path": "articles/assets/media/evis_stereo_fullseye.mp4",
+   "thumb_src": null,
+   "thumb_path": "articles/assets/evis_stereo_fullseye_thumb.jpg",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py",
+   "label": {
+    "ja": "ヒューマノイドの両眼",
+    "en": "Humanoid stereo eyes",
+    "zh": "人形机器人双眼",
+    "tw": "人形機器人雙眼",
+    "ko": "휴머노이드 두 눈",
+    "de": "Stereoaugen",
+    "hi": "Humanoid stereo eyes"
+   }
+  },
+  {
+   "id": "evis_bean_track",
+   "group": "robot_eyes",
+   "media": "",
+   "media_path": "articles/assets/media/evis_bean_track_fullseye.mp4",
+   "thumb_src": null,
+   "thumb_path": "articles/assets/evis_bean_track_fullseye_thumb.jpg",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/tools/gen_evis_media.py",
+   "label": {
+    "ja": "箸先カメラの豆追跡",
+    "en": "Chopstick-cam tracking",
+    "zh": "筷尖相机追踪豆子",
+    "tw": "筷尖相機追蹤豆子",
+    "ko": "젓가락 끝 카메라 추적",
+    "de": "Stäbchenkamera-Tracking",
+    "hi": "Chopstick-cam tracking"
+   }
+  },
+  {
+   "id": "evis_walk_rgb_depth_dvs",
+   "group": "robot_eyes",
+   "media": "",
+   "media_path": "view2026/media/evis_fullseye_walk.gif",
+   "thumb_src": null,
+   "thumb_path": "view2026/media/evis_fullseye_walk.gif",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/evis_fullseye_bridge.py",
+   "provenance": "imgevolve: out/evis_fullseye.gif (evis_fullseye_bridge.perceive_evis_walk) をそのまま複製",
+   "label": {
+    "ja": "歩行を RGB・深度・DVS で",
+    "en": "Walk in RGB, depth, DVS",
+    "zh": "以 RGB、深度、DVS 看步行",
+    "tw": "以 RGB、深度、DVS 看步行",
+    "ko": "보행을 RGB·깊이·DVS로",
+    "de": "Gang in RGB, Tiefe, DVS",
+    "hi": "RGB, depth, DVS में walk"
+   }
+  },
+  {
+   "id": "walker2d_terrain_vision",
+   "group": "robot_eyes",
+   "media": "",
+   "media_path": "view2026/media/vision_adaptive_walk.png",
+   "thumb_src": null,
+   "thumb_path": "view2026/media/vision_adaptive_walk.png",
+   "motion": false,
+   "source_url": "",
+   "provenance": "gaitlab: out/vision_adaptive_walk.png (scripts/vision_adaptive_walk.py の出力図) をそのまま複製",
+   "label": {
+    "ja": "段差を見て歩き方を選ぶ",
+    "en": "Seeing steps, choosing gait",
+    "zh": "看台阶选步态",
+    "tw": "看台階選步態",
+    "ko": "단차를 보고 보행 선택",
+    "de": "Stufen sehen, Gang wählen",
+    "hi": "steps देखकर gait चुनना"
+   }
+  },
+  {
+   "id": "poc_barcode_1d",
+   "group": "wing_industrial",
+   "media": "01_misread_split.png",
+   "motion": false,
+   "thumb_src": "01_misread_split_720.jpg",
+   "label": {
+    "ja": "1 次元バーコード",
+    "en": "1-D barcode",
+    "zh": "一维条码",
+    "tw": "一維條碼",
+    "ko": "1차원 바코드",
+    "de": "1-D-Barcode",
+    "hi": "1-D barcode"
+   }
+  },
+  {
+   "id": "poc_battery_electrode_tortuosity",
+   "group": "wing_industrial",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "電極の屈曲度",
+    "en": "Electrode tortuosity",
+    "zh": "电极曲折度",
+    "tw": "電極曲折度",
+    "ko": "전극 굴곡도",
+    "de": "Elektroden-Tortuosität",
+    "hi": "Electrode tortuosity"
+   }
+  },
+  {
+   "id": "poc_bearing_diagnosis",
+   "group": "wing_industrial",
+   "media": "01_envelope_vs_raw.png",
+   "motion": false,
+   "thumb_src": "01_envelope_vs_raw_720.jpg",
+   "label": {
+    "ja": "軸受の異常診断",
+    "en": "Bearing diagnosis",
+    "zh": "轴承故障诊断",
+    "tw": "軸承故障診斷",
+    "ko": "베어링 이상 진단",
+    "de": "Lagerdiagnose",
+    "hi": "Bearing diagnosis"
+   }
+  },
+  {
+   "id": "poc_bump_coplanarity",
+   "group": "wing_industrial",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "バンプ共平面性",
+    "en": "Bump coplanarity",
+    "zh": "凸点共面度",
+    "tw": "凸塊共面度",
+    "ko": "범프 공평면성",
+    "de": "Bump-Koplanarität",
+    "hi": "Bump coplanarity"
+   }
+  },
+  {
+   "id": "poc_crack_width",
+   "group": "wing_industrial",
+   "media": "01_width_sweep.png",
+   "motion": false,
+   "thumb_src": "01_width_sweep_720.jpg",
+   "label": {
+    "ja": "ひび割れ幅",
+    "en": "Crack width",
+    "zh": "裂缝宽度",
+    "tw": "裂縫寬度",
+    "ko": "균열 폭",
+    "de": "Rissbreite",
+    "hi": "Crack width"
+   }
+  },
+  {
+   "id": "poc_fabric_defect",
+   "group": "wing_industrial",
+   "media": "01_auc_by_type.png",
+   "motion": false,
+   "thumb_src": "01_auc_by_type_720.jpg",
+   "label": {
+    "ja": "織物の欠陥",
+    "en": "Fabric defects",
+    "zh": "织物缺陷",
+    "tw": "織物缺陷",
+    "ko": "직물 결함",
+    "de": "Gewebefehler",
+    "hi": "Fabric defects"
+   }
+  },
+  {
+   "id": "poc_leak_localization",
+   "group": "wing_industrial",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "音で漏水探知",
+    "en": "Leak by sound",
+    "zh": "声学漏水定位",
+    "tw": "聲學漏水定位",
+    "ko": "소리로 누수 탐지",
+    "de": "Leckortung",
+    "hi": "Sound से leak"
+   }
+  },
+  {
+   "id": "poc_machine_condition_fusion",
+   "group": "wing_industrial",
+   "media": "01_scene_machine.png",
+   "motion": false,
+   "thumb_src": "01_scene_machine_720.jpg",
+   "label": {
+    "ja": "設備保全の融合",
+    "en": "Machine health",
+    "zh": "设备维护融合",
+    "tw": "設備維護融合",
+    "ko": "설비 보전 융합",
+    "de": "Maschinenzustand",
+    "hi": "Machine health"
+   }
+  },
+  {
+   "id": "poc_matrix_code_reading",
+   "group": "wing_industrial",
+   "media": "01_symbol_and_errors.png",
+   "motion": false,
+   "thumb_src": "01_symbol_and_errors_720.jpg",
+   "label": {
+    "ja": "2 値コードを読む",
+    "en": "Matrix code",
+    "zh": "矩阵码读取",
+    "tw": "矩陣碼讀取",
+    "ko": "매트릭스 코드",
+    "de": "Matrixcode",
+    "hi": "Matrix code"
+   }
+  },
+  {
+   "id": "poc_moire_screen",
+   "group": "wing_industrial",
+   "media": "01_failure_split_plot.png",
+   "motion": false,
+   "thumb_src": "01_failure_split_plot_720.jpg",
+   "label": {
+    "ja": "モアレとムラ",
+    "en": "Display moiré",
+    "zh": "显示屏摩尔纹",
+    "tw": "顯示器摩爾紋",
+    "ko": "디스플레이 모아레",
+    "de": "Display-Moiré",
+    "hi": "Display moiré"
+   }
+  },
+  {
+   "id": "poc_print_registration",
+   "group": "wing_industrial",
+   "media": "01_plates.png",
+   "motion": false,
+   "thumb_src": "01_plates_720.jpg",
+   "label": {
+    "ja": "印刷の版ずれ",
+    "en": "Print registration",
+    "zh": "印刷套准",
+    "tw": "印刷套準",
+    "ko": "인쇄 판 어긋남",
+    "de": "Passerfehler",
+    "hi": "Print registration"
+   }
+  },
+  {
+   "id": "poc_real_defect_floor",
+   "group": "wing_industrial",
+   "media": "02_defect_floor_sweep.gif",
+   "motion": true,
+   "thumb_src": "02_defect_floor_sweep.gif",
+   "label": {
+    "ja": "薄い欠陥の限界",
+    "en": "Faint-defect limit",
+    "zh": "薄缺陷极限",
+    "tw": "薄缺陷極限",
+    "ko": "얇은 결함 한계",
+    "de": "Schwache Defekte",
+    "hi": "Faint defect सीमा"
+   }
+  },
+  {
+   "id": "poc_real_texture_invariance",
+   "group": "wing_industrial",
+   "media": "01_textures.png",
+   "motion": false,
+   "thumb_src": "01_textures_720.jpg",
+   "label": {
+    "ja": "実写テクスチャ回転",
+    "en": "Rotating textures",
+    "zh": "实拍纹理旋转",
+    "tw": "實拍紋理旋轉",
+    "ko": "실사 텍스처 회전",
+    "de": "Texturdrehung",
+    "hi": "Texture rotation"
+   }
+  },
+  {
+   "id": "poc_recycling_sorting",
+   "group": "wing_industrial",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "廃棄物の材質選別",
+    "en": "Waste sorting",
+    "zh": "废弃物分选",
+    "tw": "廢棄物分選",
+    "ko": "폐기물 선별",
+    "de": "Abfallsortierung",
+    "hi": "Waste sorting"
+   }
+  },
+  {
+   "id": "poc_solar_el_inspection",
+   "group": "wing_industrial",
+   "media": "01_zero_point_map.png",
+   "motion": false,
+   "thumb_src": "01_zero_point_map_720.jpg",
+   "label": {
+    "ja": "太陽電池の EL",
+    "en": "Solar EL",
+    "zh": "太阳能 EL",
+    "tw": "太陽能 EL",
+    "ko": "태양전지 EL",
+    "de": "Solar-EL",
+    "hi": "Solar EL"
+   }
+  },
+  {
+   "id": "poc_solder_fillet_aoi",
+   "group": "wing_industrial",
+   "media": "01_ring_lut.png",
+   "motion": false,
+   "thumb_src": "01_ring_lut_720.jpg",
+   "label": {
+    "ja": "はんだの AOI",
+    "en": "Solder AOI",
+    "zh": "焊锡 AOI",
+    "tw": "焊錫 AOI",
+    "ko": "솔더 AOI",
+    "de": "Lötstellen-AOI",
+    "hi": "Solder AOI"
+   }
+  },
+  {
+   "id": "poc_spc",
+   "group": "wing_industrial",
+   "media": "01_spc_xbar_chart.png",
+   "motion": false,
+   "thumb_src": "01_spc_xbar_chart_720.jpg",
+   "label": {
+    "ja": "統計的工程管理",
+    "en": "SPC",
+    "zh": "统计过程控制",
+    "tw": "統計製程管制",
+    "ko": "통계적 공정 관리",
+    "de": "SPC",
+    "hi": "SPC"
+   }
+  },
+  {
+   "id": "poc_mt_hidden_fault",
+   "group": "wing_industrial",
+   "media": "01_mt_hidden_cloud.png",
+   "motion": false,
+   "thumb_src": "01_mt_hidden_cloud_720.jpg",
+   "label": {
+    "ja": "MT 法の異常検知",
+    "en": "MT hidden fault",
+    "zh": "MT 法异常检测",
+    "tw": "MT 法異常偵測",
+    "ko": "MT법 이상 탐지",
+    "de": "MT-Fehlererkennung",
+    "hi": "MT hidden fault"
+   }
+  },
+  {
+   "id": "poc_text_region_truth",
+   "group": "wing_industrial",
+   "media": "01_text_region_scene.png",
+   "motion": false,
+   "thumb_src": "01_text_region_scene_720.jpg",
+   "label": {
+    "ja": "文字領域の検出",
+    "en": "Text regions",
+    "zh": "文字区域检测",
+    "tw": "文字區域偵測",
+    "ko": "문자 영역 검출",
+    "de": "Textbereiche",
+    "hi": "Text regions"
+   }
+  },
+  {
+   "id": "poc_thermal_drift_metrology",
+   "group": "wing_industrial",
+   "media": "01_separate_drifts.png",
+   "motion": false,
+   "thumb_src": "01_separate_drifts_720.jpg",
+   "label": {
+    "ja": "カメラの熱ドリフト",
+    "en": "Thermal drift",
+    "zh": "相机热漂移",
+    "tw": "相機熱漂移",
+    "ko": "카메라 열 드리프트",
+    "de": "Thermische Drift",
+    "hi": "Thermal drift"
+   }
+  },
+  {
+   "id": "poc_thermal_radiometry",
+   "group": "wing_industrial",
+   "media": "01_floor.png",
+   "motion": false,
+   "thumb_src": "01_floor_720.jpg",
+   "label": {
+    "ja": "熱画像と温度",
+    "en": "Thermal radiometry",
+    "zh": "热像与温度",
+    "tw": "熱像與溫度",
+    "ko": "열화상과 온도",
+    "de": "Thermoradiometrie",
+    "hi": "Thermal radiometry"
+   }
+  },
+  {
+   "id": "poc_thermography_ndt",
+   "group": "wing_industrial",
+   "media": "01_depth_table.png",
+   "motion": false,
+   "thumb_src": "01_depth_table_720.jpg",
+   "label": {
+    "ja": "熱画像の欠陥深さ",
+    "en": "Thermography NDT",
+    "zh": "热成像缺陷深度",
+    "tw": "熱影像缺陷深度",
+    "ko": "열화상 결함 깊이",
+    "de": "Thermografie",
+    "hi": "Thermography NDT"
+   }
+  },
+  {
+   "id": "poc_veiling_glare",
+   "group": "wing_industrial",
+   "media": "01_verdict.png",
+   "motion": false,
+   "thumb_src": "01_verdict_720.jpg",
+   "label": {
+    "ja": "迷光とコントラスト",
+    "en": "Veiling glare",
+    "zh": "杂散光",
+    "tw": "雜散光",
+    "ko": "미광",
+    "de": "Streulicht",
+    "hi": "Veiling glare"
+   }
+  },
+  {
+   "id": "poc_emva1288_sensor",
+   "group": "wing_industrial",
+   "media": "01_photon_transfer.mp4",
+   "motion": true,
+   "thumb_src": "01_photon_transfer.gif",
+   "label": {
+    "ja": "EMVA 1288 測定",
+    "en": "EMVA 1288 sensor",
+    "zh": "EMVA 1288 测量",
+    "tw": "EMVA 1288 量測",
+    "ko": "EMVA 1288 측정",
+    "de": "EMVA-1288-Sensor",
+    "hi": "EMVA 1288 sensor"
+   }
+  },
+  {
+   "id": "poc_web_roll_periodicity",
+   "group": "wing_industrial",
+   "media": "01_scene_web.png",
+   "motion": false,
+   "thumb_src": "01_scene_web_720.jpg",
+   "label": {
+    "ja": "搬送ロールの傷",
+    "en": "Roller defects",
+    "zh": "传送辊缺陷",
+    "tw": "傳送輥缺陷",
+    "ko": "반송 롤 결함",
+    "de": "Walzenfehler",
+    "hi": "Roller defects"
+   }
+  },
+  {
+   "id": "poc_weld_bead_profile",
+   "group": "wing_industrial",
+   "media": "01_laser_images.png",
+   "motion": false,
+   "thumb_src": "01_laser_images_720.jpg",
+   "label": {
+    "ja": "溶接ビード断面",
+    "en": "Weld bead profile",
+    "zh": "焊道截面",
+    "tw": "焊道截面",
+    "ko": "용접 비드 단면",
+    "de": "Schweißnahtprofil",
+    "hi": "Weld bead profile"
+   }
+  },
+  {
+   "id": "poc_weld_bead_scan_angle",
+   "group": "wing_industrial",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "溶接ビード走査",
+    "en": "Weld bead scan",
+    "zh": "焊道扫描",
+    "tw": "焊道掃描",
+    "ko": "용접 비드 주사",
+    "de": "Schweißnaht-Scan",
+    "hi": "Weld bead scan"
+   }
+  },
+  {
+   "id": "poc_weld_radiograph_porosity",
+   "group": "wing_industrial",
+   "media": "01_scene_radiograph.png",
+   "motion": false,
+   "thumb_src": "01_scene_radiograph_720.jpg",
+   "label": {
+    "ja": "溶接の気孔",
+    "en": "Weld porosity",
+    "zh": "焊缝气孔",
+    "tw": "焊縫氣孔",
+    "ko": "용접 기공",
+    "de": "Schweißporen",
+    "hi": "Weld porosity"
+   }
+  },
+  {
+   "id": "poc_glyph_typo_detection",
+   "group": "wing_industrial",
+   "media": "01_sign_before_after.png",
+   "motion": false,
+   "thumb_src": "01_sign_before_after_720.jpg",
+   "label": {
+    "ja": "画像の誤字検出",
+    "en": "Glyph typos",
+    "zh": "图像错字检测",
+    "tw": "影像錯字偵測",
+    "ko": "이미지 오자 검출",
+    "de": "Glyphenfehler",
+    "hi": "Glyph typos"
+   }
+  },
+  {
+   "id": "poc_print_layer_inspection",
+   "group": "wing_industrial",
+   "media": "01_slice_stack.png",
+   "motion": false,
+   "thumb_src": "01_slice_stack_720.jpg",
+   "label": {
+    "ja": "3D プリント層検査",
+    "en": "Print layers",
+    "zh": "3D 打印层检测",
+    "tw": "3D 列印層檢測",
+    "ko": "3D 프린트 층 검사",
+    "de": "Druckschichten",
+    "hi": "Print layers"
+   }
+  },
+  {
+   "id": "poc_agv_fleet",
+   "group": "wing_industrial",
+   "media": "01_agv_naive_vs_adg.mp4",
+   "motion": true,
+   "thumb_src": "01_agv_naive_vs_adg.gif",
+   "label": {
+    "ja": "AGV の倉庫",
+    "en": "AGV fleet",
+    "zh": "AGV 仓库",
+    "tw": "AGV 倉庫",
+    "ko": "AGV 창고",
+    "de": "AGV-Flotte",
+    "hi": "AGV fleet"
+   }
+  },
+  {
+   "id": "poc_am_thermal_to_ct",
+   "group": "wing_industrial",
+   "media": "01_melt_pool_frames.mp4",
+   "motion": true,
+   "thumb_src": "01_melt_pool_frames.gif",
+   "label": {
+    "ja": "積層造形と CT",
+    "en": "AM thermal to CT",
+    "zh": "增材制造与 CT",
+    "tw": "積層製造與 CT",
+    "ko": "적층 제조와 CT",
+    "de": "AM-Thermo zu CT",
+    "hi": "AM thermal से CT"
+   }
+  },
+  {
+   "id": "poc_aoi_ct_traceability",
+   "group": "wing_metrology",
+   "media": "01_aoi_and_ct.png",
+   "motion": false,
+   "thumb_src": "01_aoi_and_ct_720.jpg",
+   "label": {
+    "ja": "AOI と CT の対応",
+    "en": "AOI-to-CT matching",
+    "zh": "AOI 与 CT 对应",
+    "tw": "AOI 與 CT 對應",
+    "ko": "AOI·CT 대응",
+    "de": "AOI-CT-Zuordnung",
+    "hi": "AOI-CT matching"
+   }
+  },
+  {
+   "id": "poc_asbuilt_wall_deviation",
+   "group": "wing_metrology",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "竣工した壁の歪み",
+    "en": "As-built walls",
+    "zh": "竣工墙面偏差",
+    "tw": "竣工牆面偏差",
+    "ko": "준공 벽면 편차",
+    "de": "Ist-Wände",
+    "hi": "As-built दीवारें"
+   }
+  },
+  {
+   "id": "poc_battery_electrode_breathing",
+   "group": "wing_metrology",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "電極の呼吸",
+    "en": "Electrode breathing",
+    "zh": "电极呼吸",
+    "tw": "電極呼吸",
+    "ko": "전극 호흡",
+    "de": "Elektrodenatmung",
+    "hi": "Electrode breathing"
+   }
+  },
+  {
+   "id": "poc_bilateral_asymmetry",
+   "group": "wing_metrology",
+   "media": "01_floor_vs_spacing.png",
+   "motion": false,
+   "thumb_src": "01_floor_vs_spacing_720.jpg",
+   "label": {
+    "ja": "左右非対称性",
+    "en": "Bilateral asymmetry",
+    "zh": "左右不对称",
+    "tw": "左右不對稱",
+    "ko": "좌우 비대칭",
+    "de": "Seitenasymmetrie",
+    "hi": "Bilateral asymmetry"
+   }
+  },
+  {
+   "id": "poc_dic_strain",
+   "group": "wing_metrology",
+   "media": "05_tensile_ramp.mp4",
+   "motion": true,
+   "thumb_src": "05_tensile_ramp.gif",
+   "label": {
+    "ja": "DIC ひずみ",
+    "en": "DIC strain",
+    "zh": "DIC 应变",
+    "tw": "DIC 應變",
+    "ko": "DIC 변형률",
+    "de": "DIC-Dehnung",
+    "hi": "DIC strain"
+   }
+  },
+  {
+   "id": "poc_die_tilt_tsv_overlay",
+   "group": "wing_metrology",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "ダイ傾きと TSV",
+    "en": "Die tilt and TSV",
+    "zh": "芯片倾斜与 TSV",
+    "tw": "晶粒傾斜與 TSV",
+    "ko": "다이 기울기·TSV",
+    "de": "Die-Kippung und TSV",
+    "hi": "Die tilt और TSV"
+   }
+  },
+  {
+   "id": "poc_dimensional_inspection",
+   "group": "wing_metrology",
+   "media": "01_slot_bias.png",
+   "motion": false,
+   "thumb_src": "01_slot_bias_720.jpg",
+   "label": {
+    "ja": "部品の寸法検査",
+    "en": "Dimensional check",
+    "zh": "零件尺寸检测",
+    "tw": "零件尺寸檢測",
+    "ko": "부품 치수 검사",
+    "de": "Maßprüfung",
+    "hi": "Dimensional check"
+   }
+  },
+  {
+   "id": "poc_fiber_orientation",
+   "group": "wing_metrology",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "繊維の配向",
+    "en": "Fibre orientation",
+    "zh": "纤维取向",
+    "tw": "纖維取向",
+    "ko": "섬유 배향",
+    "de": "Faserorientierung",
+    "hi": "Fibre orientation"
+   }
+  },
+  {
+   "id": "poc_gear_tooth_metrology",
+   "group": "wing_metrology",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "歯車の歯形",
+    "en": "Gear teeth",
+    "zh": "齿轮齿形",
+    "tw": "齒輪齒形",
+    "ko": "기어 치형",
+    "de": "Zahnradmessung",
+    "hi": "Gear teeth"
+   }
+  },
+  {
+   "id": "poc_interferometry_step",
+   "group": "wing_metrology",
+   "media": "05_step_sweep.mp4",
+   "motion": true,
+   "thumb_src": "05_step_sweep.gif",
+   "label": {
+    "ja": "白色干渉の段差",
+    "en": "White-light steps",
+    "zh": "白光干涉台阶",
+    "tw": "白光干涉段差",
+    "ko": "백색광 간섭 단차",
+    "de": "Weißlicht-Stufen",
+    "hi": "White-light step"
+   }
+  },
+  {
+   "id": "poc_metal_grain_size",
+   "group": "wing_metrology",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "結晶粒度",
+    "en": "Grain size",
+    "zh": "晶粒度",
+    "tw": "晶粒度",
+    "ko": "결정 입도",
+    "de": "Korngröße",
+    "hi": "Grain size"
+   }
+  },
+  {
+   "id": "poc_multibeam_bathymetry",
+   "group": "wing_metrology",
+   "media": "17_survey.mp4",
+   "motion": true,
+   "thumb_src": "17_survey.gif",
+   "label": {
+    "ja": "多ビーム測深",
+    "en": "Multibeam sonar",
+    "zh": "多波束测深",
+    "tw": "多波束測深",
+    "ko": "다중빔 측심",
+    "de": "Fächerecholot",
+    "hi": "Multibeam sonar"
+   }
+  },
+  {
+   "id": "poc_particle_sizing",
+   "group": "wing_metrology",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "粒度分布",
+    "en": "Particle sizing",
+    "zh": "粒度分布",
+    "tw": "粒度分布",
+    "ko": "입도 분포",
+    "de": "Partikelgrößen",
+    "hi": "Particle sizing"
+   }
+  },
+  {
+   "id": "poc_photoelasticity",
+   "group": "wing_metrology",
+   "media": "03_load_and_isoclinics.mp4",
+   "motion": true,
+   "thumb_src": "03_load_and_isoclinics.gif",
+   "label": {
+    "ja": "光弾性の応力",
+    "en": "Photoelasticity",
+    "zh": "光弹性应力",
+    "tw": "光彈應力",
+    "ko": "광탄성 응력",
+    "de": "Spannungsoptik",
+    "hi": "Photoelasticity"
+   }
+  },
+  {
+   "id": "poc_rail_corrugation",
+   "group": "wing_metrology",
+   "media": "01_planted_components.png",
+   "motion": false,
+   "thumb_src": "01_planted_components_720.jpg",
+   "label": {
+    "ja": "レールの波状摩耗",
+    "en": "Rail corrugation",
+    "zh": "钢轨波磨",
+    "tw": "鋼軌波磨",
+    "ko": "레일 파상 마모",
+    "de": "Schienenriffel",
+    "hi": "Rail corrugation"
+   }
+  },
+  {
+   "id": "poc_real_coin_metrology",
+   "group": "wing_metrology",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "実写のコイン",
+    "en": "Real coins",
+    "zh": "实拍硬币",
+    "tw": "實拍硬幣",
+    "ko": "실사 동전",
+    "de": "Echte Münzen",
+    "hi": "Real coins"
+   }
+  },
+  {
+   "id": "poc_screw_thread_metrology",
+   "group": "wing_metrology",
+   "media": "01_zero_spectrum.png",
+   "motion": false,
+   "thumb_src": "01_zero_spectrum_720.jpg",
+   "label": {
+    "ja": "ねじの輪郭",
+    "en": "Screw threads",
+    "zh": "螺纹轮廓",
+    "tw": "螺紋輪廓",
+    "ko": "나사 윤곽",
+    "de": "Gewindemessung",
+    "hi": "Screw threads"
+   }
+  },
+  {
+   "id": "poc_stockpile_volume",
+   "group": "wing_metrology",
+   "media": "07_scan_orbit.mp4",
+   "motion": true,
+   "thumb_src": "07_scan_orbit.gif",
+   "label": {
+    "ja": "堆積物の体積",
+    "en": "Stockpile volume",
+    "zh": "料堆体积",
+    "tw": "料堆體積",
+    "ko": "적치물 부피",
+    "de": "Haldenvolumen",
+    "hi": "Stockpile आयतन"
+   }
+  },
+  {
+   "id": "poc_strain_history",
+   "group": "wing_metrology",
+   "media": "05_history_video.mp4",
+   "motion": true,
+   "thumb_src": "05_history_video.gif",
+   "label": {
+    "ja": "クリープひずみ",
+    "en": "Creep strain",
+    "zh": "蠕变应变",
+    "tw": "潛變應變",
+    "ko": "크리프 변형률",
+    "de": "Kriechdehnung",
+    "hi": "Creep strain"
+   }
+  },
+  {
+   "id": "poc_surface_roughness",
+   "group": "wing_metrology",
+   "media": "01_surface_components.png",
+   "motion": false,
+   "thumb_src": "01_surface_components_720.jpg",
+   "label": {
+    "ja": "表面粗さ",
+    "en": "Surface roughness",
+    "zh": "表面粗糙度",
+    "tw": "表面粗糙度",
+    "ko": "표면 거칠기",
+    "de": "Oberflächenrauheit",
+    "hi": "Surface roughness"
+   }
+  },
+  {
+   "id": "poc_tacsim_elastic_membrane",
+   "group": "wing_metrology",
+   "media": "03_tacsim_force_sweep.gif",
+   "motion": true,
+   "thumb_src": "03_tacsim_force_sweep.gif",
+   "label": {
+    "ja": "視触覚センサ",
+    "en": "Tactile sensor",
+    "zh": "视触觉传感器",
+    "tw": "視觸覺感測器",
+    "ko": "시각 촉각 센서",
+    "de": "Taktiler Sensor",
+    "hi": "Tactile sensor"
+   }
+  },
+  {
+   "id": "poc_tacsim_marker_shear",
+   "group": "wing_metrology",
+   "media": "02_tacslip_stick_circle_shrinks.gif",
+   "motion": true,
+   "thumb_src": "02_tacslip_stick_circle_shrinks.gif",
+   "label": {
+    "ja": "触覚のせん断",
+    "en": "Tactile shear",
+    "zh": "触觉剪切",
+    "tw": "觸覺剪切",
+    "ko": "촉각 전단",
+    "de": "Taktile Scherung",
+    "hi": "Tactile shear"
+   }
+  },
+  {
+   "id": "poc_tactile_dipole_torque",
+   "group": "wing_metrology",
+   "media": "02_tactorque_dipole_grows_with_M.gif",
+   "motion": true,
+   "thumb_src": "02_tactorque_dipole_grows_with_M.gif",
+   "label": {
+    "ja": "触覚双極子",
+    "en": "Tactile dipole",
+    "zh": "触觉偶极子",
+    "tw": "觸覺偶極子",
+    "ko": "촉각 쌍극자",
+    "de": "Taktiler Dipol",
+    "hi": "Tactile dipole"
+   }
+  },
+  {
+   "id": "poc_granular_heap_repose",
+   "group": "wing_metrology",
+   "media": "11_granular_datum_tilt_sweep.gif",
+   "motion": true,
+   "thumb_src": "11_granular_datum_tilt_sweep.gif",
+   "label": {
+    "ja": "粉体の山",
+    "en": "Powder heap",
+    "zh": "粉体堆",
+    "tw": "粉體堆",
+    "ko": "분체 더미",
+    "de": "Schüttgutkegel",
+    "hi": "Powder heap"
+   }
+  },
+  {
+   "id": "poc_food_cutting_measure",
+   "group": "wing_metrology",
+   "media": "01_cutting_track_force.gif",
+   "motion": true,
+   "thumb_src": "01_cutting_track_force.gif",
+   "label": {
+    "ja": "食材の切断",
+    "en": "Food cutting",
+    "zh": "食材切割",
+    "tw": "食材切割",
+    "ko": "식재료 절단",
+    "de": "Lebensmittel schneiden",
+    "hi": "Food cutting"
+   }
+  },
+  {
+   "id": "poc_tacdome_large_deformation",
+   "group": "wing_metrology",
+   "media": "01_tacdome_press_sweep.gif",
+   "motion": true,
+   "thumb_src": "01_tacdome_press_sweep.gif",
+   "label": {
+    "ja": "ドーム指先の接触",
+    "en": "Soft dome contact",
+    "zh": "穹顶指尖接触",
+    "tw": "穹頂指尖接觸",
+    "ko": "돔 손끝 접촉",
+    "de": "Weiche Kuppel",
+    "hi": "Soft dome contact"
+   }
+  },
+  {
+   "id": "poc_polish_wipe_measure",
+   "group": "wing_metrology",
+   "media": "01_polish_raster_wipe_coat.gif",
+   "motion": true,
+   "thumb_src": "01_polish_raster_wipe_coat.gif",
+   "label": {
+    "ja": "研磨と拭き取り",
+    "en": "Polish and wipe",
+    "zh": "研磨与擦拭",
+    "tw": "研磨與擦拭",
+    "ko": "연마와 닦기",
+    "de": "Polieren, Wischen",
+    "hi": "Polish और wipe"
+   }
+  },
+  {
+   "id": "poc_powder_scoop_pour",
+   "group": "wing_metrology",
+   "media": "03_scoop_stream_synthetic_frames.gif",
+   "motion": true,
+   "thumb_src": "03_scoop_stream_synthetic_frames.gif",
+   "label": {
+    "ja": "粉体のすくい注ぎ",
+    "en": "Powder scoop/pour",
+    "zh": "粉体舀取与倾倒",
+    "tw": "粉體舀取與傾倒",
+    "ko": "분체 뜨기·붓기",
+    "de": "Pulver schöpfen",
+    "hi": "Powder scoop/pour"
+   }
+  },
+  {
+   "id": "poc_powder_grinding_ae",
+   "group": "wing_metrology",
+   "media": "07_psd_fining_during_grinding.gif",
+   "motion": true,
+   "thumb_src": "07_psd_fining_during_grinding.gif",
+   "label": {
+    "ja": "乳鉢の粉砕",
+    "en": "Mortar grinding",
+    "zh": "研钵粉碎",
+    "tw": "研缽粉碎",
+    "ko": "막자사발 분쇄",
+    "de": "Mörsermahlen",
+    "hi": "Mortar grinding"
+   }
+  },
+  {
+   "id": "poc_pxrd_phase_peel",
+   "group": "wing_metrology",
+   "media": "01_phase_peel.gif",
+   "motion": true,
+   "thumb_src": "01_phase_peel.gif",
+   "label": {
+    "ja": "X 線回折の相分離",
+    "en": "PXRD phases",
+    "zh": "X 射线衍射分相",
+    "tw": "X 光繞射分相",
+    "ko": "X선 회절 상 분리",
+    "de": "PXRD-Phasen",
+    "hi": "PXRD phases"
+   }
+  },
+  {
+   "id": "poc_dose_uniformity_from_grinding",
+   "group": "wing_metrology",
+   "media": "01_cv_bias_decomposition.png",
+   "motion": false,
+   "thumb_src": "01_cv_bias_decomposition_720.jpg",
+   "label": {
+    "ja": "薬の量の均一性",
+    "en": "Dose uniformity",
+    "zh": "药量均匀性",
+    "tw": "藥量均勻性",
+    "ko": "약 용량 균일성",
+    "de": "Dosisgleichförmigkeit",
+    "hi": "Dose uniformity"
+   }
+  },
+  {
+   "id": "poc_knife_tactile_toughness",
+   "group": "wing_metrology",
+   "media": "06_cut_with_fingertip_pads.gif",
+   "motion": true,
+   "thumb_src": "06_cut_with_fingertip_pads.gif",
+   "label": {
+    "ja": "指先で包丁を持つ",
+    "en": "Tactile knife",
+    "zh": "指尖握刀",
+    "tw": "指尖握刀",
+    "ko": "손끝으로 칼 잡기",
+    "de": "Taktiles Messer",
+    "hi": "Tactile knife"
+   }
+  },
+  {
+   "id": "poc_measurement_system_analysis",
+   "group": "wing_metrology",
+   "media": "16_breakdown_movie.gif",
+   "motion": true,
+   "thumb_src": "16_breakdown_movie.gif",
+   "label": {
+    "ja": "ゲージ R&R",
+    "en": "Gauge R&R",
+    "zh": "量具 R&R",
+    "tw": "量具 R&R",
+    "ko": "게이지 R&R",
+    "de": "Gage R&R",
+    "hi": "Gauge R&R"
+   }
+  },
+  {
+   "id": "poc_zernike_aberrations",
+   "group": "wing_metrology",
+   "media": "06_through_focus.gif",
+   "motion": true,
+   "thumb_src": "06_through_focus.gif",
+   "label": {
+    "ja": "ゼルニケ収差",
+    "en": "Zernike aberrations",
+    "zh": "泽尼克像差",
+    "tw": "澤尼克像差",
+    "ko": "제르니케 수차",
+    "de": "Zernike-Aberrationen",
+    "hi": "Zernike aberrations"
+   }
+  },
+  {
+   "id": "poc_attention_identities",
+   "group": "wing_metrology",
+   "media": "01_attention_masks.png",
+   "motion": false,
+   "thumb_src": "01_attention_masks_720.jpg",
+   "label": {
+    "ja": "注意機構の恒等式",
+    "en": "Attention identities",
+    "zh": "注意力恒等式",
+    "tw": "注意力恆等式",
+    "ko": "어텐션 항등식",
+    "de": "Attention-Identitäten",
+    "hi": "Attention identities"
+   }
+  },
+  {
+   "id": "poc_residue_crt",
+   "group": "wing_metrology",
+   "media": "03_residue_rotation_needle.gif",
+   "motion": true,
+   "thumb_src": "03_residue_rotation_needle.gif",
+   "label": {
+    "ja": "剰余定理で位相",
+    "en": "Phase CRT",
+    "zh": "中国剩余定理相位",
+    "tw": "中國剩餘定理相位",
+    "ko": "잉여 정리 위상",
+    "de": "Phasen-CRT",
+    "hi": "Phase CRT"
+   }
+  },
+  {
+   "id": "poc_battery_ct_degradation",
+   "group": "wing_threed",
+   "media": "01_xray_projection.png",
+   "motion": false,
+   "thumb_src": "01_xray_projection_720.jpg",
+   "label": {
+    "ja": "電池の CT 劣化",
+    "en": "Battery CT ageing",
+    "zh": "电池 CT 劣化",
+    "tw": "電池 CT 劣化",
+    "ko": "배터리 CT 열화",
+    "de": "Batterie-CT",
+    "hi": "Battery CT"
+   }
+  },
+  {
+   "id": "poc_bev_sensor_fusion",
+   "group": "wing_threed",
+   "media": "01_scene_bev.png",
+   "motion": false,
+   "thumb_src": "01_scene_bev_720.jpg",
+   "label": {
+    "ja": "鳥瞰図の融合",
+    "en": "BEV sensor fusion",
+    "zh": "鸟瞰图融合",
+    "tw": "鳥瞰圖融合",
+    "ko": "BEV 센서 융합",
+    "de": "BEV-Sensorfusion",
+    "hi": "BEV sensor fusion"
+   }
+  },
+  {
+   "id": "poc_cad_scan_deviation",
+   "group": "wing_threed",
+   "media": "14_align_orbit.mp4",
+   "motion": true,
+   "thumb_src": "14_align_orbit.gif",
+   "label": {
+    "ja": "CAD と点群の差",
+    "en": "CAD-to-scan",
+    "zh": "CAD 与点云偏差",
+    "tw": "CAD 與點雲偏差",
+    "ko": "CAD·스캔 편차",
+    "de": "CAD-Scan-Abweichung",
+    "hi": "CAD-to-scan"
+   }
+  },
+  {
+   "id": "poc_crop_phenotyping",
+   "group": "wing_threed",
+   "media": "01_capsule_calibration.png",
+   "motion": false,
+   "thumb_src": "01_capsule_calibration_720.jpg",
+   "label": {
+    "ja": "作物の葉面積",
+    "en": "Crop leaf area",
+    "zh": "作物叶面积",
+    "tw": "作物葉面積",
+    "ko": "작물 잎 면적",
+    "de": "Blattfläche",
+    "hi": "Crop leaf area"
+   }
+  },
+  {
+   "id": "poc_ct_void_morphology",
+   "group": "wing_threed",
+   "media": "13_section_sweep.mp4",
+   "motion": true,
+   "thumb_src": "13_section_sweep.gif",
+   "label": {
+    "ja": "接合層のボイド",
+    "en": "Joint voids (CT)",
+    "zh": "接合层空洞",
+    "tw": "接合層孔洞",
+    "ko": "접합층 보이드",
+    "de": "Poren in Fügeschicht",
+    "hi": "Joint voids (CT)"
+   }
+  },
+  {
+   "id": "poc_dfm_thickness_overhang",
+   "group": "wing_threed",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "造形しやすさ",
+    "en": "Manufacturability",
+    "zh": "可制造性",
+    "tw": "可製造性",
+    "ko": "제조 용이성",
+    "de": "Fertigbarkeit",
+    "hi": "Manufacturability"
+   }
+  },
+  {
+   "id": "poc_lidar_terrain_change",
+   "group": "wing_threed",
+   "media": "12_flight.gif",
+   "motion": true,
+   "thumb_src": "12_flight.gif",
+   "label": {
+    "ja": "斜面の土量",
+    "en": "Slope earthwork",
+    "zh": "斜坡土方量",
+    "tw": "斜坡土方量",
+    "ko": "경사면 토량",
+    "de": "Böschungsvolumen",
+    "hi": "Slope earthwork"
+   }
+  },
+  {
+   "id": "poc_livestock_body_volume",
+   "group": "wing_threed",
+   "media": "14_hull_orbit.mp4",
+   "motion": true,
+   "thumb_src": "14_hull_orbit.gif",
+   "label": {
+    "ja": "家畜の体重",
+    "en": "Livestock weight",
+    "zh": "牲畜体重",
+    "tw": "牲畜體重",
+    "ko": "가축 체중",
+    "de": "Tiergewicht",
+    "hi": "Livestock weight"
+   }
+  },
+  {
+   "id": "poc_mesh_quality_repair",
+   "group": "wing_threed",
+   "media": "14_decimate_orbit.mp4",
+   "motion": true,
+   "thumb_src": "14_decimate_orbit.gif",
+   "label": {
+    "ja": "メッシュ修復",
+    "en": "Mesh repair",
+    "zh": "网格修复",
+    "tw": "網格修復",
+    "ko": "메시 복구",
+    "de": "Netzreparatur",
+    "hi": "Mesh repair"
+   }
+  },
+  {
+   "id": "poc_pallet_load_utilization",
+   "group": "wing_threed",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "パレット積載率",
+    "en": "Pallet load",
+    "zh": "托盘装载率",
+    "tw": "棧板裝載率",
+    "ko": "팔레트 적재율",
+    "de": "Palettenauslastung",
+    "hi": "Pallet load"
+   }
+  },
+  {
+   "id": "poc_pipe_wall_loss",
+   "group": "wing_threed",
+   "media": "01_scene_pipe.png",
+   "motion": false,
+   "thumb_src": "01_scene_pipe_720.jpg",
+   "label": {
+    "ja": "配管の減肉",
+    "en": "Pipe wall loss",
+    "zh": "管道减薄",
+    "tw": "管道減薄",
+    "ko": "배관 감육",
+    "de": "Rohrwandverlust",
+    "hi": "Pipe wall loss"
+   }
+  },
+  {
+   "id": "poc_print_warpage_risk",
+   "group": "wing_threed",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "積層の反り",
+    "en": "Print warpage",
+    "zh": "层叠翘曲",
+    "tw": "層疊翹曲",
+    "ko": "적층 휨",
+    "de": "Druckverzug",
+    "hi": "Print warpage"
+   }
+  },
+  {
+   "id": "poc_safety_clearance",
+   "group": "wing_threed",
+   "media": "01_conditions.png",
+   "motion": false,
+   "thumb_src": "01_conditions_720.jpg",
+   "label": {
+    "ja": "人と機械の距離",
+    "en": "Human-machine gap",
+    "zh": "人机安全距离",
+    "tw": "人機安全距離",
+    "ko": "사람·기계 거리",
+    "de": "Sicherheitsabstand",
+    "hi": "Human-machine दूरी"
+   }
+  },
+  {
+   "id": "poc_scan_to_bim_asbuilt",
+   "group": "wing_threed",
+   "media": "01_scene_plan_section.png",
+   "motion": false,
+   "thumb_src": "01_scene_plan_section_720.jpg",
+   "label": {
+    "ja": "設計と実物の差",
+    "en": "Scan-to-BIM",
+    "zh": "设计与实物偏差",
+    "tw": "設計與實物偏差",
+    "ko": "설계·실물 차이",
+    "de": "Scan-to-BIM",
+    "hi": "Scan-to-BIM"
+   }
+  },
+  {
+   "id": "poc_structure_4d_deterioration",
+   "group": "wing_threed",
+   "media": "12_years_video.mp4",
+   "motion": true,
+   "thumb_src": "12_years_video.gif",
+   "label": {
+    "ja": "構造物の経年",
+    "en": "Yearly re-survey",
+    "zh": "结构年度复测",
+    "tw": "結構年度複測",
+    "ko": "구조물 경년 측정",
+    "de": "Jährliche Bauwerksmessung",
+    "hi": "Yearly re-survey"
+   }
+  },
+  {
+   "id": "poc_symmetry_restoration",
+   "group": "wing_threed",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "対称性で補う",
+    "en": "Symmetry repair",
+    "zh": "对称性补全",
+    "tw": "對稱性補全",
+    "ko": "대칭으로 보완",
+    "de": "Symmetrie-Ergänzung",
+    "hi": "Symmetry repair"
+   }
+  },
+  {
+   "id": "poc_endless_zoom_and_turning_solids",
+   "group": "wing_threed",
+   "media": "03_zoom_loop.gif",
+   "motion": true,
+   "thumb_src": "03_zoom_loop.gif",
+   "label": {
+    "ja": "無限ズーム",
+    "en": "Endless zoom",
+    "zh": "无限缩放",
+    "tw": "無限縮放",
+    "ko": "무한 줌",
+    "de": "Endloser Zoom",
+    "hi": "Endless zoom"
+   }
+  },
+  {
+   "id": "poc_four_dimensions_by_three_d_tools",
+   "group": "wing_threed",
+   "media": "03_hopf_turn.gif",
+   "motion": true,
+   "thumb_src": "03_hopf_turn.gif",
+   "label": {
+    "ja": "4 次元を 3-D で",
+    "en": "4-D with 3-D tools",
+    "zh": "用三维工具测四维",
+    "tw": "以三維工具量四維",
+    "ko": "3-D로 4차원",
+    "de": "4-D mit 3-D-Werkzeugen",
+    "hi": "3-D tools से 4-D"
+   }
+  },
+  {
+   "id": "poc_camera_calibration",
+   "group": "wing_geometry",
+   "media": "05_calibration_convergence.mp4",
+   "motion": true,
+   "thumb_src": "05_calibration_convergence.gif",
+   "label": {
+    "ja": "カメラ校正",
+    "en": "Camera calibration",
+    "zh": "相机标定",
+    "tw": "相機校正",
+    "ko": "카메라 보정",
+    "de": "Kamerakalibrierung",
+    "hi": "Camera calibration"
+   }
+  },
+  {
+   "id": "poc_panorama_drift",
+   "group": "wing_geometry",
+   "media": "05_chain_drift_video.mp4",
+   "motion": true,
+   "thumb_src": "05_chain_drift_video.gif",
+   "label": {
+    "ja": "パノラマのずれ",
+    "en": "Panorama drift",
+    "zh": "全景漂移",
+    "tw": "全景漂移",
+    "ko": "파노라마 드리프트",
+    "de": "Panoramadrift",
+    "hi": "Panorama drift"
+   }
+  },
+  {
+   "id": "poc_real_stereo_depth",
+   "group": "wing_geometry",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "実写のステレオ",
+    "en": "Real stereo",
+    "zh": "实拍立体视觉",
+    "tw": "實拍立體視覺",
+    "ko": "실사 스테레오",
+    "de": "Echte Stereo",
+    "hi": "Real stereo"
+   }
+  },
+  {
+   "id": "poc_registration_basin",
+   "group": "wing_geometry",
+   "media": "05_icp_basin_iterations.mp4",
+   "motion": true,
+   "thumb_src": "05_icp_basin_iterations.gif",
+   "label": {
+    "ja": "点群位置合わせ",
+    "en": "Point-cloud ICP",
+    "zh": "点云配准",
+    "tw": "點雲對位",
+    "ko": "점군 정합",
+    "de": "Punktwolken-ICP",
+    "hi": "Point cloud ICP"
+   }
+  },
+  {
+   "id": "poc_rotation_invariance_audit",
+   "group": "wing_geometry",
+   "media": "02_rotating_coin.gif",
+   "motion": true,
+   "thumb_src": "02_rotating_coin.gif",
+   "label": {
+    "ja": "回転不変の監査",
+    "en": "Rotation audit",
+    "zh": "旋转不变审查",
+    "tw": "旋轉不變稽核",
+    "ko": "회전 불변 감사",
+    "de": "Rotationsprüfung",
+    "hi": "Rotation audit"
+   }
+  },
+  {
+   "id": "poc_carla_bridge",
+   "group": "wing_geometry",
+   "media": "01_carla_two_worlds.png",
+   "motion": false,
+   "thumb_src": "01_carla_two_worlds_720.jpg",
+   "label": {
+    "ja": "2 つの世界で撮る",
+    "en": "Two worlds (CARLA)",
+    "zh": "两个世界拍摄",
+    "tw": "兩個世界拍攝",
+    "ko": "두 세계 촬영",
+    "de": "Zwei Welten (CARLA)",
+    "hi": "Two worlds (CARLA)"
+   }
+  },
+  {
+   "id": "poc_driving_town",
+   "group": "wing_geometry",
+   "media": "04_town_drive_through.gif",
+   "motion": true,
+   "thumb_src": "04_town_drive_through.gif",
+   "label": {
+    "ja": "町を組む",
+    "en": "Assembling a town",
+    "zh": "组装城镇",
+    "tw": "組裝城鎮",
+    "ko": "마을 조립",
+    "de": "Eine Stadt bauen",
+    "hi": "Town assembly"
+   }
+  },
+  {
+   "id": "poc_driving_japan_town",
+   "group": "wing_geometry",
+   "media": "03_japan_town_drive.gif",
+   "motion": true,
+   "thumb_src": "03_japan_town_drive.gif",
+   "label": {
+    "ja": "実在の日本の町",
+    "en": "A real Japanese town",
+    "zh": "真实日本城镇",
+    "tw": "真實日本城鎮",
+    "ko": "실제 일본 마을",
+    "de": "Echte japanische Stadt",
+    "hi": "Real Japanese town"
+   }
+  },
+  {
+   "id": "poc_driving_commonroad",
+   "group": "wing_geometry",
+   "media": "01_commonroad_scene.png",
+   "motion": false,
+   "thumb_src": "01_commonroad_scene_720.jpg",
+   "label": {
+    "ja": "CommonRoad で採点",
+    "en": "CommonRoad scoring",
+    "zh": "CommonRoad 评分",
+    "tw": "CommonRoad 評分",
+    "ko": "CommonRoad 채점",
+    "de": "CommonRoad-Bewertung",
+    "hi": "CommonRoad scoring"
+   }
+  },
+  {
+   "id": "poc_pegsim_insertion",
+   "group": "wing_geometry",
+   "media": "04_pegsim_insert_corrected.gif",
+   "motion": true,
+   "thumb_src": "04_pegsim_insert_corrected.gif",
+   "label": {
+    "ja": "ペグ挿入",
+    "en": "Peg-in-hole",
+    "zh": "轴孔装配",
+    "tw": "插銷入孔",
+    "ko": "펙 삽입",
+    "de": "Peg-in-Hole",
+    "hi": "Peg-in-hole"
+   }
+  },
+  {
+   "id": "poc_air_hockey_intercept",
+   "group": "wing_geometry",
+   "media": "02_airhockey_prediction_cone_narrows.gif",
+   "motion": true,
+   "thumb_src": "02_airhockey_prediction_cone_narrows.gif",
+   "label": {
+    "ja": "エアホッケー",
+    "en": "Air hockey",
+    "zh": "空气曲棍球",
+    "tw": "空氣曲棍球",
+    "ko": "에어하키",
+    "de": "Airhockey",
+    "hi": "Air hockey"
+   }
+  },
+  {
+   "id": "poc_peg_failure_recovery",
+   "group": "wing_geometry",
+   "media": "05_pegfail_wrist_camera_wedging_detect_recover.gif",
+   "motion": true,
+   "thumb_src": "05_pegfail_wrist_camera_wedging_detect_recover.gif",
+   "label": {
+    "ja": "挿入失敗の回復",
+    "en": "Peg failure recovery",
+    "zh": "插入失败恢复",
+    "tw": "插入失敗恢復",
+    "ko": "삽입 실패 복구",
+    "de": "Fehler-Recovery",
+    "hi": "Peg failure recovery"
+   }
+  },
+  {
+   "id": "poc_tacscalib_sphere_lut",
+   "group": "wing_geometry",
+   "media": "02_tacscalib_synthetic_relight.gif",
+   "motion": true,
+   "thumb_src": "02_tacscalib_synthetic_relight.gif",
+   "label": {
+    "ja": "触覚センサ較正",
+    "en": "Tactile calibration",
+    "zh": "触觉传感器标定",
+    "tw": "觸覺感測器校正",
+    "ko": "촉각 센서 보정",
+    "de": "Taktil-Kalibrierung",
+    "hi": "Tactile calibration"
+   }
+  },
+  {
+   "id": "poc_peg_insertion_tactile",
+   "group": "wing_geometry",
+   "media": "03_pegtactile_whitney_insertion_through_membranes.gif",
+   "motion": true,
+   "thumb_src": "03_pegtactile_whitney_insertion_through_membranes.gif",
+   "label": {
+    "ja": "指の膜でペグ挿入",
+    "en": "Tactile peg insertion",
+    "zh": "触觉轴孔装配",
+    "tw": "觸覺插銷入孔",
+    "ko": "촉각 펙 삽입",
+    "de": "Taktiles Einsetzen",
+    "hi": "Tactile peg insertion"
+   }
+  },
+  {
+   "id": "poc_peg_symmetry_search",
+   "group": "wing_geometry",
+   "media": "01_pegsym_rotating_shapes_read_mod_2pi_over_n.gif",
+   "motion": true,
+   "thumb_src": "01_pegsym_rotating_shapes_read_mod_2pi_over_n.gif",
+   "label": {
+    "ja": "ペグの対称性",
+    "en": "Peg symmetry",
+    "zh": "销钉对称性",
+    "tw": "插銷對稱性",
+    "ko": "펙 대칭성",
+    "de": "Stift-Symmetrie",
+    "hi": "Peg symmetry"
+   }
+  },
+  {
+   "id": "poc_reproducible_icp",
+   "group": "wing_geometry",
+   "media": "01_error_staircase_ozaki1.png",
+   "motion": false,
+   "thumb_src": "01_error_staircase_ozaki1_720.jpg",
+   "label": {
+    "ja": "ビット再現 ICP",
+    "en": "Reproducible ICP",
+    "zh": "可复现 ICP",
+    "tw": "可重現 ICP",
+    "ko": "재현 가능 ICP",
+    "de": "Reproduzierbares ICP",
+    "hi": "Reproducible ICP"
+   }
+  },
+  {
+   "id": "poc_public_camera_heading",
+   "group": "wing_geometry",
+   "media": "02_yaw_sweep.gif",
+   "motion": true,
+   "thumb_src": "02_yaw_sweep.gif",
+   "label": {
+    "ja": "公共カメラの向き",
+    "en": "Camera heading",
+    "zh": "公共摄像头朝向",
+    "tw": "公共攝影機朝向",
+    "ko": "공공 카메라 방향",
+    "de": "Kamerarichtung",
+    "hi": "Camera heading"
+   }
+  },
+  {
+   "id": "poc_public_camera_heading_real",
+   "group": "wing_geometry",
+   "media": "02_sunset_follow.gif",
+   "motion": true,
+   "thumb_src": "02_sunset_follow.gif",
+   "label": {
+    "ja": "カメラの向き(実写)",
+    "en": "Camera heading (real)",
+    "zh": "摄像头朝向(实拍)",
+    "tw": "攝影機朝向(實拍)",
+    "ko": "카메라 방향(실사)",
+    "de": "Kamerarichtung (echt)",
+    "hi": "Camera heading (real)"
+   }
+  },
+  {
+   "id": "poc_camera_shake_deblur",
+   "group": "wing_imaging",
+   "media": "05_kernel_angle_sweep.mp4",
+   "motion": true,
+   "thumb_src": "05_kernel_angle_sweep.gif",
+   "label": {
+    "ja": "手ブレ補正",
+    "en": "Shake deblurring",
+    "zh": "手抖去模糊",
+    "tw": "手震去模糊",
+    "ko": "손떨림 복원",
+    "de": "Verwacklung entfernen",
+    "hi": "Shake deblurring"
+   }
+  },
+  {
+   "id": "poc_colormap_readability",
+   "group": "wing_imaging",
+   "media": "01_gain_profile.png",
+   "motion": false,
+   "thumb_src": "01_gain_profile_720.jpg",
+   "label": {
+    "ja": "疑似カラーの読み",
+    "en": "Colormap reading",
+    "zh": "伪彩色可读性",
+    "tw": "偽色可讀性",
+    "ko": "의사 색상 가독성",
+    "de": "Farbskalen-Lesbarkeit",
+    "hi": "Colormap पढ़ना"
+   }
+  },
+  {
+   "id": "poc_compound_eye",
+   "group": "wing_imaging",
+   "media": "01_compound_eye_scaling.png",
+   "motion": false,
+   "thumb_src": "01_compound_eye_scaling_720.jpg",
+   "label": {
+    "ja": "ハエの複眼",
+    "en": "Fly compound eye",
+    "zh": "苍蝇复眼",
+    "tw": "蒼蠅複眼",
+    "ko": "파리 겹눈",
+    "de": "Fliegen-Facettenauge",
+    "hi": "Fly compound eye"
+   }
+  },
+  {
+   "id": "poc_ct_fidelity",
+   "group": "wing_imaging",
+   "media": "01_recon_sweep.png",
+   "motion": false,
+   "thumb_src": "01_recon_sweep_720.jpg",
+   "label": {
+    "ja": "CT 再構成の限界",
+    "en": "CT reconstruction",
+    "zh": "CT 重建极限",
+    "tw": "CT 重建極限",
+    "ko": "CT 재구성 한계",
+    "de": "CT-Rekonstruktion",
+    "hi": "CT reconstruction"
+   }
+  },
+  {
+   "id": "poc_dehazing",
+   "group": "wing_imaging",
+   "media": "05_haze_sweep.mp4",
+   "motion": true,
+   "thumb_src": "05_haze_sweep.gif",
+   "label": {
+    "ja": "霞を剥がす",
+    "en": "Dehazing",
+    "zh": "去雾",
+    "tw": "去霧",
+    "ko": "안개 제거",
+    "de": "Dunstentfernung",
+    "hi": "Dehazing"
+   }
+  },
+  {
+   "id": "poc_dtof_ranging",
+   "group": "wing_imaging",
+   "media": "01_histograms.png",
+   "motion": false,
+   "thumb_src": "01_histograms_720.jpg",
+   "label": {
+    "ja": "光子で測距",
+    "en": "Photon ranging",
+    "zh": "光子测距",
+    "tw": "光子測距",
+    "ko": "광자 거리 측정",
+    "de": "Photonen-Entfernung",
+    "hi": "Photon ranging"
+   }
+  },
+  {
+   "id": "poc_focus_stacking",
+   "group": "wing_imaging",
+   "media": "05_focus_sweep.mp4",
+   "motion": true,
+   "thumb_src": "05_focus_sweep.gif",
+   "label": {
+    "ja": "焦点合成",
+    "en": "Focus stacking",
+    "zh": "景深合成",
+    "tw": "景深合成",
+    "ko": "초점 합성",
+    "de": "Fokus-Stacking",
+    "hi": "Focus stacking"
+   }
+  },
+  {
+   "id": "poc_lightfield_depth",
+   "group": "wing_imaging",
+   "media": "01_scene_and_depth.png",
+   "motion": false,
+   "thumb_src": "01_scene_and_depth_720.jpg",
+   "label": {
+    "ja": "光場から深度",
+    "en": "Light-field depth",
+    "zh": "光场深度",
+    "tw": "光場深度",
+    "ko": "라이트 필드 깊이",
+    "de": "Lichtfeld-Tiefe",
+    "hi": "Light-field depth"
+   }
+  },
+  {
+   "id": "poc_real_deblur_honesty",
+   "group": "wing_imaging",
+   "media": "01_restore.png",
+   "motion": false,
+   "thumb_src": "01_restore_720.jpg",
+   "label": {
+    "ja": "実写のブレ補正",
+    "en": "Real deblurring",
+    "zh": "实拍去模糊",
+    "tw": "實拍去模糊",
+    "ko": "실사 블러 복원",
+    "de": "Echtes Entschärfen",
+    "hi": "Real deblurring"
+   }
+  },
+  {
+   "id": "poc_superresolution_limits",
+   "group": "wing_imaging",
+   "media": "05_growth.mp4",
+   "motion": true,
+   "thumb_src": "05_growth.gif",
+   "label": {
+    "ja": "超解像の限界",
+    "en": "Super-resolution",
+    "zh": "超分辨率极限",
+    "tw": "超解析度極限",
+    "ko": "초해상 한계",
+    "de": "Superauflösung",
+    "hi": "Super-resolution"
+   }
+  },
+  {
+   "id": "poc_iqa_tid2013",
+   "group": "wing_imaging",
+   "media": "01_tid2013_mos_vs_psnr.png",
+   "motion": false,
+   "thumb_src": "01_tid2013_mos_vs_psnr_720.jpg",
+   "label": {
+    "ja": "画質指標と TID2013",
+    "en": "IQA vs TID2013",
+    "zh": "画质指标与 TID2013",
+    "tw": "畫質指標與 TID2013",
+    "ko": "화질 지표·TID2013",
+    "de": "IQA mit TID2013",
+    "hi": "IQA vs TID2013"
+   }
+  },
+  {
+   "id": "poc_iqa_fsim_gmsd_vif",
+   "group": "wing_imaging",
+   "media": "01_iqa_tid2013_mos_vs_fsim.png",
+   "motion": false,
+   "thumb_src": "01_iqa_tid2013_mos_vs_fsim_720.jpg",
+   "label": {
+    "ja": "知覚指標の一致",
+    "en": "FSIM/GMSD/VIF",
+    "zh": "感知指标一致",
+    "tw": "感知指標一致",
+    "ko": "지각 지표 일치",
+    "de": "FSIM/GMSD/VIF",
+    "hi": "FSIM/GMSD/VIF"
+   }
+  },
+  {
+   "id": "poc_vanishing_detail_and_morphing_area",
+   "group": "wing_imaging",
+   "media": "06_morph_loop.gif",
+   "motion": true,
+   "thumb_src": "06_morph_loop.gif",
+   "label": {
+    "ja": "消える細部と面積",
+    "en": "Vanishing detail",
+    "zh": "消失的细节",
+    "tw": "消失的細節",
+    "ko": "사라지는 디테일",
+    "de": "Verschwindende Details",
+    "hi": "Vanishing detail"
+   }
+  },
+  {
+   "id": "poc_segmentation_gauntlet",
+   "group": "wing_imaging",
+   "media": "08_gauntlet_blobs.gif",
+   "motion": true,
+   "thumb_src": "08_gauntlet_blobs.gif",
+   "label": {
+    "ja": "分割の関門",
+    "en": "Segmentation gauntlet",
+    "zh": "分割关卡",
+    "tw": "分割關卡",
+    "ko": "분할의 관문",
+    "de": "Segmentierungs-Parcours",
+    "hi": "Segmentation gauntlet"
+   }
+  },
+  {
+   "id": "poc_active_contours",
+   "group": "wing_imaging",
+   "media": "06_u_shape_snakes.mp4",
+   "motion": true,
+   "thumb_src": "06_u_shape_snakes.gif",
+   "label": {
+    "ja": "動的輪郭",
+    "en": "Active contours",
+    "zh": "主动轮廓",
+    "tw": "主動輪廓",
+    "ko": "능동 윤곽",
+    "de": "Aktive Konturen",
+    "hi": "Active contours"
+   }
+  },
+  {
+   "id": "poc_graph_hierarchy_segmentation",
+   "group": "wing_imaging",
+   "media": "08_watershed_theta_sweep.mp4",
+   "motion": true,
+   "thumb_src": "08_watershed_theta_sweep.gif",
+   "label": {
+    "ja": "グラフ分割",
+    "en": "Graph segmentation",
+    "zh": "图分割",
+    "tw": "圖分割",
+    "ko": "그래프 분할",
+    "de": "Graph-Segmentierung",
+    "hi": "Graph segmentation"
+   }
+  },
+  {
+   "id": "poc_pigment_unmixing",
+   "group": "wing_color",
+   "media": "01_per_field_auc.png",
+   "motion": false,
+   "thumb_src": "01_per_field_auc_720.jpg",
+   "label": {
+    "ja": "顔料の層を分離",
+    "en": "Pigment layers",
+    "zh": "颜料分层",
+    "tw": "顏料分層",
+    "ko": "안료 층 분리",
+    "de": "Pigmentschichten",
+    "hi": "Pigment layers"
+   }
+  },
+  {
+   "id": "poc_polarization_specular",
+   "group": "wing_color",
+   "media": "01_fresnel.png",
+   "motion": false,
+   "thumb_src": "01_fresnel_720.jpg",
+   "label": {
+    "ja": "偏光で鏡面除去",
+    "en": "Polarization",
+    "zh": "偏振去镜面反射",
+    "tw": "偏光去鏡面反射",
+    "ko": "편광 정반사 제거",
+    "de": "Polarisation",
+    "hi": "Polarization"
+   }
+  },
+  {
+   "id": "poc_real_stain_unmix",
+   "group": "wing_color",
+   "media": "01_separation.png",
+   "motion": false,
+   "thumb_src": "01_separation_720.jpg",
+   "label": {
+    "ja": "実写の染色分離",
+    "en": "Real stain unmixing",
+    "zh": "实拍染色分离",
+    "tw": "實拍染色分離",
+    "ko": "실사 염색 분리",
+    "de": "Färbungstrennung",
+    "hi": "Real stain unmixing"
+   }
+  },
+  {
+   "id": "poc_white_balance",
+   "group": "wing_color",
+   "media": "01_casts.png",
+   "motion": false,
+   "thumb_src": "01_casts_720.jpg",
+   "label": {
+    "ja": "ホワイトバランス",
+    "en": "White balance",
+    "zh": "白平衡",
+    "tw": "白平衡",
+    "ko": "화이트 밸런스",
+    "de": "Weißabgleich",
+    "hi": "White balance"
+   }
+  },
+  {
+   "id": "poc_beam_modal_video",
+   "group": "wing_xyt",
+   "media": "14_beam_video.mp4",
+   "motion": true,
+   "thumb_src": "14_beam_video.gif",
+   "label": {
+    "ja": "動画でモード同定",
+    "en": "Modal ID from video",
+    "zh": "视频模态识别",
+    "tw": "影片模態識別",
+    "ko": "영상 모드 식별",
+    "de": "Modalanalyse per Video",
+    "hi": "Video से modal ID"
+   }
+  },
+  {
+   "id": "poc_cold_chain_excursion",
+   "group": "wing_xyt",
+   "media": "01_scene_slices.png",
+   "motion": false,
+   "thumb_src": "01_scene_slices_720.jpg",
+   "label": {
+    "ja": "冷蔵輸送の温度",
+    "en": "Cold-chain record",
+    "zh": "冷链温度",
+    "tw": "冷鏈溫度",
+    "ko": "콜드체인 온도",
+    "de": "Kühlkette",
+    "hi": "Cold-chain तापमान"
+   }
+  },
+  {
+   "id": "poc_crack_width_timeseries",
+   "group": "wing_xyt",
+   "media": "11_series_video.mp4",
+   "motion": true,
+   "thumb_src": "11_series_video.gif",
+   "label": {
+    "ja": "ひび割れの伸び",
+    "en": "Crack growth",
+    "zh": "裂缝扩展",
+    "tw": "裂縫擴展",
+    "ko": "균열 성장",
+    "de": "Risswachstum",
+    "hi": "Crack growth"
+   }
+  },
+  {
+   "id": "poc_motion_magnification",
+   "group": "wing_xyt",
+   "media": "05_magnify_video.mp4",
+   "motion": true,
+   "thumb_src": "05_magnify_video.gif",
+   "label": {
+    "ja": "微小振動の拡大",
+    "en": "Motion magnification",
+    "zh": "微振动放大",
+    "tw": "微振動放大",
+    "ko": "미세 진동 확대",
+    "de": "Bewegungsverstärkung",
+    "hi": "Motion magnification"
+   }
+  },
+  {
+   "id": "poc_particle_tracking",
+   "group": "wing_xyt",
+   "media": "05_tracking_links.mp4",
+   "motion": true,
+   "thumb_src": "05_tracking_links.gif",
+   "label": {
+    "ja": "粒子追跡",
+    "en": "Particle tracking",
+    "zh": "粒子跟踪",
+    "tw": "粒子追蹤",
+    "ko": "입자 추적",
+    "de": "Partikelverfolgung",
+    "hi": "Particle tracking"
+   }
+  },
+  {
+   "id": "poc_settlement_significance",
+   "group": "wing_xyt",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "沈下か測り直しか",
+    "en": "Settlement test",
+    "zh": "沉降判定",
+    "tw": "沉降判定",
+    "ko": "침하 판정",
+    "de": "Setzungsprüfung",
+    "hi": "Settlement test"
+   }
+  },
+  {
+   "id": "poc_template_tracking",
+   "group": "wing_xyt",
+   "media": "05_twin_vs_flat_occluder.mp4",
+   "motion": true,
+   "thumb_src": "05_twin_vs_flat_occluder.gif",
+   "label": {
+    "ja": "テンプレート追跡",
+    "en": "Template tracking",
+    "zh": "模板跟踪",
+    "tw": "模板追蹤",
+    "ko": "템플릿 추적",
+    "de": "Template-Tracking",
+    "hi": "Template tracking"
+   }
+  },
+  {
+   "id": "poc_timelapse_growth",
+   "group": "wing_xyt",
+   "media": "05_growth_merge.mp4",
+   "motion": true,
+   "thumb_src": "05_growth_merge.gif",
+   "label": {
+    "ja": "成長のタイムラプス",
+    "en": "Growth time-lapse",
+    "zh": "生长延时摄影",
+    "tw": "生長縮時攝影",
+    "ko": "성장 타임랩스",
+    "de": "Wachstums-Zeitraffer",
+    "hi": "Growth time-lapse"
+   }
+  },
+  {
+   "id": "poc_traffic_counting",
+   "group": "wing_xyt",
+   "media": "05_counting_video.mp4",
+   "motion": true,
+   "thumb_src": "05_counting_video.gif",
+   "label": {
+    "ja": "交通量の計数",
+    "en": "Traffic counting",
+    "zh": "交通量计数",
+    "tw": "交通量計數",
+    "ko": "교통량 계수",
+    "de": "Verkehrszählung",
+    "hi": "Traffic counting"
+   }
+  },
+  {
+   "id": "poc_warehouse_flow",
+   "group": "wing_xyt",
+   "media": "01_heat_ambiguity.png",
+   "motion": false,
+   "thumb_src": "01_heat_ambiguity_720.jpg",
+   "label": {
+    "ja": "庫内の滞留",
+    "en": "Warehouse dwell",
+    "zh": "仓库滞留",
+    "tw": "倉庫滯留",
+    "ko": "창고 체류",
+    "de": "Lager-Verweilzeit",
+    "hi": "Warehouse dwell"
+   }
+  },
+  {
+   "id": "poc_xyt_event_surface",
+   "group": "wing_xyt",
+   "media": "05_arrival_video.mp4",
+   "motion": true,
+   "thumb_src": "05_arrival_video.gif",
+   "label": {
+    "ja": "到達時刻面",
+    "en": "Arrival-time surface",
+    "zh": "到达时间面",
+    "tw": "到達時間面",
+    "ko": "도달 시각면",
+    "de": "Ankunftszeitfläche",
+    "hi": "Arrival-time surface"
+   }
+  },
+  {
+   "id": "poc_video_cube",
+   "group": "wing_xyt",
+   "media": "02_cube_orbit.gif",
+   "motion": true,
+   "thumb_src": "02_cube_orbit.gif",
+   "label": {
+    "ja": "動画の時空立方体",
+    "en": "Video cube",
+    "zh": "视频时空立方体",
+    "tw": "影片時空立方體",
+    "ko": "영상 시공간 큐브",
+    "de": "Videowürfel",
+    "hi": "Video cube"
+   }
+  },
+  {
+   "id": "poc_live4d",
+   "group": "wing_xyt",
+   "media": "01_beating_orbit.gif",
+   "motion": true,
+   "thumb_src": "01_beating_orbit.gif",
+   "label": {
+    "ja": "生体の 3D+t",
+    "en": "Live 3D+t",
+    "zh": "活体 3D+t",
+    "tw": "活體 3D+t",
+    "ko": "생체 3D+t",
+    "de": "Lebend-3D+t",
+    "hi": "Live 3D+t"
+   }
+  },
+  {
+   "id": "poc_diabolo_model_and_vision",
+   "group": "wing_xyt",
+   "media": "01_diabolo_throw_axis_from_image.gif",
+   "motion": true,
+   "thumb_src": "01_diabolo_throw_axis_from_image.gif",
+   "label": {
+    "ja": "ディアボロ",
+    "en": "Diabolo",
+    "zh": "扯铃",
+    "tw": "扯鈴",
+    "ko": "디아볼로",
+    "de": "Diabolo",
+    "hi": "Diabolo"
+   }
+  },
+  {
+   "id": "poc_swarm_obstacle_from_flow",
+   "group": "wing_xyt",
+   "media": "01_swarmflow_hidden_obstacle_emerges.gif",
+   "motion": true,
+   "thumb_src": "01_swarmflow_hidden_obstacle_emerges.gif",
+   "label": {
+    "ja": "群れで障害物察知",
+    "en": "Swarm obstacle",
+    "zh": "群体感知障碍",
+    "tw": "群體感知障礙",
+    "ko": "군집 장애물 감지",
+    "de": "Schwarm-Hindernis",
+    "hi": "Swarm obstacle"
+   }
+  },
+  {
+   "id": "poc_ball_bounce",
+   "group": "wing_xyt",
+   "media": "06_rally_gif.gif",
+   "motion": true,
+   "thumb_src": "06_rally_gif.gif",
+   "label": {
+    "ja": "卓球の球を追う",
+    "en": "Ping-pong tracking",
+    "zh": "乒乓球跟踪",
+    "tw": "桌球追蹤",
+    "ko": "탁구공 추적",
+    "de": "Tischtennis-Tracking",
+    "hi": "Table tennis tracking"
+   }
+  },
+  {
+   "id": "poc_kendama",
+   "group": "wing_xyt",
+   "media": "05_catch_gif.gif",
+   "motion": true,
+   "thumb_src": "05_catch_gif.gif",
+   "label": {
+    "ja": "けん玉",
+    "en": "Kendama",
+    "zh": "剑玉",
+    "tw": "劍玉",
+    "ko": "켄다마",
+    "de": "Kendama",
+    "hi": "Kendama"
+   }
+  },
+  {
+   "id": "poc_table_tennis_spin",
+   "group": "wing_xyt",
+   "media": "01_side_three_serves.mp4",
+   "motion": true,
+   "thumb_src": "01_side_three_serves.gif",
+   "label": {
+    "ja": "卓球の回転",
+    "en": "Ping-pong spin",
+    "zh": "乒乓球旋转",
+    "tw": "桌球旋轉",
+    "ko": "탁구공 회전",
+    "de": "Tischtennis-Spin",
+    "hi": "Table tennis spin"
+   }
+  },
+  {
+   "id": "poc_table_tennis_bounce",
+   "group": "wing_xyt",
+   "media": "01_drop_test.mp4",
+   "motion": true,
+   "thumb_src": "01_drop_test.gif",
+   "label": {
+    "ja": "卓球の跳ね",
+    "en": "Ping-pong bounce",
+    "zh": "乒乓球弹跳",
+    "tw": "桌球彈跳",
+    "ko": "탁구공 바운드",
+    "de": "Tischtennis-Absprung",
+    "hi": "Table tennis bounce"
+   }
+  },
+  {
+   "id": "poc_table_tennis_rally_loop",
+   "group": "wing_xyt",
+   "media": "01_landing_cloud.mp4",
+   "motion": true,
+   "thumb_src": "01_landing_cloud.gif",
+   "label": {
+    "ja": "ラリーと読み誤差",
+    "en": "Rally and misreads",
+    "zh": "回合与读取误差",
+    "tw": "來回與讀取誤差",
+    "ko": "랠리와 판독 오차",
+    "de": "Ballwechsel",
+    "hi": "Rally misreads"
+   }
+  },
+  {
+   "id": "poc_periodic_video_boundary",
+   "group": "wing_xyt",
+   "media": "02_loop.gif",
+   "motion": true,
+   "thumb_src": "02_loop.gif",
+   "label": {
+    "ja": "周期的な動画",
+    "en": "Periodic video",
+    "zh": "周期视频",
+    "tw": "週期影片",
+    "ko": "주기 동영상",
+    "de": "Periodisches Video",
+    "hi": "Periodic video"
+   }
+  },
+  {
+   "id": "poc_fly_vision",
+   "group": "connectome",
+   "media": "01_fly_vision_scene.png",
+   "motion": false,
+   "thumb_src": "01_fly_vision_scene_720.jpg",
+   "label": {
+    "ja": "ハエの視覚前段",
+    "en": "Fly visual front end",
+    "zh": "苍蝇视觉前端",
+    "tw": "蒼蠅視覺前端",
+    "ko": "파리 시각 전단",
+    "de": "Fliegensehen",
+    "hi": "Fly vision"
+   }
+  },
+  {
+   "id": "poc_larval_connectome_reservoir",
+   "group": "connectome",
+   "media": "01_adjacency_binned_connectome_vs_shuffle.png",
+   "motion": false,
+   "thumb_src": "01_adjacency_binned_connectome_vs_shuffle_720.jpg",
+   "label": {
+    "ja": "幼虫の配線で計算",
+    "en": "Larval connectome",
+    "zh": "幼虫连接组",
+    "tw": "幼蟲連接體",
+    "ko": "유충 커넥톰",
+    "de": "Larven-Konnektom",
+    "hi": "Larval connectome"
+   }
+  },
+  {
+   "id": "poc_malecns_activity_wave",
+   "group": "connectome",
+   "media": "01_activity_wave_connectome_vs_shuffle.gif",
+   "motion": true,
+   "thumb_src": "01_activity_wave_connectome_vs_shuffle.gif",
+   "label": {
+    "ja": "ハエの脳の波",
+    "en": "Fly brain wave",
+    "zh": "苍蝇脑电波",
+    "tw": "蒼蠅腦波",
+    "ko": "파리 뇌의 파동",
+    "de": "Fliegenhirn-Welle",
+    "hi": "Fly brain wave"
+   }
+  },
+  {
+   "id": "poc_eye_to_brain",
+   "group": "connectome",
+   "media": "01_eye_sweep.gif",
+   "motion": true,
+   "thumb_src": "01_eye_sweep.gif",
+   "label": {
+    "ja": "複眼から脳へ",
+    "en": "Eye to brain",
+    "zh": "复眼到大脑",
+    "tw": "複眼到大腦",
+    "ko": "겹눈에서 뇌로",
+    "de": "Auge zum Gehirn",
+    "hi": "Eye से brain"
+   }
+  },
+  {
+   "id": "poc_em_second_opinion",
+   "group": "connectome",
+   "media": "02_suspects_on_the_cube.gif",
+   "motion": true,
+   "thumb_src": "02_suspects_on_the_cube.gif",
+   "label": {
+    "ja": "EM 校正の検算",
+    "en": "EM second opinion",
+    "zh": "EM 校对复核",
+    "tw": "EM 校對複核",
+    "ko": "EM 교정 재검",
+    "de": "EM-Zweitmeinung",
+    "hi": "EM second opinion"
+   }
+  },
+  {
+   "id": "poc_connectome_motor_bottleneck",
+   "group": "connectome",
+   "media": "03_activity_flow.gif",
+   "motion": true,
+   "thumb_src": "03_activity_flow.gif",
+   "label": {
+    "ja": "動きの量子化",
+    "en": "Motor quantisation",
+    "zh": "运动量化",
+    "tw": "運動量化",
+    "ko": "움직임 양자화",
+    "de": "Motorische Quantisierung",
+    "hi": "Motor quantisation"
+   }
+  },
+  {
+   "id": "poc_microns_brain_wave",
+   "group": "connectome",
+   "media": "01_brain_wave.gif",
+   "motion": true,
+   "thumb_src": "01_brain_wave.gif",
+   "label": {
+    "ja": "MICrONS の波",
+    "en": "MICrONS wave",
+    "zh": "MICrONS 脑波",
+    "tw": "MICrONS 腦波",
+    "ko": "MICrONS 파동",
+    "de": "MICrONS-Welle",
+    "hi": "MICrONS wave"
+   }
+  },
+  {
+   "id": "poc_em_branch_territory",
+   "group": "connectome",
+   "media": "02_territory_turning.gif",
+   "motion": true,
+   "thumb_src": "02_territory_turning.gif",
+   "label": {
+    "ja": "枝の縄張り",
+    "en": "Branch territories",
+    "zh": "分支领域",
+    "tw": "分支領域",
+    "ko": "가지 영역",
+    "de": "Astterritorien",
+    "hi": "Branch territories"
+   }
+  },
+  {
+   "id": "poc_connectome_lr_symmetry",
+   "group": "connectome",
+   "media": "01_lr_jaccard_closed_form.png",
+   "motion": false,
+   "thumb_src": "01_lr_jaccard_closed_form_720.jpg",
+   "label": {
+    "ja": "線虫の左右対称",
+    "en": "Worm L/R symmetry",
+    "zh": "线虫左右对称",
+    "tw": "線蟲左右對稱",
+    "ko": "선충 좌우 대칭",
+    "de": "Wurm-L/R-Symmetrie",
+    "hi": "Worm L/R symmetry"
+   }
+  },
+  {
+   "id": "poc_connectome_across_worms",
+   "group": "connectome",
+   "media": "02_wiring_across_development.gif",
+   "motion": true,
+   "thumb_src": "02_wiring_across_development.gif",
+   "label": {
+    "ja": "線虫の個体差",
+    "en": "Worm-to-worm wiring",
+    "zh": "线虫个体差异",
+    "tw": "線蟲個體差異",
+    "ko": "선충 개체 차",
+    "de": "Wurm-Vergleich",
+    "hi": "Worm-to-worm wiring"
+   }
+  },
+  {
+   "id": "poc_connectome_across_decades",
+   "group": "connectome",
+   "media": "01_jaccard_across_decades.png",
+   "motion": false,
+   "thumb_src": "01_jaccard_across_decades_720.jpg",
+   "label": {
+    "ja": "40 年前の配線図",
+    "en": "Wiring across decades",
+    "zh": "40 年前的接线图",
+    "tw": "40 年前的接線圖",
+    "ko": "40년 전 배선도",
+    "de": "Schaltplan im Wandel",
+    "hi": "Decades पार wiring"
+   }
+  },
+  {
+   "id": "poc_worm_neurites_grow",
+   "group": "connectome",
+   "media": "01_neurite_length_growth.png",
+   "motion": false,
+   "thumb_src": "01_neurite_length_growth_720.jpg",
+   "label": {
+    "ja": "神経突起の成長",
+    "en": "Neurite growth",
+    "zh": "神经突起生长",
+    "tw": "神經突起生長",
+    "ko": "신경 돌기 성장",
+    "de": "Neuritenwachstum",
+    "hi": "Neurite growth"
+   }
+  },
+  {
+   "id": "poc_em_split_merge_score",
+   "group": "connectome",
+   "media": "01_split_vs_merge_by_threshold.png",
+   "motion": false,
+   "thumb_src": "01_split_vs_merge_by_threshold_720.jpg",
+   "label": {
+    "ja": "EM 分割の採点",
+    "en": "EM split/merge",
+    "zh": "EM 分割评分",
+    "tw": "EM 分割評分",
+    "ko": "EM 분할 채점",
+    "de": "EM-Split/Merge",
+    "hi": "EM split/merge"
+   }
+  },
+  {
+   "id": "poc_em_wiring_errors",
+   "group": "connectome",
+   "media": "01_proofreading_order.png",
+   "motion": false,
+   "thumb_src": "01_proofreading_order_720.jpg",
+   "label": {
+    "ja": "分割誤りと配線",
+    "en": "Wiring errors",
+    "zh": "分割错误与连线",
+    "tw": "分割錯誤與連線",
+    "ko": "분할 오류와 배선",
+    "de": "Verdrahtungsfehler",
+    "hi": "Wiring errors"
+   }
+  },
+  {
+   "id": "poc_worm_synapses_vs_neurites",
+   "group": "connectome",
+   "media": "01_density_by_stage.png",
+   "motion": false,
+   "thumb_src": "01_density_by_stage_720.jpg",
+   "label": {
+    "ja": "シナプスと突起",
+    "en": "Synapses vs neurites",
+    "zh": "突触与神经突起",
+    "tw": "突觸與神經突起",
+    "ko": "시냅스와 돌기",
+    "de": "Synapsen vs. Neuriten",
+    "hi": "Synapses vs neurites"
+   }
+  },
+  {
+   "id": "poc_skeleton_run_length_vs_voi",
+   "group": "connectome",
+   "media": "01_merge_size_erl_vs_voi.png",
+   "motion": false,
+   "thumb_src": "01_merge_size_erl_vs_voi_720.jpg",
+   "label": {
+    "ja": "走行長と VOI",
+    "en": "ERL vs VOI",
+    "zh": "走行长度与 VOI",
+    "tw": "走行長度與 VOI",
+    "ko": "주행 길이와 VOI",
+    "de": "ERL vs. VOI",
+    "hi": "ERL vs VOI"
+   }
+  },
+  {
+   "id": "poc_swc_tree_truth",
+   "group": "connectome",
+   "media": "01_swc_projection.png",
+   "motion": false,
+   "thumb_src": "01_swc_projection_720.jpg",
+   "label": {
+    "ja": "本物の木で骨格",
+    "en": "SWC skeletons",
+    "zh": "真实树骨架",
+    "tw": "真實樹骨架",
+    "ko": "실제 나무 골격",
+    "de": "SWC-Skelette",
+    "hi": "SWC skeletons"
+   }
+  },
+  {
+   "id": "poc_fly_optomotor_steering",
+   "group": "connectome",
+   "media": "06_follow.gif",
+   "motion": true,
+   "thumb_src": "06_follow.gif",
+   "label": {
+    "ja": "ハエの進路制御",
+    "en": "Fly steering",
+    "zh": "苍蝇航向控制",
+    "tw": "蒼蠅航向控制",
+    "ko": "파리 진로 제어",
+    "de": "Fliegensteuerung",
+    "hi": "Fly steering"
+   }
+  },
+  {
+   "id": "poc_worm_core_persists",
+   "group": "connectome",
+   "media": "04_core_map_gif.gif",
+   "motion": true,
+   "thumb_src": "04_core_map_gif.gif",
+   "label": {
+    "ja": "線虫の脳の核",
+    "en": "Worm brain core",
+    "zh": "线虫脑核心",
+    "tw": "線蟲腦核心",
+    "ko": "선충 뇌의 핵",
+    "de": "Wurmhirn-Kern",
+    "hi": "Worm brain core"
+   }
+  },
+  {
+   "id": "poc_bone_trabecular_thickness",
+   "group": "wing_bio",
+   "media": "01_scene_truth.png",
+   "motion": false,
+   "thumb_src": "01_scene_truth_720.jpg",
+   "label": {
+    "ja": "骨梁の厚さ",
+    "en": "Trabecular bone",
+    "zh": "骨小梁厚度",
+    "tw": "骨小樑厚度",
+    "ko": "골소주 두께",
+    "de": "Trabekeldicke",
+    "hi": "Trabecular bone"
+   }
+  },
+  {
+   "id": "poc_cell_counting",
+   "group": "wing_bio",
+   "media": "01_scene_dense.png",
+   "motion": false,
+   "thumb_src": "01_scene_dense_720.jpg",
+   "label": {
+    "ja": "重なる細胞の計数",
+    "en": "Cell counting",
+    "zh": "重叠细胞计数",
+    "tw": "重疊細胞計數",
+    "ko": "겹친 세포 계수",
+    "de": "Zellzählung",
+    "hi": "Cell counting"
+   }
+  },
+  {
+   "id": "poc_colocalization_crosstalk",
+   "group": "wing_bio",
+   "media": "01_scene_channels.png",
+   "motion": false,
+   "thumb_src": "01_scene_channels_720.jpg",
+   "label": {
+    "ja": "蛍光の共局在",
+    "en": "Colocalization",
+    "zh": "荧光共定位",
+    "tw": "螢光共定位",
+    "ko": "형광 공국재",
+    "de": "Kolokalisation",
+    "hi": "Colocalization"
+   }
+  },
+  {
+   "id": "poc_mri_bias_field",
+   "group": "wing_bio",
+   "media": "01_controls.png",
+   "motion": false,
+   "thumb_src": "01_controls_720.jpg",
+   "label": {
+    "ja": "MRI バイアス場",
+    "en": "MRI bias field",
+    "zh": "MRI 偏置场",
+    "tw": "MRI 偏置場",
+    "ko": "MRI 바이어스장",
+    "de": "MRI-Biasfeld",
+    "hi": "MRI bias field"
+   }
+  },
+  {
+   "id": "poc_nuclei_ploidy",
+   "group": "wing_bio",
+   "media": "01_histograms.png",
+   "motion": false,
+   "thumb_src": "01_histograms_720.jpg",
+   "label": {
+    "ja": "核の倍数性",
+    "en": "Nuclear ploidy",
+    "zh": "细胞核倍性",
+    "tw": "細胞核倍性",
+    "ko": "핵 배수성",
+    "de": "Kernploidie",
+    "hi": "Nuclear ploidy"
+   }
+  },
+  {
+   "id": "poc_vessel_network",
+   "group": "wing_bio",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "血管網の分岐",
+    "en": "Vessel network",
+    "zh": "血管网络",
+    "tw": "血管網路",
+    "ko": "혈관망 분기",
+    "de": "Gefäßnetz",
+    "hi": "Vessel network"
+   }
+  },
+  {
+   "id": "poc_wound_area_tracking",
+   "group": "wing_bio",
+   "media": "06_healing_video.mp4",
+   "motion": true,
+   "thumb_src": "06_healing_video.gif",
+   "label": {
+    "ja": "創傷面積の変化",
+    "en": "Wound area",
+    "zh": "创面面积",
+    "tw": "創面面積",
+    "ko": "창상 면적",
+    "de": "Wundfläche",
+    "hi": "Wound area"
+   }
+  },
+  {
+   "id": "poc_physarum_maze",
+   "group": "wing_bio",
+   "media": "02_maze_tubes_gif.gif",
+   "motion": true,
+   "thumb_src": "02_maze_tubes_gif.gif",
+   "label": {
+    "ja": "粘菌の迷路",
+    "en": "Slime-mould maze",
+    "zh": "黏菌迷宫",
+    "tw": "黏菌迷宮",
+    "ko": "점균 미로",
+    "de": "Schleimpilz-Labyrinth",
+    "hi": "Slime-mould maze"
+   }
+  },
+  {
+   "id": "poc_physarum_transport",
+   "group": "wing_bio",
+   "media": "01_transport_tubes_gif.gif",
+   "motion": true,
+   "thumb_src": "01_transport_tubes_gif.gif",
+   "label": {
+    "ja": "粘菌の最適輸送",
+    "en": "Slime-mould transport",
+    "zh": "黏菌最优传输",
+    "tw": "黏菌最佳傳輸",
+    "ko": "점균 최적 수송",
+    "de": "Schleimpilz-Transport",
+    "hi": "Slime-mould transport"
+   }
+  },
+  {
+   "id": "poc_allsky_cloud_cover",
+   "group": "wing_astroenv",
+   "media": "01_jacobian.png",
+   "motion": false,
+   "thumb_src": "01_jacobian_720.jpg",
+   "label": {
+    "ja": "全天カメラの雲量",
+    "en": "All-sky cloud cover",
+    "zh": "全天相机云量",
+    "tw": "全天相機雲量",
+    "ko": "전천 카메라 운량",
+    "de": "Bewölkung Allsky",
+    "hi": "All-sky cloud cover"
+   }
+  },
+  {
+   "id": "poc_astro_photometry",
+   "group": "wing_astroenv",
+   "media": "01_stack_scaling.png",
+   "motion": false,
+   "thumb_src": "01_stack_scaling_720.jpg",
+   "label": {
+    "ja": "星の測光精度",
+    "en": "Star photometry",
+    "zh": "恒星测光精度",
+    "tw": "恆星測光精度",
+    "ko": "별 측광 정밀도",
+    "de": "Sternphotometrie",
+    "hi": "Star photometry"
+   }
+  },
+  {
+   "id": "poc_change_detection_misreg",
+   "group": "wing_astroenv",
+   "media": "01_plot_fp_vs_shift.png",
+   "motion": false,
+   "thumb_src": "01_plot_fp_vs_shift_720.jpg",
+   "label": {
+    "ja": "変化検出",
+    "en": "Change detection",
+    "zh": "变化检测",
+    "tw": "變化偵測",
+    "ko": "변화 검출",
+    "de": "Änderungserkennung",
+    "hi": "Change detection"
+   }
+  },
+  {
+   "id": "poc_datacenter_thermal_field",
+   "group": "wing_astroenv",
+   "media": "01_scene_truth.png",
+   "motion": false,
+   "thumb_src": "01_scene_truth_720.jpg",
+   "label": {
+    "ja": "3-D 熱場の復元",
+    "en": "3-D thermal field",
+    "zh": "三维热场重建",
+    "tw": "三維熱場重建",
+    "ko": "3-D 열장 복원",
+    "de": "3-D-Wärmefeld",
+    "hi": "3-D thermal field"
+   }
+  },
+  {
+   "id": "poc_dem_terrain",
+   "group": "wing_astroenv",
+   "media": "05_terrain_flight.mp4",
+   "motion": true,
+   "thumb_src": "05_terrain_flight.gif",
+   "label": {
+    "ja": "地形を測る",
+    "en": "Terrain (DEM)",
+    "zh": "地形测量",
+    "tw": "地形量測",
+    "ko": "지형 측정",
+    "de": "Geländemessung",
+    "hi": "Terrain (DEM)"
+   }
+  },
+  {
+   "id": "poc_exoplanet_transit",
+   "group": "wing_astroenv",
+   "media": "01_scene_starfield.png",
+   "motion": false,
+   "thumb_src": "01_scene_starfield_720.jpg",
+   "label": {
+    "ja": "系外惑星の通過",
+    "en": "Exoplanet transit",
+    "zh": "系外行星凌星",
+    "tw": "系外行星凌星",
+    "ko": "외계행성 통과",
+    "de": "Exoplanetentransit",
+    "hi": "Exoplanet transit"
+   }
+  },
+  {
+   "id": "poc_geodetic_height_frames",
+   "group": "wing_astroenv",
+   "media": "01_geoid_frames.png",
+   "motion": false,
+   "thumb_src": "01_geoid_frames_720.jpg",
+   "label": {
+    "ja": "座標の高さの罠",
+    "en": "Height datums",
+    "zh": "坐标高程陷阱",
+    "tw": "座標高程陷阱",
+    "ko": "좌표 높이 함정",
+    "de": "Höhenbezüge",
+    "hi": "Height datums"
+   }
+  },
+  {
+   "id": "poc_leaf_disease_area",
+   "group": "wing_astroenv",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "葉の病斑",
+    "en": "Leaf disease",
+    "zh": "叶片病斑",
+    "tw": "葉片病斑",
+    "ko": "잎 병반",
+    "de": "Blattkrankheit",
+    "hi": "Leaf disease"
+   }
+  },
+  {
+   "id": "poc_pv_thermal_survey",
+   "group": "wing_astroenv",
+   "media": "01_norm_table.png",
+   "motion": false,
+   "thumb_src": "01_norm_table_720.jpg",
+   "label": {
+    "ja": "太陽光の熱画像",
+    "en": "PV thermal survey",
+    "zh": "光伏热成像",
+    "tw": "光電熱影像",
+    "ko": "태양광 열화상",
+    "de": "PV-Thermografie",
+    "hi": "PV thermal survey"
+   }
+  },
+  {
+   "id": "poc_real_sky_photometry",
+   "group": "wing_astroenv",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "実写の深宇宙",
+    "en": "Real deep sky",
+    "zh": "实拍深空",
+    "tw": "實拍深空",
+    "ko": "실사 심우주",
+    "de": "Echter Sternhimmel",
+    "hi": "Real deep sky"
+   }
+  },
+  {
+   "id": "poc_river_surface_velocity",
+   "group": "wing_astroenv",
+   "media": "13_accumulate_pairs.gif",
+   "motion": true,
+   "thumb_src": "13_accumulate_pairs.gif",
+   "label": {
+    "ja": "河川の表面流速",
+    "en": "River velocity",
+    "zh": "河流表面流速",
+    "tw": "河川表面流速",
+    "ko": "하천 표면 유속",
+    "de": "Flussgeschwindigkeit",
+    "hi": "River velocity"
+   }
+  },
+  {
+   "id": "poc_sea_ice_concentration",
+   "group": "wing_astroenv",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "海氷密接度",
+    "en": "Sea-ice cover",
+    "zh": "海冰密集度",
+    "tw": "海冰密集度",
+    "ko": "해빙 밀접도",
+    "de": "Meereisbedeckung",
+    "hi": "Sea-ice cover"
+   }
+  },
+  {
+   "id": "poc_search_sweep_width",
+   "group": "wing_astroenv",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "捜索の走査幅",
+    "en": "Sweep width",
+    "zh": "搜索扫描宽度",
+    "tw": "搜索掃描寬度",
+    "ko": "수색 탐지 폭",
+    "de": "Suchbreite",
+    "hi": "Sweep width"
+   }
+  },
+  {
+   "id": "poc_solar_limb_darkening",
+   "group": "wing_astroenv",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "周辺減光と輪郭",
+    "en": "Limb darkening",
+    "zh": "临边昏暗",
+    "tw": "臨邊昏暗",
+    "ko": "주연 감광",
+    "de": "Randverdunkelung",
+    "hi": "Limb darkening"
+   }
+  },
+  {
+   "id": "poc_star_astrometry",
+   "group": "wing_astroenv",
+   "media": "01_snr_sweep.png",
+   "motion": false,
+   "thumb_src": "01_snr_sweep_720.jpg",
+   "label": {
+    "ja": "星の位置精度",
+    "en": "Star astrometry",
+    "zh": "恒星位置精度",
+    "tw": "恆星位置精度",
+    "ko": "별 위치 정밀도",
+    "de": "Sternastrometrie",
+    "hi": "Star astrometry"
+   }
+  },
+  {
+   "id": "poc_tree_ring_dendro",
+   "group": "wing_astroenv",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "年輪の幅",
+    "en": "Tree rings",
+    "zh": "年轮宽度",
+    "tw": "年輪寬度",
+    "ko": "나이테 폭",
+    "de": "Jahresringe",
+    "hi": "Tree rings"
+   }
+  },
+  {
+   "id": "poc_vegetation_cover",
+   "group": "wing_astroenv",
+   "media": "01_mixed_pixel_response.png",
+   "motion": false,
+   "thumb_src": "01_mixed_pixel_response_720.jpg",
+   "label": {
+    "ja": "畑の緑の被覆率",
+    "en": "Vegetation cover",
+    "zh": "植被覆盖率",
+    "tw": "植被覆蓋率",
+    "ko": "식생 피복률",
+    "de": "Vegetationsbedeckung",
+    "hi": "Vegetation cover"
+   }
+  },
+  {
+   "id": "poc_water_level",
+   "group": "wing_astroenv",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "河川の水位",
+    "en": "River stage",
+    "zh": "河流水位",
+    "tw": "河川水位",
+    "ko": "하천 수위",
+    "de": "Pegelstand",
+    "hi": "River stage"
+   }
+  },
+  {
+   "id": "poc_rover_slip_risk_path",
+   "group": "wing_astroenv",
+   "media": "03_rover_slip_update.gif",
+   "motion": true,
+   "thumb_src": "03_rover_slip_update.gif",
+   "label": {
+    "ja": "火星の車輪滑り",
+    "en": "Mars rover slip",
+    "zh": "火星车轮打滑",
+    "tw": "火星車輪打滑",
+    "ko": "화성 바퀴 미끄럼",
+    "de": "Mars-Rover-Schlupf",
+    "hi": "Mars rover slip"
+   }
+  },
+  {
+   "id": "poc_geodetic_benchmarks_real",
+   "group": "wing_astroenv",
+   "media": "01_residual_sorted.png",
+   "motion": false,
+   "thumb_src": "01_residual_sorted_720.jpg",
+   "label": {
+    "ja": "2 つの高さ(実データ)",
+    "en": "Two heights (real)",
+    "zh": "两种高程(实测)",
+    "tw": "兩種高程(實測)",
+    "ko": "두 높이(실데이터)",
+    "de": "Zwei Höhen (echt)",
+    "hi": "Two heights (real)"
+   }
+  },
+  {
+   "id": "poc_gravitational_lens_invariants",
+   "group": "wing_astroenv",
+   "media": "10_source_crossing.gif",
+   "motion": true,
+   "thumb_src": "10_source_crossing.gif",
+   "label": {
+    "ja": "重力レンズ",
+    "en": "Gravitational lens",
+    "zh": "引力透镜",
+    "tw": "重力透鏡",
+    "ko": "중력 렌즈",
+    "de": "Gravitationslinse",
+    "hi": "Gravitational lens"
+   }
+  },
+  {
+   "id": "poc_document_scan",
+   "group": "wing_forensics",
+   "media": "01_rectify_zero_points.png",
+   "motion": false,
+   "thumb_src": "01_rectify_zero_points_720.jpg",
+   "label": {
+    "ja": "書類をまっすぐに",
+    "en": "Document scan",
+    "zh": "文档矫正",
+    "tw": "文件校正",
+    "ko": "문서 바로잡기",
+    "de": "Dokumentscan",
+    "hi": "Document scan"
+   }
+  },
+  {
+   "id": "poc_forensics_roc",
+   "group": "wing_forensics",
+   "media": "01_score_maps.png",
+   "motion": false,
+   "thumb_src": "01_score_maps_720.jpg",
+   "label": {
+    "ja": "改竄検出の ROC",
+    "en": "Forgery ROC",
+    "zh": "篡改检测 ROC",
+    "tw": "竄改偵測 ROC",
+    "ko": "위변조 검출 ROC",
+    "de": "Fälschungs-ROC",
+    "hi": "Forgery ROC"
+   }
+  },
+  {
+   "id": "poc_fresco_craquelure",
+   "group": "wing_forensics",
+   "media": "01_ridge_ops.png",
+   "motion": false,
+   "thumb_src": "01_ridge_ops_720.jpg",
+   "label": {
+    "ja": "絵画のひび割れ網",
+    "en": "Craquelure",
+    "zh": "画作龟裂网",
+    "tw": "畫作龜裂網",
+    "ko": "그림 균열망",
+    "de": "Krakelee",
+    "hi": "Craquelure"
+   }
+  },
+  {
+   "id": "poc_prnu_camera_fingerprint",
+   "group": "wing_forensics",
+   "media": "01_scene.png",
+   "motion": false,
+   "thumb_src": "01_scene_720.jpg",
+   "label": {
+    "ja": "カメラ指紋",
+    "en": "Camera fingerprint",
+    "zh": "相机指纹",
+    "tw": "相機指紋",
+    "ko": "카메라 지문",
+    "de": "Kamera-Fingerabdruck",
+    "hi": "Camera fingerprint"
+   }
+  },
+  {
+   "id": "poc_car_parking",
+   "group": "lane_drive",
+   "media": "04_parking_gif.gif",
+   "motion": true,
+   "thumb_src": "04_parking_gif.gif",
+   "label": {
+    "ja": "最短の曲がり方",
+    "en": "Car parking",
+    "zh": "最短转弯泊车",
+    "tw": "最短轉彎停車",
+    "ko": "최단 회전 주차",
+    "de": "Einparken",
+    "hi": "Car parking"
+   }
+  },
+  {
+   "id": "poc_driving_school",
+   "group": "lane_drive",
+   "media": "05_drive_gif.gif",
+   "motion": true,
+   "thumb_src": "05_drive_gif.gif",
+   "label": {
+    "ja": "教習所",
+    "en": "Driving school",
+    "zh": "驾校",
+    "tw": "駕訓班",
+    "ko": "운전 학원",
+    "de": "Fahrschule",
+    "hi": "Driving school"
+   }
+  },
+  {
+   "id": "poc_ttc_rss",
+   "group": "lane_drive",
+   "media": "06_approach_gif.gif",
+   "motion": true,
+   "thumb_src": "06_approach_gif.gif",
+   "label": {
+    "ja": "衝突時間と安全距離",
+    "en": "TTC and RSS",
+    "zh": "碰撞时间与 RSS",
+    "tw": "碰撞時間與 RSS",
+    "ko": "충돌 시간과 RSS",
+    "de": "TTC und RSS",
+    "hi": "TTC और RSS"
+   }
+  },
+  {
+   "id": "poc_world_terrain",
+   "group": "lane_drive",
+   "media": "06_drive_gif.gif",
+   "motion": true,
+   "thumb_src": "06_drive_gif.gif",
+   "label": {
+    "ja": "世界を広げる",
+    "en": "Widening the world",
+    "zh": "扩展世界",
+    "tw": "擴展世界",
+    "ko": "세계 넓히기",
+    "de": "Welt erweitern",
+    "hi": "World विस्तार"
+   }
+  },
+  {
+   "id": "poc_driving_longitudinal",
+   "group": "lane_drive",
+   "media": "01_drive_with_time.gif",
+   "motion": true,
+   "thumb_src": "01_drive_with_time.gif",
+   "label": {
+    "ja": "慣性と坂",
+    "en": "Inertia and slopes",
+    "zh": "惯性与坡道",
+    "tw": "慣性與坡道",
+    "ko": "관성과 경사",
+    "de": "Trägheit und Steigung",
+    "hi": "Inertia और slope"
+   }
+  },
+  {
+   "id": "poc_driving_weather",
+   "group": "lane_drive",
+   "media": "01_sun_day.gif",
+   "motion": true,
+   "thumb_src": "01_sun_day.gif",
+   "label": {
+    "ja": "太陽と天気",
+    "en": "Sun and weather",
+    "zh": "太阳与天气",
+    "tw": "太陽與天氣",
+    "ko": "태양과 날씨",
+    "de": "Sonne und Wetter",
+    "hi": "Sun और weather"
+   }
+  },
+  {
+   "id": "poc_driving_endless_map",
+   "group": "lane_drive",
+   "media": "01_minimap_stream.mp4",
+   "motion": true,
+   "thumb_src": "01_minimap_stream.gif",
+   "label": {
+    "ja": "終わらない地図",
+    "en": "Endless map",
+    "zh": "无尽地图",
+    "tw": "無盡地圖",
+    "ko": "끝없는 지도",
+    "de": "Endlose Karte",
+    "hi": "Endless map"
+   }
+  },
+  {
+   "id": "poc_driving_traffic",
+   "group": "lane_drive",
+   "media": "01_dashcam_occlusion.mp4",
+   "motion": true,
+   "thumb_src": "01_dashcam_occlusion.gif",
+   "label": {
+    "ja": "交通と死角",
+    "en": "Traffic, blind spots",
+    "zh": "交通与盲区",
+    "tw": "交通與死角",
+    "ko": "교통과 사각",
+    "de": "Verkehr, toter Winkel",
+    "hi": "Traffic, blind spots"
+   }
+  },
+  {
+   "id": "poc_driving_decisions",
+   "group": "lane_drive",
+   "media": "01_decisions_mirrors_ambulance.mp4",
+   "motion": true,
+   "thumb_src": "01_decisions_mirrors_ambulance.gif",
+   "label": {
+    "ja": "判断の場面",
+    "en": "Decision scenes",
+    "zh": "判断场景",
+    "tw": "判斷場景",
+    "ko": "판단 장면",
+    "de": "Entscheidungsszenen",
+    "hi": "Decision scenes"
+   }
+  },
+  {
+   "id": "poc_driving_lateral",
+   "group": "lane_drive",
+   "media": "01_lateral_dashcam.mp4",
+   "motion": true,
+   "thumb_src": "01_lateral_dashcam.gif",
+   "label": {
+    "ja": "横の運動",
+    "en": "Lateral motion",
+    "zh": "横向运动",
+    "tw": "橫向運動",
+    "ko": "횡방향 운동",
+    "de": "Querbewegung",
+    "hi": "Lateral motion"
+   }
+  },
+  {
+   "id": "poc_driving_humanoids",
+   "group": "lane_drive",
+   "media": "03_humanoids_crossing.mp4",
+   "motion": true,
+   "thumb_src": "03_humanoids_crossing.gif",
+   "label": {
+    "ja": "横断歩道の人型",
+    "en": "Humanoid crossing",
+    "zh": "人形机器人过马路",
+    "tw": "人形機器人過馬路",
+    "ko": "횡단보도 휴머노이드",
+    "de": "Humanoiden am Zebrastreifen",
+    "hi": "Humanoid crossing"
+   }
+  },
+  {
+   "id": "poc_driving_crossing",
+   "group": "lane_drive",
+   "media": "01_crossing_dashcam.mp4",
+   "motion": true,
+   "thumb_src": "01_crossing_dashcam.gif",
+   "label": {
+    "ja": "踏切と交差点",
+    "en": "Level crossings",
+    "zh": "道口与路口",
+    "tw": "平交道與路口",
+    "ko": "건널목과 교차로",
+    "de": "Bahnübergänge",
+    "hi": "Level crossings"
+   }
+  },
+  {
+   "id": "poc_driving_pass",
+   "group": "lane_drive",
+   "media": "01_overtake_dashcam.mp4",
+   "motion": true,
+   "thumb_src": "01_overtake_dashcam.gif",
+   "label": {
+    "ja": "追越しと死角",
+    "en": "Overtaking",
+    "zh": "超车与盲区",
+    "tw": "超車與死角",
+    "ko": "추월과 사각",
+    "de": "Überholen",
+    "hi": "Overtaking"
+   }
+  },
+  {
+   "id": "poc_one_stroke_epicycles",
+   "group": "lane_math",
+   "media": "07_epicycles.gif",
+   "motion": true,
+   "thumb_src": "07_epicycles.gif",
+   "label": {
+    "ja": "一筆書きと周転円",
+    "en": "Epicycle drawing",
+    "zh": "一笔画与周转圆",
+    "tw": "一筆畫與周轉圓",
+    "ko": "한붓그리기 주전원",
+    "de": "Epizykel-Zeichnung",
+    "hi": "Epicycle drawing"
+   }
+  },
+  {
+   "id": "poc_complex_plane_fields",
+   "group": "lane_math",
+   "media": "01_rational.png",
+   "motion": false,
+   "thumb_src": "01_rational_720.jpg",
+   "label": {
+    "ja": "複素平面を面で",
+    "en": "Complex plane",
+    "zh": "复平面",
+    "tw": "複數平面",
+    "ko": "복소평면",
+    "de": "Komplexe Ebene",
+    "hi": "Complex plane"
+   }
+  },
+  {
+   "id": "poc_theorems_as_pictures",
+   "group": "lane_math",
+   "media": "01_apollonian.png",
+   "motion": false,
+   "thumb_src": "01_apollonian_720.jpg",
+   "label": {
+    "ja": "定理が門になる図",
+    "en": "Theorems as gates",
+    "zh": "定理即检验",
+    "tw": "定理即檢驗",
+    "ko": "정리가 관문인 그림",
+    "de": "Sätze als Gates",
+    "hi": "Theorems as gates"
+   }
+  },
+  {
+   "id": "poc_beats_fringes_and_screens",
+   "group": "lane_math",
+   "media": "01_membrane.png",
+   "motion": false,
+   "thumb_src": "01_membrane_720.jpg",
+   "label": {
+    "ja": "うなりは一つ",
+    "en": "One beat",
+    "zh": "拍频只有一个",
+    "tw": "拍頻只有一個",
+    "ko": "맥놀이는 하나",
+    "de": "Eine Schwebung",
+    "hi": "One beat"
+   }
+  },
+  {
+   "id": "poc_what_a_picture_cannot_check",
+   "group": "lane_math",
+   "media": "01_rk4.png",
+   "motion": false,
+   "thumb_src": "01_rk4_720.jpg",
+   "label": {
+    "ja": "絵で確かめられない",
+    "en": "Beyond pictures",
+    "zh": "图无法验证的",
+    "tw": "圖無法驗證的",
+    "ko": "그림으로 못 하는 것",
+    "de": "Jenseits des Bildes",
+    "hi": "Beyond pictures"
+   }
+  },
+  {
+   "id": "poc_illusions_and_perpetual_drawing",
+   "group": "lane_math",
+   "media": "14_loop.gif",
+   "motion": true,
+   "thumb_src": "14_loop.gif",
+   "label": {
+    "ja": "無限に描く絵",
+    "en": "Endless drawing",
+    "zh": "无限绘图",
+    "tw": "無限繪圖",
+    "ko": "끝없는 그림",
+    "de": "Endloses Zeichnen",
+    "hi": "Endless drawing"
+   }
+  },
+  {
+   "id": "poc_calipers_under_illusion",
+   "group": "lane_math",
+   "media": "01_caliper_on_cafe_wall.png",
+   "motion": false,
+   "thumb_src": "01_caliper_on_cafe_wall_720.jpg",
+   "label": {
+    "ja": "錯視で測定器診断",
+    "en": "Calipers vs illusions",
+    "zh": "错觉检验量具",
+    "tw": "錯覺檢驗量具",
+    "ko": "착시로 측정기 진단",
+    "de": "Messschieber-Illusion",
+    "hi": "Calipers vs illusions"
+   }
+  }
+ ],
+ "all_source": "docs/articles/exhibits/poc_captions.json"
 }
