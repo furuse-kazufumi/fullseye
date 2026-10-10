@@ -7,7 +7,7 @@ out: any
 examples: [poc_driving_decisions, poc_driving_pass]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # mirror_aim_normal — DRIVE `decide` op

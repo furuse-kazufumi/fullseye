@@ -7,7 +7,7 @@ out: volume
 examples: [gallery2d_physics_alife_3d, poc_am_thermal_to_ct]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # vol_gaussian — 2D `3d` op

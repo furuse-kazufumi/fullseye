@@ -8,7 +8,7 @@ halcon: sobel_amp
 examples: [degenerate_inputs, find_ops_by_meaning, gallery2d_edges, genspark_external_review, poc_fiber_orientation, poc_focus_stacking, poc_real_coin_metrology, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # sobel_amp — 2D `edges` op

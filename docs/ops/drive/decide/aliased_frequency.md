@@ -7,7 +7,7 @@ out: any
 examples: [poc_driving_crossing, poc_driving_decisions]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # aliased_frequency — DRIVE `decide` op

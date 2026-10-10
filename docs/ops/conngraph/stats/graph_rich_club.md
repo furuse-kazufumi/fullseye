@@ -7,7 +7,7 @@ out: measurement
 examples: [poc_worm_core_persists]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # graph_rich_club — CONNGRAPH `stats` op

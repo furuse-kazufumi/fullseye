@@ -7,7 +7,7 @@ out: labels2d
 examples: [halcon_segmentation_tour]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # classify_image_class_lut — SEGMENTATION `classify` op

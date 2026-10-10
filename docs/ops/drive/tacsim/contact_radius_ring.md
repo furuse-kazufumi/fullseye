@@ -7,7 +7,7 @@ out: table
 examples: [poc_tacscalib_sphere_lut, poc_tacsim_elastic_membrane]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # contact_radius_ring — DRIVE `tacsim` op

@@ -7,7 +7,7 @@ out: table
 examples: [poc_ball_bounce, poc_driving_crossing, poc_driving_decisions, poc_driving_endless_map, poc_driving_humanoids, poc_driving_japan_town, poc_driving_lateral, poc_driving_longitudinal, poc_driving_pass, poc_driving_school, poc_driving_town, poc_driving_traffic, poc_kendama, poc_table_tennis_bounce, poc_table_tennis_spin, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # world_camera — DRIVE `world` op

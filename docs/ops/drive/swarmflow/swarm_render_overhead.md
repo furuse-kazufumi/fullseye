@@ -7,7 +7,7 @@ out: image2d
 examples: [poc_swarm_obstacle_from_flow]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # swarm_render_overhead — DRIVE `swarmflow` op

@@ -7,7 +7,7 @@ out: region
 examples: [gallery2d_segmentation, poc_active_contours, poc_segmentation_gauntlet]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # sk_chan_vese — 2D `segmentation` op

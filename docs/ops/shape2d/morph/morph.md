@@ -7,7 +7,7 @@ out: image2d
 examples: [image_morph, poc_vanishing_detail_and_morphing_area]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # morph — SHAPE2D `morph` op

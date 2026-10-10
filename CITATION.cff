@@ -9,16 +9,19 @@ license: Apache-2.0
 repository-code: "https://github.com/furuse-kazufumi/fullseye"
 url: "https://furuse.work/"
 repository-artifact: "https://pypi.org/project/fullseye/"
-version: 0.5.0
-date-released: "2026-10-06"
+version: 0.6.0
+date-released: "2026-10-11"
 doi: 10.5281/zenodo.22761195
 identifiers:
   - type: doi
     value: 10.5281/zenodo.22761195
     description: "Concept DOI (resolves to the newest archived version; each GitHub Release mints a version DOI)"
   - type: doi
+    value: 10.5281/zenodo.23180057
+    description: "Version DOI for 0.5.0 (the previous release; the 0.6.0 version DOI is minted by Zenodo when its GitHub Release is published and is added here afterwards)"
+  - type: doi
     value: 10.5281/zenodo.23171440
-    description: "Version DOI for 0.4.0 (the previous release; the 0.5.0 version DOI is minted by Zenodo when its GitHub Release is published and is added here afterwards)"
+    description: "Version DOI for 0.4.0"
   - type: doi
     value: 10.5281/zenodo.23112789
     description: "Version DOI for 0.3.0"

@@ -8,7 +8,7 @@ halcon: prewitt_amp
 examples: [find_ops_by_meaning, gallery2d_edges]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # prewitt_mag — 2D `edges` op

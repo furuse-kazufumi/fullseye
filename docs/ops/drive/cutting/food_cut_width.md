@@ -7,7 +7,7 @@ out: scalar
 examples: [poc_food_cutting_measure, poc_knife_tactile_toughness]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # food_cut_width — DRIVE `cutting` op

@@ -7,7 +7,7 @@ out: signal
 examples: [gallery2d_texture_freq, optics_four_f_processor, signal_filter]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # highpass — ONED `signal` op

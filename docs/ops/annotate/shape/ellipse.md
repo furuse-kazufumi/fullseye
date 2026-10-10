@@ -7,7 +7,7 @@ out: image2d
 examples: [annotate_gallery, poc_dimensional_inspection, poc_driving_crossing, poc_driving_lateral, poc_driving_pass, poc_machine_condition_fusion, poc_peg_insertion_tactile, poc_public_camera_heading_real]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # ellipse — ANNOTATE `shape` op

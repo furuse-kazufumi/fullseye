@@ -7,7 +7,110 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
-- 実機・実データでの検証報告の入口を作った(データは非公開のままで可)。issue form `.github/ISSUE_TEMPLATE/real_validation_report.yml`、手順と昇格規則 `docs/VALIDATION_CONTRIBUTING.md`(+ `.en.md`)、記録台帳 `docs/validation_reports.json`。`tools/gen_maturity.py` が台帳を読み、規則を満たした外部報告に限って `validated-hardware` / `validated-public-real-data` を出す(空の台帳では能力行は変わらない)。手元データから集計値だけを出す `python -m fullseye.validation_kit`(第 1 弾 `blob-count`)。
+## 0.6.0 — 2026-10-11
+
+### 破壊的変更(Breaking)
+
+**op は 1 本も消えていない**(OP_INDEX 3,078 → 3,083、増分 5 = residue 族(台帳 2,125 → 2,130)、
+消失 0、既存 3,078 本の in/out の sort・分類・tier・モジュール・halcon・requires の変化 0。v0.5.0 の索引と機械で突き合わせた)。
+minor を上げるのは、0.5.0 の利用者のコードが**例外で止まる**変更(処理列の実行前の型検査・入力検査の fail-closed 化・ルートのモジュール名)と、
+**同じ呼び方で返る型・スケールが変わる**変更を含むため
+(CONTRIBUTING の Versioning:「`apply()` / `run_pipeline()` の意味が変わる」「返り値の型・数値のスケールが変わる」
+「公開のルートモジュールが `py-modules` から外れる」「fail-soft → fail-closed」はどれも minor)。
+
+| 項目 | 分類 | 根拠(Versioning のどの行か) |
+|---|---|---|
+| `run_pipeline` / `FullseyeEngine` / `FullseyeGraph` が型の合わない処理列を**実行前に** ValueError で拒否(`on_error` に依らない)。段ごとのノブも `apply` と同じ規則(非有限は拒否、0..1 の外は切り詰めて記録)。`diagnose_stages` の型不一致は `"error"`、`FullseyeGraph.run()` は `validate()` の error で何も走らせない | minor | `run_pipeline()` の意味が変わる + fail-soft → fail-closed(0.5.0 では `[gaussian, vol_gaussian]` が例外も記録も無く「成功」していた) |
+| ルートのモジュール `comm` → `fullseye_comm` | minor | 公開のルートモジュールが `py-modules` から外れる(PyPI の `comm` と衝突し、Jupyter 環境で `import fullseye` が落ちていた) |
+| `tb_angular_spectrum_propagate` / `tb_cx_apply_transfer_function` / `tb_fmcw_window_apply` が複素を返す | minor | 返り値の型が変わる(宣言した `cimage` / `beatcube` に反し、実部だけの float64 を返していた) |
+| `dsp.point_spectrum(extent=E)` が `[0, E]` の外の事象を ValueError | minor | fail-soft → fail-closed(binned は黙って捨て、direct は記録に無い山を立てていた) |
+| `imgmetrics.data_range_of` の符号付き整数の幅を `iinfo.max - iinfo.min` に(int8 は 255、int16 は 65535) | minor | 数値のスケールが変わる(PSNR が skimage と 6.02 dB ずれていた。符号なしは不変) |
+| `tb_normals_to_egi` を計数から割合([0, 1]、和 1)に | minor | 数値のスケールが変わる(image を名乗りながら最大 48 の計数を返していた) |
+| 橋のノブの写像: `img_to_monogenic` の波長 `3 + 12·a` px、`tb_local_std` の窓 3..17、`tb_fit_spline_curve` の k 1..5 | minor | ノブの数値のスケールが変わる(a=0.5 の既定は据え置き。0.5.0 では端の値が定義域の外で必ず拒否されていた) |
+| `filters_flow.apply_bandpass` は形の違うマスクを ValueError(`dc="corner"` の既定は 0.5.0 と同じ) | minor | fail-soft → fail-closed(broadcast で黙って計算していた) |
+| `hx_dist_rect2_points` が最小面積外接矩形の辺までの平均距離を返す | minor | 返り値の意味が変わる(名前に反し、重心からの平均距離を返していた) |
+| FScript の `to_gray` / `rgb1_to_gray` の値域を dtype から、長い尾の registry op は [0, 1] に写して `apply` で | minor | 数値のスケールが変わる(uint8 のカラーで mean_gray ≈ 126 だったのが [0, 1] の値に) |
+| 入力検査で新たに ValueError になる経路(下の「呼び方が変わる(詳細)」の一覧、約 20 箇所) | minor | fail-soft → fail-closed(どれも 0.5.0 では例外なしにもっともらしく誤った値を返していた) |
+| `evis_rl_perceive` / `g1_real_sensors` の `xml` の既定を `None`(環境変数か並んだ checkout から解決) | minor | 既定の引数が変わる(0.5.0 の既定は配布物に無い手元の絶対パス) |
+| 数値の誤りの直し(光学・3-D・天体・PIV・SPC・鑑識・読み書き・数学) | patch | 直し(誤った値を返していた経路を正しくする。同じ呼び方で数値は変わる —— 下の「直し」) |
+| 新しい op 族 residue(5 op)、正準名 88 の追加(旧名はそのまま)、意味で引く検索 `search_ops` | patch | 新しい op と族・別名の追加 |
+| MCP サーバの頑健化(壊れた要求で死なない・ハンドル id に sort を含める) | patch | 壊れていた経路を動くようにする直し(ハンドル id は不透明な値) |
+| ヘルプ本文の訳・ヒンディー語・検証報告の入口・ViEW2026 の案内ページ | patch | 新しい文書と訳 |
+
+移行の要点:
+
+- 処理列の型が合わない所には変換の op を挟む(例: `image` → `region` は `threshold`)。0.5.0 で「成功」していた列は、実は後段が誤った型を受けていた。
+  `on_error="fallback"` でも型の不一致は止まる(呼び出し側の誤りとして扱う)。
+- `import comm` / `from comm import ...` → `import fullseye_comm`。利用者の入口 `fullseye.open_channel` / `fullseye.capabilities()` は不変。
+- 複素を返すようになった 3 op の後段が実数を期待するなら `np.abs` / `.real` を明示する。
+- `point_spectrum` には `extent` の範囲に入る座標(原点を引いた相対座標)を渡す。
+- int8 / int16 の PSNR を 0.5.0 と比べるときは 6.02 dB の差を見込む(0.6.0 の値が skimage と一致する)。
+- `tb_normals_to_egi` の計数が要るなら割合に点数を掛ける。
+- `apply_bandpass` に中央規約のマスク(`hx_gen_*`)を渡すときは `dc="center"`。マスクは画像と同じ形に。
+- `evis_rl_perceive` / `g1_real_sensors` は `MS_HUMAN_700_DIR` / `MUJOCO_MENAGERIE` を設定するか `xml=` を明示する。
+
+### 呼び方が変わる(詳細)
+
+- ★**型の合わない処理列を実行前に拒否する**(`api.run_pipeline` / `engine.FullseyeEngine` / `graphengine.FullseyeGraph`)。
+  `_prepare_pipeline` が何も走らせる前に全段の op 解決・型連鎖(`identity` などの `"any"` は受けた型を保つ)・段ごとのノブを検査し、
+  型の不一致は段番号と両方の型を名指しして ValueError。`engine.run_stepwise` と `FullseyeGraph.run` は `run_pipeline` / `fullseye.apply` と同じ段実行を通る
+  (uint8 の /255 と guard を飛ばしていた)。`FullseyeGraph.run()` に `on_error` 引数、`to_python()` は `fullseye.apply` を出す。
+  門 = tests/test_review_fixes_app_2026_10_11.py(直す前の木で 25 件赤。最初の op を spy に差し替えて「1 段も走っていない」まで確かめる)。
+- ★**ルートのモジュール `comm` を `fullseye_comm` に改名**。wheel はルートのモジュールを site-packages の直下に置くので、Jupyter / ipykernel が入れる PyPI の `comm` に負けて
+  `import fullseye` が ImportError で落ちた(0.5.0 + `pip install comm` の使い捨て venv で再現)。配布するトップレベル名が stdlib・既知の衝突名・他の配布物と被ったら落ちる門
+  (tests/test_example_names_do_not_shadow.py)。
+- 入力検査で新たに ValueError(どれも 0.5.0 では例外なしにもっともらしく誤った値を返していた):
+  `dsp.point_spectrum` の範囲外の事象 / `apply_bandpass` の形の違うマスク / `estimate_point_normals` の 2 点・k < 3 /
+  `ransac_sphere` の同一平面の点 / `mirror_plane_from_pairs` の決まらない配置 / `mathops.wave_membrane_mode` の規約外 / `ifs_similarity_dimension` の縮小しない写像 /
+  `music_doa` / `esprit_doa` の spacing ≤ 0 / `kalman_smooth` の ±inf / `conngraph.graph_layer_propagate` の和 ≤ 0 の受け手 /
+  `optscene` の諸元ビルダ(NaN の方位角・負の読み出し雑音・非正の波長と寸法)/ `prism_min_deviation_deg` の屈折率 < 1 / `thin_film_reflectance` の範囲外の cos θ(clip していた)/
+  `aperture_photometry` の画像外の中心 / `spc.gum_expanded` の NaN 自由度 / `backends_measure1d` の 0..255 の float 画像 / `imgforensics` の complex・文字列 /
+  `jsonio` の complex・欠けた鍵(KeyError → ValueError)/ `motionio` の時刻列が決まらない表 / XYZ の小数点カンマと区切りの混在。
+
+### 直し
+
+- **光学**: PSF の画素積分を重なり按分に(偶数倍ピッチで 1/4 画素ずれていた)、`diffraction_blur` の σ = 0.42·λN(22 % 太かった)、
+  `slab_transmittance` の多重反射を偏光ごとに(60° で 0.836 → 0.848)、奇数次の微分フィルタのナイキストのビン。
+- **3-D**: 原点から遠い座標(UTM・LiDAR の絶対座標)で壊れていた ICP point-to-plane / GICP・球の当てはめ 4 本・PnP / DLT を中心化して解く
+  (オフセット 1e3 で回転誤差 23°、1e6 で半径が 7e5 ずれていた)、ジンバルロック・純並進の dual quaternion・`pose_average` の符号・acos の床、
+  `m3c2_distance(max_depth=None)` を無制限の円筒に、`hough_sphere_3d` / `hough_plane_3d` の境界 voxel の偏り、`hausdorff_distance` の入口検査。
+- **天体・断層・PIV・SPC・鑑識**: MAD = 0 の床(整数 DN で宇宙線が平均に入っていた)、非正方の Radon、PIV の再格子化を真の最近傍に、
+  MT 法の平坦な特徴量(mm と µm で MD が 1.73 と 1732)、libjpeg と同じ量子化表(34 品質でずれていた)。
+- **読み書き**: 符号付き整数の [0, 1] 写像、LAS の色深度、PLY の `end_header`・"solid" で始まる binary STL、`xlsxio` のサムネイル、`gcode_read` の G28 と始点未定の G91。
+- **数学・グラフ・応用**: 反例で再現した 31 件(円形膜の固有振動数の取りこぼし、重心補間のアンダーフロー、冪零グラフの半径、`geodesic_heat` の非連結成分、
+  `tacsim` の窓の中心、`segcompare` の 1 voxel ずれ、`pxrd.azimuthal_integrate` の σ の補正 ほか)と、門の強化で台帳に残した 9 件
+  (`tb_cx_apply_transfer_function` の 32×32 固定、temporal 帯域に DFT ビンが無い、空入力の 0/0 ほか 16 op)、`compose_funct_1d` の整数あふれ。
+- **MCP サーバ**: 壊れた要求(配列の params・Content-Length 無し・Infinity)で落ちず -32602 / -32700 / -32603 を返す、素通し op の型を保つ、
+  ハンドルの id に sort を含める、`fullseye_find_ops` の種別検査。
+- **FScript**: registry op を facade 経由で(uint8 の /255・別名の解決・例外を `FScriptError` に)。
+- **op 検索**: 自分の名前で引いた op が先頭に来なかった 38 件、別名の先頭が `apply` の走らせる op と食い違っていた 37 件。
+- **ヘルプの原文**: 測定方向・窓の話の取り違え・途中で切れた要約 24 本・docstring の数値を実装に(回折ぼけ σ、プリズム d 線 38.6°)。
+- 門を噛むようにした: guard 越しの「例外なし・有限」、空でも通る表明、`or True`、母数の黙った縮小。並列実行で順序次第になる漏れ 3 つ。
+  手書きの op 数・ノート数を索引と照合する門(tests/test_hand_written_counts.py)。
+
+### 追加
+
+- ★**中国剰余定理の op 族 residue**(新モジュール `residue` 5 op、台帳 `opsresidue`、PoC `poc_residue_crt`):
+  `residue_integer_crt` / `residue_crt` / `residue_fault_locate` / `crt_displacement` / `harmonic_rotation`。
+  1 周期の折り返しで決まらない角度と変位を、周期の違う位相を束ねて決める。真値は総当たりと解析的に描いた部品。
+- **正準名 88**(`opnames.py`): 紛らわしい旧名に正準名を足す(例 `image_fft_lowpass` / `signal_lowpass`、`region_fill_holes` / `depth_fill_holes` / `mesh_fill_holes`)。
+  旧名はすべてそのまま、`ops.REGISTRY` の登録順は 1 つも動かさない。
+- **意味で引く検索**: `fullseye.search_ops` / `fullseye-rag search` / MCP `fullseye_find_ops`(ja / en / zh / tw / ko / de / hi の要約・名前・別名・型を BM25 で照合し、
+  索引 `fullseye/data/OP_SEARCH.json` を wheel に同梱)。同じ言語の中の言い換え表(弱い重み 0.6)。
+- **実機・実データでの検証報告の入口**(データは非公開のままで可)。issue form `.github/ISSUE_TEMPLATE/real_validation_report.yml`、手順と昇格規則
+  `docs/VALIDATION_CONTRIBUTING.md`(+ `.en.md`)、記録台帳 `docs/validation_reports.json`。`tools/gen_maturity.py` が台帳を読み、規則を満たした外部報告に限って
+  `validated-hardware` / `validated-public-real-data` を出す(空の台帳では能力行は変わらない)。手元データから集計値だけを出す `python -m fullseye.validation_kit`(第 1 弾 `blob-count`)。
+- `graphinv` の入れ替えに `swaps_accepted`、`fit_zernike` に `center` / `radius`(省略可、既定は従来どおり)、`apply_bandpass` に `dc`。
+
+### 文書・訳
+
+- ★**ヒンディー語(hi)を 7 つ目の言語に**: Studio の文言・ヘルプの枠・op 要約 3,089・検索(デーヴァナーガリーの語切り・日常語 → 英語の術語)、
+  入口の文書 4 本(GETTING_STARTED / INSTALL / AI_RAG_GUIDE / STUDIO_GUIDE)。術語は英語のまま、文はヒンディー語。
+- **ヘルプ本文(要約の後の詳細説明)の訳**: 対訳表 `docs/i18n/op_rest.json` に en / zh / tw / ko / de / hi の 6 言語で計 1,701 op(残りは drive 族 446)。
+  要約は 5 言語とも 100 %(運転族 694 と残り 427 を訳した)。
+- **ViEW2026 の案内ページ**(論文の QR の行き先、https://furuse.work/view2026/ と 6 言語): 見どころ 29・シリーズ 5・ぜんぶ見る 222。
+  正本 `docs/view2026/exhibits.json` から `tools/gen_view2026_pages.py` が 7 ページを生成(訳の欠け・図の実在・数の並びを書く前に検査)。
+- PoC の図 178 本を今の描画で作り直し、説明文の数字を実行ログに合わせた。ヘルプの表示崩れを全言語で直した。
 
 ## 0.5.0 — 2026-10-06
 

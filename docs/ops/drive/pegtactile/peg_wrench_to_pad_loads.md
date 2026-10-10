@@ -7,7 +7,7 @@ out: table
 examples: [poc_knife_tactile_toughness, poc_peg_insertion_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # peg_wrench_to_pad_loads — DRIVE `pegtactile` op

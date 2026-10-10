@@ -7,7 +7,7 @@ out: table
 examples: [poc_veiling_glare]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # edge_spread — OPTICS `imaging` op

@@ -8,7 +8,7 @@ halcon: roberts
 examples: [find_ops_by_meaning, gallery2d_edges, poc_white_balance]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.5.0  # fullseye lib version this note was generated for
+version: 0.6.0  # fullseye lib version this note was generated for
 ---
 
 # roberts — 2D `edges` op
