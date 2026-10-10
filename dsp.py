@@ -480,6 +480,18 @@ def point_spectrum(positions, extent=None, n_freq=2048, f_max=None,
         lo, hi = float(pos.min()), float(pos.max())
     else:
         lo, hi = 0.0, float(extent)
+        # 2026-10-11: events outside the declared record [0, extent] were not checked --
+        # "binned" silently dropped them (a flat zero spectrum) and "direct" kept them
+        # (a plausible peak from a record that does not hold them). Positions on an
+        # absolute axis (1000..1950 with extent=1000) are a caller error: refuse it.
+        if np.isfinite(hi) and hi > 0.0:
+            out = int(np.count_nonzero((pos < 0.0) | (pos > hi)))
+            if out:
+                raise ValueError(
+                    "point_spectrum: %d of %d events lie outside [0, extent=%g] "
+                    "(positions span %g..%g); shift the positions to start at 0 "
+                    "or pass the extent that covers them"
+                    % (out, pos.size, hi, float(pos.min()), float(pos.max())))
     span = hi - lo
     if not span > 0.0:
         raise ValueError("the events span zero length; pass extent= explicitly")

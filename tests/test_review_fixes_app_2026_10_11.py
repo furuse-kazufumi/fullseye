@@ -439,3 +439,74 @@ def test_fscript_alias_resolves_to_the_canonical_op():
     canon = api.find_op("GAUSS_FILTER")
     assert canon is not None
     assert np.allclose(env.vars["R"].pixels, api.apply(img, canon.name))
+
+
+# ---------------------------------------------------------------- 11. opsearch --
+def test_search_ops_exact_registered_name_is_first():
+    """Every registered op is found first by its own name (2026-10-11: 38 were not --
+    an earlier row naming the op as its HALCON alias took the exact-name boost)."""
+    from fullseye.opsearch import search_ops
+    names = sorted({o.name for o in api._ops.REGISTRY})
+    assert len(names) > 900
+    tops = {n: [o["name"] for o in search_ops(n, k=1)["ops"]] for n in names}
+    bad = {n: t for n, t in tops.items() if t != [n]}
+    assert tops
+    assert all(t == [n] for n, t in tops.items()), "%d mismatches, e.g. %s" % (len(bad), sorted(bad.items())[:10])
+
+
+def test_search_ops_alias_goes_to_the_op_apply_runs():
+    from fullseye.opsearch import load_index, search_ops
+    ix = load_index()
+    shared: dict = {}
+    for r in ix["rows"]:
+        if r.get("h"):
+            shared.setdefault(r["h"], []).append(r["n"])
+    checked = []
+    for h, ns in sorted(shared.items()):
+        canon = api.find_op(h)
+        if len(ns) < 2 or canon is None or canon.name not in ns:
+            continue
+        top = search_ops(h, k=1)["ops"][0]["name"]
+        if h in {r["n"] for r in ix["rows"]}:
+            checked.append((h, top, h))           # an op of that exact name wins
+        else:
+            checked.append((h, top, canon.name))
+    assert checked
+    assert all(top == want for _, top, want in checked), [c for c in checked if c[1] != c[2]][:10]
+
+
+# ------------------------------------------------------------ 12. point_spectrum --
+@pytest.mark.parametrize("method", ["direct", "binned"])
+def test_point_spectrum_refuses_events_outside_extent(method):
+    import dsp
+    rng = np.random.default_rng(0)
+    pos = np.arange(0, 1000, 50.0) + rng.normal(0, 0.5, 20)
+    pos = np.clip(pos, 0.0, 1000.0)
+    with pytest.raises(ValueError, match="outside"):
+        dsp.point_spectrum(pos + 1000.0, extent=1000.0, method=method, f_max=0.05, n_freq=512)
+    with pytest.raises(ValueError, match="outside"):
+        dsp.point_spectrum(np.append(pos, -1.0), extent=1000.0, method=method, f_max=0.05, n_freq=512)
+    r = dsp.point_spectrum(pos, extent=1000.0, method=method, f_max=0.05, n_freq=512)
+    assert r["n_events"] == 20
+    assert abs(r["freq"][int(np.argmax(r["power"]))] - 0.02) < 0.002
+
+
+# ------------------------------------------------------------ 13. compose_funct_1d --
+def test_compose_funct_1d_huge_positions_clamp_to_the_ends():
+    import funct1d
+    y1 = np.arange(10.0) * 10
+    got = funct1d.compose_funct_1d(y1, [1e20, -1e20, 1e18, 3.4, 9.6, -0.4])
+    assert got.tolist() == [90.0, 0.0, 90.0, 30.0, 90.0, 0.0]
+
+
+# ------------------------------------------------------------ 14. imgmetrics int --
+@pytest.mark.parametrize("dt", [np.int8, np.int16, np.uint8, np.uint16])
+def test_psnr_integer_data_range_matches_skimage(dt):
+    import imgmetrics as M
+    sk = pytest.importorskip("skimage.metrics")
+    info = np.iinfo(dt)
+    assert M.data_range_of(np.zeros(4, dt)) == float(info.max) - float(info.min)
+    rng = np.random.default_rng(0)
+    a = rng.integers(info.min, int(info.max) + 1, (48, 48)).astype(dt)
+    b = np.clip(a.astype(np.int64) + rng.integers(-5, 6, a.shape), info.min, info.max).astype(dt)
+    assert abs(M.psnr(a, b) - sk.peak_signal_noise_ratio(a, b)) < 1e-9

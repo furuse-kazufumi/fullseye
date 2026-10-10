@@ -357,7 +357,9 @@ def compose_funct_1d(y1, y2):
     """
     a1 = _f1d(y1, "y1", min_len=1)
     a2 = _f1d(y2, "y2")
-    idx = np.clip(np.round(a2).astype(int), 0, len(a1) - 1)
+    # clip in float BEFORE the integer cast: 1e20 cast to int first overflows to
+    # INT_MIN and clamped to index 0 (2026-10-11; the docstring promises the last sample)
+    idx = np.clip(np.round(a2), 0, len(a1) - 1).astype(np.intp)
     return a1[idx]
 
 

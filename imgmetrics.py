@@ -112,8 +112,9 @@ _INT_RANGES = {
     np.dtype(np.uint8): 255.0,
     np.dtype(np.uint16): 65535.0,
     np.dtype(np.uint32): 4294967295.0,
-    # 符号付きは最大値が半分(int8 = 127、int16 = 32767)。2026-09-07 まで 255 / 65535 と
-    # 書かれていて、int16 画像の PSNR が 6 dB ずれていた(docstring 充実の読み合わせで発見)。
+    # この表は「[0, 1] の float に直す割る数」(_to_unit_float、skimage の img_as_float と同じく
+    # 符号付きは最大値で割る)。PSNR / SSIM の data_range は別で、data_range_of が dtype の
+    # 取りうる幅 iinfo.max - iinfo.min を返す(int8 = 255、int16 = 65535、skimage と同じ)。
     np.dtype(np.int8): 127.0,
     np.dtype(np.int16): 32767.0,
 }
@@ -159,7 +160,11 @@ def data_range_of(*arrays, data_range=None):
     dt = dts.pop()
 
     if dt in _INT_RANGES:
-        return _INT_RANGES[dt]
+        # ★2026-10-11: 符号付きの幅を最大値(int16 = 32767)にしていて、skimage の
+        # peak_signal_noise_ratio(data_range = iinfo.max - iinfo.min = 65535)と 6.02 dB ずれた。
+        # 幅は dtype が取りうる全範囲。符号なしは max - 0 で従来と同じ。
+        info = np.iinfo(dt)
+        return float(info.max) - float(info.min)
     if dt == np.dtype(bool):
         return 1.0
     if not np.issubdtype(dt, np.floating):

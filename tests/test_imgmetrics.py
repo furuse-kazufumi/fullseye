@@ -156,9 +156,10 @@ def test_rgb_inputs_must_have_three_channels():
 def test_integer_dtypes_fix_the_range_without_being_told():
     assert M.data_range_of(np.zeros((2, 2), np.uint8)) == 255.0
     assert M.data_range_of(np.zeros((2, 2), np.uint16)) == 65535.0
-    # 符号付きは最大値が半分(2026-09-07 まで 255 / 65535 だった)
-    assert M.data_range_of(np.zeros((2, 2), np.int8)) == 127.0
-    assert M.data_range_of(np.zeros((2, 2), np.int16)) == 32767.0
+    # 符号付きは dtype の取りうる幅 iinfo.max - iinfo.min(skimage の data_range と同じ)。
+    # 2026-09-07〜2026-10-11 は最大値(127 / 32767)にしていて skimage と 6.02 dB ずれていた。
+    assert M.data_range_of(np.zeros((2, 2), np.int8)) == 255.0
+    assert M.data_range_of(np.zeros((2, 2), np.int16)) == 65535.0
     assert M.data_range_of(np.zeros((2, 2), bool)) == 1.0
 
 
