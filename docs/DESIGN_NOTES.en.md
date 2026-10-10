@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 632 of 1342. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 632 of 1343. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -460,7 +460,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/poc_compound_eye.py`
 
-- **L301** _(ja)_ — ★PoC の門(tests/test_poc_scripts_run.py)は exit 0 に加えて "PASS" の印字を 要求する(合否を計算したのに捨てる門を防ぐ規約)。以前は "OK:" と書いていて、 台帳に登録した瞬間に「exit 0 だが PASS を印字していない」で落ちた。
+- **L271** _(ja)_ — ★実測(2026-10-11): 雑音だけの利得は N=49 で 7.05(√49=7.00)、周縁 8px 除外で 全体利得 7.19、床は外周 4 画素にだけ載り k>=4 で 1e-15 の丸め屑。 → 第 2 章の飽和(5.33)は重ねの原理ではなく縁(像の外から画素を借りる帯)の誤差。
+- **L402** _(ja)_ — ★PoC の門(tests/test_poc_scripts_run.py)は exit 0 に加えて "PASS" の印字を 要求する(合否を計算したのに捨てる門を防ぐ規約)。以前は "OK:" と書いていて、 台帳に登録した瞬間に「exit 0 だが PASS を印字していない」で落ちた。
 
 ## `examples/poc_connectome_across_decades.py`
 

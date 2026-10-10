@@ -88,7 +88,7 @@ py -3.11 examples/poc_colormap_readability.py
 
 [![ハエの複眼は光場センサ ―― 神経重ね合わせの「重ねると頑健」は膝の手前まで](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/01_compound_eye_scaling_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/01_compound_eye_scaling.png)
 
-*↑ **ハエの複眼は光場センサ ―― 神経重ね合わせの「重ねると頑健」は膝の手前まで** ―― 個眼アレイを 9×9 のプレノプティック系として合成し、同じ点を N 個眼で重ねたときの SNR 利得を測った図。小開口では √N がほぼ厳密(N=5 で 2.25 対 2.24)だが、大開口では補間誤差が平均で消えず飽和する(N=49 で 5.33 対 7.00)。ハエの R1–R6 の 6 重の重ね合わせは膝の手前にある。距離はアレイでこそ出て(手前 +1.998・奥 +0.499、真値 2.00 / 0.50)、少数派の遮蔽者は median 重ねなら貫ける(隠れ画素の RMS: 中心 1 枚 0.237 → mean 0.065 → median 0.025)。*
+*↑ **ハエの複眼は光場センサ ―― 神経重ね合わせの「重ねると頑健」は膝の手前まで** ―― 個眼アレイを 9×9 のプレノプティック系として合成し、同じ点を N 個眼で重ねたときの SNR 利得を測った図。小開口では √N がほぼ厳密(N=5 で 2.25 対 2.24)だが、大開口では飽和する(N=49 で 5.33 対 7.00)。原因は雑音でなく、ずらして重ねた像の周縁 4 画素の誤差で、雑音だけの利得は 7.05(√N どおり)、周縁 8 画素を除けば 7.19。ハエの R1–R6 の 6 重の重ね合わせは膝の手前にある。距離はアレイでこそ出て(手前 +1.998・奥 +0.499、真値 2.00 / 0.50)、少数派の遮蔽者は median 重ねなら貫ける(隠れ画素の RMS: 中心 1 枚 0.237 → mean 0.065 → median 0.025)。*
 
 [![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/02_compound_eye_superposition_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_compound_eye/02_compound_eye_superposition.png)
 
