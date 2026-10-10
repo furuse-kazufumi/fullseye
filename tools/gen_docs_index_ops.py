@@ -476,14 +476,17 @@ DOC_L10N = {
 
 
 def _doc_title(rel: str) -> str:
-    """先頭の `# 見出し` を 1 行の説明として使う。無ければ最初の本文行。"""
+    """先頭の `# 見出し` を 1 行の説明として使う。無ければ最初の本文行。
+
+    HTML の行(`<div ...>` など)と太字だけの言語切替行は題にしない。
+    """
     path = os.path.join(_ROOT, "docs", rel)
     with io.open(path, encoding="utf-8") as f:
         for line in f:
             t = line.strip()
             if t.startswith("# "):
                 t = t[2:].strip()
-            elif (not t) or t.startswith(("<!--", "---", "!", "[", "#")):
+            elif (not t) or t.startswith(("<", "---", "!", "[", "#", "**")):
                 continue
             t = t.replace("|", "/")
             return t if len(t) <= 150 else t[:147] + "..."

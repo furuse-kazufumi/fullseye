@@ -223,7 +223,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 221
+## Document map — all 228
 
 The complete map, so that **no document is unreachable from this index** (the 3,089 per-op notes and 63 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
@@ -360,7 +360,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(143)
+**Other**(150)
 
 | document | what it covers |
 |---|---|
@@ -507,5 +507,12 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`literature/driving_simulation.md`](literature/driving_simulation.md) | 文献層: 運転のシミュレーションと評価 _(ja)_ |
 | [`literature/oss_landscape_notes.md`](literature/oss_landscape_notes.md) | OSS landscape notes (verified 2026-09-21) |
 | [`literature/sensor_simulation.md`](literature/sensor_simulation.md) | 文献層: センサーの模擬(カメラ・LiDAR・レーダー) _(ja)_ |
+| [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
+| [`view2026/en/index.md`](view2026/en/index.md) | Fullseye — ViEW2026 |
+| [`view2026/hi/index.md`](view2026/hi/index.md) | Fullseye — ViEW2026 |
+| [`view2026/index.md`](view2026/index.md) | Fullseye — ViEW2026 |
+| [`view2026/ko/index.md`](view2026/ko/index.md) | Fullseye — ViEW2026 |
+| [`view2026/tw/index.md`](view2026/tw/index.md) | Fullseye — ViEW2026 |
+| [`view2026/zh/index.md`](view2026/zh/index.md) | Fullseye — ViEW2026 |
 
 <!-- docmap:end -->
