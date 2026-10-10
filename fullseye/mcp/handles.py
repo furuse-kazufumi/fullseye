@@ -10,7 +10,9 @@ fail-closed:
   足す(``os.pathsep`` 区切り)。``..`` もシンボリックリンクも ``realpath`` で潰してから
   根と比べる。
 - 未知のハンドル・追い出されたハンドルは理由つきで拒否する。
-- ハンドルは内容の sha256 なので、同じ配列は同じ名前になる(重複して持たない)。
+- ハンドルは内容と型(sort)の sha256 なので、同じ配列・同じ型は同じ名前になる(重複して持たない)。
+  型を混ぜないのは、二値画像に threshold を掛けた region が入力の image と同じバイト列になり、
+  同じハンドル(sort=image)が返って次段の region op が型の不一致で拒否されていたから(2026-10-11)。
 """
 from __future__ import annotations
 
@@ -87,15 +89,16 @@ class HandleStore:
 
     # ---------------------------------------------------------------- store
     @staticmethod
-    def _hid(arr: np.ndarray) -> str:
+    def _hid(arr: np.ndarray, sort: str = "") -> str:
         h = hashlib.sha256()
         h.update(np.ascontiguousarray(arr).tobytes())
-        h.update(("%s|%s" % (arr.shape, arr.dtype)).encode())
+        h.update(("%s|%s|%s" % (arr.shape, arr.dtype, sort)).encode())
         return PREFIX + h.hexdigest()[:16]
 
     def put(self, arr, *, sort: str, provenance: list) -> dict:
         arr = np.asarray(arr)
-        hid = self._hid(arr)
+        hid = self._hid(arr, sort)
+        self._evicted.discard(hid)          # 作り直したハンドルは生きている(追い出し印を消す)
         if hid in self._meta:
             self._meta.move_to_end(hid)
             return dict(self._meta[hid], dedup=True)
@@ -112,13 +115,25 @@ class HandleStore:
 
     def load(self, path: str, *, color: bool = False) -> dict:
         real = self._check_path(path)
-        if real.lower().endswith(".npy"):
-            arr = np.load(real)
-            sort = "image" if arr.ndim == 2 else "color" if arr.ndim == 3 and arr.shape[-1] == 3 else "any"
-        else:
-            import imgio
-            arr = imgio.load(real, color=color)
-            sort = "color" if color else "image"
+        # ★2026-10-11: 根の中の壊れた png・object 配列の npy は ValueError 等を HandleError に
+        # 写さず投げ、dispatch を抜けてサーバのループが死んでいた。読めない中身は理由つきで断る
+        # (-32602)。npy は pickle を決して許さない。
+        try:
+            if real.lower().endswith(".npy"):
+                arr = np.load(real, allow_pickle=False)
+                if not isinstance(arr, np.ndarray) or arr.dtype.kind not in "biufc":
+                    raise ValueError("数値の配列でない(dtype=%s)"
+                                     % getattr(arr, "dtype", type(arr).__name__))
+                sort = "image" if arr.ndim == 2 else "color" if arr.ndim == 3 and arr.shape[-1] == 3 else "any"
+            else:
+                import imgio
+                arr = imgio.load(real, color=color)
+                sort = "color" if color else "image"
+        except HandleError:
+            raise
+        except Exception as exc:                                # noqa: BLE001 - 中身は untrusted
+            raise HandleError("読めない画像: %s(%s: %s)"
+                              % (path, type(exc).__name__, str(exc)[:200])) from None
         return self.put(arr, sort=sort, provenance=[{"load": os.path.relpath(real, ROOT) if real.startswith(ROOT) else real}])
 
     def get(self, handle: str) -> tuple[dict, np.ndarray]:

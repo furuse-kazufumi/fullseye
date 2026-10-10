@@ -23,6 +23,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import pathlib
 import sys
@@ -325,8 +326,10 @@ def _validate(schema: dict, args: Any) -> dict:
             raise ArgError("%s は整数でなければならない(%r)" % (k, v))
         if t == "number" and (not isinstance(v, (int, float)) or isinstance(v, bool)):
             raise ArgError("%s は数でなければならない(%r)" % (k, v))
-        if t == "number" and isinstance(v, float) and v != v:
-            raise ArgError("%s が NaN" % k)
+        if t == "number" and isinstance(v, float) and not math.isfinite(v):
+            # ★2026-10-11: Infinity(JSON の 1e309 も inf になる)が通り、fix_text の bbox で
+            # int(inf) の OverflowError がサーバのループまで抜けていた。NaN と同じく境界で断る。
+            raise ArgError("%s が有限の数でない(%r)" % (k, v))
         if t == "array":
             if not isinstance(v, list):
                 raise ArgError("%s は配列でなければならない(%s)" % (k, type(v).__name__))
@@ -344,8 +347,9 @@ def _validate(schema: dict, args: Any) -> dict:
                         raise ArgError("%s[%d]: %s" % (k, i, exc)) from exc
             elif items and items.get("type") == "number":
                 for i, it in enumerate(v):
-                    if not isinstance(it, (int, float)) or isinstance(it, bool) or it != it:
-                        raise ArgError("%s[%d] は数でなければならない(%r)" % (k, i, it))
+                    if (not isinstance(it, (int, float)) or isinstance(it, bool)
+                            or not math.isfinite(it)):
+                        raise ArgError("%s[%d] は有限の数でなければならない(%r)" % (k, i, it))
             continue
         if "enum" in p and v not in p["enum"]:
             raise ArgError("%s は %s のどれか(%r)" % (k, p["enum"], v))
@@ -381,12 +385,17 @@ def read_message(stdin) -> dict | None:
         if b":" in line:
             k, _, v = line.partition(b":")
             headers[k.strip().lower()] = v.strip()
+    # ★2026-10-11: Content-Length が無い / 0 のフレームで None(= EOF)を返し、サーバが
+    # 黙って終了していた。EOF は「ヘッダを 1 行も読めない」ときだけで、壊れたフレームは
+    # FramingError(→ -32700)にしてループを続ける。
+    if b"content-length" not in headers:
+        raise FramingError("Content-Length ヘッダが無い")
     try:
-        length = int(headers.get(b"content-length", 0))
+        length = int(headers[b"content-length"])
     except ValueError as exc:
         raise FramingError("Content-Length が整数でない") from exc
     if length <= 0:
-        return None
+        raise FramingError("Content-Length が正でない(%d)" % length)
     body = stdin.read(length)
     if len(body) < length:
         return None
@@ -556,6 +565,13 @@ def _check_sort(op, cur_sort: str, *, stage: int | None = None, prev: str = "ハ
                    % (where, op.name, op.in_sort, prev, cur_sort))
 
 
+def _out_sort(op, in_sort: str | None) -> str:
+    """op が出す型。``out_sort == "any"``(素通し)は受けた型を保つ(engine._thread_sort と同じ)。"""
+    if op.out_sort == "any" and in_sort:
+        return in_sort
+    return op.out_sort
+
+
 def _run_op(arr, op, ka: float, kb: float, allow: bool):
     """1 op を走らせる。strict で失敗したら (None, degraded, err)。"""
     import backend_safe
@@ -575,14 +591,15 @@ def _stage(store: HandleStore, meta: dict, arr, op, ka: float, kb: float, allow:
     import numpy as np
     import ops
     out, degraded, err = _run_op(arr, op, ka, kb, allow)
+    out_sort = _out_sort(op, meta.get("sort"))
     rec: dict = {"op": op.name, "a": ka, "b": kb, "handle_in": meta.get("handle"),
-                 "in_sort": op.in_sort, "out_sort": op.out_sort,
+                 "in_sort": op.in_sort, "out_sort": out_sort,
                  "degraded": degraded, "strict": not allow}
     if err is not None:
         rec["error"] = err
         return rec, [], None, None
     st = stats_of(out)
-    vd = verdict_of(st, op_name=op.name, out_sort=op.out_sort)
+    vd = verdict_of(st, op_name=op.name, out_sort=out_sort)
     if degraded:
         vd = dict(vd, escalate=True,
                   reasons=vd["reasons"] + ["劣化 %d 件(degraded を見ること)" % len(degraded)])
@@ -591,7 +608,7 @@ def _stage(store: HandleStore, meta: dict, arr, op, ka: float, kb: float, allow:
     links: list[dict] = []
     m2 = None
     if isinstance(out, np.ndarray):
-        m2 = store.put(out, sort=op.out_sort, provenance=prov)
+        m2 = store.put(out, sort=out_sort, provenance=prov)
         rec["handle"] = m2["handle"]
         if thumb_allowed:
             links = _maybe_thumb(store, m2, arr, out, vision=vision, escalate=vd["escalate"],
@@ -599,7 +616,7 @@ def _stage(store: HandleStore, meta: dict, arr, op, ka: float, kb: float, allow:
     elif isinstance(out, dict) and "cs" in out:
         rec["handle"] = None
         rec["contour"] = {"n": st.get("n_contours"), "points": st.get("n_points")}
-        m2 = {"handle": None, "sort": op.out_sort, "provenance": prov}   # 連鎖用の疑似メタ
+        m2 = {"handle": None, "sort": out_sort, "provenance": prov}   # 連鎖用の疑似メタ
     else:
         rec["handle"] = None
         rec["value"] = st.get("value")
@@ -661,7 +678,7 @@ def _apply(a: dict, cat: Catalog, store: HandleStore, *,
         text = _stage_text(rec) + "\n(allow_degraded=true で fail-soft を許せるが、劣化は degraded に載る)"
         return _tool_error(text, rec)
     text = _stage_text(rec)
-    addon = _typed_json_addon(out, op.out_sort, max_structured_bytes)
+    addon = _typed_json_addon(out, _out_sort(op, meta["sort"]), max_structured_bytes)
     if addon is not None:
         env, md = addon
         rec["json"] = env                                       # 追加: bit そのまま戻せる封筒
@@ -679,7 +696,10 @@ def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
     cur, prev = meta["sort"], "ハンドル %s" % meta["handle"]
     for i, op in enumerate(ops_, 1):
         _check_sort(op, cur, stage=i, prev=prev)
-        cur, prev = op.out_sort, "前段 %s の出力" % op.name
+        # ★2026-10-11: out_sort "any"(identity など素通しの op)は受けた型を保つ
+        # (engine._thread_sort と同じ規則)。"any" をそのまま次段に流すと
+        # [identity, gaussian] が「any は image でない」で拒否されていた。
+        cur, prev = _out_sort(op, cur), "前段 %s の出力" % op.name
     allow = bool(a.get("allow_degraded", False))
     vision = a.get("vision", "auto")
     recs: list[dict] = []
@@ -711,7 +731,7 @@ def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
                 final_handle = m2["handle"]
         else:
             final_value = rec.get("value")
-            cur_meta, cur_val = {"handle": None, "sort": op.out_sort,
+            cur_meta, cur_val = {"handle": None, "sort": _out_sort(op, cur_meta.get("sort")),
                                  "provenance": cur_meta.get("provenance", [])}, out
     structured = {"handle_in": meta["handle"], "stages": recs, "completed": len(recs),
                   "stopped_at": None, "handle": final_handle, "value": final_value,
@@ -720,7 +740,7 @@ def _pipeline(a: dict, cat: Catalog, store: HandleStore, *,
         len(recs), final_handle or ("value=%s" % final_value))]
     for r in recs:
         lines.append("[段 %d] " % r["stage"] + _stage_text(r).replace("\n", "\n        "))
-    addon = _typed_json_addon(cur_val, ops_[-1].out_sort, max_structured_bytes)   # 最終段の型付き結果
+    addon = _typed_json_addon(cur_val, cur, max_structured_bytes)   # 最終段の型付き結果(素通しは受けた型)
     if addon is not None:
         env, md = addon
         structured["json"] = env                                # 追加: 最終出力の封筒(bit 一致)
@@ -946,10 +966,13 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         raise ArgError("知らない tool: %r(あるのは %s)" % (name, sorted(TOOLS)))
     a = _validate(TOOLS[name]["inputSchema"], args if args is not None else {})
     store = store if store is not None else HandleStore()
-    if name == "fullseye_search_ops":
+    if name in ("fullseye_search_ops", "fullseye_find_ops"):
+        # ★2026-10-11: find_ops は「既知の種別以外は拒否する」と書きながら typo を受け、
+        # 0 件を返していた。search_ops と同じ門を通す。
         for k in ("in_sort", "out_sort"):
             if a.get(k) and a[k] not in cat.sorts:
                 raise ArgError("%s=%r は知らない種別(あるのは %s)" % (k, a[k], cat.sorts))
+    if name == "fullseye_search_ops":
         r = cat.search(a.get("query", ""), in_sort=a.get("in_sort"), out_sort=a.get("out_sort"),
                        source=a.get("source"), limit=a.get("limit", 20))
         return tool_result(_search_text(r), r, max_structured_bytes=max_structured_bytes)
@@ -1006,8 +1029,16 @@ def dispatch(msg: dict, cat: Catalog, store: HandleStore | None = None) -> dict 
         return _err(msg.get("id") if isinstance(msg, dict) else None, -32600, "JSON-RPC 2.0 でない")
     req_id = msg.get("id")
     method = msg.get("method")
-    params = msg.get("params") or {}
+    params = msg.get("params")
     is_notification = "id" not in msg
+    # ★2026-10-11: params が配列 / 文字列、name が配列 / dict のとき、.get や辞書引きの
+    # AttributeError / TypeError が run_stdio_server のループまで抜け、サーバが死んでいた
+    # (後続の正しい要求にも返事が無い)。型は境界で検査して -32602、残りは最後の網で -32603。
+    if params is None:
+        params = {}
+    if not isinstance(params, dict):
+        return None if is_notification else _err(
+            req_id, -32602, "params はオブジェクトでなければならない(%s)" % type(params).__name__)
     try:
         if method == "initialize":
             res = handle_initialize(params)
@@ -1017,6 +1048,9 @@ def dispatch(msg: dict, cat: Catalog, store: HandleStore | None = None) -> dict 
             res = handle_tools_list(params)
         elif method == "tools/call":
             name = params.get("name")
+            if not isinstance(name, str):
+                raise ArgError("params.name は tool 名の文字列でなければならない(%s)"
+                               % type(name).__name__)
             res = call_tool(name, params.get("arguments"), cat, store)
             _log("tools/call", name, "ok" if not res.get("isError") else "isError")
         elif method in ("notifications/initialized", "notifications/cancelled"):
@@ -1026,10 +1060,14 @@ def dispatch(msg: dict, cat: Catalog, store: HandleStore | None = None) -> dict 
                 return None
             return _err(req_id, -32601, "知らない method: %r" % method)
     except ArgError as exc:
-        _log("tools/call", params.get("name"), "-32602", str(exc)[:200])
+        _log("tools/call", repr(params.get("name"))[:80], "-32602", str(exc)[:200])
         return None if is_notification else _err(req_id, -32602, str(exc))
     except CatalogError as exc:
         return None if is_notification else _err(req_id, -32603, "カタログ: %s" % exc)
+    except Exception as exc:                                    # noqa: BLE001 - 最後の網: ループを殺さない
+        _log(str(method)[:40], "-32603", "%s: %s" % (type(exc).__name__, str(exc)[:200]))
+        return None if is_notification else _err(
+            req_id, -32603, "内部エラー(%s): %s" % (type(exc).__name__, str(exc)[:400]))
     return None if is_notification else _ok(req_id, res)
 
 
