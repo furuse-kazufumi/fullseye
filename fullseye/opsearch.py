@@ -198,15 +198,52 @@ def load_index(path: str | None = None) -> dict:
     avg = sum(lens) / len(lens)
     n = len(rows)
     idf = {t: math.log(1.0 + (n - c + 0.5) / (c + 0.5)) for t, c in df.items()}
-    names = {}
-    for i, r in enumerate(rows):
-        names.setdefault(_norm(r["n"]), i)
-        if r.get("h"):
-            names.setdefault(_norm(r["h"]), i)
+    names, aliases = _name_tables(rows)
     built = {"rows": rows, "docs": docs, "lens": lens, "avg": avg, "idf": idf, "names": names,
+             "aliases": aliases,
              "n_ops": n, "languages": raw.get("languages") or list(LANGS)}
     _CACHE[key] = built
     return built
+
+
+def _name_tables(rows: list) -> tuple[dict, dict]:
+    """完全一致で先頭に上げる表を 2 枚: op 名そのもの → 行、HALCON 別名 → 行。
+
+    ★2026-10-11: 1 枚の表に op 名と別名を「先に出た行が勝つ」で混ぜていたので、
+    ``gauss_filter`` を問うと、その名前を**別名として**名乗る前の行 ``cv_gaussian`` が先頭に
+    来た(op ``gauss_filter`` 自身は 4 位)。38 op が自分の名前で引けなかった。
+    名前は op 名の表を先に引き、別名は ``api.find_op`` の規則(完全一致 → ``name == halcon``
+    → ``_ALIAS_CANONICAL``)が選ぶ op —— ``fullseye.apply(x, 別名)`` が実際に走らせる op —— に
+    だけ与える。registry に無い別名(他の層)は従来どおり先に出た行。
+    """
+    names: dict = {}
+    for i, r in enumerate(rows):
+        names.setdefault(_norm(r["n"]), i)
+    try:
+        import api as _api
+        find_op = _api.find_op
+    except Exception:  # noqa: BLE001 - the index must stay usable without the facade
+        find_op = None
+    aliases: dict = {}
+    for i, r in enumerate(rows):
+        h = r.get("h")
+        if not h:
+            continue
+        key = _norm(h)
+        if key in aliases:
+            continue
+        canon = None
+        if find_op is not None:
+            try:
+                op = find_op(h)
+            except Exception:  # noqa: BLE001
+                op = None
+            if op is not None:
+                canon = names.get(_norm(op.name))
+        if canon is None:
+            canon = i
+        aliases[key] = canon
+    return names, aliases
 
 
 def search_ops(query: str, k: int = 10, *, lang: str | None = None, in_sort: str | None = None,
@@ -254,7 +291,10 @@ def search_ops(query: str, k: int = 10, *, lang: str | None = None, in_sort: str
     # 言い換えだけで当たった op も 0 にはしない(問い合わせの語が索引に無い言い方でも引けるように)
     for i in scores:
         scores[i] *= max(matched[i], 0.5) / max(len(q), 1)
-    exact = ix["names"].get(_norm(query.strip()).replace(" ", "_"))
+    key = _norm(query.strip()).replace(" ", "_")
+    exact = ix["names"].get(key)                                       # op 名そのものが先
+    if exact is None:
+        exact = ix.get("aliases", {}).get(key)                         # 次に、apply が走らせる別名先
     if exact is not None:
         scores[exact] = scores.get(exact, 0.0) + 1e6                   # 名前そのものなら先頭
     hits = []
