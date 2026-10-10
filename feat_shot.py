@@ -51,10 +51,11 @@ def iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99,
     ``(qᵀq)/n`` の固有値 λ1≥λ2≥λ3 を求める(λ1 が 1e-12 以下なら除外)。λ3 を saliency と
     して降順に走査し、採用済みの点から ``nms_radius`` 未満にあるものを捨てる貪欲 NMS。
     返り値は int64 の点インデックス配列(saliency 降順)。候補が無ければ長さ 0。
-    注意: 近傍は注目点で中心化する(重心ではない)ため、平面上の点でも λ3 は厳密には 0 に
-    ならない。全点で近傍探索する Python ループなので、数万点を超える雲は
-    ``voxel_grid_downsample`` で間引いてから使う。``shot_descriptor`` のキーポイント入力に
-    直結し、``register_shot`` は内部で ``radius`` の 0.6 倍・NMS 0.3 倍で呼ぶ。"""
+    注意: 近傍は注目点で中心化する(重心ではない)。平面上の点は注目点も同じ平面にあるので
+    λ3 は理論上 0 で、丸め屑(λ3/λ1 ≤ 1e-9)は候補から外す。全点で近傍探索する Python ループ
+    なので、数万点を超える雲は ``voxel_grid_downsample`` で間引いてから使う。
+    ``shot_descriptor`` のキーポイント入力に直結し、``register_shot`` は saliency 半径
+    ``0.6*radius``・NMS 半径 ``0.3*radius`` で呼ぶ(``radius`` は ``register_shot`` の支持半径)。"""
     from scipy.spatial import cKDTree
     pts = np.asarray(points, np.float64)
     n = len(pts)
@@ -132,8 +133,8 @@ def _accumulate_bin(v, n):
 
 def shot_descriptor(points, normals, kp_idx, tree, radius,
                     n_azim=8, n_elev=2, n_rad=2, n_cos=11):
-    """SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を
-    径2×仰角2×方位8=32 空間セルに分割、各セルで「LRF z 軸と近傍点法線の
+    """SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を取る。
+    支持を径2×仰角2×方位8=32 空間セルに分割、各セルで「LRF z 軸と近傍点法線の
     cos角」を n_cos=11 ビンのヒストグラムに quadrilinear 補間で蓄積 → 32×11=352
     次元を L2 正規化。返り値 (Kp,352)。LRF 不能な点は零ベクトル。
 
@@ -149,7 +150,7 @@ def shot_descriptor(points, normals, kp_idx, tree, radius,
     固有値)を近傍多数派の符号に揃えて右手系化する。近傍が 5 点未満、または LRF が縮退した
     キーポイントは零ベクトルのまま(マッチング側で除外される)。各近傍点は径・仰角
     (``arccos(qz/r)/π``)・法線 cos 角をビン中心 0.5 基準で線形補間、方位は円環で wrap
-    して蓄積し、最後に行ごと L2 正規化する。返り値は float64 ``(len(kp_idx), 次元)``。
+    して蓄積し、最後に行ごと L2 正規化する。返り値は float64 ``(len(kp_idx), n_azim*n_elev*n_rad*n_cos)``(既定で 352)。
     2 雲を比較するときは両側で同じ ``radius`` と同じ法線符号則を使うこと(法線の向きが
     反転すると cos 角ヒストグラムが裏返る)。``register_shot`` がこの関数を両雲に適用し、
     マッチングと RANSAC まで行う。"""

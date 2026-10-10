@@ -108,16 +108,17 @@ def fit_cone(points) -> dict:
     """点群に無限円錐を当てはめ ``{apex, axis, half_angle, residual}`` を返す。
 
     子午面での点-母線直交距離 ``a·sinα − ρ·cosα``(``a``=軸成分, ``ρ``=半径,
-    ``α``=半角)を ``scipy.optimize.least_squares`` で最小化する。初期値は PCA 軸 +
-    半径 ρ の軸成分 t に対する線形回帰(``ρ = m·t + b`` の傾き m=tanα, 切片ゼロ点=頂点)。
+    ``α``=半角)を ``scipy.optimize.least_squares`` で最小化する。初期値は PCA の 3 主軸を
+    それぞれ軸候補にし、半径 ρ の軸成分 t に対する線形回帰 ``ρ = m·t + b`` から取る
+    (半角 = ``atan(m)``、頂点 = ρ が 0 になる軸上の点 ``t = -b/m``)。残差最小の候補を採る。
     軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。
 
     Args:
         points: (N,3) 点群(最低 6 点)。
 
     Returns:
-        dict: ``{"apex": (3,), "axis": (3,) 単位軸(開く向き), "half_angle": float [rad],
-        "residual": float 点-面距離の RMS}``。
+        dict: ``{"apex": (3,), "axis": (3,), "half_angle": float, "residual": float}``。
+        ``axis`` は単位軸(開く向き)、``half_angle`` は半角 [rad]、``residual`` は点-面距離の RMS。
 
     Raises:
         ValueError: 形状不正/点数不足/半角 ~0(円柱へ縮退)など fail-closed。
@@ -197,14 +198,14 @@ def fit_torus(points) -> dict:
 
     点-トーラス距離 ``sqrt((ρ−R)² + a²) − r``(``a``=軸成分, ``ρ``=軸からの半径,
     ``R``=主半径, ``r``=管半径)を ``scipy.optimize.least_squares`` で最小化する。
-    初期値は PCA 軸(仲間外れ固有ベクトル)+ ``R0=mean(ρ)``・``r0=mean(管中心円までの距離)``。
+    初期値は PCA 軸(仲間外れ固有ベクトル)+ ``R0=mean(ρ)``・``r0``(管中心円までの距離の平均)。
 
     Args:
         points: (N,3) 点群(最低 7 点)。
 
     Returns:
-        dict: ``{"center": (3,), "axis": (3,) 単位軸, "R": float 主半径,
-        "r": float 管半径, "residual": float 点-面距離の RMS}``。
+        dict: ``{"center": (3,), "axis": (3,), "R": float, "r": float, "residual": float}``。
+        ``axis`` は単位軸、``R`` は主半径、``r`` は管半径、``residual`` は点-面距離の RMS。
 
     Raises:
         ValueError: 形状不正/点数不足 fail-closed。
@@ -326,8 +327,9 @@ def fit_ellipsoid(points) -> dict:
         points: (N,3) 点群(最低 10 点)。外れ値には無防備(必要なら事前に inlier 選別)。
 
     Returns:
-        dict: ``{"center": (3,), "axes": (3,3) 列=主軸(半径降順), "radii": (3,) 半径(降順),
-        "residual": float Taubin 近似の点-面距離 RMS}``。
+        dict: ``{"center": (3,), "axes": (3, 3), "radii": (3,), "residual": float}``。
+        ``axes`` の列が主軸(半径の降順)、``radii`` は半径(降順)、``residual`` は Taubin 近似の
+        点-面距離 RMS。
 
     Raises:
         ValueError: 形状不正/点数不足/正定値な楕円体解が得られない(平面状の退化・

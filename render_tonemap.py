@@ -28,7 +28,7 @@
     彩度をより正確に残したい場合は輝度基準の写像もあり得るが、単調性の保証と素直さを優先した)。
   * 出力は **``[0, 1]`` の float64**(そのまま 8bit 化・保存できる表示画像)。
 
-fail-closed 入力検証: 非有限(NaN/Inf)・負の放射輝度・空配列・非正の exposition/white は
+fail-closed 入力検証: 非有限(NaN/Inf)・負の放射輝度・空配列・非正の exposure/white は
 例外で拒否する(HDR 放射輝度は非負が前提)。
 
 Honest limitations(テストが示す範囲だけを主張する):
@@ -103,7 +103,7 @@ def tonemap_reinhard(hdr, exposure: float = 1.0, white: float | None = None) -> 
     Returns:
         ``[0, 1]`` の float64 LDR 画像(入力と同形状)。
     Raises:
-        ValueError: 空/非有限/負の放射輝度、非正の exposition/white(fail-closed)。
+        ValueError: 空/非有限/負の放射輝度、非正の exposure/white(fail-closed)。
     """
     H = _as_hdr(hdr)
     e = _check_exposure(exposure)
@@ -132,7 +132,7 @@ def tonemap_aces(hdr, exposure: float = 1.0) -> np.ndarray:
     Returns:
         ``[0, 1]`` の float64 LDR 画像(入力と同形状)。
     Raises:
-        ValueError: 空/非有限/負の放射輝度、非正の exposition(fail-closed)。
+        ValueError: 空/非有限/負の放射輝度、非正の exposure(fail-closed)。
     """
     H = _as_hdr(hdr)
     e = _check_exposure(exposure)

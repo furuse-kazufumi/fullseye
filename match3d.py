@@ -527,7 +527,7 @@ def match_chamfer_3d(scene, template, device="cpu", thr=0.3, edt="scipy"):
     手順: 両 volume で ``|∇| > thr·max|∇|`` の voxel をエッジにする(``thr`` は各 volume の最大
     勾配に対する **相対比**、勾配は ``sobel3d``)。scene エッジの距離変換 DT を作り、テンプレの
     エッジ 2 値 volume をカーネルに conv3d した値をエッジ数 ``n`` で割る。
-    返り値 ``[距離, z, y, x]`` の距離は「テンプレのエッジ 1 voxel あたり、最寄り scene エッジまでの
+    返り値 ``[dist, z, y, x]`` の ``dist`` は「テンプレのエッジ 1 voxel あたり、最寄り scene エッジまでの
     平均距離(voxel 単位)」で 0 が完全一致。位置は **テンプレ中心 (T//2)** の scene 座標で
     **整数**(subvoxel 精緻化は無い。要るなら ``refine_translation_lk`` へ。corner 規約なので
     T//2 を引く)。テンプレが完全に収まらない位置は最大値+1 で埋めて除外する。
@@ -3248,7 +3248,7 @@ def render_point_depth(points, K, size, R=None, t=None):
     (同一画素は最小 z が残る)。点が無い画素は **0**(``tsdf_from_depth`` / ``depth_to_points`` が
     無効値として扱う規約)。返り値 ``(H, W)`` float64、単位は点の座標の単位。
     - 1 点 = 1 画素なので疎な点群は穴だらけになる(``mesh_to_points`` で密にしてから)。splat
-    半径は無い。
+      半径は無い。
     - ``K`` は numpy (3,3)、``R``/``t`` は省略可。
     後段: ``depth_to_points`` で戻す、``normals_from_depth`` で法線、``tsdf_from_depth``。
     """

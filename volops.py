@@ -847,8 +847,7 @@ def vol_crop_domain(vol, domain=None, margin=0):
 
 
 def vol_uncrop(part, offset, shape, fill=0.0):
-    """Paste a cropped sub-volume back into the full frame (inverse of
-    :func:`vol_crop_domain`).
+    """Paste a cropped sub-volume back into the full frame (inverse of :func:`vol_crop_domain`).
 
     *part* is placed at voxel *offset* ``(z0, y0, x0)`` inside a new
     ``(D, H, W)`` float64 volume of the given *shape*, everything else set to
@@ -995,8 +994,8 @@ def vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 
 # tiled processing — bounded peak memory for local operators                   #
 # --------------------------------------------------------------------------- #
 def vol_tiled_map(vol, fn, tile=64, overlap=8):
-    """Apply a shape-preserving volume operator in overlapping z-slabs, so peak
-    working memory is bounded by the slab — not the volume.
+    """Apply a shape-preserving volume operator in overlapping z-slabs to bound peak memory.
+    Peak working memory is bounded by the slab — not the volume.
 
     The third leg of the memory family: :func:`vol_crop_domain` shrinks *where*
     you compute, :mod:`volregion` shrinks *what you keep*, and this bounds *how

@@ -163,8 +163,8 @@ def vol_rle_encode(vol_binary) -> VolRLE:
 
 
 def vol_rle_decode(region) -> np.ndarray:
-    """Decode a ``VolRLE`` back to a dense ``(D, H, W)`` float64 ``{0, 1}``
-    volume. Exact inverse of :func:`vol_rle_encode` (bit-identical round trip).
+    """Decode a ``VolRLE`` back to a dense ``(D, H, W)`` float64 ``{0, 1}`` volume.
+    Exact inverse of :func:`vol_rle_encode` (bit-identical round trip).
     The region is validated first, so a corrupted RLE raises ``ValueError``
     instead of writing out of bounds.
 
@@ -192,8 +192,8 @@ def vol_rle_decode(region) -> np.ndarray:
 
 
 def vol_rle_volume(region) -> int:
-    """Voxel count of the region, computed on the runs (no decode). Measured
-    ~300x faster than summing the dense mask.
+    """Voxel count of the region, computed on the runs (no decode).
+    Measured ~300x faster than summing the dense mask.
 
     計算: ``sum(ends - starts)``(差は int64 で取るので run 数が多くても溢れない)。
     返り値は Python の ``int``(voxel 個数、単位は voxel。物理体積 mm^3 が欲しければ
@@ -208,9 +208,9 @@ def vol_rle_volume(region) -> int:
 
 
 def vol_rle_bbox(region):
-    """Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds)
-    computed on the runs (no decode; measured ~1000x faster than scanning the
-    dense mask). Matches ``volops.vol_bounding_box`` of the decoded mask
+    """Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds), from the runs.
+    No decode is needed; measured ~1000x faster than scanning the
+    dense mask. Matches ``volops.vol_bounding_box`` of the decoded mask
     exactly. An empty region raises ``ValueError`` (same fail-closed rule).
 
     計算: ``z = rows // H``、``y = rows % H`` を復元し、``(z.min, y.min, starts.min,
@@ -327,8 +327,8 @@ def _rle_boolean(a: "VolRLE", b: "VolRLE", keep) -> "VolRLE":
 
 
 def vol_rle_union(a, b):
-    """Union of two RLE regions, computed on the runs (no decode). Cost scales
-    with the run counts, not the voxel counts — merging two 512**3 masks never
+    """Union of two RLE regions, computed on the runs (no decode).
+    Cost scales with the run counts, not the voxel counts — merging two 512**3 masks never
     touches 512**3 anything. Regions must share the same volume shape.
 
     手順(``_rle_boolean`` 共通): 両 region の run を、平面行ごとに ``W + 1`` の

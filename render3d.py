@@ -1205,8 +1205,9 @@ def _unique_edges(Ff):
 
 
 def mesh_edge_lengths(V, F, *, per: str = "vertex") -> np.ndarray:
-    """Local edge length of a triangle mesh → ``(N,)`` per vertex (mean of incident edges),
-    ``(M,)`` per face (mean of its 3 edges) or ``(E,)`` per unique edge.
+    """Local edge length of a triangle mesh, per vertex, per face or per unique edge.
+    Returns ``(N,)`` per vertex (mean of incident edges), ``(M,)`` per face (mean of its
+    3 edges) or ``(E,)`` per unique edge.
 
     This is the resolution map of the mesh in its own units: the shortest wavelength a
     region can carry as *geometry* is about twice the local edge (Nyquist), which is what
@@ -1502,8 +1503,8 @@ def _tessellate(Vv, Ff, n_seg, target: float):
 
 def mesh_subdivide(V, F, *, levels: int = 1, target_edge=None,
                    max_faces: int = MAX_SUBDIVIDE_FACES):
-    """Refine a triangle mesh → ``(V, F)``: uniform midpoint subdivision (``levels`` passes,
-    ×4 faces each) or **adaptive tessellation to a target edge length** (``target_edge``:
+    """Refine a triangle mesh → ``(V, F)`` by midpoint subdivision or adaptive tessellation.
+    Either uniform midpoint subdivision (``levels`` passes, ×4 faces each) or **adaptive tessellation to a target edge length** (``target_edge``:
     median edge = target, edge segments ≤ 1.5×target, in-face Delaunay edges < 2×target).
 
     The geometry is *unchanged* — every new vertex lies on an old facet, so surface area
@@ -1601,8 +1602,8 @@ def _check_spectrum(wavelengths, amplitudes):
 def displacement_band_weights(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375), *,
                               nyquist: float = 2.0, fade: float = 1.0,
                               local_edge=None) -> np.ndarray:
-    """Per-octave, per-vertex band gate ``(K, N)`` in [0,1]: 1 where the mesh can carry the
-    wavelength as geometry, 0 where it would alias.
+    """Per-octave, per-vertex band gate ``(K, N)`` in [0,1].
+    It is 1 where the mesh can carry the wavelength as geometry, 0 where it would alias.
 
     A vertex with local edge length ``e`` (mean incident edge, :func:`mesh_edge_lengths`,
     or ``local_edge`` (N,) if given) carries wavelength ``λ`` only when ``λ ≥ nyquist·e``;
@@ -1653,8 +1654,8 @@ def mesh_displace_spectrum(V, F, wavelengths=(0.06, 0.03, 0.015, 0.0075, 0.00375
                            amplitudes=(0.003, 0.00176, 0.00103, 0.0006, 0.00035), *,
                            seed: int = 0, nyquist: float = 2.0, fade: float = 1.0,
                            weights=None, local_edge=None):
-    """Displace vertices along their normals with a **stated amplitude spectrum**, band-limited
-    per vertex → ``(V, F)``.
+    """Displace vertices along their normals with a **stated amplitude spectrum**, band-limited.
+    The band limit is per vertex; returns ``(V, F)``.
 
     ``displacement_i = Σ_k A_k · n_k(x_i) · gate_k(i) · w_k(i)`` with one seeded value-noise
     octave ``n_k ∈ [−1, 1]`` per ``(wavelength_k, amplitude_k)`` pair (mesh units — the
@@ -1712,8 +1713,8 @@ def bump_normals_fbm(normals, positions, wavelengths=(0.002, 0.001),
                      amplitudes=(0.0002, 0.00012), *, seed: int = 0,
                      rotation=None, step=None, local_edge=None, nyquist: float = 2.0,
                      fade: float = 1.0) -> np.ndarray:
-    """Perturb a normal map with the *gradient* of a seeded multi-octave height field
-    (sub-facet relief the geometry cannot afford to displace) → unit normals ``(H, W, 3)``.
+    """Perturb a normal map with the *gradient* of a seeded multi-octave height field.
+    This is sub-facet relief the geometry cannot afford to displace → unit normals ``(H, W, 3)``.
 
     ``h(x) = Σ_k A_k n_k(x)`` is the same value-noise field :func:`mesh_displace_spectrum`
     would displace with (same ``seed`` ⇒ same lattice), so passing the octaves that the

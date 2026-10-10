@@ -328,8 +328,7 @@ def vol_edge_probe(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None,
 # 3) wall thickness = paired rising -> falling edges                          #
 # --------------------------------------------------------------------------- #
 def vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None):
-    """Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT
-    measurement itself.
+    """Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT measurement itself.
 
     Runs :func:`vol_edge_probe` (all polarities) and pairs consecutive
     opposite-polarity edges *rising -> falling* in probe order: each pair is

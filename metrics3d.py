@@ -76,15 +76,17 @@ def chamfer_distance(a, b, squared=False):
 def hausdorff_distance(a, b):
     """対称 Hausdorff 距離 = max(max_a min_b, max_b min_a)。→ scalar。最悪ケースの乖離。
 
+    Raises ValueError: どちらかが空 or (N,3) でない場合(空の最大値は numpy の生の例外になる)。
+
     計算: ``cKDTree`` で ``a`` の各点から ``b`` への最近傍距離と、``b`` から ``a`` への
     最近傍距離を取り、両方向の **最大値** のうち大きい方を返す。「一方の雲のどの点も、
     相手の雲からこの距離以内にある」を保証する最小の半径。単位は座標の単位。
 
     入力: ``a``, ``b`` は ``(N, 3)`` / ``(M, 3)`` の点群(点数は異なってよい、対応不要)。
-    **この op は入口検査を持たない**(``_require_cloud`` を通らない): 空の点群を渡すと
-    ``max()`` が numpy の ``ValueError``("zero-size array")で落ち、``(N, 2)`` など
-    3 列でない入力は cKDTree の次元不一致で ``ValueError`` になる — いずれも
-    メッセージはこの op のものではない。呼ぶ前に空でないことを確かめること。
+    兄弟の ``chamfer_distance`` と同じく入口で ``_require_cloud`` を通す: 空の点群や
+    ``(N, 2)`` など 3 列でない入力は、この op 自身のメッセージの ``ValueError`` で拒否する
+    (以前は空の雲で ``max()`` が numpy の "zero-size array" で落ち、3 列でない入力は
+    cKDTree の次元不一致で落ちていた —— どちらも何が悪いかを言わない)。
 
     返り値: Python ``float``、``[0, inf)``。同一点群なら 0。正規化はしない。
 
@@ -92,6 +94,8 @@ def hausdorff_distance(a, b):
     評価には ``chamfer_distance`` か ``fscore``(閾値 ``tau`` 以内の割合)の方が
     安定で、Hausdorff は「最悪でもこの精度」を主張したいとき(公差検証、
     LOD の ``max_error`` と同じ性格)に使う。"""
+    a = _require_cloud(a, "a")
+    b = _require_cloud(b, "b")
     return float(max(_nn_dist(a, b).max(), _nn_dist(b, a).max()))
 
 
@@ -327,8 +331,8 @@ def m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4):
         ValueError: 点群 / cores が ``(N,3)`` でない、空、``normals`` の数が cores と
         合わない、``radius <= 0``、``max_depth <= 0``、``min_points < 1`` のとき。
 
-    **限界(honest)**: (1) 法線は呼び手が与える —— `estimate_normals` の符号は任意なので、
-    向きを揃えないと符号が場所ごとに反転する。(2) ``lod`` は雑音だけを見ており、
+    **限界(honest)**: (1) 法線は呼び手が与える —— ``estimate_point_normals`` の既定の符号は
+    重心基準なので、``viewpoint`` か ``orient_normals`` で向きを揃えないと符号が場所ごとに反転する。(2) ``lod`` は雑音だけを見ており、
     **位置合わせの残差は含まない**(Lague の原論文は登録誤差を別項として足す)。
     (3) 円筒に入る点が少ない縁では ``nan`` になる —— 0 を返して「変化なし」に
     見せない。

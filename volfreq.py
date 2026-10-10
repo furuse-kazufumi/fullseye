@@ -104,8 +104,8 @@ def _apply_transfer(vol, spacing, transfer):
 
 
 def vol_fft_lowpass(vol, cutoff, spacing=None):
-    """Gaussian low-pass: keeps structure coarser than ``1/cutoff`` (voxels, or
-    mm with *spacing*), attenuates finer detail smoothly. Transfer
+    """Gaussian low-pass: keeps structure coarser than ``1/cutoff`` (voxels, or mm with *spacing*).
+    Finer detail is attenuated smoothly. Transfer
     ``exp(-f^2 / (2 cutoff^2))`` — the DC level (mean intensity) passes
     unchanged. Typical use: extract the illumination/thickness drift.
 
@@ -133,8 +133,8 @@ def vol_fft_lowpass(vol, cutoff, spacing=None):
 
 
 def vol_fft_highpass(vol, cutoff, spacing=None):
-    """Gaussian high-pass — the exact complement ``1 - lowpass`` (the two sum
-    to the input to float precision, proven in tests). Removes the DC level and
+    """Gaussian high-pass — the exact complement ``1 - lowpass`` (the two sum to the input).
+    The sum holds to float precision, proven in tests. Removes the DC level and
     slow drift, keeps edges/texture. Output is signed (mean ~ 0).
 
     伝達関数は ``1 - exp(-|f|^2 / (2 cutoff^2))``。DC(``f = 0``)は係数 0 なので平均
@@ -157,9 +157,8 @@ def vol_fft_highpass(vol, cutoff, spacing=None):
 
 
 def vol_fft_bandpass(vol, low, high, spacing=None):
-    """Gaussian band-pass ``lowpass(high) - lowpass(low)``: keeps structure
-    between the two scales (``low < high`` required, both in cycles/voxel or
-    cycles/mm with *spacing*). Typical use: isolate one texture scale, or a
+    """Gaussian band-pass ``lowpass(high) - lowpass(low)``: keeps structure between two scales.
+    ``low < high`` is required, both in cycles/voxel or cycles/mm with *spacing*. Typical use: isolate one texture scale, or a
     periodic artefact band before subtracting it.
 
     伝達関数は ``exp(-|f|^2 / (2 high^2)) - exp(-|f|^2 / (2 low^2))``。DC では

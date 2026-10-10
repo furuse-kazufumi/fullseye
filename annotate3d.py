@@ -257,7 +257,7 @@ def annotate3d_arrow(img, p0, p1, pose, K, depth=None, color="emphasis", width=2
     Raises
     ------
     ValueError
-        端点がカメラの後ろ / 一致 / 両端とも画像の外、姿勢・K の不正。
+        端点がカメラの後ろ / 2 点が同じ画素に射影される / 両端とも画像の外、姿勢・K の不正。
 
     手順: ``img`` を float64 ``[0, 1]`` の複製にし(``(H, W)`` / ``(H, W, C)``、C は
     1/3/4。非有限・空は ``ValueError``)、``p0``, ``p1`` を ``annotate3d_project`` と
@@ -278,9 +278,9 @@ def annotate3d_arrow(img, p0, p1, pose, K, depth=None, color="emphasis", width=2
     返り値: 描画済みの新しい画像(float64、入力と同じ形。入力は変更しない)。
 
     エラーになる条件(実装どおり): どちらかの端点が ``z <= 1e-9``(カメラ面上/後ろ)/
-    2 点が同じ画素に射影される(視線上に並ぶ、長さ 1e-9 px 未満)/ 姿勢・``K`` の不正。
-    **画像の外に出た端点はエラーにしない**(``annotate.arrow`` が枠外まで線を引く
-    だけ。片方が枠内なら見た目は途中で切れる)。
+    2 点が同じ画素に射影される(視線上に並ぶ、長さ 1e-9 px 未満)/ **両端とも画像の外**
+    (``annotate.arrow`` が拒否する。枠に貼り付いた誤った線を描かないため)/ 姿勢・``K`` の不正。
+    片方だけ画像の外なら描く(線は枠外へ向かって引かれ、見た目は枠で切れる)。
 
     使いどころ: ``render3d.render_mesh`` の画像に「この頂点がこれ」を示す。長さを
     数値で示すなら ``annotate3d_measure``、文字を添えるなら ``annotate3d_label``。
@@ -457,15 +457,15 @@ def annotate3d_scale_bar(img, origin, direction, length, pose, K, unit="", depth
 def annotate3d_axes(img, pose, K, origin=(0.0, 0.0, 0.0), length=1.0, depth=None,
                     labels=("X", "Y", "Z"), colors=("wrong", "right", "reference"), width=2,
                     font_size=11, occlusion_tol=0.01, scheme="okabe_ito", font_path=None):
-    """画像(image2d)を返す: 世界座標の 3 軸(gnomon)を ``origin`` から射影して描く。
+    """画像(image2d)を返す: object 座標(``pose`` の入力側)の 3 軸(gnomon)を ``origin`` から射影して描く。
 
     Raises
     ------
     ValueError
         length が非正、原点や軸端がカメラの後ろ、labels/colors が 3 つでない、
-        軸の文字が画像に収まらない。
+        軸の文字が画像に収まらない、原点と軸端がともに画像の外。
 
-    手順: ``origin`` と、そこから世界座標の +X / +Y / +Z 方向に ``length`` 進んだ
+    手順: ``origin`` と、そこから object 座標の +X / +Y / +Z 方向に ``length`` 進んだ
     3 点を射影(``annotate3d_project`` と同じ慣習)し、原点の画素から各軸端の画素へ
     ``annotate.arrow``(矢じり 8x6 px)を描く。軸端の先 ``0.7 * font_size`` px の
     位置に ``labels[i]`` を背景なし(``box_alpha=0``)の文字で置く。
@@ -482,11 +482,15 @@ def annotate3d_axes(img, pose, K, origin=(0.0, 0.0, 0.0), length=1.0, depth=None
 
     エラーになる条件: ``length <= 0`` / ``labels`` か ``colors`` の長さが 3 でない /
     原点または軸端のいずれかが ``z <= 1e-9`` / 姿勢・``K``・``depth`` の不正 / 軸の
-    文字が画像に収まらない。**枠外の軸端はエラーにしない**(矢印は枠外まで引く)。
+    文字が画像に収まらない / 原点と軸端がともに画像の外(``annotate.arrow`` が拒否)。
+    軸端だけが枠外なら描く(矢印は枠外へ向かって引く)。
     視線と一致して点に潰れた軸(画素長 1e-9 未満)は黙ってスキップする。
 
     使いどころ: 図の姿勢の説明(gnomon)。``render3d.look_at`` の ``pose`` を
     そのまま渡し、``origin`` にメッシュの重心や ``bounds`` の角を置く。
+    座標系: ``origin`` も軸の向きも ``pose`` が写す元の座標系(object 座標)で解釈する。
+    ``look_at`` の ``pose`` は world→camera なので、そのときは world の軸になる。物体の
+    姿勢 ``M``(object→world)を含む ``pose @ M`` を渡すと物体の軸が描かれる。
     """
     a = A._prep(img)
     width = A._num(width, "width", lo=1, integer=True)
@@ -548,7 +552,7 @@ def annotate3d_bbox(img, bounds, pose, K, depth=None, color="emphasis", width=1.
     描けない) / 姿勢・``K``・``depth`` の不正。角が画像の外に出るのはエラーに
     しない(線は枠外まで引かれ、見た目は切れる)。
 
-    注意: 軸平行(世界座標に沿った)箱のみ。回転した箱(``smallest_box3`` の
+    注意: 軸平行(object 座標の軸に沿った)箱のみ。回転した箱(``smallest_box3`` の
     ``corners``)を描くには、8 角を自分で射影(``annotate3d_project``)して 2-D の
     ``annotate`` 線描画で結ぶ。
     """

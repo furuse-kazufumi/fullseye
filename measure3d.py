@@ -68,8 +68,8 @@ def _center_keys(c: np.ndarray) -> dict:
 # line / plane / sphere / circle fits — orthogonal least squares              #
 # --------------------------------------------------------------------------- #
 def fit_line3(points) -> dict:
-    """Total-least-squares 3-D line fit to ``(depth, row, col)`` points — the
-    largest principal axis through the centroid (orthogonal regression, isotropic
+    """Total-least-squares 3-D line fit to ``(depth, row, col)`` points.
+    The line is the largest principal axis through the centroid (orthogonal regression, isotropic
     in all three axes). Returns the centroid ``center`` (with ``cd/cr/cc``), a unit
     ``direction`` (depth, row, col), and the RMS orthogonal residual. Raises
     ``ValueError`` on < 2 points or a coincident cluster with no defined
@@ -88,8 +88,8 @@ def fit_line3(points) -> dict:
 
 
 def fit_plane3(points) -> dict:
-    """Least-squares 3-D plane fit to ``(depth, row, col)`` points — the plane
-    through the centroid whose normal is the smallest principal axis (minimises the
+    """Least-squares 3-D plane fit to ``(depth, row, col)`` points.
+    The fit is the plane through the centroid whose normal is the smallest principal axis (minimises the
     sum of squared point-to-plane distances). Returns ``center`` (``cd/cr/cc``), a
     unit ``normal`` (depth, row, col), and the RMS point-to-plane residual. Raises
     ``ValueError`` on < 3 points or a collinear set (the normal is undefined)."""
@@ -131,8 +131,8 @@ def fit_sphere3(points) -> dict:
 
 
 def fit_circle3(points) -> dict:
-    """3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane,
-    then fit a 2-D circle in that plane (algebraic least squares). Returns
+    """3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane, then a circle.
+    The in-plane fit is a 2-D algebraic least-squares circle. Returns
     ``center`` (``cd/cr/cc``), radius ``r``, a unit plane ``normal`` (depth, row,
     col), and the RMS residual (in-plane radial + out-of-plane, combined). Raises
     ``ValueError`` on < 3 points or a collinear set."""
@@ -168,8 +168,8 @@ def _box_corners(center: np.ndarray, axes: np.ndarray, half: np.ndarray) -> np.n
 
 
 def smallest_box3_axis(points) -> dict:
-    """Axis-aligned bounding box (the 3-D ``smallest_rectangle1``). Returns the
-    ``min`` / ``max`` corners and ``center`` in ``(depth, row, col)``, the full
+    """Axis-aligned bounding box (the 3-D ``smallest_rectangle1``).
+    Returns the ``min`` / ``max`` corners and ``center`` in ``(depth, row, col)``, the full
     ``size`` (depth, row, col edge lengths), and the enclosed ``volume``. This is
     the honest null baseline that ``smallest_box3`` beats on any rotated object.
     Raises ``ValueError`` on empty input."""
@@ -182,8 +182,8 @@ def smallest_box3_axis(points) -> dict:
 
 
 def fit_box3(points) -> dict:
-    """Oriented box fit by PCA (fast, noise-tolerant; the same construction as
-    ``pcseg.obb`` but with the ``measure``-style dict). Axes are the principal
+    """Oriented box fit by PCA (fast, noise-tolerant; the same construction as ``pcseg.obb``).
+    Unlike ``pcseg.obb`` it returns the ``measure``-style dict. Axes are the principal
     directions of the point spread; extents come from the projected span. Returns
     ``center`` (``cd/cr/cc``), ``axes`` (3, 3 — unit ROW vectors, depth/row/col
     components), sorted half-extents ``l1 >= l2 >= l3``, full ``size``, ``volume``,
@@ -378,8 +378,8 @@ def _welzl3(P, R):
 
 
 def smallest_sphere3(points) -> dict:
-    """Minimum enclosing sphere of ``(depth, row, col)`` points (Welzl's exact
-    algorithm on the convex hull). Returns ``center`` (``cd/cr/cc``) and radius
+    """Minimum enclosing sphere of ``(depth, row, col)`` points (Welzl's exact algorithm).
+    Welzl runs on the convex hull. Returns ``center`` (``cd/cr/cc``) and radius
     ``r`` — the smallest sphere that contains every point. This is the 3-D
     ``smallest_circle``; its radius is strictly below the AABB-diagonal sphere on
     any non-spherical set, and equals the true radius for points on a sphere.
