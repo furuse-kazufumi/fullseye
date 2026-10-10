@@ -4,7 +4,6 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import regionprops3d; regionprops3d.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;inner_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>完全内接于二值体素区域的最大轴对齐盒(2-D <code style="color:#22d3bf">inner_rectangle1</code> 的 3-D 版)。</p>
-<p>3-D 版)。</p>
 <p>严格解:对于任意深度区间 [z0, z1],盒子必须位于切片 z0..z1 的<b>逻辑与</b> (在所有切片中都是前景的体素)之内。该交集中的最大内接 2-D 矩形(直方图法 = 与 <code style="color:#22d3bf">inner_rectangle1</code> 相同的核心)× 区间长度 即为候选盒子,对全部区间取最大即为严格的最大内接盒子。O(D^2 * H * W)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>

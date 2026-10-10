@@ -8,7 +8,9 @@
 <p>Args:</p>
 <p>points: (N,3) 點雲(至少 10 點)。對離群值毫無防禦(如有需要請事先篩選 inlier)。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3,3) 行=主軸(半徑遞減), &quot;radii&quot;: (3,) 半徑(遞減), &quot;residual&quot;: float Taubin 近似的點-面距離 RMS}</code>。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3, 3), &quot;radii&quot;: (3,), &quot;residual&quot;: float}</code>。</p>
+<p><code style="color:#22d3bf">axes</code> 的行為主軸(半徑遞減)，<code style="color:#22d3bf">radii</code> 為半徑(遞減)，<code style="color:#22d3bf">residual</code> 為 Taubin 近似的</p>
+<p>點-面距離 RMS。</p>
 <p>Raises:</p>
 <p>ValueError: 形狀不正確/點數不足/得不到正定的橢球解(平面狀退化、</p>
 <p>非橢球面、覆蓋不足)等,fail-closed。</p>

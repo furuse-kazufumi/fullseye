@@ -26,7 +26,7 @@
 <p>Raises:</p>
 <p>ValueError: 점군 / cores가 <code style="color:#22d3bf">(N,3)</code>이 아님, 비었음, <code style="color:#22d3bf">normals</code>의 수가 cores와</p>
 <p>맞지 않음, <code style="color:#22d3bf">radius &lt;= 0</code>, <code style="color:#22d3bf">max_depth &lt;= 0</code>, <code style="color:#22d3bf">min_points &lt; 1</code>일 때.</p>
-<p><b>한계(honest)</b>: (1) 법선은 호출자가 준다 —— <code style="color:#22d3bf">estimate_normals</code>의 부호는 임의이므로, 방향을 맞추지 않으면 부호가 장소마다 반전된다. (2) <code style="color:#22d3bf">lod</code>는 잡음만 보고 있으며, <b>위치 맞춤의 잔차는 포함하지 않는다</b>(Lague의 원논문은 등록 오차를 별도 항으로 더한다).</p>
+<p><b>한계(honest)</b>: (1) 법선은 호출자가 준다 —— <code style="color:#22d3bf">estimate_point_normals</code>의 기본 부호는무게중심 기준이므로, <code style="color:#22d3bf">viewpoint</code> 나 <code style="color:#22d3bf">orient_normals</code> 로 방향을 맞추지 않으면 부호가 장소마다 반전된다. (2) <code style="color:#22d3bf">lod</code>는 잡음만 보고 있으며, <b>위치 맞춤의 잔차는 포함하지 않는다</b>(Lague의 원논문은 등록 오차를 별도 항으로 더한다).</p>
 <p style="margin:2px 0 2px 12px">(3) 원기둥에 들어가는 점이 적은 가장자리에서는 <code style="color:#22d3bf">nan</code>이 된다 —— 0을 반환해서 &quot;변화 없음&quot;으로</p>
 <p>보이게 하지 않는다.</p>
 <p>Reference (public): D. Lague, N. Brodu, J. Leroux, &quot;Accurate 3D comparison of complex topography with terrestrial laser scanner: application to the Rangitikei canyon (N-Z)&quot;, ISPRS Journal of Photogrammetry and Remote Sensing 82 (2013) 10-26.</p>

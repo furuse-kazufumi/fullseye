@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_volume(region) -&gt; &#x27;int&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import volregion; volregion.vol_rle_volume(region) -&gt; &#x27;int&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 run 上数出区域的体素数(不解码)。</p>
-<p>比对密集掩模求和快约 300 倍。</p>
+<p>实测比对密集掩模求和快约 300 倍。</p>
 <p>计算: <code style="color:#22d3bf">sum(ends - starts)</code>(差值以 int64 计算,因此即使 run 很多也不会溢出)。返回值是 Python 的 <code style="color:#22d3bf">int</code>(voxel 个数,单位为 voxel。若需要物理体积 mm^3, 请自行乘以 <code style="color:#22d3bf">spacing</code> 的乘积 <code style="color:#22d3bf">sz*sy*sx</code> —— 本 op 不接受 spacing)。</p>
 <p>输入先经 <code style="color:#22d3bf">_require_rle</code> 校验后再使用(非 <code style="color:#22d3bf">VolRLE</code>、shape 与 run 数组不一致、越界的 run 均抛出 <code style="color:#22d3bf">ValueError</code>)。空 region 返回 <code style="color:#22d3bf">0</code>(不视为错误)。目的是不构建密集数组,返回与先 <code style="color:#22d3bf">vol_rle_decode</code> 再 <code style="color:#22d3bf">sum()</code> 相同的值。对 <code style="color:#22d3bf">vol_rle_components</code> 的各成分应用即得到各成分的体积。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

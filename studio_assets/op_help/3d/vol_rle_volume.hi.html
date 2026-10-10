@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rle_region</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_volume(region) -&gt; &#x27;int&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volregion; volregion.vol_rle_volume(region) -&gt; &#x27;int&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>region का voxel count, runs पर गणना (decode के बिना)। Measured</p>
-<p>dense mask का योग करने से ~300x तेज़।</p>
+<p>region का voxel count, runs पर गणना (decode के बिना)।</p>
+<p>मापने पर dense mask का योग करने से ~300x तेज़।</p>
 <p>गणना: <code style="color:#22d3bf">sum(ends - starts)</code> (अंतर int64 में लिया जाता है, इसलिए runs बहुत होने पर भी overflow नहीं होता)। Return value Python का <code style="color:#22d3bf">int</code> है (voxel की संख्या, इकाई voxel। अगर mm^3 में physical volume चाहिए, तो <code style="color:#22d3bf">spacing</code> का गुणनफल <code style="color:#22d3bf">sz*sy*sx</code> ख़ुद गुणा करें — यह op spacing नहीं लेता)।</p>
 <p>Input की उपयोग से पहले <code style="color:#22d3bf">_require_rle</code> से जाँच होती है (<code style="color:#22d3bf">VolRLE</code> न हो, shape या run arrays में असंगति हो, या run range से बाहर हो तो <code style="color:#22d3bf">ValueError</code>)। खाली region <code style="color:#22d3bf">0</code> लौटाता है (इसे error नहीं माना जाता)। उद्देश्य है <code style="color:#22d3bf">vol_rle_decode</code> के बाद <code style="color:#22d3bf">sum()</code> करने जितना ही मान, dense array बनाए बिना लौटाना। <code style="color:#22d3bf">vol_rle_components</code> के हर component पर लगाने से हर component का volume मिलता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -35,20 +35,20 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 The centre viewpoint — the ordinary 2-D image a plenoptic camera also gives.
 
-    For odd ``V`` and ``U`` the centre is a single view and both modes return it
-    exactly. For an **even** axis the centre falls *between* two views, and this
-    operator does not pretend otherwise:
+For odd ``V`` and ``U`` the centre is a single view and both modes return it
+exactly. For an **even** axis the centre falls *between* two views, and this
+operator does not pretend otherwise:
 
-      * ``mode="average"`` (default) returns the mean of the 2 (or 4) views
-        straddling the centre — the correctly-centred estimate for a Lambertian
-        scene, at the cost of a slight blur proportional to the disparity.
-      * ``mode="nearest"`` returns the single view at ``floor((N-1)/2)``, which
-        is sharp but sits half an angular step off centre; every disparity
-        measured against it carries that half-step bias.
+  * ``mode="average"`` (default) returns the mean of the 2 (or 4) views
+    straddling the centre — the correctly-centred estimate for a Lambertian
+    scene, at the cost of a slight blur proportional to the disparity.
+  * ``mode="nearest"`` returns the single view at ``floor((N-1)/2)``, which
+    is sharp but sits half an angular step off centre; every disparity
+    measured against it carries that half-step bias.
 
-    Returns a ``(H, W)`` 2-D image.
+Returns a ``(H, W)`` 2-D image.
 
-    **Raises** ``ValueError``: *lf* not a valid light field, unknown *mode*.
+**Raises** ``ValueError``: *lf* not a valid light field, unknown *mode*.
 
 Typed bridge of the lightfield op ``lf_center_view`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

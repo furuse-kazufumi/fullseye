@@ -30,8 +30,9 @@ Args:
     points: (N,3) 点群(最低 10 点)。外れ値には無防備(必要なら事前に inlier 選別)。
 
 Returns:
-    dict: ``{"center": (3,), "axes": (3,3) 列=主軸(半径降順), "radii": (3,) 半径(降順),
-    "residual": float Taubin 近似の点-面距離 RMS}``。
+    dict: ``{"center": (3,), "axes": (3, 3), "radii": (3,), "residual": float}``。
+    ``axes`` の列が主軸(半径の降順)、``radii`` は半径(降順)、``residual`` は Taubin 近似の
+    点-面距離 RMS。
 
 Raises:
     ValueError: 形状不正/点数不足/正定値な楕円体解が得られない(平面状の退化・

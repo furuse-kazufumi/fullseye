@@ -39,25 +39,25 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 トーラス(ドーナツ)の**厳密**な符号付き距離場(内側負・外側正)。
 
-    ``sdf(p) = ‖(r - major_radius, t)‖ - minor_radius``(``r`` は軸からの半径、``t`` は
-    軸方向の距離)。芯線が半径 ``major_radius`` の円で、その周りに半径 ``minor_radius``
-    の管が付いた形なので、**フィレット(隅の丸み)の解析形**としてそのまま使える。
+``sdf(p) = ‖(r - major_radius, t)‖ - minor_radius``(``r`` は軸からの半径、``t`` は
+軸方向の距離)。芯線が半径 ``major_radius`` の円で、その周りに半径 ``minor_radius``
+の管が付いた形なので、**フィレット(隅の丸み)の解析形**としてそのまま使える。
 
-    引数と検証(``ValueError``):
-    - ``grid`` / ``center`` / ``axis``: :func:`cylinder_sdf` と同じ(軸はドーナツの穴の向き)。
-    - ``major_radius``: 芯線の半径(負は拒否)。
-    - ``minor_radius``: 管の半径(負は拒否)。``minor_radius >= major_radius`` だと穴が
-      潰れた形(スピンドルトーラス)になる。拒否はしないが、**厳密なのは ``minor_radius <
-      major_radius`` のときだけ**(2026-10-07 訂正: 以前は「距離場としては正しい」と書いていた)。
-      管が軸の上で重なる内側では、値は境界までの真の距離より絶対値が小さい(major 1・minor 2 の
-      中心で −1、真値は −1.73)。符号と零等値面、外側の値は正しく、内側の絶対値は真の距離の下界
-      なので、球追跡(sphere tracing)には安全に使える。
+引数と検証(``ValueError``):
+- ``grid`` / ``center`` / ``axis``: :func:`cylinder_sdf` と同じ(軸はドーナツの穴の向き)。
+- ``major_radius``: 芯線の半径(負は拒否)。
+- ``minor_radius``: 管の半径(負は拒否)。``minor_radius >= major_radius`` だと穴が
+  潰れた形(スピンドルトーラス)になる。拒否はしないが、**厳密なのは ``minor_radius <
+  major_radius`` のときだけ**(2026-10-07 訂正: 以前は「距離場としては正しい」と書いていた)。
+  管が軸の上で重なる内側では、値は境界までの真の距離より絶対値が小さい(major 1・minor 2 の
+  中心で −1、真値は −1.73)。符号と零等値面、外側の値は正しく、内側の絶対値は真の距離の下界
+  なので、球追跡(sphere tracing)には安全に使える。
 
-    返り値: ``grid.shape[:-1]`` の float64。
+返り値: ``grid.shape[:-1]`` の float64。
 
-    使いどころ: ``sdf_subtract`` で内隅にフィレットを削り出す / ``sdf_union`` で O リング溝の
-    形を作る。角を丸めるだけなら ``sdf_smooth_union`` のほうが手軽だが、あちらは丸みの
-    半径が形状に依存する —— **半径を設計値として持ちたいときはこちら**。
+使いどころ: ``sdf_subtract`` で内隅にフィレットを削り出す / ``sdf_union`` で O リング溝の
+形を作る。角を丸めるだけなら ``sdf_smooth_union`` のほうが手軽だが、あちらは丸みの
+半径が形状に依存する —— **半径を設計値として持ちたいときはこちら**。
 
 2-D 進化レジストリへ橋渡しした 3d の op ``torus_sdf``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 

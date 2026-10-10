@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane,
+3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane, then a circle.
 
-then fit a 2-D circle in that plane (algebraic least squares). Returns
+The in-plane fit is a 2-D algebraic least-squares circle. Returns
 ``center`` (``cd/cr/cc``), radius ``r``, a unit plane ``normal`` (depth, row,
 col), and the RMS residual (in-plane radial + out-of-plane, combined). Raises
 ``ValueError`` on < 3 points or a collinear set.

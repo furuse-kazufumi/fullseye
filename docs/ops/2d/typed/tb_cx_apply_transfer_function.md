@@ -37,13 +37,13 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Multiply a **centred** spectrum by a filter ``H`` -> ``(H, W)`` complex128.
 
-    The honest primitive under ``ops.lowpass`` / ``ops.highpass``, but
-    **complex-preserving**: the filtered spectrum is returned as a complex field
-    (not immediately inverted and real-cast), so it can be chained, inspected, or
-    handed to :func:`cx_ifft`. ``H`` is a same-shape transfer function laid out in
-    the *centred* convention of :func:`cx_fft` (DC at the centre); it may be real
-    (a magnitude mask) or complex (a phase-shifting filter). A real ``cx`` is
-    FFT'd first (module convenience).
+The honest primitive under ``ops.lowpass`` / ``ops.highpass``, but
+**complex-preserving**: the filtered spectrum is returned as a complex field
+(not immediately inverted and real-cast), so it can be chained, inspected, or
+handed to :func:`cx_ifft`. ``H`` is a same-shape transfer function laid out in
+the *centred* convention of :func:`cx_fft` (DC at the centre); it may be real
+(a magnitude mask) or complex (a phase-shifting filter). A real ``cx`` is
+FFT'd first (module convenience).
 
 Typed bridge of the 2d op ``cx_apply_transfer_function`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` sets the width of the transfer function ``H``, which the bridge builds **per call at the spectrum's own shape**: a centred Gaussian low-pass ``H = exp(-r^2 / (2 sigma^2))`` with ``sigma = 0.02 + 0.48 a`` cycles/pixel (0.26 at a=0.5). ``b`` is unused. (Until 2026-10-07 ``H`` was bound once as a fixed 32x32 array, so every other image size was refused.)
 

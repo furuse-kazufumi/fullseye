@@ -4,11 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_cone(points) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_cone(points) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;fit_cone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群に無限円錐を当てはめ <code style="color:#22d3bf">{apex, axis, half_angle, residual}</code> を返す。</p>
-<p>子午面での点-母線直交距離 <code style="color:#22d3bf">a·sinα − ρ·cosα</code>(<code style="color:#22d3bf">a</code>=軸成分, <code style="color:#22d3bf">ρ</code>=半径, <code style="color:#22d3bf">α</code>=半角)を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で最小化する。初期値は PCA 軸 + 半径 ρ の軸成分 t に対する線形回帰(<code style="color:#22d3bf">ρ = m·t + b</code> の傾き m=tanα, 切片ゼロ点=頂点)。軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。</p>
+<p>子午面での点-母線直交距離 <code style="color:#22d3bf">a·sinα − ρ·cosα</code>(<code style="color:#22d3bf">a</code>=軸成分, <code style="color:#22d3bf">ρ</code>=半径, <code style="color:#22d3bf">α</code>=半角)を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で最小化する。初期値は PCA の 3 主軸をそれぞれ軸候補にし、半径 ρ の軸成分 t に対する線形回帰 <code style="color:#22d3bf">ρ = m·t + b</code> から取る(半角 = <code style="color:#22d3bf">atan(m)</code>、頂点 = ρ が 0 になる軸上の点 <code style="color:#22d3bf">t = -b/m</code>)。残差最小の候補を採る。軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。</p>
 <p>Args:</p>
 <p>points: (N,3) 点群(最低 6 点)。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,) 単位軸(開く向き), &quot;half_angle&quot;: float [rad], &quot;residual&quot;: float 点-面距離の RMS}</code>。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,), &quot;half_angle&quot;: float, &quot;residual&quot;: float}</code>。</p>
+<p><code style="color:#22d3bf">axis</code> は単位軸(開く向き)、<code style="color:#22d3bf">half_angle</code> は半角 [rad]、<code style="color:#22d3bf">residual</code> は点-面距離の RMS。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正/点数不足/半角 ~0(円柱へ縮退)など fail-closed。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

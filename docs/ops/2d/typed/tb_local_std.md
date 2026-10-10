@@ -37,25 +37,25 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Rolling standard deviation with a stated error bound.
 
-    The 1-D counterpart of the image operator ``local_std`` (HALCON's
-    ``deviation_image``): the variance is taken after subtracting the mean
-    (``E[x^2] - E[x]^2`` loses its significant digits on a signal that sits far
-    from zero), unbiased by ``n/(n-1)``, and the residual bias of the square root
-    removed by ``c4(n)``, so the estimate of ``sigma`` itself is unbiased.
+The 1-D counterpart of the image operator ``local_std`` (HALCON's
+``deviation_image``): the variance is taken after subtracting the mean
+(``E[x^2] - E[x]^2`` loses its significant digits on a signal that sits far
+from zero), unbiased by ``n/(n-1)``, and the residual bias of the square root
+removed by ``c4(n)``, so the estimate of ``sigma`` itself is unbiased.
 
-    *window* is the number of samples in the sliding window, **rounded up to the
-    next odd number** so the window can be centred (10 becomes 11). The error
-    bound below is computed from the window actually used, so the number quoted
-    stays true. The 2-D side does the same thing — ``_k(a)`` snaps the knob to
-    3/5/7/9 — and the typed bridge that exposes this op as ``tb_local_std``
-    scales the knob continuously, so an even value arrives whenever the knob
-    lands between two odd ones.
-    **The relative standard error of each estimate is ``1/sqrt(2(n-1))``** —
-    35 % for a 5-sample window, 11 % for 41. Quote it next to any noise figure:
-    a rolling sigma over 9 samples is +- 25 %, which is wider than most of the
-    changes people try to read off it.
+*window* is the number of samples in the sliding window, **rounded up to the
+next odd number** so the window can be centred (10 becomes 11). The error
+bound below is computed from the window actually used, so the number quoted
+stays true. The 2-D side does the same thing — ``_k(a)`` snaps the knob to
+3/5/7/9 — and the typed bridge that exposes this op as ``tb_local_std``
+scales the knob continuously, so an even value arrives whenever the knob
+lands between two odd ones.
+**The relative standard error of each estimate is ``1/sqrt(2(n-1))``** —
+35 % for a 5-sample window, 11 % for 41. Quote it next to any noise figure:
+a rolling sigma over 9 samples is +- 25 %, which is wider than most of the
+changes people try to read off it.
 
-    Returns an array the same length as *x* (the ends are reflected).
+Returns an array the same length as *x* (the ends are reflected).
 
 Typed bridge of the 1d op ``local_std`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``window`` (default 9); ``b`` is unused.
 

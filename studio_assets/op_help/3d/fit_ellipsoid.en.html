@@ -8,7 +8,9 @@
 <p>Args:</p>
 <p>points: (N,3) point cloud (at least 10 points). Defenceless against outliers (select inliers beforehand if needed).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3,3) columns = principal axes (radius descending), &quot;radii&quot;: (3,) radii (descending), &quot;residual&quot;: float point-surface distance RMS of the Taubin approximation}</code>.</p>
+<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3, 3), &quot;radii&quot;: (3,), &quot;residual&quot;: float}</code>.</p>
+<p>The columns of <code style="color:#22d3bf">axes</code> are the principal axes (radius descending), <code style="color:#22d3bf">radii</code> the radii (descending), <code style="color:#22d3bf">residual</code> the</p>
+<p>point-surface distance RMS of the Taubin approximation.</p>
 <p>Raises:</p>
 <p>ValueError: fail-closed on bad shape / too few points / no positive-definite ellipsoid solution (planar degeneracy,</p>
 <p>non-ellipsoidal surface, insufficient coverage), etc.</p>

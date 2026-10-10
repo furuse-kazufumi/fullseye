@@ -27,7 +27,7 @@
 <p>Raises:</p>
 <p>ValueError：点云 / cores 不是 <code style="color:#22d3bf">(N,3)</code>、为空、<code style="color:#22d3bf">normals</code> 的数量与 cores</p>
 <p>不符、<code style="color:#22d3bf">radius &lt;= 0</code>、<code style="color:#22d3bf">max_depth &lt;= 0</code>、<code style="color:#22d3bf">min_points &lt; 1</code> 时。</p>
-<p><b>局限(honest)</b>：(1) 法线由调用方给出 —— <code style="color:#22d3bf">estimate_normals</code> 的符号是任意的，不统一方向的话符号会因位置而翻转。(2) <code style="color:#22d3bf">lod</code> 只考虑噪声，<b>不包含配准残差</b>(Lague 的原论文把配准误差作为单独一项加上)。</p>
+<p><b>局限(honest)</b>：(1) 法线由调用方给出 —— <code style="color:#22d3bf">estimate_point_normals</code> 的默认符号以重心为基准，不用 <code style="color:#22d3bf">viewpoint</code> 或 <code style="color:#22d3bf">orient_normals</code> 统一方向的话符号会因位置而翻转。(2) <code style="color:#22d3bf">lod</code> 只考虑噪声，<b>不包含配准残差</b>(Lague 的原论文把配准误差作为单独一项加上)。</p>
 <p style="margin:2px 0 2px 12px">(3) 圆柱内点数少的边缘处为 <code style="color:#22d3bf">nan</code> —— 不会返回 0 而让人</p>
 <p>误以为“没有变化”。</p>
 <p>Reference (public): D. Lague, N. Brodu, J. Leroux, &quot;Accurate 3D comparison of complex topography with terrestrial laser scanner: application to the Rangitikei canyon (N-Z)&quot;, ISPRS Journal of Photogrammetry and Remote Sensing 82 (2013) 10-26.</p>

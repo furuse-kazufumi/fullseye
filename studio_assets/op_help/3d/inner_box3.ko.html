@@ -4,7 +4,6 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import regionprops3d; regionprops3d.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;inner_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이진 복셀 영역에 완전히 내접하는 최대 축 평행 상자(2-D <code style="color:#22d3bf">inner_rectangle1</code> 의 3-D 판).</p>
-<p>3-D 판).</p>
 <p>엄밀해: 어떤 깊이 구간 [z0, z1]에 대해서도, 박스는 슬라이스 z0..z1의 <b>논리곱</b> (모든 슬라이스에서 전경인 복셀)의 안쪽에 있어야 한다. 그 곱 안의 최대 내접 2-D 직사각형(히스토그램법 = <code style="color:#22d3bf">inner_rectangle1</code>과 같은 코어) × 구간 길이 가 후보 박스이며, 전체 구간에대한 최대가 엄밀한 최대 내접 박스가 된다. O(D^2 * H * W).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>

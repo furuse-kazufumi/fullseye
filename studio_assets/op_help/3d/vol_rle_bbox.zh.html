@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rle_region</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_bbox(region)</code>(要直接调用实现,<code style="color:#22d3bf">import volregion; volregion.vol_rle_bbox(region)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_bbox&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>紧致包围盒 <code style="color:#22d3bf">(z0, y0, x0, z1, y1, x1)</code>(上界为开区间)。</p>
-<p>在 run 上计算(不 decode;实测比扫描密集掩模快约 1000 倍)。与 decode 后掩模的 <code style="color:#22d3bf">volops.vol_bounding_box</code> 完全一致。空 region 抛出 <code style="color:#22d3bf">ValueError</code>(同样的 fail-closed 规则)。</p>
+<p>由 run 求出紧致包围盒 <code style="color:#22d3bf">(z0, y0, x0, z1, y1, x1)</code>(上界为开区间)。</p>
+<p>无需 decode;实测比扫描密集掩模快约 1000 倍。与 decode 后掩模的 <code style="color:#22d3bf">volops.vol_bounding_box</code> 完全一致。空 region 抛出 <code style="color:#22d3bf">ValueError</code>(同样的 fail-closed 规则)。</p>
 <p>计算: 还原 <code style="color:#22d3bf">z = rows // H</code>、<code style="color:#22d3bf">y = rows % H</code>,返回 <code style="color:#22d3bf">(z.min, y.min, starts.min, z.max+1, y.max+1, ends.max)</code>。是 6 元素的 <code style="color:#22d3bf">int</code> 元组,轴顺序为 <code style="color:#22d3bf">(z, y, x)</code> = (depth, row, col)。上限是排他的,因此 <code style="color:#22d3bf">vol[z0:z1, y0:y1, x0:x1]</code> 直接就是最小的外接子 volume。坐标为 voxel index(不乘 spacing)。</p>
 <p>校验: 除 <code style="color:#22d3bf">VolRLE</code> 的一致性检查(<code style="color:#22d3bf">_require_rle</code>)外,连 1 个 run 都没有的 region 视为“无法定义框”而抛出 <code style="color:#22d3bf">ValueError</code>。没有 <code style="color:#22d3bf">margin</code> 参数(需要留白时,decode 后使用 <code style="color:#22d3bf">vol_bounding_box</code>)。</p>
 <p>适用场景: 取 <code style="color:#22d3bf">vol_rle_components</code> 各成分的框,在不构建密集数组的情况下确定相当于 <code style="color:#22d3bf">vol_crop_domain</code> 的 ROI 裁剪。</p>

@@ -31,7 +31,7 @@ edt="scipy"(CPU、既定)か edt="jfa"(`edt_jfa`、全 GPU で CPU 往復なし�
 手順: 両 volume で ``|∇| > thr·max|∇|`` の voxel をエッジにする(``thr`` は各 volume の最大
 勾配に対する **相対比**、勾配は ``sobel3d``)。scene エッジの距離変換 DT を作り、テンプレの
 エッジ 2 値 volume をカーネルに conv3d した値をエッジ数 ``n`` で割る。
-返り値 ``[距離, z, y, x]`` の距離は「テンプレのエッジ 1 voxel あたり、最寄り scene エッジまでの
+返り値 ``[dist, z, y, x]`` の ``dist`` は「テンプレのエッジ 1 voxel あたり、最寄り scene エッジまでの
 平均距離(voxel 単位)」で 0 が完全一致。位置は **テンプレ中心 (T//2)** の scene 座標で
 **整数**(subvoxel 精緻化は無い。要るなら ``refine_translation_lk`` へ。corner 規約なので
 T//2 を引く)。テンプレが完全に収まらない位置は最大値+1 で埋めて除外する。

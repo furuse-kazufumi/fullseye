@@ -36,7 +36,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
 ## 使い方
 
 Butterworth band-pass between *low* and *high* Hz. Both edges must be inside
-    ``(0, rate/2)``; same length contract as :func:`lowpass`.
+``(0, rate/2)``; same length contract as :func:`lowpass`.
 
 Typed bridge of the 1d op ``bandpass`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``order`` (default 4); ``b`` is unused.
 

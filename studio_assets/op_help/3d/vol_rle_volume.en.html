@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rle_region</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_volume(region) -&gt; &#x27;int&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import volregion; volregion.vol_rle_volume(region) -&gt; &#x27;int&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Voxel count of the region, computed on the runs (no decode). Measured</p>
-<p>~300x faster than summing the dense mask.</p>
+<p>Voxel count of the region, computed on the runs (no decode).</p>
+<p>Measured ~300x faster than summing the dense mask.</p>
 <p>Computation: <code style="color:#22d3bf">sum(ends - starts)</code> (the differences are taken in int64, so it does not overflow even with many runs). The return value is a Python <code style="color:#22d3bf">int</code> (voxel count, unit = voxel. If you want physical volume in mm^3, multiply by the <code style="color:#22d3bf">spacing</code> product <code style="color:#22d3bf">sz*sy*sx</code> yourself — this op does not accept spacing).</p>
 <p>The input is validated with <code style="color:#22d3bf">_require_rle</code> before use (not a <code style="color:#22d3bf">VolRLE</code>, inconsistent shape or run arrays, out-of-range runs raise <code style="color:#22d3bf">ValueError</code>). An empty region returns <code style="color:#22d3bf">0</code> (not treated as an error). The purpose is to return the same value as <code style="color:#22d3bf">vol_rle_decode</code> followed by <code style="color:#22d3bf">sum()</code>, without building a dense array. Applying it to each component of <code style="color:#22d3bf">vol_rle_components</code> gives the per-component volume.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

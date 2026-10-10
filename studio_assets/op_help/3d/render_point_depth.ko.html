@@ -5,8 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 → 깊이 이미지(z-buffer, 각 화소에 최근접 점의 깊이). 관측 합성/외관 검사 샘플.</p>
 <p><code style="color:#22d3bf">project_points(points, K, R, t)</code>로 <code style="color:#22d3bf">(u, v, z)</code>를 얻고, <code style="color:#22d3bf">round</code>한 화소 <code style="color:#22d3bf">(row=v, col=u)</code>가 <code style="color:#22d3bf">size=(H, W)</code> 안이면서 <code style="color:#22d3bf">z &gt; 0</code>인 점만을 먼 순서로 써서 가까운 점으로 덮어쓴다(같은 화소는 최소 z가 남는다). 점이 없는 화소는 <b>0</b>(<code style="color:#22d3bf">tsdf_from_depth</code> / <code style="color:#22d3bf">depth_to_points</code>가무효값으로 다루는 규약). 반환값 <code style="color:#22d3bf">(H, W)</code> float64, 단위는 점 좌표의 단위.</p>
-<p style="margin:2px 0 2px 12px">• 1 점 = 1 화소이므로 희소한 점군은 구멍투성이가 된다(<code style="color:#22d3bf">mesh_to_points</code>로 조밀하게 한 뒤에). splat</p>
-<p>반경은 없다.</p>
+<p style="margin:2px 0 2px 12px">• 1 점 = 1 화소이므로 희소한 점군은 구멍투성이가 된다(<code style="color:#22d3bf">mesh_to_points</code>로 조밀하게 한 뒤에). splat 반경은 없다.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code>는 numpy (3,3), <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code>는 생략 가능.</p>
 <p>후단: <code style="color:#22d3bf">depth_to_points</code>로 되돌리기, <code style="color:#22d3bf">normals_from_depth</code>로 법선, <code style="color:#22d3bf">tsdf_from_depth</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

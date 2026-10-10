@@ -19,15 +19,17 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 対称 Hausdorff 距離 = max(max_a min_b, max_b min_a)。→ scalar。最悪ケースの乖離。
 
+Raises ValueError: どちらかが空 or (N,3) でない場合(空の最大値は numpy の生の例外になる)。
+
 計算: ``cKDTree`` で ``a`` の各点から ``b`` への最近傍距離と、``b`` から ``a`` への
 最近傍距離を取り、両方向の **最大値** のうち大きい方を返す。「一方の雲のどの点も、
 相手の雲からこの距離以内にある」を保証する最小の半径。単位は座標の単位。
 
 入力: ``a``, ``b`` は ``(N, 3)`` / ``(M, 3)`` の点群(点数は異なってよい、対応不要)。
-**この op は入口検査を持たない**(``_require_cloud`` を通らない): 空の点群を渡すと
-``max()`` が numpy の ``ValueError``("zero-size array")で落ち、``(N, 2)`` など
-3 列でない入力は cKDTree の次元不一致で ``ValueError`` になる — いずれも
-メッセージはこの op のものではない。呼ぶ前に空でないことを確かめること。
+兄弟の ``chamfer_distance`` と同じく入口で ``_require_cloud`` を通す: 空の点群や
+``(N, 2)`` など 3 列でない入力は、この op 自身のメッセージの ``ValueError`` で拒否する
+(以前は空の雲で ``max()`` が numpy の "zero-size array" で落ち、3 列でない入力は
+cKDTree の次元不一致で落ちていた —— どちらも何が悪いかを言わない)。
 
 返り値: Python ``float``、``[0, inf)``。同一点群なら 0。正規化はしない。
 

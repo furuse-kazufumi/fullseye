@@ -37,12 +37,12 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``).
 
-    The x-grid is untouched (use :func:`transform_funct_1d` to move x too).
+The x-grid is untouched (use :func:`transform_funct_1d` to move x too).
 
-    :param y: 1-D function (may be empty).
-    :param mult: finite multiplier.
-    :param add: finite offset.
-    :raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.
+:param y: 1-D function (may be empty).
+:param mult: finite multiplier.
+:param add: finite offset.
+:raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.
 
 Typed bridge of the 1d op ``scale_y_funct_1d`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``mult`` (default 1); ``b`` is unused.
 

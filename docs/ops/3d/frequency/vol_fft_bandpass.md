@@ -17,10 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Gaussian band-pass ``lowpass(high) - lowpass(low)``: keeps structure
+Gaussian band-pass ``lowpass(high) - lowpass(low)``: keeps structure between two scales.
 
-between the two scales (``low < high`` required, both in cycles/voxel or
-cycles/mm with *spacing*). Typical use: isolate one texture scale, or a
+``low < high`` is required, both in cycles/voxel or cycles/mm with *spacing*. Typical use: isolate one texture scale, or a
 periodic artefact band before subtracting it.
 
 伝達関数は ``exp(-|f|^2 / (2 high^2)) - exp(-|f|^2 / (2 low^2))``。DC では

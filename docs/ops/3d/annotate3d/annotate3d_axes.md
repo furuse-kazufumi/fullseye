@@ -17,15 +17,15 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-画像(image2d)を返す: 世界座標の 3 軸(gnomon)を ``origin`` から射影して描く。
+画像(image2d)を返す: object 座標(``pose`` の入力側)の 3 軸(gnomon)を ``origin`` から射影して描く。
 
 Raises
 ------
 ValueError
     length が非正、原点や軸端がカメラの後ろ、labels/colors が 3 つでない、
-    軸の文字が画像に収まらない。
+    軸の文字が画像に収まらない、原点と軸端がともに画像の外。
 
-手順: ``origin`` と、そこから世界座標の +X / +Y / +Z 方向に ``length`` 進んだ
+手順: ``origin`` と、そこから object 座標の +X / +Y / +Z 方向に ``length`` 進んだ
 3 点を射影(``annotate3d_project`` と同じ慣習)し、原点の画素から各軸端の画素へ
 ``annotate.arrow``(矢じり 8x6 px)を描く。軸端の先 ``0.7 * font_size`` px の
 位置に ``labels[i]`` を背景なし(``box_alpha=0``)の文字で置く。
@@ -42,11 +42,15 @@ ValueError
 
 エラーになる条件: ``length <= 0`` / ``labels`` か ``colors`` の長さが 3 でない /
 原点または軸端のいずれかが ``z <= 1e-9`` / 姿勢・``K``・``depth`` の不正 / 軸の
-文字が画像に収まらない。**枠外の軸端はエラーにしない**(矢印は枠外まで引く)。
+文字が画像に収まらない / 原点と軸端がともに画像の外(``annotate.arrow`` が拒否)。
+軸端だけが枠外なら描く(矢印は枠外へ向かって引く)。
 視線と一致して点に潰れた軸(画素長 1e-9 未満)は黙ってスキップする。
 
 使いどころ: 図の姿勢の説明(gnomon)。``render3d.look_at`` の ``pose`` を
 そのまま渡し、``origin`` にメッシュの重心や ``bounds`` の角を置く。
+座標系: ``origin`` も軸の向きも ``pose`` が写す元の座標系(object 座標)で解釈する。
+``look_at`` の ``pose`` は world→camera なので、そのときは world の軸になる。物体の
+姿勢 ``M``(object→world)を含む ``pose @ M`` を渡すと物体の軸が描かれる。
 
 ## 参考(サンプルデータ・文献)
 

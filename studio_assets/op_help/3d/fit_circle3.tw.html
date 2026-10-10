@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對 <code style="color:#22d3bf">(depth, row, col)</code> 點做 3-D 圓擬合:先擬合支撐平面,再在面內擬合圓。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>then fit a 2-D circle in that plane (algebraic least squares). Returns <code style="color:#22d3bf">center</code> (<code style="color:#22d3bf">cd/cr/cc</code>), radius <code style="color:#22d3bf">r</code>, a unit plane <code style="color:#22d3bf">normal</code> (depth, row, col), and the RMS residual (in-plane radial + out-of-plane, combined). Raises <code style="color:#22d3bf">ValueError</code> on &lt; 3 points or a collinear set.</p>
+<p>The in-plane fit is a 2-D algebraic least-squares circle. Returns <code style="color:#22d3bf">center</code> (<code style="color:#22d3bf">cd/cr/cc</code>), radius <code style="color:#22d3bf">r</code>, a unit plane <code style="color:#22d3bf">normal</code> (depth, row, col), and the RMS residual (in-plane radial + out-of-plane, combined). Raises <code style="color:#22d3bf">ValueError</code> on &lt; 3 points or a collinear set.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

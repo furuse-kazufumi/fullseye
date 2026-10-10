@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Minimum enclosing sphere of ``(depth, row, col)`` points (Welzl's exact
+Minimum enclosing sphere of ``(depth, row, col)`` points (Welzl's exact algorithm).
 
-algorithm on the convex hull). Returns ``center`` (``cd/cr/cc``) and radius
+Welzl runs on the convex hull. Returns ``center`` (``cd/cr/cc``) and radius
 ``r`` — the smallest sphere that contains every point. This is the 3-D
 ``smallest_circle``; its radius is strictly below the AABB-diagonal sphere on
 any non-spherical set, and equals the true radius for points on a sphere.

@@ -43,9 +43,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Causal temporal bilateral denoise per frame → ``(T, H, W)`` (``video``).
 
-    Edge-preserving in time: averages recent frames but drops the weight of
-    frames that differ (moved), so it denoises static regions without ghosting
-    the motion the way :func:`moving_average_window` does.
+Edge-preserving in time: averages recent frames but drops the weight of
+frames that differ (moved), so it denoises static regions without ghosting
+the motion the way :func:`moving_average_window` does.
 
 Typed bridge of the videostream op ``temporal_bilateral`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``window`` (default 5) and ``b`` drives ``sigma_t`` (default 2).
 

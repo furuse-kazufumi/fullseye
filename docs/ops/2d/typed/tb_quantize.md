@@ -37,32 +37,32 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Scalar quantiser with the error model stated, plus optional dither.
 
-    *bits* sets the number of levels ``L = 2**bits`` over the signal's own
-    min..max range. *mode* is ``"round"`` (mid-tread, unbiased) or ``"truncate"``
-    (floor, the convention PIL's posterize and most fixed-point casts use).
+*bits* sets the number of levels ``L = 2**bits`` over the signal's own
+min..max range. *mode* is ``"round"`` (mid-tread, unbiased) or ``"truncate"``
+(floor, the convention PIL's posterize and most fixed-point casts use).
 
-    **The two differ by more than a rounding convention.** With step
-    ``Delta = range/(L-1)`` both have error variance ``Delta**2/12``, but
-    truncation also carries a mean of ``-Delta/2``, so its mean square error is
+**The two differ by more than a rounding convention.** With step
+``Delta = range/(L-1)`` both have error variance ``Delta**2/12``, but
+truncation also carries a mean of ``-Delta/2``, so its mean square error is
 
-        truncate:  Delta**2/12 + (Delta/2)**2 = Delta**2/3
-        round:     Delta**2/12
+    truncate:  Delta**2/12 + (Delta/2)**2 = Delta**2/3
+    round:     Delta**2/12
 
-    — a factor of **4**. Anything that measures a level (not just displays it)
-    must round.
+— a factor of **4**. Anything that measures a level (not just displays it)
+must round.
 
-    *dither* adds noise **before** quantising so the error stops being a function
-    of the signal: ``"tpdf"`` (triangular, the audio standard — two uniform draws
-    summed, so the error's variance no longer depends on the sample value) or
-    ``"rpdf"`` (one uniform draw). Dither raises the total error power but removes
-    the correlation that makes quantisation audible as distortion rather than as
-    hiss. ``seed`` fixes the draw so the op stays deterministic.
+*dither* adds noise **before** quantising so the error stops being a function
+of the signal: ``"tpdf"`` (triangular, the audio standard — two uniform draws
+summed, so the error's variance no longer depends on the sample value) or
+``"rpdf"`` (one uniform draw). Dither raises the total error power but removes
+the correlation that makes quantisation audible as distortion rather than as
+hiss. ``seed`` fixes the draw so the op stays deterministic.
 
-    **Applicability.** (1) The range is taken from *this* signal, so two signals
-    quantised separately do not share a scale. (2) ``bits=1`` with no dither is a
-    comparator, not a quantiser — the error model does not apply. (3) The error
-    model assumes the signal moves by more than a step between samples; on a flat
-    stretch the error is a constant offset, not noise.
+**Applicability.** (1) The range is taken from *this* signal, so two signals
+quantised separately do not share a scale. (2) ``bits=1`` with no dither is a
+comparator, not a quantiser — the error model does not apply. (3) The error
+model assumes the signal moves by more than a step between samples; on a flat
+stretch the error is a constant offset, not noise.
 
 Typed bridge of the 1d op ``quantize`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``bits`` (default 8); ``b`` is unused.
 

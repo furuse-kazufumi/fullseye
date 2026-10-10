@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_union(a, b)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volregion; volregion.vol_rle_union(a, b)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_union&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 RLE 영역의 합집합을 run 위에서(복호 없음).</p>
-<p>voxel 수가 아니라 run 수에 비례한다 — 두 <code style="color:#22d3bf">512**3</code> 마스크를 병합해도 <code style="color:#22d3bf">512**3</code> 규모의 어떤 것도 건드리지 않는다. region은 같은 volume shape를 공유해야 한다.</p>
+<p>비용은 voxel 수가 아니라 run 수에 비례한다 — 두 <code style="color:#22d3bf">512**3</code> 마스크를 병합해도 <code style="color:#22d3bf">512**3</code> 규모의 어떤 것도 건드리지 않는다. region은 같은 volume shape를 공유해야 한다.</p>
 <p>절차(<code style="color:#22d3bf">_rle_boolean</code> 공통): 두 region의 run을, 평면 행마다 <code style="color:#22d3bf">W + 1</code>의 stride를 둔 1개의 정수 직선에 사상하고(+1의 틈 덕분에 이웃 행의 run이 결합하지 않는다), 각 run의 start/end를 이벤트로 나열하여, 구간별 피복 상태 <code style="color:#22d3bf">(a의 안쪽, b의 안쪽)</code> 를 스윕해 <code style="color:#22d3bf">ia | ib</code>가 참인 구간을 최대 길이의 run으로 다시 묶는다. 계산량은 run 수 <code style="color:#22d3bf">n</code>에 대해 O(n log n)(<code style="color:#22d3bf">np.unique</code>의 정렬).</p>
 <p>반환값: 같은 <code style="color:#22d3bf">shape</code>의 새 <code style="color:#22d3bf">VolRLE</code>(run은 행 순·x 오름차순, 인접·중복하는 run은 1개로 병합됨). 둘 다 비어 있으면 run 0개의 region. <code style="color:#22d3bf">vol_rle_decode(union) == decode(a) | decode(b)</code>가 voxel 단위로 성립한다.</p>
 <p>검증(<code style="color:#22d3bf">ValueError</code>): 어느 한쪽이 <code style="color:#22d3bf">VolRLE</code>이 아님·정합성 검사에 실패 / <code style="color:#22d3bf">a.shape != b.shape</code>(다른 volume에 속한 region은 합성할 수 없다).</p>

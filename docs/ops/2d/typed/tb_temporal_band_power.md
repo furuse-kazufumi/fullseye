@@ -41,13 +41,13 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Per-pixel mean-square power inside a temporal band -> ``(H, W)`` map.
 
-    "Where in the frame is something moving at this frequency?" — a resonance
-    map. The value at a pixel is the mean over time of the squared band-passed
-    signal, so a pure sinusoid of amplitude ``a`` inside the band reads exactly
-    ``a^2/2`` (Parseval; measured relative error ``3.08e-16`` for ``a = 0.3``).
+"Where in the frame is something moving at this frequency?" — a resonance
+map. The value at a pixel is the mean over time of the squared band-passed
+signal, so a pure sinusoid of amplitude ``a`` inside the band reads exactly
+``a^2/2`` (Parseval; measured relative error ``3.08e-16`` for ``a = 0.3``).
 
-    This is an *analysis map*, not a displayable image: it is a power and is not
-    bounded by 1. Pixels with no in-band content read 0.
+This is an *analysis map*, not a displayable image: it is a power and is not
+bounded by 1. Pixels with no in-band content read 0.
 
 Typed bridge of the motionmag op ``temporal_band_power`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` picks the centre of the pass-band among the clip's own non-DC DFT bins (0 = the lowest bin, 1 = the Nyquist bin) and ``b`` its half-width (0 = one bin, 1 = half the bins on each side). The band edges sit half a bin outside the chosen bins (frame rate fixed at 32 fps), so the band holds at least one bin for any clip of two or more frames. (Until 2026-10-07 the band was a fixed 3-5 Hz, which holds no bin for a 12-frame clip, so every call was refused.)
 

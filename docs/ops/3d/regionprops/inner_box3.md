@@ -17,9 +17,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D ``inner_rectangle1`` の
-
-3-D 版)。
+二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D ``inner_rectangle1`` の 3-D 版)。
 
 厳密解: どの深さ区間 [z0, z1] についても、ボックスはスライス z0..z1 の **論理積**
 (全スライスで前景のボクセル)の内側に無ければならない。その積の中の最大内接 2-D 長方形

@@ -37,7 +37,7 @@ Args:
 Returns:
     ``[0, 1]`` の float64 LDR 画像(入力と同形状)。
 Raises:
-    ValueError: 空/非有限/負の放射輝度、非正の exposition/white(fail-closed)。
+    ValueError: 空/非有限/負の放射輝度、非正の exposure/white(fail-closed)。
 
 ## 背景知識ガイド(この op の手前にある物理・規約)
 

@@ -39,25 +39,25 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。
 
-    bounds=(lo,hi) を与えれば複数雲を同一格子に載せられる(=マッチング前提)。
+bounds=(lo,hi) を与えれば複数雲を同一格子に載せられる(=マッチング前提)。
 
-    手順: 各点を ``idx = floor((p − lo)/(hi − lo)·(size − 1))`` で整数格子に落とし、その voxel に
-    1 を加算する(値 = その voxel に落ちた点の個数)。``smooth > 0`` なら σ=``smooth``(voxel 単位)
-    の gaussian を 3 軸分離 conv で掛ける(半径 ``max(1, int(4σ + 0.5))``、端は replicate)。
-    出力の軸順は **点の列の順そのまま**(``points[:, 0]`` → 軸 0)で、(depth,row,col) への
-    並べ替えはしない。
+手順: 各点を ``idx = floor((p − lo)/(hi − lo)·(size − 1))`` で整数格子に落とし、その voxel に
+1 を加算する(値 = その voxel に落ちた点の個数)。``smooth > 0`` なら σ=``smooth``(voxel 単位)
+の gaussian を 3 軸分離 conv で掛ける(半径 ``max(1, int(4σ + 0.5))``、端は replicate)。
+出力の軸順は **点の列の順そのまま**(``points[:, 0]`` → 軸 0)で、(depth,row,col) への
+並べ替えはしない。
 
-    - ``bounds``: ``(lo, hi)`` の 3 次元ベクトル 2 本。None なら点群自身の min/max(雲ごとに
-    格子が変わるので、2 つの雲を比べるときは必ず同じ bounds を渡す)。長さ 3 でない・非有限・
-    ``hi <= lo`` の軸があると ValueError(tsdf 系の ``((xmin,xmax),...)`` 流儀は長さ 2 として拒否)。
-    - 範囲外の点は捨てずに **端の voxel へ clip される**(端に偽の密度が溜まる)。切り落としたい
-    なら事前に点群側で除く。
-    - ``size``: 一辺の voxel 数。``hi − lo`` が 0 の軸は 1e-9 に置換されるだけで警告しない。
-    - 空の点群で bounds=None は numpy の min が例外を出す。
-    - 返り値: ``(size, size, size)`` float64 numpy(device で計算しても CPU に戻す)。値は個数
-    (平滑後は個数の重み分布)で正規化はしない。
+- ``bounds``: ``(lo, hi)`` の 3 次元ベクトル 2 本。None なら点群自身の min/max(雲ごとに
+格子が変わるので、2 つの雲を比べるときは必ず同じ bounds を渡す)。長さ 3 でない・非有限・
+``hi <= lo`` の軸があると ValueError(tsdf 系の ``((xmin,xmax),...)`` 流儀は長さ 2 として拒否)。
+- 範囲外の点は捨てずに **端の voxel へ clip される**(端に偽の密度が溜まる)。切り落としたい
+なら事前に点群側で除く。
+- ``size``: 一辺の voxel 数。``hi − lo`` が 0 の軸は 1e-9 に置換されるだけで警告しない。
+- 空の点群で bounds=None は numpy の min が例外を出す。
+- 返り値: ``(size, size, size)`` float64 numpy(device で計算しても CPU に戻す)。値は個数
+(平滑後は個数の重み分布)で正規化はしない。
 
-    後段: ``match_points_ncc`` / ``signed_distance_field`` / ``voxel_to_mesh`` の入力に。
+後段: ``match_points_ncc`` / ``signed_distance_field`` / ``voxel_to_mesh`` の入力に。
 
 2-D 進化レジストリへ橋渡しした 3d の op ``points_to_voxel``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 

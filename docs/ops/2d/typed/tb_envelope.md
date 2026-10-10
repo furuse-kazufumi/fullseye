@@ -34,7 +34,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
 ## 使い方
 
 Amplitude envelope via the analytic (Hilbert) signal — the shape of a
-    knock / impact / acoustic-emission burst.
+knock / impact / acoustic-emission burst.
 
 Typed bridge of the 1d op ``envelope`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

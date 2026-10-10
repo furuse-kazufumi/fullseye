@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Gaussian high-pass — the exact complement ``1 - lowpass`` (the two sum
+Gaussian high-pass — the exact complement ``1 - lowpass`` (the two sum to the input).
 
-to the input to float precision, proven in tests). Removes the DC level and
+The sum holds to float precision, proven in tests. Removes the DC level and
 slow drift, keeps edges/texture. Output is signed (mean ~ 0).
 
 伝達関数は ``1 - exp(-|f|^2 / (2 cutoff^2))``。DC(``f = 0``)は係数 0 なので平均

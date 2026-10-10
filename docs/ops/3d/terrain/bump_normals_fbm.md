@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Perturb a normal map with the *gradient* of a seeded multi-octave height field
+Perturb a normal map with the *gradient* of a seeded multi-octave height field.
 
-(sub-facet relief the geometry cannot afford to displace) → unit normals ``(H, W, 3)``.
+This is sub-facet relief the geometry cannot afford to displace → unit normals ``(H, W, 3)``.
 
 ``h(x) = Σ_k A_k n_k(x)`` is the same value-noise field :func:`mesh_displace_spectrum`
 would displace with (same ``seed`` ⇒ same lattice), so passing the octaves that the

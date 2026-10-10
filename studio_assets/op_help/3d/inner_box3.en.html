@@ -4,7 +4,6 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inner_box3(vol) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import regionprops3d; regionprops3d.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;inner_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The largest axis-aligned box fully inscribed in a binary voxel region (the 3-D counterpart of the 2-D <code style="color:#22d3bf">inner_rectangle1</code>).</p>
-<p>3-D version).</p>
 <p>Exact solution: for any depth interval [z0, z1], the box must lie inside the <b>logical AND</b> of slices z0..z1 (voxels that are foreground in every slice). The largest inscribed 2-D rectangle inside that AND (histogram method = the same core as <code style="color:#22d3bf">inner_rectangle1</code>) × the interval length is a candidate box, and the maximum over all intervals is the exact largest inscribed box. O(D^2 * H * W).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>

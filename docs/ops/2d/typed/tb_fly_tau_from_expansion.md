@@ -35,38 +35,38 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Time-to-contact from optical expansion — the tau margin.
 
-    From the subtended angle and its rate::
+From the subtended angle and its rate::
 
-        shape="disk":   tau = sin(theta) / theta'
-        shape="sphere": tau = 2*tan(theta/2) / theta'
+    shape="disk":   tau = sin(theta) / theta'
+    shape="sphere": tau = 2*tan(theta/2) / theta'
 
-    ``theta_signal`` is the full subtended angle over time, radians.
+``theta_signal`` is the full subtended angle over time, radians.
 
-    ★ The two object models differ by 33% at a 60-degree subtense (``sin 60 = 0.866``
-    vs ``2 tan 30 = 1.155``); using the wrong one silently mis-times a landing, so
-    the model is a required, named choice rather than a default guess.
+★ The two object models differ by 33% at a 60-degree subtense (``sin 60 = 0.866``
+vs ``2 tan 30 = 1.155``); using the wrong one silently mis-times a landing, so
+the model is a required, named choice rather than a default guess.
 
-    theta_signal: the full subtended angle per sample, radians.
-    dt_s:  the sample interval, seconds.
-    shape: ``"disk"`` (a frontal circular disk) or ``"sphere"``.
+theta_signal: the full subtended angle per sample, radians.
+dt_s:  the sample interval, seconds.
+shape: ``"disk"`` (a frontal circular disk) or ``"sphere"``.
 
-    Returns a 1-D float64 array of the time-to-contact per sample, seconds.
-    Non-expanding samples (``theta' <= 0``) return ``NaN`` — a documented
-    non-finite, because a contracting or static angle has no time-to-contact and
-    inventing one would be a plausible-wrong number. (The registry op
-    ``tb_fly_tau_from_expansion`` must return a finite signal, so it replaces those
-    NaN by the signal fallback without recording a fallback event —
-    ``backend_safe.NONFINITE_BY_DESIGN``; call this function directly to keep the NaN.)
+Returns a 1-D float64 array of the time-to-contact per sample, seconds.
+Non-expanding samples (``theta' <= 0``) return ``NaN`` — a documented
+non-finite, because a contracting or static angle has no time-to-contact and
+inventing one would be a plausible-wrong number. (The registry op
+``tb_fly_tau_from_expansion`` must return a finite signal, so it replaces those
+NaN by the signal fallback without recording a fallback event —
+``backend_safe.NONFINITE_BY_DESIGN``; call this function directly to keep the NaN.)
 
-    Ground truth: for the model's own object geometry (``theta = 2 asin(l/d)`` for a
-    sphere, ``theta = 2 atan(l/d)`` for a disk) approaching at speed ``|v|``, the
-    returned tau equals the true distance-over-speed ``d/|v|`` (pinned in the
-    tests).
+Ground truth: for the model's own object geometry (``theta = 2 asin(l/d)`` for a
+sphere, ``theta = 2 atan(l/d)`` for a disk) approaching at speed ``|v|``, the
+returned tau equals the true distance-over-speed ``d/|v|`` (pinned in the
+tests).
 
-    **Raises** ``ValueError``: a non-1-D / empty / too-short (< 3) / non-finite
-    *theta_signal*, a signal over :data:`MAX_SIGNAL_POINTS`, a non-positive *dt_s*,
-    and an unknown *shape*. A non-expanding angle is **not** an error — it is the
-    documented ``NaN`` return above.
+**Raises** ``ValueError``: a non-1-D / empty / too-short (< 3) / non-finite
+*theta_signal*, a signal over :data:`MAX_SIGNAL_POINTS`, a non-positive *dt_s*,
+and an unknown *shape*. A non-expanding angle is **not** an error — it is the
+documented ``NaN`` return above.
 
 Typed bridge of the flyvision op ``fly_tau_from_expansion`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

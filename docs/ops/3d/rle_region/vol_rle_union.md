@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Union of two RLE regions, computed on the runs (no decode). Cost scales
+Union of two RLE regions, computed on the runs (no decode).
 
-with the run counts, not the voxel counts — merging two 512**3 masks never
+Cost scales with the run counts, not the voxel counts — merging two 512**3 masks never
 touches 512**3 anything. Regions must share the same volume shape.
 
 手順(``_rle_boolean`` 共通): 両 region の run を、平面行ごとに ``W + 1`` の

@@ -35,21 +35,21 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 点群の慣性テンソル (3,3)(中心 2 次モーメントから、等質量・総質量 1)。
 
-    I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²),
-    I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)。
-    共分散 C を使うと I = tr(C)·E₃ − C(E₃ は単位行列)と等価。対称・半正定値。
-    重心中心化のため並進不変。
+I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²),
+I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)。
+共分散 C を使うと I = tr(C)·E₃ − C(E₃ は単位行列)と等価。対称・半正定値。
+重心中心化のため並進不変。
 
-    Returns
-    -------
-    np.ndarray, shape (3, 3)
-        対称な慣性テンソル。
+Returns
+-------
+np.ndarray, shape (3, 3)
+    対称な慣性テンソル。
 
-    補足:
-    - 単位は長さ²(質量 1 の等質量点とみなすので密度は入らない)。点群を回転で回すと ``R I Rᵀ`` に写り、固有値(``principal_moments``)が回転不変量、固有ベクトルが主軸(``moment_axes``)。
-    - 入力は (N,3)、N >= 1(1 点なら零行列)。形状不正・非有限は ``ValueError``。
-    - 共分散 C とは ``I = tr(C)·E₃ - C`` の関係で、C と I の固有ベクトルは同じ、固有値は ``tr(C) - c_i``。
-    - 実体(体積)のモーメントではなく **サンプル点** のモーメントなので、同じ形でも点密度の偏りで値が変わる。密度を均すなら前段で ``voxel_grid_downsample``。決定論的。
+補足:
+- 単位は長さ²(質量 1 の等質量点とみなすので密度は入らない)。点群を回転で回すと ``R I Rᵀ`` に写り、固有値(``principal_moments``)が回転不変量、固有ベクトルが主軸(``moment_axes``)。
+- 入力は (N,3)、N >= 1(1 点なら零行列)。形状不正・非有限は ``ValueError``。
+- 共分散 C とは ``I = tr(C)·E₃ - C`` の関係で、C と I の固有ベクトルは同じ、固有値は ``tr(C) - c_i``。
+- 実体(体積)のモーメントではなく **サンプル点** のモーメントなので、同じ形でも点密度の偏りで値が変わる。密度を均すなら前段で ``voxel_grid_downsample``。決定論的。
 
 2-D 進化レジストリへ橋渡しした 3d の op ``inertia_tensor``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 

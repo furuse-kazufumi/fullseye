@@ -653,7 +653,11 @@ def _bridge_doc(fn, name, dim, tunable, knob_note=None):
 
     元が無説明なら ``None``(嘘の説明を捏造するより「説明なし」の方が正しい)。
     """
-    base = (getattr(fn, "__doc__", None) or "").strip()
+    # ★cleandoc で共通の字下げを外してから継ぐ(2026-10-11)。.strip() だけだと 1 行目以外が 4 字下げのまま残り、
+    # 字下げの無い橋渡し文を後ろに足すため後段の cleandoc も最小字下げ 0 と見て外さない →
+    # docs/ops の Markdown で空行の後の本文がコードブロックとして表示されていた(tb_ 146 本)。
+    import inspect                                        # noqa: PLC0415
+    base = inspect.cleandoc(getattr(fn, "__doc__", None) or "").strip()
     if not base:
         return None
     ja = any("぀" <= ch <= "ヿ" or "一" <= ch <= "鿿" for ch in base)

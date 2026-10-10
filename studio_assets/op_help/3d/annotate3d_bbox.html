@@ -15,7 +15,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth</code>: 前方距離画像(<code style="color:#22d3bf">render3d.render_mesh</code> の <code style="color:#22d3bf">depth</code>)。<code style="color:#22d3bf">occlusion_tol</code>: <code style="color:#22d3bf">[0, 1)</code>。</p>
 <p>返り値: 描画済みの新しい画像(float64 <code style="color:#22d3bf">[0, 1]</code>、入力は変更しない)。</p>
 <p>エラーになる条件: <code style="color:#22d3bf">bounds</code> が <code style="color:#22d3bf">(2, 3)</code> でない・非有限・<code style="color:#22d3bf">max &lt; min</code> の軸がある / <b>8 角のいずれかが</b> <code style="color:#22d3bf">z &lt;= 1e-9</code>(カメラ面上か後ろ。箱が視点を囲む場合は描けない) / 姿勢・<code style="color:#22d3bf">K</code>・<code style="color:#22d3bf">depth</code> の不正。角が画像の外に出るのはエラーにしない(線は枠外まで引かれ、見た目は切れる)。</p>
-<p>注意: 軸平行(世界座標に沿った)箱のみ。回転した箱(<code style="color:#22d3bf">smallest_box3</code> の <code style="color:#22d3bf">corners</code>)を描くには、8 角を自分で射影(<code style="color:#22d3bf">annotate3d_project</code>)して 2-D の <code style="color:#22d3bf">annotate</code> 線描画で結ぶ。</p>
+<p>注意: 軸平行(object 座標の軸に沿った)箱のみ。回転した箱(<code style="color:#22d3bf">smallest_box3</code> の <code style="color:#22d3bf">corners</code>)を描くには、8 角を自分で射影(<code style="color:#22d3bf">annotate3d_project</code>)して 2-D の <code style="color:#22d3bf">annotate</code> 線描画で結ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

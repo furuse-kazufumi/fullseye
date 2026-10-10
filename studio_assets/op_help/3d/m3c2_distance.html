@@ -27,7 +27,7 @@
 <p>Raises:</p>
 <p>ValueError: 点群 / cores が <code style="color:#22d3bf">(N,3)</code> でない、空、<code style="color:#22d3bf">normals</code> の数が cores と</p>
 <p>合わない、<code style="color:#22d3bf">radius &lt;= 0</code>、<code style="color:#22d3bf">max_depth &lt;= 0</code>、<code style="color:#22d3bf">min_points &lt; 1</code> のとき。</p>
-<p><b>限界(honest)</b>: (1) 法線は呼び手が与える —— <code style="color:#22d3bf">estimate_normals</code> の符号は任意なので、向きを揃えないと符号が場所ごとに反転する。(2) <code style="color:#22d3bf">lod</code> は雑音だけを見ており、<b>位置合わせの残差は含まない</b>(Lague の原論文は登録誤差を別項として足す)。</p>
+<p><b>限界(honest)</b>: (1) 法線は呼び手が与える —— <code style="color:#22d3bf">estimate_point_normals</code> の既定の符号は重心基準なので、<code style="color:#22d3bf">viewpoint</code> か <code style="color:#22d3bf">orient_normals</code> で向きを揃えないと符号が場所ごとに反転する。(2) <code style="color:#22d3bf">lod</code> は雑音だけを見ており、<b>位置合わせの残差は含まない</b>(Lague の原論文は登録誤差を別項として足す)。</p>
 <p style="margin:2px 0 2px 12px">(3) 円筒に入る点が少ない縁では <code style="color:#22d3bf">nan</code> になる —— 0 を返して「変化なし」に</p>
 <p>見せない。</p>
 <p>Reference (public): D. Lague, N. Brodu, J. Leroux, &quot;Accurate 3D comparison of complex topography with terrestrial laser scanner: application to the Rangitikei canyon (N-Z)&quot;, ISPRS Journal of Photogrammetry and Remote Sensing 82 (2013) 10-26.</p>

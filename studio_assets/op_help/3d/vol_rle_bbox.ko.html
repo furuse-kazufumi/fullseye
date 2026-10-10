@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rle_region</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_bbox(region)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volregion; volregion.vol_rle_bbox(region)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_bbox&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>밀착 경계 상자 <code style="color:#22d3bf">(z0, y0, x0, z1, y1, x1)</code>(상한은 배타적).</p>
-<p>run 위에서 계산한다(decode 없음; 밀집 마스크를 스캔하는 것보다 ~1000x 빠르게실측). decode한 마스크의 <code style="color:#22d3bf">volops.vol_bounding_box</code>와 정확히일치한다. 빈 region은 <code style="color:#22d3bf">ValueError</code>를 발생시킨다(같은 fail-closed 규칙).</p>
+<p>run 에서 구한 밀착 경계 상자 <code style="color:#22d3bf">(z0, y0, x0, z1, y1, x1)</code>(상한은 배타적).</p>
+<p>decode 가 필요 없다; 밀집 마스크를 스캔하는 것보다 ~1000x 빠르게실측됨. decode한 마스크의 <code style="color:#22d3bf">volops.vol_bounding_box</code>와 정확히일치한다. 빈 region은 <code style="color:#22d3bf">ValueError</code>를 발생시킨다(같은 fail-closed 규칙).</p>
 <p>계산: <code style="color:#22d3bf">z = rows // H</code>, <code style="color:#22d3bf">y = rows % H</code>를 복원하고 <code style="color:#22d3bf">(z.min, y.min, starts.min, z.max+1, y.max+1, ends.max)</code>를 반환한다. 6 요소의 <code style="color:#22d3bf">int</code> 튜플이며, 축 순서는 <code style="color:#22d3bf">(z, y, x)</code> = (depth, row, col). 상한은 배타적이므로 <code style="color:#22d3bf">vol[z0:z1, y0:y1, x0:x1]</code>이 그대로 최소 외접 부분 volume이 된다. 좌표는 voxel index(spacing은 곱하지 않는다).</p>
 <p>검증: <code style="color:#22d3bf">VolRLE</code>의 정합성 검사(<code style="color:#22d3bf">_require_rle</code>)에 더해, run이 1개도 없는 region은 &quot;박스를 정의할 수 없다&quot;로 <code style="color:#22d3bf">ValueError</code>. <code style="color:#22d3bf">margin</code> 인자는 없다(여백이 필요하면 decode 후 <code style="color:#22d3bf">vol_bounding_box</code>를 사용한다).</p>
 <p>사용처: <code style="color:#22d3bf">vol_rle_components</code>의 각 성분의 박스를 구해, <code style="color:#22d3bf">vol_crop_domain</code>에 해당하는 ROI 잘라내기를 밀집 배열을 만들지 않고 정한다.</p>

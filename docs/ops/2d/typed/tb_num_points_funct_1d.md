@@ -31,8 +31,8 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Number of samples (HALCON ``num_points_funct_1d``).
 
-    :param y: 1-D function (may be empty).
-    :raises ValueError: non-1-D / NaN / Inf input.
+:param y: 1-D function (may be empty).
+:raises ValueError: non-1-D / NaN / Inf input.
 
 Typed bridge of the 1d op ``num_points_funct_1d`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

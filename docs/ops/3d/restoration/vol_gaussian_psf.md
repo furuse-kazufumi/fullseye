@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-A normalised (sums to 1) 3-D Gaussian PSF kernel. *sigma* is a scalar or
+A normalised (sums to 1) 3-D Gaussian PSF kernel; *sigma* is a scalar or per-axis.
 
-``(sz, sy, sx)`` in voxels; the kernel spans ``+-truncate*sigma`` per axis
+Per-axis *sigma* is ``(sz, sy, sx)``, in voxels; the kernel spans ``+-truncate*sigma`` per axis
 (odd size, centre at the middle voxel). The convenient companion to
 :func:`vol_richardson_lucy` when the instrument PSF is well approximated
 as Gaussian. Kernels above ``PSF_MAX_ELEMENTS`` (~256^3) raise

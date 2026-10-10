@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_edge_lengths(V, F, *, per: &#x27;str&#x27; = &#x27;vertex&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import render3d; render3d.mesh_edge_lengths(V, F, *, per: &#x27;str&#x27; = &#x27;vertex&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mesh_edge_lengths&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>三角网格的局部边长 → 逐顶点 <code style="color:#22d3bf">(N,)</code>(相邻边的均值)。</p>
-<p>按面为 <code style="color:#22d3bf">(M,)</code>(其 3 条边的平均)，或按唯一边为 <code style="color:#22d3bf">(E,)</code>。</p>
+<p>三角网格的局部边长(逐顶点、逐面或逐唯一边)。</p>
+<p>返回逐顶点 <code style="color:#22d3bf">(N,)</code>(相接边的平均)、按面 <code style="color:#22d3bf">(M,)</code>(其 3 条边的平均)，或按唯一边 <code style="color:#22d3bf">(E,)</code>。</p>
 <p>这是网格在其自身单位下的分辨率图：一个区域能作为*几何*承载的最短波长约为局部边长的两倍(Nyquist)，这正是 <code style="color:#22d3bf">mesh_subdivide</code>(<code style="color:#22d3bf">target_edge</code>)和 <code style="color:#22d3bf">displacement_band_weights</code> 所使用的量。确定性；对退化网格/未知的 <code style="color:#22d3bf">per</code> fail-closed。</p>
 <p>取无向的唯一边 <code style="color:#22d3bf">(E,2)</code>，汇总每条边的长度(网格单位，float64)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">per=&#x27;vertex&#x27;</code>：与顶点相接的边长的平均 <code style="color:#22d3bf">(N,)</code>。不属于任何面的孤立顶点没有边，因此会被静默填入 <b>全部边的平均值</b>(不会是零)。</p>

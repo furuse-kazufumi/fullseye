@@ -8,7 +8,9 @@
 <p>Args:</p>
 <p>points: (N,3) 点群(最低 10 点)。外れ値には無防備(必要なら事前に inlier 選別)。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3,3) 列=主軸(半径降順), &quot;radii&quot;: (3,) 半径(降順), &quot;residual&quot;: float Taubin 近似の点-面距離 RMS}</code>。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3, 3), &quot;radii&quot;: (3,), &quot;residual&quot;: float}</code>。</p>
+<p><code style="color:#22d3bf">axes</code> の列が主軸(半径の降順)、<code style="color:#22d3bf">radii</code> は半径(降順)、<code style="color:#22d3bf">residual</code> は Taubin 近似の</p>
+<p>点-面距離 RMS。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正/点数不足/正定値な楕円体解が得られない(平面状の退化・</p>
 <p>非楕円面・被覆不足)など fail-closed。</p>

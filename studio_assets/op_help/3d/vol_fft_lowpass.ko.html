@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_fft_lowpass(vol, cutoff, spacing=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volfreq; volfreq.vol_fft_lowpass(vol, cutoff, spacing=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_lowpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가우스 저역통과: <code style="color:#22d3bf">1/cutoff</code> 보다 거친 구조를 남깁니다(복셀 단위 또는 실치수).</p>
-<p>mm 단위), 더 미세한 디테일을 부드럽게 감쇠시킨다. 전달 함수 <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> — DC 성분(평균 강도)은 그대로통과한다. 대표적 용도: 조명/두께 드리프트 추출.</p>
+<p>더 미세한 디테일은 부드럽게 감쇠된다. 전달 함수 <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> — DC 성분(평균 강도)은 그대로통과한다. 대표적 용도: 조명/두께 드리프트 추출.</p>
 <p>절차: <code style="color:#22d3bf">np.fft.rfftn</code>으로 실수 FFT → 각 주파수 bin의 크기 <code style="color:#22d3bf">|f| = sqrt(fz^2 + fy^2 + fx^2)</code> 에 전달 함수 <code style="color:#22d3bf">exp(-|f|^2 / (2 cutoff^2))</code>를 곱함 → <code style="color:#22d3bf">irfftn</code>으로 되돌린다. 입력과 같은 <code style="color:#22d3bf">(D, H, W)</code>의 float64를 반환한다(spacing을 전달해도 shape는 바뀌지 않는다).</p>
 <p>인자:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cutoff</code>: 양의 유한값. <code style="color:#22d3bf">spacing=None</code>이면 <b>cycles/voxel</b>(Nyquist = 0.5), <code style="color:#22d3bf">spacing=(sz, sy, sx)</code>(mm, 또는 <code style="color:#22d3bf">spacing_mm</code>을 가진 <code style="color:#22d3bf">volio.VolumeMeta</code>)를전달하면 <b>cycles/mm</b>. 비등방 voxel에서는 축마다 <code style="color:#22d3bf">fftfreq(n, d=spacing)</code>로 물리주파수로 바꾸므로, 같은 물리 구조가 같게 취급된다.</p>

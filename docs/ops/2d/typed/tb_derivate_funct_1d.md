@@ -35,14 +35,14 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 First derivative by central differences (HALCON ``derivate_funct_1d``).
 
-    Units are **y per sample** (the x-grid is the index): for a physical signal
-    sampled every ``dt`` seconds, divide the result by ``dt``. Interior points
-    use the second-order central difference; the two boundary points use one-sided
-    differences (``numpy.gradient``).
+Units are **y per sample** (the x-grid is the index): for a physical signal
+sampled every ``dt`` seconds, divide the result by ``dt``. Interior points
+use the second-order central difference; the two boundary points use one-sided
+differences (``numpy.gradient``).
 
-    :param y: 1-D function, at least 2 samples (a derivative needs a neighbour).
-    :returns: float64 array of the same length.
-    :raises ValueError: non-1-D / NaN / Inf input, or fewer than 2 samples.
+:param y: 1-D function, at least 2 samples (a derivative needs a neighbour).
+:returns: float64 array of the same length.
+:raises ValueError: non-1-D / NaN / Inf input, or fewer than 2 samples.
 
 Typed bridge of the 1d op ``derivate_funct_1d`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

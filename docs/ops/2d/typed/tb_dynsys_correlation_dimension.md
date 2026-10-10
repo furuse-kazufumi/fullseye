@@ -33,32 +33,32 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Grassberger-Procaccia correlation dimension — the slope of ``log C(r)``.
 
-    ``C(r)`` is the fraction of point pairs closer than ``r``; for a self-similar
-    set it grows like ``r**D``, and *D* is read off the straight part of the
-    log-log plot (fitted on the middle 60 % of the radii, where the curve is free
-    of the small-``r`` noise floor and the large-``r`` saturation).
+``C(r)`` is the fraction of point pairs closer than ``r``; for a self-similar
+set it grows like ``r**D``, and *D* is read off the straight part of the
+log-log plot (fitted on the middle 60 % of the radii, where the curve is free
+of the small-``r`` noise floor and the large-``r`` saturation).
 
-    ★**Why this earns its place**: unlike box counting it needs no grid, and its
-    answers are known for simple sets — a circle gives **1**, a filled square
-    **2**, a Cantor set ``log2/log3 = 0.6309``. It measures a different quantity
-    from the existing ``fractal_dimension`` (box counting), so the two are an
-    independent pair rather than two names for one number.
+★**Why this earns its place**: unlike box counting it needs no grid, and its
+answers are known for simple sets — a circle gives **1**, a filled square
+**2**, a Cantor set ``log2/log3 = 0.6309``. It measures a different quantity
+from the existing ``fractal_dimension`` (box counting), so the two are an
+independent pair rather than two names for one number.
 
-    Returns a ``measurement``: the fitted dimension.
+Returns a ``measurement``: the fitted dimension.
 
-    **Raises** ``ValueError``: fewer than 32 points; not a 2-D array; non-finite
-    input; a degenerate cloud (every point identical); a radius range that leaves
-    no pairs.
+**Raises** ``ValueError``: fewer than 32 points; not a 2-D array; non-finite
+input; a degenerate cloud (every point identical); a radius range that leaves
+no pairs.
 
-    Limits: sub-sampled to *max_points* (pairs grow quadratically). ★The
-    dominant error is **not** the sub-sampling but the **radius window**: the
-    default range is the 1st-25th percentile of pair distances, and on a *bounded*
-    set its upper end runs into the boundary, where ``C(r)`` saturates and flattens
-    the slope. Measured on a unit square (true D = 2): 1.879 with the default
-    window and 1.873 / 1.879 / 1.871 at 400 / 1,500 / 3,000 points —— more points
-    do **not** help; narrowing the window to ``r_lo=0.01, r_hi=0.1`` gives 1.947
-    and ``0.002 / 0.05`` gives 2.050. Pass *r_lo* / *r_hi* explicitly when the
-    answer matters, and report the window with the number.
+Limits: sub-sampled to *max_points* (pairs grow quadratically). ★The
+dominant error is **not** the sub-sampling but the **radius window**: the
+default range is the 1st-25th percentile of pair distances, and on a *bounded*
+set its upper end runs into the boundary, where ``C(r)`` saturates and flattens
+the slope. Measured on a unit square (true D = 2): 1.879 with the default
+window and 1.873 / 1.879 / 1.871 at 400 / 1,500 / 3,000 points —— more points
+do **not** help; narrowing the window to ``r_lo=0.01, r_hi=0.1`` gives 1.947
+and ``0.002 / 0.05`` gives 2.050. Pass *r_lo* / *r_hi* explicitly when the
+answer matters, and report the window with the number.
 
 Typed bridge of the math op ``dynsys_correlation_dimension`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``n_radii`` (default 24); ``b`` is unused.
 

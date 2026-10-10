@@ -4,11 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_cone(points) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_cone(points) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fit_cone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군에 무한 원뿔을 적합해 <code style="color:#22d3bf">{apex, axis, half_angle, residual}</code> 을 돌려줍니다.</p>
-<p>자오면에서의 점-모선 직교 거리 <code style="color:#22d3bf">a·sinα − ρ·cosα</code>(<code style="color:#22d3bf">a</code>=축 성분, <code style="color:#22d3bf">ρ</code>=반지름, <code style="color:#22d3bf">α</code>=반각)를 <code style="color:#22d3bf">scipy.optimize.least_squares</code>로 최소화한다. 초기값은 PCA 축 + 반지름 ρ의 축 성분 t에 대한 선형 회귀(<code style="color:#22d3bf">ρ = m·t + b</code>의 기울기 m=tanα, 절편 영점=꼭짓점). 축의 방향은 &quot;꼭짓점에서 멀어질수록 ρ가 커진다(+ 방향으로 벌어진다)&quot;로 정규화한다.</p>
+<p>자오면에서의 점-모선 직교 거리 <code style="color:#22d3bf">a·sinα − ρ·cosα</code>(<code style="color:#22d3bf">a</code>=축 성분, <code style="color:#22d3bf">ρ</code>=반지름, <code style="color:#22d3bf">α</code>=반각)를 <code style="color:#22d3bf">scipy.optimize.least_squares</code>로 최소화한다. 초기값은 PCA 의 3 주축을각각 축 후보로 삼아, 반지름 ρ의 축 성분 t에 대한 선형 회귀 <code style="color:#22d3bf">ρ = m·t + b</code> 에서 얻는다(반각 = <code style="color:#22d3bf">atan(m)</code>, 꼭짓점 = ρ 가 0 이 되는 축 위의 점 <code style="color:#22d3bf">t = -b/m</code>). 잔차가 가장 작은 후보를 채택한다. 축의 방향은 &quot;꼭짓점에서 멀어질수록 ρ가 커진다(+ 방향으로 벌어진다)&quot;로 정규화한다.</p>
 <p>Args:</p>
 <p>points: (N,3) 점군(최소 6 점).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,) 단위 축(벌어지는 방향), &quot;half_angle&quot;: float [rad], &quot;residual&quot;: float 점-면 거리의 RMS}</code>.</p>
+<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,), &quot;half_angle&quot;: float, &quot;residual&quot;: float}</code>.</p>
+<p><code style="color:#22d3bf">axis</code> 는 단위 축(벌어지는 방향), <code style="color:#22d3bf">half_angle</code> 은 반각 [rad], <code style="color:#22d3bf">residual</code> 은 점-면 거리의 RMS.</p>
 <p>Raises:</p>
 <p>ValueError: 형상 부정/점 수 부족/반각 ~0(원통으로 퇴화) 등에서 fail-closed.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

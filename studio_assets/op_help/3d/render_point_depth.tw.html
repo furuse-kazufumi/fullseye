@@ -5,8 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點群 → 深度影像(z-buffer,每像素取最近點的深度)。用於合成觀測/外觀檢測樣本。</p>
 <p>以 <code style="color:#22d3bf">project_points(points, K, R, t)</code> 取得 <code style="color:#22d3bf">(u, v, z)</code>,僅對 <code style="color:#22d3bf">round</code> 後的像素 <code style="color:#22d3bf">(row=v, col=u)</code> 位於 <code style="color:#22d3bf">size=(H, W)</code> 內且 <code style="color:#22d3bf">z &gt; 0</code> 的點,依由遠到近的順序寫入,以近的點覆寫(同一像素保留最小 z)。沒有點的像素為 <b>0</b>(<code style="color:#22d3bf">tsdf_from_depth</code> / <code style="color:#22d3bf">depth_to_points</code> 視為無效值的約定)。回傳值 <code style="color:#22d3bf">(H, W)</code> float64,單位為點座標的單位。</p>
-<p style="margin:2px 0 2px 12px">• 1 點 = 1 像素,因此稀疏的點雲會滿是空洞(先以 <code style="color:#22d3bf">mesh_to_points</code> 加密)。沒有 splat</p>
-<p>半徑。</p>
+<p style="margin:2px 0 2px 12px">• 1 點 = 1 像素,因此稀疏的點雲會滿是空洞(先以 <code style="color:#22d3bf">mesh_to_points</code> 加密)。沒有 splat 半徑。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> 為 numpy (3,3),<code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> 可省略。</p>
 <p>後續: 以 <code style="color:#22d3bf">depth_to_points</code> 還原,以 <code style="color:#22d3bf">normals_from_depth</code> 求法線,<code style="color:#22d3bf">tsdf_from_depth</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

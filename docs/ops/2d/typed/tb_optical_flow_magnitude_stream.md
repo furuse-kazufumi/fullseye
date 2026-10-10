@@ -39,8 +39,8 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Per-frame dense flow speed against the previous frame → ``(T, H, W)`` (``video``).
 
-    Zero first frame; frames ``1..T−1`` equal :func:`videops.optical_flow_sequence`
-    shifted by one, computed with one frame of state.
+Zero first frame; frames ``1..T−1`` equal :func:`videops.optical_flow_sequence`
+shifted by one, computed with one frame of state.
 
 Typed bridge of the videostream op ``optical_flow_magnitude_stream`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

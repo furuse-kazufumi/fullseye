@@ -8,7 +8,9 @@
 <p>Args:</p>
 <p>points: (N,3) Punktwolke (mindestens 10 Punkte). Schutzlos gegenüber Ausreißern (bei Bedarf vorher Inlier auswählen).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3,3) Spalten = Hauptachsen (Radius absteigend), &quot;radii&quot;: (3,) Radien (absteigend), &quot;residual&quot;: float Punkt-Fläche-Abstands-RMS der Taubin-Näherung}</code>.</p>
+<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3, 3), &quot;radii&quot;: (3,), &quot;residual&quot;: float}</code>.</p>
+<p>Die Spalten von <code style="color:#22d3bf">axes</code> sind die Hauptachsen (Radius absteigend), <code style="color:#22d3bf">radii</code> die Radien (absteigend), <code style="color:#22d3bf">residual</code> das</p>
+<p>Punkt-Fläche-Abstands-RMS der Taubin-Näherung.</p>
 <p>Raises:</p>
 <p>ValueError: fail-closed bei ungültiger Form / zu wenigen Punkten / keiner positiv definiten Ellipsoidlösung (ebene Entartung,</p>
 <p>nicht-ellipsoidische Fläche, unzureichende Abdeckung) usw.</p>

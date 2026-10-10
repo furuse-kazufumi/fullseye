@@ -35,20 +35,20 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Epipolar-plane image — the slice whose **line slope is the disparity**.
 
-    An EPI is what makes a light field different from a pile of photographs: fix
-    one image row and one angular row, and every scene point traces a *straight
-    line* whose gradient ``dx/du`` is exactly its slope ``s``. Occlusion becomes
-    one line crossing in front of another, which is why EPI methods handle it
-    better than window matching.
+An EPI is what makes a light field different from a pile of photographs: fix
+one image row and one angular row, and every scene point traces a *straight
+line* whose gradient ``dx/du`` is exactly its slope ``s``. Occlusion becomes
+one line crossing in front of another, which is why EPI methods handle it
+better than window matching.
 
-      * ``axis="u"`` (horizontal): fix ``v = view`` (default: the centre row,
-        ``(V-1)//2``) and image row ``y = index``; returns ``E[u, x]`` of shape
-        ``(U, W)``.
-      * ``axis="v"`` (vertical): fix ``u = view`` and image column ``x = index``;
-        returns ``E[v, y]`` of shape ``(V, H)``.
+  * ``axis="u"`` (horizontal): fix ``v = view`` (default: the centre row,
+    ``(V-1)//2``) and image row ``y = index``; returns ``E[u, x]`` of shape
+    ``(U, W)``.
+  * ``axis="v"`` (vertical): fix ``u = view`` and image column ``x = index``;
+    returns ``E[v, y]`` of shape ``(V, H)``.
 
-    **Raises** ``ValueError``: *lf* not a valid light field, unknown *axis*,
-    *index* outside the spatial extent, *view* outside the angular extent.
+**Raises** ``ValueError``: *lf* not a valid light field, unknown *axis*,
+*index* outside the spatial extent, *view* outside the angular extent.
 
 Typed bridge of the lightfield op ``lf_epi`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

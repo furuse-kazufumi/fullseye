@@ -37,10 +37,10 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Fill the sparse regions, then thin the dense ones: uniform spacing (``points``).
 
-    :func:`pc_fill_sparse` followed by :func:`pc_poisson_disk` with radius
-    ``0.8 × spacing`` (the Poisson radius is a minimum, the k-NN spacing a
-    typical value; 0.8 keeps the median spacing at the target). Measured on a
-    cloud with a 6× density contrast: p95/p5 of spacing from 4.2 to ≤ 1.6.
+:func:`pc_fill_sparse` followed by :func:`pc_poisson_disk` with radius
+``0.8 × spacing`` (the Poisson radius is a minimum, the k-NN spacing a
+typical value; 0.8 keeps the median spacing at the target). Measured on a
+cloud with a 6× density contrast: p95/p5 of spacing from 4.2 to ≤ 1.6.
 
 Typed bridge of the 3d op ``pc_density_equalize`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``k`` (default 8); ``b`` is unused.
 

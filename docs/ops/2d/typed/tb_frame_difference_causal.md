@@ -39,8 +39,8 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ``|frame t − frame t−1|`` with a zero first frame → ``(T, H, W)`` (``video``).
 
-    Same length as the input (unlike :func:`videops.frame_difference`, ``T−1``),
-    so it composes frame-for-frame with the other stream ops.
+Same length as the input (unlike :func:`videops.frame_difference`, ``T−1``),
+so it composes frame-for-frame with the other stream ops.
 
 Typed bridge of the videostream op ``frame_difference_causal`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

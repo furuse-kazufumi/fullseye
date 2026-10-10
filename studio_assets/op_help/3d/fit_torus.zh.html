@@ -4,11 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_torus(points) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_torus(points) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fit_torus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对点群拟合圆环面,返回 <code style="color:#22d3bf">{center, axis, R, r, residual}</code>。</p>
-<p>用 <code style="color:#22d3bf">scipy.optimize.least_squares</code> 最小化点-圆环距离 <code style="color:#22d3bf">sqrt((ρ−R)² + a²) − r</code>(<code style="color:#22d3bf">a</code>=轴向分量, <code style="color:#22d3bf">ρ</code>=到轴的半径, <code style="color:#22d3bf">R</code>=主半径, <code style="color:#22d3bf">r</code>=管半径)。初值为 PCA 轴(与众不同的那个特征向量)+ <code style="color:#22d3bf">R0=mean(ρ)</code>、<code style="color:#22d3bf">r0=mean(到管中心圆的距离)</code>。</p>
+<p>用 <code style="color:#22d3bf">scipy.optimize.least_squares</code> 最小化点-圆环距离 <code style="color:#22d3bf">sqrt((ρ−R)² + a²) − r</code>(<code style="color:#22d3bf">a</code>=轴向分量, <code style="color:#22d3bf">ρ</code>=到轴的半径, <code style="color:#22d3bf">R</code>=主半径, <code style="color:#22d3bf">r</code>=管半径)。初值为 PCA 轴(与众不同的那个特征向量)+ <code style="color:#22d3bf">R0=mean(ρ)</code>、<code style="color:#22d3bf">r0</code>(到管中心圆距离的平均)。</p>
 <p>Args:</p>
 <p>points: (N,3) 点云(至少 7 点)。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axis&quot;: (3,) 单位轴, &quot;R&quot;: float 主半径, &quot;r&quot;: float 管半径, &quot;residual&quot;: float 点-面距离的 RMS}</code>。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axis&quot;: (3,), &quot;R&quot;: float, &quot;r&quot;: float, &quot;residual&quot;: float}</code>。</p>
+<p><code style="color:#22d3bf">axis</code> 为单位轴，<code style="color:#22d3bf">R</code> 为主半径，<code style="color:#22d3bf">r</code> 为管半径，<code style="color:#22d3bf">residual</code> 为点-面距离的 RMS。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正/点数不足时 fail-closed。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Apply a shape-preserving volume operator in overlapping z-slabs, so peak
+Apply a shape-preserving volume operator in overlapping z-slabs to bound peak memory.
 
-working memory is bounded by the slab — not the volume.
+Peak working memory is bounded by the slab — not the volume.
 
 The third leg of the memory family: :func:`vol_crop_domain` shrinks *where*
 you compute, :mod:`volregion` shrinks *what you keep*, and this bounds *how

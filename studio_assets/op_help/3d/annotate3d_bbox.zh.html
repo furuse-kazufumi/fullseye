@@ -15,7 +15,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth</code>： 前方距离图像（<code style="color:#22d3bf">render3d.render_mesh</code> 的 <code style="color:#22d3bf">depth</code>）。<code style="color:#22d3bf">occlusion_tol</code>： <code style="color:#22d3bf">[0, 1)</code>。</p>
 <p>返回值： 绘制后的新图像（float64 <code style="color:#22d3bf">[0, 1]</code>，不修改输入）。</p>
 <p>报错条件： <code style="color:#22d3bf">bounds</code> 不是 <code style="color:#22d3bf">(2, 3)</code>、非有限、存在 <code style="color:#22d3bf">max &lt; min</code> 的轴 / <b>8 个角中任一个</b> <code style="color:#22d3bf">z &lt;= 1e-9</code>（在相机平面上或后方。箱子包围视点时无法绘制） / 位姿、<code style="color:#22d3bf">K</code>、<code style="color:#22d3bf">depth</code> 不正确。角超出图像不报错（线会画到框外，看起来被截断）。</p>
-<p>注意： 仅限轴对齐（沿世界坐标）的箱子。要绘制旋转的箱子（<code style="color:#22d3bf">smallest_box3</code> 的 <code style="color:#22d3bf">corners</code>），请自己投影 8 个角(<code style="color:#22d3bf">annotate3d_project</code>)，再用 2-D 的 <code style="color:#22d3bf">annotate</code> 线绘制连接。</p>
+<p>注意： 仅限轴对齐（沿 object 坐标轴）的箱子。要绘制旋转的箱子（<code style="color:#22d3bf">smallest_box3</code> 的 <code style="color:#22d3bf">corners</code>），请自己投影 8 个角(<code style="color:#22d3bf">annotate3d_project</code>)，再用 2-D 的 <code style="color:#22d3bf">annotate</code> 线绘制连接。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

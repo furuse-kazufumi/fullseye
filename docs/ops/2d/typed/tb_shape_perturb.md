@@ -39,16 +39,16 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 形に**既知の**変形を 1 つ入れる。→ ``(N, 3)``。
 
-    ``mode``:
+``mode``:
 
-    * ``"bulge"``  —— *center* のまわりをガウス重みで外向きに膨らませる。
-      片側だけに入れれば左右非対称性の真値になる。
-    * ``"shift"``  —— *center* 方向へ一様に平行移動(Procrustes が消す成分)。
-    * ``"scale"``  —— 一様拡大(``scaling=True`` の Procrustes が消す成分)。
-    * ``"noise"``  —— 等方ガウス雑音(どの手法でも消えない床)。
+* ``"bulge"``  —— *center* のまわりをガウス重みで外向きに膨らませる。
+  片側だけに入れれば左右非対称性の真値になる。
+* ``"shift"``  —— *center* 方向へ一様に平行移動(Procrustes が消す成分)。
+* ``"scale"``  —— 一様拡大(``scaling=True`` の Procrustes が消す成分)。
+* ``"noise"``  —— 等方ガウス雑音(どの手法でも消えない床)。
 
-    「Procrustes が消してくれる変形」と「消してはいけない変形」を分けて試せる
-    ように 4 つ置いてある。位置合わせの検算はこの区別が要る。
+「Procrustes が消してくれる変形」と「消してはいけない変形」を分けて試せる
+ように 4 つ置いてある。位置合わせの検算はこの区別が要る。
 
 2-D 進化レジストリへ橋渡しした shapestat の op ``shape_perturb``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``amplitude``(既定 0.05)、``b`` が ``sigma``(既定 0.4)を振る。
 

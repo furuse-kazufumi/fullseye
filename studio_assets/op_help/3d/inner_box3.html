@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inner_box3(vol) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import regionprops3d; regionprops3d.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;inner_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D <code style="color:#22d3bf">inner_rectangle1</code> の</p>
-<p>3-D 版)。</p>
+<p>二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D <code style="color:#22d3bf">inner_rectangle1</code> の 3-D 版)。</p>
 <p>厳密解: どの深さ区間 [z0, z1] についても、ボックスはスライス z0..z1 の <b>論理積</b> (全スライスで前景のボクセル)の内側に無ければならない。その積の中の最大内接 2-D 長方形(ヒストグラム法 = <code style="color:#22d3bf">inner_rectangle1</code> と同じコア)× 区間長 が候補ボックスで、全区間についての最大が厳密な最大内接ボックスになる。O(D^2 * H * W)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>

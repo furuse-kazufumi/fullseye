@@ -5,8 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud → depth image (z-buffer, हर pixel पर निकटतम point की depth)। observation synthesis/visual inspection samples।</p>
 <p><code style="color:#22d3bf">project_points(points, K, R, t)</code> से <code style="color:#22d3bf">(u, v, z)</code> लेता है, और केवल उन points को जिनका <code style="color:#22d3bf">round</code> किया गया pixel <code style="color:#22d3bf">(row=v, col=u)</code> <code style="color:#22d3bf">size=(H, W)</code> के भीतर हो और <code style="color:#22d3bf">z &gt; 0</code> हो, दूर से पास के क्रम में लिखता है ताकि पास वाला point overwrite करे (एक ही pixel पर न्यूनतम z बचता है)। जिस pixel पर कोई point न हो वह <b>0</b> है (वह convention जिसे <code style="color:#22d3bf">tsdf_from_depth</code> / <code style="color:#22d3bf">depth_to_points</code> अमान्य मान मानते हैं)। लौटाता है <code style="color:#22d3bf">(H, W)</code> float64, इकाई points के निर्देशांकों की इकाई है।</p>
-<p style="margin:2px 0 2px 12px">• 1 point = 1 pixel, इसलिए sparse point cloud छेदों से भर जाते हैं (पहले <code style="color:#22d3bf">mesh_to_points</code> से घना करें)। कोई splat</p>
-<p>radius नहीं है।</p>
+<p style="margin:2px 0 2px 12px">• 1 point = 1 pixel, इसलिए sparse point cloud छेदों से भर जाते हैं (पहले <code style="color:#22d3bf">mesh_to_points</code> से घना करें)। कोई splat radius नहीं है।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> numpy (3,3) है, <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> छोड़े जा सकते हैं।</p>
 <p>आगे: <code style="color:#22d3bf">depth_to_points</code> से वापस, <code style="color:#22d3bf">normals_from_depth</code> से normal, <code style="color:#22d3bf">tsdf_from_depth</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

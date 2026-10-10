@@ -21,14 +21,14 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 点-トーラス距離 ``sqrt((ρ−R)² + a²) − r``(``a``=軸成分, ``ρ``=軸からの半径,
 ``R``=主半径, ``r``=管半径)を ``scipy.optimize.least_squares`` で最小化する。
-初期値は PCA 軸(仲間外れ固有ベクトル)+ ``R0=mean(ρ)``・``r0=mean(管中心円までの距離)``。
+初期値は PCA 軸(仲間外れ固有ベクトル)+ ``R0=mean(ρ)``・``r0``(管中心円までの距離の平均)。
 
 Args:
     points: (N,3) 点群(最低 7 点)。
 
 Returns:
-    dict: ``{"center": (3,), "axis": (3,) 単位軸, "R": float 主半径,
-    "r": float 管半径, "residual": float 点-面距離の RMS}``。
+    dict: ``{"center": (3,), "axis": (3,), "R": float, "r": float, "residual": float}``。
+    ``axis`` は単位軸、``R`` は主半径、``r`` は管半径、``residual`` は点-面距離の RMS。
 
 Raises:
     ValueError: 形状不正/点数不足 fail-closed。

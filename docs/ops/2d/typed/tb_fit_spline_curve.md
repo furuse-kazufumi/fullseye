@@ -37,21 +37,21 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 順序付き 3D 点列を B スプラインで平滑し再サンプル。→ (M,3)。ノイズのある軌跡/エッジの平滑化。
 
-    scipy.interpolate.splprep/splev。smooth=0 は補間、>0 で平滑。n=出力点数(既定=入力数)。
+scipy.interpolate.splprep/splev。smooth=0 は補間、>0 で平滑。n=出力点数(既定=入力数)。
 
-    ``splprep([x, y, z], s=smooth, k=k)`` でパラメトリック B スプライン(パラメータ u∈[0,1]、
-    scipy 既定の弦長パラメータ化)を当て、``u = linspace(0, 1, n)`` で ``splev`` 評価した
-    (n,3) float64 を返す。u 等間隔なので出力点は弧長で厳密に等間隔ではない(弧長等間隔が
-    要るなら結果を ``resample_uniform`` に通す)。
+``splprep([x, y, z], s=smooth, k=k)`` でパラメトリック B スプライン(パラメータ u∈[0,1]、
+scipy 既定の弦長パラメータ化)を当て、``u = linspace(0, 1, n)`` で ``splev`` 評価した
+(n,3) float64 を返す。u 等間隔なので出力点は弧長で厳密に等間隔ではない(弧長等間隔が
+要るなら結果を ``resample_uniform`` に通す)。
 
-    - ``smooth``: scipy の平滑化条件 s。残差二乗和が s 以下になる最少ノットで当てる。
-      0 なら全点を通る補間、大きいほど滑らか(単位は座標の二乗)。
-    - ``k``: スプライン次数(既定 3)。点数 N が k 以下だと ``ValueError``。
-    - ``n``: 出力点数。None で入力点数。
-    - 入力は index 順に並んだ (N,3) を前提とし、形状検証は点数以外に無い。
+- ``smooth``: scipy の平滑化条件 s。残差二乗和が s 以下になる最少ノットで当てる。
+  0 なら全点を通る補間、大きいほど滑らか(単位は座標の二乗)。
+- ``k``: スプライン次数(既定 3)。点数 N が k 以下だと ``ValueError``。
+- ``n``: 出力点数。None で入力点数。
+- 入力は index 順に並んだ (N,3) を前提とし、形状検証は点数以外に無い。
 
-    ノイズのあるエッジ点列や軌跡を平滑してから ``curvature_torsion`` / ``frenet_frame`` に
-    渡す前段として使う。tck を持ち回りたい場合は ``fit_bspline_curve`` / ``eval_bspline_curve``。
+ノイズのあるエッジ点列や軌跡を平滑してから ``curvature_torsion`` / ``frenet_frame`` に
+渡す前段として使う。tck を持ち回りたい場合は ``fit_bspline_curve`` / ``eval_bspline_curve``。
 
 2-D 進化レジストリへ橋渡しした 3d の op ``fit_spline_curve``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``k``(既定 3)を振る。``b`` は未使用。
 

@@ -17,9 +17,10 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Local edge length of a triangle mesh → ``(N,)`` per vertex (mean of incident edges),
+Local edge length of a triangle mesh, per vertex, per face or per unique edge.
 
-``(M,)`` per face (mean of its 3 edges) or ``(E,)`` per unique edge.
+Returns ``(N,)`` per vertex (mean of incident edges), ``(M,)`` per face (mean of its
+3 edges) or ``(E,)`` per unique edge.
 
 This is the resolution map of the mesh in its own units: the shortest wavelength a
 region can carry as *geometry* is about twice the local edge (Nyquist), which is what

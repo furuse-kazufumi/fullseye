@@ -43,8 +43,8 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Adaptive single-Gaussian foreground masks per frame → 0/1 ``(T, H, W)`` (``video``).
 
-    Per-pixel mean/variance background (Wren *Pfinder*); foreground is
-    ``> k`` standard deviations from the mean. The first frame is all background.
+Per-pixel mean/variance background (Wren *Pfinder*); foreground is
+``> k`` standard deviations from the mean. The first frame is all background.
 
 Typed bridge of the videostream op ``running_gaussian_foreground`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``k`` (default 2.5) and ``b`` drives ``var_init`` (default 0.01).
 

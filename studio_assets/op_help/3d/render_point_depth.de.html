@@ -5,8 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Punktmenge → ein Tiefenbild (z-Buffer; jedes Pixel nimmt die Tiefe seines nächsten Punktes). Für synthetische Beobachtungen und Prüfmuster.</p>
 <p>Holt <code style="color:#22d3bf">(u, v, z)</code> mit <code style="color:#22d3bf">project_points(points, K, R, t)</code> und schreibt nur die Punkte, deren mit <code style="color:#22d3bf">round</code> gerundetes Pixel <code style="color:#22d3bf">(row=v, col=u)</code> innerhalb von <code style="color:#22d3bf">size=(H, W)</code> liegt und für die <code style="color:#22d3bf">z &gt; 0</code> gilt, von fern nach nah, sodass nähere Punkte überschreiben (bei gleichem Pixel bleibt das minimale z). Pixel ohne Punkt sind <b>0</b> (die Konvention, die <code style="color:#22d3bf">tsdf_from_depth</code> / <code style="color:#22d3bf">depth_to_points</code> als ungültigen Wert behandeln). Rückgabewert <code style="color:#22d3bf">(H, W)</code> float64, Einheit ist die der Punktkoordinaten.</p>
-<p style="margin:2px 0 2px 12px">• 1 Punkt = 1 Pixel, daher werden spärliche Punktwolken voller Löcher (vorher mit <code style="color:#22d3bf">mesh_to_points</code> verdichten). Es gibt keinen splat-</p>
-<p>Radius.</p>
+<p style="margin:2px 0 2px 12px">• 1 Punkt = 1 Pixel, daher werden spärliche Punktwolken voller Löcher (vorher mit <code style="color:#22d3bf">mesh_to_points</code> verdichten). Es gibt keinen splat- Radius.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> ist numpy (3,3), <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> können weggelassen werden.</p>
 <p>Nachgelagert: mit <code style="color:#22d3bf">depth_to_points</code> zurück, Normalen mit <code style="color:#22d3bf">normals_from_depth</code>, <code style="color:#22d3bf">tsdf_from_depth</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

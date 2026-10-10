@@ -41,8 +41,8 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Collins three-frame-difference motion mask per frame → 0/1 ``(T, H, W)`` (``video``).
 
-    ``(|f_t−f_{t−1}|>T) AND (|f_{t−1}−f_{t−2}|>T)``; zeros for the first two
-    frames. Ghost-free compared with :func:`frame_difference_causal`.
+``(|f_t−f_{t−1}|>T) AND (|f_{t−1}−f_{t−2}|>T)``; zeros for the first two
+frames. Ghost-free compared with :func:`frame_difference_causal`.
 
 Typed bridge of the videostream op ``three_frame_difference`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``threshold`` (default 0.1); ``b`` is unused.
 

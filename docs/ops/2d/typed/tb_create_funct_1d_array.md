@@ -35,11 +35,11 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 A 1-D function from equidistant samples (HALCON ``create_funct_1d_array``).
 
-    Pure validation + float64 coercion: the returned array *is* the function,
-    on the implicit index grid. Accepts an empty sequence (an empty function).
+Pure validation + float64 coercion: the returned array *is* the function,
+on the implicit index grid. Accepts an empty sequence (an empty function).
 
-    :param y: 1-D sample sequence.
-    :raises ValueError: non-1-D / NaN / Inf input.
+:param y: 1-D sample sequence.
+:raises ValueError: non-1-D / NaN / Inf input.
 
 Typed bridge of the 1d op ``create_funct_1d_array`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

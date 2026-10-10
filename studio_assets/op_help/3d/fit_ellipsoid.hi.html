@@ -8,7 +8,9 @@
 <p>Args:</p>
 <p>points: (N,3) point cloud (कम से कम 10 points)। outlier के प्रति कोई बचाव नहीं (ज़रूरत हो तो पहले inlier चुनें)।</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3,3) columns = principal axes (radius घटते क्रम में), &quot;radii&quot;: (3,) radii (घटते क्रम में), &quot;residual&quot;: float Taubin approximation का point-surface distance RMS}</code>।</p>
+<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3, 3), &quot;radii&quot;: (3,), &quot;residual&quot;: float}</code>।</p>
+<p><code style="color:#22d3bf">axes</code> के columns principal axes हैं (radius घटते क्रम में), <code style="color:#22d3bf">radii</code> radii (घटते क्रम में), और <code style="color:#22d3bf">residual</code></p>
+<p>Taubin approximation का point-surface distance RMS।</p>
 <p>Raises:</p>
 <p>ValueError: गलत shape / कम points / positive definite ellipsoid solution न मिलना (planar degeneracy,</p>
 <p>non-ellipsoidal surface, अपर्याप्त coverage) आदि पर fail-closed।</p>

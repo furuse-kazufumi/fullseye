@@ -31,19 +31,19 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 The y-value at (fractional) position *x* (HALCON ``get_y_value_funct_1d``).
 
-    With ``interpolate=True`` (default) the value is linearly interpolated
-    between the two neighbouring samples; with ``interpolate=False`` the nearest
-    sample is returned.
+With ``interpolate=True`` (default) the value is linearly interpolated
+between the two neighbouring samples; with ``interpolate=False`` the nearest
+sample is returned.
 
-    Domain policy (documented, not extrapolated): *x* outside ``[0, n-1]``
-    **clamps** to the boundary value (``numpy.interp`` end-hold semantics /
-    index clip). HALCON's ``'zero'``-border variant is not offered.
+Domain policy (documented, not extrapolated): *x* outside ``[0, n-1]``
+**clamps** to the boundary value (``numpy.interp`` end-hold semantics /
+index clip). HALCON's ``'zero'``-border variant is not offered.
 
-    :param y: 1-D function, at least 1 sample.
-    :param x: finite scalar position in index units.
-    :param interpolate: linear interpolation (True) or nearest sample (False).
-    :returns: float.
-    :raises ValueError: non-1-D / NaN / Inf input, empty input, or non-finite *x*.
+:param y: 1-D function, at least 1 sample.
+:param x: finite scalar position in index units.
+:param interpolate: linear interpolation (True) or nearest sample (False).
+:returns: float.
+:raises ValueError: non-1-D / NaN / Inf input, empty input, or non-finite *x*.
 
 Typed bridge of the 1d op ``get_y_value_funct_1d`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

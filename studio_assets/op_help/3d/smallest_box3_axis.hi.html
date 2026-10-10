@@ -3,9 +3,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smallest_box3_axis(points) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measure3d; measure3d.smallest_box3_axis(points) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;smallest_box3_axis&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>axis-aligned bounding box (3-D <code style="color:#22d3bf">smallest_rectangle1</code>)। लौटाता है the</p>
+<p>axis-aligned bounding box (3-D <code style="color:#22d3bf">smallest_rectangle1</code>)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> corners and <code style="color:#22d3bf">center</code> in <code style="color:#22d3bf">(depth, row, col)</code>, the full <code style="color:#22d3bf">size</code> (depth, row, col edge lengths), and the enclosed <code style="color:#22d3bf">volume</code>. This is the honest null baseline that <code style="color:#22d3bf">smallest_box3</code> beats on any rotated object. Raises <code style="color:#22d3bf">ValueError</code> on empty input.</p>
+<p>Returns the <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> corners and <code style="color:#22d3bf">center</code> in <code style="color:#22d3bf">(depth, row, col)</code>, the full <code style="color:#22d3bf">size</code> (depth, row, col edge lengths), and the enclosed <code style="color:#22d3bf">volume</code>. This is the honest null baseline that <code style="color:#22d3bf">smallest_box3</code> beats on any rotated object. Raises <code style="color:#22d3bf">ValueError</code> on empty input.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

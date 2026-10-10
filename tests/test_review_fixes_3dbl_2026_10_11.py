@@ -225,3 +225,42 @@ def test_3d_summaries_are_whole_sentences():
         if not re.search(r"[。.)）`]$", first):
             bad.append((n, first[-40:]))
     assert not bad, bad
+
+
+def test_bridged_op_bodies_carry_no_leftover_docstring_indent():
+    """★橋の op(tb_*)の本文に docstring の共通字下げが残らないこと(2026-10-11)。
+
+    ``_bridge_doc`` が元の docstring を ``.strip()`` だけで継いでいたため 1 行目以外が 4 字下げのまま残り、
+    docs/ops の Markdown で空行の後の本文がコードブロックとして表示されていた(146 本)。
+    """
+    import os
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
+    import opdocs as OD
+    bodies = [(r["name"], OD.summary_and_rest(r.get("doc"))[1]) for r in OD._records()[0]
+              if r["name"].startswith("tb_")]
+    bodies = [(n, b) for n, b in bodies if b and len(b.splitlines()) > 1]
+    assert len(bodies) > 100, "橋の op の本文が %d 本しか見つからない(走査が壊れている)" % len(bodies)
+
+    def code_like(body):
+        """空行の直後が 4 字下げで始まる段落(Markdown ではコードブロックになる)の数。
+        ``::`` の直後(RST のリテラル)と ``` の中は本物のコードなので数えない。"""
+        n, prev, prev_text, fence = 0, "", "", False
+        for line in body.splitlines():
+            if line.lstrip().startswith("```"):
+                fence = not fence
+            if (not fence and line.startswith("    ") and line.strip() and not prev.strip()
+                    and not prev_text.rstrip().endswith("::")):
+                n += 1
+            if line.strip():
+                prev_text = line
+            prev = line
+        return n
+
+    #: 意図した整形済みブロック(式・実測の表)。免除は理由つきで名指しし、今も該当することを確かめる
+    intended = {"tb_quantize": "誤差の式 2 行", "tb_companding_mu_law": "crest factor ごとの実測表"}
+    names = {n for n, _ in bodies}
+    assert set(intended) <= names, "免除した op が消えた: %s" % (set(intended) - names)
+    assert all(code_like(b) for n, b in bodies if n in intended), "免除した op にもう整形済みブロックが無い"
+    bad = [n for n, b in bodies if code_like(b) and n not in intended]
+    assert not bad, "空行の後が 4 字下げの段落(コードブロック化)が残る橋の op: %d 本 %s" % (len(bad), bad[:10])

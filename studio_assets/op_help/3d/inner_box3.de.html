@@ -4,7 +4,6 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inner_box3(vol) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import regionprops3d; regionprops3d.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;inner_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die größte achsenparallele Box, die vollständig in eine binäre Voxelregion einbeschrieben ist (das 3-D-Gegenstück zu <code style="color:#22d3bf">inner_rectangle1</code>).</p>
-<p>3-D-Version).</p>
 <p>Exakte Lösung: Für jedes Tiefenintervall [z0, z1] muss die Box innerhalb des <b>logischen UND</b> der Schichten z0..z1 liegen (Voxel, die in allen Schichten Vordergrund sind). Das größte einbeschriebene 2-D-Rechteck in diesem UND (Histogrammverfahren = derselbe Kern wie <code style="color:#22d3bf">inner_rectangle1</code>) × Intervalllänge ist eine Kandidatenbox, und das Maximum über alle Intervalle ist die exakte größte einbeschriebene Box. O(D^2 * H * W).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>

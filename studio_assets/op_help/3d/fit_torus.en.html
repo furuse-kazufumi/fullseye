@@ -4,11 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_torus(points) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_torus(points) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;fit_torus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fit a torus to a point set and return <code style="color:#22d3bf">{center, axis, R, r, residual}</code>.</p>
-<p>Minimises the point-torus distance <code style="color:#22d3bf">sqrt((ρ−R)² + a²) − r</code> (<code style="color:#22d3bf">a</code> = axial component, <code style="color:#22d3bf">ρ</code> = radius from the axis, <code style="color:#22d3bf">R</code> = major radius, <code style="color:#22d3bf">r</code> = tube radius) with <code style="color:#22d3bf">scipy.optimize.least_squares</code>. The initial value is the PCA axis (the odd-one-out eigenvector) + <code style="color:#22d3bf">R0=mean(ρ)</code> and <code style="color:#22d3bf">r0=mean(distance to the tube-centre circle)</code>.</p>
+<p>Minimises the point-torus distance <code style="color:#22d3bf">sqrt((ρ−R)² + a²) − r</code> (<code style="color:#22d3bf">a</code> = axial component, <code style="color:#22d3bf">ρ</code> = radius from the axis, <code style="color:#22d3bf">R</code> = major radius, <code style="color:#22d3bf">r</code> = tube radius) with <code style="color:#22d3bf">scipy.optimize.least_squares</code>. The initial value is the PCA axis (the odd-one-out eigenvector) + <code style="color:#22d3bf">R0=mean(ρ)</code> and <code style="color:#22d3bf">r0</code> (the mean distance to the tube-centre circle).</p>
 <p>Args:</p>
 <p>points: (N,3) point cloud (at least 7 points).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axis&quot;: (3,) unit axis, &quot;R&quot;: float major radius, &quot;r&quot;: float tube radius, &quot;residual&quot;: float RMS of point-surface distance}</code>.</p>
+<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axis&quot;: (3,), &quot;R&quot;: float, &quot;r&quot;: float, &quot;residual&quot;: float}</code>.</p>
+<p><code style="color:#22d3bf">axis</code> is the unit axis, <code style="color:#22d3bf">R</code> the major radius, <code style="color:#22d3bf">r</code> the tube radius, <code style="color:#22d3bf">residual</code> the RMS of point-surface distance.</p>
 <p>Raises:</p>
 <p>ValueError: fail-closed on bad shape / too few points.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

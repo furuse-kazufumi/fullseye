@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Voxel count of the region, computed on the runs (no decode). Measured
+Voxel count of the region, computed on the runs (no decode).
 
-~300x faster than summing the dense mask.
+Measured ~300x faster than summing the dense mask.
 
 計算: ``sum(ends - starts)``(差は int64 で取るので run 数が多くても溢れない)。
 返り値は Python の ``int``(voxel 個数、単位は voxel。物理体積 mm^3 が欲しければ

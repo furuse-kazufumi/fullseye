@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Displace vertices along their normals with a **stated amplitude spectrum**, band-limited
+Displace vertices along their normals with a **stated amplitude spectrum**, band-limited.
 
-per vertex → ``(V, F)``.
+The band limit is per vertex; returns ``(V, F)``.
 
 ``displacement_i = Σ_k A_k · n_k(x_i) · gate_k(i) · w_k(i)`` with one seeded value-noise
 octave ``n_k ∈ [−1, 1]`` per ``(wavelength_k, amplitude_k)`` pair (mesh units — the

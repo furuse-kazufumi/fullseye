@@ -41,9 +41,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Causal per-pixel median over the last *window* frames → ``(T, H, W)`` (``video``).
 
-    Frame ``t`` uses frames ``max(0, t−window+1) .. t``. The streaming
-    :class:`TemporalMedianWindow` gives the same frames one at a time with a
-    ring of *window* frames instead of the whole clip in memory.
+Frame ``t`` uses frames ``max(0, t−window+1) .. t``. The streaming
+:class:`TemporalMedianWindow` gives the same frames one at a time with a
+ring of *window* frames instead of the whole clip in memory.
 
 Typed bridge of the videostream op ``temporal_median_window`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``window`` (default 5); ``b`` is unused.
 

@@ -4,11 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_cone(points) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_cone(points) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;fit_cone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對點群擬合無限圓錐,回傳 <code style="color:#22d3bf">{apex, axis, half_angle, residual}</code>。</p>
-<p>以 <code style="color:#22d3bf">scipy.optimize.least_squares</code> 最小化子午面內點到母線的正交距離 <code style="color:#22d3bf">a·sinα − ρ·cosα</code>(<code style="color:#22d3bf">a</code>=軸向分量, <code style="color:#22d3bf">ρ</code>=半徑, <code style="color:#22d3bf">α</code>=半角)。初值為 PCA 軸 + 半徑 ρ 對軸向分量 t 的線性迴歸(<code style="color:#22d3bf">ρ = m·t + b</code> 的斜率 m=tanα,截距零點=頂點)。軸的朝向正規化為「離頂點越遠 ρ 越大(向 + 方向張開)」。</p>
+<p>以 <code style="color:#22d3bf">scipy.optimize.least_squares</code> 最小化子午面內點到母線的正交距離 <code style="color:#22d3bf">a·sinα − ρ·cosα</code>(<code style="color:#22d3bf">a</code>=軸向分量, <code style="color:#22d3bf">ρ</code>=半徑, <code style="color:#22d3bf">α</code>=半角)。初值把 PCA 的 3 條主軸分別作為軸候選，由半徑 ρ 對軸向分量 t 的線性迴歸 <code style="color:#22d3bf">ρ = m·t + b</code> 取得(半角 = <code style="color:#22d3bf">atan(m)</code>，頂點 = ρ 為 0 的軸上點 <code style="color:#22d3bf">t = -b/m</code>)。採用殘差最小的候選。軸的朝向正規化為「離頂點越遠 ρ 越大(向 + 方向張開)」。</p>
 <p>Args:</p>
 <p>points: (N,3) 點雲(至少 6 點)。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,) 單位軸(張開方向), &quot;half_angle&quot;: float [rad], &quot;residual&quot;: float 點-面距離的 RMS}</code>。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,), &quot;half_angle&quot;: float, &quot;residual&quot;: float}</code>。</p>
+<p><code style="color:#22d3bf">axis</code> 為單位軸(張開方向)，<code style="color:#22d3bf">half_angle</code> 為半角 [rad]，<code style="color:#22d3bf">residual</code> 為點-面距離的 RMS。</p>
 <p>Raises:</p>
 <p>ValueError: 形狀不正確/點數不足/半角 ~0(退化為圓柱)等,fail-closed。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

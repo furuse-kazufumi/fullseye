@@ -17,9 +17,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Paste a cropped sub-volume back into the full frame (inverse of
-
-:func:`vol_crop_domain`).
+Paste a cropped sub-volume back into the full frame (inverse of :func:`vol_crop_domain`).
 
 *part* is placed at voxel *offset* ``(z0, y0, x0)`` inside a new
 ``(D, H, W)`` float64 volume of the given *shape*, everything else set to

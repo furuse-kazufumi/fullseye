@@ -8,7 +8,9 @@
 <p>Args:</p>
 <p>points: (N,3) 점군(최소 10 점). 이상값에는 무방비(필요하면 사전에 inlier 선별).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3,3) 열=주축(반지름 내림차순), &quot;radii&quot;: (3,) 반지름(내림차순), &quot;residual&quot;: float Taubin 근사의 점-면 거리 RMS}</code>.</p>
+<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3, 3), &quot;radii&quot;: (3,), &quot;residual&quot;: float}</code>.</p>
+<p><code style="color:#22d3bf">axes</code> 의 열이 주축(반지름 내림차순), <code style="color:#22d3bf">radii</code> 는 반지름(내림차순), <code style="color:#22d3bf">residual</code> 은 Taubin 근사의</p>
+<p>점-면 거리 RMS.</p>
 <p>Raises:</p>
 <p>ValueError: 형상 부정/점 수 부족/양정치인 타원체 해를 얻지 못함(평면형 퇴화·</p>
 <p>비타원면·피복 부족) 등에서 fail-closed.</p>

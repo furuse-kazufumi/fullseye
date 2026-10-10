@@ -35,14 +35,14 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 One sub-aperture view — the image seen through one point of the pupil.
 
-    Returns a copy of ``L[v, u]`` as a plain ``(H, W)`` 2-D image, so every
-    other fullseye image operator applies to it unchanged. Indices are
-    **not** wrapped: a negative or out-of-range index is a ``ValueError``, not a
-    silent Python wrap-around to the opposite corner of the pupil (which is the
-    single easiest way to get a mirrored disparity sign downstream).
+Returns a copy of ``L[v, u]`` as a plain ``(H, W)`` 2-D image, so every
+other fullseye image operator applies to it unchanged. Indices are
+**not** wrapped: a negative or out-of-range index is a ``ValueError``, not a
+silent Python wrap-around to the opposite corner of the pupil (which is the
+single easiest way to get a mirrored disparity sign downstream).
 
-    **Raises** ``ValueError``: *lf* not a valid light field, and *v* / *u* not
-    an int in ``[0, V)`` / ``[0, U)``.
+**Raises** ``ValueError``: *lf* not a valid light field, and *v* / *u* not
+an int in ``[0, V)`` / ``[0, U)``.
 
 Typed bridge of the lightfield op ``lf_subaperture`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

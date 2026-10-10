@@ -678,7 +678,7 @@ _計 372 ops / 68 categories。_
 - `annotate3d_arrow` (`image2d → image2d`) — 画像(image2d)を返す: 3-D の ``p0`` から ``p1`` へ、射影した矢印を描く。 · 例: `annotate3d_figure`
 - `annotate3d_label` (`image2d, text → image2d`) — 画像(image2d)を返す: 3-D のアンカーに引き出し線つきの文字を付ける。 · 例: `annotate3d_figure`
 - `annotate3d_scale_bar` (`image2d → image2d`) — 画像(image2d)を返す: メッシュ単位で ``length`` のバーを面上に置いて射影する。 · 例: `annotate3d_figure`
-- `annotate3d_axes` (`image2d → image2d`) — 画像(image2d)を返す: 世界座標の 3 軸(gnomon)を ``origin`` から射影して描く。 · 例: `annotate3d_figure`
+- `annotate3d_axes` (`image2d → image2d`) — 画像(image2d)を返す: object 座標(``pose`` の入力側)の 3 軸(gnomon)を ``origin`` から射影して描く。 · 例: `annotate3d_figure`
 - `annotate3d_bbox` (`image2d → image2d`) — 画像(image2d)を返す: 軸平行の 3-D 箱 ``((xmin,ymin,zmin),(xmax,ymax,zmax))`` の 12 辺を射影して描く。 · 例: `annotate3d_figure`
 - `annotate3d_measure` (`image2d → image2d`) — 画像(image2d)を返す: 3-D の 2 点間距離(メッシュ単位)を、射影した線と値で示す。 · 例: `annotate3d_figure`
 
@@ -747,8 +747,8 @@ _計 372 ops / 68 categories。_
 - `vol_reduce_domain` (`voxel, voxel → voxel`) — Restrict a volume to a *domain* mask (HALCON ``reduce_domain``, voxel-wise). · 例: `roi_domain_boundary`
 - `vol_bounding_box` (`voxel → primitive`) — Tight axis-aligned bounding box of a mask's foreground, in voxel indices. · 例: `rle_region_efficiency`, `roi_domain_boundary`
 - `vol_crop_domain` (`voxel → voxel`) — Crop a volume to the tight bounding box of a domain (HALCON ``crop_domain``). · 例: `roi_domain_boundary`
-- `vol_uncrop` (`voxel → voxel`) — Paste a cropped sub-volume back into the full frame (inverse of · 例: `roi_domain_boundary`
-- `vol_tiled_map` (`voxel → voxel`) — Apply a shape-preserving volume operator in overlapping z-slabs, so peak · 例: `rle_region_efficiency`
+- `vol_uncrop` (`voxel → voxel`) — Paste a cropped sub-volume back into the full frame (inverse of :func:`vol_crop_domain`). · 例: `roi_domain_boundary`
+- `vol_tiled_map` (`voxel → voxel`) — Apply a shape-preserving volume operator in overlapping z-slabs to bound peak memory. · 例: `rle_region_efficiency`
 
 ### edges(5)
 - `gradient3d` (`voxel → gradient`) — ガウス平滑後の中心差分勾配を計算する。 · 例: `edges_3d`
@@ -778,7 +778,7 @@ _計 372 ops / 68 categories。_
 - `harris3d_keypoints` (`voxel → keypoints`) — 3D Harris キーポイント検出(2D Harris コーナー検出の 3D 版)。 · 例: `feature_register`
 - `iss_keypoints` (`points → indices`) — ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。 · 例: `feature_register`
 - `compute_fpfh` (`points, normals → descriptor`) — FPFH 記述子 (N, 3*n_bins) を計算(Rusu 2009)。 · 例: `fpfh_correspondence`
-- `shot_descriptor` (`points, normals → descriptor`) — SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を · 例: `feature_register`
+- `shot_descriptor` (`points, normals → descriptor`) — SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を取る。 · 例: `feature_register`
 - `register_spin` (`points, points → pose`) — Spin Image 記述子 + RANSAC による初期推定なし疎特徴剛体位置合わせ。 · 例: `feature_register`
 - `register_fpfh` (`points, points → pose`) — FPFH 記述子 + RANSAC で **初期推定なし** の剛体位置合わせ (R,t) を推定する。 · 例: `feature_register`
 - `register_shot` (`points, points → pose`) — SHOT 記述子による疎特徴マッチング + RANSAC 剛体姿勢推定(全パイプライン)。 · 例: `feature_register`
@@ -791,9 +791,9 @@ _計 372 ops / 68 categories。_
 - `eval_bspline_curve` (`bspline_curve → points`) — 曲線 tck をパラメータ u∈[0,1] 上 n 点で等間隔評価(splev)。 · 例: `bspline_freeform`
 
 ### frequency(3)
-- `vol_fft_lowpass` (`voxel → voxel`) — Gaussian low-pass: keeps structure coarser than ``1/cutoff`` (voxels, or · 例: `deconv_fft_restore`
-- `vol_fft_highpass` (`voxel → voxel`) — Gaussian high-pass — the exact complement ``1 - lowpass`` (the two sum · 例: `deconv_fft_restore`
-- `vol_fft_bandpass` (`voxel → voxel`) — Gaussian band-pass ``lowpass(high) - lowpass(low)``: keeps structure · 例: `deconv_fft_restore`
+- `vol_fft_lowpass` (`voxel → voxel`) — Gaussian low-pass: keeps structure coarser than ``1/cutoff`` (voxels, or mm with *spacing*). · 例: `deconv_fft_restore`
+- `vol_fft_highpass` (`voxel → voxel`) — Gaussian high-pass — the exact complement ``1 - lowpass`` (the two sum to the input). · 例: `deconv_fft_restore`
+- `vol_fft_bandpass` (`voxel → voxel`) — Gaussian band-pass ``lowpass(high) - lowpass(low)``: keeps structure between two scales. · 例: `deconv_fft_restore`
 
 ### fusion(2)
 - `register_cross` (`any, any → pose`) — 異種構造間の剛体登録。両者を点群へ変換 → 登録器(fpfh=大回転/icp=要 coarse init)。 · 例: `transforms_repr`
@@ -827,14 +827,14 @@ _計 372 ops / 68 categories。_
 - `fit_plane_3d` (`points → primitive`) — 点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。 · 例: `geometry_metrology`
 - `fit_sphere_3d` (`points → primitive`) — 点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。 · 例: `geometry_metrology`
 - `fit_circle_3d` (`points → primitive`) — 点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。 · 例: `geometry_metrology`
-- `fit_line3` (`points → primitive`) — Total-least-squares 3-D line fit to ``(depth, row, col)`` points — the · 例: `primitive_fitting_3d`
-- `fit_plane3` (`points → primitive`) — Least-squares 3-D plane fit to ``(depth, row, col)`` points — the plane · 例: `primitive_fitting_3d`
+- `fit_line3` (`points → primitive`) — Total-least-squares 3-D line fit to ``(depth, row, col)`` points. · 例: `primitive_fitting_3d`
+- `fit_plane3` (`points → primitive`) — Least-squares 3-D plane fit to ``(depth, row, col)`` points. · 例: `primitive_fitting_3d`
 - `fit_sphere3` (`points → primitive`) — Algebraic (Kåsa) least-squares sphere fit to ``(depth, row, col)`` points: · 例: `primitive_fitting_3d`, `roi_domain_boundary`
-- `fit_circle3` (`points → primitive`) — 3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane, · 例: `primitive_fitting_3d`
-- `smallest_box3_axis` (`points → primitive`) — Axis-aligned bounding box (the 3-D ``smallest_rectangle1``). Returns the · 例: `oriented_bounding_box`
-- `fit_box3` (`points → primitive`) — Oriented box fit by PCA (fast, noise-tolerant; the same construction as · 例: `oriented_bounding_box`
+- `fit_circle3` (`points → primitive`) — 3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane, then a circle. · 例: `primitive_fitting_3d`
+- `smallest_box3_axis` (`points → primitive`) — Axis-aligned bounding box (the 3-D ``smallest_rectangle1``). · 例: `oriented_bounding_box`
+- `fit_box3` (`points → primitive`) — Oriented box fit by PCA (fast, noise-tolerant; the same construction as ``pcseg.obb``). · 例: `oriented_bounding_box`
 - `smallest_box3` (`points → primitive`) — Near-minimum-volume oriented bounding box (the 3-D ``smallest_rectangle2``). · 例: `oriented_bounding_box`
-- `smallest_sphere3` (`points → primitive`) — Minimum enclosing sphere of ``(depth, row, col)`` points (Welzl's exact · 例: `primitive_fitting_3d`
+- `smallest_sphere3` (`points → primitive`) — Minimum enclosing sphere of ``(depth, row, col)`` points (Welzl's exact algorithm). · 例: `primitive_fitting_3d`
 
 ### gicp(2)
 - `gicp` (`points, points → pose`) — Generalized-ICP(共分散重みマハラノビス ICP)で剛体変換 (R,t) を推定する。 · 例: `gicp_register`
@@ -975,7 +975,7 @@ _計 372 ops / 68 categories。_
 ### probe(3)
 - `vol_profile_line` (`voxel → pairs`) — Gray-value profile along the straight probe ``p0 -> p1``. · 例: `wall_thickness_probe`
 - `vol_edge_probe` (`voxel → table`) — Sub-sample edges along the probe ``p0 -> p1``. · 例: `wall_thickness_probe`
-- `vol_wall_thickness` (`voxel → signal`) — Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT · 例: `wall_thickness_probe`
+- `vol_wall_thickness` (`voxel → signal`) — Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT measurement itself. · 例: `wall_thickness_probe`
 
 ### range_image(4)
 - `depth_to_organized_points` (`depth → pointmap`) — organized 深度画像 → 格子整列 3D 点 (H,W,3)。 · 例: `range_image`
@@ -1002,7 +1002,7 @@ _計 372 ops / 68 categories。_
 - `region_props` (`voxel → table`) — 各連結成分のリージョンプロパティ一覧を返す。 · 例: `region_props_3d`
 - `largest_component` (`voxel → voxel`) — 最大(最多ボクセル)連結成分の bool マスクを返す。 · 例: `region_props_3d`
 - `filter_by_volume` (`voxel → voxel`) — min_voxels 未満の連結成分を除去した bool マスクを返す。 · 例: `region_props_3d`
-- `inner_box3` (`voxel → primitive`) — 二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D ``inner_rectangle1`` の · 例: `inner_box_inspection`
+- `inner_box3` (`voxel → primitive`) — 二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D ``inner_rectangle1`` の 3-D 版)。 · 例: `inner_box_inspection`
 - `vol_label` (`voxel → labels`) — 3-D connected-component labelling with a selectable neighbourhood. · 例: `ct_bone_segmentation`, `molecule_atom_count`, `vessel_metrology`
 - `vol_region_props` (`labels → table`) — Per-component quantitative descriptors from a label volume. · 例: `vessel_metrology`
 
@@ -1050,16 +1050,16 @@ _計 372 ops / 68 categories。_
 - `pc_thinning_report` (`points, points → table`) — What a point-cloud thinning removed, and whether it touched the rare points (``table``). · 例: `mesh_resolution_demo`
 
 ### restoration(2)
-- `vol_gaussian_psf` (`measurement → voxel`) — A normalised (sums to 1) 3-D Gaussian PSF kernel. *sigma* is a scalar or · 例: `deconv_fft_restore`
+- `vol_gaussian_psf` (`measurement → voxel`) — A normalised (sums to 1) 3-D Gaussian PSF kernel; *sigma* is a scalar or per-axis. · 例: `deconv_fft_restore`
 - `vol_richardson_lucy` (`voxel, voxel → voxel`) — Richardson–Lucy deconvolution of a non-negative volume by a known PSF. · 例: `deconv_fft_restore`
 
 ### rle_region(9)
 - `vol_rle_encode` (`voxel → rle_region`) — Encode a binary volume as x-runs (the 3-D HALCON-region representation). · 例: `rle_region_efficiency`
-- `vol_rle_decode` (`rle_region → voxel`) — Decode a ``VolRLE`` back to a dense ``(D, H, W)`` float64 ``{0, 1}`` · 例: `rle_region_efficiency`
-- `vol_rle_volume` (`rle_region → measurement`) — Voxel count of the region, computed on the runs (no decode). Measured · 例: `rle_region_efficiency`
-- `vol_rle_bbox` (`rle_region → primitive`) — Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds) · 例: `rle_region_efficiency`
+- `vol_rle_decode` (`rle_region → voxel`) — Decode a ``VolRLE`` back to a dense ``(D, H, W)`` float64 ``{0, 1}`` volume. · 例: `rle_region_efficiency`
+- `vol_rle_volume` (`rle_region → measurement`) — Voxel count of the region, computed on the runs (no decode). · 例: `rle_region_efficiency`
+- `vol_rle_bbox` (`rle_region → primitive`) — Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds), from the runs. · 例: `rle_region_efficiency`
 - `vol_rle_centroid` (`rle_region → position`) — Centroid ``(z, y, x)`` of the region, computed on the runs (no decode). · 例: `rle_region_efficiency`
-- `vol_rle_union` (`rle_region, rle_region → rle_region`) — Union of two RLE regions, computed on the runs (no decode). Cost scales · 例: `rle_region_efficiency`
+- `vol_rle_union` (`rle_region, rle_region → rle_region`) — Union of two RLE regions, computed on the runs (no decode). · 例: `rle_region_efficiency`
 - `vol_rle_intersect` (`rle_region, rle_region → rle_region`) — Intersection of two RLE regions on the runs (no decode). · 例: `rle_region_efficiency`
 - `vol_rle_difference` (`rle_region, rle_region → rle_region`) — Set difference ``a \ b`` on the runs (no decode). · 例: `rle_region_efficiency`
 - `vol_rle_components` (`voxel → rle_region`) — Split a binary volume into per-component ``VolRLE`` regions. · 例: `rle_region_efficiency`
@@ -1149,11 +1149,11 @@ _計 372 ops / 68 categories。_
 - `mesh_displace_fbm` (`mesh → mesh`) — Roughen a mesh by displacing vertices along their normals with seeded fBm noise → ``(V, F)``. · 例: `itokawa_regolith_hero`
 - `terrain_region_mask` (`mesh → signal`) — Per-face terrain weights (M,) in [0,1]: 0 = smooth regolith "sea", 1 = rough highland. · 例: `itokawa_regolith_hero`
 - `mesh_scatter_boulders` (`mesh → mesh`) — Scatter partly-buried boulders on a mesh (power-law sizes, seeded) → ``(V, F)`` · 例: `itokawa_regolith_hero`
-- `mesh_edge_lengths` (`mesh → signal`) — Local edge length of a triangle mesh → ``(N,)`` per vertex (mean of incident edges), · 例: `itokawa_regolith_hero`
-- `mesh_subdivide` (`mesh → mesh`) — Refine a triangle mesh → ``(V, F)``: uniform midpoint subdivision (``levels`` passes, · 例: `itokawa_regolith_hero`
-- `displacement_band_weights` (`mesh → matrix`) — Per-octave, per-vertex band gate ``(K, N)`` in [0,1]: 1 where the mesh can carry the · 例: `itokawa_regolith_hero`
-- `mesh_displace_spectrum` (`mesh → mesh`) — Displace vertices along their normals with a **stated amplitude spectrum**, band-limited · 例: `itokawa_regolith_hero`
-- `bump_normals_fbm` (`normalmap, pointmap → normalmap`) — Perturb a normal map with the *gradient* of a seeded multi-octave height field · 例: `itokawa_regolith_hero`
+- `mesh_edge_lengths` (`mesh → signal`) — Local edge length of a triangle mesh, per vertex, per face or per unique edge. · 例: `itokawa_regolith_hero`
+- `mesh_subdivide` (`mesh → mesh`) — Refine a triangle mesh → ``(V, F)`` by midpoint subdivision or adaptive tessellation. · 例: `itokawa_regolith_hero`
+- `displacement_band_weights` (`mesh → matrix`) — Per-octave, per-vertex band gate ``(K, N)`` in [0,1]. · 例: `itokawa_regolith_hero`
+- `mesh_displace_spectrum` (`mesh → mesh`) — Displace vertices along their normals with a **stated amplitude spectrum**, band-limited. · 例: `itokawa_regolith_hero`
+- `bump_normals_fbm` (`normalmap, pointmap → normalmap`) — Perturb a normal map with the *gradient* of a seeded multi-octave height field. · 例: `itokawa_regolith_hero`
 
 ### transform(12)
 - `points_to_voxel` (`points → voxel`) — 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。 · 例: `sh_descriptor_retrieval`, `shape_desc_pose`

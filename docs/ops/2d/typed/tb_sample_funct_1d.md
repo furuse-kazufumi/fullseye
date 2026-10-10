@@ -37,13 +37,13 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Every *step*-th sample (HALCON ``sample_funct_1d``).
 
-    Keeps samples ``0, step, 2*step, ...`` — decimation without an
-    anti-aliasing filter (smooth first if the signal has content above the new
-    Nyquist rate).
+Keeps samples ``0, step, 2*step, ...`` — decimation without an
+anti-aliasing filter (smooth first if the signal has content above the new
+Nyquist rate).
 
-    :param y: 1-D function (may be empty).
-    :param step: truncated to int, must be >= 1 (``step=1`` copies).
-    :raises ValueError: non-1-D / NaN / Inf input, or ``step < 1``.
+:param y: 1-D function (may be empty).
+:param step: truncated to int, must be >= 1 (``step=1`` copies).
+:raises ValueError: non-1-D / NaN / Inf input, or ``step < 1``.
 
 Typed bridge of the 1d op ``sample_funct_1d`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``step`` (default 2); ``b`` is unused.
 

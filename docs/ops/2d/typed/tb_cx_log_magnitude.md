@@ -35,10 +35,10 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Log magnitude spectrum for **display** -> real ``(H, W)`` float64 in ``[0, 1]``.
 
-    ``log1p(|cx|)`` (i.e. ``log(1 + |cx|)``, finite at zero) min-max normalised to
-    ``[0, 1]``. This is the conventional way to see a spectrum whose linear
-    magnitude is dominated by the DC spike. Display only — it is not invertible;
-    use :func:`cx_magnitude` for the metric magnitude.
+``log1p(|cx|)`` (i.e. ``log(1 + |cx|)``, finite at zero) min-max normalised to
+``[0, 1]``. This is the conventional way to see a spectrum whose linear
+magnitude is dominated by the DC spike. Display only — it is not invertible;
+use :func:`cx_magnitude` for the metric magnitude.
 
 Typed bridge of the 2d op ``cx_log_magnitude`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

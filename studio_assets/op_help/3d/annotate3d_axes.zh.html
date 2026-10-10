@@ -3,20 +3,21 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate3d_axes(img, pose, K, origin=(0.0, 0.0, 0.0), length=1.0, depth=None, labels=(&#x27;X&#x27;, &#x27;Y&#x27;, &#x27;Z&#x27;), colors=(&#x27;wrong&#x27;, &#x27;right&#x27;, &#x27;reference&#x27;), width=2, font_size=11, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code>(要直接调用实现,<code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_axes(img, pose, K, origin=(0.0, 0.0, 0.0), length=1.0, depth=None, labels=(&#x27;X&#x27;, &#x27;Y&#x27;, &#x27;Z&#x27;), colors=(&#x27;wrong&#x27;, &#x27;right&#x27;, &#x27;reference&#x27;), width=2, font_size=11, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_axes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>返回图像(image2d):从 <code style="color:#22d3bf">origin</code> 投影绘制世界坐标三轴(gnomon)。</p>
+<p>返回图像(image2d):从 <code style="color:#22d3bf">origin</code> 投影绘制 object 坐标(<code style="color:#22d3bf">pose</code> 的输入侧)的三轴(gnomon)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
 <p>length 非正、原点或轴端在相机后方、labels/colors 不是 3 个、</p>
-<p>轴的文字放不进图像。</p>
-<p>步骤： 投影 <code style="color:#22d3bf">origin</code> 以及从它沿世界坐标 +X / +Y / +Z 方向前进 <code style="color:#22d3bf">length</code> 的 3 个点（与 <code style="color:#22d3bf">annotate3d_project</code> 相同的约定），从原点像素向各轴端像素绘制 <code style="color:#22d3bf">annotate.arrow</code>（箭头尖 8x6 px）。在轴端之外 <code style="color:#22d3bf">0.7 * font_size</code> px 的位置以无背景(<code style="color:#22d3bf">box_alpha=0</code>)的文字放置 <code style="color:#22d3bf">labels[i]</code>。</p>
+<p>轴的文字放不进图像、原点与轴端都在图像外。</p>
+<p>步骤： 投影 <code style="color:#22d3bf">origin</code> 以及从它沿 object 坐标 +X / +Y / +Z 方向前进 <code style="color:#22d3bf">length</code> 的 3 个点（与 <code style="color:#22d3bf">annotate3d_project</code> 相同的约定），从原点像素向各轴端像素绘制 <code style="color:#22d3bf">annotate.arrow</code>（箭头尖 8x6 px）。在轴端之外 <code style="color:#22d3bf">0.7 * font_size</code> px 的位置以无背景(<code style="color:#22d3bf">box_alpha=0</code>)的文字放置 <code style="color:#22d3bf">labels[i]</code>。</p>
 <p>参数：</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">origin</code> <code style="color:#22d3bf">(3,)</code>（object 坐标），<code style="color:#22d3bf">length</code>： 轴的长度（网格单位，<code style="color:#22d3bf">&gt; 0</code>）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>： 3 个字符串（默认 <code style="color:#22d3bf">(&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;)</code>）。<code style="color:#22d3bf">colors</code>： 3 种颜色（角色名或 RGB。默认 <code style="color:#22d3bf">(&quot;wrong&quot;, &quot;right&quot;, &quot;reference&quot;)</code> 是调色板的角色名）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>： 线宽 [px]，1 以上的整数。<code style="color:#22d3bf">font_size</code> [px]。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth</code> / <code style="color:#22d3bf">occlusion_tol</code>： 会传给投影，但<b>本 op 不做遮挡显示（虚线）</b>（判定只用于 <code style="color:#22d3bf">depth</code> 的形状检查）。</p>
 <p>返回值： 绘制后的新图像(float64 <code style="color:#22d3bf">[0, 1]</code>)。</p>
-<p>报错条件： <code style="color:#22d3bf">length &lt;= 0</code> / <code style="color:#22d3bf">labels</code> 或 <code style="color:#22d3bf">colors</code> 的长度不是 3 / 原点或任一轴端 <code style="color:#22d3bf">z &lt;= 1e-9</code> / 位姿、<code style="color:#22d3bf">K</code>、<code style="color:#22d3bf">depth</code> 不正确 / 轴的文字放不进图像。<b>框外的轴端不报错</b>（箭头会画到框外）。与视线重合而塌缩成点的轴（像素长度小于 1e-9）会被静默跳过。</p>
+<p>报错条件： <code style="color:#22d3bf">length &lt;= 0</code> / <code style="color:#22d3bf">labels</code> 或 <code style="color:#22d3bf">colors</code> 的长度不是 3 / 原点或任一轴端 <code style="color:#22d3bf">z &lt;= 1e-9</code> / 位姿、<code style="color:#22d3bf">K</code>、<code style="color:#22d3bf">depth</code> 不正确 / 轴的文字放不进图像 / 原点与轴端都在图像外(<code style="color:#22d3bf">annotate.arrow</code> 会拒绝)。只有轴端在框外时照常绘制(箭头朝框外画出)。与视线重合而塌缩成点的轴（像素长度小于 1e-9）会被静默跳过。</p>
 <p>用途： 说明图的位姿(gnomon)。把 <code style="color:#22d3bf">render3d.look_at</code> 的 <code style="color:#22d3bf">pose</code> 原样传入，把 <code style="color:#22d3bf">origin</code> 放在网格的质心或 <code style="color:#22d3bf">bounds</code> 的角上。</p>
+<p>坐标系：<code style="color:#22d3bf">origin</code> 和轴的方向都在 <code style="color:#22d3bf">pose</code> 所映射的源坐标系(object 坐标)中解释。<code style="color:#22d3bf">look_at</code> 的 <code style="color:#22d3bf">pose</code> 是 world→camera，所以此时就是 world 的轴。传入包含物体姿态 <code style="color:#22d3bf">M</code>(object→world)的 <code style="color:#22d3bf">pose @ M</code>，则画出物体的轴。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

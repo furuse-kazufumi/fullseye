@@ -17,10 +17,10 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds)
+Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds), from the runs.
 
-computed on the runs (no decode; measured ~1000x faster than scanning the
-dense mask). Matches ``volops.vol_bounding_box`` of the decoded mask
+No decode is needed; measured ~1000x faster than scanning the
+dense mask. Matches ``volops.vol_bounding_box`` of the decoded mask
 exactly. An empty region raises ``ValueError`` (same fail-closed rule).
 
 計算: ``z = rows // H``、``y = rows % H`` を復元し、``(z.min, y.min, starts.min,

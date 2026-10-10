@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Gaussian low-pass: keeps structure coarser than ``1/cutoff`` (voxels, or
+Gaussian low-pass: keeps structure coarser than ``1/cutoff`` (voxels, or mm with *spacing*).
 
-mm with *spacing*), attenuates finer detail smoothly. Transfer
+Finer detail is attenuated smoothly. Transfer
 ``exp(-f^2 / (2 cutoff^2))`` — the DC level (mean intensity) passes
 unchanged. Typical use: extract the illumination/thickness drift.
 

@@ -5,8 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。</p>
 <p><code style="color:#22d3bf">project_points(points, K, R, t)</code> で <code style="color:#22d3bf">(u, v, z)</code> を取り、<code style="color:#22d3bf">round</code> した画素 <code style="color:#22d3bf">(row=v, col=u)</code> が <code style="color:#22d3bf">size=(H, W)</code> 内かつ <code style="color:#22d3bf">z &gt; 0</code> の点だけを、遠い順に書いて近い点で上書きする(同一画素は最小 z が残る)。点が無い画素は <b>0</b>(<code style="color:#22d3bf">tsdf_from_depth</code> / <code style="color:#22d3bf">depth_to_points</code> が無効値として扱う規約)。返り値 <code style="color:#22d3bf">(H, W)</code> float64、単位は点の座標の単位。</p>
-<p style="margin:2px 0 2px 12px">• 1 点 = 1 画素なので疎な点群は穴だらけになる(<code style="color:#22d3bf">mesh_to_points</code> で密にしてから)。splat</p>
-<p>半径は無い。</p>
+<p style="margin:2px 0 2px 12px">• 1 点 = 1 画素なので疎な点群は穴だらけになる(<code style="color:#22d3bf">mesh_to_points</code> で密にしてから)。splat 半径は無い。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> は numpy (3,3)、<code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> は省略可。</p>
 <p>後段: <code style="color:#22d3bf">depth_to_points</code> で戻す、<code style="color:#22d3bf">normals_from_depth</code> で法線、<code style="color:#22d3bf">tsdf_from_depth</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

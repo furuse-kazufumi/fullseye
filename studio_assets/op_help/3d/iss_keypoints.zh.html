@@ -12,7 +12,7 @@
 <p>小于此值的点才是候选(排除比接近 1=各向同性、方向无法确定的点)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_kp</code>: 返回的上限。<code style="color:#22d3bf">min_neighbors</code>: 邻域少于此数的点不作为候选(默认 8)。</p>
 <p>步骤: 在各点收集 <code style="color:#22d3bf">radius</code> 内的邻域,求以关注点为原点的 2 阶矩矩阵 <code style="color:#22d3bf">(qᵀq)/n</code> 的特征值 λ1≥λ2≥λ3(λ1 在 1e-12 以下则排除)。以 λ3 作为 saliency 按降序扫描,舍弃距已采用点小于 <code style="color:#22d3bf">nms_radius</code> 的点的贪心 NMS。返回值为 int64 的点索引数组(saliency 降序)。无候选时长度为 0。</p>
-<p>注意: 邻域以关注点为中心(而非质心),因此即使是平面上的点 λ3 严格来说也不为 0。由于是对所有点做邻域搜索的 Python 循环,超过数万点的点云应先用 <code style="color:#22d3bf">voxel_grid_downsample</code> 抽稀后再使用。直接作为 <code style="color:#22d3bf">shot_descriptor</code> 的关键点输入, <code style="color:#22d3bf">register_shot</code> 在内部以 <code style="color:#22d3bf">radius</code> 的 0.6 倍、NMS 0.3 倍调用。</p>
+<p>注意: 邻域以关注点为中心(而非质心)。平面上的点，其关注点也在同一平面上，因此 λ3 理论上为 0，舍入残渣(λ3/λ1 ≤ 1e-9)不作为候选。这是对所有点做邻域搜索的 Python 循环，因此超过数万点的点云应先用 <code style="color:#22d3bf">voxel_grid_downsample</code> 抽稀后再使用。直接作为 <code style="color:#22d3bf">shot_descriptor</code> 的关键点输入，<code style="color:#22d3bf">register_shot</code> 以 saliency 半径 <code style="color:#22d3bf">0.6*radius</code>、NMS 半径 <code style="color:#22d3bf">0.3*radius</code> 调用(<code style="color:#22d3bf">radius</code> 为 <code style="color:#22d3bf">register_shot</code> 的支撑半径)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

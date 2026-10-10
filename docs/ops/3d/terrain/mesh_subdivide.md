@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Refine a triangle mesh → ``(V, F)``: uniform midpoint subdivision (``levels`` passes,
+Refine a triangle mesh → ``(V, F)`` by midpoint subdivision or adaptive tessellation.
 
-×4 faces each) or **adaptive tessellation to a target edge length** (``target_edge``:
+Either uniform midpoint subdivision (``levels`` passes, ×4 faces each) or **adaptive tessellation to a target edge length** (``target_edge``:
 median edge = target, edge segments ≤ 1.5×target, in-face Delaunay edges < 2×target).
 
 The geometry is *unchanged* — every new vertex lies on an old facet, so surface area

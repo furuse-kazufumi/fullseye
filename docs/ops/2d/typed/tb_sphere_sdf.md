@@ -39,30 +39,30 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。
 
-    ``grid`` は最終軸が 3 の座標配列 (..., 3)(``grid_coords`` の出力や (N,3) 点群)。
-    ``center`` は長さ3、``R>=0`` は半径。返り値の shape は ``grid.shape[:-1]``。厳密な SDF
-    (勾配ノルム 1)。``sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)``。
+``grid`` は最終軸が 3 の座標配列 (..., 3)(``grid_coords`` の出力や (N,3) 点群)。
+``center`` は長さ3、``R>=0`` は半径。返り値の shape は ``grid.shape[:-1]``。厳密な SDF
+(勾配ノルム 1)。``sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)``。
 
-    ``R < 0`` や形の不正な grid / center は ``ValueError``。
+``R < 0`` や形の不正な grid / center は ``ValueError``。
 
-    計算: ``np.linalg.norm(grid - center, axis=-1) - R``。座標の単位はそのまま距離の
-    単位になる(``grid_coords`` の world 座標を渡せば world 単位)。座標の成分順は
-    ``grid`` の最終軸の順(``grid_coords`` なら ``(x, y, z)``)で、``center`` も同じ順。
+計算: ``np.linalg.norm(grid - center, axis=-1) - R``。座標の単位はそのまま距離の
+単位になる(``grid_coords`` の world 座標を渡せば world 単位)。座標の成分順は
+``grid`` の最終軸の順(``grid_coords`` なら ``(x, y, z)``)で、``center`` も同じ順。
 
-    引数と検証(``ValueError``):
-    - ``grid``: 最終軸が 3 の float 配列 ``(..., 3)``(1-D の ``(3,)`` も可。0-D や
-      最終軸が 3 以外は拒否)。
-    - ``center``: 要素数 3(``reshape(3)`` できなければ numpy の ``ValueError``)。
-    - ``R``: ``float()`` できるスカラ。回転行列などを渡した場合も ``ValueError``
-      (この引数は半径であって姿勢ではない)。``R < 0`` は拒否、``R = 0`` は
-      中心からの距離場そのもの。
+引数と検証(``ValueError``):
+- ``grid``: 最終軸が 3 の float 配列 ``(..., 3)``(1-D の ``(3,)`` も可。0-D や
+  最終軸が 3 以外は拒否)。
+- ``center``: 要素数 3(``reshape(3)`` できなければ numpy の ``ValueError``)。
+- ``R``: ``float()`` できるスカラ。回転行列などを渡した場合も ``ValueError``
+  (この引数は半径であって姿勢ではない)。``R < 0`` は拒否、``R = 0`` は
+  中心からの距離場そのもの。
 
-    返り値: ``grid.shape[:-1]`` の float64(``grid_coords`` の出力なら
-    ``(nx, ny, nz)``)。中心で ``-R``、表面で 0、外側で正。
+返り値: ``grid.shape[:-1]`` の float64(``grid_coords`` の出力なら
+``(nx, ny, nz)``)。中心で ``-R``、表面で 0、外側で正。
 
-    使いどころ: ``grid_coords`` で格子 → ``sphere_sdf`` / ``box_sdf`` → ``sdf_union`` /
-    ``sdf_subtract`` で CSG → ``<= 0`` を占有として marching cubes(``voxel_to_mesh``
-    に ``-sdf`` を渡し ``iso=0`` 相当で等値面)。
+使いどころ: ``grid_coords`` で格子 → ``sphere_sdf`` / ``box_sdf`` → ``sdf_union`` /
+``sdf_subtract`` で CSG → ``<= 0`` を占有として marching cubes(``voxel_to_mesh``
+に ``-sdf`` を渡し ``iso=0`` 相当で等値面)。
 
 2-D 進化レジストリへ橋渡しした 3d の op ``sphere_sdf``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 

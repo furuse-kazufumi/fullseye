@@ -8183,13 +8183,13 @@
    "hi": "image (image2d) लौटाता है: 3-D ``p0`` से ``p1`` तक, project किया गया तीर draw करता है।"
   },
   "3d/annotate3d_axes": {
-   "fp": "f746f368d7ad",
-   "en": "Returns an image (image2d): the three world axes (a gnomon) projected from ``origin``.",
-   "zh": "返回图像(image2d):从 ``origin`` 投影绘制世界坐标三轴(gnomon)。",
-   "tw": "回傳影像(image2d):從 ``origin`` 投影繪製世界座標三軸(gnomon)。",
-   "ko": "이미지(image2d)를 돌려줍니다: 세계 좌표의 세 축(gnomon)을 ``origin`` 에서 투영해 그립니다.",
-   "de": "Liefert ein Bild (image2d): die drei Weltachsen (ein Gnomon), projiziert ab ``origin``.",
-   "hi": "image (image2d) लौटाता है: world coordinates के 3 axes (gnomon) को ``origin`` से project करके draw करता है।"
+   "fp": "18a580401805",
+   "en": "Returns an image (image2d): the three axes of the object coordinates (the input side of ``pose``) as a gnomon, projected from ``origin``.",
+   "zh": "返回图像(image2d):从 ``origin`` 投影绘制 object 坐标(``pose`` 的输入侧)的三轴(gnomon)。",
+   "tw": "回傳影像(image2d):從 ``origin`` 投影繪製 object 座標(``pose`` 的輸入側)的三軸(gnomon)。",
+   "ko": "이미지(image2d)를 돌려줍니다: object 좌표(``pose`` 의 입력 측)의 세 축(gnomon)을 ``origin`` 에서 투영해 그립니다.",
+   "de": "Liefert ein Bild (image2d): die drei Achsen der object-Koordinaten (Eingangsseite von ``pose``) als Gnomon, projiziert ab ``origin``.",
+   "hi": "image (image2d) लौटाता है: object coordinates (``pose`` की input side) के 3 axes (gnomon) को ``origin`` से project करके draw करता है।"
   },
   "3d/annotate3d_bbox": {
    "fp": "447d40bc2f7c",
@@ -8309,13 +8309,13 @@
    "hi": "Lommel-Seeliger reflectance law (किनारे तक उजला regolith) से normal map को shade करता है और I/F ``(H, W)`` लौटाता है।"
   },
   "3d/bump_normals_fbm": {
-   "fp": "91edaba5bf5f",
+   "fp": "329dd4757853",
    "ja": "seed 付き多オクターブ高さ場の**勾配**で法線マップを摂動する。",
    "zh": "用带 seed 的多倍频高度场的**梯度**扰动法线图。",
    "tw": "用帶 seed 的多倍頻高度場的**梯度**擾動法線圖。",
    "ko": "seed 가 있는 다중 옥타브 높이장의 **기울기**로 법선 맵을 섭동합니다.",
    "de": "Stört eine Normalenkarte mit dem *Gradienten* eines geseedeten mehroktavigen Höhenfeldes.",
-   "hi": "seeded multi-octave height field के *gradient* से normal map को perturb करता है"
+   "hi": "seeded multi-octave height field के *gradient* से normal map को perturb करता है।"
   },
   "3d/bundle_adjust": {
    "fp": "9338a2bdf892",
@@ -8507,13 +8507,13 @@
    "hi": "PCA principal axes को candidate axes मानकर सबसे अच्छी rotational symmetry (axis × order) चुनता है।"
   },
   "3d/displacement_band_weights": {
-   "fp": "bc14b84940ff",
-   "ja": "オクターブごと・頂点ごとの帯域ゲート ``(K, N)`` を [0,1] で。メッシュがその帯域を担える所が 1。",
-   "zh": "逐倍频、逐顶点的频带门 ``(K, N)``,取值 [0,1]:网格能承载该频带处为 1。",
-   "tw": "逐倍頻、逐頂點的頻帶閘 ``(K, N)``,取值 [0,1]:網格能承載該頻帶處為 1。",
-   "ko": "옥타브별·정점별 대역 게이트 ``(K, N)`` 을 [0,1] 로: 메시가 그 대역을 담을 수 있는 곳이 1.",
-   "de": "Bandgatter je Oktave und Vertex ``(K, N)`` in [0,1]: 1, wo das Mesh das Band tragen kann.",
-   "hi": "हर octave, हर vertex का band gate ``(K, N)`` [0,1] में: 1 जहाँ mesh उठा सकता है the"
+   "fp": "225b72253a42",
+   "ja": "オクターブごと・頂点ごとの帯域ゲート ``(K, N)``、値は [0,1]。",
+   "zh": "逐倍频、逐顶点的频带门 ``(K, N)``,取值 [0,1]。",
+   "tw": "逐倍頻、逐頂點的頻帶閘 ``(K, N)``,取值 [0,1]。",
+   "ko": "옥타브별·정점별 대역 게이트 ``(K, N)``, 값은 [0,1].",
+   "de": "Bandgatter je Oktave und Vertex ``(K, N)`` in [0,1].",
+   "hi": "हर octave, हर vertex का band gate ``(K, N)``, [0,1] में।"
   },
   "3d/distance_line_line": {
    "fp": "48a96f725c2c",
@@ -8759,13 +8759,13 @@
    "hi": "min_voxels से कम वाले connected components हटाकर bool mask लौटाता है।"
   },
   "3d/fit_box3": {
-   "fp": "a4d58b9d5875",
-   "ja": "PCA による有向直方体の当てはめ(高速・雑音に強い。``obb`` と同じ作図)。",
-   "zh": "用 PCA 拟合有向长方体(快速、抗噪;与 ``obb`` 同一构造)。",
-   "tw": "用 PCA 擬合有向長方體(快速、抗噪;與 ``obb`` 同一構造)。",
-   "ko": "PCA 에 의한 유향 직육면체 적합(빠르고 잡음에 강함. ``obb`` 와 같은 작도).",
-   "de": "Orientierte Boxanpassung per PCA (schnell, rauschtolerant; dieselbe Konstruktion wie ``obb``).",
-   "hi": "PCA से oriented box fit (तेज़, noise को सहने वाला; वही construction जो"
+   "fp": "edf737d5a8f5",
+   "ja": "PCA による有向直方体の当てはめ(高速・雑音に強い。``pcseg.obb`` と同じ作図)。",
+   "zh": "用 PCA 拟合有向长方体(快速、抗噪;与 ``pcseg.obb`` 同一构造)。",
+   "tw": "用 PCA 擬合有向長方體(快速、抗噪;與 ``pcseg.obb`` 同一構造)。",
+   "ko": "PCA 에 의한 유향 직육면체 적합(빠르고 잡음에 강함. ``pcseg.obb`` 와 같은 작도).",
+   "de": "Orientierte Boxanpassung per PCA (schnell, rauschtolerant; dieselbe Konstruktion wie ``pcseg.obb``).",
+   "hi": "PCA से oriented box fit (तेज़, noise को सहने वाला; वही construction जो ``pcseg.obb`` में है)।"
   },
   "3d/fit_bspline_curve": {
    "fp": "156f8358b21c",
@@ -8786,13 +8786,13 @@
    "hi": "बिखरे (x, y, z) पर bicubic (default) B-spline surface का least squares fit (bisplrep)।"
   },
   "3d/fit_circle3": {
-   "fp": "e95779d1b27b",
+   "fp": "3196bab2d590",
    "ja": "``(depth, row, col)`` 点への 3-D 円の当てはめ: 支持平面を当ててから円を当てる。",
    "zh": "对 ``(depth, row, col)`` 点做 3-D 圆拟合:先拟合支撑平面,再在面内拟合圆。",
    "tw": "對 ``(depth, row, col)`` 點做 3-D 圓擬合:先擬合支撐平面,再在面內擬合圓。",
    "ko": "``(depth, row, col)`` 점에 3-D 원 적합: 지지 평면을 맞춘 뒤 그 안에서 원을 맞춥니다.",
    "de": "3-D-Kreisanpassung an ``(depth, row, col)``-Punkte: erst die Trägerebene anpassen, dann darin den Kreis.",
-   "hi": "``(depth, row, col)`` points पर 3-D circle fit: supporting plane को fit करता है,"
+   "hi": "``(depth, row, col)`` points पर 3-D circle fit: पहले supporting plane को fit करता है, फिर उसमें circle को।"
   },
   "3d/fit_circle_3d": {
    "fp": "3b404893dd7d",
@@ -8822,13 +8822,13 @@
    "hi": "point cloud पर किसी भी pose वाला 3-axis ellipsoid algebraic रूप से fit करता है और ``{center, axes, radii, residual}`` लौटाता है।"
   },
   "3d/fit_line3": {
-   "fp": "ff7f45b32737",
+   "fp": "bee34fef96da",
    "ja": "``(depth, row, col)`` 点への全最小二乗 3-D 直線当てはめ。",
    "zh": "对 ``(depth, row, col)`` 点做全最小二乘 3-D 直线拟合。",
    "tw": "對 ``(depth, row, col)`` 點做全最小平方 3-D 直線擬合。",
    "ko": "``(depth, row, col)`` 점에 전 최소제곱 3-D 직선 적합.",
    "de": "Total-Least-Squares-3-D-Geradenanpassung an ``(depth, row, col)``-Punkte.",
-   "hi": "``(depth, row, col)`` points पर total-least-squares 3-D line fit — the"
+   "hi": "``(depth, row, col)`` points पर total-least-squares 3-D line fit।"
   },
   "3d/fit_line_3d": {
    "fp": "1b905d612336",
@@ -8840,13 +8840,13 @@
    "hi": "point cloud → least squares line (point=centroid, direction=सबसे बड़ा principal axis)। return value (point, direction)।"
   },
   "3d/fit_plane3": {
-   "fp": "fac0d5c5c39e",
+   "fp": "1ee40442c3b9",
    "ja": "``(depth, row, col)`` 点への最小二乗 3-D 平面当てはめ。",
    "zh": "对 ``(depth, row, col)`` 点做最小二乘 3-D 平面拟合。",
    "tw": "對 ``(depth, row, col)`` 點做最小平方 3-D 平面擬合。",
    "ko": "``(depth, row, col)`` 점에 최소제곱 3-D 평면 적합.",
    "de": "Kleinste-Quadrate-3-D-Ebenenanpassung an ``(depth, row, col)``-Punkte.",
-   "hi": "``(depth, row, col)`` points पर least-squares 3-D plane fit — the plane"
+   "hi": "``(depth, row, col)`` points पर least-squares 3-D plane fit।"
   },
   "3d/fit_plane_3d": {
    "fp": "af27d46e8ca2",
@@ -9173,13 +9173,13 @@
    "hi": "correspondence set का inlier अनुपात = ‖T·source[i] − target[i]‖ < thresh वाला हिस्सा। → [0,1]।"
   },
   "3d/inner_box3": {
-   "fp": "7d436afba1ca",
+   "fp": "eb1ce4980ae1",
    "en": "The largest axis-aligned box fully inscribed in a binary voxel region (the 3-D counterpart of the 2-D ``inner_rectangle1``).",
    "zh": "完全内接于二值体素区域的最大轴对齐盒(2-D ``inner_rectangle1`` 的 3-D 版)。",
    "tw": "完全內接於二值體素區域的最大軸對齊盒(2-D ``inner_rectangle1`` 的 3-D 版)。",
    "ko": "이진 복셀 영역에 완전히 내접하는 최대 축 평행 상자(2-D ``inner_rectangle1`` 의 3-D 판).",
    "de": "Die größte achsenparallele Box, die vollständig in eine binäre Voxelregion einbeschrieben ist (das 3-D-Gegenstück zu ``inner_rectangle1``).",
-   "hi": "binary voxel region में पूरी तरह inscribed सबसे बड़ा axis-aligned box (2-D ``inner_rectangle1`` का"
+   "hi": "binary voxel region में पूरी तरह inscribed सबसे बड़ा axis-aligned box (2-D ``inner_rectangle1`` का 3-D संस्करण)।"
   },
   "3d/inside_outside": {
    "fp": "96b0fe2c52cf",
@@ -9497,22 +9497,22 @@
    "hi": "seeded fBm noise से vertices को उनके normals के साथ खिसकाकर mesh को खुरदुरा बनाता है → ``(V, F)``।"
   },
   "3d/mesh_displace_spectrum": {
-   "fp": "032b309b52ed",
+   "fp": "4bf9869fdcae",
    "ja": "**振幅スペクトルを明示して**帯域制限しつつ、頂点を法線方向へ変位させる。",
    "zh": "以**明确给出的振幅谱**、带限地沿法线位移顶点。",
    "tw": "以**明確給出的振幅譜**、帶限地沿法線位移頂點。",
    "ko": "**진폭 스펙트럼을 명시**해 대역 제한하면서 정점을 법선 방향으로 변위시킵니다.",
    "de": "Verschiebt Vertices entlang ihrer Normalen mit einem **angegebenen Amplitudenspektrum**, bandbegrenzt.",
-   "hi": "vertices को उनके normals के साथ **घोषित amplitude spectrum** से खिसकाता है, band-limited"
+   "hi": "vertices को उनके normals के साथ **घोषित amplitude spectrum** से खिसकाता है, band-limited।"
   },
   "3d/mesh_edge_lengths": {
-   "fp": "af722bbab99a",
-   "ja": "三角形メッシュの局所エッジ長 → 頂点ごとの ``(N,)``(接続エッジの平均)。",
-   "zh": "三角网格的局部边长 → 逐顶点 ``(N,)``(相邻边的均值)。",
-   "tw": "三角網格的局部邊長 → 逐頂點 ``(N,)``(相鄰邊的平均)。",
-   "ko": "삼각형 메시의 국소 엣지 길이 → 정점별 ``(N,)``(접속 엣지의 평균).",
-   "de": "Lokale Kantenlänge eines Dreiecksnetzes → ``(N,)`` je Vertex (Mittel der anliegenden Kanten).",
-   "hi": "triangle mesh की local edge length → हर vertex के लिए ``(N,)`` (जुड़े edges का औसत),"
+   "fp": "b73ca3f2b3b6",
+   "ja": "三角形メッシュの局所エッジ長(頂点ごと・面ごと・一意なエッジごと)。",
+   "zh": "三角网格的局部边长(逐顶点、逐面或逐唯一边)。",
+   "tw": "三角網格的局部邊長(逐頂點、逐面或逐唯一邊)。",
+   "ko": "삼각형 메시의 국소 엣지 길이(정점별·면별·고유 엣지별).",
+   "de": "Lokale Kantenlänge eines Dreiecksnetzes, je Vertex, je Fläche oder je eindeutiger Kante.",
+   "hi": "triangle mesh की local edge length, हर vertex, हर face या हर unique edge के लिए।"
   },
   "3d/mesh_edge_stats": {
    "fp": "9437f4b05fd4",
@@ -9587,13 +9587,13 @@
    "hi": "*max_edge* से लंबे edges को तब तक दो भागों में बाँटता है जब तक कोई न बचे — adaptive refinement (``mesh``)।"
   },
   "3d/mesh_subdivide": {
-   "fp": "5ddd34644a63",
-   "ja": "三角形メッシュを細分する → ``(V, F)``: 一様な中点細分(``levels`` 回)。",
-   "zh": "细化三角网格 → ``(V, F)``:一致的中点细分(``levels`` 遍)。",
-   "tw": "細化三角網格 → ``(V, F)``:一致的中點細分(``levels`` 遍)。",
-   "ko": "삼각형 메시를 세분 → ``(V, F)``: 균일한 중점 세분(``levels`` 회).",
-   "de": "Verfeinert ein Dreiecksnetz → ``(V, F)``: gleichmäßige Mittelpunktunterteilung (``levels`` Durchgänge).",
-   "hi": "triangle mesh को refine करता है → ``(V, F)``: uniform midpoint subdivision (``levels`` passes,"
+   "fp": "ccfdca0be233",
+   "ja": "三角形メッシュを中点細分か適応テッセレーションで細かくする → ``(V, F)``。",
+   "zh": "用中点细分或自适应细分细化三角网格 → ``(V, F)``。",
+   "tw": "以中點細分或自適應細分細化三角網格 → ``(V, F)``。",
+   "ko": "중점 세분 또는 적응 테셀레이션으로 삼각형 메시를 세분 → ``(V, F)``.",
+   "de": "Verfeinert ein Dreiecksnetz → ``(V, F)`` per Mittelpunktunterteilung oder adaptiver Tessellierung.",
+   "hi": "triangle mesh को midpoint subdivision या adaptive tessellation से refine करता है → ``(V, F)``।"
   },
   "3d/mesh_to_points": {
    "fp": "5904c1d40bef",
@@ -10496,13 +10496,13 @@
    "hi": "Koenderink का shape index s∈[-1,1] (convex sphere +1, cylinder +0.5, saddle 0, concave sphere -1)। → (N,)।"
   },
   "3d/shot_descriptor": {
-   "fp": "57bd0b9de915",
+   "fp": "3058b9e33422",
    "en": "The SHOT descriptor (Tombari 2010). It builds a local reference frame at each keypoint and takes a spherical support.",
    "zh": "SHOT 描述子(Tombari 2010)。在每个关键点建立 LRF,取球形支撑域。",
    "tw": "SHOT 描述子(Tombari 2010)。在每個關鍵點建立 LRF,取球形支撐域。",
    "ko": "SHOT 기술자(Tombari 2010). 각 키포인트에 LRF 를 세우고 구형 지지를 취합니다.",
    "de": "Der SHOT-Deskriptor (Tombari 2010). Er richtet an jedem Keypoint ein lokales Bezugssystem ein und nimmt eine kugelförmige Umgebung.",
-   "hi": "SHOT descriptor (Tombari 2010)। हर keypoint पर LRF बनाता है, spherical support को"
+   "hi": "SHOT descriptor (Tombari 2010)। हर keypoint पर LRF बनाता है और spherical support लेता है।"
   },
   "3d/signed_distance_field": {
    "fp": "7d7871a7fe83",
@@ -10568,22 +10568,22 @@
    "hi": "लगभग न्यूनतम volume वाला oriented bounding box (3-D ``smallest_rectangle2``)।"
   },
   "3d/smallest_box3_axis": {
-   "fp": "8ed4e5a7c25a",
+   "fp": "0306693f4a97",
    "ja": "軸並行の外接直方体(3-D 版 ``smallest_rectangle1``)。",
    "zh": "轴对齐包围盒(3-D 版 ``smallest_rectangle1``)。",
    "tw": "軸對齊包圍盒(3-D 版 ``smallest_rectangle1``)。",
    "ko": "축 평행 경계 상자(3-D 판 ``smallest_rectangle1``).",
    "de": "Achsenparallele Bounding Box (das 3-D-``smallest_rectangle1``).",
-   "hi": "axis-aligned bounding box (3-D ``smallest_rectangle1``)। लौटाता है the"
+   "hi": "axis-aligned bounding box (3-D ``smallest_rectangle1``)।"
   },
   "3d/smallest_sphere3": {
-   "fp": "abef3bf7c16e",
+   "fp": "9faef9f4e84c",
    "ja": "``(depth, row, col)`` 点の最小包含球(Welzl の厳密解)。",
    "zh": "``(depth, row, col)`` 点的最小包围球(Welzl 精确解)。",
    "tw": "``(depth, row, col)`` 點的最小包圍球(Welzl 精確解)。",
    "ko": "``(depth, row, col)`` 점의 최소 포함구(Welzl 의 엄밀해).",
    "de": "Kleinste umschließende Kugel der ``(depth, row, col)``-Punkte (Welzls exaktes Verfahren).",
-   "hi": "``(depth, row, col)`` points का minimum enclosing sphere (Welzl का exact"
+   "hi": "``(depth, row, col)`` points का minimum enclosing sphere (Welzl का exact algorithm)।"
   },
   "3d/smooth_flow": {
    "fp": "bb9fbfd6b53b",
@@ -10919,31 +10919,31 @@
    "hi": "binary volume की Euler characteristic, उसके तीन Betti numbers में बाँटी गई।"
   },
   "3d/vol_fft_bandpass": {
-   "fp": "7cdbf2792704",
-   "ja": "ガウス帯域通過 ``lowpass(high) - lowpass(low)``。",
-   "zh": "高斯带通 ``lowpass(high) - lowpass(low)``:保留两者之间的结构。",
-   "tw": "高斯帶通 ``lowpass(high) - lowpass(low)``:保留兩者之間的結構。",
-   "ko": "가우스 대역통과 ``lowpass(high) - lowpass(low)``: 그 사이의 구조를 남깁니다.",
-   "de": "Gauß-Bandpass ``lowpass(high) - lowpass(low)``: behält die Struktur dazwischen.",
-   "hi": "Gaussian band-pass ``lowpass(high) - lowpass(low)``: structure रखता है"
+   "fp": "ff19321256ba",
+   "ja": "ガウス帯域通過 ``lowpass(high) - lowpass(low)``: 2 つのスケールの間の構造を残す。",
+   "zh": "高斯带通 ``lowpass(high) - lowpass(low)``:保留两个尺度之间的结构。",
+   "tw": "高斯帶通 ``lowpass(high) - lowpass(low)``:保留兩個尺度之間的結構。",
+   "ko": "가우스 대역통과 ``lowpass(high) - lowpass(low)``: 두 스케일 사이의 구조를 남깁니다.",
+   "de": "Gauß-Bandpass ``lowpass(high) - lowpass(low)``: behält die Struktur zwischen zwei Skalen.",
+   "hi": "Gaussian band-pass ``lowpass(high) - lowpass(low)``: दो scales के बीच की structure रखता है।"
   },
   "3d/vol_fft_highpass": {
-   "fp": "80b2d2bbc245",
+   "fp": "6c54dc7e58dc",
    "ja": "ガウス高域通過 —— ``1 - lowpass`` の厳密な補(2 つの和が元に戻る)。",
    "zh": "高斯高通 —— ``1 - lowpass`` 的精确补(两者相加还原)。",
    "tw": "高斯高通 —— ``1 - lowpass`` 的精確補(兩者相加還原)。",
    "ko": "가우스 고역통과 —— ``1 - lowpass`` 의 엄밀한 보(둘의 합이 원본).",
    "de": "Gauß-Hochpass — das exakte Komplement ``1 - lowpass`` (beide summieren sich zum Original).",
-   "hi": "Gaussian high-pass — exact complement ``1 - lowpass`` (दोनों का योग"
+   "hi": "Gaussian high-pass — exact complement ``1 - lowpass`` (दोनों का योग input के बराबर)।"
   },
   "3d/vol_fft_lowpass": {
-   "fp": "db866cbe7127",
+   "fp": "aefe31759326",
    "ja": "ガウス低域通過: ``1/cutoff`` より粗い構造を残す(ボクセル単位、または実寸)。",
    "zh": "高斯低通:保留比 ``1/cutoff`` 更粗的结构(体素单位或实际尺寸)。",
    "tw": "高斯低通:保留比 ``1/cutoff`` 更粗的結構(體素單位或實際尺寸)。",
    "ko": "가우스 저역통과: ``1/cutoff`` 보다 거친 구조를 남깁니다(복셀 단위 또는 실치수).",
    "de": "Gauß-Tiefpass: behält Strukturen gröber als ``1/cutoff`` (in Voxeln oder realen Maßen).",
-   "hi": "Gaussian low-pass: ``1/cutoff`` से मोटी structure रखता है (voxels, या"
+   "hi": "Gaussian low-pass: ``1/cutoff`` से मोटी structure रखता है (voxels में, या *spacing* के साथ mm में)।"
   },
   "3d/vol_frangi": {
    "fp": "a7a1af5b14f4",
@@ -10964,13 +10964,13 @@
    "hi": "volume की अपनी range पर gamma (power-law) correction (HALCON ``pow_image``)।"
   },
   "3d/vol_gaussian_psf": {
-   "fp": "6db110235179",
+   "fp": "64c4d7ea525e",
    "ja": "総和 1 に正規化した 3-D ガウス PSF カーネル。*sigma* はスカラーまたは軸ごと。",
    "zh": "归一化(和为 1)的 3-D 高斯 PSF 核。*sigma* 为标量或逐轴。",
    "tw": "正規化(和為 1)的 3-D 高斯 PSF 核。*sigma* 為純量或逐軸。",
    "ko": "총합 1 로 정규화한 3-D 가우스 PSF 커널. *sigma* 는 스칼라 또는 축별.",
    "de": "Ein normierter (Summe 1) 3-D-Gauß-PSF-Kern. *sigma* ist ein Skalar oder achsenweise.",
-   "hi": "normalised (योग 1) 3-D Gaussian PSF kernel। *sigma* एक scalar है या"
+   "hi": "normalised (योग 1) 3-D Gaussian PSF kernel; *sigma* एक scalar है या हर axis के लिए अलग।"
   },
   "3d/vol_gradient_magnitude": {
    "fp": "6170425fd89e",
@@ -11090,13 +11090,13 @@
    "hi": "ज्ञात PSF से non-negative volume का Richardson–Lucy deconvolution।"
   },
   "3d/vol_rle_bbox": {
-   "fp": "b1d5aeffa238",
-   "ja": "密着外接直方体 ``(z0, y0, x0, z1, y1, x1)``(上限は排他的)。",
-   "zh": "紧致包围盒 ``(z0, y0, x0, z1, y1, x1)``(上界为开区间)。",
-   "tw": "緊緻包圍盒 ``(z0, y0, x0, z1, y1, x1)``(上界為開區間)。",
-   "ko": "밀착 경계 상자 ``(z0, y0, x0, z1, y1, x1)``(상한은 배타적).",
-   "de": "Enge Bounding Box ``(z0, y0, x0, z1, y1, x1)`` (obere Grenzen exklusiv).",
-   "hi": "tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (ऊपरी सीमाएँ exclusive)"
+   "fp": "643bb8a529eb",
+   "ja": "密着外接直方体 ``(z0, y0, x0, z1, y1, x1)``(上限は排他的)を run から求める。",
+   "zh": "由 run 求出紧致包围盒 ``(z0, y0, x0, z1, y1, x1)``(上界为开区间)。",
+   "tw": "由 run 求出緊緻包圍盒 ``(z0, y0, x0, z1, y1, x1)``(上界為開區間)。",
+   "ko": "run 에서 구한 밀착 경계 상자 ``(z0, y0, x0, z1, y1, x1)``(상한은 배타적).",
+   "de": "Enge Bounding Box ``(z0, y0, x0, z1, y1, x1)`` (obere Grenzen exklusiv), aus den Runs.",
+   "hi": "runs से निकाला गया tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (ऊपरी सीमाएँ exclusive)।"
   },
   "3d/vol_rle_centroid": {
    "fp": "5ea9c51c8ea7",
@@ -11117,13 +11117,13 @@
    "hi": "binary volume को हर component के ``VolRLE`` regions में बाँटता है।"
   },
   "3d/vol_rle_decode": {
-   "fp": "2e9b992f93c6",
-   "ja": "``VolRLE`` を密な ``(D, H, W)`` float64 ``{0, 1}`` へ復号する。",
-   "zh": "把 ``VolRLE`` 解码回稠密 ``(D, H, W)`` float64 ``{0, 1}``。",
-   "tw": "把 ``VolRLE`` 解碼回稠密 ``(D, H, W)`` float64 ``{0, 1}``。",
-   "ko": "``VolRLE`` 를 조밀한 ``(D, H, W)`` float64 ``{0, 1}`` 로 복호.",
-   "de": "Decodiert ein ``VolRLE`` zurück in ein dichtes ``(D, H, W)`` float64 ``{0, 1}``.",
-   "hi": "``VolRLE`` को वापस dense ``(D, H, W)`` float64 ``{0, 1}`` में decode करता है"
+   "fp": "dbc592ab0486",
+   "ja": "``VolRLE`` を密な ``(D, H, W)`` float64 ``{0, 1}`` ボリュームへ復号する。",
+   "zh": "把 ``VolRLE`` 解码回稠密的 ``(D, H, W)`` float64 ``{0, 1}`` 体数据。",
+   "tw": "把 ``VolRLE`` 解碼回稠密的 ``(D, H, W)`` float64 ``{0, 1}`` 體資料。",
+   "ko": "``VolRLE`` 를 조밀한 ``(D, H, W)`` float64 ``{0, 1}`` 볼륨으로 복호.",
+   "de": "Decodiert ein ``VolRLE`` zurück in ein dichtes ``(D, H, W)`` float64 ``{0, 1}`` Volumen.",
+   "hi": "``VolRLE`` को वापस dense ``(D, H, W)`` float64 ``{0, 1}`` volume में decode करता है।"
   },
   "3d/vol_rle_difference": {
    "fp": "0ae3b6280989",
@@ -11153,22 +11153,22 @@
    "hi": "runs पर दो RLE regions का intersection (decode के बिना)।"
   },
   "3d/vol_rle_union": {
-   "fp": "769016f329d0",
+   "fp": "f3332d289067",
    "ja": "2 つの RLE 領域の和集合を run 上で(復号しない)。",
    "zh": "在 run 上求两个 RLE 区域的并(不解码)。",
    "tw": "在 run 上求兩個 RLE 區域的聯集(不解碼)。",
    "ko": "두 RLE 영역의 합집합을 run 위에서(복호 없음).",
    "de": "Vereinigung zweier RLE-Regionen, auf den Runs berechnet (ohne Decodierung).",
-   "hi": "दो RLE regions का union, runs पर गणना (decode के बिना)। लागत scale होती है"
+   "hi": "दो RLE regions का union, runs पर गणना (decode के बिना)।"
   },
   "3d/vol_rle_volume": {
-   "fp": "c9016c244457",
+   "fp": "b963dfd4acb6",
    "ja": "領域のボクセル数を run 上で数える(復号しない)。",
    "zh": "在 run 上数出区域的体素数(不解码)。",
    "tw": "在 run 上數出區域的體素數(不解碼)。",
    "ko": "영역의 복셀 수를 run 위에서 셉니다(복호 없음).",
    "de": "Voxelanzahl der Region, auf den Runs gezählt (ohne Decodierung).",
-   "hi": "region का voxel count, runs पर गणना (decode के बिना)। Measured"
+   "hi": "region का voxel count, runs पर गणना (decode के बिना)।"
   },
   "3d/vol_rotate": {
    "fp": "b3030fcca0ac",
@@ -11198,31 +11198,31 @@
    "hi": "``[0, 1]`` तक percentile contrast stretch (robust ``scale_image_max``)।"
   },
   "3d/vol_tiled_map": {
-   "fp": "a43770707bad",
+   "fp": "77cd13114aa0",
    "ja": "形を変えないボリューム op を、重なりを持つ z スラブに分けて適用する(ピーク使用量を抑える)。",
    "zh": "把形状不变的体算子分成重叠 z 板块施加,以压低峰值占用。",
    "tw": "把形狀不變的體運算子分成重疊 z 板塊施加,以壓低峰值佔用。",
    "ko": "형상을 바꾸지 않는 볼륨 op 를 겹치는 z 슬래브로 나눠 적용(피크 사용량 억제).",
    "de": "Wendet einen formerhaltenden Volumenoperator in überlappenden z-Scheiben an, um den Spitzenverbrauch zu senken.",
-   "hi": "shape बनाए रखने वाले volume operator को overlapping z-slabs में लागू करता है, ताकि peak"
+   "hi": "shape बनाए रखने वाले volume operator को overlapping z-slabs में लागू करता है, ताकि peak memory सीमित रहे।"
   },
   "3d/vol_uncrop": {
-   "fp": "24db8be05c8f",
+   "fp": "05fd8bce8b64",
    "ja": "切り出した部分ボリュームを元の枠へ貼り戻す(``vol_crop_domain`` の逆)。",
    "zh": "把裁出的子体贴回完整框内(``vol_crop_domain`` 的逆)。",
    "tw": "把裁出的子體貼回完整框內(``vol_crop_domain`` 的逆)。",
    "ko": "잘라낸 부분 볼륨을 원래 틀에 되붙입니다(``vol_crop_domain`` 의 역).",
    "de": "Fügt ein ausgeschnittenes Teilvolumen zurück in den vollen Rahmen ein (die Umkehrung von ``vol_crop_domain``).",
-   "hi": "crop किए गए sub-volume को वापस पूरे frame में चिपकाता है (का inverse"
+   "hi": "crop किए गए sub-volume को वापस पूरे frame में चिपकाता है (``vol_crop_domain`` का inverse)।"
   },
   "3d/vol_wall_thickness": {
-   "fp": "2baaaf3a5962",
-   "ja": "プローブ ``p0 -> p1`` に沿った肉厚 —— 産業用 CT の定番計測。",
-   "zh": "沿探针 ``p0 -> p1`` 的壁厚 —— 工业 CT 的经典计量。",
-   "tw": "沿探針 ``p0 -> p1`` 的壁厚 —— 工業 CT 的經典計量。",
-   "ko": "프로브 ``p0 -> p1`` 을 따른 살두께 —— 산업용 CT 의 정석 계측.",
-   "de": "Wanddicken entlang der Sonde ``p0 -> p1`` — die klassische Industrie-CT-Messung.",
-   "hi": "probe ``p0 -> p1`` के साथ wall thicknesses — industrial-CT"
+   "fp": "47a2e74f92f1",
+   "ja": "プローブ ``p0 -> p1`` に沿った肉厚 —— 産業用 CT の計測そのもの。",
+   "zh": "沿探针 ``p0 -> p1`` 的壁厚 —— 工业 CT 计量本身。",
+   "tw": "沿探針 ``p0 -> p1`` 的壁厚 —— 工業 CT 計量本身。",
+   "ko": "프로브 ``p0 -> p1`` 을 따른 살두께 —— 산업용 CT 계측 그 자체.",
+   "de": "Wanddicken entlang der Sonde ``p0 -> p1`` — die eigentliche Industrie-CT-Messung.",
+   "hi": "probe ``p0 -> p1`` के साथ wall thicknesses — स्वयं industrial-CT measurement।"
   },
   "3d/vol_watershed": {
    "fp": "a1d79a00c7a8",

@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Decode a ``VolRLE`` back to a dense ``(D, H, W)`` float64 ``{0, 1}``
+Decode a ``VolRLE`` back to a dense ``(D, H, W)`` float64 ``{0, 1}`` volume.
 
-volume. Exact inverse of :func:`vol_rle_encode` (bit-identical round trip).
+Exact inverse of :func:`vol_rle_encode` (bit-identical round trip).
 The region is validated first, so a corrupted RLE raises ``ValueError``
 instead of writing out of bounds.
 

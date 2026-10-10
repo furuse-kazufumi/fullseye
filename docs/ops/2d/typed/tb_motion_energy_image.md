@@ -41,8 +41,8 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Bobick–Davis Motion Energy Image per frame → 0/1 ``(T, H, W)`` (``video``).
 
-    The binary companion of :func:`motion_history_image`: *where* motion has
-    occurred within the last ``tau`` frames (``MHI > 0``), regardless of when.
+The binary companion of :func:`motion_history_image`: *where* motion has
+occurred within the last ``tau`` frames (``MHI > 0``), regardless of when.
 
 Typed bridge of the videostream op ``motion_energy_image`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``tau`` (default 15) and ``b`` drives ``threshold`` (default 0.1).
 

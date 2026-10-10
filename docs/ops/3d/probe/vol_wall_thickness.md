@@ -18,9 +18,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT
-
-measurement itself.
+Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT measurement itself.
 
 Runs :func:`vol_edge_probe` (all polarities) and pairs consecutive
 opposite-polarity edges *rising -> falling* in probe order: each pair is

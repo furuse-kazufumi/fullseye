@@ -21,17 +21,17 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Indices where the function changes sign (HALCON ``zero_crossings_funct_1d``).
 
-    Returns the integer indices ``i`` with ``sign(y[i]) * sign(y[i+1]) < 0`` —
-    the sample *before* each crossing. An empty input returns an empty index
-    array (degenerate case, not an error).
+Returns the integer indices ``i`` with ``sign(y[i]) * sign(y[i+1]) < 0`` —
+the sample *before* each crossing. An empty input returns an empty index
+array (degenerate case, not an error).
 
-    Honest limitation: the test is a **strict** sign product, so a crossing that
-    lands exactly on a zero sample (``[-1, 0, 1]``) is *not* reported, nor is a
-    touch of zero without a sign change (``[1, 0, 1]``).
+Honest limitation: the test is a **strict** sign product, so a crossing that
+lands exactly on a zero sample (``[-1, 0, 1]``) is *not* reported, nor is a
+touch of zero without a sign change (``[1, 0, 1]``).
 
-    :param y: 1-D function (may be empty).
-    :returns: int index array (possibly empty).
-    :raises ValueError: non-1-D / NaN / Inf input.
+:param y: 1-D function (may be empty).
+:returns: int index array (possibly empty).
+:raises ValueError: non-1-D / NaN / Inf input.
 
 Typed bridge of the 1d op ``zero_crossings_funct_1d`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

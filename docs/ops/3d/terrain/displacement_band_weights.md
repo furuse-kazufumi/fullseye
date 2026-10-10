@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Per-octave, per-vertex band gate ``(K, N)`` in [0,1]: 1 where the mesh can carry the
+Per-octave, per-vertex band gate ``(K, N)`` in [0,1].
 
-wavelength as geometry, 0 where it would alias.
+It is 1 where the mesh can carry the wavelength as geometry, 0 where it would alias.
 
 A vertex with local edge length ``e`` (mean incident edge, :func:`mesh_edge_lengths`,
 or ``local_edge`` (N,) if given) carries wavelength ``λ`` only when ``λ ≥ nyquist·e``;

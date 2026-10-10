@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Least-squares 3-D plane fit to ``(depth, row, col)`` points — the plane
+Least-squares 3-D plane fit to ``(depth, row, col)`` points.
 
-through the centroid whose normal is the smallest principal axis (minimises the
+The fit is the plane through the centroid whose normal is the smallest principal axis (minimises the
 sum of squared point-to-plane distances). Returns ``center`` (``cd/cr/cc``), a
 unit ``normal`` (depth, row, col), and the RMS point-to-plane residual. Raises
 ``ValueError`` on < 3 points or a collinear set (the normal is undefined).

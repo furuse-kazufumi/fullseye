@@ -26,7 +26,7 @@
 <p>Raises:</p>
 <p>ValueError: जब point cloud / cores <code style="color:#22d3bf">(N,3)</code> न हों, खाली हों, <code style="color:#22d3bf">normals</code> की संख्या cores से</p>
 <p>मेल न खाए, <code style="color:#22d3bf">radius &lt;= 0</code>, <code style="color:#22d3bf">max_depth &lt;= 0</code>, या <code style="color:#22d3bf">min_points &lt; 1</code> हो।</p>
-<p><b>सीमाएँ (honest)</b>: (1) normals caller देता है — <code style="color:#22d3bf">estimate_normals</code> का चिह्न मनमाना होता है, इसलिए दिशा एक जैसी न की जाए तो चिह्न जगह-जगह उलट जाता है। (2) <code style="color:#22d3bf">lod</code> केवल noise को देखता है, और <b>registration का residual शामिल नहीं करता</b> (Lague का मूल paper registration error को अलग पद के रूप में जोड़ता है)।</p>
+<p><b>सीमाएँ (honest)</b>: (1) normals caller देता है — <code style="color:#22d3bf">estimate_point_normals</code> का default चिह्न centroid पर आधारित होता है, इसलिए <code style="color:#22d3bf">viewpoint</code> या <code style="color:#22d3bf">orient_normals</code> से दिशा एक जैसी न की जाए तो चिह्न जगह-जगह उलट जाता है। (2) <code style="color:#22d3bf">lod</code> केवल noise को देखता है, और <b>registration का residual शामिल नहीं करता</b> (Lague का मूल paper registration error को अलग पद के रूप में जोड़ता है)।</p>
 <p style="margin:2px 0 2px 12px">(3) जिन किनारों पर cylinder में कम points आते हैं वहाँ <code style="color:#22d3bf">nan</code> होता है — 0 लौटाकर उसे &quot;कोई बदलाव नहीं&quot;</p>
 <p>जैसा नहीं दिखाता।</p>
 <p>Reference (public): D. Lague, N. Brodu, J. Leroux, &quot;Accurate 3D comparison of complex topography with terrestrial laser scanner: application to the Rangitikei canyon (N-Z)&quot;, ISPRS Journal of Photogrammetry and Remote Sensing 82 (2013) 10-26.</p>

@@ -15,7 +15,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth</code>: 전방 거리 영상(<code style="color:#22d3bf">render3d.render_mesh</code> 의 <code style="color:#22d3bf">depth</code>). <code style="color:#22d3bf">occlusion_tol</code>: <code style="color:#22d3bf">[0, 1)</code>.</p>
 <p>반환값: 그리기가 끝난 새 영상(float64 <code style="color:#22d3bf">[0, 1]</code>, 입력은 변경하지 않는다).</p>
 <p>에러가 되는 조건: <code style="color:#22d3bf">bounds</code> 가 <code style="color:#22d3bf">(2, 3)</code> 이 아님·비유한·<code style="color:#22d3bf">max &lt; min</code> 인 축이있음 / <b>8 모서리 중 어느 하나가</b> <code style="color:#22d3bf">z &lt;= 1e-9</code>(카메라 면 위 또는 뒤. 상자가 시점을 둘러싸는 경우는그릴 수 없다) / 자세·<code style="color:#22d3bf">K</code>·<code style="color:#22d3bf">depth</code> 가 부정. 모서리가 영상 밖으로 나가는 것은 에러로하지 않는다(선은 테두리 밖까지 그어지고, 겉보기에는 잘린다).</p>
-<p>주의: 축 평행(월드 좌표를 따르는) 상자만. 회전한 상자(<code style="color:#22d3bf">smallest_box3</code> 의 <code style="color:#22d3bf">corners</code>)를 그리려면, 8 모서리를 직접 투영(<code style="color:#22d3bf">annotate3d_project</code>)해 2-D 의 <code style="color:#22d3bf">annotate</code> 선 그리기로 잇는다.</p>
+<p>주의: 축 평행(object 좌표의 축을 따르는) 상자만. 회전한 상자(<code style="color:#22d3bf">smallest_box3</code> 의 <code style="color:#22d3bf">corners</code>)를 그리려면, 8 모서리를 직접 투영(<code style="color:#22d3bf">annotate3d_project</code>)해 2-D 의 <code style="color:#22d3bf">annotate</code> 선 그리기로 잇는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_edge_lengths(V, F, *, per: &#x27;str&#x27; = &#x27;vertex&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render3d; render3d.mesh_edge_lengths(V, F, *, per: &#x27;str&#x27; = &#x27;vertex&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;mesh_edge_lengths&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>삼각형 메시의 국소 엣지 길이 → 정점별 <code style="color:#22d3bf">(N,)</code>(접속 엣지의 평균).</p>
-<p>면마다 <code style="color:#22d3bf">(M,)</code>(3 변의 평균) 또는 고유 변마다 <code style="color:#22d3bf">(E,)</code>.</p>
+<p>삼각형 메시의 국소 엣지 길이(정점별·면별·고유 엣지별).</p>
+<p>정점마다 <code style="color:#22d3bf">(N,)</code>(접한 변의 평균), 면마다 <code style="color:#22d3bf">(M,)</code>(그 3 변의 평균) 또는 고유 변마다 <code style="color:#22d3bf">(E,)</code> 를 반환.</p>
 <p>이것은 메시 자체 단위로 나타낸 해상도 지도이다: 어떤 영역이 *지오메트리* 로 담을 수 있는 최단 파장은국소 변 길이의 약 두 배(Nyquist)이며, 이것이 <code style="color:#22d3bf">mesh_subdivide</code>(<code style="color:#22d3bf">target_edge</code>)와 <code style="color:#22d3bf">displacement_band_weights</code> 가 쓰는 값이다. 결정적; 퇴화 메시/알 수 없는 <code style="color:#22d3bf">per</code> 에 대해 fail-closed.</p>
 <p>무방향 고유 변 <code style="color:#22d3bf">(E,2)</code> 를 구하고 각 변의 길이(메시 단위, float64)를 집계한다.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">per=&#x27;vertex&#x27;</code>: 정점에 접한 변 길이의 평균 <code style="color:#22d3bf">(N,)</code>. 어느 면에도 속하지 않는 고립 정점은변이 없으므로 조용히 <b>전체 변의 평균값</b> 이 들어간다(0 이 되지 않는다).</p>

@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Oriented box fit by PCA (fast, noise-tolerant; the same construction as
+Oriented box fit by PCA (fast, noise-tolerant; the same construction as ``pcseg.obb``).
 
-``pcseg.obb`` but with the ``measure``-style dict). Axes are the principal
+Unlike ``pcseg.obb`` it returns the ``measure``-style dict. Axes are the principal
 directions of the point spread; extents come from the projected span. Returns
 ``center`` (``cd/cr/cc``), ``axes`` (3, 3 — unit ROW vectors, depth/row/col
 components), sorted half-extents ``l1 >= l2 >= l3``, full ``size``, ``volume``,

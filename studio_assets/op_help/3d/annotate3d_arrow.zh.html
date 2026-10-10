@@ -7,7 +7,7 @@
 <p>传入 <code style="color:#22d3bf">depth</code> 且<b>两端都被遮挡</b>时以虚线绘制（箭头尖为半透明）。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>端点在相机后方 / 两端重合 / 两端都在图像外、位姿或 K 不正确。</p>
+<p>端点在相机后方 / 2 点投影到同一像素 / 两端都在图像外、位姿或 K 不正确。</p>
 <p>步骤： 把 <code style="color:#22d3bf">img</code> 复制为 float64 <code style="color:#22d3bf">[0, 1]</code>（<code style="color:#22d3bf">(H, W)</code> / <code style="color:#22d3bf">(H, W, C)</code>，C 为 1/3/4。非有限或为空则 <code style="color:#22d3bf">ValueError</code>），用与 <code style="color:#22d3bf">annotate3d_project</code> 相同的投影把 <code style="color:#22d3bf">p0</code>, <code style="color:#22d3bf">p1</code> 变为像素，用 <code style="color:#22d3bf">annotate.arrow</code> 从 <code style="color:#22d3bf">p0</code> 的像素向 <code style="color:#22d3bf">p1</code> 的像素绘制箭头。箭头尖在 <code style="color:#22d3bf">p1</code> 一侧。</p>
 <p>参数：</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p0</code>, <code style="color:#22d3bf">p1</code>： object 坐标 <code style="color:#22d3bf">(3,)</code>（有限）。<code style="color:#22d3bf">pose</code> 为 4x4 object→camera 或 <code style="color:#22d3bf">(R, t)</code>，<code style="color:#22d3bf">K</code> 为 3x3（朝 -Z 看的 render3d 约定）。</p>
@@ -17,7 +17,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">head_len</code> / <code style="color:#22d3bf">head_width</code>： 箭头尖的长度、宽度 [px]。遮挡绘制时会缩小，使其不超过箭头长度的 80 %。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">occlusion_tol</code>： <code style="color:#22d3bf">[0, 1)</code>。</p>
 <p>返回值： 绘制后的新图像（float64，与输入形状相同。不修改输入）。</p>
-<p>报错条件（按实现）： 任一端点 <code style="color:#22d3bf">z &lt;= 1e-9</code>（在相机平面上/后方）/ 2 点投影到同一像素（沿视线排列，长度小于 1e-9 px）/ 位姿或 <code style="color:#22d3bf">K</code> 不正确。<b>超出图像的端点不报错</b>（<code style="color:#22d3bf">annotate.arrow</code> 只是把线画到框外而已。若一端在框内，看起来线会在中途截断）。</p>
+<p>报错条件（按实现）： 任一端点 <code style="color:#22d3bf">z &lt;= 1e-9</code>（在相机平面上/后方）/ 2 点投影到同一像素（沿视线排列，长度小于 1e-9 px）/ <b>两端都在图像外</b> （<code style="color:#22d3bf">annotate.arrow</code> 会拒绝，以免画出贴在边框上的错误线）/ 位姿或 <code style="color:#22d3bf">K</code> 不正确。只有一端在图像外时照常绘制（线朝框外画出，看起来在边框处被截断）。</p>
 <p>用途： 在 <code style="color:#22d3bf">render3d.render_mesh</code> 的图像上指示“这个顶点是这个”。若要以数值显示长度用 <code style="color:#22d3bf">annotate3d_measure</code>，若要附加文字用 <code style="color:#22d3bf">annotate3d_label</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

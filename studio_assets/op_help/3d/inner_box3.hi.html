@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inner_box3(vol) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import regionprops3d; regionprops3d.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;inner_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>binary voxel region में पूरी तरह inscribed सबसे बड़ा axis-aligned box (2-D <code style="color:#22d3bf">inner_rectangle1</code> का</p>
-<p>3-D संस्करण)।</p>
+<p>binary voxel region में पूरी तरह inscribed सबसे बड़ा axis-aligned box (2-D <code style="color:#22d3bf">inner_rectangle1</code> का 3-D संस्करण)।</p>
 <p>सटीक हल: किसी भी depth interval [z0, z1] के लिए box को slices z0..z1 के <b>logical AND</b> (सभी slices में foreground वाले voxels) के भीतर होना चाहिए। उस AND के भीतर सबसे बड़ा inscribed 2-D rectangle (histogram method = <code style="color:#22d3bf">inner_rectangle1</code> जैसा ही core) × interval की लंबाई candidate box है, और सभी intervals पर इसका अधिकतम ही सटीक सबसे बड़ा inscribed box है। O(D^2 * H * W)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>

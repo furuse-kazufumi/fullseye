@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_fft_lowpass(vol, cutoff, spacing=None)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import volfreq; volfreq.vol_fft_lowpass(vol, cutoff, spacing=None)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_lowpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Gaussian low-pass: keeps structure coarser than <code style="color:#22d3bf">1/cutoff</code> (voxels, or</p>
-<p>mm with *spacing*), attenuates finer detail smoothly. Transfer <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> — the DC level (mean intensity) passes unchanged. Typical use: extract the illumination/thickness drift.</p>
+<p>Gaussian low-pass: keeps structure coarser than <code style="color:#22d3bf">1/cutoff</code> (voxels, or mm with *spacing*).</p>
+<p>Finer detail is attenuated smoothly. Transfer <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> — the DC level (mean intensity) passes unchanged. Typical use: extract the illumination/thickness drift.</p>
 <p>手順: <code style="color:#22d3bf">np.fft.rfftn</code> で実 FFT → 各周波数 bin の大きさ <code style="color:#22d3bf">|f| = sqrt(fz^2 + fy^2 + fx^2)</code> に伝達関数 <code style="color:#22d3bf">exp(-|f|^2 / (2 cutoff^2))</code> を掛ける → <code style="color:#22d3bf">irfftn</code> で戻す。入力と同じ <code style="color:#22d3bf">(D, H, W)</code> の float64 を返す(spacing を渡しても shape は変わらない)。</p>
 <p>引数:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cutoff</code>: 正の有限値。<code style="color:#22d3bf">spacing=None</code> なら <b>cycles/voxel</b>(Nyquist = 0.5)、<code style="color:#22d3bf">spacing=(sz, sy, sx)</code>(mm、または <code style="color:#22d3bf">spacing_mm</code> を持つ <code style="color:#22d3bf">volio.VolumeMeta</code>)を渡すと <b>cycles/mm</b>。異方 voxel では軸ごとに <code style="color:#22d3bf">fftfreq(n, d=spacing)</code> で物理周波数に直すので、同じ物理構造が同じ扱いになる。</p>

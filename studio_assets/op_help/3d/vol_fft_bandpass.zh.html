@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_fft_bandpass(vol, low, high, spacing=None)</code>(要直接调用实现,<code style="color:#22d3bf">import volfreq; volfreq.vol_fft_bandpass(vol, low, high, spacing=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_bandpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>高斯带通 <code style="color:#22d3bf">lowpass(high) - lowpass(low)</code>:保留两者之间的结构。</p>
-<p>两个尺度之间(要求 <code style="color:#22d3bf">low &lt; high</code>,二者单位均为 cycles/voxel,或在给定 *spacing* 时为 cycles/mm)。典型用途:分离出一个纹理尺度,或在减去之前取出周期性伪影频带。</p>
+<p>高斯带通 <code style="color:#22d3bf">lowpass(high) - lowpass(low)</code>:保留两个尺度之间的结构。</p>
+<p>要求 <code style="color:#22d3bf">low &lt; high</code>,二者单位均为 cycles/voxel,或在给定 *spacing* 时为 cycles/mm。典型用途:分离出一个纹理尺度,或在减去之前取出周期性伪影频带。</p>
 <p>传递函数为 <code style="color:#22d3bf">exp(-|f|^2 / (2 high^2)) - exp(-|f|^2 / (2 low^2))</code>。在 DC 处为 <code style="color:#22d3bf">1 - 1 = 0</code>,因此平均亮度被去除,只留下峰值位于 <code style="color:#22d3bf">low</code> 与 <code style="color:#22d3bf">high</code> 之间的高斯差分(DoG 型)频带。峰高达不到 1(因为是 2 个 Gaussian 之差, <code style="color:#22d3bf">low</code> 与 <code style="color:#22d3bf">high</code> 越接近,通过量越小)。返回值是与输入相同 <code style="color:#22d3bf">(D, H, W)</code> 的 float64,有符号。</p>
 <p>参数:必须 <code style="color:#22d3bf">low &lt; high</code>(二者均为正的有限值)。单位在 <code style="color:#22d3bf">spacing=None</code> 时为 cycles/voxel,指定 <code style="color:#22d3bf">spacing</code> 时为 cycles/mm。若按周期(voxel 或 mm)考虑, <code style="color:#22d3bf">1/high</code> 是最小结构尺寸,<code style="color:#22d3bf">1/low</code> 是最大结构尺寸。</p>
 <p>验证(<code style="color:#22d3bf">ValueError</code>):非 3-D / NaN、Inf / 超过 <code style="color:#22d3bf">MAX_VOXELS</code> / <code style="color:#22d3bf">low</code>、<code style="color:#22d3bf">high</code> 非正、非有限、2 次方下溢 / <code style="color:#22d3bf">low &gt;= high</code> / <code style="color:#22d3bf">spacing</code> 无效。</p>

@@ -17,9 +17,9 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Axis-aligned bounding box (the 3-D ``smallest_rectangle1``). Returns the
+Axis-aligned bounding box (the 3-D ``smallest_rectangle1``).
 
-``min`` / ``max`` corners and ``center`` in ``(depth, row, col)``, the full
+Returns the ``min`` / ``max`` corners and ``center`` in ``(depth, row, col)``, the full
 ``size`` (depth, row, col edge lengths), and the enclosed ``volume``. This is
 the honest null baseline that ``smallest_box3`` beats on any rotated object.
 Raises ``ValueError`` on empty input.

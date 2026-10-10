@@ -37,11 +37,11 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Inverse of :func:`cx_fft`: ``ifft2(ifftshift(cx))``.
 
-    With ``real=True`` (default) the real part is returned as an image (the
-    imaginary part is numerical dust for a spectrum that came from a real image);
-    with ``real=False`` the full complex spatial field is returned (holography /
-    coherent imaging, where the imaginary part carries signal). A real array is
-    FFT'd first (module convenience), making ``cx_ifft`` an involution on it.
+With ``real=True`` (default) the real part is returned as an image (the
+imaginary part is numerical dust for a spectrum that came from a real image);
+with ``real=False`` the full complex spatial field is returned (holography /
+coherent imaging, where the imaginary part carries signal). A real array is
+FFT'd first (module convenience), making ``cx_ifft`` an involution on it.
 
 Typed bridge of the 2d op ``cx_ifft`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 

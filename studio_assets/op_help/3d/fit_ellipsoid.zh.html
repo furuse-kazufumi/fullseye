@@ -8,7 +8,9 @@
 <p>Args:</p>
 <p>points: (N,3) 点云(至少 10 点)。对离群值毫无防御(如有需要请事先筛选 inlier)。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3,3) 列=主轴(半径降序), &quot;radii&quot;: (3,) 半径(降序), &quot;residual&quot;: float Taubin 近似的点-面距离 RMS}</code>。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3, 3), &quot;radii&quot;: (3,), &quot;residual&quot;: float}</code>。</p>
+<p><code style="color:#22d3bf">axes</code> 的列为主轴(半径降序)，<code style="color:#22d3bf">radii</code> 为半径(降序)，<code style="color:#22d3bf">residual</code> 为 Taubin 近似的</p>
+<p>点-面距离 RMS。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正/点数不足/得不到正定的椭球解(平面状退化、</p>
 <p>非椭球面、覆盖不足)等,fail-closed。</p>

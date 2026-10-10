@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_fft_lowpass(vol, cutoff, spacing=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import volfreq; volfreq.vol_fft_lowpass(vol, cutoff, spacing=None)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_lowpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高斯低通:保留比 <code style="color:#22d3bf">1/cutoff</code> 更粗的結構(體素單位或實際尺寸)。</p>
-<p>mm 計),平滑地衰減更細的細節。傳遞函數 <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> —— DC 分量(平均強度)原樣</p>
+<p>更細的細節被平滑地衰減。傳遞函數 <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> —— DC 分量(平均強度)原樣</p>
 <p>通過。典型用途: 擷取照明/厚度漂移。</p>
 <p>步驟: 用 <code style="color:#22d3bf">np.fft.rfftn</code> 做實 FFT → 依各頻率 bin 的大小 <code style="color:#22d3bf">|f| = sqrt(fz^2 + fy^2 + fx^2)</code> 乘以傳遞函數 <code style="color:#22d3bf">exp(-|f|^2 / (2 cutoff^2))</code> → 用 <code style="color:#22d3bf">irfftn</code> 轉換回來。回傳與輸入相同 <code style="color:#22d3bf">(D, H, W)</code> 的 float64(傳入 spacing 也不改變 shape)。</p>
 <p>參數:</p>

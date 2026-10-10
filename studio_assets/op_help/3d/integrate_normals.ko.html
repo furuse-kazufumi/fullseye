@@ -7,10 +7,9 @@
 <p>절차: 법선 <code style="color:#22d3bf">(H,W,3)</code>을 기울기 <code style="color:#22d3bf">p = -nx/nz</code>, <code style="color:#22d3bf">q = -ny/nz</code>로 바꾸고(<code style="color:#22d3bf">|nz| &lt; 1e-6</code>인화소는 nz를 ±1e-6으로 치환해 0 나누기를 피한다), FFT 영역에서 최소제곱 해 <code style="color:#22d3bf">Z(wx,wy) = (-j·wx·P - j·wy·Q) / (wx² + wy²)</code>를 구하고(직류 성분은 0), 역변환하여평균을 0으로 뺀다. <code style="color:#22d3bf">mask</code> (bool HxW)를 주면 mask 밖의 기울기를 0으로 한 뒤 적분한다(그 영역은 평탄한 것으로 취급된다). 반환값은 float64의 <code style="color:#22d3bf">(H,W)</code>.</p>
 <p>주의점:</p>
 <p style="margin:2px 0 2px 12px">• 주기 경계를 가정하므로, 영상의 위아래·좌우가 이어지듯이 끝이 왜곡된다.</p>
-<p style="margin:2px 0 2px 12px">• 절대 높이는 정해지지 않는다(평균 0). 격자 간격 1 화소로 적분하므로 <code style="color:#22d3bf">z</code>도 화소 단위의</p>
-<p>높이가 되며, 실제 치수로는 화소 피치를 곱한다.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nz ≈ 0</code>(윤곽 부근·시선에 평행한 면)에서는 기울기가 발산하여 물결을 주위로 퍼뜨린다.</p>
-<p><code style="color:#22d3bf">mask</code>로 제외하거나 법선을 미리 평활한다. 입력 검증은 없다(<code style="color:#22d3bf">(H,W,3)</code> 이외는 내부 인덱싱에서 실패). <code style="color:#22d3bf">surface_normals</code>가 역변환이며, <code style="color:#22d3bf">photometric_stereo</code>의 법선을 여기에 넘기면 형상(높이장)을 얻는다.</p>
+<p style="margin:2px 0 2px 12px">• 절대 높이는 정해지지 않는다(평균 0). 격자 간격 1 화소로 적분하므로 <code style="color:#22d3bf">z</code>도 화소 단위의높이가 되며, 실제 치수로는 화소 피치를 곱한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nz ≈ 0</code>(윤곽 부근·시선에 평행한 면)에서는 기울기가 발산하여 물결을 주위로 퍼뜨린다. <code style="color:#22d3bf">mask</code>로 제외하거나 법선을 미리 평활한다.</p>
+<p>입력 검증은 없다(<code style="color:#22d3bf">(H,W,3)</code> 이외는 내부 인덱싱에서 실패). <code style="color:#22d3bf">surface_normals</code>가 역변환이며, <code style="color:#22d3bf">photometric_stereo</code>의 법선을 여기에 넘기면 형상(높이장)을 얻는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
