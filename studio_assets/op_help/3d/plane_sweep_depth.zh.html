@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_sweep_depth(img_ref: &#x27;np.ndarray&#x27;, img_src: &#x27;np.ndarray&#x27;, K: &#x27;np.ndarray&#x27;, R: &#x27;np.ndarray&#x27;, t: &#x27;np.ndarray&#x27;, depth_candidates, window: &#x27;int&#x27; = 1, normal=(0.0, 0.0, 1.0)) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import plane_sweep; plane_sweep.plane_sweep_depth(img_ref: &#x27;np.ndarray&#x27;, img_src: &#x27;np.ndarray&#x27;, K: &#x27;np.ndarray&#x27;, R: &#x27;np.ndarray&#x27;, t: &#x27;np.ndarray&#x27;, depth_candidates, window: &#x27;int&#x27; = 1, normal=(0.0, 0.0, 1.0)) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;plane_sweep_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 plane-sweep stereo 估计稠密深度图。→ (H,W) depth。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各深度平面で src を ref へワープし、photo-consistency 最小の候補深度を画素ごとに選ぶ(winner-take-all)。全候補で視野外の画素は NaN。fail-closed(空/非 2D/shape 不一致/非正深度)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_ref</code> / <code style="color:#22d3bf">img_src</code>: 同形状の (H,W) グレースケール float。基準カメラは <code style="color:#22d3bf">[I|0]</code>、source は <code style="color:#22d3bf">P_src = K [R|t]</code>(<code style="color:#22d3bf">X_src = R X_ref + t</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code>: 共通の (3,3) 内部行列(特異なら <code style="color:#22d3bf">ValueError</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth_candidates</code>: 基準カメラ座標での正の有限な深度列(D 個)。返る深度は必ずこの中のどれかで、量子化誤差は候補間隔程度。候補は近距離を細かく(逆深度で等間隔)取るのが常道。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>: コストの box 集約サイズ(既定 1 = 画素ごとの絶対差)。2 以上で窓内 SAD を有効画素数で正規化した値になり、テクスチャの乏しい領域で安定するが段差はぼける。1 未満は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>: 掃引平面の法線(既定 (0,0,1) = フロント平行)。</p>
-<p>返り値は (H,W) float。全候補で src の視野外に写った画素(コスト ∞)は NaN。輝度が一定の領域では全候補のコストが同点になり <code style="color:#22d3bf">argmin</code> が先頭候補を返すので、信頼度の無い深度が混じる。コスト体 (D,H,W) そのものが要るときは同モジュールの <code style="color:#22d3bf">cost_volume</code> を使う。得られた深度は <code style="color:#22d3bf">depth_to_points</code> で点群化できる。</p>
+<p>在各深度平面上将 src 扭曲到 ref，逐像素选出 photo-consistency 最小的候选深度(winner-take-all)。所有候选下都在视场外的像素为 NaN。fail-closed(失败即拒绝)(空/非 2D/shape 不一致/非正深度)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_ref</code> / <code style="color:#22d3bf">img_src</code>:同形状的 (H,W) 灰度 float。基准相机为 <code style="color:#22d3bf">[I|0]</code>，source 为 <code style="color:#22d3bf">P_src = K [R|t]</code>(<code style="color:#22d3bf">X_src = R X_ref + t</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code>:共用的 (3,3) 内参矩阵(奇异时 <code style="color:#22d3bf">ValueError</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth_candidates</code>:基准相机坐标下正的有限深度序列(D 个)。返回的深度必定是其中的某一个，量化误差约为候选间隔。候选通常在近处取得较密(按逆深度等间隔)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>:代价的 box 聚合尺寸(默认 1 = 逐像素绝对差)。2 及以上时为窗口内 SAD 除以有效像素数归一化后的值，在纹理贫乏区域更稳定，但阶跃会变模糊。小于 1 时 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>:扫掠平面的法线(默认 (0,0,1) = 正对平行)。</p>
+<p>返回值为 (H,W) float。所有候选下都映射到 src 视场外的像素(代价 ∞)为 NaN。在亮度恒定的区域，所有候选的代价相同，<code style="color:#22d3bf">argmin</code> 返回第一个候选，因此会混入没有可信度的深度。需要代价体 (D,H,W) 本身时，请使用同一模块的 <code style="color:#22d3bf">cost_volume</code>。所得深度可以用 <code style="color:#22d3bf">depth_to_points</code> 转换为点云。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

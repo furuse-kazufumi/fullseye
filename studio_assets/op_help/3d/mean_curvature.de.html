@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mean_curvature(points, k=25, normals=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import curvature3d; curvature3d.mean_curvature(points, k=25, normals=None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;mean_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Mittlere Krümmung H = (k1+k2)/2. → (N,). Eine orientierungsabhängige Größe.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は凸側ヒューリスティクス(開面の凹/凸符号は不定)。向き付き法線を渡すと大域向きに整合し正しい符号を出す。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 計算は <code style="color:#22d3bf">principal_curvatures</code> と同じ(k+1 近傍の PCA 法線 + 局所二次曲面フィット)で、<code style="color:#22d3bf">(k1 + k2) / 2</code> を返す。単位は 1/長さ。</p>
-<p style="margin:2px 0 2px 12px">• 符号は凸を正とする規約で、<code style="color:#22d3bf">normals</code> を渡したときだけ大域的な凹/凸に対応する。未指定では開いた面の H は常に凸側(絶対値相当)。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は 0。<code style="color:#22d3bf">k</code> は N-1 に切り詰められる。</p>
-<p style="margin:2px 0 2px 12px">• 半径 R の球なら <code style="color:#22d3bf">1/R</code>、円柱は <code style="color:#22d3bf">1/(2R)</code>、平面は 0。鞍点(k1 = -k2)も 0 だが <code style="color:#22d3bf">gaussian_curvature</code> は負になるので区別できる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行(<code style="color:#22d3bf">ValueError</code>)。決定論的。</p>
+<p>normals (orientierte Referenznormalen, (N,3)): ohne Angabe wird eine Heuristik der konvexen Seite verwendet (das Konkav/Konvex-Vorzeichen einer offenen Fläche ist unbestimmt). Werden orientierte Normalen übergeben, richtet sich das Ergebnis nach der globalen Orientierung und liefert das korrekte Vorzeichen.</p>
+<p>Ergänzungen:</p>
+<p style="margin:2px 0 2px 12px">• Die Berechnung ist dieselbe wie bei <code style="color:#22d3bf">principal_curvatures</code> (PCA-Normale der k+1-Nachbarschaft + lokaler Quadrikfit) und liefert <code style="color:#22d3bf">(k1 + k2) / 2</code>. Einheit ist 1/Länge.</p>
+<p style="margin:2px 0 2px 12px">• Das Vorzeichen folgt der Konvention konvex = positiv und entspricht nur dann globalem Konkav/Konvex, wenn <code style="color:#22d3bf">normals</code> übergeben wird. Ohne Angabe liegt H einer offenen Fläche immer auf der konvexen Seite (entspricht dem Absolutwert).</p>
+<p style="margin:2px 0 2px 12px">• Punkte mit weniger als 5 Nachbarn erhalten 0. <code style="color:#22d3bf">k</code> wird auf N-1 gekürzt.</p>
+<p style="margin:2px 0 2px 12px">• Eine Kugel mit Radius R ergibt <code style="color:#22d3bf">1/R</code>, ein Zylinder <code style="color:#22d3bf">1/(2R)</code>, eine Ebene 0. Ein Sattelpunkt (k1 = -k2) ergibt ebenfalls 0, aber <code style="color:#22d3bf">gaussian_curvature</code> ist dort negativ, sodass sich beide unterscheiden lassen.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> muss (N,3) mit endlichen, von null verschiedenen Zeilen sein (<code style="color:#22d3bf">ValueError</code>). Deterministisch.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -5,13 +5,12 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SH 기술자끼리의 코사인 유사도(회전 불변 형상 대조). 1 에 가까울수록 같은 형상. voxel × SH 열.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">sh_descriptor(a, L, nradii)</code> と <code style="color:#22d3bf">sh_descriptor(b, L, nradii)</code> を平坦化して L2 正規化し、内積を float で返す。帯域エネルギーは非負なので値は <b>[0, 1]</b>(負にならない)。どちらかの記述子が全 0(空 volume)なら 0。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は立方体 volume(<code style="color:#22d3bf">sh_descriptor</code> の前提)。形が違ってもよいが、shell 半径が</p>
-<p>各 N で決まるので <b>スケールが違う物体は別物</b>として低く出る(スケール不変ではない)。中心ずれにも弱い(重心で中心合わせしてから)。</p>
-<p style="margin:2px 0 2px 12px">• 回転には不変(帯域エネルギー)。ただし鏡像も同じ値になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ntheta</code>/<code style="color:#22d3bf">nphi</code> は既定(32×64)固定。同じ設定同士の比較にだけ意味がある。</p>
-<p style="margin:2px 0 2px 12px">• 位置は返さない。「どこにあるか」は <code style="color:#22d3bf">match_shape_3d</code> 等、「同じ形か」は本 op。</p>
+<p><code style="color:#22d3bf">sh_descriptor(a, L, nradii)</code>와 <code style="color:#22d3bf">sh_descriptor(b, L, nradii)</code>를 평탄화하여 L2 정규화하고, 내적을 float로 반환한다. 대역 에너지는 음이 아니므로 값은 <b>[0, 1]</b>(음이 되지 않음). 어느 한쪽기술자가 전부 0(빈 volume)이면 0.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 정육면체 volume(<code style="color:#22d3bf">sh_descriptor</code>의 전제). 형상이 달라도 되지만, shell 반경이</p>
+<p>각 N으로 정해지므로 <b>스케일이 다른 물체는 다른 것</b>으로 낮게 나온다(스케일 불변이 아님). 중심 어긋남에도 약하다(무게중심으로 중심 맞춤한 뒤에).</p>
+<p style="margin:2px 0 2px 12px">• 회전에는 불변(대역 에너지). 단 거울상도 같은 값이 된다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ntheta</code>/<code style="color:#22d3bf">nphi</code>는 기본값(32×64) 고정. 같은 설정끼리의 비교에만 의미가 있다.</p>
+<p style="margin:2px 0 2px 12px">• 위치는 반환하지 않는다. &quot;어디에 있는가&quot;는 <code style="color:#22d3bf">match_shape_3d</code> 등, &quot;같은 형상인가&quot;는 본 op.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

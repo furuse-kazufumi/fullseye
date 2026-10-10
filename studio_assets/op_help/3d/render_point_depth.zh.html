@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_point_depth(points, K, size, R=None, t=None)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.render_point_depth(points, K, size, R=None, t=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;render_point_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群 → 深度图像(z-buffer,每像素取最近点的深度)。用于合成观测/外观检测样本。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">project_points(points, K, R, t)</code> で <code style="color:#22d3bf">(u, v, z)</code> を取り、<code style="color:#22d3bf">round</code> した画素 <code style="color:#22d3bf">(row=v, col=u)</code> が <code style="color:#22d3bf">size=(H, W)</code> 内かつ <code style="color:#22d3bf">z &gt; 0</code> の点だけを、遠い順に書いて近い点で上書きする(同一画素は最小 z が残る)。点が無い画素は <b>0</b>(<code style="color:#22d3bf">tsdf_from_depth</code> / <code style="color:#22d3bf">depth_to_points</code> が無効値として扱う規約)。返り値 <code style="color:#22d3bf">(H, W)</code> float64、単位は点の座標の単位。</p>
-<p style="margin:2px 0 2px 12px">• 1 点 = 1 画素なので疎な点群は穴だらけになる(<code style="color:#22d3bf">mesh_to_points</code> で密にしてから)。splat</p>
-<p>半径は無い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> は numpy (3,3)、<code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> は省略可。</p>
-<p>後段: <code style="color:#22d3bf">depth_to_points</code> で戻す、<code style="color:#22d3bf">normals_from_depth</code> で法線、<code style="color:#22d3bf">tsdf_from_depth</code>。</p>
+<p>用 <code style="color:#22d3bf">project_points(points, K, R, t)</code> 取得 <code style="color:#22d3bf">(u, v, z)</code>,仅对 <code style="color:#22d3bf">round</code> 后的像素 <code style="color:#22d3bf">(row=v, col=u)</code> 位于 <code style="color:#22d3bf">size=(H, W)</code> 内且 <code style="color:#22d3bf">z &gt; 0</code> 的点,按由远到近的顺序写入,以近的点覆盖(同一像素保留最小 z)。没有点的像素为 <b>0</b>(<code style="color:#22d3bf">tsdf_from_depth</code> / <code style="color:#22d3bf">depth_to_points</code> 视为无效值的约定)。返回值 <code style="color:#22d3bf">(H, W)</code> float64,单位为点坐标的单位。</p>
+<p style="margin:2px 0 2px 12px">• 1 点 = 1 像素,因此稀疏的点云会满是空洞(先用 <code style="color:#22d3bf">mesh_to_points</code> 加密)。没有 splat</p>
+<p>半径。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> 为 numpy (3,3),<code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> 可省略。</p>
+<p>后续: 用 <code style="color:#22d3bf">depth_to_points</code> 还原,用 <code style="color:#22d3bf">normals_from_depth</code> 求法线,<code style="color:#22d3bf">tsdf_from_depth</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

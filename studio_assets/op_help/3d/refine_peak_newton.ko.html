@@ -6,23 +6,22 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스코어/상관 volume 의 정수 피크를 3D Newton 으로 서브복셀 정련(반복 최적화).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>粗いマッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)が返す整数ピーク idx を、局所の 2 次モデル f(x)≈f0+gᵀΔ+½ΔᵀHΔ の停留点 Δ=-H⁻¹g へ反復更新して連続座標へ収束させる。軸別の放物線サブピクセルと違い <b>全 3x3 Hessian(交差曲率 fzy,fzx,fyx を含む)</b> を使うため、回転した(相互曲率のある)異方性ピークでも座標軸間の結合バイアスを除去できる。</p>
-<p>各反復: 現在位置まわりの 27 近傍を trilinear で取得 → 中心差分で勾配 g と 6 成分 Hessian H を組み、Δ=solve(H,-g)。各成分を ±1 voxel にクリップ(信頼領域)して位置を更新、|Δ|&lt;tol で収束。ガウス山では中心差分勾配の零点が真のピークに一致するため停留点へ収束する(単一ステップでは 2 次モデル誤差が残り ±0.05voxel を割れないが、反復で ~0.02voxel まで収束)。H が負定値でない(=極大でない)real な相関面では上昇方向へ退避(勾配上昇ステップ)して発散を防ぐ。</p>
+<p>대략적 매치(정수 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)가 반환하는 정수 피크 idx를, 국소 2차 모델 f(x)≈f0+gᵀΔ+½ΔᵀHΔ의 정류점 Δ=-H⁻¹g로 반복 갱신하여 연속 좌표로 수렴시킨다. 축별 포물선 서브픽셀과 달리 <b>전체 3x3 Hessian(교차 곡률 fzy,fzx,fyx 포함)</b>을 쓰므로, 회전된(상호 곡률이 있는) 이방성 피크에서도 좌표축 간의 결합 바이어스를 제거할 수 있다.</p>
+<p>각 반복: 현재 위치 주변의 27 근방을 trilinear로 취득 → 중심 차분으로 기울기 g와 6성분 Hessian H를구성, Δ=solve(H,-g). 각 성분을 ±1 voxel로 클립(신뢰 영역)하여 위치를 갱신, |Δ|&lt;tol로 수렴. 가우스 산에서는 중심 차분 기울기의 영점이 참 피크와 일치하므로 정류점으로 수렴한다(단일 스텝으로는 2차 모델 오차가 남아 ±0.05voxel을 밑돌지 못하지만, 반복으로 ~0.02voxel까지 수렴). H가 음의 정부호가 아닌(=극대가 아닌) real한 상관면에서는 상승 방향으로 물러나(기울기 상승 스텝) 발산을 막는다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>score : array_like または torch.Tensor</p>
-<p>3D スコア/相関 volume (D,H,W)。値が大きいほどピーク。</p>
+<p>score : array_like 또는 torch.Tensor</p>
+<p>3D 점수/상관 volume (D,H,W). 값이 클수록 피크.</p>
 <p>idx : tuple[int,int,int]</p>
-<p>整数ピーク座標 (z,y,x)(通常 argmax の unravel 結果)。</p>
+<p>정수 피크 좌표 (z,y,x)(보통 argmax의 unravel 결과).</p>
 <p>device : str</p>
-<p>&quot;cpu&quot; / &quot;cuda&quot;。torch 演算の device。</p>
+<p>&quot;cpu&quot; / &quot;cuda&quot;. torch 연산의 device.</p>
 <p>max_iter : int</p>
-<p>最大反復回数(既定 12)。</p>
+<p>최대 반복 횟수(기본값 12).</p>
 <p>tol : float</p>
-<p>収束判定(更新量 L2 ノルム、既定 1e-4)。</p>
+<p>수렴 판정(갱신량 L2 노름, 기본값 1e-4).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p>[score_peak, z, y, x] (精緻化後)。score_peak は精緻化位置での trilinear 補間スコア。</p>
+<p>[score_peak, z, y, x] (정밀화 후). score_peak은 정밀화 위치에서의 trilinear 보간 점수.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

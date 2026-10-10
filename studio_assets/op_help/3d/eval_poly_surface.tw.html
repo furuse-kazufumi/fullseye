@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.eval_poly_surface(model, x, y)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.eval_poly_surface(model, x, y)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;eval_poly_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 (x,y) 處評估 model → z(按 x 的形狀回傳)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>*model* は <code style="color:#22d3bf">fit_poly_surface</code> の返り(dict)。<b>fail-closed</b>: B スプライン曲面/曲線の tck(FITPACK の list)を渡すと、以前は <code style="color:#22d3bf">model[&quot;degree&quot;]</code> が <code style="color:#22d3bf">TypeError: list indices must be integers...</code> で落ちていた(2026-09-01 実測 7 回)。多項式モデルと B スプラインモデルは中身が違うので、ここで明示的に拒否する(ops3d 台帳側でも poly_surface / bspline_surface と型を分けてある)。</p>
-<p>Raises ValueError: model が多項式モデル dict でない / 必須キー欠落。</p>
+<p>*model* 是 <code style="color:#22d3bf">fit_poly_surface</code> 的回傳值(dict)。<b>fail-closed</b>(失敗即拒絕): 以前若傳入 B 樣條曲面/曲線的 tck(FITPACK 的 list),會在 <code style="color:#22d3bf">model[&quot;degree&quot;]</code> 處以 <code style="color:#22d3bf">TypeError: list indices must be integers...</code> 當掉(2026-09-01 實測 7 次)。多項式模型與 B 樣條模型內容不同,因此在這裡明確拒絕(ops3d 台帳一側也將 poly_surface / bspline_surface 分為不同型別)。</p>
+<p>Raises ValueError: model 不是多項式模型 dict / 缺少必要鍵。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

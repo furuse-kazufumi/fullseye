@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.query_distance(esdf_grid, bounds, res, query_points, mode=&#x27;trilinear&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import occupancy; occupancy.query_distance(esdf_grid, bounds, res, query_points, mode=&#x27;trilinear&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;query_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>किसी भी world coordinates (M,3) पर ESDF values (M,) लौटाता है (<code style="color:#22d3bf">mode</code>=&#x27;trilinear&#x27; interpolation or &#x27;nearest&#x27;)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">bounds</code>/<code style="color:#22d3bf">res</code> は ESDF を作った格子と同じもの(<code style="color:#22d3bf">res</code> はスカラ = 立方、または長さ 3 の軸ごとのボクセル数)。world→連続ボクセル座標は <code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code>(voxel i の中心が c=i)。三線形補間はボクセル中心 8 近傍を重み付け(格子外はエッジにクランプ=最近端の値で外挿)。planner がノード/経路上の任意点で離隔を問い合わせる用途。返り値は ESDF と同じ world 単位。</p>
-<p>Raises ValueError for res&lt;=0, degenerate bounds, non-(M,3) query, or unknown mode.</p>
+<p><code style="color:#22d3bf">bounds</code>/<code style="color:#22d3bf">res</code> वही हैं जो ESDF बनाने वाले grid के थे (<code style="color:#22d3bf">res</code> scalar = cube, या लंबाई 3 वाली हर axis की voxels की संख्या)। world→continuous voxel coordinates <code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code> है (voxel i का centre c=i पर)। Trilinear interpolation voxel centres के 8 पड़ोसियों को weight देता है (grid के बाहर edge पर clamp = सबसे नज़दीकी किनारे के मान से extrapolate)। Planner के लिए node/path पर किसी भी point पर clearance पूछने का उपयोग। Return value ESDF जैसी ही world इकाई में है।</p>
+<p>res&lt;=0, degenerate bounds, (M,3) न होने वाली query, या अज्ञात mode पर ValueError उठाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

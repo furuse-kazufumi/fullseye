@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_line_plane(d, n)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.angle_line_plane(d, n)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;angle_line_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The angle between a line (direction d) and a plane (normal n), in degrees.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">90 − arccos(|d̂·n̂|)</code> を度で返す(float)。値は <b>[0, 90]</b>、0 = 直線が平面に平行、90 = 垂直。<code style="color:#22d3bf">d</code>, <code style="color:#22d3bf">n</code> は数値の 2 または 3 ベクトル(長さは問わない)、次元の混在は ValueError。零ベクトルは 0 が返る。</p>
-<p>用途: 穴軸と基準面の直角度、<code style="color:#22d3bf">intersect_line_plane</code> の前の平行判定(0 に近いと交点が遠くへ飛ぶ)。</p>
+<p>Returns <code style="color:#22d3bf">90 − arccos(|d̂·n̂|)</code> in degrees (float). The value is in <b>[0, 90]</b>; 0 = the line is parallel to the plane, 90 = perpendicular. <code style="color:#22d3bf">d</code>, <code style="color:#22d3bf">n</code> are numeric 2- or 3-vectors (length does not matter); mixed dimensions raise ValueError. A zero vector returns 0.</p>
+<p>Uses: perpendicularity of a hole axis to a datum plane, the parallel check before <code style="color:#22d3bf">intersect_line_plane</code> (near 0 the intersection flies far away).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

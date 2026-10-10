@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mesh_props; mesh_props.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;face_areas&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>三角形網格<b>每個面的面積</b> → <code style="color:#22d3bf">(M,)</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>面積 = <code style="color:#22d3bf">0.5·|cross(v1−v0, v2−v0)|</code> を面ごとに返す(<code style="color:#22d3bf">mesh_area</code> はこの総和)。面積は<b>重み</b>として使うためにある —— 「下を向いた面の面積」「公差外の面積」「曲率の面積加重平均」はすべて面ごとの面積が要る量で、総和からは作れない。</p>
+<p>逐面回傳面積 = <code style="color:#22d3bf">0.5·|cross(v1−v0, v2−v0)|</code>（<code style="color:#22d3bf">mesh_area</code> 是其總和）。面積是為了作為<b>權重</b>使用而存在的 —— 「朝下的面的面積」、「公差外的面積」、「曲率的面積加權平均」都是需要逐面面積的量，無法從總和得到。</p>
 <p>Args:</p>
-<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
+<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> 的元組。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(M,)</code> の float64(非負)。順序は <code style="color:#22d3bf">faces</code> の順で、<code style="color:#22d3bf">face_normals</code> と同じ</p>
-<p>並びなので <code style="color:#22d3bf">areas[normals[:, 2] &lt; 0].sum()</code> のように直接組み合わせられる。</p>
+<p><code style="color:#22d3bf">(M,)</code> 的 float64（非負）。順序為 <code style="color:#22d3bf">faces</code> 的順序，與 <code style="color:#22d3bf">face_normals</code> 相同的</p>
+<p>排列，因此可以像 <code style="color:#22d3bf">areas[normals[:, 2] &lt; 0].sum()</code> 這樣直接組合。</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
-<p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p>注意: <code style="color:#22d3bf">mesh_area</code> と同じく、退化三角形(面積 0)は<b>拒否せず 0 を返す</b> (<code style="color:#22d3bf">face_normals</code> は法線が定義できないので拒否する —— 同じメッシュでもこちらは通る)。重複面・表裏 2 枚張りはそれぞれ 1 面として数える。単位は座標の単位の 2 乗。</p>
+<p>ValueError: <code style="color:#22d3bf">mesh</code> 不是 <code style="color:#22d3bf">(vertices, faces)</code> 這 2 個元素、形狀不正確、</p>
+<p>座標非有限、index 非整數、越界、為空時。</p>
+<p>注意： 與 <code style="color:#22d3bf">mesh_area</code> 相同，退化三角形（面積 0）<b>不拒絕而回傳 0</b> （<code style="color:#22d3bf">face_normals</code> 因法線無法定義而拒絕 —— 同一網格在這裡可以通過）。重複面、正反 2 片貼合的面各以 1 個面計數。單位是座標單位的 2 次方。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

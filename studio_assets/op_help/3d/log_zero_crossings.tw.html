@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.log_zero_crossings(vol, sigma: &#x27;float&#x27; = 1.5, rel_thresh: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import edges3d; edges3d.log_zero_crossings(vol, sigma: &#x27;float&#x27; = 1.5, rel_thresh: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;log_zero_crossings&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Laplacian-of-Gaussian 的零交叉邊緣。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : (D,H,W) array</p>
-<p>グレー voxel。</p>
+<p>灰階 voxel。</p>
 <p>sigma : float</p>
-<p>LoG の標準偏差(&gt; 0)。</p>
+<p>LoG 的標準差(&gt; 0)。</p>
 <p>rel_thresh : float</p>
-<p>平坦部の数値ノイズによる偽交差を抑える相対閾値。交差ペアの LoG 差 |a-b| が</p>
-<p>rel_thresh * max|L| を超える場合のみ採用する。</p>
+<p>抑制平坦區數值雜訊造成的偽交叉的相對閾值。僅當交叉對的 LoG 差 |a-b|</p>
+<p>超過 rel_thresh * max|L| 時才採用。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>edge_mask : (D,H,W) bool</p>
-<p>符号が変化する隣接ペアのうち |LoG| が小さい側(ゼロにより近い側)を立てた mask。</p>
+<p>在符號變化的相鄰對中,將 |LoG| 較小的一側(較接近零的一側)設位的 mask。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>各軸方向に二種類のゼロ交差を検出する:</p>
-<p style="margin:2px 0 2px 12px">(1) 格子間交差 — 隣接ペア (a,b) の符号積 a*b &lt; 0(両側とも非ゼロで符号反転)。厚みを抑えるためペアのうち |LoG| が小さい側 1 voxel に割り当てる。</p>
-<p style="margin:2px 0 2px 12px">(2) 格子整列交差 — 中央 voxel が厳密ゼロ(L==0)で両隣が異符号(符号がその voxel でゼロを通過)する場合。SDF 風の格子に整列した面で LoG がちょうど格子点上で 0 になる真のエッジは a*b が常に 0 となり (1) では取りこぼすため、当該 voxel を交差として立てる。定数ゼロ領域は両隣も 0 で Lm*Lp==0 となり除外される(誤検出しない)。</p>
-<p>いずれも平坦部の数値ノイズは相対閾値(rel_thresh * max|L|)で抑制する。</p>
+<p>在各軸方向上偵測兩種過零點:</p>
+<p style="margin:2px 0 2px 12px">(1) 格間交叉 —— 相鄰對 (a,b) 的符號積 a*b &lt; 0(兩側皆非零且符號反轉)。為了抑制厚度,分配給對中 |LoG| 較小一側的 1 個 voxel。</p>
+<p style="margin:2px 0 2px 12px">(2) 格點對齊交叉 —— 中央 voxel 嚴格為零(L==0)且兩鄰異號(符號在該 voxel 處通過零)的情況。在 SDF 風格的格點對齊面上,LoG 恰好在格點上為 0 的真實邊緣,a*b 總是 0,(1) 會漏偵測,因此把該 voxel 作為交叉設位。常數零區域兩鄰也為 0,Lm*Lp==0,因而被排除(不會誤偵測)。</p>
+<p>兩種情況下,平坦區的數值雜訊都由相對閾值(rel_thresh * max|L|)抑制。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

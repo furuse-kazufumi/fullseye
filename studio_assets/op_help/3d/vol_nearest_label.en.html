@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_nearest_label(vol_labels, spacing=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import volops; volops.vol_nearest_label(vol_labels, spacing=None)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vol_nearest_label&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Label volume <code style="color:#22d3bf">(D, H, W)</code> in which each zero voxel is given <b>the nearest non-zero label</b> (Voronoi partition of the labels, <code style="color:#22d3bf">voxel</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>入力は整数ラベル(<code style="color:#22d3bf">vol_label</code> / <code style="color:#22d3bf">vol_rle_components</code> の出力、0 = 未割当)。各 0 voxel は物理距離(<code style="color:#22d3bf">spacing</code>)で最も近い非零 voxel のラベルを受け取り、非零 voxel はそのまま。EM の分割片や骨格の枝ラベルから「その枝が支配する体積」を切り出す(枝ごとの体積・肉厚)のに使う。非整数のラベルは拒否(丸めて別のラベルにしない)、非零が 1 つも無ければ ValueError。返りは int64。</p>
+<p>The input is integer labels (output of <code style="color:#22d3bf">vol_label</code> / <code style="color:#22d3bf">vol_rle_components</code>, 0 = unassigned). Each 0 voxel receives, by physical distance (<code style="color:#22d3bf">spacing</code>), the label of the nearest non-zero voxel; non-zero voxels stay as they are. Used to cut out &quot;the volume that branch governs&quot; from EM segmentation fragments or skeleton branch labels (per-branch volume and wall thickness). Non-integer labels are rejected (not rounded into another label); if not even 1 non-zero voxel exists, ValueError. Returns int64.</p>
 <p>&gt;&gt;&gt; L = np.zeros((1, 1, 7)); L[0, 0, 0] = 1; L[0, 0, 6] = 2</p>
 <p>&gt;&gt;&gt; vol_nearest_label(L)[0, 0].tolist()</p>
 <p>[1, 1, 1, 1, 2, 2, 2]</p>

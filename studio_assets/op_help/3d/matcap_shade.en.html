@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import render_shade; render_shade.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;matcap_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>MatCap: map view-space normals onto a lit-sphere texture to transfer a material&#x27;s look. → <code style="color:#22d3bf">(H, W[, C])</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>視空間の単位法線 <code style="color:#22d3bf">(nx, ny)</code>(<code style="color:#22d3bf">[-1,1]</code>)をテクスチャ座標に写像し(<code style="color:#22d3bf">u = (nx+1)/2</code>, <code style="color:#22d3bf">v = (1−ny)/2</code>、行方向で y を反転)、<code style="color:#22d3bf">matcap</code> 画像を <b>双線形補間</b> で引く。ライト計算をせず、球にライティングして撮った 1 枚の素材見えを任意形状へそのまま貼れる(金属・粘土・トゥーンなど)。</p>
-<p><code style="color:#22d3bf">matcap</code> は正方に近い lit-sphere テクスチャ:</p>
-<p style="margin:2px 0 2px 12px">• グレースケール <code style="color:#22d3bf">(h, w)</code>      → 出力 <code style="color:#22d3bf">(H, W)</code></p>
-<p style="margin:2px 0 2px 12px">• カラー <code style="color:#22d3bf">(h, w, C)</code>(C 任意)  → 出力 <code style="color:#22d3bf">(H, W, C)</code></p>
-<p>背景(長さ 0 の法線)は 0。テクスチャ座標は端でクランプ(球外縁の法線 <code style="color:#22d3bf">|(nx,ny)|→1</code> はテクスチャ縁を指す)。</p>
-<p>fail-closed: 形状不正・非有限・小さすぎる(<code style="color:#22d3bf">h,w &lt; 2</code>)テクスチャは <code style="color:#22d3bf">ValueError</code>。</p>
+<p>Maps the view-space unit normal <code style="color:#22d3bf">(nx, ny)</code> (<code style="color:#22d3bf">[-1,1]</code>) to texture coordinates (<code style="color:#22d3bf">u = (nx+1)/2</code>, <code style="color:#22d3bf">v = (1−ny)/2</code>, flipping y along the row direction) and samples the <code style="color:#22d3bf">matcap</code> image with <b>bilinear interpolation</b>. Without any lighting computation, the material look of 1 shot of a lit sphere can be pasted directly onto any shape (metal, clay, toon, etc.).</p>
+<p><code style="color:#22d3bf">matcap</code> is a near-square lit-sphere texture:</p>
+<p style="margin:2px 0 2px 12px">• greyscale <code style="color:#22d3bf">(h, w)</code>           → output <code style="color:#22d3bf">(H, W)</code></p>
+<p style="margin:2px 0 2px 12px">• colour <code style="color:#22d3bf">(h, w, C)</code> (any C)   → output <code style="color:#22d3bf">(H, W, C)</code></p>
+<p>The background (normals of length 0) is 0. Texture coordinates are clamped at the edges (normals at the sphere rim <code style="color:#22d3bf">|(nx,ny)|→1</code> point to the texture edge).</p>
+<p>fail-closed: invalid shapes, non-finite values and textures that are too small (<code style="color:#22d3bf">h,w &lt; 2</code>) raise <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

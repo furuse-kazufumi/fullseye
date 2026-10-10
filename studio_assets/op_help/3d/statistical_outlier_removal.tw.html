@@ -6,22 +6,21 @@
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(kept, mask)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>去除 k 近鄰平均距離在全域上離群的點(統計離群點去除)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の <code style="color:#22d3bf">mean + std_ratio*std</code> を超える点を飛び点とみなして落とす。まばらな飛び点の掃除に有効で、密な面上の点は残る。</p>
+<p>對每個點量測「到最近的 k 個點(不含自身)的平均距離」,把超過全體點分布的 <code style="color:#22d3bf">mean + std_ratio*std</code> 的點視為飛點並剔除。對清理稀疏的飛點有效,緻密面上的點會保留。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>輸入點雲。</p>
 <p>k : int</p>
-<p>近傍数(既定 16)。点数が少なければ内部で <code style="color:#22d3bf">n-1</code> に丸める。</p>
+<p>鄰域點數(預設 16)。點數少時內部截為 <code style="color:#22d3bf">n-1</code>。</p>
 <p>std_ratio : float</p>
-<p>しきい値の緩さ。大きいほど残りやすい(除去が緩い)。</p>
+<p>閾值的寬鬆程度。越大越容易保留(剔除越寬鬆)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
-<p>生き残った点(元の順序を保持)。</p>
+<p>保留下來的點(保持原順序)。</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
-<p>各入力点を残すか(True=残す)。<code style="color:#22d3bf">points[keep_mask]</code> が <code style="color:#22d3bf">filtered</code> に等しい。</p>
+<p>是否保留各輸入點(True=保留)。<code style="color:#22d3bf">points[keep_mask]</code> 等於 <code style="color:#22d3bf">filtered</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>点数 &lt; 3 では統計が立たないため、全点を残す(graceful)。</p>
+<p>點數 &lt; 3 時無法統計,因此保留全部點(graceful)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

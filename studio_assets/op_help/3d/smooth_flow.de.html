@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;smooth_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert einen regularisierten Fluss (N, 3): den Nächste-Nachbar-Fluss, lokal durch Nachbarschaftsmittelung geglättet.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">nearest_neighbor_flow</code> の生フロー(最近傍対応ゆえノイズが乗る)を、<code style="color:#22d3bf">pts0</code> 空間の k 近傍トポロジ(自身を含む、1 度だけ構築)で反復平均する。ゼロ平均ノイズを抑えつつ滑らかな変位場は概ね保存する(Jacobi 反復 = フロー場のラプラシアン平滑化)。線形場は対称近傍で不偏、曲率のある場は僅かに縮む(honest な平滑化バイアス)。</p>
+<p>Mittelt den Rohfluss von <code style="color:#22d3bf">nearest_neighbor_flow</code> (verrauscht, da aus der Korrespondenz über den nächsten Nachbarn) iterativ über die k-Nächste-Nachbarn-Topologie im Raum von <code style="color:#22d3bf">pts0</code> (einschließlich des Punktes selbst, nur 1 Mal aufgebaut). Unterdrückt mittelwertfreies Rauschen und erhält glatte Verschiebungsfelder weitgehend (Jacobi-Iteration = Laplace-Glättung des Flussfeldes). Lineare Felder sind bei symmetrischer Nachbarschaft unverzerrt, Felder mit Krümmung schrumpfen leicht (ein ehrlicher Glättungs-Bias).</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群。</p>
-<p>pts1: (M, 3) 時刻 1 の点群。</p>
-<p>k: 平均に使う近傍数(自身含む)。</p>
-<p>n_iter: 平滑化反復回数。</p>
+<p>pts0: (N, 3)-Punktwolke zum Zeitpunkt 0.</p>
+<p>pts1: (M, 3)-Punktwolke zum Zeitpunkt 1.</p>
+<p>k: Anzahl der zur Mittelung verwendeten Nachbarn (einschließlich des Punktes selbst).</p>
+<p>n_iter: Anzahl der Glättungsiterationen.</p>
 <p>Returns:</p>
-<p>(N, 3) 平滑化変位ベクトル場。</p>
+<p>(N, 3) geglättetes Verschiebungsvektorfeld.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正、または pts0 非空なのに pts1 が空。</p>
+<p>ValueError: ungültige Form, oder pts1 ist leer, während pts0 nicht leer ist.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

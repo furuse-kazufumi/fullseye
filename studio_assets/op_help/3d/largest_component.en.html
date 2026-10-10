@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largest_component(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import regionprops3d; regionprops3d.largest_component(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;largest_component&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Return the bool mask of the largest (most voxels) connected component.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>前景が無い場合は全 False マスク(vol と同形状)。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 内部で <code style="color:#22d3bf">label_components</code> を呼び、<code style="color:#22d3bf">bincount</code> でラベルごとのボクセル数を数えて最大を選ぶ。<b>同数のときは番号の小さいラベル</b>(scipy の走査順で先)が勝つ。</p>
-<p style="margin:2px 0 2px 12px">• 入力は 0 以外を前景として <code style="color:#22d3bf">bool</code> 化する(NaN も前景)。軸順は (z, y, x)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は入力と同形状の bool。前景が無ければ全 False(例外にはしない)。</p>
-<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 3 次元でない入力、<code style="color:#22d3bf">connectivity</code> が 6/18/26 以外。</p>
-<p style="margin:2px 0 2px 12px">• 典型: 閾値処理で出た二値ボリュームからノイズ塊を捨てて主対象だけ残す。複数を残したいなら <code style="color:#22d3bf">filter_by_volume</code>、特徴で選ぶなら <code style="color:#22d3bf">vol_select_labels</code>。</p>
+<p>If there is no foreground, an all-False mask (same shape as vol).</p>
+<p>Notes:</p>
+<p style="margin:2px 0 2px 12px">• Calls <code style="color:#22d3bf">label_components</code> internally, counts voxels per label with <code style="color:#22d3bf">bincount</code> and picks the largest. <b>On a tie the label with the smaller number</b> (earlier in scipy&#x27;s scan order) wins.</p>
+<p style="margin:2px 0 2px 12px">• The input is converted to <code style="color:#22d3bf">bool</code> with everything other than 0 as foreground (NaN is foreground too). The axis order is (z, y, x).</p>
+<p style="margin:2px 0 2px 12px">• The return value is bool with the same shape as the input. With no foreground it is all False (no exception).</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: input that is not 3-dimensional, <code style="color:#22d3bf">connectivity</code> other than 6/18/26.</p>
+<p style="margin:2px 0 2px 12px">• Typical: from a binary volume produced by thresholding, discard noise blobs and keep only the main object. To keep several, use <code style="color:#22d3bf">filter_by_volume</code>; to select by features, <code style="color:#22d3bf">vol_select_labels</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty and calibration — what it takes to claim you are measuring</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

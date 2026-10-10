@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_rigid(pts_from, pts_to)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import motion_seg3d; motion_seg3d.fit_rigid(pts_from, pts_to)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fit_rigid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>corresponding points से closed-form Kabsch द्वारा rigid transform (R, t) का अनुमान लगाता है (pts_from[i] -&gt; pts_to[i])।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>行 i どうしが対応する (N, 3) 2 点集合から、<code style="color:#22d3bf">|| (R·p + t) - q ||</code> を最小化する proper rotation(det = +1, 反射なし)と並進を返す。<code style="color:#22d3bf">registration.kabsch</code> の薄いラッパで、入力検証を付す(N &gt;= 3 で回転が一意)。</p>
+<p>जिनकी row i आपस में संगत हैं ऐसे 2 (N, 3) point sets से, <code style="color:#22d3bf">|| (R·p + t) - q ||</code> को न्यूनतम करने वाला proper rotation (det = +1, reflection नहीं) और translation लौटाता है। <code style="color:#22d3bf">registration.kabsch</code> का पतला wrapper है, जिसमें input validation जोड़ा गया है (N &gt;= 3 पर rotation अद्वितीय है)।</p>
 <p>Args:</p>
-<p>pts_from: (N, 3) 変換元(対応順)。</p>
-<p>pts_to: (N, 3) 変換先(対応順)。</p>
+<p>pts_from: (N, 3) source (correspondence क्रम में)।</p>
+<p>pts_to: (N, 3) destination (correspondence क्रम में)।</p>
 <p>Returns:</p>
-<p>(R, t): (3, 3) 回転行列, (3,) 並進ベクトル。</p>
+<p>(R, t): (3, 3) rotation matrix, (3,) translation vector।</p>
 <p>Raises:</p>
-<p>ValueError: 形状不一致 / (N, 3) でない / N &lt; 3 / 非有限。</p>
+<p>ValueError: shape मेल नहीं / (N, 3) नहीं / N &lt; 3 / non-finite।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

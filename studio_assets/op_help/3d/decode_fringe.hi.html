@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fringe; fringe.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;decode_fringe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>phase-shift image series को एक साथ decode करता है: wrapped → unwrap → (reference घटाकर) height।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>phase_shift_images: N-step 位相シフト縞画像列((N,H,W) または長さ N のシーケンス)。</p>
-<p>ref_phase:          参照平面(高さ 0)のアンラップ済み位相。None なら高さ = k·(unwrapped)。</p>
-<p>k:                  位相→高さ較正定数。</p>
-<p>mask:               省略可。True=有効画素。無効画素は NaN。</p>
-<p>min_modulation:     省略可。指定すると modulation &lt; この値の画素を低信頼として無効化。</p>
-<p>返り値: 高さマップ(2D float)。ref_phase=None のときは k を掛けた連続位相を返す。無効画素は NaN。</p>
-<p>手順(実装どおり): <code style="color:#22d3bf">wrapped_phase</code> → 信頼マスクを組む(<code style="color:#22d3bf">min_modulation</code> があれば <code style="color:#22d3bf">modulation(stack) &gt;= min_modulation</code>、<code style="color:#22d3bf">mask</code> があればそれと AND)→ <code style="color:#22d3bf">unwrap_phase_2d(wrapped, mask=信頼マスク)</code> → <code style="color:#22d3bf">ref_phase</code> が <code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">k * unwrapped</code>、あれば <code style="color:#22d3bf">phase_to_height</code>(<code style="color:#22d3bf">k * (unwrapped - ref_phase)</code>)。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phase_shift_images</code>: <code style="color:#22d3bf">(N, H, W)</code>、<code style="color:#22d3bf">N &gt;= 3</code>、等間隔位相シフト。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref_phase</code>: スカラまたは <code style="color:#22d3bf">(H, W)</code>。参照面を<b>同じ手順で展開した</b>位相を渡す(<code style="color:#22d3bf">unwrap_phase_2d</code> の大域オフセットが両者で同じ扱いになるよう、参照も本 op で <code style="color:#22d3bf">ref_phase=None</code> として復号した結果を使うのが安全)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: 位相→高さの較正定数(単位/rad)。<code style="color:#22d3bf">synthesize_fringes</code> の <code style="color:#22d3bf">phase_gain</code> の逆数に対応。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code>: <code style="color:#22d3bf">(H, W)</code> の bool、True = 有効。<code style="color:#22d3bf">min_modulation</code>: 変調度の下限(<code style="color:#22d3bf">[0, 1]</code> 程度。影・飽和の画素を落とす)。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): 画像列が 3-D でない・<code style="color:#22d3bf">N &lt; 3</code>・非有限 / <code style="color:#22d3bf">mask</code> の形が違う / <code style="color:#22d3bf">ref_phase</code> の形が違う / 有効画素がゼロ。scikit-image が無ければ <code style="color:#22d3bf">RuntimeError</code>。</p>
-<p>返り値: <code style="color:#22d3bf">(H, W)</code> float64。無効画素は NaN。単位は <code style="color:#22d3bf">k</code> の単位。</p>
-<p>注意: 空間アンラップに依存するので、段差・オクルージョンで島に分かれた場面では島ごとに <code style="color:#22d3bf">2πm k</code> の高さオフセットが残りうる。絶対高さが要る場面は <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code> → <code style="color:#22d3bf">triangulate_column</code> の経路。</p>
+<p>phase_shift_images: N-step phase-shifted fringe images की sequence ((N,H,W) या length N की sequence)।</p>
+<p>ref_phase:          reference plane (height 0) की unwrapped phase। None होने पर height = k·(unwrapped)।</p>
+<p>k:                  phase→height calibration constant।</p>
+<p>mask:               optional। True=valid pixel। invalid pixels NaN होते हैं।</p>
+<p>min_modulation:     optional। देने पर modulation &lt; इस मान वाले pixels को कम भरोसेमंद मानकर invalid किया जाता है।</p>
+<p>return value: height map (2D float)। ref_phase=None होने पर k से गुणा की गई continuous phase लौटाई जाती है। invalid pixels NaN होते हैं।</p>
+<p>प्रक्रिया (implementation के अनुसार): <code style="color:#22d3bf">wrapped_phase</code> → confidence mask बनाना (अगर <code style="color:#22d3bf">min_modulation</code> दिया हो तो <code style="color:#22d3bf">modulation(stack) &gt;= min_modulation</code>, अगर <code style="color:#22d3bf">mask</code> दिया हो तो उसके साथ AND) → <code style="color:#22d3bf">unwrap_phase_2d(wrapped, mask=confidence mask)</code> → <code style="color:#22d3bf">ref_phase</code> <code style="color:#22d3bf">None</code> हो तो <code style="color:#22d3bf">k * unwrapped</code>, वरना <code style="color:#22d3bf">phase_to_height</code> (<code style="color:#22d3bf">k * (unwrapped - ref_phase)</code>)।</p>
+<p>Arguments:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phase_shift_images</code>: <code style="color:#22d3bf">(N, H, W)</code>, <code style="color:#22d3bf">N &gt;= 3</code>, बराबर अंतराल वाले phase shifts।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref_phase</code>: scalar या <code style="color:#22d3bf">(H, W)</code>। reference surface की <b>उसी प्रक्रिया से unwrap की गई</b> phase दें (ताकि <code style="color:#22d3bf">unwrap_phase_2d</code> का global offset दोनों में एक जैसा लिया जाए, reference के लिए भी इसी op से <code style="color:#22d3bf">ref_phase=None</code> के साथ decode किया गया result इस्तेमाल करना सबसे सुरक्षित है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: phase→height calibration constant (unit/rad)। यह <code style="color:#22d3bf">synthesize_fringes</code> के <code style="color:#22d3bf">phase_gain</code> के व्युत्क्रम के बराबर है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code>: <code style="color:#22d3bf">(H, W)</code> का bool, True = valid। <code style="color:#22d3bf">min_modulation</code>: modulation depth की निचली सीमा (लगभग <code style="color:#22d3bf">[0, 1]</code>; shadow और saturation वाले pixels हटाता है)।</p>
+<p>validation (<code style="color:#22d3bf">ValueError</code>): image sequence 3-D न हो, <code style="color:#22d3bf">N &lt; 3</code>, non-finite / <code style="color:#22d3bf">mask</code> का shape अलग हो / <code style="color:#22d3bf">ref_phase</code> का shape अलग हो / valid pixels शून्य हों। scikit-image न हो तो <code style="color:#22d3bf">RuntimeError</code>।</p>
+<p>return value: <code style="color:#22d3bf">(H, W)</code> float64। invalid pixels NaN। unit <code style="color:#22d3bf">k</code> की unit है।</p>
+<p>सावधानी: यह spatial unwrapping पर निर्भर है, इसलिए steps या occlusion से islands में बँटे दृश्यों में हर island में <code style="color:#22d3bf">2πm k</code> का height offset रह सकता है। absolute height चाहिए तो रास्ता है <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code> → <code style="color:#22d3bf">triangulate_column</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

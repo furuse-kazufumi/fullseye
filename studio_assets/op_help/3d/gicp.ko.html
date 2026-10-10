@@ -5,31 +5,30 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.gicp(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">pose</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.gicp.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">gicp.gicp</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Generalized-ICP(공분산 가중 마할라노비스 ICP)로 강체 변환 (R,t) 를 추정합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各反復で source→target の最近傍対応を張り、残差 <code style="color:#22d3bf">d_i = R·s_i + t - q_i</code> を重み <code style="color:#22d3bf">W_i = (C_target[q_i] + R·C_source[s_i]·Rᵀ)⁻¹</code> で測るマハラノビスコスト <code style="color:#22d3bf">Σ d_iᵀ W_i d_i</code> を、小角線形化 <code style="color:#22d3bf">R ← (I+[ω]×)R</code> の Gauss-Newton で最小化する。各対応のヤコビアン <code style="color:#22d3bf">J_i = [-[R·s_i+t]× | I]</code>(3×6)から正規方程式 <code style="color:#22d3bf">(Σ J_iᵀ W_i J_i) x = -(Σ J_iᵀ W_i d_i)</code>(6×6)を解いて増分 <code style="color:#22d3bf">x=[ω|τ]</code> を得、Rodrigues で回転に戻して累積する。</p>
-<p>共分散は plane-to-plane(<code style="color:#22d3bf">estimate_covariances</code>)。point-to-plane が target の法線方向へ残差を射影する(rank-1)のに対し、GICP は source・target 双方の full 3×3 共分散を合成した重みを使うため、平面的・ノイズを含む点群で頑健。</p>
-<p>ICP はローカル最適化なので <b>近い初期化を前提</b>(粗マッチや <code style="color:#22d3bf">init</code> を渡す)。</p>
-<p>引数:</p>
-<p>source (N,3): 動かす側の点群。</p>
-<p>target (M,3): 参照側(固定)の点群。</p>
-<p>max_iter: 最大反復数。</p>
-<p>k: 共分散推定の近傍数。</p>
-<p>epsilon: plane-to-plane の法線方向小分散(0&lt;ε&lt;1)。</p>
-<p>tol: 収束閾値。増分並進 ‖τ‖ が <code style="color:#22d3bf">tol×(target のRMS半径)</code> 未満かつ</p>
-<p>増分回転 ‖ω‖(rad)が <code style="color:#22d3bf">tol</code> 未満で打ち切り(スケール相対)。</p>
-<p>init: (R0(3,3), t0(3,)) の初期姿勢タプル、または None(単位)。</p>
-<p>reproducible: True なら N 点の和 <code style="color:#22d3bf">Σ J_iᵀ W_i J_i</code>・<code style="color:#22d3bf">Σ J_iᵀ W_i d_i</code> を ozakimm(Ozaki スキーム)の縮約に、</p>
-<p>姿勢の適用を要素ごとの演算に、RMSE を math.fsum にする。source の点の順・BLAS のスレッド数に依らず</p>
-<p>R・t・rmse がビット単位で同じ(共分散の近傍に距離がちょうど同点の点があると近傍の選ばれ方が変わりうる)。</p>
-<p>既定 False は従来どおり。</p>
-<p>返り値:</p>
+<p>각 반복에서 source→target 의 최근접 대응을 맺고, 잔차 <code style="color:#22d3bf">d_i = R·s_i + t - q_i</code> 를가중치 <code style="color:#22d3bf">W_i = (C_target[q_i] + R·C_source[s_i]·Rᵀ)⁻¹</code> 로 측정하는 마할라노비스비용 <code style="color:#22d3bf">Σ d_iᵀ W_i d_i</code> 를, 소각 선형화 <code style="color:#22d3bf">R ← (I+[ω]×)R</code> 의 Gauss-Newton 으로최소화한다. 각 대응의 야코비안 <code style="color:#22d3bf">J_i = [-[R·s_i+t]× | I]</code>(3×6)로부터정규 방정식 <code style="color:#22d3bf">(Σ J_iᵀ W_i J_i) x = -(Σ J_iᵀ W_i d_i)</code>(6×6)를 풀어 증분 <code style="color:#22d3bf">x=[ω|τ]</code> 를 얻고, Rodrigues 로 회전으로 되돌려 누적한다.</p>
+<p>공분산은 plane-to-plane(<code style="color:#22d3bf">estimate_covariances</code>). point-to-plane 이 target 의법선 방향으로 잔차를 사영하는(rank-1) 것과 달리, GICP 는 source·target 양쪽의 full 3×3 공분산을 합성한 가중치를 쓰므로, 평면적이고 잡음을 포함한 점군에서 강건하다.</p>
+<p>ICP 는 로컬 최적화이므로 <b>가까운 초기화를 전제</b>(대략적 매칭이나 <code style="color:#22d3bf">init</code> 을 전달).</p>
+<p>인수:</p>
+<p>source (N,3): 움직이는 쪽의 점군.</p>
+<p>target (M,3): 참조 쪽(고정)의 점군.</p>
+<p>max_iter: 최대 반복 수.</p>
+<p>k: 공분산 추정의 근방 수.</p>
+<p>epsilon: plane-to-plane 의 법선 방향 소분산(0&lt;ε&lt;1).</p>
+<p>tol: 수렴 임계값. 증분 병진 ‖τ‖ 가 <code style="color:#22d3bf">tol×(target 의 RMS 반경)</code> 미만이고</p>
+<p>증분 회전 ‖ω‖(rad)가 <code style="color:#22d3bf">tol</code> 미만이면 중단(스케일 상대).</p>
+<p>init: (R0(3,3), t0(3,)) 의 초기 자세 튜플, 또는 None(단위).</p>
+<p>reproducible: True 이면 N 점의 합 <code style="color:#22d3bf">Σ J_iᵀ W_i J_i</code>·<code style="color:#22d3bf">Σ J_iᵀ W_i d_i</code> 를 ozakimm(Ozaki 스킴)의 축약으로,</p>
+<p>자세의 적용을 요소별 연산으로, RMSE 를 math.fsum 으로 한다. source 의 점 순서·BLAS 의 스레드 수에 관계없이</p>
+<p>R·t·rmse 가 비트 단위로 같다(공분산의 근방에 거리가 정확히 같은 점이 있으면 근방의 선택 방식이 바뀔 수 있다).</p>
+<p>기본값 False 는 종래대로.</p>
+<p>반환값:</p>
 <p>dict:</p>
-<p>&quot;R&quot; (3,3) ndarray  — target ≈ R·source + t を満たす回転。</p>
-<p>&quot;t&quot; (3,) ndarray   — 並進。</p>
-<p>&quot;rmse&quot; float       — 最終対応上のユークリッド RMSE(採用点)。</p>
-<p>&quot;iterations&quot; int   — 実反復数。</p>
-<p>例外:</p>
-<p>ValueError: 入力形状不正 / 点数不足 / 数値発散(非有限)= fail-closed。</p>
+<p>&quot;R&quot; (3,3) ndarray  — target ≈ R·source + t 를 만족하는 회전.</p>
+<p>&quot;t&quot; (3,) ndarray   — 병진.</p>
+<p>&quot;rmse&quot; float       — 최종 대응 위의 유클리드 RMSE(채택 점).</p>
+<p>&quot;iterations&quot; int   — 실제 반복 수.</p>
+<p>예외:</p>
+<p>ValueError: 입력 형상 부정 / 점 수 부족 / 수치 발산(비유한) = fail-closed.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

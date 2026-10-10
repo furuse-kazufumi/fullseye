@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_line_plane(d, n)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.angle_line_plane(d, n)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;angle_line_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>line (direction d) और plane (normal n) के बीच कोण (डिग्री)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">90 − arccos(|d̂·n̂|)</code> を度で返す(float)。値は <b>[0, 90]</b>、0 = 直線が平面に平行、90 = 垂直。<code style="color:#22d3bf">d</code>, <code style="color:#22d3bf">n</code> は数値の 2 または 3 ベクトル(長さは問わない)、次元の混在は ValueError。零ベクトルは 0 が返る。</p>
-<p>用途: 穴軸と基準面の直角度、<code style="color:#22d3bf">intersect_line_plane</code> の前の平行判定(0 に近いと交点が遠くへ飛ぶ)。</p>
+<p><code style="color:#22d3bf">90 − arccos(|d̂·n̂|)</code> को डिग्री में लौटाता है (float)। मान <b>[0, 90]</b> में होता है, 0 = रेखा plane के समानांतर, 90 = लंबवत। <code style="color:#22d3bf">d</code>, <code style="color:#22d3bf">n</code> संख्यात्मक 2 या 3 vector हैं (लंबाई मायने नहीं रखती), आयामों का मिश्रण ValueError देता है। zero vector पर 0 लौटता है।</p>
+<p>उपयोग: hole axis और reference plane की perpendicularity, <code style="color:#22d3bf">intersect_line_plane</code> से पहले समानांतरता की जाँच (0 के पास होने पर प्रतिच्छेद बिंदु बहुत दूर चला जाता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

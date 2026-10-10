@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.canny3d(vol, low: &#x27;float&#x27;, high: &#x27;float&#x27;, sigma: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import edges3d; edges3d.canny3d(vol, low: &#x27;float&#x27;, high: &#x27;float&#x27;, sigma: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;canny3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D Canny edge detection (non-maximum suppression + hysteresis)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : (D,H,W) array</p>
-<p>グレー voxel。</p>
+<p>grey voxel।</p>
 <p>low, high : float</p>
-<p>ヒステリシスの下限 / 上限閾値(勾配の大きさに対して)。0 &lt;= low &lt;= high, high &gt; 0。</p>
+<p>hysteresis के निचले / ऊपरी threshold (gradient magnitude के सापेक्ष)। 0 &lt;= low &lt;= high, high &gt; 0।</p>
 <p>sigma : float</p>
-<p>平滑の標準偏差。</p>
+<p>smoothing का standard deviation।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>edge_mask : (D,H,W) bool</p>
-<p>1 voxel に細線化されたエッジ。</p>
+<p>1 voxel तक thin किए गए edge।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p style="margin:2px 0 2px 12px">(1) gradient3d で平滑勾配を得る → (2) 勾配方向に沿った NMS(三線形補間)で局所最大を残し</p>
-<p>→ (3) high 閾値を種に low 閾値で 26 連結を伸長。閾値は絶対値なので、対象に応じて gmag.max() のスケールで与えるとロバスト。</p>
+<p style="margin:2px 0 2px 12px">(1) gradient3d से smoothed gradient लें → (2) gradient direction के साथ NMS (trilinear interpolation) से local maxima रखें</p>
+<p>→ (3) high threshold को seed मानकर low threshold पर 26-connectivity से बढ़ाएँ। threshold absolute मान हैं, इसलिए object के अनुसार gmag.max() के scale पर देना robust है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

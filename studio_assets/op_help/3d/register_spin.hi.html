@@ -4,33 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_spin(src, dst, device=&#x27;cpu&#x27;, n_keypoints=220, normal_k=18, support_radius=None, n_alpha=16, n_beta=16, support_angle_deg=60.0, lowe_ratio=0.85, ransac_iters=4000, inlier_thr=None, min_inliers=8, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import feat_spin; feat_spin.register_spin(src, dst, device=&#x27;cpu&#x27;, n_keypoints=220, normal_k=18, support_radius=None, n_alpha=16, n_beta=16, support_angle_deg=60.0, lowe_ratio=0.85, ransac_iters=4000, inlier_thr=None, min_inliers=8, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;register_spin&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Spin Image descriptor + RANSAC से initial guess के बिना sparse-feature rigid alignment।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>2 点群 <code style="color:#22d3bf">src</code> (N,3), <code style="color:#22d3bf">dst</code> (M,3) を、初期姿勢の事前情報なしに位置合わせする。各点の法線(局所 PCA、重心から外向きに符号統一 = 剛体変換で不変)を軸として近傍点を(α=軸からの距離, β=軸方向の高さ) の 2D ヒストグラムへ「回転(spin)」蓄積した Spin Image 記述子(Johnson &amp; Hebert 1997)を keypoint ごとに作り、記述子空間の最近傍でマッチ(Lowe ratio test で選別)、RANSAC(3 点最小標本 + Kabsch)で外れ値に頑健な剛体変換を推定する。密マッチ(NCC/位相相関/Hough)や PCA 主軸整列と違い、<b>大回転 + 部分重なり</b>でも局所特徴の対応から姿勢を復元できるため、ICP の前段(coarse init 供給)に使える。返す姿勢は <code style="color:#22d3bf">dst ~= src @ R.T + t</code> (= <code style="color:#22d3bf">R @ src_i + t</code>)の規約に従う(<code style="color:#22d3bf">icp_point2point_3d</code> と同一)。</p>
-<p>引数:</p>
-<p>src: (N,3) 移動側点群(numpy.ndarray か torch.Tensor)。</p>
-<p>dst: (M,3) 固定側(参照)点群。</p>
-<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD/最終姿勢をこの上で解く。</p>
-<p>n_keypoints: 各点群から抽出する keypoint 数(等間隔サブサンプル)。</p>
-<p>normal_k: 法線推定に使う近傍点数(局所 PCA)。</p>
-<p>support_radius: Spin Image の支持半径。None なら各点群個別の bbox 対角(大きい方)</p>
-<p>の 0.30 倍(未知並進で汚れないよう和集合でなく個別に測る)。</p>
-<p>n_alpha, n_beta: Spin Image の (α, β) ビン数(記述子は n_alpha*n_beta 次元)。</p>
-<p>support_angle_deg: 支持角しきい値(度)。keypoint 法線とこの角度以内の法線を持つ</p>
-<p>支持点のみ蓄積(遮蔽・裏面に頑健)。&gt;=90 で無効。</p>
-<p>lowe_ratio: Lowe 比率テストしきい値(d1 &lt; ratio*d2 の対応のみ採用)。</p>
-<p>ransac_iters: RANSAC 反復数。</p>
-<p>inlier_thr: RANSAC のインライア距離しきい値。None なら bbox 対角の 0.04 倍。</p>
-<p>min_inliers: 有効姿勢とみなす最小インライア数(<code style="color:#22d3bf">ok</code> 判定)。</p>
-<p>seed: RANSAC 乱数シード。</p>
-<p>返り値:</p>
-<p>R: (3,3) torch.Tensor。dst ~= src @ R.T + t を満たす回転。</p>
-<p>t: (3,) torch.Tensor。並進。</p>
-<p>info: dict。&quot;n_matches&quot;(ratio test 通過対応数), &quot;inliers&quot;(RANSAC最終),</p>
-<p>&quot;inlier_ratio&quot;, &quot;rmse&quot;(インライア上 RMSE), &quot;support_radius&quot;,</p>
-<p>&quot;inlier_thr&quot;, &quot;ok&quot;(min_inliers 以上か)。</p>
-<p>注意:</p>
-<p style="margin:2px 0 2px 12px">• 記述子は法線符号に依存する。重心から外向きの符号統一は、法線が概ね放射状で n·(p-重心) の符号が安定な形状(lumpy な閉曲面等)で有効。薄板・管状など n·(p-重心)≈0 の領域が多い形状では 2 雲間で符号が反転しうる。</p>
-<p style="margin:2px 0 2px 12px">• 平面・球など曲率が空間的に一様な部位は記述子が縮退し ratio test で対応が消える(無特徴形状には不向き)。overlap が概ね 60% を切ると成功率が急落し、失敗時は幾何整合だが誤りの解に RANSAC がロックして壊滅的な誤差になりうる(<code style="color:#22d3bf">ok</code> / <code style="color:#22d3bf">inlier_ratio</code> ゲートの併用を推奨)。</p>
+<p>2 point cloud <code style="color:#22d3bf">src</code> (N,3), <code style="color:#22d3bf">dst</code> (M,3) को प्रारंभिक pose की किसी पूर्व जानकारी के बिना register करता है। हर point के normal (local PCA, sign को centroid से बाहर की ओर एक-सा किया गया = rigid transform में invariant) को axis मानकर पड़ोसी points को (α=axis से दूरी, β=axis की दिशा में ऊँचाई) के 2D histogram में &quot;घुमाकर (spin)&quot; जमा किया जाता है; इस तरह Spin Image descriptor (Johnson &amp; Hebert 1997) हर keypoint के लिए बनता है, descriptor space में nearest neighbour से match किया जाता है (Lowe ratio test से छाँटकर), और RANSAC (3 point का न्यूनतम sample + Kabsch) से outlier के प्रति robust rigid transform का अनुमान लगाया जाता है। dense matching (NCC/phase correlation/Hough) या PCA principal axis alignment से अलग, यह <b>बड़े rotation + आंशिक overlap</b> में भी local feature के correspondence से pose वापस पा सकता है, इसलिए ICP के पहले चरण (coarse init देने) में उपयोगी है। लौटाया गया pose <code style="color:#22d3bf">dst ~= src @ R.T + t</code> (= <code style="color:#22d3bf">R @ src_i + t</code>) की convention का पालन करता है (<code style="color:#22d3bf">icp_point2point_3d</code> जैसा ही)।</p>
+<p>Args:</p>
+<p>src: (N,3) चलने वाला point cloud (numpy.ndarray या torch.Tensor)।</p>
+<p>dst: (M,3) स्थिर (reference) point cloud।</p>
+<p>device: torch device (&quot;cpu&quot; आदि)। SVD/अंतिम pose इसी पर हल होते हैं।</p>
+<p>n_keypoints: हर point cloud से निकाले जाने वाले keypoint की संख्या (समान अंतराल पर subsampling)।</p>
+<p>normal_k: normal estimation में उपयोग होने वाले पड़ोसी points की संख्या (local PCA)।</p>
+<p>support_radius: Spin Image का support radius। None हो तो हर point cloud के अलग-अलग मापे गए bbox diagonal (बड़ा वाला)</p>
+<p>का 0.30 गुना (अज्ञात translation से दूषित न हो, इसलिए union पर नहीं बल्कि अलग-अलग मापा जाता है)।</p>
+<p>n_alpha, n_beta: Spin Image के (α, β) bin की संख्या (descriptor n_alpha*n_beta आयामी होता है)।</p>
+<p>support_angle_deg: support angle का threshold (डिग्री)। केवल वे support points जमा होते हैं जिनका normal keypoint normal से</p>
+<p>इस कोण के भीतर हो (occlusion और पिछली सतह के प्रति robust)। &gt;=90 पर निष्क्रिय।</p>
+<p>lowe_ratio: Lowe ratio test का threshold (केवल d1 &lt; ratio*d2 वाले correspondence लिए जाते हैं)।</p>
+<p>ransac_iters: RANSAC iterations की संख्या।</p>
+<p>inlier_thr: RANSAC का inlier distance threshold। None हो तो bbox diagonal का 0.04 गुना।</p>
+<p>min_inliers: किसी pose को वैध मानने के लिए न्यूनतम inlier संख्या (<code style="color:#22d3bf">ok</code> का निर्णय)।</p>
+<p>seed: RANSAC का random seed।</p>
+<p>Returns:</p>
+<p>R: (3,3) torch.Tensor। dst ~= src @ R.T + t को संतुष्ट करने वाला rotation।</p>
+<p>t: (3,) torch.Tensor। translation।</p>
+<p>info: dict। &quot;n_matches&quot; (ratio test पास करने वाले correspondence), &quot;inliers&quot; (RANSAC अंतिम),</p>
+<p>&quot;inlier_ratio&quot;, &quot;rmse&quot; (inliers पर RMSE), &quot;support_radius&quot;,</p>
+<p>&quot;inlier_thr&quot;, &quot;ok&quot; (क्या min_inliers या अधिक है)।</p>
+<p>ध्यान दें:</p>
+<p style="margin:2px 0 2px 12px">• descriptor normal के sign पर निर्भर है। centroid से बाहर की ओर sign एक-सा करना उन आकृतियों में काम करता है जिनके normal लगभग radial हों और n·(p-centroid) का sign स्थिर हो (lumpy बंद सतह आदि)। पतली प्लेट या नली जैसी आकृतियों में, जहाँ n·(p-centroid)≈0 वाले क्षेत्र अधिक हों, 2 cloud के बीच sign उलट सकता है।</p>
+<p style="margin:2px 0 2px 12px">• plane या sphere जैसे हिस्से, जहाँ curvature स्थान में एक-सा हो, descriptor को degenerate कर देते हैं और ratio test में correspondence गायब हो जाते हैं (feature-रहित आकृतियों के लिए अनुपयुक्त)। overlap लगभग 60% से नीचे जाने पर सफलता दर तेजी से गिरती है, और विफलता पर RANSAC ज्यामितीय रूप से संगत पर गलत हल पर अटक सकता है, जिससे विनाशकारी त्रुटि होती है (<code style="color:#22d3bf">ok</code> / <code style="color:#22d3bf">inlier_ratio</code> gate साथ में उपयोग करने की सलाह है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

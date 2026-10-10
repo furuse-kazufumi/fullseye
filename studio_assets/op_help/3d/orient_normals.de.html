@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import normals_orient; normals_orient.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;orient_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Orientiert die Normalen <b>global konsistent</b> nach Hoppes Methode (MST-Propagation). → (N,3).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>kNN グラフ上に重み <code style="color:#22d3bf">1 - |n_i·n_j|</code>(接平面が揃うほど安い)の最小全域木を張り、種から木を BFS しながら親と符号が逆の子を反転させて成分を内部一貫にする。種は <code style="color:#22d3bf">seed_dir</code> 指定時はその向きに最も突き出た点、未指定時は<b>最外点</b>(重心から最遠)。グラフが分断されていれば連結成分ごとに独立に種を取り伝播する(成分間の相対向きは未保証)。</p>
-<p><code style="color:#22d3bf">seed_dir</code> を渡した場合、伝播で内部一貫化した後に<b>成分全点の射影を集約</b>して大域符号を <code style="color:#22d3bf">seed_dir</code> に整合する(単一 seed の <code style="color:#22d3bf">|cos|</code> に依存しないので、seed 点の法線が <code style="color:#22d3bf">seed_dir</code> と近直交でも符号は確実に決まる — finding [5])。<code style="color:#22d3bf">seed_dir</code> が成分の全法線と(ほぼ)直交して符号を決められない真の退化は fail-closed(<code style="color:#22d3bf">ValueError</code>)。閉曲面(球など)で <code style="color:#22d3bf">seed_dir</code> が平均的に法線と直交する場合は大域符号が一意でないため、最突出点(=外向き)基準の向き付けを保持する。<code style="color:#22d3bf">seed_dir</code> 未指定時は重心から外向き。</p>
+<p>Baut auf dem kNN-Graphen einen minimalen Spannbaum mit Gewichten <code style="color:#22d3bf">1 - |n_i·n_j|</code> (je besser die Tangentialebenen übereinstimmen, desto günstiger) und macht jede Komponente intern konsistent, indem der Baum vom Saatpunkt aus per BFS durchlaufen und Kinder mit zum Elternknoten entgegengesetztem Vorzeichen umgedreht werden. Der Saatpunkt ist bei Angabe von <code style="color:#22d3bf">seed_dir</code> der in dieser Richtung am weitesten herausragende Punkt, sonst der <b>äußerste Punkt</b> (am weitesten vom Schwerpunkt). Ist der Graph getrennt, wird pro Zusammenhangskomponente unabhängig ein Saatpunkt gewählt und ausgebreitet (die relative Orientierung zwischen Komponenten ist nicht garantiert).</p>
+<p>Wird <code style="color:#22d3bf">seed_dir</code> übergeben, werden nach der internen Konsistenzbildung durch Ausbreitung <b>die Projektionen aller Punkte der Komponente aggregiert</b>, um das globale Vorzeichen an <code style="color:#22d3bf">seed_dir</code> anzugleichen (es hängt nicht vom <code style="color:#22d3bf">|cos|</code> eines einzelnen Saatpunkts ab, daher wird das Vorzeichen auch dann sicher bestimmt, wenn die Normale des Saatpunkts zu <code style="color:#22d3bf">seed_dir</code> nahezu orthogonal ist — finding [5]). Eine echte Entartung, bei der <code style="color:#22d3bf">seed_dir</code> zu allen Normalen einer Komponente (nahezu) orthogonal ist und das Vorzeichen nicht bestimmt werden kann, ist fail-closed (<code style="color:#22d3bf">ValueError</code>). Bei geschlossenen Flächen (z. B. einer Kugel), bei denen <code style="color:#22d3bf">seed_dir</code> im Mittel orthogonal zu den Normalen ist, ist das globale Vorzeichen nicht eindeutig, daher wird die Orientierung bezogen auf den am weitesten herausragenden Punkt (= nach außen) beibehalten. Ohne <code style="color:#22d3bf">seed_dir</code> vom Schwerpunkt nach außen.</p>
 <p>Args:</p>
-<p>points: (N,3) の点群。</p>
-<p>normals: (N,3) の向き未定法線(内部で単位化)。</p>
-<p>k: kNN グラフの近傍数。</p>
-<p>seed_dir: 大域基準向き (3,)。None なら重心から外向きを基準にする。</p>
+<p>points: (N,3)-Punktwolke.</p>
+<p>normals: (N,3)-Normalen mit unbestimmter Orientierung (intern auf Einheitslänge normiert).</p>
+<p>k: Anzahl der Nachbarn des kNN-Graphen.</p>
+<p>seed_dir: globale Referenzorientierung (3,). Bei None wird vom Schwerpunkt nach außen als Referenz verwendet.</p>
 <p>Returns:</p>
-<p>符号を大域一貫にそろえた (N,3) 単位法線。</p>
+<p>(N,3)-Einheitsnormalen mit global konsistentem Vorzeichen.</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">seed_dir</code> がゼロ、または(ある連結成分で)全法線と直交して</p>
-<p>大域符号を制御できないとき(fail-closed)。</p>
+<p>ValueError: wenn <code style="color:#22d3bf">seed_dir</code> null ist oder (in einer Zusammenhangskomponente) zu allen Normalen orthogonal ist, sodass</p>
+<p>das globale Vorzeichen nicht gesteuert werden kann (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

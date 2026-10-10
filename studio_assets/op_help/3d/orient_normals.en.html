@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import normals_orient; normals_orient.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;orient_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Orient the normals <b>globally consistently</b> by Hoppe&#x27;s method (MST propagation). → (N,3).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>kNN グラフ上に重み <code style="color:#22d3bf">1 - |n_i·n_j|</code>(接平面が揃うほど安い)の最小全域木を張り、種から木を BFS しながら親と符号が逆の子を反転させて成分を内部一貫にする。種は <code style="color:#22d3bf">seed_dir</code> 指定時はその向きに最も突き出た点、未指定時は<b>最外点</b>(重心から最遠)。グラフが分断されていれば連結成分ごとに独立に種を取り伝播する(成分間の相対向きは未保証)。</p>
-<p><code style="color:#22d3bf">seed_dir</code> を渡した場合、伝播で内部一貫化した後に<b>成分全点の射影を集約</b>して大域符号を <code style="color:#22d3bf">seed_dir</code> に整合する(単一 seed の <code style="color:#22d3bf">|cos|</code> に依存しないので、seed 点の法線が <code style="color:#22d3bf">seed_dir</code> と近直交でも符号は確実に決まる — finding [5])。<code style="color:#22d3bf">seed_dir</code> が成分の全法線と(ほぼ)直交して符号を決められない真の退化は fail-closed(<code style="color:#22d3bf">ValueError</code>)。閉曲面(球など)で <code style="color:#22d3bf">seed_dir</code> が平均的に法線と直交する場合は大域符号が一意でないため、最突出点(=外向き)基準の向き付けを保持する。<code style="color:#22d3bf">seed_dir</code> 未指定時は重心から外向き。</p>
+<p>Builds a minimum spanning tree on the kNN graph with weights <code style="color:#22d3bf">1 - |n_i·n_j|</code> (cheaper the more aligned the tangent planes are), and makes each component internally consistent by BFS through the tree from a seed, flipping children whose sign is opposite to their parent. The seed is the point protruding furthest in the <code style="color:#22d3bf">seed_dir</code> direction when it is given, otherwise the <b>outermost point</b> (furthest from the centroid). If the graph is disconnected, a seed is taken and propagated independently per connected component (relative orientation between components is not guaranteed).</p>
+<p>When <code style="color:#22d3bf">seed_dir</code> is passed, after propagation makes the component internally consistent, <b>the projections of all points in the component are aggregated</b> to align the global sign with <code style="color:#22d3bf">seed_dir</code> (it does not depend on the <code style="color:#22d3bf">|cos|</code> of a single seed, so even if the seed point&#x27;s normal is nearly orthogonal to <code style="color:#22d3bf">seed_dir</code> the sign is reliably determined — finding [5]). A true degeneracy where <code style="color:#22d3bf">seed_dir</code> is (nearly) orthogonal to all normals of a component and the sign cannot be decided is fail-closed (<code style="color:#22d3bf">ValueError</code>). On closed surfaces (a sphere etc.) where <code style="color:#22d3bf">seed_dir</code> is orthogonal to the normals on average, the global sign is not unique, so the orientation based on the most protruding point (= outward) is kept. Without <code style="color:#22d3bf">seed_dir</code>, outward from the centroid.</p>
 <p>Args:</p>
-<p>points: (N,3) の点群。</p>
-<p>normals: (N,3) の向き未定法線(内部で単位化)。</p>
-<p>k: kNN グラフの近傍数。</p>
-<p>seed_dir: 大域基準向き (3,)。None なら重心から外向きを基準にする。</p>
+<p>points: (N,3) point cloud.</p>
+<p>normals: (N,3) unoriented normals (normalised to unit length internally).</p>
+<p>k: number of neighbours of the kNN graph.</p>
+<p>seed_dir: global reference orientation (3,). If None, outward from the centroid is used as the reference.</p>
 <p>Returns:</p>
-<p>符号を大域一貫にそろえた (N,3) 単位法線。</p>
+<p>(N,3) unit normals with globally consistent sign.</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">seed_dir</code> がゼロ、または(ある連結成分で)全法線と直交して</p>
-<p>大域符号を制御できないとき(fail-closed)。</p>
+<p>ValueError: when <code style="color:#22d3bf">seed_dir</code> is zero, or (in some connected component) is orthogonal to all normals so that</p>
+<p>the global sign cannot be controlled (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

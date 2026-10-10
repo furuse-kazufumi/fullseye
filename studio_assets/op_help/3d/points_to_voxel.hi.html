@@ -5,18 +5,17 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud (N,3) → density voxel (size³)। scatter_add से splat, वैकल्पिक रूप से gaussian smoothing।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>bounds=(lo,hi) を与えれば複数雲を同一格子に載せられる(=マッチング前提)。</p>
-<p>手順: 各点を <code style="color:#22d3bf">idx = floor((p − lo)/(hi − lo)·(size − 1))</code> で整数格子に落とし、その voxel に 1 を加算する(値 = その voxel に落ちた点の個数)。<code style="color:#22d3bf">smooth &gt; 0</code> なら σ=<code style="color:#22d3bf">smooth</code>(voxel 単位) の gaussian を 3 軸分離 conv で掛ける(半径 <code style="color:#22d3bf">max(1, int(4σ + 0.5))</code>、端は replicate)。出力の軸順は <b>点の列の順そのまま</b>(<code style="color:#22d3bf">points[:, 0]</code> → 軸 0)で、(depth,row,col) への並べ替えはしない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">(lo, hi)</code> の 3 次元ベクトル 2 本。None なら点群自身の min/max(雲ごとに</p>
-<p>格子が変わるので、2 つの雲を比べるときは必ず同じ bounds を渡す)。長さ 3 でない・非有限・ <code style="color:#22d3bf">hi &lt;= lo</code> の軸があると ValueError(tsdf 系の <code style="color:#22d3bf">((xmin,xmax),...)</code> 流儀は長さ 2 として拒否)。</p>
-<p style="margin:2px 0 2px 12px">• 範囲外の点は捨てずに <b>端の voxel へ clip される</b>(端に偽の密度が溜まる)。切り落としたい</p>
-<p>なら事前に点群側で除く。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">size</code>: 一辺の voxel 数。<code style="color:#22d3bf">hi − lo</code> が 0 の軸は 1e-9 に置換されるだけで警告しない。</p>
-<p style="margin:2px 0 2px 12px">• 空の点群で bounds=None は numpy の min が例外を出す。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(size, size, size)</code> float64 numpy(device で計算しても CPU に戻す)。値は個数</p>
-<p>(平滑後は個数の重み分布)で正規化はしない。</p>
-<p>後段: <code style="color:#22d3bf">match_points_ncc</code> / <code style="color:#22d3bf">signed_distance_field</code> / <code style="color:#22d3bf">voxel_to_mesh</code> の入力に。</p>
+<p>bounds=(lo,hi) देने पर कई cloud को एक ही grid पर रखा जा सकता है (= matching की पूर्व-शर्त)।</p>
+<p>प्रक्रिया: हर point को <code style="color:#22d3bf">idx = floor((p − lo)/(hi − lo)·(size − 1))</code> से integer grid पर रखा जाता है, और उस voxel में 1 जोड़ा जाता है (मान = उस voxel में गिरे points की संख्या)। <code style="color:#22d3bf">smooth &gt; 0</code> हो तो σ=<code style="color:#22d3bf">smooth</code> (voxel इकाई में) वाला gaussian 3 axis के separable conv से लगाया जाता है (radius <code style="color:#22d3bf">max(1, int(4σ + 0.5))</code>, किनारे replicate)। Output का axis क्रम <b>points के column क्रम जैसा ही</b> है (<code style="color:#22d3bf">points[:, 0]</code> → axis 0), और (depth,row,col) में दोबारा क्रम नहीं बदला जाता।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">(lo, hi)</code> के रूप में 3 dimension के 2 vector। None हो तो point cloud का अपना min/max (हर</p>
+<p>cloud के लिए grid बदल जाता है, इसलिए 2 cloud की तुलना करते समय हमेशा वही bounds दें)। लंबाई 3 न हो, मान non-finite हों, या <code style="color:#22d3bf">hi &lt;= lo</code> वाला axis हो तो ValueError (tsdf वाली <code style="color:#22d3bf">((xmin,xmax),...)</code> शैली को लंबाई 2 मानकर reject किया जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• Range से बाहर के points हटाए नहीं जाते, बल्कि <b>किनारे के voxel पर clip होते हैं</b> (किनारे पर नकली density जमा होती है)। काटना हो</p>
+<p>तो पहले ही point cloud से हटा दें।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">size</code>: एक side में voxel की संख्या। जिस axis का <code style="color:#22d3bf">hi − lo</code> 0 हो, उसे बिना warning के सिर्फ़ 1e-9 से बदल दिया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• खाली point cloud और bounds=None होने पर numpy का min exception देता है।</p>
+<p style="margin:2px 0 2px 12px">• Return value: <code style="color:#22d3bf">(size, size, size)</code> float64 numpy (device पर गणना होने पर भी CPU पर लौटाया जाता है)। मान गिनती हैं</p>
+<p>(smoothing के बाद गिनती का weighted distribution) और normalise नहीं किए जाते।</p>
+<p>आगे: <code style="color:#22d3bf">match_points_ncc</code> / <code style="color:#22d3bf">signed_distance_field</code> / <code style="color:#22d3bf">voxel_to_mesh</code> के input के रूप में।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

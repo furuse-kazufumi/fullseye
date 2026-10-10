@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_prune3d(vol, length=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import medial; medial.skeleton_prune3d(vol, length=1)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;skeleton_prune3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Beschneidet die Härchen (kurzen Äste) eines 3-D-Skeletts. Endpunktentfernung length-mal wiederholt = Äste der Länge &lt;= length verschwinden.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>2D の <code style="color:#22d3bf">pruning</code> の 3D 版。孤立 voxel は端点扱いで消える。</p>
-<p>手順: <code style="color:#22d3bf">_ensure_skeleton</code> で bool 化(interior voxel があれば <code style="color:#22d3bf">skeletonize_vol</code> で細線化)し、次を <code style="color:#22d3bf">length</code> 回繰り返す — 26 近傍次数 <code style="color:#22d3bf">&lt;= 1</code> の voxel(端点と孤立点)をすべて同時に取り除く。骨格が空になるか端点が無くなれば(閉ループだけになれば)途中で止まる。</p>
-<p>引数: <code style="color:#22d3bf">length</code> は <code style="color:#22d3bf">int(length)</code> にして負なら 0 に丸める(0 なら細線化した骨格をそのまま返す)。1 回の反復で各枝の先端 1 voxel が消えるので、長さ <code style="color:#22d3bf">&lt;= length</code> voxel の枝(ヒゲ)は根元まで消える。</p>
-<p>返り値: 入力と同形の bool 配列。</p>
-<p>注意(挙動として知っておくこと):</p>
-<p style="margin:2px 0 2px 12px">• <b>長い枝も先端から <code style="color:#22d3bf">length</code> voxel 短くなる</b>(ヒゲだけを選んで消す処理ではない)。主枝の端点位置が要るなら、刈った後の端点は元より <code style="color:#22d3bf">length</code> 内側にある。</p>
-<p style="margin:2px 0 2px 12px">• 2 分岐の間の短い枝は両端が分岐点(次数 &gt;= 3)なので消えない。</p>
-<p style="margin:2px 0 2px 12px">• 孤立 voxel は 1 回目で消える。</p>
-<p style="margin:2px 0 2px 12px">• 反復のたびに次数を数え直すので、コストは <code style="color:#22d3bf">length</code> に比例する。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): 3-D でない・空配列・NaN/Inf を含む入力。細線化が必要で scikit-image が無ければ <code style="color:#22d3bf">ImportError</code>。後段は <code style="color:#22d3bf">skeleton_endpoints3d</code> / <code style="color:#22d3bf">skeleton_junctions3d</code> / <code style="color:#22d3bf">skeleton_branches3d</code> / <code style="color:#22d3bf">topology_signature</code>。</p>
+<p>3D-Version von <code style="color:#22d3bf">pruning</code> aus 2D. Isolierte Voxel gelten als Endpunkte und verschwinden.</p>
+<p>Ablauf: mit <code style="color:#22d3bf">_ensure_skeleton</code> in bool umwandeln (bei Inneres-Voxeln mit <code style="color:#22d3bf">skeletonize_vol</code> ausdünnen), dann <code style="color:#22d3bf">length</code>-mal wiederholen: alle Voxel mit Grad <code style="color:#22d3bf">&lt;= 1</code> in der 26-Nachbarschaft (Endpunkte und isolierte Punkte) gleichzeitig entfernen. Wird das Skelett leer oder gibt es keine Endpunkte mehr (bleiben nur geschlossene Schleifen übrig), wird vorzeitig beendet.</p>
+<p>Argumente: <code style="color:#22d3bf">length</code> wird mit <code style="color:#22d3bf">int(length)</code> umgewandelt und bei negativem Wert auf 0 gesetzt (bei 0 wird das ausgedünnte Skelett unverändert zurückgegeben). 1 Iteration entfernt das 1 Spitzen-Voxel jedes Astes, daher verschwinden Äste (Sporne) mit einer Länge von <code style="color:#22d3bf">&lt;= length</code> Voxeln bis zur Wurzel.</p>
+<p>Rückgabewert: bool-Array derselben Form wie die Eingabe.</p>
+<p>Hinweise (Verhalten, das man kennen sollte):</p>
+<p style="margin:2px 0 2px 12px">• <b>Auch lange Äste werden von der Spitze her um <code style="color:#22d3bf">length</code> Voxel kürzer</b> (es ist kein Verfahren, das gezielt nur Sporne entfernt). Werden die Endpunktpositionen der Hauptäste gebraucht: Die Endpunkte nach dem Kappen liegen <code style="color:#22d3bf">length</code> weiter innen als die ursprünglichen Endpunkte.</p>
+<p style="margin:2px 0 2px 12px">• Ein kurzer Ast zwischen 2 Verzweigungen verschwindet nicht, da beide Enden Verzweigungspunkte sind (Grad &gt;= 3).</p>
+<p style="margin:2px 0 2px 12px">• Isolierte Voxel verschwinden in der 1. Iteration.</p>
+<p style="margin:2px 0 2px 12px">• Der Grad wird in jeder Iteration neu gezählt, daher sind die Kosten proportional zu <code style="color:#22d3bf">length</code>.</p>
+<p>Prüfung (<code style="color:#22d3bf">ValueError</code>): Eingabe kein 3-D, leeres Array oder mit NaN/Inf. Ist eine Ausdünnung nötig und fehlt scikit-image, <code style="color:#22d3bf">ImportError</code>. Nachgelagert: <code style="color:#22d3bf">skeleton_endpoints3d</code> / <code style="color:#22d3bf">skeleton_junctions3d</code> / <code style="color:#22d3bf">skeleton_branches3d</code> / <code style="color:#22d3bf">topology_signature</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

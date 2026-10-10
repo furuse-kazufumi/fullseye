@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import moments3d; moments3d.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;principal_moments&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>慣性張量的特徵值(主慣性矩,降冪排列,旋轉不變)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>慣性テンソルは対称なので固有値は実。点群を回転 R で回すと I → R I Rᵀ と相似変換され、固有値は不変(厳密)。返り値は降順にそろえるので座標系や回転に依らず一致する。</p>
+<p>慣性張量是對稱的,因此特徵值為實數。將點雲以旋轉 R 旋轉時,I → R I Rᵀ 做相似變換,特徵值不變(嚴格)。回傳值按降冪排列,因此與座標系和旋轉無關地一致。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (3,)</p>
-<p>降順の主慣性モーメント λ1 &gt;= λ2 &gt;= λ3 &gt;= 0。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">inertia_tensor</code> の固有値で、共分散の固有値 c_i とは <code style="color:#22d3bf">λ_i = (c_1 + c_2 + c_3) - c_i</code> の関係。細長い棒では最小固有値(棒の軸まわり)が 0 に近づき、球では 3 つが等しい。</p>
-<p style="margin:2px 0 2px 12px">• 単位は長さ²。並進と回転には不変だが <b>スケールには不変でない</b>(s 倍で s² 倍)。スケール不変が要るなら <code style="color:#22d3bf">moment_invariants</code>。</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1(1 点なら全て 0)。形状不正・非有限は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 主軸ベクトル(固有ベクトル)が要るなら <code style="color:#22d3bf">moment_axes</code>。決定論的。</p>
+<p>降冪的主慣性矩 λ1 &gt;= λ2 &gt;= λ3 &gt;= 0。</p>
+<p>補充:</p>
+<p style="margin:2px 0 2px 12px">• 是 <code style="color:#22d3bf">inertia_tensor</code> 的特徵值,與共變異數的特徵值 c_i 的關係為 <code style="color:#22d3bf">λ_i = (c_1 + c_2 + c_3) - c_i</code>。細長的棒最小特徵值(繞棒軸)趨近 0,球的 3 個相等。</p>
+<p style="margin:2px 0 2px 12px">• 單位為長度²。對平移和旋轉不變,但<b>不具有尺度不變性</b>(s 倍時為 s² 倍)。需要尺度不變時用 <code style="color:#22d3bf">moment_invariants</code>。</p>
+<p style="margin:2px 0 2px 12px">• 輸入為 (N,3),N &gt;= 1(1 個點時全部為 0)。形狀不正確、非有限時 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• 需要主軸向量(特徵向量)時用 <code style="color:#22d3bf">moment_axes</code>。決定性。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

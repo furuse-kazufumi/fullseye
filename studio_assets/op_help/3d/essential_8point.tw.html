@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.essential_8point(pts1, pts2, K1, K2=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import twoview; twoview.essential_8point(pts1, pts2, K1, K2=None)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;essential_8point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由對應點 + K 直接求本質矩陣 E。→ E (3,3)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>手順: <code style="color:#22d3bf">fundamental_8point(pts1, pts2)</code> で F を推定し、<code style="color:#22d3bf">E = K2ᵀ F K1</code> を作ってから SVD で特異値を (1, 1, 0) に置き換える(本質行列の性質。結果の Frobenius ノルムは √2 に固定される)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K1</code> (3,3) は画像 1 の内部行列、<code style="color:#22d3bf">K2</code> を省略すると <code style="color:#22d3bf">K1</code> を両画像に使う(同一カメラの前提)。</p>
-<p style="margin:2px 0 2px 12px">• 対応点は画素座標 (N,2)。検証と例外は <code style="color:#22d3bf">fundamental_8point</code> と同じ(8 点未満・点数不一致・非有限・(N,2) でない入力は <code style="color:#22d3bf">ValueError</code>)。</p>
-<p style="margin:2px 0 2px 12px">• E の符号は不定で、(R, t) は 4 候補に分かれる。分解と cheirality による一意化までまとめて行うのが <code style="color:#22d3bf">recover_pose</code>。</p>
-<p style="margin:2px 0 2px 12px">• 外れ値に無防備。平面・純回転の退化も本 op では検出しない(<code style="color:#22d3bf">recover_pose</code> が検出する)。決定論的。</p>
+<p>步驟：以 <code style="color:#22d3bf">fundamental_8point(pts1, pts2)</code> 估計 F，建構 <code style="color:#22d3bf">E = K2ᵀ F K1</code> 後以 SVD 把奇異值替換為 (1, 1, 0)(本質矩陣的性質。結果的 Frobenius 範數固定為 √2)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K1</code> (3,3) 是影像 1 的內部參數矩陣，省略 <code style="color:#22d3bf">K2</code> 時兩張影像都用 <code style="color:#22d3bf">K1</code>(以同一相機為前提)。</p>
+<p style="margin:2px 0 2px 12px">• 對應點為像素座標 (N,2)。驗證與例外與 <code style="color:#22d3bf">fundamental_8point</code> 相同(少於 8 個點、點數不一致、非有限、不是 (N,2) 的輸入為 <code style="color:#22d3bf">ValueError</code>)。</p>
+<p style="margin:2px 0 2px 12px">• E 的正負號不定，(R, t) 分為 4 個候選。把分解和基於 cheirality 的唯一化一併完成的是 <code style="color:#22d3bf">recover_pose</code>。</p>
+<p style="margin:2px 0 2px 12px">• 對離群值毫無防備。平面、純旋轉的退化本 op 也不偵測(由 <code style="color:#22d3bf">recover_pose</code> 偵測)。決定性。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

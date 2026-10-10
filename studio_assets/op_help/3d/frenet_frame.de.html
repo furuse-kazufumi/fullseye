@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.frenet_frame(curve)</code> (die Implementierung direkt: <code style="color:#22d3bf">import curve3d; curve3d.frenet_frame(curve)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;frenet_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Das Frenet-Dreibein (Tangente T, Hauptnormale N, Binormale B) an jedem Punkt. → (T, N, B), je (Npts,3) Einheitsvektoren.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>順序付き点列 (N,3) を index パラメータで <code style="color:#22d3bf">np.gradient</code>(内部は中心差分、両端は片側差分)して r&#x27;, r&#x27;&#x27; を取り、</p>
+<p>Leitet die geordnete Punktfolge (N,3) über den Index-Parameter mit <code style="color:#22d3bf">np.gradient</code> ab (intern zentrale Differenzen, an beiden Enden einseitige Differenzen), erhält r&#x27;, r&#x27;&#x27; und</p>
 <p style="margin:2px 0 2px 12px">• T = r&#x27; / ‖r&#x27;‖</p>
-<p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖(r&#x27;&#x27; の T 直交成分 = 曲率中心へ向く向き)</p>
+<p style="margin:2px 0 2px 12px">• N = (r&#x27;&#x27; − (r&#x27;&#x27;·T) T) / ‖…‖ (die zu T orthogonale Komponente von r&#x27;&#x27; = die Richtung zum Krümmungsmittelpunkt)</p>
 <p style="margin:2px 0 2px 12px">• B = T × N</p>
-<p>を各点で計算する。r&#x27;&#x27; の T 直交成分の向きは再パラメータ化に不変なので、点間隔が滑らかに変わる限り index パラメータで正しい向きが出る。</p>
-<p style="margin:2px 0 2px 12px">• 分母には絶対値 1e-12 を足すだけで、正規化しきれない箇所は単位長にならない。直線区間(r&#x27;&#x27; ∥ T または 0)では N・B がほぼゼロベクトルになり、変曲点の前後で N の向きが反転する。「単位ベクトル」の保証はそこでは成り立たない。</p>
-<p style="margin:2px 0 2px 12px">• N&lt;2 の点列は <code style="color:#22d3bf">np.gradient</code> が <code style="color:#22d3bf">ValueError</code> を出す。形状検証はそれ以外に無い。</p>
-<p style="margin:2px 0 2px 12px">• 両端 2 点は片側差分なので精度が落ちる。等間隔化(<code style="color:#22d3bf">resample_uniform</code>)や平滑(<code style="color:#22d3bf">fit_spline_curve</code>)を先に掛けると安定する。</p>
-<p>曲率・捩率の数値そのものは <code style="color:#22d3bf">curvature_torsion</code>、弧長は <code style="color:#22d3bf">arc_length</code>。</p>
+<p>wird an jedem Punkt berechnet. Die Richtung der zu T orthogonalen Komponente von r&#x27;&#x27; ist invariant gegenüber Umparametrisierung; solange sich der Punktabstand glatt ändert, liefert der Index-Parameter die richtige Richtung.</p>
+<p style="margin:2px 0 2px 12px">• Zum Nenner wird nur der Absolutwert 1e-12 addiert, Stellen, die sich nicht normieren lassen, werden nicht einheitslang. Auf geraden Abschnitten (r&#x27;&#x27; ∥ T oder 0) werden N und B nahezu Nullvektoren, und vor und nach einem Wendepunkt kehrt sich die Richtung von N um. Die Garantie &quot;Einheitsvektor&quot; gilt dort nicht.</p>
+<p style="margin:2px 0 2px 12px">• Bei einer Folge mit N&lt;2 löst <code style="color:#22d3bf">np.gradient</code> <code style="color:#22d3bf">ValueError</code> aus. Eine andere Formprüfung gibt es nicht.</p>
+<p style="margin:2px 0 2px 12px">• Die 2 Punkte an beiden Enden nutzen einseitige Differenzen, daher sinkt die Genauigkeit. Vorheriges Äquidistantmachen (<code style="color:#22d3bf">resample_uniform</code>) oder Glätten (<code style="color:#22d3bf">fit_spline_curve</code>) stabilisiert das Ergebnis.</p>
+<p>Die Zahlenwerte von Krümmung und Torsion selbst liefert <code style="color:#22d3bf">curvature_torsion</code>, die Bogenlänge <code style="color:#22d3bf">arc_length</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sampson_distance(F, pts1, pts2)</code>(要直接呼叫實作,<code style="color:#22d3bf">import twoview; twoview.sampson_distance(F, pts1, pts2)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;sampson_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對極約束的 Sampson 距離(一階幾何誤差,逐對應)。→ (N,)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。</p>
-<p>計算: 同次座標 x1=(u1,v1,1)、x2=(u2,v2,1) で <code style="color:#22d3bf">(x2ᵀ F x1)² / ((F x1)_0² + (F x1)_1² + (Fᵀ x2)_0² + (Fᵀ x2)_1² + 1e-12)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <b>単位は画素の 2 乗</b>(距離の 2 乗)。画素で閾値を切るなら <code style="color:#22d3bf">sqrt</code> を取るか、閾値側を 2 乗する。</p>
-<p style="margin:2px 0 2px 12px">• F は <code style="color:#22d3bf">fundamental_8point</code> の規約 <code style="color:#22d3bf">x2ᵀ F x1 = 0</code>(pts1 → x1、pts2 → x2)。順序を入れ替えるなら F を転置する。</p>
-<p style="margin:2px 0 2px 12px">• 分母に 1e-12 を足しているので F=0 でも例外にはならず 0 を返す(F の検査は行わない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は float64 (N,)。決定論的。(N,2) でない・非有限・点数不一致は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 典型: <code style="color:#22d3bf">fundamental_8point</code> の当てはまり確認、誤対応(大きい値)の選別、<code style="color:#22d3bf">recover_pose</code> 前の前処理。</p>
+<p>Raises ValueError：點不是 (N,2)/非有限/對應數不一致。</p>
+<p>計算：以齊次座標 x1=(u1,v1,1)、x2=(u2,v2,1) 計算 <code style="color:#22d3bf">(x2ᵀ F x1)² / ((F x1)_0² + (F x1)_1² + (Fᵀ x2)_0² + (Fᵀ x2)_1² + 1e-12)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>單位是像素的 2 次方</b>(距離的 2 次方)。若以像素設閾值，請取 <code style="color:#22d3bf">sqrt</code>，或把閾值一側取 2 次方。</p>
+<p style="margin:2px 0 2px 12px">• F 遵循 <code style="color:#22d3bf">fundamental_8point</code> 的慣例 <code style="color:#22d3bf">x2ᵀ F x1 = 0</code>(pts1 → x1、pts2 → x2)。若交換順序，請轉置 F。</p>
+<p style="margin:2px 0 2px 12px">• 分母加了 1e-12，因此即使 F=0 也不會拋出例外，而是回傳 0(不檢查 F)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值為 float64 (N,)。決定性。不是 (N,2)、非有限、點數不一致為 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• 典型用途：確認 <code style="color:#22d3bf">fundamental_8point</code> 的擬合程度、篩除誤對應(大值)、<code style="color:#22d3bf">recover_pose</code> 之前的前處理。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

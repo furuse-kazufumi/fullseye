@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import render_ssaa; render_ssaa.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;edge_alias_energy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The aliasing (jaggy) energy of edges = the RMS of the Laplacian (smaller is smoother).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>ラスタライズのエイリアスは階段状の鋭い角(高い 2 階微分)として現れる。ラプラシアンは高周波を強調するため、その二乗平均平方根(RMS)は境界の階段度を単調に捉える — SSAA でエッジが滑らかな勾配になれば、ラプラシアンの高周波エネルギーは減る(low-pass は高周波を減衰させ、ラプラシアンはそれを増幅するので、平滑化されたエッジほど本量は小さい)。</p>
-<p>平坦な内部・背景はラプラシアン ≈ 0 で寄与しないため、実質エッジ帯の量になる。カラー画像はチャンネル平均。同一形状・同一コントラストの画像どうしを比較するための相対指標。</p>
+<p>Rasterisation aliasing appears as sharp staircase corners (a high 2nd derivative). The Laplacian emphasises high frequencies, so its root mean square (RMS) monotonically captures how stair-stepped the boundaries are — once SSAA turns the edges into smooth gradients, the Laplacian&#x27;s high-frequency energy decreases (low-pass attenuates high frequencies and the Laplacian amplifies them, so the smoother the edges, the smaller this quantity).</p>
+<p>Flat interiors and background have Laplacian ≈ 0 and do not contribute, so in effect it is a quantity of the edge band. Colour images use the channel mean. A relative metric for comparing images of the same shape and the same contrast with each other.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

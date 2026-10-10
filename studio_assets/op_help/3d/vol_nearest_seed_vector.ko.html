@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_nearest_seed_vector(vol_binary, spacing=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volops; volops.vol_nearest_seed_vector(vol_binary, spacing=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_nearest_seed_vector&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>각 voxel에서 가장 가까운 seed voxel까지의 변위 벡터</b> <code style="color:#22d3bf">(3, D, H, W)</code>(<code style="color:#22d3bf">flow_dense</code>, 성분 dz, dy, dx [voxel]).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>seed = 非零 voxel(<code style="color:#22d3bf">&gt; 0.5</code> で二値化)。seed の上では 0。<code style="color:#22d3bf">vol_distance_transform</code> が返すのは距離の<b>値</b>だけで、「どの voxel が最近か」は落ちる —— 骨格からの半径(表面 → 骨格の変位)、膜までの肉厚、ESDF の勾配、ラベルのボロノイ分割はこの<b>向き</b>が要る(2026-09-21、コネクトーム基盤の穴)。<code style="color:#22d3bf">spacing</code> <code style="color:#22d3bf">(sz, sy, sx)</code> を渡すと最近傍の判定は物理距離で行う(返す変位は voxel 単位のまま —— <code style="color:#22d3bf">|v * spacing|</code> が物理距離)。</p>
-<p>厳密解: Maurer, Qi &amp; Raghavan (IEEE TPAMI 2003) の線形時間 EDT(<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt(return_indices=True)</code>)。同距離の seed が複数あるときはその実装の順序で 1 つ(順序に意味を持たせないこと)。seed が 1 つも無いと ValueError(全 voxel が無限遠 —— 黙って 0 を返さない)。</p>
+<p>seed = 0이 아닌 voxel(<code style="color:#22d3bf">&gt; 0.5</code>로 이진화). seed 위에서는 0. <code style="color:#22d3bf">vol_distance_transform</code>이 반환하는 것은 거리의 <b>값</b>뿐이어서, &quot;어느 voxel이 가장 가까운가&quot;는 사라진다 —— 골격으로부터의 반지름(표면 → 골격의 변위), 막까지의 두께, ESDF의 기울기, 라벨의 보로노이 분할에는 이 <b>방향</b>이 필요하다(2026-09-21, 커넥톰 기반의 구멍). <code style="color:#22d3bf">spacing</code> <code style="color:#22d3bf">(sz, sy, sx)</code>를 넘기면최근접 판정은 물리 거리로 한다(반환하는 변위는 voxel 단위 그대로 —— <code style="color:#22d3bf">|v * spacing|</code>가 물리 거리).</p>
+<p>엄밀해: Maurer, Qi &amp; Raghavan (IEEE TPAMI 2003)의 선형 시간 EDT(<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt(return_indices=True)</code>). 같은 거리의 seed가 여러 개일 때는 그 구현의 순서로 1개(순서에 의미를 두지 말 것). seed가 1개도 없으면 ValueError(모든 voxel이 무한히 멂 —— 조용히 0을 반환하지 않는다).</p>
 <p>&gt;&gt;&gt; v = np.zeros((5, 5, 5)); v[2, 2, 0] = 1</p>
 <p>&gt;&gt;&gt; d = vol_nearest_seed_vector(v); d.shape, tuple(d[:, 2, 2, 4])</p>
 <p>((3, 5, 5, 5), (0.0, 0.0, -4.0))</p>

@@ -6,28 +6,27 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(warped, info, info)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>non-rigid ICP से <code style="color:#22d3bf">src</code> को <code style="color:#22d3bf">dst</code> की ओर लाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各反復で「現在の変形後 src」から <code style="color:#22d3bf">dst</code> への最近傍対応を張り直し、その対応を制御点対応(制御中心 = 元の src)として TPS を正則化つきで再当てはめし、src を変形する。対応が既知でなくとも滑らかな非線形変形を回復できる。</p>
-<p>実装上の要点(頑健性):</p>
-<p style="margin:2px 0 2px 12px">• <b>スケール不変</b>: λ は dst の重心まわり RMS 半径に対する相対値として扱う(内部で λ_eff = λ·scale)。座標が 100 倍でも同じ λ が同じ挙動を与える。</p>
-<p style="margin:2px 0 2px 12px">• <b>発散ガード</b>: 対応が曖昧だと単純な NN 反復は正のフィードバックで発散し得る。反復ごとの対応 RMS を監視し、<b>最良反復</b>(最小 RMS)の変形とモデルを返す。これにより悪い λ でも「初期より悪い」結果を返さない。</p>
-<p style="margin:2px 0 2px 12px">• λ が大きいほど剛(変形が小さい)。既定 λ=1.0 は保守的(ほぼ剛)なので、大きな非線形変形を回復させたい場合は λ を小さく(例 0.01〜0.05)する。</p>
-<p>引数:</p>
-<p>src: (N,3) 移動側点群。</p>
-<p>dst: (M,3) 固定側(参照)点群。</p>
-<p>iters: 最大反復回数。</p>
-<p>lam: TPS 正則化 λ(スケール相対)。大きいほど変形が滑らか(外れ対応に頑健、</p>
-<p>当てはめは緩い)。小さいほど密着(細かい変形を回復)。</p>
-<p>k_smooth: None なら最近傍1点を目標にする(ハード対応)。整数を与えると</p>
-<p><code style="color:#22d3bf">dst</code> 側の k 近傍の平均を目標にして対応を平滑化する(ノイズに頑健)。</p>
-<p>返り値:</p>
-<p>warped_src: (N,3) 最良反復での変形後 src。</p>
-<p>model: 対応する TPS モデル(制御中心 = 元 src、原座標系でそのまま</p>
-<p><code style="color:#22d3bf">tps_warp</code> に渡せる)。1回も当てはめできなければ None。</p>
-<p>info: dict。&quot;rms&quot;(最良の対応 RMS)、&quot;rms_init&quot;(初期=恒等時の対応 RMS)、</p>
-<p>&quot;rms_history&quot;(list)、&quot;iters&quot;(実反復数)、&quot;best_iter&quot;、&quot;converged&quot;(bool)。</p>
-<p>例外:</p>
-<p>ValueError: 形状不正、点数不足、k_smooth 不正。</p>
+<p>हर iteration में &quot;वर्तमान warped src&quot; से <code style="color:#22d3bf">dst</code> तक nearest neighbour correspondence फिर से बनाए जाते हैं, उन correspondence को control-point correspondence (control centre = मूल src) मानकर TPS को regularisation के साथ फिर से fit किया जाता है, और src को warp किया जाता है। correspondence पहले से ज्ञात न हों तब भी smooth nonlinear deformation वापस पाया जा सकता है।</p>
+<p>Implementation की मुख्य बातें (robustness):</p>
+<p style="margin:2px 0 2px 12px">• <b>Scale invariance</b>: λ को dst के centroid के आसपास RMS radius के सापेक्ष मान के रूप में लिया जाता है (अंदर λ_eff = λ·scale)। coordinate 100 गुना होने पर भी वही λ वही behaviour देता है।</p>
+<p style="margin:2px 0 2px 12px">• <b>Divergence guard</b>: correspondence अस्पष्ट हों तो साधारण NN iteration positive feedback से diverge हो सकता है। हर iteration का correspondence RMS देखा जाता है, और <b>best iteration</b> (न्यूनतम RMS) का warp और model लौटाया जाता है। इसलिए खराब λ पर भी &quot;शुरुआत से खराब&quot; परिणाम नहीं लौटता।</p>
+<p style="margin:2px 0 2px 12px">• λ जितना बड़ा, उतना rigid (deformation छोटा)। default λ=1.0 conservative (लगभग rigid) है, इसलिए बड़ा nonlinear deformation वापस पाना हो तो λ छोटा (जैसे 0.01 से 0.05) रखें।</p>
+<p>Arguments:</p>
+<p>src: (N,3) moving point cloud।</p>
+<p>dst: (M,3) fixed (reference) point cloud।</p>
+<p>iters: iteration की अधिकतम संख्या।</p>
+<p>lam: TPS regularisation λ (scale के सापेक्ष)। बड़ा होने पर warp अधिक smooth (गलत correspondence के प्रति robust,</p>
+<p>fit ढीला)। छोटा होने पर fit कसा हुआ (बारीक deformation वापस मिलता है)।</p>
+<p>k_smooth: None हो तो 1 nearest neighbour target होता है (hard correspondence)। integer देने पर</p>
+<p><code style="color:#22d3bf">dst</code> की ओर k nearest neighbours का mean target बनता है और correspondence smooth होते हैं (noise के प्रति robust)।</p>
+<p>Returns:</p>
+<p>warped_src: (N,3) best iteration पर warped src।</p>
+<p>model: संबंधित TPS model (control centre = मूल src, मूल coordinate system में सीधे</p>
+<p><code style="color:#22d3bf">tps_warp</code> को दिया जा सकता है)। एक भी (1) fit सफल न हो तो None।</p>
+<p>info: dict। &quot;rms&quot; (best correspondence RMS), &quot;rms_init&quot; (शुरुआत = identity पर correspondence RMS),</p>
+<p>&quot;rms_history&quot; (list), &quot;iters&quot; (वास्तव में चले iterations), &quot;best_iter&quot;, &quot;converged&quot; (bool)।</p>
+<p>Exceptions:</p>
+<p>ValueError: गलत shape, बहुत कम points, गलत k_smooth।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

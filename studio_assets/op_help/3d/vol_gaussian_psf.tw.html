@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_gaussian_psf(sigma, truncate=4.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import volrestore; volrestore.vol_gaussian_psf(sigma, truncate=4.0)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;vol_gaussian_psf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>正規化(和為 1)的 3-D 高斯 PSF 核。*sigma* 為純量或逐軸。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">(sz, sy, sx)</code> in voxels; the kernel spans <code style="color:#22d3bf">+-truncate*sigma</code> per axis (odd size, centre at the middle voxel). The convenient companion to <code style="color:#22d3bf">vol_richardson_lucy</code> when the instrument PSF is well approximated as Gaussian. Kernels above <code style="color:#22d3bf">PSF_MAX_ELEMENTS</code> (~256^3) raise <code style="color:#22d3bf">ValueError</code> — a PSF that large is an input mistake, not an instrument.</p>
-<p>形: 各軸の半径 <code style="color:#22d3bf">r = ceil(truncate * sigma)</code>、辺長 <code style="color:#22d3bf">2r + 1</code>(奇数)の <code style="color:#22d3bf">(2rz+1, 2ry+1, 2rx+1)</code> float64 配列。軸順は <code style="color:#22d3bf">(z, y, x)</code> で、<code style="color:#22d3bf">sigma</code> を <code style="color:#22d3bf">(sz, sy, sx)</code> で渡すとその順に対応する(異方 PSF)。3 本の 1-D Gaussian <code style="color:#22d3bf">exp(-x^2 / (2 sigma^2))</code> の外積を全体和で割るので、合計はちょうど 1、中心 voxel が最大値。単位は voxel(mm の PSF 幅は spacing で割ってから渡す)。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sigma</code>: 正の有限スカラ、または長さ 3 の正の有限値。2 乗が 0 にアンダーフローするほど小さい値(~1.5e-154 未満)は 0/0 になるので拒否。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">truncate</code>: 正の有限値(既定 4.0 = 片側 4σ で打ち切り)。</p>
-<p style="margin:2px 0 2px 12px">• 要素数 <code style="color:#22d3bf">prod(2r+1)</code> が <code style="color:#22d3bf">PSF_MAX_ELEMENTS</code>(<code style="color:#22d3bf">2**24</code>)を超えると拒否(σ≈300 で 64 GB を確保しかけた実測が動機)。</p>
-<p>使いどころ: <code style="color:#22d3bf">vol_richardson_lucy(vol, psf)</code> の <code style="color:#22d3bf">psf</code>。RL 側でも合計 1 に再正規化するので、ここで作ったカーネルをそのまま渡してよい。</p>
+<p><code style="color:#22d3bf">(sz, sy, sx)</code>,單位為 voxel;核在每個軸上涵蓋 <code style="color:#22d3bf">+-truncate*sigma</code> (奇數尺寸,中心位於中間 voxel)。當儀器 PSF 可良好近似為 Gaussian 時,它是 <code style="color:#22d3bf">vol_richardson_lucy</code> 的便利搭檔。超過 <code style="color:#22d3bf">PSF_MAX_ELEMENTS</code> (~256^3) 的核會引發 <code style="color:#22d3bf">ValueError</code> —— 那麼大的 PSF 是輸入錯誤,而不是儀器。</p>
+<p>形狀:各軸半徑 <code style="color:#22d3bf">r = ceil(truncate * sigma)</code>,邊長 <code style="color:#22d3bf">2r + 1</code>(奇數)的 <code style="color:#22d3bf">(2rz+1, 2ry+1, 2rx+1)</code> float64 陣列。軸順序為 <code style="color:#22d3bf">(z, y, x)</code>,將 <code style="color:#22d3bf">sigma</code> 以 <code style="color:#22d3bf">(sz, sy, sx)</code> 傳入時按該順序對應(異向性 PSF)。將 3 條 1-D Gaussian <code style="color:#22d3bf">exp(-x^2 / (2 sigma^2))</code> 的外積除以總和,因此總和恰為 1,中心 voxel 為最大值。單位為 voxel(mm 的 PSF 寬度先除以 spacing 再傳入)。</p>
+<p>參數與驗證(<code style="color:#22d3bf">ValueError</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sigma</code>:正的有限純量,或長度為 3 的正有限值。小到 2 次方下溢為 0 的值(小於 ~1.5e-154)會變成 0/0,因此拒絕。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">truncate</code>:正的有限值(預設 4.0 = 單側 4σ 處截斷)。</p>
+<p style="margin:2px 0 2px 12px">• 元素數 <code style="color:#22d3bf">prod(2r+1)</code> 超過 <code style="color:#22d3bf">PSF_MAX_ELEMENTS</code>(<code style="color:#22d3bf">2**24</code>)時拒絕(動機是實測中 σ≈300 時差點配置 64 GB)。</p>
+<p>用途:<code style="color:#22d3bf">vol_richardson_lucy(vol, psf)</code> 的 <code style="color:#22d3bf">psf</code>。RL 端也會重新正規化為總和 1, 因此這裡產生的核可以直接傳入。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

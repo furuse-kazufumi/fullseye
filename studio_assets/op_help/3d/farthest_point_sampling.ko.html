@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geodesic3d; geodesic3d.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;farthest_point_sampling&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>측지 거리에서의 최원점 샘플링(균등 솎기). → 선택 인덱스 열 (n,) int.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">start</code> を最初の代表点にし、「既に選んだ点集合への測地距離が最大の点」を 1 つずつ追加する貪欲法(FPS)。距離は <code style="color:#22d3bf">knn_graph(points, k)</code> の無向 kNN グラフ上の Dijkstra で測り、既選択集合への距離は各代表点の単源距離の要素ごと最小 <code style="color:#22d3bf">mind</code> として保持、代表点を 1 つ足すたびに <code style="color:#22d3bf">mind = min(mind, d_new)</code> で更新する。代表点 1 つにつき Dijkstra 1 回なので計算量は n 回分の単源最短路。乱数は使わず決定的。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 点群。<code style="color:#22d3bf">n</code>: 欲しい点数。<code style="color:#22d3bf">N</code> を超えると <code style="color:#22d3bf">N</code> に、負なら 0 に丸める(0 なら空配列)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: kNN グラフの近傍数(既定 8)。<code style="color:#22d3bf">start</code>: 最初の代表点(<code style="color:#22d3bf">start % N</code> で範囲内に折り返す)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は選んだ順の添字列(先頭が <code style="color:#22d3bf">start</code>)。<code style="color:#22d3bf">points[idx]</code> で代表点群になる。</p>
-<p>罠: グラフが複数の連結成分に分かれていると、不達の点は距離 <code style="color:#22d3bf">inf</code> なので未到達の成分が先に選ばれる(argmax が <code style="color:#22d3bf">inf</code> を拾う)。「離れた塊から先に取る」挙動になるので、成分ごとに均等に間引きたいなら <code style="color:#22d3bf">euclidean_cluster</code> 等で分けてから使う。</p>
+<p><code style="color:#22d3bf">start</code> 를 첫 대표점으로 하고, &quot;이미 고른 점 집합까지의 측지 거리가 최대인 점&quot;을 1 개씩 추가하는탐욕법(FPS). 거리는 <code style="color:#22d3bf">knn_graph(points, k)</code> 의 무향 kNN 그래프 위의 Dijkstra 로 재며, 기선택집합까지의 거리는 각 대표점의 단일 시점 거리의 요소별 최소 <code style="color:#22d3bf">mind</code> 로 유지하고, 대표점을 1 개 더할 때마다 <code style="color:#22d3bf">mind = min(mind, d_new)</code> 로 갱신한다. 대표점 1 개당 Dijkstra 1 회이므로 계산량은 n 회분의단일 시점 최단 경로. 난수는 쓰지 않으며 결정적.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 점군. <code style="color:#22d3bf">n</code>: 원하는 점 수. <code style="color:#22d3bf">N</code> 을 넘으면 <code style="color:#22d3bf">N</code> 으로, 음이면 0 으로 맞춘다(0 이면 빈 배열).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: kNN 그래프의 근방 수(기본값 8). <code style="color:#22d3bf">start</code>: 첫 대표점(<code style="color:#22d3bf">start % N</code> 으로 범위 안으로 되돌림).</p>
+<p style="margin:2px 0 2px 12px">• 반환값은 고른 순서의 첨자열(선두가 <code style="color:#22d3bf">start</code>). <code style="color:#22d3bf">points[idx]</code> 로 대표점군이 된다.</p>
+<p>함정: 그래프가 여러 연결 성분으로 나뉘어 있으면, 도달하지 못한 점은 거리 <code style="color:#22d3bf">inf</code> 이므로 미도달 성분이 먼저선택된다(argmax 가 <code style="color:#22d3bf">inf</code> 를 줍는다). &quot;떨어진 덩어리부터 먼저 취하는&quot; 동작이 되므로, 성분마다균등하게 솎아내고 싶다면 <code style="color:#22d3bf">euclidean_cluster</code> 등으로 나눈 뒤 쓴다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

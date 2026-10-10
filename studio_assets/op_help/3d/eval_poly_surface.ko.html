@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.eval_poly_surface(model, x, y)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.eval_poly_surface(model, x, y)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;eval_poly_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>model 을 (x,y) 에서 평가 → z(x 의 shape 으로 반환).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*model* は <code style="color:#22d3bf">fit_poly_surface</code> の返り(dict)。<b>fail-closed</b>: B スプライン曲面/曲線の tck(FITPACK の list)を渡すと、以前は <code style="color:#22d3bf">model[&quot;degree&quot;]</code> が <code style="color:#22d3bf">TypeError: list indices must be integers...</code> で落ちていた(2026-09-01 実測 7 回)。多項式モデルと B スプラインモデルは中身が違うので、ここで明示的に拒否する(ops3d 台帳側でも poly_surface / bspline_surface と型を分けてある)。</p>
-<p>Raises ValueError: model が多項式モデル dict でない / 必須キー欠落。</p>
+<p>*model*은 <code style="color:#22d3bf">fit_poly_surface</code>의 반환값(dict). <b>fail-closed</b>(실패 시 거부): B 스플라인곡면/곡선의 tck(FITPACK의 list)를 넘기면, 이전에는 <code style="color:#22d3bf">model[&quot;degree&quot;]</code>에서 <code style="color:#22d3bf">TypeError: list indices must be integers...</code>로 죽었다(2026-09-01 실측 7회). 다항식 모델과 B 스플라인 모델은 내용이 다르므로, 여기서 명시적으로 거부한다(ops3d 대장 쪽에서도 poly_surface / bspline_surface로 형을 나누어 두었다).</p>
+<p>Raises ValueError: model이 다항식 모델 dict가 아님 / 필수 키 누락.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 행렬 분해가 느린 이유 — BLAS 스레드·캐시·메모리 배치</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

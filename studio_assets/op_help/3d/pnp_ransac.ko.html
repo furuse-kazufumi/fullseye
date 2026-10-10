@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pnp3d; pnp3d.pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;pnp_ransac&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이상치에 강건한 PnP(RANSAC + 최종 DLT 재적합). → (R, t, inlier_mask, info).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>6 点の最小サンプルで DLT(精密化なし)→ 再投影誤差 &lt; thresh の inlier 最大化 → inlier 全体で <code style="color:#22d3bf">pnp_pose</code>(精密化あり)リフィット。</p>
-<p>Raises ValueError: points_2d が (N,2) でない / points_3d が (N,3) でない /</p>
-<p>点数不一致 / 6 点未満 / 非有限。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thresh</code>: 再投影誤差のしきい値 [px] (ユークリッド距離、既定 2.0)。これ未満を inlier とする。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iters</code>: 反復数(既定 300)。早期終了はせず必ずこの回数回す。各反復は 6 点を非復元抽出し初期姿勢だけを解く(縮退した標本は捨てて次へ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>: <code style="color:#22d3bf">numpy.random.default_rng(seed)</code> に渡す。同じ入力と seed なら結果は再現する。</p>
-<p>返り値: <code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,)(規約 <code style="color:#22d3bf">Xc = R X + t</code>)、<code style="color:#22d3bf">inlier_mask</code> bool (N,)、<code style="color:#22d3bf">info</code> dict。<code style="color:#22d3bf">info</code> のキーは <code style="color:#22d3bf">n_inliers</code> / <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code> / <code style="color:#22d3bf">rms</code>(最終姿勢の再投影 RMS [px]、inlier 集合上)。</p>
-<p style="margin:2px 0 2px 12px">• 最良標本の inlier が 6 未満のときは全点で解き直す fallback に入り、<code style="color:#22d3bf">info[&quot;fallback&quot;] = True</code> が付く。このとき <code style="color:#22d3bf">inlier_mask</code> は fallback 姿勢で数え直した実測値なので、<code style="color:#22d3bf">inlier_ratio</code> が小さいまま返ることがある(合意を捏造しない)。fallback も失敗すれば <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• inlier 数の比較は「より多い」だけを更新するので、同数なら先に見つかった標本が残る。</p>
-<p style="margin:2px 0 2px 12px">• 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。</p>
-<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 形状不正 / 6 点未満 / 点数不一致 / 非有限(<code style="color:#22d3bf">dlt_pose</code> と同じ入口検査)。</p>
-<p style="margin:2px 0 2px 12px">• 評価は <code style="color:#22d3bf">reprojection_error</code>、GT 比較は <code style="color:#22d3bf">pose_error</code>。</p>
+<p>6점의 최소 샘플로 DLT(정밀화 없음) → 재투영 오차 &lt; thresh인 inlier 최대화 → inlier 전체로 <code style="color:#22d3bf">pnp_pose</code>(정밀화 있음) 재피팅.</p>
+<p>Raises ValueError: points_2d가 (N,2)가 아님 / points_3d가 (N,3)이 아님 /</p>
+<p>점 수 불일치 / 6점 미만 / 비유한.</p>
+<p>인수:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thresh</code>: 재투영 오차의 임계값 [px] (유클리드 거리, 기본값 2.0). 이 미만을 inlier로 한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iters</code>: 반복 수(기본값 300). 조기 종료는 하지 않고 반드시 이 횟수만큼 돈다. 각 반복은 6점을 비복원 추출하여 초기 자세만 푼다(축퇴된 표본은 버리고 다음으로).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>: <code style="color:#22d3bf">numpy.random.default_rng(seed)</code>에 넘긴다. 같은 입력과 seed면 결과가 재현된다.</p>
+<p>반환값: <code style="color:#22d3bf">R</code> (3,3), <code style="color:#22d3bf">t</code> (3,)(규약 <code style="color:#22d3bf">Xc = R X + t</code>), <code style="color:#22d3bf">inlier_mask</code> bool (N,), <code style="color:#22d3bf">info</code> dict. <code style="color:#22d3bf">info</code>의 키는 <code style="color:#22d3bf">n_inliers</code> / <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code> / <code style="color:#22d3bf">rms</code>(최종 자세의 재투영 RMS [px], inlier 집합 위).</p>
+<p style="margin:2px 0 2px 12px">• 최선 표본의 inlier가 6 미만이면 전체 점으로 다시 푸는 fallback에 들어가고, <code style="color:#22d3bf">info[&quot;fallback&quot;] = True</code>가 붙는다. 이때 <code style="color:#22d3bf">inlier_mask</code>는 fallback 자세로 다시 센 실측값이므로, <code style="color:#22d3bf">inlier_ratio</code>가 작은 채로 반환될 수 있다(합의를 날조하지 않는다). fallback도 실패하면 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• inlier 수 비교는 &quot;더 많음&quot;일 때만 갱신하므로, 같은 수면 먼저 찾은 표본이 남는다.</p>
+<p style="margin:2px 0 2px 12px">• 최종 자세는 inlier 전체로의 재피팅(LM 정밀화 있음).</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 형상 부정 / 6점 미만 / 점 수 불일치 / 비유한(<code style="color:#22d3bf">dlt_pose</code>와 같은 입구 검사).</p>
+<p style="margin:2px 0 2px 12px">• 평가는 <code style="color:#22d3bf">reprojection_error</code>, GT 비교는 <code style="color:#22d3bf">pose_error</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

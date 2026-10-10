@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;smooth_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>nearest-neighbour flow को neighbourhood average से locally smooth करके regularised flow (N, 3) लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">nearest_neighbor_flow</code> の生フロー(最近傍対応ゆえノイズが乗る)を、<code style="color:#22d3bf">pts0</code> 空間の k 近傍トポロジ(自身を含む、1 度だけ構築)で反復平均する。ゼロ平均ノイズを抑えつつ滑らかな変位場は概ね保存する(Jacobi 反復 = フロー場のラプラシアン平滑化)。線形場は対称近傍で不偏、曲率のある場は僅かに縮む(honest な平滑化バイアス)。</p>
+<p><code style="color:#22d3bf">nearest_neighbor_flow</code> के कच्चे flow (nearest neighbour correspondence के कारण noise वाले) को <code style="color:#22d3bf">pts0</code> space की k-nearest-neighbour topology (point स्वयं सहित, केवल 1 बार बनाई गई) पर बार-बार औसत करता है। Zero-mean noise को दबाते हुए smooth displacement fields को काफ़ी हद तक बनाए रखता है (Jacobi iteration = flow field का Laplacian smoothing)। Linear fields symmetric neighbourhood में unbiased रहते हैं, curvature वाले fields थोड़ा सिकुड़ते हैं (एक ईमानदार smoothing bias)।</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群。</p>
-<p>pts1: (M, 3) 時刻 1 の点群。</p>
-<p>k: 平均に使う近傍数(自身含む)。</p>
-<p>n_iter: 平滑化反復回数。</p>
+<p>pts0: (N, 3) समय 0 का point cloud।</p>
+<p>pts1: (M, 3) समय 1 का point cloud।</p>
+<p>k: औसत के लिए इस्तेमाल होने वाले neighbours की संख्या (point स्वयं सहित)।</p>
+<p>n_iter: smoothing iterations की संख्या।</p>
 <p>Returns:</p>
-<p>(N, 3) 平滑化変位ベクトル場。</p>
+<p>(N, 3) smooth किया गया displacement vector field।</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正、または pts0 非空なのに pts1 が空。</p>
+<p>ValueError: गलत shape, या pts0 खाली न होने पर भी pts1 खाली हो।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

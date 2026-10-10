@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import render_shade; render_shade.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;matcap_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>MatCap: bildet Normalen im Blickraum auf eine Lit-Sphere-Textur ab, um das Aussehen eines Materials zu übertragen. → <code style="color:#22d3bf">(H, W[, C])</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>視空間の単位法線 <code style="color:#22d3bf">(nx, ny)</code>(<code style="color:#22d3bf">[-1,1]</code>)をテクスチャ座標に写像し(<code style="color:#22d3bf">u = (nx+1)/2</code>, <code style="color:#22d3bf">v = (1−ny)/2</code>、行方向で y を反転)、<code style="color:#22d3bf">matcap</code> 画像を <b>双線形補間</b> で引く。ライト計算をせず、球にライティングして撮った 1 枚の素材見えを任意形状へそのまま貼れる(金属・粘土・トゥーンなど)。</p>
-<p><code style="color:#22d3bf">matcap</code> は正方に近い lit-sphere テクスチャ:</p>
-<p style="margin:2px 0 2px 12px">• グレースケール <code style="color:#22d3bf">(h, w)</code>      → 出力 <code style="color:#22d3bf">(H, W)</code></p>
-<p style="margin:2px 0 2px 12px">• カラー <code style="color:#22d3bf">(h, w, C)</code>(C 任意)  → 出力 <code style="color:#22d3bf">(H, W, C)</code></p>
-<p>背景(長さ 0 の法線)は 0。テクスチャ座標は端でクランプ(球外縁の法線 <code style="color:#22d3bf">|(nx,ny)|→1</code> はテクスチャ縁を指す)。</p>
-<p>fail-closed: 形状不正・非有限・小さすぎる(<code style="color:#22d3bf">h,w &lt; 2</code>)テクスチャは <code style="color:#22d3bf">ValueError</code>。</p>
+<p>Bildet die Einheitsnormale <code style="color:#22d3bf">(nx, ny)</code> (<code style="color:#22d3bf">[-1,1]</code>) des Sichtraums auf Texturkoordinaten ab (<code style="color:#22d3bf">u = (nx+1)/2</code>, <code style="color:#22d3bf">v = (1−ny)/2</code>, y in Zeilenrichtung gespiegelt) und tastet das <code style="color:#22d3bf">matcap</code>-Bild per <b>bilinearer Interpolation</b> ab. Ohne Beleuchtungsrechnung lässt sich das Materialaussehen von 1 Aufnahme einer beleuchteten Kugel direkt auf beliebige Formen übertragen (Metall, Ton, Toon usw.).</p>
+<p><code style="color:#22d3bf">matcap</code> ist eine nahezu quadratische lit-sphere-Textur:</p>
+<p style="margin:2px 0 2px 12px">• Graustufen <code style="color:#22d3bf">(h, w)</code>          → Ausgabe <code style="color:#22d3bf">(H, W)</code></p>
+<p style="margin:2px 0 2px 12px">• Farbe <code style="color:#22d3bf">(h, w, C)</code> (C beliebig) → Ausgabe <code style="color:#22d3bf">(H, W, C)</code></p>
+<p>Der Hintergrund (Normalen der Länge 0) ist 0. Texturkoordinaten werden an den Rändern geklemmt (Normalen am Kugelrand <code style="color:#22d3bf">|(nx,ny)|→1</code> zeigen auf den Texturrand).</p>
+<p>fail-closed: ungültige Formen, nicht endliche Werte und zu kleine (<code style="color:#22d3bf">h,w &lt; 2</code>) Texturen lösen <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

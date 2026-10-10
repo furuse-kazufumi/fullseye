@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fundamental_8point(pts1, pts2)</code> (die Implementierung direkt: <code style="color:#22d3bf">import twoview; twoview.fundamental_8point(pts1, pts2)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;fundamental_8point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schätzt die Fundamentalmatrix F mit dem normalisierten Acht-Punkt-Algorithmus (Rang 2 erzwungen). → F (3,3). Mindestens acht Punkte nötig.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Raises ValueError: 点が (N,2) でない/非有限/8 点未満/対応数不一致。</p>
-<p>手順: 両画像の点を Hartley 正規化(重心を原点、平均距離 √2)→ 9 列の係数行列の最小特異ベクトルを F とする → 特異値の 3 番目を 0 にして rank-2 に強制 → <code style="color:#22d3bf">T2ᵀ F T1</code> で逆正規化 → <code style="color:#22d3bf">F[2,2]</code> で割って正規化(それがほぼ 0 なら Frobenius ノルムで割る)。</p>
-<p style="margin:2px 0 2px 12px">• 対応点は画素座標 (x, y) の (N,2)。規約は <code style="color:#22d3bf">x2ᵀ F x1 = 0</code>(x1 が pts1、x2 が pts2)。</p>
-<p style="margin:2px 0 2px 12px">• F はスケール不定(定数倍しても同じ幾何)で符号も一意ではない。</p>
-<p style="margin:2px 0 2px 12px">• 全点を等しく使う最小二乗で、外れ値には無防備。誤対応が混じる対応は本 op の前に除くか、<code style="color:#22d3bf">sampson_distance</code> で残差を見て選別してから再フィットする。</p>
-<p style="margin:2px 0 2px 12px">• 平面シーンや純回転では対応点が 1 つのホモグラフィで説明でき F は一意に決まらない(それでも何かは返る)。この退化は <code style="color:#22d3bf">recover_pose</code> が入口で検出して拒否する。</p>
-<p style="margin:2px 0 2px 12px">• 決定論的。後段は <code style="color:#22d3bf">essential_8point</code> / <code style="color:#22d3bf">recover_pose</code> / <code style="color:#22d3bf">sampson_distance</code>。</p>
+<p>Raises ValueError: Punkte sind nicht (N,2) / nicht endlich / weniger als 8 Punkte / Anzahl der Korrespondenzen stimmt nicht überein.</p>
+<p>Ablauf: die Punkte beider Bilder Hartley-normieren (Schwerpunkt in den Ursprung, mittlerer Abstand √2) → den kleinsten Singulärvektor der Koeffizientenmatrix mit 9 Spalten als F nehmen → den 3. Singulärwert auf 0 setzen, um rank-2 zu erzwingen → mit <code style="color:#22d3bf">T2ᵀ F T1</code> denormieren → durch <code style="color:#22d3bf">F[2,2]</code> teilen und so normieren (ist dieser Wert nahezu 0, durch die Frobenius-Norm teilen).</p>
+<p style="margin:2px 0 2px 12px">• Korrespondenzen sind (N,2) in Pixelkoordinaten (x, y). Konvention: <code style="color:#22d3bf">x2ᵀ F x1 = 0</code> (x1 ist pts1, x2 ist pts2).</p>
+<p style="margin:2px 0 2px 12px">• F ist nur bis auf die Skala bestimmt (ein konstantes Vielfaches ergibt dieselbe Geometrie), und auch das Vorzeichen ist nicht eindeutig.</p>
+<p style="margin:2px 0 2px 12px">• Kleinste Quadrate mit gleicher Gewichtung aller Punkte; gegen Ausreißer schutzlos. Fehlzuordnungen vor diesem Op entfernen oder die Residuen mit <code style="color:#22d3bf">sampson_distance</code> prüfen, aussortieren und neu fitten.</p>
+<p style="margin:2px 0 2px 12px">• Bei einer ebenen Szene oder reiner Rotation lassen sich die Korrespondenzen durch 1 Homographie erklären, und F ist nicht eindeutig bestimmt (es wird trotzdem etwas zurückgegeben). Diese Degeneration erkennt <code style="color:#22d3bf">recover_pose</code> am Eingang und weist sie ab.</p>
+<p style="margin:2px 0 2px 12px">• Deterministisch. Nachgelagert: <code style="color:#22d3bf">essential_8point</code> / <code style="color:#22d3bf">recover_pose</code> / <code style="color:#22d3bf">sampson_distance</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

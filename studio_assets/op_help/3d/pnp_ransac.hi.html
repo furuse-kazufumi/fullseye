@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pnp3d; pnp3d.pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;pnp_ransac&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>outliers के प्रति robust PnP (RANSAC + अंतिम DLT refit)। → (R, t, inlier_mask, info)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>6 点の最小サンプルで DLT(精密化なし)→ 再投影誤差 &lt; thresh の inlier 最大化 → inlier 全体で <code style="color:#22d3bf">pnp_pose</code>(精密化あり)リフィット。</p>
-<p>Raises ValueError: points_2d が (N,2) でない / points_3d が (N,3) でない /</p>
-<p>点数不一致 / 6 点未満 / 非有限。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thresh</code>: 再投影誤差のしきい値 [px] (ユークリッド距離、既定 2.0)。これ未満を inlier とする。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iters</code>: 反復数(既定 300)。早期終了はせず必ずこの回数回す。各反復は 6 点を非復元抽出し初期姿勢だけを解く(縮退した標本は捨てて次へ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>: <code style="color:#22d3bf">numpy.random.default_rng(seed)</code> に渡す。同じ入力と seed なら結果は再現する。</p>
-<p>返り値: <code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,)(規約 <code style="color:#22d3bf">Xc = R X + t</code>)、<code style="color:#22d3bf">inlier_mask</code> bool (N,)、<code style="color:#22d3bf">info</code> dict。<code style="color:#22d3bf">info</code> のキーは <code style="color:#22d3bf">n_inliers</code> / <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code> / <code style="color:#22d3bf">rms</code>(最終姿勢の再投影 RMS [px]、inlier 集合上)。</p>
-<p style="margin:2px 0 2px 12px">• 最良標本の inlier が 6 未満のときは全点で解き直す fallback に入り、<code style="color:#22d3bf">info[&quot;fallback&quot;] = True</code> が付く。このとき <code style="color:#22d3bf">inlier_mask</code> は fallback 姿勢で数え直した実測値なので、<code style="color:#22d3bf">inlier_ratio</code> が小さいまま返ることがある(合意を捏造しない)。fallback も失敗すれば <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• inlier 数の比較は「より多い」だけを更新するので、同数なら先に見つかった標本が残る。</p>
-<p style="margin:2px 0 2px 12px">• 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。</p>
-<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 形状不正 / 6 点未満 / 点数不一致 / 非有限(<code style="color:#22d3bf">dlt_pose</code> と同じ入口検査)。</p>
-<p style="margin:2px 0 2px 12px">• 評価は <code style="color:#22d3bf">reprojection_error</code>、GT 比較は <code style="color:#22d3bf">pose_error</code>。</p>
+<p>6 points के minimal sample पर DLT (refinement के बिना) → reprojection error &lt; thresh वाले inliers को अधिकतम करना → सभी inliers पर <code style="color:#22d3bf">pnp_pose</code> (refinement सहित) से refit।</p>
+<p>Raises ValueError: points_2d (N,2) न हो / points_3d (N,3) न हो /</p>
+<p>points की संख्या मेल न खाए / 6 से कम points / non-finite।</p>
+<p>arguments:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thresh</code>: reprojection error का threshold [px] (Euclidean distance, default 2.0)। इससे कम को inlier माना जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iters</code>: iterations की संख्या (default 300)। जल्दी नहीं रुकता, हमेशा इतनी बार चलता है। हर iteration 6 points बिना replacement के चुनकर केवल initial pose हल करता है (degenerate sample छोड़कर अगले पर जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>: <code style="color:#22d3bf">numpy.random.default_rng(seed)</code> को दिया जाता है। वही input और seed हो तो परिणाम दोहराया जा सकता है।</p>
+<p>return value: <code style="color:#22d3bf">R</code> (3,3), <code style="color:#22d3bf">t</code> (3,) (convention <code style="color:#22d3bf">Xc = R X + t</code>), <code style="color:#22d3bf">inlier_mask</code> bool (N,), <code style="color:#22d3bf">info</code> dict। <code style="color:#22d3bf">info</code> की keys हैं <code style="color:#22d3bf">n_inliers</code> / <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code> / <code style="color:#22d3bf">rms</code> (अंतिम pose का reprojection RMS [px], inlier set पर)।</p>
+<p style="margin:2px 0 2px 12px">• सबसे अच्छे sample में inliers 6 से कम हों तो सभी points से दोबारा हल करने वाला fallback चलता है, और <code style="color:#22d3bf">info[&quot;fallback&quot;] = True</code> जुड़ जाता है। तब <code style="color:#22d3bf">inlier_mask</code> fallback pose से दोबारा गिना गया वास्तविक मान होता है, इसलिए <code style="color:#22d3bf">inlier_ratio</code> छोटा ही लौट सकता है (consensus गढ़ा नहीं जाता)। fallback भी विफल हो तो <code style="color:#22d3bf">ValueError</code>।</p>
+<p style="margin:2px 0 2px 12px">• inliers की संख्या की तुलना केवल &quot;ज़्यादा&quot; होने पर update करती है, इसलिए बराबर होने पर पहले मिला sample बना रहता है।</p>
+<p style="margin:2px 0 2px 12px">• अंतिम pose सभी inliers पर refit है (LM refinement सहित)।</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: ग़लत shape / 6 से कम points / points की संख्या मेल न खाए / non-finite (<code style="color:#22d3bf">dlt_pose</code> जैसी ही प्रवेश जाँच)।</p>
+<p style="margin:2px 0 2px 12px">• evaluation <code style="color:#22d3bf">reprojection_error</code> से, GT से तुलना <code style="color:#22d3bf">pose_error</code> से।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

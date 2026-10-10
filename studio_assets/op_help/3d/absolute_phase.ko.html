@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.absolute_phase(wrapped, coarse) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fringe; fringe.absolute_phase(wrapped, coarse) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;absolute_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>감긴 위상을, 거칠지만 절대적인 위상 추정으로 차수를 확정해 절대 위상으로 만듭니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Φ = wrapped + 2π·round((coarse − wrapped) / 2π)</p>
-<p>wrapped: wrapped_phase の出力 (-π,π] の 2D 配列(高精度・絶対次数なし)。</p>
-<p>coarse:  同形の 2D 配列。<b>絶対だが粗い</b>位相推定 [rad]。Gray code で復号した投影機</p>
-<p>コラム番号を位相に直したもの(2π·freq·col/width)が典型。NaN 可(出力も NaN)。</p>
-<p>返り値: 絶対位相 [rad] (2D float64)。無効画素(どちらかが NaN)は NaN。</p>
-<p>なぜ必要か(空間アンラップとの違い): <code style="color:#22d3bf">unwrap_phase_2d</code> は隣接画素を辿って 2π 跳びを繋ぐので、(a) 大域オフセット +2πm が残り、(b) オクルージョンで切れた島の間では次数が伝播できない。本 op は画素ごとに独立に次数を決めるため、<b>島に分かれた場面でも絶対</b>で、伝播も要らない。その代わり coarse の誤差が半周期(π)未満であることが要件。</p>
-<p>要件(fail-closed): |coarse − Φ_true| &lt; π。これを破ると round が隣の次数を選び、その画素だけ 2π ぶん(= 縞 1 本ぶんの奥行き)静かにずれる。Gray code の粗さ(±0.5 コラム) を位相に直した量が半周期を超えないよう、縞本数 freq を選ぶこと(例: 投影機幅 512 px・freq 24 → 1 周期 21.3 px、Gray の ±0.5 px は余裕で内側)。</p>
-<p>Raises: 形状不一致・2D でない・wrapped が (-π,π] を大きく外れる場合に ValueError。</p>
-<p>来歴(公開文献): Gray code と位相シフトを併用して絶対位相を得る合成法 — Sansoni et al., *Appl. Opt.* 38(31) 1999 / Zhang, *Opt. Lasers Eng.* 48 2010(総説)。Gray code そのものの投影は Inokuchi et al., *ICPR* 1984。</p>
+<p>wrapped: wrapped_phase의 출력 (-π,π]의 2D 배열(고정밀·절대 차수 없음).</p>
+<p>coarse:  같은 형상의 2D 배열. <b>절대적이지만 거친</b> 위상 추정 [rad]. Gray code로 복호한 프로젝터</p>
+<p>컬럼 번호를 위상으로 고친 것(2π·freq·col/width)이 전형적. NaN 허용(출력도 NaN).</p>
+<p>반환값: 절대 위상 [rad] (2D float64). 무효 화소(어느 한쪽이 NaN)는 NaN.</p>
+<p>왜 필요한가(공간 언랩과의 차이): <code style="color:#22d3bf">unwrap_phase_2d</code>는 인접 화소를 따라가며 2π 점프를잇기 때문에, (a) 대역 오프셋 +2πm이 남고, (b) 오클루전으로 끊긴 섬 사이에서는 차수가전파되지 못한다. 본 op는 화소마다 독립적으로 차수를 정하므로 <b>섬으로 나뉜 장면에서도 절대적</b> 이며, 전파도 필요 없다. 그 대신 coarse의 오차가 반주기(π) 미만이어야 한다.</p>
+<p>요건(fail-closed): |coarse − Φ_true| &lt; π. 이를 어기면 round가 이웃 차수를 골라, 그 화소만 2π만큼(= 줄무늬 1 개분의 깊이) 조용히 어긋난다. Gray code의 거칠기(±0.5 컬럼) 를 위상으로 고친 양이 반주기를 넘지 않도록 줄무늬 개수 freq를 고를 것(예: 프로젝터 폭 512 px·freq 24 → 1 주기 21.3 px, Gray의 ±0.5 px는 여유 있게 안쪽).</p>
+<p>Raises: 형상 불일치·2D가 아님·wrapped가 (-π,π]를 크게 벗어나는 경우에 ValueError.</p>
+<p>출처(공개 문헌): Gray code와 위상 시프트를 병용하여 절대 위상을 얻는 합성법 — Sansoni et al., *Appl. Opt.* 38(31) 1999 / Zhang, *Opt. Lasers Eng.* 48 2010(총설). Gray code 자체의 투영은 Inokuchi et al., *ICPR* 1984.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

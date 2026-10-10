@@ -4,27 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import volops; volops.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;volume_downsample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Block-Pooling eines <code style="color:#22d3bf">(D, H, W)</code>-Volumens um einen ganzzahligen *factor* je Achse (Datenreduktion).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Large CT / laminography / simulation volumes must be thinned before the heavier 3-D operators (Frangi/Sato are capped at ~256**3 voxels, see <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>). This is the volume analogue of the point-cloud <code style="color:#22d3bf">voxel_grid_downsample</code> and the mesh <code style="color:#22d3bf">decimate_qem</code> — the third leg of Fullseye&#x27;s *間引き* (decimation) family, one per 3-D data sort.</p>
+<p>Große CT- / Laminographie- / Simulationsvolumen müssen vor den schwereren 3-D-Operatoren ausgedünnt werden (Frangi/Sato sind auf ~256**3 Voxel begrenzt, siehe <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>). Dies ist das Volumen-Gegenstück zum Punktwolken- <code style="color:#22d3bf">voxel_grid_downsample</code> und zum Mesh-<code style="color:#22d3bf">decimate_qem</code> -- das dritte Bein von Fullseyes *Ausdünnungs*-Familie (decimation), eines pro 3-D-Datensorte.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : array_like, shape (D, H, W)</p>
-<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>Eingabevolumen (in float64 umgewandelt; NaN/Inf abgewiesen).</p>
 <p>factor : int or (fz, fy, fx)</p>
-<p>Block size per axis, each <code style="color:#22d3bf">&gt;= 1</code>. The output shape is</p>
-<p><code style="color:#22d3bf">(D//fz, H//fy, W//fx)</code>; a trailing partial block that cannot fill a</p>
-<p>full factor is dropped (deterministic, no edge bias).</p>
+<p>Blockgröße pro Achse, jeweils <code style="color:#22d3bf">&gt;= 1</code>. Die Ausgabeform ist</p>
+<p><code style="color:#22d3bf">(D//fz, H//fy, W//fx)</code>; ein nachlaufender Teilblock, der keinen</p>
+<p>vollen Faktor füllt, wird verworfen (deterministisch, ohne Randverzerrung).</p>
 <p>mode : {&#x27;mean&#x27;, &#x27;max&#x27;, &#x27;stride&#x27;}</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;mean&#x27;</code> — average-pool. Band-limits before subsampling (the anti-aliasing choice); the right default for grey CT / MRI.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;max&#x27;</code>  — max-pool. Preserves thin bright structures (bone, vessel, defect voxels) that averaging would wash out.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;stride&#x27;</code> — plain subsample <code style="color:#22d3bf">vol[::fz, ::fy, ::fx]</code> (fastest, but aliases — no pre-filter).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;mean&#x27;</code> -- Average-Pooling. Bandbegrenzt vor dem Unterabtasten (die Anti-Aliasing-Wahl); der richtige Standard für Grauwert-CT / MRI.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;max&#x27;</code>  -- Max-Pooling. Erhält dünne helle Strukturen (Knochen, Gefäße, Defektvoxel), die das Mitteln auswaschen würde.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;stride&#x27;</code> -- einfache Unterabtastung <code style="color:#22d3bf">vol[::fz, ::fy, ::fx]</code> (am schnellsten, aber mit Aliasing -- kein Vorfilter).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (D//fz, H//fy, W//fx), float64</p>
-<p>The downsampled volume. Spacing scales by the same factor: an input</p>
-<p>spacing <code style="color:#22d3bf">(sz, sy, sx)</code> mm becomes <code style="color:#22d3bf">(sz*fz, sy*fy, sx*fx)</code> mm.</p>
+<p>Das herunterskalierte Volumen. Der Abstand skaliert mit demselben Faktor: ein Eingabe-</p>
+<p>abstand <code style="color:#22d3bf">(sz, sy, sx)</code> mm wird zu <code style="color:#22d3bf">(sz*fz, sy*fy, sx*fx)</code> mm.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>Non-3-D input, a factor component <code style="color:#22d3bf">&lt; 1</code> or larger than its axis, or an</p>
-<p>unknown *mode* (fail-closed).</p>
+<p>Eingabe nicht 3-D, eine Faktorkomponente <code style="color:#22d3bf">&lt; 1</code> oder größer als ihre Achse, oder ein</p>
+<p>unbekannter *mode* (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

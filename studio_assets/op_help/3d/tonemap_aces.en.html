@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;tonemap_aces&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Compress HDR into <code style="color:#22d3bf">[0, 1]</code> LDR with the ACES filmic approximation (Narkowicz 2015). → float64.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">x = hdr * exposure</code> に対し <code style="color:#22d3bf">f(x) = x(a x + b) / (x(c x + d) + e)</code> を適用する。フィルム的な S 字カーブで暗部を持ち上げハイライトを緩やかに巻き取り、映像制作標準の「見栄え」を出す。<code style="color:#22d3bf">x &lt; ~7.24</code> の範囲では狭義単調増加・出力 &lt; 1(それ以上は 1 に飽和しクリップ)。カラー <code style="color:#22d3bf">(H, W, C)</code> はチャンネル独立に写像する。</p>
+<p>Applies <code style="color:#22d3bf">f(x) = x(a x + b) / (x(c x + d) + e)</code> to <code style="color:#22d3bf">x = hdr * exposure</code>. A film-like S-curve that lifts the shadows and rolls off the highlights gently, giving the &quot;look&quot; that is standard in video production. In the range <code style="color:#22d3bf">x &lt; ~7.24</code> it is strictly monotonically increasing with output &lt; 1 (above that it saturates at 1 and is clipped). Colour <code style="color:#22d3bf">(H, W, C)</code> is mapped per channel independently.</p>
 <p>Args:</p>
-<p>hdr: HDR 画像。<code style="color:#22d3bf">(H, W)</code> or <code style="color:#22d3bf">(H, W, C)</code>、放射輝度 &gt;= 0。</p>
-<p>exposure: 写像前に掛ける露出スケール(正)。</p>
+<p>hdr: HDR image. <code style="color:#22d3bf">(H, W)</code> or <code style="color:#22d3bf">(H, W, C)</code>, radiance &gt;= 0.</p>
+<p>exposure: exposure scale applied before mapping (positive).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">[0, 1]</code> の float64 LDR 画像(入力と同形状)。</p>
+<p>float64 LDR image in <code style="color:#22d3bf">[0, 1]</code> (same shape as the input).</p>
 <p>Raises:</p>
-<p>ValueError: 空/非有限/負の放射輝度、非正の exposition(fail-closed)。</p>
+<p>ValueError: empty/non-finite/negative radiance, non-positive exposition (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

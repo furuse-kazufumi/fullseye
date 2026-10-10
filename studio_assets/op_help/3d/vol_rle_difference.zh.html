@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_difference(a, b)</code>(要直接调用实现,<code style="color:#22d3bf">import volregion; volregion.vol_rle_difference(a, b)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_difference&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 run 上的差集 <code style="color:#22d3bf">a \ b</code>(不解码)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> に含まれ <code style="color:#22d3bf">b</code> に含まれない voxel の region。掃引エンジン(<code style="color:#22d3bf">_rle_boolean</code>) で区間ごとの被覆状態が <code style="color:#22d3bf">ia &amp; ~ib</code> の区間を run として残す。非可換(<code style="color:#22d3bf">vol_rle_difference(a, b) != vol_rle_difference(b, a)</code>)。計算量は run 数に対して O(n log n)。</p>
-<p>返り値: 同じ <code style="color:#22d3bf">shape</code> の新しい <code style="color:#22d3bf">VolRLE</code>。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">b</code> に完全に含まれていれば run 0 本の region。<code style="color:#22d3bf">vol_rle_decode(result) == decode(a) &amp; ~decode(b)</code> が voxel 単位で成り立つ。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): どちらかが <code style="color:#22d3bf">VolRLE</code> でない・run 配列の整合性検査に失敗 / <code style="color:#22d3bf">a.shape != b.shape</code>。</p>
-<p>使いどころ: 全体マスクから ROI 外や既知の成分(<code style="color:#22d3bf">vol_rle_components</code> の 1 つ)を取り除く、<code style="color:#22d3bf">vol_rle_encode(mask)</code> と erode 結果の差で殻を作る、といった「引き算」を密配列を作らずに行う。</p>
+<p>包含在 <code style="color:#22d3bf">a</code> 中且不包含在 <code style="color:#22d3bf">b</code> 中的 voxel 的 region。用扫掠引擎(<code style="color:#22d3bf">_rle_boolean</code>) 把每个区间覆盖状态为 <code style="color:#22d3bf">ia &amp; ~ib</code> 的区间保留为 run。不可交换(<code style="color:#22d3bf">vol_rle_difference(a, b) != vol_rle_difference(b, a)</code>)。计算量相对 run 数为 O(n log n)。</p>
+<p>返回值: 相同 <code style="color:#22d3bf">shape</code> 的新 <code style="color:#22d3bf">VolRLE</code>。若 <code style="color:#22d3bf">a</code> 完全包含在 <code style="color:#22d3bf">b</code> 中,则为 run 0 个的 region。<code style="color:#22d3bf">vol_rle_decode(result) == decode(a) &amp; ~decode(b)</code> 在 voxel 级别成立。</p>
+<p>校验(<code style="color:#22d3bf">ValueError</code>): 任一方不是 <code style="color:#22d3bf">VolRLE</code> 或 run 数组的一致性检查失败 / <code style="color:#22d3bf">a.shape != b.shape</code>。</p>
+<p>适用场景: 从整体掩模中去除 ROI 外或已知的成分(<code style="color:#22d3bf">vol_rle_components</code> 中的 1 个)、用 <code style="color:#22d3bf">vol_rle_encode(mask)</code> 与 erode 结果之差制作壳层等 “减法”,无需构建密集数组即可完成。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

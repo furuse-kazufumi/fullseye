@@ -5,22 +5,21 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">points</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">pcl_filter.radius_outlier_removal</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>반경 radius 안의 이웃 수가 min_neighbors 미만인 점을 제거(고립점 제거).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各点を中心に半径 <code style="color:#22d3bf">radius</code> の球を張り、その中に居る他点の数が <code style="color:#22d3bf">min_neighbors</code> に満たない点を「孤立した粒」として落とす。統計的手法より局所的・直接的で、センサの実スケールが分かっているときにしきい値を決めやすい。</p>
+<p>각 점을 중심으로 반경 <code style="color:#22d3bf">radius</code>의 구를 펼치고, 그 안에 있는 다른 점의 수가 <code style="color:#22d3bf">min_neighbors</code> 에 못 미치는 점을 &quot;고립된 알갱이&quot;로 보고 제거한다. 통계적 방법보다 국소적·직접적이며, 센서의 실제 스케일을 알고 있을 때 임계값을 정하기 쉽다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>입력 점군.</p>
 <p>radius : float</p>
-<p>近傍とみなす球の半径(&gt; 0)。</p>
+<p>근방으로 간주하는 구의 반경(&gt; 0).</p>
 <p>min_neighbors : int</p>
-<p>残すのに必要な近傍数(自分自身は数えない、既定 8)。</p>
+<p>남기는 데 필요한 근방 수(자기 자신은 세지 않음, 기본값 8).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
-<p>生き残った点(元の順序を保持)。</p>
+<p>살아남은 점(원래 순서를 유지).</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
-<p>各入力点を残すか(True=残す)。</p>
+<p>각 입력점을 남길지 여부(True=남긴다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p><code style="color:#22d3bf">radius &lt;= 0</code> は ValueError。空入力は空を返す(graceful)。</p>
+<p><code style="color:#22d3bf">radius &lt;= 0</code>은 ValueError. 빈 입력은 빈 결과를 반환한다(graceful).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

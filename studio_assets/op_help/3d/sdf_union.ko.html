@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_union(a, b)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_union(a, b)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;sdf_union&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 SDF 의 합집합 A∪B = 요소별 min(a, b)(어느 한쪽이 음이면 안쪽).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>ゼロ等値面は両形状の境界の和集合に厳密一致。外側では厳密な SDF(最近表面までの距離)、内側は保守的下界。<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> はブロードキャスト整合すればよい。</p>
-<p>計算: <code style="color:#22d3bf">np.minimum(np.asarray(a, float64), np.asarray(b, float64))</code>。それ以外の検査はしない — shape がブロードキャストできなければ numpy の <code style="color:#22d3bf">ValueError</code>、NaN は要素ごとに伝播する(<code style="color:#22d3bf">np.minimum</code> は NaN を返す)。<code style="color:#22d3bf">±inf</code> は厳密に伝播(<code style="color:#22d3bf">min(a, +inf) = a</code>:<code style="color:#22d3bf">esdf</code> の「全自由なら +inf」契約と相互運用できる)。</p>
-<p>入力: 同一グリッド上で評価した 2 つの SDF(<code style="color:#22d3bf">sphere_sdf</code> / <code style="color:#22d3bf">box_sdf</code> / <code style="color:#22d3bf">esdf</code> の出力など、内側負・外側正)。形は <code style="color:#22d3bf">grid_coords</code> の <code style="color:#22d3bf">(nx, ny, nz)</code> でも <code style="color:#22d3bf">(N,)</code> の点列でもよい。距離の単位は入力と同じ。</p>
-<p>返り値: ブロードキャスト後の shape の float64。ゼロ交差(<code style="color:#22d3bf">&lt;= 0</code>)が A∪B の占有。</p>
-<p>注意: 内側の値は「どちらか近い方の表面までの距離」の下界であり、重なり領域では真の距離より小さめ(絶対値が大きめ)に出る。CSG の標準的性質で、等値面抽出(marching cubes)や <code style="color:#22d3bf">sdf_offset</code> の膨張には影響しない。継ぎ目を丸めたい場合は <code style="color:#22d3bf">sdf_smooth_union</code>。</p>
+<p>영 등위면은 두 형상 경계의 합집합과 엄밀히 일치한다. 바깥에서는 엄밀한 SDF(최근접 표면까지의 거리), 안쪽은 보수적 하계. <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> 는 브로드캐스트 정합만 되면 된다.</p>
+<p>계산: <code style="color:#22d3bf">np.minimum(np.asarray(a, float64), np.asarray(b, float64))</code>. 그 밖의검사는 하지 않는다 — shape 를 브로드캐스트할 수 없으면 numpy 의 <code style="color:#22d3bf">ValueError</code>, NaN 은 요소별로 전파된다(<code style="color:#22d3bf">np.minimum</code> 은 NaN 을 반환). <code style="color:#22d3bf">±inf</code> 는 엄밀히 전파(<code style="color:#22d3bf">min(a, +inf) = a</code>: <code style="color:#22d3bf">esdf</code> 의 &quot;전부 자유이면 +inf&quot; 계약과 상호 운용할 수 있다).</p>
+<p>입력: 같은 격자 위에서 평가한 2 개의 SDF(<code style="color:#22d3bf">sphere_sdf</code> / <code style="color:#22d3bf">box_sdf</code> / <code style="color:#22d3bf">esdf</code> 의 출력 등, 안쪽 음, 바깥쪽 양). 형태는 <code style="color:#22d3bf">grid_coords</code> 의 <code style="color:#22d3bf">(nx, ny, nz)</code> 이든 <code style="color:#22d3bf">(N,)</code> 의 점 목록이든 좋다. 거리 단위는 입력과 같다.</p>
+<p>반환값: 브로드캐스트 후 shape 의 float64. 영교차(<code style="color:#22d3bf">&lt;= 0</code>)가 A∪B 의점유.</p>
+<p>주의: 안쪽 값은 &quot;어느 쪽이든 가까운 표면까지의 거리&quot;의 하계이며, 겹침 영역에서는참 거리보다 작게(절댓값이 크게) 나온다. CSG 의 표준적 성질로, 등위면 추출(marching cubes)이나 <code style="color:#22d3bf">sdf_offset</code> 의 팽창에는 영향이 없다. 이음매를 둥글리고 싶으면 <code style="color:#22d3bf">sdf_smooth_union</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

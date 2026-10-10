@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.eval_poly_surface(model, x, y)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.eval_poly_surface(model, x, y)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;eval_poly_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Evaluate the model at (x,y) → z (returned in the shape of x).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>*model* は <code style="color:#22d3bf">fit_poly_surface</code> の返り(dict)。<b>fail-closed</b>: B スプライン曲面/曲線の tck(FITPACK の list)を渡すと、以前は <code style="color:#22d3bf">model[&quot;degree&quot;]</code> が <code style="color:#22d3bf">TypeError: list indices must be integers...</code> で落ちていた(2026-09-01 実測 7 回)。多項式モデルと B スプラインモデルは中身が違うので、ここで明示的に拒否する(ops3d 台帳側でも poly_surface / bspline_surface と型を分けてある)。</p>
-<p>Raises ValueError: model が多項式モデル dict でない / 必須キー欠落。</p>
+<p>*model* is the return value (dict) of <code style="color:#22d3bf">fit_poly_surface</code>. <b>fail-closed</b>: passing the tck of a B-spline surface/curve (a FITPACK list) used to crash at <code style="color:#22d3bf">model[&quot;degree&quot;]</code> with <code style="color:#22d3bf">TypeError: list indices must be integers...</code> (measured 7 times on 2026-09-01). Polynomial models and B-spline models have different contents, so they are rejected explicitly here (the ops3d ledger also keeps the types poly_surface / bspline_surface separate).</p>
+<p>Raises ValueError: model is not a polynomial-model dict / a required key is missing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Why matrix decompositions are slow — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

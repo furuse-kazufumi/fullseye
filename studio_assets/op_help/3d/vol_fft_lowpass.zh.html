@@ -4,14 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_fft_lowpass(vol, cutoff, spacing=None)</code>(要直接调用实现,<code style="color:#22d3bf">import volfreq; volfreq.vol_fft_lowpass(vol, cutoff, spacing=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_lowpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高斯低通:保留比 <code style="color:#22d3bf">1/cutoff</code> 更粗的结构(体素单位或实际尺寸)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>mm with *spacing*), attenuates finer detail smoothly. Transfer <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> — the DC level (mean intensity) passes unchanged. Typical use: extract the illumination/thickness drift.</p>
-<p>手順: <code style="color:#22d3bf">np.fft.rfftn</code> で実 FFT → 各周波数 bin の大きさ <code style="color:#22d3bf">|f| = sqrt(fz^2 + fy^2 + fx^2)</code> に伝達関数 <code style="color:#22d3bf">exp(-|f|^2 / (2 cutoff^2))</code> を掛ける → <code style="color:#22d3bf">irfftn</code> で戻す。入力と同じ <code style="color:#22d3bf">(D, H, W)</code> の float64 を返す(spacing を渡しても shape は変わらない)。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cutoff</code>: 正の有限値。<code style="color:#22d3bf">spacing=None</code> なら <b>cycles/voxel</b>(Nyquist = 0.5)、<code style="color:#22d3bf">spacing=(sz, sy, sx)</code>(mm、または <code style="color:#22d3bf">spacing_mm</code> を持つ <code style="color:#22d3bf">volio.VolumeMeta</code>)を渡すと <b>cycles/mm</b>。異方 voxel では軸ごとに <code style="color:#22d3bf">fftfreq(n, d=spacing)</code> で物理周波数に直すので、同じ物理構造が同じ扱いになる。</p>
-<p style="margin:2px 0 2px 12px">• 減衰は Gaussian で、<code style="color:#22d3bf">|f| = cutoff</code> で <code style="color:#22d3bf">exp(-1/2) ≈ 0.61</code>(brick-wall ではない。リンギングは出ない)。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): 3-D でない / NaN・Inf / voxel 数が <code style="color:#22d3bf">MAX_VOXELS</code>(<code style="color:#22d3bf">1 &lt;&lt; 27</code>) 超 / <code style="color:#22d3bf">cutoff</code> が非正・非有限・2 乗がアンダーフローするほど小さい / <code style="color:#22d3bf">spacing</code> が長さ 3 でない・非正。</p>
-<p>注意: FFT は volume を周期的とみなす。向かい合う面の輝度差が大きいと wrap をまたいで漏れる(窓掛けは黙ってしない)。<code style="color:#22d3bf">vol_fft_highpass</code> は厳密にこの補集合 <code style="color:#22d3bf">1 - lowpass</code> で、両者の和は入力に一致する。</p>
+<p>mm 计),平滑地衰减更细的细节。传递函数 <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> —— DC 分量(平均强度)原样</p>
+<p>通过。典型用途: 提取照明/厚度漂移。</p>
+<p>步骤: 用 <code style="color:#22d3bf">np.fft.rfftn</code> 做实 FFT → 按各频率 bin 的大小 <code style="color:#22d3bf">|f| = sqrt(fz^2 + fy^2 + fx^2)</code> 乘以传递函数 <code style="color:#22d3bf">exp(-|f|^2 / (2 cutoff^2))</code> → 用 <code style="color:#22d3bf">irfftn</code> 变换回来。返回与输入相同 <code style="color:#22d3bf">(D, H, W)</code> 的 float64(传入 spacing 也不改变 shape)。</p>
+<p>参数:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cutoff</code>: 正有限值。<code style="color:#22d3bf">spacing=None</code> 时为 <b>cycles/voxel</b>(Nyquist = 0.5), 传入 <code style="color:#22d3bf">spacing=(sz, sy, sx)</code>(mm,或带 <code style="color:#22d3bf">spacing_mm</code> 的 <code style="color:#22d3bf">volio.VolumeMeta</code>)时为 <b>cycles/mm</b>。各向异性 voxel 时按轴用 <code style="color:#22d3bf">fftfreq(n, d=spacing)</code> 换算为物理频率,因此相同的物理结构得到相同处理。</p>
+<p style="margin:2px 0 2px 12px">• 衰减为 Gaussian,在 <code style="color:#22d3bf">|f| = cutoff</code> 处为 <code style="color:#22d3bf">exp(-1/2) ≈ 0.61</code>(不是 brick-wall。不会出现振铃)。</p>
+<p>校验(<code style="color:#22d3bf">ValueError</code>): 不是 3-D / NaN、Inf / voxel 数超过 <code style="color:#22d3bf">MAX_VOXELS</code>(<code style="color:#22d3bf">1 &lt;&lt; 27</code>) / <code style="color:#22d3bf">cutoff</code> 非正、非有限、小到 2 次方会下溢 / <code style="color:#22d3bf">spacing</code> 长度不为 3、非正。</p>
+<p>注意: FFT 将 volume 视为周期性的。若相对两面的亮度差很大,会跨越 wrap 泄漏(不会默默加窗)。<code style="color:#22d3bf">vol_fft_highpass</code> 严格是其补集 <code style="color:#22d3bf">1 - lowpass</code>,两者之和等于输入。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

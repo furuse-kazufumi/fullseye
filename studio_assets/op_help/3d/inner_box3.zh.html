@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import regionprops3d; regionprops3d.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;inner_box3&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>完全内接于二值体素区域的最大轴对齐盒(2-D <code style="color:#22d3bf">inner_rectangle1</code> 的 3-D 版)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>3-D 版)。</p>
-<p>厳密解: どの深さ区間 [z0, z1] についても、ボックスはスライス z0..z1 の <b>論理積</b> (全スライスで前景のボクセル)の内側に無ければならない。その積の中の最大内接 2-D 長方形(ヒストグラム法 = <code style="color:#22d3bf">inner_rectangle1</code> と同じコア)× 区間長 が候補ボックスで、全区間についての最大が厳密な最大内接ボックスになる。O(D^2 * H * W)。</p>
+<p>严格解:对于任意深度区间 [z0, z1],盒子必须位于切片 z0..z1 的<b>逻辑与</b> (在所有切片中都是前景的体素)之内。该交集中的最大内接 2-D 矩形(直方图法 = 与 <code style="color:#22d3bf">inner_rectangle1</code> 相同的核心)× 区间长度 即为候选盒子,对全部区间取最大即为严格的最大内接盒子。O(D^2 * H * W)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p>(depth,row,col) 軸順で <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> 隅、<code style="color:#22d3bf">center</code> (+ <code style="color:#22d3bf">cd/cr/cc</code>)、</p>
-<p>全幅 <code style="color:#22d3bf">size</code>、ボクセル数の <code style="color:#22d3bf">volume</code>。</p>
+<p>按 (depth,row,col) 轴顺序的 <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> 角点、<code style="color:#22d3bf">center</code>(+ <code style="color:#22d3bf">cd/cr/cc</code>)、</p>
+<p>全宽 <code style="color:#22d3bf">size</code>、以体素数表示的 <code style="color:#22d3bf">volume</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>非 3-D 入力、または前景ゼロの領域(内接ボックス無し)。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> は <b>両端を含む</b> ボクセル添字(float 配列)。<code style="color:#22d3bf">size = max - min + 1</code>、<code style="color:#22d3bf">volume = prod(size)</code>。<code style="color:#22d3bf">center</code> は <code style="color:#22d3bf">(min + max) / 2</code> で .5 が付き得る。2-D 側の登録名は <code style="color:#22d3bf">r2_inner_rectangle1</code>。</p>
-<p style="margin:2px 0 2px 12px">• 深さ区間ごとに Python ループで最大長方形を探す O(D²·H·W)。積が空になった時点でその z0 の探索は打ち切る。大きなボリュームでは遅い。</p>
-<p style="margin:2px 0 2px 12px">• 同体積の候補が複数あるときは先に見つかったもの(z0 が小さく、その中で z1 が小さい)を返す。</p>
-<p style="margin:2px 0 2px 12px">• 入力は 0 以外を前景として bool 化する(NaN も前景)。軸順は (depth, row, col)。</p>
-<p style="margin:2px 0 2px 12px">• 典型: <code style="color:#22d3bf">largest_component</code> で対象を 1 つに絞ってから呼ぶ(複数成分が混ざると最大成分のボックスとは限らない)。</p>
+<p>非 3-D 输入,或前景为零的区域(没有内接盒子)。</p>
+<p>补充:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> 是<b>包含两端</b>的体素下标(float 数组)。<code style="color:#22d3bf">size = max - min + 1</code>,<code style="color:#22d3bf">volume = prod(size)</code>。<code style="color:#22d3bf">center</code> 为 <code style="color:#22d3bf">(min + max) / 2</code>,可能带 .5。2-D 侧的注册名为 <code style="color:#22d3bf">r2_inner_rectangle1</code>。</p>
+<p style="margin:2px 0 2px 12px">• 对每个深度区间用 Python 循环寻找最大矩形,O(D²·H·W)。交集变空时即终止该 z0 的搜索。大体数据上较慢。</p>
+<p style="margin:2px 0 2px 12px">• 存在多个同体积候选时,返回先找到的那个(z0 较小,其中 z1 较小)。</p>
+<p style="margin:2px 0 2px 12px">• 输入以 0 以外为前景转为 bool(NaN 也是前景)。轴顺序为 (depth, row, col)。</p>
+<p style="margin:2px 0 2px 12px">• 典型:先用 <code style="color:#22d3bf">largest_component</code> 将对象缩减为 1 个再调用(混有多个分量时,不一定是最大分量的盒子)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 测量不确定度与校准知识 —— 为了能主张“测得准”</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

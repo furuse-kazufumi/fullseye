@@ -6,28 +6,27 @@
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(warped, info, info)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用非剛體 ICP 把 <code style="color:#22d3bf">src</code> 靠向 <code style="color:#22d3bf">dst</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各反復で「現在の変形後 src」から <code style="color:#22d3bf">dst</code> への最近傍対応を張り直し、その対応を制御点対応(制御中心 = 元の src)として TPS を正則化つきで再当てはめし、src を変形する。対応が既知でなくとも滑らかな非線形変形を回復できる。</p>
-<p>実装上の要点(頑健性):</p>
-<p style="margin:2px 0 2px 12px">• <b>スケール不変</b>: λ は dst の重心まわり RMS 半径に対する相対値として扱う(内部で λ_eff = λ·scale)。座標が 100 倍でも同じ λ が同じ挙動を与える。</p>
-<p style="margin:2px 0 2px 12px">• <b>発散ガード</b>: 対応が曖昧だと単純な NN 反復は正のフィードバックで発散し得る。反復ごとの対応 RMS を監視し、<b>最良反復</b>(最小 RMS)の変形とモデルを返す。これにより悪い λ でも「初期より悪い」結果を返さない。</p>
-<p style="margin:2px 0 2px 12px">• λ が大きいほど剛(変形が小さい)。既定 λ=1.0 は保守的(ほぼ剛)なので、大きな非線形変形を回復させたい場合は λ を小さく(例 0.01〜0.05)する。</p>
-<p>引数:</p>
-<p>src: (N,3) 移動側点群。</p>
-<p>dst: (M,3) 固定側(参照)点群。</p>
-<p>iters: 最大反復回数。</p>
-<p>lam: TPS 正則化 λ(スケール相対)。大きいほど変形が滑らか(外れ対応に頑健、</p>
-<p>当てはめは緩い)。小さいほど密着(細かい変形を回復)。</p>
-<p>k_smooth: None なら最近傍1点を目標にする(ハード対応)。整数を与えると</p>
-<p><code style="color:#22d3bf">dst</code> 側の k 近傍の平均を目標にして対応を平滑化する(ノイズに頑健)。</p>
-<p>返り値:</p>
-<p>warped_src: (N,3) 最良反復での変形後 src。</p>
-<p>model: 対応する TPS モデル(制御中心 = 元 src、原座標系でそのまま</p>
-<p><code style="color:#22d3bf">tps_warp</code> に渡せる)。1回も当てはめできなければ None。</p>
-<p>info: dict。&quot;rms&quot;(最良の対応 RMS)、&quot;rms_init&quot;(初期=恒等時の対応 RMS)、</p>
-<p>&quot;rms_history&quot;(list)、&quot;iters&quot;(実反復数)、&quot;best_iter&quot;、&quot;converged&quot;(bool)。</p>
+<p>每次迭代都從「目前變形後的 src」向 <code style="color:#22d3bf">dst</code> 重新建立最近鄰對應,把這些對應作為控制點對應(控制中心 = 原始 src),帶正則化地重新擬合 TPS,並對 src 進行變形。即使對應關係未知,也能恢復平滑的非線性變形。</p>
+<p>實作要點(穩健性):</p>
+<p style="margin:2px 0 2px 12px">• <b>尺度不變</b>: λ 視為相對於 dst 繞質心的 RMS 半徑的相對值(內部為 λ_eff = λ·scale)。即使座標放大 100 倍,同一個 λ 也給出相同的行為。</p>
+<p style="margin:2px 0 2px 12px">• <b>發散防護</b>: 對應關係含糊時,單純的 NN 迭代可能因正回饋而發散。監看每次迭代的對應 RMS,回傳<b>最佳迭代</b>(RMS 最小)的變形與模型。因此即使 λ 選得不好,也不會回傳「比初始更差」的結果。</p>
+<p style="margin:2px 0 2px 12px">• λ 越大越剛性(變形越小)。預設 λ=1.0 偏保守(幾乎剛性),因此想恢復較大的非線性變形時,應把 λ 調小(例如 0.01~0.05)。</p>
+<p>引數:</p>
+<p>src: (N,3) 移動側點雲。</p>
+<p>dst: (M,3) 固定側(參考)點雲。</p>
+<p>iters: 最大迭代次數。</p>
+<p>lam: TPS 正則化 λ(相對尺度)。越大變形越平滑(對錯誤對應穩健,</p>
+<p>擬合較鬆)。越小貼合越緊(能恢復細小變形)。</p>
+<p>k_smooth: 為 None 時以最近的 1 個點為目標(硬對應)。給定整數時,</p>
+<p>以 <code style="color:#22d3bf">dst</code> 側 k 個近鄰的平均為目標,使對應平滑化(對雜訊穩健)。</p>
+<p>回傳值:</p>
+<p>warped_src: (N,3) 最佳迭代時變形後的 src。</p>
+<p>model: 對應的 TPS 模型(控制中心 = 原始 src,可在原座標系中直接</p>
+<p>傳給 <code style="color:#22d3bf">tps_warp</code>)。如果 1 次擬合都沒有成功則為 None。</p>
+<p>info: dict。&quot;rms&quot;(最佳對應 RMS)、&quot;rms_init&quot;(初始=恆等時的對應 RMS)、</p>
+<p>&quot;rms_history&quot;(list)、&quot;iters&quot;(實際迭代次數)、&quot;best_iter&quot;、&quot;converged&quot;(bool)。</p>
 <p>例外:</p>
-<p>ValueError: 形状不正、点数不足、k_smooth 不正。</p>
+<p>ValueError: 形狀不正確、點數不足、k_smooth 不正確。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

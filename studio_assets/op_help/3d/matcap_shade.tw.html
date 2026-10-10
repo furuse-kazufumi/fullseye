@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import render_shade; render_shade.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;matcap_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>MatCap:把視空間法線映射到 lit-sphere 貼圖,轉移材質外觀。→ <code style="color:#22d3bf">(H, W[, C])</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>視空間の単位法線 <code style="color:#22d3bf">(nx, ny)</code>(<code style="color:#22d3bf">[-1,1]</code>)をテクスチャ座標に写像し(<code style="color:#22d3bf">u = (nx+1)/2</code>, <code style="color:#22d3bf">v = (1−ny)/2</code>、行方向で y を反転)、<code style="color:#22d3bf">matcap</code> 画像を <b>双線形補間</b> で引く。ライト計算をせず、球にライティングして撮った 1 枚の素材見えを任意形状へそのまま貼れる(金属・粘土・トゥーンなど)。</p>
-<p><code style="color:#22d3bf">matcap</code> は正方に近い lit-sphere テクスチャ:</p>
-<p style="margin:2px 0 2px 12px">• グレースケール <code style="color:#22d3bf">(h, w)</code>      → 出力 <code style="color:#22d3bf">(H, W)</code></p>
-<p style="margin:2px 0 2px 12px">• カラー <code style="color:#22d3bf">(h, w, C)</code>(C 任意)  → 出力 <code style="color:#22d3bf">(H, W, C)</code></p>
-<p>背景(長さ 0 の法線)は 0。テクスチャ座標は端でクランプ(球外縁の法線 <code style="color:#22d3bf">|(nx,ny)|→1</code> はテクスチャ縁を指す)。</p>
-<p>fail-closed: 形状不正・非有限・小さすぎる(<code style="color:#22d3bf">h,w &lt; 2</code>)テクスチャは <code style="color:#22d3bf">ValueError</code>。</p>
+<p>將視空間的單位法線 <code style="color:#22d3bf">(nx, ny)</code>(<code style="color:#22d3bf">[-1,1]</code>)映射到紋理座標(<code style="color:#22d3bf">u = (nx+1)/2</code>, <code style="color:#22d3bf">v = (1−ny)/2</code>,在列方向上翻轉 y),對 <code style="color:#22d3bf">matcap</code> 影像以<b>雙線性內插</b>取樣。不做光照計算,就能將對球打光拍下的 1 張材質外觀原樣貼到任意形狀上(金屬、黏土、卡通等)。</p>
+<p><code style="color:#22d3bf">matcap</code> 為接近正方形的 lit-sphere 紋理:</p>
+<p style="margin:2px 0 2px 12px">• 灰階 <code style="color:#22d3bf">(h, w)</code>              → 輸出 <code style="color:#22d3bf">(H, W)</code></p>
+<p style="margin:2px 0 2px 12px">• 彩色 <code style="color:#22d3bf">(h, w, C)</code>(C 任意)   → 輸出 <code style="color:#22d3bf">(H, W, C)</code></p>
+<p>背景(長度 0 的法線)為 0。紋理座標在邊緣處 clamp(球外緣的法線 <code style="color:#22d3bf">|(nx,ny)|→1</code> 指向紋理邊緣)。</p>
+<p>fail-closed: 形狀不合法、非有限、過小(<code style="color:#22d3bf">h,w &lt; 2</code>)的紋理為 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

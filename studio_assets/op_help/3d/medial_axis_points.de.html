@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(points, radii)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Macht aus den medialen Voxeln eine Punktmenge samt lokalem Radius (= dem EDT-Wert dieses Punktes). Liefert (points, radius).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>太い部分は面状、細い部分は線状に分布する medial 点を (M,3) の座標(z,y,x)と、それぞれの局所半径 (M,) として返す。半径最大の点は形状の最も「内側」= 中心を指す。</p>
+<p>Gibt die Medialpunkte, die in dicken Teilen flächig und in dünnen Teilen linienförmig verteilt sind, als (M,3)-Koordinaten (z,y,x) zusammen mit dem jeweiligen lokalen Radius (M,) zurück. Der Punkt mit dem größten Radius zeigt auf das &quot;Innerste&quot; der Form = ihr Zentrum.</p>
 <p>Args:</p>
-<p>vol: バイナリ voxel(bool / 0-1 の 3D)。</p>
-<p>min_radius: この半径以下の点を除外(ノイズ抑制)。</p>
+<p>vol: binäre Voxel (bool / 0-1, 3D).</p>
+<p>min_radius: schließt Punkte mit Radius kleiner oder gleich diesem Wert aus (Rauschunterdrückung).</p>
 <p>Returns:</p>
-<p>points (float64, (M,3)): medial voxel 座標(z, y, x)。</p>
-<p>radius (float64, (M,)): 各点の EDT 値(= 局所内接半径)。</p>
-<p>手順: <code style="color:#22d3bf">distance_ridge(vol, min_radius)</code> で得た <code style="color:#22d3bf">ridge_mask</code> の <code style="color:#22d3bf">np.argwhere</code> (配列 index、行は z-major の辞書順で決定的)と、その位置の <code style="color:#22d3bf">edt</code> 値を返す。座標は voxel index で spacing は掛けない(物理座標が要るなら呼び手で <code style="color:#22d3bf">points * (sz, sy, sx)</code>、半径も同様に等方 spacing を掛ける)。</p>
-<p>引数と検証: <code style="color:#22d3bf">vol</code> は 3-D(非ゼロ = 前景)。3-D でない・空・NaN/Inf は <code style="color:#22d3bf">ValueError</code>、<code style="color:#22d3bf">min_radius &lt; 0</code> も <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">radius</code> は <code style="color:#22d3bf">&gt; min_radius</code> の点だけ(境界 voxel は EDT が 1 以下なので <code style="color:#22d3bf">min_radius=1</code> で外殻ノイズをほぼ落とせる)。</p>
-<p>端の挙動: 前景が無い、または全点が <code style="color:#22d3bf">min_radius</code> 以下なら <code style="color:#22d3bf">points</code> は <code style="color:#22d3bf">(0, 3)</code>、<code style="color:#22d3bf">radius</code> は <code style="color:#22d3bf">(0,)</code> の空配列(エラーにしない)。</p>
-<p>使いどころ: <code style="color:#22d3bf">medial_match</code> の半径分布、点群 op(<code style="color:#22d3bf">smallest_sphere3</code> / <code style="color:#22d3bf">fit_line3</code> 等)への橋渡し、<code style="color:#22d3bf">np.argmax(radius)</code> で最大内接球の中心を取る。</p>
+<p>points (float64, (M,3)): Medial-Voxelkoordinaten (z, y, x).</p>
+<p>radius (float64, (M,)): EDT-Wert jedes Punkts (= lokaler Inkreisradius).</p>
+<p>Ablauf: gibt <code style="color:#22d3bf">np.argwhere</code> der aus <code style="color:#22d3bf">distance_ridge(vol, min_radius)</code> gewonnenen <code style="color:#22d3bf">ridge_mask</code> zurück (Array-Indizes; Zeilen deterministisch in z-major lexikografischer Reihenfolge) sowie die <code style="color:#22d3bf">edt</code>-Werte an diesen Positionen. Koordinaten sind Voxelindizes, spacing wird nicht angewendet (werden physische Koordinaten benötigt, rechnet der Aufrufer <code style="color:#22d3bf">points * (sz, sy, sx)</code> und multipliziert den Radius ebenso mit dem isotropen spacing).</p>
+<p>Argumente und Prüfung: <code style="color:#22d3bf">vol</code> ist 3-D (ungleich null = Vordergrund). Kein 3-D, leer oder NaN/Inf ergibt <code style="color:#22d3bf">ValueError</code>, <code style="color:#22d3bf">min_radius &lt; 0</code> ebenfalls <code style="color:#22d3bf">ValueError</code>. <code style="color:#22d3bf">radius</code> enthält nur Punkte mit <code style="color:#22d3bf">&gt; min_radius</code> (Rand-Voxel haben eine EDT von höchstens 1, daher entfernt <code style="color:#22d3bf">min_radius=1</code> das Rauschen der äußeren Hülle fast vollständig).</p>
+<p>Randverhalten: Gibt es keinen Vordergrund oder liegen alle Punkte bei oder unter <code style="color:#22d3bf">min_radius</code>, ist <code style="color:#22d3bf">points</code> <code style="color:#22d3bf">(0, 3)</code> und <code style="color:#22d3bf">radius</code> <code style="color:#22d3bf">(0,)</code>, jeweils leere Arrays (kein Fehler).</p>
+<p>Einsatz: Radiusverteilung für <code style="color:#22d3bf">medial_match</code>, Brücke zu Punktwolken-Ops (<code style="color:#22d3bf">smallest_sphere3</code> / <code style="color:#22d3bf">fit_line3</code> usw.), und <code style="color:#22d3bf">np.argmax(radius)</code> liefert das Zentrum der größten Inkugel.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

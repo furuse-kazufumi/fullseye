@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_smooth_union(a, b, k)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_smooth_union(a, b, k)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sdf_smooth_union&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>smooth रूप से गोल किया गया union (polynomial smooth-min)। <code style="color:#22d3bf">k&gt;0</code> पर जोड़ को लगभग k radius से गोल करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Inigo Quilez の二次多項式 smin:</p>
-<p><code style="color:#22d3bf">h = clip(0.5 + 0.5*(b-a)/k, 0, 1)</code>,  <code style="color:#22d3bf">smin = mix(b,a,h) - k*h*(1-h)</code>。</p>
-<p>性質: (1) 対称 <code style="color:#22d3bf">smin(a,b)=smin(b,a)</code>、(2) <code style="color:#22d3bf">smin &lt;= min(a,b)</code>(継ぎ目でくぼむ)、</p>
-<p style="margin:2px 0 2px 12px">(3) <b>k→0 で min(a,b) に一致</b>(= 硬い <code style="color:#22d3bf">sdf_union</code>)、(4) 1 次同次</p>
-<p><code style="color:#22d3bf">smin(s*a,s*b,s*k)=s*smin(a,b,k)</code>(スケール整合)。</p>
-<p><code style="color:#22d3bf">k</code> は距離次元の丸め半径。硬い min が欲しければ <code style="color:#22d3bf">sdf_union</code> を使う。<code style="color:#22d3bf">±inf</code> を含む入力(<code style="color:#22d3bf">esdf</code> の「全自由なら +inf」契約との相互運用)では、ブレンド帯 <code style="color:#22d3bf">|a-b|&lt;k</code> が退化するため厳密に <code style="color:#22d3bf">min(a,b)</code> を返す。Raises ValueError for k&lt;=0(0 除算を避けるため fail-closed)。</p>
+<p>Inigo Quilez का quadratic polynomial smin:</p>
+<p><code style="color:#22d3bf">h = clip(0.5 + 0.5*(b-a)/k, 0, 1)</code>,  <code style="color:#22d3bf">smin = mix(b,a,h) - k*h*(1-h)</code>।</p>
+<p>गुण: (1) symmetric <code style="color:#22d3bf">smin(a,b)=smin(b,a)</code>, (2) <code style="color:#22d3bf">smin &lt;= min(a,b)</code> (जोड़ पर गड्ढा बनता है),</p>
+<p style="margin:2px 0 2px 12px">(3) <b>k→0 पर min(a,b) के बराबर</b> (= hard <code style="color:#22d3bf">sdf_union</code>), (4) degree 1 का homogeneous</p>
+<p><code style="color:#22d3bf">smin(s*a,s*b,s*k)=s*smin(a,b,k)</code> (scale-संगत)।</p>
+<p><code style="color:#22d3bf">k</code> दूरी की dimension वाला rounding radius है। hard min चाहिए तो <code style="color:#22d3bf">sdf_union</code> का उपयोग करें। <code style="color:#22d3bf">±inf</code> वाले input (<code style="color:#22d3bf">esdf</code> के &quot;सब free हो तो +inf&quot; contract के साथ interoperate करते समय) पर blend band <code style="color:#22d3bf">|a-b|&lt;k</code> degenerate हो जाता है, इसलिए यह exact <code style="color:#22d3bf">min(a,b)</code> लौटाता है। k&lt;=0 पर ValueError raise करता है (0 से भाग से बचने के लिए fail-closed)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mesh_props; mesh_props.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;face_areas&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>triangle mesh का <b>हर face का area</b> → <code style="color:#22d3bf">(M,)</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>面積 = <code style="color:#22d3bf">0.5·|cross(v1−v0, v2−v0)|</code> を面ごとに返す(<code style="color:#22d3bf">mesh_area</code> はこの総和)。面積は<b>重み</b>として使うためにある —— 「下を向いた面の面積」「公差外の面積」「曲率の面積加重平均」はすべて面ごとの面積が要る量で、総和からは作れない。</p>
+<p>हर face के लिए area = <code style="color:#22d3bf">0.5·|cross(v1−v0, v2−v0)|</code> लौटाता है (<code style="color:#22d3bf">mesh_area</code> इनका योग है)। area को <b>weights</b> के रूप में इस्तेमाल करने के लिए दिया जाता है —— &quot;नीचे की ओर मुड़े faces का area&quot;, &quot;tolerance से बाहर का area&quot; और &quot;curvature का area-weighted mean&quot; सभी ऐसी मात्राएँ हैं जिनके लिए हर face का area चाहिए, और इन्हें योग से नहीं बनाया जा सकता।</p>
 <p>Args:</p>
-<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
+<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> का tuple।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(M,)</code> の float64(非負)。順序は <code style="color:#22d3bf">faces</code> の順で、<code style="color:#22d3bf">face_normals</code> と同じ</p>
-<p>並びなので <code style="color:#22d3bf">areas[normals[:, 2] &lt; 0].sum()</code> のように直接組み合わせられる。</p>
+<p><code style="color:#22d3bf">(M,)</code> का float64 (non-negative)। क्रम <code style="color:#22d3bf">faces</code> का क्रम है, जो <code style="color:#22d3bf">face_normals</code> वाला ही</p>
+<p>क्रम है, इसलिए <code style="color:#22d3bf">areas[normals[:, 2] &lt; 0].sum()</code> की तरह सीधे जोड़ा जा सकता है।</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
-<p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p>注意: <code style="color:#22d3bf">mesh_area</code> と同じく、退化三角形(面積 0)は<b>拒否せず 0 を返す</b> (<code style="color:#22d3bf">face_normals</code> は法線が定義できないので拒否する —— 同じメッシュでもこちらは通る)。重複面・表裏 2 枚張りはそれぞれ 1 面として数える。単位は座標の単位の 2 乗。</p>
+<p>ValueError: जब <code style="color:#22d3bf">mesh</code> <code style="color:#22d3bf">(vertices, faces)</code> के 2 elements न हो, shape अमान्य हो,</p>
+<p>coordinates non-finite हों, index non-integer या सीमा से बाहर हो, या mesh खाली हो।</p>
+<p>ध्यान दें: <code style="color:#22d3bf">mesh_area</code> की तरह, degenerate triangles (area 0) को <b>reject नहीं किया जाता, 0 लौटाया जाता है</b> (<code style="color:#22d3bf">face_normals</code> इन्हें reject करता है क्योंकि normal परिभाषित नहीं होता —— वही mesh यहाँ पास हो जाता है)। duplicate faces और आगे-पीछे 2 परतों वाले faces हर एक 1 face के रूप में गिने जाते हैं। unit coordinate unit का वर्ग (घात 2) है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

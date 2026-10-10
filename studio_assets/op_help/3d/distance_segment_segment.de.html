@@ -5,20 +5,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">measurement</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code> oder rufe <code style="color:#22d3bf">match3d.distance_segment_segment</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kürzester Abstand zwischen <b>endlichen Strecken</b> und das Paar ihrer nächstgelegenen Punkte. → <code style="color:#22d3bf">(distance, cp, cq)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">distance_line_line</code> は<b>無限直線</b>の距離なので、離れた 2 線分に 0 を返すことがある(実測: (0,0,0)-(1,0,0) と (5,0,0)-(6,0,0) に対し 0.0、真値は 4.0)。手足・ロボットのリンク・配管・工具はどれも<b>有限</b>なので、安全距離や干渉判定に無限直線版を使うと<b>危険を過小評価する</b>(<code style="color:#22d3bf">poc_safety_clearance</code> の実測では同じ 2 本に対し 87.6 % の過小評価)。</p>
+<p><code style="color:#22d3bf">distance_line_line</code> ist der Abstand <b>unendlicher Geraden</b> und kann daher für 2 getrennte Strecken 0 liefern (gemessen: 0.0 für (0,0,0)-(1,0,0) und (5,0,0)-(6,0,0), Ground Truth 4.0). Gliedmaßen, Roboterlinks, Rohre und Werkzeuge sind alle <b>endlich</b>; bei Sicherheitsabständen oder Kollisionsprüfungen <b>unterschätzt die Version für unendliche Geraden die Gefahr</b> (in der Messung von <code style="color:#22d3bf">poc_safety_clearance</code> um 87.6 % für dieselben 2 Strecken).</p>
 <p>Args:</p>
-<p>p0, p1: 線分 1 の端点 <code style="color:#22d3bf">(3,)</code>。<code style="color:#22d3bf">p0 == p1</code> なら点として扱う。</p>
-<p>q0, q1: 線分 2 の端点 <code style="color:#22d3bf">(3,)</code>。</p>
+<p>p0, p1: Endpunkte von Strecke 1, <code style="color:#22d3bf">(3,)</code>. Bei <code style="color:#22d3bf">p0 == p1</code> als Punkt behandelt.</p>
+<p>q0, q1: Endpunkte von Strecke 2, <code style="color:#22d3bf">(3,)</code>.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(distance, cp, cq)</code>: 最短距離 float と、線分 1 側・線分 2 側の最近接点</p>
-<p><code style="color:#22d3bf">(3,)</code>。<code style="color:#22d3bf">distance == 0</code> は 2 線分が交差(または接触)しているとき。</p>
-<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.distance_segment_segment</code>)は宣言 out 型の</p>
-<p><code style="color:#22d3bf">distance</code> だけを返す。最近接点も要るときは</p>
-<p><code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code>。</p>
+<p><code style="color:#22d3bf">(distance, cp, cq)</code>: kürzester Abstand als float sowie die nächstgelegenen Punkte auf Strecke 1 und Strecke 2,</p>
+<p><code style="color:#22d3bf">(3,)</code>. <code style="color:#22d3bf">distance == 0</code>, wenn sich die 2 Strecken schneiden (oder berühren).</p>
+<p>★Über das Register (<code style="color:#22d3bf">fullseye.ledger.distance_segment_segment</code>) wird nur der deklarierte out-Typ</p>
+<p><code style="color:#22d3bf">distance</code> zurückgegeben. Werden auch die nächstgelegenen Punkte benötigt:</p>
+<p><code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code>.</p>
 <p>Raises:</p>
-<p>ValueError: 端点が <code style="color:#22d3bf">(3,)</code> に直せない、または非有限のとき。</p>
-<p>平行・退化(点に潰れた線分)も分岐で正しく扱う(Ericson, *Real-Time Collision Detection*, §5.1.9 の clamped closest-point 法)。<b>カプセル</b>(芯線 + 半径) どうしの距離は <code style="color:#22d3bf">distance - r1 - r2</code>、干渉は それが負になること。</p>
+<p>ValueError: wenn ein Endpunkt nicht in <code style="color:#22d3bf">(3,)</code> umgewandelt werden kann oder nicht endlich ist.</p>
+<p>Parallele und entartete Fälle (zu einem Punkt kollabierte Strecken) werden per Verzweigung ebenfalls korrekt behandelt (Ericson, *Real-Time Collision Detection*, §5.1.9, clamped closest-point-Verfahren). Der Abstand zwischen <b>Kapseln</b> (Kernlinie + Radius) ist <code style="color:#22d3bf">distance - r1 - r2</code>; Kollision bedeutet, dass er negativ wird.</p>
 <p>Reference (public): C. Ericson, *Real-Time Collision Detection*, Morgan Kaufmann 2005, §5.1.9 &quot;Closest Points of Two Line Segments&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

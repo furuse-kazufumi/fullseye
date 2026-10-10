@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import moments3d; moments3d.principal_moments(points) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;principal_moments&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>inertia tensor के eigenvalues (principal moments of inertia, घटते क्रम में sort, rotation invariant)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>慣性テンソルは対称なので固有値は実。点群を回転 R で回すと I → R I Rᵀ と相似変換され、固有値は不変(厳密)。返り値は降順にそろえるので座標系や回転に依らず一致する。</p>
+<p>inertia tensor symmetric है, इसलिए eigenvalues real हैं। point cloud को rotation R से घुमाने पर I → R I Rᵀ similarity transform होता है, और eigenvalues invariant (ठीक-ठीक) रहते हैं। return value घटते क्रम में होती है, इसलिए coordinate system या rotation से स्वतंत्र रूप से मेल खाती है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (3,)</p>
-<p>降順の主慣性モーメント λ1 &gt;= λ2 &gt;= λ3 &gt;= 0。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">inertia_tensor</code> の固有値で、共分散の固有値 c_i とは <code style="color:#22d3bf">λ_i = (c_1 + c_2 + c_3) - c_i</code> の関係。細長い棒では最小固有値(棒の軸まわり)が 0 に近づき、球では 3 つが等しい。</p>
-<p style="margin:2px 0 2px 12px">• 単位は長さ²。並進と回転には不変だが <b>スケールには不変でない</b>(s 倍で s² 倍)。スケール不変が要るなら <code style="color:#22d3bf">moment_invariants</code>。</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1(1 点なら全て 0)。形状不正・非有限は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 主軸ベクトル(固有ベクトル)が要るなら <code style="color:#22d3bf">moment_axes</code>。決定論的。</p>
+<p>घटते क्रम में principal moments of inertia λ1 &gt;= λ2 &gt;= λ3 &gt;= 0।</p>
+<p>अतिरिक्त:</p>
+<p style="margin:2px 0 2px 12px">• ये <code style="color:#22d3bf">inertia_tensor</code> के eigenvalues हैं, और covariance eigenvalues c_i से संबंध <code style="color:#22d3bf">λ_i = (c_1 + c_2 + c_3) - c_i</code> है। लंबी पतली छड़ में सबसे छोटा eigenvalue (छड़ के axis के चारों ओर) 0 के क़रीब जाता है, और sphere में 3 eigenvalues बराबर होते हैं।</p>
+<p style="margin:2px 0 2px 12px">• इकाई लंबाई² है। translation और rotation के प्रति invariant है पर <b>scale के प्रति invariant नहीं</b> है (s गुना पर s² गुना)। scale invariance चाहिए तो <code style="color:#22d3bf">moment_invariants</code>।</p>
+<p style="margin:2px 0 2px 12px">• input (N,3), N &gt;= 1 (1 point पर सब 0)। ग़लत shape या non-finite मान पर <code style="color:#22d3bf">ValueError</code>।</p>
+<p style="margin:2px 0 2px 12px">• principal axis vectors (eigenvectors) चाहिए तो <code style="color:#22d3bf">moment_axes</code>। Deterministic।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

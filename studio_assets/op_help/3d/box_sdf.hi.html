@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.box_sdf(grid, center, half_extents)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.box_sdf(grid, center, half_extents)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;box_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>axis-aligned box का <b>exact</b> signed distance field (अंदर ऋणात्मक, बाहर धनात्मक)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Inigo Quilez の box SDF: <code style="color:#22d3bf">q = |p-center| - half_extents</code> とし、</p>
-<p><code style="color:#22d3bf">outside = |max(q,0)|</code> (角/辺/面の外はユークリッド距離),</p>
-<p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code> (内側は最近面までの負値),</p>
-<p><code style="color:#22d3bf">sdf = outside + inside</code>。</p>
-<p><code style="color:#22d3bf">half_extents</code> は各軸の<b>半辺長</b>(中心から面まで)。外側は厳密距離(角では対角、面前は垂直距離)、内側も最近面までの厳密負距離を与える。</p>
-<p>Raises ValueError for any half_extent&lt;0 or malformed grid/center/half_extents。</p>
+<p>Inigo Quilez का box SDF: <code style="color:#22d3bf">q = |p-center| - half_extents</code> लेकर,</p>
+<p><code style="color:#22d3bf">outside = |max(q,0)|</code> (corner/edge/face के बाहर Euclidean distance),</p>
+<p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code> (अंदर निकटतम face तक ऋणात्मक मान),</p>
+<p><code style="color:#22d3bf">sdf = outside + inside</code>।</p>
+<p><code style="color:#22d3bf">half_extents</code> हर axis की <b>आधी भुजा-लंबाई</b> है (center से face तक)। बाहर exact distance देता है (corner पर diagonal, face के सामने लंबवत दूरी), और अंदर भी निकटतम face तक exact ऋणात्मक दूरी देता है।</p>
+<p>कोई भी half_extent&lt;0 हो या grid/center/half_extents गलत रूप में हों तो ValueError उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

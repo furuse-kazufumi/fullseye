@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import bspline_surf; bspline_surf.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;fit_bspline_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對有序點列 (M,D) 擬合 B 雲形線曲線(splprep,參數化)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>シーム/エッジ/計測プローブ軌跡など「並び順が意味を持つ」点列を滑らかなパラメトリック曲線 r(u), u∈[0,1] として復元する。z=f(x,y) と違い多価(折り返し・ループ)な形も表せる。</p>
+<p>將接縫/邊緣/量測探頭軌跡等「排列順序有意義」的點列還原為平滑的參數曲線 r(u), u∈[0,1]。與 z=f(x,y) 不同,也能表示多值(折返、迴圈)的形狀。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (M, D)</p>
-<p>順序付き頂点。D=3 が典型(3D 曲線)だが 2D 以上を許容。</p>
+<p>有序頂點。D=3 為典型(3D 曲線),但允許 2D 以上。</p>
 <p>smooth : float</p>
-<p>平滑化係数 s。0.0 で全点通過(補間)、大きいほど滑らか。</p>
+<p>平滑係數 s。0.0 時通過全部點(內插),越大越平滑。</p>
 <p>k : int</p>
-<p>次数(既定 3=三次)。点数が k+1 未満なら自動で下げる。</p>
+<p>次數(預設 3=三次)。點數少於 k+1 時自動降低。</p>
 <p>nest : int or None</p>
-<p>節点数の上限(splprep へそのまま渡す)。None で自動。</p>
+<p>節點數上限(原樣傳給 splprep)。None 為自動。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>tck : tuple</p>
-<p><code style="color:#22d3bf">(t, c, k)</code>。eval_bspline_curve に渡す。</p>
+<p><code style="color:#22d3bf">(t, c, k)</code>。傳給 eval_bspline_curve。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点数が 2 未満、次元不整合、非有限値、または重複/縮退で splprep が</p>
-<p>曲線を返せない場合。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 既定 <code style="color:#22d3bf">smooth=0.0</code> は補間(全点通過)。曲面側の既定(点数からの自動値)と違うので、ノイズ点列は明示的に <code style="color:#22d3bf">smooth</code> を与える。パラメータ u は <code style="color:#22d3bf">splprep</code> の既定(弦長に比例して [0,1] に正規化)。</p>
-<p style="margin:2px 0 2px 12px">• 次数 k は <code style="color:#22d3bf">k &gt;= m</code> のとき <code style="color:#22d3bf">m-1</code> に無言で下げる(2 点なら直線)。</p>
-<p style="margin:2px 0 2px 12px">• 連続する重複点があると <code style="color:#22d3bf">splprep</code> が失敗し <code style="color:#22d3bf">ValueError</code> になる。前段で重複を除くか <code style="color:#22d3bf">resample_uniform</code> で等間隔化する。</p>
-<p style="margin:2px 0 2px 12px">• 返す tck は <code style="color:#22d3bf">[t, c, k]</code> の list(c は D 本の係数配列のリスト)。<code style="color:#22d3bf">eval_bspline_curve</code> に渡す。閉曲線としては扱わない(端点は開いたまま)。</p>
-<p style="margin:2px 0 2px 12px">• 決定論的(乱数なし)。</p>
+<p>點數少於 2、維度不一致、非有限值,或因重複/退化 splprep</p>
+<p>無法回傳曲線時。</p>
+<p>補充:</p>
+<p style="margin:2px 0 2px 12px">• 預設 <code style="color:#22d3bf">smooth=0.0</code> 為內插(通過全部點)。與曲面側的預設(由點數得出的自動值)不同,因此含雜訊的點列請明確給出 <code style="color:#22d3bf">smooth</code>。參數 u 為 <code style="color:#22d3bf">splprep</code> 的預設(與弦長成比例並正規化到 [0,1])。</p>
+<p style="margin:2px 0 2px 12px">• 次數 k 在 <code style="color:#22d3bf">k &gt;= m</code> 時靜默降為 <code style="color:#22d3bf">m-1</code>(2 點則為直線)。</p>
+<p style="margin:2px 0 2px 12px">• 存在連續重複點時 <code style="color:#22d3bf">splprep</code> 會失敗並成為 <code style="color:#22d3bf">ValueError</code>。請在前級去除重複,或用 <code style="color:#22d3bf">resample_uniform</code> 等間距化。</p>
+<p style="margin:2px 0 2px 12px">• 回傳的 tck 是 <code style="color:#22d3bf">[t, c, k]</code> 的 list(c 是 D 個係數陣列的串列)。傳給 <code style="color:#22d3bf">eval_bspline_curve</code>。不作為封閉曲線處理(端點保持開放)。</p>
+<p style="margin:2px 0 2px 12px">• 決定性(無亂數)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

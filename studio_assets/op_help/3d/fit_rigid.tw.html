@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_rigid(pts_from, pts_to)</code>(要直接呼叫實作,<code style="color:#22d3bf">import motion_seg3d; motion_seg3d.fit_rigid(pts_from, pts_to)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;fit_rigid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用閉合式 Kabsch 由對應點估計剛體變換 (R, t)(pts_from[i] -&gt; pts_to[i])。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>行 i どうしが対応する (N, 3) 2 点集合から、<code style="color:#22d3bf">|| (R·p + t) - q ||</code> を最小化する proper rotation(det = +1, 反射なし)と並進を返す。<code style="color:#22d3bf">registration.kabsch</code> の薄いラッパで、入力検証を付す(N &gt;= 3 で回転が一意)。</p>
+<p>從第 i 列彼此對應的 (N, 3) 2 個點集，回傳使 <code style="color:#22d3bf">|| (R·p + t) - q ||</code> 最小的 proper rotation(det = +1，無反射)與平移。是 <code style="color:#22d3bf">registration.kabsch</code> 的薄包裝，附加了輸入檢查(N &gt;= 3 時旋轉唯一)。</p>
 <p>Args:</p>
-<p>pts_from: (N, 3) 変換元(対応順)。</p>
-<p>pts_to: (N, 3) 変換先(対応順)。</p>
+<p>pts_from:(N, 3) 轉換來源(依對應順序)。</p>
+<p>pts_to:(N, 3) 轉換目標(依對應順序)。</p>
 <p>Returns:</p>
-<p>(R, t): (3, 3) 回転行列, (3,) 並進ベクトル。</p>
+<p>(R, t):(3, 3) 旋轉矩陣，(3,) 平移向量。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不一致 / (N, 3) でない / N &lt; 3 / 非有限。</p>
+<p>ValueError:形狀不一致 / 不是 (N, 3) / N &lt; 3 / 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

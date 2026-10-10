@@ -5,11 +5,10 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>voxel की cylindrical surface को (height×θ×r) में unwrap करता है (cylindrical parts/pipes की अंदरूनी-बाहरी surface का inspection)। axis=z (D axis)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>θ 軸は endpoint 無しの周期グリッド(polar_unwrap と同じ 2026-08-30 修正)。</p>
-<p>Raises ValueError: 入力に NaN/Inf/float32 桁あふれがある場合。</p>
-<p>引数: <code style="color:#22d3bf">vol</code> は <code style="color:#22d3bf">(D,H,W)</code>、<code style="color:#22d3bf">center=(cy, cx)</code> は各 z スライス内の <b>(行, 列)</b>(既定はスライス中心)。<code style="color:#22d3bf">r_in</code>〜<code style="color:#22d3bf">r_out</code>(voxel、既定 <code style="color:#22d3bf">min(H,W)/2 − 1</code>)を <code style="color:#22d3bf">nr</code> 等分、角度を <code style="color:#22d3bf">ntheta</code> 等分。出力 <code style="color:#22d3bf">(D, ntheta, nr)</code> float32: 軸 0 は z(高さ、入力と同じ)、行 k の角度 <code style="color:#22d3bf">θ = k·2π/ntheta</code>、列 j の半径。サンプル点は <code style="color:#22d3bf">(z, cy + r sinθ, cx + r cosθ)</code>、volume 外は 0。D, H, W が 1 の軸は正規化で 0 除算になる(<code style="color:#22d3bf">polar_unwrap</code> と違い検査は無い)。</p>
-<p>後段: <code style="color:#22d3bf">[:, :, j]</code> を取れば半径 j の円筒面が (D×θ) の 2-D 画像になり、2-D の傷検査・ <code style="color:#22d3bf">ncc_locate</code> が使える。</p>
+<p>θ axis बिना endpoint वाला periodic grid है (polar_unwrap जैसा ही 2026-08-30 का सुधार)।</p>
+<p>Raises ValueError: इनपुट में NaN/Inf/float32 overflow हो तो।</p>
+<p>Args: <code style="color:#22d3bf">vol</code> <code style="color:#22d3bf">(D,H,W)</code> है, <code style="color:#22d3bf">center=(cy, cx)</code> हर z slice के भीतर <b>(row, column)</b> है (default slice का केंद्र)। <code style="color:#22d3bf">r_in</code>-<code style="color:#22d3bf">r_out</code> (voxel, default <code style="color:#22d3bf">min(H,W)/2 − 1</code>) को <code style="color:#22d3bf">nr</code> बराबर भागों में, कोण को <code style="color:#22d3bf">ntheta</code> बराबर भागों में बाँटा जाता है। output <code style="color:#22d3bf">(D, ntheta, nr)</code> float32: axis 0 z है (ऊँचाई, इनपुट जैसा), row k का कोण <code style="color:#22d3bf">θ = k·2π/ntheta</code>, column j की त्रिज्या। sample points <code style="color:#22d3bf">(z, cy + r sinθ, cx + r cosθ)</code> हैं, volume के बाहर 0। जिन axes में D, H, W का मान 1 हो, वहाँ normalisation में 0 से भाग होता है (<code style="color:#22d3bf">polar_unwrap</code> से अलग, कोई जाँच नहीं)।</p>
+<p>आगे: <code style="color:#22d3bf">[:, :, j]</code> लेने पर त्रिज्या j की बेलनाकार सतह (D×θ) की 2-D image बन जाती है, और 2-D scratch inspection और <code style="color:#22d3bf">ncc_locate</code> उपयोग किए जा सकते हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

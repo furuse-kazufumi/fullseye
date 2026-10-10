@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_alpha(points)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import recon3d; recon3d.estimate_alpha(points)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;estimate_alpha&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud के scale से सुझाया गया alpha लौटाता है (nearest-neighbour distance के median पर आधारित)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各点の最近傍距離の中央値 <code style="color:#22d3bf">m</code> を求め、半径しきい値 1/alpha ≈ 2m(隣接間隔の約 2 倍まで許す)となるよう <code style="color:#22d3bf">alpha = 1/(2m)</code> を返す。これで表面付近の素性の良い四面体は残しつつ、大きく間延びした四面体(=凹み・外側)を切り落とせる。重複点は最近傍 0 になるため正の距離のみ使う。</p>
+<p>हर point की nearest neighbour distance का median <code style="color:#22d3bf">m</code> निकालकर, <code style="color:#22d3bf">alpha = 1/(2m)</code> लौटाता है ताकि radius threshold 1/alpha ≈ 2m हो (पड़ोसी अंतराल के लगभग 2 गुना तक अनुमति)। इससे surface के पास के अच्छे tetrahedra बने रहते हैं, जबकि बहुत खिंचे हुए tetrahedra (= concavities, बाहरी भाग) काटे जा सकते हैं। duplicate points की nearest neighbour distance 0 होती है, इसलिए केवल धनात्मक distances उपयोग होती हैं।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>alpha : float</p>
-<p>正の有限値。</p>
+<p>धनात्मक finite मान।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

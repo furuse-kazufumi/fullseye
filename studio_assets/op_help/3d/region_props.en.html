@@ -4,32 +4,31 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.region_props(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;list[dict]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import regionprops3d; regionprops3d.region_props(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;list[dict]&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;region_props&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Return the list of region properties of each connected component.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : array_like</p>
-<p>bool または 0/1 の 3D 配列。</p>
+<p>3D array of bool or 0/1.</p>
 <p>connectivity : int</p>
-<p>6 / 18 / 26。</p>
+<p>6 / 18 / 26.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>list[dict]</p>
-<p>成分ごとの dict。キー:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">label</code>           : ラベル番号 (int)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">volume</code>          : ボクセル数 (int)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">centroid</code>        : 重心 (z, y, x) の tuple(float)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bbox</code>            : (z0, y0, x0, z1, y1, x1)。z1/y1/x1 は排他的上端(stop)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">extent</code>          : volume / bbox 体積(充填率、0..1)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">principal_axes</code>  : (3,3) 主軸ベクトル(行、固有値降順)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">principal_lengths</code>: (3,) 主軸長 = 座標共分散固有値の平方根(降順)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">equivalent_radius</code>: 等価球半径 (3V/4π)^(1/3)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_area</code>    : 露出面カウント近似(ボクセル面単位)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sphericity</code>      : 等体積球表面積 / 実表面積(球=1 に近い、離散のため &lt;1)</p>
-<p>前景ボクセルが無い(または空入力)場合は空リスト。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 全量はボクセル単位(スペーシング補正なし)。実寸が要るなら <code style="color:#22d3bf">volume</code> に voxel 体積、<code style="color:#22d3bf">centroid</code> / <code style="color:#22d3bf">bbox</code> / <code style="color:#22d3bf">principal_lengths</code> に各軸のスペーシングを掛ける(非等方だと主軸方向は歪む)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">principal_lengths</code> は座標の母共分散(N で割る)の固有値の平方根で、成分の半径ではなく座標の標準偏差。1 ボクセルの成分は <code style="color:#22d3bf">principal_axes</code> が単位行列、<code style="color:#22d3bf">principal_lengths</code> が全 0。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_area</code> は配列端に接する面も数える(ゼロ padding)。<code style="color:#22d3bf">sphericity</code> は離散化のため球でも約 0.66 が上限(モジュール docstring 参照)。</p>
-<p style="margin:2px 0 2px 12px">• ラベルは 1..n の順(<code style="color:#22d3bf">label_components</code> と同じ scipy の走査順)で、体積順ではない。並べ替えは呼び手で行う。</p>
-<p style="margin:2px 0 2px 12px">• 入力は 0 以外を前景として bool 化する(NaN も前景)。Raises <code style="color:#22d3bf">ValueError</code>: 3 次元でない入力、<code style="color:#22d3bf">connectivity</code> が 6/18/26 以外。</p>
+<p>One dict per component. Keys:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">label</code>           : label number (int)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">volume</code>          : voxel count (int)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">centroid</code>        : centroid (z, y, x) as a tuple (float)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bbox</code>            : (z0, y0, x0, z1, y1, x1). z1/y1/x1 are exclusive upper ends (stop)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">extent</code>          : volume / bbox volume (fill fraction, 0..1)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">principal_axes</code>  : (3,3) principal axis vectors (rows, eigenvalues descending)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">principal_lengths</code>: (3,) principal axis lengths = square roots of the coordinate covariance eigenvalues (descending)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">equivalent_radius</code>: equivalent sphere radius (3V/4π)^(1/3)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_area</code>    : exposed-face count approximation (in voxel-face units)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sphericity</code>      : surface area of the equal-volume sphere / actual surface area (close to 1 for a sphere, &lt;1 due to discretisation)</p>
+<p>An empty list if there are no foreground voxels (or the input is empty).</p>
+<p>Notes:</p>
+<p style="margin:2px 0 2px 12px">• All quantities are in voxel units (no spacing correction). For physical units multiply <code style="color:#22d3bf">volume</code> by the voxel volume and <code style="color:#22d3bf">centroid</code> / <code style="color:#22d3bf">bbox</code> / <code style="color:#22d3bf">principal_lengths</code> by each axis&#x27;s spacing (with anisotropic spacing the principal axis directions are distorted).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">principal_lengths</code> are the square roots of the eigenvalues of the population covariance of the coordinates (divided by N); they are standard deviations of the coordinates, not radii of the component. For a 1-voxel component, <code style="color:#22d3bf">principal_axes</code> is the identity matrix and <code style="color:#22d3bf">principal_lengths</code> are all 0.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_area</code> also counts faces touching the array border (zero padding). Because of discretisation, <code style="color:#22d3bf">sphericity</code> tops out at about 0.66 even for a sphere (see the module docstring).</p>
+<p style="margin:2px 0 2px 12px">• Labels are in order 1..n (the same scipy scan order as <code style="color:#22d3bf">label_components</code>), not by volume. Sorting is up to the caller.</p>
+<p style="margin:2px 0 2px 12px">• The input is converted to bool with everything other than 0 as foreground (NaN is foreground too). Raises <code style="color:#22d3bf">ValueError</code>: input that is not 3-dimensional, <code style="color:#22d3bf">connectivity</code> other than 6/18/26.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty and calibration — what it takes to claim you are measuring</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

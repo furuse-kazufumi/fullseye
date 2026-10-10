@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inside_outside(points, a, eps, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import superquadric; superquadric.inside_outside(points, a, eps, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;inside_outside&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>초이차곡면의 내외 함수 F(표면=1, 내부&lt;1, 외부&gt;1).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">F(X) = (|x/a1|^(2/eps2) + |y/a2|^(2/eps2))^(eps2/eps1) + |z/a3|^(2/eps1)</code>。<code style="color:#22d3bf">R, t</code> で姿勢(<code style="color:#22d3bf">X_body = R.T @ (X - t)</code>)。</p>
+<p><code style="color:#22d3bf">F(X) = (|x/a1|^(2/eps2) + |y/a2|^(2/eps2))^(eps2/eps1) + |z/a3|^(2/eps1)</code>. <code style="color:#22d3bf">R, t</code> 로 자세(<code style="color:#22d3bf">X_body = R.T @ (X - t)</code>).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
-<p>a : (a1,a2,a3) 半径(すべて正)</p>
-<p>eps : (eps1,eps2) 形状指数(&gt; 0)</p>
-<p>R : (3,3) 回転(列 = body 軸の world 表現)、既定 = 単位</p>
-<p>t : (3,) 平行移動(body 中心の world 位置)、既定 = 原点</p>
+<p>a : (a1,a2,a3) 반지름(모두 양수)</p>
+<p>eps : (eps1,eps2) 형상 지수(&gt; 0)</p>
+<p>R : (3,3) 회전(열 = body 축의 world 표현), 기본값 = 단위</p>
+<p>t : (3,) 평행 이동(body 중심의 world 위치), 기본값 = 원점</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (N,)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

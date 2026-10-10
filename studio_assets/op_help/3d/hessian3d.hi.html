@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D Hessian के 6 स्वतंत्र components (fzz,fyy,fxx,fzy,fzx,fyx)। separable conv3d (2nd order/1st order × smoothing)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>カーネル: 2 階 [1,−2,1] (利得 1)、1 階 [−0.5,0,0.5] (利得 1)、残りの軸は [1,2,1]/4 の平滑(利得 1)。対角成分は「その軸の 2 階 × 他 2 軸の平滑」、交差成分は「2 軸の 1 階 × 残り軸の平滑」。<b>単位は 1/voxel² の真の値</b>(<code style="color:#22d3bf">sobel3d</code> の 32 倍利得とは違う)。端は replicate。返り値は <b>list の torch tensor 6 本</b>、各 <code style="color:#22d3bf">(D,H,W)</code> float32、<code style="color:#22d3bf">device</code> 上、順は(zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x)。numpy が要れば <code style="color:#22d3bf">.cpu().numpy()</code>。入力は numpy 相当(float32 に変換)。</p>
-<p>用途: <code style="color:#22d3bf">curvature_maps</code> の主曲率(<code style="color:#22d3bf">sobel3d</code> と組で使う)、blob/管状構造の検出。</p>
+<p>Kernel: 2nd-order [1,−2,1] (gain 1), 1st-order [−0.5,0,0.5] (gain 1), बाकी axes पर [1,2,1]/4 का smoothing (gain 1)। Diagonal components &quot;उस axis का 2nd-order × बाकी 2 axes का smoothing&quot; हैं, cross components &quot;2 axes का 1st-order × बचे axis का smoothing&quot;। <b>इकाई 1/voxel² में असली मान है</b> (<code style="color:#22d3bf">sobel3d</code> के 32 गुना gain से अलग)। किनारे replicate। Return value <b>6 torch tensor की list</b> है, हर एक <code style="color:#22d3bf">(D,H,W)</code> float32, <code style="color:#22d3bf">device</code> पर, क्रम (zz, yy, xx, zy, zx, yx) (axis 0=z, 1=y, 2=x)। numpy चाहिए तो <code style="color:#22d3bf">.cpu().numpy()</code>। Input numpy जैसा होता है (float32 में बदला जाता है)।</p>
+<p>उपयोग: <code style="color:#22d3bf">curvature_maps</code> की principal curvature (<code style="color:#22d3bf">sobel3d</code> के साथ जोड़ी में), blob/tubular structures की पहचान।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

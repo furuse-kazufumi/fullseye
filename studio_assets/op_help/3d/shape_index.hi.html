@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index(points, k=25, normals=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import curvature3d; curvature3d.shape_index(points, k=25, normals=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;shape_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Koenderink का shape index s∈[-1,1] (convex sphere +1, cylinder +0.5, saddle 0, concave sphere -1)। → (N,)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>umbilic/平面判定は<b>曲率スケール相対</b>(絶対しきい値なし)。緩やかな凸/凹(曲率が微小でも)は符号=凹凸を保ち、平面はデータ全体の曲率スケールに対して相対的に 0 の点のみ s=0 とする。</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は開面の凹/凸符号が不定(凸マグニチュードで報告)。向き付き法線を渡すと大域向きに整合し正しい符号(凹球=cup → -1)を出す。</p>
-<p>計算(各点、<code style="color:#22d3bf">principal_curvatures</code> と同じフィット):</p>
-<p style="margin:2px 0 2px 12px">• 平面判定: curvedness <code style="color:#22d3bf">sqrt((k1² + k2²) / 2)</code> が、全点の curvedness の中央値 × 1e-3 未満なら s = 0。中央値が 0(曲率信号なし)なら全点 0。</p>
-<p style="margin:2px 0 2px 12px">• 臍点判定: <code style="color:#22d3bf">|k1 - k2| &lt; 1e-2 × (|k1| + |k2|)</code> なら s = <code style="color:#22d3bf">sign(k1 + k2)</code>(厳密に ±1)。</p>
-<p style="margin:2px 0 2px 12px">• それ以外: <code style="color:#22d3bf">s = (2/π) · arctan((k1 + k2) / (k1 - k2))</code>。</p>
-<p style="margin:2px 0 2px 12px">• しきい値は絶対値でなく <b>データ全体の曲率スケール相対</b> なので、同じ形でも他の点との混在具合で平面扱いになる点が変わる。単一の点群を分類する前提で使う。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は k1 = k2 = 0 → 平面(0)。<code style="color:#22d3bf">k</code> は N-1 に切り詰め。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行(<code style="color:#22d3bf">ValueError</code>)。未指定では開いた面の符号は不定(凸側)。</p>
-<p style="margin:2px 0 2px 12px">• 曲がりの強さは含まない。強さも要るなら <code style="color:#22d3bf">principal_curvatures</code> の 2 本を <code style="color:#22d3bf">(N,2)</code> に並べて <code style="color:#22d3bf">curvature_to_shape_index</code> に通す。</p>
+<p>umbilic/plane का निर्णय <b>curvature scale के सापेक्ष</b> है (कोई absolute threshold नहीं)। हल्के convex/concave क्षेत्र (curvature बहुत छोटा होने पर भी) अपना sign = concave/convex बनाए रखते हैं, और plane के रूप में s=0 केवल उन points को मिलता है जिनका curvature पूरे data के curvature scale के सापेक्ष 0 है।</p>
+<p>normals (oriented reference normals, (N,3)) न देने पर open surface का concave/convex sign अनिश्चित रहता है (convex magnitude के रूप में report होता है)। oriented normals देने पर परिणाम global orientation के साथ मेल खाता है और सही sign देता है (concave sphere = cup → -1)।</p>
+<p>गणना (हर point पर, <code style="color:#22d3bf">principal_curvatures</code> जैसा ही fit):</p>
+<p style="margin:2px 0 2px 12px">• plane जाँच: अगर curvedness <code style="color:#22d3bf">sqrt((k1² + k2²) / 2)</code> सभी points की curvedness के median × 1e-3 से कम है, तो s = 0। अगर median 0 है (कोई curvature signal नहीं), तो सभी points 0।</p>
+<p style="margin:2px 0 2px 12px">• umbilic जाँच: अगर <code style="color:#22d3bf">|k1 - k2| &lt; 1e-2 × (|k1| + |k2|)</code>, तो s = <code style="color:#22d3bf">sign(k1 + k2)</code> (ठीक ±1)।</p>
+<p style="margin:2px 0 2px 12px">• अन्यथा: <code style="color:#22d3bf">s = (2/π) · arctan((k1 + k2) / (k1 - k2))</code>।</p>
+<p style="margin:2px 0 2px 12px">• threshold absolute नहीं बल्कि <b>पूरे data के curvature scale के सापेक्ष</b> है, इसलिए एक ही आकार में भी, कौन से points plane माने जाएँगे यह दूसरे points के साथ मिश्रण पर बदलता है। इसे एक ही point cloud के वर्गीकरण की मान्यता के साथ इस्तेमाल करें।</p>
+<p style="margin:2px 0 2px 12px">• जिन points का neighbourhood 5 points से कम है उनके लिए k1 = k2 = 0 → plane (0)। <code style="color:#22d3bf">k</code> को N-1 तक काटा जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> (N,3) होना चाहिए और हर row finite तथा non-zero हो (<code style="color:#22d3bf">ValueError</code>)। न देने पर open surface का sign अनिश्चित है (convex side)।</p>
+<p style="margin:2px 0 2px 12px">• मोड़ की तीव्रता शामिल नहीं है। तीव्रता भी चाहिए तो <code style="color:#22d3bf">principal_curvatures</code> के 2 मानों को <code style="color:#22d3bf">(N,2)</code> में रखकर <code style="color:#22d3bf">curvature_to_shape_index</code> से गुज़ारें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

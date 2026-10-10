@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.eval_bspline_curve(tck, n=200)</code>(要直接呼叫實作,<code style="color:#22d3bf">import bspline_surf; bspline_surf.eval_bspline_curve(tck, n=200)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;eval_bspline_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在參數 u∈[0,1] 上等間隔 n 點評估曲線 tck(splev)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>tck : tuple</p>
-<p>fit_bspline_curve が返した <code style="color:#22d3bf">(t, c, k)</code>。</p>
+<p>fit_bspline_curve 回傳的 <code style="color:#22d3bf">(t, c, k)</code>。</p>
 <p>n : int</p>
-<p>評価点数(既定 200)。2 以上。</p>
+<p>求值點數(預設 200)。2 以上。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray, shape (n, D)</p>
-<p>曲線上の点列。D は fit 時の入力次元(3D 入力なら (n, 3))。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• u は <code style="color:#22d3bf">linspace(0, 1, n)</code> なので <b>パラメータ等間隔</b> であって弧長等間隔ではない。点の密度は元の点列の疎密に依存する。弧長で等間隔にしたければ本 op の出力を <code style="color:#22d3bf">resample_uniform</code> に通す。</p>
-<p style="margin:2px 0 2px 12px">• 両端点 u=0, u=1 を含む。</p>
-<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: tck が曲線モデル <code style="color:#22d3bf">(t, c, k)</code> でない(曲面 tck / 多項式 dict を名指しで拒否)、または n &lt; 2。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は float64 の <code style="color:#22d3bf">(n, D)</code>。決定論的。</p>
+<p>曲線上的點列。D 為 fit 時的輸入維數(3D 輸入則為 (n, 3))。</p>
+<p>補充:</p>
+<p style="margin:2px 0 2px 12px">• u 為 <code style="color:#22d3bf">linspace(0, 1, n)</code>,因此是<b>參數等間隔</b>而非弧長等間隔。點的密度取決於原始點列的疏密。需要弧長等間隔時,將本 op 的輸出傳給 <code style="color:#22d3bf">resample_uniform</code>。</p>
+<p style="margin:2px 0 2px 12px">• 包含兩端點 u=0, u=1。</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>:tck 不是曲線模型 <code style="color:#22d3bf">(t, c, k)</code>(指名拒絕曲面 tck / 多項式 dict),或 n &lt; 2。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值為 float64 的 <code style="color:#22d3bf">(n, D)</code>。決定性。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

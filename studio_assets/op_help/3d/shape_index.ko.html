@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index(points, k=25, normals=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import curvature3d; curvature3d.shape_index(points, k=25, normals=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;shape_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Koenderink 의 shape index s∈<a style="color:#22d3bf" href="볼록구+1·원기둥+0.5·안장0·오목구-1">-1,1</a>. → (N,).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>umbilic/平面判定は<b>曲率スケール相対</b>(絶対しきい値なし)。緩やかな凸/凹(曲率が微小でも)は符号=凹凸を保ち、平面はデータ全体の曲率スケールに対して相対的に 0 の点のみ s=0 とする。</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は開面の凹/凸符号が不定(凸マグニチュードで報告)。向き付き法線を渡すと大域向きに整合し正しい符号(凹球=cup → -1)を出す。</p>
-<p>計算(各点、<code style="color:#22d3bf">principal_curvatures</code> と同じフィット):</p>
-<p style="margin:2px 0 2px 12px">• 平面判定: curvedness <code style="color:#22d3bf">sqrt((k1² + k2²) / 2)</code> が、全点の curvedness の中央値 × 1e-3 未満なら s = 0。中央値が 0(曲率信号なし)なら全点 0。</p>
-<p style="margin:2px 0 2px 12px">• 臍点判定: <code style="color:#22d3bf">|k1 - k2| &lt; 1e-2 × (|k1| + |k2|)</code> なら s = <code style="color:#22d3bf">sign(k1 + k2)</code>(厳密に ±1)。</p>
-<p style="margin:2px 0 2px 12px">• それ以外: <code style="color:#22d3bf">s = (2/π) · arctan((k1 + k2) / (k1 - k2))</code>。</p>
-<p style="margin:2px 0 2px 12px">• しきい値は絶対値でなく <b>データ全体の曲率スケール相対</b> なので、同じ形でも他の点との混在具合で平面扱いになる点が変わる。単一の点群を分類する前提で使う。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は k1 = k2 = 0 → 平面(0)。<code style="color:#22d3bf">k</code> は N-1 に切り詰め。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行(<code style="color:#22d3bf">ValueError</code>)。未指定では開いた面の符号は不定(凸側)。</p>
-<p style="margin:2px 0 2px 12px">• 曲がりの強さは含まない。強さも要るなら <code style="color:#22d3bf">principal_curvatures</code> の 2 本を <code style="color:#22d3bf">(N,2)</code> に並べて <code style="color:#22d3bf">curvature_to_shape_index</code> に通す。</p>
+<p>배꼽점/평면 판정은 <b>곡률 스케일 상대</b>(절대 임계값 없음). 완만한 볼록/오목(곡률이 미소해도)은부호=오목·볼록을 유지하고, 평면은 데이터 전체의 곡률 스케일에 대해 상대적으로 0 인 점만 s=0 으로 한다.</p>
+<p>normals(방향이 정해진 참조 법선, (N,3))를 지정하지 않으면 열린 면의 오목/볼록 부호는 부정(볼록 크기로 보고). 방향이 정해진 법선을 넘기면 대역 방향에 맞추어 올바른 부호(오목 구=cup → -1)를 낸다.</p>
+<p>계산(각 점, <code style="color:#22d3bf">principal_curvatures</code> 와 같은 피팅):</p>
+<p style="margin:2px 0 2px 12px">• 평면 판정: curvedness <code style="color:#22d3bf">sqrt((k1² + k2²) / 2)</code> 가 전체 점의 curvedness 중앙값 × 1e-3 미만이면 s = 0. 중앙값이 0(곡률 신호 없음)이면 전체 점이 0.</p>
+<p style="margin:2px 0 2px 12px">• 배꼽점 판정: <code style="color:#22d3bf">|k1 - k2| &lt; 1e-2 × (|k1| + |k2|)</code> 이면 s = <code style="color:#22d3bf">sign(k1 + k2)</code>(엄밀히 ±1).</p>
+<p style="margin:2px 0 2px 12px">• 그 밖: <code style="color:#22d3bf">s = (2/π) · arctan((k1 + k2) / (k1 - k2))</code>.</p>
+<p style="margin:2px 0 2px 12px">• 임계값은 절댓값이 아니라 <b>데이터 전체의 곡률 스케일 상대</b> 이므로, 같은 형태라도 다른 점과의 혼재 정도에 따라 평면으로 취급되는 점이 바뀐다. 단일 점군을 분류하는 전제로 쓴다.</p>
+<p style="margin:2px 0 2px 12px">• 근방이 5 점 미만인 점은 k1 = k2 = 0 → 평면(0). <code style="color:#22d3bf">k</code> 는 N-1 로 잘린다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> 는 (N,3) 이고 유한하며 0 이 아닌 행(<code style="color:#22d3bf">ValueError</code>). 지정하지 않으면 열린 면의 부호는 부정(볼록 쪽).</p>
+<p style="margin:2px 0 2px 12px">• 굽은 정도의 강도는 포함하지 않는다. 강도도 필요하면 <code style="color:#22d3bf">principal_curvatures</code> 의 2 개 값을 <code style="color:#22d3bf">(N,2)</code> 로 나란히 놓아 <code style="color:#22d3bf">curvature_to_shape_index</code> 에 통과시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 행렬 분해가 느린 이유 — BLAS 스레드·캐시·메모리 배치</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

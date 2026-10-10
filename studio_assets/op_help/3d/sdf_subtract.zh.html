@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_subtract(a, b)</code>(要直接调用实现,<code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_subtract(a, b)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;sdf_subtract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>差集 A\B = max(a, -b)(在 A 内侧 且 在 B 外侧 = 在 <code style="color:#22d3bf">-b</code> 内侧)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">b</code> の符号反転は「B の外を内、B の内を外」に反転する(相補集合)ので、A との積が A から B をくり抜いた形になる。非可換: <code style="color:#22d3bf">sdf_subtract(a,b) != sdf_subtract(b,a)</code>。</p>
-<p>計算: <code style="color:#22d3bf">np.maximum(np.asarray(a, float64), -np.asarray(b, float64))</code>。<code style="color:#22d3bf">sdf_intersect(a, -b)</code> と同じ。shape はブロードキャスト整合が必要(不整合なら numpy の <code style="color:#22d3bf">ValueError</code>)で、それ以外の検査はしない。NaN は伝播、<code style="color:#22d3bf">±inf</code> も厳密に伝播する(<code style="color:#22d3bf">b = +inf</code> の点は <code style="color:#22d3bf">-b = -inf</code> なので <code style="color:#22d3bf">a</code> がそのまま残る = 「B が無限に遠い」点は A のまま)。</p>
-<p>入力: 同一グリッド上の 2 つの SDF(内側負・外側正)。<code style="color:#22d3bf">a</code> が残す形、<code style="color:#22d3bf">b</code> がくり抜く形。距離の単位は入力と同じ。</p>
-<p>返り値: ブロードキャスト後の shape の float64。<code style="color:#22d3bf">&lt;= 0</code> が A\B の占有。</p>
-<p>注意:</p>
-<p style="margin:2px 0 2px 12px">• B の内側で値は <code style="color:#22d3bf">-b &gt; 0</code>(B の表面までの距離)になるので、くり抜いた穴の内壁までの距離は外側では厳密、A の内側では下界(CSG の標準的性質)。</p>
-<p style="margin:2px 0 2px 12px">• B が A を完全に含むと全要素が正(空集合)。エラーにはならない。</p>
-<p style="margin:2px 0 2px 12px">• 穴あけ・ポケット加工・殻(<code style="color:#22d3bf">a</code> と <code style="color:#22d3bf">sdf_offset(a, -t)</code> の差で厚さ <code style="color:#22d3bf">t</code> の殻)に使う。</p>
+<p><code style="color:#22d3bf">b</code> 的符号取反会把“B 的外部变为内部、B 的内部变为外部”（补集），因此与 A 的积就是从 A 中挖去 B 的形状。不可交换：<code style="color:#22d3bf">sdf_subtract(a,b) != sdf_subtract(b,a)</code>。</p>
+<p>计算：<code style="color:#22d3bf">np.maximum(np.asarray(a, float64), -np.asarray(b, float64))</code>。与 <code style="color:#22d3bf">sdf_intersect(a, -b)</code> 相同。shape 需要广播匹配（不匹配时由 numpy 抛出 <code style="color:#22d3bf">ValueError</code>），此外不做检查。NaN 传播，<code style="color:#22d3bf">±inf</code> 也严格传播（<code style="color:#22d3bf">b = +inf</code> 的点有 <code style="color:#22d3bf">-b = -inf</code>，因此 <code style="color:#22d3bf">a</code> 原样保留 = “B 无限远”的点仍为 A）。</p>
+<p>输入：同一网格上的 2 个 SDF（内侧负、外侧正）。<code style="color:#22d3bf">a</code> 是保留的形状，<code style="color:#22d3bf">b</code> 是挖去的形状。距离单位与输入相同。</p>
+<p>返回值：广播后 shape 的 float64。<code style="color:#22d3bf">&lt;= 0</code> 为 A\B 的占用。</p>
+<p>注意：</p>
+<p style="margin:2px 0 2px 12px">• 在 B 的内侧值为 <code style="color:#22d3bf">-b &gt; 0</code>（到 B 表面的距离），因此到挖出孔内壁的距离在外侧是严格的，在 A 的内侧是下界（CSG 的标准性质）。</p>
+<p style="margin:2px 0 2px 12px">• B 完全包含 A 时所有元素为正（空集）。不会报错。</p>
+<p style="margin:2px 0 2px 12px">• 用于钻孔、型腔加工、壳体（由 <code style="color:#22d3bf">a</code> 与 <code style="color:#22d3bf">sdf_offset(a, -t)</code> 之差得到厚度 <code style="color:#22d3bf">t</code> 的壳）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

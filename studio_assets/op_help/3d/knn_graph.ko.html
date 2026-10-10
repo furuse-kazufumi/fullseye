@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.knn_graph(points: numpy.ndarray, k: int = 8) -&gt; Tuple[numpy.ndarray, numpy.ndarray]</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geodesic3d; geodesic3d.knn_graph(points: numpy.ndarray, k: int = 8) -&gt; Tuple[numpy.ndarray, numpy.ndarray]</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;knn_graph&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 점의 k 근방 인덱스와 유클리드 거리(자기 제외). → (idx (N,k) int, dist (N,k) float).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">scipy.spatial.cKDTree</code> で各点の k+1 近傍を引き、自分自身(距離 0)を除いた k 個を返す。<code style="color:#22d3bf">idx[i, j]</code> は点 i に j 番目に近い点の添字、<code style="color:#22d3bf">dist[i, j]</code> はその Euclid 距離(座標の単位)で、各行は距離の昇順。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) など任意次元の座標(float64 に変換)。形状の検証はしない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: 近傍数(既定 8)。<code style="color:#22d3bf">N-1</code> を超える値は黙って <code style="color:#22d3bf">N-1</code> に切り詰める。</p>
-<p style="margin:2px 0 2px 12px">• N &lt; 2 のときは例外を出さず、形 (N,0) の空配列を 2 つ返す。</p>
-<p>罠: 座標が重複していると KD-tree が自己を列 0 に返さないことがある。その場合は行ごとに自己の位置を探して除き、k+1 個の中に自己が無ければ最遠の 1 つを落とす(結果はやはり k 個)。<code style="color:#22d3bf">geodesic_distances</code> / <code style="color:#22d3bf">farthest_point_sampling</code> はこの結果を隣接行列(有向 CSR、Dijkstra 側で無向化)にして測地距離の近似に使う。</p>
+<p><code style="color:#22d3bf">scipy.spatial.cKDTree</code> 로 각 점의 k+1 근방을 찾아, 자기 자신(거리 0)을 제외한 k 개를 반환한다. <code style="color:#22d3bf">idx[i, j]</code> 는 점 i 에 j 번째로 가까운 점의 첨자, <code style="color:#22d3bf">dist[i, j]</code> 는 그 Euclid 거리(좌표의 단위)이며, 각 행은 거리의 오름차순.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 등 임의 차원의 좌표(float64 로 변환). 형상 검증은 하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: 근방 수(기본값 8). <code style="color:#22d3bf">N-1</code> 을 넘는 값은 조용히 <code style="color:#22d3bf">N-1</code> 로 잘린다.</p>
+<p style="margin:2px 0 2px 12px">• N &lt; 2 일 때는 예외를 내지 않고, 형상 (N,0) 의 빈 배열을 2 개 반환한다.</p>
+<p>함정: 좌표가 중복되어 있으면 KD-tree 가 자신을 열 0 에 반환하지 않는 경우가 있다. 그 경우는 행마다 자신의위치를 찾아 제거하고, k+1 개 안에 자신이 없으면 가장 먼 1 개를 떨어뜨린다(결과는 역시 k 개). <code style="color:#22d3bf">geodesic_distances</code> / <code style="color:#22d3bf">farthest_point_sampling</code> 은 이 결과를 인접 행렬(유향 CSR, Dijkstra 쪽에서 무향화)로 만들어 측지 거리의 근사에 쓴다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

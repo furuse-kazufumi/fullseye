@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;tonemap_aces&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 ACES filmic 近似(Narkowicz 2015)把 HDR 压缩到 <code style="color:#22d3bf">[0, 1]</code> 的 LDR。→ float64。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">x = hdr * exposure</code> に対し <code style="color:#22d3bf">f(x) = x(a x + b) / (x(c x + d) + e)</code> を適用する。フィルム的な S 字カーブで暗部を持ち上げハイライトを緩やかに巻き取り、映像制作標準の「見栄え」を出す。<code style="color:#22d3bf">x &lt; ~7.24</code> の範囲では狭義単調増加・出力 &lt; 1(それ以上は 1 に飽和しクリップ)。カラー <code style="color:#22d3bf">(H, W, C)</code> はチャンネル独立に写像する。</p>
+<p>对 <code style="color:#22d3bf">x = hdr * exposure</code> 应用 <code style="color:#22d3bf">f(x) = x(a x + b) / (x(c x + d) + e)</code>。以胶片般的 S 形曲线提亮暗部、平缓地压缩高光,呈现影像制作标准的 &quot;观感&quot;。在 <code style="color:#22d3bf">x &lt; ~7.24</code> 的范围内严格单调递增、输出 &lt; 1(超过后在 1 处饱和并被裁剪)。彩色 <code style="color:#22d3bf">(H, W, C)</code> 按通道独立映射。</p>
 <p>Args:</p>
-<p>hdr: HDR 画像。<code style="color:#22d3bf">(H, W)</code> or <code style="color:#22d3bf">(H, W, C)</code>、放射輝度 &gt;= 0。</p>
-<p>exposure: 写像前に掛ける露出スケール(正)。</p>
+<p>hdr: HDR 图像。<code style="color:#22d3bf">(H, W)</code> or <code style="color:#22d3bf">(H, W, C)</code>,辐射亮度 &gt;= 0。</p>
+<p>exposure: 映射前乘上的曝光尺度(正)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">[0, 1]</code> の float64 LDR 画像(入力と同形状)。</p>
+<p><code style="color:#22d3bf">[0, 1]</code> 的 float64 LDR 图像(与输入同形状)。</p>
 <p>Raises:</p>
-<p>ValueError: 空/非有限/負の放射輝度、非正の exposition(fail-closed)。</p>
+<p>ValueError: 空/非有限/负的辐射亮度,非正的 exposition(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

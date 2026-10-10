@@ -5,15 +5,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>MIP projection → 2D NCC (structure=voxel → 2D × method=NCC, conversion=orthogonal MIP)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>3 直交方向の最大値投影で 3 枚の 2D 問題に落とし、既存の 2D NCC で定位 → 3 枚から 3D 座標を冗長推定。全 3D NCC より安く coarse alignment に。回転が無い平行移動探索向き。</p>
-<p>手順: <code style="color:#22d3bf">voxel_to_mips</code> で scene・model とも 3 枚の MIP を作り、各投影で model MIP の <code style="color:#22d3bf">&gt; 5%·max</code> の bbox を切り出してテンプレにし、<code style="color:#22d3bf">accel_match.ncc_locate_batch</code>(2D NCC、テンプレ中心規約)で位置を取る。軸 0 を潰した投影は (y,x)、軸 1 は (z,x)、軸 2 は (z,y) を与えるので各座標は 2 枚から得られ、その平均を返す。返り値 <code style="color:#22d3bf">(3,)</code> float64 の <code style="color:#22d3bf">[z, y, x]</code>(整数 NCC 位置の平均なので .5 刻み)。score は返さない。</p>
-<p style="margin:2px 0 2px 12px">• 位置は <b>切り出した bbox テンプレの中心</b>が scene MIP のどこに載るか。model volume の</p>
-<p>中心ではない。</p>
-<p style="margin:2px 0 2px 12px">• model MIP が全 0 の投影は飛ばし、ある座標が 1 枚からも得られなければ 0.0 になる(例外は</p>
-<p>出ない)。</p>
-<p style="margin:2px 0 2px 12px">• MIP は重なりで奥行き情報を失うので、複数物体・クラッタには弱い。</p>
-<p>後段: この粗位置を <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_lm</code> に渡す。</p>
+<p>3 orthogonal दिशाओं के maximum intensity projection से समस्या को 3 2D समस्याओं में बदलता है, मौजूदा 2D NCC से locate करता है → 3 images से 3D coordinates का redundant अनुमान लगाता है। पूरे 3D NCC से सस्ता, coarse alignment के लिए। बिना rotation वाली translation search के लिए उपयुक्त।</p>
+<p>प्रक्रिया: <code style="color:#22d3bf">voxel_to_mips</code> से scene और model दोनों के 3 MIP बनाए जाते हैं; हर projection में model MIP के <code style="color:#22d3bf">&gt; 5%·max</code> का bbox काटकर template बनाया जाता है, और <code style="color:#22d3bf">accel_match.ncc_locate_batch</code> (2D NCC, template-center convention) से position ली जाती है। Axis 0 को collapse करने वाला projection (y,x), axis 1 वाला (z,x), axis 2 वाला (z,y) देता है, इसलिए हर coordinate 2 images से मिलता है, और उनका औसत लौटाया जाता है। Return value <code style="color:#22d3bf">(3,)</code> float64 का <code style="color:#22d3bf">[z, y, x]</code> है (integer NCC positions का औसत, इसलिए .5 के step में)। score नहीं लौटाता।</p>
+<p style="margin:2px 0 2px 12px">• Position बताती है कि <b>काटे गए bbox template का center</b> scene MIP में कहाँ पड़ता है। यह model volume का</p>
+<p>center नहीं है।</p>
+<p style="margin:2px 0 2px 12px">• जिन projections में model MIP पूरा 0 हो उन्हें छोड़ दिया जाता है; अगर कोई coordinate 1 image से भी न मिले तो वह 0.0 होता है (कोई exception</p>
+<p>नहीं आता)।</p>
+<p style="margin:2px 0 2px 12px">• MIP overlap के कारण depth जानकारी खो देते हैं, इसलिए कई वस्तुओं और clutter में कमज़ोर हैं।</p>
+<p>आगे: इस coarse position को <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_lm</code> को दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

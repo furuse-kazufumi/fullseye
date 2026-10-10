@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.eval_poly_surface(model, x, y)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.eval_poly_surface(model, x, y)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;eval_poly_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>model को (x,y) पर evaluate करता है → z (x के shape में लौटाता है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>*model* は <code style="color:#22d3bf">fit_poly_surface</code> の返り(dict)。<b>fail-closed</b>: B スプライン曲面/曲線の tck(FITPACK の list)を渡すと、以前は <code style="color:#22d3bf">model[&quot;degree&quot;]</code> が <code style="color:#22d3bf">TypeError: list indices must be integers...</code> で落ちていた(2026-09-01 実測 7 回)。多項式モデルと B スプラインモデルは中身が違うので、ここで明示的に拒否する(ops3d 台帳側でも poly_surface / bspline_surface と型を分けてある)。</p>
-<p>Raises ValueError: model が多項式モデル dict でない / 必須キー欠落。</p>
+<p>*model* <code style="color:#22d3bf">fit_poly_surface</code> का return value (dict) है। <b>fail-closed</b>: B-spline surface/curve का tck (FITPACK की list) देने पर पहले <code style="color:#22d3bf">model[&quot;degree&quot;]</code> पर <code style="color:#22d3bf">TypeError: list indices must be integers...</code> के साथ crash होता था (2026-09-01 को 7 बार मापा गया)। polynomial model और B-spline model की सामग्री अलग होती है, इसलिए यहाँ इन्हें स्पष्ट रूप से अस्वीकार किया जाता है (ops3d ledger में भी poly_surface / bspline_surface के type अलग रखे गए हैं)।</p>
+<p>Raises ValueError: model polynomial model dict नहीं है / आवश्यक key गायब है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

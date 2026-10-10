@@ -5,15 +5,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">mesh</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh.raw(...)</code> or call <code style="color:#22d3bf">match3d.voxel_to_mesh</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Voxel → mesh (marching cubes, skimage). Returns (verts, faces, normals). The voxel → mesh conversion.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">skimage.measure.marching_cubes(vol, level=iso)</code> の薄い包み(spacing 指定なし = 1 voxel 単位)。<code style="color:#22d3bf">verts</code> (V,3) float は <b>voxel index 座標</b>で、列は入力の軸順(<code style="color:#22d3bf">vol</code> が (D,H,W) なら (z,y,x))。<code style="color:#22d3bf">faces</code> (F,3) int は verts への index、<code style="color:#22d3bf">normals</code> (V,3) は skimage が勾配から与える頂点法線。4 番目の返り値(values)は捨てる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iso</code>: 等値面のレベル。<b>入力の値域の外だと skimage が ValueError</b> を出す(全 0 の</p>
-<p>volume で iso=0.5 など)。個数密度なら 0.5、SDF なら 0.0 を渡す。</p>
-<p style="margin:2px 0 2px 12px">• 境界に接する等値面は開いたまま(端で閉じない)。</p>
-<p style="margin:2px 0 2px 12px">• ★<b>巻き順は内向き</b>。そのまま <code style="color:#22d3bf">mesh_volume</code> に渡すと<b>普通の中身のある形でも負</b>になる(実測: 1000 voxel の立方体で -985.67)。体積が欲しいだけなら</p>
-<p><code style="color:#22d3bf">abs()</code>、向きを揃えたいなら <code style="color:#22d3bf">faces[:, ::-1]</code> で巻き直す。</p>
-<p style="margin:2px 0 2px 12px">• skimage は呼び出し時 import(未導入なら ImportError)。</p>
-<p>後段: <code style="color:#22d3bf">mesh_to_points</code> で点群化、<code style="color:#22d3bf">mesh_area</code> / <code style="color:#22d3bf">face_areas</code> / <code style="color:#22d3bf">mesh_volume</code> / <code style="color:#22d3bf">boundary_vertices</code> / <code style="color:#22d3bf">mesh_edge_stats</code> で計測。</p>
+<p>A thin wrapper around <code style="color:#22d3bf">skimage.measure.marching_cubes(vol, level=iso)</code> (no spacing given = 1 voxel unit). <code style="color:#22d3bf">verts</code> (V,3) float are <b>voxel index coordinates</b>; the columns follow the input axis order (if <code style="color:#22d3bf">vol</code> is (D,H,W), then (z,y,x)). <code style="color:#22d3bf">faces</code> (F,3) int are indices into verts, <code style="color:#22d3bf">normals</code> (V,3) are vertex normals that skimage derives from the gradient. The 4th return value (values) is discarded.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iso</code>: level of the isosurface. <b>Outside the value range of the input, skimage raises ValueError</b> (e.g. iso=0.5 on an all-0</p>
+<p>volume). Pass 0.5 for count density, 0.0 for an SDF.</p>
+<p style="margin:2px 0 2px 12px">• Isosurfaces touching the boundary stay open (they are not closed at the edges).</p>
+<p style="margin:2px 0 2px 12px">• ★<b>The winding order points inward</b>. Passed directly to <code style="color:#22d3bf">mesh_volume</code>, <b>even an ordinary solid shape comes out negative</b> (measured: -985.67 for a cube of 1000 voxels). If you only want the volume, use</p>
+<p><code style="color:#22d3bf">abs()</code>; to fix the orientation, rewind with <code style="color:#22d3bf">faces[:, ::-1]</code>.</p>
+<p style="margin:2px 0 2px 12px">• skimage is imported at call time (ImportError if not installed).</p>
+<p>Downstream: <code style="color:#22d3bf">mesh_to_points</code> for a point cloud; measure with <code style="color:#22d3bf">mesh_area</code> / <code style="color:#22d3bf">face_areas</code> / <code style="color:#22d3bf">mesh_volume</code> / <code style="color:#22d3bf">boundary_vertices</code> / <code style="color:#22d3bf">mesh_edge_stats</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

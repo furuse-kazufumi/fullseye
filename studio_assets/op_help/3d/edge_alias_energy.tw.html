@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import render_ssaa; render_ssaa.edge_alias_energy(img) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;edge_alias_energy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>邊緣的鋸齒能量 = 拉普拉斯的 RMS(越小越平滑)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>ラスタライズのエイリアスは階段状の鋭い角(高い 2 階微分)として現れる。ラプラシアンは高周波を強調するため、その二乗平均平方根(RMS)は境界の階段度を単調に捉える — SSAA でエッジが滑らかな勾配になれば、ラプラシアンの高周波エネルギーは減る(low-pass は高周波を減衰させ、ラプラシアンはそれを増幅するので、平滑化されたエッジほど本量は小さい)。</p>
-<p>平坦な内部・背景はラプラシアン ≈ 0 で寄与しないため、実質エッジ帯の量になる。カラー画像はチャンネル平均。同一形状・同一コントラストの画像どうしを比較するための相対指標。</p>
+<p>光柵化的混疊呈現為階梯狀的尖銳轉角(高的 2 階導數)。拉普拉斯會強調高頻,因此其均方根(RMS)能單調地捕捉邊界的階梯程度 —— 經 SSAA 使邊緣變為平滑的梯度後,拉普拉斯的高頻能量會減少(low-pass 衰減高頻, 而拉普拉斯放大高頻,因此邊緣越平滑,本量越小)。</p>
+<p>平坦的內部、背景的拉普拉斯 ≈ 0,不作貢獻,因此實質上是邊緣帶的量。彩色影像取通道平均。是用於比較同一形狀、同一對比度的影像之間的相對指標。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

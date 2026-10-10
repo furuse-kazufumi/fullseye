@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;tsdf_from_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>深度圖(2.5D)→ TSDF volume(RGB-D 重建的標準表示)。depth→TSDF 轉換。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各 voxel を画像へ投影し、視線上の観測深度との符号付き切詰め距離 [-1,1] を格納(表面手前 +・奥 −・表面 0)。KinectFusion 系の基本表現。</p>
-<p>格子: <code style="color:#22d3bf">bounds=(lo, hi)</code> は <b>(X, Y, Z) のカメラ座標</b>(<code style="color:#22d3bf">depth_to_points</code> と同じ)で、None なら深度を逆投影した点群の min−2 / max+2(深度の単位)。出力は <code style="color:#22d3bf">(size,size,size)</code> float32 で <b>軸順は (Z, Y, X)</b>、voxel 中心 <code style="color:#22d3bf">= lo + (i + 0.5)/size·(hi − lo)</code>。bounds の並び (x,y,z) と配列の軸 (z,y,x) が逆なことに注意。</p>
-<p>値: 各 voxel 中心を <code style="color:#22d3bf">u = X·fx/Z + cx</code>、<code style="color:#22d3bf">v = Y·fy/Z + cy</code> で画素へ丸め、その画素の観測深度 <code style="color:#22d3bf">d</code> から <code style="color:#22d3bf">clip((d − Z)/trunc, −1, 1)</code>(<code style="color:#22d3bf">trunc</code> は深度と同じ単位)。画像外に落ちる voxel・観測深度が 0 以下・Z が 0 以下の voxel は <b>+1(未観測=自由)</b> にする(端画素へ clip して観測済みに見せかけない)。深度 0 が無効値の規約。</p>
-<p style="margin:2px 0 2px 12px">• 深度が全て 0 で bounds=None だと点群が空になり numpy の min で例外。</p>
-<p style="margin:2px 0 2px 12px">• 1 視点の TSDF なので視線の裏側は −1 で埋まる(閉じた物体にはならない)。</p>
-<p>後段: <code style="color:#22d3bf">voxel_to_mesh(tsdf, iso=0.0)</code> で面を取る。占有にするなら <code style="color:#22d3bf">sdf_to_occupancy</code>。</p>
+<p>將每個 voxel 投影到影像上,儲存與視線上觀測深度之間的帶符號截斷距離 [-1,1] (表面前方 +、後方 −、表面 0)。KinectFusion 系的基本表示。</p>
+<p>網格: <code style="color:#22d3bf">bounds=(lo, hi)</code> 是 <b>(X, Y, Z) 的相機座標</b>(與 <code style="color:#22d3bf">depth_to_points</code> 相同), 為 None 時取深度反投影點雲的 min−2 / max+2(深度單位)。輸出為 <code style="color:#22d3bf">(size,size,size)</code> float32,<b>軸順序為 (Z, Y, X)</b>,voxel 中心 <code style="color:#22d3bf">= lo + (i + 0.5)/size·(hi − lo)</code>。注意 bounds 的排列 (x,y,z) 與陣列的軸 (z,y,x) 相反。</p>
+<p>值: 以 <code style="color:#22d3bf">u = X·fx/Z + cx</code>、<code style="color:#22d3bf">v = Y·fy/Z + cy</code> 將各 voxel 中心取整到像素,由該像素的觀測深度 <code style="color:#22d3bf">d</code> 計算 <code style="color:#22d3bf">clip((d − Z)/trunc, −1, 1)</code>(<code style="color:#22d3bf">trunc</code> 與深度同單位)。落在影像外的 voxel、觀測深度為 0 以下、Z 為 0 以下的 voxel 設為 <b>+1(未觀測=自由)</b>(不會 clip 到邊界像素而偽裝成已觀測)。約定深度 0 為無效值。</p>
+<p style="margin:2px 0 2px 12px">• 深度全為 0 且 bounds=None 時點雲為空,numpy 的 min 拋出例外。</p>
+<p style="margin:2px 0 2px 12px">• 由於是 1 個視點的 TSDF,視線背面以 −1 填滿(不會成為封閉物體)。</p>
+<p>後續: 用 <code style="color:#22d3bf">voxel_to_mesh(tsdf, iso=0.0)</code> 擷取表面。要轉為佔據則用 <code style="color:#22d3bf">sdf_to_occupancy</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

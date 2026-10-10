@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.resample_uniform(curve, n)</code>(要直接调用实现,<code style="color:#22d3bf">import curve3d; curve3d.resample_uniform(curve, n)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;resample_uniform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按弧长等间隔重采样为 n 点(线性插值)。→ (n,3)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">arc_length</code> の累積弧長をパラメータとして <code style="color:#22d3bf">np.linspace(0, total, n)</code> の位置を取り、x・y・z を独立に <code style="color:#22d3bf">np.interp</code> で線形補間する。出力は float64 の (n,3)。始点と終点は入力の先頭・末尾に一致し、中間点は折れ線上に乗る(元の点を通るとは限らない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 出力点数。1 なら始点 1 点、0 なら空の (0,3)。入力より多くしても情報は増えず折れ線を細かく刻むだけ。</p>
-<p style="margin:2px 0 2px 12px">• 全長が 1e-12 未満(全点一致)のときは先頭点を n 回複製して返す。</p>
-<p style="margin:2px 0 2px 12px">• 出力列数は 3 に固定されており、入力が (N,3) 以外だと列数不足で失敗するか余剰列が捨てられる。形状検証は無い。</p>
-<p style="margin:2px 0 2px 12px">• 閉曲線は閉じない(終点→始点の区間は補間対象外)。重複点があっても <code style="color:#22d3bf">np.interp</code> は通るが、その区間は長さ 0 として扱われる。</p>
-<p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> は index パラメータの差分なので、間隔が不均一な点列はこの op で等間隔化してから渡すと数値微分が安定する。滑らかに補間したい場合は <code style="color:#22d3bf">fit_spline_curve</code>。</p>
+<p>以 <code style="color:#22d3bf">arc_length</code> 的累积弧长为参数,取 <code style="color:#22d3bf">np.linspace(0, total, n)</code> 的位置并用 <code style="color:#22d3bf">np.interp</code> 对 x、y、z 独立线性插值。输出为 float64 的 (n,3)。起点和终点与输入的首尾一致,中间点落在折线上(不一定经过原始点)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>:输出点数。1 时仅起点 1 点,0 时为空的 (0,3)。多于输入也不会增加信息, 只是把折线切得更细。</p>
+<p style="margin:2px 0 2px 12px">• 总长小于 1e-12(全部点重合)时,将首点复制 n 次返回。</p>
+<p style="margin:2px 0 2px 12px">• 输出列数固定为 3,输入不是 (N,3) 时会因列数不足而失败,或多余的列被丢弃。没有形状校验。</p>
+<p style="margin:2px 0 2px 12px">• 闭曲线不会闭合(终点→起点的区间不在插值范围内)。即使有重复点 <code style="color:#22d3bf">np.interp</code> 也能通过,但该区间按长度 0 处理。</p>
+<p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> 是 index 参数的差分,因此间距不均匀的点列用本 op 等间距化后再传入,数值微分会更稳定。需要平滑插值时用 <code style="color:#22d3bf">fit_spline_curve</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

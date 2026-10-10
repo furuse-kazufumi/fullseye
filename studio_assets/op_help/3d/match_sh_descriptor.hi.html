@@ -5,13 +5,12 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>दो SH descriptors के बीच cosine similarity (rotation-invariant shape matching)। 1 के जितना पास, shape उतनी समान। voxel × SH column।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">sh_descriptor(a, L, nradii)</code> と <code style="color:#22d3bf">sh_descriptor(b, L, nradii)</code> を平坦化して L2 正規化し、内積を float で返す。帯域エネルギーは非負なので値は <b>[0, 1]</b>(負にならない)。どちらかの記述子が全 0(空 volume)なら 0。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は立方体 volume(<code style="color:#22d3bf">sh_descriptor</code> の前提)。形が違ってもよいが、shell 半径が</p>
-<p>各 N で決まるので <b>スケールが違う物体は別物</b>として低く出る(スケール不変ではない)。中心ずれにも弱い(重心で中心合わせしてから)。</p>
-<p style="margin:2px 0 2px 12px">• 回転には不変(帯域エネルギー)。ただし鏡像も同じ値になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ntheta</code>/<code style="color:#22d3bf">nphi</code> は既定(32×64)固定。同じ設定同士の比較にだけ意味がある。</p>
-<p style="margin:2px 0 2px 12px">• 位置は返さない。「どこにあるか」は <code style="color:#22d3bf">match_shape_3d</code> 等、「同じ形か」は本 op。</p>
+<p><code style="color:#22d3bf">sh_descriptor(a, L, nradii)</code> और <code style="color:#22d3bf">sh_descriptor(b, L, nradii)</code> को flatten करके L2 normalise करता है और inner product को float के रूप में लौटाता है। band energy non-negative है, इसलिए मान <b>[0, 1]</b> में है (ऋणात्मक नहीं होता)। किसी एक descriptor के पूरे 0 होने पर (खाली volume) 0।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> cube volume हैं (<code style="color:#22d3bf">sh_descriptor</code> की शर्त)। shape अलग हो सकते हैं, पर shell radius</p>
+<p>हर N से तय होता है, इसलिए <b>अलग scale वाले object अलग माने जाते हैं</b> और कम score पाते हैं (scale invariant नहीं)। center के खिसकने पर भी कमज़ोर है (पहले centroid से center मिलाएँ)।</p>
+<p style="margin:2px 0 2px 12px">• rotation के प्रति invariant (band energy)। पर mirror image भी वही मान देता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ntheta</code>/<code style="color:#22d3bf">nphi</code> default (32×64) पर स्थिर हैं। केवल समान setting वाली तुलना का अर्थ है।</p>
+<p style="margin:2px 0 2px 12px">• position नहीं लौटाता। &quot;कहाँ है&quot; के लिए <code style="color:#22d3bf">match_shape_3d</code> आदि, &quot;क्या समान shape है&quot; के लिए यह op।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

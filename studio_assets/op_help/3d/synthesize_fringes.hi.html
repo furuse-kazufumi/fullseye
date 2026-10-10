@@ -5,19 +5,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">images</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">fringe.synthesize_fringes</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ज्ञात height map से N-step phase-shift fringe image series synthesize करता है (test/sample generation के लिए)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>モデル: 総位相 φ(x,y) = φ_carrier + phase_gain·height。搬送波 φ_carrier は視野を横切る線形ランプ(freq 周期)。各フレームは I_n = bias + amplitude·cos(φ - δ_n), δ_n = 2πn/N。この符号規約により wrapped_phase(...) は総位相 φ をそのまま復元する。</p>
-<p>height:      2D 配列(計測対象の高さ場、任意単位)。</p>
-<p>n_steps:     位相シフト枚数 N(&gt;=3)。</p>
-<p>freq:        視野幅を横切る搬送波の周期数(縞本数)。0 なら搬送波なし(height のみ)。</p>
-<p>phase_gain:  高さ→位相の変換ゲイン(rad/単位)。復号側の較正 k = 1/phase_gain に対応。</p>
-<p>bias:        平均輝度 a(既定 0.5)。</p>
-<p>amplitude:   縞振幅 b(既定 0.5)。bias±amplitude が [0,1] に収まると自然。</p>
-<p>axis:        搬送波の方向(1 = 列方向 x に沿う既定、0 = 行方向 y)。</p>
-<p>noise:       付加ガウスノイズの標準偏差(0 で無ノイズ)。</p>
-<p>seed:        ノイズ用乱数シード。</p>
-<p>return_phase: True なら (images, total_phase) を返す(テスト・デバッグ用)。</p>
-<p>返り値: (N, H, W) float 配列(値域 [0,1] にクリップ)。return_phase=True なら位相も。</p>
+<p>model: कुल phase φ(x,y) = φ_carrier + phase_gain·height। carrier φ_carrier field of view के आर-पार एक linear ramp है (freq periods)। हर frame I_n = bias + amplitude·cos(φ - δ_n), δ_n = 2πn/N है। इस sign convention से wrapped_phase(...) कुल phase φ को वैसा ही वापस देता है।</p>
+<p>height:      2D array (मापे जाने वाले object का height field, कोई भी unit)।</p>
+<p>n_steps:     phase-shift images की संख्या N (&gt;=3)।</p>
+<p>freq:        field of view की चौड़ाई के आर-पार carrier periods की संख्या (fringes की संख्या)। 0 का मतलब कोई carrier नहीं (सिर्फ़ height)।</p>
+<p>phase_gain:  height→phase conversion gain (rad/unit)। decode की तरफ़ के calibration k = 1/phase_gain से मेल खाता है।</p>
+<p>bias:        औसत luminance a (default 0.5)।</p>
+<p>amplitude:   fringe amplitude b (default 0.5)। bias±amplitude [0,1] में रहे तो स्वाभाविक है।</p>
+<p>axis:        carrier की दिशा (1 = column direction x के साथ, default; 0 = row direction y)।</p>
+<p>noise:       जोड़े गए Gaussian noise का standard deviation (0 पर noise नहीं)।</p>
+<p>seed:        noise के लिए random seed।</p>
+<p>return_phase: True होने पर (images, total_phase) लौटाता है (tests और debugging के लिए)।</p>
+<p>return value: (N, H, W) float array (range [0,1] पर clip किया गया)। return_phase=True पर phase भी।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

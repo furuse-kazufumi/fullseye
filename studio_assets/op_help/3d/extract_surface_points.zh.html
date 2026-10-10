@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.extract_surface_points(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.extract_surface_points(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;extract_surface_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 TSDF 零交叉提取表面点 (M,3)(无需 marching cubes,线性插值)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>観測済み(weight&gt;0)の隣接 voxel 対で TSDF 符号が変わる辺を、その 2 中心の間で <code style="color:#22d3bf">alpha = t_a/(t_a - t_b)</code> により線形補間して交点(表面点)を出す。両端とも weight&gt;0 の辺のみ採用(未観測の初期値 1.0 との偽の交差を作らない=honest)。x/y/z 3 軸の全辺を走査。交差が無ければ空 (0,3) を返す(詐称せず honest な空返し)。</p>
+<p>对已观测(weight&gt;0)的相邻 voxel 对中 TSDF 符号发生变化的边,在其 2 个中心之间用 <code style="color:#22d3bf">alpha = t_a/(t_a - t_b)</code> 线性插值求出交点(表面点)。只采用两端 weight 都 &gt;0 的边(不与未观测的初始值 1.0 产生虚假交叉 = honest)。扫描 x/y/z 3 个轴的全部边。若无交叉则返回空 (0,3)(不造假,诚实地返回空)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

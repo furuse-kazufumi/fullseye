@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.visual_hull(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import visualhull; visualhull.visual_hull(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;visual_hull&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把多視角輪廓的 visual hull 作為體素佔據回傳(<code style="color:#22d3bf">carve</code> 的別名)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>引数・返り値・例外は <code style="color:#22d3bf">carve</code> と完全に同じ(内部でそのまま <code style="color:#22d3bf">carve</code> を呼ぶだけ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">silhouettes</code>: 各カメラの前景マスク (H,W) bool を M 個並べたリスト(サイズはカメラごとに異なってよい)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">Ks</code>/<code style="color:#22d3bf">Rs</code>/<code style="color:#22d3bf">ts</code>: 各カメラの内部行列 (3,3)・回転 (3,3)・並進 (3,)。射影規約は <code style="color:#22d3bf">X_cam = R @ X_world + t</code>、<code style="color:#22d3bf">pixel = (K @ X_cam)[:2] / Z</code>(OpenCV 流)。画素は最近傍に丸める。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> の彫刻領域(各軸 max &gt; min 必須)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">res</code>: 各軸の voxel 分割数(正の整数)。voxel 総数 <code style="color:#22d3bf">res**3</code>。</p>
-<p>返り値は (res,res,res) bool。<code style="color:#22d3bf">indexing=&#x27;ij&#x27;</code> で軸は (x,y,z)、<code style="color:#22d3bf">vox[i,j,k]</code> の中心は <code style="color:#22d3bf">(xmin+(i+.5)dx, ymin+(j+.5)dy, zmin+(k+.5)dz)</code>。voxel が残る条件は、全カメラで「カメラ前方(Z&gt;0)・画像内・その画素がシルエット前景」を満たすこと(AND)。1 台でも外れれば削られる。</p>
-<p>fail-closed: リスト長の不一致、カメラ 0 台、<code style="color:#22d3bf">res &lt;= 0</code>、退化 bounds はすべて <code style="color:#22d3bf">ValueError</code> (0 台のときに「全 voxel 占有」を復元結果と偽って返さない)。</p>
-<p>注意: visual hull は物体の上位集合で、どのカメラからも見えない凹みは埋まったまま残る。シルエットは <code style="color:#22d3bf">synthesize_silhouette</code> のように 1 画素太らせた被覆マスクにしておくと、離散化誤差で物体 voxel を削り落とす取りこぼしを避けられる。結果は <code style="color:#22d3bf">voxel_to_mesh</code> でメッシュ化、<code style="color:#22d3bf">esdf</code> の占有入力にもそのまま使える。</p>
+<p>參數、回傳值、例外與 <code style="color:#22d3bf">carve</code> 完全相同(內部只是直接呼叫 <code style="color:#22d3bf">carve</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">silhouettes</code>: 將各相機的前景遮罩 (H,W) bool 排成 M 個的串列(尺寸可以因相機而不同)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">Ks</code>/<code style="color:#22d3bf">Rs</code>/<code style="color:#22d3bf">ts</code>: 各相機的內部矩陣 (3,3)、旋轉 (3,3)、平移 (3,)。投影慣例為 <code style="color:#22d3bf">X_cam = R @ X_world + t</code>,<code style="color:#22d3bf">pixel = (K @ X_cam)[:2] / Z</code>(OpenCV 風格)。像素四捨五入到最近鄰。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> 的雕刻區域(各軸必須 max &gt; min)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">res</code>: 各軸的 voxel 分割數(正整數)。voxel 總數 <code style="color:#22d3bf">res**3</code>。</p>
+<p>回傳值為 (res,res,res) bool。<code style="color:#22d3bf">indexing=&#x27;ij&#x27;</code> 時軸為 (x,y,z),<code style="color:#22d3bf">vox[i,j,k]</code> 的中心為 <code style="color:#22d3bf">(xmin+(i+.5)dx, ymin+(j+.5)dy, zmin+(k+.5)dz)</code>。voxel 保留的條件是,在所有相機中都滿足「在相機前方(Z&gt;0)、在影像內、該像素為剪影前景」(AND)。只要有 1 台不滿足就會被削去。</p>
+<p>fail-closed(失敗即拒絕): 串列長度不一致、相機 0 台、<code style="color:#22d3bf">res &lt;= 0</code>、退化 bounds 全部為 <code style="color:#22d3bf">ValueError</code> (0 台時不會把「全部 voxel 佔據」偽裝成重建結果回傳)。</p>
+<p>注意: visual hull 是物體的超集,任何相機都看不到的凹陷會保持填滿。若把剪影做成像 <code style="color:#22d3bf">synthesize_silhouette</code> 那樣膨脹 1 像素的覆蓋遮罩,就能避免因離散化誤差削掉物體 voxel 的遺漏。結果可用 <code style="color:#22d3bf">voxel_to_mesh</code> 網格化,也可直接用作 <code style="color:#22d3bf">esdf</code> 的佔據輸入。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

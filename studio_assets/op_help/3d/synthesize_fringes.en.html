@@ -5,19 +5,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">images</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes.raw(...)</code> or call <code style="color:#22d3bf">fringe.synthesize_fringes</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Synthesise an N-step phase-shifted fringe image series from a known height map (for tests and sample generation).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>モデル: 総位相 φ(x,y) = φ_carrier + phase_gain·height。搬送波 φ_carrier は視野を横切る線形ランプ(freq 周期)。各フレームは I_n = bias + amplitude·cos(φ - δ_n), δ_n = 2πn/N。この符号規約により wrapped_phase(...) は総位相 φ をそのまま復元する。</p>
-<p>height:      2D 配列(計測対象の高さ場、任意単位)。</p>
-<p>n_steps:     位相シフト枚数 N(&gt;=3)。</p>
-<p>freq:        視野幅を横切る搬送波の周期数(縞本数)。0 なら搬送波なし(height のみ)。</p>
-<p>phase_gain:  高さ→位相の変換ゲイン(rad/単位)。復号側の較正 k = 1/phase_gain に対応。</p>
-<p>bias:        平均輝度 a(既定 0.5)。</p>
-<p>amplitude:   縞振幅 b(既定 0.5)。bias±amplitude が [0,1] に収まると自然。</p>
-<p>axis:        搬送波の方向(1 = 列方向 x に沿う既定、0 = 行方向 y)。</p>
-<p>noise:       付加ガウスノイズの標準偏差(0 で無ノイズ)。</p>
-<p>seed:        ノイズ用乱数シード。</p>
-<p>return_phase: True なら (images, total_phase) を返す(テスト・デバッグ用)。</p>
-<p>返り値: (N, H, W) float 配列(値域 [0,1] にクリップ)。return_phase=True なら位相も。</p>
+<p>Model: total phase φ(x,y) = φ_carrier + phase_gain·height. The carrier φ_carrier is a linear ramp across the field of view (freq periods). Each frame is I_n = bias + amplitude·cos(φ - δ_n), δ_n = 2πn/N. With this sign convention wrapped_phase(...) recovers the total phase φ as is.</p>
+<p>height:      2D array (height field of the measured object, arbitrary units).</p>
+<p>n_steps:     number of phase-shift images N (&gt;=3).</p>
+<p>freq:        number of carrier periods across the field-of-view width (number of fringes). 0 means no carrier (height only).</p>
+<p>phase_gain:  height→phase conversion gain (rad/unit). Corresponds to the decoder&#x27;s calibration k = 1/phase_gain.</p>
+<p>bias:        mean luminance a (default 0.5).</p>
+<p>amplitude:   fringe amplitude b (default 0.5). Natural when bias±amplitude stays within [0,1].</p>
+<p>axis:        direction of the carrier (1 = along the column direction x, the default; 0 = row direction y).</p>
+<p>noise:       standard deviation of the added Gaussian noise (0 = noise-free).</p>
+<p>seed:        random seed for the noise.</p>
+<p>return_phase: if True, returns (images, total_phase) (for tests and debugging).</p>
+<p>Returns: (N, H, W) float array (clipped to the range [0,1]). With return_phase=True, also the phase.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

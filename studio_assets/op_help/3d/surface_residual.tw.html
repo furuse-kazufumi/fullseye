@@ -6,17 +6,16 @@
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">{&quot;rms&quot;,&quot;max&quot;,&quot;pv&quot;} → pv float</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳散布資料與曲面 tck 的殘差統計(形狀誤差=相對擬合的偏離)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各サンプル位置で曲面高さを評価し、観測 z との差の RMS / 最大絶対値 / PV (peak-to-valley = 最大 - 最小)を計測する。検査ではこれが自由曲面からのずれ量(打痕・うねり・欠肉)の定量指標になる。</p>
+<p>在各樣本位置求曲面高度,量測與觀測 z 之差的 RMS / 最大絕對值 / PV (peak-to-valley = 最大 - 最小)。在檢測中,這是相對自由曲面的偏差量(凹痕、波紋度、缺料)的定量指標。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;rms&quot;: float, &quot;max&quot;: float, &quot;pv&quot;: float}</code>。max は最大絶対残差、</p>
-<p>pv は符号付き残差の最大 - 最小(片側だけの凸/凹も捉える)。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 残差の符号は <code style="color:#22d3bf">resid = z - zhat</code>(観測 − 曲面)。正 = 曲面より高い(盛り上がり)、負 = 低い(欠肉)。<code style="color:#22d3bf">max</code> は絶対値なので向きは分からず、向きが要るなら <code style="color:#22d3bf">eval_bspline_surface</code> で <code style="color:#22d3bf">zhat</code> を取り自分で差を取る。</p>
-<p style="margin:2px 0 2px 12px">• x, y, z は任意 shape を受け、内部で <code style="color:#22d3bf">eval_bspline_surface(tck, x, y, grid=False)</code> を通す(tck の種類検査もそこで行われ、曲線 tck や多項式 dict は <code style="color:#22d3bf">ValueError</code>)。z と x の要素数が違うと numpy の形状エラーになる(専用の検査は無く、z が 1 要素だと黙って broadcast される)。</p>
-<p style="margin:2px 0 2px 12px">• 単位は z と同じ。<code style="color:#22d3bf">rms</code> は全点の二乗平均平方根なので局所的な打痕は平均で薄まる。局所欠陥は <code style="color:#22d3bf">max</code> か <code style="color:#22d3bf">pv</code> で見る。</p>
-<p style="margin:2px 0 2px 12px">• 典型: <code style="color:#22d3bf">fit_bspline_surface</code> → 本 op。フィットに使った点で評価すると smooth が小さいほど残差は 0 に近づく(過適合の指標にもなる)。</p>
+<p><code style="color:#22d3bf">{&quot;rms&quot;: float, &quot;max&quot;: float, &quot;pv&quot;: float}</code>。max 為最大絕對殘差,</p>
+<p>pv 為帶符號殘差的最大 - 最小(也能捕捉單側的凸起/凹陷)。</p>
+<p>補充:</p>
+<p style="margin:2px 0 2px 12px">• 殘差符號為 <code style="color:#22d3bf">resid = z - zhat</code>(觀測 − 曲面)。正 = 高於曲面(隆起),負 = 低於曲面(缺料)。<code style="color:#22d3bf">max</code> 是絕對值,看不出方向;需要方向時用 <code style="color:#22d3bf">eval_bspline_surface</code> 取 <code style="color:#22d3bf">zhat</code> 自行求差。</p>
+<p style="margin:2px 0 2px 12px">• x, y, z 接受任意 shape,內部經過 <code style="color:#22d3bf">eval_bspline_surface(tck, x, y, grid=False)</code>(tck 類型檢查也在那裡進行,曲線 tck 或多項式 dict 為 <code style="color:#22d3bf">ValueError</code>)。z 與 x 元素數不同時會出現 numpy 的形狀錯誤(沒有專門檢查,z 只有 1 個元素時會靜默 broadcast)。</p>
+<p style="margin:2px 0 2px 12px">• 單位與 z 相同。<code style="color:#22d3bf">rms</code> 是全部點的均方根,因此局部凹痕會被平均沖淡。局部瑕疵用 <code style="color:#22d3bf">max</code> 或 <code style="color:#22d3bf">pv</code> 查看。</p>
+<p style="margin:2px 0 2px 12px">• 典型:<code style="color:#22d3bf">fit_bspline_surface</code> → 本 op。在擬合所用的點上求值時,smooth 越小殘差越接近 0(也可作為過擬合的指標)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2)</code>(要直接调用实现,<code style="color:#22d3bf">import pcl_filter; pcl_filter.mls_smooth(points, radius: &#x27;float&#x27;, order: &#x27;int&#x27; = 2)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mls_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把每个点投影到局部多项式曲面上以去噪(Moving Least Squares 平滑)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>点ごとに半径 <code style="color:#22d3bf">radius</code> 内の近傍を集め、重み付き PCA で局所平面(法線 n と接平面の 2 軸)を推定し、近傍の「接平面上座標 (u,v) → 法線方向の高さ h」に order 次の多項式曲面をガウス重み付き最小二乗で当てはめる。注目点自身は局所座標の原点 (0,0) にあたるので、当てはめた曲面の (0,0) での高さ(= 定数項)ぶんだけ法線方向へ動かして曲面上へ射影する。面の形は保ったままセンサノイズだけを均せる。</p>
+<p>对每个点收集半径 <code style="color:#22d3bf">radius</code> 内的邻域,用加权 PCA 估计局部平面(法线 n 与切平面的 2 个轴),对邻域的&quot;切平面上坐标 (u,v) → 法线方向高度 h&quot;用高斯加权最小二乘拟合 order 次的多项式曲面。关注点自身对应局部坐标的原点 (0,0), 因此沿法线方向移动拟合曲面在 (0,0) 处的高度(= 常数项), 投影到曲面上。能在保持面形状的同时只平滑传感器噪声。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>输入点云。</p>
 <p>radius : float</p>
-<p>近傍球の半径(&gt; 0)。局所曲面のサポート。</p>
+<p>邻域球的半径(&gt; 0)。局部曲面的支撑范围。</p>
 <p>order : int</p>
-<p>局所多項式の次数(既定 2)。項数は (order+1)(order+2)/2。</p>
+<p>局部多项式的次数(默认 2)。项数为 (order+1)(order+2)/2。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
-<p>平滑後の点群(順序・点数は保持)。近傍が多項式の項数に満たない点は原位置のまま。</p>
+<p>平滑后的点云(保持顺序和点数)。邻域少于多项式项数的点保持原位。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>近似手法である。近傍数が項数未満/局所平面が縮退する点は動かさず原位置を維持する(穴や境界で暴れないための安全策)。<code style="color:#22d3bf">radius &lt;= 0</code> は ValueError、空入力は空を返す。</p>
+<p>这是近似方法。邻域数少于项数/局部平面退化的点不移动,保持原位(为避免在孔洞和边界处失控的安全措施)。<code style="color:#22d3bf">radius &lt;= 0</code> 时 ValueError,空输入返回空。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>curvature (shape index) matching। voxel × curvature column (line→surface lift का मुख्य हिस्सा)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>scene/template を <b>curvedness で重み付けした shape-index 場</b>へ変換 → 既存 3D NCC で定位。強度でなく <b>局所曲面形状</b>で一致を測るため、同じ強度でも形が違う対象(球 vs 円柱/鞍点)を区別できる。S は回転不変なので回転にもある程度頑健。返り値 [score, d, h, w]。</p>
-<p>手順: 両 volume で <code style="color:#22d3bf">curvature_maps</code> → <code style="color:#22d3bf">S × curvedness × mask</code> の重み付き shape-index 場 <code style="color:#22d3bf">w</code> を作り、テンプレ側は <code style="color:#22d3bf">|w| &gt; 0.1·max|w|</code> の bbox を切り出して <code style="color:#22d3bf">accel_match.ncc_locate_3d</code> に渡す。返り値 <code style="color:#22d3bf">[NCC, z, y, x]</code> float64、NCC ∈ [−1, 1]。</p>
-<p style="margin:2px 0 2px 12px">• <b>位置は切り出した bbox テンプレの中心</b>が scene に載る座標。元テンプレ volume の中心とは</p>
-<p>bbox のオフセット分ずれる(元テンプレ座標に戻すには bbox の lo を足し直す)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mc</code>: <code style="color:#22d3bf">curvature_maps</code> の勾配マスク閾値(真の勾配単位、voxel あたり)。平坦部を除いて</p>
-<p>曲率ノイズを抑える。</p>
-<p style="margin:2px 0 2px 12px">• テンプレの曲率場が全 0(平坦・<code style="color:#22d3bf">mc</code> が高すぎ)なら <code style="color:#22d3bf">[0,0,0,0]</code> を返す。</p>
-<p style="margin:2px 0 2px 12px">• 曲率は 2 階微分なのでノイズに敏感。ノイズが多い volume は先に <code style="color:#22d3bf">points_to_voxel</code> の</p>
-<p><code style="color:#22d3bf">smooth</code> 等で滑らかにする。<code style="color:#22d3bf">subvoxel=True</code> で NCC ピークの ±2 近傍重心に精緻化。</p>
+<p>scene/template को <b>curvedness से weighted shape-index field</b> में बदलता है → मौजूदा 3D NCC से locate करता है। यह intensity के बजाय <b>local surface shape</b> से match मापता है, इसलिए समान intensity पर भी अलग आकार वाली वस्तुओं (sphere vs cylinder/saddle) को अलग पहचान सकता है। S rotation invariant है, इसलिए rotation के प्रति भी कुछ हद तक robust है। Return value [score, d, h, w]।</p>
+<p>प्रक्रिया: दोनों volume पर <code style="color:#22d3bf">curvature_maps</code> → <code style="color:#22d3bf">S × curvedness × mask</code> वाला weighted shape-index field <code style="color:#22d3bf">w</code> बनाया जाता है; template की तरफ <code style="color:#22d3bf">|w| &gt; 0.1·max|w|</code> का bbox काटकर <code style="color:#22d3bf">accel_match.ncc_locate_3d</code> को दिया जाता है। Return value <code style="color:#22d3bf">[NCC, z, y, x]</code> float64, NCC ∈ [−1, 1]।</p>
+<p style="margin:2px 0 2px 12px">• <b>Position काटे गए bbox template का center है</b>, scene में जहाँ वह पड़ता है। यह मूल template volume के center से</p>
+<p>bbox offset जितना खिसका होता है (मूल template coordinates पर लौटने के लिए bbox का lo फिर से जोड़ें)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mc</code>: <code style="color:#22d3bf">curvature_maps</code> का gradient mask threshold (असली gradient इकाई, प्रति voxel)। flat क्षेत्रों को हटाकर</p>
+<p>curvature noise को दबाता है।</p>
+<p style="margin:2px 0 2px 12px">• अगर template का curvature field पूरा 0 है (flat, या <code style="color:#22d3bf">mc</code> बहुत ऊँचा), तो <code style="color:#22d3bf">[0,0,0,0]</code> लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• Curvature 2nd-order derivative है, इसलिए noise के प्रति संवेदनशील है। noisy volume को पहले <code style="color:#22d3bf">points_to_voxel</code> के</p>
+<p><code style="color:#22d3bf">smooth</code> आदि से smooth करें। <code style="color:#22d3bf">subvoxel=True</code> पर NCC peak के ±2 neighbourhood के centroid तक refine होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

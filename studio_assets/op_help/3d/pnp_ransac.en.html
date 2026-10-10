@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import pnp3d; pnp3d.pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;pnp_ransac&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Outlier-robust PnP (RANSAC plus a final DLT refit). → (R, t, inlier_mask, info).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>6 点の最小サンプルで DLT(精密化なし)→ 再投影誤差 &lt; thresh の inlier 最大化 → inlier 全体で <code style="color:#22d3bf">pnp_pose</code>(精密化あり)リフィット。</p>
-<p>Raises ValueError: points_2d が (N,2) でない / points_3d が (N,3) でない /</p>
-<p>点数不一致 / 6 点未満 / 非有限。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thresh</code>: 再投影誤差のしきい値 [px] (ユークリッド距離、既定 2.0)。これ未満を inlier とする。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iters</code>: 反復数(既定 300)。早期終了はせず必ずこの回数回す。各反復は 6 点を非復元抽出し初期姿勢だけを解く(縮退した標本は捨てて次へ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>: <code style="color:#22d3bf">numpy.random.default_rng(seed)</code> に渡す。同じ入力と seed なら結果は再現する。</p>
-<p>返り値: <code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,)(規約 <code style="color:#22d3bf">Xc = R X + t</code>)、<code style="color:#22d3bf">inlier_mask</code> bool (N,)、<code style="color:#22d3bf">info</code> dict。<code style="color:#22d3bf">info</code> のキーは <code style="color:#22d3bf">n_inliers</code> / <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code> / <code style="color:#22d3bf">rms</code>(最終姿勢の再投影 RMS [px]、inlier 集合上)。</p>
-<p style="margin:2px 0 2px 12px">• 最良標本の inlier が 6 未満のときは全点で解き直す fallback に入り、<code style="color:#22d3bf">info[&quot;fallback&quot;] = True</code> が付く。このとき <code style="color:#22d3bf">inlier_mask</code> は fallback 姿勢で数え直した実測値なので、<code style="color:#22d3bf">inlier_ratio</code> が小さいまま返ることがある(合意を捏造しない)。fallback も失敗すれば <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• inlier 数の比較は「より多い」だけを更新するので、同数なら先に見つかった標本が残る。</p>
-<p style="margin:2px 0 2px 12px">• 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。</p>
-<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 形状不正 / 6 点未満 / 点数不一致 / 非有限(<code style="color:#22d3bf">dlt_pose</code> と同じ入口検査)。</p>
-<p style="margin:2px 0 2px 12px">• 評価は <code style="color:#22d3bf">reprojection_error</code>、GT 比較は <code style="color:#22d3bf">pose_error</code>。</p>
+<p>DLT on minimal samples of 6 points (no refinement) → maximise the inliers with reprojection error &lt; thresh → refit with <code style="color:#22d3bf">pnp_pose</code> (with refinement) on all inliers.</p>
+<p>Raises ValueError: points_2d is not (N,2) / points_3d is not (N,3) /</p>
+<p>point counts mismatch / fewer than 6 points / non-finite.</p>
+<p>Arguments:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thresh</code>: reprojection error threshold [px] (Euclidean distance, default 2.0). Errors below this count as inliers.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iters</code>: number of iterations (default 300). There is no early termination; it always runs this many times. Each iteration draws 6 points without replacement and solves only the initial pose (degenerate samples are discarded and the next is tried).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>: passed to <code style="color:#22d3bf">numpy.random.default_rng(seed)</code>. With the same input and seed the result is reproducible.</p>
+<p>Returns: <code style="color:#22d3bf">R</code> (3,3), <code style="color:#22d3bf">t</code> (3,) (convention <code style="color:#22d3bf">Xc = R X + t</code>), <code style="color:#22d3bf">inlier_mask</code> bool (N,), <code style="color:#22d3bf">info</code> dict. The keys of <code style="color:#22d3bf">info</code> are <code style="color:#22d3bf">n_inliers</code> / <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code> / <code style="color:#22d3bf">rms</code> (reprojection RMS [px] of the final pose, over the inlier set).</p>
+<p style="margin:2px 0 2px 12px">• When the best sample has fewer than 6 inliers, it enters a fallback that re-solves with all points, and <code style="color:#22d3bf">info[&quot;fallback&quot;] = True</code> is attached. In that case <code style="color:#22d3bf">inlier_mask</code> is the actual value recounted with the fallback pose, so <code style="color:#22d3bf">inlier_ratio</code> may be returned still small (consensus is not fabricated). If the fallback also fails, <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• The inlier-count comparison updates only on &quot;more&quot;, so on a tie the sample found first remains.</p>
+<p style="margin:2px 0 2px 12px">• The final pose is a refit on all inliers (with LM refinement).</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: invalid shape / fewer than 6 points / point counts mismatch / non-finite (the same entry checks as <code style="color:#22d3bf">dlt_pose</code>).</p>
+<p style="margin:2px 0 2px 12px">• Evaluate with <code style="color:#22d3bf">reprojection_error</code>; compare with GT using <code style="color:#22d3bf">pose_error</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

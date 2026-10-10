@@ -5,19 +5,18 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">images</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">fringe.synthesize_fringes</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由已知 height map 合成 N 步相移條紋影像序列(用於測試/範例生成)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>モデル: 総位相 φ(x,y) = φ_carrier + phase_gain·height。搬送波 φ_carrier は視野を横切る線形ランプ(freq 周期)。各フレームは I_n = bias + amplitude·cos(φ - δ_n), δ_n = 2πn/N。この符号規約により wrapped_phase(...) は総位相 φ をそのまま復元する。</p>
-<p>height:      2D 配列(計測対象の高さ場、任意単位)。</p>
-<p>n_steps:     位相シフト枚数 N(&gt;=3)。</p>
-<p>freq:        視野幅を横切る搬送波の周期数(縞本数)。0 なら搬送波なし(height のみ)。</p>
-<p>phase_gain:  高さ→位相の変換ゲイン(rad/単位)。復号側の較正 k = 1/phase_gain に対応。</p>
-<p>bias:        平均輝度 a(既定 0.5)。</p>
-<p>amplitude:   縞振幅 b(既定 0.5)。bias±amplitude が [0,1] に収まると自然。</p>
-<p>axis:        搬送波の方向(1 = 列方向 x に沿う既定、0 = 行方向 y)。</p>
-<p>noise:       付加ガウスノイズの標準偏差(0 で無ノイズ)。</p>
-<p>seed:        ノイズ用乱数シード。</p>
-<p>return_phase: True なら (images, total_phase) を返す(テスト・デバッグ用)。</p>
-<p>返り値: (N, H, W) float 配列(値域 [0,1] にクリップ)。return_phase=True なら位相も。</p>
+<p>模型:總相位 φ(x,y) = φ_carrier + phase_gain·height。載波 φ_carrier 是橫越視野的線性斜坡(freq 個週期)。各幀為 I_n = bias + amplitude·cos(φ - δ_n), δ_n = 2πn/N。在此符號約定下,wrapped_phase(...) 可原樣還原總相位 φ。</p>
+<p>height:      2D 陣列(被測物的高度場,任意單位)。</p>
+<p>n_steps:     相移張數 N(&gt;=3)。</p>
+<p>freq:        橫越視野寬度的載波週期數(條紋數)。0 表示無載波(只有 height)。</p>
+<p>phase_gain:  高度→相位的轉換增益(rad/單位)。對應解碼端的校正 k = 1/phase_gain。</p>
+<p>bias:        平均輝度 a(預設 0.5)。</p>
+<p>amplitude:   條紋振幅 b(預設 0.5)。bias±amplitude 落在 [0,1] 內較為自然。</p>
+<p>axis:        載波方向(1 = 沿行方向 x 的預設值,0 = 列方向 y)。</p>
+<p>noise:       附加高斯雜訊的標準差(0 表示無雜訊)。</p>
+<p>seed:        雜訊用亂數種子。</p>
+<p>return_phase: True 時回傳 (images, total_phase)(用於測試、除錯)。</p>
+<p>回傳值:(N, H, W) float 陣列(截斷到值域 [0,1])。return_phase=True 時也回傳相位。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

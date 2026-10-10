@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.grid_coords(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">coordgrid</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.grid_coords.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">sdf_ops.grid_coords</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>建構用於 CSG 求值的體素中心座標網格(與 occupancy 相同的格點慣例)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code>、<code style="color:#22d3bf">res</code> は各軸のボクセル数(スカラ=立方 or 長さ3)。voxel <code style="color:#22d3bf">i</code> の中心は world <code style="color:#22d3bf">lo + (i+0.5)/res * span</code>(<code style="color:#22d3bf">occupancy.query_distance</code> の <code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code> と整合 = 中心アライン)。返り値は <code style="color:#22d3bf">coords</code> shape <code style="color:#22d3bf">(nx,ny,nz,3)</code> と <code style="color:#22d3bf">extent=(xmin,xmax,ymin,ymax,zmin,zmax)</code>。</p>
-<p>こうして作った座標に <code style="color:#22d3bf">sphere_sdf</code>/<code style="color:#22d3bf">box_sdf</code> を評価し CSG 合成すれば、<code style="color:#22d3bf">recon3d</code> の marching cubes や <code style="color:#22d3bf">occupancy</code> のゼロ交差抽出へそのまま渡せる。</p>
-<p>Raises ValueError for degenerate bounds or res&lt;=0。</p>
+<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code>，<code style="color:#22d3bf">res</code> 為各軸的體素數(純量=立方體或長度 3)。體素 <code style="color:#22d3bf">i</code> 的中心為 world <code style="color:#22d3bf">lo + (i+0.5)/res * span</code>(與 <code style="color:#22d3bf">occupancy.query_distance</code> 的 <code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code> 一致 = 中心對齊)。回傳值為形狀 <code style="color:#22d3bf">(nx,ny,nz,3)</code> 的 <code style="color:#22d3bf">coords</code> 與 <code style="color:#22d3bf">extent=(xmin,xmax,ymin,ymax,zmin,zmax)</code>。</p>
+<p>在這樣產生的座標上計算 <code style="color:#22d3bf">sphere_sdf</code>/<code style="color:#22d3bf">box_sdf</code> 並做 CSG 合成，即可直接傳給 <code style="color:#22d3bf">recon3d</code> 的 marching cubes 或 <code style="color:#22d3bf">occupancy</code> 的過零點擷取。</p>
+<p>bounds 退化或 res&lt;=0 時拋出 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obb(points) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pcseg; pcseg.obb(points) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;obb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 PCA 求有向包围盒。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Returns <code style="color:#22d3bf">{center, axes (3,3 columns = box axes), extents (3, half-widths), corners (8,3)}</code>. The tight-fitting box a manipulator uses to reason about an object&#x27;s size and grasp width once it has been segmented out.</p>
-<p>手順: 重心 <code style="color:#22d3bf">c</code> を引いた点群の SVD(<code style="color:#22d3bf">full_matrices=False</code>)で主軸 <code style="color:#22d3bf">axes</code>(列 = 特異値の降順、第 1 列が最も広がる方向)を取り、点を主軸座標に写して各軸の min/max から半幅 <code style="color:#22d3bf">extents</code> と箱中心 <code style="color:#22d3bf">center</code>(重心とは一般に異なる)を求める。<code style="color:#22d3bf">corners</code> は <code style="color:#22d3bf">center + (±extents) @ axes.T</code> の 8 点で、符号の組合せは <code style="color:#22d3bf">meshgrid([-1,1],[-1,1],[-1,1])</code> の順。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 以外は <code style="color:#22d3bf">ValueError</code>、2 点未満も <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• PCA の主軸は「最小体積の箱」を保証しない(点の分布に沿うだけ)。主軸の符号は SVD の任意性で決まり、点の分布が等方に近い(特異値が縮退する)と軸の向きは不安定になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">extents</code> は半幅なので辺長は <code style="color:#22d3bf">2 * extents</code>。単位は座標の単位。</p>
+<p>返回 <code style="color:#22d3bf">{center, axes (3,3 columns = box axes), extents (3, half-widths), corners (8,3)}</code>。这是物体被分割出来后，机械臂用来推断其大小与抓握宽度的紧贴包围盒。</p>
+<p>步骤：对减去质心 <code style="color:#22d3bf">c</code> 的点云做 SVD(<code style="color:#22d3bf">full_matrices=False</code>)得到主轴 <code style="color:#22d3bf">axes</code>（列 = 奇异值降序，第 1 列为分布最广的方向），把点映射到主轴坐标，由各轴的 min/max 求出半宽 <code style="color:#22d3bf">extents</code> 与盒子中心 <code style="color:#22d3bf">center</code>（一般与质心不同）。<code style="color:#22d3bf">corners</code> 为 <code style="color:#22d3bf">center + (±extents) @ axes.T</code> 的 8 个点，符号组合的顺序为 <code style="color:#22d3bf">meshgrid([-1,1],[-1,1],[-1,1])</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>：(N,3) 以外抛出 <code style="color:#22d3bf">ValueError</code>，少于 2 个点也抛出 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• PCA 主轴不保证是“最小体积的盒子”（只是沿着点的分布）。主轴的符号由 SVD 的任意性决定，点的分布接近各向同性（奇异值退化）时轴的方向会不稳定。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">extents</code> 是半宽，因此边长为 <code style="color:#22d3bf">2 * extents</code>。单位为坐标单位。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_by_plane(img: &#x27;np.ndarray&#x27;, H: &#x27;np.ndarray&#x27;, order: &#x27;int&#x27; = 1, cval: &#x27;float&#x27; = nan) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import plane_sweep; plane_sweep.warp_by_plane(img: &#x27;np.ndarray&#x27;, H: &#x27;np.ndarray&#x27;, order: &#x27;int&#x27; = 1, cval: &#x27;float&#x27; = nan) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;warp_by_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用單應 H 對 img 做逆向 warp。→ out[y,x] = img(H·(x,y,1))(bilinear)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>H は出力(ref)画素 → 入力(src)画素の写像。視野外は cval(既定 NaN)。</p>
-<p>出力画素 (x=列, y=行) ごとに <code style="color:#22d3bf">q = H @ (x, y, 1)</code>、<code style="color:#22d3bf">(sx, sy) = (q0/q2, q1/q2)</code> を求め、<code style="color:#22d3bf">scipy.ndimage.map_coordinates</code> で入力画像の (行 sy, 列 sx) を補間して埋める(逆ワープなので穴が空かない)。出力の形は入力と同じ (h,w)。同モジュールの <code style="color:#22d3bf">plane_homography</code> が返す H (ref 画素 → src 画素)をそのまま渡すと「src を ref 視点へ持ってきた画像」になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code>: (H,W) の 2-D グレースケール(float に変換)。空・非 2-D は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">H</code>: (3,3) 以外は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code>: 補間次数(既定 1 = bilinear)。<code style="color:#22d3bf">prefilter=False</code> で呼ぶため、2 以上を指定してもスプライン前処理を省いた近似(平滑化寄り)になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cval</code>: 入力の範囲外に写った画素、および <code style="color:#22d3bf">|q2| &lt; 1e-12</code>(無限遠に飛ぶ画素)に入れる値。既定 NaN なので、後段で <code style="color:#22d3bf">np.isfinite</code> により「対応が取れなかった画素」を区別できる。</p>
-<p><code style="color:#22d3bf">plane_sweep_depth</code> は候補深度ごとにこの関数で src をワープし、<code style="color:#22d3bf">|I_ref - warp(I_src)|</code> を photo-consistency コストにしている。</p>
+<p>H 是輸出(ref)像素 → 輸入(src)像素的映射。視野外為 cval(預設 NaN)。</p>
+<p>對每個輸出像素 (x=行, y=列) 求 <code style="color:#22d3bf">q = H @ (x, y, 1)</code>、<code style="color:#22d3bf">(sx, sy) = (q0/q2, q1/q2)</code>，以 <code style="color:#22d3bf">scipy.ndimage.map_coordinates</code> 對輸入影像的 (列 sy, 行 sx) 內插填充(因為是逆向扭曲，不會出現空洞)。輸出形狀與輸入相同，為 (h,w)。將同一模組的 <code style="color:#22d3bf">plane_homography</code> 回傳的 H (ref 像素 → src 像素)直接傳入，即得到「把 src 帶到 ref 視點的影像」。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code>:(H,W) 的 2-D 灰階(轉換為 float)。空、非 2-D 時 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">H</code>:非 (3,3) 時 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code>:內插階數(預設 1 = bilinear)。由於以 <code style="color:#22d3bf">prefilter=False</code> 呼叫，即使指定 2 以上，也是省略樣條前處理的近似(偏向平滑)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cval</code>:映射到輸入範圍外的像素，以及 <code style="color:#22d3bf">|q2| &lt; 1e-12</code>(飛向無窮遠的像素)所填入的值。預設為 NaN，因此後段可以用 <code style="color:#22d3bf">np.isfinite</code> 區分「未能取得對應的像素」。</p>
+<p><code style="color:#22d3bf">plane_sweep_depth</code> 對每個候選深度以本函式扭曲 src，並以 <code style="color:#22d3bf">|I_ref - warp(I_src)|</code> 作為 photo-consistency 成本。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

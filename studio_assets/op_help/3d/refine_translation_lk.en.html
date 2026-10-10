@@ -5,32 +5,31 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Sub-voxel refinement of the 3-D translation by inverse-compositional Lucas-Kanade with Gauss-Newton.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>粗マッチ(整数 NCC / Fourier-Mellin / Hough)が与えた整数初期位置 <code style="color:#22d3bf">init_pos</code> を出発点に、SSD <code style="color:#22d3bf">Σ|I(x+p) − T(x)|²</code> を最小化してサブボクセル並進 <code style="color:#22d3bf">p</code> へ収束させる。</p>
-<p>逆合成(inverse-compositional, Baker–Matthews)方式のため steepest-descent 画像 <code style="color:#22d3bf">SD = ∇T</code> と Hessian <code style="color:#22d3bf">H = Σ SDᵀSD</code> を <b>反復前に一度だけ</b>前計算し、各反復は「scene の trilinear ワープ + 残差 + 3×3 線形解 <code style="color:#22d3bf">Δp = H⁻¹ Σ SDᵀ(I(x+p)−T)</code>」のみ。並進の合成は <code style="color:#22d3bf">p ← p − Δp</code>。純並進ワープでは ∂W/∂p=I なので SD=∇T がそのまま使える。</p>
-<p>座標系: <code style="color:#22d3bf">init_pos</code> と戻り値はいずれも <b>テンプレート原点(corner, index 0,0,0)</b> が scene のどの (dz,dy,dx) に載るか。<code style="color:#22d3bf">sobel3d</code> / <code style="color:#22d3bf">grid_sample</code> の corner 規約に一致(NCC(ncc_locate_3d)の中心規約とは T//2 だけ異なる点に注意)。</p>
+<p>Starting from the integer initial position <code style="color:#22d3bf">init_pos</code> given by a coarse match (integer NCC / Fourier-Mellin / Hough), minimises the SSD <code style="color:#22d3bf">Σ|I(x+p) − T(x)|²</code> and converges to the sub-voxel translation <code style="color:#22d3bf">p</code>.</p>
+<p>Being inverse-compositional (Baker–Matthews), the steepest-descent image <code style="color:#22d3bf">SD = ∇T</code> and the Hessian <code style="color:#22d3bf">H = Σ SDᵀSD</code> are precomputed <b>only once before iterating</b>, and each iteration is only &quot;trilinear warp of the scene + residual + 3×3 linear solve <code style="color:#22d3bf">Δp = H⁻¹ Σ SDᵀ(I(x+p)−T)</code>&quot;. The translation composition is <code style="color:#22d3bf">p ← p − Δp</code>. For a pure translation warp ∂W/∂p=I, so SD=∇T can be used as is.</p>
+<p>Coordinate system: both <code style="color:#22d3bf">init_pos</code> and the return value are where the <b>template origin (corner, index 0,0,0)</b> lands in the scene as (dz,dy,dx). Matches the corner convention of <code style="color:#22d3bf">sobel3d</code> / <code style="color:#22d3bf">grid_sample</code> (note it differs from the centre convention of NCC (ncc_locate_3d) by T//2).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>scene : (D,H,W) array_like</p>
-<p>探索対象ボリューム。</p>
+<p>Volume to search.</p>
 <p>template : (Td,Th,Tw) array_like</p>
-<p>位置合わせするテンプレート(scene より小)。</p>
+<p>Template to register (smaller than the scene).</p>
 <p>init_pos : (3,) sequence</p>
-<p>整数初期位置 (dz,dy,dx) = テンプレート原点の scene 座標。</p>
+<p>Integer initial position (dz,dy,dx) = scene coordinates of the template origin.</p>
 <p>device : str</p>
-<p>&quot;cpu&quot; / &quot;cuda&quot; 等。device 非依存。</p>
+<p>&quot;cpu&quot; / &quot;cuda&quot; etc. Device-independent.</p>
 <p>iters : int</p>
-<p>最大反復数。</p>
+<p>Maximum number of iterations.</p>
 <p>tol : float</p>
-<p>‖Δp‖ がこの値を下回ったら収束打ち切り。</p>
+<p>Stop as converged when ‖Δp‖ falls below this value.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>pos : (3,) np.ndarray(float64)</p>
-<p>精緻化されたサブボクセル位置 (dz,dy,dx)。</p>
+<p>pos : (3,) np.ndarray (float64)</p>
+<p>Refined sub-voxel position (dz,dy,dx).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p style="margin:2px 0 2px 12px">• 滑らか(帯域制限)な密度場を仮定。整数初期値が真値の ±0.5〜1 voxel 内であれば通常 5〜8 反復で ‖err‖ &lt; 0.05 voxel(低ノイズ時)。実測(独立 cubic-spline GT):</p>
-<p>ノイズ無し mean 0.008 / max 0.013 voxel(≈6 反復, ≈1.2ms/回)、NCC サブボクセル</p>
-<p>baseline(mean 0.56 voxel)を約60×改善。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grad_scale=32</code> は分離 sobel3d(導関数[-1,0,1]×平滑[1,2,1]²)の固定スケール(線形ランプで実測 32.0)。真の勾配へ正規化して Δp のスケールを正す。</p>
-<p style="margin:2px 0 2px 12px">• H には微小 Levenberg 正則化を加え、勾配の乏しい平坦テンプレートでの数値破綻を防ぐ。</p>
+<p style="margin:2px 0 2px 12px">• Assumes a smooth (band-limited) density field. If the integer initial value is within ±0.5 to 1 voxel of the ground truth, usually 5 to 8 iterations give ‖err‖ &lt; 0.05 voxel (at low noise). Measured (independent cubic-spline GT):</p>
+<p>noise-free mean 0.008 / max 0.013 voxel (≈6 iterations, ≈1.2ms per call), about 60× better than the NCC sub-voxel</p>
+<p>baseline (mean 0.56 voxel).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grad_scale=32</code> is the fixed scale of the separable sobel3d (derivative [-1,0,1] × smoothing [1,2,1]²) (measured 32.0 on a linear ramp). It normalises to the true gradient and corrects the scale of Δp.</p>
+<p style="margin:2px 0 2px 12px">• A small Levenberg regularisation is added to H to prevent numerical breakdown on flat templates with little gradient.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

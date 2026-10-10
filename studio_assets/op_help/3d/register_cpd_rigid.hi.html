@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import deform3d; deform3d.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;register_cpd_rigid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Coherent Point Drift (CPD) के rigid संस्करण से rotation + translation का EM estimate करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">src</code>(移動側 Y, M点)を <code style="color:#22d3bf">dst</code>(固定側 X, N点)へ剛体変換で合わせる。CPD は dst を、src を中心に置いた等方ガウス混合の重心と見なし、E ステップで軟対応(posterior)を、M ステップで最尤の剛体変換と分散を更新する。ICP と違い対応をハードに決めないため、初期ずれ・部分的外れ値に頑健。スケールは 1 固定(純剛体)。</p>
-<p>参考: Myronenko &amp; Song, &quot;Point Set Registration: Coherent Point Drift&quot;, 2010。</p>
-<p>引数:</p>
-<p>src: (M,3) 移動側点群。</p>
-<p>dst: (N,3) 固定側点群。</p>
-<p>iters: 最大 EM 反復回数。</p>
-<p>w: 外れ値(一様分布)混合比 0≤w&lt;1。0 で外れ無し。</p>
-<p>tol: 分散 σ² の相対変化がこの値未満で収束打ち切り。</p>
-<p>返り値:</p>
-<p>R: (3,3) 回転(<code style="color:#22d3bf">dst ≈ src @ R.T + t</code>)。</p>
-<p>t: (3,) 並進。</p>
-<p>info: dict。&quot;sigma2&quot;(最終分散)、&quot;iters&quot;、&quot;converged&quot;、&quot;rmse&quot;</p>
-<p>(変換後 src の最近傍 RMSE)。</p>
-<p>例外:</p>
-<p>ValueError: 形状不正、点数不足、w 範囲外、または <code style="color:#22d3bf">N*M</code> が</p>
-<p><code style="color:#22d3bf">CPD_MAX_PAIRS</code>(25M)超(密な (N,M) 責務行列を毎反復組むため。</p>
-<p>両点群を間引いてから渡す)。</p>
+<p><code style="color:#22d3bf">src</code> (moving Y, M points) को <code style="color:#22d3bf">dst</code> (fixed X, N points) से rigid transform द्वारा align करता है। CPD dst को, src पर centre वाले isotropic Gaussian mixture के centroid के रूप में देखता है; E step में soft correspondence (posterior) और M step में maximum-likelihood rigid transform और variance update होते हैं। ICP के विपरीत correspondence hard तरीके से तय नहीं होते, इसलिए शुरुआती misalignment और आंशिक outlier के प्रति robust है। scale 1 पर fixed (pure rigid)।</p>
+<p>Reference: Myronenko &amp; Song, &quot;Point Set Registration: Coherent Point Drift&quot;, 2010।</p>
+<p>Arguments:</p>
+<p>src: (M,3) moving point cloud।</p>
+<p>dst: (N,3) fixed point cloud।</p>
+<p>iters: EM iteration की अधिकतम संख्या।</p>
+<p>w: outlier (uniform distribution) mixing ratio 0≤w&lt;1। 0 का अर्थ कोई outlier नहीं।</p>
+<p>tol: variance σ² का relative change इस मान से कम हो तो converged मानकर रुकता है।</p>
+<p>Returns:</p>
+<p>R: (3,3) rotation (<code style="color:#22d3bf">dst ≈ src @ R.T + t</code>)।</p>
+<p>t: (3,) translation।</p>
+<p>info: dict। &quot;sigma2&quot; (अंतिम variance), &quot;iters&quot;, &quot;converged&quot;, &quot;rmse&quot;</p>
+<p>(transform के बाद src का nearest neighbour RMSE)।</p>
+<p>Exceptions:</p>
+<p>ValueError: गलत shape, बहुत कम points, w range से बाहर, या <code style="color:#22d3bf">N*M</code> का</p>
+<p><code style="color:#22d3bf">CPD_MAX_PAIRS</code> (25M) से अधिक होना (क्योंकि हर iteration में dense (N,M) responsibility matrix बनती है।</p>
+<p>दोनों point cloud को पहले decimate करके दें)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

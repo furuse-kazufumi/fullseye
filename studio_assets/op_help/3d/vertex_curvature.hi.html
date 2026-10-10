@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vertex_curvature(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mesh_props; mesh_props.vertex_curvature(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vertex_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>triangle mesh के हर vertex पर <b>mean curvature का परिमाण</b> (mean curvature magnitude)। → (N,)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Meyer et al. (2003) の離散 Laplace-Beltrami 作用素:</p>
+<p>Meyer et al. (2003) का discrete Laplace-Beltrami operator:</p>
 <p>K(x_i) = (1 / (2·A_mixed_i)) · Σ_{j∈1-ring} (cot α_ij + cot β_ij)·(x_i − x_j)</p>
-<p>は平均曲率法線ベクトル K = 2·H·n に等しい(H=平均曲率, n=単位法線)。ここでは向きに依らない <b>大きさ</b> H_i = |K(x_i)| / 2 を返す。α_ij, β_ij は辺 (i,j) に相対する 2 つの角、A_mixed は Meyer の混合面積(非鈍角三角形は Voronoi 面積、鈍角三角形は面積の 1/2 か 1/4)で、素朴な重心面積より曲率推定が正確になる。</p>
-<p>半径 R の球(閉じた多様体)では全頂点で H ≈ 1/R(離散化誤差内)。平面の内部頂点では H ≈ 0。<b>限界(honest)</b>: cotangent Laplace-Beltrami は閉多様体/内部頂点でのみ妥当で、開いたメッシュの<b>境界頂点</b>(1-ring が閉じない)では値が発散的に不正確になる。閉じたメッシュ、または開メッシュの内部頂点にのみ意味がある。</p>
+<p>mean curvature normal vector K = 2·H·n के बराबर है (H=mean curvature, n=unit normal)। यहाँ दिशा से स्वतंत्र <b>magnitude</b> H_i = |K(x_i)| / 2 लौटाया जाता है। α_ij, β_ij edge (i,j) के सामने वाले 2 कोण हैं, और A_mixed Meyer का mixed area है (non-obtuse triangle के लिए Voronoi area, obtuse triangle के लिए area का 1/2 या 1/4), जिससे curvature का अनुमान सरल barycentric area की तुलना में अधिक सटीक होता है।</p>
+<p>त्रिज्या R वाले sphere (closed manifold) पर सभी vertices पर H ≈ 1/R (discretisation error के भीतर)। plane के interior vertices पर H ≈ 0। <b>सीमा (honest)</b>: cotangent Laplace-Beltrami केवल closed manifold / interior vertices पर ही मान्य है, और open mesh के <b>boundary vertices</b> (जहाँ 1-ring बंद नहीं होता) पर मान बेतहाशा गलत हो जाते हैं। इसका अर्थ केवल closed mesh, या open mesh के interior vertices के लिए है।</p>
 <p>Args:</p>
-<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>mesh: (vertices (N,3), faces (M,3)) का tuple।</p>
 <p>Returns:</p>
-<p>(N,) の平均曲率の大きさ(非負)。境界頂点の値は上記の理由で信頼できない。</p>
+<p>(N,) mean curvature के magnitudes (non-negative)। ऊपर बताए कारण से boundary vertices के मान भरोसेमंद नहीं हैं।</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正・範囲外 index、または混合面積がゼロの頂点(退化)があるとき。</p>
+<p>ValueError: shape अमान्य, index सीमा से बाहर, या कोई vertex जिसका mixed area शून्य हो (degenerate) तब।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

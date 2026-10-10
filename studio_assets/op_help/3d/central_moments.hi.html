@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.central_moments(points, max_order: &#x27;int&#x27; = 3) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import moments3d; moments3d.central_moments(points, max_order: &#x27;int&#x27; = 3) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;central_moments&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>centroid पर केंद्रित central moments μ_{pqr} (translation invariant, key=(p,q,r)) लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>μ_{pqr} = mean( (x-x̄)^p (y-ȳ)^q (z-z̄)^r )。p+q+r &lt;= max_order の全次数を含む。重心を引いてから計算するので平行移動に厳密に不変。等質量規約なので μ_{000}=1、1 次モーメント μ_{100}=μ_{010}=μ_{001}=0(中心化の帰結)。</p>
+<p>μ_{pqr} = mean( (x-x̄)^p (y-ȳ)^q (z-z̄)^r )। p+q+r &lt;= max_order वाले सभी orders शामिल हैं। centroid घटाकर गणना होती है, इसलिए translation के प्रति ठीक-ठीक invariant है। equal-mass convention के कारण μ_{000}=1, और 1st-order moments μ_{100}=μ_{010}=μ_{001}=0 (centring का परिणाम)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>点群。</p>
+<p>point cloud।</p>
 <p>max_order : int</p>
-<p>含める最大次数 p+q+r(既定 3)。0 以上。</p>
+<p>शामिल किया जाने वाला अधिकतम order p+q+r (default 3)। 0 या अधिक।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict[tuple[int, int, int], float]</p>
-<p>(p, q, r) -&gt; μ_{pqr}。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 返る dict のキー数は p+q+r &lt;= max_order の全組合せ(<code style="color:#22d3bf">max_order=3</code> で 20 個)。値は float(平均なので点数で割ってある)。</p>
-<p style="margin:2px 0 2px 12px">• 単位は長さ^(p+q+r)。並進不変だが回転・スケールには不変でない(回転不変量は <code style="color:#22d3bf">moment_invariants</code> / <code style="color:#22d3bf">principal_moments</code>)。</p>
-<p style="margin:2px 0 2px 12px">• 2 次モーメント <code style="color:#22d3bf">(2,0,0)</code>, <code style="color:#22d3bf">(1,1,0)</code> などは母共分散(N で割る)そのもので、<code style="color:#22d3bf">inertia_tensor</code> の素材と同じ。</p>
-<p style="margin:2px 0 2px 12px">• 高次は重心から遠い点が支配するので外れ値に弱い。前段で <code style="color:#22d3bf">statistical_outlier_removal</code> などを検討する。</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1。<code style="color:#22d3bf">max_order &lt; 0</code>、形状不正、非有限は <code style="color:#22d3bf">ValueError</code>。決定論的。</p>
+<p>(p, q, r) → μ_{pqr}।</p>
+<p>अतिरिक्त:</p>
+<p style="margin:2px 0 2px 12px">• लौटाए गए dict में keys की संख्या p+q+r &lt;= max_order वाले सभी संयोजन हैं (<code style="color:#22d3bf">max_order=3</code> पर 20)। मान float हैं (mean है, इसलिए points की संख्या से भाग दिया गया है)।</p>
+<p style="margin:2px 0 2px 12px">• इकाई लंबाई^(p+q+r) है। translation invariant है पर rotation और scale के प्रति invariant नहीं (rotation invariants के लिए <code style="color:#22d3bf">moment_invariants</code> / <code style="color:#22d3bf">principal_moments</code>)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(2,0,0)</code>, <code style="color:#22d3bf">(1,1,0)</code> जैसे 2nd-order moments ठीक population covariance (N से भाग) हैं, यानी <code style="color:#22d3bf">inertia_tensor</code> वाली ही सामग्री।</p>
+<p style="margin:2px 0 2px 12px">• higher orders पर centroid से दूर के points हावी होते हैं, इसलिए ये outliers के प्रति कमज़ोर हैं। पहले <code style="color:#22d3bf">statistical_outlier_removal</code> आदि पर विचार करें।</p>
+<p style="margin:2px 0 2px 12px">• input (N,3), N &gt;= 1। <code style="color:#22d3bf">max_order &lt; 0</code>, ग़लत shape या non-finite मान पर <code style="color:#22d3bf">ValueError</code>। Deterministic।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

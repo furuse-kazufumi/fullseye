@@ -5,16 +5,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.rigid_flow(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pose</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.rigid_flow.raw(...)</code> oder rufe <code style="color:#22d3bf">scene_flow3d.rigid_flow</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schätzt die eine Starrkörperbewegung, die pts0 -&gt; pts1 erklärt, über Nächste-Nachbar-Korrespondenzen und Kabsch (ICP-ähnlich).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>恒等変換から出発し、毎反復で現姿勢の点群から <code style="color:#22d3bf">pts1</code> への最近傍対応を取り、<code style="color:#22d3bf">registration.kabsch</code> で閉形式に (R, t) を求めて累積する。対応 index が前反復と一致(= 収束)するか <code style="color:#22d3bf">max_iter</code> で停止する。収束判定は index の安定性のみに依存するため<b>スケール不変</b>(絶対 epsilon を使わない)。</p>
+<p>Beginnt bei der Identitätstransformation, bildet in jeder Iteration Korrespondenzen über den nächsten Nachbarn von der Punktwolke in der aktuellen Pose zu <code style="color:#22d3bf">pts1</code>, löst (R, t) in geschlossener Form mit <code style="color:#22d3bf">registration.kabsch</code> und akkumuliert. Hält an, wenn die Korrespondenzindizes mit der vorherigen Iteration übereinstimmen (= Konvergenz) oder bei <code style="color:#22d3bf">max_iter</code>. Das Konvergenzkriterium hängt nur von der Stabilität der Indizes ab und ist daher <b>skaleninvariant</b> (es wird kein absolutes epsilon verwendet).</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群(N &gt;= 3、回転を一意に決めるため)。</p>
-<p>pts1: (M, 3) 時刻 1 の点群(M &gt;= 1、N と一致不要)。</p>
-<p>max_iter: ICP 反復上限。</p>
+<p>pts0: (N, 3)-Punktwolke zum Zeitpunkt 0 (N &gt;= 3, um die Rotation eindeutig zu bestimmen).</p>
+<p>pts1: (M, 3)-Punktwolke zum Zeitpunkt 1 (M &gt;= 1, muss nicht mit N übereinstimmen).</p>
+<p>max_iter: Obergrenze der ICP-Iterationen.</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;R&quot;: (3,3) 回転, &quot;t&quot;: (3,) 並進, &quot;rmse&quot;: 整合後の点-最近傍 RMS 距離}</code>。R は真の回転(det=+1)。rmse は実測値(詐称なし)。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;R&quot;: (3,3) Rotation, &quot;t&quot;: (3,) Translation, &quot;rmse&quot;: RMS-Abstand Punkt-nächster-Nachbar nach der Ausrichtung}</code>. R ist eine echte Rotation (det=+1). rmse ist der gemessene Wert (nichts geschönt).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正、pts0 &lt; 3 点、または pts1 が空。</p>
+<p>ValueError: ungültige Form, pts0 &lt; 3 Punkte, oder pts1 ist leer.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

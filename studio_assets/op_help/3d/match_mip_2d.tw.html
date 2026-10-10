@@ -5,15 +5,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>MIP 投影 → 2D NCC(結構=voxel → 2D、方法=NCC、變換=正交 MIP)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>3 直交方向の最大値投影で 3 枚の 2D 問題に落とし、既存の 2D NCC で定位 → 3 枚から 3D 座標を冗長推定。全 3D NCC より安く coarse alignment に。回転が無い平行移動探索向き。</p>
-<p>手順: <code style="color:#22d3bf">voxel_to_mips</code> で scene・model とも 3 枚の MIP を作り、各投影で model MIP の <code style="color:#22d3bf">&gt; 5%·max</code> の bbox を切り出してテンプレにし、<code style="color:#22d3bf">accel_match.ncc_locate_batch</code>(2D NCC、テンプレ中心規約)で位置を取る。軸 0 を潰した投影は (y,x)、軸 1 は (z,x)、軸 2 は (z,y) を与えるので各座標は 2 枚から得られ、その平均を返す。返り値 <code style="color:#22d3bf">(3,)</code> float64 の <code style="color:#22d3bf">[z, y, x]</code>(整数 NCC 位置の平均なので .5 刻み)。score は返さない。</p>
-<p style="margin:2px 0 2px 12px">• 位置は <b>切り出した bbox テンプレの中心</b>が scene MIP のどこに載るか。model volume の</p>
-<p>中心ではない。</p>
-<p style="margin:2px 0 2px 12px">• model MIP が全 0 の投影は飛ばし、ある座標が 1 枚からも得られなければ 0.0 になる(例外は</p>
-<p>出ない)。</p>
-<p style="margin:2px 0 2px 12px">• MIP は重なりで奥行き情報を失うので、複数物体・クラッタには弱い。</p>
-<p>後段: この粗位置を <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_lm</code> に渡す。</p>
+<p>用 3 個正交方向的最大值投影把問題化為 3 張 2D 問題,用既有的 2D NCC 定位 → 由 3 張圖冗餘估計 3D 座標。比全 3D NCC 便宜,用於 coarse alignment。適合無旋轉的平移搜尋。</p>
+<p>步驟:用 <code style="color:#22d3bf">voxel_to_mips</code> 為 scene、model 各產生 3 張 MIP,在每個投影中把 model MIP 的 <code style="color:#22d3bf">&gt; 5%·max</code> 的 bbox 裁出作為模板,用 <code style="color:#22d3bf">accel_match.ncc_locate_batch</code>(2D NCC、模板中心慣例)求位置。壓掉軸 0 的投影給出 (y,x),軸 1 給出 (z,x),軸 2 給出 (z,y), 因此每個座標都可從 2 張圖得到,回傳其平均。回傳值為 <code style="color:#22d3bf">(3,)</code> float64 的 <code style="color:#22d3bf">[z, y, x]</code>(是整數 NCC 位置的平均,因此步長為 .5)。不回傳 score。</p>
+<p style="margin:2px 0 2px 12px">• 位置是 <b>裁出的 bbox 模板的中心</b> 落在 scene MIP 的何處。不是 model volume 的</p>
+<p>中心。</p>
+<p style="margin:2px 0 2px 12px">• model MIP 全為 0 的投影被略過,若某座標連 1 張圖都得不到則為 0.0(不拋出</p>
+<p>例外)。</p>
+<p style="margin:2px 0 2px 12px">• MIP 因重疊而遺失深度資訊,因此不擅長多物件、雜波。</p>
+<p>後續:把這個粗略位置傳給 <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_lm</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

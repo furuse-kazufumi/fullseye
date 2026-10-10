@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_spline_curve(points, smooth=0.0, k=3, n=None)</code>(要直接调用实现,<code style="color:#22d3bf">import curve3d; curve3d.fit_spline_curve(points, smooth=0.0, k=3, n=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fit_spline_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 B 样条平滑并重采样有序 3D 点列。→ (M,3)。用于平滑带噪的轨迹/边缘。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>scipy.interpolate.splprep/splev。smooth=0 は補間、&gt;0 で平滑。n=出力点数(既定=入力数)。</p>
-<p><code style="color:#22d3bf">splprep([x, y, z], s=smooth, k=k)</code> でパラメトリック B スプライン(パラメータ u∈[0,1]、scipy 既定の弦長パラメータ化)を当て、<code style="color:#22d3bf">u = linspace(0, 1, n)</code> で <code style="color:#22d3bf">splev</code> 評価した(n,3) float64 を返す。u 等間隔なので出力点は弧長で厳密に等間隔ではない(弧長等間隔が要るなら結果を <code style="color:#22d3bf">resample_uniform</code> に通す)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">smooth</code>: scipy の平滑化条件 s。残差二乗和が s 以下になる最少ノットで当てる。0 なら全点を通る補間、大きいほど滑らか(単位は座標の二乗)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: スプライン次数(既定 3)。点数 N が k 以下だと <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 出力点数。None で入力点数。</p>
-<p style="margin:2px 0 2px 12px">• 入力は index 順に並んだ (N,3) を前提とし、形状検証は点数以外に無い。</p>
-<p>ノイズのあるエッジ点列や軌跡を平滑してから <code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> に渡す前段として使う。tck を持ち回りたい場合は <code style="color:#22d3bf">fit_bspline_curve</code> / <code style="color:#22d3bf">eval_bspline_curve</code>。</p>
+<p>scipy.interpolate.splprep/splev。smooth=0 为插值,&gt;0 为平滑。n=输出点数(默认=输入数)。</p>
+<p>用 <code style="color:#22d3bf">splprep([x, y, z], s=smooth, k=k)</code> 拟合参数化 B 样条(参数 u∈[0,1], scipy 默认的弦长参数化),在 <code style="color:#22d3bf">u = linspace(0, 1, n)</code> 处用 <code style="color:#22d3bf">splev</code> 求值, 返回 (n,3) float64。由于 u 等间隔,输出点在弧长上并不严格等间隔(需要弧长等间隔时将结果传给 <code style="color:#22d3bf">resample_uniform</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">smooth</code>:scipy 的平滑条件 s。用使残差平方和不超过 s 的最少节点进行拟合。0 为通过全部点的插值,越大越平滑(单位为坐标的平方)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>:样条次数(默认 3)。点数 N 不超过 k 时 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>:输出点数。None 时为输入点数。</p>
+<p style="margin:2px 0 2px 12px">• 输入假定为按 index 顺序排列的 (N,3),除点数外没有形状校验。</p>
+<p>用作将含噪声的边缘点列或轨迹平滑后再传给 <code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> 的前级。需要持有 tck 时用 <code style="color:#22d3bf">fit_bspline_curve</code> / <code style="color:#22d3bf">eval_bspline_curve</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

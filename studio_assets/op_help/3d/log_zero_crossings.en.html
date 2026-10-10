@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.log_zero_crossings(vol, sigma: &#x27;float&#x27; = 1.5, rel_thresh: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import edges3d; edges3d.log_zero_crossings(vol, sigma: &#x27;float&#x27; = 1.5, rel_thresh: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;log_zero_crossings&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Zero-crossing edges of the Laplacian of Gaussian.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : (D,H,W) array</p>
-<p>グレー voxel。</p>
+<p>Grey voxels.</p>
 <p>sigma : float</p>
-<p>LoG の標準偏差(&gt; 0)。</p>
+<p>Standard deviation of the LoG (&gt; 0).</p>
 <p>rel_thresh : float</p>
-<p>平坦部の数値ノイズによる偽交差を抑える相対閾値。交差ペアの LoG 差 |a-b| が</p>
-<p>rel_thresh * max|L| を超える場合のみ採用する。</p>
+<p>Relative threshold that suppresses false crossings caused by numerical noise in flat regions. Adopted only when the LoG difference |a-b| of the crossing pair</p>
+<p>exceeds rel_thresh * max|L|.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>edge_mask : (D,H,W) bool</p>
-<p>符号が変化する隣接ペアのうち |LoG| が小さい側(ゼロにより近い側)を立てた mask。</p>
+<p>A mask that sets, of each adjacent pair whose sign changes, the side with the smaller |LoG| (the side closer to zero).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>各軸方向に二種類のゼロ交差を検出する:</p>
-<p style="margin:2px 0 2px 12px">(1) 格子間交差 — 隣接ペア (a,b) の符号積 a*b &lt; 0(両側とも非ゼロで符号反転)。厚みを抑えるためペアのうち |LoG| が小さい側 1 voxel に割り当てる。</p>
-<p style="margin:2px 0 2px 12px">(2) 格子整列交差 — 中央 voxel が厳密ゼロ(L==0)で両隣が異符号(符号がその voxel でゼロを通過)する場合。SDF 風の格子に整列した面で LoG がちょうど格子点上で 0 になる真のエッジは a*b が常に 0 となり (1) では取りこぼすため、当該 voxel を交差として立てる。定数ゼロ領域は両隣も 0 で Lm*Lp==0 となり除外される(誤検出しない)。</p>
-<p>いずれも平坦部の数値ノイズは相対閾値(rel_thresh * max|L|)で抑制する。</p>
+<p>Two kinds of zero crossing are detected along each axis direction:</p>
+<p style="margin:2px 0 2px 12px">(1) Between-grid crossing — sign product a*b &lt; 0 of an adjacent pair (a,b) (both sides non-zero with a sign flip). To keep the thickness down it is assigned to the 1 voxel of the pair with the smaller |LoG|.</p>
+<p style="margin:2px 0 2px 12px">(2) Grid-aligned crossing — the centre voxel is exactly zero (L==0) and its two neighbours have opposite signs (the sign passes through zero at that voxel). For a true edge on a grid-aligned surface such as an SDF-like grid, where the LoG is 0 exactly on a grid point, a*b is always 0 and (1) misses it, so that voxel is set as a crossing. Constant-zero regions have both neighbours 0 too, so Lm*Lp==0 and they are excluded (no false detection).</p>
+<p>In both cases numerical noise in flat regions is suppressed by the relative threshold (rel_thresh * max|L|).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

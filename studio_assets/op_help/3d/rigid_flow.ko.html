@@ -5,16 +5,15 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.rigid_flow(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">pose</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.rigid_flow.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">scene_flow3d.rigid_flow</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>pts0 -&gt; pts1 을 설명하는 단일 강체 운동을 최근접 대응 + Kabsch(ICP 풍)로 추정.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>恒等変換から出発し、毎反復で現姿勢の点群から <code style="color:#22d3bf">pts1</code> への最近傍対応を取り、<code style="color:#22d3bf">registration.kabsch</code> で閉形式に (R, t) を求めて累積する。対応 index が前反復と一致(= 収束)するか <code style="color:#22d3bf">max_iter</code> で停止する。収束判定は index の安定性のみに依存するため<b>スケール不変</b>(絶対 epsilon を使わない)。</p>
+<p>항등 변환에서 출발해, 매 반복마다 현재 자세의 점군에서 <code style="color:#22d3bf">pts1</code> 으로의 최근접 대응을 잡고, <code style="color:#22d3bf">registration.kabsch</code> 로 닫힌 식으로 (R, t) 를 구해 누적한다. 대응 index 가이전 반복과 일치(= 수렴)하거나 <code style="color:#22d3bf">max_iter</code> 에서 정지한다. 수렴 판정은 index 의안정성에만 의존하므로 <b>스케일 불변</b>(절대 epsilon 을 쓰지 않는다).</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群(N &gt;= 3、回転を一意に決めるため)。</p>
-<p>pts1: (M, 3) 時刻 1 の点群(M &gt;= 1、N と一致不要)。</p>
-<p>max_iter: ICP 反復上限。</p>
+<p>pts0: (N, 3) 시각 0 의 점군(N &gt;= 3, 회전을 유일하게 정하기 위해).</p>
+<p>pts1: (M, 3) 시각 1 의 점군(M &gt;= 1, N 과 일치 불필요).</p>
+<p>max_iter: ICP 반복 상한.</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;R&quot;: (3,3) 回転, &quot;t&quot;: (3,) 並進, &quot;rmse&quot;: 整合後の点-最近傍 RMS 距離}</code>。R は真の回転(det=+1)。rmse は実測値(詐称なし)。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;R&quot;: (3,3) 회전, &quot;t&quot;: (3,) 병진, &quot;rmse&quot;: 정합 후의 점-최근접 RMS 거리}</code>. R 은 진짜 회전(det=+1). rmse 는 실측값(사칭 없음).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正、pts0 &lt; 3 点、または pts1 が空。</p>
+<p>ValueError: 형상 부정, pts0 &lt; 3 점, 또는 pts1 이 비어 있음.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

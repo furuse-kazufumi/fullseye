@@ -6,8 +6,7 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(rmse, n_inliers) → rmse</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>inlier correspondences (residual &lt; thresh) पर RMSE और inliers की संख्या। → (rmse, n_inliers)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">source[i]↔target[i]</code> の index 対応が前提(<code style="color:#22d3bf">inlier_ratio</code> と同じ)。inlier が 0 個なら RMSE は未定義 → <code style="color:#22d3bf">(nan, 0)</code> を返す(honest; 捏造しない)。形状不一致・非 (N,3) は ValueError(fail-closed)。</p>
+<p><code style="color:#22d3bf">source[i]↔target[i]</code> की index correspondence मानी गई है (<code style="color:#22d3bf">inlier_ratio</code> जैसी ही)। inlier 0 हों तो RMSE undefined है → <code style="color:#22d3bf">(nan, 0)</code> लौटाता है (honest; कुछ गढ़ा नहीं जाता)। shape मेल न खाए या (N,3) न हो तो ValueError (fail-closed)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mesh_props; mesh_props.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;boundary_vertices&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Indizes der Vertices</b>, die auf offenen Kanten (dem Rand) liegen → <code style="color:#22d3bf">(K,)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>無向辺のうち<b>ちょうど 1 つの面にしか使われていない辺</b>(境界辺)の端点を集めて返す。閉じた多様体なら空配列 —— つまり <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> が <b>水密性(watertight)の判定</b>になる。穴埋め・体積計算・曲率のどれも、境界の有無で意味が変わるので、先にここを見る。</p>
+<p>Sammelt die Endpunkte der ungerichteten Kanten, die <b>von genau 1 Fläche verwendet werden</b> (Randkanten), und gibt sie zurück. Bei einer geschlossenen Mannigfaltigkeit ist das ein leeres Array -- d. h. <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> dient als <b>Test auf Wasserdichtheit (watertight)</b>. Lochfüllen, Volumenberechnung und Krümmung ändern alle ihre Bedeutung je nachdem, ob ein Rand existiert; deshalb hier zuerst nachsehen.</p>
 <p>Args:</p>
-<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
+<p>mesh: Tupel aus <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code>.</p>
 <p>Returns:</p>
-<p>昇順・重複なしの <code style="color:#22d3bf">(K,)</code> int64。境界が無ければ <code style="color:#22d3bf">shape == (0,)</code>。</p>
+<p><code style="color:#22d3bf">(K,)</code> int64, aufsteigend und ohne Duplikate. Ohne Rand <code style="color:#22d3bf">shape == (0,)</code>.</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
-<p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p><b>限界(honest)</b>: 返るのは頂点の集合で、<b>縁のループ(周回順)ではない</b>。穴が複数あっても 1 つの配列にまとまるので、穴ごとに分けたいなら連結成分を自分で辿ることになる(ループ抽出の op はまだ無い)。3 つ以上の面が共有する非多様体辺はここには出ない(<code style="color:#22d3bf">mesh_edge_stats</code> の <code style="color:#22d3bf">non_manifold_edges</code>)。</p>
+<p>ValueError: wenn <code style="color:#22d3bf">mesh</code> nicht die 2 Elemente <code style="color:#22d3bf">(vertices, faces)</code> sind, die Form ungültig ist,</p>
+<p>Koordinaten nicht endlich sind, ein Index nicht ganzzahlig oder außerhalb des Bereichs ist oder es leer ist.</p>
+<p><b>Grenze (honest)</b>: Zurückgegeben wird eine Menge von Ecken, <b>keine Randschleife (in Umlaufreihenfolge)</b>. Auch bei mehreren Löchern landet alles in 1 Array; wer nach Löchern trennen will, muss die Zusammenhangskomponenten selbst verfolgen (ein Op zur Schleifenextraktion gibt es noch nicht). Nicht-mannigfaltige Kanten, die sich 3 oder mehr Flächen teilen, erscheinen hier nicht (siehe <code style="color:#22d3bf">non_manifold_edges</code> von <code style="color:#22d3bf">mesh_edge_stats</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

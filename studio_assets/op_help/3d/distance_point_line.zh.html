@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_point_line(p, line_pt, d)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.distance_point_line(p, line_pt, d)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;distance_point_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点-直线距离。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">w = p − line_pt</code> の、方向 <code style="color:#22d3bf">d̂</code> に直交する成分の長さ <code style="color:#22d3bf">|w − (w·d̂)d̂|</code> を float で返す(<code style="color:#22d3bf">d</code> は内部で単位化。2-D/3-D 共通)。<code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">line_pt</code>, <code style="color:#22d3bf">d</code> は数値の 2 または 3 ベクトル、次元の混在は ValueError。<code style="color:#22d3bf">d</code> が零ベクトルなら <code style="color:#22d3bf">|w|</code> がそのまま返る。単位は入力座標の単位。</p>
-<p>用途: <code style="color:#22d3bf">fit_line_3d</code> の軸からの偏心、<code style="color:#22d3bf">line_from_2points</code> の線に対する点群のばらつき(1 点ずつ)。</p>
+<p>以 float 返回 <code style="color:#22d3bf">w = p − line_pt</code> 中与方向 <code style="color:#22d3bf">d̂</code> 正交分量的长度 <code style="color:#22d3bf">|w − (w·d̂)d̂|</code> (<code style="color:#22d3bf">d</code> 在内部单位化。2-D/3-D 通用)。<code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">line_pt</code>, <code style="color:#22d3bf">d</code> 为数值的 2 或 3 维向量, 维度混用则 ValueError。若 <code style="color:#22d3bf">d</code> 为零向量,则原样返回 <code style="color:#22d3bf">|w|</code>。单位为输入坐标的单位。</p>
+<p>用途: 距 <code style="color:#22d3bf">fit_line_3d</code> 轴的偏心,点云相对于 <code style="color:#22d3bf">line_from_2points</code> 直线的离散(每次 1 个点)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

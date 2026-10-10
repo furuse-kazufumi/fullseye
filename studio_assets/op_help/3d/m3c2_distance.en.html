@@ -5,32 +5,31 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.m3c2_distance(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">signal</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code> or call <code style="color:#22d3bf">metrics3d.m3c2_distance</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Measures the difference between point clouds from 2 epochs <b>along the normal direction</b> (M3C2). → the 2 values <code style="color:#22d3bf">(distance, lod)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>最近傍距離(chamfer / C2C)は「いちばん近い点までの距離」なので、<b>傾いた面では面に沿ったずれまで距離として数えてしまう</b>。地形・構造物の変化検出では、それが「測り直しただけで検出される偽の変化」の主因になる(<code style="color:#22d3bf">poc_structure_4d_deterioration</code></p>
-<p>の実測: 劣化ゼロで測り返しただけで C2C の中央値 21.07 mm、法線方向なら 0.55 mm)。</p>
-<p>M3C2(Lague 2013)は core 点ごとに <b>法線 <code style="color:#22d3bf">n</code> を軸とする円筒</b>(半径 <code style="color:#22d3bf">radius</code>、長さ <code style="color:#22d3bf">max_depth</code>)で両方の雲を切り取り、各点を <code style="color:#22d3bf">n</code> に射影した平均の差を返す。向きは <code style="color:#22d3bf">n</code> の指す側が正 —— <b>符号がそのまま「増えた / 減った」</b>になる。</p>
+<p>The nearest-neighbour distance (chamfer / C2C) is &quot;the distance to the closest point&quot;, so <b>on a tilted surface it counts even the shift along the surface as distance</b>. In change detection of terrain and structures, that is the main cause of &quot;false change detected merely by re-measuring&quot; (<code style="color:#22d3bf">poc_structure_4d_deterioration</code></p>
+<p>measured: with zero deterioration, just re-measuring gives a C2C median of 21.07 mm, along the normal 0.55 mm).</p>
+<p>M3C2 (Lague 2013) cuts both clouds, per core point, with a <b>cylinder whose axis is the normal <code style="color:#22d3bf">n</code></b> (radius <code style="color:#22d3bf">radius</code>, length <code style="color:#22d3bf">max_depth</code>), projects each point onto <code style="color:#22d3bf">n</code> and returns the difference of the means. The side <code style="color:#22d3bf">n</code> points to is positive — <b>the sign directly reads as &quot;increased / decreased&quot;</b>.</p>
 <p>Args:</p>
-<p>a: 時点 1 の点群 <code style="color:#22d3bf">(Na,3)</code>。</p>
-<p>b: 時点 2 の点群 <code style="color:#22d3bf">(Nb,3)</code>。</p>
-<p>cores: 測る場所 <code style="color:#22d3bf">(M,3)</code>(a の部分集合でも、別に置いた格子でもよい)。</p>
-<p>normals: core ごとの法線 <code style="color:#22d3bf">(M,3)</code>(未正規化でよい。<b>符号が結果の符号を決める</b>)。</p>
-<p>radius: 円筒の半径(core 周りで平均する範囲。面の粗さより大きく、測りたい</p>
-<p>構造より小さく取る)。</p>
-<p>max_depth: 円筒の長さの半分。<code style="color:#22d3bf">None</code> なら軸方向を制限しない。</p>
-<p>min_points: 片側にこの数だけ点が無い core は <code style="color:#22d3bf">nan</code> を返す(既定 4)。</p>
+<p>a: point cloud at time 1 <code style="color:#22d3bf">(Na,3)</code>.</p>
+<p>b: point cloud at time 2 <code style="color:#22d3bf">(Nb,3)</code>.</p>
+<p>cores: where to measure <code style="color:#22d3bf">(M,3)</code> (may be a subset of a, or a separately placed grid).</p>
+<p>normals: normal per core <code style="color:#22d3bf">(M,3)</code> (need not be normalised. <b>Its sign decides the sign of the result</b>).</p>
+<p>radius: cylinder radius (the averaging range around the core. Choose it larger than the surface roughness and smaller than</p>
+<p>the structure you want to measure).</p>
+<p>max_depth: half the cylinder length. <code style="color:#22d3bf">None</code> means no limit along the axis.</p>
+<p>min_points: a core lacking this many points on either side returns <code style="color:#22d3bf">nan</code> (default 4).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(distance, lod)</code>: どちらも <code style="color:#22d3bf">(M,)</code> float64。<code style="color:#22d3bf">distance</code> は法線方向の</p>
-<p>符号つき差、<code style="color:#22d3bf">lod</code>(level of detection)は</p>
-<p><code style="color:#22d3bf">1.96·sqrt(σa²/na + σb²/nb)</code> —— <b>この値を超えない差は雑音と区別できない</b>。</p>
-<p>点が足りない core は両方 <code style="color:#22d3bf">nan</code>。</p>
-<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.m3c2_distance</code>)は宣言 out 型の <code style="color:#22d3bf">distance</code> だけを</p>
-<p>返す。<code style="color:#22d3bf">lod</code> も要るときは <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code>。</p>
+<p><code style="color:#22d3bf">(distance, lod)</code>: both <code style="color:#22d3bf">(M,)</code> float64. <code style="color:#22d3bf">distance</code> is the signed difference</p>
+<p>along the normal, <code style="color:#22d3bf">lod</code> (level of detection) is</p>
+<p><code style="color:#22d3bf">1.96·sqrt(σa²/na + σb²/nb)</code> — <b>a difference not exceeding this value cannot be told apart from noise</b>.</p>
+<p>Cores with too few points get <code style="color:#22d3bf">nan</code> for both.</p>
+<p>★Via the ledger (<code style="color:#22d3bf">fullseye.ledger.m3c2_distance</code>) only <code style="color:#22d3bf">distance</code>, the declared out type, is</p>
+<p>returned. When <code style="color:#22d3bf">lod</code> is also needed, use <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code>.</p>
 <p>Raises:</p>
-<p>ValueError: 点群 / cores が <code style="color:#22d3bf">(N,3)</code> でない、空、<code style="color:#22d3bf">normals</code> の数が cores と</p>
-<p>合わない、<code style="color:#22d3bf">radius &lt;= 0</code>、<code style="color:#22d3bf">max_depth &lt;= 0</code>、<code style="color:#22d3bf">min_points &lt; 1</code> のとき。</p>
-<p><b>限界(honest)</b>: (1) 法線は呼び手が与える —— <code style="color:#22d3bf">estimate_normals</code> の符号は任意なので、向きを揃えないと符号が場所ごとに反転する。(2) <code style="color:#22d3bf">lod</code> は雑音だけを見ており、<b>位置合わせの残差は含まない</b>(Lague の原論文は登録誤差を別項として足す)。</p>
-<p style="margin:2px 0 2px 12px">(3) 円筒に入る点が少ない縁では <code style="color:#22d3bf">nan</code> になる —— 0 を返して「変化なし」に</p>
-<p>見せない。</p>
+<p>ValueError: when the point clouds / cores are not <code style="color:#22d3bf">(N,3)</code>, empty, the number of <code style="color:#22d3bf">normals</code> does not match</p>
+<p>cores, <code style="color:#22d3bf">radius &lt;= 0</code>, <code style="color:#22d3bf">max_depth &lt;= 0</code> or <code style="color:#22d3bf">min_points &lt; 1</code>.</p>
+<p><b>Limits (honest)</b>: (1) the caller supplies the normals — the sign of <code style="color:#22d3bf">estimate_normals</code> is arbitrary, so unless the orientation is made consistent the sign flips from place to place. (2) <code style="color:#22d3bf">lod</code> looks only at noise and <b>does not include the registration residual</b> (Lague&#x27;s original paper adds the registration error as a separate term).</p>
+<p style="margin:2px 0 2px 12px">(3) At edges where few points fall inside the cylinder the result is <code style="color:#22d3bf">nan</code> — it does not return 0 to make it</p>
+<p>look like &quot;no change&quot;.</p>
 <p>Reference (public): D. Lague, N. Brodu, J. Leroux, &quot;Accurate 3D comparison of complex topography with terrestrial laser scanner: application to the Rangitikei canyon (N-Z)&quot;, ISPRS Journal of Photogrammetry and Remote Sensing 82 (2013) 10-26.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>

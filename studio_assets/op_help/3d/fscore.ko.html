@@ -6,15 +6,14 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(f, precision, recall) → F 値</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>F-score @ tau = precision 과 recall 의 조화평균. → (f, precision, recall). 재구성의 표준 지표.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Raises ValueError: どちらかが空 or (N,3) でない場合(accuracy/completeness 経由)。</p>
-<p>計算(<code style="color:#22d3bf">a</code> = 再構成/推定、<code style="color:#22d3bf">b</code> = 参照/GT の慣習):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">precision</code> = <code style="color:#22d3bf">a</code> の点のうち、<code style="color:#22d3bf">b</code> への最近傍距離が <code style="color:#22d3bf">tau</code> <b>未満</b> (<code style="color:#22d3bf">&lt; tau</code>、等号は含まない)の割合。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">recall</code> = <code style="color:#22d3bf">b</code> の点のうち、<code style="color:#22d3bf">a</code> への最近傍距離が <code style="color:#22d3bf">tau</code> 未満の割合。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f = 2 p r / (p + r)</code>、<code style="color:#22d3bf">p + r == 0</code> なら <code style="color:#22d3bf">0.0</code>(0 除算にしない)。</p>
-<p>引数: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は <code style="color:#22d3bf">(N, 3)</code> / <code style="color:#22d3bf">(M, 3)</code> 点群(対応不要、点数は異なってよい)。<code style="color:#22d3bf">tau</code> は距離閾値(座標と同じ単位、正の値を想定。<code style="color:#22d3bf">tau &lt;= 0</code> だと距離 0 の点も <code style="color:#22d3bf">&lt; tau</code> にならず precision = recall = 0 になる。検査はしない)。</p>
-<p>返り値: <code style="color:#22d3bf">(f, precision, recall)</code> の 3 つの <code style="color:#22d3bf">float</code>、それぞれ <code style="color:#22d3bf">[0, 1]</code>。1 が完全一致。</p>
-<p>注意: <code style="color:#22d3bf">tau</code> の選び方が結果を決める(voxel サイズ・スキャン分解能の 1〜2 倍が目安)。片方の雲だけ密だと precision と recall が乖離する — その非対称性を見るのがこの指標の価値で、1 数字で良ければ <code style="color:#22d3bf">chamfer_distance</code>。</p>
+<p>Raises ValueError: 어느 한쪽이 비었거나 (N,3)이 아닌 경우(accuracy/completeness 경유).</p>
+<p>계산(관례: <code style="color:#22d3bf">a</code> = 재구성/추정, <code style="color:#22d3bf">b</code> = 참조/GT):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">precision</code> = <code style="color:#22d3bf">a</code>의 점 중, <code style="color:#22d3bf">b</code>로의 최근접 거리가 <code style="color:#22d3bf">tau</code> <b>미만</b> (<code style="color:#22d3bf">&lt; tau</code>, 등호는 포함하지 않음)인 비율.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">recall</code> = <code style="color:#22d3bf">b</code>의 점 중, <code style="color:#22d3bf">a</code>로의 최근접 거리가 <code style="color:#22d3bf">tau</code> 미만인 비율.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f = 2 p r / (p + r)</code>, <code style="color:#22d3bf">p + r == 0</code>이면 <code style="color:#22d3bf">0.0</code>(0으로 나누지 않는다).</p>
+<p>인수: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 <code style="color:#22d3bf">(N, 3)</code> / <code style="color:#22d3bf">(M, 3)</code> 점군(대응 불필요, 점 수는 달라도 된다). <code style="color:#22d3bf">tau</code>는 거리 임계값(좌표와 같은 단위, 양의 값을 가정. <code style="color:#22d3bf">tau &lt;= 0</code>이면 거리 0인 점도 <code style="color:#22d3bf">&lt; tau</code>가 되지 않아 precision = recall = 0이 된다. 검사는 하지 않는다).</p>
+<p>반환값: <code style="color:#22d3bf">(f, precision, recall)</code>의 3개 <code style="color:#22d3bf">float</code>, 각각 <code style="color:#22d3bf">[0, 1]</code>. 1이 완전 일치.</p>
+<p>주의: <code style="color:#22d3bf">tau</code>의 선택이 결과를 정한다(voxel 크기·스캔 분해능의 1~2배가기준). 한쪽 점군만 밀하면 precision과 recall이 괴리된다 — 그 비대칭성을 보는것이 이 지표의 가치이며, 1개 숫자로 충분하다면 <code style="color:#22d3bf">chamfer_distance</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 측정 불확도와 교정 지식 — ‘측정되고 있다’고 주장하려면</p>

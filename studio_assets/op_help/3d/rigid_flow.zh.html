@@ -5,16 +5,16 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.rigid_flow(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">pose</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.rigid_flow.raw(...)</code>,或直接调用 <code style="color:#22d3bf">scene_flow3d.rigid_flow</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用最近邻对应 + Kabsch(类 ICP)估计解释 pts0 -&gt; pts1 的单一刚体运动。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>恒等変換から出発し、毎反復で現姿勢の点群から <code style="color:#22d3bf">pts1</code> への最近傍対応を取り、<code style="color:#22d3bf">registration.kabsch</code> で閉形式に (R, t) を求めて累積する。対応 index が前反復と一致(= 収束)するか <code style="color:#22d3bf">max_iter</code> で停止する。収束判定は index の安定性のみに依存するため<b>スケール不変</b>(絶対 epsilon を使わない)。</p>
+<p>从恒等变换出发,每次迭代从当前位姿的点云到 <code style="color:#22d3bf">pts1</code> 取最近邻对应,</p>
+<p>用 <code style="color:#22d3bf">registration.kabsch</code> 以闭式求出 (R, t) 并累积。当对应 index 与上一次迭代一致(= 收敛)或达到 <code style="color:#22d3bf">max_iter</code> 时停止。收敛判定只依赖 index 的稳定性,因此<b>尺度不变</b>(不使用绝对 epsilon)。</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群(N &gt;= 3、回転を一意に決めるため)。</p>
-<p>pts1: (M, 3) 時刻 1 の点群(M &gt;= 1、N と一致不要)。</p>
-<p>max_iter: ICP 反復上限。</p>
+<p>pts0: (N, 3) 时刻 0 的点云(N &gt;= 3,以唯一确定旋转)。</p>
+<p>pts1: (M, 3) 时刻 1 的点云(M &gt;= 1,无需与 N 一致)。</p>
+<p>max_iter: ICP 迭代上限。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;R&quot;: (3,3) 回転, &quot;t&quot;: (3,) 並進, &quot;rmse&quot;: 整合後の点-最近傍 RMS 距離}</code>。R は真の回転(det=+1)。rmse は実測値(詐称なし)。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;R&quot;: (3,3) 旋转, &quot;t&quot;: (3,) 平移, &quot;rmse&quot;: 对齐后点-最近邻的 RMS 距离}</code>。R 是真正的旋转(det=+1)。rmse 是实测值(不造假)。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正、pts0 &lt; 3 点、または pts1 が空。</p>
+<p>ValueError: 形状不正确、pts0 &lt; 3 个点,或 pts1 为空。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

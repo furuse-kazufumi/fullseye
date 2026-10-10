@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;integrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用投影式 TSDF 把一張深度整合進 volume(原地,加權滑動平均)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各 voxel 中心を (K,R,t) で射影(<code style="color:#22d3bf">X_cam = R X + t</code>, <code style="color:#22d3bf">u = fx*X/Z+cx</code>)し、対応画素の観測深度 <code style="color:#22d3bf">d_meas</code> と voxel のカメラ深度 <code style="color:#22d3bf">d_voxel = Z_cam</code> を比較。<code style="color:#22d3bf">sdf = min(1, (d_meas - d_voxel)/trunc)</code> を、以下すべてを満たす voxel にのみ適用:</p>
-<p>画像内・<code style="color:#22d3bf">d_meas&gt;0</code> かつ有限・<code style="color:#22d3bf">(d_meas - d_voxel) &gt;= -trunc</code>(表面より trunc 以上奥= 遮蔽領域は観測不能として <b>更新しない</b>)。この valid 集合では sdf ∈ [-1,1]。</p>
-<p>更新: <code style="color:#22d3bf">tsdf = (w*tsdf + sdf)/(w+1)</code>、<code style="color:#22d3bf">weight = w+1</code>(1 フレーム重み 1)。</p>
-<p>bounds を渡すと voxel 中心を world で解釈し (K,R,t) は world→camera。bounds=None(既定) では voxel 中心を grid-index フレーム((i+0.5,...))で解釈し (K,R,t) は grid→camera とする(<code style="color:#22d3bf">fuse</code> は bounds を渡すので world 座標で融合される)。</p>
+<p>用 (K,R,t) 投影各 voxel 中心(<code style="color:#22d3bf">X_cam = R X + t</code>, <code style="color:#22d3bf">u = fx*X/Z+cx</code>),比較對應像素的觀測深度 <code style="color:#22d3bf">d_meas</code> 與 voxel 的相機深度 <code style="color:#22d3bf">d_voxel = Z_cam</code>。<code style="color:#22d3bf">sdf = min(1, (d_meas - d_voxel)/trunc)</code> 僅套用於同時滿足以下全部條件的 voxel:</p>
+<p>在影像內、<code style="color:#22d3bf">d_meas&gt;0</code> 且有限、<code style="color:#22d3bf">(d_meas - d_voxel) &gt;= -trunc</code>(比表面深 trunc 以上 = 遮蔽區域無法觀測,<b>不更新</b>)。在此 valid 集合上 sdf ∈ [-1,1]。</p>
+<p>更新:<code style="color:#22d3bf">tsdf = (w*tsdf + sdf)/(w+1)</code>,<code style="color:#22d3bf">weight = w+1</code>(1 影格權重為 1)。</p>
+<p>傳入 bounds 時,voxel 中心依 world 解讀,(K,R,t) 為 world→camera。bounds=None(預設) 時,voxel 中心依 grid-index 座標系((i+0.5,...))解讀,(K,R,t) 為 grid→camera (<code style="color:#22d3bf">fuse</code> 會傳入 bounds,因此在 world 座標中融合)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

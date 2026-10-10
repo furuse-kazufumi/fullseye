@@ -5,22 +5,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">points</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.radius_outlier_removal.raw(...)</code> oder rufe <code style="color:#22d3bf">pcl_filter.radius_outlier_removal</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Entfernt Punkte mit weniger als min_neighbors Nachbarn innerhalb von radius (Entfernung isolierter Punkte).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各点を中心に半径 <code style="color:#22d3bf">radius</code> の球を張り、その中に居る他点の数が <code style="color:#22d3bf">min_neighbors</code> に満たない点を「孤立した粒」として落とす。統計的手法より局所的・直接的で、センサの実スケールが分かっているときにしきい値を決めやすい。</p>
+<p>Legt um jeden Punkt eine Kugel mit Radius <code style="color:#22d3bf">radius</code> und verwirft Punkte, in deren Kugel weniger als <code style="color:#22d3bf">min_neighbors</code> andere Punkte liegen, als &quot;isolierte Körner&quot;. Lokaler und direkter als das statistische Verfahren; der Schwellwert lässt sich leicht festlegen, wenn der reale Maßstab des Sensors bekannt ist.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>Eingabe-Punktwolke.</p>
 <p>radius : float</p>
-<p>近傍とみなす球の半径(&gt; 0)。</p>
+<p>Radius der Kugel, die als Nachbarschaft gilt (&gt; 0).</p>
 <p>min_neighbors : int</p>
-<p>残すのに必要な近傍数(自分自身は数えない、既定 8)。</p>
+<p>Zum Behalten nötige Anzahl Nachbarn (ohne sich selbst, Standard 8).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
-<p>生き残った点(元の順序を保持)。</p>
+<p>Die verbliebenen Punkte (ursprüngliche Reihenfolge erhalten).</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
-<p>各入力点を残すか(True=残す)。</p>
+<p>Ob jeder Eingabepunkt erhalten bleibt (True=behalten).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p><code style="color:#22d3bf">radius &lt;= 0</code> は ValueError。空入力は空を返す(graceful)。</p>
+<p><code style="color:#22d3bf">radius &lt;= 0</code> löst ValueError aus. Leere Eingabe ergibt eine leere Ausgabe (graceful).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

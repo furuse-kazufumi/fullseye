@@ -7,30 +7,26 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D Harris keypoint detection (2D Harris corner detection का 3D संस्करण)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>voxel 密度場の 3D 勾配 g=(gz,gy,gx) から、各ボクセルで局所構造テンソル M=Σ_w w·g gᵀ(3x3 対称、gaussian 窓 sigma_i で積和)を組み、コーナー性を測る。応答が周囲で極大かつ閾値超のボクセルを keypoint とする(初期姿勢推定なしに検出できるため、大回転+部分重なりの対応付けや ICP の coarse init 供給に使える)。</p>
-<p>コーナー性の指標:</p>
-<p style="margin:2px 0 2px 12px">• &quot;mineig&quot;(既定): 3x3 対称行列の最小固有値(Shi-Tomasi 流)。3 方向すべてに構造がある(=角)ほど最小固有値が大きい。閉形式(三角関数法)で算出。k 調整不要で頑健(実測 mean repeatability 85%、min 72.5%)。</p>
-<p style="margin:2px 0 2px 12px">• &quot;harris&quot;: R = det(M) - k·tr(M)³。3D では固有値 3 個なので tr の 3 乗で</p>
-<p>無次元化。★注意: 密度 voxel の角では det/tr³ 比が経験的に ~0.01 しか</p>
-<p>ないため、2D 標準の k=0.04〜0.06 では全応答が負になり検出 0 になる。</p>
-<p>3D では k≈0.005 が必要(実測 k=0.005 で mean 89.6%)。</p>
-<p>引数:</p>
-<p>vol: (D,H,W) 密度 voxel(numpy / torch)。points_to_voxel の出力を想定。</p>
-<p>device: torch デバイス(&quot;cpu&quot; 等)。全演算をこのデバイス上で行う。</p>
-<p>k: Harris の感度係数(response=&quot;harris&quot; 時のみ有効)。3D 密度場では</p>
-<p>0.005 前後(2D 慣習の 0.04〜0.06 は 3D では強すぎ検出 0 になる)。</p>
-<p>nms: 非最大抑制の立方体窓の一辺(奇数、標準 3 = 3x3x3 近傍)。</p>
-<p>topn: 応答降順で返す keypoint の最大数。</p>
-<p>sigma_i: 構造テンソルの積分窓(gaussian)の標準偏差(voxel)。</p>
-<p>response: &quot;mineig&quot;(既定, 頑健)か &quot;harris&quot;。</p>
-<p>rel_thresh: 応答の閾値 = rel_thresh × 有効領域の最大応答(雑音抑制)。</p>
-<p>border: 端から border ボクセル以内は検出しない(勾配の端効果を除去)。</p>
-<p>返り値:</p>
-<p>keypoints: (M,3) float64。keypoint の voxel 座標 (z,y,x)(sobel3d と</p>
-<p>同じ軸順)。応答降順、最大 topn 個。</p>
-<p>responses: (M,) float64。対応する応答値(降順)。</p>
-<p>依存: sobel3d(3D 勾配)、_gauss3d(積分窓平滑)。いずれも device 上で動作。</p>
+<p>voxel density field के 3D gradient g=(gz,gy,gx) से हर voxel पर local structure tensor M=Σ_w w·g gᵀ (3x3 symmetric, gaussian window sigma_i से weighted sum) बनाकर cornerness मापता है। जिन voxels का response आसपास में local maximum और threshold से ऊपर हो, वे keypoint बनते हैं (initial pose estimate के बिना detect हो सकते हैं, इसलिए बड़े rotation + partial overlap में correspondence या ICP को coarse init देने में काम आते हैं)।</p>
+<p>cornerness के माप:</p>
+<p style="margin:2px 0 2px 12px">• &quot;mineig&quot; (default): 3x3 symmetric matrix का न्यूनतम eigenvalue (Shi-Tomasi शैली)। सभी 3 दिशाओं में संरचना हो (= corner) तो न्यूनतम eigenvalue उतना बड़ा। closed form (trigonometric विधि) से निकाला जाता है। k tuning की ज़रूरत नहीं और robust (मापा गया mean repeatability 85%, min 72.5%)।</p>
+<p style="margin:2px 0 2px 12px">• &quot;harris&quot;: R = det(M) - k·tr(M)³। 3D में 3 eigenvalues होते हैं, इसलिए tr की 3 घात से dimensionless बनाया जाता है। ★ध्यान दें: density voxel के corners पर det/tr³ अनुपात अनुभव से केवल ~0.01 होता है, इसलिए 2D standard k=0.04-0.06 पर सभी responses negative हो जाते हैं और 0 detect होते हैं। 3D में k≈0.005 चाहिए (मापा गया: k=0.005 पर mean 89.6%)।</p>
+<p>Arguments:</p>
+<p>vol: (D,H,W) density voxels (numpy / torch)। points_to_voxel का output माना गया है।</p>
+<p>device: torch device (&quot;cpu&quot; आदि)। सभी operations इसी device पर चलते हैं।</p>
+<p>k: Harris का sensitivity coefficient (केवल response=&quot;harris&quot; पर प्रभावी)। 3D density field में</p>
+<p>लगभग 0.005 (2D परंपरा का 0.04-0.06 3D में बहुत तेज़ है और 0 detect होते हैं)।</p>
+<p>nms: non-maximum suppression की cubic window की भुजा (odd, standard 3 = 3x3x3 neighbourhood)।</p>
+<p>topn: response के घटते क्रम में लौटाए जाने वाले keypoints की अधिकतम संख्या।</p>
+<p>sigma_i: structure tensor की integration window (gaussian) का standard deviation (voxel)।</p>
+<p>response: &quot;mineig&quot; (default, robust) या &quot;harris&quot;।</p>
+<p>rel_thresh: response threshold = rel_thresh × valid क्षेत्र का अधिकतम response (noise दबाने के लिए)।</p>
+<p>border: किनारे से border voxels के भीतर detect नहीं करता (gradient के edge effect हटाने के लिए)।</p>
+<p>Returns:</p>
+<p>keypoints: (M,3) float64। keypoints के voxel coordinates (z,y,x) (sobel3d जैसा ही</p>
+<p>axis क्रम)। response के घटते क्रम में, अधिकतम topn।</p>
+<p>responses: (M,) float64। संबंधित response मान (घटते क्रम में)।</p>
+<p>निर्भरता: sobel3d (3D gradient), _gauss3d (integration window smoothing)। दोनों device पर चलते हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

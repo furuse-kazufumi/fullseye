@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compute_fpfh(points, normals, k=60, n_bins=11)</code>(要直接调用实现,<code style="color:#22d3bf">import feat_fpfh; feat_fpfh.compute_fpfh(points, normals, k=60, n_bins=11)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;compute_fpfh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>计算 FPFH 描述子 (N, 3*n_bins)(Rusu 2009)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p style="margin:2px 0 2px 12px">1) SPFH: 各点 p と近傍 k 点の対に (α,φ,θ) を求め、各特徴を n_bins ビンでヒストグラム化。</p>
-<p style="margin:2px 0 2px 12px">2) FPFH(p) = SPFH(p) + (1/k)Σ_j (1/d_pj) SPFH(j): 近傍 SPFH を距離重みで合成。</p>
-<p>3 サブヒストグラムを各々 L1 正規化して連結(既定 33 次元)。角特徴は剛体不変。</p>
-<p>引数: points (N,3), normals (N,3), k(FPFH 近傍数), n_bins(1特徴あたりのビン数)。</p>
-<p>返り値: (N, 3*n_bins) の記述子行列。Raises ValueError: points/normals が (N,3) でない・行数不一致・非有限・N&lt;4 (k-NN が k&gt;=3 を要求するため)。</p>
+<p style="margin:2px 0 2px 12px">1) SPFH: 对各点 p 与邻域 k 个点的点对求 (α,φ,θ),将各特征用 n_bins 个 bin 做直方图。</p>
+<p style="margin:2px 0 2px 12px">2) FPFH(p) = SPFH(p) + (1/k)Σ_j (1/d_pj) SPFH(j): 以距离权重合成邻域 SPFH。</p>
+<p>3 个子直方图各自 L1 归一化后连接(默认 33 维)。角度特征具有刚体不变性。</p>
+<p>参数: points (N,3), normals (N,3), k(FPFH 邻域数), n_bins(每 1 个特征的 bin 数)。</p>
+<p>返回值: (N, 3*n_bins) 的描述子矩阵。Raises ValueError: points/normals 不是 (N,3)、行数不一致、非有限、N&lt;4 (因为 k-NN 要求 k&gt;=3)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_shape_boundary(points, alpha)</code> (to call the implementation directly, <code style="color:#22d3bf">import recon3d; recon3d.alpha_shape_boundary(points, alpha)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;alpha_shape_boundary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>indices of the boundary points</b> by alpha shapes (point set → boundary points).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Delaunay 四面体分割の外接球半径 &lt; 1/alpha の四面体の表面三角形(境界面)を集め、その頂点集合を境界点とする。中実(表面+内部)の点群から表面殻の点だけを抜き出す用途に向く。alpha を大きくすると許す半径 1/alpha が小さくなり、より密着した(細部を拾う)境界になる。</p>
+<p>Collects the surface triangles (boundary faces) of the Delaunay tetrahedra whose circumsphere radius &lt; 1/alpha, and takes their vertex set as the boundary points. Suited to extracting only the surface-shell points from a solid (surface + interior) point cloud. Making alpha larger makes the allowed radius 1/alpha smaller, giving a tighter boundary (one that picks up fine detail).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
 <p>alpha : float</p>
-<p>正の実数。半径しきい値は 1/alpha。<code style="color:#22d3bf">estimate_alpha</code> で目安を得られる。</p>
+<p>Positive real number. The radius threshold is 1/alpha. <code style="color:#22d3bf">estimate_alpha</code> gives a rough guide.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>boundary_point_indices : numpy.ndarray (K,) int64</p>
-<p>points に対する境界点の index(昇順・重複なし)。境界が無ければ空配列。</p>
+<p>Indices of the boundary points into points (ascending, no duplicates). Empty array if there is no boundary.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_alpha(points)</code>(要直接呼叫實作,<code style="color:#22d3bf">import recon3d; recon3d.estimate_alpha(points)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;estimate_alpha&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由點群的尺度給出推薦 alpha(基於最近鄰距離的中位數)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各点の最近傍距離の中央値 <code style="color:#22d3bf">m</code> を求め、半径しきい値 1/alpha ≈ 2m(隣接間隔の約 2 倍まで許す)となるよう <code style="color:#22d3bf">alpha = 1/(2m)</code> を返す。これで表面付近の素性の良い四面体は残しつつ、大きく間延びした四面体(=凹み・外側)を切り落とせる。重複点は最近傍 0 になるため正の距離のみ使う。</p>
+<p>求各點最近鄰距離的中位數 <code style="color:#22d3bf">m</code>,回傳 <code style="color:#22d3bf">alpha = 1/(2m)</code>,使半徑閾值 1/alpha ≈ 2m(允許到相鄰間距的約 2 倍為止)。如此既能保留表面附近性狀良好的四面體, 又能切掉被大幅拉長的四面體(= 凹陷、外側)。重複點的最近鄰為 0,因此只使用正距離。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>alpha : float</p>
-<p>正の有限値。</p>
+<p>正的有限值。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

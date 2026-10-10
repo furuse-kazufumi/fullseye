@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>generalized Hough 3D (Ballard R-table voting)। voxel × Hough column।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>GHT を <b>向きビンごとの相関の総和</b> として GPU ネイティブに定式化:</p>
-<p>accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin )。各エッジが勾配方向に応じて投票し、欠けたエッジはピークを下げるだけ(<b>遮蔽・クラッタに頑健</b>)。shape-based(連続内積の単一解) と違い <b>投票 accumulator を返し、NMS で複数ピーク = 複数インスタンス</b> を取れるのが差別化。返り値 (topk,4) の [votes, d, h, w] (votes 降順)。</p>
-<p>手順: 両 volume の単位勾配(<code style="color:#22d3bf">mc</code> は <code style="color:#22d3bf">sobel3d</code> の生出力への閾値)を <code style="color:#22d3bf">ndir</code> 本の参照方向のうち最も近いものに量子化し、方向ビンごとに「scene のそのビンの 2 値場 ⋆ テンプレのそのビンの 2 値場」を conv3d で足し合わせる。テンプレの有効エッジ数で割るので votes は <b>[0, 1]</b>、1 で全エッジが一致。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ndir</code>: 26 以下は 26 近傍方向のリストの先頭 <code style="color:#22d3bf">ndir</code> 本(26 未満は方向が偏る)、27 以上は</p>
-<p>fibonacci 球で一様。方向が粗いほど回転に寛容だが偽ピークも増える。</p>
-<p style="margin:2px 0 2px 12px">• 返り値 <code style="color:#22d3bf">(topk, 4)</code> の各行 <code style="color:#22d3bf">[votes, z, y, x]</code>、votes 降順。座標は <b>テンプレ中心 (T//2)</b></p>
-<p>の scene 座標、<code style="color:#22d3bf">subvoxel=True</code> なら ±2 近傍重心。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms</code>: ピークを取るたびに <code style="color:#22d3bf">±nms</code> voxel の立方体を −1 で潰してから次を探す。近接する</p>
-<p>複数インスタンスは <code style="color:#22d3bf">nms</code> を小さく。</p>
-<p style="margin:2px 0 2px 12px">• テンプレにエッジが無ければ全 0 の <code style="color:#22d3bf">(topk,4)</code>。テンプレが完全に収まらない位置は 0。</p>
-<p>後段: 各ピークを <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_peak_newton</code> で精緻化。</p>
+<p>GHT को GPU-native रूप में <b>हर orientation bin के correlations के योग</b> के रूप में formulate करता है:</p>
+<p>accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin )। हर edge अपनी gradient दिशा के अनुसार vote करता है, और गायब edges केवल peak को नीचे करते हैं (<b>occlusion और clutter के प्रति robust</b>)। shape-based (continuous dot products का एक ही हल) के विपरीत, इसकी विशेषता यह है कि यह <b>vote accumulator लौटाता है, इसलिए NMS से कई peaks = कई instances</b> मिल सकते हैं। Return value (topk,4) का [votes, d, h, w] है (votes घटते क्रम में)।</p>
+<p>प्रक्रिया: दोनों volume के unit gradients (<code style="color:#22d3bf">mc</code>, <code style="color:#22d3bf">sobel3d</code> के raw output पर threshold है) को <code style="color:#22d3bf">ndir</code> reference दिशाओं में से सबसे नज़दीकी पर quantise किया जाता है, और हर direction bin के लिए &quot;scene के उस bin का 2-valued field ⋆ template के उस bin का 2-valued field&quot; conv3d से जोड़ा जाता है। Template के valid edges की संख्या से भाग दिया जाता है, इसलिए votes <b>[0, 1]</b> में हैं; 1 का अर्थ सभी edges का match है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ndir</code>: 26 या कम पर 26-neighbourhood दिशाओं की list के पहले <code style="color:#22d3bf">ndir</code> लिए जाते हैं (26 से कम पर दिशाएँ एकतरफा होती हैं); 27 या अधिक पर</p>
+<p>fibonacci sphere पर uniform। दिशाएँ जितनी मोटी, rotation के प्रति उतनी सहनशीलता, पर false peaks भी उतने अधिक।</p>
+<p style="margin:2px 0 2px 12px">• Return value <code style="color:#22d3bf">(topk, 4)</code> की हर row <code style="color:#22d3bf">[votes, z, y, x]</code> है, votes घटते क्रम में। Coordinates <b>template center (T//2)</b></p>
+<p>के scene coordinates हैं; <code style="color:#22d3bf">subvoxel=True</code> पर ±2 neighbourhood का centroid।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms</code>: हर peak लेने के बाद <code style="color:#22d3bf">±nms</code> voxel के cube को −1 से दबाकर अगला खोजा जाता है। पास-पास के</p>
+<p>कई instances के लिए <code style="color:#22d3bf">nms</code> छोटा रखें।</p>
+<p style="margin:2px 0 2px 12px">• Template में कोई edge न हो तो पूरा 0 वाला <code style="color:#22d3bf">(topk,4)</code>। जहाँ template पूरा नहीं समाता वे positions 0 हैं।</p>
+<p>आगे: हर peak को <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_peak_newton</code> से refine करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

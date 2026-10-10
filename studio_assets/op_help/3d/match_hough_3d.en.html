@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Generalized Hough 3-D (Ballard R-table voting). The voxel × Hough column.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>GHT を <b>向きビンごとの相関の総和</b> として GPU ネイティブに定式化:</p>
-<p>accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin )。各エッジが勾配方向に応じて投票し、欠けたエッジはピークを下げるだけ(<b>遮蔽・クラッタに頑健</b>)。shape-based(連続内積の単一解) と違い <b>投票 accumulator を返し、NMS で複数ピーク = 複数インスタンス</b> を取れるのが差別化。返り値 (topk,4) の [votes, d, h, w] (votes 降順)。</p>
-<p>手順: 両 volume の単位勾配(<code style="color:#22d3bf">mc</code> は <code style="color:#22d3bf">sobel3d</code> の生出力への閾値)を <code style="color:#22d3bf">ndir</code> 本の参照方向のうち最も近いものに量子化し、方向ビンごとに「scene のそのビンの 2 値場 ⋆ テンプレのそのビンの 2 値場」を conv3d で足し合わせる。テンプレの有効エッジ数で割るので votes は <b>[0, 1]</b>、1 で全エッジが一致。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ndir</code>: 26 以下は 26 近傍方向のリストの先頭 <code style="color:#22d3bf">ndir</code> 本(26 未満は方向が偏る)、27 以上は</p>
-<p>fibonacci 球で一様。方向が粗いほど回転に寛容だが偽ピークも増える。</p>
-<p style="margin:2px 0 2px 12px">• 返り値 <code style="color:#22d3bf">(topk, 4)</code> の各行 <code style="color:#22d3bf">[votes, z, y, x]</code>、votes 降順。座標は <b>テンプレ中心 (T//2)</b></p>
-<p>の scene 座標、<code style="color:#22d3bf">subvoxel=True</code> なら ±2 近傍重心。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms</code>: ピークを取るたびに <code style="color:#22d3bf">±nms</code> voxel の立方体を −1 で潰してから次を探す。近接する</p>
-<p>複数インスタンスは <code style="color:#22d3bf">nms</code> を小さく。</p>
-<p style="margin:2px 0 2px 12px">• テンプレにエッジが無ければ全 0 の <code style="color:#22d3bf">(topk,4)</code>。テンプレが完全に収まらない位置は 0。</p>
-<p>後段: 各ピークを <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_peak_newton</code> で精緻化。</p>
+<p>Formulates GHT natively for the GPU as the <b>sum of correlations per orientation bin</b>:</p>
+<p>accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin ). Each edge votes according to its gradient direction, and missing edges only lower the peak (<b>robust to occlusion and clutter</b>). Unlike shape-based (a single solution of continuous dot products), its distinguishing feature is that it <b>returns the vote accumulator, so NMS yields multiple peaks = multiple instances</b>. Returns [votes, d, h, w] of shape (topk,4) (votes descending).</p>
+<p>Procedure: the unit gradients of both volumes (<code style="color:#22d3bf">mc</code> is a threshold on the raw output of <code style="color:#22d3bf">sobel3d</code>) are quantised to the nearest of <code style="color:#22d3bf">ndir</code> reference directions, and for each direction bin &quot;the scene&#x27;s 2-valued field for that bin ⋆ the template&#x27;s 2-valued field for that bin&quot; is summed via conv3d. It is divided by the number of valid template edges, so votes are in <b>[0, 1]</b>; 1 means all edges match.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ndir</code>: 26 or fewer takes the first <code style="color:#22d3bf">ndir</code> entries of the list of 26-neighbourhood directions (below 26 the directions are biased); 27 or more is</p>
+<p>uniform on a fibonacci sphere. Coarser directions are more tolerant of rotation but also produce more false peaks.</p>
+<p style="margin:2px 0 2px 12px">• Each row of the return value <code style="color:#22d3bf">(topk, 4)</code> is <code style="color:#22d3bf">[votes, z, y, x]</code>, votes descending. The coordinates are the scene coordinates of the <b>template centre (T//2)</b>;</p>
+<p>with <code style="color:#22d3bf">subvoxel=True</code>, the centroid of the ±2 neighbourhood.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms</code>: each time a peak is taken, a cube of <code style="color:#22d3bf">±nms</code> voxels is squashed to −1 before searching for the next. For nearby</p>
+<p>multiple instances, make <code style="color:#22d3bf">nms</code> small.</p>
+<p style="margin:2px 0 2px 12px">• If the template has no edges, an all-0 <code style="color:#22d3bf">(topk,4)</code>. Positions where the template does not fit entirely are 0.</p>
+<p>Downstream: refine each peak with <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_peak_newton</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

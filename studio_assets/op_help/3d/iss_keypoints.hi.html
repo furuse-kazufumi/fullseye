@@ -4,16 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import feat_shot; feat_shot.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;iss_keypoints&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ISS (Intrinsic Shape Signatures, 3D Harris के समकक्ष) keypoint detection।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>局所共分散の最小固有値 λ3 を saliency とし、固有値が distinct(向きが well-defined)な点のみ候補にして NMS で疎に選ぶ。回転不変。返り値=点 index 配列。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code> (N,3)。<code style="color:#22d3bf">radius</code>: saliency 用の近傍球半径(点群と同じ単位)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms_radius</code>: 非最大抑制の距離。None なら <code style="color:#22d3bf">0.6*radius</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gamma21</code>・<code style="color:#22d3bf">gamma32</code>: 固有値比 λ2/λ1、λ3/λ2 の上限(既定 0.99)。両方ともこれ</p>
-<p>未満の点だけが候補(比が 1 に近い=等方で向きが決まらない点を除く)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_kp</code>: 返す上限。<code style="color:#22d3bf">min_neighbors</code>: 近傍がこれ未満の点は候補にしない(既定 8)。</p>
-<p>手順: 各点で <code style="color:#22d3bf">radius</code> 内の近傍を集め、注目点を原点とした 2 次モーメント行列 <code style="color:#22d3bf">(qᵀq)/n</code> の固有値 λ1≥λ2≥λ3 を求める(λ1 が 1e-12 以下なら除外)。λ3 を saliency として降順に走査し、採用済みの点から <code style="color:#22d3bf">nms_radius</code> 未満にあるものを捨てる貪欲 NMS。返り値は int64 の点インデックス配列(saliency 降順)。候補が無ければ長さ 0。</p>
-<p>注意: 近傍は注目点で中心化する(重心ではない)ため、平面上の点でも λ3 は厳密には 0 にならない。全点で近傍探索する Python ループなので、数万点を超える雲は <code style="color:#22d3bf">voxel_grid_downsample</code> で間引いてから使う。<code style="color:#22d3bf">shot_descriptor</code> のキーポイント入力に直結し、<code style="color:#22d3bf">register_shot</code> は内部で <code style="color:#22d3bf">radius</code> の 0.6 倍・NMS 0.3 倍で呼ぶ。</p>
+<p>local covariance के न्यूनतम eigenvalue λ3 को saliency मानता है, केवल distinct eigenvalues वाले points (orientation well-defined) को candidate बनाता है और NMS से विरल रूप से चुनता है। rotation-invariant। लौटाया गया मान = point index array।</p>
+<p>Arguments:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code> (N,3)। <code style="color:#22d3bf">radius</code>: saliency के लिए neighbourhood sphere की त्रिज्या (point cloud जैसी ही इकाई)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms_radius</code>: non-maximum suppression की दूरी। None होने पर <code style="color:#22d3bf">0.6*radius</code>।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gamma21</code>, <code style="color:#22d3bf">gamma32</code>: eigenvalue अनुपात λ2/λ1, λ3/λ2 की ऊपरी सीमा (default 0.99)। जिन points पर दोनों इससे</p>
+<p>कम हों वही candidate हैं (अनुपात 1 के पास = isotropic, जिनकी orientation तय नहीं होती, ऐसे points हटाए जाते हैं)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_kp</code>: लौटाने की ऊपरी सीमा। <code style="color:#22d3bf">min_neighbors</code>: इससे कम neighbours वाले points candidate नहीं बनते (default 8)।</p>
+<p>प्रक्रिया: हर point पर <code style="color:#22d3bf">radius</code> के भीतर के neighbours इकट्ठा करके, लक्ष्य point को origin मानकर 2nd-order moment matrix <code style="color:#22d3bf">(qᵀq)/n</code> के eigenvalues λ1≥λ2≥λ3 निकाले जाते हैं (λ1 के 1e-12 या कम होने पर बाहर)। λ3 को saliency मानकर घटते क्रम में scan किया जाता है, और greedy NMS पहले से अपनाए गए point से <code style="color:#22d3bf">nms_radius</code> से कम दूरी वाले points हटा देता है। लौटाया गया मान int64 point index array है (saliency के घटते क्रम में)। candidate न हों तो length 0। ध्यान दें: neighbours को लक्ष्य point पर centre किया जाता है (centroid पर नहीं), इसलिए plane पर स्थित points के लिए भी λ3 ठीक-ठीक 0 नहीं होता। यह हर point पर neighbourhood search करने वाला Python loop है, इसलिए दसियों हज़ार से अधिक points वाले cloud को पहले <code style="color:#22d3bf">voxel_grid_downsample</code> से कम करके इस्तेमाल करें। यह सीधे <code style="color:#22d3bf">shot_descriptor</code> के keypoint input से जुड़ता है, और <code style="color:#22d3bf">register_shot</code> इसे भीतर <code style="color:#22d3bf">radius</code> के 0.6 गुना और NMS 0.3 गुना के साथ बुलाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

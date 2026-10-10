@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(points, radii)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 medial 體素的座標與局部半徑(= 該點的 EDT 值)變成點群。回傳 (points, radius)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>太い部分は面状、細い部分は線状に分布する medial 点を (M,3) の座標(z,y,x)と、それぞれの局所半径 (M,) として返す。半径最大の点は形状の最も「内側」= 中心を指す。</p>
+<p>把粗的部分呈面狀、細的部分呈線狀分布的 medial 點,以 (M,3) 座標(z,y,x)及各自的局部半徑 (M,) 回傳。半徑最大的點指向形狀最「內側」= 中心。</p>
 <p>Args:</p>
-<p>vol: バイナリ voxel(bool / 0-1 の 3D)。</p>
-<p>min_radius: この半径以下の点を除外(ノイズ抑制)。</p>
+<p>vol: 二值 voxel(bool / 0-1 的 3D)。</p>
+<p>min_radius: 排除半徑不超過此值的點(抑制雜訊)。</p>
 <p>Returns:</p>
 <p>points (float64, (M,3)): medial voxel 座標(z, y, x)。</p>
-<p>radius (float64, (M,)): 各点の EDT 値(= 局所内接半径)。</p>
-<p>手順: <code style="color:#22d3bf">distance_ridge(vol, min_radius)</code> で得た <code style="color:#22d3bf">ridge_mask</code> の <code style="color:#22d3bf">np.argwhere</code> (配列 index、行は z-major の辞書順で決定的)と、その位置の <code style="color:#22d3bf">edt</code> 値を返す。座標は voxel index で spacing は掛けない(物理座標が要るなら呼び手で <code style="color:#22d3bf">points * (sz, sy, sx)</code>、半径も同様に等方 spacing を掛ける)。</p>
-<p>引数と検証: <code style="color:#22d3bf">vol</code> は 3-D(非ゼロ = 前景)。3-D でない・空・NaN/Inf は <code style="color:#22d3bf">ValueError</code>、<code style="color:#22d3bf">min_radius &lt; 0</code> も <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">radius</code> は <code style="color:#22d3bf">&gt; min_radius</code> の点だけ(境界 voxel は EDT が 1 以下なので <code style="color:#22d3bf">min_radius=1</code> で外殻ノイズをほぼ落とせる)。</p>
-<p>端の挙動: 前景が無い、または全点が <code style="color:#22d3bf">min_radius</code> 以下なら <code style="color:#22d3bf">points</code> は <code style="color:#22d3bf">(0, 3)</code>、<code style="color:#22d3bf">radius</code> は <code style="color:#22d3bf">(0,)</code> の空配列(エラーにしない)。</p>
-<p>使いどころ: <code style="color:#22d3bf">medial_match</code> の半径分布、点群 op(<code style="color:#22d3bf">smallest_sphere3</code> / <code style="color:#22d3bf">fit_line3</code> 等)への橋渡し、<code style="color:#22d3bf">np.argmax(radius)</code> で最大内接球の中心を取る。</p>
+<p>radius (float64, (M,)): 各點的 EDT 值(= 局部內切半徑)。</p>
+<p>步驟: 回傳由 <code style="color:#22d3bf">distance_ridge(vol, min_radius)</code> 得到的 <code style="color:#22d3bf">ridge_mask</code> 的 <code style="color:#22d3bf">np.argwhere</code> (陣列 index,列依 z-major 的字典序,具確定性)以及該位置的 <code style="color:#22d3bf">edt</code> 值。座標是 voxel index,不乘 spacing(需要物理座標時由呼叫端計算 <code style="color:#22d3bf">points * (sz, sy, sx)</code>,半徑同樣乘以等向 spacing)。</p>
+<p>引數與檢驗: <code style="color:#22d3bf">vol</code> 為 3-D(非零 = 前景)。不是 3-D、空、NaN/Inf 時為 <code style="color:#22d3bf">ValueError</code>,<code style="color:#22d3bf">min_radius &lt; 0</code> 也為 <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">radius</code> 只含 <code style="color:#22d3bf">&gt; min_radius</code> 的點(邊界 voxel 的 EDT 不超過 1,因此用 <code style="color:#22d3bf">min_radius=1</code> 幾乎可以去掉外殼雜訊)。</p>
+<p>邊界行為: 沒有前景,或全部點都不超過 <code style="color:#22d3bf">min_radius</code> 時,<code style="color:#22d3bf">points</code> 為 <code style="color:#22d3bf">(0, 3)</code>、<code style="color:#22d3bf">radius</code> 為 <code style="color:#22d3bf">(0,)</code> 的空陣列(不報錯)。</p>
+<p>用途: <code style="color:#22d3bf">medial_match</code> 的半徑分布、通往點雲 op(<code style="color:#22d3bf">smallest_sphere3</code> / <code style="color:#22d3bf">fit_line3</code> 等)的橋樑,用 <code style="color:#22d3bf">np.argmax(radius)</code> 取最大內切球的中心。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

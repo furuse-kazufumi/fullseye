@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gradient3d(vol, sigma: &#x27;float&#x27; = 1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import edges3d; edges3d.gradient3d(vol, sigma: &#x27;float&#x27; = 1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;gradient3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gaussian smoothing के बाद central difference gradient की गणना करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : (D,H,W) array</p>
-<p>グレー voxel。</p>
+<p>grey voxel।</p>
 <p>sigma : float</p>
-<p>ガウス平滑の標準偏差(voxel 単位)。0 で平滑なし(生の中心差分)。</p>
+<p>Gaussian smoothing का standard deviation (voxel unit में)। 0 पर कोई smoothing नहीं (कच्चे central differences)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>gmag : (D,H,W) float64</p>
-<p>勾配の大きさ ||∇I||。</p>
+<p>gradient magnitude ||∇I||।</p>
 <p>gvec : (D,H,W,3) float64</p>
-<p>勾配ベクトル。成分は (∂/∂axis0, ∂/∂axis1, ∂/∂axis2) = (depth, height, width)。</p>
+<p>gradient vector। components (∂/∂axis0, ∂/∂axis1, ∂/∂axis2) = (depth, height, width) हैं।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>平滑には scipy.ndimage.gaussian_filter(mode=&quot;nearest&quot;)、微分には np.gradient(spacing=1) を用いる。np.gradient は内部が中心差分、境界のみ片側差分。</p>
+<p>smoothing के लिए scipy.ndimage.gaussian_filter(mode=&quot;nearest&quot;), differentiation के लिए np.gradient(spacing=1) का उपयोग होता है। np.gradient अंदर central difference और केवल boundary पर one-sided difference लेता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

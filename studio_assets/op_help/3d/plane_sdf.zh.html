@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_sdf(grid, point, normal)</code>(要直接调用实现,<code style="color:#22d3bf">import sdf_ops; sdf_ops.plane_sdf(grid, point, normal)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;plane_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>半空间(被平面切出的一侧)的<b>精确</b>有符号距离场(内侧为负、外侧为正)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">sdf(p) = (p - point) · n̂</code>。法線 <code style="color:#22d3bf">n̂</code> の<b>指す側が外側(正)</b>で、反対側が内側。面取り(chamfer)・切断・「基板から上だけ」のような<b>片側だけを残す</b>演算に使う。<code style="color:#22d3bf">sdf_intersect</code> を重ねれば任意の凸多面体が作れる。ただし <b>max による交差は角の外側で厳密ではない</b>: 6 枚で直方体を作ると占有(<code style="color:#22d3bf">&lt;= 0</code>)と内側の値は <code style="color:#22d3bf">box_sdf</code> に完全一致するが、外側は角の近くで最大 2.1(半辺 2 の箱・格子 0.25 で実測)だけ<b>過小評価</b>する —— CSG の標準的な性質で、距離そのものが要るなら <code style="color:#22d3bf">box_sdf</code> を使う。</p>
-<p>厳密性: 平面は全空間で勾配ノルム 1 なので、この値は<b>どこでも真の符号付き距離</b> (<code style="color:#22d3bf">box_sdf</code> のように角で切り替わる場合分けが要らない)。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>(<code style="color:#22d3bf">grid_coords</code> の出力または点列)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">point</code>: 平面上の 1 点(要素数 3)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>: 平面の法線(要素数 3、<b>零ベクトル・NaN は拒否</b>)。長さは自動で 1 に正規化するので、大きさは結果に影響しない(向きだけが意味を持つ)。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。法線側で正、反対側で負、平面上で 0。</p>
-<p>使いどころ: <code style="color:#22d3bf">sdf_subtract(part, plane_sdf(g, p, n))</code> で「その平面より法線側を削る」。向きを逆にしたいときは <code style="color:#22d3bf">normal</code> の符号を反転する(<code style="color:#22d3bf">-sdf</code> でも同じ)。</p>
+<p><code style="color:#22d3bf">sdf(p) = (p - point) · n̂</code>。法线 <code style="color:#22d3bf">n̂</code> <b>所指的一侧为外侧（正）</b>，相反一侧为内侧。用于倒角、切割、“只保留基板以上部分”这类<b>只保留一侧</b>的运算。叠加 <code style="color:#22d3bf">sdf_intersect</code> 可构造任意凸多面体。但 <b>用 max 求交在角的外侧并不严格</b>:用 6 个平面构造长方体时，占用(<code style="color:#22d3bf">&lt;= 0</code>)和内侧的值与 <code style="color:#22d3bf">box_sdf</code> 完全一致，但外侧在角附近最多会<b>低估</b> 2.1（半边长 2 的盒子、网格 0.25 实测）—— 这是 CSG 的标准性质，如果需要距离本身，请使用 <code style="color:#22d3bf">box_sdf</code>。</p>
+<p>严格性：平面在全空间梯度范数为 1，因此该值<b>在任何地方都是真正的有符号距离</b> （不需要像 <code style="color:#22d3bf">box_sdf</code> 那样在角处切换的分情况处理）。</p>
+<p>参数与校验(<code style="color:#22d3bf">ValueError</code>)：</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>：最后一轴为 3 的 float 数组 <code style="color:#22d3bf">(..., 3)</code>（<code style="color:#22d3bf">grid_coords</code> 的输出或点列）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">point</code>：平面上的 1 个点（元素数 3）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>：平面的法线（元素数 3,<b>拒绝零向量和 NaN</b>）。长度自动归一化为 1, 因此大小不影响结果（只有方向有意义）。</p>
+<p>返回值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。法线一侧为正，相反一侧为负，平面上为 0。</p>
+<p>用法：<code style="color:#22d3bf">sdf_subtract(part, plane_sdf(g, p, n))</code> 即“削去该平面法线一侧的部分”。想反转方向时，将 <code style="color:#22d3bf">normal</code> 的符号取反（<code style="color:#22d3bf">-sdf</code> 也一样）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

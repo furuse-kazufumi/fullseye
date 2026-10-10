@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import deform3d; deform3d.tps_fit(src_ctrl, dst_ctrl, lam=0.0)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;tps_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Passt einen 3-D-Thin-Plate-Spline aus Kontrollpunktkorrespondenzen an.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>移動側の制御点 <code style="color:#22d3bf">src_ctrl</code> を固定側 <code style="color:#22d3bf">dst_ctrl</code> へ写す TPS 係数を、鞍点系を最小二乗(<code style="color:#22d3bf">numpy.linalg.lstsq</code>)で解いて求める。λ=0 なら制御点上で厳密に内挿(<code style="color:#22d3bf">tps_warp(model, src_ctrl) == dst_ctrl</code>)、λ&gt;0 で平滑化する。</p>
-<p>引数:</p>
-<p>src_ctrl: (K,3) 制御点(変形の始点、TPS のカーネル中心 p_i)。</p>
-<p>dst_ctrl: (K,3) 対応する目標点(変形の終点 v_i)。</p>
-<p>lam: 正則化係数 λ≥0。カーネル行列 K の対角へ λ を加える。大きいほど</p>
-<p>変形は滑らか(制御点への当てはめは緩む)。</p>
-<p>返り値:</p>
-<p>model: dict。キーは</p>
-<p>&quot;ctrl&quot; (K,3) カーネル中心 p_i、</p>
-<p>&quot;w&quot;    (K,3) 非線形(曲げ)係数、</p>
-<p>&quot;a&quot;    (4,3) アフィン係数([平行移動; 線形部]、a[0]=c, a[1:4]=Aᵀ)、</p>
-<p>&quot;lam&quot;  使用した λ。</p>
-<p>例外:</p>
-<p>ValueError: 形状不一致、制御点数不足、非有限値、または制御点数が</p>
-<p><code style="color:#22d3bf">TPS_MAX_CTRL</code>(10,000)超(密な (K+4)² 系は O(K³) のため。</p>
-<p>対応点を間引いてから渡す — TPS は疎な制御点で滑らかな変形を</p>
-<p>表現するのが本来の使い方)。</p>
+<p>Bestimmt die TPS-Koeffizienten, die die beweglichen Kontrollpunkte <code style="color:#22d3bf">src_ctrl</code> auf die festen <code style="color:#22d3bf">dst_ctrl</code> abbilden, indem das Sattelpunktsystem per kleinster Quadrate (<code style="color:#22d3bf">numpy.linalg.lstsq</code>) gelöst wird. Bei λ=0 wird an den Kontrollpunkten exakt interpoliert (<code style="color:#22d3bf">tps_warp(model, src_ctrl) == dst_ctrl</code>), bei λ&gt;0 geglättet.</p>
+<p>Argumente:</p>
+<p>src_ctrl: (K,3) Kontrollpunkte (Startpunkte der Verformung, TPS-Kernelzentren p_i).</p>
+<p>dst_ctrl: (K,3) zugehörige Zielpunkte (Endpunkte der Verformung v_i).</p>
+<p>lam: Regularisierungskoeffizient λ≥0. λ wird zur Diagonale der Kernelmatrix K addiert. Je größer, desto</p>
+<p>glatter die Verformung (die Anpassung an die Kontrollpunkte lockert sich).</p>
+<p>Rückgabewert:</p>
+<p>model: dict. Schlüssel sind</p>
+<p>&quot;ctrl&quot; (K,3) Kernelzentren p_i,</p>
+<p>&quot;w&quot;    (K,3) nichtlineare (Biege-)Koeffizienten,</p>
+<p>&quot;a&quot;    (4,3) affine Koeffizienten ([Translation; linearer Teil], a[0]=c, a[1:4]=Aᵀ),</p>
+<p>&quot;lam&quot;  das verwendete λ.</p>
+<p>Ausnahmen:</p>
+<p>ValueError: Formabweichung, zu wenige Kontrollpunkte, nicht endliche Werte oder mehr als</p>
+<p><code style="color:#22d3bf">TPS_MAX_CTRL</code> (10,000) Kontrollpunkte (das dichte (K+4)²-System ist O(K³).</p>
+<p>Korrespondenzen vor der Übergabe ausdünnen -- TPS ist dafür gedacht, eine glatte Verformung</p>
+<p>mit spärlichen Kontrollpunkten darzustellen).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

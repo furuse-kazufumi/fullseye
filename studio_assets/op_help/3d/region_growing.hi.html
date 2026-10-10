@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segment3d; segment3d.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;region_growing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normal similarity से region growing करता है और जुड़े हुए smooth regions को समान label देता है (curvature gate के बिना variant)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各点を k 近傍グラフ上で BFS 成長させ、隣接点 q を「法線 n_p と n_q の成す角が <code style="color:#22d3bf">angle_thresh_deg</code> 未満」のときだけ同領域に加える。平面内の法線はほぼ平行なので同一領域に連結し、向きの違う面の境界では角度が開いて連結が切れる → 面ごとに別領域。法線は符号不定(PCA 由来)なので <code style="color:#22d3bf">|n_p·n_q|</code> で判定(表裏を同一視)。</p>
+<p>हर point को k-nearest-neighbour graph पर BFS से बढ़ाता है, और पड़ोसी point q को उसी region में तभी जोड़ता है जब &quot;normals n_p और n_q के बीच का कोण <code style="color:#22d3bf">angle_thresh_deg</code> से कम हो&quot;। एक plane के अंदर normals लगभग समानांतर होते हैं, इसलिए वे एक ही region में जुड़ते हैं; अलग दिशा वाले faces की सीमा पर कोण खुल जाता है और जुड़ाव टूट जाता है → हर face के लिए अलग region। Normals का sign तय नहीं होता (PCA से आते हैं), इसलिए <code style="color:#22d3bf">|n_p·n_q|</code> से जाँचता है (आगे और पीछे को एक ही माना जाता है)।</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>normals: (N,3) 単位法線。None なら <code style="color:#22d3bf">pointcloud.estimate_normals</code> で PCA 推定。</p>
-<p>angle_thresh_deg: 隣接法線角度の許容上限[度]。(0,180) の範囲。</p>
-<p>k: 近傍数(kNN グラフの次数)。</p>
+<p>points: (N,3) point cloud।</p>
+<p>normals: (N,3) unit normals। None होने पर <code style="color:#22d3bf">pointcloud.estimate_normals</code> से PCA द्वारा अनुमान लगाया जाता है।</p>
+<p>angle_thresh_deg: पड़ोसी normals के कोण की स्वीकार्य ऊपरी सीमा [degree]। सीमा (0,180)।</p>
+<p>k: neighbours की संख्या (kNN graph की degree)।</p>
 <p>Returns:</p>
-<p>labels: (N,) int。連結平滑領域ごとに 0,1,2,... を付与。<b>min_region_size 未満の小領域(孤立点・向き不一致のゴミ)は -1(ノイズ/未割当)</b> = 統一契約(-1=ノイズ)に従う。</p>
-<p>空入力は shape (0,) を返す。</p>
+<p>labels: (N,) int। हर जुड़े हुए smooth region को 0,1,2,... देता है। <b>min_region_size से छोटे regions (isolated points, असंगत दिशा वाला कचरा) को -1 (noise/unassigned)</b> मिलता है = एकीकृत contract (-1=noise) के अनुसार।</p>
+<p>खाली input पर shape (0,) लौटाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

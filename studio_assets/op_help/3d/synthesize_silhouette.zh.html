@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.synthesize_silhouette(points, K, R, t, size: &#x27;Tuple[int, int]&#x27;, *, fill: &#x27;bool&#x27; = True, dilate: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import visualhull; visualhull.synthesize_silhouette(points, K, R, t, size: &#x27;Tuple[int, int]&#x27;, *, fill: &#x27;bool&#x27; = True, dilate: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;synthesize_silhouette&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 3-D 点群投影到 (K,R,t) 相机,返回占据像素为 True 的轮廓(H,W bool)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>GT 生成用。<code style="color:#22d3bf">points</code> (N,3) を <code style="color:#22d3bf">X_cam = R X + t</code> で射影し、depth&gt;0 かつ画像内に落ちた画素を True にする。疎な点群では射影像に穴が空くため、既定で穴埋め(<code style="color:#22d3bf">fill</code>, scipy.ndimage.binary_fill_holes)して中身の詰まった前景マスクにする。さらに <code style="color:#22d3bf">dilate</code> 画素だけ膨張させ「pixel が少しでも物体に触れれば前景」という被覆(coverage)意味のシルエットにする — これが visual hull の recall(物体 voxel を取りこぼさない)を離散化誤差の下でも保証するための保守側の丸め。</p>
+<p>用于生成 GT。将 <code style="color:#22d3bf">points</code> (N,3) 按 <code style="color:#22d3bf">X_cam = R X + t</code> 投影,把 depth&gt;0 且落在图像内的像素设为 True。稀疏点云的投影像会出现空洞,因此默认进行孔洞填充(<code style="color:#22d3bf">fill</code>, scipy.ndimage.binary_fill_holes),得到内部填实的前景掩模。再仅按 <code style="color:#22d3bf">dilate</code> 个像素进行膨胀,使其成为“pixel 只要稍微接触物体就算前景”这一覆盖(coverage)意义上的轮廓 —— 这是为了在离散化误差下也能保证 visual hull 的 recall(不漏掉物体 voxel )而采取的保守侧取整。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>points : (N, 3) array_like  ワールド座標の点群(物体表面/内部のサンプル)。</p>
-<p>K : (3, 3)  内部パラメータ。</p>
-<p>R, t : (3, 3), (3,)  ワールド-&gt;カメラの回転・並進。</p>
-<p>size : (H, W)  出力画像サイズ。</p>
-<p>fill : bool  射影像の穴を埋めて solid にする(既定 True)。</p>
-<p>dilate : int  被覆マージンとして膨張させる画素数(既定 1、0 で無効)。</p>
+<p>points : (N, 3) array_like  世界坐标下的点云(物体表面/内部的采样)。</p>
+<p>K : (3, 3)  内参。</p>
+<p>R, t : (3, 3), (3,)  世界-&gt;相机的旋转、平移。</p>
+<p>size : (H, W)  输出图像尺寸。</p>
+<p>fill : bool  填充投影像的空洞使其成为 solid(默认 True)。</p>
+<p>dilate : int  作为覆盖余量进行膨胀的像素数(默认 1,0 表示不启用)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>(H, W) bool ndarray  前景 True のシルエット。</p>
+<p>(H, W) bool ndarray  前景为 True 的轮廓。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

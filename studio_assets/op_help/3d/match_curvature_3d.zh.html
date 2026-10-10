@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲率(shape index)匹配。voxel × 曲率列(线→面提升的核心)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>scene/template を <b>curvedness で重み付けした shape-index 場</b>へ変換 → 既存 3D NCC で定位。強度でなく <b>局所曲面形状</b>で一致を測るため、同じ強度でも形が違う対象(球 vs 円柱/鞍点)を区別できる。S は回転不変なので回転にもある程度頑健。返り値 [score, d, h, w]。</p>
-<p>手順: 両 volume で <code style="color:#22d3bf">curvature_maps</code> → <code style="color:#22d3bf">S × curvedness × mask</code> の重み付き shape-index 場 <code style="color:#22d3bf">w</code> を作り、テンプレ側は <code style="color:#22d3bf">|w| &gt; 0.1·max|w|</code> の bbox を切り出して <code style="color:#22d3bf">accel_match.ncc_locate_3d</code> に渡す。返り値 <code style="color:#22d3bf">[NCC, z, y, x]</code> float64、NCC ∈ [−1, 1]。</p>
-<p style="margin:2px 0 2px 12px">• <b>位置は切り出した bbox テンプレの中心</b>が scene に載る座標。元テンプレ volume の中心とは</p>
-<p>bbox のオフセット分ずれる(元テンプレ座標に戻すには bbox の lo を足し直す)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mc</code>: <code style="color:#22d3bf">curvature_maps</code> の勾配マスク閾値(真の勾配単位、voxel あたり)。平坦部を除いて</p>
-<p>曲率ノイズを抑える。</p>
-<p style="margin:2px 0 2px 12px">• テンプレの曲率場が全 0(平坦・<code style="color:#22d3bf">mc</code> が高すぎ)なら <code style="color:#22d3bf">[0,0,0,0]</code> を返す。</p>
-<p style="margin:2px 0 2px 12px">• 曲率は 2 階微分なのでノイズに敏感。ノイズが多い volume は先に <code style="color:#22d3bf">points_to_voxel</code> の</p>
-<p><code style="color:#22d3bf">smooth</code> 等で滑らかにする。<code style="color:#22d3bf">subvoxel=True</code> で NCC ピークの ±2 近傍重心に精緻化。</p>
+<p>把 scene/template 转换为 <b>以 curvedness 加权的 shape-index 场</b> → 用已有的 3D NCC 定位。由于它以 <b>局部曲面形状</b> 而非强度衡量匹配,即使强度相同也能区分形状不同的对象(球 vs 圆柱/鞍点)。S 具有旋转不变性,因此对旋转也有一定鲁棒性。返回值 [score, d, h, w]。</p>
+<p>步骤:对两个 volume 做 <code style="color:#22d3bf">curvature_maps</code> → 生成 <code style="color:#22d3bf">S × curvedness × mask</code> 的加权 shape-index 场 <code style="color:#22d3bf">w</code>,模板侧裁出 <code style="color:#22d3bf">|w| &gt; 0.1·max|w|</code> 的 bbox, 传给 <code style="color:#22d3bf">accel_match.ncc_locate_3d</code>。返回值 <code style="color:#22d3bf">[NCC, z, y, x]</code> float64,NCC ∈ [−1, 1]。</p>
+<p style="margin:2px 0 2px 12px">• <b>位置是裁出的 bbox 模板的中心</b> 落在 scene 上的坐标。与原模板 volume 的中心</p>
+<p>相差 bbox 的偏移量(要回到原模板坐标,需加回 bbox 的 lo)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mc</code>:<code style="color:#22d3bf">curvature_maps</code> 的梯度掩模阈值(真实梯度单位,每 voxel)。排除平坦区域以</p>
+<p>抑制曲率噪声。</p>
+<p style="margin:2px 0 2px 12px">• 模板的曲率场全为 0(平坦、<code style="color:#22d3bf">mc</code> 过高)时返回 <code style="color:#22d3bf">[0,0,0,0]</code>。</p>
+<p style="margin:2px 0 2px 12px">• 曲率是 2 阶导数,因此对噪声敏感。噪声多的 volume 先用 <code style="color:#22d3bf">points_to_voxel</code> 的</p>
+<p><code style="color:#22d3bf">smooth</code> 等进行平滑。<code style="color:#22d3bf">subvoxel=True</code> 时细化到 NCC 峰值 ±2 邻域的质心。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

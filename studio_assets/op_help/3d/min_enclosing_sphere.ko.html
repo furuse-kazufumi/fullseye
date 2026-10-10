@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.min_enclosing_sphere(points, refine_iters: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import hull3d; hull3d.min_enclosing_sphere(points, refine_iters: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;min_enclosing_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 (N,3) → 모든 점을 포함하는 (근사) 최소 포함구 {center(3), radius}.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">fit_sphere_3d</code>(球面フィット)や <code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">hough_sphere_3d</code>(球検出)とは異なり、<b>全点を内包する最小の球</b>(minimum enclosing ball, MEB)を解く。2 段構成で「全点内包」を厳守しつつ半径を詰める:</p>
-<p style="margin:2px 0 2px 12px">1. <b>Ritter (1990) 初期化</b> — 最遠の点対を粗く取り初期球にし、各点を走査して球外の点があれば「その点と既存球の両方を含む」最小の球へ 1 回膨らませる(膨張式 <code style="color:#22d3bf">new_r=(r+d)/2</code> / 中心を点方向へ <code style="color:#22d3bf">(d-r)/(2d)</code> 進める)。新球が旧球を完全に含むため、1 パスで全点内包を保証する。</p>
-<p style="margin:2px 0 2px 12px">2. <b>Bădoiu–Clarkson (2003) core-set 反復による精緻化</b> — 反復 <code style="color:#22d3bf">i</code> で最遠点 <code style="color:#22d3bf">q</code> へ中心を <code style="color:#22d3bf">1/(i+2)</code> だけ寄せる。真の最小包含球へ単調収束する(半径過大な Ritter のドリフトを詰める)。最後に半径を「中心からの最大距離」で確定するので、精緻化後も <b>必ず全点を内包</b>(近似ゆえ半径が過小になり点が漏れることはない、安全側)。</p>
-<p>精緻化した中心が Ritter より外接半径を縮められたときのみ採用する(常に Ritter 以下)。真の最小球(厳密解は Welzl の乱択線形時間法)ではなく高速な (1+ε) 近似。</p>
+<p><code style="color:#22d3bf">fit_sphere_3d</code>(구면 피팅)나 <code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">hough_sphere_3d</code>(구 검출)와는달리, <b>모든 점을 내포하는 최소의 구</b>(minimum enclosing ball, MEB)를 푼다. 2 단 구성으로 &quot;모든 점 내포&quot;를 엄수하면서 반지름을 좁힌다:</p>
+<p style="margin:2px 0 2px 12px">1. <b>Ritter (1990) 초기화</b> — 가장 먼 점 쌍을 대략 잡아 초기 구로 하고, 각 점을 주사하여 구 밖의 점이있으면 &quot;그 점과 기존 구를 모두 포함하는&quot; 최소의 구로 1 회 부풀린다(팽창식 <code style="color:#22d3bf">new_r=(r+d)/2</code> / 중심을 점 방향으로 <code style="color:#22d3bf">(d-r)/(2d)</code> 전진). 새 구가 이전 구를 완전히 포함하므로 1 패스로 모든 점 내포를 보장한다.</p>
+<p style="margin:2px 0 2px 12px">2. <b>Bădoiu–Clarkson (2003) core-set 반복에 의한 정밀화</b> — 반복 <code style="color:#22d3bf">i</code> 에서 가장 먼 점 <code style="color:#22d3bf">q</code> 쪽으로중심을 <code style="color:#22d3bf">1/(i+2)</code> 만큼 옮긴다. 참 최소 포함 구로 단조 수렴한다(반지름이 과대한 Ritter 의드리프트를 좁힌다). 마지막에 반지름을 &quot;중심으로부터의 최대 거리&quot;로 확정하므로, 정밀화 후에도 <b>반드시 모든 점을 내포</b>(근사라서 반지름이 과소해져 점이 새는 일은 없다, 안전 측).</p>
+<p>정밀화한 중심이 Ritter 보다 외접 반지름을 줄일 수 있을 때만 채택한다(항상 Ritter 이하). 참 최소 구(엄밀해는 Welzl 의 랜덤 선형 시간법)가 아니라 고속 (1+ε) 근사.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
-<p>入力点群(&gt;= 1 点)。</p>
+<p>입력 점군(&gt;= 1 점).</p>
 <p>refine_iters : int</p>
-<p>Bădoiu–Clarkson 精緻化の反復数(既定 1000)。0 で Ritter のみ。</p>
+<p>Bădoiu–Clarkson 정밀화의 반복 횟수(기본값 1000). 0 이면 Ritter 만.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: (3,) float64 — 球中心(世界座標)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: float — 半径(全点を内包)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: (3,) float64 — 구 중심(월드 좌표).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: float — 반지름(모든 점을 내포).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形状不正・非有限・点数 0、または <code style="color:#22d3bf">refine_iters</code> が負のとき(fail-closed)。</p>
+<p>형상 부정, 비유한, 점 수 0, 또는 <code style="color:#22d3bf">refine_iters</code> 가 음수일 때(fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

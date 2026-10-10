@@ -6,8 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर voxel से निकटतम seed तक displacement <code style="color:#22d3bf">(3, D, H, W)</code> (<code style="color:#22d3bf">flow_dense</code>, dz, dy, dx [voxel]), <b>GPU के JFA</b> से।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">edt_jfa</code> は距離の値だけを返すが、JFA は内部で最近 seed の座標を運んでいる —— それをそのまま出す(追加コストほぼ 0)。CPU / scipy 経路は <code style="color:#22d3bf">vol_nearest_seed_vector</code>(同じ値、N≤160 で厳密一致を実測)。seed が無ければ ValueError (<code style="color:#22d3bf">edt_jfa</code> は 1e6 に飽和させるが、向きに「無限遠」は無い)。返りは torch float32(台帳経由では numpy)。</p>
+<p><code style="color:#22d3bf">edt_jfa</code> केवल distance के मान लौटाता है, पर JFA अंदर ही सबसे पास के seed के coordinates साथ रखता है —— यह op उन्हें वैसे ही output करता है (अतिरिक्त लागत लगभग 0)। CPU / scipy रास्ता <code style="color:#22d3bf">vol_nearest_seed_vector</code> है (वही मान; N≤160 पर बिल्कुल मेल मापा गया)। Seed न हो तो ValueError (<code style="color:#22d3bf">edt_jfa</code> 1e6 पर saturate करता है, पर दिशा के लिए &quot;अनंत दूर&quot; जैसा कुछ नहीं होता)। Return torch float32 (ledger से होकर numpy)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

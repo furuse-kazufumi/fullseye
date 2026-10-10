@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(linked, n)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Labelt eine Kantenmaske mit 26er-Nachbarschaft in Zusammenhangskomponenten.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>edge_mask : (D,H,W) bool</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>labels : (D,H,W) int</p>
-<p>各 voxel の成分ラベル(背景 = 0、成分 = 1..n)。</p>
+<p>Komponentenlabel jedes Voxels (Hintergrund = 0, Komponenten = 1..n).</p>
 <p>n : int</p>
-<p>連結成分数。</p>
+<p>Anzahl der Zusammenhangskomponenten.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>26 連結(3x3x3 の全近傍)。断片化したエッジ片を 1 本の曲線 / 閉曲面としてまとめ、下流の Hough / chamfer で成分単位に扱えるようにする。</p>
+<p>26-Zusammenhang (die volle 3x3x3-Nachbarschaft). Fasst fragmentierte Kantenstücke zu je 1 Kurve / geschlossenen Fläche zusammen, damit nachgelagertes Hough / chamfer sie komponentenweise behandeln kann.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -5,32 +5,30 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.m3c2_distance(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">signal</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">metrics3d.m3c2_distance</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2개 시점의 점군 차이를 <b>법선 방향으로</b> 측정한다(M3C2). → <code style="color:#22d3bf">(distance, lod)</code>의 2개.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>最近傍距離(chamfer / C2C)は「いちばん近い点までの距離」なので、<b>傾いた面では面に沿ったずれまで距離として数えてしまう</b>。地形・構造物の変化検出では、それが「測り直しただけで検出される偽の変化」の主因になる(<code style="color:#22d3bf">poc_structure_4d_deterioration</code></p>
-<p>の実測: 劣化ゼロで測り返しただけで C2C の中央値 21.07 mm、法線方向なら 0.55 mm)。</p>
-<p>M3C2(Lague 2013)は core 点ごとに <b>法線 <code style="color:#22d3bf">n</code> を軸とする円筒</b>(半径 <code style="color:#22d3bf">radius</code>、長さ <code style="color:#22d3bf">max_depth</code>)で両方の雲を切り取り、各点を <code style="color:#22d3bf">n</code> に射影した平均の差を返す。向きは <code style="color:#22d3bf">n</code> の指す側が正 —— <b>符号がそのまま「増えた / 減った」</b>になる。</p>
+<p>최근접 거리(chamfer / C2C)는 &quot;가장 가까운 점까지의 거리&quot;이므로, <b>기울어진 면에서는면을 따른 어긋남까지 거리로 세어 버린다</b>. 지형·구조물의 변화 검출에서는 그것이 &quot;다시 쟀을 뿐인데 검출되는 가짜 변화&quot;의 주원인이 된다(<code style="color:#22d3bf">poc_structure_4d_deterioration</code> 의 실측: 열화 0으로 다시 쟀을 뿐인데 C2C의 중앙값 21.07 mm, 법선 방향이라면 0.55 mm).</p>
+<p>M3C2(Lague 2013)는 core 점마다 <b>법선 <code style="color:#22d3bf">n</code>을 축으로 하는 원기둥</b>(반지름 <code style="color:#22d3bf">radius</code>, 길이 <code style="color:#22d3bf">max_depth</code>)으로 양쪽 점군을 잘라내고, 각 점을 <code style="color:#22d3bf">n</code>에 사영한 평균의 차를 반환한다. 방향은 <code style="color:#22d3bf">n</code>이 가리키는 쪽이 양 —— <b>부호가 그대로 &quot;늘었다 / 줄었다&quot;</b>가 된다.</p>
 <p>Args:</p>
-<p>a: 時点 1 の点群 <code style="color:#22d3bf">(Na,3)</code>。</p>
-<p>b: 時点 2 の点群 <code style="color:#22d3bf">(Nb,3)</code>。</p>
-<p>cores: 測る場所 <code style="color:#22d3bf">(M,3)</code>(a の部分集合でも、別に置いた格子でもよい)。</p>
-<p>normals: core ごとの法線 <code style="color:#22d3bf">(M,3)</code>(未正規化でよい。<b>符号が結果の符号を決める</b>)。</p>
-<p>radius: 円筒の半径(core 周りで平均する範囲。面の粗さより大きく、測りたい</p>
-<p>構造より小さく取る)。</p>
-<p>max_depth: 円筒の長さの半分。<code style="color:#22d3bf">None</code> なら軸方向を制限しない。</p>
-<p>min_points: 片側にこの数だけ点が無い core は <code style="color:#22d3bf">nan</code> を返す(既定 4)。</p>
+<p>a: 시점 1의 점군 <code style="color:#22d3bf">(Na,3)</code>.</p>
+<p>b: 시점 2의 점군 <code style="color:#22d3bf">(Nb,3)</code>.</p>
+<p>cores: 재는 장소 <code style="color:#22d3bf">(M,3)</code>(a의 부분집합이든, 따로 둔 격자든 좋다).</p>
+<p>normals: core별 법선 <code style="color:#22d3bf">(M,3)</code>(정규화하지 않아도 된다. <b>부호가 결과의 부호를 정한다</b>).</p>
+<p>radius: 원기둥의 반지름(core 주위에서 평균하는 범위. 면의 거칠기보다 크고, 재고 싶은</p>
+<p>구조보다 작게 잡는다).</p>
+<p>max_depth: 원기둥 길이의 절반. <code style="color:#22d3bf">None</code>이면 축 방향을 제한하지 않는다.</p>
+<p>min_points: 한쪽에 이 수만큼 점이 없는 core는 <code style="color:#22d3bf">nan</code>을 반환한다(기본값 4).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(distance, lod)</code>: どちらも <code style="color:#22d3bf">(M,)</code> float64。<code style="color:#22d3bf">distance</code> は法線方向の</p>
-<p>符号つき差、<code style="color:#22d3bf">lod</code>(level of detection)は</p>
-<p><code style="color:#22d3bf">1.96·sqrt(σa²/na + σb²/nb)</code> —— <b>この値を超えない差は雑音と区別できない</b>。</p>
-<p>点が足りない core は両方 <code style="color:#22d3bf">nan</code>。</p>
-<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.m3c2_distance</code>)は宣言 out 型の <code style="color:#22d3bf">distance</code> だけを</p>
-<p>返す。<code style="color:#22d3bf">lod</code> も要るときは <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code>。</p>
+<p><code style="color:#22d3bf">(distance, lod)</code>: 둘 다 <code style="color:#22d3bf">(M,)</code> float64. <code style="color:#22d3bf">distance</code>는 법선 방향의</p>
+<p>부호 있는 차, <code style="color:#22d3bf">lod</code>(level of detection)는</p>
+<p><code style="color:#22d3bf">1.96·sqrt(σa²/na + σb²/nb)</code> —— <b>이 값을 넘지 않는 차는 잡음과 구별할 수 없다</b>.</p>
+<p>점이 부족한 core는 양쪽 모두 <code style="color:#22d3bf">nan</code>.</p>
+<p>★대장 경유(<code style="color:#22d3bf">fullseye.ledger.m3c2_distance</code>)는 선언된 out 형의 <code style="color:#22d3bf">distance</code>만을</p>
+<p>반환한다. <code style="color:#22d3bf">lod</code>도 필요할 때는 <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code>.</p>
 <p>Raises:</p>
-<p>ValueError: 点群 / cores が <code style="color:#22d3bf">(N,3)</code> でない、空、<code style="color:#22d3bf">normals</code> の数が cores と</p>
-<p>合わない、<code style="color:#22d3bf">radius &lt;= 0</code>、<code style="color:#22d3bf">max_depth &lt;= 0</code>、<code style="color:#22d3bf">min_points &lt; 1</code> のとき。</p>
-<p><b>限界(honest)</b>: (1) 法線は呼び手が与える —— <code style="color:#22d3bf">estimate_normals</code> の符号は任意なので、向きを揃えないと符号が場所ごとに反転する。(2) <code style="color:#22d3bf">lod</code> は雑音だけを見ており、<b>位置合わせの残差は含まない</b>(Lague の原論文は登録誤差を別項として足す)。</p>
-<p style="margin:2px 0 2px 12px">(3) 円筒に入る点が少ない縁では <code style="color:#22d3bf">nan</code> になる —— 0 を返して「変化なし」に</p>
-<p>見せない。</p>
+<p>ValueError: 점군 / cores가 <code style="color:#22d3bf">(N,3)</code>이 아님, 비었음, <code style="color:#22d3bf">normals</code>의 수가 cores와</p>
+<p>맞지 않음, <code style="color:#22d3bf">radius &lt;= 0</code>, <code style="color:#22d3bf">max_depth &lt;= 0</code>, <code style="color:#22d3bf">min_points &lt; 1</code>일 때.</p>
+<p><b>한계(honest)</b>: (1) 법선은 호출자가 준다 —— <code style="color:#22d3bf">estimate_normals</code>의 부호는 임의이므로, 방향을 맞추지 않으면 부호가 장소마다 반전된다. (2) <code style="color:#22d3bf">lod</code>는 잡음만 보고 있으며, <b>위치 맞춤의 잔차는 포함하지 않는다</b>(Lague의 원논문은 등록 오차를 별도 항으로 더한다).</p>
+<p style="margin:2px 0 2px 12px">(3) 원기둥에 들어가는 점이 적은 가장자리에서는 <code style="color:#22d3bf">nan</code>이 된다 —— 0을 반환해서 &quot;변화 없음&quot;으로</p>
+<p>보이게 하지 않는다.</p>
 <p>Reference (public): D. Lague, N. Brodu, J. Leroux, &quot;Accurate 3D comparison of complex topography with terrestrial laser scanner: application to the Rangitikei canyon (N-Z)&quot;, ISPRS Journal of Photogrammetry and Remote Sensing 82 (2013) 10-26.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>

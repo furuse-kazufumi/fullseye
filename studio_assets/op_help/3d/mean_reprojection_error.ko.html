@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import bundle3d; bundle3d.mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;mean_reprojection_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>재투영 RMS 오차(픽셀).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>全観測 k について <code style="color:#22d3bf">project(points[obs_pt[k]], cameras[obs_cam[k]])</code> と <code style="color:#22d3bf">obs_uv[k]</code> の差(du, dv) を取り、<code style="color:#22d3bf">sqrt(mean_k(du² + dv²))</code> = 観測ごとの再投影距離の 2 乗平均平方根を float で返す(実装は <code style="color:#22d3bf">r.reshape(-1,2)**2 * 2</code> の平均の平方根で、同じ量)。単位は <code style="color:#22d3bf">obs_uv</code> と K に従うピクセル。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cameras</code>: (nc,6) の <code style="color:#22d3bf">[rvec(3) | t(3)]</code>(<code style="color:#22d3bf">X_cam = R X + t</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (m,3) の 3D 点。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">obs_cam</code> / <code style="color:#22d3bf">obs_pt</code>: 各観測のカメラ添字・点添字(int)。<code style="color:#22d3bf">obs_uv</code>: (K,2) の観測画素。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code>: 全カメラ共通の (3,3) 内部行列。</p>
-<p><code style="color:#22d3bf">bundle_adjust</code> の返り値 <code style="color:#22d3bf">rmse</code> と同じ計算で、最適化前後の比較に使う。観測が 0 件だと空の平均で NaN になる(長さの検証は <code style="color:#22d3bf">bundle_adjust</code> 側にあり、この関数単体では行わない)。カメラ後方の点も <code style="color:#22d3bf">project</code> がそのまま射影するので、可視性は呼び出し側で保証する。</p>
+<p>모든 관측 k 에 대해 <code style="color:#22d3bf">project(points[obs_pt[k]], cameras[obs_cam[k]])</code> 와 <code style="color:#22d3bf">obs_uv[k]</code> 의 차(du, dv) 를 취하고, <code style="color:#22d3bf">sqrt(mean_k(du² + dv²))</code> = 관측별 재투영 거리의 2 제곱 평균 제곱근을 float 로반환한다(구현은 <code style="color:#22d3bf">r.reshape(-1,2)**2 * 2</code> 의 평균의 제곱근으로, 같은 양). 단위는 <code style="color:#22d3bf">obs_uv</code> 와 K 를따르는 픽셀.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cameras</code>: (nc,6) 의 <code style="color:#22d3bf">[rvec(3) | t(3)]</code>(<code style="color:#22d3bf">X_cam = R X + t</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (m,3) 의 3D 점.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">obs_cam</code> / <code style="color:#22d3bf">obs_pt</code>: 각 관측의 카메라 첨자·점 첨자(int). <code style="color:#22d3bf">obs_uv</code>: (K,2) 의 관측 화소.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code>: 모든 카메라 공통의 (3,3) 내부 행렬.</p>
+<p><code style="color:#22d3bf">bundle_adjust</code> 의 반환값 <code style="color:#22d3bf">rmse</code> 와 같은 계산으로, 최적화 전후 비교에 쓴다. 관측이 0 건이면 빈평균으로 NaN 이 된다(길이 검증은 <code style="color:#22d3bf">bundle_adjust</code> 쪽에 있으며, 이 함수 단독으로는 하지 않는다). 카메라 뒤쪽의 점도 <code style="color:#22d3bf">project</code> 가 그대로 투영하므로, 가시성은 호출 측에서 보장한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

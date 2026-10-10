@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(linked, n)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>edge mask को 26-neighbourhood से connected components में label करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>edge_mask : (D,H,W) bool</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>labels : (D,H,W) int</p>
-<p>各 voxel の成分ラベル(背景 = 0、成分 = 1..n)。</p>
+<p>हर voxel का component label (background = 0, components = 1..n)।</p>
 <p>n : int</p>
-<p>連結成分数。</p>
+<p>connected components की संख्या।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>26 連結(3x3x3 の全近傍)。断片化したエッジ片を 1 本の曲線 / 閉曲面としてまとめ、下流の Hough / chamfer で成分単位に扱えるようにする。</p>
+<p>26-connectivity (3x3x3 का पूरा neighbourhood)। टूटे हुए edge टुकड़ों को 1 curve / closed surface के रूप में जोड़ता है, ताकि downstream Hough / chamfer उन्हें component के स्तर पर संभाल सकें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

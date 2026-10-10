@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mesh_props; mesh_props.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;face_areas&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삼각형 메시의 <b>면별 면적</b> → <code style="color:#22d3bf">(M,)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>面積 = <code style="color:#22d3bf">0.5·|cross(v1−v0, v2−v0)|</code> を面ごとに返す(<code style="color:#22d3bf">mesh_area</code> はこの総和)。面積は<b>重み</b>として使うためにある —— 「下を向いた面の面積」「公差外の面積」「曲率の面積加重平均」はすべて面ごとの面積が要る量で、総和からは作れない。</p>
+<p>면적 = <code style="color:#22d3bf">0.5·|cross(v1−v0, v2−v0)|</code> 을 면별로 반환한다(<code style="color:#22d3bf">mesh_area</code> 는 이것의 총합). 면적은 <b>가중치</b>로 쓰기 위해 있다 —— &quot;아래를 향한 면의 면적&quot;, &quot;공차 밖의 면적&quot;, &quot;곡률의 면적 가중 평균&quot;은 모두 면별 면적이 필요한 양으로, 총합으로부터는 만들 수 없다.</p>
 <p>Args:</p>
-<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
+<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> 의 튜플.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(M,)</code> の float64(非負)。順序は <code style="color:#22d3bf">faces</code> の順で、<code style="color:#22d3bf">face_normals</code> と同じ</p>
-<p>並びなので <code style="color:#22d3bf">areas[normals[:, 2] &lt; 0].sum()</code> のように直接組み合わせられる。</p>
+<p><code style="color:#22d3bf">(M,)</code> 의 float64(음이 아님). 순서는 <code style="color:#22d3bf">faces</code> 의 순서이며, <code style="color:#22d3bf">face_normals</code> 와 같은</p>
+<p>배열이므로 <code style="color:#22d3bf">areas[normals[:, 2] &lt; 0].sum()</code> 처럼 바로 조합할 수 있다.</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
-<p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p>注意: <code style="color:#22d3bf">mesh_area</code> と同じく、退化三角形(面積 0)は<b>拒否せず 0 を返す</b> (<code style="color:#22d3bf">face_normals</code> は法線が定義できないので拒否する —— 同じメッシュでもこちらは通る)。重複面・表裏 2 枚張りはそれぞれ 1 面として数える。単位は座標の単位の 2 乗。</p>
+<p>ValueError: <code style="color:#22d3bf">mesh</code> 가 <code style="color:#22d3bf">(vertices, faces)</code> 의 2 요소가 아님, 형상 부정,</p>
+<p>비유한 좌표, 비정수·범위 밖 index, 비어 있을 때.</p>
+<p>주의: <code style="color:#22d3bf">mesh_area</code> 와 마찬가지로, 퇴화 삼각형(면적 0)은 <b>거부하지 않고 0 을 반환한다</b> (<code style="color:#22d3bf">face_normals</code> 는 법선을 정의할 수 없으므로 거부한다 —— 같은 메시라도이쪽은 통과한다). 중복 면·앞뒷면 2 장으로 붙인 면은 각각 1 면으로 센다. 단위는 좌표 단위의 2 제곱.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

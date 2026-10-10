@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_edges(depth, rel_thresh=0.05)</code>(要直接呼叫實作,<code style="color:#22d3bf">import range_image; range_image.occlusion_edges(depth, rel_thresh=0.05)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;occlusion_edges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>偵測深度不連續(前景/背景邊界 = 遮蔽邊緣)。→ bool HxW。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>遮蔽エッジは深度の<b>不連続(step)</b>であって傾斜(slope)ではない。一様な傾斜面は連続で遮蔽を含まないため flag してはならない。一階勾配(=深度/画素)は傾斜そのもので、段差か斜面かを区別できない(かつ絶対深度の割合と比較するのは次元不整合)。</p>
-<p>そこで軸ごとの<b>二階差分(離散ラプラシアン相当)</b> <code style="color:#22d3bf">d[i+1]-2*d[i]+d[i-1]</code> を使う。一様傾斜(深度が近傍で線形)なら二階差分 ≈ 0、fronto-parallel な段差では両側で大きな値。これを局所深度で正規化した相対的な深度ジャンプが rel_thresh を超える画素を境界とする。</p>
+<p>遮擋邊緣是深度的<b>不連續(step)</b>,而不是傾斜(slope)。均勻的傾斜面是連續的、不含遮擋,因此不得 flag。一階梯度(=深度/像素)就是傾斜本身, 無法區分階躍與斜面(而且與絕對深度的比例相比較在因次上不一致)。</p>
+<p>因此使用各軸的<b>二階差分(相當於離散拉普拉斯)</b> <code style="color:#22d3bf">d[i+1]-2*d[i]+d[i-1]</code>。均勻傾斜(深度在鄰域內線性)時二階差分 ≈ 0,fronto-parallel 的階躍則在兩側取大值。以局部深度對其正規化,相對深度跳變超過 rel_thresh 的像素即為邊界。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>

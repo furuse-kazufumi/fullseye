@@ -5,11 +5,10 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.photometric_stereo(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">normalmap</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.photometric_stereo.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">photometric.photometric_stereo</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Lambert 光度立體:由已知光源方向的 N 張圖恢復法線與反照率。→ (normals HxWx3, albedo HxW)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>I_n = albedo * max(N·L_n, 0)。各画素で g = albedo*N を最小二乗 g = pinv(L) @ I で解き、albedo=|g|, normal=g/|g|。N&gt;=3 必要。albedo~0 や mask 外の画素は normal=(0,0,1)。normalize=True で光源ベクトルを単位方向に正規化(render_lambertian と同一規約 = アルベド絶対値が正しく出る)。強度重み付き光源を使うなら normalize=False にし、合成側も生ベクトルで揃えること。</p>
-<p>lit_only(2026-09-04 追加): <b>付着影(attached shadow)を外して解く</b>。モデルの max(·, 0) は非線形なので、N·L &lt; 0 の観測(真の値は 0)を線形最小二乗にそのまま入れると解が偏る ―― 実測: 影も AO も無い球で中央値 <b>9°</b>、点灯している光源だけで解くと <b>0.000°</b>。既定は False(従来の挙動を変えない)。True にすると画素ごとに <code style="color:#22d3bf">I &gt; lit_thresh</code> の光源だけを使って解き直す。<b>同じ点灯パターンの画素をまとめて</b> 1 回の疑似逆行列で処理するので、追加コストは光源数ぶんのパターン数に比例する程度(6 灯なら最大 64 群)。点灯光源が 3 未満の画素は全光源の解に戻す(fail-open:</p>
-<p>解けない画素を NaN にするより、偏っていても値がある方が下流の積分が壊れない)。</p>
-<p>lit_thresh: 「点灯している」とみなす輝度の下限。撮影ノイズより上に置く。</p>
+<p>I_n = albedo * max(N·L_n, 0)。在每個像素以最小平方 g = pinv(L) @ I 求解 g = albedo*N, albedo=|g|, normal=g/|g|。需要 N&gt;=3。albedo~0 或 mask 外的像素 normal=(0,0,1)。normalize=True 時將光源向量正規化為單位方向(與 render_lambertian 相同的約定 = 反照率絕對值能正確得出)。若使用帶強度權重的光源,請設 normalize=False,合成端也統一使用原始向量。</p>
+<p>lit_only(2026-09-04 新增):<b>去除附著陰影(attached shadow)後求解</b>。模型的 max(·, 0) 是非線性的,把 N·L &lt; 0 的觀測(真值為 0)直接放進線性最小平方會使解產生偏差 ―― 實測:在既無陰影也無 AO 的球上中位數為 <b>9°</b>,只用點亮的光源求解則為 <b>0.000°</b>。預設為 False(不改變以往行為)。設為 True 時對每個像素只用 <code style="color:#22d3bf">I &gt; lit_thresh</code> 的光源重新求解。<b>把點亮模式相同的像素歸為一組</b>, 以 1 次偽逆處理,因此額外成本大致只與光源數對應的模式數成正比(6 燈時最多 64 組)。點亮光源少於 3 個的像素退回全光源的解(fail-open:</p>
+<p>與其把無法求解的像素設為 NaN,不如保留即使有偏差的值,這樣下游的積分不會崩壞)。</p>
+<p>lit_thresh:視為「點亮」的輝度下限。應設在拍攝雜訊之上。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -5,19 +5,18 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">images</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">fringe.synthesize_fringes</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>알려진 height map 으로부터 N-step 위상 이동 프린지 이미지 열을 합성합니다(테스트/샘플 생성용).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>モデル: 総位相 φ(x,y) = φ_carrier + phase_gain·height。搬送波 φ_carrier は視野を横切る線形ランプ(freq 周期)。各フレームは I_n = bias + amplitude·cos(φ - δ_n), δ_n = 2πn/N。この符号規約により wrapped_phase(...) は総位相 φ をそのまま復元する。</p>
-<p>height:      2D 配列(計測対象の高さ場、任意単位)。</p>
-<p>n_steps:     位相シフト枚数 N(&gt;=3)。</p>
-<p>freq:        視野幅を横切る搬送波の周期数(縞本数)。0 なら搬送波なし(height のみ)。</p>
-<p>phase_gain:  高さ→位相の変換ゲイン(rad/単位)。復号側の較正 k = 1/phase_gain に対応。</p>
-<p>bias:        平均輝度 a(既定 0.5)。</p>
-<p>amplitude:   縞振幅 b(既定 0.5)。bias±amplitude が [0,1] に収まると自然。</p>
-<p>axis:        搬送波の方向(1 = 列方向 x に沿う既定、0 = 行方向 y)。</p>
-<p>noise:       付加ガウスノイズの標準偏差(0 で無ノイズ)。</p>
-<p>seed:        ノイズ用乱数シード。</p>
-<p>return_phase: True なら (images, total_phase) を返す(テスト・デバッグ用)。</p>
-<p>返り値: (N, H, W) float 配列(値域 [0,1] にクリップ)。return_phase=True なら位相も。</p>
+<p>모델: 총 위상 φ(x,y) = φ_carrier + phase_gain·height. 반송파 φ_carrier는 시야를 가로지르는 선형램프(freq 주기). 각 프레임은 I_n = bias + amplitude·cos(φ - δ_n), δ_n = 2πn/N. 이 부호 규약에 의해 wrapped_phase(...)는 총 위상 φ를 그대로 복원한다.</p>
+<p>height:      2D 배열(계측 대상의 높이장, 임의 단위).</p>
+<p>n_steps:     위상 시프트 장수 N(&gt;=3).</p>
+<p>freq:        시야 폭을 가로지르는 반송파의 주기 수(줄무늬 개수). 0이면 반송파 없음(height만).</p>
+<p>phase_gain:  높이→위상의 변환 게인(rad/단위). 복호 측의 캘리브레이션 k = 1/phase_gain에 대응.</p>
+<p>bias:        평균 휘도 a(기본값 0.5).</p>
+<p>amplitude:   줄무늬 진폭 b(기본값 0.5). bias±amplitude가 [0,1]에 들어가면 자연스럽다.</p>
+<p>axis:        반송파의 방향(1 = 열 방향 x를 따르는 기본값, 0 = 행 방향 y).</p>
+<p>noise:       부가 가우스 잡음의 표준편차(0이면 무잡음).</p>
+<p>seed:        잡음용 난수 시드.</p>
+<p>return_phase: True이면 (images, total_phase)를 반환한다(테스트·디버그용).</p>
+<p>반환값: (N, H, W) float 배열(값 범위 [0,1]로 클립). return_phase=True이면 위상도.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

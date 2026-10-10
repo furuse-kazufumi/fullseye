@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graycode_decode(bit_images, thresh=0.5) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import fringe; fringe.graycode_decode(bit_images, thresh=0.5) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;graycode_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Serie von Gray-Code-Bitbildern → eine ganzzahlige Streifenordnungskarte (die absolute Ordnung).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>bit_images: 長さ K のシーケンス(各 2D 画像、明=1 / 暗=0)。<b>MSB first</b>(bit_images[0] が</p>
-<p>最上位ビット)。thresh で二値化する。</p>
-<p>thresh:     二値化しきい値(画素値 &gt;= thresh を 1)。</p>
-<p>処理: 各ビット面を二値化 → MSB first で Gray 値を組み立て → Gray→binary 変換</p>
-<p>(binary = gray ^ (gray&gt;&gt;1) ^ ... ^ (gray&gt;&gt;(K-1)))で絶対次数(整数)を返す。</p>
-<p>返り値: dtype int64 の 2D 次数マップ(値域 0..2**K-1)。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): <code style="color:#22d3bf">None</code> / <code style="color:#22d3bf">(K, H, W)</code> に変換できない / <code style="color:#22d3bf">K &lt; 1</code> / <code style="color:#22d3bf">K &gt; 62</code>(int64 に収まらない) / NaN・Inf を含む。<code style="color:#22d3bf">thresh</code> は検査しない(画素値と同じスケールで与える。<code style="color:#22d3bf">[0, 1]</code> 画像なら 0.5 が既定)。</p>
-<p>二値化は固定閾値 <code style="color:#22d3bf">&gt;= thresh</code> のみ — 反転パターン(ネガ画像)との比較や局所閾値は行わない。影・低反射で暗く出た画素は 0 ビットとして復号され、エラーにならず誤った次数になるので、<code style="color:#22d3bf">modulation</code> などで作った信頼マスクを呼び手が別に持つこと。</p>
-<p>次数の意味: Gray 符号は隣接コードが 1 ビットしか違わないので、境界画素の二値化誤りは次数を ±1 しかずらさない(binary 符号なら大きく飛ぶ)。返る整数を投影機コラム番号や縞の絶対次数として、<code style="color:#22d3bf">absolute_phase</code> の <code style="color:#22d3bf">coarse</code> (<code style="color:#22d3bf">2π * 次数</code> を位相に換算)や <code style="color:#22d3bf">triangulate_column</code> の <code style="color:#22d3bf">column</code> に使う。</p>
+<p>bit_images: Sequenz der Länge K (jeweils ein 2D-Bild, hell=1 / dunkel=0). <b>MSB first</b> (bit_images[0] ist</p>
+<p>das höchstwertige Bit). Mit thresh binarisiert.</p>
+<p>thresh:     Binarisierungsschwellwert (Pixelwert &gt;= thresh ergibt 1).</p>
+<p>Verarbeitung: jede Bitebene binarisieren → Gray-Wert MSB first zusammensetzen → Gray→binary-Umwandlung</p>
+<p>(binary = gray ^ (gray&gt;&gt;1) ^ ... ^ (gray&gt;&gt;(K-1))), zurückgegeben wird die absolute Ordnung (ganze Zahl).</p>
+<p>Rückgabewert: 2D-Ordnungskarte vom dtype int64 (Wertebereich 0..2**K-1).</p>
+<p>Prüfung (<code style="color:#22d3bf">ValueError</code>): <code style="color:#22d3bf">None</code> / nicht in <code style="color:#22d3bf">(K, H, W)</code> umwandelbar / <code style="color:#22d3bf">K &lt; 1</code> / <code style="color:#22d3bf">K &gt; 62</code> (passt nicht in int64) / enthält NaN oder Inf. <code style="color:#22d3bf">thresh</code> wird nicht geprüft (auf derselben Skala wie die Pixelwerte angeben; für ein <code style="color:#22d3bf">[0, 1]</code>-Bild ist 0.5 der Standard).</p>
+<p>Binarisiert wird nur mit dem festen Schwellwert <code style="color:#22d3bf">&gt;= thresh</code> -- kein Vergleich mit einem invertierten Muster (Negativbild) und kein lokaler Schwellwert. Pixel, die wegen Schatten oder geringer Reflexion dunkel ausfallen, werden als 0-Bits dekodiert und ergeben ohne Fehler eine falsche Ordnung; daher sollte der Aufrufer eine mit <code style="color:#22d3bf">modulation</code> o. Ä. erzeugte Vertrauensmaske separat bereithalten.</p>
+<p>Bedeutung der Ordnung: benachbarte Gray-Codes unterscheiden sich in nur 1 Bit, daher verschiebt ein Binarisierungsfehler an einem Grenzpixel die Ordnung nur um ±1 (bei einem Binärcode würde sie weit springen). Die zurückgegebene ganze Zahl als Projektorspaltennummer oder absolute Streifenordnung für <code style="color:#22d3bf">coarse</code> von <code style="color:#22d3bf">absolute_phase</code> (als <code style="color:#22d3bf">2π * Ordnung</code> in Phase umgerechnet) oder für <code style="color:#22d3bf">column</code> von <code style="color:#22d3bf">triangulate_column</code> verwenden.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

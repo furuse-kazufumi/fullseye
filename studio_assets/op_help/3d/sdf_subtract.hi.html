@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_subtract(a, b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_subtract(a, b)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sdf_subtract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>difference A\B = max(a, -b) (A के अंदर और B के बाहर = <code style="color:#22d3bf">-b</code> के अंदर)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">b</code> の符号反転は「B の外を内、B の内を外」に反転する(相補集合)ので、A との積が A から B をくり抜いた形になる。非可換: <code style="color:#22d3bf">sdf_subtract(a,b) != sdf_subtract(b,a)</code>。</p>
-<p>計算: <code style="color:#22d3bf">np.maximum(np.asarray(a, float64), -np.asarray(b, float64))</code>。<code style="color:#22d3bf">sdf_intersect(a, -b)</code> と同じ。shape はブロードキャスト整合が必要(不整合なら numpy の <code style="color:#22d3bf">ValueError</code>)で、それ以外の検査はしない。NaN は伝播、<code style="color:#22d3bf">±inf</code> も厳密に伝播する(<code style="color:#22d3bf">b = +inf</code> の点は <code style="color:#22d3bf">-b = -inf</code> なので <code style="color:#22d3bf">a</code> がそのまま残る = 「B が無限に遠い」点は A のまま)。</p>
-<p>入力: 同一グリッド上の 2 つの SDF(内側負・外側正)。<code style="color:#22d3bf">a</code> が残す形、<code style="color:#22d3bf">b</code> がくり抜く形。距離の単位は入力と同じ。</p>
-<p>返り値: ブロードキャスト後の shape の float64。<code style="color:#22d3bf">&lt;= 0</code> が A\B の占有。</p>
-<p>注意:</p>
-<p style="margin:2px 0 2px 12px">• B の内側で値は <code style="color:#22d3bf">-b &gt; 0</code>(B の表面までの距離)になるので、くり抜いた穴の内壁までの距離は外側では厳密、A の内側では下界(CSG の標準的性質)。</p>
-<p style="margin:2px 0 2px 12px">• B が A を完全に含むと全要素が正(空集合)。エラーにはならない。</p>
-<p style="margin:2px 0 2px 12px">• 穴あけ・ポケット加工・殻(<code style="color:#22d3bf">a</code> と <code style="color:#22d3bf">sdf_offset(a, -t)</code> の差で厚さ <code style="color:#22d3bf">t</code> の殻)に使う。</p>
+<p><code style="color:#22d3bf">b</code> का sign उलटने से &quot;B का बाहर अंदर और B का अंदर बाहर&quot; हो जाता है (complement), इसलिए A के साथ इसका गुणनफल A में से B को खोखला करके निकाला गया आकार बनता है। non-commutative: <code style="color:#22d3bf">sdf_subtract(a,b) != sdf_subtract(b,a)</code>।</p>
+<p>गणना: <code style="color:#22d3bf">np.maximum(np.asarray(a, float64), -np.asarray(b, float64))</code>। <code style="color:#22d3bf">sdf_intersect(a, -b)</code> के समान। shape का broadcast-संगत होना ज़रूरी है (असंगत हो तो numpy का <code style="color:#22d3bf">ValueError</code>), इसके अलावा कोई जाँच नहीं। NaN propagate होता है, <code style="color:#22d3bf">±inf</code> भी exact रूप से propagate होता है (<code style="color:#22d3bf">b = +inf</code> वाले point पर <code style="color:#22d3bf">-b = -inf</code> है, इसलिए <code style="color:#22d3bf">a</code> जैसा है वैसा रहता है = &quot;B अनंत दूर है&quot; वाला point A ही रहता है)।</p>
+<p>Input: एक ही grid पर 2 SDF (अंदर negative, बाहर positive)। <code style="color:#22d3bf">a</code> रखा जाने वाला आकार, <code style="color:#22d3bf">b</code> खोखला करके निकाला जाने वाला आकार। दूरी की unit input जैसी ही।</p>
+<p>Return value: broadcast के बाद के shape का float64। <code style="color:#22d3bf">&lt;= 0</code> A\B की occupancy है।</p>
+<p>ध्यान दें:</p>
+<p style="margin:2px 0 2px 12px">• B के अंदर मान <code style="color:#22d3bf">-b &gt; 0</code> (B की surface तक की दूरी) होता है, इसलिए खोखले किए गए छेद की अंदरूनी दीवार तक की दूरी बाहर exact है और A के अंदर lower bound (CSG का मानक गुण)।</p>
+<p style="margin:2px 0 2px 12px">• B यदि A को पूरी तरह घेर ले तो सभी elements positive (खाली set)। यह error नहीं है।</p>
+<p style="margin:2px 0 2px 12px">• drilling, pocket machining और shell (<code style="color:#22d3bf">a</code> और <code style="color:#22d3bf">sdf_offset(a, -t)</code> के अंतर से मोटाई <code style="color:#22d3bf">t</code> का shell) के लिए उपयोग होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

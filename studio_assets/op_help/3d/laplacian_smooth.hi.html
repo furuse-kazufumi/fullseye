@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.laplacian_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.5) -&gt; &#x27;Mesh&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mesh_smooth; mesh_smooth.laplacian_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.5) -&gt; &#x27;Mesh&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;laplacian_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>umbrella Laplacian से triangle mesh smoothing। → (verts, faces)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各反復で全頂点を <code style="color:#22d3bf">v_i += lam * (mean(隣接 v_j) - v_i)</code> と更新する。高周波ノイズを確実に減らす一方、閉曲面では平均曲率流と同様に <b>内側へ収縮(shrinkage)</b> する(球は反復とともに縮む)。収縮を避けたい場合は <code style="color:#22d3bf">taubin_smooth</code> を使う。</p>
+<p>हर iteration में सभी vertices को <code style="color:#22d3bf">v_i += lam * (mean(隣接 v_j) - v_i)</code> से update किया जाता है। यह high-frequency noise को भरोसेमंद ढंग से घटाता है, पर closed surface पर mean curvature flow की तरह <b>अंदर की ओर सिकुड़ता (shrinkage) है</b> (sphere iterations के साथ छोटा होता जाता है)। shrinkage से बचना हो तो <code style="color:#22d3bf">taubin_smooth</code> का उपयोग करें।</p>
 <p>Args:</p>
-<p>mesh: (verts (N,3), faces (M,3)[, ...]) のシーケンス。faces は不変。</p>
-<p>iters: 反復回数(正の整数)。</p>
-<p>lam: 各段の寄せ率、<code style="color:#22d3bf">0 &lt; lam &lt;= 1</code>(1 で隣接平均へ全寄せ)。</p>
+<p>mesh: (verts (N,3), faces (M,3)[, ...]) का sequence। faces नहीं बदलते।</p>
+<p>iters: iterations की संख्या (positive integer)।</p>
+<p>lam: हर चरण का खिंचाव अनुपात, <code style="color:#22d3bf">0 &lt; lam &lt;= 1</code> (1 पर पड़ोसियों के औसत तक पूरा खिंचाव)।</p>
 <p>Returns:</p>
-<p>(verts (N,3) float64, faces (M,3) int64)。faces は入力を保持。</p>
+<p>(verts (N,3) float64, faces (M,3) int64)। faces input से ही रखे जाते हैं।</p>
 <p>Raises:</p>
-<p>ValueError: メッシュ形状不正・面範囲外・iters/lam が不正(fail-closed)。</p>
+<p>ValueError: mesh का shape अमान्य, face index सीमा से बाहर, या iters/lam अमान्य (fail-closed)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

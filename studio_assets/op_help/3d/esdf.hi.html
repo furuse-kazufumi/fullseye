@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.esdf(occupancy, voxel_size=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import occupancy; occupancy.esdf(occupancy, voxel_size=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;esdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>occupancy grid → Euclidean signed distance field (ESDF) (बाहर=+ निकटतम occupied तक, अंदर=- निकटतम free तक)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code> を自由側(外)と占有側(内)に別々にかけ、<code style="color:#22d3bf">d_out - d_in</code> で符号を付ける。<code style="color:#22d3bf">voxel_size</code> はボクセル辺長(等方スカラ or 異方長さ3。EDT の <code style="color:#22d3bf">sampling</code> に渡す)で、返る距離は world 単位。全自由なら +inf、全占有なら -inf(honest: 最近対辺が存在しない)。ゼロ交差は占有/自由ボクセル<b>中心の中間</b>に落ちるため、境界セル中心の |ESDF| は約 1 ボクセル(下流テストの許容根拠)。</p>
-<p>Raises ValueError for voxel_size&lt;=0.</p>
+<p><code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code> को free side (बाहर) और occupied side (अंदर) पर अलग-अलग लगाता है, और <code style="color:#22d3bf">d_out - d_in</code> से sign देता है। <code style="color:#22d3bf">voxel_size</code> voxel की edge length है (isotropic scalar या anisotropic लंबाई 3; EDT के <code style="color:#22d3bf">sampling</code> को दिया जाता है), और लौटाई गई दूरियाँ world इकाई में हैं। सब free हो तो +inf, सब occupied हो तो -inf (ईमानदारी से: सबसे नज़दीकी विपरीत पक्ष मौजूद ही नहीं)। Zero crossing occupied/free voxels के <b>centres के बीच</b> में पड़ता है, इसलिए boundary cell के centre पर |ESDF| लगभग 1 voxel होता है (downstream tests की tolerance का आधार)।</p>
+<p>voxel_size&lt;=0 पर ValueError उठाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

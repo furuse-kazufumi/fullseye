@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.principal_curvatures(points, k=25, normals=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import curvature3d; curvature3d.principal_curvatures(points, k=25, normals=None)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;principal_curvatures&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>各點的主曲率 (k1&gt;=k2)。→ (k1 (N,), k2 (N,))。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は凸側マグニチュード(開面の凹/凸符号は不定)。向き付き法線を渡すと大域向きに整合し正しい符号(凹=負, 凸=正)。</p>
-<p>手順(各点、Python ループ):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cKDTree</code> で自身を含む k+1 近傍を取る(k は N-1 に切り詰め)。近傍が 5 点未満なら <code style="color:#22d3bf">k1 = k2 = 0</code> を返す(5 係数の二次曲面が組めないため)。</p>
-<p style="margin:2px 0 2px 12px">• 近傍座標をクエリ点原点に平行移動し、<code style="color:#22d3bf">local.T @ local</code> の最小固有ベクトルを法線とする(向きは <code style="color:#22d3bf">normals</code> があればそれに整合、無ければ近傍重心から離れる側)。</p>
-<p style="margin:2px 0 2px 12px">• 接線基底 (t1, t2) に射影し <code style="color:#22d3bf">w = d·u + e·v + a·u² + b·uv + c·v²</code> を最小二乗フィット → 第一/第二基本形式から shape operator の固有値を取り、凸を正にして <code style="color:#22d3bf">k1 &gt;= k2</code> に並べる。</p>
-<p style="margin:2px 0 2px 12px">• 単位は 1/長さ(点群の単位に依存)。半径 R の球なら <code style="color:#22d3bf">k1 = k2 = 1/R</code>、円柱は <code style="color:#22d3bf">(1/R, 0)</code>、平面は 0。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> は近傍点数(既定 25)。大きいほど平滑で曲率は低め、小さいほどノイズを拾う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行が必須(<code style="color:#22d3bf">ValueError</code>)。決定論的。</p>
-<p style="margin:2px 0 2px 12px">• 後段: <code style="color:#22d3bf">mean_curvature</code> / <code style="color:#22d3bf">gaussian_curvature</code> / <code style="color:#22d3bf">shape_index</code>(いずれも内部で同じ計算を繰り返す)。shape index と曲がりの対が要るなら 2 本を <code style="color:#22d3bf">(N,2)</code> に並べて <code style="color:#22d3bf">curvature_to_shape_index</code>。</p>
+<p>未指定 normals(有向參考法線，(N,3))時為凸側幅值(開放曲面的凹/凸正負號不定)。傳入有向法線則與全域方向一致，得到正確的正負號(凹=負，凸=正)。</p>
+<p>步驟(每個點，Python 迴圈)：</p>
+<p style="margin:2px 0 2px 12px">• 以 <code style="color:#22d3bf">cKDTree</code> 取包含自身的 k+1 個鄰域點(k 截斷為 N-1)。鄰域少於 5 個點時回傳 <code style="color:#22d3bf">k1 = k2 = 0</code>(因為無法建構 5 係數的二次曲面)。</p>
+<p style="margin:2px 0 2px 12px">• 把鄰域座標平移到以查詢點為原點，取 <code style="color:#22d3bf">local.T @ local</code> 的最小特徵向量作為法線(若有 <code style="color:#22d3bf">normals</code> 則方向與之一致，否則取遠離鄰域質心的一側)。</p>
+<p style="margin:2px 0 2px 12px">• 投影到切線基底 (t1, t2) 上，對 <code style="color:#22d3bf">w = d·u + e·v + a·u² + b·uv + c·v²</code> 做最小平方擬合 → 由第一/第二基本形式求 shape operator 的特徵值，使凸為正，並依 <code style="color:#22d3bf">k1 &gt;= k2</code> 排列。</p>
+<p style="margin:2px 0 2px 12px">• 單位為 1/長度(取決於點雲的單位)。半徑 R 的球為 <code style="color:#22d3bf">k1 = k2 = 1/R</code>，圓柱為 <code style="color:#22d3bf">(1/R, 0)</code>，平面為 0。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> 是鄰域點數(預設 25)。越大越平滑、曲率偏低，越小越容易拾取雜訊。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> 必須為 (N,3)，有限且列非零(<code style="color:#22d3bf">ValueError</code>)。決定性。</p>
+<p style="margin:2px 0 2px 12px">• 後續：<code style="color:#22d3bf">mean_curvature</code> / <code style="color:#22d3bf">gaussian_curvature</code> / <code style="color:#22d3bf">shape_index</code>(皆在內部重複同樣的計算)。需要 shape index 與彎曲度這一對時，把 2 個並排成 <code style="color:#22d3bf">(N,2)</code> 用 <code style="color:#22d3bf">curvature_to_shape_index</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

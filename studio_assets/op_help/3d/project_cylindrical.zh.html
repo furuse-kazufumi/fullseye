@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project_cylindrical(points, h_res: &#x27;int&#x27; = 1024, z_bins: &#x27;int&#x27; = 64, z_range=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import spherical_proj; spherical_proj.project_cylindrical(points, h_res: &#x27;int&#x27; = 1024, z_bins: &#x27;int&#x27; = 64, z_range=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;project_cylindrical&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>投影到圆柱距离图像 (z_bins, h_res)。方位角(列)× z(行),像素=水平半径 ρ=hypot(x,y)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>球面投影が仰角で層を切るのに対し、円柱投影は<b>高さ z を等間隔に切る</b>(壁/柱/回廊の展開に向く)。画素値は z 軸からの水平距離 ρ(円柱上の点が一定になる自然な不変量)。空セル=0, 近い点優先(最小 ρ)。z_range=(z_min,z_max) 未指定なら点群の [z.min, z.max] を採用。z 幅ゼロは fail-closed(ValueError)。行 0 = 上端(z=z_max)。z_range 外、z 軸上(ρ=0)、非有限座標の点は落とす。</p>
+<p>球面投影按仰角切层，而圆柱投影<b>按等间隔切分高度 z</b>(适合展开墙/柱/走廊)。像素值为到 z 轴的水平距离 ρ(圆柱上的点保持恒定的自然不变量)。空单元=0，近点优先(最小 ρ)。未指定 z_range=(z_min,z_max) 时采用点云的 [z.min, z.max]。z 宽度为零时 fail-closed(失败即拒绝)(ValueError)。行 0 = 上端(z=z_max)。z_range 之外、位于 z 轴上(ρ=0)、坐标非有限的点被丢弃。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.registration_recall(source, target, gt_transform, est_transform, thresh: &#x27;float&#x27;, *, corr_thresh: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import registration_eval; registration_eval.registration_recall(source, target, gt_transform, est_transform, thresh: &#x27;float&#x27;, *, corr_thresh: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;registration_recall&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3DMatch 류의 per-pair 정합 성패 = 1.0(성공) / 0.0(실패).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>GT 変換 <code style="color:#22d3bf">gt_transform</code> で source を target フレームへ写し、target 側の最近傍(距離 &lt; <code style="color:#22d3bf">corr_thresh</code>、既定は thresh)を GT 対応(=重なり)として張る。その対応を <b>推定変換</b> <code style="color:#22d3bf">est_transform</code> で写した RMSE が <code style="color:#22d3bf">thresh</code> を切れば成功。</p>
-<p><code style="color:#22d3bf">source</code>/<code style="color:#22d3bf">target</code> は index 対応でなくてよい(対応は GT から張るため target の並びに依存しない)。GT 重なりが 1 点も無ければ成否は未定義 → <code style="color:#22d3bf">nan</code>(honest)。データセット全体の Registration Recall はこの per-pair 指標(重なり有ペア上)の平均。形状不正は ValueError(fail-closed)。</p>
+<p>GT 변환 <code style="color:#22d3bf">gt_transform</code> 으로 source 를 target 프레임으로 옮기고, target 쪽의 최근접(거리 &lt; <code style="color:#22d3bf">corr_thresh</code>, 기본값은 thresh)을 GT 대응(=겹침)으로 잇는다. 그대응을 <b>추정 변환</b> <code style="color:#22d3bf">est_transform</code> 으로 옮긴 RMSE 가 <code style="color:#22d3bf">thresh</code> 를 밑돌면 성공.</p>
+<p><code style="color:#22d3bf">source</code>/<code style="color:#22d3bf">target</code> 은 index 대응이 아니어도 된다(대응은 GT 에서 잇기 때문에 target 의순서에 의존하지 않는다). GT 겹침이 1 점도 없으면 성패는 정의되지 않음 → <code style="color:#22d3bf">nan</code>(honest). 데이터셋 전체의 Registration Recall 은 이 per-pair 지표(겹침이 있는 쌍 위)의 평균. 형상이 잘못되면 ValueError(fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

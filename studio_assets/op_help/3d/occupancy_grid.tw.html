@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occupancy_grid(points, bounds, res)</code>(要直接呼叫實作,<code style="color:#22d3bf">import occupancy; occupancy.occupancy_grid(points, bounds, res)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;occupancy_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點雲 (N,3) → 三維佔據體素柵格,bool(點落入的體素記為佔據)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> が格子の張る体積、<code style="color:#22d3bf">res</code> は各軸のボクセル数(スカラ = 立方 res³、または長さ 3 の軸ごと)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、上端 (frac==1) の点は最終ボクセルに含める。<b>bounds 外の点は落とす</b>(端セルへ clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float) を作るのに対し、これは planning 用の占有(bool)を作る点が固有。</p>
-<p>Raises ValueError for res&lt;=0, non-(N,3) points, or degenerate bounds.</p>
+<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> 是網格張成的體積,<code style="color:#22d3bf">res</code> 是各軸的體素數(純量 = 立方 res³,或長度 3 的逐軸值)。體素為半開區間 [lo+i/res*span, lo+(i+1)/res*span), 上端 (frac==1) 的點歸入最後一個體素。<b>bounds 之外的點被捨棄</b>(若 clamp 到邊緣單元, 邊界上會堆積虛假障礙物)。match3d.points_to_voxel 產生密度(float), 而本函式產生用於 planning 的佔據(bool),這是其特有之處。</p>
+<p>res&lt;=0、points 不是 (N,3) 或 bounds 退化時拋出 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

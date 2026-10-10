@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import normals_orient; normals_orient.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;orient_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Hoppe method से normals को <b>global रूप से एकरूप</b> orient करता है (MST propagation)। → (N,3)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>kNN グラフ上に重み <code style="color:#22d3bf">1 - |n_i·n_j|</code>(接平面が揃うほど安い)の最小全域木を張り、種から木を BFS しながら親と符号が逆の子を反転させて成分を内部一貫にする。種は <code style="color:#22d3bf">seed_dir</code> 指定時はその向きに最も突き出た点、未指定時は<b>最外点</b>(重心から最遠)。グラフが分断されていれば連結成分ごとに独立に種を取り伝播する(成分間の相対向きは未保証)。</p>
-<p><code style="color:#22d3bf">seed_dir</code> を渡した場合、伝播で内部一貫化した後に<b>成分全点の射影を集約</b>して大域符号を <code style="color:#22d3bf">seed_dir</code> に整合する(単一 seed の <code style="color:#22d3bf">|cos|</code> に依存しないので、seed 点の法線が <code style="color:#22d3bf">seed_dir</code> と近直交でも符号は確実に決まる — finding [5])。<code style="color:#22d3bf">seed_dir</code> が成分の全法線と(ほぼ)直交して符号を決められない真の退化は fail-closed(<code style="color:#22d3bf">ValueError</code>)。閉曲面(球など)で <code style="color:#22d3bf">seed_dir</code> が平均的に法線と直交する場合は大域符号が一意でないため、最突出点(=外向き)基準の向き付けを保持する。<code style="color:#22d3bf">seed_dir</code> 未指定時は重心から外向き。</p>
+<p>kNN graph पर weight <code style="color:#22d3bf">1 - |n_i·n_j|</code> (tangent planes जितने संरेखित, उतना सस्ता) वाला minimum spanning tree बनाता है, और seed से tree पर BFS करते हुए parent से उल्टे sign वाले children को पलटकर हर component को आंतरिक रूप से consistent बनाता है। Seed <code style="color:#22d3bf">seed_dir</code> दिए जाने पर उस दिशा में सबसे अधिक बाहर निकला point है, और न दिए जाने पर <b>सबसे बाहरी point</b> (centroid से सबसे दूर)। Graph कटा हुआ हो तो हर connected component के लिए स्वतंत्र रूप से seed लेकर propagate करता है (components के बीच relative दिशा की गारंटी नहीं)।</p>
+<p><code style="color:#22d3bf">seed_dir</code> देने पर, propagation से आंतरिक consistency के बाद <b>component के सभी points के projections को एकत्र</b> करके global sign को <code style="color:#22d3bf">seed_dir</code> से संगत करता है (एक seed के <code style="color:#22d3bf">|cos|</code> पर निर्भर नहीं होता, इसलिए seed point का normal <code style="color:#22d3bf">seed_dir</code> से लगभग orthogonal हो तब भी sign पक्के तौर पर तय होता है — finding [5])। <code style="color:#22d3bf">seed_dir</code> component के सभी normals से (लगभग) orthogonal हो और sign तय न हो सके, ऐसा सच्चा degenerate case fail-closed है (<code style="color:#22d3bf">ValueError</code>)। बंद सतहों (गोला आदि) पर जहाँ <code style="color:#22d3bf">seed_dir</code> औसतन normals से orthogonal हो, global sign अद्वितीय नहीं होता, इसलिए सबसे बाहर निकले point (= बाहर की ओर) पर आधारित दिशा बनाए रखता है। <code style="color:#22d3bf">seed_dir</code> न देने पर centroid से बाहर की ओर।</p>
 <p>Args:</p>
-<p>points: (N,3) の点群。</p>
-<p>normals: (N,3) の向き未定法線(内部で単位化)。</p>
-<p>k: kNN グラフの近傍数。</p>
-<p>seed_dir: 大域基準向き (3,)。None なら重心から外向きを基準にする。</p>
+<p>points: (N,3) point cloud।</p>
+<p>normals: (N,3) अनिर्धारित दिशा वाले normals (अंदर unit length में normalise किए जाते हैं)।</p>
+<p>k: kNN graph के neighbours की संख्या।</p>
+<p>seed_dir: global reference दिशा (3,)। None होने पर centroid से बाहर की ओर को reference माना जाता है।</p>
 <p>Returns:</p>
-<p>符号を大域一貫にそろえた (N,3) 単位法線。</p>
+<p>global रूप से consistent sign वाले (N,3) unit normals।</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">seed_dir</code> がゼロ、または(ある連結成分で)全法線と直交して</p>
-<p>大域符号を制御できないとき(fail-closed)。</p>
+<p>ValueError: जब <code style="color:#22d3bf">seed_dir</code> शून्य हो, या (किसी connected component में) सभी normals से orthogonal हो और</p>
+<p>global sign नियंत्रित न किया जा सके (fail-closed)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

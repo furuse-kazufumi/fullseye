@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_point_plane(p, plane_pt, n)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.distance_point_plane(p, plane_pt, n)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;distance_point_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点-平面距离(无符号)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">|(p − plane_pt)·n̂|</code> を float で返す(<code style="color:#22d3bf">n</code> は内部で単位化)。符号は捨てるので、面のどちら側かが要るなら <code style="color:#22d3bf">(p − plane_pt) @ n̂</code> を直接計算する。<code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">plane_pt</code>, <code style="color:#22d3bf">n</code> は数値の 2 または 3 ベクトル、次元の混在は ValueError。2-D では <code style="color:#22d3bf">n</code> を直線の法線として点-直線距離になる。零ベクトルの <code style="color:#22d3bf">n</code> は 0 を返す。単位は入力座標の単位。</p>
-<p>用途: <code style="color:#22d3bf">fit_plane_3d</code> / <code style="color:#22d3bf">hough_plane_3d</code> の面からの高さ、<code style="color:#22d3bf">surface_form_error</code> の点群版(残差を 1 点ずつ)。</p>
+<p>以 float 返回 <code style="color:#22d3bf">|(p − plane_pt)·n̂|</code>(<code style="color:#22d3bf">n</code> 在内部单位化)。符号被丢弃,因此若需要知道在面的哪一侧, 请直接计算 <code style="color:#22d3bf">(p − plane_pt) @ n̂</code>。<code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">plane_pt</code>, <code style="color:#22d3bf">n</code> 为数值的 2 或 3 维向量,维度混用则 ValueError。在 2-D 中 <code style="color:#22d3bf">n</code> 作为直线的法线,结果为点到直线的距离。零向量的 <code style="color:#22d3bf">n</code> 返回 0。单位为输入坐标的单位。</p>
+<p>用途: 距 <code style="color:#22d3bf">fit_plane_3d</code> / <code style="color:#22d3bf">hough_plane_3d</code> 平面的高度,<code style="color:#22d3bf">surface_form_error</code> 的点云版(每次 1 个点给出残差)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

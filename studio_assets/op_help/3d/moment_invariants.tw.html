@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_invariants(points) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import moments3d; moments3d.moment_invariants(points) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;moment_invariants&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對平移+旋轉+縮放不變的形狀特徵向量(Sadjadi–Hall 風格 + 高階徑向分布)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>★入力は <b><code style="color:#22d3bf">(N,3)</code> の点群</b>。2-D の<b>領域</b>(画像)から同じ趣旨の量が欲しいときは、この op ではなく HALCON 流の <code style="color:#22d3bf">moments_region_2nd_invar</code> / <code style="color:#22d3bf">moments_region_central_invar</code> / <code style="color:#22d3bf">moments_region_3rd_invar</code>(Hu モーメント) を使う。名前が似ているので取り違えやすく、<code style="color:#22d3bf">(H,W)</code> を渡すと「points must be a point cloud of shape (N,3)」で落ちる(2026-09-09、<code style="color:#22d3bf">poc_rotation_invariance_audit</code> を書くときに実際に踏んだ)。</p>
-<p>処方:</p>
-<p style="margin:2px 0 2px 12px">1. 重心中心化(並進を除去)。</p>
-<p style="margin:2px 0 2px 12px">2. RMS 半径 R = sqrt(mean‖p-c‖²) で割ってスケール正規化(R→1)。これで正規化後の中心 2 次モーメントは一様スケール s に依らない。</p>
-<p style="margin:2px 0 2px 12px">3. 正規化共分散 C̃ の主不変量(特性多項式の係数)を並べる:</p>
-<p>λ̂1 &gt;= λ̂2 &gt;= λ̂3   … C̃ の固有値(= 正規化した主 2 次モーメント、</p>
-<p>Σλ̂ = 1、回転不変)</p>
-<p>J2 = λ̂1λ̂2 + λ̂1λ̂3 + λ̂2λ̂3   (Sadjadi–Hall 第 2 不変量 = 2×2 主小行列和)</p>
-<p>J3 = λ̂1λ̂2λ̂3               (第 3 不変量 = det C̃)</p>
-<p style="margin:2px 0 2px 12px">4. 正規化 4 次半径モーメント m4 = mean(‖p̂-c‖⁴)(= mean(r⁴)/mean(r²)²)。r = 重心からの距離なので回転+並進不変、RMS 正規化済でスケール不変。</p>
-<p>返すベクトルは [λ̂1, λ̂2, λ̂3, J2, J3, m4] (長さ 6)。第 1 不変量 J1 = Σλ̂ は正規化で常に 1 になり識別に寄与しないため省く。J2,J3 は固有値の対称式(冗長)だが、Sadjadi–Hall の代数不変量シグネチャとの互換のため併記する。</p>
-<p>識別性の内訳(honest):</p>
-<p style="margin:2px 0 2px 12px">• λ̂1,λ̂2,λ̂3(と対称式 J2,J3)は <b>2 次モーメント(共分散固有値)のみ</b> に由来し、独立自由度は主軸アスペクト比の 2 つだけ。これだけでは 2 次が等方な形状(solid cube と solid sphere は共に λ̂≈(1/3,1/3,1/3))を区別できない。</p>
-<p style="margin:2px 0 2px 12px">• m4 は <b>半径分布の 4 次モーメント</b> で、2 次では潰れる高次の形状差を捉える。一様 solid sphere は m4=75/63≈1.190、一様 solid cube は m4=19/15≈1.267 と異なるため、両者を分離できる。</p>
-<p>球なら概ね (1/3, 1/3, 1/3, 1/3, 1/27, 1.190)、細長い棒なら (≈1, ≈0, ≈0, ≈0, ≈0, 大) に近づく。</p>
+<p>★輸入是 <b><code style="color:#22d3bf">(N,3)</code> 的點雲</b>。想從 2-D <b>區域</b>(影像)得到同類量時, 請不要用本 op,而是使用 HALCON 風格的 <code style="color:#22d3bf">moments_region_2nd_invar</code> / <code style="color:#22d3bf">moments_region_central_invar</code> / <code style="color:#22d3bf">moments_region_3rd_invar</code>(Hu 矩)。名稱相似容易混淆,傳入 <code style="color:#22d3bf">(H,W)</code> 時會以 &quot;points must be a point cloud of shape (N,3)&quot; 失敗(2026-09-09,撰寫 <code style="color:#22d3bf">poc_rotation_invariance_audit</code> 時實際踩到)。</p>
+<p>處方:</p>
+<p style="margin:2px 0 2px 12px">1. 質心中心化(去除平移)。</p>
+<p style="margin:2px 0 2px 12px">2. 除以 RMS 半徑 R = sqrt(mean‖p-c‖²) 進行尺度正規化(R→1)。如此正規化後的中心 2 階矩與均勻尺度 s 無關。</p>
+<p style="margin:2px 0 2px 12px">3. 列出正規化共變異數 C̃ 的主不變量(特徵多項式的係數):</p>
+<p>λ̂1 &gt;= λ̂2 &gt;= λ̂3   … C̃ 的特徵值(= 正規化的主 2 階矩,</p>
+<p>Σλ̂ = 1,旋轉不變)</p>
+<p>J2 = λ̂1λ̂2 + λ̂1λ̂3 + λ̂2λ̂3   (Sadjadi–Hall 第 2 不變量 = 2×2 主子式之和)</p>
+<p>J3 = λ̂1λ̂2λ̂3               (第 3 不變量 = det C̃)</p>
+<p style="margin:2px 0 2px 12px">4. 正規化 4 階徑向矩 m4 = mean(‖p̂-c‖⁴)(= mean(r⁴)/mean(r²)²)。r = 到質心的距離,因此旋轉+平移不變,已做 RMS 正規化因此尺度不變。</p>
+<p>回傳的向量為 [λ̂1, λ̂2, λ̂3, J2, J3, m4] (長度 6)。第 1 不變量 J1 = Σλ̂ 經正規化後恆為 1,對識別無貢獻,因此省略。J2,J3 是特徵值的對稱式(冗餘),但為了與 Sadjadi–Hall 代數不變量簽章相容而一併列出。</p>
+<p>識別能力的細分(honest):</p>
+<p style="margin:2px 0 2px 12px">• λ̂1,λ̂2,λ̂3(以及對稱式 J2,J3)來源於<b>僅 2 階矩(共變異數特徵值)</b>, 獨立自由度只有主軸長寬比 2 個。僅憑這些,對於 2 階等向性的形狀(solid cube 與 solid sphere 都是 λ̂≈(1/3,1/3,1/3)) 無法加以區分。</p>
+<p style="margin:2px 0 2px 12px">• m4 是<b>徑向分布的 4 階矩</b>,捕捉在 2 階會被抹平的高階形狀差異。均勻 solid sphere 為 m4=75/63≈1.190,均勻 solid cube 為 m4=19/15≈1.267,兩者不同,因此可以分離。</p>
+<p>球大致為 (1/3, 1/3, 1/3, 1/3, 1/27, 1.190), 細長的棒趨近於 (≈1, ≈0, ≈0, ≈0, ≈0, 大)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (6,)</p>
-<p>並進・回転・スケール不変な特徴ベクトル。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 2。形状不正・非有限・全点一致(中心化後の広がりが 0)は <code style="color:#22d3bf">ValueError</code>。縮退判定はスケール相対(<code style="color:#22d3bf">rms &lt;= 1e-12 × max|centered|</code>)なので、座標が極小なだけの点群は弾かない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は float64 (6,)。<code style="color:#22d3bf">λ̂</code> は 0 でクリップ済み、<code style="color:#22d3bf">Σλ̂ = 1</code>。</p>
-<p style="margin:2px 0 2px 12px">• 不変なのは並進・回転・一様スケールのみ。鏡映(反転)にも不変(固有値と半径分布は反転で変わらない)ので鏡像体は区別できない。非一様スケールや点密度の偏り(サンプリングの粗密)は値を変える。</p>
-<p style="margin:2px 0 2px 12px">• 点密度に敏感な用途では前段で <code style="color:#22d3bf">voxel_grid_downsample</code> で密度を均す。比較は <code style="color:#22d3bf">shape_distance</code>(台帳 op、同じ長さの記述子ベクトル同士の距離)。</p>
+<p>平移、旋轉、尺度不變的特徵向量。</p>
+<p>補充:</p>
+<p style="margin:2px 0 2px 12px">• 輸入為 (N,3),N &gt;= 2。形狀不正確、非有限、所有點重合(中心化後的擴展為 0)時 <code style="color:#22d3bf">ValueError</code>。退化判定是尺度相對的(<code style="color:#22d3bf">rms &lt;= 1e-12 × max|centered|</code>),因此不會拒絕僅僅座標極小的點雲。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值為 float64 (6,)。<code style="color:#22d3bf">λ̂</code> 已在 0 處截斷(clip),<code style="color:#22d3bf">Σλ̂ = 1</code>。</p>
+<p style="margin:2px 0 2px 12px">• 不變的只有平移、旋轉、均勻尺度。對鏡像(翻轉)也不變(特徵值和徑向分布在翻轉下不變),因此無法區分鏡像體。非均勻尺度和點密度的偏差(取樣的疏密)會改變值。</p>
+<p style="margin:2px 0 2px 12px">• 對點密度敏感的用途,請在前級以 <code style="color:#22d3bf">voxel_grid_downsample</code> 均衡密度。比較使用 <code style="color:#22d3bf">shape_distance</code>(台帳 op,相同長度的描述子向量之間的距離)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

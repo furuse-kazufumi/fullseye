@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import twoview; twoview.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;recover_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>대응점 + K 로부터 상대 자세 (R,t) 와 3D 구조를 복원(cheirality 로 유일화). → (R, t_unit, points3d).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>t はスケール不定なので単位ベクトル。points3d は cam1 座標系(|t|=1 に対応するスケール)。</p>
-<p>fail-closed: 平面(共平面 3D)/純回転シーンは本質行列分解の<b>退化配置</b>で、Sampson 残差 ~0 のまま並進方向を誤って返す(見かけは完璧)。そうした入力は姿勢を復元できないため ValueError で明示拒否する(ホモグラフィ分解を使うこと)。<code style="color:#22d3bf">planar_tol</code> はスケール不変な平面度しきい値(<code style="color:#22d3bf">_planar_degeneracy_ratio</code> の戻り値がこれ未満なら退化と判定)。</p>
-<p>手順:</p>
-<p style="margin:2px 0 2px 12px">• 入口検査(8 点以上、点数一致、(N,2) かつ有限)。</p>
-<p style="margin:2px 0 2px 12px">• 平面度: 正規化 DLT でホモグラフィ H を当て、対称転送残差の中央値を両画像の点の広がり(重心からの平均距離の和)で割った比を出す。これが <code style="color:#22d3bf">planar_tol</code>(既定 1e-2)未満なら <code style="color:#22d3bf">ValueError</code>。H が特異なら比 0 として同じく拒否。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">essential_8point</code> → 4 候補 <code style="color:#22d3bf">(R, ±t)</code> へ分解 → 各候補で <code style="color:#22d3bf">triangulate</code> し、両カメラで深度 &gt; 0 の点数が最大の候補を採る(同数なら先の候補)。</p>
-<p>返り値: <code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,) 単位ベクトル、<code style="color:#22d3bf">points3d</code> (N,3)。規約は cam1 = K1[I|0]、cam2 = K2[R|t] で <code style="color:#22d3bf">X2 = R X1 + t</code>。<code style="color:#22d3bf">points3d</code> は cam1 座標系で |t|=1 のスケール。視線が平行な対応は NaN 行になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K2</code> 省略時は <code style="color:#22d3bf">K1</code> を両画像に使う。</p>
-<p style="margin:2px 0 2px 12px">• 外れ値に無防備(RANSAC は行わない)。前段で誤対応を除く。</p>
-<p style="margin:2px 0 2px 12px">• 決定論的。GT 検証は <code style="color:#22d3bf">pose_error</code>、残差は <code style="color:#22d3bf">sampson_distance</code>。</p>
+<p>t는 스케일이 부정이므로 단위 벡터. points3d는 cam1 좌표계(|t|=1에 대응하는 스케일).</p>
+<p>fail-closed: 평면(공면 3D) / 순수 회전 장면은 본질 행렬 분해의 <b>퇴화 배치</b>로, Sampson 잔차 ~0인채로 병진 방향을 잘못 반환한다(겉보기는 완벽). 그런 입력은 자세를 복원할 수 없으므로 ValueError로명시적으로 거부한다(호모그래피 분해를 쓸 것). <code style="color:#22d3bf">planar_tol</code>은 스케일 불변인 평면도 임계값(<code style="color:#22d3bf">_planar_degeneracy_ratio</code>의 반환값이 이 미만이면 퇴화로 판정).</p>
+<p>절차:</p>
+<p style="margin:2px 0 2px 12px">• 입구 검사(8점 이상, 점 수 일치, (N,2)이면서 유한).</p>
+<p style="margin:2px 0 2px 12px">• 평면도: 정규화 DLT로 호모그래피 H를 맞추고, 대칭 전송 잔차의 중앙값을 두 영상의 점의 퍼짐(무게중심으로부터의 평균 거리의 합)으로 나눈 비를 구한다. 이것이 <code style="color:#22d3bf">planar_tol</code>(기본값 1e-2) 미만이면 <code style="color:#22d3bf">ValueError</code>. H가 특이하면 비를 0으로 하여 마찬가지로 거부.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">essential_8point</code> → 4후보 <code style="color:#22d3bf">(R, ±t)</code>로 분해 → 각 후보로 <code style="color:#22d3bf">triangulate</code>하고, 두 카메라에서 깊이 &gt; 0인 점 수가 최대인 후보를 채택한다(같은 수라면 앞의 후보).</p>
+<p>반환값: <code style="color:#22d3bf">R</code> (3,3), <code style="color:#22d3bf">t</code> (3,) 단위 벡터, <code style="color:#22d3bf">points3d</code> (N,3). 규약은 cam1 = K1[I|0], cam2 = K2[R|t]로 <code style="color:#22d3bf">X2 = R X1 + t</code>. <code style="color:#22d3bf">points3d</code>는 cam1 좌표계에서 |t|=1의 스케일. 시선이 평행한 대응은 NaN 행이 된다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K2</code> 생략 시에는 <code style="color:#22d3bf">K1</code>을 두 영상에 쓴다.</p>
+<p style="margin:2px 0 2px 12px">• 이상값에 무방비(RANSAC은 하지 않는다). 전단에서 오대응을 제거한다.</p>
+<p style="margin:2px 0 2px 12px">• 결정론적. GT 검증은 <code style="color:#22d3bf">pose_error</code>, 잔차는 <code style="color:#22d3bf">sampson_distance</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;ransac_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ausreißerrobuste RANSAC-Zylinderanpassung (Punktnormalen erforderlich).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>円筒表面の法線は軸に直交するので、2 点の法線の外積で軸方向を推定 → 軸に直交な平面へ全点を投影 → その平面内で円をフィット → |投影距離 - r| &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化。最終 inlier ではより頑健に軸を再推定(法線群の SVD の最小特異方向 = 軸)し、投影円を最小二乗リフィットする。法線が無ければ呼び出し側で estimate してから渡す。</p>
+<p>Die Normalen einer Zylinderfläche stehen orthogonal zur Achse, daher wird die Achsrichtung aus dem Kreuzprodukt der Normalen von 2 Punkten geschätzt → alle Punkte werden auf die zur Achse orthogonale Ebene projiziert → in dieser Ebene wird ein Kreis gefittet → die Inlier mit |Projektionsabstand - r| &lt; <code style="color:#22d3bf">thresh</code> werden maximiert. Auf den finalen Inliern wird die Achse robuster neu geschätzt (kleinste singuläre Richtung der SVD der Normalen = Achse), und der projizierte Kreis wird per kleinste Quadrate neu angepasst. Fehlen Normalen, schätzen Sie sie aufrufseitig, bevor Sie sie übergeben.</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>normals: (N,3) 各点の(単位)法線。</p>
-<p>thresh: inlier とみなす |投影距離-r| のしきい値。</p>
-<p>iters: RANSAC 反復数。</p>
-<p>seed: 乱数シード(決定論)。</p>
+<p>points: (N,3) Punktwolke.</p>
+<p>normals: (N,3) (Einheits-)Normale jedes Punktes.</p>
+<p>thresh: Schwellwert für |Projektionsabstand-r|, ab dem ein Punkt als Inlier gilt.</p>
+<p>iters: Anzahl der RANSAC-Iterationen.</p>
+<p>seed: Zufalls-Seed (deterministisch).</p>
 <p>Returns:</p>
-<p>(params, inlier_mask, info)。params = {&quot;axis&quot;: (3,) 単位軸, &quot;point&quot;: (3,) 軸上の一点,</p>
-<p>&quot;radius&quot;: float}。info には inlier 数 <code style="color:#22d3bf">n_inliers</code> / 比 <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code>。</p>
+<p>(params, inlier_mask, info). params = {&quot;axis&quot;: (3,) Einheitsachse, &quot;point&quot;: (3,) ein Punkt auf der Achse,</p>
+<p>&quot;radius&quot;: float}. info enthält die Inlier-Anzahl <code style="color:#22d3bf">n_inliers</code> / den Anteil <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

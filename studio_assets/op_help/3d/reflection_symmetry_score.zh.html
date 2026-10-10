@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reflection_symmetry_score(points, plane_point, plane_normal)</code>(要直接调用实现,<code style="color:#22d3bf">import symmetry3d; symmetry3d.reflection_symmetry_score(points, plane_point, plane_normal)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;reflection_symmetry_score&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>反射对称得分 = chamfer(镜像, 原) / 最近邻间距中位数(越小越对称,尺度不变)。→ float。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">reflect_points</code> で点群を平面で鏡映し、元の点群との対称 Chamfer 距離(<code style="color:#22d3bf">chamfer_distance</code>:</p>
-<p>双方向の最近傍距離の平均の平均)を、元の点群の最近傍間隔の中央値で割る。「鏡像が元の点から点間隔の何倍ずれているか」という無次元量なので、座標を定数倍しても値は変わらない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 点群。<code style="color:#22d3bf">plane_point</code> / <code style="color:#22d3bf">plane_normal</code>: 候補平面(法線は内部で正規化)。</p>
-<p style="margin:2px 0 2px 12px">• fail-closed: 点群が空・(N,3) でない(<code style="color:#22d3bf">chamfer_distance</code> が <code style="color:#22d3bf">ValueError</code>)、全点が一致して間隔が定義できない(<code style="color:#22d3bf">ValueError</code>)。重複点で中央値間隔が 0 になる場合だけ、重心からの RMS 半径 × 1e-12 を床にする。</p>
-<p>読み方の注意: 厳密に対称な形でも、鏡像の点が元のサンプル点にぴったり重なるわけではないのでスコアは 0 にならず、点間隔程度が床になる(実測値は <code style="color:#22d3bf">detect_reflection_symmetry</code> の表を参照)。閾値で採否を決めるより、複数候補を掃引して最小値と 2 位との差(<code style="color:#22d3bf">margin</code>)を見る。PCA の 3 軸以外の候補面を試したいときは、この関数を平面パラメータで直接掃引する。</p>
+<p>用 <code style="color:#22d3bf">reflect_points</code> 将点云关于平面做镜像，计算与原点云的对称 Chamfer 距离(<code style="color:#22d3bf">chamfer_distance</code>:</p>
+<p>双向最近邻距离均值的均值)，再除以原点云最近邻间距的中位数。这是“镜像相对原始点偏离了几倍点间距”的无量纲量，因此坐标乘以常数倍后值不变。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>:(N,3) 点云。<code style="color:#22d3bf">plane_point</code> / <code style="color:#22d3bf">plane_normal</code>:候选平面(法线在内部归一化)。</p>
+<p style="margin:2px 0 2px 12px">• fail-closed(失败即拒绝)：点云为空、不是 (N,3)(<code style="color:#22d3bf">chamfer_distance</code> 抛出 <code style="color:#22d3bf">ValueError</code>)、所有点重合导致间距无法定义(<code style="color:#22d3bf">ValueError</code>)。仅当重复点使中位数间距为 0 时，以到质心的 RMS 半径 × 1e-12 作为下限。</p>
+<p>阅读注意：即使是严格对称的形状，镜像点也不会与原始采样点完全重合，因此分数不会为 0，而是以点间距左右为下限(实测值见 <code style="color:#22d3bf">detect_reflection_symmetry</code> 的表)。与其用阈值决定取舍，不如扫掠多个候选，看最小值及其与第 2 名之差(<code style="color:#22d3bf">margin</code>)。想尝试 PCA 3 轴以外的候选面时，直接用平面参数扫掠本函数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

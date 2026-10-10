@@ -6,28 +6,27 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(warped, info, info)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Bring <code style="color:#22d3bf">src</code> toward <code style="color:#22d3bf">dst</code> with non-rigid ICP.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各反復で「現在の変形後 src」から <code style="color:#22d3bf">dst</code> への最近傍対応を張り直し、その対応を制御点対応(制御中心 = 元の src)として TPS を正則化つきで再当てはめし、src を変形する。対応が既知でなくとも滑らかな非線形変形を回復できる。</p>
-<p>実装上の要点(頑健性):</p>
-<p style="margin:2px 0 2px 12px">• <b>スケール不変</b>: λ は dst の重心まわり RMS 半径に対する相対値として扱う(内部で λ_eff = λ·scale)。座標が 100 倍でも同じ λ が同じ挙動を与える。</p>
-<p style="margin:2px 0 2px 12px">• <b>発散ガード</b>: 対応が曖昧だと単純な NN 反復は正のフィードバックで発散し得る。反復ごとの対応 RMS を監視し、<b>最良反復</b>(最小 RMS)の変形とモデルを返す。これにより悪い λ でも「初期より悪い」結果を返さない。</p>
-<p style="margin:2px 0 2px 12px">• λ が大きいほど剛(変形が小さい)。既定 λ=1.0 は保守的(ほぼ剛)なので、大きな非線形変形を回復させたい場合は λ を小さく(例 0.01〜0.05)する。</p>
-<p>引数:</p>
-<p>src: (N,3) 移動側点群。</p>
-<p>dst: (M,3) 固定側(参照)点群。</p>
-<p>iters: 最大反復回数。</p>
-<p>lam: TPS 正則化 λ(スケール相対)。大きいほど変形が滑らか(外れ対応に頑健、</p>
-<p>当てはめは緩い)。小さいほど密着(細かい変形を回復)。</p>
-<p>k_smooth: None なら最近傍1点を目標にする(ハード対応)。整数を与えると</p>
-<p><code style="color:#22d3bf">dst</code> 側の k 近傍の平均を目標にして対応を平滑化する(ノイズに頑健)。</p>
-<p>返り値:</p>
-<p>warped_src: (N,3) 最良反復での変形後 src。</p>
-<p>model: 対応する TPS モデル(制御中心 = 元 src、原座標系でそのまま</p>
-<p><code style="color:#22d3bf">tps_warp</code> に渡せる)。1回も当てはめできなければ None。</p>
-<p>info: dict。&quot;rms&quot;(最良の対応 RMS)、&quot;rms_init&quot;(初期=恒等時の対応 RMS)、</p>
-<p>&quot;rms_history&quot;(list)、&quot;iters&quot;(実反復数)、&quot;best_iter&quot;、&quot;converged&quot;(bool)。</p>
-<p>例外:</p>
-<p>ValueError: 形状不正、点数不足、k_smooth 不正。</p>
+<p>At each iteration, re-establish nearest-neighbour correspondences from &quot;the current warped src&quot; to <code style="color:#22d3bf">dst</code>, use them as control-point correspondences (control centres = the original src) to refit a regularised TPS, and warp src. A smooth nonlinear deformation can be recovered even when correspondences are not known.</p>
+<p>Implementation notes (robustness):</p>
+<p style="margin:2px 0 2px 12px">• <b>Scale invariance</b>: λ is treated as relative to the RMS radius of dst about its centroid (internally λ_eff = λ·scale). Even with coordinates 100 times larger, the same λ gives the same behaviour.</p>
+<p style="margin:2px 0 2px 12px">• <b>Divergence guard</b>: with ambiguous correspondences, plain NN iteration can diverge through positive feedback. The correspondence RMS is monitored per iteration, and the warp and model of the <b>best iteration</b> (minimum RMS) are returned. So even with a bad λ, no result &quot;worse than the initial state&quot; is returned.</p>
+<p style="margin:2px 0 2px 12px">• The larger λ, the more rigid (the smaller the deformation). The default λ=1.0 is conservative (almost rigid), so to recover large nonlinear deformations, make λ small (e.g. 0.01 to 0.05).</p>
+<p>Args:</p>
+<p>src: (N,3) moving point cloud.</p>
+<p>dst: (M,3) fixed (reference) point cloud.</p>
+<p>iters: maximum number of iterations.</p>
+<p>lam: TPS regularisation λ (scale-relative). Larger makes the warp smoother (robust to outlier correspondences,</p>
+<p>looser fit). Smaller fits more tightly (recovers fine deformation).</p>
+<p>k_smooth: if None, the 1 nearest neighbour is the target (hard correspondence). Given an integer, the mean of</p>
+<p>the k nearest neighbours on the <code style="color:#22d3bf">dst</code> side is the target, smoothing the correspondences (robust to noise).</p>
+<p>Returns:</p>
+<p>warped_src: (N,3) warped src at the best iteration.</p>
+<p>model: the corresponding TPS model (control centres = original src; can be passed as-is to</p>
+<p><code style="color:#22d3bf">tps_warp</code> in the original coordinate system). None if not even 1 fit succeeded.</p>
+<p>info: dict. &quot;rms&quot; (best correspondence RMS), &quot;rms_init&quot; (correspondence RMS at the start = identity),</p>
+<p>&quot;rms_history&quot; (list), &quot;iters&quot; (iterations actually run), &quot;best_iter&quot;, &quot;converged&quot; (bool).</p>
+<p>Raises:</p>
+<p>ValueError: invalid shape, too few points, invalid k_smooth.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

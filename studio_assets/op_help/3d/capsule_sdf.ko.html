@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.capsule_sdf(grid, a, b, radius)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sdf_ops; sdf_ops.capsule_sdf(grid, a, b, radius)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;capsule_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선분 <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code>를 반경 <code style="color:#22d3bf">radius</code>로 두껍게 한 캡슐의 <b>엄밀한</b> 부호 거리장.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>。線分への最短距離そのものなので<b>全空間で勾配ノルム 1</b>(円柱と違い端が丸いぶん、角が無く厳密)。リブ・配管・骨・ワイヤ・工具の掃引体積の近似に向く。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code>: 芯線の端点(要素数 3)。<code style="color:#22d3bf">a == b</code> なら球(<code style="color:#22d3bf">sphere_sdf</code> と一致)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 太さ(負は拒否)。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。</p>
-<p>使いどころ: 工具の到達性を「工具の掃引体積が部品と交わらないか」で見るとき、工具をカプセルで置いて <code style="color:#22d3bf">sdf_intersect</code> の最小値が正かを見る。骨梁・血管・繊維の合成にも。</p>
+<p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>. 선분까지의 최단 거리 그 자체이므로 <b>전 공간에서 기울기 노름 1</b>(원기둥과 달리 끝이 둥근 만큼모서리가 없어 엄밀). 리브, 배관, 뼈, 와이어, 공구의 스윕 체적 근사에 적합하다.</p>
+<p>인수와 검증(<code style="color:#22d3bf">ValueError</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 마지막 축이 3 인 float 배열 <code style="color:#22d3bf">(..., 3)</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code>: 심선의 끝점(요소 수 3). <code style="color:#22d3bf">a == b</code> 이면 구(<code style="color:#22d3bf">sphere_sdf</code> 와 일치).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 굵기(음수는 거부).</p>
+<p>반환값: <code style="color:#22d3bf">grid.shape[:-1]</code> 의 float64.</p>
+<p>사용처: 공구의 도달성을 &quot;공구의 스윕 체적이 부품과 교차하지 않는가&quot;로 볼 때, 공구를캡슐로 두고 <code style="color:#22d3bf">sdf_intersect</code> 의 최솟값이 양인지 본다. 골소주, 혈관, 섬유의 합성에도.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

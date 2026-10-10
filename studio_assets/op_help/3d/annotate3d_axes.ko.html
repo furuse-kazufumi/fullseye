@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate3d_axes(img, pose, K, origin=(0.0, 0.0, 0.0), length=1.0, depth=None, labels=(&#x27;X&#x27;, &#x27;Y&#x27;, &#x27;Z&#x27;), colors=(&#x27;wrong&#x27;, &#x27;right&#x27;, &#x27;reference&#x27;), width=2, font_size=11, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_axes(img, pose, K, origin=(0.0, 0.0, 0.0), length=1.0, depth=None, labels=(&#x27;X&#x27;, &#x27;Y&#x27;, &#x27;Z&#x27;), colors=(&#x27;wrong&#x27;, &#x27;right&#x27;, &#x27;reference&#x27;), width=2, font_size=11, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_axes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지(image2d)를 돌려줍니다: 세계 좌표의 세 축(gnomon)을 <code style="color:#22d3bf">origin</code> 에서 투영해 그립니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>length が非正、原点や軸端がカメラの後ろ、labels/colors が 3 つでない、</p>
-<p>軸の文字が画像に収まらない。</p>
-<p>手順: <code style="color:#22d3bf">origin</code> と、そこから世界座標の +X / +Y / +Z 方向に <code style="color:#22d3bf">length</code> 進んだ 3 点を射影(<code style="color:#22d3bf">annotate3d_project</code> と同じ慣習)し、原点の画素から各軸端の画素へ <code style="color:#22d3bf">annotate.arrow</code>(矢じり 8x6 px)を描く。軸端の先 <code style="color:#22d3bf">0.7 * font_size</code> px の位置に <code style="color:#22d3bf">labels[i]</code> を背景なし(<code style="color:#22d3bf">box_alpha=0</code>)の文字で置く。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">origin</code> <code style="color:#22d3bf">(3,)</code>(object 座標)、<code style="color:#22d3bf">length</code>: 軸の長さ(メッシュ単位、<code style="color:#22d3bf">&gt; 0</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>: 3 つの文字列(既定 <code style="color:#22d3bf">(&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;)</code>)。<code style="color:#22d3bf">colors</code>: 3 つの色(役割名か RGB。既定 <code style="color:#22d3bf">(&quot;wrong&quot;, &quot;right&quot;, &quot;reference&quot;)</code> はパレットの役割名)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線幅 [px]、1 以上の整数。<code style="color:#22d3bf">font_size</code> [px]。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth</code> / <code style="color:#22d3bf">occlusion_tol</code>: 射影に渡すが、<b>この op は隠れ表示(破線)をしない</b>(判定は <code style="color:#22d3bf">depth</code> の形検査に使うだけ)。</p>
-<p>返り値: 描画済みの新しい画像(float64 <code style="color:#22d3bf">[0, 1]</code>)。</p>
-<p>エラーになる条件: <code style="color:#22d3bf">length &lt;= 0</code> / <code style="color:#22d3bf">labels</code> か <code style="color:#22d3bf">colors</code> の長さが 3 でない / 原点または軸端のいずれかが <code style="color:#22d3bf">z &lt;= 1e-9</code> / 姿勢・<code style="color:#22d3bf">K</code>・<code style="color:#22d3bf">depth</code> の不正 / 軸の文字が画像に収まらない。<b>枠外の軸端はエラーにしない</b>(矢印は枠外まで引く)。視線と一致して点に潰れた軸(画素長 1e-9 未満)は黙ってスキップする。</p>
-<p>使いどころ: 図の姿勢の説明(gnomon)。<code style="color:#22d3bf">render3d.look_at</code> の <code style="color:#22d3bf">pose</code> をそのまま渡し、<code style="color:#22d3bf">origin</code> にメッシュの重心や <code style="color:#22d3bf">bounds</code> の角を置く。</p>
+<p>length 가 양이 아님, 원점이나 축 끝이 카메라 뒤, labels/colors 가 3 개가 아님,</p>
+<p>축의 문자가 영상에 들어가지 않음.</p>
+<p>절차: <code style="color:#22d3bf">origin</code> 과, 거기서 월드 좌표의 +X / +Y / +Z 방향으로 <code style="color:#22d3bf">length</code> 나아간 3 점을 투영(<code style="color:#22d3bf">annotate3d_project</code> 와 같은 관례)하고, 원점의 화소에서 각 축 끝의 화소로 <code style="color:#22d3bf">annotate.arrow</code>(화살촉 8x6 px)를 그린다. 축 끝에서 <code style="color:#22d3bf">0.7 * font_size</code> px 더 나간위치에 <code style="color:#22d3bf">labels[i]</code> 를 배경 없는(<code style="color:#22d3bf">box_alpha=0</code>) 문자로 둔다.</p>
+<p>인수:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">origin</code> <code style="color:#22d3bf">(3,)</code>(object 좌표), <code style="color:#22d3bf">length</code>: 축의 길이(메시 단위, <code style="color:#22d3bf">&gt; 0</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>: 3 개의 문자열(기본값 <code style="color:#22d3bf">(&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;)</code>). <code style="color:#22d3bf">colors</code>: 3 개의 색(역할명 또는 RGB. 기본값 <code style="color:#22d3bf">(&quot;wrong&quot;, &quot;right&quot;, &quot;reference&quot;)</code> 는 팔레트의 역할명).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 선 폭 [px], 1 이상의 정수. <code style="color:#22d3bf">font_size</code> [px].</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth</code> / <code style="color:#22d3bf">occlusion_tol</code>: 투영에 넘기지만, <b>이 op 는 가려짐 표시(파선)를하지 않는다</b>(판정은 <code style="color:#22d3bf">depth</code> 의 형상 검사에 쓸 뿐).</p>
+<p>반환값: 그리기가 끝난 새 영상(float64 <code style="color:#22d3bf">[0, 1]</code>).</p>
+<p>에러가 되는 조건: <code style="color:#22d3bf">length &lt;= 0</code> / <code style="color:#22d3bf">labels</code> 나 <code style="color:#22d3bf">colors</code> 의 길이가 3 이 아님 / 원점 또는 축 끝 중 하나가 <code style="color:#22d3bf">z &lt;= 1e-9</code> / 자세·<code style="color:#22d3bf">K</code>·<code style="color:#22d3bf">depth</code> 가 부정 / 축의문자가 영상에 들어가지 않음. <b>테두리 밖의 축 끝은 에러로 하지 않는다</b>(화살표는 테두리 밖까지 긋는다). 시선과 일치해 점으로 찌그러진 축(화소 길이 1e-9 미만)은 조용히 건너뛴다.</p>
+<p>용도: 그림의 자세 설명(gnomon). <code style="color:#22d3bf">render3d.look_at</code> 의 <code style="color:#22d3bf">pose</code> 를그대로 넘기고, <code style="color:#22d3bf">origin</code> 에 메시의 무게중심이나 <code style="color:#22d3bf">bounds</code> 의 모서리를 둔다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

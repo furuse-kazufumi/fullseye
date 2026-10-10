@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_offset(sdf, r)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_offset(sdf, r)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;sdf_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SDF 의 영등가면을 거리 <code style="color:#22d3bf">r</code> 만큼 법선 방향으로 이동 = <code style="color:#22d3bf">sdf - r</code>(r&gt;0 팽창, r&lt;0 수축).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>新しいゼロ集合は旧 <code style="color:#22d3bf">sdf == r</code> の等値面。全点で距離が一様に <code style="color:#22d3bf">r</code> シフトするので、距離場としての性質(勾配ノルム 1)は保たれる。プリミティブの厚み付け(丸めた殻)や配管のクリアランス確保に使う。</p>
-<p>計算: <code style="color:#22d3bf">np.asarray(sdf, float64) - float(r)</code>。<code style="color:#22d3bf">r</code> はスカラのみ(配列を渡すと <code style="color:#22d3bf">float()</code> で <code style="color:#22d3bf">TypeError</code>)。単位は <code style="color:#22d3bf">sdf</code> の距離単位と同じ。<code style="color:#22d3bf">r = 0</code> は恒等。shape・NaN・inf の検査はしない(<code style="color:#22d3bf">inf - r = inf</code> で契約どおり伝播)。</p>
-<p>幾何的意味: 厳密な SDF に対しては Minkowski 和(<code style="color:#22d3bf">r &gt; 0</code> で半径 <code style="color:#22d3bf">r</code> の球で膨張、<code style="color:#22d3bf">r &lt; 0</code> で収縮)に一致する。<code style="color:#22d3bf">sphere_sdf(g, c, R)</code> に <code style="color:#22d3bf">r</code> を掛けると <code style="color:#22d3bf">sphere_sdf(g, c, R + r)</code> と厳密に等しい。<code style="color:#22d3bf">box_sdf</code> の膨張では角が丸くなる(ユークリッド膨張なので、箱が大きくなるのではなく角 R = r の丸箱になる)。</p>
-<p>注意:</p>
-<p style="margin:2px 0 2px 12px">• 収縮(<code style="color:#22d3bf">r &lt; 0</code>)で <code style="color:#22d3bf">|r|</code> が最小内接半径を超えると形は消える(全要素が正)。エラーにはならない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sdf_union</code> / <code style="color:#22d3bf">sdf_intersect</code> の<b>内側</b>は真の距離の下界なので、合成後に <code style="color:#22d3bf">r &lt; 0</code> で収縮すると、重なり領域で実際より多く削れることがある。</p>
-<p style="margin:2px 0 2px 12px">• 厚さ <code style="color:#22d3bf">t</code> の殻: <code style="color:#22d3bf">sdf_subtract(sdf, sdf_offset(sdf, -t))</code>。</p>
+<p>새 영 집합은 이전 <code style="color:#22d3bf">sdf == r</code> 의 등위면. 모든 점에서 거리가 균일하게 <code style="color:#22d3bf">r</code> 만큼 이동하므로, 거리장으로서의 성질(기울기 노름 1)은 유지된다. 프리미티브의 두께 부여(둥근 셸)나 배관의간극 확보에 쓴다.</p>
+<p>계산: <code style="color:#22d3bf">np.asarray(sdf, float64) - float(r)</code>. <code style="color:#22d3bf">r</code> 은 스칼라만(배열을 넘기면 <code style="color:#22d3bf">float()</code> 에서 <code style="color:#22d3bf">TypeError</code>). 단위는 <code style="color:#22d3bf">sdf</code> 의 거리 단위와 같다. <code style="color:#22d3bf">r = 0</code> 은 항등. shape, NaN, inf 의 검사는 하지 않는다(<code style="color:#22d3bf">inf - r = inf</code> 로 계약대로 전파).</p>
+<p>기하적 의미: 엄밀한 SDF 에 대해서는 Minkowski 합(<code style="color:#22d3bf">r &gt; 0</code> 이면 반지름 <code style="color:#22d3bf">r</code> 의 구로팽창, <code style="color:#22d3bf">r &lt; 0</code> 이면 수축)과 일치한다. <code style="color:#22d3bf">sphere_sdf(g, c, R)</code> 에 <code style="color:#22d3bf">r</code> 을 적용하면 <code style="color:#22d3bf">sphere_sdf(g, c, R + r)</code> 과 엄밀히 같다. <code style="color:#22d3bf">box_sdf</code> 의 팽창에서는 모서리가 둥글어진다(유클리드 팽창이므로 상자가 커지는 것이 아니라 모서리 R = r 의 둥근 상자가 된다).</p>
+<p>주의:</p>
+<p style="margin:2px 0 2px 12px">• 수축(<code style="color:#22d3bf">r &lt; 0</code>)에서 <code style="color:#22d3bf">|r|</code> 이 최소 내접 반지름을 넘으면 형태가 사라진다(모든 요소가 양). 오류는 아니다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sdf_union</code> / <code style="color:#22d3bf">sdf_intersect</code> 의 <b>안쪽</b>은 참 거리의 하계이므로, 합성 후에 <code style="color:#22d3bf">r &lt; 0</code> 으로 수축하면 겹침 영역에서 실제보다 많이 깎일 수 있다.</p>
+<p style="margin:2px 0 2px 12px">• 두께 <code style="color:#22d3bf">t</code> 의 셸: <code style="color:#22d3bf">sdf_subtract(sdf, sdf_offset(sdf, -t))</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

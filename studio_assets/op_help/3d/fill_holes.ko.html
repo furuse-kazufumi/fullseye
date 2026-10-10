@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fill_holes(depth: &#x27;np.ndarray&#x27;, max_radius: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, max_iter: &#x27;int | None&#x27; = None, rel_tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import depth_bilateral; depth_bilateral.fill_holes(depth: &#x27;np.ndarray&#x27;, max_radius: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, max_iter: &#x27;int | None&#x27; = None, rel_tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fill_holes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>무효 화소(구멍)를 이웃 유효 화소로부터 조화(라플라스) 완화로 보간. → float64 (H,W).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各穴画素の最寄り有効画素までの距離が max_radius 以下なら補間対象、超える深い穴は補間せず NaN で残す(fail-closed)。補間は 4 近傍平均の反復(Dirichlet 境界=元の有効画素)で、線形場(平面)は離散調和関数の不動点なので反復収束とともに平面を厳密復元する。初期値は最寄り有効画素値(EDT)。</p>
-<p>max_iter 既定は穴サイズに応じて自動設定、rel_tol は深度スケール相対の収束判定。全画素無効の入力は補間の足場が無いため ValueError(fail-closed)。</p>
+<p>각 구멍 화소에서 가장 가까운 유효 화소까지의 거리가 max_radius 이하이면 보간 대상, 넘는 깊은 구멍은 보간하지 않고 NaN 으로 남긴다(fail-closed). 보간은 4 근방 평균의 반복(Dirichlet 경계=원래의 유효 화소)이며, 선형장(평면)은 이산조화 함수의 부동점이므로 반복 수렴과 함께 평면을 엄밀히 복원한다. 초깃값은 가장 가까운 유효 화소 값(EDT).</p>
+<p>max_iter 기본값은 구멍 크기에 따라 자동 설정, rel_tol 은 깊이 스케일 상대의 수렴 판정. 모든 화소가 무효인 입력은보간의 발판이 없으므로 ValueError(fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>

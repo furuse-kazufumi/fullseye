@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dlt_pose(points_3d, points_2d, K)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pnp3d; pnp3d.dlt_pose(points_3d, points_2d, K)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;dlt_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 DLT 由 3D-2D 對應恢復相機姿態(K 已知)。→ (R (3,3), t (3,))。至少需要 6 點。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">pnp_pose</code> の (R, t) 部分(正規化 DLT + 平面 PnP 分岐 + LM 精密化)。再投影 RMS も要るなら <code style="color:#22d3bf">pnp_pose</code> を使う。共平面入力(チェッカーボード等)は平面 PnP へ自動で振り分ける(旧実装は fail-closed で拒否していたが、正しく解けるので解く)。</p>
-<p>手順(モジュール関数 <code style="color:#22d3bf">pnp3d.pnp_pose</code> を <code style="color:#22d3bf">refine=True</code> で呼ぶ):</p>
-<p style="margin:2px 0 2px 12px">• 画素を <code style="color:#22d3bf">K⁻¹</code> で正規化画像座標へ、3D 点は Hartley 正規化(重心を原点、平均距離 √3)して DLT(12 未知数の SVD)を解く。</p>
-<p style="margin:2px 0 2px 12px">• 共平面度(共分散の最小/最大固有値比の平方根)が 0.05 未満なら平面 PnP(ホモグラフィ分解)も候補に加え、厳密に平面(3 番目の広がりが 0)なら DLT を省く。</p>
-<p style="margin:2px 0 2px 12px">• 各候補を再投影誤差の Levenberg-Marquardt(最大 30 反復)で精密化し、前方点(深度 &gt; 0)の割合が最大、同点なら再投影 RMS が最小の候補を採る。</p>
-<p>返り値: <code style="color:#22d3bf">R</code> (3,3) 回転(det=+1)、<code style="color:#22d3bf">t</code> (3,)(世界座標と同じ単位)。規約 <code style="color:#22d3bf">Xc = R X + t</code>、<code style="color:#22d3bf">x ≅ K Xc</code>。</p>
-<p>Raises <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">points_2d</code> が (N,2) でない(画像を渡した場合は名指しで拒否)/ <code style="color:#22d3bf">points_3d</code> が (N,3) でない / 非有限 / 6 点未満 / 点数不一致 / 全点が一直線か一点。</p>
-<p>注意: 外れ値には無防備(全点を等しく使う)。誤対応があるなら <code style="color:#22d3bf">pnp_ransac</code>。決定論的(乱数なし)。評価は <code style="color:#22d3bf">reprojection_error</code>、GT との比較は <code style="color:#22d3bf">pose_error</code>。</p>
+<p><code style="color:#22d3bf">pnp_pose</code> 的 (R, t) 部分(正規化 DLT + 平面 PnP 分支 + LM 精細化)。也需要重投影 RMS 時使用 <code style="color:#22d3bf">pnp_pose</code>。共面輸入(棋盤格等)會自動分配到平面 PnP (舊實作以 fail-closed(失敗即拒絕)方式拒絕,但由於能正確求解,所以求解)。</p>
+<p>步驟(以 <code style="color:#22d3bf">refine=True</code> 呼叫模組函式 <code style="color:#22d3bf">pnp3d.pnp_pose</code>):</p>
+<p style="margin:2px 0 2px 12px">• 像素用 <code style="color:#22d3bf">K⁻¹</code> 轉為正規化影像座標,3D 點做 Hartley 正規化(質心移到原點,平均距離 √3),求解 DLT(12 個未知數的 SVD)。</p>
+<p style="margin:2px 0 2px 12px">• 共面度(共變異數最小/最大特徵值比的平方根)小於 0.05 時,將平面 PnP(單應性分解)也加入候選;嚴格平面(第 3 個擴展為 0)時省略 DLT。</p>
+<p style="margin:2px 0 2px 12px">• 各候選以重投影誤差的 Levenberg-Marquardt(最多 30 次迭代)精細化,採用前方點(深度 &gt; 0)比例最大、相同時重投影 RMS 最小的候選。</p>
+<p>回傳值:<code style="color:#22d3bf">R</code> (3,3) 旋轉(det=+1),<code style="color:#22d3bf">t</code> (3,)(與世界座標相同單位)。約定 <code style="color:#22d3bf">Xc = R X + t</code>,<code style="color:#22d3bf">x ≅ K Xc</code>。</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code>:<code style="color:#22d3bf">points_2d</code> 不是 (N,2)(傳入影像時指名拒絕)/ <code style="color:#22d3bf">points_3d</code> 不是 (N,3) / 非有限 / 少於 6 點 / 點數不一致 / 全部點共線或重合於一點。</p>
+<p>注意:對離群值毫無防備(平等使用全部點)。存在錯誤對應時用 <code style="color:#22d3bf">pnp_ransac</code>。決定性(無亂數)。評估用 <code style="color:#22d3bf">reprojection_error</code>,與 GT 比較用 <code style="color:#22d3bf">pose_error</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

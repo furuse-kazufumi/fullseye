@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fundamental_8point(pts1, pts2)</code>(要直接调用实现,<code style="color:#22d3bf">import twoview; twoview.fundamental_8point(pts1, pts2)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fundamental_8point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用归一化八点法估计基础矩阵 F(强制 rank-2)。→ F (3,3)。至少需要 8 点。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Raises ValueError: 点が (N,2) でない/非有限/8 点未満/対応数不一致。</p>
-<p>手順: 両画像の点を Hartley 正規化(重心を原点、平均距離 √2)→ 9 列の係数行列の最小特異ベクトルを F とする → 特異値の 3 番目を 0 にして rank-2 に強制 → <code style="color:#22d3bf">T2ᵀ F T1</code> で逆正規化 → <code style="color:#22d3bf">F[2,2]</code> で割って正規化(それがほぼ 0 なら Frobenius ノルムで割る)。</p>
-<p style="margin:2px 0 2px 12px">• 対応点は画素座標 (x, y) の (N,2)。規約は <code style="color:#22d3bf">x2ᵀ F x1 = 0</code>(x1 が pts1、x2 が pts2)。</p>
-<p style="margin:2px 0 2px 12px">• F はスケール不定(定数倍しても同じ幾何)で符号も一意ではない。</p>
-<p style="margin:2px 0 2px 12px">• 全点を等しく使う最小二乗で、外れ値には無防備。誤対応が混じる対応は本 op の前に除くか、<code style="color:#22d3bf">sampson_distance</code> で残差を見て選別してから再フィットする。</p>
-<p style="margin:2px 0 2px 12px">• 平面シーンや純回転では対応点が 1 つのホモグラフィで説明でき F は一意に決まらない(それでも何かは返る)。この退化は <code style="color:#22d3bf">recover_pose</code> が入口で検出して拒否する。</p>
-<p style="margin:2px 0 2px 12px">• 決定論的。後段は <code style="color:#22d3bf">essential_8point</code> / <code style="color:#22d3bf">recover_pose</code> / <code style="color:#22d3bf">sampson_distance</code>。</p>
+<p>Raises ValueError：点不是 (N,2)/非有限/少于 8 个点/对应数不一致。</p>
+<p>步骤：对两幅图像的点做 Hartley 归一化(质心移到原点，平均距离 √2)→ 取 9 列系数矩阵的最小奇异向量作为 F → 把第 3 个奇异值置 0，强制 rank-2 → 用 <code style="color:#22d3bf">T2ᵀ F T1</code> 反归一化 → 除以 <code style="color:#22d3bf">F[2,2]</code> 归一化(它几乎为 0 时除以 Frobenius 范数)。</p>
+<p style="margin:2px 0 2px 12px">• 对应点是像素坐标 (x, y) 的 (N,2)。约定为 <code style="color:#22d3bf">x2ᵀ F x1 = 0</code>(x1 为 pts1，x2 为 pts2)。</p>
+<p style="margin:2px 0 2px 12px">• F 的尺度不定(乘以常数也是相同的几何)，符号也不唯一。</p>
+<p style="margin:2px 0 2px 12px">• 是对所有点同等对待的最小二乘，对离群值毫无防备。含误对应的对应点请在本 op 之前去除，或用 <code style="color:#22d3bf">sampson_distance</code> 查看残差筛选后再重新拟合。</p>
+<p style="margin:2px 0 2px 12px">• 平面场景或纯旋转时，对应点可用 1 个单应性解释，F 无法唯一确定(但仍会返回某个结果)。这种退化由 <code style="color:#22d3bf">recover_pose</code> 在入口检测并拒绝。</p>
+<p style="margin:2px 0 2px 12px">• 确定性。后续为 <code style="color:#22d3bf">essential_8point</code> / <code style="color:#22d3bf">recover_pose</code> / <code style="color:#22d3bf">sampson_distance</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

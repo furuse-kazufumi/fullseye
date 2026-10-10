@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cylinder_sdf(grid, center, axis, radius, height)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sdf_ops; sdf_ops.cylinder_sdf(grid, center, axis, radius, height)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;cylinder_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>有限長圓柱(兩端為平蓋)的<b>精確</b>有號距離場(內側為負、外側為正)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>軸方向の距離 <code style="color:#22d3bf">t</code> と軸からの半径 <code style="color:#22d3bf">r</code> に分け、<code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code> として <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>、<code style="color:#22d3bf">inside = min(max(q), 0)</code>、<code style="color:#22d3bf">sdf = outside + inside</code>。これは <code style="color:#22d3bf">box_sdf</code> と同じ Quilez 流の構成を「(半径, 軸)の 2-D 断面」に適用したもので、側面・蓋・角(縁)のいずれに対しても真のユークリッド距離になる。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: 円柱の<b>中心</b>(端面ではなく重心。要素数 3)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis</code>: 軸の向き(要素数 3、零ベクトル・NaN は拒否。長さは自動正規化)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 半径 &gt; 0 相当のスカラ(<code style="color:#22d3bf">0</code> は軸線そのもの、負は拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>: 全長のスカラ(<code style="color:#22d3bf">center</code> から ±height/2。負は拒否)。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。</p>
-<p>使いどころ: <b>貫通穴は <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b>(<code style="color:#22d3bf">height</code> を部品より長くして端面の縁を残さない)。ボス・ピン・シャフトは <code style="color:#22d3bf">sdf_union</code>。無限長の円柱が要るなら <code style="color:#22d3bf">height</code> を十分大きく取る(端面が評価域の外に出れば側面だけが効く)。</p>
+<p>拆分為軸向距離 <code style="color:#22d3bf">t</code> 與到軸的半徑 <code style="color:#22d3bf">r</code>，令 <code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code>，則 <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>、<code style="color:#22d3bf">inside = min(max(q), 0)</code>、<code style="color:#22d3bf">sdf = outside + inside</code>。這是將與 <code style="color:#22d3bf">box_sdf</code> 相同的 Quilez 式建構套用於「（半徑，軸）的 2-D 截面」，因此對側面、端蓋、角（邊緣）都是真正的歐幾里得距離。</p>
+<p>參數與驗證(<code style="color:#22d3bf">ValueError</code>)：</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>：最後一軸為 3 的 float 陣列 <code style="color:#22d3bf">(..., 3)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>：圓柱的<b>中心</b>（不是端面而是質心。元素數 3）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis</code>：軸的方向（元素數 3，拒絕零向量與 NaN。長度自動正規化）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>：相當於半徑 &gt; 0 的純量（<code style="color:#22d3bf">0</code> 為軸線本身，拒絕負值）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>：全長的純量（從 <code style="color:#22d3bf">center</code> 起 ±height/2。拒絕負值）。</p>
+<p>回傳值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。</p>
+<p>用法：<b>貫穿孔用 <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b>（讓 <code style="color:#22d3bf">height</code> 比零件更長，以免留下端面的邊緣）。凸台、銷、軸用 <code style="color:#22d3bf">sdf_union</code>。若需要無限長的圓柱，就把 <code style="color:#22d3bf">height</code> 取得足夠大（端面落在求值域之外時，只有側面起作用）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

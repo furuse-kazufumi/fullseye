@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.absolute_phase(wrapped, coarse) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import fringe; fringe.absolute_phase(wrapped, coarse) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;absolute_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用粗糙但絕對的相位估計確定條紋級次,把捲繞相位變成絕對相位。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Φ = wrapped + 2π·round((coarse − wrapped) / 2π)</p>
-<p>wrapped: wrapped_phase の出力 (-π,π] の 2D 配列(高精度・絶対次数なし)。</p>
-<p>coarse:  同形の 2D 配列。<b>絶対だが粗い</b>位相推定 [rad]。Gray code で復号した投影機</p>
-<p>コラム番号を位相に直したもの(2π·freq·col/width)が典型。NaN 可(出力も NaN)。</p>
-<p>返り値: 絶対位相 [rad] (2D float64)。無効画素(どちらかが NaN)は NaN。</p>
-<p>なぜ必要か(空間アンラップとの違い): <code style="color:#22d3bf">unwrap_phase_2d</code> は隣接画素を辿って 2π 跳びを繋ぐので、(a) 大域オフセット +2πm が残り、(b) オクルージョンで切れた島の間では次数が伝播できない。本 op は画素ごとに独立に次数を決めるため、<b>島に分かれた場面でも絶対</b>で、伝播も要らない。その代わり coarse の誤差が半周期(π)未満であることが要件。</p>
-<p>要件(fail-closed): |coarse − Φ_true| &lt; π。これを破ると round が隣の次数を選び、その画素だけ 2π ぶん(= 縞 1 本ぶんの奥行き)静かにずれる。Gray code の粗さ(±0.5 コラム) を位相に直した量が半周期を超えないよう、縞本数 freq を選ぶこと(例: 投影機幅 512 px・freq 24 → 1 周期 21.3 px、Gray の ±0.5 px は余裕で内側)。</p>
-<p>Raises: 形状不一致・2D でない・wrapped が (-π,π] を大きく外れる場合に ValueError。</p>
-<p>来歴(公開文献): Gray code と位相シフトを併用して絶対位相を得る合成法 — Sansoni et al., *Appl. Opt.* 38(31) 1999 / Zhang, *Opt. Lasers Eng.* 48 2010(総説)。Gray code そのものの投影は Inokuchi et al., *ICPR* 1984。</p>
+<p>wrapped:wrapped_phase 的輸出,(-π,π] 的 2D 陣列(高精度、無絕對級次)。</p>
+<p>coarse:  同形狀的 2D 陣列。<b>絕對但粗略</b>的相位估計 [rad]。典型的是把以 Gray code 解碼的投影機</p>
+<p>行號換算成相位(2π·freq·col/width)。可含 NaN(輸出也為 NaN)。</p>
+<p>回傳值:絕對相位 [rad] (2D float64)。無效像素(任一方為 NaN)為 NaN。</p>
+<p>為何需要(與空間展開的區別):<code style="color:#22d3bf">unwrap_phase_2d</code> 沿相鄰像素追蹤來連接 2π 跳變, 因此 (a) 殘留全域偏移 +2πm,(b) 在被遮擋切開的孤島之間級次無法傳播。本 op 逐像素獨立確定級次,因此<b>即使在分成孤島的場景中也是絕對的</b>, 也不需要傳播。代價是要求 coarse 的誤差小於半個週期(π)。</p>
+<p>要求(fail-closed):|coarse − Φ_true| &lt; π。違反時 round 會選中相鄰級次, 僅該像素靜默偏移 2π(= 1 條條紋對應的深度)。請選擇條紋數 freq,使 Gray code 的粗略度(±0.5 行) 換算為相位後的量不超過半個週期(例:投影機寬度 512 px、freq 24 → 1 個週期 21.3 px,Gray 的 ±0.5 px 完全在範圍內)。</p>
+<p>Raises:形狀不一致、非 2D、wrapped 大幅超出 (-π,π] 時拋出 ValueError。</p>
+<p>來源(公開文獻):結合 Gray code 與相移獲得絕對相位的合成法 — Sansoni et al., *Appl. Opt.* 38(31) 1999 / Zhang, *Opt. Lasers Eng.* 48 2010(綜述)。Gray code 本身的投影見 Inokuchi et al., *ICPR* 1984。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

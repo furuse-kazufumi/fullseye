@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import registration_eval; registration_eval.inlier_ratio(source, target, transform, thresh: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;inlier_ratio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>correspondence set का inlier अनुपात = ‖T·source[i] − target[i]‖ &lt; thresh वाला हिस्सा। → [0,1]।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">source</code> と <code style="color:#22d3bf">target</code> は <b>index 対応</b>(source[i] が target[i] に対応)の同数点群(FPFH 等の putative correspondence を想定)。thresh に単調非減少。形状不一致・非 (N,3) は ValueError(fail-closed)。</p>
+<p><code style="color:#22d3bf">source</code> और <code style="color:#22d3bf">target</code> <b>index correspondence</b> वाले (source[i] का मेल target[i] से) समान संख्या के point clouds हैं (FPFH आदि की putative correspondence मानी गई है)। thresh में monotonically non-decreasing। shape मेल न खाए या (N,3) न हो तो ValueError (fail-closed)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

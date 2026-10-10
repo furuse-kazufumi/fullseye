@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import normals_orient; normals_orient.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;estimate_oriented_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>PCA normal estimation + Hoppe global orientation का संयोजन। → (N,3) oriented unit normals।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">estimate_normals</code>(向き未定)→ <code style="color:#22d3bf">orient_normals</code>(MST 伝播)を通す。閉曲面なら全点外向き、平面なら全点同一半球にそろう。得た法線を <code style="color:#22d3bf">curvature3d.shape_index</code> に渡すと凹/凸符号が正しく出る。</p>
+<p><code style="color:#22d3bf">estimate_normals</code> (दिशा अनिर्धारित) → <code style="color:#22d3bf">orient_normals</code> (MST propagation) से गुज़ारता है। बंद सतह पर सभी points बाहर की ओर, और plane पर सभी points एक ही hemisphere की ओर संरेखित होते हैं। मिले हुए normals को <code style="color:#22d3bf">curvature3d.shape_index</code> को देने पर अवतल/उत्तल का sign सही निकलता है।</p>
 <p>Args:</p>
-<p>points: (N,3) の点群。</p>
-<p>k: PCA 近傍数と kNN グラフ近傍数(共通)。</p>
-<p>seed_dir: 大域基準向き (3,)。None なら重心から外向き。</p>
+<p>points: (N,3) point cloud।</p>
+<p>k: PCA neighbours और kNN graph neighbours की संख्या (साझा)।</p>
+<p>seed_dir: global reference दिशा (3,)। None होने पर centroid से बाहर की ओर।</p>
 <p>Returns:</p>
-<p>(N,3) の大域一貫・向き付き単位法線。</p>
+<p>(N,3) globally consistent, दिशा-निर्धारित unit normals।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

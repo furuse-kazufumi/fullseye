@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_grid_downsample(points, voxel_size: &#x27;float&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pcl_filter; pcl_filter.voxel_grid_downsample(points, voxel_size: &#x27;float&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;voxel_grid_downsample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Dünnt eine Punktmenge auf einem Gitter der Kantenlänge voxel_size aus und fasst jede Zelle zu einem Schwerpunktpunkt zusammen (deterministisch).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>空間を一辺 <code style="color:#22d3bf">voxel_size</code> の立方体セルに区切り、同じセルに落ちた点をその重心 1 点で代表させる。密度ムラを均し、下流(ICP・特徴量)の計算量を点数で抑える標準手法。出力順はボクセル座標の辞書順で固定(同じ入力なら常に同じ出力=決定論的)。</p>
+<p>Teilt den Raum in würfelförmige Zellen der Seitenlänge <code style="color:#22d3bf">voxel_size</code> und repräsentiert die in dieselbe Zelle fallenden Punkte durch ihren Schwerpunkt als 1 Punkt. Das Standardverfahren, um Dichteunterschiede auszugleichen und den Rechenaufwand nachgelagerter Schritte (ICP, Merkmale) über die Punktzahl zu begrenzen. Die Ausgabereihenfolge ist die lexikographische Reihenfolge der Voxelkoordinaten (gleiche Eingabe ergibt stets gleiche Ausgabe = deterministisch).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>Eingabe-Punktwolke.</p>
 <p>voxel_size : float</p>
-<p>セルの一辺(&gt; 0)。大きいほど強く間引く。</p>
+<p>Seitenlänge der Zelle (&gt; 0). Je größer, desto stärker die Ausdünnung.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (M, 3)</p>
-<p>各占有セルの重心(M &lt;= N)。すべて入力の軸並行 bounding box 内に収まる。</p>
+<p>Schwerpunkt jeder belegten Zelle (M &lt;= N). Alle liegen innerhalb der achsenparallelen Bounding Box der Eingabe.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p><code style="color:#22d3bf">voxel_size &lt;= 0</code> は ValueError。空入力は空 (0,3) を返す(graceful)。重心はセル内の点の平均なので、必ず入力点の凸包(ゆえに bbox)内に入る。</p>
+<p><code style="color:#22d3bf">voxel_size &lt;= 0</code> löst ValueError aus. Leere Eingabe ergibt ein leeres (0,3) (graceful). Der Schwerpunkt ist der Mittelwert der Punkte in der Zelle und liegt daher stets in der konvexen Hülle (und damit der bbox) der Eingabepunkte.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

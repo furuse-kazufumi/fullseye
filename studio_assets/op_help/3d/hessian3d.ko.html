@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D Hessian 의 6 독립 성분 (fzz,fyy,fxx,fzy,fzx,fyx). 분리형 conv3d(2 계/1 계×평활).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>カーネル: 2 階 [1,−2,1] (利得 1)、1 階 [−0.5,0,0.5] (利得 1)、残りの軸は [1,2,1]/4 の平滑(利得 1)。対角成分は「その軸の 2 階 × 他 2 軸の平滑」、交差成分は「2 軸の 1 階 × 残り軸の平滑」。<b>単位は 1/voxel² の真の値</b>(<code style="color:#22d3bf">sobel3d</code> の 32 倍利得とは違う)。端は replicate。返り値は <b>list の torch tensor 6 本</b>、各 <code style="color:#22d3bf">(D,H,W)</code> float32、<code style="color:#22d3bf">device</code> 上、順は(zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x)。numpy が要れば <code style="color:#22d3bf">.cpu().numpy()</code>。入力は numpy 相当(float32 に変換)。</p>
-<p>用途: <code style="color:#22d3bf">curvature_maps</code> の主曲率(<code style="color:#22d3bf">sobel3d</code> と組で使う)、blob/管状構造の検出。</p>
+<p>커널: 2계 [1,−2,1] (이득 1), 1계 [−0.5,0,0.5] (이득 1), 나머지 축은 [1,2,1]/4의 평활(이득 1). 대각 성분은 &quot;그 축의 2계 × 다른 2축의 평활&quot;, 교차 성분은 &quot;2축의 1계 × 나머지 축의평활&quot;. <b>단위는 1/voxel²의 참값</b>(<code style="color:#22d3bf">sobel3d</code>의 32배 이득과는 다르다). 끝은 replicate. 반환값은 <b>torch tensor 6개의 list</b>, 각각 <code style="color:#22d3bf">(D,H,W)</code> float32, <code style="color:#22d3bf">device</code> 위, 순서는(zz, yy, xx, zy, zx, yx)(축 0=z, 1=y, 2=x). numpy가 필요하면 <code style="color:#22d3bf">.cpu().numpy()</code>. 입력은 numpy 상당(float32로 변환).</p>
+<p>용도: <code style="color:#22d3bf">curvature_maps</code>의 주곡률(<code style="color:#22d3bf">sobel3d</code>와 짝으로 사용), blob/관상 구조의 검출.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

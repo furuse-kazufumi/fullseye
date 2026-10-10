@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.eval_bspline_surface(tck, x, y, grid=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import bspline_surf; bspline_surf.eval_bspline_surface(tck, x, y, grid=False)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;eval_bspline_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wertet eine angepasste Fläche tck aus (bisplev). Zwei Modi: verstreute Punkte (Standard) oder ein Gitter.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>tck : list</p>
-<p>fit_bspline_surface が返した <code style="color:#22d3bf">[tx, ty, c, kx, ky]</code>。</p>
+<p>Das von fit_bspline_surface zurückgegebene <code style="color:#22d3bf">[tx, ty, c, kx, ky]</code>.</p>
 <p>x, y : array_like</p>
-<p>grid=False(既定): 同一 shape の散布/対応点。各 (x[i], y[i]) で評価し</p>
-<p>入力と同じ shape の z を返す(計測=各サンプル位置での曲面高さ)。</p>
-<p>grid=True: x, y を昇順の 1 次元軸として扱い、テンソル格子</p>
-<p>(len(x), len(y)) 上で評価(密な可視化・再サンプリング用)。</p>
+<p>grid=False (Standard): gestreute/korrespondierende Punkte gleicher shape. Wertet an jedem (x[i], y[i]) aus und</p>
+<p>gibt z mit derselben shape wie die Eingabe zurück (Messung = Flächenhöhe an jeder Stichprobenposition).</p>
+<p>grid=True: behandelt x, y als aufsteigende 1-D-Achsen und wertet auf dem Tensorgitter</p>
+<p>(len(x), len(y)) aus (für dichte Visualisierung und Neuabtastung).</p>
 <p>grid : bool</p>
-<p>評価モード。曲面残差など点対応の比較には False。</p>
+<p>Auswertungsmodus. Für punktweise Vergleiche wie Flächenresiduen False.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>z : numpy.ndarray</p>
-<p>grid=False なら x と同 shape、grid=True なら (len(x), len(y))。</p>
+<p>Bei grid=False dieselbe shape wie x, bei grid=True (len(x), len(y)).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>tck が曲面モデル([tx,ty,c,kx,ky])でない(曲線 tck / 多項式 dict を含む)、</p>
-<p>または x, y の shape 不一致・空。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• grid=True では x, y を内部で昇順に並べ替えて <code style="color:#22d3bf">bisplev</code> を呼び、結果を <b>入力の順序</b> に戻して返す。したがって <code style="color:#22d3bf">out[i, j]</code> は常に <code style="color:#22d3bf">(x[i], y[j])</code> の値で、軸を降順で渡しても壊れない。</p>
-<p style="margin:2px 0 2px 12px">• grid=False は点ごとに <code style="color:#22d3bf">bisplev</code> を呼ぶ Python ループなので点数に比例して遅い。大量点の評価は可能なら grid=True に寄せる。</p>
-<p style="margin:2px 0 2px 12px">• 節点範囲(フィットに使った x, y の範囲)の外側は外挿になり、その値は保証しない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は float64。grid=False なら x と同じ shape(スカラーを渡せば 0 次元配列)。</p>
-<p style="margin:2px 0 2px 12px">• 典型: <code style="color:#22d3bf">fit_bspline_surface</code> → 本 op(再サンプリング・可視化)。残差評価は <code style="color:#22d3bf">surface_residual</code> がこれを内部で呼ぶ。</p>
+<p>Wenn tck kein Flächenmodell ([tx,ty,c,kx,ky]) ist (einschließlich Kurven-tck / Polynom-dict)</p>
+<p>oder x, y nicht übereinstimmende shapes haben bzw. leer sind.</p>
+<p>Ergänzung:</p>
+<p style="margin:2px 0 2px 12px">• Bei grid=True werden x, y intern aufsteigend sortiert, dann wird <code style="color:#22d3bf">bisplev</code> aufgerufen und das Ergebnis in <b>der Eingabereihenfolge</b> zurückgegeben. <code style="color:#22d3bf">out[i, j]</code> ist also immer der Wert bei <code style="color:#22d3bf">(x[i], y[j])</code>; auch absteigend übergebene Achsen machen nichts kaputt.</p>
+<p style="margin:2px 0 2px 12px">• grid=False ist eine Python-Schleife, die <code style="color:#22d3bf">bisplev</code> pro Punkt aufruft, und wird proportional zur Punktzahl langsamer. Viele Punkte möglichst mit grid=True auswerten.</p>
+<p style="margin:2px 0 2px 12px">• Außerhalb des Knotenbereichs (Bereich der für den Fit verwendeten x, y) wird extrapoliert; diese Werte sind nicht garantiert.</p>
+<p style="margin:2px 0 2px 12px">• Der Rückgabewert ist float64. Bei grid=False dieselbe shape wie x (ein Skalar ergibt ein 0-dimensionales Array).</p>
+<p style="margin:2px 0 2px 12px">• Typisch: <code style="color:#22d3bf">fit_bspline_surface</code> → dieses op (Neuabtastung, Visualisierung). Für die Residuenbewertung ruft <code style="color:#22d3bf">surface_residual</code> es intern auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

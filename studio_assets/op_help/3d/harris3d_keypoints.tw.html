@@ -7,30 +7,29 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D Harris 關鍵點偵測(2D Harris 角點偵測的 3D 版)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>voxel 密度場の 3D 勾配 g=(gz,gy,gx) から、各ボクセルで局所構造テンソル M=Σ_w w·g gᵀ(3x3 対称、gaussian 窓 sigma_i で積和)を組み、コーナー性を測る。応答が周囲で極大かつ閾値超のボクセルを keypoint とする(初期姿勢推定なしに検出できるため、大回転+部分重なりの対応付けや ICP の coarse init 供給に使える)。</p>
-<p>コーナー性の指標:</p>
-<p style="margin:2px 0 2px 12px">• &quot;mineig&quot;(既定): 3x3 対称行列の最小固有値(Shi-Tomasi 流)。3 方向すべてに構造がある(=角)ほど最小固有値が大きい。閉形式(三角関数法)で算出。k 調整不要で頑健(実測 mean repeatability 85%、min 72.5%)。</p>
-<p style="margin:2px 0 2px 12px">• &quot;harris&quot;: R = det(M) - k·tr(M)³。3D では固有値 3 個なので tr の 3 乗で</p>
-<p>無次元化。★注意: 密度 voxel の角では det/tr³ 比が経験的に ~0.01 しか</p>
-<p>ないため、2D 標準の k=0.04〜0.06 では全応答が負になり検出 0 になる。</p>
-<p>3D では k≈0.005 が必要(実測 k=0.005 で mean 89.6%)。</p>
-<p>引数:</p>
-<p>vol: (D,H,W) 密度 voxel(numpy / torch)。points_to_voxel の出力を想定。</p>
-<p>device: torch デバイス(&quot;cpu&quot; 等)。全演算をこのデバイス上で行う。</p>
-<p>k: Harris の感度係数(response=&quot;harris&quot; 時のみ有効)。3D 密度場では</p>
-<p>0.005 前後(2D 慣習の 0.04〜0.06 は 3D では強すぎ検出 0 になる)。</p>
-<p>nms: 非最大抑制の立方体窓の一辺(奇数、標準 3 = 3x3x3 近傍)。</p>
-<p>topn: 応答降順で返す keypoint の最大数。</p>
-<p>sigma_i: 構造テンソルの積分窓(gaussian)の標準偏差(voxel)。</p>
-<p>response: &quot;mineig&quot;(既定, 頑健)か &quot;harris&quot;。</p>
-<p>rel_thresh: 応答の閾値 = rel_thresh × 有効領域の最大応答(雑音抑制)。</p>
-<p>border: 端から border ボクセル以内は検出しない(勾配の端効果を除去)。</p>
-<p>返り値:</p>
-<p>keypoints: (M,3) float64。keypoint の voxel 座標 (z,y,x)(sobel3d と</p>
-<p>同じ軸順)。応答降順、最大 topn 個。</p>
-<p>responses: (M,) float64。対応する応答値(降順)。</p>
-<p>依存: sobel3d(3D 勾配)、_gauss3d(積分窓平滑)。いずれも device 上で動作。</p>
+<p>從 voxel 密度場的 3D 梯度 g=(gz,gy,gx) 出發,在各體素建構局部結構張量 M=Σ_w w·g gᵀ(3x3 對稱,以 gaussian 視窗 sigma_i 加權求和),量測角點性。響應在周圍為極大且超過閾值的體素作為 keypoint(由於無需初始位姿估計即可偵測,可用於大旋轉+部分重疊的對應,或為 ICP 提供 coarse init)。</p>
+<p>角點性指標:</p>
+<p style="margin:2px 0 2px 12px">• &quot;mineig&quot;(預設): 3x3 對稱矩陣的最小特徵值(Shi-Tomasi 式)。3 個方向都有結構(=角)時最小特徵值越大。以閉合式(三角函數法)計算。無需調整 k 且穩健(實測 mean repeatability 85%,min 72.5%)。</p>
+<p style="margin:2px 0 2px 12px">• &quot;harris&quot;: R = det(M) - k·tr(M)³。3D 中有 3 個特徵值,因此以 tr 的 3 次方</p>
+<p>無因次化。★注意: 在密度 voxel 的角處 det/tr³ 比經驗上只有 ~0.01,</p>
+<p>因此用 2D 標準的 k=0.04〜0.06 時全部響應為負,偵測數為 0。</p>
+<p>3D 中需要 k≈0.005(實測 k=0.005 時 mean 89.6%)。</p>
+<p>參數:</p>
+<p>vol: (D,H,W) 密度 voxel(numpy / torch)。假定為 points_to_voxel 的輸出。</p>
+<p>device: torch 裝置(&quot;cpu&quot; 等)。所有運算都在該裝置上進行。</p>
+<p>k: Harris 的靈敏度係數(僅在 response=&quot;harris&quot; 時有效)。3D 密度場中</p>
+<p>約 0.005(2D 慣例的 0.04〜0.06 在 3D 中過強,偵測數為 0)。</p>
+<p>nms: 非極大值抑制的立方體視窗邊長(奇數,標準 3 = 3x3x3 鄰域)。</p>
+<p>topn: 依響應降序回傳的 keypoint 最大數量。</p>
+<p>sigma_i: 結構張量積分視窗(gaussian)的標準差(voxel)。</p>
+<p>response: &quot;mineig&quot;(預設,穩健)或 &quot;harris&quot;。</p>
+<p>rel_thresh: 響應閾值 = rel_thresh × 有效區域的最大響應(抑制雜訊)。</p>
+<p>border: 距邊緣 border 個體素以內不偵測(去除梯度的邊緣效應)。</p>
+<p>回傳值:</p>
+<p>keypoints: (M,3) float64。keypoint 的 voxel 座標 (z,y,x)(與 sobel3d</p>
+<p>相同的軸順序)。依響應降序,最多 topn 個。</p>
+<p>responses: (M,) float64。對應的響應值(降序)。</p>
+<p>相依: sobel3d(3D 梯度)、_gauss3d(積分視窗平滑)。皆在 device 上執行。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

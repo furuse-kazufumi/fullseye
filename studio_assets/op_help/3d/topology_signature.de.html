@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.topology_signature(skeleton)</code> (die Implementierung direkt: <code style="color:#22d3bf">import medial; medial.topology_signature(skeleton)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;topology_signature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Baut aus den 26er-Nachbarschaftsgraden eines Skeletts einen Topologiedeskriptor. Liefert die Anzahl der Endpunkte, Knoten, gewöhnlichen und isolierten Punkte.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各骨格 voxel について 26 近傍にある骨格 voxel 数(次数)を数え、</p>
-<p>次数 1  = 端点(endpoint)</p>
-<p>次数 2  = 通常点(骨格の途中)</p>
-<p>次数&gt;=3 = 分岐点(branch)</p>
-<p>次数 0  = 孤立点(isolated)</p>
-<p>に分類する。個数は平行移動・回転(90 度)不変で、形状の位相を粗く要約する記述子になる。</p>
-<p>注意(honest): 26 近傍の次数は、分岐近傍で対角隣接により過大に数えられることがある(離散骨格の既知の性質)。端点数は各枝の末端で厳密だが、分岐点数はやや過大側に振れうる。</p>
+<p>Zählt für jedes Skelett-Voxel die Anzahl der Skelett-Voxel in seiner 26-Nachbarschaft (Grad) und</p>
+<p>Grad 1  = Endpunkt (endpoint)</p>
+<p>Grad 2  = normaler Punkt (Mitte des Skeletts)</p>
+<p>Grad&gt;=3 = Verzweigungspunkt (branch)</p>
+<p>Grad 0  = isolierter Punkt (isolated)</p>
+<p>klassifiziert es entsprechend. Die Anzahlen sind invariant gegenüber Translation und Rotation (90 Grad) und bilden einen Deskriptor, der die Topologie der Form grob zusammenfasst.</p>
+<p>Achtung (honest): Der Grad in der 26-Nachbarschaft kann nahe Verzweigungen durch diagonale Nachbarschaft zu hoch gezählt werden (bekannte Eigenschaft diskreter Skelette). Die Endpunktzahl ist an jedem Astende exakt, die Zahl der Verzweigungspunkte kann aber etwas zu hoch ausfallen.</p>
 <p>Args:</p>
-<p>skeleton: 骨格 voxel(bool / 0-1 の 3D)。</p>
+<p>skeleton: Skelett-Voxel (bool / 0-1, 3D).</p>
 <p>Returns:</p>
-<p>dict: endpoints, branches, normal, isolated, total(骨格 voxel 総数),</p>
-<p>degree_hist(次数 -&gt; 個数)。</p>
+<p>dict: endpoints, branches, normal, isolated, total (Gesamtzahl der Skelett-Voxel),</p>
+<p>degree_hist (Grad -&gt; Anzahl).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

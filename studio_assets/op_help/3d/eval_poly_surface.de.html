@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.eval_poly_surface(model, x, y)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.eval_poly_surface(model, x, y)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;eval_poly_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wertet das Modell bei (x,y) aus → z (in der Form von x zurückgegeben).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>*model* は <code style="color:#22d3bf">fit_poly_surface</code> の返り(dict)。<b>fail-closed</b>: B スプライン曲面/曲線の tck(FITPACK の list)を渡すと、以前は <code style="color:#22d3bf">model[&quot;degree&quot;]</code> が <code style="color:#22d3bf">TypeError: list indices must be integers...</code> で落ちていた(2026-09-01 実測 7 回)。多項式モデルと B スプラインモデルは中身が違うので、ここで明示的に拒否する(ops3d 台帳側でも poly_surface / bspline_surface と型を分けてある)。</p>
-<p>Raises ValueError: model が多項式モデル dict でない / 必須キー欠落。</p>
+<p>*model* ist der Rückgabewert (dict) von <code style="color:#22d3bf">fit_poly_surface</code>. <b>fail-closed</b>: Die Übergabe des tck einer B-Spline- Fläche/-Kurve (FITPACK-list) führte früher bei <code style="color:#22d3bf">model[&quot;degree&quot;]</code> zum Absturz mit <code style="color:#22d3bf">TypeError: list indices must be integers...</code> (2026-09-01 gemessen, 7 Mal). Polynommodelle und B-Spline-Modelle haben verschiedenen Inhalt, daher werden sie hier explizit abgewiesen (auch im ops3d-Register sind die Typen poly_surface / bspline_surface getrennt).</p>
+<p>Raises ValueError: model ist kein Polynommodell-dict / Pflichtschlüssel fehlt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

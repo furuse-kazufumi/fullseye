@@ -4,21 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_column(column, k_cam, k_proj, rot, trans) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import fringe; fringe.triangulate_column(column, k_cam, k_proj, rot, trans) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;triangulate_column&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由每個相機像素的「投影機行號」三角測量出深度 Z(結構光的最後一段)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>構造化光スキャナの幾何そのもの: カメラ画素 (u,v) は 1 本の視線を張り、投影機のコラム番号 u_p は 1 枚の平面(投影機中心とそのコラムを含む平面)を張る。視線と平面の交点が表面の 3D 点で、そのカメラ系 Z が深度になる。<b>閉じた式</b>なので反復も最適化も要らない。</p>
-<p>column: (H, W) の投影機コラム番号(<b>サブピクセル実数</b>)。位相から出した値をそのまま</p>
-<p>渡せる。NaN = 未確定画素(出力も NaN)。</p>
-<p>k_cam:  カメラ内部行列 3x3(fx, fy, cx, cy[, skew])。画素中心は整数座標</p>
-<p>(<code style="color:#22d3bf">render3d.render_mesh</code> / <code style="color:#22d3bf">camera.depth_to_points</code> と同じ約束)。</p>
-<p>k_proj: 投影機内部行列 3x3。使うのは第 0 行(コラム方向)と第 2 行だけ。</p>
-<p>rot:    3x3 回転。カメラ系 → 投影機系(X_proj = rot·X_cam + trans)。</p>
-<p>trans:  長さ 3 の並進(同上、単位はシーンと同じ)。<b>ゼロベクトルは禁止</b></p>
-<p>(基線 0 = カメラと投影機が同一点。平面と視線が交わらず深度が定義できない)。</p>
-<p>返り値: (H, W) float64 の深度マップ(カメラ前方の Z、<code style="color:#22d3bf">render_mesh</code> の depth と同じ量)。</p>
-<p>交点が後方(Z&lt;=0)や視線が平面と平行な画素は NaN。</p>
-<p>導出: X_cam = Z·d(d = K_cam⁻¹[u,v,1])。投影機側のコラム条件は(K_proj[0] − u_p·K_proj[2])·X_proj = 0。X_proj = rot·X_cam + trans を代入して Z について解くと Z = −(a·trans) / (a·(rot·d))、a = K_proj[0] − u_p·K_proj[2]。</p>
-<p>Raises: 形状・行列不正、基線ゼロ、特異なカメラ行列で ValueError。</p>
-<p>来歴(公開文献): 光線と平面の交点による構造化光三角測量 — Hartley &amp; Zisserman, *Multiple View Geometry* 2nd ed. §12(射影幾何の交わり)/ Salvi et al., *Pattern Recognition* 43 2010(構造化光パターンの分類と復号)。</p>
+<p>結構光掃描器的幾何本身:相機像素 (u,v) 張成 1 條視線,投影機的行號 u_p 張成 1 個平面(包含投影機中心與該行的平面)。視線與平面的交點就是表面的 3D 點,其相機座標系下的 Z 即深度。這是<b>閉式解</b>,既不需要迭代也不需要最佳化。</p>
+<p>column:(H, W) 的投影機行號(<b>次像素實數</b>)。由相位得到的值可直接</p>
+<p>傳入。NaN = 未確定像素(輸出也為 NaN)。</p>
+<p>k_cam:  相機內參矩陣 3x3(fx, fy, cx, cy[, skew])。像素中心位於整數座標</p>
+<p>(與 <code style="color:#22d3bf">render3d.render_mesh</code> / <code style="color:#22d3bf">camera.depth_to_points</code> 相同的約定)。</p>
+<p>k_proj:投影機內參矩陣 3x3。只使用第 0 列(行方向)和第 2 列。</p>
+<p>rot:    3x3 旋轉。相機座標系 → 投影機座標系(X_proj = rot·X_cam + trans)。</p>
+<p>trans:  長度為 3 的平移(同上,單位與場景相同)。<b>禁止零向量</b></p>
+<p>(基線 0 = 相機與投影機在同一點。平面與視線不相交,深度無法定義)。</p>
+<p>回傳值:(H, W) float64 的深度圖(相機前方的 Z,與 <code style="color:#22d3bf">render_mesh</code> 的 depth 為同一量)。</p>
+<p>交點在後方(Z&lt;=0)或視線與平面平行的像素為 NaN。</p>
+<p>推導:X_cam = Z·d(d = K_cam⁻¹[u,v,1])。投影機端的行條件為(K_proj[0] − u_p·K_proj[2])·X_proj = 0。代入 X_proj = rot·X_cam + trans, 對 Z 求解得 Z = −(a·trans) / (a·(rot·d)),a = K_proj[0] − u_p·K_proj[2]。</p>
+<p>Raises:形狀、矩陣不正確,基線為零,相機矩陣奇異時拋出 ValueError。</p>
+<p>來源(公開文獻):基於光線與平面交點的結構光三角測量 — Hartley &amp; Zisserman, *Multiple View Geometry* 2nd ed. §12(射影幾何中的相交)/ Salvi et al., *Pattern Recognition* 43 2010(結構光圖案的分類與解碼)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rotation_translation_error(gt, est)</code>(要直接调用实现,<code style="color:#22d3bf">import registration_eval; registration_eval.rotation_translation_error(gt, est)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;rotation_translation_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>两个 4×4 变换之间的相对旋转误差(测地角[度], RRE)与相对平移误差(RTE)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>RRE = 角度(gt_R^T · est_R) = atan2(|axial(dR − dRᵀ)|/2, (tr−1)/2) を度で。任意軸まわりの角 θ の回転差なら RRE=θ。RTE = ‖gt_t − est_t‖。→ (rre_deg, rte)。非 4×4 は ValueError(fail-closed)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gt</code> / <code style="color:#22d3bf">est</code>: 4×4 同次変換(左上 3×3 が回転、右列が並進)。非有限を含むと <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rre_deg</code> は [0, 180] の度(sin を歪対称部、cos を trace から取る atan2。arccos は 1 の近くで √ε の床を持ち 1e-6° 以下を 0 と答えていた —— 2026-10-07 修正)。<code style="color:#22d3bf">rte</code> は並進列の差のノルムで座標の単位。並進列は回転の原点に依存するので、同じ姿勢誤差でも原点が物体から遠いほど RTE は大きく出る(比較は同じフレーム規約の変換どうしで行う)。</p>
-<p style="margin:2px 0 2px 12px">• 回転行列が直交でなくても検査しないので、<code style="color:#22d3bf">gicp</code> 等の出力 (R,t) を同モジュールの <code style="color:#22d3bf">make_transform</code> で組んだ正しい変換を渡す。<code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">registration_recall</code> が点群上の残差で測るのに対し、こちらは変換パラメータそのものの差を測る。</p>
+<p>RRE = 角度(gt_R^T · est_R) = atan2(|axial(dR − dRᵀ)|/2, (tr−1)/2)，以度为单位。绕任意轴转角 θ 的旋转差则 RRE=θ。RTE = ‖gt_t − est_t‖。→ (rre_deg, rte)。非 4×4 时抛出 ValueError(fail-closed)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gt</code> / <code style="color:#22d3bf">est</code>：4×4 齐次变换（左上 3×3 为旋转，右列为平移）。含非有限值时抛出 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rre_deg</code> 为 [0, 180] 的度（由反对称部分取 sin、由 trace 取 cos 的 atan2。arccos 在 1 附近有 √ε 的下限，曾把 1e-6° 以下回答为 0 —— 2026-10-07 修正）。<code style="color:#22d3bf">rte</code> 是平移列之差的范数，单位为坐标单位。平移列依赖于旋转的原点，因此即使位姿误差相同，原点离物体越远 RTE 越大（比较应在相同坐标系约定的变换之间进行）。</p>
+<p style="margin:2px 0 2px 12px">• 即使旋转矩阵不正交也不检查，因此请传入用同一模块的 <code style="color:#22d3bf">make_transform</code> 由 <code style="color:#22d3bf">gicp</code> 等输出的 (R,t) 组装的正确变换。<code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">registration_recall</code> 以点云上的残差衡量，而本函数衡量变换参数本身的差。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

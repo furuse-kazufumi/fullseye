@@ -6,28 +6,27 @@
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(warped, info, info)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Führt <code style="color:#22d3bf">src</code> mit nicht-starrem ICP an <code style="color:#22d3bf">dst</code> heran.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各反復で「現在の変形後 src」から <code style="color:#22d3bf">dst</code> への最近傍対応を張り直し、その対応を制御点対応(制御中心 = 元の src)として TPS を正則化つきで再当てはめし、src を変形する。対応が既知でなくとも滑らかな非線形変形を回復できる。</p>
-<p>実装上の要点(頑健性):</p>
-<p style="margin:2px 0 2px 12px">• <b>スケール不変</b>: λ は dst の重心まわり RMS 半径に対する相対値として扱う(内部で λ_eff = λ·scale)。座標が 100 倍でも同じ λ が同じ挙動を与える。</p>
-<p style="margin:2px 0 2px 12px">• <b>発散ガード</b>: 対応が曖昧だと単純な NN 反復は正のフィードバックで発散し得る。反復ごとの対応 RMS を監視し、<b>最良反復</b>(最小 RMS)の変形とモデルを返す。これにより悪い λ でも「初期より悪い」結果を返さない。</p>
-<p style="margin:2px 0 2px 12px">• λ が大きいほど剛(変形が小さい)。既定 λ=1.0 は保守的(ほぼ剛)なので、大きな非線形変形を回復させたい場合は λ を小さく(例 0.01〜0.05)する。</p>
-<p>引数:</p>
-<p>src: (N,3) 移動側点群。</p>
-<p>dst: (M,3) 固定側(参照)点群。</p>
-<p>iters: 最大反復回数。</p>
-<p>lam: TPS 正則化 λ(スケール相対)。大きいほど変形が滑らか(外れ対応に頑健、</p>
-<p>当てはめは緩い)。小さいほど密着(細かい変形を回復)。</p>
-<p>k_smooth: None なら最近傍1点を目標にする(ハード対応)。整数を与えると</p>
-<p><code style="color:#22d3bf">dst</code> 側の k 近傍の平均を目標にして対応を平滑化する(ノイズに頑健)。</p>
-<p>返り値:</p>
-<p>warped_src: (N,3) 最良反復での変形後 src。</p>
-<p>model: 対応する TPS モデル(制御中心 = 元 src、原座標系でそのまま</p>
-<p><code style="color:#22d3bf">tps_warp</code> に渡せる)。1回も当てはめできなければ None。</p>
-<p>info: dict。&quot;rms&quot;(最良の対応 RMS)、&quot;rms_init&quot;(初期=恒等時の対応 RMS)、</p>
-<p>&quot;rms_history&quot;(list)、&quot;iters&quot;(実反復数)、&quot;best_iter&quot;、&quot;converged&quot;(bool)。</p>
-<p>例外:</p>
-<p>ValueError: 形状不正、点数不足、k_smooth 不正。</p>
+<p>In jeder Iteration werden die Korrespondenzen zum nächsten Nachbarn von &quot;dem aktuell verformten src&quot; zu <code style="color:#22d3bf">dst</code> neu gebildet, als Kontrollpunkt-Korrespondenzen (Kontrollzentren = das ursprüngliche src) wird damit ein regularisierter TPS neu angepasst, und src wird verformt. Auch ohne bekannte Korrespondenzen lässt sich eine glatte nichtlineare Verformung rekonstruieren.</p>
+<p>Hinweise zur Implementierung (Robustheit):</p>
+<p style="margin:2px 0 2px 12px">• <b>Skaleninvarianz</b>: λ wird relativ zum RMS-Radius von dst um seinen Schwerpunkt behandelt (intern λ_eff = λ·scale). Auch bei 100-fach größeren Koordinaten liefert dasselbe λ dasselbe Verhalten.</p>
+<p style="margin:2px 0 2px 12px">• <b>Divergenzschutz</b>: Bei mehrdeutigen Korrespondenzen kann eine einfache NN-Iteration durch positive Rückkopplung divergieren. Das Korrespondenz-RMS wird pro Iteration überwacht, und Verformung und Modell der <b>besten Iteration</b> (minimales RMS) werden zurückgegeben. So wird auch bei schlechtem λ kein Ergebnis &quot;schlechter als der Anfangszustand&quot; zurückgegeben.</p>
+<p style="margin:2px 0 2px 12px">• Je größer λ, desto starrer (desto kleiner die Verformung). Der Standard λ=1.0 ist konservativ (fast starr), daher λ klein wählen (z. B. 0.01 bis 0.05), wenn große nichtlineare Verformungen rekonstruiert werden sollen.</p>
+<p>Argumente:</p>
+<p>src: (N,3) bewegte Punktwolke.</p>
+<p>dst: (M,3) feste (Referenz-)Punktwolke.</p>
+<p>iters: maximale Anzahl der Iterationen.</p>
+<p>lam: TPS-Regularisierung λ (skalenrelativ). Größer ergibt eine glattere Verformung (robust gegen Ausreißer-Korrespondenzen,</p>
+<p>lockerere Anpassung). Kleiner passt enger an (rekonstruiert feine Verformungen).</p>
+<p>k_smooth: Bei None ist der 1 nächste Nachbar das Ziel (harte Korrespondenz). Bei einer ganzen Zahl ist der Mittelwert</p>
+<p>der k nächsten Nachbarn auf der <code style="color:#22d3bf">dst</code>-Seite das Ziel, was die Korrespondenzen glättet (robust gegen Rauschen).</p>
+<p>Rückgabewerte:</p>
+<p>warped_src: (N,3) verformtes src in der besten Iteration.</p>
+<p>model: das zugehörige TPS-Modell (Kontrollzentren = ursprüngliches src; kann im ursprünglichen Koordinatensystem direkt an</p>
+<p><code style="color:#22d3bf">tps_warp</code> übergeben werden). None, wenn nicht einmal 1 Anpassung gelang.</p>
+<p>info: dict. &quot;rms&quot; (bestes Korrespondenz-RMS), &quot;rms_init&quot; (Korrespondenz-RMS am Anfang = Identität),</p>
+<p>&quot;rms_history&quot; (list), &quot;iters&quot; (tatsächliche Iterationen), &quot;best_iter&quot;, &quot;converged&quot; (bool).</p>
+<p>Ausnahmen:</p>
+<p>ValueError: ungültige Form, zu wenige Punkte, ungültiges k_smooth.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -6,8 +6,7 @@
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(rmse, n_inliers) → rmse</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der RMSE über die Inlier-Korrespondenzen (Residuum &lt; thresh) und die Inlier-Anzahl. → (rmse, n_inliers).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">source[i]↔target[i]</code> の index 対応が前提(<code style="color:#22d3bf">inlier_ratio</code> と同じ)。inlier が 0 個なら RMSE は未定義 → <code style="color:#22d3bf">(nan, 0)</code> を返す(honest; 捏造しない)。形状不一致・非 (N,3) は ValueError(fail-closed)。</p>
+<p>Setzt die Index-Korrespondenz <code style="color:#22d3bf">source[i]↔target[i]</code> voraus (wie <code style="color:#22d3bf">inlier_ratio</code>). Bei 0 Inliern ist der RMSE undefiniert → liefert <code style="color:#22d3bf">(nan, 0)</code> (honest; nichts wird erfunden). Formabweichung oder nicht (N,3) ergibt ValueError (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

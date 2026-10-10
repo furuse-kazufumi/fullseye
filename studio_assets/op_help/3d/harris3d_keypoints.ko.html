@@ -7,30 +7,26 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D Harris 키포인트 검출(2D Harris 코너 검출의 3D 판).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>voxel 密度場の 3D 勾配 g=(gz,gy,gx) から、各ボクセルで局所構造テンソル M=Σ_w w·g gᵀ(3x3 対称、gaussian 窓 sigma_i で積和)を組み、コーナー性を測る。応答が周囲で極大かつ閾値超のボクセルを keypoint とする(初期姿勢推定なしに検出できるため、大回転+部分重なりの対応付けや ICP の coarse init 供給に使える)。</p>
-<p>コーナー性の指標:</p>
-<p style="margin:2px 0 2px 12px">• &quot;mineig&quot;(既定): 3x3 対称行列の最小固有値(Shi-Tomasi 流)。3 方向すべてに構造がある(=角)ほど最小固有値が大きい。閉形式(三角関数法)で算出。k 調整不要で頑健(実測 mean repeatability 85%、min 72.5%)。</p>
-<p style="margin:2px 0 2px 12px">• &quot;harris&quot;: R = det(M) - k·tr(M)³。3D では固有値 3 個なので tr の 3 乗で</p>
-<p>無次元化。★注意: 密度 voxel の角では det/tr³ 比が経験的に ~0.01 しか</p>
-<p>ないため、2D 標準の k=0.04〜0.06 では全応答が負になり検出 0 になる。</p>
-<p>3D では k≈0.005 が必要(実測 k=0.005 で mean 89.6%)。</p>
-<p>引数:</p>
-<p>vol: (D,H,W) 密度 voxel(numpy / torch)。points_to_voxel の出力を想定。</p>
-<p>device: torch デバイス(&quot;cpu&quot; 等)。全演算をこのデバイス上で行う。</p>
-<p>k: Harris の感度係数(response=&quot;harris&quot; 時のみ有効)。3D 密度場では</p>
-<p>0.005 前後(2D 慣習の 0.04〜0.06 は 3D では強すぎ検出 0 になる)。</p>
-<p>nms: 非最大抑制の立方体窓の一辺(奇数、標準 3 = 3x3x3 近傍)。</p>
-<p>topn: 応答降順で返す keypoint の最大数。</p>
-<p>sigma_i: 構造テンソルの積分窓(gaussian)の標準偏差(voxel)。</p>
-<p>response: &quot;mineig&quot;(既定, 頑健)か &quot;harris&quot;。</p>
-<p>rel_thresh: 応答の閾値 = rel_thresh × 有効領域の最大応答(雑音抑制)。</p>
-<p>border: 端から border ボクセル以内は検出しない(勾配の端効果を除去)。</p>
-<p>返り値:</p>
-<p>keypoints: (M,3) float64。keypoint の voxel 座標 (z,y,x)(sobel3d と</p>
-<p>同じ軸順)。応答降順、最大 topn 個。</p>
-<p>responses: (M,) float64。対応する応答値(降順)。</p>
-<p>依存: sobel3d(3D 勾配)、_gauss3d(積分窓平滑)。いずれも device 上で動作。</p>
+<p>voxel 밀도장의 3D 기울기 g=(gz,gy,gx) 로부터, 각 복셀에서 국소 구조 텐서 M=Σ_w w·g gᵀ(3x3 대칭, gaussian 창 sigma_i 로 가중합)를 구성하고, 코너성을측정한다. 응답이 주변에서 극대이고 임계값을 넘는 복셀을 keypoint 로 한다(초기 자세추정 없이 검출할 수 있으므로, 대회전+부분 겹침의 대응이나 ICP 의 coarse init 공급에 쓸 수 있다).</p>
+<p>코너성 지표:</p>
+<p style="margin:2px 0 2px 12px">• &quot;mineig&quot;(기본값): 3x3 대칭 행렬의 최소 고윳값(Shi-Tomasi 식). 3 방향 모두에 구조가 있을(=모서리)수록 최소 고윳값이 크다. 닫힌 식(삼각함수법)으로 산출. k 조정이 필요 없고 강건(실측 mean repeatability 85%, min 72.5%).</p>
+<p style="margin:2px 0 2px 12px">• &quot;harris&quot;: R = det(M) - k·tr(M)³. 3D 에서는 고윳값이 3 개이므로 tr 의 3 제곱으로무차원화. ★주의: 밀도 voxel 의 모서리에서는 det/tr³ 비가 경험적으로 ~0.01 밖에되지 않으므로, 2D 표준의 k=0.04〜0.06 에서는 모든 응답이 음이 되어 검출 0 이 된다. 3D 에서는 k≈0.005 가 필요(실측 k=0.005 에서 mean 89.6%).</p>
+<p>인수:</p>
+<p>vol: (D,H,W) 밀도 voxel(numpy / torch). points_to_voxel 의 출력을 상정.</p>
+<p>device: torch 디바이스(&quot;cpu&quot; 등). 모든 연산을 이 디바이스에서 수행한다.</p>
+<p>k: Harris 의 감도 계수(response=&quot;harris&quot; 일 때만 유효). 3D 밀도장에서는</p>
+<p>0.005 전후(2D 관례의 0.04〜0.06 은 3D 에서는 너무 강해 검출 0 이 된다).</p>
+<p>nms: 비최대 억제의 입방체 창의 한 변의 길이(홀수, 표준 3 = 3x3x3 근방).</p>
+<p>topn: 응답 내림차순으로 반환하는 keypoint 의 최대 수.</p>
+<p>sigma_i: 구조 텐서의 적분 창(gaussian)의 표준편차(voxel).</p>
+<p>response: &quot;mineig&quot;(기본값, 강건) 또는 &quot;harris&quot;.</p>
+<p>rel_thresh: 응답의 임계값 = rel_thresh × 유효 영역의 최대 응답(잡음 억제).</p>
+<p>border: 가장자리에서 border 복셀 이내는 검출하지 않는다(기울기의 가장자리 효과 제거).</p>
+<p>반환값:</p>
+<p>keypoints: (M,3) float64. keypoint 의 voxel 좌표 (z,y,x)(sobel3d 와</p>
+<p>같은 축 순서). 응답 내림차순, 최대 topn 개.</p>
+<p>responses: (M,) float64. 대응하는 응답값(내림차순).</p>
+<p>의존: sobel3d(3D 기울기), _gauss3d(적분 창 평활). 모두 device 위에서 동작.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 행렬 분해가 느린 이유 — BLAS 스레드·캐시·메모리 배치</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

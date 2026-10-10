@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mesh_props; mesh_props.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;boundary_vertices&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Indices of the vertices</b> lying on open edges (the boundary) → <code style="color:#22d3bf">(K,)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>無向辺のうち<b>ちょうど 1 つの面にしか使われていない辺</b>(境界辺)の端点を集めて返す。閉じた多様体なら空配列 —— つまり <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> が <b>水密性(watertight)の判定</b>になる。穴埋め・体積計算・曲率のどれも、境界の有無で意味が変わるので、先にここを見る。</p>
+<p>Collects and returns the endpoints of the undirected edges <b>used by exactly 1 face only</b> (boundary edges). For a closed manifold this is an empty array -- that is, <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> serves as <b>the watertightness test</b>. Hole filling, volume computation and curvature all change meaning depending on whether a boundary exists, so look here first.</p>
 <p>Args:</p>
-<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
+<p>mesh: tuple of <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code>.</p>
 <p>Returns:</p>
-<p>昇順・重複なしの <code style="color:#22d3bf">(K,)</code> int64。境界が無ければ <code style="color:#22d3bf">shape == (0,)</code>。</p>
+<p><code style="color:#22d3bf">(K,)</code> int64, ascending and without duplicates. <code style="color:#22d3bf">shape == (0,)</code> if there is no boundary.</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
-<p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p><b>限界(honest)</b>: 返るのは頂点の集合で、<b>縁のループ(周回順)ではない</b>。穴が複数あっても 1 つの配列にまとまるので、穴ごとに分けたいなら連結成分を自分で辿ることになる(ループ抽出の op はまだ無い)。3 つ以上の面が共有する非多様体辺はここには出ない(<code style="color:#22d3bf">mesh_edge_stats</code> の <code style="color:#22d3bf">non_manifold_edges</code>)。</p>
+<p>ValueError: when <code style="color:#22d3bf">mesh</code> is not the 2 elements <code style="color:#22d3bf">(vertices, faces)</code>, the shape is invalid,</p>
+<p>coordinates are non-finite, an index is non-integer or out of range, or it is empty.</p>
+<p><b>Limitation (honest)</b>: what is returned is a set of vertices, <b>not a loop of the rim (in traversal order)</b>. Even with several holes everything is merged into 1 array, so if you want them separated per hole you have to trace the connected components yourself (there is no loop-extraction op yet). Non-manifold edges shared by 3 or more faces do not appear here (see <code style="color:#22d3bf">non_manifold_edges</code> of <code style="color:#22d3bf">mesh_edge_stats</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tonemap_reinhard(hdr, exposure: &#x27;float&#x27; = 1.0, white: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_reinhard(hdr, exposure: &#x27;float&#x27; = 1.0, white: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;tonemap_reinhard&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Reinhard 톤 매핑으로 HDR 을 <code style="color:#22d3bf">[0, 1]</code> 의 LDR 로 압축. → float64, 입력과 같은 형상.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>露出を掛けた <code style="color:#22d3bf">x = hdr * exposure</code> に対し:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white is None</code> … 基本形 <code style="color:#22d3bf">x / (1 + x)</code>。<code style="color:#22d3bf">[0, ∞)</code> を<b>狭義単調増加</b>で <code style="color:#22d3bf">[0, 1)</code> へ写し、決してクリップしない(全域で階調順序を厳密保存)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code> 指定 … 拡張形 <code style="color:#22d3bf">x (1 + x/white²) / (1 + x)</code>。<code style="color:#22d3bf">white</code> を正確に 1.0 へ写し、<code style="color:#22d3bf">white</code> 未満に多くのレンジを割く(<code style="color:#22d3bf">white</code> を超える入力は 1 を超えるので <code style="color:#22d3bf">[0, 1]</code> にクリップする)。</p>
-<p>カラー <code style="color:#22d3bf">(H, W, C)</code> はチャンネル独立に写像する。素朴クリップ <code style="color:#22d3bf">min(x, 1)</code> と違い、値 &gt; 1 のハイライト域でも単調な階調を保つ。</p>
+<p>노출을 곱한 <code style="color:#22d3bf">x = hdr * exposure</code>에 대해:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white is None</code> … 기본형 <code style="color:#22d3bf">x / (1 + x)</code>. <code style="color:#22d3bf">[0, ∞)</code>를 <b>순증가(엄밀한 단조 증가)</b>로 <code style="color:#22d3bf">[0, 1)</code>로 사상하며, 결코 클립하지 않는다(전역에서 계조 순서를 엄밀하게 보존).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code> 지정 … 확장형 <code style="color:#22d3bf">x (1 + x/white²) / (1 + x)</code>. <code style="color:#22d3bf">white</code>를 정확히 1.0으로사상하고, <code style="color:#22d3bf">white</code> 미만에 많은 레인지를 할애한다(<code style="color:#22d3bf">white</code>를 넘는 입력은 1을 넘으므로 <code style="color:#22d3bf">[0, 1]</code>에 클립한다).</p>
+<p>컬러 <code style="color:#22d3bf">(H, W, C)</code>는 채널 독립으로 사상한다. 소박한 클립 <code style="color:#22d3bf">min(x, 1)</code>과 달리, 값 &gt; 1인 하이라이트 영역에서도 단조로운 계조를 유지한다.</p>
 <p>Args:</p>
-<p>hdr: HDR 画像。<code style="color:#22d3bf">(H, W)</code> グレースケール or <code style="color:#22d3bf">(H, W, C)</code> カラー、放射輝度 &gt;= 0。</p>
-<p>exposure: 写像前に掛ける露出スケール(正)。</p>
-<p>white: 任意の white-point(正)。None なら基本 Reinhard(推奨・全域単調)。</p>
+<p>hdr: HDR 영상. <code style="color:#22d3bf">(H, W)</code> 그레이스케일 or <code style="color:#22d3bf">(H, W, C)</code> 컬러, 방사 휘도 &gt;= 0.</p>
+<p>exposure: 사상 전에 곱하는 노출 스케일(양).</p>
+<p>white: 임의의 white-point(양). None이면 기본 Reinhard(권장·전역 단조).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">[0, 1]</code> の float64 LDR 画像(入力と同形状)。</p>
+<p><code style="color:#22d3bf">[0, 1]</code>의 float64 LDR 영상(입력과 같은 형상).</p>
 <p>Raises:</p>
-<p>ValueError: 空/非有限/負の放射輝度、非正の exposition/white(fail-closed)。</p>
+<p>ValueError: 빈/비유한/음의 방사 휘도, 양이 아닌 exposition/white(fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

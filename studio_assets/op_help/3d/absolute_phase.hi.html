@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.absolute_phase(wrapped, coarse) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fringe; fringe.absolute_phase(wrapped, coarse) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;absolute_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>wrapped phase को, मोटे पर absolute phase estimate से &quot;order तय&quot; करके absolute phase बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Φ = wrapped + 2π·round((coarse − wrapped) / 2π)</p>
-<p>wrapped: wrapped_phase の出力 (-π,π] の 2D 配列(高精度・絶対次数なし)。</p>
-<p>coarse:  同形の 2D 配列。<b>絶対だが粗い</b>位相推定 [rad]。Gray code で復号した投影機</p>
-<p>コラム番号を位相に直したもの(2π·freq·col/width)が典型。NaN 可(出力も NaN)。</p>
-<p>返り値: 絶対位相 [rad] (2D float64)。無効画素(どちらかが NaN)は NaN。</p>
-<p>なぜ必要か(空間アンラップとの違い): <code style="color:#22d3bf">unwrap_phase_2d</code> は隣接画素を辿って 2π 跳びを繋ぐので、(a) 大域オフセット +2πm が残り、(b) オクルージョンで切れた島の間では次数が伝播できない。本 op は画素ごとに独立に次数を決めるため、<b>島に分かれた場面でも絶対</b>で、伝播も要らない。その代わり coarse の誤差が半周期(π)未満であることが要件。</p>
-<p>要件(fail-closed): |coarse − Φ_true| &lt; π。これを破ると round が隣の次数を選び、その画素だけ 2π ぶん(= 縞 1 本ぶんの奥行き)静かにずれる。Gray code の粗さ(±0.5 コラム) を位相に直した量が半周期を超えないよう、縞本数 freq を選ぶこと(例: 投影機幅 512 px・freq 24 → 1 周期 21.3 px、Gray の ±0.5 px は余裕で内側)。</p>
-<p>Raises: 形状不一致・2D でない・wrapped が (-π,π] を大きく外れる場合に ValueError。</p>
-<p>来歴(公開文献): Gray code と位相シフトを併用して絶対位相を得る合成法 — Sansoni et al., *Appl. Opt.* 38(31) 1999 / Zhang, *Opt. Lasers Eng.* 48 2010(総説)。Gray code そのものの投影は Inokuchi et al., *ICPR* 1984。</p>
+<p>wrapped: wrapped_phase का output, (-π,π] का 2D array (उच्च precision, absolute order नहीं)।</p>
+<p>coarse:  उसी shape का 2D array। <b>absolute लेकिन coarse</b> phase अनुमान [rad]। आम तौर पर Gray code से decode किया गया projector</p>
+<p>column number, phase में बदला हुआ (2π·freq·col/width)। NaN चल सकता है (output भी NaN)।</p>
+<p>return value: absolute phase [rad] (2D float64)। invalid pixels (दोनों में से कोई NaN) NaN होते हैं।</p>
+<p>यह क्यों ज़रूरी है (spatial unwrapping से अंतर): <code style="color:#22d3bf">unwrap_phase_2d</code> पड़ोसी pixels के सहारे 2π jumps को जोड़ता है, इसलिए (a) global offset +2πm बचा रहता है, और (b) occlusion से कटे islands के बीच order propagate नहीं हो पाता। यह op हर pixel के लिए स्वतंत्र रूप से order तय करता है, इसलिए <b>islands में बँटे दृश्यों में भी absolute</b> रहता है, और propagation की ज़रूरत नहीं होती। बदले में coarse की error आधे period (π) से कम होनी चाहिए।</p>
+<p>शर्त (fail-closed): |coarse − Φ_true| &lt; π। यह टूटे तो round पड़ोसी order चुन लेता है, और सिर्फ़ वह pixel चुपचाप 2π (= 1 fringe जितनी depth) खिसक जाता है। fringes की संख्या freq ऐसे चुनें कि Gray code की coarseness (±0.5 column) phase में बदलने पर आधे period से ज़्यादा न हो (उदाहरण: projector width 512 px, freq 24 → 1 period 21.3 px, Gray का ±0.5 px आराम से अंदर है)।</p>
+<p>Raises: shape mismatch, 2D न होना, या wrapped का (-π,π] से बहुत बाहर होना पर ValueError।</p>
+<p>स्रोत (सार्वजनिक literature): Gray code और phase shifting को मिलाकर absolute phase पाने की combined विधि — Sansoni et al., *Appl. Opt.* 38(31) 1999 / Zhang, *Opt. Lasers Eng.* 48 2010 (review)। Gray code का ख़ुद का projection: Inokuchi et al., *ICPR* 1984।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

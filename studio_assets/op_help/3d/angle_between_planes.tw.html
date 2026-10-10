@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_between_planes(n1, n2)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.angle_between_planes(n1, n2)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;angle_between_planes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>兩平面的二面角(法線 n1,n2;度)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>法線同士の角 <code style="color:#22d3bf">arccos(|n̂1·n̂2|)</code> を度で返す(float)。絶対値を取るので <b>[0, 90]</b> の鋭角側(法線の向きに依らない。鈍角側が要るなら <code style="color:#22d3bf">180 −</code>)。0 = 平行、90 = 直交。<code style="color:#22d3bf">n1</code>, <code style="color:#22d3bf">n2</code> は数値の 2 または 3 ベクトル(長さは問わない)、次元の混在は ValueError。零ベクトルは 90 が返る。</p>
-<p>用途: <code style="color:#22d3bf">fit_plane_3d</code> / <code style="color:#22d3bf">hough_plane_3d</code> で取った 2 面の平行度・直角度、<code style="color:#22d3bf">intersect_planes</code> の前の平行判定。</p>
+<p>以度回傳法線之間的角 <code style="color:#22d3bf">arccos(|n̂1·n̂2|)</code>(float)。由於取絕對值,為 <b>[0, 90]</b> 的銳角一側(與法線的朝向無關。需要鈍角一側時取 <code style="color:#22d3bf">180 −</code>)。0 = 平行,90 = 正交。<code style="color:#22d3bf">n1</code>, <code style="color:#22d3bf">n2</code> 為數值的 2 或 3 維向量(長度不限),維度混用則 ValueError。零向量回傳 90。</p>
+<p>用途: <code style="color:#22d3bf">fit_plane_3d</code> / <code style="color:#22d3bf">hough_plane_3d</code> 得到的 2 個面的平行度、垂直度,<code style="color:#22d3bf">intersect_planes</code> 之前的平行判定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

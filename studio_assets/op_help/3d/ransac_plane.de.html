@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_plane(points, thresh, iters=500, seed=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_plane(points, thresh, iters=500, seed=0)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;ransac_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ausreißerrobuste RANSAC-Ebenenanpassung.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>3 点をサンプル → 平面法線(2 辺の外積)→ 点-平面距離 |n·(p-p0)| &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化 → 最終 inlier で最小二乗リフィット(法線=共分散の最小主軸)。</p>
+<p>3 Punkte ziehen → Ebenennormale (Kreuzprodukt von 2 Kanten) → Inlier mit Punkt-Ebene-Abstand |n·(p-p0)| &lt; <code style="color:#22d3bf">thresh</code> maximieren → Kleinste-Quadrate-Neuanpassung auf den finalen Inliern (Normale = kleinste Hauptachse der Kovarianz).</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>thresh: inlier とみなす点-平面距離のしきい値。</p>
-<p>iters: RANSAC 反復数。</p>
-<p>seed: 乱数シード(決定論)。</p>
+<p>points: (N,3) Punktwolke.</p>
+<p>thresh: Schwellwert des Punkt-Ebene-Abstands, ab dem ein Punkt als Inlier gilt.</p>
+<p>iters: Anzahl der RANSAC-Iterationen.</p>
+<p>seed: Zufalls-Seed (deterministisch).</p>
 <p>Returns:</p>
-<p>(params, inlier_mask, info)。params = {&quot;normal&quot;: (3,), &quot;d&quot;: float, &quot;point&quot;: (3,)}</p>
-<p>で平面は <code style="color:#22d3bf">normal·x + d = 0</code>。inlier_mask=(N,) bool。</p>
+<p>(params, inlier_mask, info). params = {&quot;normal&quot;: (3,), &quot;d&quot;: float, &quot;point&quot;: (3,)}</p>
+<p>und die Ebene ist <code style="color:#22d3bf">normal·x + d = 0</code>. inlier_mask=(N,) bool.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

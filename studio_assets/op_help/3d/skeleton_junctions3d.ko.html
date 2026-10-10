@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_junctions3d(vol)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import medial; medial.skeleton_junctions3d(vol)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;skeleton_junctions3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D 골격의 분기점(joint, 26 이웃에 골격 voxel 이 3 개 이상)을 voxel 마스크로 돌려줍니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>骨格でない入力(interior を持つ塊)は skeletonize_vol で細線化してから測る。2D の <code style="color:#22d3bf">junctions_skeleton</code> の 3D 版。血管・多孔質・ネットワーク状構造のグラフ化(node 抽出)に使う。分岐次数の集計だけ欲しい場合は topology_signature が dict で返す。</p>
-<p>注意(honest): 26 近傍次数は分岐近傍の対角隣接で過大に出うる(離散骨格の既知の性質)。分岐 *個数* を数えるときはこのマスクを連結成分でまとめること。</p>
-<p>手順: <code style="color:#22d3bf">_ensure_skeleton</code> — 入力を bool 化し、6 近傍(面隣接)がすべて前景の interior voxel が 1 つでもあれば「骨格ではない」とみなして <code style="color:#22d3bf">skeletonize_vol</code> (skimage Lee 法)を先に掛ける。その後、3x3x3 の全 1 カーネル(中心 0)の畳み込み(<code style="color:#22d3bf">mode=&quot;constant&quot;</code>、外側は 0)で各 voxel の 26 近傍にある骨格 voxel 数(次数)を数え、<code style="color:#22d3bf">skel &amp; (次数 &gt;= 3)</code> を返す。</p>
-<p>返り値: 入力と同形の bool 配列。前景が無ければ全 False。骨格 voxel 以外は必ず False。座標は <code style="color:#22d3bf">np.argwhere</code> で <code style="color:#22d3bf">(z, y, x)</code> 順に取れる。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): 3-D でない・空配列・float で NaN/Inf を含む入力。scikit-image が無い環境で細線化が必要になると <code style="color:#22d3bf">ImportError</code>。</p>
-<p>注意: 既に骨格の入力でも interior 判定は毎回走る(細い骨格なら細線化は skip される)。個数を数えるなら <code style="color:#22d3bf">vol_label(mask, 26)</code> の成分数を使う。枝に分けるのは <code style="color:#22d3bf">skeleton_branches3d</code>、端点は <code style="color:#22d3bf">skeleton_endpoints3d</code>。</p>
+<p>골격이 아닌 입력(interior를 가진 덩어리)은 skeletonize_vol로 세선화한 뒤 측정한다. 2D <code style="color:#22d3bf">junctions_skeleton</code>의 3D 판. 혈관, 다공질, 네트워크 모양 구조의그래프화(node 추출)에 쓴다. 분기 차수의 집계만 필요하면 topology_signature가 dict로 반환한다.</p>
+<p>주의(honest): 26 근방 차수는 분기 근방의 대각 인접으로 과대하게 나올 수 있다(이산 골격의알려진 성질). 분기 *개수*를 셀 때는 이 마스크를 연결 성분으로 묶을 것.</p>
+<p>절차: <code style="color:#22d3bf">_ensure_skeleton</code> — 입력을 bool로 만들고, 6 근방(면 인접)이 모두 전경인 interior voxel이 1개라도 있으면 &quot;골격이 아니다&quot;로 보고 <code style="color:#22d3bf">skeletonize_vol</code> (skimage Lee 법)을 먼저 적용한다. 그 후 3x3x3의 전부 1인 커널(중심 0)의 합성곱(<code style="color:#22d3bf">mode=&quot;constant&quot;</code>, 바깥은 0)으로 각 voxel의 26 근방에 있는 골격 voxel 수(차수)를세어, <code style="color:#22d3bf">skel &amp; (차수 &gt;= 3)</code>을 반환한다.</p>
+<p>반환값: 입력과 같은 형상의 bool 배열. 전경이 없으면 모두 False. 골격 voxel 이외는반드시 False. 좌표는 <code style="color:#22d3bf">np.argwhere</code>로 <code style="color:#22d3bf">(z, y, x)</code> 순서로 얻을 수 있다.</p>
+<p>검증(<code style="color:#22d3bf">ValueError</code>): 3-D가 아님, 빈 배열, NaN/Inf를 포함한 float 입력. scikit-image가 없는 환경에서 세선화가 필요해지면 <code style="color:#22d3bf">ImportError</code>.</p>
+<p>주의: 이미 골격인 입력이라도 interior 판정은 매번 실행된다(가는 골격이면 세선화는 skip된다). 개수를 세려면 <code style="color:#22d3bf">vol_label(mask, 26)</code>의 성분 수를 사용한다. 가지로 나누는 것은 <code style="color:#22d3bf">skeleton_branches3d</code>, 끝점은 <code style="color:#22d3bf">skeleton_endpoints3d</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

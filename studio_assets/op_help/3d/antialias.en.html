@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.antialias(hi_res_image, ss, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import render_ssaa; render_ssaa.antialias(hi_res_image, ss, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;antialias&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Downscale a high-resolution image by an integer factor <code style="color:#22d3bf">ss</code> (area-average anti-aliasing).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">hi_res_image</code> は <code style="color:#22d3bf">(H*ss, W*ss)</code> または <code style="color:#22d3bf">(H*ss, W*ss, C)</code> の float 画像。各 <code style="color:#22d3bf">ss×ss</code> ブロックを重み付き平均して <code style="color:#22d3bf">(H, W[, C])</code> を返す。<code style="color:#22d3bf">filter</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;box&quot;</code>   — 等重み平均(正確な面積平均、SSAA の標準)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gauss&quot;</code> — ブロック中心を重く見るガウス重み(σ = ss/2、僅かに柔らかい)。</p>
-<p>Fail-closed: <code style="color:#22d3bf">ss</code> は 1 以上の整数、入力は 2D / 3D、各辺は <code style="color:#22d3bf">ss</code> で割り切れること。非有限値があれば <code style="color:#22d3bf">ValueError</code>(平均で NaN が伝播しないよう確保前に拒否)。</p>
+<p><code style="color:#22d3bf">hi_res_image</code> is a float image of <code style="color:#22d3bf">(H*ss, W*ss)</code> or <code style="color:#22d3bf">(H*ss, W*ss, C)</code>. Each <code style="color:#22d3bf">ss×ss</code> block is weight-averaged and <code style="color:#22d3bf">(H, W[, C])</code> is returned. <code style="color:#22d3bf">filter</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;box&quot;</code>   — equal-weight average (exact area average, the standard for SSAA).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gauss&quot;</code> — Gaussian weights emphasising the block centre (σ = ss/2, slightly softer).</p>
+<p>Fail-closed: <code style="color:#22d3bf">ss</code> is an integer of 1 or more, the input is 2D / 3D, and each side must be divisible by <code style="color:#22d3bf">ss</code>. Non-finite values raise <code style="color:#22d3bf">ValueError</code> (rejected before allocation so that NaN does not propagate through the averaging).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

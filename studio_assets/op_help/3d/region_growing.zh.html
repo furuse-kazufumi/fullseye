@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import segment3d; segment3d.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;region_growing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按法线相似度做区域生长,给连通的平滑区域同一标签(无曲率门限的变体)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各点を k 近傍グラフ上で BFS 成長させ、隣接点 q を「法線 n_p と n_q の成す角が <code style="color:#22d3bf">angle_thresh_deg</code> 未満」のときだけ同領域に加える。平面内の法線はほぼ平行なので同一領域に連結し、向きの違う面の境界では角度が開いて連結が切れる → 面ごとに別領域。法線は符号不定(PCA 由来)なので <code style="color:#22d3bf">|n_p·n_q|</code> で判定(表裏を同一視)。</p>
+<p>在 k 近邻图上对各点做 BFS 生长,仅当“法线 n_p 与 n_q 的夹角小于 <code style="color:#22d3bf">angle_thresh_deg</code>”时才把相邻点 q 加入同一区域。平面内的法线几乎平行,因此连成同一区域;在朝向不同的面的边界处夹角张开,连接断开 → 每个面成为不同区域。法线的符号不确定(来自 PCA),因此用 <code style="color:#22d3bf">|n_p·n_q|</code> 判定(正反面视为相同)。</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>normals: (N,3) 単位法線。None なら <code style="color:#22d3bf">pointcloud.estimate_normals</code> で PCA 推定。</p>
-<p>angle_thresh_deg: 隣接法線角度の許容上限[度]。(0,180) の範囲。</p>
-<p>k: 近傍数(kNN グラフの次数)。</p>
+<p>points: (N,3) 点云。</p>
+<p>normals: (N,3) 单位法线。为 None 时用 <code style="color:#22d3bf">pointcloud.estimate_normals</code> 做 PCA 估计。</p>
+<p>angle_thresh_deg: 相邻法线夹角的允许上限[度]。范围 (0,180)。</p>
+<p>k: 邻域点数(kNN 图的度)。</p>
 <p>Returns:</p>
-<p>labels: (N,) int。連結平滑領域ごとに 0,1,2,... を付与。<b>min_region_size 未満の小領域(孤立点・向き不一致のゴミ)は -1(ノイズ/未割当)</b> = 統一契約(-1=ノイズ)に従う。</p>
-<p>空入力は shape (0,) を返す。</p>
+<p>labels: (N,) int。按每个连通的平滑区域赋予 0,1,2,...。<b>小于 min_region_size 的小区域(孤立点、朝向不一致的杂碎)为 -1(噪声/未分配)</b> = 遵循统一约定(-1=噪声)。</p>
+<p>空输入返回 shape (0,)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

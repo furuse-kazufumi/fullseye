@@ -6,15 +6,14 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(f, precision, recall) → F 値</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>F-score @ tau = precision और recall का harmonic mean। → (f, precision, recall)। reconstruction का मानक metric।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Raises ValueError: どちらかが空 or (N,3) でない場合(accuracy/completeness 経由)。</p>
-<p>計算(<code style="color:#22d3bf">a</code> = 再構成/推定、<code style="color:#22d3bf">b</code> = 参照/GT の慣習):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">precision</code> = <code style="color:#22d3bf">a</code> の点のうち、<code style="color:#22d3bf">b</code> への最近傍距離が <code style="color:#22d3bf">tau</code> <b>未満</b> (<code style="color:#22d3bf">&lt; tau</code>、等号は含まない)の割合。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">recall</code> = <code style="color:#22d3bf">b</code> の点のうち、<code style="color:#22d3bf">a</code> への最近傍距離が <code style="color:#22d3bf">tau</code> 未満の割合。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f = 2 p r / (p + r)</code>、<code style="color:#22d3bf">p + r == 0</code> なら <code style="color:#22d3bf">0.0</code>(0 除算にしない)。</p>
-<p>引数: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は <code style="color:#22d3bf">(N, 3)</code> / <code style="color:#22d3bf">(M, 3)</code> 点群(対応不要、点数は異なってよい)。<code style="color:#22d3bf">tau</code> は距離閾値(座標と同じ単位、正の値を想定。<code style="color:#22d3bf">tau &lt;= 0</code> だと距離 0 の点も <code style="color:#22d3bf">&lt; tau</code> にならず precision = recall = 0 になる。検査はしない)。</p>
-<p>返り値: <code style="color:#22d3bf">(f, precision, recall)</code> の 3 つの <code style="color:#22d3bf">float</code>、それぞれ <code style="color:#22d3bf">[0, 1]</code>。1 が完全一致。</p>
-<p>注意: <code style="color:#22d3bf">tau</code> の選び方が結果を決める(voxel サイズ・スキャン分解能の 1〜2 倍が目安)。片方の雲だけ密だと precision と recall が乖離する — その非対称性を見るのがこの指標の価値で、1 数字で良ければ <code style="color:#22d3bf">chamfer_distance</code>。</p>
+<p>Raises ValueError: यदि दोनों में से कोई खाली हो या (N,3) न हो (accuracy/completeness के माध्यम से)।</p>
+<p>गणना (परिपाटी: <code style="color:#22d3bf">a</code> = reconstruction/estimate, <code style="color:#22d3bf">b</code> = reference/GT):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">precision</code> = <code style="color:#22d3bf">a</code> के points में से उनका अनुपात जिनकी <code style="color:#22d3bf">b</code> तक nearest neighbour दूरी <code style="color:#22d3bf">tau</code> से <b>कम</b> (<code style="color:#22d3bf">&lt; tau</code>, बराबरी शामिल नहीं) है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">recall</code> = <code style="color:#22d3bf">b</code> के points में से उनका अनुपात जिनकी <code style="color:#22d3bf">a</code> तक nearest neighbour दूरी <code style="color:#22d3bf">tau</code> से कम है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f = 2 p r / (p + r)</code>, <code style="color:#22d3bf">p + r == 0</code> हो तो <code style="color:#22d3bf">0.0</code> (0 से भाग नहीं)।</p>
+<p>arguments: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> <code style="color:#22d3bf">(N, 3)</code> / <code style="color:#22d3bf">(M, 3)</code> point cloud हैं (correspondence की ज़रूरत नहीं, points की संख्या अलग हो सकती है)। <code style="color:#22d3bf">tau</code> दूरी का threshold है (coordinates वाली ही इकाई, धनात्मक मान माना गया है। <code style="color:#22d3bf">tau &lt;= 0</code> हो तो दूरी 0 वाले points भी <code style="color:#22d3bf">&lt; tau</code> नहीं होते और precision = recall = 0 हो जाता है। जाँच नहीं की जाती)।</p>
+<p>return value: <code style="color:#22d3bf">(f, precision, recall)</code> के 3 <code style="color:#22d3bf">float</code>, हर एक <code style="color:#22d3bf">[0, 1]</code> में। 1 पूर्ण मेल है।</p>
+<p>ध्यान दें: <code style="color:#22d3bf">tau</code> का चुनाव परिणाम तय करता है (voxel size या scan resolution का 1-2 गुना एक संकेत है)। केवल एक cloud घना हो तो precision और recall अलग हो जाते हैं — उसी असमानता को देखना इस metric का मूल्य है; 1 संख्या से काम चले तो <code style="color:#22d3bf">chamfer_distance</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>

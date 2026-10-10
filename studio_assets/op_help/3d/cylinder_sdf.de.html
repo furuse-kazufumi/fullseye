@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cylinder_sdf(grid, center, axis, radius, height)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sdf_ops; sdf_ops.cylinder_sdf(grid, center, axis, radius, height)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;cylinder_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Exaktes</b> vorzeichenbehaftetes Distanzfeld eines Zylinders endlicher Länge (flache Deckel an beiden Enden) (innen negativ, außen positiv).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>軸方向の距離 <code style="color:#22d3bf">t</code> と軸からの半径 <code style="color:#22d3bf">r</code> に分け、<code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code> として <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>、<code style="color:#22d3bf">inside = min(max(q), 0)</code>、<code style="color:#22d3bf">sdf = outside + inside</code>。これは <code style="color:#22d3bf">box_sdf</code> と同じ Quilez 流の構成を「(半径, 軸)の 2-D 断面」に適用したもので、側面・蓋・角(縁)のいずれに対しても真のユークリッド距離になる。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: 円柱の<b>中心</b>(端面ではなく重心。要素数 3)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis</code>: 軸の向き(要素数 3、零ベクトル・NaN は拒否。長さは自動正規化)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 半径 &gt; 0 相当のスカラ(<code style="color:#22d3bf">0</code> は軸線そのもの、負は拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>: 全長のスカラ(<code style="color:#22d3bf">center</code> から ±height/2。負は拒否)。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。</p>
-<p>使いどころ: <b>貫通穴は <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b>(<code style="color:#22d3bf">height</code> を部品より長くして端面の縁を残さない)。ボス・ピン・シャフトは <code style="color:#22d3bf">sdf_union</code>。無限長の円柱が要るなら <code style="color:#22d3bf">height</code> を十分大きく取る(端面が評価域の外に出れば側面だけが効く)。</p>
+<p>Zerlegung in den axialen Abstand <code style="color:#22d3bf">t</code> und den Radius von der Achse <code style="color:#22d3bf">r</code>; mit <code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code> ist <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>, <code style="color:#22d3bf">inside = min(max(q), 0)</code>, <code style="color:#22d3bf">sdf = outside + inside</code>. Das ist dieselbe Quilez-Konstruktion wie bei <code style="color:#22d3bf">box_sdf</code>, angewandt auf &quot;den 2-D-Querschnitt (Radius, Achse)&quot;, und ergibt daher für Mantel, Deckel und Ecken (Ränder) gleichermaßen die wahre euklidische Distanz.</p>
+<p>Argumente und Prüfung (<code style="color:#22d3bf">ValueError</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: float-Array <code style="color:#22d3bf">(..., 3)</code> mit letzter Achse 3.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: der <b>Mittelpunkt</b> des Zylinders (der Schwerpunkt, keine Stirnfläche; 3 Elemente).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis</code>: Achsrichtung (3 Elemente, Nullvektor und NaN werden abgewiesen; Länge wird automatisch normiert).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: Skalar entsprechend Radius &gt; 0 (<code style="color:#22d3bf">0</code> ist die Achslinie selbst, negativ wird abgewiesen).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>: Skalar der Gesamtlänge (±height/2 von <code style="color:#22d3bf">center</code>; negativ wird abgewiesen).</p>
+<p>Rückgabewert: float64 der Form <code style="color:#22d3bf">grid.shape[:-1]</code>.</p>
+<p>Einsatz: <b>Eine Durchgangsbohrung ist <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b> (<code style="color:#22d3bf">height</code> länger als das Bauteil wählen, damit kein Rand der Stirnfläche bleibt). Naben, Stifte und Wellen mit <code style="color:#22d3bf">sdf_union</code>. Wird ein unendlich langer Zylinder benötigt, <code style="color:#22d3bf">height</code> ausreichend groß wählen (liegen die Stirnflächen außerhalb des Auswertebereichs, wirkt nur der Mantel).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

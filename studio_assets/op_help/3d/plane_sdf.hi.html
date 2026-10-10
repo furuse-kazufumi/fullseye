@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_sdf(grid, point, normal)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.plane_sdf(grid, point, normal)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;plane_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>half-space (plane से कटा हुआ हिस्सा) का <b>exact</b> signed distance field (अंदर ऋणात्मक, बाहर धनात्मक)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">sdf(p) = (p - point) · n̂</code>。法線 <code style="color:#22d3bf">n̂</code> の<b>指す側が外側(正)</b>で、反対側が内側。面取り(chamfer)・切断・「基板から上だけ」のような<b>片側だけを残す</b>演算に使う。<code style="color:#22d3bf">sdf_intersect</code> を重ねれば任意の凸多面体が作れる。ただし <b>max による交差は角の外側で厳密ではない</b>: 6 枚で直方体を作ると占有(<code style="color:#22d3bf">&lt;= 0</code>)と内側の値は <code style="color:#22d3bf">box_sdf</code> に完全一致するが、外側は角の近くで最大 2.1(半辺 2 の箱・格子 0.25 で実測)だけ<b>過小評価</b>する —— CSG の標準的な性質で、距離そのものが要るなら <code style="color:#22d3bf">box_sdf</code> を使う。</p>
-<p>厳密性: 平面は全空間で勾配ノルム 1 なので、この値は<b>どこでも真の符号付き距離</b> (<code style="color:#22d3bf">box_sdf</code> のように角で切り替わる場合分けが要らない)。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>(<code style="color:#22d3bf">grid_coords</code> の出力または点列)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">point</code>: 平面上の 1 点(要素数 3)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>: 平面の法線(要素数 3、<b>零ベクトル・NaN は拒否</b>)。長さは自動で 1 に正規化するので、大きさは結果に影響しない(向きだけが意味を持つ)。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。法線側で正、反対側で負、平面上で 0。</p>
-<p>使いどころ: <code style="color:#22d3bf">sdf_subtract(part, plane_sdf(g, p, n))</code> で「その平面より法線側を削る」。向きを逆にしたいときは <code style="color:#22d3bf">normal</code> の符号を反転する(<code style="color:#22d3bf">-sdf</code> でも同じ)。</p>
+<p><code style="color:#22d3bf">sdf(p) = (p - point) · n̂</code>। normal <code style="color:#22d3bf">n̂</code> <b>जिस ओर इशारा करता है वह बाहर (positive) है</b>, और उलटी ओर अंदर है। chamfer, cutting, या &quot;board से केवल ऊपर का हिस्सा&quot; जैसे <b>केवल एक ओर को रखने वाले</b> operations के लिए उपयोग होता है। <code style="color:#22d3bf">sdf_intersect</code> को परतों में लगाने से कोई भी convex polyhedron बन सकता है। लेकिन <b>max से intersection कोनों के बाहर exact नहीं है</b>: 6 planes से cuboid बनाने पर occupancy (<code style="color:#22d3bf">&lt;= 0</code>) और अंदर के मान <code style="color:#22d3bf">box_sdf</code> से पूरी तरह मेल खाते हैं, पर बाहर कोनों के पास अधिकतम 2.1 तक <b>कम आँकलन</b> होता है (half-side 2 के box और grid 0.25 पर मापा गया) -- यह CSG का मानक गुण है; यदि दूरी स्वयं चाहिए तो <code style="color:#22d3bf">box_sdf</code> का उपयोग करें।</p>
+<p>Exactness: plane का gradient norm पूरे space में 1 है, इसलिए यह मान <b>हर जगह सच्ची signed distance है</b> (<code style="color:#22d3bf">box_sdf</code> की तरह कोनों पर बदलने वाले case split की ज़रूरत नहीं)।</p>
+<p>Arguments और validation (<code style="color:#22d3bf">ValueError</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: अंतिम axis 3 वाला float array <code style="color:#22d3bf">(..., 3)</code> (<code style="color:#22d3bf">grid_coords</code> का output या points की सूची)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">point</code>: plane पर 1 point (3 elements)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>: plane का normal (3 elements, <b>zero vector और NaN अस्वीकार</b>)। लंबाई अपने-आप 1 पर normalise होती है, इसलिए परिमाण से परिणाम पर असर नहीं पड़ता (केवल दिशा मायने रखती है)।</p>
+<p>Return value: <code style="color:#22d3bf">grid.shape[:-1]</code> का float64। normal की ओर positive, उलटी ओर negative, plane पर 0।</p>
+<p>कहाँ उपयोग करें: <code style="color:#22d3bf">sdf_subtract(part, plane_sdf(g, p, n))</code> से &quot;उस plane के normal वाली ओर का हिस्सा काट दें&quot;। दिशा उलटनी हो तो <code style="color:#22d3bf">normal</code> का sign उलट दें (<code style="color:#22d3bf">-sdf</code> से भी वही होता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;ransac_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>outliers के प्रति robust RANSAC cylinder fitting (point normals आवश्यक)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>円筒表面の法線は軸に直交するので、2 点の法線の外積で軸方向を推定 → 軸に直交な平面へ全点を投影 → その平面内で円をフィット → |投影距離 - r| &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化。最終 inlier ではより頑健に軸を再推定(法線群の SVD の最小特異方向 = 軸)し、投影円を最小二乗リフィットする。法線が無ければ呼び出し側で estimate してから渡す。</p>
+<p>cylinder surface के normal axis के लंबवत होते हैं, इसलिए 2 points के normals के cross product से axis direction का अनुमान → axis के लंबवत plane पर सभी points को project करें → उस plane में circle fit करें → |projected distance - r| &lt; <code style="color:#22d3bf">thresh</code> वाले inlier को maximise करें। अंतिम inlier पर axis का अधिक robust दोबारा अनुमान (normals के SVD की smallest singular direction = axis) किया जाता है, और projected circle का least squares refit होता है। normal न हों तो caller की ओर पहले estimate करके दें।</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>normals: (N,3) 各点の(単位)法線。</p>
-<p>thresh: inlier とみなす |投影距離-r| のしきい値。</p>
-<p>iters: RANSAC 反復数。</p>
-<p>seed: 乱数シード(決定論)。</p>
+<p>points: (N,3) point cloud।</p>
+<p>normals: (N,3) हर point का (unit) normal।</p>
+<p>thresh: inlier मानने के लिए |projected distance-r| का threshold।</p>
+<p>iters: RANSAC iterations की संख्या।</p>
+<p>seed: random seed (deterministic)।</p>
 <p>Returns:</p>
-<p>(params, inlier_mask, info)。params = {&quot;axis&quot;: (3,) 単位軸, &quot;point&quot;: (3,) 軸上の一点,</p>
-<p>&quot;radius&quot;: float}。info には inlier 数 <code style="color:#22d3bf">n_inliers</code> / 比 <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code>。</p>
+<p>(params, inlier_mask, info)। params = {&quot;axis&quot;: (3,) unit axis, &quot;point&quot;: (3,) axis पर एक point,</p>
+<p>&quot;radius&quot;: float}। info में inlier संख्या <code style="color:#22d3bf">n_inliers</code> / अनुपात <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code> होते हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

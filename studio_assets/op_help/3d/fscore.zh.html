@@ -6,15 +6,14 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(f, precision, recall) → F 値</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>F-score @ tau = precision 与 recall 的调和平均。→ (f, precision, recall)。重建的标准指标。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Raises ValueError: どちらかが空 or (N,3) でない場合(accuracy/completeness 経由)。</p>
-<p>計算(<code style="color:#22d3bf">a</code> = 再構成/推定、<code style="color:#22d3bf">b</code> = 参照/GT の慣習):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">precision</code> = <code style="color:#22d3bf">a</code> の点のうち、<code style="color:#22d3bf">b</code> への最近傍距離が <code style="color:#22d3bf">tau</code> <b>未満</b> (<code style="color:#22d3bf">&lt; tau</code>、等号は含まない)の割合。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">recall</code> = <code style="color:#22d3bf">b</code> の点のうち、<code style="color:#22d3bf">a</code> への最近傍距離が <code style="color:#22d3bf">tau</code> 未満の割合。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f = 2 p r / (p + r)</code>、<code style="color:#22d3bf">p + r == 0</code> なら <code style="color:#22d3bf">0.0</code>(0 除算にしない)。</p>
-<p>引数: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は <code style="color:#22d3bf">(N, 3)</code> / <code style="color:#22d3bf">(M, 3)</code> 点群(対応不要、点数は異なってよい)。<code style="color:#22d3bf">tau</code> は距離閾値(座標と同じ単位、正の値を想定。<code style="color:#22d3bf">tau &lt;= 0</code> だと距離 0 の点も <code style="color:#22d3bf">&lt; tau</code> にならず precision = recall = 0 になる。検査はしない)。</p>
-<p>返り値: <code style="color:#22d3bf">(f, precision, recall)</code> の 3 つの <code style="color:#22d3bf">float</code>、それぞれ <code style="color:#22d3bf">[0, 1]</code>。1 が完全一致。</p>
-<p>注意: <code style="color:#22d3bf">tau</code> の選び方が結果を決める(voxel サイズ・スキャン分解能の 1〜2 倍が目安)。片方の雲だけ密だと precision と recall が乖離する — その非対称性を見るのがこの指標の価値で、1 数字で良ければ <code style="color:#22d3bf">chamfer_distance</code>。</p>
+<p>Raises ValueError：任一方为空或不是 (N,3) 时(经由 accuracy/completeness)。</p>
+<p>计算(惯例：<code style="color:#22d3bf">a</code> = 重建/估计，<code style="color:#22d3bf">b</code> = 参照/GT)：</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">precision</code> = <code style="color:#22d3bf">a</code> 的点中，到 <code style="color:#22d3bf">b</code> 的最近邻距离 <b>小于</b> <code style="color:#22d3bf">tau</code> (<code style="color:#22d3bf">&lt; tau</code>，不含等号)的比例。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">recall</code> = <code style="color:#22d3bf">b</code> 的点中，到 <code style="color:#22d3bf">a</code> 的最近邻距离小于 <code style="color:#22d3bf">tau</code> 的比例。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f = 2 p r / (p + r)</code>，<code style="color:#22d3bf">p + r == 0</code> 时为 <code style="color:#22d3bf">0.0</code>(不做除以 0)。</p>
+<p>参数：<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 是 <code style="color:#22d3bf">(N, 3)</code> / <code style="color:#22d3bf">(M, 3)</code> 点云(不需要对应，点数可以不同)。<code style="color:#22d3bf">tau</code> 是距离阈值(与坐标同单位，假定为正值。<code style="color:#22d3bf">tau &lt;= 0</code> 时连距离 0 的点也不满足 <code style="color:#22d3bf">&lt; tau</code>，precision = recall = 0。不做检查)。</p>
+<p>返回值：<code style="color:#22d3bf">(f, precision, recall)</code> 3 个 <code style="color:#22d3bf">float</code>，各自在 <code style="color:#22d3bf">[0, 1]</code>。1 为完全一致。</p>
+<p>注意：<code style="color:#22d3bf">tau</code> 的选择决定结果(以 voxel 尺寸、扫描分辨率的 1~2 倍为参考)。只有一方点云密集时 precision 与 recall 会背离 —— 看出这种不对称性正是该指标的价值；只要 1 个数字就够时用 <code style="color:#22d3bf">chamfer_distance</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 测量不确定度与校准知识 —— 为了能主张“测得准”</p>

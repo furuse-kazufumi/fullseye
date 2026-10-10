@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vertex_curvature(mesh) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mesh_props; mesh_props.vertex_curvature(mesh) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;vertex_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>三角網格各頂點的<b>平均曲率大小</b>(mean curvature magnitude)。→ (N,)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Meyer et al. (2003) の離散 Laplace-Beltrami 作用素:</p>
+<p>Meyer et al. (2003) 的離散 Laplace-Beltrami 運算子：</p>
 <p>K(x_i) = (1 / (2·A_mixed_i)) · Σ_{j∈1-ring} (cot α_ij + cot β_ij)·(x_i − x_j)</p>
-<p>は平均曲率法線ベクトル K = 2·H·n に等しい(H=平均曲率, n=単位法線)。ここでは向きに依らない <b>大きさ</b> H_i = |K(x_i)| / 2 を返す。α_ij, β_ij は辺 (i,j) に相対する 2 つの角、A_mixed は Meyer の混合面積(非鈍角三角形は Voronoi 面積、鈍角三角形は面積の 1/2 か 1/4)で、素朴な重心面積より曲率推定が正確になる。</p>
-<p>半径 R の球(閉じた多様体)では全頂点で H ≈ 1/R(離散化誤差内)。平面の内部頂点では H ≈ 0。<b>限界(honest)</b>: cotangent Laplace-Beltrami は閉多様体/内部頂点でのみ妥当で、開いたメッシュの<b>境界頂点</b>(1-ring が閉じない)では値が発散的に不正確になる。閉じたメッシュ、または開メッシュの内部頂点にのみ意味がある。</p>
+<p>等於平均曲率法向量 K = 2·H·n（H=平均曲率，n=單位法線）。這裡回傳與方向無關的 <b>大小</b> H_i = |K(x_i)| / 2。α_ij, β_ij 是邊 (i,j) 所對的 2 個角，A_mixed 是 Meyer 的混合面積（非鈍角三角形取 Voronoi 面積，鈍角三角形取面積的 1/2 或 1/4），比樸素的重心面積能更準確地估計曲率。</p>
+<p>在半徑 R 的球（封閉流形）上，所有頂點 H ≈ 1/R（在離散化誤差內）。平面的內部頂點上 H ≈ 0。<b>限制(honest)</b>: cotangent Laplace-Beltrami 僅在封閉流形/內部頂點上有效，在開放網格的<b>邊界頂點</b>（1-ring 不封閉）上，值會發散性地不準確。只對封閉網格，或開放網格的內部頂點有意義。</p>
 <p>Args:</p>
-<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>mesh: (vertices (N,3), faces (M,3)) 的元組。</p>
 <p>Returns:</p>
-<p>(N,) の平均曲率の大きさ(非負)。境界頂点の値は上記の理由で信頼できない。</p>
+<p>(N,) 的平均曲率大小（非負）。由於上述原因，邊界頂點的值不可信。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正・範囲外 index、または混合面積がゼロの頂点(退化)があるとき。</p>
+<p>ValueError: 形狀不正確、index 越界，或存在混合面積為零的頂點（退化）時。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

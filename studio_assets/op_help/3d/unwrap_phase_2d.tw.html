@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.unwrap_phase_2d(wrapped, mask=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import fringe; fringe.unwrap_phase_2d(wrapped, mask=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;unwrap_phase_2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 skimage.restoration.unwrap_phase 把捲繞相位展開為連續相位。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>wrapped: wrapped_phase の出力(2D)。NaN を含んでよい(無効画素として扱う)。</p>
-<p>mask:    省略可。True = 有効画素(numpy masked array の慣習とは逆にした直感的な向き)。</p>
-<p>NaN 画素と mask=False 画素は無効としてアンラップから除外し、出力では NaN を返す。</p>
-<p>返り値: 連続位相(2D float)。無効画素は NaN。大域オフセット(+2πm)の不定性は残る。</p>
-<p>手順: 無効画素(<code style="color:#22d3bf">wrapped</code> の非有限 ∪ <code style="color:#22d3bf">mask == False</code>)が無ければ <code style="color:#22d3bf">skimage.restoration.unwrap_phase(arr)</code> をそのまま呼ぶ。あれば無効画素を 0 で埋めた <code style="color:#22d3bf">numpy.ma</code> の masked array として渡し(skimage は masked 画素を展開から除外する)、出力の無効画素を NaN に戻す。</p>
-<p>検証: scikit-image が import できない環境では <code style="color:#22d3bf">RuntimeError</code>(<code style="color:#22d3bf">ImportError</code> ではない)。<code style="color:#22d3bf">wrapped</code> が 2-D でない、<code style="color:#22d3bf">mask</code> の形が違う、<b>全画素が無効</b> (アンラップする画素が無い)は <code style="color:#22d3bf">ValueError</code>。</p>
-<p>前提(Itoh の条件): 隣接する有効画素の真の位相差が <code style="color:#22d3bf">π</code> 未満。急な段差・深い穴・オクルージョン境界では 2π の飛びを誤り、その先の領域全体が <code style="color:#22d3bf">2πm</code> ずれる。マスクで島に分かれた領域どうしの相対次数は決まらない(島ごとに独立なオフセット)。絶対性が要るときは <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code> の画素独立な次数確定を使う。</p>
-<p>使いどころ: <code style="color:#22d3bf">wrapped_phase</code> → 本 op → <code style="color:#22d3bf">phase_to_height</code>(同モジュールの関数、<code style="color:#22d3bf">height = k (phase - ref_phase)</code>)。参照面を同じ手順で展開して引けば大域オフセットは相殺される。<code style="color:#22d3bf">decode_fringe</code> はこの連鎖を 1 回で行う。</p>
+<p>wrapped:wrapped_phase 的輸出(2D)。可以含 NaN(作為無效像素處理)。</p>
+<p>mask:    可省略。True = 有效像素(與 numpy masked array 的慣例相反的直觀方向)。</p>
+<p>NaN 像素和 mask=False 像素視為無效,從相位展開中排除,輸出中回傳 NaN。</p>
+<p>回傳值:連續相位(2D float)。無效像素為 NaN。全域偏移(+2πm)的不確定性仍然存在。</p>
+<p>步驟:若沒有無效像素(<code style="color:#22d3bf">wrapped</code> 的非有限值 ∪ <code style="color:#22d3bf">mask == False</code>),則直接呼叫 <code style="color:#22d3bf">skimage.restoration.unwrap_phase(arr)</code>。若有,則把無效像素以 0 填充後作為 <code style="color:#22d3bf">numpy.ma</code> 的 masked array 傳入(skimage 會把 masked 像素從展開中排除),再把輸出的無效像素恢復為 NaN。</p>
+<p>驗證:在無法 import scikit-image 的環境中拋出 <code style="color:#22d3bf">RuntimeError</code>(而不是 <code style="color:#22d3bf">ImportError</code>)。<code style="color:#22d3bf">wrapped</code> 不是 2-D、<code style="color:#22d3bf">mask</code> 形狀不同、<b>全部像素無效</b> (沒有可展開的像素)時拋出 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>前提(Itoh 條件):相鄰有效像素的真實相位差小於 <code style="color:#22d3bf">π</code>。在陡峭階躍、深孔、遮擋邊界處會誤判 2π 跳變,其後的整個區域偏移 <code style="color:#22d3bf">2πm</code>。被遮罩分成孤島的區域之間的相對級次無法確定(每個孤島有獨立的偏移)。需要絕對性時,請使用 <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code> 的逐像素獨立級次確定。</p>
+<p>用法:<code style="color:#22d3bf">wrapped_phase</code> → 本 op → <code style="color:#22d3bf">phase_to_height</code>(同模組的函式,<code style="color:#22d3bf">height = k (phase - ref_phase)</code>)。以相同步驟展開參考面並相減, 全域偏移即被抵消。<code style="color:#22d3bf">decode_fringe</code> 以 1 次呼叫完成這一鏈條。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

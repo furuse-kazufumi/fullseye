@@ -4,27 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import feat_shot; feat_shot.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;register_shot&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>SHOT descriptor से sparse feature matching + RANSAC rigid pose estimation (पूरी pipeline)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>初期推定なしに、大回転・部分重なりの 2 点群を対応付けて剛体変換(回転 R + 並進 t)を返す。密マッチ(NCC/Hough/PCA)と異なり、ISS キーポイントごとに局所参照フレーム(LRF)を張り、球状分割セルの法線角度ヒストグラム(SHOT)で記述 → Lowe 比率テスト + 相互最近傍でマッチ → RANSAC で外れ値に頑健に姿勢推定する。得た姿勢は ICP の粗初期値(coarse init)供給にも使える。</p>
-<p>LRF の符号曖昧性: 距離重み付き共分散の固有ベクトルは符号が定まらないため、各軸(x=最大, z=最小 固有値)を近傍ベクトル (p_i-p) の投影多数派へ合わせ(Tombari の符号則)、y=z×x で右手系を構成する。点法線も同則で近傍質量から離れる向き(局所外向き)に統一するため回転に共変で部分重なりにも安定。両点群に同一則を適用することで記述子の repeatability を担保。</p>
-<p>引数:</p>
-<p>src, dst: (N,3)/(M,3) 点群(numpy か torch)。src を dst へ合わせる。</p>
-<p>radius: SHOT 支持半径。None なら各点群自身の bbox 対角(小さい方)の 0.15 倍</p>
-<p>(結合 bbox は並進で対角が水増しされスケールが狂うため使わない)。</p>
-<p>normal_k: 法線推定の knn 数。</p>
-<p>ratio: Lowe 比率テスト閾値(小さいほど厳格)。</p>
-<p>ransac_iters: RANSAC 反復数。</p>
-<p>inlier_thr: RANSAC インライア距離。None なら bbox 対角の 0.03 倍。</p>
-<p>refine_icp: True なら得た姿勢を初期値に Trimmed ICP(icp_point2point_3d)で精緻化。</p>
-<p>max_kp: キーポイント上限。</p>
-<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD/ICP をこの上で解く。</p>
-<p>seed: RANSAC 乱数種。</p>
-<p>返り値:</p>
-<p>R: (3,3) numpy。dst ≈ src @ R.T + t を満たす回転(icp と同規約)。</p>
-<p>t: (3,) numpy。並進。</p>
-<p>info: dict。&quot;n_kp_src&quot;,&quot;n_kp_dst&quot;,&quot;n_matches&quot;,&quot;n_inliers&quot;,&quot;inlier_ratio&quot;,</p>
-<p>&quot;icp_rmse&quot;(refine_icp 時),&quot;ok&quot;(True=推定成功; インライア&lt;4 は</p>
-<p>信頼不可として False + 単位変換を返す)。</p>
+<p>प्रारंभिक अनुमान के बिना, बड़े rotation और आंशिक overlap वाले 2 point cloud का correspondence बनाकर rigid transform (rotation R + translation t) लौटाता है। dense matching (NCC/Hough/PCA) से अलग, हर ISS keypoint पर local reference frame (LRF) बनाया जाता है, गोलाकार रूप से बँटी cells के normal angle histogram (SHOT) से वर्णन → Lowe ratio test + mutual nearest neighbour से match → RANSAC से outlier के प्रति robust ढंग से pose का अनुमान। प्राप्त pose ICP के coarse प्रारंभिक मान (coarse init) देने में भी उपयोगी है।</p>
+<p>LRF की sign अस्पष्टता: distance-weighted covariance के eigenvector का sign तय नहीं होता, इसलिए हर axis (x=सबसे बड़ा, z=सबसे छोटा eigenvalue) को पड़ोसी vector (p_i-p) के projection के बहुमत की ओर मिलाया जाता है (Tombari का sign नियम), और y=z×x से right-handed system बनता है। point normal को भी इसी नियम से पड़ोस के द्रव्यमान से दूर की दिशा (locally बाहर) में एक-सा किया जाता है, इसलिए वे rotation के साथ covariant और आंशिक overlap में भी स्थिर हैं। दोनों point cloud पर एक ही नियम लगाकर descriptor की repeatability सुनिश्चित की जाती है।</p>
+<p>Args:</p>
+<p>src, dst: (N,3)/(M,3) point cloud (numpy या torch)। src को dst पर align किया जाता है।</p>
+<p>radius: SHOT support radius। None हो तो हर point cloud के अपने bbox diagonal (छोटा वाला) का 0.15 गुना</p>
+<p>(संयुक्त bbox का diagonal translation से बढ़ जाता है और scale बिगड़ता है, इसलिए उसका उपयोग नहीं होता)।</p>
+<p>normal_k: normal estimation का knn संख्या।</p>
+<p>ratio: Lowe ratio test का threshold (जितना छोटा, उतना सख्त)।</p>
+<p>ransac_iters: RANSAC iterations की संख्या।</p>
+<p>inlier_thr: RANSAC inlier distance। None हो तो bbox diagonal का 0.03 गुना।</p>
+<p>refine_icp: True हो तो प्राप्त pose को प्रारंभिक मान मानकर Trimmed ICP (icp_point2point_3d) से परिष्कृत करता है।</p>
+<p>max_kp: keypoint की ऊपरी सीमा।</p>
+<p>device: torch device (&quot;cpu&quot; आदि)। SVD/ICP इसी पर हल होते हैं।</p>
+<p>seed: RANSAC का random seed।</p>
+<p>Returns:</p>
+<p>R: (3,3) numpy। dst ≈ src @ R.T + t को संतुष्ट करने वाला rotation (icp जैसी ही convention)।</p>
+<p>t: (3,) numpy। translation।</p>
+<p>info: dict। &quot;n_kp_src&quot;,&quot;n_kp_dst&quot;,&quot;n_matches&quot;,&quot;n_inliers&quot;,&quot;inlier_ratio&quot;,</p>
+<p>&quot;icp_rmse&quot; (refine_icp होने पर),&quot;ok&quot; (True=अनुमान सफल; 4 से कम inlier को</p>
+<p>अविश्वसनीय मानकर False + identity transform लौटाता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

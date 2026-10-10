@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_endpoints3d(vol)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.skeleton_endpoints3d(vol)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;skeleton_endpoints3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D skeleton के end points (26-neighbourhood में 1 या कम skeleton voxel) को voxel mask के रूप में लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>孤立 voxel(次数 0)も端点に数える。2D の <code style="color:#22d3bf">r2_endpoints_skeleton</code> の 3D 版。</p>
-<p>手順: <code style="color:#22d3bf">_ensure_skeleton</code> で入力を bool 化し、6 近傍がすべて前景の interior voxel があれば <code style="color:#22d3bf">skeletonize_vol</code> で細線化してから、3x3x3 全 1 カーネル(中心 0、<code style="color:#22d3bf">mode=&quot;constant&quot;</code> で外側 0)の畳み込みで各 voxel の 26 近傍にある骨格 voxel 数(次数)を数え、<code style="color:#22d3bf">skel &amp; (次数 &lt;= 1)</code> を返す。volume の縁にある骨格 voxel は、外側が 0 扱いなので枝がそこで途切れていれば端点になる。</p>
-<p>返り値: 入力と同形の bool 配列(端点 = True)。前景が無ければ全 False。<code style="color:#22d3bf">np.argwhere</code> で <code style="color:#22d3bf">(z, y, x)</code> 座標に、<code style="color:#22d3bf">.sum()</code> で端点数になる。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): 3-D でない・空配列・float で NaN/Inf を含む入力。細線化が必要で scikit-image が無い環境では <code style="color:#22d3bf">ImportError</code>。</p>
-<p>注意:</p>
-<p style="margin:2px 0 2px 12px">• 端点は各枝の末端で厳密だが、ヒゲ(細線化が作る短い枝)の先端も端点に数える。構造の端だけ欲しければ先に <code style="color:#22d3bf">skeleton_prune3d</code> で刈る。</p>
-<p style="margin:2px 0 2px 12px">• 閉ループだけの骨格(輪)は端点 0 個。</p>
-<p style="margin:2px 0 2px 12px">• 数だけ欲しいなら <code style="color:#22d3bf">topology_signature</code> が <code style="color:#22d3bf">endpoints</code> / <code style="color:#22d3bf">isolated</code> を分けて返す。</p>
+<p>isolated voxel (degree 0) भी endpoint में गिने जाते हैं। 2D के <code style="color:#22d3bf">r2_endpoints_skeleton</code> का 3D संस्करण।</p>
+<p>Procedure: <code style="color:#22d3bf">_ensure_skeleton</code> से input को bool बनाया जाता है, और अगर 6-neighbourhood पूरी तरह foreground वाला interior voxel हो तो <code style="color:#22d3bf">skeletonize_vol</code> से thin किया जाता है; फिर सभी 1 वाले 3x3x3 kernel (centre 0, <code style="color:#22d3bf">mode=&quot;constant&quot;</code> से बाहर 0) के convolution से हर voxel के 26-neighbourhood में skeleton voxel की संख्या (degree) गिनी जाती है, और <code style="color:#22d3bf">skel &amp; (degree &lt;= 1)</code> लौटाया जाता है। volume के किनारे पर स्थित skeleton voxel, बाहर को 0 माने जाने के कारण, अगर branch वहीं कट जाए तो endpoint बन जाता है।</p>
+<p>Returns: input के समान shape का bool array (endpoint = True)। foreground न हो तो पूरा False। <code style="color:#22d3bf">np.argwhere</code> से <code style="color:#22d3bf">(z, y, x)</code> coordinate, और <code style="color:#22d3bf">.sum()</code> से endpoint की संख्या मिलती है।</p>
+<p>Validation (<code style="color:#22d3bf">ValueError</code>): 3-D न हो, खाली array हो, या float में NaN/Inf वाला input। thinning ज़रूरी हो और scikit-image न हो तो <code style="color:#22d3bf">ImportError</code>।</p>
+<p>ध्यान दें:</p>
+<p style="margin:2px 0 2px 12px">• endpoint हर branch के सिरे पर सटीक हैं, पर spur (thinning से बनी छोटी branch) के सिरे भी endpoint गिने जाते हैं। केवल संरचना के सिरे चाहिए तो पहले <code style="color:#22d3bf">skeleton_prune3d</code> से काटें।</p>
+<p style="margin:2px 0 2px 12px">• केवल closed loop वाले skeleton (ring) में endpoint 0 होते हैं।</p>
+<p style="margin:2px 0 2px 12px">• केवल संख्या चाहिए तो <code style="color:#22d3bf">topology_signature</code> <code style="color:#22d3bf">endpoints</code> / <code style="color:#22d3bf">isolated</code> को अलग-अलग लौटाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

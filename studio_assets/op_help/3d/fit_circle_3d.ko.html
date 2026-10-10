@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_circle_3d(points)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import match3d; match3d.fit_circle_3d(points)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fit_circle_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 → 3D 원(평면 적합 → 면 안에서 2D 원 적합). 반환값 (center, radius, normal).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">fit_plane_3d</code> で面 <code style="color:#22d3bf">(c, n)</code> を取り、面内の正規直交基底 <code style="color:#22d3bf">(e1, e2)</code> に点を射影して 2-D の代数円フィット(<code style="color:#22d3bf">|q|² = 2·cc·q + k</code> の <code style="color:#22d3bf">lstsq</code>)を解き、中心を 3-D に戻す。<code style="color:#22d3bf">(N,3)</code> で 3 点未満は ValueError(3 点なら面は厳密、円は 3 点を通る)。<code style="color:#22d3bf">center</code> は面上の 3-D 点、<code style="color:#22d3bf">radius</code> は float(負の根は 0 に clamp)、<code style="color:#22d3bf">normal</code> は面の単位法線(符号任意)。円弧の一部だけ・面から外れた点が多いと半径が偏る(代数フィットの性質。面内残差は返さない)。</p>
-<p>用途: 穴・フランジ・リングの中心と径、<code style="color:#22d3bf">distance_point_line</code> で軸からの偏心。</p>
+<p><code style="color:#22d3bf">fit_plane_3d</code>로 면 <code style="color:#22d3bf">(c, n)</code>을 구하고, 면 내의 정규직교 기저 <code style="color:#22d3bf">(e1, e2)</code>에 점을 투영하여 2-D의대수적 원 피팅(<code style="color:#22d3bf">|q|² = 2·cc·q + k</code>의 <code style="color:#22d3bf">lstsq</code>)을 풀고, 중심을 3-D로 되돌린다. <code style="color:#22d3bf">(N,3)</code>에서 3점 미만은 ValueError(3점이면 면은 정확하고, 원은 3점을 지난다). <code style="color:#22d3bf">center</code>는 면 위의 3-D 점, <code style="color:#22d3bf">radius</code>는 float(음의 근은 0으로 clamp), <code style="color:#22d3bf">normal</code>은 면의 단위 법선(부호 임의). 원호의 일부만 있거나 면에서 벗어난 점이 많으면 반지름이 치우친다(대수적 피팅의 성질. 면 내 잔차는반환하지 않는다).</p>
+<p>용도: 구멍, 플랜지, 링의 중심과 지름, <code style="color:#22d3bf">distance_point_line</code>으로 축으로부터의 편심.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

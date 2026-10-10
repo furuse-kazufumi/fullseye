@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud (N,3) → (vertices(V,3), faces(F,3)) surface mesh (screened Poisson का हल्का approximation)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>点群を size³ の voxel 格子へ splat し、等値面場を作って marching cubes で三角形メッシュ化する。出力頂点は入力点群と同じ<b>世界座標</b>(bbox から逆写像)。bounds は点群 bbox(+σ 依存の padding)。</p>
-<p>2 モード:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals is None</code>: <b>占有(occupancy)</b> をガウス平滑・[0,1] 正規化し、<code style="color:#22d3bf">iso</code> で二値化した表面バンドの内部を <code style="color:#22d3bf">binary_fill_holes</code> で充填してから再平滑し、単一の外殻を <code style="color:#22d3bf">iso</code> で抜く。占有(unsigned)場は内外対称で、平滑した薄殻の等値面は内スロープ・外スロープの二か所を通り <b>同心二重殻</b>になってしまう。内部充填で内外対称性を破ることで、<b>閉じた</b>表面サンプルからは(格子/σ に対し十分密なら)単一殻が得られる。開いた曲面は充填されず薄い面のまま。疎すぎる/σ が小さいと隙間から充填が漏れ二重殻へ縮退しうる(厳密な内外判定が要るなら <code style="color:#22d3bf">normals</code> 指定を使う)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> 指定: 向き付き点の <b>winding number</b> で内外指標場を作りガウス平滑、<code style="color:#22d3bf">iso</code> (既定 0.5)で表面抜き。表面のみサンプルでも内部を埋めて閉曲面を得られる。</p>
+<p>point cloud को size³ के voxel grid में splat करके, iso-surface field बनाता है और marching cubes से triangle mesh बनाता है। output vertices input point cloud वाले ही <b>world coordinates</b> में होते हैं (bbox से inverse mapping)। bounds point cloud का bbox है (+ σ पर निर्भर padding)।</p>
+<p>2 modes:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals is None</code>: <b>occupancy</b> को Gaussian smoothing और [0,1] normalise करके, <code style="color:#22d3bf">iso</code> से binary बनाए गए surface band के अंदर को <code style="color:#22d3bf">binary_fill_holes</code> से भरकर फिर smooth करता है, और एक अकेला बाहरी shell <code style="color:#22d3bf">iso</code> पर निकालता है। occupancy (unsigned) field अंदर-बाहर symmetric होता है, इसलिए smooth किए पतले shell का iso-surface भीतरी और बाहरी slope, दो जगहों से गुज़रता है और <b>concentric double shell</b> बन जाता है। अंदर भरकर अंदर-बाहर की symmetry तोड़ने से <b>closed</b> surface samples से (grid / σ के सापेक्ष पर्याप्त घने हों तो) एक अकेला shell मिलता है। open surface भरे नहीं जाते और पतली सतह ही रहते हैं। बहुत विरल हों / σ छोटा हो तो भराव दरारों से रिसकर double shell में degenerate हो सकता है (सटीक अंदर-बाहर निर्णय चाहिए तो <code style="color:#22d3bf">normals</code> दें)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> देने पर: oriented points के <b>winding number</b> से अंदर-बाहर indicator field बनाकर Gaussian smoothing, फिर <code style="color:#22d3bf">iso</code> (default 0.5) पर surface निकालता है। केवल surface samples होने पर भी अंदर भरकर closed surface मिलती है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
-<p>入力点群。</p>
+<p>input point cloud।</p>
 <p>size : int</p>
-<p>voxel 格子の一辺(既定 64)。大きいほど精細だが O(size³)。</p>
+<p>voxel grid की side length (default 64)। बड़ा होने पर अधिक बारीक, पर O(size³)।</p>
 <p>sigma : float</p>
-<p>ガウス平滑の標準偏差(voxel 単位、既定 1.0)。padding は ⌈3σ⌉+2 voxel を自動確保。</p>
+<p>Gaussian smoothing का standard deviation (voxel unit में, default 1.0)। ⌈3σ⌉+2 voxel का padding अपने आप रखा जाता है।</p>
 <p>iso : float</p>
-<p>等値面レベル。正規化場 [0,1] 上の値(既定 0.5)。</p>
+<p>iso-surface level। normalised field [0,1] पर मान (default 0.5)।</p>
 <p>normals : array_like (N,3) or None</p>
-<p>点法線。与えると winding number モード、None なら占有モード。</p>
+<p>point normals। देने पर winding number mode, None पर occupancy mode।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>vertices : numpy.ndarray (V,3) float64</p>
-<p>世界座標の頂点。</p>
+<p>world coordinates में vertices।</p>
 <p>faces : numpy.ndarray (F,3) int64</p>
-<p>三角形の頂点インデックス(vertices を参照)。</p>
+<p>triangles के vertex indices (vertices को refer करते हैं)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点数不足(&lt;4)、size が小さすぎる、占有/指標場が薄く iso が場の値域外、など。</p>
+<p>कम points (&lt;4), size बहुत छोटा, occupancy / indicator field इतना पतला कि iso field की range से बाहर, आदि।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

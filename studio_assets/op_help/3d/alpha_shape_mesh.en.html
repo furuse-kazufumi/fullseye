@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_shape_mesh(points, alpha)</code> (to call the implementation directly, <code style="color:#22d3bf">import recon3d; recon3d.alpha_shape_mesh(points, alpha)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;alpha_shape_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>triangulated surface mesh</b> by alpha shapes (point set → (vertices, faces)).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">alpha_shape_boundary</code> と同じ境界三角形を、使用頂点だけに詰め直したメッシュとして返す。voxel を介さず点群から直接張る表面。凹み/穴を保持できるのが marching cubes 系との差別化。</p>
+<p>Returns the same boundary triangles as <code style="color:#22d3bf">alpha_shape_boundary</code> as a mesh repacked to only the vertices used. A surface spanned directly from the point cloud without going through voxels. Preserving concavities / holes is what sets it apart from the marching-cubes family.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
 <p>alpha : float</p>
-<p>正の実数(半径しきい値 1/alpha)。</p>
+<p>Positive real number (radius threshold 1/alpha).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>vertices : numpy.ndarray (V,3) float64</p>
-<p>境界に使われた入力点(詰め直し済み)。</p>
+<p>Input points used on the boundary (repacked).</p>
 <p>faces : numpy.ndarray (F,3) int64</p>
-<p>vertices を参照する三角形インデックス。境界が無ければ (0,3)/(0,3)。</p>
+<p>Triangle indices referring to vertices. If there is no boundary, (0,3)/(0,3).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

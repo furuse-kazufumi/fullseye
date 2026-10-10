@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D opening = erosion → dilation。去除小于 SE 的<b>亮结构(尖刺・颗粒)</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">morph_dilate3d(morph_erode3d(vol, r, ...), r, ...)</code> と同じ SE を 2 回。出力は入力以下(<code style="color:#22d3bf">open &lt;= vol</code>)で、SE(一辺 <code style="color:#22d3bf">2r+1</code> の cube か半径 r の ball)が入り切らない明るい突起・孤立点・細いブリッジが消え、大きな構造の形は保たれる(等冪: 2 回掛けても同じ)。<code style="color:#22d3bf">r</code> は voxel 単位、<code style="color:#22d3bf">se</code> は &quot;cube&quot;/&quot;ball&quot;(他は ValueError)、<code style="color:#22d3bf">device</code> は cube+torch のときだけ有効。返り値 <code style="color:#22d3bf">(D,H,W)</code> float32 numpy。</p>
-<p>用途: <code style="color:#22d3bf">vol − open</code> が <code style="color:#22d3bf">morph_tophat3d</code>(小さな明構造の抽出)。点密度 voxel の孤立ノイズ点除去、2 値占有の細線除去。</p>
+<p><code style="color:#22d3bf">morph_dilate3d(morph_erode3d(vol, r, ...), r, ...)</code>,同一 SE 用 2 次。输出不大于输入(<code style="color:#22d3bf">open &lt;= vol</code>),SE(边长 <code style="color:#22d3bf">2r+1</code> 的 cube 或半径 r 的 ball)放不进的明亮突起、孤立点、细桥会消失,大结构的形状得以保持(幂等:用 2 次结果相同)。<code style="color:#22d3bf">r</code> 以 voxel 为单位,<code style="color:#22d3bf">se</code> 为 &quot;cube&quot;/&quot;ball&quot;(其他为 ValueError),<code style="color:#22d3bf">device</code> 仅在 cube+torch 时有效。返回值为 <code style="color:#22d3bf">(D,H,W)</code> float32 numpy。</p>
+<p>用途:<code style="color:#22d3bf">vol − open</code> 即 <code style="color:#22d3bf">morph_tophat3d</code>(提取小的明亮结构)。去除点密度 voxel 中的孤立噪声点,去除 2 值占据中的细线。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

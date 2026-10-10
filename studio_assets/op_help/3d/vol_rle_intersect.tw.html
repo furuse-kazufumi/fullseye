@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_intersect(a, b)</code>(要直接呼叫實作,<code style="color:#22d3bf">import volregion; volregion.vol_rle_intersect(a, b)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_intersect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 run 上求兩個 RLE 區域的交(不解碼)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">vol_rle_union</code> と同じ掃引エンジン(<code style="color:#22d3bf">_rle_boolean</code>)で、区間ごとの被覆状態が <code style="color:#22d3bf">ia &amp; ib</code>(両方の内側)の区間だけを run として残す。計算量は run 数に対して O(n log n) で、voxel 数には依存しない。</p>
-<p>返り値: 同じ <code style="color:#22d3bf">shape</code> の新しい <code style="color:#22d3bf">VolRLE</code>。共通部分が無ければ run 0 本の region (エラーではない。空かどうかは <code style="color:#22d3bf">len(region) == 0</code> か <code style="color:#22d3bf">vol_rle_volume</code> で見る)。<code style="color:#22d3bf">vol_rle_decode(result) == decode(a) &amp; decode(b)</code> が voxel 単位で成り立つ。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): どちらかが <code style="color:#22d3bf">VolRLE</code> でない・run 配列の整合性検査に失敗 / <code style="color:#22d3bf">a.shape != b.shape</code>。</p>
-<p>使いどころ: ROI(<code style="color:#22d3bf">vol_rle_encode</code> した domain マスク)と成分(<code style="color:#22d3bf">vol_rle_components</code>) の重なり判定、2 つの閾値結果の共通領域、<code style="color:#22d3bf">vol_rle_volume</code> と組み合わせた IoU 計算(<code style="color:#22d3bf">|a∩b| / |a∪b|</code>)を密配列なしで行う。</p>
+<p>使用與 <code style="color:#22d3bf">vol_rle_union</code> 相同的掃掠引擎(<code style="color:#22d3bf">_rle_boolean</code>),只保留每個區間覆蓋狀態為 <code style="color:#22d3bf">ia &amp; ib</code>(兩者內側)的區間作為 run。計算量相對 run 數為 O(n log n),與 voxel 數無關。</p>
+<p>回傳值: 相同 <code style="color:#22d3bf">shape</code> 的新 <code style="color:#22d3bf">VolRLE</code>。沒有共同部分時為 run 0 個的 region (不是錯誤。是否為空用 <code style="color:#22d3bf">len(region) == 0</code> 或 <code style="color:#22d3bf">vol_rle_volume</code> 判斷)。<code style="color:#22d3bf">vol_rle_decode(result) == decode(a) &amp; decode(b)</code> 在 voxel 層級成立。</p>
+<p>驗證(<code style="color:#22d3bf">ValueError</code>): 任一方不是 <code style="color:#22d3bf">VolRLE</code> 或 run 陣列的一致性檢查失敗 / <code style="color:#22d3bf">a.shape != b.shape</code>。</p>
+<p>使用時機: ROI(經 <code style="color:#22d3bf">vol_rle_encode</code> 的 domain 遮罩)與成分(<code style="color:#22d3bf">vol_rle_components</code>) 的重疊判定、2 個閾值結果的共同區域、與 <code style="color:#22d3bf">vol_rle_volume</code> 組合的 IoU 計算(<code style="color:#22d3bf">|a∩b| / |a∪b|</code>),都無需密集陣列即可完成。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

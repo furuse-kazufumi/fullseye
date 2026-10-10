@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mesh_props; mesh_props.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mesh_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>闭合三角形网格所围的<b>有符号体积</b> → float。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>発散定理(divergence theorem)で <code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>。面の巻き順が外向き(右手系)なら正、内向きなら負になる —— <b>符号は向きの検査そのもの</b>で、負が返ったら法線が裏返っている。</p>
+<p>由散度定理(divergence theorem)得 <code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>。面的环绕顺序朝外（右手系）则为正，朝内则为负 —— <b>符号本身就是方向检查</b>，若返回负值则法线是翻转的。</p>
 <p>Args:</p>
-<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
+<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> 的元组。</p>
 <p>Returns:</p>
-<p>符号付き体積(float、座標の単位の 3 乗)。</p>
+<p>带符号体积（float，坐标单位的 3 次方）。</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
-<p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p>★<b><code style="color:#22d3bf">voxel_to_mesh</code>(marching cubes)の返りは内向き巻きなので、そのまま渡すと負になる</b>(実測: 1000 voxel の立方体で -985.67)。「負 = 法線が裏返っている」のは正しいが、<b>この組み合わせでは裏返っているのが既定</b>なので、体積が欲しいだけなら <code style="color:#22d3bf">abs()</code> を取るか <code style="color:#22d3bf">faces[:, ::-1]</code> で巻き直すこと。向きの検査に使うのは、巻き順を自分で決めた(または向きを揃えた)メッシュに対して。</p>
-<p><b>限界(honest)</b>: 発散定理は<b>閉じた曲面でのみ</b>成り立つ。開いたメッシュ(穴のあるスキャン)に対しても数値は返るが、それは「穴を原点へ向かって塞いだ立体の体積」であって、欲しい量ではない。閉じているかどうかは <code style="color:#22d3bf">boundary_vertices</code> が空か、<code style="color:#22d3bf">mesh_edge_stats</code> の <code style="color:#22d3bf">boundary_edges</code> が 0 かで<b>先に確かめること</b>。自己交差があるメッシュでは重なった領域が符号つきで二重に数えられる(これも定理どおりの挙動で、検出はしない)。</p>
-<p>Reference (public): 発散定理による多面体体積は標準的な公式。例えば C. Zhang &amp; T. Chen, &quot;Efficient feature extraction for 2D/3D objects in mesh representation&quot;, ICIP 2001。</p>
+<p>ValueError: <code style="color:#22d3bf">mesh</code> 不是 <code style="color:#22d3bf">(vertices, faces)</code> 这 2 个元素、形状不正确、</p>
+<p>坐标非有限、index 非整数、越界、为空时。</p>
+<p>★<b><code style="color:#22d3bf">voxel_to_mesh</code>(marching cubes)的返回是朝内环绕的，因此直接传入会得到负值</b>（实测： 1000 voxel 的立方体为 -985.67）。“负 = 法线翻转” 本身是对的，但<b>在这种组合下翻转才是默认</b>，所以如果只想要体积，请取 <code style="color:#22d3bf">abs()</code> 或用 <code style="color:#22d3bf">faces[:, ::-1]</code> 重新环绕。用于方向检查时，应针对自己决定了环绕顺序（或已统一方向）的网格。</p>
+<p><b>局限(honest)</b>: 散度定理<b>仅对闭合曲面</b>成立。对开放网格（有孔的扫描）也会返回数值，但那是&quot;把孔朝原点方向封住后的立体体积&quot;，并不是想要的量。是否闭合，请用 <code style="color:#22d3bf">boundary_vertices</code> 是否为空，或 <code style="color:#22d3bf">mesh_edge_stats</code> 的 <code style="color:#22d3bf">boundary_edges</code> 是否为 0 <b>事先确认</b>。存在自相交的网格中，重叠区域会带符号地被计数两次（这也是符合定理的行为，不做检测）。</p>
+<p>Reference (public): 基于散度定理的多面体体积是标准公式。例如 C. Zhang &amp; T. Chen, &quot;Efficient feature extraction for 2D/3D objects in mesh representation&quot;, ICIP 2001。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

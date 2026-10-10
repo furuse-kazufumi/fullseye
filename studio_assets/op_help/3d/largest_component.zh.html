@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largest_component(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import regionprops3d; regionprops3d.largest_component(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;largest_component&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回最大(体素最多)连通成分的 bool 掩码。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>前景が無い場合は全 False マスク(vol と同形状)。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 内部で <code style="color:#22d3bf">label_components</code> を呼び、<code style="color:#22d3bf">bincount</code> でラベルごとのボクセル数を数えて最大を選ぶ。<b>同数のときは番号の小さいラベル</b>(scipy の走査順で先)が勝つ。</p>
-<p style="margin:2px 0 2px 12px">• 入力は 0 以外を前景として <code style="color:#22d3bf">bool</code> 化する(NaN も前景)。軸順は (z, y, x)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は入力と同形状の bool。前景が無ければ全 False(例外にはしない)。</p>
-<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 3 次元でない入力、<code style="color:#22d3bf">connectivity</code> が 6/18/26 以外。</p>
-<p style="margin:2px 0 2px 12px">• 典型: 閾値処理で出た二値ボリュームからノイズ塊を捨てて主対象だけ残す。複数を残したいなら <code style="color:#22d3bf">filter_by_volume</code>、特徴で選ぶなら <code style="color:#22d3bf">vol_select_labels</code>。</p>
+<p>没有前景时为全 False 掩模(与 vol 同形状)。</p>
+<p>补充:</p>
+<p style="margin:2px 0 2px 12px">• 内部调用 <code style="color:#22d3bf">label_components</code>,用 <code style="color:#22d3bf">bincount</code> 统计各标签的体素数并选出最大者。<b>数量相同时编号较小的标签</b>(scipy 扫描顺序中靠前)胜出。</p>
+<p style="margin:2px 0 2px 12px">• 输入以 0 以外为前景转为 <code style="color:#22d3bf">bool</code>(NaN 也是前景)。轴顺序为 (z, y, x)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值为与输入同形状的 bool。没有前景则全 False(不抛异常)。</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>:非 3 维输入,<code style="color:#22d3bf">connectivity</code> 不是 6/18/26。</p>
+<p style="margin:2px 0 2px 12px">• 典型:从阈值处理得到的二值体数据中丢弃噪声块,只保留主要对象。要保留多个用 <code style="color:#22d3bf">filter_by_volume</code>,按特征选择用 <code style="color:#22d3bf">vol_select_labels</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 测量不确定度与校准知识 —— 为了能主张“测得准”</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

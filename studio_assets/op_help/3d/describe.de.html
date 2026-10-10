@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.describe(points, bins: &#x27;int&#x27; = 64, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import descriptors3d; descriptors3d.describe(points, bins: &#x27;int&#x27; = 64, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;describe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein globaler Formdeskriptor aus der Verkettung von D2 + A3 + Ausdehnung.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>長さ 2*bins + 3 の 1 次元 float64 ベクトル。並びは [d2(bins), a3(bins), extent(3)]。各部分ブロックはそれぞれ総和 1 に正規化済みなので、L1 距離での比較時に 3 指標がおおよそ等しい重みで効く。</p>
+<p>Ein 1-dimensionaler float64-Vektor der Länge 2*bins + 3. Die Reihenfolge ist [d2(bins), a3(bins), extent(3)]. Jeder Teilblock ist bereits auf Summe 1 normiert, daher wirken die 3 Kennzahlen beim Vergleich mit dem L1-Abstand mit ungefähr gleichem Gewicht.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>点群。N &gt;= 3 が必要。</p>
+<p>Punktwolke. N &gt;= 3 ist erforderlich.</p>
 <p>bins : int</p>
-<p>D2 / A3 それぞれの bin 数。</p>
+<p>Anzahl der Bins für D2 / A3 jeweils.</p>
 <p>seed : int</p>
-<p>D2 / A3 の乱択シード(両者に同一 seed を渡す)。</p>
+<p>Zufalls-Seed für die Stichproben von D2 / A3 (beiden wird derselbe seed übergeben).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (2*bins + 3,)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

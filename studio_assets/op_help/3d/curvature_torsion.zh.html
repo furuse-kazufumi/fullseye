@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(kappa,tau) → (N,2) pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>各点的曲率 κ 与挠率 τ(与重参数化无关的闭式)。→ (kappa (N,), tau (N,))。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>座標の一様スケール s に対し κ→κ/s, τ→τ/s と正しくスケールする。0 割り防止の epsilon は <b>相対化</b>する: 絶対 1e-12 は cross_norm²(~s⁴)・r1_norm³(~s³)を小座標スケールで支配し、κ/τ を破壊するため、代表スケール L=median‖r&#x27;‖(座標スケール s に線形)で各分母と同次元に正規化した相対 eps を使う。これは曲線を L で正規化してから計算し 1/L で戻すのと厳密に等価。</p>
-<p>計算は順序付き点列 (N,3) を index パラメータで <code style="color:#22d3bf">np.gradient</code> 3 回(中心差分、両端は片側差分)した r&#x27;, r&#x27;&#x27;, r&#x27;&#x27;&#x27; から</p>
+<p>对坐标的均匀缩放 s,κ→κ/s、τ→τ/s 能正确缩放。防止除以 0 的 epsilon 做了<b>相对化</b>:绝对的 1e-12 在小坐标尺度下会支配 cross_norm²(~s⁴)、r1_norm³(~s³), 破坏 κ/τ,因此使用以代表尺度 L=median‖r&#x27;‖(与坐标尺度 s 成线性)归一化到与各分母同量纲的相对 eps。这与先用 L 归一化曲线再计算、最后以 1/L 还原严格等价。</p>
+<p>计算时对有序点列 (N,3) 以 index 为参数做 3 次 <code style="color:#22d3bf">np.gradient</code>(中心差分,两端为单侧差分)得到 r&#x27;, r&#x27;&#x27;, r&#x27;&#x27;&#x27;,由</p>
 <p style="margin:2px 0 2px 12px">• κ = ‖r&#x27;×r&#x27;&#x27;‖ / ‖r&#x27;‖³</p>
 <p style="margin:2px 0 2px 12px">• τ = (r&#x27;×r&#x27;&#x27;)·r&#x27;&#x27;&#x27; / ‖r&#x27;×r&#x27;&#x27;‖²</p>
-<p>で求める。単位は κ・τ とも 1/座標単位。τ の符号は右手系の螺旋(a cosθ, a sinθ, bθ), b&gt;0 で正。直線区間(‖r&#x27;×r&#x27;&#x27;‖≈0)では κ≈0、τ は分母が eps だけになるため値は信頼できない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ValueError</code>: 全点が重なり median‖r&#x27;‖ が 0 または非有限のとき。</p>
-<p style="margin:2px 0 2px 12px">• 点間隔が急に変わる箇所は数値微分が乱れるので、先に <code style="color:#22d3bf">resample_uniform</code> で等間隔化するか <code style="color:#22d3bf">fit_spline_curve</code> で平滑化してから渡す。両端 2 点は片側差分で精度が落ちる。</p>
-<p style="margin:2px 0 2px 12px">• N&lt;2 は <code style="color:#22d3bf">np.gradient</code> が <code style="color:#22d3bf">ValueError</code>。形状 (N,3) の検証はしていない。</p>
-<p>標構(T,N,B)が要るなら <code style="color:#22d3bf">frenet_frame</code>、弧長 ds は <code style="color:#22d3bf">arc_length</code> から取る。</p>
+<p>求得。κ、τ 的单位均为 1/坐标单位。τ 的符号对右手系螺旋(a cosθ, a sinθ, bθ), b&gt;0 为正。直线区间(‖r&#x27;×r&#x27;&#x27;‖≈0)中 κ≈0,τ 的分母只剩 eps, 因此其值不可信。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ValueError</code>:所有点重合、median‖r&#x27;‖ 为 0 或非有限时。</p>
+<p style="margin:2px 0 2px 12px">• 点间距突变处数值微分会紊乱,因此请先用 <code style="color:#22d3bf">resample_uniform</code> 等间距化, 或用 <code style="color:#22d3bf">fit_spline_curve</code> 平滑后再传入。两端 2 点因单侧差分而精度下降。</p>
+<p style="margin:2px 0 2px 12px">• N&lt;2 时 <code style="color:#22d3bf">np.gradient</code> 抛出 <code style="color:#22d3bf">ValueError</code>。不验证形状 (N,3)。</p>
+<p>若需要标架(T,N,B)请用 <code style="color:#22d3bf">frenet_frame</code>,弧长 ds 从 <code style="color:#22d3bf">arc_length</code> 获取。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

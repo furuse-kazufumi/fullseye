@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_from_reflection(incident, reflected)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.normal_from_reflection(incident, reflected)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;normal_from_reflection&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由入射+反射恢复镜面法线(deflectometry)。n ∝ (r − d),朝与入射相反的方向。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>既知パターンの反射を観測 → 面法線 → 積分して鏡面形状。鏡面(反射)物体の形状計測の要。</p>
-<p><code style="color:#22d3bf">incident</code>(面へ向かう入射方向)と <code style="color:#22d3bf">reflected</code>(面から出る反射方向)を単位化し、<code style="color:#22d3bf">n = unit(r − d)</code> を <b><code style="color:#22d3bf">n·d &lt;= 0</code>(入射に逆らう=入射側外向き)</b> になるよう符号を決めて返す(単位ベクトル)。<code style="color:#22d3bf">r == d</code> なら零ベクトル。最後の軸をベクトルとするので <code style="color:#22d3bf">(N,3)</code> バッチも通る(符号判定は全体の内積和で 1 回だけ行う)。</p>
-<p>用途: 既知パターンの反射像から画素ごとに法線を作り(法線マップ)、<code style="color:#22d3bf">integrate_normals</code> で高さに積分、<code style="color:#22d3bf">render_shaded</code> で見た目を再現、<code style="color:#22d3bf">reflect</code> で検算。</p>
+<p>观测已知图案的反射 → 面法线 → 积分得到镜面形状。镜面(反射)物体形状测量的关键。</p>
+<p>将 <code style="color:#22d3bf">incident</code>(射向面的入射方向)和 <code style="color:#22d3bf">reflected</code>(离开面的反射方向)单位化, 确定 <code style="color:#22d3bf">n = unit(r − d)</code> 的符号使其满足 <b><code style="color:#22d3bf">n·d &lt;= 0</code>(逆着入射=入射侧向外)</b> 后返回(单位向量)。<code style="color:#22d3bf">r == d</code> 时为零向量。把最后一个轴作为向量,因此 <code style="color:#22d3bf">(N,3)</code> 批量也能通过(符号判定只用全体内积和进行 1 次)。</p>
+<p>用途: 由已知图案的反射像逐像素生成法线(法线贴图),用 <code style="color:#22d3bf">integrate_normals</code> 积分为高度,用 <code style="color:#22d3bf">render_shaded</code> 再现外观,用 <code style="color:#22d3bf">reflect</code> 验算。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

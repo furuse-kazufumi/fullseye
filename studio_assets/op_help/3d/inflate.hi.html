@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inflate(occupancy, radius, voxel_size=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import occupancy; occupancy.inflate(occupancy, radius, voxel_size=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;inflate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>obstacles को <code style="color:#22d3bf">radius</code> (world units) से फैलाया गया occupancy grid bool (= ESDF&lt;=radius को occupied)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>planner の安全マージン: 点ロボットが膨張格子上で衝突回避すれば、半径 radius の実ロボットが障害物から離隔を保つ(configuration-space obstacle)。ESDF は外で正の最近占有距離なので、<code style="color:#22d3bf">ESDF&lt;=radius</code> は「占有(負)∪ 障害物から radius 以内の自由」を捕らえる。radius を増やすと単調に占有が増える(下流テストの GT)。</p>
-<p>Raises ValueError for radius&lt;0 or voxel_size&lt;=0 (both validated up-front, before the radius==0 / empty-occupancy short-circuit — otherwise an invalid voxel_size slips through unchecked when esdf is never reached).</p>
+<p>Planner के लिए safety margin: अगर एक point robot inflated grid पर टक्कर से बचे, तो radius त्रिज्या वाला असली robot obstacles से दूरी बनाए रखता है (configuration-space obstacle)। ESDF बाहर की ओर धनात्मक nearest-occupied दूरी है, इसलिए <code style="color:#22d3bf">ESDF&lt;=radius</code> &quot;occupied (ऋणात्मक) ∪ obstacle से radius के भीतर का free&quot; पकड़ता है। radius बढ़ाने पर occupancy monotonically बढ़ती है (downstream tests का GT)।</p>
+<p>radius&lt;0 या voxel_size&lt;=0 पर ValueError उठाता है (दोनों पहले ही जाँचे जाते हैं, radius==0 / खाली occupancy के short-circuit से पहले — वरना esdf तक न पहुँचने पर गलत voxel_size बिना जाँच के निकल जाता)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

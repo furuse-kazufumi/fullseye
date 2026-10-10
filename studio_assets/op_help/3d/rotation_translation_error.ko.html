@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rotation_translation_error(gt, est)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import registration_eval; registration_eval.rotation_translation_error(gt, est)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;rotation_translation_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 4×4 변환 사이의 상대 회전 오차(측지각[도], RRE)와 상대 병진 오차(RTE).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>RRE = 角度(gt_R^T · est_R) = atan2(|axial(dR − dRᵀ)|/2, (tr−1)/2) を度で。任意軸まわりの角 θ の回転差なら RRE=θ。RTE = ‖gt_t − est_t‖。→ (rre_deg, rte)。非 4×4 は ValueError(fail-closed)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gt</code> / <code style="color:#22d3bf">est</code>: 4×4 同次変換(左上 3×3 が回転、右列が並進)。非有限を含むと <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rre_deg</code> は [0, 180] の度(sin を歪対称部、cos を trace から取る atan2。arccos は 1 の近くで √ε の床を持ち 1e-6° 以下を 0 と答えていた —— 2026-10-07 修正)。<code style="color:#22d3bf">rte</code> は並進列の差のノルムで座標の単位。並進列は回転の原点に依存するので、同じ姿勢誤差でも原点が物体から遠いほど RTE は大きく出る(比較は同じフレーム規約の変換どうしで行う)。</p>
-<p style="margin:2px 0 2px 12px">• 回転行列が直交でなくても検査しないので、<code style="color:#22d3bf">gicp</code> 等の出力 (R,t) を同モジュールの <code style="color:#22d3bf">make_transform</code> で組んだ正しい変換を渡す。<code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">registration_recall</code> が点群上の残差で測るのに対し、こちらは変換パラメータそのものの差を測る。</p>
+<p>RRE = 각도(gt_R^T · est_R) = atan2(|axial(dR − dRᵀ)|/2, (tr−1)/2) 를 도로. 임의 축 둘레 각 θ 의회전 차이면 RRE=θ. RTE = ‖gt_t − est_t‖. → (rre_deg, rte). 비 4×4 는 ValueError(fail-closed).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gt</code> / <code style="color:#22d3bf">est</code>: 4×4 동차 변환(왼쪽 위 3×3 이 회전, 오른쪽 열이 병진). 비유한을 포함하면 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rre_deg</code> 는 [0, 180] 의 도(sin 을 반대칭부, cos 을 trace 에서 취하는 atan2. arccos 는 1 근처에서 √ε 의 바닥을 가져 1e-6° 이하를 0 으로 답하고 있었다 —— 2026-10-07 수정). <code style="color:#22d3bf">rte</code> 는 병진 열 차이의노름으로 좌표 단위. 병진 열은 회전의 원점에 의존하므로, 같은 자세 오차라도 원점이 물체에서 멀수록 RTE 는 크게 나온다(비교는 같은 프레임 규약의 변환끼리 한다).</p>
+<p style="margin:2px 0 2px 12px">• 회전 행렬이 직교가 아니어도 검사하지 않으므로, <code style="color:#22d3bf">gicp</code> 등의 출력 (R,t) 를 같은 모듈의 <code style="color:#22d3bf">make_transform</code> 으로 조립한 올바른 변환을 넘긴다. <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">registration_recall</code> 이 점군 위의 잔차로 재는 것에 비해, 이쪽은 변환 파라미터 자체의 차이를 잰다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

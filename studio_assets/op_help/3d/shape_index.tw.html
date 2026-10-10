@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index(points, k=25, normals=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import curvature3d; curvature3d.shape_index(points, k=25, normals=None)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;shape_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Koenderink 的 shape index s∈<a style="color:#22d3bf" href="凸球+1・圓柱+0.5・鞍點0・凹球-1">-1,1</a>。→ (N,)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>umbilic/平面判定は<b>曲率スケール相対</b>(絶対しきい値なし)。緩やかな凸/凹(曲率が微小でも)は符号=凹凸を保ち、平面はデータ全体の曲率スケールに対して相対的に 0 の点のみ s=0 とする。</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は開面の凹/凸符号が不定(凸マグニチュードで報告)。向き付き法線を渡すと大域向きに整合し正しい符号(凹球=cup → -1)を出す。</p>
-<p>計算(各点、<code style="color:#22d3bf">principal_curvatures</code> と同じフィット):</p>
-<p style="margin:2px 0 2px 12px">• 平面判定: curvedness <code style="color:#22d3bf">sqrt((k1² + k2²) / 2)</code> が、全点の curvedness の中央値 × 1e-3 未満なら s = 0。中央値が 0(曲率信号なし)なら全点 0。</p>
-<p style="margin:2px 0 2px 12px">• 臍点判定: <code style="color:#22d3bf">|k1 - k2| &lt; 1e-2 × (|k1| + |k2|)</code> なら s = <code style="color:#22d3bf">sign(k1 + k2)</code>(厳密に ±1)。</p>
-<p style="margin:2px 0 2px 12px">• それ以外: <code style="color:#22d3bf">s = (2/π) · arctan((k1 + k2) / (k1 - k2))</code>。</p>
-<p style="margin:2px 0 2px 12px">• しきい値は絶対値でなく <b>データ全体の曲率スケール相対</b> なので、同じ形でも他の点との混在具合で平面扱いになる点が変わる。単一の点群を分類する前提で使う。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は k1 = k2 = 0 → 平面(0)。<code style="color:#22d3bf">k</code> は N-1 に切り詰め。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行(<code style="color:#22d3bf">ValueError</code>)。未指定では開いた面の符号は不定(凸側)。</p>
-<p style="margin:2px 0 2px 12px">• 曲がりの強さは含まない。強さも要るなら <code style="color:#22d3bf">principal_curvatures</code> の 2 本を <code style="color:#22d3bf">(N,2)</code> に並べて <code style="color:#22d3bf">curvature_to_shape_index</code> に通す。</p>
+<p>臍點/平面判定<b>相對於曲率尺度</b>(無絕對閾值)。平緩的凸/凹(即使曲率極小) 也保留符號=凹凸,平面僅對相對於整體資料的曲率尺度為 0 的點設 s=0。</p>
+<p>normals(帶方向的參考法線, (N,3))未指定時開放曲面的凹/凸符號不確定(以凸的幅值回報)。傳入帶方向的法線後會與全域方向一致,給出正確的符號(凹球=cup → -1)。</p>
+<p>計算(每個點,與 <code style="color:#22d3bf">principal_curvatures</code> 相同的擬合):</p>
+<p style="margin:2px 0 2px 12px">• 平面判定: curvedness <code style="color:#22d3bf">sqrt((k1² + k2²) / 2)</code> 小於全部點 curvedness 的中位數 × 1e-3 時 s = 0。中位數為 0(無曲率訊號)時全部點為 0。</p>
+<p style="margin:2px 0 2px 12px">• 臍點判定: <code style="color:#22d3bf">|k1 - k2| &lt; 1e-2 × (|k1| + |k2|)</code> 時 s = <code style="color:#22d3bf">sign(k1 + k2)</code>(嚴格為 ±1)。</p>
+<p style="margin:2px 0 2px 12px">• 其他情況: <code style="color:#22d3bf">s = (2/π) · arctan((k1 + k2) / (k1 - k2))</code>。</p>
+<p style="margin:2px 0 2px 12px">• 閾值不是絕對值而是<b>相對於整體資料的曲率尺度</b>,因此即使形狀相同,被視為平面的點也會隨與其他點的混合情況而改變。以對單一點雲進行分類為前提使用。</p>
+<p style="margin:2px 0 2px 12px">• 鄰域少於 5 個點的點 k1 = k2 = 0 → 平面(0)。<code style="color:#22d3bf">k</code> 截斷為 N-1。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> 須為 (N,3) 且各列有限、非零(<code style="color:#22d3bf">ValueError</code>)。未指定時開放曲面的符號不確定(凸側)。</p>
+<p style="margin:2px 0 2px 12px">• 不包含彎曲的強度。若也需要強度,把 <code style="color:#22d3bf">principal_curvatures</code> 的 2 個值排成 <code style="color:#22d3bf">(N,2)</code> 後傳給 <code style="color:#22d3bf">curvature_to_shape_index</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

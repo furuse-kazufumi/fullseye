@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_reflectance(cos_i, eta1=1.0, eta2=1.5)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.fresnel_reflectance(cos_i, eta1=1.0, eta2=1.5)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fresnel_reflectance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Fresnel 反射率(非偏振=s/p 平均)。透明体界面上分成反射/透射的比例。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>垂直入射で ((n1−n2)/(n1+n2))²(air→glass=0.04)。臨界角超で 1.0(全反射)。透明体レンダ/検査に。</p>
-<p><code style="color:#22d3bf">cos_i</code> は入射角の余弦(実数スカラー。配列・None は ValueError)。符号は捨てる(<code style="color:#22d3bf">|cos_i|</code>)。<code style="color:#22d3bf">eta1</code> は入射側、<code style="color:#22d3bf">eta2</code> は透過側の屈折率。s 偏光 <code style="color:#22d3bf">rs</code> と p 偏光 <code style="color:#22d3bf">rp</code> の平均を float で返す(<b>[0, 1]</b>)。Brewster 角では <code style="color:#22d3bf">rp = 0</code> になるが平均は 0 にならない。<code style="color:#22d3bf">cos_i = 0</code>(かすめ入射)で 1.0。透過率は <code style="color:#22d3bf">1 −</code> 反射率(吸収なし)。</p>
-<p>用途: <code style="color:#22d3bf">refract</code> で曲げた光線の重み、透明体の輝度予測。</p>
+<p>垂直入射时为 ((n1−n2)/(n1+n2))²(air→glass=0.04)。超过临界角为 1.0(全反射)。用于透明体渲染/检测。</p>
+<p><code style="color:#22d3bf">cos_i</code> 为入射角的余弦(实数标量。数组、None 则 ValueError)。符号被丢弃(<code style="color:#22d3bf">|cos_i|</code>)。<code style="color:#22d3bf">eta1</code> 为入射侧、<code style="color:#22d3bf">eta2</code> 为透射侧的折射率。以 float 返回 s 偏振 <code style="color:#22d3bf">rs</code> 与 p 偏振 <code style="color:#22d3bf">rp</code> 的平均(<b>[0, 1]</b>)。在 Brewster 角处 <code style="color:#22d3bf">rp = 0</code>,但平均不为 0。<code style="color:#22d3bf">cos_i = 0</code>(掠入射)时为 1.0。透射率为 <code style="color:#22d3bf">1 −</code> 反射率(无吸收)。</p>
+<p>用途: 经 <code style="color:#22d3bf">refract</code> 弯折的光线的权重,透明体的亮度预测。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

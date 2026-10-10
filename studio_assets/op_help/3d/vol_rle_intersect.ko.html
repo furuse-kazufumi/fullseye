@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_intersect(a, b)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volregion; volregion.vol_rle_intersect(a, b)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_intersect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 RLE 영역의 교집합을 run 위에서(복호 없음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">vol_rle_union</code> と同じ掃引エンジン(<code style="color:#22d3bf">_rle_boolean</code>)で、区間ごとの被覆状態が <code style="color:#22d3bf">ia &amp; ib</code>(両方の内側)の区間だけを run として残す。計算量は run 数に対して O(n log n) で、voxel 数には依存しない。</p>
-<p>返り値: 同じ <code style="color:#22d3bf">shape</code> の新しい <code style="color:#22d3bf">VolRLE</code>。共通部分が無ければ run 0 本の region (エラーではない。空かどうかは <code style="color:#22d3bf">len(region) == 0</code> か <code style="color:#22d3bf">vol_rle_volume</code> で見る)。<code style="color:#22d3bf">vol_rle_decode(result) == decode(a) &amp; decode(b)</code> が voxel 単位で成り立つ。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): どちらかが <code style="color:#22d3bf">VolRLE</code> でない・run 配列の整合性検査に失敗 / <code style="color:#22d3bf">a.shape != b.shape</code>。</p>
-<p>使いどころ: ROI(<code style="color:#22d3bf">vol_rle_encode</code> した domain マスク)と成分(<code style="color:#22d3bf">vol_rle_components</code>) の重なり判定、2 つの閾値結果の共通領域、<code style="color:#22d3bf">vol_rle_volume</code> と組み合わせた IoU 計算(<code style="color:#22d3bf">|a∩b| / |a∪b|</code>)を密配列なしで行う。</p>
+<p><code style="color:#22d3bf">vol_rle_union</code>과 같은 스윕 엔진(<code style="color:#22d3bf">_rle_boolean</code>)으로, 구간별 피복 상태가 <code style="color:#22d3bf">ia &amp; ib</code>(양쪽의 안쪽)인 구간만 run으로 남긴다. 계산량은 run 수에 대해 O(n log n)이며, voxel 수에는 의존하지 않는다.</p>
+<p>반환값: 같은 <code style="color:#22d3bf">shape</code>의 새 <code style="color:#22d3bf">VolRLE</code>. 공통 부분이 없으면 run 0개의 region (오류가 아님. 비었는지는 <code style="color:#22d3bf">len(region) == 0</code>이나 <code style="color:#22d3bf">vol_rle_volume</code>으로 본다). <code style="color:#22d3bf">vol_rle_decode(result) == decode(a) &amp; decode(b)</code>가 voxel 단위로 성립한다.</p>
+<p>검증(<code style="color:#22d3bf">ValueError</code>): 어느 한쪽이 <code style="color:#22d3bf">VolRLE</code>이 아님·run 배열의 정합성 검사에 실패 / <code style="color:#22d3bf">a.shape != b.shape</code>.</p>
+<p>사용처: ROI(<code style="color:#22d3bf">vol_rle_encode</code>한 domain 마스크)와 성분(<code style="color:#22d3bf">vol_rle_components</code>) 의 겹침 판정, 2개의 임계값 결과의 공통 영역, <code style="color:#22d3bf">vol_rle_volume</code>과 조합한 IoU 계산(<code style="color:#22d3bf">|a∩b| / |a∪b|</code>)을 밀집 배열 없이 수행한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

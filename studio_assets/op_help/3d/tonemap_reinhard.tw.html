@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tonemap_reinhard(hdr, exposure: &#x27;float&#x27; = 1.0, white: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_reinhard(hdr, exposure: &#x27;float&#x27; = 1.0, white: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;tonemap_reinhard&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Reinhard 色調映射把 HDR 壓縮到 <code style="color:#22d3bf">[0, 1]</code> 的 LDR。→ float64,與輸入同形狀。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>露出を掛けた <code style="color:#22d3bf">x = hdr * exposure</code> に対し:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white is None</code> … 基本形 <code style="color:#22d3bf">x / (1 + x)</code>。<code style="color:#22d3bf">[0, ∞)</code> を<b>狭義単調増加</b>で <code style="color:#22d3bf">[0, 1)</code> へ写し、決してクリップしない(全域で階調順序を厳密保存)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code> 指定 … 拡張形 <code style="color:#22d3bf">x (1 + x/white²) / (1 + x)</code>。<code style="color:#22d3bf">white</code> を正確に 1.0 へ写し、<code style="color:#22d3bf">white</code> 未満に多くのレンジを割く(<code style="color:#22d3bf">white</code> を超える入力は 1 を超えるので <code style="color:#22d3bf">[0, 1]</code> にクリップする)。</p>
-<p>カラー <code style="color:#22d3bf">(H, W, C)</code> はチャンネル独立に写像する。素朴クリップ <code style="color:#22d3bf">min(x, 1)</code> と違い、値 &gt; 1 のハイライト域でも単調な階調を保つ。</p>
+<p>對乘以曝光後的 <code style="color:#22d3bf">x = hdr * exposure</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white is None</code> … 基本形 <code style="color:#22d3bf">x / (1 + x)</code>。將 <code style="color:#22d3bf">[0, ∞)</code> 以<b>嚴格單調遞增</b> 映射到 <code style="color:#22d3bf">[0, 1)</code>,絕不截斷(在全域嚴格保持灰階順序)。</p>
+<p style="margin:2px 0 2px 12px">• 指定 <code style="color:#22d3bf">white</code> … 擴展形 <code style="color:#22d3bf">x (1 + x/white²) / (1 + x)</code>。將 <code style="color:#22d3bf">white</code> 精確映射到 1.0, 將更多的範圍分給小於 <code style="color:#22d3bf">white</code> 的部分(超過 <code style="color:#22d3bf">white</code> 的輸入會超過 1,因此截斷到 <code style="color:#22d3bf">[0, 1]</code>)。</p>
+<p>彩色 <code style="color:#22d3bf">(H, W, C)</code> 依通道獨立映射。與樸素截斷 <code style="color:#22d3bf">min(x, 1)</code> 不同, 即使在值 &gt; 1 的高光區域也保持單調的灰階。</p>
 <p>Args:</p>
-<p>hdr: HDR 画像。<code style="color:#22d3bf">(H, W)</code> グレースケール or <code style="color:#22d3bf">(H, W, C)</code> カラー、放射輝度 &gt;= 0。</p>
-<p>exposure: 写像前に掛ける露出スケール(正)。</p>
-<p>white: 任意の white-point(正)。None なら基本 Reinhard(推奨・全域単調)。</p>
+<p>hdr: HDR 影像。<code style="color:#22d3bf">(H, W)</code> 灰階 or <code style="color:#22d3bf">(H, W, C)</code> 彩色,輻射輝度 &gt;= 0。</p>
+<p>exposure: 映射前乘上的曝光尺度(正)。</p>
+<p>white: 可選的 white-point(正)。None 時為基本 Reinhard(建議、全域單調)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">[0, 1]</code> の float64 LDR 画像(入力と同形状)。</p>
+<p><code style="color:#22d3bf">[0, 1]</code> 的 float64 LDR 影像(與輸入同形狀)。</p>
 <p>Raises:</p>
-<p>ValueError: 空/非有限/負の放射輝度、非正の exposition/white(fail-closed)。</p>
+<p>ValueError: 空/非有限/負的輻射輝度,非正的 exposition/white(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

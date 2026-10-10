@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reflect_points(points, plane_point, plane_normal)</code>(要直接呼叫實作,<code style="color:#22d3bf">import symmetry3d; symmetry3d.reflect_points(points, plane_point, plane_normal)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;reflect_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把點群關於平面(點 plane_point、法線 plane_normal)鏡像。→ (N,3)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各点 p の平面からの符号付き距離 <code style="color:#22d3bf">d = (p - plane_point) · n</code>(n は正規化した法線)を取り、<code style="color:#22d3bf">p&#x27; = p - 2 d n</code> を返す(Householder 鏡映)。平面上の点は動かず、平面の両側の点が入れ替わる。点の並び順は保たれるので <code style="color:#22d3bf">p&#x27;[i]</code> は <code style="color:#22d3bf">p[i]</code> の鏡像。座標の単位はそのまま。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) の配列(float に変換)。形状検証はしない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">plane_point</code>: 平面上の 1 点 (3,)。<code style="color:#22d3bf">plane_normal</code>: 法線 (3,)(長さは任意、内部で正規化。符号は結果に影響しない)。</p>
-<p>注意: 法線はノルムに 1e-12 を足して割るため、ゼロベクトルを渡しても例外にならず点群がほぼそのまま返る(fail-closed ではない)。<code style="color:#22d3bf">reflection_symmetry_score</code> / <code style="color:#22d3bf">detect_reflection_symmetry</code> の内部で使うほか、検出した対称面で欠損側を埋める(鏡像を元の点群に連結する)形状補完にも使える。</p>
+<p>取各點 p 到平面的有號距離 <code style="color:#22d3bf">d = (p - plane_point) · n</code>(n 為正規化後的法線)，回傳 <code style="color:#22d3bf">p&#x27; = p - 2 d n</code>(Householder 鏡射)。平面上的點不動，平面兩側的點互換。點的順序保持不變，因此 <code style="color:#22d3bf">p&#x27;[i]</code> 是 <code style="color:#22d3bf">p[i]</code> 的鏡像。座標單位不變。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>:(N,3) 陣列(轉換為 float)。不做形狀檢查。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">plane_point</code>:平面上的 1 個點 (3,)。<code style="color:#22d3bf">plane_normal</code>:法線 (3,)(長度任意，內部正規化。符號不影響結果)。</p>
+<p>注意：法線是除以範數加 1e-12，因此即使傳入零向量也不會拋出例外，點雲幾乎原樣回傳(不是 fail-closed(失敗即拒絕))。除了在 <code style="color:#22d3bf">reflection_symmetry_score</code> / <code style="color:#22d3bf">detect_reflection_symmetry</code> 內部使用外，也可用於以偵測到的對稱面填補缺失側(將鏡像串接到原點雲上)的形狀補全。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_normals(points, k=25)</code>(要直接呼叫實作,<code style="color:#22d3bf">import curvature3d; curvature3d.estimate_normals(points, k=25)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;estimate_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>統一朝外(遠離鄰域重心)的點雲法線。→ (N,3)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>手順(各点、Python ループ): <code style="color:#22d3bf">cKDTree</code> で自身を含む k+1 近傍(k は N-1 に切り詰め)を取り、クエリ点を原点にした近傍座標の散布行列 <code style="color:#22d3bf">local.T @ local</code> の最小固有ベクトルを法線にする(単位長)。向きは「近傍重心との内積が正なら反転」= 近傍重心から離れる側に揃える。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は固定値 <code style="color:#22d3bf">(0, 0, 1)</code> を返す(推定していない)。</p>
-<p style="margin:2px 0 2px 12px">• 向き付けは局所ヒューリスティクスで、閉じた凸形状なら外向きだが、開いた面・薄板・凹部では隣接点どうしで向きが食い違い得る(大域一貫性は保証しない)。大域的に揃えるには <code style="color:#22d3bf">orient_normals</code> に通すか、最初から <code style="color:#22d3bf">estimate_oriented_normals</code> を使う。organized 深度画像なら <code style="color:#22d3bf">normals_from_depth</code> が視点向きで速い。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は float64 (N,3)。<code style="color:#22d3bf">k</code> 既定 25。決定論的。</p>
-<p style="margin:2px 0 2px 12px">• 内部は <code style="color:#22d3bf">principal_curvatures</code> と同じ計算を通る(法線推定にも二次曲面フィットまで走る)ので、点数が多いと遅い。</p>
+<p>步驟(每個點,Python 迴圈): 以 <code style="color:#22d3bf">cKDTree</code> 取包含自身在內的 k+1 個鄰域點(k 截斷為 N-1),以查詢點為原點的鄰域座標散布矩陣 <code style="color:#22d3bf">local.T @ local</code> 的最小特徵向量作為法線(單位長度)。方向為「與鄰域質心的內積為正則翻轉」= 統一到遠離鄰域質心的一側。</p>
+<p style="margin:2px 0 2px 12px">• 鄰域少於 5 個點的點回傳固定值 <code style="color:#22d3bf">(0, 0, 1)</code>(未進行估計)。</p>
+<p style="margin:2px 0 2px 12px">• 方向是局部啟發式,對封閉凸形狀朝外,但在開放曲面、薄板、凹部,相鄰點之間的方向可能不一致(不保證全域一致性)。若要全域統一,請通過 <code style="color:#22d3bf">orient_normals</code>,或從一開始就使用 <code style="color:#22d3bf">estimate_oriented_normals</code>。對於 organized 深度影像,<code style="color:#22d3bf">normals_from_depth</code> 以視點方向且更快。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值為 float64 (N,3)。<code style="color:#22d3bf">k</code> 預設 25。決定性。</p>
+<p style="margin:2px 0 2px 12px">• 內部經過與 <code style="color:#22d3bf">principal_curvatures</code> 相同的計算(法線估計也會執行到二次曲面擬合),因此點數多時較慢。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

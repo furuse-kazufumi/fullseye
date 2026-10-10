@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.laplacian_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.5) -&gt; &#x27;Mesh&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mesh_smooth; mesh_smooth.laplacian_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.5) -&gt; &#x27;Mesh&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;laplacian_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 umbrella Laplacian 平滑三角网格。→ (verts, faces)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各反復で全頂点を <code style="color:#22d3bf">v_i += lam * (mean(隣接 v_j) - v_i)</code> と更新する。高周波ノイズを確実に減らす一方、閉曲面では平均曲率流と同様に <b>内側へ収縮(shrinkage)</b> する(球は反復とともに縮む)。収縮を避けたい場合は <code style="color:#22d3bf">taubin_smooth</code> を使う。</p>
+<p>每次迭代把所有顶点更新为 <code style="color:#22d3bf">v_i += lam * (mean(隣接 v_j) - v_i)</code>。能可靠地减少高频噪声，但在闭曲面上会像平均曲率流一样<b>向内收缩(shrinkage)</b> （球会随迭代缩小）。想避免收缩时用 <code style="color:#22d3bf">taubin_smooth</code>。</p>
 <p>Args:</p>
-<p>mesh: (verts (N,3), faces (M,3)[, ...]) のシーケンス。faces は不変。</p>
-<p>iters: 反復回数(正の整数)。</p>
-<p>lam: 各段の寄せ率、<code style="color:#22d3bf">0 &lt; lam &lt;= 1</code>(1 で隣接平均へ全寄せ)。</p>
+<p>mesh: (verts (N,3), faces (M,3)[, ...]) 的序列。faces 不变。</p>
+<p>iters: 迭代次数（正整数）。</p>
+<p>lam: 每步的拉近率，<code style="color:#22d3bf">0 &lt; lam &lt;= 1</code>（1 时完全拉到邻点平均）。</p>
 <p>Returns:</p>
-<p>(verts (N,3) float64, faces (M,3) int64)。faces は入力を保持。</p>
+<p>(verts (N,3) float64, faces (M,3) int64)。faces 保持输入。</p>
 <p>Raises:</p>
-<p>ValueError: メッシュ形状不正・面範囲外・iters/lam が不正(fail-closed)。</p>
+<p>ValueError: 网格形状不正确、面索引越界、iters/lam 不正确(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,27 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volops; volops.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;volume_downsample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">(D, H, W)</code> volume को हर axis पर integer *factor* से block-pool करता है (data decimation)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Large CT / laminography / simulation volumes must be thinned before the heavier 3-D operators (Frangi/Sato are capped at ~256**3 voxels, see <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>). This is the volume analogue of the point-cloud <code style="color:#22d3bf">voxel_grid_downsample</code> and the mesh <code style="color:#22d3bf">decimate_qem</code> — the third leg of Fullseye&#x27;s *間引き* (decimation) family, one per 3-D data sort.</p>
+<p>बड़े CT / laminography / simulation volumes को भारी 3-D operators से पहले thin करना ज़रूरी है (Frangi/Sato की सीमा ~256**3 voxels है, देखें <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>)। यह point-cloud वाले <code style="color:#22d3bf">voxel_grid_downsample</code> और mesh वाले <code style="color:#22d3bf">decimate_qem</code> का volume रूप है — यह Fullseye के *decimation* परिवार का तीसरा हिस्सा है, हर 3-D data sort के लिए एक।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : array_like, shape (D, H, W)</p>
-<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>input volume (float64 में बदला जाता है; NaN/Inf अस्वीकार)।</p>
 <p>factor : int or (fz, fy, fx)</p>
-<p>Block size per axis, each <code style="color:#22d3bf">&gt;= 1</code>. The output shape is</p>
-<p><code style="color:#22d3bf">(D//fz, H//fy, W//fx)</code>; a trailing partial block that cannot fill a</p>
-<p>full factor is dropped (deterministic, no edge bias).</p>
+<p>हर axis का block size, हर एक <code style="color:#22d3bf">&gt;= 1</code>। output shape</p>
+<p><code style="color:#22d3bf">(D//fz, H//fy, W//fx)</code> है; अंत का अधूरा block जो पूरा</p>
+<p>factor नहीं भर सकता, हटा दिया जाता है (deterministic, किनारे का कोई bias नहीं)।</p>
 <p>mode : {&#x27;mean&#x27;, &#x27;max&#x27;, &#x27;stride&#x27;}</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;mean&#x27;</code> — average-pool. Band-limits before subsampling (the anti-aliasing choice); the right default for grey CT / MRI.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;max&#x27;</code>  — max-pool. Preserves thin bright structures (bone, vessel, defect voxels) that averaging would wash out.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;stride&#x27;</code> — plain subsample <code style="color:#22d3bf">vol[::fz, ::fy, ::fx]</code> (fastest, but aliases — no pre-filter).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;mean&#x27;</code> — average-pool। subsampling से पहले band-limit करता है (यानी anti-aliasing वाला विकल्प); grey CT / MRI के लिए सही default।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;max&#x27;</code>  — max-pool। पतली चमकीली structures (bone, vessel, defect voxels) को बचाता है जिन्हें averaging धो देती।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;stride&#x27;</code> — सीधा subsample <code style="color:#22d3bf">vol[::fz, ::fy, ::fx]</code> (सबसे तेज़, लेकिन aliasing होती है — कोई pre-filter नहीं)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (D//fz, H//fy, W//fx), float64</p>
-<p>The downsampled volume. Spacing scales by the same factor: an input</p>
-<p>spacing <code style="color:#22d3bf">(sz, sy, sx)</code> mm becomes <code style="color:#22d3bf">(sz*fz, sy*fy, sx*fx)</code> mm.</p>
+<p>downsample किया गया volume। spacing भी उसी factor से scale होती है: input</p>
+<p>spacing <code style="color:#22d3bf">(sz, sy, sx)</code> mm बदलकर <code style="color:#22d3bf">(sz*fz, sy*fy, sx*fx)</code> mm हो जाती है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>Non-3-D input, a factor component <code style="color:#22d3bf">&lt; 1</code> or larger than its axis, or an</p>
-<p>unknown *mode* (fail-closed).</p>
+<p>input 3-D न हो, factor का कोई component <code style="color:#22d3bf">&lt; 1</code> हो या अपनी axis से बड़ा हो, या</p>
+<p>*mode* अज्ञात हो (fail-closed)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

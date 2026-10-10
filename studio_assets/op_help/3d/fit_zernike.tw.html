@@ -5,13 +5,12 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>圓盤影像 → Zernike 係數(光學/波前計量的<b>極座標曲面擬合</b>)。回傳 {(n,m): coef}。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>直交多項式で円板上の曲面(波面収差、レンズ形状)を少数係数に。tilt/defocus/astigmatism/ coma/spherical 等が特定の (n,m) に対応し、回転で m が混ざる(帯域=回転不変)。</p>
-<p>瞳(単位円板 ρ=1)は既定で画像中心 <code style="color:#22d3bf">((H-1)/2, (W-1)/2)</code>、半径 <code style="color:#22d3bf">min(H, W)/2 - 1</code> 画素に置かれる。画像の瞳がこれと違うなら <code style="color:#22d3bf">center=(row, col)</code> と <code style="color:#22d3bf">radius</code>(画素)で渡す —— 渡さないと半径の食い違いがそのまま低次モードへの漏れになる(129×129 で瞳半径 (H-1)/2 の純 defocus を既定で読むと (2,0)=0.984 / (0,0)=−0.015、<code style="color:#22d3bf">radius=(H-1)/2</code> を渡せば 0.999999)。瞳の円が画像からはみ出す <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">radius</code> は ValueError。</p>
-<p>honest 開示(2026-10-07 訂正): 以前ここには「離散サンプリング(nr=48, nt=72)由来の最大 ~10% のクロストーク、nr/nt を上げれば減る」と書いていたが、原因は解像度ではなかった。瞳の半径・中心が合っていて瞳の外にも値が続く画像なら既定の nr/nt で係数はほぼ 1(129×129 で 0.999999)に戻る。漏れの実際の原因は</p>
-<p style="margin:2px 0 2px 12px">(1) 上記の瞳半径・中心の食い違い(nr/nt を上げても 1 桁も減らない)と、(2) 瞳の外が 0 の画像で</p>
-<p>いちばん外のリング(ρ=1)が縁に乗り、双一次補間が外側の 0 を吸い込むこと(examples/poc_zernike_aberrations.py の実測)。</p>
-<p>Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ・瞳が画像からはみ出す。</p>
+<p>以正交多項式將圓盤上的曲面(波前像差、透鏡形狀)壓縮為少數係數。tilt/defocus/astigmatism/ coma/spherical 等對應特定的 (n,m),旋轉會使 m 混合(頻帶=旋轉不變)。</p>
+<p>瞳(單位圓盤 ρ=1)預設放在影像中心 <code style="color:#22d3bf">((H-1)/2, (W-1)/2)</code>,半徑為 <code style="color:#22d3bf">min(H, W)/2 - 1</code> 像素。若影像的瞳與此不同,請以 <code style="color:#22d3bf">center=(row, col)</code> 與 <code style="color:#22d3bf">radius</code>(像素)傳入 —— 若不傳入, 半徑的偏差會直接成為向低階模態的洩漏(在 129×129 上以預設值讀取瞳半徑 (H-1)/2 的純 defocus, 得到 (2,0)=0.984 / (0,0)=−0.015,傳入 <code style="color:#22d3bf">radius=(H-1)/2</code> 則為 0.999999)。瞳的圓超出影像的 <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">radius</code> 會 ValueError。</p>
+<p>honest 揭露(2026-10-07 訂正): 以前這裡寫的是「源於離散取樣(nr=48, nt=72)的最大 ~10% 的串擾,提高 nr/nt 即可減少」,但原因並不是解析度。若瞳的半徑、中心吻合且瞳外也有連續值的影像,以預設的 nr/nt 係數即可回到幾乎為 1(129×129 上為 0.999999)。洩漏的實際原因是</p>
+<p style="margin:2px 0 2px 12px">(1) 上述瞳半徑、中心的偏差(提高 nr/nt 也減少不了 1 個數量級),以及 (2) 在瞳外為 0 的影像中,</p>
+<p>最外側的環(ρ=1)落在邊緣上,雙線性內插把外側的 0 吸了進來(examples/poc_zernike_aberrations.py 的實測)。</p>
+<p>Raises ValueError: 輸入不是 2-D、小於 2x2、NaN/Inf/float32 溢位、瞳超出影像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

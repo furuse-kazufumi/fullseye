@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_rigid(pts_from, pts_to)</code> (to call the implementation directly, <code style="color:#22d3bf">import motion_seg3d; motion_seg3d.fit_rigid(pts_from, pts_to)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;fit_rigid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimate the rigid transform (R, t) from correspondences by the closed-form Kabsch algorithm (pts_from[i] -&gt; pts_to[i]).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>行 i どうしが対応する (N, 3) 2 点集合から、<code style="color:#22d3bf">|| (R·p + t) - q ||</code> を最小化する proper rotation(det = +1, 反射なし)と並進を返す。<code style="color:#22d3bf">registration.kabsch</code> の薄いラッパで、入力検証を付す(N &gt;= 3 で回転が一意)。</p>
+<p>From 2 (N, 3) point sets whose rows i correspond, returns the proper rotation that minimises <code style="color:#22d3bf">|| (R·p + t) - q ||</code> (det = +1, no reflection) and the translation. A thin wrapper around <code style="color:#22d3bf">registration.kabsch</code> that adds input validation (the rotation is unique for N &gt;= 3).</p>
 <p>Args:</p>
-<p>pts_from: (N, 3) 変換元(対応順)。</p>
-<p>pts_to: (N, 3) 変換先(対応順)。</p>
+<p>pts_from: (N, 3) source (in correspondence order).</p>
+<p>pts_to: (N, 3) destination (in correspondence order).</p>
 <p>Returns:</p>
-<p>(R, t): (3, 3) 回転行列, (3,) 並進ベクトル。</p>
+<p>(R, t): (3, 3) rotation matrix, (3,) translation vector.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不一致 / (N, 3) でない / N &lt; 3 / 非有限。</p>
+<p>ValueError: shape mismatch / not (N, 3) / N &lt; 3 / non-finite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

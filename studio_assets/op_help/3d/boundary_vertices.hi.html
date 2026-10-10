@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mesh_props; mesh_props.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;boundary_vertices&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>खुले किनारों (boundary) पर स्थित <b>vertices के index</b> → <code style="color:#22d3bf">(K,)</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>無向辺のうち<b>ちょうど 1 つの面にしか使われていない辺</b>(境界辺)の端点を集めて返す。閉じた多様体なら空配列 —— つまり <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> が <b>水密性(watertight)の判定</b>になる。穴埋め・体積計算・曲率のどれも、境界の有無で意味が変わるので、先にここを見る。</p>
+<p>undirected edges में से <b>ठीक 1 face द्वारा ही इस्तेमाल होने वाले edges</b> (boundary edges) के endpoints इकट्ठा करके लौटाता है। closed manifold के लिए यह खाली array होता है —— यानी <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> <b>watertightness (watertight) की जाँच</b> बन जाता है। hole filling, volume calculation और curvature, सभी का अर्थ boundary होने या न होने से बदलता है, इसलिए पहले यहाँ देखें।</p>
 <p>Args:</p>
-<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
+<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> का tuple।</p>
 <p>Returns:</p>
-<p>昇順・重複なしの <code style="color:#22d3bf">(K,)</code> int64。境界が無ければ <code style="color:#22d3bf">shape == (0,)</code>。</p>
+<p>ascending क्रम में, बिना duplicates का <code style="color:#22d3bf">(K,)</code> int64। boundary न हो तो <code style="color:#22d3bf">shape == (0,)</code>।</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
-<p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p><b>限界(honest)</b>: 返るのは頂点の集合で、<b>縁のループ(周回順)ではない</b>。穴が複数あっても 1 つの配列にまとまるので、穴ごとに分けたいなら連結成分を自分で辿ることになる(ループ抽出の op はまだ無い)。3 つ以上の面が共有する非多様体辺はここには出ない(<code style="color:#22d3bf">mesh_edge_stats</code> の <code style="color:#22d3bf">non_manifold_edges</code>)。</p>
+<p>ValueError: जब <code style="color:#22d3bf">mesh</code> <code style="color:#22d3bf">(vertices, faces)</code> के 2 elements न हो, shape अमान्य हो,</p>
+<p>coordinates non-finite हों, index non-integer या सीमा से बाहर हो, या mesh खाली हो।</p>
+<p><b>सीमा (honest)</b>: लौटता है vertices का set, <b>किनारे का loop (traversal order में) नहीं</b>। कई holes होने पर भी सब 1 array में मिल जाता है, इसलिए अगर हर hole अलग चाहिए तो connected components खुद trace करने होंगे (loop extraction का op अभी नहीं है)। 3 या अधिक faces द्वारा साझा किए गए non-manifold edges यहाँ नहीं आते (<code style="color:#22d3bf">mesh_edge_stats</code> का <code style="color:#22d3bf">non_manifold_edges</code> देखें)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

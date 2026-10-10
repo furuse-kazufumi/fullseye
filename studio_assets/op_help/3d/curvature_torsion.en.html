@@ -6,16 +6,16 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(kappa,tau) → (N,2) pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The curvature κ and torsion τ at each point (a reparameterisation-invariant closed form). → (kappa (N,), tau (N,)).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>座標の一様スケール s に対し κ→κ/s, τ→τ/s と正しくスケールする。0 割り防止の epsilon は <b>相対化</b>する: 絶対 1e-12 は cross_norm²(~s⁴)・r1_norm³(~s³)を小座標スケールで支配し、κ/τ を破壊するため、代表スケール L=median‖r&#x27;‖(座標スケール s に線形)で各分母と同次元に正規化した相対 eps を使う。これは曲線を L で正規化してから計算し 1/L で戻すのと厳密に等価。</p>
-<p>計算は順序付き点列 (N,3) を index パラメータで <code style="color:#22d3bf">np.gradient</code> 3 回(中心差分、両端は片側差分)した r&#x27;, r&#x27;&#x27;, r&#x27;&#x27;&#x27; から</p>
+<p>Under a uniform scale s of the coordinates, κ→κ/s and τ→τ/s scale correctly. The epsilon guarding against division by 0 is</p>
+<p><b>relativised</b>: an absolute 1e-12 dominates cross_norm² (~s⁴) and r1_norm³ (~s³) at small coordinate scales and destroys κ/τ, so a relative eps is used, normalised to the same dimension as each denominator with the representative scale L=median‖r&#x27;‖ (linear in the coordinate scale s). This is exactly equivalent to normalising the curve by L, computing, and scaling back by 1/L.</p>
+<p>The computation takes the ordered point sequence (N,3), applies <code style="color:#22d3bf">np.gradient</code> 3 times with the index as parameter (central differences, one-sided differences at both ends) to get r&#x27;, r&#x27;&#x27;, r&#x27;&#x27;&#x27;, and computes</p>
 <p style="margin:2px 0 2px 12px">• κ = ‖r&#x27;×r&#x27;&#x27;‖ / ‖r&#x27;‖³</p>
 <p style="margin:2px 0 2px 12px">• τ = (r&#x27;×r&#x27;&#x27;)·r&#x27;&#x27;&#x27; / ‖r&#x27;×r&#x27;&#x27;‖²</p>
-<p>で求める。単位は κ・τ とも 1/座標単位。τ の符号は右手系の螺旋(a cosθ, a sinθ, bθ), b&gt;0 で正。直線区間(‖r&#x27;×r&#x27;&#x27;‖≈0)では κ≈0、τ は分母が eps だけになるため値は信頼できない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ValueError</code>: 全点が重なり median‖r&#x27;‖ が 0 または非有限のとき。</p>
-<p style="margin:2px 0 2px 12px">• 点間隔が急に変わる箇所は数値微分が乱れるので、先に <code style="color:#22d3bf">resample_uniform</code> で等間隔化するか <code style="color:#22d3bf">fit_spline_curve</code> で平滑化してから渡す。両端 2 点は片側差分で精度が落ちる。</p>
-<p style="margin:2px 0 2px 12px">• N&lt;2 は <code style="color:#22d3bf">np.gradient</code> が <code style="color:#22d3bf">ValueError</code>。形状 (N,3) の検証はしていない。</p>
-<p>標構(T,N,B)が要るなら <code style="color:#22d3bf">frenet_frame</code>、弧長 ds は <code style="color:#22d3bf">arc_length</code> から取る。</p>
+<p>from them. The unit of both κ and τ is 1/coordinate unit. The sign of τ is positive for the right-handed helix (a cosθ, a sinθ, bθ), b&gt;0. On straight sections (‖r&#x27;×r&#x27;&#x27;‖≈0), κ≈0, and τ is unreliable because its denominator becomes only eps.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ValueError</code>: when all points coincide and median‖r&#x27;‖ is 0 or non-finite.</p>
+<p style="margin:2px 0 2px 12px">• Where the point spacing changes abruptly the numerical derivatives get disturbed, so first make the spacing uniform with <code style="color:#22d3bf">resample_uniform</code> or smooth with <code style="color:#22d3bf">fit_spline_curve</code> before passing. The 2 points at each end lose accuracy from one-sided differences.</p>
+<p style="margin:2px 0 2px 12px">• For N&lt;2 <code style="color:#22d3bf">np.gradient</code> raises <code style="color:#22d3bf">ValueError</code>. The (N,3) shape is not validated.</p>
+<p>If you need the frame (T,N,B), use <code style="color:#22d3bf">frenet_frame</code>; take the arc length ds from <code style="color:#22d3bf">arc_length</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

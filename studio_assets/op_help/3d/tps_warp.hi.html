@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_warp(model, points)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import deform3d; deform3d.tps_warp(model, points)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;tps_warp&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>TPS model से point cloud को deform करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖) を評価する。</p>
-<p>引数:</p>
-<p>model: <code style="color:#22d3bf">tps_fit</code> が返した dict。</p>
-<p>points: (M,3)(または長さ3の1次元)。変形したい点群。</p>
-<p>返り値:</p>
-<p>(M,3) 変形後の点群(入力が1次元なら (3,) を返す)。</p>
-<p>例外:</p>
-<p>ValueError: model の形式不正、または points の形状不正。</p>
+<p>f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖) का मान निकालता है।</p>
+<p>Arguments:</p>
+<p>model: <code style="color:#22d3bf">tps_fit</code> द्वारा लौटाया गया dict।</p>
+<p>points: (M,3) (या length 3 का 1-dimensional)। deform किए जाने वाले points।</p>
+<p>return value:</p>
+<p>(M,3) deform किए गए points (input 1-dimensional हो तो (3,) लौटाता है)।</p>
+<p>Exceptions:</p>
+<p>ValueError: model का format गलत हो, या points का shape गलत हो।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

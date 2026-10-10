@@ -5,20 +5,19 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">measurement</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">match3d.distance_segment_segment</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>有限線段</b>之間的最短距離及其最近點對。→ <code style="color:#22d3bf">(distance, cp, cq)</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">distance_line_line</code> は<b>無限直線</b>の距離なので、離れた 2 線分に 0 を返すことがある(実測: (0,0,0)-(1,0,0) と (5,0,0)-(6,0,0) に対し 0.0、真値は 4.0)。手足・ロボットのリンク・配管・工具はどれも<b>有限</b>なので、安全距離や干渉判定に無限直線版を使うと<b>危険を過小評価する</b>(<code style="color:#22d3bf">poc_safety_clearance</code> の実測では同じ 2 本に対し 87.6 % の過小評価)。</p>
+<p><code style="color:#22d3bf">distance_line_line</code> 是<b>無限直線</b>之間的距離,因此對分離的 2 條線段也可能回傳 0(實測: 對 (0,0,0)-(1,0,0) 與 (5,0,0)-(6,0,0) 為 0.0,真值為 4.0)。手腳、機器人連桿、管線、工具都是<b>有限</b>的,因此在安全距離或干涉判定中使用無限直線版會<b>低估危險</b>(在 <code style="color:#22d3bf">poc_safety_clearance</code> 的實測中, 對同樣 2 條線段低估了 87.6 %)。</p>
 <p>Args:</p>
-<p>p0, p1: 線分 1 の端点 <code style="color:#22d3bf">(3,)</code>。<code style="color:#22d3bf">p0 == p1</code> なら点として扱う。</p>
-<p>q0, q1: 線分 2 の端点 <code style="color:#22d3bf">(3,)</code>。</p>
+<p>p0, p1: 線段 1 的端點 <code style="color:#22d3bf">(3,)</code>。若 <code style="color:#22d3bf">p0 == p1</code> 則視為點。</p>
+<p>q0, q1: 線段 2 的端點 <code style="color:#22d3bf">(3,)</code>。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(distance, cp, cq)</code>: 最短距離 float と、線分 1 側・線分 2 側の最近接点</p>
-<p><code style="color:#22d3bf">(3,)</code>。<code style="color:#22d3bf">distance == 0</code> は 2 線分が交差(または接触)しているとき。</p>
-<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.distance_segment_segment</code>)は宣言 out 型の</p>
-<p><code style="color:#22d3bf">distance</code> だけを返す。最近接点も要るときは</p>
+<p><code style="color:#22d3bf">(distance, cp, cq)</code>: 最短距離 float,以及線段 1 側、線段 2 側的最近點</p>
+<p><code style="color:#22d3bf">(3,)</code>。<code style="color:#22d3bf">distance == 0</code> 表示 2 條線段相交(或接觸)。</p>
+<p>★經由台帳(<code style="color:#22d3bf">fullseye.ledger.distance_segment_segment</code>)只回傳宣告的 out 型別</p>
+<p><code style="color:#22d3bf">distance</code>。也需要最近點時請用</p>
 <p><code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code>。</p>
 <p>Raises:</p>
-<p>ValueError: 端点が <code style="color:#22d3bf">(3,)</code> に直せない、または非有限のとき。</p>
-<p>平行・退化(点に潰れた線分)も分岐で正しく扱う(Ericson, *Real-Time Collision Detection*, §5.1.9 の clamped closest-point 法)。<b>カプセル</b>(芯線 + 半径) どうしの距離は <code style="color:#22d3bf">distance - r1 - r2</code>、干渉は それが負になること。</p>
+<p>ValueError: 端點無法轉換為 <code style="color:#22d3bf">(3,)</code>,或非有限時。</p>
+<p>平行、退化(塌縮為點的線段)的情況也透過分支正確處理(Ericson, *Real-Time Collision Detection*, §5.1.9 的 clamped closest-point 法)。<b>膠囊體</b>(芯線 + 半徑) 之間的距離為 <code style="color:#22d3bf">distance - r1 - r2</code>,干涉即其為負。</p>
 <p>Reference (public): C. Ericson, *Real-Time Collision Detection*, Morgan Kaufmann 2005, §5.1.9 &quot;Closest Points of Two Line Segments&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

@@ -6,17 +6,16 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">{&quot;rms&quot;,&quot;max&quot;,&quot;pv&quot;} → pv float</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>산포 데이터와 곡면 tck 의 잔차 통계를 돌려줍니다(형상 오차=적합으로부터의 이탈).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各サンプル位置で曲面高さを評価し、観測 z との差の RMS / 最大絶対値 / PV (peak-to-valley = 最大 - 最小)を計測する。検査ではこれが自由曲面からのずれ量(打痕・うねり・欠肉)の定量指標になる。</p>
+<p>각 샘플 위치에서 곡면 높이를 평가하고, 관측 z와의 차의 RMS / 최대 절댓값 / PV (peak-to-valley = 최대 - 최소)를 계측한다. 검사에서는 이것이 자유 곡면으로부터의어긋남 양(찍힘·파상도·결육)의 정량 지표가 된다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">{&quot;rms&quot;: float, &quot;max&quot;: float, &quot;pv&quot;: float}</code>。max は最大絶対残差、</p>
-<p>pv は符号付き残差の最大 - 最小(片側だけの凸/凹も捉える)。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 残差の符号は <code style="color:#22d3bf">resid = z - zhat</code>(観測 − 曲面)。正 = 曲面より高い(盛り上がり)、負 = 低い(欠肉)。<code style="color:#22d3bf">max</code> は絶対値なので向きは分からず、向きが要るなら <code style="color:#22d3bf">eval_bspline_surface</code> で <code style="color:#22d3bf">zhat</code> を取り自分で差を取る。</p>
-<p style="margin:2px 0 2px 12px">• x, y, z は任意 shape を受け、内部で <code style="color:#22d3bf">eval_bspline_surface(tck, x, y, grid=False)</code> を通す(tck の種類検査もそこで行われ、曲線 tck や多項式 dict は <code style="color:#22d3bf">ValueError</code>)。z と x の要素数が違うと numpy の形状エラーになる(専用の検査は無く、z が 1 要素だと黙って broadcast される)。</p>
-<p style="margin:2px 0 2px 12px">• 単位は z と同じ。<code style="color:#22d3bf">rms</code> は全点の二乗平均平方根なので局所的な打痕は平均で薄まる。局所欠陥は <code style="color:#22d3bf">max</code> か <code style="color:#22d3bf">pv</code> で見る。</p>
-<p style="margin:2px 0 2px 12px">• 典型: <code style="color:#22d3bf">fit_bspline_surface</code> → 本 op。フィットに使った点で評価すると smooth が小さいほど残差は 0 に近づく(過適合の指標にもなる)。</p>
+<p><code style="color:#22d3bf">{&quot;rms&quot;: float, &quot;max&quot;: float, &quot;pv&quot;: float}</code>. max는 최대 절대 잔차,</p>
+<p>pv는 부호 있는 잔차의 최대 - 최소(한쪽만의 볼록/오목도 포착한다).</p>
+<p>보충:</p>
+<p style="margin:2px 0 2px 12px">• 잔차의 부호는 <code style="color:#22d3bf">resid = z - zhat</code>(관측 − 곡면). 양 = 곡면보다 높음(솟아오름), 음 = 낮음(결육). <code style="color:#22d3bf">max</code>는 절댓값이므로 방향을 알 수 없으며, 방향이 필요하면 <code style="color:#22d3bf">eval_bspline_surface</code>로 <code style="color:#22d3bf">zhat</code>을 얻어 직접 차를 구한다.</p>
+<p style="margin:2px 0 2px 12px">• x, y, z는 임의의 shape을 받고, 내부에서 <code style="color:#22d3bf">eval_bspline_surface(tck, x, y, grid=False)</code>를 거친다(tck 종류 검사도 거기서 이루어지며, 곡선 tck나 다항식 dict는 <code style="color:#22d3bf">ValueError</code>). z와 x의 요소 수가 다르면 numpy의 형상 오류가 된다(전용 검사는 없고, z가 1요소면 조용히 broadcast된다).</p>
+<p style="margin:2px 0 2px 12px">• 단위는 z와 같다. <code style="color:#22d3bf">rms</code>는 전체 점의 제곱평균제곱근이므로 국소적인 찍힘은 평균으로 희석된다. 국소 결함은 <code style="color:#22d3bf">max</code>나 <code style="color:#22d3bf">pv</code>로 본다.</p>
+<p style="margin:2px 0 2px 12px">• 전형: <code style="color:#22d3bf">fit_bspline_surface</code> → 이 op. 피팅에 쓴 점에서 평가하면 smooth가 작을수록 잔차는 0에 가까워진다(과적합의 지표도 된다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

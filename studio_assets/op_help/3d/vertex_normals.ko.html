@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vertex_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mesh_props; mesh_props.vertex_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vertex_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>삼각형 메시의 <b>정점 법선</b>(면적 가중으로 집약한 단위 법선). → (N,3).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各三角形の外積ベクトル(=面法線×2·面積)を、その 3 頂点へ散布加算し、頂点ごとに正規化する。大きい(重要な)面ほど寄与が大きい面積重み付き平均になり、向きは面の巻き順から一貫する。<code style="color:#22d3bf">normals_orient.estimate_normals</code>(点群 PCA・符号未定)と違い、追加の向き付け工程は不要。</p>
+<p>각 삼각형의 외적 벡터(=면 법선×2·면적)를 그 3 정점에 산포 가산하고, 정점마다 정규화한다. 큰(중요한) 면일수록 기여가 큰 면적 가중 평균이 되며, 방향은 면의 감김 순서로부터 일관된다. <code style="color:#22d3bf">normals_orient.estimate_normals</code>(점군 PCA, 부호 미정)와 달리 추가 방향 부여 공정은 필요 없다.</p>
 <p>Args:</p>
-<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>mesh: (vertices (N,3), faces (M,3)) 의 튜플.</p>
 <p>Returns:</p>
-<p>(N,3) の単位頂点法線。</p>
+<p>(N,3) 의 단위 정점 법선.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正・範囲外 index、または法線が定義できない頂点(入射面が無い/</p>
-<p>寄与が相殺してゼロ)があるとき。</p>
+<p>ValueError: 형상 부정, 범위 밖 index, 또는 법선을 정의할 수 없는 정점(입사 면이 없음/</p>
+<p>기여가 상쇄되어 0)이 있을 때.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

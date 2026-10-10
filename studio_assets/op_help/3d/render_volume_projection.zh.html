@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从任意视点把 voxel 投影为 2D(mode=xray=衰减积分 / mip=最大值)。用于 DRR(X 光)与世界模型观测。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>view 方向へ volume を grid_sample で回して軸投影。voxel_to_mips の任意視点版。</p>
-<p>回転は <code style="color:#22d3bf">affine_grid</code>(座標順 x=W, y=H, z=D)で volume 中心まわり: <code style="color:#22d3bf">azimuth</code> は H 軸まわり(W と D を混ぜる)、<code style="color:#22d3bf">elevation</code> は W 軸まわり(H と D を混ぜる)、いずれも度、<code style="color:#22d3bf">Rx @ Ry</code> の順。回転後の volume を <b>軸 0(D)方向に潰す</b>ので、視線は回転後の D 軸。<code style="color:#22d3bf">mode=&quot;mip&quot;</code> は最大値、それ以外はすべて総和(<code style="color:#22d3bf">&quot;xray&quot;</code> は Beer-Lambert の指数ではなく <b>単純な積算</b>。減衰像にするなら <code style="color:#22d3bf">exp(−Σ)</code> を呼び手で)。返り値 <code style="color:#22d3bf">(H, W)</code> float32 numpy。volume 外は 0 で埋まるので、回転で隅が欠けると総和が下がる(立方体に近い volume で、物体を中心に置く)。<code style="color:#22d3bf">azimuth=elevation=0</code> の mip は <code style="color:#22d3bf">voxel_to_mips()[0]</code> と同じ向き。</p>
-<p>用途: DRR の合成、<code style="color:#22d3bf">ncc_locate</code> 用の 2-D テンプレ生成、<code style="color:#22d3bf">match_mip_2d</code> の任意視点化。</p>
+<p>用 grid_sample 把 volume 朝 view 方向旋转后做轴向投影。voxel_to_mips 的任意视点版。</p>
+<p>旋转用 <code style="color:#22d3bf">affine_grid</code>(坐标顺序 x=W, y=H, z=D)绕 volume 中心进行: <code style="color:#22d3bf">azimuth</code> 绕 H 轴(混合 W 与 D),<code style="color:#22d3bf">elevation</code> 绕 W 轴(混合 H 与 D),均为度,顺序为 <code style="color:#22d3bf">Rx @ Ry</code>。旋转后的 volume <b>沿轴 0(D)方向压扁</b>,因此视线是旋转后的 D 轴。<code style="color:#22d3bf">mode=&quot;mip&quot;</code> 取最大值, 其他全部为求和(<code style="color:#22d3bf">&quot;xray&quot;</code> 不是 Beer-Lambert 的指数,而是<b>简单累加</b>。若要得到衰减像,请由调用方做 <code style="color:#22d3bf">exp(−Σ)</code>)。返回值 <code style="color:#22d3bf">(H, W)</code> float32 numpy。volume 外以 0 填充,因此旋转导致角落缺失时总和会下降(使用接近立方体的 volume,并把物体放在中心)。<code style="color:#22d3bf">azimuth=elevation=0</code> 的 mip 与 <code style="color:#22d3bf">voxel_to_mips()[0]</code> 朝向相同。</p>
+<p>用途: DRR 的合成,生成 <code style="color:#22d3bf">ncc_locate</code> 用的 2-D 模板,<code style="color:#22d3bf">match_mip_2d</code> 的任意视点化。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

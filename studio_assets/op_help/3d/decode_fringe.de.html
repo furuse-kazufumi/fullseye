@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import fringe; fringe.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;decode_fringe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Decodiert eine Phasenschiebe-Bildserie in einem Zug: wrapped → Entfaltung → (per Referenzsubtraktion) Höhe.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>phase_shift_images: N-step 位相シフト縞画像列((N,H,W) または長さ N のシーケンス)。</p>
-<p>ref_phase:          参照平面(高さ 0)のアンラップ済み位相。None なら高さ = k·(unwrapped)。</p>
-<p>k:                  位相→高さ較正定数。</p>
-<p>mask:               省略可。True=有効画素。無効画素は NaN。</p>
-<p>min_modulation:     省略可。指定すると modulation &lt; この値の画素を低信頼として無効化。</p>
-<p>返り値: 高さマップ(2D float)。ref_phase=None のときは k を掛けた連続位相を返す。無効画素は NaN。</p>
-<p>手順(実装どおり): <code style="color:#22d3bf">wrapped_phase</code> → 信頼マスクを組む(<code style="color:#22d3bf">min_modulation</code> があれば <code style="color:#22d3bf">modulation(stack) &gt;= min_modulation</code>、<code style="color:#22d3bf">mask</code> があればそれと AND)→ <code style="color:#22d3bf">unwrap_phase_2d(wrapped, mask=信頼マスク)</code> → <code style="color:#22d3bf">ref_phase</code> が <code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">k * unwrapped</code>、あれば <code style="color:#22d3bf">phase_to_height</code>(<code style="color:#22d3bf">k * (unwrapped - ref_phase)</code>)。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phase_shift_images</code>: <code style="color:#22d3bf">(N, H, W)</code>、<code style="color:#22d3bf">N &gt;= 3</code>、等間隔位相シフト。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref_phase</code>: スカラまたは <code style="color:#22d3bf">(H, W)</code>。参照面を<b>同じ手順で展開した</b>位相を渡す(<code style="color:#22d3bf">unwrap_phase_2d</code> の大域オフセットが両者で同じ扱いになるよう、参照も本 op で <code style="color:#22d3bf">ref_phase=None</code> として復号した結果を使うのが安全)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: 位相→高さの較正定数(単位/rad)。<code style="color:#22d3bf">synthesize_fringes</code> の <code style="color:#22d3bf">phase_gain</code> の逆数に対応。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code>: <code style="color:#22d3bf">(H, W)</code> の bool、True = 有効。<code style="color:#22d3bf">min_modulation</code>: 変調度の下限(<code style="color:#22d3bf">[0, 1]</code> 程度。影・飽和の画素を落とす)。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): 画像列が 3-D でない・<code style="color:#22d3bf">N &lt; 3</code>・非有限 / <code style="color:#22d3bf">mask</code> の形が違う / <code style="color:#22d3bf">ref_phase</code> の形が違う / 有効画素がゼロ。scikit-image が無ければ <code style="color:#22d3bf">RuntimeError</code>。</p>
-<p>返り値: <code style="color:#22d3bf">(H, W)</code> float64。無効画素は NaN。単位は <code style="color:#22d3bf">k</code> の単位。</p>
-<p>注意: 空間アンラップに依存するので、段差・オクルージョンで島に分かれた場面では島ごとに <code style="color:#22d3bf">2πm k</code> の高さオフセットが残りうる。絶対高さが要る場面は <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code> → <code style="color:#22d3bf">triangulate_column</code> の経路。</p>
+<p>phase_shift_images: N-Step-Folge phasenverschobener Streifenbilder ((N,H,W) oder Sequenz der Länge N).</p>
+<p>ref_phase:          entfaltete Phase der Referenzebene (Höhe 0). Bei None ist Höhe = k·(unwrapped).</p>
+<p>k:                  Kalibrierkonstante Phase→Höhe.</p>
+<p>mask:               optional. True=gültiges Pixel. Ungültige Pixel sind NaN.</p>
+<p>min_modulation:     optional. Falls angegeben, werden Pixel mit modulation &lt; diesem Wert als wenig vertrauenswürdig ungültig gemacht.</p>
+<p>Rückgabewert: Höhenkarte (2D float). Bei ref_phase=None wird die mit k multiplizierte stetige Phase zurückgegeben. Ungültige Pixel sind NaN.</p>
+<p>Vorgehen (wie implementiert): <code style="color:#22d3bf">wrapped_phase</code> → Vertrauensmaske bilden (falls <code style="color:#22d3bf">min_modulation</code> gegeben, <code style="color:#22d3bf">modulation(stack) &gt;= min_modulation</code>; falls <code style="color:#22d3bf">mask</code> gegeben, AND damit) → <code style="color:#22d3bf">unwrap_phase_2d(wrapped, mask=Vertrauensmaske)</code> → ist <code style="color:#22d3bf">ref_phase</code> <code style="color:#22d3bf">None</code>, <code style="color:#22d3bf">k * unwrapped</code>, sonst <code style="color:#22d3bf">phase_to_height</code> (<code style="color:#22d3bf">k * (unwrapped - ref_phase)</code>).</p>
+<p>Argumente:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phase_shift_images</code>: <code style="color:#22d3bf">(N, H, W)</code>, <code style="color:#22d3bf">N &gt;= 3</code>, gleichabständige Phasenverschiebungen.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref_phase</code>: Skalar oder <code style="color:#22d3bf">(H, W)</code>. Die Phase der Referenzfläche übergeben, <b>mit demselben Verfahren entfaltet</b> (damit der globale Offset von <code style="color:#22d3bf">unwrap_phase_2d</code> in beiden gleich behandelt wird, ist es am sichersten, auch für die Referenz das Ergebnis der Dekodierung mit dieser Op und <code style="color:#22d3bf">ref_phase=None</code> zu verwenden).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: Kalibrierkonstante Phase→Höhe (Einheit/rad). Entspricht dem Kehrwert von <code style="color:#22d3bf">phase_gain</code> aus <code style="color:#22d3bf">synthesize_fringes</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code>: <code style="color:#22d3bf">(H, W)</code> bool, True = gültig. <code style="color:#22d3bf">min_modulation</code>: Untergrenze der Modulationstiefe (etwa <code style="color:#22d3bf">[0, 1]</code>; verwirft Pixel in Schatten und Sättigung).</p>
+<p>Prüfung (<code style="color:#22d3bf">ValueError</code>): Bildfolge nicht 3-D, <code style="color:#22d3bf">N &lt; 3</code>, nicht endlich / <code style="color:#22d3bf">mask</code> mit anderer Form / <code style="color:#22d3bf">ref_phase</code> mit anderer Form / null gültige Pixel. Ohne scikit-image <code style="color:#22d3bf">RuntimeError</code>.</p>
+<p>Rückgabewert: <code style="color:#22d3bf">(H, W)</code> float64. Ungültige Pixel sind NaN. Die Einheit ist die Einheit von <code style="color:#22d3bf">k</code>.</p>
+<p>Achtung: es beruht auf räumlichem Entfalten; in Szenen, die durch Stufen oder Verdeckung in Inseln zerfallen, kann pro Insel ein Höhenoffset von <code style="color:#22d3bf">2πm k</code> verbleiben. Wird absolute Höhe benötigt, ist der Pfad <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code> → <code style="color:#22d3bf">triangulate_column</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

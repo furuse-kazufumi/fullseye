@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fill_holes(depth: &#x27;np.ndarray&#x27;, max_radius: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, max_iter: &#x27;int | None&#x27; = None, rel_tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import depth_bilateral; depth_bilateral.fill_holes(depth: &#x27;np.ndarray&#x27;, max_radius: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, max_iter: &#x27;int | None&#x27; = None, rel_tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fill_holes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用调和(拉普拉斯)松弛由邻近有效像素插补无效像素(空洞)。→ float64 (H,W)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各穴画素の最寄り有効画素までの距離が max_radius 以下なら補間対象、超える深い穴は補間せず NaN で残す(fail-closed)。補間は 4 近傍平均の反復(Dirichlet 境界=元の有効画素)で、線形場(平面)は離散調和関数の不動点なので反復収束とともに平面を厳密復元する。初期値は最寄り有効画素値(EDT)。</p>
-<p>max_iter 既定は穴サイズに応じて自動設定、rel_tol は深度スケール相対の収束判定。全画素無効の入力は補間の足場が無いため ValueError(fail-closed)。</p>
+<p>若每个洞像素到最近有效像素的距离不超过 max_radius 则作为插值对象，超出的深洞不插值而保留为 NaN (fail-closed)。插值是 4 邻域平均的迭代（Dirichlet 边界 = 原有效像素），线性场（平面）是离散调和函数的不动点，因此随迭代收敛平面被严格复原。初始值为最近有效像素值(EDT)。</p>
+<p>max_iter 默认值根据洞的大小自动设定，rel_tol 是相对深度尺度的收敛判定。全部像素无效的输入没有插值的立足点，因此抛出 ValueError(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>

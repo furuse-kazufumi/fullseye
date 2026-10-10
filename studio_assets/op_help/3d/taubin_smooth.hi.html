@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.taubin_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.33, mu: &#x27;float&#x27; = -0.34) -&gt; &#x27;Mesh&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mesh_smooth; mesh_smooth.taubin_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.33, mu: &#x27;float&#x27; = -0.34) -&gt; &#x27;Mesh&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;taubin_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Taubin λ|μ filter से <b>non-shrinking</b> smoothing। → (verts, faces)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各反復で「正の <code style="color:#22d3bf">lam</code> で寄せる段」→「負の <code style="color:#22d3bf">mu</code> で押し戻す段」を続けて掛ける。<code style="color:#22d3bf">|mu| &gt; lam</code> とすることで低周波(全体形状)を通し高周波(ノイズ)だけを減衰させる帯域通過フィルタになり、Laplacian の収縮アーティファクトを打ち消す(球の平均半径がほぼ保たれる)。既定 <code style="color:#22d3bf">lam=0.33, mu=-0.34</code> は Taubin (1995) の推奨に近い。</p>
+<p>हर iteration में &quot;positive <code style="color:#22d3bf">lam</code> से खींचने वाला चरण&quot; → &quot;negative <code style="color:#22d3bf">mu</code> से वापस धकेलने वाला चरण&quot; लगातार लगाए जाते हैं। <code style="color:#22d3bf">|mu| &gt; lam</code> रखने से यह ऐसा band-pass filter बन जाता है जो low frequency (समग्र आकार) को जाने देता है और केवल high frequency (noise) को घटाता है, और Laplacian के shrinkage artifact को निष्प्रभावी करता है (sphere का औसत radius लगभग बना रहता है)। default <code style="color:#22d3bf">lam=0.33, mu=-0.34</code> Taubin (1995) की सिफ़ारिश के क़रीब है।</p>
 <p>Args:</p>
-<p>mesh: (verts (N,3), faces (M,3)[, ...]) のシーケンス。faces は不変。</p>
-<p>iters: λ|μ ペアの反復回数(正の整数)。</p>
-<p>lam: 寄せ段の係数、<code style="color:#22d3bf">0 &lt; lam &lt; 1</code>。</p>
-<p>mu: 押し戻し段の係数、<code style="color:#22d3bf">mu &lt; 0</code> かつ <code style="color:#22d3bf">|mu| &gt; lam</code>(収縮を打ち消す条件)。</p>
+<p>mesh: (verts (N,3), faces (M,3)[, ...]) का sequence। faces नहीं बदलते।</p>
+<p>iters: λ|μ pairs के iterations की संख्या (positive integer)।</p>
+<p>lam: खींचने वाले चरण का coefficient, <code style="color:#22d3bf">0 &lt; lam &lt; 1</code>।</p>
+<p>mu: वापस धकेलने वाले चरण का coefficient, <code style="color:#22d3bf">mu &lt; 0</code> और <code style="color:#22d3bf">|mu| &gt; lam</code> (shrinkage को निष्प्रभावी करने की शर्त)।</p>
 <p>Returns:</p>
-<p>(verts (N,3) float64, faces (M,3) int64)。faces は入力を保持。</p>
+<p>(verts (N,3) float64, faces (M,3) int64)। faces input से ही रखे जाते हैं।</p>
 <p>Raises:</p>
-<p>ValueError: メッシュ形状不正・面範囲外・iters/lam/mu が不正(fail-closed)。</p>
+<p>ValueError: mesh का shape अमान्य, face index सीमा से बाहर, या iters/lam/mu अमान्य (fail-closed)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.extent_signature(points) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import descriptors3d; descriptors3d.extent_signature(points) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;extent_signature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>沿 PCA 主轴(协方差特征向量)方向展布的比值。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>共分散行列の固有値は回転に不変。ここでは固有値の平方根(= 各主軸方向の標準偏差、長さの次元)を降順に並べ、総和 1 に正規化して (3,) ベクトルにする。これにより絶対スケールが消え、<b>回転・平行移動・スケールに不変</b>な「形の細長さ」指標になる。</p>
-<p style="margin:2px 0 2px 12px">• 等方的な形状(球・立方体)→ 3 成分がほぼ等値 [~0.33, ~0.33, ~0.33]</p>
-<p style="margin:2px 0 2px 12px">• 細長い棒 → 1 成分が突出 [~0.9, ~0.05, ~0.05]</p>
+<p>协方差矩阵的特征值对旋转不变。这里将特征值的平方根(= 各主轴方向的标准差, 具有长度的量纲)降序排列,归一化为总和 1,得到 (3,) 向量。由此消除了绝对尺度,成为<b>对旋转、平移、尺度不变</b>的&quot;形状细长度&quot;指标。</p>
+<p style="margin:2px 0 2px 12px">• 各向同性的形状(球、立方体)→ 3 个分量几乎相等 [~0.33, ~0.33, ~0.33]</p>
+<p style="margin:2px 0 2px 12px">• 细长的棒 → 1 个分量突出 [~0.9, ~0.05, ~0.05]</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>点群。N &gt;= 3 が必要(共分散を意味のある形で作るため)。</p>
+<p>点云。需要 N &gt;= 3(为了构造有意义的协方差)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (3,)</p>
-<p>降順・総和 1 に正規化した広がりベクトル。</p>
+<p>降序、归一化为总和 1 的扩展向量。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

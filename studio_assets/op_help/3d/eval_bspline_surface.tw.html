@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.eval_bspline_surface(tck, x, y, grid=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import bspline_surf; bspline_surf.eval_bspline_surface(tck, x, y, grid=False)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;eval_bspline_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>評估已擬合的曲面 tck(bisplev)。兩種模式:散點(預設)或網格。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>tck : list</p>
-<p>fit_bspline_surface が返した <code style="color:#22d3bf">[tx, ty, c, kx, ky]</code>。</p>
+<p>fit_bspline_surface 回傳的 <code style="color:#22d3bf">[tx, ty, c, kx, ky]</code>。</p>
 <p>x, y : array_like</p>
-<p>grid=False(既定): 同一 shape の散布/対応点。各 (x[i], y[i]) で評価し</p>
-<p>入力と同じ shape の z を返す(計測=各サンプル位置での曲面高さ)。</p>
-<p>grid=True: x, y を昇順の 1 次元軸として扱い、テンソル格子</p>
-<p>(len(x), len(y)) 上で評価(密な可視化・再サンプリング用)。</p>
+<p>grid=False(預設):相同 shape 的散佈/對應點。在各 (x[i], y[i]) 處求值,</p>
+<p>回傳與輸入相同 shape 的 z(量測=各樣本位置處的曲面高度)。</p>
+<p>grid=True:將 x, y 視為升序的 1 維軸,在張量網格</p>
+<p>(len(x), len(y)) 上求值(用於密集視覺化、重新取樣)。</p>
 <p>grid : bool</p>
-<p>評価モード。曲面残差など点対応の比較には False。</p>
+<p>求值模式。曲面殘差等逐點對應的比較用 False。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>z : numpy.ndarray</p>
-<p>grid=False なら x と同 shape、grid=True なら (len(x), len(y))。</p>
+<p>grid=False 時與 x 同 shape,grid=True 時為 (len(x), len(y))。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>tck が曲面モデル([tx,ty,c,kx,ky])でない(曲線 tck / 多項式 dict を含む)、</p>
-<p>または x, y の shape 不一致・空。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• grid=True では x, y を内部で昇順に並べ替えて <code style="color:#22d3bf">bisplev</code> を呼び、結果を <b>入力の順序</b> に戻して返す。したがって <code style="color:#22d3bf">out[i, j]</code> は常に <code style="color:#22d3bf">(x[i], y[j])</code> の値で、軸を降順で渡しても壊れない。</p>
-<p style="margin:2px 0 2px 12px">• grid=False は点ごとに <code style="color:#22d3bf">bisplev</code> を呼ぶ Python ループなので点数に比例して遅い。大量点の評価は可能なら grid=True に寄せる。</p>
-<p style="margin:2px 0 2px 12px">• 節点範囲(フィットに使った x, y の範囲)の外側は外挿になり、その値は保証しない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は float64。grid=False なら x と同じ shape(スカラーを渡せば 0 次元配列)。</p>
-<p style="margin:2px 0 2px 12px">• 典型: <code style="color:#22d3bf">fit_bspline_surface</code> → 本 op(再サンプリング・可視化)。残差評価は <code style="color:#22d3bf">surface_residual</code> がこれを内部で呼ぶ。</p>
+<p>tck 不是曲面模型([tx,ty,c,kx,ky])時(包括曲線 tck / 多項式 dict),</p>
+<p>或 x, y 的 shape 不一致、為空。</p>
+<p>補充:</p>
+<p style="margin:2px 0 2px 12px">• grid=True 時在內部將 x, y 依升序排序後呼叫 <code style="color:#22d3bf">bisplev</code>,結果還原為<b>輸入的順序</b>回傳。因此 <code style="color:#22d3bf">out[i, j]</code> 始終是 <code style="color:#22d3bf">(x[i], y[j])</code> 處的值,即使以降序傳入軸也不會出錯。</p>
+<p style="margin:2px 0 2px 12px">• grid=False 是逐點呼叫 <code style="color:#22d3bf">bisplev</code> 的 Python 迴圈,因此速度與點數成比例地變慢。大量點的求值盡可能改用 grid=True。</p>
+<p style="margin:2px 0 2px 12px">• 節點範圍(擬合所用 x, y 的範圍)之外為外插,其值不作保證。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值為 float64。grid=False 時與 x 同 shape(傳入純量則為 0 維陣列)。</p>
+<p style="margin:2px 0 2px 12px">• 典型:<code style="color:#22d3bf">fit_bspline_surface</code> → 本 op(重新取樣、視覺化)。殘差評估由 <code style="color:#22d3bf">surface_residual</code> 在內部呼叫本 op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

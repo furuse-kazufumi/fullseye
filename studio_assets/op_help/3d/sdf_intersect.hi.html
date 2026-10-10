@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_intersect(a, b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_intersect(a, b)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sdf_intersect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 SDFs का intersection A∩B = element-wise max(a, b) (केवल दोनों के अंदर होने पर अंदर)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>ゼロ等値面は両境界の共通部分。外側で厳密 SDF、内側は保守的下界。</p>
-<p>計算: <code style="color:#22d3bf">np.maximum(np.asarray(a, float64), np.asarray(b, float64))</code>。要素ごとの max なので、ある点が A∩B の内側(負)になるのは <code style="color:#22d3bf">a &lt; 0</code> かつ <code style="color:#22d3bf">b &lt; 0</code> のときだけ。shape はブロードキャスト整合していればよく(不整合なら numpy の <code style="color:#22d3bf">ValueError</code>)、それ以外の検査はしない。NaN は伝播、<code style="color:#22d3bf">±inf</code> は厳密に伝播(<code style="color:#22d3bf">max(a, -inf) = a</code>)。</p>
-<p>入力: 同一グリッド上で評価した 2 つの SDF(<code style="color:#22d3bf">sphere_sdf</code> / <code style="color:#22d3bf">box_sdf</code> / <code style="color:#22d3bf">esdf</code> の出力など、内側負・外側正)。距離の単位は入力と同じ。</p>
-<p>返り値: ブロードキャスト後の shape の float64。<code style="color:#22d3bf">&lt;= 0</code> が A∩B の占有。</p>
-<p>注意:</p>
-<p style="margin:2px 0 2px 12px">• <b>外側の値は真の距離より小さく出うる</b>: 交差の外側で、点が A の外かつ B の外のとき <code style="color:#22d3bf">max(a, b)</code> は「遠い方の表面まで」の距離で、A∩B の表面はそれより遠いことがある(下界)。ゼロ等値面は厳密。</p>
-<p style="margin:2px 0 2px 12px">• 共通部分が無ければ全要素が正(占有 0)になり、エラーにはならない。</p>
-<p style="margin:2px 0 2px 12px">• 箱で球を切る・2 つの箱で角柱を作る、といった CSG の「切り出し」に使う。A から B を抜くのは <code style="color:#22d3bf">sdf_subtract</code>。</p>
+<p>zero isosurface दोनों boundaries का intersection है। बाहर exact SDF, अंदर conservative lower bound।</p>
+<p>गणना: <code style="color:#22d3bf">np.maximum(np.asarray(a, float64), np.asarray(b, float64))</code>। element-wise max होने के कारण कोई point A∩B के अंदर (negative) तभी होता है जब <code style="color:#22d3bf">a &lt; 0</code> और <code style="color:#22d3bf">b &lt; 0</code> हों। shape का केवल broadcast-संगत होना ज़रूरी है (असंगत हो तो numpy का <code style="color:#22d3bf">ValueError</code>), इसके अलावा कोई जाँच नहीं। NaN propagate होता है, <code style="color:#22d3bf">±inf</code> exact रूप से propagate होता है (<code style="color:#22d3bf">max(a, -inf) = a</code>)।</p>
+<p>Input: एक ही grid पर evaluate किए गए 2 SDF (<code style="color:#22d3bf">sphere_sdf</code> / <code style="color:#22d3bf">box_sdf</code> / <code style="color:#22d3bf">esdf</code> के output आदि, अंदर negative, बाहर positive)। दूरी की unit input जैसी ही।</p>
+<p>Return value: broadcast के बाद के shape का float64। <code style="color:#22d3bf">&lt;= 0</code> A∩B की occupancy है।</p>
+<p>ध्यान दें:</p>
+<p style="margin:2px 0 2px 12px">• <b>बाहर का मान सच्ची दूरी से छोटा आ सकता है</b>: intersection के बाहर, जब point A के बाहर और B के बाहर हो तब <code style="color:#22d3bf">max(a, b)</code> &quot;दूर वाली surface तक&quot; की दूरी है, और A∩B की surface उससे भी दूर हो सकती है (lower bound)। zero isosurface exact है।</p>
+<p style="margin:2px 0 2px 12px">• कोई साझा भाग न हो तो सभी elements positive होते हैं (occupancy 0), यह error नहीं है।</p>
+<p style="margin:2px 0 2px 12px">• box से sphere काटने या 2 boxes से prism बनाने जैसे CSG के &quot;cut-out&quot; के लिए उपयोग होता है। A से B निकालना <code style="color:#22d3bf">sdf_subtract</code> है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

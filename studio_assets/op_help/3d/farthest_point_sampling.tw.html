@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code>(要直接呼叫實作,<code style="color:#22d3bf">import geodesic3d; geodesic3d.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;farthest_point_sampling&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按測地距離的最遠點取樣(均勻抽稀)。→ 選中索引序列 (n,) int。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">start</code> を最初の代表点にし、「既に選んだ点集合への測地距離が最大の点」を 1 つずつ追加する貪欲法(FPS)。距離は <code style="color:#22d3bf">knn_graph(points, k)</code> の無向 kNN グラフ上の Dijkstra で測り、既選択集合への距離は各代表点の単源距離の要素ごと最小 <code style="color:#22d3bf">mind</code> として保持、代表点を 1 つ足すたびに <code style="color:#22d3bf">mind = min(mind, d_new)</code> で更新する。代表点 1 つにつき Dijkstra 1 回なので計算量は n 回分の単源最短路。乱数は使わず決定的。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 点群。<code style="color:#22d3bf">n</code>: 欲しい点数。<code style="color:#22d3bf">N</code> を超えると <code style="color:#22d3bf">N</code> に、負なら 0 に丸める(0 なら空配列)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: kNN グラフの近傍数(既定 8)。<code style="color:#22d3bf">start</code>: 最初の代表点(<code style="color:#22d3bf">start % N</code> で範囲内に折り返す)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は選んだ順の添字列(先頭が <code style="color:#22d3bf">start</code>)。<code style="color:#22d3bf">points[idx]</code> で代表点群になる。</p>
-<p>罠: グラフが複数の連結成分に分かれていると、不達の点は距離 <code style="color:#22d3bf">inf</code> なので未到達の成分が先に選ばれる(argmax が <code style="color:#22d3bf">inf</code> を拾う)。「離れた塊から先に取る」挙動になるので、成分ごとに均等に間引きたいなら <code style="color:#22d3bf">euclidean_cluster</code> 等で分けてから使う。</p>
+<p>以 <code style="color:#22d3bf">start</code> 為第 1 個代表點,每次 1 個地加入「到已選點集的測地距離最大的點」的貪婪法(FPS)。距離以 <code style="color:#22d3bf">knn_graph(points, k)</code> 的無向 kNN 圖上的 Dijkstra 測量,到已選集合的距離保存為各代表點單源距離的逐元素最小值 <code style="color:#22d3bf">mind</code>,每增加 1 個代表點就以 <code style="color:#22d3bf">mind = min(mind, d_new)</code> 更新。每 1 個代表點執行 1 次 Dijkstra,因此計算量為 n 次單源最短路徑。不使用亂數,是決定性的。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 點雲。<code style="color:#22d3bf">n</code>: 需要的點數。超過 <code style="color:#22d3bf">N</code> 時取 <code style="color:#22d3bf">N</code>,為負時取 0 (0 時為空陣列)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: kNN 圖的鄰域數(預設 8)。<code style="color:#22d3bf">start</code>: 第 1 個代表點(以 <code style="color:#22d3bf">start % N</code> 折回到範圍內)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值是依選擇順序排列的索引序列(開頭是 <code style="color:#22d3bf">start</code>)。<code style="color:#22d3bf">points[idx]</code> 即為代表點群。</p>
+<p>陷阱: 圖分為多個連通元件時,不可達的點距離為 <code style="color:#22d3bf">inf</code>,因此未到達的元件會被優先選中(argmax 取到 <code style="color:#22d3bf">inf</code>)。會出現「先取遠處的塊」的行為,因此若想按元件均勻抽稀,請先以 <code style="color:#22d3bf">euclidean_cluster</code> 等分開後再使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

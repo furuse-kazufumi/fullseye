@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.min_enclosing_sphere(points, refine_iters: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import hull3d; hull3d.min_enclosing_sphere(points, refine_iters: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;min_enclosing_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群 (N,3) → 包含全部点的(近似)最小包围球 {center(3), radius}。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">fit_sphere_3d</code>(球面フィット)や <code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">hough_sphere_3d</code>(球検出)とは異なり、<b>全点を内包する最小の球</b>(minimum enclosing ball, MEB)を解く。2 段構成で「全点内包」を厳守しつつ半径を詰める:</p>
-<p style="margin:2px 0 2px 12px">1. <b>Ritter (1990) 初期化</b> — 最遠の点対を粗く取り初期球にし、各点を走査して球外の点があれば「その点と既存球の両方を含む」最小の球へ 1 回膨らませる(膨張式 <code style="color:#22d3bf">new_r=(r+d)/2</code> / 中心を点方向へ <code style="color:#22d3bf">(d-r)/(2d)</code> 進める)。新球が旧球を完全に含むため、1 パスで全点内包を保証する。</p>
-<p style="margin:2px 0 2px 12px">2. <b>Bădoiu–Clarkson (2003) core-set 反復による精緻化</b> — 反復 <code style="color:#22d3bf">i</code> で最遠点 <code style="color:#22d3bf">q</code> へ中心を <code style="color:#22d3bf">1/(i+2)</code> だけ寄せる。真の最小包含球へ単調収束する(半径過大な Ritter のドリフトを詰める)。最後に半径を「中心からの最大距離」で確定するので、精緻化後も <b>必ず全点を内包</b>(近似ゆえ半径が過小になり点が漏れることはない、安全側)。</p>
-<p>精緻化した中心が Ritter より外接半径を縮められたときのみ採用する(常に Ritter 以下)。真の最小球(厳密解は Welzl の乱択線形時間法)ではなく高速な (1+ε) 近似。</p>
+<p>与 <code style="color:#22d3bf">fit_sphere_3d</code>（球面拟合）或 <code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">hough_sphere_3d</code>（球检测）不同，本 op 求解<b>包含全部点的最小球</b>(minimum enclosing ball, MEB)。采用 2 段结构，在严格保证“包含全部点”的同时收紧半径：</p>
+<p style="margin:2px 0 2px 12px">1. <b>Ritter (1990) 初始化</b> —— 粗略取最远点对作为初始球，扫描各点，若有点在球外，则 1 次性膨胀为“同时包含该点和现有球”的最小球（膨胀式 <code style="color:#22d3bf">new_r=(r+d)/2</code> / 中心向该点方向前进 <code style="color:#22d3bf">(d-r)/(2d)</code>）。新球完全包含旧球，因此 1 遍即保证包含全部点。</p>
+<p style="margin:2px 0 2px 12px">2. <b>基于 Bădoiu–Clarkson (2003) core-set 迭代的精化</b> —— 第 <code style="color:#22d3bf">i</code> 次迭代时把中心向最远点 <code style="color:#22d3bf">q</code> 靠近 <code style="color:#22d3bf">1/(i+2)</code>。单调收敛到真正的最小包围球（收紧半径过大的 Ritter 的漂移）。最后以“到中心的最大距离”确定半径，因此精化后也 <b>必定包含全部点</b>（不会因近似导致半径过小而漏点，偏于安全）。</p>
+<p>仅当精化后的中心比 Ritter 能缩小外接半径时才采用（始终不大于 Ritter）。不是真正的最小球（严格解为 Welzl 的随机线性时间法），而是快速的 (1+ε) 近似。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
-<p>入力点群(&gt;= 1 点)。</p>
+<p>输入点云（&gt;= 1 个点）。</p>
 <p>refine_iters : int</p>
-<p>Bădoiu–Clarkson 精緻化の反復数(既定 1000)。0 で Ritter のみ。</p>
+<p>Bădoiu–Clarkson 精化的迭代次数（默认 1000）。0 表示只用 Ritter。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: (3,) float64 — 球中心(世界座標)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: float — 半径(全点を内包)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>：(3,) float64 —— 球心（世界坐标）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>：float —— 半径（包含全部点）。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形状不正・非有限・点数 0、または <code style="color:#22d3bf">refine_iters</code> が負のとき(fail-closed)。</p>
+<p>形状不正确、非有限、点数为 0，或 <code style="color:#22d3bf">refine_iters</code> 为负时(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import normals_orient; normals_orient.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;estimate_oriented_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>PCA 법선 추정 + Hoppe 전역 방향 지정의 결합. → 방향이 붙은 단위 법선 (N,3).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">estimate_normals</code>(向き未定)→ <code style="color:#22d3bf">orient_normals</code>(MST 伝播)を通す。閉曲面なら全点外向き、平面なら全点同一半球にそろう。得た法線を <code style="color:#22d3bf">curvature3d.shape_index</code> に渡すと凹/凸符号が正しく出る。</p>
+<p><code style="color:#22d3bf">estimate_normals</code>(방향 미정)→ <code style="color:#22d3bf">orient_normals</code>(MST 전파)를 거친다. 닫힌 곡면이면 모든 점이 바깥 방향, 평면이면 모든 점이 같은 반구로 맞춰진다. 얻은 법선을 <code style="color:#22d3bf">curvature3d.shape_index</code> 에 넘기면 오목/볼록 부호가 올바르게 나온다.</p>
 <p>Args:</p>
-<p>points: (N,3) の点群。</p>
-<p>k: PCA 近傍数と kNN グラフ近傍数(共通)。</p>
-<p>seed_dir: 大域基準向き (3,)。None なら重心から外向き。</p>
+<p>points: (N,3) 의 점군.</p>
+<p>k: PCA 근방 수와 kNN 그래프 근방 수(공통).</p>
+<p>seed_dir: 대역 기준 방향 (3,). None 이면 무게중심에서 바깥 방향.</p>
 <p>Returns:</p>
-<p>(N,3) の大域一貫・向き付き単位法線。</p>
+<p>(N,3) 의 대역 일관·방향이 정해진 단위 법선.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

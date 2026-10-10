@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import normals_orient; normals_orient.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;orient_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Hoppe 法把法線定向為<b>全域一致</b>(MST 傳播)。→ (N,3)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>kNN グラフ上に重み <code style="color:#22d3bf">1 - |n_i·n_j|</code>(接平面が揃うほど安い)の最小全域木を張り、種から木を BFS しながら親と符号が逆の子を反転させて成分を内部一貫にする。種は <code style="color:#22d3bf">seed_dir</code> 指定時はその向きに最も突き出た点、未指定時は<b>最外点</b>(重心から最遠)。グラフが分断されていれば連結成分ごとに独立に種を取り伝播する(成分間の相対向きは未保証)。</p>
-<p><code style="color:#22d3bf">seed_dir</code> を渡した場合、伝播で内部一貫化した後に<b>成分全点の射影を集約</b>して大域符号を <code style="color:#22d3bf">seed_dir</code> に整合する(単一 seed の <code style="color:#22d3bf">|cos|</code> に依存しないので、seed 点の法線が <code style="color:#22d3bf">seed_dir</code> と近直交でも符号は確実に決まる — finding [5])。<code style="color:#22d3bf">seed_dir</code> が成分の全法線と(ほぼ)直交して符号を決められない真の退化は fail-closed(<code style="color:#22d3bf">ValueError</code>)。閉曲面(球など)で <code style="color:#22d3bf">seed_dir</code> が平均的に法線と直交する場合は大域符号が一意でないため、最突出点(=外向き)基準の向き付けを保持する。<code style="color:#22d3bf">seed_dir</code> 未指定時は重心から外向き。</p>
+<p>在 kNN 圖上以權重 <code style="color:#22d3bf">1 - |n_i·n_j|</code>(切平面越一致代價越低)建立最小生成樹, 從種子點開始對樹做 BFS,翻轉與父節點符號相反的子節點,使元件內部一致。種子點在指定 <code style="color:#22d3bf">seed_dir</code> 時為沿該方向最突出的點,未指定時為<b>最外點</b>(離質心最遠)。若圖不連通,則對每個連通元件獨立選取種子點並傳播(元件之間的相對朝向不保證)。</p>
+<p>傳入 <code style="color:#22d3bf">seed_dir</code> 時,在透過傳播使元件內部一致後,<b>彙總元件所有點的投影</b>,使全域符號與 <code style="color:#22d3bf">seed_dir</code> 一致(不依賴單一種子點的 <code style="color:#22d3bf">|cos|</code>,因此即使種子點的法線與 <code style="color:#22d3bf">seed_dir</code> 近乎正交,符號也能可靠確定 — finding [5])。<code style="color:#22d3bf">seed_dir</code> 與元件的全部法線(幾乎)正交、無法決定符號的真正退化情況為 fail-closed(失敗即拒絕)(<code style="color:#22d3bf">ValueError</code>)。在閉曲面(球等)上 <code style="color:#22d3bf">seed_dir</code> 平均而言與法線正交時,全域符號不唯一, 因此保留以最突出點(= 朝外)為基準的定向。未指定 <code style="color:#22d3bf">seed_dir</code> 時從質心朝外。</p>
 <p>Args:</p>
-<p>points: (N,3) の点群。</p>
-<p>normals: (N,3) の向き未定法線(内部で単位化)。</p>
-<p>k: kNN グラフの近傍数。</p>
-<p>seed_dir: 大域基準向き (3,)。None なら重心から外向きを基準にする。</p>
+<p>points: (N,3) 的點雲。</p>
+<p>normals: (N,3) 朝向未定的法線(內部單位化)。</p>
+<p>k: kNN 圖的鄰域點數。</p>
+<p>seed_dir: 全域參考朝向 (3,)。為 None 時以從質心朝外為基準。</p>
 <p>Returns:</p>
-<p>符号を大域一貫にそろえた (N,3) 単位法線。</p>
+<p>符號全域一致的 (N,3) 單位法線。</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">seed_dir</code> がゼロ、または(ある連結成分で)全法線と直交して</p>
-<p>大域符号を制御できないとき(fail-closed)。</p>
+<p>ValueError: <code style="color:#22d3bf">seed_dir</code> 為零,或(在某個連通元件中)與全部法線正交而</p>
+<p>無法控制全域符號時(fail-closed(失敗即拒絕))。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,27 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import feat_shot; feat_shot.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;register_shot&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SHOT 기술자에 의한 희소 특징 매칭 + RANSAC 강체 자세 추정(전체 파이프라인).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>初期推定なしに、大回転・部分重なりの 2 点群を対応付けて剛体変換(回転 R + 並進 t)を返す。密マッチ(NCC/Hough/PCA)と異なり、ISS キーポイントごとに局所参照フレーム(LRF)を張り、球状分割セルの法線角度ヒストグラム(SHOT)で記述 → Lowe 比率テスト + 相互最近傍でマッチ → RANSAC で外れ値に頑健に姿勢推定する。得た姿勢は ICP の粗初期値(coarse init)供給にも使える。</p>
-<p>LRF の符号曖昧性: 距離重み付き共分散の固有ベクトルは符号が定まらないため、各軸(x=最大, z=最小 固有値)を近傍ベクトル (p_i-p) の投影多数派へ合わせ(Tombari の符号則)、y=z×x で右手系を構成する。点法線も同則で近傍質量から離れる向き(局所外向き)に統一するため回転に共変で部分重なりにも安定。両点群に同一則を適用することで記述子の repeatability を担保。</p>
-<p>引数:</p>
-<p>src, dst: (N,3)/(M,3) 点群(numpy か torch)。src を dst へ合わせる。</p>
-<p>radius: SHOT 支持半径。None なら各点群自身の bbox 対角(小さい方)の 0.15 倍</p>
-<p>(結合 bbox は並進で対角が水増しされスケールが狂うため使わない)。</p>
-<p>normal_k: 法線推定の knn 数。</p>
-<p>ratio: Lowe 比率テスト閾値(小さいほど厳格)。</p>
-<p>ransac_iters: RANSAC 反復数。</p>
-<p>inlier_thr: RANSAC インライア距離。None なら bbox 対角の 0.03 倍。</p>
-<p>refine_icp: True なら得た姿勢を初期値に Trimmed ICP(icp_point2point_3d)で精緻化。</p>
-<p>max_kp: キーポイント上限。</p>
-<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD/ICP をこの上で解く。</p>
-<p>seed: RANSAC 乱数種。</p>
-<p>返り値:</p>
-<p>R: (3,3) numpy。dst ≈ src @ R.T + t を満たす回転(icp と同規約)。</p>
-<p>t: (3,) numpy。並進。</p>
-<p>info: dict。&quot;n_kp_src&quot;,&quot;n_kp_dst&quot;,&quot;n_matches&quot;,&quot;n_inliers&quot;,&quot;inlier_ratio&quot;,</p>
-<p>&quot;icp_rmse&quot;(refine_icp 時),&quot;ok&quot;(True=推定成功; インライア&lt;4 は</p>
-<p>信頼不可として False + 単位変換を返す)。</p>
+<p>초기 추정 없이 대회전·부분 중첩인 2 개 점군을 대응시켜 강체 변환(회전 R + 병진 t)을 반환한다. 밀집 매칭(NCC/Hough/PCA)과 달리 ISS 키포인트마다 국소 참조 프레임(LRF)을 세우고, 구형 분할 셀의법선 각도 히스토그램(SHOT)으로 기술 → Lowe 비율 테스트 + 상호 최근접으로매칭 → RANSAC으로 이상값에 강건하게 자세를 추정한다. 얻은 자세는 ICP의거친 초기값(coarse init) 공급에도 쓸 수 있다.</p>
+<p>LRF의 부호 모호성: 거리 가중 공분산의 고유벡터는 부호가 정해지지 않으므로, 각 축(x=최대, z=최소 고윳값)을 근방 벡터 (p_i-p)의 투영 다수파쪽으로 맞추고(Tombari의 부호 규칙), y=z×x로 오른손 좌표계를 구성한다. 점 법선도 같은 규칙으로근방 질량에서 멀어지는 방향(국소 바깥쪽)으로 통일하므로 회전에 공변이고 부분중첩에도 안정적이다. 두 점군에 동일한 규칙을 적용함으로써 기술자의 repeatability를 담보한다.</p>
+<p>인수:</p>
+<p>src, dst: (N,3)/(M,3) 점군(numpy 또는 torch). src를 dst에 맞춘다.</p>
+<p>radius: SHOT 지지 반경. None이면 각 점군 자신의 bbox 대각선(작은 쪽)의 0.15 배</p>
+<p>(결합 bbox는 병진으로 대각선이 부풀려져 스케일이 어긋나므로 쓰지 않는다).</p>
+<p>normal_k: 법선 추정의 knn 수.</p>
+<p>ratio: Lowe 비율 테스트 임계값(작을수록 엄격).</p>
+<p>ransac_iters: RANSAC 반복 수.</p>
+<p>inlier_thr: RANSAC 인라이어 거리. None이면 bbox 대각선의 0.03 배.</p>
+<p>refine_icp: True이면 얻은 자세를 초기값으로 Trimmed ICP(icp_point2point_3d)로 정밀화.</p>
+<p>max_kp: 키포인트 상한.</p>
+<p>device: torch 디바이스(&quot;cpu&quot; 등). SVD/ICP를 이 위에서 푼다.</p>
+<p>seed: RANSAC 난수 시드.</p>
+<p>반환값:</p>
+<p>R: (3,3) numpy. dst ≈ src @ R.T + t를 만족하는 회전(icp와 같은 규약).</p>
+<p>t: (3,) numpy. 병진.</p>
+<p>info: dict. &quot;n_kp_src&quot;,&quot;n_kp_dst&quot;,&quot;n_matches&quot;,&quot;n_inliers&quot;,&quot;inlier_ratio&quot;,</p>
+<p>&quot;icp_rmse&quot;(refine_icp 시),&quot;ok&quot;(True=추정 성공; 인라이어&lt;4는</p>
+<p>신뢰 불가로 False + 단위 변환을 반환).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 행렬 분해가 느린 이유 — BLAS 스레드·캐시·메모리 배치</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

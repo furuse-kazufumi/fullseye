@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_cone(points) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_cone(points) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;fit_cone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fit an infinite cone to a point set and return <code style="color:#22d3bf">{apex, axis, half_angle, residual}</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>子午面での点-母線直交距離 <code style="color:#22d3bf">a·sinα − ρ·cosα</code>(<code style="color:#22d3bf">a</code>=軸成分, <code style="color:#22d3bf">ρ</code>=半径, <code style="color:#22d3bf">α</code>=半角)を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で最小化する。初期値は PCA 軸 + 半径 ρ の軸成分 t に対する線形回帰(<code style="color:#22d3bf">ρ = m·t + b</code> の傾き m=tanα, 切片ゼロ点=頂点)。軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。</p>
+<p>Minimises the point-to-generatrix orthogonal distance in the meridian plane, <code style="color:#22d3bf">a·sinα − ρ·cosα</code> (<code style="color:#22d3bf">a</code> = axial component, <code style="color:#22d3bf">ρ</code> = radius, <code style="color:#22d3bf">α</code> = half-angle), with <code style="color:#22d3bf">scipy.optimize.least_squares</code>. The initial value is the PCA axis + a linear regression of the radius ρ against the axial component t (slope m = tanα of <code style="color:#22d3bf">ρ = m·t + b</code>, zero-intercept point = apex). The axis orientation is normalised so that &quot;ρ grows away from the apex (opens toward +)&quot;.</p>
 <p>Args:</p>
-<p>points: (N,3) 点群(最低 6 点)。</p>
+<p>points: (N,3) point cloud (at least 6 points).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,) 単位軸(開く向き), &quot;half_angle&quot;: float [rad], &quot;residual&quot;: float 点-面距離の RMS}</code>。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,) unit axis (opening direction), &quot;half_angle&quot;: float [rad], &quot;residual&quot;: float RMS of point-surface distance}</code>.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正/点数不足/半角 ~0(円柱へ縮退)など fail-closed。</p>
+<p>ValueError: fail-closed on bad shape / too few points / half-angle ~0 (degenerates to a cylinder), etc.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Why matrix decompositions are slow — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graycode_decode(bit_images, thresh=0.5) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import fringe; fringe.graycode_decode(bit_images, thresh=0.5) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;graycode_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A series of Gray-code bit images → an integer fringe-order map (the absolute order).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>bit_images: 長さ K のシーケンス(各 2D 画像、明=1 / 暗=0)。<b>MSB first</b>(bit_images[0] が</p>
-<p>最上位ビット)。thresh で二値化する。</p>
-<p>thresh:     二値化しきい値(画素値 &gt;= thresh を 1)。</p>
-<p>処理: 各ビット面を二値化 → MSB first で Gray 値を組み立て → Gray→binary 変換</p>
-<p>(binary = gray ^ (gray&gt;&gt;1) ^ ... ^ (gray&gt;&gt;(K-1)))で絶対次数(整数)を返す。</p>
-<p>返り値: dtype int64 の 2D 次数マップ(値域 0..2**K-1)。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): <code style="color:#22d3bf">None</code> / <code style="color:#22d3bf">(K, H, W)</code> に変換できない / <code style="color:#22d3bf">K &lt; 1</code> / <code style="color:#22d3bf">K &gt; 62</code>(int64 に収まらない) / NaN・Inf を含む。<code style="color:#22d3bf">thresh</code> は検査しない(画素値と同じスケールで与える。<code style="color:#22d3bf">[0, 1]</code> 画像なら 0.5 が既定)。</p>
-<p>二値化は固定閾値 <code style="color:#22d3bf">&gt;= thresh</code> のみ — 反転パターン(ネガ画像)との比較や局所閾値は行わない。影・低反射で暗く出た画素は 0 ビットとして復号され、エラーにならず誤った次数になるので、<code style="color:#22d3bf">modulation</code> などで作った信頼マスクを呼び手が別に持つこと。</p>
-<p>次数の意味: Gray 符号は隣接コードが 1 ビットしか違わないので、境界画素の二値化誤りは次数を ±1 しかずらさない(binary 符号なら大きく飛ぶ)。返る整数を投影機コラム番号や縞の絶対次数として、<code style="color:#22d3bf">absolute_phase</code> の <code style="color:#22d3bf">coarse</code> (<code style="color:#22d3bf">2π * 次数</code> を位相に換算)や <code style="color:#22d3bf">triangulate_column</code> の <code style="color:#22d3bf">column</code> に使う。</p>
+<p>bit_images: a sequence of length K (each a 2D image, bright=1 / dark=0). <b>MSB first</b> (bit_images[0] is</p>
+<p>the most significant bit). Binarised with thresh.</p>
+<p>thresh:     binarisation threshold (pixel value &gt;= thresh is 1).</p>
+<p>Processing: binarise each bit plane → assemble the Gray value MSB first → Gray→binary conversion</p>
+<p>(binary = gray ^ (gray&gt;&gt;1) ^ ... ^ (gray&gt;&gt;(K-1))), returning the absolute order (integer).</p>
+<p>Returns: 2D order map of dtype int64 (range 0..2**K-1).</p>
+<p>Validation (<code style="color:#22d3bf">ValueError</code>): <code style="color:#22d3bf">None</code> / not convertible to <code style="color:#22d3bf">(K, H, W)</code> / <code style="color:#22d3bf">K &lt; 1</code> / <code style="color:#22d3bf">K &gt; 62</code> (does not fit in int64) / contains NaN or Inf. <code style="color:#22d3bf">thresh</code> is not checked (give it on the same scale as the pixel values; for a <code style="color:#22d3bf">[0, 1]</code> image 0.5 is the default).</p>
+<p>Binarisation is only the fixed threshold <code style="color:#22d3bf">&gt;= thresh</code> — no comparison with an inverted pattern (negative image) and no local threshold. Pixels that come out dark because of shadow or low reflectance are decoded as 0 bits and, without an error, give a wrong order, so a reliability mask made with <code style="color:#22d3bf">modulation</code> or similar should be kept separately by the caller.</p>
+<p>Meaning of the order: adjacent Gray codes differ in only 1 bit, so a binarisation error at a boundary pixel shifts the order by only ±1 (with a binary code it would jump a lot). Use the returned integer as the projector column number or the absolute fringe order, for <code style="color:#22d3bf">coarse</code> of <code style="color:#22d3bf">absolute_phase</code> (converted to phase as <code style="color:#22d3bf">2π * order</code>) or <code style="color:#22d3bf">column</code> of <code style="color:#22d3bf">triangulate_column</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

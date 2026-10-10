@@ -5,9 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>level-set की principal curvatures → shape index S (Koenderink) और curvedness। closed form (Kindlmann 2003)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>2D 輪郭の曲率(スカラー 1 個)の <b>線→面リフト</b>: 曲面は主曲率 κ1,κ2 の 2 個を持つ。mean = (κ1+κ2)/2 = (|g|²trH − gᵀHg)/|g|³、Gauss K = κ1κ2 = gᵀadj(H)g/|g|⁴(g=∇, H=Hessian)。S=(2/π)atan2(κ1+κ2, κ1−κ2) ∈[-1,1] は <b>強度・回転に不変な局所曲面型</b>(cup−1/rut/saddle0/ ridge+.5/cap+1)。外向き法線規約で明凸 blob=cap(+1)。返り値 (S, curvedness, mask, |g|)、全 torch。</p>
-<p>単位系: sobel3d の分離 conv 利得 32(deriv[-1,0,1]×平滑[1,2,1]²)をここで割り戻すので、κ1,κ2/curvedness は <b>真の 1/voxel 単位</b>(半径 R の球殻で curvedness=1/R)、|g| と mask 閾値 mc は <b>voxel あたりの真の勾配単位</b>。旧版(〜2026-08-29)は割り戻しを忘れ curvedness が 1/32 倍・mc が生 sobel3d 単位だった(shape index S は比なので影響なし)。旧 mc 値を使っていた場合は 1/32 して渡すこと(既定値 0.02→6.25e-4 も等価変換済み)。</p>
+<p>2D contour की curvature (1 scalar) का <b>line→surface lift</b>: surface के 2 principal curvature κ1,κ2 होते हैं। mean = (κ1+κ2)/2 = (|g|²trH − gᵀHg)/|g|³, Gauss K = κ1κ2 = gᵀadj(H)g/|g|⁴ (g=∇, H=Hessian)। S=(2/π)atan2(κ1+κ2, κ1−κ2) ∈[-1,1] <b>intensity और rotation से अप्रभावित local surface type</b> है (cup−1/rut/saddle0/ ridge+.5/cap+1)। बाहर की ओर वाले normal के नियम में चमकीला convex blob = cap(+1)। Return value (S, curvedness, mask, |g|), सभी torch।</p>
+<p>इकाइयाँ: sobel3d के separable conv का gain 32 (deriv[-1,0,1]×smoothing[1,2,1]²) यहाँ वापस भाग दिया जाता है, इसलिए κ1,κ2/curvedness <b>असली 1/voxel इकाई</b> में हैं (radius R के spherical shell पर curvedness=1/R), और |g| तथा mask threshold mc <b>प्रति voxel असली gradient इकाई</b> में हैं। पुराना version (2026-08-29 तक) भाग देना भूल गया था:</p>
+<p>curvedness 1/32 गुना था और mc कच्ची sobel3d इकाई में था (shape index S अनुपात है, इसलिए उस पर असर नहीं)। पुराने mc मान इस्तेमाल किए हों तो उन्हें 1/32 से गुणा करके दें (default 0.02→6.25e-4 भी बराबर रूप में बदला जा चुका है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

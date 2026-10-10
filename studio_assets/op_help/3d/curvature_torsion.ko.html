@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(kappa,tau) → (N,2) pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 점의 곡률 κ 와 비틀림 τ(재매개변수화 불변인 닫힌 식). → (kappa (N,), tau (N,)).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>座標の一様スケール s に対し κ→κ/s, τ→τ/s と正しくスケールする。0 割り防止の epsilon は <b>相対化</b>する: 絶対 1e-12 は cross_norm²(~s⁴)・r1_norm³(~s³)を小座標スケールで支配し、κ/τ を破壊するため、代表スケール L=median‖r&#x27;‖(座標スケール s に線形)で各分母と同次元に正規化した相対 eps を使う。これは曲線を L で正規化してから計算し 1/L で戻すのと厳密に等価。</p>
-<p>計算は順序付き点列 (N,3) を index パラメータで <code style="color:#22d3bf">np.gradient</code> 3 回(中心差分、両端は片側差分)した r&#x27;, r&#x27;&#x27;, r&#x27;&#x27;&#x27; から</p>
+<p>좌표의 균일 스케일 s에 대해 κ→κ/s, τ→τ/s로 올바르게 스케일된다. 0 나누기 방지용 epsilon은 <b>상대화</b>한다: 절대 1e-12는 cross_norm²(~s⁴)·r1_norm³(~s³)을 작은 좌표 스케일에서 지배하여 κ/τ를 파괴하므로, 대표 스케일 L=median‖r&#x27;‖(좌표 스케일 s에 선형)로 각 분모와 같은 차원으로정규화한 상대 eps를 쓴다. 이는 곡선을 L로 정규화한 뒤 계산하고 1/L로 되돌리는 것과 엄밀히 등가.</p>
+<p>계산은 순서 있는 점열 (N,3)에 index 파라미터로 <code style="color:#22d3bf">np.gradient</code>를 3 회(중심 차분, 양 끝은한쪽 차분) 적용한 r&#x27;, r&#x27;&#x27;, r&#x27;&#x27;&#x27;로부터</p>
 <p style="margin:2px 0 2px 12px">• κ = ‖r&#x27;×r&#x27;&#x27;‖ / ‖r&#x27;‖³</p>
 <p style="margin:2px 0 2px 12px">• τ = (r&#x27;×r&#x27;&#x27;)·r&#x27;&#x27;&#x27; / ‖r&#x27;×r&#x27;&#x27;‖²</p>
-<p>で求める。単位は κ・τ とも 1/座標単位。τ の符号は右手系の螺旋(a cosθ, a sinθ, bθ), b&gt;0 で正。直線区間(‖r&#x27;×r&#x27;&#x27;‖≈0)では κ≈0、τ は分母が eps だけになるため値は信頼できない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ValueError</code>: 全点が重なり median‖r&#x27;‖ が 0 または非有限のとき。</p>
-<p style="margin:2px 0 2px 12px">• 点間隔が急に変わる箇所は数値微分が乱れるので、先に <code style="color:#22d3bf">resample_uniform</code> で等間隔化するか <code style="color:#22d3bf">fit_spline_curve</code> で平滑化してから渡す。両端 2 点は片側差分で精度が落ちる。</p>
-<p style="margin:2px 0 2px 12px">• N&lt;2 は <code style="color:#22d3bf">np.gradient</code> が <code style="color:#22d3bf">ValueError</code>。形状 (N,3) の検証はしていない。</p>
-<p>標構(T,N,B)が要るなら <code style="color:#22d3bf">frenet_frame</code>、弧長 ds は <code style="color:#22d3bf">arc_length</code> から取る。</p>
+<p>로 구한다. 단위는 κ·τ 모두 1/좌표 단위. τ의 부호는 오른손계 나선(a cosθ, a sinθ, bθ), b&gt;0에서 양. 직선 구간(‖r&#x27;×r&#x27;&#x27;‖≈0)에서는 κ≈0, τ는 분모가 eps만남으므로 값을 신뢰할 수 없다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ValueError</code>: 모든 점이 겹쳐 median‖r&#x27;‖이 0 또는 비유한일 때.</p>
+<p style="margin:2px 0 2px 12px">• 점 간격이 급변하는 곳은 수치 미분이 흐트러지므로, 먼저 <code style="color:#22d3bf">resample_uniform</code>으로 등간격화하거나 <code style="color:#22d3bf">fit_spline_curve</code>로 평활화한 후 넘긴다. 양 끝 2 점은 한쪽 차분으로 정밀도가 떨어진다.</p>
+<p style="margin:2px 0 2px 12px">• N&lt;2는 <code style="color:#22d3bf">np.gradient</code>가 <code style="color:#22d3bf">ValueError</code>. 형상 (N,3)의 검증은 하지 않는다.</p>
+<p>틀(T,N,B)이 필요하면 <code style="color:#22d3bf">frenet_frame</code>, 호 길이 ds는 <code style="color:#22d3bf">arc_length</code>에서 얻는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

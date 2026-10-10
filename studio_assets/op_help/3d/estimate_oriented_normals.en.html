@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import normals_orient; normals_orient.estimate_oriented_normals(points, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;estimate_oriented_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>PCA normal estimation combined with Hoppe&#x27;s global orientation. → oriented unit normals (N,3).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">estimate_normals</code>(向き未定)→ <code style="color:#22d3bf">orient_normals</code>(MST 伝播)を通す。閉曲面なら全点外向き、平面なら全点同一半球にそろう。得た法線を <code style="color:#22d3bf">curvature3d.shape_index</code> に渡すと凹/凸符号が正しく出る。</p>
+<p>Runs <code style="color:#22d3bf">estimate_normals</code> (unoriented) → <code style="color:#22d3bf">orient_normals</code> (MST propagation). On a closed surface all points face outward; on a plane all points align to the same hemisphere. Passing the resulting normals to <code style="color:#22d3bf">curvature3d.shape_index</code> gives the correct concave/convex sign.</p>
 <p>Args:</p>
-<p>points: (N,3) の点群。</p>
-<p>k: PCA 近傍数と kNN グラフ近傍数(共通)。</p>
-<p>seed_dir: 大域基準向き (3,)。None なら重心から外向き。</p>
+<p>points: (N,3) point cloud.</p>
+<p>k: number of PCA neighbours and kNN graph neighbours (shared).</p>
+<p>seed_dir: global reference orientation (3,). If None, outward from the centroid.</p>
 <p>Returns:</p>
-<p>(N,3) の大域一貫・向き付き単位法線。</p>
+<p>(N,3) globally consistent, oriented unit normals.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

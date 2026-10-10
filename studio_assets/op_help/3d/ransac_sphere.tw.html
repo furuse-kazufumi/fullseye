@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_sphere(points, thresh, iters=500, seed=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_sphere(points, thresh, iters=500, seed=0)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;ransac_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對外點穩健的 RANSAC 球擬合。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>4 点をサンプル → 線形法(代数フィット)で球中心・半径 → |‖p-c‖ - r| &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化 → 最終 inlier で最小二乗リフィット。配管ボール/球面計測用。</p>
+<p>取樣 4 點 → 以線性法(代數擬合)求球心與半徑 → 最大化 |‖p-c‖ - r| &lt; <code style="color:#22d3bf">thresh</code> 的 inlier → 以最終 inlier 做最小平方重新擬合。用於管線球/球面量測。</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>thresh: inlier とみなす |距離-r| のしきい値。</p>
-<p>iters: RANSAC 反復数。</p>
-<p>seed: 乱数シード(決定論)。</p>
+<p>points: (N,3) 點雲。</p>
+<p>thresh: 視為 inlier 的 |距離-r| 閾值。</p>
+<p>iters: RANSAC 迭代次數。</p>
+<p>seed: 亂數種子(決定性)。</p>
 <p>Returns:</p>
 <p>(params, inlier_mask, info)。params = {&quot;center&quot;: (3,), &quot;radius&quot;: float}。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

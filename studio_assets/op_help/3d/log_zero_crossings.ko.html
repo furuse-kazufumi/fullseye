@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.log_zero_crossings(vol, sigma: &#x27;float&#x27; = 1.5, rel_thresh: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import edges3d; edges3d.log_zero_crossings(vol, sigma: &#x27;float&#x27; = 1.5, rel_thresh: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;log_zero_crossings&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Laplacian-of-Gaussian 의 영교차 에지.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : (D,H,W) array</p>
-<p>グレー voxel。</p>
+<p>그레이 voxel.</p>
 <p>sigma : float</p>
-<p>LoG の標準偏差(&gt; 0)。</p>
+<p>LoG의 표준편차(&gt; 0).</p>
 <p>rel_thresh : float</p>
-<p>平坦部の数値ノイズによる偽交差を抑える相対閾値。交差ペアの LoG 差 |a-b| が</p>
-<p>rel_thresh * max|L| を超える場合のみ採用する。</p>
+<p>평탄부의 수치 잡음에 의한 거짓 교차를 억제하는 상대 임계값. 교차 쌍의 LoG 차 |a-b|가</p>
+<p>rel_thresh * max|L|를 넘는 경우에만 채택한다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>edge_mask : (D,H,W) bool</p>
-<p>符号が変化する隣接ペアのうち |LoG| が小さい側(ゼロにより近い側)を立てた mask。</p>
+<p>부호가 바뀌는 인접 쌍 중 |LoG|가 작은 쪽(0에 더 가까운 쪽)을 세운 mask.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>各軸方向に二種類のゼロ交差を検出する:</p>
-<p style="margin:2px 0 2px 12px">(1) 格子間交差 — 隣接ペア (a,b) の符号積 a*b &lt; 0(両側とも非ゼロで符号反転)。厚みを抑えるためペアのうち |LoG| が小さい側 1 voxel に割り当てる。</p>
-<p style="margin:2px 0 2px 12px">(2) 格子整列交差 — 中央 voxel が厳密ゼロ(L==0)で両隣が異符号(符号がその voxel でゼロを通過)する場合。SDF 風の格子に整列した面で LoG がちょうど格子点上で 0 になる真のエッジは a*b が常に 0 となり (1) では取りこぼすため、当該 voxel を交差として立てる。定数ゼロ領域は両隣も 0 で Lm*Lp==0 となり除外される(誤検出しない)。</p>
-<p>いずれも平坦部の数値ノイズは相対閾値(rel_thresh * max|L|)で抑制する。</p>
+<p>각 축 방향으로 두 종류의 영교차를 검출한다:</p>
+<p style="margin:2px 0 2px 12px">(1) 격자 사이 교차 — 인접 쌍 (a,b)의 부호곱 a*b &lt; 0(양쪽 모두 0이 아니고 부호 반전). 두께를억제하기 위해 쌍 중 |LoG|가 작은 쪽 1 voxel에 할당한다.</p>
+<p style="margin:2px 0 2px 12px">(2) 격자 정렬 교차 — 중앙 voxel이 엄밀히 0(L==0)이고 양옆이 다른 부호(부호가 그 voxel에서 0을 통과)인 경우. SDF 풍의 격자에 정렬된 면에서 LoG가 정확히 격자점 위에서 0이되는 진짜 에지는 a*b가 항상 0이 되어 (1)에서는 놓치므로, 해당 voxel을 교차로 세운다. 상수 0 영역은 양옆도 0이라 Lm*Lp==0이 되어 제외된다(오검출하지 않는다).</p>
+<p>어느 쪽이든 평탄부의 수치 잡음은 상대 임계값(rel_thresh * max|L|)으로 억제한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

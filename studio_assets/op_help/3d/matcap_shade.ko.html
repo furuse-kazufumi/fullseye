@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render_shade; render_shade.matcap_shade(normals, matcap) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;matcap_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>MatCap: 시점 공간 법선을 lit-sphere 텍스처에 대응시켜 소재의 겉모습을 옮깁니다. → <code style="color:#22d3bf">(H, W[, C])</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>視空間の単位法線 <code style="color:#22d3bf">(nx, ny)</code>(<code style="color:#22d3bf">[-1,1]</code>)をテクスチャ座標に写像し(<code style="color:#22d3bf">u = (nx+1)/2</code>, <code style="color:#22d3bf">v = (1−ny)/2</code>、行方向で y を反転)、<code style="color:#22d3bf">matcap</code> 画像を <b>双線形補間</b> で引く。ライト計算をせず、球にライティングして撮った 1 枚の素材見えを任意形状へそのまま貼れる(金属・粘土・トゥーンなど)。</p>
-<p><code style="color:#22d3bf">matcap</code> は正方に近い lit-sphere テクスチャ:</p>
-<p style="margin:2px 0 2px 12px">• グレースケール <code style="color:#22d3bf">(h, w)</code>      → 出力 <code style="color:#22d3bf">(H, W)</code></p>
-<p style="margin:2px 0 2px 12px">• カラー <code style="color:#22d3bf">(h, w, C)</code>(C 任意)  → 出力 <code style="color:#22d3bf">(H, W, C)</code></p>
-<p>背景(長さ 0 の法線)は 0。テクスチャ座標は端でクランプ(球外縁の法線 <code style="color:#22d3bf">|(nx,ny)|→1</code> はテクスチャ縁を指す)。</p>
-<p>fail-closed: 形状不正・非有限・小さすぎる(<code style="color:#22d3bf">h,w &lt; 2</code>)テクスチャは <code style="color:#22d3bf">ValueError</code>。</p>
+<p>시공간의 단위 법선 <code style="color:#22d3bf">(nx, ny)</code>(<code style="color:#22d3bf">[-1,1]</code>)를 텍스처 좌표로 사상하고(<code style="color:#22d3bf">u = (nx+1)/2</code>, <code style="color:#22d3bf">v = (1−ny)/2</code>, 행 방향으로 y를 반전), <code style="color:#22d3bf">matcap</code> 영상을 <b>쌍선형 보간</b>으로 조회한다. 조명 계산 없이, 구에 조명을 비추어 찍은 1 장의 재질 외관을임의 형상에 그대로 붙일 수 있다(금속·점토·툰 등).</p>
+<p><code style="color:#22d3bf">matcap</code>은 정사각형에 가까운 lit-sphere 텍스처:</p>
+<p style="margin:2px 0 2px 12px">• 그레이스케일 <code style="color:#22d3bf">(h, w)</code>        → 출력 <code style="color:#22d3bf">(H, W)</code></p>
+<p style="margin:2px 0 2px 12px">• 컬러 <code style="color:#22d3bf">(h, w, C)</code>(C 임의)     → 출력 <code style="color:#22d3bf">(H, W, C)</code></p>
+<p>배경(길이 0인 법선)은 0. 텍스처 좌표는 끝에서 클램프(구 외연의 법선 <code style="color:#22d3bf">|(nx,ny)|→1</code>은텍스처 가장자리를 가리킨다).</p>
+<p>fail-closed: 형상 부정·비유한·너무 작은(<code style="color:#22d3bf">h,w &lt; 2</code>) 텍스처는 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.unproject_spherical(range_img, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spherical_proj; spherical_proj.unproject_spherical(range_img, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;unproject_spherical&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구면 레인지 이미지 → 3D 점 (M, 3). range&gt;0 인 셀만 빈 중심각으로 역투영.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">project_spherical</code> の逆。行/列からビン<b>中心</b>の (elevation, azimuth) を復元し、格納 range を slant distance として球面 → 直交座標へ戻す。空(全 0)なら (0, 3) を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">range_img</code>: (v_res, h_res) の 2-D 配列(非 2-D・サイズ 0 は <code style="color:#22d3bf">ValueError</code>)。<code style="color:#22d3bf">range &gt; 0</code> のセルだけを点にする(0 = 空セル、負値も無視)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">v_fov</code>: 投影時と同じ (v_min, v_max) [度]。違う値を渡すと仰角がずれた点群になる(整合性は検査できない)。</p>
-<p>列 c → 方位角 <code style="color:#22d3bf">az = (c + 0.5) / h_res · 2π - π</code>、行 r → 仰角 <code style="color:#22d3bf">el = v_min + ((v_res-1-r) + 0.5) / v_res · (v_max - v_min)</code>(度 → rad)とし、<code style="color:#22d3bf">x = r cos(el) cos(az)</code>、<code style="color:#22d3bf">y = r cos(el) sin(az)</code>、<code style="color:#22d3bf">z = r sin(el)</code>。点の並びは <code style="color:#22d3bf">np.nonzero</code> の行優先順(行 0 から)。ビン中心へ戻すので元の点とは最大でおよそ「半セル角 × range」ずれ、投影で捨てられた(同セルの奥・FOV 外の)点は戻らない。往復すると点数は一般に減る。</p>
+<p><code style="color:#22d3bf">project_spherical</code>의 역. 행/열로부터 bin <b>중심</b>의 (elevation, azimuth)를 복원하고, 저장된 range를 slant distance로 하여 구면 → 직교 좌표로 되돌린다. 비어 있으면(전부 0) (0, 3)을 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">range_img</code>: (v_res, h_res)의 2-D 배열(2-D가 아니거나 크기 0이면 <code style="color:#22d3bf">ValueError</code>). <code style="color:#22d3bf">range &gt; 0</code>인셀만 점으로 만든다(0 = 빈 셀, 음수 값도 무시).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">v_fov</code>: 투영 시와 같은 (v_min, v_max) [도]. 다른 값을 넘기면 앙각이 어긋난 점군이 된다(정합성은검사할 수 없다).</p>
+<p>열 c → 방위각 <code style="color:#22d3bf">az = (c + 0.5) / h_res · 2π - π</code>, 행 r → 앙각 <code style="color:#22d3bf">el = v_min + ((v_res-1-r) + 0.5) / v_res · (v_max - v_min)</code>(도 → rad)로 하고, <code style="color:#22d3bf">x = r cos(el) cos(az)</code>, <code style="color:#22d3bf">y = r cos(el) sin(az)</code>, <code style="color:#22d3bf">z = r sin(el)</code>. 점의 순서는 <code style="color:#22d3bf">np.nonzero</code>의 행 우선 순서(행 0부터). bin 중심으로 되돌리므로 원래 점과는최대 대략 &quot;반 셀 각 × range&quot; 어긋나며, 투영에서 버려진(같은 셀의 안쪽, FOV 밖의) 점은 돌아오지 않는다. 왕복하면 점 수는 일반적으로 줄어든다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

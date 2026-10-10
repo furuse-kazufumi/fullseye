@@ -6,15 +6,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 形狀(梯度方向)匹配 = 2D shapematch_gpu 的 voxel 版(「輪廓匹配」)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>テンプレとシーンの <b>単位勾配ベクトルの内積和</b>(Steger 流)。強度/コントラストに不変で、エッジ/形状で一致を測る。score(pos)=Σ&lt;û_scene(pos+dt), û_model(dt)&gt;/n を 3 成分の conv3d で。</p>
-<p>手順: 両 volume に <code style="color:#22d3bf">sobel3d</code> → 大きさ <code style="color:#22d3bf">mc</code> 超の voxel だけ単位ベクトル化(以下は 0)。テンプレの単位勾配 3 成分をカーネルに、シーンの単位勾配と成分ごとに conv3d して和を取り、テンプレの有効 voxel 数 <code style="color:#22d3bf">n</code> で割る。score は <b>[−1, 1]</b>、1 で完全一致(勾配の向きが全て揃う)、コントラスト反転で −1。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mc</code>: <code style="color:#22d3bf">sobel3d</code> の <b>生出力(真の勾配の 32 倍)</b> に対する閾値。小さいほど平坦部の</p>
-<p>ノイズ勾配が投票に入る。</p>
-<p style="margin:2px 0 2px 12px">• 位置: 返り値 <code style="color:#22d3bf">[score, z, y, x]</code>(float64 配列)の座標は <b>テンプレ中心 voxel(index T//2)</b></p>
-<p>が scene のどこに載るか。テンプレが完全に収まる位置以外は 0 に落とすので、テンプレが scene より大きいと全 0 のまま index (0,0,0) が返る(例外は出ない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subvoxel=True</code> で argmax の ±2 近傍の正スコア重心に精緻化(<code style="color:#22d3bf">accel_match._subvoxel_com</code>)。</p>
-<p>後段: <code style="color:#22d3bf">refine_translation_lk</code>(corner 規約なので T//2 を引く)/ <code style="color:#22d3bf">refine_lm</code>。回転には不変でない(<code style="color:#22d3bf">match_logpolar_z</code> で先に回転を合わせる)。</p>
+<p>模板與場景的 <b>單位梯度向量內積之和</b>(Steger 式)。對強度/對比度不變, 以邊緣/形狀衡量匹配。score(pos)=Σ&lt;û_scene(pos+dt), û_model(dt)&gt;/n,用 3 個分量的 conv3d 計算。</p>
+<p>步驟:對兩個 volume 做 <code style="color:#22d3bf">sobel3d</code> → 只把大小超過 <code style="color:#22d3bf">mc</code> 的 voxel 單位向量化(其餘為 0)。以模板單位梯度的 3 個分量為核,與場景單位梯度逐分量做 conv3d 並求和, 再除以模板的有效 voxel 數 <code style="color:#22d3bf">n</code>。score 在 <b>[−1, 1]</b> 內,1 為完全匹配(梯度方向全部一致),對比度反轉時為 −1。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mc</code>:針對 <code style="color:#22d3bf">sobel3d</code> 的 <b>原始輸出(真實梯度的 32 倍)</b> 的閾值。越小,平坦區域的</p>
+<p>雜訊梯度越多地參與投票。</p>
+<p style="margin:2px 0 2px 12px">• 位置:回傳值 <code style="color:#22d3bf">[score, z, y, x]</code>(float64 陣列)的座標是 <b>模板中心 voxel(index T//2)</b></p>
+<p>落在 scene 的何處。模板不能完全容納的位置都設為 0,因此模板比 scene 大時全部保持為 0,回傳 index (0,0,0)(不拋出例外)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subvoxel=True</code> 時細化到 argmax 的 ±2 鄰域內正分數的質心(<code style="color:#22d3bf">accel_match._subvoxel_com</code>)。</p>
+<p>後續:<code style="color:#22d3bf">refine_translation_lk</code>(corner 慣例,因此減去 T//2)/ <code style="color:#22d3bf">refine_lm</code>。對旋轉不具不變性(先用 <code style="color:#22d3bf">match_logpolar_z</code> 對齊旋轉)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

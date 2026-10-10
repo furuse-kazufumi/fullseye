@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.principal_curvatures(points, k=25, normals=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import curvature3d; curvature3d.principal_curvatures(points, k=25, normals=None)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;principal_curvatures&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The principal curvatures at each point (k1 &gt;= k2). → (k1 (N,), k2 (N,)).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は凸側マグニチュード(開面の凹/凸符号は不定)。向き付き法線を渡すと大域向きに整合し正しい符号(凹=負, 凸=正)。</p>
-<p>手順(各点、Python ループ):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cKDTree</code> で自身を含む k+1 近傍を取る(k は N-1 に切り詰め)。近傍が 5 点未満なら <code style="color:#22d3bf">k1 = k2 = 0</code> を返す(5 係数の二次曲面が組めないため)。</p>
-<p style="margin:2px 0 2px 12px">• 近傍座標をクエリ点原点に平行移動し、<code style="color:#22d3bf">local.T @ local</code> の最小固有ベクトルを法線とする(向きは <code style="color:#22d3bf">normals</code> があればそれに整合、無ければ近傍重心から離れる側)。</p>
-<p style="margin:2px 0 2px 12px">• 接線基底 (t1, t2) に射影し <code style="color:#22d3bf">w = d·u + e·v + a·u² + b·uv + c·v²</code> を最小二乗フィット → 第一/第二基本形式から shape operator の固有値を取り、凸を正にして <code style="color:#22d3bf">k1 &gt;= k2</code> に並べる。</p>
-<p style="margin:2px 0 2px 12px">• 単位は 1/長さ(点群の単位に依存)。半径 R の球なら <code style="color:#22d3bf">k1 = k2 = 1/R</code>、円柱は <code style="color:#22d3bf">(1/R, 0)</code>、平面は 0。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> は近傍点数(既定 25)。大きいほど平滑で曲率は低め、小さいほどノイズを拾う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行が必須(<code style="color:#22d3bf">ValueError</code>)。決定論的。</p>
-<p style="margin:2px 0 2px 12px">• 後段: <code style="color:#22d3bf">mean_curvature</code> / <code style="color:#22d3bf">gaussian_curvature</code> / <code style="color:#22d3bf">shape_index</code>(いずれも内部で同じ計算を繰り返す)。shape index と曲がりの対が要るなら 2 本を <code style="color:#22d3bf">(N,2)</code> に並べて <code style="color:#22d3bf">curvature_to_shape_index</code>。</p>
+<p>When normals (oriented reference normals, (N,3)) is not given: convex-side magnitude (the concave/convex sign of an open surface is indeterminate). Passing oriented normals makes it consistent with the global orientation and gives the correct sign (concave = negative, convex = positive).</p>
+<p>Procedure (per point, Python loop):</p>
+<p style="margin:2px 0 2px 12px">• Take the k+1 neighbours including itself with <code style="color:#22d3bf">cKDTree</code> (k is clipped to N-1). If there are fewer than 5 neighbours, return <code style="color:#22d3bf">k1 = k2 = 0</code> (a quadric with 5 coefficients cannot be built).</p>
+<p style="margin:2px 0 2px 12px">• Translate the neighbour coordinates so the query point is the origin, and take the smallest eigenvector of <code style="color:#22d3bf">local.T @ local</code> as the normal (its orientation follows <code style="color:#22d3bf">normals</code> if given, otherwise the side away from the neighbour centroid).</p>
+<p style="margin:2px 0 2px 12px">• Project onto the tangent basis (t1, t2) and least-squares fit <code style="color:#22d3bf">w = d·u + e·v + a·u² + b·uv + c·v²</code> → take the eigenvalues of the shape operator from the first/second fundamental forms, make convex positive, and order them as <code style="color:#22d3bf">k1 &gt;= k2</code>.</p>
+<p style="margin:2px 0 2px 12px">• The unit is 1/length (depends on the unit of the point cloud). For a sphere of radius R, <code style="color:#22d3bf">k1 = k2 = 1/R</code>; a cylinder gives <code style="color:#22d3bf">(1/R, 0)</code>, a plane 0.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> is the number of neighbours (default 25). Larger is smoother with lower curvature, smaller picks up noise.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> must be (N,3), finite and with non-zero rows (<code style="color:#22d3bf">ValueError</code>). Deterministic.</p>
+<p style="margin:2px 0 2px 12px">• Downstream: <code style="color:#22d3bf">mean_curvature</code> / <code style="color:#22d3bf">gaussian_curvature</code> / <code style="color:#22d3bf">shape_index</code> (each repeats the same computation internally). If you need the pair of shape index and curvedness, put the 2 side by side as <code style="color:#22d3bf">(N,2)</code> and use <code style="color:#22d3bf">curvature_to_shape_index</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Why matrix decompositions are slow — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

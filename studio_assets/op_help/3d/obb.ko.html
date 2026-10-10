@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obb(points) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pcseg; pcseg.obb(points) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;obb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>PCA 에 의한 유향 경계 상자.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Returns <code style="color:#22d3bf">{center, axes (3,3 columns = box axes), extents (3, half-widths), corners (8,3)}</code>. The tight-fitting box a manipulator uses to reason about an object&#x27;s size and grasp width once it has been segmented out.</p>
-<p>手順: 重心 <code style="color:#22d3bf">c</code> を引いた点群の SVD(<code style="color:#22d3bf">full_matrices=False</code>)で主軸 <code style="color:#22d3bf">axes</code>(列 = 特異値の降順、第 1 列が最も広がる方向)を取り、点を主軸座標に写して各軸の min/max から半幅 <code style="color:#22d3bf">extents</code> と箱中心 <code style="color:#22d3bf">center</code>(重心とは一般に異なる)を求める。<code style="color:#22d3bf">corners</code> は <code style="color:#22d3bf">center + (±extents) @ axes.T</code> の 8 点で、符号の組合せは <code style="color:#22d3bf">meshgrid([-1,1],[-1,1],[-1,1])</code> の順。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 以外は <code style="color:#22d3bf">ValueError</code>、2 点未満も <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• PCA の主軸は「最小体積の箱」を保証しない(点の分布に沿うだけ)。主軸の符号は SVD の任意性で決まり、点の分布が等方に近い(特異値が縮退する)と軸の向きは不安定になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">extents</code> は半幅なので辺長は <code style="color:#22d3bf">2 * extents</code>。単位は座標の単位。</p>
+<p><code style="color:#22d3bf">{center, axes (3,3 columns = box axes), extents (3, half-widths), corners (8,3)}</code> 를 반환한다. 물체가 분할되어 나온 뒤 매니퓰레이터가그 크기와 파지 폭을 추론하는 데 쓰는 밀착 상자.</p>
+<p>절차: 무게중심 <code style="color:#22d3bf">c</code> 를 뺀 점군의 SVD(<code style="color:#22d3bf">full_matrices=False</code>)로 주축 <code style="color:#22d3bf">axes</code>(열 = 특이값의 내림차순, 제 1 열이 가장 넓게 퍼진 방향)를 얻고, 점을 주축 좌표로 옮겨 각 축의 min/max 에서 반폭 <code style="color:#22d3bf">extents</code> 와상자 중심 <code style="color:#22d3bf">center</code>(무게중심과는 일반적으로 다르다)를 구한다. <code style="color:#22d3bf">corners</code> 는 <code style="color:#22d3bf">center + (±extents) @ axes.T</code> 의 8 점이며, 부호 조합은 <code style="color:#22d3bf">meshgrid([-1,1],[-1,1],[-1,1])</code> 의 순서.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 이외는 <code style="color:#22d3bf">ValueError</code>, 2 점 미만도 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• PCA 의 주축은 &quot;최소 체적의 상자&quot;를 보장하지 않는다(점의 분포를 따를 뿐). 주축의 부호는 SVD 의 임의성으로정해지며, 점의 분포가 등방에 가까우면(특이값이 축퇴하면) 축의 방향은 불안정해진다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">extents</code> 는 반폭이므로 변의 길이는 <code style="color:#22d3bf">2 * extents</code>. 단위는 좌표의 단위.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

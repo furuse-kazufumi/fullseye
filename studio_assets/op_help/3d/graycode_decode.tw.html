@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graycode_decode(bit_images, thresh=0.5) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import fringe; fringe.graycode_decode(bit_images, thresh=0.5) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;graycode_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Gray code 位元影像序列 → 整數條紋級次圖(絕對級次)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>bit_images: 長さ K のシーケンス(各 2D 画像、明=1 / 暗=0)。<b>MSB first</b>(bit_images[0] が</p>
-<p>最上位ビット)。thresh で二値化する。</p>
-<p>thresh:     二値化しきい値(画素値 &gt;= thresh を 1)。</p>
-<p>処理: 各ビット面を二値化 → MSB first で Gray 値を組み立て → Gray→binary 変換</p>
-<p>(binary = gray ^ (gray&gt;&gt;1) ^ ... ^ (gray&gt;&gt;(K-1)))で絶対次数(整数)を返す。</p>
-<p>返り値: dtype int64 の 2D 次数マップ(値域 0..2**K-1)。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): <code style="color:#22d3bf">None</code> / <code style="color:#22d3bf">(K, H, W)</code> に変換できない / <code style="color:#22d3bf">K &lt; 1</code> / <code style="color:#22d3bf">K &gt; 62</code>(int64 に収まらない) / NaN・Inf を含む。<code style="color:#22d3bf">thresh</code> は検査しない(画素値と同じスケールで与える。<code style="color:#22d3bf">[0, 1]</code> 画像なら 0.5 が既定)。</p>
-<p>二値化は固定閾値 <code style="color:#22d3bf">&gt;= thresh</code> のみ — 反転パターン(ネガ画像)との比較や局所閾値は行わない。影・低反射で暗く出た画素は 0 ビットとして復号され、エラーにならず誤った次数になるので、<code style="color:#22d3bf">modulation</code> などで作った信頼マスクを呼び手が別に持つこと。</p>
-<p>次数の意味: Gray 符号は隣接コードが 1 ビットしか違わないので、境界画素の二値化誤りは次数を ±1 しかずらさない(binary 符号なら大きく飛ぶ)。返る整数を投影機コラム番号や縞の絶対次数として、<code style="color:#22d3bf">absolute_phase</code> の <code style="color:#22d3bf">coarse</code> (<code style="color:#22d3bf">2π * 次数</code> を位相に換算)や <code style="color:#22d3bf">triangulate_column</code> の <code style="color:#22d3bf">column</code> に使う。</p>
+<p>bit_images:長度為 K 的序列(各為 2D 影像,亮=1 / 暗=0)。<b>MSB first</b>(bit_images[0] 為</p>
+<p>最高位元)。以 thresh 二值化。</p>
+<p>thresh:     二值化閾值(像素值 &gt;= thresh 為 1)。</p>
+<p>處理:將各位元平面二值化 → 按 MSB first 組裝 Gray 值 → Gray→binary 轉換</p>
+<p>(binary = gray ^ (gray&gt;&gt;1) ^ ... ^ (gray&gt;&gt;(K-1))),回傳絕對級次(整數)。</p>
+<p>回傳值:dtype int64 的 2D 級次圖(值域 0..2**K-1)。</p>
+<p>驗證(<code style="color:#22d3bf">ValueError</code>):<code style="color:#22d3bf">None</code> / 無法轉換為 <code style="color:#22d3bf">(K, H, W)</code> / <code style="color:#22d3bf">K &lt; 1</code> / <code style="color:#22d3bf">K &gt; 62</code>(超出 int64) / 含 NaN、Inf。<code style="color:#22d3bf">thresh</code> 不做檢查(以與像素值相同的尺度給出。<code style="color:#22d3bf">[0, 1]</code> 影像時預設為 0.5)。</p>
+<p>二值化只用固定閾值 <code style="color:#22d3bf">&gt;= thresh</code> — 不與反轉圖案(負片影像)比較, 也不做局部閾值。因陰影、低反射而顯暗的像素被解碼為 0 位元, 不報錯卻得到錯誤級次,因此呼叫端應另行持有以 <code style="color:#22d3bf">modulation</code> 等產生的可信遮罩。</p>
+<p>級次的含義:Gray 碼相鄰碼字只差 1 位元,因此邊界像素的二值化錯誤只會使級次偏移 ±1(若是 binary 碼則會大幅跳變)。回傳的整數可作為投影機行號或條紋絕對級次,用於 <code style="color:#22d3bf">absolute_phase</code> 的 <code style="color:#22d3bf">coarse</code> (按 <code style="color:#22d3bf">2π * 級次</code> 換算為相位)或 <code style="color:#22d3bf">triangulate_column</code> 的 <code style="color:#22d3bf">column</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

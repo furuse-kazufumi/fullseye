@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8))</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import symmetry3d; symmetry3d.detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8))</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;detect_rotational_symmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>PCA principal axes को candidate axes मानकर सबसे अच्छी rotational symmetry (axis × order) चुनता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>→ dict{axis_point, axis_dir, order, score, table, margin}。score が小さいほど対称。</p>
-<p>★ <code style="color:#22d3bf">margin</code>(2 位との差)を必ず併読すること。理由は <code style="color:#22d3bf">detect_reflection_symmetry</code> と同じ —— 候補が団子なら選択はくじ引きで、そのとき先に潰れるのは score ではなく margin である。回転対称は候補が 3 軸 x order なので<b>同じ軸の別 order が 2 位に来る</b>ことも多く、その場合の margin の小ささは「order が決まらない」を意味する(軸は決まっている)。<code style="color:#22d3bf">table</code> に全候補が入っているので、軸だけ固定して order を見直せる。</p>
-<p>★ 候補は PCA の 3 軸だけ。真の対称軸が主軸のどれとも一致しない形では見つからず、しかも黙って最良を返す。</p>
+<p>→ dict{axis_point, axis_dir, order, score, table, margin}। score जितना छोटा, उतना अधिक symmetric।</p>
+<p>★ <code style="color:#22d3bf">margin</code> (दूसरे यानी 2nd स्थान से अंतर) को हमेशा साथ में पढ़ें। कारण <code style="color:#22d3bf">detect_reflection_symmetry</code> जैसा ही है — candidates गुच्छे में हों तो चुनाव लॉटरी है, और उस समय पहले score नहीं, margin ढहता है। rotational symmetry में candidates 3 axes x order होते हैं, इसलिए <b>अक्सर उसी axis का दूसरा order 2nd स्थान पर आता है</b>, और उस स्थिति में छोटा margin का अर्थ है &quot;order तय नहीं होता&quot; (axis तय है)। <code style="color:#22d3bf">table</code> में सभी candidates हैं, इसलिए केवल axis स्थिर करके order दोबारा जाँचा जा सकता है।</p>
+<p>★ candidates केवल PCA के 3 axes हैं। जिस आकार का असली symmetry axis किसी भी principal axis से मेल नहीं खाता, उसमें यह नहीं मिलता, और फिर भी चुपचाप सबसे अच्छा लौटाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

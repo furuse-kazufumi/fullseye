@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_area(mesh) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_area(mesh) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;mesh_area&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>triangle mesh का <b>surface area</b> (सभी triangles के area का योग)। → float।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>面積 = Σ 0.5·|cross(v1−v0, v2−v0)|。頂点数に定数を掛ける素朴な近似ではなく、実際の面の大きさを積算するので、メッシュのスケール・形状に正しく追随する。</p>
+<p>area = Σ 0.5·|cross(v1−v0, v2−v0)|। यह vertex count को किसी constant से गुणा करने वाला सरल approximation नहीं है, बल्कि असली faces के आकार को जोड़ता है, इसलिए mesh के scale और shape के साथ सही ढंग से चलता है।</p>
 <p>Args:</p>
-<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>mesh: (vertices (N,3), faces (M,3)) का tuple।</p>
 <p>Returns:</p>
-<p>表面積(非負の float)。</p>
+<p>surface area (non-negative float)।</p>
 <p>Raises:</p>
-<p>ValueError: mesh が (vertices, faces) の 2 要素でない、形状不正、非有限座標、非整数・</p>
-<p>範囲外の index、空、または 3 頂点のどれかが同じ index の三角形があるとき。</p>
-<p>注意: <code style="color:#22d3bf">face_normals</code> と違い、座標がほぼ一直線に並んだ退化三角形(面積 0)は拒否せず 0 として加算する。重複面や表裏 2 枚張りの面はそのまま 2 回数えられる。単位は座標の単位の 2 乗。</p>
+<p>ValueError: जब mesh (vertices, faces) के 2 elements न हो, shape अमान्य हो, coordinates non-finite हों, index non-integer या</p>
+<p>सीमा से बाहर हो, mesh खाली हो, या कोई ऐसा triangle हो जिसके 3 vertices में से कोई एक ही index वाले हों।</p>
+<p>ध्यान दें: <code style="color:#22d3bf">face_normals</code> के विपरीत, लगभग एक सीधी रेखा पर पड़े coordinates वाला degenerate triangle (area 0) reject नहीं होता, बल्कि 0 के रूप में जोड़ा जाता है। duplicate faces और आगे-पीछे 2 परतों वाले faces जैसे हैं वैसे 2 बार गिने जाते हैं। unit coordinate unit का वर्ग (घात 2) है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

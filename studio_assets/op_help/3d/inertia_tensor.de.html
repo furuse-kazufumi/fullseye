@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import moments3d; moments3d.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;inertia_tensor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Trägheitstensor (3,3) einer Punktmenge (aus den zentralen zweiten Momenten; gleiche Masse, Gesamtmasse 1).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²), I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)。共分散 C を使うと I = tr(C)·E₃ − C(E₃ は単位行列)と等価。対称・半正定値。重心中心化のため並進不変。</p>
+<p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²), I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz). Mit der Kovarianz C äquivalent zu I = tr(C)·E₃ − C (E₃ ist die Einheitsmatrix). Symmetrisch und positiv semidefinit. Durch die Schwerpunktzentrierung translationsinvariant.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (3, 3)</p>
-<p>対称な慣性テンソル。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 単位は長さ²(質量 1 の等質量点とみなすので密度は入らない)。点群を回転で回すと <code style="color:#22d3bf">R I Rᵀ</code> に写り、固有値(<code style="color:#22d3bf">principal_moments</code>)が回転不変量、固有ベクトルが主軸(<code style="color:#22d3bf">moment_axes</code>)。</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1(1 点なら零行列)。形状不正・非有限は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 共分散 C とは <code style="color:#22d3bf">I = tr(C)·E₃ - C</code> の関係で、C と I の固有ベクトルは同じ、固有値は <code style="color:#22d3bf">tr(C) - c_i</code>。</p>
-<p style="margin:2px 0 2px 12px">• 実体(体積)のモーメントではなく <b>サンプル点</b> のモーメントなので、同じ形でも点密度の偏りで値が変わる。密度を均すなら前段で <code style="color:#22d3bf">voxel_grid_downsample</code>。決定論的。</p>
+<p>Symmetrischer Trägheitstensor.</p>
+<p>Ergänzungen:</p>
+<p style="margin:2px 0 2px 12px">• Einheit ist Länge² (Punkte gelten als gleiche Massen der Masse 1, daher geht keine Dichte ein). Dreht man die Punktwolke, geht er in <code style="color:#22d3bf">R I Rᵀ</code> über; die Eigenwerte (<code style="color:#22d3bf">principal_moments</code>) sind die Rotationsinvarianten, die Eigenvektoren die Hauptachsen (<code style="color:#22d3bf">moment_axes</code>).</p>
+<p style="margin:2px 0 2px 12px">• Eingabe ist (N,3), N &gt;= 1 (bei 1 Punkt die Nullmatrix). Ungültige Form oder nicht endliche Werte lösen <code style="color:#22d3bf">ValueError</code> aus.</p>
+<p style="margin:2px 0 2px 12px">• Beziehung zur Kovarianz C: <code style="color:#22d3bf">I = tr(C)·E₃ - C</code>; C und I haben dieselben Eigenvektoren, die Eigenwerte sind <code style="color:#22d3bf">tr(C) - c_i</code>.</p>
+<p style="margin:2px 0 2px 12px">• Dies sind Momente der <b>Abtastpunkte</b>, nicht des Körpers (Volumens); daher ändern sich die Werte selbst bei gleicher Form mit dem Bias der Punktdichte. Zum Ausgleichen der Dichte vorab <code style="color:#22d3bf">voxel_grid_downsample</code>. Deterministisch.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

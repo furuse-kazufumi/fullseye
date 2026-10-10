@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_poly_surface(x, y, z, degree=2)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.fit_poly_surface(x, y, z, degree=2)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fit_poly_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>散布 (x,y,z) → z=f(x,y) 多项式最小二乘。返回 model(coef/powers/degree/rms/pv)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>基底 <code style="color:#22d3bf">{x^i·y^j : i + j &lt;= degree}</code>(項数 <code style="color:#22d3bf">(degree+1)(degree+2)/2</code>。degree=1 で 3 項の平面、2 で 6 項の 2 次曲面)を <code style="color:#22d3bf">lstsq</code> で当てる。<code style="color:#22d3bf">x, y, z</code> は同じ要素数なら形は問わない(内部で ravel。格子なら <code style="color:#22d3bf">np.mgrid</code> の出力をそのまま)。返り値 dict: <code style="color:#22d3bf">coef</code> (T,) 係数、<code style="color:#22d3bf">powers</code> は各係数の <code style="color:#22d3bf">(i, j)</code>(項 <code style="color:#22d3bf">x**i * y**j</code>)、<code style="color:#22d3bf">degree</code>、<code style="color:#22d3bf">rms</code> は残差 RMS、<code style="color:#22d3bf">pv</code> は残差の peak-to-valley(max − min)。単位は z。</p>
-<p style="margin:2px 0 2px 12px">• 点数が項数より少ないと最小ノルム解が黙って返る。x, y の桁が大きいと高次で条件が悪くなる</p>
-<p>(座標を中心化・正規化してから)。NaN の検証は無い。</p>
-<p>後段: <code style="color:#22d3bf">eval_poly_surface(model, x, y)</code> で任意点を評価。格子の高さ場なら <code style="color:#22d3bf">surface_form_error</code> / <code style="color:#22d3bf">background_flatten</code> がこれを内部で呼ぶ。</p>
+<p>用 <code style="color:#22d3bf">lstsq</code> 拟合基 <code style="color:#22d3bf">{x^i·y^j : i + j &lt;= degree}</code>(项数 <code style="color:#22d3bf">(degree+1)(degree+2)/2</code>。degree=1 为 3 项的平面, 2 为 6 项的 2 次曲面)。<code style="color:#22d3bf">x, y, z</code> 只要元素数相同,形状不限(内部 ravel。网格可直接传入 <code style="color:#22d3bf">np.mgrid</code> 的输出)。返回 dict: <code style="color:#22d3bf">coef</code> (T,) 系数,<code style="color:#22d3bf">powers</code> 为各系数的 <code style="color:#22d3bf">(i, j)</code>(项 <code style="color:#22d3bf">x**i * y**j</code>), <code style="color:#22d3bf">degree</code>,<code style="color:#22d3bf">rms</code> 为残差 RMS,<code style="color:#22d3bf">pv</code> 为残差的 peak-to-valley(max − min)。单位同 z。</p>
+<p style="margin:2px 0 2px 12px">• 点数少于项数时会静默返回最小范数解。x, y 的数量级大时高次会病态</p>
+<p>(先将坐标中心化、归一化)。不检查 NaN。</p>
+<p>后续: 用 <code style="color:#22d3bf">eval_poly_surface(model, x, y)</code> 在任意点求值。网格上的高度场由 <code style="color:#22d3bf">surface_form_error</code> / <code style="color:#22d3bf">background_flatten</code> 在内部调用本函数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

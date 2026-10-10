@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_invariants(points) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import moments3d; moments3d.moment_invariants(points) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;moment_invariants&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평행이동+회전+스케일 불변인 형상 특징 벡터(Sadjadi–Hall 류 + 고차 반경 분포).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>★入力は <b><code style="color:#22d3bf">(N,3)</code> の点群</b>。2-D の<b>領域</b>(画像)から同じ趣旨の量が欲しいときは、この op ではなく HALCON 流の <code style="color:#22d3bf">moments_region_2nd_invar</code> / <code style="color:#22d3bf">moments_region_central_invar</code> / <code style="color:#22d3bf">moments_region_3rd_invar</code>(Hu モーメント) を使う。名前が似ているので取り違えやすく、<code style="color:#22d3bf">(H,W)</code> を渡すと「points must be a point cloud of shape (N,3)」で落ちる(2026-09-09、<code style="color:#22d3bf">poc_rotation_invariance_audit</code> を書くときに実際に踏んだ)。</p>
-<p>処方:</p>
-<p style="margin:2px 0 2px 12px">1. 重心中心化(並進を除去)。</p>
-<p style="margin:2px 0 2px 12px">2. RMS 半径 R = sqrt(mean‖p-c‖²) で割ってスケール正規化(R→1)。これで正規化後の中心 2 次モーメントは一様スケール s に依らない。</p>
-<p style="margin:2px 0 2px 12px">3. 正規化共分散 C̃ の主不変量(特性多項式の係数)を並べる:</p>
-<p>λ̂1 &gt;= λ̂2 &gt;= λ̂3   … C̃ の固有値(= 正規化した主 2 次モーメント、</p>
-<p>Σλ̂ = 1、回転不変)</p>
-<p>J2 = λ̂1λ̂2 + λ̂1λ̂3 + λ̂2λ̂3   (Sadjadi–Hall 第 2 不変量 = 2×2 主小行列和)</p>
-<p>J3 = λ̂1λ̂2λ̂3               (第 3 不変量 = det C̃)</p>
-<p style="margin:2px 0 2px 12px">4. 正規化 4 次半径モーメント m4 = mean(‖p̂-c‖⁴)(= mean(r⁴)/mean(r²)²)。r = 重心からの距離なので回転+並進不変、RMS 正規化済でスケール不変。</p>
-<p>返すベクトルは [λ̂1, λ̂2, λ̂3, J2, J3, m4] (長さ 6)。第 1 不変量 J1 = Σλ̂ は正規化で常に 1 になり識別に寄与しないため省く。J2,J3 は固有値の対称式(冗長)だが、Sadjadi–Hall の代数不変量シグネチャとの互換のため併記する。</p>
-<p>識別性の内訳(honest):</p>
-<p style="margin:2px 0 2px 12px">• λ̂1,λ̂2,λ̂3(と対称式 J2,J3)は <b>2 次モーメント(共分散固有値)のみ</b> に由来し、独立自由度は主軸アスペクト比の 2 つだけ。これだけでは 2 次が等方な形状(solid cube と solid sphere は共に λ̂≈(1/3,1/3,1/3))を区別できない。</p>
-<p style="margin:2px 0 2px 12px">• m4 は <b>半径分布の 4 次モーメント</b> で、2 次では潰れる高次の形状差を捉える。一様 solid sphere は m4=75/63≈1.190、一様 solid cube は m4=19/15≈1.267 と異なるため、両者を分離できる。</p>
-<p>球なら概ね (1/3, 1/3, 1/3, 1/3, 1/27, 1.190)、細長い棒なら (≈1, ≈0, ≈0, ≈0, ≈0, 大) に近づく。</p>
+<p>★입력은 <b><code style="color:#22d3bf">(N,3)</code> 의 점군</b>. 2-D 의 <b>영역</b>(영상)에서 같은 취지의 양이 필요할때는 이 op 가 아니라 HALCON 식의 <code style="color:#22d3bf">moments_region_2nd_invar</code> / <code style="color:#22d3bf">moments_region_central_invar</code> / <code style="color:#22d3bf">moments_region_3rd_invar</code>(Hu 모멘트) 를 쓴다. 이름이 비슷해서 혼동하기 쉬우며, <code style="color:#22d3bf">(H,W)</code> 를 넘기면 &quot;points must be a point cloud of shape (N,3)&quot; 로 실패한다(2026-09-09, <code style="color:#22d3bf">poc_rotation_invariance_audit</code> 을 작성할 때 실제로 밟았다).</p>
+<p>처방:</p>
+<p style="margin:2px 0 2px 12px">1. 무게중심 중심화(병진 제거).</p>
+<p style="margin:2px 0 2px 12px">2. RMS 반지름 R = sqrt(mean‖p-c‖²) 로 나누어 스케일 정규화(R→1). 이로써 정규화 후의 중심 2 차 모멘트는 균일 스케일 s 에 의존하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">3. 정규화 공분산 C̃ 의 주 불변량(특성 다항식의 계수)을 늘어놓는다:</p>
+<p>λ̂1 &gt;= λ̂2 &gt;= λ̂3   … C̃ 의 고윳값(= 정규화한 주 2 차 모멘트,</p>
+<p>Σλ̂ = 1, 회전 불변)</p>
+<p>J2 = λ̂1λ̂2 + λ̂1λ̂3 + λ̂2λ̂3   (Sadjadi–Hall 제 2 불변량 = 2×2 주소행렬식의 합)</p>
+<p>J3 = λ̂1λ̂2λ̂3               (제 3 불변량 = det C̃)</p>
+<p style="margin:2px 0 2px 12px">4. 정규화 4 차 반지름 모멘트 m4 = mean(‖p̂-c‖⁴)(= mean(r⁴)/mean(r²)²). r = 무게중심으로부터의 거리이므로 회전+병진 불변, RMS 정규화가 끝났으므로 스케일 불변.</p>
+<p>반환하는 벡터는 [λ̂1, λ̂2, λ̂3, J2, J3, m4] (길이 6). 제 1 불변량 J1 = Σλ̂ 는 정규화로 항상 1 이 되어 식별에 기여하지 않으므로 생략한다. J2,J3 는 고윳값의 대칭식(중복)이지만, Sadjadi–Hall 의 대수 불변량 시그니처와의호환을 위해 함께 적는다.</p>
+<p>식별성의 내역(honest):</p>
+<p style="margin:2px 0 2px 12px">• λ̂1,λ̂2,λ̂3(와 대칭식 J2,J3)는 <b>2 차 모멘트(공분산 고윳값)만</b> 에유래하며, 독립 자유도는 주축 종횡비 2 개뿐이다. 이것만으로는 2 차가등방인 형상(solid cube 와 solid sphere 는 둘 다 λ̂≈(1/3,1/3,1/3))을 구별할 수 없다.</p>
+<p style="margin:2px 0 2px 12px">• m4 는 <b>반지름 분포의 4 차 모멘트</b> 로, 2 차에서는 뭉개지는 고차의 형상 차이를포착한다. 균일 solid sphere 는 m4=75/63≈1.190, 균일 solid cube 는 m4=19/15≈1.267 로 다르므로 둘을 분리할 수 있다.</p>
+<p>구라면 대략 (1/3, 1/3, 1/3, 1/3, 1/27, 1.190), 가늘고 긴 막대라면 (≈1, ≈0, ≈0, ≈0, ≈0, 큼) 에 가까워진다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (6,)</p>
-<p>並進・回転・スケール不変な特徴ベクトル。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 2。形状不正・非有限・全点一致(中心化後の広がりが 0)は <code style="color:#22d3bf">ValueError</code>。縮退判定はスケール相対(<code style="color:#22d3bf">rms &lt;= 1e-12 × max|centered|</code>)なので、座標が極小なだけの点群は弾かない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は float64 (6,)。<code style="color:#22d3bf">λ̂</code> は 0 でクリップ済み、<code style="color:#22d3bf">Σλ̂ = 1</code>。</p>
-<p style="margin:2px 0 2px 12px">• 不変なのは並進・回転・一様スケールのみ。鏡映(反転)にも不変(固有値と半径分布は反転で変わらない)ので鏡像体は区別できない。非一様スケールや点密度の偏り(サンプリングの粗密)は値を変える。</p>
-<p style="margin:2px 0 2px 12px">• 点密度に敏感な用途では前段で <code style="color:#22d3bf">voxel_grid_downsample</code> で密度を均す。比較は <code style="color:#22d3bf">shape_distance</code>(台帳 op、同じ長さの記述子ベクトル同士の距離)。</p>
+<p>병진·회전·스케일 불변인 특징 벡터.</p>
+<p>보충:</p>
+<p style="margin:2px 0 2px 12px">• 입력은 (N,3), N &gt;= 2. 형상 부정·비유한·전체 점 일치(중심화 후의 퍼짐이 0)는 <code style="color:#22d3bf">ValueError</code>. 축퇴 판정은 스케일 상대(<code style="color:#22d3bf">rms &lt;= 1e-12 × max|centered|</code>)이므로, 좌표가 극소할 뿐인 점군은 거부하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값은 float64 (6,). <code style="color:#22d3bf">λ̂</code> 는 0 에서 클립 완료, <code style="color:#22d3bf">Σλ̂ = 1</code>.</p>
+<p style="margin:2px 0 2px 12px">• 불변인 것은 병진·회전·균일 스케일뿐이다. 거울상(반전)에도 불변(고윳값과 반지름 분포는 반전으로 바뀌지 않음)이므로 거울상체는 구별할 수 없다. 비균일 스케일이나 점 밀도의 치우침(샘플링의 조밀)은 값을 바꾼다.</p>
+<p style="margin:2px 0 2px 12px">• 점 밀도에 민감한 용도에서는 전단에서 <code style="color:#22d3bf">voxel_grid_downsample</code> 로 밀도를 고르게 한다. 비교는 <code style="color:#22d3bf">shape_distance</code>(대장 op, 같은 길이의 기술자 벡터끼리의 거리).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fundamental_8point(pts1, pts2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import twoview; twoview.fundamental_8point(pts1, pts2)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fundamental_8point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normalised 8-point method से fundamental matrix F का अनुमान (rank-2 लागू)। → F (3,3)। कम से कम 8 points आवश्यक।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Raises ValueError: 点が (N,2) でない/非有限/8 点未満/対応数不一致。</p>
-<p>手順: 両画像の点を Hartley 正規化(重心を原点、平均距離 √2)→ 9 列の係数行列の最小特異ベクトルを F とする → 特異値の 3 番目を 0 にして rank-2 に強制 → <code style="color:#22d3bf">T2ᵀ F T1</code> で逆正規化 → <code style="color:#22d3bf">F[2,2]</code> で割って正規化(それがほぼ 0 なら Frobenius ノルムで割る)。</p>
-<p style="margin:2px 0 2px 12px">• 対応点は画素座標 (x, y) の (N,2)。規約は <code style="color:#22d3bf">x2ᵀ F x1 = 0</code>(x1 が pts1、x2 が pts2)。</p>
-<p style="margin:2px 0 2px 12px">• F はスケール不定(定数倍しても同じ幾何)で符号も一意ではない。</p>
-<p style="margin:2px 0 2px 12px">• 全点を等しく使う最小二乗で、外れ値には無防備。誤対応が混じる対応は本 op の前に除くか、<code style="color:#22d3bf">sampson_distance</code> で残差を見て選別してから再フィットする。</p>
-<p style="margin:2px 0 2px 12px">• 平面シーンや純回転では対応点が 1 つのホモグラフィで説明でき F は一意に決まらない(それでも何かは返る)。この退化は <code style="color:#22d3bf">recover_pose</code> が入口で検出して拒否する。</p>
-<p style="margin:2px 0 2px 12px">• 決定論的。後段は <code style="color:#22d3bf">essential_8point</code> / <code style="color:#22d3bf">recover_pose</code> / <code style="color:#22d3bf">sampson_distance</code>。</p>
+<p>Raises ValueError: points (N,2) न हों / non-finite हों / 8 points से कम हों / correspondence की संख्या मेल न खाए।</p>
+<p>प्रक्रिया: दोनों images के points का Hartley normalisation (centroid को origin पर, औसत दूरी √2) → 9 columns वाले coefficient matrix के सबसे छोटे singular vector को F मानना → तीसरे (3) singular value को 0 करके rank-2 पर मजबूर करना → <code style="color:#22d3bf">T2ᵀ F T1</code> से denormalise → <code style="color:#22d3bf">F[2,2]</code> से भाग देकर normalise (यदि वह लगभग 0 हो तो Frobenius norm से भाग)।</p>
+<p style="margin:2px 0 2px 12px">• correspondence points, pixel coordinates (x, y) का (N,2) हैं। परिपाटी <code style="color:#22d3bf">x2ᵀ F x1 = 0</code> है (x1 pts1 है, x2 pts2 है)।</p>
+<p style="margin:2px 0 2px 12px">• F का scale अनिश्चित है (किसी स्थिरांक से गुणा करने पर भी वही geometry) और उसका चिह्न भी अद्वितीय नहीं है।</p>
+<p style="margin:2px 0 2px 12px">• यह सभी points को बराबर उपयोग करने वाला least squares है, outliers के सामने असुरक्षित। गलत correspondence वाले जोड़े इस op से पहले हटाएँ, या <code style="color:#22d3bf">sampson_distance</code> से residual देखकर छाँटें और फिर से fit करें।</p>
+<p style="margin:2px 0 2px 12px">• planar scene या pure rotation में correspondence points को 1 homography से समझाया जा सकता है और F अद्वितीय रूप से तय नहीं होता (फिर भी कुछ न कुछ लौटता है)। इस degeneracy को <code style="color:#22d3bf">recover_pose</code> प्रवेश पर पकड़कर reject करता है।</p>
+<p style="margin:2px 0 2px 12px">• deterministic। आगे के चरण <code style="color:#22d3bf">essential_8point</code> / <code style="color:#22d3bf">recover_pose</code> / <code style="color:#22d3bf">sampson_distance</code> हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

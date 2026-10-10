@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fundamental_8point(pts1, pts2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import twoview; twoview.fundamental_8point(pts1, pts2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fundamental_8point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정규화 8 점법으로 기본 행렬 F 를 추정(rank-2 강제). → F (3,3). 8 점 이상 필요.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Raises ValueError: 点が (N,2) でない/非有限/8 点未満/対応数不一致。</p>
-<p>手順: 両画像の点を Hartley 正規化(重心を原点、平均距離 √2)→ 9 列の係数行列の最小特異ベクトルを F とする → 特異値の 3 番目を 0 にして rank-2 に強制 → <code style="color:#22d3bf">T2ᵀ F T1</code> で逆正規化 → <code style="color:#22d3bf">F[2,2]</code> で割って正規化(それがほぼ 0 なら Frobenius ノルムで割る)。</p>
-<p style="margin:2px 0 2px 12px">• 対応点は画素座標 (x, y) の (N,2)。規約は <code style="color:#22d3bf">x2ᵀ F x1 = 0</code>(x1 が pts1、x2 が pts2)。</p>
-<p style="margin:2px 0 2px 12px">• F はスケール不定(定数倍しても同じ幾何)で符号も一意ではない。</p>
-<p style="margin:2px 0 2px 12px">• 全点を等しく使う最小二乗で、外れ値には無防備。誤対応が混じる対応は本 op の前に除くか、<code style="color:#22d3bf">sampson_distance</code> で残差を見て選別してから再フィットする。</p>
-<p style="margin:2px 0 2px 12px">• 平面シーンや純回転では対応点が 1 つのホモグラフィで説明でき F は一意に決まらない(それでも何かは返る)。この退化は <code style="color:#22d3bf">recover_pose</code> が入口で検出して拒否する。</p>
-<p style="margin:2px 0 2px 12px">• 決定論的。後段は <code style="color:#22d3bf">essential_8point</code> / <code style="color:#22d3bf">recover_pose</code> / <code style="color:#22d3bf">sampson_distance</code>。</p>
+<p>Raises ValueError: 점이 (N,2)가 아님 / 비유한 / 8점 미만 / 대응 수 불일치.</p>
+<p>절차: 두 영상의 점을 Hartley 정규화(무게중심을 원점, 평균 거리 √2) → 9열 계수 행렬의 최소 특이 벡터를 F로 한다 → 특이값의 3번째를 0으로 하여 rank-2로 강제 → <code style="color:#22d3bf">T2ᵀ F T1</code>로 역정규화 → <code style="color:#22d3bf">F[2,2]</code>로 나눠 정규화(그것이 거의 0이면 Frobenius 노름으로 나눈다).</p>
+<p style="margin:2px 0 2px 12px">• 대응점은 화소 좌표 (x, y)의 (N,2). 규약은 <code style="color:#22d3bf">x2ᵀ F x1 = 0</code>(x1이 pts1, x2가 pts2).</p>
+<p style="margin:2px 0 2px 12px">• F는 스케일이 부정(상수배해도 같은 기하)이고 부호도 유일하지 않다.</p>
+<p style="margin:2px 0 2px 12px">• 모든 점을 동등하게 쓰는 최소제곱으로, 이상값에는 무방비. 오대응이 섞인 대응은 본 op 전에 제거하거나, <code style="color:#22d3bf">sampson_distance</code>로 잔차를 보고 선별한 뒤 다시 피팅한다.</p>
+<p style="margin:2px 0 2px 12px">• 평면 장면이나 순수 회전에서는 대응점을 1개의 호모그래피로 설명할 수 있어 F가 유일하게 정해지지 않는다(그래도 무언가는 반환된다). 이 퇴화는 <code style="color:#22d3bf">recover_pose</code>가 입구에서 검출해 거부한다.</p>
+<p style="margin:2px 0 2px 12px">• 결정론적. 후단은 <code style="color:#22d3bf">essential_8point</code> / <code style="color:#22d3bf">recover_pose</code> / <code style="color:#22d3bf">sampson_distance</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

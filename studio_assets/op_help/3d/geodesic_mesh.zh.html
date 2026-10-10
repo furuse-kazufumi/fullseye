@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</code>(要直接调用实现,<code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;geodesic_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在三角网格的边图上用 Dijkstra 求从 source 到各顶点的测地距离。→ (V,) float。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各三角形の 3 辺 (0,1),(1,2),(2,0) を無向辺として集め、(min,max) で一意化してから辺長 = 両端頂点の Euclid 距離を重みにした疎グラフを作り、<code style="color:#22d3bf">dijkstra(directed=False)</code> で source からの最短路長を返す。<code style="color:#22d3bf">d[source] = 0</code>、source と辺で繋がらない頂点は <code style="color:#22d3bf">inf</code>。単位は頂点座標の単位。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">vertices</code>: (V,3) 頂点座標(float64 に変換)。<code style="color:#22d3bf">faces</code>: (M,3) 頂点添字(int に変換)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>: 始点頂点の添字。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">faces</code> が空のときは全頂点 <code style="color:#22d3bf">inf</code>(source が範囲内ならそこだけ 0)を返し、例外は出さない。</p>
-<p>実装上の要点: <code style="color:#22d3bf">csr_matrix</code> は同じ (i,j) を重複して渡すと重みを黙って加算するため、重複面・非多様体・巻き順が不揃いなメッシュでも距離が膨らまないよう辺を一意化している。退化辺(i==j)は捨てる。距離は辺に沿った折れ線長なので、粗いメッシュでは真の測地距離より長め(辺の走り方に依存する異方性)になる。<code style="color:#22d3bf">voxel_to_mesh</code> や <code style="color:#22d3bf">convex_hull</code> が返す (verts, faces) をそのまま渡せる。</p>
+<p>将每个三角形的 3 条边 (0,1),(1,2),(2,0) 收集为无向边,按 (min,max) 去重后,以边长 = 两端顶点的 Euclid 距离为权重构建稀疏图,用 <code style="color:#22d3bf">dijkstra(directed=False)</code> 返回从 source 出发的最短路径长度。<code style="color:#22d3bf">d[source] = 0</code>,与 source 没有边相连的顶点为 <code style="color:#22d3bf">inf</code>。单位为顶点坐标的单位。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">vertices</code>: (V,3) 顶点坐标(转换为 float64)。<code style="color:#22d3bf">faces</code>: (M,3) 顶点索引(转换为 int)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>: 起点顶点的索引。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">faces</code> 为空时所有顶点返回 <code style="color:#22d3bf">inf</code>(若 source 在范围内则仅该处为 0),不抛出异常。</p>
+<p>实现要点: <code style="color:#22d3bf">csr_matrix</code> 在重复传入相同 (i,j) 时会悄悄把权重相加,因此为了让重复面、非流形、绕序不一致的网格的距离也不膨胀,对边做了去重。退化边(i==j)被丢弃。距离是沿边的折线长度,因此在粗网格上比真实测地距离偏长(依赖于边的走向的各向异性)。<code style="color:#22d3bf">voxel_to_mesh</code> 或 <code style="color:#22d3bf">convex_hull</code> 返回的 (verts, faces) 可以直接传入。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

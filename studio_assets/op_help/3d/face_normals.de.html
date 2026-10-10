@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mesh_props; mesh_props.face_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;face_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die <b>Flächennormalen</b> eines Dreiecksnetzes (die Einheitsnormale jedes Dreiecks). → (M,3).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>法線 = 正規化した cross(v1−v0, v2−v0)。向きは <b>faces の巻き順(winding)</b> から一貫して決まる(PCA のような符号未定さは無い)。閉じたメッシュを外向き巻きで作れば全法線が外向き。</p>
+<p>Normale = normierte cross(v1−v0, v2−v0). Die Orientierung wird konsistent durch <b>die Umlaufreihenfolge (winding) der faces</b> bestimmt (keine Vorzeichenmehrdeutigkeit wie bei PCA). Wird ein geschlossenes Mesh mit Außen-Umlauf gebaut, zeigen alle Normalen nach außen.</p>
 <p>Args:</p>
-<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>mesh: Tupel aus (vertices (N,3), faces (M,3)).</p>
 <p>Returns:</p>
-<p>(M,3) の単位面法線。</p>
+<p>(M,3) Einheits-Flächennormalen.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正・範囲外 index、または退化(ゼロ面積)三角形で法線が定義できないとき。</p>
+<p>ValueError: ungültige Form, Index außerhalb des Bereichs oder wenn ein entartetes Dreieck (Fläche null) keine definierte Normale hat.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

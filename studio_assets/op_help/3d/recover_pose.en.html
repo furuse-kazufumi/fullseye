@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code> (to call the implementation directly, <code style="color:#22d3bf">import twoview; twoview.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;recover_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Recover the relative pose (R,t) and the 3-D structure from correspondences and K (disambiguated by cheirality). → (R, t_unit, points3d).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>t はスケール不定なので単位ベクトル。points3d は cam1 座標系(|t|=1 に対応するスケール)。</p>
-<p>fail-closed: 平面(共平面 3D)/純回転シーンは本質行列分解の<b>退化配置</b>で、Sampson 残差 ~0 のまま並進方向を誤って返す(見かけは完璧)。そうした入力は姿勢を復元できないため ValueError で明示拒否する(ホモグラフィ分解を使うこと)。<code style="color:#22d3bf">planar_tol</code> はスケール不変な平面度しきい値(<code style="color:#22d3bf">_planar_degeneracy_ratio</code> の戻り値がこれ未満なら退化と判定)。</p>
-<p>手順:</p>
-<p style="margin:2px 0 2px 12px">• 入口検査(8 点以上、点数一致、(N,2) かつ有限)。</p>
-<p style="margin:2px 0 2px 12px">• 平面度: 正規化 DLT でホモグラフィ H を当て、対称転送残差の中央値を両画像の点の広がり(重心からの平均距離の和)で割った比を出す。これが <code style="color:#22d3bf">planar_tol</code>(既定 1e-2)未満なら <code style="color:#22d3bf">ValueError</code>。H が特異なら比 0 として同じく拒否。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">essential_8point</code> → 4 候補 <code style="color:#22d3bf">(R, ±t)</code> へ分解 → 各候補で <code style="color:#22d3bf">triangulate</code> し、両カメラで深度 &gt; 0 の点数が最大の候補を採る(同数なら先の候補)。</p>
-<p>返り値: <code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,) 単位ベクトル、<code style="color:#22d3bf">points3d</code> (N,3)。規約は cam1 = K1[I|0]、cam2 = K2[R|t] で <code style="color:#22d3bf">X2 = R X1 + t</code>。<code style="color:#22d3bf">points3d</code> は cam1 座標系で |t|=1 のスケール。視線が平行な対応は NaN 行になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K2</code> 省略時は <code style="color:#22d3bf">K1</code> を両画像に使う。</p>
-<p style="margin:2px 0 2px 12px">• 外れ値に無防備(RANSAC は行わない)。前段で誤対応を除く。</p>
-<p style="margin:2px 0 2px 12px">• 決定論的。GT 検証は <code style="color:#22d3bf">pose_error</code>、残差は <code style="color:#22d3bf">sampson_distance</code>。</p>
+<p>t is defined only up to scale, so it is a unit vector. points3d is in the cam1 frame (at the scale corresponding to |t|=1).</p>
+<p>fail-closed: planar (coplanar 3D) / pure-rotation scenes are <b>degenerate configurations</b> of essential-matrix decomposition: the Sampson residual stays ~0 while a wrong translation direction is returned (it looks perfect). Since the pose cannot be recovered from such input, it is rejected explicitly with ValueError (use homography decomposition). <code style="color:#22d3bf">planar_tol</code> is a scale-invariant planarity threshold (degenerate if the return value of <code style="color:#22d3bf">_planar_degeneracy_ratio</code> is below it).</p>
+<p>Procedure:</p>
+<p style="margin:2px 0 2px 12px">• Entry check (at least 8 points, matching point counts, (N,2) and finite).</p>
+<p style="margin:2px 0 2px 12px">• Planarity: fit a homography H by normalised DLT, and compute the ratio of the median symmetric transfer residual to the spread of the points in both images (sum of the mean distances from the centroids). If it is below <code style="color:#22d3bf">planar_tol</code> (default 1e-2), <code style="color:#22d3bf">ValueError</code>. If H is singular, the ratio is taken as 0 and likewise rejected.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">essential_8point</code> → decompose into 4 candidates <code style="color:#22d3bf">(R, ±t)</code> → <code style="color:#22d3bf">triangulate</code> for each candidate and take the candidate with the most points at depth &gt; 0 in both cameras (on a tie, the earlier candidate).</p>
+<p>Returns: <code style="color:#22d3bf">R</code> (3,3), <code style="color:#22d3bf">t</code> (3,) unit vector, <code style="color:#22d3bf">points3d</code> (N,3). Convention: cam1 = K1[I|0], cam2 = K2[R|t], <code style="color:#22d3bf">X2 = R X1 + t</code>. <code style="color:#22d3bf">points3d</code> is in the cam1 frame at the scale |t|=1. Correspondences with parallel lines of sight become NaN rows.</p>
+<p style="margin:2px 0 2px 12px">• If <code style="color:#22d3bf">K2</code> is omitted, <code style="color:#22d3bf">K1</code> is used for both images.</p>
+<p style="margin:2px 0 2px 12px">• Defenceless against outliers (no RANSAC). Remove mismatches upstream.</p>
+<p style="margin:2px 0 2px 12px">• Deterministic. GT verification with <code style="color:#22d3bf">pose_error</code>, residuals with <code style="color:#22d3bf">sampson_distance</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

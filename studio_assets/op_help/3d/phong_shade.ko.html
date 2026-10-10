@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phong_shade(normals, view=(0.0, 0.0, 1.0), light=(0.0, 0.0, 1.0), ambient: &#x27;float&#x27; = 0.1, diffuse: &#x27;float&#x27; = 0.8, specular: &#x27;float&#x27; = 0.5, shininess: &#x27;float&#x27; = 32.0, clip: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import render_shade; render_shade.phong_shade(normals, view=(0.0, 0.0, 1.0), light=(0.0, 0.0, 1.0), ambient: &#x27;float&#x27; = 0.1, diffuse: &#x27;float&#x27; = 0.8, specular: &#x27;float&#x27; = 0.5, shininess: &#x27;float&#x27; = 32.0, clip: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;phong_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Phong 반사 모델로 법선 맵에 음영을 넣습니다(환경광 + 확산 + <b>정반사</b>). → <code style="color:#22d3bf">(H, W)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各前景画素で単位法線 <code style="color:#22d3bf">N</code> に対し、光源方向 <code style="color:#22d3bf">L</code> を <code style="color:#22d3bf">N</code> で鏡面反射した理想反射方向 <code style="color:#22d3bf">R = 2(N·L)N − L</code> を求め、視線 <code style="color:#22d3bf">V</code> との一致で鏡面項を作る::</p>
+<p>각 전경 화소에서 단위 법선 <code style="color:#22d3bf">N</code>에 대해 광원 방향 <code style="color:#22d3bf">L</code>을 <code style="color:#22d3bf">N</code>으로 경면 반사한 이상 반사 방향 <code style="color:#22d3bf">R = 2(N·L)N − L</code>을 구하고, 시선 <code style="color:#22d3bf">V</code>와의 일치로 경면 항을 만든다::</p>
 <p>I = ambient + diffuse * max(N·L, 0) + specular * max(R·V, 0)^shininess</p>
-<p>鏡面項は光の当たる面(<code style="color:#22d3bf">N·L &gt; 0</code>)にのみ乗る。<code style="color:#22d3bf">render_lambertian</code> に鏡面ローブを足したもので、ハイライトのピークは拡散最大(<code style="color:#22d3bf">N=L</code>)ではなく <b>半角方向</b> <code style="color:#22d3bf">N = normalize(L+V)</code> に立つ(このとき <code style="color:#22d3bf">R=V</code> で <code style="color:#22d3bf">R·V=1</code>)。</p>
-<p>背景(長さ 0 の法線 = <code style="color:#22d3bf">render3d.render_mesh</code> の空画素)は 0。<code style="color:#22d3bf">clip=True</code> で出力を <code style="color:#22d3bf">[0, 1]</code> にクリップ(表示向き)、<code style="color:#22d3bf">clip=False</code> で生の加算強度を返す(<code style="color:#22d3bf">argmax</code> でハイライト位置を厳密に取りたいときはこちら — 飽和で頂点が同点にならない)。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code>  : float <code style="color:#22d3bf">(H, W, 3)</code> 法線マップ(視空間、視点向き。長さ 0 = 背景)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">view</code>     : 面→視点の方向(既定 <code style="color:#22d3bf">(0,0,1)</code> = <code style="color:#22d3bf">render3d</code> の視点)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">light</code>    : 面→光源の方向。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ambient/diffuse/specular</code> : 各項の係数(有限・非負)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shininess</code>: 鏡面ローブの鋭さ(&gt; 0。大きいほど鋭い/小さいほど広い)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">clip</code>     : <code style="color:#22d3bf">[0,1]</code> にクリップするか。</p>
-<p>fail-closed: 形状不正・非有限・ゼロ長方向・非正の <code style="color:#22d3bf">shininess</code>・負係数は <code style="color:#22d3bf">ValueError</code>。</p>
+<p>경면 항은 빛이 닿는 면(<code style="color:#22d3bf">N·L &gt; 0</code>)에만 실린다. <code style="color:#22d3bf">render_lambertian</code>에 경면 로브를더한 것으로, 하이라이트의 피크는 확산 최대(<code style="color:#22d3bf">N=L</code>)가 아니라 <b>반각 방향</b> <code style="color:#22d3bf">N = normalize(L+V)</code>에 선다(이때 <code style="color:#22d3bf">R=V</code>이고 <code style="color:#22d3bf">R·V=1</code>).</p>
+<p>배경(길이 0인 법선 = <code style="color:#22d3bf">render3d.render_mesh</code>의 빈 화소)은 0. <code style="color:#22d3bf">clip=True</code>로 출력을 <code style="color:#22d3bf">[0, 1]</code>에 클립(표시용), <code style="color:#22d3bf">clip=False</code>로 생 가산 강도를 반환한다(<code style="color:#22d3bf">argmax</code>로하이라이트 위치를 엄밀하게 얻고 싶을 때는 이쪽 — 포화로 정점이 동점이 되지 않는다).</p>
+<p>인수:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code>  : float <code style="color:#22d3bf">(H, W, 3)</code> 법선 맵(시공간, 시점 방향. 길이 0 = 배경).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">view</code>     : 면→시점의 방향(기본값 <code style="color:#22d3bf">(0,0,1)</code> = <code style="color:#22d3bf">render3d</code>의 시점).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">light</code>    : 면→광원의 방향.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ambient/diffuse/specular</code> : 각 항의 계수(유한·비음수).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shininess</code>: 경면 로브의 날카로움(&gt; 0. 클수록 날카롭고/작을수록 넓다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">clip</code>     : <code style="color:#22d3bf">[0,1]</code>에 클립할지.</p>
+<p>fail-closed: 형상 부정·비유한·길이 0 방향·양이 아닌 <code style="color:#22d3bf">shininess</code>·음의 계수는 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

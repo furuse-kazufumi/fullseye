@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.relative_pose(pose_i, pose_j)</code>(要直接调用实现,<code style="color:#22d3bf">import pose_graph; pose_graph.relative_pose(pose_i, pose_j)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;relative_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>T_i⁻¹ ∘ T_j = i←j 的相对位姿。pose_* = [rvec|t] (6,)。→ (rvec_ij (3,), t_ij (3,))。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>姿勢の規約は world←body(<code style="color:#22d3bf">p_world = R p_body + t</code>)。<code style="color:#22d3bf">T_i⁻¹ = (R_iᵀ, -R_iᵀ t_i)</code> と <code style="color:#22d3bf">T_j</code> を合成して <code style="color:#22d3bf">R_ij = R_iᵀ R_j</code>、<code style="color:#22d3bf">t_ij = R_iᵀ (t_j - t_i)</code> を求め、回転は回転ベクトル(軸 × 角 [rad]、scipy の <code style="color:#22d3bf">as_rotvec</code>)に戻して返す。これは「フレーム i から見たフレーム j の姿勢」で、<code style="color:#22d3bf">optimize_pose_graph</code> に渡すエッジ <code style="color:#22d3bf">(i, j, rvec_ij, t_ij)</code> の計測値をこの規約で作ればそのまま整合する(GT 姿勢からの合成エッジ生成にも使う)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_i</code> / <code style="color:#22d3bf">pose_j</code>: 長さ 6 の <code style="color:#22d3bf">[rvec(3) | t(3)]</code>。形状検証はしない(<code style="color:#22d3bf">pose[:3]</code> / <code style="color:#22d3bf">pose[3:]</code> でスライスするだけ)。</p>
-<p style="margin:2px 0 2px 12px">• 単位は並進が座標の単位、回転が rad。返る <code style="color:#22d3bf">rvec_ij</code> の角度は [0, π] に折り畳まれる。</p>
+<p>位姿约定为 world←body(<code style="color:#22d3bf">p_world = R p_body + t</code>)。将 <code style="color:#22d3bf">T_i⁻¹ = (R_iᵀ, -R_iᵀ t_i)</code> 与 <code style="color:#22d3bf">T_j</code> 合成,求出 <code style="color:#22d3bf">R_ij = R_iᵀ R_j</code>、<code style="color:#22d3bf">t_ij = R_iᵀ (t_j - t_i)</code>,旋转转回旋转向量(轴 × 角 [rad],scipy 的 <code style="color:#22d3bf">as_rotvec</code>)后返回。这是“从帧 i 看到的帧 j 的位姿”, 若按此约定生成传给 <code style="color:#22d3bf">optimize_pose_graph</code> 的边 <code style="color:#22d3bf">(i, j, rvec_ij, t_ij)</code> 的测量值,即可直接保持一致(也用于从 GT 位姿生成合成边)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_i</code> / <code style="color:#22d3bf">pose_j</code>: 长度 6 的 <code style="color:#22d3bf">[rvec(3) | t(3)]</code>。不做形状校验(只用 <code style="color:#22d3bf">pose[:3]</code> / <code style="color:#22d3bf">pose[3:]</code> 切片)。</p>
+<p style="margin:2px 0 2px 12px">• 单位:平移为坐标单位,旋转为 rad。返回的 <code style="color:#22d3bf">rvec_ij</code> 的角度折叠到 [0, π]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

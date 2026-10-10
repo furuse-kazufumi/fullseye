@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device=&#x27;cpu&#x27;, reproducible=False)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device=&#x27;cpu&#x27;, reproducible=False)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;icp_point2plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用点-面 ICP(Gauss-Newton,小角近似)高精度精化刚体变换。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>粗マッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)の初期姿勢を表面点群の点-面距離最小化で締め上げる精緻化手法。各反復で src 各点の dst 最近傍を対応付け、<b>点-面残差</b> <code style="color:#22d3bf">r_i = n_i·(R·p_i + t - q_i)</code> を最小化する。R を小角近似 <code style="color:#22d3bf">R ≈ I + [ω]×</code> で線形化すると各対応のヤコビアンは <code style="color:#22d3bf">J_i = [p_i×n_i | n_i]</code>(スカラー三重積 <code style="color:#22d3bf">n·(ω×p)=ω·(p×n)</code> より)、定数項 <code style="color:#22d3bf">b_i = -n_i·(p_i - q_i)</code>。正規方程式 <code style="color:#22d3bf">(JᵀJ)x = Jᵀb</code> を 6×6 で解いて増分 <code style="color:#22d3bf">x=[ω|t]</code> を得、Rodrigues で回転に戻して累積する。点-面は接平面内の滑りを許すため、point-to-point より少ない反復で表面にタイトに収束する(Low 2004)。</p>
-<p>実測(波打つ表面 N=2025, CPU float64): 初期6°/並進0.06 を 4 反復で euclid RMSE 1.7e-16・回転誤差 0° に回復(point-to-point は 17 反復で RMSE 4e-2・回転 1.9° 停滞)。初期角 3〜20° でも 4〜5 反復で機械精度。</p>
-<p>引数:</p>
-<p>src (N,3): 動かす側の点群(粗マッチ後の初期姿勢)。</p>
-<p>dst (M,3): 参照側の点群(固定)。</p>
-<p>dst_normals (M,3): dst の単位法線(未正規化でも内部で正規化)。</p>
-<p>未知なら pointcloud.estimate_normals(dst) 等で事前推定。</p>
-<p>iters: 最大反復数。</p>
-<p>tol: RMSE 変化がこの値未満で収束打ち切り。</p>
-<p>init ((R0,t0)): 初期姿勢(粗マッチの R,t を渡す)。None なら単位。</p>
-<p>trim (float|None): [0,1) の割合。点-面残差の大きい上位を毎反復捨てる</p>
-<p>Trimmed ICP(部分重なり・外れ値に頑健)。</p>
-<p>device: &quot;cpu&quot;/&quot;cuda&quot; 等。torch device 文字列(device 非依存)。</p>
-<p>reproducible: True なら正規方程式の <code style="color:#22d3bf">JᵀJ</code>・<code style="color:#22d3bf">Jᵀb</code>(N 点の縮約)を ozakimm(Ozaki スキーム)で計算し、</p>
-<p>点-面残差・姿勢の適用は要素ごとの演算、RMSE は math.fsum にする。src の点の順・BLAS のスレッド数に依らず</p>
-<p>R・t・rmse がビット単位で同じ。既定 False は従来どおり(<code style="color:#22d3bf">J.T @ J</code>)。</p>
-<p>返り値:</p>
-<p>R (3,3), t (3,), aligned (N,3)=R·src+t, rmse(採用点の点-面 RMSE),</p>
-<p>n_iter(実反復数)。</p>
+<p>将粗匹配(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)的初始位姿通过最小化表面点云的点-面距离来收紧的精化方法。每次迭代将 src 各点与 dst 最近邻对应,最小化 <b>点-面残差</b> <code style="color:#22d3bf">r_i = n_i·(R·p_i + t - q_i)</code>。用小角近似 <code style="color:#22d3bf">R ≈ I + [ω]×</code> 将 R 线性化后,各对应的雅可比矩阵为 <code style="color:#22d3bf">J_i = [p_i×n_i | n_i]</code>(由标量三重积 <code style="color:#22d3bf">n·(ω×p)=ω·(p×n)</code> 得出), 常数项 <code style="color:#22d3bf">b_i = -n_i·(p_i - q_i)</code>。以 6×6 求解正规方程 <code style="color:#22d3bf">(JᵀJ)x = Jᵀb</code> 得到增量 <code style="color:#22d3bf">x=[ω|t]</code>,再用 Rodrigues 还原为旋转并累积。点-面允许在切平面内滑动,因此比 point-to-point 以更少的迭代紧密地收敛到表面(Low 2004)。</p>
+<p>实测(波浪状表面 N=2025,CPU float64):初始 6°/平移 0.06 经 4 次迭代恢复到 euclid RMSE 1.7e-16、旋转误差 0°(point-to-point 在 17 次迭代时以 RMSE 4e-2、旋转 1.9° 停滞)。初始角 3〜20° 时也在 4〜5 次迭代内达到机器精度。</p>
+<p>参数:</p>
+<p>src (N,3): 被移动侧的点云(粗匹配后的初始位姿)。</p>
+<p>dst (M,3): 参照侧的点云(固定)。</p>
+<p>dst_normals (M,3): dst 的单位法线(即使未归一化也会在内部归一化)。</p>
+<p>未知时用 pointcloud.estimate_normals(dst) 等事先估计。</p>
+<p>iters: 最大迭代次数。</p>
+<p>tol: RMSE 变化小于此值时判定收敛并终止。</p>
+<p>init ((R0,t0)): 初始位姿(传入粗匹配的 R,t)。None 时为单位。</p>
+<p>trim (float|None): [0,1) 的比例。每次迭代丢弃点-面残差最大的前若干部分的</p>
+<p>Trimmed ICP(对部分重叠、离群值稳健)。</p>
+<p>device: &quot;cpu&quot;/&quot;cuda&quot; 等。torch device 字符串(与 device 无关)。</p>
+<p>reproducible: 为 True 时用 ozakimm(Ozaki 方案)计算正规方程的 <code style="color:#22d3bf">JᵀJ</code>、<code style="color:#22d3bf">Jᵀb</code>(N 点的归约),</p>
+<p>点-面残差、位姿的应用为逐元素运算,RMSE 用 math.fsum。不依赖 src 点的顺序、BLAS 线程数,</p>
+<p>R、t、rmse 按位相同。默认 False 与以前相同(<code style="color:#22d3bf">J.T @ J</code>)。</p>
+<p>返回值:</p>
+<p>R (3,3), t (3,), aligned (N,3)=R·src+t, rmse(采用点的点-面 RMSE),</p>
+<p>n_iter(实际迭代次数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

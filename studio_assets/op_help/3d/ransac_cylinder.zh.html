@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;ransac_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对外点稳健的 RANSAC 圆柱拟合(需要点法线)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>円筒表面の法線は軸に直交するので、2 点の法線の外積で軸方向を推定 → 軸に直交な平面へ全点を投影 → その平面内で円をフィット → |投影距離 - r| &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化。最終 inlier ではより頑健に軸を再推定(法線群の SVD の最小特異方向 = 軸)し、投影円を最小二乗リフィットする。法線が無ければ呼び出し側で estimate してから渡す。</p>
+<p>圆柱表面的法线与轴正交,因此用 2 点法线的叉积估计轴方向 → 将全部点投影到与轴正交的平面上 → 在该平面内拟合圆 → 最大化 |投影距离 - r| &lt; <code style="color:#22d3bf">thresh</code> 的 inlier。最终 inlier 上以更稳健的方式重新估计轴(法线群 SVD 的最小奇异方向 = 轴), 并对投影圆做最小二乘重拟合。若没有法线,请在调用方先 estimate 再传入。</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>normals: (N,3) 各点の(単位)法線。</p>
-<p>thresh: inlier とみなす |投影距離-r| のしきい値。</p>
-<p>iters: RANSAC 反復数。</p>
-<p>seed: 乱数シード(決定論)。</p>
+<p>points: (N,3) 点云。</p>
+<p>normals: (N,3) 各点的(单位)法线。</p>
+<p>thresh: 视为 inlier 的 |投影距离-r| 阈值。</p>
+<p>iters: RANSAC 迭代次数。</p>
+<p>seed: 随机种子(确定性)。</p>
 <p>Returns:</p>
-<p>(params, inlier_mask, info)。params = {&quot;axis&quot;: (3,) 単位軸, &quot;point&quot;: (3,) 軸上の一点,</p>
-<p>&quot;radius&quot;: float}。info には inlier 数 <code style="color:#22d3bf">n_inliers</code> / 比 <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code>。</p>
+<p>(params, inlier_mask, info)。params = {&quot;axis&quot;: (3,) 单位轴, &quot;point&quot;: (3,) 轴上一点,</p>
+<p>&quot;radius&quot;: float}。info 中有 inlier 数 <code style="color:#22d3bf">n_inliers</code> / 比例 <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_superquadric(points) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import superquadric; superquadric.fit_superquadric(points) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fit_superquadric&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 least_squares 对点群拟合超二次曲面,返回 dict{a,eps,R,t,residual}。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>初期姿勢 = 慣性テンソル固有ベクトル、初期 a = 主軸 bbox 半分、初期 eps=(1,1)。<code style="color:#22d3bf">a</code> は正、<code style="color:#22d3bf">eps</code> は [0.1, 2.0] にクリップして最適化する。</p>
+<p>初始位姿 = 惯性张量特征向量,初始 a = 主轴 bbox 的一半,初始 eps=(1,1)。优化时 <code style="color:#22d3bf">a</code> 保持为正,<code style="color:#22d3bf">eps</code> 裁剪(clip)到 [0.1, 2.0]。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict: {&#x27;a&#x27;: (3,), &#x27;eps&#x27;: (2,), &#x27;R&#x27;: (3,3), &#x27;t&#x27;: (3,), &#x27;residual&#x27;: float}</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

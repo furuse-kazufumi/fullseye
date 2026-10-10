@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_distances(points: numpy.ndarray, source: int, k: int = 8) -&gt; numpy.ndarray</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;geodesic_distances&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>source 에서 모든 점까지의 측지 거리(kNN 그래프 위 Dijkstra). → (N,) float(도달 불가는 inf).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">knn_graph(points, k)</code> で作った k 近傍グラフ(辺の重み = 点間の Euclid 距離 = 弦長)を <code style="color:#22d3bf">directed=False</code> で無向化し、<code style="color:#22d3bf">scipy.sparse.csgraph.dijkstra</code> で単一始点最短路を解く。<code style="color:#22d3bf">d[i]</code> は source から点 i までのグラフ上の経路長で <code style="color:#22d3bf">d[source] = 0</code>、source と繋がっていない連結成分の点は <code style="color:#22d3bf">inf</code>。単位は座標の単位そのまま。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) の点群(float64 に変換)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>: 始点の添字(0..N-1 の整数。範囲外は scipy 側で例外)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: 近傍数(既定 8)。小さいとグラフが分断されて <code style="color:#22d3bf">inf</code> が増え、大きいと離れた面どうしを直結する「近道」が生まれて曲面に沿わない距離になる(薄い板の表裏、折り返した面など)。</p>
-<p>精度: 辺が弦長なので弧をわずかに過小評価する一方、経路のジグザグが過大評価を生む(モジュール docstring の Bernstein らの挟み込み評価を参照)。三角メッシュがあるなら近傍数に依存しない <code style="color:#22d3bf">geodesic_mesh</code> を使う。この距離で均等に間引くには <code style="color:#22d3bf">farthest_point_sampling</code>。</p>
+<p><code style="color:#22d3bf">knn_graph(points, k)</code> 로 만든 k 근방 그래프(변의 가중치 = 점 사이의 Euclid 거리 = 현의 길이)를 <code style="color:#22d3bf">directed=False</code> 로 무향화하고, <code style="color:#22d3bf">scipy.sparse.csgraph.dijkstra</code> 로 단일 시점 최단 경로를 푼다. <code style="color:#22d3bf">d[i]</code> 는 source 에서 점 i 까지의 그래프 위 경로 길이로 <code style="color:#22d3bf">d[source] = 0</code>, source 와 이어지지 않은연결 성분의 점은 <code style="color:#22d3bf">inf</code>. 단위는 좌표의 단위 그대로.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 의 점군(float64 로 변환).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>: 시점의 첨자(0..N-1 의 정수. 범위 밖은 scipy 쪽에서 예외).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: 근방 수(기본값 8). 작으면 그래프가 분단되어 <code style="color:#22d3bf">inf</code> 가 늘고, 크면 떨어진 면끼리를직결하는 &quot;지름길&quot;이 생겨 곡면을 따르지 않는 거리가 된다(얇은 판의 앞뒤, 접혀 돌아온 면 등).</p>
+<p>정밀도: 변이 현의 길이이므로 호를 약간 과소평가하는 한편, 경로의 지그재그가 과대평가를 낳는다(모듈 docstring 의 Bernstein 등의 협공 평가를 참조). 삼각 메시가 있으면 근방 수에 의존하지 않는 <code style="color:#22d3bf">geodesic_mesh</code> 를 쓴다. 이 거리로 균등하게 솎아내려면 <code style="color:#22d3bf">farthest_point_sampling</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

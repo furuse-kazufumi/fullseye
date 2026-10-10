@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(ridge, dist)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 EDT 的脊(距离场的局部极大)提取为中轴。返回 (ridge_mask, edt)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各前景 voxel の EDT を計算し、<b>26 近傍の局所極大</b>(自分の EDT が周囲 26 voxel の最大以上)を medial とみなす。この基準は物体の局所次元に応じて自然に次元を出し分ける:</p>
-<p>塊(球)  -&gt; EDT が単峰 -&gt; 点状の medial(中心 1 点)。</p>
-<p>管(円柱)-&gt; 軸方向に平坦・半径方向に単峰 -&gt; 線状の medial(軸線)。</p>
-<p>板(スラブ)-&gt; 面内で平坦・厚み方向に単峰 -&gt; 面状の medial(中心面)。</p>
-<p>境界 voxel は内側の隣が必ず大きいため極大にならず、外殻は自然に除かれる。平坦な尾根(軸/面)は同値の隣接を許容(&gt;=)することで連続した線/面として残る。</p>
+<p>计算各前景 voxel 的 EDT,把 <b>26 邻域的局部极大</b>(自身 EDT 不小于周围 26 个 voxel 的最大值) 视为 medial。该判据会依据物体的局部维数自然地给出相应维数:</p>
+<p>块(球)  -&gt; EDT 单峰 -&gt; 点状 medial(中心 1 点)。</p>
+<p>管(圆柱)-&gt; 沿轴向平坦、沿径向单峰 -&gt; 线状 medial(轴线)。</p>
+<p>板(平板)-&gt; 面内平坦、沿厚度方向单峰 -&gt; 面状 medial(中心面)。</p>
+<p>边界 voxel 的内侧邻居必然更大,因此不会成为极大,外壳自然被去除。平坦的脊(轴/面)因允许等值邻接(&gt;=)而作为连续的线/面保留下来。</p>
 <p>Args:</p>
-<p>vol: バイナリ voxel(bool / 0-1 の 3D)。</p>
-<p>min_radius: この EDT 値以下の弱い尾根を捨てる閾値(既定 0 = 捨てない)。ノイズ抑制用。</p>
+<p>vol: 二值 voxel(bool / 0-1 的 3D)。</p>
+<p>min_radius: 丢弃 EDT 值不超过此值的弱脊的阈值(默认 0 = 不丢弃)。用于抑制噪声。</p>
 <p>Returns:</p>
 <p>ridge_mask (bool 3D): medial voxel。</p>
-<p>edt (float64 3D): 各 voxel の背景までのユークリッド距離(= 局所半径)。</p>
+<p>edt (float64 3D): 各 voxel 到背景的欧氏距离(= 局部半径)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

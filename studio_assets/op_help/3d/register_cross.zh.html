@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_cross(src, src_kind, dst, dst_kind, method=&#x27;fpfh&#x27;, samples=15000, **kw)</code>(要直接调用实现,<code style="color:#22d3bf">import fuse3d; fuse3d.register_cross(src, src_kind, dst, dst_kind, method=&#x27;fpfh&#x27;, samples=15000, **kw)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;register_cross&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>异构结构间的刚体配准。二者转为点云 → 配准器(fpfh=大旋转 / icp=需 coarse init)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>例: register_cross((verts,faces),&quot;mesh&quot;, scan_pts,&quot;points&quot;) で CAD↔スキャン整合。返り値 (R, t)。</p>
-<p>手順: <code style="color:#22d3bf">to_points(src, src_kind, samples, **kw)</code> と <code style="color:#22d3bf">to_points(dst, dst_kind, samples, **kw)</code> で両者を点群にし、<code style="color:#22d3bf">method</code> で登録器を選ぶ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;fpfh&quot;</code>(既定): <code style="color:#22d3bf">feat_fpfh.register_fpfh(ps, pd)</code> を既定パラメータで呼ぶ(FPFH 記述子 + RANSAC、初期姿勢不要、大回転・部分重なりに対応)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;icp&quot;</code>: <code style="color:#22d3bf">match3d.icp_point2point_3d(ps, pd, iters=50)</code>(最近傍対応 + Kabsch)。初期姿勢の引数は渡さないので、<code style="color:#22d3bf">src</code> が <code style="color:#22d3bf">dst</code> に近い(粗く合っている)ことが前提。</p>
-<p style="margin:2px 0 2px 12px">• それ以外は <code style="color:#22d3bf">ValueError</code>。</p>
-<p>返り値: <code style="color:#22d3bf">(R, t)</code> — <code style="color:#22d3bf">R</code> は <code style="color:#22d3bf">(3, 3)</code>、<code style="color:#22d3bf">t</code> は <code style="color:#22d3bf">(3,)</code> の numpy 配列(torch tensor は CPU の numpy に変換して返す)。慣習は <code style="color:#22d3bf">dst ≈ src @ R.T + t</code>。</p>
+<p>例: register_cross((verts,faces),&quot;mesh&quot;, scan_pts,&quot;points&quot;) 实现 CAD↔扫描对齐。返回值 (R, t)。</p>
+<p>步骤: 用 <code style="color:#22d3bf">to_points(src, src_kind, samples, **kw)</code> 和 <code style="color:#22d3bf">to_points(dst, dst_kind, samples, **kw)</code> 把两者转为点云,由 <code style="color:#22d3bf">method</code> 选择配准器。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;fpfh&quot;</code>(默认): 以默认参数调用 <code style="color:#22d3bf">feat_fpfh.register_fpfh(ps, pd)</code> (FPFH 描述子 + RANSAC,无需初始位姿,适用于大旋转、部分重叠)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;icp&quot;</code>: <code style="color:#22d3bf">match3d.icp_point2point_3d(ps, pd, iters=50)</code>(最近邻对应 + Kabsch)。不传入初始位姿参数,因此前提是 <code style="color:#22d3bf">src</code> 接近 <code style="color:#22d3bf">dst</code>(大致对齐)。</p>
+<p style="margin:2px 0 2px 12px">• 其他值则 <code style="color:#22d3bf">ValueError</code>。</p>
+<p>返回值: <code style="color:#22d3bf">(R, t)</code> —— <code style="color:#22d3bf">R</code> 为 <code style="color:#22d3bf">(3, 3)</code>、<code style="color:#22d3bf">t</code> 为 <code style="color:#22d3bf">(3,)</code> 的 numpy 数组(torch tensor 会转换为 CPU 上的 numpy 后返回)。约定为 <code style="color:#22d3bf">dst ≈ src @ R.T + t</code>。</p>
 <p>注意:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">**kw</code> は <b>両方の</b> <code style="color:#22d3bf">to_points</code> に同じものが渡る(<code style="color:#22d3bf">&quot;depth&quot;</code> の <code style="color:#22d3bf">fx, fy, cx, cy</code> や <code style="color:#22d3bf">&quot;voxel&quot;</code> の <code style="color:#22d3bf">iso</code> を片側だけに与えることはできない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">samples</code> は <code style="color:#22d3bf">&quot;mesh&quot;</code> のサンプル数(既定 15000)。点群の個数・形は検査しない。</p>
-<p style="margin:2px 0 2px 12px">• 座標系の違い(<code style="color:#22d3bf">to_points</code> 参照: voxel は <code style="color:#22d3bf">(z, y, x)</code> index、depth はカメラ <code style="color:#22d3bf">(x, y, z)</code>)は吸収しない。</p>
-<p style="margin:2px 0 2px 12px">• 精度を締めるには fpfh の結果を初期値に <code style="color:#22d3bf">icp_point2point_3d</code> を直接呼ぶ。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">**kw</code> 会原样传给<b>两个</b> <code style="color:#22d3bf">to_points</code>(无法只给一侧提供 <code style="color:#22d3bf">&quot;depth&quot;</code> 的 <code style="color:#22d3bf">fx, fy, cx, cy</code> 或 <code style="color:#22d3bf">&quot;voxel&quot;</code> 的 <code style="color:#22d3bf">iso</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">samples</code> 是 <code style="color:#22d3bf">&quot;mesh&quot;</code> 的采样数(默认 15000)。不检查点云的个数和形状。</p>
+<p style="margin:2px 0 2px 12px">• 不吸收坐标系的差异(参见 <code style="color:#22d3bf">to_points</code>: voxel 为 <code style="color:#22d3bf">(z, y, x)</code> index,depth 为相机 <code style="color:#22d3bf">(x, y, z)</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 若要收紧精度,以 fpfh 的结果为初始值直接调用 <code style="color:#22d3bf">icp_point2point_3d</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

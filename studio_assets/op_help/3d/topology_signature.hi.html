@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.topology_signature(skeleton)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.topology_signature(skeleton)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;topology_signature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>skeleton के 26-neighbourhood degree से topology descriptor बनाता है। end points/branch points/सामान्य points/isolated points की संख्या लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各骨格 voxel について 26 近傍にある骨格 voxel 数(次数)を数え、</p>
-<p>次数 1  = 端点(endpoint)</p>
-<p>次数 2  = 通常点(骨格の途中)</p>
-<p>次数&gt;=3 = 分岐点(branch)</p>
-<p>次数 0  = 孤立点(isolated)</p>
-<p>に分類する。個数は平行移動・回転(90 度)不変で、形状の位相を粗く要約する記述子になる。</p>
-<p>注意(honest): 26 近傍の次数は、分岐近傍で対角隣接により過大に数えられることがある(離散骨格の既知の性質)。端点数は各枝の末端で厳密だが、分岐点数はやや過大側に振れうる。</p>
+<p>हर skeleton voxel के लिए उसके 26-neighbourhood में skeleton voxel की संख्या (degree) गिनी जाती है, और</p>
+<p>degree 1  = endpoint</p>
+<p>degree 2  = सामान्य point (skeleton के बीच में)</p>
+<p>degree&gt;=3 = branch point (branch)</p>
+<p>degree 0  = isolated point (isolated)</p>
+<p>के रूप में classify किया जाता है। ये गिनतियाँ translation और rotation (90 degree) से invariant हैं और shape की topology का मोटा सार देने वाला descriptor बनती हैं।</p>
+<p>सावधानी (honest): 26-neighbourhood की degree branch के पास diagonal adjacency के कारण ज़्यादा गिनी जा सकती है (discrete skeleton का ज्ञात गुण)। endpoint की संख्या हर branch के सिरे पर सटीक है, पर branch point की संख्या कुछ ज़्यादा की ओर जा सकती है।</p>
 <p>Args:</p>
-<p>skeleton: 骨格 voxel(bool / 0-1 の 3D)。</p>
+<p>skeleton: skeleton voxel (bool / 0-1 का 3D)।</p>
 <p>Returns:</p>
-<p>dict: endpoints, branches, normal, isolated, total(骨格 voxel 総数),</p>
-<p>degree_hist(次数 -&gt; 個数)。</p>
+<p>dict: endpoints, branches, normal, isolated, total (skeleton voxel की कुल संख्या),</p>
+<p>degree_hist (degree -&gt; संख्या)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

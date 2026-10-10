@@ -6,22 +6,21 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(kept, mask)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 점의 k 근방 평균 거리가 전역적으로 벗어나는 점을 제거(통계적 이상치 제거).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の <code style="color:#22d3bf">mean + std_ratio*std</code> を超える点を飛び点とみなして落とす。まばらな飛び点の掃除に有効で、密な面上の点は残る。</p>
+<p>점마다 &quot;가장 가까운 k 개(자기 자신은 제외)까지의 평균 거리&quot;를 재고, 그 전체 점 분포의 <code style="color:#22d3bf">mean + std_ratio*std</code>를 넘는 점을 튄 점으로 간주하여 제거한다. 성긴 튄 점의 청소에유효하며, 조밀한 면 위의 점은 남는다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>입력 점군.</p>
 <p>k : int</p>
-<p>近傍数(既定 16)。点数が少なければ内部で <code style="color:#22d3bf">n-1</code> に丸める。</p>
+<p>근방 수(기본값 16). 점 수가 적으면 내부에서 <code style="color:#22d3bf">n-1</code>로 줄인다.</p>
 <p>std_ratio : float</p>
-<p>しきい値の緩さ。大きいほど残りやすい(除去が緩い)。</p>
+<p>임계값의 느슨함. 클수록 남기 쉽다(제거가 느슨하다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
-<p>生き残った点(元の順序を保持)。</p>
+<p>살아남은 점(원래 순서를 유지).</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
-<p>各入力点を残すか(True=残す)。<code style="color:#22d3bf">points[keep_mask]</code> が <code style="color:#22d3bf">filtered</code> に等しい。</p>
+<p>각 입력점을 남길지 여부(True=남긴다). <code style="color:#22d3bf">points[keep_mask]</code>가 <code style="color:#22d3bf">filtered</code>와 같다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>点数 &lt; 3 では統計が立たないため、全点を残す(graceful)。</p>
+<p>점 수 &lt; 3에서는 통계가 성립하지 않으므로 모든 점을 남긴다(graceful).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

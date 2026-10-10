@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tonemap_reinhard(hdr, exposure: &#x27;float&#x27; = 1.0, white: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_reinhard(hdr, exposure: &#x27;float&#x27; = 1.0, white: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;tonemap_reinhard&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Compress HDR into <code style="color:#22d3bf">[0, 1]</code> LDR with Reinhard tone mapping. → float64, the same shape as the input.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>露出を掛けた <code style="color:#22d3bf">x = hdr * exposure</code> に対し:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white is None</code> … 基本形 <code style="color:#22d3bf">x / (1 + x)</code>。<code style="color:#22d3bf">[0, ∞)</code> を<b>狭義単調増加</b>で <code style="color:#22d3bf">[0, 1)</code> へ写し、決してクリップしない(全域で階調順序を厳密保存)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code> 指定 … 拡張形 <code style="color:#22d3bf">x (1 + x/white²) / (1 + x)</code>。<code style="color:#22d3bf">white</code> を正確に 1.0 へ写し、<code style="color:#22d3bf">white</code> 未満に多くのレンジを割く(<code style="color:#22d3bf">white</code> を超える入力は 1 を超えるので <code style="color:#22d3bf">[0, 1]</code> にクリップする)。</p>
-<p>カラー <code style="color:#22d3bf">(H, W, C)</code> はチャンネル独立に写像する。素朴クリップ <code style="color:#22d3bf">min(x, 1)</code> と違い、値 &gt; 1 のハイライト域でも単調な階調を保つ。</p>
+<p>For the exposure-scaled <code style="color:#22d3bf">x = hdr * exposure</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white is None</code> … the basic form <code style="color:#22d3bf">x / (1 + x)</code>. Maps <code style="color:#22d3bf">[0, ∞)</code> <b>strictly monotonically increasing</b> onto <code style="color:#22d3bf">[0, 1)</code> and never clips (strictly preserves tonal order over the whole range).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code> given … the extended form <code style="color:#22d3bf">x (1 + x/white²) / (1 + x)</code>. Maps <code style="color:#22d3bf">white</code> exactly to 1.0 and devotes much of the range to values below <code style="color:#22d3bf">white</code> (inputs above <code style="color:#22d3bf">white</code> exceed 1, so they are clipped to <code style="color:#22d3bf">[0, 1]</code>).</p>
+<p>Colour <code style="color:#22d3bf">(H, W, C)</code> is mapped per channel independently. Unlike naive clipping <code style="color:#22d3bf">min(x, 1)</code>, it keeps a monotonic tonal scale even in the highlight region of values &gt; 1.</p>
 <p>Args:</p>
-<p>hdr: HDR 画像。<code style="color:#22d3bf">(H, W)</code> グレースケール or <code style="color:#22d3bf">(H, W, C)</code> カラー、放射輝度 &gt;= 0。</p>
-<p>exposure: 写像前に掛ける露出スケール(正)。</p>
-<p>white: 任意の white-point(正)。None なら基本 Reinhard(推奨・全域単調)。</p>
+<p>hdr: HDR image. <code style="color:#22d3bf">(H, W)</code> greyscale or <code style="color:#22d3bf">(H, W, C)</code> colour, radiance &gt;= 0.</p>
+<p>exposure: exposure scale applied before mapping (positive).</p>
+<p>white: optional white-point (positive). None gives basic Reinhard (recommended; monotonic everywhere).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">[0, 1]</code> の float64 LDR 画像(入力と同形状)。</p>
+<p>float64 LDR image in <code style="color:#22d3bf">[0, 1]</code> (same shape as the input).</p>
 <p>Raises:</p>
-<p>ValueError: 空/非有限/負の放射輝度、非正の exposition/white(fail-closed)。</p>
+<p>ValueError: empty/non-finite/negative radiance, non-positive exposition/white (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

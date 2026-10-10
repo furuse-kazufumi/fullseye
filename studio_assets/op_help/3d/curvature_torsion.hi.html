@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(kappa,tau) → (N,2) pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर point का curvature κ और torsion τ (reparameterisation-invariant closed form)। → (kappa (N,), tau (N,))।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>座標の一様スケール s に対し κ→κ/s, τ→τ/s と正しくスケールする。0 割り防止の epsilon は <b>相対化</b>する: 絶対 1e-12 は cross_norm²(~s⁴)・r1_norm³(~s³)を小座標スケールで支配し、κ/τ を破壊するため、代表スケール L=median‖r&#x27;‖(座標スケール s に線形)で各分母と同次元に正規化した相対 eps を使う。これは曲線を L で正規化してから計算し 1/L で戻すのと厳密に等価。</p>
-<p>計算は順序付き点列 (N,3) を index パラメータで <code style="color:#22d3bf">np.gradient</code> 3 回(中心差分、両端は片側差分)した r&#x27;, r&#x27;&#x27;, r&#x27;&#x27;&#x27; から</p>
+<p>coordinates के uniform scale s पर κ→κ/s और τ→τ/s सही ढंग से scale होते हैं। 0 से भाग रोकने वाले epsilon को <b>relative</b> बनाया जाता है: absolute 1e-12 छोटे coordinate scale पर cross_norm² (~s⁴) और r1_norm³ (~s³) पर हावी होकर κ/τ को नष्ट कर देता है, इसलिए representative scale L=median‖r&#x27;‖ (coordinate scale s में linear) से हर denominator के समान dimension में normalise किया गया relative eps उपयोग होता है। यह curve को L से normalise करके गणना करने और 1/L से वापस लाने के बिल्कुल बराबर है।</p>
+<p>गणना में ordered point sequence (N,3) पर index को parameter मानकर <code style="color:#22d3bf">np.gradient</code> 3 बार (central difference, दोनों सिरों पर one-sided difference) लगाकर मिले r&#x27;, r&#x27;&#x27;, r&#x27;&#x27;&#x27; से</p>
 <p style="margin:2px 0 2px 12px">• κ = ‖r&#x27;×r&#x27;&#x27;‖ / ‖r&#x27;‖³</p>
 <p style="margin:2px 0 2px 12px">• τ = (r&#x27;×r&#x27;&#x27;)·r&#x27;&#x27;&#x27; / ‖r&#x27;×r&#x27;&#x27;‖²</p>
-<p>で求める。単位は κ・τ とも 1/座標単位。τ の符号は右手系の螺旋(a cosθ, a sinθ, bθ), b&gt;0 で正。直線区間(‖r&#x27;×r&#x27;&#x27;‖≈0)では κ≈0、τ は分母が eps だけになるため値は信頼できない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ValueError</code>: 全点が重なり median‖r&#x27;‖ が 0 または非有限のとき。</p>
-<p style="margin:2px 0 2px 12px">• 点間隔が急に変わる箇所は数値微分が乱れるので、先に <code style="color:#22d3bf">resample_uniform</code> で等間隔化するか <code style="color:#22d3bf">fit_spline_curve</code> で平滑化してから渡す。両端 2 点は片側差分で精度が落ちる。</p>
-<p style="margin:2px 0 2px 12px">• N&lt;2 は <code style="color:#22d3bf">np.gradient</code> が <code style="color:#22d3bf">ValueError</code>。形状 (N,3) の検証はしていない。</p>
-<p>標構(T,N,B)が要るなら <code style="color:#22d3bf">frenet_frame</code>、弧長 ds は <code style="color:#22d3bf">arc_length</code> から取る。</p>
+<p>निकाले जाते हैं। κ और τ दोनों की unit 1/coordinate unit है। τ का sign right-handed helix (a cosθ, a sinθ, bθ), b&gt;0 के लिए धनात्मक है। सीधे हिस्सों (‖r&#x27;×r&#x27;&#x27;‖≈0) में κ≈0 होता है, और τ का denominator केवल eps रह जाने से उसका मान भरोसेमंद नहीं।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ValueError</code>: जब सभी points एक ही जगह हों और median‖r&#x27;‖ 0 या non-finite हो।</p>
+<p style="margin:2px 0 2px 12px">• जहाँ points का अंतराल अचानक बदलता है वहाँ numerical derivative बिगड़ता है, इसलिए पहले <code style="color:#22d3bf">resample_uniform</code> से अंतराल समान करें या <code style="color:#22d3bf">fit_spline_curve</code> से smooth करके दें। दोनों सिरों के 2 points one-sided difference के कारण कम सटीक होते हैं।</p>
+<p style="margin:2px 0 2px 12px">• N&lt;2 पर <code style="color:#22d3bf">np.gradient</code> <code style="color:#22d3bf">ValueError</code> देता है। shape (N,3) की जाँच नहीं होती।</p>
+<p>frame (T,N,B) चाहिए तो <code style="color:#22d3bf">frenet_frame</code>, और arc length ds <code style="color:#22d3bf">arc_length</code> से लें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

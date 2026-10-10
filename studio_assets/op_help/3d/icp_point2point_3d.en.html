@@ -4,33 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Refine point sets by point-to-point ICP (Kabsch/SVD).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>粗いマッチ推定(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)で得た初期姿勢 (init_R, init_t) を出発点に、src 側点群を dst 側点群へ剛体変換で位置合わせする。各反復で最近傍対応(cKDTree)を張り直し、Kabsch アルゴリズム(SVD)で相対回転・並進を求めて累積することで、対応が既知でなくてもサブボクセル精度へ収束させる。</p>
-<p>部分重なり・外れ値には Trimmed ICP(距離の小さい対応のみ採用)と絶対距離ゲート(max_corr_dist)で対処する。最終 RMSE は実際に採用した対応(インライア)上で評価するため、部分観測でも姿勢品質を正しく反映する。</p>
-<p>引数:</p>
-<p>src: (N,3) 移動側点群(torch.Tensor か numpy.ndarray)。</p>
-<p>dst: (M,3) 固定側(参照)点群。</p>
-<p>iters: 最大反復回数。</p>
-<p>init_R: (3,3) 初期回転。None なら単位行列。</p>
-<p>init_t: (3,) 初期並進。None なら零ベクトル。</p>
-<p>tol: RMSE の相対改善がこの値を下回れば収束打ち切り。</p>
-<p>max_corr_dist: この距離を超える対応を外れ値として棄却(None で無効)。</p>
-<p>trim_ratio: 0&lt;r&lt;=1。各反復で最近傍距離の小さい上位 r 割の対応のみ</p>
-<p>採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。</p>
-<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD をこのデバイス上で解く。</p>
-<p>reproducible: True なら点の順・BLAS のスレッド数に依らない縮約にする(既定 False = 従来どおり)。</p>
-<p>平均は math.fsum、相互共分散 H は ozakimm(Ozaki スキーム)、姿勢の適用は要素ごとの演算、RMSE も math.fsum。</p>
-<p>src の点の順を入れ替えても R・t・rmse がビット単位で同じ(同じ計算機・同じ LAPACK の上)。trim_ratio の切れ目で</p>
-<p>距離がちょうど同点の点は、順で選ばれ方が変わりうる。20 万点で 1 反復あたり 0.7 ms が 170 ms 程度になる。</p>
-<p>返り値:</p>
-<p>R: (3,3) 回転。dst ~= src @ R.T + t を満たす。<b>torch がある環境では <code style="color:#22d3bf">torch.Tensor</code>、無ければ同じ値の <code style="color:#22d3bf">numpy.ndarray</code></b>(2026-09-07 に</p>
-<p>本体を numpy 化したときも、互換のため型は据え置いた)。</p>
-<p>★同じ族の <code style="color:#22d3bf">icp_point2plane</code> は<b>常に numpy を返す</b> —— 族の中で</p>
-<p>型が揃っていないので、下流では <code style="color:#22d3bf">np.asarray(R)</code> を通すのが安全</p>
-<p>(どちらでも動く。破壊的変更を避けてこの不揃いを残してある)。</p>
-<p>t: (3,) 並進(R と同じ型)。</p>
-<p>info: dict。&quot;rmse&quot;(採用対応上の最終RMSE), &quot;iters&quot;(実反復数),</p>
-<p>&quot;converged&quot;(bool), &quot;inliers&quot;(採用対応数), &quot;rmse_history&quot;(list)。</p>
+<p>Starting from the initial pose (init_R, init_t) obtained by a coarse match estimate (integer NCC / Fourier-Mellin±3° / Hough±0.5voxel), it aligns the src point cloud to the dst point cloud by a rigid-body transform. In each iteration it rebuilds the nearest-neighbour correspondences (cKDTree), obtains the relative rotation and translation with the Kabsch algorithm (SVD) and accumulates them, so it converges to sub-voxel accuracy even when the correspondences are not known.</p>
+<p>Partial overlap and outliers are handled by Trimmed ICP (only correspondences with small distance are used) and an absolute distance gate (max_corr_dist). The final RMSE is evaluated on the correspondences actually used (inliers), so it reflects the pose quality correctly even for partial observations.</p>
+<p>Arguments:</p>
+<p>src: (N,3) moving point cloud (torch.Tensor or numpy.ndarray).</p>
+<p>dst: (M,3) fixed (reference) point cloud.</p>
+<p>iters: maximum number of iterations.</p>
+<p>init_R: (3,3) initial rotation. None means the identity matrix.</p>
+<p>init_t: (3,) initial translation. None means the zero vector.</p>
+<p>tol: stops as converged when the relative RMSE improvement falls below this value.</p>
+<p>max_corr_dist: correspondences farther than this distance are rejected as outliers (None disables).</p>
+<p>trim_ratio: 0&lt;r&lt;=1. Trimmed ICP that in each iteration uses only the top fraction r of correspondences</p>
+<p>with the smallest nearest-neighbour distance. Effective for partial overlap (overlap ratio r). None disables.</p>
+<p>device: torch device (&quot;cpu&quot; etc.). The SVD is solved on this device.</p>
+<p>reproducible: if True, reductions do not depend on the point order or the number of BLAS threads (default False = as before).</p>
+<p>The mean uses math.fsum, the cross-covariance H uses ozakimm (Ozaki scheme), the pose is applied element-wise, and the RMSE also uses math.fsum.</p>
+<p>Permuting the order of the src points gives bit-identical R, t and rmse (on the same machine, same LAPACK). Points whose distances tie exactly</p>
+<p>at the trim_ratio cut-off may be selected differently depending on the order. With 200,000 points, 0.7 ms per 1 iteration becomes about 170 ms.</p>
+<p>Returns:</p>
+<p>R: (3,3) rotation. Satisfies dst ~= src @ R.T + t. <b>In an environment with torch it is a <code style="color:#22d3bf">torch.Tensor</code>, otherwise a <code style="color:#22d3bf">numpy.ndarray</code> with the same values</b> (when the body was converted to numpy</p>
+<p>on 2026-09-07, the type was kept for compatibility).</p>
+<p>★<code style="color:#22d3bf">icp_point2plane</code> of the same family <b>always returns numpy</b> — the types within the family</p>
+<p>are not consistent, so passing through <code style="color:#22d3bf">np.asarray(R)</code> downstream is the safe choice</p>
+<p>(either works; this inconsistency is left in place to avoid a breaking change).</p>
+<p>t: (3,) translation (same type as R).</p>
+<p>info: dict. &quot;rmse&quot; (final RMSE over the used correspondences), &quot;iters&quot; (actual number of iterations),</p>
+<p>&quot;converged&quot; (bool), &quot;inliers&quot; (number of used correspondences), &quot;rmse_history&quot; (list).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vertex_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mesh_props; mesh_props.vertex_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vertex_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>三角网格的<b>顶点法线</b>(按面积加权聚合的单位法线)。→ (N,3)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各三角形の外積ベクトル(=面法線×2·面積)を、その 3 頂点へ散布加算し、頂点ごとに正規化する。大きい(重要な)面ほど寄与が大きい面積重み付き平均になり、向きは面の巻き順から一貫する。<code style="color:#22d3bf">normals_orient.estimate_normals</code>(点群 PCA・符号未定)と違い、追加の向き付け工程は不要。</p>
+<p>把各三角形的叉积向量（= 面法线×2·面积）散布累加到其 3 个顶点，再逐顶点归一化。面越大（越重要）贡献越大，成为面积加权平均，方向与面的环绕顺序一致。与 <code style="color:#22d3bf">normals_orient.estimate_normals</code>（点云 PCA、符号不定）不同，不需要额外的定向步骤。</p>
 <p>Args:</p>
-<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>mesh: (vertices (N,3), faces (M,3)) 的元组。</p>
 <p>Returns:</p>
-<p>(N,3) の単位頂点法線。</p>
+<p>(N,3) 的单位顶点法线。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正・範囲外 index、または法線が定義できない頂点(入射面が無い/</p>
-<p>寄与が相殺してゼロ)があるとき。</p>
+<p>ValueError: 形状不正确、index 越界，或存在无法定义法线的顶点（没有入射面/</p>
+<p>贡献相互抵消为零）时。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

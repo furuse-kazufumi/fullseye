@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.laplacian_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.5) -&gt; &#x27;Mesh&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mesh_smooth; mesh_smooth.laplacian_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.5) -&gt; &#x27;Mesh&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;laplacian_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 umbrella Laplacian 平滑三角網格。→ (verts, faces)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各反復で全頂点を <code style="color:#22d3bf">v_i += lam * (mean(隣接 v_j) - v_i)</code> と更新する。高周波ノイズを確実に減らす一方、閉曲面では平均曲率流と同様に <b>内側へ収縮(shrinkage)</b> する(球は反復とともに縮む)。収縮を避けたい場合は <code style="color:#22d3bf">taubin_smooth</code> を使う。</p>
+<p>每次疊代把所有頂點更新為 <code style="color:#22d3bf">v_i += lam * (mean(隣接 v_j) - v_i)</code>。能可靠地減少高頻雜訊，但在閉曲面上會像平均曲率流一樣<b>向內收縮(shrinkage)</b> （球會隨疊代縮小）。想避免收縮時用 <code style="color:#22d3bf">taubin_smooth</code>。</p>
 <p>Args:</p>
-<p>mesh: (verts (N,3), faces (M,3)[, ...]) のシーケンス。faces は不変。</p>
-<p>iters: 反復回数(正の整数)。</p>
-<p>lam: 各段の寄せ率、<code style="color:#22d3bf">0 &lt; lam &lt;= 1</code>(1 で隣接平均へ全寄せ)。</p>
+<p>mesh: (verts (N,3), faces (M,3)[, ...]) 的序列。faces 不變。</p>
+<p>iters: 疊代次數（正整數）。</p>
+<p>lam: 每步的拉近率，<code style="color:#22d3bf">0 &lt; lam &lt;= 1</code>（1 時完全拉到鄰點平均）。</p>
 <p>Returns:</p>
-<p>(verts (N,3) float64, faces (M,3) int64)。faces は入力を保持。</p>
+<p>(verts (N,3) float64, faces (M,3) int64)。faces 保持輸入。</p>
 <p>Raises:</p>
-<p>ValueError: メッシュ形状不正・面範囲外・iters/lam が不正(fail-closed)。</p>
+<p>ValueError: 網格形狀不正確、面索引越界、iters/lam 不正確(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

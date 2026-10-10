@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;depth_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>深度圖(2.5D)→ 點雲(針孔反投影)。把 depth 列接到所有方法。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>画素 (行 v, 列 u) の深度 z から <code style="color:#22d3bf">X = (u − cx)·z/fx</code>、<code style="color:#22d3bf">Y = (v − cy)·z/fy</code>、<code style="color:#22d3bf">Z = z</code> を作る。返り値は <code style="color:#22d3bf">(N,3)</code> float64、列は <b>(X, Y, Z) のカメラ座標</b>(深度と同じ単位)。z が 0 以下の画素は捨てるので N は画素数以下(無効深度は 0 で表す規約)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fx, fy, cx, cy</code>: 画素単位の焦点距離と主点。<code style="color:#22d3bf">project_points</code> の K と同じ規約。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">stride</code>: 行・列とも <code style="color:#22d3bf">stride</code> 画素おきに間引く。u, v は間引き後の index に <code style="color:#22d3bf">stride</code></p>
-<p>を掛けた <b>元画像の画素座標</b>で計算するので、間引いても幾何は変わらない。</p>
-<p style="margin:2px 0 2px 12px">• 入力検証は無い(2-D でなければ添字で失敗)。NaN 深度は <code style="color:#22d3bf">z &gt; 0</code> が偽で捨てられる。</p>
-<p style="margin:2px 0 2px 12px">• 点は行優先の順に並ぶが、行・列の情報は残らない。格子構造を保ちたいなら</p>
+<p>由像素 (列 v, 行 u) 的深度 z 產生 <code style="color:#22d3bf">X = (u − cx)·z/fx</code>、<code style="color:#22d3bf">Y = (v − cy)·z/fy</code>、<code style="color:#22d3bf">Z = z</code>。回傳值為 <code style="color:#22d3bf">(N,3)</code> float64,各行是 <b>(X, Y, Z) 的相機座標</b>(與深度同單位)。z 為 0 以下的像素被捨棄,所以 N 不超過像素數(約定以 0 表示無效深度)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fx, fy, cx, cy</code>: 以像素為單位的焦距與主點。與 <code style="color:#22d3bf">project_points</code> 的 K 約定相同。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">stride</code>: 列、行都每隔 <code style="color:#22d3bf">stride</code> 個像素抽取。u, v 以抽取後的 index 乘以 <code style="color:#22d3bf">stride</code></p>
+<p>得到的 <b>原影像像素座標</b> 計算,因此抽取不改變幾何。</p>
+<p style="margin:2px 0 2px 12px">• 沒有輸入驗證(不是 2-D 時在索引處失敗)。NaN 深度因 <code style="color:#22d3bf">z &gt; 0</code> 為假而被捨棄。</p>
+<p style="margin:2px 0 2px 12px">• 點依列優先順序排列,但不保留列、行資訊。若要保留網格結構,用</p>
 <p><code style="color:#22d3bf">depth_to_organized_points</code>。</p>
-<p>後段: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">estimate_point_normals</code> / <code style="color:#22d3bf">icp_point2plane</code>。逆写像は <code style="color:#22d3bf">project_points</code>、TSDF 化は <code style="color:#22d3bf">tsdf_from_depth</code>。</p>
+<p>後續: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">estimate_point_normals</code> / <code style="color:#22d3bf">icp_point2plane</code>。逆映射為 <code style="color:#22d3bf">project_points</code>,轉 TSDF 用 <code style="color:#22d3bf">tsdf_from_depth</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

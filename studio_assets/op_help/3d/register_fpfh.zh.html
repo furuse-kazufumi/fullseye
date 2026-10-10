@@ -4,35 +4,34 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import feat_fpfh; feat_fpfh.register_fpfh(src, dst, src_normals=None, dst_normals=None, voxel_size=None, normal_k=16, feature_k=60, n_bins=11, ransac_iters=8000, inlier_thr=None, edge_sim=0.9, mutual=True, ratio=0.95, seed=0, device=&#x27;cpu&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;register_fpfh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 FPFH 描述子 + RANSAC 做 <b>无需初值</b> 的刚体配准 (R,t)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>2D の Harris/SIFT に相当する疎 feature マッチの 3D 版。両雲を FPFH 記述子で表し、記述子空間の最近傍で対応を張り(相互最近傍 + Lowe ratio でフィルタ)、RANSAC で外れ値に頑健な剛体姿勢を解く。密マッチ(NCC/Hough)や PCA と違い、大回転(50-70°) +並進+部分重なりでも初期推定なしに姿勢を出せるのが価値。得た (R,t) は ICP の初期値(coarse init)として渡すと表面精度まで締められる(dst ≈ src @ R.T + t の ICP 慣習)。</p>
-<p>パイプライン:</p>
-<p style="margin:2px 0 2px 12px">1) voxel ダウンサンプル(独立サンプリング 2 雲の近傍を共通解像度へ揃える。FPFH の対応正答率を大きく左右する必須前処理)。</p>
-<p style="margin:2px 0 2px 12px">2) 法線推定(局所 PCA)。src_normals/dst_normals を渡せばそれを使う。</p>
-<p style="margin:2px 0 2px 12px">3) FPFH 記述子(SPFH→距離重み合成)。</p>
-<p style="margin:2px 0 2px 12px">4) 記述子 NN マッチ(mutual + ratio)。</p>
-<p style="margin:2px 0 2px 12px">5) RANSAC: 3 点サンプル → edge-length 整合プレフィルタ → Kabsch → <b>全点フィットネス</b> (src 全点を変換し dst 最近傍が閾値内に入る割合)で採点。対応(~100点)だけの採点は誤姿勢に固着しやすいため、全点フィットネスで頑健化する。</p>
-<p style="margin:2px 0 2px 12px">6) 最良姿勢の対応インライアで再フィット。</p>
-<p>引数:</p>
-<p>src (N,3), dst (M,3): 位置合わせする 2 点群(numpy/torch)。</p>
-<p>src_normals, dst_normals ((N,3)/(M,3) or None): 事前法線。None なら内部推定</p>
-<p>(ただし voxel_size&gt;0 のときは座標が変わるため常に再推定)。</p>
-<p>voxel_size (float or None): ダウンサンプル辺長。None で dst 解像度×2.5 を自動採用。</p>
-<p>0/None で無効化(生点群のまま。独立サンプリングでは非推奨)。</p>
-<p>normal_k (int): 法線推定の近傍数。</p>
-<p>feature_k (int): FPFH の近傍数(大きいほど記述子が安定・識別的。60 前後を推奨)。</p>
-<p>n_bins (int): 1 特徴あたりのヒストグラムビン数(記述子次元 = 3*n_bins)。</p>
-<p>ransac_iters (int): RANSAC 反復数。</p>
-<p>inlier_thr (float or None): インライア距離閾値。None で(ダウンサンプル後)解像度×3。</p>
-<p>edge_sim (float): 三つ組の辺長比の許容(0&lt;edge_sim&lt;=1、1 に近いほど厳格)。</p>
-<p>mutual (bool): 相互最近傍フィルタ。ratio (float or None): Lowe ratio。</p>
-<p>seed (int): RANSAC 乱数種(restart 時に変える)。device (str): 返り値テンソルの device。</p>
-<p>返り値:</p>
-<p>R (3,3) torch.Tensor(device 上), t (3,) torch.Tensor,</p>
-<p>info dict: {&quot;n_corr&quot;(対応数), &quot;inliers&quot;(インライア数), &quot;inlier_ratio&quot;,</p>
-<p>&quot;fitness&quot;(全点フィットネス=restart 選択の指標), &quot;rmse&quot;(インライア RMSE),</p>
-<p>&quot;inlier_thr&quot;, &quot;src_corr&quot;,&quot;dst_corr&quot;(対応 index)}。</p>
-<p>注意(honest): FPFH は coarse registration であり、独立サンプリング+ノイズ+部分重なりの難条件では回転誤差が数度残る(実測: 62°回転・重なり~64%・ノイズ0.5×解像度で RANSAC 後 中央値 ~4.4°、~90% が &lt;8°、残り ~10% は 8-9° の境界。ICP で締めると 100% が &lt;8°・中央値 ~0.5°)。ノイズが点間隔(解像度)並み以上になると法線・角特徴が崩れ記述子が識別力を失う(実測: ノイズ≥1.0×解像度で成功率が低下)。RANSAC は乱択なので実運用では数回 restart し info[&quot;fitness&quot;] 最大の結果を採るとよい。</p>
+<p>相当于 2D 中 Harris/SIFT 的稀疏 feature 匹配的 3D 版。用 FPFH 描述子表示两个点云, 以描述子空间中的最近邻建立对应(用相互最近邻 + Lowe ratio 过滤),再用 RANSAC 求解对离群值鲁棒的刚体位姿。与稠密匹配(NCC/Hough)或 PCA 不同,其价值在于即使在大旋转(50-70°) +平移+部分重叠下也无需初始估计即可给出位姿。得到的 (R,t) 作为 ICP 的初始值(coarse init)传入,即可收紧到表面精度(dst ≈ src @ R.T + t 的 ICP 惯例)。</p>
+<p>流水线:</p>
+<p style="margin:2px 0 2px 12px">1) voxel 下采样(将独立采样的 2 个点云的邻域统一到共同分辨率。是大幅左右 FPFH 对应正确率的必需预处理)。</p>
+<p style="margin:2px 0 2px 12px">2) 法线估计(局部 PCA)。若传入 src_normals/dst_normals 则使用它们。</p>
+<p style="margin:2px 0 2px 12px">3) FPFH 描述子(SPFH→距离加权合成)。</p>
+<p style="margin:2px 0 2px 12px">4) 描述子 NN 匹配(mutual + ratio)。</p>
+<p style="margin:2px 0 2px 12px">5) RANSAC: 3 点采样 → edge-length 一致性预过滤 → Kabsch → 以<b>全点 fitness</b> (将 src 全部点变换后,其 dst 最近邻落在阈值内的比例)评分。只用对应(~100点) 评分容易固着于错误位姿,因此用全点 fitness 使其鲁棒。</p>
+<p style="margin:2px 0 2px 12px">6) 用最佳位姿的对应内点重新拟合。</p>
+<p>参数:</p>
+<p>src (N,3), dst (M,3): 要配准的 2 个点云(numpy/torch)。</p>
+<p>src_normals, dst_normals ((N,3)/(M,3) or None): 预先给定的法线。None 时内部估计</p>
+<p>(但 voxel_size&gt;0 时坐标会改变,因此总是重新估计)。</p>
+<p>voxel_size (float or None): 下采样边长。None 时自动采用 dst 分辨率×2.5。</p>
+<p>0/None 时禁用(保持原始点云。独立采样时不推荐)。</p>
+<p>normal_k (int): 法线估计的邻域数。</p>
+<p>feature_k (int): FPFH 的邻域数(越大描述子越稳定、越有区分力。推荐 60 左右)。</p>
+<p>n_bins (int): 每 1 个特征的直方图分箱数(描述子维数 = 3*n_bins)。</p>
+<p>ransac_iters (int): RANSAC 迭代次数。</p>
+<p>inlier_thr (float or None): 内点距离阈值。None 时为(下采样后)分辨率×3。</p>
+<p>edge_sim (float): 三元组边长比的容差(0&lt;edge_sim&lt;=1,越接近 1 越严格)。</p>
+<p>mutual (bool): 相互最近邻过滤。ratio (float or None): Lowe ratio。</p>
+<p>seed (int): RANSAC 随机种子(restart 时改变)。device (str): 返回张量的 device。</p>
+<p>返回值:</p>
+<p>R (3,3) torch.Tensor(在 device 上), t (3,) torch.Tensor,</p>
+<p>info dict: {&quot;n_corr&quot;(对应数), &quot;inliers&quot;(内点数), &quot;inlier_ratio&quot;,</p>
+<p>&quot;fitness&quot;(全点 fitness=restart 选择的指标), &quot;rmse&quot;(内点 RMSE),</p>
+<p>&quot;inlier_thr&quot;, &quot;src_corr&quot;,&quot;dst_corr&quot;(对应 index)}。</p>
+<p>注意(honest): FPFH 是 coarse registration,在独立采样+噪声+部分重叠的困难条件下会残留数度的旋转误差(实测: 62°旋转、重叠~64%、噪声0.5×分辨率时 RANSAC 后中位数 ~4.4°,~90% 为 &lt;8°,其余 ~10% 处于 8-9° 的边界。用 ICP 收紧后 100% 为 &lt;8°、中位数 ~0.5°)。噪声达到点间距(分辨率)量级以上时,法线、角特征会崩溃,描述子失去区分力(实测: 噪声≥1.0×分辨率时成功率下降)。RANSAC 是随机的, 因此实际运用中宜 restart 数次,取 info[&quot;fitness&quot;] 最大的结果。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

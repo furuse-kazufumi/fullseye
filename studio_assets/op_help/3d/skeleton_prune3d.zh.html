@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_prune3d(vol, length=1)</code>(要直接调用实现,<code style="color:#22d3bf">import medial; medial.skeleton_prune3d(vol, length=1)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;skeleton_prune3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>修剪 3D 骨架的毛刺(短枝)。端点去除迭代 length 次 = 去除枝长 &lt;=length 的枝。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>2D の <code style="color:#22d3bf">pruning</code> の 3D 版。孤立 voxel は端点扱いで消える。</p>
-<p>手順: <code style="color:#22d3bf">_ensure_skeleton</code> で bool 化(interior voxel があれば <code style="color:#22d3bf">skeletonize_vol</code> で細線化)し、次を <code style="color:#22d3bf">length</code> 回繰り返す — 26 近傍次数 <code style="color:#22d3bf">&lt;= 1</code> の voxel(端点と孤立点)をすべて同時に取り除く。骨格が空になるか端点が無くなれば(閉ループだけになれば)途中で止まる。</p>
-<p>引数: <code style="color:#22d3bf">length</code> は <code style="color:#22d3bf">int(length)</code> にして負なら 0 に丸める(0 なら細線化した骨格をそのまま返す)。1 回の反復で各枝の先端 1 voxel が消えるので、長さ <code style="color:#22d3bf">&lt;= length</code> voxel の枝(ヒゲ)は根元まで消える。</p>
-<p>返り値: 入力と同形の bool 配列。</p>
-<p>注意(挙動として知っておくこと):</p>
-<p style="margin:2px 0 2px 12px">• <b>長い枝も先端から <code style="color:#22d3bf">length</code> voxel 短くなる</b>(ヒゲだけを選んで消す処理ではない)。主枝の端点位置が要るなら、刈った後の端点は元より <code style="color:#22d3bf">length</code> 内側にある。</p>
-<p style="margin:2px 0 2px 12px">• 2 分岐の間の短い枝は両端が分岐点(次数 &gt;= 3)なので消えない。</p>
-<p style="margin:2px 0 2px 12px">• 孤立 voxel は 1 回目で消える。</p>
-<p style="margin:2px 0 2px 12px">• 反復のたびに次数を数え直すので、コストは <code style="color:#22d3bf">length</code> に比例する。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): 3-D でない・空配列・NaN/Inf を含む入力。細線化が必要で scikit-image が無ければ <code style="color:#22d3bf">ImportError</code>。後段は <code style="color:#22d3bf">skeleton_endpoints3d</code> / <code style="color:#22d3bf">skeleton_junctions3d</code> / <code style="color:#22d3bf">skeleton_branches3d</code> / <code style="color:#22d3bf">topology_signature</code>。</p>
+<p>2D 的 <code style="color:#22d3bf">pruning</code> 的 3D 版。孤立 voxel 按端点处理而被删除。</p>
+<p>步骤: 用 <code style="color:#22d3bf">_ensure_skeleton</code> 转为 bool(若有 interior voxel 则用 <code style="color:#22d3bf">skeletonize_vol</code> 细化),然后把下列操作重复 <code style="color:#22d3bf">length</code> 次 — 同时删除所有 26 邻域度 <code style="color:#22d3bf">&lt;= 1</code> 的 voxel(端点和孤立点)。当骨架变空或不再有端点时(只剩闭环时)中途停止。</p>
+<p>参数: <code style="color:#22d3bf">length</code> 经 <code style="color:#22d3bf">int(length)</code> 转换,为负则取 0(为 0 时把细化后的骨架原样返回)。每 1 次迭代删去各分支尖端的 1 个 voxel,因此长度 <code style="color:#22d3bf">&lt;= length</code> voxel 的分支(毛刺)会一直删到根部。</p>
+<p>返回值: 与输入同形状的 bool 数组。</p>
+<p>注意(需要了解的行为):</p>
+<p style="margin:2px 0 2px 12px">• <b>长分支也会从尖端缩短 <code style="color:#22d3bf">length</code> 个 voxel</b>(这并不是只挑出毛刺删除的处理)。需要主分支的端点位置时,请注意剪枝后的端点比原来向内偏移 <code style="color:#22d3bf">length</code>。</p>
+<p style="margin:2px 0 2px 12px">• 2 个分支点之间的短分支,两端都是分支点(度 &gt;= 3),因此不会被删除。</p>
+<p style="margin:2px 0 2px 12px">• 孤立 voxel 在第 1 次迭代就被删除。</p>
+<p style="margin:2px 0 2px 12px">• 每次迭代都会重新计算度,因此开销与 <code style="color:#22d3bf">length</code> 成正比。</p>
+<p>校验(<code style="color:#22d3bf">ValueError</code>): 不是 3-D、空数组、含 NaN/Inf 的输入。需要细化而没有 scikit-image 时为 <code style="color:#22d3bf">ImportError</code>。后续为 <code style="color:#22d3bf">skeleton_endpoints3d</code> / <code style="color:#22d3bf">skeleton_junctions3d</code> / <code style="color:#22d3bf">skeleton_branches3d</code> / <code style="color:#22d3bf">topology_signature</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

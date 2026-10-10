@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.joint_bilateral(depth: &#x27;np.ndarray&#x27;, guide: &#x27;np.ndarray&#x27;, spatial_sigma: &#x27;float&#x27;, range_sigma: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, truncate: &#x27;float&#x27; = 3.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import depth_bilateral; depth_bilateral.joint_bilateral(depth: &#x27;np.ndarray&#x27;, guide: &#x27;np.ndarray&#x27;, spatial_sigma: &#x27;float&#x27;, range_sigma: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, truncate: &#x27;float&#x27; = 3.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;joint_bilateral&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>joint / cross bilateral:被平滑的是 depth,而 range 权重由 guide 的差值给出。→ float64 (H,W)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>深度が荒くても清浄な guide(RGB 輝度・別センサ)の鮮鋭なエッジで段差を保存できる。range_sigma は <b>guide 値の単位</b>。guide が非有限の画素、および depth が無効な画素は寄与しない。guide と depth は同一形状必須(fail-closed)。</p>
+<p>即使深度粗糙，也能借助干净的 guide（RGB 亮度、其他传感器）的锐利边缘保留阶跃。range_sigma 以 <b>guide 值为单位</b>。guide 非有限的像素以及 depth 无效的像素不参与贡献。guide 与 depth 必须形状相同(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>

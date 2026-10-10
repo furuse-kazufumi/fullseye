@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largest_component(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import regionprops3d; regionprops3d.largest_component(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;largest_component&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳最大(體素最多)連通成分的 bool 遮罩。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>前景が無い場合は全 False マスク(vol と同形状)。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 内部で <code style="color:#22d3bf">label_components</code> を呼び、<code style="color:#22d3bf">bincount</code> でラベルごとのボクセル数を数えて最大を選ぶ。<b>同数のときは番号の小さいラベル</b>(scipy の走査順で先)が勝つ。</p>
-<p style="margin:2px 0 2px 12px">• 入力は 0 以外を前景として <code style="color:#22d3bf">bool</code> 化する(NaN も前景)。軸順は (z, y, x)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は入力と同形状の bool。前景が無ければ全 False(例外にはしない)。</p>
-<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 3 次元でない入力、<code style="color:#22d3bf">connectivity</code> が 6/18/26 以外。</p>
-<p style="margin:2px 0 2px 12px">• 典型: 閾値処理で出た二値ボリュームからノイズ塊を捨てて主対象だけ残す。複数を残したいなら <code style="color:#22d3bf">filter_by_volume</code>、特徴で選ぶなら <code style="color:#22d3bf">vol_select_labels</code>。</p>
+<p>沒有前景時為全 False 遮罩(與 vol 同形狀)。</p>
+<p>補充:</p>
+<p style="margin:2px 0 2px 12px">• 內部呼叫 <code style="color:#22d3bf">label_components</code>,用 <code style="color:#22d3bf">bincount</code> 統計各標籤的體素數並選出最大者。<b>數量相同時編號較小的標籤</b>(scipy 掃描順序中靠前)勝出。</p>
+<p style="margin:2px 0 2px 12px">• 輸入以 0 以外為前景轉為 <code style="color:#22d3bf">bool</code>(NaN 也是前景)。軸順序為 (z, y, x)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值為與輸入同形狀的 bool。沒有前景則全 False(不拋例外)。</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>:非 3 維輸入,<code style="color:#22d3bf">connectivity</code> 不是 6/18/26。</p>
+<p style="margin:2px 0 2px 12px">• 典型:從閾值處理得到的二值體資料中捨棄雜訊塊,只保留主要對象。要保留多個用 <code style="color:#22d3bf">filter_by_volume</code>,依特徵選擇用 <code style="color:#22d3bf">vol_select_labels</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 量測不確定度與校正知識 —— 為了能主張「量得準」</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

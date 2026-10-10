@@ -4,27 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import feat_shot; feat_shot.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;register_shot&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>SHOT 描述子的稀疏特徵匹配 + RANSAC 剛體姿態估計(完整管線)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>初期推定なしに、大回転・部分重なりの 2 点群を対応付けて剛体変換(回転 R + 並進 t)を返す。密マッチ(NCC/Hough/PCA)と異なり、ISS キーポイントごとに局所参照フレーム(LRF)を張り、球状分割セルの法線角度ヒストグラム(SHOT)で記述 → Lowe 比率テスト + 相互最近傍でマッチ → RANSAC で外れ値に頑健に姿勢推定する。得た姿勢は ICP の粗初期値(coarse init)供給にも使える。</p>
-<p>LRF の符号曖昧性: 距離重み付き共分散の固有ベクトルは符号が定まらないため、各軸(x=最大, z=最小 固有値)を近傍ベクトル (p_i-p) の投影多数派へ合わせ(Tombari の符号則)、y=z×x で右手系を構成する。点法線も同則で近傍質量から離れる向き(局所外向き)に統一するため回転に共変で部分重なりにも安定。両点群に同一則を適用することで記述子の repeatability を担保。</p>
-<p>引数:</p>
-<p>src, dst: (N,3)/(M,3) 点群(numpy か torch)。src を dst へ合わせる。</p>
-<p>radius: SHOT 支持半径。None なら各点群自身の bbox 対角(小さい方)の 0.15 倍</p>
-<p>(結合 bbox は並進で対角が水増しされスケールが狂うため使わない)。</p>
-<p>normal_k: 法線推定の knn 数。</p>
-<p>ratio: Lowe 比率テスト閾値(小さいほど厳格)。</p>
-<p>ransac_iters: RANSAC 反復数。</p>
-<p>inlier_thr: RANSAC インライア距離。None なら bbox 対角の 0.03 倍。</p>
-<p>refine_icp: True なら得た姿勢を初期値に Trimmed ICP(icp_point2point_3d)で精緻化。</p>
-<p>max_kp: キーポイント上限。</p>
-<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD/ICP をこの上で解く。</p>
-<p>seed: RANSAC 乱数種。</p>
-<p>返り値:</p>
-<p>R: (3,3) numpy。dst ≈ src @ R.T + t を満たす回転(icp と同規約)。</p>
-<p>t: (3,) numpy。並進。</p>
+<p>無需初始估計,即可將大旋轉、部分重疊的 2 個點雲對應起來並回傳剛體變換(旋轉 R + 平移 t)。與稠密匹配(NCC/Hough/PCA)不同,在每個 ISS keypoint 上建立局部參考座標系(LRF),以球狀分割單元的法線角度直方圖(SHOT)描述 → 以 Lowe 比率測試 + 相互最近鄰匹配 → 以 RANSAC 對離群值穩健地估計位姿。得到的位姿也可用於為 ICP 提供粗初始值(coarse init)。</p>
+<p>LRF 的符號歧義: 距離加權共變異數的特徵向量符號不確定, 因此將各軸(x=最大, z=最小 特徵值)對齊到鄰域向量 (p_i-p) 投影的多數方向(Tombari 的符號規則),並以 y=z×x 構成右手系。點法線也依同一規則統一為遠離鄰域質量的方向(局部向外),因此對旋轉共變,對部分重疊也穩定。對兩個點雲套用同一規則,以確保描述子的 repeatability。</p>
+<p>參數:</p>
+<p>src, dst: (N,3)/(M,3) 點雲(numpy 或 torch)。將 src 對齊到 dst。</p>
+<p>radius: SHOT 支撐半徑。None 時為各點雲自身 bbox 對角線(取較小者)的 0.15 倍</p>
+<p>(聯合 bbox 的對角線會因平移而虛增、使尺度失準,因此不使用)。</p>
+<p>normal_k: 法線估計的 knn 數。</p>
+<p>ratio: Lowe 比率測試閾值(越小越嚴格)。</p>
+<p>ransac_iters: RANSAC 迭代次數。</p>
+<p>inlier_thr: RANSAC 內點距離。None 時為 bbox 對角線的 0.03 倍。</p>
+<p>refine_icp: 為 True 時以得到的位姿為初始值,以 Trimmed ICP(icp_point2point_3d)精化。</p>
+<p>max_kp: keypoint 上限。</p>
+<p>device: torch 裝置(&quot;cpu&quot; 等)。在其上求解 SVD/ICP。</p>
+<p>seed: RANSAC 亂數種子。</p>
+<p>回傳值:</p>
+<p>R: (3,3) numpy。滿足 dst ≈ src @ R.T + t 的旋轉(與 icp 同一慣例)。</p>
+<p>t: (3,) numpy。平移。</p>
 <p>info: dict。&quot;n_kp_src&quot;,&quot;n_kp_dst&quot;,&quot;n_matches&quot;,&quot;n_inliers&quot;,&quot;inlier_ratio&quot;,</p>
-<p>&quot;icp_rmse&quot;(refine_icp 時),&quot;ok&quot;(True=推定成功; インライア&lt;4 は</p>
-<p>信頼不可として False + 単位変換を返す)。</p>
+<p>&quot;icp_rmse&quot;(refine_icp 時),&quot;ok&quot;(True=估計成功; 內點&lt;4 時</p>
+<p>視為不可信,回傳 False + 單位變換)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

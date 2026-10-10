@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>level-set 的主曲率 → 形状指数 S(Koenderink)与弯曲度。闭式(Kindlmann 2003)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>2D 輪郭の曲率(スカラー 1 個)の <b>線→面リフト</b>: 曲面は主曲率 κ1,κ2 の 2 個を持つ。mean = (κ1+κ2)/2 = (|g|²trH − gᵀHg)/|g|³、Gauss K = κ1κ2 = gᵀadj(H)g/|g|⁴(g=∇, H=Hessian)。S=(2/π)atan2(κ1+κ2, κ1−κ2) ∈[-1,1] は <b>強度・回転に不変な局所曲面型</b>(cup−1/rut/saddle0/ ridge+.5/cap+1)。外向き法線規約で明凸 blob=cap(+1)。返り値 (S, curvedness, mask, |g|)、全 torch。</p>
-<p>単位系: sobel3d の分離 conv 利得 32(deriv[-1,0,1]×平滑[1,2,1]²)をここで割り戻すので、κ1,κ2/curvedness は <b>真の 1/voxel 単位</b>(半径 R の球殻で curvedness=1/R)、|g| と mask 閾値 mc は <b>voxel あたりの真の勾配単位</b>。旧版(〜2026-08-29)は割り戻しを忘れ curvedness が 1/32 倍・mc が生 sobel3d 単位だった(shape index S は比なので影響なし)。旧 mc 値を使っていた場合は 1/32 して渡すこと(既定値 0.02→6.25e-4 も等価変換済み)。</p>
+<p>2D 轮廓曲率(1 个标量)的 <b>线→面提升</b>: 曲面有 2 个主曲率 κ1,κ2。mean = (κ1+κ2)/2 = (|g|²trH − gᵀHg)/|g|³,Gauss K = κ1κ2 = gᵀadj(H)g/|g|⁴(g=∇, H=Hessian)。S=(2/π)atan2(κ1+κ2, κ1−κ2) ∈[-1,1] 是 <b>对强度、旋转不变的局部曲面类型</b>(cup−1/rut/saddle0/ ridge+.5/cap+1)。按外向法线约定,亮的凸 blob=cap(+1)。返回值 (S, curvedness, mask, |g|),全为 torch。</p>
+<p>单位制: 在此把 sobel3d 可分离 conv 的增益 32(deriv[-1,0,1]×平滑[1,2,1]²)除回去,因此 κ1,κ2/curvedness 为 <b>真实的 1/voxel 单位</b>(半径 R 的球壳上 curvedness=1/R),|g| 和 mask 阈值 mc 为 <b>每 voxel 的真实梯度单位</b>。旧版(至 2026-08-29)忘了除回, curvedness 为 1/32 倍、mc 为原始 sobel3d 单位(shape index S 是比值,不受影响)。若使用过旧 mc 值,请乘以 1/32 后传入(默认值 0.02→6.25e-4 也已等价换算)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -6,11 +6,10 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 梯度 (gz,gy,gx)。導數[-1,0,1]×平滑[1,2,1] 的可分離 conv3d。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>vol は numpy でも torch tensor(GPU 上でも可)でも受ける(scene_flow 等の device 常駐用)。</p>
-<p>返り値は <b>torch tensor 3 本</b>(numpy ではない)、各 <code style="color:#22d3bf">(1,1,D,H,W)</code> float32、<code style="color:#22d3bf">device</code> 上。<code style="color:#22d3bf">gz</code> は軸 0 方向、<code style="color:#22d3bf">gy</code> は軸 1、<code style="color:#22d3bf">gx</code> は軸 2 の微分(入力が (D,H,W) なら (depth,row,col) 順)。numpy に戻すなら <code style="color:#22d3bf">g[0, 0].cpu().numpy()</code>。</p>
-<p>利得: 微分 [-1,0,1] (傾き 1 で 2)× 他 2 軸の平滑 [1,2,1] (各 4)で <b>真の勾配の 32 倍</b>が出る(正規化しない)。真の値が要るなら 32 で割る(<code style="color:#22d3bf">curvature_maps</code> / <code style="color:#22d3bf">scene_flow_lk</code> は内部で割っている。<code style="color:#22d3bf">hessian3d</code> は利得 1 なので混ぜるときに注意)。端は replicate padding(境界で偽のエッジを作らない)。tensor 入力が 3-D なら batch 次元を足し、5-D ならそのまま使う。dtype は float32 に落とす。</p>
-<p>後段: <code style="color:#22d3bf">curvature_maps</code> / <code style="color:#22d3bf">match_shape_3d</code> の単位勾配、<code style="color:#22d3bf">hough_plane_3d</code> の法線。方向の要らないエッジ強度なら <code style="color:#22d3bf">morph_gradient3d</code> も代替。</p>
+<p>vol 既可以是 numpy 也可以是 torch tensor(在 GPU 上也可)(用於 scene_flow 等常駐 device 的情境)。</p>
+<p>回傳值為 <b>3 個 torch tensor</b>(不是 numpy),各為 <code style="color:#22d3bf">(1,1,D,H,W)</code> float32,位於 <code style="color:#22d3bf">device</code> 上。<code style="color:#22d3bf">gz</code> 是軸 0 方向、<code style="color:#22d3bf">gy</code> 是軸 1、<code style="color:#22d3bf">gx</code> 是軸 2 的微分(輸入為 (D,H,W) 時即 (depth,row,col) 順序)。要轉回 numpy 用 <code style="color:#22d3bf">g[0, 0].cpu().numpy()</code>。</p>
+<p>增益: 微分 [-1,0,1] (斜率 1 時為 2)× 其他 2 軸的平滑 [1,2,1] (各 4),得到 <b>真實梯度的 32 倍</b> (不正規化)。需要真實值時除以 32(<code style="color:#22d3bf">curvature_maps</code> / <code style="color:#22d3bf">scene_flow_lk</code> 在內部已經除過。<code style="color:#22d3bf">hessian3d</code> 的增益為 1,混用時要注意)。邊緣用 replicate padding(不在邊界產生虛假邊緣)。tensor 輸入為 3-D 時補上 batch 維, 為 5-D 時原樣使用。dtype 降為 float32。</p>
+<p>後續: <code style="color:#22d3bf">curvature_maps</code> / <code style="color:#22d3bf">match_shape_3d</code> 的單位梯度、<code style="color:#22d3bf">hough_plane_3d</code> 的法線。不需要方向的邊緣強度也可用 <code style="color:#22d3bf">morph_gradient3d</code> 替代。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

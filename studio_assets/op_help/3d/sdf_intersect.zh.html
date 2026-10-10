@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_intersect(a, b)</code>(要直接调用实现,<code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_intersect(a, b)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;sdf_intersect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>两个 SDF 的交集 A∩B = 逐元素 max(a, b)(只有两者都在内侧才在内侧)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>ゼロ等値面は両境界の共通部分。外側で厳密 SDF、内側は保守的下界。</p>
-<p>計算: <code style="color:#22d3bf">np.maximum(np.asarray(a, float64), np.asarray(b, float64))</code>。要素ごとの max なので、ある点が A∩B の内側(負)になるのは <code style="color:#22d3bf">a &lt; 0</code> かつ <code style="color:#22d3bf">b &lt; 0</code> のときだけ。shape はブロードキャスト整合していればよく(不整合なら numpy の <code style="color:#22d3bf">ValueError</code>)、それ以外の検査はしない。NaN は伝播、<code style="color:#22d3bf">±inf</code> は厳密に伝播(<code style="color:#22d3bf">max(a, -inf) = a</code>)。</p>
-<p>入力: 同一グリッド上で評価した 2 つの SDF(<code style="color:#22d3bf">sphere_sdf</code> / <code style="color:#22d3bf">box_sdf</code> / <code style="color:#22d3bf">esdf</code> の出力など、内側負・外側正)。距離の単位は入力と同じ。</p>
-<p>返り値: ブロードキャスト後の shape の float64。<code style="color:#22d3bf">&lt;= 0</code> が A∩B の占有。</p>
-<p>注意:</p>
-<p style="margin:2px 0 2px 12px">• <b>外側の値は真の距離より小さく出うる</b>: 交差の外側で、点が A の外かつ B の外のとき <code style="color:#22d3bf">max(a, b)</code> は「遠い方の表面まで」の距離で、A∩B の表面はそれより遠いことがある(下界)。ゼロ等値面は厳密。</p>
-<p style="margin:2px 0 2px 12px">• 共通部分が無ければ全要素が正(占有 0)になり、エラーにはならない。</p>
-<p style="margin:2px 0 2px 12px">• 箱で球を切る・2 つの箱で角柱を作る、といった CSG の「切り出し」に使う。A から B を抜くのは <code style="color:#22d3bf">sdf_subtract</code>。</p>
+<p>零等值面为两边界的交集。外侧为严格 SDF，内侧为保守下界。</p>
+<p>计算：<code style="color:#22d3bf">np.maximum(np.asarray(a, float64), np.asarray(b, float64))</code>。由于是逐元素 max，某点处于 A∩B 内侧（负）仅当 <code style="color:#22d3bf">a &lt; 0</code> 且 <code style="color:#22d3bf">b &lt; 0</code>。shape 只需广播匹配（不匹配时由 numpy 抛出 <code style="color:#22d3bf">ValueError</code>），此外不做检查。NaN 传播，<code style="color:#22d3bf">±inf</code> 严格传播(<code style="color:#22d3bf">max(a, -inf) = a</code>)。</p>
+<p>输入：在同一网格上求值的 2 个 SDF（<code style="color:#22d3bf">sphere_sdf</code> / <code style="color:#22d3bf">box_sdf</code> / <code style="color:#22d3bf">esdf</code> 的输出等，内侧负、外侧正）。距离单位与输入相同。</p>
+<p>返回值：广播后 shape 的 float64。<code style="color:#22d3bf">&lt;= 0</code> 为 A∩B 的占用。</p>
+<p>注意：</p>
+<p style="margin:2px 0 2px 12px">• <b>外侧的值可能小于真实距离</b>:在交集外侧，当点在 A 外且在 B 外时，<code style="color:#22d3bf">max(a, b)</code> 是“到较远一方表面”的距离，而 A∩B 的表面可能比这更远（下界）。零等值面是严格的。</p>
+<p style="margin:2px 0 2px 12px">• 若没有公共部分，则所有元素为正（占用为 0），不会报错。</p>
+<p style="margin:2px 0 2px 12px">• 用于 CSG 的“切出”，如用盒子切球、用 2 个盒子构造棱柱。从 A 中挖去 B 用 <code style="color:#22d3bf">sdf_subtract</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

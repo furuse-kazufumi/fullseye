@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;ransac_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이상치에 강건한 RANSAC 원기둥 적합(점 법선이 필요).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>円筒表面の法線は軸に直交するので、2 点の法線の外積で軸方向を推定 → 軸に直交な平面へ全点を投影 → その平面内で円をフィット → |投影距離 - r| &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化。最終 inlier ではより頑健に軸を再推定(法線群の SVD の最小特異方向 = 軸)し、投影円を最小二乗リフィットする。法線が無ければ呼び出し側で estimate してから渡す。</p>
+<p>원통 표면의 법선은 축에 직교하므로 2 점의 법선의 외적으로 축 방향을 추정 → 축에 직교하는 평면으로모든 점을 투영 → 그 평면 안에서 원을 피팅 → |투영 거리 - r| &lt; <code style="color:#22d3bf">thresh</code>인 inlier를최대화. 최종 inlier에서는 더 강건하게 축을 재추정하고(법선군 SVD의 최소 특이 방향 = 축), 투영 원을 최소제곱 재피팅한다. 법선이 없으면 호출 측에서 estimate한 후 넘긴다.</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>normals: (N,3) 各点の(単位)法線。</p>
-<p>thresh: inlier とみなす |投影距離-r| のしきい値。</p>
-<p>iters: RANSAC 反復数。</p>
-<p>seed: 乱数シード(決定論)。</p>
+<p>points: (N,3) 점군.</p>
+<p>normals: (N,3) 각 점의 (단위) 법선.</p>
+<p>thresh: inlier로 간주하는 |투영 거리-r|의 임계값.</p>
+<p>iters: RANSAC 반복 횟수.</p>
+<p>seed: 난수 시드(결정론적).</p>
 <p>Returns:</p>
-<p>(params, inlier_mask, info)。params = {&quot;axis&quot;: (3,) 単位軸, &quot;point&quot;: (3,) 軸上の一点,</p>
-<p>&quot;radius&quot;: float}。info には inlier 数 <code style="color:#22d3bf">n_inliers</code> / 比 <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code>。</p>
+<p>(params, inlier_mask, info). params = {&quot;axis&quot;: (3,) 단위 축, &quot;point&quot;: (3,) 축 위의 한 점,</p>
+<p>&quot;radius&quot;: float}. info에는 inlier 수 <code style="color:#22d3bf">n_inliers</code> / 비율 <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 행렬 분해가 느린 이유 — BLAS 스레드·캐시·메모리 배치</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

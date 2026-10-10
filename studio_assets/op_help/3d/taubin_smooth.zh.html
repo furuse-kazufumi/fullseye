@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.taubin_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.33, mu: &#x27;float&#x27; = -0.34) -&gt; &#x27;Mesh&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mesh_smooth; mesh_smooth.taubin_smooth(mesh: &#x27;Sequence&#x27;, iters: &#x27;int&#x27; = 10, lam: &#x27;float&#x27; = 0.33, mu: &#x27;float&#x27; = -0.34) -&gt; &#x27;Mesh&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;taubin_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Taubin λ|μ 滤波的<b>非收缩</b>平滑。→ (verts, faces)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各反復で「正の <code style="color:#22d3bf">lam</code> で寄せる段」→「負の <code style="color:#22d3bf">mu</code> で押し戻す段」を続けて掛ける。<code style="color:#22d3bf">|mu| &gt; lam</code> とすることで低周波(全体形状)を通し高周波(ノイズ)だけを減衰させる帯域通過フィルタになり、Laplacian の収縮アーティファクトを打ち消す(球の平均半径がほぼ保たれる)。既定 <code style="color:#22d3bf">lam=0.33, mu=-0.34</code> は Taubin (1995) の推奨に近い。</p>
+<p>每次迭代连续施加“用正的 <code style="color:#22d3bf">lam</code> 拉近的步骤”→“用负的 <code style="color:#22d3bf">mu</code> 推回的步骤”。取 <code style="color:#22d3bf">|mu| &gt; lam</code> 后成为让低频（整体形状）通过、只衰减高频（噪声）的带通滤波器，抵消 Laplacian 的收缩伪影（球的平均半径几乎保持不变）。默认 <code style="color:#22d3bf">lam=0.33, mu=-0.34</code> 接近 Taubin (1995) 的推荐值。</p>
 <p>Args:</p>
-<p>mesh: (verts (N,3), faces (M,3)[, ...]) のシーケンス。faces は不変。</p>
-<p>iters: λ|μ ペアの反復回数(正の整数)。</p>
-<p>lam: 寄せ段の係数、<code style="color:#22d3bf">0 &lt; lam &lt; 1</code>。</p>
-<p>mu: 押し戻し段の係数、<code style="color:#22d3bf">mu &lt; 0</code> かつ <code style="color:#22d3bf">|mu| &gt; lam</code>(収縮を打ち消す条件)。</p>
+<p>mesh: (verts (N,3), faces (M,3)[, ...]) 的序列。faces 不变。</p>
+<p>iters: λ|μ 对的迭代次数（正整数）。</p>
+<p>lam: 拉近步骤的系数，<code style="color:#22d3bf">0 &lt; lam &lt; 1</code>。</p>
+<p>mu: 推回步骤的系数，<code style="color:#22d3bf">mu &lt; 0</code> 且 <code style="color:#22d3bf">|mu| &gt; lam</code>（抵消收缩的条件）。</p>
 <p>Returns:</p>
-<p>(verts (N,3) float64, faces (M,3) int64)。faces は入力を保持。</p>
+<p>(verts (N,3) float64, faces (M,3) int64)。faces 保持输入。</p>
 <p>Raises:</p>
-<p>ValueError: メッシュ形状不正・面範囲外・iters/lam/mu が不正(fail-closed)。</p>
+<p>ValueError: 网格形状不正确、面索引越界、iters/lam/mu 不正确(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

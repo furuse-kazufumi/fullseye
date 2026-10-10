@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)</code>(要直接呼叫實作,<code style="color:#22d3bf">import feat_shot; feat_shot.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;iss_keypoints&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>ISS(Intrinsic Shape Signatures,相當於 3D Harris)關鍵點偵測。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>局所共分散の最小固有値 λ3 を saliency とし、固有値が distinct(向きが well-defined)な点のみ候補にして NMS で疎に選ぶ。回転不変。返り値=点 index 配列。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code> (N,3)。<code style="color:#22d3bf">radius</code>: saliency 用の近傍球半径(点群と同じ単位)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms_radius</code>: 非最大抑制の距離。None なら <code style="color:#22d3bf">0.6*radius</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gamma21</code>・<code style="color:#22d3bf">gamma32</code>: 固有値比 λ2/λ1、λ3/λ2 の上限(既定 0.99)。両方ともこれ</p>
-<p>未満の点だけが候補(比が 1 に近い=等方で向きが決まらない点を除く)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_kp</code>: 返す上限。<code style="color:#22d3bf">min_neighbors</code>: 近傍がこれ未満の点は候補にしない(既定 8)。</p>
-<p>手順: 各点で <code style="color:#22d3bf">radius</code> 内の近傍を集め、注目点を原点とした 2 次モーメント行列 <code style="color:#22d3bf">(qᵀq)/n</code> の固有値 λ1≥λ2≥λ3 を求める(λ1 が 1e-12 以下なら除外)。λ3 を saliency として降順に走査し、採用済みの点から <code style="color:#22d3bf">nms_radius</code> 未満にあるものを捨てる貪欲 NMS。返り値は int64 の点インデックス配列(saliency 降順)。候補が無ければ長さ 0。</p>
-<p>注意: 近傍は注目点で中心化する(重心ではない)ため、平面上の点でも λ3 は厳密には 0 にならない。全点で近傍探索する Python ループなので、数万点を超える雲は <code style="color:#22d3bf">voxel_grid_downsample</code> で間引いてから使う。<code style="color:#22d3bf">shot_descriptor</code> のキーポイント入力に直結し、<code style="color:#22d3bf">register_shot</code> は内部で <code style="color:#22d3bf">radius</code> の 0.6 倍・NMS 0.3 倍で呼ぶ。</p>
+<p>以局部共變異數的最小特徵值 λ3 作為 saliency,只把特徵值 distinct(方向 well-defined)的點作為候選,並以 NMS 稀疏地選取。旋轉不變。回傳值=點 index 陣列。</p>
+<p>參數:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code> (N,3)。<code style="color:#22d3bf">radius</code>: saliency 用的鄰域球半徑(與點雲單位相同)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms_radius</code>: 非極大值抑制的距離。None 時為 <code style="color:#22d3bf">0.6*radius</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gamma21</code>、<code style="color:#22d3bf">gamma32</code>: 特徵值比 λ2/λ1、λ3/λ2 的上限(預設 0.99)。兩者都</p>
+<p>小於此值的點才是候選(排除比接近 1=等向性、方向無法確定的點)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_kp</code>: 回傳的上限。<code style="color:#22d3bf">min_neighbors</code>: 鄰域少於此數的點不作為候選(預設 8)。</p>
+<p>步驟: 在各點收集 <code style="color:#22d3bf">radius</code> 內的鄰域,求以關注點為原點的 2 階矩矩陣 <code style="color:#22d3bf">(qᵀq)/n</code> 的特徵值 λ1≥λ2≥λ3(λ1 在 1e-12 以下則排除)。以 λ3 作為 saliency 依降序掃描,捨棄距已採用點小於 <code style="color:#22d3bf">nms_radius</code> 的點的貪婪 NMS。回傳值為 int64 的點索引陣列(saliency 降序)。無候選時長度為 0。</p>
+<p>注意: 鄰域以關注點為中心(而非質心),因此即使是平面上的點 λ3 嚴格來說也不為 0。由於是對所有點做鄰域搜尋的 Python 迴圈,超過數萬點的點雲應先以 <code style="color:#22d3bf">voxel_grid_downsample</code> 抽稀後再使用。直接作為 <code style="color:#22d3bf">shot_descriptor</code> 的關鍵點輸入, <code style="color:#22d3bf">register_shot</code> 在內部以 <code style="color:#22d3bf">radius</code> 的 0.6 倍、NMS 0.3 倍呼叫。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

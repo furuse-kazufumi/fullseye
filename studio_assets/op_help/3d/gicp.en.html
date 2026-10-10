@@ -5,31 +5,30 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.gicp(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">pose</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.gicp.raw(...)</code> or call <code style="color:#22d3bf">gicp.gicp</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Estimate the rigid transform (R,t) by Generalized-ICP (covariance-weighted Mahalanobis ICP).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各反復で source→target の最近傍対応を張り、残差 <code style="color:#22d3bf">d_i = R·s_i + t - q_i</code> を重み <code style="color:#22d3bf">W_i = (C_target[q_i] + R·C_source[s_i]·Rᵀ)⁻¹</code> で測るマハラノビスコスト <code style="color:#22d3bf">Σ d_iᵀ W_i d_i</code> を、小角線形化 <code style="color:#22d3bf">R ← (I+[ω]×)R</code> の Gauss-Newton で最小化する。各対応のヤコビアン <code style="color:#22d3bf">J_i = [-[R·s_i+t]× | I]</code>(3×6)から正規方程式 <code style="color:#22d3bf">(Σ J_iᵀ W_i J_i) x = -(Σ J_iᵀ W_i d_i)</code>(6×6)を解いて増分 <code style="color:#22d3bf">x=[ω|τ]</code> を得、Rodrigues で回転に戻して累積する。</p>
-<p>共分散は plane-to-plane(<code style="color:#22d3bf">estimate_covariances</code>)。point-to-plane が target の法線方向へ残差を射影する(rank-1)のに対し、GICP は source・target 双方の full 3×3 共分散を合成した重みを使うため、平面的・ノイズを含む点群で頑健。</p>
-<p>ICP はローカル最適化なので <b>近い初期化を前提</b>(粗マッチや <code style="color:#22d3bf">init</code> を渡す)。</p>
-<p>引数:</p>
-<p>source (N,3): 動かす側の点群。</p>
-<p>target (M,3): 参照側(固定)の点群。</p>
-<p>max_iter: 最大反復数。</p>
-<p>k: 共分散推定の近傍数。</p>
-<p>epsilon: plane-to-plane の法線方向小分散(0&lt;ε&lt;1)。</p>
-<p>tol: 収束閾値。増分並進 ‖τ‖ が <code style="color:#22d3bf">tol×(target のRMS半径)</code> 未満かつ</p>
-<p>増分回転 ‖ω‖(rad)が <code style="color:#22d3bf">tol</code> 未満で打ち切り(スケール相対)。</p>
-<p>init: (R0(3,3), t0(3,)) の初期姿勢タプル、または None(単位)。</p>
-<p>reproducible: True なら N 点の和 <code style="color:#22d3bf">Σ J_iᵀ W_i J_i</code>・<code style="color:#22d3bf">Σ J_iᵀ W_i d_i</code> を ozakimm(Ozaki スキーム)の縮約に、</p>
-<p>姿勢の適用を要素ごとの演算に、RMSE を math.fsum にする。source の点の順・BLAS のスレッド数に依らず</p>
-<p>R・t・rmse がビット単位で同じ(共分散の近傍に距離がちょうど同点の点があると近傍の選ばれ方が変わりうる)。</p>
-<p>既定 False は従来どおり。</p>
-<p>返り値:</p>
+<p>At each iteration, sets up source→target nearest-neighbour correspondences, and minimises the Mahalanobis cost <code style="color:#22d3bf">Σ d_iᵀ W_i d_i</code>, which measures the residual <code style="color:#22d3bf">d_i = R·s_i + t - q_i</code> with the weight <code style="color:#22d3bf">W_i = (C_target[q_i] + R·C_source[s_i]·Rᵀ)⁻¹</code>, by Gauss-Newton with the small-angle linearisation <code style="color:#22d3bf">R ← (I+[ω]×)R</code>. From each correspondence&#x27;s Jacobian <code style="color:#22d3bf">J_i = [-[R·s_i+t]× | I]</code> (3×6), it solves the normal equations <code style="color:#22d3bf">(Σ J_iᵀ W_i J_i) x = -(Σ J_iᵀ W_i d_i)</code> (6×6) for the increment <code style="color:#22d3bf">x=[ω|τ]</code>, converts it back to a rotation with Rodrigues, and accumulates it.</p>
+<p>Covariances are plane-to-plane (<code style="color:#22d3bf">estimate_covariances</code>). Whereas point-to-plane projects the residual onto the target&#x27;s normal direction (rank-1), GICP uses a weight combining the full 3×3 covariances of both source and target, so it is robust on planar, noisy point clouds.</p>
+<p>ICP is a local optimisation, so it <b>assumes a close initialisation</b> (pass a coarse match or <code style="color:#22d3bf">init</code>).</p>
+<p>Arguments:</p>
+<p>source (N,3): point cloud to be moved.</p>
+<p>target (M,3): reference (fixed) point cloud.</p>
+<p>max_iter: maximum number of iterations.</p>
+<p>k: number of neighbours for covariance estimation.</p>
+<p>epsilon: small variance along the normal for plane-to-plane (0&lt;ε&lt;1).</p>
+<p>tol: convergence threshold. Stops when the incremental translation ‖τ‖ is below <code style="color:#22d3bf">tol×(RMS radius of target)</code> and</p>
+<p>the incremental rotation ‖ω‖ (rad) is below <code style="color:#22d3bf">tol</code> (scale-relative).</p>
+<p>init: initial pose tuple (R0(3,3), t0(3,)), or None (identity).</p>
+<p>reproducible: if True, the N-point sums <code style="color:#22d3bf">Σ J_iᵀ W_i J_i</code> and <code style="color:#22d3bf">Σ J_iᵀ W_i d_i</code> use ozakimm (Ozaki scheme) reductions,</p>
+<p>applying the pose uses element-wise operations, and the RMSE uses math.fsum. Independent of source point order and the BLAS thread count,</p>
+<p>R, t and rmse are bit-for-bit identical (if a covariance neighbourhood contains points at exactly tied distances, which neighbours get chosen may change).</p>
+<p>The default False behaves as before.</p>
+<p>Returns:</p>
 <p>dict:</p>
-<p>&quot;R&quot; (3,3) ndarray  — target ≈ R·source + t を満たす回転。</p>
-<p>&quot;t&quot; (3,) ndarray   — 並進。</p>
-<p>&quot;rmse&quot; float       — 最終対応上のユークリッド RMSE(採用点)。</p>
-<p>&quot;iterations&quot; int   — 実反復数。</p>
-<p>例外:</p>
-<p>ValueError: 入力形状不正 / 点数不足 / 数値発散(非有限)= fail-closed。</p>
+<p>&quot;R&quot; (3,3) ndarray  — rotation satisfying target ≈ R·source + t.</p>
+<p>&quot;t&quot; (3,) ndarray   — translation.</p>
+<p>&quot;rmse&quot; float       — Euclidean RMSE over the final correspondences (accepted points).</p>
+<p>&quot;iterations&quot; int   — actual number of iterations.</p>
+<p>Exceptions:</p>
+<p>ValueError: invalid input shape / too few points / numerical divergence (non-finite) = fail-closed.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

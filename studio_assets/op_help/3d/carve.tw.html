@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carve(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import visualhull; visualhull.carve(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;carve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 bounds 離散成 res^3 體素,保留投影落在所有輪廓內的體素(空間雕刻)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各 voxel 中心を全カメラ <code style="color:#22d3bf">m</code> に <code style="color:#22d3bf">X_cam = R_m X + t_m</code> で射影し、depth&gt;0・画像内・ <code style="color:#22d3bf">silhouettes[m]</code> が前景、を <b>すべて</b> 満たす voxel だけ keep する(視錐の共通部分)。シルエット/カメラは長さ M のリスト。</p>
+<p>將每個 voxel 中心以 <code style="color:#22d3bf">X_cam = R_m X + t_m</code> 投影到所有相機 <code style="color:#22d3bf">m</code>,僅保留滿足 depth&gt;0、在影像內、<code style="color:#22d3bf">silhouettes[m]</code> 為前景這些條件<b>全部</b>的 voxel(視錐的交集)。剪影/相機是長度為 M 的串列。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>silhouettes : list of (H, W) bool array  各カメラの前景マスク(M 個)。</p>
-<p>Ks, Rs, ts : list  各カメラの内部パラメータ・回転・並進(各 M 個)。</p>
-<p>bounds : ((xmin,xmax),(ymin,ymax),(zmin,zmax))  彫刻する直方体領域。</p>
-<p>res : int  各軸の voxel 分割数(voxel 総数 = res^3)。</p>
+<p>silhouettes : list of (H, W) bool array  各相機的前景遮罩(M 個)。</p>
+<p>Ks, Rs, ts : list  各相機的內部參數、旋轉、平移(各 M 個)。</p>
+<p>bounds : ((xmin,xmax),(ymin,ymax),(zmin,zmax))  雕刻的長方體區域。</p>
+<p>res : int  各軸的 voxel 分割數(voxel 總數 = res^3)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>(res, res, res) bool ndarray  占有 voxel。indexing=&#x27;ij&#x27; で軸は (x, y, z)。</p>
-<p><code style="color:#22d3bf">vox[i,j,k]</code> の中心は <code style="color:#22d3bf">(xmin+(i+.5)dx, ymin+(j+.5)dy, zmin+(k+.5)dz)</code>。</p>
+<p>(res, res, res) bool ndarray  佔據 voxel。indexing=&#x27;ij&#x27; 時軸為 (x, y, z)。</p>
+<p><code style="color:#22d3bf">vox[i,j,k]</code> 的中心為 <code style="color:#22d3bf">(xmin+(i+.5)dx, ymin+(j+.5)dy, zmin+(k+.5)dz)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

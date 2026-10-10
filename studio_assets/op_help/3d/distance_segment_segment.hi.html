@@ -5,20 +5,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">measurement</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">match3d.distance_segment_segment</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><b>finite line segments</b> के बीच न्यूनतम दूरी, और उनके निकटतम points का जोड़ा। → <code style="color:#22d3bf">(distance, cp, cq)</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">distance_line_line</code> は<b>無限直線</b>の距離なので、離れた 2 線分に 0 を返すことがある(実測: (0,0,0)-(1,0,0) と (5,0,0)-(6,0,0) に対し 0.0、真値は 4.0)。手足・ロボットのリンク・配管・工具はどれも<b>有限</b>なので、安全距離や干渉判定に無限直線版を使うと<b>危険を過小評価する</b>(<code style="color:#22d3bf">poc_safety_clearance</code> の実測では同じ 2 本に対し 87.6 % の過小評価)。</p>
+<p><code style="color:#22d3bf">distance_line_line</code> <b>अनंत रेखाओं</b> की दूरी है, इसलिए अलग-अलग 2 segment के लिए भी यह 0 लौटा सकता है (मापा गया: (0,0,0)-(1,0,0) और (5,0,0)-(6,0,0) के लिए 0.0, ground truth 4.0)। हाथ-पैर, robot के link, पाइप और tool सभी <b>सीमित</b> होते हैं, इसलिए safety distance या interference की जाँच में अनंत-रेखा वाला संस्करण उपयोग करने पर <b>खतरे को कम आँका जाता है</b> (<code style="color:#22d3bf">poc_safety_clearance</code> के माप में उन्हीं 2 के लिए 87.6 % कम आँकलन)।</p>
 <p>Args:</p>
-<p>p0, p1: 線分 1 の端点 <code style="color:#22d3bf">(3,)</code>。<code style="color:#22d3bf">p0 == p1</code> なら点として扱う。</p>
-<p>q0, q1: 線分 2 の端点 <code style="color:#22d3bf">(3,)</code>。</p>
+<p>p0, p1: segment 1 के अंत-बिंदु <code style="color:#22d3bf">(3,)</code>। <code style="color:#22d3bf">p0 == p1</code> हो तो इसे बिंदु माना जाता है।</p>
+<p>q0, q1: segment 2 के अंत-बिंदु <code style="color:#22d3bf">(3,)</code>।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(distance, cp, cq)</code>: 最短距離 float と、線分 1 側・線分 2 側の最近接点</p>
-<p><code style="color:#22d3bf">(3,)</code>。<code style="color:#22d3bf">distance == 0</code> は 2 線分が交差(または接触)しているとき。</p>
-<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.distance_segment_segment</code>)は宣言 out 型の</p>
-<p><code style="color:#22d3bf">distance</code> だけを返す。最近接点も要るときは</p>
-<p><code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code>。</p>
+<p><code style="color:#22d3bf">(distance, cp, cq)</code>: न्यूनतम दूरी float, और segment 1 तथा segment 2 की ओर के निकटतम बिंदु</p>
+<p><code style="color:#22d3bf">(3,)</code>। <code style="color:#22d3bf">distance == 0</code> तब होता है जब 2 segment प्रतिच्छेद करते हैं (या छूते हैं)।</p>
+<p>★ledger के माध्यम से (<code style="color:#22d3bf">fullseye.ledger.distance_segment_segment</code>) घोषित out type का</p>
+<p>केवल <code style="color:#22d3bf">distance</code> लौटता है। निकटतम बिंदु भी चाहिए हों तो</p>
+<p><code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code>।</p>
 <p>Raises:</p>
-<p>ValueError: 端点が <code style="color:#22d3bf">(3,)</code> に直せない、または非有限のとき。</p>
-<p>平行・退化(点に潰れた線分)も分岐で正しく扱う(Ericson, *Real-Time Collision Detection*, §5.1.9 の clamped closest-point 法)。<b>カプセル</b>(芯線 + 半径) どうしの距離は <code style="color:#22d3bf">distance - r1 - r2</code>、干渉は それが負になること。</p>
+<p>ValueError: जब अंत-बिंदु को <code style="color:#22d3bf">(3,)</code> में नहीं बदला जा सके, या वह परिमित न हो।</p>
+<p>समानांतर और degenerate (बिंदु में सिमटा segment) स्थितियाँ भी branching से सही ढंग से संभाली जाती हैं (Ericson, *Real-Time Collision Detection*, §5.1.9 की clamped closest-point विधि)। <b>capsule</b> (core line + त्रिज्या) के बीच की दूरी <code style="color:#22d3bf">distance - r1 - r2</code> है; interference का अर्थ है कि यह ऋणात्मक हो जाए।</p>
 <p>Reference (public): C. Ericson, *Real-Time Collision Detection*, Morgan Kaufmann 2005, §5.1.9 &quot;Closest Points of Two Line Segments&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

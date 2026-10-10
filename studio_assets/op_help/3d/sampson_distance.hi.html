@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sampson_distance(F, pts1, pts2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import twoview; twoview.sampson_distance(F, pts1, pts2)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sampson_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>epipolar constraint की Sampson distance (1st-order geometric error, हर correspondence के लिए)। → (N,)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。</p>
-<p>計算: 同次座標 x1=(u1,v1,1)、x2=(u2,v2,1) で <code style="color:#22d3bf">(x2ᵀ F x1)² / ((F x1)_0² + (F x1)_1² + (Fᵀ x2)_0² + (Fᵀ x2)_1² + 1e-12)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <b>単位は画素の 2 乗</b>(距離の 2 乗)。画素で閾値を切るなら <code style="color:#22d3bf">sqrt</code> を取るか、閾値側を 2 乗する。</p>
-<p style="margin:2px 0 2px 12px">• F は <code style="color:#22d3bf">fundamental_8point</code> の規約 <code style="color:#22d3bf">x2ᵀ F x1 = 0</code>(pts1 → x1、pts2 → x2)。順序を入れ替えるなら F を転置する。</p>
-<p style="margin:2px 0 2px 12px">• 分母に 1e-12 を足しているので F=0 でも例外にはならず 0 を返す(F の検査は行わない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は float64 (N,)。決定論的。(N,2) でない・非有限・点数不一致は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 典型: <code style="color:#22d3bf">fundamental_8point</code> の当てはまり確認、誤対応(大きい値)の選別、<code style="color:#22d3bf">recover_pose</code> 前の前処理。</p>
+<p>Raises ValueError: points (N,2) न हों / non-finite हों / correspondence की संख्या मेल न खाए।</p>
+<p>गणना: homogeneous coordinates x1=(u1,v1,1), x2=(u2,v2,1) के साथ <code style="color:#22d3bf">(x2ᵀ F x1)² / ((F x1)_0² + (F x1)_1² + (Fᵀ x2)_0² + (Fᵀ x2)_1² + 1e-12)</code>।</p>
+<p style="margin:2px 0 2px 12px">• <b>इकाई pixel की 2 घात है</b> (दूरी की 2 घात)। pixels में threshold लगाना हो तो <code style="color:#22d3bf">sqrt</code> लें, या threshold को 2 की घात पर ले जाएँ।</p>
+<p style="margin:2px 0 2px 12px">• F <code style="color:#22d3bf">fundamental_8point</code> की परिपाटी <code style="color:#22d3bf">x2ᵀ F x1 = 0</code> (pts1 → x1, pts2 → x2) का पालन करता है। क्रम बदलना हो तो F का transpose करें।</p>
+<p style="margin:2px 0 2px 12px">• denominator में 1e-12 जोड़ा जाता है, इसलिए F=0 पर भी exception नहीं आता और 0 लौटता है (F की जाँच नहीं होती)।</p>
+<p style="margin:2px 0 2px 12px">• return value float64 (N,) है। deterministic। (N,2) न होना, non-finite, या points की संख्या में बेमेल <code style="color:#22d3bf">ValueError</code> देता है।</p>
+<p style="margin:2px 0 2px 12px">• सामान्य उपयोग: <code style="color:#22d3bf">fundamental_8point</code> का fit जाँचना, गलत correspondence (बड़े मान) छाँटना, <code style="color:#22d3bf">recover_pose</code> से पहले की preprocessing।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

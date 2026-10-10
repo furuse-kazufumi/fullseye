@@ -5,15 +5,14 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">mesh</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">match3d.voxel_to_mesh</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>voxel → mesh(marching cubes, skimage). 반환값 (verts, faces, normals). voxel→mesh 변환.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">skimage.measure.marching_cubes(vol, level=iso)</code> の薄い包み(spacing 指定なし = 1 voxel 単位)。<code style="color:#22d3bf">verts</code> (V,3) float は <b>voxel index 座標</b>で、列は入力の軸順(<code style="color:#22d3bf">vol</code> が (D,H,W) なら (z,y,x))。<code style="color:#22d3bf">faces</code> (F,3) int は verts への index、<code style="color:#22d3bf">normals</code> (V,3) は skimage が勾配から与える頂点法線。4 番目の返り値(values)は捨てる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iso</code>: 等値面のレベル。<b>入力の値域の外だと skimage が ValueError</b> を出す(全 0 の</p>
-<p>volume で iso=0.5 など)。個数密度なら 0.5、SDF なら 0.0 を渡す。</p>
-<p style="margin:2px 0 2px 12px">• 境界に接する等値面は開いたまま(端で閉じない)。</p>
-<p style="margin:2px 0 2px 12px">• ★<b>巻き順は内向き</b>。そのまま <code style="color:#22d3bf">mesh_volume</code> に渡すと<b>普通の中身のある形でも負</b>になる(実測: 1000 voxel の立方体で -985.67)。体積が欲しいだけなら</p>
-<p><code style="color:#22d3bf">abs()</code>、向きを揃えたいなら <code style="color:#22d3bf">faces[:, ::-1]</code> で巻き直す。</p>
-<p style="margin:2px 0 2px 12px">• skimage は呼び出し時 import(未導入なら ImportError)。</p>
-<p>後段: <code style="color:#22d3bf">mesh_to_points</code> で点群化、<code style="color:#22d3bf">mesh_area</code> / <code style="color:#22d3bf">face_areas</code> / <code style="color:#22d3bf">mesh_volume</code> / <code style="color:#22d3bf">boundary_vertices</code> / <code style="color:#22d3bf">mesh_edge_stats</code> で計測。</p>
+<p><code style="color:#22d3bf">skimage.measure.marching_cubes(vol, level=iso)</code>의 얇은 래퍼(spacing 지정 없음 = 1 voxel 단위). <code style="color:#22d3bf">verts</code> (V,3) float는 <b>voxel index 좌표</b>이며, 열은 입력의 축 순서(<code style="color:#22d3bf">vol</code>이 (D,H,W) 라면 (z,y,x)). <code style="color:#22d3bf">faces</code> (F,3) int는 verts에 대한 index, <code style="color:#22d3bf">normals</code> (V,3)는 skimage가기울기로부터 주는 정점 법선. 4번째 반환값(values)은 버린다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iso</code>: 등값면의 레벨. <b>입력 값 범위 밖이면 skimage가 ValueError</b>를 낸다(전부 0인</p>
+<p>volume에서 iso=0.5 등). 개수 밀도라면 0.5, SDF라면 0.0을 넘긴다.</p>
+<p style="margin:2px 0 2px 12px">• 경계에 닿는 등값면은 열린 채로 남는다(끝에서 닫히지 않는다).</p>
+<p style="margin:2px 0 2px 12px">• ★<b>감기 순서는 안쪽 방향</b>. 그대로 <code style="color:#22d3bf">mesh_volume</code>에 넘기면 <b>보통의 속이 찬 형태라도음수</b>가 된다(실측: 1000 voxel의 정육면체에서 -985.67). 부피만 필요하면</p>
+<p><code style="color:#22d3bf">abs()</code>, 방향을 맞추고 싶다면 <code style="color:#22d3bf">faces[:, ::-1]</code>로 다시 감는다.</p>
+<p style="margin:2px 0 2px 12px">• skimage는 호출 시 import(미설치라면 ImportError).</p>
+<p>후단: <code style="color:#22d3bf">mesh_to_points</code>로 점군화, <code style="color:#22d3bf">mesh_area</code> / <code style="color:#22d3bf">face_areas</code> / <code style="color:#22d3bf">mesh_volume</code> / <code style="color:#22d3bf">boundary_vertices</code> / <code style="color:#22d3bf">mesh_edge_stats</code>로 계측.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

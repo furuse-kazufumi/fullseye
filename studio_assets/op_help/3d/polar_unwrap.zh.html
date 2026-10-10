@@ -5,11 +5,10 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把图像的圆环/圆盘展开为 (θ×r) 矩形(工业:标签/环/回转体检测)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>円周方向に並ぶ特徴を「縦」に伸ばして通常の 2D 手法(直線探索/相関)を適用できる。grid_sample。θ 軸は endpoint 無し(行 k の角度 = k·2π/ntheta)= 0° と 360° を重複サンプルしない周期グリッド(θ 方向 FFT/循環相関の前提を満たす。2026-08-30 修正、旧版は先頭行=末尾行)。</p>
-<p>Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。</p>
-<p>引数: <code style="color:#22d3bf">center=(cy, cx)</code> は <b>(行, 列)</b> の順(既定は画像中心 <code style="color:#22d3bf">((H−1)/2, (W−1)/2)</code>)。<code style="color:#22d3bf">r_in</code>〜<code style="color:#22d3bf">r_out</code>(画素、既定 <code style="color:#22d3bf">min(H,W)/2 − 1</code>)を <code style="color:#22d3bf">nr</code> 等分、角度を <code style="color:#22d3bf">ntheta</code> 等分。出力 <code style="color:#22d3bf">(ntheta, nr)</code> float32: 行 k の角度 <code style="color:#22d3bf">θ = k·2π/ntheta</code>、列 j の半径 <code style="color:#22d3bf">r = r_in + j·(r_out − r_in)/(nr−1)</code>、サンプル点は <code style="color:#22d3bf">(cy + r sinθ, cx + r cosθ)</code>(θ=0 が +列方向、θ が増えると +行方向へ回る)。画像外は 0 で埋まる(bilinear)。</p>
-<p>後段: 行方向(θ)の直線探索・<code style="color:#22d3bf">ncc_locate</code>、θ 方向の 1-D 相関で回転角。</p>
+<p>将沿圆周方向排列的特征拉伸为&quot;纵向&quot;,从而可以应用常规的 2D 方法(直线搜索/相关)。grid_sample。θ 轴无 endpoint(第 k 行的角度 = k·2π/ntheta)= 不重复采样 0° 与 360° 的周期网格(满足 θ 方向 FFT/循环相关的前提。2026-08-30 修正,旧版首行=末行)。</p>
+<p>Raises ValueError: 输入不是 2-D、小于 2x2、NaN/Inf/float32 溢出。</p>
+<p>参数: <code style="color:#22d3bf">center=(cy, cx)</code> 为 <b>(行, 列)</b> 顺序(默认为图像中心 <code style="color:#22d3bf">((H−1)/2, (W−1)/2)</code>)。将 <code style="color:#22d3bf">r_in</code>〜<code style="color:#22d3bf">r_out</code>(像素,默认 <code style="color:#22d3bf">min(H,W)/2 − 1</code>)等分为 <code style="color:#22d3bf">nr</code> 份,角度等分为 <code style="color:#22d3bf">ntheta</code> 份。输出 <code style="color:#22d3bf">(ntheta, nr)</code> float32: 第 k 行的角度 <code style="color:#22d3bf">θ = k·2π/ntheta</code>,第 j 列的半径 <code style="color:#22d3bf">r = r_in + j·(r_out − r_in)/(nr−1)</code>,采样点为 <code style="color:#22d3bf">(cy + r sinθ, cx + r cosθ)</code>(θ=0 为 +列方向,θ 增大时向 +行方向旋转)。图像外以 0 填充(bilinear)。</p>
+<p>后续: 行方向(θ)的直线搜索、<code style="color:#22d3bf">ncc_locate</code>,用 θ 方向的 1-D 相关求旋转角。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

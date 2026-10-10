@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_line_line(p1, d1, p2, d2)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.distance_line_line(p1, d1, p2, d2)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;distance_line_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>两直线间距离(含异面/skew)。平行时退化为点-线距离。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★これは<b>無限直線</b>の距離。手足・ロボットのリンク・配管のような<b>有限線分</b>に使うと、離れているのに 0 が返ることがある(実測: (0,0,0)-(1,0,0) と(5,0,0)-(6,0,0) で 0.0、真値 4.0)。線分どうしは <code style="color:#22d3bf">distance_segment_segment</code> を使うこと —— 安全距離の判定でここを取り違えると <b>危険を過小評価する</b>側に外れる。</p>
-<p><code style="color:#22d3bf">n = d̂1 × d̂2</code> を取り、<code style="color:#22d3bf">|n| &lt; 1e-9</code>(平行)なら <code style="color:#22d3bf">distance_point_line(p2, p1, d1)</code>、それ以外は <code style="color:#22d3bf">|(p2 − p1)·n̂|</code>(共通垂線の長さ)を float で返す。交わる直線では 0。<code style="color:#22d3bf">p1, d1, p2, d2</code> は数値の 2 または 3 ベクトル、次元の混在は ValueError。2-D の非平行な直線は交わるので距離 0 のはずだが、<code style="color:#22d3bf">np.cross</code> がスカラーになるため <code style="color:#22d3bf">@</code> が失敗する(2-D は平行な場合しか通らない)。3-D で使うこと。単位は入力座標の単位。</p>
-<p>用途: 2 本の軸(<code style="color:#22d3bf">fit_line_3d</code>)の同軸度、穴ピッチ。</p>
+<p>★这是<b>无限直线</b>之间的距离。用于手脚、机器人连杆、管道之类的<b>有限线段</b>时, 即使相互分离也可能返回 0(实测: (0,0,0)-(1,0,0) 与(5,0,0)-(6,0,0) 得 0.0,真值 4.0)。线段之间请使用 <code style="color:#22d3bf">distance_segment_segment</code> —— 在安全距离判定中弄混这一点, 会偏向<b>低估危险</b>的一侧。</p>
+<p>取 <code style="color:#22d3bf">n = d̂1 × d̂2</code>,若 <code style="color:#22d3bf">|n| &lt; 1e-9</code>(平行)则返回 <code style="color:#22d3bf">distance_point_line(p2, p1, d1)</code>,否则返回 <code style="color:#22d3bf">|(p2 − p1)·n̂|</code>(公垂线的长度),类型为 float。相交直线为 0。<code style="color:#22d3bf">p1, d1, p2, d2</code> 为数值 2 维或 3 维向量,维数混用则 ValueError。2-D 中不平行的直线必相交,距离应为 0,但 <code style="color:#22d3bf">np.cross</code> 会变成标量,导致 <code style="color:#22d3bf">@</code> 失败(2-D 只有平行的情况能通过)。请在 3-D 中使用。单位为输入坐标的单位。</p>
+<p>用途: 2 条轴(<code style="color:#22d3bf">fit_line_3d</code>)的同轴度、孔距。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

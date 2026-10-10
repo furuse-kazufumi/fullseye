@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import motion_seg3d; motion_seg3d.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;estimate_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從 pts0 各點到 pts1 最近鄰的 3-D 位移向量場 (N, 3)(最近鄰流)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">pts0</code> の各点 p について <code style="color:#22d3bf">pts1</code> 中の最近傍 q を cKDTree で求め、変位 <code style="color:#22d3bf">q - p</code> を返す。要素数は N != M でよい。変位が局所点間隔より十分小さい小運動でのみ「点 i の真の対応先」を当てる(honest な最近傍の限界)。segment_rigid_motions が inlier 判定に使う <b>観測フロー</b> を与える。</p>
+<p>對 <code style="color:#22d3bf">pts0</code> 的各點 p，以 cKDTree 求 <code style="color:#22d3bf">pts1</code> 中的最近鄰 q，回傳位移 <code style="color:#22d3bf">q - p</code>。元素數可以 N != M。只有在位移遠小於局部點間距的小運動下，才能猜中「點 i 的真正對應點」(honest 的最近鄰的極限)。為 segment_rigid_motions 的 inlier 判定提供所用的<b>觀測流</b>。</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群。</p>
-<p>pts1: (M, 3) 時刻 1 の点群。</p>
+<p>pts0:(N, 3) 時刻 0 的點雲。</p>
+<p>pts1:(M, 3) 時刻 1 的點雲。</p>
 <p>Returns:</p>
-<p>(N, 3) 変位ベクトル場(pts0 と同じ行順)。空 pts0 は (0, 3) を返す。</p>
+<p>(N, 3) 位移向量場(與 pts0 列順序相同)。空 pts0 回傳 (0, 3)。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正、または pts0 が非空なのに pts1 が空(最近傍が存在しない)。</p>
+<p>ValueError:形狀不正確，或 pts0 非空而 pts1 為空(不存在最近鄰)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

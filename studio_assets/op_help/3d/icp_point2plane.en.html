@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device=&#x27;cpu&#x27;, reproducible=False)</code> (to call the implementation directly, <code style="color:#22d3bf">import match3d; match3d.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device=&#x27;cpu&#x27;, reproducible=False)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;icp_point2plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Refine the rigid transform to high accuracy with point-to-plane ICP (Gauss-Newton, small-angle approximation).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>粗マッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)の初期姿勢を表面点群の点-面距離最小化で締め上げる精緻化手法。各反復で src 各点の dst 最近傍を対応付け、<b>点-面残差</b> <code style="color:#22d3bf">r_i = n_i·(R·p_i + t - q_i)</code> を最小化する。R を小角近似 <code style="color:#22d3bf">R ≈ I + [ω]×</code> で線形化すると各対応のヤコビアンは <code style="color:#22d3bf">J_i = [p_i×n_i | n_i]</code>(スカラー三重積 <code style="color:#22d3bf">n·(ω×p)=ω·(p×n)</code> より)、定数項 <code style="color:#22d3bf">b_i = -n_i·(p_i - q_i)</code>。正規方程式 <code style="color:#22d3bf">(JᵀJ)x = Jᵀb</code> を 6×6 で解いて増分 <code style="color:#22d3bf">x=[ω|t]</code> を得、Rodrigues で回転に戻して累積する。点-面は接平面内の滑りを許すため、point-to-point より少ない反復で表面にタイトに収束する(Low 2004)。</p>
-<p>実測(波打つ表面 N=2025, CPU float64): 初期6°/並進0.06 を 4 反復で euclid RMSE 1.7e-16・回転誤差 0° に回復(point-to-point は 17 反復で RMSE 4e-2・回転 1.9° 停滞)。初期角 3〜20° でも 4〜5 反復で機械精度。</p>
-<p>引数:</p>
-<p>src (N,3): 動かす側の点群(粗マッチ後の初期姿勢)。</p>
-<p>dst (M,3): 参照側の点群(固定)。</p>
-<p>dst_normals (M,3): dst の単位法線(未正規化でも内部で正規化)。</p>
-<p>未知なら pointcloud.estimate_normals(dst) 等で事前推定。</p>
-<p>iters: 最大反復数。</p>
-<p>tol: RMSE 変化がこの値未満で収束打ち切り。</p>
-<p>init ((R0,t0)): 初期姿勢(粗マッチの R,t を渡す)。None なら単位。</p>
-<p>trim (float|None): [0,1) の割合。点-面残差の大きい上位を毎反復捨てる</p>
-<p>Trimmed ICP(部分重なり・外れ値に頑健)。</p>
-<p>device: &quot;cpu&quot;/&quot;cuda&quot; 等。torch device 文字列(device 非依存)。</p>
-<p>reproducible: True なら正規方程式の <code style="color:#22d3bf">JᵀJ</code>・<code style="color:#22d3bf">Jᵀb</code>(N 点の縮約)を ozakimm(Ozaki スキーム)で計算し、</p>
-<p>点-面残差・姿勢の適用は要素ごとの演算、RMSE は math.fsum にする。src の点の順・BLAS のスレッド数に依らず</p>
-<p>R・t・rmse がビット単位で同じ。既定 False は従来どおり(<code style="color:#22d3bf">J.T @ J</code>)。</p>
-<p>返り値:</p>
-<p>R (3,3), t (3,), aligned (N,3)=R·src+t, rmse(採用点の点-面 RMSE),</p>
-<p>n_iter(実反復数)。</p>
+<p>A refinement method that tightens the initial pose from a coarse match (integer NCC / Fourier-Mellin ±3° / Hough ±0.5voxel) by minimising point-to-plane distances on surface point clouds. In each iteration every src point is paired with its dst nearest neighbour, and the <b>point-to-plane residual</b> <code style="color:#22d3bf">r_i = n_i·(R·p_i + t - q_i)</code> is minimised. Linearising R with the small-angle approximation <code style="color:#22d3bf">R ≈ I + [ω]×</code>, the Jacobian of each correspondence is <code style="color:#22d3bf">J_i = [p_i×n_i | n_i]</code> (from the scalar triple product <code style="color:#22d3bf">n·(ω×p)=ω·(p×n)</code>), with constant term <code style="color:#22d3bf">b_i = -n_i·(p_i - q_i)</code>. The normal equations <code style="color:#22d3bf">(JᵀJ)x = Jᵀb</code> are solved as a 6×6 system to obtain the increment <code style="color:#22d3bf">x=[ω|t]</code>, which is turned back into a rotation with Rodrigues and accumulated. Point-to-plane allows sliding within the tangent plane, so it converges tightly to the surface in fewer iterations than point-to-point (Low 2004).</p>
+<p>Measured (wavy surface N=2025, CPU float64): from an initial 6°/translation 0.06 it recovers in 4 iterations to euclid RMSE 1.7e-16 and rotation error 0° (point-to-point stalls after 17 iterations at RMSE 4e-2 and rotation 1.9°). Even with initial angles of 3-20° it reaches machine precision in 4-5 iterations.</p>
+<p>Arguments:</p>
+<p>src (N,3): point cloud to be moved (initial pose after the coarse match).</p>
+<p>dst (M,3): reference point cloud (fixed).</p>
+<p>dst_normals (M,3): unit normals of dst (normalised internally even if not normalised).</p>
+<p>If unknown, estimate beforehand with pointcloud.estimate_normals(dst) etc.</p>
+<p>iters: maximum number of iterations.</p>
+<p>tol: stops as converged when the RMSE change is below this value.</p>
+<p>init ((R0,t0)): initial pose (pass the R,t of the coarse match). None means identity.</p>
+<p>trim (float|None): fraction in [0,1). Trimmed ICP that discards the top share with the largest point-to-plane residual</p>
+<p>in every iteration (robust to partial overlap and outliers).</p>
+<p>device: &quot;cpu&quot;/&quot;cuda&quot; etc. torch device string (device-independent).</p>
+<p>reproducible: if True, <code style="color:#22d3bf">JᵀJ</code> and <code style="color:#22d3bf">Jᵀb</code> of the normal equations (reductions over N points) are computed with ozakimm (Ozaki scheme),</p>
+<p>the point-to-plane residual and the pose application are element-wise operations, and the RMSE uses math.fsum. Regardless of the src point order and the number of BLAS threads,</p>
+<p>R, t and rmse are bit-identical. The default False is as before (<code style="color:#22d3bf">J.T @ J</code>).</p>
+<p>Returns:</p>
+<p>R (3,3), t (3,), aligned (N,3)=R·src+t, rmse (point-to-plane RMSE over the used points),</p>
+<p>n_iter (actual number of iterations).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

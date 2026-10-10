@@ -4,12 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rmse_correspondence(a, b)</code>(要直接调用实现,<code style="color:#22d3bf">import metrics3d; metrics3d.rmse_correspondence(a, b)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;rmse_correspondence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对应已知(同 index)的 RMSE = sqrt(mean |a_i - b_i|^2)。→ scalar。评估配准残差。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>計算: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> を float 配列にし、行ごとのユークリッド距離の 2 乗 <code style="color:#22d3bf">sum((a - b)**2, axis=1)</code> を平均して平方根を取る。<b>最近傍探索はしない</b> — <code style="color:#22d3bf">a[i]</code> と <code style="color:#22d3bf">b[i]</code> が同じ点の対応であることを呼び手が保証する(登録で変換した <code style="color:#22d3bf">src @ R.T + t</code> と、対応する <code style="color:#22d3bf">dst</code> の点列、合成データの GT 対応など)。</p>
-<p>引数と検証: <code style="color:#22d3bf">a.shape != b.shape</code> なら <code style="color:#22d3bf">ValueError</code>。それ以外の検査はない:</p>
-<p>空の <code style="color:#22d3bf">(0, 3)</code> 同士は <code style="color:#22d3bf">mean</code> が空で NaN(警告付き)を返し、<code style="color:#22d3bf">(N, 3)</code> 以外でも <code style="color:#22d3bf">axis=1</code> で足せる形なら値を返す。3 列の点群を渡すこと。</p>
-<p>返り値: Python <code style="color:#22d3bf">float</code>、単位は座標の単位、<code style="color:#22d3bf">[0, inf)</code>。同一なら 0。</p>
-<p>注意: 対応がずれている(index が並び替わった)雲に使うと、姿勢が正しくても大きな値が出る。対応不明なら <code style="color:#22d3bf">chamfer_distance</code> / <code style="color:#22d3bf">fscore</code>、姿勢そのものを GT と比べるなら <code style="color:#22d3bf">pose_error</code>。</p>
+<p>计算：将 <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 转为 float 数组，把逐行欧几里得距离的 2 次方 <code style="color:#22d3bf">sum((a - b)**2, axis=1)</code> 取平均后开平方根。<b>不做最近邻搜索</b> —— 由调用方保证 <code style="color:#22d3bf">a[i]</code> 与 <code style="color:#22d3bf">b[i]</code> 是同一点的对应(经配准变换的 <code style="color:#22d3bf">src @ R.T + t</code> 与对应的 <code style="color:#22d3bf">dst</code> 点列、合成数据的 GT 对应等)。</p>
+<p>参数与验证：<code style="color:#22d3bf">a.shape != b.shape</code> 时为 <code style="color:#22d3bf">ValueError</code>。除此之外没有检查：两个空的 <code style="color:#22d3bf">(0, 3)</code> 因 <code style="color:#22d3bf">mean</code> 为空而返回 NaN(带警告)，不是 <code style="color:#22d3bf">(N, 3)</code> 时只要是能以 <code style="color:#22d3bf">axis=1</code> 求和的形状也会返回值。请传入 3 列的点云。</p>
+<p>返回值：Python <code style="color:#22d3bf">float</code>，单位为坐标的单位，<code style="color:#22d3bf">[0, inf)</code>。相同则为 0。</p>
+<p>注意：用于对应错位(index 被重新排列)的点云时，即使位姿正确也会得到很大的值。对应未知时用 <code style="color:#22d3bf">chamfer_distance</code> / <code style="color:#22d3bf">fscore</code>，要把位姿本身与 GT 比较时用 <code style="color:#22d3bf">pose_error</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 测量不确定度与校准知识 —— 为了能主张“测得准”</p>

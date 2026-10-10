@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_line(points, thresh, iters=300, seed=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_line(points, thresh, iters=300, seed=0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;ransac_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Outlier-robust RANSAC line fitting.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>2 点をサンプル → 直線(通過点 + 方向)→ 点-直線距離 ‖(p-p0)×d‖ &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化 → 最終 inlier で最小二乗リフィット(方向=共分散の最大主軸)。</p>
+<p>Sample 2 points → line (point on line + direction) → maximise the inliers with point-line distance ‖(p-p0)×d‖ &lt; <code style="color:#22d3bf">thresh</code> → least-squares refit on the final inliers (direction = major principal axis of the covariance).</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>thresh: inlier とみなす点-直線距離のしきい値。</p>
-<p>iters: RANSAC 反復数。</p>
-<p>seed: 乱数シード(決定論)。</p>
+<p>points: (N,3) point cloud.</p>
+<p>thresh: point-line distance threshold for counting as an inlier.</p>
+<p>iters: number of RANSAC iterations.</p>
+<p>seed: random seed (deterministic).</p>
 <p>Returns:</p>
-<p>(params, inlier_mask, info)。params = {&quot;point&quot;: (3,), &quot;direction&quot;: (3,)}(単位方向)。</p>
+<p>(params, inlier_mask, info). params = {&quot;point&quot;: (3,), &quot;direction&quot;: (3,)} (unit direction).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Why matrix decompositions are slow — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

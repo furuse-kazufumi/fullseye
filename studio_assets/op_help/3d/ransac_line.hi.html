@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_line(points, thresh, iters=300, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_line(points, thresh, iters=300, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;ransac_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>outliers के प्रति robust RANSAC line fitting।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>2 点をサンプル → 直線(通過点 + 方向)→ 点-直線距離 ‖(p-p0)×d‖ &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化 → 最終 inlier で最小二乗リフィット(方向=共分散の最大主軸)。</p>
+<p>2 points sample करें → line (line पर एक point + direction) → point-line distance ‖(p-p0)×d‖ &lt; <code style="color:#22d3bf">thresh</code> वाले inlier को maximise करें → अंतिम inlier पर least squares refit (direction = covariance का major principal axis)।</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>thresh: inlier とみなす点-直線距離のしきい値。</p>
-<p>iters: RANSAC 反復数。</p>
-<p>seed: 乱数シード(決定論)。</p>
+<p>points: (N,3) point cloud।</p>
+<p>thresh: inlier मानने के लिए point-line distance का threshold।</p>
+<p>iters: RANSAC iterations की संख्या।</p>
+<p>seed: random seed (deterministic)।</p>
 <p>Returns:</p>
-<p>(params, inlier_mask, info)。params = {&quot;point&quot;: (3,), &quot;direction&quot;: (3,)}(単位方向)。</p>
+<p>(params, inlier_mask, info)। params = {&quot;point&quot;: (3,), &quot;direction&quot;: (3,)} (unit direction)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

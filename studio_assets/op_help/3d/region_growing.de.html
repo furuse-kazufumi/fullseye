@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import segment3d; segment3d.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;region_growing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lässt Regionen nach Normalenähnlichkeit wachsen und gibt zusammenhängenden glatten Regionen dasselbe Label (die Variante ohne Krümmungsgatter).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各点を k 近傍グラフ上で BFS 成長させ、隣接点 q を「法線 n_p と n_q の成す角が <code style="color:#22d3bf">angle_thresh_deg</code> 未満」のときだけ同領域に加える。平面内の法線はほぼ平行なので同一領域に連結し、向きの違う面の境界では角度が開いて連結が切れる → 面ごとに別領域。法線は符号不定(PCA 由来)なので <code style="color:#22d3bf">|n_p·n_q|</code> で判定(表裏を同一視)。</p>
+<p>Lässt jeden Punkt per BFS auf dem k-Nächste-Nachbarn-Graphen wachsen und fügt einen Nachbarpunkt q nur dann derselben Region hinzu, wenn &quot;der Winkel zwischen den Normalen n_p und n_q unter <code style="color:#22d3bf">angle_thresh_deg</code> liegt&quot;. Normalen innerhalb einer Ebene sind nahezu parallel und werden daher zu derselben Region verbunden; an Grenzen zwischen unterschiedlich orientierten Flächen öffnet sich der Winkel und die Verbindung bricht ab → eine eigene Region pro Fläche. Das Vorzeichen der Normalen ist unbestimmt (aus PCA), daher wird mit <code style="color:#22d3bf">|n_p·n_q|</code> geprüft (Vorder- und Rückseite gelten als gleich).</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>normals: (N,3) 単位法線。None なら <code style="color:#22d3bf">pointcloud.estimate_normals</code> で PCA 推定。</p>
-<p>angle_thresh_deg: 隣接法線角度の許容上限[度]。(0,180) の範囲。</p>
-<p>k: 近傍数(kNN グラフの次数)。</p>
+<p>points: (N,3)-Punktwolke.</p>
+<p>normals: (N,3)-Einheitsnormalen. Bei None per PCA mit <code style="color:#22d3bf">pointcloud.estimate_normals</code> geschätzt.</p>
+<p>angle_thresh_deg: zulässige Obergrenze des Winkels zwischen benachbarten Normalen [Grad]. Bereich (0,180).</p>
+<p>k: Anzahl der Nachbarn (Grad des kNN-Graphen).</p>
 <p>Returns:</p>
-<p>labels: (N,) int。連結平滑領域ごとに 0,1,2,... を付与。<b>min_region_size 未満の小領域(孤立点・向き不一致のゴミ)は -1(ノイズ/未割当)</b> = 統一契約(-1=ノイズ)に従う。</p>
-<p>空入力は shape (0,) を返す。</p>
+<p>labels: (N,) int. Vergibt 0,1,2,... pro zusammenhängender glatter Region. <b>Kleine Regionen unter min_region_size (isolierte Punkte, Reste mit inkonsistenter Orientierung) erhalten -1 (Rauschen/nicht zugeordnet)</b>, gemäß dem einheitlichen Vertrag (-1=Rauschen).</p>
+<p>Eine leere Eingabe liefert shape (0,).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

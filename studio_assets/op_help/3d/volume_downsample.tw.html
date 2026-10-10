@@ -4,27 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import volops; volops.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;volume_downsample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按每軸整數 *factor* 對 <code style="color:#22d3bf">(D, H, W)</code> 體做區塊池化(資料抽稀)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Large CT / laminography / simulation volumes must be thinned before the heavier 3-D operators (Frangi/Sato are capped at ~256**3 voxels, see <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>). This is the volume analogue of the point-cloud <code style="color:#22d3bf">voxel_grid_downsample</code> and the mesh <code style="color:#22d3bf">decimate_qem</code> — the third leg of Fullseye&#x27;s *間引き* (decimation) family, one per 3-D data sort.</p>
+<p>大型 CT / 層析(laminography)/ 模擬體資料在送入較重的 3-D 運算子之前必須先抽稀(Frangi/Sato 的上限約為 ~256**3 體素,見 <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>)。這是點雲 <code style="color:#22d3bf">voxel_grid_downsample</code> 與網格 <code style="color:#22d3bf">decimate_qem</code> 在體資料上的對應物 —— 是 Fullseye *抽稀*(decimation)家族的第三條腿,每種 3-D 資料 sort 各一個。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : array_like, shape (D, H, W)</p>
-<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>輸入體資料(強制轉換為 float64;拒絕 NaN/Inf)。</p>
 <p>factor : int or (fz, fy, fx)</p>
-<p>Block size per axis, each <code style="color:#22d3bf">&gt;= 1</code>. The output shape is</p>
-<p><code style="color:#22d3bf">(D//fz, H//fy, W//fx)</code>; a trailing partial block that cannot fill a</p>
-<p>full factor is dropped (deterministic, no edge bias).</p>
+<p>各軸的區塊大小,每個都 <code style="color:#22d3bf">&gt;= 1</code>。輸出形狀為</p>
+<p><code style="color:#22d3bf">(D//fz, H//fy, W//fx)</code>;末尾無法填滿一個完整</p>
+<p>因子的部分區塊會被捨棄(確定性,無邊緣偏差)。</p>
 <p>mode : {&#x27;mean&#x27;, &#x27;max&#x27;, &#x27;stride&#x27;}</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;mean&#x27;</code> — average-pool. Band-limits before subsampling (the anti-aliasing choice); the right default for grey CT / MRI.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;max&#x27;</code>  — max-pool. Preserves thin bright structures (bone, vessel, defect voxels) that averaging would wash out.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;stride&#x27;</code> — plain subsample <code style="color:#22d3bf">vol[::fz, ::fy, ::fx]</code> (fastest, but aliases — no pre-filter).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;mean&#x27;</code> —— 平均池化。在降取樣前做頻帶限制(即抗混疊的選擇);對灰階 CT / MRI 是合適的預設值。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;max&#x27;</code>  —— 最大池化。保留平均會沖淡的細亮結構(骨骼、血管、缺陷體素)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;stride&#x27;</code> —— 單純降取樣 <code style="color:#22d3bf">vol[::fz, ::fy, ::fx]</code>(最快, 但會混疊 —— 無預濾波)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (D//fz, H//fy, W//fx), float64</p>
-<p>The downsampled volume. Spacing scales by the same factor: an input</p>
-<p>spacing <code style="color:#22d3bf">(sz, sy, sx)</code> mm becomes <code style="color:#22d3bf">(sz*fz, sy*fy, sx*fx)</code> mm.</p>
+<p>降取樣後的體資料。間距按同一因子縮放:輸入</p>
+<p>間距 <code style="color:#22d3bf">(sz, sy, sx)</code> mm 變為 <code style="color:#22d3bf">(sz*fz, sy*fy, sx*fx)</code> mm。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>Non-3-D input, a factor component <code style="color:#22d3bf">&lt; 1</code> or larger than its axis, or an</p>
-<p>unknown *mode* (fail-closed).</p>
+<p>非 3-D 輸入、因子分量 <code style="color:#22d3bf">&lt; 1</code> 或大於其軸長,或</p>
+<p>未知的 *mode*(fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

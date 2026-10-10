@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_sweep_depth(img_ref: &#x27;np.ndarray&#x27;, img_src: &#x27;np.ndarray&#x27;, K: &#x27;np.ndarray&#x27;, R: &#x27;np.ndarray&#x27;, t: &#x27;np.ndarray&#x27;, depth_candidates, window: &#x27;int&#x27; = 1, normal=(0.0, 0.0, 1.0)) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import plane_sweep; plane_sweep.plane_sweep_depth(img_ref: &#x27;np.ndarray&#x27;, img_src: &#x27;np.ndarray&#x27;, K: &#x27;np.ndarray&#x27;, R: &#x27;np.ndarray&#x27;, t: &#x27;np.ndarray&#x27;, depth_candidates, window: &#x27;int&#x27; = 1, normal=(0.0, 0.0, 1.0)) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;plane_sweep_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>plane-sweep stereo 로 조밀 깊이 맵을 추정. → (H,W) depth.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各深度平面で src を ref へワープし、photo-consistency 最小の候補深度を画素ごとに選ぶ(winner-take-all)。全候補で視野外の画素は NaN。fail-closed(空/非 2D/shape 不一致/非正深度)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_ref</code> / <code style="color:#22d3bf">img_src</code>: 同形状の (H,W) グレースケール float。基準カメラは <code style="color:#22d3bf">[I|0]</code>、source は <code style="color:#22d3bf">P_src = K [R|t]</code>(<code style="color:#22d3bf">X_src = R X_ref + t</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code>: 共通の (3,3) 内部行列(特異なら <code style="color:#22d3bf">ValueError</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth_candidates</code>: 基準カメラ座標での正の有限な深度列(D 個)。返る深度は必ずこの中のどれかで、量子化誤差は候補間隔程度。候補は近距離を細かく(逆深度で等間隔)取るのが常道。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>: コストの box 集約サイズ(既定 1 = 画素ごとの絶対差)。2 以上で窓内 SAD を有効画素数で正規化した値になり、テクスチャの乏しい領域で安定するが段差はぼける。1 未満は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>: 掃引平面の法線(既定 (0,0,1) = フロント平行)。</p>
-<p>返り値は (H,W) float。全候補で src の視野外に写った画素(コスト ∞)は NaN。輝度が一定の領域では全候補のコストが同点になり <code style="color:#22d3bf">argmin</code> が先頭候補を返すので、信頼度の無い深度が混じる。コスト体 (D,H,W) そのものが要るときは同モジュールの <code style="color:#22d3bf">cost_volume</code> を使う。得られた深度は <code style="color:#22d3bf">depth_to_points</code> で点群化できる。</p>
+<p>각 깊이 평면에서 src를 ref로 워프하고, photo-consistency가 최소인 후보 깊이를 화소마다 고른다(winner-take-all). 모든 후보에서 시야 밖인 화소는 NaN. fail-closed(실패 시 거부)(빈 입력/비 2D/shape 불일치/비양수 깊이).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img_ref</code> / <code style="color:#22d3bf">img_src</code>: 같은 형상의 (H,W) 그레이스케일 float. 기준 카메라는 <code style="color:#22d3bf">[I|0]</code>, source는 <code style="color:#22d3bf">P_src = K [R|t]</code>(<code style="color:#22d3bf">X_src = R X_ref + t</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code>: 공통의 (3,3) 내부 행렬(특이하면 <code style="color:#22d3bf">ValueError</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth_candidates</code>: 기준 카메라 좌표에서의 양의 유한한 깊이 열(D 개). 반환되는 깊이는 반드시 이 중어느 하나이며, 양자화 오차는 후보 간격 정도. 후보는 가까운 거리를 촘촘하게(역깊이로 등간격) 잡는 것이 정석.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>: 비용의 box 집계 크기(기본값 1 = 화소별 절대 차). 2 이상이면 창 안의 SAD를 유효 화소 수로정규화한 값이 되어, 텍스처가 부족한 영역에서 안정되지만 계단은 흐려진다. 1 미만은 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>: 스윕 평면의 법선(기본값 (0,0,1) = 정면 평행).</p>
+<p>반환값은 (H,W) float. 모든 후보에서 src의 시야 밖으로 투영된 화소(비용 ∞)는 NaN. 휘도가 일정한 영역에서는모든 후보의 비용이 동점이 되어 <code style="color:#22d3bf">argmin</code>이 첫 후보를 반환하므로, 신뢰도 없는 깊이가 섞인다. 비용 볼륨 (D,H,W) 자체가 필요할 때는 같은 모듈의 <code style="color:#22d3bf">cost_volume</code>을 쓴다. 얻은 깊이는 <code style="color:#22d3bf">depth_to_points</code>로 점군화할 수 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

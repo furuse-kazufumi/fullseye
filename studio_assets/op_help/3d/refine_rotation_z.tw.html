@@ -6,21 +6,21 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>z 軸旋轉角的 <b>Gauss-Newton 精化</b>(SSD 上的 Lucas-Kanade,單參數)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Fourier-Mellin 等の粗い z 軸回転推定(±3° 級)を、SSD を回転角 θ だけで最小化して高精度化する下流精緻化器。scene ≈ rotate_z(template, θ_true) を仮定し、warp_z(template, θ) が scene に一致する θ を求める。返り値の角は match_logpolar_z と同符号(scene = template を θ 回転)。</p>
-<p>定式化: 残差 r(θ)=T_warp(θ)−S を θ で線形化。回転の steepest-descent image(解析ヤコビアン) は、中心化格子 (X=W−cx, Y=H−cy) と warp 済みテンプレの空間勾配 (gx,gy) から J = ∂T_warp/∂θ = (−gx·Y + gy·X)(rad あたり)。1 パラメータ GN 更新は Δθ = −(JᵀWr)/(JᵀWJ)。回転で 0 詰めされた隅は valid マスク W で除外。step は max_step_deg で制限し発散を防ぐ。</p>
-<p>実測(48³ 非対称 volume, CPU, 別補間器 scipy order=3 で scene 生成=inverse crime 回避):</p>
-<p>clean 誤差 ~0.0006°、5% ノイズ 0.009°、10% ノイズ 0.017°(いずれも &lt;0.3°)。捕捉レンジは最低 ±10°、収束 3-5 反復・~12ms。粗推定 ±3° をそのまま使う場合(誤差 3°)比で ~5000 倍改善。</p>
+<p>將 Fourier-Mellin 等給出的粗略 z 軸旋轉估計(±3° 級)僅對旋轉角 θ 最小化 SSD 來提高精度的下游精化器。假定 scene ≈ rotate_z(template, θ_true),求使 warp_z(template, θ) 與 scene 一致的 θ。回傳的角與 match_logpolar_z 同號(scene = template 旋轉 θ)。</p>
+<p>公式化:將殘差 r(θ)=T_warp(θ)−S 對 θ 線性化。旋轉的 steepest-descent image(解析 Jacobian 矩陣) 由中心化網格 (X=W−cx, Y=H−cy) 與 warp 後樣板的空間梯度 (gx,gy) 得到:</p>
+<p>J = ∂T_warp/∂θ = (−gx·Y + gy·X)(每 rad)。1 參數 GN 更新為 Δθ = −(JᵀWr)/(JᵀWJ)。旋轉造成的補 0 角落以 valid 遮罩 W 排除。step 由 max_step_deg 限制以防發散。</p>
+<p>實測(48³ 非對稱 volume,CPU,用另一內插器 scipy order=3 產生 scene=避免 inverse crime):</p>
+<p>clean 誤差 ~0.0006°,5% 雜訊 0.009°,10% 雜訊 0.017°(皆 &lt;0.3°)。捕捉範圍至少 ±10°,3-5 次迭代收斂、~12ms。與直接使用粗估計 ±3°(誤差 3°)相比改善約 ~5000 倍。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>scene : array_like (D,H,W)     基準 volume(この姿勢へ template を合わせる)。</p>
-<p>template : array_like (D,H,W)  回転させて scene に合わせるテンプレ volume。同一格子・同一中心。</p>
-<p>init_angle_deg : float         粗推定角(deg)。Fourier-Mellin 等の初期値。</p>
-<p>device : str                   &quot;cpu&quot; / &quot;cuda&quot;。device 非依存。</p>
-<p>iters : int                    最大反復数。</p>
-<p>tol : float                    |Δθ|(deg)がこれ未満で収束打ち切り。</p>
-<p>max_step_deg : float           1 反復あたりの角ステップ上限(deg、発散防止)。</p>
+<p>scene : array_like (D,H,W)     基準 volume(將 template 對齊到此位姿)。</p>
+<p>template : array_like (D,H,W)  旋轉後與 scene 對齊的樣板 volume。同一網格、同一中心。</p>
+<p>init_angle_deg : float         粗估計角(deg)。Fourier-Mellin 等的初始值。</p>
+<p>device : str                   &quot;cpu&quot; / &quot;cuda&quot;。與 device 無關。</p>
+<p>iters : int                    最大迭代次數。</p>
+<p>tol : float                    |Δθ|(deg)小於此值時判定收斂並終止。</p>
+<p>max_step_deg : float           每 1 次迭代的角步長上限(deg,防止發散)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>(angle_deg, n_iters) : (float, int)  精緻化角(deg)と実行反復数。</p>
+<p>(angle_deg, n_iters) : (float, int)  精化後的角(deg)與實際迭代次數。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

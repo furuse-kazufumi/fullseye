@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import gicp; gicp.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;estimate_covariances&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把每點局部共變異數的特徵值替換為 (ε,1,1) 的 plane-to-plane 共變異數 (N,3,3)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>k 近傍(自身を含む)の標本共分散を固有分解し、固有値を <b>接平面内は 1・表面法線方向(最小固有値方向)は ε</b> に置き換えて再構成する。共分散の大きさは近傍の広がりに依らず一定(ε,1,1)で、スケール不変な「面的な確からしさ」モデルになる(GICP の中核)。</p>
-<p>引数:</p>
-<p>points (N,3): 点群。</p>
-<p>k: 近傍数(自身を含む)。共分散推定は k≥4 程度が安定。</p>
-<p>epsilon: 法線方向に割り当てる小分散(0&lt;ε&lt;1)。小さいほど接平面へ</p>
-<p>強く拘束する。スケール不変(次元なし比)。</p>
-<p>返り値:</p>
-<p>(N,3,3) 対称正定値共分散の束。各共分散の固有値は {ε,1,1}、ε に</p>
-<p>対応する固有ベクトルが局所表面法線方向。</p>
+<p>對 k 近鄰(包含自身)的樣本共變異數做特徵分解,將特徵值<b>在切平面內替換為 1、在表面法線方向(最小特徵值方向)替換為 ε</b> 後重建。共變異數的大小與鄰域的分布範圍無關,恆為 (ε,1,1),成為尺度不變的「面狀可信度」模型(GICP 的核心)。</p>
+<p>參數:</p>
+<p>points (N,3): 點雲。</p>
+<p>k: 鄰域點數(包含自身)。共變異數估計在 k≥4 左右時穩定。</p>
+<p>epsilon: 分配給法線方向的小變異數(0&lt;ε&lt;1)。越小越強地</p>
+<p>約束到切平面。尺度不變(無因次比)。</p>
+<p>回傳值:</p>
+<p>(N,3,3) 對稱正定共變異數的集合。各共變異數的特徵值為 {ε,1,1},與 ε</p>
+<p>對應的特徵向量為局部表面法線方向。</p>
 <p>例外:</p>
-<p>ValueError: points が (N,3) でない / N&lt;3(法線が定まらず縮退)/</p>
-<p>epsilon が (0,1) 外(fail-closed)。</p>
+<p>ValueError: points 不是 (N,3) / N&lt;3(法線無法確定而退化)/</p>
+<p>epsilon 在 (0,1) 之外(fail-closed(失敗即拒絕))。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

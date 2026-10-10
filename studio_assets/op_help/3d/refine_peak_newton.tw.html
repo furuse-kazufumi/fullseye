@@ -6,23 +6,22 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 3D Newton 把 score/相關體的整數峰精化到次體素(迭代最佳化)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>粗いマッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)が返す整数ピーク idx を、局所の 2 次モデル f(x)≈f0+gᵀΔ+½ΔᵀHΔ の停留点 Δ=-H⁻¹g へ反復更新して連続座標へ収束させる。軸別の放物線サブピクセルと違い <b>全 3x3 Hessian(交差曲率 fzy,fzx,fyx を含む)</b> を使うため、回転した(相互曲率のある)異方性ピークでも座標軸間の結合バイアスを除去できる。</p>
-<p>各反復: 現在位置まわりの 27 近傍を trilinear で取得 → 中心差分で勾配 g と 6 成分 Hessian H を組み、Δ=solve(H,-g)。各成分を ±1 voxel にクリップ(信頼領域)して位置を更新、|Δ|&lt;tol で収束。ガウス山では中心差分勾配の零点が真のピークに一致するため停留点へ収束する(単一ステップでは 2 次モデル誤差が残り ±0.05voxel を割れないが、反復で ~0.02voxel まで収束)。H が負定値でない(=極大でない)real な相関面では上昇方向へ退避(勾配上昇ステップ)して発散を防ぐ。</p>
+<p>將粗匹配(整數 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)回傳的整數峰值 idx,向局部 2 次模型 f(x)≈f0+gᵀΔ+½ΔᵀHΔ 的駐點 Δ=-H⁻¹g 迭代更新,使其收斂到連續座標。與逐軸的拋物線次像素不同,它使用 <b>完整的 3x3 Hessian(含交叉曲率 fzy,fzx,fyx)</b>,因此即使是旋轉後的(有交叉曲率的)異向性峰值,也能消除座標軸之間的耦合偏差。</p>
+<p>每次迭代:以 trilinear 取目前位置周圍的 27 鄰域 → 以中心差分構造梯度 g 與 6 分量 Hessian H, Δ=solve(H,-g)。各分量截斷到 ±1 voxel(信賴域)後更新位置,|Δ|&lt;tol 時收斂。在高斯峰上,中心差分梯度的零點與真實峰值一致,因此收斂到駐點(單步會殘留 2 次模型誤差,無法低於 ±0.05voxel,但迭代可收斂到 ~0.02voxel)。在 H 非負定(=不是極大)的 real 相關面上,退回到上升方向(梯度上升步)以防發散。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>score : array_like または torch.Tensor</p>
-<p>3D スコア/相関 volume (D,H,W)。値が大きいほどピーク。</p>
+<p>score : array_like 或 torch.Tensor</p>
+<p>3D 分數/相關 volume (D,H,W)。值越大越是峰值。</p>
 <p>idx : tuple[int,int,int]</p>
-<p>整数ピーク座標 (z,y,x)(通常 argmax の unravel 結果)。</p>
+<p>整數峰值座標 (z,y,x)(通常為 argmax 的 unravel 結果)。</p>
 <p>device : str</p>
-<p>&quot;cpu&quot; / &quot;cuda&quot;。torch 演算の device。</p>
+<p>&quot;cpu&quot; / &quot;cuda&quot;。torch 運算的 device。</p>
 <p>max_iter : int</p>
-<p>最大反復回数(既定 12)。</p>
+<p>最大迭代次數(預設 12)。</p>
 <p>tol : float</p>
-<p>収束判定(更新量 L2 ノルム、既定 1e-4)。</p>
+<p>收斂判定(更新量 L2 範數,預設 1e-4)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>numpy.ndarray</p>
-<p>[score_peak, z, y, x] (精緻化後)。score_peak は精緻化位置での trilinear 補間スコア。</p>
+<p>[score_peak, z, y, x] (精細化後)。score_peak 為精細化位置處的 trilinear 內插分數。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

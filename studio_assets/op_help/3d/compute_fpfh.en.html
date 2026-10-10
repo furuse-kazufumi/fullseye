@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compute_fpfh(points, normals, k=60, n_bins=11)</code> (to call the implementation directly, <code style="color:#22d3bf">import feat_fpfh; feat_fpfh.compute_fpfh(points, normals, k=60, n_bins=11)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;compute_fpfh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Compute the FPFH descriptor (N, 3*n_bins) (Rusu 2009).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p style="margin:2px 0 2px 12px">1) SPFH: 各点 p と近傍 k 点の対に (α,φ,θ) を求め、各特徴を n_bins ビンでヒストグラム化。</p>
-<p style="margin:2px 0 2px 12px">2) FPFH(p) = SPFH(p) + (1/k)Σ_j (1/d_pj) SPFH(j): 近傍 SPFH を距離重みで合成。</p>
-<p>3 サブヒストグラムを各々 L1 正規化して連結(既定 33 次元)。角特徴は剛体不変。</p>
-<p>引数: points (N,3), normals (N,3), k(FPFH 近傍数), n_bins(1特徴あたりのビン数)。</p>
-<p>返り値: (N, 3*n_bins) の記述子行列。Raises ValueError: points/normals が (N,3) でない・行数不一致・非有限・N&lt;4 (k-NN が k&gt;=3 を要求するため)。</p>
+<p style="margin:2px 0 2px 12px">1) SPFH: for each pair of a point p and its k neighbour points, compute (α,φ,θ) and histogram each feature into n_bins bins.</p>
+<p style="margin:2px 0 2px 12px">2) FPFH(p) = SPFH(p) + (1/k)Σ_j (1/d_pj) SPFH(j): combines the neighbour SPFHs with distance weights.</p>
+<p>The 3 sub-histograms are each L1-normalised and concatenated (default 33 dimensions). The angular features are rigid-body invariant.</p>
+<p>Arguments: points (N,3), normals (N,3), k (number of FPFH neighbours), n_bins (number of bins per 1 feature).</p>
+<p>Returns: descriptor matrix of shape (N, 3*n_bins). Raises ValueError: if points/normals are not (N,3), row counts differ, values are non-finite, or N&lt;4 (because k-NN requires k&gt;=3).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Why matrix decompositions are slow — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

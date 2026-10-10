@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussian_curvature(points, k=25)</code> (die Implementierung direkt: <code style="color:#22d3bf">import curvature3d; curvature3d.gaussian_curvature(points, k=25)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;gaussian_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gaußsche Krümmung K = k1·k2 (invariant gegen Umkehr der Normalen). → (N,).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">principal_curvatures</code> と同じ局所二次曲面フィットで <code style="color:#22d3bf">k1 * k2</code> を返す。符号は法線の向きに依らないため <code style="color:#22d3bf">normals</code> 引数を持たない(向き付けは常に近傍重心ヒューリスティクス)。</p>
-<p style="margin:2px 0 2px 12px">• 単位は 1/長さ²。半径 R の球なら <code style="color:#22d3bf">1/R²</code>、円柱・平面は 0、鞍点は負(k1 と k2 が異符号)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> は近傍点数(既定 25、N-1 に切り詰め)。近傍が 5 点未満の点は 0。</p>
-<p style="margin:2px 0 2px 12px">• 楕円点(K&gt;0)/放物点(K=0)/双曲点(K&lt;0)の分類に使う。凸凹の区別は <code style="color:#22d3bf">mean_curvature</code> か <code style="color:#22d3bf">shape_index</code> に <code style="color:#22d3bf">normals</code> を渡して行う。</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3) の点群。決定論的。</p>
+<p>Ergänzungen:</p>
+<p style="margin:2px 0 2px 12px">• Liefert <code style="color:#22d3bf">k1 * k2</code> aus demselben lokalen Quadrikfit wie <code style="color:#22d3bf">principal_curvatures</code>. Das Vorzeichen hängt nicht von der Orientierung der Normalen ab, daher gibt es kein Argument <code style="color:#22d3bf">normals</code> (die Orientierung nutzt immer die Heuristik des Nachbarschaftsschwerpunkts).</p>
+<p style="margin:2px 0 2px 12px">• Einheit ist 1/Länge². Eine Kugel mit Radius R ergibt <code style="color:#22d3bf">1/R²</code>, Zylinder und Ebene 0, ein Sattelpunkt einen negativen Wert (k1 und k2 haben verschiedene Vorzeichen).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> ist die Anzahl der Nachbarn (Standard 25, auf N-1 gekürzt). Punkte mit weniger als 5 Nachbarn erhalten 0.</p>
+<p style="margin:2px 0 2px 12px">• Dient zur Klassifikation in elliptische Punkte (K&gt;0) / parabolische Punkte (K=0) / hyperbolische Punkte (K&lt;0). Konvex und konkav unterscheidet man, indem man <code style="color:#22d3bf">normals</code> an <code style="color:#22d3bf">mean_curvature</code> oder <code style="color:#22d3bf">shape_index</code> übergibt.</p>
+<p style="margin:2px 0 2px 12px">• Eingabe ist eine (N,3)-Punktwolke. Deterministisch.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

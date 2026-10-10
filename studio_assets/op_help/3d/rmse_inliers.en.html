@@ -6,8 +6,7 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(rmse, n_inliers) → rmse</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The RMSE over the inlier correspondences (residual &lt; thresh) and the inlier count. → (rmse, n_inliers).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">source[i]↔target[i]</code> の index 対応が前提(<code style="color:#22d3bf">inlier_ratio</code> と同じ)。inlier が 0 個なら RMSE は未定義 → <code style="color:#22d3bf">(nan, 0)</code> を返す(honest; 捏造しない)。形状不一致・非 (N,3) は ValueError(fail-closed)。</p>
+<p>Assumes the index correspondence <code style="color:#22d3bf">source[i]↔target[i]</code> (same as <code style="color:#22d3bf">inlier_ratio</code>). If there are 0 inliers the RMSE is undefined → returns <code style="color:#22d3bf">(nan, 0)</code> (honest; nothing fabricated). Shape mismatch or non-(N,3) raises ValueError (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

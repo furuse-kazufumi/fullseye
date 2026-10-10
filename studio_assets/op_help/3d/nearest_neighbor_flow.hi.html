@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nearest_neighbor_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.nearest_neighbor_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;nearest_neighbor_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर point pts0 से pts1 के nearest neighbour तक 3-D displacement vector field (N, 3) लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">pts0</code> の各点 p について <code style="color:#22d3bf">pts1</code> 中の最近傍 q を cKDTree で求め、変位 <code style="color:#22d3bf">q - p</code> を返す。要素数は N != M でよい。変位が局所点間隔より十分小さいとき(小さな運動)にのみ「点 i の真の対応先」を当てる — 大変位では最近傍が別点に張り付く(honest な限界、正則化には <code style="color:#22d3bf">smooth_flow</code> を併用)。</p>
+<p><code style="color:#22d3bf">pts0</code> के हर point p के लिए cKDTree से <code style="color:#22d3bf">pts1</code> में nearest neighbour q खोजता है और displacement <code style="color:#22d3bf">q - p</code> लौटाता है। Elements की संख्या N != M हो सकती है। जब displacement local point spacing से काफ़ी छोटा हो (छोटी गति), केवल तभी यह &quot;point i का सही correspondence&quot; पकड़ता है — बड़े displacement पर nearest neighbour किसी दूसरे point से चिपक जाता है (एक ईमानदार सीमा; regularisation के लिए <code style="color:#22d3bf">smooth_flow</code> साथ में इस्तेमाल करें)।</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群。</p>
-<p>pts1: (M, 3) 時刻 1 の点群。</p>
+<p>pts0: (N, 3) समय 0 का point cloud।</p>
+<p>pts1: (M, 3) समय 1 का point cloud।</p>
 <p>Returns:</p>
-<p>(N, 3) 変位ベクトル場(pts0 と同じ行順)。</p>
+<p>(N, 3) displacement vector field (pts0 जैसा ही row क्रम)।</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正、または pts0 が非空なのに pts1 が空。</p>
+<p>ValueError: गलत shape, या pts0 खाली न होने पर भी pts1 खाली हो।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

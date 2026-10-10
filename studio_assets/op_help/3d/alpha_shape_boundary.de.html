@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_shape_boundary(points, alpha)</code> (die Implementierung direkt: <code style="color:#22d3bf">import recon3d; recon3d.alpha_shape_boundary(points, alpha)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;alpha_shape_boundary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die <b>Indizes der Randpunkte</b> über Alpha-Shapes (Punktmenge → Randpunkte).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Delaunay 四面体分割の外接球半径 &lt; 1/alpha の四面体の表面三角形(境界面)を集め、その頂点集合を境界点とする。中実(表面+内部)の点群から表面殻の点だけを抜き出す用途に向く。alpha を大きくすると許す半径 1/alpha が小さくなり、より密着した(細部を拾う)境界になる。</p>
+<p>Sammelt die Oberflächendreiecke (Randflächen) der Delaunay-Tetraeder mit Umkugelradius &lt; 1/alpha und nimmt deren Vertex- menge als Randpunkte. Geeignet, um aus einer massiven Punktwolke (Oberfläche + Inneres) nur die Punkte der Oberflächenschale zu extrahieren. Ein größeres alpha macht den zulässigen Radius 1/alpha kleiner und ergibt einen enger anliegenden Rand (der Details erfasst).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
 <p>alpha : float</p>
-<p>正の実数。半径しきい値は 1/alpha。<code style="color:#22d3bf">estimate_alpha</code> で目安を得られる。</p>
+<p>Positive reelle Zahl. Der Radius-Schwellwert ist 1/alpha. <code style="color:#22d3bf">estimate_alpha</code> liefert einen Richtwert.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>boundary_point_indices : numpy.ndarray (K,) int64</p>
-<p>points に対する境界点の index(昇順・重複なし)。境界が無ければ空配列。</p>
+<p>Indizes der Randpunkte in points (aufsteigend, ohne Duplikate). Leeres Array, wenn es keinen Rand gibt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

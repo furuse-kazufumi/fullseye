@@ -6,29 +6,28 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">{&quot;labels&quot;, &quot;motions&quot;} → labels</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 점군을 운동이 일치하는 강체마다 분할(반복 RANSAC 에 의한 multi-body 분할).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>まず <code style="color:#22d3bf">estimate_flow</code> で観測フロー(各 pts0 点 -&gt; pts1 最近傍)を取り、<code style="color:#22d3bf">target = pts0 + flow</code> を対応先として固定する。以後、残り点集合に対して:</p>
-<p style="margin:2px 0 2px 12px">1. 空間的に近い <code style="color:#22d3bf">k_sample</code> 点(seed + その最近傍)を種に Kabsch で剛体仮説を立て、</p>
-<p style="margin:2px 0 2px 12px">2. フロー整合 <code style="color:#22d3bf">|| (R·s + t) - target(s) || &lt; thresh</code> を満たす inlier を数え、</p>
-<p style="margin:2px 0 2px 12px">3. <code style="color:#22d3bf">n_iter</code> 試行で <b>有意性ゲートを満たす</b> 最良仮説を選び(inlier 残差中央値が <code style="color:#22d3bf">thresh</code> の一定割合未満 = 真の剛体らしく残差が 0 近傍に集中。無相関/ノイズの偶然適合は許容球を満たし残差 ≈ 0.6*thresh なので弾かれる)、その inlier で Kabsch 再フィット(refine)、</p>
-<p style="margin:2px 0 2px 12px">4. inlier 数が <code style="color:#22d3bf">min_inliers</code> 以上 <b>かつ</b> refine 後も有意性を保つならそれを 1 剛体として確定・除去。満たさなければ body を作らず残余は -1 のまま終了(偽の剛体を捏造しない)。</p>
-<p>を <code style="color:#22d3bf">max_bodies</code> 個または残り点が閾値を下回るまで繰り返す。どの剛体にも属さない残り点は <code style="color:#22d3bf">labels = -1</code>(outlier / 未対応、詐称しない)。近傍種サンプリングは空間的に連続な物体をまとめて掴むための locality prior で、閾値ではなく相対順位だけを使うためスケール不変。</p>
+<p>먼저 <code style="color:#22d3bf">estimate_flow</code>로 관측 흐름(각 pts0 점 -&gt; pts1 최근접)을 구하고, <code style="color:#22d3bf">target = pts0 + flow</code>를 대응처로 고정한다. 이후 남은 점 집합에 대해:</p>
+<p style="margin:2px 0 2px 12px">1. 공간적으로 가까운 <code style="color:#22d3bf">k_sample</code> 점(seed + 그 최근접)을 씨앗으로 Kabsch로 강체 가설을 세우고,</p>
+<p style="margin:2px 0 2px 12px">2. 흐름 정합 <code style="color:#22d3bf">|| (R·s + t) - target(s) || &lt; thresh</code>를 만족하는 inlier를 세고,</p>
+<p style="margin:2px 0 2px 12px">3. <code style="color:#22d3bf">n_iter</code> 시행에서 <b>유의성 게이트를 만족하는</b> 최선의 가설을 고르고(inlier 잔차 중앙값이 <code style="color:#22d3bf">thresh</code>의 일정 비율 미만 = 진짜 강체처럼 잔차가 0 근방에 집중. 무상관/잡음의우연한 적합은 허용 구를 채워 잔차 ≈ 0.6*thresh가 되므로 걸러진다), 그 inlier로 Kabsch 재적합(refine)하며,</p>
+<p style="margin:2px 0 2px 12px">4. inlier 수가 <code style="color:#22d3bf">min_inliers</code> 이상 <b>이고</b> refine 후에도 유의성을 유지하면 그것을 1 강체로확정하고 제거한다. 만족하지 않으면 body를 만들지 않고 나머지는 -1인 채로 종료한다(가짜강체를 날조하지 않는다).</p>
+<p>를 <code style="color:#22d3bf">max_bodies</code> 개 또는 남은 점이 임계값을 밑돌 때까지 반복한다. 어느 강체에도 속하지 않는 남은 점은 <code style="color:#22d3bf">labels = -1</code>(outlier / 미대응, 사칭하지 않음). 근방 씨앗 샘플링은 공간적으로 연속인 물체를한꺼번에 잡기 위한 locality prior로, 임계값이 아니라 상대 순위만 쓰므로 스케일 불변이다.</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群。</p>
-<p>pts1: (M, 3) 時刻 1 の点群(N と一致不要)。</p>
-<p>thresh: フロー整合の inlier 距離しきい値。<b>座標スケール相対</b>で与えること</p>
-<p>(絶対 epsilon をモジュール内に持たないため、呼び手が座標系に合わせる)。</p>
-<p>max_bodies: 抽出する剛体数の上限(&gt;= 1)。</p>
-<p>min_inliers: 1 剛体と認める最小 inlier 数。None なら <code style="color:#22d3bf">max(3, round(0.1*N))</code>。</p>
-<p>outlier の塊を偽の剛体にしないための下限。</p>
-<p>n_iter: 剛体 1 個あたりの RANSAC 試行回数。</p>
-<p>k_sample: 1 仮説を作る種サンプルの点数(seed + 最近傍、&gt;= 3)。</p>
-<p>seed: RANSAC 乱数シード(再現性)。</p>
+<p>pts0: (N, 3) 시각 0의 점군.</p>
+<p>pts1: (M, 3) 시각 1의 점군(N과 일치할 필요 없음).</p>
+<p>thresh: 흐름 정합의 inlier 거리 임계값. <b>좌표 스케일 상대</b>로 줄 것</p>
+<p>(모듈 안에 절대 epsilon을 갖지 않으므로 호출자가 좌표계에 맞춘다).</p>
+<p>max_bodies: 추출할 강체 수의 상한(&gt;= 1).</p>
+<p>min_inliers: 1 강체로 인정하는 최소 inlier 수. None이면 <code style="color:#22d3bf">max(3, round(0.1*N))</code>.</p>
+<p>outlier 덩어리를 가짜 강체로 만들지 않기 위한 하한.</p>
+<p>n_iter: 강체 1 개당 RANSAC 시행 횟수.</p>
+<p>k_sample: 1 가설을 만드는 씨앗 샘플의 점 수(seed + 최근접, &gt;= 3).</p>
+<p>seed: RANSAC 난수 시드(재현성).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;labels&quot;: (N,) int(各点の剛体 id、0..K-1 / outlier=-1), &quot;motions&quot;: [(R, t), ...] (id 順の剛体変換、K 個)}</code>。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;labels&quot;: (N,) int(각 점의 강체 id, 0..K-1 / outlier=-1), &quot;motions&quot;: [(R, t), ...] (id 순의 강체 변환, K 개)}</code>.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限 / pts1 空 / thresh &lt;= 0 / max_bodies &lt; 1 /</p>
-<p>k_sample &lt; 3。</p>
+<p>ValueError: 형상 부정 / 비유한 / pts1 비어 있음 / thresh &lt;= 0 / max_bodies &lt; 1 /</p>
+<p>k_sample &lt; 3.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

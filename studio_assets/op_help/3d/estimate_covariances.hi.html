@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gicp; gicp.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;estimate_covariances&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर point की local covariance के eigenvalues को (ε,1,1) से बदलकर बनी plane-to-plane covariance (N,3,3)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>k 近傍(自身を含む)の標本共分散を固有分解し、固有値を <b>接平面内は 1・表面法線方向(最小固有値方向)は ε</b> に置き換えて再構成する。共分散の大きさは近傍の広がりに依らず一定(ε,1,1)で、スケール不変な「面的な確からしさ」モデルになる(GICP の中核)。</p>
-<p>引数:</p>
-<p>points (N,3): 点群。</p>
-<p>k: 近傍数(自身を含む)。共分散推定は k≥4 程度が安定。</p>
-<p>epsilon: 法線方向に割り当てる小分散(0&lt;ε&lt;1)。小さいほど接平面へ</p>
-<p>強く拘束する。スケール不変(次元なし比)。</p>
-<p>返り値:</p>
-<p>(N,3,3) 対称正定値共分散の束。各共分散の固有値は {ε,1,1}、ε に</p>
-<p>対応する固有ベクトルが局所表面法線方向。</p>
-<p>例外:</p>
-<p>ValueError: points が (N,3) でない / N&lt;3(法線が定まらず縮退)/</p>
-<p>epsilon が (0,1) 外(fail-closed)。</p>
+<p>k nearest neighbours (point स्वयं सहित) की sample covariance का eigen-decomposition करता है, और eigenvalues को <b>tangent plane के अंदर 1 और surface normal दिशा (सबसे छोटे eigenvalue की दिशा) में ε</b> से बदलकर पुनर्निर्मित करता है। Covariance का आकार neighbourhood के फैलाव से स्वतंत्र, स्थिर (ε,1,1) रहता है, जिससे scale-invariant &quot;समतल होने की संभावना&quot; वाला model बनता है (GICP का मूल)।</p>
+<p>Arguments:</p>
+<p>points (N,3): point cloud।</p>
+<p>k: neighbours की संख्या (point स्वयं सहित)। Covariance estimation लगभग k≥4 से स्थिर रहता है।</p>
+<p>epsilon: normal दिशा को दिया गया छोटा variance (0&lt;ε&lt;1)। जितना छोटा, उतना अधिक मज़बूती से</p>
+<p>tangent plane पर बाँधता है। Scale-invariant (dimensionless अनुपात)।</p>
+<p>Return value:</p>
+<p>(N,3,3) symmetric positive-definite covariances का समूह। हर covariance के eigenvalues {ε,1,1} हैं, और ε से</p>
+<p>संबंधित eigenvector local surface normal की दिशा है।</p>
+<p>Exceptions:</p>
+<p>ValueError: points (N,3) नहीं है / N&lt;3 (normal तय नहीं होता, degenerate) /</p>
+<p>epsilon (0,1) से बाहर (fail-closed)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_line(points, thresh, iters=300, seed=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_line(points, thresh, iters=300, seed=0)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;ransac_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ausreißerrobuste RANSAC-Geradenanpassung.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>2 点をサンプル → 直線(通過点 + 方向)→ 点-直線距離 ‖(p-p0)×d‖ &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化 → 最終 inlier で最小二乗リフィット(方向=共分散の最大主軸)。</p>
+<p>2 Punkte ziehen → Gerade (Aufpunkt + Richtung) → Inlier mit Punkt-Gerade-Abstand ‖(p-p0)×d‖ &lt; <code style="color:#22d3bf">thresh</code> maximieren → Kleinste-Quadrate-Neuanpassung auf den finalen Inliern (Richtung = größte Hauptachse der Kovarianz).</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>thresh: inlier とみなす点-直線距離のしきい値。</p>
-<p>iters: RANSAC 反復数。</p>
-<p>seed: 乱数シード(決定論)。</p>
+<p>points: (N,3) Punktwolke.</p>
+<p>thresh: Schwellwert des Punkt-Gerade-Abstands, ab dem ein Punkt als Inlier gilt.</p>
+<p>iters: Anzahl der RANSAC-Iterationen.</p>
+<p>seed: Zufalls-Seed (deterministisch).</p>
 <p>Returns:</p>
-<p>(params, inlier_mask, info)。params = {&quot;point&quot;: (3,), &quot;direction&quot;: (3,)}(単位方向)。</p>
+<p>(params, inlier_mask, info). params = {&quot;point&quot;: (3,), &quot;direction&quot;: (3,)} (Einheitsrichtung).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

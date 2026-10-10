@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fuse(depths: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence&#x27;, Rs: &#x27;Sequence&#x27;, ts: &#x27;Sequence&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;, trunc: &#x27;float&#x27;) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.fuse(depths: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence&#x27;, Rs: &#x27;Sequence&#x27;, ts: &#x27;Sequence&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;, trunc: &#x27;float&#x27;) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;fuse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 new_volume + integrate 把深度序列融合成一个 TSDF 体。返回 (tsdf, weight)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各フレームの (K,R,t) は world→camera。多視点で同じ表面を観測すると重みが積算され、単フレームでは見えない(自己遮蔽の)面が別視点で埋まる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depths</code>: (H,W) 深度画像のリスト(カメラ Z 深度。0 以下・非有限の画素は未観測扱い)。サイズはフレームごとに異なってよい。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">Ks</code> / <code style="color:#22d3bf">Rs</code> / <code style="color:#22d3bf">ts</code>: 各フレームの (3,3) 内部行列・(3,3) 回転・(3,) 並進(<code style="color:#22d3bf">X_cam = R X + t</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> の world 領域(各軸 max &gt; min)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">res</code>: 一辺の voxel 数(正の int)。volume は <code style="color:#22d3bf">res×res×res</code>、軸順は (x,y,z) の <code style="color:#22d3bf">indexing=&#x27;ij&#x27;</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">trunc</code>: 切り詰め距離(world 単位、正の有限値)。voxel サイズの数倍が目安で、小さすぎると表面の両側に観測が乗らず、大きすぎると薄い構造の表裏が混ざる。</p>
-<p>返り値: <code style="color:#22d3bf">tsdf</code> (res,res,res) float32(未観測 +1.0、表面手前が正・奥が負、[-1,1])と <code style="color:#22d3bf">weight</code> (res,res,res) float32(観測回数)。表面点は <code style="color:#22d3bf">extract_surface_points(tsdf, weight, bounds, res)</code> で取り出す。fail-closed: フレーム 0 枚、リスト長の不一致、退化 bounds、非正の <code style="color:#22d3bf">res</code> / <code style="color:#22d3bf">trunc</code> は <code style="color:#22d3bf">ValueError</code>。統合の詳細(遮蔽領域を更新しない規則)は <code style="color:#22d3bf">integrate</code> を参照。</p>
+<p>各帧的 (K,R,t) 为 world→camera。多视角观测同一表面时权重会累加, 单帧中看不到的(自遮挡的)面由其他视角补全。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depths</code>: (H,W) 深度图像的列表(相机 Z 深度。0 以下、非有限的像素视为未观测)。各帧尺寸可以不同。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">Ks</code> / <code style="color:#22d3bf">Rs</code> / <code style="color:#22d3bf">ts</code>: 各帧的 (3,3) 内参矩阵、(3,3) 旋转、(3,) 平移(<code style="color:#22d3bf">X_cam = R X + t</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> 的 world 区域(各轴 max &gt; min)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">res</code>: 边长方向的 voxel 数(正 int)。volume 为 <code style="color:#22d3bf">res×res×res</code>,轴顺序为 (x,y,z) 的 <code style="color:#22d3bf">indexing=&#x27;ij&#x27;</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">trunc</code>: 截断距离(world 单位,正的有限值)。以 voxel 尺寸的数倍为宜,过小则观测无法落在表面两侧,过大则薄结构的正反面会混在一起。</p>
+<p>返回值:<code style="color:#22d3bf">tsdf</code> (res,res,res) float32(未观测为 +1.0,表面前方为正、后方为负,[-1,1])和 <code style="color:#22d3bf">weight</code> (res,res,res) float32(观测次数)。表面点用 <code style="color:#22d3bf">extract_surface_points(tsdf, weight, bounds, res)</code> 取出。fail-closed(失败即拒绝):帧数为 0、列表长度不一致、退化 bounds、非正的 <code style="color:#22d3bf">res</code> / <code style="color:#22d3bf">trunc</code> 均抛出 <code style="color:#22d3bf">ValueError</code>。融合的细节(不更新遮挡区域的规则)参见 <code style="color:#22d3bf">integrate</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import moments3d; moments3d.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;inertia_tensor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點群的慣性張量 (3,3)(由中心二階矩,等質量、總質量 1)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²), I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)。共分散 C を使うと I = tr(C)·E₃ − C(E₃ は単位行列)と等価。対称・半正定値。重心中心化のため並進不変。</p>
+<p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²), I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)。使用共變異數 C 時等價於 I = tr(C)·E₃ − C(E₃ 為單位矩陣)。對稱、半正定。由於質心中心化,對平移不變。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (3, 3)</p>
-<p>対称な慣性テンソル。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 単位は長さ²(質量 1 の等質量点とみなすので密度は入らない)。点群を回転で回すと <code style="color:#22d3bf">R I Rᵀ</code> に写り、固有値(<code style="color:#22d3bf">principal_moments</code>)が回転不変量、固有ベクトルが主軸(<code style="color:#22d3bf">moment_axes</code>)。</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1(1 点なら零行列)。形状不正・非有限は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 共分散 C とは <code style="color:#22d3bf">I = tr(C)·E₃ - C</code> の関係で、C と I の固有ベクトルは同じ、固有値は <code style="color:#22d3bf">tr(C) - c_i</code>。</p>
-<p style="margin:2px 0 2px 12px">• 実体(体積)のモーメントではなく <b>サンプル点</b> のモーメントなので、同じ形でも点密度の偏りで値が変わる。密度を均すなら前段で <code style="color:#22d3bf">voxel_grid_downsample</code>。決定論的。</p>
+<p>對稱的慣性張量。</p>
+<p>補充:</p>
+<p style="margin:2px 0 2px 12px">• 單位為長度²(視為質量 1 的等質量點,因此不含密度)。將點雲旋轉後映射為 <code style="color:#22d3bf">R I Rᵀ</code>,特徵值(<code style="color:#22d3bf">principal_moments</code>)是旋轉不變量,特徵向量是主軸(<code style="color:#22d3bf">moment_axes</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 輸入為 (N,3),N &gt;= 1(1 個點時為零矩陣)。形狀不正確、非有限時 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• 與共變異數 C 的關係為 <code style="color:#22d3bf">I = tr(C)·E₃ - C</code>,C 與 I 的特徵向量相同,特徵值為 <code style="color:#22d3bf">tr(C) - c_i</code>。</p>
+<p style="margin:2px 0 2px 12px">• 不是實體(體積)的矩,而是<b>取樣點</b>的矩,因此即使形狀相同,值也會隨點密度的偏差而改變。若要均衡密度,請在前級使用 <code style="color:#22d3bf">voxel_grid_downsample</code>。決定性。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

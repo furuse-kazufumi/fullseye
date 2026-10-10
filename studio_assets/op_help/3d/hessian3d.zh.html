@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:该算子有 GPU 路径(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D Hessian 的 6 个独立分量 (fzz,fyy,fxx,fzy,fzx,fyx)。可分离 conv3d(二阶/一阶×平滑)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>カーネル: 2 階 [1,−2,1] (利得 1)、1 階 [−0.5,0,0.5] (利得 1)、残りの軸は [1,2,1]/4 の平滑(利得 1)。対角成分は「その軸の 2 階 × 他 2 軸の平滑」、交差成分は「2 軸の 1 階 × 残り軸の平滑」。<b>単位は 1/voxel² の真の値</b>(<code style="color:#22d3bf">sobel3d</code> の 32 倍利得とは違う)。端は replicate。返り値は <b>list の torch tensor 6 本</b>、各 <code style="color:#22d3bf">(D,H,W)</code> float32、<code style="color:#22d3bf">device</code> 上、順は(zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x)。numpy が要れば <code style="color:#22d3bf">.cpu().numpy()</code>。入力は numpy 相当(float32 に変換)。</p>
-<p>用途: <code style="color:#22d3bf">curvature_maps</code> の主曲率(<code style="color:#22d3bf">sobel3d</code> と組で使う)、blob/管状構造の検出。</p>
+<p>核: 2 阶 [1,−2,1] (增益 1)、1 阶 [−0.5,0,0.5] (增益 1)、其余轴为 [1,2,1]/4 的平滑(增益 1)。对角分量为「该轴的 2 阶 × 其他 2 轴的平滑」,交叉分量为「2 个轴的 1 阶 × 其余轴的平滑」。<b>单位为 1/voxel² 的真实值</b>(与 <code style="color:#22d3bf">sobel3d</code> 的 32 倍增益不同)。边缘 replicate。返回值为 <b>6 个 torch tensor 组成的 list</b>,各为 <code style="color:#22d3bf">(D,H,W)</code> float32,位于 <code style="color:#22d3bf">device</code> 上,顺序为(zz, yy, xx, zy, zx, yx)(轴 0=z, 1=y, 2=x)。需要 numpy 时用 <code style="color:#22d3bf">.cpu().numpy()</code>。输入为 numpy 等价物(转换为 float32)。</p>
+<p>用途: <code style="color:#22d3bf">curvature_maps</code> 的主曲率(与 <code style="color:#22d3bf">sobel3d</code> 配合使用)、blob/管状结构的检测。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

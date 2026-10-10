@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gaussian_curvature(points, k=25)</code>(要直接呼叫實作,<code style="color:#22d3bf">import curvature3d; curvature3d.gaussian_curvature(points, k=25)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;gaussian_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高斯曲率 K=k1·k2(對法線反向不變)。→ (N,)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">principal_curvatures</code> と同じ局所二次曲面フィットで <code style="color:#22d3bf">k1 * k2</code> を返す。符号は法線の向きに依らないため <code style="color:#22d3bf">normals</code> 引数を持たない(向き付けは常に近傍重心ヒューリスティクス)。</p>
-<p style="margin:2px 0 2px 12px">• 単位は 1/長さ²。半径 R の球なら <code style="color:#22d3bf">1/R²</code>、円柱・平面は 0、鞍点は負(k1 と k2 が異符号)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> は近傍点数(既定 25、N-1 に切り詰め)。近傍が 5 点未満の点は 0。</p>
-<p style="margin:2px 0 2px 12px">• 楕円点(K&gt;0)/放物点(K=0)/双曲点(K&lt;0)の分類に使う。凸凹の区別は <code style="color:#22d3bf">mean_curvature</code> か <code style="color:#22d3bf">shape_index</code> に <code style="color:#22d3bf">normals</code> を渡して行う。</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3) の点群。決定論的。</p>
+<p>補充:</p>
+<p style="margin:2px 0 2px 12px">• 以與 <code style="color:#22d3bf">principal_curvatures</code> 相同的局部二次曲面擬合回傳 <code style="color:#22d3bf">k1 * k2</code>。符號與法線方向無關,因此沒有 <code style="color:#22d3bf">normals</code> 參數(方向始終採用鄰域質心啟發式)。</p>
+<p style="margin:2px 0 2px 12px">• 單位為 1/長度²。半徑 R 的球為 <code style="color:#22d3bf">1/R²</code>,圓柱、平面為 0,鞍點為負(k1 與 k2 異號)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> 為鄰域點數(預設 25,截斷為 N-1)。鄰域少於 5 個點的點為 0。</p>
+<p style="margin:2px 0 2px 12px">• 用於橢圓點(K&gt;0)/拋物點(K=0)/雙曲點(K&lt;0)的分類。凹凸的區分透過向 <code style="color:#22d3bf">mean_curvature</code> 或 <code style="color:#22d3bf">shape_index</code> 傳入 <code style="color:#22d3bf">normals</code> 來進行。</p>
+<p style="margin:2px 0 2px 12px">• 輸入為 (N,3) 點雲。決定性。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

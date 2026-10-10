@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_shape_boundary(points, alpha)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import recon3d; recon3d.alpha_shape_boundary(points, alpha)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;alpha_shape_boundary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>alpha shapes से <b>boundary point indices</b> लौटाता है (point cloud → boundary points)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Delaunay 四面体分割の外接球半径 &lt; 1/alpha の四面体の表面三角形(境界面)を集め、その頂点集合を境界点とする。中実(表面+内部)の点群から表面殻の点だけを抜き出す用途に向く。alpha を大きくすると許す半径 1/alpha が小さくなり、より密着した(細部を拾う)境界になる。</p>
+<p>Delaunay tetrahedralisation के उन tetrahedra के surface triangles (boundary faces) इकट्ठा करता है जिनका circumsphere radius &lt; 1/alpha है, और उनके vertex set को boundary points मानता है। solid (surface + अंदर) point cloud से केवल surface shell के points निकालने के लिए उपयुक्त। alpha बड़ा करने पर अनुमत radius 1/alpha छोटा होता है, और boundary अधिक सटी हुई (बारीकियाँ पकड़ने वाली) बनती है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
 <p>alpha : float</p>
-<p>正の実数。半径しきい値は 1/alpha。<code style="color:#22d3bf">estimate_alpha</code> で目安を得られる。</p>
+<p>धनात्मक real number। radius threshold 1/alpha है। <code style="color:#22d3bf">estimate_alpha</code> से अनुमानित मान मिलता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>boundary_point_indices : numpy.ndarray (K,) int64</p>
-<p>points に対する境界点の index(昇順・重複なし)。境界が無ければ空配列。</p>
+<p>points में boundary points के index (आरोही क्रम, कोई duplicate नहीं)। boundary न हो तो खाली array।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

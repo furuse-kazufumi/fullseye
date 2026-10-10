@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cylinder_sdf(grid, center, axis, radius, height)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sdf_ops; sdf_ops.cylinder_sdf(grid, center, axis, radius, height)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;cylinder_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>유한 길이 원기둥(양 끝이 평평한 뚜껑)의 <b>엄밀한</b> 부호 거리장(안쪽 음, 바깥쪽 양).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>軸方向の距離 <code style="color:#22d3bf">t</code> と軸からの半径 <code style="color:#22d3bf">r</code> に分け、<code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code> として <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>、<code style="color:#22d3bf">inside = min(max(q), 0)</code>、<code style="color:#22d3bf">sdf = outside + inside</code>。これは <code style="color:#22d3bf">box_sdf</code> と同じ Quilez 流の構成を「(半径, 軸)の 2-D 断面」に適用したもので、側面・蓋・角(縁)のいずれに対しても真のユークリッド距離になる。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: 円柱の<b>中心</b>(端面ではなく重心。要素数 3)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis</code>: 軸の向き(要素数 3、零ベクトル・NaN は拒否。長さは自動正規化)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 半径 &gt; 0 相当のスカラ(<code style="color:#22d3bf">0</code> は軸線そのもの、負は拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>: 全長のスカラ(<code style="color:#22d3bf">center</code> から ±height/2。負は拒否)。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。</p>
-<p>使いどころ: <b>貫通穴は <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b>(<code style="color:#22d3bf">height</code> を部品より長くして端面の縁を残さない)。ボス・ピン・シャフトは <code style="color:#22d3bf">sdf_union</code>。無限長の円柱が要るなら <code style="color:#22d3bf">height</code> を十分大きく取る(端面が評価域の外に出れば側面だけが効く)。</p>
+<p>축 방향 거리 <code style="color:#22d3bf">t</code> 와 축으로부터의 반지름 <code style="color:#22d3bf">r</code> 로 나누어 <code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code> 로 두고 <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>, <code style="color:#22d3bf">inside = min(max(q), 0)</code>, <code style="color:#22d3bf">sdf = outside + inside</code>. 이것은 <code style="color:#22d3bf">box_sdf</code> 와 같은 Quilez 식 구성을 &quot;(반지름, 축)의 2-D 단면&quot;에 적용한 것으로, 측면, 뚜껑, 모서리(테두리) 어느 것에 대해서도 참인 유클리드 거리가 된다.</p>
+<p>인수와 검증(<code style="color:#22d3bf">ValueError</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 마지막 축이 3 인 float 배열 <code style="color:#22d3bf">(..., 3)</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: 원기둥의 <b>중심</b>(끝면이 아니라 무게중심. 요소 수 3).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis</code>: 축 방향(요소 수 3, 영벡터와 NaN 은 거부. 길이는 자동 정규화).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 반지름 &gt; 0 에 해당하는 스칼라(<code style="color:#22d3bf">0</code> 은 축선 자체, 음수는 거부).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>: 전체 길이 스칼라(<code style="color:#22d3bf">center</code> 에서 ±height/2. 음수는 거부).</p>
+<p>반환값: <code style="color:#22d3bf">grid.shape[:-1]</code> 의 float64.</p>
+<p>사용처: <b>관통 구멍은 <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b>(<code style="color:#22d3bf">height</code> 를 부품보다길게 하여 끝면의 테두리를 남기지 않는다). 보스, 핀, 샤프트는 <code style="color:#22d3bf">sdf_union</code>. 무한 길이의 원기둥이필요하면 <code style="color:#22d3bf">height</code> 를 충분히 크게 잡는다(끝면이 평가 영역 밖으로 나가면 측면만 작용한다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

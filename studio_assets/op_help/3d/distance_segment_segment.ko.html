@@ -5,20 +5,19 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">measurement</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">match3d.distance_segment_segment</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>유한 선분</b>끼리의 최단 거리와 그 최근접점의 쌍. → <code style="color:#22d3bf">(distance, cp, cq)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">distance_line_line</code> は<b>無限直線</b>の距離なので、離れた 2 線分に 0 を返すことがある(実測: (0,0,0)-(1,0,0) と (5,0,0)-(6,0,0) に対し 0.0、真値は 4.0)。手足・ロボットのリンク・配管・工具はどれも<b>有限</b>なので、安全距離や干渉判定に無限直線版を使うと<b>危険を過小評価する</b>(<code style="color:#22d3bf">poc_safety_clearance</code> の実測では同じ 2 本に対し 87.6 % の過小評価)。</p>
+<p><code style="color:#22d3bf">distance_line_line</code>은 <b>무한 직선</b> 사이의 거리이므로, 떨어져 있는 2개 선분에 0을 반환할 수있다(실측: (0,0,0)-(1,0,0)과 (5,0,0)-(6,0,0)에 대해 0.0, 참값은 4.0). 팔다리, 로봇 링크, 배관, 공구는 모두 <b>유한</b>하므로, 안전 거리나 간섭 판정에무한 직선 버전을 사용하면 <b>위험을 과소평가한다</b>(<code style="color:#22d3bf">poc_safety_clearance</code>의 실측에서는같은 2개에 대해 87.6 %의 과소평가).</p>
 <p>Args:</p>
-<p>p0, p1: 線分 1 の端点 <code style="color:#22d3bf">(3,)</code>。<code style="color:#22d3bf">p0 == p1</code> なら点として扱う。</p>
-<p>q0, q1: 線分 2 の端点 <code style="color:#22d3bf">(3,)</code>。</p>
+<p>p0, p1: 선분 1의 끝점 <code style="color:#22d3bf">(3,)</code>. <code style="color:#22d3bf">p0 == p1</code>이면 점으로 취급한다.</p>
+<p>q0, q1: 선분 2의 끝점 <code style="color:#22d3bf">(3,)</code>.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(distance, cp, cq)</code>: 最短距離 float と、線分 1 側・線分 2 側の最近接点</p>
-<p><code style="color:#22d3bf">(3,)</code>。<code style="color:#22d3bf">distance == 0</code> は 2 線分が交差(または接触)しているとき。</p>
-<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.distance_segment_segment</code>)は宣言 out 型の</p>
-<p><code style="color:#22d3bf">distance</code> だけを返す。最近接点も要るときは</p>
-<p><code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code>。</p>
+<p><code style="color:#22d3bf">(distance, cp, cq)</code>: 최단 거리 float와, 선분 1 쪽과 선분 2 쪽의 최근접점</p>
+<p><code style="color:#22d3bf">(3,)</code>. <code style="color:#22d3bf">distance == 0</code>은 2개 선분이 교차(또는 접촉)할 때.</p>
+<p>★대장 경유(<code style="color:#22d3bf">fullseye.ledger.distance_segment_segment</code>)는 선언된 out 형의</p>
+<p><code style="color:#22d3bf">distance</code>만 반환한다. 최근접점도 필요할 때는</p>
+<p><code style="color:#22d3bf">fullseye.ledger.distance_segment_segment.raw(...)</code>.</p>
 <p>Raises:</p>
-<p>ValueError: 端点が <code style="color:#22d3bf">(3,)</code> に直せない、または非有限のとき。</p>
-<p>平行・退化(点に潰れた線分)も分岐で正しく扱う(Ericson, *Real-Time Collision Detection*, §5.1.9 の clamped closest-point 法)。<b>カプセル</b>(芯線 + 半径) どうしの距離は <code style="color:#22d3bf">distance - r1 - r2</code>、干渉は それが負になること。</p>
+<p>ValueError: 끝점을 <code style="color:#22d3bf">(3,)</code>으로 변환할 수 없거나 유한하지 않을 때.</p>
+<p>평행, 퇴화(점으로 뭉개진 선분)도 분기로 올바르게 처리한다(Ericson, *Real-Time Collision Detection*, §5.1.9의 clamped closest-point 법). <b>캡슐</b>(심선 + 반지름) 끼리의 거리는 <code style="color:#22d3bf">distance - r1 - r2</code>이며, 간섭은 그것이 음수가 되는 것.</p>
 <p>Reference (public): C. Ericson, *Real-Time Collision Detection*, Morgan Kaufmann 2005, §5.1.9 &quot;Closest Points of Two Line Segments&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>

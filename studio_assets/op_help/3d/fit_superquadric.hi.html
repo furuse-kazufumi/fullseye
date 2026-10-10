@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_superquadric(points) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import superquadric; superquadric.fit_superquadric(points) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fit_superquadric&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud पर least_squares से superquadric surface fit करता है और dict{a,eps,R,t,residual} लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>初期姿勢 = 慣性テンソル固有ベクトル、初期 a = 主軸 bbox 半分、初期 eps=(1,1)。<code style="color:#22d3bf">a</code> は正、<code style="color:#22d3bf">eps</code> は [0.1, 2.0] にクリップして最適化する。</p>
+<p>प्रारंभिक pose = inertia tensor के eigenvector, प्रारंभिक a = principal axis bbox का आधा, प्रारंभिक eps=(1,1)। <code style="color:#22d3bf">a</code> को धनात्मक रखकर और <code style="color:#22d3bf">eps</code> को [0.1, 2.0] में clip करके optimisation किया जाता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict: {&#x27;a&#x27;: (3,), &#x27;eps&#x27;: (2,), &#x27;R&#x27;: (3,3), &#x27;t&#x27;: (3,), &#x27;residual&#x27;: float}</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

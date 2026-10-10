@@ -6,15 +6,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Punktwolke-zu-Punktwolke-Matching (Struktur = Punktwolke × Methode = NCC, Transformation = Splat). Lokalisiert das Modell in der Szene.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>手順: <code style="color:#22d3bf">pts_scene</code> と <code style="color:#22d3bf">pts_model</code> を <b>同じ</b> <code style="color:#22d3bf">bounds=(lo,hi)</code> と <code style="color:#22d3bf">size</code> で <code style="color:#22d3bf">points_to_voxel</code>(σ=<code style="color:#22d3bf">smooth</code> voxel の平滑つき)に通し、model 側は <code style="color:#22d3bf">&gt; 5%·max</code> の bbox を切り出してテンプレにし、<code style="color:#22d3bf">accel_match.ncc_locate_3d</code> で NCC 定位する。返り値 <code style="color:#22d3bf">[NCC, z, y, x]</code> float64(NCC ∈ [−1,1]、位置は voxel index、±2 近傍重心でサブボクセル)。</p>
-<p style="margin:2px 0 2px 12px">• 位置は <b>切り出した bbox テンプレの中心</b>が scene voxel のどこに載るか。world 座標に戻すには</p>
-<p><code style="color:#22d3bf">lo + idx/(size−1)·(hi−lo)</code>(<code style="color:#22d3bf">points_to_voxel</code> の格子)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code> は必須(<code style="color:#22d3bf">_lo_hi</code> で検証、不正は ValueError)。両雲を含む範囲にしないと範囲外の</p>
-<p>点が端 voxel に clip される。</p>
-<p style="margin:2px 0 2px 12px">• model の voxel が全 0 なら <code style="color:#22d3bf">[0,0,0,0]</code>。</p>
-<p style="margin:2px 0 2px 12px">• 並進のみ。回転・スケールは <code style="color:#22d3bf">match_pca</code> / <code style="color:#22d3bf">match_logpolar_z</code> で先に合わせる。</p>
-<p>後段: <code style="color:#22d3bf">icp_point2point_3d</code> の <code style="color:#22d3bf">init_t</code>、<code style="color:#22d3bf">refine_translation_lk</code>。</p>
+<p>Ablauf: <code style="color:#22d3bf">pts_scene</code> und <code style="color:#22d3bf">pts_model</code> werden mit <b>denselben</b> <code style="color:#22d3bf">bounds=(lo,hi)</code> und <code style="color:#22d3bf">size</code> durch <code style="color:#22d3bf">points_to_voxel</code> (mit Glättung von σ=<code style="color:#22d3bf">smooth</code> Voxeln) geschickt; auf der model-Seite wird die bbox von <code style="color:#22d3bf">&gt; 5%·max</code> als Template ausgeschnitten, und die NCC-Lokalisierung erfolgt mit <code style="color:#22d3bf">accel_match.ncc_locate_3d</code>. Rückgabewert <code style="color:#22d3bf">[NCC, z, y, x]</code> float64 (NCC ∈ [−1,1]; die Position ist ein Voxel-index, per Schwerpunkt der ±2-Nachbarschaft subvoxelgenau).</p>
+<p style="margin:2px 0 2px 12px">• Die Position gibt an, wo in den Szenen-Voxeln das <b>Zentrum des ausgeschnittenen bbox-Templates</b> liegt. Zurück in world-Koordinaten mit</p>
+<p><code style="color:#22d3bf">lo + idx/(size−1)·(hi−lo)</code> (das Gitter von <code style="color:#22d3bf">points_to_voxel</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code> ist Pflicht (geprüft durch <code style="color:#22d3bf">_lo_hi</code>; ungültig ergibt ValueError). Umfasst der Bereich nicht beide Wolken, werden Punkte außerhalb</p>
+<p>auf die Randvoxel geclippt.</p>
+<p style="margin:2px 0 2px 12px">• Sind die Voxel des model überall 0, <code style="color:#22d3bf">[0,0,0,0]</code>.</p>
+<p style="margin:2px 0 2px 12px">• Nur Translation. Rotation und Skalierung zuerst mit <code style="color:#22d3bf">match_pca</code> / <code style="color:#22d3bf">match_logpolar_z</code> angleichen.</p>
+<p>Nachfolgend: <code style="color:#22d3bf">init_t</code> von <code style="color:#22d3bf">icp_point2point_3d</code>, <code style="color:#22d3bf">refine_translation_lk</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

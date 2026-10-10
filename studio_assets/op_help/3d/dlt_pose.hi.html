@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dlt_pose(points_3d, points_2d, K)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pnp3d; pnp3d.dlt_pose(points_3d, points_2d, K)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;dlt_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>DLT से 3D-2D correspondences से camera pose वापस निकालता है (K ज्ञात)। → (R (3,3), t (3,))। कम से कम 6 points आवश्यक।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">pnp_pose</code> の (R, t) 部分(正規化 DLT + 平面 PnP 分岐 + LM 精密化)。再投影 RMS も要るなら <code style="color:#22d3bf">pnp_pose</code> を使う。共平面入力(チェッカーボード等)は平面 PnP へ自動で振り分ける(旧実装は fail-closed で拒否していたが、正しく解けるので解く)。</p>
-<p>手順(モジュール関数 <code style="color:#22d3bf">pnp3d.pnp_pose</code> を <code style="color:#22d3bf">refine=True</code> で呼ぶ):</p>
-<p style="margin:2px 0 2px 12px">• 画素を <code style="color:#22d3bf">K⁻¹</code> で正規化画像座標へ、3D 点は Hartley 正規化(重心を原点、平均距離 √3)して DLT(12 未知数の SVD)を解く。</p>
-<p style="margin:2px 0 2px 12px">• 共平面度(共分散の最小/最大固有値比の平方根)が 0.05 未満なら平面 PnP(ホモグラフィ分解)も候補に加え、厳密に平面(3 番目の広がりが 0)なら DLT を省く。</p>
-<p style="margin:2px 0 2px 12px">• 各候補を再投影誤差の Levenberg-Marquardt(最大 30 反復)で精密化し、前方点(深度 &gt; 0)の割合が最大、同点なら再投影 RMS が最小の候補を採る。</p>
-<p>返り値: <code style="color:#22d3bf">R</code> (3,3) 回転(det=+1)、<code style="color:#22d3bf">t</code> (3,)(世界座標と同じ単位)。規約 <code style="color:#22d3bf">Xc = R X + t</code>、<code style="color:#22d3bf">x ≅ K Xc</code>。</p>
-<p>Raises <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">points_2d</code> が (N,2) でない(画像を渡した場合は名指しで拒否)/ <code style="color:#22d3bf">points_3d</code> が (N,3) でない / 非有限 / 6 点未満 / 点数不一致 / 全点が一直線か一点。</p>
-<p>注意: 外れ値には無防備(全点を等しく使う)。誤対応があるなら <code style="color:#22d3bf">pnp_ransac</code>。決定論的(乱数なし)。評価は <code style="color:#22d3bf">reprojection_error</code>、GT との比較は <code style="color:#22d3bf">pose_error</code>。</p>
+<p><code style="color:#22d3bf">pnp_pose</code> का (R, t) हिस्सा (normalised DLT + planar PnP branch + LM refinement)। reprojection RMS भी चाहिए तो <code style="color:#22d3bf">pnp_pose</code> इस्तेमाल करें। coplanar input (checkerboard आदि) अपने-आप planar PnP को भेजा जाता है (पुराना implementation इसे fail-closed तरीक़े से अस्वीकार करता था, पर यह सही ढंग से हल हो सकता है, इसलिए हल किया जाता है)।</p>
+<p>प्रक्रिया (module function <code style="color:#22d3bf">pnp3d.pnp_pose</code> को <code style="color:#22d3bf">refine=True</code> के साथ बुलाता है):</p>
+<p style="margin:2px 0 2px 12px">• pixels को <code style="color:#22d3bf">K⁻¹</code> से normalised image coordinates में, 3D points को Hartley normalisation (centroid को origin पर, औसत दूरी √3) से बदलकर DLT (12 unknowns का SVD) हल किया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• coplanarity (covariance के सबसे छोटे/सबसे बड़े eigenvalue के अनुपात का square root) 0.05 से कम हो तो planar PnP (homography decomposition) भी candidate में जोड़ा जाता है; पूरी तरह planar (3rd extent 0) हो तो DLT छोड़ दिया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• हर candidate को reprojection error पर Levenberg-Marquardt (अधिकतम 30 iterations) से refine किया जाता है, और सामने वाले points (depth &gt; 0) का अनुपात सबसे अधिक, बराबर होने पर reprojection RMS सबसे कम वाला candidate चुना जाता है।</p>
+<p>return value: <code style="color:#22d3bf">R</code> (3,3) rotation (det=+1), <code style="color:#22d3bf">t</code> (3,) (world coordinates जैसी ही unit)। convention <code style="color:#22d3bf">Xc = R X + t</code>, <code style="color:#22d3bf">x ≅ K Xc</code>।</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">points_2d</code> (N,2) न हो (image देने पर नाम लेकर अस्वीकार) / <code style="color:#22d3bf">points_3d</code> (N,3) न हो / non-finite / 6 से कम points / points की संख्या मेल न खाए / सभी points एक रेखा पर या एक ही point पर।</p>
+<p>सावधानी: outliers के सामने असुरक्षित (सभी points को बराबर इस्तेमाल करता है)। ग़लत correspondences हों तो <code style="color:#22d3bf">pnp_ransac</code>। deterministic (कोई random नहीं)। evaluation <code style="color:#22d3bf">reprojection_error</code> से, GT से तुलना <code style="color:#22d3bf">pose_error</code> से।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

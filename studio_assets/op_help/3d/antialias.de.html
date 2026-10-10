@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.antialias(hi_res_image, ss, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import render_ssaa; render_ssaa.antialias(hi_res_image, ss, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;antialias&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verkleinert ein hochaufgelöstes Bild um den ganzzahligen Faktor <code style="color:#22d3bf">ss</code> (flächengemittelte Kantenglättung).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">hi_res_image</code> は <code style="color:#22d3bf">(H*ss, W*ss)</code> または <code style="color:#22d3bf">(H*ss, W*ss, C)</code> の float 画像。各 <code style="color:#22d3bf">ss×ss</code> ブロックを重み付き平均して <code style="color:#22d3bf">(H, W[, C])</code> を返す。<code style="color:#22d3bf">filter</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;box&quot;</code>   — 等重み平均(正確な面積平均、SSAA の標準)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gauss&quot;</code> — ブロック中心を重く見るガウス重み(σ = ss/2、僅かに柔らかい)。</p>
-<p>Fail-closed: <code style="color:#22d3bf">ss</code> は 1 以上の整数、入力は 2D / 3D、各辺は <code style="color:#22d3bf">ss</code> で割り切れること。非有限値があれば <code style="color:#22d3bf">ValueError</code>(平均で NaN が伝播しないよう確保前に拒否)。</p>
+<p><code style="color:#22d3bf">hi_res_image</code> ist ein float-Bild von <code style="color:#22d3bf">(H*ss, W*ss)</code> oder <code style="color:#22d3bf">(H*ss, W*ss, C)</code>. Jeder <code style="color:#22d3bf">ss×ss</code>-Block wird gewichtet gemittelt und <code style="color:#22d3bf">(H, W[, C])</code> zurückgegeben. <code style="color:#22d3bf">filter</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;box&quot;</code>   — gleichgewichteter Mittelwert (exakter Flächenmittelwert, Standard bei SSAA).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gauss&quot;</code> — Gauß-Gewichte, die die Blockmitte stärker gewichten (σ = ss/2, etwas weicher).</p>
+<p>Fail-closed: <code style="color:#22d3bf">ss</code> ist eine ganze Zahl von 1 oder mehr, die Eingabe ist 2D / 3D, und jede Seite muss durch <code style="color:#22d3bf">ss</code> teilbar sein. Nicht endliche Werte lösen <code style="color:#22d3bf">ValueError</code> aus (vor der Allokation abgewiesen, damit sich NaN nicht über die Mittelung ausbreitet).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

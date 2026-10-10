@@ -5,13 +5,12 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>兩個 SH 描述子的餘弦相似度(旋轉不變的形狀比對)。越接近 1 形狀越相似。voxel × SH 列。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">sh_descriptor(a, L, nradii)</code> と <code style="color:#22d3bf">sh_descriptor(b, L, nradii)</code> を平坦化して L2 正規化し、内積を float で返す。帯域エネルギーは非負なので値は <b>[0, 1]</b>(負にならない)。どちらかの記述子が全 0(空 volume)なら 0。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は立方体 volume(<code style="color:#22d3bf">sh_descriptor</code> の前提)。形が違ってもよいが、shell 半径が</p>
-<p>各 N で決まるので <b>スケールが違う物体は別物</b>として低く出る(スケール不変ではない)。中心ずれにも弱い(重心で中心合わせしてから)。</p>
-<p style="margin:2px 0 2px 12px">• 回転には不変(帯域エネルギー)。ただし鏡像も同じ値になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ntheta</code>/<code style="color:#22d3bf">nphi</code> は既定(32×64)固定。同じ設定同士の比較にだけ意味がある。</p>
-<p style="margin:2px 0 2px 12px">• 位置は返さない。「どこにあるか」は <code style="color:#22d3bf">match_shape_3d</code> 等、「同じ形か」は本 op。</p>
+<p>將 <code style="color:#22d3bf">sh_descriptor(a, L, nradii)</code> 與 <code style="color:#22d3bf">sh_descriptor(b, L, nradii)</code> 攤平並做 L2 正規化, 以 float 回傳內積。頻帶能量非負,因此值在 <b>[0, 1]</b>(不會為負)。任一描述子全為 0(空 volume)時為 0。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 為立方體 volume(<code style="color:#22d3bf">sh_descriptor</code> 的前提)。形狀可以不同,但 shell 半徑</p>
+<p>由各自的 N 決定,因此 <b>尺度不同的物體被視為不同物體</b>而得分偏低(不具尺度不變性)。對中心偏移也敏感(先以質心對中)。</p>
+<p style="margin:2px 0 2px 12px">• 對旋轉不變(頻帶能量)。但鏡像也得到相同的值。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ntheta</code>/<code style="color:#22d3bf">nphi</code> 固定為預設值(32×64)。只有相同設定之間的比較才有意義。</p>
+<p style="margin:2px 0 2px 12px">• 不回傳位置。「在哪裡」用 <code style="color:#22d3bf">match_shape_3d</code> 等,「是否同形」用本 op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

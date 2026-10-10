@@ -5,16 +5,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.rigid_flow(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">pose</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.rigid_flow.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">scene_flow3d.rigid_flow</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>pts0 -&gt; pts1 को समझाने वाली single rigid motion का अनुमान nearest-neighbour correspondence + Kabsch (ICP जैसा) से लगाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>恒等変換から出発し、毎反復で現姿勢の点群から <code style="color:#22d3bf">pts1</code> への最近傍対応を取り、<code style="color:#22d3bf">registration.kabsch</code> で閉形式に (R, t) を求めて累積する。対応 index が前反復と一致(= 収束)するか <code style="color:#22d3bf">max_iter</code> で停止する。収束判定は index の安定性のみに依存するため<b>スケール不変</b>(絶対 epsilon を使わない)。</p>
+<p>Identity transform से शुरू करके, हर iteration में मौजूदा pose वाले point cloud से <code style="color:#22d3bf">pts1</code> तक nearest neighbour correspondences लेता है, <code style="color:#22d3bf">registration.kabsch</code> से closed form में (R, t) निकालता है और जोड़ता जाता है। जब correspondence index पिछले iteration से मेल खाएँ (= convergence) या <code style="color:#22d3bf">max_iter</code> पर रुकता है। Convergence की जाँच केवल index की स्थिरता पर निर्भर है, इसलिए यह <b>scale-invariant</b> है (absolute epsilon इस्तेमाल नहीं होता)।</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群(N &gt;= 3、回転を一意に決めるため)。</p>
-<p>pts1: (M, 3) 時刻 1 の点群(M &gt;= 1、N と一致不要)。</p>
-<p>max_iter: ICP 反復上限。</p>
+<p>pts0: (N, 3) समय 0 का point cloud (N &gt;= 3, rotation को अद्वितीय रूप से तय करने के लिए)।</p>
+<p>pts1: (M, 3) समय 1 का point cloud (M &gt;= 1, N से मेल खाना ज़रूरी नहीं)।</p>
+<p>max_iter: ICP iterations की ऊपरी सीमा।</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;R&quot;: (3,3) 回転, &quot;t&quot;: (3,) 並進, &quot;rmse&quot;: 整合後の点-最近傍 RMS 距離}</code>。R は真の回転(det=+1)。rmse は実測値(詐称なし)。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;R&quot;: (3,3) rotation, &quot;t&quot;: (3,) translation, &quot;rmse&quot;: alignment के बाद point-nearest neighbour RMS दूरी}</code>। R सच्चा rotation है (det=+1)। rmse मापा गया मान है (कोई हेराफेरी नहीं)।</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正、pts0 &lt; 3 点、または pts1 が空。</p>
+<p>ValueError: गलत shape, pts0 &lt; 3 points, या pts1 खाली।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mean_curvature(points, k=25, normals=None)</code>(要直接调用实现,<code style="color:#22d3bf">import curvature3d; curvature3d.mean_curvature(points, k=25, normals=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;mean_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平均曲率 H=(k1+k2)/2。→ (N,)。依赖朝向的量。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は凸側ヒューリスティクス(開面の凹/凸符号は不定)。向き付き法線を渡すと大域向きに整合し正しい符号を出す。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 計算は <code style="color:#22d3bf">principal_curvatures</code> と同じ(k+1 近傍の PCA 法線 + 局所二次曲面フィット)で、<code style="color:#22d3bf">(k1 + k2) / 2</code> を返す。単位は 1/長さ。</p>
-<p style="margin:2px 0 2px 12px">• 符号は凸を正とする規約で、<code style="color:#22d3bf">normals</code> を渡したときだけ大域的な凹/凸に対応する。未指定では開いた面の H は常に凸側(絶対値相当)。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は 0。<code style="color:#22d3bf">k</code> は N-1 に切り詰められる。</p>
-<p style="margin:2px 0 2px 12px">• 半径 R の球なら <code style="color:#22d3bf">1/R</code>、円柱は <code style="color:#22d3bf">1/(2R)</code>、平面は 0。鞍点(k1 = -k2)も 0 だが <code style="color:#22d3bf">gaussian_curvature</code> は負になるので区別できる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行(<code style="color:#22d3bf">ValueError</code>)。決定論的。</p>
+<p>normals(带朝向的参考法线, (N,3))未指定时采用凸侧启发式(开放曲面的凹/凸符号不确定)。传入带朝向的法线后会与全局朝向一致,给出正确的符号。</p>
+<p>补充:</p>
+<p style="margin:2px 0 2px 12px">• 计算与 <code style="color:#22d3bf">principal_curvatures</code> 相同(k+1 邻域的 PCA 法线 + 局部二次曲面拟合),返回 <code style="color:#22d3bf">(k1 + k2) / 2</code>。单位为 1/长度。</p>
+<p style="margin:2px 0 2px 12px">• 符号采用凸为正的约定,仅在传入 <code style="color:#22d3bf">normals</code> 时才对应全局的凹/凸。未指定时开放曲面的 H 始终在凸侧(相当于绝对值)。</p>
+<p style="margin:2px 0 2px 12px">• 邻域少于 5 个点的点为 0。<code style="color:#22d3bf">k</code> 被截断为 N-1。</p>
+<p style="margin:2px 0 2px 12px">• 半径 R 的球为 <code style="color:#22d3bf">1/R</code>,圆柱为 <code style="color:#22d3bf">1/(2R)</code>,平面为 0。鞍点(k1 = -k2)也为 0,但 <code style="color:#22d3bf">gaussian_curvature</code> 为负,因此可以区分。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> 须为 (N,3) 且各行有限、非零(<code style="color:#22d3bf">ValueError</code>)。确定性。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

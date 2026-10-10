@@ -4,33 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_spin(src, dst, device=&#x27;cpu&#x27;, n_keypoints=220, normal_k=18, support_radius=None, n_alpha=16, n_beta=16, support_angle_deg=60.0, lowe_ratio=0.85, ransac_iters=4000, inlier_thr=None, min_inliers=8, seed=0)</code>(要直接调用实现,<code style="color:#22d3bf">import feat_spin; feat_spin.register_spin(src, dst, device=&#x27;cpu&#x27;, n_keypoints=220, normal_k=18, support_radius=None, n_alpha=16, n_beta=16, support_angle_deg=60.0, lowe_ratio=0.85, ransac_iters=4000, inlier_thr=None, min_inliers=8, seed=0)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;register_spin&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Spin Image 描述子 + RANSAC 的无初值稀疏特征刚体配准。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>2 点群 <code style="color:#22d3bf">src</code> (N,3), <code style="color:#22d3bf">dst</code> (M,3) を、初期姿勢の事前情報なしに位置合わせする。各点の法線(局所 PCA、重心から外向きに符号統一 = 剛体変換で不変)を軸として近傍点を(α=軸からの距離, β=軸方向の高さ) の 2D ヒストグラムへ「回転(spin)」蓄積した Spin Image 記述子(Johnson &amp; Hebert 1997)を keypoint ごとに作り、記述子空間の最近傍でマッチ(Lowe ratio test で選別)、RANSAC(3 点最小標本 + Kabsch)で外れ値に頑健な剛体変換を推定する。密マッチ(NCC/位相相関/Hough)や PCA 主軸整列と違い、<b>大回転 + 部分重なり</b>でも局所特徴の対応から姿勢を復元できるため、ICP の前段(coarse init 供給)に使える。返す姿勢は <code style="color:#22d3bf">dst ~= src @ R.T + t</code> (= <code style="color:#22d3bf">R @ src_i + t</code>)の規約に従う(<code style="color:#22d3bf">icp_point2point_3d</code> と同一)。</p>
-<p>引数:</p>
-<p>src: (N,3) 移動側点群(numpy.ndarray か torch.Tensor)。</p>
-<p>dst: (M,3) 固定側(参照)点群。</p>
-<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD/最終姿勢をこの上で解く。</p>
-<p>n_keypoints: 各点群から抽出する keypoint 数(等間隔サブサンプル)。</p>
-<p>normal_k: 法線推定に使う近傍点数(局所 PCA)。</p>
-<p>support_radius: Spin Image の支持半径。None なら各点群個別の bbox 対角(大きい方)</p>
-<p>の 0.30 倍(未知並進で汚れないよう和集合でなく個別に測る)。</p>
-<p>n_alpha, n_beta: Spin Image の (α, β) ビン数(記述子は n_alpha*n_beta 次元)。</p>
-<p>support_angle_deg: 支持角しきい値(度)。keypoint 法線とこの角度以内の法線を持つ</p>
-<p>支持点のみ蓄積(遮蔽・裏面に頑健)。&gt;=90 で無効。</p>
-<p>lowe_ratio: Lowe 比率テストしきい値(d1 &lt; ratio*d2 の対応のみ採用)。</p>
-<p>ransac_iters: RANSAC 反復数。</p>
-<p>inlier_thr: RANSAC のインライア距離しきい値。None なら bbox 対角の 0.04 倍。</p>
-<p>min_inliers: 有効姿勢とみなす最小インライア数(<code style="color:#22d3bf">ok</code> 判定)。</p>
-<p>seed: RANSAC 乱数シード。</p>
-<p>返り値:</p>
-<p>R: (3,3) torch.Tensor。dst ~= src @ R.T + t を満たす回転。</p>
-<p>t: (3,) torch.Tensor。並進。</p>
-<p>info: dict。&quot;n_matches&quot;(ratio test 通過対応数), &quot;inliers&quot;(RANSAC最終),</p>
-<p>&quot;inlier_ratio&quot;, &quot;rmse&quot;(インライア上 RMSE), &quot;support_radius&quot;,</p>
-<p>&quot;inlier_thr&quot;, &quot;ok&quot;(min_inliers 以上か)。</p>
+<p>在没有任何初始位姿先验的情况下,对 2 个点云 <code style="color:#22d3bf">src</code> (N,3)、<code style="color:#22d3bf">dst</code> (M,3) 进行配准。以各点的法线(局部 PCA,符号统一为从质心向外 = 对刚体变换不变)为轴,将邻域点 &quot;旋转(spin)&quot;累积到 (α=到轴的距离, β=沿轴方向的高度) 的 2D 直方图中, 为每个 keypoint 构建 Spin Image 描述子(Johnson &amp; Hebert 1997),在描述子空间中以最近邻进行匹配(用 Lowe ratio test 筛选),再用 RANSAC(3 点最小样本 + Kabsch) 估计对离群值鲁棒的刚体变换。与稠密匹配(NCC/相位相关/Hough)或 PCA 主轴对齐不同,即使在<b>大旋转 + 部分重叠</b>下也能从局部特征的对应恢复位姿,因此可用作 ICP 的前级(提供 coarse init)。返回的位姿遵循 <code style="color:#22d3bf">dst ~= src @ R.T + t</code> (= <code style="color:#22d3bf">R @ src_i + t</code>)的约定(与 <code style="color:#22d3bf">icp_point2point_3d</code> 相同)。</p>
+<p>参数:</p>
+<p>src: (N,3) 移动侧点云(numpy.ndarray 或 torch.Tensor)。</p>
+<p>dst: (M,3) 固定侧(参考)点云。</p>
+<p>device: torch 设备(&quot;cpu&quot; 等)。在其上求解 SVD/最终位姿。</p>
+<p>n_keypoints: 从各点云中提取的 keypoint 数(等间隔子采样)。</p>
+<p>normal_k: 法线估计所用的邻域点数(局部 PCA)。</p>
+<p>support_radius: Spin Image 的支持半径。None 时为各点云分别测得的 bbox 对角线(取较大者)</p>
+<p>的 0.30 倍(为避免被未知平移污染,不取并集而是分别测量)。</p>
+<p>n_alpha, n_beta: Spin Image 的 (α, β) 分箱数(描述子为 n_alpha*n_beta 维)。</p>
+<p>support_angle_deg: 支持角阈值(度)。只累积法线与 keypoint 法线夹角在此角度以内的</p>
+<p>支持点(对遮挡、背面鲁棒)。&gt;=90 时无效。</p>
+<p>lowe_ratio: Lowe 比率测试阈值(只采用 d1 &lt; ratio*d2 的对应)。</p>
+<p>ransac_iters: RANSAC 迭代次数。</p>
+<p>inlier_thr: RANSAC 的内点距离阈值。None 时为 bbox 对角线的 0.04 倍。</p>
+<p>min_inliers: 视为有效位姿的最少内点数(<code style="color:#22d3bf">ok</code> 判定)。</p>
+<p>seed: RANSAC 随机种子。</p>
+<p>返回值:</p>
+<p>R: (3,3) torch.Tensor。满足 dst ~= src @ R.T + t 的旋转。</p>
+<p>t: (3,) torch.Tensor。平移。</p>
+<p>info: dict。&quot;n_matches&quot;(通过 ratio test 的对应数), &quot;inliers&quot;(RANSAC 最终),</p>
+<p>&quot;inlier_ratio&quot;, &quot;rmse&quot;(内点上的 RMSE), &quot;support_radius&quot;,</p>
+<p>&quot;inlier_thr&quot;, &quot;ok&quot;(是否不少于 min_inliers)。</p>
 <p>注意:</p>
-<p style="margin:2px 0 2px 12px">• 記述子は法線符号に依存する。重心から外向きの符号統一は、法線が概ね放射状で n·(p-重心) の符号が安定な形状(lumpy な閉曲面等)で有効。薄板・管状など n·(p-重心)≈0 の領域が多い形状では 2 雲間で符号が反転しうる。</p>
-<p style="margin:2px 0 2px 12px">• 平面・球など曲率が空間的に一様な部位は記述子が縮退し ratio test で対応が消える(無特徴形状には不向き)。overlap が概ね 60% を切ると成功率が急落し、失敗時は幾何整合だが誤りの解に RANSAC がロックして壊滅的な誤差になりうる(<code style="color:#22d3bf">ok</code> / <code style="color:#22d3bf">inlier_ratio</code> ゲートの併用を推奨)。</p>
+<p style="margin:2px 0 2px 12px">• 描述子依赖于法线符号。从质心向外的符号统一,对于法线大致呈放射状、n·(p-质心) 的符号稳定的形状(lumpy 的闭曲面等)有效。在薄板、管状等 n·(p-质心)≈0 的区域较多的形状上,符号可能在 2 个点云之间翻转。</p>
+<p style="margin:2px 0 2px 12px">• 平面、球等曲率在空间上均匀的部位描述子会退化,ratio test 会使对应消失(不适合无特征形状)。overlap 低于约 60% 时成功率骤降,失败时 RANSAC 可能锁定在几何上一致但错误的解上,导致灾难性误差(建议并用 <code style="color:#22d3bf">ok</code> / <code style="color:#22d3bf">inlier_ratio</code> 门控)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

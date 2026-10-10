@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_warp(model, points)</code> (to call the implementation directly, <code style="color:#22d3bf">import deform3d; deform3d.tps_warp(model, points)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;tps_warp&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Deform a point set with a TPS model.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖) を評価する。</p>
-<p>引数:</p>
-<p>model: <code style="color:#22d3bf">tps_fit</code> が返した dict。</p>
-<p>points: (M,3)(または長さ3の1次元)。変形したい点群。</p>
-<p>返り値:</p>
-<p>(M,3) 変形後の点群(入力が1次元なら (3,) を返す)。</p>
-<p>例外:</p>
-<p>ValueError: model の形式不正、または points の形状不正。</p>
+<p>Evaluates f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖).</p>
+<p>Arguments:</p>
+<p>model: the dict returned by <code style="color:#22d3bf">tps_fit</code>.</p>
+<p>points: (M,3) (or 1-dimensional of length 3). The points to deform.</p>
+<p>Returns:</p>
+<p>(M,3) deformed points (if the input is 1-dimensional, returns (3,)).</p>
+<p>Exceptions:</p>
+<p>ValueError: malformed model or bad shape of points.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

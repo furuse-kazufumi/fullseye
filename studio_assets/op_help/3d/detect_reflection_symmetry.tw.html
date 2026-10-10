@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detect_reflection_symmetry(points)</code>(要直接呼叫實作,<code style="color:#22d3bf">import symmetry3d; symmetry3d.detect_reflection_symmetry(points)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;detect_reflection_symmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在以 PCA 主軸為法線(過重心)的候選平面中選出最佳鏡像對稱面。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>→ dict{plane_point, plane_normal, score, all_scores, margin}。score が小さいほど対称。</p>
-<p>★ <b><code style="color:#22d3bf">score</code> だけで採否を決めない。<code style="color:#22d3bf">margin</code> を見ること</b>(2026-09-06 追加)。<code style="color:#22d3bf">margin</code> は 2 位と 1 位の score の差で、<b>候補が団子なら答えはくじ引き</b> である、という警告になる。実測(1500 点):</p>
+<p>→ dict{plane_point, plane_normal, score, all_scores, margin}。score 越小越對稱。</p>
+<p>★ <b>不要只憑 <code style="color:#22d3bf">score</code> 決定取捨。要看 <code style="color:#22d3bf">margin</code></b>(2026-09-06 新增)。<code style="color:#22d3bf">margin</code> 是第 2 名與第 1 名 score 之差，<b>候選擠成一團時，答案就是抽籤</b> —— 它發揮這樣的警告作用。實測(1500 點):</p>
 <p>==================  ========  ========  =========</p>
-<p>形状                best      2 位      margin</p>
+<p>形狀                best      第 2 名   margin</p>
 <p>==================  ========  ========  =========</p>
-<p>箱(鏡映面が 3 枚)     0.9397    0.9499     0.0102</p>
-<p>角柱つきの箱          0.9876    0.9918     0.0043</p>
+<p>盒子(3 個鏡射面)     0.9397    0.9499     0.0102</p>
+<p>附稜柱的盒子          0.9876    0.9918     0.0043</p>
 <p>球                    1.0490    1.0551     0.0062</p>
-<p>一様乱数の立方体      1.0608    1.3435     0.2828</p>
+<p>均勻亂數立方體        1.0608    1.3435     0.2828</p>
 <p>==================  ========  ========  =========</p>
-<p>対称面が複数ある形ほど margin は小さい —— これは不具合ではなく、そういう形だという情報である。点群位置合わせの PoC が同じ構造を測っていて、PCA の候補は<b>素の直方体で 83 % が反転した象限を掴む</b>が、そのとき先に潰れるのは残差ではなく候補どうしの margin だった(0.42 → 0.066 → 0.039)。<b>残差でなく margin で採否を見る</b>、が両方に共通する結論。</p>
-<p>★ <b><code style="color:#22d3bf">score</code> は 0 に近づかない。</b> 厳密に対称な形でも点の間隔が床を作る(上の表で箱が 0.94)。「0 に近いか」ではなく「同じ形を鏡映せずに測った値」や「点間隔」と比べること。</p>
-<p>★ <b>候補は PCA の 3 軸だけ</b>。真の対称面が主軸のどれとも一致しない形では見つからず、しかも黙って 3 つのうち最良を返す。密に振った候補が要るなら <code style="color:#22d3bf">reflection_symmetry_score</code> を直接掃引すること。</p>
+<p>對稱面越多的形狀，margin 越小 —— 這不是缺陷，而是表示形狀本身如此的資訊。點雲對位的 PoC 量測的是同一結構：PCA 的候選<b>在單純長方體上有 83 % 會抓到翻轉的象限</b>，而此時先崩塌的不是殘差，而是候選之間的 margin(0.42 → 0.066 → 0.039)。<b>不看殘差而看 margin 來決定取捨</b>，是兩者共同的結論。</p>
+<p>★ <b><code style="color:#22d3bf">score</code> 不會趨近 0。</b> 即使是嚴格對稱的形狀，點間距也會形成下限(上表中盒子為 0.94)。不要看「是否接近 0」，而應與「對同一形狀不做鏡射量得的值」或「點間距」相比較。</p>
+<p>★ <b>候選只有 PCA 的 3 個軸</b>。真正的對稱面與任何主軸都不一致的形狀找不到對稱面，而且會默默回傳 3 個中的最佳者。需要密集取樣的候選時，請直接掃掠 <code style="color:#22d3bf">reflection_symmetry_score</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

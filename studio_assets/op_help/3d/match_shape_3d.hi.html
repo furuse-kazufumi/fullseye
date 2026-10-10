@@ -6,15 +6,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D shape-based (gradient direction) matching = 2D shapematch_gpu का voxel संस्करण (&quot;contour matching&quot;)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>テンプレとシーンの <b>単位勾配ベクトルの内積和</b>(Steger 流)。強度/コントラストに不変で、エッジ/形状で一致を測る。score(pos)=Σ&lt;û_scene(pos+dt), û_model(dt)&gt;/n を 3 成分の conv3d で。</p>
-<p>手順: 両 volume に <code style="color:#22d3bf">sobel3d</code> → 大きさ <code style="color:#22d3bf">mc</code> 超の voxel だけ単位ベクトル化(以下は 0)。テンプレの単位勾配 3 成分をカーネルに、シーンの単位勾配と成分ごとに conv3d して和を取り、テンプレの有効 voxel 数 <code style="color:#22d3bf">n</code> で割る。score は <b>[−1, 1]</b>、1 で完全一致(勾配の向きが全て揃う)、コントラスト反転で −1。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mc</code>: <code style="color:#22d3bf">sobel3d</code> の <b>生出力(真の勾配の 32 倍)</b> に対する閾値。小さいほど平坦部の</p>
-<p>ノイズ勾配が投票に入る。</p>
-<p style="margin:2px 0 2px 12px">• 位置: 返り値 <code style="color:#22d3bf">[score, z, y, x]</code>(float64 配列)の座標は <b>テンプレ中心 voxel(index T//2)</b></p>
-<p>が scene のどこに載るか。テンプレが完全に収まる位置以外は 0 に落とすので、テンプレが scene より大きいと全 0 のまま index (0,0,0) が返る(例外は出ない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subvoxel=True</code> で argmax の ±2 近傍の正スコア重心に精緻化(<code style="color:#22d3bf">accel_match._subvoxel_com</code>)。</p>
-<p>後段: <code style="color:#22d3bf">refine_translation_lk</code>(corner 規約なので T//2 を引く)/ <code style="color:#22d3bf">refine_lm</code>。回転には不変でない(<code style="color:#22d3bf">match_logpolar_z</code> で先に回転を合わせる)。</p>
+<p>Template और scene के <b>unit gradient vectors के dot products का योग</b> (Steger शैली)। intensity/contrast से invariant है, और edge/shape के आधार पर match मापता है। score(pos)=Σ&lt;û_scene(pos+dt), û_model(dt)&gt;/n, 3 components के conv3d से।</p>
+<p>प्रक्रिया: दोनों volume पर <code style="color:#22d3bf">sobel3d</code> → केवल वे voxel unit vector बनते हैं जिनका magnitude <code style="color:#22d3bf">mc</code> से अधिक है (बाकी 0)। Template के unit gradient के 3 components को kernel बनाकर, scene के unit gradient के साथ हर component पर conv3d करके योग लिया जाता है, और template के valid voxel की संख्या <code style="color:#22d3bf">n</code> से भाग दिया जाता है। score <b>[−1, 1]</b> में है: 1 पर पूरा match (सभी gradient दिशाएँ एक जैसी), contrast उलटने पर −1।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mc</code>: <code style="color:#22d3bf">sobel3d</code> के <b>raw output (असली gradient का 32 गुना)</b> पर threshold। जितना छोटा, उतने अधिक flat क्षेत्रों के</p>
+<p>noise gradients vote में आते हैं।</p>
+<p style="margin:2px 0 2px 12px">• Position: return value <code style="color:#22d3bf">[score, z, y, x]</code> (float64 array) के coordinates बताते हैं कि <b>template center voxel (index T//2)</b></p>
+<p>scene में कहाँ पड़ता है। जहाँ template पूरा नहीं समाता वे positions 0 कर दी जाती हैं, इसलिए template अगर scene से बड़ा हो तो सब 0 ही रहता है और index (0,0,0) लौटता है (कोई exception नहीं)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subvoxel=True</code> पर argmax के ±2 neighbourhood के धनात्मक scores के centroid तक refine होता है (<code style="color:#22d3bf">accel_match._subvoxel_com</code>)।</p>
+<p>आगे: <code style="color:#22d3bf">refine_translation_lk</code> (corner convention, इसलिए T//2 घटाएँ) / <code style="color:#22d3bf">refine_lm</code>। rotation से invariant नहीं है (पहले <code style="color:#22d3bf">match_logpolar_z</code> से rotation मिलाएँ)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

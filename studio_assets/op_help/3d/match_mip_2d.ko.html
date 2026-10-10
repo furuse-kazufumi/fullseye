@@ -5,15 +5,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>MIP 투영 → 2D NCC(구조=voxel → 2D, 기법=NCC, 변환=직교 MIP).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>3 直交方向の最大値投影で 3 枚の 2D 問題に落とし、既存の 2D NCC で定位 → 3 枚から 3D 座標を冗長推定。全 3D NCC より安く coarse alignment に。回転が無い平行移動探索向き。</p>
-<p>手順: <code style="color:#22d3bf">voxel_to_mips</code> で scene・model とも 3 枚の MIP を作り、各投影で model MIP の <code style="color:#22d3bf">&gt; 5%·max</code> の bbox を切り出してテンプレにし、<code style="color:#22d3bf">accel_match.ncc_locate_batch</code>(2D NCC、テンプレ中心規約)で位置を取る。軸 0 を潰した投影は (y,x)、軸 1 は (z,x)、軸 2 は (z,y) を与えるので各座標は 2 枚から得られ、その平均を返す。返り値 <code style="color:#22d3bf">(3,)</code> float64 の <code style="color:#22d3bf">[z, y, x]</code>(整数 NCC 位置の平均なので .5 刻み)。score は返さない。</p>
-<p style="margin:2px 0 2px 12px">• 位置は <b>切り出した bbox テンプレの中心</b>が scene MIP のどこに載るか。model volume の</p>
-<p>中心ではない。</p>
-<p style="margin:2px 0 2px 12px">• model MIP が全 0 の投影は飛ばし、ある座標が 1 枚からも得られなければ 0.0 になる(例外は</p>
-<p>出ない)。</p>
-<p style="margin:2px 0 2px 12px">• MIP は重なりで奥行き情報を失うので、複数物体・クラッタには弱い。</p>
-<p>後段: この粗位置を <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_lm</code> に渡す。</p>
+<p>3 직교 방향의 최댓값 투영으로 3 장의 2D 문제로 떨어뜨리고, 기존 2D NCC 로 위치 추정 → 3 장에서 3D 좌표를중복 추정. 전체 3D NCC 보다 싸게 coarse alignment 에. 회전이 없는 평행 이동 탐색용.</p>
+<p>절차: <code style="color:#22d3bf">voxel_to_mips</code> 로 scene·model 모두 3 장의 MIP 를 만들고, 각 투영에서 model MIP 의 <code style="color:#22d3bf">&gt; 5%·max</code> 의 bbox 를 잘라내어 템플릿으로 하고, <code style="color:#22d3bf">accel_match.ncc_locate_batch</code>(2D NCC, 템플릿 중심 규약)로 위치를 얻는다. 축 0 을 눌러 없앤 투영은 (y,x), 축 1 은 (z,x), 축 2 는 (z,y) 를주므로 각 좌표는 2 장에서 얻어지며, 그 평균을 반환한다. 반환값 <code style="color:#22d3bf">(3,)</code> float64 의 <code style="color:#22d3bf">[z, y, x]</code>(정수 NCC 위치의 평균이므로 .5 스텝). score 는 반환하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 위치는 <b>잘라낸 bbox 템플릿의 중심</b> 이 scene MIP 의 어디에 놓이는가. model volume 의</p>
+<p>중심이 아니다.</p>
+<p style="margin:2px 0 2px 12px">• model MIP 가 전부 0 인 투영은 건너뛰고, 어떤 좌표가 1 장에서도 얻어지지 않으면 0.0 이 된다(예외는</p>
+<p>나지 않는다).</p>
+<p style="margin:2px 0 2px 12px">• MIP 는 겹침으로 깊이 정보를 잃으므로, 복수 물체·클러터에는 약하다.</p>
+<p>후단: 이 대략적 위치를 <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_lm</code> 에 넘긴다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

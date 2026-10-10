@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_endpoints3d(vol)</code>(要直接调用实现,<code style="color:#22d3bf">import medial; medial.skeleton_endpoints3d(vol)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;skeleton_endpoints3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以体素掩码返回 3D 骨架的端点(26 邻域中骨架 voxel 不超过 1 个)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>孤立 voxel(次数 0)も端点に数える。2D の <code style="color:#22d3bf">r2_endpoints_skeleton</code> の 3D 版。</p>
-<p>手順: <code style="color:#22d3bf">_ensure_skeleton</code> で入力を bool 化し、6 近傍がすべて前景の interior voxel があれば <code style="color:#22d3bf">skeletonize_vol</code> で細線化してから、3x3x3 全 1 カーネル(中心 0、<code style="color:#22d3bf">mode=&quot;constant&quot;</code> で外側 0)の畳み込みで各 voxel の 26 近傍にある骨格 voxel 数(次数)を数え、<code style="color:#22d3bf">skel &amp; (次数 &lt;= 1)</code> を返す。volume の縁にある骨格 voxel は、外側が 0 扱いなので枝がそこで途切れていれば端点になる。</p>
-<p>返り値: 入力と同形の bool 配列(端点 = True)。前景が無ければ全 False。<code style="color:#22d3bf">np.argwhere</code> で <code style="color:#22d3bf">(z, y, x)</code> 座標に、<code style="color:#22d3bf">.sum()</code> で端点数になる。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): 3-D でない・空配列・float で NaN/Inf を含む入力。細線化が必要で scikit-image が無い環境では <code style="color:#22d3bf">ImportError</code>。</p>
+<p>孤立 voxel(度 0)也计为端点。2D 的 <code style="color:#22d3bf">r2_endpoints_skeleton</code> 的 3D 版。</p>
+<p>步骤: 用 <code style="color:#22d3bf">_ensure_skeleton</code> 把输入转为 bool,若有 6 邻域全为前景的 interior voxel 就用 <code style="color:#22d3bf">skeletonize_vol</code> 细化,然后用 3x3x3 全 1 核(中心 0, <code style="color:#22d3bf">mode=&quot;constant&quot;</code> 下外侧为 0)做卷积,统计各 voxel 的 26 邻域内的骨架 voxel 数(度),返回 <code style="color:#22d3bf">skel &amp; (度 &lt;= 1)</code>。位于 volume 边缘的骨架 voxel, 由于外侧按 0 处理,若分支在那里中断就成为端点。</p>
+<p>返回值: 与输入同形状的 bool 数组(端点 = True)。没有前景时全为 False。用 <code style="color:#22d3bf">np.argwhere</code> 得到 <code style="color:#22d3bf">(z, y, x)</code> 坐标,用 <code style="color:#22d3bf">.sum()</code> 得到端点数。</p>
+<p>校验(<code style="color:#22d3bf">ValueError</code>): 不是 3-D、空数组、含 NaN/Inf 的 float 输入。需要细化而环境中没有 scikit-image 时为 <code style="color:#22d3bf">ImportError</code>。</p>
 <p>注意:</p>
-<p style="margin:2px 0 2px 12px">• 端点は各枝の末端で厳密だが、ヒゲ(細線化が作る短い枝)の先端も端点に数える。構造の端だけ欲しければ先に <code style="color:#22d3bf">skeleton_prune3d</code> で刈る。</p>
-<p style="margin:2px 0 2px 12px">• 閉ループだけの骨格(輪)は端点 0 個。</p>
-<p style="margin:2px 0 2px 12px">• 数だけ欲しいなら <code style="color:#22d3bf">topology_signature</code> が <code style="color:#22d3bf">endpoints</code> / <code style="color:#22d3bf">isolated</code> を分けて返す。</p>
+<p style="margin:2px 0 2px 12px">• 端点在各分支末端是精确的,但毛刺(细化产生的短分支)的尖端也计为端点。只想要结构的末端时,先用 <code style="color:#22d3bf">skeleton_prune3d</code> 剪掉。</p>
+<p style="margin:2px 0 2px 12px">• 只有闭环的骨架(环)端点为 0 个。</p>
+<p style="margin:2px 0 2px 12px">• 只要数量时,<code style="color:#22d3bf">topology_signature</code> 会把 <code style="color:#22d3bf">endpoints</code> / <code style="color:#22d3bf">isolated</code> 分开返回。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

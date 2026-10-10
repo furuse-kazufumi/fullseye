@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_gaussian_psf(sigma, truncate=4.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volrestore; volrestore.vol_gaussian_psf(sigma, truncate=4.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_gaussian_psf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>총합 1 로 정규화한 3-D 가우스 PSF 커널. *sigma* 는 스칼라 또는 축별.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">(sz, sy, sx)</code> in voxels; the kernel spans <code style="color:#22d3bf">+-truncate*sigma</code> per axis (odd size, centre at the middle voxel). The convenient companion to <code style="color:#22d3bf">vol_richardson_lucy</code> when the instrument PSF is well approximated as Gaussian. Kernels above <code style="color:#22d3bf">PSF_MAX_ELEMENTS</code> (~256^3) raise <code style="color:#22d3bf">ValueError</code> — a PSF that large is an input mistake, not an instrument.</p>
-<p>形: 各軸の半径 <code style="color:#22d3bf">r = ceil(truncate * sigma)</code>、辺長 <code style="color:#22d3bf">2r + 1</code>(奇数)の <code style="color:#22d3bf">(2rz+1, 2ry+1, 2rx+1)</code> float64 配列。軸順は <code style="color:#22d3bf">(z, y, x)</code> で、<code style="color:#22d3bf">sigma</code> を <code style="color:#22d3bf">(sz, sy, sx)</code> で渡すとその順に対応する(異方 PSF)。3 本の 1-D Gaussian <code style="color:#22d3bf">exp(-x^2 / (2 sigma^2))</code> の外積を全体和で割るので、合計はちょうど 1、中心 voxel が最大値。単位は voxel(mm の PSF 幅は spacing で割ってから渡す)。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sigma</code>: 正の有限スカラ、または長さ 3 の正の有限値。2 乗が 0 にアンダーフローするほど小さい値(~1.5e-154 未満)は 0/0 になるので拒否。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">truncate</code>: 正の有限値(既定 4.0 = 片側 4σ で打ち切り)。</p>
-<p style="margin:2px 0 2px 12px">• 要素数 <code style="color:#22d3bf">prod(2r+1)</code> が <code style="color:#22d3bf">PSF_MAX_ELEMENTS</code>(<code style="color:#22d3bf">2**24</code>)を超えると拒否(σ≈300 で 64 GB を確保しかけた実測が動機)。</p>
-<p>使いどころ: <code style="color:#22d3bf">vol_richardson_lucy(vol, psf)</code> の <code style="color:#22d3bf">psf</code>。RL 側でも合計 1 に再正規化するので、ここで作ったカーネルをそのまま渡してよい。</p>
+<p><code style="color:#22d3bf">(sz, sy, sx)</code>, voxel 단위; 커널은 축마다 <code style="color:#22d3bf">+-truncate*sigma</code> 를 덮는다(홀수 크기, 중심은 가운데 voxel). 장비 PSF 가 Gaussian 으로잘 근사될 때 <code style="color:#22d3bf">vol_richardson_lucy</code> 의 편리한 짝이다. <code style="color:#22d3bf">PSF_MAX_ELEMENTS</code> (~256^3) 를 넘는 커널은 <code style="color:#22d3bf">ValueError</code> 를 낸다 — 그렇게 큰 PSF 는 장비가 아니라 입력 실수다.</p>
+<p>형태: 각 축의 반지름 <code style="color:#22d3bf">r = ceil(truncate * sigma)</code>, 변 길이 <code style="color:#22d3bf">2r + 1</code>(홀수)의 <code style="color:#22d3bf">(2rz+1, 2ry+1, 2rx+1)</code> float64 배열. 축 순서는 <code style="color:#22d3bf">(z, y, x)</code> 이며, <code style="color:#22d3bf">sigma</code> 를 <code style="color:#22d3bf">(sz, sy, sx)</code> 로 주면 그 순서로 대응한다(이방성 PSF). 3 개의 1-D Gaussian <code style="color:#22d3bf">exp(-x^2 / (2 sigma^2))</code> 의 외적을 전체 합으로 나누므로 합계는 정확히 1, 중심 voxel 이 최댓값. 단위는 voxel(mm 의 PSF 폭은 spacing 으로 나눈 뒤 전달).</p>
+<p>인수와 검증(<code style="color:#22d3bf">ValueError</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sigma</code>: 양의 유한 스칼라, 또는 길이 3 의 양의 유한값. 2 제곱이 0 으로언더플로할 만큼 작은 값(~1.5e-154 미만)은 0/0 이 되므로 거부.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">truncate</code>: 양의 유한값(기본값 4.0 = 한쪽 4σ 에서 절단).</p>
+<p style="margin:2px 0 2px 12px">• 요소 수 <code style="color:#22d3bf">prod(2r+1)</code> 가 <code style="color:#22d3bf">PSF_MAX_ELEMENTS</code>(<code style="color:#22d3bf">2**24</code>)를 넘으면 거부(σ≈300 에서 64 GB 를 할당할 뻔한 실측이 동기).</p>
+<p>용도: <code style="color:#22d3bf">vol_richardson_lucy(vol, psf)</code> 의 <code style="color:#22d3bf">psf</code>. RL 쪽에서도 합계 1 로재정규화하므로, 여기서 만든 커널을 그대로 넘겨도 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -5,11 +5,10 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把影像的圓環/圓盤展開為 (θ×r) 矩形(工業:標籤/環/迴轉體檢測)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>円周方向に並ぶ特徴を「縦」に伸ばして通常の 2D 手法(直線探索/相関)を適用できる。grid_sample。θ 軸は endpoint 無し(行 k の角度 = k·2π/ntheta)= 0° と 360° を重複サンプルしない周期グリッド(θ 方向 FFT/循環相関の前提を満たす。2026-08-30 修正、旧版は先頭行=末尾行)。</p>
-<p>Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。</p>
-<p>引数: <code style="color:#22d3bf">center=(cy, cx)</code> は <b>(行, 列)</b> の順(既定は画像中心 <code style="color:#22d3bf">((H−1)/2, (W−1)/2)</code>)。<code style="color:#22d3bf">r_in</code>〜<code style="color:#22d3bf">r_out</code>(画素、既定 <code style="color:#22d3bf">min(H,W)/2 − 1</code>)を <code style="color:#22d3bf">nr</code> 等分、角度を <code style="color:#22d3bf">ntheta</code> 等分。出力 <code style="color:#22d3bf">(ntheta, nr)</code> float32: 行 k の角度 <code style="color:#22d3bf">θ = k·2π/ntheta</code>、列 j の半径 <code style="color:#22d3bf">r = r_in + j·(r_out − r_in)/(nr−1)</code>、サンプル点は <code style="color:#22d3bf">(cy + r sinθ, cx + r cosθ)</code>(θ=0 が +列方向、θ が増えると +行方向へ回る)。画像外は 0 で埋まる(bilinear)。</p>
-<p>後段: 行方向(θ)の直線探索・<code style="color:#22d3bf">ncc_locate</code>、θ 方向の 1-D 相関で回転角。</p>
+<p>將沿圓周方向排列的特徵拉伸為「縱向」,從而可以套用一般的 2D 方法(直線搜尋/相關)。grid_sample。θ 軸無 endpoint(第 k 列的角度 = k·2π/ntheta)= 不重複取樣 0° 與 360° 的週期網格(滿足 θ 方向 FFT/循環相關的前提。2026-08-30 修正,舊版首列=末列)。</p>
+<p>Raises ValueError: 輸入不是 2-D、小於 2x2、NaN/Inf/float32 溢位。</p>
+<p>參數: <code style="color:#22d3bf">center=(cy, cx)</code> 為 <b>(列, 行)</b> 順序(預設為影像中心 <code style="color:#22d3bf">((H−1)/2, (W−1)/2)</code>)。將 <code style="color:#22d3bf">r_in</code>〜<code style="color:#22d3bf">r_out</code>(像素,預設 <code style="color:#22d3bf">min(H,W)/2 − 1</code>)等分為 <code style="color:#22d3bf">nr</code> 份,角度等分為 <code style="color:#22d3bf">ntheta</code> 份。輸出 <code style="color:#22d3bf">(ntheta, nr)</code> float32: 第 k 列的角度 <code style="color:#22d3bf">θ = k·2π/ntheta</code>,第 j 行的半徑 <code style="color:#22d3bf">r = r_in + j·(r_out − r_in)/(nr−1)</code>,取樣點為 <code style="color:#22d3bf">(cy + r sinθ, cx + r cosθ)</code>(θ=0 為 +行方向,θ 增大時向 +列方向旋轉)。影像外以 0 填補(bilinear)。</p>
+<p>後續: 列方向(θ)的直線搜尋、<code style="color:#22d3bf">ncc_locate</code>,以 θ 方向的 1-D 相關求旋轉角。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

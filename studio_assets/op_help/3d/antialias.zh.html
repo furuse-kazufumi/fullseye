@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.antialias(hi_res_image, ss, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import render_ssaa; render_ssaa.antialias(hi_res_image, ss, filter: &#x27;str&#x27; = &#x27;box&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;antialias&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按整数倍 <code style="color:#22d3bf">ss</code> 缩小高分辨率图像(面积平均抗锯齿)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">hi_res_image</code> は <code style="color:#22d3bf">(H*ss, W*ss)</code> または <code style="color:#22d3bf">(H*ss, W*ss, C)</code> の float 画像。各 <code style="color:#22d3bf">ss×ss</code> ブロックを重み付き平均して <code style="color:#22d3bf">(H, W[, C])</code> を返す。<code style="color:#22d3bf">filter</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;box&quot;</code>   — 等重み平均(正確な面積平均、SSAA の標準)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gauss&quot;</code> — ブロック中心を重く見るガウス重み(σ = ss/2、僅かに柔らかい)。</p>
-<p>Fail-closed: <code style="color:#22d3bf">ss</code> は 1 以上の整数、入力は 2D / 3D、各辺は <code style="color:#22d3bf">ss</code> で割り切れること。非有限値があれば <code style="color:#22d3bf">ValueError</code>(平均で NaN が伝播しないよう確保前に拒否)。</p>
+<p><code style="color:#22d3bf">hi_res_image</code> 为 <code style="color:#22d3bf">(H*ss, W*ss)</code> 或 <code style="color:#22d3bf">(H*ss, W*ss, C)</code> 的 float 图像。对每个 <code style="color:#22d3bf">ss×ss</code> 块做加权平均,返回 <code style="color:#22d3bf">(H, W[, C])</code>。<code style="color:#22d3bf">filter</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;box&quot;</code>   — 等权平均(精确的面积平均,SSAA 的标准)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gauss&quot;</code> — 加重块中心的高斯权重(σ = ss/2,稍微柔和)。</p>
+<p>Fail-closed: <code style="color:#22d3bf">ss</code> 为 1 以上的整数,输入为 2D / 3D,各边须能被 <code style="color:#22d3bf">ss</code> 整除。存在非有限值则 <code style="color:#22d3bf">ValueError</code>(为防止 NaN 经平均传播,在分配前拒绝)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

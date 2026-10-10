@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_circle_3d(points)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.fit_circle_3d(points)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;fit_circle_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點群 → 3D 圓(先平面擬合,再在面內做 2D 圓擬合)。回傳 (center, radius, normal)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">fit_plane_3d</code> で面 <code style="color:#22d3bf">(c, n)</code> を取り、面内の正規直交基底 <code style="color:#22d3bf">(e1, e2)</code> に点を射影して 2-D の代数円フィット(<code style="color:#22d3bf">|q|² = 2·cc·q + k</code> の <code style="color:#22d3bf">lstsq</code>)を解き、中心を 3-D に戻す。<code style="color:#22d3bf">(N,3)</code> で 3 点未満は ValueError(3 点なら面は厳密、円は 3 点を通る)。<code style="color:#22d3bf">center</code> は面上の 3-D 点、<code style="color:#22d3bf">radius</code> は float(負の根は 0 に clamp)、<code style="color:#22d3bf">normal</code> は面の単位法線(符号任意)。円弧の一部だけ・面から外れた点が多いと半径が偏る(代数フィットの性質。面内残差は返さない)。</p>
-<p>用途: 穴・フランジ・リングの中心と径、<code style="color:#22d3bf">distance_point_line</code> で軸からの偏心。</p>
+<p>用 <code style="color:#22d3bf">fit_plane_3d</code> 求平面 <code style="color:#22d3bf">(c, n)</code>,將點投影到面內正交歸一基底 <code style="color:#22d3bf">(e1, e2)</code> 上,求解 2-D 的代數圓擬合(<code style="color:#22d3bf">|q|² = 2·cc·q + k</code> 的 <code style="color:#22d3bf">lstsq</code>),再把圓心轉回 3-D。<code style="color:#22d3bf">(N,3)</code> 中不足 3 點則 ValueError(3 點時平面嚴格成立,圓通過這 3 點)。<code style="color:#22d3bf">center</code> 為平面上的 3-D 點,<code style="color:#22d3bf">radius</code> 為 float(負根 clamp 為 0),<code style="color:#22d3bf">normal</code> 為平面的單位法線(符號任意)。只有部分圓弧、或偏離平面的點較多時半徑會有偏差(代數擬合的性質。不回傳面內殘差)。</p>
+<p>用途: 孔、法蘭、環的中心與直徑,用 <code style="color:#22d3bf">distance_point_line</code> 求相對軸的偏心。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vertex_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mesh_props; mesh_props.vertex_normals(mesh) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vertex_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>vertex normals</b> of a triangle mesh (unit normals aggregated with area weights). → (N,3).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各三角形の外積ベクトル(=面法線×2·面積)を、その 3 頂点へ散布加算し、頂点ごとに正規化する。大きい(重要な)面ほど寄与が大きい面積重み付き平均になり、向きは面の巻き順から一貫する。<code style="color:#22d3bf">normals_orient.estimate_normals</code>(点群 PCA・符号未定)と違い、追加の向き付け工程は不要。</p>
+<p>The cross-product vector of each triangle (= face normal × 2·area) is scatter-added to its 3 vertices, then normalised per vertex. This gives an area-weighted average where larger (more important) faces contribute more, and the orientation is consistent with the face winding. Unlike <code style="color:#22d3bf">normals_orient.estimate_normals</code> (point cloud PCA, sign undetermined), no extra orientation step is needed.</p>
 <p>Args:</p>
-<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>mesh: tuple of (vertices (N,3), faces (M,3)).</p>
 <p>Returns:</p>
-<p>(N,3) の単位頂点法線。</p>
+<p>(N,3) unit vertex normals.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正・範囲外 index、または法線が定義できない頂点(入射面が無い/</p>
-<p>寄与が相殺してゼロ)があるとき。</p>
+<p>ValueError: invalid shape, index out of range, or when there is a vertex whose normal cannot be defined (no incident face /</p>
+<p>contributions cancel to zero).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

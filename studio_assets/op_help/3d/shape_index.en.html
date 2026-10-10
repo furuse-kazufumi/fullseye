@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index(points, k=25, normals=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import curvature3d; curvature3d.shape_index(points, k=25, normals=None)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;shape_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Koenderink&#x27;s shape index s∈[-1,1] (convex sphere +1, cylinder +0.5, saddle 0, concave sphere −1). → (N,).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>umbilic/平面判定は<b>曲率スケール相対</b>(絶対しきい値なし)。緩やかな凸/凹(曲率が微小でも)は符号=凹凸を保ち、平面はデータ全体の曲率スケールに対して相対的に 0 の点のみ s=0 とする。</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は開面の凹/凸符号が不定(凸マグニチュードで報告)。向き付き法線を渡すと大域向きに整合し正しい符号(凹球=cup → -1)を出す。</p>
-<p>計算(各点、<code style="color:#22d3bf">principal_curvatures</code> と同じフィット):</p>
-<p style="margin:2px 0 2px 12px">• 平面判定: curvedness <code style="color:#22d3bf">sqrt((k1² + k2²) / 2)</code> が、全点の curvedness の中央値 × 1e-3 未満なら s = 0。中央値が 0(曲率信号なし)なら全点 0。</p>
-<p style="margin:2px 0 2px 12px">• 臍点判定: <code style="color:#22d3bf">|k1 - k2| &lt; 1e-2 × (|k1| + |k2|)</code> なら s = <code style="color:#22d3bf">sign(k1 + k2)</code>(厳密に ±1)。</p>
-<p style="margin:2px 0 2px 12px">• それ以外: <code style="color:#22d3bf">s = (2/π) · arctan((k1 + k2) / (k1 - k2))</code>。</p>
-<p style="margin:2px 0 2px 12px">• しきい値は絶対値でなく <b>データ全体の曲率スケール相対</b> なので、同じ形でも他の点との混在具合で平面扱いになる点が変わる。単一の点群を分類する前提で使う。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は k1 = k2 = 0 → 平面(0)。<code style="color:#22d3bf">k</code> は N-1 に切り詰め。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行(<code style="color:#22d3bf">ValueError</code>)。未指定では開いた面の符号は不定(凸側)。</p>
-<p style="margin:2px 0 2px 12px">• 曲がりの強さは含まない。強さも要るなら <code style="color:#22d3bf">principal_curvatures</code> の 2 本を <code style="color:#22d3bf">(N,2)</code> に並べて <code style="color:#22d3bf">curvature_to_shape_index</code> に通す。</p>
+<p>The umbilic/plane decision is <b>relative to the curvature scale</b> (no absolute threshold). Gentle convex/concave regions (even with tiny curvature) keep their sign = concave/convex, and only points whose curvature is 0 relative to the curvature scale of the whole data get s=0 as planes.</p>
+<p>normals (oriented reference normals, (N,3)): when omitted, the concave/convex sign of an open surface is undefined (reported as convex magnitude). Passing oriented normals aligns with the global orientation and yields the correct sign (concave sphere = cup → -1).</p>
+<p>Computation (per point, same fit as <code style="color:#22d3bf">principal_curvatures</code>):</p>
+<p style="margin:2px 0 2px 12px">• Plane test: if the curvedness <code style="color:#22d3bf">sqrt((k1² + k2²) / 2)</code> is below the median of the curvedness over all points × 1e-3, then s = 0. If the median is 0 (no curvature signal), all points are 0.</p>
+<p style="margin:2px 0 2px 12px">• Umbilic test: if <code style="color:#22d3bf">|k1 - k2| &lt; 1e-2 × (|k1| + |k2|)</code>, then s = <code style="color:#22d3bf">sign(k1 + k2)</code> (exactly ±1).</p>
+<p style="margin:2px 0 2px 12px">• Otherwise: <code style="color:#22d3bf">s = (2/π) · arctan((k1 + k2) / (k1 - k2))</code>.</p>
+<p style="margin:2px 0 2px 12px">• The threshold is not absolute but <b>relative to the curvature scale of the whole data</b>, so even for the same shape, which points are treated as planar changes with how they are mixed with other points. Use it on the premise of classifying a single point cloud.</p>
+<p style="margin:2px 0 2px 12px">• Points with fewer than 5 neighbours get k1 = k2 = 0 → plane (0). <code style="color:#22d3bf">k</code> is truncated to N-1.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> must be (N,3) with finite, non-zero rows (<code style="color:#22d3bf">ValueError</code>). When omitted, the sign of an open surface is undefined (convex side).</p>
+<p style="margin:2px 0 2px 12px">• The strength of bending is not included. If you also need the strength, stack the 2 values of <code style="color:#22d3bf">principal_curvatures</code> into <code style="color:#22d3bf">(N,2)</code> and pass them through <code style="color:#22d3bf">curvature_to_shape_index</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Why matrix decompositions are slow — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

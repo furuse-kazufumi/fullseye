@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_cylinder(points, normals, thresh, iters=800, seed=0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;ransac_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Outlier-robust RANSAC cylinder fitting (point normals are required).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>円筒表面の法線は軸に直交するので、2 点の法線の外積で軸方向を推定 → 軸に直交な平面へ全点を投影 → その平面内で円をフィット → |投影距離 - r| &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化。最終 inlier ではより頑健に軸を再推定(法線群の SVD の最小特異方向 = 軸)し、投影円を最小二乗リフィットする。法線が無ければ呼び出し側で estimate してから渡す。</p>
+<p>The normals of a cylinder surface are orthogonal to the axis, so the axis direction is estimated from the cross product of the normals of 2 points → all points are projected onto the plane orthogonal to the axis → a circle is fitted in that plane → the inliers with |projected distance - r| &lt; <code style="color:#22d3bf">thresh</code> are maximised. On the final inliers the axis is re-estimated more robustly (smallest singular direction of the SVD of the normals = axis), and the projected circle is refitted by least squares. If there are no normals, estimate them on the caller side before passing them.</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>normals: (N,3) 各点の(単位)法線。</p>
-<p>thresh: inlier とみなす |投影距離-r| のしきい値。</p>
-<p>iters: RANSAC 反復数。</p>
-<p>seed: 乱数シード(決定論)。</p>
+<p>points: (N,3) point cloud.</p>
+<p>normals: (N,3) (unit) normal of each point.</p>
+<p>thresh: threshold on |projected distance-r| for counting as an inlier.</p>
+<p>iters: number of RANSAC iterations.</p>
+<p>seed: random seed (deterministic).</p>
 <p>Returns:</p>
-<p>(params, inlier_mask, info)。params = {&quot;axis&quot;: (3,) 単位軸, &quot;point&quot;: (3,) 軸上の一点,</p>
-<p>&quot;radius&quot;: float}。info には inlier 数 <code style="color:#22d3bf">n_inliers</code> / 比 <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code>。</p>
+<p>(params, inlier_mask, info). params = {&quot;axis&quot;: (3,) unit axis, &quot;point&quot;: (3,) a point on the axis,</p>
+<p>&quot;radius&quot;: float}. info holds the inlier count <code style="color:#22d3bf">n_inliers</code> / ratio <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Why matrix decompositions are slow — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

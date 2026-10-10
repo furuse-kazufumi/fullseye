@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import bspline_surf; bspline_surf.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fit_bspline_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ordered point sequence (M,D) पर B-spline curve fit करता है (splprep, parametric)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>シーム/エッジ/計測プローブ軌跡など「並び順が意味を持つ」点列を滑らかなパラメトリック曲線 r(u), u∈[0,1] として復元する。z=f(x,y) と違い多価(折り返し・ループ)な形も表せる。</p>
+<p>seam/edge/measurement probe की trajectory जैसे &quot;क्रम का अर्थ रखने वाले&quot; point sequence को smooth parametric curve r(u), u∈[0,1] के रूप में फिर से बनाता है। z=f(x,y) के विपरीत यह multi-valued (मुड़कर लौटने वाले, loop) आकार भी दर्शा सकता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (M, D)</p>
-<p>順序付き頂点。D=3 が典型(3D 曲線)だが 2D 以上を許容。</p>
+<p>क्रमित vertices। D=3 आम है (3D curve), पर 2D या अधिक की अनुमति है।</p>
 <p>smooth : float</p>
-<p>平滑化係数 s。0.0 で全点通過(補間)、大きいほど滑らか。</p>
+<p>smoothing factor s। 0.0 पर सभी points से गुज़रता है (interpolation), जितना बड़ा उतना smooth।</p>
 <p>k : int</p>
-<p>次数(既定 3=三次)。点数が k+1 未満なら自動で下げる。</p>
+<p>degree (default 3=cubic)। points की संख्या k+1 से कम हो तो अपने-आप घटा दी जाती है।</p>
 <p>nest : int or None</p>
-<p>節点数の上限(splprep へそのまま渡す)。None で自動。</p>
+<p>knots की संख्या की ऊपरी सीमा (splprep को जैसी की तैसी दी जाती है)। None पर automatic।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>tck : tuple</p>
-<p><code style="color:#22d3bf">(t, c, k)</code>。eval_bspline_curve に渡す。</p>
+<p><code style="color:#22d3bf">(t, c, k)</code>। eval_bspline_curve को दें।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点数が 2 未満、次元不整合、非有限値、または重複/縮退で splprep が</p>
-<p>曲線を返せない場合。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 既定 <code style="color:#22d3bf">smooth=0.0</code> は補間(全点通過)。曲面側の既定(点数からの自動値)と違うので、ノイズ点列は明示的に <code style="color:#22d3bf">smooth</code> を与える。パラメータ u は <code style="color:#22d3bf">splprep</code> の既定(弦長に比例して [0,1] に正規化)。</p>
-<p style="margin:2px 0 2px 12px">• 次数 k は <code style="color:#22d3bf">k &gt;= m</code> のとき <code style="color:#22d3bf">m-1</code> に無言で下げる(2 点なら直線)。</p>
-<p style="margin:2px 0 2px 12px">• 連続する重複点があると <code style="color:#22d3bf">splprep</code> が失敗し <code style="color:#22d3bf">ValueError</code> になる。前段で重複を除くか <code style="color:#22d3bf">resample_uniform</code> で等間隔化する。</p>
-<p style="margin:2px 0 2px 12px">• 返す tck は <code style="color:#22d3bf">[t, c, k]</code> の list(c は D 本の係数配列のリスト)。<code style="color:#22d3bf">eval_bspline_curve</code> に渡す。閉曲線としては扱わない(端点は開いたまま)。</p>
-<p style="margin:2px 0 2px 12px">• 決定論的(乱数なし)。</p>
+<p>जब points 2 से कम हों, dimensions असंगत हों, non-finite मान हों, या duplicate/degeneracy के कारण splprep</p>
+<p>curve न लौटा सके।</p>
+<p>अतिरिक्त:</p>
+<p style="margin:2px 0 2px 12px">• default <code style="color:#22d3bf">smooth=0.0</code> interpolation है (सभी points से गुज़रता है)। यह surface वाले default (points की संख्या से automatic मान) से अलग है, इसलिए noise वाले point sequence के लिए <code style="color:#22d3bf">smooth</code> स्पष्ट रूप से दें। parameter u <code style="color:#22d3bf">splprep</code> का default है (chord length के अनुपात में, [0,1] पर normalised)।</p>
+<p style="margin:2px 0 2px 12px">• degree k <code style="color:#22d3bf">k &gt;= m</code> होने पर चुपचाप <code style="color:#22d3bf">m-1</code> कर दी जाती है (2 points पर सीधी रेखा)।</p>
+<p style="margin:2px 0 2px 12px">• लगातार duplicate points हों तो <code style="color:#22d3bf">splprep</code> विफल होकर <code style="color:#22d3bf">ValueError</code> देता है। पहले चरण में duplicates हटाएँ या <code style="color:#22d3bf">resample_uniform</code> से समान spacing करें।</p>
+<p style="margin:2px 0 2px 12px">• लौटाया गया tck <code style="color:#22d3bf">[t, c, k]</code> की list है (c, D coefficient arrays की list है)। इसे <code style="color:#22d3bf">eval_bspline_curve</code> को दें। closed curve नहीं माना जाता (सिरे खुले रहते हैं)।</p>
+<p style="margin:2px 0 2px 12px">• deterministic (कोई random नहीं)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

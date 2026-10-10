@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dlt_pose(points_3d, points_2d, K)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pnp3d; pnp3d.dlt_pose(points_3d, points_2d, K)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;dlt_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>DLT 로 3D-2D 대응에서 카메라 자세를 복원(K 기지). → (R (3,3), t (3,)). 6 점 이상 필요.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">pnp_pose</code> の (R, t) 部分(正規化 DLT + 平面 PnP 分岐 + LM 精密化)。再投影 RMS も要るなら <code style="color:#22d3bf">pnp_pose</code> を使う。共平面入力(チェッカーボード等)は平面 PnP へ自動で振り分ける(旧実装は fail-closed で拒否していたが、正しく解けるので解く)。</p>
-<p>手順(モジュール関数 <code style="color:#22d3bf">pnp3d.pnp_pose</code> を <code style="color:#22d3bf">refine=True</code> で呼ぶ):</p>
-<p style="margin:2px 0 2px 12px">• 画素を <code style="color:#22d3bf">K⁻¹</code> で正規化画像座標へ、3D 点は Hartley 正規化(重心を原点、平均距離 √3)して DLT(12 未知数の SVD)を解く。</p>
-<p style="margin:2px 0 2px 12px">• 共平面度(共分散の最小/最大固有値比の平方根)が 0.05 未満なら平面 PnP(ホモグラフィ分解)も候補に加え、厳密に平面(3 番目の広がりが 0)なら DLT を省く。</p>
-<p style="margin:2px 0 2px 12px">• 各候補を再投影誤差の Levenberg-Marquardt(最大 30 反復)で精密化し、前方点(深度 &gt; 0)の割合が最大、同点なら再投影 RMS が最小の候補を採る。</p>
-<p>返り値: <code style="color:#22d3bf">R</code> (3,3) 回転(det=+1)、<code style="color:#22d3bf">t</code> (3,)(世界座標と同じ単位)。規約 <code style="color:#22d3bf">Xc = R X + t</code>、<code style="color:#22d3bf">x ≅ K Xc</code>。</p>
-<p>Raises <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">points_2d</code> が (N,2) でない(画像を渡した場合は名指しで拒否)/ <code style="color:#22d3bf">points_3d</code> が (N,3) でない / 非有限 / 6 点未満 / 点数不一致 / 全点が一直線か一点。</p>
-<p>注意: 外れ値には無防備(全点を等しく使う)。誤対応があるなら <code style="color:#22d3bf">pnp_ransac</code>。決定論的(乱数なし)。評価は <code style="color:#22d3bf">reprojection_error</code>、GT との比較は <code style="color:#22d3bf">pose_error</code>。</p>
+<p><code style="color:#22d3bf">pnp_pose</code>의 (R, t) 부분(정규화 DLT + 평면 PnP 분기 + LM 정밀화). 재투영 RMS도 필요하면 <code style="color:#22d3bf">pnp_pose</code>를 쓴다. 공면 입력(체커보드 등)은 평면 PnP로자동으로 분배한다(이전 구현은 fail-closed(실패 시 거부)로 거부했지만, 올바르게 풀 수 있으므로 푼다).</p>
+<p>절차(모듈 함수 <code style="color:#22d3bf">pnp3d.pnp_pose</code>를 <code style="color:#22d3bf">refine=True</code>로 호출):</p>
+<p style="margin:2px 0 2px 12px">• 화소를 <code style="color:#22d3bf">K⁻¹</code>로 정규화 영상 좌표로, 3D 점은 Hartley 정규화(무게중심을 원점, 평균 거리 √3)하여 DLT(미지수 12개의 SVD)를 푼다.</p>
+<p style="margin:2px 0 2px 12px">• 공면도(공분산의 최소/최대 고윳값 비의 제곱근)가 0.05 미만이면 평면 PnP(호모그래피 분해)도 후보에 더하고, 엄밀히 평면(3번째 퍼짐이 0)이면 DLT를 생략한다.</p>
+<p style="margin:2px 0 2px 12px">• 각 후보를 재투영 오차의 Levenberg-Marquardt(최대 30회 반복)로 정밀화하고, 전방 점(깊이 &gt; 0)의 비율이 최대, 같으면 재투영 RMS가 최소인 후보를 채택한다.</p>
+<p>반환값: <code style="color:#22d3bf">R</code> (3,3) 회전(det=+1), <code style="color:#22d3bf">t</code> (3,)(월드 좌표와 같은 단위). 규약 <code style="color:#22d3bf">Xc = R X + t</code>, <code style="color:#22d3bf">x ≅ K Xc</code>.</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">points_2d</code>가 (N,2)가 아님(영상을 넘긴 경우 지목해 거부) / <code style="color:#22d3bf">points_3d</code>가 (N,3)이 아님 / 비유한 / 6점 미만 / 점 수 불일치 / 모든 점이 한 직선 위이거나 한 점.</p>
+<p>주의: 이상값에는 무방비(모든 점을 동등하게 사용). 오대응이 있으면 <code style="color:#22d3bf">pnp_ransac</code>. 결정론적(난수 없음). 평가는 <code style="color:#22d3bf">reprojection_error</code>, GT와의 비교는 <code style="color:#22d3bf">pose_error</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

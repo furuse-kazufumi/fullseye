@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.log_zero_crossings(vol, sigma: &#x27;float&#x27; = 1.5, rel_thresh: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import edges3d; edges3d.log_zero_crossings(vol, sigma: &#x27;float&#x27; = 1.5, rel_thresh: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;log_zero_crossings&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Laplacian-of-Gaussian के zero-crossing edges।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : (D,H,W) array</p>
-<p>グレー voxel。</p>
+<p>grey voxel।</p>
 <p>sigma : float</p>
-<p>LoG の標準偏差(&gt; 0)。</p>
+<p>LoG का standard deviation (&gt; 0)।</p>
 <p>rel_thresh : float</p>
-<p>平坦部の数値ノイズによる偽交差を抑える相対閾値。交差ペアの LoG 差 |a-b| が</p>
-<p>rel_thresh * max|L| を超える場合のみ採用する。</p>
+<p>flat क्षेत्रों के numerical noise से बने झूठे crossing को दबाने वाला relative threshold। केवल तभी अपनाया जाता है जब crossing pair का LoG अंतर |a-b|</p>
+<p>rel_thresh * max|L| से अधिक हो।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>edge_mask : (D,H,W) bool</p>
-<p>符号が変化する隣接ペアのうち |LoG| が小さい側(ゼロにより近い側)を立てた mask。</p>
+<p>sign बदलने वाले adjacent pairs में से छोटे |LoG| वाली ओर (शून्य के अधिक निकट वाली ओर) को set करने वाला mask।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>各軸方向に二種類のゼロ交差を検出する:</p>
-<p style="margin:2px 0 2px 12px">(1) 格子間交差 — 隣接ペア (a,b) の符号積 a*b &lt; 0(両側とも非ゼロで符号反転)。厚みを抑えるためペアのうち |LoG| が小さい側 1 voxel に割り当てる。</p>
-<p style="margin:2px 0 2px 12px">(2) 格子整列交差 — 中央 voxel が厳密ゼロ(L==0)で両隣が異符号(符号がその voxel でゼロを通過)する場合。SDF 風の格子に整列した面で LoG がちょうど格子点上で 0 になる真のエッジは a*b が常に 0 となり (1) では取りこぼすため、当該 voxel を交差として立てる。定数ゼロ領域は両隣も 0 で Lm*Lp==0 となり除外される(誤検出しない)。</p>
-<p>いずれも平坦部の数値ノイズは相対閾値(rel_thresh * max|L|)で抑制する。</p>
+<p>हर axis दिशा में दो प्रकार के zero crossing detect किए जाते हैं:</p>
+<p style="margin:2px 0 2px 12px">(1) grid के बीच crossing — adjacent pair (a,b) का sign product a*b &lt; 0 (दोनों ओर non-zero और sign उलटा)। मोटाई कम रखने के लिए pair में छोटे |LoG| वाली ओर के 1 voxel को दिया जाता है।</p>
+<p style="margin:2px 0 2px 12px">(2) grid-aligned crossing — बीच का voxel ठीक शून्य (L==0) हो और दोनों पड़ोसी विपरीत sign के हों (sign उस voxel पर शून्य से गुज़रता है)। SDF जैसे grid-aligned surface पर, जहाँ LoG ठीक grid point पर 0 होता है, असली edge के लिए a*b हमेशा 0 होता है और (1) उसे छोड़ देता है, इसलिए उस voxel को crossing के रूप में set किया जाता है। constant zero क्षेत्र में दोनों पड़ोसी भी 0 होते हैं, Lm*Lp==0, इसलिए वे बाहर रहते हैं (गलत detection नहीं)।</p>
+<p>दोनों ही स्थितियों में flat क्षेत्रों का numerical noise relative threshold (rel_thresh * max|L|) से दबाया जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import moments3d; moments3d.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;inertia_tensor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군의 관성 텐서 (3,3)(중심 2 차 모멘트에서, 등질량·총질량 1).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²), I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)。共分散 C を使うと I = tr(C)·E₃ − C(E₃ は単位行列)と等価。対称・半正定値。重心中心化のため並進不変。</p>
+<p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²), I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz). 공분산 C 를 쓰면 I = tr(C)·E₃ − C(E₃ 는 단위 행렬)와 동등. 대칭·반양정치. 무게중심 중심화 때문에 병진 불변.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (3, 3)</p>
-<p>対称な慣性テンソル。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 単位は長さ²(質量 1 の等質量点とみなすので密度は入らない)。点群を回転で回すと <code style="color:#22d3bf">R I Rᵀ</code> に写り、固有値(<code style="color:#22d3bf">principal_moments</code>)が回転不変量、固有ベクトルが主軸(<code style="color:#22d3bf">moment_axes</code>)。</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1(1 点なら零行列)。形状不正・非有限は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 共分散 C とは <code style="color:#22d3bf">I = tr(C)·E₃ - C</code> の関係で、C と I の固有ベクトルは同じ、固有値は <code style="color:#22d3bf">tr(C) - c_i</code>。</p>
-<p style="margin:2px 0 2px 12px">• 実体(体積)のモーメントではなく <b>サンプル点</b> のモーメントなので、同じ形でも点密度の偏りで値が変わる。密度を均すなら前段で <code style="color:#22d3bf">voxel_grid_downsample</code>。決定論的。</p>
+<p>대칭인 관성 텐서.</p>
+<p>보충:</p>
+<p style="margin:2px 0 2px 12px">• 단위는 길이²(질량 1 의 등질량 점으로 간주하므로 밀도는 들어가지 않는다). 점군을 회전으로 돌리면 <code style="color:#22d3bf">R I Rᵀ</code> 로 옮겨지며, 고윳값(<code style="color:#22d3bf">principal_moments</code>)이 회전 불변량, 고유벡터가 주축(<code style="color:#22d3bf">moment_axes</code>).</p>
+<p style="margin:2px 0 2px 12px">• 입력은 (N,3), N &gt;= 1(1 점이면 영행렬). 형상 부정·비유한은 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• 공분산 C 와는 <code style="color:#22d3bf">I = tr(C)·E₃ - C</code> 의 관계로, C 와 I 의 고유벡터는 같고 고윳값은 <code style="color:#22d3bf">tr(C) - c_i</code>.</p>
+<p style="margin:2px 0 2px 12px">• 실체(체적)의 모멘트가 아니라 <b>샘플 점</b> 의 모멘트이므로, 같은 형태라도 점 밀도의 치우침으로 값이 바뀐다. 밀도를 고르게 하려면 전단에서 <code style="color:#22d3bf">voxel_grid_downsample</code>. 결정론적.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

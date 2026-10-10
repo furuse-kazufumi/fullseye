@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largest_component(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import regionprops3d; regionprops3d.largest_component(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;largest_component&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सबसे बड़े (सबसे अधिक voxels वाले) connected component का bool mask लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>前景が無い場合は全 False マスク(vol と同形状)。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 内部で <code style="color:#22d3bf">label_components</code> を呼び、<code style="color:#22d3bf">bincount</code> でラベルごとのボクセル数を数えて最大を選ぶ。<b>同数のときは番号の小さいラベル</b>(scipy の走査順で先)が勝つ。</p>
-<p style="margin:2px 0 2px 12px">• 入力は 0 以外を前景として <code style="color:#22d3bf">bool</code> 化する(NaN も前景)。軸順は (z, y, x)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は入力と同形状の bool。前景が無ければ全 False(例外にはしない)。</p>
-<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 3 次元でない入力、<code style="color:#22d3bf">connectivity</code> が 6/18/26 以外。</p>
-<p style="margin:2px 0 2px 12px">• 典型: 閾値処理で出た二値ボリュームからノイズ塊を捨てて主対象だけ残す。複数を残したいなら <code style="color:#22d3bf">filter_by_volume</code>、特徴で選ぶなら <code style="color:#22d3bf">vol_select_labels</code>。</p>
+<p>foreground न हो तो पूरा False mask (vol जैसी ही shape)।</p>
+<p>अतिरिक्त:</p>
+<p style="margin:2px 0 2px 12px">• भीतर <code style="color:#22d3bf">label_components</code> बुलाकर <code style="color:#22d3bf">bincount</code> से हर label के voxels गिनता है और सबसे बड़ा चुनता है। <b>बराबर होने पर छोटे number वाला label</b> (scipy के scan क्रम में पहले) जीतता है।</p>
+<p style="margin:2px 0 2px 12px">• input में 0 के अलावा सबको foreground मानकर <code style="color:#22d3bf">bool</code> बनाया जाता है (NaN भी foreground)। axis क्रम (z, y, x) है।</p>
+<p style="margin:2px 0 2px 12px">• return value input जैसी shape का bool है। foreground न हो तो पूरा False (exception नहीं)।</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 3-dimensional न होने वाला input, <code style="color:#22d3bf">connectivity</code> 6/18/26 के अलावा।</p>
+<p style="margin:2px 0 2px 12px">• आम प्रयोग: threshold से बने binary volume से noise के टुकड़े हटाकर केवल मुख्य वस्तु रखना। कई रखनी हों तो <code style="color:#22d3bf">filter_by_volume</code>, features से चुनना हो तो <code style="color:#22d3bf">vol_select_labels</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -6,15 +6,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군끼리의 매칭(구조=point cloud × 기법=NCC, 변환=splat). scene 안에서 model 을 정위.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>手順: <code style="color:#22d3bf">pts_scene</code> と <code style="color:#22d3bf">pts_model</code> を <b>同じ</b> <code style="color:#22d3bf">bounds=(lo,hi)</code> と <code style="color:#22d3bf">size</code> で <code style="color:#22d3bf">points_to_voxel</code>(σ=<code style="color:#22d3bf">smooth</code> voxel の平滑つき)に通し、model 側は <code style="color:#22d3bf">&gt; 5%·max</code> の bbox を切り出してテンプレにし、<code style="color:#22d3bf">accel_match.ncc_locate_3d</code> で NCC 定位する。返り値 <code style="color:#22d3bf">[NCC, z, y, x]</code> float64(NCC ∈ [−1,1]、位置は voxel index、±2 近傍重心でサブボクセル)。</p>
-<p style="margin:2px 0 2px 12px">• 位置は <b>切り出した bbox テンプレの中心</b>が scene voxel のどこに載るか。world 座標に戻すには</p>
-<p><code style="color:#22d3bf">lo + idx/(size−1)·(hi−lo)</code>(<code style="color:#22d3bf">points_to_voxel</code> の格子)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code> は必須(<code style="color:#22d3bf">_lo_hi</code> で検証、不正は ValueError)。両雲を含む範囲にしないと範囲外の</p>
-<p>点が端 voxel に clip される。</p>
-<p style="margin:2px 0 2px 12px">• model の voxel が全 0 なら <code style="color:#22d3bf">[0,0,0,0]</code>。</p>
-<p style="margin:2px 0 2px 12px">• 並進のみ。回転・スケールは <code style="color:#22d3bf">match_pca</code> / <code style="color:#22d3bf">match_logpolar_z</code> で先に合わせる。</p>
-<p>後段: <code style="color:#22d3bf">icp_point2point_3d</code> の <code style="color:#22d3bf">init_t</code>、<code style="color:#22d3bf">refine_translation_lk</code>。</p>
+<p>절차: <code style="color:#22d3bf">pts_scene</code> 과 <code style="color:#22d3bf">pts_model</code> 을 <b>같은</b> <code style="color:#22d3bf">bounds=(lo,hi)</code> 와 <code style="color:#22d3bf">size</code> 로 <code style="color:#22d3bf">points_to_voxel</code>(σ=<code style="color:#22d3bf">smooth</code> voxel 의 평활 포함)에 통과시키고, model 쪽은 <code style="color:#22d3bf">&gt; 5%·max</code> 의 bbox 를잘라내어 템플릿으로 하며, <code style="color:#22d3bf">accel_match.ncc_locate_3d</code> 로 NCC 위치 추정한다. 반환값 <code style="color:#22d3bf">[NCC, z, y, x]</code> float64(NCC ∈ [−1,1], 위치는 voxel index, ±2 근방 무게중심으로서브복셀).</p>
+<p style="margin:2px 0 2px 12px">• 위치는 <b>잘라낸 bbox 템플릿의 중심</b> 이 scene voxel 의 어디에 놓이는가. world 좌표로 되돌리려면</p>
+<p><code style="color:#22d3bf">lo + idx/(size−1)·(hi−lo)</code>(<code style="color:#22d3bf">points_to_voxel</code> 의 격자).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code> 는 필수(<code style="color:#22d3bf">_lo_hi</code> 로 검증, 부정이면 ValueError). 두 점군을 포함하는 범위로 하지 않으면 범위 밖의</p>
+<p>점이 끝 voxel 에 clip 된다.</p>
+<p style="margin:2px 0 2px 12px">• model 의 voxel 이 전부 0 이면 <code style="color:#22d3bf">[0,0,0,0]</code>.</p>
+<p style="margin:2px 0 2px 12px">• 병진만. 회전·스케일은 <code style="color:#22d3bf">match_pca</code> / <code style="color:#22d3bf">match_logpolar_z</code> 로 먼저 맞춘다.</p>
+<p>후단: <code style="color:#22d3bf">icp_point2point_3d</code> 의 <code style="color:#22d3bf">init_t</code>, <code style="color:#22d3bf">refine_translation_lk</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

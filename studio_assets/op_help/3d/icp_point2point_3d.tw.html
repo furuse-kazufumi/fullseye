@@ -4,33 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 point-to-point ICP(Kabsch/SVD)精化點群。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>粗いマッチ推定(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)で得た初期姿勢 (init_R, init_t) を出発点に、src 側点群を dst 側点群へ剛体変換で位置合わせする。各反復で最近傍対応(cKDTree)を張り直し、Kabsch アルゴリズム(SVD)で相対回転・並進を求めて累積することで、対応が既知でなくてもサブボクセル精度へ収束させる。</p>
-<p>部分重なり・外れ値には Trimmed ICP(距離の小さい対応のみ採用)と絶対距離ゲート(max_corr_dist)で対処する。最終 RMSE は実際に採用した対応(インライア)上で評価するため、部分観測でも姿勢品質を正しく反映する。</p>
-<p>引数:</p>
-<p>src: (N,3) 移動側点群(torch.Tensor か numpy.ndarray)。</p>
-<p>dst: (M,3) 固定側(参照)点群。</p>
-<p>iters: 最大反復回数。</p>
-<p>init_R: (3,3) 初期回転。None なら単位行列。</p>
-<p>init_t: (3,) 初期並進。None なら零ベクトル。</p>
-<p>tol: RMSE の相対改善がこの値を下回れば収束打ち切り。</p>
-<p>max_corr_dist: この距離を超える対応を外れ値として棄却(None で無効)。</p>
-<p>trim_ratio: 0&lt;r&lt;=1。各反復で最近傍距離の小さい上位 r 割の対応のみ</p>
-<p>採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。</p>
-<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD をこのデバイス上で解く。</p>
-<p>reproducible: True なら点の順・BLAS のスレッド数に依らない縮約にする(既定 False = 従来どおり)。</p>
-<p>平均は math.fsum、相互共分散 H は ozakimm(Ozaki スキーム)、姿勢の適用は要素ごとの演算、RMSE も math.fsum。</p>
-<p>src の点の順を入れ替えても R・t・rmse がビット単位で同じ(同じ計算機・同じ LAPACK の上)。trim_ratio の切れ目で</p>
-<p>距離がちょうど同点の点は、順で選ばれ方が変わりうる。20 万点で 1 反復あたり 0.7 ms が 170 ms 程度になる。</p>
-<p>返り値:</p>
-<p>R: (3,3) 回転。dst ~= src @ R.T + t を満たす。<b>torch がある環境では <code style="color:#22d3bf">torch.Tensor</code>、無ければ同じ値の <code style="color:#22d3bf">numpy.ndarray</code></b>(2026-09-07 に</p>
-<p>本体を numpy 化したときも、互換のため型は据え置いた)。</p>
-<p>★同じ族の <code style="color:#22d3bf">icp_point2plane</code> は<b>常に numpy を返す</b> —— 族の中で</p>
-<p>型が揃っていないので、下流では <code style="color:#22d3bf">np.asarray(R)</code> を通すのが安全</p>
-<p>(どちらでも動く。破壊的変更を避けてこの不揃いを残してある)。</p>
-<p>t: (3,) 並進(R と同じ型)。</p>
-<p>info: dict。&quot;rmse&quot;(採用対応上の最終RMSE), &quot;iters&quot;(実反復数),</p>
-<p>&quot;converged&quot;(bool), &quot;inliers&quot;(採用対応数), &quot;rmse_history&quot;(list)。</p>
+<p>以粗匹配估計(整數NCC / Fourier-Mellin±3° / Hough±0.5voxel)得到的初始位姿 (init_R, init_t) 為起點,透過剛體變換將 src 側點雲對位到 dst 側點雲。每次迭代重新建立最近鄰對應(cKDTree),以 Kabsch 演算法(SVD)求相對旋轉、平移並累積,因此即使對應關係未知, 也能收斂到次體素精度。</p>
+<p>對部分重疊、離群值,以 Trimmed ICP(只採用距離小的對應)與絕對距離門檻(max_corr_dist)來處理。最終 RMSE 在實際採用的對應(內點)上評估,因此即使是部分觀測也能正確反映位姿品質。</p>
+<p>參數:</p>
+<p>src: (N,3) 移動側點雲(torch.Tensor 或 numpy.ndarray)。</p>
+<p>dst: (M,3) 固定側(參照)點雲。</p>
+<p>iters: 最大迭代次數。</p>
+<p>init_R: (3,3) 初始旋轉。None 時為單位矩陣。</p>
+<p>init_t: (3,) 初始平移。None 時為零向量。</p>
+<p>tol: RMSE 的相對改善低於此值時判定收斂並終止。</p>
+<p>max_corr_dist: 超過此距離的對應視為離群值剔除(None 為停用)。</p>
+<p>trim_ratio: 0&lt;r&lt;=1。每次迭代只採用最近鄰距離最小的前 r 比例對應的</p>
+<p>Trimmed ICP。對部分重疊(重疊率 r)有效。None 為停用。</p>
+<p>device: torch 裝置(&quot;cpu&quot; 等)。在該裝置上求解 SVD。</p>
+<p>reproducible: 為 True 時採用不依賴點的順序、BLAS 執行緒數的歸約(預設 False = 與以往相同)。</p>
+<p>平均用 math.fsum,互共變異數 H 用 ozakimm(Ozaki 方案),位姿的套用為逐元素運算,RMSE 也用 math.fsum。</p>
+<p>即使打亂 src 點的順序,R、t、rmse 也逐位元相同(同一電腦、同一 LAPACK 上)。在 trim_ratio 的分界處</p>
+<p>距離恰好相同的點,其選取可能隨順序而變。20 萬點時每 1 次迭代由 0.7 ms 變為約 170 ms。</p>
+<p>回傳值:</p>
+<p>R: (3,3) 旋轉。滿足 dst ~= src @ R.T + t。<b>有 torch 的環境下為 <code style="color:#22d3bf">torch.Tensor</code>,否則為相同值的 <code style="color:#22d3bf">numpy.ndarray</code></b>(2026-09-07</p>
+<p>將主體改為 numpy 時,為了相容仍保留了該型別)。</p>
+<p>★同一族的 <code style="color:#22d3bf">icp_point2plane</code> <b>一律回傳 numpy</b> —— 族內</p>
+<p>型別不一致,因此在下游經過 <code style="color:#22d3bf">np.asarray(R)</code> 較為安全</p>
+<p>(兩者都能運作。為避免破壞性變更而保留了這種不一致)。</p>
+<p>t: (3,) 平移(與 R 同型別)。</p>
+<p>info: dict。&quot;rmse&quot;(採用對應上的最終RMSE), &quot;iters&quot;(實際迭代次數),</p>
+<p>&quot;converged&quot;(bool), &quot;inliers&quot;(採用的對應數), &quot;rmse_history&quot;(list)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

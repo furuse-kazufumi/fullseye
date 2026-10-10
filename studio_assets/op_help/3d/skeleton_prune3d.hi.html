@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_prune3d(vol, length=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.skeleton_prune3d(vol, length=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;skeleton_prune3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D skeleton की मूँछें (छोटी branches) काटता है। end point removal को length बार दोहराना = लंबाई &lt;=length वाली branches हटाना।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>2D の <code style="color:#22d3bf">pruning</code> の 3D 版。孤立 voxel は端点扱いで消える。</p>
-<p>手順: <code style="color:#22d3bf">_ensure_skeleton</code> で bool 化(interior voxel があれば <code style="color:#22d3bf">skeletonize_vol</code> で細線化)し、次を <code style="color:#22d3bf">length</code> 回繰り返す — 26 近傍次数 <code style="color:#22d3bf">&lt;= 1</code> の voxel(端点と孤立点)をすべて同時に取り除く。骨格が空になるか端点が無くなれば(閉ループだけになれば)途中で止まる。</p>
-<p>引数: <code style="color:#22d3bf">length</code> は <code style="color:#22d3bf">int(length)</code> にして負なら 0 に丸める(0 なら細線化した骨格をそのまま返す)。1 回の反復で各枝の先端 1 voxel が消えるので、長さ <code style="color:#22d3bf">&lt;= length</code> voxel の枝(ヒゲ)は根元まで消える。</p>
-<p>返り値: 入力と同形の bool 配列。</p>
-<p>注意(挙動として知っておくこと):</p>
-<p style="margin:2px 0 2px 12px">• <b>長い枝も先端から <code style="color:#22d3bf">length</code> voxel 短くなる</b>(ヒゲだけを選んで消す処理ではない)。主枝の端点位置が要るなら、刈った後の端点は元より <code style="color:#22d3bf">length</code> 内側にある。</p>
-<p style="margin:2px 0 2px 12px">• 2 分岐の間の短い枝は両端が分岐点(次数 &gt;= 3)なので消えない。</p>
-<p style="margin:2px 0 2px 12px">• 孤立 voxel は 1 回目で消える。</p>
-<p style="margin:2px 0 2px 12px">• 反復のたびに次数を数え直すので、コストは <code style="color:#22d3bf">length</code> に比例する。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): 3-D でない・空配列・NaN/Inf を含む入力。細線化が必要で scikit-image が無ければ <code style="color:#22d3bf">ImportError</code>。後段は <code style="color:#22d3bf">skeleton_endpoints3d</code> / <code style="color:#22d3bf">skeleton_junctions3d</code> / <code style="color:#22d3bf">skeleton_branches3d</code> / <code style="color:#22d3bf">topology_signature</code>。</p>
+<p>2D के <code style="color:#22d3bf">pruning</code> का 3D संस्करण। isolated voxel endpoint माने जाते हैं और हट जाते हैं।</p>
+<p>Procedure: <code style="color:#22d3bf">_ensure_skeleton</code> से bool बनाया जाता है (interior voxel हो तो <code style="color:#22d3bf">skeletonize_vol</code> से thin किया जाता है), फिर यह <code style="color:#22d3bf">length</code> बार दोहराया जाता है — 26-neighbourhood degree <code style="color:#22d3bf">&lt;= 1</code> वाले सभी voxel (endpoint और isolated point) एक साथ हटाए जाते हैं। skeleton खाली हो जाए या endpoint न बचें (केवल closed loop बचें) तो बीच में ही रुक जाता है।</p>
+<p>Arguments: <code style="color:#22d3bf">length</code> को <code style="color:#22d3bf">int(length)</code> में बदला जाता है और negative हो तो 0 कर दिया जाता है (0 हो तो thin किया हुआ skeleton जैसा है वैसा लौटता है)। 1 iteration में हर branch के सिरे का 1 voxel हटता है, इसलिए लंबाई <code style="color:#22d3bf">&lt;= length</code> voxel वाली branch (spur) जड़ तक हट जाती है।</p>
+<p>Returns: input के समान shape का bool array।</p>
+<p>ध्यान दें (behaviour के रूप में जानने योग्य बातें):</p>
+<p style="margin:2px 0 2px 12px">• <b>लंबी branch भी सिरे से <code style="color:#22d3bf">length</code> voxel छोटी हो जाती है</b> (यह केवल spur चुनकर हटाने वाली प्रक्रिया नहीं है)। main branch के endpoint की position चाहिए तो ध्यान रखें कि prune के बाद endpoint मूल से <code style="color:#22d3bf">length</code> भीतर होते हैं।</p>
+<p style="margin:2px 0 2px 12px">• 2 branch point के बीच की छोटी branch नहीं हटती, क्योंकि उसके दोनों सिरे branch point (degree &gt;= 3) हैं।</p>
+<p style="margin:2px 0 2px 12px">• isolated voxel 1st iteration में ही हट जाते हैं।</p>
+<p style="margin:2px 0 2px 12px">• हर iteration में degree फिर से गिनी जाती है, इसलिए cost <code style="color:#22d3bf">length</code> के अनुपात में होती है।</p>
+<p>Validation (<code style="color:#22d3bf">ValueError</code>): 3-D न हो, खाली array हो, या NaN/Inf वाला input। thinning ज़रूरी हो और scikit-image न हो तो <code style="color:#22d3bf">ImportError</code>। आगे के चरण: <code style="color:#22d3bf">skeleton_endpoints3d</code> / <code style="color:#22d3bf">skeleton_junctions3d</code> / <code style="color:#22d3bf">skeleton_branches3d</code> / <code style="color:#22d3bf">topology_signature</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

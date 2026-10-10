@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.eval_bspline_surface(tck, x, y, grid=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import bspline_surf; bspline_surf.eval_bspline_surface(tck, x, y, grid=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;eval_bspline_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>적합된 곡면 tck 를 평가(bisplev). 산포점(기본) 또는 격자의 두 모드.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>tck : list</p>
-<p>fit_bspline_surface が返した <code style="color:#22d3bf">[tx, ty, c, kx, ky]</code>。</p>
+<p>fit_bspline_surface가 반환한 <code style="color:#22d3bf">[tx, ty, c, kx, ky]</code>.</p>
 <p>x, y : array_like</p>
-<p>grid=False(既定): 同一 shape の散布/対応点。各 (x[i], y[i]) で評価し</p>
-<p>入力と同じ shape の z を返す(計測=各サンプル位置での曲面高さ)。</p>
-<p>grid=True: x, y を昇順の 1 次元軸として扱い、テンソル格子</p>
-<p>(len(x), len(y)) 上で評価(密な可視化・再サンプリング用)。</p>
+<p>grid=False(기본값): 같은 shape의 산포/대응점. 각 (x[i], y[i])에서 평가하여</p>
+<p>입력과 같은 shape의 z를 반환한다(계측=각 샘플 위치에서의 곡면 높이).</p>
+<p>grid=True: x, y를 오름차순의 1차원 축으로 다루고, 텐서 격자</p>
+<p>(len(x), len(y)) 위에서 평가(조밀한 시각화·재샘플링용).</p>
 <p>grid : bool</p>
-<p>評価モード。曲面残差など点対応の比較には False。</p>
+<p>평가 모드. 곡면 잔차 등 점 대응 비교에는 False.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>z : numpy.ndarray</p>
-<p>grid=False なら x と同 shape、grid=True なら (len(x), len(y))。</p>
+<p>grid=False면 x와 같은 shape, grid=True면 (len(x), len(y)).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>tck が曲面モデル([tx,ty,c,kx,ky])でない(曲線 tck / 多項式 dict を含む)、</p>
-<p>または x, y の shape 不一致・空。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• grid=True では x, y を内部で昇順に並べ替えて <code style="color:#22d3bf">bisplev</code> を呼び、結果を <b>入力の順序</b> に戻して返す。したがって <code style="color:#22d3bf">out[i, j]</code> は常に <code style="color:#22d3bf">(x[i], y[j])</code> の値で、軸を降順で渡しても壊れない。</p>
-<p style="margin:2px 0 2px 12px">• grid=False は点ごとに <code style="color:#22d3bf">bisplev</code> を呼ぶ Python ループなので点数に比例して遅い。大量点の評価は可能なら grid=True に寄せる。</p>
-<p style="margin:2px 0 2px 12px">• 節点範囲(フィットに使った x, y の範囲)の外側は外挿になり、その値は保証しない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は float64。grid=False なら x と同じ shape(スカラーを渡せば 0 次元配列)。</p>
-<p style="margin:2px 0 2px 12px">• 典型: <code style="color:#22d3bf">fit_bspline_surface</code> → 本 op(再サンプリング・可視化)。残差評価は <code style="color:#22d3bf">surface_residual</code> がこれを内部で呼ぶ。</p>
+<p>tck가 곡면 모델([tx,ty,c,kx,ky])이 아닌 경우(곡선 tck / 다항식 dict 포함),</p>
+<p>또는 x, y의 shape 불일치·빈 입력.</p>
+<p>보충:</p>
+<p style="margin:2px 0 2px 12px">• grid=True에서는 x, y를 내부에서 오름차순으로 정렬해 <code style="color:#22d3bf">bisplev</code>를 호출하고, 결과를 <b>입력의 순서</b>로 되돌려 반환한다. 따라서 <code style="color:#22d3bf">out[i, j]</code>는 항상 <code style="color:#22d3bf">(x[i], y[j])</code>의 값이며, 축을 내림차순으로 넘겨도 깨지지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• grid=False는 점마다 <code style="color:#22d3bf">bisplev</code>를 호출하는 Python 루프이므로 점 수에 비례해 느리다. 대량의 점 평가는 가능하면 grid=True로 돌린다.</p>
+<p style="margin:2px 0 2px 12px">• 절점 범위(피팅에 사용한 x, y의 범위) 바깥은 외삽이 되며, 그 값은 보장하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값은 float64. grid=False면 x와 같은 shape(스칼라를 넘기면 0차원 배열).</p>
+<p style="margin:2px 0 2px 12px">• 전형: <code style="color:#22d3bf">fit_bspline_surface</code> → 이 op(재샘플링·시각화). 잔차 평가는 <code style="color:#22d3bf">surface_residual</code>이 내부에서 이것을 호출한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

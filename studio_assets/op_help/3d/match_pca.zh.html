@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_pca(pts_scene, pts_model)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.match_pca(pts_scene, pts_model)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;match_pca&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>PCA 位姿匹配(结构=point cloud × 方法=主轴对齐)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>両雲の主軸を合わせる粗い剛体変換(回転 R + 並進 t)を返す。NCC/位相相関が扱えない <b>回転</b>をここで担う(符号の 4 通り曖昧性は最小二乗で解消。この残差は両雲の点が同じ並び順で対応している前提の粗い基準 — 無対応の実測雲では ICP 等で後段精密化を)。返り値 (R(3,3), t(3,))。</p>
-<p>返り値の意味: <code style="color:#22d3bf">pts_scene ≈ (R @ pts_model.T).T + t</code>(<code style="color:#22d3bf">t = c_scene − R·c_model</code>)。R は必ず <code style="color:#22d3bf">det=+1</code> の回転(反射は出さない)。残差は点を index 順に対応させて測るので、無対応の雲では 4 候補の選択が当てにならない(その場合は <code style="color:#22d3bf">icp_point2point_3d</code> に <code style="color:#22d3bf">init_R/init_t</code> として渡して精緻化する)。主軸が縮退している(球・円柱など固有値が等しい)雲では軸が不定で結果は安定しない。点数は両雲で違ってよい。入力は (N,3)(検証は <code style="color:#22d3bf">moment_axes</code> 任せで無い)。</p>
+<p>返回使两点云主轴对齐的粗略刚体变换(旋转 R + 平移 t)。在这里承担 NCC/相位相关无法处理的 <b>旋转</b>(符号的 4 种歧义通过最小二乘消解。该残差是假定两点云的点按相同顺序对应的粗略标准 — 对无对应关系的实测点云,请在后段用 ICP 等精细化)。返回值 (R(3,3), t(3,))。</p>
+<p>返回值的含义:<code style="color:#22d3bf">pts_scene ≈ (R @ pts_model.T).T + t</code>(<code style="color:#22d3bf">t = c_scene − R·c_model</code>)。R 必定是 <code style="color:#22d3bf">det=+1</code> 的旋转(不产生反射)。残差按 index 顺序对应点来测量,因此对无对应关系的点云,4 个候选的选择不可靠(此时将其作为 <code style="color:#22d3bf">init_R/init_t</code> 传给 <code style="color:#22d3bf">icp_point2point_3d</code> 进行精细化)。主轴退化(球、圆柱等特征值相等)的点云,轴不确定, 结果不稳定。两点云的点数可以不同。输入为 (N,3)(验证交给 <code style="color:#22d3bf">moment_axes</code>,本身没有)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

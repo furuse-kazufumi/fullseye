@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Krümmungs-(Shape-Index-)Matching. Die Spalte Voxel × Krümmung — der Kern des Linie-zu-Fläche-Lifts.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>scene/template を <b>curvedness で重み付けした shape-index 場</b>へ変換 → 既存 3D NCC で定位。強度でなく <b>局所曲面形状</b>で一致を測るため、同じ強度でも形が違う対象(球 vs 円柱/鞍点)を区別できる。S は回転不変なので回転にもある程度頑健。返り値 [score, d, h, w]。</p>
-<p>手順: 両 volume で <code style="color:#22d3bf">curvature_maps</code> → <code style="color:#22d3bf">S × curvedness × mask</code> の重み付き shape-index 場 <code style="color:#22d3bf">w</code> を作り、テンプレ側は <code style="color:#22d3bf">|w| &gt; 0.1·max|w|</code> の bbox を切り出して <code style="color:#22d3bf">accel_match.ncc_locate_3d</code> に渡す。返り値 <code style="color:#22d3bf">[NCC, z, y, x]</code> float64、NCC ∈ [−1, 1]。</p>
-<p style="margin:2px 0 2px 12px">• <b>位置は切り出した bbox テンプレの中心</b>が scene に載る座標。元テンプレ volume の中心とは</p>
-<p>bbox のオフセット分ずれる(元テンプレ座標に戻すには bbox の lo を足し直す)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mc</code>: <code style="color:#22d3bf">curvature_maps</code> の勾配マスク閾値(真の勾配単位、voxel あたり)。平坦部を除いて</p>
-<p>曲率ノイズを抑える。</p>
-<p style="margin:2px 0 2px 12px">• テンプレの曲率場が全 0(平坦・<code style="color:#22d3bf">mc</code> が高すぎ)なら <code style="color:#22d3bf">[0,0,0,0]</code> を返す。</p>
-<p style="margin:2px 0 2px 12px">• 曲率は 2 階微分なのでノイズに敏感。ノイズが多い volume は先に <code style="color:#22d3bf">points_to_voxel</code> の</p>
-<p><code style="color:#22d3bf">smooth</code> 等で滑らかにする。<code style="color:#22d3bf">subvoxel=True</code> で NCC ピークの ±2 近傍重心に精緻化。</p>
+<p>Wandelt scene/template in ein <b>mit curvedness gewichtetes shape-index-Feld</b> um → Lokalisierung mit dem vorhandenen 3D-NCC. Da die Übereinstimmung über die <b>lokale Flächenform</b> statt der Intensität gemessen wird, lassen sich Objekte gleicher Intensität, aber anderer Form (Kugel vs Zylinder/Sattel) unterscheiden. S ist rotationsinvariant, daher ist es auch gegenüber Rotation einigermaßen robust. Rückgabewert [score, d, h, w].</p>
+<p>Ablauf: <code style="color:#22d3bf">curvature_maps</code> auf beide Volumes → das gewichtete shape-index-Feld <code style="color:#22d3bf">S × curvedness × mask</code> <code style="color:#22d3bf">w</code> bilden; auf der Template-Seite die bbox von <code style="color:#22d3bf">|w| &gt; 0.1·max|w|</code> ausschneiden und an <code style="color:#22d3bf">accel_match.ncc_locate_3d</code> übergeben. Rückgabewert <code style="color:#22d3bf">[NCC, z, y, x]</code> float64, NCC ∈ [−1, 1].</p>
+<p style="margin:2px 0 2px 12px">• <b>Die Position ist das Zentrum des ausgeschnittenen bbox-Templates</b>, wie es in der Szene liegt. Gegenüber dem Zentrum des ursprünglichen Template-Volumes</p>
+<p>ist sie um den bbox-Offset verschoben (um zu den ursprünglichen Template-Koordinaten zurückzukehren, das lo der bbox wieder addieren).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mc</code>: Gradientenmasken-Schwellwert von <code style="color:#22d3bf">curvature_maps</code> (wahre Gradienteneinheiten, pro Voxel). Schließt flache Bereiche aus, um</p>
+<p>Krümmungsrauschen zu unterdrücken.</p>
+<p style="margin:2px 0 2px 12px">• Ist das Krümmungsfeld des Templates überall 0 (flach, <code style="color:#22d3bf">mc</code> zu hoch), wird <code style="color:#22d3bf">[0,0,0,0]</code> zurückgegeben.</p>
+<p style="margin:2px 0 2px 12px">• Krümmung ist eine Ableitung 2. Ordnung und daher rauschempfindlich. Verrauschte Volumes zuerst glätten, etwa mit</p>
+<p><code style="color:#22d3bf">smooth</code> von <code style="color:#22d3bf">points_to_voxel</code>. <code style="color:#22d3bf">subvoxel=True</code> verfeinert auf den Schwerpunkt der ±2-Nachbarschaft des NCC-Maximums.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

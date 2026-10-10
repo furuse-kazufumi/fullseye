@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.d2_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import descriptors3d; descriptors3d.d2_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;d2_distribution&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>random 2-point pairs की Euclidean distance distribution (Osada 2002 का D2)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>N 点から <code style="color:#22d3bf">samples</code> 組の相異なる点対 (i, j) を乱択し、その距離を集計する。距離は<b>平均距離で割って正規化</b>するため、回転・平行移動・<b>スケール</b>に不変。固定レンジ [0, _D2_MAX] の正規化ヒストグラム (bins,) を返す(総和 1)。</p>
+<p>N points में से <code style="color:#22d3bf">samples</code> जोड़ी अलग-अलग point pairs (i, j) random रूप से चुनकर उनकी दूरियों को इकट्ठा करता है। दूरियों को <b>औसत दूरी से भाग देकर normalise</b> किया जाता है, इसलिए परिणाम rotation, translation और <b>scale</b> से नहीं बदलता। fixed range [0, _D2_MAX] का normalised histogram (bins,) लौटाता है (योग 1)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>点群。N &gt;= 2 が必要。</p>
+<p>point cloud। N &gt;= 2 ज़रूरी है।</p>
 <p>bins : int</p>
-<p>ヒストグラムの bin 数。</p>
+<p>histogram के bins की संख्या।</p>
 <p>samples : int</p>
-<p>乱択する点対の数。多いほど分散が下がる(サンプリング誤差 ~ 1/sqrt(samples))。</p>
+<p>random रूप से चुने जाने वाले point pairs की संख्या। जितने ज़्यादा उतना कम variance (sampling error ~ 1/sqrt(samples))।</p>
 <p>seed : int</p>
-<p>乱数シード。同 seed・同点群なら決定論的に同一。</p>
+<p>random seed। वही seed और वही point cloud हो तो परिणाम deterministic रूप से एक जैसा।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (bins,)</p>
-<p>正規化距離ヒストグラム。</p>
+<p>normalised distance histogram।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

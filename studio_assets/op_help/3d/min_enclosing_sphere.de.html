@@ -4,23 +4,22 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.min_enclosing_sphere(points, refine_iters: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import hull3d; hull3d.min_enclosing_sphere(points, refine_iters: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;min_enclosing_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Punktmenge (N,3) → die (näherungsweise) kleinste umschließende Kugel aller Punkte, {center(3), radius}.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">fit_sphere_3d</code>(球面フィット)や <code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">hough_sphere_3d</code>(球検出)とは異なり、<b>全点を内包する最小の球</b>(minimum enclosing ball, MEB)を解く。2 段構成で「全点内包」を厳守しつつ半径を詰める:</p>
-<p style="margin:2px 0 2px 12px">1. <b>Ritter (1990) 初期化</b> — 最遠の点対を粗く取り初期球にし、各点を走査して球外の点があれば「その点と既存球の両方を含む」最小の球へ 1 回膨らませる(膨張式 <code style="color:#22d3bf">new_r=(r+d)/2</code> / 中心を点方向へ <code style="color:#22d3bf">(d-r)/(2d)</code> 進める)。新球が旧球を完全に含むため、1 パスで全点内包を保証する。</p>
-<p style="margin:2px 0 2px 12px">2. <b>Bădoiu–Clarkson (2003) core-set 反復による精緻化</b> — 反復 <code style="color:#22d3bf">i</code> で最遠点 <code style="color:#22d3bf">q</code> へ中心を <code style="color:#22d3bf">1/(i+2)</code> だけ寄せる。真の最小包含球へ単調収束する(半径過大な Ritter のドリフトを詰める)。最後に半径を「中心からの最大距離」で確定するので、精緻化後も <b>必ず全点を内包</b>(近似ゆえ半径が過小になり点が漏れることはない、安全側)。</p>
-<p>精緻化した中心が Ritter より外接半径を縮められたときのみ採用する(常に Ritter 以下)。真の最小球(厳密解は Welzl の乱択線形時間法)ではなく高速な (1+ε) 近似。</p>
+<p>Anders als <code style="color:#22d3bf">fit_sphere_3d</code> (Kugelanpassung) oder <code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">hough_sphere_3d</code> (Kugeldetektion) löst dies <b>die kleinste Kugel, die alle Punkte enthält</b> (minimum enclosing ball, MEB). Ein 2-stufiges Verfahren verkleinert den Radius und hält dabei &quot;alle Punkte enthalten&quot; strikt ein:</p>
+<p style="margin:2px 0 2px 12px">1. <b>Ritter (1990) Initialisierung</b> -- grob das am weitesten entfernte Punktpaar als Startkugel nehmen, dann die Punkte durchlaufen; liegt ein Punkt außerhalb der Kugel, 1-mal auf die kleinste Kugel &quot;die sowohl diesen Punkt als auch die bisherige Kugel enthält&quot; vergrößern (Vergrößerung <code style="color:#22d3bf">new_r=(r+d)/2</code> / den Mittelpunkt um <code style="color:#22d3bf">(d-r)/(2d)</code> in Richtung des Punkts verschieben). Da die neue Kugel die alte vollständig enthält, garantiert 1 Durchlauf, dass alle Punkte enthalten sind.</p>
+<p style="margin:2px 0 2px 12px">2. <b>Verfeinerung durch Bădoiu–Clarkson (2003) Core-Set-Iteration</b> -- in Iteration <code style="color:#22d3bf">i</code> den Mittelpunkt um <code style="color:#22d3bf">1/(i+2)</code> zum entferntesten Punkt <code style="color:#22d3bf">q</code> hin verschieben. Konvergiert monoton zur wahren minimalen umschließenden Kugel (verkleinert die Drift des Ritter-Radius, der zu groß ist). Zuletzt wird der Radius als &quot;maximaler Abstand vom Mittelpunkt&quot; festgelegt, sodass auch nach der Verfeinerung <b>stets alle Punkte enthalten sind</b> (die Näherung macht den Radius nie zu klein, sodass Punkte herausfallen; sie liegt auf der sicheren Seite).</p>
+<p>Der verfeinerte Mittelpunkt wird nur übernommen, wenn er den Umkreisradius gegenüber Ritter verkleinert (also stets &lt;= Ritter). Nicht die wahre minimale Kugel (die exakte Lösung ist Welzls randomisiertes Linearzeitverfahren), sondern eine schnelle (1+ε)-Näherung.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
-<p>入力点群(&gt;= 1 点)。</p>
+<p>Eingabe-Punktwolke (&gt;= 1 Punkt).</p>
 <p>refine_iters : int</p>
-<p>Bădoiu–Clarkson 精緻化の反復数(既定 1000)。0 で Ritter のみ。</p>
+<p>Anzahl der Iterationen der Bădoiu–Clarkson-Verfeinerung (Standard 1000). 0 bedeutet nur Ritter.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: (3,) float64 — 球中心(世界座標)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: float — 半径(全点を内包)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: (3,) float64 -- Kugelmittelpunkt (Weltkoordinaten).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: float -- Radius (enthält alle Punkte).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>形状不正・非有限・点数 0、または <code style="color:#22d3bf">refine_iters</code> が負のとき(fail-closed)。</p>
+<p>Bei ungültiger Form, nicht endlichen Werten, 0 Punkten oder negativem <code style="color:#22d3bf">refine_iters</code> (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_fft_lowpass(vol, cutoff, spacing=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volfreq; volfreq.vol_fft_lowpass(vol, cutoff, spacing=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_lowpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가우스 저역통과: <code style="color:#22d3bf">1/cutoff</code> 보다 거친 구조를 남깁니다(복셀 단위 또는 실치수).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>mm with *spacing*), attenuates finer detail smoothly. Transfer <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> — the DC level (mean intensity) passes unchanged. Typical use: extract the illumination/thickness drift.</p>
-<p>手順: <code style="color:#22d3bf">np.fft.rfftn</code> で実 FFT → 各周波数 bin の大きさ <code style="color:#22d3bf">|f| = sqrt(fz^2 + fy^2 + fx^2)</code> に伝達関数 <code style="color:#22d3bf">exp(-|f|^2 / (2 cutoff^2))</code> を掛ける → <code style="color:#22d3bf">irfftn</code> で戻す。入力と同じ <code style="color:#22d3bf">(D, H, W)</code> の float64 を返す(spacing を渡しても shape は変わらない)。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cutoff</code>: 正の有限値。<code style="color:#22d3bf">spacing=None</code> なら <b>cycles/voxel</b>(Nyquist = 0.5)、<code style="color:#22d3bf">spacing=(sz, sy, sx)</code>(mm、または <code style="color:#22d3bf">spacing_mm</code> を持つ <code style="color:#22d3bf">volio.VolumeMeta</code>)を渡すと <b>cycles/mm</b>。異方 voxel では軸ごとに <code style="color:#22d3bf">fftfreq(n, d=spacing)</code> で物理周波数に直すので、同じ物理構造が同じ扱いになる。</p>
-<p style="margin:2px 0 2px 12px">• 減衰は Gaussian で、<code style="color:#22d3bf">|f| = cutoff</code> で <code style="color:#22d3bf">exp(-1/2) ≈ 0.61</code>(brick-wall ではない。リンギングは出ない)。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): 3-D でない / NaN・Inf / voxel 数が <code style="color:#22d3bf">MAX_VOXELS</code>(<code style="color:#22d3bf">1 &lt;&lt; 27</code>) 超 / <code style="color:#22d3bf">cutoff</code> が非正・非有限・2 乗がアンダーフローするほど小さい / <code style="color:#22d3bf">spacing</code> が長さ 3 でない・非正。</p>
-<p>注意: FFT は volume を周期的とみなす。向かい合う面の輝度差が大きいと wrap をまたいで漏れる(窓掛けは黙ってしない)。<code style="color:#22d3bf">vol_fft_highpass</code> は厳密にこの補集合 <code style="color:#22d3bf">1 - lowpass</code> で、両者の和は入力に一致する。</p>
+<p>mm 단위), 더 미세한 디테일을 부드럽게 감쇠시킨다. 전달 함수 <code style="color:#22d3bf">exp(-f^2 / (2 cutoff^2))</code> — DC 성분(평균 강도)은 그대로통과한다. 대표적 용도: 조명/두께 드리프트 추출.</p>
+<p>절차: <code style="color:#22d3bf">np.fft.rfftn</code>으로 실수 FFT → 각 주파수 bin의 크기 <code style="color:#22d3bf">|f| = sqrt(fz^2 + fy^2 + fx^2)</code> 에 전달 함수 <code style="color:#22d3bf">exp(-|f|^2 / (2 cutoff^2))</code>를 곱함 → <code style="color:#22d3bf">irfftn</code>으로 되돌린다. 입력과 같은 <code style="color:#22d3bf">(D, H, W)</code>의 float64를 반환한다(spacing을 전달해도 shape는 바뀌지 않는다).</p>
+<p>인자:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cutoff</code>: 양의 유한값. <code style="color:#22d3bf">spacing=None</code>이면 <b>cycles/voxel</b>(Nyquist = 0.5), <code style="color:#22d3bf">spacing=(sz, sy, sx)</code>(mm, 또는 <code style="color:#22d3bf">spacing_mm</code>을 가진 <code style="color:#22d3bf">volio.VolumeMeta</code>)를전달하면 <b>cycles/mm</b>. 비등방 voxel에서는 축마다 <code style="color:#22d3bf">fftfreq(n, d=spacing)</code>로 물리주파수로 바꾸므로, 같은 물리 구조가 같게 취급된다.</p>
+<p style="margin:2px 0 2px 12px">• 감쇠는 Gaussian이며, <code style="color:#22d3bf">|f| = cutoff</code>에서 <code style="color:#22d3bf">exp(-1/2) ≈ 0.61</code>(brick-wall이아니다. 링잉은 생기지 않는다).</p>
+<p>검증(<code style="color:#22d3bf">ValueError</code>): 3-D가 아님 / NaN·Inf / voxel 수가 <code style="color:#22d3bf">MAX_VOXELS</code>(<code style="color:#22d3bf">1 &lt;&lt; 27</code>) 초과 / <code style="color:#22d3bf">cutoff</code>가 비양수·비유한·2제곱이 언더플로할 만큼 작음 / <code style="color:#22d3bf">spacing</code>이길이 3이 아님·비양수.</p>
+<p>주의: FFT는 volume을 주기적으로 간주한다. 마주 보는 면의 휘도 차가 크면 wrap을넘어 누설된다(창 적용은 말없이 하지 않는다). <code style="color:#22d3bf">vol_fft_highpass</code>는 엄밀히 이것의 여집합 <code style="color:#22d3bf">1 - lowpass</code>이며, 둘의 합은 입력과 일치한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

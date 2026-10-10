@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_spline_curve(points, smooth=0.0, k=3, n=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import curve3d; curve3d.fit_spline_curve(points, smooth=0.0, k=3, n=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fit_spline_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ordered 3D point sequence को B-spline से smooth करके resample करता है। → (M,3)। noisy trajectory/edge को smooth करने के लिए।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>scipy.interpolate.splprep/splev。smooth=0 は補間、&gt;0 で平滑。n=出力点数(既定=入力数)。</p>
-<p><code style="color:#22d3bf">splprep([x, y, z], s=smooth, k=k)</code> でパラメトリック B スプライン(パラメータ u∈[0,1]、scipy 既定の弦長パラメータ化)を当て、<code style="color:#22d3bf">u = linspace(0, 1, n)</code> で <code style="color:#22d3bf">splev</code> 評価した(n,3) float64 を返す。u 等間隔なので出力点は弧長で厳密に等間隔ではない(弧長等間隔が要るなら結果を <code style="color:#22d3bf">resample_uniform</code> に通す)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">smooth</code>: scipy の平滑化条件 s。残差二乗和が s 以下になる最少ノットで当てる。0 なら全点を通る補間、大きいほど滑らか(単位は座標の二乗)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: スプライン次数(既定 3)。点数 N が k 以下だと <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 出力点数。None で入力点数。</p>
-<p style="margin:2px 0 2px 12px">• 入力は index 順に並んだ (N,3) を前提とし、形状検証は点数以外に無い。</p>
-<p>ノイズのあるエッジ点列や軌跡を平滑してから <code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> に渡す前段として使う。tck を持ち回りたい場合は <code style="color:#22d3bf">fit_bspline_curve</code> / <code style="color:#22d3bf">eval_bspline_curve</code>。</p>
+<p>scipy.interpolate.splprep/splev। smooth=0 पर interpolation, &gt;0 पर smoothing। n=output points की संख्या (default=input की संख्या)।</p>
+<p><code style="color:#22d3bf">splprep([x, y, z], s=smooth, k=k)</code> से parametric B-spline fit करता है (parameter u∈[0,1], scipy का default chord-length parameterisation), <code style="color:#22d3bf">u = linspace(0, 1, n)</code> पर <code style="color:#22d3bf">splev</code> से evaluate करके (n,3) float64 लौटाता है। u समान अंतराल पर है, इसलिए output points arc length में ठीक-ठीक समान अंतराल पर नहीं होते (arc length में समान अंतराल चाहिए तो परिणाम को <code style="color:#22d3bf">resample_uniform</code> से गुज़ारें)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">smooth</code>: scipy की smoothing condition s। उन सबसे कम knots से fit करता है जिनसे residual sum of squares s से अधिक न हो। 0 पर सभी points से गुज़रने वाला interpolation, जितना बड़ा उतना smooth (unit coordinate का वर्ग है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: spline degree (default 3)। points की संख्या N यदि k या उससे कम हो तो <code style="color:#22d3bf">ValueError</code>।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: output points की संख्या। None पर input points की संख्या।</p>
+<p style="margin:2px 0 2px 12px">• input को index क्रम में लगा (N,3) माना जाता है, points की संख्या के अलावा कोई shape validation नहीं है।</p>
+<p>noise वाले edge point sequence या trajectory को smooth करके <code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> को देने से पहले के चरण के रूप में इस्तेमाल होता है। tck साथ रखना हो तो <code style="color:#22d3bf">fit_bspline_curve</code> / <code style="color:#22d3bf">eval_bspline_curve</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

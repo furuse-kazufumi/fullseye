@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_between_planes(n1, n2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.angle_between_planes(n1, n2)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;angle_between_planes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 planes के बीच dihedral angle (normals n1,n2, डिग्री)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>法線同士の角 <code style="color:#22d3bf">arccos(|n̂1·n̂2|)</code> を度で返す(float)。絶対値を取るので <b>[0, 90]</b> の鋭角側(法線の向きに依らない。鈍角側が要るなら <code style="color:#22d3bf">180 −</code>)。0 = 平行、90 = 直交。<code style="color:#22d3bf">n1</code>, <code style="color:#22d3bf">n2</code> は数値の 2 または 3 ベクトル(長さは問わない)、次元の混在は ValueError。零ベクトルは 90 が返る。</p>
-<p>用途: <code style="color:#22d3bf">fit_plane_3d</code> / <code style="color:#22d3bf">hough_plane_3d</code> で取った 2 面の平行度・直角度、<code style="color:#22d3bf">intersect_planes</code> の前の平行判定。</p>
+<p>normals के बीच का कोण <code style="color:#22d3bf">arccos(|n̂1·n̂2|)</code> डिग्री में लौटाता है (float)। absolute value लेने के कारण यह <b>[0, 90]</b> की न्यून कोण वाली ओर होता है (normal की दिशा पर निर्भर नहीं; अधिक कोण वाली ओर चाहिए तो <code style="color:#22d3bf">180 −</code>)। 0 = समानांतर, 90 = लंबवत। <code style="color:#22d3bf">n1</code>, <code style="color:#22d3bf">n2</code> संख्यात्मक 2 या 3 vector हैं (लंबाई मायने नहीं रखती), आयामों का मिश्रण ValueError देता है। zero vector पर 90 लौटता है।</p>
+<p>उपयोग: <code style="color:#22d3bf">fit_plane_3d</code> / <code style="color:#22d3bf">hough_plane_3d</code> से लिए गए 2 planes का parallelism और perpendicularity, <code style="color:#22d3bf">intersect_planes</code> से पहले समानांतरता की जाँच।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

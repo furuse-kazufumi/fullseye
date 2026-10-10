@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_junctions3d(vol)</code>(要直接呼叫實作,<code style="color:#22d3bf">import medial; medial.skeleton_junctions3d(vol)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;skeleton_junctions3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以體素遮罩回傳 3D 骨架的分叉點(joint,26 鄰域中骨架 voxel 不少於 3 個)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>骨格でない入力(interior を持つ塊)は skeletonize_vol で細線化してから測る。2D の <code style="color:#22d3bf">junctions_skeleton</code> の 3D 版。血管・多孔質・ネットワーク状構造のグラフ化(node 抽出)に使う。分岐次数の集計だけ欲しい場合は topology_signature が dict で返す。</p>
-<p>注意(honest): 26 近傍次数は分岐近傍の対角隣接で過大に出うる(離散骨格の既知の性質)。分岐 *個数* を数えるときはこのマスクを連結成分でまとめること。</p>
-<p>手順: <code style="color:#22d3bf">_ensure_skeleton</code> — 入力を bool 化し、6 近傍(面隣接)がすべて前景の interior voxel が 1 つでもあれば「骨格ではない」とみなして <code style="color:#22d3bf">skeletonize_vol</code> (skimage Lee 法)を先に掛ける。その後、3x3x3 の全 1 カーネル(中心 0)の畳み込み(<code style="color:#22d3bf">mode=&quot;constant&quot;</code>、外側は 0)で各 voxel の 26 近傍にある骨格 voxel 数(次数)を数え、<code style="color:#22d3bf">skel &amp; (次数 &gt;= 3)</code> を返す。</p>
-<p>返り値: 入力と同形の bool 配列。前景が無ければ全 False。骨格 voxel 以外は必ず False。座標は <code style="color:#22d3bf">np.argwhere</code> で <code style="color:#22d3bf">(z, y, x)</code> 順に取れる。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): 3-D でない・空配列・float で NaN/Inf を含む入力。scikit-image が無い環境で細線化が必要になると <code style="color:#22d3bf">ImportError</code>。</p>
-<p>注意: 既に骨格の入力でも interior 判定は毎回走る(細い骨格なら細線化は skip される)。個数を数えるなら <code style="color:#22d3bf">vol_label(mask, 26)</code> の成分数を使う。枝に分けるのは <code style="color:#22d3bf">skeleton_branches3d</code>、端点は <code style="color:#22d3bf">skeleton_endpoints3d</code>。</p>
+<p>非骨架的輸入(帶 interior 的塊)會先用 skeletonize_vol 細化後再量測。2D 的 <code style="color:#22d3bf">junctions_skeleton</code> 的 3D 版。用於把血管、多孔質、網路狀結構圖化(node 擷取)。只想要分支度的彙總時, topology_signature 會以 dict 回傳。</p>
+<p>注意(honest): 26 鄰域度在分支附近可能因對角鄰接而偏大(離散骨架的已知性質)。統計分支 *個數* 時,請把此遮罩依連通元件歸併。</p>
+<p>步驟: <code style="color:#22d3bf">_ensure_skeleton</code> — 把輸入轉為 bool,只要有 1 個 6 鄰域(面鄰接)全為前景的 interior voxel,就視為「不是骨架」,先套用 <code style="color:#22d3bf">skeletonize_vol</code> (skimage Lee 法)。之後用 3x3x3 的全 1 核(中心 0)做摺積(<code style="color:#22d3bf">mode=&quot;constant&quot;</code>,外側為 0),統計各 voxel 的 26 鄰域內的骨架 voxel 數(度), 回傳 <code style="color:#22d3bf">skel &amp; (度 &gt;= 3)</code>。</p>
+<p>回傳值: 與輸入同形狀的 bool 陣列。沒有前景時全為 False。骨架 voxel 以外必為 False。座標可用 <code style="color:#22d3bf">np.argwhere</code> 依 <code style="color:#22d3bf">(z, y, x)</code> 順序取得。</p>
+<p>檢驗(<code style="color:#22d3bf">ValueError</code>): 不是 3-D、空陣列、含 NaN/Inf 的 float 輸入。在沒有 scikit-image 的環境中需要細化時為 <code style="color:#22d3bf">ImportError</code>。</p>
+<p>注意: 即使輸入已經是骨架,每次也會進行 interior 判定(若是細骨架,細化會被 skip)。要計數時,使用 <code style="color:#22d3bf">vol_label(mask, 26)</code> 的元件數。分成分支用 <code style="color:#22d3bf">skeleton_branches3d</code>,端點用 <code style="color:#22d3bf">skeleton_endpoints3d</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

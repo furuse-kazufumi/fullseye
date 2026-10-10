@@ -5,14 +5,13 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平面偵測(2D Hough 直線的 3D 提升)。以梯度=法線,向 (法線 n, 距離 d) 空間投票。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>薄い境界面の各 voxel が自分の法線方向ビンと d=n·p に投票 → ピーク=支配平面。法線は勝ちビン内の実法線平均で精緻化、d は投影のモード。点群/voxel の地面・壁の抽出に。返り値 (n(3,), d, inliers, total)。</p>
-<p>手順: <code style="color:#22d3bf">(vol &gt; iso)</code> の 1 voxel 厚の境界面(占有 voxel のうち 3³ erosion で消えるもの)を取り、その voxel の単位勾配(<code style="color:#22d3bf">sobel3d</code>、<code style="color:#22d3bf">mc</code> は生出力への閾値)を法線 <code style="color:#22d3bf">n</code> にする。<code style="color:#22d3bf">n</code> は軸 0 成分が非負になるよう半球へ畳み、<code style="color:#22d3bf">d = n·p</code>(<code style="color:#22d3bf">p</code> は整数 voxel index <code style="color:#22d3bf">(z,y,x)</code>)。<code style="color:#22d3bf">ndir</code> 本の参照方向(26 以下は 26 近傍、それ以上は fibonacci 球)と <code style="color:#22d3bf">nd</code> 個の d ビンに投票し、最多ビンの実法線平均で n を、その n への射影ヒストグラムのモード近傍の中央値で d を精緻化する。返り値 <code style="color:#22d3bf">(n(3,), d, inliers, total)</code>: <code style="color:#22d3bf">n</code> は <b>(z,y,x) 順</b>の単位法線(numpy float32)、平面は <code style="color:#22d3bf">n·(z,y,x) = d</code>(voxel 単位)。<code style="color:#22d3bf">inliers</code> は <code style="color:#22d3bf">|n·p − d| &lt; tol</code> の境界 voxel 数、<code style="color:#22d3bf">total</code> は境界 voxel の総数(inliers/total が支配平面の占める割合)。</p>
-<p style="margin:2px 0 2px 12px">• 境界 voxel が 10 未満なら <b>None を返す</b>(例外ではない)。</p>
-<p style="margin:2px 0 2px 12px">• 密度 voxel は <code style="color:#22d3bf">iso</code> で 2 値化される(個数密度なら 0.5 で「1 点以上」)。</p>
-<p style="margin:2px 0 2px 12px">• 1 枚しか返さない。複数平面はインライアを除いて再実行するか、点群なら <code style="color:#22d3bf">plane_segmentation</code></p>
+<p>薄邊界面的每個 voxel 向自身法線方向 bin 與 d=n·p 投票 → 峰值=主平面。法線以勝出 bin 內實際法線的平均來精細化,d 取投影的眾數。用於從點雲/voxel 中擷取地面、牆面。回傳值 (n(3,), d, inliers, total)。</p>
+<p>步驟:取 <code style="color:#22d3bf">(vol &gt; iso)</code> 的 1 voxel 厚的邊界面(佔用 voxel 中經 3³ erosion 後消失者), 以這些 voxel 的單位梯度(<code style="color:#22d3bf">sobel3d</code>,<code style="color:#22d3bf">mc</code> 是對原始輸出的閾值)作為法線 <code style="color:#22d3bf">n</code>。<code style="color:#22d3bf">n</code> 折疊到軸 0 分量非負的半球,<code style="color:#22d3bf">d = n·p</code>(<code style="color:#22d3bf">p</code> 為整數 voxel index <code style="color:#22d3bf">(z,y,x)</code>)。向 <code style="color:#22d3bf">ndir</code> 個參考方向(26 以下為 26 鄰域,更多則為 fibonacci 球)與 <code style="color:#22d3bf">nd</code> 個 d bin 投票, 以票數最多 bin 的實際法線平均精細化 n,以向該 n 的投影直方圖眾數附近的中位數精細化 d。回傳值 <code style="color:#22d3bf">(n(3,), d, inliers, total)</code>:<code style="color:#22d3bf">n</code> 為 <b>(z,y,x) 順序</b>的單位法線(numpy float32), 平面為 <code style="color:#22d3bf">n·(z,y,x) = d</code>(voxel 單位)。<code style="color:#22d3bf">inliers</code> 為 <code style="color:#22d3bf">|n·p − d| &lt; tol</code> 的邊界 voxel 數, <code style="color:#22d3bf">total</code> 為邊界 voxel 總數(inliers/total 即主平面所佔比例)。</p>
+<p style="margin:2px 0 2px 12px">• 邊界 voxel 少於 10 個時 <b>回傳 None</b>(不是例外)。</p>
+<p style="margin:2px 0 2px 12px">• 密度 voxel 依 <code style="color:#22d3bf">iso</code> 2 值化(若為點數密度,0.5 即「1 個點以上」)。</p>
+<p style="margin:2px 0 2px 12px">• 只回傳 1 個平面。多個平面需去掉內點後重新執行,點雲則用 <code style="color:#22d3bf">plane_segmentation</code></p>
 <p>/ <code style="color:#22d3bf">ransac_plane</code>。</p>
-<p>後段: <code style="color:#22d3bf">distance_point_plane</code> / <code style="color:#22d3bf">angle_between_planes</code> で計測。</p>
+<p>後段:以 <code style="color:#22d3bf">distance_point_plane</code> / <code style="color:#22d3bf">angle_between_planes</code> 量測。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

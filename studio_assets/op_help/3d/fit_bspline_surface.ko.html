@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import bspline_surf; bspline_surf.fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;fit_bspline_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>산포 (x, y, z) 에 이중 3 차(기본) B 스플라인 곡면을 최소제곱 적합(bisplrep).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>x, y, z : array_like</p>
-<p>同数の散布サンプル座標と高さ。任意形状で与えてよく内部で 1 次元化する。</p>
+<p>같은 개수의 산포 샘플 좌표와 높이. 임의의 형상으로 주어도 되며 내부에서 1차원화한다.</p>
 <p>kx, ky : int</p>
-<p>x/y 方向の B スプライン次数(1=線形, 3=三次)。点数が (kx+1)*(ky+1) に</p>
-<p>満たない場合は自動で下げる(縮退回避)。</p>
+<p>x/y 방향의 B 스플라인 차수(1=선형, 3=삼차). 점 수가 (kx+1)*(ky+1)에</p>
+<p>못 미치면 자동으로 낮춘다(축퇴 회피).</p>
 <p>smooth : float or None</p>
-<p>平滑化係数 s。None は点数ベースの自動値(<code style="color:#22d3bf">_auto_surface_smooth</code>)。</p>
-<p>0.0 で全点通過(補間寄り=過適合しやすい)、大きいほど滑らか。</p>
+<p>평활화 계수 s. None은 점 수 기반 자동값(<code style="color:#22d3bf">_auto_surface_smooth</code>).</p>
+<p>0.0이면 모든 점 통과(보간 쪽=과적합되기 쉬움), 클수록 매끄럽다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>tck : list</p>
-<p><code style="color:#22d3bf">[tx, ty, c, kx, ky]</code>。eval_bspline_surface / surface_residual に渡す。</p>
+<p><code style="color:#22d3bf">[tx, ty, c, kx, ky]</code>. eval_bspline_surface / surface_residual에 넘긴다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点数が線形曲面にすら足りない(m&lt;4)、x/y/z の長さ不一致、非有限値、</p>
-<p>あるいは共線・重複による FITPACK 縮退で近似が得られない場合。</p>
-<p>補足(実装の裏取り):</p>
-<p style="margin:2px 0 2px 12px">• 座標系は自由: x, y は任意の平面座標(row/col でも実寸でも可)、z は高さ。3 配列は <code style="color:#22d3bf">ravel</code> で 1 次元化するので格子入力でも散布入力でも同じに扱う。</p>
-<p style="margin:2px 0 2px 12px">• 次数の自動降格は <code style="color:#22d3bf">(kx+1)*(ky+1) &gt; m</code> の間、大きい方(同点なら kx)を 1 ずつ下げ、両方 1 になったら止まる。降格は例外でなく無言で行われるので、実際の次数は返り値 <code style="color:#22d3bf">tck[3]</code>, <code style="color:#22d3bf">tck[4]</code> で確認できる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">smooth=None</code> の自動値は <code style="color:#22d3bf">max(0, m - sqrt(2m))</code>(FITPACK の推奨)。z のノイズ分散が 1 相当という前提の式なので、z の単位が小さく残差二乗和が小さいデータでは過平滑になりやすい。その場合は明示的に小さい <code style="color:#22d3bf">smooth</code> を渡す。</p>
-<p style="margin:2px 0 2px 12px">• FITPACK の警告(反復打ち切り等)は握り潰して tck を返す。例外はすべて <code style="color:#22d3bf">ValueError</code> に翻訳し、係数が空のときも <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 決定論的(乱数なし)。</p>
-<p style="margin:2px 0 2px 12px">• 後段は <code style="color:#22d3bf">eval_bspline_surface</code>(評価)と <code style="color:#22d3bf">surface_residual</code>(逸脱量)。大域的な低次のうねりだけで良ければ <code style="color:#22d3bf">fit_poly_surface</code> / <code style="color:#22d3bf">eval_poly_surface</code> があるが、tck と多項式 dict は互換でない。</p>
+<p>점 수가 선형 곡면에도 부족한 경우(m&lt;4), x/y/z의 길이 불일치, 비유한값,</p>
+<p>또는 공선·중복으로 인한 FITPACK 축퇴로 근사를 얻을 수 없는 경우.</p>
+<p>보충(구현으로 확인):</p>
+<p style="margin:2px 0 2px 12px">• 좌표계는 자유: x, y는 임의의 평면 좌표(row/col이든 실치수든 가능), z는 높이. 3 배열은 <code style="color:#22d3bf">ravel</code>로 1차원화하므로 격자 입력이든 산포 입력이든 똑같이 다룬다.</p>
+<p style="margin:2px 0 2px 12px">• 차수의 자동 강등은 <code style="color:#22d3bf">(kx+1)*(ky+1) &gt; m</code>인 동안 큰 쪽(같으면 kx)을 1씩 낮추고, 둘 다 1이 되면 멈춘다. 강등은 예외가 아니라 조용히 일어나므로, 실제 차수는 반환값 <code style="color:#22d3bf">tck[3]</code>, <code style="color:#22d3bf">tck[4]</code>로 확인할 수 있다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">smooth=None</code>의 자동값은 <code style="color:#22d3bf">max(0, m - sqrt(2m))</code>(FITPACK 권장). z의 잡음 분산이 1 정도라는 전제의 식이므로, z 단위가 작고 잔차 제곱합이 작은 데이터에서는 과평활화되기 쉽다. 그런 경우에는 명시적으로 작은 <code style="color:#22d3bf">smooth</code>를 넘긴다.</p>
+<p style="margin:2px 0 2px 12px">• FITPACK의 경고(반복 중단 등)는 무시하고 tck를 반환한다. 예외는 모두 <code style="color:#22d3bf">ValueError</code>로 번역하며, 계수가 비었을 때도 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• 결정론적(난수 없음).</p>
+<p style="margin:2px 0 2px 12px">• 후단은 <code style="color:#22d3bf">eval_bspline_surface</code>(평가)와 <code style="color:#22d3bf">surface_residual</code>(이탈량). 대역적인 저차 파상도만으로 충분하면 <code style="color:#22d3bf">fit_poly_surface</code> / <code style="color:#22d3bf">eval_poly_surface</code>가 있지만, tck와 다항식 dict는 호환되지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

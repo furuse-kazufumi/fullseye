@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.depth_to_points(depth, fx, fy, cx, cy, stride=1)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;depth_to_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tiefenkarte (2,5-D) → Punktwolke (Lochkamera-Rückprojektion). Sie verbindet die Tiefenzeile mit allen Verfahren.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>画素 (行 v, 列 u) の深度 z から <code style="color:#22d3bf">X = (u − cx)·z/fx</code>、<code style="color:#22d3bf">Y = (v − cy)·z/fy</code>、<code style="color:#22d3bf">Z = z</code> を作る。返り値は <code style="color:#22d3bf">(N,3)</code> float64、列は <b>(X, Y, Z) のカメラ座標</b>(深度と同じ単位)。z が 0 以下の画素は捨てるので N は画素数以下(無効深度は 0 で表す規約)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fx, fy, cx, cy</code>: 画素単位の焦点距離と主点。<code style="color:#22d3bf">project_points</code> の K と同じ規約。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">stride</code>: 行・列とも <code style="color:#22d3bf">stride</code> 画素おきに間引く。u, v は間引き後の index に <code style="color:#22d3bf">stride</code></p>
-<p>を掛けた <b>元画像の画素座標</b>で計算するので、間引いても幾何は変わらない。</p>
-<p style="margin:2px 0 2px 12px">• 入力検証は無い(2-D でなければ添字で失敗)。NaN 深度は <code style="color:#22d3bf">z &gt; 0</code> が偽で捨てられる。</p>
-<p style="margin:2px 0 2px 12px">• 点は行優先の順に並ぶが、行・列の情報は残らない。格子構造を保ちたいなら</p>
-<p><code style="color:#22d3bf">depth_to_organized_points</code>。</p>
-<p>後段: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">estimate_point_normals</code> / <code style="color:#22d3bf">icp_point2plane</code>。逆写像は <code style="color:#22d3bf">project_points</code>、TSDF 化は <code style="color:#22d3bf">tsdf_from_depth</code>。</p>
+<p>Aus der Tiefe z des Pixels (Zeile v, Spalte u) werden <code style="color:#22d3bf">X = (u − cx)·z/fx</code>, <code style="color:#22d3bf">Y = (v − cy)·z/fy</code>, <code style="color:#22d3bf">Z = z</code> gebildet. Rückgabewert <code style="color:#22d3bf">(N,3)</code> float64; die Spalten sind <b>Kamerakoordinaten (X, Y, Z)</b> (gleiche Einheit wie die Tiefe). Pixel mit z von 0 oder kleiner werden verworfen, daher ist N höchstens die Pixelanzahl (Konvention: ungültige Tiefe wird durch 0 dargestellt).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fx, fy, cx, cy</code>: Brennweite und Hauptpunkt in Pixeln. Gleiche Konvention wie K in <code style="color:#22d3bf">project_points</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">stride</code>: Zeilen und Spalten werden auf jedes <code style="color:#22d3bf">stride</code>-te Pixel ausgedünnt. u, v werden aus dem Index nach dem Ausdünnen mal <code style="color:#22d3bf">stride</code></p>
+<p>als <b>Pixelkoordinaten des Originalbilds</b> berechnet, daher ändert das Ausdünnen die Geometrie nicht.</p>
+<p style="margin:2px 0 2px 12px">• Keine Eingabeprüfung (ist die Eingabe nicht 2-D, scheitert die Indizierung). NaN-Tiefen werden verworfen, da <code style="color:#22d3bf">z &gt; 0</code> falsch ist.</p>
+<p style="margin:2px 0 2px 12px">• Die Punkte liegen in zeilenweiser Reihenfolge vor, aber die Zeilen-/Spalteninformation bleibt nicht erhalten. Wer die Gitterstruktur behalten will, nimmt</p>
+<p><code style="color:#22d3bf">depth_to_organized_points</code>.</p>
+<p>Nachgelagert: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">estimate_point_normals</code> / <code style="color:#22d3bf">icp_point2plane</code>. Inverse Abbildung: <code style="color:#22d3bf">project_points</code>; TSDF-Umwandlung: <code style="color:#22d3bf">tsdf_from_depth</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

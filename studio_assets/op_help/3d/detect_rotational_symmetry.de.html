@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8))</code> (die Implementierung direkt: <code style="color:#22d3bf">import symmetry3d; symmetry3d.detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8))</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;detect_rotational_symmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wählt die beste Rotationssymmetrie (Achse × Ordnung) mit den PCA-Hauptachsen als Kandidatenachsen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>→ dict{axis_point, axis_dir, order, score, table, margin}。score が小さいほど対称。</p>
-<p>★ <code style="color:#22d3bf">margin</code>(2 位との差)を必ず併読すること。理由は <code style="color:#22d3bf">detect_reflection_symmetry</code> と同じ —— 候補が団子なら選択はくじ引きで、そのとき先に潰れるのは score ではなく margin である。回転対称は候補が 3 軸 x order なので<b>同じ軸の別 order が 2 位に来る</b>ことも多く、その場合の margin の小ささは「order が決まらない」を意味する(軸は決まっている)。<code style="color:#22d3bf">table</code> に全候補が入っているので、軸だけ固定して order を見直せる。</p>
-<p>★ 候補は PCA の 3 軸だけ。真の対称軸が主軸のどれとも一致しない形では見つからず、しかも黙って最良を返す。</p>
+<p>→ dict{axis_point, axis_dir, order, score, table, margin}. Je kleiner der score, desto symmetrischer.</p>
+<p>★ <code style="color:#22d3bf">margin</code> (Abstand zu Platz 2) immer mitlesen. Der Grund ist derselbe wie bei <code style="color:#22d3bf">detect_reflection_symmetry</code>: Liegen die Kandidaten dicht beieinander, ist die Wahl ein Losentscheid, und was dabei zuerst kollabiert, ist nicht score, sondern margin. Bei Rotationssymmetrie sind die Kandidaten 3 Achsen x order, daher <b>landet oft eine andere order derselben Achse auf Platz 2</b>, und dann bedeutet eine kleine margin &quot;die order ist nicht bestimmt&quot; (die Achse ist bestimmt). <code style="color:#22d3bf">table</code> enthält alle Kandidaten, sodass man nur die Achse fixieren und die order neu prüfen kann.</p>
+<p>★ Kandidaten sind nur die 3 PCA-Achsen. Bei einer Form, deren wahre Symmetrieachse mit keiner Hauptachse übereinstimmt, wird sie nicht gefunden, und trotzdem wird stillschweigend die beste zurückgegeben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

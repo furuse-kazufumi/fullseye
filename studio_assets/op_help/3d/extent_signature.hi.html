@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.extent_signature(points) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import descriptors3d; descriptors3d.extent_signature(points) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;extent_signature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>PCA principal axes (covariance के eigenvectors) की दिशा में फैलाव का अनुपात लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>共分散行列の固有値は回転に不変。ここでは固有値の平方根(= 各主軸方向の標準偏差、長さの次元)を降順に並べ、総和 1 に正規化して (3,) ベクトルにする。これにより絶対スケールが消え、<b>回転・平行移動・スケールに不変</b>な「形の細長さ」指標になる。</p>
-<p style="margin:2px 0 2px 12px">• 等方的な形状(球・立方体)→ 3 成分がほぼ等値 [~0.33, ~0.33, ~0.33]</p>
-<p style="margin:2px 0 2px 12px">• 細長い棒 → 1 成分が突出 [~0.9, ~0.05, ~0.05]</p>
+<p>covariance matrix के eigenvalues rotation से नहीं बदलते। यहाँ eigenvalues के square root (= हर principal axis की दिशा में standard deviation, लंबाई की dimension वाला) घटते क्रम में रखकर योग 1 पर normalise किए जाते हैं और (3,) vector बनता है। इससे absolute scale हट जाता है और यह <b>rotation, translation और scale से अपरिवर्तित</b> &quot;आकार की पतली-लंबाई&quot; का सूचकांक बनता है।</p>
+<p style="margin:2px 0 2px 12px">• isotropic आकार (गोला, घन) → 3 components लगभग बराबर [~0.33, ~0.33, ~0.33]</p>
+<p style="margin:2px 0 2px 12px">• पतली लंबी छड़ → 1 component उभरा हुआ [~0.9, ~0.05, ~0.05]</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>点群。N &gt;= 3 が必要(共分散を意味のある形で作るため)。</p>
+<p>point cloud। N &gt;= 3 ज़रूरी है (covariance को सार्थक रूप में बनाने के लिए)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (3,)</p>
-<p>降順・総和 1 に正規化した広がりベクトル。</p>
+<p>घटते क्रम में और योग 1 पर normalised extent vector।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -5,13 +5,12 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원판 이미지 → Zernike 계수(광학/파면 계측의 <b>극좌표 곡면 근사</b>). 반환값 {(n,m): coef}.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>直交多項式で円板上の曲面(波面収差、レンズ形状)を少数係数に。tilt/defocus/astigmatism/ coma/spherical 等が特定の (n,m) に対応し、回転で m が混ざる(帯域=回転不変)。</p>
-<p>瞳(単位円板 ρ=1)は既定で画像中心 <code style="color:#22d3bf">((H-1)/2, (W-1)/2)</code>、半径 <code style="color:#22d3bf">min(H, W)/2 - 1</code> 画素に置かれる。画像の瞳がこれと違うなら <code style="color:#22d3bf">center=(row, col)</code> と <code style="color:#22d3bf">radius</code>(画素)で渡す —— 渡さないと半径の食い違いがそのまま低次モードへの漏れになる(129×129 で瞳半径 (H-1)/2 の純 defocus を既定で読むと (2,0)=0.984 / (0,0)=−0.015、<code style="color:#22d3bf">radius=(H-1)/2</code> を渡せば 0.999999)。瞳の円が画像からはみ出す <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">radius</code> は ValueError。</p>
-<p>honest 開示(2026-10-07 訂正): 以前ここには「離散サンプリング(nr=48, nt=72)由来の最大 ~10% のクロストーク、nr/nt を上げれば減る」と書いていたが、原因は解像度ではなかった。瞳の半径・中心が合っていて瞳の外にも値が続く画像なら既定の nr/nt で係数はほぼ 1(129×129 で 0.999999)に戻る。漏れの実際の原因は</p>
-<p style="margin:2px 0 2px 12px">(1) 上記の瞳半径・中心の食い違い(nr/nt を上げても 1 桁も減らない)と、(2) 瞳の外が 0 の画像で</p>
-<p>いちばん外のリング(ρ=1)が縁に乗り、双一次補間が外側の 0 を吸い込むこと(examples/poc_zernike_aberrations.py の実測)。</p>
-<p>Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ・瞳が画像からはみ出す。</p>
+<p>직교 다항식으로 원판 위의 곡면(파면 수차, 렌즈 형상)을 소수의 계수로. tilt/defocus/astigmatism/ coma/spherical 등이 특정 (n,m)에 대응하며, 회전으로 m이 섞인다(대역=회전 불변).</p>
+<p>동공(단위 원판 ρ=1)은 기본값으로 영상 중심 <code style="color:#22d3bf">((H-1)/2, (W-1)/2)</code>, 반경 <code style="color:#22d3bf">min(H, W)/2 - 1</code> 화소에놓인다. 영상의 동공이 이와 다르면 <code style="color:#22d3bf">center=(row, col)</code>과 <code style="color:#22d3bf">radius</code>(화소)로 넘긴다 —— 넘기지 않으면반경의 어긋남이 그대로 저차 모드로의 누설이 된다(129×129에서 동공 반경 (H-1)/2의 순수 defocus를기본값으로 읽으면 (2,0)=0.984 / (0,0)=−0.015, <code style="color:#22d3bf">radius=(H-1)/2</code>를 넘기면 0.999999). 동공의 원이 영상에서삐져나오는 <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">radius</code>는 ValueError.</p>
+<p>honest 공시(2026-10-07 정정): 이전에는 여기에 &quot;이산 샘플링(nr=48, nt=72) 유래의 최대 ~10%의크로스토크, nr/nt를 올리면 줄어든다&quot;고 썼으나, 원인은 해상도가 아니었다. 동공의 반경·중심이맞고 동공 밖에도 값이 이어지는 영상이라면 기본 nr/nt로 계수는 거의 1(129×129에서 0.999999)로 돌아온다. 누설의 실제 원인은</p>
+<p style="margin:2px 0 2px 12px">(1) 위의 동공 반경·중심의 어긋남(nr/nt를 올려도 1 자릿수도 줄지 않는다)과, (2) 동공 밖이 0인 영상에서</p>
+<p>가장 바깥 링(ρ=1)이 가장자리에 걸려 쌍선형 보간이 바깥쪽의 0을 빨아들이는 것(examples/poc_zernike_aberrations.py의 실측).</p>
+<p>Raises ValueError: 입력이 2-D가 아님·2x2 미만·NaN/Inf/float32 자릿수 넘침·동공이 영상에서 삐져나옴.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

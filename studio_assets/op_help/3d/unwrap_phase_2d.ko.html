@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.unwrap_phase_2d(wrapped, mask=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import fringe; fringe.unwrap_phase_2d(wrapped, mask=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;unwrap_phase_2d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>감긴 위상을 skimage.restoration.unwrap_phase 로 연속 위상으로 펼칩니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>wrapped: wrapped_phase の出力(2D)。NaN を含んでよい(無効画素として扱う)。</p>
-<p>mask:    省略可。True = 有効画素(numpy masked array の慣習とは逆にした直感的な向き)。</p>
-<p>NaN 画素と mask=False 画素は無効としてアンラップから除外し、出力では NaN を返す。</p>
-<p>返り値: 連続位相(2D float)。無効画素は NaN。大域オフセット(+2πm)の不定性は残る。</p>
-<p>手順: 無効画素(<code style="color:#22d3bf">wrapped</code> の非有限 ∪ <code style="color:#22d3bf">mask == False</code>)が無ければ <code style="color:#22d3bf">skimage.restoration.unwrap_phase(arr)</code> をそのまま呼ぶ。あれば無効画素を 0 で埋めた <code style="color:#22d3bf">numpy.ma</code> の masked array として渡し(skimage は masked 画素を展開から除外する)、出力の無効画素を NaN に戻す。</p>
-<p>検証: scikit-image が import できない環境では <code style="color:#22d3bf">RuntimeError</code>(<code style="color:#22d3bf">ImportError</code> ではない)。<code style="color:#22d3bf">wrapped</code> が 2-D でない、<code style="color:#22d3bf">mask</code> の形が違う、<b>全画素が無効</b> (アンラップする画素が無い)は <code style="color:#22d3bf">ValueError</code>。</p>
-<p>前提(Itoh の条件): 隣接する有効画素の真の位相差が <code style="color:#22d3bf">π</code> 未満。急な段差・深い穴・オクルージョン境界では 2π の飛びを誤り、その先の領域全体が <code style="color:#22d3bf">2πm</code> ずれる。マスクで島に分かれた領域どうしの相対次数は決まらない(島ごとに独立なオフセット)。絶対性が要るときは <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code> の画素独立な次数確定を使う。</p>
-<p>使いどころ: <code style="color:#22d3bf">wrapped_phase</code> → 本 op → <code style="color:#22d3bf">phase_to_height</code>(同モジュールの関数、<code style="color:#22d3bf">height = k (phase - ref_phase)</code>)。参照面を同じ手順で展開して引けば大域オフセットは相殺される。<code style="color:#22d3bf">decode_fringe</code> はこの連鎖を 1 回で行う。</p>
+<p>wrapped: wrapped_phase의 출력(2D). NaN을 포함해도 된다(무효 화소로 취급).</p>
+<p>mask:    생략 가능. True = 유효 화소(numpy masked array의 관례와는 반대인 직관적인 방향).</p>
+<p>NaN 화소와 mask=False 화소는 무효로 보아 언랩에서 제외하고, 출력에서는 NaN을 반환한다.</p>
+<p>반환값: 연속 위상(2D float). 무효 화소는 NaN. 대역 오프셋(+2πm)의 부정성은 남는다.</p>
+<p>절차: 무효 화소(<code style="color:#22d3bf">wrapped</code>의 비유한 ∪ <code style="color:#22d3bf">mask == False</code>)가 없으면 <code style="color:#22d3bf">skimage.restoration.unwrap_phase(arr)</code>를 그대로 호출한다. 있으면 무효 화소를 0으로채운 <code style="color:#22d3bf">numpy.ma</code>의 masked array로 넘기고(skimage는 masked 화소를 언랩에서제외한다), 출력의 무효 화소를 NaN으로 되돌린다.</p>
+<p>검증: scikit-image를 import할 수 없는 환경에서는 <code style="color:#22d3bf">RuntimeError</code>(<code style="color:#22d3bf">ImportError</code> 가 아님). <code style="color:#22d3bf">wrapped</code>가 2-D가 아님, <code style="color:#22d3bf">mask</code>의 형상이 다름, <b>모든 화소가 무효</b> (언랩할 화소가 없음)은 <code style="color:#22d3bf">ValueError</code>.</p>
+<p>전제(Itoh의 조건): 인접한 유효 화소의 참 위상 차가 <code style="color:#22d3bf">π</code> 미만. 급한 계단·깊은 구멍· 오클루전 경계에서는 2π 점프를 잘못 판단하여, 그 너머의 영역 전체가 <code style="color:#22d3bf">2πm</code> 어긋난다. 마스크로 섬으로 나뉜 영역끼리의 상대 차수는 정해지지 않는다(섬마다 독립된오프셋). 절대성이 필요할 때는 <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code>의화소 독립적인 차수 확정을 사용한다.</p>
+<p>사용처: <code style="color:#22d3bf">wrapped_phase</code> → 본 op → <code style="color:#22d3bf">phase_to_height</code>(같은 모듈의함수, <code style="color:#22d3bf">height = k (phase - ref_phase)</code>). 참조면을 같은 절차로 언랩해서 빼면대역 오프셋은 상쇄된다. <code style="color:#22d3bf">decode_fringe</code>는 이 연쇄를 1 회에 수행한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

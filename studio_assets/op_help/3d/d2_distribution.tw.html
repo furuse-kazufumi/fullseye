@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.d2_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import descriptors3d; descriptors3d.d2_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;d2_distribution&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>隨機點對之間歐氏距離的分布(Osada 2002 的 D2)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>N 点から <code style="color:#22d3bf">samples</code> 組の相異なる点対 (i, j) を乱択し、その距離を集計する。距離は<b>平均距離で割って正規化</b>するため、回転・平行移動・<b>スケール</b>に不変。固定レンジ [0, _D2_MAX] の正規化ヒストグラム (bins,) を返す(総和 1)。</p>
+<p>從 N 個點中隨機抽取 <code style="color:#22d3bf">samples</code> 組互不相同的點對 (i, j),統計其距離。距離<b>除以平均距離進行正規化</b>,因此對旋轉、平移、<b>尺度</b>不變。回傳固定範圍 [0, _D2_MAX] 的正規化直方圖 (bins,)(總和 1)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>点群。N &gt;= 2 が必要。</p>
+<p>點雲。需要 N &gt;= 2。</p>
 <p>bins : int</p>
-<p>ヒストグラムの bin 数。</p>
+<p>直方圖的 bin 數。</p>
 <p>samples : int</p>
-<p>乱択する点対の数。多いほど分散が下がる(サンプリング誤差 ~ 1/sqrt(samples))。</p>
+<p>隨機抽取的點對數。越多變異數越小(抽樣誤差 ~ 1/sqrt(samples))。</p>
 <p>seed : int</p>
-<p>乱数シード。同 seed・同点群なら決定論的に同一。</p>
+<p>亂數種子。相同 seed、相同點雲則決定性地相同。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (bins,)</p>
-<p>正規化距離ヒストグラム。</p>
+<p>正規化距離直方圖。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

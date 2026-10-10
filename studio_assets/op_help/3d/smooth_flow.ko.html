@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.smooth_flow(pts0, pts1, k: &#x27;int&#x27; = 10, n_iter: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;smooth_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>최근접 플로를 이웃 평균으로 국소 평활한 정칙화 플로 (N, 3) 를 돌려줍니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">nearest_neighbor_flow</code> の生フロー(最近傍対応ゆえノイズが乗る)を、<code style="color:#22d3bf">pts0</code> 空間の k 近傍トポロジ(自身を含む、1 度だけ構築)で反復平均する。ゼロ平均ノイズを抑えつつ滑らかな変位場は概ね保存する(Jacobi 反復 = フロー場のラプラシアン平滑化)。線形場は対称近傍で不偏、曲率のある場は僅かに縮む(honest な平滑化バイアス)。</p>
+<p><code style="color:#22d3bf">nearest_neighbor_flow</code> 의 생 플로(최근접 대응이므로 잡음이 실린다)를, <code style="color:#22d3bf">pts0</code> 공간의 k 근방 토폴로지(자신 포함, 1 번만 구축)로 반복 평균한다. 영평균 잡음을 억제하면서 매끄러운 변위장은 대체로 보존한다(Jacobi 반복 = 플로 장의 라플라시안 평활화). 선형 장은 대칭 근방에서 불편, 곡률이 있는 장은약간 줄어든다(honest 한 평활화 바이어스).</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群。</p>
-<p>pts1: (M, 3) 時刻 1 の点群。</p>
-<p>k: 平均に使う近傍数(自身含む)。</p>
-<p>n_iter: 平滑化反復回数。</p>
+<p>pts0: (N, 3) 시각 0 의 점군.</p>
+<p>pts1: (M, 3) 시각 1 의 점군.</p>
+<p>k: 평균에 쓰는 근방 수(자신 포함).</p>
+<p>n_iter: 평활화 반복 횟수.</p>
 <p>Returns:</p>
-<p>(N, 3) 平滑化変位ベクトル場。</p>
+<p>(N, 3) 평활화된 변위 벡터장.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正、または pts0 非空なのに pts1 が空。</p>
+<p>ValueError: 형상 부정, 또는 pts0 이 비어 있지 않은데 pts1 이 비어 있음.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

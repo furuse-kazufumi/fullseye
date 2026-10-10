@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cylinder_sdf(grid, center, axis, radius, height)</code> (to call the implementation directly, <code style="color:#22d3bf">import sdf_ops; sdf_ops.cylinder_sdf(grid, center, axis, radius, height)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;cylinder_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Exact</b> signed distance field of a finite-length cylinder (flat caps at both ends) (negative inside, positive outside).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>軸方向の距離 <code style="color:#22d3bf">t</code> と軸からの半径 <code style="color:#22d3bf">r</code> に分け、<code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code> として <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>、<code style="color:#22d3bf">inside = min(max(q), 0)</code>、<code style="color:#22d3bf">sdf = outside + inside</code>。これは <code style="color:#22d3bf">box_sdf</code> と同じ Quilez 流の構成を「(半径, 軸)の 2-D 断面」に適用したもので、側面・蓋・角(縁)のいずれに対しても真のユークリッド距離になる。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: 円柱の<b>中心</b>(端面ではなく重心。要素数 3)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis</code>: 軸の向き(要素数 3、零ベクトル・NaN は拒否。長さは自動正規化)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 半径 &gt; 0 相当のスカラ(<code style="color:#22d3bf">0</code> は軸線そのもの、負は拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>: 全長のスカラ(<code style="color:#22d3bf">center</code> から ±height/2。負は拒否)。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。</p>
-<p>使いどころ: <b>貫通穴は <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b>(<code style="color:#22d3bf">height</code> を部品より長くして端面の縁を残さない)。ボス・ピン・シャフトは <code style="color:#22d3bf">sdf_union</code>。無限長の円柱が要るなら <code style="color:#22d3bf">height</code> を十分大きく取る(端面が評価域の外に出れば側面だけが効く)。</p>
+<p>Split into the axial distance <code style="color:#22d3bf">t</code> and the radius from the axis <code style="color:#22d3bf">r</code>, set <code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code>, and take <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>, <code style="color:#22d3bf">inside = min(max(q), 0)</code>, <code style="color:#22d3bf">sdf = outside + inside</code>. This applies the same Quilez-style construction as <code style="color:#22d3bf">box_sdf</code> to &quot;the 2-D cross-section (radius, axis)&quot;, so it is the true Euclidean distance to the side, the caps and the corners (rims) alike.</p>
+<p>Arguments and validation (<code style="color:#22d3bf">ValueError</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: float array <code style="color:#22d3bf">(..., 3)</code> whose last axis is 3.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: the <b>center</b> of the cylinder (the centroid, not an end face; 3 elements).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis</code>: axis direction (3 elements, zero vector and NaN are rejected; length is normalised automatically).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: scalar equivalent to radius &gt; 0 (<code style="color:#22d3bf">0</code> is the axis line itself, negative is rejected).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>: scalar full length (±height/2 from <code style="color:#22d3bf">center</code>; negative is rejected).</p>
+<p>Returns: float64 of shape <code style="color:#22d3bf">grid.shape[:-1]</code>.</p>
+<p>Where to use: <b>a through hole is <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b> (make <code style="color:#22d3bf">height</code> longer than the part so no rim of the end face remains). Bosses, pins and shafts use <code style="color:#22d3bf">sdf_union</code>. If you need an infinitely long cylinder, take <code style="color:#22d3bf">height</code> large enough (once the end faces are outside the evaluation domain, only the side matters).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

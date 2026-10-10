@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.extract_surface_points(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tsdf_fusion; tsdf_fusion.extract_surface_points(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;extract_surface_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>TSDF 영교차에서 표면점 (M,3) 을 추출(marching cubes 불필요, 선형 보간).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>観測済み(weight&gt;0)の隣接 voxel 対で TSDF 符号が変わる辺を、その 2 中心の間で <code style="color:#22d3bf">alpha = t_a/(t_a - t_b)</code> により線形補間して交点(表面点)を出す。両端とも weight&gt;0 の辺のみ採用(未観測の初期値 1.0 との偽の交差を作らない=honest)。x/y/z 3 軸の全辺を走査。交差が無ければ空 (0,3) を返す(詐称せず honest な空返し)。</p>
+<p>관측된(weight&gt;0) 인접 voxel 쌍에서 TSDF 부호가 바뀌는 변을, 그 2 중심 사이에서 <code style="color:#22d3bf">alpha = t_a/(t_a - t_b)</code> 로 선형 보간하여 교점(표면점)을 낸다. 양 끝 모두 weight&gt;0 인변만 채택(미관측 초기값 1.0 과의 가짜 교차를 만들지 않음 = honest). x/y/z 3 축의 모든 변을 주사. 교차가 없으면 빈 (0,3) 을 반환한다(속이지 않고 honest 하게 빈 값을 반환).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

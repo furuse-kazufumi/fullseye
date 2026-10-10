@@ -6,15 +6,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Point-set to point-set matching (structure = point cloud × method = NCC, transform = splat). Locates the model within the scene.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>手順: <code style="color:#22d3bf">pts_scene</code> と <code style="color:#22d3bf">pts_model</code> を <b>同じ</b> <code style="color:#22d3bf">bounds=(lo,hi)</code> と <code style="color:#22d3bf">size</code> で <code style="color:#22d3bf">points_to_voxel</code>(σ=<code style="color:#22d3bf">smooth</code> voxel の平滑つき)に通し、model 側は <code style="color:#22d3bf">&gt; 5%·max</code> の bbox を切り出してテンプレにし、<code style="color:#22d3bf">accel_match.ncc_locate_3d</code> で NCC 定位する。返り値 <code style="color:#22d3bf">[NCC, z, y, x]</code> float64(NCC ∈ [−1,1]、位置は voxel index、±2 近傍重心でサブボクセル)。</p>
-<p style="margin:2px 0 2px 12px">• 位置は <b>切り出した bbox テンプレの中心</b>が scene voxel のどこに載るか。world 座標に戻すには</p>
-<p><code style="color:#22d3bf">lo + idx/(size−1)·(hi−lo)</code>(<code style="color:#22d3bf">points_to_voxel</code> の格子)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code> は必須(<code style="color:#22d3bf">_lo_hi</code> で検証、不正は ValueError)。両雲を含む範囲にしないと範囲外の</p>
-<p>点が端 voxel に clip される。</p>
-<p style="margin:2px 0 2px 12px">• model の voxel が全 0 なら <code style="color:#22d3bf">[0,0,0,0]</code>。</p>
-<p style="margin:2px 0 2px 12px">• 並進のみ。回転・スケールは <code style="color:#22d3bf">match_pca</code> / <code style="color:#22d3bf">match_logpolar_z</code> で先に合わせる。</p>
-<p>後段: <code style="color:#22d3bf">icp_point2point_3d</code> の <code style="color:#22d3bf">init_t</code>、<code style="color:#22d3bf">refine_translation_lk</code>。</p>
+<p>Procedure: <code style="color:#22d3bf">pts_scene</code> and <code style="color:#22d3bf">pts_model</code> are passed, with the <b>same</b> <code style="color:#22d3bf">bounds=(lo,hi)</code> and <code style="color:#22d3bf">size</code>, through <code style="color:#22d3bf">points_to_voxel</code> (with smoothing of σ=<code style="color:#22d3bf">smooth</code> voxels); on the model side the bbox of <code style="color:#22d3bf">&gt; 5%·max</code> is cropped as the template, and NCC localisation is done with <code style="color:#22d3bf">accel_match.ncc_locate_3d</code>. Returns <code style="color:#22d3bf">[NCC, z, y, x]</code> float64 (NCC ∈ [−1,1]; the position is a voxel index, refined to subvoxel by the centroid of the ±2 neighbourhood).</p>
+<p style="margin:2px 0 2px 12px">• The position is where in the scene voxels the <b>centre of the cropped bbox template</b> lands. To go back to world coordinates:</p>
+<p><code style="color:#22d3bf">lo + idx/(size−1)·(hi−lo)</code> (the grid of <code style="color:#22d3bf">points_to_voxel</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code> is required (validated by <code style="color:#22d3bf">_lo_hi</code>; invalid gives ValueError). Unless the range contains both clouds, out-of-range</p>
+<p>points are clipped to the edge voxels.</p>
+<p style="margin:2px 0 2px 12px">• If the model&#x27;s voxels are all 0, <code style="color:#22d3bf">[0,0,0,0]</code>.</p>
+<p style="margin:2px 0 2px 12px">• Translation only. Align rotation and scale first with <code style="color:#22d3bf">match_pca</code> / <code style="color:#22d3bf">match_logpolar_z</code>.</p>
+<p>Downstream: <code style="color:#22d3bf">init_t</code> of <code style="color:#22d3bf">icp_point2point_3d</code>, <code style="color:#22d3bf">refine_translation_lk</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

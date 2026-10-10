@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_ellipsoid(points) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_ellipsoid(points) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;fit_ellipsoid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對點群代數擬合任意姿態的三軸橢球,回傳 <code style="color:#22d3bf">{center, axes, radii, residual}</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>一般二次曲面 <code style="color:#22d3bf">xᵀA x + b·x + c = 0</code> を、楕円体を保証する拘束 <code style="color:#22d3bf">4J − I² = 1</code> の下で一般化固有問題 <code style="color:#22d3bf">Sr v1 = λ C v1</code>(<code style="color:#22d3bf">scipy.linalg.eig</code>)として解く(Li &amp; Griffiths 2004)。各実固有ベクトルを楕円体へ復元し、<b>正定値(= 実在する楕円体)へ復元でき残差 RMS が最小</b> のものを採用する(復元時の正定値検査そのものが厳密な楕円体判定)。初期値不要・決定論・大域解。数値安定化のため点群を重心と RMS 半径で無次元化してから解き、パラメータを world 座標へ戻す。</p>
+<p>將一般二次曲面 <code style="color:#22d3bf">xᵀA x + b·x + c = 0</code> 在保證為橢球的約束 <code style="color:#22d3bf">4J − I² = 1</code> 下, 作為廣義特徵問題 <code style="color:#22d3bf">Sr v1 = λ C v1</code>(<code style="color:#22d3bf">scipy.linalg.eig</code>)求解(Li &amp; Griffiths 2004)。將各實特徵向量還原為橢球,採用<b>能還原為正定(= 實際存在的橢球)且殘差 RMS 最小</b> 的那個(還原時的正定檢查本身就是嚴格的橢球判定)。不需初值、決定性、全域解。為了數值穩定,先以質心與 RMS 半徑將點雲無因次化後再求解,再把參數轉回 world 座標。</p>
 <p>Args:</p>
-<p>points: (N,3) 点群(最低 10 点)。外れ値には無防備(必要なら事前に inlier 選別)。</p>
+<p>points: (N,3) 點雲(至少 10 點)。對離群值毫無防禦(如有需要請事先篩選 inlier)。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3,3) 列=主軸(半径降順), &quot;radii&quot;: (3,) 半径(降順), &quot;residual&quot;: float Taubin 近似の点-面距離 RMS}</code>。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;center&quot;: (3,), &quot;axes&quot;: (3,3) 行=主軸(半徑遞減), &quot;radii&quot;: (3,) 半徑(遞減), &quot;residual&quot;: float Taubin 近似的點-面距離 RMS}</code>。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正/点数不足/正定値な楕円体解が得られない(平面状の退化・</p>
-<p>非楕円面・被覆不足)など fail-closed。</p>
+<p>ValueError: 形狀不正確/點數不足/得不到正定的橢球解(平面狀退化、</p>
+<p>非橢球面、覆蓋不足)等,fail-closed。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

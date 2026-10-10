@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 (N,3) → (vertices(V,3), faces(F,3)) 의 표면 메시(스크린드 Poisson 경량 근사).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>点群を size³ の voxel 格子へ splat し、等値面場を作って marching cubes で三角形メッシュ化する。出力頂点は入力点群と同じ<b>世界座標</b>(bbox から逆写像)。bounds は点群 bbox(+σ 依存の padding)。</p>
-<p>2 モード:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals is None</code>: <b>占有(occupancy)</b> をガウス平滑・[0,1] 正規化し、<code style="color:#22d3bf">iso</code> で二値化した表面バンドの内部を <code style="color:#22d3bf">binary_fill_holes</code> で充填してから再平滑し、単一の外殻を <code style="color:#22d3bf">iso</code> で抜く。占有(unsigned)場は内外対称で、平滑した薄殻の等値面は内スロープ・外スロープの二か所を通り <b>同心二重殻</b>になってしまう。内部充填で内外対称性を破ることで、<b>閉じた</b>表面サンプルからは(格子/σ に対し十分密なら)単一殻が得られる。開いた曲面は充填されず薄い面のまま。疎すぎる/σ が小さいと隙間から充填が漏れ二重殻へ縮退しうる(厳密な内外判定が要るなら <code style="color:#22d3bf">normals</code> 指定を使う)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> 指定: 向き付き点の <b>winding number</b> で内外指標場を作りガウス平滑、<code style="color:#22d3bf">iso</code> (既定 0.5)で表面抜き。表面のみサンプルでも内部を埋めて閉曲面を得られる。</p>
+<p>점군을 size³의 voxel 격자로 splat하고, 등치면 장을 만들어 marching cubes로 삼각형 메시화한다. 출력 정점은 입력 점군과 같은 <b>월드 좌표</b>(bbox에서 역사상). bounds는 점군 bbox(+σ 의존 padding).</p>
+<p>2 모드:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals is None</code>: <b>점유(occupancy)</b>를 가우스 평활·[0,1] 정규화하고, <code style="color:#22d3bf">iso</code>로 이진화한표면 밴드의 내부를 <code style="color:#22d3bf">binary_fill_holes</code>로 채운 뒤 다시 평활하여, 단일 외곽 껍질을 <code style="color:#22d3bf">iso</code>로 뽑는다. 점유(unsigned) 장은 내외 대칭이어서, 평활한 얇은 껍질의 등치면은 안쪽 경사·바깥쪽 경사의 두 곳을 지나 <b>동심 이중 껍질</b>이 되어 버린다. 내부 채움으로 내외 대칭성을 깨면, <b>닫힌</b> 표면 샘플로부터는(격자/σ에 대해 충분히 조밀하면) 단일 껍질을 얻는다. 열린 곡면은 채워지지 않고 얇은 면 그대로. 너무 성기거나/σ가작으면 틈으로 채움이 새어 이중 껍질로 퇴화할 수 있다(엄밀한 내외 판정이 필요하면 <code style="color:#22d3bf">normals</code> 지정을 쓴다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> 지정: 방향이 있는 점의 <b>winding number</b>로 내외 지표 장을 만들어 가우스 평활하고, <code style="color:#22d3bf">iso</code> (기본값 0.5)로 표면을 뽑는다. 표면만의 샘플이라도 내부를 채워 닫힌 곡면을 얻을 수 있다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
-<p>入力点群。</p>
+<p>입력 점군.</p>
 <p>size : int</p>
-<p>voxel 格子の一辺(既定 64)。大きいほど精細だが O(size³)。</p>
+<p>voxel 격자의 한 변의 길이(기본값 64). 클수록 정밀하지만 O(size³).</p>
 <p>sigma : float</p>
-<p>ガウス平滑の標準偏差(voxel 単位、既定 1.0)。padding は ⌈3σ⌉+2 voxel を自動確保。</p>
+<p>가우스 평활의 표준편차(voxel 단위, 기본값 1.0). padding은 ⌈3σ⌉+2 voxel을 자동 확보.</p>
 <p>iso : float</p>
-<p>等値面レベル。正規化場 [0,1] 上の値(既定 0.5)。</p>
+<p>등치면 레벨. 정규화 장 [0,1] 위의 값(기본값 0.5).</p>
 <p>normals : array_like (N,3) or None</p>
-<p>点法線。与えると winding number モード、None なら占有モード。</p>
+<p>점 법선. 주면 winding number 모드, None이면 점유 모드.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>vertices : numpy.ndarray (V,3) float64</p>
-<p>世界座標の頂点。</p>
+<p>월드 좌표의 정점.</p>
 <p>faces : numpy.ndarray (F,3) int64</p>
-<p>三角形の頂点インデックス(vertices を参照)。</p>
+<p>삼각형의 정점 인덱스(vertices를 참조).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点数不足(&lt;4)、size が小さすぎる、占有/指標場が薄く iso が場の値域外、など。</p>
+<p>점 수 부족(&lt;4), size가 너무 작음, 점유/지표 장이 얇아 iso가 장의 값 범위 밖 등.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

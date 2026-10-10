@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_fft_highpass(vol, cutoff, spacing=None)</code>(要直接调用实现,<code style="color:#22d3bf">import volfreq; volfreq.vol_fft_highpass(vol, cutoff, spacing=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;vol_fft_highpass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高斯高通 —— <code style="color:#22d3bf">1 - lowpass</code> 的精确补(两者相加还原)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>to the input to float precision, proven in tests). Removes the DC level and slow drift, keeps edges/texture. Output is signed (mean ~ 0).</p>
-<p>伝達関数は <code style="color:#22d3bf">1 - exp(-|f|^2 / (2 cutoff^2))</code>。DC(<code style="color:#22d3bf">f = 0</code>)は係数 0 なので平均輝度は完全に落ち、<code style="color:#22d3bf">|f| = cutoff</code> で <code style="color:#22d3bf">1 - 0.61 ≈ 0.39</code>、高周波ほど 1 に近づく。返り値は入力と同じ <code style="color:#22d3bf">(D, H, W)</code> の float64 で <b>符号付き</b>(負の値を含む)。<code style="color:#22d3bf">[0, 1]</code> 前提の後段(表示・<code style="color:#22d3bf">vol_window_level</code> 等)に渡すなら <code style="color:#22d3bf">vol_stretch</code> で正規化するか、<code style="color:#22d3bf">vol + highpass</code> の形で使う。</p>
-<p>引数: <code style="color:#22d3bf">cutoff</code> は正の有限値。<code style="color:#22d3bf">spacing=None</code> で cycles/voxel、<code style="color:#22d3bf">spacing</code> (<code style="color:#22d3bf">(sz, sy, sx)</code> または <code style="color:#22d3bf">volio.VolumeMeta</code>)を渡すと cycles/mm。</p>
-<p>検証(<code style="color:#22d3bf">ValueError</code>): <code style="color:#22d3bf">vol_fft_lowpass</code> と同じ(3-D でない / NaN・Inf / <code style="color:#22d3bf">MAX_VOXELS</code> 超 / cutoff・spacing 不正)。</p>
-<p>使いどころ: 照明むら・厚みドリフト・背景勾配の除去(<code style="color:#22d3bf">vol_fft_lowpass</code> の結果を引くのと同値)。周期的とみなす FFT の性質上、面どうしの輝度差は wrap で漏れる。</p>
+<p>在浮点精度内与输入一致,已在测试中证明)。去除 DC 分量和缓慢漂移,保留边缘/纹理。输出带符号(均值 ~ 0)。</p>
+<p>传递函数为 <code style="color:#22d3bf">1 - exp(-|f|^2 / (2 cutoff^2))</code>。DC(<code style="color:#22d3bf">f = 0</code>)系数为 0,因此平均亮度被完全去除,在 <code style="color:#22d3bf">|f| = cutoff</code> 处为 <code style="color:#22d3bf">1 - 0.61 ≈ 0.39</code>,频率越高越接近 1。返回值是与输入相同 <code style="color:#22d3bf">(D, H, W)</code> 的 float64,且 <b>带符号</b>(含负值)。若要传给以 <code style="color:#22d3bf">[0, 1]</code> 为前提的后级(显示、<code style="color:#22d3bf">vol_window_level</code> 等),请用 <code style="color:#22d3bf">vol_stretch</code> 归一化,或以 <code style="color:#22d3bf">vol + highpass</code> 的形式使用。</p>
+<p>参数: <code style="color:#22d3bf">cutoff</code> 为正有限值。<code style="color:#22d3bf">spacing=None</code> 时为 cycles/voxel,传入 <code style="color:#22d3bf">spacing</code> (<code style="color:#22d3bf">(sz, sy, sx)</code> 或 <code style="color:#22d3bf">volio.VolumeMeta</code>)时为 cycles/mm。</p>
+<p>校验(<code style="color:#22d3bf">ValueError</code>): 与 <code style="color:#22d3bf">vol_fft_lowpass</code> 相同(不是 3-D / NaN、Inf / 超过 <code style="color:#22d3bf">MAX_VOXELS</code> / cutoff、spacing 不合法)。</p>
+<p>适用场景: 去除照明不均、厚度漂移、背景梯度(等同于减去 <code style="color:#22d3bf">vol_fft_lowpass</code> 的结果)。由于 FFT 将 volume 视为周期性的,各面之间的亮度差会经 wrap 泄漏。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

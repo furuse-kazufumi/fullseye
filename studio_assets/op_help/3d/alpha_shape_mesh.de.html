@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.alpha_shape_mesh(points, alpha)</code> (die Implementierung direkt: <code style="color:#22d3bf">import recon3d; recon3d.alpha_shape_mesh(points, alpha)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;alpha_shape_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Das <b>triangulierte Oberflächennetz</b> über Alpha-Shapes (Punktmenge → (vertices, faces)).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">alpha_shape_boundary</code> と同じ境界三角形を、使用頂点だけに詰め直したメッシュとして返す。voxel を介さず点群から直接張る表面。凹み/穴を保持できるのが marching cubes 系との差別化。</p>
+<p>Gibt dieselben Randdreiecke wie <code style="color:#22d3bf">alpha_shape_boundary</code> als Mesh zurück, das auf die verwendeten Vertices umgepackt ist. Eine direkt aus der Punktwolke ohne Umweg über Voxel aufgespannte Fläche. Dass Einbuchtungen / Löcher erhalten bleiben, unterscheidet sie von der marching-cubes-Familie.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
 <p>alpha : float</p>
-<p>正の実数(半径しきい値 1/alpha)。</p>
+<p>Positive reelle Zahl (Radius-Schwellwert 1/alpha).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>vertices : numpy.ndarray (V,3) float64</p>
-<p>境界に使われた入力点(詰め直し済み)。</p>
+<p>Für den Rand verwendete Eingabepunkte (umgepackt).</p>
 <p>faces : numpy.ndarray (F,3) int64</p>
-<p>vertices を参照する三角形インデックス。境界が無ければ (0,3)/(0,3)。</p>
+<p>Dreiecksindizes, die sich auf vertices beziehen. Ohne Rand (0,3)/(0,3).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

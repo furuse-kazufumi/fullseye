@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inflate(occupancy, radius, voxel_size=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import occupancy; occupancy.inflate(occupancy, radius, voxel_size=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;inflate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>장애물을 <code style="color:#22d3bf">radius</code>(world 단위) 부풀린 점유 격자 bool(= ESDF&lt;=radius 를 점유로).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>planner の安全マージン: 点ロボットが膨張格子上で衝突回避すれば、半径 radius の実ロボットが障害物から離隔を保つ(configuration-space obstacle)。ESDF は外で正の最近占有距離なので、<code style="color:#22d3bf">ESDF&lt;=radius</code> は「占有(負)∪ 障害物から radius 以内の自由」を捕らえる。radius を増やすと単調に占有が増える(下流テストの GT)。</p>
-<p>Raises ValueError for radius&lt;0 or voxel_size&lt;=0 (both validated up-front, before the radius==0 / empty-occupancy short-circuit — otherwise an invalid voxel_size slips through unchecked when esdf is never reached).</p>
+<p>planner 의 안전 마진: 점 로봇이 팽창 격자 위에서 충돌을 회피하면, 반경 radius 의 실제로봇이 장애물로부터 이격을 유지한다(configuration-space obstacle). ESDF 는 바깥에서 양의최근접 점유 거리이므로, <code style="color:#22d3bf">ESDF&lt;=radius</code> 는 &quot;점유(음) ∪ 장애물로부터 radius 이내의 자유&quot;를포착한다. radius 를 늘리면 단조적으로 점유가 늘어난다(하류 테스트의 GT).</p>
+<p>radius&lt;0 또는 voxel_size&lt;=0 이면 ValueError 를 발생시킨다(둘 다 앞에서 미리 검증한다. radius==0 / 빈 점유의 단락보다 앞 — 그렇지 않으면 esdf 에 도달하지 않을 때 잘못된 voxel_size 가검사 없이 빠져나간다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

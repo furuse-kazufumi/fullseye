@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nearest_neighbor_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.nearest_neighbor_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;nearest_neighbor_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The 3-D displacement vector field (N, 3) from each point of pts0 to its nearest neighbour in pts1.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">pts0</code> の各点 p について <code style="color:#22d3bf">pts1</code> 中の最近傍 q を cKDTree で求め、変位 <code style="color:#22d3bf">q - p</code> を返す。要素数は N != M でよい。変位が局所点間隔より十分小さいとき(小さな運動)にのみ「点 i の真の対応先」を当てる — 大変位では最近傍が別点に張り付く(honest な限界、正則化には <code style="color:#22d3bf">smooth_flow</code> を併用)。</p>
+<p>For each point p of <code style="color:#22d3bf">pts0</code>, finds the nearest neighbour q in <code style="color:#22d3bf">pts1</code> with cKDTree and returns the displacement <code style="color:#22d3bf">q - p</code>. Element counts may differ, N != M. Only when the displacement is much smaller than the local point spacing (small motion) does it hit &quot;the true correspondence of point i&quot; — with large displacements the nearest neighbour sticks to another point (an honest limitation; for regularisation combine with <code style="color:#22d3bf">smooth_flow</code>).</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群。</p>
-<p>pts1: (M, 3) 時刻 1 の点群。</p>
+<p>pts0: (N, 3) point cloud at time 0.</p>
+<p>pts1: (M, 3) point cloud at time 1.</p>
 <p>Returns:</p>
-<p>(N, 3) 変位ベクトル場(pts0 と同じ行順)。</p>
+<p>(N, 3) displacement vector field (same row order as pts0).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正、または pts0 が非空なのに pts1 が空。</p>
+<p>ValueError: invalid shape, or pts1 empty while pts0 is non-empty.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

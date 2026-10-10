@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import gicp; gicp.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;estimate_covariances&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Plane-to-Plane-Kovarianzen (N,3,3): die lokale Kovarianz jedes Punktes mit auf (ε,1,1) gesetzten Eigenwerten.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>k 近傍(自身を含む)の標本共分散を固有分解し、固有値を <b>接平面内は 1・表面法線方向(最小固有値方向)は ε</b> に置き換えて再構成する。共分散の大きさは近傍の広がりに依らず一定(ε,1,1)で、スケール不変な「面的な確からしさ」モデルになる(GICP の中核)。</p>
-<p>引数:</p>
-<p>points (N,3): 点群。</p>
-<p>k: 近傍数(自身を含む)。共分散推定は k≥4 程度が安定。</p>
-<p>epsilon: 法線方向に割り当てる小分散(0&lt;ε&lt;1)。小さいほど接平面へ</p>
-<p>強く拘束する。スケール不変(次元なし比)。</p>
-<p>返り値:</p>
-<p>(N,3,3) 対称正定値共分散の束。各共分散の固有値は {ε,1,1}、ε に</p>
-<p>対応する固有ベクトルが局所表面法線方向。</p>
-<p>例外:</p>
-<p>ValueError: points が (N,3) でない / N&lt;3(法線が定まらず縮退)/</p>
-<p>epsilon が (0,1) 外(fail-closed)。</p>
+<p>Zerlegt die Stichprobenkovarianz der k nächsten Nachbarn (einschließlich des Punktes selbst) in Eigenwerte und rekonstruiert sie, wobei die Eigenwerte <b>in der Tangentialebene durch 1 und in Richtung der Flächennormale (Richtung des kleinsten Eigenwerts) durch ε</b> ersetzt werden. Die Größe der Kovarianz ist unabhängig von der Ausdehnung der Nachbarschaft konstant (ε,1,1); so entsteht ein skaleninvariantes Modell der &quot;flächigen Plausibilität&quot; (der Kern von GICP).</p>
+<p>Argumente:</p>
+<p>points (N,3): Punktwolke.</p>
+<p>k: Anzahl der Nachbarn (einschließlich des Punktes selbst). Die Kovarianzschätzung ist ab etwa k≥4 stabil.</p>
+<p>epsilon: kleine Varianz, die der Normalenrichtung zugewiesen wird (0&lt;ε&lt;1). Je kleiner, desto stärker</p>
+<p>die Bindung an die Tangentialebene. Skaleninvariant (dimensionsloses Verhältnis).</p>
+<p>Rückgabewert:</p>
+<p>(N,3,3)-Bündel symmetrischer, positiv definiter Kovarianzen. Die Eigenwerte jeder Kovarianz sind {ε,1,1}, und der zu ε</p>
+<p>gehörende Eigenvektor ist die lokale Flächennormalenrichtung.</p>
+<p>Ausnahmen:</p>
+<p>ValueError: points ist nicht (N,3) / N&lt;3 (Normale unbestimmt, entartet) /</p>
+<p>epsilon außerhalb von (0,1) (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

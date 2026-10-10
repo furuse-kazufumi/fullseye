@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import normals_orient; normals_orient.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;orient_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Hoppe 법으로 법선을 <b>전역 일관</b>하게 방향 지음(MST 전파). → (N,3).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>kNN グラフ上に重み <code style="color:#22d3bf">1 - |n_i·n_j|</code>(接平面が揃うほど安い)の最小全域木を張り、種から木を BFS しながら親と符号が逆の子を反転させて成分を内部一貫にする。種は <code style="color:#22d3bf">seed_dir</code> 指定時はその向きに最も突き出た点、未指定時は<b>最外点</b>(重心から最遠)。グラフが分断されていれば連結成分ごとに独立に種を取り伝播する(成分間の相対向きは未保証)。</p>
-<p><code style="color:#22d3bf">seed_dir</code> を渡した場合、伝播で内部一貫化した後に<b>成分全点の射影を集約</b>して大域符号を <code style="color:#22d3bf">seed_dir</code> に整合する(単一 seed の <code style="color:#22d3bf">|cos|</code> に依存しないので、seed 点の法線が <code style="color:#22d3bf">seed_dir</code> と近直交でも符号は確実に決まる — finding [5])。<code style="color:#22d3bf">seed_dir</code> が成分の全法線と(ほぼ)直交して符号を決められない真の退化は fail-closed(<code style="color:#22d3bf">ValueError</code>)。閉曲面(球など)で <code style="color:#22d3bf">seed_dir</code> が平均的に法線と直交する場合は大域符号が一意でないため、最突出点(=外向き)基準の向き付けを保持する。<code style="color:#22d3bf">seed_dir</code> 未指定時は重心から外向き。</p>
+<p>kNN 그래프 위에 가중치 <code style="color:#22d3bf">1 - |n_i·n_j|</code>(접평면이 맞을수록 저렴)의 최소 전역 트리를 만들고, 시드에서 트리를 BFS 하면서 부모와 부호가 반대인 자식을 반전시켜 성분을 내부 일관되게 한다. 시드는 <code style="color:#22d3bf">seed_dir</code> 지정 시에는 그 방향으로 가장 돌출한 점, 미지정 시에는 <b>최외곽 점</b>(무게중심에서 가장 먼 점). 그래프가 분단되어 있으면 연결 성분마다 독립적으로 시드를 잡아 전파한다(성분 간의 상대 방향은 보장하지 않음).</p>
+<p><code style="color:#22d3bf">seed_dir</code> 를 넘긴 경우, 전파로 내부 일관화한 뒤에 <b>성분 전체 점의 사영을 집약</b>하여 대역 부호를 <code style="color:#22d3bf">seed_dir</code> 에 정합시킨다(단일 seed 의 <code style="color:#22d3bf">|cos|</code> 에 의존하지 않으므로, seed 점의 법선이 <code style="color:#22d3bf">seed_dir</code> 와 거의 직교해도 부호는 확실히 정해진다 — finding [5]). <code style="color:#22d3bf">seed_dir</code> 가 성분의모든 법선과 (거의) 직교하여 부호를 정할 수 없는 진짜 축퇴는 fail-closed(<code style="color:#22d3bf">ValueError</code>). 닫힌 곡면(구 등)에서 <code style="color:#22d3bf">seed_dir</code> 가 평균적으로 법선과 직교하는 경우는 대역 부호가 유일하지 않으므로, 최돌출점(=바깥 방향) 기준의 방향 결정을 유지한다. <code style="color:#22d3bf">seed_dir</code> 미지정 시는 무게중심에서 바깥 방향.</p>
 <p>Args:</p>
-<p>points: (N,3) の点群。</p>
-<p>normals: (N,3) の向き未定法線(内部で単位化)。</p>
-<p>k: kNN グラフの近傍数。</p>
-<p>seed_dir: 大域基準向き (3,)。None なら重心から外向きを基準にする。</p>
+<p>points: (N,3) 의 점군.</p>
+<p>normals: (N,3) 의 방향 미정 법선(내부에서 단위화).</p>
+<p>k: kNN 그래프의 근방 수.</p>
+<p>seed_dir: 대역 기준 방향 (3,). None 이면 무게중심에서 바깥 방향을 기준으로 한다.</p>
 <p>Returns:</p>
-<p>符号を大域一貫にそろえた (N,3) 単位法線。</p>
+<p>부호를 대역적으로 일관되게 맞춘 (N,3) 단위 법선.</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">seed_dir</code> がゼロ、または(ある連結成分で)全法線と直交して</p>
-<p>大域符号を制御できないとき(fail-closed)。</p>
+<p>ValueError: <code style="color:#22d3bf">seed_dir</code> 가 영이거나, (어느 연결 성분에서) 모든 법선과 직교하여</p>
+<p>대역 부호를 제어할 수 없을 때(fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

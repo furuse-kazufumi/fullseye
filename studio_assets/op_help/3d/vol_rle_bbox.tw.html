@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_bbox(region)</code>(要直接呼叫實作,<code style="color:#22d3bf">import volregion; volregion.vol_rle_bbox(region)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_bbox&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>緊緻包圍盒 <code style="color:#22d3bf">(z0, y0, x0, z1, y1, x1)</code>(上界為開區間)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>computed on the runs (no decode; measured ~1000x faster than scanning the dense mask). Matches <code style="color:#22d3bf">volops.vol_bounding_box</code> of the decoded mask exactly. An empty region raises <code style="color:#22d3bf">ValueError</code> (same fail-closed rule).</p>
-<p>計算: <code style="color:#22d3bf">z = rows // H</code>、<code style="color:#22d3bf">y = rows % H</code> を復元し、<code style="color:#22d3bf">(z.min, y.min, starts.min, z.max+1, y.max+1, ends.max)</code> を返す。6 要素の <code style="color:#22d3bf">int</code> タプルで、軸順は <code style="color:#22d3bf">(z, y, x)</code> = (depth, row, col)。上限は排他的なので <code style="color:#22d3bf">vol[z0:z1, y0:y1, x0:x1]</code> がそのまま最小の外接部分 volume になる。座標は voxel index(spacing は掛けない)。</p>
-<p>検証: <code style="color:#22d3bf">VolRLE</code> の整合性検査(<code style="color:#22d3bf">_require_rle</code>)に加え、run が 1 本もない region は「箱が定義できない」として <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">margin</code> 引数は無い(余白が要るなら <code style="color:#22d3bf">vol_bounding_box</code> を decode 後に使う)。</p>
-<p>使いどころ: <code style="color:#22d3bf">vol_rle_components</code> の各成分の箱を取り、<code style="color:#22d3bf">vol_crop_domain</code> 相当の ROI 切り出しを密配列を作らずに決める。</p>
+<p>在 run 上計算(不 decode;實測比掃描密集遮罩快約 1000 倍)。與 decode 後遮罩的 <code style="color:#22d3bf">volops.vol_bounding_box</code> 完全一致。空 region 拋出 <code style="color:#22d3bf">ValueError</code>(同樣的 fail-closed 規則)。</p>
+<p>計算: 還原 <code style="color:#22d3bf">z = rows // H</code>、<code style="color:#22d3bf">y = rows % H</code>,回傳 <code style="color:#22d3bf">(z.min, y.min, starts.min, z.max+1, y.max+1, ends.max)</code>。是 6 元素的 <code style="color:#22d3bf">int</code> 元組,軸順序為 <code style="color:#22d3bf">(z, y, x)</code> = (depth, row, col)。上限是排他的,因此 <code style="color:#22d3bf">vol[z0:z1, y0:y1, x0:x1]</code> 直接就是最小的外接子 volume。座標為 voxel index(不乘 spacing)。</p>
+<p>驗證: 除 <code style="color:#22d3bf">VolRLE</code> 的一致性檢查(<code style="color:#22d3bf">_require_rle</code>)外,連 1 個 run 都沒有的 region 視為「無法定義框」而拋出 <code style="color:#22d3bf">ValueError</code>。沒有 <code style="color:#22d3bf">margin</code> 參數(需要留白時,decode 後使用 <code style="color:#22d3bf">vol_bounding_box</code>)。</p>
+<p>使用時機: 取 <code style="color:#22d3bf">vol_rle_components</code> 各成分的框,在不建構密集陣列的情況下決定相當於 <code style="color:#22d3bf">vol_crop_domain</code> 的 ROI 裁切。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

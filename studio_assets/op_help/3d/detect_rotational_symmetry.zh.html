@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8))</code>(要直接调用实现,<code style="color:#22d3bf">import symmetry3d; symmetry3d.detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8))</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;detect_rotational_symmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 PCA 主轴为候选轴,选出最佳旋转对称(轴 × 阶数)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>→ dict{axis_point, axis_dir, order, score, table, margin}。score が小さいほど対称。</p>
-<p>★ <code style="color:#22d3bf">margin</code>(2 位との差)を必ず併読すること。理由は <code style="color:#22d3bf">detect_reflection_symmetry</code> と同じ —— 候補が団子なら選択はくじ引きで、そのとき先に潰れるのは score ではなく margin である。回転対称は候補が 3 軸 x order なので<b>同じ軸の別 order が 2 位に来る</b>ことも多く、その場合の margin の小ささは「order が決まらない」を意味する(軸は決まっている)。<code style="color:#22d3bf">table</code> に全候補が入っているので、軸だけ固定して order を見直せる。</p>
-<p>★ 候補は PCA の 3 軸だけ。真の対称軸が主軸のどれとも一致しない形では見つからず、しかも黙って最良を返す。</p>
+<p>→ dict{axis_point, axis_dir, order, score, table, margin}。score 越小越对称。</p>
+<p>★ 务必同时查看 <code style="color:#22d3bf">margin</code>(与第 2 名之差)。理由与 <code style="color:#22d3bf">detect_reflection_symmetry</code> 相同 —— 候选挤成一团时选择就是抽签，此时先塌缩的不是 score 而是 margin。旋转对称的候选是 3 轴 x order，因此<b>同一轴的另一个 order 常常排第 2</b>，此时 margin 小意味着“order 定不下来”(轴是确定的)。<code style="color:#22d3bf">table</code> 中包含全部候选，因此可以只固定轴来重新检查 order。</p>
+<p>★ 候选只有 PCA 的 3 个轴。真正的对称轴与任何主轴都不一致的形状找不到对称轴，而且会默默返回最优者。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

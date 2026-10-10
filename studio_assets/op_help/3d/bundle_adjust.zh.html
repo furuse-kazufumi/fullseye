@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)</code>(要直接调用实现,<code style="color:#22d3bf">import bundle3d; bundle3d.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;bundle_adjust&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以重投影误差最小同时优化相机位姿与 3D 点。→ dict{cameras, points, rmse, cost}。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>cameras (nc,6)=[rvec(3)|t(3)] の初期値、points (m,3) の初期値、観測 obs_cam/obs_pt/obs_uv。fix_first=True で先頭カメラを [I|0] 相当(初期値のまま)に固定し gauge を除く。</p>
-<p><b>scale gauge</b>: 再投影誤差は「カメラ 0 の中心を基準にシーン全体を相似拡大」しても厳密に変わらないので、それだけでは解の scale が定まらず LM が任意の倍率へ滑る(実測 ×0.7〜×213、rmse≈0 のまま)。本関数は <b>構造のカメラ 0 中心からの RMS 距離(<code style="color:#22d3bf">scale_anchor</code>)を初期値に保つ残差</b> <code style="color:#22d3bf">w·(rms/rms0 − 1)</code> を 1 本足して固定する。再投影コストは scale 方向に勾配ゼロなので、この残差は最適解で厳密に 0 になり、返る scale は初期構造のそれと一致する(基線長 <code style="color:#22d3bf">‖t₁‖</code> で固定するより、点数で平均される分だけ初期摂動の影響が小さい)。初期構造が退化(全点がカメラ 0 中心に一致)していれば拘束は掛けない。返り dict の <code style="color:#22d3bf">scale_anchor</code> に採用した RMS 距離を載せる。</p>
+<p>cameras (nc,6)=[rvec(3)|t(3)] 的初始值、points (m,3) 的初始值、观测 obs_cam/obs_pt/obs_uv。fix_first=True 时将第一个相机固定为相当于 [I|0] 的状态(保持初始值),以消除 gauge。</p>
+<p><b>scale gauge</b>:重投影误差在“以相机 0 的中心为基准将整个场景做相似放大”时严格不变,因此仅凭它无法确定解的 scale,LM 会滑向任意倍率(实测 ×0.7〜×213,rmse≈0 不变)。本函数添加 1 个<b>使结构到相机 0 中心的 RMS 距离(<code style="color:#22d3bf">scale_anchor</code>)保持初始值的残差</b> <code style="color:#22d3bf">w·(rms/rms0 − 1)</code> 来固定它。重投影代价在 scale 方向上梯度为零,因此该残差在最优解处严格为 0, 返回的 scale 与初始结构的一致(与用基线长度 <code style="color:#22d3bf">‖t₁‖</code> 固定相比,由于按点数取平均,初始扰动的影响更小)。若初始结构退化(所有点都与相机 0 的中心重合),则不施加约束。所采用的 RMS 距离记录在返回 dict 的 <code style="color:#22d3bf">scale_anchor</code> 中。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

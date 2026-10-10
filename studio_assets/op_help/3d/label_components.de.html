@@ -6,24 +6,23 @@
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(labels, n) → labels</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Labelt ein 3-D-Binärvolumen in Zusammenhangskomponenten.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : array_like</p>
-<p>bool または 0/1 の 3D 配列。</p>
+<p>3D-Array aus bool oder 0/1.</p>
 <p>connectivity : int</p>
-<p>6(面) / 18(面+辺) / 26(面+辺+角)のいずれか。</p>
+<p>Eines von 6 (Flächen) / 18 (Flächen+Kanten) / 26 (Flächen+Kanten+Ecken).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>labels : ndarray(int)</p>
-<p>vol と同形状。背景 0、各連結成分に 1..n のラベル。</p>
+<p>Gleiche Form wie vol. Hintergrund 0, Labels 1..n für jede Zusammenhangskomponente.</p>
 <p>n : int</p>
-<p>連結成分数。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 入力は <code style="color:#22d3bf">astype(bool)</code> で二値化する。0 以外はすべて前景で、float の NaN も True(前景)になる点に注意。</p>
-<p style="margin:2px 0 2px 12px">• 軸順は (z, y, x) = numpy の配列軸順。<code style="color:#22d3bf">labels</code> の dtype は <code style="color:#22d3bf">scipy.ndimage.label</code> の返す整数型(通常 int32)。前景が無い/空配列なら int32 のゼロ配列と 0 を返す。</p>
-<p style="margin:2px 0 2px 12px">• ラベル番号の付与順は scipy の走査順で、体積順ではない。</p>
-<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 3 次元でない入力、<code style="color:#22d3bf">connectivity</code> が 6/18/26 以外。</p>
-<p style="margin:2px 0 2px 12px">• 接触している物体は 1 成分に融合する。分離が要るなら前段で <code style="color:#22d3bf">morph_erode3d</code> / <code style="color:#22d3bf">morph_open3d</code> や <code style="color:#22d3bf">vol_watershed</code> で切る。</p>
-<p style="margin:2px 0 2px 12px">• 後段: <code style="color:#22d3bf">region_props</code>(計測)、<code style="color:#22d3bf">largest_component</code> / <code style="color:#22d3bf">filter_by_volume</code>(選別)、<code style="color:#22d3bf">vol_select_labels</code>(特徴でふるい)、<code style="color:#22d3bf">vol_colorize_labels</code>(可視化)。</p>
+<p>Anzahl der Zusammenhangskomponenten.</p>
+<p>Ergänzung:</p>
+<p style="margin:2px 0 2px 12px">• Die Eingabe wird mit <code style="color:#22d3bf">astype(bool)</code> binarisiert. Alles außer 0 ist Vordergrund; Achtung, auch float-NaN wird True (Vordergrund).</p>
+<p style="margin:2px 0 2px 12px">• Die Achsenreihenfolge ist (z, y, x) = numpy-Array-Achsenreihenfolge. Der dtype von <code style="color:#22d3bf">labels</code> ist der von <code style="color:#22d3bf">scipy.ndimage.label</code> gelieferte Ganzzahltyp (meist int32). Ohne Vordergrund / bei leerem Array werden ein int32-Nullarray und 0 zurückgegeben.</p>
+<p style="margin:2px 0 2px 12px">• Die Labelnummern werden in scipys Abtastreihenfolge vergeben, nicht nach Volumen.</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: Eingabe nicht 3-dimensional, <code style="color:#22d3bf">connectivity</code> ungleich 6/18/26.</p>
+<p style="margin:2px 0 2px 12px">• Sich berührende Objekte verschmelzen zu 1 Komponente. Ist eine Trennung nötig, vorher mit <code style="color:#22d3bf">morph_erode3d</code> / <code style="color:#22d3bf">morph_open3d</code> oder <code style="color:#22d3bf">vol_watershed</code> schneiden.</p>
+<p style="margin:2px 0 2px 12px">• Nachgelagert: <code style="color:#22d3bf">region_props</code> (Messung), <code style="color:#22d3bf">largest_component</code> / <code style="color:#22d3bf">filter_by_volume</code> (Auswahl), <code style="color:#22d3bf">vol_select_labels</code> (Sieben nach Merkmalen), <code style="color:#22d3bf">vol_colorize_labels</code> (Visualisierung).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Messunsicherheit und Kalibrierung — was nötig ist, um zu behaupten, dass man misst</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detect_reflection_symmetry(points)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import symmetry3d; symmetry3d.detect_reflection_symmetry(points)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;detect_reflection_symmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>PCA 주축을 법선으로 하는 후보 평면(무게중심 통과) 가운데 최적의 반사 대칭면을 고릅니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>→ dict{plane_point, plane_normal, score, all_scores, margin}。score が小さいほど対称。</p>
-<p>★ <b><code style="color:#22d3bf">score</code> だけで採否を決めない。<code style="color:#22d3bf">margin</code> を見ること</b>(2026-09-06 追加)。<code style="color:#22d3bf">margin</code> は 2 位と 1 位の score の差で、<b>候補が団子なら答えはくじ引き</b> である、という警告になる。実測(1500 点):</p>
+<p>→ dict{plane_point, plane_normal, score, all_scores, margin}. score가 작을수록 대칭이다.</p>
+<p>★ <b><code style="color:#22d3bf">score</code>만으로 채택 여부를 정하지 말 것. <code style="color:#22d3bf">margin</code>을 볼 것</b>(2026-09-06 추가). <code style="color:#22d3bf">margin</code>은 2위와 1위의 score 차이로, <b>후보가 뭉쳐 있으면 답은 제비뽑기</b> 라는 경고가 된다. 실측(1500 점):</p>
 <p>==================  ========  ========  =========</p>
-<p>形状                best      2 位      margin</p>
+<p>형상                best      2위       margin</p>
 <p>==================  ========  ========  =========</p>
-<p>箱(鏡映面が 3 枚)     0.9397    0.9499     0.0102</p>
-<p>角柱つきの箱          0.9876    0.9918     0.0043</p>
-<p>球                    1.0490    1.0551     0.0062</p>
-<p>一様乱数の立方体      1.0608    1.3435     0.2828</p>
+<p>상자(거울면 3 장)     0.9397    0.9499     0.0102</p>
+<p>각기둥 달린 상자      0.9876    0.9918     0.0043</p>
+<p>구                    1.0490    1.0551     0.0062</p>
+<p>균일 난수 정육면체    1.0608    1.3435     0.2828</p>
 <p>==================  ========  ========  =========</p>
-<p>対称面が複数ある形ほど margin は小さい —— これは不具合ではなく、そういう形だという情報である。点群位置合わせの PoC が同じ構造を測っていて、PCA の候補は<b>素の直方体で 83 % が反転した象限を掴む</b>が、そのとき先に潰れるのは残差ではなく候補どうしの margin だった(0.42 → 0.066 → 0.039)。<b>残差でなく margin で採否を見る</b>、が両方に共通する結論。</p>
-<p>★ <b><code style="color:#22d3bf">score</code> は 0 に近づかない。</b> 厳密に対称な形でも点の間隔が床を作る(上の表で箱が 0.94)。「0 に近いか」ではなく「同じ形を鏡映せずに測った値」や「点間隔」と比べること。</p>
-<p>★ <b>候補は PCA の 3 軸だけ</b>。真の対称面が主軸のどれとも一致しない形では見つからず、しかも黙って 3 つのうち最良を返す。密に振った候補が要るなら <code style="color:#22d3bf">reflection_symmetry_score</code> を直接掃引すること。</p>
+<p>대칭면이 여러 개인 형상일수록 margin은 작다 —— 이것은 결함이 아니라 그런 형상이라는 정보다. 점군 위치 맞춤 PoC가 같은 구조를 측정하고 있는데, PCA의후보는 <b>단순한 직육면체에서 83 %가 반전된 사분면을 잡으며</b>, 그때 먼저 무너지는 것은잔차가 아니라 후보끼리의 margin이었다(0.42 → 0.066 → 0.039). <b>잔차가 아니라 margin으로 채택 여부를 본다</b>가 양쪽에 공통된 결론이다.</p>
+<p>★ <b><code style="color:#22d3bf">score</code>는 0에 가까워지지 않는다.</b> 엄밀히 대칭인 형상이라도 점 간격이 바닥값을 만든다(위 표에서 상자가 0.94). &quot;0에 가까운가&quot;가 아니라 &quot;같은 형상을 거울 반사하지 않고 측정한 값&quot;이나 &quot;점 간격&quot;과 비교할 것.</p>
+<p>★ <b>후보는 PCA의 3 축뿐</b>이다. 진짜 대칭면이 주축 중 어느 것과도 일치하지 않는 형상에서는찾지 못하며, 게다가 조용히 3 개 중 최선을 반환한다. 촘촘하게 흔든 후보가 필요하면 <code style="color:#22d3bf">reflection_symmetry_score</code>를 직접 스윕할 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

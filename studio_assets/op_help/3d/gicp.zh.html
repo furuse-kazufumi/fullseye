@@ -5,31 +5,30 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.gicp(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">pose</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.gicp.raw(...)</code>,或直接调用 <code style="color:#22d3bf">gicp.gicp</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Generalized-ICP(协方差加权马氏 ICP)估计刚体变换 (R,t)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各反復で source→target の最近傍対応を張り、残差 <code style="color:#22d3bf">d_i = R·s_i + t - q_i</code> を重み <code style="color:#22d3bf">W_i = (C_target[q_i] + R·C_source[s_i]·Rᵀ)⁻¹</code> で測るマハラノビスコスト <code style="color:#22d3bf">Σ d_iᵀ W_i d_i</code> を、小角線形化 <code style="color:#22d3bf">R ← (I+[ω]×)R</code> の Gauss-Newton で最小化する。各対応のヤコビアン <code style="color:#22d3bf">J_i = [-[R·s_i+t]× | I]</code>(3×6)から正規方程式 <code style="color:#22d3bf">(Σ J_iᵀ W_i J_i) x = -(Σ J_iᵀ W_i d_i)</code>(6×6)を解いて増分 <code style="color:#22d3bf">x=[ω|τ]</code> を得、Rodrigues で回転に戻して累積する。</p>
-<p>共分散は plane-to-plane(<code style="color:#22d3bf">estimate_covariances</code>)。point-to-plane が target の法線方向へ残差を射影する(rank-1)のに対し、GICP は source・target 双方の full 3×3 共分散を合成した重みを使うため、平面的・ノイズを含む点群で頑健。</p>
-<p>ICP はローカル最適化なので <b>近い初期化を前提</b>(粗マッチや <code style="color:#22d3bf">init</code> を渡す)。</p>
-<p>引数:</p>
-<p>source (N,3): 動かす側の点群。</p>
-<p>target (M,3): 参照側(固定)の点群。</p>
-<p>max_iter: 最大反復数。</p>
-<p>k: 共分散推定の近傍数。</p>
-<p>epsilon: plane-to-plane の法線方向小分散(0&lt;ε&lt;1)。</p>
-<p>tol: 収束閾値。増分並進 ‖τ‖ が <code style="color:#22d3bf">tol×(target のRMS半径)</code> 未満かつ</p>
-<p>増分回転 ‖ω‖(rad)が <code style="color:#22d3bf">tol</code> 未満で打ち切り(スケール相対)。</p>
-<p>init: (R0(3,3), t0(3,)) の初期姿勢タプル、または None(単位)。</p>
-<p>reproducible: True なら N 点の和 <code style="color:#22d3bf">Σ J_iᵀ W_i J_i</code>・<code style="color:#22d3bf">Σ J_iᵀ W_i d_i</code> を ozakimm(Ozaki スキーム)の縮約に、</p>
-<p>姿勢の適用を要素ごとの演算に、RMSE を math.fsum にする。source の点の順・BLAS のスレッド数に依らず</p>
-<p>R・t・rmse がビット単位で同じ(共分散の近傍に距離がちょうど同点の点があると近傍の選ばれ方が変わりうる)。</p>
-<p>既定 False は従来どおり。</p>
-<p>返り値:</p>
+<p>每次迭代建立 source→target 的最近邻对应,对用权重 <code style="color:#22d3bf">W_i = (C_target[q_i] + R·C_source[s_i]·Rᵀ)⁻¹</code> 衡量残差 <code style="color:#22d3bf">d_i = R·s_i + t - q_i</code> 的马氏代价 <code style="color:#22d3bf">Σ d_iᵀ W_i d_i</code>,用小角度线性化 <code style="color:#22d3bf">R ← (I+[ω]×)R</code> 的 Gauss-Newton 进行最小化。由各对应的雅可比矩阵 <code style="color:#22d3bf">J_i = [-[R·s_i+t]× | I]</code>(3×6) 求解正规方程 <code style="color:#22d3bf">(Σ J_iᵀ W_i J_i) x = -(Σ J_iᵀ W_i d_i)</code>(6×6)得到增量 <code style="color:#22d3bf">x=[ω|τ]</code>,用 Rodrigues 转回旋转并累积。</p>
+<p>协方差为 plane-to-plane(<code style="color:#22d3bf">estimate_covariances</code>)。point-to-plane 将残差投影到 target 的法线方向(rank-1),而 GICP 使用合成了 source、target 双方 full 3×3 协方差的权重,因此对平面状、含噪声的点云稳健。</p>
+<p>ICP 是局部优化,因此<b>以接近的初始化为前提</b>(传入粗匹配或 <code style="color:#22d3bf">init</code>)。</p>
+<p>参数:</p>
+<p>source (N,3): 被移动一侧的点云。</p>
+<p>target (M,3): 参考侧(固定)的点云。</p>
+<p>max_iter: 最大迭代次数。</p>
+<p>k: 协方差估计的邻域点数。</p>
+<p>epsilon: plane-to-plane 中法线方向的小方差(0&lt;ε&lt;1)。</p>
+<p>tol: 收敛阈值。增量平移 ‖τ‖ 小于 <code style="color:#22d3bf">tol×(target 的 RMS 半径)</code> 且</p>
+<p>增量旋转 ‖ω‖(rad)小于 <code style="color:#22d3bf">tol</code> 时终止(相对于尺度)。</p>
+<p>init: (R0(3,3), t0(3,)) 的初始位姿元组,或 None(单位)。</p>
+<p>reproducible: 为 True 时,N 点之和 <code style="color:#22d3bf">Σ J_iᵀ W_i J_i</code>、<code style="color:#22d3bf">Σ J_iᵀ W_i d_i</code> 用 ozakimm(Ozaki 方案)归约,</p>
+<p>位姿的应用改为逐元素运算,RMSE 用 math.fsum。与 source 点的顺序、BLAS 线程数无关,</p>
+<p>R、t、rmse 按位相同(若协方差的邻域中有距离恰好相同的点,邻域的选取方式可能改变)。</p>
+<p>默认 False 与以往相同。</p>
+<p>返回值:</p>
 <p>dict:</p>
-<p>&quot;R&quot; (3,3) ndarray  — target ≈ R·source + t を満たす回転。</p>
-<p>&quot;t&quot; (3,) ndarray   — 並進。</p>
-<p>&quot;rmse&quot; float       — 最終対応上のユークリッド RMSE(採用点)。</p>
-<p>&quot;iterations&quot; int   — 実反復数。</p>
-<p>例外:</p>
-<p>ValueError: 入力形状不正 / 点数不足 / 数値発散(非有限)= fail-closed。</p>
+<p>&quot;R&quot; (3,3) ndarray  — 满足 target ≈ R·source + t 的旋转。</p>
+<p>&quot;t&quot; (3,) ndarray   — 平移。</p>
+<p>&quot;rmse&quot; float       — 最终对应上的欧氏 RMSE(采用的点)。</p>
+<p>&quot;iterations&quot; int   — 实际迭代次数。</p>
+<p>异常:</p>
+<p>ValueError: 输入形状不正确 / 点数不足 / 数值发散(非有限)= fail-closed(失败即拒绝)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

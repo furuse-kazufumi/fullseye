@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;mesh_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Signed volume</b> enclosed by a closed triangle mesh → float.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>発散定理(divergence theorem)で <code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>。面の巻き順が外向き(右手系)なら正、内向きなら負になる —— <b>符号は向きの検査そのもの</b>で、負が返ったら法線が裏返っている。</p>
+<p>By the divergence theorem, <code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>. If the face winding points outward (right-handed) the result is positive, if inward it is negative -- <b>the sign is itself the orientation check</b>: if a negative value comes back, the normals are flipped.</p>
 <p>Args:</p>
-<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
+<p>mesh: tuple of <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code>.</p>
 <p>Returns:</p>
-<p>符号付き体積(float、座標の単位の 3 乗)。</p>
+<p>Signed volume (float, cube (power 3) of the coordinate unit).</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
-<p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p>★<b><code style="color:#22d3bf">voxel_to_mesh</code>(marching cubes)の返りは内向き巻きなので、そのまま渡すと負になる</b>(実測: 1000 voxel の立方体で -985.67)。「負 = 法線が裏返っている」のは正しいが、<b>この組み合わせでは裏返っているのが既定</b>なので、体積が欲しいだけなら <code style="color:#22d3bf">abs()</code> を取るか <code style="color:#22d3bf">faces[:, ::-1]</code> で巻き直すこと。向きの検査に使うのは、巻き順を自分で決めた(または向きを揃えた)メッシュに対して。</p>
-<p><b>限界(honest)</b>: 発散定理は<b>閉じた曲面でのみ</b>成り立つ。開いたメッシュ(穴のあるスキャン)に対しても数値は返るが、それは「穴を原点へ向かって塞いだ立体の体積」であって、欲しい量ではない。閉じているかどうかは <code style="color:#22d3bf">boundary_vertices</code> が空か、<code style="color:#22d3bf">mesh_edge_stats</code> の <code style="color:#22d3bf">boundary_edges</code> が 0 かで<b>先に確かめること</b>。自己交差があるメッシュでは重なった領域が符号つきで二重に数えられる(これも定理どおりの挙動で、検出はしない)。</p>
-<p>Reference (public): 発散定理による多面体体積は標準的な公式。例えば C. Zhang &amp; T. Chen, &quot;Efficient feature extraction for 2D/3D objects in mesh representation&quot;, ICIP 2001。</p>
+<p>ValueError: when <code style="color:#22d3bf">mesh</code> is not the 2 elements <code style="color:#22d3bf">(vertices, faces)</code>, the shape is invalid,</p>
+<p>coordinates are non-finite, an index is non-integer or out of range, or it is empty.</p>
+<p>★<b>The output of <code style="color:#22d3bf">voxel_to_mesh</code> (marching cubes) is wound inward, so passing it as is gives a negative value</b> (measured: -985.67 for a cube of 1000 voxels). &quot;Negative = the normals are flipped&quot; is correct, but <b>with this combination, flipped is the default</b>, so if you only want the volume, take <code style="color:#22d3bf">abs()</code> or rewind with <code style="color:#22d3bf">faces[:, ::-1]</code>. Use it as an orientation check on meshes whose winding you chose yourself (or whose orientation you made consistent).</p>
+<p><b>Limitation (honest)</b>: the divergence theorem holds <b>only for closed surfaces</b>. For an open mesh (a scan with holes) a number is still returned, but it is &quot;the volume of the solid whose holes are closed off toward the origin&quot;, not the quantity you want. Whether it is closed should be checked by whether <code style="color:#22d3bf">boundary_vertices</code> is empty, or <code style="color:#22d3bf">boundary_edges</code> of <code style="color:#22d3bf">mesh_edge_stats</code> is 0 or not -- <b>check this first</b>. In a mesh with self-intersections, overlapping regions are counted twice with sign (this too is behaviour exactly as the theorem says, and it is not detected).</p>
+<p>Reference (public): polyhedron volume via the divergence theorem is a standard formula. For example, C. Zhang &amp; T. Chen, &quot;Efficient feature extraction for 2D/3D objects in mesh representation&quot;, ICIP 2001.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

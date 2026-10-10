@@ -5,32 +5,31 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Gauss-Newton 逆合成 Lucas-Kanade 做 3D 平移的次體素精化。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>粗マッチ(整数 NCC / Fourier-Mellin / Hough)が与えた整数初期位置 <code style="color:#22d3bf">init_pos</code> を出発点に、SSD <code style="color:#22d3bf">Σ|I(x+p) − T(x)|²</code> を最小化してサブボクセル並進 <code style="color:#22d3bf">p</code> へ収束させる。</p>
-<p>逆合成(inverse-compositional, Baker–Matthews)方式のため steepest-descent 画像 <code style="color:#22d3bf">SD = ∇T</code> と Hessian <code style="color:#22d3bf">H = Σ SDᵀSD</code> を <b>反復前に一度だけ</b>前計算し、各反復は「scene の trilinear ワープ + 残差 + 3×3 線形解 <code style="color:#22d3bf">Δp = H⁻¹ Σ SDᵀ(I(x+p)−T)</code>」のみ。並進の合成は <code style="color:#22d3bf">p ← p − Δp</code>。純並進ワープでは ∂W/∂p=I なので SD=∇T がそのまま使える。</p>
-<p>座標系: <code style="color:#22d3bf">init_pos</code> と戻り値はいずれも <b>テンプレート原点(corner, index 0,0,0)</b> が scene のどの (dz,dy,dx) に載るか。<code style="color:#22d3bf">sobel3d</code> / <code style="color:#22d3bf">grid_sample</code> の corner 規約に一致(NCC(ncc_locate_3d)の中心規約とは T//2 だけ異なる点に注意)。</p>
+<p>以粗匹配(整數 NCC / Fourier-Mellin / Hough)給出的整數初始位置 <code style="color:#22d3bf">init_pos</code> 為起點,最小化 SSD <code style="color:#22d3bf">Σ|I(x+p) − T(x)|²</code>,收斂到次體素平移 <code style="color:#22d3bf">p</code>。</p>
+<p>由於採用逆合成(inverse-compositional, Baker–Matthews)方式,steepest-descent 影像 <code style="color:#22d3bf">SD = ∇T</code> 與 Hessian <code style="color:#22d3bf">H = Σ SDᵀSD</code> <b>只在迭代前預先計算一次</b>,每次迭代只有「scene 的 trilinear 變形 + 殘差 + 3×3 線性求解 <code style="color:#22d3bf">Δp = H⁻¹ Σ SDᵀ(I(x+p)−T)</code>」。平移的合成為 <code style="color:#22d3bf">p ← p − Δp</code>。純平移變形中 ∂W/∂p=I,因此 SD=∇T 可直接使用。</p>
+<p>座標系:<code style="color:#22d3bf">init_pos</code> 與回傳值都表示 <b>樣板原點(corner, index 0,0,0)</b> 落在 scene 的哪個 (dz,dy,dx)。與 <code style="color:#22d3bf">sobel3d</code> / <code style="color:#22d3bf">grid_sample</code> 的 corner 慣例一致(注意與 NCC(ncc_locate_3d)的中心慣例相差 T//2)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>scene : (D,H,W) array_like</p>
-<p>探索対象ボリューム。</p>
+<p>要搜尋的體資料。</p>
 <p>template : (Td,Th,Tw) array_like</p>
-<p>位置合わせするテンプレート(scene より小)。</p>
+<p>要對位的樣板(比 scene 小)。</p>
 <p>init_pos : (3,) sequence</p>
-<p>整数初期位置 (dz,dy,dx) = テンプレート原点の scene 座標。</p>
+<p>整數初始位置 (dz,dy,dx) = 樣板原點的 scene 座標。</p>
 <p>device : str</p>
-<p>&quot;cpu&quot; / &quot;cuda&quot; 等。device 非依存。</p>
+<p>&quot;cpu&quot; / &quot;cuda&quot; 等。與 device 無關。</p>
 <p>iters : int</p>
-<p>最大反復数。</p>
+<p>最大迭代次數。</p>
 <p>tol : float</p>
-<p>‖Δp‖ がこの値を下回ったら収束打ち切り。</p>
+<p>‖Δp‖ 低於此值時判定收斂並終止。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>pos : (3,) np.ndarray(float64)</p>
-<p>精緻化されたサブボクセル位置 (dz,dy,dx)。</p>
+<p>精細化後的次體素位置 (dz,dy,dx)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p style="margin:2px 0 2px 12px">• 滑らか(帯域制限)な密度場を仮定。整数初期値が真値の ±0.5〜1 voxel 内であれば通常 5〜8 反復で ‖err‖ &lt; 0.05 voxel(低ノイズ時)。実測(独立 cubic-spline GT):</p>
-<p>ノイズ無し mean 0.008 / max 0.013 voxel(≈6 反復, ≈1.2ms/回)、NCC サブボクセル</p>
-<p>baseline(mean 0.56 voxel)を約60×改善。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grad_scale=32</code> は分離 sobel3d(導関数[-1,0,1]×平滑[1,2,1]²)の固定スケール(線形ランプで実測 32.0)。真の勾配へ正規化して Δp のスケールを正す。</p>
-<p style="margin:2px 0 2px 12px">• H には微小 Levenberg 正則化を加え、勾配の乏しい平坦テンプレートでの数値破綻を防ぐ。</p>
+<p style="margin:2px 0 2px 12px">• 假定為平滑(頻帶受限)的密度場。若整數初始值在真值的 ±0.5〜1 voxel 內, 通常 5〜8 次迭代即可 ‖err‖ &lt; 0.05 voxel(低雜訊時)。實測(獨立 cubic-spline GT):</p>
+<p>無雜訊 mean 0.008 / max 0.013 voxel(≈6 次迭代, ≈1.2ms/次),比 NCC 次體素</p>
+<p>baseline(mean 0.56 voxel)改善約 60×。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grad_scale=32</code> 是可分離 sobel3d(導數[-1,0,1]×平滑[1,2,1]²)的固定尺度(線性斜坡實測 32.0)。將其正規化到真實梯度以修正 Δp 的尺度。</p>
+<p style="margin:2px 0 2px 12px">• H 中加入微小的 Levenberg 正則化,防止梯度貧乏的平坦樣板出現數值崩潰。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

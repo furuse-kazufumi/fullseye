@@ -5,19 +5,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">images</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.synthesize_fringes.raw(...)</code> oder rufe <code style="color:#22d3bf">fringe.synthesize_fringes</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Synthetisiert aus einer bekannten Höhenkarte eine N-Schritt-phasenverschobene Streifenbildserie (für Tests und Beispielerzeugung).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>モデル: 総位相 φ(x,y) = φ_carrier + phase_gain·height。搬送波 φ_carrier は視野を横切る線形ランプ(freq 周期)。各フレームは I_n = bias + amplitude·cos(φ - δ_n), δ_n = 2πn/N。この符号規約により wrapped_phase(...) は総位相 φ をそのまま復元する。</p>
-<p>height:      2D 配列(計測対象の高さ場、任意単位)。</p>
-<p>n_steps:     位相シフト枚数 N(&gt;=3)。</p>
-<p>freq:        視野幅を横切る搬送波の周期数(縞本数)。0 なら搬送波なし(height のみ)。</p>
-<p>phase_gain:  高さ→位相の変換ゲイン(rad/単位)。復号側の較正 k = 1/phase_gain に対応。</p>
-<p>bias:        平均輝度 a(既定 0.5)。</p>
-<p>amplitude:   縞振幅 b(既定 0.5)。bias±amplitude が [0,1] に収まると自然。</p>
-<p>axis:        搬送波の方向(1 = 列方向 x に沿う既定、0 = 行方向 y)。</p>
-<p>noise:       付加ガウスノイズの標準偏差(0 で無ノイズ)。</p>
-<p>seed:        ノイズ用乱数シード。</p>
-<p>return_phase: True なら (images, total_phase) を返す(テスト・デバッグ用)。</p>
-<p>返り値: (N, H, W) float 配列(値域 [0,1] にクリップ)。return_phase=True なら位相も。</p>
+<p>Modell: Gesamtphase φ(x,y) = φ_carrier + phase_gain·height. Der Träger φ_carrier ist eine lineare Rampe quer über das Sichtfeld (freq Perioden). Jedes Frame ist I_n = bias + amplitude·cos(φ - δ_n), δ_n = 2πn/N. Mit dieser Vorzeichenkonvention stellt wrapped_phase(...) die Gesamtphase φ unverändert wieder her.</p>
+<p>height:      2D-Array (Höhenfeld des Messobjekts, beliebige Einheit).</p>
+<p>n_steps:     Anzahl der Phasenschiebebilder N (&gt;=3).</p>
+<p>freq:        Anzahl der Trägerperioden über die Sichtfeldbreite (Streifenzahl). 0 bedeutet keinen Träger (nur height).</p>
+<p>phase_gain:  Umrechnungsverstärkung Höhe→Phase (rad/Einheit). Entspricht der Kalibrierung k = 1/phase_gain auf der Dekodierseite.</p>
+<p>bias:        mittlere Leuchtdichte a (Standard 0.5).</p>
+<p>amplitude:   Streifenamplitude b (Standard 0.5). Natürlich, wenn bias±amplitude in [0,1] liegt.</p>
+<p>axis:        Richtung des Trägers (1 = entlang der Spaltenrichtung x, Standard; 0 = Zeilenrichtung y).</p>
+<p>noise:       Standardabweichung des addierten Gauß-Rauschens (0 = rauschfrei).</p>
+<p>seed:        Zufalls-Seed für das Rauschen.</p>
+<p>return_phase: bei True wird (images, total_phase) zurückgegeben (für Tests und Debugging).</p>
+<p>Rückgabewert: (N, H, W) float-Array (auf den Wertebereich [0,1] begrenzt). Bei return_phase=True auch die Phase.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

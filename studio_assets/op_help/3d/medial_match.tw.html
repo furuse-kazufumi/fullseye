@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)</code>(要直接呼叫實作,<code style="color:#22d3bf">import medial; medial.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;medial_match&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基於 medial(拓撲 + 半徑分布)對兩個體素形狀的粗匹配得分。回傳 [0,1]。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>骨格の位相記述子(端点/分岐/通常/孤立の割合)の距離と、medial 半径分布(内接半径のヒストグラム)の距離を重み付き合成し、類似度 = 1 - 距離 として返す。1 に近いほど似ている。平行移動・回転(90 度)に対して概ね不変で、位相ベースの初期照合(粗いふるい)に使う。</p>
+<p>將骨架的拓撲描述子(端點/分支/一般/孤立的比例)之間的距離,與 medial 半徑分布(內切半徑的直方圖)之間的距離加權合成,回傳相似度 = 1 - 距離。越接近 1 越相似。對平移、旋轉(90 度)大致不變,用於基於拓撲的初始比對(粗篩)。</p>
 <p>Args:</p>
-<p>vol_a, vol_b: バイナリ voxel(bool / 0-1 の 3D)。</p>
-<p>w_topology: 位相距離の重み(既定 0.6)。</p>
-<p>w_radius: 半径分布距離の重み(既定 0.4)。</p>
-<p>n_bins: 半径ヒストグラムの bin 数。</p>
+<p>vol_a, vol_b: 二值 voxel(bool / 0-1 的 3D)。</p>
+<p>w_topology: 拓撲距離的權重(預設 0.6)。</p>
+<p>w_radius: 半徑分布距離的權重(預設 0.4)。</p>
+<p>n_bins: 半徑直方圖的 bin 數。</p>
 <p>Returns:</p>
-<p>float: 類似スコア [0,1] (大きいほど類似)。</p>
+<p>float: 相似分數 [0,1] (越大越相似)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

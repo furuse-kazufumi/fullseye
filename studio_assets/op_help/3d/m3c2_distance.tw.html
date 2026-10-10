@@ -5,32 +5,31 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.m3c2_distance(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">signal</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">metrics3d.m3c2_distance</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>沿法線方向</b>測量 2 個時間點點雲之間的差異(M3C2)。→ <code style="color:#22d3bf">(distance, lod)</code> 這 2 個值。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>最近傍距離(chamfer / C2C)は「いちばん近い点までの距離」なので、<b>傾いた面では面に沿ったずれまで距離として数えてしまう</b>。地形・構造物の変化検出では、それが「測り直しただけで検出される偽の変化」の主因になる(<code style="color:#22d3bf">poc_structure_4d_deterioration</code></p>
-<p>の実測: 劣化ゼロで測り返しただけで C2C の中央値 21.07 mm、法線方向なら 0.55 mm)。</p>
-<p>M3C2(Lague 2013)は core 点ごとに <b>法線 <code style="color:#22d3bf">n</code> を軸とする円筒</b>(半径 <code style="color:#22d3bf">radius</code>、長さ <code style="color:#22d3bf">max_depth</code>)で両方の雲を切り取り、各点を <code style="color:#22d3bf">n</code> に射影した平均の差を返す。向きは <code style="color:#22d3bf">n</code> の指す側が正 —— <b>符号がそのまま「増えた / 減った」</b>になる。</p>
+<p>最近鄰距離(chamfer / C2C)是「到最近點的距離」，因此 <b>在傾斜面上連沿著面的偏移也會算作距離</b>。在地形、結構物的變化偵測中，這是「僅僅重新量測就被偵測出的假變化」的主因(<code style="color:#22d3bf">poc_structure_4d_deterioration</code></p>
+<p>的實測：零劣化、僅重新量測，C2C 的中位數就為 21.07 mm，沿法線方向則為 0.55 mm)。</p>
+<p>M3C2(Lague 2013)對每個 core 點以 <b>以法線 <code style="color:#22d3bf">n</code> 為軸的圓柱</b>(半徑 <code style="color:#22d3bf">radius</code>、長度 <code style="color:#22d3bf">max_depth</code>)截取兩個點雲，回傳各點投影到 <code style="color:#22d3bf">n</code> 上的平均值之差。方向以 <code style="color:#22d3bf">n</code> 所指的一側為正 —— <b>符號直接就是「增加 / 減少」</b>。</p>
 <p>Args:</p>
-<p>a: 時点 1 の点群 <code style="color:#22d3bf">(Na,3)</code>。</p>
-<p>b: 時点 2 の点群 <code style="color:#22d3bf">(Nb,3)</code>。</p>
-<p>cores: 測る場所 <code style="color:#22d3bf">(M,3)</code>(a の部分集合でも、別に置いた格子でもよい)。</p>
-<p>normals: core ごとの法線 <code style="color:#22d3bf">(M,3)</code>(未正規化でよい。<b>符号が結果の符号を決める</b>)。</p>
-<p>radius: 円筒の半径(core 周りで平均する範囲。面の粗さより大きく、測りたい</p>
-<p>構造より小さく取る)。</p>
-<p>max_depth: 円筒の長さの半分。<code style="color:#22d3bf">None</code> なら軸方向を制限しない。</p>
-<p>min_points: 片側にこの数だけ点が無い core は <code style="color:#22d3bf">nan</code> を返す(既定 4)。</p>
+<p>a：時刻 1 的點雲 <code style="color:#22d3bf">(Na,3)</code>。</p>
+<p>b：時刻 2 的點雲 <code style="color:#22d3bf">(Nb,3)</code>。</p>
+<p>cores：量測位置 <code style="color:#22d3bf">(M,3)</code>(可以是 a 的子集合，也可以是另行配置的網格)。</p>
+<p>normals：每個 core 的法線 <code style="color:#22d3bf">(M,3)</code>(可不正規化。<b>符號決定結果的符號</b>)。</p>
+<p>radius：圓柱的半徑(在 core 周圍取平均的範圍。取得比面的粗糙度大、比想量測的</p>
+<p>結構小)。</p>
+<p>max_depth：圓柱長度的一半。<code style="color:#22d3bf">None</code> 時不限制軸向。</p>
+<p>min_points：任一側點數不足此數的 core 回傳 <code style="color:#22d3bf">nan</code>(預設 4)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(distance, lod)</code>: どちらも <code style="color:#22d3bf">(M,)</code> float64。<code style="color:#22d3bf">distance</code> は法線方向の</p>
-<p>符号つき差、<code style="color:#22d3bf">lod</code>(level of detection)は</p>
-<p><code style="color:#22d3bf">1.96·sqrt(σa²/na + σb²/nb)</code> —— <b>この値を超えない差は雑音と区別できない</b>。</p>
-<p>点が足りない core は両方 <code style="color:#22d3bf">nan</code>。</p>
-<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.m3c2_distance</code>)は宣言 out 型の <code style="color:#22d3bf">distance</code> だけを</p>
-<p>返す。<code style="color:#22d3bf">lod</code> も要るときは <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code>。</p>
+<p><code style="color:#22d3bf">(distance, lod)</code>：皆為 <code style="color:#22d3bf">(M,)</code> float64。<code style="color:#22d3bf">distance</code> 是沿法線方向的</p>
+<p>帶正負號差，<code style="color:#22d3bf">lod</code>(level of detection)為</p>
+<p><code style="color:#22d3bf">1.96·sqrt(σa²/na + σb²/nb)</code> —— <b>不超過此值的差無法與雜訊區分</b>。</p>
+<p>點數不足的 core 兩者皆為 <code style="color:#22d3bf">nan</code>。</p>
+<p>★經由台帳(<code style="color:#22d3bf">fullseye.ledger.m3c2_distance</code>)時只回傳宣告的 out 型別</p>
+<p><code style="color:#22d3bf">distance</code>。還需要 <code style="color:#22d3bf">lod</code> 時用 <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code>。</p>
 <p>Raises:</p>
-<p>ValueError: 点群 / cores が <code style="color:#22d3bf">(N,3)</code> でない、空、<code style="color:#22d3bf">normals</code> の数が cores と</p>
-<p>合わない、<code style="color:#22d3bf">radius &lt;= 0</code>、<code style="color:#22d3bf">max_depth &lt;= 0</code>、<code style="color:#22d3bf">min_points &lt; 1</code> のとき。</p>
-<p><b>限界(honest)</b>: (1) 法線は呼び手が与える —— <code style="color:#22d3bf">estimate_normals</code> の符号は任意なので、向きを揃えないと符号が場所ごとに反転する。(2) <code style="color:#22d3bf">lod</code> は雑音だけを見ており、<b>位置合わせの残差は含まない</b>(Lague の原論文は登録誤差を別項として足す)。</p>
-<p style="margin:2px 0 2px 12px">(3) 円筒に入る点が少ない縁では <code style="color:#22d3bf">nan</code> になる —— 0 を返して「変化なし」に</p>
-<p>見せない。</p>
+<p>ValueError：點雲 / cores 不是 <code style="color:#22d3bf">(N,3)</code>、為空、<code style="color:#22d3bf">normals</code> 的數量與 cores</p>
+<p>不符、<code style="color:#22d3bf">radius &lt;= 0</code>、<code style="color:#22d3bf">max_depth &lt;= 0</code>、<code style="color:#22d3bf">min_points &lt; 1</code> 時。</p>
+<p><b>局限(honest)</b>：(1) 法線由呼叫端給出 —— <code style="color:#22d3bf">estimate_normals</code> 的符號是任意的，不統一方向的話符號會因位置而翻轉。(2) <code style="color:#22d3bf">lod</code> 只考慮雜訊，<b>不包含對位殘差</b>(Lague 的原論文把對位誤差作為獨立一項加上)。</p>
+<p style="margin:2px 0 2px 12px">(3) 圓柱內點數少的邊緣處為 <code style="color:#22d3bf">nan</code> —— 不會回傳 0 而讓人</p>
+<p>誤以為「沒有變化」。</p>
 <p>Reference (public): D. Lague, N. Brodu, J. Leroux, &quot;Accurate 3D comparison of complex topography with terrestrial laser scanner: application to the Rangitikei canyon (N-Z)&quot;, ISPRS Journal of Photogrammetry and Remote Sensing 82 (2013) 10-26.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>

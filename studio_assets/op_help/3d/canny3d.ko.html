@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.canny3d(vol, low: &#x27;float&#x27;, high: &#x27;float&#x27;, sigma: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import edges3d; edges3d.canny3d(vol, low: &#x27;float&#x27;, high: &#x27;float&#x27;, sigma: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;canny3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3D Canny 에지 검출(비최대 억제 + 히스테리시스).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : (D,H,W) array</p>
-<p>グレー voxel。</p>
+<p>그레이 voxel.</p>
 <p>low, high : float</p>
-<p>ヒステリシスの下限 / 上限閾値(勾配の大きさに対して)。0 &lt;= low &lt;= high, high &gt; 0。</p>
+<p>히스테리시스의 하한 / 상한 임계값(기울기의 크기에 대해). 0 &lt;= low &lt;= high, high &gt; 0.</p>
 <p>sigma : float</p>
-<p>平滑の標準偏差。</p>
+<p>평활의 표준편차.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>edge_mask : (D,H,W) bool</p>
-<p>1 voxel に細線化されたエッジ。</p>
+<p>1 voxel로 세선화된 에지.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p style="margin:2px 0 2px 12px">(1) gradient3d で平滑勾配を得る → (2) 勾配方向に沿った NMS(三線形補間)で局所最大を残し</p>
-<p>→ (3) high 閾値を種に low 閾値で 26 連結を伸長。閾値は絶対値なので、対象に応じて gmag.max() のスケールで与えるとロバスト。</p>
+<p style="margin:2px 0 2px 12px">(1) gradient3d로 평활 기울기를 얻는다 → (2) 기울기 방향을 따른 NMS(삼선형 보간)로 국소 최대를 남기고</p>
+<p>→ (3) high 임계값을 시드로 low 임계값에서 26 연결로 확장. 임계값은 절대값이므로 대상에 맞춰 gmag.max()의 스케일로 주면 강건하다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

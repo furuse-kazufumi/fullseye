@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_edges(depth, rel_thresh=0.05)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import range_image; range_image.occlusion_edges(depth, rel_thresh=0.05)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;occlusion_edges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>depth discontinuity (foreground/background boundary = occlusion edge) पहचानता है। → bool HxW।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>遮蔽エッジは深度の<b>不連続(step)</b>であって傾斜(slope)ではない。一様な傾斜面は連続で遮蔽を含まないため flag してはならない。一階勾配(=深度/画素)は傾斜そのもので、段差か斜面かを区別できない(かつ絶対深度の割合と比較するのは次元不整合)。</p>
-<p>そこで軸ごとの<b>二階差分(離散ラプラシアン相当)</b> <code style="color:#22d3bf">d[i+1]-2*d[i]+d[i-1]</code> を使う。一様傾斜(深度が近傍で線形)なら二階差分 ≈ 0、fronto-parallel な段差では両側で大きな値。これを局所深度で正規化した相対的な深度ジャンプが rel_thresh を超える画素を境界とする。</p>
+<p>occlusion edge depth की <b>discontinuity (step)</b> है, slope नहीं। एक-समान slope वाली surface continuous होती है और उसमें occlusion नहीं होता, इसलिए उसे flag नहीं करना चाहिए। first-order gradient (=depth/pixel) ख़ुद slope है, और step व slope में फ़र्क नहीं कर सकता (और इसे absolute depth के अनुपात से तुलना करना dimension के हिसाब से असंगत है)।</p>
+<p>इसलिए हर axis पर <b>second-order difference (discrete Laplacian के बराबर)</b> <code style="color:#22d3bf">d[i+1]-2*d[i]+d[i-1]</code> इस्तेमाल किया जाता है। एक-समान slope (neighbourhood में depth linear) पर second-order difference ≈ 0, जबकि fronto-parallel step पर दोनों तरफ़ बड़ा मान। इसे local depth से normalise करके, जिन pixels का relative depth jump rel_thresh से ज़्यादा है उन्हें boundary माना जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>

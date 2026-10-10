@@ -4,27 +4,26 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volops; volops.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;volume_downsample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">(D, H, W)</code> 볼륨을 축별 정수 *factor* 로 블록 풀링(데이터 간引き).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Large CT / laminography / simulation volumes must be thinned before the heavier 3-D operators (Frangi/Sato are capped at ~256**3 voxels, see <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>). This is the volume analogue of the point-cloud <code style="color:#22d3bf">voxel_grid_downsample</code> and the mesh <code style="color:#22d3bf">decimate_qem</code> — the third leg of Fullseye&#x27;s *間引き* (decimation) family, one per 3-D data sort.</p>
+<p>대형 CT / 라미노그래피 / 시뮬레이션 볼륨은더 무거운 3-D 연산자에 앞서 솎아내야 한다(Frangi/Sato는 ~256**3 복셀이 상한, <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code> 참조). 이것은 점군의 <code style="color:#22d3bf">voxel_grid_downsample</code>과 메시의 <code style="color:#22d3bf">decimate_qem</code>에 대응하는 볼륨판이다 — Fullseye *솎아내기*(decimation) 계열의 세 번째 다리로, 3-D 데이터 sort마다 하나씩이다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : array_like, shape (D, H, W)</p>
-<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>입력 볼륨(float64로 강제 변환; NaN/Inf는 거부).</p>
 <p>factor : int or (fz, fy, fx)</p>
-<p>Block size per axis, each <code style="color:#22d3bf">&gt;= 1</code>. The output shape is</p>
-<p><code style="color:#22d3bf">(D//fz, H//fy, W//fx)</code>; a trailing partial block that cannot fill a</p>
-<p>full factor is dropped (deterministic, no edge bias).</p>
+<p>축마다의 블록 크기, 각각 <code style="color:#22d3bf">&gt;= 1</code>. 출력 형상은</p>
+<p><code style="color:#22d3bf">(D//fz, H//fy, W//fx)</code>; 완전한 factor를 채우지 못하는</p>
+<p>끝부분의 불완전 블록은 버린다(결정적, 가장자리 편향 없음).</p>
 <p>mode : {&#x27;mean&#x27;, &#x27;max&#x27;, &#x27;stride&#x27;}</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;mean&#x27;</code> — average-pool. Band-limits before subsampling (the anti-aliasing choice); the right default for grey CT / MRI.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;max&#x27;</code>  — max-pool. Preserves thin bright structures (bone, vessel, defect voxels) that averaging would wash out.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;stride&#x27;</code> — plain subsample <code style="color:#22d3bf">vol[::fz, ::fy, ::fx]</code> (fastest, but aliases — no pre-filter).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;mean&#x27;</code> — 평균 풀링. 서브샘플링 전에 대역을 제한한다( 안티에일리어싱 선택); 그레이 CT / MRI에 알맞은 기본값.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;max&#x27;</code>  — 최대 풀링. 평균하면 씻겨 나갈 가늘고 밝은 구조(뼈, 혈관, 결함 복셀)를 보존한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;stride&#x27;</code> — 단순 서브샘플 <code style="color:#22d3bf">vol[::fz, ::fy, ::fx]</code>(가장 빠르지만, 에일리어싱이 생긴다 — 사전 필터 없음).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (D//fz, H//fy, W//fx), float64</p>
-<p>The downsampled volume. Spacing scales by the same factor: an input</p>
-<p>spacing <code style="color:#22d3bf">(sz, sy, sx)</code> mm becomes <code style="color:#22d3bf">(sz*fz, sy*fy, sx*fx)</code> mm.</p>
+<p>다운샘플된 볼륨. 간격도 같은 factor로 스케일된다: 입력</p>
+<p>간격 <code style="color:#22d3bf">(sz, sy, sx)</code> mm는 <code style="color:#22d3bf">(sz*fz, sy*fy, sx*fx)</code> mm가 된다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>Non-3-D input, a factor component <code style="color:#22d3bf">&lt; 1</code> or larger than its axis, or an</p>
-<p>unknown *mode* (fail-closed).</p>
+<p>3-D가 아닌 입력, factor 성분이 <code style="color:#22d3bf">&lt; 1</code>이거나 그 축보다 큰 경우, 또는</p>
+<p>알 수 없는 *mode* (fail-closed).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

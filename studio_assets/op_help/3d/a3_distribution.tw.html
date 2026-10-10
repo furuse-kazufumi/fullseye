@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.a3_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import descriptors3d; descriptors3d.a3_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;a3_distribution&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>隨機三點 (A, B, C) 在頂點 B 處所成角的分布(Osada 2002 的 A3)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>角度は回転・平行移動・スケールのすべてに不変(スケールしても角は変わらない)ため、D2 と相補的な<b>無次元</b>の形状特徴になる。レンジ [0, π] 固定の正規化ヒストグラム(bins,) を返す(総和 1)。空間的に重なった点(ゼロ長ベクトル)は角が未定義なので除外する。</p>
+<p>角度對旋轉、平移、尺度全部不變(縮放也不改變角度),因此成為與 D2 互補的<b>無因次</b>形狀特徵。回傳範圍固定為 [0, π] 的正規化直方圖(bins,)(總和 1)。空間上重合的點(零長度向量)角度未定義,因此予以排除。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>点群。N &gt;= 3 が必要。</p>
+<p>點雲。需要 N &gt;= 3。</p>
 <p>bins, samples, seed :</p>
-<p>d2_distribution と同義。</p>
+<p>與 d2_distribution 意義相同。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (bins,)</p>
-<p>正規化角度ヒストグラム(ラジアン、[0, π])。</p>
+<p>正規化角度直方圖(弧度,[0, π])。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

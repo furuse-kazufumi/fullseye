@@ -4,40 +4,43 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_graph3d(vol, distance=None, spacing=(1.0, 1.0, 1.0), min_branch_len=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import medial; medial.skeleton_graph3d(vol, distance=None, spacing=(1.0, 1.0, 1.0), min_branch_len=0.0)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;skeleton_graph3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 3D 骨架组装成<b>由节点(连接点、端点)和分支(长度、半径)构成的图</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">skeleton_junctions3d</code> / <code style="color:#22d3bf">skeleton_endpoints3d</code> / <code style="color:#22d3bf">skeleton_branches3d</code> は「どの voxel がノードか/枝か」を <b>マスク</b>で返すだけで、<b>どの枝がどのノードとどのノードを繋ぐか</b>は返さない。回路にするにはその接続が要る —— 神経形態のケーブル理論では、区画の軸方向コンダクタンスが <b>直径と長さ</b>で決まり、区画同士の <b>繋がり方</b>が回路そのものになる。この op はその 1 段を埋める。</p>
-<p>引数:</p>
-<p>vol: 3-D の骨格(bool か <code style="color:#22d3bf">{0, 1}</code>。<code style="color:#22d3bf">skeletonize_vol</code> の出力)。中身が</p>
-<p>塊(6 近傍がすべて前景の interior voxel がある)なら、族の他の op と</p>
-<p>同じく内部で <code style="color:#22d3bf">skeletonize_vol</code> を先に掛ける。</p>
-<p>distance: 任意。同形の距離変換ボリューム(<code style="color:#22d3bf">vol_distance_transform</code> の</p>
-<p>出力)。渡すと各ノード・各枝に半径が付く。<b>単位は渡した距離場に従う</b></p>
-<p>—— 物理単位が要るなら <code style="color:#22d3bf">vol_distance_transform(mask, spacing)</code> を渡す。</p>
-<p>spacing: <code style="color:#22d3bf">(sz, sy, sx)</code>。枝の長さを <b>実距離</b>で測る(EM の異方ボクセルが</p>
-<p>既定の想定)。<code style="color:#22d3bf">VolumeMeta</code> も受ける。</p>
-<p>min_branch_len: これ未満の<b>末端の枝(ヒゲ)</b>を刈る(既定 0 = 刈らない)。</p>
-<p>単位は <code style="color:#22d3bf">spacing</code> の実距離。刈るのは「片端が端点(次数 1)で、もう</p>
-<p>片端が次数 2 以上」の枝 —— <b>両端とも端点</b>の枝は刈らない。それは</p>
-<p>それ自体が 1 つの連結成分(短い孤立した管)なので、刈ると構造ごと</p>
-<p>消えてしまう。刈ったぶんは <code style="color:#22d3bf">n_pruned_branches</code> に返す。</p>
-<p>返り値: <code style="color:#22d3bf">dict</code>(台帳の宣言 out 型 = <code style="color:#22d3bf">table</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nodes</code>: ノード表。<code style="color:#22d3bf">id</code> / <code style="color:#22d3bf">z,y,x</code>(voxel 添字での重心。実座標は spacing を掛ける)/ <code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">degree</code> / <code style="color:#22d3bf">n_voxels</code> / <code style="color:#22d3bf">radius</code> (<code style="color:#22d3bf">distance</code> を渡したとき、そのノードの voxel での最大値 = 内接半径)/ <code style="color:#22d3bf">component</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">edges</code>: 枝表。<code style="color:#22d3bf">u</code> / <code style="color:#22d3bf">v</code>(ノード id の対)/ <code style="color:#22d3bf">length</code>(骨格に沿った実距離、spacing 込み)/ <code style="color:#22d3bf">radius_mean</code> / <code style="color:#22d3bf">radius_min</code> / <code style="color:#22d3bf">n_points</code> (経路上の voxel 数、両端のノード voxel を含む)/ <code style="color:#22d3bf">component</code>。</p>
+<p><code style="color:#22d3bf">skeleton_junctions3d</code> / <code style="color:#22d3bf">skeleton_endpoints3d</code> / <code style="color:#22d3bf">skeleton_branches3d</code> 只以 <b>掩模</b> 返回&quot;哪些 voxel 是节点/分支&quot;,并不返回 <b>哪条分支连接哪个节点与哪个节点</b>。要构成电路就需要这种连接 —— 在神经形态的电缆理论中,区室的轴向电导由 <b>直径和长度</b> 决定,区室之间的 <b>连接方式</b> 本身就是电路。本 op 填补这 1 个环节。</p>
+<p>参数:</p>
+<p>vol: 3-D 骨架(bool 或 <code style="color:#22d3bf">{0, 1}</code>。<code style="color:#22d3bf">skeletonize_vol</code> 的输出)。若内容</p>
+<p>是块(存在 6 邻域全为前景的 interior voxel),则与同族的其他 op</p>
+<p>一样,在内部先施加 <code style="color:#22d3bf">skeletonize_vol</code>。</p>
+<p>distance: 可选。同形状的距离变换体(<code style="color:#22d3bf">vol_distance_transform</code> 的</p>
+<p>输出)。传入后各节点、各分支会附带半径。<b>单位遵循传入的距离场</b></p>
+<p>—— 需要物理单位时传 <code style="color:#22d3bf">vol_distance_transform(mask, spacing)</code>。</p>
+<p>spacing: <code style="color:#22d3bf">(sz, sy, sx)</code>。以 <b>实际距离</b> 测量分支长度(默认设想 EM 的各向异性</p>
+<p>体素)。也接受 <code style="color:#22d3bf">VolumeMeta</code>。</p>
+<p>min_branch_len: 剪掉短于该值的 <b>末端分支(毛刺)</b>(默认 0 = 不剪)。</p>
+<p>单位是 <code style="color:#22d3bf">spacing</code> 下的实际距离。被剪的是&quot;一端为端点(度 1)、另</p>
+<p>一端度为 2 以上&quot;的分支 —— <b>两端都是端点</b> 的分支不剪。这种分支</p>
+<p>本身就是 1 个连通分量(短的孤立管),剪掉会让整个结构</p>
+<p>消失。剪掉的数量返回到 <code style="color:#22d3bf">n_pruned_branches</code>。</p>
+<p>返回值: <code style="color:#22d3bf">dict</code>(台账声明的 out 类型 = <code style="color:#22d3bf">table</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nodes</code>: 节点表。<code style="color:#22d3bf">id</code> / <code style="color:#22d3bf">z,y,x</code>(以 voxel 下标表示的质心。实际坐标需乘以 spacing)/ <code style="color:#22d3bf">kind</code> / <code style="color:#22d3bf">degree</code> / <code style="color:#22d3bf">n_voxels</code> / <code style="color:#22d3bf">radius</code> (传入 <code style="color:#22d3bf">distance</code> 时,该节点各 voxel 上的最大值 = 内切半径)/ <code style="color:#22d3bf">component</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">edges</code>: 分支表。<code style="color:#22d3bf">u</code> / <code style="color:#22d3bf">v</code>(节点 id 对)/ <code style="color:#22d3bf">length</code>(沿骨架的实际距离,含 spacing)/ <code style="color:#22d3bf">radius_mean</code> / <code style="color:#22d3bf">radius_min</code> / <code style="color:#22d3bf">n_points</code> (路径上的 voxel 数,含两端节点 voxel)/ <code style="color:#22d3bf">component</code>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_nodes</code> / <code style="color:#22d3bf">n_edges</code> / <code style="color:#22d3bf">n_components</code> / <code style="color:#22d3bf">n_cycles</code> / <code style="color:#22d3bf">n_pruned_branches</code> / <code style="color:#22d3bf">n_skeleton_voxels</code> / <code style="color:#22d3bf">spacing</code> / <code style="color:#22d3bf">has_radius</code>。</p>
-<p>規約(ここが位相を決める):</p>
-<p style="margin:2px 0 2px 12px">• 26 近傍次数 <b>2</b> の voxel は枝の途中であってノードにしない。次数 <b>1 以下</b> が端点(孤立 voxel を含む)、<b>3 以上</b>が接合。</p>
-<p style="margin:2px 0 2px 12px">• 接合 voxel は 1 つとは限らない(離散骨格では分岐が数 voxel の塊になる)。26 連結で塊にまとめて <b>1 ノード</b>として数え、座標はその重心。</p>
-<p style="margin:2px 0 2px 12px">• <b>連結成分が複数なら黙って繋がない。</b> <code style="color:#22d3bf">n_components</code> に本数を返し、各ノード・各枝に <code style="color:#22d3bf">component</code> を付ける。</p>
-<p style="margin:2px 0 2px 12px">• 閉ループだけの成分(ノードになる voxel が 1 つも無い輪)は、その成分の先頭 voxel を 1 つだけ種のノードに立てて自己ループの枝 1 本にする。こうすると <b>オイラーの関係 <code style="color:#22d3bf">n_cycles = n_edges - n_nodes + n_components</code></b> が輪でも成り立つ(木だと仮定していない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> は<b>刈った後の</b>次数で決まる: 0 = <code style="color:#22d3bf">isolated</code> / 1 = <code style="color:#22d3bf">endpoint</code> / 2 = <code style="color:#22d3bf">chain</code>(輪の種ノード、または刈った結果そうなったノード)/ 3 以上 = <code style="color:#22d3bf">junction</code>。刈ると接合が次数 2 に落ちることがあり、そのノードは残る(区画の境界としては正しいが、「次数 2 はノードにしない」という上の規約は<b>刈る前</b>の話であることに注意)。</p>
-<p style="margin:2px 0 2px 12px">• 接合の塊どうしが直接隣接している(間に次数 2 の道が無い)場合は、その対に対して <b>1 本</b>の枝を作る(長さ = 隣接する voxel 対の最短)。</p>
-<p>検証(すべて <code style="color:#22d3bf">ValueError</code> で fail-closed): 3-D でない/空配列/NaN・Inf/ bool でも <code style="color:#22d3bf">{0,1}</code> でもない値(中間値の「たぶん前景」を黙って丸めない)/ 前景がゼロ/<code style="color:#22d3bf">distance</code> の形が違う・負・非有限/<code style="color:#22d3bf">spacing</code> が 3 つの正の有限値でない/<code style="color:#22d3bf">min_branch_len</code> が負。細線化が要る入力で scikit-image が無ければ <code style="color:#22d3bf">ImportError</code>。</p>
-<p>注意(honest、いずれも実測):</p>
-<p style="margin:2px 0 2px 12px">• 長さは <b>26 近傍の折れ線</b>の和なので、曲がった枝は連続曲線より長く出る。半径 14 voxel の閉じた管(真の周長 87.96)で <b>94.7 = +7.7 %</b>。</p>
-<p style="margin:2px 0 2px 12px">• <b>太い入力は端が縮む。</b> 自由端の細線化は端の蓋の手前で止まる。長さ 35 の直円柱で実測すると 半径 1・2 は <b>35.00(縮みゼロ)</b>、半径 3 は 33、半径 4 は 31 —— 半径が 3 以上になると片端あたり 1〜2 voxel 内側に寄る。長さを真値と比べるなら、<b>細線化を通らない 1 voxel 幅の骨格</b>を渡すこと(そのときは厳密に一致する: 31 voxel の直線で 30.0)。</p>
-<p style="margin:2px 0 2px 12px">• 分岐では、接合の塊(次数 3 以上が 26 連結でまとまったもの)に呑まれたぶんだけ枝が短くなる。<b>接合より短いヒゲは枝にならず、ノードの <code style="color:#22d3bf">n_voxels</code> に含まれて消える</b>(<code style="color:#22d3bf">min_branch_len</code> で刈る対象にすらならない)。</p>
-<p style="margin:2px 0 2px 12px">• 半径は <code style="color:#22d3bf">distance</code> の値そのもの。端点は端の蓋までの距離で決まるので <b>管の半径より小さく出る</b>(半径 3 の円柱で端点 2.0、枝の平均 3.07)。枝の太さを見るなら <code style="color:#22d3bf">radius_mean</code> / <code style="color:#22d3bf">radius_min</code> を使う。</p>
-<p style="margin:2px 0 2px 12px">• <b>90 度回転</b>: 1 voxel 幅の骨格を入れた場合、グラフは同型で長さも厳密に一致する(9 通り実測)。太い塊を渡した場合はノード数・枝数は一致するが、長さは最大 1.41(= 対角 1 歩)ずれる —— ずれているのはこの op ではなく <b>細線化ヘルパ(skimage Lee)が回転で厳密には同じ骨格を作らない</b>ため。</p>
+<p>约定(这里决定拓扑):</p>
+<p style="margin:2px 0 2px 12px">• 26 邻域度为 <b>2</b> 的 voxel 是分支的中途,不作为节点。度 <b>1 以下</b> 为端点(含孤立 voxel),<b>3 以上</b> 为接合。</p>
+<p style="margin:2px 0 2px 12px">• 接合 voxel 不一定只有 1 个(离散骨架中分支会成为数个 voxel 的块)。按 26 连通归并成块并计为 <b>1 个节点</b>,坐标为其质心。</p>
+<p style="margin:2px 0 2px 12px">• <b>有多个连通分量时不会擅自连接。</b> 在 <code style="color:#22d3bf">n_components</code> 中返回个数, 并给各节点、各分支加上 <code style="color:#22d3bf">component</code>。</p>
+<p style="margin:2px 0 2px 12px">• 只有闭环的分量(没有 1 个会成为节点的 voxel 的环),只在该分量的首个 voxel 上立 1 个种子节点,形成 1 条自环分支。这样 <b>欧拉关系 <code style="color:#22d3bf">n_cycles = n_edges - n_nodes + n_components</code></b> 对环也成立(不假定为树)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> 由 <b>剪枝后的</b> 度决定: 0 = <code style="color:#22d3bf">isolated</code> / 1 = <code style="color:#22d3bf">endpoint</code> / 2 = <code style="color:#22d3bf">chain</code>(环的种子节点,或剪枝后变成这样的节点)/ 3 以上 = <code style="color:#22d3bf">junction</code>。剪枝可能使接合降为度 2,这种节点会保留(作为区室边界是正确的,但请注意上面&quot;度 2 不作为节点&quot; 的约定说的是 <b>剪枝前</b> 的情况)。</p>
+<p style="margin:2px 0 2px 12px">• 接合块之间直接相邻(中间没有度 2 的路径)时,为该对生成 <b>1 条</b> 分支(长度 = 相邻 voxel 对的最短值)。</p>
+<p>校验(全部以 <code style="color:#22d3bf">ValueError</code> fail-closed): 不是 3-D/空数组/NaN、Inf/ 既不是 bool 也不是 <code style="color:#22d3bf">{0,1}</code> 的值(不会把中间值的&quot;大概是前景&quot;擅自取整)/ 前景为零/<code style="color:#22d3bf">distance</code> 形状不同、为负、非有限/<code style="color:#22d3bf">spacing</code> 不是 3 个正的有限值/<code style="color:#22d3bf">min_branch_len</code> 为负。需要细化的输入在没有 scikit-image 时为 <code style="color:#22d3bf">ImportError</code>。</p>
+<p>注意(honest,均为实测):</p>
+<p style="margin:2px 0 2px 12px">• 长度是 <b>26 邻域折线</b> 之和,因此弯曲的分支会比连续曲线长。半径 14 voxel 的闭合管(真实周长 87.96)得到 <b>94.7 = +7.7 %</b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>粗的输入端部会收缩。</b> 自由端的细化会停在端盖之前。在长 35 的</p>
+<p>直圆柱上实测: 半径 1、2 为 <b>35.00(零收缩)</b>,半径 3 为 33,</p>
+<p>半径 4 为 31 —— 半径达到 3 以上时每端向内偏移 1~2 voxel。</p>
+<p>要与真值比较长度,请传入 <b>不经过细化的 1 voxel 宽骨架</b></p>
+<p>(此时严格一致: 31 voxel 的直线得到 30.0)。</p>
+<p style="margin:2px 0 2px 12px">• 在分支处,分支会缩短被接合块(度 3 以上按 26 连通归并而成)吞掉的部分。<b>比接合短的毛刺不会成为分支,而是计入节点的 <code style="color:#22d3bf">n_voxels</code> 而消失</b>(甚至不会成为 <code style="color:#22d3bf">min_branch_len</code> 的剪枝对象)。</p>
+<p style="margin:2px 0 2px 12px">• 半径就是 <code style="color:#22d3bf">distance</code> 的值本身。端点由到端盖的距离决定,因此 <b>会小于管的半径</b>(半径 3 的圆柱: 端点 2.0,分支平均 3.07)。看分支粗细时请用 <code style="color:#22d3bf">radius_mean</code> / <code style="color:#22d3bf">radius_min</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>90 度旋转</b>: 输入 1 voxel 宽的骨架时,图同构且长度也严格一致(实测 9 种)。传入粗块时节点数、分支数一致,但长度最多相差 1.41(= 对角 1 步)—— 产生偏差的不是本 op,而是 <b>细化辅助函数(skimage Lee)在旋转下并不严格生成相同的骨架</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

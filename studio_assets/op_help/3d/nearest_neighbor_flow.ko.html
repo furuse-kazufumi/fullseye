@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nearest_neighbor_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import scene_flow3d; scene_flow3d.nearest_neighbor_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;nearest_neighbor_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>pts0 각 점에서 pts1 의 최근접까지의 3-D 변위 벡터장 (N, 3).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">pts0</code> の各点 p について <code style="color:#22d3bf">pts1</code> 中の最近傍 q を cKDTree で求め、変位 <code style="color:#22d3bf">q - p</code> を返す。要素数は N != M でよい。変位が局所点間隔より十分小さいとき(小さな運動)にのみ「点 i の真の対応先」を当てる — 大変位では最近傍が別点に張り付く(honest な限界、正則化には <code style="color:#22d3bf">smooth_flow</code> を併用)。</p>
+<p><code style="color:#22d3bf">pts0</code> 의 각 점 p 에 대해 <code style="color:#22d3bf">pts1</code> 중의 최근접 q 를 cKDTree 로 구하고, 변위 <code style="color:#22d3bf">q - p</code> 를 반환한다. 요소 수는 N != M 이어도 된다. 변위가 국소 점 간격보다 충분히 작을때(작은 운동)에만 &quot;점 i 의 진짜 대응점&quot;을 맞힌다 — 큰 변위에서는 최근접이다른 점에 달라붙는다(honest 한 한계, 정칙화에는 <code style="color:#22d3bf">smooth_flow</code> 를 병용).</p>
 <p>Args:</p>
-<p>pts0: (N, 3) 時刻 0 の点群。</p>
-<p>pts1: (M, 3) 時刻 1 の点群。</p>
+<p>pts0: (N, 3) 시각 0 의 점군.</p>
+<p>pts1: (M, 3) 시각 1 의 점군.</p>
 <p>Returns:</p>
-<p>(N, 3) 変位ベクトル場(pts0 と同じ行順)。</p>
+<p>(N, 3) 변위 벡터장(pts0 과 같은 행 순서).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正、または pts0 が非空なのに pts1 が空。</p>
+<p>ValueError: 형상 부정, 또는 pts0 이 비어 있지 않은데 pts1 이 비어 있음.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

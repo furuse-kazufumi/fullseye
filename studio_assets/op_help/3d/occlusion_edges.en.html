@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_edges(depth, rel_thresh=0.05)</code> (to call the implementation directly, <code style="color:#22d3bf">import range_image; range_image.occlusion_edges(depth, rel_thresh=0.05)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;occlusion_edges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Detect depth discontinuities (the foreground/background boundary = occlusion edges). → bool HxW.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>遮蔽エッジは深度の<b>不連続(step)</b>であって傾斜(slope)ではない。一様な傾斜面は連続で遮蔽を含まないため flag してはならない。一階勾配(=深度/画素)は傾斜そのもので、段差か斜面かを区別できない(かつ絶対深度の割合と比較するのは次元不整合)。</p>
-<p>そこで軸ごとの<b>二階差分(離散ラプラシアン相当)</b> <code style="color:#22d3bf">d[i+1]-2*d[i]+d[i-1]</code> を使う。一様傾斜(深度が近傍で線形)なら二階差分 ≈ 0、fronto-parallel な段差では両側で大きな値。これを局所深度で正規化した相対的な深度ジャンプが rel_thresh を超える画素を境界とする。</p>
+<p>An occlusion edge is a <b>discontinuity (step)</b> in depth, not a slope. A uniformly sloped surface is continuous and contains no occlusion, so it must not be flagged. The first-order gradient (= depth/pixel) is the slope itself and cannot distinguish a step from a slope (and comparing it with a fraction of the absolute depth is dimensionally inconsistent).</p>
+<p>So the per-axis <b>second-order difference (equivalent to a discrete Laplacian)</b> <code style="color:#22d3bf">d[i+1]-2*d[i]+d[i-1]</code> is used. On a uniform slope (depth linear in the neighbourhood) the second difference ≈ 0; at a fronto-parallel step it is large on both sides. Pixels where this relative depth jump, normalised by the local depth, exceeds rel_thresh are taken as boundaries.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>

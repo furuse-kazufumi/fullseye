@@ -6,8 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: this op has a GPU path (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Displacement from each voxel to the nearest seed <code style="color:#22d3bf">(3, D, H, W)</code> (<code style="color:#22d3bf">flow_dense</code>, dz, dy, dx [voxel]), computed with <b>GPU JFA</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">edt_jfa</code> は距離の値だけを返すが、JFA は内部で最近 seed の座標を運んでいる —— それをそのまま出す(追加コストほぼ 0)。CPU / scipy 経路は <code style="color:#22d3bf">vol_nearest_seed_vector</code>(同じ値、N≤160 で厳密一致を実測)。seed が無ければ ValueError (<code style="color:#22d3bf">edt_jfa</code> は 1e6 に飽和させるが、向きに「無限遠」は無い)。返りは torch float32(台帳経由では numpy)。</p>
+<p><code style="color:#22d3bf">edt_jfa</code> returns only the distance values, but internally JFA carries the coordinates of the nearest seed —— this op outputs them as they are (almost 0 extra cost). The CPU / scipy path is <code style="color:#22d3bf">vol_nearest_seed_vector</code> (same values; exact match measured for N≤160). ValueError if there is no seed (<code style="color:#22d3bf">edt_jfa</code> saturates at 1e6, but a direction has no &quot;infinitely far&quot;). Returns torch float32 (numpy via the ledger).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

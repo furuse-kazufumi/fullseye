@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_line(points, thresh, iters=300, seed=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_line(points, thresh, iters=300, seed=0)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;ransac_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對外點穩健的 RANSAC 直線擬合。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>2 点をサンプル → 直線(通過点 + 方向)→ 点-直線距離 ‖(p-p0)×d‖ &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化 → 最終 inlier で最小二乗リフィット(方向=共分散の最大主軸)。</p>
+<p>取樣 2 點 → 直線(通過點 + 方向)→ 最大化點-直線距離 ‖(p-p0)×d‖ &lt; <code style="color:#22d3bf">thresh</code> 的 inlier → 以最終 inlier 做最小平方重新擬合(方向 = 共變異數的最大主軸)。</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>thresh: inlier とみなす点-直線距離のしきい値。</p>
-<p>iters: RANSAC 反復数。</p>
-<p>seed: 乱数シード(決定論)。</p>
+<p>points: (N,3) 點雲。</p>
+<p>thresh: 視為 inlier 的點-直線距離閾值。</p>
+<p>iters: RANSAC 迭代次數。</p>
+<p>seed: 亂數種子(決定性)。</p>
 <p>Returns:</p>
-<p>(params, inlier_mask, info)。params = {&quot;point&quot;: (3,), &quot;direction&quot;: (3,)}(単位方向)。</p>
+<p>(params, inlier_mask, info)。params = {&quot;point&quot;: (3,), &quot;direction&quot;: (3,)}(單位方向)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,24 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code>(要直接呼叫實作,<code style="color:#22d3bf">import deform3d; deform3d.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;register_cpd_rigid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Coherent Point Drift(CPD)剛體版以 EM 估計旋轉+平移。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">src</code>(移動側 Y, M点)を <code style="color:#22d3bf">dst</code>(固定側 X, N点)へ剛体変換で合わせる。CPD は dst を、src を中心に置いた等方ガウス混合の重心と見なし、E ステップで軟対応(posterior)を、M ステップで最尤の剛体変換と分散を更新する。ICP と違い対応をハードに決めないため、初期ずれ・部分的外れ値に頑健。スケールは 1 固定(純剛体)。</p>
-<p>参考: Myronenko &amp; Song, &quot;Point Set Registration: Coherent Point Drift&quot;, 2010。</p>
-<p>引数:</p>
-<p>src: (M,3) 移動側点群。</p>
-<p>dst: (N,3) 固定側点群。</p>
-<p>iters: 最大 EM 反復回数。</p>
-<p>w: 外れ値(一様分布)混合比 0≤w&lt;1。0 で外れ無し。</p>
-<p>tol: 分散 σ² の相対変化がこの値未満で収束打ち切り。</p>
-<p>返り値:</p>
-<p>R: (3,3) 回転(<code style="color:#22d3bf">dst ≈ src @ R.T + t</code>)。</p>
-<p>t: (3,) 並進。</p>
-<p>info: dict。&quot;sigma2&quot;(最終分散)、&quot;iters&quot;、&quot;converged&quot;、&quot;rmse&quot;</p>
-<p>(変換後 src の最近傍 RMSE)。</p>
+<p>以剛體變換把 <code style="color:#22d3bf">src</code>(移動側 Y,M 點)對齊到 <code style="color:#22d3bf">dst</code>(固定側 X,N 點)。CPD 把 dst 看作以 src 為中心的各向同性高斯混合的質心來處理,在 E 步更新軟對應(posterior),在 M 步更新最大概似的剛體變換與變異數。與 ICP 不同,對應不是硬性決定的,因此對初始偏差與部分離群值穩健。尺度固定為 1(純剛體)。</p>
+<p>參考: Myronenko &amp; Song, &quot;Point Set Registration: Coherent Point Drift&quot;, 2010。</p>
+<p>引數:</p>
+<p>src: (M,3) 移動側點雲。</p>
+<p>dst: (N,3) 固定側點雲。</p>
+<p>iters: 最大 EM 迭代次數。</p>
+<p>w: 離群值(均勻分布)混合比 0≤w&lt;1。0 表示無離群值。</p>
+<p>tol: 變異數 σ² 的相對變化小於此值時視為收斂並終止。</p>
+<p>回傳值:</p>
+<p>R: (3,3) 旋轉(<code style="color:#22d3bf">dst ≈ src @ R.T + t</code>)。</p>
+<p>t: (3,) 平移。</p>
+<p>info: dict。&quot;sigma2&quot;(最終變異數)、&quot;iters&quot;、&quot;converged&quot;、&quot;rmse&quot;</p>
+<p>(變換後 src 的最近鄰 RMSE)。</p>
 <p>例外:</p>
-<p>ValueError: 形状不正、点数不足、w 範囲外、または <code style="color:#22d3bf">N*M</code> が</p>
-<p><code style="color:#22d3bf">CPD_MAX_PAIRS</code>(25M)超(密な (N,M) 責務行列を毎反復組むため。</p>
-<p>両点群を間引いてから渡す)。</p>
+<p>ValueError: 形狀不正確、點數不足、w 超出範圍,或 <code style="color:#22d3bf">N*M</code> 超過</p>
+<p><code style="color:#22d3bf">CPD_MAX_PAIRS</code>(25M)(因為每次迭代都要建構稠密的 (N,M) 責任矩陣。</p>
+<p>請先對兩個點雲降取樣再傳入)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

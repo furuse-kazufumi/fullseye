@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rmse_correspondence(a, b)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metrics3d; metrics3d.rmse_correspondence(a, b)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;rmse_correspondence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>대응이 알려진(같은 index) RMSE = sqrt(mean |a_i - b_i|^2). → scalar. 정합 잔차의 평가.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>計算: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> を float 配列にし、行ごとのユークリッド距離の 2 乗 <code style="color:#22d3bf">sum((a - b)**2, axis=1)</code> を平均して平方根を取る。<b>最近傍探索はしない</b> — <code style="color:#22d3bf">a[i]</code> と <code style="color:#22d3bf">b[i]</code> が同じ点の対応であることを呼び手が保証する(登録で変換した <code style="color:#22d3bf">src @ R.T + t</code> と、対応する <code style="color:#22d3bf">dst</code> の点列、合成データの GT 対応など)。</p>
-<p>引数と検証: <code style="color:#22d3bf">a.shape != b.shape</code> なら <code style="color:#22d3bf">ValueError</code>。それ以外の検査はない:</p>
-<p>空の <code style="color:#22d3bf">(0, 3)</code> 同士は <code style="color:#22d3bf">mean</code> が空で NaN(警告付き)を返し、<code style="color:#22d3bf">(N, 3)</code> 以外でも <code style="color:#22d3bf">axis=1</code> で足せる形なら値を返す。3 列の点群を渡すこと。</p>
-<p>返り値: Python <code style="color:#22d3bf">float</code>、単位は座標の単位、<code style="color:#22d3bf">[0, inf)</code>。同一なら 0。</p>
-<p>注意: 対応がずれている(index が並び替わった)雲に使うと、姿勢が正しくても大きな値が出る。対応不明なら <code style="color:#22d3bf">chamfer_distance</code> / <code style="color:#22d3bf">fscore</code>、姿勢そのものを GT と比べるなら <code style="color:#22d3bf">pose_error</code>。</p>
+<p>계산: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>를 float 배열로 하고, 행별 유클리드 거리의 2제곱 <code style="color:#22d3bf">sum((a - b)**2, axis=1)</code>을 평균하여 제곱근을 취한다. <b>최근접 탐색은 하지 않는다</b> — <code style="color:#22d3bf">a[i]</code>와 <code style="color:#22d3bf">b[i]</code>가 같은 점의 대응임을 호출자가 보장한다(등록으로 변환한 <code style="color:#22d3bf">src @ R.T + t</code>와 대응하는 <code style="color:#22d3bf">dst</code>의 점열, 합성 데이터의 GT 대응 등).</p>
+<p>인수와 검증: <code style="color:#22d3bf">a.shape != b.shape</code>이면 <code style="color:#22d3bf">ValueError</code>. 그 밖의 검사는 없다:</p>
+<p>빈 <code style="color:#22d3bf">(0, 3)</code> 끼리는 <code style="color:#22d3bf">mean</code>이 비어 NaN(경고 포함)을 반환하고, <code style="color:#22d3bf">(N, 3)</code> 이외라도 <code style="color:#22d3bf">axis=1</code>로 더할 수 있는 형태라면 값을 반환한다. 3열의 점군을 넘길 것.</p>
+<p>반환값: Python <code style="color:#22d3bf">float</code>, 단위는 좌표의 단위, <code style="color:#22d3bf">[0, inf)</code>. 동일하면 0.</p>
+<p>주의: 대응이 어긋난(index가 재배열된) 점군에 쓰면, 자세가 올바르더라도큰 값이 나온다. 대응을 모르면 <code style="color:#22d3bf">chamfer_distance</code> / <code style="color:#22d3bf">fscore</code>, 자세 자체를 GT와 비교하려면 <code style="color:#22d3bf">pose_error</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 측정 불확도와 교정 지식 — ‘측정되고 있다’고 주장하려면</p>

@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mesh_props; mesh_props.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;face_areas&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Fläche jeder Facette</b> eines Dreiecksnetzes → <code style="color:#22d3bf">(M,)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>面積 = <code style="color:#22d3bf">0.5·|cross(v1−v0, v2−v0)|</code> を面ごとに返す(<code style="color:#22d3bf">mesh_area</code> はこの総和)。面積は<b>重み</b>として使うためにある —— 「下を向いた面の面積」「公差外の面積」「曲率の面積加重平均」はすべて面ごとの面積が要る量で、総和からは作れない。</p>
+<p>Gibt die Fläche = <code style="color:#22d3bf">0.5·|cross(v1−v0, v2−v0)|</code> je Fläche zurück (<code style="color:#22d3bf">mesh_area</code> ist deren Summe). Die Flächen sind dazu da, als <b>Gewichte</b> verwendet zu werden -- &quot;die Fläche der nach unten zeigenden Flächen&quot;, &quot;die Fläche außerhalb der Toleranz&quot; und &quot;der flächengewichtete Mittelwert der Krümmung&quot; sind allesamt Größen, die Flächen je Fläche benötigen und nicht aus der Summe gebildet werden können.</p>
 <p>Args:</p>
-<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
+<p>mesh: Tupel aus <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code>.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(M,)</code> の float64(非負)。順序は <code style="color:#22d3bf">faces</code> の順で、<code style="color:#22d3bf">face_normals</code> と同じ</p>
-<p>並びなので <code style="color:#22d3bf">areas[normals[:, 2] &lt; 0].sum()</code> のように直接組み合わせられる。</p>
+<p><code style="color:#22d3bf">(M,)</code> float64 (nichtnegativ). Die Reihenfolge ist die von <code style="color:#22d3bf">faces</code>, dieselbe</p>
+<p>Anordnung wie bei <code style="color:#22d3bf">face_normals</code>, sodass sie sich direkt kombinieren lassen, etwa <code style="color:#22d3bf">areas[normals[:, 2] &lt; 0].sum()</code>.</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
-<p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p>注意: <code style="color:#22d3bf">mesh_area</code> と同じく、退化三角形(面積 0)は<b>拒否せず 0 を返す</b> (<code style="color:#22d3bf">face_normals</code> は法線が定義できないので拒否する —— 同じメッシュでもこちらは通る)。重複面・表裏 2 枚張りはそれぞれ 1 面として数える。単位は座標の単位の 2 乗。</p>
+<p>ValueError: wenn <code style="color:#22d3bf">mesh</code> nicht die 2 Elemente <code style="color:#22d3bf">(vertices, faces)</code> sind, die Form ungültig ist,</p>
+<p>Koordinaten nicht endlich sind, ein Index nicht ganzzahlig oder außerhalb des Bereichs ist oder es leer ist.</p>
+<p>Hinweis: Wie bei <code style="color:#22d3bf">mesh_area</code> werden degenerierte Dreiecke (Fläche 0) <b>nicht abgewiesen, sondern liefern 0</b> (<code style="color:#22d3bf">face_normals</code> weist sie ab, weil die Normale undefiniert ist -- dasselbe Mesh geht hier durch). Doppelte Flächen und beidseitig belegte Flächen (2 Lagen, Vorder- und Rückseite) zählen jeweils als 1 Fläche. Die Einheit ist das Quadrat (Potenz 2) der Koordinateneinheit.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

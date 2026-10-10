@@ -5,15 +5,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">mesh</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh.raw(...)</code> oder rufe <code style="color:#22d3bf">match3d.voxel_to_mesh</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Voxel → Mesh (Marching Cubes, skimage). Liefert (verts, faces, normals). Die Voxel-→-Mesh-Umwandlung.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">skimage.measure.marching_cubes(vol, level=iso)</code> の薄い包み(spacing 指定なし = 1 voxel 単位)。<code style="color:#22d3bf">verts</code> (V,3) float は <b>voxel index 座標</b>で、列は入力の軸順(<code style="color:#22d3bf">vol</code> が (D,H,W) なら (z,y,x))。<code style="color:#22d3bf">faces</code> (F,3) int は verts への index、<code style="color:#22d3bf">normals</code> (V,3) は skimage が勾配から与える頂点法線。4 番目の返り値(values)は捨てる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iso</code>: 等値面のレベル。<b>入力の値域の外だと skimage が ValueError</b> を出す(全 0 の</p>
-<p>volume で iso=0.5 など)。個数密度なら 0.5、SDF なら 0.0 を渡す。</p>
-<p style="margin:2px 0 2px 12px">• 境界に接する等値面は開いたまま(端で閉じない)。</p>
-<p style="margin:2px 0 2px 12px">• ★<b>巻き順は内向き</b>。そのまま <code style="color:#22d3bf">mesh_volume</code> に渡すと<b>普通の中身のある形でも負</b>になる(実測: 1000 voxel の立方体で -985.67)。体積が欲しいだけなら</p>
-<p><code style="color:#22d3bf">abs()</code>、向きを揃えたいなら <code style="color:#22d3bf">faces[:, ::-1]</code> で巻き直す。</p>
-<p style="margin:2px 0 2px 12px">• skimage は呼び出し時 import(未導入なら ImportError)。</p>
-<p>後段: <code style="color:#22d3bf">mesh_to_points</code> で点群化、<code style="color:#22d3bf">mesh_area</code> / <code style="color:#22d3bf">face_areas</code> / <code style="color:#22d3bf">mesh_volume</code> / <code style="color:#22d3bf">boundary_vertices</code> / <code style="color:#22d3bf">mesh_edge_stats</code> で計測。</p>
+<p>Eine dünne Hülle um <code style="color:#22d3bf">skimage.measure.marching_cubes(vol, level=iso)</code> (ohne spacing-Angabe = Einheit 1 Voxel). <code style="color:#22d3bf">verts</code> (V,3) float sind <b>Voxel-Index-Koordinaten</b>; die Spalten folgen der Achsenreihenfolge der Eingabe (ist <code style="color:#22d3bf">vol</code> (D,H,W), dann (z,y,x)). <code style="color:#22d3bf">faces</code> (F,3) int sind Indizes in verts, <code style="color:#22d3bf">normals</code> (V,3) sind Vertexnormalen, die skimage aus dem Gradienten liefert. Der 4. Rückgabewert (values) wird verworfen.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iso</code>: Pegel der Isofläche. <b>Außerhalb des Wertebereichs der Eingabe wirft skimage ValueError</b> (z. B. iso=0.5 auf einem Volume aus lauter 0).</p>
+<p>Für Anzahldichte 0.5 übergeben, für ein SDF 0.0.</p>
+<p style="margin:2px 0 2px 12px">• Isoflächen, die den Rand berühren, bleiben offen (sie werden am Rand nicht geschlossen).</p>
+<p style="margin:2px 0 2px 12px">• ★<b>Die Wickelreihenfolge zeigt nach innen</b>. Direkt an <code style="color:#22d3bf">mesh_volume</code> übergeben, wird <b>selbst eine gewöhnliche massive Form negativ</b> (gemessen: -985.67 für einen Würfel aus 1000 Voxeln). Wer nur das Volumen braucht, nimmt</p>
+<p><code style="color:#22d3bf">abs()</code>; um die Orientierung anzugleichen, mit <code style="color:#22d3bf">faces[:, ::-1]</code> neu wickeln.</p>
+<p style="margin:2px 0 2px 12px">• skimage wird beim Aufruf importiert (ImportError, falls nicht installiert).</p>
+<p>Nachgelagert: <code style="color:#22d3bf">mesh_to_points</code> für eine Punktwolke; Messung mit <code style="color:#22d3bf">mesh_area</code> / <code style="color:#22d3bf">face_areas</code> / <code style="color:#22d3bf">mesh_volume</code> / <code style="color:#22d3bf">boundary_vertices</code> / <code style="color:#22d3bf">mesh_edge_stats</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

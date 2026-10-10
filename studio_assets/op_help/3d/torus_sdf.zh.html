@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.torus_sdf(grid, center, axis, major_radius, minor_radius)</code>(要直接调用实现,<code style="color:#22d3bf">import sdf_ops; sdf_ops.torus_sdf(grid, center, axis, major_radius, minor_radius)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;torus_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>圆环面(甜甜圈形)的<b>精确</b>有符号距离场(内侧为负、外侧为正)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">sdf(p) = ‖(r - major_radius, t)‖ - minor_radius</code>(<code style="color:#22d3bf">r</code> は軸からの半径、<code style="color:#22d3bf">t</code> は軸方向の距離)。芯線が半径 <code style="color:#22d3bf">major_radius</code> の円で、その周りに半径 <code style="color:#22d3bf">minor_radius</code> の管が付いた形なので、<b>フィレット(隅の丸み)の解析形</b>としてそのまま使える。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code> / <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">axis</code>: <code style="color:#22d3bf">cylinder_sdf</code> と同じ(軸はドーナツの穴の向き)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major_radius</code>: 芯線の半径(負は拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">minor_radius</code>: 管の半径(負は拒否)。<code style="color:#22d3bf">minor_radius &gt;= major_radius</code> だと穴が潰れた形(スピンドルトーラス)になる。拒否はしないが、<b>厳密なのは <code style="color:#22d3bf">minor_radius &lt; major_radius</code> のときだけ</b>(2026-10-07 訂正: 以前は「距離場としては正しい」と書いていた)。管が軸の上で重なる内側では、値は境界までの真の距離より絶対値が小さい(major 1・minor 2 の中心で −1、真値は −1.73)。符号と零等値面、外側の値は正しく、内側の絶対値は真の距離の下界なので、球追跡(sphere tracing)には安全に使える。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。</p>
-<p>使いどころ: <code style="color:#22d3bf">sdf_subtract</code> で内隅にフィレットを削り出す / <code style="color:#22d3bf">sdf_union</code> で O リング溝の形を作る。角を丸めるだけなら <code style="color:#22d3bf">sdf_smooth_union</code> のほうが手軽だが、あちらは丸みの半径が形状に依存する —— <b>半径を設計値として持ちたいときはこちら</b>。</p>
+<p><code style="color:#22d3bf">sdf(p) = ‖(r - major_radius, t)‖ - minor_radius</code>（<code style="color:#22d3bf">r</code> 为到轴的半径，<code style="color:#22d3bf">t</code> 为轴向距离）。芯线是半径 <code style="color:#22d3bf">major_radius</code> 的圆，其周围附有半径 <code style="color:#22d3bf">minor_radius</code> 的管，因此可直接用作<b>圆角（内角圆角）的解析形式</b>。</p>
+<p>参数与校验(<code style="color:#22d3bf">ValueError</code>)：</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code> / <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">axis</code>：与 <code style="color:#22d3bf">cylinder_sdf</code> 相同（轴为甜甜圈孔的方向）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major_radius</code>：芯线的半径（拒绝负值）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">minor_radius</code>：管的半径（拒绝负值）。<code style="color:#22d3bf">minor_radius &gt;= major_radius</code> 时孔会塌陷（纺锤环面）。不会拒绝，但<b>只有在 <code style="color:#22d3bf">minor_radius &lt; major_radius</code> 时才严格</b>（2026-10-07 更正：以前写的是“作为距离场是正确的”）。在管于轴上重叠的内侧，值的绝对值小于到边界的真实距离（major 1、minor 2 的中心处为 −1，真值为 −1.73）。符号、零等值面和外侧的值是正确的，内侧的绝对值是真实距离的下界，因此可安全用于球追踪(sphere tracing)。</p>
+<p>返回值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。</p>
+<p>用法：用 <code style="color:#22d3bf">sdf_subtract</code> 在内角削出圆角 / 用 <code style="color:#22d3bf">sdf_union</code> 构造 O 形圈槽的形状。如果只是倒圆角，<code style="color:#22d3bf">sdf_smooth_union</code> 更方便，但其圆角半径依赖于形状 —— <b>想把半径作为设计值时用这个</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

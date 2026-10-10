@@ -4,30 +4,29 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點群 (N,3) → (vertices(V,3), faces(F,3)) 的表面網格(screened Poisson 的輕量近似)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>点群を size³ の voxel 格子へ splat し、等値面場を作って marching cubes で三角形メッシュ化する。出力頂点は入力点群と同じ<b>世界座標</b>(bbox から逆写像)。bounds は点群 bbox(+σ 依存の padding)。</p>
-<p>2 モード:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals is None</code>: <b>占有(occupancy)</b> をガウス平滑・[0,1] 正規化し、<code style="color:#22d3bf">iso</code> で二値化した表面バンドの内部を <code style="color:#22d3bf">binary_fill_holes</code> で充填してから再平滑し、単一の外殻を <code style="color:#22d3bf">iso</code> で抜く。占有(unsigned)場は内外対称で、平滑した薄殻の等値面は内スロープ・外スロープの二か所を通り <b>同心二重殻</b>になってしまう。内部充填で内外対称性を破ることで、<b>閉じた</b>表面サンプルからは(格子/σ に対し十分密なら)単一殻が得られる。開いた曲面は充填されず薄い面のまま。疎すぎる/σ が小さいと隙間から充填が漏れ二重殻へ縮退しうる(厳密な内外判定が要るなら <code style="color:#22d3bf">normals</code> 指定を使う)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> 指定: 向き付き点の <b>winding number</b> で内外指標場を作りガウス平滑、<code style="color:#22d3bf">iso</code> (既定 0.5)で表面抜き。表面のみサンプルでも内部を埋めて閉曲面を得られる。</p>
+<p>將點雲 splat 到 size³ 的 voxel 網格,建立等值面場,並以 marching cubes 產生三角網格。輸出頂點與輸入點雲位於同一<b>世界座標</b>(由 bbox 逆映射)。bounds 為點雲 bbox(+ 依 σ 而定的 padding)。</p>
+<p>2 種模式:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals is None</code>:對<b>佔用(occupancy)</b>做高斯平滑並正規化到 [0,1],以 <code style="color:#22d3bf">binary_fill_holes</code> 填充以 <code style="color:#22d3bf">iso</code> 二值化後的表面帶內部,再次平滑,然後以 <code style="color:#22d3bf">iso</code> 擷取單一外殼。佔用(unsigned)場內外對稱,平滑後薄殼的等值面會通過內坡與外坡兩處, 變成<b>同心雙層殼</b>。透過內部填充打破內外對稱性,從<b>封閉</b>的表面取樣中(相對網格 / σ 足夠稠密時)可得到單層殼。開放曲面不會被填充,仍維持為薄面。過於稀疏 / σ 過小時,填充會從縫隙漏出而退化為雙層殼(需要嚴格內外判定時請指定 <code style="color:#22d3bf">normals</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 指定 <code style="color:#22d3bf">normals</code>:以帶朝向點的 <b>winding number</b> 建立內外指示場並做高斯平滑,以 <code style="color:#22d3bf">iso</code> (預設 0.5)擷取表面。即使只有表面取樣,也能填滿內部得到閉曲面。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
-<p>入力点群。</p>
+<p>輸入點雲。</p>
 <p>size : int</p>
-<p>voxel 格子の一辺(既定 64)。大きいほど精細だが O(size³)。</p>
+<p>voxel 網格的邊長(預設 64)。越大越精細,但為 O(size³)。</p>
 <p>sigma : float</p>
-<p>ガウス平滑の標準偏差(voxel 単位、既定 1.0)。padding は ⌈3σ⌉+2 voxel を自動確保。</p>
+<p>高斯平滑的標準差(voxel 單位,預設 1.0)。自動保留 ⌈3σ⌉+2 voxel 的 padding。</p>
 <p>iso : float</p>
-<p>等値面レベル。正規化場 [0,1] 上の値(既定 0.5)。</p>
+<p>等值面水準。正規化場 [0,1] 上的值(預設 0.5)。</p>
 <p>normals : array_like (N,3) or None</p>
-<p>点法線。与えると winding number モード、None なら占有モード。</p>
+<p>點法線。給定則為 winding number 模式,None 則為佔用模式。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>vertices : numpy.ndarray (V,3) float64</p>
-<p>世界座標の頂点。</p>
+<p>世界座標中的頂點。</p>
 <p>faces : numpy.ndarray (F,3) int64</p>
-<p>三角形の頂点インデックス(vertices を参照)。</p>
+<p>三角形的頂點索引(參照 vertices)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
 <p>ValueError</p>
-<p>点数不足(&lt;4)、size が小さすぎる、占有/指標場が薄く iso が場の値域外、など。</p>
+<p>點數不足(&lt;4)、size 過小、佔用/指示場過薄導致 iso 超出場的值域,等等。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

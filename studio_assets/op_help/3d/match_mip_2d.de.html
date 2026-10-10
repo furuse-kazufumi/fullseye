@@ -5,15 +5,14 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>MIP-Projektion → 2-D-NCC (Struktur = Voxel → 2-D, Methode = NCC, Transformation = orthogonale MIP).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>3 直交方向の最大値投影で 3 枚の 2D 問題に落とし、既存の 2D NCC で定位 → 3 枚から 3D 座標を冗長推定。全 3D NCC より安く coarse alignment に。回転が無い平行移動探索向き。</p>
-<p>手順: <code style="color:#22d3bf">voxel_to_mips</code> で scene・model とも 3 枚の MIP を作り、各投影で model MIP の <code style="color:#22d3bf">&gt; 5%·max</code> の bbox を切り出してテンプレにし、<code style="color:#22d3bf">accel_match.ncc_locate_batch</code>(2D NCC、テンプレ中心規約)で位置を取る。軸 0 を潰した投影は (y,x)、軸 1 は (z,x)、軸 2 は (z,y) を与えるので各座標は 2 枚から得られ、その平均を返す。返り値 <code style="color:#22d3bf">(3,)</code> float64 の <code style="color:#22d3bf">[z, y, x]</code>(整数 NCC 位置の平均なので .5 刻み)。score は返さない。</p>
-<p style="margin:2px 0 2px 12px">• 位置は <b>切り出した bbox テンプレの中心</b>が scene MIP のどこに載るか。model volume の</p>
-<p>中心ではない。</p>
-<p style="margin:2px 0 2px 12px">• model MIP が全 0 の投影は飛ばし、ある座標が 1 枚からも得られなければ 0.0 になる(例外は</p>
-<p>出ない)。</p>
-<p style="margin:2px 0 2px 12px">• MIP は重なりで奥行き情報を失うので、複数物体・クラッタには弱い。</p>
-<p>後段: この粗位置を <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_lm</code> に渡す。</p>
+<p>Reduziert das Problem per Maximumprojektion in 3 orthogonale Richtungen auf 3 2D-Probleme, lokalisiert mit dem vorhandenen 2D-NCC → schätzt die 3D-Koordinaten redundant aus den 3 Bildern. Günstiger als volles 3D-NCC, für coarse alignment. Geeignet für Translationssuche ohne Rotation.</p>
+<p>Ablauf: <code style="color:#22d3bf">voxel_to_mips</code> erzeugt für scene und model je 3 MIPs; in jeder Projektion wird die bbox von <code style="color:#22d3bf">&gt; 5%·max</code> des model-MIP als Template ausgeschnitten, und <code style="color:#22d3bf">accel_match.ncc_locate_batch</code> (2D-NCC, Template-Zentrum-Konvention) liefert die Position. Die Projektion, die Achse 0 zusammenfasst, liefert (y,x), Achse 1 liefert (z,x), Achse 2 liefert (z,y), daher ergibt sich jede Koordinate aus 2 Bildern, und deren Mittel wird zurückgegeben. Rückgabewert <code style="color:#22d3bf">[z, y, x]</code> als <code style="color:#22d3bf">(3,)</code> float64 (Mittel ganzzahliger NCC-Positionen, daher in Schritten von .5). Kein score wird zurückgegeben.</p>
+<p style="margin:2px 0 2px 12px">• Die Position gibt an, wo im Szenen-MIP das <b>Zentrum des ausgeschnittenen bbox-Templates</b> liegt. Nicht das Zentrum des model-</p>
+<p>Volumes.</p>
+<p style="margin:2px 0 2px 12px">• Projektionen mit model-MIP überall 0 werden übersprungen; lässt sich eine Koordinate aus keinem Bild (nicht einmal 1) gewinnen, wird sie 0.0 (keine Ausnahme</p>
+<p>wird ausgelöst).</p>
+<p style="margin:2px 0 2px 12px">• MIPs verlieren durch Überlagerung die Tiefeninformation und sind daher schwach bei mehreren Objekten und Clutter.</p>
+<p>Nachfolgend: diese Grobposition an <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_lm</code> übergeben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

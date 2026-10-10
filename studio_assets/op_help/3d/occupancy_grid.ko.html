@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occupancy_grid(points, bounds, res)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import occupancy; occupancy.occupancy_grid(points, bounds, res)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;occupancy_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군 (N,3) → 3-D 점유 복셀 격자, bool(점이 들어간 복셀을 점유로 표시).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> が格子の張る体積、<code style="color:#22d3bf">res</code> は各軸のボクセル数(スカラ = 立方 res³、または長さ 3 の軸ごと)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、上端 (frac==1) の点は最終ボクセルに含める。<b>bounds 外の点は落とす</b>(端セルへ clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float) を作るのに対し、これは planning 用の占有(bool)を作る点が固有。</p>
-<p>Raises ValueError for res&lt;=0, non-(N,3) points, or degenerate bounds.</p>
+<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> 가 격자가 펼치는 체적, <code style="color:#22d3bf">res</code> 는 각 축의복셀 수(스칼라 = 입방 res³, 또는 길이 3 의 축별). 복셀은 반개구간 [lo+i/res*span, lo+(i+1)/res*span) 이며, 상단 (frac==1) 의 점은 마지막 복셀에 포함한다. <b>bounds 밖의 점은 버린다</b>(끝 셀로 clamp 하면 경계에 환상의 장애물이 쌓이기 때문). match3d.points_to_voxel 이 밀도(float) 를 만드는 데 비해, 이것은 planning 용의 점유(bool)를 만드는 점이 고유하다.</p>
+<p>res&lt;=0, (N,3) 이 아닌 points, 또는 축퇴된 bounds 이면 ValueError 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

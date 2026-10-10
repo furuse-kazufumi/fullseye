@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aabb(points)</code>(要直接调用实现,<code style="color:#22d3bf">import pcseg; pcseg.aabb(points)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;aabb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>轴对齐包围盒。返回 <code style="color:#22d3bf">(min (3,), max (3,))</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>点群の各軸の最小値と最大値をそのまま返す(<code style="color:#22d3bf">P.min(0)</code>, <code style="color:#22d3bf">P.max(0)</code>)。返り値は 2 つの (3,) float64 配列で、順に <code style="color:#22d3bf">(xmin, ymin, zmin)</code> と <code style="color:#22d3bf">(xmax, ymax, zmax)</code>(軸の並びは入力の列順)。箱の大きさは <code style="color:#22d3bf">max - min</code>、中心は <code style="color:#22d3bf">(min + max) / 2</code>。単位は座標の単位。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 以外の形状は <code style="color:#22d3bf">ValueError</code>、空の点群も <code style="color:#22d3bf">ValueError</code>(fail-closed)。</p>
-<p style="margin:2px 0 2px 12px">• NaN を含む点があると <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> が NaN になる(非有限の検査はしない)。</p>
-<p>用途: voxel 化(<code style="color:#22d3bf">occupancy_grid</code> / <code style="color:#22d3bf">points_to_voxel</code> の <code style="color:#22d3bf">bounds</code>)の領域決め、<code style="color:#22d3bf">obb</code>(PCA で向きを合わせた箱)との比較。軸に沿わない細長い物体では AABB は大きく余るので、把持幅の推定には <code style="color:#22d3bf">obb</code> の <code style="color:#22d3bf">extents</code> を使う。</p>
+<p>直接返回点云各轴的最小值与最大值(<code style="color:#22d3bf">P.min(0)</code>, <code style="color:#22d3bf">P.max(0)</code>)。返回值为 2 个 (3,) float64 数组，依次为 <code style="color:#22d3bf">(xmin, ymin, zmin)</code> 与 <code style="color:#22d3bf">(xmax, ymax, zmax)</code>（轴的顺序为输入的列顺序）。盒子的大小为 <code style="color:#22d3bf">max - min</code>，中心为 <code style="color:#22d3bf">(min + max) / 2</code>。单位为坐标单位。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>：(N,3) 以外的形状抛出 <code style="color:#22d3bf">ValueError</code>，空点云也抛出 <code style="color:#22d3bf">ValueError</code>(fail-closed)。</p>
+<p style="margin:2px 0 2px 12px">• 若有点含 NaN,<code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> 会变为 NaN（不检查非有限值）。</p>
+<p>用途：确定体素化（<code style="color:#22d3bf">occupancy_grid</code> / <code style="color:#22d3bf">points_to_voxel</code> 的 <code style="color:#22d3bf">bounds</code>）的区域，与 <code style="color:#22d3bf">obb</code>（用 PCA 对齐方向的盒子）比较。对不沿坐标轴的细长物体，AABB 会大量富余，因此估计抓握宽度请用 <code style="color:#22d3bf">obb</code> 的 <code style="color:#22d3bf">extents</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

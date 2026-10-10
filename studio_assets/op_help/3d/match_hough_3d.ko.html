@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: 이 연산자는 GPU 경로가 있습니다(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>generalized Hough 3D(Ballard R-table 투표). voxel × Hough 열.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>GHT を <b>向きビンごとの相関の総和</b> として GPU ネイティブに定式化:</p>
-<p>accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin )。各エッジが勾配方向に応じて投票し、欠けたエッジはピークを下げるだけ(<b>遮蔽・クラッタに頑健</b>)。shape-based(連続内積の単一解) と違い <b>投票 accumulator を返し、NMS で複数ピーク = 複数インスタンス</b> を取れるのが差別化。返り値 (topk,4) の [votes, d, h, w] (votes 降順)。</p>
-<p>手順: 両 volume の単位勾配(<code style="color:#22d3bf">mc</code> は <code style="color:#22d3bf">sobel3d</code> の生出力への閾値)を <code style="color:#22d3bf">ndir</code> 本の参照方向のうち最も近いものに量子化し、方向ビンごとに「scene のそのビンの 2 値場 ⋆ テンプレのそのビンの 2 値場」を conv3d で足し合わせる。テンプレの有効エッジ数で割るので votes は <b>[0, 1]</b>、1 で全エッジが一致。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ndir</code>: 26 以下は 26 近傍方向のリストの先頭 <code style="color:#22d3bf">ndir</code> 本(26 未満は方向が偏る)、27 以上は</p>
-<p>fibonacci 球で一様。方向が粗いほど回転に寛容だが偽ピークも増える。</p>
-<p style="margin:2px 0 2px 12px">• 返り値 <code style="color:#22d3bf">(topk, 4)</code> の各行 <code style="color:#22d3bf">[votes, z, y, x]</code>、votes 降順。座標は <b>テンプレ中心 (T//2)</b></p>
-<p>の scene 座標、<code style="color:#22d3bf">subvoxel=True</code> なら ±2 近傍重心。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms</code>: ピークを取るたびに <code style="color:#22d3bf">±nms</code> voxel の立方体を −1 で潰してから次を探す。近接する</p>
-<p>複数インスタンスは <code style="color:#22d3bf">nms</code> を小さく。</p>
-<p style="margin:2px 0 2px 12px">• テンプレにエッジが無ければ全 0 の <code style="color:#22d3bf">(topk,4)</code>。テンプレが完全に収まらない位置は 0。</p>
-<p>後段: 各ピークを <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_peak_newton</code> で精緻化。</p>
+<p>GHT 를 <b>방향 빈별 상관의 총합</b> 으로 GPU 네이티브하게 정식화:</p>
+<p>accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin ). 각 에지가 기울기 방향에 따라 투표하고, 빠진 에지는 피크를 낮출 뿐이다(<b>가림·클러터에 강건</b>). shape-based(연속 내적의 단일 해) 와 달리 <b>투표 accumulator 를 반환하여, NMS 로 복수 피크 = 복수 인스턴스</b> 를 얻을 수 있는 것이 차별점. 반환값 (topk,4) 의 [votes, d, h, w] (votes 내림차순).</p>
+<p>절차: 두 volume 의 단위 기울기(<code style="color:#22d3bf">mc</code> 는 <code style="color:#22d3bf">sobel3d</code> 생출력에 대한 임계값)를 <code style="color:#22d3bf">ndir</code> 개의 참조 방향중 가장 가까운 것으로 양자화하고, 방향 빈별로 &quot;scene 의 그 빈의 2 값 장 ⋆ 템플릿의 그 빈의 2 값 장&quot; 을 conv3d 로 더한다. 템플릿의 유효 에지 수로 나누므로 votes 는 <b>[0, 1]</b>, 1 에서모든 에지가 일치.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ndir</code>: 26 이하는 26 근방 방향 리스트의 앞쪽 <code style="color:#22d3bf">ndir</code> 개(26 미만은 방향이 치우침), 27 이상은</p>
+<p>fibonacci 구에서 균일. 방향이 거칠수록 회전에 관대하지만 거짓 피크도 늘어난다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값 <code style="color:#22d3bf">(topk, 4)</code> 의 각 행 <code style="color:#22d3bf">[votes, z, y, x]</code>, votes 내림차순. 좌표는 <b>템플릿 중심 (T//2)</b></p>
+<p>의 scene 좌표, <code style="color:#22d3bf">subvoxel=True</code> 이면 ±2 근방 무게중심.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms</code>: 피크를 취할 때마다 <code style="color:#22d3bf">±nms</code> voxel 의 정육면체를 −1 로 지운 뒤 다음을 찾는다. 근접한</p>
+<p>복수 인스턴스는 <code style="color:#22d3bf">nms</code> 를 작게.</p>
+<p style="margin:2px 0 2px 12px">• 템플릿에 에지가 없으면 전부 0 인 <code style="color:#22d3bf">(topk,4)</code>. 템플릿이 완전히 들어가지 않는 위치는 0.</p>
+<p>후단: 각 피크를 <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_peak_newton</code> 으로 정밀화.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

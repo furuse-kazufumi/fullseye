@@ -6,8 +6,7 @@
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verschiebung von jedem Voxel zum nächsten Seed <code style="color:#22d3bf">(3, D, H, W)</code> (<code style="color:#22d3bf">flow_dense</code>, dz, dy, dx [voxel]), berechnet mit <b>GPU-JFA</b>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">edt_jfa</code> は距離の値だけを返すが、JFA は内部で最近 seed の座標を運んでいる —— それをそのまま出す(追加コストほぼ 0)。CPU / scipy 経路は <code style="color:#22d3bf">vol_nearest_seed_vector</code>(同じ値、N≤160 で厳密一致を実測)。seed が無ければ ValueError (<code style="color:#22d3bf">edt_jfa</code> は 1e6 に飽和させるが、向きに「無限遠」は無い)。返りは torch float32(台帳経由では numpy)。</p>
+<p><code style="color:#22d3bf">edt_jfa</code> gibt nur die Abstandswerte zurück, aber JFA trägt intern die Koordinaten des nächsten seeds mit —— dieses Op gibt sie direkt aus (fast 0 Zusatzkosten). Der CPU- / scipy-Pfad ist <code style="color:#22d3bf">vol_nearest_seed_vector</code> (gleiche Werte; exakte Übereinstimmung für N≤160 gemessen). ValueError, wenn es keinen seed gibt (<code style="color:#22d3bf">edt_jfa</code> sättigt bei 1e6, aber eine Richtung kennt kein &quot;unendlich fern&quot;). Rückgabe torch float32 (über das Register (Ledger) numpy).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

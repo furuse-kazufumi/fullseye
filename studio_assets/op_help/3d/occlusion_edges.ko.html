@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_edges(depth, rel_thresh=0.05)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import range_image; range_image.occlusion_edges(depth, rel_thresh=0.05)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;occlusion_edges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>깊이의 불연속(전경/배경 경계 = 가림 에지)을 검출. → bool HxW.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>遮蔽エッジは深度の<b>不連続(step)</b>であって傾斜(slope)ではない。一様な傾斜面は連続で遮蔽を含まないため flag してはならない。一階勾配(=深度/画素)は傾斜そのもので、段差か斜面かを区別できない(かつ絶対深度の割合と比較するのは次元不整合)。</p>
-<p>そこで軸ごとの<b>二階差分(離散ラプラシアン相当)</b> <code style="color:#22d3bf">d[i+1]-2*d[i]+d[i-1]</code> を使う。一様傾斜(深度が近傍で線形)なら二階差分 ≈ 0、fronto-parallel な段差では両側で大きな値。これを局所深度で正規化した相対的な深度ジャンプが rel_thresh を超える画素を境界とする。</p>
+<p>차폐 에지는 깊이의 <b>불연속(step)</b> 이지 경사(slope)가 아니다. 균일한 경사면은연속이고 차폐를 포함하지 않으므로 flag해서는 안 된다. 1차 기울기(=깊이/화소)는 경사 그 자체여서, 계단인지 사면인지 구별할 수 없다(게다가 절대 깊이의 비율과 비교하는 것은 차원이 맞지 않는다).</p>
+<p>그래서 축마다의 <b>2차 차분(이산 라플라시안 상당)</b> <code style="color:#22d3bf">d[i+1]-2*d[i]+d[i-1]</code>을 사용한다. 균일 경사(깊이가 근방에서 선형)라면 2차 차분 ≈ 0, fronto-parallel한 계단에서는 양쪽에서 큰 값. 이를 국소 깊이로 정규화한 상대적 깊이 점프가 rel_thresh를 넘는 화소를 경계로 한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>

@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import twoview; twoview.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;recover_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>corresponding points + K से relative pose (R,t) और 3D structure वापस निकालता है (cheirality से एकमात्र हल)। → (R, t_unit, points3d)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>t はスケール不定なので単位ベクトル。points3d は cam1 座標系(|t|=1 に対応するスケール)。</p>
-<p>fail-closed: 平面(共平面 3D)/純回転シーンは本質行列分解の<b>退化配置</b>で、Sampson 残差 ~0 のまま並進方向を誤って返す(見かけは完璧)。そうした入力は姿勢を復元できないため ValueError で明示拒否する(ホモグラフィ分解を使うこと)。<code style="color:#22d3bf">planar_tol</code> はスケール不変な平面度しきい値(<code style="color:#22d3bf">_planar_degeneracy_ratio</code> の戻り値がこれ未満なら退化と判定)。</p>
-<p>手順:</p>
-<p style="margin:2px 0 2px 12px">• 入口検査(8 点以上、点数一致、(N,2) かつ有限)。</p>
-<p style="margin:2px 0 2px 12px">• 平面度: 正規化 DLT でホモグラフィ H を当て、対称転送残差の中央値を両画像の点の広がり(重心からの平均距離の和)で割った比を出す。これが <code style="color:#22d3bf">planar_tol</code>(既定 1e-2)未満なら <code style="color:#22d3bf">ValueError</code>。H が特異なら比 0 として同じく拒否。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">essential_8point</code> → 4 候補 <code style="color:#22d3bf">(R, ±t)</code> へ分解 → 各候補で <code style="color:#22d3bf">triangulate</code> し、両カメラで深度 &gt; 0 の点数が最大の候補を採る(同数なら先の候補)。</p>
-<p>返り値: <code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,) 単位ベクトル、<code style="color:#22d3bf">points3d</code> (N,3)。規約は cam1 = K1[I|0]、cam2 = K2[R|t] で <code style="color:#22d3bf">X2 = R X1 + t</code>。<code style="color:#22d3bf">points3d</code> は cam1 座標系で |t|=1 のスケール。視線が平行な対応は NaN 行になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K2</code> 省略時は <code style="color:#22d3bf">K1</code> を両画像に使う。</p>
-<p style="margin:2px 0 2px 12px">• 外れ値に無防備(RANSAC は行わない)。前段で誤対応を除く。</p>
-<p style="margin:2px 0 2px 12px">• 決定論的。GT 検証は <code style="color:#22d3bf">pose_error</code>、残差は <code style="color:#22d3bf">sampson_distance</code>。</p>
+<p>t का scale अनिश्चित है, इसलिए यह unit vector है। points3d cam1 coordinate system में है (|t|=1 के संगत scale पर)।</p>
+<p>fail-closed: planar (coplanar 3D) / pure rotation scenes essential matrix decomposition के <b>degenerate configuration</b> हैं, Sampson residual ~0 रहते हुए भी translation की दिशा गलत लौटती है (देखने में एकदम सही)। ऐसे input से pose recover नहीं हो सकता, इसलिए उन्हें ValueError से स्पष्ट रूप से reject किया जाता है (homography decomposition का उपयोग करें)। <code style="color:#22d3bf">planar_tol</code> scale-invariant planarity threshold है (<code style="color:#22d3bf">_planar_degeneracy_ratio</code> का return value इससे कम हो तो degenerate माना जाता है)।</p>
+<p>प्रक्रिया:</p>
+<p style="margin:2px 0 2px 12px">• प्रवेश जाँच (कम से कम 8 points, points की संख्या मेल खाए, (N,2) और finite)।</p>
+<p style="margin:2px 0 2px 12px">• planarity: normalised DLT से homography H fit करके, symmetric transfer residual के median को दोनों images के points के फैलाव (centroid से औसत दूरियों का योग) से भाग देकर अनुपात निकाला जाता है। यह <code style="color:#22d3bf">planar_tol</code> (default 1e-2) से कम हो तो <code style="color:#22d3bf">ValueError</code>। H singular हो तो अनुपात 0 मानकर उसी तरह reject।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">essential_8point</code> → 4 candidates <code style="color:#22d3bf">(R, ±t)</code> में decomposition → हर candidate के लिए <code style="color:#22d3bf">triangulate</code> करके, दोनों cameras में depth &gt; 0 वाले points की अधिकतम संख्या वाला candidate लिया जाता है (बराबरी पर पहले वाला candidate)।</p>
+<p>return value: <code style="color:#22d3bf">R</code> (3,3), <code style="color:#22d3bf">t</code> (3,) unit vector, <code style="color:#22d3bf">points3d</code> (N,3)। परिपाटी cam1 = K1[I|0], cam2 = K2[R|t] के साथ <code style="color:#22d3bf">X2 = R X1 + t</code> है। <code style="color:#22d3bf">points3d</code> cam1 coordinate system में |t|=1 के scale पर है। समानांतर line of sight वाले correspondence NaN rows बन जाते हैं।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K2</code> छोड़ने पर <code style="color:#22d3bf">K1</code> दोनों images के लिए उपयोग होता है।</p>
+<p style="margin:2px 0 2px 12px">• outliers के सामने असुरक्षित (RANSAC नहीं किया जाता)। पिछले चरण में गलत correspondence हटाएँ।</p>
+<p style="margin:2px 0 2px 12px">• deterministic। GT सत्यापन के लिए <code style="color:#22d3bf">pose_error</code>, residual के लिए <code style="color:#22d3bf">sampson_distance</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

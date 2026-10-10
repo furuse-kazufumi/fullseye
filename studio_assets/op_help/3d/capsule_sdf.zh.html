@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.capsule_sdf(grid, a, b, radius)</code>(要直接调用实现,<code style="color:#22d3bf">import sdf_ops; sdf_ops.capsule_sdf(grid, a, b, radius)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;capsule_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将线段 <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code> 以半径 <code style="color:#22d3bf">radius</code> 加粗所得胶囊体的<b>精确</b>有符号距离场。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>。線分への最短距離そのものなので<b>全空間で勾配ノルム 1</b>(円柱と違い端が丸いぶん、角が無く厳密)。リブ・配管・骨・ワイヤ・工具の掃引体積の近似に向く。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code>: 芯線の端点(要素数 3)。<code style="color:#22d3bf">a == b</code> なら球(<code style="color:#22d3bf">sphere_sdf</code> と一致)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 太さ(負は拒否)。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。</p>
-<p>使いどころ: 工具の到達性を「工具の掃引体積が部品と交わらないか」で見るとき、工具をカプセルで置いて <code style="color:#22d3bf">sdf_intersect</code> の最小値が正かを見る。骨梁・血管・繊維の合成にも。</p>
+<p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>。它就是到线段的最短距离，因此<b>在全空间梯度范数为 1</b>（与圆柱不同，端部是圆的，没有角，因而严格）。适合近似加强筋、管道、骨骼、线材、工具的扫掠体积。</p>
+<p>参数与校验(<code style="color:#22d3bf">ValueError</code>)：</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>：最后一轴为 3 的 float 数组 <code style="color:#22d3bf">(..., 3)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code>：芯线的端点（元素数 3）。<code style="color:#22d3bf">a == b</code> 时为球（与 <code style="color:#22d3bf">sphere_sdf</code> 一致）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>：粗细（拒绝负值）。</p>
+<p>返回值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。</p>
+<p>用法：以“工具的扫掠体积是否与零件相交”来判断工具可达性时，将工具放置为胶囊体，看 <code style="color:#22d3bf">sdf_intersect</code> 的最小值是否为正。也可用于合成骨小梁、血管、纤维。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

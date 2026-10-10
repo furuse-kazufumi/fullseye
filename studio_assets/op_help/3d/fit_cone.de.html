@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_cone(points) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import fit_primitives_ext; fit_primitives_ext.fit_cone(points) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;fit_cone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Passt einen unendlichen Kegel an eine Punktmenge an und liefert <code style="color:#22d3bf">{apex, axis, half_angle, residual}</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>子午面での点-母線直交距離 <code style="color:#22d3bf">a·sinα − ρ·cosα</code>(<code style="color:#22d3bf">a</code>=軸成分, <code style="color:#22d3bf">ρ</code>=半径, <code style="color:#22d3bf">α</code>=半角)を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で最小化する。初期値は PCA 軸 + 半径 ρ の軸成分 t に対する線形回帰(<code style="color:#22d3bf">ρ = m·t + b</code> の傾き m=tanα, 切片ゼロ点=頂点)。軸の向きは「頂点から離れるほど ρ が増える(+方向に開く)」に正規化する。</p>
+<p>Minimiert den orthogonalen Punkt-Mantellinie-Abstand in der Meridianebene, <code style="color:#22d3bf">a·sinα − ρ·cosα</code> (<code style="color:#22d3bf">a</code> = Axialkomponente, <code style="color:#22d3bf">ρ</code> = Radius, <code style="color:#22d3bf">α</code> = halber Öffnungswinkel), mit <code style="color:#22d3bf">scipy.optimize.least_squares</code>. Startwert ist die PCA-Achse + eine lineare Regression des Radius ρ über die Axialkomponente t (Steigung m = tanα von <code style="color:#22d3bf">ρ = m·t + b</code>, Nullstelle = Spitze). Die Achsrichtung wird so normiert, dass &quot;ρ mit dem Abstand von der Spitze wächst (öffnet sich in +-Richtung)&quot;.</p>
 <p>Args:</p>
-<p>points: (N,3) 点群(最低 6 点)。</p>
+<p>points: (N,3) Punktwolke (mindestens 6 Punkte).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,) 単位軸(開く向き), &quot;half_angle&quot;: float [rad], &quot;residual&quot;: float 点-面距離の RMS}</code>。</p>
+<p>dict: <code style="color:#22d3bf">{&quot;apex&quot;: (3,), &quot;axis&quot;: (3,) Einheitsachse (Öffnungsrichtung), &quot;half_angle&quot;: float [rad], &quot;residual&quot;: float RMS des Punkt-Fläche-Abstands}</code>.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正/点数不足/半角 ~0(円柱へ縮退)など fail-closed。</p>
+<p>ValueError: fail-closed bei ungültiger Form / zu wenigen Punkten / halbem Öffnungswinkel ~0 (Entartung zum Zylinder) usw.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

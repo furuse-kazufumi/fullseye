@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;mesh_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>닫힌 삼각형 메시가 둘러싸는 <b>부호 있는 부피</b> → float.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>発散定理(divergence theorem)で <code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>。面の巻き順が外向き(右手系)なら正、内向きなら負になる —— <b>符号は向きの検査そのもの</b>で、負が返ったら法線が裏返っている。</p>
+<p>발산 정리(divergence theorem)로 <code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>. 면의 감김 순서가 바깥 방향(오른손 좌표계)이면 양, 안쪽 방향이면 음이 된다 —— <b>부호가 곧 방향 검사</b>이며, 음수가반환되면 법선이 뒤집혀 있다.</p>
 <p>Args:</p>
-<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
+<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> 의 튜플.</p>
 <p>Returns:</p>
-<p>符号付き体積(float、座標の単位の 3 乗)。</p>
+<p>부호 있는 부피(float, 좌표 단위의 3 제곱).</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
-<p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p>★<b><code style="color:#22d3bf">voxel_to_mesh</code>(marching cubes)の返りは内向き巻きなので、そのまま渡すと負になる</b>(実測: 1000 voxel の立方体で -985.67)。「負 = 法線が裏返っている」のは正しいが、<b>この組み合わせでは裏返っているのが既定</b>なので、体積が欲しいだけなら <code style="color:#22d3bf">abs()</code> を取るか <code style="color:#22d3bf">faces[:, ::-1]</code> で巻き直すこと。向きの検査に使うのは、巻き順を自分で決めた(または向きを揃えた)メッシュに対して。</p>
-<p><b>限界(honest)</b>: 発散定理は<b>閉じた曲面でのみ</b>成り立つ。開いたメッシュ(穴のあるスキャン)に対しても数値は返るが、それは「穴を原点へ向かって塞いだ立体の体積」であって、欲しい量ではない。閉じているかどうかは <code style="color:#22d3bf">boundary_vertices</code> が空か、<code style="color:#22d3bf">mesh_edge_stats</code> の <code style="color:#22d3bf">boundary_edges</code> が 0 かで<b>先に確かめること</b>。自己交差があるメッシュでは重なった領域が符号つきで二重に数えられる(これも定理どおりの挙動で、検出はしない)。</p>
-<p>Reference (public): 発散定理による多面体体積は標準的な公式。例えば C. Zhang &amp; T. Chen, &quot;Efficient feature extraction for 2D/3D objects in mesh representation&quot;, ICIP 2001。</p>
+<p>ValueError: <code style="color:#22d3bf">mesh</code> 가 <code style="color:#22d3bf">(vertices, faces)</code> 의 2 요소가 아님, 형상 부정,</p>
+<p>비유한 좌표, 비정수·범위 밖 index, 비어 있을 때.</p>
+<p>★<b><code style="color:#22d3bf">voxel_to_mesh</code>(marching cubes)의 반환은 안쪽 감김이므로, 그대로 넘기면음수가 된다</b>(실측: 1000 voxel 의 정육면체에서 -985.67). &quot;음수 = 법선이 뒤집혀 있다&quot; 는 것은 맞지만, <b>이 조합에서는 뒤집혀 있는 것이 기본값</b>이므로, 부피만원한다면 <code style="color:#22d3bf">abs()</code> 를 취하거나 <code style="color:#22d3bf">faces[:, ::-1]</code> 로 다시 감을 것. 방향 검사에쓰는 것은 감김 순서를 직접 정한(또는 방향을 맞춘) 메시에 대해서다.</p>
+<p><b>한계(honest)</b>: 발산 정리는 <b>닫힌 곡면에서만</b> 성립한다. 열린 메시(구멍이 있는 스캔)에 대해서도 수치는 반환되지만, 그것은 &quot;구멍을 원점 쪽으로막은 입체의 부피&quot;이지 원하는 양이 아니다. 닫혀 있는지는 <code style="color:#22d3bf">boundary_vertices</code> 가 비어 있는지, <code style="color:#22d3bf">mesh_edge_stats</code> 의 <code style="color:#22d3bf">boundary_edges</code> 가 0 인지로 <b>먼저 확인할 것</b>. 자기 교차가 있는 메시에서는 겹친 영역이부호 있게 이중으로 세어진다(이것도 정리대로의 동작이며, 검출하지 않는다).</p>
+<p>Reference (public): 발산 정리에 의한 다면체 부피는 표준적인 공식. 예를 들어 C. Zhang &amp; T. Chen, &quot;Efficient feature extraction for 2D/3D objects in mesh representation&quot;, ICIP 2001.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

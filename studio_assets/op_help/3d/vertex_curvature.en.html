@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vertex_curvature(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mesh_props; mesh_props.vertex_curvature(mesh) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;vertex_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>mean curvature magnitude</b> at each vertex of a triangle mesh. → (N,).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Meyer et al. (2003) の離散 Laplace-Beltrami 作用素:</p>
+<p>The discrete Laplace-Beltrami operator of Meyer et al. (2003):</p>
 <p>K(x_i) = (1 / (2·A_mixed_i)) · Σ_{j∈1-ring} (cot α_ij + cot β_ij)·(x_i − x_j)</p>
-<p>は平均曲率法線ベクトル K = 2·H·n に等しい(H=平均曲率, n=単位法線)。ここでは向きに依らない <b>大きさ</b> H_i = |K(x_i)| / 2 を返す。α_ij, β_ij は辺 (i,j) に相対する 2 つの角、A_mixed は Meyer の混合面積(非鈍角三角形は Voronoi 面積、鈍角三角形は面積の 1/2 か 1/4)で、素朴な重心面積より曲率推定が正確になる。</p>
-<p>半径 R の球(閉じた多様体)では全頂点で H ≈ 1/R(離散化誤差内)。平面の内部頂点では H ≈ 0。<b>限界(honest)</b>: cotangent Laplace-Beltrami は閉多様体/内部頂点でのみ妥当で、開いたメッシュの<b>境界頂点</b>(1-ring が閉じない)では値が発散的に不正確になる。閉じたメッシュ、または開メッシュの内部頂点にのみ意味がある。</p>
+<p>equals the mean-curvature normal vector K = 2·H·n (H = mean curvature, n = unit normal). Here the orientation-independent <b>magnitude</b> H_i = |K(x_i)| / 2 is returned. α_ij, β_ij are the 2 angles opposite edge (i,j), and A_mixed is Meyer&#x27;s mixed area (Voronoi area for non-obtuse triangles, 1/2 or 1/4 of the area for obtuse triangles), which makes the curvature estimate more accurate than the naive barycentric area.</p>
+<p>On a sphere of radius R (a closed manifold), H ≈ 1/R at every vertex (within discretisation error). At interior vertices of a plane, H ≈ 0. <b>Limitation (honest)</b>: the cotangent Laplace-Beltrami is valid only on closed manifolds / at interior vertices; at the <b>boundary vertices</b> of an open mesh (where the 1-ring does not close) the values become divergently inaccurate. It is meaningful only for closed meshes, or for the interior vertices of an open mesh.</p>
 <p>Args:</p>
-<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>mesh: tuple of (vertices (N,3), faces (M,3)).</p>
 <p>Returns:</p>
-<p>(N,) の平均曲率の大きさ(非負)。境界頂点の値は上記の理由で信頼できない。</p>
+<p>(N,) mean-curvature magnitudes (non-negative). Values at boundary vertices are unreliable for the reason above.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正・範囲外 index、または混合面積がゼロの頂点(退化)があるとき。</p>
+<p>ValueError: invalid shape, out-of-range index, or a vertex whose mixed area is zero (degenerate).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

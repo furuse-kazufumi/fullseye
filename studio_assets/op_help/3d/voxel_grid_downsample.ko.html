@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_grid_downsample(points, voxel_size: &#x27;float&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pcl_filter; pcl_filter.voxel_grid_downsample(points, voxel_size: &#x27;float&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;voxel_grid_downsample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>변 voxel_size 의 격자로 점군을 솎아, 각 셀을 무게중심 한 점으로 집약(결정적).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>空間を一辺 <code style="color:#22d3bf">voxel_size</code> の立方体セルに区切り、同じセルに落ちた点をその重心 1 点で代表させる。密度ムラを均し、下流(ICP・特徴量)の計算量を点数で抑える標準手法。出力順はボクセル座標の辞書順で固定(同じ入力なら常に同じ出力=決定論的)。</p>
+<p>공간을 한 변 <code style="color:#22d3bf">voxel_size</code>의 입방체 셀로 나누고, 같은 셀에 떨어진 점을 그 무게중심 1 점으로 대표시킨다. 밀도 얼룩을 고르게 하고, 하류(ICP·특징량)의 계산량을 점 수로 억제하는 표준 기법. 출력 순서는 복셀 좌표의 사전순으로 고정(같은 입력이면 항상 같은 출력 = 결정적).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>입력 점군.</p>
 <p>voxel_size : float</p>
-<p>セルの一辺(&gt; 0)。大きいほど強く間引く。</p>
+<p>셀의 한 변(&gt; 0). 클수록 강하게 솎아낸다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (M, 3)</p>
-<p>各占有セルの重心(M &lt;= N)。すべて入力の軸並行 bounding box 内に収まる。</p>
+<p>각 점유 셀의 무게중심(M &lt;= N). 모두 입력의 축 정렬 bounding box 안에 들어간다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p><code style="color:#22d3bf">voxel_size &lt;= 0</code> は ValueError。空入力は空 (0,3) を返す(graceful)。重心はセル内の点の平均なので、必ず入力点の凸包(ゆえに bbox)内に入る。</p>
+<p><code style="color:#22d3bf">voxel_size &lt;= 0</code>은 ValueError. 빈 입력은 빈 (0,3)을 반환한다(graceful). 무게중심은 셀 안 점들의 평균이므로, 반드시 입력점의 볼록 껍질(따라서 bbox) 안에 들어간다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

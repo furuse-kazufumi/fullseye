@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index(points, k=25, normals=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import curvature3d; curvature3d.shape_index(points, k=25, normals=None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;shape_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Koenderinks Formindex s∈[-1,1] (konvexe Kugel +1, Zylinder +0,5, Sattel 0, konkave Kugel −1). → (N,).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>umbilic/平面判定は<b>曲率スケール相対</b>(絶対しきい値なし)。緩やかな凸/凹(曲率が微小でも)は符号=凹凸を保ち、平面はデータ全体の曲率スケールに対して相対的に 0 の点のみ s=0 とする。</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は開面の凹/凸符号が不定(凸マグニチュードで報告)。向き付き法線を渡すと大域向きに整合し正しい符号(凹球=cup → -1)を出す。</p>
-<p>計算(各点、<code style="color:#22d3bf">principal_curvatures</code> と同じフィット):</p>
-<p style="margin:2px 0 2px 12px">• 平面判定: curvedness <code style="color:#22d3bf">sqrt((k1² + k2²) / 2)</code> が、全点の curvedness の中央値 × 1e-3 未満なら s = 0。中央値が 0(曲率信号なし)なら全点 0。</p>
-<p style="margin:2px 0 2px 12px">• 臍点判定: <code style="color:#22d3bf">|k1 - k2| &lt; 1e-2 × (|k1| + |k2|)</code> なら s = <code style="color:#22d3bf">sign(k1 + k2)</code>(厳密に ±1)。</p>
-<p style="margin:2px 0 2px 12px">• それ以外: <code style="color:#22d3bf">s = (2/π) · arctan((k1 + k2) / (k1 - k2))</code>。</p>
-<p style="margin:2px 0 2px 12px">• しきい値は絶対値でなく <b>データ全体の曲率スケール相対</b> なので、同じ形でも他の点との混在具合で平面扱いになる点が変わる。単一の点群を分類する前提で使う。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は k1 = k2 = 0 → 平面(0)。<code style="color:#22d3bf">k</code> は N-1 に切り詰め。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行(<code style="color:#22d3bf">ValueError</code>)。未指定では開いた面の符号は不定(凸側)。</p>
-<p style="margin:2px 0 2px 12px">• 曲がりの強さは含まない。強さも要るなら <code style="color:#22d3bf">principal_curvatures</code> の 2 本を <code style="color:#22d3bf">(N,2)</code> に並べて <code style="color:#22d3bf">curvature_to_shape_index</code> に通す。</p>
+<p>Die Nabelpunkt/Ebene-Entscheidung ist <b>relativ zur Krümmungsskala</b> (kein absoluter Schwellwert). Sanfte konvexe/konkave Bereiche (auch bei winziger Krümmung) behalten ihr Vorzeichen = konkav/konvex, und nur Punkte, deren Krümmung relativ zur Krümmungsskala der gesamten Daten 0 ist, erhalten als Ebene s=0.</p>
+<p>normals (orientierte Referenznormalen, (N,3)): ohne Angabe ist das Konkav/Konvex-Vorzeichen einer offenen Fläche unbestimmt (als konvexe Magnitude gemeldet). Werden orientierte Normalen übergeben, richtet sich das Ergebnis nach der globalen Orientierung und liefert das korrekte Vorzeichen (konkave Kugel = cup → -1).</p>
+<p>Berechnung (pro Punkt, derselbe Fit wie bei <code style="color:#22d3bf">principal_curvatures</code>):</p>
+<p style="margin:2px 0 2px 12px">• Ebenentest: Ist die curvedness <code style="color:#22d3bf">sqrt((k1² + k2²) / 2)</code> kleiner als der Median der curvedness aller Punkte × 1e-3, dann s = 0. Ist der Median 0 (kein Krümmungssignal), sind alle Punkte 0.</p>
+<p style="margin:2px 0 2px 12px">• Nabelpunkttest: Wenn <code style="color:#22d3bf">|k1 - k2| &lt; 1e-2 × (|k1| + |k2|)</code>, dann s = <code style="color:#22d3bf">sign(k1 + k2)</code> (exakt ±1).</p>
+<p style="margin:2px 0 2px 12px">• Sonst: <code style="color:#22d3bf">s = (2/π) · arctan((k1 + k2) / (k1 - k2))</code>.</p>
+<p style="margin:2px 0 2px 12px">• Der Schwellwert ist nicht absolut, sondern <b>relativ zur Krümmungsskala der gesamten Daten</b>; daher ändert sich selbst bei gleicher Form, welche Punkte als eben gelten, je nachdem, wie sie mit anderen Punkten gemischt sind. Für die Klassifikation einer einzelnen Punktwolke gedacht.</p>
+<p style="margin:2px 0 2px 12px">• Punkte mit weniger als 5 Nachbarn erhalten k1 = k2 = 0 → Ebene (0). <code style="color:#22d3bf">k</code> wird auf N-1 gekürzt.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> muss (N,3) mit endlichen, von null verschiedenen Zeilen sein (<code style="color:#22d3bf">ValueError</code>). Ohne Angabe ist das Vorzeichen einer offenen Fläche unbestimmt (konvexe Seite).</p>
+<p style="margin:2px 0 2px 12px">• Die Stärke der Biegung ist nicht enthalten. Wird auch die Stärke benötigt, stapelt man die 2 Werte von <code style="color:#22d3bf">principal_curvatures</code> zu <code style="color:#22d3bf">(N,2)</code> und gibt sie an <code style="color:#22d3bf">curvature_to_shape_index</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

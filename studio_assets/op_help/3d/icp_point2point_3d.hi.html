@@ -4,33 +4,32 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud को point-to-point ICP (Kabsch/SVD) से refine करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>粗いマッチ推定(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)で得た初期姿勢 (init_R, init_t) を出発点に、src 側点群を dst 側点群へ剛体変換で位置合わせする。各反復で最近傍対応(cKDTree)を張り直し、Kabsch アルゴリズム(SVD)で相対回転・並進を求めて累積することで、対応が既知でなくてもサブボクセル精度へ収束させる。</p>
-<p>部分重なり・外れ値には Trimmed ICP(距離の小さい対応のみ採用)と絶対距離ゲート(max_corr_dist)で対処する。最終 RMSE は実際に採用した対応(インライア)上で評価するため、部分観測でも姿勢品質を正しく反映する。</p>
-<p>引数:</p>
-<p>src: (N,3) 移動側点群(torch.Tensor か numpy.ndarray)。</p>
-<p>dst: (M,3) 固定側(参照)点群。</p>
-<p>iters: 最大反復回数。</p>
-<p>init_R: (3,3) 初期回転。None なら単位行列。</p>
-<p>init_t: (3,) 初期並進。None なら零ベクトル。</p>
-<p>tol: RMSE の相対改善がこの値を下回れば収束打ち切り。</p>
-<p>max_corr_dist: この距離を超える対応を外れ値として棄却(None で無効)。</p>
-<p>trim_ratio: 0&lt;r&lt;=1。各反復で最近傍距離の小さい上位 r 割の対応のみ</p>
-<p>採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。</p>
-<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD をこのデバイス上で解く。</p>
-<p>reproducible: True なら点の順・BLAS のスレッド数に依らない縮約にする(既定 False = 従来どおり)。</p>
-<p>平均は math.fsum、相互共分散 H は ozakimm(Ozaki スキーム)、姿勢の適用は要素ごとの演算、RMSE も math.fsum。</p>
-<p>src の点の順を入れ替えても R・t・rmse がビット単位で同じ(同じ計算機・同じ LAPACK の上)。trim_ratio の切れ目で</p>
-<p>距離がちょうど同点の点は、順で選ばれ方が変わりうる。20 万点で 1 反復あたり 0.7 ms が 170 ms 程度になる。</p>
-<p>返り値:</p>
-<p>R: (3,3) 回転。dst ~= src @ R.T + t を満たす。<b>torch がある環境では <code style="color:#22d3bf">torch.Tensor</code>、無ければ同じ値の <code style="color:#22d3bf">numpy.ndarray</code></b>(2026-09-07 に</p>
-<p>本体を numpy 化したときも、互換のため型は据え置いた)。</p>
-<p>★同じ族の <code style="color:#22d3bf">icp_point2plane</code> は<b>常に numpy を返す</b> —— 族の中で</p>
-<p>型が揃っていないので、下流では <code style="color:#22d3bf">np.asarray(R)</code> を通すのが安全</p>
-<p>(どちらでも動く。破壊的変更を避けてこの不揃いを残してある)。</p>
-<p>t: (3,) 並進(R と同じ型)。</p>
-<p>info: dict。&quot;rmse&quot;(採用対応上の最終RMSE), &quot;iters&quot;(実反復数),</p>
-<p>&quot;converged&quot;(bool), &quot;inliers&quot;(採用対応数), &quot;rmse_history&quot;(list)。</p>
+<p>मोटे match अनुमान (integer NCC / Fourier-Mellin±3° / Hough±0.5voxel) से मिले initial pose (init_R, init_t) से शुरू करके, src point cloud को dst point cloud पर rigid transform से align करता है। हर iteration में nearest neighbour correspondences (cKDTree) फिर से बनाता है, Kabsch algorithm (SVD) से relative rotation और translation निकालकर जोड़ता जाता है, इसलिए correspondences ज्ञात न होने पर भी sub-voxel सटीकता तक converge करता है।</p>
+<p>partial overlap और outlier को Trimmed ICP (केवल कम दूरी वाले correspondences लिए जाते हैं) और absolute distance gate (max_corr_dist) से संभाला जाता है। अंतिम RMSE वास्तव में अपनाए गए correspondences (inliers) पर मापा जाता है, इसलिए partial observation में भी pose की गुणवत्ता सही दिखती है।</p>
+<p>Arguments:</p>
+<p>src: (N,3) चलने वाला point cloud (torch.Tensor या numpy.ndarray)।</p>
+<p>dst: (M,3) स्थिर (reference) point cloud।</p>
+<p>iters: iterations की अधिकतम संख्या।</p>
+<p>init_R: (3,3) initial rotation। None होने पर identity matrix।</p>
+<p>init_t: (3,) initial translation। None होने पर zero vector।</p>
+<p>tol: RMSE का relative सुधार इस मान से कम होने पर convergence मानकर रुकता है।</p>
+<p>max_corr_dist: इस दूरी से अधिक के correspondences outlier मानकर हटाए जाते हैं (None से बंद)।</p>
+<p>trim_ratio: 0&lt;r&lt;=1। हर iteration में nearest neighbour दूरी सबसे कम वाले ऊपरी r हिस्से के correspondences ही</p>
+<p>अपनाने वाला Trimmed ICP। partial overlap (overlap ratio r) के लिए उपयोगी। None से बंद।</p>
+<p>device: torch device (&quot;cpu&quot; आदि)। SVD इसी device पर हल होता है।</p>
+<p>reproducible: True होने पर reduction points के क्रम और BLAS threads की संख्या पर निर्भर नहीं करता (default False = पहले जैसा)।</p>
+<p>mean के लिए math.fsum, cross-covariance H के लिए ozakimm (Ozaki scheme), pose element-wise लागू होता है, RMSE भी math.fsum से।</p>
+<p>src points का क्रम बदलने पर भी R, t और rmse bit स्तर पर समान रहते हैं (उसी computer और उसी LAPACK पर)। trim_ratio की सीमा पर</p>
+<p>ठीक बराबर दूरी वाले points क्रम के अनुसार अलग चुने जा सकते हैं। 200,000 points पर प्रति 1 iteration 0.7 ms से लगभग 170 ms हो जाता है।</p>
+<p>Returns:</p>
+<p>R: (3,3) rotation। dst ~= src @ R.T + t को संतुष्ट करता है। <b>torch वाले environment में <code style="color:#22d3bf">torch.Tensor</code>, नहीं तो समान मानों वाला <code style="color:#22d3bf">numpy.ndarray</code></b> (2026-09-07 को</p>
+<p>मुख्य भाग को numpy में बदलते समय भी compatibility के लिए type वही रखा गया)।</p>
+<p>★उसी family का <code style="color:#22d3bf">icp_point2plane</code> <b>हमेशा numpy लौटाता है</b> — family के भीतर</p>
+<p>types एक जैसे नहीं हैं, इसलिए downstream में <code style="color:#22d3bf">np.asarray(R)</code> से गुज़ारना सुरक्षित है</p>
+<p>(दोनों चलते हैं। breaking change से बचने के लिए यह असमानता छोड़ी गई है)।</p>
+<p>t: (3,) translation (R जैसा ही type)।</p>
+<p>info: dict। &quot;rmse&quot; (अपनाए गए correspondences पर अंतिम RMSE), &quot;iters&quot; (वास्तविक iterations की संख्या),</p>
+<p>&quot;converged&quot; (bool), &quot;inliers&quot; (अपनाए गए correspondences की संख्या), &quot;rmse_history&quot; (list)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

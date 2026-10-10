@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_axes(points, weights=None)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.moment_axes(points, weights=None)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;moment_axes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点群/加权点的 <b>重心 + 主轴</b>(惯性张量的特征向量)。位姿估计的基础。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返り値 (centroid(3,), axes(3,3) 列=主軸, eigvals(3,))。固有値降順。回転の正準化に使う。</p>
-<p>定義: <code style="color:#22d3bf">w</code> を総和 1 に正規化し、重心 <code style="color:#22d3bf">c = Σ w p</code>、散布行列 <code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code> (共分散。慣性テンソル <code style="color:#22d3bf">tr(C)I − C</code> と固有ベクトルは共通で固有値の順序が逆)を <code style="color:#22d3bf">eigh</code> で分解する。<code style="color:#22d3bf">axes[:, i]</code> が i 番目に大きい固有値の主軸(降順)。固有値は分散(長さ²)。</p>
-<p style="margin:2px 0 2px 12px">• 固有ベクトルの符号は任意で、<code style="color:#22d3bf">axes</code> は左手系(det=−1)になり得る(<code style="color:#22d3bf">match_pca</code> は第 3 軸を</p>
-<p>反転して右手系にしている)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> は長さ N。総和 0 は 0 除算で NaN(例外は出ない)。点数 0 は失敗する(検証は無い)。</p>
-<p style="margin:2px 0 2px 12px">• 主軸が縮退(球など)なら軸の向きは不定。</p>
-<p>後段: <code style="color:#22d3bf">match_pca</code>、<code style="color:#22d3bf">obb</code>(有向 bbox)、正準姿勢への回転。</p>
+<p>返回 (centroid(3,), axes(3,3) 列=主轴, eigvals(3,))。特征值降序。用于旋转的规范化。</p>
+<p>定义:将 <code style="color:#22d3bf">w</code> 归一化为总和 1,质心 <code style="color:#22d3bf">c = Σ w p</code>,散布矩阵 <code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code> (协方差。与惯性张量 <code style="color:#22d3bf">tr(C)I − C</code> 特征向量相同而特征值顺序相反)用 <code style="color:#22d3bf">eigh</code> 分解。<code style="color:#22d3bf">axes[:, i]</code> 是第 i 大特征值的主轴(降序)。特征值为方差(长度²)。</p>
+<p style="margin:2px 0 2px 12px">• 特征向量的符号任意,<code style="color:#22d3bf">axes</code> 可能是左手系(det=−1)(<code style="color:#22d3bf">match_pca</code> 将第 3 轴</p>
+<p>反转为右手系)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> 长度为 N。总和为 0 时除以 0 得 NaN(不抛异常)。点数为 0 会失败(没有验证)。</p>
+<p style="margin:2px 0 2px 12px">• 主轴退化(球等)时轴的方向不确定。</p>
+<p>后段:<code style="color:#22d3bf">match_pca</code>、<code style="color:#22d3bf">obb</code>(有向 bbox)、旋转到规范位姿。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

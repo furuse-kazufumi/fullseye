@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jitter(points, sigma: &#x27;float&#x27;, clip: &#x27;Optional[float]&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pcl_augment; pcl_augment.jitter(points, sigma: &#x27;float&#x27;, clip: &#x27;Optional[float]&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;jitter&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fügt jedem Punkt isotropes gaußsches Rauschen <code style="color:#22d3bf">N(0, sigma)</code> hinzu (simuliert Sensorpositionsrauschen).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">sigma</code> はワールド単位の標準偏差(ユーザ指定パラメータ)。<code style="color:#22d3bf">clip</code> を与えると各成分の変位を <code style="color:#22d3bf">[-clip, clip]</code> に切り詰める(外れ変位の抑制)。大 N ではノイズの平均≈0・標準偏差≈sigma となる。返り値は入力と同形状 <code style="color:#22d3bf">(N,3)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sigma &lt; 0</code> は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">sigma == 0</code> または空入力は入力のコピーを返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">clip</code> は与えるなら <code style="color:#22d3bf">&gt; 0</code>(それ以外は <code style="color:#22d3bf">ValueError</code>)。切り詰めは成分ごとなので</p>
-<p>変位ベクトルの長さは最大 <code style="color:#22d3bf">√3·clip</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code> で決定論的(<code style="color:#22d3bf">np.random.default_rng(seed)</code>)。同 seed・同形状なら同じノイズ。</p>
-<p style="margin:2px 0 2px 12px">• 入力は <code style="color:#22d3bf">(N,3)</code> の有限値のみ(長さ 3 の 1-D は 1 点に昇格、それ以外や NaN は</p>
-<p><code style="color:#22d3bf">ValueError</code>)。返り値は float64。</p>
-<p style="margin:2px 0 2px 12px">• 位置合わせ(<code style="color:#22d3bf">register_fpfh</code> 等)のノイズ耐性を測るとき、<code style="color:#22d3bf">sigma</code> を点間隔</p>
-<p>(<code style="color:#22d3bf">voxel_grid_downsample</code> の格子幅など)に対する比で決めると条件を比較しやすい。</p>
+<p><code style="color:#22d3bf">sigma</code> ist die Standardabweichung in Welteinheiten (vom Nutzer angegebener Parameter). Ist <code style="color:#22d3bf">clip</code> angegeben, wird jede Komponente der Verschiebung auf <code style="color:#22d3bf">[-clip, clip]</code> abgeschnitten (Unterdrückung ausreißender Verschiebungen). Für großes N hat das Rauschen Mittelwert≈0 und Standardabweichung≈sigma. Der Rückgabewert hat dieselbe Form wie die Eingabe, <code style="color:#22d3bf">(N,3)</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sigma &lt; 0</code> löst <code style="color:#22d3bf">ValueError</code> aus. <code style="color:#22d3bf">sigma == 0</code> oder leere Eingabe gibt eine Kopie der Eingabe zurück.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">clip</code> muss, falls angegeben, <code style="color:#22d3bf">&gt; 0</code> sein (sonst <code style="color:#22d3bf">ValueError</code>). Das Abschneiden erfolgt pro Komponente, daher</p>
+<p>ist die Länge eines Verschiebungsvektors höchstens <code style="color:#22d3bf">√3·clip</code>.</p>
+<p style="margin:2px 0 2px 12px">• Deterministisch über <code style="color:#22d3bf">seed</code> (<code style="color:#22d3bf">np.random.default_rng(seed)</code>). Gleicher seed und gleiche Form ergeben dasselbe Rauschen.</p>
+<p style="margin:2px 0 2px 12px">• Eingabe nur <code style="color:#22d3bf">(N,3)</code> mit endlichen Werten (ein 1-D-Array der Länge 3 wird zu 1 Punkt hochgestuft; anderes oder NaN löst</p>
+<p><code style="color:#22d3bf">ValueError</code> aus). Der Rückgabewert ist float64.</p>
+<p style="margin:2px 0 2px 12px">• Beim Messen der Rauschrobustheit einer Registrierung (<code style="color:#22d3bf">register_fpfh</code> usw.) lassen sich Bedingungen leichter vergleichen, wenn <code style="color:#22d3bf">sigma</code> als Verhältnis zum Punktabstand</p>
+<p>(etwa der Gitterweite von <code style="color:#22d3bf">voxel_grid_downsample</code>) gewählt wird.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

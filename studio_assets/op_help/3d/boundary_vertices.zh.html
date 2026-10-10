@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mesh_props; mesh_props.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;boundary_vertices&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>位于开放边缘(边界)上的<b>顶点 index</b> → <code style="color:#22d3bf">(K,)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>無向辺のうち<b>ちょうど 1 つの面にしか使われていない辺</b>(境界辺)の端点を集めて返す。閉じた多様体なら空配列 —— つまり <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> が <b>水密性(watertight)の判定</b>になる。穴埋め・体積計算・曲率のどれも、境界の有無で意味が変わるので、先にここを見る。</p>
+<p>收集并返回无向边中<b>恰好只被 1 个面使用的边</b>（边界边）的端点。闭合流形则为空数组 —— 也就是说 <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> 即可作为 <b>水密性(watertight)的判定</b>。补洞、体积计算、曲率都会因有无边界而改变含义，所以先看这里。</p>
 <p>Args:</p>
-<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>
+<p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> 的元组。</p>
 <p>Returns:</p>
-<p>昇順・重複なしの <code style="color:#22d3bf">(K,)</code> int64。境界が無ければ <code style="color:#22d3bf">shape == (0,)</code>。</p>
+<p>升序、无重复的 <code style="color:#22d3bf">(K,)</code> int64。若无边界则 <code style="color:#22d3bf">shape == (0,)</code>。</p>
 <p>Raises:</p>
-<p>ValueError: <code style="color:#22d3bf">mesh</code> が <code style="color:#22d3bf">(vertices, faces)</code> の 2 要素でない、形状不正、</p>
-<p>非有限座標、非整数・範囲外の index、空のとき。</p>
-<p><b>限界(honest)</b>: 返るのは頂点の集合で、<b>縁のループ(周回順)ではない</b>。穴が複数あっても 1 つの配列にまとまるので、穴ごとに分けたいなら連結成分を自分で辿ることになる(ループ抽出の op はまだ無い)。3 つ以上の面が共有する非多様体辺はここには出ない(<code style="color:#22d3bf">mesh_edge_stats</code> の <code style="color:#22d3bf">non_manifold_edges</code>)。</p>
+<p>ValueError: <code style="color:#22d3bf">mesh</code> 不是 <code style="color:#22d3bf">(vertices, faces)</code> 这 2 个元素、形状不正确、</p>
+<p>坐标非有限、index 非整数、越界、为空时。</p>
+<p><b>局限(honest)</b>: 返回的是顶点集合，<b>而不是边缘的环路（环绕顺序）</b>。即使有多个孔也会合并为 1 个数组，所以若要按孔分开，需要自己追踪连通分量（还没有提取环路的 op）。被 3 个以上面共享的非流形边不会出现在这里（见 <code style="color:#22d3bf">mesh_edge_stats</code> 的 <code style="color:#22d3bf">non_manifold_edges</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

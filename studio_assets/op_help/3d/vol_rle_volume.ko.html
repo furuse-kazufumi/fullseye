@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_volume(region) -&gt; &#x27;int&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volregion; volregion.vol_rle_volume(region) -&gt; &#x27;int&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역의 복셀 수를 run 위에서 셉니다(복호 없음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>~300x faster than summing the dense mask.</p>
-<p>計算: <code style="color:#22d3bf">sum(ends - starts)</code>(差は int64 で取るので run 数が多くても溢れない)。返り値は Python の <code style="color:#22d3bf">int</code>(voxel 個数、単位は voxel。物理体積 mm^3 が欲しければ <code style="color:#22d3bf">spacing</code> の積 <code style="color:#22d3bf">sz*sy*sx</code> を自分で掛ける — この op は spacing を受けない)。</p>
-<p>入力は <code style="color:#22d3bf">_require_rle</code> で検証してから使う(<code style="color:#22d3bf">VolRLE</code> 以外、shape・run 配列の不整合、範囲外の run は <code style="color:#22d3bf">ValueError</code>)。空の region は <code style="color:#22d3bf">0</code> を返す(エラーにしない)。<code style="color:#22d3bf">vol_rle_decode</code> してから <code style="color:#22d3bf">sum()</code> するのと同じ値を、密配列を作らずに返すのが目的。<code style="color:#22d3bf">vol_rle_components</code> の各成分にかければ成分ごとの体積になる。</p>
+<p>밀집 마스크를 합산하는 것보다 ~300x 빠르다.</p>
+<p>계산: <code style="color:#22d3bf">sum(ends - starts)</code>(차는 int64로 구하므로 run 수가 많아도 넘치지 않는다). 반환값은 Python의 <code style="color:#22d3bf">int</code>(voxel 개수, 단위는 voxel. 물리 체적 mm^3이 필요하면 <code style="color:#22d3bf">spacing</code>의 곱 <code style="color:#22d3bf">sz*sy*sx</code>를 직접 곱한다 — 이 op는 spacing을 받지 않는다).</p>
+<p>입력은 <code style="color:#22d3bf">_require_rle</code>로 검증한 뒤 사용한다(<code style="color:#22d3bf">VolRLE</code>이 아님, shape·run 배열의불일치, 범위 밖의 run은 <code style="color:#22d3bf">ValueError</code>). 빈 region은 <code style="color:#22d3bf">0</code>을 반환한다(오류로하지 않는다). <code style="color:#22d3bf">vol_rle_decode</code>한 뒤 <code style="color:#22d3bf">sum()</code>하는 것과 같은 값을, 밀집 배열을 만들지 않고반환하는 것이 목적이다. <code style="color:#22d3bf">vol_rle_components</code>의 각 성분에 적용하면 성분별 체적이 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
