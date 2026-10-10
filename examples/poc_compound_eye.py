@@ -43,11 +43,17 @@ HCI 4D Light Field Benchmark(Honauer et al., ACCV 2016)が最も近い。
       1        5      2.25      2.24     ← ハエの神経重ね合わせ(~6)はこの領域
       2       13      3.57      3.61
       3       29      4.82      5.39
-      4       49      5.33      7.00     ← √N から明確に飽和(補間誤差は平均化されない)
+      4       49      5.33      7.00     ← √N から明確に飽和(周縁の誤差は平均化されない)
 
-    小開口では √N がほぼ厳密。大開口では shift-and-add の補間誤差(視点間で相関する)が
-    独立ノイズのように消えず、利得が √N を下回って飽和する。ハエが ~6 個(半径 1)で
-    止めているのは、利得がまだ √N のまま伸びる領域 —— 進化は膝の手前で降りている。
+    小開口では √N がほぼ厳密。大開口では利得が √N を下回って飽和する。ハエが ~6 個
+    (半径 1)で止めているのは、利得がまだ √N のまま伸びる領域 —— 進化は膝の手前で降りている。
+
+    対照実験(第 2 章の後半 :func:`superposition_decomposition`)で誤差を分解すると、
+    **雑音だけの成分は N=49 まで √N に従う(7.05)**。飽和の正体は、ノイズの無い光場を
+    重ねても残る「床」で、それは**外周 4 画素だけ**にある(スロープ 1.0 × 開口半径 4 =
+    最大シフト 4 画素で、像の外から画素を借りる縁)。周縁 8 画素を除いて評価すると
+    N=49 でも利得 7.19。スロープ 1.0 は整数シフトなので内部に補間誤差は無い
+    (非整数スロープでは内部にも補間の床が出る —— ここでは測っていない)。
 
 参考: M. F. Land, D.-E. Nilsson, *Animal Eyes* (Oxford, 2012);
 神経重ね合わせ = Kirschfeld (1967)。複眼とプレノプティックの等価性 = Ng et al. (2005)。
@@ -182,6 +188,94 @@ def chapter_superposition_scaling():
     return rows
 
 
+DECOMP_BORDER = 8         # 対照実験で「周縁」として除く幅 [px]
+FLOOR_BORDERS = (0, 1, 2, 3, 4, 5, 8)   # 床(ノイズ無しの誤差)を測る除外幅 [px]
+FLOOR_ZERO = 1e-12        # これ未満の床は丸め屑(=誤差ゼロ)とみなす
+
+
+def _rms(a):
+    return float(np.sqrt(np.mean(np.asarray(a, dtype=float) ** 2)))
+
+
+def superposition_decomposition(*, border=DECOMP_BORDER, radii=(0, 1, 2, 3, 4)):
+    """第 2 章の飽和を誤差の成分に分ける対照実験。
+
+    重ね合わせは線形(等重み平均)なので、``重ね(ノイズ入り) - 真 = 床 + 雑音項`` に
+    厳密に分かれる:
+
+    * 床   = 重ね(ノイズ無しの光場) - 真      … 重ねの幾何が持ち込む系統誤差
+    * 雑音 = 重ね(ノイズだけの光場)             … 独立ノイズが平均でどれだけ落ちるか
+
+    雑音項の利得が √N に従い、床が周縁だけにあるなら、「√N の飽和」は重ねの原理
+    ではなく縁の扱いの問題であり、周縁を除けば利得は √N に戻る。
+
+    返り値 = dict:
+      ``rows``  … 半径ごとの (r, N, 全体利得, 雑音だけの利得, √N, 周縁 border px 除外の全体利得)
+      ``floor`` … 最大半径の床の (除外幅 k, RMS, 最大絶対値) —— k=0 は全画素
+      ``floor_extent`` … 床がゼロでない最も内側の除外幅 + 1 = 床の載る外周の幅 [px]
+    """
+    slope = 1.0
+    lf, _ = ommatidial_scene((slope,), occlusion=False, seed=1)   # 第 2 章と同じ光場
+    noisy, _sig, _nstd = add_photoreceptor_noise(lf, per_view_snr=2.0, seed=0)
+    clean = np.asarray(L.lf_subaperture(lf, v=V_C, u=U_C))
+    noise = noisy - lf
+    inner = (slice(border, -border), slice(border, -border))
+
+    rows = []
+    base = None
+    p_floor = None
+    for r in radii:
+        mask = np.asarray(L.lf_aperture_mask(angular=ANGULAR, shape="circle",
+                                             radius=r, normalize=True))
+        n = int((mask > 0).sum())
+
+        def pool(x):
+            return np.asarray(L.lf_synthetic_aperture(x, slope=slope, mask=mask,
+                                                      reduce="mean"))
+        p_noisy, p_floor, p_noise = pool(noisy), pool(lf), pool(noise)
+        tot = _rms(p_noisy - clean)
+        nz = _rms(p_noise)
+        tot_in = _rms((p_noisy - clean)[inner])
+        if base is None:
+            base = (tot, nz, tot_in)
+        rows.append((r, n, base[0] / tot, base[1] / nz, float(np.sqrt(n)),
+                     base[2] / tot_in))
+
+    # 床(ノイズ無しの重ね - 真)を外周から何画素除けば消えるか(最大半径で)
+    d = np.abs(p_floor - clean)
+    floor = []
+    extent = 0
+    for k in FLOOR_BORDERS:
+        dk = d[k:d.shape[0] - k, k:d.shape[1] - k]
+        floor.append((k, _rms(dk), float(dk.max())))
+    for k in range(min(d.shape) // 2):
+        dk = d[k:d.shape[0] - k, k:d.shape[1] - k]
+        if float(dk.max()) >= FLOOR_ZERO:
+            extent = k + 1
+    return {"rows": rows, "floor": floor, "floor_extent": extent, "border": border}
+
+
+def chapter_superposition_decomposition():
+    """第 2 章の続き: 飽和はどこから来るか —— 誤差を床と雑音に分ける対照実験。"""
+    dec = superposition_decomposition()
+    b = dec["border"]
+    print("\n  -- 対照実験: 誤差を「床(ノイズ無しの重ね-真)」と「雑音項」に分ける --")
+    print("  半径 r  視点 N   全体利得   雑音だけの利得   √N     周縁%dpx除外の全体利得" % b)
+    for r, n, g_tot, g_noise, sq, g_in in dec["rows"]:
+        print("   %d      %2d      %.2f        %.2f         %.2f        %.2f"
+              % (r, n, g_tot, g_noise, sq, g_in))
+    r_max = dec["rows"][-1][0]
+    print("  床(ノイズ無し・半径%d)を外周 k 画素除いて測る:" % r_max)
+    for k, rms, mx in dec["floor"]:
+        print("    k=%d px   RMS %.2e   最大 %.2e" % (k, rms, mx))
+    # ★実測(2026-10-11): 雑音だけの利得は N=49 で 7.05(√49=7.00)、周縁 8px 除外で
+    #   全体利得 7.19、床は外周 4 画素にだけ載り k>=4 で 1e-15 の丸め屑。
+    #   → 第 2 章の飽和(5.33)は重ねの原理ではなく縁(像の外から画素を借りる帯)の誤差。
+    print("  床が載るのは外周 %d 画素(スロープ 1.0 × 半径 %d = 最大シフト)。"
+          "雑音項は √N のまま —— 飽和は縁の誤差。" % (dec["floor_extent"], r_max))
+    return dec
+
+
 # ---------------------------------------------------------------------------- #
 #  第 3 章 —— アレイでこそ距離が出る(1 個眼には視差が無い)                        #
 # ---------------------------------------------------------------------------- #
@@ -267,6 +361,7 @@ def main():
         warnings.simplefilter("error")     # 黙ったゼロ割・NaN を出させない
         design = chapter_optical_design()
         scaling = chapter_superposition_scaling()
+        decomp = chapter_superposition_decomposition()
         depth_err, layer_hit, near_slope, far_slope = chapter_depth_needs_the_array()
         occ_center, occ_mean, occ_med, occ_frac = chapter_pooling_is_not_free()
 
@@ -284,6 +379,12 @@ def main():
     assert abs(r1[3] - r1[4]) < 0.15, "半径1(ハエ域)で √N から外れすぎ"
     r4 = next(row for row in scaling if row[0] == 4)
     assert r4[3] < 0.85 * r4[4], "大開口が √N で伸び続けた(飽和の膝が無い=非物理)"
+    # 第2章の対照実験: 雑音項は N=49 まで √N、周縁を除けば全体も √N 付近に戻り、
+    #   床(ノイズ無しの誤差)は外周 4 画素(=最大シフト)にだけある。
+    d49 = decomp["rows"][-1]
+    assert abs(d49[3] - d49[4]) < 0.15, "雑音だけの利得が N=49 で √N から外れた"
+    assert d49[5] > 0.95 * d49[4], "周縁を除いても √N 付近に戻らない(飽和が縁以外にある)"
+    assert decomp["floor_extent"] == 4, "床が外周 4 画素(最大シフト)以外に広がった"
 
     # 第3章: ノイズ下でも手前(視差大)と奥(視差小)を距離として分離できる。
     assert layer_hit[near_slope] > layer_hit[far_slope] + 0.5, \
