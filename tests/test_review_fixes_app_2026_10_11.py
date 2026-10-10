@@ -121,6 +121,7 @@ def test_graph_nary_input_sorts_are_checked():
     g.add("c", "blob_count")                       # feature
     g.add("s", "add_image", ["$in", "c"])          # add_image takes two images
     probs = g.validate()
+    assert probs
     assert any(p.get("kind") == "sort_mismatch" for p in probs)
     with pytest.raises(ValueError):
         g.run(_img(), terminal="s")
@@ -187,7 +188,9 @@ def test_graph_refuses_arity_error_and_checks_knobs(spy):
         g.run(_img(), terminal="t", on_error="raise")
     g = graphengine.FullseyeGraph()
     g.add("t", "threshold", a=float("nan"))
-    assert any("non-finite" in p["msg"] for p in g.validate())
+    probs = g.validate()
+    assert probs
+    assert any("non-finite" in p["msg"] for p in probs)
     with pytest.raises(ValueError):
         g.run(_img(), terminal="t")
 
