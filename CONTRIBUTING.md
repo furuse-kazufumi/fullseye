@@ -7,6 +7,10 @@ input. The fastest routes:
   *accuracy / honesty* template exists because "the number is subtly wrong" reports
   are the most valuable ones here — they have found real bugs (a 32× curvature scale,
   an inverted normal sign) that ratio-style tests could not see.
+- **Real-hardware / real-data validation** (data may stay private; results-only is
+  accepted): use the [validation report form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml), or post informally in
+  [Discussions › Show and tell](https://github.com/furuse-kazufumi/fullseye/discussions/categories/show-and-tell). How reports move the maturity
+  ledger: `docs/VALIDATION_CONTRIBUTING.en.md` (日本語: `docs/VALIDATION_CONTRIBUTING.md`).
 - **Operator request**: name the algorithm, its public reference (paper / OSS), and
   the type contract. Fullseye reimplements from **public knowledge only**.
 - **Pull request**: see below.

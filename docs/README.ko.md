@@ -18,6 +18,8 @@
 
 > **할 수 있는 일 → [CAPABILITIES.en.md](CAPABILITIES.en.md)** (목적별 색인) / **PoC가 높인 견고성 → [HARDENING.en.md](HARDENING.en.md)** (발견·수정·게이트)
 
+> **실기·실데이터 검증 결과를 모집합니다.** Fullseye는 개인이 개발하며 물리적 계측 장비가 없어서, 가상 광학계와 시뮬레이션 참값으로만 검증하고 있습니다. 실제 장비나 실데이터로 시험한 결과를 크게 환영합니다. **데이터는 공유하지 않아도 됩니다** —— 결과 수치만의 보고도 받으며, 검증 키트(`python -m fullseye.validation_kit`)는 로컬 데이터에서 집계값만 출력합니다. → [보고 양식](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) · [Discussions › Show and tell](https://github.com/furuse-kazufumi/fullseye/discussions/categories/show-and-tell) · [판정 기준(영어)](VALIDATION_CONTRIBUTING.en.md)
+
 ---
 
 <!-- poc-index:start -->
@@ -221,7 +223,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## 문서 지도 — 전 219건
+## 문서 지도 — 전 221건
 
 **색인에서 닿지 않는 문서를 만들지 않기** 위한 전체 지도입니다(`docs/ops/`의 연산자 노트 3,089건과 패밀리 가이드 63건은 위의 「연산자 찾기」에서, 기사는 [articles/](articles/README.md)에서). **본문은 대부분 일본어입니다.**
 
@@ -303,7 +305,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`FSCRIPT_LANGUAGE.md`](FSCRIPT_LANGUAGE.md) | Fullseye Script — 言語 / ランタイム / ウォッチ IDE 設計仕様(北極星) _(ja)_ |
 | [`FSCRIPT_MEASUREMENTS.md`](FSCRIPT_MEASUREMENTS.md) | Fullseye Runtime — 実測記録 (2026-08-15) _(ja)_ |
 
-**Quality and honesty**(11)
+**Quality and honesty**(12)
 
 | 문서 | 내용 |
 |---|---|
@@ -318,6 +320,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`AUDIT_2026_08_12.md`](AUDIT_2026_08_12.md) | imgevolve implementation audit — 2026-08-12 |
 | [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) | リリース手順書 — 同じ間違いを繰り返さないための門 _(ja)_ |
 | [`I18N.md`](I18N.md) | Fullseye の多言語対応 — 全体設計 / Internationalisation design _(ja)_ |
+| [`VALIDATION_CONTRIBUTING.md`](VALIDATION_CONTRIBUTING.md) | 実機・実データでの検証を報告する _(ja)_ |
 
 **Performance and GPU**(4)
 
@@ -357,7 +360,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(142)
+**Other**(143)
 
 | 문서 | 내용 |
 |---|---|
@@ -429,6 +432,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`STUDIO_GUIDE.zh.md`](STUDIO_GUIDE.zh.md) | Fullseye Studio 完全指南 _(ja)_ |
 | [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) | Walking a Character Over Terrain (sim-native, no GPU required) |
 | [`UNIFIED_API_REQUIREMENTS.en.md`](UNIFIED_API_REQUIREMENTS.en.md) | Fullseye Unified Interface — Requirements Specification (v0.1, 2026-08-18) |
+| [`VALIDATION_CONTRIBUTING.en.md`](VALIDATION_CONTRIBUTING.en.md) | Reporting validation on real hardware or real data |
 | [`capabilities/align-and-stack.md`](capabilities/align-and-stack.md) | id: align-and-stack |
 | [`capabilities/beamforming-and-range-doppler.md`](capabilities/beamforming-and-range-doppler.md) | id: beamforming-and-range-doppler |
 | [`capabilities/beats-fringes-and-screens.md`](capabilities/beats-fringes-and-screens.md) | id: beats-fringes-and-screens |

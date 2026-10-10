@@ -1,0 +1,129 @@
+name: Real hardware / real data validation / 実機・実データでの検証報告
+description: Results of running Fullseye on real hardware or real data (data may stay private) / 実機・実データで Fullseye を確かめた結果(データは非公開で構いません)
+title: "[validation] <capability / PoC / op>: <hardware or dataset>"
+labels: ["validation-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fullseye は個人開発で、物理の計測装置を持っていません。CI が確かめられるのは仮想の光学系・合成した真値までです。実機・実データでの結果が、検証を一段ずつ正確にしていきます。
+        Fullseye is developed without physical measurement rigs, so CI can only check against virtual optics and simulated ground truth. Your results on real hardware or real data make the verification progressively more accurate.
+
+        **社内データ・画像・製品名は書かないでください。 / Do not post confidential data, images or product names.**
+        データは共有しなくて構いません。結果の数値だけの報告も受け付けます(重みは再現できる報告より低くなります)。所属・勤務先は求めません。
+        You do not have to share data: results-only reports are accepted (they weigh less than reproducible ones). Employer or affiliation is never asked.
+
+        - How reports are judged / 判定の仕方: [docs/VALIDATION_CONTRIBUTING.en.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/VALIDATION_CONTRIBUTING.en.md) · [日本語](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/VALIDATION_CONTRIBUTING.md)
+        - Informal results or questions / 気軽な結果共有・質問: [Discussions › Show and tell](https://github.com/furuse-kazufumi/fullseye/discussions/categories/show-and-tell)
+        - Prefer not to post publicly? Email the maintainer (kazufumi@furuse.work); only aggregate numbers are published, and only with your consent. / 公開の場に書きたくない場合はメールでも受け付けます。公開するのは同意を得た集計値だけです。
+  - type: input
+    id: capability
+    attributes:
+      label: Capability, PoC or operator / 能力・PoC・op
+      description: "Name from docs/MATURITY.md, examples/, or the op name. / docs/MATURITY.md の能力名、PoC 名、または op 名"
+      placeholder: "blob-and-region / poc_cell_counting"
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What you validated on / 何で確かめたか
+      options:
+        - "実機(センサ・カメラ・計測器) / Real hardware (sensor, camera, instrument)"
+        - "公開されている実データ / Public real dataset"
+        - "非公開の実データ / Private real data"
+    validations:
+      required: true
+  - type: textarea
+    id: setup
+    attributes:
+      label: Hardware or dataset / 装置またはデータセット
+      description: |
+        Hardware: sensor or camera type, optics, lighting, working distance — generic descriptions are fine (no product names needed). Dataset: name, licence, URL.
+        実機: センサ・カメラの種類、光学系、照明、作動距離(一般的な説明で十分、製品名は不要)。データセット: 名前・ライセンス・URL。
+    validations:
+      required: true
+  - type: textarea
+    id: ground_truth
+    attributes:
+      label: Ground truth and its uncertainty / 真値の取り方とその不確かさ
+      description: |
+        How the true value was obtained (reference instrument, calibration target, certified artefact, published values) and its uncertainty with units (e.g. ±0.005 mm, k=2).
+        真値の取り方(基準計測器・校正ターゲット・認証された基準器・公表値)と、その不確かさ(単位つき。例: ±0.005 mm, k=2)。
+    validations:
+      required: true
+  - type: dropdown
+    id: reference_type
+    attributes:
+      label: Traceability of the reference / 基準の追跡可能性
+      options:
+        - "校正済みの計測器 / Calibrated instrument"
+        - "認証された基準器・校正ターゲット / Certified artefact or calibration target"
+        - "公表された値 / Published reference values"
+        - "その他・追跡できない / Other or not traceable"
+    validations:
+      required: true
+  - type: textarea
+    id: procedure
+    attributes:
+      label: Procedure / 手順
+      description: |
+        Fullseye version or commit (`pip show fullseye` or `git rev-parse HEAD`), the script or commands you ran, and parameters.
+        Fullseye の版またはコミット、走らせたスクリプト・コマンド、パラメータ。
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: Results vs ground truth / 結果と真値の比較
+      description: |
+        Numbers against ground truth, with units and the number of samples n (e.g. mean error, max error, repeatability). If you used `tools/validation_kit.py`, paste its JSON here.
+        真値に対する数値(単位と件数 n つき。平均誤差・最大誤差・繰り返し性など)。`tools/validation_kit.py` を使った場合はその JSON を貼ってください。
+    validations:
+      required: true
+  - type: textarea
+    id: failure_conditions
+    attributes:
+      label: Failure conditions observed / 失敗した条件
+      description: |
+        Where it broke or degraded (lighting, surface, size, noise, ...). Failures are as valuable as successes.
+        崩れた・悪化した条件(照明・表面・大きさ・ノイズなど)。失敗も成功と同じだけ役に立ちます。
+    validations:
+      required: false
+  - type: dropdown
+    id: data_sharing
+    attributes:
+      label: Data sharing / データ共有
+      description: |
+        Results-only is a full route. Shared data or a synthetic re-creation lets the maintainer reproduce the result, which carries more weight.
+        結果のみも正規の経路です。データか合成で作り直したデータを共有すると保守者が再現でき、重みが上がります。
+      options:
+        - "共有可 / Can share the data"
+        - "結果のみ(データは非公開) / Results only (data stays private)"
+        - "合成で再現したデータを共有 / Can share a synthetic re-creation"
+    validations:
+      required: true
+  - type: input
+    id: data_licence
+    attributes:
+      label: Data licence and URL (if shared) / 共有する場合のライセンスと URL
+      placeholder: "CC-BY-4.0, https://..."
+    validations:
+      required: false
+  - type: input
+    id: credit
+    attributes:
+      label: Credit (optional) / 謝辞での表記(任意)
+      description: |
+        Name or handle to credit in docs/MATURITY.md and the release notes. Leave empty to stay anonymous. No employer or affiliation needed.
+        docs/MATURITY.md やリリースノートに載せる名前・ハンドル。空欄なら匿名のまま扱います。所属・勤務先は不要です。
+    validations:
+      required: false
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation / 確認
+      options:
+        - label: "I have not posted confidential data, images or product names, and I have the right to share what I posted. / 社内データ・画像・製品名を書いておらず、書いた内容を共有する権利があります。"
+          required: true

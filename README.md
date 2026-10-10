@@ -15,6 +15,14 @@ release notes.
 **What the PoCs hardened: [HARDENING.md](docs/HARDENING.md)** — the ledger of defects
 the PoC series found, what changed, and which gate now stops each one coming back.
 
+> **Real-hardware and real-data results wanted.** Fullseye is developed without physical
+> measurement rigs, so it is validated against virtual optical systems and simulated ground
+> truth. Results from real hardware or real data are very welcome — **your data does not have
+> to be shared**: results-only reports are accepted, and `python -m fullseye.validation_kit`
+> writes only aggregate numbers from your local data. [Report form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) ·
+> [Discussions › Show and tell](https://github.com/furuse-kazufumi/fullseye/discussions/categories/show-and-tell) ·
+> [how reports are judged](docs/VALIDATION_CONTRIBUTING.en.md)
+
 <!-- Banner: real Fullseye outputs only (no mockups). Regenerate with
      `py -3.11 tools/gen_banner.py`. Absolute raw URL for PyPI compatibility. -->
 <!-- Animated hero: 6 acts of real operator output (edge orientation, blob
@@ -255,6 +263,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 | Understand the language policy and what is *not* translated | `docs/I18N.md` |
 | Update a checkout safely | `tools/update_fullseye.py --check` |
 | **See what is actually verified (and how)** | `docs/MATURITY.md` + `docs/maturity.json` (generated, not written) |
+| **Report results from real hardware or real data** (data may stay private) | `docs/VALIDATION_CONTRIBUTING.en.md` · [issue form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) |
 | **Read why it is built this way** | `docs/DESIGN_NOTES.md` — 606 load-bearing `★` comments collected from the source, in 6 languages (translated as we go; untranslated entries are shown as such) |
 | Cite Fullseye | `CITATION.cff` |
 

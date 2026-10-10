@@ -18,6 +18,8 @@
 
 > **What it can do → [CAPABILITIES.en.md](CAPABILITIES.en.md)** (indexed by what you want to do) / **What the PoCs hardened → [HARDENING.en.md](HARDENING.en.md)** (found, fixed, gated)
 
+> **Real-hardware and real-data results wanted.** Fullseye is developed without physical measurement rigs, so it is validated against virtual optical systems and simulated ground truth. Results from real hardware or real data are very welcome. **Your data does not have to be shared** — results-only reports are accepted, and a validation kit (`python -m fullseye.validation_kit`) writes only aggregate numbers from your local data. → [report form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) · [Discussions › Show and tell](https://github.com/furuse-kazufumi/fullseye/discussions/categories/show-and-tell) · [how reports are judged](VALIDATION_CONTRIBUTING.en.md)
+
 ---
 
 <!-- poc-index:start -->
@@ -221,7 +223,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Document map — all 219
+## Document map — all 221
 
 The complete map, so that **no document is unreachable from this index** (the 3,089 per-op notes and 63 family guides under `docs/ops/` are reached from the operator section above; articles from [articles/](articles/README.md)). One unreachable file fails `tests/test_docs_index_reachable.py`. **Most bodies are in Japanese.**
 
@@ -303,7 +305,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`FSCRIPT_LANGUAGE.md`](FSCRIPT_LANGUAGE.md) | Fullseye Script — 言語 / ランタイム / ウォッチ IDE 設計仕様(北極星) _(ja)_ |
 | [`FSCRIPT_MEASUREMENTS.md`](FSCRIPT_MEASUREMENTS.md) | Fullseye Runtime — 実測記録 (2026-08-15) _(ja)_ |
 
-**Quality and honesty**(11)
+**Quality and honesty**(12)
 
 | document | what it covers |
 |---|---|
@@ -318,6 +320,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`AUDIT_2026_08_12.md`](AUDIT_2026_08_12.md) | imgevolve implementation audit — 2026-08-12 |
 | [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) | リリース手順書 — 同じ間違いを繰り返さないための門 _(ja)_ |
 | [`I18N.md`](I18N.md) | Fullseye の多言語対応 — 全体設計 / Internationalisation design _(ja)_ |
+| [`VALIDATION_CONTRIBUTING.md`](VALIDATION_CONTRIBUTING.md) | 実機・実データでの検証を報告する _(ja)_ |
 
 **Performance and GPU**(4)
 
@@ -357,7 +360,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(142)
+**Other**(143)
 
 | document | what it covers |
 |---|---|
@@ -429,6 +432,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`STUDIO_GUIDE.zh.md`](STUDIO_GUIDE.zh.md) | Fullseye Studio 完全指南 _(ja)_ |
 | [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) | Walking a Character Over Terrain (sim-native, no GPU required) |
 | [`UNIFIED_API_REQUIREMENTS.en.md`](UNIFIED_API_REQUIREMENTS.en.md) | Fullseye Unified Interface — Requirements Specification (v0.1, 2026-08-18) |
+| [`VALIDATION_CONTRIBUTING.en.md`](VALIDATION_CONTRIBUTING.en.md) | Reporting validation on real hardware or real data |
 | [`capabilities/align-and-stack.md`](capabilities/align-and-stack.md) | id: align-and-stack |
 | [`capabilities/beamforming-and-range-doppler.md`](capabilities/beamforming-and-range-doppler.md) | id: beamforming-and-range-doppler |
 | [`capabilities/beats-fringes-and-screens.md`](capabilities/beats-fringes-and-screens.md) | id: beats-fringes-and-screens |

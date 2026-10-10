@@ -20,6 +20,8 @@
 
 > **できること一覧 → [CAPABILITIES.md](CAPABILITIES.md)**（何をしたいかで引く索引）／**PoC が上げた堅牢性 → [HARDENING.md](HARDENING.md)**（見つけて直した記録）／**どこまで検証できているか → [MATURITY.md](MATURITY.md)**（手で書かず数えて出す成熟度台帳）
 
+> **実機・実データでの検証を募集しています。** Fullseye は個人開発で、物理の計測装置を持っていません。そのため検証は仮想の光学系と合成した真値で行っています。実機や実データで試した結果は大歓迎です。**データは共有しなくて構いません** —— 結果の数値だけの報告も受け付けます。手元のデータから集計値だけを出す検証キット(`python -m fullseye.validation_kit`)もあります。→ [検証報告フォーム](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) · [Discussions › Show and tell](https://github.com/furuse-kazufumi/fullseye/discussions/categories/show-and-tell) · [VALIDATION_CONTRIBUTING.md](VALIDATION_CONTRIBUTING.md)
+
 ---
 
 <!-- poc-index:start -->
@@ -223,7 +225,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## ドキュメント地図 — 全 219 本
+## ドキュメント地図 — 全 221 本
 
 **索引から 1 本も辿れない文書を作らない**ための全体地図です(`docs/ops/` の op ノート 3,089 本と族ガイド 63 本は上の「オペレータを探す」から、記事は [articles/](articles/README.md) から辿れます)。到達できない文書が 1 本でもあれば `tests/test_docs_index_reachable.py` が落ちます。**本文はほとんどが日本語**です。
 
@@ -305,7 +307,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`FSCRIPT_LANGUAGE.md`](FSCRIPT_LANGUAGE.md) | Fullseye Script — 言語 / ランタイム / ウォッチ IDE 設計仕様(北極星) |
 | [`FSCRIPT_MEASUREMENTS.md`](FSCRIPT_MEASUREMENTS.md) | Fullseye Runtime — 実測記録 (2026-08-15) |
 
-**品質・正直さ**(11)
+**品質・正直さ**(12)
 
 | 文書 | 内容 |
 |---|---|
@@ -320,6 +322,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`AUDIT_2026_08_12.md`](AUDIT_2026_08_12.md) | imgevolve implementation audit — 2026-08-12 |
 | [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) | リリース手順書 — 同じ間違いを繰り返さないための門 |
 | [`I18N.md`](I18N.md) | Fullseye の多言語対応 — 全体設計 / Internationalisation design |
+| [`VALIDATION_CONTRIBUTING.md`](VALIDATION_CONTRIBUTING.md) | 実機・実データでの検証を報告する |
 
 **性能・GPU**(4)
 
@@ -359,7 +362,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) |
 
-**そのほか**(142)
+**そのほか**(143)
 
 | 文書 | 内容 |
 |---|---|
@@ -431,6 +434,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 | [`STUDIO_GUIDE.zh.md`](STUDIO_GUIDE.zh.md) | Fullseye Studio 完全指南 |
 | [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) | Walking a Character Over Terrain (sim-native, no GPU required) |
 | [`UNIFIED_API_REQUIREMENTS.en.md`](UNIFIED_API_REQUIREMENTS.en.md) | Fullseye Unified Interface — Requirements Specification (v0.1, 2026-08-18) |
+| [`VALIDATION_CONTRIBUTING.en.md`](VALIDATION_CONTRIBUTING.en.md) | Reporting validation on real hardware or real data |
 | [`capabilities/align-and-stack.md`](capabilities/align-and-stack.md) | id: align-and-stack |
 | [`capabilities/beamforming-and-range-doppler.md`](capabilities/beamforming-and-range-doppler.md) | id: beamforming-and-range-doppler |
 | [`capabilities/beats-fringes-and-screens.md`](capabilities/beats-fringes-and-screens.md) | id: beats-fringes-and-screens |

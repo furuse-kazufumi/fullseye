@@ -1,0 +1,5 @@
+{
+ "schema": 1,
+ "about": "外部の実機・実データ検証報告のうち、保守者が記録したもの。tools/gen_maturity.py が読む。書き方は docs/VALIDATION_CONTRIBUTING.md / Reports recorded by the maintainer; read by tools/gen_maturity.py. See docs/VALIDATION_CONTRIBUTING.en.md.",
+ "reports": []
+}

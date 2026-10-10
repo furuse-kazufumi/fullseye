@@ -48,6 +48,8 @@ Repository = "https://github.com/furuse-kazufumi/fullseye"
 Documentation = "https://furuse.work/"
 "Operator corpus (RAG)" = "https://github.com/furuse-kazufumi/fullseye/tree/master/docs/ops"
 "Bug tracker" = "https://github.com/furuse-kazufumi/fullseye/issues"
+# 2026-10-11: 実機・実データでの検証報告の入口(PyPI のサイドバーに出す)。
+"Validation reports" = "https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml"
 
 [project.optional-dependencies]
 opencv = ["opencv-python>=4.6"]

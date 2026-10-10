@@ -10,7 +10,9 @@ v0.1.10 のリリースノートに「実データで検証済み」という成
 そこで台帳は生成物にし、ここで 3 つを見張る:
 
 1. **コミット済み == 生成物**(古びたら CI が落ちる。他の docs 生成物と同じ drift 検査)
-2. **``validated-hardware`` は決して出ない**(CI に実機が無いので、構造的に到達不能)
+2. **``validated-hardware`` は repo 内の事実からは出ない**(CI に実機が無い)。出るのは
+   ``docs/validation_reports.json`` に記録した外部の実機報告が昇格規則を満たしたときだけ
+   (規則そのものの試験は ``tests/test_validation_reports.py``)
 3. **段の主張には裏づけがある**(実データを名乗るなら、``data: real`` の例が
    実際に門で走っていること)
 """
@@ -39,15 +41,24 @@ def test_the_committed_ledger_matches_what_the_generator_produces():
         + (r.stdout or "") + (r.stderr or ""))
 
 
-def test_hardware_validation_is_structurally_unreachable():
-    """実機の段は決して出ない。**段を先に書くのは順序が逆**なので生成器が拒む。"""
+def test_hardware_validation_needs_an_external_report_that_meets_the_rules():
+    """実機の段は repo 内の事実からは出ない。**外部報告の昇格規則を満たした行だけ**。
+
+    2026-10-11 まではここで「決して出ない」を守っていた。実機を持つ人の報告を
+    受ける入口(``docs/VALIDATION_CONTRIBUTING.md``)を作ったので、守る形を
+    「名乗るなら、満たした規則と受理済みの報告が台帳に残っていること」に変えた。
+    """
     d = _ledger()
     assert any(x["id"] == "validated-hardware" for x in d["ladder"]), \
-        "はしごの定義から実機の段が消えている(消すのではなく、到達不能のまま残す)"
-    claimed = [r["id"] for r in d["capabilities"] if r["status"] == "validated-hardware"]
-    assert not claimed, (
-        "実機検証を名乗っている能力がある: %s —— CI に実機が無い以上、これは書けない。"
-        "名乗りたいなら先に実機を回す門を作ること" % claimed)
+        "はしごの定義から実機の段が消えている"
+    for r in d["capabilities"]:
+        if r["status"] != "validated-hardware":
+            continue
+        met = [x for x in r.get("external_rules_met", []) if x.startswith("hardware-")]
+        assert met, "%s が実機検証を名乗るのに、満たした実機の昇格規則が無い" % r["id"]
+        assert any(x["review"] == "accepted" and x["kind"] == "hardware"
+                   for x in r.get("external_reports", [])), \
+            "%s が実機検証を名乗るのに、受理済みの実機報告が無い" % r["id"]
 
 
 def test_a_real_data_claim_is_backed_by_an_example_that_actually_runs():

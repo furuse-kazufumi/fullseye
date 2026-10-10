@@ -1,0 +1,7 @@
+contact_links:
+  - name: Show and tell — informal results on your hardware / 実機で試した結果を気軽に
+    url: https://github.com/furuse-kazufumi/fullseye/discussions/categories/show-and-tell
+    about: Informal results, questions and "I tried it on my rig" posts. Use the validation form above for reports meant to change a verification stage. / 検証の段を動かす報告は上の検証報告フォームへ。
+  - name: Questions / 質問
+    url: https://github.com/furuse-kazufumi/fullseye/discussions/categories/q-a
+    about: Usage questions. / 使い方の質問。

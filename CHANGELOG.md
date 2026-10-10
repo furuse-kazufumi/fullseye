@@ -7,6 +7,8 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- 実機・実データでの検証報告の入口を作った(データは非公開のままで可)。issue form `.github/ISSUE_TEMPLATE/real_validation_report.yml`、手順と昇格規則 `docs/VALIDATION_CONTRIBUTING.md`(+ `.en.md`)、記録台帳 `docs/validation_reports.json`。`tools/gen_maturity.py` が台帳を読み、規則を満たした外部報告に限って `validated-hardware` / `validated-public-real-data` を出す(空の台帳では能力行は変わらない)。手元データから集計値だけを出す `python -m fullseye.validation_kit`(第 1 弾 `blob-count`)。
+
 ## 0.5.0 — 2026-10-06
 
 ### 破壊的変更(Breaking)

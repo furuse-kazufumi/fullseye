@@ -19,8 +19,8 @@
   },
   {
    "id": "validated-hardware",
-   "ja": "実機センサ・装置につないで検証済み(★CI に実機が無いのでこの段は決して出ない)",
-   "en": "Validated against physical sensors or instruments. Never emitted: there is no hardware in CI."
+   "ja": "実機センサ・装置で検証済み(★CI に実機は無い。外部の実機検証報告を保守者が受理し、昇格規則を満たしたときだけ出る)",
+   "en": "Validated against physical sensors or instruments. CI has no hardware, so this is emitted only from accepted external reports that meet the promotion rules (docs/VALIDATION_CONTRIBUTING.en.md)."
   }
  ],
  "capabilities": [

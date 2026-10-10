@@ -15,10 +15,14 @@
 | `research-prototype` | 実装はあるが、名指しの op に試験が揃っておらず、走る例も無い | Implemented, but not every named operator is exercised by a test and no linked example is executed by a gate. |
 | `verified-synthetic` | 真値を持つ合成データで自動検証済み(名指しの op 全部に試験があるか、走る例がある) | Automatically verified against ground truth that is synthesised or computed in closed form. |
 | `validated-public-real-data` | 公開された実写・実測データを使う例が、門で実際に走っている | At least one linked example that runs in CI is driven by real, publicly available measured data. |
-| `validated-hardware` | 実機センサ・装置につないで検証済み(★CI に実機が無いのでこの段は決して出ない) | Validated against physical sensors or instruments. Never emitted: there is no hardware in CI. |
+| `validated-hardware` | 実機センサ・装置で検証済み(★CI に実機は無い。外部の実機検証報告を保守者が受理し、昇格規則を満たしたときだけ出る) | Validated against physical sensors or instruments. CI has no hardware, so this is emitted only from accepted external reports that meet the promotion rules (docs/VALIDATION_CONTRIBUTING.en.md). |
 
-★ **`validated-hardware` は決して出ません。** CI に実機センサが無いからです。
-段を先に書くのは順序が逆なので、生成器の側で構造的に到達不能にしてあります。
+★ **`validated-hardware` は repo の中の事実からは出ません。** CI に実機センサが
+無いからです。出る道は 1 本だけで、実機・実データを持つ人の検証報告を保守者が
+受理して `docs/validation_reports.json` に記録し、昇格規則を満たしたときです。
+データを外に出せない場合も、結果の数値だけで報告できます。
+
+*Fullseye is developed without physical measurement rigs, so CI can only verify against synthetic or computed ground truth. If you have real hardware or real data, your results can move a capability up this ladder — results-only reports (data kept private) count too:* [report form](https://github.com/furuse-kazufumi/fullseye/issues/new?template=real_validation_report.yml) · [how reports are judged](VALIDATION_CONTRIBUTING.en.md) · [日本語](VALIDATION_CONTRIBUTING.md)
 
 ## 能力ごと
 
@@ -59,6 +63,11 @@
 | [3-D スキャンから体積・土量を出す](capabilities/volume-from-3d-scan.md) | Turn a 3-D scan into a volume | 測る | `verified-synthetic` | 4/4 | `poc_stockpile_volume` synthetic → tests/test_poc_scripts_run.py<br>`poc_lidar_terrain_change` synthetic → tests/test_poc_scripts_run.py |
 | [絵では確かめられないもの(積分器の次数・リアプノフ指数・分岐・相関次元・極小曲面)](capabilities/what-a-picture-cannot-check.md) | What a picture cannot check (integrator order, Lyapunov spectrum, bifurcations, correlation dimension, minimal surfaces) | 測る | `verified-synthetic` | 11/11 | `poc_what_a_picture_cannot_check` synthetic → tests/test_poc_scripts_run.py |
 | [型付きの検査結果を Excel(.xlsx)レポートに書き出す](capabilities/xlsx-report.md) | Write typed inspection results to an Excel (.xlsx) report | 組み立てる | `verified-synthetic` | 4/4 | `xlsx_report` synthetic → tests/test_example_scripts_run.py |
+
+## 外部からの検証報告(External validation reports)
+
+記録した報告はまだ **0 件**です(`docs/validation_reports.json` は空)。
+*No external report has been recorded yet.*
 
 ## 例が実際に走っているか
 
