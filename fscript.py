@@ -1139,10 +1139,15 @@ def _b_read_image(env, path):
 def _b_rgb1_to_gray(env, img):
     if isinstance(img, FImage):
         return img
-    a = np.asarray(img, dtype=np.float64)
+    raw = np.asarray(img)
+    # The range comes from the dtype, like every other seeded array (_range_for_dtype).
+    # 2026-10-11: a uint8 colour frame became 0..255 grey labelled (0, 1), so
+    # mean_gray read ~126 and threshold(G, 0.5, 1.0) selected every pixel.
+    rng = _range_for_dtype(raw.dtype)
+    a = raw.astype(np.float64)
     if a.ndim == 3:
         a = a[..., :3].mean(axis=2)
-    return FImage(a, value_range=(0.0, 1.0))
+    return FImage(a, value_range=rng)
 
 
 def _b_gauss_image(env, img, sigma):
@@ -1361,9 +1366,18 @@ def _seed_value(v):
 
 
 def _unwrap_iconic(v):
-    """The raw array behind an iconic value, for the registry long-tail."""
+    """The array behind an iconic value, on the registry's contract, for the long-tail.
+
+    An :class:`FImage` is mapped from its declared ``value_range`` onto float64 in
+    [0, 1] (the registry op contract). 2026-10-11: the raw pixels were passed, so a
+    uint8 image reached the op as 0..255 (``invert`` -> all 0, ``sobel_amp`` -> max
+    0.004 after the 0..255 label), unlike ``fullseye.apply`` which converts ``/255``."""
     if isinstance(v, FImage):
-        return v.pixels
+        lo, hi = v.value_range
+        px = np.asarray(v.pixels, dtype=np.float64)
+        if (lo, hi) == (0.0, 1.0):
+            return px
+        return (px - lo) / (hi - lo)
     if isinstance(v, Region):
         return _region_mask(v)
     return np.asarray(v)
@@ -1374,8 +1388,8 @@ def _wrap_registry_out(out, out_sort, inp):
     if out_sort == "region":
         return out if isinstance(out, Region) else Region(np.asarray(out) > 0)
     if out_sort == "image":
-        lo, hi = inp.value_range if isinstance(inp, FImage) else (0.0, 1.0)
-        return FImage(np.asarray(out, dtype=np.float64), value_range=(lo, hi))
+        # the op ran on the [0, 1] contract (_unwrap_iconic), so its output is on it too
+        return FImage(np.asarray(out, dtype=np.float64), value_range=(0.0, 1.0))
     if out_sort == "feature":
         arr = np.asarray(out)
         return float(arr) if arr.size == 1 else [float(x) for x in arr.ravel()]
@@ -1407,8 +1421,20 @@ def _call_registry_op(name, args):
     inp = args[0]
     a = float(_as_number(args[1], "op '%s' argument a" % name)) if len(args) > 1 else 0.5
     b = float(_as_number(args[2], "op '%s' argument b" % name)) if len(args) > 2 else 0.5
-    out = api.RT[name](_unwrap_iconic(inp), a, b)
-    return _wrap_registry_out(out, getattr(op, "out_sort", None), inp)
+    # Through the facade (api.apply, fail-closed): the canonical op (an alias such as
+    # GAUSS_FILTER used to be looked up as RT['GAUSS_FILTER'] -> raw KeyError), the
+    # knob check and the dtype contract. Anything the op or the wrap raises becomes an
+    # FScriptError like the built-ins (2026-10-11: TypeError / UFuncTypeError /
+    # FsTypeError escaped run()).
+    try:
+        out = api.apply(_unwrap_iconic(inp), op.name, a, b, on_error="raise")
+        return _wrap_registry_out(out, getattr(op, "out_sort", None), inp)
+    except FScriptError:
+        raise
+    except Exception as e:                            # noqa: BLE001 - surfaced as a script error
+        raise FScriptError("op '%s' (%s -> %s) failed on %s: %s: %s"
+                           % (name, op.in_sort, op.out_sort, _describe(inp),
+                              type(e).__name__, str(e)[:200])) from e
 
 
 # --------------------------------------------------------------------------- #

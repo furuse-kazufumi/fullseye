@@ -379,3 +379,63 @@ def test_mcp_find_ops_refuses_unknown_sort(mcp, tmp_path):
             S.call_tool("fullseye_find_ops", {"query": "gaussian blur", k: "imagee"}, cat, store)
     r = S.call_tool("fullseye_find_ops", {"query": "gaussian blur", "in_sort": "image"}, cat, store)
     assert r["structuredContent"]["total"] > 0
+
+
+# ------------------------------------------------------------- 4/5/6. FScript --
+def _g8(seed=0, shape=(32, 32)):
+    return (np.random.default_rng(seed).random(shape) * 255).astype(np.uint8)
+
+
+@pytest.mark.parametrize("op", ["invert", "sobel_amp", "gaussian"])
+def test_fscript_registry_op_on_uint8_matches_apply(op):
+    import fscript
+    g8 = _g8()
+    env = fscript.run("R := %s(Image)" % op, images={"Image": g8})
+    r = env.vars["R"]
+    assert r.value_range == (0.0, 1.0)
+    assert np.allclose(r.pixels, api.apply(g8, op))
+
+
+def test_fscript_registry_output_reads_like_the_builtin():
+    import fscript
+    g8 = _g8()
+    env = fscript.run("M := mean_gray(Image)\nB := invert_image(Image)\nMB := mean_gray(B)\n"
+                      "R := invert(Image)\nMR := mean_gray(R)", images={"Image": g8})
+    assert abs(env.vars["MR"] - env.vars["MB"]) < 1e-9
+    assert abs(env.vars["MR"] - (1 - env.vars["M"])) < 1e-9
+
+
+def test_fscript_to_gray_uint8_range_is_from_the_dtype():
+    import fscript
+    rgb8 = (np.random.default_rng(0).random((16, 16, 3)) * 255).astype(np.uint8)
+    env = fscript.run("G := to_gray(Image)\nM := mean_gray(G)\nR := threshold(G, 0.5, 1.0)\nA := area(R)",
+                      images={"Image": rgb8})
+    assert env.vars["G"].value_range == (0.0, 255.0)
+    want = rgb8.astype(np.float64).mean(axis=2) / 255.0
+    assert abs(env.vars["M"] - want.mean()) < 1e-9
+    assert env.vars["A"] == float(((want >= 0.5) & (want <= 1.0)).sum())
+    env = fscript.run("G := rgb1_to_gray(Image)", images={"Image": np.random.default_rng(1).random((8, 8, 3))})
+    assert env.vars["G"].value_range == (0.0, 1.0)
+
+
+@pytest.mark.parametrize("src", [
+    "R := gaussian(5)",
+    "R := gaussian('abc')",
+    "R := otsu([1,2,3])",
+    "R := invert(Image, 5, 0.5)",
+])
+def test_fscript_registry_errors_are_fscript_errors(src):
+    import fscript
+    img = np.random.default_rng(0).random((32, 32))
+    with pytest.raises(fscript.FScriptError) as ei:     # a raw TypeError etc. fails this
+        fscript.run(src, images={"Image": img})
+    assert ei.value.line == 1
+
+
+def test_fscript_alias_resolves_to_the_canonical_op():
+    import fscript
+    img = np.random.default_rng(0).random((32, 32))
+    env = fscript.run("R := GAUSS_FILTER(Image)", images={"Image": img})
+    canon = api.find_op("GAUSS_FILTER")
+    assert canon is not None
+    assert np.allclose(env.vars["R"].pixels, api.apply(img, canon.name))
