@@ -31,6 +31,10 @@ def estimate_normals(points, k=16, device="cpu"):
     return normals
 
 
+#: iss_keypoints の saliency の床(λ3 / λ1)。これ以下は平面上の丸め屑として捨てる。
+_ISS_REL_FLOOR = 1e-9
+
+
 def iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99,
                   max_kp=400, min_neighbors=8):
     """ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。
@@ -66,6 +70,11 @@ def iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99,
         vals = np.linalg.eigvalsh((q.T @ q) / len(nb_idx))[::-1]  # λ1>=λ2>=λ3
         l1, l2, l3 = vals
         if l1 <= 1e-12:
+            continue
+        # ★2026-10-11: 平面上の点の λ3 は丸め屑(λ3/λ1 ~ 1e-17)。軸に沿った平面では
+        #   厳密に 0 で落ちるが、傾けた平面では屑が正になり「特徴の無い平面」から
+        #   キーポイントが 203 個出ていた(回転不変の主張が崩れる)。床は λ1 に対する相対量で。
+        if l3 <= _ISS_REL_FLOOR * l1:
             continue
         if (l2 / l1) < gamma21 and (l3 / l2) < gamma32:
             saliency[i] = l3

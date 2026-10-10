@@ -200,7 +200,7 @@ def sphere_sdf(grid, center, R):
     ``center`` は長さ3、``R>=0`` は半径。返り値の shape は ``grid.shape[:-1]``。厳密な SDF
     (勾配ノルム 1)。``sdf_offset(sphere_sdf(g,c,R), r) == sphere_sdf(g,c,R+r)``。
 
-    Raises ValueError for R<0 or malformed grid/center。
+    ``R < 0`` や形の不正な grid / center は ``ValueError``。
 
     計算: ``np.linalg.norm(grid - center, axis=-1) - R``。座標の単位はそのまま距離の
     単位になる(``grid_coords`` の world 座標を渡せば world 単位)。座標の成分順は
@@ -243,7 +243,7 @@ def box_sdf(grid, center, half_extents):
     ``half_extents`` は各軸の**半辺長**(中心から面まで)。外側は厳密距離(角では対角、面前は
     垂直距離)、内側も最近面までの厳密負距離を与える。
 
-    Raises ValueError for any half_extent<0 or malformed grid/center/half_extents。"""
+    半辺長が 1 つでも負、または形の不正な grid / center / half_extents は ``ValueError``。"""
     g = _as_coords(grid)
     c = np.asarray(center, np.float64).reshape(3)
     he = np.asarray(half_extents, np.float64).reshape(3)

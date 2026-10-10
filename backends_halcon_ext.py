@@ -916,6 +916,10 @@ def _plateaus_center(v, a, b):
 def _move_region(v, a, b):
     """region を平行移動(dy=a, dx=b を中心 0 のオフセットに)。
 
+    ``v > 0.5`` を region とし、行方向に ``dy = int((a - 0.5) * H)``、列方向に
+    ``dx = int((b - 0.5) * W)`` 画素ずらした 0/1 の float 配列を返す(``a = b = 0.5`` で移動なし。
+    ``int`` は 0 方向への切り捨て)。ずらしは ``np.roll`` で行う。
+
     np.roll ゆえ**端は循環**(はみ出た region が反対側から現れる)。HALCON の
     move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる —
     進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。
@@ -1684,26 +1688,93 @@ def _dist_ellipse_contour_points_xld(v, a, b):
     return np.float64(min(float(np.abs(rad - 1.0).max()), 1.0))
 
 
-def _dist_rectangle2_contour_points_xld(v, a, b):
-    """contour 各点の最小面積外接矩形の中心からの正規化距離の平均(feature)。
+def _convex_hull_2d(p):
+    """2-D 点群の凸包の頂点(反時計回り、Andrew の monotone chain)。共線・重複は落とす。"""
+    q = np.unique(np.asarray(p, np.float64), axis=0)
+    if len(q) < 3:
+        return q
+    q = q[np.lexsort((q[:, 1], q[:, 0]))]
 
-    全 contour の点をまとめ、点の重心からの各点のユークリッド距離の平均を ``max(H, W)`` で割って 1 で頭打ちした
-    ``np.float64`` を返す。
+    def _half(pts):
+        h = []
+        for x in pts:
+            while len(h) >= 2 and ((h[-1][0] - h[-2][0]) * (x[1] - h[-2][1])
+                                   - (h[-1][1] - h[-2][1]) * (x[0] - h[-2][0])) <= 0.0:
+                h.pop()
+            h.append(x)
+        return h
+
+    lower, upper = _half(q), _half(q[::-1])
+    return np.asarray(lower[:-1] + upper[:-1], np.float64)
+
+
+def _min_area_rect_exact(p):
+    """厳密な最小面積外接矩形(回転キャリパー: 凸包の辺の向きだけを試す)。
+
+    ``(center, e1, e2, h1, h2)`` を返す。``e1``/``e2`` は矩形の直交単位軸、``h1``/``h2`` は
+    その軸方向の半辺長。点が 3 個未満・全点共線なら幅 0 の矩形(``h2 = 0``)になる。
+    最小面積矩形の 1 辺は凸包の辺と重なる(Freeman & Shapira 1975)ので、角度の離散探索
+    (``_min_area_rect_ratio`` の 6° 刻み)と違い取りこぼしが無い。
+    """
+    p = np.asarray(p, np.float64)
+    hull = _convex_hull_2d(p)
+    if len(hull) < 3:                                   # 1 点 / 共線: 線分を包む幅 0 の矩形
+        c = p.mean(0)
+        d = p - c
+        if len(p) < 2 or not np.any(np.abs(d) > 0):
+            return c, np.array([1.0, 0.0]), np.array([0.0, 1.0]), 0.0, 0.0
+        e1 = d[np.argmax(np.hypot(d[:, 0], d[:, 1]))]
+        e1 = e1 / np.hypot(*e1)
+        e2 = np.array([-e1[1], e1[0]])
+        u = d @ e1
+        return c + e1 * (u.max() + u.min()) / 2.0, e1, e2, (u.max() - u.min()) / 2.0, 0.0
+    best = None
+    edges = np.roll(hull, -1, axis=0) - hull
+    for ev in edges:
+        n = np.hypot(*ev)
+        if n <= 0.0:
+            continue
+        e1 = ev / n
+        e2 = np.array([-e1[1], e1[0]])
+        u, w = hull @ e1, hull @ e2
+        area = (u.max() - u.min()) * (w.max() - w.min())
+        if best is None or area < best[0]:
+            best = (area, e1, e2, u.min(), u.max(), w.min(), w.max())
+    _, e1, e2, u0, u1, w0, w1 = best
+    c = e1 * (u0 + u1) / 2.0 + e2 * (w0 + w1) / 2.0
+    return c, e1, e2, (u1 - u0) / 2.0, (w1 - w0) / 2.0
+
+
+def _dist_rectangle2_contour_points_xld(v, a, b):
+    """contour 各点から最小面積外接矩形の辺までの正規化距離の平均(feature)。
+
+    全 contour の点をまとめて厳密な最小面積外接矩形(回転キャリパー)を求め、各点からその矩形の
+    最も近い辺までのユークリッド距離の平均を ``max(H, W)`` で割り、1 で頭打ちした ``np.float64`` を返す。
+    矩形は全点を包むので、点 ``(u, w)``(矩形の軸方向の座標、中心が原点)の距離は
+    ``min(h1 - |u|, h2 - |w|)``(``h1``/``h2`` は半辺長)になる。
 
     - ``a``, ``b`` は未使用。
-    - 点が 3 個未満なら 0.0。
+    - 点が 3 個未満なら 0.0。全点が一直線に並ぶ(幅 0 の矩形)ときも 0.0。
 
-    注意: 名前は最小面積外接矩形の中心からの距離だが、現実装は矩形を求めず点群の重心を中心にしている。
-    点が偏っている場合(弧が欠けた輪郭など)は矩形中心と重心がずれるため、名前どおりの値にはならない。
-    実質は「重心からの平均半径」で、``hx_moments_any_xld``(二乗平均)の 1 乗版にあたる。矩形そのものは
-    ``hx_smallest_rect2_xld`` / ``hx_fit_rectangle2_contour``。
+    値は「輪郭がどれだけ矩形の縁に沿っているか」を表す: 矩形の輪郭そのものなら 0、円なら半径の
+    約 0.0997 倍(``1 - (4/π)·sin(π/4)``)、内側に点が多いほど大きい。矩形の向きによらない
+    (回転不変)。HALCON の ``dist_rectangle2_contour_points_xld`` は矩形を引数で受け取り点ごとの距離を
+    返すが、この op は contour 自身に当てた最小面積矩形を使い、平均の 1 値に畳む。
+
+    2026-10-11 まで、名前に反して矩形を求めず「点の重心からの平均距離」を返していた
+    (矩形の輪郭でも 0 にならず、正方形の輪郭で約 0.57·辺長/``max(H, W)``)。矩形そのものは
+    ``hx_smallest_rect2_xld`` / ``hx_fit_rectangle2_contour``、重心からの広がりは ``hx_moments_any_xld``。
     """
     p = _all_pts(v)
     if len(p) < 3:
         return np.float64(0.0)
-    c = p.mean(0)
-    d = np.hypot(*(p - c).T)
-    return np.float64(min(float(d.mean()) / max(_c_shape(v)), 1.0))
+    c, e1, e2, h1, h2 = _min_area_rect_exact(p)
+    if h1 <= 0.0 or h2 <= 0.0:
+        return np.float64(0.0)
+    d = p - c
+    dist = np.minimum(h1 - np.abs(d @ e1), h2 - np.abs(d @ e2))
+    dist = np.clip(dist, 0.0, None)                    # 丸めで辺のわずかに外へ出た点は 0
+    return np.float64(min(float(dist.mean()) / max(_c_shape(v)), 1.0))
 
 
 def _distance_pc(v, a, b):
