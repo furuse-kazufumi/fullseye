@@ -89,11 +89,19 @@ def diagnose_stages(stages) -> list[dict]:
     """Validate a list of ``(op, a, b)`` stages without running them.
 
     Returns a list of problem dicts ``{"index", "op", "severity", "message"}``
-    (``severity`` = ``"error"`` for an unknown operator, ``"warning"`` for a
-    sort mismatch between adjacent stages). A sort-mismatch dict additionally
-    carries ``"prev_index"`` / ``"prev_op"`` — the upstream stage that produced
-    the incompatible sort. An empty list means the pipeline is structurally
-    sound. Pure / Qt-free — reused by the Studio diagnostics panel.
+    (``severity`` = ``"error"`` for an unknown operator **and** for a sort
+    mismatch between adjacent stages). A sort-mismatch dict additionally
+    carries ``"kind": "sort_mismatch"`` and ``"prev_index"`` / ``"prev_op"`` —
+    the upstream stage that produced the incompatible sort. An empty list means
+    the pipeline is structurally sound. Pure / Qt-free — reused by the Studio
+    diagnostics panel.
+
+    **A sort mismatch is an error (2026-10-11).** It used to be a ``"warning"``,
+    so :meth:`FullseyeEngine.is_runnable` said True for ``[gaussian,
+    vol_gaussian]`` and :meth:`FullseyeEngine.run` executed it (the result was a
+    plausible-looking array). ``api.run_pipeline`` now refuses such a chain
+    before any stage runs (``api._check_chain_sorts``), so the validator says
+    the same thing the runtime does.
 
     **Numbering (2026-09-02).** ``index`` / ``prev_index`` are **0-based**
     (they index *stages* directly, so they can be used to select a row).
@@ -128,7 +136,7 @@ def diagnose_stages(stages) -> list[dict]:
             continue
         if prev_out is not None and not _compatible(prev_out, op.in_sort):
             problems.append({
-                "index": i, "op": op.name, "severity": "warning",
+                "index": i, "op": op.name, "severity": "error", "kind": "sort_mismatch",
                 "prev_index": prev_index, "prev_op": prev_name,
                 # 1-based in the prose, to match the Problems-panel heading that
                 # renders this same line's own index as index+1.
@@ -279,7 +287,9 @@ class FullseyeEngine:
         return diagnose_stages(self.stages)
 
     def is_runnable(self) -> bool:
-        """True if every stage resolves to a known operator (no hard errors)."""
+        """True if every stage resolves to a known operator and adjacent stages agree on
+        their sort (no errors from :meth:`validate`) — exactly when :meth:`run` will
+        execute the chain instead of refusing it."""
         return not any(p["severity"] == "error" for p in self.validate())
 
     # ------------------------------------------------------------- parameters --
@@ -309,7 +319,10 @@ class FullseyeEngine:
 
         *upto* runs only stages ``0..upto`` (default: all); a pipeline with no
         stages returns the input unchanged. Raises ``KeyError`` if a stage names
-        an unknown operator (call :meth:`validate` first to check)."""
+        an unknown operator and ``ValueError`` if adjacent stages disagree on their
+        sort or a knob is non-finite — both **before** any stage runs (call
+        :meth:`validate` / :meth:`is_runnable` first to check). Runs through
+        ``api.run_pipeline`` (dtype contract, knob check, fallback guard)."""
         stages = self._stage_tuples(upto)
         if not stages:
             return image                             # no stages -> the input, unchanged
@@ -320,18 +333,19 @@ class FullseyeEngine:
 
         The step-through a debugger shows: ``steps[i]`` is the value after stage
         ``i``. Efficient — threads the array through once rather than re-running
-        each prefix."""
-        v = image
-        first = True
-        out = []
-        for (name, sa, sb) in (tuple(s) for s in self.stages):
-            op = api._resolve(name)
-            if first:
-                v = api._coerce_input(v, op) if coerce else v
-                first = False
-            v = api._ops.RT[op.name](v, sa, sb)
-            out.append(v)
-        return out
+        each prefix.
+
+        Shares :meth:`run`'s stage runner (``api._prepare_pipeline`` +
+        ``api._pipeline_steps``), so ``run_stepwise(x)[-1]`` equals ``run(x)``: the
+        same up-front checks (sort chain, knobs), dtype contract and fallback guard.
+        (2026-10-11: it called ``RT`` directly, so a uint8 frame skipped ``/255``
+        and the last step disagreed with :meth:`run`.)"""
+        stages = self._stage_tuples()
+        if not stages:
+            return []
+        policy = api._policy(None)
+        img, norm, ops_ = api._prepare_pipeline(image, stages, 0.5, 0.5, policy)
+        return list(api._pipeline_steps(img, norm, ops_, coerce, policy, api._fast_on(None)))
 
     def run_file(self, in_path: str, out_path: str | None = None,
                  upto: int | None = None):

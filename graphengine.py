@@ -92,41 +92,91 @@ class FullseyeGraph:
         return order
 
     def validate(self) -> list:
-        """Return a list of problem dicts (unknown op / arity mismatch); empty = OK.
-        Raises on structural errors (cycle / dangling ref) via topological_order."""
-        self.topological_order()
+        """Return a list of problem dicts (unknown op / arity mismatch / sort mismatch /
+        non-finite knob); empty = OK. Raises on structural errors (cycle / dangling ref)
+        via topological_order.
+
+        Sorts are threaded through the graph in topological order the same way
+        ``FullseyeEngine`` threads a chain (``engine._thread_sort``: an op whose
+        ``out_sort`` is ``"any"`` keeps the incoming sort). External inputs carry no
+        declared sort, so the first op reading one is not checked; every edge between
+        two nodes is. 2026-10-11: there was no sort check at all, so
+        ``otsu -> blob_count -> vol_gaussian`` validated clean and ran."""
+        import math
+
+        import api
+        import engine
+        order = self.topological_order()
         RT, nary = self._tables()
         probs = []
-        for n, spec in self.nodes.items():
+        sorts: dict = {}                     # node id -> sort it outputs (None = unknown)
+        for n in order:
+            spec = self.nodes[n]
             op, k = spec["op"], len(spec["inputs"])
-            if op in nary:
-                if k != nary[op].arity:
+            for label in ("a", "b"):
+                if not math.isfinite(spec[label]):
                     probs.append({"node": n, "severity": "error",
-                                  "msg": "op %r needs %d inputs, got %d" % (op, nary[op].arity, k)})
+                                  "msg": "knob %s of %r is non-finite (%r)" % (label, op, spec[label])})
+            in_sorts = [sorts.get(i) for i in spec["inputs"]]
+            if op in nary:
+                nop = nary[op]
+                if k != nop.arity:
+                    probs.append({"node": n, "severity": "error",
+                                  "msg": "op %r needs %d inputs, got %d" % (op, nop.arity, k)})
+                    sorts[n] = None
+                    continue
+                for jj, (got, want) in enumerate(zip(in_sorts, nop.in_sorts)):
+                    if got is not None and not engine._compatible(got, want):
+                        probs.append({"node": n, "severity": "error", "kind": "sort_mismatch",
+                                      "msg": "input %d of %r (%s) is %r but the op takes %r"
+                                             % (jj, op, spec["inputs"][jj], got, want)})
+                out = nop.out_sort
+                sorts[n] = in_sorts[0] if (out == "any" and in_sorts[0] is not None) else out
             elif op in RT:
                 if k != 1:
                     probs.append({"node": n, "severity": "error",
                                   "msg": "single-input op %r got %d inputs" % (op, k)})
+                o = api.find_op(op)
+                got = in_sorts[0] if in_sorts else None
+                if o is None:
+                    sorts[n] = None
+                    continue
+                if got is not None and not engine._compatible(got, o.in_sort):
+                    probs.append({"node": n, "severity": "error", "kind": "sort_mismatch",
+                                  "msg": "op %r takes %r but its input %r outputs %r"
+                                         % (op, o.in_sort, spec["inputs"][0], got)})
+                sorts[n] = engine._thread_sort(got, o)
             else:
                 probs.append({"node": n, "severity": "error", "msg": "unknown op %r" % op})
+                sorts[n] = None
         return probs
 
     # -- execution ----------------------------------------------------------- #
-    def _eval(self, RT, nary, op, args, a, b):
+    def _eval(self, nary, op, args, a, b, coerce, on_error):
+        """One node through the facade's runner (``api.apply``): dtype contract (uint8
+        ``/255``), knob check (clamped + recorded, or refused under ``on_error="raise"``)
+        and the fallback guard -- the same path ``fullseye.apply`` / ``run_pipeline`` take.
+        2026-10-11: nodes called ``RT`` / ``NaryOp.fn`` directly, so a uint8 frame gave a
+        different answer than ``fullseye.apply`` and a knob of 7 ran unchecked."""
+        import api
         if op in nary:
-            return nary[op].fn(list(args), a, b)
-        if op in RT:
-            return RT[op](args[0], a, b)
-        raise ValueError("unknown op %r" % op)
+            return api.apply(list(args), op, a, b, coerce=coerce, on_error=on_error)
+        return api.apply(args[0], op, a, b, coerce=coerce, on_error=on_error)
 
-    def run(self, inputs, terminal: str | None = None):
+    def run(self, inputs, terminal: str | None = None, on_error: str | None = None):
         """Evaluate the graph. ``inputs`` is a single array (bound to ``"$in"``) or a
-        ``{name: array}`` dict. Returns a ``{node_id: array}`` cache, or — when
-        *terminal* is given — that single node's output. Raises ``ValueError`` if a
+        ``{name: array}`` dict. Returns a ``{node_id: array}`` cache, or -- when
+        *terminal* is given -- that single node's output. Raises ``ValueError`` if a
         required external input is missing. An empty graph returns the inputs cache
-        unchanged (``{"$in": array}``) — nothing ran, nothing was invented."""
+        unchanged (``{"$in": array}``) -- nothing ran, nothing was invented.
+
+        :meth:`validate` runs first: any error (unknown op, wrong arity, sort mismatch,
+        non-finite knob) raises ``ValueError`` **before any node runs**. Each node then
+        runs through ``fullseye.apply`` (``on_error`` as there; ``None`` reads
+        ``FULLSEYE_ON_ERROR``); like ``run_pipeline``, only nodes that read external
+        inputs coerce them (``api._coerce_input``)."""
         import numpy as np
-        RT, nary = self._tables()
+        _, nary = self._tables()
         if isinstance(inputs, dict):
             cache = {str(k): np.asarray(v) for k, v in inputs.items()}
         else:
@@ -134,10 +184,16 @@ class FullseyeGraph:
         missing = self._external() - set(cache)
         if missing:
             raise ValueError("missing external input(s): %s" % ", ".join(sorted(missing)))
+        errors = [p for p in self.validate() if p["severity"] == "error"]
+        if errors:
+            raise ValueError("graph %r refused before running: %s"
+                             % (self.name, "; ".join("%s: %s" % (p["node"], p["msg"]) for p in errors)))
+        ext = self._external()
         for nid in self.topological_order():
             spec = self.nodes[nid]
             args = [cache[i] for i in spec["inputs"]]
-            cache[nid] = self._eval(RT, nary, spec["op"], args, spec["a"], spec["b"])
+            coerce = all(i in ext for i in spec["inputs"])
+            cache[nid] = self._eval(nary, spec["op"], args, spec["a"], spec["b"], coerce, on_error)
         if terminal is not None:
             if terminal not in cache:
                 raise ValueError("no such node %r" % terminal)
@@ -158,18 +214,23 @@ class FullseyeGraph:
         return g
 
     def to_python(self) -> str:
-        """Emit a standalone Python function reproducing the graph via ``fullseye``."""
-        lines = ["import fullseye, imgops_nary",
-                 "_NARY = {o.name: o for o in imgops_nary.build_nary()}", "",
-                 "def %s(**inputs):" % (self.name if self.name.isidentifier() else "graph"),
+        """Emit a standalone Python function reproducing the graph via ``fullseye.apply``
+        (the same runner :meth:`run` uses). The function name goes through
+        ``engine._py_ident``, so a graph named ``class`` / ``1x`` still compiles."""
+        import engine
+        _, nary = self._tables()
+        ext = self._external()
+        lines = ["import fullseye", "",
+                 "def %s(**inputs):" % engine._py_ident(self.name),
                  "    v = dict(inputs)"]
         for nid in self.topological_order():
             s = self.nodes[nid]
-            args = "[%s]" % ", ".join("v[%r]" % i for i in s["inputs"])
-            lines.append(
-                "    v[%r] = (_NARY[%r].fn(%s, %s, %s) if %r in _NARY "
-                "else fullseye.RT[%r](v[%r], %s, %s))"
-                % (nid, s["op"], args, s["a"], s["b"], s["op"],
-                   s["op"], s["inputs"][0], s["a"], s["b"]))
+            if s["op"] in nary:
+                arg = "[%s]" % ", ".join("v[%r]" % i for i in s["inputs"])
+            else:
+                arg = "v[%r]" % s["inputs"][0]
+            coerce = all(i in ext for i in s["inputs"])
+            lines.append("    v[%r] = fullseye.apply(%s, %r, %r, %r, coerce=%r)"
+                         % (nid, arg, s["op"], s["a"], s["b"], coerce))
         lines.append("    return v")
         return "\n".join(lines)

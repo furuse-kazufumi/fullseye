@@ -1874,12 +1874,17 @@ def test_contour_variable_gets_a_polyline_thumbnail():
 
 def test_contour_variable_is_tagged_iconic_in_the_list():
     """End-to-end: a pipeline ending in a contour op yields a variable row that is
-    tagged 'iconic' and carries a (non-null) icon."""
+    tagged 'iconic' and carries a (non-null) icon.
+
+    2026-10-11: the chain was ``otsu -> sk_find_contours`` (region into an op that
+    takes an image) -- type-mismatched, and it only passed because mismatched chains
+    used to run. The runner now refuses it before running, so use a sort-valid chain
+    (image -> image -> contour)."""
     from PySide6 import QtCore
     _app()
     win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     ol, ins = win._op_list, win._op_buttons["insert"]
-    for op in ("otsu", "sk_find_contours"):
+    for op in ("gaussian", "sk_find_contours"):
         idx = next((i for i in range(ol.count())
                     if ol.item(i).data(QtCore.Qt.UserRole) == op), None)
         if idx is None:

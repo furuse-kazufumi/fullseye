@@ -64,10 +64,12 @@ def test_validate_good_and_bad():
     assert FullseyeEngine.from_ops("gaussian").is_runnable()
 
 
-def test_sort_mismatch_is_a_warning():
-    # otsu outputs a region; feeding it to gaussian (expects image) is a warning
+def test_sort_mismatch_is_an_error():
+    # otsu outputs a region; feeding it to gaussian (expects image) is an ERROR since
+    # 2026-10-11 (it was a "warning", so is_runnable() said True and run() executed it).
     probs = diagnose_stages([("otsu", .5, .5), ("gaussian", .5, .5)])
-    assert any(p["severity"] == "warning" for p in probs)
+    assert any(p["severity"] == "error" and p.get("kind") == "sort_mismatch" for p in probs)
+    assert not FullseyeEngine([("otsu", .5, .5), ("gaussian", .5, .5)]).is_runnable()
     # a clean chain has none
     assert diagnose_stages([("gaussian", .5, .5), ("otsu", .5, .5)]) == []
 
@@ -86,7 +88,7 @@ def test_sort_mismatch_message_numbers_stages_1_based():
     """
     stages = [("gaussian", .5, .5), ("gaussian", .5, .5), ("otsu", .5, .5),
               ("sk_clear_border", .5, .5), ("circularity_xld", .5, .5)]
-    probs = [p for p in diagnose_stages(stages) if p["severity"] == "warning"]
+    probs = [p for p in diagnose_stages(stages) if p.get("kind") == "sort_mismatch"]
     assert len(probs) == 1
     p = probs[0]
     assert p["index"] == 4 and p["op"] == "circularity_xld"      # 0-based, unchanged
@@ -106,8 +108,8 @@ def test_sort_mismatch_prev_index_survives_an_unknown_op():
     probs = diagnose_stages(stages)
     errs = [p for p in probs if p["severity"] == "error"]
     assert len(errs) == 1 and errs[0]["index"] == 1
-    # 'nope_op' sets prev_out to "any", which pairs with everything -> no warning
-    assert [p for p in probs if p["severity"] == "warning"] == []
+    # 'nope_op' sets prev_out to "any", which pairs with everything -> no sort mismatch
+    assert [p for p in probs if p.get("kind") == "sort_mismatch"] == []
 
 
 def test_set_knobs_and_chaining():
@@ -180,9 +182,9 @@ def test_identity_threads_the_sort_instead_of_matching_everything():
     said 'any' for a pipeline that produces an image. 'any' out means pass-through:
     keep the incoming sort (same rule as ops._effective_out_sort)."""
     without = diagnose_stages([("gaussian", .5, .5), ("vol_gaussian", .5, .5)])
-    assert [p["severity"] for p in without] == ["warning"]
+    assert [p["severity"] for p in without] == ["error"]
     with_id = diagnose_stages([("gaussian", .5, .5), ("identity", .5, .5), ("vol_gaussian", .5, .5)])
-    assert [p["severity"] for p in with_id] == ["warning"]
+    assert [p["severity"] for p in with_id] == ["error"]
     assert with_id[0]["index"] == 2 and with_id[0]["prev_index"] == 1
     assert "outputs 'image'" in with_id[0]["message"]
     # a sort-consistent chain through identity stays clean

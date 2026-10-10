@@ -2783,6 +2783,95 @@ def _normalise_stages(image, stages, a, b) -> list:
     return norm
 
 
+def _check_chain_sorts(ops_, where: str = "run_pipeline") -> None:
+    """段の列 *ops_*(:class:`ops.Op` の列)の型連鎖を、**何も走らせる前に**検査する。
+
+    前段の出力 sort を ``engine._thread_sort`` で順に流し(``out_sort == "any"`` の
+    ``identity`` などは受けた sort を保つ)、次段の ``in_sort`` と合わなければ
+    ``ValueError`` で止める —— ``on_error`` の方針に依らない。``on_error`` は「op が
+    実行時に失敗したとき sort として妥当な値へ落とすか」の選択で、型の合わない処理列は
+    実行時の劣化ではなく呼び出し側の誤り(``_check_call_args`` と同じ扱い)。
+
+    ★2026-10-11 の内部レビュー: 「型が不整合な処理列は実行前に除外する」と書いていたのに、
+    ``run_pipeline`` は第 1 段の入力しか見ず、``engine.diagnose_stages`` は不一致を
+    warning にしていたので ``is_runnable()`` が True、``FullseyeGraph`` は型を見ていなかった。
+    ``[gaussian, vol_gaussian]`` や ``[blob_count, gaussian]`` が例外も台帳記録も無く
+    「成功」していた。入口 3 本(run_pipeline / FullseyeEngine / FullseyeGraph)はここを通る。
+    """
+    import engine as _engine                     # engine imports api: resolve lazily
+    cur = None
+    prev = None
+    for i, op in enumerate(ops_, 1):
+        if cur is not None and not _engine._compatible(cur, op.in_sort):
+            raise ValueError(
+                "%s: type mismatch at stage %d (%s): it takes %r but stage %d (%s) outputs %r "
+                "-- the chain was refused before any stage ran; insert an op that converts "
+                "%s -> %s between them" % (where, i, op.name, op.in_sort, i - 1, prev, cur,
+                                            cur, op.in_sort))
+        cur = _engine._thread_sort(cur, op)
+        prev = op.name
+
+
+def _prepare_pipeline(image, stages, a, b, policy):
+    """run_pipeline / ``FullseyeEngine.run_stepwise`` の前処理(**何も走らせない**)。
+
+    返り値 = ``(image, norm, ops_)``。段の書き方の正規化、全段の op 解決(未知の名前は
+    ここで KeyError / TypeError)、型連鎖の検査(:func:`_check_chain_sorts`)、段ごとの
+    ノブ検査(:func:`_check_call_args` —— NaN は方針に依らず拒否、0..1 の外は記録して
+    切り詰めるか ``on_error="raise"`` で拒否)を、第 1 段を走らせる前に済ませる。
+
+    ★2026-10-11: ノブは ``apply`` だけが検査し、``run_pipeline`` / ``FullseyeEngine.run`` は
+    ``("threshold", nan)`` / ``("threshold", 5.0)`` をそのまま op に渡していた(台帳も空)。
+    """
+    image = _unwrap_image(image)
+    norm = _normalise_stages(image, stages, a, b)
+    ops_ = [_resolve(name) for name, _, _ in norm]
+    _check_chain_sorts(ops_)
+    checked = []
+    for (name, sa, sb), op in zip(norm, ops_):
+        sa, sb = _check_call_args(image, op.name, sa, sb, policy)
+        checked.append((name, sa, sb))
+    return image, checked, ops_
+
+
+def _pipeline_steps(image, norm, ops_, coerce, policy, use_fast):
+    """CPU の段実行の唯一の本体: 各段の後の値を順に yield する。
+
+    ``run_pipeline`` は最後の値を、``FullseyeEngine.run_stepwise`` は全部を取る ——
+    同じ本体なので ``run_stepwise(x)[-1] == run(x)``(2026-10-11: stepwise だけが
+    dtype 契約と guard を飛ばし、uint8 で別の答えを返していた)。
+    """
+    v = image
+    first = True
+    for (name, sa, sb), op in zip(norm, ops_):
+        if isinstance(v, PrecisionUnion):
+            # lazy stages keep the union (see _apply_impl); the first non-lazy stage
+            # materialises once and is then coerced/contracted as the entry array.
+            lazy = _PU_LAZY.get(name)
+            pu = _pu_contract(v, op, policy) if lazy is not None else None
+            if pu is not None:
+                v = lazy(pu, sa, sb)
+                yield v
+                continue
+            v = v.to_dense()
+        if first:
+            _reject_untyped(v, op)
+            v = _coerce_input(v, op) if coerce else v
+            v = _contract_dtype(v, op, policy)
+            _guard_input(v, op, policy)
+            first = False
+
+        def _stage(_op=op, _v=v, _a=sa, _b=sb):
+            if use_fast:
+                res = _try_fast(_op, _v, _a, _b)
+                if res is not _NOACCEL:
+                    return res
+            return _ops.RT[_op.name](_v, _a, _b)
+
+        v = _run_guarded(op.name, _stage, policy, op.out_sort, v)
+        yield v
+
+
 def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
                  coerce: bool = True, device: str = "cpu", on_error: str | None = None,
                  fast: bool | None = None):
@@ -2811,10 +2900,15 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     ``fast.py`` runs it. Ignored on the GPU path (the bridge is already the fast one).
 
     ``on_error``: as in :func:`apply`; fallbacks are attributed per stage.
+
+    **Checked before any stage runs, whatever ``on_error`` is**: every op name resolves,
+    adjacent stages agree on their sort (a ``ValueError`` names the stage and both sorts;
+    ``identity``-style ``"any"`` ops keep the incoming sort) and every stage's knobs pass
+    the same check as :func:`apply` (non-finite refused; outside 0..1 clamped and
+    recorded, or refused under ``on_error="raise"``). See :func:`_check_chain_sorts`.
     """
     policy = _policy(on_error)
-    image = _unwrap_image(image)
-    norm = _normalise_stages(image, stages, a, b)
+    image, norm, ops_ = _prepare_pipeline(image, stages, a, b, policy)
 
     if isinstance(image, PrecisionUnion) and device != "cpu":
         image = image.to_dense()      # the lazy union path is CPU-only; the GPU bridge needs a dense array
@@ -2847,34 +2941,8 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
                     _bs.record("run_pipeline[gpu]", e, None, source="gpu")
 
     v = image
-    first = True
-    use_fast = _fast_on(fast)
-    for name, sa, sb in norm:
-        if isinstance(v, PrecisionUnion):
-            # lazy stages keep the union (see _apply_impl); the first non-lazy stage
-            # materialises once and is then coerced/contracted as the entry array.
-            lazy = _PU_LAZY.get(name)
-            pu = _pu_contract(v, _resolve(name), policy) if lazy is not None else None
-            if pu is not None:
-                v = lazy(pu, sa, sb)
-                continue
-            v = v.to_dense()
-        op = _resolve(name)
-        if first:
-            _reject_untyped(v, op)
-            v = _coerce_input(v, op) if coerce else v
-            v = _contract_dtype(v, op, policy)
-            _guard_input(v, op, policy)
-            first = False
-
-        def _stage(_op=op, _v=v, _a=sa, _b=sb):
-            if use_fast:
-                res = _try_fast(_op, _v, _a, _b)
-                if res is not _NOACCEL:
-                    return res
-            return _ops.RT[_op.name](_v, _a, _b)
-
-        v = _run_guarded(op.name, _stage, policy, op.out_sort, v)
+    for v in _pipeline_steps(image, norm, ops_, coerce, policy, _fast_on(fast)):
+        pass
     return v
 
 

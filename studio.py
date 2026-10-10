@@ -76,8 +76,9 @@ def validate_pipeline_dict(d):
         except (TypeError, ValueError):
             raise ValueError("stage %d (%s): knobs a, b must be numbers" % (i + 1, name))
         # fail-closed on a knob the pipeline cannot honour: the op contract is a, b in
-        # [0, 1]; api.run_pipeline does not clamp, so an out-of-range / NaN knob would
-        # run one thing here and another after a script round trip (which clamps).
+        # [0, 1]; api.run_pipeline only clamps-and-records an out-of-range knob (refusing
+        # it just under on_error="raise"), so the program text refuses it here instead of
+        # running a different value than the one written.
         for label, v in (("a", a), ("b", b)):
             if not math.isfinite(v):
                 raise ValueError("stage %d (%s): knob %s must be a finite number, got %r"
