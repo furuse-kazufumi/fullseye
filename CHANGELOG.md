@@ -15,6 +15,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 - 台帳経由の `read_wav` / `read_audio` は信号だけを返す(宣言 `signal` どおり)。`dsp.read_wav` の直呼びは `(x, rate)` のまま。
 - `chebyshev_eval_nd` は `coeffs` の無い table を ValueError で拒否する(生の KeyError だった)。
 - `covers_sensor` の生の TypeError を ValueError に。
+- 空の入力で生の ZeroDivisionError / IndexError を出していた 20 op(`vol_fft_*`・`integrate_normals`・`mesh_to_points`・`fbp_volume` など)は、何が空かを名指しする ValueError で拒否する。
+- docstring の無かった公開関数 23 本(`pose_compose`・`quat_*`・`find_op` など)に説明を書いた。`find_op.__doc__` は
+  判定が docstring より前にあって None だった。
+- 門を 3 つ足した: 台帳・n 入力・公開関数の説明の有無、空入力の拒否(docstring が約束した op)、効かないノブ。
 
 ## 0.6.0 — 2026-10-11
 
