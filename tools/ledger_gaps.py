@@ -316,11 +316,53 @@ class KnobHook:
                 except Exception:                # noqa: BLE001 - an out-of-range variant
                     continue
                 ran += 1
-                if lc.same(base, lc._stable(name, r)) is not True:
+                if _differs(base, lc._stable(name, r)):
                     changed = True
                     break
             out[p.name] = "live" if changed else ("dead" if ran else "unmeasured")
         return out
+
+
+def _flat_numbers(x, out, depth=0):
+    """Every number in a result, in order (None when the structure is not numeric)."""
+    if depth > 8:
+        return out
+    if isinstance(x, dict):
+        for k in sorted(x, key=str):
+            if _flat_numbers(x[k], out, depth + 1) is None:
+                return None
+        return out
+    if isinstance(x, (list, tuple)):
+        for v in x:
+            if _flat_numbers(v, out, depth + 1) is None:
+                return None
+        return out
+    a = np.asarray(x) if not isinstance(x, (str, bytes)) else None
+    if a is None or a.dtype.kind not in "biufc":
+        return None
+    out.extend(np.asarray(a, np.complex128).ravel().tolist())
+    return out
+
+
+def _differs(base, r):
+    """Did turning the knob change the output **beyond rounding**?
+
+    ★2026-10-11: ``foe_from_flow.iters`` は探針の入力で 1 巡目に収束し、巡回を増やした差は丸めの屑だけ。
+    手元(Windows の BLAS)は最後の桁が動いて「効く」、CI(Linux)は完全一致で「効かない」—— 厳密一致の
+    比較だと判定が環境で割れて CI だけ赤になった。相対 1e-9 より小さい差は「変わっていない」と数える。
+    """
+    if lc.same(base, r) is True:
+        return False
+    a, b = _flat_numbers(base, []), _flat_numbers(r, [])
+    if a is None or b is None or len(a) != len(b) or not a:
+        return True
+    a, b = np.asarray(a), np.asarray(b)
+    fin = np.isfinite(a) & np.isfinite(b)
+    if not np.array_equal(fin, np.isfinite(a)) or not np.array_equal(fin, np.isfinite(b)):
+        return True
+    if np.any(a[~fin] != b[~fin]) and not np.all(np.isnan(a[~fin]) & np.isnan(b[~fin])):
+        return True
+    return not np.allclose(a[fin], b[fin], rtol=1e-9, atol=1e-12)
 
 
 def knob_failures(name, g):
