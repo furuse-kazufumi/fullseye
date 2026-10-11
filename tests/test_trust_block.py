@@ -242,7 +242,8 @@ def test_gate_inventory_is_complete(data):
     gi = data["gates"]
     assert tuple(gi["checks"]) == G.CHECKS
     mids = {m["id"] for m in gi["measurements"]}
-    assert len(mids) == len(gi["measurements"]) == 2
+    # 測定は 1 回以上、ID は重ならない(2026-10-11 に 7 層を 1 つの commit で測り直して 1 回にまとめた)
+    assert len(mids) == len(gi["measurements"]) >= 1
     for m in gi["measurements"]:
         assert re.fullmatch(r"[0-9a-f]{10}", m["commit"]), m
         assert m["relation"] in ("in_release", "after_release"), m

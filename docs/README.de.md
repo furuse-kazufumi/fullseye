@@ -35,18 +35,17 @@ Keine dieser Zahlen ist von Hand geschrieben: `tools/gen_trust_block.py` erzeugt
 
 Pro Schicht wurde genau ein absichtlich defekter Operator eingefügt und die gesamte Testsuite ausgeführt; gezählt wurden die fehlschlagenden Tests (Mutation Probe). ✓ = ein Gate erkennt diesen Defekt, ✗ = **noch keines**.
 
-- Messung ①: Commit `792fd576a1`, 2026-10-11, in 0.6.0 enthalten.
-- Messung ②: Commit `fc42e76f59`, 2026-10-11, Stand nach 0.6.0 (mit unveröffentlichten Änderungen).
+- Messung ①: Commit `e97e94bae2`, 2026-10-11, Stand nach 0.6.0 (mit unveröffentlichten Änderungen).
 
 | Schicht | Messung | Verwaltungs-Gates | Verhaltens-Gates | wirft Ausnahme | NaN | falscher Typ | nicht deterministisch | ignoriert Parameter | keine Beschreibung | Beschreibung nur Englisch | akzeptiert leere Eingabe |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 2-D-Kern (`ops.REGISTRY`) | ① | 27 | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
-| n-är | ① | 16 | 4 | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ | ✓ | ✗ |
-| Farbe | ① | 28 | 9 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
-| typisiertes Register + `tb_`-Brücke | ① | 27 | 13 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| typisiertes Register (ohne Brücke) | ② | 16 | 3 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
-| 3-D-Register | ② | 19 | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
-| nur Fassade | ① | 1 | 0 | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| n-är | ① | 16 | 5 | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
+| Farbe | ① | 28 | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| typisiertes Register + `tb_`-Brücke | ① | 29 | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| typisiertes Register (ohne Brücke) | ① | 17 | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 3-D-Register | ① | 20 | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| nur Fassade | ① | 1 | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 
 Verwaltungs-Gates schlagen bei jedem neuen Operator an, auch bei einem korrekten, bis seine Notiz und sein Indexeintrag neu erzeugt sind. Verhaltens-Gates = die weiteren, verschiedenen Tests, die wegen der Art des Defekts fehlschlagen.
 

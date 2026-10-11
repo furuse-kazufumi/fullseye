@@ -24,32 +24,23 @@
  ],
  "measurements": [
   {
-   "id": "m1",
-   "commit": "792fd576a1",
+   "id": "m3",
+   "commit": "e97e94bae2",
    "date": "2026-10-11",
-   "relation": "in_release",
+   "relation": "after_release",
    "release": "0.6.0",
    "tiers": [
     "t1",
     "t2",
     "t3",
     "t4",
-    "t6"
-   ]
-  },
-  {
-   "id": "m2",
-   "commit": "fc42e76f59",
-   "date": "2026-10-11",
-   "relation": "after_release",
-   "release": "0.6.0",
-   "tiers": [
     "t5",
-    "t5b"
+    "t5b",
+    "t6"
    ],
    "why": {
-    "ja": "型付き台帳の契約の門を入れた後に t5 / t5b だけ測り直した。その門は registry / n 入力 / 色 / facade には掛からないので、他の層は m1 のまま。",
-    "en": "After the typed-ledger contract gate landed, only t5 / t5b were re-measured; that gate does not apply to registry / n-ary / colour / facade, so the other tiers keep m1."
+    "ja": "0.6.0 の後に足した門(説明の門の分割・効かないノブ・空入力)を含めて、7 層すべてを同じ commit で測り直した(63 回+基準 1 回)。",
+    "en": "All seven tiers re-measured on one commit (63 runs plus one baseline), including the gates added after 0.6.0 (split description gate, dead knobs, empty input)."
    }
   }
  ],
@@ -58,7 +49,7 @@
    "id": "t1",
    "ja": "2-D 中核(ops.REGISTRY)",
    "en": "2-D core (ops.REGISTRY)",
-   "measurement": "m1",
+   "measurement": "m3",
    "bookkeeping_gates": 27,
    "behavioural_gates": 10,
    "caught": {
@@ -76,16 +67,16 @@
    "id": "t2",
    "ja": "n 入力",
    "en": "n-ary",
-   "measurement": "m1",
+   "measurement": "m3",
    "bookkeeping_gates": 16,
-   "behavioural_gates": 4,
+   "behavioural_gates": 5,
    "caught": {
     "raises": true,
     "nan": true,
     "wrong_type": true,
     "nondeterministic": false,
     "ignores_params": false,
-    "no_description": false,
+    "no_description": true,
     "english_only_description": true,
     "accepts_empty_input": false
    }
@@ -94,9 +85,9 @@
    "id": "t3",
    "ja": "色",
    "en": "colour",
-   "measurement": "m1",
+   "measurement": "m3",
    "bookkeeping_gates": 28,
-   "behavioural_gates": 9,
+   "behavioural_gates": 10,
    "caught": {
     "raises": true,
     "nan": true,
@@ -112,9 +103,9 @@
    "id": "t4",
    "ja": "型付き台帳 + tb_ 橋",
    "en": "typed ledger + tb_ bridge",
-   "measurement": "m1",
-   "bookkeeping_gates": 27,
-   "behavioural_gates": 13,
+   "measurement": "m3",
+   "bookkeeping_gates": 29,
+   "behavioural_gates": 16,
    "caught": {
     "raises": true,
     "nan": true,
@@ -123,25 +114,25 @@
     "ignores_params": true,
     "no_description": true,
     "english_only_description": true,
-    "accepts_empty_input": false
+    "accepts_empty_input": true
    }
   },
   {
    "id": "t5",
    "ja": "型付き台帳(橋なし)",
    "en": "typed ledger (no bridge)",
-   "measurement": "m2",
-   "bookkeeping_gates": 16,
-   "behavioural_gates": 3,
+   "measurement": "m3",
+   "bookkeeping_gates": 17,
+   "behavioural_gates": 5,
    "caught": {
     "raises": true,
     "nan": true,
     "wrong_type": true,
     "nondeterministic": true,
-    "ignores_params": false,
-    "no_description": false,
+    "ignores_params": true,
+    "no_description": true,
     "english_only_description": true,
-    "accepts_empty_input": false
+    "accepts_empty_input": true
    },
    "superseded": {
     "measurement": "m1",
@@ -163,18 +154,18 @@
    "id": "t5b",
    "ja": "3-D 台帳",
    "en": "3-D ledger",
-   "measurement": "m2",
-   "bookkeeping_gates": 19,
-   "behavioural_gates": 5,
+   "measurement": "m3",
+   "bookkeeping_gates": 20,
+   "behavioural_gates": 7,
    "caught": {
     "raises": true,
     "nan": true,
     "wrong_type": true,
     "nondeterministic": true,
-    "ignores_params": false,
-    "no_description": false,
+    "ignores_params": true,
+    "no_description": true,
     "english_only_description": true,
-    "accepts_empty_input": false
+    "accepts_empty_input": true
    },
    "superseded": {
     "measurement": "m1",
@@ -196,16 +187,16 @@
    "id": "t6",
    "ja": "facade のみ",
    "en": "facade only",
-   "measurement": "m1",
+   "measurement": "m3",
    "bookkeeping_gates": 1,
-   "behavioural_gates": 0,
+   "behavioural_gates": 1,
    "caught": {
     "raises": false,
     "nan": false,
     "wrong_type": false,
     "nondeterministic": false,
     "ignores_params": false,
-    "no_description": false,
+    "no_description": true,
     "english_only_description": false,
     "accepts_empty_input": false
    }

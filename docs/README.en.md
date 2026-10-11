@@ -35,18 +35,17 @@ None of these numbers is typed by hand: `tools/gen_trust_block.py` renders them 
 
 For each tier, one deliberately broken operator was injected and the whole suite run; failing tests were counted (mutation probe). ✓ = a gate catches that breakage, ✗ = **nothing catches it yet**.
 
-- Measurement ①: commit `792fd576a1`, 2026-10-11, included in 0.6.0.
-- Measurement ②: commit `fc42e76f59`, 2026-10-11, the tree after 0.6.0 (includes unreleased changes).
+- Measurement ①: commit `e97e94bae2`, 2026-10-11, the tree after 0.6.0 (includes unreleased changes).
 
 | tier | measured | bookkeeping gates | behavioural gates | raises | NaN | wrong type | nondeterministic | ignores parameters | no description | English-only description | accepts empty input |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 2-D core (`ops.REGISTRY`) | ① | 27 | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
-| n-ary | ① | 16 | 4 | ✓ | ✓ | ✓ | ✗ | ✗ | ✗ | ✓ | ✗ |
-| colour | ① | 28 | 9 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
-| typed ledger + `tb_` bridge | ① | 27 | 13 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✗ |
-| typed ledger (no bridge) | ② | 16 | 3 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
-| 3-D ledger | ② | 19 | 5 | ✓ | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ | ✗ |
-| facade only | ① | 1 | 0 | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ |
+| n-ary | ① | 16 | 5 | ✓ | ✓ | ✓ | ✗ | ✗ | ✓ | ✓ | ✗ |
+| colour | ① | 28 | 10 | ✓ | ✓ | ✓ | ✓ | ✗ | ✓ | ✓ | ✗ |
+| typed ledger + `tb_` bridge | ① | 29 | 16 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| typed ledger (no bridge) | ① | 17 | 5 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| 3-D ledger | ① | 20 | 7 | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| facade only | ① | 1 | 1 | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ | ✗ | ✗ |
 
 Bookkeeping gates fire for any new operator, even a correct one, until its note and index entries are regenerated. Behavioural gates = the further distinct tests that fail because of how the operator is broken.
 
