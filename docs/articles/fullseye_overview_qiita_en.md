@@ -17,7 +17,7 @@ This is the real shape model of asteroid **25143 Itokawa** — the Gaskell model
 ## TL;DR
 
 - **Fullseye** (a pun on "Bullseye" — the dead center of a target) is a self-built library of classical image-processing and geometric-vision algorithms: **roughly 1,000 operators, implemented from scratch in numpy, sitting behind one typed interface**. The goal is to make "explainable vision" — vision whose internals you can actually account for — something you can carry around as the eyes of **Physical AI** (AI that acts in the physical world with a body, i.e. robots).
-- I use **HALCON**, the industrial machine-vision standard, as a "map of coverage." As measured, Fullseye has a self-built counterpart for **982 of 2,313 HALCON operators (42.5%)** — not a number from memory, but a mechanical tally against the operator list from the official reference.
+- I use **HALCON**, the industrial machine-vision standard, as a "map of coverage." As measured, Fullseye has a self-built counterpart for **981 of 2,313 HALCON operators (42.4%, as of v0.6.0)** — not a number from memory, but a mechanical tally against the operator list from the official reference.
 - On top of the library sit an **evolutionary mode that "designs" algorithms through evolutionary computation**, a **Physical AI perception stack** that chains stereo → depth → point cloud → 6-DoF pose, and an **HDevelop-style IDE, Fullseye Studio**.
 - **The single most recommended way to use it is as an AI's RAG knowledge base.** Feed it to Claude Code or similar, and a plain conversational request like "detect X in this image" gets you a **pipeline assembled from ~1,000 ops, executed, with the results appearing on Studio's screen** — that's the foundation this is designed to be.
 - The undercurrent of this article is **making "honest disclosure" a mechanism** — never showing only the good numbers, never erasing failures, always stating the limitations. I include cases where the quality gates actually caught bugs, **including six I fixed just now**, exactly as they happened.
@@ -132,7 +132,7 @@ This is a long article, so let me sort **which claims sit at which stage** befor
 
 | Tier | Status label | What it covers in this article |
 |---|---|---|
-| **Implemented & reproducible** | `Production-ready / Verified` | The 877 2-D + 346 3-D ops, type contracts and the unified interface, Studio, the PyPI release, 18,174 tests (measured 2026-10-11), the machine-tallied 981/2,313 HALCON mapping, and the real outputs behind every exhibit and demo |
+| **Implemented & reproducible** | `Production-ready / Verified` | The 3,083 indexed ops (936 single-input 2-D, 17 n-ary, 2,130 in the typed ledgers of which 371 are 3-D; as of v0.6.0), type contracts and the unified interface, Studio, the PyPI release, 18,174 tests (measured 2026-10-11), the machine-tallied 981/2,313 HALCON mapping, and the real outputs behind every exhibit and demo |
 | **Under validation** | `PoC / Research prototype` | Evolutionary pipeline design (hold-out evaluated, bounded settings), natural-language-to-pipeline via RAG, and the Physical AI perception stack (validated in simulation; real hardware and sim-to-real are untouched) |
 | **Future vision** | `Roadmap / Design proposal` | A comprehensive op foundation for robots, an AI autonomously selecting and running the ~1,000 ops, and a shared perception base for industrial inspection and Physical AI |
 
@@ -256,7 +256,7 @@ Here is that "pick up a bean with chopsticks" experiment, seen through Fullseye'
 ```mermaid
 flowchart TB
     subgraph L0["Foundation: ~1,000 typed ops"]
-        OPS["The typed operator library<br/>877 2D ops + 346 3D ops<br/>hand-written numpy / wired together by type (sort)"]
+        OPS["The typed operator library<br/>3,083 indexed ops (v0.6.0)<br/>936 single-input 2-D + 2,130 typed-ledger<br/>hand-written numpy / wired together by type (sort)"]
     end
     subgraph L1["Two ways to use it"]
         APPLY["① Apply a known op<br/>fullseye.apply / run_pipeline"]
@@ -377,6 +377,8 @@ Add one op, and the registry, the search space, code generation, documentation, 
 
 ### How Big Is It, Really? (Measured)
 
+> The 731 / 265 below and the treemap are **as measured for the first version (2026-09-02)**. In v0.6.0 (2026-10-11) the machine-readable index holds **3,083 ops** (936 single-input 2-D, 17 n-ary, 2,130 in the typed ledgers, of which 371 are 3-D). Per-version counts are in [OP_COUNT_HISTORY](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/OP_COUNT_HISTORY.md).
+
 - **2D operators: 731** (of 735 registry entries, 731 are distinct by name), across **46 categories**.
 - **3D operators: 265** (point clouds, meshes, volumes, SDFs, and more), across **55 categories**.
 - Roughly **1,000 total**, covering denoising / smoothing / sharpening / thresholding & segmentation / morphology / edge, corner, and blob detection / distance transforms / color spaces / texture and shape features / contours / 3D geometry.
@@ -428,19 +430,19 @@ Words alone stay abstract, so here are these "inspection-line standards" actuall
 
 *↑ **Bar detection** — just like a real reader, bar edge pairs are detected from the gray profile along a scanline. Both ends of all 45 bars located within ±1.5px (this is the raw material for bar detection and width measurement, not a full decoder). Ops used: `decode_barcode`, `m1_measure_pairs`.*
 
-### The Yardstick Is HALCON (42.5%, Measured)
+### The Yardstick Is HALCON (42.4%, Measured)
 
 To avoid talking about "coverage" subjectively, I use the industrial-vision giant **HALCON** as a yardstick. Against the list of **2,313 operators** compiled from the official reference, each Fullseye op is tagged with "which real operator does this correspond to?", and the tally is done mechanically.
 
 Let me pause on why a yardstick is needed at all. "There are about 1,000 ops" tells a reader nothing on its own — is that a lot, or a little? **The number 1,000 has no meaning until it's compared against something.** But declaring "it's comprehensive" subjectively would violate this article's undercurrent, honest disclosure. So the method I chose was: **measure with the same yardstick as the giant actually used in industry, and produce the number by mechanical tally**. I picked HALCON not merely because it's famous, but because **its operator list is organized and published as an official reference** — that is, for its high comparability.
 
-> **imgevolve maps to 982 / 2313 HALCON operators (42.5%)** — not from memory, but measured against the scraped list.
+> **imgevolve maps to 981 / 2313 HALCON operators (42.4%, v0.6.0)** — not from memory, but measured against the scraped list.
 
 To be honest, that's **still under half**. Chapters like Tuple handling, System, Classification, and OCR are almost entirely untouched (they sit outside the core of image processing, so I've deprioritized them). Matching, Morphology, Filtering, and geometric measurement, on the other hand, are where I've built thick. The heart of this number is that **a per-chapter table showing "what's filled in and what's empty" stays open for anyone to see, at all times.**
 
 ### The Per-Chapter Map — Thick Spots and Empty Spots
 
-HALCON's 2,313 operators are divided into **30 chapters**. Fullseye's 982 counterparts are **not** spread evenly across them.
+HALCON's 2,313 operators are divided into **30 chapters**. Fullseye's 981 counterparts are **not** spread evenly across them.
 
 Where I've built thick is the chapters at the heart of image processing: **Filtering** (smoothing, edges, frequency-domain filters), **Morphology** (dilation, erosion, opening, closing), **Regions** (region operations and feature measurement), **Segmentation** (thresholding and region splitting), and **Matching** (template and deformable matching) — all painted **far denser** than the overall 42.5% average. The thin spots are chapters like **Tuple handling** (numeric-tuple operations, the programming-language side of HDevelop), **System** (process and thread control), and **Classification / OCR** (machine-learning-based classification and character recognition). Those are nearly untouched — that's the honest state of things.
 
@@ -667,7 +669,7 @@ The image at the top of this article (SDF smooth union + AO + soft shadows + ACE
 
 These are not "decoration for looks" — **each is an independently verifiable op**. For AO, "are the more-occluded vertices actually darker?"; for tone mapping, "is gradation restored in regions that used to blow out?" — both check out numerically. Behind the single hero image at the top of the article sits a stack of **measurable parts written as typed ops** — Layer 1's "type (sort) as a backbone" philosophy applied consistently even to rendering, a field that looks far removed from it.
 
-3D ops currently number 265. Spanning point clouds, meshes, volumes, and SDFs, the library carries **3D feature descriptors** like SHOT, FPFH, and spin images, **TSDF fusion**, **fringe projection**, **photometric stereo**, **superquadric fitting**, **medial axis**, **geodesic distance**, **visual hull**, and **QEM mesh simplification (boundary-preserving, strictly manifold)**.
+3D ops number 371 as of v0.6.0 (the 3-D typed ledger). Spanning point clouds, meshes, volumes, and SDFs, the library carries **3D feature descriptors** like SHOT, FPFH, and spin images, **TSDF fusion**, **fringe projection**, **photometric stereo**, **superquadric fitting**, **medial axis**, **geodesic distance**, **visual hull**, and **QEM mesh simplification (boundary-preserving, strictly manifold)**.
 
 There's also a one-image sampler that **applies the basic 3D ops in sequence to the same real Itokawa cloud** (normal estimation, shape index, voxel decimation 3,000 → 635 points, OBB, convex hull — all actual execution results).
 
@@ -800,9 +802,9 @@ The same idiom works from scripts too. A **disp directive family** matching HDev
 
 `Tools ▸ System settings…` (`Ctrl+,`) is a category-tree settings screen. **Execution** (worker thread count, operator timeout), **Windows** (the cap on graphics windows), **Display** (default colormap, region drawing mode), **Editor** (font size, the Python Editor's interpreter) — the settings corresponding to HDevelop's `set_system`, gathered on one screen. The **Command palette** on `Ctrl+P` fuzzy-searches any action or any operator by name and runs it immediately, so a full session's worth of operations can stay on the keyboard without walking menus.
 
-### The Gallery and Help — 105 Worked Examples and a 265-Op Reference
+### The Gallery and Help — 105 Worked Examples and a 3D Op Reference
 
-On the 3D side, 105 worked examples (real Itokawa point cloud, skeleton volume, synthetic data) can be picked from the gallery and Run on the spot, and each of the 265 3D ops has a generated help page (signature, usage, links to verified samples, and the type-compatible next ops).
+On the 3D side, 105 worked examples (real Itokawa point cloud, skeleton volume, synthetic data) can be picked from the gallery and Run on the spot, and each 3D op (371 as of v0.6.0) has a generated help page (signature, usage, links to verified samples, and the type-compatible next ops).
 
 ![Studio 3D Examples gallery](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_3d_examples_thumb.jpg)
 
@@ -3542,14 +3544,14 @@ I won't write "everything gets faster." Writing down **where it's fast (with mea
 
 > **Status: Roadmap / Design proposal** — from here on, the article covers current limits and pre-implementation plans.
 
-- **HALCON coverage is still 42.5%.** OCR, Classification, and System chapters are nearly empty. The policy of thickening the image/geometry core stays, but "under half" is the fact.
+- **HALCON coverage is still 42.4%.** OCR, Classification, and System chapters are nearly empty. The policy of thickening the image/geometry core stays, but "under half" is the fact.
 - **The unified API is still mid-migration.** Conventions historically diverged across the image registry, the algorithms, and the perception facade, and the move to the Qt-style natural API is **proceeding in stages**.
 - **GPU coverage is still in progress.** The ported parts already exist with real RTX 5090 measurements (see "An Honest Word on Performance" above), but **the full ~1,000 ops aren't covered yet**. **Never pass off CPU numbers as GPU numbers** — that's the discipline.
 - **3D visualization inside Studio** is also still being grown, centered on integration with existing viewers (Open3D / RViz2).
 
 A bit more honesty on each.
 
-The 42.5% HALCON coverage sits, as the "coverage story" section explained, on a **deliberately narrowed denominator** — but even so, the work of thickening the Filtering / Morphology / Regions / Segmentation core has no visible finish line yet. In particular, chapters that lean toward machinery — Matching (template and deformable matching), 3D Reconstruction — **don't fit comfortably in a single `fn(v, a, b)`**, and involve design decisions about how to extend the type contracts. They're not the kind of thing that grows just by adding ops.
+The 42.4% HALCON coverage sits, as the "coverage story" section explained, on a **deliberately narrowed denominator** — but even so, the work of thickening the Filtering / Morphology / Regions / Segmentation core has no visible finish line yet. In particular, chapters that lean toward machinery — Matching (template and deformable matching), 3D Reconstruction — **don't fit comfortably in a single `fn(v, a, b)`**, and involve design decisions about how to extend the type contracts. They're not the kind of thing that grows just by adding ops.
 
 On the unified-API migration, honestly, a large part of it is **cleaning up after history**. The naming conventions from the `imgevolve` era and the ones added while growing the Physical AI perception facade aren't fully aligned. Realizing the "readable, completion-friendly writing feel" from the design-philosophy section across the whole surface means converging **gradually**, without breaking existing callers — plodding work, more so than feature-building.
 
@@ -4307,7 +4309,7 @@ Finally the steering itself is written **on the connectome side**: six neurons a
 - **design with them by evolution (evolve, with honest evaluation)**, or
 - **use them as a robot's eyes (the Physical AI perception stack)** —
 
-a numpy-native, self-built library. **42.5% against the HALCON yardstick (measured)**, **18,174 tests** (measured 2026-10-11), a documentation system with **Markdown as its single source of truth**, and the **HDevelop-style Studio**. Every deep dependency is optional, and **the core runs on nothing but numpy + scipy**.
+a numpy-native, self-built library. **42.4% against the HALCON yardstick (measured)**, **18,174 tests** (measured 2026-10-11), a documentation system with **Markdown as its single source of truth**, and the **HDevelop-style Studio**. Every deep dependency is optional, and **the core runs on nothing but numpy + scipy**.
 
 What I most want to convey is neither the scale nor the coverage rate, but the stance of **making honesty a mechanism**. Hold-out data never selects. Coverage is disclosed as measured. **When a bug is found, the article keeps the bug — together with the quality assurance that caught it.** Over flash, the priorities are being **explainable, reproducible, and maintainable for the long haul** — built up steadily.
 
@@ -4330,7 +4332,7 @@ One preview of the next installment's protagonist (click to play the video):
 This article was the "map." Next, I'll walk its regions. Candidates:
 
 - **What happens when you add one op** — the internals of the machinery by which the registry, evolution, code generation, and documentation all follow automatically.
-- **How to grow HALCON's 42.5%** — a build log of filling uncovered operators one by one through the honest gate.
+- **How to grow HALCON's 42.4%** — a build log of filling uncovered operators one by one through the honest gate.
 - **Physical AI's eyes** — evis's vision pipeline end to end, from stereo through 6-DoF pose to "pinching" with 700 muscles.
 - **Technical follow-ups on the mines CI dug up** — each bug from "The Night Before Release," down to the fix commits and how the tests were written.
 
@@ -4344,7 +4346,7 @@ If you enjoyed it, please click the ♡ — it is what keeps the next one coming
 
 <!--
 Publication notes (not shown in the article body):
-- All numbers are measured (ops 877, 3D 346, HALCON 982/2313=42.5%, tests 18,174 = 2026-10-11, after v0.6.0). Re-measure before updating any of them.
+- All numbers are measured (3,083 indexed ops incl. 936 single-input 2-D and 371 3-D, HALCON 981/2313=42.4% as of v0.6.0, tests 18,174 = 2026-10-11, after v0.6.0). Re-measure before updating any of them.
 - Prefer Mermaid over images where possible (native to Qiita; avoids SVG path/cache issues). If figures become SVG, always apply raw absolute URL + HTTP 200 check + ?v=N cache-bust.
 - Apache-2.0 and reimplemented-from-public-knowledge are stated explicitly (the no-derivation-from-commercial-products line).
 - Release logistics: queue as a private draft, and publish when a slot opens, avoiding Qiita's consecutive-post 502.
