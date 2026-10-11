@@ -1,0 +1,411 @@
+{
+ "about": {
+  "ja": "版ごとの op 数・PoC 数・回帰テスト数の実測。過去の版の行は記録であり書き換えない(tests/test_trust_block.py が指紋で固定)。新しい版を出すときは行を 1 つ足す。",
+  "en": "Measured operator, PoC and regression-test counts per released version. Rows for past versions are records and are never edited (tests/test_trust_block.py pins them by fingerprint). Each release appends one row."
+ },
+ "method": {
+  "measured_on": "2026-10-11",
+  "ja": "各タグを別の作業ツリーに checkout し、optional backend を全部入れた環境(Windows、Python 3.11)で数えた。registry / n 入力 / 色 / 台帳はその版のコードを import して数え、索引の計はその版の索引生成を走らせた値、PoC は examples2d の poc_* の本数、テストは pytest --collect-only の件数。0.6.0 の行は v0.6.0 と同じ中身のツリーで測った。",
+  "en": "Each tag was checked out into its own working tree and counted with every optional backend installed (Windows, Python 3.11). Registry / n-ary / colour / ledger counts come from importing that version's code; the index total from running that version's index builder; PoC = number of poc_* entries in examples2d; tests = pytest --collect-only count. The 0.6.0 row was measured on a tree with the same content as v0.6.0."
+ },
+ "columns": {
+  "registry": {
+   "ja": "2-D 単入力 op(ops.REGISTRY のうち索引に載るもの)",
+   "en": "single-input 2-D ops (ops.REGISTRY entries listed in the index)"
+  },
+  "nary": {
+   "ja": "n 入力 op",
+   "en": "n-ary ops"
+  },
+  "color": {
+   "ja": "色の op",
+   "en": "colour ops"
+  },
+  "ledger": {
+   "ja": "型付き台帳の op(重複除去後)。null = その版に台帳が無い",
+   "en": "typed-ledger ops (deduplicated); null = no ledger in that version"
+  },
+  "index": {
+   "ja": "機械可読索引(docs/OP_INDEX.json)の全 op。null = その版では索引の全数を測っていない",
+   "en": "all ops in the machine-readable index (docs/OP_INDEX.json); null = not measured for that version"
+  },
+  "index_tiers": {
+   "ja": "索引の計に含まれる層",
+   "en": "tiers included in the index total"
+  },
+  "halcon": {
+   "ja": "HALCON 演算子(全 2,313)のうち対応する実装がある数",
+   "en": "HALCON operators (of 2,313) with a corresponding implementation"
+  },
+  "poc": {
+   "ja": "PoC の本数",
+   "en": "number of PoCs"
+  },
+  "tests": {
+   "ja": "回帰テストの件数(pytest --collect-only)",
+   "en": "regression tests collected (pytest --collect-only)"
+  }
+ },
+ "definition_changes": [
+  {
+   "version": "0.1.9",
+   "compare_with": "0.1.8",
+   "kind": "halcon_recount"
+  },
+  {
+   "version": "0.2.0",
+   "compare_with": "0.1.11",
+   "kind": "ledger_into_index"
+  }
+ ],
+ "rows": [
+  {
+   "version": "0.1.0",
+   "tag": "v0.1.0",
+   "date": "2026-08-30",
+   "registry": 723,
+   "nary": 17,
+   "color": 12,
+   "ledger": null,
+   "ledger_families": null,
+   "index": null,
+   "index_tiers": null,
+   "halcon": 323,
+   "poc": 0,
+   "tests": 6246
+  },
+  {
+   "version": "0.1.1",
+   "tag": "v0.1.1",
+   "date": "2026-08-30",
+   "registry": 723,
+   "nary": 17,
+   "color": 12,
+   "ledger": null,
+   "ledger_families": null,
+   "index": null,
+   "index_tiers": null,
+   "halcon": 323,
+   "poc": 0,
+   "tests": 6246
+  },
+  {
+   "version": "0.1.2",
+   "tag": "v0.1.2",
+   "date": "2026-08-30",
+   "registry": 723,
+   "nary": 17,
+   "color": 12,
+   "ledger": null,
+   "ledger_families": null,
+   "index": null,
+   "index_tiers": null,
+   "halcon": 323,
+   "poc": 0,
+   "tests": 6247
+  },
+  {
+   "version": "0.1.3",
+   "tag": "v0.1.3",
+   "date": "2026-08-30",
+   "registry": 723,
+   "nary": 17,
+   "color": 12,
+   "ledger": null,
+   "ledger_families": null,
+   "index": null,
+   "index_tiers": null,
+   "halcon": 323,
+   "poc": 0,
+   "tests": 6291
+  },
+  {
+   "version": "0.1.4",
+   "tag": "v0.1.4",
+   "date": "2026-08-31",
+   "registry": 725,
+   "nary": 17,
+   "color": 12,
+   "ledger": null,
+   "ledger_families": null,
+   "index": null,
+   "index_tiers": null,
+   "halcon": 323,
+   "poc": 0,
+   "tests": 6323
+  },
+  {
+   "version": "0.1.5",
+   "tag": "v0.1.5",
+   "date": "2026-09-03",
+   "registry": 865,
+   "nary": 17,
+   "color": 12,
+   "ledger": null,
+   "ledger_families": null,
+   "index": null,
+   "index_tiers": null,
+   "halcon": 323,
+   "poc": 0,
+   "tests": 11028
+  },
+  {
+   "version": "0.1.6",
+   "tag": "v0.1.6",
+   "date": "2026-09-05",
+   "registry": 869,
+   "nary": 17,
+   "color": 12,
+   "ledger": 839,
+   "ledger_families": 22,
+   "index": null,
+   "index_tiers": null,
+   "halcon": 323,
+   "poc": 0,
+   "tests": 11392
+  },
+  {
+   "version": "0.1.7",
+   "tag": "v0.1.7",
+   "date": "2026-09-05",
+   "registry": 869,
+   "nary": 17,
+   "color": 12,
+   "ledger": 839,
+   "ledger_families": 22,
+   "index": null,
+   "index_tiers": null,
+   "halcon": 323,
+   "poc": 0,
+   "tests": 11431
+  },
+  {
+   "version": "0.1.8",
+   "tag": "v0.1.8",
+   "date": "2026-09-05",
+   "registry": 869,
+   "nary": 17,
+   "color": 12,
+   "ledger": 839,
+   "ledger_families": 22,
+   "index": null,
+   "index_tiers": null,
+   "halcon": 323,
+   "poc": 0,
+   "tests": 11518
+  },
+  {
+   "version": "0.1.9",
+   "tag": "v0.1.9",
+   "date": "2026-09-05",
+   "registry": 869,
+   "nary": 17,
+   "color": 12,
+   "ledger": 839,
+   "ledger_families": 22,
+   "index": null,
+   "index_tiers": null,
+   "halcon": 979,
+   "poc": 0,
+   "tests": 11593
+  },
+  {
+   "version": "0.1.10",
+   "tag": "v0.1.10",
+   "date": "2026-09-07",
+   "registry": 873,
+   "nary": 17,
+   "color": 12,
+   "ledger": 955,
+   "ledger_families": 30,
+   "index": 902,
+   "index_tiers": [
+    "color",
+    "nary",
+    "registry"
+   ],
+   "halcon": 979,
+   "poc": 53,
+   "tests": 12492
+  },
+  {
+   "version": "0.1.11",
+   "tag": "v0.1.11",
+   "date": "2026-09-15",
+   "registry": 889,
+   "nary": 17,
+   "color": 12,
+   "ledger": 1021,
+   "ledger_families": 33,
+   "index": 918,
+   "index_tiers": [
+    "color",
+    "nary",
+    "registry"
+   ],
+   "halcon": 979,
+   "poc": 121,
+   "tests": 13178
+  },
+  {
+   "version": "0.2.0",
+   "tag": "v0.2.0",
+   "date": "2026-09-15",
+   "registry": 889,
+   "nary": 17,
+   "color": 12,
+   "ledger": 1024,
+   "ledger_families": 33,
+   "index": 1942,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 979,
+   "poc": 121,
+   "tests": 13272
+  },
+  {
+   "version": "0.2.1",
+   "tag": "v0.2.1",
+   "date": "2026-09-20",
+   "registry": 919,
+   "nary": 17,
+   "color": 12,
+   "ledger": 1048,
+   "ledger_families": 33,
+   "index": 1996,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 979,
+   "poc": 122,
+   "tests": 13921
+  },
+  {
+   "version": "0.2.2",
+   "tag": "v0.2.2",
+   "date": "2026-09-22",
+   "registry": 919,
+   "nary": 17,
+   "color": 12,
+   "ledger": 1134,
+   "ledger_families": 39,
+   "index": 2082,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 979,
+   "poc": 135,
+   "tests": 14214
+  },
+  {
+   "version": "0.2.3",
+   "tag": "v0.2.3",
+   "date": "2026-09-25",
+   "registry": 920,
+   "nary": 17,
+   "color": 12,
+   "ledger": 1238,
+   "ledger_families": 41,
+   "index": 2187,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 979,
+   "poc": 151,
+   "tests": 14802
+  },
+  {
+   "version": "0.3.0",
+   "tag": "v0.3.0",
+   "date": "2026-10-03",
+   "registry": 922,
+   "nary": 17,
+   "color": 12,
+   "ledger": 1639,
+   "ledger_families": 46,
+   "index": 2590,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 980,
+   "poc": 187,
+   "tests": 16675
+  },
+  {
+   "version": "0.4.0",
+   "tag": "v0.4.0",
+   "date": "2026-10-06",
+   "registry": 924,
+   "nary": 17,
+   "color": 12,
+   "ledger": 2104,
+   "ledger_families": 46,
+   "index": 3057,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 980,
+   "poc": 214,
+   "tests": 17424
+  },
+  {
+   "version": "0.5.0",
+   "tag": "v0.5.0",
+   "date": "2026-10-06",
+   "registry": 924,
+   "nary": 17,
+   "color": 12,
+   "ledger": 2125,
+   "ledger_families": 46,
+   "index": 3078,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 980,
+   "poc": 217,
+   "tests": 17489
+  },
+  {
+   "version": "0.6.0",
+   "tag": "v0.6.0",
+   "date": "2026-10-11",
+   "registry": 924,
+   "nary": 17,
+   "color": 12,
+   "ledger": 2130,
+   "ledger_families": 47,
+   "index": 3083,
+   "index_tiers": [
+    "color",
+    "ledger",
+    "nary",
+    "registry"
+   ],
+   "halcon": 981,
+   "poc": 218,
+   "tests": 18109
+  }
+ ]
+}

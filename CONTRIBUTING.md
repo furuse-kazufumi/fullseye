@@ -82,8 +82,21 @@ Order of operations:
 
 1. Suite green locally, then `master` green in CI. **Never tag a red tree.**
 2. Bump `version` in `pyproject.toml` **and** `CITATION.cff` (`version`, `date-released`).
-3. `git tag vX.Y.Z && git push origin vX.Y.Z` — this publishes to PyPI.
-4. Wait for the PyPI job to succeed, then publish the Release with the sections below.
+3. Record the release's numbers for the top-page "How it is checked" block — **measured, with the
+   new version, never retyped**. `tests/test_trust_block.py` fails until all three carry the
+   version from `pyproject.toml`:
+   - append a row for the version to `docs/op_count_history.json` (counted as its `method` says;
+     past rows are pinned and must not change);
+   - re-measure the regression-test count into `docs/test_count.json` (`count`, `version`, `date`,
+     `commit`): `PYTHONPATH=. python -m pytest --collect-only -q -p no:cacheprovider tests`, with
+     every optional backend installed;
+   - re-run the mutation probe, or confirm nothing it measures changed, and set
+     `valid_for_version` in `docs/gate_inventory.json`.
+
+   Then `py -3.11 tools/regen_all.py` and `py -3.11 tools/gen_trust_block.py --release-check`
+   (the new row must equal `docs/OP_INDEX.json` tier by tier).
+4. `git tag vX.Y.Z && git push origin vX.Y.Z` — this publishes to PyPI.
+5. Wait for the PyPI job to succeed, then publish the Release with the sections below.
 
 The sections, in this order (see the v0.1.10 release for a worked example):
 

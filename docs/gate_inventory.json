@@ -1,0 +1,214 @@
+{
+ "about": {
+  "ja": "op を 1 本足したとき、どの種類の門がそれを確かめるかの実測(mutation probe)。数字は手で書かず、この表から tools/gen_trust_block.py が描く。",
+  "en": "Measured answer to: if one op is added to a tier, which kinds of gates check it (mutation probe). Rendered by tools/gen_trust_block.py; never hand-written."
+ },
+ "valid_for_version": "0.6.0",
+ "method": {
+  "ja": "層ごと・壊し方ごとに、わざと壊した op を 1 本だけ注入して全テストを走らせ、落ちた試験を数えた。壊し方: (a) 正しく書いた op、(b) 例外を投げる、(c) NaN を返す、(d) 型の違う値を返す、(e) 呼ぶたびに出力が変わる、(f) 引数を無視する、(g) 説明が無い、(g2) 説明が英語だけ、(h) 拒否すべき空入力を受け付ける。手続きの門 = (a) で落ちた試験(正しい op でも、ノート・索引などを作り直すまで落ちる)。振る舞いの門 = (b)〜(h) で落ちた試験のうち (a) で落ちなかったものの種類数。✓ = その壊し方で手続き以外の試験が 1 本以上落ちた。汚染された実行は捨てて測り直した。探針のスクリプトは repo に入れていない。",
+  "en": "Per tier and per kind of breakage, exactly one deliberately broken op was injected and the whole suite was run; failing tests were counted. Breakages: (a) a well-formed op, (b) raises, (c) returns NaN, (d) returns the wrong type, (e) output changes between calls, (f) ignores its parameters, (g) no description, (g2) English-only description, (h) accepts empty input that should be refused. Bookkeeping gates = tests failing for (a) (they fire for any new op until its note, index etc. are regenerated). Behavioural gates = distinct tests failing for (b)–(h) beyond those failing for (a). ✓ = at least one non-bookkeeping test failed for that breakage. Contaminated runs were discarded and re-measured. The probe scripts are not part of the repository."
+ },
+ "not_covered": {
+  "ja": "測っていないこと: もっともらしい間違った値(真値との差)、速度、OS 固有の落ち方、2 つ以上の壊れ方の組み合わせ、試験名に依存する誤検出。✓ は「少なくとも 1 本落ちた」の意味で、落ちた理由が読める保証ではない。",
+  "en": "Not measured: plausible but wrong values (distance from ground truth), speed, OS-specific failures, two breakages combined, and name-dependent false positives. ✓ means at least one test failed, not that its message explains why."
+ },
+ "checks": [
+  "raises",
+  "nan",
+  "wrong_type",
+  "nondeterministic",
+  "ignores_params",
+  "no_description",
+  "english_only_description",
+  "accepts_empty_input"
+ ],
+ "measurements": [
+  {
+   "id": "m1",
+   "commit": "792fd576a1",
+   "date": "2026-10-11",
+   "relation": "in_release",
+   "release": "0.6.0",
+   "tiers": [
+    "t1",
+    "t2",
+    "t3",
+    "t4",
+    "t6"
+   ]
+  },
+  {
+   "id": "m2",
+   "commit": "fc42e76f59",
+   "date": "2026-10-11",
+   "relation": "after_release",
+   "release": "0.6.0",
+   "tiers": [
+    "t5",
+    "t5b"
+   ],
+   "why": {
+    "ja": "型付き台帳の契約の門を入れた後に t5 / t5b だけ測り直した。その門は registry / n 入力 / 色 / facade には掛からないので、他の層は m1 のまま。",
+    "en": "After the typed-ledger contract gate landed, only t5 / t5b were re-measured; that gate does not apply to registry / n-ary / colour / facade, so the other tiers keep m1."
+   }
+  }
+ ],
+ "tiers": [
+  {
+   "id": "t1",
+   "ja": "2-D 中核(ops.REGISTRY)",
+   "en": "2-D core (ops.REGISTRY)",
+   "measurement": "m1",
+   "bookkeeping_gates": 27,
+   "behavioural_gates": 10,
+   "caught": {
+    "raises": true,
+    "nan": true,
+    "wrong_type": true,
+    "nondeterministic": true,
+    "ignores_params": false,
+    "no_description": true,
+    "english_only_description": true,
+    "accepts_empty_input": false
+   }
+  },
+  {
+   "id": "t2",
+   "ja": "n 入力",
+   "en": "n-ary",
+   "measurement": "m1",
+   "bookkeeping_gates": 16,
+   "behavioural_gates": 4,
+   "caught": {
+    "raises": true,
+    "nan": true,
+    "wrong_type": true,
+    "nondeterministic": false,
+    "ignores_params": false,
+    "no_description": false,
+    "english_only_description": true,
+    "accepts_empty_input": false
+   }
+  },
+  {
+   "id": "t3",
+   "ja": "色",
+   "en": "colour",
+   "measurement": "m1",
+   "bookkeeping_gates": 28,
+   "behavioural_gates": 9,
+   "caught": {
+    "raises": true,
+    "nan": true,
+    "wrong_type": true,
+    "nondeterministic": true,
+    "ignores_params": false,
+    "no_description": true,
+    "english_only_description": true,
+    "accepts_empty_input": false
+   }
+  },
+  {
+   "id": "t4",
+   "ja": "型付き台帳 + tb_ 橋",
+   "en": "typed ledger + tb_ bridge",
+   "measurement": "m1",
+   "bookkeeping_gates": 27,
+   "behavioural_gates": 13,
+   "caught": {
+    "raises": true,
+    "nan": true,
+    "wrong_type": true,
+    "nondeterministic": true,
+    "ignores_params": true,
+    "no_description": true,
+    "english_only_description": true,
+    "accepts_empty_input": false
+   }
+  },
+  {
+   "id": "t5",
+   "ja": "型付き台帳(橋なし)",
+   "en": "typed ledger (no bridge)",
+   "measurement": "m2",
+   "bookkeeping_gates": 16,
+   "behavioural_gates": 3,
+   "caught": {
+    "raises": true,
+    "nan": true,
+    "wrong_type": true,
+    "nondeterministic": true,
+    "ignores_params": false,
+    "no_description": false,
+    "english_only_description": true,
+    "accepts_empty_input": false
+   },
+   "superseded": {
+    "measurement": "m1",
+    "bookkeeping_gates": 15,
+    "behavioural_gates": 2,
+    "caught": {
+     "raises": false,
+     "nan": false,
+     "wrong_type": false,
+     "nondeterministic": false,
+     "ignores_params": false,
+     "no_description": false,
+     "english_only_description": true,
+     "accepts_empty_input": false
+    }
+   }
+  },
+  {
+   "id": "t5b",
+   "ja": "3-D 台帳",
+   "en": "3-D ledger",
+   "measurement": "m2",
+   "bookkeeping_gates": 19,
+   "behavioural_gates": 5,
+   "caught": {
+    "raises": true,
+    "nan": true,
+    "wrong_type": true,
+    "nondeterministic": true,
+    "ignores_params": false,
+    "no_description": false,
+    "english_only_description": true,
+    "accepts_empty_input": false
+   },
+   "superseded": {
+    "measurement": "m1",
+    "bookkeeping_gates": 18,
+    "behavioural_gates": 4,
+    "caught": {
+     "raises": true,
+     "nan": false,
+     "wrong_type": true,
+     "nondeterministic": false,
+     "ignores_params": false,
+     "no_description": false,
+     "english_only_description": true,
+     "accepts_empty_input": false
+    }
+   }
+  },
+  {
+   "id": "t6",
+   "ja": "facade のみ",
+   "en": "facade only",
+   "measurement": "m1",
+   "bookkeeping_gates": 1,
+   "behavioural_gates": 0,
+   "caught": {
+    "raises": false,
+    "nan": false,
+    "wrong_type": false,
+    "nondeterministic": false,
+    "ignores_params": false,
+    "no_description": false,
+    "english_only_description": false,
+    "accepts_empty_input": false
+   }
+  }
+ ]
+}

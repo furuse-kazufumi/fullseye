@@ -59,6 +59,10 @@ CHAIN = [
     (["tools/gen_oss_landscape.py"], "既存 OSS の地図(docs/literature/oss_landscape.json → OSS_LANDSCAPE.md)"),
     # ViEW2026 案内ページ(7 言語)。docmap がその題を読むので gen_docs_index_ops より先。
     (["tools/gen_view2026_pages.py"], "docs/view2026/**/index.md(論文の QR の行き先、正本は exhibits.json)"),
+    # ★gen_docs_index_ops より先: docmap が docs/OP_COUNT_HISTORY.md の題を読む。README*.md は
+    #   両者が書くが、マーカーが別なので互いの中身には触れない。gen_maturity の後(maturity.json を読む)。
+    (["tools/gen_trust_block.py"],
+     "README.md + docs/README*.md の trust ブロックと docs/OP_COUNT_HISTORY.md(測定データ docs/*.json から)"),
     (["tools/gen_docs_index_ops.py"], "docs/README*.md の ops / poc / docmap ブロック"),
     (["tools/gen_examples3d_doc.py"], "docs/EXAMPLES_3D.md(3-D 例の一覧)"),
     (["tools/gen_sensor_playbook.py"], "センサー playbook"),

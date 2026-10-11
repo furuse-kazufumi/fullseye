@@ -1,0 +1,17 @@
+{
+ "about": {
+  "ja": "回帰テストの件数の実測。収集は環境(optional backend の有無)で変わり 40 秒ほどかかるので、regen_all --check では数えず、版ごとに測ってここに記録する。tests/test_trust_block.py が version を pyproject と照合するので、版を上げたら測り直すまで門が落ちる。",
+  "en": "Measured regression-test count. Collection depends on the environment (which optional backends are installed) and takes about 40 s, so regen_all --check does not run it; it is measured per version and recorded here. tests/test_trust_block.py checks version against pyproject, so a version bump fails the gate until this is re-measured."
+ },
+ "version": "0.6.0",
+ "count": 18174,
+ "date": "2026-10-11",
+ "commit": "482c913d26",
+ "relation": "after_release",
+ "command": "PYTHONPATH=. python -m pytest --collect-only -q -p no:cacheprovider tests",
+ "environment": {
+  "os": "Windows 11",
+  "python": "3.11.9",
+  "optional_backends": "all installed (ops.FAILED_BACKENDS empty, 936 registry entries)"
+ }
+}

@@ -417,7 +417,7 @@ DOC_GROUPS = [
         "FSCRIPT_DECISION.md", "FSCRIPT_LANGUAGE.md", "FSCRIPT_MEASUREMENTS.md"]),
     ("quality", "品質・正直さ", "Quality and honesty", [
         "KNOWN_ISSUES.md", "STATUS.md", "ACCURACY_BENCH.md", "BENCH_VS_OPENCV.md",
-        "PARITY_CROSSBACKEND.md", "CHAIN_FUZZ.md", "PROVENANCE.md",
+        "PARITY_CROSSBACKEND.md", "CHAIN_FUZZ.md", "PROVENANCE.md", "OP_COUNT_HISTORY.md",
         "REFERENCES.md", "AUDIT_2026_08_12.md", "RELEASE_CHECKLIST.md",
         "I18N.md", "VALIDATION_CONTRIBUTING.md"]),
     ("perf", "性能・GPU", "Performance and GPU", [
