@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 632 of 1356. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 632 of 1357. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2022,6 +2022,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L112** _(ja)_ — ★残差の正体は burn-in 。短い burn での誤差は 3 倍以上大きい。
 - **L123** _(ja)_ — ★r の列を**1 本だけ**選ぶ。横に幅を持たせると、隣の r の不動点が 別の柝に見えて r = 2.9 でも「3 本」になる(一度それで誤判定した)。
+
+## `tests/test_empty_input_refusals_2026_10_11.py`
+
+- **L66** _(ja)_ — ★mesh_to_voxel は points_to_voxel が optional の torch を要る。CI には torch が無いので 拒否の確認(上)だけ走らせ、通常入力の実行は torch のある環境に限る。
 
 ## `tests/test_example_names_do_not_shadow.py`
 

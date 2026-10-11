@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1356. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1357. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2022,6 +2022,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L112** _(ja)_ — ★残差の正体は burn-in 。短い burn での誤差は 3 倍以上大きい。
 - **L123** _(ja)_ — ★r の列を**1 本だけ**選ぶ。横に幅を持たせると、隣の r の不動点が 別の柝に見えて r = 2.9 でも「3 本」になる(一度それで誤判定した)。
+
+## `tests/test_empty_input_refusals_2026_10_11.py`
+
+- **L66** _(ja)_ — ★mesh_to_voxel は points_to_voxel が optional の torch を要る。CI には torch が無いので 拒否の確認(上)だけ走らせ、通常入力の実行は torch のある環境に限る。
 
 ## `tests/test_example_names_do_not_shadow.py`
 
