@@ -104,6 +104,12 @@ OPS1D = _build()
 #: 宣言 out 型の値を実返却から取り出すアダプタ(ops3d.RESULT_ADAPTERS と同思想)
 RESULT_ADAPTERS = {
     "resample": lambda r: r[0],       # (signal, new_rate)
+    # ★2026-10-11(台帳契約の門): read_wav / read_audio は (x, rate) を返すのに宣言は
+    #   signal で、adapter が無かった(io 族は連鎖ファザーの目録から外れていて、誰も
+    #   型を確かめていなかった)。resample と同じく本体(x)を取り出す。rate が要るなら
+    #   ``fs.ledger.read_wav.raw(path)`` か ``dsp.read_wav``(どちらも (x, rate) のまま)。
+    "read_wav": lambda r: r[0],       # (x, rate)
+    "read_audio": lambda r: r[0],     # (x, rate)
     "spectrogram": lambda r: r[2],    # (freqs, times, S) — S が本体
     # --- pairs の正典 = **(N,2)**(2026-09-02)---------------------------------- #
     # それまで tools/chain_fuzz.TYPE_CHECKS["pairs"] は ``lambda v: True`` で、

@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">read_audio — ONED <code style="color:#22d3bf">io</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">file</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_audio(path)</code> (to call the implementation directly, <code style="color:#22d3bf">import dsp; dsp.read_audio(path)</code>; from the registry, <code style="color:#22d3bf">ops1d.get(&quot;read_audio&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.read_audio(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">signal</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.read_audio.raw(...)</code> or call <code style="color:#22d3bf">dsp.read_audio</code> directly.</p>
+<p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(x, rate)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Read any audio format -&gt; <code style="color:#22d3bf">(x, rate)</code>. Uses <code style="color:#22d3bf">soundfile</code> if available (mp3/flac/ogg/…), else falls back to the stdlib WAV reader.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

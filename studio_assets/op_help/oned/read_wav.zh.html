@@ -2,6 +2,8 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">read_wav — ONED <code style="color:#22d3bf">io</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">file</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_wav(path)</code>(要直接调用实现,<code style="color:#22d3bf">import dsp; dsp.read_wav(path)</code>;从台账取用则 <code style="color:#22d3bf">ops1d.get(&quot;read_wav&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.read_wav(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">signal</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.read_wav.raw(...)</code>,或直接调用 <code style="color:#22d3bf">dsp.read_wav</code>。</p>
+<p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(x, rate)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>Read a WAV file (stdlib) -&gt; <code style="color:#22d3bf">(x float64 [-1,1], rate)</code>. Multi-channel is averaged to mono. Handles 8/16/32-bit PCM.</p>

@@ -9,6 +9,9 @@
 <p><code style="color:#22d3bf">image</code> 양자화됨 (H, W, 3) / <code style="color:#22d3bf">defect_mask</code> 결함의 참값 /</p>
 <p><code style="color:#22d3bf">part_mask</code> 부품의 참값 / <code style="color:#22d3bf">depth_mm</code> 깊이의 참값 /</p>
 <p><code style="color:#22d3bf">meta</code> 사용한 조명 종류·노출·요동량·결함 라벨(재현에 필요한 값 전부).</p>
+<p><code style="color:#22d3bf">meta</code>의 <code style="color:#22d3bf">seconds</code> / <code style="color:#22d3bf">seconds_render</code> / <code style="color:#22d3bf">seconds_labels</code> /</p>
+<p><code style="color:#22d3bf">pixels_per_second</code>는 <b>실측 소요 시간</b>이라 호출할 때마다 바뀐다</p>
+<p>(<code style="color:#22d3bf">dataset_throughput</code>가 읽는다). 그 밖의 전부는 결정적이다.</p>
 <p><code style="color:#22d3bf">defects</code>에 <code style="color:#22d3bf">random_defects</code>의 인수 dict를 넘기면, <b>1장마다결함을 다시 뽑는다</b>(<code style="color:#22d3bf">scene</code>의 첫 번째를 대상으로 한다). 이것이 외관 검사 AI의 학습데이터 생성 그 자체이며, 결함의 종류·위치·크기·깊이와 조명이 동시에 변한다.</p>
 <p><code style="color:#22d3bf">seed</code>를 고정하면 결정적이다. <b>같은 결함이라도 조명을 바꾸면 보이는 방식이 달라진다</b> 는 것이 이 생성기의 요점이며, 그래서 조명을 바꾼 장수가 효과가 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>

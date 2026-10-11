@@ -6714,6 +6714,9 @@ TYPE_CHECKS = {
     "scalar": lambda v: isinstance(v, (int, float, np.integer, np.floating))
                         and not isinstance(v, bool),
     "any": lambda v: True,
+    # ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。
+    #   述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+    "file": lambda v: isinstance(v, (str, os.PathLike)) and os.path.isfile(v),
     # 色: lab は rgbimage と**形も dtype も同じ**なので、L* が 0-100 かどうかで見る
     # (sRGB を ΔE に渡しても例外は出ず、2 桁小さい色差が静かに出る)
     "lab": _is_lab,
@@ -7159,7 +7162,9 @@ TYPE_CHECKS = {
 #: 主点・焦点距離の意味が変わるので丸めない。``example_system`` は lens_system の
 #: 処方をそのまま、``bend_singlet`` は ``system`` キーに同じ処方を返す(fuzz 2026-09-20 の
 #: 3 件はすべてこの 1 つの inf、replay で確認)。
-NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_singlet"}
+NONFINITE_BY_CONTRACT_PRESCRIPTION = {"lens_system", "example_system", "bend_singlet",
+                                      # ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+                                      "optimize_lens"}
 
 #: 文書化済みの非有限を返す op(計測の「測れなかった」)。
 #:   * triangulate_column — 「NaN = 未確定画素(出力も NaN)」「交点が後方(Z<=0)や視線が
@@ -7178,6 +7183,34 @@ NONFINITE_BY_CONTRACT_MEASURE = {"triangulate_column", "m3c2_distance", "piv_cro
 #: そこを 0 で埋めると「F=0 = 完全に有意でない」と読めてしまう —— 無いものは無いと
 #: 書くほうが正しいので、非有限を契約として台帳に載せる(連鎖ファザーが実検出した)。
 NONFINITE_BY_CONTRACT_MSA = {"msa_anova_table"}
+
+#: ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、
+#: **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を
+#: 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する
+#: ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の
+#: inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+NONFINITE_BY_CONTRACT_LEDGER_GATE = {
+    "sphere_cap_height",          # shape_rel: 「外側は nan」
+    "hertz_small_strain_error",   # force_from_radius: 「平頭(p = inf)は nan」
+    "large_deformation_contact",  # F_hertz_from_radius: 「平頭は nan」(err_* はその比)
+    "threshold_triangle",         # distance: 「範囲外は nan」
+    "threshold_kittler",          # criterion: 「除いたビンは nan」
+    "threshold_kapur",            # entropy: 「除いたビンは nan」
+    "graph_rich_club_curve",      # ratio: 「null mean が 0 なら nan」/ z: 「null sd が 0 なら nan」
+    "quickshift",                 # link: 「根は inf」
+    "hierarchical_watershed",     # dynamics: 「各連結成分で最も深い盆地は inf」
+    "grid_distances",             # 「届かないマスは inf」
+    "ray_plane_range",            # 「前方に当たらない・平行なら inf」
+    "ray_box_ranges",             # 「外れは inf」
+    "understeer_gradient",        # critical_speed: 「無いものは inf」
+    "idm_platoon_simulate",       # gap[:, 0] = inf(先頭車の前には誰もいない)
+    "gs_render",                  # depth: 「alpha < 0.5 は NaN」
+    "gradient_lut_build",         # mean_rgb: 「空のビンは nan」
+    "failure_confusion",          # per_class_recall: 「無い行は nan」
+    "diabolo_track",              # 「推定できないコマは NaN で ok = False」
+    "diabolo_simulate",           # tension: 「exact のときだけ、paper は NaN」
+    "diabolo_spheroid",           # b_paper_literal: 「根の中が負になる(NaN)」
+}
 
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
@@ -7201,7 +7234,7 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          | NONFINITE_BY_CONTRACT_OPTICS \
     | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR \
     | NONFINITE_BY_CONTRACT_PRESCRIPTION | NONFINITE_BY_CONTRACT_MEASURE \
-    | NONFINITE_BY_CONTRACT_MSA
+    | NONFINITE_BY_CONTRACT_MSA | NONFINITE_BY_CONTRACT_LEDGER_GATE
 
 #: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
 #: 体積が指数増殖し、後段の全 op が実質ハングする(wave-4 実測: ~34GB の voxel に

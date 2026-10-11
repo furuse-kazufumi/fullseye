@@ -708,3 +708,12 @@ def test_light_catalog_ships_no_invented_vendor_specs():
     assert all(v["maker"] == "generic" for k, v in OS.light_catalog().items()
                if not k.startswith("TestBrand") and not k.startswith("CCS")
                and not k.startswith("OtherBrand"))
+
+
+def test_covers_sensor_refuses_a_lens_without_an_image_circle_by_name():
+    """★2026-10-11(台帳契約の門): lens_spec() は image_circle_mm を None で持つので、
+    float(None) の生の TypeError が漏れていた。名指しの ValueError で拒否する。"""
+    with pytest.raises(ValueError, match="image_circle_mm"):
+        OS.covers_sensor(OS.lens_spec(f_number=4.0), OS.sensor_spec())
+    r = OS.covers_sensor(OS.lens_spec(f_number=4.0, image_circle_mm=16.0), OS.sensor_spec())
+    assert r["image_circle_mm"] == 16.0 and isinstance(r["covers"], bool)

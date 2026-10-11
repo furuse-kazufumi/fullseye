@@ -115,7 +115,10 @@ def read_wav(path):
 
 def write_wav(path, x, rate=44100):
     """Write a float ``[-1,1]`` mono signal to a 16-bit PCM WAV (stdlib).
-    Non-finite samples raise (they would become garbage PCM)."""
+    Non-finite samples raise (they would become garbage PCM).
+
+    Returns the path written (``str``) -- the ledger declares this op's output as the
+    ``file`` sort, which ``read_wav`` / ``read_audio`` consume (it used to return ``None``)."""
     path = _require_path(path, "write_wav")
     a = np.clip(_require_finite(x), -1.0, 1.0)
     pcm = np.round(a * 32767.0).astype(np.int16)
@@ -126,6 +129,7 @@ def write_wav(path, x, rate=44100):
         w.setsampwidth(2)
         w.setframerate(int(rate))
         w.writeframes(pcm.tobytes())
+    return os.fspath(path)
 
 
 def read_audio(path):

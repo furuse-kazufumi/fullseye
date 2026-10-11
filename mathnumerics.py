@@ -374,6 +374,12 @@ def chebyshev_eval_nd(coeffs, points, box=None) -> np.ndarray:
 
     ``points`` が d 本の 1-D 配列の組なら、その格子(外積)の上で評価して形 (m1, …, md) を返す。
     """
+    # ★2026-10-11(台帳契約の門): 係数表でない table({pre, post} など)を渡すと生の
+    #   KeyError: 'coeffs' が漏れていた。何が足りないかを名指しして拒否する(fail-closed)。
+    if isinstance(coeffs, dict) and "coeffs" not in coeffs:
+        raise ValueError("chebyshev_eval_nd: table has no 'coeffs' key (got keys %s) — "
+                         "pass the dict from chebyshev_coeffs_nd or the coefficient array"
+                         % sorted(map(str, coeffs)))
     C = np.asarray(coeffs["coeffs"] if isinstance(coeffs, dict) else coeffs, dtype=np.float64)
     d = C.ndim
     B = _box(coeffs.get("box") if isinstance(coeffs, dict) and box is None else box, d)

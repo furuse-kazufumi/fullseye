@@ -27,6 +27,9 @@ version: 0.6.0  # fullseye lib version this note was generated for
   ``image`` 量子化済み (H, W, 3) / ``defect_mask`` 欠陥の真値 /
   ``part_mask`` 部品の真値 / ``depth_mm`` 深度の真値 /
   ``meta`` 使った照明種別・露光・ゆらぎ量・欠陥ラベル(再現に必要な値をすべて)。
+  ``meta`` の ``seconds`` / ``seconds_render`` / ``seconds_labels`` /
+  ``pixels_per_second`` は**実測の所要時間**で、呼ぶたびに変わる
+  (:func:`dataset_throughput` が読む)。決定的なのはそれ以外の全部。
 
 ``defects`` に :func:`random_defects` の引数 dict を渡すと、**1 枚ごとに
 欠陥を引き直す**(``scene`` の先頭を対象にする)。これが外観検査 AI の学習

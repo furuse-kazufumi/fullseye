@@ -4,6 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.write_wav(path, x, rate=44100)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import dsp; dsp.write_wav(path, x, rate=44100)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;write_wav&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>float <code style="color:#22d3bf">[-1,1]</code> mono signal को 16-bit PCM WAV में लिखता है (stdlib)। non-finite sample error देते हैं (वरना वे बेकार PCM बन जाते)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Returns the path written (<code style="color:#22d3bf">str</code>) -- the ledger declares this op&#x27;s output as the <code style="color:#22d3bf">file</code> sort, which <code style="color:#22d3bf">read_wav</code> / <code style="color:#22d3bf">read_audio</code> consume (it used to return <code style="color:#22d3bf">None</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

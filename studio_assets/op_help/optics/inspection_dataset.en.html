@@ -9,6 +9,9 @@
 <p><code style="color:#22d3bf">image</code> quantized (H, W, 3) / <code style="color:#22d3bf">defect_mask</code> ground truth of defects /</p>
 <p><code style="color:#22d3bf">part_mask</code> ground truth of the part / <code style="color:#22d3bf">depth_mm</code> ground truth of depth /</p>
 <p><code style="color:#22d3bf">meta</code> illumination type used, exposure, fluctuation amounts, defect labels (every value needed for reproduction).</p>
+<p><code style="color:#22d3bf">meta</code>&#x27;s <code style="color:#22d3bf">seconds</code> / <code style="color:#22d3bf">seconds_render</code> / <code style="color:#22d3bf">seconds_labels</code> /</p>
+<p><code style="color:#22d3bf">pixels_per_second</code> are the <b>measured run times</b> and change on every call</p>
+<p>(<code style="color:#22d3bf">dataset_throughput</code> reads them). Everything else is deterministic.</p>
 <p>Passing an argument dict of <code style="color:#22d3bf">random_defects</code> in <code style="color:#22d3bf">defects</code> <b>redraws the defects for each image</b> (targeting the first item of <code style="color:#22d3bf">scene</code>). This is exactly the training-data generation for visual inspection AI: type, position, size and depth of the defects vary together with the illumination.</p>
 <p>Fixing <code style="color:#22d3bf">seed</code> makes it deterministic. <b>Even the same defect looks different when the illumination changes</b> is the key point of this generator, which is why the number of images with varied illumination matters.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>

@@ -235,3 +235,9 @@ def test_chebyshev_nd_rejects_bad_input():
     c = N.chebyshev_coeffs_nd(np.ones((3, 3)))
     with pytest.raises(ValueError):
         N.chebyshev_eval_nd(c, np.array([[2.0, 0.0]]))                   # 外挿はしない
+
+
+def test_chebyshev_eval_nd_refuses_a_table_without_coeffs():
+    """★2026-10-11(台帳契約の門): 係数表でない table は生の KeyError でなく、足りない鍵を名指しする ValueError。"""
+    with pytest.raises(ValueError, match="coeffs"):
+        N.chebyshev_eval_nd({"pre": np.zeros((3, 2)), "post": np.ones((3, 2))}, np.zeros((2, 2)))

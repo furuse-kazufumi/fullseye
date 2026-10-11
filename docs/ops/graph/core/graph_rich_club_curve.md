@@ -31,7 +31,8 @@ et al. 2013 call it significant where ``ratio > 1 + sd``.
 
 Returns a dict: ``k`` (all integers 0 .. max degree − 1), ``count`` (nodes with degree
 > k), ``phi``, ``null_mean``, ``null_sd``, ``ratio`` (nan where the null mean is 0),
-``z``, ``regime`` (bool: ratio > 1 + null sd of the ratio), ``n_null``, ``mode``.
+``z`` (nan where the null sd is 0 -- e.g. a complete graph, where no swap changes phi),
+``regime`` (bool: ratio > 1 + null sd of the ratio), ``n_null``, ``mode``.
 
 Identities: ``phi[k] == conngraph.graph_rich_club(adj, k)`` for every k with
 ``mode="total"``; a complete graph has ``phi == 1`` and ``ratio == 1`` everywhere

@@ -50,7 +50,9 @@ lc = pytest.importorskip(
 #: 実測 2026-10-11: 手元(全 optional あり)1,919 / CI py3.10・3.12 相当(torch・open3d・
 #: sklearn … を import で塞いで再現)1,884。違いは torch が要る 29 op とその下流 8 op が
 #: skip になる分だけ(判定が skip 以外へ動いた op は 0)。床はその下に置く。
-EXECUTED_FLOOR = 1850
+#: ★同日の 2 回目: 探針側の builder(``ledger_contracts.probe_builders``)で 2,055 / CI 相当
+#: 2,019 に上がったので床も上げた(床を据え置くと、builder が黙って外れても気づけない)。
+EXECUTED_FLOOR = 2000
 
 @pytest.fixture(scope="module")
 def probe():
@@ -131,6 +133,24 @@ def test_every_debt_row_has_a_known_reason(debt):
     assert not bad, bad[:20]
 
 
+def test_none_and_volatile_contracts_are_exact(probe):
+    """None を契約として許す op・決定性から外す欄は、**ちょうど実在するものだけ**。
+
+    ``NONE_BY_CONTRACT`` に載っているのに値を返した op は表から消す(載せたままだと、
+    いつか本当に None を返すようになっても素通りする)。backend 欠落の skip は別扱い。
+    """
+    verdict, _ = probe
+    import api
+    names = {r["name"] for r in api.ledger_rows()}
+    assert set(lc.NONE_BY_CONTRACT) <= names, sorted(set(lc.NONE_BY_CONTRACT) - names)
+    assert set(lc.VOLATILE_FIELDS) <= names, sorted(set(lc.VOLATILE_FIELDS) - names)
+    stale = sorted(n for n in lc.NONE_BY_CONTRACT
+                   if verdict[n]["status"] != "skip" and not verdict[n].get("returned_none"))
+    assert not stale, "NONE_BY_CONTRACT に在るが None を返さなかった op: %s" % stale
+    for n, why in lc.NONE_BY_CONTRACT.items():
+        assert isinstance(why, str) and len(why) > 20, n
+
+
 # --------------------------------------------------------------------------- #
 # 門を壊して確かめる                                                            #
 # --------------------------------------------------------------------------- #
@@ -168,6 +188,15 @@ def _good(x):
     return np.asarray(x, dtype=float) * 0.5
 
 
+def _none(x):
+    return None
+
+
+def _timed(x):
+    import time as _t
+    return {"value": np.asarray(x, dtype=float) * 2.0, "seconds": _t.perf_counter()}
+
+
 _FAKES = {
     "zz_fake_raise": (_raise, ("fail", ["raises"])),
     "zz_fake_nan": (_nan, ("fail", ["nonfinite"])),
@@ -177,6 +206,10 @@ _FAKES = {
     "zz_fake_refuse": (_refuse, ("fail", ["refused"])),
     "zz_fake_missing_backend": (_missing_backend, ("skip", None)),
     "zz_fake_good": (_good, ("ok", None)),
+    "zz_fake_none": (_none, ("fail", ["sort"])),
+    "zz_fake_none_by_contract": (_none, ("ok", None)),
+    "zz_fake_timed": (_timed, ("fail", ["nondeterministic"])),
+    "zz_fake_timed_volatile": (_timed, ("ok", None)),
 }
 
 
@@ -189,8 +222,12 @@ def test_each_check_catches_a_planted_broken_op(monkeypatch):
     では、常に鳴る門でも常に黙る門でも通ってしまう。
     """
     import ops3d
+    # 契約の表に載せた偽 op だけが通ることも見る(表の外の None / 時刻は落ちる)
+    monkeypatch.setitem(lc.NONE_BY_CONTRACT, "zz_fake_none_by_contract", "a fake in-place op for this test")
+    monkeypatch.setitem(lc.VOLATILE_FIELDS, "zz_fake_timed_volatile", ("seconds",))
     for name, (fn, _) in _FAKES.items():
-        monkeypatch.setitem(ops3d.OPS3D, name, {"in": ["image2d"], "out": "image2d",
+        out = "table" if name.startswith("zz_fake_timed") else "image2d"
+        monkeypatch.setitem(ops3d.OPS3D, name, {"in": ["image2d"], "out": out,
                                                 "category": "fake", "func": fn})
     ops = [o for o in lc.ledger_ops() if o[0] in _FAKES]
     assert sorted(o[0] for o in ops) == sorted(_FAKES), "偽 op が索引の列挙に載らない"

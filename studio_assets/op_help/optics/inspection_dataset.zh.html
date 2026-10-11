@@ -9,6 +9,9 @@
 <p><code style="color:#22d3bf">image</code> 已量化 (H, W, 3) / <code style="color:#22d3bf">defect_mask</code> 缺陷的真值 /</p>
 <p><code style="color:#22d3bf">part_mask</code> 部件的真值 / <code style="color:#22d3bf">depth_mm</code> 深度的真值 /</p>
 <p><code style="color:#22d3bf">meta</code> 所用照明种类、曝光、波动量、缺陷标签(复现所需的全部值)。</p>
+<p><code style="color:#22d3bf">meta</code> 中的 <code style="color:#22d3bf">seconds</code> / <code style="color:#22d3bf">seconds_render</code> / <code style="color:#22d3bf">seconds_labels</code> /</p>
+<p><code style="color:#22d3bf">pixels_per_second</code> 是<b>实测耗时</b>,每次调用都会变化</p>
+<p>(<code style="color:#22d3bf">dataset_throughput</code> 读取它们)。其余全部是确定性的。</p>
 <p>向 <code style="color:#22d3bf">defects</code> 传入 <code style="color:#22d3bf">random_defects</code> 的参数 dict，就会<b>每张重新抽取缺陷</b>(以 <code style="color:#22d3bf">scene</code> 的第一个为对象)。这正是外观检测 AI 的训练数据生成本身，缺陷的种类、位置、大小、深度与照明同时变化。</p>
 <p>固定 <code style="color:#22d3bf">seed</code> 即为确定性。<b>同一缺陷换了照明看起来就不同</b> 是这个生成器的要点，所以改变照明拍摄的张数很有效。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

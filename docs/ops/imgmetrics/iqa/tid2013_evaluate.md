@@ -22,7 +22,9 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``luma`` = ``"limited_u8"``(作者規約の Y′ uint8 (H, W) を渡す、psnr.txt / ssim.txt と比べるとき)/ ``"rgb"``(uint8 (H, W, 3) を
 そのまま渡す、psnrc.txt と比べるとき)。``subset`` = ``None``(3000 組全部)/ 個数(台帳の先頭 n)/ 名前の列(大文字小文字無視、
 拡張子は任意)。参照画像は 25 枚を一度だけ読む。
-返り値: ``values`` (n,)、``mos`` (n,)、``idx``(台帳の行番号)、``names``、``srocc``、``krocc``(τ_b)、``n``、``n_inf``、``luma``、``seconds``。
+返り値: ``values`` (n,)、``mos`` (n,)、``idx``(台帳の行番号)、``names``、``srocc``、``krocc``(τ_b)、``n``、``n_inf``、``luma``、``seconds``
+(評価にかかった実時間。**呼ぶたびに変わる**唯一の欄で、決定性の検査からは外してある ——
+``tools/ledger_contracts.VOLATILE_FIELDS``)。
 ``fn`` が ``inf`` を返すのは**正当**(PSNR の完全一致)。TID2013 では歪み 18「彩度変化」の 125 組のうち **106 組で Y′ が参照と
 1 画素も変わらず**、作者は psnr.txt にその行を **100000.0** と書き、ssim.txt は 1.0(:func:`tid2013_compare` の ``inf_as``)。
 順位相関では inf を最大の順位として扱う。**Raises** ``ValueError``: ``luma`` が未知、``fn`` が数か ±inf を返さない(nan は拒否)、subset が不正。

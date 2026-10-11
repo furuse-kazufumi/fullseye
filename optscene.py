@@ -1619,6 +1619,9 @@ def inspection_dataset(scene, camera, lights, n: int = 8, seed: int = 0,
       ``image`` 量子化済み (H, W, 3) / ``defect_mask`` 欠陥の真値 /
       ``part_mask`` 部品の真値 / ``depth_mm`` 深度の真値 /
       ``meta`` 使った照明種別・露光・ゆらぎ量・欠陥ラベル(再現に必要な値をすべて)。
+      ``meta`` の ``seconds`` / ``seconds_render`` / ``seconds_labels`` /
+      ``pixels_per_second`` は**実測の所要時間**で、呼ぶたびに変わる
+      (:func:`dataset_throughput` が読む)。決定的なのはそれ以外の全部。
 
     ``defects`` に :func:`random_defects` の引数 dict を渡すと、**1 枚ごとに
     欠陥を引き直す**(``scene`` の先頭を対象にする)。これが外観検査 AI の学習
@@ -2495,7 +2498,10 @@ def covers_sensor(lens: dict, sensor: dict) -> dict:
     """
     _check_spec(sensor, "sensor", "sensor", "covers_sensor")
     _check_spec(lens, "lens", "lens", "covers_sensor")
-    circle = float(lens.get("image_circle_mm", 0.0))
+    # ★2026-10-11(台帳契約の門): lens_spec() は image_circle_mm を **None** で持つ(鍵は在る)
+    #   ので ``.get(.., 0.0)`` が None を返し、float(None) の生の TypeError が漏れていた ——
+    #   下の「image_circle_mm が無い」の ValueError に届いていなかった。
+    circle = float(lens.get("image_circle_mm") or 0.0)
     if circle <= 0.0:
         raise ValueError("lens has no image_circle_mm; build it with lens_spec(model=...) "
                          "or pass image_circle_mm explicitly")

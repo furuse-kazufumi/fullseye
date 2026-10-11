@@ -9,6 +9,9 @@
 <p><code style="color:#22d3bf">image</code> quantized (H, W, 3) / <code style="color:#22d3bf">defect_mask</code> defects का ground truth /</p>
 <p><code style="color:#22d3bf">part_mask</code> part का ground truth / <code style="color:#22d3bf">depth_mm</code> depth का ground truth /</p>
 <p><code style="color:#22d3bf">meta</code> उपयोग किया गया illumination type, exposure, उतार-चढ़ाव की मात्राएँ, defect labels (दोहराने के लिए आवश्यक हर मान)।</p>
+<p><code style="color:#22d3bf">meta</code> के <code style="color:#22d3bf">seconds</code> / <code style="color:#22d3bf">seconds_render</code> / <code style="color:#22d3bf">seconds_labels</code> /</p>
+<p><code style="color:#22d3bf">pixels_per_second</code> <b>मापा गया चलने का समय</b> हैं और हर call पर बदलते हैं</p>
+<p>(<code style="color:#22d3bf">dataset_throughput</code> इन्हें पढ़ता है)। बाकी सब deterministic है।</p>
 <p><code style="color:#22d3bf">defects</code> में <code style="color:#22d3bf">random_defects</code> का argument dict देने से <b>हर 1 image के लिए defects दोबारा बनाए जाते हैं</b> (<code style="color:#22d3bf">scene</code> के पहले item को लक्ष्य करके)। यही ठीक visual inspection AI के लिए training-data generation है: defects का type, position, आकार और गहराई illumination के साथ बदलते हैं।</p>
 <p><code style="color:#22d3bf">seed</code> तय करने से यह deterministic (हर बार एक जैसा परिणाम) हो जाता है। <b>illumination बदलने पर वही defect भी अलग दिखता है</b> यही इस generator का मुख्य बिंदु है, इसी कारण बदले हुए illumination वाली images की संख्या मायने रखती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>

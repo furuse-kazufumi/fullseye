@@ -9,6 +9,9 @@
 <p><code style="color:#22d3bf">image</code> quantisiert (H, W, 3) / <code style="color:#22d3bf">defect_mask</code> Ground Truth der Defekte /</p>
 <p><code style="color:#22d3bf">part_mask</code> Ground Truth des Teils / <code style="color:#22d3bf">depth_mm</code> Ground Truth der Tiefe /</p>
 <p><code style="color:#22d3bf">meta</code> verwendete Beleuchtungsart, Belichtung, Schwankungsbeträge, Defekt-Labels (alle zur Reproduktion nötigen Werte).</p>
+<p><code style="color:#22d3bf">seconds</code> / <code style="color:#22d3bf">seconds_render</code> / <code style="color:#22d3bf">seconds_labels</code> /</p>
+<p><code style="color:#22d3bf">pixels_per_second</code> in <code style="color:#22d3bf">meta</code> sind <b>gemessene Laufzeiten</b> und ändern sich bei jedem Aufruf</p>
+<p>(<code style="color:#22d3bf">dataset_throughput</code> liest sie). Alles andere ist deterministisch.</p>
 <p>Übergibt man in <code style="color:#22d3bf">defects</code> ein Argument-dict von <code style="color:#22d3bf">random_defects</code>, werden <b>die Defekte für jedes Bild neu gezogen</b> (bezogen auf das erste Element von <code style="color:#22d3bf">scene</code>). Das ist genau die Trainingsdaten- erzeugung für Sichtprüfungs-KI: Art, Position, Größe und Tiefe der Defekte variieren zugleich mit der Beleuchtung.</p>
 <p>Mit festem <code style="color:#22d3bf">seed</code> ist es deterministisch. <b>Selbst derselbe Defekt sieht bei anderer Beleuchtung anders aus</b> ist der Kernpunkt dieses Generators, und deshalb zählt die Zahl der Bilder mit variierter Beleuchtung.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>

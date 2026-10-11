@@ -14,6 +14,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 - **データ種**: `file` → `signal`
 - **呼び出し**: `import fullseye as fs; fs.ledger.read_wav(path)` (実装を直接呼ぶなら `import dsp; dsp.read_wav(path)`、台帳から引くなら `ops1d.get("read_wav")`)
+- **台帳経由の戻り値**: `fullseye.ledger.read_wav(...)` は**宣言 out 型 `signal` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.read_wav.raw(...)`、または `dsp.read_wav` を直接呼ぶ。
+  - 本体の返り: `(x, rate)`
 
 ## 使い方
 

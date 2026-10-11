@@ -482,3 +482,20 @@ def test_mu_law_is_decided_by_the_crest_factor():
                        dsp.quantize(sig / peak, 6, "round") * peak)
     with pytest.raises(ValueError, match="mu"):
         dsp.companding_mu_law(sig, -1.0, 6)
+
+
+def test_write_wav_returns_the_path_and_the_ledger_reads_back_a_signal(tmp_path):
+    """★2026-10-11(台帳契約の門): 台帳は write_wav の出力を ``file``、read_wav / read_audio の
+    出力を ``signal`` と宣言しているのに、write_wav は None、読む側は (x, rate) を返していた。
+    write_wav は書いたパスを返し、台帳の入口(ops1d.call = fs.ledger)は宣言どおり信号を返す。
+    直接呼ぶ dsp.read_wav は (x, rate) のまま(公開の返りは変えていない)。"""
+    import ops1d
+    x = 0.5 * np.sin(np.linspace(0, 20 * np.pi, 400))
+    p = dsp.write_wav(str(tmp_path / "a.wav"), x, 8000)
+    assert p == str(tmp_path / "a.wav")
+    sig, rate = dsp.read_wav(p)                                # 直接の呼び方は (x, rate)
+    assert rate == 8000 and sig.shape == (400,)
+    for name in ("read_wav", "read_audio"):
+        got = ops1d.call(name, p)
+        assert isinstance(got, np.ndarray) and got.ndim == 1, name
+        assert np.allclose(got, sig, atol=1e-4), name
