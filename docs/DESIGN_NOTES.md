@@ -2111,7 +2111,8 @@
 
 ## `tests/test_ledger_contracts.py`
 
-- **L53** — ★同日の 2 回目: 探針側の builder(``ledger_contracts.probe_builders``)で 2,055 / CI 相当 2,019 に上がったので床も上げた(床を据え置くと、builder が黙って外れても気づけない)。
+- **L55** — ★同日の 2 回目: 探針側の builder(``ledger_contracts.probe_builders``)で 2,055 / CI 相当 2,019 に上がったので床も上げた(床を据え置くと、builder が黙って外れても気づけない)。
+- **L61** — ★空入力(h)と効かないノブ(f)の探針は**同じ 1 回の探針に相乗り**させる (引数と結果を使い回す)。別モジュールで回し直すとスイートが 50 s 余分にかかる。
 
 ## `tests/test_llmcore.py`
 
@@ -2178,6 +2179,10 @@
 - **L343** — ★guard は非有限の出力を置き換えてから返す(source=output で台帳に残る)。 上の assert は置き換え後を見ているので、台帳の側で「置き換えが起きていない」を確かめる。
 - **L365** — ★fallback の値は自明に決定的 —— 比べたのが op 本体の出力であることを台帳で確かめる
 - **L423** — ★2026-10-07: ここに else が無く、points/signal/matrix/video/qimage/cimage/counts/ keypoints/rgbimage/beatcube/lightfield/any の 120 op は**何も検査されずに緑**だった。 形の契約の正本は backends_typed._sort_ok(進化の橋の出口と同じ表)。複素の sort は dtype も見る(backends_bridge._COMPLEX_SORTS)。
+
+## `tests/test_op_descriptions.py`
+
+- **L258** — ★2026-10-11: 台帳・n-ary・facade(fullseye.__all__)にも同じ規則を広げる # --------------------------------------------------------------------------- # 変異探針で、上の検査は ops.REGISTRY しか見ておらず、台帳 op・n-ary op・facade の関数は 説明を消しても**どの門も鳴らない**と分かった。既存の欠けは docs/LEDGER_GAP_DEBT.json の "description" に固定し、増えたら落ち、直ったら台帳から消す(縮むしかない)。
 
 ## `tests/test_op_discovery.py`
 
@@ -2559,8 +2564,8 @@
 - **L72** — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
 - **L76** — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
 - **L104** — * ★そして危険: 生成直後の記事は画像を**相対パス**で書く。公開版は `raw.githubusercontent.com` の絶対 URL に直したもの(Qiita は相対パスだと 画像が出ない —— memory `feedback_qiita_svg_path_and_cache`)。生成器だけを 回すと、その絶対 URL が 42 行ぶん巻き戻る。**回すなら記事の公開手順まで 通しでやること。** 除外は**ファイル名で**書く。散文でまとめると(「wing*_gallery の 10 本」) 機械で照合できず、下の `unclassified()` が働かない。
-- **L318** — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L374** — ★`tools/` の外にある生成物。`tools/*.py` を歩くだけでは**永久に見つからない** 位置にあり、実際 `docs/OP_INDEX.json` を取りこぼしていた。
+- **L319** — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L375** — ★`tools/` の外にある生成物。`tools/*.py` を歩くだけでは**永久に見つからない** 位置にあり、実際 `docs/OP_INDEX.json` を取りこぼしていた。
 
 ## `torch_lazy.py`
 

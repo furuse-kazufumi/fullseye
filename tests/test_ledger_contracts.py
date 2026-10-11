@@ -44,6 +44,8 @@ for _p in (ROOT, os.path.join(ROOT, "tools")):
 
 lc = pytest.importorskip(
     "ledger_contracts", reason="tools/ledger_contracts.py が読めない(探針の正本)")
+lg = pytest.importorskip(
+    "ledger_gaps", reason="tools/ledger_gaps.py が読めない(空入力・効かないノブの探針)")
 
 #: 実際に呼べた(値を返した or 契約違反として判定まで進んだ)op の下限。
 #: このコミット時点の実測から少し下げた床。範囲が黙って縮むのを止めるためのもの。
@@ -56,8 +58,10 @@ EXECUTED_FLOOR = 2000
 
 @pytest.fixture(scope="module")
 def probe():
+    # ★空入力(h)と効かないノブ(f)の探針は**同じ 1 回の探針に相乗り**させる
+    #   (引数と結果を使い回す)。別モジュールで回し直すとスイートが 50 s 余分にかかる。
     t0 = time.perf_counter()
-    v = lc.run()
+    v = lc.run(hooks=lg.hooks())
     return v, time.perf_counter() - t0
 
 
@@ -264,3 +268,136 @@ def test_value_helpers_compare_and_scan_structurally():
     assert lc.nonfinite({"x": [1.0, Box(np.array([np.inf]))]})
     assert lc.nonfinite(float("nan"))
     assert not lc.nonfinite({"x": [1, 2.0, "nan", Box(np.zeros(2))]})
+
+
+# --------------------------------------------------------------------------- #
+# (h) 空入力 / (f) 効かないノブ —— tools/ledger_gaps.py、台帳 docs/LEDGER_GAP_DEBT.json  #
+# --------------------------------------------------------------------------- #
+#: 判定まで届いた数の床(2026-10-11 実測: 手元 1,641 op / 3,117 ノブ。CI 相当 —— torch などを
+#: import で塞いだ実行 —— で 1,605 op / 3,062 ノブ)。範囲が黙って縮むのを止める。
+EMPTY_JUDGED_FLOOR = 1550
+KNOB_PARAMS_FLOOR = 2950
+_PROBE_GAPS = ("empty_input", "dead_knob")
+
+
+@pytest.fixture(scope="module")
+def gaps(probe):
+    verdict, _ = probe
+    found, scope = lg.observed(verdict, descriptions=False)
+    return verdict, found, scope
+
+
+def test_gap_probes_reach_their_scope(gaps, capsys):
+    """空入力とノブの探針が届いた数(床つき)と、**ゲートにしない**数を出す。
+
+    空入力に黙って何かを返し、docstring にも何も書いていない op の数は**報告だけ**する
+    (拒否すべきかは持ち主の方針の問い。まだ門にしない)。
+    """
+    _verdict, found, scope = gaps
+    e, k = scope["empty_input"], scope["dead_knob"]
+    with capsys.disabled():
+        print("\n== 空入力: 判定 %d op(docstring が拒否を約束 %d)/ 約束なしで黙って値を返す %d op"
+              % (e["judged"], e["promised"], e["returned_unpromised"]))
+        print("== ノブ: %d op / %d 個(効く %d・効かない %d・測れない %d)、重くて振らない op %d"
+              % (k["ops"], k["params"], k["live"], k["dead"], k["unmeasured"], k["slow_ops"]))
+    assert e["judged"] >= EMPTY_JUDGED_FLOOR, e
+    assert e["promised"] >= 90, ("docstring が空入力の拒否を約束する op の検出が少なすぎる"
+                                  "(探す正規表現が壊れていないか): %s" % e)
+    assert k["params"] >= KNOB_PARAMS_FLOOR, k
+    assert set(lg.KNOB_SKIP_SLOW) <= set(_verdict), sorted(set(lg.KNOB_SKIP_SLOW) - set(_verdict))
+
+
+def test_no_new_empty_input_or_dead_knob_gap(gaps):
+    """台帳に無い空入力の約束違反・効かないノブが出たら落ちる(直すのは新しく書いた側)。"""
+    _verdict, found, _scope = gaps
+    new = lg.new_gaps(found, lg.load_debt(), gaps=_PROBE_GAPS)
+    assert not new, "台帳に無い gap(新規):\n" + "\n".join("  [%s] %s: %s" % g for g in new[:60])
+
+
+def test_the_gap_debt_only_shrinks(gaps):
+    """台帳に在るのに、もう破っていない行があれば落ちる(``tools/ledger_gaps.py --write``)。
+
+    backend 欠落で判定されなかった op の行は残す(環境で台帳が揺れないように)。
+    """
+    verdict, found, _scope = gaps
+    stale = lg.stale_gaps(found, lg.load_debt(), verdict, gaps=_PROBE_GAPS)
+    assert not stale, "台帳に在るがもう破っていない:\n" + "\n".join("  [%s] %s -> %s" % s for s in stale[:60])
+
+
+def _promises_but_returns(x):
+    """Sum the samples. Raises ``ValueError`` on an empty input."""
+    return float(np.sum(x))
+
+
+def _promises_and_refuses(x):
+    """Sum the samples. Raises ``ValueError`` on an empty input."""
+    x = np.asarray(x)
+    if x.size == 0:
+        raise ValueError("empty input")
+    return float(np.sum(x))
+
+
+def _silent_on_empty(x):
+    """Sum the samples of the input array (no statement about empty input at all)."""
+    return float(np.sum(x))
+
+
+def _dead_knob(x, gain=2.0):
+    """Scale the input -- but the gain is never applied (a planted dead knob)."""
+    return np.asarray(x, dtype=float) * 1.0
+
+
+def _live_knob(x, gain=2.0):
+    """Scale the input by ``gain`` (a live knob)."""
+    return np.asarray(x, dtype=float) * gain
+
+
+def test_gap_probes_catch_planted_ops(monkeypatch):
+    """★偽 op を本物の台帳表へ差して、空入力とノブの判定が鳴ることを見る(鳴らない対照も)。"""
+    import ops3d
+    fakes = {
+        "zz_gap_promise_broken": (_promises_but_returns, "measurement"),
+        "zz_gap_promise_kept": (_promises_and_refuses, "measurement"),
+        "zz_gap_silent": (_silent_on_empty, "measurement"),
+        "zz_gap_dead_knob": (_dead_knob, "signal"),
+        "zz_gap_live_knob": (_live_knob, "signal"),
+    }
+    for name, (fn, out) in fakes.items():
+        monkeypatch.setitem(ops3d.OPS3D, name, {"in": ["signal"], "out": out,
+                                                "category": "fake", "func": fn})
+    ops = [o for o in lc.ledger_ops() if o[0] in fakes]
+    assert len(ops) == len(fakes)
+    verdict = lc.run(ops=ops, hooks=lg.hooks())
+    found, scope = lg.observed(verdict, descriptions=False)
+    assert found["empty_input"] == {"zz_gap_promise_broken": "returns_on_empty"}, found["empty_input"]
+    assert scope["empty_input"]["returned_unpromised"] >= 1          # zz_gap_silent は数えるだけ
+    assert "zz_gap_dead_knob.gain" in found["dead_knob"], found["dead_knob"]
+    assert not any(k.startswith("zz_gap_live_knob.") for k in found["dead_knob"])
+    assert verdict["zz_gap_live_knob"]["gaps"]["knobs"] == {"gain": "live"}
+    # ラチェットも鳴る: 空の台帳に対して新規、直った行は stale
+    empty = {g: {} for g in lg.GAPS}
+    assert {k for _g, k, _c in lg.new_gaps(found, empty, gaps=_PROBE_GAPS)} == {
+        "zz_gap_promise_broken", "zz_gap_dead_knob.gain"}
+    listed = {g: {} for g in lg.GAPS}
+    listed["dead_knob"]["zz_gap_live_knob.gain"] = "other"
+    assert [s[1] for s in lg.stale_gaps(found, listed, verdict, gaps=_PROBE_GAPS)] == ["zz_gap_live_knob.gain"]
+
+
+def test_empty_promise_reader_and_knob_variants():
+    """約束の読み取り(空間・空気は「空」ではない)と、ノブの振り方の単体。"""
+    assert lg.promises_empty_refusal("**Raises** ``ValueError``: a non-1-D / empty signal.")
+    assert lg.promises_empty_refusal("ValueError: 点群が空")
+    assert lg.promises_empty_refusal("空なら ValueError")
+    assert not lg.promises_empty_refusal("空間フィルタ。範囲外は ValueError")
+    assert not lg.promises_empty_refusal("空全体が飛んだ写真を拒む")
+    assert not lg.promises_empty_refusal("Returns the mean of the samples.")
+    # 2026-10-11 の初版はこの 2 型を読み違えて 10 件を誤検出した(10 件とも)
+    assert not lg.promises_empty_refusal(
+        "Raises: ValueError: 形状不正、または pts0 が非空なのに pts1 が空。", "pts0", ["pts1"])
+    assert not lg.promises_empty_refusal("``radius <= 0`` は ValueError、空入力は空を返す。")
+    assert not lg.promises_empty_refusal("a NaN raises ``ValueError``; empty signal -> zeros.")
+    assert lg.knob_variants(4) == [2, 8] and lg.knob_variants(0) == [1, 2]
+    assert lg.knob_variants(0.3) == [0.15, 0.6] and lg.knob_variants(0.0) == [0.5, 1.0]
+    assert lg.knob_variants(True) == [] and lg.knob_variants(float("inf")) == []
+    assert lg.empty_like(np.ones((4, 3))).shape == (0, 3) and lg.empty_like({"a": 1}) == {}
+    assert lg.empty_like(3.0) is None

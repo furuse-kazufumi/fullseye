@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：610 / 1353 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：610 / 1355 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel.py`
@@ -2113,7 +2113,8 @@
 
 ## `tests/test_ledger_contracts.py`
 
-- **L53** _(ja)_ — ★同日の 2 回目: 探針側の builder(``ledger_contracts.probe_builders``)で 2,055 / CI 相当 2,019 に上がったので床も上げた(床を据え置くと、builder が黙って外れても気づけない)。
+- **L55** _(ja)_ — ★同日の 2 回目: 探針側の builder(``ledger_contracts.probe_builders``)で 2,055 / CI 相当 2,019 に上がったので床も上げた(床を据え置くと、builder が黙って外れても気づけない)。
+- **L61** _(ja)_ — ★空入力(h)と効かないノブ(f)の探針は**同じ 1 回の探針に相乗り**させる (引数と結果を使い回す)。別モジュールで回し直すとスイートが 50 s 余分にかかる。
 
 ## `tests/test_llmcore.py`
 
@@ -2180,6 +2181,10 @@
 - **L343** _(ja)_ — ★guard は非有限の出力を置き換えてから返す(source=output で台帳に残る)。 上の assert は置き換え後を見ているので、台帳の側で「置き換えが起きていない」を確かめる。
 - **L365** _(ja)_ — ★fallback の値は自明に決定的 —— 比べたのが op 本体の出力であることを台帳で確かめる
 - **L423** _(ja)_ — ★2026-10-07: ここに else が無く、points/signal/matrix/video/qimage/cimage/counts/ keypoints/rgbimage/beatcube/lightfield/any の 120 op は**何も検査されずに緑**だった。 形の契約の正本は backends_typed._sort_ok(進化の橋の出口と同じ表)。複素の sort は dtype も見る(backends_bridge._COMPLEX_SORTS)。
+
+## `tests/test_op_descriptions.py`
+
+- **L258** _(ja)_ — ★2026-10-11: 台帳・n-ary・facade(fullseye.__all__)にも同じ規則を広げる # --------------------------------------------------------------------------- # 変異探針で、上の検査は ops.REGISTRY しか見ておらず、台帳 op・n-ary op・facade の関数は 説明を消しても**どの門も鳴らない**と分かった。既存の欠けは docs/LEDGER_GAP_DEBT.json の "description" に固定し、増えたら落ち、直ったら台帳から消す(縮むしかない)。
 
 ## `tests/test_op_discovery.py`
 
@@ -2561,8 +2566,8 @@
 - **L72** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
 - **L76** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
 - **L104** — * ★而且危險：剛生成的文章用**相對路徑**寫圖像。公開版是改成 `raw.githubusercontent.com` 絕對 URL 後的（Qiita 用相對路徑不顯示圖像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些絕對 URL 會回退 42 行。**要跑就一直跑到文章的公開步驟為止。** 排除項要**按檔名**寫。用散文歸納（"wing*_gallery 的 10 本"）機器無法比對，下面的 `unclassified()` 就不工作了。
-- **L318** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L374** — ★位於 `tools/` 之外的生成物。只走訪 `tools/*.py` 永遠發現不了它，實際上 `docs/OP_INDEX.json` 就一直被漏掉。
+- **L319** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L375** — ★位於 `tools/` 之外的生成物。只走訪 `tools/*.py` 永遠發現不了它，實際上 `docs/OP_INDEX.json` 就一直被漏掉。
 
 ## `torch_lazy.py`
 

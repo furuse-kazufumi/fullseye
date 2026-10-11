@@ -5,7 +5,7 @@
 
 이 저장소는 「왜 그렇게 되어 있는가」를 **소스의 주석**에 적는다. 그중 `★` 가 붙은 것이 실제로 효과가 있는 지식 — 재어 보고 알아낸 것, 밟은 실패, 그렇게 만든 이유. 이 페이지는 그것을 기계적으로 모은 생성물이며, 정본은 소스 쪽에 있으므로 둘이 어긋나지 않는다.
 
-**번역 상황**: 610 / 1353 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
+**번역 상황**: 610 / 1355 건. 미번역 항목은 원문(일본어) 그대로 보여 준다 — 말없이 원문으로 떨어지면 「번역한 셈」이 되므로, 번역이 없으면 없다고 밝힌다.
 
 
 ## `accel.py`
@@ -2113,7 +2113,8 @@
 
 ## `tests/test_ledger_contracts.py`
 
-- **L53** _(ja)_ — ★同日の 2 回目: 探針側の builder(``ledger_contracts.probe_builders``)で 2,055 / CI 相当 2,019 に上がったので床も上げた(床を据え置くと、builder が黙って外れても気づけない)。
+- **L55** _(ja)_ — ★同日の 2 回目: 探針側の builder(``ledger_contracts.probe_builders``)で 2,055 / CI 相当 2,019 に上がったので床も上げた(床を据え置くと、builder が黙って外れても気づけない)。
+- **L61** _(ja)_ — ★空入力(h)と効かないノブ(f)の探針は**同じ 1 回の探針に相乗り**させる (引数と結果を使い回す)。別モジュールで回し直すとスイートが 50 s 余分にかかる。
 
 ## `tests/test_llmcore.py`
 
@@ -2180,6 +2181,10 @@
 - **L343** _(ja)_ — ★guard は非有限の出力を置き換えてから返す(source=output で台帳に残る)。 上の assert は置き換え後を見ているので、台帳の側で「置き換えが起きていない」を確かめる。
 - **L365** _(ja)_ — ★fallback の値は自明に決定的 —— 比べたのが op 本体の出力であることを台帳で確かめる
 - **L423** _(ja)_ — ★2026-10-07: ここに else が無く、points/signal/matrix/video/qimage/cimage/counts/ keypoints/rgbimage/beatcube/lightfield/any の 120 op は**何も検査されずに緑**だった。 形の契約の正本は backends_typed._sort_ok(進化の橋の出口と同じ表)。複素の sort は dtype も見る(backends_bridge._COMPLEX_SORTS)。
+
+## `tests/test_op_descriptions.py`
+
+- **L258** _(ja)_ — ★2026-10-11: 台帳・n-ary・facade(fullseye.__all__)にも同じ規則を広げる # --------------------------------------------------------------------------- # 変異探針で、上の検査は ops.REGISTRY しか見ておらず、台帳 op・n-ary op・facade の関数は 説明を消しても**どの門も鳴らない**と分かった。既存の欠けは docs/LEDGER_GAP_DEBT.json の "description" に固定し、増えたら落ち、直ったら台帳から消す(縮むしかない)。
 
 ## `tests/test_op_discovery.py`
 
@@ -2561,8 +2566,8 @@
 - **L72** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
 - **L76** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
 - **L104** — * ★그리고 위험: 생성 직후의 기사는 이미지를 **상대 경로**로 쓴다. 공개판은 `raw.githubusercontent.com` 의 절대 URL 로 고친 것(Qiita 는 상대 경로면 이미지가 나오지 않는다 —— memory `feedback_qiita_svg_path_and_cache`). 생성기만 돌리면 그 절대 URL 이 42 줄만큼 되돌아간다. **돌릴 거면 기사의 공개 절차까지 통째로 할 것.** 제외는 **파일명으로** 쓴다. 산문으로 정리하면("wing*_gallery 의 10 개") 기계로 대조할 수 없어 아래의 `unclassified()` 가 작동하지 않는다.
-- **L318** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L374** — ★`tools/` 밖에 있는 생성물. `tools/*.py` 만 훑어서는 결코 찾을 수 없는 위치에 있었고, 실제로 `docs/OP_INDEX.json` 을 놓치고 있었다.
+- **L319** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L375** — ★`tools/` 밖에 있는 생성물. `tools/*.py` 만 훑어서는 결코 찾을 수 없는 위치에 있었고, 실제로 `docs/OP_INDEX.json` 을 놓치고 있었다.
 
 ## `torch_lazy.py`
 

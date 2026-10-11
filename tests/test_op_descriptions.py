@@ -251,3 +251,48 @@ def test_the_two_nonfinite_ledgers_agree():
     b = set(mod.KNOWN_NONFINITE_BY_CONTRACT)
     assert a == b, ("非有限の除外表がずれている —— ops 側だけ: %s / テスト側だけ: %s"
                     % (sorted(a - b), sorted(b - a)))
+
+
+
+# --------------------------------------------------------------------------- #
+# ★2026-10-11: 台帳・n-ary・facade(fullseye.__all__)にも同じ規則を広げる         #
+# --------------------------------------------------------------------------- #
+# 変異探針で、上の検査は ops.REGISTRY しか見ておらず、台帳 op・n-ary op・facade の関数は
+# 説明を消しても**どの門も鳴らない**と分かった。既存の欠けは docs/LEDGER_GAP_DEBT.json の
+# "description" に固定し、増えたら落ち、直ったら台帳から消す(縮むしかない)。
+def _gaps_module():
+    tools = os.path.join(ROOT, "tools")
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
+    import ledger_gaps
+    return ledger_gaps
+
+
+def test_every_ledger_nary_and_facade_entry_says_what_it_does():
+    lg = _gaps_module()
+    bad, scope = lg.description_audit()
+    with open(os.path.join(ROOT, "docs", "OP_INDEX.json"), encoding="utf-8") as f:
+        n_ledger = sum(1 for r in json.load(f)["ops"] if r.get("tier") == "ledger")
+    import imgops_nary
+    # 範囲は配布物の側から数える(門が自分で範囲を読むと黙って縮む)
+    assert scope["ledger"] == n_ledger, (scope, n_ledger)
+    assert scope["nary"] == len(imgops_nary._DEFS), scope
+    assert scope["facade"] >= 1200, ("facade の関数・クラスが 1,200 を割った(数え方が壊れていないか): %s"
+                                     % scope)
+    debt = lg.load_debt()["description"]
+    new = sorted((k, c) for k, c in bad.items() if k not in debt)
+    assert not new, "説明が無い/短すぎる(新規)%d 件 —— 書くこと: %s" % (len(new), new[:30])
+    stale = sorted(k for k in debt if k not in bad)
+    assert not stale, ("台帳に在るが説明が書かれた(LEDGER_GAP_DEBT.json の description から消すこと。"
+                       "py -3.11 tools/ledger_gaps.py --write): %s" % stale[:30])
+    assert all(c in ("missing", "short_head", "name_only") for c in debt.values())
+
+
+def test_the_description_rule_catches_planted_entries():
+    """★壊して確かめる: 空・名前だけ・短い頭は鳴り、まともな一文は鳴らない。"""
+    lg = _gaps_module()
+    assert lg.thin("foo_bar", "") == "missing"
+    assert lg.thin("foo_bar", "   ") == "missing"
+    assert lg.thin("foo_bar", "foo_bar.") == "name_only"
+    assert lg.thin("foo_bar", "Short.\n\nLonger text follows here.") == "short_head"
+    assert lg.thin("foo_bar", "Fit a plane to the points by least squares.") is None

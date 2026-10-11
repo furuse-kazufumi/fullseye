@@ -628,11 +628,15 @@ def _call(fn, args, kwargs):
 # --------------------------------------------------------------------------- #
 # one op                                                                       #
 # --------------------------------------------------------------------------- #
-def probe_one(name, ins, out, fn, pool, cf=None, extra=None):
+def probe_one(name, ins, out, fn, pool, cf=None, extra=None, hooks=None):
     """Probe one op → ``{"status", "check", "detail", "sec", "result"}``.
 
     ``status`` is ``ok`` / ``fail`` / ``skip``; for ``fail``, ``check`` is the list of
     failed contracts (names from :data:`CHECKS`).
+
+    *hooks* (``tools/ledger_gaps``) are called once the op has returned a value, with the
+    same arguments and the result, so further audits reuse this probe instead of
+    re-running it; each hook's answer lands in ``verdict["gaps"][hook.key]``.
     """
     cf = _cf() if cf is None else cf
     extra = dict(_io_builders(), **probe_builders()) if extra is None else extra
@@ -706,6 +710,14 @@ def probe_one(name, ins, out, fn, pool, cf=None, extra=None):
     if failures:
         v.update(status="fail", check=[c for c, _ in failures],
                  detail="; ".join("%s: %s" % f for f in failures))
+    if hooks:
+        gaps = {}
+        for h in hooks:
+            try:
+                gaps[h.key] = h(name, ins, fn, args, kwargs, res, v)
+            except Exception as e:               # noqa: BLE001 - a hook must not sink the probe
+                gaps[h.key] = {"hook_error": "%s: %s" % (type(e).__name__, str(e)[:120])}
+        v["gaps"] = gaps
     return v
 
 
@@ -753,7 +765,7 @@ def why_nondeterministic(fn, args, kwargs, adapter):
 # --------------------------------------------------------------------------- #
 # every op                                                                     #
 # --------------------------------------------------------------------------- #
-def run(ops=None, verbose=False):
+def run(ops=None, verbose=False, hooks=None):
     """Probe every op → ``{name: verdict}`` (verdicts keep no results, to stay small).
 
     Ops run in index order, in rounds: an op whose input sort has no generator waits
@@ -766,13 +778,13 @@ def run(ops=None, verbose=False):
     verdict = {}
     saved_env = {k: os.environ.pop(k) for k in _DATASET_ENV if k in os.environ}
     try:
-        _run(ops, cf, gens, extra, verdict, verbose)
+        _run(ops, cf, gens, extra, verdict, verbose, hooks)
     finally:
         os.environ.update(saved_env)
     return verdict
 
 
-def _run(ops, cf, gens, extra, verdict, verbose):
+def _run(ops, cf, gens, extra, verdict, verbose, hooks=None):
     with cf._scratch_cwd():
         base = np.random.default_rng(_SEED)
         pool = {t: [g(base)] for t, g in sorted(gens.items())}
@@ -787,7 +799,7 @@ def _run(ops, cf, gens, extra, verdict, verbose):
                 if name not in extra and any(not pool.get(t) for t in ins if t != "any"):
                     rest.append(op)
                     continue
-                v = probe_one(name, ins, out, fn, pool, cf, extra)
+                v = probe_one(name, ins, out, fn, pool, cf, extra, hooks)
                 res = v.pop("result", None)
                 verdict[name] = v
                 progressed = True
