@@ -15,7 +15,11 @@
 
 1. 見どころ —— 手で選んだ展示のサムネイルの格子(``exhibits``)。押すと動画・GIF・原寸の図。
 2. シリーズ記事 —— 大きいタイル(``series``)。各シリーズの Qiita 記事(公開のもの)へ。
-3. ぜんぶ見る —— ``all`` の全部を群ごとの ``<details>``(閉じた状態)に。本数は生成時に数える。
+3. できること —— ``docs/capabilities/*.md`` の全件を分類ごとに。各行から説明のページと走る例へ。
+   その下に PoC 以外の使用例の一覧(``examples/README.md``)へのリンクと本数。
+   ★2026-10-11 まで PoC しか載せておらず、「生成 AI の画像の文字を直す」(fix-text-in-images)
+   のような**PoC でない機能は案内ページから辿れなかった**(ユーザー指摘)。
+4. ぜんぶ見る —— ``all`` の全部を群ごとの ``<details>``(閉じた状態)に。本数は生成時に数える。
    ★Chrome は閉じた ``<details>`` の中の ``loading="lazy"`` の画像も取りに行く(2026-10-11 に
    手元の HTTP サーバのログで確認)。だからここのサムネイルは ``data-src`` に置き、開いたときに
    小さな JS で ``src`` へ移す。JS が無ければサムネイルは出ないが、タイルの文字とリンクは働き、
@@ -28,6 +32,7 @@
   * 全言語の文字列がそろっている / 図・サムネイル・例のスクリプトが実在する
   * **説明文と数字に出てくる数の並びが、全言語で日本語と同じ**(訳で数字が化けない)
   * ``poc_captions.json`` の展示が 1 本残らず ``all`` に在る(新しい PoC を載せ忘れない)
+  * ``docs/capabilities/*.md`` が 1 件残らず訳つきで載り、そこが挙げる例が実在する
   * シリーズの行き先は ``https://qiita.com/furuse-kazufumi/items/`` の公開記事だけ(``/private/`` を拒む)
   * 日本語以外のページに、印(``_(ja)_``)の無いかなが無い / Liquid の開き記号が無い
 """
@@ -197,6 +202,26 @@ def validate(d: dict) -> list[str]:
         for p, what in ((DOCS / _media_rel(d, e), "図"), (BASE / "thumbs" / "all" / (e["id"] + ".jpg"), "サムネイル")):
             if not p.is_file():
                 bad.append("all.%s: %s が無い (%s)" % (e["id"], what, p.relative_to(ROOT).as_posix()))
+    caps = capabilities()
+    tr = d["capabilities"]["titles"]
+    cat_names = [c["ja"] for c in d["capabilities"]["categories"]]
+    for c in d["capabilities"]["categories"]:
+        full("capabilities.categories." + c["ja"], c)
+    if len(caps) < 30:
+        bad.append("docs/capabilities/ の件数が %d —— 探す場所が縮んでいないか" % len(caps))
+    for c in caps:
+        cid = c["id"]
+        full("capabilities.%s" % cid, {"ja": c["ja"], "en": c["en"]} | tr.get(cid, {}))
+        if c["category"] not in cat_names:
+            bad.append("capabilities.%s: 分類 %r の訳が無い" % (cid, c["category"]))
+        if not c["examples"]:
+            bad.append("capabilities.%s: 例が 1 本も無い" % cid)
+        for x in c["examples"]:
+            if _example_path(x) is None:
+                bad.append("capabilities.%s: 例 %s が examples/ にも examples_3d/ にも無い" % (cid, x))
+    extra = sorted(set(tr) - {c["id"] for c in caps})
+    if extra:
+        bad.append("capabilities.titles に、もう無い説明の訳が残っている: %s" % extra)
     src = json.loads((ROOT / d["all_source"]).read_text(encoding="utf-8"))
     missing = sorted({x["id"] for x in src["exhibits"]} - set(aids))
     if missing:
@@ -215,6 +240,42 @@ def _doc(name: str, lang: str) -> str:
             if (DOCS / cand).is_file():
                 return cand
     return name + ".md"
+
+
+CAP_DIR = DOCS / "capabilities"
+EXAMPLE_DIRS = ("examples", "examples_3d")
+
+
+def capabilities() -> list[dict]:
+    """``docs/capabilities/*.md`` の前付け(id / title / title_en / category / examples)。"""
+    rows = []
+    for p in sorted(CAP_DIR.glob("*.md")):
+        lines = p.read_text(encoding="utf-8").splitlines()
+        if not lines or lines[0].strip() != "---":
+            raise ValueError("%s: 前付け(---)が無い" % p.name)
+        fm = {}
+        for line in lines[1:]:
+            if line.strip() == "---":
+                break
+            k, _, v = line.partition(":")
+            fm[k.strip()] = v.strip()
+        ex = [x.strip() for x in fm.get("examples", "").strip("[]").split(",") if x.strip()]
+        rows.append({"id": p.stem, "ja": fm.get("title", ""), "en": fm.get("title_en", ""),
+                     "category": fm.get("category", ""), "examples": ex})
+    return rows
+
+
+def _example_path(name: str) -> str | None:
+    """例の repo 内の経路(``examples/`` か ``examples_3d/``)。無ければ None。"""
+    for sub in EXAMPLE_DIRS:
+        if (ROOT / sub / (name + ".py")).is_file():
+            return "%s/%s.py" % (sub, name)
+    return None
+
+
+def other_example_count() -> int:
+    """PoC でない使用例の本数(``examples/*.py`` から ``poc_`` と ``_`` 始まりを除く)。手で書かない。"""
+    return sum(1 for p in (ROOT / "examples").glob("*.py") if not p.name.startswith(("poc_", "_")))
 
 
 def counts(d: dict) -> tuple[int, int]:
@@ -257,7 +318,27 @@ def build(d: dict, lang: str) -> str:
                    % (url, up, s["thumb"], s["label"][lang], s["label"][lang], s["desc"][lang]))
     out += ["</div>", ""]
 
-    # 3. ぜんぶ見る
+    # 3. できること(docs/capabilities の全件)
+    caps = capabilities()
+    ja_note = "" if lang == "ja" else " " + JA_MARK      # 説明のページは日本語だけ
+    out += ["## " + ui["h_caps"], "", ui["caps_intro"].format(n=len(caps)), "",
+            '<div class="vl" markdown="1">', ""]
+    for cat in d["capabilities"]["categories"]:
+        rows = [c for c in caps if c["category"] == cat["ja"]]
+        if not rows:
+            continue
+        out += ["**%s**" % cat[lang], ""]
+        for c in rows:
+            title = c[lang] if lang in ("ja", "en") else d["capabilities"]["titles"][c["id"]][lang]
+            exs = " · ".join("[%s](%s/blob/master/%s)" % (x, d["repo"], _example_path(x)) for x in c["examples"])
+            out.append("- %s: [%s](%scapabilities/%s.md)%s · %s %s" % (
+                title, ui["caps_doc"], docs, c["id"], ja_note, ui["caps_ex"], exs))
+        out.append("")
+    out += ["</div>", "",
+            "[%s](%s/blob/master/examples/README.md)" % (ui["other_examples"].format(n=other_example_count()), d["repo"]),
+            ""]
+
+    # 4. ぜんぶ見る
     n_poc, n_other = counts(d)
     out += ["## " + ui["h_all"], "", ui["all_count"].format(n=n_poc, m=n_other), "",
             '<noscript><p><a href="%s%s">%s</a></p></noscript>' % (docs, _doc("GALLERY", lang).replace(".md", ".html"),
@@ -276,7 +357,7 @@ def build(d: dict, lang: str) -> str:
                 '<div class="vg vs">'] + cells + ["</div>", "</details>", ""]
     out += [LAZY, ""]
 
-    # 4. 見どころの説明と数字
+    # 5. 見どころの説明と数字
     out += ["## " + ui["h_list"], "", ui["list_intro"], "", '<div class="vl" markdown="1">', ""]
     for cat in d["categories"]:
         rows = [e for e in d["exhibits"] if e["category"] == cat["id"]]
@@ -292,7 +373,7 @@ def build(d: dict, lang: str) -> str:
         out.append("")
     out += ["</div>", "", "## " + ui["h_about"], "", ui["about"], ""]
 
-    # 5. 畳む節
+    # 6. 畳む節
     out += ['<details markdown="1">', "<summary><b>%s</b> (Python 3.11)</summary>" % ui["try"], "",
             TRY_CMD, "", ui["try_after"], "", "</details>", ""]
     mcp_note = "" if lang == "ja" else " " + JA_MARK
@@ -355,8 +436,9 @@ def main(argv=None) -> int:
         if drift:
             print("生成物が古い: %s —— py -3.11 tools/gen_view2026_pages.py" % drift, file=sys.stderr)
             return 1
-        print("ok: %d pages current (highlights %d, series %d, all %d = PoC %d + %d)"
-              % (len(pages), len(d["exhibits"]), len(d["series"]), len(d["all"]), n_poc, n_other))
+        print("ok: %d pages current (highlights %d, series %d, capabilities %d, all %d = PoC %d + %d)"
+              % (len(pages), len(d["exhibits"]), len(d["series"]), len(capabilities()), len(d["all"]),
+                 n_poc, n_other))
         return 0
     print("wrote %d / %d pages: %s" % (len(drift), len(pages), drift))
     return 0

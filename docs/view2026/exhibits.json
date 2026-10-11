@@ -428,6 +428,51 @@
    "ko": "(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)",
    "de": "(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)",
    "hi": "(JavaScript के बिना सभी figures gallery page पर हैं।)"
+  },
+  "h_caps": {
+   "ja": "できること",
+   "en": "What it can do",
+   "zh": "能做什么",
+   "tw": "能做什麼",
+   "ko": "할 수 있는 것",
+   "de": "Was es kann",
+   "hi": "यह क्या कर सकता है"
+  },
+  "caps_intro": {
+   "ja": "{n} 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。",
+   "en": "{n} topics, each with an explanation page (how to use it, and its limits) and runnable examples.",
+   "zh": "共 {n} 项,每项都有说明页(用法与限制)和可运行的示例。",
+   "tw": "共 {n} 項,每項都有說明頁(用法與限制)與可執行的範例。",
+   "ko": "{n}개 항목. 각각 설명 페이지(사용법과 한계)와 실행 가능한 예제로 연결됩니다.",
+   "de": "{n} Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.",
+   "hi": "{n} विषय, हर एक के साथ explanation page (उपयोग और सीमाएँ) और चलने वाले examples।"
+  },
+  "caps_doc": {
+   "ja": "説明",
+   "en": "explanation",
+   "zh": "说明",
+   "tw": "說明",
+   "ko": "설명",
+   "de": "Erklärung",
+   "hi": "explanation"
+  },
+  "caps_ex": {
+   "ja": "例",
+   "en": "examples",
+   "zh": "示例",
+   "tw": "範例",
+   "ko": "예제",
+   "de": "Beispiele",
+   "hi": "examples"
+  },
+  "other_examples": {
+   "ja": "PoC 以外の使用例 {n} 本の一覧",
+   "en": "All {n} usage examples that are not PoCs",
+   "zh": "其他 {n} 个使用示例(非 PoC)的列表",
+   "tw": "其他 {n} 個使用範例(非 PoC)的列表",
+   "ko": "PoC가 아닌 사용 예 {n}개 목록",
+   "de": "Alle {n} Anwendungsbeispiele, die keine PoCs sind",
+   "hi": "PoC के अलावा {n} usage examples की सूची"
   }
  },
  "paper": {
@@ -5277,5 +5322,329 @@
    }
   }
  ],
- "all_source": "docs/articles/exhibits/poc_captions.json"
+ "all_source": "docs/articles/exhibits/poc_captions.json",
+ "capabilities": {
+  "_": "docs/capabilities/*.md の題の訳と分類の訳。ja / en は各ファイルの title / title_en から読む。1 件でも足りなければ生成器が止まる。",
+  "categories": [
+   {
+    "ja": "見つける",
+    "en": "Find",
+    "zh": "查找",
+    "tw": "尋找",
+    "ko": "찾기",
+    "de": "Finden",
+    "hi": "ढूँढना"
+   },
+   {
+    "ja": "測る",
+    "en": "Measure",
+    "zh": "测量",
+    "tw": "量測",
+    "ko": "재기",
+    "de": "Messen",
+    "hi": "मापना"
+   },
+   {
+    "ja": "光と色",
+    "en": "Light and colour",
+    "zh": "光与色",
+    "tw": "光與色",
+    "ko": "빛과 색",
+    "de": "Licht und Farbe",
+    "hi": "Light और colour"
+   },
+   {
+    "ja": "波と信号",
+    "en": "Waves and signals",
+    "zh": "波与信号",
+    "tw": "波與訊號",
+    "ko": "파동과 신호",
+    "de": "Wellen und Signale",
+    "hi": "Waves और signals"
+   },
+   {
+    "ja": "形にする",
+    "en": "Reconstruct and correct",
+    "zh": "重建与校正",
+    "tw": "重建與校正",
+    "ko": "재구성·보정",
+    "de": "Rekonstruieren und korrigieren",
+    "hi": "Reconstruct और correct करना"
+   },
+   {
+    "ja": "組み立てる",
+    "en": "Build a workflow",
+    "zh": "搭建流程",
+    "tw": "搭建流程",
+    "ko": "워크플로 구성",
+    "de": "Abläufe bauen",
+    "hi": "Workflow बनाना"
+   },
+   {
+    "ja": "見せる",
+    "en": "Show",
+    "zh": "呈现",
+    "tw": "呈現",
+    "ko": "보여주기",
+    "de": "Darstellen",
+    "hi": "दिखाना"
+   },
+   {
+    "ja": "描く",
+    "en": "Draw",
+    "zh": "绘制",
+    "tw": "繪製",
+    "ko": "그리기",
+    "de": "Zeichnen",
+    "hi": "चित्र बनाना"
+   }
+  ],
+  "titles": {
+   "align-and-stack": {
+    "zh": "对齐并叠加",
+    "tw": "對齊並疊加",
+    "ko": "위치를 맞춰 겹치기",
+    "de": "Ausrichten und überlagern",
+    "hi": "Align करके stack करना"
+   },
+   "beamforming-and-range-doppler": {
+    "zh": "用阵列测方向,分离距离与速度",
+    "tw": "用陣列測方向,分離距離與速度",
+    "ko": "배열로 방향을 재고 거리와 속도를 분리",
+    "de": "Richtung per Array messen, Entfernung und Geschwindigkeit trennen",
+    "hi": "Array से दिशा मापना, range और velocity अलग करना"
+   },
+   "beats-fringes-and-screens": {
+    "zh": "拍频只有一个(膜的模态、干涉条纹、衍射级、印刷莫尔纹、落到墨上)",
+    "tw": "拍頻只有一個(膜的模態、干涉條紋、繞射級、印刷疊紋、落到墨上)",
+    "ko": "맥놀이는 하나(막의 모드·간섭무늬·회절 차수·인쇄 무아레·잉크로 옮기기)",
+    "de": "Eine Schwebung (Membranmoden, Interferenzstreifen, Beugungsordnungen, Druckmoiré, Ton zu Tinte)",
+    "hi": "एक ही beat (membrane modes, fringes, diffraction orders, print moiré, tone से ink)"
+   },
+   "blob-and-region": {
+    "zh": "切出区域、筛选并计数",
+    "tw": "切出區域、篩選並計數",
+    "ko": "영역을 잘라내고 골라서 세기",
+    "de": "Regionen segmentieren, auswählen und zählen",
+    "hi": "Regions को segment, select और count करना"
+   },
+   "camera-intrinsics-calibration": {
+    "zh": "从平面标定板的多视图估计内参矩阵 K(张正友法)",
+    "tw": "從平面標定板的多視角估計內參矩陣 K(張正友法)",
+    "ko": "평면 타깃의 다시점에서 내부 행렬 K 추정(Zhang 법)",
+    "de": "Kameramatrix K aus mehreren Ansichten einer Ebene schätzen (Zhang)",
+    "hi": "Planar target के कई views से intrinsic matrix K का अनुमान (Zhang)"
+   },
+   "colour-and-delta-e": {
+    "zh": "测量颜色(XYZ / Lab / 色差)",
+    "tw": "量測顏色(XYZ / Lab / 色差)",
+    "ko": "색 측정(XYZ / Lab / 색차)",
+    "de": "Farbe messen (XYZ / Lab / Farbabstand)",
+    "hi": "रंग मापना (XYZ / Lab / colour difference)"
+   },
+   "complex-plane-fields": {
+    "zh": "把复平面当作面来看(域着色、吸引域、逃逸时间、绕翼流动)",
+    "tw": "把複數平面當作面來看(域著色、吸引域、逃逸時間、繞翼流動)",
+    "ko": "복소평면을 면으로 보기(정의역 색칠·끌개 영역·탈출 시간·날개 주위 흐름)",
+    "de": "Die komplexe Ebene als Fläche sehen (Domain Colouring, Einzugsgebiete, Fluchtzeit, Umströmung)",
+    "hi": "Complex plane को area की तरह देखना (domain colouring, basins, escape time, flow)"
+   },
+   "estimate-lens-distortion": {
+    "zh": "从本应笔直的线估计畸变系数(铅垂线法,无需棋盘格)",
+    "tw": "從本應筆直的線估計畸變係數(鉛垂線法,不需棋盤格)",
+    "ko": "원래 곧은 선에서 왜곡 계수 추정(plumb-line, 체커보드 불필요)",
+    "de": "Verzeichnungskoeffizienten aus geraden Linien schätzen (Plumb-Line, ohne Schachbrett)",
+    "hi": "सीधी रेखाओं से lens distortion coefficients का अनुमान (plumb-line, board की ज़रूरत नहीं)"
+   },
+   "figures-and-annotation": {
+    "zh": "把结果做成人能读懂的图",
+    "tw": "把結果做成人能讀懂的圖",
+    "ko": "결과를 사람이 읽을 수 있는 그림으로",
+    "de": "Ergebnisse in lesbare Abbildungen verwandeln",
+    "hi": "नतीजों को पढ़ने लायक figures में बदलना"
+   },
+   "fix-text-in-images": {
+    "zh": "按应有的字符串修正图像中的文字",
+    "tw": "依應有的字串修正影像中的文字",
+    "ko": "이미지 속 글자를 올바른 문자열에 맞춰 고치기",
+    "de": "Text im Bild anhand des Soll-Strings korrigieren",
+    "hi": "Image के अंदर के text को सही string के अनुसार ठीक करना"
+   },
+   "geodetic-frames": {
+    "zh": "放到地球尺度坐标上(ECEF、高程基准、局部 ENU)",
+    "tw": "放到地球尺度座標上(ECEF、高程基準、局部 ENU)",
+    "ko": "지구 규모 좌표에 올리기(ECEF·높이 기준·국소 ENU)",
+    "de": "Messungen auf die Erde bringen (ECEF, Höhenbezug, lokales ENU)",
+    "hi": "Measurements को पृथ्वी पर रखना (ECEF, height frames, local ENU)"
+   },
+   "golden-compare": {
+    "zh": "与基准图像(黄金样本)比较、测缺陷、按批判定",
+    "tw": "與基準影像(黃金樣本)比較、量缺陷、按批判定",
+    "ko": "기준 이미지(골든)와 비교해 결함을 재고 로트 단위로 판정",
+    "de": "Mit einem Golden Image vergleichen, Defekte messen, das Los beurteilen",
+    "hi": "Golden image से तुलना, defects मापना, lot का निर्णय"
+   },
+   "inspection-fixture": {
+    "zh": "用已知良品/不良品集在部署前检定检测配方与规格,并测量余量",
+    "tw": "用已知良品/不良品集在部署前檢定檢測配方與規格,並量測餘裕",
+    "ko": "알려진 양품/불량품 세트로 배치 전에 검사 레시피와 사양을 검정하고 여유를 측정",
+    "de": "Rezept und Spezifikation vor dem Einsatz an bekannten Gut-/Schlecht-Sets prüfen und Reserven messen",
+    "hi": "Deploy से पहले known good/bad sets पर recipe और spec जाँचना, margins मापना"
+   },
+   "inspection-workflow": {
+    "zh": "一次调用检测整个文件夹(批处理、按规格判定、汇总、SPC、报告、审计日志)",
+    "tw": "一次呼叫檢測整個資料夾(批次、依規格判定、彙總、SPC、報告、稽核日誌)",
+    "ko": "폴더를 한 번에 검사(일괄·사양 판정·집계·SPC·보고서·감사 로그)",
+    "de": "Einen Ordner in einem Aufruf prüfen (Batch, Spezifikation, Aggregation, SPC, Bericht, Audit-Log)",
+    "hi": "एक call में पूरा folder inspect करना (batch, spec, aggregate, SPC, report, audit log)"
+   },
+   "inverted-colour-overlays": {
+    "zh": "不知道底色也能画线和区域(反色)",
+    "tw": "不知道底色也能畫線與區域(反色)",
+    "ko": "바탕색을 몰라도 선과 영역 그리기(반전색)",
+    "de": "Linien und Flächen ohne Kenntnis der Hintergrundfarbe zeichnen (invertierte Farbe)",
+    "hi": "Background का रंग जाने बिना lines और regions बनाना (inverted colour)"
+   },
+   "lens-distortion-correction": {
+    "zh": "对整幅图像校正镜头畸变(桶形、枕形、切向)",
+    "tw": "對整張影像校正鏡頭畸變(桶形、枕形、切向)",
+    "ko": "이미지 전체의 렌즈 왜곡 보정(배럴·핀쿠션·접선)",
+    "de": "Linsenverzeichnung im ganzen Bild korrigieren (Tonne, Kissen, tangential)",
+    "hi": "पूरी image में lens distortion ठीक करना (barrel, pincushion, tangential)"
+   },
+   "measurement-system-and-uncertainty": {
+    "zh": "这个数字有多少来自测量方式(量具 R&R 与测量不确定度)",
+    "tw": "這個數字有多少來自量測方式(量具 R&R 與量測不確定度)",
+    "ko": "그 숫자 중 얼마가 측정 방식 때문인가(게이지 R&R과 측정 불확도)",
+    "de": "Wie viel dieser Zahl ist das Messen und nicht der Prozess (Gauge R&R und Messunsicherheit)",
+    "hi": "उस संख्या में कितना हिस्सा measurement का है, process का नहीं (gauge R&R और uncertainty)"
+   },
+   "one-stroke-drawing": {
+    "zh": "把照片变成一条线(点描 → 巡回路径 → 旋转的圆)",
+    "tw": "把照片變成一條線(點描 → 巡迴路徑 → 旋轉的圓)",
+    "ko": "사진을 한 줄의 선으로(점묘 → 순회 경로 → 회전하는 원)",
+    "de": "Ein Foto in eine einzige Linie verwandeln (Punkte → Tour → rotierende Kreise)",
+    "hi": "Photo को एक ही line में बदलना (stipple → tour → घूमते circles)"
+   },
+   "optics-and-materials": {
+    "zh": "计算光的反射、折射与干涉",
+    "tw": "計算光的反射、折射與干涉",
+    "ko": "빛의 반사·굴절·간섭 계산",
+    "de": "Reflexion, Brechung und Interferenz berechnen",
+    "hi": "Reflection, refraction और interference की गणना"
+   },
+   "pictures-that-carry-their-own-truth": {
+    "zh": "制作会骗眼睛的图来给测量方打分(错觉、无限绘制、循环动画)",
+    "tw": "製作會騙眼睛的圖來替量測方評分(錯覺、無限繪製、循環動畫)",
+    "ko": "눈을 속이는 그림을 만들어 측정 쪽을 채점(착시·무한 그리기·순환 동영상)",
+    "de": "Bilder, die das Auge täuschen, um das Messen zu benoten (Illusionen, endloses Zeichnen, Endlosschleifen)",
+    "hi": "आँख को धोखा देने वाली तस्वीरें बनाकर measurement को अंक देना (illusions, endless drawing, loops)"
+   },
+   "point-target-detection": {
+    "zh": "找到小的点状目标并以亚像素定位",
+    "tw": "找到小的點狀目標並以次像素定位",
+    "ko": "작은 점 모양 목표를 찾아 서브픽셀로 위치 구하기",
+    "de": "Kleine punktförmige Ziele finden und subpixelgenau lokalisieren",
+    "hi": "छोटे point-like targets ढूँढना और sub-pixel position निकालना"
+   },
+   "polarization-imaging": {
+    "zh": "把偏振相机的原始帧读成 Stokes、DoLP、Mueller",
+    "tw": "把偏光相機的原始幀讀成 Stokes、DoLP、Mueller",
+    "ko": "편광 카메라의 원시 프레임을 Stokes·DoLP·Mueller로 읽기",
+    "de": "Rohbild einer Polarisationskamera in Stokes, DoLP und Mueller umrechnen",
+    "hi": "Polarisation camera के raw frame को Stokes, DoLP और Mueller में पढ़ना"
+   },
+   "raw-to-display-isp": {
+    "zh": "用每一步都能解释的公式把 Bayer 原始帧变成显示图像",
+    "tw": "用每一步都能解釋的公式把 Bayer 原始幀變成顯示影像",
+    "ko": "Bayer 원시 프레임을 단계마다 설명 가능한 식으로 표시 이미지로",
+    "de": "Ein Bayer-Rohbild Schritt für Schritt nachvollziehbar in ein Anzeigebild umwandeln",
+    "hi": "Bayer raw frame को हर stage समझाने लायक formula से display image में बदलना"
+   },
+   "subpixel-2d-metrology": {
+    "zh": "以亚像素精度从图像测量尺寸",
+    "tw": "以次像素精度從影像量測尺寸",
+    "ko": "이미지에서 치수를 서브픽셀로 측정",
+    "de": "Maße aus dem Bild subpixelgenau messen",
+    "hi": "Image से dimensions को sub-pixel तक मापना"
+   },
+   "terrain-and-visibility": {
+    "zh": "测量地形的坡度、水流与通视",
+    "tw": "量測地形的坡度、水流與通視",
+    "ko": "지형의 경사·물 흐름·가시선 측정",
+    "de": "Gefälle, Abfluss und Sichtlinien im Gelände",
+    "hi": "Terrain पर slope, flow और line of sight"
+   },
+   "text-and-tables-on-images": {
+    "zh": "把文字和表格放到图像上想要的位置",
+    "tw": "把文字與表格放到影像上想要的位置",
+    "ko": "이미지 위 원하는 곳에 글자와 표 놓기",
+    "de": "Text und Tabellen genau an die gewünschte Stelle im Bild setzen",
+    "hi": "Image पर text और tables ठीक मनचाही जगह रखना"
+   },
+   "theorems-as-pictures": {
+    "zh": "定理即检验门的图(阿波罗尼奥斯、福特圆、测地穹顶、叶序、IFS、空间填充曲线)",
+    "tw": "定理即檢驗門的圖(阿波羅尼奧斯、福特圓、測地穹頂、葉序、IFS、空間填充曲線)",
+    "ko": "정리가 검사 문이 되는 그림(아폴로니우스·포드·측지 돔·잎차례·IFS·공간 채움 곡선)",
+    "de": "Sätze als Bilder (Apollonisch, Ford, geodätische Kuppel, Phyllotaxis, IFS, raumfüllende Kurven)",
+    "hi": "Theorems तस्वीरों के रूप में (Apollonian, Ford, geodesic dome, phyllotaxis, IFS, space-filling curves)"
+   },
+   "tomography-reconstruction": {
+    "zh": "从投影重建断面(CT)",
+    "tw": "從投影重建斷面(CT)",
+    "ko": "투영에서 단면 재구성(CT)",
+    "de": "Schnitte aus Projektionen rekonstruieren (CT)",
+    "hi": "Projections से slices का reconstruction (CT)"
+   },
+   "typed-results-as-json": {
+    "zh": "把 op 的返回值(带类型)写成 JSON,并逐位还原",
+    "tw": "把 op 的回傳值(帶型別)寫成 JSON,並逐位元還原",
+    "ko": "op 반환값(타입 포함)을 JSON으로 쓰고 비트 그대로 되읽기",
+    "de": "Typisierte Op-Ergebnisse als JSON schreiben und bitgenau zurücklesen",
+    "hi": "Typed op results को JSON में लिखना और bit-for-bit वापस पढ़ना"
+   },
+   "typed-results-as-markdown": {
+    "zh": "把 op 的返回值(带类型)做成可读的 Markdown,并内嵌 JSON 以便还原",
+    "tw": "把 op 的回傳值(帶型別)做成可讀的 Markdown,並內嵌 JSON 以便還原",
+    "ko": "op 반환값(타입 포함)을 읽기 쉬운 Markdown으로, JSON을 넣어 되읽기",
+    "de": "Typisierte Op-Ergebnisse als Markdown darstellen, mit eingebettetem JSON zum Zurücklesen",
+    "hi": "Typed op results को Markdown में दिखाना, वापस पढ़ने के लिए JSON block के साथ"
+   },
+   "vibration-and-acoustics": {
+    "zh": "从振动与声音诊断异常",
+    "tw": "從振動與聲音診斷異常",
+    "ko": "진동과 소리로 이상 진단",
+    "de": "Fehler aus Schwingung und Schall diagnostizieren",
+    "hi": "Vibration और आवाज़ से faults का निदान"
+   },
+   "visual-hull-from-silhouettes": {
+    "zh": "从剪影雕出立体(视觉外壳)",
+    "tw": "從剪影雕出立體(視覺外殼)",
+    "ko": "실루엣에서 입체 깎아내기(시각 헐)",
+    "de": "Aus Silhouetten einen Körper schnitzen (Visual Hull)",
+    "hi": "Silhouettes से solid तराशना (visual hull)"
+   },
+   "volume-from-3d-scan": {
+    "zh": "从 3-D 扫描求体积与土方量",
+    "tw": "從 3-D 掃描求體積與土方量",
+    "ko": "3-D 스캔에서 부피·토량 구하기",
+    "de": "Volumen und Erdmassen aus einem 3-D-Scan",
+    "hi": "3-D scan से volume निकालना"
+   },
+   "what-a-picture-cannot-check": {
+    "zh": "图无法验证的东西(积分器阶数、李雅普诺夫指数、分岔、关联维数、极小曲面)",
+    "tw": "圖無法驗證的東西(積分器階數、李雅普諾夫指數、分岔、關聯維度、極小曲面)",
+    "ko": "그림으로는 확인할 수 없는 것(적분기 차수·리아푸노프 지수·분기·상관 차원·극소 곡면)",
+    "de": "Was ein Bild nicht prüfen kann (Integratorordnung, Lyapunov-Spektrum, Bifurkationen, Korrelationsdimension, Minimalflächen)",
+    "hi": "जो तस्वीर से जाँचा नहीं जा सकता (integrator order, Lyapunov spectrum, bifurcations, correlation dimension, minimal surfaces)"
+   },
+   "xlsx-report": {
+    "zh": "把带类型的检测结果写入 Excel(.xlsx)报告",
+    "tw": "把帶型別的檢測結果寫入 Excel(.xlsx)報告",
+    "ko": "타입이 있는 검사 결과를 Excel(.xlsx) 보고서로",
+    "de": "Typisierte Prüfergebnisse in einen Excel-Bericht (.xlsx) schreiben",
+    "hi": "Typed inspection results को Excel (.xlsx) report में लिखना"
+   }
+  }
+ }
 }

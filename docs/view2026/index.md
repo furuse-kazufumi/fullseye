@@ -90,6 +90,75 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="https://qiita.com/furuse-kazufumi/items/57e2f1e5a09165e58b65"><img src="thumbs/series_humanoid.gif" alt="ヒューマノイド運動会" loading="lazy" width="480" height="270"><strong>ヒューマノイド運動会</strong><span>画像処理が審判をする自宅の運動会</span></a>
 </div>
 
+## できること
+
+35 件。それぞれ説明のページ(使い方と限界)と、走る例へのリンクです。
+
+<div class="vl" markdown="1">
+
+**見つける**
+
+- 領域を切り出して、選んで、数える: [説明](../capabilities/blob-and-region.md) · 例 [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- 画像の中の文字を、正しい文字列に合わせて直す: [説明](../capabilities/fix-text-in-images.md) · 例 [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
+- 小さな点状の目標を見つけて、副画素で位置を出す: [説明](../capabilities/point-target-detection.md) · 例 [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
+
+**測る**
+
+- 平面ターゲットの多視点から内部行列 K を推定する(Zhang 法): [説明](../capabilities/camera-intrinsics-calibration.md) · 例 [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py)
+- 複素平面を「面」で見る(位相彩色・吸引域・脱出時間・翼まわりの流れ): [説明](../capabilities/complex-plane-fields.md) · 例 [poc_complex_plane_fields](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_complex_plane_fields.py)
+- 本来まっすぐな線から歪み係数を推定する(plumb-line、チェッカー不要): [説明](../capabilities/estimate-lens-distortion.md) · 例 [estimate_lens_distortion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/estimate_lens_distortion.py)
+- 地球規模の座標に載せる(ECEF・高さの基準・局所 ENU): [説明](../capabilities/geodetic-frames.md) · 例 [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
+- その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ): [説明](../capabilities/measurement-system-and-uncertainty.md) · 例 [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
+- 画像から寸法をサブピクセルで測る: [説明](../capabilities/subpixel-2d-metrology.md) · 例 [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
+- 地形の傾き・水の流れ・見通しを測る: [説明](../capabilities/terrain-and-visibility.md) · 例 [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- 3-D スキャンから体積・土量を出す: [説明](../capabilities/volume-from-3d-scan.md) · 例 [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
+- 絵では確かめられないもの(積分器の次数・リアプノフ指数・分岐・相関次元・極小曲面): [説明](../capabilities/what-a-picture-cannot-check.md) · 例 [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
+
+**光と色**
+
+- 色を測る(XYZ / Lab / 色差): [説明](../capabilities/colour-and-delta-e.md) · 例 [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
+- 光の反射・屈折・干渉を計算する: [説明](../capabilities/optics-and-materials.md) · 例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
+- 偏光カメラの生フレームを Stokes・DoLP・Mueller に読む: [説明](../capabilities/polarization-imaging.md) · 例 [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
+- Bayer の生フレームを、段ごとに説明できる式で表示画像にする: [説明](../capabilities/raw-to-display-isp.md) · 例 [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
+
+**波と信号**
+
+- 配列で方向を測り、距離と速度を分ける: [説明](../capabilities/beamforming-and-range-doppler.md) · 例 [poc_multibeam_bathymetry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multibeam_bathymetry.py) · [poc_bev_sensor_fusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py)
+- うなりは一つ(膜のモード・干渉縞・回折次数・印刷のモアレ・墨に落とす): [説明](../capabilities/beats-fringes-and-screens.md) · 例 [poc_beats_fringes_and_screens](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beats_fringes_and_screens.py)
+- 振動と音から異常を診断する: [説明](../capabilities/vibration-and-acoustics.md) · 例 [poc_bearing_diagnosis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bearing_diagnosis.py) · [poc_rail_corrugation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py)
+
+**形にする**
+
+- レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線): [説明](../capabilities/lens-distortion-correction.md) · 例 [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
+- 投影から断面を再構成する(CT): [説明](../capabilities/tomography-reconstruction.md) · 例 [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
+- シルエットから立体を彫り出す(視体積交差): [説明](../capabilities/visual-hull-from-silhouettes.md) · 例 [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
+
+**組み立てる**
+
+- 位置を合わせて重ねる: [説明](../capabilities/align-and-stack.md) · 例 [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py) · [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py)
+- 基準画像(ゴールデン)と比べて欠陥を測り、ロットごと判定する: [説明](../capabilities/golden-compare.md) · 例 [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
+- 既知の良品/不良品セットで検査レシピと仕様を配備前に検定し、余裕を測る: [説明](../capabilities/inspection-fixture.md) · 例 [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
+- フォルダを一括検査し、仕様で判定し、集計・SPC・レポート・監査ログまで出す: [説明](../capabilities/inspection-workflow.md) · 例 [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- op の返り値(型付き)を JSON に出し、bit そのままで戻す: [説明](../capabilities/typed-results-as-json.md) · 例 [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
+- op の返り値(型付き)を Markdown で読める形にし、JSON を埋め込んで戻す: [説明](../capabilities/typed-results-as-markdown.md) · 例 [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
+- 型付きの検査結果を Excel(.xlsx)レポートに書き出す: [説明](../capabilities/xlsx-report.md) · 例 [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
+
+**見せる**
+
+- 結果を人が読める図にする: [説明](../capabilities/figures-and-annotation.md) · 例 [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
+- 地の色を知らずに線と領域を描く(反転色): [説明](../capabilities/inverted-colour-overlays.md) · 例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
+- 画像の上に、文字と表を置きたい場所へ置く: [説明](../capabilities/text-and-tables-on-images.md) · 例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
+
+**描く**
+
+- 写真を 1 本の線にする(点描 → 巡回路 → 回る円): [説明](../capabilities/one-stroke-drawing.md) · 例 [poc_one_stroke_epicycles](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_one_stroke_epicycles.py)
+- 目が嘘をつく絵を作って、測る側を採点する(錯視・無限描画・循環動画): [説明](../capabilities/pictures-that-carry-their-own-truth.md) · 例 [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- 定理が門になる図(アポロニウス・フォード・測地ドーム・葉序・IFS・空間充填曲線): [説明](../capabilities/theorems-as-pictures.md) · 例 [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
+
+</div>
+
+[PoC 以外の使用例 115 本の一覧](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+
 ## ぜんぶ見る
 
 PoC 218 本と、ロボットの目 4 本。グループを開くとサムネイルが出ます。

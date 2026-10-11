@@ -75,6 +75,75 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="https://qiita.com/furuse-kazufumi/items/569720dbae0c6471c96e"><img src="../thumbs/series_humanoid.gif" alt="人形機器人運動會" loading="lazy" width="480" height="270"><strong>人形機器人運動會</strong><span>由影像處理擔任裁判的家庭運動會</span></a>
 </div>
 
+## 能做什麼
+
+共 35 項,每項都有說明頁(用法與限制)與可執行的範例。
+
+<div class="vl" markdown="1">
+
+**尋找**
+
+- 切出區域、篩選並計數: [說明](../../capabilities/blob-and-region.md) _(ja)_ · 範例 [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- 依應有的字串修正影像中的文字: [說明](../../capabilities/fix-text-in-images.md) _(ja)_ · 範例 [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
+- 找到小的點狀目標並以次像素定位: [說明](../../capabilities/point-target-detection.md) _(ja)_ · 範例 [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
+
+**量測**
+
+- 從平面標定板的多視角估計內參矩陣 K(張正友法): [說明](../../capabilities/camera-intrinsics-calibration.md) _(ja)_ · 範例 [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py)
+- 把複數平面當作面來看(域著色、吸引域、逃逸時間、繞翼流動): [說明](../../capabilities/complex-plane-fields.md) _(ja)_ · 範例 [poc_complex_plane_fields](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_complex_plane_fields.py)
+- 從本應筆直的線估計畸變係數(鉛垂線法,不需棋盤格): [說明](../../capabilities/estimate-lens-distortion.md) _(ja)_ · 範例 [estimate_lens_distortion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/estimate_lens_distortion.py)
+- 放到地球尺度座標上(ECEF、高程基準、局部 ENU): [說明](../../capabilities/geodetic-frames.md) _(ja)_ · 範例 [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
+- 這個數字有多少來自量測方式(量具 R&R 與量測不確定度): [說明](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · 範例 [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
+- 以次像素精度從影像量測尺寸: [說明](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · 範例 [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
+- 量測地形的坡度、水流與通視: [說明](../../capabilities/terrain-and-visibility.md) _(ja)_ · 範例 [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- 從 3-D 掃描求體積與土方量: [說明](../../capabilities/volume-from-3d-scan.md) _(ja)_ · 範例 [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
+- 圖無法驗證的東西(積分器階數、李雅普諾夫指數、分岔、關聯維度、極小曲面): [說明](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · 範例 [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
+
+**光與色**
+
+- 量測顏色(XYZ / Lab / 色差): [說明](../../capabilities/colour-and-delta-e.md) _(ja)_ · 範例 [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
+- 計算光的反射、折射與干涉: [說明](../../capabilities/optics-and-materials.md) _(ja)_ · 範例 [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
+- 把偏光相機的原始幀讀成 Stokes、DoLP、Mueller: [說明](../../capabilities/polarization-imaging.md) _(ja)_ · 範例 [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
+- 用每一步都能解釋的公式把 Bayer 原始幀變成顯示影像: [說明](../../capabilities/raw-to-display-isp.md) _(ja)_ · 範例 [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
+
+**波與訊號**
+
+- 用陣列測方向,分離距離與速度: [說明](../../capabilities/beamforming-and-range-doppler.md) _(ja)_ · 範例 [poc_multibeam_bathymetry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multibeam_bathymetry.py) · [poc_bev_sensor_fusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py)
+- 拍頻只有一個(膜的模態、干涉條紋、繞射級、印刷疊紋、落到墨上): [說明](../../capabilities/beats-fringes-and-screens.md) _(ja)_ · 範例 [poc_beats_fringes_and_screens](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beats_fringes_and_screens.py)
+- 從振動與聲音診斷異常: [說明](../../capabilities/vibration-and-acoustics.md) _(ja)_ · 範例 [poc_bearing_diagnosis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bearing_diagnosis.py) · [poc_rail_corrugation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py)
+
+**重建與校正**
+
+- 對整張影像校正鏡頭畸變(桶形、枕形、切向): [說明](../../capabilities/lens-distortion-correction.md) _(ja)_ · 範例 [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
+- 從投影重建斷面(CT): [說明](../../capabilities/tomography-reconstruction.md) _(ja)_ · 範例 [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
+- 從剪影雕出立體(視覺外殼): [說明](../../capabilities/visual-hull-from-silhouettes.md) _(ja)_ · 範例 [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
+
+**搭建流程**
+
+- 對齊並疊加: [說明](../../capabilities/align-and-stack.md) _(ja)_ · 範例 [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py) · [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py)
+- 與基準影像(黃金樣本)比較、量缺陷、按批判定: [說明](../../capabilities/golden-compare.md) _(ja)_ · 範例 [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
+- 用已知良品/不良品集在部署前檢定檢測配方與規格,並量測餘裕: [說明](../../capabilities/inspection-fixture.md) _(ja)_ · 範例 [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
+- 一次呼叫檢測整個資料夾(批次、依規格判定、彙總、SPC、報告、稽核日誌): [說明](../../capabilities/inspection-workflow.md) _(ja)_ · 範例 [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- 把 op 的回傳值(帶型別)寫成 JSON,並逐位元還原: [說明](../../capabilities/typed-results-as-json.md) _(ja)_ · 範例 [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
+- 把 op 的回傳值(帶型別)做成可讀的 Markdown,並內嵌 JSON 以便還原: [說明](../../capabilities/typed-results-as-markdown.md) _(ja)_ · 範例 [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
+- 把帶型別的檢測結果寫入 Excel(.xlsx)報告: [說明](../../capabilities/xlsx-report.md) _(ja)_ · 範例 [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
+
+**呈現**
+
+- 把結果做成人能讀懂的圖: [說明](../../capabilities/figures-and-annotation.md) _(ja)_ · 範例 [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
+- 不知道底色也能畫線與區域(反色): [說明](../../capabilities/inverted-colour-overlays.md) _(ja)_ · 範例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
+- 把文字與表格放到影像上想要的位置: [說明](../../capabilities/text-and-tables-on-images.md) _(ja)_ · 範例 [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
+
+**繪製**
+
+- 把照片變成一條線(點描 → 巡迴路徑 → 旋轉的圓): [說明](../../capabilities/one-stroke-drawing.md) _(ja)_ · 範例 [poc_one_stroke_epicycles](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_one_stroke_epicycles.py)
+- 製作會騙眼睛的圖來替量測方評分(錯覺、無限繪製、循環動畫): [說明](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · 範例 [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- 定理即檢驗門的圖(阿波羅尼奧斯、福特圓、測地穹頂、葉序、IFS、空間填充曲線): [說明](../../capabilities/theorems-as-pictures.md) _(ja)_ · 範例 [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
+
+</div>
+
+[其他 115 個使用範例(非 PoC)的列表](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+
 ## 全部看
 
 PoC 218 個,另有機器人之眼 4 個。展開分組即可載入縮圖。

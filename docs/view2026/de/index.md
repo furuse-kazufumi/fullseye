@@ -75,6 +75,75 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="https://qiita.com/furuse-kazufumi/items/569720dbae0c6471c96e"><img src="../thumbs/series_humanoid.gif" alt="Humanoiden-Sportfest" loading="lazy" width="480" height="270"><strong>Humanoiden-Sportfest</strong><span>Ein Sportfest daheim, Schiedsrichter ist die Bildverarbeitung</span></a>
 </div>
 
+## Was es kann
+
+35 Themen, jeweils mit Erklärseite (Anwendung und Grenzen) und lauffähigen Beispielen.
+
+<div class="vl" markdown="1">
+
+**Finden**
+
+- Regionen segmentieren, auswählen und zählen: [Erklärung](../../capabilities/blob-and-region.md) _(ja)_ · Beispiele [poc_cell_counting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_cell_counting.py) · [poc_particle_sizing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_particle_sizing.py) · [poc_real_coin_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_real_coin_metrology.py)
+- Text im Bild anhand des Soll-Strings korrigieren: [Erklärung](../../capabilities/fix-text-in-images.md) _(ja)_ · Beispiele [fix_text_in_image](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/fix_text_in_image.py) · [poc_glyph_typo_detection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_glyph_typo_detection.py)
+- Kleine punktförmige Ziele finden und subpixelgenau lokalisieren: [Erklärung](../../capabilities/point-target-detection.md) _(ja)_ · Beispiele [poc_search_sweep_width](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_search_sweep_width.py) · [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py)
+
+**Messen**
+
+- Kameramatrix K aus mehreren Ansichten einer Ebene schätzen (Zhang): [Erklärung](../../capabilities/camera-intrinsics-calibration.md) _(ja)_ · Beispiele [camera_intrinsics_calibration](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/camera_intrinsics_calibration.py)
+- Die komplexe Ebene als Fläche sehen (Domain Colouring, Einzugsgebiete, Fluchtzeit, Umströmung): [Erklärung](../../capabilities/complex-plane-fields.md) _(ja)_ · Beispiele [poc_complex_plane_fields](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_complex_plane_fields.py)
+- Verzeichnungskoeffizienten aus geraden Linien schätzen (Plumb-Line, ohne Schachbrett): [Erklärung](../../capabilities/estimate-lens-distortion.md) _(ja)_ · Beispiele [estimate_lens_distortion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/estimate_lens_distortion.py)
+- Messungen auf die Erde bringen (ECEF, Höhenbezug, lokales ENU): [Erklärung](../../capabilities/geodetic-frames.md) _(ja)_ · Beispiele [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
+- Wie viel dieser Zahl ist das Messen und nicht der Prozess (Gauge R&R und Messunsicherheit): [Erklärung](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · Beispiele [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
+- Maße aus dem Bild subpixelgenau messen: [Erklärung](../../capabilities/subpixel-2d-metrology.md) _(ja)_ · Beispiele [poc_dimensional_inspection](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dimensional_inspection.py) · [poc_screw_thread_metrology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_screw_thread_metrology.py) · [poc_calipers_under_illusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_calipers_under_illusion.py)
+- Gefälle, Abfluss und Sichtlinien im Gelände: [Erklärung](../../capabilities/terrain-and-visibility.md) _(ja)_ · Beispiele [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py) · [dem_terrain_analysis_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_terrain_analysis_tour.py)
+- Volumen und Erdmassen aus einem 3-D-Scan: [Erklärung](../../capabilities/volume-from-3d-scan.md) _(ja)_ · Beispiele [poc_stockpile_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_stockpile_volume.py) · [poc_lidar_terrain_change](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_lidar_terrain_change.py)
+- Was ein Bild nicht prüfen kann (Integratorordnung, Lyapunov-Spektrum, Bifurkationen, Korrelationsdimension, Minimalflächen): [Erklärung](../../capabilities/what-a-picture-cannot-check.md) _(ja)_ · Beispiele [poc_what_a_picture_cannot_check](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_what_a_picture_cannot_check.py)
+
+**Licht und Farbe**
+
+- Farbe messen (XYZ / Lab / Farbabstand): [Erklärung](../../capabilities/colour-and-delta-e.md) _(ja)_ · Beispiele [poc_white_balance](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_white_balance.py) · [poc_pigment_unmixing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pigment_unmixing.py)
+- Reflexion, Brechung und Interferenz berechnen: [Erklärung](../../capabilities/optics-and-materials.md) _(ja)_ · Beispiele [glass_and_mirror_optics](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/glass_and_mirror_optics.py) · [appearance_structural_colour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/appearance_structural_colour.py)
+- Rohbild einer Polarisationskamera in Stokes, DoLP und Mueller umrechnen: [Erklärung](../../capabilities/polarization-imaging.md) _(ja)_ · Beispiele [polarization_camera_pipeline](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/polarization_camera_pipeline.py) · [poc_polarization_specular](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polarization_specular.py)
+- Ein Bayer-Rohbild Schritt für Schritt nachvollziehbar in ein Anzeigebild umwandeln: [Erklärung](../../capabilities/raw-to-display-isp.md) _(ja)_ · Beispiele [raw_to_display_isp](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/raw_to_display_isp.py)
+
+**Wellen und Signale**
+
+- Richtung per Array messen, Entfernung und Geschwindigkeit trennen: [Erklärung](../../capabilities/beamforming-and-range-doppler.md) _(ja)_ · Beispiele [poc_multibeam_bathymetry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_multibeam_bathymetry.py) · [poc_bev_sensor_fusion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bev_sensor_fusion.py)
+- Eine Schwebung (Membranmoden, Interferenzstreifen, Beugungsordnungen, Druckmoiré, Ton zu Tinte): [Erklärung](../../capabilities/beats-fringes-and-screens.md) _(ja)_ · Beispiele [poc_beats_fringes_and_screens](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_beats_fringes_and_screens.py)
+- Fehler aus Schwingung und Schall diagnostizieren: [Erklärung](../../capabilities/vibration-and-acoustics.md) _(ja)_ · Beispiele [poc_bearing_diagnosis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_bearing_diagnosis.py) · [poc_rail_corrugation](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rail_corrugation.py)
+
+**Rekonstruieren und korrigieren**
+
+- Linsenverzeichnung im ganzen Bild korrigieren (Tonne, Kissen, tangential): [Erklärung](../../capabilities/lens-distortion-correction.md) _(ja)_ · Beispiele [lens_undistort](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/lens_undistort.py)
+- Schnitte aus Projektionen rekonstruieren (CT): [Erklärung](../../capabilities/tomography-reconstruction.md) _(ja)_ · Beispiele [poc_ct_fidelity](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_fidelity.py) · [poc_ct_void_morphology](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_ct_void_morphology.py)
+- Aus Silhouetten einen Körper schnitzen (Visual Hull): [Erklärung](../../capabilities/visual-hull-from-silhouettes.md) _(ja)_ · Beispiele [space_carving](https://github.com/furuse-kazufumi/fullseye/blob/master/examples_3d/space_carving.py) · [poc_livestock_body_volume](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_livestock_body_volume.py)
+
+**Abläufe bauen**
+
+- Ausrichten und überlagern: [Erklärung](../../capabilities/align-and-stack.md) _(ja)_ · Beispiele [poc_astro_photometry](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_astro_photometry.py) · [poc_registration_basin](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_registration_basin.py)
+- Mit einem Golden Image vergleichen, Defekte messen, das Los beurteilen: [Erklärung](../../capabilities/golden-compare.md) _(ja)_ · Beispiele [golden_compare](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/golden_compare.py)
+- Rezept und Spezifikation vor dem Einsatz an bekannten Gut-/Schlecht-Sets prüfen und Reserven messen: [Erklärung](../../capabilities/inspection-fixture.md) _(ja)_ · Beispiele [inspection_fixture](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_fixture.py)
+- Einen Ordner in einem Aufruf prüfen (Batch, Spezifikation, Aggregation, SPC, Bericht, Audit-Log): [Erklärung](../../capabilities/inspection-workflow.md) _(ja)_ · Beispiele [inspection_workflow](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/inspection_workflow.py)
+- Typisierte Op-Ergebnisse als JSON schreiben und bitgenau zurücklesen: [Erklärung](../../capabilities/typed-results-as-json.md) _(ja)_ · Beispiele [typed_results_json](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_json.py)
+- Typisierte Op-Ergebnisse als Markdown darstellen, mit eingebettetem JSON zum Zurücklesen: [Erklärung](../../capabilities/typed-results-as-markdown.md) _(ja)_ · Beispiele [typed_results_markdown](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/typed_results_markdown.py)
+- Typisierte Prüfergebnisse in einen Excel-Bericht (.xlsx) schreiben: [Erklärung](../../capabilities/xlsx-report.md) _(ja)_ · Beispiele [xlsx_report](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/xlsx_report.py)
+
+**Darstellen**
+
+- Ergebnisse in lesbare Abbildungen verwandeln: [Erklärung](../../capabilities/figures-and-annotation.md) _(ja)_ · Beispiele [poc_colormap_readability](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_colormap_readability.py) · [poc_dem_terrain](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dem_terrain.py)
+- Linien und Flächen ohne Kenntnis der Hintergrundfarbe zeichnen (invertierte Farbe): [Erklärung](../../capabilities/inverted-colour-overlays.md) _(ja)_ · Beispiele [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
+- Text und Tabellen genau an die gewünschte Stelle im Bild setzen: [Erklärung](../../capabilities/text-and-tables-on-images.md) _(ja)_ · Beispiele [annotate_paper_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/annotate_paper_tour.py)
+
+**Zeichnen**
+
+- Ein Foto in eine einzige Linie verwandeln (Punkte → Tour → rotierende Kreise): [Erklärung](../../capabilities/one-stroke-drawing.md) _(ja)_ · Beispiele [poc_one_stroke_epicycles](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_one_stroke_epicycles.py)
+- Bilder, die das Auge täuschen, um das Messen zu benoten (Illusionen, endloses Zeichnen, Endlosschleifen): [Erklärung](../../capabilities/pictures-that-carry-their-own-truth.md) _(ja)_ · Beispiele [poc_illusions_and_perpetual_drawing](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_illusions_and_perpetual_drawing.py)
+- Sätze als Bilder (Apollonisch, Ford, geodätische Kuppel, Phyllotaxis, IFS, raumfüllende Kurven): [Erklärung](../../capabilities/theorems-as-pictures.md) _(ja)_ · Beispiele [poc_theorems_as_pictures](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_theorems_as_pictures.py)
+
+</div>
+
+[Alle 115 Anwendungsbeispiele, die keine PoCs sind](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/README.md)
+
 ## Alles ansehen
 
 218 PoCs und 4 Roboteraugen-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
