@@ -10,6 +10,7 @@
 """
 from __future__ import annotations
 
+import importlib.util
 import os
 import sys
 
@@ -33,6 +34,9 @@ FIXED = (
     "mean_edge_error", "mean_reprojection_error", "mesh_signed_volume", "mesh_to_points",
     "mesh_to_voxel", "vda5050_order", "vol_euler_number", "vol_stretch",
 )
+
+#: 通常入力で optional の torch を要る op(拒否は torch 無しでも確かめる)。
+NEEDS_TORCH = {"mesh_to_voxel"}
 
 
 @pytest.fixture(scope="module")
@@ -59,6 +63,10 @@ def test_empty_first_input_is_a_named_value_error(bound, name):
     with pytest.raises(ValueError, match="empty"):
         lc._call(fn, [empty] + list(args[1:]), kwargs)
     # 空でない元の入力ではこれまでどおり動く(門が入口を塞いでいないこと)
+    # ★mesh_to_voxel は points_to_voxel が optional の torch を要る。CI には torch が無いので
+    #   拒否の確認(上)だけ走らせ、通常入力の実行は torch のある環境に限る。
+    if name in NEEDS_TORCH and importlib.util.find_spec("torch") is None:
+        return
     lc._call(fn, list(args), kwargs)
     # docstring の約束として読めること(台帳の門がこの op を見張る条件)
     import inspect
