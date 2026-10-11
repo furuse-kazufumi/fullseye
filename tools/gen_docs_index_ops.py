@@ -512,9 +512,36 @@ def _doc_label(rel: str, lang: str) -> str:
     README の 71 行の日本語のうち、44 行がこの地図(残りは PoC 表)。
     """
     title = _doc_title(rel)
-    if lang != "" and _KANA.search(title):
-        return title + " _(ja)_"
-    return title
+    if lang == "":
+        return title
+    # ★2026-10-11: 訳文ファイル(`X.zh.md` など)の題は**その言語**で書かれている。以前は
+    #   日本語版と同じく漢字で判定して `(ja)` を付けていたので、中国語版の索引で中国語の文書が
+    #   「読めない日本語」と表示されていた。印は**ファイルの言語**で付け、自分の言語なら付けない。
+    m = _TRANS_SUFFIX.search(rel)
+    if m:
+        own = m.group(1)
+        if own == lang or not _KANA.search(title):
+            return title
+        return title + " _(%s)_" % own
+    if not _KANA.search(title):
+        return title
+    # ★2026-10-11: 日本語の原文に**この言語の訳がある**なら、訳の題と訳へのリンクを先に出す
+    #   (以前は英訳があっても英語版の索引が日本語の題と日本語版へのリンクしか出さず、
+    #   読める版があることが索引から分からなかった)。原文が日本語であることの印は残す。
+    for code in (lang, "en"):
+        tr = rel[:-3] + ".%s.md" % code
+        if os.path.isfile(os.path.join(_ROOT, "docs", tr)):
+            return "%s → [`%s`](%s) · %s _(ja)_" % (_doc_title(tr), os.path.basename(tr), tr,
+                                                   _ORIGINAL[lang])
+    return title + " _(ja)_"
+
+
+#: 訳文ファイルの接尾辞(`GETTING_STARTED.zh.md` の `zh`)。
+_TRANS_SUFFIX = re.compile(r"\.(en|zh|tw|ko|de|hi)\.md$")
+
+#: 「原文」の語(訳へのリンクの後ろに、元の日本語版がこの行のリンク先だと添える)。
+_ORIGINAL = {"en": "original", "zh": "原文", "tw": "原文", "ko": "원문", "de": "Original",
+             "hi": "मूल"}
 
 
 #: 地図から外す部分木。**それぞれ専用の節が面倒を見る**もの以外は外さない。

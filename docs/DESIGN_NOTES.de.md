@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1357. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1359. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2426,7 +2426,9 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L291** — ★`__all__`, nicht `dir(fullseye)`. dir enthaelt Modulattribute (os / sys / warnings / annotations) und **erhoeht sich zudem um eins, nachdem ein anderer Test importiert hat** (1094 → 1095), sodass das Drift-Gate nur in der Gesamt-Suite fiel (2026-09-06). Die oeffentliche Oberflaeche sind die 1,091 Namen, die die Fassade in `__all__` deklariert.
 - **L340** — ★Der Index ist nicht nur fuer Menschen, sondern auch **die Suchoberflaeche der KI** (die Bemerkung des Nutzers vom 2026-09-06 "der Index ist doch auch der Teil, der als RAG genutzt wird, oder?"). Da op-Notizen zugleich der Suchkorpus fuer KI-Coding-Unterstuetzung sind, mache den **maschinenlesbaren Einstiegspunkt** im Index explizit. Schreibt man "alle op" fuer etwas, das nur die Haelfte hat, irrt sich das RAG ueber die andere Haelfte selbstsicher -- deshalb werden die gemessenen Zeilen aus `_honest()` nicht aus diesem Abschnitt entfernt.
 - **L497** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
-- **L662** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
+- **L517** _(ja)_ — ★2026-10-11: 訳文ファイル(`X.zh.md` など)の題は**その言語**で書かれている。以前は 日本語版と同じく漢字で判定して `(ja)` を付けていたので、中国語版の索引で中国語の文書が 「読めない日本語」と表示されていた。印は**ファイルの言語**で付け、自分の言語なら付けない。
+- **L528** _(ja)_ — ★2026-10-11: 日本語の原文に**この言語の訳がある**なら、訳の題と訳へのリンクを先に出す (以前は英訳があっても英語版の索引が日本語の題と日本語版へのリンクしか出さず、 読める版があることが索引から分からなかった)。原文が日本語であることの印は残す。
+- **L689** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
 
 ## `tools/gen_hardening_index.py`
 

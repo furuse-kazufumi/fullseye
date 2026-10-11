@@ -10,9 +10,9 @@ operators in the machine-readable index, `docs/OP_INDEX.json`: 936 single-input 
 17 n-ary + 2,130 in the typed ledgers, each with a per-operator note), the family guides, and the
 release notes.
 
-**What it can do: [CAPABILITIES.md](docs/CAPABILITIES.md)** — an index organised by
+**What it can do: [CAPABILITIES.en.md](docs/CAPABILITIES.en.md)** — an index organised by
 *what you want to do*, every entry tied to operators that exist and an example that runs.
-**What the PoCs hardened: [HARDENING.md](docs/HARDENING.md)** — the ledger of defects
+**What the PoCs hardened: [HARDENING.en.md](docs/HARDENING.en.md)** — the ledger of defects
 the PoC series found, what changed, and which gate now stops each one coming back.
 
 > **Real-hardware and real-data results wanted.** Fullseye is developed without physical

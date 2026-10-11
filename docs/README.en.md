@@ -14,7 +14,7 @@
 
 ★ **Rare for an image-processing library, Fullseye also includes virtual optical design** — thin/thick lenses, ray tracing, Seidel aberrations and PSF/MTF, plus damped-least-squares (Levenberg–Marquardt) optimisation of the lens prescription itself (`optimize_lens`). You can **design the imaging system and then inspect its image with the operators above, end to end** — a differentiator that matters for semiconductor and precision metrology.
 
-> **Start here → [GETTING_STARTED.md](GETTING_STARTED.md) (up and running in 5 minutes)**
+> **Start here → [GETTING_STARTED.en.md](GETTING_STARTED.en.md) (up and running in 5 minutes)**
 
 > **What it can do → [CAPABILITIES.en.md](CAPABILITIES.en.md)** (indexed by what you want to do) / **What the PoCs hardened → [HARDENING.en.md](HARDENING.en.md)** (found, fixed, gated)
 
@@ -200,10 +200,10 @@ Search by name with `py -3.11 imgevolve.py ops --search edge`; the full cross-li
 
 | Document | Contents |
 |---|---|
-| **[GETTING_STARTED.md](GETTING_STARTED.md)** | Get going in 5 minutes: install → your first pipeline → run it from Studio, the CLI or code → look at the result |
-| **[INSTALL.md](INSTALL.md)** | The complete setup guide: prerequisites, `pip install -e .` and which extras to choose, the Windows/Linux installers, minimal and embedded configurations, troubleshooting |
-| **[STUDIO_GUIDE.md](STUDIO_GUIDE.md)** | The complete Fullseye Studio guide: the three panels, operator browser, step execution, knobs, Inspector, perception panel, command palette, keyboard shortcuts, export |
-| **[ENGINE.md](ENGINE.md)** | FullseyeEngine (design → execution): every method, use from Python, the `run` CLI, calling it from another project |
+| **[GETTING_STARTED.en.md](GETTING_STARTED.en.md)** | Get going in 5 minutes: install → your first pipeline → run it from Studio, the CLI or code → look at the result |
+| **[INSTALL.en.md](INSTALL.en.md)** | The complete setup guide: prerequisites, `pip install -e .` and which extras to choose, the Windows/Linux installers, minimal and embedded configurations, troubleshooting |
+| **[STUDIO_GUIDE.en.md](STUDIO_GUIDE.en.md)** | The complete Fullseye Studio guide: the three panels, operator browser, step execution, knobs, Inspector, perception panel, command palette, keyboard shortcuts, export |
+| **[ENGINE.en.md](ENGINE.en.md)** | FullseyeEngine (design → execution): every method, use from Python, the `run` CLI, calling it from another project |
 
 ---
 
@@ -238,8 +238,8 @@ Search by name with `py -3.11 imgevolve.py ops --search edge`; the full cross-li
 | Document | Contents |
 |---|---|
 | [ACCURACY_BENCH.md](ACCURACY_BENCH.md) | The standing accuracy table: evolved champion vs null baseline (holdout) |
-| [CHAIN_FUZZ.md](CHAIN_FUZZ.md) | The chain fuzzer — a third quality-assurance layer that shakes operators chained together (diffuse → converge → minimal reproduction) |
-| [EVOLUTION_ENVIRONMENT.md](EVOLUTION_ENVIRONMENT.md) | The evolutionary algorithm development environment (diffuse → contract → promote; the counterfactual-utility gate and the bridge between the two operator universes) |
+| [CHAIN_FUZZ.en.md](CHAIN_FUZZ.en.md) | The chain fuzzer — a third quality-assurance layer that shakes operators chained together (diffuse → converge → minimal reproduction) |
+| [EVOLUTION_ENVIRONMENT.en.md](EVOLUTION_ENVIRONMENT.en.md) | The evolutionary algorithm development environment (diffuse → contract → promote; the counterfactual-utility gate and the bridge between the two operator universes) |
 | [PROVENANCE.md](PROVENANCE.md) | Provenance: the record that these are our own work, built from published algorithms |
 | [REFERENCES.md](REFERENCES.md) | The literature backing each operator |
 | [REPRODUCE.md](REPRODUCE.md) | How to reproduce the figures: seed-driven and deterministic |
@@ -294,18 +294,18 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 
 | document | what it covers |
 |---|---|
-| [`GETTING_STARTED.md`](GETTING_STARTED.md) | はじめかた（5分で動かす） _(ja)_ |
-| [`INSTALL.md`](INSTALL.md) | インストール / 環境構築 完全ガイド _(ja)_ |
-| [`STUDIO_GUIDE.md`](STUDIO_GUIDE.md) | Fullseye Studio 完全ガイド _(ja)_ |
+| [`GETTING_STARTED.md`](GETTING_STARTED.md) | Getting started (running in 5 minutes) → [`GETTING_STARTED.en.md`](GETTING_STARTED.en.md) · original _(ja)_ |
+| [`INSTALL.md`](INSTALL.md) | Installation / Environment Setup — Complete Guide → [`INSTALL.en.md`](INSTALL.en.md) · original _(ja)_ |
+| [`STUDIO_GUIDE.md`](STUDIO_GUIDE.md) | The complete guide to Fullseye Studio → [`STUDIO_GUIDE.en.md`](STUDIO_GUIDE.en.md) · original _(ja)_ |
 | [`STUDIO_UX.md`](STUDIO_UX.md) | Fullseye Studio — UX & design pass (v15) |
 | [`EXAMPLES.md`](EXAMPLES.md) | imgevolve — sample code (cross-library recipes) |
 | [`EXAMPLES_3D.md`](EXAMPLES_3D.md) | Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D) _(ja)_ |
-| [`GALLERY.md`](GALLERY.md) | Fullseye ギャラリー / Gallery _(ja)_ |
+| [`GALLERY.md`](GALLERY.md) | Fullseye Gallery → [`GALLERY.en.md`](GALLERY.en.md) · original _(ja)_ |
 | [`REPRODUCE.md`](REPRODUCE.md) | Reproducing the numbers |
 | [`CONSUMER_APPLICATIONS.md`](CONSUMER_APPLICATIONS.md) | Fullseye — per-project applications (honest, 2026-08-15) |
-| [`3DGS_USAGE.md`](3DGS_USAGE.md) | Fullseye 3DGS ― 使い方(1コマンド) _(ja)_ |
-| [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | 地形の上を歩かせる(sim-native, GPU 不要) _(ja)_ |
-| [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | gsplat native を Windows(RTX 5090 / torch cu128)でビルドする — 実証済み手順 _(ja)_ |
+| [`3DGS_USAGE.md`](3DGS_USAGE.md) | Fullseye 3DGS — how to use it (one command) → [`3DGS_USAGE.en.md`](3DGS_USAGE.en.md) · original _(ja)_ |
+| [`TERRAIN_WALK.md`](TERRAIN_WALK.md) | Walking a Character Over Terrain (sim-native, no GPU required) → [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) · original _(ja)_ |
+| [`GSPLAT_NATIVE_WINDOWS.md`](GSPLAT_NATIVE_WINDOWS.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure → [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) · original _(ja)_ |
 
 **Operator reference**(9)
 
@@ -313,11 +313,11 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 |---|---|
 | [`OPERATORS.md`](OPERATORS.md) | imgevolve — cross-library operator catalog |
 | [`OP_CATALOG.md`](OP_CATALOG.md) | Fullseye Operator Catalog — AI capability ledger |
-| [`OP_COMBINATION_MATRIX.md`](OP_COMBINATION_MATRIX.md) | fullseye 3D op × op 組み合わせマトリクス(実現性 × 差別化で優先度化) _(ja)_ |
+| [`OP_COMBINATION_MATRIX.md`](OP_COMBINATION_MATRIX.md) | fullseye 3D op × op Combination Matrix (prioritized by feasibility × differentiation) → [`OP_COMBINATION_MATRIX.en.md`](OP_COMBINATION_MATRIX.en.md) · original _(ja)_ |
 | [`CONVERSION_MATRIX.md`](CONVERSION_MATRIX.md) | 型変換の行列 ―― 穴と不具合の点検 _(ja)_ |
 | [`CONNECTIVITY.md`](CONNECTIVITY.md) | Fullseye connectivity — devices, cameras & industrial protocols |
-| [`MATCH_3D_MATRIX.md`](MATCH_3D_MATRIX.md) | fullseye 3D ビジョン・ツールキット(Physical AI 向け、HALCON/OpenCV 差別化) _(ja)_ |
-| [`GENERAL_ALGORITHMS.md`](GENERAL_ALGORITHMS.md) | 汎用アルゴリズムを実装可能にする — algo-c 対応ロードマップ _(ja)_ |
+| [`MATCH_3D_MATRIX.md`](MATCH_3D_MATRIX.md) | fullseye 3D Vision Toolkit (for Physical AI, differentiating from HALCON/OpenCV) → [`MATCH_3D_MATRIX.en.md`](MATCH_3D_MATRIX.en.md) · original _(ja)_ |
+| [`GENERAL_ALGORITHMS.md`](GENERAL_ALGORITHMS.md) | Making general algorithms implementable — the algo-c support roadmap → [`GENERAL_ALGORITHMS.en.md`](GENERAL_ALGORITHMS.en.md) · original _(ja)_ |
 | [`ADDING_OPS.md`](ADDING_OPS.md) | Adding an operator |
 | [`WAVE0_STABLE_SLOTS.md`](WAVE0_STABLE_SLOTS.md) | Wave-0: stable op slots + name-pinned champions |
 
@@ -325,7 +325,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 
 | document | what it covers |
 |---|---|
-| [`AI_RAG_GUIDE.md`](AI_RAG_GUIDE.md) | Fullseye を AI アシスタントの RAG にする手順(Claude Code 向け) _(ja)_ |
+| [`AI_RAG_GUIDE.md`](AI_RAG_GUIDE.md) | Using Fullseye as an AI assistant's RAG (for Claude Code) → [`AI_RAG_GUIDE.en.md`](AI_RAG_GUIDE.en.md) · original _(ja)_ |
 
 **Literature layer (manufacturing knowledge → ops)**(5)
 
@@ -355,9 +355,9 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 |---|---|
 | [`HALCON_PARITY.md`](HALCON_PARITY.md) | HALCON parity — what imgevolve genuinely DOES (not just names) |
 | [`HALCON_COVERAGE.md`](HALCON_COVERAGE.md) | HALCON operator coverage (measured vs the real reference) |
-| [`HALCON_COVERAGE_HONEST.md`](HALCON_COVERAGE_HONEST.md) | HALCON カバレッジ — honest な分母(2026-08-18 更新) _(ja)_ |
-| [`HDEVELOP_FIDELITY.md`](HDEVELOP_FIDELITY.md) | Fullseye Studio — HDevelop 忠実化スペック(北極星) _(ja)_ |
-| [`HDEVELOP_DEV_OPS.md`](HDEVELOP_DEV_OPS.md) | HDevelop `dev_*` operator family — the UI/display control surface (Studio 北極星) _(ja)_ |
+| [`HALCON_COVERAGE_HONEST.md`](HALCON_COVERAGE_HONEST.md) | HALCON Coverage — the honest denominator (updated 2026-08-18) → [`HALCON_COVERAGE_HONEST.en.md`](HALCON_COVERAGE_HONEST.en.md) · original _(ja)_ |
+| [`HDEVELOP_FIDELITY.md`](HDEVELOP_FIDELITY.md) | Fullseye Studio — HDevelop Fidelity Spec (North Star) → [`HDEVELOP_FIDELITY.en.md`](HDEVELOP_FIDELITY.en.md) · original _(ja)_ |
+| [`HDEVELOP_DEV_OPS.md`](HDEVELOP_DEV_OPS.md) | HDevelop `dev_*` operator family — the UI/display control surface (Studio north star) → [`HDEVELOP_DEV_OPS.en.md`](HDEVELOP_DEV_OPS.en.md) · original _(ja)_ |
 | [`LIB_COVERAGE.md`](LIB_COVERAGE.md) | Multi-library coverage (imgevolve is not HALCON-only) |
 
 **Fullseye Script**(3)
@@ -365,7 +365,7 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | document | what it covers |
 |---|---|
 | [`FSCRIPT_DECISION.md`](FSCRIPT_DECISION.md) | Fullseye Script / Runtime — 要件定義と基本設計(確定案) _(ja)_ |
-| [`FSCRIPT_LANGUAGE.md`](FSCRIPT_LANGUAGE.md) | Fullseye Script — 言語 / ランタイム / ウォッチ IDE 設計仕様(北極星) _(ja)_ |
+| [`FSCRIPT_LANGUAGE.md`](FSCRIPT_LANGUAGE.md) | Fullseye Script — Language / Runtime / Watch IDE Design Specification (North Star) → [`FSCRIPT_LANGUAGE.en.md`](FSCRIPT_LANGUAGE.en.md) · original _(ja)_ |
 | [`FSCRIPT_MEASUREMENTS.md`](FSCRIPT_MEASUREMENTS.md) | Fullseye Runtime — 実測記録 (2026-08-15) _(ja)_ |
 
 **Quality and honesty**(13)
@@ -375,23 +375,23 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`KNOWN_ISSUES.md`](KNOWN_ISSUES.md) | Known Issues — 実データ横断テストで発見(2026-08-30) _(ja)_ |
 | [`STATUS.md`](STATUS.md) | imgevolve — status / plan (plan_ref) |
 | [`ACCURACY_BENCH.md`](ACCURACY_BENCH.md) | Accuracy benchmark — champion vs null (holdout) |
-| [`BENCH_VS_OPENCV.md`](BENCH_VS_OPENCV.md) | imgevolve GPU op vs OpenCV(CPU)処理速度ベンチ _(ja)_ |
+| [`BENCH_VS_OPENCV.md`](BENCH_VS_OPENCV.md) | imgevolve GPU op vs OpenCV (CPU) throughput benchmark → [`BENCH_VS_OPENCV.en.md`](BENCH_VS_OPENCV.en.md) · original _(ja)_ |
 | [`PARITY_CROSSBACKEND.md`](PARITY_CROSSBACKEND.md) | Cross-backend parity — independent implementations agree at the tested points |
-| [`CHAIN_FUZZ.md`](CHAIN_FUZZ.md) | 連鎖ファザー(chain fuzz)— op を鎖にして揺さぶる第三の品質保証層 _(ja)_ |
+| [`CHAIN_FUZZ.md`](CHAIN_FUZZ.md) | Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains → [`CHAIN_FUZZ.en.md`](CHAIN_FUZZ.en.md) · original _(ja)_ |
 | [`PROVENANCE.md`](PROVENANCE.md) | Provenance |
 | [`OP_COUNT_HISTORY.md`](OP_COUNT_HISTORY.md) | op の数の推移(版ごと) / Operator counts by version _(ja)_ |
 | [`REFERENCES.md`](REFERENCES.md) | imgevolve — operator research provenance |
 | [`AUDIT_2026_08_12.md`](AUDIT_2026_08_12.md) | imgevolve implementation audit — 2026-08-12 |
 | [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) | リリース手順書 — 同じ間違いを繰り返さないための門 _(ja)_ |
 | [`I18N.md`](I18N.md) | Fullseye の多言語対応 — 全体設計 / Internationalisation design _(ja)_ |
-| [`VALIDATION_CONTRIBUTING.md`](VALIDATION_CONTRIBUTING.md) | 実機・実データでの検証を報告する _(ja)_ |
+| [`VALIDATION_CONTRIBUTING.md`](VALIDATION_CONTRIBUTING.md) | Reporting validation on real hardware or real data → [`VALIDATION_CONTRIBUTING.en.md`](VALIDATION_CONTRIBUTING.en.md) · original _(ja)_ |
 
 **Performance and GPU**(4)
 
 | document | what it covers |
 |---|---|
 | [`GPU_ACCEL_PLAN.md`](GPU_ACCEL_PLAN.md) | op の GPU 化ロードマップ(E2E の本丸) _(ja)_ |
-| [`GPU_OPTIMIZATION_PATTERNS.md`](GPU_OPTIMIZATION_PATTERNS.md) | GPU 最適化デザインパターン・カタログ(RTX 5090 / Blackwell sm_120 向け) _(ja)_ |
+| [`GPU_OPTIMIZATION_PATTERNS.md`](GPU_OPTIMIZATION_PATTERNS.md) | GPU Optimization Design-Pattern Catalog (for RTX 5090 / Blackwell sm_120) → [`GPU_OPTIMIZATION_PATTERNS.en.md`](GPU_OPTIMIZATION_PATTERNS.en.md) · original _(ja)_ |
 | [`design/FAST_TWINS.md`](design/FAST_TWINS.md) | CPU 高速 twin(`fast.py`)— 実装記録と実測(2026-09-03) _(ja)_ |
 | [`design/PERF_MEMORY_VIDEO_SURVEY.md`](design/PERF_MEMORY_VIDEO_SURVEY.md) | op の高速化・省メモリ化・動画処理 — 実測にもとづく調査報告(2026-09-03) _(ja)_ |
 
@@ -399,12 +399,12 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 
 | document | what it covers |
 |---|---|
-| [`ENGINE.md`](ENGINE.md) | FullseyeEngine — 設計したパイプラインを実行するランタイム _(ja)_ |
-| [`EVOLUTION_ENVIRONMENT.md`](EVOLUTION_ENVIRONMENT.md) | 進化型アルゴリズム開発環境 — 拡散・収縮・昇格 _(ja)_ |
+| [`ENGINE.md`](ENGINE.md) | FullseyeEngine — the runtime that executes a pipeline you designed → [`ENGINE.en.md`](ENGINE.en.md) · original _(ja)_ |
+| [`EVOLUTION_ENVIRONMENT.md`](EVOLUTION_ENVIRONMENT.md) | Evolutionary Algorithm Development Environment — Expand, Contract, Promote → [`EVOLUTION_ENVIRONMENT.en.md`](EVOLUTION_ENVIRONMENT.en.md) · original _(ja)_ |
 | [`INTEGRATION.md`](INTEGRATION.md) | Depending on Fullseye from another project (stability contract) |
-| [`UNIFIED_API_REQUIREMENTS.md`](UNIFIED_API_REQUIREMENTS.md) | Fullseye 統一インターフェース — 要件定義書 (v0.1, 2026-08-18) _(ja)_ |
+| [`UNIFIED_API_REQUIREMENTS.md`](UNIFIED_API_REQUIREMENTS.md) | Fullseye Unified Interface — Requirements Specification (v0.1, 2026-08-18) → [`UNIFIED_API_REQUIREMENTS.en.md`](UNIFIED_API_REQUIREMENTS.en.md) · original _(ja)_ |
 | [`design/TRIZ_DESIGN_PATTERN_MATRIX.md`](design/TRIZ_DESIGN_PATTERN_MATRIX.md) | TRIZ 40 発明原理 × ソフトウェア設計パターン × コンテナ型 — 構造選択マトリクス(fullseye) _(ja)_ |
-| [`EVIS_VISION_OSS_GAP.md`](EVIS_VISION_OSS_GAP.md) | evis の視覚部品 — OSS/ROS2 ギャップ分析 (2026-08-17) _(ja)_ |
+| [`EVIS_VISION_OSS_GAP.md`](EVIS_VISION_OSS_GAP.md) | evis Vision Components — OSS/ROS2 Gap Analysis (2026-08-17) → [`EVIS_VISION_OSS_GAP.en.md`](EVIS_VISION_OSS_GAP.en.md) · original _(ja)_ |
 | [`INDUSTRY_SIGNALS.md`](INDUSTRY_SIGNALS.md) | 業界シグナル — 展示会・アワードを op 発想の恒常的な入力にする _(ja)_ |
 
 **Working notes and plans (historical; numbers are as of their date)**(12)
@@ -431,29 +431,29 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`3DGS_USAGE.de.md`](3DGS_USAGE.de.md) | Fullseye 3DGS – Anwendung (ein einziger Befehl) |
 | [`3DGS_USAGE.en.md`](3DGS_USAGE.en.md) | Fullseye 3DGS — how to use it (one command) |
 | [`3DGS_USAGE.ko.md`](3DGS_USAGE.ko.md) | Fullseye 3DGS — 사용법(명령어 한 줄) |
-| [`3DGS_USAGE.tw.md`](3DGS_USAGE.tw.md) | Fullseye 3DGS —— 使用方法（一行指令） _(ja)_ |
-| [`3DGS_USAGE.zh.md`](3DGS_USAGE.zh.md) | Fullseye 3DGS —— 使用方法（单条命令） _(ja)_ |
+| [`3DGS_USAGE.tw.md`](3DGS_USAGE.tw.md) | Fullseye 3DGS —— 使用方法（一行指令） _(tw)_ |
+| [`3DGS_USAGE.zh.md`](3DGS_USAGE.zh.md) | Fullseye 3DGS —— 使用方法（单条命令） _(zh)_ |
 | [`AI_RAG_GUIDE.de.md`](AI_RAG_GUIDE.de.md) | Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code) |
 | [`AI_RAG_GUIDE.en.md`](AI_RAG_GUIDE.en.md) | Using Fullseye as an AI assistant's RAG (for Claude Code) |
 | [`AI_RAG_GUIDE.hi.md`](AI_RAG_GUIDE.hi.md) | Fullseye को AI assistant के RAG के रूप में इस्तेमाल करना (Claude Code के लिए) |
 | [`AI_RAG_GUIDE.ko.md`](AI_RAG_GUIDE.ko.md) | Fullseye를 AI 어시스턴트의 RAG로 사용하는 방법(Claude Code용) |
-| [`AI_RAG_GUIDE.tw.md`](AI_RAG_GUIDE.tw.md) | 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code） _(ja)_ |
-| [`AI_RAG_GUIDE.zh.md`](AI_RAG_GUIDE.zh.md) | 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code） _(ja)_ |
+| [`AI_RAG_GUIDE.tw.md`](AI_RAG_GUIDE.tw.md) | 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code） _(tw)_ |
+| [`AI_RAG_GUIDE.zh.md`](AI_RAG_GUIDE.zh.md) | 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code） _(zh)_ |
 | [`BENCH_VS_OPENCV.en.md`](BENCH_VS_OPENCV.en.md) | imgevolve GPU op vs OpenCV (CPU) throughput benchmark |
 | [`CAPABILITIES.en.md`](CAPABILITIES.en.md) | What Fullseye can do |
-| [`CAPABILITIES.md`](CAPABILITIES.md) | Fullseye でできること _(ja)_ |
+| [`CAPABILITIES.md`](CAPABILITIES.md) | What Fullseye can do → [`CAPABILITIES.en.md`](CAPABILITIES.en.md) · original _(ja)_ |
 | [`CHAIN_FUZZ.en.md`](CHAIN_FUZZ.en.md) | Chain Fuzzer (chain fuzz) — a third quality-assurance layer that shakes ops by wiring them into chains |
 | [`DESIGN_NOTES.de.md`](DESIGN_NOTES.de.md) | Fullseye-Entwurfsnotizen (aus den ★-Kommentaren im Quellcode erzeugt) |
 | [`DESIGN_NOTES.en.md`](DESIGN_NOTES.en.md) | Fullseye design notes (generated from the ★ comments in the source) |
 | [`DESIGN_NOTES.ko.md`](DESIGN_NOTES.ko.md) | Fullseye 설계 판단 모음(소스의 ★ 주석에서 생성) |
-| [`DESIGN_NOTES.md`](DESIGN_NOTES.md) | Fullseye 設計判断集(ソース中の ★ コメントから生成) _(ja)_ |
-| [`DESIGN_NOTES.tw.md`](DESIGN_NOTES.tw.md) | Fullseye 設計判斷集（由原始碼中的 ★ 註解產生） _(ja)_ |
-| [`DESIGN_NOTES.zh.md`](DESIGN_NOTES.zh.md) | Fullseye 设计判断集（由源码中的 ★ 注释生成） _(ja)_ |
+| [`DESIGN_NOTES.md`](DESIGN_NOTES.md) | Fullseye design notes (generated from the ★ comments in the source) → [`DESIGN_NOTES.en.md`](DESIGN_NOTES.en.md) · original _(ja)_ |
+| [`DESIGN_NOTES.tw.md`](DESIGN_NOTES.tw.md) | Fullseye 設計判斷集（由原始碼中的 ★ 註解產生） _(tw)_ |
+| [`DESIGN_NOTES.zh.md`](DESIGN_NOTES.zh.md) | Fullseye 设计判断集（由源码中的 ★ 注释生成） _(zh)_ |
 | [`ENGINE.de.md`](ENGINE.de.md) | FullseyeEngine — Laufzeitumgebung zur Ausführung entworfener Pipelines |
 | [`ENGINE.en.md`](ENGINE.en.md) | FullseyeEngine — the runtime that executes a pipeline you designed |
 | [`ENGINE.ko.md`](ENGINE.ko.md) | FullseyeEngine — 설계한 파이프라인을 실행하는 런타임 |
-| [`ENGINE.tw.md`](ENGINE.tw.md) | FullseyeEngine — 執行已設計管線的執行環境 _(ja)_ |
-| [`ENGINE.zh.md`](ENGINE.zh.md) | FullseyeEngine — 运行已设计管道的运行时 _(ja)_ |
+| [`ENGINE.tw.md`](ENGINE.tw.md) | FullseyeEngine — 執行已設計管線的執行環境 _(tw)_ |
+| [`ENGINE.zh.md`](ENGINE.zh.md) | FullseyeEngine — 运行已设计管道的运行时 _(zh)_ |
 | [`EVIS_VISION_OSS_GAP.en.md`](EVIS_VISION_OSS_GAP.en.md) | evis Vision Components — OSS/ROS2 Gap Analysis (2026-08-17) |
 | [`EVOLUTION_ENVIRONMENT.en.md`](EVOLUTION_ENVIRONMENT.en.md) | Evolutionary Algorithm Development Environment — Expand, Contract, Promote |
 | [`FSCRIPT_LANGUAGE.en.md`](FSCRIPT_LANGUAGE.en.md) | Fullseye Script — Language / Runtime / Watch IDE Design Specification (North Star) |
@@ -461,19 +461,19 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`GENERAL_ALGORITHMS.de.md`](GENERAL_ALGORITHMS.de.md) | Allgemeine Algorithmen implementierbar machen — algo-c Kompatibilitäts-Roadmap |
 | [`GENERAL_ALGORITHMS.en.md`](GENERAL_ALGORITHMS.en.md) | Making general algorithms implementable — the algo-c support roadmap |
 | [`GENERAL_ALGORITHMS.ko.md`](GENERAL_ALGORITHMS.ko.md) | 범용 알고리즘을 구현 가능하게 만들기 — algo-c 대응 로드맵 |
-| [`GENERAL_ALGORITHMS.tw.md`](GENERAL_ALGORITHMS.tw.md) | 讓通用演算法也能實作 — algo-c 對應路線圖 _(ja)_ |
-| [`GENERAL_ALGORITHMS.zh.md`](GENERAL_ALGORITHMS.zh.md) | 让通用算法也能实现 — algo-c 对应路线图 _(ja)_ |
+| [`GENERAL_ALGORITHMS.tw.md`](GENERAL_ALGORITHMS.tw.md) | 讓通用演算法也能實作 — algo-c 對應路線圖 _(tw)_ |
+| [`GENERAL_ALGORITHMS.zh.md`](GENERAL_ALGORITHMS.zh.md) | 让通用算法也能实现 — algo-c 对应路线图 _(zh)_ |
 | [`GETTING_STARTED.de.md`](GETTING_STARTED.de.md) | Erste Schritte (in 5 Minuten startklar) |
 | [`GETTING_STARTED.en.md`](GETTING_STARTED.en.md) | Getting started (running in 5 minutes) |
 | [`GETTING_STARTED.hi.md`](GETTING_STARTED.hi.md) | शुरुआत करें (5 मिनट में चालू) |
 | [`GETTING_STARTED.ko.md`](GETTING_STARTED.ko.md) | 시작하기 (5분 만에 실행하기) |
-| [`GETTING_STARTED.tw.md`](GETTING_STARTED.tw.md) | 快速上手（5 分鐘跑起來） _(ja)_ |
-| [`GETTING_STARTED.zh.md`](GETTING_STARTED.zh.md) | 快速上手（5 分钟运行起来） _(ja)_ |
+| [`GETTING_STARTED.tw.md`](GETTING_STARTED.tw.md) | 快速上手（5 分鐘跑起來） _(tw)_ |
+| [`GETTING_STARTED.zh.md`](GETTING_STARTED.zh.md) | 快速上手（5 分钟运行起来） _(zh)_ |
 | [`GPU_OPTIMIZATION_PATTERNS.en.md`](GPU_OPTIMIZATION_PATTERNS.en.md) | GPU Optimization Design-Pattern Catalog (for RTX 5090 / Blackwell sm_120) |
 | [`GSPLAT_NATIVE_WINDOWS.en.md`](GSPLAT_NATIVE_WINDOWS.en.md) | Building native gsplat on Windows (RTX 5090 / torch cu128) — a proven procedure |
 | [`HALCON_COVERAGE_HONEST.en.md`](HALCON_COVERAGE_HONEST.en.md) | HALCON Coverage — the honest denominator (updated 2026-08-18) |
 | [`HARDENING.en.md`](HARDENING.en.md) | What the PoCs hardened — found, fixed, and gated |
-| [`HARDENING.md`](HARDENING.md) | PoC が上げた堅牢性 —— 見つけて直した記録 _(ja)_ |
+| [`HARDENING.md`](HARDENING.md) | What the PoCs hardened — found, fixed, and gated → [`HARDENING.en.md`](HARDENING.en.md) · original _(ja)_ |
 | [`HDEVELOP_DEV_OPS.en.md`](HDEVELOP_DEV_OPS.en.md) | HDevelop `dev_*` operator family — the UI/display control surface (Studio north star) |
 | [`HDEVELOP_FIDELITY.en.md`](HDEVELOP_FIDELITY.en.md) | Fullseye Studio — HDevelop Fidelity Spec (North Star) |
 | [`I18N_PLAN.md`](I18N_PLAN.md) | 完全な多言語化 — 計画と現在地 _(ja)_ |
@@ -481,8 +481,8 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`INSTALL.en.md`](INSTALL.en.md) | Installation / Environment Setup — Complete Guide |
 | [`INSTALL.hi.md`](INSTALL.hi.md) | Installation / Environment Setup — पूरी गाइड |
 | [`INSTALL.ko.md`](INSTALL.ko.md) | 설치 / 환경 구축 완전 가이드 |
-| [`INSTALL.tw.md`](INSTALL.tw.md) | 安裝 / 環境建置完整指南 _(ja)_ |
-| [`INSTALL.zh.md`](INSTALL.zh.md) | 安装 / 环境搭建完全指南 _(ja)_ |
+| [`INSTALL.tw.md`](INSTALL.tw.md) | 安裝 / 環境建置完整指南 _(tw)_ |
+| [`INSTALL.zh.md`](INSTALL.zh.md) | 安装 / 环境搭建完全指南 _(zh)_ |
 | [`MATCH_3D_MATRIX.en.md`](MATCH_3D_MATRIX.en.md) | fullseye 3D Vision Toolkit (for Physical AI, differentiating from HALCON/OpenCV) |
 | [`MATURITY.md`](MATURITY.md) | 成熟度台帳(Maturity) _(ja)_ |
 | [`MCP.md`](MCP.md) | Fullseye を MCP(Model Context Protocol)から使う _(ja)_ |
@@ -492,8 +492,8 @@ The complete map, so that **no document is unreachable from this index** (the 3,
 | [`STUDIO_GUIDE.en.md`](STUDIO_GUIDE.en.md) | The complete guide to Fullseye Studio |
 | [`STUDIO_GUIDE.hi.md`](STUDIO_GUIDE.hi.md) | Fullseye Studio की पूरी गाइड |
 | [`STUDIO_GUIDE.ko.md`](STUDIO_GUIDE.ko.md) | Fullseye Studio 완전 가이드 |
-| [`STUDIO_GUIDE.tw.md`](STUDIO_GUIDE.tw.md) | Fullseye Studio 完全指南 _(ja)_ |
-| [`STUDIO_GUIDE.zh.md`](STUDIO_GUIDE.zh.md) | Fullseye Studio 完全指南 _(ja)_ |
+| [`STUDIO_GUIDE.tw.md`](STUDIO_GUIDE.tw.md) | Fullseye Studio 完全指南 _(tw)_ |
+| [`STUDIO_GUIDE.zh.md`](STUDIO_GUIDE.zh.md) | Fullseye Studio 完全指南 _(zh)_ |
 | [`TERRAIN_WALK.en.md`](TERRAIN_WALK.en.md) | Walking a Character Over Terrain (sim-native, no GPU required) |
 | [`UNIFIED_API_REQUIREMENTS.en.md`](UNIFIED_API_REQUIREMENTS.en.md) | Fullseye Unified Interface — Requirements Specification (v0.1, 2026-08-18) |
 | [`VALIDATION_CONTRIBUTING.en.md`](VALIDATION_CONTRIBUTING.en.md) | Reporting validation on real hardware or real data |
