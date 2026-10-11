@@ -268,17 +268,28 @@ def _gaps_module():
     return ledger_gaps
 
 
-def test_every_ledger_nary_and_facade_entry_says_what_it_does():
+def test_the_description_scope_matches_what_ships():
+    """範囲は配布物の側から数える(門が自分で範囲を読むと黙って縮む)。
+
+    ★2026-10-11: 範囲の一致と説明の有無を 1 本の試験にしていたら、op を足して索引を作り直す前は
+    範囲の不一致で先に落ち、**説明が無いこと**が同じ試験の中で隠れた(門の棚卸しの探針で、説明の無い
+    台帳 op が「どの門にも掛からない」と出た)。1 本の試験は 1 つのことだけを見る。
+    """
     lg = _gaps_module()
-    bad, scope = lg.description_audit()
+    _bad, scope = lg.description_audit()
     with open(os.path.join(ROOT, "docs", "OP_INDEX.json"), encoding="utf-8") as f:
         n_ledger = sum(1 for r in json.load(f)["ops"] if r.get("tier") == "ledger")
     import imgops_nary
-    # 範囲は配布物の側から数える(門が自分で範囲を読むと黙って縮む)
     assert scope["ledger"] == n_ledger, (scope, n_ledger)
     assert scope["nary"] == len(imgops_nary._DEFS), scope
     assert scope["facade"] >= 1200, ("facade の関数・クラスが 1,200 を割った(数え方が壊れていないか): %s"
                                      % scope)
+
+
+def test_every_ledger_nary_and_facade_entry_says_what_it_does():
+    lg = _gaps_module()
+    bad, scope = lg.description_audit()
+    assert scope["ledger"] >= 2000 and scope["nary"] > 0, scope
     debt = lg.load_debt()["description"]
     new = sorted((k, c) for k, c in bad.items() if k not in debt)
     assert not new, "説明が無い/短すぎる(新規)%d 件 —— 書くこと: %s" % (len(new), new[:30])
