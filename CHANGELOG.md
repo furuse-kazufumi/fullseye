@@ -10,7 +10,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ### 変更
 
 - 型付き台帳の全 op(2,130 本)に契約の門(例外・非有限・宣言の型・決定性)。既存の違反は
-  `docs/LEDGER_CONTRACT_DEBT.json` に固定し、254 → 89 op まで直した。
+  `docs/LEDGER_CONTRACT_DEBT.json` に固定し、254 → 88 op まで直した。
 - `write_wav` は None ではなく書いたパスを返す(`write_3mf` と同じ)。
 - 台帳経由の `read_wav` / `read_audio` は信号だけを返す(宣言 `signal` どおり)。`dsp.read_wav` の直呼びは `(x, rate)` のまま。
 - `chebyshev_eval_nd` は `coeffs` の無い table を ValueError で拒否する(生の KeyError だった)。

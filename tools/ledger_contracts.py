@@ -483,6 +483,10 @@ def _batch2_builders():
         return mathspectral.ula_snapshots((10.0, -20.0), n_elements=8, n_snapshots=64)
 
     return {
+        # ★探針の 32×32 だと目盛の文字幅が書体で変わり、手元(Windows の書体)は右に 3 px はみ出して
+        #   拒否・CI(代替書体)は収まって通る —— 環境で判定が割れた(2026-10-11)。余白を取って両方で通す。
+        "annotate_colorbar": lambda pool, rng: ((np.full((96, 128), 0.5), np.outer(np.linspace(0.0, 1.0, 96), np.ones(128)),
+                                                 (8, 8, 12, 80)), {}),
         # optics: physical ranges (cos in [0, 1], wavelengths in nm, path >= 0)
         "fresnel_dielectric": lambda pool, rng: ([cos_i(rng)], {}),
         "fresnel_conductor": lambda pool, rng: ([cos_i(rng), 0.2, 3.0], {}),

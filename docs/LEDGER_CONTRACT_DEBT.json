@@ -13,7 +13,6 @@
  "debt": {
   "refused": {
    "align_frames": "valueerror_on_probe",
-   "annotate_colorbar": "valueerror_on_probe",
    "annotate_table": "valueerror_on_probe",
    "aperture_photometry": "valueerror_on_probe",
    "beam_hardening_correct": "valueerror_on_probe",
