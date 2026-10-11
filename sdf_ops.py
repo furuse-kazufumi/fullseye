@@ -177,7 +177,12 @@ def sdf_offset(sdf, r):
       エラーにはならない。
     - ``sdf_union`` / ``sdf_intersect`` の**内側**は真の距離の下界なので、合成後に
       ``r < 0`` で収縮すると、重なり領域で実際より多く削れることがある。
-    - 厚さ ``t`` の殻: ``sdf_subtract(sdf, sdf_offset(sdf, -t))``。"""
+    - 厚さ ``t`` の殻: ``sdf_subtract(sdf, sdf_offset(sdf, -t))``。
+
+    空の入力(``sdf`` が 0 要素)は ValueError。
+    """
+    if (len(sdf) if isinstance(sdf, (list, tuple)) else np.asarray(sdf).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("sdf_offset: sdf is empty — pass at least one element")
     sdf = np.asarray(sdf, np.float64)
     return sdf - float(r)
 
@@ -219,7 +224,12 @@ def sphere_sdf(grid, center, R):
 
     使いどころ: ``grid_coords`` で格子 → ``sphere_sdf`` / ``box_sdf`` → ``sdf_union`` /
     ``sdf_subtract`` で CSG → ``<= 0`` を占有として marching cubes(``voxel_to_mesh``
-    に ``-sdf`` を渡し ``iso=0`` 相当で等値面)。"""
+    に ``-sdf`` を渡し ``iso=0`` 相当で等値面)。
+
+    空の入力(``grid`` が 0 要素)は ValueError。
+    """
+    if (len(grid) if isinstance(grid, (list, tuple)) else np.asarray(grid).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("sphere_sdf: grid is empty — pass at least one element")
     g = _as_coords(grid)
     c = np.asarray(center, np.float64).reshape(3)
     try:                                        # R は**半径のスカラ**(回転行列ではない)
@@ -243,7 +253,12 @@ def box_sdf(grid, center, half_extents):
     ``half_extents`` は各軸の**半辺長**(中心から面まで)。外側は厳密距離(角では対角、面前は
     垂直距離)、内側も最近面までの厳密負距離を与える。
 
-    半辺長が 1 つでも負、または形の不正な grid / center / half_extents は ``ValueError``。"""
+    半辺長が 1 つでも負、または形の不正な grid / center / half_extents は ``ValueError``。
+
+    空の入力(``grid`` が 0 要素)は ValueError。
+    """
+    if (len(grid) if isinstance(grid, (list, tuple)) else np.asarray(grid).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("box_sdf: grid is empty — pass at least one element")
     g = _as_coords(grid)
     c = np.asarray(center, np.float64).reshape(3)
     he = np.asarray(half_extents, np.float64).reshape(3)
@@ -338,7 +353,12 @@ def plane_sdf(grid, point, normal):
     返り値: ``grid.shape[:-1]`` の float64。法線側で正、反対側で負、平面上で 0。
 
     使いどころ: ``sdf_subtract(part, plane_sdf(g, p, n))`` で「その平面より法線側を削る」。
-    向きを逆にしたいときは ``normal`` の符号を反転する(``-sdf`` でも同じ)。"""
+    向きを逆にしたいときは ``normal`` の符号を反転する(``-sdf`` でも同じ)。
+
+    空の入力(``grid`` が 0 要素)は ValueError。
+    """
+    if (len(grid) if isinstance(grid, (list, tuple)) else np.asarray(grid).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("plane_sdf: grid is empty — pass at least one element")
     g = _as_coords(grid)
     p0 = np.asarray(point, np.float64).reshape(3)
     n = _axis_frame(normal)
@@ -364,7 +384,12 @@ def cylinder_sdf(grid, center, axis, radius, height):
 
     使いどころ: **貫通穴は ``sdf_subtract(part, cylinder_sdf(...))``**(``height`` を部品より
     長くして端面の縁を残さない)。ボス・ピン・シャフトは ``sdf_union``。無限長の円柱が
-    要るなら ``height`` を十分大きく取る(端面が評価域の外に出れば側面だけが効く)。"""
+    要るなら ``height`` を十分大きく取る(端面が評価域の外に出れば側面だけが効く)。
+
+    空の入力(``grid`` が 0 要素)は ValueError。
+    """
+    if (len(grid) if isinstance(grid, (list, tuple)) else np.asarray(grid).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("cylinder_sdf: grid is empty — pass at least one element")
     g = _as_coords(grid)
     R = float(radius)
     H = float(height)
@@ -399,7 +424,12 @@ def torus_sdf(grid, center, axis, major_radius, minor_radius):
 
     使いどころ: ``sdf_subtract`` で内隅にフィレットを削り出す / ``sdf_union`` で O リング溝の
     形を作る。角を丸めるだけなら ``sdf_smooth_union`` のほうが手軽だが、あちらは丸みの
-    半径が形状に依存する —— **半径を設計値として持ちたいときはこちら**。"""
+    半径が形状に依存する —— **半径を設計値として持ちたいときはこちら**。
+
+    空の入力(``grid`` が 0 要素)は ValueError。
+    """
+    if (len(grid) if isinstance(grid, (list, tuple)) else np.asarray(grid).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("torus_sdf: grid is empty — pass at least one element")
     g = _as_coords(grid)
     Rm = float(major_radius)
     rm = float(minor_radius)
@@ -424,7 +454,12 @@ def capsule_sdf(grid, a, b, radius):
     返り値: ``grid.shape[:-1]`` の float64。
 
     使いどころ: 工具の到達性を「工具の掃引体積が部品と交わらないか」で見るとき、工具を
-    カプセルで置いて ``sdf_intersect`` の最小値が正かを見る。骨梁・血管・繊維の合成にも。"""
+    カプセルで置いて ``sdf_intersect`` の最小値が正かを見る。骨梁・血管・繊維の合成にも。
+
+    空の入力(``grid`` が 0 要素)は ValueError。
+    """
+    if (len(grid) if isinstance(grid, (list, tuple)) else np.asarray(grid).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("capsule_sdf: grid is empty — pass at least one element")
     g = _as_coords(grid)
     pa = np.asarray(a, np.float64).reshape(3)
     pb = np.asarray(b, np.float64).reshape(3)

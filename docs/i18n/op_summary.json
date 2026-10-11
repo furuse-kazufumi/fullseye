@@ -13976,9 +13976,9 @@
    "hi": "y-मानों का linear map, ``mult * y + add`` (HALCON ``scale_y_funct_1d``)।"
   },
   "oned/signal_features": {
-   "fp": "49eddaa57dc9",
-   "ja": "異常検知向けの音響・振動の特徴量ベクトル: ``rms``、``peak``、``crest_factor``、``zcr``、``spectral_centroid``(Hz)、``peak_freq``(Hz)、``bandwidth``(Hz)。すべて有限 —— NaN / Inf の標本は ``ValueError`` を上げ、NaN の特徴量を作らない。空の信号はゼロを返す。",
-   "hi": "anomaly detection के लिए संक्षिप्त acoustic/vibration feature vector: ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid`` (Hz), ``peak_freq`` (Hz), ``bandwidth`` (Hz)। सभी finite — NaN / Inf sample NaN feature बनाने के बजाय ``ValueError`` देता है; खाली signal -> शून्य।"
+   "fp": "98491c0d2f4c",
+   "ja": "異常検知向けの音響・振動の特徴量ベクトル: ``rms``、``peak``、``crest_factor``、``zcr``、``spectral_centroid``(Hz)、``peak_freq``(Hz)、``bandwidth``(Hz)。すべて有限 —— NaN / Inf の標本は ``ValueError`` を上げ、NaN の特徴量を作らない(空の信号も同じく ValueError。2026-10-12 から。以前はゼロを返した)。",
+   "hi": "anomaly detection के लिए संक्षिप्त acoustic/vibration feature vector: ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid`` (Hz), ``peak_freq`` (Hz), ``bandwidth`` (Hz)। सभी finite — NaN / Inf sample NaN feature बनाने के बजाय ``ValueError`` देता है (खाली signal भी, 2026-10-12 से; पहले शून्य लौटाता था)।"
   },
   "oned/smooth_funct_1d_gauss": {
    "fp": "ec333b182f0b",

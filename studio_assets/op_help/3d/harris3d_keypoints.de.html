@@ -27,6 +27,7 @@
 <p>sobel3d). Absteigend nach Antwort, höchstens topn.</p>
 <p>responses: (M,) float64. Die zugehörigen Antwortwerte (absteigend).</p>
 <p>Abhängigkeiten: sobel3d (3D-Gradient), _gauss3d (Glättung im Integrationsfenster). Beide laufen auf dem device.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">vol</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

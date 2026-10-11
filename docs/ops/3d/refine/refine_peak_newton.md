@@ -51,6 +51,8 @@ Returns
 numpy.ndarray
     [score_peak, z, y, x] (精緻化後)。score_peak は精緻化位置での trilinear 補間スコア。
 
+空の入力(``score`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

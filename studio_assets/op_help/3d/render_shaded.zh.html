@@ -6,6 +6,7 @@
 <p>法线图 (H,W,3) + 光源方向 → Lambert 着色图像(外观样本生成,与光学衔接)。</p>
 <p>以 <code style="color:#22d3bf">(H, W)</code> float64、值域 <b>[0, 1]</b> 返回 <code style="color:#22d3bf">I = ambient + (1 − ambient)·clip(n·L̂, 0, 1)</code>。<code style="color:#22d3bf">light</code> 在内部单位化(零向量会因除以 0 变为 NaN),但<b>法线不做单位化</b>(请传入单位法线。<code style="color:#22d3bf">estimate_point_normals</code> / <code style="color:#22d3bf">normals_from_depth</code> 的输出为单位法线)。法线的分量顺序与 <code style="color:#22d3bf">light</code> 的分量顺序要一致(默认 <code style="color:#22d3bf">(0,0,1)</code> 遵循以第 3 分量=朝向相机为正面光的约定)。背向光源的面取 <code style="color:#22d3bf">ambient</code> 的值。把最后一个轴视为法线,因此 <code style="color:#22d3bf">(N,3)</code> 的逐点法线也能工作。没有镜面高光(另行用 <code style="color:#22d3bf">fresnel_reflectance</code> / <code style="color:#22d3bf">reflect</code>)。</p>
 <p>用途: <code style="color:#22d3bf">photometric_stereo</code> 的验算(法线 → 图像的正向),外观检测的合成样本。</p>
+<p>空输入(<code style="color:#22d3bf">normals_img</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

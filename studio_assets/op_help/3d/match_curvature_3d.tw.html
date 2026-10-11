@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• 模板的曲率場全為 0(平坦、<code style="color:#22d3bf">mc</code> 過高)時回傳 <code style="color:#22d3bf">[0,0,0,0]</code>。</p>
 <p style="margin:2px 0 2px 12px">• 曲率是 2 階導數,因此對雜訊敏感。雜訊多的 volume 先用 <code style="color:#22d3bf">points_to_voxel</code> 的</p>
 <p><code style="color:#22d3bf">smooth</code> 等進行平滑。<code style="color:#22d3bf">subvoxel=True</code> 時細化到 NCC 峰值 ±2 鄰域的質心。</p>
+<p>空輸入(<code style="color:#22d3bf">scene</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

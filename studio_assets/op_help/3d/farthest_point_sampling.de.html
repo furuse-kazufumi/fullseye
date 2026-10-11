@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: Nachbaranzahl des kNN-Graphen (Standard 8). <code style="color:#22d3bf">start</code>: erster repräsentativer Punkt (mit <code style="color:#22d3bf">start % N</code> in den Bereich zurückgefaltet).</p>
 <p style="margin:2px 0 2px 12px">• Rückgabewert ist die Indexfolge in Auswahlreihenfolge (zuerst <code style="color:#22d3bf">start</code>). <code style="color:#22d3bf">points[idx]</code> liefert die repräsentativen Punkte.</p>
 <p>Falle: Zerfällt der Graph in mehrere Zusammenhangskomponenten, haben unerreichbare Punkte den Abstand <code style="color:#22d3bf">inf</code>, sodass eine unerreichte Komponente zuerst gewählt wird (argmax greift <code style="color:#22d3bf">inf</code>). Das ergibt ein Verhalten &quot;entfernte Haufen zuerst&quot;; wer jede Komponente gleichmäßig ausdünnen will, trennt sie zuvor mit <code style="color:#22d3bf">euclidean_cluster</code> o. Ä.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

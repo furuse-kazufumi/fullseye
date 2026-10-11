@@ -35,6 +35,8 @@ dict : ``deductions``(``(細目, 点, 説明)`` の列。点 None = 試験中止
 
 **Raises** ``ValueError``: venue が不正、event の kind が不明・値が非有限。
 
+空の入力(``events`` が 0 件)は空を返す(理由: 減点の事象が 0 件の走行は満点で、それが正しい答え)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -6,6 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D black-hat = closing − vol। SE से छोटी <b>गहरी structures/छेद</b> निकालता है।</p>
 <p><code style="color:#22d3bf">morph_close3d(vol, r, ...) − vol(float32)</code>। मान 0 या अधिक होता है: केवल SE (side length <code style="color:#22d3bf">2r+1</code> का cube या त्रिज्या r का ball) से छोटे अंधेरे holes, cracks और gaps अपनी गहराई के साथ बचते हैं, और बड़े अंधेरे क्षेत्र तथा background 0 हो जाते हैं। occupancy voxel के लिए इसका अर्थ है &quot;SE से भरने वाली cavities = 1&quot;। <code style="color:#22d3bf">r</code> को उन holes की त्रिज्या से बड़ा रखें जिन्हें detect करना है। <code style="color:#22d3bf">se</code> &quot;cube&quot;/&quot;ball&quot; है (अन्य पर ValueError), <code style="color:#22d3bf">device</code> केवल cube+torch में प्रभावी है। Return value <code style="color:#22d3bf">(D,H,W)</code> float32 numpy है। चमकीली structures के लिए <code style="color:#22d3bf">morph_tophat3d</code>।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">vol</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -45,6 +45,8 @@ Z は ``1e-6`` 以上に clip してから割るので、**カメラ後方の点
 (``depth > 0`` で呼び手が除く)。画像外の点も返す(``render_point_depth`` が範囲で切る)。
 ``depth_to_points`` の逆で、``depth_to_points(render_point_depth(...))`` が往復になる。
 
+空の入力(``points`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``project_points``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)

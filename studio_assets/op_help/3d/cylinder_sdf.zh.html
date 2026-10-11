@@ -13,6 +13,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>：全长的标量（从 <code style="color:#22d3bf">center</code> 起 ±height/2。拒绝负值）。</p>
 <p>返回值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。</p>
 <p>用法：<b>通孔用 <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b>（让 <code style="color:#22d3bf">height</code> 比零件更长，以免留下端面的边缘）。凸台、销、轴用 <code style="color:#22d3bf">sdf_union</code>。如果需要无限长的圆柱，就把 <code style="color:#22d3bf">height</code> 取得足够大（端面落在求值域之外时，只有侧面起作用）。</p>
+<p>空输入(<code style="color:#22d3bf">grid</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

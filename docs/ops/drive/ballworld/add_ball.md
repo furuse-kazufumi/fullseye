@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 球を姿勢 (p, R) で世界に足す。面ごとのラベル(球 23 / 模様 24)はそのまま。返り値 = objects の索引。
 
+空の入力(``world`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

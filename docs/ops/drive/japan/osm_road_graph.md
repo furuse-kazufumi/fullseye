@@ -25,6 +25,8 @@ OSM の読み込み結果から道路網を作る。
 ``oneway`` は "yes" / "1" / "true" が順方向、"-1" / "reverse" は a, b を入れ替えて順方向にする。
 **Raises** ``ValueError``: way_types に知らない種別、辺が 1 本も無い。
 
+空の入力(``osm`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

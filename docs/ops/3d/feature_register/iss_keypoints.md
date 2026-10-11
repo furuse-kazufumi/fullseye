@@ -38,6 +38,8 @@ well-defined)な点のみ候補にして NMS で疎に選ぶ。回転不変。�
 ``shot_descriptor`` のキーポイント入力に直結し、``register_shot`` は saliency 半径
 ``0.6*radius``・NMS 半径 ``0.3*radius`` で呼ぶ(``radius`` は ``register_shot`` の支持半径)。
 
+空の入力(``points`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

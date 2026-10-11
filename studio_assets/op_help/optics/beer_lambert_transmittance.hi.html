@@ -7,6 +7,7 @@
 <p>path_mm: माध्यम में optical path की लंबाई [mm] (array अनुमत, non-negative)।</p>
 <p>sigma_per_mm: absorption coefficient [1/mm] (array अनुमत — इसे हर wavelength पर बदलने से <b>रंग</b> मिलता है)।</p>
 <p>Returns: आंतरिक transmittance (0–1)। Interface reflections शामिल नहीं हैं (वह <code style="color:#22d3bf">slab_transmittance</code> है)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">path_mm</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

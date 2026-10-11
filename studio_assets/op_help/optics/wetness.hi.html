@@ -8,6 +8,7 @@
 <p>ior: water film का refractive index।</p>
 <p>Returns: गीली अवस्था का diffuse रंग (समान shape)।</p>
 <p>यह गहरा क्यों होता है: water film के अंदर total internal reflection होता है, diffuse प्रकाश बार-बार surface की ओर वापस भेजा जाता है और हर बार absorb होता है। सन्निकटन (approximation) के रूप में, सूखी reflectance ρ पर internal reflectance Ri = 1 − (1 − Ri0)/n² के समकक्ष re-absorption लगाया जाता है ―― ठीक यही गीली रेत के गहरा दिखने की घटना है (specularity में वृद्धि <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> की layer चढ़ाकर व्यक्त की जाती है)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">base_rgb</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

@@ -41,6 +41,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 環境ではなく **Fresnel(n, k) から出ている**ことを絵の中で保証するため。
 ``directions`` は (..., 3) の単位ベクトル(z 上向き)。返り値はその形の (...,)。
 
+空の入力(``directions`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした optics の op ``env_studio``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``key``(既定 12)、``b`` が ``fill``(既定 3.2)を振る。
 
 ## 参考(サンプルデータ・文献)

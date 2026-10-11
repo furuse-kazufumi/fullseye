@@ -6,6 +6,7 @@
 <p>將逐影格候選列表 <code style="color:#22d3bf">detections[k] = ball_detect(frame_k)</code> 連成 1 條軌跡(取最接近等速預測的候選，且在 <code style="color:#22d3bf">max_jump</code> px 以內)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot; (N,), &quot;row&quot; (N,), &quot;radius&quot; (N,), &quot;found&quot; (K,) bool}</code>(見つからないコマは飛ばす)。</p>
+<p>空の入力(<code style="color:#22d3bf">detections</code> が 0 件)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

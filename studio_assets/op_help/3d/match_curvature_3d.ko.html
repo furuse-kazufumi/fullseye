@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• 템플릿의 곡률장이 전부 0(평탄·<code style="color:#22d3bf">mc</code> 가 너무 높음)이면 <code style="color:#22d3bf">[0,0,0,0]</code> 을 반환.</p>
 <p style="margin:2px 0 2px 12px">• 곡률은 2 계 미분이므로 잡음에 민감. 잡음이 많은 volume 은 먼저 <code style="color:#22d3bf">points_to_voxel</code> 의</p>
 <p><code style="color:#22d3bf">smooth</code> 등으로 매끄럽게 한다. <code style="color:#22d3bf">subvoxel=True</code> 로 NCC 피크의 ±2 근방 무게중심으로 정밀화.</p>
+<p>빈 입력(<code style="color:#22d3bf">scene</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -6,6 +6,7 @@
 <p>सड़कों के union की boundary loops। उन्हें बाहरी (सड़क के किनारे) और छेदों (city blocks) में बाँटता है, और Douglas–Peucker से सरल करता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>追跡は画素の辺に沿う(<code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>)ので、間引く前のループの面積の和 = 画素数 × step² (外側 − 穴)が厳密に成り立つ(<code style="color:#22d3bf">area_check</code>)。穴か外側かは、ループの最も左の縦の辺のすぐ右の画素が道路かどうかで決める。返り値 <code style="color:#22d3bf">{&quot;outer&quot;: [(K,2) xy], &quot;holes&quot;: [(K,2) xy], &quot;outer_raw&quot;, &quot;holes_raw&quot;, &quot;area_check&quot;: {&quot;loops_m2&quot;, &quot;pixels_m2&quot;, &quot;abs_err&quot;}}</code>。</p>
+<p>空の入力(<code style="color:#22d3bf">roadmask</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_harmonics</code>: इस्तेमाल होने वाले harmonics की संख्या। <code style="color:#22d3bf">None</code> पर सभी, <code style="color:#22d3bf">N</code> से बड़े मान <code style="color:#22d3bf">N</code> पर काटे जाते हैं, 0 या कम हो तो केवल DC (सभी points केंद्र <code style="color:#22d3bf">(a0, c0)</code> पर)।</p>
 <p style="margin:2px 0 2px 12px">• return value: <code style="color:#22d3bf">(M, 2)</code> float64। coordinates का क्रम (<code style="color:#22d3bf">(x, y)</code> या <code style="color:#22d3bf">(row, col)</code>) <code style="color:#22d3bf">elliptic_fourier</code> को दिए गए क्रम जैसा ही रहता है। <code style="color:#22d3bf">t = 0</code> मूल contour के शुरुआती point से मेल खाता है।</p>
 <p>contour को coefficients में बदले बिना केवल smooth करना हो तो <code style="color:#22d3bf">fourier_smooth</code>। coefficients की आपस में तुलना के लिए <code style="color:#22d3bf">invariants</code> / <code style="color:#22d3bf">descriptor_distance</code>।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">model</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

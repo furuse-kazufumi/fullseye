@@ -9,6 +9,7 @@
 <p>Raises ValueError: 输入中有 NaN/Inf/float32 溢出时。</p>
 <p>参数: <code style="color:#22d3bf">vol</code> 为 <code style="color:#22d3bf">(D,H,W)</code>,<code style="color:#22d3bf">center=(cy, cx)</code> 为各 z 切片内的 <b>(行, 列)</b>(默认为切片中心)。将 <code style="color:#22d3bf">r_in</code>〜<code style="color:#22d3bf">r_out</code>(voxel,默认 <code style="color:#22d3bf">min(H,W)/2 − 1</code>)等分为 <code style="color:#22d3bf">nr</code> 份,角度等分为 <code style="color:#22d3bf">ntheta</code> 份。输出 <code style="color:#22d3bf">(D, ntheta, nr)</code> float32: 轴 0 为 z(高度,与输入相同),第 k 行的角度 <code style="color:#22d3bf">θ = k·2π/ntheta</code>,第 j 列的半径。采样点为 <code style="color:#22d3bf">(z, cy + r sinθ, cx + r cosθ)</code>,volume 外为 0。D, H, W 为 1 的轴在归一化时会除以 0(与 <code style="color:#22d3bf">polar_unwrap</code> 不同,没有检查)。</p>
 <p>后续: 取 <code style="color:#22d3bf">[:, :, j]</code> 即得到半径 j 的圆柱面的 (D×θ) 2-D 图像,可使用 2-D 的划痕检测、<code style="color:#22d3bf">ncc_locate</code>。</p>
+<p>空输入(<code style="color:#22d3bf">vol</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

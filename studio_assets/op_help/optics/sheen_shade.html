@@ -6,6 +6,7 @@
 <p>布の<b>縁の光沢</b>(ベルベット・サテン)。視線に対して寝た所ほど明るい。</p>
 <p>normals / light / view: 上記と同じ。sheen: 強さ。exponent: 縁への集中度。</p>
 <p>返り値: (H, W)。<b>鏡面反射とは逆</b>に、正面(n·v = 1)で 0 に近く、縁(n·v → 0)で最大になる ―― ベルベットの縁が白く光るのはこれで、Phong では絶対に出せない。</p>
+<p>空の入力(<code style="color:#22d3bf">normals</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

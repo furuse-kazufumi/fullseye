@@ -96,7 +96,12 @@ def gs_from_world(world: dict, *, spacing: float = 0.004, max_per_object: int = 
     返り値 dict: ``face`` (N,)・``bary`` (N,3)・``offset_local`` (N,3)・``color`` (N,3)・``opacity`` (N,)・``sigma_t`` (N,)・``sigma_n`` (N,)・
     ``obj`` (N,)(世界の objects の索引)・``label`` (N,)・``spacing_obj`` (物体数,)、加えて :func:`gs_update` が埋める ``mu`` (N,3)・
     ``R`` (N,3,3)(列 = t1, t2, n)・``normal`` (N,3)。
-    fail-closed: spacing ≤ 0、max_per_object < 1、雑音 < 0、sigma_ratio ≤ 0、normal_ratio ≤ 0、opacity ∉ (0, 1]、面の無い世界は ValueError。"""
+    fail-closed: spacing ≤ 0、max_per_object < 1、雑音 < 0、sigma_ratio ≤ 0、normal_ratio ≤ 0、opacity ∉ (0, 1]、面の無い世界は ValueError。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("gs_from_world: world is empty — pass a non-empty dict")
     if not (np.isfinite(spacing) and spacing > 0) or int(max_per_object) < 1:
         raise ValueError("gs_from_world: need spacing > 0 and max_per_object ≥ 1")
     if not (pos_noise >= 0 and color_noise >= 0) or not (sigma_ratio > 0 and normal_ratio > 0 and curv_ratio > 0 and 0 < edge_ratio <= 1) or not (0 < opacity <= 1):
@@ -170,7 +175,12 @@ def gs_update(gs: dict, world: dict) -> dict:
     """世界の**いまの**頂点からガウシアンの中心・向きを計算し直す(その場で書き換えて同じ dict を返す)。
 
     μ = Σ_k bary_k · V[F[face, k]] + R · offset_local、R = 面の局所座標 [t1 t2 n]。面の数が作ったときと違う世界は ValueError
-    (物体を足した・消した世界には使えない: 作り直すこと)。剛体で動かした物体のガウシアンは同じ剛体変換で動く(門)。"""
+    (物体を足した・消した世界には使えない: 作り直すこと)。剛体で動かした物体のガウシアンは同じ剛体変換で動く(門)。
+
+    空の入力(``gs`` が空の dict)は ValueError。
+    """
+    if isinstance(gs, dict) and len(gs) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("gs_update: gs is empty — pass a non-empty dict")
     V = np.asarray(world["V"], np.float64)
     F = np.asarray(world["F"], np.int64)
     if len(F) <= int(gs["face"].max()):
@@ -197,7 +207,12 @@ def gs_render(gs: dict, pose, K, width: int, height: int, *, light=(0.3, -0.5, 0
 
     返り値: ``color`` (H,W,3)・``alpha`` (H,W)(= Σ α_i T_i)・``depth`` (H,W)(α で重みづけた深さ / alpha、alpha < 0.5 は NaN)・
     ``label`` (H,W)(重み最大のガウシアンのラベル、alpha < 0.5 は −1)・``n_pairs``・``n_visible``。
-    fail-closed: 画像の大きさ ≤ 0、max_radius < 1、組の数が ``max_pairs`` を超える(遅すぎる描画を黙って走らせない)は ValueError。"""
+    fail-closed: 画像の大きさ ≤ 0、max_radius < 1、組の数が ``max_pairs`` を超える(遅すぎる描画を黙って走らせない)は ValueError。
+
+    空の入力(``gs`` が空の dict)は ValueError。
+    """
+    if isinstance(gs, dict) and len(gs) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("gs_render: gs is empty — pass a non-empty dict")
     W, H = int(width), int(height)
     if W <= 0 or H <= 0 or int(max_radius) < 1:
         raise ValueError("gs_render: need width, height > 0 and max_radius ≥ 1")

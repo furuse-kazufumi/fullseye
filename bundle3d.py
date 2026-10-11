@@ -41,7 +41,11 @@ def project(points, rvec, t, K):
     ``Z_cam = 0`` は 0 割で inf/NaN、負の Z は画像内に見える偽の座標になるので、可視性の判定は
     呼び出し側で行う。形状の検証もしない(``np.asarray`` で float 化するのみ)。
     ``bundle_adjust`` / ``mean_reprojection_error`` の再投影残差はこの関数で作られる。
+
+    空の入力(``points`` が 0 要素)は ValueError。
     """
+    if (len(points) if isinstance(points, (list, tuple)) else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("project: points is empty — pass at least one element")
     R = rvec_to_R(rvec)
     Xc = (R @ np.asarray(points, float).T).T + np.asarray(t, float)
     x = (np.asarray(K, float) @ Xc.T).T

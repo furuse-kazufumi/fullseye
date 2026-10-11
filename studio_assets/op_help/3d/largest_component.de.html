@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• Der Rückgabewert ist bool mit derselben Form wie die Eingabe. Ohne Vordergrund lauter False (keine Ausnahme).</p>
 <p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: Eingabe nicht 3-dimensional, <code style="color:#22d3bf">connectivity</code> ungleich 6/18/26.</p>
 <p style="margin:2px 0 2px 12px">• Typisch: aus einem durch Schwellwertbildung entstandenen Binärvolumen Rauschklumpen verwerfen und nur das Hauptobjekt behalten. Um mehrere zu behalten <code style="color:#22d3bf">filter_by_volume</code>, zur Auswahl nach Merkmalen <code style="color:#22d3bf">vol_select_labels</code>.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">vol</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Messunsicherheit und Kalibrierung — was nötig ist, um zu behaupten, dass man misst</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

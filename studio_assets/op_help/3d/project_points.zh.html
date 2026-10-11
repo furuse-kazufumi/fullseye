@@ -8,6 +8,7 @@
 <p>3D 点群 (N,3) → 图像坐标 (u,v) 与深度。针孔(depth_to_points 的正向)。</p>
 <p>K=相机内参矩阵 [[fx,0,cx],[0,fy,cy],[0,0,1]]。R,t 为外参位姿。世界模型的观测映射。</p>
 <p>将 <code style="color:#22d3bf">P_cam = R @ P + t</code>(<code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,)。None 为恒等、零)按 <code style="color:#22d3bf">u = fx·X/Z + cx</code>、<code style="color:#22d3bf">v = fy·Y/Z + cy</code> 投影。返回值 <code style="color:#22d3bf">(uv (N,2), depth (N,))</code>: <code style="color:#22d3bf">uv[:,0] = u</code>(列)、<code style="color:#22d3bf">uv[:,1] = v</code>(行),<code style="color:#22d3bf">depth</code> 为相机坐标的 Z(clip 前的原始值,负值也原样保留)。<code style="color:#22d3bf">K</code> 以 <code style="color:#22d3bf">K[0,0]</code> 等方式取下标,因此须为 numpy 数组(nested list 不可)。Z 先 clip 到 <code style="color:#22d3bf">1e-6</code> 以上再相除,因此<b>相机后方的点也不会被丢弃</b>,而会变成巨大的 u,v (由调用方用 <code style="color:#22d3bf">depth &gt; 0</code> 去除)。图像外的点也会返回(由 <code style="color:#22d3bf">render_point_depth</code> 按范围裁掉)。是 <code style="color:#22d3bf">depth_to_points</code> 的逆,<code style="color:#22d3bf">depth_to_points(render_point_depth(...))</code> 构成往返。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

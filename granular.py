@@ -305,7 +305,12 @@ def cone_profile_px(u, H_px: float, phi_deg: float, toe_round_px: float = 0.0, a
     基本は ``c = max(0, H − u tan φ)``。``apex_blunt_px`` = 頂に内接する円弧の半径(材料を削る、中心は
     ``(0, H − r/cos φ)``、接点 ``u = r sin φ``)。``toe_round_px`` = 裾の凹みを埋める円弧の半径(材料を
     足す、中心は空気側 ``(x_t, r)``、``x_t = R + r tan(φ/2)``、接点 ``u = x_t − r sin φ``)—— どちらも
-    接線連続(導出: 接点で両側の高さが裾は ``r(1 − cos φ)``、頂は ``H − r sin²φ / cos φ`` で一致)。**Raises** ``ValueError``: 2 つの円弧が重なる(山が小さすぎる)。"""
+    接線連続(導出: 接点で両側の高さが裾は ``r(1 − cos φ)``、頂は ``H − r sin²φ / cos φ`` で一致)。**Raises** ``ValueError``: 2 つの円弧が重なる(山が小さすぎる)。
+
+    空の入力(``u`` が 0 要素)は ValueError。
+    """
+    if (len(u) if isinstance(u, (list, tuple)) else np.asarray(u).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("cone_profile_px: u is empty — pass at least one element")
     u = np.abs(np.asarray(u, dtype=np.float64))
     phi = math.radians(_angle(phi_deg, "phi_deg"))
     H = _pos(H_px, "H_px")
@@ -683,7 +688,12 @@ def heap_spheres_select(pos, radius: float, floor_height: float, bin_radius: flo
 
 def spheres_to_heightmap(pos, radius: float, pitch: float, extent: float) -> np.ndarray:
     """球の中心列 ``pos (n, 3)`` [m] と半径から、上から見た高さ図(各セルで球面の最大高さ、無ければ 0)。
-    格子は ``[-extent, extent]²`` を ``pitch`` で刻む。"""
+    格子は ``[-extent, extent]²`` を ``pitch`` で刻む。
+
+    空の入力(``pos`` が 0 要素)は ValueError。
+    """
+    if (len(pos) if isinstance(pos, (list, tuple)) else np.asarray(pos).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("spheres_to_heightmap: pos is empty — pass at least one element")
     P = np.asarray(pos, dtype=np.float64)
     r = _pos(radius, "radius")
     p = _pos(pitch, "pitch")
@@ -704,7 +714,12 @@ def spheres_to_heightmap(pos, radius: float, pitch: float, extent: float) -> np.
 
 
 def spheres_to_silhouette(pos, radius: float, pitch: float, extent: float, height: float, supersample: int = 4) -> np.ndarray:
-    """球の中心列から、横(y 方向)から見た正射影の被覆率画像(円板の和、反エイリアス)。行 0 が上。"""
+    """球の中心列から、横(y 方向)から見た正射影の被覆率画像(円板の和、反エイリアス)。行 0 が上。
+
+    空の入力(``pos`` が 0 要素)は ValueError。
+    """
+    if (len(pos) if isinstance(pos, (list, tuple)) else np.asarray(pos).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("spheres_to_silhouette: pos is empty — pass at least one element")
     P = np.asarray(pos, dtype=np.float64)
     r = _pos(radius, "radius")
     ss = int(supersample)
@@ -723,7 +738,12 @@ def spheres_to_silhouette(pos, radius: float, pitch: float, extent: float, heigh
 
 
 def spheres_render_shaded(pos, radius: float, pitch: float, extent: float, height: float, light=(-0.4, -0.6, 0.7)) -> np.ndarray:
-    """横からの正射影を陰影つきで描く(numpy の z バッファ、Lambert)。GIF 用。返り ``(rows, cols, 3)`` [0, 1]。"""
+    """横からの正射影を陰影つきで描く(numpy の z バッファ、Lambert)。GIF 用。返り ``(rows, cols, 3)`` [0, 1]。
+
+    空の入力(``pos`` が 0 要素)は ValueError。
+    """
+    if (len(pos) if isinstance(pos, (list, tuple)) else np.asarray(pos).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("spheres_render_shaded: pos is empty — pass at least one element")
     P = np.asarray(pos, dtype=np.float64)
     r = _pos(radius, "radius")
     p = _pos(pitch, "pitch")

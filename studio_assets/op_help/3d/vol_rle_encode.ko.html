@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• 3-D가 아니거나, voxel 수가 <code style="color:#22d3bf">MAX_VOXELS</code>(<code style="color:#22d3bf">1 &lt;&lt; 27</code> ≈ 1.34억)를 초과하면 <code style="color:#22d3bf">ValueError</code>.</p>
 <p style="margin:2px 0 2px 12px">• 빈 마스크는 run 수 0의 <code style="color:#22d3bf">VolRLE</code>이 된다(오류가 아님).</p>
 <p>주의: 축 순서는 <code style="color:#22d3bf">[z, y, x]</code>(depth, row, col). run은 x 방향으로만 달리므로, x 방향으로 잘게 끊기는 형상(줄무늬·잡음)일수록 run 수가 늘고 압축의 이점은 줄어든다. <code style="color:#22d3bf">vol_rle_volume</code> / <code style="color:#22d3bf">vol_rle_bbox</code> / <code style="color:#22d3bf">vol_rle_centroid</code>는 decode하지 않고 run 위에서 답한다. 집합 연산은 <code style="color:#22d3bf">vol_rle_union</code> / <code style="color:#22d3bf">vol_rle_intersect</code> / <code style="color:#22d3bf">vol_rle_difference</code>, 밀집 배열로 되돌리는 것은 <code style="color:#22d3bf">vol_rle_decode</code>.</p>
+<p>빈 입력(<code style="color:#22d3bf">vol_binary</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

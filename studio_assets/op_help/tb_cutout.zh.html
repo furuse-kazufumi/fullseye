@@ -14,6 +14,7 @@
 <p>移除一个空间上的轴对齐盒状区域，并返回 <code style="color:#22d3bf">(kept, kept_idx)</code>（模拟局部数据缺失）。</p>
 <p>均匀采样 1 个已有点作为中心，去除边长为 <code style="color:#22d3bf">extent</code>(标量=立方体，或 <code style="color:#22d3bf">(3,)</code>=各轴边长)的盒子内的所有点。中心点自身必定在内，因此至少去除 1 个点。去除的点必定落在边长为 <code style="color:#22d3bf">extent</code> 的盒子内(空间上局部 = 可与随机散布区分)。<code style="color:#22d3bf">kept == points[kept_idx]</code>，<code style="color:#22d3bf">extent &gt; 0</code>。</p>
 <p><code style="color:#22d3bf">extent</code> 传入非正值或 <code style="color:#22d3bf">(3,)</code> 以外的形状为 <code style="color:#22d3bf">ValueError</code>。空输入返回空和空索引。中心是用 <code style="color:#22d3bf">rng.integers(n)</code> 选出的点，因此即使 <code style="color:#22d3bf">seed</code> 相同，点的排列一变，挖掉的位置也会不同。盒子判定为闭区间 <code style="color:#22d3bf">|P - center| &lt;= extent/2</code>。去除点数取决于密度，<code style="color:#22d3bf">extent</code> 大于点云尺寸时全部点都会消失。返回值为 <code style="color:#22d3bf">(kept float64 (M,3), kept_idx int64 (M,))</code>，顺序不变。均匀缺失用 <code style="color:#22d3bf">random_dropout</code>。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:点云的抽稀、离群点去除和随机丢弃都可能得到空结果。空点云是合法的值,链条的下一级不应因此停下)。</p>
 <p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">cutout</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调参数，<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

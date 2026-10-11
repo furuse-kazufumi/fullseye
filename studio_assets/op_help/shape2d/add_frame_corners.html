@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(N + 8, 2)</code> float64。</p>
 <p style="margin:2px 0 2px 12px">• 元の点が既に枠上や枠外にあっても検査しない。枠外の対応点は Delaunay 分割で枠の三角形と交差し、ワープが歪む。</p>
 <p><code style="color:#22d3bf">morph</code> / <code style="color:#22d3bf">morph_sequence</code> は <code style="color:#22d3bf">with_corners=True</code> で内部的にこれを両方の点群に掛ける。<code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">warp_tps_image</code> を直接呼ぶときは自分で <code style="color:#22d3bf">src</code> と <code style="color:#22d3bf">dst</code> の両方に足すこと。</p>
+<p>空の入力(<code style="color:#22d3bf">pts</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -182,7 +182,11 @@ def render_lambertian(normals, albedo, light, ambient=0.0):
     ``photometric_stereo`` の順方向モデルそのもの(光源正規化の規約は ``normalize=True``
     に対応)なので、復元した法線・アルベドから再合成して元画像と比べる往復検証に使える。
     鏡面・相互反射・投影影(cast shadow)は含まない。
+
+    空の入力(``normals`` が 0 要素)は ValueError。
     """
+    if (len(normals) if isinstance(normals, (list, tuple)) else np.asarray(normals).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("render_lambertian: normals is empty — pass at least one element")
     n = np.asarray(normals, float)
     L = np.asarray(light, float)
     L = L / (np.linalg.norm(L) + 1e-12)

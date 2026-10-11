@@ -29,6 +29,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 大きさが同時に変わる)。大きさだけ変えたいなら事前に重心を原点へ寄せる。``s`` は
 Python float、返り値の点群は float64。``seed`` で決定論的。空入力は空を返す。
 
+空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

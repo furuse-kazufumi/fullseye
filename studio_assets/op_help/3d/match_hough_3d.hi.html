@@ -17,6 +17,7 @@
 <p>कई instances के लिए <code style="color:#22d3bf">nms</code> छोटा रखें।</p>
 <p style="margin:2px 0 2px 12px">• Template में कोई edge न हो तो पूरा 0 वाला <code style="color:#22d3bf">(topk,4)</code>। जहाँ template पूरा नहीं समाता वे positions 0 हैं।</p>
 <p>आगे: हर peak को <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_peak_newton</code> से refine करें।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">scene</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

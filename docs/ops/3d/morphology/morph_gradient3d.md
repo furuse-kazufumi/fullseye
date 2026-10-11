@@ -28,6 +28,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ValueError)、``device`` は cube+torch のときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
 用途: ``match_chamfer_3d`` 用のエッジ源、``hough_plane_3d`` に渡す前の表面抽出の代替。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

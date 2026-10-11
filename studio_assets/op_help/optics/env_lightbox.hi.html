@@ -8,6 +8,7 @@
 <p style="margin:2px 0 2px 12px">• आसपास चमकीला है ―― अंधेरे environment में aluminium बिल्कुल काला हो जाता है (reflectance ~0.9 वाली metal काली दिखती है क्योंकि जो वह परावर्तित करती है वह काला है)।</p>
 <p style="margin:2px 0 2px 12px">• फिर भी, <b>एक gradient होता है</b> ―― पूरी तरह एकसमान environment में कोई भी anisotropic lobe समान मान लौटाता है, इसलिए machining marks गायब हो जाते हैं। brush marks इसलिए दिखते हैं क्योंकि marks environment के उजाले और अंधेरे को mark की दिशा में खींचते हैं।</p>
 <p>machining marks <b>केवल तिरछे देखने पर दिखते हैं</b> (ठीक ऊपर से देखे गए plane के लिए, हर pixel की reflection दिशा zenith पर केंद्रित होती है और environment के gradient पर नहीं फैलती)। <code style="color:#22d3bf">optical_camera(tilt_deg=50〜70)</code> के आसपास एक दिशानिर्देश है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">directions</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

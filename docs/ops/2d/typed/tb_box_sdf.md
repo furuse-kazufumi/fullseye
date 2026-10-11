@@ -48,6 +48,8 @@ Inigo Quilez の box SDF: ``q = |p-center| - half_extents`` とし、
 
 半辺長が 1 つでも負、または形の不正な grid / center / half_extents は ``ValueError``。
 
+空の入力(``grid`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``box_sdf``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)

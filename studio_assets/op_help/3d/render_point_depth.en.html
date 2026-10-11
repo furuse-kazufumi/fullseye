@@ -8,6 +8,7 @@
 <p style="margin:2px 0 2px 12px">• 1 point = 1 pixel, so sparse point clouds end up full of holes (densify first with <code style="color:#22d3bf">mesh_to_points</code>). There is no splat radius.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> is numpy (3,3); <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> can be omitted.</p>
 <p>Downstream: back with <code style="color:#22d3bf">depth_to_points</code>, normals with <code style="color:#22d3bf">normals_from_depth</code>, <code style="color:#22d3bf">tsdf_from_depth</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">points</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -29,6 +29,8 @@ C = Σ c_i α_i T_i、T_i = Π_{j<i}(1 − α_j)、背景 = (1 − Σ α_i T_i) 
 ``label`` (H,W)(重み最大のガウシアンのラベル、alpha < 0.5 は −1)・``n_pairs``・``n_visible``。
 fail-closed: 画像の大きさ ≤ 0、max_radius < 1、組の数が ``max_pairs`` を超える(遅すぎる描画を黙って走らせない)は ValueError。
 
+空の入力(``gs`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

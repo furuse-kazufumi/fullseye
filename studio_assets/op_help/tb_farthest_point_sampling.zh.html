@@ -18,6 +18,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: kNN 图的邻域数(默认 8)。<code style="color:#22d3bf">start</code>: 第一个代表点(用 <code style="color:#22d3bf">start % N</code> 折回到范围内)。</p>
 <p style="margin:2px 0 2px 12px">• 返回值是按选择顺序的下标列(开头为 <code style="color:#22d3bf">start</code>)。用 <code style="color:#22d3bf">points[idx]</code> 得到代表点群。</p>
 <p>陷阱: 图分成多个连通分量时,不可达的点距离为 <code style="color:#22d3bf">inf</code>,因此未到达的分量会被先选中(argmax 取到 <code style="color:#22d3bf">inf</code>)。会出现“先取远离的块”的行为,因此想对每个分量均匀抽稀时,先用 <code style="color:#22d3bf">euclidean_cluster</code> 等分开后再使用。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">farthest_point_sampling</code>。实现相同,只有调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 调节 <code style="color:#22d3bf">k</code>(默认 8)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

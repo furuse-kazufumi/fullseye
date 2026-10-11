@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 像の見かけの大きさ θ = 2 atan(m h /(2(e + b)))、近軸では m h/(e + b) = h/(e + k a)、k = 1 + 2e/R。
 ``flat_equivalent_distance`` = 同じ大きさに見える平面鏡の距離 k a(遠くに見える量)。
 
+空の入力(``object_distance`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_harmonics</code>: number of harmonics used. <code style="color:#22d3bf">None</code> for all; values larger than <code style="color:#22d3bf">N</code> are truncated to <code style="color:#22d3bf">N</code>; 0 or less gives DC only (all points at the centre <code style="color:#22d3bf">(a0, c0)</code>).</p>
 <p style="margin:2px 0 2px 12px">• Returns: <code style="color:#22d3bf">(M, 2)</code> float64. The coordinate order (<code style="color:#22d3bf">(x, y)</code> or <code style="color:#22d3bf">(row, col)</code>) is inherited as passed to <code style="color:#22d3bf">elliptic_fourier</code>. <code style="color:#22d3bf">t = 0</code> corresponds to the start point of the original contour.</p>
 <p>To merely smooth a contour without turning it into coefficients, <code style="color:#22d3bf">fourier_smooth</code>. Comparing coefficients with each other: <code style="color:#22d3bf">invariants</code> / <code style="color:#22d3bf">descriptor_distance</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">model</code> an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_harmonics</code>: 使用的諧波數。<code style="color:#22d3bf">None</code> 為全部，大於 <code style="color:#22d3bf">N</code> 的值截斷為 <code style="color:#22d3bf">N</code>,0 以下則只有 DC(所有點都在中心 <code style="color:#22d3bf">(a0, c0)</code>)。</p>
 <p style="margin:2px 0 2px 12px">• 回傳值: <code style="color:#22d3bf">(M, 2)</code> float64。座標的排列(<code style="color:#22d3bf">(x, y)</code> 或 <code style="color:#22d3bf">(row, col)</code>) 原樣繼承傳給 <code style="color:#22d3bf">elliptic_fourier</code> 的排列。<code style="color:#22d3bf">t = 0</code> 對應原輪廓的起點。</p>
 <p>若只想平滑輪廓而不係數化，用 <code style="color:#22d3bf">fourier_smooth</code>。係數之間的比較用 <code style="color:#22d3bf">invariants</code> / <code style="color:#22d3bf">descriptor_distance</code>。</p>
+<p>空輸入(<code style="color:#22d3bf">model</code> 為空 dict)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

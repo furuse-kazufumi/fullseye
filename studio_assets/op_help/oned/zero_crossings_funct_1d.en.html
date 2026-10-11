@@ -7,6 +7,7 @@
 <p>Returns the integer indices <code style="color:#22d3bf">i</code> with <code style="color:#22d3bf">sign(y[i]) * sign(y[i+1]) &lt; 0</code> — the sample *before* each crossing. An empty input returns an empty index array (degenerate case, not an error).</p>
 <p>Honest limitation: the test is a <b>strict</b> sign product, so a crossing that lands exactly on a zero sample (<code style="color:#22d3bf">[-1, 0, 1]</code>) is *not* reported, nor is a touch of zero without a sign change (<code style="color:#22d3bf">[1, 0, 1]</code>).</p>
 <p>:param y: 1-D function (may be empty). :returns: int index array (possibly empty). :raises ValueError: non-1-D / NaN / Inf input.</p>
+<p>Empty input (<code style="color:#22d3bf">y</code> with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON&#x27;s funct_1d), and empty functions flow through chains of function ops).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

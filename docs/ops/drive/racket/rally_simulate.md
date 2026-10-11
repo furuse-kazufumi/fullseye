@@ -26,6 +26,8 @@ T_flight で落ちる速度を狙って打つ(y* は乱数、``plan_spin`` な�
 :func:`shot_is_legal` で先読みし、外す狙いは巻き戻して別の狙い(戦略を引き直す)でやり直す。
 返り値 ``{"hits", "end_reason", "shots": [...], "t", "p" (N,3), "racket_pos" (N,2,3), "hit_times", "rewinds"}``。
 
+空の入力(``bp`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

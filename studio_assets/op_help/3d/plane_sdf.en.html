@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>: the plane normal (3 elements, <b>zero vector and NaN are rejected</b>). Its length is automatically normalised to 1, so the magnitude does not affect the result (only the direction matters).</p>
 <p>Returns: float64 of shape <code style="color:#22d3bf">grid.shape[:-1]</code>. Positive on the normal side, negative on the opposite side, 0 on the plane.</p>
 <p>Where to use: <code style="color:#22d3bf">sdf_subtract(part, plane_sdf(g, p, n))</code> &quot;cuts away the normal side of that plane&quot;. To reverse the orientation, flip the sign of <code style="color:#22d3bf">normal</code> (<code style="color:#22d3bf">-sdf</code> does the same).</p>
+<p>Empty input (<code style="color:#22d3bf">grid</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

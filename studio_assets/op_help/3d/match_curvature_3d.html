@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• テンプレの曲率場が全 0(平坦・<code style="color:#22d3bf">mc</code> が高すぎ)なら <code style="color:#22d3bf">[0,0,0,0]</code> を返す。</p>
 <p style="margin:2px 0 2px 12px">• 曲率は 2 階微分なのでノイズに敏感。ノイズが多い volume は先に <code style="color:#22d3bf">points_to_voxel</code> の</p>
 <p><code style="color:#22d3bf">smooth</code> 等で滑らかにする。<code style="color:#22d3bf">subvoxel=True</code> で NCC ピークの ±2 近傍重心に精緻化。</p>
+<p>空の入力(<code style="color:#22d3bf">scene</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

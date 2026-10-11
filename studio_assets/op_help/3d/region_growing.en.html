@@ -13,6 +13,7 @@
 <p>Returns:</p>
 <p>labels: (N,) int. Assigns 0,1,2,... per connected smooth region. <b>Small regions below min_region_size (isolated points, debris with inconsistent orientation) are -1 (noise/unassigned)</b>, following the unified contract (-1=noise).</p>
 <p>Empty input returns shape (0,).</p>
+<p>Empty input (<code style="color:#22d3bf">points</code> with 0 elements) returns an empty result (reason: an empty cloud has nothing to label, so a length-0 label array is the correct answer; upstream filters can emit empty clouds).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

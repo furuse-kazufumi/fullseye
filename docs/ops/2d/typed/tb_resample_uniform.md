@@ -51,6 +51,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 点列はこの op で等間隔化してから渡すと数値微分が安定する。滑らかに補間したい場合は
 ``fit_spline_curve``。
 
+空の入力(``curve`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``resample_uniform``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)

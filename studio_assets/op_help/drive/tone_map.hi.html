@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tone_map(radiance, exposure: &#x27;float&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveenv; driveenv.tone_map(radiance, exposure: &#x27;float&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;tone_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>HDR camera के लिए रंग बनाए रखने वाला tone compression: m = हर pixel का अधिकतम channel × exposure, display = luminance × exposure × (1 + m/4)/(1 + m) —— m ≪ 1 पर linear, चमकीले भागों में 1 की ओर जाता है (रंगों का अनुपात = chromaticity नहीं बदलती; saturation से lamps सफ़ेद नहीं होतीं; मान्यता: वाहन में लगा HDR camera)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">radiance</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

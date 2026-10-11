@@ -32,6 +32,8 @@ CIE L\*a\*b\* → sRGB ``[0, 1]``。**色域外は切り詰められる**ので
   8 bit にするなら呼び出し側で 255 倍して丸める。
 - 失敗(``MetricContractError``): 最後の軸が 3 でない。
 
+空の入力(``lab`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

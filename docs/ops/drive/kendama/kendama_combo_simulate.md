@@ -47,6 +47,8 @@ kp["catch_window"]、相対速さ ≤ ``v_rel_max``: 仮定 1 m/s)。窓に入�
 "apex_closed", "rose_then_fell", "energy_drift"}], "end_reason" ("done" | "too_fast" | "hit_ken" | "missed" | "timeout"), "t", "p", "v",
 "hand", "hand_v", "hand_a", "R", "on_cup", "taut", "stage", "min_gap", "grade" (もしかめの級相当), "max_omega"}``。
 
+空の入力(``kp`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

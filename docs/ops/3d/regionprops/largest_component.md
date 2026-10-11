@@ -28,6 +28,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 - Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
 - 典型: 閾値処理で出た二値ボリュームからノイズ塊を捨てて主対象だけ残す。複数を残したいなら ``filter_by_volume``、特徴で選ぶなら ``vol_select_labels``。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [measurement_uncertainty](../../math/guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために

@@ -25,6 +25,7 @@
 <p>Returns:</p>
 <p>labels: (N,) int. 0,1,2,... assigned to each connected smooth region. <b>Small regions below min_region_size (isolated points, misoriented debris) get -1 (noise / unassigned)</b>, following the common contract (-1 = noise).</p>
 <p>Empty input returns shape (0,).</p>
+<p>Empty input (<code style="color:#22d3bf">points</code> with 0 elements) returns an empty result (reason: an empty cloud has nothing to label, so a length-0 label array is the correct answer; upstream filters can emit empty clouds).</p>
 <p>The 3d op <code style="color:#22d3bf">region_growing</code> bridged into the 2-D evolution registry. The implementation is the same; only the calling convention is adapted to <code style="color:#22d3bf">op(v, a, b)</code>. <code style="color:#22d3bf">a</code> sweeps <code style="color:#22d3bf">angle_thresh_deg</code> (default 15) and <code style="color:#22d3bf">b</code> sweeps <code style="color:#22d3bf">k</code> (default 20).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

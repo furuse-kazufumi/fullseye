@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 輸出行數固定為 3,輸入不是 (N,3) 時會因行數不足而失敗,或多餘的行被捨棄。沒有形狀檢驗。</p>
 <p style="margin:2px 0 2px 12px">• 封閉曲線不會封閉(終點→起點的區間不在內插範圍內)。即使有重複點 <code style="color:#22d3bf">np.interp</code> 也能通過,但該區間以長度 0 處理。</p>
 <p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> 是 index 參數的差分,因此間距不均勻的點列用本 op 等間距化後再傳入,數值微分會更穩定。需要平滑內插時用 <code style="color:#22d3bf">fit_spline_curve</code>。</p>
+<p>空輸入(<code style="color:#22d3bf">curve</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

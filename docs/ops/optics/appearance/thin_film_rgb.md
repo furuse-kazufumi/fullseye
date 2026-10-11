@@ -26,6 +26,8 @@ normals / view: (H,W,3) 法線マップ / 面から視点への方向。
 thickness_nm / n_film / n_sub: :func:`thin_film_reflectance` と同じ。
 strength: 全体の強さ。
 
+空の入力(``normals`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

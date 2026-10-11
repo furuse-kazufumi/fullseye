@@ -27,6 +27,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 法線でも動く。鏡面ハイライトは無い(``fresnel_reflectance`` / ``reflect`` で別途)。
 用途: ``photometric_stereo`` の検算(法線 → 画像の順方向)、外観検査の合成サンプル。
 
+空の入力(``normals_img`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

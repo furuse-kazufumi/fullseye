@@ -30,6 +30,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 - 主軸が縮退(球など)なら軸の向きは不定。
 後段: ``match_pca``、``obb``(有向 bbox)、正準姿勢への回転。
 
+空の入力(``points`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

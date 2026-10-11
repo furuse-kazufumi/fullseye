@@ -12,6 +12,7 @@
 <p>検証: scikit-image が import できない環境では <code style="color:#22d3bf">RuntimeError</code>(<code style="color:#22d3bf">ImportError</code> ではない)。<code style="color:#22d3bf">wrapped</code> が 2-D でない、<code style="color:#22d3bf">mask</code> の形が違う、<b>全画素が無効</b> (アンラップする画素が無い)は <code style="color:#22d3bf">ValueError</code>。</p>
 <p>前提(Itoh の条件): 隣接する有効画素の真の位相差が <code style="color:#22d3bf">π</code> 未満。急な段差・深い穴・オクルージョン境界では 2π の飛びを誤り、その先の領域全体が <code style="color:#22d3bf">2πm</code> ずれる。マスクで島に分かれた領域どうしの相対次数は決まらない(島ごとに独立なオフセット)。絶対性が要るときは <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code> の画素独立な次数確定を使う。</p>
 <p>使いどころ: <code style="color:#22d3bf">wrapped_phase</code> → 本 op → <code style="color:#22d3bf">phase_to_height</code>(同モジュールの関数、<code style="color:#22d3bf">height = k (phase - ref_phase)</code>)。参照面を同じ手順で展開して引けば大域オフセットは相殺される。<code style="color:#22d3bf">decode_fringe</code> はこの連鎖を 1 回で行う。</p>
+<p>空の入力(<code style="color:#22d3bf">wrapped</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度センサの知識 — 測距原理・実機の値・欠測の出方</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

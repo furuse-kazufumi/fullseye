@@ -17,6 +17,7 @@
 <p>平滑后的点云(保持顺序和点数)。邻域少于多项式项数的点保持原位。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>这是近似方法。邻域数少于项数/局部平面退化的点不移动,保持原位(为避免在孔洞和边界处失控的安全措施)。<code style="color:#22d3bf">radius &lt;= 0</code> 时 ValueError,空输入返回空。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:点云的抽稀、离群点去除和随机丢弃都可能得到空结果。空点云是合法的值,链条的下一级不应因此停下)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

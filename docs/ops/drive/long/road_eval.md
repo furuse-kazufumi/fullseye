@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 道の縦断を弧長 l で引く: (z, sin θ, cos θ)。``road`` = None(平ら)/ 数値(一定の勾配角 θ [rad]、z = l sin θ)/
 :func:`road_profile` の dict。折れ点の上ではその先の区間の値(右連続)。
 
+空の入力(``road`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

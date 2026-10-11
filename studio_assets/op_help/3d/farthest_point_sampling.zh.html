@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: kNN 图的邻域数(默认 8)。<code style="color:#22d3bf">start</code>: 第 1 个代表点(用 <code style="color:#22d3bf">start % N</code> 折回到范围内)。</p>
 <p style="margin:2px 0 2px 12px">• 返回值是按选择顺序排列的索引序列(开头是 <code style="color:#22d3bf">start</code>)。<code style="color:#22d3bf">points[idx]</code> 即为代表点群。</p>
 <p>陷阱: 图分为多个连通分量时,不可达的点距离为 <code style="color:#22d3bf">inf</code>,因此未到达的分量会被优先选中(argmax 取到 <code style="color:#22d3bf">inf</code>)。会出现&quot;先取远处的块&quot;的行为,因此若想按分量均匀抽稀,请先用 <code style="color:#22d3bf">euclidean_cluster</code> 等分开后再使用。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

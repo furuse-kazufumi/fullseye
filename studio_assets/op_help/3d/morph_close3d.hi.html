@@ -8,6 +8,7 @@
 <p><code style="color:#22d3bf">morph_erode3d(morph_dilate3d(vol, r, ...), r, ...)</code>। आउटपुट इनपुट से कम नहीं होता (<code style="color:#22d3bf">close &gt;= vol</code>):</p>
 <p>SE (side length <code style="color:#22d3bf">2r+1</code> का cube या त्रिज्या r का ball) से छोटे अंधेरे holes, cracks और surface gaps आसपास की brightness से भर जाते हैं, और बड़े अंधेरे क्षेत्र बने रहते हैं (idempotent)। Border के बाहर को dilation में −∞ और erosion में +∞ माना जाता है, इसलिए किनारे अपने-आप नहीं भरते। <code style="color:#22d3bf">se</code> &quot;cube&quot;/&quot;ball&quot; है (अन्य पर ValueError), <code style="color:#22d3bf">device</code> केवल cube+torch में प्रभावी है। Return value <code style="color:#22d3bf">(D,H,W)</code> float32 numpy है।</p>
 <p>उपयोग: <code style="color:#22d3bf">close − vol</code> ही <code style="color:#22d3bf">morph_blackhat3d</code> है (छोटी अंधेरी structures निकालना)। point cloud splat की surface के holes भरना, <code style="color:#22d3bf">signed_distance_field</code> से पहले occupancy के holes भरना।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">vol</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

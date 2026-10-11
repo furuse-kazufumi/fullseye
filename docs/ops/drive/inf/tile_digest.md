@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 区画のメッシュの指紋(SHA-256、頂点・面・ラベル・色のバイト列)。作り直しのビット一致の門に使う。
 
+空の入力(``mesh`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

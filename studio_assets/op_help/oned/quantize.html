@@ -11,6 +11,7 @@
 <p>— a factor of <b>4</b>. Anything that measures a level (not just displays it) must round.</p>
 <p>*dither* adds noise <b>before</b> quantising so the error stops being a function of the signal: <code style="color:#22d3bf">&quot;tpdf&quot;</code> (triangular, the audio standard — two uniform draws summed, so the error&#x27;s variance no longer depends on the sample value) or <code style="color:#22d3bf">&quot;rpdf&quot;</code> (one uniform draw). Dither raises the total error power but removes the correlation that makes quantisation audible as distortion rather than as hiss. <code style="color:#22d3bf">seed</code> fixes the draw so the op stays deterministic.</p>
 <p><b>Applicability.</b> (1) The range is taken from *this* signal, so two signals quantised separately do not share a scale. (2) <code style="color:#22d3bf">bits=1</code> with no dither is a comparator, not a quantiser — the error model does not apply. (3) The error model assumes the signal moves by more than a step between samples; on a flat stretch the error is a constant offset, not noise.</p>
+<p>Empty input (<code style="color:#22d3bf">x</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

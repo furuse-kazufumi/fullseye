@@ -35,6 +35,8 @@ SDF → occupancy voxel(iso 以下=内側=1)。SDF から voxel へ戻す。
 同じ形の 0/1/2 ラベルを渡すと **9,504**(5.5 倍)—— 符号が反転している。
 ラベルから占有を作るなら ``iso`` でなく ``labels > 0`` を自分で書くこと。
 
+空の入力(``sdf`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

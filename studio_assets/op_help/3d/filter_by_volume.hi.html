@@ -20,6 +20,7 @@
 <p style="margin:2px 0 2px 12px">• input में 0 के अलावा सबको foreground मानकर bool बनाया जाता है (NaN भी foreground)। axis क्रम (z, y, x)।</p>
 <p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 3-dimensional न होने वाला input, <code style="color:#22d3bf">connectivity</code> 6/18/26 के अलावा।</p>
 <p style="margin:2px 0 2px 12px">• voxels की संख्या spacing से corrected नहीं है, इसलिए वास्तविक माप में threshold रखना हो तो voxel volume से भाग देकर दें।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">vol</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

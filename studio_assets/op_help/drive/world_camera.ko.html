@@ -6,6 +6,7 @@
 <p>카메라로 월드를 촬영합니다: <code style="color:#22d3bf">{&quot;color&quot; (H,W,3), &quot;label&quot; (H,W) int(−1 = 空), &quot;depth&quot; (H,W), &quot;face&quot; (H,W), &quot;shade&quot; (H,W)}</code>.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>render3d.render_mesh(attributes=True) の三角形 id から面の色・ラベルを引き、色は Lambert (<code style="color:#22d3bf">ambient + (1−ambient)·max(n·l, 0)</code>、n は render3d のカメラ系法線を世界系に戻さず、光をカメラ系で与える)。<code style="color:#22d3bf">ego=(V, F, color)</code> を渡すと自車のメッシュも一緒に描く(世界には足さない)。</p>
+<p>空の入力(<code style="color:#22d3bf">world</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

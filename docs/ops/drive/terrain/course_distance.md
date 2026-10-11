@@ -22,6 +22,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``{"d" (N,), "nx" (N,), "ny" (N,)}``。内側は d = 0、n = 0。外側の d は最寄りの辺への点-線分距離の閉形式で、
 中心軸(最寄り点が 2 つある所)を除いて |∇d| = 1(eikonal)。
 
+空の入力(``course`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

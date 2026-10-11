@@ -23,6 +23,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>: पूरी लंबाई का scalar (<code style="color:#22d3bf">center</code> से ±height/2; ऋणात्मक अस्वीकार)।</p>
 <p>return value: <code style="color:#22d3bf">grid.shape[:-1]</code> का float64।</p>
 <p>उपयोग: <b>through hole <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code> है</b> (<code style="color:#22d3bf">height</code> को part से लंबा रखें ताकि end face का किनारा न बचे)। boss, pin और shaft के लिए <code style="color:#22d3bf">sdf_union</code>। अनंत लंबा cylinder चाहिए तो <code style="color:#22d3bf">height</code> पर्याप्त बड़ा लें (end face evaluation क्षेत्र से बाहर हों तो केवल side का असर रहता है)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">grid</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <p>2-D evolution registry में bridge किया गया 3d का op <code style="color:#22d3bf">cylinder_sdf</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। इस op में कोई tunable parameter नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

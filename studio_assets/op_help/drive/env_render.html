@@ -8,6 +8,7 @@
 <p>dict : <code style="color:#22d3bf">color</code>(カメラの線形 RGB [0,1]、<code style="color:#22d3bf">tone_map</code> で圧縮 —— 画像処理はこれを読む)、<code style="color:#22d3bf">display</code>(sRGB に符号化した</p>
 <p>表示用、図だけに使う)、<code style="color:#22d3bf">radiance</code>(RGB の輝度 cd/m²、線形)、<code style="color:#22d3bf">depth</code>・<code style="color:#22d3bf">label</code>・ <code style="color:#22d3bf">face</code>(driveworld.world_camera と同じ)、<code style="color:#22d3bf">shadow</code>(bool、太陽の影の画素)、<code style="color:#22d3bf">exposure</code>(使った倍率)、<code style="color:#22d3bf">veil</code>(光幕輝度 cd/m² (H,W))、<code style="color:#22d3bf">illuminance</code>(面の照度 lx (H,W))。</p>
 <p><code style="color:#22d3bf">ego_pose=(x, y, yaw)</code> = 前照灯を付ける自車の姿勢(前端 2.25 m・左右 ±0.6 m・高さ 0.65 m に 2 灯)。<code style="color:#22d3bf">shadow_cache</code> に dict を渡すと太陽のシャドウマップを使い回す(太陽と世界が変わらない間)。</p>
+<p>空の入力(<code style="color:#22d3bf">world</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

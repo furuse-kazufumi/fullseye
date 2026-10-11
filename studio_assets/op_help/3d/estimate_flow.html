@@ -12,6 +12,7 @@
 <p>(N, 3) 変位ベクトル場(pts0 と同じ行順)。空 pts0 は (0, 3) を返す。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正、または pts0 が非空なのに pts1 が空(最近傍が存在しない)。</p>
+<p>空の入力(<code style="color:#22d3bf">pts0</code> が 0 要素)は空を返す(理由: 空の点群の変位は空の変位場が正しい答え(行順を保つ op)。前段のフィルタが空を出しうる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -6,6 +6,7 @@
 <p>Splits the events evenly in time into n_frames and sums the polarities per pixel into frames (T, H, W) (ON = +1, OFF = −1).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>全イベントの極性の和はコマの総和と一致する(落とすイベントは無い)。</p>
+<p>空の入力(<code style="color:#22d3bf">events</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

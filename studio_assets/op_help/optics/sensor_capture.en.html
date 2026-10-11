@@ -6,6 +6,7 @@
 <p>Radiance → the output of a real sensor (shot noise, read noise, saturation, quantisation).</p>
 <p>Photon count = Poisson with mean radiance · exposure_ms · gain_e_per_unit / 1000. Read noise (normal) is added, the result is <b>saturated</b> at <code style="color:#22d3bf">full_well_e</code> and quantized with <code style="color:#22d3bf">bit_depth</code>. Saturation is a clip and does not wrap around (blown highlights stay white).</p>
 <p>The return value is an integer array in 0..2^bit_depth−1. Fixing <code style="color:#22d3bf">seed</code> makes it deterministic.</p>
+<p>Empty input (<code style="color:#22d3bf">radiance</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

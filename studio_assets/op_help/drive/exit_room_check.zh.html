@@ -6,6 +6,7 @@
 <p>铁路道口(人行横道、交叉口同理)的对面是否有本车能停下的空间(第50条第2款)。可用数组。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>前の車の後端 <code style="color:#22d3bf">queue_rear</code> の後ろ <code style="color:#22d3bf">gap</code> で止まると、自分の後端 = queue_rear − gap − car_length。これが far_edge + beyond 以上なら入ってよい。返り値: <code style="color:#22d3bf">room</code> = queue_rear − far_edge、<code style="color:#22d3bf">need</code> = car_length + gap + beyond、<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">rear_if_stopped</code>。前の車が無い場合は queue_rear = +∞。</p>
+<p>空の入力(<code style="color:#22d3bf">queue_rear</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

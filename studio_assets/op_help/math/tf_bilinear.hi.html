@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Tustin (bilinear) transform s = K (z − 1)/(z + 1) से continuous system को discrete system में map करता है।</p>
 <p>K = 2·fs (सामान्य Tustin), या, यदि <code style="color:#22d3bf">prewarp_hz</code> दिया हो, तो K = ω₀ / tan(ω₀ / (2 fs)) (उस frequency पर continuous और discrete responses <b>बिल्कुल मेल खाते हैं</b>; अन्य frequencies tan से warp होती हैं)। लौटाए गए coefficients z की घटती घातों में हैं (<code style="color:#22d3bf">np.polyval(num_z, z)</code>)। stable continuous system, stable discrete system बनता है (left half-plane → unit circle के अंदर)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">num</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

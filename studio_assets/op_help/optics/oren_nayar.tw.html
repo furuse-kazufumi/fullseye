@@ -9,6 +9,7 @@
 <p>albedo：漫反射率(純量或 (H,W))。</p>
 <p>回傳值：(H, W) 的輻射亮度係數(0 以上)。</p>
 <p>為什麼 Lambert 不夠：Lambert 在邊緣(terminator)按 cos 成比例下降，但粗糙面由於微面的相互遮蔽與相互反射，<b>邊緣仍保持平坦明亮</b>。滿月看起來像圓盤一樣均勻就是這個原因，用 Lambert 則邊緣變暗而看起來像球。</p>
+<p>空輸入(<code style="color:#22d3bf">normals</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

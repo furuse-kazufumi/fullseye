@@ -12,6 +12,7 @@
 <p>검증: scikit-image를 import할 수 없는 환경에서는 <code style="color:#22d3bf">RuntimeError</code>(<code style="color:#22d3bf">ImportError</code> 가 아님). <code style="color:#22d3bf">wrapped</code>가 2-D가 아님, <code style="color:#22d3bf">mask</code>의 형상이 다름, <b>모든 화소가 무효</b> (언랩할 화소가 없음)은 <code style="color:#22d3bf">ValueError</code>.</p>
 <p>전제(Itoh의 조건): 인접한 유효 화소의 참 위상 차가 <code style="color:#22d3bf">π</code> 미만. 급한 계단·깊은 구멍· 오클루전 경계에서는 2π 점프를 잘못 판단하여, 그 너머의 영역 전체가 <code style="color:#22d3bf">2πm</code> 어긋난다. 마스크로 섬으로 나뉜 영역끼리의 상대 차수는 정해지지 않는다(섬마다 독립된오프셋). 절대성이 필요할 때는 <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code>의화소 독립적인 차수 확정을 사용한다.</p>
 <p>사용처: <code style="color:#22d3bf">wrapped_phase</code> → 본 op → <code style="color:#22d3bf">phase_to_height</code>(같은 모듈의함수, <code style="color:#22d3bf">height = k (phase - ref_phase)</code>). 참조면을 같은 절차로 언랩해서 빼면대역 오프셋은 상쇄된다. <code style="color:#22d3bf">decode_fringe</code>는 이 연쇄를 1 회에 수행한다.</p>
+<p>빈 입력(<code style="color:#22d3bf">wrapped</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

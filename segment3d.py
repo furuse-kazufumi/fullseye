@@ -79,6 +79,8 @@ def region_growing(points, normals=None, angle_thresh_deg: float = 15.0,
         labels: (N,) int。連結平滑領域ごとに 0,1,2,... を付与。**min_region_size 未満の
         小領域(孤立点・向き不一致のゴミ)は -1(ノイズ/未割当)** = 統一契約(-1=ノイズ)に従う。
         空入力は shape (0,) を返す。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 空の点群には割り当てる点が無く、長さ 0 のラベル列が正しい答え。前段のフィルタが空を出しうる)。
     """
     P = _pts3(points, "region_growing")
     if not (0.0 < float(angle_thresh_deg) < 180.0):
@@ -153,6 +155,8 @@ def euclidean_cluster(points, tol: float, min_size: int = 10) -> np.ndarray:
 
     Returns:
         labels: (N,) int。0..(n_clusters-1) がクラスタ、-1 がノイズ。空入力は shape (0,)。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 空の点群には割り当てる点が無く、長さ 0 のラベル列が正しい答え。前段のフィルタが空を出しうる)。
     """
     from scipy.sparse import csr_matrix
     from scipy.sparse.csgraph import connected_components
@@ -213,6 +217,8 @@ def plane_segmentation(points, thresh: float, min_inliers: int,
     Returns:
         labels: (N,) int。検出順(=consensus 大きい順に近い)に 0,1,2,... を平面へ付与、
         どの平面にも属さない残差点は -1。空入力は shape (0,)。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 空の点群には割り当てる点が無く、長さ 0 のラベル列が正しい答え。前段のフィルタが空を出しうる)。
     """
     from ransac_fit import ransac_plane
 

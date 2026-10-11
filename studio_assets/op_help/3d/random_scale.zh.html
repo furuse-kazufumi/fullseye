@@ -7,6 +7,7 @@
 <p>绕原点施加均匀缩放 <code style="color:#22d3bf">s ~ U(lo, hi)</code> 并返回 <code style="color:#22d3bf">(scaled, s)</code>。</p>
 <p><code style="color:#22d3bf">scaled = points * s</code>。bbox 对角线长度恰好变为 <code style="color:#22d3bf">s</code> 倍(由于 <code style="color:#22d3bf">s &gt; 0</code>, <code style="color:#22d3bf">max</code>/<code style="color:#22d3bf">min</code> 都变为 <code style="color:#22d3bf">s</code> 倍 → 对角线 <code style="color:#22d3bf">‖max-min‖</code> 也是 <code style="color:#22d3bf">s</code> 倍)。将物体尺度的波动(距离/传感器倍率)注入训练。要求 <code style="color:#22d3bf">0 &lt; lo &lt;= hi</code>(fail-closed(失败即拒绝))。</p>
 <p><code style="color:#22d3bf">lo &lt;= 0</code> 或 <code style="color:#22d3bf">hi &lt; lo</code> 抛出 <code style="color:#22d3bf">ValueError</code>(允许 <code style="color:#22d3bf">lo == hi</code>,此时总是 <code style="color:#22d3bf">s = lo</code>)。由于是绕原点放大,点云远离原点时质心也会移到 <code style="color:#22d3bf">s</code> 倍的位置(位置和大小同时改变)。若只想改变大小,请事先将质心移到原点。<code style="color:#22d3bf">s</code> 是 Python float,返回的点云为 float64。由 <code style="color:#22d3bf">seed</code> 决定。空输入返回空。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:点云的抽稀、离群点去除和随机丢弃都可能得到空结果。空点云是合法的值,链条的下一级不应因此停下)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -8,6 +8,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;box&quot;</code>   — समान weight का औसत (सटीक area average, SSAA का मानक)।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gauss&quot;</code> — block के केंद्र को अधिक महत्व देने वाले Gaussian weight (σ = ss/2, थोड़ा नरम)।</p>
 <p>Fail-closed: <code style="color:#22d3bf">ss</code> 1 या अधिक का integer हो, इनपुट 2D / 3D हो, और हर भुजा <code style="color:#22d3bf">ss</code> से पूरी विभाज्य हो। non-finite मान हों तो <code style="color:#22d3bf">ValueError</code> (औसत से NaN न फैले, इसलिए allocation से पहले अस्वीकार)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">hi_res_image</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

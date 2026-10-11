@@ -6,6 +6,7 @@
 <p>Ein bool-Belegungsgitter mit um <code style="color:#22d3bf">radius</code> (in Welteinheiten) aufgeblähten Hindernissen (also ESDF &lt;= radius gilt als belegt).</p>
 <p>Sicherheitsabstand für den Planer: Vermeidet ein Punktroboter Kollisionen auf dem aufgeblähten Gitter, hält ein realer Roboter mit Radius radius Abstand zu Hindernissen (configuration-space obstacle). Das ESDF ist außen der positive Abstand zum nächsten belegten Voxel, daher erfasst <code style="color:#22d3bf">ESDF&lt;=radius</code> &quot;belegt (negativ) ∪ frei innerhalb von radius um ein Hindernis&quot;. Vergrößert man radius, nimmt die Belegung monoton zu (die GT der nachgelagerten Tests).</p>
 <p>Löst ValueError aus bei radius&lt;0 oder voxel_size&lt;=0 (beide vorab geprüft, vor dem Kurzschluss für radius==0 / leere Belegung — sonst würde ein ungültiges voxel_size ungeprüft durchrutschen, wenn esdf nie erreicht wird).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">occupancy</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

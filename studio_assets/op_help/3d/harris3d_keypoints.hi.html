@@ -27,6 +27,7 @@
 <p>axis क्रम)। response के घटते क्रम में, अधिकतम topn।</p>
 <p>responses: (M,) float64। संबंधित response मान (घटते क्रम में)।</p>
 <p>निर्भरता: sobel3d (3D gradient), _gauss3d (integration window smoothing)। दोनों device पर चलते हैं।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">vol</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -31,6 +31,8 @@ Returns ``(labels, n)`` — an ``int32`` volume whose voxels are ``0``
 The neighbourhood genuinely matters: two blobs meeting only at a corner are
 *two* components under 6-connectivity but *one* under 26.
 
+Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [measurement_uncertainty](../../math/guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために

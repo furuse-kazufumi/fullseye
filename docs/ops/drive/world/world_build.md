@@ -24,6 +24,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 (初期状態 "red"、日本式: 向こう側の柱 + アームで車線上に横型 3 灯、roadjp)、``stop_lines`` に停止線、``crosswalks`` に横断歩道の縞。``props`` は ``(asset_name, x, y, yaw)`` か
 ``(asset_name, x, y, yaw[, dims[, paint]])`` の並び(paint = 車の車体色、:data:`CAR_PAINTS`)。返り値 = ``{"V","F","face_label","face_color","objects","bounds","course"}``。
 
+空の入力(``course`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

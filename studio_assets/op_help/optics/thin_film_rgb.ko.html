@@ -7,6 +7,7 @@
 <p>면이 시선에 대해 누울수록 막 안의 광로가 늘어나고, 색이 단파장 쪽으로 움직인다 ―― 비눗방울이나달군 티타늄의 색이 가장자리에서 바뀌는 것은 이 때문이다. 각도 의존성은 cosθ = |n·v|로부터 낸다.</p>
 <p>normals / view: (H,W,3) 법선 맵 / 면에서 시점으로의 방향. thickness_nm / n_film / n_sub: <code style="color:#22d3bf">thin_film_reflectance</code>와 같다.</p>
 <p>strength: 전체 강도.</p>
+<p>빈 입력(<code style="color:#22d3bf">normals</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

@@ -34,6 +34,8 @@ v_fov=(v_min,v_max)[度] の仰角帯の外側、原点上(r=0)、非有限座�
 逆変換は ``unproject_spherical``(同じ ``v_fov`` を渡す)。高さで層を切る変種が
 ``project_cylindrical``。
 
+空の入力(``points`` が 0 要素)は空を返す(理由: 返りの無いスキャンは正当で、全セルが 0 の像が正しい答え)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

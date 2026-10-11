@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Project into a cylindrical range image (z_bins, h_res). Azimuth (columns) × z (rows); the pixel is the horizontal radius ρ = hypot(x,y).</p>
 <p>Whereas spherical projection slices layers by elevation, cylindrical projection <b>slices height z at equal intervals</b> (suited to unrolling walls/pillars/corridors). The pixel value is the horizontal distance ρ from the z axis (a natural invariant that is constant for points on a cylinder). Empty cell = 0, nearer points take priority (minimum ρ). If z_range=(z_min,z_max) is not given, the point cloud&#x27;s [z.min, z.max] is used. Zero z width is fail-closed (ValueError). Row 0 = top (z=z_max). Points outside z_range, on the z axis (ρ=0), or with non-finite coordinates are dropped.</p>
+<p>Empty input (<code style="color:#22d3bf">points</code> with 0 elements) returns an empty result (reason: a scan with no returns is valid, and an image with every cell 0 is the answer).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

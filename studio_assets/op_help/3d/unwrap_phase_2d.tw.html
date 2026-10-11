@@ -12,6 +12,7 @@
 <p>驗證:在無法 import scikit-image 的環境中拋出 <code style="color:#22d3bf">RuntimeError</code>(而不是 <code style="color:#22d3bf">ImportError</code>)。<code style="color:#22d3bf">wrapped</code> 不是 2-D、<code style="color:#22d3bf">mask</code> 形狀不同、<b>全部像素無效</b> (沒有可展開的像素)時拋出 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>前提(Itoh 條件):相鄰有效像素的真實相位差小於 <code style="color:#22d3bf">π</code>。在陡峭階躍、深孔、遮擋邊界處會誤判 2π 跳變,其後的整個區域偏移 <code style="color:#22d3bf">2πm</code>。被遮罩分成孤島的區域之間的相對級次無法確定(每個孤島有獨立的偏移)。需要絕對性時,請使用 <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code> 的逐像素獨立級次確定。</p>
 <p>用法:<code style="color:#22d3bf">wrapped_phase</code> → 本 op → <code style="color:#22d3bf">phase_to_height</code>(同模組的函式,<code style="color:#22d3bf">height = k (phase - ref_phase)</code>)。以相同步驟展開參考面並相減, 全域偏移即被抵消。<code style="color:#22d3bf">decode_fringe</code> 以 1 次呼叫完成這一鏈條。</p>
+<p>空輸入(<code style="color:#22d3bf">wrapped</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

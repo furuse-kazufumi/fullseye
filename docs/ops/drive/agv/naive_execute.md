@@ -22,6 +22,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 遅れが入ると、計画では時間差ですれ違うはずの 2 台が向かい合って止まる。返りは :func:`adg_execute` と
 同じ形に ``waits_for``(デッドロックの瞬間の「誰が誰を待つか」の辺)を足したもの。
 
+空の入力(``paths`` が 0 件)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

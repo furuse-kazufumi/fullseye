@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 Hertz の接触圧 p(r) = p0 √(1 − r²/a²)(r < a)、外は 0。r と同じ形。**Raises** ``ValueError``: a, p0 ≤ 0。
 
+空の入力(``r`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -1210,7 +1210,11 @@ def lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *,
     **Raises** ``ValueError``: non-finite *slope* / *focal_px* / *baseline*, a
     non-positive *focal_px* / *baseline* / *min_slope*, a negative *far_depth*,
     and ``|slope| < min_slope`` anywhere when *far_depth* is ``None``.
+
+    Empty input (``slope`` with 0 elements) raises ``ValueError``.
     """
+    if (len(slope) if isinstance(slope, (list, tuple)) else np.asarray(slope).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("lf_disparity_to_depth: slope is empty — pass at least one element")
     op = "lf_disparity_to_depth"
     s = _as_float_array(slope, op + ": slope")
     f = _positive(focal_px, op + ": focal_px")

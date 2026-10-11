@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(N + 8, 2)</code> float64.</p>
 <p style="margin:2px 0 2px 12px">• 원래 점이 이미 틀 위나 틀 밖에 있어도 검사하지 않는다. 틀 밖의 대응점은 Delaunay 분할에서틀의 삼각형과 교차하여 워프가 일그러진다.</p>
 <p><code style="color:#22d3bf">morph</code> / <code style="color:#22d3bf">morph_sequence</code> 는 <code style="color:#22d3bf">with_corners=True</code> 로 내부적으로 이것을 양쪽점군에 건다. <code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">warp_tps_image</code> 를 직접 호출할 때는직접 <code style="color:#22d3bf">src</code> 와 <code style="color:#22d3bf">dst</code> 양쪽에 더할 것.</p>
+<p>빈 입력(<code style="color:#22d3bf">pts</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

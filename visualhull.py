@@ -104,7 +104,11 @@ def synthesize_silhouette(points, K, R, t, size: Tuple[int, int],
     Returns
     -------
     (H, W) bool ndarray  前景 True のシルエット。
+
+    空の入力(``points`` が 0 要素)は ValueError。
     """
+    if (len(points) if isinstance(points, (list, tuple)) else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("synthesize_silhouette: points is empty — pass at least one element")
     P = _as_pts3(points)
     K = _as_K(K)
     R = _as_R(R)

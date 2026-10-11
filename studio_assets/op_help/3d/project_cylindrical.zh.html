@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>投影到圆柱距离图像 (z_bins, h_res)。方位角(列)× z(行),像素=水平半径 ρ=hypot(x,y)。</p>
 <p>球面投影按仰角切层，而圆柱投影<b>按等间隔切分高度 z</b>(适合展开墙/柱/走廊)。像素值为到 z 轴的水平距离 ρ(圆柱上的点保持恒定的自然不变量)。空单元=0，近点优先(最小 ρ)。未指定 z_range=(z_min,z_max) 时采用点云的 [z.min, z.max]。z 宽度为零时 fail-closed(失败即拒绝)(ValueError)。行 0 = 上端(z=z_max)。z_range 之外、位于 z 轴上(ρ=0)、坐标非有限的点被丢弃。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:没有回波的扫描是合法的,所有单元为 0 的图像就是正确答案)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

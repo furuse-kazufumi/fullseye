@@ -6,6 +6,7 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(x, rate)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Read any audio format -&gt; <code style="color:#22d3bf">(x, rate)</code>. Uses <code style="color:#22d3bf">soundfile</code> if available (mp3/flac/ogg/…), else falls back to the stdlib WAV reader.</p>
+<p>Empty input (<code style="color:#22d3bf">path</code> an empty string) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

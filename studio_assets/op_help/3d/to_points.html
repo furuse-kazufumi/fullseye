@@ -13,6 +13,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;voxel&quot;</code>: 密度 grid <code style="color:#22d3bf">(D, H, W)</code> を <code style="color:#22d3bf">kw[&quot;iso&quot;]</code>(既定 0.5)で閾値し、<code style="color:#22d3bf">np.argwhere</code> の <b>整数 index 座標</b> <code style="color:#22d3bf">(z, y, x)</code> を float にした点群。物理座標には直さない(spacing は掛けない)。</p>
 <p>返り値: <code style="color:#22d3bf">(N, 3)</code> float64。<code style="color:#22d3bf">kind</code> が上記以外なら <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">samples</code> は <code style="color:#22d3bf">&quot;mesh&quot;</code> 以外では無視される。</p>
 <p>注意: <code style="color:#22d3bf">&quot;voxel&quot;</code> の座標は配列 index 順 <code style="color:#22d3bf">(z, y, x)</code>、<code style="color:#22d3bf">&quot;depth&quot;</code> はカメラ座標 <code style="color:#22d3bf">(x, y, z)</code> と、種別ごとに軸の意味が違う。異種を <code style="color:#22d3bf">register_cross</code> / <code style="color:#22d3bf">fuse_to_voxel</code> で混ぜるときは、この差を呼び手が揃えておくこと。</p>
+<p>空の入力(<code style="color:#22d3bf">data</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

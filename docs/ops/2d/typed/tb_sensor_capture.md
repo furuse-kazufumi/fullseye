@@ -45,6 +45,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 返り値は 0..2^bit_depth−1 の整数配列。``seed`` を固定すれば決定的。
 
+空の入力(``radiance`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした optics の op ``sensor_capture``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``exposure_ms``(既定 10)、``b`` が ``gain_e_per_unit``(既定 50000)を振る。
 
 ## 参考(サンプルデータ・文献)

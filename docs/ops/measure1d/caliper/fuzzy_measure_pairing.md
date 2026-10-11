@@ -39,6 +39,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 幅の下限・上限で切りたい場合はこの結果を ``width`` で自分でフィルタする
 (この op は順位付けだけで、閾での除外はしない)。
 
+空の入力(``image`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

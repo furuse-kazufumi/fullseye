@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 自前の最小 MJCF(Coulomb 版、mujoco 不要): 摩擦のある平面に円柱のパック(自由関節)、4 枚の壁(箱)、真上カメラ。
 Challenge の台は粘性減衰なので、Coulomb の等減速を MuJoCo で確かめるにはこちらを使う。壁の反発は軟接触で e は測る。
 
+空の入力(``table`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

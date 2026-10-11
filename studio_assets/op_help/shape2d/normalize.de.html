@@ -6,6 +6,7 @@
 <p>Wandelt EFD-Koeffizienten in die Koeffizienten der &quot;kanonischen Pose&quot; um (ausgerichtet an der 1. Harmonischen).</p>
 <p>Kanonisierung nach Kuhl–Giardina: (1) Beliebigkeit des <b>Startpunkts</b> über die Phase der 1. Harmonischen entfernen, (2) die lange Achse der 1. Ellipse auf die Bezugsachse drehen und so die <b>Orientierung</b> angleichen, (3) durch die Länge der langen Achse der 1. Harmonischen teilen und so die <b>Größe</b> angleichen. Gedacht für &quot;Rekonstruktion in kanonischer Pose&quot;, etwa das Überlagern oder Mitteln mehrerer Formen.</p>
 <p>Achtung (honest): Bei Formen, deren 1. Harmonische nahezu <b>kreisförmig</b> ist (lange Achse ≈ kurze Achse), ist die Phase (theta/psi) schlecht konditioniert und instabil. <b>Für invariantes Matching nicht diese Funktion</b>, sondern <code style="color:#22d3bf">invariants</code> / <code style="color:#22d3bf">descriptor_distance</code> (singulärwertbasiert) verwenden.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">model</code> ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">Leitfaden zur Familie shape_description_2d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -55,7 +55,12 @@ def iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99,
     λ3 は理論上 0 で、丸め屑(λ3/λ1 ≤ 1e-9)は候補から外す。全点で近傍探索する Python ループ
     なので、数万点を超える雲は ``voxel_grid_downsample`` で間引いてから使う。
     ``shot_descriptor`` のキーポイント入力に直結し、``register_shot`` は saliency 半径
-    ``0.6*radius``・NMS 半径 ``0.3*radius`` で呼ぶ(``radius`` は ``register_shot`` の支持半径)。"""
+    ``0.6*radius``・NMS 半径 ``0.3*radius`` で呼ぶ(``radius`` は ``register_shot`` の支持半径)。
+
+    空の入力(``points`` が 0 要素)は ValueError。
+    """
+    if (len(points) if isinstance(points, (list, tuple)) else points.numel() if hasattr(points, "numel") else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("iss_keypoints: points is empty — pass at least one element")
     from scipy.spatial import cKDTree
     pts = np.asarray(points, np.float64)
     n = len(pts)

@@ -9,6 +9,7 @@
 <p>polarization：&quot;unpolarized&quot;(默认，s 与 p 的平均)/ &quot;s&quot; / &quot;p&quot;。</p>
 <p>返回值：反射率 R(与 cos_i 同形，0–1)。超过临界角的入射为<b>严格的 1.0</b>(全反射)。</p>
 <p>验算(由测试固定)：垂直入射时 ((n1−n2)/(n1+n2))²(air→BK7 = 0.04)，Brewster 角时 p 偏振为 0(小于 1e-15)，超过临界角时为 1.0。透射率为 1 − R(无吸收的界面，能量守恒)。</p>
+<p>空输入(<code style="color:#22d3bf">cos_i</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

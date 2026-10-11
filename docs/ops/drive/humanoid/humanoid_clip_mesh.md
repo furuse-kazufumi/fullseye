@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 なので、**置く位置を ``distance`` だけ進めれば**支持脚は地面で止まって見える(コマの位相は ``advance`` で歩いた距離に
 合わせてある)。★2026-10-03: 最初の版は周期内の前進をここでも差し引き、置く側と 2 重に引いていた(滑りの門で発覚)。
 
+空の入力(``clip`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

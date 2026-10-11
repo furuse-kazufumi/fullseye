@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>：平面的法線（元素數 3,<b>拒絕零向量與 NaN</b>）。長度自動正規化為 1, 因此大小不影響結果（只有方向有意義）。</p>
 <p>回傳值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。法線一側為正，相反一側為負，平面上為 0。</p>
 <p>用法：<code style="color:#22d3bf">sdf_subtract(part, plane_sdf(g, p, n))</code> 即「削去該平面法線一側的部分」。想反轉方向時，將 <code style="color:#22d3bf">normal</code> 的符號反轉（<code style="color:#22d3bf">-sdf</code> 也相同）。</p>
+<p>空輸入(<code style="color:#22d3bf">grid</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

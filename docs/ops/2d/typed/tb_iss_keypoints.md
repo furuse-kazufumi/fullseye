@@ -57,6 +57,8 @@ well-defined)な点のみ候補にして NMS で疎に選ぶ。回転不変。�
 ``shot_descriptor`` のキーポイント入力に直結し、``register_shot`` は saliency 半径
 ``0.6*radius``・NMS 半径 ``0.3*radius`` で呼ぶ(``radius`` は ``register_shot`` の支持半径)。
 
+空の入力(``points`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``iss_keypoints``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``gamma21``(既定 0.99)、``b`` が ``gamma32``(既定 0.99)を振る。
 
 ## 参考(サンプルデータ・文献)

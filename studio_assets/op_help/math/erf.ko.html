@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>오차 함수 erf(x) = (2/√π) ∫_0^x e^{−t²} dt.</p>
 <p>정규분포의 누적이며, 흐려진 에지(가우스로 합성곱한 계단)의 형태 그 자체: 폭 σ의 가우스로 흐려진 계단은 ½(1 + erf(x / (σ√2))). 게이트: 홀함수, erf(∞) = 1, 도함수 = (2/√π) e^{−x²}, Gauss 구적에 의한 적분과 일치.</p>
+<p>빈 입력(<code style="color:#22d3bf">x</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

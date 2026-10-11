@@ -6,6 +6,7 @@
 <p>3-D local-maxima (peak) detection.</p>
 <p>A voxel is a peak if it equals the maximum over a cubic neighbourhood of half-width <code style="color:#22d3bf">min_distance</code> (side <code style="color:#22d3bf">2*min_distance + 1</code>) <b>and</b> that neighbourhood is not flat (its max strictly exceeds its min, so a constant region yields no peaks). Pass *threshold* to additionally require <code style="color:#22d3bf">vol &gt;= threshold</code> (drop weak peaks in noise).</p>
 <p>Returns an <code style="color:#22d3bf">(N, 3)</code> int array of <code style="color:#22d3bf">(z, y, x)</code> peak coordinates. Uses only <code style="color:#22d3bf">scipy.ndimage.maximum_filter</code> / <code style="color:#22d3bf">minimum_filter</code> (no skimage).</p>
+<p>Empty input (<code style="color:#22d3bf">vol</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

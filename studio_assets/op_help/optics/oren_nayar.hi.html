@@ -9,6 +9,7 @@
 <p>albedo: diffuse reflectance (scalar या (H,W))।</p>
 <p>Returns: (H, W) radiance coefficient (0 या अधिक)।</p>
 <p>Lambert काफ़ी क्यों नहीं है: Lambert किनारे (terminator) पर cos के अनुपात में गिरता है, लेकिन rough surface, microfacets के आपसी shadowing और interreflection के कारण, <b>किनारे तक सपाट और चमकीली रहती है</b>। इसी वजह से पूर्णिमा का चाँद एक disc की तरह एकसमान दिखता है; Lambert में rim गहरा हो जाता है और यह गोले जैसा दिखता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">normals</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

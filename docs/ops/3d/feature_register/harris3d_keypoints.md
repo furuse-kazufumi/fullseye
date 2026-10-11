@@ -57,6 +57,8 @@ init 供給に使える)。
 
 依存: sobel3d(3D 勾配)、_gauss3d(積分窓平滑)。いずれも device 上で動作。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blas_threads_and_memory](../../math/guides/blas_threads_and_memory.md) — 行列分解が遅い理由の知識 — BLAS スレッド・キャッシュ・メモリ配置

@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Bessel 関数。<code style="color:#22d3bf">kind</code> = <code style="color:#22d3bf">&quot;j&quot;</code>(第 1 種 J)/ <code style="color:#22d3bf">&quot;y&quot;</code>(第 2 種 Y)/ <code style="color:#22d3bf">&quot;i&quot;</code>・<code style="color:#22d3bf">&quot;k&quot;</code>(変形)。</p>
 <p>円い膜の振動・円い開口の回折(Airy = J₁)・円筒の熱伝導に出る。門: Wronskian J_{ν+1}(x)Y_ν(x) − J_ν(x)Y_{ν+1}(x) = 2/(πx)、漸化式 J_{ν−1} + J_{ν+1} = (2ν/x) J_ν。Y と K は x &gt; 0 のみ(原点で発散する)。</p>
+<p>空の入力(<code style="color:#22d3bf">x</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>

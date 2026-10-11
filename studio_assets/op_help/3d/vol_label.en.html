@@ -8,6 +8,7 @@
 <p>3-D connected-component labelling with a selectable neighbourhood.</p>
 <p>*connectivity* chooses the structuring element: <code style="color:#22d3bf">6</code> (face neighbours only), <code style="color:#22d3bf">18</code> (faces + edges), or <code style="color:#22d3bf">26</code> (faces + edges + corners — the default, <code style="color:#22d3bf">ndimage.generate_binary_structure(3, 3)</code>). A non-<code style="color:#22d3bf">{0, 1}</code> input is thresholded at <code style="color:#22d3bf">&gt; 0.5</code>.</p>
 <p>Returns <code style="color:#22d3bf">(labels, n)</code> — an <code style="color:#22d3bf">int32</code> volume whose voxels are <code style="color:#22d3bf">0</code> (background) or a component id in <code style="color:#22d3bf">1..n</code>, and the component count <code style="color:#22d3bf">n</code>. The neighbourhood genuinely matters: two blobs meeting only at a corner are *two* components under 6-connectivity but *one* under 26.</p>
+<p>Empty input (<code style="color:#22d3bf">vol_binary</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty and calibration — what it takes to claim you are measuring</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

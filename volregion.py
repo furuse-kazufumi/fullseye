@@ -138,7 +138,11 @@ def vol_rle_encode(vol_binary) -> VolRLE:
     ``vol_rle_volume`` / ``vol_rle_bbox`` / ``vol_rle_centroid`` は decode せずに
     run 上で答える。集合演算は ``vol_rle_union`` / ``vol_rle_intersect`` /
     ``vol_rle_difference``、密配列へ戻すのは ``vol_rle_decode``。
+
+    空の入力(``vol_binary`` が 0 要素)は ValueError。
     """
+    if (len(vol_binary) if isinstance(vol_binary, (list, tuple)) else np.asarray(vol_binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_rle_encode: vol_binary is empty — pass at least one element")
     v = np.ascontiguousarray(vol_binary)
     if v.ndim != 3:
         raise ValueError("vol_binary must be a 3-D (D, H, W) volume, got %d-D"
@@ -403,7 +407,11 @@ def vol_rle_components(vol_binary, connectivity=26):
 
     Returns a list of ``VolRLE`` ordered by label id (1..n). An empty mask
     returns an empty list.
+
+    Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol_binary) if isinstance(vol_binary, (list, tuple)) else np.asarray(vol_binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_rle_components: vol_binary is empty — pass at least one element")
     from scipy import ndimage                       # lazy: keep import cost low
     try:                                            # None etc. -> ValueError, not TypeError
         rank = (None if float(connectivity) != int(connectivity)

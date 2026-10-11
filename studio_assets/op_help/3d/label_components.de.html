@@ -23,6 +23,7 @@
 <p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: Eingabe nicht 3-dimensional, <code style="color:#22d3bf">connectivity</code> ungleich 6/18/26.</p>
 <p style="margin:2px 0 2px 12px">• Sich berührende Objekte verschmelzen zu 1 Komponente. Ist eine Trennung nötig, vorher mit <code style="color:#22d3bf">morph_erode3d</code> / <code style="color:#22d3bf">morph_open3d</code> oder <code style="color:#22d3bf">vol_watershed</code> schneiden.</p>
 <p style="margin:2px 0 2px 12px">• Nachgelagert: <code style="color:#22d3bf">region_props</code> (Messung), <code style="color:#22d3bf">largest_component</code> / <code style="color:#22d3bf">filter_by_volume</code> (Auswahl), <code style="color:#22d3bf">vol_select_labels</code> (Sieben nach Merkmalen), <code style="color:#22d3bf">vol_colorize_labels</code> (Visualisierung).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">vol</code> mit 0 Elementen) liefert ein leeres Ergebnis (Grund: ein Volumen ohne Voxel hat null Zusammenhangskomponenten, und das ist die richtige Antwort).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Messunsicherheit und Kalibrierung — was nötig ist, um zu behaupten, dass man misst</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

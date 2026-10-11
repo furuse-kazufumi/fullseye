@@ -33,6 +33,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 穴径・ピン径の検査、円形部品の中心出しに使う。
 
+空の入力(``model`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

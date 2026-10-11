@@ -28,6 +28,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 Fail-closed: ``ss`` は 1 以上の整数、入力は 2D / 3D、各辺は ``ss`` で割り切れること。
 非有限値があれば ``ValueError``(平均で NaN が伝播しないよう確保前に拒否)。
 
+空の入力(``hi_res_image`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

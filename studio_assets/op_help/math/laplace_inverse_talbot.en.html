@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Numerical inverse Laplace transform of a rational function F(s) = num(s)/den(s) (fixed Talbot method).</p>
 <p>The exact solution is produced by <code style="color:#22d3bf">tf_impulse_response</code> via the matrix exponential, so <b>whether 2 independent paths give the same f(t)</b> serves as the cross-check of this op. For an arbitrary F(s) (such as 1/√s), use <code style="color:#22d3bf">laplace_inverse_func</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">num</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

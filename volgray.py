@@ -140,7 +140,11 @@ def vol_window_level(vol, center, width, out_range=(0.0, 1.0)):
     ------
     ValueError
         Non-3-D / non-finite input, ``width <= 0``, or a malformed *out_range*.
+
+    Empty input (``vol`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_window_level: vol is empty — pass at least one element")
     v = _require_volume(vol)
     _check_voxels(v, MAX_VOXELS, "vol_window_level", "MAX_VOXELS")
     c = _finite_scalar(center, "center")

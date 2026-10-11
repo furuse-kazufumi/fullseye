@@ -6,6 +6,7 @@
 <p>Converts EFD coefficients into the coefficients of the &quot;canonical pose&quot; (aligned with respect to the 1st harmonic).</p>
 <p>Kuhl–Giardina canonicalisation: (1) remove the arbitrariness of the <b>start point</b> using the phase of the 1st harmonic, (2) rotate the long axis of the 1st ellipse onto the reference axis to align the <b>orientation</b>, (3) divide by the long-axis length of the 1st harmonic to align the <b>size</b>. Intended for &quot;canonical-pose reconstruction&quot;, such as overlaying or averaging several shapes.</p>
 <p>Caution (honest): for shapes whose 1st harmonic is nearly <b>circular</b> (long axis ≈ short axis), the phase (theta/psi) is ill-conditioned and unstable. <b>For invariant matching, do not use this function</b>; use <code style="color:#22d3bf">invariants</code> / <code style="color:#22d3bf">descriptor_distance</code> (based on singular values).</p>
+<p>Empty input (<code style="color:#22d3bf">model</code> an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

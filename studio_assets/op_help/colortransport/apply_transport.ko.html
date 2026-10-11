@@ -6,6 +6,7 @@
 <p>수송 계획으로 <code style="color:#22d3bf">target_values</code> 를 원래 점으로 되끌어옵니다(무게중심 사상).</p>
 <p>각 행(보내는 쪽)에 대해, 나른 질량으로 가중한 행선지 값의 평균을 반환한다. 이것이 &quot;계획을 <b>써서 그림을 고치는</b>&quot; 입구 -- 계획을 만들기만 하고 쓸 데가 없으면, <code style="color:#22d3bf">sinkhorn</code>의 출력은 대장의 막다른 골목이 된다(이 repo가 반복해서 밟아 온 &quot;입구는 있지만 소비 op가 없는 유형&quot;의 형태).</p>
 <p>질량 0인 행은 행선지가 없다 -- 0으로 채우면 &quot;검은 화소&quot;가 말없이 섞이므로 <code style="color:#22d3bf">ValueError</code>.</p>
+<p>빈 입력(<code style="color:#22d3bf">plan</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — 측색과 분광 지식 — 색은 ‘분광 × 광원 × 관찰자’로만 정해진다</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

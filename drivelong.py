@@ -180,7 +180,12 @@ def road_profile(profile_xz, l0: float = 0.0) -> Dict[str, np.ndarray]:
 
 def road_eval(road, l: float) -> Tuple[float, float, float]:
     """道の縦断を弧長 l で引く: (z, sin θ, cos θ)。``road`` = None(平ら)/ 数値(一定の勾配角 θ [rad]、z = l sin θ)/
-    :func:`road_profile` の dict。折れ点の上ではその先の区間の値(右連続)。"""
+    :func:`road_profile` の dict。折れ点の上ではその先の区間の値(右連続)。
+
+    空の入力(``road`` が空の dict)は ValueError。
+    """
+    if isinstance(road, dict) and len(road) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("road_eval: road is empty — pass a non-empty dict")
     if road is None:
         return 0.0, 0.0, 1.0
     if not isinstance(road, dict):
@@ -407,7 +412,12 @@ def long_simulate(s0: float, v0: float, command: Callable, road=None, t_end: flo
 
 
 def long_energy_residual(res: dict, v0: Optional[float] = None) -> np.ndarray:
-    """エネルギー収支の残差(単位質量あたり [J/kg]): (½ v² + g z) − (½ v₀² + g z₀ + W_drive − W_brake − W_rr − W_drag)。"""
+    """エネルギー収支の残差(単位質量あたり [J/kg]): (½ v² + g z) − (½ v₀² + g z₀ + W_drive − W_brake − W_rr − W_drag)。
+
+    空の入力(``res`` が空の dict)は ValueError。
+    """
+    if isinstance(res, dict) and len(res) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("long_energy_residual: res is empty — pass a non-empty dict")
     g = res["params"]["g"]
     v, z = res["v"], res["z"]
     E = 0.5 * v * v + g * z
@@ -562,7 +572,12 @@ def plan_command(plan: dict, road=None, params: Optional[dict] = None, hold_brak
                  before: Optional[Callable] = None) -> Callable:
     """:func:`stop_line_plan` を ``command(t, s, v)`` にする。t0 より前は ``before``(None = 速さを保つ)、react / cruise は
     速さを保つ(駆動 = 坂 + 転がり + 空気抵抗の打ち消し、下りで負なら制動)、brake1 / brake2 は計画の値、止まったら保持
-    (制動 ``hold_brake``(None = 上限)+ クリープの駆動)。"""
+    (制動 ``hold_brake``(None = 上限)+ クリープの駆動)。
+
+    空の入力(``plan`` が空の dict)は ValueError。
+    """
+    if isinstance(plan, dict) and len(plan) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("plan_command: plan is empty — pass a non-empty dict")
     p = _params(params, "plan_command")
     phases = plan["phases"]
     times = np.array([ph[0] for ph in phases])
@@ -702,7 +717,10 @@ def skill_test_score(events, venue: str = "場内", thresholds: Optional[dict] =
     dict : ``deductions``(``(細目, 点, 説明)`` の列。点 None = 試験中止)、``total``(減点の合計)、``score``(100 − 合計、
     試験中止なら None)、``test_stopped``、``passed``(第一種 70 点以上)、``thresholds``。
 
-    **Raises** ``ValueError``: venue が不正、event の kind が不明・値が非有限。"""
+    **Raises** ``ValueError``: venue が不正、event の kind が不明・値が非有限。
+
+    空の入力(``events`` が 0 件)は空を返す(理由: 減点の事象が 0 件の走行は満点で、それが正しい答え)。
+    """
     op = "skill_test_score"
     if venue not in ("場内", "路上"):
         raise ValueError("%s: venue must be '場内' or '路上'" % op)

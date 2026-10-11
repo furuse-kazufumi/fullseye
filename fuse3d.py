@@ -35,7 +35,11 @@ def to_points(data, kind, samples=20000, **kw):
     注意: ``"voxel"`` の座標は配列 index 順 ``(z, y, x)``、``"depth"`` はカメラ座標
     ``(x, y, z)`` と、種別ごとに軸の意味が違う。異種を ``register_cross`` /
     ``fuse_to_voxel`` で混ぜるときは、この差を呼び手が揃えておくこと。
+
+    空の入力(``data`` が 0 要素)は ValueError。
     """
+    if (len(data) if isinstance(data, (list, tuple)) else data.numel() if hasattr(data, "numel") else np.asarray(data).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("to_points: data is empty — pass at least one element")
     if kind == "points":
         return np.asarray(data, float)
     if kind == "mesh":

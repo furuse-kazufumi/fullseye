@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>H(s) = num/den の極・零点・直流ゲイン・安定性。</p>
 <p>安定(漸近安定)= すべての極の実部 &lt; 0。直流ゲインは H(0)(原点に極があれば inf)。</p>
+<p>空の入力(<code style="color:#22d3bf">num</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>

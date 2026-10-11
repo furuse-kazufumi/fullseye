@@ -26,6 +26,7 @@
 <p>平滑后的点云(保持顺序、点数)。邻域少于多项式项数的点保持原位。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>这是近似方法。邻域数少于项数/局部平面退化的点不移动,保持原位(为了不在孔洞或边界处乱动的安全措施)。<code style="color:#22d3bf">radius &lt;= 0</code> 时 ValueError,空输入返回空。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:点云的抽稀、离群点去除和随机丢弃都可能得到空结果。空点云是合法的值,链条的下一级不应因此停下)。</p>
 <p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">mls_smooth</code>。实现相同,只有调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 调节 <code style="color:#22d3bf">order</code>(默认 2)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

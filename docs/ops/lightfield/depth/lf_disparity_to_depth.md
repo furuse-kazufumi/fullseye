@@ -44,6 +44,8 @@ Accepts a scalar or any array; returns the same shape (a scalar in gives a
 non-positive *focal_px* / *baseline* / *min_slope*, a negative *far_depth*,
 and ``|slope| < min_slope`` anywhere when *far_depth* is ``None``.
 
+Empty input (``slope`` with 0 elements) raises ``ValueError``.
+
 ## 詳しい使い方ガイド
 
 - [lightfield_depth ファミリ ガイド](../guides/lightfield_depth.md)

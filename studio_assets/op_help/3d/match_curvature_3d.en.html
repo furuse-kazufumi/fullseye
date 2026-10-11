@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• If the template&#x27;s curvature field is all 0 (flat, or <code style="color:#22d3bf">mc</code> too high), returns <code style="color:#22d3bf">[0,0,0,0]</code>.</p>
 <p style="margin:2px 0 2px 12px">• Curvature is a 2nd-order derivative, so it is sensitive to noise. Smooth a noisy volume first, e.g. with the</p>
 <p><code style="color:#22d3bf">smooth</code> of <code style="color:#22d3bf">points_to_voxel</code>. <code style="color:#22d3bf">subvoxel=True</code> refines to the centroid of the ±2 neighbourhood of the NCC peak.</p>
+<p>Empty input (<code style="color:#22d3bf">scene</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

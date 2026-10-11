@@ -299,7 +299,11 @@ def vol_rotate(vol, angle_deg, axes=(1, 2), order=1, reshape=False,
     — module notes).
 
     Returns a ``(D, H, W)`` float64 volume (same shape unless *reshape*).
+
+    Empty input (``vol`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_rotate: vol is empty — pass at least one element")
     v = _require_volume(vol)
     order = _check_order(order)
     cval = _check_cval(cval)
@@ -367,7 +371,11 @@ def vol_affine(vol, matrix, offset=(0, 0, 0), order=1, output_shape=None,
     input are filled per *mode*/*cval*.
 
     Returns a float64 volume of *output_shape*.
+
+    Empty input (``vol`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_affine: vol is empty — pass at least one element")
     v = _require_volume(vol)
     order = _check_order(order)
     cval = _check_cval(cval)

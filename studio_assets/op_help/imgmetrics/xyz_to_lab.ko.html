@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 반환값: 입력과 같은 형태의 float64. <code style="color:#22d3bf">L</code>은 흰색에서 100, 검은색에서 0. <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code>는 부호 있는 값.</p>
 <p style="margin:2px 0 2px 12px">• 실패(<code style="color:#22d3bf">MetricContractError</code>): 마지막 축이 3이 아님 / <code style="color:#22d3bf">white</code>가 3요소가 아님, 또는 0 이하를 포함. XYZ의 값 범위는 검사하지 않는다(음수나 1 초과도 그대로 계산한다).</p>
 <p><code style="color:#22d3bf">delta_e_76</code> / <code style="color:#22d3bf">delta_e_2000</code>은 이 Lab을 입력으로 한다.</p>
+<p>빈 입력(<code style="color:#22d3bf">xyz</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

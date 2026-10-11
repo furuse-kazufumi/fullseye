@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>：粗细（拒绝负值）。</p>
 <p>返回值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。</p>
 <p>用法：以“工具的扫掠体积是否与零件相交”来判断工具可达性时，将工具放置为胶囊体，看 <code style="color:#22d3bf">sdf_intersect</code> 的最小值是否为正。也可用于合成骨小梁、血管、纤维。</p>
+<p>空输入(<code style="color:#22d3bf">grid</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

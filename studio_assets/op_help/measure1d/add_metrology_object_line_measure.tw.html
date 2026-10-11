@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 參數的型別、範圍在此不做驗證(影像外的座標也能堆疊;<code style="color:#22d3bf">apply</code> 時只會用最近鄰外插，不會拋出例外)。</p>
 <p style="margin:2px 0 2px 12px">• 回傳值: 所新增物件的 index(從 0 開始)。<code style="color:#22d3bf">apply</code> 結果 list 的同一位置是 <code style="color:#22d3bf">type=&quot;line&quot;</code> 的結果(<code style="color:#22d3bf">row1/col1/row2/col2/angle_deg</code>)。</p>
 <p>用 <code style="color:#22d3bf">align_metrology_model</code> 平移時，兩端點一起移動。</p>
+<p>空輸入(<code style="color:#22d3bf">model</code> 為空 dict)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

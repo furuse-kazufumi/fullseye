@@ -24,6 +24,8 @@ sigma_per_mm: 吸収係数 [1/mm] (配列可 — 波長ごとに変えれば**�
 
 返り値: 内部透過率(0–1)。界面の反射は含まない(それは `slab_transmittance`)。
 
+空の入力(``path_mm`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

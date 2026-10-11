@@ -39,6 +39,8 @@ Returns
 -------
 (H, W) bool ndarray  前景 True のシルエット。
 
+空の入力(``points`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

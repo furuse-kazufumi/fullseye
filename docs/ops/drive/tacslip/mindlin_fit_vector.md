@@ -26,6 +26,8 @@ F_x を 90° 回した場 R(90°)F_x(R(−90°)p)、核は等方な半空間な�
 偏り(純 v のせん断に 0.01 N の偽の u 成分)を出した(pegtactile の試作で測って捨てた)。
 返り ``c_over_a``・``q_ratio``・``muP``・``Q``・``phi``・``rms_m``。**Raises** ``ValueError``: 形の不一致、点が 3 個未満。
 
+空の入力(``model`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

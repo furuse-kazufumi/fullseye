@@ -14,6 +14,7 @@
 <p>随机移除 <code style="color:#22d3bf">ratio</code> 比例的点，并返回 <code style="color:#22d3bf">(kept, kept_idx)</code>（模拟数据缺失）。</p>
 <p>保留的点数为 <code style="color:#22d3bf">round((1-ratio)*N)</code>。<code style="color:#22d3bf">kept_idx</code> 是指向原数组的升序索引，<code style="color:#22d3bf">kept == points[kept_idx]</code> 严格成立。在训练中再现遮挡/稀疏视点造成的点缺失。要求 <code style="color:#22d3bf">0 &lt;= ratio &lt;= 1</code>。</p>
 <p><code style="color:#22d3bf">ratio</code> 超出 [0,1] 为 <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">ratio=1</code> 得到空的 <code style="color:#22d3bf">(0,3)</code> 和空索引，<code style="color:#22d3bf">ratio=0</code> 得到全部点(顺序不变)。保留点数由 Python 的 <code style="color:#22d3bf">round</code>(银行家舍入)决定，因此在 <code style="color:#22d3bf">.5</code> 边界偏向偶数一侧。<code style="color:#22d3bf">seed</code> 决定 <code style="color:#22d3bf">permutation</code>，结果确定。返回值为 <code style="color:#22d3bf">(kept float64 (M,3), kept_idx int64 (M,))</code>。去除在空间上是均匀的，要模拟局部缺失(遮挡)请用 <code style="color:#22d3bf">cutout</code>。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:点云的抽稀、离群点去除和随机丢弃都可能得到空结果。空点云是合法的值,链条的下一级不应因此停下)。</p>
 <p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">random_dropout</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调参数，<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

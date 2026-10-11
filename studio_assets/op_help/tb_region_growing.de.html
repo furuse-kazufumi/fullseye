@@ -25,6 +25,7 @@
 <p>Returns:</p>
 <p>labels: (N,) int. Jede zusammenhängende glatte Region erhält 0,1,2,.... <b>Kleine Regionen unter min_region_size (isolierte Punkte, falsch orientierter Abfall) erhalten -1 (Rauschen / nicht zugeordnet)</b> = gemäß dem einheitlichen Vertrag (-1 = Rauschen).</p>
 <p>Leere Eingabe liefert shape (0,).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) liefert ein leeres Ergebnis (Grund: eine leere Wolke hat nichts zu beschriften, also ist ein Label-Array der Länge 0 die richtige Antwort; vorgelagerte Filter können leere Wolken liefern).</p>
 <p>Die 3d-Op <code style="color:#22d3bf">region_growing</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. <code style="color:#22d3bf">a</code> variiert <code style="color:#22d3bf">angle_thresh_deg</code> (Standard 15), <code style="color:#22d3bf">b</code> variiert <code style="color:#22d3bf">k</code> (Standard 20).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

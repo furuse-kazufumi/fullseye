@@ -15,6 +15,7 @@
 <p>dict : <code style="color:#22d3bf">deductions</code>(<code style="color:#22d3bf">(細目, 点, 説明)</code> の列。点 None = 試験中止)、<code style="color:#22d3bf">total</code>(減点の合計)、<code style="color:#22d3bf">score</code>(100 − 合計、</p>
 <p>試験中止なら None)、<code style="color:#22d3bf">test_stopped</code>、<code style="color:#22d3bf">passed</code>(第一種 70 点以上)、<code style="color:#22d3bf">thresholds</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: venue が不正、event の kind が不明・値が非有限。</p>
+<p>空の入力(<code style="color:#22d3bf">events</code> が 0 件)は空を返す(理由: 減点の事象が 0 件の走行は満点で、それが正しい答え)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -26,6 +26,7 @@
 <p>smoothing के बाद का point cloud (क्रम और points की संख्या बनी रहती है)। जिन points के neighbours polynomial के terms से कम हैं, वे अपनी जगह पर रहते हैं।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>यह approximation method है। जिन points के neighbours terms से कम हैं / जिनका local plane degenerate है, वे नहीं खिसकते और अपनी मूल जगह पर रहते हैं (holes या borders पर बेकाबू न होने के लिए safety measure)। <code style="color:#22d3bf">radius &lt;= 0</code> पर ValueError, खाली input पर खाली लौटता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: पॉइंट क्लाउड का विरलन, आउटलायर हटाना और ड्रॉपआउट खाली परिणाम दे सकते हैं; खाली क्लाउड एक वैध मान है और शृंखला का अगला चरण उस पर नहीं रुकना चाहिए)।</p>
 <p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">mls_smooth</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">order</code> (default 2) बदला जाता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

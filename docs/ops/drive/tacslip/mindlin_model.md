@@ -25,6 +25,8 @@ g は Cerruti 核で格子上に作り、x·a/c が格子の外に出る点は�
 核で 0.05 %、環で 0.13 %。返り ``gx``・``gy``(n, n)、``Qunit``、``n``・``pitch``・``c0``(格子中心 [px])、``hz``・``G``・``nu``。
 c/a の格子を線形補間する模型は場が c に非線形なので c/a を 0.01 ずらした(捨てた)。**Raises** ValueError: 形の不一致、G ≤ 0。
 
+空の入力(``hz`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

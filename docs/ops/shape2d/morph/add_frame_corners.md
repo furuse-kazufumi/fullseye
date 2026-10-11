@@ -37,6 +37,8 @@ src/dst の両方に同じ順序で足せば、四隅は「動かない対応点
 点群に掛ける。``warp_piecewise_affine`` / ``warp_tps_image`` を直接呼ぶときは
 自分で ``src`` と ``dst`` の両方に足すこと。
 
+空の入力(``pts`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [shape_description_2d ファミリ ガイド](../guides/shape_description_2d.md)

@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• return value: उसी shape की float64 copy, <code style="color:#22d3bf">[0, 1]</code>।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(3,)</code> का 1 रंग या <code style="color:#22d3bf">(N, 3)</code> की रंग तालिका यह op नहीं लेता (image API)। किसी भी shape पर लगाना हो तो <code style="color:#22d3bf">imgmetrics</code> की ओर का उसी नाम का function यहाँ delegate करता है।</p>
 <p><code style="color:#22d3bf">radial_light</code> / <code style="color:#22d3bf">light_mask</code> / <code style="color:#22d3bf">bloom</code> जैसे linear light में गणना किए गए परिणामों पर, file में लिखने या screen पर दिखाने से ठीक पहले केवल 1 बार लगाएँ। दो बार लगाने पर midtones उभर आते हैं (कोई exception नहीं आता)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">img</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

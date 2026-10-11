@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 相補誤差関数 erfc(x) = 1 − erf(x)。大きな x で 1 − erf を引き算すると桁落ちするので別に持つ
 (x = 10 で 1 − erf は 0 になるが erfc は 2.1e−45)。
 
+空の入力(``x`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 mathops の全 op は入力を検証してから計算する(黙って通さない):

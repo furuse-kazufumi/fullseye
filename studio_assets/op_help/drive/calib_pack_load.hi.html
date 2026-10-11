@@ -7,6 +7,7 @@
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p><code style="color:#22d3bf">pitch_mm</code> [mm/px] と <code style="color:#22d3bf">ball_radius_mm</code> は呼び出し側が与える(パックの中に無い)。返り: <code style="color:#22d3bf">f0</code>・<code style="color:#22d3bf">imgs</code>・<code style="color:#22d3bf">centers</code> (N, 2)・ <code style="color:#22d3bf">radii</code> (N,) [px]・<code style="color:#22d3bf">pitch</code>(m/px)・<code style="color:#22d3bf">pitch_mm</code>・<code style="color:#22d3bf">R_mm</code>・<code style="color:#22d3bf">R_px</code>(= 半径 / ピッチ)・<code style="color:#22d3bf">n</code>。データ置き場は呼び出し側が環境変数(例 <code style="color:#22d3bf">FULLSEYE_TAXIM_DATA</code>)から組む。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: キー欠落(綴り違いも)/ 形の不一致 / 画像 0 枚 / 中心が非有限 / 半径 ≤ 0 / pitch・球半径 ≤ 0。<code style="color:#22d3bf">FileNotFoundError</code>: パスが無い。</p>
+<p>空の入力(<code style="color:#22d3bf">path</code> が空文字列)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

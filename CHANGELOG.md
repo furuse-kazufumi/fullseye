@@ -7,6 +7,29 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### Changed (behaviour) — 空の入力の扱い(方針 A)
+
+**PyPI の利用者にとって振る舞いの変更。** 型付き台帳の op に、第 1 引数が空(0 要素の配列・空の
+list / dict・空文字列)のものを渡したときの扱いを 1 つに揃えた。
+
+- **273 op が `ValueError` で拒否する**ようになった。メッセージは `"<op>: <引数> is empty — …"` で、
+  何が空かを名指しする。内訳: これまで**黙って値を返していた** 170 op(空の配列・形の崩れた配列・
+  既定値の結果などを返していた)と、**生の例外**で落ちていた 103 op(`KeyError` 75・torch の
+  `RuntimeError` 23・空のパスでの `FileNotFoundError` 5)。それぞれの docstring に
+  「空の入力(``引数`` が 0 要素)は ValueError」と書いた。
+  `signal_features` の「空の信号はゼロ」もこの拒否に変わった。
+  空でない入力での結果は変わらない。空を渡していたコードは、呼ぶ前に空かどうかを見て分岐すること。
+- **43 op は空を受けて空を返す**(拒否しない)。空が値の範囲の内側で、空を返すのが正しい答えの
+  op だけ: 点群の間引き・外れ値除去・拡張(10)、点群の分割(4)と変位場(3)、点の無いスキャンの距離画像(2)、funct_1d(11、HALCON と
+  同じ)、連結成分(2)、駐停車・追越し禁止の区間と合法な停車区間・技能試験の採点(4)、ほか 7
+  (`measure_text`・`vda5050_check`・`tile_stream`・`knn_graph`・`building_prisms`・
+  `swarm_render_overhead`・`cplx_rational_field`)。どれも docstring に
+  「空の入力(``引数`` …)は空を返す(理由: …)」と理由つきで書いた。
+- 門: `tests/test_ledger_contracts.py` が、空の入力に**どちらの文も無いまま値を返す** op
+  (`silent_on_empty`)、生の例外(`raw_*`)、「空を返す」と書いて例外を出す op
+  (`accept_promise_broken`)を新規の違反として落とす。台帳 `docs/LEDGER_GAP_DEBT.json` の
+  空入力の負債は 0 本。
+
 ### 変更
 
 - 型付き台帳の全 op(2,130 本)に契約の門(例外・非有限・宣言の型・決定性)。既存の違反は

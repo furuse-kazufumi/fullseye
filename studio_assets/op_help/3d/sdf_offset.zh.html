@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• 收缩(<code style="color:#22d3bf">r &lt; 0</code>)时若 <code style="color:#22d3bf">|r|</code> 超过最小内切半径，形状会消失（所有元素为正）。不会报错。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sdf_union</code> / <code style="color:#22d3bf">sdf_intersect</code> 的<b>内侧</b>是真实距离的下界，因此在合成后以 <code style="color:#22d3bf">r &lt; 0</code> 收缩时，重叠区域可能被削去比实际更多。</p>
 <p style="margin:2px 0 2px 12px">• 厚度 <code style="color:#22d3bf">t</code> 的壳：<code style="color:#22d3bf">sdf_subtract(sdf, sdf_offset(sdf, -t))</code>。</p>
+<p>空输入(<code style="color:#22d3bf">sdf</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

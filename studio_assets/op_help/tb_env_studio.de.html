@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Strahldichte einer Studioumgebung (Richtung -&gt; Helligkeit). <b>Achromatisch</b>.</p>
 <p>2 Softboxen + ein Himmelsgradient + ein dünnes horizontales Band. Es bleibt farblos, um im Bild zu garantieren, dass die Farbe des Metalls <b>aus Fresnel(n, k) stammt</b>, nicht aus der Umgebung. <code style="color:#22d3bf">directions</code> sind (..., 3)-Einheitsvektoren (z nach oben). Der Rückgabewert hat diese Form, (...,).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">directions</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <p>Die optics-Op <code style="color:#22d3bf">env_studio</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. <code style="color:#22d3bf">a</code> variiert <code style="color:#22d3bf">key</code> (Standard 12), <code style="color:#22d3bf">b</code> variiert <code style="color:#22d3bf">fill</code> (Standard 3.2).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

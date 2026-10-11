@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: kNN graph के neighbours की संख्या (default 8)। <code style="color:#22d3bf">start</code>: पहला representative point (<code style="color:#22d3bf">start % N</code> से सीमा के अंदर लपेटा जाता है)।</p>
 <p style="margin:2px 0 2px 12px">• return value चुनने के क्रम में index sequence है (पहला <code style="color:#22d3bf">start</code>)। <code style="color:#22d3bf">points[idx]</code> से representative points मिलते हैं।</p>
 <p>सावधानी: अगर graph कई connected components में बँटा हो, तो न पहुँचने वाले points की दूरी <code style="color:#22d3bf">inf</code> होती है, इसलिए न पहुँचा component पहले चुना जाता है (argmax <code style="color:#22d3bf">inf</code> उठा लेता है)। इससे &quot;दूर के ढेर पहले लो&quot; वाला behaviour बनता है, इसलिए अगर हर component को समान रूप से subsample करना हो तो पहले <code style="color:#22d3bf">euclidean_cluster</code> आदि से अलग करके इस्तेमाल करें।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

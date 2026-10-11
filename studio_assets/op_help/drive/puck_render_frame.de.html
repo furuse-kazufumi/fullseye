@@ -6,6 +6,7 @@
 <p>Synthetisiert 1 Frame von oben (float (H,W), 0–1): weißer Tisch, graue Wände, dunkler Puck (Anti-Aliasing 1. Ordnung).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">exposure</code> &gt; 0 なら露光の間 [t, t+exposure] にパックが v·exposure 動く分を n_sub 個の副露光の平均で入れる(モーションブラー)。コマの時刻は <b>露光の始め</b>: ブラーした像の重心は v·exposure/2 だけ進む(閉形式、門)。<code style="color:#22d3bf">noise</code> はガウス雑音の σ。</p>
+<p>空の入力(<code style="color:#22d3bf">cam</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

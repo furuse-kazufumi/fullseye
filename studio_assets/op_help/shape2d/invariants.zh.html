@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对旋转、平移、起点以及(可选)尺度不变的形状描述子((N,2))。</p>
 <p>把各谐波椭圆的 (长轴，短轴) = 奇异值排列起来。不含 DC，因此对平移不变;由于是奇异值，对空间旋转和起点平移不变;除以第1谐波的长轴则对尺度不变。是形状匹配(<code style="color:#22d3bf">descriptor_distance</code>)的基础。</p>
+<p>空输入(<code style="color:#22d3bf">model</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

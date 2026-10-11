@@ -89,6 +89,8 @@ def project_spherical(points, h_res: int = 1024, v_res: int = 64,
     同じセルに複数点が落ちたら ``np.minimum.at`` で最小 range を残す(奥の点は失われる)。
     逆変換は ``unproject_spherical``(同じ ``v_fov`` を渡す)。高さで層を切る変種が
     ``project_cylindrical``。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 返りの無いスキャンは正当で、全セルが 0 の像が正しい答え)。
     """
     _validate_res(h_res, v_res)
     v_min, v_max = _validate_fov(v_fov)
@@ -179,6 +181,8 @@ def project_cylindrical(points, h_res: int = 1024, z_bins: int = 64,
     画素値は z 軸からの水平距離 ρ(円柱上の点が一定になる自然な不変量)。空セル=0, 近い点優先(最小 ρ)。
     z_range=(z_min,z_max) 未指定なら点群の [z.min, z.max] を採用。z 幅ゼロは fail-closed(ValueError)。
     行 0 = 上端(z=z_max)。z_range 外、z 軸上(ρ=0)、非有限座標の点は落とす。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 返りの無いスキャンは正当で、全セルが 0 の像が正しい答え)。
     """
     _validate_res(h_res, z_bins)
     h_res, z_bins = int(h_res), int(z_bins)

@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Radiance of a studio environment (direction → brightness). <b>Achromatic.</b></p>
 <p>2 softboxes + a sky gradient + a thin horizontal band. It is left uncoloured to guarantee within the picture that the colour of the metal comes not from the environment but <b>from Fresnel(n, k)</b>. <code style="color:#22d3bf">directions</code> are unit vectors of shape (..., 3) (z up). The return value has shape (...,).</p>
+<p>Empty input (<code style="color:#22d3bf">directions</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

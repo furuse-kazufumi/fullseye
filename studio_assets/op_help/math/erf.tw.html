@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>誤差函數 erf(x) = (2/√π) ∫_0^x e^{−t²} dt。</p>
 <p>常態分布的累積，也正是模糊邊緣(與高斯摺積的階躍)的形狀：被寬度 σ 的高斯模糊的階躍為 ½(1 + erf(x / (σ√2)))。門檻：奇函數，erf(∞) = 1，導數 = (2/√π) e^{−x²}，與 Gauss 求積所得積分一致。</p>
+<p>空輸入(<code style="color:#22d3bf">x</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

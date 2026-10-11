@@ -150,7 +150,11 @@ def reconstruct(model, n_points=300, n_harmonics=None):
 
     輪郭を係数化せずに滑らかにするだけなら ``fourier_smooth``。係数どうしの
     比較は ``invariants`` / ``descriptor_distance``。
+
+    空の入力(``model`` が空の dict)は ValueError。
     """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("reconstruct: model is empty — pass a non-empty dict")
     coeffs = np.asarray(model["coeffs"], dtype=np.float64)
     N = coeffs.shape[0] if n_harmonics is None else min(int(n_harmonics), coeffs.shape[0])
     t = np.linspace(0.0, 1.0, int(n_points), endpoint=False)
@@ -186,7 +190,11 @@ def invariants(model, scale_invariant=True):
     各高調波の楕円の (長軸, 短軸) = 特異値を並べたもの。DC を含まないので平行移動に
     不変、特異値なので空間回転と始点シフトに不変、第1高調波の長軸で割ればスケール
     不変。形状マッチング(:func:`descriptor_distance`)の土台。
+
+    空の入力(``model`` が空の dict)は ValueError。
     """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("invariants: model is empty — pass a non-empty dict")
     amp = _amplitudes(model["coeffs"])
     if scale_invariant:
         L1 = amp[0, 0]
@@ -205,7 +213,11 @@ def normalize(model, size_invariant=True):
     注意(honest): 第1高調波がほぼ **円形**(長軸≈短軸)の形状では位相 (theta/psi) が
     悪条件で不安定になる。**不変マッチングには本関数でなく** :func:`invariants` /
     :func:`descriptor_distance`(特異値ベース)を使うこと。
+
+    空の入力(``model`` が空の dict)は ValueError。
     """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("normalize: model is empty — pass a non-empty dict")
     coeffs = np.array(model["coeffs"], dtype=np.float64, copy=True)
     a1, b1, c1, d1 = coeffs[0]
     # (1) 始点位相 theta1
@@ -238,7 +250,11 @@ def descriptor_distance(m1, m2, n_harmonics=None, scale_invariant=True):
 
     各高調波の楕円 (長軸, 短軸) 特異値不変量(:func:`invariants`)の L2 距離。
     m1, m2 は :func:`elliptic_fourier` の出力 dict。
+
+    空の入力(``m1`` が空の dict)は ValueError。
     """
+    if isinstance(m1, dict) and len(m1) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("descriptor_distance: m1 is empty — pass a non-empty dict")
     a = invariants(m1, scale_invariant=scale_invariant)
     b = invariants(m2, scale_invariant=scale_invariant)
     N = min(a.shape[0], b.shape[0])

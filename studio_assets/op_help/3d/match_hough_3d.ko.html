@@ -17,6 +17,7 @@
 <p>복수 인스턴스는 <code style="color:#22d3bf">nms</code> 를 작게.</p>
 <p style="margin:2px 0 2px 12px">• 템플릿에 에지가 없으면 전부 0 인 <code style="color:#22d3bf">(topk,4)</code>. 템플릿이 완전히 들어가지 않는 위치는 0.</p>
 <p>후단: 각 피크를 <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_peak_newton</code> 으로 정밀화.</p>
+<p>빈 입력(<code style="color:#22d3bf">scene</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

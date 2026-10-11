@@ -18,6 +18,7 @@
 <p>The window, as in <code style="color:#22d3bf">cplx_plane_grid</code>.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a pole (or zero) lands *exactly* on a sample, so the value there is not a number — nudge <code style="color:#22d3bf">centre</code> by half a pixel or take an odd <code style="color:#22d3bf">shape</code> (the message says which pole and where); non-finite input; the window is degenerate; the result overflows to infinity anyway (the gain and the window disagree by more than float64 can hold).</p>
 <p>HALCON: no operator (HALCON has no complex-plane family).</p>
+<p>Empty input (<code style="color:#22d3bf">zeros</code> with 0 elements) returns an empty result (reason: a rational function without zeros (<code style="color:#22d3bf">1/q</code>) is a valid mathematical object).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>

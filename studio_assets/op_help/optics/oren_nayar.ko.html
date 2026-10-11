@@ -9,6 +9,7 @@
 <p>albedo: 확산 반사율(스칼라 또는 (H,W)).</p>
 <p>반환값: (H, W)의 방사 휘도 계수(0 이상).</p>
 <p>왜 Lambert로는 부족한가: Lambert는 끝(terminator)에서 cos에 비례하여 떨어지지만, 거친 면은 미세면의 상호 차폐와 상호 반사로 <b>끝이 평평하게 밝은 채로</b> 남는다. 보름달이원반처럼 균일하게 보이는 것이 이것이며, Lambert로는 가장자리가 어두워져 구로 보여 버린다.</p>
+<p>빈 입력(<code style="color:#22d3bf">normals</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 v − v_h = f H (1 + tan²α) / (d + H tan α) —— よって d = λ/(v − v_h) − H tan α、λ = f H / cos²α
 (Hautière ら 2006 の λ/(v − v_h) は第 1 項だけの形)。行は下向きが +。
 
+空の入力(``rows`` が 0 件)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

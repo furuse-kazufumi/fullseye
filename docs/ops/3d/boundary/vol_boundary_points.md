@@ -37,6 +37,8 @@ with a valid empty answer — unlike a crop, which needs a box to exist).
 
 Returns an ``(N, 3)`` float64 array, rows ordered z-major (deterministic).
 
+Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -7,6 +7,7 @@
 <p><code style="color:#22d3bf">{&quot;max&quot;: indices, &quot;min&quot;: indices}</code> where index <code style="color:#22d3bf">i</code> is a maximum iff <code style="color:#22d3bf">y[i] &gt; y[i-1] and y[i] &gt; y[i+1]</code> (mirrored for minima). Inputs shorter than 3 samples have no interior point and return two empty arrays (degenerate case, not an error).</p>
 <p>Honest limitation: inequalities are <b>strict</b> — plateau extrema (equal neighbouring samples at the top/bottom) are not reported, and the boundary samples <code style="color:#22d3bf">0</code> and <code style="color:#22d3bf">n-1</code> are never extrema.</p>
 <p>:param y: 1-D function (may be empty). :returns: dict <code style="color:#22d3bf">{&quot;max&quot;: int array, &quot;min&quot;: int array}</code>. :raises ValueError: non-1-D / NaN / Inf input.</p>
+<p>Empty input (<code style="color:#22d3bf">y</code> with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON&#x27;s funct_1d), and empty functions flow through chains of function ops).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

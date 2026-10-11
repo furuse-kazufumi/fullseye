@@ -288,21 +288,26 @@ def gaps(probe):
 
 
 def test_gap_probes_reach_their_scope(gaps, capsys):
-    """空入力とノブの探針が届いた数(床つき)と、**ゲートにしない**数を出す。
+    """空入力とノブの探針が届いた数(床つき)を出す。
 
-    空入力に黙って何かを返し、docstring にも何も書いていない op の数は**報告だけ**する
-    (拒否すべきかは持ち主の方針の問い。まだ門にしない)。
+    ★2026-10-12 方針 A: 空入力に黙って値を返す op は門(``silent_on_empty``)になった。
+    ここでは「拒否を約束した数」と「空なら空を返すと理由つきで書いた数」の床を見る
+    (読み取りの正規表現が壊れて 0 になると、門ごと素通りになるので)。
     """
     _verdict, found, scope = gaps
     e, k = scope["empty_input"], scope["dead_knob"]
     with capsys.disabled():
-        print("\n== 空入力: 判定 %d op(docstring が拒否を約束 %d)/ 約束なしで黙って値を返す %d op"
-              % (e["judged"], e["promised"], e["returned_unpromised"]))
+        print("\n== 空入力: 判定 %d op(拒否を約束 %d・空なら空と明記 %d)/ 約束なしで黙って値を返す %d op"
+              % (e["judged"], e["promised"], e["accepted"], e["returned_unpromised"]))
         print("== ノブ: %d op / %d 個(効く %d・効かない %d・測れない %d)、重くて振らない op %d"
               % (k["ops"], k["params"], k["live"], k["dead"], k["unmeasured"], k["slow_ops"]))
     assert e["judged"] >= EMPTY_JUDGED_FLOOR, e
     assert e["promised"] >= 90, ("docstring が空入力の拒否を約束する op の検出が少なすぎる"
                                   "(探す正規表現が壊れていないか): %s" % e)
+    # 2026-10-12 実測: 拒否の約束 396 本・空なら空の明記 43 本(手元)。CI 相当では torch が要る op が
+    # skip になるので少し下に床を置く
+    assert e["promised"] >= 350, e
+    assert e["accepted"] >= 35, ("「空の入力は空を返す(理由: …)」の読み取りが少なすぎる: %s" % e)
     assert k["params"] >= KNOB_PARAMS_FLOOR, k
     assert set(lg.KNOB_SKIP_SLOW) <= set(_verdict), sorted(set(lg.KNOB_SKIP_SLOW) - set(_verdict))
 
@@ -342,13 +347,51 @@ def _silent_on_empty(x):
     return float(np.sum(x))
 
 
+def _accepts_and_returns(x):
+    """Sum the samples.
+
+    Empty input (``x`` with 0 elements) returns an empty result (reason: a planted control).
+    """
+    return float(np.sum(x))
+
+
+def _accepts_but_refuses(x):
+    """Sum the samples.
+
+    空の入力(``x`` が 0 要素)は空を返す(理由: 植えた対照)。
+    """
+    x = np.asarray(x)
+    if x.size == 0:
+        raise ValueError("empty input")
+    return float(np.sum(x))
+
+
+def _raw_on_empty(x):
+    """Return the first sample of the input array (no statement about empty input)."""
+    return float(np.asarray(x)[0])
+
+
+def _refuses_without_saying(x):
+    """Sum the samples of the input array (the guard below is not mentioned here)."""
+    x = np.asarray(x)
+    if x.size == 0:
+        raise ValueError("x is empty")
+    return float(np.sum(x))
+
+
 def _dead_knob(x, gain=2.0):
-    """Scale the input -- but the gain is never applied (a planted dead knob)."""
+    """Scale the input -- but the gain is never applied (a planted dead knob).
+
+    Empty input (``x`` with 0 elements) returns an empty result (reason: element-wise).
+    """
     return np.asarray(x, dtype=float) * 1.0
 
 
 def _live_knob(x, gain=2.0):
-    """Scale the input by ``gain`` (a live knob)."""
+    """Scale the input by ``gain`` (a live knob).
+
+    Empty input (``x`` with 0 elements) returns an empty result (reason: element-wise).
+    """
     return np.asarray(x, dtype=float) * gain
 
 
@@ -359,6 +402,10 @@ def test_gap_probes_catch_planted_ops(monkeypatch):
         "zz_gap_promise_broken": (_promises_but_returns, "measurement"),
         "zz_gap_promise_kept": (_promises_and_refuses, "measurement"),
         "zz_gap_silent": (_silent_on_empty, "measurement"),
+        "zz_gap_accept_kept": (_accepts_and_returns, "measurement"),
+        "zz_gap_accept_broken": (_accepts_but_refuses, "measurement"),
+        "zz_gap_raw": (_raw_on_empty, "measurement"),
+        "zz_gap_refuses_quietly": (_refuses_without_saying, "measurement"),
         "zz_gap_dead_knob": (_dead_knob, "signal"),
         "zz_gap_live_knob": (_live_knob, "signal"),
     }
@@ -369,15 +416,22 @@ def test_gap_probes_catch_planted_ops(monkeypatch):
     assert len(ops) == len(fakes)
     verdict = lc.run(ops=ops, hooks=lg.hooks())
     found, scope = lg.observed(verdict, descriptions=False)
-    assert found["empty_input"] == {"zz_gap_promise_broken": "returns_on_empty"}, found["empty_input"]
-    assert scope["empty_input"]["returned_unpromised"] >= 1          # zz_gap_silent は数えるだけ
+    # ★2026-10-12 方針 A: 黙って値を返す op(zz_gap_silent)と生の例外(zz_gap_raw)も門になった。
+    #   「空なら空」と書いて値を返す op・書かずに ValueError で断る op は通る
+    assert found["empty_input"] == {"zz_gap_promise_broken": "returns_on_empty",
+                                    "zz_gap_silent": "silent_on_empty",
+                                    "zz_gap_accept_broken": "accept_promise_broken",
+                                    "zz_gap_raw": "raw_IndexError"}, found["empty_input"]
+    assert scope["empty_input"]["returned_unpromised"] == 1          # zz_gap_silent だけ
+    assert scope["empty_input"]["accepted"] == 4                    # accept_* 2 本 + ノブの 2 本
     assert "zz_gap_dead_knob.gain" in found["dead_knob"], found["dead_knob"]
     assert not any(k.startswith("zz_gap_live_knob.") for k in found["dead_knob"])
     assert verdict["zz_gap_live_knob"]["gaps"]["knobs"] == {"gain": "live"}
     # ラチェットも鳴る: 空の台帳に対して新規、直った行は stale
     empty = {g: {} for g in lg.GAPS}
     assert {k for _g, k, _c in lg.new_gaps(found, empty, gaps=_PROBE_GAPS)} == {
-        "zz_gap_promise_broken", "zz_gap_dead_knob.gain"}
+        "zz_gap_promise_broken", "zz_gap_silent", "zz_gap_accept_broken", "zz_gap_raw",
+        "zz_gap_dead_knob.gain"}
     listed = {g: {} for g in lg.GAPS}
     listed["dead_knob"]["zz_gap_live_knob.gain"] = "other"
     assert [s[1] for s in lg.stale_gaps(found, listed, verdict, gaps=_PROBE_GAPS)] == ["zz_gap_live_knob.gain"]
@@ -400,6 +454,16 @@ def test_empty_promise_reader_and_knob_variants():
     assert lg.promises_empty_refusal(
         "空の入力(``vertices`` が 0 要素)は ValueError。(面 ``faces`` が空なら例外は出さない)",
         "vertices", ["faces"])
+    # 「空なら空を返す」の明記は、第 1 引数を名指しし、理由を添えたものだけ数える(方針 A、2026-10-12)
+    assert lg.documents_empty_result("空の入力(``pts`` が 0 要素)は空を返す(理由: 前段が空を出す)。", "pts")
+    assert lg.documents_empty_result(
+        "Empty input (``y`` with 0 elements) returns an empty result (reason: HALCON parity).", "y")
+    assert not lg.documents_empty_result("空の入力(``pts`` が 0 要素)は空を返す。", "pts")        # 理由が無い
+    assert not lg.documents_empty_result(
+        "空の入力(``pts`` が 0 要素)は空を返す(理由: x)。", "other")                           # 別の引数
+    assert not lg.documents_empty_result("対が 1 つも無ければ空 list(例外にはしない)。", "img")  # 結果の話
+    assert not lg.promises_empty_refusal(
+        "空の入力(``pts`` が 0 要素)は空を返す(理由: 前段が空を出す)。", "pts", [])
     assert lg.knob_variants(4) == [2, 8] and lg.knob_variants(0) == [1, 2]
     assert lg.knob_variants(0.3) == [0.15, 0.6] and lg.knob_variants(0.0) == [0.5, 1.0]
     assert lg.knob_variants(True) == [] and lg.knob_variants(float("inf")) == []

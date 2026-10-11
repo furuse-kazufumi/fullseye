@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">samples</code>：条数。默认 5。小于 1 时取 1。取奇数时包含中心波长。</p>
 <p style="margin:2px 0 2px 12px">• 返回值：<code style="color:#22d3bf">(wavelengths (k,), weights (k,))</code> 2 个 float64 数组。这是不模拟光谱真实形状(LED 的不对称、卤素灯的黑体分布)的近似。</p>
 <p><code style="color:#22d3bf">layout_capture</code> 以 <code style="color:#22d3bf">spectral_samples</code> 条调用它，把各波长的结果按此权重相加。</p>
+<p>空输入(<code style="color:#22d3bf">light</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

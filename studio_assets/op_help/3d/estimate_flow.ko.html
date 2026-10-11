@@ -12,6 +12,7 @@
 <p>(N, 3) 변위 벡터장(pts0와 같은 행 순서). 빈 pts0는 (0, 3)을 반환한다.</p>
 <p>Raises:</p>
 <p>ValueError: 형상 부정, 또는 pts0가 비어 있지 않은데 pts1이 비어 있음(최근접이 존재하지 않음).</p>
+<p>빈 입력(<code style="color:#22d3bf">pts0</code> 이(가) 0 개 요소)은 빈 결과를 반환한다(이유: 빈 점군의 변위는 빈 변위장이 올바른 답이다(행 순서를 유지하는 op). 앞 단계의 필터가 빈 점군을 낼 수 있다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

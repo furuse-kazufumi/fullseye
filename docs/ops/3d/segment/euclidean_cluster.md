@@ -32,6 +32,8 @@ Args:
 Returns:
     labels: (N,) int。0..(n_clusters-1) がクラスタ、-1 がノイズ。空入力は shape (0,)。
 
+空の入力(``points`` が 0 要素)は空を返す(理由: 空の点群には割り当てる点が無く、長さ 0 のラベル列が正しい答え。前段のフィルタが空を出しうる)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

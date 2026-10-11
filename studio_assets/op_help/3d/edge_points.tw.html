@@ -10,6 +10,7 @@
 <p>pts : (M,3) float64</p>
 <p>邊緣 voxel 的座標 (axis0, axis1, axis2) = (z, y, x)。M = 邊緣 voxel 數。</p>
 <p>沒有邊緣時回傳 shape (0,3)。</p>
+<p>空輸入(<code style="color:#22d3bf">edge_mask</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

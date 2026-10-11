@@ -30,6 +30,7 @@
 <p>相同的轴顺序)。按响应降序,最多 topn 个。</p>
 <p>responses: (M,) float64。对应的响应值(降序)。</p>
 <p>依赖: sobel3d(3D 梯度)、_gauss3d(积分窗口平滑)。均在 device 上运行。</p>
+<p>空输入(<code style="color:#22d3bf">vol</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

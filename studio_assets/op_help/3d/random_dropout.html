@@ -7,6 +7,7 @@
 <p>点の <code style="color:#22d3bf">ratio</code> 割合をランダム除去し <code style="color:#22d3bf">(kept, kept_idx)</code> を返す(欠損の模倣)。</p>
 <p>残す点数は <code style="color:#22d3bf">round((1-ratio)*N)</code>。<code style="color:#22d3bf">kept_idx</code> は元配列への昇順インデックスで、<code style="color:#22d3bf">kept == points[kept_idx]</code> が厳密に成り立つ。オクルージョン/疎な視点による点欠損を学習で再現する。<code style="color:#22d3bf">0 &lt;= ratio &lt;= 1</code> を要求。</p>
 <p><code style="color:#22d3bf">ratio</code> が [0,1] の外なら <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">ratio=1</code> は空 <code style="color:#22d3bf">(0,3)</code> と空インデックス、<code style="color:#22d3bf">ratio=0</code> は全点(順序は元のまま)。残す点数は Python の <code style="color:#22d3bf">round</code>(偶数丸め)で決まるので <code style="color:#22d3bf">.5</code> 端では偶数側に寄る。<code style="color:#22d3bf">seed</code> で <code style="color:#22d3bf">permutation</code> が決まり決定論的。返り値は <code style="color:#22d3bf">(kept float64 (M,3), kept_idx int64 (M,))</code>。除去は空間的に一様なので、局所的な欠損(遮蔽)を模すには <code style="color:#22d3bf">cutout</code> を使う。</p>
+<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

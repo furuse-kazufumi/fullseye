@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: Lab का white point। sRGB का matrix D65 पर स्थिर है, इसलिए आमतौर पर default ही रखें।</p>
 <p style="margin:2px 0 2px 12px">• return value: input जैसे ही shape का float64। <code style="color:#22d3bf">L</code> <code style="color:#22d3bf">[0, 100]</code> में होता है, सफ़ेद <code style="color:#22d3bf">(1, 1, 1)</code> पर लगभग <code style="color:#22d3bf">(100, 0, 0)</code>।</p>
 <p>2 images के रंग-अंतर के लिए <code style="color:#22d3bf">delta_e_map</code> रूपांतरण से रंग-अंतर तक सब एक बार में करता है। <code style="color:#22d3bf">lab_to_rgb</code> से वापस बदला जा सकता है, लेकिन gamut से बाहर के रंग काट दिए जाते हैं।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">rgb</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

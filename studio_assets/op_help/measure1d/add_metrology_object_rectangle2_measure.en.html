@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: guideline for the total number of samples (default 40 → 10 points per side). Even below 4, 2 points per side are placed.</p>
 <p style="margin:2px 0 2px 12px">• Arguments are not validated. The return value is the index of the added position (starting at 0).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">params</code> of the <code style="color:#22d3bf">apply</code> result is <code style="color:#22d3bf">row / col / phi / l1 / l2</code>, and after refitting <b>they are reordered so that <code style="color:#22d3bf">l1 &gt;= l2</code> (the long side is <code style="color:#22d3bf">l1</code>)</b> -- even if the reference gives <code style="color:#22d3bf">l1 &lt; l2</code>, the resulting <code style="color:#22d3bf">phi</code> is the orientation of the long side.</p>
+<p>Empty input (<code style="color:#22d3bf">model</code> an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

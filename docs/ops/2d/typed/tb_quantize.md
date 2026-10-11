@@ -64,6 +64,8 @@ comparator, not a quantiser — the error model does not apply. (3) The error
 model assumes the signal moves by more than a step between samples; on a flat
 stretch the error is a constant offset, not noise.
 
+Empty input (``x`` with 0 elements) raises ``ValueError``.
+
 Typed bridge of the 1d op ``quantize`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``bits`` (default 8); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)

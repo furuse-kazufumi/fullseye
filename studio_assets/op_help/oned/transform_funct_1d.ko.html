@@ -7,6 +7,7 @@
 <p>Independent affine transform of x and y (HALCON <code style="color:#22d3bf">transform_funct_1d</code>).</p>
 <p>Returns explicit pairs <code style="color:#22d3bf">(mult_x * i + add_x, mult_y * y[i] + add_y)</code> for <code style="color:#22d3bf">i = 0..n-1</code>. Note <code style="color:#22d3bf">mult_x = 0</code> collapses the abscissa to a single point (accepted; the result is then not a function of x).</p>
 <p>:param y: 1-D function (may be empty). :param mult_x, add_x, mult_y, add_y: finite affine coefficients. :returns: <code style="color:#22d3bf">(n, 2)</code> float64 array of <code style="color:#22d3bf">(x, y)</code> pairs. :raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.</p>
+<p>Empty input (<code style="color:#22d3bf">y</code> with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON&#x27;s funct_1d), and empty functions flow through chains of function ops).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -8,6 +8,7 @@
 <p>se=&quot;cube&quot;(默认,torch 路径可用 GPU)/ &quot;ball&quot;(各向同性 SE,scipy 路径)。</p>
 <p>SE 是边长 <code style="color:#22d3bf">2r+1</code> 的立方体(cube)或 <code style="color:#22d3bf">z²+y²+x² &lt;= r²</code> 的球(ball)。<code style="color:#22d3bf">r=0</code> 为恒等。边界外按 −∞ 处理(只在图像内的值上取 max;torch 的 <code style="color:#22d3bf">max_pool3d</code> 的 implicit padding 与 scipy 的 <code style="color:#22d3bf">cval=-inf</code> 结果相同)。cube 在有 torch 时用 <code style="color:#22d3bf">max_pool3d</code> (<code style="color:#22d3bf">device</code> 有效),ball 或没有 torch 时用 <code style="color:#22d3bf">scipy.ndimage.grey_dilation</code>(<code style="color:#22d3bf">device</code> 被忽略)。输入转换为 float32,返回值为 <code style="color:#22d3bf">(D,H,W)</code> float32 numpy。<code style="color:#22d3bf">se</code> 不是这 2 种之一时 ValueError。2 值 volume(0/1)直接得到 2 值 dilation。<code style="color:#22d3bf">se=&quot;ball&quot;</code> 在 r 较大时因 footprint 扫描而较慢。</p>
 <p>后续:与 <code style="color:#22d3bf">morph_erode3d</code> 配对,得到 <code style="color:#22d3bf">morph_open3d</code> / <code style="color:#22d3bf">morph_close3d</code> / <code style="color:#22d3bf">morph_gradient3d</code>。</p>
+<p>空输入(<code style="color:#22d3bf">vol</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

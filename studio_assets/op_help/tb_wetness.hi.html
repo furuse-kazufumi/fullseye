@@ -18,6 +18,7 @@
 <p>ior: पानी की परत का refractive index।</p>
 <p>return value: गीली अवस्था का diffuse रंग (समान shape)।</p>
 <p>यह गहरा क्यों होता है: पानी की परत के अंदर total internal reflection होता है, और diffuse प्रकाश बार-बार surface की ओर लौटता है और हर बार absorb होता है। approximation के रूप में, सूखी reflectance ρ पर internal reflectance Ri = 1 − (1 − Ri0)/n² के बराबर re-absorption लगाया जाता है ―― गीली रेत के काली दिखने की यही घटना है (specular का बढ़ना <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> को ऊपर जोड़कर दर्शाया जाता है)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">base_rgb</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <p>2-D evolution registry में bridge किया गया optics का op <code style="color:#22d3bf">wetness</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">wet</code> (default 1) और <code style="color:#22d3bf">b</code> से <code style="color:#22d3bf">ior</code> (default 1.33) बदला जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

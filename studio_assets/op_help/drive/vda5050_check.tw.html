@@ -6,6 +6,7 @@
 <p>檢查 VDA 5050 order 的<b>結構規則</b>(獨立於官方 JSON 結構描述的自製第二實作(獨立實作))。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>規則: 必須キー / ノードの sequenceId は 0 から偶数で連番、エッジは奇数で連番 / エッジ数 = ノード数 − 1 / 各エッジの始点・終点が前後のノード / released は base の先頭から連続(base → horizon の 1 回の切替のみ)/ エッジの released はその終点ノードと同じ。返りは違反の文言のリスト(空 = 合格)。</p>
+<p>空の入力(<code style="color:#22d3bf">order</code> が空の dict)は空を返す(理由: 検査器なので、空の order も検査の対象。足りない鍵の一覧が正しい答え)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

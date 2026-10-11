@@ -45,6 +45,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 呼び出し側で行う。形状の検証もしない(``np.asarray`` で float 化するのみ)。
 ``bundle_adjust`` / ``mean_reprojection_error`` の再投影残差はこの関数で作られる。
 
+空の入力(``points`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``project``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)

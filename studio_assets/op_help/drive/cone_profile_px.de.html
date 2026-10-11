@@ -6,6 +6,7 @@
 <p>Querschnitt <code style="color:#22d3bf">c(u)</code> [px] der Mantellinie des Kegels (<code style="color:#22d3bf">u</code> = Abstand von der Achse [px]).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>基本は <code style="color:#22d3bf">c = max(0, H − u tan φ)</code>。<code style="color:#22d3bf">apex_blunt_px</code> = 頂に内接する円弧の半径(材料を削る、中心は <code style="color:#22d3bf">(0, H − r/cos φ)</code>、接点 <code style="color:#22d3bf">u = r sin φ</code>)。<code style="color:#22d3bf">toe_round_px</code> = 裾の凹みを埋める円弧の半径(材料を足す、中心は空気側 <code style="color:#22d3bf">(x_t, r)</code>、<code style="color:#22d3bf">x_t = R + r tan(φ/2)</code>、接点 <code style="color:#22d3bf">u = x_t − r sin φ</code>)—— どちらも接線連続(導出: 接点で両側の高さが裾は <code style="color:#22d3bf">r(1 − cos φ)</code>、頂は <code style="color:#22d3bf">H − r sin²φ / cos φ</code> で一致)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2 つの円弧が重なる(山が小さすぎる)。</p>
+<p>空の入力(<code style="color:#22d3bf">u</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

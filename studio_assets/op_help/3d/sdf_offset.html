@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• 収縮(<code style="color:#22d3bf">r &lt; 0</code>)で <code style="color:#22d3bf">|r|</code> が最小内接半径を超えると形は消える(全要素が正)。エラーにはならない。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sdf_union</code> / <code style="color:#22d3bf">sdf_intersect</code> の<b>内側</b>は真の距離の下界なので、合成後に <code style="color:#22d3bf">r &lt; 0</code> で収縮すると、重なり領域で実際より多く削れることがある。</p>
 <p style="margin:2px 0 2px 12px">• 厚さ <code style="color:#22d3bf">t</code> の殻: <code style="color:#22d3bf">sdf_subtract(sdf, sdf_offset(sdf, -t))</code>。</p>
+<p>空の入力(<code style="color:#22d3bf">sdf</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

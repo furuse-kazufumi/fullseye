@@ -77,7 +77,12 @@ def class_2dim_unsup(image1, image2, n_clusters=3, iters=20):
 
 
 def classify_image_class_lut(image, lut):
-    """グレー LUT による画素分類(閾値/ラベル LUT)(classify_image_class_lut)。"""
+    """グレー LUT による画素分類(閾値/ラベル LUT)(classify_image_class_lut)。
+
+    空の入力(``image`` が 0 要素)は ValueError。
+    """
+    if (len(image) if isinstance(image, (list, tuple)) else np.asarray(image).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("classify_image_class_lut: image is empty — pass at least one element")
     im = _img(image); L = len(lut)
     idx = np.clip((im * (L - 1)).round().astype(int), 0, L - 1)
     return np.asarray(lut)[idx]
@@ -128,7 +133,12 @@ def regiongrowing_n(feature_images, tol=0.05, min_size=1):
 
 
 def watersheds_marker(image, markers):
-    """マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。"""
+    """マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。
+
+    空の入力(``image`` が 0 要素)は ValueError。
+    """
+    if (len(image) if isinstance(image, (list, tuple)) else np.asarray(image).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("watersheds_marker: image is empty — pass at least one element")
     from scipy import ndimage
     try:
         from skimage.segmentation import watershed

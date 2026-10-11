@@ -72,7 +72,12 @@ def luma_limited_u8(rgb) -> np.ndarray:
     どの輝度かは書かれておらず、実測で特定した規約。丸めは ``np.round``(半偶数)。輝度が **ちょうど k.5** に落ちる画素は丸めの向きが
     算術の順序で変わり、作者と 1 LSB 食い違うことがある(TID2013 では参照 I12 の 28 画素。彩度変化 5 組で作者 = 完全一致、ここでは 86.6 dB。
     半切り上げでも float32 でも揃わない)。PSNR が 60 dB を超える領域だけの話で、それ以外の 2,995 組は 0.0005 dB 以内。
-    **Raises** ``ValueError``: 形が (H, W, 3) でない、dtype が uint8 でない。"""
+    **Raises** ``ValueError``: 形が (H, W, 3) でない、dtype が uint8 でない。
+
+    空の入力(``rgb`` が 0 要素)は ValueError。
+    """
+    if (len(rgb) if isinstance(rgb, (list, tuple)) else np.asarray(rgb).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("luma_limited_u8: rgb is empty — pass at least one element")
     a = np.asarray(rgb)
     if a.ndim != 3 or a.shape[2] != 3:
         raise ValueError("luma_limited_u8: rgb must be (H, W, 3), got %r" % (a.shape,))

@@ -33,6 +33,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 モデルに反映し、``apply_metrology_model`` を掛ける。傾いたワークには使えない
 (参照形状の法線が実物の法線からずれ、探索半幅 ``measure_length`` の外に出る)。
 
+空の入力(``model`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

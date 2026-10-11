@@ -22,6 +22,7 @@
 <p>dilate : int  作為覆蓋餘量膨脹的像素數(預設 1,0 為無效)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>(H, W) bool ndarray  前景為 True 的剪影。</p>
+<p>空輸入(<code style="color:#22d3bf">points</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>橋接到 2-D 演化登錄表的 3d op <code style="color:#22d3bf">synthesize_silhouette</code>。實作相同,只有呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調點,<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

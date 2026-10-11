@@ -102,7 +102,11 @@ def oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0),
     なぜ Lambert では足りないか: Lambert は端(terminator)で cos に比例して落ちるが、
     粗い面は微小面の相互遮蔽と相互反射で**端が平らに明るいまま**になる。満月が
     円盤のように一様に見えるのがこれで、Lambert だと縁が暗くなって球に見えてしまう。
+
+    空の入力(``normals`` が 0 要素)は ValueError。
     """
+    if (len(normals) if isinstance(normals, (list, tuple)) else np.asarray(normals).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("oren_nayar: normals is empty — pass at least one element")
     op = "oren_nayar"
     N, mask = matappear._normal_map(normals, op)
     L = _dir(light, "light", op)
@@ -221,7 +225,11 @@ def sheen_shade(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0),
 
     返り値: (H, W)。**鏡面反射とは逆**に、正面(n·v = 1)で 0 に近く、縁(n·v → 0)で
     最大になる ―― ベルベットの縁が白く光るのはこれで、Phong では絶対に出せない。
+
+    空の入力(``normals`` が 0 要素)は ValueError。
     """
+    if (len(normals) if isinstance(normals, (list, tuple)) else np.asarray(normals).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("sheen_shade: normals is empty — pass at least one element")
     op = "sheen_shade"
     N, mask = matappear._normal_map(normals, op)
     L = _dir(light, "light", op)
@@ -318,7 +326,11 @@ def wetness(base_rgb, wet=1.0, ior=1.33) -> np.ndarray:
     そのたびに吸収される。近似として、乾いた反射率 ρ に対し内部反射率
     Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの
     (鏡面が増えるのは `clearcoat_shade(coat=wet)` を重ねて表す)。
+
+    空の入力(``base_rgb`` が 0 要素)は ValueError。
     """
+    if (len(base_rgb) if isinstance(base_rgb, (list, tuple)) else np.asarray(base_rgb).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("wetness: base_rgb is empty — pass at least one element")
     op = "wetness"
     base = np.asarray(base_rgb, dtype=np.float64)
     if np.any(base < 0.0):
@@ -373,7 +385,11 @@ def subsurface_approx(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0),
 
     返り値: (H, W)。**光源が裏にあるほど明るい**成分(back-scatter)と、影側へ
     回り込む成分(wrap lighting)の和。Lambert では 0 になる領域に光が残るのが要点。
+
+    空の入力(``normals`` が 0 要素)は ValueError。
     """
+    if (len(normals) if isinstance(normals, (list, tuple)) else np.asarray(normals).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("subsurface_approx: normals is empty — pass at least one element")
     op = "subsurface_approx"
     N, mask = matappear._normal_map(normals, op)
     L = _dir(light, "light", op)
@@ -399,7 +415,11 @@ def rough_transmission(cos_i, roughness=0.3, n1=1.0, n2=1.5):
     返り値: (直進 T_spec, 拡散 T_diff) の 2 本。合計は透明板の透過率に一致する
     (エネルギーを作らない ―― テストで確認)。曇りガラス越しの見え方は、この
     直進成分が落ちて拡散成分が増えるだけで説明できる。
+
+    空の入力(``cos_i`` が 0 要素)は ValueError。
     """
+    if (len(cos_i) if isinstance(cos_i, (list, tuple)) else np.asarray(cos_i).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("rough_transmission: cos_i is empty — pass at least one element")
     op = "rough_transmission"
     r = _unit_scalar(roughness, "roughness", op)
     T = glassmirror.slab_transmittance(cos_i, n1, n2, 0.0, 0.0)

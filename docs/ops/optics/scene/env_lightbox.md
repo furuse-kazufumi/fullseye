@@ -32,6 +32,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 加工目は**斜めから見ないと出ない**(真上から見た平面は反射方向が全画素で天頂に
 集中し、環境の勾配を掃かない)。``optical_camera(tilt_deg=50〜70)`` 程度が目安。
 
+空の入力(``directions`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

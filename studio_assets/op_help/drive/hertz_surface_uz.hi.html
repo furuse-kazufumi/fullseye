@@ -6,6 +6,7 @@
 <p>Hertz sphere contact में half-space surface का normal displacement ū_z(r) (धँसने की मात्रा ≥ 0, r जैसे shape का array)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>内側 r ≤ a: δ − r²/(2R)。外側: (1/πR)[(2a² − r²) arcsin(a/r) + a r √(1 − a²/r²)] (Johnson 式 3.42a)。r = a で δ/2 に連続。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a, δ, R ≤ 0、a² と Rδ が 1 % 以上食い違う(Hertz でない組)。</p>
+<p>空の入力(<code style="color:#22d3bf">r</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

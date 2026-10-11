@@ -70,6 +70,8 @@ def estimate_flow(pts0, pts1) -> np.ndarray:
         (N, 3) 変位ベクトル場(pts0 と同じ行順)。空 pts0 は (0, 3) を返す。
     Raises:
         ValueError: 形状不正、または pts0 が非空なのに pts1 が空(最近傍が存在しない)。
+
+    空の入力(``pts0`` が 0 要素)は空を返す(理由: 空の点群の変位は空の変位場が正しい答え(行順を保つ op)。前段のフィルタが空を出しうる)。
     """
     from scipy.spatial import cKDTree
 
@@ -148,6 +150,8 @@ def segment_rigid_motions(pts0, pts1, thresh, max_bodies: int = 5,
     Raises:
         ValueError: 形状不正 / 非有限 / pts1 空 / thresh <= 0 / max_bodies < 1 /
             k_sample < 3。
+
+    空の入力(``pts0`` が 0 要素)は空を返す(理由: 空の点群には割り当てる点が無く、長さ 0 のラベル列が正しい答え。前段のフィルタが空を出しうる)。
     """
     P0 = _as_points(pts0, "pts0")
     P1 = _as_points(pts1, "pts1")

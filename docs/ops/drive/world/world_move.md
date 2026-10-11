@@ -22,6 +22,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 対向車を 1 コマずつ進める(15 巡目の TTC)ための op。資産でない物体(縁石・路面・信号機)は ``ValueError``。
 姿勢の意味は :func:`add_asset` と同じ(資産の原点 = 箱の底面中心、yaw は +x から反時計回り)。
 
+空の入力(``world`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

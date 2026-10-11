@@ -47,6 +47,8 @@ stage = 各 step の制御の段階 ("lift" 振り上げ / "wait" 弛んだが�
 張った後で初めて弛んだ時刻、初めから弛んでいれば 0.0、一度も弛まなければ None。energy = ½mv² + mgz。n_estimates = 計画に
 渡した知覚の数)。初期状態が |p₀ − 支点(0)| > L、t_end < 0、dt ≤ 0、上限 ≤ 0 は ValueError。
 
+空の入力(``kp`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

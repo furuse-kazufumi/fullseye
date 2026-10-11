@@ -13,6 +13,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">R</code>:可被 <code style="color:#22d3bf">float()</code> 轉換的純量。傳入旋轉矩陣等時也為 <code style="color:#22d3bf">ValueError</code> (此參數是半徑而非位姿)。<code style="color:#22d3bf">R &lt; 0</code> 會被拒絕，<code style="color:#22d3bf">R = 0</code> 即為到中心的距離場本身。</p>
 <p>回傳值:<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64(<code style="color:#22d3bf">grid_coords</code> 的輸出時為 <code style="color:#22d3bf">(nx, ny, nz)</code>)。中心處為 <code style="color:#22d3bf">-R</code>，表面為 0，外側為正。</p>
 <p>用法:以 <code style="color:#22d3bf">grid_coords</code> 產生網格 → <code style="color:#22d3bf">sphere_sdf</code> / <code style="color:#22d3bf">box_sdf</code> → 以 <code style="color:#22d3bf">sdf_union</code> / <code style="color:#22d3bf">sdf_subtract</code> 做 CSG → 以 <code style="color:#22d3bf">&lt;= 0</code> 為佔用做 marching cubes(向 <code style="color:#22d3bf">voxel_to_mesh</code> 傳入 <code style="color:#22d3bf">-sdf</code>，相當於 <code style="color:#22d3bf">iso=0</code> 取等值面)。</p>
+<p>空輸入(<code style="color:#22d3bf">grid</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

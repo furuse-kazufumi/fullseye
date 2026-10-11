@@ -34,6 +34,8 @@ seed の無い側の距離が 1e6 に飽和し、全占有では −1e6、全空
 返り値 ``(D,H,W)`` float32 numpy。
 後段: ``sdf_to_occupancy`` で戻す、``voxel_to_mesh(sdf, iso=0.0)`` で面、``sobel3d`` で法線場。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

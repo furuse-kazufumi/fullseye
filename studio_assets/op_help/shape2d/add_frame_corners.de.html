@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• Rückgabewert: <code style="color:#22d3bf">(N + 8, 2)</code> float64.</p>
 <p style="margin:2px 0 2px 12px">• Ob die ursprünglichen Punkte bereits auf oder außerhalb des Rahmens liegen, wird nicht geprüft. Korrespondenzpunkte außerhalb des Rahmens schneiden in der Delaunay-Triangulierung die Rahmendreiecke, und der Warp wird verzerrt.</p>
 <p><code style="color:#22d3bf">morph</code> / <code style="color:#22d3bf">morph_sequence</code> wenden dies mit <code style="color:#22d3bf">with_corners=True</code> intern auf beide Punktmengen an. Wer <code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">warp_tps_image</code> direkt aufruft, muss sie selbst sowohl <code style="color:#22d3bf">src</code> als auch <code style="color:#22d3bf">dst</code> hinzufügen.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">pts</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">Leitfaden zur Familie shape_description_2d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

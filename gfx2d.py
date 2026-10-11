@@ -453,7 +453,11 @@ def srgb_to_linear(img):
     came out of an image file. Skipping it does not raise: it makes highlights
     bloom too early and shadows too dark, by the amount quoted in the module
     docstring.
+
+    Empty input (``img`` with 0 elements) raises ``ValueError``.
     """
+    if (len(img) if isinstance(img, (list, tuple)) else np.asarray(img).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("srgb_to_linear: img is empty — pass at least one element")
     return _transfer(img, "img",
                      lambda c: np.where(c <= 0.04045, c / 12.92,
                                         ((np.maximum(c, 0.0) + 0.055) / 1.055) ** 2.4))
@@ -478,7 +482,11 @@ def linear_to_srgb(img):
     ``radial_light`` / ``light_mask`` / ``bloom`` など線形光で計算した結果を、
     ファイルに書く・画面に出す直前に 1 回だけ掛ける。二度掛けると中間調が
     浮く(例外は出ない)。
+
+    空の入力(``img`` が 0 要素)は ValueError。
     """
+    if (len(img) if isinstance(img, (list, tuple)) else np.asarray(img).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("linear_to_srgb: img is empty — pass at least one element")
     return _transfer(img, "img",
                      lambda c: np.where(c <= 0.0031308, c * 12.92,
                                         1.055 * np.maximum(c, 0.0) ** (1.0 / 2.4) - 0.055))

@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 far_edge + beyond 以上なら入ってよい。返り値: ``room`` = queue_rear − far_edge、``need`` = car_length + gap + beyond、
 ``ok``、``rear_if_stopped``。前の車が無い場合は queue_rear = +∞。
 
+空の入力(``queue_rear`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

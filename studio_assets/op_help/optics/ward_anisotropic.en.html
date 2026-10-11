@@ -9,6 +9,7 @@
 <p>(a circle if isotropic; if alpha_x &gt;&gt; alpha_y, a line stretched along the streaks).</p>
 <p>Returns: (H, W) specular reflection intensity (non-negative). Background is 0.</p>
 <p>Formula: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo)), where δ is the angle between the half vector and the normal, and φ the azimuth from the tangent (Ward 1992).</p>
+<p>Empty input (<code style="color:#22d3bf">normals</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

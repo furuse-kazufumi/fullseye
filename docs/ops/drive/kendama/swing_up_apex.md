@@ -24,6 +24,8 @@ a ≤ g なら弛まず、玉は支点の L 下で止まる。返り値 ``{"acce
 "apex_above_handle", "apex_above_cup"}``(apex_above_handle = apex − lift、apex_above_cup = それから大皿の縁の高さを引いた量:
 皿に届くには ≥ h_c、皿の窓に入るには h_c ≤ … ≤ h_c + 1.5 r_b)。
 
+空の入力(``kp`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

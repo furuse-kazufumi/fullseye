@@ -21,6 +21,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 h(t) = C e^{At} B を行列指数で直接評価する(部分分数に頼らないので重根・原点の極でも分岐しない)。
 
+空の入力(``num`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 mathops の全 op は入力を検証してから計算する(黙って通さない):

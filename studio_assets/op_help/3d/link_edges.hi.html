@@ -15,6 +15,7 @@
 <p>connected components की संख्या।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>26-connectivity (3x3x3 का पूरा neighbourhood)। टूटे हुए edge टुकड़ों को 1 curve / closed surface के रूप में जोड़ता है, ताकि downstream Hough / chamfer उन्हें component के स्तर पर संभाल सकें।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">edge_mask</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

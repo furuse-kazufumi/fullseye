@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Bessel 함수. <code style="color:#22d3bf">kind</code> = <code style="color:#22d3bf">&quot;j&quot;</code>(제1종 J) / <code style="color:#22d3bf">&quot;y&quot;</code>(제2종 Y) / <code style="color:#22d3bf">&quot;i&quot;</code>·<code style="color:#22d3bf">&quot;k&quot;</code>(변형).</p>
 <p>원형 막의 진동·원형 개구의 회절(Airy = J₁)·원통의 열전도에 나온다. 게이트: Wronskian J_{ν+1}(x)Y_ν(x) − J_ν(x)Y_{ν+1}(x) = 2/(πx), 점화식 J_{ν−1} + J_{ν+1} = (2ν/x) J_ν. Y와 K는 x &gt; 0만(원점에서 발산한다).</p>
+<p>빈 입력(<code style="color:#22d3bf">x</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

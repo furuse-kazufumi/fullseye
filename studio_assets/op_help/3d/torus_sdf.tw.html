@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">minor_radius</code>：管的半徑（拒絕負值）。<code style="color:#22d3bf">minor_radius &gt;= major_radius</code> 時孔會塌陷（紡錘環面）。不會拒絕，但<b>只有在 <code style="color:#22d3bf">minor_radius &lt; major_radius</code> 時才嚴格</b>（2026-10-07 更正：以前寫的是「作為距離場是正確的」）。在管於軸上重疊的內側，值的絕對值小於到邊界的真實距離（major 1、minor 2 的中心處為 −1，真值為 −1.73）。符號、零等值面與外側的值是正確的，內側的絕對值是真實距離的下界，因此可安全用於球追蹤(sphere tracing)。</p>
 <p>回傳值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。</p>
 <p>用法：以 <code style="color:#22d3bf">sdf_subtract</code> 在內角削出圓角 / 以 <code style="color:#22d3bf">sdf_union</code> 建構 O 形環槽的形狀。若只是倒圓角，<code style="color:#22d3bf">sdf_smooth_union</code> 較方便，但其圓角半徑取決於形狀 —— <b>想把半徑當作設計值時用這個</b>。</p>
+<p>空輸入(<code style="color:#22d3bf">grid</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

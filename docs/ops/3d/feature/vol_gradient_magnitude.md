@@ -36,6 +36,8 @@ spacing は受けず、voxel 単位の差分(異方 voxel でも軸ごとに補�
 使いどころ: ``vol_watershed`` の地形(landscape)入力、``vol_local_maxima`` で
 界面の峰を拾う、``vol_stretch`` で ``[0, 1]`` に正規化して表示。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

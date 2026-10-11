@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code>(영상 크기)는 재검사하지 않으므로, 영상 밖으로 나가도 예외는 발생하지 않고 <code style="color:#22d3bf">measure_pos</code> 가 끝 값으로 외삽할 뿐이다.</p>
 <p style="margin:2px 0 2px 12px">• 반환값: 같은 구조의 dict(<code style="color:#22d3bf">measurehandle</code> 형).</p>
 <p>전형: 위치 맞춤으로 얻은 워크의 어긋남을 측정선에 반영한 뒤 <code style="color:#22d3bf">measure_pos</code> / <code style="color:#22d3bf">measure_pairs</code> 를 건다. 기울기가 바뀌는 경우에는 <code style="color:#22d3bf">gen_measure_rectangle2</code> 를새 <code style="color:#22d3bf">phi</code> 로 다시 만든다.</p>
+<p>빈 입력(<code style="color:#22d3bf">measure</code> 이(가) 빈 dict)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

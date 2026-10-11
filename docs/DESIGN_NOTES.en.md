@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 632 of 1359. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 632 of 1360. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -41,7 +41,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `annotate.py`
 
-- **L3095** — ★Punctuation (。、) should not be rotated but **shifted to the upper right**, but here we don't shift it —— rather than silently approximating what we can't do, we write it in the docstring and leave it. Characters (punctuation) that **shift to the upper right** in vertical writing. A dot that sits at the lower left of the glyph in horizontal setting comes to the upper right in vertical setting —— the typographic manner is to **move the position**, not to rotate. Windows' ``@``-prefixed fonts (the vertical-writing face GDI selects by face name) did this on the font side. Pillow opens a font by **file path** so it can't reach the ``@`` face, and HarfBuzz's ``direction="ttb"`` also gives different results with and without Raqm installed (this machine's Pillow 12.3.0 has ``features.check("raqm")`` False). Following the policy **choose what is consistent across platforms**, here we shift by composition.
+- **L3101** — ★Punctuation (。、) should not be rotated but **shifted to the upper right**, but here we don't shift it —— rather than silently approximating what we can't do, we write it in the docstring and leave it. Characters (punctuation) that **shift to the upper right** in vertical writing. A dot that sits at the lower left of the glyph in horizontal setting comes to the upper right in vertical setting —— the typographic manner is to **move the position**, not to rotate. Windows' ``@``-prefixed fonts (the vertical-writing face GDI selects by face name) did this on the font side. Pillow opens a font by **file path** so it can't reach the ``@`` face, and HarfBuzz's ``direction="ttb"`` also gives different results with and without Raqm installed (this machine's Pillow 12.3.0 has ``features.check("raqm")`` False). Following the policy **choose what is consistent across platforms**, here we shift by composition.
 
 ## `api.py`
 
@@ -164,7 +164,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `ballistics.py`
 
-- **L293** _(ja)_ — ★減衰つき(Levenberg–Marquardt)。素の Gauss–Newton は軌跡が短い(曲がりが雑音に埋もれる)と ω の方向が ほぼ不定になり、1 歩で 1e7 rad/s へ飛んだ(2026-09-30、PoC ㉔ の 10〜45 コマ)。費用が下がる歩だけ受け入れる。
+- **L303** _(ja)_ — ★減衰つき(Levenberg–Marquardt)。素の Gauss–Newton は軌跡が短い(曲がりが雑音に埋もれる)と ω の方向が ほぼ不定になり、1 歩で 1e7 rad/s へ飛んだ(2026-09-30、PoC ㉔ の 10〜45 コマ)。費用が下がる歩だけ受け入れる。
 
 ## `blob2d.py`
 
@@ -205,8 +205,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L613** — ★We first noticed this slowness when the sky-view factor for 513^2 took 41.9 seconds in the PoC (examples/poc_dem_terrain.py). The tests used only small grids, so they confirmed it "works" but not that it is "usable".
 - **L694** — ★Fixed 2026-09-08 (found by `poc_stockpile_volume`). When a line-of-sight sample rounds via ``np.rint`` to the **target cell itself**, that cell's height gets compared against itself as "intervening terrain". Since t < 1 the denominator dist*t is small, and ``(z-eye)/(dist*t) > (z-eye)/dist`` is always true when z > eye —— so **cells higher than eye level were self-occluding across the board**. Measured (before fix): a 10 m column on flat ground was returned as "not visible" from 25 m away at eye 2 m, and only a 1 m column below eye level was "visible". The highest point of a convex solid is always visible from outside, so this is geometrically wrong. We do not count the iterations where the sample landed on the target cell.
 - **L754** — ★The ledger declares ``points`` = (N, 3). Passing a scalar yields (3,), which conflicts with the declaration, so we always fold to (N, 3) (surfaced by the fuzzer's TYPEMISS on 2026-09-06; the fuzzer had not been run after adding the 6 geocentric-coordinate ops). When you want (H, W, 3) as a grid, use :func:`dem_geocentric_grid`.
-- **L803** — ★Inside the evolute the geodetic latitude is not unique -> instead of silently returning an out-of-range latitude, refuse. The evolute of the ellipse x²/a² + z²/b² = 1 is (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3). Only outside the equality is the region where "the normal is uniquely determined" (since the 2/3 power is non-negative, the sign is |z|).
-- **L984** _(ja)_ — ★ 鎖の残り。ECEF ↔ 測地座標 は在ったが、その先(ジオイド高・標高・datum・ENU) # が無く、能力ノート docs/capabilities/geodetic-frames.md に「どれも未実装。 # GNSS が返すのは楕円体高で地図が使うのは標高、取り違えると日本付近で 30〜40 m # 静かにずれる」と自分で書いてあった。ここを閉じる。 # --------------------------------------------------------------------------- # :func:`dem_height_frame_convert` が受ける高さの基準。
+- **L807** — ★Inside the evolute the geodetic latitude is not unique -> instead of silently returning an out-of-range latitude, refuse. The evolute of the ellipse x²/a² + z²/b² = 1 is (a·x)^(2/3) + (b·z)^(2/3) = (a²-b²)^(2/3). Only outside the equality is the region where "the normal is uniquely determined" (since the 2/3 power is non-negative, the sign is |z|).
+- **L988** _(ja)_ — ★ 鎖の残り。ECEF ↔ 測地座標 は在ったが、その先(ジオイド高・標高・datum・ENU) # が無く、能力ノート docs/capabilities/geodetic-frames.md に「どれも未実装。 # GNSS が返すのは楕円体高で地図が使うのは標高、取り違えると日本付近で 30〜40 m # 静かにずれる」と自分で書いてあった。ここを閉じる。 # --------------------------------------------------------------------------- # :func:`dem_height_frame_convert` が受ける高さの基準。
 
 ## `detect.py`
 
@@ -222,7 +222,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `drivehumanoid.py`
 
-- **L357** _(ja)_ — ★ユーザー案(2026-10-03)「あらかじめ物体ごとの描画をマスク付きで作っておく」。精細なメッシュを向き × 位相ごとに 一度だけ描き(色・マスク・深度のずれ)、毎コマは縮めて貼り、世界の深度と比べて前後を決める。見た目は精細なまま、 1 体の費用は貼る画素の数だけ。近似は 2 つ(門で大きさを測る): (1) 方位を n_yaw 段に丸める、(2) 事前描画は水平に 遠くから見た像なので、カメラが高い・近いときの透視の違いを無視する。
+- **L367** _(ja)_ — ★ユーザー案(2026-10-03)「あらかじめ物体ごとの描画をマスク付きで作っておく」。精細なメッシュを向き × 位相ごとに 一度だけ描き(色・マスク・深度のずれ)、毎コマは縮めて貼り、世界の深度と比べて前後を決める。見た目は精細なまま、 1 体の費用は貼る画素の数だけ。近似は 2 つ(門で大きさを測る): (1) 方位を n_yaw 段に丸める、(2) 事前描画は水平に 遠くから見た像なので、カメラが高い・近いときの透視の違いを無視する。
 
 ## `driveinf.py`
 
@@ -230,7 +230,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `driveworld.py`
 
-- **L610** _(ja)_ — ★2026-10-07: 置いた高さ z を物体に残す(残さないと world_move が元の z を外せず、z=2 で置いて z=2 へ動かすと底が 4 になった)
+- **L615** _(ja)_ — ★2026-10-07: 置いた高さ z を物体に残す(残さないと world_move が元の z を外せず、z=2 で置いて z=2 へ動かすと底が 4 になった)
 
 ## `engine.py`
 
@@ -1263,7 +1263,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `feat_shot.py`
 
-- **L75** _(ja)_ — ★2026-10-11: 平面上の点の λ3 は丸め屑(λ3/λ1 ~ 1e-17)。軸に沿った平面では 厳密に 0 で落ちるが、傾けた平面では屑が正になり「特徴の無い平面」から キーポイントが 203 個出ていた(回転不変の主張が崩れる)。床は λ1 に対する相対量で。
+- **L80** _(ja)_ — ★2026-10-11: 平面上の点の λ3 は丸め屑(λ3/λ1 ~ 1e-17)。軸に沿った平面では 厳密に 0 で落ちるが、傾けた平面では屑が正になり「特徴の無い平面」から キーポイントが 203 個出ていた(回転不変の主張が崩れる)。床は λ1 に対する相対量で。
 
 ## `flyvision.py`
 
@@ -1271,8 +1271,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `fourierdesc.py`
 
-- **L282** _(ja)_ — ★この族の既存 op(elliptic_fourier)は Kuhl-Giardina の**実**係数(a,b,c,d) # で、楕円 1 つ 1 つを表す。こちらは同じ輪郭を**複素**係数 c_k で見る —— # z(t) = Σ c_k exp(2πikt) と書けるので、各項が「回る腕」そのものになり、 # パーセバルで**打ち切り誤差を描く前に予言できる**。用途が違うので両方置く。 # --------------------------------------------------------------------------- #
-- **L382** _(ja)_ — ★偶数点では添字 n/2 が **k = +n/2 と k = -n/2 の同じ 1 つの係数**である。 両方を並べるとエネルギーを 1 本ぶん多く数えて**パーセバルが破れる** (実測: n=8 で 1.17e-01、n=512 で 7.5e-03 ずれた)。numpy の ``fft.fftfreq`` に合わせて **k = -n/2 の側だけ**を出す。 最初の検査(正方形の輪郭)はこの係数がたまたま 0 に近くて通っていた —— 探針 1 枚では足りない、の実例。
+- **L298** _(ja)_ — ★この族の既存 op(elliptic_fourier)は Kuhl-Giardina の**実**係数(a,b,c,d) # で、楕円 1 つ 1 つを表す。こちらは同じ輪郭を**複素**係数 c_k で見る —— # z(t) = Σ c_k exp(2πikt) と書けるので、各項が「回る腕」そのものになり、 # パーセバルで**打ち切り誤差を描く前に予言できる**。用途が違うので両方置く。 # --------------------------------------------------------------------------- #
+- **L398** _(ja)_ — ★偶数点では添字 n/2 が **k = +n/2 と k = -n/2 の同じ 1 つの係数**である。 両方を並べるとエネルギーを 1 本ぶん多く数えて**パーセバルが破れる** (実測: n=8 で 1.17e-01、n=512 で 7.5e-03 ずれた)。numpy の ``fft.fftfreq`` に合わせて **k = -n/2 の側だけ**を出す。 最初の検査(正方形の輪郭)はこの係数がたまたま 0 に近くて通っていた —— 探針 1 枚では足りない、の実例。
 
 ## `fscript.py`
 
@@ -1354,7 +1354,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `glassmirror.py`
 
-- **L269** _(ja)_ — 多重反射の和は偏光ごとに取ってから平均する。★ 以前は Rs と Rp を先に平均して 1 本の R で和を取っていたので、斜め入射で透過率を過小評価した(air→1.5、 60° で 0.836 対 正しい 0.848)。垂直入射では Rs = Rp なので値は変わらない。
+- **L285** _(ja)_ — 多重反射の和は偏光ごとに取ってから平均する。★ 以前は Rs と Rp を先に平均して 1 本の R で和を取っていたので、斜め入射で透過率を過小評価した(air→1.5、 60° で 0.836 対 正しい 0.848)。垂直入射では Rs = Rp なので値は変わらない。
 
 ## `glyphops.py`
 
@@ -1422,22 +1422,22 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L167** — ★Passing a 0-dimensional (scalar) value made `r.shape[-1]` throw a **bare IndexError** (caught in the adversarial audit of 2026-09-04). A spectral reflectance has at least a wavelength axis -- a scalar is not 'a value per wavelength', so the guard explicitly refuses it.
 - **L217** _(ja)_ — ★ 範囲外は黙って clip せず拒否する(cos=5 が垂直入射、cos=-0.5 が全反射に化けていた)。 丸めの屑(1 + 1e-15 など)だけは許す。
-- **L301** — ★A real grating diffracts on **both sides** (if the grooves are symmetric, the +/-m efficiencies are nearly equal). If you do not include both +/-, then depending on the geometry of light source and line of sight all solutions can be negative, and the 'keep only positive lambda' filter **drops everything and goes pitch black**. Measured: a CD illuminated perpendicular to the grooves (delta-sin = -0.55) had m=+1,+2 all vanish at lambda<0, and the 440 nm of m=-2 was the real answer.
+- **L305** — ★A real grating diffracts on **both sides** (if the grooves are symmetric, the +/-m efficiencies are nearly equal). If you do not include both +/-, then depending on the geometry of light source and line of sight all solutions can be negative, and the 'keep only positive lambda' filter **drops everything and goes pitch black**. Measured: a CD illuminated perpendicular to the grooves (delta-sin = -0.55) had m=+1,+2 all vanish at lambda<0, and the 440 nm of m=-2 was the real answer.
 
 ## `match3d.py`
 
-- **L336** — ★2026-09-07: Replaced with numpy's FFT. The formula is the same (float32 fftn -> phase only -> real part of ifftn -> argmax), and there was nowhere it needed torch. On CI without torch (py3.10 / 3.12) this op became an ImportError and the PoC failed.
-- **L995** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層なので、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き = 高い値の側)にある(軸平行で 0.5、斜めで最大 0.87)。d が系統的に その分ずれていた。各 voxel を −|n|₁/2·n だけ iso 面側へ戻してから投票する。 実測(40³、真の法線、半 voxel ずらし 10 通り×表裏): 軸平行の平均誤差 ±0.5 → 0.000、 斜め面は投影の離散化で ±0.3 以内が残る。
-- **L1053** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層で、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き)にある。半径が明球で −0.6、暗球で +0.6 voxel 系統的にずれていた。 各 voxel を −|n|₁/2·n だけ iso 面へ戻してから投票する(明球・暗球どちらでも同じ式)。 実測(48³、半径 7〜13、中心を半 voxel 内で乱した球): 平均誤差 明球 −0.64 → +0.17 / 暗球 +0.57 → −0.15 voxel (残りは丸め投票と放物線補間の偏り)。
-- **L1717** — ★2026-09-07: Rewrote the body in numpy. This ICP is **nearest-neighbour search by cKDTree and pose update by a 3x3 SVD**, with not a single task for torch, yet it made torch mandatory. On CI without torch (py3.10 / 3.12), 4 PoCs fell with `ImportError: this operator needs the optional 'torch' backend` and it surfaced (with torch present locally it went unnoticed -- a case of 'put the gate where the accident happens'). The numbers are the same float64 formula, so **the result does not change with the environment**. The return type is kept for compatibility: torch.Tensor if torch is present, numpy.ndarray if not (values identical). If a device other than "cpu" is requested, fail-closed.
-- **L1952** — ★2026-09-07: Rewrote the body in numpy. Nearest-neighbour search, the 6x6 normal equations, and Rodrigues are all small CPU linear algebra with no need for torch, yet it had been made mandatory. On CI without torch (py3.10 / 3.12) the PoC fell with an ImportError and it surfaced. The formula is the same float64, so the result is unchanged (the difference from the torch version was measured as 0 in R/t and 0 in RMSE).
-- **L1967** _(ja)_ — ★2026-10-07 レビュー修正: 小角線形化 R ≈ I+[ω]× は「原点まわり」の回転。原点から遠い 点群(UTM 座標など、オフセット 1e3 で回転誤差 23°)ではてこの腕 p が巨大になり、 回転と並進の自由度がほぼ縮退して Gauss-Newton が誤った姿勢へ収束していた。 dst の外接箱の中心 c へ両点群を寄せてから解き、最後に t = t' + c − R·c で戻す。 外接箱の中心は点の順に依らない(reproducible=True のビット一致を保つ)。
-- **L2802** _(ja)_ — ★2026-10-07 レビュー修正: 未中心化の |p|² は原点から遠い点群(オフセット 1e6)で桁落ちし 半径が 7.5e5 も狂った。重心へ寄せて解き、中心を戻す(数学的には同じ解)。
-- **L2956** — ★2026-09-07: **fail-closed if the ring is outside the image**. ``r_in``/``r_out`` are in pixels, so passing them in mm reads outside the field of view and returns **all 0** with no exception (surfaced when `poc_pipe_wall_loss` produced one pitch-black figure). If not a single radius is inside the maximum distance from the centre to the image's four corners, the return can only be empty.
-- **L2967** — ★2026-09-07: Replaced grid_sample (bilinear, align_corners=True, zeros padding) with scipy's map_coordinates(order=1, mode="constant", cval=0) -- the same bilinear interpolation, and it runs even on CI without torch (py3.10 / 3.12). The measured difference is at most 6.0e-06 (random image over the range 0..1; the rounding difference between float32 and float64).
-- **L3012** — ★2026-09-07: Replaced with map_coordinates for the same reason as polar_unwrap (bilinear, out-of-range 0). Runs even without torch. The measured difference is at most 7.6e-06.
-- **L3083** _(ja)_ — ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
-- **L3287** — ★2026-09-07: Replaced affine_grid + grid_sample (align_corners=False, zeros padding) with numpy coordinate computation + scipy's map_coordinates(order=1). torch was used only for the bilinear resampling, and in an environment without torch (CI py3.10 / 3.12) this op became an ImportError. The convention was carried over verbatim: the normalized coordinate of an output voxel (d,h,w) is ((i+0.5)/N)*2-1, and after rotation it is mapped back to input pixel coordinates by (g+1)/2*N-0.5 (the align_corners=False definition). The last axis of grid is in the order (x, y, z) = (W, H, D). The measured difference from the torch version is at most 7.6e-06.
+- **L344** — ★2026-09-07: Replaced with numpy's FFT. The formula is the same (float32 fftn -> phase only -> real part of ifftn -> argmax), and there was nowhere it needed torch. On CI without torch (py3.10 / 3.12) this op became an ImportError and the PoC failed.
+- **L1047** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層なので、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き = 高い値の側)にある(軸平行で 0.5、斜めで最大 0.87)。d が系統的に その分ずれていた。各 voxel を −|n|₁/2·n だけ iso 面側へ戻してから投票する。 実測(40³、真の法線、半 voxel ずらし 10 通り×表裏): 軸平行の平均誤差 ±0.5 → 0.000、 斜め面は投影の離散化で ±0.3 以内が残る。
+- **L1109** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層で、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き)にある。半径が明球で −0.6、暗球で +0.6 voxel 系統的にずれていた。 各 voxel を −|n|₁/2·n だけ iso 面へ戻してから投票する(明球・暗球どちらでも同じ式)。 実測(48³、半径 7〜13、中心を半 voxel 内で乱した球): 平均誤差 明球 −0.64 → +0.17 / 暗球 +0.57 → −0.15 voxel (残りは丸め投票と放物線補間の偏り)。
+- **L1793** — ★2026-09-07: Rewrote the body in numpy. This ICP is **nearest-neighbour search by cKDTree and pose update by a 3x3 SVD**, with not a single task for torch, yet it made torch mandatory. On CI without torch (py3.10 / 3.12), 4 PoCs fell with `ImportError: this operator needs the optional 'torch' backend` and it surfaced (with torch present locally it went unnoticed -- a case of 'put the gate where the accident happens'). The numbers are the same float64 formula, so **the result does not change with the environment**. The return type is kept for compatibility: torch.Tensor if torch is present, numpy.ndarray if not (values identical). If a device other than "cpu" is requested, fail-closed.
+- **L2028** — ★2026-09-07: Rewrote the body in numpy. Nearest-neighbour search, the 6x6 normal equations, and Rodrigues are all small CPU linear algebra with no need for torch, yet it had been made mandatory. On CI without torch (py3.10 / 3.12) the PoC fell with an ImportError and it surfaced. The formula is the same float64, so the result is unchanged (the difference from the torch version was measured as 0 in R/t and 0 in RMSE).
+- **L2043** _(ja)_ — ★2026-10-07 レビュー修正: 小角線形化 R ≈ I+[ω]× は「原点まわり」の回転。原点から遠い 点群(UTM 座標など、オフセット 1e3 で回転誤差 23°)ではてこの腕 p が巨大になり、 回転と並進の自由度がほぼ縮退して Gauss-Newton が誤った姿勢へ収束していた。 dst の外接箱の中心 c へ両点群を寄せてから解き、最後に t = t' + c − R·c で戻す。 外接箱の中心は点の順に依らない(reproducible=True のビット一致を保つ)。
+- **L2914** _(ja)_ — ★2026-10-07 レビュー修正: 未中心化の |p|² は原点から遠い点群(オフセット 1e6)で桁落ちし 半径が 7.5e5 も狂った。重心へ寄せて解き、中心を戻す(数学的には同じ解)。
+- **L3068** — ★2026-09-07: **fail-closed if the ring is outside the image**. ``r_in``/``r_out`` are in pixels, so passing them in mm reads outside the field of view and returns **all 0** with no exception (surfaced when `poc_pipe_wall_loss` produced one pitch-black figure). If not a single radius is inside the maximum distance from the centre to the image's four corners, the return can only be empty.
+- **L3079** — ★2026-09-07: Replaced grid_sample (bilinear, align_corners=True, zeros padding) with scipy's map_coordinates(order=1, mode="constant", cval=0) -- the same bilinear interpolation, and it runs even on CI without torch (py3.10 / 3.12). The measured difference is at most 6.0e-06 (random image over the range 0..1; the rounding difference between float32 and float64).
+- **L3128** — ★2026-09-07: Replaced with map_coordinates for the same reason as polar_unwrap (bilinear, out-of-range 0). Runs even without torch. The measured difference is at most 7.6e-06.
+- **L3199** _(ja)_ — ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
+- **L3415** — ★2026-09-07: Replaced affine_grid + grid_sample (align_corners=False, zeros padding) with numpy coordinate computation + scipy's map_coordinates(order=1). torch was used only for the bilinear resampling, and in an environment without torch (CI py3.10 / 3.12) this op became an ImportError. The convention was carried over verbatim: the normalized coordinate of an output voxel (d,h,w) is ((i+0.5)/N)*2-1, and after rotation it is mapped back to input pixel coordinates by (g+1)/2*N-0.5 (the align_corners=False definition). The last axis of grid is in the order (x, y, z) = (W, H, D). The measured difference from the torch version is at most 7.6e-06.
 
 ## `mathestimation.py`
 
@@ -1454,29 +1454,29 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `mathnumerics.py`
 
-- **L226** _(ja)_ — ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
-- **L377** _(ja)_ — ★2026-10-11(台帳契約の門): 係数表でない table({pre, post} など)を渡すと生の KeyError: 'coeffs' が漏れていた。何が足りないかを名指しして拒否する(fail-closed)。
-- **L393** _(ja)_ — ★2026-10-07: list も格子扱いしていたので、d 点 x d 次元の点列 [[x, y], [x, y]] が ndarray なら点ごと、list なら外積格子と、同じ数値で答えが変わっていた。格子は tuple のみ (文書の呼び方 ``(gx, gy)`` は tuple)、list は ndarray と同じく点 (M, d) として読む。
+- **L239** _(ja)_ — ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
+- **L390** _(ja)_ — ★2026-10-11(台帳契約の門): 係数表でない table({pre, post} など)を渡すと生の KeyError: 'coeffs' が漏れていた。何が足りないかを名指しして拒否する(fail-closed)。
+- **L406** _(ja)_ — ★2026-10-07: list も格子扱いしていたので、d 点 x d 次元の点列 [[x, y], [x, y]] が ndarray なら点ごと、list なら外積格子と、同じ数値で答えが変わっていた。格子は tuple のみ (文書の呼び方 ``(gx, gy)`` は tuple)、list は ndarray と同じく点 (M, d) として読む。
 
 ## `mathops.py`
 
 - **L114** _(ja)_ — 定理が門になる図(2026-09-23)。★`MATHOPS`(台帳が読む一覧)と `__all__` (import * の公開面)は**別物**で、両方に書かないと片方だけ通る。
 - **L1713** _(ja)_ — ★既存の cplx_* は閉曲線を点列で持つ層(積分・巻き数・ローラン・等角写像)。# ここで足すのは**領域**の層 —— 値の場・位相彩色・ニュートンの吸引域・ # 脱出時間・翼まわりのポテンシャル流。新しい語は 1 つも作らない # (cimage / rgbimage / labels2d / mask / roots / signal はすべて既存)。 # 真値は「使った式」ではなく、偏角の原理・Cayley の定理・主カージオイドの # 閉形式内部判定・c=0 のジュリア集合(単位円板)・そして既存 op である # cplx_winding_number / cplx_cr_residual / cplx_joukowski / poly_roots。 # --------------------------------------------------------------------------- #
-- **L2167** _(ja)_ — ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0 が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
-- **L2280** _(ja)_ — ★どれも「きれいな図」だが、**採ったのはきれいだからではなく、 正しさを定理が言えるから**である。数学の図はきれいなので、合って いるかを誰も確かめない —— だから絵の外に真値を置く: circle_packing_apollonian デカルトの円定理(厳密な代数等式)+ 整数充填 ford_circles 接するのは |ps - qr| = 1 のときに限る(整数で厳密) phyllotaxis_pattern 隣の番号差がフィボナッチ数(黄金角のときだけ) ifs_fractal モランの式 sum r^d = 1 と、既存 fractal_dimension space_filling_curve 4^n 点をちょうど 1 回ずつ・隣は必ず距離 1 相棒(neighbour_index_gaps / ifs_similarity_dimension / curve_locality)は **主張を数にする側**で、これが無いと「それらしい絵」しか残らない。 ------------------------------------------------------------------------- #
-- **L2393** _(ja)_ — ★四つ組の**最後**が「直前に生まれた円」。それを落とす反射は**親をもう一度** 作るので、種の四つ組だけ 4 方向、以降は 3 方向に進む。ここを間違えると depth 3 で 56 個のはずが 88 個になった(実測。一意な円は 56 のままなので、 絵は正しく見えるが同じ円を何度も描き、以降の段が指数的に太る)。
-- **L2725** _(ja)_ — ★2026-10-07: 縮小しない写像(r >= 1)を黙って通すと二分法が上端 8.0 に張り付き (r=1.2 の 2 枚で 7.99999…)、恒等写像 1 枚では 0 を返していた。Moran の式は 全写像が縮小(r < 1)のときだけ意味を持つので、ここで明示的に拒否する。
-- **L2734** _(ja)_ — ★2026-10-07: 写像の数が多いと解が 8 を超えうる —— 上端を広げてから二分する。
-- **L2802** _(ja)_ — ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は 総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を 満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
-- **L2908** _(ja)_ — ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。 ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。 干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。 ------------------------------------------------------------------------- #
-- **L2998** _(ja)_ — ★2026-10-07: 矩形は [0,1] x [0,aspect](wave_mode_frequencies の pi**2 (m**2 + n**2/aspect**2) と同じ規約)。以前は y を [0,1] で取りつつ n pi y/aspect を 使っていたので、aspect != 1 で y=1 の辺が境界条件(Dirichlet なら 0)を破っていた。
-- **L3006** _(ja)_ — ★2026-10-07: Dirichlet(sin x sin)は m=0 か n=0 で恒等的に 0 —— 全ゼロの場を 「固有モード」として返していた。拒否する。
-- **L3011** _(ja)_ — ★2026-10-07: 組合せ (m,n)-(n,m) の 2 項は aspect != 1 だと固有値が pi**2 (m**2 + n**2/a**2) と pi**2 (n**2 + m**2/a**2) で異なり、和は固有モードでない。
-- **L3080** _(ja)_ — ★2026-10-07: 以前は「集めた数が c+8 を超えたら止める」で、低い次数(m=0..2)の 高い零点ばかり集めて m>=3 の低い固有値(j'_{3,1}**2 = 17.65 …)を落としていた。 j'_{m,1} は m について単調増加なので、次の次数の最初の零点が、集めた中の c 番目を 超えた時点で打ち切れば取りこぼしは無い。
-- **L3275** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
-- **L3279** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
-- **L3450** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
-- **L3753** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
+- **L2173** _(ja)_ — ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0 が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
+- **L2286** _(ja)_ — ★どれも「きれいな図」だが、**採ったのはきれいだからではなく、 正しさを定理が言えるから**である。数学の図はきれいなので、合って いるかを誰も確かめない —— だから絵の外に真値を置く: circle_packing_apollonian デカルトの円定理(厳密な代数等式)+ 整数充填 ford_circles 接するのは |ps - qr| = 1 のときに限る(整数で厳密) phyllotaxis_pattern 隣の番号差がフィボナッチ数(黄金角のときだけ) ifs_fractal モランの式 sum r^d = 1 と、既存 fractal_dimension space_filling_curve 4^n 点をちょうど 1 回ずつ・隣は必ず距離 1 相棒(neighbour_index_gaps / ifs_similarity_dimension / curve_locality)は **主張を数にする側**で、これが無いと「それらしい絵」しか残らない。 ------------------------------------------------------------------------- #
+- **L2399** _(ja)_ — ★四つ組の**最後**が「直前に生まれた円」。それを落とす反射は**親をもう一度** 作るので、種の四つ組だけ 4 方向、以降は 3 方向に進む。ここを間違えると depth 3 で 56 個のはずが 88 個になった(実測。一意な円は 56 のままなので、 絵は正しく見えるが同じ円を何度も描き、以降の段が指数的に太る)。
+- **L2731** _(ja)_ — ★2026-10-07: 縮小しない写像(r >= 1)を黙って通すと二分法が上端 8.0 に張り付き (r=1.2 の 2 枚で 7.99999…)、恒等写像 1 枚では 0 を返していた。Moran の式は 全写像が縮小(r < 1)のときだけ意味を持つので、ここで明示的に拒否する。
+- **L2740** _(ja)_ — ★2026-10-07: 写像の数が多いと解が 8 を超えうる —— 上端を広げてから二分する。
+- **L2808** _(ja)_ — ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は 総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を 満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
+- **L2914** _(ja)_ — ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。 ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。 干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。 ------------------------------------------------------------------------- #
+- **L3004** _(ja)_ — ★2026-10-07: 矩形は [0,1] x [0,aspect](wave_mode_frequencies の pi**2 (m**2 + n**2/aspect**2) と同じ規約)。以前は y を [0,1] で取りつつ n pi y/aspect を 使っていたので、aspect != 1 で y=1 の辺が境界条件(Dirichlet なら 0)を破っていた。
+- **L3012** _(ja)_ — ★2026-10-07: Dirichlet(sin x sin)は m=0 か n=0 で恒等的に 0 —— 全ゼロの場を 「固有モード」として返していた。拒否する。
+- **L3017** _(ja)_ — ★2026-10-07: 組合せ (m,n)-(n,m) の 2 項は aspect != 1 だと固有値が pi**2 (m**2 + n**2/a**2) と pi**2 (n**2 + m**2/a**2) で異なり、和は固有モードでない。
+- **L3086** _(ja)_ — ★2026-10-07: 以前は「集めた数が c+8 を超えたら止める」で、低い次数(m=0..2)の 高い零点ばかり集めて m>=3 の低い固有値(j'_{3,1}**2 = 17.65 …)を落としていた。 j'_{m,1} は m について単調増加なので、次の次数の最初の零点が、集めた中の c 番目を 超えた時点で打ち切れば取りこぼしは無い。
+- **L3285** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
+- **L3289** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
+- **L3460** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
+- **L3763** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
 
 ## `medial.py`
 
@@ -1501,8 +1501,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `occupancy.py`
 
-- **L223** — ★2026-09-07: Made ``res`` accept **per-axis** values (length 3 allowed too). Restricted to cubic, a flat volume like a bird's-eye grid (thin z x wide xy) is forced to use the same spacing even on the unneeded axis (`poc_bev_sensor_fusion` measured: of 4.096 million voxels only 8.1 % are used). The same-family `grid_coords` had accepted per-axis res from the start -- the mismatch where **the contract's breadth differs at the entrance and the exit** was aligned. Existing callers passing a scalar are unaffected.
-- **L317** — ★2026-09-07: Made ``res`` accept **per-axis** values (length 3 allowed too). Previously ``int(res)`` allowed only a cubic grid, and while ``esdf`` accepts a length-3 anisotropic ``voxel_size``, this side -- which subtracts its output in world coordinates -- was restricted to cubic, a **contract narrow on only one side**. It jams outright on a grid like CT's thin junction layer (30,180,180) (measured in `poc_ct_void_morphology`). Existing callers passing a scalar are unaffected.
+- **L228** — ★2026-09-07: Made ``res`` accept **per-axis** values (length 3 allowed too). Restricted to cubic, a flat volume like a bird's-eye grid (thin z x wide xy) is forced to use the same spacing even on the unneeded axis (`poc_bev_sensor_fusion` measured: of 4.096 million voxels only 8.1 % are used). The same-family `grid_coords` had accepted per-axis res from the start -- the mismatch where **the contract's breadth differs at the entrance and the exit** was aligned. Existing callers passing a scalar are unaffected.
+- **L332** — ★2026-09-07: Made ``res`` accept **per-axis** values (length 3 allowed too). Previously ``int(res)`` allowed only a cubic grid, and while ``esdf`` accepts a length-3 anisotropic ``voxel_size``, this side -- which subtracts its output in world coordinates -- was restricted to cubic, a **contract narrow on only one side**. It jams outright on a grid like CT's thin junction layer (30,180,180) (measured in `poc_ct_void_morphology`). Existing callers passing a scalar are unaffected.
 
 ## `op_probe.py`
 
@@ -1655,8 +1655,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `optscene.py`
 
-- **L2157** _(ja)_ — σ = 0.42·λN(Airy 強度の最良ガウス近似)。★ 以前は 0.42·(1.22λN) で 22 % 太かった
-- **L2501** _(ja)_ — ★2026-10-11(台帳契約の門): lens_spec() は image_circle_mm を **None** で持つ(鍵は在る) ので ``.get(.., 0.0)`` が None を返し、float(None) の生の TypeError が漏れていた —— 下の「image_circle_mm が無い」の ValueError に届いていなかった。
+- **L2165** _(ja)_ — σ = 0.42·λN(Airy 強度の最良ガウス近似)。★ 以前は 0.42·(1.22λN) で 22 % 太かった
+- **L2509** _(ja)_ — ★2026-10-11(台帳契約の門): lens_spec() は image_circle_mm を **None** で持つ(鍵は在る) ので ``.get(.., 0.0)`` が None を返し、float(None) の生の TypeError が漏れていた —— 下の「image_circle_mm が無い」の ValueError に届いていなかった。
 
 ## `ozakimm.py`
 
@@ -1704,7 +1704,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `polish.py`
 
-- **L430** _(ja)_ — ★2026-10-05 chain_fuzz の 2 回目の発見(ttc_from_scale → raster_wipe_area): 面積の 4 項が有限でも、N 本の和(N·single)と 一筆の y 座標((i − (N−1)/2)·pitch)はまだ溢れうる。区切りの NaN 以外に非有限が出たら黙って返さない
+- **L435** _(ja)_ — ★2026-10-05 chain_fuzz の 2 回目の発見(ttc_from_scale → raster_wipe_area): 面積の 4 項が有限でも、N 本の和(N·single)と 一筆の y 座標((i − (N−1)/2)·pitch)はまだ溢れうる。区切りの NaN 以外に非有限が出たら黙って返さない
 
 ## `pose_quat.py`
 
@@ -1793,7 +1793,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `sdf_ops.py`
 
-- **L293** — ★ Reason for adding it, based on measurement: `poc_dfm_thickness_overhang` and `poc_cad_scan_deviation` reported that # "a machine part is made of cylindrical holes, chamfers, and fillets, but since the primitives are only sphere and # box, it cannot be assembled with CSG", and both wrote per-face analytic formulas themselves. The 4 here are **all closed-form and exact** (outside is the # Euclidean distance to the nearest surface, inside is the negative to the nearest face), so a synthetic part with # ground truth can now be assembled with CSG alone. # --------------------------------------------------------------------------- #
+- **L308** — ★ Reason for adding it, based on measurement: `poc_dfm_thickness_overhang` and `poc_cad_scan_deviation` reported that # "a machine part is made of cylindrical holes, chamfers, and fillets, but since the primitives are only sphere and # box, it cannot be assembled with CSG", and both wrote per-face analytic formulas themselves. The 4 here are **all closed-form and exact** (outside is the # Euclidean distance to the nearest surface, inside is the negative to the nearest face), so a synthetic part with # ground truth can now be assembled with CSG alone. # --------------------------------------------------------------------------- #
 
 ## `segcompare.py`
 
@@ -1846,13 +1846,13 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `superquadric.py`
 
-- **L178** _(ja)_ — ★2026-10-07: 0 点の平均残差は 0/0(NaN を guard が置き換えていた)
+- **L182** _(ja)_ — ★2026-10-07: 0 点の平均残差は 0/0(NaN を guard が置き換えていた)
 
 ## `tacsim.py`
 
-- **L369** _(ja)_ — ★既定の探索半径は窓の縁まで(双線形 ±0.5 px の余白に 2 px)。2026-10-05 までは窓の半分の半分(0.5 × 縁までの距離)で 打ち切っていて、201 px の窓では 50 px で止まり、半径 61 px の実機の接触を 49 px と答えた(tacscalib の門 12: −12.9 px)。 tacsim の合成(256 px・Hertz)は接触が窓の 1/4 より内側なので、直しても結果は 1 桁も変わらない。
-- **L405** _(ja)_ — ★2026-10-07: 窓の端までの距離は中心から測る(原点 = 窓の中心と仮定していて、X・Y・中心を +8 mm ずらすと δ が 11 % 縮んだ)
-- **L491** _(ja)_ — ★2026-10-07: a0 が 20 % 超ずれると黄金分割が区間の端 0.8·a0 / 1.2·a0 をそのまま返していた。端に張り付いたら その端を新しい a0 にして画素の選び(縁の除外の輪)ごとやり直す。8 回で内側に収まらなければ ValueError
+- **L384** _(ja)_ — ★既定の探索半径は窓の縁まで(双線形 ±0.5 px の余白に 2 px)。2026-10-05 までは窓の半分の半分(0.5 × 縁までの距離)で 打ち切っていて、201 px の窓では 50 px で止まり、半径 61 px の実機の接触を 49 px と答えた(tacscalib の門 12: −12.9 px)。 tacsim の合成(256 px・Hertz)は接触が窓の 1/4 より内側なので、直しても結果は 1 桁も変わらない。
+- **L420** _(ja)_ — ★2026-10-07: 窓の端までの距離は中心から測る(原点 = 窓の中心と仮定していて、X・Y・中心を +8 mm ずらすと δ が 11 % 縮んだ)
+- **L506** _(ja)_ — ★2026-10-07: a0 が 20 % 超ずれると黄金分割が区間の端 0.8·a0 / 1.2·a0 をそのまま返していた。端に張り付いたら その端を新しい a0 にして画素の選び(縁の除外の輪)ごとやり直す。8 回で内側に収まらなければ ValueError
 
 ## `tests/conftest.py`
 
@@ -2015,8 +2015,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tests/test_dsp.py`
 
-- **L338** — ★The maximum is the harmonic: period / (1/f_max_bin) lands near an integer
-- **L368** _(ja)_ — ★どれも閉形式の真値を持つので、「動いた」でなく「理論値と合う」で検査する。 --------------------------------------------------------------------------- #
+- **L341** — ★The maximum is the harmonic: period / (1/f_max_bin) lands near an integer
+- **L371** _(ja)_ — ★どれも閉形式の真値を持つので、「動いた」でなく「理論値と合う」で検査する。 --------------------------------------------------------------------------- #
 
 ## `tests/test_dynsys.py`
 
@@ -2120,6 +2120,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L55** _(ja)_ — ★同日の 2 回目: 探針側の builder(``ledger_contracts.probe_builders``)で 2,055 / CI 相当 2,019 に上がったので床も上げた(床を据え置くと、builder が黙って外れても気づけない)。
 - **L61** _(ja)_ — ★空入力(h)と効かないノブ(f)の探針は**同じ 1 回の探針に相乗り**させる (引数と結果を使い回す)。別モジュールで回し直すとスイートが 50 s 余分にかかる。
+- **L419** _(ja)_ — ★2026-10-12 方針 A: 黙って値を返す op(zz_gap_silent)と生の例外(zz_gap_raw)も門になった。 「空なら空」と書いて値を返す op・書かずに ValueError で断る op は通る
 
 ## `tests/test_llmcore.py`
 
@@ -2608,14 +2609,14 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `visualhull.py`
 
-- **L123** — ★ **Every single** point behind the camera = almost certainly a convention mismatch in the pose (2026-09-08, hit by poc_livestock_body_volume). This function requires the OpenCV convention (+Z forward), but what bears the name ``look_at`` in the public layer is render3d's gluLookAt version (−Z forward, a 4x4). Passing its ``M[:3,:3], M[:3,3]`` makes every voxel judged as behind, and **an empty silhouette without exception** is returned, giving an empty hull. Silently returning empty is indistinguishable from "fully carved," so here alone we raise our voice (there are valid cases —— the object being behind the field of view —— so keep it to a warning rather than a raise).
+- **L127** — ★ **Every single** point behind the camera = almost certainly a convention mismatch in the pose (2026-09-08, hit by poc_livestock_body_volume). This function requires the OpenCV convention (+Z forward), but what bears the name ``look_at`` in the public layer is render3d's gluLookAt version (−Z forward, a 4x4). Passing its ``M[:3,:3], M[:3,3]`` makes every voxel judged as behind, and **an empty silhouette without exception** is returned, giving an empty hull. Silently returning empty is indistinguishable from "fully carved," so here alone we raise our voice (there are valid cases —— the object being behind the field of view —— so keep it to a warning rather than a raise).
 
 ## `volops.py`
 
-- **L1136** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
-- **L1149** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
-- **L1244** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
-- **L1264** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
+- **L1180** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
+- **L1193** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
+- **L1292** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
+- **L1312** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
 
 ## `world_render.py`
 

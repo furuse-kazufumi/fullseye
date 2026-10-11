@@ -7,6 +7,7 @@
 <p>在各点放置独立的高斯随机向量,用空间高斯权重 <code style="color:#22d3bf">exp(-d²/2σ²)</code> 平滑后生成位移场(相邻点 coherent 地移动)。场先归一化为 RMS 1 再乘以 <code style="color:#22d3bf">alpha</code>,因此位移的 RMS 范数恰好为 <code style="color:#22d3bf">alpha</code>(<code style="color:#22d3bf">σ→∞</code> 时场为常数 = 刚体平移,<code style="color:#22d3bf">σ→0</code> 时各点独立)。用于非刚性物体变形/柔性物体的训练。</p>
 <p>注意(honest):邻域搜索使用 <code style="color:#22d3bf">cKDTree.query_pairs(r=3σ)</code>。<code style="color:#22d3bf">σ</code> 越接近点云直径, 点对数越接近 O(N²),因此对大规模点云请将 <code style="color:#22d3bf">σ</code> 保持在局部尺度。</p>
 <p><code style="color:#22d3bf">sigma &lt; 0</code> 抛出 <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">sigma == 0</code> 或只有 1 个点的点云不做平滑,各点独立位移。<code style="color:#22d3bf">alpha</code> 不做校验(0 则无位移,为负只是场反向)。由 <code style="color:#22d3bf">seed</code> 决定。返回值为 float64 <code style="color:#22d3bf">(N,3)</code>,点数和顺序保持不变(变形前后的对应关系可由下标得知,因此能直接测量非刚性配准的误差)。空输入返回空。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:点云的抽稀、离群点去除和随机丢弃都可能得到空结果。空点云是合法的值,链条的下一级不应因此停下)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

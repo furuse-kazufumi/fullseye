@@ -32,6 +32,8 @@ volume 外は 0 で埋まるので、回転で隅が欠けると総和が下が�
 中心に置く)。``azimuth=elevation=0`` の mip は ``voxel_to_mips()[0]`` と同じ向き。
 用途: DRR の合成、``ncc_locate`` 用の 2-D テンプレ生成、``match_mip_2d`` の任意視点化。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

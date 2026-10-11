@@ -30,6 +30,8 @@ Args:
 Returns:
     (H, W) float64。
 
+空の入力(``points`` が 0 要素)は空を返す(理由: 個体が 0 体の場面は正当で、背景だけの絵が正しい答え)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

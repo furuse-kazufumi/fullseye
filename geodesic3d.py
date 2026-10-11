@@ -36,6 +36,8 @@ def knn_graph(points: np.ndarray, k: int = 8) -> Tuple[np.ndarray, np.ndarray]:
     位置を探して除き、k+1 個の中に自己が無ければ最遠の 1 つを落とす(結果はやはり k 個)。
     ``geodesic_distances`` / ``farthest_point_sampling`` はこの結果を隣接行列(有向 CSR、
     Dijkstra 側で無向化)にして測地距離の近似に使う。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 2 点未満の点群の近傍グラフは空が正しい答え)。
     """
     P = np.asarray(points, dtype=float)
     n = P.shape[0]
@@ -159,7 +161,11 @@ def farthest_point_sampling(points: np.ndarray, n: int, k: int = 8, start: int =
     罠: グラフが複数の連結成分に分かれていると、不達の点は距離 ``inf`` なので未到達の成分が先に
     選ばれる(argmax が ``inf`` を拾う)。「離れた塊から先に取る」挙動になるので、成分ごとに
     均等に間引きたいなら ``euclidean_cluster`` 等で分けてから使う。
+
+    空の入力(``points`` が 0 要素)は ValueError。
     """
+    if (len(points) if isinstance(points, (list, tuple)) else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("farthest_point_sampling: points is empty — pass at least one element")
     P = np.asarray(points, dtype=float)
     N = P.shape[0]
     n = int(max(0, min(n, N)))

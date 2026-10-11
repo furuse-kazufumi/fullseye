@@ -6,6 +6,7 @@
 <p>將邊畫成帶寬度的線段(端點為圓)得到的<b>道路聯集</b>二值(2 值)影像。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>画素 (r, c) の中心 = (xmin + (c + ½) step, ymin + (r + ½) step)、行は y の増える向き(数学座標。表示で上下を返す)。返り値 <code style="color:#22d3bf">{&quot;mask&quot;: (H, W) bool, &quot;xmin&quot;, &quot;ymin&quot;, &quot;step&quot;, &quot;shape&quot;, &quot;area_m2&quot;: 画素数 × step²}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: step ≤ 0、画像が 4e7 画素を超える(step を粗く)。</p>
+<p>空の入力(<code style="color:#22d3bf">graph</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

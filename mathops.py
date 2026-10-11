@@ -1830,6 +1830,8 @@ def cplx_rational_field(zeros, poles, gain=1.0, centre=0j, half_width=2.0,
     and the window disagree by more than float64 can hold).
 
     HALCON: no operator (HALCON has no complex-plane family).
+
+    Empty input (``zeros`` with 0 elements) returns an empty result (reason: a rational function without zeros (``1/q``) is a valid mathematical object).
     """
     op = "cplx_rational_field"
     z = cplx_plane_grid(centre, half_width, shape)
@@ -2140,7 +2142,11 @@ def mandelbrot_interior(c):
     bound** on the set, which is exactly what makes it usable as a gate:
     :func:`cplx_escape_time` must return ``max_iter`` everywhere this is True,
     and no tolerance is involved.
+
+    Empty input (``c`` with 0 elements) raises ``ValueError``.
     """
+    if (len(c) if isinstance(c, (list, tuple)) else np.asarray(c).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("mandelbrot_interior: c is empty — pass at least one element")
     a = np.asarray(c, dtype=np.complex128)
     card = np.abs(1.0 - np.sqrt(1.0 - 4.0 * a)) < 1.0
     bulb = np.abs(a + 1.0) < 0.25
@@ -3201,7 +3207,11 @@ def wave_fringe_period(image, axis=1):
 
     **Raises** ``ValueError``: not a 2-D array; fewer than 8 samples along *axis*;
     non-finite values; a profile with no variation (a flat image has no period).
+
+    Empty input (``image`` with 0 elements) raises ``ValueError``.
     """
+    if (len(image) if isinstance(image, (list, tuple)) else np.asarray(image).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("wave_fringe_period: image is empty — pass at least one element")
     op = "wave_fringe_period"
     im = np.asarray(image, dtype=np.float64)
     if im.ndim != 2:

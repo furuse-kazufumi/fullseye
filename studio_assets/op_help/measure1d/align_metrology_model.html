@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• 型は検証しない。<code style="color:#22d3bf">add_metrology_object_generic</code> で積んだ未知型は <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> を row/col とみなして動かす。</p>
 <p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">{&quot;objects&quot;: [...]}</code>(<code style="color:#22d3bf">metrologymodel</code> 型)。</p>
 <p>典型例: 形状マッチングや基準マークの検出で得た位置ずれをここでモデルに反映し、<code style="color:#22d3bf">apply_metrology_model</code> を掛ける。傾いたワークには使えない(参照形状の法線が実物の法線からずれ、探索半幅 <code style="color:#22d3bf">measure_length</code> の外に出る)。</p>
+<p>空の入力(<code style="color:#22d3bf">model</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

@@ -36,6 +36,8 @@ dict は変えない)。``gen_measure_rectangle2`` の ``origin`` と ``gen_meas
 ``measure_pairs`` を掛ける。傾きが変わる場合は ``gen_measure_rectangle2`` を
 新しい ``phi`` で作り直す。
 
+空の入力(``measure`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

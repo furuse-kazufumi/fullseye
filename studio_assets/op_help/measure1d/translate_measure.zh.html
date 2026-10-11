@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code>(图像尺寸)不再检查，因此移到图像外也不会抛出异常，只是 <code style="color:#22d3bf">measure_pos</code> 用端值外推。</p>
 <p style="margin:2px 0 2px 12px">• 返回值: 相同结构的 dict(<code style="color:#22d3bf">measurehandle</code> 类型)。</p>
 <p>典型用法: 把配准得到的工件偏移反映到测量线上，再执行 <code style="color:#22d3bf">measure_pos</code> / <code style="color:#22d3bf">measure_pairs</code>。倾角改变时，用新的 <code style="color:#22d3bf">phi</code> 重新创建 <code style="color:#22d3bf">gen_measure_rectangle2</code>。</p>
+<p>空输入(<code style="color:#22d3bf">measure</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

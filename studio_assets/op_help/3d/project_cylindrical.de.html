@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Projiziert in ein zylindrisches Range-Bild (z_bins, h_res). Azimut (Spalten) × z (Zeilen); das Pixel ist der horizontale Radius ρ = hypot(x,y).</p>
 <p>Während die Kugelprojektion Schichten nach Elevation schneidet, <b>schneidet die Zylinderprojektion die Höhe z in gleichen Abständen</b> (geeignet zum Abwickeln von Wänden/Säulen/Korridoren). Der Pixelwert ist der horizontale Abstand ρ von der z-Achse (eine natürliche Invariante, die für Punkte auf einem Zylinder konstant ist). Leere Zelle=0, nähere Punkte haben Vorrang (minimales ρ). Ohne Angabe von z_range=(z_min,z_max) wird [z.min, z.max] der Punktwolke verwendet. z-Breite null ist fail-closed (ValueError). Zeile 0 = oberer Rand (z=z_max). Punkte außerhalb von z_range, auf der z-Achse (ρ=0) oder mit nicht endlichen Koordinaten werden verworfen.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) liefert ein leeres Ergebnis (Grund: ein Scan ohne Rückläufer ist gültig, und ein Bild mit lauter Nullzellen ist die Antwort).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

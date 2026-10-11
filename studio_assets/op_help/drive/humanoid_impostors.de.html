@@ -8,6 +8,7 @@
 <p>方位 b = 体から見たカメラの向き 2πb / n_yaw(0 = 正面 +x から見る)。カメラは体の高さの中ほどの高さから水平に、距離 <code style="color:#22d3bf">distance</code> で見る(ほぼ平行投影)。色は <code style="color:#22d3bf">driveworld.world_camera</code> と同じ Lambert(光はカメラ系)。</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">{&quot;color&quot; (n_yaw, n_phase, res, res, 3) uint8, &quot;mask&quot; (...) bool, &quot;dz&quot; (...) float16 (画素の深度 − distance [m]), &quot;f&quot; (事前描画の焦点距離 [px]), &quot;distance&quot;, &quot;eye_h&quot; [m], &quot;res&quot;, &quot;n_yaw&quot;, &quot;n_phase&quot;, &quot;cycle_length&quot;, &quot;dims&quot;, &quot;phase_s&quot; (各位相の歩いた距離 [m])}</code>。</p>
+<p>空の入力(<code style="color:#22d3bf">clip</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

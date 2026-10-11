@@ -6,6 +6,7 @@
 <p>Naive execution for comparison: uses only the plan&#x27;s <b>sequence of cells</b> and advances whenever the next cell is free (no ordering agreement).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>遅れが入ると、計画では時間差ですれ違うはずの 2 台が向かい合って止まる。返りは <code style="color:#22d3bf">adg_execute</code> と同じ形に <code style="color:#22d3bf">waits_for</code>(デッドロックの瞬間の「誰が誰を待つか」の辺)を足したもの。</p>
+<p>空の入力(<code style="color:#22d3bf">paths</code> が 0 件)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

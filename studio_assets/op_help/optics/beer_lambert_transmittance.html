@@ -7,6 +7,7 @@
 <p>path_mm: 媒質中の光路長 [mm] (配列可、非負)。</p>
 <p>sigma_per_mm: 吸収係数 [1/mm] (配列可 — 波長ごとに変えれば<b>色</b>になる)。</p>
 <p>返り値: 内部透過率(0–1)。界面の反射は含まない(それは <code style="color:#22d3bf">slab_transmittance</code>)。</p>
+<p>空の入力(<code style="color:#22d3bf">path_mm</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

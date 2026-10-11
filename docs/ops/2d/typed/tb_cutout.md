@@ -47,6 +47,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``(kept float64 (M,3), kept_idx int64 (M,))``、順序は元のまま。一様な欠損は
 ``random_dropout``。
 
+空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``cutout``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)

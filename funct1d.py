@@ -258,6 +258,8 @@ def zero_crossings_funct_1d(y):
     :param y: 1-D function (may be empty).
     :returns: int index array (possibly empty).
     :raises ValueError: non-1-D / NaN / Inf input.
+
+    Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     arr = _f1d(y, "y")
     s = np.sign(arr)
@@ -279,6 +281,8 @@ def local_min_max_funct_1d(y):
     :param y: 1-D function (may be empty).
     :returns: dict ``{"max": int array, "min": int array}``.
     :raises ValueError: non-1-D / NaN / Inf input.
+
+    Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     arr = _f1d(y, "y")
     mx = np.nonzero((arr[1:-1] > arr[:-2]) & (arr[1:-1] > arr[2:]))[0] + 1
@@ -297,6 +301,8 @@ def funct_1d_to_pairs(y):
     :returns: ``(n, 2)`` float64 array, column 0 the index grid ``0..n-1``,
         column 1 the y-values.
     :raises ValueError: non-1-D / NaN / Inf input.
+
+    Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     arr = _f1d(y, "y")
     return np.column_stack([np.arange(len(arr), dtype=float), arr])
@@ -307,6 +313,8 @@ def abs_funct_1d(y):
 
     :param y: 1-D function (may be empty).
     :raises ValueError: non-1-D / NaN / Inf input.
+
+    Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     return np.abs(_f1d(y, "y"))
 
@@ -316,6 +324,8 @@ def negate_funct_1d(y):
 
     :param y: 1-D function (may be empty).
     :raises ValueError: non-1-D / NaN / Inf input.
+
+    Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     return -_f1d(y, "y")
 
@@ -329,6 +339,8 @@ def scale_y_funct_1d(y, mult=1.0, add=0.0):
     :param mult: finite multiplier.
     :param add: finite offset.
     :raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.
+
+    Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     arr = _f1d(y, "y")
     m = _finite_scalar(mult, "mult")
@@ -368,6 +380,8 @@ def num_points_funct_1d(y) -> int:
 
     :param y: 1-D function (may be empty).
     :raises ValueError: non-1-D / NaN / Inf input.
+
+    Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     return int(_f1d(y, "y").size)
 
@@ -408,6 +422,8 @@ def sample_funct_1d(y, step=2):
     :param y: 1-D function (may be empty).
     :param step: truncated to int, must be >= 1 (``step=1`` copies).
     :raises ValueError: non-1-D / NaN / Inf input, or ``step < 1``.
+
+    Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     arr = _f1d(y, "y")
     st = _int_param(step, "step", 1)
@@ -447,6 +463,8 @@ def invert_funct_1d(y):
     :param y: 1-D function (may be empty).
     :returns: dict ``{"x": float64 array, "y": float64 array}``.
     :raises ValueError: non-1-D / NaN / Inf input.
+
+    Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     arr = _f1d(y, "y")
     x = np.arange(len(arr), dtype=float)
@@ -465,6 +483,8 @@ def transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0):
     :param mult_x, add_x, mult_y, add_y: finite affine coefficients.
     :returns: ``(n, 2)`` float64 array of ``(x, y)`` pairs.
     :raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.
+
+    Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     arr = _f1d(y, "y")
     mx = _finite_scalar(mult_x, "mult_x")
@@ -532,6 +552,8 @@ def create_funct_1d_array(y):
 
     :param y: 1-D sample sequence.
     :raises ValueError: non-1-D / NaN / Inf input.
+
+    Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
     """
     return _f1d(y, "y")
 

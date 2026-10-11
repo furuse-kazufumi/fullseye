@@ -6,6 +6,7 @@
 <p>원뿔 모선의 단면 <code style="color:#22d3bf">c(u)</code> [px] (<code style="color:#22d3bf">u</code> = 축으로부터의 거리 [px]).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>基本は <code style="color:#22d3bf">c = max(0, H − u tan φ)</code>。<code style="color:#22d3bf">apex_blunt_px</code> = 頂に内接する円弧の半径(材料を削る、中心は <code style="color:#22d3bf">(0, H − r/cos φ)</code>、接点 <code style="color:#22d3bf">u = r sin φ</code>)。<code style="color:#22d3bf">toe_round_px</code> = 裾の凹みを埋める円弧の半径(材料を足す、中心は空気側 <code style="color:#22d3bf">(x_t, r)</code>、<code style="color:#22d3bf">x_t = R + r tan(φ/2)</code>、接点 <code style="color:#22d3bf">u = x_t − r sin φ</code>)—— どちらも接線連続(導出: 接点で両側の高さが裾は <code style="color:#22d3bf">r(1 − cos φ)</code>、頂は <code style="color:#22d3bf">H − r sin²φ / cos φ</code> で一致)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2 つの円弧が重なる(山が小さすぎる)。</p>
+<p>空の入力(<code style="color:#22d3bf">u</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

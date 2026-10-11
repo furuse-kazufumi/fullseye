@@ -400,7 +400,10 @@ def no_overtaking_zones(features: Iterable[dict], *, priority_road: bool = False
     ``crest``(上り坂の頂上、同)、``downhill``(下り坂、"grade" が ``steep_grade``(**仮定** 10 %)以上か grade 無しなら
     1 号の「勾配の急な」)、``tunnel``(2 号。"has_lanes" が真なら除外)、``intersection``(3 号。``priority_road`` を
     通行しているなら除外)、``railway_crossing`` / ``crosswalk`` / ``bicycle_crossing``(3 号)。3 号は [start − 30, end]。
-    返り値: ``zones`` = [(a, b, kind, 号)]、``merged`` = 重なりを併せた (k, 2)。"""
+    返り値: ``zones`` = [(a, b, kind, 号)]、``merged`` = 重なりを併せた (k, 2)。
+
+    空の入力(``features`` が 0 件)は空を返す(理由: 施設が 0 件の道路は普通にあり、禁止区間が無いことが正しい答え)。
+    """
     op = "no_overtaking_zones"
     V = dict(VICINITY)
     if vicinity:
@@ -810,7 +813,12 @@ def convex_mirror_image(object_distance, radius: float, *, eye_distance: float, 
 
     1/a + 1/b = 2/R(b は鏡の向こうの虚像)→ b = aR/(2a + R)、倍率 m = R/(2a + R)。眼が鏡から e(``eye_distance``)のとき
     像の見かけの大きさ θ = 2 atan(m h /(2(e + b)))、近軸では m h/(e + b) = h/(e + k a)、k = 1 + 2e/R。
-    ``flat_equivalent_distance`` = 同じ大きさに見える平面鏡の距離 k a(遠くに見える量)。"""
+    ``flat_equivalent_distance`` = 同じ大きさに見える平面鏡の距離 k a(遠くに見える量)。
+
+    空の入力(``object_distance`` が 0 要素)は ValueError。
+    """
+    if (len(object_distance) if isinstance(object_distance, (list, tuple)) else np.asarray(object_distance).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("convex_mirror_image: object_distance is empty — pass at least one element")
     op = "convex_mirror_image"
     a = _array(object_distance, "object_distance", op)
     if np.any(a <= 0):

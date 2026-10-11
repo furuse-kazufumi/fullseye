@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pair_size</code>: 預期寬度 [px]。為 <code style="color:#22d3bf">None</code> 時既不排序也不打分，原樣回傳 <code style="color:#22d3bf">measure_pairs</code> 的結果(沿量測線的順序)。0 或負值不做驗證(為 0 時分母變為 1e-9，所有對的分數幾乎都壓成 0 或 1)。</p>
 <p style="margin:2px 0 2px 12px">• 回傳值: 對的 dict 的 list(<code style="color:#22d3bf">table</code> 型別)。各 dict 含 <code style="color:#22d3bf">first</code> / <code style="color:#22d3bf">second</code> (取樣 index)、<code style="color:#22d3bf">width</code> [px]、<code style="color:#22d3bf">first_point</code> / <code style="color:#22d3bf">second_point</code> (<code style="color:#22d3bf">(row, col)</code>)、<code style="color:#22d3bf">first_amplitude</code> / <code style="color:#22d3bf">second_amplitude</code>、<code style="color:#22d3bf">fuzzy_score</code>。連 1 個對都沒有時回傳空 list(不作為例外)。</p>
 <p>想依寬度的下限、上限截取時，請自行用 <code style="color:#22d3bf">width</code> 過濾此結果(本 op 只做排序，不依閾值排除)。</p>
+<p>空輸入(<code style="color:#22d3bf">image</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

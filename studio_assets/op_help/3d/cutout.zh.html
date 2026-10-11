@@ -7,6 +7,7 @@
 <p>去除空间中一个轴对齐盒区域,返回 <code style="color:#22d3bf">(kept, kept_idx)</code>(模拟局部缺失)。</p>
 <p>从已有的点中均匀采样 1 个作为中心,删除边长为 <code style="color:#22d3bf">extent</code>(标量 = 立方体,或 <code style="color:#22d3bf">(3,)</code> = 各轴边长)的盒子内的所有点。中心点自身必定在内,因此至少删除 1 个点。被删除的点必定落在边长 <code style="color:#22d3bf">extent</code> 的盒子内(空间上局部 = 可与随机散布区分)。<code style="color:#22d3bf">kept == points[kept_idx]</code>,<code style="color:#22d3bf">extent &gt; 0</code>。</p>
 <p><code style="color:#22d3bf">extent</code> 传入非正值或 <code style="color:#22d3bf">(3,)</code> 以外的形状时抛出 <code style="color:#22d3bf">ValueError</code>。空输入返回空和空索引。中心是由 <code style="color:#22d3bf">rng.integers(n)</code> 选出的点,因此即使 <code style="color:#22d3bf">seed</code> 相同,点的排列一变,被挖掉的位置也会不同。盒子判定为闭区间 <code style="color:#22d3bf">|P - center| &lt;= extent/2</code>。删除点数取决于密度,若 <code style="color:#22d3bf">extent</code> 大于点云尺寸则所有点都会消失。返回值为 <code style="color:#22d3bf">(kept float64 (M,3), kept_idx int64 (M,))</code>,保持原顺序。均匀缺失请用 <code style="color:#22d3bf">random_dropout</code>。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:点云的抽稀、离群点去除和随机丢弃都可能得到空结果。空点云是合法的值,链条的下一级不应因此停下)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

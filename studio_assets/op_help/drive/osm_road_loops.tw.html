@@ -6,6 +6,7 @@
 <p>道路聯集的邊界環。分為外環(道路邊緣)與孔(街廓)，並以 Douglas–Peucker 簡化。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>追跡は画素の辺に沿う(<code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>)ので、間引く前のループの面積の和 = 画素数 × step² (外側 − 穴)が厳密に成り立つ(<code style="color:#22d3bf">area_check</code>)。穴か外側かは、ループの最も左の縦の辺のすぐ右の画素が道路かどうかで決める。返り値 <code style="color:#22d3bf">{&quot;outer&quot;: [(K,2) xy], &quot;holes&quot;: [(K,2) xy], &quot;outer_raw&quot;, &quot;holes_raw&quot;, &quot;area_check&quot;: {&quot;loops_m2&quot;, &quot;pixels_m2&quot;, &quot;abs_err&quot;}}</code>。</p>
+<p>空の入力(<code style="color:#22d3bf">roadmask</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

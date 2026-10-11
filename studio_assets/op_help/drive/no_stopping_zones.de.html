@@ -7,6 +7,7 @@
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(バス停は &quot;at&quot; = 標示板の位置でもよい)。kind ∈ <code style="color:#22d3bf">NO_STOP_DISTANCE</code>。区間 = [start − d, end + d] (d = その号の距離)。バス停は運行時間中(<code style="color:#22d3bf">in_service</code>)だけ。</p>
 <p>返り値: <code style="color:#22d3bf">zones</code> = [(a, b, kind, 号)] (元の順)、<code style="color:#22d3bf">merged</code> = 重なりを併せた (k, 2) の配列(昇順・互いに素)。</p>
+<p>空の入力(<code style="color:#22d3bf">features</code> が 0 件)は空を返す(理由: 施設が 0 件の道路は普通にあり、禁止区間が無いことが正しい答え)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

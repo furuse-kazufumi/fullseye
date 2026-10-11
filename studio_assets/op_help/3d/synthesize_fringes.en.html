@@ -17,6 +17,7 @@
 <p>seed:        random seed for the noise.</p>
 <p>return_phase: if True, returns (images, total_phase) (for tests and debugging).</p>
 <p>Returns: (N, H, W) float array (clipped to the range [0,1]). With return_phase=True, also the phase.</p>
+<p>Empty input (<code style="color:#22d3bf">height</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

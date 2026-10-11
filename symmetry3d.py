@@ -30,7 +30,11 @@ def reflect_points(points, plane_point, plane_normal):
     そのまま返る(fail-closed ではない)。``reflection_symmetry_score`` /
     ``detect_reflection_symmetry`` の内部で使うほか、検出した対称面で欠損側を埋める(鏡像を元の
     点群に連結する)形状補完にも使える。
+
+    空の入力(``points`` が 0 要素)は ValueError。
     """
+    if (len(points) if isinstance(points, (list, tuple)) else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("reflect_points: points is empty — pass at least one element")
     p = np.asarray(points, float)
     p0 = np.asarray(plane_point, float)
     n = np.asarray(plane_normal, float)

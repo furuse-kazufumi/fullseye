@@ -8,6 +8,7 @@
 <p><code style="color:#22d3bf">start_index</code>(点ごと、または 1 つ)を与えると、その区間の前後 <code style="color:#22d3bf">window</code> 区間だけを調べる(繰り返しを速くする。窓の外に本当の最寄りがあると誤るので、点が少しずつ動くときに使う)。None なら全区間を調べる。</p>
 <p>返り値: <code style="color:#22d3bf">s</code>, <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">index</code>(区間)、<code style="color:#22d3bf">heading</code>(その区間の向き)。点 (2,) なら スカラー。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、start_index が範囲外。</p>
+<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

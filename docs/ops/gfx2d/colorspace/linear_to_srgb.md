@@ -36,6 +36,8 @@ Linear light back to sRGB encoding. Exact inverse of :func:`srgb_to_linear`.
 ファイルに書く・画面に出す直前に 1 回だけ掛ける。二度掛けると中間調が
 浮く(例外は出ない)。
 
+空の入力(``img`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

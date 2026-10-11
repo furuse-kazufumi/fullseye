@@ -32,6 +32,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``geodesic_distances`` / ``farthest_point_sampling`` はこの結果を隣接行列(有向 CSR、
 Dijkstra 側で無向化)にして測地距離の近似に使う。
 
+空の入力(``points`` が 0 要素)は空を返す(理由: 2 点未満の点群の近傍グラフは空が正しい答え)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

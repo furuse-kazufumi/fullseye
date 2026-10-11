@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Tustin(双线性)变换 s = K (z − 1)/(z + 1) 把连续系统映射为离散系统。</p>
 <p>K = 2·fs(朴素 Tustin)，或给出 <code style="color:#22d3bf">prewarp_hz</code> 时 K = ω₀ / tan(ω₀ / (2 fs)) (在该频率上连续系统与离散系统的响应<b>严格一致</b>。其他频率被 tan 扭曲)。返回值的系数按 z 的降幂排列(<code style="color:#22d3bf">np.polyval(num_z, z)</code>)。稳定的连续系统变为稳定的离散系统(左半平面 → 单位圆内)。</p>
+<p>空输入(<code style="color:#22d3bf">num</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

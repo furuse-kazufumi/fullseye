@@ -24,6 +24,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 正直に: 試作の 16 姿勢で軸方向の誤差 max 0.83 px(横方向 0.004 px)—— 影の端 1 画素の被覆率だけから軸方向を読む限界で、
 目標 0.3 px は未達。**Raises** ``RuntimeError``: ペグが見えない(芯の画素 < 50)。
 
+空の入力(``rgb`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

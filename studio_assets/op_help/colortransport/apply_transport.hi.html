@@ -7,6 +7,7 @@
 <p>हर row (स्रोत) के लिए, ले जाए गए mass से weighted गंतव्य मानों का औसत लौटाता है। यही &quot;<b>plan का उपयोग करके तस्वीर सुधारने</b>&quot; का प्रवेश द्वार है -- अगर plan केवल बनाया जाए और उसका कोई उपयोग न हो,</p>
 <p>तो <code style="color:#22d3bf">sinkhorn</code> का output ledger में बंद गली बन जाता है (वही &quot;प्रवेश द्वार है पर consumer op नहीं&quot; वाला रूप, जिसमें यह repo बार-बार फँसा है)।</p>
 <p>शून्य mass वाली row का कोई गंतव्य नहीं होता -- 0 भरने पर &quot;काले pixels&quot; चुपचाप मिल जाते, इसलिए <code style="color:#22d3bf">ValueError</code>।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">plan</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Colorimetry और spectra — रंग केवल spectrum × illuminant × observer से तय होता है</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

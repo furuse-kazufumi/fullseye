@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 :func:`driveworld.place_mesh` で回すだけ。板は柱の手前(車の側)に ``pole_radius + 1 cm`` 離して付ける。
 返り値 = 板の object 索引(``extra = {"kind", "value", "width", "height", "mount_height"}``)。柱は直前の別 object。
 
+空の入力(``world`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

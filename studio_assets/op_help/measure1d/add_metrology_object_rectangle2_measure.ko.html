@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 총 샘플 수의 기준(기본값 40 → 각 변 10 점). 4 미만이어도 각 변 2 점은 둔다.</p>
 <p style="margin:2px 0 2px 12px">• 인수는 검증하지 않는다. 반환값은 추가 위치의 index(0 시작).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">apply</code> 결과의 <code style="color:#22d3bf">params</code> 는 <code style="color:#22d3bf">row / col / phi / l1 / l2</code> 이며, 재피팅 후에는 <b><code style="color:#22d3bf">l1 &gt;= l2</code>(긴 변이 <code style="color:#22d3bf">l1</code>)로 다시 정렬된다</b> ―― 참조에서 <code style="color:#22d3bf">l1 &lt; l2</code> 로 주어도결과의 <code style="color:#22d3bf">phi</code> 는 긴 변의 방향이 된다.</p>
+<p>빈 입력(<code style="color:#22d3bf">model</code> 이(가) 빈 dict)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

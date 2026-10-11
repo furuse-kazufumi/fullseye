@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code> (image size) is not rechecked, so moving outside the image raises no exception; <code style="color:#22d3bf">measure_pos</code> just extrapolates with the edge values.</p>
 <p style="margin:2px 0 2px 12px">• Returns: a dict of the same structure (type <code style="color:#22d3bf">measurehandle</code>).</p>
 <p>Typical use: apply the workpiece offset obtained by registration to the measuring line, then run <code style="color:#22d3bf">measure_pos</code> / <code style="color:#22d3bf">measure_pairs</code>. If the tilt changes, rebuild <code style="color:#22d3bf">gen_measure_rectangle2</code> with the new <code style="color:#22d3bf">phi</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">measure</code> an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -27,6 +27,7 @@
 <p>sobel3d). In descending order of response, at most topn.</p>
 <p>responses: (M,) float64. The corresponding response values (descending).</p>
 <p>Dependencies: sobel3d (3D gradient), _gauss3d (integration-window smoothing). Both run on the device.</p>
+<p>Empty input (<code style="color:#22d3bf">vol</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Why matrix decompositions are slow — BLAS threads, caches, memory layout</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

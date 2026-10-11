@@ -288,7 +288,12 @@ def crossing_gate_state(t, *, t_warning: float, t_lower_start: float, lower_dura
     かんの角 [rad]: 上 π/2 → 下 0。降下・上昇は余弦の滑らかな形(**仮定**: 実機の降下曲線は資料なし)。
     ``entry_forbidden`` = 1〜4(33 条 2 項。上昇中も含めるのは保守側の解釈)。
 
-    返り値: ``state``(int)、``boom_angle``、``lamps_on``(bool)、``entry_forbidden``(bool)、``t_closed``(降下の終わり)。"""
+    返り値: ``state``(int)、``boom_angle``、``lamps_on``(bool)、``entry_forbidden``(bool)、``t_closed``(降下の終わり)。
+
+    空の入力(``t`` が 0 要素)は ValueError。
+    """
+    if (len(t) if isinstance(t, (list, tuple)) else np.asarray(t).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("crossing_gate_state: t is empty — pass at least one element")
     op = "crossing_gate_state"
     tt = _array(t, "t", op)
     tw = _finite(t_warning, "t_warning", op)
@@ -419,7 +424,12 @@ def exit_room_check(queue_rear, far_edge: float, car_length: float, *, gap: floa
 
     前の車の後端 ``queue_rear`` の後ろ ``gap`` で止まると、自分の後端 = queue_rear − gap − car_length。これが
     far_edge + beyond 以上なら入ってよい。返り値: ``room`` = queue_rear − far_edge、``need`` = car_length + gap + beyond、
-    ``ok``、``rear_if_stopped``。前の車が無い場合は queue_rear = +∞。"""
+    ``ok``、``rear_if_stopped``。前の車が無い場合は queue_rear = +∞。
+
+    空の入力(``queue_rear`` が 0 要素)は ValueError。
+    """
+    if (len(queue_rear) if isinstance(queue_rear, (list, tuple)) else np.asarray(queue_rear).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("exit_room_check: queue_rear is empty — pass at least one element")
     op = "exit_room_check"
     q = _array(queue_rear, "queue_rear", op, allow_inf=True)
     fe = _finite(far_edge, "far_edge", op)
@@ -712,7 +722,10 @@ def no_stopping_zones(features: Iterable[dict], *, in_service: bool = True) -> D
 
     features[i] = {"kind", "start", "end"}(バス停は "at" = 標示板の位置でもよい)。kind ∈ ``NO_STOP_DISTANCE``。
     区間 = [start − d, end + d](d = その号の距離)。バス停は運行時間中(``in_service``)だけ。
-    返り値: ``zones`` = [(a, b, kind, 号)](元の順)、``merged`` = 重なりを併せた (k, 2) の配列(昇順・互いに素)。"""
+    返り値: ``zones`` = [(a, b, kind, 号)](元の順)、``merged`` = 重なりを併せた (k, 2) の配列(昇順・互いに素)。
+
+    空の入力(``features`` が 0 件)は空を返す(理由: 施設が 0 件の道路は普通にあり、禁止区間が無いことが正しい答え)。
+    """
     op = "no_stopping_zones"
     zones = []
     for f in features:
@@ -746,7 +759,10 @@ def legal_stop_intervals(merged, road_start: float, road_end: float, car_length:
     """駐停車禁止の区間(併せた (k, 2))を避けて、車体 [rear, rear + car_length] が丸ごと入る **後端の位置** の区間 (m, 2)。
 
     区間の端ちょうど(距離がちょうど 5 m など)は禁止の側に含める(「以内」)ので、車体が端に触れるだけなら許す
-    (閉区間の補集合の閉包)。"""
+    (閉区間の補集合の閉包)。
+
+    空の入力(``merged`` が 0 要素)は空を返す(理由: 禁止区間が 0 件なら道路全体が正しい答え。no_stopping_zones は施設があっても空の merged を返しうる(運行時間外のバス停だけのとき))。
+    """
     op = "legal_stop_intervals"
     M = _array(merged, "merged", op).reshape(-1, 2)
     r0 = _finite(road_start, "road_start", op)

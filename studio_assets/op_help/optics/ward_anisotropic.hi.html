@@ -9,6 +9,7 @@
 <p>(isotropic हो तो वृत्त; यदि alpha_x &gt;&gt; alpha_y, तो धारियों के साथ खिंची रेखा)।</p>
 <p>Returns: (H, W) specular reflection तीव्रता (non-negative)। Background 0 है।</p>
 <p>सूत्र: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo)), जहाँ δ half vector और normal के बीच का कोण है, और φ tangent से azimuth (Ward 1992)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">normals</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

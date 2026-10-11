@@ -6,6 +6,7 @@
 <p>Die Aliasing-(Treppen-)Energie von Kanten = der RMS des Laplace-Operators (kleiner ist glatter).</p>
 <p>Rasterisierungs-Aliasing erscheint als scharfe treppenförmige Ecken (hohe 2. Ableitung). Der Laplace-Operator betont hohe Frequenzen, daher erfasst sein quadratisches Mittel (RMS) monoton, wie treppenartig die Ränder sind — macht SSAA die Kanten zu glatten Gradienten, sinkt die Hochfrequenzenergie des Laplace-Operators (low-pass dämpft hohe Frequenzen, der Laplace-Operator verstärkt sie, daher ist diese Größe umso kleiner, je geglätteter die Kanten sind).</p>
 <p>Flache Innenbereiche und Hintergrund haben Laplace ≈ 0 und tragen nicht bei, daher ist es effektiv eine Größe des Kantenbands. Farbbilder nehmen den Kanalmittelwert. Ein relatives Maß zum Vergleich von Bildern gleicher Form und gleichen Kontrasts untereinander.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">img</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

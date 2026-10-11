@@ -39,6 +39,8 @@ T//2 を引く)。テンプレが完全に収まらない位置は最大値+1 �
 scene にエッジが無い場合の距離場は意味を持たない(``thr`` を下げる)。
 ``edt="jfa"`` は ``edt_jfa`` を使い ``device`` 上で完結、それ以外は scipy(CPU)。
 
+空の入力(``scene`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

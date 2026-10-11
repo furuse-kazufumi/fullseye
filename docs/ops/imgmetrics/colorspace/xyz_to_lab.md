@@ -32,6 +32,8 @@ CIE XYZ → CIE 1976 L\*a\*b\*。既定の白色点は D65 2°。
 
 ``delta_e_76`` / ``delta_e_2000`` はこの Lab を入力にする。
 
+空の入力(``xyz`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

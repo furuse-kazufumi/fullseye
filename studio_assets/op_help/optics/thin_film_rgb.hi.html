@@ -7,6 +7,7 @@
 <p>surface दृष्टि रेखा से जितनी अधिक झुकी हो, film के अंदर optical path उतना लंबा होता है, और रंग छोटी wavelengths की ओर खिसकता है ―― इसीलिए साबुन के बुलबुलों और गर्मी से रंगे titanium के रंग किनारों पर बदलते हैं। कोण पर निर्भरता cosθ = |n·v| से आती है।</p>
 <p>normals / view: (H,W,3) normal map / surface से viewpoint की दिशा। thickness_nm / n_film / n_sub: <code style="color:#22d3bf">thin_film_reflectance</code> के समान।</p>
 <p>strength: कुल तीव्रता।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">normals</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

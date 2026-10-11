@@ -47,7 +47,11 @@ def harris3d_keypoints(vol, device="cpu", k=0.005, nms=3, topn=64,
         responses: (M,) float64。対応する応答値(降順)。
 
     依存: sobel3d(3D 勾配)、_gauss3d(積分窓平滑)。いずれも device 上で動作。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("harris3d_keypoints: vol is empty — pass at least one element")
     dev = torch.device(device)
 
     # --- 3D 勾配(sobel3d は numpy 入力から device テンソルを作るので device 安全) ---

@@ -32,6 +32,8 @@ Returns a ``measurement``: the period in pixels.
 **Raises** ``ValueError``: not a 2-D array; fewer than 8 samples along *axis*;
 non-finite values; a profile with no variation (a flat image has no period).
 
+Empty input (``image`` with 0 elements) raises ``ValueError``.
+
 ## ファミリ共通の入力契約(fail-closed)
 
 mathops の全 op は入力を検証してから計算する(黙って通さない):

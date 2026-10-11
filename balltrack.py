@@ -93,7 +93,12 @@ def ball_detect(image, *, mode: str = "bright", thresh=None, color=None, color_t
 def ball_track(detections, *, max_jump: float = 40.0, min_score: float = 0.0) -> dict:
     """コマごとの候補列 ``detections[k] = ball_detect(frame_k)`` を 1 本の軌跡に繋ぐ(等速予測に最も近い候補、``max_jump`` px 以内)。
 
-    返り値 ``{"frame" (N,), "col" (N,), "row" (N,), "radius" (N,), "found" (K,) bool}``(見つからないコマは飛ばす)。"""
+    返り値 ``{"frame" (N,), "col" (N,), "row" (N,), "radius" (N,), "found" (K,) bool}``(見つからないコマは飛ばす)。
+
+    空の入力(``detections`` が 0 件)は ValueError。
+    """
+    if isinstance(detections, (list, tuple)) and len(detections) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("ball_track: detections is empty — pass at least one item")
     if not isinstance(detections, (list, tuple)):
         raise ValueError("detections must be a list of per-frame candidate lists")
     fr, cs, rs, rad = [], [], [], []
@@ -216,7 +221,12 @@ def spin_from_marker_sequence(dirs, dt: float, *, lag: int = 4, max_angle: float
     組んで当て直す —— 回転角が lag 倍になるので、模様の位置の誤差が効く割合は 1/lag。★1 コマの回転角は ``max_angle``
     より十分小さいこと(模様の取り違え)、lag コマの回転は π より小さいこと(Kabsch は最短の回転を返す)。
     返り値 ``{"omega", "omega_stage1", "n_pairs", "per_pair" (N, 3)}``(ω は dirs と同じ座標系)。組が 1 つも無ければ
-    ω は NaN。模様が見えた向きの組が要るので、各コマ 2 個以上の模様が要る。"""
+    ω は NaN。模様が見えた向きの組が要るので、各コマ 2 個以上の模様が要る。
+
+    空の入力(``dirs`` が 0 件)は ValueError。
+    """
+    if isinstance(dirs, (list, tuple)) and len(dirs) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("spin_from_marker_sequence: dirs is empty — pass at least one item")
     if dt <= 0 or int(lag) < 1 or not (0 < max_angle < np.pi / 2):
         raise ValueError("need dt > 0, lag >= 1, 0 < max_angle < pi/2")
     D = [None if d is None else np.asarray(d, np.float64).reshape(-1, 3) for d in dirs]
@@ -243,7 +253,12 @@ def spin_from_marker_sequence(dirs, dt: float, *, lag: int = 4, max_angle: float
 
 
 def reproject(points, pose, K) -> np.ndarray:
-    """世界点 (N, 3) → (N, 2) の (col, row)(深度 ≤ 0 は NaN)。"""
+    """世界点 (N, 3) → (N, 2) の (col, row)(深度 ≤ 0 は NaN)。
+
+    空の入力(``points`` が 0 要素)は ValueError。
+    """
+    if (len(points) if isinstance(points, (list, tuple)) else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("reproject: points is empty — pass at least one element")
     P = np.asarray(points, np.float64).reshape(-1, 3)
     M = _projection_matrix(pose, K)
     h = np.column_stack([P, np.ones(len(P))]) @ M.T
@@ -284,7 +299,12 @@ def triangulate_dlt(uvs, poses, Ks) -> dict:
 
 def track_triangulate(tracks, poses, Ks, n_frames: int) -> dict:
     """カメラごとの軌跡(:func:`ball_track` の返り値)を三角測量して 3-D の軌跡に: ``{"frame", "p" (N, 3), "reproj_rms" (N,)}``
-    (2 視点以上で見えたコマだけ)。"""
+    (2 視点以上で見えたコマだけ)。
+
+    空の入力(``tracks`` が 0 件)は ValueError。
+    """
+    if isinstance(tracks, (list, tuple)) and len(tracks) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("track_triangulate: tracks is empty — pass at least one item")
     C = len(tracks)
     uv = np.full((n_frames, C, 2), np.nan)
     for c, tr in enumerate(tracks):

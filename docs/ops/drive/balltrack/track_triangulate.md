@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 カメラごとの軌跡(:func:`ball_track` の返り値)を三角測量して 3-D の軌跡に: ``{"frame", "p" (N, 3), "reproj_rms" (N,)}``
 (2 視点以上で見えたコマだけ)。
 
+空の入力(``tracks`` が 0 件)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

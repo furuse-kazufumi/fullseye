@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• Arguments are not validated here (a radius of 0 or less can be stacked but is meaningless).</p>
 <p style="margin:2px 0 2px 12px">• Returns: index of the added position (starting at 0). <code style="color:#22d3bf">params</code> of the <code style="color:#22d3bf">apply</code> result is <code style="color:#22d3bf">row / col / radius</code>, and <code style="color:#22d3bf">rms</code> is the radial residual from the circle [px].</p>
 <p>Used for inspecting hole and pin diameters and for centring circular parts.</p>
+<p>Empty input (<code style="color:#22d3bf">model</code> an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

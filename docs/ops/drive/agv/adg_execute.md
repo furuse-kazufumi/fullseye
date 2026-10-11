@@ -22,6 +22,8 @@ ADG に従って実行する。各時刻、各車両は確率 ``delay_prob`` で
 次の行動の依存がすべて済んでいる車両だけが 1 マス進む。返りは dict: ``trajectories``(実際の位置の列)、
 ``makespan``、``collisions``(同じマス・すれ違い)、``deadlock``(誰も進めず未了)、``finished``。
 
+空の入力(``adg`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

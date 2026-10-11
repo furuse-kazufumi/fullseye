@@ -172,7 +172,12 @@ def idm_equilibrium_gap(v, *, v0: float, T: float, s0: float, delta: float = 4.0
 
     門: 先行車が一定速度のとき ``idm_platoon_simulate`` が収束した車間と rtol 1e-6 で一致。
 
-    **Raises** ``ValueError``: v < 0 または v ≥ v0。"""
+    **Raises** ``ValueError``: v < 0 または v ≥ v0。
+
+    空の入力(``v`` が 0 要素)は ValueError。
+    """
+    if (len(v) if isinstance(v, (list, tuple)) else np.asarray(v).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("idm_equilibrium_gap: v is empty — pass at least one element")
     op = "idm_equilibrium_gap"
     v0 = _positive(v0, "v0", op)
     T = _nonneg(T, "T", op)
@@ -750,7 +755,12 @@ def occlusion_safe_speed(d, *, reaction: float, brake: float):
 
     門: ``rss_stopping_distance(v, ρ, 0, b)`` == d(第 2 実装、rtol 1e-12)。
 
-    **Raises** ``ValueError``: reaction < 0、brake ≤ 0、d が非有限(inf は許して inf を返す)。"""
+    **Raises** ``ValueError``: reaction < 0、brake ≤ 0、d が非有限(inf は許して inf を返す)。
+
+    空の入力(``d`` が 0 要素)は ValueError。
+    """
+    if (len(d) if isinstance(d, (list, tuple)) else np.asarray(d).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("occlusion_safe_speed: d is empty — pass at least one element")
     op = "occlusion_safe_speed"
     rho = _nonneg(reaction, "reaction", op)
     b = _positive(brake, "brake", op)
@@ -907,7 +917,12 @@ def passing_simulate(dist_oncoming: float, parked_len: float, margin_front: floa
 # ---- 11. 非一様ポアソン過程 ---------------------------------------------------------------------------
 def bus_stop_rate(x, *, bus_rear: float, bus_front: float, base: float, peak: float, spread: float):
     """停車中のバスの前後で高い出現率 λ(x) = base + peak [exp(−½((x − rear)/spread)²) + exp(−½((x − front)/spread)²)]
-    [件/m]。バスの陰(前端の先)と後ろから人が出てくる、という形の例(値は呼び出し側の仮定)。上限は base + 2·peak。"""
+    [件/m]。バスの陰(前端の先)と後ろから人が出てくる、という形の例(値は呼び出し側の仮定)。上限は base + 2·peak。
+
+    空の入力(``x`` が 0 要素)は ValueError。
+    """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("bus_stop_rate: x is empty — pass at least one element")
     op = "bus_stop_rate"
     xa = _array(x, "x", op)
     base = _nonneg(base, "base", op)

@@ -22,6 +22,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 各高調波の楕円 (長軸, 短軸) 特異値不変量(:func:`invariants`)の L2 距離。
 m1, m2 は :func:`elliptic_fourier` の出力 dict。
 
+空の入力(``m1`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [shape_description_2d ファミリ ガイド](../guides/shape_description_2d.md)

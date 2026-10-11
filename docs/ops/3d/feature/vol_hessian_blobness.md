@@ -27,6 +27,8 @@ dark). Normalised to ``[0, 1]``. Complements the line filters — a Frangi-style
 ``Rb`` term rejects blobs, this one keeps them. Reference: the second-order
 (Hessian) blob measure, cf. Frangi et al. 1998 / Lindeberg scale-space blobs.
 
+Empty input (``vol`` with 0 elements) raises ``ValueError``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

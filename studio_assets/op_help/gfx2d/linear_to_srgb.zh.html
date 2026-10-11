@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 返回值:同形的 float64 副本,<code style="color:#22d3bf">[0, 1]</code>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(3,)</code> 的 1 种颜色或 <code style="color:#22d3bf">(N, 3)</code> 的颜色表本 op 不接受(图像 API)。想作用于任意形状时,<code style="color:#22d3bf">imgmetrics</code> 侧的同名函数会委托到这里。</p>
 <p>对 <code style="color:#22d3bf">radial_light</code> / <code style="color:#22d3bf">light_mask</code> / <code style="color:#22d3bf">bloom</code> 等在线性光中计算的结果, 在写入文件、显示到屏幕之前只施加 1 次。施加两次会使中间调发飘(不会抛出异常)。</p>
+<p>空输入(<code style="color:#22d3bf">img</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

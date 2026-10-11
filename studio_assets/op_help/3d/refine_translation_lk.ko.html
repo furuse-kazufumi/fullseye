@@ -30,6 +30,7 @@
 <p>baseline(mean 0.56 voxel)보다 약 60× 개선.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grad_scale=32</code>는 분리형 sobel3d(도함수[-1,0,1]×평활[1,2,1]²)의 고정 스케일(선형 램프에서 실측 32.0). 참 기울기로 정규화하여 Δp의 스케일을 바로잡는다.</p>
 <p style="margin:2px 0 2px 12px">• H에는 미소한 Levenberg 정칙화를 더해, 기울기가 부족한 평탄 템플릿에서의 수치 파탄을 막는다.</p>
+<p>빈 입력(<code style="color:#22d3bf">scene</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

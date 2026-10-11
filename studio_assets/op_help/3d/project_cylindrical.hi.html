@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>cylindrical range image पर project करता है (z_bins, h_res)। azimuth (column) × z (row), pixel=horizontal radius ρ=hypot(x,y)।</p>
 <p>spherical projection elevation से layers काटता है, जबकि cylindrical projection <b>ऊँचाई z को बराबर अंतराल पर काटता है</b> (दीवार/खंभे/गलियारे को खोलकर दिखाने के लिए उपयुक्त)। pixel value z axis से क्षैतिज दूरी ρ है (cylinder पर के points के लिए स्थिर रहने वाला प्राकृतिक invariant)। खाली cell=0, पास वाले point को प्राथमिकता (न्यूनतम ρ)। z_range=(z_min,z_max) न दिया हो तो point cloud का [z.min, z.max] लिया जाता है। z चौड़ाई शून्य हो तो fail-closed (ValueError)। row 0 = ऊपरी सिरा (z=z_max)। z_range के बाहर, z axis पर (ρ=0), या non-finite coordinates वाले points छोड़ दिए जाते हैं।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: बिना रिटर्न वाला स्कैन वैध है, और हर सेल 0 वाली छवि ही उत्तर है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

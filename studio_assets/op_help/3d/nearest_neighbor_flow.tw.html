@@ -12,6 +12,7 @@
 <p>(N, 3) 位移向量場(與 pts0 列順序相同)。</p>
 <p>Raises:</p>
 <p>ValueError: 形狀不正確,或 pts0 非空而 pts1 為空。</p>
+<p>空輸入(<code style="color:#22d3bf">pts0</code> 為 0 個元素)回傳空結果(理由:空點雲的位移就是空的位移場(保持列順序的 op)。前級的濾波可能輸出空點雲)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

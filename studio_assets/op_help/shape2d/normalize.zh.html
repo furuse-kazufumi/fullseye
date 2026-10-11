@@ -6,6 +6,7 @@
 <p>将 EFD 系数变换为“规范姿态”的系数(以第 1 谐波为基准对齐)。</p>
 <p>Kuhl–Giardina 的正则化: (1) 用第1谐波的相位消除<b>起点</b>的任意性，(2) 把第1 椭圆的长轴转到基准轴以统一<b>朝向</b>,(3) 除以第1谐波的长轴长以统一<b>大小</b>。适用于把多个形状叠加/求平均等「正则姿态重建」。</p>
 <p>注意(honest): 第1谐波几乎为<b>圆形</b>(长轴≈短轴)的形状，相位 (theta/psi) 病态而不稳定。<b>不变匹配请不要用本函数</b>，而用 <code style="color:#22d3bf">invariants</code> / <code style="color:#22d3bf">descriptor_distance</code>(基于奇异值)。</p>
+<p>空输入(<code style="color:#22d3bf">model</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

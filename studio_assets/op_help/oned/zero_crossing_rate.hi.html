@@ -6,6 +6,7 @@
 <p>पड़ोसी sample में से sign बदलने वालों का अनुपात — pitch/noisiness का सस्ता संकेत।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Exact zeros are neither a crossing nor a sign: a crossing is counted only when the sign changes between consecutive *non-zero* samples, and the rate divides by the number of adjacent sample pairs <code style="color:#22d3bf">len(x) - 1</code>. So <code style="color:#22d3bf">[1, 0, 1, 0, 1]</code> is <code style="color:#22d3bf">0.0</code> and <code style="color:#22d3bf">[1, 0, -1]</code> is <code style="color:#22d3bf">0.5</code> (before 2026-09-02 <code style="color:#22d3bf">diff(sign(x))</code> counted every touch of zero as a crossing: <code style="color:#22d3bf">1.0</code> for both).</p>
+<p>Empty input (<code style="color:#22d3bf">x</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

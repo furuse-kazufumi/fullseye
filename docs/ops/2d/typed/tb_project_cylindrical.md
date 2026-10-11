@@ -44,6 +44,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 z_range=(z_min,z_max) 未指定なら点群の [z.min, z.max] を採用。z 幅ゼロは fail-closed(ValueError)。
 行 0 = 上端(z=z_max)。z_range 外、z 軸上(ρ=0)、非有限座標の点は落とす。
 
+空の入力(``points`` が 0 要素)は空を返す(理由: 返りの無いスキャンは正当で、全セルが 0 の像が正しい答え)。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``project_cylindrical``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``h_res``(既定 1024)、``b`` が ``z_bins``(既定 64)を振る。
 
 ## 参考(サンプルデータ・文献)

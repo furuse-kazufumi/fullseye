@@ -11,6 +11,7 @@
 <p>min_size: Zusammenhangskomponenten kleiner als dieser Wert sind Rauschen (-1).</p>
 <p>Returns:</p>
 <p>labels: (N,) int. 0..(n_clusters-1) sind Cluster, -1 ist Rauschen. Eine leere Eingabe ergibt shape (0,).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) liefert ein leeres Ergebnis (Grund: eine leere Wolke hat nichts zu beschriften, also ist ein Label-Array der Länge 0 die richtige Antwort; vorgelagerte Filter können leere Wolken liefern).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

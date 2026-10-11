@@ -23,6 +23,7 @@
 <p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 3-dimensional न होने वाला input, <code style="color:#22d3bf">connectivity</code> 6/18/26 के अलावा।</p>
 <p style="margin:2px 0 2px 12px">• आपस में छूती वस्तुएँ 1 component में मिल जाती हैं। अलग करना हो तो पहले चरण में <code style="color:#22d3bf">morph_erode3d</code> / <code style="color:#22d3bf">morph_open3d</code> या <code style="color:#22d3bf">vol_watershed</code> से काटें।</p>
 <p style="margin:2px 0 2px 12px">• आगे के चरण: <code style="color:#22d3bf">region_props</code> (measurement), <code style="color:#22d3bf">largest_component</code> / <code style="color:#22d3bf">filter_by_volume</code> (चयन), <code style="color:#22d3bf">vol_select_labels</code> (features से छँटाई), <code style="color:#22d3bf">vol_colorize_labels</code> (visualisation)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">vol</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: बिना वॉक्सेल वाले आयतन के शून्य संबद्ध घटक होते हैं, और यही सही उत्तर है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -230,7 +230,12 @@ def curve_speed_limit(radius, *, side_friction: float, superelevation: float = 0
     道路構造令の解説 (2) 式 Z cos α − G sin α ≤ f (Z sin α + G cos α)(Z = G v²/(gR)、i = tan α)を v について解いた
     厳密な形。i f ≥ 1 なら(どの速さでも外へは滑らない)``inf``。``radius`` は配列でもよい(> 0)。
 
-    **Raises** ``ValueError``: R ≤ 0、f < 0、|i| ≥ 1、i + f ≤ 0(止まっていても内へ滑る)。"""
+    **Raises** ``ValueError``: R ≤ 0、f < 0、|i| ≥ 1、i + f ≤ 0(止まっていても内へ滑る)。
+
+    空の入力(``radius`` が 0 要素)は ValueError。
+    """
+    if (len(radius) if isinstance(radius, (list, tuple)) else np.asarray(radius).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("curve_speed_limit: radius is empty — pass at least one element")
     op = "curve_speed_limit"
     R = _array(radius, "radius", op)
     if np.any(R <= 0.0):
@@ -255,7 +260,12 @@ def design_min_radius(design_speed_kmh, *, side_friction: float, superelevation:
 
     (2) 式から分母の i f を落とし(i f ≪ 1)、3.6² g ≈ 127 とした設計の式。厳密な上限速度は :func:`curve_speed_limit`。
 
-    **Raises** ``ValueError``: V ≤ 0、f < 0、i + f ≤ 0。"""
+    **Raises** ``ValueError``: V ≤ 0、f < 0、i + f ≤ 0。
+
+    空の入力(``design_speed_kmh`` が 0 要素)は ValueError。
+    """
+    if (len(design_speed_kmh) if isinstance(design_speed_kmh, (list, tuple)) else np.asarray(design_speed_kmh).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("design_min_radius: design_speed_kmh is empty — pass at least one element")
     op = "design_min_radius"
     V = _array(design_speed_kmh, "design_speed_kmh", op)
     if np.any(V <= 0.0):
@@ -367,7 +377,12 @@ def ackermann_steer_angles(radius, wheelbase: float, track: float) -> Dict[str, 
     返り値: ``inner``, ``outer``, ``bicycle`` [rad]、``front_inner_radius`` √((R − t/2)² + L²)、``front_outer_radius``、
     ``rear_inner_radius`` R − t/2、``offtracking``(定常の内輪差 = 前内輪 − 後内輪の半径)。
 
-    **Raises** ``ValueError``: R ≤ t/2(内側の後輪が旋回の中心を越える)、L ≤ 0、t < 0。"""
+    **Raises** ``ValueError``: R ≤ t/2(内側の後輪が旋回の中心を越える)、L ≤ 0、t < 0。
+
+    空の入力(``radius`` が 0 要素)は ValueError。
+    """
+    if (len(radius) if isinstance(radius, (list, tuple)) else np.asarray(radius).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("ackermann_steer_angles: radius is empty — pass at least one element")
     op = "ackermann_steer_angles"
     R = _array(radius, "radius", op)
     L = _positive(wheelbase, "wheelbase", op)
@@ -526,7 +541,12 @@ def fresnel_integrals(x):
     |x| ≤ 3.5 はべき級数、それより大きいと漸近展開(補助関数 f, g)。誤差は 1e-8 以下(門: 数値積分)。
     返り値: (C, S)(x と同じ形)。
 
-    **Raises** ``ValueError``: 非有限。"""
+    **Raises** ``ValueError``: 非有限。
+
+    空の入力(``x`` が 0 要素)は ValueError。
+    """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("fresnel_integrals: x is empty — pass at least one element")
     op = "fresnel_integrals"
     X = _array(x, "x", op)
     xs = np.atleast_1d(np.abs(X)).astype(np.float64)
@@ -974,7 +994,12 @@ def lateral_offset(points, path, *, start_index=None, window: int = 40) -> Dict[
     窓の外に本当の最寄りがあると誤るので、点が少しずつ動くときに使う)。None なら全区間を調べる。
     返り値: ``s``, ``n``, ``index``(区間)、``heading``(その区間の向き)。点 (2,) なら スカラー。
 
-    **Raises** ``ValueError``: 形の誤り、start_index が範囲外。"""
+    **Raises** ``ValueError``: 形の誤り、start_index が範囲外。
+
+    空の入力(``points`` が 0 要素)は ValueError。
+    """
+    if (len(points) if isinstance(points, (list, tuple)) else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("lateral_offset: points is empty — pass at least one element")
     op = "lateral_offset"
     X = _array(points, "points", op)
     single = X.ndim == 1

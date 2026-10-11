@@ -43,14 +43,24 @@ def _v3(x, name="vector"):
 # ─────────────────────────────── 表 ───────────────────────────────
 
 def magnus_lift_coefficient(spin_ratio) -> np.ndarray:
-    """スピン比 S = rω/|v| から揚力係数 C_L = 1 / (2 + 1/S)(S → 0 で 0、S → ∞ で 0.5。球の文献で広く使われる経験式)。"""
+    """スピン比 S = rω/|v| から揚力係数 C_L = 1 / (2 + 1/S)(S → 0 で 0、S → ∞ で 0.5。球の文献で広く使われる経験式)。
+
+    空の入力(``spin_ratio`` が 0 要素)は ValueError。
+    """
+    if (len(spin_ratio) if isinstance(spin_ratio, (list, tuple)) else np.asarray(spin_ratio).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("magnus_lift_coefficient: spin_ratio is empty — pass at least one element")
     S = np.asarray(spin_ratio, np.float64)
     return np.where(S > 0, 1.0 / (2.0 + 1.0 / np.maximum(S, 1e-300)), 0.0)
 
 
 def drag_coefficient_sphere(reynolds) -> np.ndarray:
     """滑らかな球の抗力係数の経験式(Morrison 2013、Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8)
-    + 0.25(Re/1e6)/(1 + Re/1e6)。卓球の球(Re ≈ 1〜5 × 10⁴)で ≈ 0.4〜0.5。"""
+    + 0.25(Re/1e6)/(1 + Re/1e6)。卓球の球(Re ≈ 1〜5 × 10⁴)で ≈ 0.4〜0.5。
+
+    空の入力(``reynolds`` が 0 要素)は ValueError。
+    """
+    if (len(reynolds) if isinstance(reynolds, (list, tuple)) else np.asarray(reynolds).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("drag_coefficient_sphere: reynolds is empty — pass at least one element")
     Re = np.maximum(np.asarray(reynolds, np.float64), 1e-9)
     a = Re / 5.0
     b = Re / 263000.0

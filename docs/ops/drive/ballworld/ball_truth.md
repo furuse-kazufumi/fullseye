@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 球 i の真値の投影: 中心の (col, row)、像の半径 [px] (≈ f·r/深度)、模様の中心の (col, row)(裏側なら NaN)。
 
+空の入力(``world`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

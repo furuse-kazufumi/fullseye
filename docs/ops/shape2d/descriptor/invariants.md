@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 不変、特異値なので空間回転と始点シフトに不変、第1高調波の長軸で割ればスケール
 不変。形状マッチング(:func:`descriptor_distance`)の土台。
 
+空の入力(``model`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [shape_description_2d ファミリ ガイド](../guides/shape_description_2d.md)

@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 車のいる区画 (i, j) の周り (2·radius + 1)² 区画を持ち、外れた区画を捨てる(``cache`` をその場で書き換える)。
 返り値 ``{"loaded": [(i, j)], "evicted": [(i, j)], "n": 持っている区画の数}``。
 
+空の入力(``cache`` が空の dict)は空を返す(理由: 最初の呼び出しは空の cache から始まる(その場で書き換える))。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -29,6 +29,8 @@ ior: 水膜の屈折率。
 Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの
 (鏡面が増えるのは `clearcoat_shade(coat=wet)` を重ねて表す)。
 
+空の入力(``base_rgb`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

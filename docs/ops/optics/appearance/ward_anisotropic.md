@@ -30,6 +30,8 @@ alpha_x / alpha_y: 筋方向 / 直交方向の粗さ。**この比がハイラ�
 式: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo)) で、
 δ はハーフベクトルと法線の角、φ は接線からの方位角(Ward 1992)。
 
+空の入力(``normals`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

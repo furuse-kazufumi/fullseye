@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• 返回值: <code style="color:#22d3bf">(N + 8, 2)</code> float64。</p>
 <p style="margin:2px 0 2px 12px">• 不检查原有点是否已位于框上或框外。框外的对应点会在 Delaunay 剖分中与框的三角形相交，使变形扭曲。</p>
 <p><code style="color:#22d3bf">morph</code> / <code style="color:#22d3bf">morph_sequence</code> 在 <code style="color:#22d3bf">with_corners=True</code> 时会在内部对两组点集应用此处理。直接调用 <code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">warp_tps_image</code> 时，请自行把它加到 <code style="color:#22d3bf">src</code> 和 <code style="color:#22d3bf">dst</code> 两边。</p>
+<p>空输入(<code style="color:#22d3bf">pts</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

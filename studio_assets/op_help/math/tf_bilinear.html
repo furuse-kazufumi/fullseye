@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Tustin(双一次)変換 s = K (z − 1)/(z + 1) で連続系を離散系に写す。</p>
 <p>K = 2·fs(素の Tustin)か、<code style="color:#22d3bf">prewarp_hz</code> を与えると K = ω₀ / tan(ω₀ / (2 fs)) (その周波数で連続系と離散系の応答が<b>厳密に一致</b>する。それ以外の周波数は tan で歪む)。返り値の係数は z の降べき(<code style="color:#22d3bf">np.polyval(num_z, z)</code>)。安定な連続系は安定な離散系になる(左半面 → 単位円内)。</p>
+<p>空の入力(<code style="color:#22d3bf">num</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>

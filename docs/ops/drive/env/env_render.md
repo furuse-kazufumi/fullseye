@@ -29,6 +29,8 @@ dict : ``color``(カメラの線形 RGB [0,1]、:func:`tone_map` で圧縮 —�
 ``ego_pose=(x, y, yaw)`` = 前照灯を付ける自車の姿勢(前端 2.25 m・左右 ±0.6 m・高さ 0.65 m に 2 灯)。
 ``shadow_cache`` に dict を渡すと太陽のシャドウマップを使い回す(太陽と世界が変わらない間)。
 
+空の入力(``world`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

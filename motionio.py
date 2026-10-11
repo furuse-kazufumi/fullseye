@@ -215,7 +215,11 @@ def events_to_frames(events: dict, n_frames: int = 32, shape=None) -> np.ndarray
     """イベントを時間で n_frames に等分し、画素ごとに極性を足したコマ (T, H, W) にする(ON = +1、OFF = −1)。
 
     全イベントの極性の和はコマの総和と一致する(落とすイベントは無い)。
+
+    空の入力(``events`` が空の dict)は ValueError。
     """
+    if isinstance(events, dict) and len(events) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("events_to_frames: events is empty — pass a non-empty dict")
     x, y, t, p = events["x"], events["y"], events["t"], events["p"]
     H, W = shape if shape is not None else events["shape"]
     T = int(n_frames)

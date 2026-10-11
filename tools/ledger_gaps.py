@@ -7,9 +7,13 @@ g) ``description`` -- every typed-ledger op, every n-ary op (``imgops_nary._DEFS
    ``tests/test_op_descriptions.py``, which only looked at ``ops.REGISTRY``).
 h) ``empty_input`` -- a ledger op whose docstring promises a ``ValueError`` (or says it
    rejects / 拒否) on empty input really raises ``ValueError`` when its first data argument
-   is an empty value of the same kind. Ops that return something for empty input WITHOUT
-   any docstring statement are only counted (:func:`empty_census`) -- whether that should
-   be refused is the owner's policy call.
+   is an empty value of the same kind. ★2026-10-12 policy A (owner's decision): an op
+   that RETURNS a value for an empty first argument must either refuse it (named
+   ``ValueError``) or state the opposite in its docstring, naming the parameter and the
+   reason (:func:`documents_empty_result`: ``空の入力(``x`` が 0 要素)は空を返す(理由: …)``).
+   A silent return is a gap (``silent_on_empty``), and so is a raw non-``ValueError``
+   exception (``raw_<Type>``: it never says what is empty), and so is a stated
+   "returns empty" that raises (``accept_promise_broken``).
 f) ``dead_knob`` -- for each numeric keyword parameter with a default, the op is called
    with the default halved and doubled (0 -> 0.5 / 1); a knob whose change never changes
    the output on the probe input is flagged. False positives are expected (a knob that
@@ -156,6 +160,23 @@ def promises_empty_refusal(doc: str, first=None, others=()) -> bool:
     return False
 
 
+#: The named "empty in, empty out" statement (policy A, 2026-10-12): the first parameter in
+#: ``…``, then "returns", then a REASON. Deliberately narrow -- the loose ``_ACCEPTS`` readers
+#: above also match sentences about the RESULT ("no pair -> empty list"), which say nothing
+#: about an empty input; a gate that took those would let a silent op through.
+_ACCEPT_NAMED_JA = r"(?<!非)空の入力[(（]``%s``[^)）]{0,20}[)）]は[^。]{0,40}を返す[(（]理由"
+_ACCEPT_NAMED_EN = r"(?i)\bempty input \(``%s``[^)]{0,30}\) returns\b[^.]{0,60}\(reason:"
+
+
+def documents_empty_result(doc: str, first) -> bool:
+    """Does *doc* state, naming *first*, that an empty *first* is accepted -- with a reason?"""
+    if not first:
+        return False
+    d = re.sub(r"\s+", " ", doc or "")
+    p = re.escape(first)
+    return bool(re.search(_ACCEPT_NAMED_JA % p, d) or re.search(_ACCEPT_NAMED_EN % p, d))
+
+
 def empty_like(v):
     """An empty value of the same kind as *v*, or ``None`` when emptiness has no meaning."""
     v = lc._to_numpy(v)
@@ -184,23 +205,42 @@ class EmptyInputHook:
             pnames = [p.name for p in inspect.signature(fn).parameters.values()]
         except (TypeError, ValueError):
             pnames = []
-        promised = promises_empty_refusal(fn.__doc__ or "", pnames[0] if pnames else None,
-                                          pnames[1:])
+        doc = fn.__doc__ or ""
+        first = pnames[0] if pnames else None
+        promised = promises_empty_refusal(doc, first, pnames[1:])
+        accepted = (not promised) and documents_empty_result(doc, first)
         try:
             lc._call(fn, [e] + list(args[1:]), kwargs)
         except Exception as exc:                 # noqa: BLE001
             if lc.optional_missing(exc):
-                return {"outcome": "skip", "promised": promised}
+                return {"outcome": "skip", "promised": promised, "accepted": accepted}
             kind = "value_error" if isinstance(exc, ValueError) else "raw_" + type(exc).__name__
-            return {"outcome": kind, "promised": promised}
-        return {"outcome": "returned", "promised": promised}
+            return {"outcome": kind, "promised": promised, "accepted": accepted}
+        return {"outcome": "returned", "promised": promised, "accepted": accepted}
 
 
 def empty_failure(g):
-    """Debt category for one empty-input observation (``None`` = passes / not judged)."""
-    if not g or not g.get("promised") or g["outcome"] in ("value_error", "skip", "n/a"):
+    """Debt category for one empty-input observation (``None`` = passes / not judged).
+
+    * promised a refusal: anything but ``ValueError`` fails (``returns_on_empty`` / ``raw_*``);
+    * stated "empty in, empty out" (:func:`documents_empty_result`): it must return
+      (``accept_promise_broken`` otherwise);
+    * said nothing (★policy A, 2026-10-12): returning is ``silent_on_empty``, a raw
+      non-``ValueError`` exception is ``raw_<Type>``; an unpromised ``ValueError`` passes
+      (it is a refusal, even if the docstring does not say so).
+    """
+    if not g or g.get("outcome") in (None, "skip", "n/a"):
         return None
-    return "returns_on_empty" if g["outcome"] == "returned" else g["outcome"]
+    out = g["outcome"]
+    if g.get("promised"):
+        if out == "value_error":
+            return None
+        return "returns_on_empty" if out == "returned" else out
+    if g.get("accepted"):
+        return None if out == "returned" else "accept_promise_broken"
+    if out == "returned":
+        return "silent_on_empty"
+    return None if out == "value_error" else out
 
 
 # --------------------------------------------------------------------------- #
@@ -416,7 +456,7 @@ def observed(verdict, descriptions=True):
         bad, dscope = description_audit()
         found["description"] = bad
         scope["description"] = dscope
-    emp = {"judged": 0, "promised": 0, "returned_unpromised": 0, "skip": 0}
+    emp = {"judged": 0, "promised": 0, "accepted": 0, "returned_unpromised": 0, "skip": 0}
     knobs = {"ops": 0, "params": 0, "live": 0, "dead": 0, "unmeasured": 0, "slow_ops": 0}
     for name, v in sorted(verdict.items()):
         g = (v.get("gaps") or {})
@@ -425,7 +465,9 @@ def observed(verdict, descriptions=True):
             emp["judged"] += 1
             emp["skip"] += e["outcome"] == "skip"
             emp["promised"] += bool(e.get("promised"))
-            emp["returned_unpromised"] += (e["outcome"] == "returned" and not e.get("promised"))
+            emp["accepted"] += bool(e.get("accepted"))
+            emp["returned_unpromised"] += (e["outcome"] == "returned" and not e.get("promised")
+                                           and not e.get("accepted"))
             c = empty_failure(e)
             if c:
                 found["empty_input"][name] = c

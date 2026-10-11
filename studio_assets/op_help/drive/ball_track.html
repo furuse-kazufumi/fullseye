@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>コマごとの候補列 <code style="color:#22d3bf">detections[k] = ball_detect(frame_k)</code> を 1 本の軌跡に繋ぐ(等速予測に最も近い候補、<code style="color:#22d3bf">max_jump</code> px 以内)。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot; (N,), &quot;row&quot; (N,), &quot;radius&quot; (N,), &quot;found&quot; (K,) bool}</code>(見つからないコマは飛ばす)。</p>
+<p>空の入力(<code style="color:#22d3bf">detections</code> が 0 件)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -6,6 +6,7 @@
 <p>用相机拍摄世界：<code style="color:#22d3bf">{&quot;color&quot; (H,W,3), &quot;label&quot; (H,W) int(−1 = 空), &quot;depth&quot; (H,W), &quot;face&quot; (H,W), &quot;shade&quot; (H,W)}</code>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>render3d.render_mesh(attributes=True) の三角形 id から面の色・ラベルを引き、色は Lambert (<code style="color:#22d3bf">ambient + (1−ambient)·max(n·l, 0)</code>、n は render3d のカメラ系法線を世界系に戻さず、光をカメラ系で与える)。<code style="color:#22d3bf">ego=(V, F, color)</code> を渡すと自車のメッシュも一緒に描く(世界には足さない)。</p>
+<p>空の入力(<code style="color:#22d3bf">world</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

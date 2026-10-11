@@ -13,6 +13,7 @@
 <p><code style="color:#22d3bf">ValueError</code>)。返り値は float64。</p>
 <p style="margin:2px 0 2px 12px">• 位置合わせ(<code style="color:#22d3bf">register_fpfh</code> 等)のノイズ耐性を測るとき、<code style="color:#22d3bf">sigma</code> を点間隔</p>
 <p>(<code style="color:#22d3bf">voxel_grid_downsample</code> の格子幅など)に対する比で決めると条件を比較しやすい。</p>
+<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

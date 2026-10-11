@@ -39,6 +39,8 @@ honest 開示(2026-08-30 レビュー実測): 球面求積は一様 θ×φ グ�
 (非負)。物体は volume の中心に置く(中心がずれると回転不変性が崩れる。``moment_axes`` の
 重心で先に中心合わせを)。scipy の ``sph_harm_y``/``sph_harm`` を呼び出し時 import。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

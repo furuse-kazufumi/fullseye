@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• 不校验类型。用 <code style="color:#22d3bf">add_metrology_object_generic</code> 堆叠的未知类型，把 <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> 视为 row/col 移动。</p>
 <p style="margin:2px 0 2px 12px">• 返回值: <code style="color:#22d3bf">{&quot;objects&quot;: [...]}</code>(<code style="color:#22d3bf">metrologymodel</code> 类型)。</p>
 <p>典型例: 把形状匹配或基准标记检测得到的位置偏移在此反映到模型中，再执行 <code style="color:#22d3bf">apply_metrology_model</code>。不能用于倾斜的工件(参考形状的法线偏离实物的法线，超出搜索半宽 <code style="color:#22d3bf">measure_length</code>)。</p>
+<p>空输入(<code style="color:#22d3bf">model</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

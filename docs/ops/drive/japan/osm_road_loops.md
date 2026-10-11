@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 (外側 − 穴)が厳密に成り立つ(``area_check``)。穴か外側かは、ループの最も左の縦の辺のすぐ右の画素が道路かどうかで決める。
 返り値 ``{"outer": [(K,2) xy], "holes": [(K,2) xy], "outer_raw", "holes_raw", "area_check": {"loops_m2", "pixels_m2", "abs_err"}}``。
 
+空の入力(``roadmask`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

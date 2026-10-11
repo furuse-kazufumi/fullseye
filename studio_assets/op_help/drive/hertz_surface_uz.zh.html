@@ -6,6 +6,7 @@
 <p>Hertz 球接触中半空间表面的法向位移 ū_z(r)(下沉量 ≥ 0，与 r 同形状的数组)。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>内側 r ≤ a: δ − r²/(2R)。外側: (1/πR)[(2a² − r²) arcsin(a/r) + a r √(1 − a²/r²)] (Johnson 式 3.42a)。r = a で δ/2 に連続。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a, δ, R ≤ 0、a² と Rδ が 1 % 以上食い違う(Hertz でない組)。</p>
+<p>空の入力(<code style="color:#22d3bf">r</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

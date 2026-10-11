@@ -15,6 +15,7 @@
 <p>連通元件數。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>26 連通(3x3x3 的全部鄰域)。將破碎的邊緣片段歸併為 1 條曲線 / 閉曲面, 使下游的 Hough / chamfer 能以元件為單位處理。</p>
+<p>空輸入(<code style="color:#22d3bf">edge_mask</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

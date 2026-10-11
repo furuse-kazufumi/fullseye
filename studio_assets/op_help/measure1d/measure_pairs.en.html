@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_pairs(image, measure, sigma=1.0, threshold=0.1)</code> (to call the implementation directly, <code style="color:#22d3bf">import measuring1d; measuring1d.measure_pairs(image, measure, sigma=1.0, threshold=0.1)</code>; from the registry, <code style="color:#22d3bf">opsmeasure1d.get(&quot;measure_pairs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extracts pairs of rising/falling edges (the width of a structure) (measure_pairs). <code style="color:#22d3bf">first</code>/<code style="color:#22d3bf">second</code> = <code style="color:#22d3bf">pos</code> of each edge, <code style="color:#22d3bf">width</code> = width [px], <code style="color:#22d3bf">first_point</code>/<code style="color:#22d3bf">second_point</code> = (row, col).</p>
+<p>Empty input (<code style="color:#22d3bf">image</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

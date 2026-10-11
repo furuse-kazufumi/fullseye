@@ -13,6 +13,7 @@
 <p><code style="color:#22d3bf">ValueError</code>)。返回值为 float64。</p>
 <p style="margin:2px 0 2px 12px">• 测量配准(<code style="color:#22d3bf">register_fpfh</code> 等)的噪声鲁棒性时,若以相对点间距</p>
 <p>(<code style="color:#22d3bf">voxel_grid_downsample</code> 的网格宽度等)的比例来确定 <code style="color:#22d3bf">sigma</code>,条件更容易比较。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:点云的抽稀、离群点去除和随机丢弃都可能得到空结果。空点云是合法的值,链条的下一级不应因此停下)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -27,6 +27,7 @@
 <p>같은 축 순서). 응답 내림차순, 최대 topn 개.</p>
 <p>responses: (M,) float64. 대응하는 응답값(내림차순).</p>
 <p>의존: sobel3d(3D 기울기), _gauss3d(적분 창 평활). 모두 device 위에서 동작.</p>
+<p>빈 입력(<code style="color:#22d3bf">vol</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — 행렬 분해가 느린 이유 — BLAS 스레드·캐시·메모리 배치</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

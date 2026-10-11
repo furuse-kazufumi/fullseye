@@ -6,6 +6,7 @@
 <p>把障碍膨胀 <code style="color:#22d3bf">radius</code>(世界单位)后的占据栅格 bool(即 ESDF&lt;=radius 视为占据)。</p>
 <p>planner 的安全余量:若点机器人在膨胀网格上避免碰撞,则半径为 radius 的实际机器人能与障碍物保持间隔(configuration-space obstacle)。ESDF 在外部是正的最近占据距离,因此 <code style="color:#22d3bf">ESDF&lt;=radius</code> 捕获“占据(负)∪ 距障碍物 radius 以内的空闲”。增大 radius 时占据单调增加(下游测试的 GT)。</p>
 <p>radius&lt;0 或 voxel_size&lt;=0 时抛出 ValueError(两者都在前面预先校验,在 radius==0 / 空占据的短路之前 — 否则当始终不会到达 esdf 时,无效的 voxel_size 会未经检查地漏过去)。</p>
+<p>空输入(<code style="color:#22d3bf">occupancy</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

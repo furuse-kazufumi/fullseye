@@ -27,6 +27,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 平坦な内部・背景はラプラシアン ≈ 0 で寄与しないため、実質エッジ帯の量になる。カラー画像は
 チャンネル平均。同一形状・同一コントラストの画像どうしを比較するための相対指標。
 
+空の入力(``img`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

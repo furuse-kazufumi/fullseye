@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• output columns की संख्या 3 पर तय है; input (N,3) न हो तो columns कम पड़ने से विफल होता है या अतिरिक्त columns छोड़ दिए जाते हैं। कोई shape validation नहीं है।</p>
 <p style="margin:2px 0 2px 12px">• closed curve बंद नहीं होता (अंतिम point→पहले point का हिस्सा interpolation से बाहर है)। duplicate points होने पर भी <code style="color:#22d3bf">np.interp</code> चल जाता है, पर उस हिस्से को लंबाई 0 माना जाता है।</p>
 <p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> index parameter के differences लेते हैं, इसलिए असमान spacing वाले point sequence को इस op से समान spacing में बदलकर देने पर numerical differentiation स्थिर होता है। smooth interpolation चाहिए तो <code style="color:#22d3bf">fit_spline_curve</code>।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">curve</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -7,6 +7,7 @@
 <p>面相對視線越傾斜，膜內光程越長，顏色向短波長側移動 ―― 肥皂泡和燒過的鈦的顏色在邊緣處變化就是這個原因。角度依賴由 cosθ = |n·v| 求出。</p>
 <p>normals / view：(H,W,3) 法線貼圖 / 從面到視點的方向。thickness_nm / n_film / n_sub：與 <code style="color:#22d3bf">thin_film_reflectance</code> 相同。</p>
 <p>strength：整體強度。</p>
+<p>空輸入(<code style="color:#22d3bf">normals</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

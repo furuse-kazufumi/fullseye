@@ -44,6 +44,8 @@ The x-grid is untouched (use :func:`transform_funct_1d` to move x too).
 :param add: finite offset.
 :raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.
 
+Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
+
 Typed bridge of the 1d op ``scale_y_funct_1d`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``mult`` (default 1); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)

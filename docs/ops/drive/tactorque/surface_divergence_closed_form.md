@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 半空間の表面接線変位の発散の閉形式 ∇·ū = −(1−2ν) p/(2G)(本モジュールの導出: Boussinesq 点荷重 ū_r = −(1−2ν)P/(4πGr) と
 2 次元の ∇·(r̂/r) = 2πδ²)。畳み込みの数値発散と比べる門(r < 0.8a で 0.2 %、実測)。**Raises** ValueError: G ≤ 0。
 
+空の入力(``p`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -6,6 +6,7 @@
 <p>Binary (2-valued) image of the <b>union of roads</b>, with edges drawn as line segments of given width (with round ends).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>画素 (r, c) の中心 = (xmin + (c + ½) step, ymin + (r + ½) step)、行は y の増える向き(数学座標。表示で上下を返す)。返り値 <code style="color:#22d3bf">{&quot;mask&quot;: (H, W) bool, &quot;xmin&quot;, &quot;ymin&quot;, &quot;step&quot;, &quot;shape&quot;, &quot;area_m2&quot;: 画素数 × step²}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: step ≤ 0、画像が 4e7 画素を超える(step を粗く)。</p>
+<p>空の入力(<code style="color:#22d3bf">graph</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

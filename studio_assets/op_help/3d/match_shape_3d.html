@@ -14,6 +14,7 @@
 <p>が scene のどこに載るか。テンプレが完全に収まる位置以外は 0 に落とすので、テンプレが scene より大きいと全 0 のまま index (0,0,0) が返る(例外は出ない)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subvoxel=True</code> で argmax の ±2 近傍の正スコア重心に精緻化(<code style="color:#22d3bf">accel_match._subvoxel_com</code>)。</p>
 <p>後段: <code style="color:#22d3bf">refine_translation_lk</code>(corner 規約なので T//2 を引く)/ <code style="color:#22d3bf">refine_lm</code>。回転には不変でない(<code style="color:#22d3bf">match_logpolar_z</code> で先に回転を合わせる)。</p>
+<p>空の入力(<code style="color:#22d3bf">vol</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -123,7 +123,12 @@ def carla_labels() -> list:
 
 
 def carla_label_map(semantic) -> np.ndarray:
-    """CARLA の意味分割(タグの uint8 像)→ Fullseye のラベル像(int、−1 = 空・未ラベル)。未知のタグは ValueError。"""
+    """CARLA の意味分割(タグの uint8 像)→ Fullseye のラベル像(int、−1 = 空・未ラベル)。未知のタグは ValueError。
+
+    空の入力(``semantic`` が 0 要素)は ValueError。
+    """
+    if (len(semantic) if isinstance(semantic, (list, tuple)) else np.asarray(semantic).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("carla_label_map: semantic is empty — pass at least one element")
     op = "carla_label_map"
     s = _image_u8(semantic, "semantic", op, 0)
     lut = np.full(256, -2, np.int64)
@@ -137,7 +142,12 @@ def carla_label_map(semantic) -> np.ndarray:
 
 
 def carla_label_unmap(label) -> np.ndarray:
-    """Fullseye のラベル像 → CARLA のタグ像(uint8、代表タグ)。:func:`carla_label_map` の逆(ラベル側で恒等)。"""
+    """Fullseye のラベル像 → CARLA のタグ像(uint8、代表タグ)。:func:`carla_label_map` の逆(ラベル側で恒等)。
+
+    空の入力(``label`` が 0 要素)は ValueError。
+    """
+    if (len(label) if isinstance(label, (list, tuple)) else np.asarray(label).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("carla_label_unmap: label is empty — pass at least one element")
     op = "carla_label_unmap"
     l = np.asarray(label)
     if l.ndim != 2 or l.dtype.kind not in "iu":
@@ -156,14 +166,24 @@ def carla_label_unmap(label) -> np.ndarray:
 # ----------------------------------------------------------------------------------------------------------------------
 # 深度
 def carla_depth_decode(depth_raw) -> np.ndarray:
-    """CARLA の深度カメラの生の像(R 下位・G・B 上位の 24 bit)→ 像面からの距離 [m]。d = code / (2²⁴ − 1) · 1000。"""
+    """CARLA の深度カメラの生の像(R 下位・G・B 上位の 24 bit)→ 像面からの距離 [m]。d = code / (2²⁴ − 1) · 1000。
+
+    空の入力(``depth_raw`` が 0 要素)は ValueError。
+    """
+    if (len(depth_raw) if isinstance(depth_raw, (list, tuple)) else np.asarray(depth_raw).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("carla_depth_decode: depth_raw is empty — pass at least one element")
     a = _image_u8(depth_raw, "depth_raw", "carla_depth_decode", 3).astype(np.float64)
     code = a[..., 0] + 256.0 * a[..., 1] + 65536.0 * a[..., 2]
     return code / DEPTH_CODE_MAX * DEPTH_SCALE_M
 
 
 def carla_depth_encode(depth_m) -> np.ndarray:
-    """像面からの距離 [m] → CARLA の生の深度像(uint8 (H,W,3))。inf と 1000 m 超は最大値、負と NaN は ValueError。"""
+    """像面からの距離 [m] → CARLA の生の深度像(uint8 (H,W,3))。inf と 1000 m 超は最大値、負と NaN は ValueError。
+
+    空の入力(``depth_m`` が 0 要素)は ValueError。
+    """
+    if (len(depth_m) if isinstance(depth_m, (list, tuple)) else np.asarray(depth_m).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("carla_depth_encode: depth_m is empty — pass at least one element")
     op = "carla_depth_encode"
     d = np.asarray(depth_m, np.float64)
     if d.ndim != 2:

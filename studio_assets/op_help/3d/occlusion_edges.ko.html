@@ -6,6 +6,7 @@
 <p>깊이의 불연속(전경/배경 경계 = 가림 에지)을 검출. → bool HxW.</p>
 <p>차폐 에지는 깊이의 <b>불연속(step)</b> 이지 경사(slope)가 아니다. 균일한 경사면은연속이고 차폐를 포함하지 않으므로 flag해서는 안 된다. 1차 기울기(=깊이/화소)는 경사 그 자체여서, 계단인지 사면인지 구별할 수 없다(게다가 절대 깊이의 비율과 비교하는 것은 차원이 맞지 않는다).</p>
 <p>그래서 축마다의 <b>2차 차분(이산 라플라시안 상당)</b> <code style="color:#22d3bf">d[i+1]-2*d[i]+d[i-1]</code>을 사용한다. 균일 경사(깊이가 근방에서 선형)라면 2차 차분 ≈ 0, fronto-parallel한 계단에서는 양쪽에서 큰 값. 이를 국소 깊이로 정규화한 상대적 깊이 점프가 rel_thresh를 넘는 화소를 경계로 한다.</p>
+<p>빈 입력(<code style="color:#22d3bf">depth</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>

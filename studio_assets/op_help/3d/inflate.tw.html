@@ -6,6 +6,7 @@
 <p>把障礙膨脹 <code style="color:#22d3bf">radius</code>(世界單位)後的佔據柵格 bool(即 ESDF&lt;=radius 視為佔據)。</p>
 <p>planner 的安全餘量:若點機器人在膨脹網格上避免碰撞,則半徑為 radius 的實際機器人能與障礙物保持間隔(configuration-space obstacle)。ESDF 在外部是正的最近佔據距離,因此 <code style="color:#22d3bf">ESDF&lt;=radius</code> 捕捉「佔據(負)∪ 距障礙物 radius 以內的空閒」。增大 radius 時佔據單調增加(下游測試的 GT)。</p>
 <p>radius&lt;0 或 voxel_size&lt;=0 時拋出 ValueError(兩者都在前面預先驗證,在 radius==0 / 空佔據的短路之前 — 否則當始終不會到達 esdf 時,無效的 voxel_size 會未經檢查地漏過去)。</p>
+<p>空輸入(<code style="color:#22d3bf">occupancy</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

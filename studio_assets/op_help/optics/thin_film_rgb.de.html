@@ -7,6 +7,7 @@
 <p>Je flacher die Fläche zur Blickrichtung liegt, desto länger ist der Lichtweg in der Schicht, und die Farbe wandert zu kürzeren Wellenlängen ―― deshalb ändern sich die Farben von Seifenblasen und angelaufenem Titan am Rand. Die Winkelabhängigkeit ergibt sich aus cosθ = |n·v|.</p>
 <p>normals / view: (H,W,3) Normalenkarte / Richtung von der Fläche zum Blickpunkt. thickness_nm / n_film / n_sub: wie bei <code style="color:#22d3bf">thin_film_reflectance</code>.</p>
 <p>strength: Gesamtstärke.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">normals</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

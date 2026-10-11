@@ -29,6 +29,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_area</code> 也计入与数组边缘接触的面(零 padding)。由于离散化,<code style="color:#22d3bf">sphericity</code> 即使是球上限也约为 0.66(参见模块 docstring)。</p>
 <p style="margin:2px 0 2px 12px">• 标签按 1..n 的顺序(与 <code style="color:#22d3bf">label_components</code> 相同的 scipy 扫描顺序),而非体积顺序。排序由调用方进行。</p>
 <p style="margin:2px 0 2px 12px">• 输入以 0 以外为前景转为 bool(NaN 也是前景)。Raises <code style="color:#22d3bf">ValueError</code>:非 3 维输入,<code style="color:#22d3bf">connectivity</code> 不是 6/18/26。</p>
+<p>空输入(<code style="color:#22d3bf">vol</code> 为 0 个元素)返回空结果(理由:没有体素的体积,连通分量为 0 个就是正确答案)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 测量不确定度与校准知识 —— 为了能主张“测得准”</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

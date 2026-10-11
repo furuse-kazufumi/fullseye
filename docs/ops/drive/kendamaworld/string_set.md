@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 糸 i の両端を (p_ball, p_cup) に置き直す(頂点だけ書き換える)。糸でない物体は ValueError。
 
+空の入力(``world`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

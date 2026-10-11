@@ -31,6 +31,8 @@ float64 の ``(H,W,3)``、第 3 軸は (x, y, z) で x は右、y は下、z は
 入力検証は無く、2-D 以外は ``d.shape`` の展開で失敗する。``normals_from_depth`` は
 この関数の出力を内部で使う。
 
+空の入力(``depth`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

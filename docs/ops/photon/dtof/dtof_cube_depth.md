@@ -59,6 +59,8 @@ non-finite *empty_value* other than NaN, and — instead of returning negative
 distances — an *offset_ps* that exceeds the measured arrival time of any
 valid pixel (a mis-signed or mis-scaled calibration delay).
 
+Empty input (``cube`` with 0 elements) raises ``ValueError``.
+
 ## 詳しい使い方ガイド
 
 - [photon_timeresolved ファミリ ガイド](../guides/photon_timeresolved.md)

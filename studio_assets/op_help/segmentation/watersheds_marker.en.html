@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watersheds_marker(image, markers)</code> (to call the implementation directly, <code style="color:#22d3bf">import segmentation; segmentation.watersheds_marker(image, markers)</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;watersheds_marker&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Marker-controlled watershed segmentation; markers is an int label image (0 = unassigned) (watersheds_marker).</p>
+<p>Empty input (<code style="color:#22d3bf">image</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

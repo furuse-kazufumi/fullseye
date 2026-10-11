@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tone_map(radiance, exposure: &#x27;float&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import driveenv; driveenv.tone_map(radiance, exposure: &#x27;float&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;tone_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Hue-preserving tone compression for an HDR camera: m = per-pixel max channel × exposure, display = luminance × exposure × (1 + m/4)/(1 + m) — linear for m ≪ 1, approaching 1 in bright areas (color ratios = chromaticity unchanged; lamps do not turn white from saturation; assumed: an in-vehicle HDR camera).</p>
+<p>Empty input (<code style="color:#22d3bf">radiance</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

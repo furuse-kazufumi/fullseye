@@ -26,6 +26,8 @@ features[i] = {"kind", "start", "end"}(点の施設は "at")。kind:
 通行しているなら除外)、``railway_crossing`` / ``crosswalk`` / ``bicycle_crossing``(3 号)。3 号は [start − 30, end]。
 返り値: ``zones`` = [(a, b, kind, 号)]、``merged`` = 重なりを併せた (k, 2)。
 
+空の入力(``features`` が 0 件)は空を返す(理由: 施設が 0 件の道路は普通にあり、禁止区間が無いことが正しい答え)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

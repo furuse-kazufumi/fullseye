@@ -25,6 +25,7 @@
 <p>Returns:</p>
 <p>labels: (N,) int。对每个连通平滑区域赋 0,1,2,...。<b>小于 min_region_size 的小区域(孤立点、朝向不一致的碎屑)为 -1(噪声/未分配)</b>，遵循统一约定(-1=噪声)。</p>
 <p>空输入返回 shape (0,)。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:空点云没有可分配的点,长度为 0 的标签数组就是正确答案。前级的滤波可能输出空点云)。</p>
 <p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">region_growing</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 调节 <code style="color:#22d3bf">angle_thresh_deg</code>(默认 15)，<code style="color:#22d3bf">b</code> 调节 <code style="color:#22d3bf">k</code>(默认 20)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

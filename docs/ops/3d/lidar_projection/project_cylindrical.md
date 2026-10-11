@@ -24,6 +24,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 z_range=(z_min,z_max) 未指定なら点群の [z.min, z.max] を採用。z 幅ゼロは fail-closed(ValueError)。
 行 0 = 上端(z=z_max)。z_range 外、z 軸上(ρ=0)、非有限座標の点は落とす。
 
+空の入力(``points`` が 0 要素)は空を返す(理由: 返りの無いスキャンは正当で、全セルが 0 の像が正しい答え)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

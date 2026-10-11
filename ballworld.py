@@ -42,7 +42,12 @@ def _box(x0, x1, y0, y1, z0, z1):
 
 
 def table_world(tp: dict = None, *, floor: bool = True, floor_size: float = 8.0) -> dict:
-    """台(天板 + 白線 + ネット)と床の世界。原点 = 天板の中心、x = 長手(±1.37)、y = 幅(±0.7625)、z 上。天板の上面 z = height。"""
+    """台(天板 + 白線 + ネット)と床の世界。原点 = 天板の中心、x = 長手(±1.37)、y = 幅(±0.7625)、z 上。天板の上面 z = height。
+
+    空の入力(``tp`` が空の dict)は ValueError。
+    """
+    if isinstance(tp, dict) and len(tp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("table_world: tp is empty — pass a non-empty dict")
     import driveworld as DW
     tp = tp or table_params()
     L, Wd, H = tp["length"], tp["width"], tp["height"]
@@ -131,7 +136,12 @@ def ball_mesh(radius: float = 0.02, subdiv: int = 3, color=(1.0, 0.55, 0.05), ma
 
 
 def add_ball(world: dict, mesh: dict, p, R=None, *, name: str = "ball") -> int:
-    """球を姿勢 (p, R) で世界に足す。面ごとのラベル(球 23 / 模様 24)はそのまま。返り値 = objects の索引。"""
+    """球を姿勢 (p, R) で世界に足す。面ごとのラベル(球 23 / 模様 24)はそのまま。返り値 = objects の索引。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_ball: world is empty — pass a non-empty dict")
     import driveworld as DW
     p = np.asarray(p, np.float64).reshape(3)
     R = np.eye(3) if R is None else np.asarray(R, np.float64).reshape(3, 3)
@@ -145,7 +155,12 @@ def add_ball(world: dict, mesh: dict, p, R=None, *, name: str = "ball") -> int:
 
 
 def ball_set_pose(world: dict, i: int, p, R) -> None:
-    """球 i の姿勢を (p, R) にする(頂点だけ書き換える)。"""
+    """球 i の姿勢を (p, R) にする(頂点だけ書き換える)。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("ball_set_pose: world is empty — pass a non-empty dict")
     obj = world["objects"][i]
     if "local" not in obj:
         raise ValueError("objects[%d] is not a ball (use add_ball)" % i)
@@ -170,7 +185,12 @@ def rotation_from_omega(omega, dt: float) -> np.ndarray:
 
 def camera_rig(tp: dict = None, *, n: int = 2, distance: float = 2.2, height: float = 1.7, fov_deg: float = 55.0,
                width: int = 1280, height_px: int = 1024) -> list:
-    """台を囲むカメラ(n = 2: 両端の斜め上、n = 4: 4 隅)。返り値 ``[{"pose", "K", "eye"}, …]``、全部が台の中心を見る。"""
+    """台を囲むカメラ(n = 2: 両端の斜め上、n = 4: 4 隅)。返り値 ``[{"pose", "K", "eye"}, …]``、全部が台の中心を見る。
+
+    空の入力(``tp`` が空の dict)は ValueError。
+    """
+    if isinstance(tp, dict) and len(tp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("camera_rig: tp is empty — pass a non-empty dict")
     import driveworld as DW
     tp = tp or table_params()
     L, Wd, H = tp["length"], tp["width"], tp["height"]
@@ -188,7 +208,12 @@ def camera_rig(tp: dict = None, *, n: int = 2, distance: float = 2.2, height: fl
 
 
 def ball_truth(world: dict, i: int, cam: dict) -> dict:
-    """球 i の真値の投影: 中心の (col, row)、像の半径 [px] (≈ f·r/深度)、模様の中心の (col, row)(裏側なら NaN)。"""
+    """球 i の真値の投影: 中心の (col, row)、像の半径 [px] (≈ f·r/深度)、模様の中心の (col, row)(裏側なら NaN)。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("ball_truth: world is empty — pass a non-empty dict")
     import balltrack as BT
     obj = world["objects"][i]
     p = obj["center"]

@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> की लंबाई N है। योग 0 होने पर 0 से भाग से NaN (exception नहीं)। 0 point पर विफल होता है (validation नहीं है)।</p>
 <p style="margin:2px 0 2px 12px">• principal axis degenerate हों (sphere आदि) तो axis की दिशा अनिश्चित रहती है।</p>
 <p>आगे: <code style="color:#22d3bf">match_pca</code>, <code style="color:#22d3bf">obb</code> (oriented bbox), canonical pose में rotation।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -7,6 +7,7 @@
 <p>把毛玻璃的透射分成「直透分量」與「擴散分量」。</p>
 <p>cos_i：入射角的 cos。roughness：面的粗糙度(0 = 透明，1 = 完全漫射)。</p>
 <p>回傳值：(直進 T_spec, 漫射 T_diff) 2 個值。合計與透明板的穿透率一致(不憑空產生能量 ―― 已由測試確認)。隔著毛玻璃的觀感，只需用這個直進成分下降、漫射成分增加即可解釋。</p>
+<p>空輸入(<code style="color:#22d3bf">cos_i</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

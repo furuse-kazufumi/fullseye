@@ -8,6 +8,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;box&quot;</code>   — 等权平均(精确的面积平均,SSAA 的标准)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gauss&quot;</code> — 加重块中心的高斯权重(σ = ss/2,稍微柔和)。</p>
 <p>Fail-closed: <code style="color:#22d3bf">ss</code> 为 1 以上的整数,输入为 2D / 3D,各边须能被 <code style="color:#22d3bf">ss</code> 整除。存在非有限值则 <code style="color:#22d3bf">ValueError</code>(为防止 NaN 经平均传播,在分配前拒绝)。</p>
+<p>空输入(<code style="color:#22d3bf">hi_res_image</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye 测量(坐标轴、单位、真值数据的陷阱)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

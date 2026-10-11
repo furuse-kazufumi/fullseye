@@ -208,7 +208,11 @@ def distance_peaks(binary, min_distance: float = 1.0) -> np.ndarray:
     -------
     markers : ndarray(int32)
         binary と同形状。0=シード無し、1..k=各シードラベル。
+
+    空の入力(``binary`` が 0 要素)は ValueError。
     """
+    if (len(binary) if isinstance(binary, (list, tuple)) else np.asarray(binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("distance_peaks: binary is empty — pass at least one element")
     mask = _as_binary_3d(binary)
     if not mask.any():
         return np.zeros(mask.shape, dtype=np.int32)
@@ -248,7 +252,11 @@ def watershed_vol(binary, markers: Optional[np.ndarray] = None,
     ------
     ValueError
         形状不正・退化入力・不正 method のとき(fail-closed)。
+
+    空の入力(``binary`` が 0 要素)は ValueError。
     """
+    if (len(binary) if isinstance(binary, (list, tuple)) else np.asarray(binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("watershed_vol: binary is empty — pass at least one element")
     if method not in ("auto", "skimage", "scipy"):
         raise ValueError(
             f"method must be one of 'auto'/'skimage'/'scipy' (received: {method!r})."
@@ -300,7 +308,11 @@ def separate_touching(binary, min_distance: float = 5.0,
     -------
     labels : ndarray(int32)
         binary と同形状。背景 0、分離された各物体に 1..k のラベル。
+
+    空の入力(``binary`` が 0 要素)は ValueError。
     """
+    if (len(binary) if isinstance(binary, (list, tuple)) else np.asarray(binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("separate_touching: binary is empty — pass at least one element")
     return watershed_vol(
         binary, markers=None, min_distance=min_distance, method=method,
     )

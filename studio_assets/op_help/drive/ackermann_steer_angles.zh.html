@@ -8,6 +8,7 @@
 <p>δ_in = atan(L/(R − t/2))、δ_out = atan(L/(R + t/2))、2 輪等価 δ = atan(L/R)。cot δ_out − cot δ_in = t/L。</p>
 <p>返り値: <code style="color:#22d3bf">inner</code>, <code style="color:#22d3bf">outer</code>, <code style="color:#22d3bf">bicycle</code> [rad]、<code style="color:#22d3bf">front_inner_radius</code> √((R − t/2)² + L²)、<code style="color:#22d3bf">front_outer_radius</code>、<code style="color:#22d3bf">rear_inner_radius</code> R − t/2、<code style="color:#22d3bf">offtracking</code>(定常の内輪差 = 前内輪 − 後内輪の半径)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ t/2(内側の後輪が旋回の中心を越える)、L ≤ 0、t &lt; 0。</p>
+<p>空の入力(<code style="color:#22d3bf">radius</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -58,7 +58,11 @@ def add_metrology_object_line_measure(model, row1, col1, row2, col2, n: int = 25
       同じ位置に ``type="line"`` の結果(``row1/col1/row2/col2/angle_deg``)が入る。
 
     ``align_metrology_model`` で平行移動するときは両端点が一緒に動く。
+
+    空の入力(``model`` が空の dict)は ValueError。
     """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_metrology_object_line_measure: model is empty — pass a non-empty dict")
     model["objects"].append({"type": "line", "p": (row1, col1, row2, col2), "n": n})
     return len(model["objects"]) - 1
 
@@ -79,7 +83,11 @@ def add_metrology_object_circle_measure(model, row, col, radius, n: int = 40) ->
       ``row / col / radius``、``rms`` は円からの半径方向残差 [px]。
 
     穴径・ピン径の検査、円形部品の中心出しに使う。
+
+    空の入力(``model`` が空の dict)は ValueError。
     """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_metrology_object_circle_measure: model is empty — pass a non-empty dict")
     model["objects"].append({"type": "circle", "p": (row, col, radius), "n": n})
     return len(model["objects"]) - 1
 
@@ -102,7 +110,11 @@ def add_metrology_object_rectangle2_measure(model, row, col, phi, l1, l2, n: int
     - ``apply`` 結果の ``params`` は ``row / col / phi / l1 / l2`` で、再フィット後は
       **``l1 >= l2``(長辺が ``l1``)に並び替えられる** ―― 参照で ``l1 < l2`` と与えても
       結果の ``phi`` は長辺の向きになる。
+
+    空の入力(``model`` が空の dict)は ValueError。
     """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_metrology_object_rectangle2_measure: model is empty — pass a non-empty dict")
     model["objects"].append({"type": "rect", "p": (row, col, phi, l1, l2), "n": n})
     return len(model["objects"]) - 1
 
@@ -126,7 +138,11 @@ def add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: int = 
     - ``apply`` 結果の ``params`` は ``row / col / phi / ra / rb`` で **``ra >= rb``
       (長軸が ``ra``)** に正規化され、``rms`` は代数残差ではなく中心からの
       半径方向の幾何残差 [px]。
+
+    空の入力(``model`` が空の dict)は ValueError。
     """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_metrology_object_ellipse_measure: model is empty — pass a non-empty dict")
     model["objects"].append({"type": "ellipse", "p": (row, col, phi, ra, rb), "n": n})
     return len(model["objects"]) - 1
 
@@ -151,7 +167,11 @@ def add_metrology_object_generic(model, otype, params, n: int = 40) -> int:
     - 返り値: 追加位置の index(0 始まり)。
     - ``align_metrology_model`` は ``params[0]``/``params[1]`` を row/col として
       動かす(``"line"`` のみ ``[2]``/``[3]`` も)。
+
+    空の入力(``model`` が空の dict)は ValueError。
     """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_metrology_object_generic: model is empty — pass a non-empty dict")
     model["objects"].append({"type": otype, "p": tuple(params), "n": n})
     return len(model["objects"]) - 1
 
@@ -285,7 +305,11 @@ def apply_metrology_model(model, image, measure_length=6.0, sigma=1.0, threshold
     矩形は row,col,phi,l1>=l2)/ ``rms`` = フィット残差 [px]。エッジ点が足りず
     フィットできない場合は ``params=None``, ``rms=inf``, ``error`` に理由を入れる
     (他オブジェクトの計測は続行)。楕円・矩形の ``phi`` は長軸(ra / l1)の向き。
+
+    空の入力(``model`` が空の dict)は ValueError。
     """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("apply_metrology_model: model is empty — pass a non-empty dict")
     img = np.asarray(image, dtype=np.float64)
     if img.ndim != 2:
         raise ValueError(f"image must be 2-D, got shape {img.shape}")
@@ -331,7 +355,11 @@ def align_metrology_model(model, drow=0.0, dcol=0.0) -> dict:
     典型例: 形状マッチングや基準マークの検出で得た位置ずれをここで
     モデルに反映し、``apply_metrology_model`` を掛ける。傾いたワークには使えない
     (参照形状の法線が実物の法線からずれ、探索半幅 ``measure_length`` の外に出る)。
+
+    空の入力(``model`` が空の dict)は ValueError。
     """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("align_metrology_model: model is empty — pass a non-empty dict")
     out = {"objects": []}
     for obj in model["objects"]:
         p = list(obj["p"])

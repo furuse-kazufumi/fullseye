@@ -21,6 +21,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>：粗細(負值拒絕)。</p>
 <p>回傳值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。</p>
 <p>用法：以「工具的掃掠體積是否與零件相交」判斷工具可達性時，把工具置為膠囊，看 <code style="color:#22d3bf">sdf_intersect</code> 的最小值是否為正。也可用於骨小樑、血管、纖維的合成。</p>
+<p>空輸入(<code style="color:#22d3bf">grid</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>橋接到 2-D 演化註冊表的 3d op <code style="color:#22d3bf">capsule_sdf</code>。實作相同，只是呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調參數，<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: denselben Weißpunkt wie bei <code style="color:#22d3bf">rgb_to_lab</code> übergeben (wird nicht geprüft).</p>
 <p style="margin:2px 0 2px 12px">• Rückgabewert: float64 in derselben Form wie die Eingabe, gamma-kodiertes sRGB im Bereich <code style="color:#22d3bf">[0, 1]</code>. Für 8 bit multipliziert der Aufrufer mit 255 und rundet.</p>
 <p style="margin:2px 0 2px 12px">• Fehler (<code style="color:#22d3bf">MetricContractError</code>): die letzte Achse ist nicht 3.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">lab</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

@@ -305,7 +305,12 @@ def road_row_distance(rows, horizon_row: float, focal: float, cam_height: float,
 
     俯角 α(下向き +、ラジアン)のピンホール: 地平線の行 v_h = c_y − f tan α、路面の水平距離 d の点の行は
     v − v_h = f H (1 + tan²α) / (d + H tan α) —— よって d = λ/(v − v_h) − H tan α、λ = f H / cos²α
-    (Hautière ら 2006 の λ/(v − v_h) は第 1 項だけの形)。行は下向きが +。"""
+    (Hautière ら 2006 の λ/(v − v_h) は第 1 項だけの形)。行は下向きが +。
+
+    空の入力(``rows`` が 0 件)は ValueError。
+    """
+    if isinstance(rows, (list, tuple)) and len(rows) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("road_row_distance: rows is empty — pass at least one item")
     op = "road_row_distance"
     vh = _finite(horizon_row, "horizon_row", op)
     f = _positive(focal, "focal", op)
@@ -587,7 +592,12 @@ def _headlamp_intensity(mode: str, h_deg, v_deg):
 
 def tone_map(radiance, exposure: float):
     """HDR カメラの色を保つ階調の圧縮: m = 各画素の最大チャンネル × exposure、表示 = 輝度 × exposure × (1 + m/4)/(1 + m)
-    —— m ≪ 1 では線形、明るい所は 1 に漸近(色の比 = 色度は変えない。飽和で灯火が白くならない、仮定: 車載の HDR カメラ)。"""
+    —— m ≪ 1 では線形、明るい所は 1 に漸近(色の比 = 色度は変えない。飽和で灯火が白くならない、仮定: 車載の HDR カメラ)。
+
+    空の入力(``radiance`` が 0 要素)は ValueError。
+    """
+    if (len(radiance) if isinstance(radiance, (list, tuple)) else np.asarray(radiance).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("tone_map: radiance is empty — pass at least one element")
     op = "tone_map"
     k = _positive(exposure, "exposure", op)
     r = np.asarray(radiance, np.float64)
@@ -613,7 +623,12 @@ def env_render(world: dict, pose, K, width: int = 640, height: int = 400, env: O
     ``veil``(光幕輝度 cd/m² (H,W))、``illuminance``(面の照度 lx (H,W))。
 
     ``ego_pose=(x, y, yaw)`` = 前照灯を付ける自車の姿勢(前端 2.25 m・左右 ±0.6 m・高さ 0.65 m に 2 灯)。
-    ``shadow_cache`` に dict を渡すと太陽のシャドウマップを使い回す(太陽と世界が変わらない間)。"""
+    ``shadow_cache`` に dict を渡すと太陽のシャドウマップを使い回す(太陽と世界が変わらない間)。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("env_render: world is empty — pass a non-empty dict")
     import render3d
     op = "env_render"
     if env is None:

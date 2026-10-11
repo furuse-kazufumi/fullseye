@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• When eroding (<code style="color:#22d3bf">r &lt; 0</code>), if <code style="color:#22d3bf">|r|</code> exceeds the smallest inscribed radius the shape vanishes (every element positive). This is not an error.</p>
 <p style="margin:2px 0 2px 12px">• The <b>inside</b> of <code style="color:#22d3bf">sdf_union</code> / <code style="color:#22d3bf">sdf_intersect</code> is a lower bound of the true distance, so eroding with <code style="color:#22d3bf">r &lt; 0</code> after combining can remove more than it should in the overlap region.</p>
 <p style="margin:2px 0 2px 12px">• Shell of thickness <code style="color:#22d3bf">t</code>: <code style="color:#22d3bf">sdf_subtract(sdf, sdf_offset(sdf, -t))</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">sdf</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

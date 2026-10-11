@@ -31,6 +31,8 @@ voxel counts (a fractional value is rejected, never truncated — a silent
 NaN/Inf voxels, so a non-finite fill would produce a volume nothing
 downstream will accept.
 
+Empty input (``part`` with 0 elements) raises ``ValueError``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

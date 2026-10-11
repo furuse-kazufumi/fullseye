@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_ball(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, p, R=None, *, name: &#x27;str&#x27; = &#x27;ball&#x27;) -&gt; &#x27;int&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ballworld; ballworld.add_ball(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, p, R=None, *, name: &#x27;str&#x27; = &#x27;ball&#x27;) -&gt; &#x27;int&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;add_ball&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>गेंद को pose (p, R) पर world में जोड़ता है। हर face के labels (गेंद 23 / marker 24) वैसे ही रहते हैं। return value = objects में index।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">world</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

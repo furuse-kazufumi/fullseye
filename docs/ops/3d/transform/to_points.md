@@ -42,6 +42,8 @@ kind: "points"(N,3)/ "mesh"=(vertices,faces)/ "depth"=depth+{fx,fy,cx,cy[,stride
 ``(x, y, z)`` と、種別ごとに軸の意味が違う。異種を ``register_cross`` /
 ``fuse_to_voxel`` で混ぜるときは、この差を呼び手が揃えておくこと。
 
+空の入力(``data`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

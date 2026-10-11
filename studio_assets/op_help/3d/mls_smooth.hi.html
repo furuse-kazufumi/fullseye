@@ -17,6 +17,7 @@
 <p>smoothing के बाद का point cloud (क्रम और points की संख्या बनी रहती है)। जिन points के neighbours polynomial के terms से कम हैं वे अपनी जगह रहते हैं।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>यह approximate तरीका है। जिन points के neighbours terms से कम हैं / जिनका local plane degenerate है, उन्हें हिलाया नहीं जाता और वे अपनी जगह रहते हैं (holes और boundaries पर बेकाबू होने से बचाने का सुरक्षा उपाय)। <code style="color:#22d3bf">radius &lt;= 0</code> पर ValueError, खाली input पर खाली लौटाया जाता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: पॉइंट क्लाउड का विरलन, आउटलायर हटाना और ड्रॉपआउट खाली परिणाम दे सकते हैं; खाली क्लाउड एक वैध मान है और शृंखला का अगला चरण उस पर नहीं रुकना चाहिए)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

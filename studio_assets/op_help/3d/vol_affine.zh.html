@@ -11,6 +11,7 @@
 <p>*matrix* is either a <code style="color:#22d3bf">(3, 3)</code> linear part (with *offset* a separate length-3 translation) or a <code style="color:#22d3bf">(4, 4)</code> homogeneous matrix <code style="color:#22d3bf">[[A, t], [0, 0, 0, 1]]</code> — then <code style="color:#22d3bf">A</code> / <code style="color:#22d3bf">t</code> are taken from the matrix, the bottom row must be exactly <code style="color:#22d3bf">(0, 0, 0, 1)</code>, and *offset* must stay at its zero default (a second translation would be ambiguous). Any other shape raises <code style="color:#22d3bf">ValueError</code>.</p>
 <p>*output_shape* defaults to the input shape; an explicit one is cap-checked against <code style="color:#22d3bf">MAX_VOXELS</code> before allocation. *order* is the spline degree (exact integer 0..5). Voxels whose source coordinate falls outside the input are filled per *mode*/*cval*.</p>
 <p>Returns a float64 volume of *output_shape*.</p>
+<p>Empty input (<code style="color:#22d3bf">vol</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

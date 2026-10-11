@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 :func:`puck_slide_predict` の経路上の位置と速度を時刻 t(スカラーか (N,))で。終端より後は終端の状態のまま(位置は動かない、速度は終端の値 = 止まっていれば 0)。
 返り値 ``{"p" (N,2), "v" (N,2)}``。
 
+空の入力(``pred`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

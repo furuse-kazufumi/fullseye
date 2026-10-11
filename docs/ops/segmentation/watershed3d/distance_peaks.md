@@ -36,6 +36,8 @@ Returns
 markers : ndarray(int32)
     binary と同形状。0=シード無し、1..k=各シードラベル。
 
+空の入力(``binary`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [halcon_segmentation ファミリ ガイド](../guides/halcon_segmentation.md)

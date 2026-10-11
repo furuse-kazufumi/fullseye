@@ -339,7 +339,12 @@ def swing_up_plan(kp: dict, *, lift: float = 0.265, T_lift: float = 0.15, kind: 
     ``dodge`` (3,)(水平): 減速に入って玉が離れた後(bang: T/2 → T、trap: 2T/3 → T)に手元を横へ ``dodge`` だけ逃がす
     (S 字の bang-bang)。玉は皿胴の糸穴の真下から真っ直ぐ昇るので、逃がさないと皿胴・小皿を突き抜ける(物理は玉とけん玉の衝突を
     解かない —— :func:`kendamaworld.kendama_clearance` で数える)。逃がした分は :func:`catch_plan_ballistic` の ``clearance`` が
-    玉が大皿の縁より上に出てから戻す。"""
+    玉が大皿の縁より上に出てから戻す。
+
+    空の入力(``kp`` が空の dict)は ValueError。
+    """
+    if isinstance(kp, dict) and len(kp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("swing_up_plan: kp is empty — pass a non-empty dict")
     lift = _pos(lift, "lift")
     T = _pos(T_lift, "T_lift")
     o = _v3(origin, "origin")
@@ -403,7 +408,12 @@ def swing_up_apex(kp: dict, *, lift: float = 0.265, T_lift: float = 0.15, kind: 
     → 頂点 z = tie_z + z_s − L + v_s²/(2g)(手元の出発点から測った玉の中心、L = ひもの有効長、tie_z = 支点の手元からの高さ)。
     a ≤ g なら弛まず、玉は支点の L 下で止まる。返り値 ``{"accel", "flies", "slack_t", "z_slack", "v_slack", "apex",
     "apex_above_handle", "apex_above_cup"}``(apex_above_handle = apex − lift、apex_above_cup = それから大皿の縁の高さを引いた量:
-    皿に届くには ≥ h_c、皿の窓に入るには h_c ≤ … ≤ h_c + 1.5 r_b)。"""
+    皿に届くには ≥ h_c、皿の窓に入るには h_c ≤ … ≤ h_c + 1.5 r_b)。
+
+    空の入力(``kp`` が空の dict)は ValueError。
+    """
+    if isinstance(kp, dict) and len(kp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("swing_up_apex: kp is empty — pass a non-empty dict")
     lift = _pos(lift, "lift")
     T = _pos(T_lift, "T_lift")
     g = kp["g"] if g is None else _pos(g, "g")
@@ -439,7 +449,12 @@ def kendama_catch_check(kp: dict, p_ball, v_ball, cup_center, cup_axis=(0.0, 0.0
     ``window`` を渡すと高さの窓を「縁に最初に触れる高さ」+ window 以下に狭める(着地の判定: :func:`kendama_simulate` は
     kp["catch_window"])。横ずれ δ の玉は √(r_b² − (r_c − δ)²)(δ = 0 で h_c)で縁に触れる —— 中心からずれた玉は縁の片側に
     先に触れ、皿の中へ転がり込む(横ずれ ≤ r_c なら受けたとする)。
-    縁の半径は kp["cup_radius"](受ける皿、無ければ大皿)。返り値 ``{"caught", "lateral", "height" (縁の面から), "speed" (相対), "descending"}``。"""
+    縁の半径は kp["cup_radius"](受ける皿、無ければ大皿)。返り値 ``{"caught", "lateral", "height" (縁の面から), "speed" (相対), "descending"}``。
+
+    空の入力(``kp`` が空の dict)は ValueError。
+    """
+    if isinstance(kp, dict) and len(kp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("kendama_catch_check: kp is empty — pass a non-empty dict")
     axis = _unit(cup_axis, "cup_axis")
     c = _v3(cup_center, "cup_center")
     vrel = _v3(v_ball, "v_ball") - _v3(v_cup, "v_cup")
@@ -530,7 +545,12 @@ def kendama_simulate(kp: dict, handle, *, p0, v0, t_end: float, dt: float = 1e-3
     "slack_t", "caught", "catch_t", "end_reason", "lateral", "plan_log", "n_estimates", "stage", "min_gap"}``(配列は終わった step まで。
     stage = 各 step の制御の段階 ("lift" 振り上げ / "wait" 弛んだが計画前 / 計画の "stage"(hold / carry / absorb)or "plan")。slack_t = ひもが
     張った後で初めて弛んだ時刻、初めから弛んでいれば 0.0、一度も弛まなければ None。energy = ½mv² + mgz。n_estimates = 計画に
-    渡した知覚の数)。初期状態が |p₀ − 支点(0)| > L、t_end < 0、dt ≤ 0、上限 ≤ 0 は ValueError。"""
+    渡した知覚の数)。初期状態が |p₀ − 支点(0)| > L、t_end < 0、dt ≤ 0、上限 ≤ 0 は ValueError。
+
+    空の入力(``kp`` が空の dict)は ValueError。
+    """
+    if isinstance(kp, dict) and len(kp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("kendama_simulate: kp is empty — pass a non-empty dict")
     L = kp["pendulum_length"]
     m = kp["mass"]
     r_b = kp["ball_radius"]
@@ -681,7 +701,12 @@ def catch_plan_ballistic(kp: dict, *, v_max: float = 2.0, a_max: float = 20.0, g
     大皿の縁はけん玉のいちばん高い所なので、玉が縁の面より上なら xy がどこでもぶつからない。間に合うかは τ − τ_up で判定し、
     玉が縁の面を越えない面は不可。返り値に ``"landing"``(落下点 = 最終の目標)と ``"wait"``(τ_up、0 = 待たない)を足す。
     制限(正直に): 皿は目標で**静止して待つ**(到達時の相対速さ = 玉の速さ)。間に合わない面での「玉に合わせて皿を下げる」
-    速度合わせは実装していない —— v_rel_max に頼る。抗力は無視(60 mm の玉の ≤ 0.5 s の飛翔で数 mm、毎 step 計画し直すので消える)。"""
+    速度合わせは実装していない —— v_rel_max に頼る。抗力は無視(60 mm の玉の ≤ 0.5 s の飛翔で数 mm、毎 step 計画し直すので消える)。
+
+    空の入力(``kp`` が空の dict)は ValueError。
+    """
+    if isinstance(kp, dict) and len(kp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("catch_plan_ballistic: kp is empty — pass a non-empty dict")
     v_max = _pos(v_max, "v_max")
     a_max = _pos(a_max, "a_max")
     g = kp["g"] if g is None else _pos(g, "g")
@@ -757,7 +782,12 @@ def catch_plan_staged(kp: dict, *, v_max: float = 2.0, a_max: float = 20.0, g: f
         4 技とも縁で弾かれた —— 測って退けた)。
     返り値 ``{"target" (皿の中心の目標), "stage", "landing" (玉が縁に乗る点の真下の皿の中心), "t_land", "wait" (hold の残り), "feasible",
     "apex", "travel"}``。頂点が縁に乗る高さに届かない軌道は ``feasible=False`` で hold。
-    制限(正直に): 皿の姿勢は技ごとに固定(手首を回して玉を迎えない)、抗力は予測に入れない(毎回知覚からやり直す)。"""
+    制限(正直に): 皿の姿勢は技ごとに固定(手首を回して玉を迎えない)、抗力は予測に入れない(毎回知覚からやり直す)。
+
+    空の入力(``kp`` が空の dict)は ValueError。
+    """
+    if isinstance(kp, dict) and len(kp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("catch_plan_staged: kp is empty — pass a non-empty dict")
     v_max = _pos(v_max, "v_max")
     a_max = _pos(a_max, "a_max")
     g = kp["g"] if g is None else _pos(g, "g")
@@ -823,7 +853,12 @@ def swing_up_lift(kp: dict, *, apex_above_cup: float = None, T_lift: float = 0.1
     頂点 − lift − cup_z = tie_z + lift/2 − L + 2 lift²/(g T²) − lift − cup_z = A を lift の 2 次方程式として正の根。
     既定 A = max(h_c + 0.9 r_b, (top_offset − cup_z) + r_b + 0.035): 玉の下端がけん玉のいちばん高い所を 35 mm 越える頂点
     (:func:`catch_plan_staged` の hold は玉がそこを越えるまで皿を寄せない。越えている時間 ≈ 2√(2·0.03/g) = 0.17 s で皿を
-    横へ 10 cm 戻す)。減速の加速度 4·lift/T² が g を超えないと玉は飛ばない(ValueError)。"""
+    横へ 10 cm 戻す)。減速の加速度 4·lift/T² が g を超えないと玉は飛ばない(ValueError)。
+
+    空の入力(``kp`` が空の dict)は ValueError。
+    """
+    if isinstance(kp, dict) and len(kp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("swing_up_lift: kp is empty — pass a non-empty dict")
     T = _pos(T_lift, "T_lift")
     g = kp["g"] if g is None else _pos(g, "g")
     if apex_above_cup is None:
@@ -880,7 +915,12 @@ def catch_success_rate(kp: dict, *, n: int = 20, seed: int = 0, noise_pos: float
     :func:`swing_up_plan` / :func:`catch_plan_ballistic` へ(既定 = 手元を糸穴の側(−y)へ 10 cm 逃がし、玉が大皿の縁より上に出てから
     皿を戻す: 玉がけん玉を突き抜けない構え。逃がさない (0, 0, 0)・False だと 20 試行すべてで玉が皿胴を突き抜けた —— 測って退けた。
     +y へ逃がすとカメラ 2 から見てけんが玉の手前に来て玉を隠し、画像の予測の横ずれが 0.14 → 2.8 mm に増えた)。``keep_runs=True`` で各試行の :func:`kendama_simulate` の返り値と
-    知覚を ``"runs"`` / ``"perceivers"`` に残す。n ≤ 0 は ValueError。"""
+    知覚を ``"runs"`` / ``"perceivers"`` に残す。n ≤ 0 は ValueError。
+
+    空の入力(``kp`` が空の dict)は ValueError。
+    """
+    if isinstance(kp, dict) and len(kp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("catch_success_rate: kp is empty — pass a non-empty dict")
     if n <= 0:
         raise ValueError("n must be ≥ 1")
     if jitter_pos < 0 or jitter_vel < 0:
@@ -939,7 +979,12 @@ def hole_detect(img, ball_center, ball_radius, *, dark_ratio: float = 0.45, min_
     atan2(Δrow, Δcol)), "offset" (距離 / ball_radius: 0 = 正面、→ 1 = 縁), "ellipticity" (短軸 / 長軸、2 次モーメントから:
     1 = 正面の円、→ 0 = 真横), "area" [px]}``。見つからなければ found False(他は NaN)。
     正面から見た穴の中心は玉の中心と重なり、横へ回るほど縁へ寄って潰れる(offset ≈ sin φ、ellipticity ≈ cos φ、φ = 穴の軸と視線の角)。
-    img (H, W, 3)、ball_radius > 0 でなければ ValueError。"""
+    img (H, W, 3)、ball_radius > 0 でなければ ValueError。
+
+    空の入力(``img`` が 0 要素)は ValueError。
+    """
+    if (len(img) if isinstance(img, (list, tuple)) else np.asarray(img).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("hole_detect: img is empty — pass at least one element")
     from scipy import ndimage
     im = np.asarray(img, np.float64)
     if im.ndim != 3 or im.shape[2] != 3:
@@ -1129,7 +1174,12 @@ def kendama_combo_simulate(kp: dict, sequence=("ozara", "chuzara"), *, n_catch: 
     仮定(公表値なし): 手首の角速度 ≤ 30 rad/s、手元の速さ ≤ 2.5 m/s・加速度 ≤ 20 m/s²、k_match = 0.8(人の「膝で速さを合わせる」の程度)。
     返り値 ``{"count" (最初の失敗までに受けた回数), "catches" [{"t", "trick", "rel_speed", "lateral", "apex", "z_catch" (受けた瞬間の玉の中心の高さ), "z_release", "v_release",
     "apex_closed", "rose_then_fell", "energy_drift"}], "end_reason" ("done" | "too_fast" | "hit_ken" | "missed" | "timeout"), "t", "p", "v",
-    "hand", "hand_v", "hand_a", "R", "on_cup", "taut", "stage", "min_gap", "grade" (もしかめの級相当), "max_omega"}``。"""
+    "hand", "hand_v", "hand_a", "R", "on_cup", "taut", "stage", "min_gap", "grade" (もしかめの級相当), "max_omega"}``。
+
+    空の入力(``kp`` が空の dict)は ValueError。
+    """
+    if isinstance(kp, dict) and len(kp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("kendama_combo_simulate: kp is empty — pass a non-empty dict")
     g = kp["g"] if g is None else _pos(g, "g")
     bp = dict(kp["bp"])
     bp["g"] = g

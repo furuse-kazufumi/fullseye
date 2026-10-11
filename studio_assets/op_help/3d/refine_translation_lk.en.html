@@ -30,6 +30,7 @@
 <p>baseline (mean 0.56 voxel).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grad_scale=32</code> is the fixed scale of the separable sobel3d (derivative [-1,0,1] × smoothing [1,2,1]²) (measured 32.0 on a linear ramp). It normalises to the true gradient and corrects the scale of Δp.</p>
 <p style="margin:2px 0 2px 12px">• A small Levenberg regularisation is added to H to prevent numerical breakdown on flat templates with little gradient.</p>
+<p>Empty input (<code style="color:#22d3bf">scene</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

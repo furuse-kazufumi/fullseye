@@ -35,6 +35,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
   **``l1 >= l2``(長辺が ``l1``)に並び替えられる** ―― 参照で ``l1 < l2`` と与えても
   結果の ``phi`` は長辺の向きになる。
 
+空の入力(``model`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

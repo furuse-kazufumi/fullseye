@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 參數在此不做驗證(0 以下的半徑也能堆疊，但沒有意義)。</p>
 <p style="margin:2px 0 2px 12px">• 回傳值: 新增位置的 index(從 0 開始)。<code style="color:#22d3bf">apply</code> 結果的 <code style="color:#22d3bf">params</code> 為 <code style="color:#22d3bf">row / col / radius</code>,<code style="color:#22d3bf">rms</code> 為距圓的徑向殘差 [px]。</p>
 <p>用於孔徑、銷徑的檢查以及圓形零件的定心。</p>
+<p>空輸入(<code style="color:#22d3bf">model</code> 為空 dict)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

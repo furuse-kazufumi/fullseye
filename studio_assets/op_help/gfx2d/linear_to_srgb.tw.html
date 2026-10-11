@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 回傳值:同形的 float64 副本,<code style="color:#22d3bf">[0, 1]</code>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(3,)</code> 的 1 種顏色或 <code style="color:#22d3bf">(N, 3)</code> 的顏色表本 op 不接受(影像 API)。想作用於任意形狀時,<code style="color:#22d3bf">imgmetrics</code> 側的同名函式會委派到這裡。</p>
 <p>對 <code style="color:#22d3bf">radial_light</code> / <code style="color:#22d3bf">light_mask</code> / <code style="color:#22d3bf">bloom</code> 等在線性光中計算的結果, 在寫入檔案、顯示到螢幕之前只施加 1 次。施加兩次會使中間調發飄(不會拋出例外)。</p>
+<p>空輸入(<code style="color:#22d3bf">img</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

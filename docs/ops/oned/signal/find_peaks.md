@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 Peak indices (scipy.signal.find_peaks) — impacts / defect echoes.
 
+Empty input (``x`` with 0 elements) raises ``ValueError``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

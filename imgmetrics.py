@@ -287,7 +287,11 @@ def rgb_to_xyz(rgb):
     - 失敗: 最後の軸が 3 でない / float が ``[0, 1]`` の外 / 非有限。
 
     次に ``xyz_to_lab`` を繋ぐのが常道(まとめて ``rgb_to_lab``)。
+
+    空の入力(``rgb`` が 0 要素)は ValueError。
     """
+    if (len(rgb) if isinstance(rgb, (list, tuple)) else np.asarray(rgb).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("rgb_to_xyz: rgb is empty — pass at least one element")
     lin = srgb_to_linear(rgb)
     if lin.shape[-1] != 3:
         raise MetricContractError(f"rgb must have 3 channels in the last axis, got shape {lin.shape}")
@@ -309,7 +313,11 @@ def xyz_to_lab(xyz, white=D65_WHITE):
       または 0 以下を含む。XYZ の値域は検査しない(負や 1 超もそのまま計算する)。
 
     ``delta_e_76`` / ``delta_e_2000`` はこの Lab を入力にする。
+
+    空の入力(``xyz`` が 0 要素)は ValueError。
     """
+    if (len(xyz) if isinstance(xyz, (list, tuple)) else np.asarray(xyz).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("xyz_to_lab: xyz is empty — pass at least one element")
     xyz = np.asarray(xyz, dtype=np.float64)
     if xyz.shape[-1] != 3:
         raise MetricContractError(f"xyz must have 3 channels in the last axis, got shape {xyz.shape}")
@@ -339,7 +347,11 @@ def rgb_to_lab(rgb, white=D65_WHITE):
 
     画像 2 枚の色差なら ``delta_e_map`` が変換から色差まで一度にやる。
     ``lab_to_rgb`` で戻せるが、色域外は切り詰められる。
+
+    空の入力(``rgb`` が 0 要素)は ValueError。
     """
+    if (len(rgb) if isinstance(rgb, (list, tuple)) else np.asarray(rgb).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("rgb_to_lab: rgb is empty — pass at least one element")
     return xyz_to_lab(rgb_to_xyz(rgb), white=white)
 
 
@@ -358,7 +370,11 @@ def lab_to_rgb(lab, white=D65_WHITE):
     - 返り値: 入力と同じ形の float64、値域 ``[0, 1]`` のガンマ付き sRGB。
       8 bit にするなら呼び出し側で 255 倍して丸める。
     - 失敗(``MetricContractError``): 最後の軸が 3 でない。
+
+    空の入力(``lab`` が 0 要素)は ValueError。
     """
+    if (len(lab) if isinstance(lab, (list, tuple)) else np.asarray(lab).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("lab_to_rgb: lab is empty — pass at least one element")
     lab = np.asarray(lab, dtype=np.float64)
     if lab.shape[-1] != 3:
         raise MetricContractError(f"lab must have 3 channels in the last axis, got shape {lab.shape}")
@@ -914,7 +930,11 @@ def compressed_size(a, compressor="lzma"):
     画像コーデックは**使わない** ―― 挟むとその実装の癖を測ってしまう。
     stdlib の ``zlib`` / ``lzma`` のみ。dtype と shape の違いが結果を変える
     ので、比べる 2 枚は同じ dtype・同じ shape であること。
+
+    空の入力(``a`` が 0 要素)は ValueError。
     """
+    if (len(a) if isinstance(a, (list, tuple)) else np.asarray(a).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("compressed_size: a is empty — pass at least one element")
     if compressor not in _COMPRESSORS:
         raise MetricContractError(f"compressor must be one of {sorted(_COMPRESSORS)}, got {compressor!r}")
     return len(_COMPRESSORS[compressor](np.ascontiguousarray(np.asarray(a)).tobytes()))

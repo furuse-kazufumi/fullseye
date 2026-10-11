@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 굵기(음수는 거부).</p>
 <p>반환값: <code style="color:#22d3bf">grid.shape[:-1]</code> 의 float64.</p>
 <p>사용처: 공구의 도달성을 &quot;공구의 스윕 체적이 부품과 교차하지 않는가&quot;로 볼 때, 공구를캡슐로 두고 <code style="color:#22d3bf">sdf_intersect</code> 의 최솟값이 양인지 본다. 골소주, 혈관, 섬유의 합성에도.</p>
+<p>빈 입력(<code style="color:#22d3bf">grid</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

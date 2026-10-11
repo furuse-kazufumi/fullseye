@@ -33,6 +33,8 @@ h_c + 0.9 r_b 上)。``contact(hand, p) → 隙間`` を渡すとけん玉に触
 +y へ逃がすとカメラ 2 から見てけんが玉の手前に来て玉を隠し、画像の予測の横ずれが 0.14 → 2.8 mm に増えた)。``keep_runs=True`` で各試行の :func:`kendama_simulate` の返り値と
 知覚を ``"runs"`` / ``"perceivers"`` に残す。n ≤ 0 は ValueError。
 
+空の入力(``kp`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

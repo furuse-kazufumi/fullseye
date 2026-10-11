@@ -28,6 +28,7 @@
 <p>Raises:</p>
 <p>ValueError:形狀不正確 / 非有限 / pts1 為空 / thresh &lt;= 0 / max_bodies &lt; 1 /</p>
 <p>k_sample &lt; 3。</p>
+<p>空輸入(<code style="color:#22d3bf">pts0</code> 為 0 個元素)回傳空結果(理由:空點雲沒有可分配的點,長度為 0 的標籤陣列就是正確答案。前級的濾波可能輸出空點雲)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

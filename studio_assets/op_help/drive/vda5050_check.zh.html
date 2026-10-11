@@ -6,6 +6,7 @@
 <p>检查 VDA 5050 order 的<b>结构规则</b>(独立于官方 JSON 模式的自研第二实现(独立实现))。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>規則: 必須キー / ノードの sequenceId は 0 から偶数で連番、エッジは奇数で連番 / エッジ数 = ノード数 − 1 / 各エッジの始点・終点が前後のノード / released は base の先頭から連続(base → horizon の 1 回の切替のみ)/ エッジの released はその終点ノードと同じ。返りは違反の文言のリスト(空 = 合格)。</p>
+<p>空の入力(<code style="color:#22d3bf">order</code> が空の dict)は空を返す(理由: 検査器なので、空の order も検査の対象。足りない鍵の一覧が正しい答え)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

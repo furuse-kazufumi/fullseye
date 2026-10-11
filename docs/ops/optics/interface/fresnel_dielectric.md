@@ -29,6 +29,8 @@ polarization: "unpolarized"(既定、s と p の平均)/ "s" / "p"。
 Brewster 角で p 偏光が 0(1e-15 未満)、臨界角超で 1.0。
 透過率は 1 − R(吸収の無い界面なのでエネルギーが閉じる)。
 
+空の入力(``cos_i`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

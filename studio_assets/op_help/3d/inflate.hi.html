@@ -6,6 +6,7 @@
 <p>obstacles को <code style="color:#22d3bf">radius</code> (world units) से फैलाया गया occupancy grid bool (= ESDF&lt;=radius को occupied)।</p>
 <p>Planner के लिए safety margin: अगर एक point robot inflated grid पर टक्कर से बचे, तो radius त्रिज्या वाला असली robot obstacles से दूरी बनाए रखता है (configuration-space obstacle)। ESDF बाहर की ओर धनात्मक nearest-occupied दूरी है, इसलिए <code style="color:#22d3bf">ESDF&lt;=radius</code> &quot;occupied (ऋणात्मक) ∪ obstacle से radius के भीतर का free&quot; पकड़ता है। radius बढ़ाने पर occupancy monotonically बढ़ती है (downstream tests का GT)।</p>
 <p>radius&lt;0 या voxel_size&lt;=0 पर ValueError उठाता है (दोनों पहले ही जाँचे जाते हैं, radius==0 / खाली occupancy के short-circuit से पहले — वरना esdf तक न पहुँचने पर गलत voxel_size बिना जाँच के निकल जाता)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">occupancy</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

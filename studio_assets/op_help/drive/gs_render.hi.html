@@ -8,6 +8,7 @@
 <p>手順: (1) 中心をカメラ系へ、深さ d = −z ≤ 1e-6 は捨てる、(2) 2-D 共分散 Σ&#x27; = J W Σ Wᵀ Jᵀ + 0.3 I、J = [[fx/d, 0, fx·x/d²], [0, −fy/d, −fy·y/d²]]、(3) 半径 r = ⌈3 √λ_max(Σ&#x27;)⌉(≤ <code style="color:#22d3bf">max_radius</code>、超える物は捨てずに r を切る)の窓の画素ごとに α = min(0.99, o · exp(−½ Δᵀ Σ&#x27;⁻¹ Δ))(α &lt; 1/255 は捨てる)、(4) 画素ごとに深さの順で手前から C = Σ c_i α_i T_i、T_i = Π_{j&lt;i}(1 − α_j)、背景 = (1 − Σ α_i T_i) · sky。色は Lambert(world_camera と同じ ambient + (1 − ambient)|n·l|、光はカメラ系)。すべて配列演算(ガウシアン × 窓の画素の組を平らに並べ、画素 → 深さで並べて群ごとの累積和で T を出す)。</p>
 <p>返り値: <code style="color:#22d3bf">color</code> (H,W,3)・<code style="color:#22d3bf">alpha</code> (H,W)(= Σ α_i T_i)・<code style="color:#22d3bf">depth</code> (H,W)(α で重みづけた深さ / alpha、alpha &lt; 0.5 は NaN)・ <code style="color:#22d3bf">label</code> (H,W)(重み最大のガウシアンのラベル、alpha &lt; 0.5 は −1)・<code style="color:#22d3bf">n_pairs</code>・<code style="color:#22d3bf">n_visible</code>。</p>
 <p>fail-closed: 画像の大きさ ≤ 0、max_radius &lt; 1、組の数が <code style="color:#22d3bf">max_pairs</code> を超える(遅すぎる描画を黙って走らせない)は ValueError。</p>
+<p>空の入力(<code style="color:#22d3bf">gs</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

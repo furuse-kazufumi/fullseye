@@ -12,6 +12,7 @@
 <p>strength: overall strength.</p>
 <p>width_nm: width along the wavelength axis given to 1 diffraction line [nm] (the effect of finite spot size and band).</p>
 <p>Returns: (H, W, 3) linear sRGB (negative values kept = out-of-gamut stays visible).</p>
+<p>Empty input (<code style="color:#22d3bf">normals</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

@@ -271,7 +271,12 @@ def _rot_from_to(a, b) -> np.ndarray:
 
 
 def add_ken(world: dict, mesh: dict, p, R=None, *, name: str = "ken") -> int:
-    """けんを姿勢 (p = 皿胴の中心, R) で世界に足す(面ラベル 27/28/30/31 はそのまま)。返り値 = objects の索引。"""
+    """けんを姿勢 (p = 皿胴の中心, R) で世界に足す(面ラベル 27/28/30/31 はそのまま)。返り値 = objects の索引。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_ken: world is empty — pass a non-empty dict")
     p = np.asarray(p, np.float64).reshape(3)
     R = np.eye(3) if R is None else np.asarray(R, np.float64).reshape(3, 3)
     Vw = mesh["V"] @ R.T + p
@@ -285,7 +290,12 @@ def add_ken(world: dict, mesh: dict, p, R=None, *, name: str = "ken") -> int:
 
 
 def ken_set_pose(world: dict, i: int, p, R) -> None:
-    """けん i の姿勢を (p, R) にする(頂点だけ書き換える)。けんでない物体は ValueError。"""
+    """けん i の姿勢を (p, R) にする(頂点だけ書き換える)。けんでない物体は ValueError。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("ken_set_pose: world is empty — pass a non-empty dict")
     obj = world["objects"][i]
     if obj.get("kind") != "ken":
         raise ValueError("objects[%d] is not a ken (use add_ken)" % i)
@@ -320,7 +330,12 @@ def string_mesh(p_ball, p_cup, radius: float = 0.0015):
 
 
 def add_string(world: dict, p_ball, p_cup, *, radius: float = 0.0015, color=STRING_COLOR, name: str = "string") -> int:
-    """糸(ラベル 29、暗い灰)を世界に足す。返り値 = objects の索引。"""
+    """糸(ラベル 29、暗い灰)を世界に足す。返り値 = objects の索引。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_string: world is empty — pass a non-empty dict")
     V, F = string_mesh(p_ball, p_cup, radius)
     return DW.world_add(world, V, F, 29, color, name=name,
                         extra={"kind": "string", "radius": float(radius),
@@ -329,7 +344,12 @@ def add_string(world: dict, p_ball, p_cup, *, radius: float = 0.0015, color=STRI
 
 
 def string_set(world: dict, i: int, p_ball, p_cup) -> None:
-    """糸 i の両端を (p_ball, p_cup) に置き直す(頂点だけ書き換える)。糸でない物体は ValueError。"""
+    """糸 i の両端を (p_ball, p_cup) に置き直す(頂点だけ書き換える)。糸でない物体は ValueError。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("string_set: world is empty — pass a non-empty dict")
     obj = world["objects"][i]
     if obj.get("kind") != "string":
         raise ValueError("objects[%d] is not a string (use add_string)" % i)
@@ -433,7 +453,12 @@ def kendama_rig(kp: dict = None, *, n: int = 2, distance: float = 1.5, height: f
 def ken_truth(world: dict, i_ken: int, cam: dict) -> dict:
     """けん i_ken の真値の投影: 受ける皿の縁の中心(anchors[kp["catch_cup"] + "_rim"] を姿勢で動かした点)の (col, row)、深度、
     像での皿の半径 [px](大皿の半径で)、
-    ``visible``(カメラの前にあり画素が像の内側)。ballworld.ball_truth と同型。"""
+    ``visible``(カメラの前にあり画素が像の内側)。ballworld.ball_truth と同型。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("ken_truth: world is empty — pass a non-empty dict")
     import balltrack as BT
     obj = world["objects"][i_ken]
     if obj.get("kind") != "ken":

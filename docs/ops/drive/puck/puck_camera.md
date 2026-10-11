@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 真上から見た合成カメラ: 台を等倍率で画素へ写すホモグラフィ(アフィン)。
 col = (x + x_half + margin)·s、row = (y_half + margin − y)·s。返り値 ``{"H" world→(col,row), "Hinv", "shape", "px_per_m", "margin", "table"}``。
 
+空の入力(``table`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

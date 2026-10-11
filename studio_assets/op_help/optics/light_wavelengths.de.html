@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">samples</code>: Anzahl der Linien. Default 5. Werte unter 1 werden auf 1 gesetzt. Eine ungerade Zahl enthält die Zentralwellenlänge.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabewert: <code style="color:#22d3bf">(wavelengths (k,), weights (k,))</code>, 2 float64-Arrays. Eine Näherung, die die reale Spektralform (Asymmetrie der LED, Schwarzkörperverteilung des Halogens) nicht nachbildet.</p>
 <p><code style="color:#22d3bf">layout_capture</code> ruft dies mit <code style="color:#22d3bf">spectral_samples</code> Linien auf und summiert die Ergebnisse je Wellenlänge mit diesen Gewichten.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">light</code> ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

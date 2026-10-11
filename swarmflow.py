@@ -166,7 +166,11 @@ def sph_kernel(r, h: float, dim: int = 2, derivative: bool = False) -> np.ndarra
         r と同じ形の配列。
     Raises:
         ValueError: h ≤ 0、dim が 1〜3 でない、r に負・非有限がある。
+
+    空の入力(``r`` が 0 要素)は ValueError。
     """
+    if (len(r) if isinstance(r, (list, tuple)) else np.asarray(r).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("sph_kernel: r is empty — pass at least one element")
     op = "sph_kernel"
     hh = _pos(h, "h", op)
     if dim not in _SIGMA:
@@ -374,6 +378,8 @@ def swarm_render_overhead(points, shape, res: float, center=(0.0, 0.0), diameter
         background: 一様な下駄。
     Returns:
         (H, W) float64。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 個体が 0 体の場面は正当で、背景だけの絵が正しい答え)。
     """
     op = "swarm_render_overhead"
     try:
@@ -602,7 +608,11 @@ def potential_flow_cylinder(x, y, cylinder, speed: float = 1.0, grid: bool = Fal
     既定の ``grid=False`` は要素ごと(同じ形に broadcast)に ``u``・``v``・``inside`` を返す —— 軸か点の列かを形で
     推し量らない(同じ長さの 1 次元の x と y はどちらにも読めて、点の列が黙って格子になる)。どちらにも ``stagnation``(上流の衝突点
     (x_c − R, y_c))と ``rear_stagnation`` と ``surface_speed_max``(= 2U)を付ける。
+
+    空の入力(``x`` が 0 要素)は ValueError。
     """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("potential_flow_cylinder: x is empty — pass at least one element")
     op = "potential_flow_cylinder"
     xc, yc, R = _cyl(cylinder, op)
     U = _pos(speed, "speed", op)
@@ -883,7 +893,11 @@ def ritter_dam_break(x, t: float, h0: float, g: float = 9.81, particle_mass=None
 
     Returns:
         dict: ``h``・``u``(x と同じ形)、``front`` = 2c₀ t、``rarefaction_head`` = −c₀ t、``c0``、``lead_particle``(m を与えたとき)。
+
+    空の入力(``x`` が 0 要素)は ValueError。
     """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("ritter_dam_break: x is empty — pass at least one element")
     op = "ritter_dam_break"
     tt, hh, gg = _pos(t, "t", op), _pos(h0, "h0", op), _pos(g, "g", op)
     xa = np.asarray(x, np.float64)

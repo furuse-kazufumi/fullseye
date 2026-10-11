@@ -18,6 +18,7 @@
 <p style="margin:2px 0 2px 12px">• 輸出行數固定為 3,輸入不是 (N,3) 時,要麼因行數不足而失敗,要麼多餘的行被丟棄。沒有形狀驗證。</p>
 <p style="margin:2px 0 2px 12px">• 閉曲線不會閉合(終點→起點的區間不在內插對象內)。即使有重複點 <code style="color:#22d3bf">np.interp</code> 也能通過,但該區間按長度 0 處理。</p>
 <p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> 是 index 參數的差分,因此間隔不均勻的點列先用本 op 等間隔化後再傳入,數值微分會更穩定。想要平滑內插時用 <code style="color:#22d3bf">fit_spline_curve</code>。</p>
+<p>空輸入(<code style="color:#22d3bf">curve</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>橋接到 2-D 演化登錄表的 3d op <code style="color:#22d3bf">resample_uniform</code>。實作相同,只有呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調點,<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

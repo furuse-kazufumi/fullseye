@@ -7,6 +7,7 @@
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>*The* use case run-length regions exist for: holding every component of a segmentation as its own region at run-proportional cost, instead of one dense label volume or N dense masks. Uses the key structural fact that a run is x-connected, so a component label is constant along each run — the volume is labelled once (dense, same 6/18/26 semantics as <code style="color:#22d3bf">volops.vol_label</code>) and then each *run* is assigned by its first voxel&#x27;s label; no per-component dense mask is ever built.</p>
 <p>Returns a list of <code style="color:#22d3bf">VolRLE</code> ordered by label id (1..n). An empty mask returns an empty list.</p>
+<p>Empty input (<code style="color:#22d3bf">vol_binary</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

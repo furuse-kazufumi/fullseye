@@ -6,6 +6,7 @@
 <p>辐亮度 → 真实传感器的输出(散粒噪声・读出噪声・饱和・量化)。</p>
 <p>光子数 = 以 radiance · exposure_ms · gain_e_per_unit / 1000 为均值的 Poisson。在此之上加上读出噪声(正态)，以 <code style="color:#22d3bf">full_well_e</code> <b>饱和</b>，再以 <code style="color:#22d3bf">bit_depth</code> 量化。饱和是 clip 而非折返(过曝处保持白色)。</p>
 <p>返回值为 0..2^bit_depth−1 的整数数组。固定 <code style="color:#22d3bf">seed</code> 即为确定性。</p>
+<p>空输入(<code style="color:#22d3bf">radiance</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

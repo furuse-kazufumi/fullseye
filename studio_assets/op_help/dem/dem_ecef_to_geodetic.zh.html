@@ -10,6 +10,7 @@
 <p>经度在两种情况下最大都是 2.8e-14 度。在地面上都在 µm 以下,实用上可以当作“误差的地板”,但<b>不要把中位数当作最大值引用</b>。</p>
 <p>如果只是想要地心<b>球</b>坐标,用 <code style="color:#22d3bf">r = |xyz|</code> 和 <code style="color:#22d3bf">geocentric_lat = asin(z/r)</code> 就够了 —— 但那<b>不是大地纬度</b> (两者最多相差 0.19 度,换算成距离约 21 km)。本 op 返回的是与地图和 GPS 相同的<b>大地</b>纬度。</p>
 <p>★<b>在地球中心附近以 fail-closed(失败即拒绝)方式拒绝</b>(2026-09-08, <code style="color:#22d3bf">poc_geodetic_height_frames</code> 踩到了)。在椭球的渐屈线(evolute) <code style="color:#22d3bf">(a·p)^(2/3) + (b·|z|)^(2/3) &lt; (a²-b²)^(2/3)</code> 的内侧,从椭球面立起的法线不唯一,<b>大地纬度本身就不唯一</b>。在此之前这里会默默返回 <code style="color:#22d3bf">lat = 180 度</code> —— 这是作为纬度并不存在的值, 而且是<b>自身的逆函数 <code style="color:#22d3bf">dem_geodetic_to_ecef</code> 会以 “lat_deg must be within [-90, 90]”拒绝</b>的值。该区域在赤道面上从轴到 <code style="color:#22d3bf">e²a = 42697.7 m</code>,在极轴上到 <code style="color:#22d3bf">(a²-b²)/b = 42841.3 m</code> 为止(实测:42600 m 时为 180 度,42700 m 时为 0 度 —— 与闭式的边界恰好一致)。</p>
+<p>空输入(<code style="color:#22d3bf">xyz</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

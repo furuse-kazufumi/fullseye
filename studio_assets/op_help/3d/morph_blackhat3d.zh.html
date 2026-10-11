@@ -6,6 +6,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D black-hat = closing − vol。提取小于 SE 的<b>暗结构/孔洞</b>。</p>
 <p><code style="color:#22d3bf">morph_close3d(vol, r, ...) − vol(float32)</code>。值不小于 0,只有比 SE(边长 <code style="color:#22d3bf">2r+1</code> 的 cube 或半径 r 的 ball)小的暗孔、裂纹、间隙以其深度保留,大的暗区域和背景变为 0。对占据 voxel 而言是“被 SE 填满的空洞 = 1”。<code style="color:#22d3bf">r</code> 取得比想检测的孔的半径更大。<code style="color:#22d3bf">se</code> 为 &quot;cube&quot;/&quot;ball&quot;(其他为 ValueError),<code style="color:#22d3bf">device</code> 仅在 cube+torch 时有效。返回值为 <code style="color:#22d3bf">(D,H,W)</code> float32 numpy。要提取明亮结构时用 <code style="color:#22d3bf">morph_tophat3d</code>。</p>
+<p>空输入(<code style="color:#22d3bf">vol</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

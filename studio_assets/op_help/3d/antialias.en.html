@@ -8,6 +8,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;box&quot;</code>   — equal-weight average (exact area average, the standard for SSAA).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gauss&quot;</code> — Gaussian weights emphasising the block centre (σ = ss/2, slightly softer).</p>
 <p>Fail-closed: <code style="color:#22d3bf">ss</code> is an integer of 1 or more, the input is 2D / 3D, and each side must be divisible by <code style="color:#22d3bf">ss</code>. Non-finite values raise <code style="color:#22d3bf">ValueError</code> (rejected before allocation so that NaN does not propagate through the averaging).</p>
+<p>Empty input (<code style="color:#22d3bf">hi_res_image</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>有理関数 F(s) = num(s)/den(s) の数値逆ラプラス変換(固定 Talbot 法)。</p>
 <p>厳密解は <code style="color:#22d3bf">tf_impulse_response</code> が行列指数で出すので、<b>2 つの独立な経路で同じ f(t) が出るか</b>がこの op の検算になる。任意の F(s)(1/√s など)は <code style="color:#22d3bf">laplace_inverse_func</code> へ。</p>
+<p>空の入力(<code style="color:#22d3bf">num</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>

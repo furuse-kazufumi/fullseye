@@ -7,6 +7,7 @@
 <p>cos_i / n1 / n2 / thickness_mm / sigma_per_mm wie oben.</p>
 <p>Rückgabewert: Gesamttransmissionsgrad T. Die Formel lautet T = (1−R)²·a / (1 − R²·a²), a = innerer Transmissionsgrad (mit dem schrägen Weg in der Platte L = d/cosθ_t). Die Summe der unendlichen Reihe = eine Form, die keine Mehrfachreflexion auslässt.</p>
 <p>Gegenprobe: Eine air→BK7-Platte (n=1.5) mit Absorption 0 bei senkrechtem Einfall ergibt T = 0.9231 (= der bekannte Wert 2n/(n²+1)). Mit steigendem σ fällt T monoton, jenseits des Grenzwinkels (von innerhalb der Platte) ist es 0.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">cos_i</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

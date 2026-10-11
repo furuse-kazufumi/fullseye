@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• Argument types and ranges are not validated here (coordinates outside the image can be stacked too; at <code style="color:#22d3bf">apply</code> time they are only extrapolated by nearest neighbour, no exception is raised).</p>
 <p style="margin:2px 0 2px 12px">• Returns: index of the added object (starting at 0). At the same position in the result list of <code style="color:#22d3bf">apply</code> is the result with <code style="color:#22d3bf">type=&quot;line&quot;</code> (<code style="color:#22d3bf">row1/col1/row2/col2/angle_deg</code>).</p>
 <p>When translating with <code style="color:#22d3bf">align_metrology_model</code>, both end points move together.</p>
+<p>Empty input (<code style="color:#22d3bf">model</code> an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

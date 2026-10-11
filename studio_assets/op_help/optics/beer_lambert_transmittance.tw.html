@@ -7,6 +7,7 @@
 <p>path_mm：介質中的光程長 [mm] (可為陣列，非負)。</p>
 <p>sigma_per_mm：吸收係數 [1/mm] (可為陣列 — 隨波長改變就成了<b>顏色</b>)。</p>
 <p>回傳值：內部穿透率(0–1)。不含界面反射(那是 <code style="color:#22d3bf">slab_transmittance</code>)。</p>
+<p>空輸入(<code style="color:#22d3bf">path_mm</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">samples</code>: number of lines. Default 5. Values below 1 are rounded to 1. An odd number includes the centre wavelength.</p>
 <p style="margin:2px 0 2px 12px">• Return value: <code style="color:#22d3bf">(wavelengths (k,), weights (k,))</code>, 2 float64 arrays. An approximation that does not model the real spectral shape (LED asymmetry, the halogen blackbody distribution).</p>
 <p><code style="color:#22d3bf">layout_capture</code> calls this with <code style="color:#22d3bf">spectral_samples</code> lines and sums the per-wavelength results with these weights.</p>
+<p>Empty input (<code style="color:#22d3bf">light</code> an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• return value: <code style="color:#22d3bf">(N + 8, 2)</code> float64।</p>
 <p style="margin:2px 0 2px 12px">• मूल points पहले से frame पर या frame के बाहर हों तब भी जाँच नहीं होती। frame के बाहर के corresponding points Delaunay triangulation में frame के triangles को काटते हैं, और warp विकृत हो जाता है।</p>
 <p><code style="color:#22d3bf">morph</code> / <code style="color:#22d3bf">morph_sequence</code> <code style="color:#22d3bf">with_corners=True</code> पर इसे अंदर ही दोनों point sets पर लगाते हैं। <code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">warp_tps_image</code> को सीधे call करते समय इन्हें <code style="color:#22d3bf">src</code> और <code style="color:#22d3bf">dst</code> दोनों में खुद जोड़ें।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">pts</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

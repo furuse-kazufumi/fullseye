@@ -14,6 +14,7 @@
 <p style="margin:2px 0 2px 12px">• If the model&#x27;s voxels are all 0, <code style="color:#22d3bf">[0,0,0,0]</code>.</p>
 <p style="margin:2px 0 2px 12px">• Translation only. Align rotation and scale first with <code style="color:#22d3bf">match_pca</code> / <code style="color:#22d3bf">match_logpolar_z</code>.</p>
 <p>Downstream: <code style="color:#22d3bf">init_t</code> of <code style="color:#22d3bf">icp_point2point_3d</code>, <code style="color:#22d3bf">refine_translation_lk</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">pts_scene</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

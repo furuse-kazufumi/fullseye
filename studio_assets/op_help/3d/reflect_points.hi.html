@@ -8,6 +8,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) array (float में बदला जाता है)। shape की जाँच नहीं होती।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">plane_point</code>: plane पर 1 point (3,)। <code style="color:#22d3bf">plane_normal</code>: normal (3,) (लंबाई कुछ भी, अंदर normalise होता है। sign का परिणाम पर असर नहीं होता)।</p>
 <p>ध्यान दें: normal को उसकी norm में 1e-12 जोड़कर भाग दिया जाता है, इसलिए zero vector देने पर भी exception नहीं आता और point cloud लगभग वैसा ही लौटता है (fail-closed नहीं)। <code style="color:#22d3bf">reflection_symmetry_score</code> / <code style="color:#22d3bf">detect_reflection_symmetry</code> के अंदर उपयोग के अलावा, पहचाने गए symmetry plane से गायब हिस्से को भरने (mirror image को मूल point cloud से जोड़ने) वाले shape completion में भी इसका उपयोग हो सकता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

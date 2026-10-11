@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: pass the same white point as used in <code style="color:#22d3bf">rgb_to_lab</code> (not validated).</p>
 <p style="margin:2px 0 2px 12px">• Return value: float64 of the same shape as the input, gamma-encoded sRGB in the range <code style="color:#22d3bf">[0, 1]</code>. For 8 bit, the caller multiplies by 255 and rounds.</p>
 <p style="margin:2px 0 2px 12px">• Failure (<code style="color:#22d3bf">MetricContractError</code>): the last axis is not 3.</p>
+<p>Empty input (<code style="color:#22d3bf">lab</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

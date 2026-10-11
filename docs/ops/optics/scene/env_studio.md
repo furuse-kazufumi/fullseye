@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 環境ではなく **Fresnel(n, k) から出ている**ことを絵の中で保証するため。
 ``directions`` は (..., 3) の単位ベクトル(z 上向き)。返り値はその形の (...,)。
 
+空の入力(``directions`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

@@ -119,7 +119,9 @@ def test_signal_features_on_tone():
     assert abs(feat["peak_freq"] - 1000.0) < 20
     assert abs(feat["rms"] - 0.5 / np.sqrt(2)) < 0.02       # RMS of a 0.5 sine
     assert feat["crest_factor"] > 1.0
-    assert dsp.signal_features(np.array([]))["rms"] == 0.0  # empty -> zeros
+    # 方針 A(2026-10-12): 空の信号は 0 の特徴量でなく名指しの ValueError
+    with pytest.raises(ValueError, match="x is empty"):
+        dsp.signal_features(np.array([]))
 
 
 def test_bandpass_removes_out_of_band_tone():
@@ -170,7 +172,8 @@ def test_non_finite_signal_is_refused_not_turned_into_nan_features():
             dsp.rms(bad)
     x, rate = _tone(1000.0, rate=16000)
     assert all(np.isfinite(v) for v in dsp.signal_features(x, rate).values())
-    assert dsp.signal_features(np.array([]))["rms"] == 0.0   # empty stays the zero case
+    with pytest.raises(ValueError, match="x is empty"):     # empty is refused (policy A)
+        dsp.signal_features(np.array([]))
 
 
 def test_cutoff_above_nyquist_raises_instead_of_near_allpass():

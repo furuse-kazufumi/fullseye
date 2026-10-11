@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• return value input जैसी shape का bool है। foreground न हो तो पूरा False (exception नहीं)।</p>
 <p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 3-dimensional न होने वाला input, <code style="color:#22d3bf">connectivity</code> 6/18/26 के अलावा।</p>
 <p style="margin:2px 0 2px 12px">• आम प्रयोग: threshold से बने binary volume से noise के टुकड़े हटाकर केवल मुख्य वस्तु रखना। कई रखनी हों तो <code style="color:#22d3bf">filter_by_volume</code>, features से चुनना हो तो <code style="color:#22d3bf">vol_select_labels</code>।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">vol</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

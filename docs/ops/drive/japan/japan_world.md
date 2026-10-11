@@ -28,6 +28,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 返り値 = driveworld の世界 + ``{"graph", "roadmask", "loops", "signals": [{"node", "edge", "object", "pose"}], "stats": {...}}``。
 **Raises** ``ValueError``: side が left/right 以外、kerb/step が不正。
 
+空の入力(``graph`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

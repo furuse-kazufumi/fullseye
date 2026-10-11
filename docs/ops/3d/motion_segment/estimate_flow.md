@@ -32,6 +32,8 @@ Returns:
 Raises:
     ValueError: 形状不正、または pts0 が非空なのに pts1 が空(最近傍が存在しない)。
 
+空の入力(``pts0`` が 0 要素)は空を返す(理由: 空の点群の変位は空の変位場が正しい答え(行順を保つ op)。前段のフィルタが空を出しうる)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

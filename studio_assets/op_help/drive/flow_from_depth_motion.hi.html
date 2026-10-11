@@ -6,6 +6,7 @@
 <p>depth image और rigid motion से <b>ground truth optical flow</b>: <code style="color:#22d3bf">{&quot;u&quot;, &quot;v&quot;, &quot;valid&quot;, &quot;depth1&quot;}</code> (हर एक (H, W))।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>画素の 3-D 点を <code style="color:#22d3bf">T_rel</code> で動かして再投影し、<code style="color:#22d3bf">u = col₁ − col₀</code>、<code style="color:#22d3bf">v = row₁ − row₀</code>。動かした後にカメラの背後へ行く点や深度の無い画素は <code style="color:#22d3bf">valid = False</code>(u, v は NaN)。<code style="color:#22d3bf">depth1</code> は動かした後の深度。光学流の推定器の採点に使う真値(推定器と同じ規約: (x, y) → (x + u, y + v))。</p>
+<p>空の入力(<code style="color:#22d3bf">depth</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

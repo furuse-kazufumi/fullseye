@@ -20,13 +20,16 @@ version: 0.6.0  # fullseye lib version this note was generated for
 A compact acoustic/vibration feature vector for anomaly detection:
 ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid`` (Hz),
 ``peak_freq`` (Hz), ``bandwidth`` (Hz). All finite — a NaN / Inf sample raises
-``ValueError`` rather than producing NaN features; empty signal -> zeros.
+``ValueError`` rather than producing NaN features (an empty signal too, since 2026-10-12;
+it used to give zeros).
 
 The three spectral entries are built on :func:`spectrum`, but every one of
 them is a *ratio* of magnitudes (``argmax``, a magnitude-weighted mean, a
 magnitude-weighted spread), so the raw ``|rfft|`` convention documented there
 cancels out and these numbers are unaffected by it. ``rms``, ``peak`` and
 ``crest_factor`` are computed in the time domain and never touch the FFT.
+
+Empty input (``x`` with 0 elements) raises ``ValueError``.
 
 ## 参考(サンプルデータ・文献)
 

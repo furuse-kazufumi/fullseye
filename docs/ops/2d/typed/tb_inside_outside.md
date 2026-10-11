@@ -50,6 +50,8 @@ Returns
 -------
 np.ndarray, shape (N,)
 
+空の入力(``points`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``inside_outside``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)

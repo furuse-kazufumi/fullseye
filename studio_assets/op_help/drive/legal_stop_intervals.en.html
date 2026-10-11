@@ -6,6 +6,7 @@
 <p>Intervals (m, 2) of <b>rear-end positions</b> at which the car body [rear, rear + car_length] fits entirely while avoiding the no-stopping-or-parking sections (merged (k, 2)).</p>
 <p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>区間の端ちょうど(距離がちょうど 5 m など)は禁止の側に含める(「以内」)ので、車体が端に触れるだけなら許す(閉区間の補集合の閉包)。</p>
+<p>空の入力(<code style="color:#22d3bf">merged</code> が 0 要素)は空を返す(理由: 禁止区間が 0 件なら道路全体が正しい答え。no_stopping_zones は施設があっても空の merged を返しうる(運行時間外のバス停だけのとき))。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

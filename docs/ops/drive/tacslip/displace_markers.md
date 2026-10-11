@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 変位場 fx, fy (n, n) [m] でマーカー中心 (N, 2) [px] を移す(場は中心位置で双線形標本化、画素に換算して足す)。
 **Raises** ValueError: pts が (N, 2) でない、fx と fy の形が違う、pitch ≤ 0。
 
+空の入力(``pts`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

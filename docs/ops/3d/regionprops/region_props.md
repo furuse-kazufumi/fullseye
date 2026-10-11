@@ -50,6 +50,8 @@ list[dict]
 - ラベルは 1..n の順(``label_components`` と同じ scipy の走査順)で、体積順ではない。並べ替えは呼び手で行う。
 - 入力は 0 以外を前景として bool 化する(NaN も前景)。Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
 
+空の入力(``vol`` が 0 要素)は空を返す(理由: 要素の無い体積の連結成分は 0 個が正しい答え)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [measurement_uncertainty](../../math/guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために

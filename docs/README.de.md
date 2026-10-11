@@ -137,7 +137,7 @@ Jede hat eine geschlossene oder synthetische Grundwahrheit und ein Nullmodell. F
 
 **Gemessene Abdeckung**: evolvierbare Ops 936/936, typisiertes Ledger 2132/2144, Fassade `fullseye.<name>` 671/1418 — **die Fassade ist erst zur Hälfte abgedeckt**.
 
-**Gemessener Inhalt**: von 3089 Notizen verweisen **2901** auf mindestens ein lauffähiges Beispiel (188 ohne), **2916** haben einen Nutzungsabschnitt ab 120 Zeichen (173 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3089.
+**Gemessener Inhalt**: von 3089 Notizen verweisen **2901** auf mindestens ein lauffähiges Beispiel (188 ohne), **2928** haben einen Nutzungsabschnitt ab 120 Zeichen (161 nur eine Zeile). Die Struktur (Aufrufform, Typen, anschließbare Ops) haben alle 3089.
 
 | Dimension | Ops | Einstieg |
 |---|---:|---|

@@ -323,7 +323,12 @@ def humanoid_clip_mesh(clip: dict, distance: float) -> dict:
 
     1 周期で ``cycle_length`` 進む。コマの間は頂点を線形に補間する(面の組み方は全コマ同じ)。形は腰の真下が原点のまま
     なので、**置く位置を ``distance`` だけ進めれば**支持脚は地面で止まって見える(コマの位相は ``advance`` で歩いた距離に
-    合わせてある)。★2026-10-03: 最初の版は周期内の前進をここでも差し引き、置く側と 2 重に引いていた(滑りの門で発覚)。"""
+    合わせてある)。★2026-10-03: 最初の版は周期内の前進をここでも差し引き、置く側と 2 重に引いていた(滑りの門で発覚)。
+
+    空の入力(``clip`` が空の dict)は ValueError。
+    """
+    if isinstance(clip, dict) and len(clip) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("humanoid_clip_mesh: clip is empty — pass a non-empty dict")
     V = np.asarray(clip["V"], np.float64)
     if V.ndim != 3 or V.shape[0] < 2:
         raise ValueError("humanoid_clip_mesh: clip['V'] は (T, n, 3)、T ≥ 2")
@@ -342,7 +347,12 @@ def humanoid_clip_mesh(clip: dict, distance: float) -> dict:
 
 def world_pose_humanoid(world: dict, i: int, clip: dict, distance: float, x: float, y: float, yaw: float) -> None:
     """世界の物体 ``i``(:func:`driveterrain.add_mesh_object` で ``humanoid_clip_mesh`` を置いたもの)を、歩いた距離
-    ``distance`` の姿勢にして ``(x, y, yaw)`` へ置き直す(頂点だけ書き換える。面・色・ラベル・``dims`` は不変)。"""
+    ``distance`` の姿勢にして ``(x, y, yaw)`` へ置き直す(頂点だけ書き換える。面・色・ラベル・``dims`` は不変)。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("world_pose_humanoid: world is empty — pass a non-empty dict")
     import driveworld
     obj = world["objects"][i]
     v0, v1 = obj["verts"]
@@ -370,7 +380,11 @@ def humanoid_impostors(clip: dict, *, n_yaw: int = 16, n_phase: int = 12, res: i
         ``{"color" (n_yaw, n_phase, res, res, 3) uint8, "mask" (...) bool, "dz" (...) float16 (画素の深度 − distance [m]),
         "f" (事前描画の焦点距離 [px]), "distance", "eye_h" [m], "res", "n_yaw", "n_phase", "cycle_length", "dims",
         "phase_s" (各位相の歩いた距離 [m])}``。
+
+    空の入力(``clip`` が空の dict)は ValueError。
     """
+    if isinstance(clip, dict) and len(clip) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("humanoid_impostors: clip is empty — pass a non-empty dict")
     import render3d
     import driveworld as DW
     n_yaw, n_phase, res = int(n_yaw), int(n_phase), int(res)
@@ -418,7 +432,12 @@ def world_camera_impostors(world: dict, pose, K, width: int = 640, height: int =
     向きの段 = 体から見たカメラの方位を n_yaw 段に丸めたもの、位相 = 歩いた距離を周期で割った余りに最も近い段。
     大きさ = 実際のカメラの「1 m あたりの画素」/ 事前描画の「1 m あたりの画素」(最近傍で拡大縮小)。
     返り値は world_camera と同じ鍵。貼った画素は ``label`` = 物体のラベル(7)、``face`` = −2(三角形が無い)、
-    ``shade`` = 1。加えて ``"impostor_pixels"``(貼った画素の数)。"""
+    ``shade`` = 1。加えて ``"impostor_pixels"``(貼った画素の数)。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("world_camera_impostors: world is empty — pass a non-empty dict")
     import driveworld as DW
     v = DW.world_camera(world, pose, K, width, height, **camera_kw)
     pose = np.asarray(pose, np.float64)

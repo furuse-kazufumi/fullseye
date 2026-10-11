@@ -22,6 +22,8 @@ Hertz 球接触の半空間表面の法線変位 ū_z(r)(沈む量 ≥ 0、r と
 内側 r ≤ a: δ − r²/(2R)。外側: (1/πR)[(2a² − r²) arcsin(a/r) + a r √(1 − a²/r²)] (Johnson 式 3.42a)。r = a で δ/2 に連続。
 **Raises** ``ValueError``: a, δ, R ≤ 0、a² と Rδ が 1 % 以上食い違う(Hertz でない組)。
 
+空の入力(``r`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

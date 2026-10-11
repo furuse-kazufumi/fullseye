@@ -28,6 +28,8 @@ came out of an image file. Skipping it does not raise: it makes highlights
 bloom too early and shadows too dark, by the amount quoted in the module
 docstring.
 
+Empty input (``img`` with 0 elements) raises ``ValueError``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

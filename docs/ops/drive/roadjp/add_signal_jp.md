@@ -29,6 +29,8 @@ objects: 柱 + アーム(ラベル 3、name "signal_pole")と灯器(ラベル 3�
 ``extra = {"state", "lamp_faces"(世界の面索引), "arm", "lamp_bottom", "kind": "jp"}``)。返り値 = 灯器の索引
 (:func:`driveworld.set_signal_state` はこれに対して使う)。
 
+空の入力(``world`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

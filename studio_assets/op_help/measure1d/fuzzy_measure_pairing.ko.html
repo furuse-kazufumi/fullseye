@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pair_size</code>: 상정 폭 [px]. <code style="color:#22d3bf">None</code> 이면 정렬도 점수 부여도 하지 않고 <code style="color:#22d3bf">measure_pairs</code> 의 결과(측정선을 따른 순서)를 그대로 반환한다. 0 이나 음수는 검증하지 않는다(0 이면 분모가 1e-9 가 되어 전 쌍의 점수가 거의 0 이나 1 로 뭉개진다).</p>
 <p style="margin:2px 0 2px 12px">• 반환값: 쌍 dict 의 list(<code style="color:#22d3bf">table</code> 형). 각 dict 는 <code style="color:#22d3bf">first</code> / <code style="color:#22d3bf">second</code> (샘플 index), <code style="color:#22d3bf">width</code> [px], <code style="color:#22d3bf">first_point</code> / <code style="color:#22d3bf">second_point</code> (<code style="color:#22d3bf">(row, col)</code>), <code style="color:#22d3bf">first_amplitude</code> / <code style="color:#22d3bf">second_amplitude</code>, <code style="color:#22d3bf">fuzzy_score</code>. 쌍이 1 개도 없으면 빈 list(예외로 하지 않는다).</p>
 <p>폭의 하한·상한으로 자르고 싶은 경우에는 이 결과를 <code style="color:#22d3bf">width</code> 로 직접 필터한다(이 op 는 순위 매기기만 하며, 임계값에 의한 제외는 하지 않는다).</p>
+<p>빈 입력(<code style="color:#22d3bf">image</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

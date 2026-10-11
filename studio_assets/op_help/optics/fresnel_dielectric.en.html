@@ -9,6 +9,7 @@
 <p>polarization: &quot;unpolarized&quot; (default, mean of s and p) / &quot;s&quot; / &quot;p&quot;.</p>
 <p>Returns: reflectance R (same shape as cos_i, 0–1). Incidence beyond the critical angle gives <b>exactly 1.0</b> (total internal reflection).</p>
 <p>Cross-check (fixed in tests): at normal incidence ((n1−n2)/(n1+n2))² (air→BK7 = 0.04), at the Brewster angle p polarization is 0 (below 1e-15), beyond the critical angle 1.0. Transmittance is 1 − R (an interface without absorption, so energy is conserved).</p>
+<p>Empty input (<code style="color:#22d3bf">cos_i</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

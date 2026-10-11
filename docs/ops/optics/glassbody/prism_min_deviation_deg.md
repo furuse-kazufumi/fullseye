@@ -32,6 +32,8 @@ apex_deg: 頂角 A [deg]。glass: `raytrace.glass_catalog` の硝材名、また
 検算: N-BK7・A=60° で d 線(587.6 nm)の δ_min ≈ 38.6°、F 線(486.1)と C 線(656.3)の
 差(角分散)が **Abbe 数から予想される向き**(短波長ほど大きく曲がる)になる。
 
+空の入力(``wavelength_nm`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

@@ -10,6 +10,7 @@
 <p>*far_depth* is the fail-closed switch for the <code style="color:#22d3bf">s -&gt; 0</code> pole (a point at infinity has zero parallax). <code style="color:#22d3bf">None</code> (default) makes any <code style="color:#22d3bf">|s| &lt; min_slope</code> a <code style="color:#22d3bf">ValueError</code> naming how many pixels were affected — mask them, or pass an explicit saturation distance as *far_depth* and get that value there. There is no silent <code style="color:#22d3bf">inf</code> and no silent clamp.</p>
 <p>Accepts a scalar or any array; returns the same shape (a scalar in gives a 0-d array out, so downstream code has one type to handle).</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-finite *slope* / *focal_px* / *baseline*, a non-positive *focal_px* / *baseline* / *min_slope*, a negative *far_depth*, and <code style="color:#22d3bf">|slope| &lt; min_slope</code> anywhere when *far_depth* is <code style="color:#22d3bf">None</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">slope</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

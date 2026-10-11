@@ -331,7 +331,11 @@ def color_transfer(src, ref, method="reinhard", space="lab"):
     -------
     ndarray
         ``src`` と同じ形の sRGB ``[0, 1]``(色域外は切り詰められる)。
+
+    空の入力(``src`` が 0 要素)は ValueError。
     """
+    if (len(src) if isinstance(src, (list, tuple)) else np.asarray(src).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("color_transfer: src is empty — pass at least one element")
     if method not in COLOR_TRANSFER_METHODS:
         raise MetricContractError(f"method must be one of {COLOR_TRANSFER_METHODS}, got {method!r}")
     if space not in ("lab", "rgb"):
@@ -511,7 +515,11 @@ def apply_transport(plan, target_values):
 
     質量ゼロの行は行き先が無い ―― 0 で埋めると「黒い画素」が黙って混ざるので
     ``ValueError``。
+
+    空の入力(``plan`` が 0 要素)は ValueError。
     """
+    if (len(plan) if isinstance(plan, (list, tuple)) else np.asarray(plan).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("apply_transport: plan is empty — pass at least one element")
     p = np.asarray(plan, dtype=np.float64)
     t = np.asarray(target_values, dtype=np.float64)
     if p.ndim != 2:

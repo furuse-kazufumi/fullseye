@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• 형은 검증하지 않는다. <code style="color:#22d3bf">add_metrology_object_generic</code> 으로 쌓은 미지형은 <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> 을 row/col 로 간주해 움직인다.</p>
 <p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">{&quot;objects&quot;: [...]}</code>(<code style="color:#22d3bf">metrologymodel</code> 형).</p>
 <p>전형적인 예: 형상 매칭이나 기준 마크 검출로 얻은 위치 어긋남을 여기서모델에 반영하고 <code style="color:#22d3bf">apply_metrology_model</code> 을 건다. 기울어진 워크에는 쓸 수 없다(참조 형상의 법선이 실물의 법선에서 어긋나, 탐색 반폭 <code style="color:#22d3bf">measure_length</code> 밖으로 나간다).</p>
+<p>빈 입력(<code style="color:#22d3bf">model</code> 이(가) 빈 dict)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

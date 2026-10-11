@@ -6,6 +6,7 @@
 <p>एक *scale* पर Hessian eigenvalues से blob-like (spherical) response।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>A bright blob has all three eigenvalues negative and comparable in magnitude; the response is the geometric mean of their magnitudes, <code style="color:#22d3bf">(|l1| |l2| |l3|)**(1/3)</code>, gated to voxels where the three share the sign of a blob of the requested polarity (all negative for bright, all positive for dark). Normalised to <code style="color:#22d3bf">[0, 1]</code>. Complements the line filters — a Frangi-style <code style="color:#22d3bf">Rb</code> term rejects blobs, this one keeps them. Reference: the second-order (Hessian) blob measure, cf. Frangi et al. 1998 / Lindeberg scale-space blobs.</p>
+<p>Empty input (<code style="color:#22d3bf">vol</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

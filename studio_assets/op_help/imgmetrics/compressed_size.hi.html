@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>array को lossless compress करने के बाद byte संख्या। <code style="color:#22d3bf">ncd</code> की सामग्री।</p>
 <p>image codecs का <b>उपयोग नहीं होता</b> -- बीच में रखने पर उस implementation की आदतें मपने लगती हैं। केवल stdlib के <code style="color:#22d3bf">zlib</code> / <code style="color:#22d3bf">lzma</code>। dtype और shape का अंतर परिणाम बदल देता है, इसलिए तुलना की जाने वाली 2 images का dtype और shape समान होना चाहिए।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">a</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

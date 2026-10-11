@@ -7,6 +7,7 @@
 <p>Split the transmission of ground glass into a &quot;straight-through&quot; and a &quot;diffuse&quot; component.</p>
 <p>cos_i: cos of the angle of incidence. roughness: surface roughness (0 = clear, 1 = fully diffuse).</p>
 <p>Returns: 2 values (direct T_spec, diffuse T_diff). Their sum matches the transmittance of a clear plate (no energy is created ―― verified in tests). How things look through frosted glass is explained simply by this direct component falling and the diffuse component rising.</p>
+<p>Empty input (<code style="color:#22d3bf">cos_i</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

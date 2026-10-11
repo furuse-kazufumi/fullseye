@@ -21,6 +21,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>：粗细(负值拒绝)。</p>
 <p>返回值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。</p>
 <p>用法：用&quot;工具的扫掠体积是否与零件相交&quot;来判断工具可达性时，把工具置为胶囊，看 <code style="color:#22d3bf">sdf_intersect</code> 的最小值是否为正。也可用于骨小梁、血管、纤维的合成。</p>
+<p>空输入(<code style="color:#22d3bf">grid</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">capsule_sdf</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调参数，<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

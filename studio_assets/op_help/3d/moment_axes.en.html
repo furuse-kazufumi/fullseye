@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> has length N. A sum of 0 gives NaN via division by 0 (no exception). 0 points fails (there is no validation).</p>
 <p style="margin:2px 0 2px 12px">• If the principal axes are degenerate (a sphere, etc.), the axis directions are undefined.</p>
 <p>Downstream: <code style="color:#22d3bf">match_pca</code>, <code style="color:#22d3bf">obb</code> (oriented bbox), rotation to a canonical pose.</p>
+<p>Empty input (<code style="color:#22d3bf">points</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

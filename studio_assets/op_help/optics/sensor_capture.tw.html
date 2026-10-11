@@ -6,6 +6,7 @@
 <p>輻亮度 → 真實感測器的輸出(散粒雜訊・讀出雜訊・飽和・量化)。</p>
 <p>光子數 = 以 radiance · exposure_ms · gain_e_per_unit / 1000 為平均的 Poisson。在此之上加上讀出雜訊(常態)，以 <code style="color:#22d3bf">full_well_e</code> <b>飽和</b>，再以 <code style="color:#22d3bf">bit_depth</code> 量化。飽和是 clip 而非折返(過曝處保持白色)。</p>
 <p>回傳值為 0..2^bit_depth−1 的整數陣列。固定 <code style="color:#22d3bf">seed</code> 即為確定性。</p>
+<p>空輸入(<code style="color:#22d3bf">radiance</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

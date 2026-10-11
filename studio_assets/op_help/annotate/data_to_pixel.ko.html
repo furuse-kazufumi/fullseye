@@ -16,6 +16,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p><b>길이 불일치를 거부하는 것은 2026-09-02에 추가했다</b>. 연쇄 퍼저가 이 op을실행할 수 있게 된 직후, 길이가 다른 2개의 signal을 넘기는 경로에서 채굴기가 <code style="color:#22d3bf">np.stack</code>의 날것의 ValueError로 떨어져 발각되었다. 그때까지는 <code style="color:#22d3bf">x</code> 7점· <code style="color:#22d3bf">y</code> 3점이라도 <b>예외를 내지 않고, 길이가 다른 2개를 그대로 반환하고 있었다</b>.</p>
 <p>위험한 것은 떨어지는 것이 아니라 떨어지지 않는 것 —— 반환된 2개를 <code style="color:#22d3bf">zip</code>하면 <b>3점만이, x의 앞쪽 3개 위치에</b> 그려진다. 점이 사라진 것도, x가어긋난 것도 그림으로는 알 수 없다. 형제인 <code style="color:#22d3bf">plot_series</code>는 같은 상황을 <code style="color:#22d3bf">&quot;x and y must have the same length&quot;</code>로 거부하고 있었으므로, <b>같은 족 안에서규율이 갈라져 있었다</b>(한쪽만 고쳐도 재발하는 유형이므로, 문구도 맞춰 두었다).</p>
+<p>빈 입력(<code style="color:#22d3bf">axes</code> 이(가) 빈 dict)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

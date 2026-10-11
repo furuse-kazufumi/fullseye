@@ -8,6 +8,7 @@
 <p style="margin:2px 0 2px 12px">• 1 점 = 1 화소이므로 희소한 점군은 구멍투성이가 된다(<code style="color:#22d3bf">mesh_to_points</code>로 조밀하게 한 뒤에). splat 반경은 없다.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code>는 numpy (3,3), <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code>는 생략 가능.</p>
 <p>후단: <code style="color:#22d3bf">depth_to_points</code>로 되돌리기, <code style="color:#22d3bf">normals_from_depth</code>로 법선, <code style="color:#22d3bf">tsdf_from_depth</code>.</p>
+<p>빈 입력(<code style="color:#22d3bf">points</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

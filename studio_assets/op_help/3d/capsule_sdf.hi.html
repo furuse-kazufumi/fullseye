@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: मोटाई (negative अस्वीकार)।</p>
 <p>Return value: <code style="color:#22d3bf">grid.shape[:-1]</code> का float64।</p>
 <p>कहाँ उपयोग करें: tool की पहुँच को &quot;tool का swept volume part से नहीं टकराता?&quot; के रूप में जाँचते समय, tool को capsule के रूप में रखकर देखें कि <code style="color:#22d3bf">sdf_intersect</code> का न्यूनतम मान positive है या नहीं। trabeculae, रक्त वाहिकाओं और fibres के synthesis में भी।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">grid</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -285,7 +285,11 @@ def grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1
     width_nm: 1 本の回折線に与える波長方向の幅 [nm] (有限のスポットサイズ・帯域の効果)。
 
     返り値: (H, W, 3) 線形 sRGB(負値は残す = 色域外がそのまま見える)。
+
+    空の入力(``normals`` が 0 要素)は ValueError。
     """
+    if (len(normals) if isinstance(normals, (list, tuple)) else np.asarray(normals).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("grating_rgb: normals is empty — pass at least one element")
     op = "grating_rgb"
     N, mask = _normal_map(normals, op)
     L = _unit(light, "light", op)
@@ -328,7 +332,11 @@ def thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33
     normals / view: (H,W,3) 法線マップ / 面から視点への方向。
     thickness_nm / n_film / n_sub: :func:`thin_film_reflectance` と同じ。
     strength: 全体の強さ。
+
+    空の入力(``normals`` が 0 要素)は ValueError。
     """
+    if (len(normals) if isinstance(normals, (list, tuple)) else np.asarray(normals).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("thin_film_rgb: normals is empty — pass at least one element")
     op = "thin_film_rgb"
     N, mask = _normal_map(normals, op)
     V = _unit(view, "view", op)
@@ -356,7 +364,11 @@ def ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0),
 
     式: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo)) で、
     δ はハーフベクトルと法線の角、φ は接線からの方位角(Ward 1992)。
+
+    空の入力(``normals`` が 0 要素)は ValueError。
     """
+    if (len(normals) if isinstance(normals, (list, tuple)) else np.asarray(normals).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("ward_anisotropic: normals is empty — pass at least one element")
     op = "ward_anisotropic"
     N, mask = _normal_map(normals, op)
     L = _unit(light, "light", op)

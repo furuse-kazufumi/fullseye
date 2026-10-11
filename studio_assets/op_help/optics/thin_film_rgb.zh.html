@@ -7,6 +7,7 @@
 <p>面相对视线越倾斜，膜内光程越长，颜色向短波长侧移动 ―― 肥皂泡和烧过的钛的颜色在边缘处变化就是这个原因。角度依赖由 cosθ = |n·v| 求出。</p>
 <p>normals / view：(H,W,3) 法线贴图 / 从面到视点的方向。thickness_nm / n_film / n_sub：与 <code style="color:#22d3bf">thin_film_reflectance</code> 相同。</p>
 <p>strength：整体强度。</p>
+<p>空输入(<code style="color:#22d3bf">normals</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

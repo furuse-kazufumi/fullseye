@@ -21,6 +21,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 速さを保つ(駆動 = 坂 + 転がり + 空気抵抗の打ち消し、下りで負なら制動)、brake1 / brake2 は計画の値、止まったら保持
 (制動 ``hold_brake``(None = 上限)+ クリープの駆動)。
 
+空の入力(``plan`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

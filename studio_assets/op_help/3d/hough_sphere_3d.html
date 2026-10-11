@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• 境界 voxel が 10 未満なら <b>None</b>。<code style="color:#22d3bf">radii</code> が空だと TypeError で落ちる。</p>
 <p style="margin:2px 0 2px 12px">• 1 個しか返さない。複数球は検出した球の voxel を消して再実行するか、点群なら</p>
 <p><code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">fit_sphere_3d</code>。</p>
+<p>空の入力(<code style="color:#22d3bf">vol</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

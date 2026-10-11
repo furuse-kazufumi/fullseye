@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 マーカー制御 watershed 分割(watersheds_marker)。markers: int ラベル画像(0=未割当)。
 
+空の入力(``image`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [halcon_segmentation ファミリ ガイド](../guides/halcon_segmentation.md)

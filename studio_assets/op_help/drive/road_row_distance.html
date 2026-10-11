@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>平らな路面の上の行 → カメラから路面の点までの水平距離(厳密)。地平線より上の行は <code style="color:#22d3bf">inf</code>。</p>
 <p>俯角 α(下向き +、ラジアン)のピンホール: 地平線の行 v_h = c_y − f tan α、路面の水平距離 d の点の行は v − v_h = f H (1 + tan²α) / (d + H tan α) —— よって d = λ/(v − v_h) − H tan α、λ = f H / cos²α (Hautière ら 2006 の λ/(v − v_h) は第 1 項だけの形)。行は下向きが +。</p>
+<p>空の入力(<code style="color:#22d3bf">rows</code> が 0 件)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -14,6 +14,7 @@
 <p>scene में कहाँ पड़ता है। जहाँ template पूरा नहीं समाता वे positions 0 कर दी जाती हैं, इसलिए template अगर scene से बड़ा हो तो सब 0 ही रहता है और index (0,0,0) लौटता है (कोई exception नहीं)।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subvoxel=True</code> पर argmax के ±2 neighbourhood के धनात्मक scores के centroid तक refine होता है (<code style="color:#22d3bf">accel_match._subvoxel_com</code>)।</p>
 <p>आगे: <code style="color:#22d3bf">refine_translation_lk</code> (corner convention, इसलिए T//2 घटाएँ) / <code style="color:#22d3bf">refine_lm</code>। rotation से invariant नहीं है (पहले <code style="color:#22d3bf">match_logpolar_z</code> से rotation मिलाएँ)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">vol</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• arguments का type और range यहाँ validate नहीं होते (image से बाहर के coordinates भी जमा हो सकते हैं; <code style="color:#22d3bf">apply</code> के समय केवल nearest neighbour से extrapolate होते हैं, exception नहीं उठता)।</p>
 <p style="margin:2px 0 2px 12px">• return value: जोड़े गए object का index (0 से शुरू)। <code style="color:#22d3bf">apply</code> के परिणाम की list में उसी position पर <code style="color:#22d3bf">type=&quot;line&quot;</code> का परिणाम (<code style="color:#22d3bf">row1/col1/row2/col2/angle_deg</code>) आता है।</p>
 <p><code style="color:#22d3bf">align_metrology_model</code> से translate करने पर दोनों सिरे साथ-साथ खिसकते हैं।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">model</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

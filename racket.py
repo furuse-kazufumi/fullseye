@@ -236,7 +236,12 @@ def rally_simulate(bp: dict, rp: dict, tp: dict, *, perceive=None, strategies=No
     T_flight で落ちる速度を狙って打つ(y* は乱数、``plan_spin`` なら打球後のスピンを込みで狙いを合わせる)。
     ``strategies`` = (side 0 の戦略, side 1 の戦略)(None なら両方 :func:`strategy_feeder`)。``retries`` > 0 なら打つ前に
     :func:`shot_is_legal` で先読みし、外す狙いは巻き戻して別の狙い(戦略を引き直す)でやり直す。
-    返り値 ``{"hits", "end_reason", "shots": [...], "t", "p" (N,3), "racket_pos" (N,2,3), "hit_times", "rewinds"}``。"""
+    返り値 ``{"hits", "end_reason", "shots": [...], "t", "p" (N,3), "racket_pos" (N,2,3), "hit_times", "rewinds"}``。
+
+    空の入力(``bp`` が空の dict)は ValueError。
+    """
+    if isinstance(bp, dict) and len(bp) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("rally_simulate: bp is empty — pass a non-empty dict")
     rng = np.random.default_rng(seed)
     H = tp["height"]
     L, Wd = tp["length"], tp["width"]

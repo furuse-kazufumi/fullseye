@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_state_at(pred: &#x27;dict&#x27;, t) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import puck; puck.puck_state_at(pred: &#x27;dict&#x27;, t) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;puck_state_at&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">puck_slide_predict</code> 경로 위의 시각 t(스칼라 또는 (N,))에서의 위치와 속도. 종단 이후는 종단 상태를 유지합니다(위치는 움직이지 않고, 속도는 종단 값 = 멈춰 있으면 0). 반환값 <code style="color:#22d3bf">{&quot;p&quot; (N,2), &quot;v&quot; (N,2)}</code>.</p>
+<p>빈 입력(<code style="color:#22d3bf">pred</code> 이(가) 빈 dict)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

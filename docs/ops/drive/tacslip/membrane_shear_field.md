@@ -21,6 +21,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 (:func:`hertz_surface_ur` を x, y に分けたもの)[m]、``q``、固着/滑りのマスク ``mask_stick``(r ≤ c)・``mask_slip``(c < r ≤ a)、``r``。
 X, Y は格子の座標 [m] (中心が原点)。**Raises** ValueError: X と Y の形が違う、kern の n と合わない。
 
+空の入力(``hz`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

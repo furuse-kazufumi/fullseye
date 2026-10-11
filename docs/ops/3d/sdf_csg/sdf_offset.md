@@ -39,6 +39,8 @@ shape・NaN・inf の検査はしない(``inf - r = inf`` で契約どおり伝�
   ``r < 0`` で収縮すると、重なり領域で実際より多く削れることがある。
 - 厚さ ``t`` の殻: ``sdf_subtract(sdf, sdf_offset(sdf, -t))``。
 
+空の入力(``sdf`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

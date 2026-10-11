@@ -39,6 +39,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 形を作る。角を丸めるだけなら ``sdf_smooth_union`` のほうが手軽だが、あちらは丸みの
 半径が形状に依存する —— **半径を設計値として持ちたいときはこちら**。
 
+空の入力(``grid`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

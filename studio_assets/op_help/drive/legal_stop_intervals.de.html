@@ -6,6 +6,7 @@
 <p>Intervalle (m, 2) der <b>Heckpositionen</b>, bei denen die Karosserie [rear, rear + car_length] vollständig außerhalb der Abschnitte mit Halt- und Parkverbot (zusammengefasst (k, 2)) liegt.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>区間の端ちょうど(距離がちょうど 5 m など)は禁止の側に含める(「以内」)ので、車体が端に触れるだけなら許す(閉区間の補集合の閉包)。</p>
+<p>空の入力(<code style="color:#22d3bf">merged</code> が 0 要素)は空を返す(理由: 禁止区間が 0 件なら道路全体が正しい答え。no_stopping_zones は施設があっても空の merged を返しうる(運行時間外のバス停だけのとき))。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

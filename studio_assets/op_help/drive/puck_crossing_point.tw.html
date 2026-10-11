@@ -6,6 +6,7 @@
 <p>預測路徑首次穿過防守線 x = <code style="color:#22d3bf">x_line</code> 的時刻與位置(閉合式：逐區間求解 d(τ)·uₓ = 所需距離)。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;t&quot;, &quot;p&quot;, &quot;v&quot;, &quot;segment&quot;}</code>、横切らなければ <code style="color:#22d3bf">None</code>(fail-closed —— 止まる・ゴールに入る・時間切れ)。</p>
+<p>空の入力(<code style="color:#22d3bf">pred</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

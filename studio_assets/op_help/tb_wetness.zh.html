@@ -18,6 +18,7 @@
 <p>ior：水膜的折射率。</p>
 <p>返回值：湿润状态的漫反射色(同形状)。</p>
 <p>为什么会变暗：水膜内侧发生全反射，漫射光一次次被送回表面，每次都被吸收。作为近似，对干燥反射率 ρ 乘以相当于内部反射率 Ri = 1 − (1 − Ri0)/n² 的再吸收 ―― 正是湿沙看起来发黑的现象(镜面反射增加则通过叠加 <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> 来表示)。</p>
+<p>空输入(<code style="color:#22d3bf">base_rgb</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>桥接到 2-D 进化注册表的 optics op <code style="color:#22d3bf">wetness</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 调节 <code style="color:#22d3bf">wet</code>(默认 1)，<code style="color:#22d3bf">b</code> 调节 <code style="color:#22d3bf">ior</code>(默认 1.33)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

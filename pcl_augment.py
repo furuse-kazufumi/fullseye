@@ -81,7 +81,10 @@ def jitter(points, sigma: float, clip: Optional[float] = None, seed: int = 0) ->
     - 入力は ``(N,3)`` の有限値のみ(長さ 3 の 1-D は 1 点に昇格、それ以外や NaN は
     ``ValueError``)。返り値は float64。
     - 位置合わせ(``register_fpfh`` 等)のノイズ耐性を測るとき、``sigma`` を点間隔
-    (``voxel_grid_downsample`` の格子幅など)に対する比で決めると条件を比較しやすい。"""
+    (``voxel_grid_downsample`` の格子幅など)に対する比で決めると条件を比較しやすい。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
+    """
     P = _as_points(points)
     sigma = float(sigma)
     if sigma < 0.0:
@@ -126,7 +129,10 @@ def random_rotation(points, seed: int = 0,
     で、雲が原点から離れていれば重心も動く。``R`` の規約 ``rotated = points @ R.T`` は
     ``register_fpfh``・``register_shot`` が返す ``dst ≈ src @ R.T + t`` と同じ向きなので、
     推定結果との角度誤差は ``arccos((tr(R_est·Rᵀ)-1)/2)`` で測れる。``seed`` で決定論的
-    (同 seed なら同じ ``R``)。返り値は float64 の ``(N,3)`` と ``(3,3)``。"""
+    (同 seed なら同じ ``R``)。返り値は float64 の ``(N,3)`` と ``(3,3)``。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
+    """
     P = _as_points(points)
     rng = np.random.default_rng(int(seed))
 
@@ -177,7 +183,10 @@ def random_scale(points, lo: float, hi: float, seed: int = 0) -> Tuple[np.ndarra
     ``lo <= 0`` または ``hi < lo`` は ``ValueError``(``lo == hi`` は許され常に ``s = lo``)。
     原点まわりの拡大なので、雲が原点から離れていれば重心も ``s`` 倍の位置へ動く(位置と
     大きさが同時に変わる)。大きさだけ変えたいなら事前に重心を原点へ寄せる。``s`` は
-    Python float、返り値の点群は float64。``seed`` で決定論的。空入力は空を返す。"""
+    Python float、返り値の点群は float64。``seed`` で決定論的。空入力は空を返す。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
+    """
     P = _as_points(points)
     lo = float(lo)
     hi = float(hi)
@@ -204,7 +213,10 @@ def random_dropout(points, ratio: float, seed: int = 0) -> Tuple[np.ndarray, np.
     ``ratio=0`` は全点(順序は元のまま)。残す点数は Python の ``round``(偶数丸め)で決まる
     ので ``.5`` 端では偶数側に寄る。``seed`` で ``permutation`` が決まり決定論的。返り値は
     ``(kept float64 (M,3), kept_idx int64 (M,))``。除去は空間的に一様なので、局所的な
-    欠損(遮蔽)を模すには ``cutout`` を使う。"""
+    欠損(遮蔽)を模すには ``cutout`` を使う。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
+    """
     P = _as_points(points)
     ratio = float(ratio)
     if not (0.0 <= ratio <= 1.0):
@@ -234,7 +246,10 @@ def elastic_deform(points, sigma: float, alpha: float, seed: int = 0) -> np.ndar
     ``sigma < 0`` は ``ValueError``。``sigma == 0`` または 1 点だけの雲では平滑化せず各点
     独立の変位になる。``alpha`` は検証しない(0 なら無変位、負なら場が反転するだけ)。
     ``seed`` で決定論的。返り値は float64 ``(N,3)`` で点数・順序は保たれる(変形前後の
-    対応が添字で分かるので、非剛体位置合わせの誤差を直接測れる)。空入力は空を返す。"""
+    対応が添字で分かるので、非剛体位置合わせの誤差を直接測れる)。空入力は空を返す。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
+    """
     P = _as_points(points)
     sigma = float(sigma)
     alpha = float(alpha)
@@ -288,7 +303,10 @@ def cutout(points, extent: Union[float, np.ndarray], seed: int = 0
     並びが変わると別の場所が抜ける。ボックス判定は ``|P - center| <= extent/2`` の閉区間。
     除去点数は密度次第で、``extent`` を雲の大きさより大きくすると全点が消える。返り値は
     ``(kept float64 (M,3), kept_idx int64 (M,))``、順序は元のまま。一様な欠損は
-    ``random_dropout``。"""
+    ``random_dropout``。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
+    """
     P = _as_points(points)
     ext = np.asarray(extent, dtype=np.float64)
     if ext.ndim == 0:

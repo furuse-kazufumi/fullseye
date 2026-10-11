@@ -8,6 +8,7 @@
 <p>v ρ + v²/(2b) = d(空走 + 制動。<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code> と同じ式)を v について解いた正の根。桁落ちを避けて v = 2d / (ρ + sqrt(ρ² + 2d/b)) で計算する(ρ = 0 で sqrt(2 b d))。d は配列でもよい。d ≤ 0 なら 0(見えた時には既に間に合わない)。</p>
 <p>門: <code style="color:#22d3bf">rss_stopping_distance(v, ρ, 0, b)</code> == d(第 2 実装、rtol 1e-12)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: reaction &lt; 0、brake ≤ 0、d が非有限(inf は許して inf を返す)。</p>
+<p>空の入力(<code style="color:#22d3bf">d</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

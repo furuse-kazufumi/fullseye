@@ -22,6 +22,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 拡大行列 [[A, B], [0, 0]] の指数関数で ∫_0^t e^{Aτ} B dτ を厳密に得る(A が特異でも可)。
 門: 1/(s+a) → (1 − e^{−at})/a、2 次系 ω²/(s² + 2ζωs + ω²) の閉じた式。
 
+空の入力(``num`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 mathops の全 op は入力を検証してから計算する(黙って通さない):

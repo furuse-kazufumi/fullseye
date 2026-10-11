@@ -7,6 +7,7 @@
 <p>すりガラスの透過を「直進成分」と「拡散成分」に分ける。</p>
 <p>cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。</p>
 <p>返り値: (直進 T_spec, 拡散 T_diff) の 2 本。合計は透明板の透過率に一致する(エネルギーを作らない ―― テストで確認)。曇りガラス越しの見え方は、この直進成分が落ちて拡散成分が増えるだけで説明できる。</p>
+<p>空の入力(<code style="color:#22d3bf">cos_i</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

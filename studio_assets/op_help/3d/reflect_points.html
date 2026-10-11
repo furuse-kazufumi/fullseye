@@ -8,6 +8,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) の配列(float に変換)。形状検証はしない。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">plane_point</code>: 平面上の 1 点 (3,)。<code style="color:#22d3bf">plane_normal</code>: 法線 (3,)(長さは任意、内部で正規化。符号は結果に影響しない)。</p>
 <p>注意: 法線はノルムに 1e-12 を足して割るため、ゼロベクトルを渡しても例外にならず点群がほぼそのまま返る(fail-closed ではない)。<code style="color:#22d3bf">reflection_symmetry_score</code> / <code style="color:#22d3bf">detect_reflection_symmetry</code> の内部で使うほか、検出した対称面で欠損側を埋める(鏡像を元の点群に連結する)形状補完にも使える。</p>
+<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

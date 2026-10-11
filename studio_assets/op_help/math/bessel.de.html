@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bessel-Funktionen. <code style="color:#22d3bf">kind</code> = <code style="color:#22d3bf">&quot;j&quot;</code> (J 1. Art) / <code style="color:#22d3bf">&quot;y&quot;</code> (Y 2. Art) / <code style="color:#22d3bf">&quot;i&quot;</code>, <code style="color:#22d3bf">&quot;k&quot;</code> (modifiziert).</p>
 <p>Tritt auf bei Schwingungen kreisförmiger Membranen, Beugung an kreisförmigen Öffnungen (Airy = J₁) und Wärmeleitung in Zylindern. Gate: Wronski-Determinante J_{ν+1}(x)Y_ν(x) − J_ν(x)Y_{ν+1}(x) = 2/(πx), Rekursion J_{ν−1} + J_{ν+1} = (2ν/x) J_ν. Y und K nur für x &gt; 0 (divergieren im Ursprung).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">x</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

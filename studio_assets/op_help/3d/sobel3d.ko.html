@@ -10,6 +10,7 @@
 <p>반환값은 <b>torch tensor 3개</b>(numpy가 아님), 각각 <code style="color:#22d3bf">(1,1,D,H,W)</code> float32, <code style="color:#22d3bf">device</code> 위. <code style="color:#22d3bf">gz</code>는 축 0 방향, <code style="color:#22d3bf">gy</code>는 축 1, <code style="color:#22d3bf">gx</code>는 축 2의 미분(입력이 (D,H,W)라면 (depth,row,col) 순서). numpy로 되돌리려면 <code style="color:#22d3bf">g[0, 0].cpu().numpy()</code>.</p>
 <p>이득: 미분 [-1,0,1] (기울기 1에서 2)× 다른 2축의 평활 [1,2,1] (각 4)로 <b>참 기울기의 32배</b>가 나온다(정규화하지 않음). 참값이 필요하면 32로 나눈다(<code style="color:#22d3bf">curvature_maps</code> / <code style="color:#22d3bf">scene_flow_lk</code>는 내부에서나누고 있다. <code style="color:#22d3bf">hessian3d</code>는 이득 1이므로 섞을 때 주의). 끝은 replicate padding(경계에서 가짜 에지를 만들지 않는다). tensor 입력이 3-D면 batch 차원을더하고, 5-D면 그대로 쓴다. dtype은 float32로 낮춘다.</p>
 <p>후단: <code style="color:#22d3bf">curvature_maps</code> / <code style="color:#22d3bf">match_shape_3d</code>의 단위 기울기, <code style="color:#22d3bf">hough_plane_3d</code>의 법선. 방향이 필요 없는 에지 강도라면 <code style="color:#22d3bf">morph_gradient3d</code>도 대안.</p>
+<p>빈 입력(<code style="color:#22d3bf">vol</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

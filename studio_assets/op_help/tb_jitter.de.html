@@ -21,6 +21,7 @@
 <p><code style="color:#22d3bf">ValueError</code>). Der Rückgabewert ist float64.</p>
 <p style="margin:2px 0 2px 12px">• Misst man die Rauschrobustheit der Registrierung (<code style="color:#22d3bf">register_fpfh</code> usw.), lassen sich Bedingungen leichter vergleichen, wenn <code style="color:#22d3bf">sigma</code> als Verhältnis zum Punktabstand</p>
 <p>(etwa der Gitterweite von <code style="color:#22d3bf">voxel_grid_downsample</code>) festgelegt wird.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) liefert ein leeres Ergebnis (Grund: Ausdünnen, Ausreißerentfernung und Dropout können keine Punkte übrig lassen; eine leere Wolke ist ein gültiger Wert, und die nächste Stufe einer Kette darf daran nicht anhalten).</p>
 <p>Die 3d-Op <code style="color:#22d3bf">jitter</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. Diese Op hat keine Stellgrößen; weder <code style="color:#22d3bf">a</code> noch <code style="color:#22d3bf">b</code> wird verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

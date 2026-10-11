@@ -31,6 +31,8 @@ Z は ``1e-6`` 以上に clip してから割るので、**カメラ後方の点
 (``depth > 0`` で呼び手が除く)。画像外の点も返す(``render_point_depth`` が範囲で切る)。
 ``depth_to_points`` の逆で、``depth_to_points(render_point_depth(...))`` が往復になる。
 
+空の入力(``points`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

@@ -15,6 +15,7 @@
 <p>Returns:</p>
 <p>labels: (N,) int。検出順(=consensus 大きい順に近い)に 0,1,2,... を平面へ付与、</p>
 <p>どの平面にも属さない残差点は -1。空入力は shape (0,)。</p>
+<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は空を返す(理由: 空の点群には割り当てる点が無く、長さ 0 のラベル列が正しい答え。前段のフィルタが空を出しうる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

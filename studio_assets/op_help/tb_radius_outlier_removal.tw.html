@@ -27,6 +27,7 @@
 <p>是否保留各輸入點(True=保留)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p><code style="color:#22d3bf">radius &lt;= 0</code> 時 ValueError。空輸入回傳空(graceful)。</p>
+<p>空輸入(<code style="color:#22d3bf">points</code> 為 0 個元素)回傳空結果(理由:點雲的抽稀、離群點去除與隨機丟棄都可能得到空結果。空點雲是合法的值,鏈的下一級不應因此停下)。</p>
 <p>橋接到 2-D 演化登錄表的 3d op <code style="color:#22d3bf">radius_outlier_removal</code>。實作相同,只有呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 調整 <code style="color:#22d3bf">min_neighbors</code>(預設 8)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

@@ -6,6 +6,7 @@
 <p>주정차 금지 구간(병합된 (k, 2))을 피해 차체 [rear, rear + car_length]가 통째로 들어가는 <b>후단 위치</b>의 구간 (m, 2).</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>区間の端ちょうど(距離がちょうど 5 m など)は禁止の側に含める(「以内」)ので、車体が端に触れるだけなら許す(閉区間の補集合の閉包)。</p>
+<p>空の入力(<code style="color:#22d3bf">merged</code> が 0 要素)は空を返す(理由: 禁止区間が 0 件なら道路全体が正しい答え。no_stopping_zones は施設があっても空の merged を返しうる(運行時間外のバス停だけのとき))。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

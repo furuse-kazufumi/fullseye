@@ -37,6 +37,8 @@ Notes
 26 連結(3x3x3 の全近傍)。断片化したエッジ片を 1 本の曲線 / 閉曲面としてまとめ、
 下流の Hough / chamfer で成分単位に扱えるようにする。
 
+空の入力(``edge_mask`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -6,6 +6,7 @@
 <p>हर frame की candidate lists <code style="color:#22d3bf">detections[k] = ball_detect(frame_k)</code> को 1 trajectory में जोड़ता है (constant-velocity prediction के सबसे पास वाला candidate, <code style="color:#22d3bf">max_jump</code> px के भीतर)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot; (N,), &quot;row&quot; (N,), &quot;radius&quot; (N,), &quot;found&quot; (K,) bool}</code>(見つからないコマは飛ばす)。</p>
+<p>空の入力(<code style="color:#22d3bf">detections</code> が 0 件)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

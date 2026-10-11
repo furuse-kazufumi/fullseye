@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>有理函数 F(s) = num(s)/den(s) 的数值逆拉普拉斯变换(固定 Talbot 法)。</p>
 <p>精确解由 <code style="color:#22d3bf">tf_impulse_response</code> 用矩阵指数给出，所以<b>2 条独立路径是否得到相同的 f(t)</b> 就是本 op 的验算。任意的 F(s)(如 1/√s 等)请用 <code style="color:#22d3bf">laplace_inverse_func</code>。</p>
+<p>空输入(<code style="color:#22d3bf">num</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

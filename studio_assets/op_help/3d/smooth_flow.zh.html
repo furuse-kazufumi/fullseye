@@ -14,6 +14,7 @@
 <p>(N, 3) 平滑后的位移向量场。</p>
 <p>Raises:</p>
 <p>ValueError: 形状不正确,或 pts0 非空而 pts1 为空。</p>
+<p>空输入(<code style="color:#22d3bf">pts0</code> 为 0 个元素)返回空结果(理由:空点云的位移就是空的位移场(保持行顺序的 op)。前级的滤波可能输出空点云)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

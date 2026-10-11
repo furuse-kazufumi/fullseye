@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• N=1 时 <code style="color:#22d3bf">cumulative=[0.0]</code>、<code style="color:#22d3bf">total=0.0</code>。即使是闭曲线也不计算终点→起点的区间(需要闭合时,先把首点复制到末尾再传入)。</p>
 <p style="margin:2px 0 2px 12px">• 重复点(距离为 0 的区间)直接按 0 累加,因此 <code style="color:#22d3bf">cumulative</code> 单调不减但不是严格递增。</p>
 <p><code style="color:#22d3bf">resample_uniform</code> 以该累积弧长为参数进行线性插值。曲率的弧长积分等与 <code style="color:#22d3bf">curvature_torsion</code> 组合时所用的 ds 取自这些差分。</p>
+<p>空输入(<code style="color:#22d3bf">curve</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

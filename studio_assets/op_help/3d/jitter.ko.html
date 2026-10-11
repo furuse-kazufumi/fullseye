@@ -13,6 +13,7 @@
 <p><code style="color:#22d3bf">ValueError</code>). 반환값은 float64.</p>
 <p style="margin:2px 0 2px 12px">• 위치 맞춤(<code style="color:#22d3bf">register_fpfh</code> 등)의 잡음 내성을 잴 때, <code style="color:#22d3bf">sigma</code> 를 점 간격</p>
 <p>(<code style="color:#22d3bf">voxel_grid_downsample</code> 의 격자 폭 등)에 대한 비로 정하면 조건을 비교하기 쉽다.</p>
+<p>빈 입력(<code style="color:#22d3bf">points</code> 이(가) 0 개 요소)은 빈 결과를 반환한다(이유: 점군의 솎아내기·이상점 제거·드롭아웃은 결과가 비어 있을 수 있다. 빈 점군은 정당한 값이며, 연쇄의 다음 단계가 멈추지 않게 한다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

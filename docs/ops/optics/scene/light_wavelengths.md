@@ -37,6 +37,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``layout_capture`` が ``spectral_samples`` 本でこれを呼び、波長ごとの結果を
 この重みで足し合わせる。
 
+空の入力(``light`` が空の dict)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

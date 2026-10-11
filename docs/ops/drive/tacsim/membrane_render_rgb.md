@@ -22,6 +22,8 @@ albedo·(max(N·L_k, 0) + ambient)(:func:`photometric.render_lambertian` を 3 �
 
 **Raises** ``ValueError``: normals が (H, W, 3) でない、lights が (3, 3) でない、noise < 0。
 
+空の入力(``normals`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

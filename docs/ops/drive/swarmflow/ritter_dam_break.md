@@ -29,6 +29,8 @@ x_f − (27 g t² m/2)^{1/3} を ``lead_particle`` に返す —— 粒子法の
 Returns:
     dict: ``h``・``u``(x と同じ形)、``front`` = 2c₀ t、``rarefaction_head`` = −c₀ t、``c0``、``lead_particle``(m を与えたとき)。
 
+空の入力(``x`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

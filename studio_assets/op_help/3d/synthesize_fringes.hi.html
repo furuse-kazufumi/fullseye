@@ -17,6 +17,7 @@
 <p>seed:        noise के लिए random seed।</p>
 <p>return_phase: True होने पर (images, total_phase) लौटाता है (tests और debugging के लिए)।</p>
 <p>return value: (N, H, W) float array (range [0,1] पर clip किया गया)। return_phase=True पर phase भी।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">height</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -32,6 +32,8 @@ sRGB(``(..., 3)``)→ CIE XYZ。伝達関数を外してから行列を掛ける
 
 次に ``xyz_to_lab`` を繋ぐのが常道(まとめて ``rgb_to_lab``)。
 
+空の入力(``rgb`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

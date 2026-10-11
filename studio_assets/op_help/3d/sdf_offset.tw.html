@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• 收縮(<code style="color:#22d3bf">r &lt; 0</code>)時若 <code style="color:#22d3bf">|r|</code> 超過最小內切半徑，形狀會消失（所有元素為正）。不會報錯。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sdf_union</code> / <code style="color:#22d3bf">sdf_intersect</code> 的<b>內側</b>是真實距離的下界，因此在合成後以 <code style="color:#22d3bf">r &lt; 0</code> 收縮時，重疊區域可能被削去比實際更多。</p>
 <p style="margin:2px 0 2px 12px">• 厚度 <code style="color:#22d3bf">t</code> 的殼：<code style="color:#22d3bf">sdf_subtract(sdf, sdf_offset(sdf, -t))</code>。</p>
+<p>空輸入(<code style="color:#22d3bf">sdf</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

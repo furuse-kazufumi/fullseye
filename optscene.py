@@ -1887,7 +1887,11 @@ def env_studio(directions, key: float = 12.0, fill: float = 3.2,
     ソフトボックス 2 枚 + 天空の勾配 + 細い水平の帯。色を付けないのは、金属の色が
     環境ではなく **Fresnel(n, k) から出ている**ことを絵の中で保証するため。
     ``directions`` は (..., 3) の単位ベクトル(z 上向き)。返り値はその形の (...,)。
+
+    空の入力(``directions`` が 0 要素)は ValueError。
     """
+    if (len(directions) if isinstance(directions, (list, tuple)) else np.asarray(directions).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("env_studio: directions is empty — pass at least one element")
     d = _safe_unit(_arr(directions, "directions", 3))
     up = np.clip(d[..., 2], -1.0, 1.0)
     az = np.arctan2(d[..., 0], d[..., 1])
@@ -1916,7 +1920,11 @@ def env_lightbox(directions, base: float = 0.45, key: float = 4.0,
 
     加工目は**斜めから見ないと出ない**(真上から見た平面は反射方向が全画素で天頂に
     集中し、環境の勾配を掃かない)。``optical_camera(tilt_deg=50〜70)`` 程度が目安。
+
+    空の入力(``directions`` が 0 要素)は ValueError。
     """
+    if (len(directions) if isinstance(directions, (list, tuple)) else np.asarray(directions).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("env_lightbox: directions is empty — pass at least one element")
     d = _safe_unit(_arr(directions, "directions", 3))
     up = np.clip(d[..., 2], -1.0, 1.0)
     az = np.arctan2(d[..., 0], d[..., 1])
@@ -2730,7 +2738,11 @@ def light_wavelengths(light: dict, samples: int = 5):
 
     ``layout_capture`` が ``spectral_samples`` 本でこれを呼び、波長ごとの結果を
     この重みで足し合わせる。
+
+    空の入力(``light`` が空の dict)は ValueError。
     """
+    if isinstance(light, dict) and len(light) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("light_wavelengths: light is empty — pass a non-empty dict")
     _check_light_dict(light, "light_wavelengths")
     lam = float(light.get("wavelength_nm", 550.0))
     bw = float(light.get("bandwidth_nm", 0.0))
@@ -3120,7 +3132,11 @@ def sensor_capture(radiance, exposure_ms: float = 10.0, gain_e_per_unit: float =
     で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。
 
     返り値は 0..2^bit_depth−1 の整数配列。``seed`` を固定すれば決定的。
+
+    空の入力(``radiance`` が 0 要素)は ValueError。
     """
+    if (len(radiance) if isinstance(radiance, (list, tuple)) else np.asarray(radiance).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("sensor_capture: radiance is empty — pass at least one element")
     r = np.asarray(radiance, dtype=np.float64)
     if np.any(r < 0.0) or not np.all(np.isfinite(r)):
         raise ValueError("radiance must be finite and non-negative")

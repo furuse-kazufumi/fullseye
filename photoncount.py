@@ -1525,7 +1525,11 @@ def dtof_cube_depth(cube, bin_ps=100.0, mode="peak", offset_ps=0.0,
     non-finite *empty_value* other than NaN, and — instead of returning negative
     distances — an *offset_ps* that exceeds the measured arrival time of any
     valid pixel (a mis-signed or mis-scaled calibration delay).
+
+    Empty input (``cube`` with 0 elements) raises ``ValueError``.
     """
+    if (len(cube) if isinstance(cube, (list, tuple)) else np.asarray(cube).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("dtof_cube_depth: cube is empty — pass at least one element")
     c = _require_cube(cube, "cube", "dtof_cube_depth")
     dt = _positive(bin_ps, "bin_ps")
     m = _check_mode(mode, DEPTH_MODES, "mode", "dtof_cube_depth")

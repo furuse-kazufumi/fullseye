@@ -37,6 +37,8 @@ by the number of adjacent sample pairs ``len(x) - 1``. So ``[1, 0, 1, 0, 1]`` is
 ``0.0`` and ``[1, 0, -1]`` is ``0.5`` (before 2026-09-02 ``diff(sign(x))`` counted
 every touch of zero as a crossing: ``1.0`` for both).
 
+Empty input (``x`` with 0 elements) raises ``ValueError``.
+
 Typed bridge of the 1d op ``zero_crossing_rate`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)

@@ -228,7 +228,12 @@ def course_distance(course, xy) -> dict:
     """点 (N, 2) からコース(走れる多角形の和)への距離と、最寄り点から外へ向く単位ベクトル。
 
     ``{"d" (N,), "nx" (N,), "ny" (N,)}``。内側は d = 0、n = 0。外側の d は最寄りの辺への点-線分距離の閉形式で、
-    中心軸(最寄り点が 2 つある所)を除いて |∇d| = 1(eikonal)。"""
+    中心軸(最寄り点が 2 つある所)を除いて |∇d| = 1(eikonal)。
+
+    空の入力(``course`` が空の dict)は ValueError。
+    """
+    if isinstance(course, dict) and len(course) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("course_distance: course is empty — pass a non-empty dict")
     import drivecourse
     Q = np.asarray(xy, np.float64).reshape(-1, 2)
     if not np.all(np.isfinite(Q)):
@@ -329,7 +334,12 @@ def terrain_gradient(x, y, p: dict, course=None):
 def terrain_mesh(p: dict, course, bounds, step: float = 2.0) -> dict:
     """(xmin, xmax, ymin, ymax) を step の升に割り z = terrain_height の格子メッシュ。
 
-    ``{"V", "F", "face_label" (0 = 道の内側、10 = 地形), "face_color"}``。面のラベルは重心の内外判定。"""
+    ``{"V", "F", "face_label" (0 = 道の内側、10 = 地形), "face_color"}``。面のラベルは重心の内外判定。
+
+    空の入力(``p`` が空の dict)は ValueError。
+    """
+    if isinstance(p, dict) and len(p) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("terrain_mesh: p is empty — pass a non-empty dict")
     import drivecourse
     xmin, xmax, ymin, ymax = (float(v) for v in bounds)
     if not (xmax > xmin and ymax > ymin) or step <= 0:
@@ -426,7 +436,12 @@ def world_materials(world: dict, view: dict, pose, K, m: dict) -> dict:
     路面(ラベル 0)と地形(10)の画素は世界座標で材質を評価し直す: アスファルトの粒(Perlin 8 周期/m)、草の色むら、
     染み(暗い斑、ラベルは 0 のまま)、水溜り(空の写り込み、ラベル 11)。白線・横断歩道(9・12)は摩耗率 wear で
     路面の色に混ぜる(ラベルは不変、真値 "wear" に残る)。水溜りの写り込みの強さ(0.1〜0.9、Perlin 1.5 周期/m)は真値 "refl"。
-    返り値 = ``{"color", "label", "puddle", "refl", "stain", "wear", "xyz"}``。"""
+    返り値 = ``{"color", "label", "puddle", "refl", "stain", "wear", "xyz"}``。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("world_materials: world is empty — pass a non-empty dict")
     import drivecourse
     if "shade" not in view:
         raise ValueError("view must come from world_camera(..., shade=True)")
@@ -647,7 +662,12 @@ def crosswalk_mesh(a, b, length: float = 4.0, stripe: float = 0.45, gap: float =
 def add_mesh_object(world: dict, mesh: dict, x: float, y: float, yaw: float, *, name: str = "", z: float = 0.0) -> int:
     """手続き的なメッシュ(tree_mesh / pedestrian_mesh …、原点 = 底面中心)を姿勢に置いて世界に足す。
 
-    資産と同じ ``pose``/``dims`` を持たせるので :func:`driveworld.world_move` で動かせる。"""
+    資産と同じ ``pose``/``dims`` を持たせるので :func:`driveworld.world_move` で動かせる。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_mesh_object: world is empty — pass a non-empty dict")
     import driveworld
     V = driveworld.place_mesh(np.asarray(mesh["V"], np.float64), float(x), float(y), float(yaw), float(z))
     i = driveworld.world_add(world, V, mesh["F"], int(mesh["label"]), mesh["color"], name=name or "mesh",
@@ -659,7 +679,12 @@ def scatter_offroad(course, bounds, n: int = 60, r_min: float = 4.0, margin: flo
                     max_tries: int = 20000) -> np.ndarray:
     """道の外に物を撒く(dart throwing): 各点はコースから ``margin`` 以上、互いに ``r_min`` 以上離れる。
 
-    返り値 (n', 3) = (x, y, yaw)。``max_tries`` で n に届かなければあるだけ返す(n' ≤ n)。"""
+    返り値 (n', 3) = (x, y, yaw)。``max_tries`` で n に届かなければあるだけ返す(n' ≤ n)。
+
+    空の入力(``course`` が空の dict)は ValueError。
+    """
+    if isinstance(course, dict) and len(course) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("scatter_offroad: course is empty — pass a non-empty dict")
     if n < 0 or r_min <= 0 or margin < 0:
         raise ValueError("bad scatter parameters")
     rng = np.random.default_rng(int(seed))

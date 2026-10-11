@@ -48,6 +48,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``detect_reflection_symmetry`` の内部で使うほか、検出した対称面で欠損側を埋める(鏡像を元の
 点群に連結する)形状補完にも使える。
 
+空の入力(``points`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``reflect_points``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)

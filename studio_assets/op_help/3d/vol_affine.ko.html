@@ -11,6 +11,7 @@
 <p>*matrix* is either a <code style="color:#22d3bf">(3, 3)</code> linear part (with *offset* a separate length-3 translation) or a <code style="color:#22d3bf">(4, 4)</code> homogeneous matrix <code style="color:#22d3bf">[[A, t], [0, 0, 0, 1]]</code> — then <code style="color:#22d3bf">A</code> / <code style="color:#22d3bf">t</code> are taken from the matrix, the bottom row must be exactly <code style="color:#22d3bf">(0, 0, 0, 1)</code>, and *offset* must stay at its zero default (a second translation would be ambiguous). Any other shape raises <code style="color:#22d3bf">ValueError</code>.</p>
 <p>*output_shape* defaults to the input shape; an explicit one is cap-checked against <code style="color:#22d3bf">MAX_VOXELS</code> before allocation. *order* is the spline degree (exact integer 0..5). Voxels whose source coordinate falls outside the input are filled per *mode*/*cval*.</p>
 <p>Returns a float64 volume of *output_shape*.</p>
+<p>Empty input (<code style="color:#22d3bf">vol</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

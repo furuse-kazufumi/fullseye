@@ -15,6 +15,7 @@
 <p>各占用单元的质心(M &lt;= N)。全部落在输入的轴对齐 bounding box 内。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p><code style="color:#22d3bf">voxel_size &lt;= 0</code> 时 ValueError。空输入返回空的 (0,3)(graceful)。质心是单元内点的平均,因此必定落在输入点的凸包(因而也在 bbox)内。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:点云的抽稀、离群点去除和随机丢弃都可能得到空结果。空点云是合法的值,链条的下一级不应因此停下)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

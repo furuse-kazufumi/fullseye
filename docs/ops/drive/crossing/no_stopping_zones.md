@@ -23,6 +23,8 @@ features[i] = {"kind", "start", "end"}(バス停は "at" = 標示板の位置で
 区間 = [start − d, end + d] (d = その号の距離)。バス停は運行時間中(``in_service``)だけ。
 返り値: ``zones`` = [(a, b, kind, 号)] (元の順)、``merged`` = 重なりを併せた (k, 2) の配列(昇順・互いに素)。
 
+空の入力(``features`` が 0 件)は空を返す(理由: 施設が 0 件の道路は普通にあり、禁止区間が無いことが正しい答え)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

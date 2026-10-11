@@ -18,6 +18,7 @@
 <p>推導:X_cam = Z·d(d = K_cam⁻¹[u,v,1])。投影機端的行條件為(K_proj[0] − u_p·K_proj[2])·X_proj = 0。代入 X_proj = rot·X_cam + trans, 對 Z 求解得 Z = −(a·trans) / (a·(rot·d)),a = K_proj[0] − u_p·K_proj[2]。</p>
 <p>Raises:形狀、矩陣不正確,基線為零,相機矩陣奇異時拋出 ValueError。</p>
 <p>來源(公開文獻):基於光線與平面交點的結構光三角測量 — Hartley &amp; Zisserman, *Multiple View Geometry* 2nd ed. §12(射影幾何中的相交)/ Salvi et al., *Pattern Recognition* 43 2010(結構光圖案的分類與解碼)。</p>
+<p>空輸入(<code style="color:#22d3bf">column</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

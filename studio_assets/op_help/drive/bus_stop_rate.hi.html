@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bus_stop_rate(x, *, bus_rear: &#x27;float&#x27;, bus_front: &#x27;float&#x27;, base: &#x27;float&#x27;, peak: &#x27;float&#x27;, spread: &#x27;float&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetraffic; drivetraffic.bus_stop_rate(x, *, bus_rear: &#x27;float&#x27;, bus_front: &#x27;float&#x27;, base: &#x27;float&#x27;, peak: &#x27;float&#x27;, spread: &#x27;float&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;bus_stop_rate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>रुकी हुई bus के आगे और पीछे अधिक होने वाली emergence rate λ(x) = base + peak [exp(−½((x − rear)/spread)²) + exp(−½((x − front)/spread)²)] [घटनाएँ/m]। bus की ओट (आगे के सिरे से आगे) और पीछे से लोग निकलते हैं, इस रूप का उदाहरण (मान caller की मान्यताएँ हैं)। ऊपरी सीमा base + 2·peak है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">x</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -6,6 +6,7 @@
 <p><code style="color:#22d3bf">driveworld.world_camera</code> से world की image लेता है और <code style="color:#22d3bf">actors</code> के impostors को <b>depth से आगे-पीछे की तुलना करके</b> चिपकाता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p><code style="color:#22d3bf">actors</code> = <code style="color:#22d3bf">[{&quot;imp&quot;: humanoid_impostors の返り値, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;distance&quot; (歩いた距離 [m])}, …]</code>。向きの段 = 体から見たカメラの方位を n_yaw 段に丸めたもの、位相 = 歩いた距離を周期で割った余りに最も近い段。大きさ = 実際のカメラの「1 m あたりの画素」/ 事前描画の「1 m あたりの画素」(最近傍で拡大縮小)。返り値は world_camera と同じ鍵。貼った画素は <code style="color:#22d3bf">label</code> = 物体のラベル(7)、<code style="color:#22d3bf">face</code> = −2(三角形が無い)、<code style="color:#22d3bf">shade</code> = 1。加えて <code style="color:#22d3bf">&quot;impostor_pixels&quot;</code>(貼った画素の数)。</p>
+<p>空の入力(<code style="color:#22d3bf">world</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

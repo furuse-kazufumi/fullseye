@@ -22,6 +22,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 最大は縁でなく r ≈ 0.93a(ūr(a) の 1.022 倍)。ūr(a)/δ = 2(1−2ν)/(3π(1−ν))(ν 0.48 で 1.6 %、ν 0.3 で 12 %)—— ほぼ非圧縮のゲルでは
 法線荷重でマーカーはほとんど動かない。**Raises** ValueError: a, p0, G ≤ 0。
 
+空の入力(``r`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

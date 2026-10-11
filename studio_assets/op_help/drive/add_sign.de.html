@@ -6,6 +6,7 @@
 <p>Stellt ein Verkehrszeichen am Straßenrand auf: Pfosten (Zylinder, grau, Label 6) + Tafel (Unterkante = <code style="color:#22d3bf">mount_height</code>, Standard 1.8 m, Label 4).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>規約: <b>yaw の向きへ進んで来る車に板の面が向く</b>(法線 = (−cos yaw, −sin yaw))。実装は <code style="color:#22d3bf">sign_mesh</code>(法線 −x)を <code style="color:#22d3bf">driveworld.place_mesh</code> で回すだけ。板は柱の手前(車の側)に <code style="color:#22d3bf">pole_radius + 1 cm</code> 離して付ける。返り値 = 板の object 索引(<code style="color:#22d3bf">extra = {&quot;kind&quot;, &quot;value&quot;, &quot;width&quot;, &quot;height&quot;, &quot;mount_height&quot;}</code>)。柱は直前の別 object。</p>
+<p>空の入力(<code style="color:#22d3bf">world</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• 점은 행 우선 순서로 늘어서지만, 행·열 정보는 남지 않는다. 격자 구조를 유지하고 싶다면</p>
 <p><code style="color:#22d3bf">depth_to_organized_points</code>.</p>
 <p>후단: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">estimate_point_normals</code> / <code style="color:#22d3bf">icp_point2plane</code>. 역사상은 <code style="color:#22d3bf">project_points</code>, TSDF화는 <code style="color:#22d3bf">tsdf_from_depth</code>.</p>
+<p>빈 입력(<code style="color:#22d3bf">depth</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

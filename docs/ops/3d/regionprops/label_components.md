@@ -43,6 +43,8 @@ n : int
 - 接触している物体は 1 成分に融合する。分離が要るなら前段で ``morph_erode3d`` / ``morph_open3d`` や ``vol_watershed`` で切る。
 - 後段: ``region_props``(計測)、``largest_component`` / ``filter_by_volume``(選別)、``vol_select_labels``(特徴でふるい)、``vol_colorize_labels``(可視化)。
 
+空の入力(``vol`` が 0 要素)は空を返す(理由: 要素の無い体積の連結成分は 0 個が正しい答え)。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [measurement_uncertainty](../../math/guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために

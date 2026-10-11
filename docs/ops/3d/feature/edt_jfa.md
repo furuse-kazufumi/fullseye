@@ -35,6 +35,8 @@ seed が 1 つも無いと全 voxel が 1e6 に飽和する(例外は出ない)�
 用途: ``signed_distance_field``(両側)、``match_chamfer_3d(edt="jfa")``。CPU 版は
 ``scipy.ndimage.distance_transform_edt(~seed)`` と同じ値。
 
+空の入力(``seed_bool`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

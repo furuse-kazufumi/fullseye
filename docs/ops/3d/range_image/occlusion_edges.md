@@ -27,6 +27,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 一様傾斜(深度が近傍で線形)なら二階差分 ≈ 0、fronto-parallel な段差では両側で大きな値。
 これを局所深度で正規化した相対的な深度ジャンプが rel_thresh を超える画素を境界とする。
 
+空の入力(``depth`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [blender_interop](../guides/blender_interop.md) — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)

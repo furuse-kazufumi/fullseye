@@ -30,6 +30,7 @@
 <p>baseline (mean 0.56 voxel) से लगभग 60× सुधार।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grad_scale=32</code> separable sobel3d (derivative [-1,0,1] × smoothing [1,2,1]²) का fixed scale है (linear ramp पर मापा गया 32.0)। इसे सही gradient पर normalise करके Δp का scale ठीक किया जाता है।</p>
 <p style="margin:2px 0 2px 12px">• H में छोटा Levenberg regularisation जोड़ा जाता है, ताकि कम gradient वाले flat template पर numerical breakdown न हो।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">scene</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

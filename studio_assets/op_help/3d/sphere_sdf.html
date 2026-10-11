@@ -13,6 +13,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">R</code>: <code style="color:#22d3bf">float()</code> できるスカラ。回転行列などを渡した場合も <code style="color:#22d3bf">ValueError</code> (この引数は半径であって姿勢ではない)。<code style="color:#22d3bf">R &lt; 0</code> は拒否、<code style="color:#22d3bf">R = 0</code> は中心からの距離場そのもの。</p>
 <p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64(<code style="color:#22d3bf">grid_coords</code> の出力なら <code style="color:#22d3bf">(nx, ny, nz)</code>)。中心で <code style="color:#22d3bf">-R</code>、表面で 0、外側で正。</p>
 <p>使いどころ: <code style="color:#22d3bf">grid_coords</code> で格子 → <code style="color:#22d3bf">sphere_sdf</code> / <code style="color:#22d3bf">box_sdf</code> → <code style="color:#22d3bf">sdf_union</code> / <code style="color:#22d3bf">sdf_subtract</code> で CSG → <code style="color:#22d3bf">&lt;= 0</code> を占有として marching cubes(<code style="color:#22d3bf">voxel_to_mesh</code> に <code style="color:#22d3bf">-sdf</code> を渡し <code style="color:#22d3bf">iso=0</code> 相当で等値面)。</p>
+<p>空の入力(<code style="color:#22d3bf">grid</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

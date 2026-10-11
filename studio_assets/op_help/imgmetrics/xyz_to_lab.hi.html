@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• return value: input जैसे ही shape का float64। <code style="color:#22d3bf">L</code> सफ़ेद पर 100 और काले पर 0। <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> signed हैं।</p>
 <p style="margin:2px 0 2px 12px">• विफलता (<code style="color:#22d3bf">MetricContractError</code>): आख़िरी axis 3 नहीं / <code style="color:#22d3bf">white</code> में 3 तत्व नहीं, या उसमें 0 या उससे कम मान है। XYZ की value range जाँची नहीं जाती (ऋणात्मक या 1 से अधिक मान भी वैसे ही गणना में जाते हैं)।</p>
 <p><code style="color:#22d3bf">delta_e_76</code> / <code style="color:#22d3bf">delta_e_2000</code> इसी Lab को input लेते हैं।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">xyz</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

@@ -22,6 +22,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``exposure`` > 0 なら露光の間 [t, t+exposure] にパックが v·exposure 動く分を n_sub 個の副露光の平均で入れる(モーションブラー)。
 コマの時刻は **露光の始め**: ブラーした像の重心は v·exposure/2 だけ進む(閉形式、門)。``noise`` はガウス雑音の σ。
 
+空の入力(``cam`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

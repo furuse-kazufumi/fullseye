@@ -37,6 +37,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 長くして端面の縁を残さない)。ボス・ピン・シャフトは ``sdf_union``。無限長の円柱が
 要るなら ``height`` を十分大きく取る(端面が評価域の外に出れば側面だけが効く)。
 
+空の入力(``grid`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

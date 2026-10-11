@@ -26,6 +26,7 @@
 <p>Geglättete Punktwolke (Reihenfolge und Punktzahl bleiben erhalten). Punkte mit weniger Nachbarn als Polynomtermen bleiben an Ort und Stelle.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>Es ist ein Näherungsverfahren. Punkte mit weniger Nachbarn als Termen / mit entarteter lokaler Ebene werden nicht bewegt und behalten ihre ursprüngliche Position (eine Sicherheitsmaßnahme, damit es an Löchern und Rändern nicht ausufert). <code style="color:#22d3bf">radius &lt;= 0</code> führt zu ValueError, leere Eingabe ergibt Leeres.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) liefert ein leeres Ergebnis (Grund: Ausdünnen, Ausreißerentfernung und Dropout können keine Punkte übrig lassen; eine leere Wolke ist ein gültiger Wert, und die nächste Stufe einer Kette darf daran nicht anhalten).</p>
 <p>Die in die 2-D-Evolutionsregistrierung überbrückte 3d-op <code style="color:#22d3bf">mls_smooth</code>. Die Implementierung ist dieselbe, nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. <code style="color:#22d3bf">a</code> variiert <code style="color:#22d3bf">order</code> (Standard 2). <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

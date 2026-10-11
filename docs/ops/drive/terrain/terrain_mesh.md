@@ -21,6 +21,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ``{"V", "F", "face_label" (0 = 道の内側、10 = 地形), "face_color"}``。面のラベルは重心の内外判定。
 
+空の入力(``p`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

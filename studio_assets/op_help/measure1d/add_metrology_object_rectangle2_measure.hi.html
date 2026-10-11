@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: कुल samples की अनुमानित संख्या (default 40 → हर भुजा पर 10 points)। 4 से कम होने पर भी हर भुजा पर 2 points रखे जाते हैं।</p>
 <p style="margin:2px 0 2px 12px">• arguments validate नहीं होते। return value जोड़ी गई position का index है (0 से शुरू)।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">apply</code> परिणाम का <code style="color:#22d3bf">params</code> <code style="color:#22d3bf">row / col / phi / l1 / l2</code> है, और फिर से fit करने के बाद <b>इन्हें <code style="color:#22d3bf">l1 &gt;= l2</code> (लंबी भुजा <code style="color:#22d3bf">l1</code>) के क्रम में फिर से रखा जाता है</b> -- reference में <code style="color:#22d3bf">l1 &lt; l2</code> देने पर भी परिणाम का <code style="color:#22d3bf">phi</code> लंबी भुजा की दिशा होता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">model</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

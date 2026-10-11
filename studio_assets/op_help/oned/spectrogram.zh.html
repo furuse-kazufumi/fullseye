@@ -12,6 +12,7 @@
 <p>amp = S * (2.0 / w.sum())        # bins 1 .. win/2-1; DC / Nyquist: 1/w.sum()</p>
 <p>Measured on a unit sine at a bin centre (<code style="color:#22d3bf">rate = 16000</code> Hz, 1000 Hz, amplitude exactly 1.0, <code style="color:#22d3bf">win = 256</code>): the raw column peak is <code style="color:#22d3bf">63.7497786196906</code>; <code style="color:#22d3bf">* 2/win</code> gives <code style="color:#22d3bf">0.49804514546633283</code> (too small by exactly the Hann coherent gain <code style="color:#22d3bf">sum(w)/win = 0.498046875</code>), while <code style="color:#22d3bf">* 2/sum(w)</code> gives <code style="color:#22d3bf">0.9999965273676957</code>. Only the second one is the amplitude that was actually in the signal.</p>
 <p>Peak *positions*, frame-to-frame ratios and any dB *difference* are unaffected by either factor. This function returns magnitudes only — the phase is discarded, so it cannot be inverted; use <code style="color:#22d3bf">acoustics.stft</code> / <code style="color:#22d3bf">acoustics.istft</code> for a round-trip.</p>
+<p>Empty input (<code style="color:#22d3bf">x</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

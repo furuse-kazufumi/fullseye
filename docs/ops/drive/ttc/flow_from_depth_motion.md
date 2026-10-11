@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 カメラの背後へ行く点や深度の無い画素は ``valid = False``(u, v は NaN)。``depth1`` は動かした後の深度。
 光学流の推定器の採点に使う真値(推定器と同じ規約: (x, y) → (x + u, y + v))。
 
+空の入力(``depth`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

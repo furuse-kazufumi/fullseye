@@ -216,7 +216,12 @@ def occupancy_grid(points, bounds, res):
     clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float)
     を作るのに対し、これは planning 用の占有(bool)を作る点が固有。
 
-    Raises ValueError for res<=0, non-(N,3) points, or degenerate bounds."""
+    Raises ValueError for res<=0, non-(N,3) points, or degenerate bounds.
+
+    空の入力(``points`` が 0 要素)は ValueError。
+    """
+    if (len(points) if isinstance(points, (list, tuple)) else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("occupancy_grid: points is empty — pass at least one element")
     P = np.asarray(points, np.float64)
     if P.ndim != 2 or P.shape[1] != 3:
         raise ValueError("points must be (N, 3)")
@@ -270,7 +275,12 @@ def esdf(occupancy, voxel_size=1.0):
     なら -inf(honest: 最近対辺が存在しない)。ゼロ交差は占有/自由ボクセル**中心の中間**に
     落ちるため、境界セル中心の |ESDF| は約 1 ボクセル(下流テストの許容根拠)。
 
-    Raises ValueError for voxel_size<=0."""
+    Raises ValueError for voxel_size<=0.
+
+    空の入力(``occupancy`` が 0 要素)は ValueError。
+    """
+    if (len(occupancy) if isinstance(occupancy, (list, tuple)) else np.asarray(occupancy).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("esdf: occupancy is empty — pass at least one element")
     occ = np.asarray(occupancy, bool)
     samp = _sampling(voxel_size)
     if not occ.any():                           # 障害物なし → 最近占有は無限遠
@@ -292,7 +302,12 @@ def inflate(occupancy, radius, voxel_size=1.0):
 
     Raises ValueError for radius<0 or voxel_size<=0 (both validated up-front, before
     the radius==0 / empty-occupancy short-circuit — otherwise an invalid voxel_size
-    slips through unchecked when esdf is never reached)."""
+    slips through unchecked when esdf is never reached).
+
+    空の入力(``occupancy`` が 0 要素)は ValueError。
+    """
+    if (len(occupancy) if isinstance(occupancy, (list, tuple)) else np.asarray(occupancy).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("inflate: occupancy is empty — pass at least one element")
     occ = np.asarray(occupancy, bool)
     _sampling(voxel_size)                        # fail-closed on voxel_size<=0 before any short-circuit
     r = float(radius)

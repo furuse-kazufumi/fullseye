@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> 长度为 N。总和为 0 时除以 0 得 NaN(不抛异常)。点数为 0 会失败(没有验证)。</p>
 <p style="margin:2px 0 2px 12px">• 主轴退化(球等)时轴的方向不确定。</p>
 <p>后段:<code style="color:#22d3bf">match_pca</code>、<code style="color:#22d3bf">obb</code>(有向 bbox)、旋转到规范位姿。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

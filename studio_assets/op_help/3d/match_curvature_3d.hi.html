@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• अगर template का curvature field पूरा 0 है (flat, या <code style="color:#22d3bf">mc</code> बहुत ऊँचा), तो <code style="color:#22d3bf">[0,0,0,0]</code> लौटाता है।</p>
 <p style="margin:2px 0 2px 12px">• Curvature 2nd-order derivative है, इसलिए noise के प्रति संवेदनशील है। noisy volume को पहले <code style="color:#22d3bf">points_to_voxel</code> के</p>
 <p><code style="color:#22d3bf">smooth</code> आदि से smooth करें। <code style="color:#22d3bf">subvoxel=True</code> पर NCC peak के ±2 neighbourhood के centroid तक refine होता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">scene</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

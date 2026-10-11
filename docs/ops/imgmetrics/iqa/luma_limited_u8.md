@@ -28,6 +28,8 @@ full range だと PSNR −1.3 dB・SSIM 最大 0.05 ずれ、丸めないと PSN
 半切り上げでも float32 でも揃わない)。PSNR が 60 dB を超える領域だけの話で、それ以外の 2,995 組は 0.0005 dB 以内。
 **Raises** ``ValueError``: 形が (H, W, 3) でない、dtype が uint8 でない。
 
+空の入力(``rgb`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

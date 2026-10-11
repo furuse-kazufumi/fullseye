@@ -26,6 +26,8 @@ atan2(Δrow, Δcol)), "offset" (距離 / ball_radius: 0 = 正面、→ 1 = 縁),
 正面から見た穴の中心は玉の中心と重なり、横へ回るほど縁へ寄って潰れる(offset ≈ sin φ、ellipticity ≈ cos φ、φ = 穴の軸と視線の角)。
 img (H, W, 3)、ball_radius > 0 でなければ ValueError。
 
+空の入力(``img`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

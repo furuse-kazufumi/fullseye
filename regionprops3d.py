@@ -149,6 +149,8 @@ def label_components(vol, connectivity: int = 26):
     - Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
     - 接触している物体は 1 成分に融合する。分離が要るなら前段で ``morph_erode3d`` / ``morph_open3d`` や ``vol_watershed`` で切る。
     - 後段: ``region_props``(計測)、``largest_component`` / ``filter_by_volume``(選別)、``vol_select_labels``(特徴でふるい)、``vol_colorize_labels``(可視化)。
+
+    空の入力(``vol`` が 0 要素)は空を返す(理由: 要素の無い体積の連結成分は 0 個が正しい答え)。
     """
     arr = _as_binary_3d(vol)
     struct = _structure(connectivity)
@@ -191,6 +193,8 @@ def region_props(vol, connectivity: int = 26) -> list[dict]:
     - ``surface_area`` は配列端に接する面も数える(ゼロ padding)。``sphericity`` は離散化のため球でも約 0.66 が上限(モジュール docstring 参照)。
     - ラベルは 1..n の順(``label_components`` と同じ scipy の走査順)で、体積順ではない。並べ替えは呼び手で行う。
     - 入力は 0 以外を前景として bool 化する(NaN も前景)。Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
+
+    空の入力(``vol`` が 0 要素)は空を返す(理由: 要素の無い体積の連結成分は 0 個が正しい答え)。
     """
     arr = _as_binary_3d(vol)
     if arr.size == 0 or not arr.any():
@@ -260,7 +264,11 @@ def largest_component(vol, connectivity: int = 26) -> np.ndarray:
     - 返り値は入力と同形状の bool。前景が無ければ全 False(例外にはしない)。
     - Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
     - 典型: 閾値処理で出た二値ボリュームからノイズ塊を捨てて主対象だけ残す。複数を残したいなら ``filter_by_volume``、特徴で選ぶなら ``vol_select_labels``。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("largest_component: vol is empty — pass at least one element")
     arr = _as_binary_3d(vol)
     labels, n = label_components(arr, connectivity=connectivity)
     if n == 0:
@@ -295,7 +303,11 @@ def filter_by_volume(vol, min_voxels: int, connectivity: int = 26) -> np.ndarray
     - 入力は 0 以外を前景として bool 化する(NaN も前景)。軸順 (z, y, x)。
     - Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
     - ボクセル数はスペーシング未補正なので、実寸で閾値を切るなら voxel 体積で割ってから渡す。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("filter_by_volume: vol is empty — pass at least one element")
     arr = _as_binary_3d(vol)
     labels, n = label_components(arr, connectivity=connectivity)
     if n == 0:

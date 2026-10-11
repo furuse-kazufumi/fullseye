@@ -211,7 +211,11 @@ def blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -> np.ndarray:
 
     返り値: 摂動後の単位法線マップ。方向統計を持たないので、ハイライトは
     伸びずに**広がる** ―― これがヘアラインとの見分けどころ。
+
+    空の入力(``normals`` が 0 要素)は ValueError。
     """
+    if (len(normals) if isinstance(normals, (list, tuple)) else np.asarray(normals).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("blast_normals: normals is empty — pass at least one element")
     op = "blast_normals"
     N, mask = matappear._normal_map(normals, op)
     g = float(grain)

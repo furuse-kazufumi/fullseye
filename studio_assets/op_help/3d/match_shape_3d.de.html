@@ -14,6 +14,7 @@
 <p>liegt. Positionen, an denen das Template nicht vollständig hineinpasst, werden auf 0 gesetzt; ist das Template größer als die Szene, bleibt alles 0 und index (0,0,0) wird zurückgegeben (keine Ausnahme).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subvoxel=True</code> verfeinert auf den Schwerpunkt der positiven Scores in der ±2-Nachbarschaft des argmax (<code style="color:#22d3bf">accel_match._subvoxel_com</code>).</p>
 <p>Nachfolgend: <code style="color:#22d3bf">refine_translation_lk</code> (corner-Konvention, daher T//2 abziehen) / <code style="color:#22d3bf">refine_lm</code>. Nicht invariant gegenüber Rotation (Rotation zuerst mit <code style="color:#22d3bf">match_logpolar_z</code> angleichen).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">vol</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

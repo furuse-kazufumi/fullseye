@@ -59,6 +59,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 形を作る。角を丸めるだけなら ``sdf_smooth_union`` のほうが手軽だが、あちらは丸みの
 半径が形状に依存する —— **半径を設計値として持ちたいときはこちら**。
 
+空の入力(``grid`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``torus_sdf``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)

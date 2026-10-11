@@ -32,6 +32,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 RMS level. Scalar for the whole signal, or a framewise array when *frame*
 is given (a vibration/energy envelope over time).
 
+Empty input (``x`` with 0 elements) raises ``ValueError``.
+
 Typed bridge of the 1d op ``rms`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)

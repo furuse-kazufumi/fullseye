@@ -11,6 +11,7 @@
 <p><b>Applicability.</b> (1) The foreground comes from a single threshold, so beam hardening or a brightness gradient biases the thickness across the volume — flatten first.  (2) With anisotropic voxels the ball is a ball in millimetres, not in voxels, so *spacing* is not cosmetic.  (3) A feature three voxels across is quantised at better than 30% only if you say so:</p>
 <p>report the voxel size next to any thickness number.</p>
 <p>Returns a <code style="color:#22d3bf">(D, H, W)</code> float64 volume, 0 on the background.</p>
+<p>Empty input (<code style="color:#22d3bf">vol_binary</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

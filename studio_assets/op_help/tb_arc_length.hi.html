@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• N=1 पर <code style="color:#22d3bf">cumulative=[0.0]</code> और <code style="color:#22d3bf">total=0.0</code>। closed curve में भी end → start वाला segment नहीं गिना जाता (बंद करना हो तो पहले point को अंत में duplicate करके दें)।</p>
 <p style="margin:2px 0 2px 12px">• duplicate points (distance 0 वाले segments) 0 के रूप में ही जुड़ते हैं, इसलिए <code style="color:#22d3bf">cumulative</code> monotonically non-decreasing है पर strictly increasing नहीं।</p>
 <p><code style="color:#22d3bf">resample_uniform</code> इसी cumulative arc length को parameter बनाकर linear interpolation करता है। curvature के arc-length integral जैसे कामों में <code style="color:#22d3bf">curvature_torsion</code> के साथ जोड़ते समय ds इन्हीं differences से लिया जाता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">curve</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">arc_length</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। इस op में कोई tuning point नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

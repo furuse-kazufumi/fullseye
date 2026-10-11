@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 道路網の内訳の表: 種別ごとの辺数・延長・平均幅、幅の由来の内訳、特徴のある節点の数。
 
+空の入力(``graph`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

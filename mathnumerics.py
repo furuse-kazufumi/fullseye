@@ -44,13 +44,22 @@ def erf(x) -> np.ndarray:
 
     正規分布の累積や、ぼけたエッジ(ガウスで畳んだ段差)の形そのもの: 幅 σ のガウスでぼけた段差は
     ½(1 + erf(x / (σ√2)))。門: 奇関数、erf(∞) = 1、導関数 = (2/√π) e^{−x²}、Gauss 求積による積分と一致。
+
+    空の入力(``x`` が 0 要素)は ValueError。
     """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("erf: x is empty — pass at least one element")
     return special.erf(_real(x, "erf"))
 
 
 def erfc(x) -> np.ndarray:
     """相補誤差関数 erfc(x) = 1 − erf(x)。大きな x で 1 − erf を引き算すると桁落ちするので別に持つ
-    (x = 10 で 1 − erf は 0 になるが erfc は 2.1e−45)。"""
+    (x = 10 で 1 − erf は 0 になるが erfc は 2.1e−45)。
+
+    空の入力(``x`` が 0 要素)は ValueError。
+    """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("erfc: x is empty — pass at least one element")
     return special.erfc(_real(x, "erfc"))
 
 
@@ -60,7 +69,11 @@ def bessel(x, order: float = 0, kind: str = "j") -> np.ndarray:
     円い膜の振動・円い開口の回折(Airy = J₁)・円筒の熱伝導に出る。門: Wronskian
     J_{ν+1}(x)Y_ν(x) − J_ν(x)Y_{ν+1}(x) = 2/(πx)、漸化式 J_{ν−1} + J_{ν+1} = (2ν/x) J_ν。
     Y と K は x > 0 のみ(原点で発散する)。
+
+    空の入力(``x`` が 0 要素)は ValueError。
     """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("bessel: x is empty — pass at least one element")
     x = _real(x, "bessel")
     fn = {"j": special.jv, "y": special.yv, "i": special.iv, "k": special.kv}.get(kind)
     if fn is None:

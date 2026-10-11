@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• type validate नहीं होता। <code style="color:#22d3bf">add_metrology_object_generic</code> से जमा किए गए अज्ञात type को <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> को row/col मानकर खिसकाया जाता है।</p>
 <p style="margin:2px 0 2px 12px">• return value: <code style="color:#22d3bf">{&quot;objects&quot;: [...]}</code> (<code style="color:#22d3bf">metrologymodel</code> type)।</p>
 <p>सामान्य उदाहरण: shape matching या reference mark detection से मिला position का खिसकाव यहाँ model पर लागू करके <code style="color:#22d3bf">apply_metrology_model</code> चलाएँ। झुके हुए workpiece पर इस्तेमाल नहीं हो सकता (reference shape का normal असली normal से हट जाता है और खोज की आधी चौड़ाई <code style="color:#22d3bf">measure_length</code> से बाहर चला जाता है)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">model</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

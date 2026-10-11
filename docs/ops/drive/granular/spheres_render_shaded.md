@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 横からの正射影を陰影つきで描く(numpy の z バッファ、Lambert)。GIF 用。返り ``(rows, cols, 3)`` [0, 1]。
 
+空の入力(``pos`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

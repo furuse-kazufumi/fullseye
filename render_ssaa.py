@@ -105,7 +105,12 @@ def antialias(hi_res_image, ss, filter: str = "box") -> np.ndarray:
       * ``"gauss"`` — ブロック中心を重く見るガウス重み(σ = ss/2、僅かに柔らかい)。
 
     Fail-closed: ``ss`` は 1 以上の整数、入力は 2D / 3D、各辺は ``ss`` で割り切れること。
-    非有限値があれば ``ValueError``(平均で NaN が伝播しないよう確保前に拒否)。"""
+    非有限値があれば ``ValueError``(平均で NaN が伝播しないよう確保前に拒否)。
+
+    空の入力(``hi_res_image`` が 0 要素)は ValueError。
+    """
+    if (len(hi_res_image) if isinstance(hi_res_image, (list, tuple)) else np.asarray(hi_res_image).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("antialias: hi_res_image is empty — pass at least one element")
     s = _check_ss(ss)
     a = np.asarray(hi_res_image, np.float64)
     if a.ndim not in (2, 3):
@@ -205,7 +210,12 @@ def edge_alias_energy(img) -> float:
     減衰させ、ラプラシアンはそれを増幅するので、平滑化されたエッジほど本量は小さい)。
 
     平坦な内部・背景はラプラシアン ≈ 0 で寄与しないため、実質エッジ帯の量になる。カラー画像は
-    チャンネル平均。同一形状・同一コントラストの画像どうしを比較するための相対指標。"""
+    チャンネル平均。同一形状・同一コントラストの画像どうしを比較するための相対指標。
+
+    空の入力(``img`` が 0 要素)は ValueError。
+    """
+    if (len(img) if isinstance(img, (list, tuple)) else np.asarray(img).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("edge_alias_energy: img is empty — pass at least one element")
     from scipy.ndimage import laplace
 
     a = np.asarray(img, np.float64)

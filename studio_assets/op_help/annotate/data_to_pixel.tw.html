@@ -16,6 +16,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p><b>拒絕長度不一致是 2026-09-02 加上的</b>。鏈式模糊測試器(fuzzer)剛能執行這個 op 之後, 在傳入 2 個長度不同的 signal 的路徑上,挖掘器因 <code style="color:#22d3bf">np.stack</code> 的原始 ValueError 崩潰,由此暴露。在那之前,即使 <code style="color:#22d3bf">x</code> 7 個點、<code style="color:#22d3bf">y</code> 3 個點,也<b>不拋出例外,把長度不同的 2 個陣列原樣回傳</b>。</p>
 <p>危險的不是崩潰,而是不崩潰 —— 把回傳的 2 個陣列 <code style="color:#22d3bf">zip</code> 後, <b>只有 3 個點被畫在 x 的前 3 個位置上</b>。點消失了也好,x 錯位了也好,都無法從圖上看出來。同族的 <code style="color:#22d3bf">plot_series</code> 對同樣的情況以 <code style="color:#22d3bf">&quot;x and y must have the same length&quot;</code> 拒絕,所以<b>在同一族內紀律出現了分裂</b>(這是只修一邊就會再發的類型,所以措辭也統一了)。</p>
+<p>空輸入(<code style="color:#22d3bf">axes</code> 為空 dict)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

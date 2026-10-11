@@ -33,6 +33,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 使いどころ: 工具の到達性を「工具の掃引体積が部品と交わらないか」で見るとき、工具を
 カプセルで置いて ``sdf_intersect`` の最小値が正かを見る。骨梁・血管・繊維の合成にも。
 
+空の入力(``grid`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

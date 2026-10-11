@@ -59,6 +59,8 @@ by either factor. This function returns magnitudes only — the phase is
 discarded, so it cannot be inverted; use ``acoustics.stft`` / ``acoustics.istft``
 for a round-trip.
 
+Empty input (``x`` with 0 elements) raises ``ValueError``.
+
 Typed bridge of the 1d op ``spectrogram`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``rate`` (default 1) and ``b`` drives ``win`` (default 256).
 
 ## 参考(サンプルデータ・文献)

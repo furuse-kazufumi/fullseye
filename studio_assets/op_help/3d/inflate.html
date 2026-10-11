@@ -6,6 +6,7 @@
 <p>障害物を <code style="color:#22d3bf">radius</code>(world 単位)膨張した占有格子 bool(= ESDF&lt;=radius を占有)。</p>
 <p>planner の安全マージン: 点ロボットが膨張格子上で衝突回避すれば、半径 radius の実ロボットが障害物から離隔を保つ(configuration-space obstacle)。ESDF は外で正の最近占有距離なので、<code style="color:#22d3bf">ESDF&lt;=radius</code> は「占有(負)∪ 障害物から radius 以内の自由」を捕らえる。radius を増やすと単調に占有が増える(下流テストの GT)。</p>
 <p>Raises ValueError for radius&lt;0 or voxel_size&lt;=0 (both validated up-front, before the radius==0 / empty-occupancy short-circuit — otherwise an invalid voxel_size slips through unchecked when esdf is never reached).</p>
+<p>空の入力(<code style="color:#22d3bf">occupancy</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

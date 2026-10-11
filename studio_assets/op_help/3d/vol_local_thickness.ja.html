@@ -11,6 +11,7 @@
 <p><b>Applicability.</b> (1) The foreground comes from a single threshold, so beam hardening or a brightness gradient biases the thickness across the volume — flatten first.  (2) With anisotropic voxels the ball is a ball in millimetres, not in voxels, so *spacing* is not cosmetic.  (3) A feature three voxels across is quantised at better than 30% only if you say so:</p>
 <p>report the voxel size next to any thickness number.</p>
 <p>Returns a <code style="color:#22d3bf">(D, H, W)</code> float64 volume, 0 on the background.</p>
+<p>Empty input (<code style="color:#22d3bf">vol_binary</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

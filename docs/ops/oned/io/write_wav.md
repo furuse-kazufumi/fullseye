@@ -23,6 +23,8 @@ Non-finite samples raise (they would become garbage PCM).
 Returns the path written (``str``) -- the ledger declares this op's output as the
 ``file`` sort, which ``read_wav`` / ``read_audio`` consume (it used to return ``None``).
 
+Empty input (``path`` an empty string) raises ``ValueError``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

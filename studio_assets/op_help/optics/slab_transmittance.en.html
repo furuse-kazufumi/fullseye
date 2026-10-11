@@ -7,6 +7,7 @@
 <p>cos_i / n1 / n2 / thickness_mm / sigma_per_mm are the same as above.</p>
 <p>Returns: total transmittance T. The formula is T = (1−R)²·a / (1 − R²·a²), a = internal transmittance (using the oblique path inside the slab L = d/cosθ_t). The sum of the infinite series = a form that does not miss any multiple reflections.</p>
 <p>Cross-check: an air→BK7 (n=1.5) slab with absorption 0 at normal incidence gives T = 0.9231 (= the well-known value 2n/(n²+1)). Raising σ makes it decrease monotonically, and beyond the critical angle (from inside the slab) it is 0.</p>
+<p>Empty input (<code style="color:#22d3bf">cos_i</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

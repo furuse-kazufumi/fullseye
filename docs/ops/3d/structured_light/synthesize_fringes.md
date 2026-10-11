@@ -37,6 +37,8 @@ return_phase: True なら (images, total_phase) を返す(テスト・デバッ�
 
 返り値: (N, H, W) float 配列(値域 [0,1] にクリップ)。return_phase=True なら位相も。
 
+空の入力(``height`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

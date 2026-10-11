@@ -28,6 +28,8 @@ Inigo Quilez の box SDF: ``q = |p-center| - half_extents`` とし、
 
 半辺長が 1 つでも負、または形の不正な grid / center / half_extents は ``ValueError``。
 
+空の入力(``grid`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

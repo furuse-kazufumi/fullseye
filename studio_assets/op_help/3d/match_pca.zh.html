@@ -6,6 +6,7 @@
 <p>PCA 位姿匹配(结构=point cloud × 方法=主轴对齐)。</p>
 <p>返回使两点云主轴对齐的粗略刚体变换(旋转 R + 平移 t)。在这里承担 NCC/相位相关无法处理的 <b>旋转</b>(符号的 4 种歧义通过最小二乘消解。该残差是假定两点云的点按相同顺序对应的粗略标准 — 对无对应关系的实测点云,请在后段用 ICP 等精细化)。返回值 (R(3,3), t(3,))。</p>
 <p>返回值的含义:<code style="color:#22d3bf">pts_scene ≈ (R @ pts_model.T).T + t</code>(<code style="color:#22d3bf">t = c_scene − R·c_model</code>)。R 必定是 <code style="color:#22d3bf">det=+1</code> 的旋转(不产生反射)。残差按 index 顺序对应点来测量,因此对无对应关系的点云,4 个候选的选择不可靠(此时将其作为 <code style="color:#22d3bf">init_R/init_t</code> 传给 <code style="color:#22d3bf">icp_point2point_3d</code> 进行精细化)。主轴退化(球、圆柱等特征值相等)的点云,轴不确定, 结果不稳定。两点云的点数可以不同。输入为 (N,3)(验证交给 <code style="color:#22d3bf">moment_axes</code>,本身没有)。</p>
+<p>空输入(<code style="color:#22d3bf">pts_scene</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

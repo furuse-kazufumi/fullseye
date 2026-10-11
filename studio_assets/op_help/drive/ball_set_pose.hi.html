@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ball_set_pose(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, p, R) -&gt; &#x27;None&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ballworld; ballworld.ball_set_pose(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, p, R) -&gt; &#x27;None&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ball_set_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>गेंद i का pose (p, R) करता है (केवल vertices बदलता है)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">world</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -41,6 +41,8 @@ fibonacci 球で一様。方向が粗いほど回転に寛容だが偽ピーク�
 - テンプレにエッジが無ければ全 0 の ``(topk,4)``。テンプレが完全に収まらない位置は 0。
 後段: 各ピークを ``refine_translation_lk`` / ``refine_peak_newton`` で精緻化。
 
+空の入力(``scene`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

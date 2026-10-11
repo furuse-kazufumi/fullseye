@@ -7,6 +7,7 @@
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p><code style="color:#22d3bf">kind=&quot;bang&quot;</code>: 加速 a = 4·lift/T² を T/2、減速 −a を T/2(速度三角形)。<code style="color:#22d3bf">kind=&quot;trap&quot;</code>: 加速・等速・減速を T/3 ずつ(速度台形、a = 9·lift/(2T²))。玉が昇るには減速の加速度が g を超える必要がある(<code style="color:#22d3bf">swing_up_apex</code> が閉形式で答える)。既定 lift = 0.265 m、T = 0.15 s(a = 47 m/s² ≈ 4.8 g、手元の最高速 3.5 m/s)で玉の頂点は大皿の縁の 4.9 cm 上(ひもの有効長 0.42 m、大皿の縁は手元の 35 mm 上: <code style="color:#22d3bf">swing_up_apex</code>)。</p>
 <p><code style="color:#22d3bf">dodge</code> (3,)(水平): 減速に入って玉が離れた後(bang: T/2 → T、trap: 2T/3 → T)に手元を横へ <code style="color:#22d3bf">dodge</code> だけ逃がす(S 字の bang-bang)。玉は皿胴の糸穴の真下から真っ直ぐ昇るので、逃がさないと皿胴・小皿を突き抜ける(物理は玉とけん玉の衝突を解かない —— <code style="color:#22d3bf">kendamaworld.kendama_clearance</code> で数える)。逃がした分は <code style="color:#22d3bf">catch_plan_ballistic</code> の <code style="color:#22d3bf">clearance</code> が玉が大皿の縁より上に出てから戻す。</p>
+<p>空の入力(<code style="color:#22d3bf">kp</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

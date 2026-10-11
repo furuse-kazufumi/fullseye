@@ -23,6 +23,7 @@
 <p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>:非 3 維輸入,<code style="color:#22d3bf">connectivity</code> 不是 6/18/26。</p>
 <p style="margin:2px 0 2px 12px">• 相互接觸的物體會融合為 1 個元件。需要分離時在前級用 <code style="color:#22d3bf">morph_erode3d</code> / <code style="color:#22d3bf">morph_open3d</code> 或 <code style="color:#22d3bf">vol_watershed</code> 切開。</p>
 <p style="margin:2px 0 2px 12px">• 後級:<code style="color:#22d3bf">region_props</code>(量測)、<code style="color:#22d3bf">largest_component</code> / <code style="color:#22d3bf">filter_by_volume</code>(篩選)、<code style="color:#22d3bf">vol_select_labels</code>(依特徵篩選)、<code style="color:#22d3bf">vol_colorize_labels</code>(視覺化)。</p>
+<p>空輸入(<code style="color:#22d3bf">vol</code> 為 0 個元素)回傳空結果(理由:沒有體素的體積,連通分量為 0 個就是正確答案)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 量測不確定度與校正知識 —— 為了能主張「量得準」</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -22,6 +22,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 (k_p p / v)[c √(b² + ω²c²) + (b²/ω) asinh(ωc/|b|)] (c = √(a² − y²)、b = v − ωy)。|y| ≥ a は 0。
 **Raises** ValueError: 数の検査、回る時に速さが無い、Hertz で回す(閉形式が無い)。
 
+空の入力(``y`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

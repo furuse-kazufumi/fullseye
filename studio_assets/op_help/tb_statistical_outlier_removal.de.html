@@ -29,6 +29,7 @@
 <p>Ob jeder Eingabepunkt behalten wird (True = behalten). <code style="color:#22d3bf">points[keep_mask]</code> ist gleich <code style="color:#22d3bf">filtered</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>Bei Punktzahl &lt; 3 lässt sich keine Statistik bilden, daher werden alle Punkte behalten (graceful).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) liefert ein leeres Ergebnis (Grund: Ausdünnen, Ausreißerentfernung und Dropout können keine Punkte übrig lassen; eine leere Wolke ist ein gültiger Wert, und die nächste Stufe einer Kette darf daran nicht anhalten).</p>
 <p>Die in die 2-D-Evolutionsregistrierung überbrückte 3d-op <code style="color:#22d3bf">statistical_outlier_removal</code>. Die Implementierung ist dieselbe, nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. <code style="color:#22d3bf">a</code> variiert <code style="color:#22d3bf">k</code> (Standard 16), <code style="color:#22d3bf">b</code> variiert <code style="color:#22d3bf">std_ratio</code> (Standard 2).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

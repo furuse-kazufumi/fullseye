@@ -24,6 +24,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 路面の色に混ぜる(ラベルは不変、真値 "wear" に残る)。水溜りの写り込みの強さ(0.1〜0.9、Perlin 1.5 周期/m)は真値 "refl"。
 返り値 = ``{"color", "label", "puddle", "refl", "stain", "wear", "xyz"}``。
 
+空の入力(``world`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

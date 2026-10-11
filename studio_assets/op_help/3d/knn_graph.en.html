@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: number of neighbours (default 8). Values above <code style="color:#22d3bf">N-1</code> are silently truncated to <code style="color:#22d3bf">N-1</code>.</p>
 <p style="margin:2px 0 2px 12px">• When N &lt; 2, no exception is raised; returns 2 empty arrays of shape (N,0).</p>
 <p>Pitfall: with duplicate coordinates the KD-tree may not return the point itself in column 0. In that case the position of the point itself is searched per row and removed, and if the point itself is not among the k+1, the farthest 1 is dropped (the result is still k). <code style="color:#22d3bf">geodesic_distances</code> / <code style="color:#22d3bf">farthest_point_sampling</code> turn this result into an adjacency matrix (directed CSR, made undirected on the Dijkstra side) and use it to approximate geodesic distance.</p>
+<p>Empty input (<code style="color:#22d3bf">points</code> with 0 elements) returns an empty result (reason: the neighbour graph of fewer than 2 points is empty by definition).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

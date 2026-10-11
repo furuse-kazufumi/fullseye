@@ -29,6 +29,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_area</code> array के किनारे से लगे faces भी गिनता है (zero padding)। discretisation के कारण <code style="color:#22d3bf">sphericity</code> sphere के लिए भी लगभग 0.66 पर सीमित रहती है (module docstring देखें)।</p>
 <p style="margin:2px 0 2px 12px">• labels 1..n के क्रम में हैं (<code style="color:#22d3bf">label_components</code> जैसा ही scipy scan क्रम), volume के क्रम में नहीं। sorting caller करता है।</p>
 <p style="margin:2px 0 2px 12px">• input में 0 के अलावा सबको foreground मानकर bool बनाया जाता है (NaN भी foreground)। Raises <code style="color:#22d3bf">ValueError</code>: 3-dimensional न होने वाला input, <code style="color:#22d3bf">connectivity</code> 6/18/26 के अलावा।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">vol</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: बिना वॉक्सेल वाले आयतन के शून्य संबद्ध घटक होते हैं, और यही सही उत्तर है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

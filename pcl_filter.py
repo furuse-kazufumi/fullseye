@@ -60,6 +60,8 @@ def statistical_outlier_removal(points, k: int = 16, std_ratio: float = 2.0):
     Notes
     -----
     点数 < 3 では統計が立たないため、全点を残す(graceful)。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
     """
     from scipy.spatial import cKDTree
 
@@ -103,6 +105,8 @@ def radius_outlier_removal(points, radius: float, min_neighbors: int = 8):
     Notes
     -----
     ``radius <= 0`` は ValueError。空入力は空を返す(graceful)。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
     """
     from scipy.spatial import cKDTree
 
@@ -142,6 +146,8 @@ def voxel_grid_downsample(points, voxel_size: float):
     -----
     ``voxel_size <= 0`` は ValueError。空入力は空 (0,3) を返す(graceful)。
     重心はセル内の点の平均なので、必ず入力点の凸包(ゆえに bbox)内に入る。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
     """
     P = _as_points(points)
     if float(voxel_size) <= 0.0:
@@ -207,6 +213,8 @@ def mls_smooth(points, radius: float, order: int = 2):
     -----
     近似手法である。近傍数が項数未満/局所平面が縮退する点は動かさず原位置を維持する
     (穴や境界で暴れないための安全策)。``radius <= 0`` は ValueError、空入力は空を返す。
+
+    空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
     """
     from scipy.spatial import cKDTree
 

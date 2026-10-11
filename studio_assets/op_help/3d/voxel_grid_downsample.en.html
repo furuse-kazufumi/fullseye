@@ -15,6 +15,7 @@
 <p>Centroid of each occupied cell (M &lt;= N). All lie inside the axis-aligned bounding box of the input.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p><code style="color:#22d3bf">voxel_size &lt;= 0</code> raises ValueError. Empty input returns an empty (0,3) (graceful). A centroid is the mean of the points in its cell, so it always lies inside the convex hull of the input points (hence inside the bbox).</p>
+<p>Empty input (<code style="color:#22d3bf">points</code> with 0 elements) returns an empty result (reason: thinning, outlier removal and dropout can leave no points; an empty cloud is a valid value and the next stage of a chain must not stop on it).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -243,7 +243,11 @@ def tf_poles_zeros(num, den) -> dict:
     """H(s) = num/den の極・零点・直流ゲイン・安定性。
 
     安定(漸近安定)= すべての極の実部 < 0。直流ゲインは H(0)(原点に極があれば inf)。
+
+    空の入力(``num`` が 0 要素)は ValueError。
     """
+    if (len(num) if isinstance(num, (list, tuple)) else np.asarray(num).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("tf_poles_zeros: num is empty — pass at least one element")
     num, den = _tf(num, den)
     poles = np.roots(den) if den.size > 1 else np.zeros(0, complex)
     zeros = np.roots(num) if num.size > 1 else np.zeros(0, complex)
@@ -255,7 +259,12 @@ def tf_poles_zeros(num, den) -> dict:
 
 
 def tf_freq_response(num, den, w) -> dict:
-    """周波数応答 H(jω)(Bode 線図の中身)。ω は rad/s。位相は連続に unwrap した度。"""
+    """周波数応答 H(jω)(Bode 線図の中身)。ω は rad/s。位相は連続に unwrap した度。
+
+    空の入力(``num`` が 0 要素)は ValueError。
+    """
+    if (len(num) if isinstance(num, (list, tuple)) else np.asarray(num).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("tf_freq_response: num is empty — pass at least one element")
     num, den = _tf(num, den)
     w = np.asarray(w, dtype=np.float64).ravel()
     H = np.polyval(num, 1j * w) / np.polyval(den, 1j * w)
@@ -286,7 +295,11 @@ def tf_impulse_response(num, den, t) -> np.ndarray:
     """インパルス応答 h(t) = L⁻¹[H(s)](t)(厳密にプロパーな部分。直達項のデルタは返さない)。
 
     h(t) = C e^{At} B を行列指数で直接評価する(部分分数に頼らないので重根・原点の極でも分岐しない)。
+
+    空の入力(``num`` が 0 要素)は ValueError。
     """
+    if (len(num) if isinstance(num, (list, tuple)) else np.asarray(num).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("tf_impulse_response: num is empty — pass at least one element")
     A, B, C, _D = _state_space(num, den)
     t = np.asarray(t, dtype=np.float64).ravel()
     if A.size == 0:
@@ -299,7 +312,11 @@ def tf_step_response(num, den, t) -> np.ndarray:
 
     拡大行列 [[A, B], [0, 0]] の指数関数で ∫_0^t e^{Aτ} B dτ を厳密に得る(A が特異でも可)。
     門: 1/(s+a) → (1 − e^{−at})/a、2 次系 ω²/(s² + 2ζωs + ω²) の閉じた式。
+
+    空の入力(``num`` が 0 要素)は ValueError。
     """
+    if (len(num) if isinstance(num, (list, tuple)) else np.asarray(num).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("tf_step_response: num is empty — pass at least one element")
     A, B, C, D = _state_space(num, den)
     t = np.asarray(t, dtype=np.float64).ravel()
     n = A.shape[0]
@@ -321,7 +338,11 @@ def tf_bilinear(num, den, fs: float = 1.0, *, prewarp_hz: float | None = None) -
     K = 2·fs(素の Tustin)か、``prewarp_hz`` を与えると K = ω₀ / tan(ω₀ / (2 fs))
     (その周波数で連続系と離散系の応答が**厳密に一致**する。それ以外の周波数は tan で歪む)。
     返り値の係数は z の降べき(``np.polyval(num_z, z)``)。安定な連続系は安定な離散系になる(左半面 → 単位円内)。
+
+    空の入力(``num`` が 0 要素)は ValueError。
     """
+    if (len(num) if isinstance(num, (list, tuple)) else np.asarray(num).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("tf_bilinear: num is empty — pass at least one element")
     num, den = _tf(num, den)
     fs = float(fs)
     if not fs > 0:
@@ -358,7 +379,11 @@ def laplace_inverse_talbot(num, den, t, *, M: int = 32) -> np.ndarray:
 
     厳密解は ``tf_impulse_response`` が行列指数で出すので、**2 つの独立な経路で同じ f(t) が出るか**が
     この op の検算になる。任意の F(s)(1/√s など)は ``laplace_inverse_func`` へ。
+
+    空の入力(``num`` が 0 要素)は ValueError。
     """
+    if (len(num) if isinstance(num, (list, tuple)) else np.asarray(num).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("laplace_inverse_talbot: num is empty — pass at least one element")
     num, den = _tf(num, den)
     return laplace_inverse_func(lambda s: np.polyval(num, s) / np.polyval(den, s), t, M=M)
 

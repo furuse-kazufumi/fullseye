@@ -8,6 +8,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;box&quot;</code>   — gleichgewichteter Mittelwert (exakter Flächenmittelwert, Standard bei SSAA).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gauss&quot;</code> — Gauß-Gewichte, die die Blockmitte stärker gewichten (σ = ss/2, etwas weicher).</p>
 <p>Fail-closed: <code style="color:#22d3bf">ss</code> ist eine ganze Zahl von 1 oder mehr, die Eingabe ist 2D / 3D, und jede Seite muss durch <code style="color:#22d3bf">ss</code> teilbar sein. Nicht endliche Werte lösen <code style="color:#22d3bf">ValueError</code> aus (vor der Allokation abgewiesen, damit sich NaN nicht über die Mittelung ausbreitet).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">hi_res_image</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

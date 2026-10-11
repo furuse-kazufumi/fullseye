@@ -13,6 +13,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;voxel&quot;</code>: 밀도 grid <code style="color:#22d3bf">(D, H, W)</code>를 <code style="color:#22d3bf">kw[&quot;iso&quot;]</code>(기본값 0.5)로 임계값 처리하고, <code style="color:#22d3bf">np.argwhere</code>의 <b>정수 index 좌표</b> <code style="color:#22d3bf">(z, y, x)</code>를 float로 만든 점군. 물리 좌표로는 바꾸지 않는다(spacing은 곱하지 않는다).</p>
 <p>반환값: <code style="color:#22d3bf">(N, 3)</code> float64. <code style="color:#22d3bf">kind</code>가 위의 것 이외이면 <code style="color:#22d3bf">ValueError</code>. <code style="color:#22d3bf">samples</code>는 <code style="color:#22d3bf">&quot;mesh&quot;</code> 이외에서는 무시된다.</p>
 <p>주의: <code style="color:#22d3bf">&quot;voxel&quot;</code>의 좌표는 배열 index 순서 <code style="color:#22d3bf">(z, y, x)</code>, <code style="color:#22d3bf">&quot;depth&quot;</code>는 카메라 좌표 <code style="color:#22d3bf">(x, y, z)</code>로, 종류마다 축의 의미가 다르다. 이종을 <code style="color:#22d3bf">register_cross</code> / <code style="color:#22d3bf">fuse_to_voxel</code>로 섞을 때는, 이 차이를 호출 측이 맞춰 둘 것.</p>
+<p>빈 입력(<code style="color:#22d3bf">data</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

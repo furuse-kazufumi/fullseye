@@ -440,7 +440,12 @@ def add_sign(world: dict, kind: str, x: float, y: float, yaw: float, *, value=No
 
     規約: **yaw の向きへ進んで来る車に板の面が向く**(法線 = (−cos yaw, −sin yaw))。実装は :func:`sign_mesh`(法線 −x)を
     :func:`driveworld.place_mesh` で回すだけ。板は柱の手前(車の側)に ``pole_radius + 1 cm`` 離して付ける。
-    返り値 = 板の object 索引(``extra = {"kind", "value", "width", "height", "mount_height"}``)。柱は直前の別 object。"""
+    返り値 = 板の object 索引(``extra = {"kind", "value", "width", "height", "mount_height"}``)。柱は直前の別 object。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_sign: world is empty — pass a non-empty dict")
     _check_kind(kind)
     pole_radius = float(pole_radius)
     if not (pole_radius > 0):
@@ -527,7 +532,12 @@ def add_signal_jp(world: dict, x: float, y: float, yaw: float, *, state: str = "
 
     objects: 柱 + アーム(ラベル 3、name "signal_pole")と灯器(ラベル 3、name "traffic_light"、
     ``extra = {"state", "lamp_faces"(世界の面索引), "arm", "lamp_bottom", "kind": "jp"}``)。返り値 = 灯器の索引
-    (:func:`driveworld.set_signal_state` はこれに対して使う)。"""
+    (:func:`driveworld.set_signal_state` はこれに対して使う)。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_signal_jp: world is empty — pass a non-empty dict")
     if state not in ("red", "yellow", "green", "off"):
         raise ValueError("state は red / yellow / green / off")
     arm, lamp_bottom, pole_radius = float(arm), float(lamp_bottom), float(pole_radius)

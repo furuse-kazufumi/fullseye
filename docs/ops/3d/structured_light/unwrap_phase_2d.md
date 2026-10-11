@@ -44,6 +44,8 @@ mask:    省略可。True = 有効画素(numpy masked array の慣習とは逆�
 関数、``height = k (phase - ref_phase)``)。参照面を同じ手順で展開して引けば
 大域オフセットは相殺される。``decode_fringe`` はこの連鎖を 1 回で行う。
 
+空の入力(``wrapped`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

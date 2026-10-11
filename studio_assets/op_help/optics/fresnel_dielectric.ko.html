@@ -9,6 +9,7 @@
 <p>polarization: &quot;unpolarized&quot;(기본값, s와 p의 평균) / &quot;s&quot; / &quot;p&quot;.</p>
 <p>반환값: 반사율 R(cos_i와 같은 형태, 0–1). 임계각을 넘은 입사는 <b>정확히 1.0</b>(전반사).</p>
 <p>검산(테스트로 고정): 수직 입사에서 ((n1−n2)/(n1+n2))²(air→BK7 = 0.04), Brewster 각에서 p 편광이 0(1e-15 미만), 임계각 초과에서 1.0. 투과율은 1 − R(흡수가 없는 계면이므로 에너지가 닫힌다).</p>
+<p>빈 입력(<code style="color:#22d3bf">cos_i</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

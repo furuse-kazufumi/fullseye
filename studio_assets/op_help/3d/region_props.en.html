@@ -29,6 +29,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_area</code> also counts faces touching the array border (zero padding). Because of discretisation, <code style="color:#22d3bf">sphericity</code> tops out at about 0.66 even for a sphere (see the module docstring).</p>
 <p style="margin:2px 0 2px 12px">• Labels are in order 1..n (the same scipy scan order as <code style="color:#22d3bf">label_components</code>), not by volume. Sorting is up to the caller.</p>
 <p style="margin:2px 0 2px 12px">• The input is converted to bool with everything other than 0 as foreground (NaN is foreground too). Raises <code style="color:#22d3bf">ValueError</code>: input that is not 3-dimensional, <code style="color:#22d3bf">connectivity</code> other than 6/18/26.</p>
+<p>Empty input (<code style="color:#22d3bf">vol</code> with 0 elements) returns an empty result (reason: a volume with no voxels has zero connected components, which is the correct answer).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty and calibration — what it takes to claim you are measuring</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

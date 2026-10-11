@@ -33,6 +33,8 @@ D, H, W が 1 の軸は正規化で 0 除算になる(``polar_unwrap`` と違い
 後段: ``[:, :, j]`` を取れば半径 j の円筒面が (D×θ) の 2-D 画像になり、2-D の傷検査・
 ``ncc_locate`` が使える。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

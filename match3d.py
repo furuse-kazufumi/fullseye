@@ -193,7 +193,11 @@ def depth_to_points(depth, fx, fy, cx, cy, stride=1):
     ``depth_to_organized_points``。
     後段: ``points_to_voxel`` / ``estimate_point_normals`` / ``icp_point2plane``。
     逆写像は ``project_points``、TSDF 化は ``tsdf_from_depth``。
+
+    空の入力(``depth`` が 0 要素)は ValueError。
     """
+    if (len(depth) if isinstance(depth, (list, tuple)) else depth.numel() if hasattr(depth, "numel") else np.asarray(depth).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("depth_to_points: depth is empty — pass at least one element")
     d = np.asarray(depth, np.float64)[::stride, ::stride]
     vv, uu = np.mgrid[0:d.shape[0], 0:d.shape[1]]
     z = d.reshape(-1)
@@ -251,7 +255,11 @@ def sobel3d(vol, device="cpu"):
     足し、5-D ならそのまま使う。dtype は float32 に落とす。
     後段: ``curvature_maps`` / ``match_shape_3d`` の単位勾配、``hough_plane_3d`` の法線。
     方向の要らないエッジ強度なら ``morph_gradient3d`` も代替。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("sobel3d: vol is empty — pass at least one element")
     if torch.is_tensor(vol):
         t = vol.to(device=device, dtype=torch.float32)
         if t.ndim == 3:
@@ -384,7 +392,11 @@ def match_shape_3d(vol, template, device="cpu", mc=0.05, subvoxel=True):
     - ``subvoxel=True`` で argmax の ±2 近傍の正スコア重心に精緻化(``accel_match._subvoxel_com``)。
     後段: ``refine_translation_lk``(corner 規約なので T//2 を引く)/ ``refine_lm``。回転には
     不変でない(``match_logpolar_z`` で先に回転を合わせる)。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("match_shape_3d: vol is empty — pass at least one element")
     sz, sy, sx, _ = _unit_grad3d(vol, device, mc)           # 単位勾配(シーン)
     tz, ty, tx, tm = _unit_grad3d(np.asarray(template, np.float64), device, mc)
     n = float(tm.sum().clamp_min(1.0))
@@ -419,7 +431,11 @@ def moment_axes(points, weights=None):
     - ``weights`` は長さ N。総和 0 は 0 除算で NaN(例外は出ない)。点数 0 は失敗する(検証は無い)。
     - 主軸が縮退(球など)なら軸の向きは不定。
     後段: ``match_pca``、``obb``(有向 bbox)、正準姿勢への回転。
+
+    空の入力(``points`` が 0 要素)は ValueError。
     """
+    if (len(points) if isinstance(points, (list, tuple)) else points.numel() if hasattr(points, "numel") else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("moment_axes: points is empty — pass at least one element")
     P = np.asarray(points, np.float64)
     w = np.ones(len(P)) if weights is None else np.asarray(weights, np.float64)
     w = w / w.sum()
@@ -444,7 +460,11 @@ def match_pca(pts_scene, pts_model):
     雲では 4 候補の選択が当てにならない(その場合は ``icp_point2point_3d`` に ``init_R/init_t``
     として渡して精緻化する)。主軸が縮退している(球・円柱など固有値が等しい)雲では軸が不定で
     結果は安定しない。点数は両雲で違ってよい。入力は (N,3)(検証は ``moment_axes`` 任せで無い)。
+
+    空の入力(``pts_scene`` が 0 要素)は ValueError。
     """
+    if (len(pts_scene) if isinstance(pts_scene, (list, tuple)) else pts_scene.numel() if hasattr(pts_scene, "numel") else np.asarray(pts_scene).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("match_pca: pts_scene is empty — pass at least one element")
     cs, As, _ = moment_axes(pts_scene)
     cm, Am, _ = moment_axes(pts_model)
     # eigh の固有ベクトル枠は掌性(det ±1)が不定。S=diag(sx,sy,sx·sy) は常に det=+1 なので
@@ -537,7 +557,11 @@ def match_chamfer_3d(scene, template, device="cpu", thr=0.3, edt="scipy"):
     テンプレにエッジが無い(``thr`` が高すぎる等)と score が全 0 になり index (0,0,0) が返る。
     scene にエッジが無い場合の距離場は意味を持たない(``thr`` を下げる)。
     ``edt="jfa"`` は ``edt_jfa`` を使い ``device`` 上で完結、それ以外は scipy(CPU)。
+
+    空の入力(``scene`` が 0 要素)は ValueError。
     """
+    if (len(scene) if isinstance(scene, (list, tuple)) else scene.numel() if hasattr(scene, "numel") else np.asarray(scene).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("match_chamfer_3d: scene is empty — pass at least one element")
     se = _edges3d(scene, device, thr).detach().cpu().numpy() > 0.5
     te = _edges3d(template, device, thr).detach().cpu().numpy() > 0.5
     if edt == "jfa":
@@ -577,7 +601,11 @@ def match_points_ncc(pts_scene, pts_model, size, bounds, device="cpu", smooth=0.
     - model の voxel が全 0 なら ``[0,0,0,0]``。
     - 並進のみ。回転・スケールは ``match_pca`` / ``match_logpolar_z`` で先に合わせる。
     後段: ``icp_point2point_3d`` の ``init_t``、``refine_translation_lk``。
+
+    空の入力(``pts_scene`` が 0 要素)は ValueError。
     """
+    if (len(pts_scene) if isinstance(pts_scene, (list, tuple)) else pts_scene.numel() if hasattr(pts_scene, "numel") else np.asarray(pts_scene).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("match_points_ncc: pts_scene is empty — pass at least one element")
     vs = points_to_voxel(pts_scene, size, bounds, device, smooth)
     vm_full = points_to_voxel(pts_model, size, bounds, device, smooth)
     nz = np.argwhere(vm_full > vm_full.max() * 0.05)
@@ -713,7 +741,11 @@ def edt_jfa(seed_bool, device="cpu"):
     段のジャンプなので、メモリは ``(3,D,H,W)`` float32 が数枚分。
     用途: ``signed_distance_field``(両側)、``match_chamfer_3d(edt="jfa")``。CPU 版は
     ``scipy.ndimage.distance_transform_edt(~seed)`` と同じ値。
+
+    空の入力(``seed_bool`` が 0 要素)は ValueError。
     """
+    if (len(seed_bool) if isinstance(seed_bool, (list, tuple)) else seed_bool.numel() if hasattr(seed_bool, "numel") else np.asarray(seed_bool).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("edt_jfa: seed_bool is empty — pass at least one element")
     coord, pos = _jfa_nearest(seed_bool, device)
     return torch.sqrt(((coord - pos) ** 2).sum(0)).clamp_max(1e6)
 
@@ -809,7 +841,11 @@ def match_hough_3d(scene, template, device="cpu", ndir=26, mc=0.05,
     複数インスタンスは ``nms`` を小さく。
     - テンプレにエッジが無ければ全 0 の ``(topk,4)``。テンプレが完全に収まらない位置は 0。
     後段: 各ピークを ``refine_translation_lk`` / ``refine_peak_newton`` で精緻化。
+
+    空の入力(``scene`` が 0 要素)は ValueError。
     """
+    if (len(scene) if isinstance(scene, (list, tuple)) else scene.numel() if hasattr(scene, "numel") else np.asarray(scene).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("match_hough_3d: scene is empty — pass at least one element")
     sz, sy, sx, sm = _unit_grad3d(scene, device, mc)
     tz, ty, tx, tm = _unit_grad3d(np.asarray(template, np.float64), device, mc)
     dirs = _sphere_dirs(ndir, device)                       # (ndir,3)
@@ -866,7 +902,11 @@ def hessian3d(vol, device="cpu"):
     (zz, yy, xx, zy, zx, yx)(軸 0=z, 1=y, 2=x)。numpy が要れば ``.cpu().numpy()``。入力は
     numpy 相当(float32 に変換)。
     用途: ``curvature_maps`` の主曲率(``sobel3d`` と組で使う)、blob/管状構造の検出。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("hessian3d: vol is empty — pass at least one element")
     t = torch.as_tensor(np.asarray(vol, np.float32)[None, None], device=device)
     d2 = torch.tensor([1.0, -2.0, 1.0], device=device)
     d1 = torch.tensor([-0.5, 0.0, 0.5], device=device)
@@ -898,7 +938,11 @@ def curvature_maps(vol, device="cpu", mc=6.25e-4):
     mask 閾値 mc は **voxel あたりの真の勾配単位**。旧版(〜2026-08-29)は割り戻しを忘れ
     curvedness が 1/32 倍・mc が生 sobel3d 単位だった(shape index S は比なので影響なし)。
     旧 mc 値を使っていた場合は 1/32 して渡すこと(既定値 0.02→6.25e-4 も等価変換済み)。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("curvature_maps: vol is empty — pass at least one element")
     gz, gy, gx = sobel3d(vol, device)
     # sobel3d は利得 32 の規約(refine_translation_lk 等は grad_scale=32 で補正) — ここでも割り戻す
     gz, gy, gx = gz[0, 0] / 32.0, gy[0, 0] / 32.0, gx[0, 0] / 32.0
@@ -941,7 +985,11 @@ def match_curvature_3d(scene, template, device="cpu", mc=6.25e-4, subvoxel=True)
     - 曲率は 2 階微分なのでノイズに敏感。ノイズが多い volume は先に ``points_to_voxel`` の
     ``smooth`` 等で滑らかにする。
     ``subvoxel=True`` で NCC ピークの ±2 近傍重心に精緻化。
+
+    空の入力(``scene`` が 0 要素)は ValueError。
     """
+    if (len(scene) if isinstance(scene, (list, tuple)) else scene.numel() if hasattr(scene, "numel") else np.asarray(scene).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("match_curvature_3d: scene is empty — pass at least one element")
     Ss, Cs, Ms, _ = curvature_maps(scene, device, mc)
     St, Ct, Mt, _ = curvature_maps(template, device, mc)
     ws = (Ss * Cs * Ms).detach().cpu().numpy()
@@ -984,7 +1032,11 @@ def hough_plane_3d(vol, device="cpu", ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0
     - 1 枚しか返さない。複数平面はインライアを除いて再実行するか、点群なら ``plane_segmentation``
     / ``ransac_plane``。
     後段: ``distance_point_plane`` / ``angle_between_planes`` で計測。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("hough_plane_3d: vol is empty — pass at least one element")
     gz, gy, gx, _ = _unit_grad3d(vol, device, mc)
     gz, gy, gx = gz[0, 0], gy[0, 0], gx[0, 0]
     surf = _thin_surface(vol, device, iso)
@@ -1042,7 +1094,11 @@ def hough_sphere_3d(vol, device="cpu", radii=None, mc=0.0, iso=0.5, subvoxel=Tru
     - 境界 voxel が 10 未満なら **None**。``radii`` が空だと TypeError で落ちる。
     - 1 個しか返さない。複数球は検出した球の voxel を消して再実行するか、点群なら
     ``ransac_sphere`` / ``fit_sphere_3d``。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("hough_sphere_3d: vol is empty — pass at least one element")
     gz, gy, gx, _ = _unit_grad3d(vol, device, mc)
     gz, gy, gx = gz[0, 0], gy[0, 0], gx[0, 0]
     surf = _thin_surface(vol, device, iso)
@@ -1129,7 +1185,11 @@ def sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device="cpu"):
     返り値 ``(nradii, L+1)`` float32 numpy、``[i, l]`` が i 番目の shell の次数 l のエネルギー
     (非負)。物体は volume の中心に置く(中心がずれると回転不変性が崩れる。``moment_axes`` の
     重心で先に中心合わせを)。scipy の ``sph_harm_y``/``sph_harm`` を呼び出し時 import。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("sh_descriptor: vol is empty — pass at least one element")
     v = np.asarray(vol, np.float64)
     N = v.shape[0]
     c = (N - 1) / 2.0
@@ -1168,7 +1228,11 @@ def match_sh_descriptor(a, b, L=8, nradii=12, device="cpu"):
     - 回転には不変(帯域エネルギー)。ただし鏡像も同じ値になる。
     - ``ntheta``/``nphi`` は既定(32×64)固定。同じ設定同士の比較にだけ意味がある。
     - 位置は返さない。「どこにあるか」は ``match_shape_3d`` 等、「同じ形か」は本 op。
+
+    空の入力(``a`` が 0 要素)は ValueError。
     """
+    if (len(a) if isinstance(a, (list, tuple)) else a.numel() if hasattr(a, "numel") else np.asarray(a).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("match_sh_descriptor: a is empty — pass at least one element")
     da = sh_descriptor(a, L, nradii, device=device).reshape(-1)
     db = sh_descriptor(b, L, nradii, device=device).reshape(-1)
     da = da / (np.linalg.norm(da) + 1e-9)
@@ -1237,7 +1301,11 @@ def refine_peak_newton(score, idx, device="cpu", max_iter=12, tol=1e-4):
     -------
     numpy.ndarray
         [score_peak, z, y, x](精緻化後)。score_peak は精緻化位置での trilinear 補間スコア。
+
+    空の入力(``score`` が 0 要素)は ValueError。
     """
+    if (len(score) if isinstance(score, (list, tuple)) else score.numel() if hasattr(score, "numel") else np.asarray(score).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("refine_peak_newton: score is empty — pass at least one element")
     vol = torch.as_tensor(np.asarray(score, np.float32), device=device)
     D, H, W = vol.shape
     vol_t = vol[None, None]                                   # (1,1,D,H,W)
@@ -1362,7 +1430,11 @@ def refine_translation_lk(scene, template, init_pos, device="cpu", iters=30, tol
     - ``grad_scale=32`` は分離 sobel3d(導関数[-1,0,1]×平滑[1,2,1]²)の固定スケール
       (線形ランプで実測 32.0)。真の勾配へ正規化して Δp のスケールを正す。
     - H には微小 Levenberg 正則化を加え、勾配の乏しい平坦テンプレートでの数値破綻を防ぐ。
+
+    空の入力(``scene`` が 0 要素)は ValueError。
     """
+    if (len(scene) if isinstance(scene, (list, tuple)) else scene.numel() if hasattr(scene, "numel") else np.asarray(scene).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("refine_translation_lk: scene is empty — pass at least one element")
     init_pos = _init_pos3(init_pos, "refine_translation_lk")
     D, H, W = np.asarray(scene).shape
     Td, Th, Tw = np.asarray(template).shape
@@ -1447,7 +1519,11 @@ def refine_lm(scene, template, init_pos, device="cpu", iters=50,
         scale : 等方スケール(scale=False なら 1.0)
         gain  : 輝度ゲイン(gain=False なら 1.0)
         cost  : 最終 SSD、rms: 1voxel あたり残差 RMS、iters: 実行反復数
+
+    空の入力(``scene`` が 0 要素)は ValueError。
     """
+    if (len(scene) if isinstance(scene, (list, tuple)) else scene.numel() if hasattr(scene, "numel") else np.asarray(scene).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("refine_lm: scene is empty — pass at least one element")
     init_pos = _init_pos3(init_pos, "refine_lm")
     dev = device
     sc = torch.as_tensor(np.asarray(scene, np.float64)[None, None], device=dev)   # (1,1,D,H,W)
@@ -2145,7 +2221,11 @@ def signed_distance_field(vol, device="cpu", iso=0.5):
     seed の無い側の距離が 1e6 に飽和し、全占有では −1e6、全空では +1e6 になる(例外は出ない)。
     返り値 ``(D,H,W)`` float32 numpy。
     後段: ``sdf_to_occupancy`` で戻す、``voxel_to_mesh(sdf, iso=0.0)`` で面、``sobel3d`` で法線場。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("signed_distance_field: vol is empty — pass at least one element")
     occ = np.asarray(vol) > iso
     d_out = edt_jfa(occ, device)                            # 外側→最近表面
     d_in = edt_jfa(~occ, device)                            # 内側→最近外側
@@ -2171,7 +2251,11 @@ def sdf_to_occupancy(sdf, iso=0.0):
     (2026-09-08、24³ の立方体、真の内側 1,728 voxel): SDF を渡すと 1,728、
     同じ形の 0/1/2 ラベルを渡すと **9,504**(5.5 倍)—— 符号が反転している。
     ラベルから占有を作るなら ``iso`` でなく ``labels > 0`` を自分で書くこと。
+
+    空の入力(``sdf`` が 0 要素)は ValueError。
     """
+    if (len(sdf) if isinstance(sdf, (list, tuple)) else sdf.numel() if hasattr(sdf, "numel") else np.asarray(sdf).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("sdf_to_occupancy: sdf is empty — pass at least one element")
     return (np.asarray(sdf) <= iso).astype(np.float64)
 
 
@@ -2373,7 +2457,11 @@ def morph_dilate3d(vol, r=1, device="cpu", se="cube"):
     ValueError。2 値 volume(0/1)ならそのまま 2 値 dilation になる。``se="ball"`` は r が
     大きいと footprint 走査で遅い。
     後段: ``morph_erode3d`` と組で ``morph_open3d`` / ``morph_close3d`` / ``morph_gradient3d``。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("morph_dilate3d: vol is empty — pass at least one element")
     return _gray_morph3d(vol, r, device, se, "dil")
 
 
@@ -2386,7 +2474,11 @@ def morph_erode3d(vol, r=1, device="cpu", se="cube"):
     cube+torch のときだけ効く。返り値 ``(D,H,W)`` float32 numpy。
     2 値 volume では「SE が丸ごと入る voxel だけ残す」= 細い構造・薄い殻の除去。
     後段: ``morph_dilate3d`` と組で opening/closing、``vol − erosion`` で内側境界。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("morph_erode3d: vol is empty — pass at least one element")
     return _gray_morph3d(vol, r, device, se, "ero")
 
 
@@ -2400,7 +2492,11 @@ def morph_open3d(vol, r=1, device="cpu", se="cube"):
     ときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
     用途: ``vol − open`` が ``morph_tophat3d``(小さな明構造の抽出)。点密度 voxel の孤立ノイズ
     点除去、2 値占有の細線除去。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("morph_open3d: vol is empty — pass at least one element")
     return morph_dilate3d(morph_erode3d(vol, r, device, se), r, device, se)
 
 
@@ -2414,7 +2510,11 @@ def morph_close3d(vol, r=1, device="cpu", se="cube"):
     cube+torch のときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
     用途: ``close − vol`` が ``morph_blackhat3d``(小さな暗構造の抽出)。点群 splat の表面の
     穴埋め、``signed_distance_field`` 前の占有の穴埋め。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("morph_close3d: vol is empty — pass at least one element")
     return morph_erode3d(morph_dilate3d(vol, r, device, se), r, device, se)
 
 
@@ -2427,7 +2527,11 @@ def morph_gradient3d(vol, r=1, device="cpu", se="cube"):
     2 値 volume では「境界 voxel = 1」の殻がそのまま出る。``se`` は "cube"/"ball"(他は
     ValueError)、``device`` は cube+torch のときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
     用途: ``match_chamfer_3d`` 用のエッジ源、``hough_plane_3d`` に渡す前の表面抽出の代替。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("morph_gradient3d: vol is empty — pass at least one element")
     return (morph_dilate3d(vol, r, device, se)
             - morph_erode3d(vol, r, device, se))
 
@@ -2441,7 +2545,11 @@ def morph_tophat3d(vol, r=1, device="cpu", se="cube"):
     ``r`` は「残したい構造の半径」より大きく取る。``se`` は "cube"/"ball"(他は ValueError)、
     ``device`` は cube+torch のときだけ有効。返り値 ``(D,H,W)`` float32 numpy。
     暗い構造を取るなら ``morph_blackhat3d``。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("morph_tophat3d: vol is empty — pass at least one element")
     return np.asarray(vol, np.float32) - morph_open3d(vol, r, device, se)
 
 
@@ -2453,7 +2561,11 @@ def morph_blackhat3d(vol, r=1, device="cpu", se="cube"):
     0 になる。占有 voxel なら「SE で埋まる空洞 = 1」。``r`` は検出したい穴の半径より大きく取る。
     ``se`` は "cube"/"ball"(他は ValueError)、``device`` は cube+torch のときだけ有効。
     返り値 ``(D,H,W)`` float32 numpy。明るい構造を取るなら ``morph_tophat3d``。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("morph_blackhat3d: vol is empty — pass at least one element")
     return morph_close3d(vol, r, device, se) - np.asarray(vol, np.float32)
 
 
@@ -2996,7 +3108,11 @@ def cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, d
     D, H, W が 1 の軸は正規化で 0 除算になる(``polar_unwrap`` と違い検査は無い)。
     後段: ``[:, :, j]`` を取れば半径 j の円筒面が (D×θ) の 2-D 画像になり、2-D の傷検査・
     ``ncc_locate`` が使える。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("cylinder_unwrap: vol is empty — pass at least one element")
     v = _f32_finite(vol, "cylinder_unwrap: vol"); D, H, W = v.shape
     cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
     if r_out is None:
@@ -3234,7 +3350,11 @@ def project_points(points, K, R=None, t=None):
     Z は ``1e-6`` 以上に clip してから割るので、**カメラ後方の点も捨てず**巨大な u,v になる
     (``depth > 0`` で呼び手が除く)。画像外の点も返す(``render_point_depth`` が範囲で切る)。
     ``depth_to_points`` の逆で、``depth_to_points(render_point_depth(...))`` が往復になる。
+
+    空の入力(``points`` が 0 要素)は ValueError。
     """
+    if (len(points) if isinstance(points, (list, tuple)) else points.numel() if hasattr(points, "numel") else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("project_points: points is empty — pass at least one element")
     P = np.asarray(points, float)
     if R is not None:
         P = (np.asarray(R) @ P.T).T
@@ -3257,7 +3377,11 @@ def render_point_depth(points, K, size, R=None, t=None):
       半径は無い。
     - ``K`` は numpy (3,3)、``R``/``t`` は省略可。
     後段: ``depth_to_points`` で戻す、``normals_from_depth`` で法線、``tsdf_from_depth``。
+
+    空の入力(``points`` が 0 要素)は ValueError。
     """
+    if (len(points) if isinstance(points, (list, tuple)) else points.numel() if hasattr(points, "numel") else np.asarray(points).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("render_point_depth: points is empty — pass at least one element")
     H, W = size
     uv, z = project_points(points, K, R, t)
     ui = np.round(uv[:, 0]).astype(int); vi = np.round(uv[:, 1]).astype(int)
@@ -3283,7 +3407,11 @@ def render_volume_projection(vol, azimuth=0.0, elevation=0.0, mode="xray", devic
     volume 外は 0 で埋まるので、回転で隅が欠けると総和が下がる(立方体に近い volume で、物体を
     中心に置く)。``azimuth=elevation=0`` の mip は ``voxel_to_mips()[0]`` と同じ向き。
     用途: DRR の合成、``ncc_locate`` 用の 2-D テンプレ生成、``match_mip_2d`` の任意視点化。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else vol.numel() if hasattr(vol, "numel") else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("render_volume_projection: vol is empty — pass at least one element")
     # ★2026-09-07: affine_grid + grid_sample(align_corners=False, zeros padding)を
     # numpy の座標計算 + scipy の map_coordinates(order=1)に置き換えた。torch は
     # 双線形の再標本化にしか使われておらず、torch を入れない環境(CI の py3.10 /
@@ -3333,7 +3461,11 @@ def render_shaded(normals_img, light=(0, 0, 1), ambient=0.1):
     光源と反対を向く面は ``ambient`` の値になる。最後の軸を法線とみなすので ``(N,3)`` の点ごとの
     法線でも動く。鏡面ハイライトは無い(``fresnel_reflectance`` / ``reflect`` で別途)。
     用途: ``photometric_stereo`` の検算(法線 → 画像の順方向)、外観検査の合成サンプル。
+
+    空の入力(``normals_img`` が 0 要素)は ValueError。
     """
+    if (len(normals_img) if isinstance(normals_img, (list, tuple)) else normals_img.numel() if hasattr(normals_img, "numel") else np.asarray(normals_img).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("render_shaded: normals_img is empty — pass at least one element")
     n = np.asarray(normals_img, float); L = np.asarray(light, float)
     L = L / np.linalg.norm(L)
     ndl = np.clip((n * L).sum(-1), 0, 1)

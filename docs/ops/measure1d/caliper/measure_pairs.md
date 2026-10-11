@@ -21,6 +21,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、
 ``first_point``/``second_point`` = (row, col)。
 
+空の入力(``image`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

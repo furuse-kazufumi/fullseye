@@ -25,6 +25,7 @@
 <p>Returns:</p>
 <p>labels: (N,) int। हर connected smooth region को 0,1,2,... दिया जाता है। <b>min_region_size से छोटे region (isolated point, गलत दिशा वाला कचरा) को -1 (noise / unassigned)</b> = साझा contract (-1=noise) के अनुसार।</p>
 <p>खाली input पर shape (0,) लौटता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: खाली क्लाउड में लेबल करने को कुछ नहीं है, इसलिए लंबाई 0 का लेबल ऐरे सही उत्तर है; पहले के फ़िल्टर खाली क्लाउड दे सकते हैं)।</p>
 <p>2-D evolution registry में bridge किया गया 3d का op <code style="color:#22d3bf">region_growing</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">angle_thresh_deg</code> (default 15) और <code style="color:#22d3bf">b</code> से <code style="color:#22d3bf">k</code> (default 20) बदला जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

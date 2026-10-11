@@ -258,7 +258,11 @@ def link_edges(edge_mask):
     -----
     26 連結(3x3x3 の全近傍)。断片化したエッジ片を 1 本の曲線 / 閉曲面としてまとめ、
     下流の Hough / chamfer で成分単位に扱えるようにする。
+
+    空の入力(``edge_mask`` が 0 要素)は ValueError。
     """
+    if (len(edge_mask) if isinstance(edge_mask, (list, tuple)) else edge_mask.numel() if hasattr(edge_mask, "numel") else np.asarray(edge_mask).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("link_edges: edge_mask is empty — pass at least one element")
     mask = _check_mask(edge_mask)
     structure = np.ones((3, 3, 3), dtype=int)  # 26 連結
     labels, n = label(mask, structure=structure)
@@ -280,7 +284,11 @@ def edge_points(edge_mask) -> np.ndarray:
     pts : (M,3) float64
         エッジ voxel の座標(axis0, axis1, axis2) = (z, y, x)。M = エッジ voxel 数。
         エッジが無ければ shape (0,3) を返す。
+
+    空の入力(``edge_mask`` が 0 要素)は ValueError。
     """
+    if (len(edge_mask) if isinstance(edge_mask, (list, tuple)) else edge_mask.numel() if hasattr(edge_mask, "numel") else np.asarray(edge_mask).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("edge_points: edge_mask is empty — pass at least one element")
     mask = _check_mask(edge_mask)
     pts = np.argwhere(mask)  # (M,3) int
     if pts.size == 0:

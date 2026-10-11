@@ -32,6 +32,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``seed`` で決定論的。返り値は float64 ``(N,3)`` で点数・順序は保たれる(変形前後の
 対応が添字で分かるので、非剛体位置合わせの誤差を直接測れる)。空入力は空を返す。
 
+空の入力(``points`` が 0 要素)は空を返す(理由: 点群の間引き・外れ値除去・ドロップアウトは結果が空になりうる。空の点群は正当な値で、連鎖の次段で止めない)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

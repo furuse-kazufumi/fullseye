@@ -37,6 +37,8 @@ Returns
 labels : ndarray(int32)
     binary と同形状。背景 0、分離された各物体に 1..k のラベル。
 
+空の入力(``binary`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [halcon_segmentation ファミリ ガイド](../guides/halcon_segmentation.md)

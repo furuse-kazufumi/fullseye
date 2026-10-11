@@ -122,7 +122,11 @@ def add_frame_corners(pts, shape):
     ``morph`` / ``morph_sequence`` は ``with_corners=True`` で内部的にこれを両方の
     点群に掛ける。``warp_piecewise_affine`` / ``warp_tps_image`` を直接呼ぶときは
     自分で ``src`` と ``dst`` の両方に足すこと。
+
+    空の入力(``pts`` が 0 要素)は ValueError。
     """
+    if (len(pts) if isinstance(pts, (list, tuple)) else np.asarray(pts).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("add_frame_corners: pts is empty — pass at least one element")
     p = _as_pts(pts, "pts")
     H, W = shape[:2]
     x1, y1 = 0.0, 0.0

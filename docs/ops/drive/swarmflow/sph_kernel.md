@@ -32,6 +32,8 @@ Returns:
 Raises:
     ValueError: h ≤ 0、dim が 1〜3 でない、r に負・非有限がある。
 
+空の入力(``r`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: Richtwert für die Gesamtzahl der Abtastpunkte (Standard 40 → 10 Punkte pro Seite). Auch unter 4 werden pro Seite 2 Punkte gesetzt.</p>
 <p style="margin:2px 0 2px 12px">• Argumente werden nicht validiert. Der Rückgabewert ist der Index der hinzugefügten Position (ab 0).</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">params</code> des <code style="color:#22d3bf">apply</code>-Ergebnisses ist <code style="color:#22d3bf">row / col / phi / l1 / l2</code>, und nach der Neuanpassung <b>wird so umsortiert, dass <code style="color:#22d3bf">l1 &gt;= l2</code> (die lange Seite ist <code style="color:#22d3bf">l1</code>)</b> -- auch wenn die Referenz <code style="color:#22d3bf">l1 &lt; l2</code> angibt, ist das resultierende <code style="color:#22d3bf">phi</code> die Orientierung der langen Seite.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">model</code> ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">Leitfaden zur Familie subpixel_measuring</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

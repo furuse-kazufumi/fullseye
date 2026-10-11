@@ -13,6 +13,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>: Skalar der Gesamtlänge (±height/2 von <code style="color:#22d3bf">center</code>; negativ wird abgewiesen).</p>
 <p>Rückgabewert: float64 der Form <code style="color:#22d3bf">grid.shape[:-1]</code>.</p>
 <p>Einsatz: <b>Eine Durchgangsbohrung ist <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b> (<code style="color:#22d3bf">height</code> länger als das Bauteil wählen, damit kein Rand der Stirnfläche bleibt). Naben, Stifte und Wellen mit <code style="color:#22d3bf">sdf_union</code>. Wird ein unendlich langer Zylinder benötigt, <code style="color:#22d3bf">height</code> ausreichend groß wählen (liegen die Stirnflächen außerhalb des Auswertebereichs, wirkt nur der Mantel).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">grid</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

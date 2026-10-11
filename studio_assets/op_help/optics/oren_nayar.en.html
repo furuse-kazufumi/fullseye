@@ -9,6 +9,7 @@
 <p>albedo: diffuse reflectance (scalar or (H,W)).</p>
 <p>Returns: (H, W) radiance coefficient (0 or more).</p>
 <p>Why Lambert is not enough: Lambert falls off proportionally to cos at the edge (terminator), but a rough surface, through mutual shadowing and interreflection of microfacets, <b>stays flat and bright to the edge</b>. This is why the full moon looks uniform like a disc; with Lambert the rim darkens and it looks like a sphere.</p>
+<p>Empty input (<code style="color:#22d3bf">normals</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

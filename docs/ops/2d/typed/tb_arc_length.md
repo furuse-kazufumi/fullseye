@@ -44,6 +44,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``resample_uniform`` はこの累積弧長をパラメータに線形補間する。曲率の弧長積分など
 ``curvature_torsion`` と組み合わせるときの ds はこの差分から取る。
 
+空の入力(``curve`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``arc_length``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)

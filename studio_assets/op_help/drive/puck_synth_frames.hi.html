@@ -6,6 +6,7 @@
 <p>synthetic frame sequence और ground truth: closed-form रास्ते (<code style="color:#22d3bf">puck_slide_predict</code>) को fps पर sample करके <code style="color:#22d3bf">puck_render_frame</code> से बनाता है।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;frames&quot; [N], &quot;t&quot; (N,), &quot;truth_xy&quot; (N,2) 露光始めの位置, &quot;truth_v&quot; (N,2), &quot;truth_px&quot; (N,2), &quot;pred&quot;, &quot;cam&quot;, &quot;fps&quot;, &quot;exposure&quot;}</code>。</p>
+<p>空の入力(<code style="color:#22d3bf">table</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• 경계 voxel이 10 미만이면 <b>None</b>. <code style="color:#22d3bf">radii</code>가 비어 있으면 TypeError로 떨어진다.</p>
 <p style="margin:2px 0 2px 12px">• 1개만 반환한다. 여러 구는 검출한 구의 voxel을 지우고 재실행하거나, 점군이라면</p>
 <p><code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">fit_sphere_3d</code>.</p>
+<p>빈 입력(<code style="color:#22d3bf">vol</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -6,6 +6,7 @@
 <p>float <code style="color:#22d3bf">[-1,1]</code> のモノラル信号を 16-bit PCM の WAV に書く(標準ライブラリ)。非有限の標本は例外(そのまま書くと壊れた PCM になるため)。</p>
 <p>&gt; 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。</p>
 <p>Returns the path written (<code style="color:#22d3bf">str</code>) -- the ledger declares this op&#x27;s output as the <code style="color:#22d3bf">file</code> sort, which <code style="color:#22d3bf">read_wav</code> / <code style="color:#22d3bf">read_audio</code> consume (it used to return <code style="color:#22d3bf">None</code>).</p>
+<p>Empty input (<code style="color:#22d3bf">path</code> an empty string) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• Returns: <code style="color:#22d3bf">(N + 8, 2)</code> float64.</p>
 <p style="margin:2px 0 2px 12px">• It is not checked whether the original points already lie on or outside the frame. Corresponding points outside the frame intersect the frame triangles in the Delaunay triangulation, and the warp is distorted.</p>
 <p><code style="color:#22d3bf">morph</code> / <code style="color:#22d3bf">morph_sequence</code> apply this internally to both point sets with <code style="color:#22d3bf">with_corners=True</code>. When calling <code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">warp_tps_image</code> directly, add them yourself to both <code style="color:#22d3bf">src</code> and <code style="color:#22d3bf">dst</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">pts</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

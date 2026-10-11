@@ -7,6 +7,7 @@
 <p>path_mm: optische Weglänge im Medium [mm] (Array zulässig, nicht negativ).</p>
 <p>sigma_per_mm: Absorptionskoeffizient [1/mm] (Array zulässig — je Wellenlänge variiert ergibt das <b>Farbe</b>).</p>
 <p>Rückgabewert: innerer Transmissionsgrad (0–1). Reflexionen an Grenzflächen sind nicht enthalten (dafür gibt es <code style="color:#22d3bf">slab_transmittance</code>).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">path_mm</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

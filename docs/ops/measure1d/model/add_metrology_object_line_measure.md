@@ -34,6 +34,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ``align_metrology_model`` で平行移動するときは両端点が一緒に動く。
 
+空の入力(``model`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

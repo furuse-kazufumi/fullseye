@@ -6,6 +6,7 @@
 <p>no-stopping-or-parking खंडों (मिलाए गए (k, 2)) से बचते हुए, वाहन का body [rear, rear + car_length] पूरा समा सके ऐसी <b>पिछले सिरे की स्थितियों</b> के अंतराल (m, 2)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>区間の端ちょうど(距離がちょうど 5 m など)は禁止の側に含める(「以内」)ので、車体が端に触れるだけなら許す(閉区間の補集合の閉包)。</p>
+<p>空の入力(<code style="color:#22d3bf">merged</code> が 0 要素)は空を返す(理由: 禁止区間が 0 件なら道路全体が正しい答え。no_stopping_zones は施設があっても空の merged を返しうる(運行時間外のバス停だけのとき))。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

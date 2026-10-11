@@ -27,6 +27,8 @@ d は配列でもよい。d ≤ 0 なら 0(見えた時には既に間に合わ�
 
 **Raises** ``ValueError``: reaction < 0、brake ≤ 0、d が非有限(inf は許して inf を返す)。
 
+空の入力(``d`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -24,6 +24,8 @@ B/A = ν/(1−ν) → ``nu``、``ratio`` = (A+B)/A、``R2``)、dy を A + B sin2
 ``dy_over_dz0``(法線だけでも出ている接線成分 = 非対称の量)、``rdx_n``、``dz0``、``dx_min_spacing``、``r``・``th``(中心相対)も返す。
 **Raises** ValueError: 2 つの表の節点数が違う、節点が 10 個未満。
 
+空の入力(``fz`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

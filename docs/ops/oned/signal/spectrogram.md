@@ -43,6 +43,8 @@ by either factor. This function returns magnitudes only — the phase is
 discarded, so it cannot be inverted; use ``acoustics.stft`` / ``acoustics.istft``
 for a round-trip.
 
+Empty input (``x`` with 0 elements) raises ``ValueError``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

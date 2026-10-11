@@ -15,6 +15,7 @@
 <p>각 점유 셀의 무게중심(M &lt;= N). 모두 입력의 축 정렬 bounding box 안에 들어간다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p><code style="color:#22d3bf">voxel_size &lt;= 0</code>은 ValueError. 빈 입력은 빈 (0,3)을 반환한다(graceful). 무게중심은 셀 안 점들의 평균이므로, 반드시 입력점의 볼록 껍질(따라서 bbox) 안에 들어간다.</p>
+<p>빈 입력(<code style="color:#22d3bf">points</code> 이(가) 0 개 요소)은 빈 결과를 반환한다(이유: 점군의 솎아내기·이상점 제거·드롭아웃은 결과가 비어 있을 수 있다. 빈 점군은 정당한 값이며, 연쇄의 다음 단계가 멈추지 않게 한다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

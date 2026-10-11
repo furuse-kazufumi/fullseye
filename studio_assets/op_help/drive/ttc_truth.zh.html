@@ -6,6 +6,7 @@
 <p>逐像素的<b>真实 τ</b>(秒，以第一帧的时刻计)与接近速度：<code style="color:#22d3bf">{&quot;tau&quot;, &quot;closing_speed&quot;, &quot;depth1&quot;, &quot;valid&quot;}</code>。</p>
 <p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">τ₀ = Z₀ · Δt / (Z₀ − Z₁)</code>(Lee 1976 の <code style="color:#22d3bf">Z / (−Ż)</code> を 2 コマの差分で。等速なら厳密)。近づかない画素(<code style="color:#22d3bf">Z₁ ≥ Z₀</code>)は <code style="color:#22d3bf">inf</code>。<code style="color:#22d3bf">closing_speed = (Z₀ − Z₁) / Δt</code>(m/s、正 = 近づく)。</p>
+<p>空の入力(<code style="color:#22d3bf">depth</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

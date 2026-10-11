@@ -40,6 +40,8 @@ ndarray(bool)
 - Raises ``ValueError``: 3 次元でない入力、``connectivity`` が 6/18/26 以外。
 - ボクセル数はスペーシング未補正なので、実寸で閾値を切るなら voxel 体積で割ってから渡す。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [measurement_uncertainty](../../math/guides/measurement_uncertainty.md) — 計測の不確かさと校正の知識 — 「測れている」を主張するために

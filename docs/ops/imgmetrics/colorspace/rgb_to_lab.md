@@ -31,6 +31,8 @@ sRGB → CIE L\*a\*b\*(D65)。ΔE を測る前段。
 画像 2 枚の色差なら ``delta_e_map`` が変換から色差まで一度にやる。
 ``lab_to_rgb`` で戻せるが、色域外は切り詰められる。
 
+空の入力(``rgb`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

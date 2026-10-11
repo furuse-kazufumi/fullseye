@@ -35,6 +35,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 Peak indices (scipy.signal.find_peaks) — impacts / defect echoes.
 
+Empty input (``x`` with 0 elements) raises ``ValueError``.
+
 Typed bridge of the 1d op ``find_peaks`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
 
 ## 参考(サンプルデータ・文献)

@@ -20,6 +20,7 @@
 <p style="margin:2px 0 2px 12px">• 輸入以 0 以外為前景轉為 bool(NaN 也是前景)。軸順序 (z, y, x)。</p>
 <p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>:非 3 維輸入,<code style="color:#22d3bf">connectivity</code> 不是 6/18/26。</p>
 <p style="margin:2px 0 2px 12px">• 體素數未做間距校正,因此依實際尺寸設閾值時,先除以體素體積再傳入。</p>
+<p>空輸入(<code style="color:#22d3bf">vol</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 量測不確定度與校正知識 —— 為了能主張「量得準」</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

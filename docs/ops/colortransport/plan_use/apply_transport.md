@@ -27,6 +27,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 質量ゼロの行は行き先が無い ―― 0 で埋めると「黒い画素」が黙って混ざるので
 ``ValueError``。
 
+空の入力(``plan`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [colorimetry](../../2d/guides/colorimetry.md) — 測色と分光の知識 — 色は「分光 × 光源 × 観測者」でしか決まらない

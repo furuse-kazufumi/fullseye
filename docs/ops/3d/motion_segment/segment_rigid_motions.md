@@ -56,6 +56,8 @@ Raises:
     ValueError: 形状不正 / 非有限 / pts1 空 / thresh <= 0 / max_bodies < 1 /
         k_sample < 3。
 
+空の入力(``pts0`` が 0 要素)は空を返す(理由: 空の点群には割り当てる点が無く、長さ 0 のラベル列が正しい答え。前段のフィルタが空を出しうる)。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

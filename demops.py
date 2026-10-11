@@ -789,7 +789,11 @@ def dem_ecef_to_geodetic(xyz):
     「lat_deg must be within [-90, 90]」で拒否する**値だった。
     領域は赤道面で軸から ``e²a = 42697.7 m``、極軸上で ``(a²-b²)/b = 42841.3 m``
     まで(実測: 42600 m で 180 度、42700 m で 0 度 —— 閉形式の境界とちょうど一致)。
+
+    空の入力(``xyz`` が 0 要素)は ValueError。
     """
+    if (len(xyz) if isinstance(xyz, (list, tuple)) else np.asarray(xyz).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("dem_ecef_to_geodetic: xyz is empty — pass at least one element")
     p = np.asarray(xyz, dtype=np.float64)
     if p.shape[-1] != 3:
         raise ValueError(f"xyz must have a trailing axis of 3, got shape {p.shape}")

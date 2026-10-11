@@ -2003,7 +2003,11 @@ def radon_volume(volume, angles_deg=None, n_detectors=None, oversample=1):
     :returns: ``(Z, n_angles, n_detectors)`` float64 stack.
     :raises ValueError: on a non-3-D input or a stack over
         :data:`MAX_STACK_ELEMENTS`.
+
+    Empty input (``volume`` with 0 elements) raises ``ValueError``.
     """
+    if (len(volume) if isinstance(volume, (list, tuple)) else np.asarray(volume).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("radon_volume: volume is empty — pass at least one element")
     op = "radon_volume"
     vol = _as_float_array(volume, "volume", MAX_STACK_ELEMENTS, op)
     if vol.ndim != 3:

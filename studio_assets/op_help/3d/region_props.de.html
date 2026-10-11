@@ -29,6 +29,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_area</code> zählt auch Flächen am Array-Rand (Null-padding). Wegen der Diskretisierung liegt <code style="color:#22d3bf">sphericity</code> selbst bei einer Kugel höchstens bei etwa 0.66 (siehe Modul-docstring).</p>
 <p style="margin:2px 0 2px 12px">• Die Labels sind in der Reihenfolge 1..n (dieselbe scipy-Abtastreihenfolge wie <code style="color:#22d3bf">label_components</code>), nicht nach Volumen. Sortieren muss der Aufrufer.</p>
 <p style="margin:2px 0 2px 12px">• Die Eingabe wird mit allem außer 0 als Vordergrund in bool umgewandelt (auch NaN ist Vordergrund). Raises <code style="color:#22d3bf">ValueError</code>: Eingabe nicht 3-dimensional, <code style="color:#22d3bf">connectivity</code> ungleich 6/18/26.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">vol</code> mit 0 Elementen) liefert ein leeres Ergebnis (Grund: ein Volumen ohne Voxel hat null Zusammenhangskomponenten, und das ist die richtige Antwort).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Messunsicherheit und Kalibrierung — was nötig ist, um zu behaupten, dass man misst</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

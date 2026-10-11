@@ -30,6 +30,8 @@ PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。
 として渡して精緻化する)。主軸が縮退している(球・円柱など固有値が等しい)雲では軸が不定で
 結果は安定しない。点数は両雲で違ってよい。入力は (N,3)(検証は ``moment_axes`` 任せで無い)。
 
+空の入力(``pts_scene`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

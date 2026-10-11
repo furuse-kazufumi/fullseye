@@ -498,6 +498,8 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
     ------
     ValueError
         ``max_width`` が非正 / ``min_font_size`` まで縮めても 1 行が入らない。
+
+    空の入力(``text`` が空文字列)は空を返す(理由: 空のラベル・表の空欄は普通にあり、幅 0 の寸法が正しい答え)。
     """
     if not isinstance(text, str):
         text = str(text)
@@ -1347,7 +1349,11 @@ def data_to_pixel(axes, x, y):
     ずれたことも図からは分からない。兄弟の :func:`plot_series` は同じ状況を
     ``"x and y must have the same length"`` で拒否していたので、**同じ族の中で
     規律が割れていた**(片方だけ直しても再発する型なので、文言も揃えてある)。
+
+    空の入力(``axes`` が空の dict)は ValueError。
     """
+    if isinstance(axes, dict) and len(axes) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("data_to_pixel: axes is empty — pass a non-empty dict")
     rx, ry, rw, rh = axes["rect"]
     n_x = np.size(np.asarray(x))
     n_y = np.size(np.asarray(y))

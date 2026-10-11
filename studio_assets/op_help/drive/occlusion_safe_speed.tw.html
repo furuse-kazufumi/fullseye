@@ -8,6 +8,7 @@
 <p>v ρ + v²/(2b) = d(空走 + 制動。<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code> と同じ式)を v について解いた正の根。桁落ちを避けて v = 2d / (ρ + sqrt(ρ² + 2d/b)) で計算する(ρ = 0 で sqrt(2 b d))。d は配列でもよい。d ≤ 0 なら 0(見えた時には既に間に合わない)。</p>
 <p>門: <code style="color:#22d3bf">rss_stopping_distance(v, ρ, 0, b)</code> == d(第 2 実装、rtol 1e-12)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: reaction &lt; 0、brake ≤ 0、d が非有限(inf は許して inf を返す)。</p>
+<p>空の入力(<code style="color:#22d3bf">d</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

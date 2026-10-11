@@ -6,6 +6,7 @@
 <p>2개의 라켓(x = −x_r과 +x_r, 판은 상대를 향함)이 서로 랠리합니다.</p>
 <p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>各コマ(1/fps)で受け手側の知覚 <code style="color:#22d3bf">perceive(t, p, v, ω)</code> が球の状態を返し、そこから運動方程式 + 台の跳ねで自分の面 x = ±x_r への到達点・時刻を予測してラケットを動かす(上限つき)。球が面に届いたら、相手コートの (∓target_x, y*) に T_flight で落ちる速度を狙って打つ(y* は乱数、<code style="color:#22d3bf">plan_spin</code> なら打球後のスピンを込みで狙いを合わせる)。<code style="color:#22d3bf">strategies</code> = (side 0 の戦略, side 1 の戦略)(None なら両方 <code style="color:#22d3bf">strategy_feeder</code>)。<code style="color:#22d3bf">retries</code> &gt; 0 なら打つ前に <code style="color:#22d3bf">shot_is_legal</code> で先読みし、外す狙いは巻き戻して別の狙い(戦略を引き直す)でやり直す。返り値 <code style="color:#22d3bf">{&quot;hits&quot;, &quot;end_reason&quot;, &quot;shots&quot;: [...], &quot;t&quot;, &quot;p&quot; (N,3), &quot;racket_pos&quot; (N,2,3), &quot;hit_times&quot;, &quot;rewinds&quot;}</code>。</p>
+<p>空の入力(<code style="color:#22d3bf">bp</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

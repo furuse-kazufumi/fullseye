@@ -251,7 +251,12 @@ def osm_road_graph(osm: dict, *, way_types: Sequence[str] = ROAD_TYPES, bbox=Non
     節点 = ``{"xy", "degree", "features": [NODE_FEATURES の部分集合], "tags", "edges": [辺の索引]}``(辺に使われた節点だけ)。
     ``bbox`` = (xmin, xmax, ymin, ymax) を渡すと **両端が箱(+ margin)の外** の辺を落とす(片端だけ外の辺は残す = 箱の縁で道が切れる)。
     ``oneway`` は "yes" / "1" / "true" が順方向、"-1" / "reverse" は a, b を入れ替えて順方向にする。
-    **Raises** ``ValueError``: way_types に知らない種別、辺が 1 本も無い。"""
+    **Raises** ``ValueError``: way_types に知らない種別、辺が 1 本も無い。
+
+    空の入力(``osm`` が空の dict)は ValueError。
+    """
+    if isinstance(osm, dict) and len(osm) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("osm_road_graph: osm is empty — pass a non-empty dict")
     for t in way_types:
         if t not in LANE_WIDTH_JP:
             raise ValueError("osm_road_graph: unknown way type %r (known: %s)" % (t, ", ".join(ROAD_TYPES)))
@@ -328,7 +333,12 @@ def osm_road_mask(graph: dict, *, step: float = 0.5, margin: float = 6.0, bbox=N
 
     画素 (r, c) の中心 = (xmin + (c + ½) step, ymin + (r + ½) step)、行は y の増える向き(数学座標。表示で上下を返す)。
     返り値 ``{"mask": (H, W) bool, "xmin", "ymin", "step", "shape", "area_m2": 画素数 × step²}``。
-    **Raises** ``ValueError``: step ≤ 0、画像が 4e7 画素を超える(step を粗く)。"""
+    **Raises** ``ValueError``: step ≤ 0、画像が 4e7 画素を超える(step を粗く)。
+
+    空の入力(``graph`` が空の dict)は ValueError。
+    """
+    if isinstance(graph, dict) and len(graph) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("osm_road_mask: graph is empty — pass a non-empty dict")
     step = float(step)
     if not (step > 0):
         raise ValueError("osm_road_mask: step must be > 0")
@@ -411,7 +421,12 @@ def osm_road_loops(roadmask: dict, *, tolerance_px: float = 0.75) -> Dict[str, o
 
     追跡は画素の辺に沿う(:func:`contours_xld._trace_mask_boundaries`)ので、間引く前のループの面積の和 = 画素数 × step²
     (外側 − 穴)が厳密に成り立つ(``area_check``)。穴か外側かは、ループの最も左の縦の辺のすぐ右の画素が道路かどうかで決める。
-    返り値 ``{"outer": [(K,2) xy], "holes": [(K,2) xy], "outer_raw", "holes_raw", "area_check": {"loops_m2", "pixels_m2", "abs_err"}}``。"""
+    返り値 ``{"outer": [(K,2) xy], "holes": [(K,2) xy], "outer_raw", "holes_raw", "area_check": {"loops_m2", "pixels_m2", "abs_err"}}``。
+
+    空の入力(``roadmask`` が空の dict)は ValueError。
+    """
+    if isinstance(roadmask, dict) and len(roadmask) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("osm_road_loops: roadmask is empty — pass a non-empty dict")
     import contours_xld as CX
     mask = roadmask["mask"]
     step = roadmask["step"]
@@ -636,7 +651,12 @@ def japan_world(graph: dict, *, step: float = 0.5, kerb_height: float = 0.15, ke
     踏切(``level_crossing``: 2 本のレール(ラベル 8)+ 踏切警標 + 停止線)。生活道路(residential / unclassified / living_street)の
     通行側の縁に ``pole_pitch`` 間隔で電柱(ラベル 16)。``buildings`` = plateau_parse の建物の列なら押し出し柱(ラベル 14)。
     返り値 = driveworld の世界 + ``{"graph", "roadmask", "loops", "signals": [{"node", "edge", "object", "pose"}], "stats": {...}}``。
-    **Raises** ``ValueError``: side が left/right 以外、kerb/step が不正。"""
+    **Raises** ``ValueError``: side が left/right 以外、kerb/step が不正。
+
+    空の入力(``graph`` が空の dict)は ValueError。
+    """
+    if isinstance(graph, dict) and len(graph) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("japan_world: graph is empty — pass a non-empty dict")
     import driveworld as DW
     if side not in ("left", "right"):
         raise ValueError("japan_world: side must be 'left' or 'right'")
@@ -852,7 +872,12 @@ def osm_route(graph: dict, src: int, dst: int, *, side: str = "left", step: floa
     ``level_crossing`` = "crossing"(crossing_setback 手前、``crossing_zone`` = レールの前後 1.5 m)。経路の最初の節点は飛ばす。
     返り値 ``{"kind": "route", "nodes", "edges", "polyline": (K,2), "cum": (K,), "length", "stop_lines", "side", "waypoints": (n,3) 節点の
     車線中心, "crosswalks": [s]}``。
-    **Raises** ``ValueError``: 節点が無い、到達不能、side が不正。"""
+    **Raises** ``ValueError``: 節点が無い、到達不能、side が不正。
+
+    空の入力(``graph`` が空の dict)は ValueError。
+    """
+    if isinstance(graph, dict) and len(graph) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("osm_route: graph is empty — pass a non-empty dict")
     if side not in ("left", "right"):
         raise ValueError("osm_route: side must be 'left' or 'right'")
     N = graph["nodes"]
@@ -955,7 +980,12 @@ def osm_route(graph: dict, src: int, dst: int, *, side: str = "left", step: floa
 
 
 def japan_stats(graph: dict) -> Dict[str, object]:
-    """道路網の内訳の表: 種別ごとの辺数・延長・平均幅、幅の由来の内訳、特徴のある節点の数。"""
+    """道路網の内訳の表: 種別ごとの辺数・延長・平均幅、幅の由来の内訳、特徴のある節点の数。
+
+    空の入力(``graph`` が空の dict)は ValueError。
+    """
+    if isinstance(graph, dict) and len(graph) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("japan_stats: graph is empty — pass a non-empty dict")
     rows = {}
     for e in graph["edges"]:
         r = rows.setdefault(e["highway"], {"edges": 0, "length_m": 0.0, "width_sum": 0.0})

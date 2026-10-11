@@ -16,6 +16,7 @@
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p><b>लंबाई के अंतर को reject करना 2026-09-02 को जोड़ा गया</b>। chain fuzzer के इस op को चला पाने के ठीक बाद, अलग लंबाई के 2 signals देने वाले path पर miner <code style="color:#22d3bf">np.stack</code> के कच्चे ValueError से गिर गया, और यह पकड़ में आया। उससे पहले <code style="color:#22d3bf">x</code> में 7 points और <code style="color:#22d3bf">y</code> में 3 points होने पर भी यह <b>कोई exception नहीं देता था और अलग लंबाई के 2 arrays वैसे ही लौटा देता था</b>।</p>
 <p>खतरा गिरने में नहीं, न गिरने में है -- लौटे 2 arrays को <code style="color:#22d3bf">zip</code> करने पर <b>केवल 3 points, x के पहले 3 स्थानों पर</b> बनते हैं। points गायब हुए, या x खिसक गया, यह figure से पता नहीं चलता। sibling <code style="color:#22d3bf">plot_series</code> इसी स्थिति को <code style="color:#22d3bf">&quot;x and y must have the same length&quot;</code> से reject करता था, इसलिए <b>एक ही family के अंदर अनुशासन बँटा हुआ था</b> (यह ऐसी गलती है जो एक ही तरफ़ ठीक करने पर दोबारा आती है, इसलिए शब्द भी एक जैसे किए गए हैं)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">axes</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

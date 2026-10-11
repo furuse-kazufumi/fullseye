@@ -119,7 +119,12 @@ def flow_from_depth_motion(depth, K, T_rel) -> dict:
 
     画素の 3-D 点を ``T_rel`` で動かして再投影し、``u = col₁ − col₀``、``v = row₁ − row₀``。動かした後に
     カメラの背後へ行く点や深度の無い画素は ``valid = False``(u, v は NaN)。``depth1`` は動かした後の深度。
-    光学流の推定器の採点に使う真値(推定器と同じ規約: (x, y) → (x + u, y + v))。"""
+    光学流の推定器の採点に使う真値(推定器と同じ規約: (x, y) → (x + u, y + v))。
+
+    空の入力(``depth`` が 0 要素)は ValueError。
+    """
+    if (len(depth) if isinstance(depth, (list, tuple)) else np.asarray(depth).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("flow_from_depth_motion: depth is empty — pass at least one element")
     Z = _depth(depth)
     K = _K(K)
     T = _T(T_rel, "T_rel")
@@ -138,7 +143,12 @@ def ttc_truth(depth, K, T_rel, dt: float) -> dict:
     """画素ごとの **真の τ**(秒、最初のコマの時刻で)と閉じる速さ: ``{"tau", "closing_speed", "depth1", "valid"}``。
 
     ``τ₀ = Z₀ · Δt / (Z₀ − Z₁)``(Lee 1976 の ``Z / (−Ż)`` を 2 コマの差分で。等速なら厳密)。近づかない画素
-    (``Z₁ ≥ Z₀``)は ``inf``。``closing_speed = (Z₀ − Z₁) / Δt``(m/s、正 = 近づく)。"""
+    (``Z₁ ≥ Z₀``)は ``inf``。``closing_speed = (Z₀ − Z₁) / Δt``(m/s、正 = 近づく)。
+
+    空の入力(``depth`` が 0 要素)は ValueError。
+    """
+    if (len(depth) if isinstance(depth, (list, tuple)) else np.asarray(depth).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("ttc_truth: depth is empty — pass at least one element")
     if not (dt > 0):
         raise ValueError("dt must be positive")
     Z = _depth(depth)
@@ -223,7 +233,12 @@ def ttc_from_range(distance: float, closing_speed: float) -> float:
 def label_extent(label, value: int) -> dict:
     """ラベル像の中で値 ``value`` の画素の箱: ``{"col0", "col1", "row0", "row1", "width", "height", "n"}``。
 
-    幅・高さは画素数(``col1 − col0 + 1``)。無ければ全部 0。:func:`ttc_from_scale` の入力(完全な検出器の代役)。"""
+    幅・高さは画素数(``col1 − col0 + 1``)。無ければ全部 0。:func:`ttc_from_scale` の入力(完全な検出器の代役)。
+
+    空の入力(``label`` が 0 要素)は ValueError。
+    """
+    if (len(label) if isinstance(label, (list, tuple)) else np.asarray(label).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("label_extent: label is empty — pass at least one element")
     L = np.asarray(label)
     if L.ndim != 2:
         raise ValueError("label must be 2-D")

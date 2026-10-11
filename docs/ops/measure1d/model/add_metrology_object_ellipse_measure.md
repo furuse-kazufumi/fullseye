@@ -36,6 +36,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
   (長軸が ``ra``)** に正規化され、``rms`` は代数残差ではなく中心からの
   半径方向の幾何残差 [px]。
 
+空の入力(``model`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

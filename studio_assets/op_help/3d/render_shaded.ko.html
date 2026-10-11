@@ -6,6 +6,7 @@
 <p>법선 맵 (H,W,3) + 광원 방향 → Lambert 음영 이미지(외관 샘플 생성, 광학과 연결).</p>
 <p><code style="color:#22d3bf">I = ambient + (1 − ambient)·clip(n·L̂, 0, 1)</code>를 <code style="color:#22d3bf">(H, W)</code> float64, 값 범위 <b>[0, 1]</b>로 반환한다. <code style="color:#22d3bf">light</code>는 내부에서 단위화하지만(영벡터는 0 나눗셈으로 NaN), <b>법선은 단위화하지 않는다</b>(단위 법선을넘긴다. <code style="color:#22d3bf">estimate_point_normals</code> / <code style="color:#22d3bf">normals_from_depth</code>의 출력은 단위). 법선의 성분 순서와 <code style="color:#22d3bf">light</code>의 성분 순서는 맞춘다(기본값 <code style="color:#22d3bf">(0,0,1)</code>은 제 3 성분=카메라 방향을 정면광으로 하는 규약). 광원과 반대를 향하는 면은 <code style="color:#22d3bf">ambient</code>의 값이 된다. 마지막 축을 법선으로 간주하므로 <code style="color:#22d3bf">(N,3)</code>의 점별법선으로도 동작한다. 경면 하이라이트는 없다(<code style="color:#22d3bf">fresnel_reflectance</code> / <code style="color:#22d3bf">reflect</code>로 별도로).</p>
 <p>용도: <code style="color:#22d3bf">photometric_stereo</code>의 검산(법선 → 영상의 순방향), 외관 검사의 합성 샘플.</p>
+<p>빈 입력(<code style="color:#22d3bf">normals_img</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

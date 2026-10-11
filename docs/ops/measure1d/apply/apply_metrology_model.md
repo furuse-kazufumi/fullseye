@@ -29,6 +29,8 @@ row1,col1,row2,col2,angle_deg / 円は row,col,radius / 楕円は row,col,phi,ra
 フィットできない場合は ``params=None``, ``rms=inf``, ``error`` に理由を入れる
 (他オブジェクトの計測は続行)。楕円・矩形の ``phi`` は長軸(ra / l1)の向き。
 
+空の入力(``model`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

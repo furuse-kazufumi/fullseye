@@ -25,6 +25,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 返り値は 0..2^bit_depth−1 の整数配列。``seed`` を固定すれば決定的。
 
+空の入力(``radiance`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

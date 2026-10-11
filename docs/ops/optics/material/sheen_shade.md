@@ -24,6 +24,8 @@ normals / light / view: 上記と同じ。sheen: 強さ。exponent: 縁への集
 返り値: (H, W)。**鏡面反射とは逆**に、正面(n·v = 1)で 0 に近く、縁(n·v → 0)で
 最大になる ―― ベルベットの縁が白く光るのはこれで、Phong では絶対に出せない。
 
+空の入力(``normals`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

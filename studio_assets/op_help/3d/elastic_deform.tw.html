@@ -7,6 +7,7 @@
 <p>在各點放置獨立的高斯隨機向量,用空間高斯權重 <code style="color:#22d3bf">exp(-d²/2σ²)</code> 平滑後產生位移場(相鄰點 coherent 地移動)。場先正規化為 RMS 1 再乘以 <code style="color:#22d3bf">alpha</code>,因此位移的 RMS 範數恰好為 <code style="color:#22d3bf">alpha</code>(<code style="color:#22d3bf">σ→∞</code> 時場為常數 = 剛體平移,<code style="color:#22d3bf">σ→0</code> 時各點獨立)。用於非剛性物體變形/柔性物體的訓練。</p>
 <p>注意(honest):鄰域搜尋使用 <code style="color:#22d3bf">cKDTree.query_pairs(r=3σ)</code>。<code style="color:#22d3bf">σ</code> 越接近點雲直徑, 點對數越接近 O(N²),因此對大規模點雲請將 <code style="color:#22d3bf">σ</code> 保持在局部尺度。</p>
 <p><code style="color:#22d3bf">sigma &lt; 0</code> 拋出 <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">sigma == 0</code> 或只有 1 個點的點雲不做平滑,各點獨立位移。<code style="color:#22d3bf">alpha</code> 不做驗證(0 則無位移,為負只是場反向)。由 <code style="color:#22d3bf">seed</code> 決定。回傳值為 float64 <code style="color:#22d3bf">(N,3)</code>,點數與順序保持不變(變形前後的對應關係可由索引得知,因此能直接量測非剛性對位的誤差)。空輸入回傳空。</p>
+<p>空輸入(<code style="color:#22d3bf">points</code> 為 0 個元素)回傳空結果(理由:點雲的抽稀、離群點去除與隨機丟棄都可能得到空結果。空點雲是合法的值,鏈的下一級不應因此停下)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -24,6 +24,8 @@ thickness: 透け具合(0–1、大きいほど裏から回り込む)。wrap: �
 返り値: (H, W)。**光源が裏にあるほど明るい**成分(back-scatter)と、影側へ
 回り込む成分(wrap lighting)の和。Lambert では 0 になる領域に光が残るのが要点。
 
+空の入力(``normals`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

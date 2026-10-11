@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 周波数応答 H(jω)(Bode 線図の中身)。ω は rad/s。位相は連続に unwrap した度。
 
+空の入力(``num`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 mathops の全 op は入力を検証してから計算する(黙って通さない):

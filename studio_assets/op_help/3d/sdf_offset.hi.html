@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• erosion (<code style="color:#22d3bf">r &lt; 0</code>) में <code style="color:#22d3bf">|r|</code> यदि सबसे छोटे inscribed radius से अधिक हो तो आकार गायब हो जाता है (सभी elements positive)। यह error नहीं है।</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sdf_union</code> / <code style="color:#22d3bf">sdf_intersect</code> का <b>अंदर का भाग</b> सच्ची दूरी की lower bound है, इसलिए combine करने के बाद <code style="color:#22d3bf">r &lt; 0</code> से erosion करने पर overlap क्षेत्र में वास्तविक से अधिक कट सकता है।</p>
 <p style="margin:2px 0 2px 12px">• मोटाई <code style="color:#22d3bf">t</code> का shell: <code style="color:#22d3bf">sdf_subtract(sdf, sdf_offset(sdf, -t))</code>।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">sdf</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

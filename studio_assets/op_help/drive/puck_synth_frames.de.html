@@ -6,6 +6,7 @@
 <p>Synthetische Frame-Folge und Ground Truth: tastet den Pfad in geschlossener Form (<code style="color:#22d3bf">puck_slide_predict</code>) mit fps ab und zeichnet ihn mit <code style="color:#22d3bf">puck_render_frame</code>.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;frames&quot; [N], &quot;t&quot; (N,), &quot;truth_xy&quot; (N,2) 露光始めの位置, &quot;truth_v&quot; (N,2), &quot;truth_px&quot; (N,2), &quot;pred&quot;, &quot;cam&quot;, &quot;fps&quot;, &quot;exposure&quot;}</code>。</p>
+<p>空の入力(<code style="color:#22d3bf">table</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

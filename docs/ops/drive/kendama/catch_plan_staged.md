@@ -34,6 +34,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 "apex", "travel"}``。頂点が縁に乗る高さに届かない軌道は ``feasible=False`` で hold。
 制限(正直に): 皿の姿勢は技ごとに固定(手首を回して玉を迎えない)、抗力は予測に入れない(毎回知覚からやり直す)。
 
+空の入力(``kp`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

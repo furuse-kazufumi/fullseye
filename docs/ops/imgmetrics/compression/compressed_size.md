@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 stdlib の ``zlib`` / ``lzma`` のみ。dtype と shape の違いが結果を変える
 ので、比べる 2 枚は同じ dtype・同じ shape であること。
 
+空の入力(``a`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [image_difference_metrics ファミリ ガイド](../guides/image_difference_metrics.md)

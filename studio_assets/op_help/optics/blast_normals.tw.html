@@ -6,6 +6,7 @@
 <p>把噴砂 / 霧面的<b>無方向微觀凹凸</b>寫進法線。</p>
 <p>grain：傾斜強度(0–1 左右)。cell_px：顆粒大小 [px] (越大霧面越粗)。</p>
 <p>回傳值：擾動後的單位法線貼圖。沒有方向統計，所以高光不拉長而是<b>擴散</b> ―― 這就是與髮絲紋的區分點。</p>
+<p>空輸入(<code style="color:#22d3bf">normals</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

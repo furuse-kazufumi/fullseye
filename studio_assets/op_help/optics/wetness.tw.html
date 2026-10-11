@@ -8,6 +8,7 @@
 <p>ior：水膜的折射率。</p>
 <p>回傳值：濕潤狀態的漫射色(同形)。</p>
 <p>為什麼會變暗：水膜內側發生全反射，漫射光一次次被送回表面，每次都被吸收。作為近似，對乾燥反射率 ρ 乘以相當於內部反射率 Ri = 1 − (1 − Ri0)/n² 的再吸收 ―― 正是濕沙看起來發黑的現象(鏡面增加則疊加 <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> 來表現)。</p>
+<p>空輸入(<code style="color:#22d3bf">base_rgb</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

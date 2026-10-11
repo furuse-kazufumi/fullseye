@@ -44,6 +44,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ``sdf_subtract`` で CSG → ``<= 0`` を占有として marching cubes(``voxel_to_mesh``
 に ``-sdf`` を渡し ``iso=0`` 相当で等値面)。
 
+空の入力(``grid`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 接線トラクション q(r) = q′ − q″ [Pa]: q′ = μp0√(1−r²/a²)(r < a)、q″ = μp0(c/a)√(1−r²/c²)(r < c)。滑り環 c ≤ r < a では q = μp(r)
 (Coulomb の限界に張り付く)、固着円では q < μp。``mp`` は :func:`mindlin_partial_slip` の表。r と同じ形。**Raises** ValueError: mp に a/c/mu/p0 が無い。
 
+空の入力(``r`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

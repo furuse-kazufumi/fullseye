@@ -6,6 +6,7 @@
 <p>Eine Näherung für durchscheinendes Umgriffslicht (Blätter, Haut, Marmor, Milchkunststoff).</p>
 <p>thickness: Durchscheinen (0–1, größer = mehr Licht umgreift von hinten). wrap: wie weit das Licht in die Schattenseite umgreift.</p>
 <p>Rückgabewert: (H, W). Summe aus einem Anteil, der <b>heller ist, je mehr die Lichtquelle dahinter liegt</b> (back-scatter), und einem Anteil, der in die Schattenseite umgreift (wrap lighting). Entscheidend ist, dass in Bereichen, in denen Lambert 0 ergibt, Licht verbleibt.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">normals</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

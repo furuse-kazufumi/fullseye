@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• 返回值为与输入同形状的 bool。没有前景则全 False(不抛异常)。</p>
 <p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>:非 3 维输入,<code style="color:#22d3bf">connectivity</code> 不是 6/18/26。</p>
 <p style="margin:2px 0 2px 12px">• 典型:从阈值处理得到的二值体数据中丢弃噪声块,只保留主要对象。要保留多个用 <code style="color:#22d3bf">filter_by_volume</code>,按特征选择用 <code style="color:#22d3bf">vol_select_labels</code>。</p>
+<p>空输入(<code style="color:#22d3bf">vol</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 测量不确定度与校准知识 —— 为了能主张“测得准”</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

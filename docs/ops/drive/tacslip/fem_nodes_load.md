@@ -22,6 +22,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 3 本は同じ節点集合で最終列だけがその方向の変位。返り ``id``・``X``・``Y``・``Z``・``dx``・``dy``・``dz``(各 (N,))、``n``、``name``。
 **Raises** FileNotFoundError: ファイルが無い。ValueError: ヘッダが違う、列が 5 本でない、3 本の節点座標が一致しない(fail-closed)。
 
+空の入力(``dirpath`` が空文字列)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> 長度為 N。總和為 0 時除以 0 得 NaN(不拋例外)。點數為 0 會失敗(沒有驗證)。</p>
 <p style="margin:2px 0 2px 12px">• 主軸退化(球等)時軸的方向不確定。</p>
 <p>後段:<code style="color:#22d3bf">match_pca</code>、<code style="color:#22d3bf">obb</code>(有向 bbox)、旋轉到標準位姿。</p>
+<p>空輸入(<code style="color:#22d3bf">points</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

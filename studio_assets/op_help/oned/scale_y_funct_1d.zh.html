@@ -7,6 +7,7 @@
 <p>Linear map of the y-values, <code style="color:#22d3bf">mult * y + add</code> (HALCON <code style="color:#22d3bf">scale_y_funct_1d</code>).</p>
 <p>The x-grid is untouched (use <code style="color:#22d3bf">transform_funct_1d</code> to move x too).</p>
 <p>:param y: 1-D function (may be empty). :param mult: finite multiplier. :param add: finite offset. :raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.</p>
+<p>Empty input (<code style="color:#22d3bf">y</code> with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON&#x27;s funct_1d), and empty functions flow through chains of function ops).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

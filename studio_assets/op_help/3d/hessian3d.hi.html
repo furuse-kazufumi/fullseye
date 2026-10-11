@@ -7,6 +7,7 @@
 <p>3D Hessian के 6 स्वतंत्र components (fzz,fyy,fxx,fzy,fzx,fyx)। separable conv3d (2nd order/1st order × smoothing)।</p>
 <p>Kernel: 2nd-order [1,−2,1] (gain 1), 1st-order [−0.5,0,0.5] (gain 1), बाकी axes पर [1,2,1]/4 का smoothing (gain 1)। Diagonal components &quot;उस axis का 2nd-order × बाकी 2 axes का smoothing&quot; हैं, cross components &quot;2 axes का 1st-order × बचे axis का smoothing&quot;। <b>इकाई 1/voxel² में असली मान है</b> (<code style="color:#22d3bf">sobel3d</code> के 32 गुना gain से अलग)। किनारे replicate। Return value <b>6 torch tensor की list</b> है, हर एक <code style="color:#22d3bf">(D,H,W)</code> float32, <code style="color:#22d3bf">device</code> पर, क्रम (zz, yy, xx, zy, zx, yx) (axis 0=z, 1=y, 2=x)। numpy चाहिए तो <code style="color:#22d3bf">.cpu().numpy()</code>। Input numpy जैसा होता है (float32 में बदला जाता है)।</p>
 <p>उपयोग: <code style="color:#22d3bf">curvature_maps</code> की principal curvature (<code style="color:#22d3bf">sobel3d</code> के साथ जोड़ी में), blob/tubular structures की पहचान।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">vol</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

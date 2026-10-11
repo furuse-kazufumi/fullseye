@@ -41,6 +41,8 @@ n_harmonics を係数数より小さくすると **高調波を打ち切って�
 輪郭を係数化せずに滑らかにするだけなら ``fourier_smooth``。係数どうしの
 比較は ``invariants`` / ``descriptor_distance``。
 
+空の入力(``model`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [shape_description_2d ファミリ ガイド](../guides/shape_description_2d.md)

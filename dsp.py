@@ -92,7 +92,12 @@ def _require_path(path, fn: str):
 
 def read_wav(path):
     """Read a WAV file (stdlib) -> ``(x float64 [-1,1], rate)``. Multi-channel is
-    averaged to mono. Handles 8/16/32-bit PCM."""
+    averaged to mono. Handles 8/16/32-bit PCM.
+
+    Empty input (``path`` an empty string) raises ``ValueError``.
+    """
+    if isinstance(path, (str, bytes)) and len(path) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("read_wav: path is empty — pass a file path")
     path = _require_path(path, "read_wav")
     with wave.open(path, "rb") as w:
         rate = w.getframerate()
@@ -118,7 +123,12 @@ def write_wav(path, x, rate=44100):
     Non-finite samples raise (they would become garbage PCM).
 
     Returns the path written (``str``) -- the ledger declares this op's output as the
-    ``file`` sort, which ``read_wav`` / ``read_audio`` consume (it used to return ``None``)."""
+    ``file`` sort, which ``read_wav`` / ``read_audio`` consume (it used to return ``None``).
+
+    Empty input (``path`` an empty string) raises ``ValueError``.
+    """
+    if isinstance(path, (str, bytes)) and len(path) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("write_wav: path is empty — pass a file path")
     path = _require_path(path, "write_wav")
     a = np.clip(_require_finite(x), -1.0, 1.0)
     pcm = np.round(a * 32767.0).astype(np.int16)
@@ -134,7 +144,12 @@ def write_wav(path, x, rate=44100):
 
 def read_audio(path):
     """Read any audio format -> ``(x, rate)``. Uses ``soundfile`` if available
-    (mp3/flac/ogg/…), else falls back to the stdlib WAV reader."""
+    (mp3/flac/ogg/…), else falls back to the stdlib WAV reader.
+
+    Empty input (``path`` an empty string) raises ``ValueError``.
+    """
+    if isinstance(path, (str, bytes)) and len(path) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("read_audio: path is empty — pass a file path")
     path = _require_path(path, "read_audio")
     try:
         import soundfile as sf
@@ -220,7 +235,12 @@ def spectrogram(x, rate=1.0, win=256, hop=None):
     Peak *positions*, frame-to-frame ratios and any dB *difference* are unaffected
     by either factor. This function returns magnitudes only — the phase is
     discarded, so it cannot be inverted; use ``acoustics.stft`` / ``acoustics.istft``
-    for a round-trip."""
+    for a round-trip.
+
+    Empty input (``x`` with 0 elements) raises ``ValueError``.
+    """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("spectrogram: x is empty — pass at least one element")
     x = _require_finite(x)
     win = int(win)
     hop = win // 2 if hop is None else int(hop)
@@ -293,7 +313,12 @@ def envelope(x):
 
 def rms(x, frame=None, hop=None):
     """RMS level. Scalar for the whole signal, or a framewise array when *frame*
-    is given (a vibration/energy envelope over time)."""
+    is given (a vibration/energy envelope over time).
+
+    Empty input (``x`` with 0 elements) raises ``ValueError``.
+    """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("rms: x is empty — pass at least one element")
     x = _require_finite(x)
     if frame is None:
         return float(np.sqrt(np.mean(x * x))) if x.size else 0.0
@@ -310,7 +335,12 @@ def zero_crossing_rate(x):
     the sign changes between consecutive *non-zero* samples, and the rate divides
     by the number of adjacent sample pairs ``len(x) - 1``. So ``[1, 0, 1, 0, 1]`` is
     ``0.0`` and ``[1, 0, -1]`` is ``0.5`` (before 2026-09-02 ``diff(sign(x))`` counted
-    every touch of zero as a crossing: ``1.0`` for both)."""
+    every touch of zero as a crossing: ``1.0`` for both).
+
+    Empty input (``x`` with 0 elements) raises ``ValueError``.
+    """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("zero_crossing_rate: x is empty — pass at least one element")
     x = _require_finite(x)
     if x.size < 2:
         return 0.0
@@ -322,7 +352,12 @@ def zero_crossing_rate(x):
 
 
 def find_peaks(x, height=None, distance=None):
-    """Peak indices (scipy.signal.find_peaks) — impacts / defect echoes."""
+    """Peak indices (scipy.signal.find_peaks) — impacts / defect echoes.
+
+    Empty input (``x`` with 0 elements) raises ``ValueError``.
+    """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("find_peaks: x is empty — pass at least one element")
     from scipy.signal import find_peaks as _fp
     idx, _ = _fp(_require_finite(x), height=height, distance=distance)
     return idx
@@ -550,13 +585,19 @@ def signal_features(x, rate=1.0):
     """A compact acoustic/vibration feature vector for anomaly detection:
     ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid`` (Hz),
     ``peak_freq`` (Hz), ``bandwidth`` (Hz). All finite — a NaN / Inf sample raises
-    ``ValueError`` rather than producing NaN features; empty signal -> zeros.
+    ``ValueError`` rather than producing NaN features (an empty signal too, since 2026-10-12;
+    it used to give zeros).
 
     The three spectral entries are built on :func:`spectrum`, but every one of
     them is a *ratio* of magnitudes (``argmax``, a magnitude-weighted mean, a
     magnitude-weighted spread), so the raw ``|rfft|`` convention documented there
     cancels out and these numbers are unaffected by it. ``rms``, ``peak`` and
-    ``crest_factor`` are computed in the time domain and never touch the FFT."""
+    ``crest_factor`` are computed in the time domain and never touch the FFT.
+
+    Empty input (``x`` with 0 elements) raises ``ValueError``.
+    """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("signal_features: x is empty — pass at least one element")
     x = _require_finite(x)
     if x.size == 0:
         return {k: 0.0 for k in ("rms", "peak", "crest_factor", "zcr",
@@ -656,7 +697,11 @@ def quantize(x, bits=8, mode="round", dither=None, seed=0):
     comparator, not a quantiser — the error model does not apply. (3) The error
     model assumes the signal moves by more than a step between samples; on a flat
     stretch the error is a constant offset, not noise.
+
+    Empty input (``x`` with 0 elements) raises ``ValueError``.
     """
+    if (len(x) if isinstance(x, (list, tuple)) else np.asarray(x).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("quantize: x is empty — pass at least one element")
     x = _require_finite(x)
     if x.size == 0:
         return np.asarray(x, np.float64)

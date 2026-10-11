@@ -116,7 +116,12 @@ def punch_pressure(X, Y, a: float, P: float = 0.0, M1=(0.0, 0.0), pitch: float |
 def punch_surface_uz(r, a: float, P: float, G: float, nu: float) -> np.ndarray:
     """平頭円形押し込み子(法線力 P)の半空間表面の法線変位 [m] (沈む向き正): 円内は一様 δ = P(1−ν)/(4Ga)、外側は (2δ/π) arcsin(a/r)
     (Johnson 1985 §3.4 の平頭押し込み子。式番号は本文で確認できず **unverified** —— Boussinesq 核 ``Kz`` の畳み込みと 0.35 % で一致することで
-    数値検証した)。**Raises** ValueError: a, P, G ≤ 0。"""
+    数値検証した)。**Raises** ValueError: a, P, G ≤ 0。
+
+    空の入力(``r`` が 0 要素)は ValueError。
+    """
+    if (len(r) if isinstance(r, (list, tuple)) else np.asarray(r).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("punch_surface_uz: r is empty — pass at least one element")
     a, P, G, nu = float(a), float(P), float(G), float(nu)
     if not (a > 0.0 and P > 0.0 and G > 0.0):
         raise ValueError("punch_surface_uz: a, P, G must be > 0")
@@ -217,7 +222,12 @@ def boussinesq_surface_displacement(p, kern: dict) -> dict:
 
 def surface_divergence_closed_form(p, G: float, nu: float) -> np.ndarray:
     """半空間の表面接線変位の発散の閉形式 ∇·ū = −(1−2ν) p/(2G)(本モジュールの導出: Boussinesq 点荷重 ū_r = −(1−2ν)P/(4πGr) と
-    2 次元の ∇·(r̂/r) = 2πδ²)。畳み込みの数値発散と比べる門(r < 0.8a で 0.2 %、実測)。**Raises** ValueError: G ≤ 0。"""
+    2 次元の ∇·(r̂/r) = 2πδ²)。畳み込みの数値発散と比べる門(r < 0.8a で 0.2 %、実測)。**Raises** ValueError: G ≤ 0。
+
+    空の入力(``p`` が 0 要素)は ValueError。
+    """
+    if (len(p) if isinstance(p, (list, tuple)) else np.asarray(p).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("surface_divergence_closed_form: p is empty — pass at least one element")
     if not (float(G) > 0.0):
         raise ValueError("surface_divergence_closed_form: G must be > 0")
     return -(1.0 - 2.0 * float(nu)) * np.asarray(p, np.float64) / (2.0 * float(G))

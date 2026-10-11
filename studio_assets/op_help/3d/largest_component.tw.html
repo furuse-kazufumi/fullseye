@@ -11,6 +11,7 @@
 <p style="margin:2px 0 2px 12px">• 回傳值為與輸入同形狀的 bool。沒有前景則全 False(不拋例外)。</p>
 <p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>:非 3 維輸入,<code style="color:#22d3bf">connectivity</code> 不是 6/18/26。</p>
 <p style="margin:2px 0 2px 12px">• 典型:從閾值處理得到的二值體資料中捨棄雜訊塊,只保留主要對象。要保留多個用 <code style="color:#22d3bf">filter_by_volume</code>,依特徵選擇用 <code style="color:#22d3bf">vol_select_labels</code>。</p>
+<p>空輸入(<code style="color:#22d3bf">vol</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 量測不確定度與校正知識 —— 為了能主張「量得準」</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -13,6 +13,7 @@
 <p>Returns:</p>
 <p>labels: (N,) int। हर जुड़े हुए smooth region को 0,1,2,... देता है। <b>min_region_size से छोटे regions (isolated points, असंगत दिशा वाला कचरा) को -1 (noise/unassigned)</b> मिलता है = एकीकृत contract (-1=noise) के अनुसार।</p>
 <p>खाली input पर shape (0,) लौटाता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: खाली क्लाउड में लेबल करने को कुछ नहीं है, इसलिए लंबाई 0 का लेबल ऐरे सही उत्तर है; पहले के फ़िल्टर खाली क्लाउड दे सकते हैं)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

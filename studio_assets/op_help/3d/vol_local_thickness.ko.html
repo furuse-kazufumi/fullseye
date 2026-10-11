@@ -11,6 +11,7 @@
 <p><b>Applicability.</b> (1) The foreground comes from a single threshold, so beam hardening or a brightness gradient biases the thickness across the volume — flatten first.  (2) With anisotropic voxels the ball is a ball in millimetres, not in voxels, so *spacing* is not cosmetic.  (3) A feature three voxels across is quantised at better than 30% only if you say so:</p>
 <p>report the voxel size next to any thickness number.</p>
 <p>Returns a <code style="color:#22d3bf">(D, H, W)</code> float64 volume, 0 on the background.</p>
+<p>Empty input (<code style="color:#22d3bf">vol_binary</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

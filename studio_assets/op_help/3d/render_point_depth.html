@@ -8,6 +8,7 @@
 <p style="margin:2px 0 2px 12px">• 1 点 = 1 画素なので疎な点群は穴だらけになる(<code style="color:#22d3bf">mesh_to_points</code> で密にしてから)。splat 半径は無い。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> は numpy (3,3)、<code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> は省略可。</p>
 <p>後段: <code style="color:#22d3bf">depth_to_points</code> で戻す、<code style="color:#22d3bf">normals_from_depth</code> で法線、<code style="color:#22d3bf">tsdf_from_depth</code>。</p>
+<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender との併用 — 形を作って fullseye で測る(軸・単位・正解データの罠)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

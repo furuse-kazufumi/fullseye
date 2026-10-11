@@ -130,7 +130,12 @@ def measure_pos(image, measure, sigma=1.0, threshold=0.1, transition="all"):
     各エッジ: ``pos``(サンプル index、矩形は始点からの px)/ ``dist``(始点からの
     距離 [px])/ ``row``, ``col`` / ``amplitude``(符号つきグレー差)/ ``polarity``
     ("positive" = 測定方向に明るくなる)。``threshold`` は |amplitude| の下限、
-    ``transition`` は "all" / "positive" / "negative"。"""
+    ``transition`` は "all" / "positive" / "negative"。
+
+    空の入力(``image`` が 0 要素)は ValueError。
+    """
+    if (len(image) if isinstance(image, (list, tuple)) else np.asarray(image).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("measure_pos: image is empty — pass at least one element")
     n = len(measure["rows"])
     spacing = float(measure.get("spacing", 1.0))
     k = int(np.ceil(3.0 * max(float(sigma), 0.0))) + 2
@@ -166,7 +171,12 @@ def measure_pos(image, measure, sigma=1.0, threshold=0.1, transition="all"):
 def measure_pairs(image, measure, sigma=1.0, threshold=0.1):
     """立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。
     ``first``/``second`` = 各エッジの ``pos``、``width`` = 幅 [px]、
-    ``first_point``/``second_point`` = (row, col)。"""
+    ``first_point``/``second_point`` = (row, col)。
+
+    空の入力(``image`` が 0 要素)は ValueError。
+    """
+    if (len(image) if isinstance(image, (list, tuple)) else np.asarray(image).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("measure_pairs: image is empty — pass at least one element")
     edges = measure_pos(image, measure, sigma, threshold)
     spacing = float(measure.get("spacing", 1.0))
     pairs = []
@@ -206,7 +216,11 @@ def fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=No
 
     幅の下限・上限で切りたい場合はこの結果を ``width`` で自分でフィルタする
     (この op は順位付けだけで、閾での除外はしない)。
+
+    空の入力(``image`` が 0 要素)は ValueError。
     """
+    if (len(image) if isinstance(image, (list, tuple)) else np.asarray(image).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("fuzzy_measure_pairing: image is empty — pass at least one element")
     pairs = measure_pairs(image, measure, sigma, threshold)
     if pair_size is None or not pairs:
         return pairs
@@ -235,7 +249,11 @@ def translate_measure(measure, drow, dcol):
     典型: 位置合わせで得たワークのずれを測定線に反映してから ``measure_pos`` /
     ``measure_pairs`` を掛ける。傾きが変わる場合は ``gen_measure_rectangle2`` を
     新しい ``phi`` で作り直す。
+
+    空の入力(``measure`` が空の dict)は ValueError。
     """
+    if isinstance(measure, dict) and len(measure) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("translate_measure: measure is empty — pass a non-empty dict")
     m = dict(measure)
     m["rows"] = np.asarray(measure["rows"], float) + drow
     m["cols"] = np.asarray(measure["cols"], float) + dcol

@@ -52,6 +52,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 選ばれる(argmax が ``inf`` を拾う)。「離れた塊から先に取る」挙動になるので、成分ごとに
 均等に間引きたいなら ``euclidean_cluster`` 等で分けてから使う。
 
+空の入力(``points`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``farthest_point_sampling``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``k``(既定 8)を振る。``b`` は未使用。
 
 ## 参考(サンプルデータ・文献)

@@ -28,6 +28,8 @@ bound** on the set, which is exactly what makes it usable as a gate:
 :func:`cplx_escape_time` must return ``max_iter`` everywhere this is True,
 and no tolerance is involved.
 
+Empty input (``c`` with 0 elements) raises ``ValueError``.
+
 ## ファミリ共通の入力契約(fail-closed)
 
 mathops の全 op は入力を検証してから計算する(黙って通さない):

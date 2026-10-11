@@ -52,6 +52,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 加工目は**斜めから見ないと出ない**(真上から見た平面は反射方向が全画素で天頂に
 集中し、環境の勾配を掃かない)。``optical_camera(tilt_deg=50〜70)`` 程度が目安。
 
+空の入力(``directions`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした optics の op ``env_lightbox``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``base``(既定 0.45)、``b`` が ``key``(既定 4)を振る。
 
 ## 参考(サンプルデータ・文献)

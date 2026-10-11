@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 台を囲むカメラ(n = 2: 両端の斜め上、n = 4: 4 隅)。返り値 ``[{"pose", "K", "eye"}, …]``、全部が台の中心を見る。
 
+空の入力(``tp`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

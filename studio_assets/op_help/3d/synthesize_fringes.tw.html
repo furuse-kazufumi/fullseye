@@ -17,6 +17,7 @@
 <p>seed:        雜訊用亂數種子。</p>
 <p>return_phase: True 時回傳 (images, total_phase)(用於測試、除錯)。</p>
 <p>回傳值:(N, H, W) float 陣列(截斷到值域 [0,1])。return_phase=True 時也回傳相位。</p>
+<p>空輸入(<code style="color:#22d3bf">height</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

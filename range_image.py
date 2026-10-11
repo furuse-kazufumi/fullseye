@@ -25,7 +25,11 @@ def depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None):
     float64 の ``(H,W,3)``、第 3 軸は (x, y, z) で x は右、y は下、z は奥行き(画像座標系)。
     入力検証は無く、2-D 以外は ``d.shape`` の展開で失敗する。``normals_from_depth`` は
     この関数の出力を内部で使う。
+
+    空の入力(``depth`` が 0 要素)は ValueError。
     """
+    if (len(depth) if isinstance(depth, (list, tuple)) else np.asarray(depth).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("depth_to_organized_points: depth is empty — pass at least one element")
     d = np.asarray(depth, float)
     H, W = d.shape
     uu, vv = np.meshgrid(np.arange(W), np.arange(H))
@@ -117,7 +121,11 @@ def occlusion_edges(depth, rel_thresh=0.05):
     そこで軸ごとの**二階差分(離散ラプラシアン相当)** ``d[i+1]-2*d[i]+d[i-1]`` を使う。
     一様傾斜(深度が近傍で線形)なら二階差分 ≈ 0、fronto-parallel な段差では両側で大きな値。
     これを局所深度で正規化した相対的な深度ジャンプが rel_thresh を超える画素を境界とする。
+
+    空の入力(``depth`` が 0 要素)は ValueError。
     """
+    if (len(depth) if isinstance(depth, (list, tuple)) else np.asarray(depth).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("occlusion_edges: depth is empty — pass at least one element")
     d = np.asarray(depth, float)
     if d.ndim != 2:
         raise ValueError(f"occlusion_edges expects a 2D depth image, got shape {d.shape}")

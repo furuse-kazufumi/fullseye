@@ -225,7 +225,12 @@ def tile_mesh(i: int, j: int, tp: dict, step: float = 10.0) -> dict:
 
 
 def tile_digest(mesh: dict) -> str:
-    """区画のメッシュの指紋(SHA-256、頂点・面・ラベル・色のバイト列)。作り直しのビット一致の門に使う。"""
+    """区画のメッシュの指紋(SHA-256、頂点・面・ラベル・色のバイト列)。作り直しのビット一致の門に使う。
+
+    空の入力(``mesh`` が空の dict)は ValueError。
+    """
+    if isinstance(mesh, dict) and len(mesh) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("tile_digest: mesh is empty — pass a non-empty dict")
     h = hashlib.sha256()
     for k in ("V", "F", "label", "color"):
         a = np.ascontiguousarray(mesh[k])
@@ -237,7 +242,10 @@ def tile_digest(mesh: dict) -> str:
 
 def tile_stream(cache: dict, i: int, j: int, tp: dict, radius: int = 1, step: float = 10.0) -> dict:
     """車のいる区画 (i, j) の周り (2·radius + 1)² 区画を持ち、外れた区画を捨てる(``cache`` をその場で書き換える)。
-    返り値 ``{"loaded": [(i, j)], "evicted": [(i, j)], "n": 持っている区画の数}``。"""
+    返り値 ``{"loaded": [(i, j)], "evicted": [(i, j)], "n": 持っている区画の数}``。
+
+    空の入力(``cache`` が空の dict)は空を返す(理由: 最初の呼び出しは空の cache から始まる(その場で書き換える))。
+    """
     want = {(int(i) + a, int(j) + b) for a in range(-radius, radius + 1) for b in range(-radius, radius + 1)}
     evicted = [k for k in list(cache) if k not in want]
     for k in evicted:

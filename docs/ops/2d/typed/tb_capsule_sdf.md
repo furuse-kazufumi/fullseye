@@ -53,6 +53,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 使いどころ: 工具の到達性を「工具の掃引体積が部品と交わらないか」で見るとき、工具を
 カプセルで置いて ``sdf_intersect`` の最小値が正かを見る。骨梁・血管・繊維の合成にも。
 
+空の入力(``grid`` が 0 要素)は ValueError。
+
 2-D 進化レジストリへ橋渡しした 3d の op ``capsule_sdf``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。この op に調整点は無く、``a`` も ``b`` も使われない。
 
 ## 参考(サンプルデータ・文献)

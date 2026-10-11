@@ -534,7 +534,12 @@ def peg_tip_from_rgbd(rgb, depth, K, r_peg: float = 5.0e-3, peg_mask=None) -> di
 
     返り: ``tip_cam``(3,)、``axis``(先端 → 上、単位)、``rms_cyl``、``n_pts``、``uv``(先端の投影)、``delta_axial``。
     正直に: 試作の 16 姿勢で軸方向の誤差 max 0.83 px(横方向 0.004 px)—— 影の端 1 画素の被覆率だけから軸方向を読む限界で、
-    目標 0.3 px は未達。**Raises** ``RuntimeError``: ペグが見えない(芯の画素 < 50)。"""
+    目標 0.3 px は未達。**Raises** ``RuntimeError``: ペグが見えない(芯の画素 < 50)。
+
+    空の入力(``rgb`` が 0 要素)は ValueError。
+    """
+    if (len(rgb) if isinstance(rgb, (list, tuple)) else np.asarray(rgb).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("peg_tip_from_rgbd: rgb is empty — pass at least one element")
     rgb = np.asarray(rgb)
     depth = np.asarray(depth, np.float64)
     if peg_mask is None:

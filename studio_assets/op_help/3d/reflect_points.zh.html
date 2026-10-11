@@ -8,6 +8,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>:(N,3) 数组(转换为 float)。不做形状检查。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">plane_point</code>:平面上的 1 个点 (3,)。<code style="color:#22d3bf">plane_normal</code>:法线 (3,)(长度任意，内部归一化。符号不影响结果)。</p>
 <p>注意：法线是除以范数加 1e-12，因此即使传入零向量也不会抛出异常，点云几乎原样返回(不是 fail-closed(失败即拒绝))。除了在 <code style="color:#22d3bf">reflection_symmetry_score</code> / <code style="color:#22d3bf">detect_reflection_symmetry</code> 内部使用外，也可用于用检测到的对称面填补缺失侧(将镜像拼接到原点云上)的形状补全。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

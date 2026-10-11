@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.punch_surface_uz(r, a: &#x27;float&#x27;, P: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tactorque; tactorque.punch_surface_uz(r, a: &#x27;float&#x27;, P: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;punch_surface_uz&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平头圆形压头(法向力 P)作用下半空间表面的法向位移 [m] (下沉方向为正)：圆内为均匀的 δ = P(1−ν)/(4Ga)，圆外为 (2δ/π) arcsin(a/r)(Johnson 1985 §3.4 的平头压头。正文中未能确认式号，<b>unverified</b> —— 通过与 Boussinesq 核 <code style="color:#22d3bf">Kz</code> 的卷积在 0.35 % 内一致做了数值验证)。<b>Raises</b> ValueError：a, P, G ≤ 0。</p>
+<p>空输入(<code style="color:#22d3bf">r</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

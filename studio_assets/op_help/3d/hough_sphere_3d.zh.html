@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• 边界 voxel 少于 10 个时为 <b>None</b>。<code style="color:#22d3bf">radii</code> 为空时因 TypeError 而崩溃。</p>
 <p style="margin:2px 0 2px 12px">• 只返回 1 个。多个球需抹去已检测球的 voxel 后重新运行,点云则用</p>
 <p><code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">fit_sphere_3d</code>。</p>
+<p>空输入(<code style="color:#22d3bf">vol</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

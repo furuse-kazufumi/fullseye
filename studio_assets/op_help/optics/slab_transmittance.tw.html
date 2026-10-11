@@ -7,6 +7,7 @@
 <p>cos_i / n1 / n2 / thickness_mm / sigma_per_mm 與上述相同。</p>
 <p>回傳值：總穿透率 T。公式為 T = (1−R)²·a / (1 − R²·a²)，a = 內部穿透率(使用板內的斜向光程 L = d/cosθ_t)。無窮級數之和 = 不漏算多重反射的形式。</p>
 <p>驗算：吸收為 0、垂直入射的 air→BK7(n=1.5)板 T = 0.9231(= 2n/(n²+1) 這一眾所周知的值)。增大 σ 則單調下降，超過臨界角(從板內側)時為 0。</p>
+<p>空輸入(<code style="color:#22d3bf">cos_i</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

@@ -28,6 +28,8 @@ polarization: "unpolarized" / "s" / "p"。
 式: η² = (n+ik)² − sin²θ として rs = (cosθ − η)/(cosθ + η)、
 rp = ((n+ik)² cosθ − η)/((n+ik)² cosθ + η)(Born & Wolf §13.2 の複素形)。
 
+空の入力(``cos_i`` が 0 要素)は ValueError。
+
 ## ファミリ共通の入力契約(fail-closed)
 
 optics の全 op は入力を検証してから計算する(黙って通さない):

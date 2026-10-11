@@ -24,6 +24,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ("positive" = 測定方向に明るくなる)。``threshold`` は |amplitude| の下限、
 ``transition`` は "all" / "positive" / "negative"。
 
+空の入力(``image`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [subpixel_measuring ファミリ ガイド](../guides/subpixel_measuring.md)

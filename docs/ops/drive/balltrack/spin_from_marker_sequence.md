@@ -26,6 +26,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 返り値 ``{"omega", "omega_stage1", "n_pairs", "per_pair" (N, 3)}``(ω は dirs と同じ座標系)。組が 1 つも無ければ
 ω は NaN。模様が見えた向きの組が要るので、各コマ 2 個以上の模様が要る。
 
+空の入力(``dirs`` が 0 件)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

@@ -21,6 +21,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 返り値 ``{"t", "p", "v", "segment"}``、横切らなければ ``None``(fail-closed —— 止まる・ゴールに入る・時間切れ)。
 
+空の入力(``pred`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

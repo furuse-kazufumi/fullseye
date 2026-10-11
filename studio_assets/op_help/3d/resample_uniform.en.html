@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• The output column count is fixed at 3; if the input is not (N,3) it either fails for lack of columns or extra columns are discarded. There is no shape validation.</p>
 <p style="margin:2px 0 2px 12px">• Closed curves are not closed (the end→start segment is not interpolated). Duplicate points still pass through <code style="color:#22d3bf">np.interp</code>, but that segment is treated as length 0.</p>
 <p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> use differences over the index parameter, so for unevenly spaced sequences, equalising the spacing with this op before passing them in stabilises the numerical differentiation. For smooth interpolation use <code style="color:#22d3bf">fit_spline_curve</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">curve</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -22,6 +22,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>: normal of the plane (3 elements; <b>zero vector and NaN are rejected</b>). Its length is normalised to 1 automatically, so the magnitude does not affect the result (only the direction matters).</p>
 <p>Return value: float64 of <code style="color:#22d3bf">grid.shape[:-1]</code>. Positive on the normal side, negative on the opposite side, 0 on the plane.</p>
 <p>Usage: <code style="color:#22d3bf">sdf_subtract(part, plane_sdf(g, p, n))</code> &quot;cuts away the normal side of that plane&quot;. To reverse the direction, flip the sign of <code style="color:#22d3bf">normal</code> (<code style="color:#22d3bf">-sdf</code> gives the same).</p>
+<p>Empty input (<code style="color:#22d3bf">grid</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <p>The 3d op <code style="color:#22d3bf">plane_sdf</code> bridged into the 2-D evolution registry. The implementation is the same; only the calling convention is adapted to <code style="color:#22d3bf">op(v, a, b)</code>. This op has no tunable parameters; neither <code style="color:#22d3bf">a</code> nor <code style="color:#22d3bf">b</code> is used.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

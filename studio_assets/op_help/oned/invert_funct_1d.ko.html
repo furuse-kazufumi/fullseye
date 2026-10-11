@@ -9,6 +9,7 @@
 <p>Returns <code style="color:#22d3bf">{&quot;x&quot;: y-values sorted ascending, &quot;y&quot;: their original indices}</code>, i.e. the (y, x) pairs ordered so the new abscissa is monotonic — ready for <code style="color:#22d3bf">numpy.interp</code>-style lookup.</p>
 <p>Honest limitation: this is a true inverse only when *y* is monotonic. A non-monotonic function is multi-valued; the sort interleaves its branches instead of resolving them (ties keep index order — numpy stable-ish argsort). An empty input returns two empty arrays.</p>
 <p>:param y: 1-D function (may be empty). :returns: dict <code style="color:#22d3bf">{&quot;x&quot;: float64 array, &quot;y&quot;: float64 array}</code>. :raises ValueError: non-1-D / NaN / Inf input.</p>
+<p>Empty input (<code style="color:#22d3bf">y</code> with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON&#x27;s funct_1d), and empty functions flow through chains of function ops).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

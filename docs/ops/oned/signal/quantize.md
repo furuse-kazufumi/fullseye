@@ -46,6 +46,8 @@ comparator, not a quantiser — the error model does not apply. (3) The error
 model assumes the signal moves by more than a step between samples; on a flat
 stretch the error is a constant offset, not noise.
 
+Empty input (``x`` with 0 elements) raises ``ValueError``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

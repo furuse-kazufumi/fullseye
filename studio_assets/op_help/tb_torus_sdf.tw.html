@@ -21,6 +21,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">minor_radius</code>：管的半徑(負值拒絕)。<code style="color:#22d3bf">minor_radius &gt;= major_radius</code> 時孔會塌陷(紡錘環面)。不拒絕，但<b>僅在 <code style="color:#22d3bf">minor_radius &lt; major_radius</code> 時才嚴格</b>(2026-10-07 更正：以前寫的是「作為距離場仍然正確」)。在管於軸上重疊的內側，值的絕對值小於到邊界的真實距離(major 1、minor 2 的中心為 −1，真值為 −1.73)。符號、零等值面與外側的值是正確的，內側的絕對值是真實距離的下界，因此可以安全地用於球追蹤(sphere tracing)。</p>
 <p>回傳值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。</p>
 <p>用法：以 <code style="color:#22d3bf">sdf_subtract</code> 在內角削出圓角 / 以 <code style="color:#22d3bf">sdf_union</code> 構造 O 形環溝的形狀。只是倒圓角的話 <code style="color:#22d3bf">sdf_smooth_union</code> 較方便，但那邊的圓角半徑取決於形狀 —— <b>想把半徑作為設計值掌握時用這個</b>。</p>
+<p>空輸入(<code style="color:#22d3bf">grid</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>橋接到 2-D 演化註冊表的 3d op <code style="color:#22d3bf">torus_sdf</code>。實作相同，只是呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調參數，<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

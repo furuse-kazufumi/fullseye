@@ -9,6 +9,7 @@
 <p>Raises ValueError: 輸入中有 NaN/Inf/float32 溢位時。</p>
 <p>參數: <code style="color:#22d3bf">vol</code> 為 <code style="color:#22d3bf">(D,H,W)</code>,<code style="color:#22d3bf">center=(cy, cx)</code> 為各 z 切片內的 <b>(列, 行)</b>(預設為切片中心)。將 <code style="color:#22d3bf">r_in</code>〜<code style="color:#22d3bf">r_out</code>(voxel,預設 <code style="color:#22d3bf">min(H,W)/2 − 1</code>)等分為 <code style="color:#22d3bf">nr</code> 份,角度等分為 <code style="color:#22d3bf">ntheta</code> 份。輸出 <code style="color:#22d3bf">(D, ntheta, nr)</code> float32: 軸 0 為 z(高度,與輸入相同),第 k 列的角度 <code style="color:#22d3bf">θ = k·2π/ntheta</code>,第 j 行的半徑。取樣點為 <code style="color:#22d3bf">(z, cy + r sinθ, cx + r cosθ)</code>,volume 外為 0。D, H, W 為 1 的軸在正規化時會除以 0(與 <code style="color:#22d3bf">polar_unwrap</code> 不同,沒有檢查)。</p>
 <p>後續: 取 <code style="color:#22d3bf">[:, :, j]</code> 即得到半徑 j 的圓柱面的 (D×θ) 2-D 影像,可使用 2-D 的刮痕檢測、<code style="color:#22d3bf">ncc_locate</code>。</p>
+<p>空輸入(<code style="color:#22d3bf">vol</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

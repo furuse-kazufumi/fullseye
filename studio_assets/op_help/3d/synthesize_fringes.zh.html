@@ -17,6 +17,7 @@
 <p>seed:        噪声用随机种子。</p>
 <p>return_phase: True 时返回 (images, total_phase)(用于测试、调试)。</p>
 <p>返回值:(N, H, W) float 数组(裁剪到值域 [0,1])。return_phase=True 时也返回相位。</p>
+<p>空输入(<code style="color:#22d3bf">height</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度传感器知识 —— 测距原理、实机数值、缺测的表现</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

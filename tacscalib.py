@@ -126,7 +126,12 @@ def calib_pack_load(path: str, pitch_mm: float, ball_radius_mm: float) -> dict:
     データ置き場は呼び出し側が環境変数(例 ``FULLSEYE_TAXIM_DATA``)から組む。
 
     **Raises** ``ValueError``: キー欠落(綴り違いも)/ 形の不一致 / 画像 0 枚 / 中心が非有限 / 半径 ≤ 0 / pitch・球半径 ≤ 0。
-    ``FileNotFoundError``: パスが無い。"""
+    ``FileNotFoundError``: パスが無い。
+
+    空の入力(``path`` が空文字列)は ValueError。
+    """
+    if isinstance(path, (str, bytes)) and len(path) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("calib_pack_load: path is empty — pass a file path")
     if not isinstance(path, (str, os.PathLike)):
         raise ValueError("calib_pack_load: path must be a str, got %s" % type(path).__name__)
     pm, rm = float(pitch_mm), float(ball_radius_mm)
@@ -253,7 +258,12 @@ def lights_fit_from_sphere(diffs, normals, masks, order: int = 0) -> dict:
 def membrane_predict_rgb(normals, fit: dict) -> np.ndarray:
     """法線 (H, W, 3) + :func:`lights_fit_from_sphere` の結果 → 背景差分 RGB の予測 (H, W, 3)(線形、クリップしない)。
     order 2 の結果は画素ごとに a(x, y)・L(x, y) を作る(画像の大きさは較正時と同じであること)。
-    **Raises** ``ValueError``: 法線の形 / order 2 で画像の大きさが違う。"""
+    **Raises** ``ValueError``: 法線の形 / order 2 で画像の大きさが違う。
+
+    空の入力(``normals`` が 0 要素)は ValueError。
+    """
+    if (len(normals) if isinstance(normals, (list, tuple)) else np.asarray(normals).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("membrane_predict_rgb: normals is empty — pass at least one element")
     n = np.asarray(normals, np.float64)
     if n.ndim != 3 or n.shape[2] != 3:
         raise ValueError("membrane_predict_rgb: normals must be (H, W, 3)")

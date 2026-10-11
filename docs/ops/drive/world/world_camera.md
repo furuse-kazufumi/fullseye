@@ -23,6 +23,8 @@ render3d.render_mesh(attributes=True) の三角形 id から面の色・ラベ�
 (``ambient + (1−ambient)·max(n·l, 0)``、n は render3d のカメラ系法線を世界系に戻さず、光をカメラ系で与える)。
 ``ego=(V, F, color)`` を渡すと自車のメッシュも一緒に描く(世界には足さない)。
 
+空の入力(``world`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

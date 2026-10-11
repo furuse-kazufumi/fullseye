@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 总采样数的参考值(默认 40 → 每边 10 点)。小于 4 时每边也至少放 2 点。</p>
 <p style="margin:2px 0 2px 12px">• 参数不做校验。返回值是添加位置的 index(从 0 开始)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">apply</code> 结果的 <code style="color:#22d3bf">params</code> 为 <code style="color:#22d3bf">row / col / phi / l1 / l2</code>，重新拟合后 <b>会重排为 <code style="color:#22d3bf">l1 &gt;= l2</code>(长边为 <code style="color:#22d3bf">l1</code>)</b> —— 即使参考中给出 <code style="color:#22d3bf">l1 &lt; l2</code>, 结果的 <code style="color:#22d3bf">phi</code> 也是长边的方向。</p>
+<p>空输入(<code style="color:#22d3bf">model</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

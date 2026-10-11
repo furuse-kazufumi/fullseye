@@ -27,6 +27,7 @@
 <p>Returns:</p>
 <p>labels: (N,) int. 0,1,2,... werden den Ebenen in Erkennungsreihenfolge (≈ absteigender consensus) vergeben;</p>
 <p>Residuenpunkte ohne Ebene sind -1. Leere Eingabe ergibt shape (0,).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) liefert ein leeres Ergebnis (Grund: eine leere Wolke hat nichts zu beschriften, also ist ein Label-Array der Länge 0 die richtige Antwort; vorgelagerte Filter können leere Wolken liefern).</p>
 <p>Die 3d-Op <code style="color:#22d3bf">plane_segmentation</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. <code style="color:#22d3bf">a</code> variiert <code style="color:#22d3bf">max_planes</code> (Standard 5), <code style="color:#22d3bf">b</code> variiert <code style="color:#22d3bf">iters</code> (Standard 300).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

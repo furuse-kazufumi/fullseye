@@ -9,6 +9,7 @@
 <p>实测与 scipy EDT 严格一致(max|err|=0,N≤160,JFA+2)。scipy(C 实现)在 N 较小时更快,但 GPU-JFA 在 N≥96 时反超(RTX5090 实测 96→2.6× / 128→4.7×)。全 voxel 并行, 可常驻 GPU,本质在于让 chamfer 成为无需 CPU 往返的全 GPU 流水线。把末尾的 step=1 做成 2 遍(JFA+2),也消除了大 N 时的近似误差。返回值为距离场 (D,H,W) 的 torch tensor。</p>
 <p>参数 <code style="color:#22d3bf">seed_bool</code> 是 <code style="color:#22d3bf">(D,H,W)</code> 的 bool(True=seed,距离 0)。返回值为 <b>torch float32 tensor</b> <code style="color:#22d3bf">(D,H,W)</code>(位于 <code style="color:#22d3bf">device</code> 上,不是 numpy。经台账 <code style="color:#22d3bf">fs.ledger.edt_jfa</code> 时会转换为 numpy)。距离是 voxel 中心之间的欧氏距离(voxel 单位)。连 1 个 seed 都没有时全部 voxel 饱和为 1e6(不抛异常)。26 个方向 × log2(max(D,H,W)) 级的跳跃,所以内存约为数个 <code style="color:#22d3bf">(3,D,H,W)</code> float32。</p>
 <p>用途: <code style="color:#22d3bf">signed_distance_field</code>(两侧)、<code style="color:#22d3bf">match_chamfer_3d(edt=&quot;jfa&quot;)</code>。CPU 版与 <code style="color:#22d3bf">scipy.ndimage.distance_transform_edt(~seed)</code> 的值相同。</p>
+<p>空输入(<code style="color:#22d3bf">seed_bool</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

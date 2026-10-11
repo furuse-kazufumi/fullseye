@@ -24,6 +24,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 推し量らない(同じ長さの 1 次元の x と y はどちらにも読めて、点の列が黙って格子になる)。どちらにも ``stagnation``(上流の衝突点
 (x_c − R, y_c))と ``rear_stagnation`` と ``surface_speed_max``(= 2U)を付ける。
 
+空の入力(``x`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

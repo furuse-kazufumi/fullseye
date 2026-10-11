@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.punch_surface_uz(r, a: &#x27;float&#x27;, P: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tactorque; tactorque.punch_surface_uz(r, a: &#x27;float&#x27;, P: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;punch_surface_uz&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평두 원형 압자(법선력 P)에 의한 반공간 표면의 법선 변위 [m] (가라앉는 방향이 양): 원 안은 균일한 δ = P(1−ν)/(4Ga), 바깥은 (2δ/π) arcsin(a/r)(Johnson 1985 §3.4의 평두 압자. 식 번호는 본문에서 확인하지 못해 <b>unverified</b> — Boussinesq 커널 <code style="color:#22d3bf">Kz</code>의 컨볼루션과 0.35 % 이내로 일치하는 것으로 수치 검증했습니다). <b>Raises</b> ValueError: a, P, G ≤ 0.</p>
+<p>빈 입력(<code style="color:#22d3bf">r</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

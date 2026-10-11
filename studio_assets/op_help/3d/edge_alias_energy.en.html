@@ -6,6 +6,7 @@
 <p>The aliasing (jaggy) energy of edges = the RMS of the Laplacian (smaller is smoother).</p>
 <p>Rasterisation aliasing appears as sharp staircase corners (a high 2nd derivative). The Laplacian emphasises high frequencies, so its root mean square (RMS) monotonically captures how stair-stepped the boundaries are — once SSAA turns the edges into smooth gradients, the Laplacian&#x27;s high-frequency energy decreases (low-pass attenuates high frequencies and the Laplacian amplifies them, so the smoother the edges, the smaller this quantity).</p>
 <p>Flat interiors and background have Laplacian ≈ 0 and do not contribute, so in effect it is a quantity of the edge band. Colour images use the channel mean. A relative metric for comparing images of the same shape and the same contrast with each other.</p>
+<p>Empty input (<code style="color:#22d3bf">img</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

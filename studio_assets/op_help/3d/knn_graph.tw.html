@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: 鄰域數(預設 8)。超過 <code style="color:#22d3bf">N-1</code> 的值會被悄悄截斷為 <code style="color:#22d3bf">N-1</code>。</p>
 <p style="margin:2px 0 2px 12px">• N &lt; 2 時不拋出例外,回傳 2 個形狀為 (N,0) 的空陣列。</p>
 <p>陷阱: 座標重複時,KD-tree 可能不會把自身回傳在第 0 行。此時逐列查找自身的位置並去除,若 k+1 個中沒有自身,則捨棄最遠的 1 個(結果仍為 k 個)。<code style="color:#22d3bf">geodesic_distances</code> / <code style="color:#22d3bf">farthest_point_sampling</code> 把此結果作為鄰接矩陣(有向 CSR, 在 Dijkstra 端無向化),用於近似測地距離。</p>
+<p>空輸入(<code style="color:#22d3bf">points</code> 為 0 個元素)回傳空結果(理由:少於 2 個點的點雲,其近鄰圖依定義為空)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

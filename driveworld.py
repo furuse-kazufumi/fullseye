@@ -521,7 +521,12 @@ def world_build(course, *, props=(), kerb_height: float = 0.15, kerb_width: floa
     路面 = 全体を覆う平面(z = 0、ラベル 0)。各要素の多角形の縁に縁石(ラベル 1、継ぎ目の辺は除く)、
     縁の内側 0.15 m に白線(ラベル 9)。坂道は斜面のメッシュ(ラベル 0)。交差点の ``signal_poses`` には信号機を立て
     (初期状態 "red"、日本式: 向こう側の柱 + アームで車線上に横型 3 灯、roadjp)、``stop_lines`` に停止線、``crosswalks`` に横断歩道の縞。``props`` は ``(asset_name, x, y, yaw)`` か
-    ``(asset_name, x, y, yaw[, dims[, paint]])`` の並び(paint = 車の車体色、:data:`CAR_PAINTS`)。返り値 = ``{"V","F","face_label","face_color","objects","bounds","course"}``。"""
+    ``(asset_name, x, y, yaw[, dims[, paint]])`` の並び(paint = 車の車体色、:data:`CAR_PAINTS`)。返り値 = ``{"V","F","face_label","face_color","objects","bounds","course"}``。
+
+    空の入力(``course`` が空の dict)は ValueError。
+    """
+    if isinstance(course, dict) and len(course) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("world_build: course is empty — pass a non-empty dict")
     world = _empty_world()
     xmin, xmax, ymin, ymax = world_bounds(course, ground_margin)
     world["bounds"] = (xmin, xmax, ymin, ymax)
@@ -661,7 +666,12 @@ def world_move(world: dict, i: int, x: float, y: float, yaw: float, z: float = 0
     """物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。
 
     対向車を 1 コマずつ進める(15 巡目の TTC)ための op。資産でない物体(縁石・路面・信号機)は ``ValueError``。
-    姿勢の意味は :func:`add_asset` と同じ(資産の原点 = 箱の底面中心、yaw は +x から反時計回り)。"""
+    姿勢の意味は :func:`add_asset` と同じ(資産の原点 = 箱の底面中心、yaw は +x から反時計回り)。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("world_move: world is empty — pass a non-empty dict")
     obj = world["objects"][i]
     if "dims" not in obj or obj.get("pose") is None:
         raise ValueError("objects[%d] は資産で置いた物体でない(動かせるのは add_asset / props の物体だけ)" % i)
@@ -742,7 +752,12 @@ def world_camera(world: dict, pose, K, width: int = 640, height: int = 400, *, l
 
     render3d.render_mesh(attributes=True) の三角形 id から面の色・ラベルを引き、色は Lambert
     (``ambient + (1−ambient)·max(n·l, 0)``、n は render3d のカメラ系法線を世界系に戻さず、光をカメラ系で与える)。
-    ``ego=(V, F, color)`` を渡すと自車のメッシュも一緒に描く(世界には足さない)。"""
+    ``ego=(V, F, color)`` を渡すと自車のメッシュも一緒に描く(世界には足さない)。
+
+    空の入力(``world`` が空の dict)は ValueError。
+    """
+    if isinstance(world, dict) and len(world) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("world_camera: world is empty — pass a non-empty dict")
     import render3d
     V, F, C, Lb = world["V"], world["F"], world["face_color"], world["face_label"]
     if ego is not None:

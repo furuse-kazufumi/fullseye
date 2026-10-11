@@ -29,6 +29,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_area</code>는 배열 끝에 접한 면도 센다(제로 padding). <code style="color:#22d3bf">sphericity</code>는 이산화 때문에 구라도 약 0.66이 상한(모듈 docstring 참조).</p>
 <p style="margin:2px 0 2px 12px">• 라벨은 1..n 순(<code style="color:#22d3bf">label_components</code>와 같은 scipy 주사 순서)이며, 체적 순이 아니다. 정렬은 호출 측에서 한다.</p>
 <p style="margin:2px 0 2px 12px">• 입력은 0 이외를 전경으로 bool화한다(NaN도 전경). Raises <code style="color:#22d3bf">ValueError</code>: 3차원이 아닌 입력, <code style="color:#22d3bf">connectivity</code>가 6/18/26 이외.</p>
+<p>빈 입력(<code style="color:#22d3bf">vol</code> 이(가) 0 개 요소)은 빈 결과를 반환한다(이유: 복셀이 없는 볼륨의 연결 성분은 0 개가 올바른 답이다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 측정 불확도와 교정 지식 — ‘측정되고 있다’고 주장하려면</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

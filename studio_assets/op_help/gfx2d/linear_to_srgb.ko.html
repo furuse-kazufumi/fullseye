@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 반환값: 같은 형태의 float64 복제, <code style="color:#22d3bf">[0, 1]</code>.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">(3,)</code>의 1색이나 <code style="color:#22d3bf">(N, 3)</code>의 색표는 이 op에서는 받지 않는다(영상 API). 임의의 형태에 적용하고 싶을 때는 <code style="color:#22d3bf">imgmetrics</code> 쪽의 같은 이름 함수가 여기에 위임하고 있다.</p>
 <p><code style="color:#22d3bf">radial_light</code> / <code style="color:#22d3bf">light_mask</code> / <code style="color:#22d3bf">bloom</code> 등 선형광으로 계산한 결과를, 파일에 쓰거나 화면에 내기 직전에 1번만 적용한다. 두 번 적용하면 중간조가들뜬다(예외는 나지 않는다).</p>
+<p>빈 입력(<code style="color:#22d3bf">img</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

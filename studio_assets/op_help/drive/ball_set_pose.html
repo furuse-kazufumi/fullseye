@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ball_set_pose(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, p, R) -&gt; &#x27;None&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import ballworld; ballworld.ball_set_pose(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, p, R) -&gt; &#x27;None&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;ball_set_pose&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>球 i の姿勢を (p, R) にする(頂点だけ書き換える)。</p>
+<p>空の入力(<code style="color:#22d3bf">world</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

@@ -7,6 +7,7 @@
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>配置(信号機設置の指針の解説: 一般の車両用灯器は交差点の向こう側 = 出口側): 柱を (x, y) に立て(高さ lamp_bottom + 0.7)、アームを進入車の運転者から見て <b>右</b>(車線の上。yaw 0 で −y)へ水平に <code style="color:#22d3bf">arm</code> だけ出し(標準 2.0 m、最大 3.5 m 超は ValueError)、灯器の中心をアームの先に吊る(灯器の底 = <code style="color:#22d3bf">lamp_bottom</code>、既定 5.0 m、4.5 m 未満は ValueError — 交通信号機工事仕様書、一次資料で要確認)。<code style="color:#22d3bf">arm_side=&quot;right&quot;</code> なら柱が運転者の右側にあり、アームは左へ出る。表示面の法線 = (−cos yaw, −sin yaw)、レンズは運転者から見て左から青・黄・赤。</p>
 <p>objects: 柱 + アーム(ラベル 3、name &quot;signal_pole&quot;)と灯器(ラベル 3、name &quot;traffic_light&quot;、<code style="color:#22d3bf">extra = {&quot;state&quot;, &quot;lamp_faces&quot;(世界の面索引), &quot;arm&quot;, &quot;lamp_bottom&quot;, &quot;kind&quot;: &quot;jp&quot;}</code>)。返り値 = 灯器の索引(<code style="color:#22d3bf">driveworld.set_signal_state</code> はこれに対して使う)。</p>
+<p>空の入力(<code style="color:#22d3bf">world</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

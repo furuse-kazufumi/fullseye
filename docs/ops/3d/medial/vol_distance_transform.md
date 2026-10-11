@@ -29,6 +29,8 @@ is thresholded at ``> 0.5``.
 Returns a ``(D, H, W)`` float64 distance field (0 on the background).
 Reference: Felzenszwalb & Huttenlocher, Theory of Computing 2012.
 
+Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

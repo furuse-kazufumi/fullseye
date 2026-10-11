@@ -123,7 +123,12 @@ def hertz_surface_uz(r, a: float, delta: float, R: float) -> np.ndarray:
     """Hertz 球接触の半空間表面の法線変位 ū_z(r)(沈む量 ≥ 0、r と同じ形の配列)。
 
     内側 r ≤ a: δ − r²/(2R)。外側: (1/πR)[(2a² − r²) arcsin(a/r) + a r √(1 − a²/r²)] (Johnson 式 3.42a)。r = a で δ/2 に連続。
-    **Raises** ``ValueError``: a, δ, R ≤ 0、a² と Rδ が 1 % 以上食い違う(Hertz でない組)。"""
+    **Raises** ``ValueError``: a, δ, R ≤ 0、a² と Rδ が 1 % 以上食い違う(Hertz でない組)。
+
+    空の入力(``r`` が 0 要素)は ValueError。
+    """
+    if (len(r) if isinstance(r, (list, tuple)) else np.asarray(r).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("hertz_surface_uz: r is empty — pass at least one element")
     a, delta, R = float(a), float(delta), float(R)
     if not (a > 0.0 and delta > 0.0 and R > 0.0):
         raise ValueError("hertz_surface_uz: a, delta, R must be > 0")
@@ -154,7 +159,12 @@ def _hertz_slope(r, a: float, R: float) -> np.ndarray:
 
 
 def hertz_pressure(r, a: float, p0: float) -> np.ndarray:
-    """Hertz の接触圧 p(r) = p0 √(1 − r²/a²)(r < a)、外は 0。r と同じ形。**Raises** ``ValueError``: a, p0 ≤ 0。"""
+    """Hertz の接触圧 p(r) = p0 √(1 − r²/a²)(r < a)、外は 0。r と同じ形。**Raises** ``ValueError``: a, p0 ≤ 0。
+
+    空の入力(``r`` が 0 要素)は ValueError。
+    """
+    if (len(r) if isinstance(r, (list, tuple)) else np.asarray(r).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("hertz_pressure: r is empty — pass at least one element")
     a, p0 = float(a), float(p0)
     if not (a > 0.0 and p0 > 0.0):
         raise ValueError("hertz_pressure: a and p0 must be > 0")
@@ -278,7 +288,12 @@ def membrane_render_rgb(normals, lights, albedo: float = 1.0, ambient: float = 0
     """法線場 (H, W, 3) + 光源 (3, 3) → 視触覚センサ風の RGB (H, W, 3) float。チャネル k = 光源 k の Lambertian 像
     albedo·(max(N·L_k, 0) + ambient)(:func:`photometric.render_lambertian` を 3 回、第 2 実装)。``noise`` > 0 なら正規乱数を足す。
 
-    **Raises** ``ValueError``: normals が (H, W, 3) でない、lights が (3, 3) でない、noise < 0。"""
+    **Raises** ``ValueError``: normals が (H, W, 3) でない、lights が (3, 3) でない、noise < 0。
+
+    空の入力(``normals`` が 0 要素)は ValueError。
+    """
+    if (len(normals) if isinstance(normals, (list, tuple)) else np.asarray(normals).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("membrane_render_rgb: normals is empty — pass at least one element")
     nrm = np.asarray(normals, np.float64)
     L = np.asarray(lights, np.float64)
     if nrm.ndim != 3 or nrm.shape[2] != 3:

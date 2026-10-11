@@ -11,6 +11,7 @@
 <p>經度在兩種情況下最大都是 2.8e-14 度。在地面上都在 µm 以下，實務上可以當作「誤差下限」，但<b>不要把中位數當作最大值引用</b>。</p>
 <p>如果只想要地心<b>球</b>座標，<code style="color:#22d3bf">r = |xyz|</code> 與 <code style="color:#22d3bf">geocentric_lat = asin(z/r)</code> 就夠了 —— 但那<b>不是大地緯度</b> (兩者最多相差 0.19 度，換算成距離約 21 km)。本 op 回傳的是與地圖和 GPS 相同的<b>測地</b>緯度。</p>
 <p>★<b>在地球中心附近以 fail-closed 方式拒絕</b>(2026-09-08，<code style="color:#22d3bf">poc_geodetic_height_frames</code> 踩到)。在橢球的漸屈線(evolute) <code style="color:#22d3bf">(a·p)^(2/3) + (b·|z|)^(2/3) &lt; (a²-b²)^(2/3)</code> 內側，從橢球面立起的法線無法確定為 1 條，<b>大地緯度本身就不唯一</b>。在此之前這裡會默默回傳 <code style="color:#22d3bf">lat = 180 度</code> —— 一個作為緯度並不存在的值，而且是<b>它自己的反函數 <code style="color:#22d3bf">dem_geodetic_to_ecef</code> 會以「lat_deg must be within [-90, 90]」拒絕</b>的值。該區域在赤道面上距軸 <code style="color:#22d3bf">e²a = 42697.7 m</code>，在極軸上為 <code style="color:#22d3bf">(a²-b²)/b = 42841.3 m</code> (實測: 42600 m 時為 180 度，42700 m 時為 0 度 —— 與閉合式邊界恰好一致)。</p>
+<p>空輸入(<code style="color:#22d3bf">xyz</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <p>橋接到 2-D 演化註冊表的 dem op <code style="color:#22d3bf">dem_ecef_to_geodetic</code>。實作相同，只是把呼叫約定改成了 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調參數，<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

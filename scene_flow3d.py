@@ -61,6 +61,8 @@ def nearest_neighbor_flow(pts0, pts1) -> np.ndarray:
         (N, 3) 変位ベクトル場(pts0 と同じ行順)。
     Raises:
         ValueError: 形状不正、または pts0 が非空なのに pts1 が空。
+
+    空の入力(``pts0`` が 0 要素)は空を返す(理由: 空の点群の変位は空の変位場が正しい答え(行順を保つ op)。前段のフィルタが空を出しうる)。
     """
     from scipy.spatial import cKDTree
 
@@ -179,6 +181,8 @@ def smooth_flow(pts0, pts1, k: int = 10, n_iter: int = 5) -> np.ndarray:
         (N, 3) 平滑化変位ベクトル場。
     Raises:
         ValueError: 形状不正、または pts0 非空なのに pts1 が空。
+
+    空の入力(``pts0`` が 0 要素)は空を返す(理由: 空の点群の変位は空の変位場が正しい答え(行順を保つ op)。前段のフィルタが空を出しうる)。
     """
     from scipy.spatial import cKDTree
 

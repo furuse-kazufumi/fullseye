@@ -32,6 +32,8 @@ mask 閾値 mc は **voxel あたりの真の勾配単位**。旧版(〜2026-08-
 curvedness が 1/32 倍・mc が生 sobel3d 単位だった(shape index S は比なので影響なし)。
 旧 mc 値を使っていた場合は 1/32 して渡すこと(既定値 0.02→6.25e-4 も等価変換済み)。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

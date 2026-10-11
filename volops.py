@@ -383,7 +383,11 @@ def vol_hessian_blobness(vol, scale, black_ridges=False):
     dark). Normalised to ``[0, 1]``. Complements the line filters — a Frangi-style
     ``Rb`` term rejects blobs, this one keeps them. Reference: the second-order
     (Hessian) blob measure, cf. Frangi et al. 1998 / Lindeberg scale-space blobs.
+
+    Empty input (``vol`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_hessian_blobness: vol is empty — pass at least one element")
     v = _require_volume(vol)
     _check_voxels(v, MAX_EIGEN_VOXELS, "vol_hessian_blobness", "MAX_EIGEN_VOXELS")
     sigma = _iter_scales(scale, "scale")[0]
@@ -412,7 +416,11 @@ def vol_distance_transform(vol_binary, spacing=None):
 
     Returns a ``(D, H, W)`` float64 distance field (0 on the background).
     Reference: Felzenszwalb & Huttenlocher, Theory of Computing 2012.
+
+    Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol_binary) if isinstance(vol_binary, (list, tuple)) else np.asarray(vol_binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_distance_transform: vol_binary is empty — pass at least one element")
     m = _as_binary(vol_binary)
     _check_voxels(m, MAX_VOXELS, "vol_distance_transform", "MAX_VOXELS")
     sp = _spacing_tuple(spacing)
@@ -486,7 +494,11 @@ def vol_label(vol_binary, connectivity=26):
     (background) or a component id in ``1..n``, and the component count ``n``.
     The neighbourhood genuinely matters: two blobs meeting only at a corner are
     *two* components under 6-connectivity but *one* under 26.
+
+    Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol_binary) if isinstance(vol_binary, (list, tuple)) else np.asarray(vol_binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_label: vol_binary is empty — pass at least one element")
     # strict: 6.5 must not silently become 6 — accept only exact 6/18/26
     rank = ({6: 1, 18: 2, 26: 3}.get(int(connectivity))
             if float(connectivity) == int(connectivity) else None)
@@ -627,7 +639,11 @@ def vol_gradient_magnitude(vol):
 
     使いどころ: ``vol_watershed`` の地形(landscape)入力、``vol_local_maxima`` で
     界面の峰を拾う、``vol_stretch`` で ``[0, 1]`` に正規化して表示。
+
+    空の入力(``vol`` が 0 要素)は ValueError。
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_gradient_magnitude: vol is empty — pass at least one element")
     v = _require_volume(vol)
     _check_voxels(v, MAX_VOXELS, "vol_gradient_magnitude", "MAX_VOXELS")
     gz = ndimage.sobel(v, axis=0)
@@ -647,7 +663,11 @@ def vol_local_maxima(vol, min_distance, threshold=None):
 
     Returns an ``(N, 3)`` int array of ``(z, y, x)`` peak coordinates. Uses only
     ``scipy.ndimage.maximum_filter`` / ``minimum_filter`` (no skimage).
+
+    Empty input (``vol`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_local_maxima: vol is empty — pass at least one element")
     v = _require_volume(vol)
     _check_voxels(v, MAX_VOXELS, "vol_local_maxima", "MAX_VOXELS")
     md = int(min_distance)
@@ -860,7 +880,11 @@ def vol_uncrop(part, offset, shape, fill=0.0):
     *fill* must be a finite number: every operator in this module refuses
     NaN/Inf voxels, so a non-finite fill would produce a volume nothing
     downstream will accept.
+
+    Empty input (``part`` with 0 elements) raises ``ValueError``.
     """
+    if (len(part) if isinstance(part, (list, tuple)) else np.asarray(part).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_uncrop: part is empty — pass at least one element")
     p = _require_volume(part, "part")
 
     def _ivec3(seq, what):
@@ -939,7 +963,11 @@ def vol_boundary(vol_binary, connectivity=6, side="inner"):
 
     Returns a ``(D, H, W)`` float64 ``{0, 1}`` volume (chainable into
     :func:`vol_label`, :func:`vol_boundary_points`, ...).
+
+    Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol_binary) if isinstance(vol_binary, (list, tuple)) else np.asarray(vol_binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_boundary: vol_binary is empty — pass at least one element")
     if side not in ("inner", "outer"):
         raise ValueError("side must be 'inner' or 'outer', got %r" % (side,))
     m = _as_binary(vol_binary)
@@ -972,7 +1000,11 @@ def vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 
     with a valid empty answer — unlike a crop, which needs a box to exist).
 
     Returns an ``(N, 3)`` float64 array, rows ordered z-major (deterministic).
+
+    Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol_binary) if isinstance(vol_binary, (list, tuple)) else np.asarray(vol_binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_boundary_points: vol_binary is empty — pass at least one element")
     shell = vol_boundary(vol_binary, connectivity=connectivity, side="inner")
     sp = _spacing_tuple(spacing) or (1.0, 1.0, 1.0)
     try:
@@ -1019,7 +1051,11 @@ def vol_tiled_map(vol, fn, tile=64, overlap=8):
     *tile* is the slab thickness (>= 1), *overlap* the per-side context
     (>= 0). A slab result of the wrong shape raises ``ValueError`` immediately
     (fail-closed — a shape-changing fn would silently corrupt the assembly).
+
+    Empty input (``vol`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_tiled_map: vol is empty — pass at least one element")
     v = _require_volume(vol)
     if not callable(fn):
         raise ValueError("fn must be callable (volume -> same-shape volume), got %r"
@@ -1067,7 +1103,11 @@ def vol_local_std(vol, size=5):
 
     Returns a ``(D, H, W)`` float64 volume in the input's own units (it is *not*
     normalised, so values from different scans compare directly).
+
+    Empty input (``vol`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol) if isinstance(vol, (list, tuple)) else np.asarray(vol).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_local_std: vol is empty — pass at least one element")
     x = np.asarray(vol, dtype=np.float64)
     if x.ndim != 3:
         raise ValueError("vol_local_std expects a (D, H, W) volume, got shape %r"
@@ -1121,7 +1161,11 @@ def vol_local_thickness(vol_binary, spacing=None, max_radius=None):
     report the voxel size next to any thickness number.
 
     Returns a ``(D, H, W)`` float64 volume, 0 on the background.
+
+    Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol_binary) if isinstance(vol_binary, (list, tuple)) else np.asarray(vol_binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_local_thickness: vol_binary is empty — pass at least one element")
     m = _as_binary(vol_binary)
     _check_voxels(m, MAX_VOXELS, "vol_local_thickness", "MAX_VOXELS")
     sp = _spacing_tuple(spacing) or (1.0, 1.0, 1.0)
@@ -1230,7 +1274,11 @@ def vol_granulometry(vol_binary, radii=None, spacing=None):
     finer than the radius step.
 
     HALCON has no granulometry operator.
+
+    Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
     """
+    if (len(vol_binary) if isinstance(vol_binary, (list, tuple)) else np.asarray(vol_binary).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("vol_granulometry: vol_binary is empty — pass at least one element")
     m = _as_binary(vol_binary)
     sp = _spacing_tuple(spacing)
     units = "mm" if sp else "voxel"

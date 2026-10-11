@@ -9,6 +9,7 @@
 <p>albedo: diffuser Reflexionsgrad (Skalar oder (H,W)).</p>
 <p>Rückgabewert: (H, W) Strahldichtekoeffizient (0 oder größer).</p>
 <p>Warum Lambert nicht genügt: Lambert fällt am Rand (Terminator) proportional zu cos ab, aber eine raue Fläche <b>bleibt durch gegenseitige Abschattung und Interreflexion der Mikrofacetten bis zum Rand flach hell</b>. Deshalb wirkt der Vollmond gleichmäßig wie eine Scheibe; mit Lambert würde der Rand dunkler und er sähe wie eine Kugel aus.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">normals</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

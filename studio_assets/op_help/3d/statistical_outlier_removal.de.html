@@ -21,6 +21,7 @@
 <p>Ob jeder Eingabepunkt erhalten bleibt (True=behalten). <code style="color:#22d3bf">points[keep_mask]</code> ist gleich <code style="color:#22d3bf">filtered</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>Bei Punktzahl &lt; 3 ist keine Statistik möglich, daher bleiben alle Punkte erhalten (graceful).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">points</code> mit 0 Elementen) liefert ein leeres Ergebnis (Grund: Ausdünnen, Ausreißerentfernung und Dropout können keine Punkte übrig lassen; eine leere Wolke ist ein gültiger Wert, und die nächste Stufe einer Kette darf daran nicht anhalten).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

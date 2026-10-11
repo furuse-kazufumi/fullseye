@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code> (Bildgröße) wird nicht erneut geprüft; auch außerhalb des Bildes gibt es keine Ausnahme, <code style="color:#22d3bf">measure_pos</code> extrapoliert dann nur mit den Randwerten.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabewert: dict gleicher Struktur (Typ <code style="color:#22d3bf">measurehandle</code>).</p>
 <p>Typisch: den per Registrierung ermittelten Werkstückversatz auf die Messlinie übertragen und dann <code style="color:#22d3bf">measure_pos</code> / <code style="color:#22d3bf">measure_pairs</code> anwenden. Ändert sich die Neigung, <code style="color:#22d3bf">gen_measure_rectangle2</code> mit dem neuen <code style="color:#22d3bf">phi</code> neu erzeugen.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">measure</code> ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">Leitfaden zur Familie subpixel_measuring</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

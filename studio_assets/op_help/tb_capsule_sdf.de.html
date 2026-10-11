@@ -21,6 +21,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: Dicke (negativ wird abgewiesen).</p>
 <p>Rückgabewert: float64 der Form <code style="color:#22d3bf">grid.shape[:-1]</code>.</p>
 <p>Einsatz: Prüft man die Werkzeug-Erreichbarkeit danach, &quot;ob das Sweep-Volumen des Werkzeugs das Teil schneidet&quot;, setzt man das Werkzeug als Kapsel an und prüft, ob das Minimum von <code style="color:#22d3bf">sdf_intersect</code> positiv ist. Auch zum Synthetisieren von Trabekeln, Gefäßen und Fasern.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">grid</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <p>Die 3d-Op <code style="color:#22d3bf">capsule_sdf</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. Diese Op hat keine Stellgrößen; weder <code style="color:#22d3bf">a</code> noch <code style="color:#22d3bf">b</code> wird verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

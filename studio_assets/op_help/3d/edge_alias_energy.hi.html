@@ -6,6 +6,7 @@
 <p>edges की aliasing (jaggy) energy = Laplacian का RMS (जितना छोटा उतना smooth)।</p>
 <p>rasterisation की aliasing सीढ़ीनुमा तीखे कोनों (ऊँचा 2nd derivative) के रूप में दिखती है। Laplacian high frequency को उभारता है, इसलिए इसका root mean square (RMS) सीमाओं की सीढ़ीनुमा मात्रा को monotonic रूप से पकड़ता है — SSAA से edge smooth gradient बन जाएँ तो Laplacian की high-frequency energy घटती है (low-pass high frequency को कम करता है और Laplacian उसे बढ़ाता है, इसलिए edge जितने smooth हों यह मात्रा उतनी छोटी)।</p>
 <p>समतल भीतरी भाग और background में Laplacian ≈ 0 होता है और वे योगदान नहीं देते, इसलिए यह वास्तव में edge band की मात्रा है। colour image में channel का औसत लिया जाता है। एक ही आकार और एक ही contrast वाली images की आपस में तुलना के लिए सापेक्ष metric।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">img</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

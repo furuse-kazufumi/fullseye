@@ -35,7 +35,11 @@ def arc_length(curve):
 
     ``resample_uniform`` はこの累積弧長をパラメータに線形補間する。曲率の弧長積分など
     ``curvature_torsion`` と組み合わせるときの ds はこの差分から取る。
+
+    空の入力(``curve`` が 0 要素)は ValueError。
     """
+    if (len(curve) if isinstance(curve, (list, tuple)) else np.asarray(curve).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("arc_length: curve is empty — pass at least one element")
     c = np.asarray(curve, float)
     seg = np.linalg.norm(np.diff(c, axis=0), axis=1)
     cum = np.concatenate([[0.0], np.cumsum(seg)])
@@ -137,7 +141,11 @@ def resample_uniform(curve, n):
     ``curvature_torsion`` / ``frenet_frame`` は index パラメータの差分なので、間隔が不均一な
     点列はこの op で等間隔化してから渡すと数値微分が安定する。滑らかに補間したい場合は
     ``fit_spline_curve``。
+
+    空の入力(``curve`` が 0 要素)は ValueError。
     """
+    if (len(curve) if isinstance(curve, (list, tuple)) else np.asarray(curve).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("resample_uniform: curve is empty — pass at least one element")
     c = np.asarray(curve, float)
     cum, total = arc_length(c)
     if total < 1e-12:

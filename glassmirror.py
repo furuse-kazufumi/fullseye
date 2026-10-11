@@ -102,7 +102,11 @@ def fresnel_dielectric(cos_i, n1=1.0, n2=1.5, polarization="unpolarized") -> np.
     検算(テストで固定): 垂直入射で ((n1−n2)/(n1+n2))²(air→BK7 = 0.04)、
     Brewster 角で p 偏光が 0(1e-15 未満)、臨界角超で 1.0。
     透過率は 1 − R(吸収の無い界面なのでエネルギーが閉じる)。
+
+    空の入力(``cos_i`` が 0 要素)は ValueError。
     """
+    if (len(cos_i) if isinstance(cos_i, (list, tuple)) else np.asarray(cos_i).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("fresnel_dielectric: cos_i is empty — pass at least one element")
     op = "fresnel_dielectric"
     ci = _cos(cos_i, op)
     a, b = _index(n1, "n1", op), _index(n2, "n2", op)
@@ -127,7 +131,11 @@ def fresnel_conductor(cos_i, n, k, polarization="unpolarized") -> np.ndarray:
 
     式: η² = (n+ik)² − sin²θ として rs = (cosθ − η)/(cosθ + η)、
     rp = ((n+ik)² cosθ − η)/((n+ik)² cosθ + η)(Born & Wolf §13.2 の複素形)。
+
+    空の入力(``cos_i`` が 0 要素)は ValueError。
     """
+    if (len(cos_i) if isinstance(cos_i, (list, tuple)) else np.asarray(cos_i).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("fresnel_conductor: cos_i is empty — pass at least one element")
     op = "fresnel_conductor"
     ci = _cos(cos_i, op)
     nn = _arr(n, "n", op)
@@ -233,7 +241,11 @@ def beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -> np.ndarray:
     sigma_per_mm: 吸収係数 [1/mm] (配列可 — 波長ごとに変えれば**色**になる)。
 
     返り値: 内部透過率(0–1)。界面の反射は含まない(それは `slab_transmittance`)。
+
+    空の入力(``path_mm`` が 0 要素)は ValueError。
     """
+    if (len(path_mm) if isinstance(path_mm, (list, tuple)) else np.asarray(path_mm).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("beer_lambert_transmittance: path_mm is empty — pass at least one element")
     op = "beer_lambert_transmittance"
     L = _arr(path_mm, "path_mm", op)
     s = _arr(sigma_per_mm, "sigma_per_mm", op)
@@ -254,7 +266,11 @@ def slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0
 
     検算: 吸収 0・垂直入射の air→BK7(n=1.5)板は T = 0.9231(= 2n/(n²+1) の
     よく知られた値)。σ を上げると単調に下がり、臨界角超(板の内側から)では 0。
+
+    空の入力(``cos_i`` が 0 要素)は ValueError。
     """
+    if (len(cos_i) if isinstance(cos_i, (list, tuple)) else np.asarray(cos_i).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("slab_transmittance: cos_i is empty — pass at least one element")
     op = "slab_transmittance"
     ci = _cos(cos_i, op)
     a, b = _index(n1, "n1", op), _index(n2, "n2", op)
@@ -329,7 +345,11 @@ def prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass="N-BK7") -
 
     検算: N-BK7・A=60° で d 線(587.6 nm)の δ_min ≈ 38.6°、F 線(486.1)と C 線(656.3)の
     差(角分散)が **Abbe 数から予想される向き**(短波長ほど大きく曲がる)になる。
+
+    空の入力(``wavelength_nm`` が 0 要素)は ValueError。
     """
+    if (len(wavelength_nm) if isinstance(wavelength_nm, (list, tuple)) else np.asarray(wavelength_nm).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("prism_min_deviation_deg: wavelength_nm is empty — pass at least one element")
     op = "prism_min_deviation_deg"
     if np.ndim(apex_deg) != 0:
         raise ValueError(f"{op}: apex_deg must be a scalar (the wavelength is the "

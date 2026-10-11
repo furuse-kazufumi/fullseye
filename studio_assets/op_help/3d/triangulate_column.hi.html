@@ -18,6 +18,7 @@
 <p>व्युत्पत्ति: X_cam = Z·d (d = K_cam⁻¹[u,v,1])। projector की तरफ़ column condition है (K_proj[0] − u_p·K_proj[2])·X_proj = 0। X_proj = rot·X_cam + trans रखकर Z के लिए हल करने पर Z = −(a·trans) / (a·(rot·d)), a = K_proj[0] − u_p·K_proj[2]।</p>
 <p>Raises: गलत shapes या matrices, शून्य baseline, या singular camera matrix पर ValueError।</p>
 <p>स्रोत (सार्वजनिक literature): ray और plane के intersection से structured-light triangulation — Hartley &amp; Zisserman, *Multiple View Geometry* 2nd ed. §12 (projective geometry में intersections) / Salvi et al., *Pattern Recognition* 43 2010 (structured-light patterns का वर्गीकरण और decoding)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">column</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

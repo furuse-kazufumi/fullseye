@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 既定は切る。実機のドリフトは接触の外の遠方マーカーで別途引くのが筋。真の変位で当てると c/a の誤差 0.001、画像からの追跡では 0.011
 (重心の pixel-locking が共通モードで乗る)。**Raises** ValueError: 形の不一致、点が 3 個未満。
 
+空の入力(``model`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

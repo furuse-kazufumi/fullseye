@@ -6,6 +6,7 @@
 <p>半透明繞射光的近似(樹葉・皮膚・大理石・乳白塑膠)。</p>
 <p>thickness：透光程度(0–1，越大越多光從背面繞過來)。wrap：向陰影側繞入的範圍。</p>
 <p>回傳值：(H, W)。<b>光源越在背面越亮</b>的成分(back-scatter)與向陰影側繞入的成分(wrap lighting)之和。重點是在 Lambert 為 0 的區域仍留有光。</p>
+<p>空輸入(<code style="color:#22d3bf">normals</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">h_res</code> / <code style="color:#22d3bf">v_res</code>: 열 수(방위각 360°의 등분), 행 수(앙각 대역의 등분). 양수가 아니면 <code style="color:#22d3bf">ValueError</code>.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">v_fov</code>: (v_min, v_max) [도]. <code style="color:#22d3bf">v_min &lt; v_max</code>가 아니면 <code style="color:#22d3bf">ValueError</code>.</p>
 <p>열은 <code style="color:#22d3bf">floor((atan2(y,x) + π) / 2π · h_res)</code>로, 열 0이 바로 뒤(-x), <code style="color:#22d3bf">h_res//2</code>가 정면(+x)이며, 반시계 방향으로 증가한다. 행은 <code style="color:#22d3bf">(v_res-1) - floor((θ - v_min)/(v_max - v_min) · v_res)</code>(θ는 앙각 [도])로, 행 0이 대역의 위쪽 끝(θ=v_max). 화소값은 slant range <code style="color:#22d3bf">sqrt(x²+y²+z²)</code>(좌표 단위). 같은 셀에 여러 점이 떨어지면 <code style="color:#22d3bf">np.minimum.at</code>으로 최소 range를 남긴다(안쪽 점은 잃는다). 역변환은 <code style="color:#22d3bf">unproject_spherical</code>(같은 <code style="color:#22d3bf">v_fov</code>를 넘길 것). 높이로 층을 자르는 변종이 <code style="color:#22d3bf">project_cylindrical</code>이다.</p>
+<p>빈 입력(<code style="color:#22d3bf">points</code> 이(가) 0 개 요소)은 빈 결과를 반환한다(이유: 반사가 없는 스캔은 정당하며, 모든 셀이 0 인 영상이 올바른 답이다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

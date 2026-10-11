@@ -6,6 +6,7 @@
 <p>法線場 (H, W, 3) + 光源 (3, 3) → 視觸覺感測器風格的 RGB (H, W, 3) float。通道 k = 光源 k 的 Lambertian 影像 albedo·(max(N·L_k, 0) + ambient)(呼叫 3 次 <code style="color:#22d3bf">photometric.render_lambertian</code>，第 2 實作)。<code style="color:#22d3bf">noise</code> &gt; 0 時加上常態亂數。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: normals が (H, W, 3) でない、lights が (3, 3) でない、noise &lt; 0。</p>
+<p>空の入力(<code style="color:#22d3bf">normals</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

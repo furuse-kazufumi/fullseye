@@ -15,6 +15,7 @@
 <p>연결 성분 수.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
 <p>26 연결(3x3x3의 전체 근방). 단편화된 에지 조각을 1 개의 곡선 / 닫힌 곡면으로 묶어, 하류의 Hough / chamfer에서 성분 단위로 다룰 수 있게 한다.</p>
+<p>빈 입력(<code style="color:#22d3bf">edge_mask</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

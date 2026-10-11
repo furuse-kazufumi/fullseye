@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">samples</code>: lines की संख्या। default 5। 1 से कम मान 1 पर round होते हैं। विषम संख्या में केंद्र wavelength शामिल होती है।</p>
 <p style="margin:2px 0 2px 12px">• Return value: <code style="color:#22d3bf">(wavelengths (k,), weights (k,))</code>, 2 float64 arrays। एक सन्निकटन (approximation) जो वास्तविक spectral shape (LED की असममिति, halogen का blackbody वितरण) model नहीं करता।</p>
 <p><code style="color:#22d3bf">layout_capture</code> इसे <code style="color:#22d3bf">spectral_samples</code> lines के साथ call करता है और प्रति-wavelength परिणामों को इन weights से जोड़ता है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">light</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

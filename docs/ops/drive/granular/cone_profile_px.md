@@ -24,6 +24,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 足す、中心は空気側 ``(x_t, r)``、``x_t = R + r tan(φ/2)``、接点 ``u = x_t − r sin φ``)—— どちらも
 接線連続(導出: 接点で両側の高さが裾は ``r(1 − cos φ)``、頂は ``H − r sin²φ / cos φ`` で一致)。**Raises** ``ValueError``: 2 つの円弧が重なる(山が小さすぎる)。
 
+空の入力(``u`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

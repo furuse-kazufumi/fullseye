@@ -6,6 +6,7 @@
 <p>शंकु की generatrix का cross-section <code style="color:#22d3bf">c(u)</code> [px] (<code style="color:#22d3bf">u</code> = axis से दूरी [px])।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>基本は <code style="color:#22d3bf">c = max(0, H − u tan φ)</code>。<code style="color:#22d3bf">apex_blunt_px</code> = 頂に内接する円弧の半径(材料を削る、中心は <code style="color:#22d3bf">(0, H − r/cos φ)</code>、接点 <code style="color:#22d3bf">u = r sin φ</code>)。<code style="color:#22d3bf">toe_round_px</code> = 裾の凹みを埋める円弧の半径(材料を足す、中心は空気側 <code style="color:#22d3bf">(x_t, r)</code>、<code style="color:#22d3bf">x_t = R + r tan(φ/2)</code>、接点 <code style="color:#22d3bf">u = x_t − r sin φ</code>)—— どちらも接線連続(導出: 接点で両側の高さが裾は <code style="color:#22d3bf">r(1 − cos φ)</code>、頂は <code style="color:#22d3bf">H − r sin²φ / cos φ</code> で一致)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2 つの円弧が重なる(山が小さすぎる)。</p>
+<p>空の入力(<code style="color:#22d3bf">u</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

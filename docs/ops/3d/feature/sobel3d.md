@@ -35,6 +35,8 @@ vol は numpy でも torch tensor(GPU 上でも可)でも受ける(scene_flow �
 後段: ``curvature_maps`` / ``match_shape_3d`` の単位勾配、``hough_plane_3d`` の法線。
 方向の要らないエッジ強度なら ``morph_gradient3d`` も代替。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

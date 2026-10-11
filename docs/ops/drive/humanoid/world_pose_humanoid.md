@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 世界の物体 ``i``(:func:`driveterrain.add_mesh_object` で ``humanoid_clip_mesh`` を置いたもの)を、歩いた距離
 ``distance`` の姿勢にして ``(x, y, yaw)`` へ置き直す(頂点だけ書き換える。面・色・ラベル・``dims`` は不変)。
 
+空の入力(``world`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

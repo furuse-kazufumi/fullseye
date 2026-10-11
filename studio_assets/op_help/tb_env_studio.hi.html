@@ -14,6 +14,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>studio environment की radiance (direction -&gt; brightness)। <b>achromatic</b>।</p>
 <p>2 softbox + आकाश का gradient + पतली क्षैतिज पट्टी। रंग नहीं डाला गया ताकि चित्र के भीतर यह सुनिश्चित हो कि धातु का रंग environment से नहीं बल्कि <b>Fresnel(n, k) से आता है</b>। <code style="color:#22d3bf">directions</code> (..., 3) के unit vector हैं (z ऊपर)। return value उसी shape का (...,) है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">directions</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <p>2-D evolution registry में bridge किया गया optics का op <code style="color:#22d3bf">env_studio</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">key</code> (default 12) और <code style="color:#22d3bf">b</code> से <code style="color:#22d3bf">fill</code> (default 3.2) बदला जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

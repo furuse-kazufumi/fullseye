@@ -21,6 +21,7 @@
 <p><code style="color:#22d3bf">ValueError</code>)। return value float64 है।</p>
 <p style="margin:2px 0 2px 12px">• registration (<code style="color:#22d3bf">register_fpfh</code> आदि) की noise robustness मापते समय <code style="color:#22d3bf">sigma</code> को point spacing</p>
 <p>(जैसे <code style="color:#22d3bf">voxel_grid_downsample</code> की grid चौड़ाई) के अनुपात में तय करने से conditions की तुलना आसान होती है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: पॉइंट क्लाउड का विरलन, आउटलायर हटाना और ड्रॉपआउट खाली परिणाम दे सकते हैं; खाली क्लाउड एक वैध मान है और शृंखला का अगला चरण उस पर नहीं रुकना चाहिए)।</p>
 <p>2-D evolution registry में bridge किया गया 3d का op <code style="color:#22d3bf">jitter</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। इस op में कोई tunable parameter नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>

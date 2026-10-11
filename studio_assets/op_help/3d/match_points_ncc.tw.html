@@ -14,6 +14,7 @@
 <p style="margin:2px 0 2px 12px">• model 的 voxel 全為 0 時為 <code style="color:#22d3bf">[0,0,0,0]</code>。</p>
 <p style="margin:2px 0 2px 12px">• 僅平移。旋轉、縮放先用 <code style="color:#22d3bf">match_pca</code> / <code style="color:#22d3bf">match_logpolar_z</code> 對齊。</p>
 <p>後續:<code style="color:#22d3bf">icp_point2point_3d</code> 的 <code style="color:#22d3bf">init_t</code>,<code style="color:#22d3bf">refine_translation_lk</code>。</p>
+<p>空輸入(<code style="color:#22d3bf">pts_scene</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

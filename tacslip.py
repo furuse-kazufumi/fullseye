@@ -82,7 +82,12 @@ def mindlin_partial_slip(Q: float, hz: dict, mu: float, G: float, nu: float) -> 
 
 def mindlin_traction(r, mp: dict) -> np.ndarray:
     """接線トラクション q(r) = q′ − q″ [Pa]: q′ = μp0√(1−r²/a²)(r < a)、q″ = μp0(c/a)√(1−r²/c²)(r < c)。滑り環 c ≤ r < a では q = μp(r)
-    (Coulomb の限界に張り付く)、固着円では q < μp。``mp`` は :func:`mindlin_partial_slip` の表。r と同じ形。**Raises** ValueError: mp に a/c/mu/p0 が無い。"""
+    (Coulomb の限界に張り付く)、固着円では q < μp。``mp`` は :func:`mindlin_partial_slip` の表。r と同じ形。**Raises** ValueError: mp に a/c/mu/p0 が無い。
+
+    空の入力(``r`` が 0 要素)は ValueError。
+    """
+    if (len(r) if isinstance(r, (list, tuple)) else np.asarray(r).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("mindlin_traction: r is empty — pass at least one element")
     if not isinstance(mp, dict) or not all(k in mp for k in ("a", "c", "mu", "p0")):
         raise ValueError("mindlin_traction: mp must be the dict from mindlin_partial_slip()")
     r = np.abs(np.asarray(r, np.float64))
@@ -98,7 +103,12 @@ def hertz_surface_ur(r, a: float, p0: float, G: float, nu: float) -> np.ndarray:
     """法線荷重(Hertz 圧 p0√(1−r²/a²))が作る半空間表面の**半径方向**変位 ūr [m] (Johnson 1985 式 3.41b を E = 2G(1+ν) で書き直し)。
     負 = 中心向き。内側 −(1−2ν)p0a²/(6Gr)[1 − (1−r²/a²)^{3/2}]、外側 −(1−2ν)p0a²/(6Gr)(= 点荷重 −(1−2ν)P/(4πGr))、r → 0 で 0。
     最大は縁でなく r ≈ 0.93a(ūr(a) の 1.022 倍)。ūr(a)/δ = 2(1−2ν)/(3π(1−ν))(ν 0.48 で 1.6 %、ν 0.3 で 12 %)—— ほぼ非圧縮のゲルでは
-    法線荷重でマーカーはほとんど動かない。**Raises** ValueError: a, p0, G ≤ 0。"""
+    法線荷重でマーカーはほとんど動かない。**Raises** ValueError: a, p0, G ≤ 0。
+
+    空の入力(``r`` が 0 要素)は ValueError。
+    """
+    if (len(r) if isinstance(r, (list, tuple)) else np.asarray(r).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("hertz_surface_ur: r is empty — pass at least one element")
     a, p0, G, nu = float(a), float(p0), float(G), float(nu)
     if not (a > 0.0 and p0 > 0.0 and G > 0.0):
         raise ValueError("hertz_surface_ur: a, p0, G must be > 0")
@@ -185,7 +195,12 @@ def cerruti_surface_displacement(qx, kern: dict) -> dict:
 def membrane_shear_field(hz: dict, mp: dict, X, Y, kern: dict) -> dict:
     """膜表面の変位場: Mindlin のトラクション q(r) を Cerruti 核で畳んだ接線変位 ``ux``・``uy`` と、法線荷重の半径変位 ``urx``・``ury``
     (:func:`hertz_surface_ur` を x, y に分けたもの)[m]、``q``、固着/滑りのマスク ``mask_stick``(r ≤ c)・``mask_slip``(c < r ≤ a)、``r``。
-    X, Y は格子の座標 [m] (中心が原点)。**Raises** ValueError: X と Y の形が違う、kern の n と合わない。"""
+    X, Y は格子の座標 [m] (中心が原点)。**Raises** ValueError: X と Y の形が違う、kern の n と合わない。
+
+    空の入力(``hz`` が空の dict)は ValueError。
+    """
+    if isinstance(hz, dict) and len(hz) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("membrane_shear_field: hz is empty — pass a non-empty dict")
     X = np.asarray(X, np.float64); Y = np.asarray(Y, np.float64)
     if X.shape != Y.shape or X.ndim != 2 or X.shape != (int(kern["n"]), int(kern["n"])):
         raise ValueError("membrane_shear_field: X, Y must be (n, n) with the kernel's n")
@@ -221,7 +236,12 @@ def _sample(field, xy_px):
 
 def displace_markers(pts, fx, fy, pitch: float) -> np.ndarray:
     """変位場 fx, fy (n, n) [m] でマーカー中心 (N, 2) [px] を移す(場は中心位置で双線形標本化、画素に換算して足す)。
-    **Raises** ValueError: pts が (N, 2) でない、fx と fy の形が違う、pitch ≤ 0。"""
+    **Raises** ValueError: pts が (N, 2) でない、fx と fy の形が違う、pitch ≤ 0。
+
+    空の入力(``pts`` が 0 要素)は ValueError。
+    """
+    if (len(pts) if isinstance(pts, (list, tuple)) else np.asarray(pts).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("displace_markers: pts is empty — pass at least one element")
     p = np.asarray(pts, np.float64)
     fx = np.asarray(fx, np.float64); fy = np.asarray(fy, np.float64)
     if p.ndim != 2 or p.shape[1] != 2 or fx.shape != fy.shape or fx.ndim != 2 or not (float(pitch) > 0.0):
@@ -232,7 +252,12 @@ def displace_markers(pts, fx, fy, pitch: float) -> np.ndarray:
 def membrane_render_markers(rgb, pts, r_px: float, dark: float, sub: int = 8) -> np.ndarray:
     """RGB (H, W, 3) に黒い円盤のマーカー(中心 pts (N, 2) [px]、半径 r_px)を描く: 画素の被覆率で rgb *= 1 − dark·coverage。
     被覆率は円盤の縁の画素だけ sub² の副標本(内側 1・外側 0)。像を補間して歪めないので真値が厳密。
-    **Raises** ValueError: rgb が (H, W, 3) でない、pts が (N, 2) でない、r_px ≤ 0、dark が [0, 1] の外。"""
+    **Raises** ValueError: rgb が (H, W, 3) でない、pts が (N, 2) でない、r_px ≤ 0、dark が [0, 1] の外。
+
+    空の入力(``rgb`` が 0 要素)は ValueError。
+    """
+    if (len(rgb) if isinstance(rgb, (list, tuple)) else np.asarray(rgb).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("membrane_render_markers: rgb is empty — pass at least one element")
     out = np.asarray(rgb, np.float64).copy()
     pts = np.asarray(pts, np.float64)
     if out.ndim != 3 or out.shape[2] != 3 or pts.ndim != 2 or pts.shape[1] != 2:
@@ -353,7 +378,12 @@ def marker_match_grow(p0, p1, pitch_px: float, seed_tol: float = 0.25, tols=(0.2
     遠いもの(「接触は視野の内側にあり縁は遠方場 = 小変位」という物理の前提。どこでも種にすると、核の変位 6.4 px が隣の基準位置から
     1.6 px なのでピッチ 1 つ飛んだ偽の種が 27 個できた)。以後、未対応のマーカーは nb_r·ピッチ以内の既対応 2 点以上の変位の平均を予測にして
     tol·ピッチ以内の最近傍を取り、tol は小さい値から段階的に緩める。1 つの p1 は 1 回しか使わない。
-    **Raises** ValueError: p0/p1 が (N, 2) でない、pitch_px ≤ 0。"""
+    **Raises** ValueError: p0/p1 が (N, 2) でない、pitch_px ≤ 0。
+
+    空の入力(``p0`` が 0 要素)は ValueError。
+    """
+    if (len(p0) if isinstance(p0, (list, tuple)) else np.asarray(p0).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("marker_match_grow: p0 is empty — pass at least one element")
     from scipy.spatial import cKDTree
     p0 = np.asarray(p0, np.float64); p1 = np.asarray(p1, np.float64)
     if p0.ndim != 2 or p0.shape[1] != 2 or p1.ndim != 2 or p1.shape[1] != 2 or not (float(pitch_px) > 0.0):
@@ -442,7 +472,12 @@ def mindlin_model(hz: dict, X, Y, kern: dict, G: float, nu: float) -> dict:
     q″(半径 c、頂点 μp0·c/a)の差だから、g(x) = 頂点 1 Pa・半径 a の場として u(x; c) = μp0·[g(x) − (c/a)²·g(x·a/c)]。
     g は Cerruti 核で格子上に作り、x·a/c が格子の外に出る点は点荷重の漸近形(総力 (2/3)πa²·1 Pa)で補う。順方向の畳み込みとの差は
     核で 0.05 %、環で 0.13 %。返り ``gx``・``gy``(n, n)、``Qunit``、``n``・``pitch``・``c0``(格子中心 [px])、``hz``・``G``・``nu``。
-    c/a の格子を線形補間する模型は場が c に非線形なので c/a を 0.01 ずらした(捨てた)。**Raises** ValueError: 形の不一致、G ≤ 0。"""
+    c/a の格子を線形補間する模型は場が c に非線形なので c/a を 0.01 ずらした(捨てた)。**Raises** ValueError: 形の不一致、G ≤ 0。
+
+    空の入力(``hz`` が空の dict)は ValueError。
+    """
+    if isinstance(hz, dict) and len(hz) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("mindlin_model: hz is empty — pass a non-empty dict")
     X = np.asarray(X, np.float64); Y = np.asarray(Y, np.float64)
     n = int(kern["n"])
     if X.shape != (n, n) or Y.shape != (n, n) or not (float(G) > 0.0):
@@ -487,7 +522,12 @@ def mindlin_fit(model: dict, pts_px, u_m, n_coarse: int = 101, n_fine: int = 41,
     線形最小二乗。返り ``c_over_a``・``q_ratio`` = 1 − (c/a)³・``muP``・``Q``・``mu``(= μP/P)・``rms_m``・``shift_m``。
     ``rigid=True`` は剛体シフト (tx, ty) も自由にする —— 試作では**逆効果**だった(外側 900 点の 1/r の尾と縮退して c/a が 0.028 ずれる)ので
     既定は切る。実機のドリフトは接触の外の遠方マーカーで別途引くのが筋。真の変位で当てると c/a の誤差 0.001、画像からの追跡では 0.011
-    (重心の pixel-locking が共通モードで乗る)。**Raises** ValueError: 形の不一致、点が 3 個未満。"""
+    (重心の pixel-locking が共通モードで乗る)。**Raises** ValueError: 形の不一致、点が 3 個未満。
+
+    空の入力(``model`` が空の dict)は ValueError。
+    """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("mindlin_fit: model is empty — pass a non-empty dict")
     pts_px = np.asarray(pts_px, np.float64); u_m = np.asarray(u_m, np.float64)
     if pts_px.ndim != 2 or pts_px.shape[1] != 2 or u_m.shape != pts_px.shape or len(pts_px) < 3:
         raise ValueError("mindlin_fit: pts_px and u_m must be (M, 2) with M >= 3")
@@ -521,7 +561,12 @@ def mindlin_fit_vector(model: dict, pts_px, u_m, n_coarse: int = 51, n_fine: int
     μP = √(A² + B²)、φ = atan2(B, A)、Q = μP(1 − (c/a)³)。c/a は粗く走査 → 最良の周りを細かく。
     向きを先に「固着核の平均変位」で決めて 1 成分の :func:`mindlin_fit` に回す版は、規則格子の位相で核の標本が非対称になり 0.5° 前後の
     偏り(純 v のせん断に 0.01 N の偽の u 成分)を出した(pegtactile の試作で測って捨てた)。
-    返り ``c_over_a``・``q_ratio``・``muP``・``Q``・``phi``・``rms_m``。**Raises** ``ValueError``: 形の不一致、点が 3 個未満。"""
+    返り ``c_over_a``・``q_ratio``・``muP``・``Q``・``phi``・``rms_m``。**Raises** ``ValueError``: 形の不一致、点が 3 個未満。
+
+    空の入力(``model`` が空の dict)は ValueError。
+    """
+    if isinstance(model, dict) and len(model) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("mindlin_fit_vector: model is empty — pass a non-empty dict")
     pts_px = np.asarray(pts_px, np.float64)
     u_m = np.asarray(u_m, np.float64)
     if pts_px.ndim != 2 or pts_px.shape[1] != 2 or u_m.shape != pts_px.shape or len(pts_px) < 3:
@@ -592,7 +637,12 @@ def fem_nodes_load(dirpath: str, name: str) -> dict:
     """有限要素の表面節点テキスト(Robo-Touch/Taxim リポジトリ同梱、MIT ライセンス)を 3 本読む: ``<dirpath>/<name>_{x,y,z}.txt``、
     タブ区切り・1 行ヘッダ ``Node Number / X Location (m) / Y Location (m) / Z Location (m) / Directional Deformation (m)``、単位 m。
     3 本は同じ節点集合で最終列だけがその方向の変位。返り ``id``・``X``・``Y``・``Z``・``dx``・``dy``・``dz``(各 (N,))、``n``、``name``。
-    **Raises** FileNotFoundError: ファイルが無い。ValueError: ヘッダが違う、列が 5 本でない、3 本の節点座標が一致しない(fail-closed)。"""
+    **Raises** FileNotFoundError: ファイルが無い。ValueError: ヘッダが違う、列が 5 本でない、3 本の節点座標が一致しない(fail-closed)。
+
+    空の入力(``dirpath`` が空文字列)は ValueError。
+    """
+    if isinstance(dirpath, (str, bytes)) and len(dirpath) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("fem_nodes_load: dirpath is empty — pass a file path")
     arrs = []
     for comp in "xyz":
         p = os.path.join(str(dirpath), "%s_%s.txt" % (name, comp))
@@ -640,7 +690,12 @@ def fem_vs_halfspace(fz: dict, fxz: dict) -> dict:
     半径 ``r_half``(無ければ None)。(2) 斜め押し込みの dx(θ) を r = 1/1.5/2/3 mm の環で A + B cos²θ に当てる(``ang``: Cerruti なら
     B/A = ν/(1−ν) → ``nu``、``ratio`` = (A+B)/A、``R2``)、dy を A + B sin2θ に(``dy_fit``)。``R_dome``(表面の r–z を球冠に当てた半径)、
     ``dy_over_dz0``(法線だけでも出ている接線成分 = 非対称の量)、``rdx_n``、``dz0``、``dx_min_spacing``、``r``・``th``(中心相対)も返す。
-    **Raises** ValueError: 2 つの表の節点数が違う、節点が 10 個未満。"""
+    **Raises** ValueError: 2 つの表の節点数が違う、節点が 10 個未満。
+
+    空の入力(``fz`` が空の dict)は ValueError。
+    """
+    if isinstance(fz, dict) and len(fz) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("fem_vs_halfspace: fz is empty — pass a non-empty dict")
     if int(fz["n"]) != int(fxz["n"]) or int(fz["n"]) < 10:
         raise ValueError("fem_vs_halfspace: both tables must have the same >= 10 nodes")
     i0 = int(np.argmax(fz["dz"]))

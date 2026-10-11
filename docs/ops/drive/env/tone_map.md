@@ -20,6 +20,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 HDR カメラの色を保つ階調の圧縮: m = 各画素の最大チャンネル × exposure、表示 = 輝度 × exposure × (1 + m/4)/(1 + m)
 —— m ≪ 1 では線形、明るい所は 1 に漸近(色の比 = 色度は変えない。飽和で灯火が白くならない、仮定: 車載の HDR カメラ)。
 
+空の入力(``radiance`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

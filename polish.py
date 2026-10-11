@@ -324,7 +324,12 @@ def preston_track_profile(y, force: float, radius: float, k_p: float, kind: str 
     """長い直線の一筆(+x へ進む)の断面の除去の深さ h(y) [m] (y = 進む向きの左が正の横ずれ、``y`` と同じ形)。閉形式:
     平板 2 k_p p √(a² − y²)、Hertz k_p (E*/R)(a² − y²)(a は力から Hertz で)、回る平板(``spin`` = ω、``speed`` = v が要る)
     (k_p p / v)[c √(b² + ω²c²) + (b²/ω) asinh(ωc/|b|)] (c = √(a² − y²)、b = v − ωy)。|y| ≥ a は 0。
-    **Raises** ValueError: 数の検査、回る時に速さが無い、Hertz で回す(閉形式が無い)。"""
+    **Raises** ValueError: 数の検査、回る時に速さが無い、Hertz で回す(閉形式が無い)。
+
+    空の入力(``y`` が 0 要素)は ValueError。
+    """
+    if (len(y) if isinstance(y, (list, tuple)) else np.asarray(y).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("preston_track_profile: y is empty — pass at least one element")
     op = "preston_track_profile"
     F = _pos(force, "force", op)
     R = _pos(radius, "radius", op)

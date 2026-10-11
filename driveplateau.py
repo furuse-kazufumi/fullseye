@@ -633,6 +633,8 @@ def building_prisms(
 
     Raises:
         ValueError: color_fn の返り値が RGB 3 要素 0..1 でない、建物の footprint/height が不正。
+
+    空の入力(``buildings`` が 0 件)は空を返す(理由: 建物が 0 件のタイルは実データに普通にある。空の角柱集合が正しい答え)。
     """
     fn = color_fn if color_fn is not None else _default_building_color
     if not (0.0 < roof_shade <= 1.0):

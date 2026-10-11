@@ -54,6 +54,8 @@ and the window disagree by more than float64 can hold).
 
 HALCON: no operator (HALCON has no complex-plane family).
 
+Empty input (``zeros`` with 0 elements) returns an empty result (reason: a rational function without zeros (``1/q``) is a valid mathematical object).
+
 ## ファミリ共通の入力契約(fail-closed)
 
 mathops の全 op は入力を検証してから計算する(黙って通さない):

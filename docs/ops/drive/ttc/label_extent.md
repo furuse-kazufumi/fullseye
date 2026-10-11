@@ -21,6 +21,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 幅・高さは画素数(``col1 − col0 + 1``)。無ければ全部 0。:func:`ttc_from_scale` の入力(完全な検出器の代役)。
 
+空の入力(``label`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

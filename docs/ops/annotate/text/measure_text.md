@@ -60,6 +60,8 @@ Raises
 ValueError
     ``max_width`` が非正 / ``min_font_size`` まで縮めても 1 行が入らない。
 
+空の入力(``text`` が空文字列)は空を返す(理由: 空のラベル・表の空欄は普通にあり、幅 0 の寸法が正しい答え)。
+
 ## 詳しい使い方ガイド
 
 - [figure_annotation ファミリ ガイド](../guides/figure_annotation.md)

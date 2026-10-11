@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code> (image का आकार) दोबारा नहीं जाँचा जाता, इसलिए image से बाहर जाने पर भी exception नहीं उठता, बस <code style="color:#22d3bf">measure_pos</code> किनारे के मानों से extrapolate करता है।</p>
 <p style="margin:2px 0 2px 12px">• return value: उसी संरचना की dict (<code style="color:#22d3bf">measurehandle</code> type)।</p>
 <p>सामान्य उपयोग: registration से मिला workpiece का खिसकाव measuring line पर लागू करके फिर <code style="color:#22d3bf">measure_pos</code> / <code style="color:#22d3bf">measure_pairs</code> चलाएँ। झुकाव बदलता हो तो <code style="color:#22d3bf">gen_measure_rectangle2</code> को नए <code style="color:#22d3bf">phi</code> से फिर से बनाएँ।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">measure</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

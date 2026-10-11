@@ -5,6 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Error function erf(x) = (2/√π) ∫_0^x e^{−t²} dt.</p>
 <p>The cumulative normal distribution, and the very shape of a blurred edge (a step convolved with a Gaussian): a step blurred by a Gaussian of width σ is ½(1 + erf(x / (σ√2))). Gate: odd function, erf(∞) = 1, derivative = (2/√π) e^{−x²}, agrees with the integral by Gauss quadrature.</p>
+<p>Empty input (<code style="color:#22d3bf">x</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

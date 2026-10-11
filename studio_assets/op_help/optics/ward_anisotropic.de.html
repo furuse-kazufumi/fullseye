@@ -9,6 +9,7 @@
 <p>(bei Isotropie ein Kreis; bei alpha_x &gt;&gt; alpha_y eine entlang der Riefen gestreckte Linie).</p>
 <p>Rückgabewert: (H, W) Intensität der spiegelnden Reflexion (nicht negativ). Hintergrund ist 0.</p>
 <p>Formel: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo)), wobei δ der Winkel zwischen Halbvektor und Normale und φ der Azimut ab der Tangente ist (Ward 1992).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">normals</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

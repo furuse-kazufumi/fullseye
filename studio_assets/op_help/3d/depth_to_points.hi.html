@@ -12,6 +12,7 @@
 <p style="margin:2px 0 2px 12px">• Points row-major क्रम में आते हैं, पर row/column की जानकारी नहीं बचती। Grid structure रखना हो तो</p>
 <p><code style="color:#22d3bf">depth_to_organized_points</code>।</p>
 <p>आगे: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">estimate_point_normals</code> / <code style="color:#22d3bf">icp_point2plane</code>। Inverse mapping <code style="color:#22d3bf">project_points</code> है, TSDF बनाने के लिए <code style="color:#22d3bf">tsdf_from_depth</code>।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">depth</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

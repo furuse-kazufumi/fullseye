@@ -241,7 +241,12 @@ def puck_slide_predict(p0, v0, table: dict, t_end: float, *, model: str = "coulo
 
 def puck_state_at(pred: dict, t) -> dict:
     """:func:`puck_slide_predict` の経路上の位置と速度を時刻 t(スカラーか (N,))で。終端より後は終端の状態のまま(位置は動かない、速度は終端の値 = 止まっていれば 0)。
-    返り値 ``{"p" (N,2), "v" (N,2)}``。"""
+    返り値 ``{"p" (N,2), "v" (N,2)}``。
+
+    空の入力(``pred`` が空の dict)は ValueError。
+    """
+    if isinstance(pred, dict) and len(pred) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("puck_state_at: pred is empty — pass a non-empty dict")
     tt = np.atleast_1d(np.asarray(t, np.float64))
     P = np.empty((tt.size, 2))
     V = np.empty((tt.size, 2))
@@ -268,7 +273,12 @@ def puck_state_at(pred: dict, t) -> dict:
 def puck_crossing_point(pred: dict, x_line: float):
     """予測経路が守備線 x = ``x_line`` を最初に横切る時刻と場所(閉形式: 区間ごとに d(τ)·uₓ = 必要距離 を解く)。
 
-    返り値 ``{"t", "p", "v", "segment"}``、横切らなければ ``None``(fail-closed —— 止まる・ゴールに入る・時間切れ)。"""
+    返り値 ``{"t", "p", "v", "segment"}``、横切らなければ ``None``(fail-closed —— 止まる・ゴールに入る・時間切れ)。
+
+    空の入力(``pred`` が空の dict)は ValueError。
+    """
+    if isinstance(pred, dict) and len(pred) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("puck_crossing_point: pred is empty — pass a non-empty dict")
     model, k = pred["model"], pred["k"]
     for j, s in enumerate(pred["segments"]):
         if s["s0"] <= 0 or abs(s["u"][0]) < 1e-15:
@@ -309,7 +319,12 @@ def puck_stop_distance(v0: float, table: dict) -> float:
 
 def puck_camera(table: dict, *, px_per_m: float = 200.0, margin: float = 0.06) -> dict:
     """真上から見た合成カメラ: 台を等倍率で画素へ写すホモグラフィ(アフィン)。
-    col = (x + x_half + margin)·s、row = (y_half + margin − y)·s。返り値 ``{"H" world→(col,row), "Hinv", "shape", "px_per_m", "margin", "table"}``。"""
+    col = (x + x_half + margin)·s、row = (y_half + margin − y)·s。返り値 ``{"H" world→(col,row), "Hinv", "shape", "px_per_m", "margin", "table"}``。
+
+    空の入力(``table`` が空の dict)は ValueError。
+    """
+    if isinstance(table, dict) and len(table) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("puck_camera: table is empty — pass a non-empty dict")
     if px_per_m <= 0 or margin < 0:
         raise ValueError("need px_per_m > 0, margin >= 0")
     s = float(px_per_m)
@@ -324,7 +339,12 @@ def puck_camera(table: dict, *, px_per_m: float = 200.0, margin: float = 0.06) -
 def puck_pinhole_camera(table: dict, height: float, fovy_deg: float, shape) -> dict:
     """真上の針穴カメラ(位置 (0, 0, h)、−z を見る、up = +y、MuJoCo のカメラ規約)をホモグラフィに: col = W/2 + f x/h、
     row = H/2 − f y/h、f = (H/2)/tan(fovy/2)。パック上面の高さ(≈ 0.02 m)は無視(視差 h に対して 1 % 強、残差は門で測る)。
-    ``shape`` = (H, W)。返り値は :func:`puck_camera` と同じ形。"""
+    ``shape`` = (H, W)。返り値は :func:`puck_camera` と同じ形。
+
+    空の入力(``table`` が空の dict)は ValueError。
+    """
+    if isinstance(table, dict) and len(table) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("puck_pinhole_camera: table is empty — pass a non-empty dict")
     Hh, W = int(shape[0]), int(shape[1])
     if height <= 0 or not (0 < fovy_deg < 180) or Hh < 2 or W < 2:
         raise ValueError("need height > 0, 0 < fovy_deg < 180, shape >= 2x2")
@@ -335,12 +355,22 @@ def puck_pinhole_camera(table: dict, height: float, fovy_deg: float, shape) -> d
 
 
 def puck_world_to_pixel(cam: dict, xy) -> np.ndarray:
-    """world (N,2) → 画素 (col, row) (N,2)(:func:`calib.image_to_world_plane` に H を渡す)。"""
+    """world (N,2) → 画素 (col, row) (N,2)(:func:`calib.image_to_world_plane` に H を渡す)。
+
+    空の入力(``cam`` が空の dict)は ValueError。
+    """
+    if isinstance(cam, dict) and len(cam) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("puck_world_to_pixel: cam is empty — pass a non-empty dict")
     return _CAL.image_to_world_plane(np.asarray(xy, np.float64).reshape(-1, 2), cam["H"])
 
 
 def puck_pixel_to_world(cam: dict, colrow) -> np.ndarray:
-    """画素 (col, row) (N,2) → world (N,2)(:func:`calib.image_to_world_plane` に逆行列を渡す)。"""
+    """画素 (col, row) (N,2) → world (N,2)(:func:`calib.image_to_world_plane` に逆行列を渡す)。
+
+    空の入力(``cam`` が空の dict)は ValueError。
+    """
+    if isinstance(cam, dict) and len(cam) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("puck_pixel_to_world: cam is empty — pass a non-empty dict")
     return _CAL.image_to_world_plane(np.asarray(colrow, np.float64).reshape(-1, 2), cam["Hinv"])
 
 
@@ -359,7 +389,12 @@ def puck_render_frame(cam: dict, p, *, v=None, exposure: float = 0.0, n_sub: int
     """真上の 1 コマを合成(float (H,W)、0〜1): 白い台・灰色の壁・暗いパック(1 次の反エイリアス)。
 
     ``exposure`` > 0 なら露光の間 [t, t+exposure] にパックが v·exposure 動く分を n_sub 個の副露光の平均で入れる(モーションブラー)。
-    コマの時刻は **露光の始め**: ブラーした像の重心は v·exposure/2 だけ進む(閉形式、門)。``noise`` はガウス雑音の σ。"""
+    コマの時刻は **露光の始め**: ブラーした像の重心は v·exposure/2 だけ進む(閉形式、門)。``noise`` はガウス雑音の σ。
+
+    空の入力(``cam`` が空の dict)は ValueError。
+    """
+    if isinstance(cam, dict) and len(cam) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("puck_render_frame: cam is empty — pass a non-empty dict")
     table = cam["table"]
     Hh, W = cam["shape"]
     s = cam["px_per_m"]
@@ -401,7 +436,12 @@ def puck_synth_frames(table: dict, cam: dict, p0, v0, *, fps: float = 120.0, n_f
                       noise: float = 0.0, rng=None, model: str = "coulomb") -> dict:
     """合成の連続コマと真値: 閉形式の経路(:func:`puck_slide_predict`)を fps で標本化し :func:`puck_render_frame` で描く。
 
-    返り値 ``{"frames" [N], "t" (N,), "truth_xy" (N,2) 露光始めの位置, "truth_v" (N,2), "truth_px" (N,2), "pred", "cam", "fps", "exposure"}``。"""
+    返り値 ``{"frames" [N], "t" (N,), "truth_xy" (N,2) 露光始めの位置, "truth_v" (N,2), "truth_px" (N,2), "pred", "cam", "fps", "exposure"}``。
+
+    空の入力(``table`` が空の dict)は ValueError。
+    """
+    if isinstance(table, dict) and len(table) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("puck_synth_frames: table is empty — pass a non-empty dict")
     if fps <= 0 or n_frames < 1:
         raise ValueError("need fps > 0 and n_frames >= 1")
     t = np.arange(n_frames) / fps
@@ -614,7 +654,12 @@ def fivebar_ik(E, link: dict, *, branch: str = "out"):
 
 def fivebar_workspace(link: dict, *, n: int = 161, tol: float = 1e-9) -> dict:
     """作業域: 格子の各点で IK が解けて FK∘IK が tol で戻る所(枝 out/forward で矛盾しない所だけを「届く」とする)。
-    返り値 ``{"xs","ys","mask","area","x_max","x_min"}``(x_max = 届く最前の x)。"""
+    返り値 ``{"xs","ys","mask","area","x_max","x_min"}``(x_max = 届く最前の x)。
+
+    空の入力(``link`` が空の dict)は ValueError。
+    """
+    if isinstance(link, dict) and len(link) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("fivebar_workspace: link is empty — pass a non-empty dict")
     if n < 3:
         raise ValueError("n must be >= 3")
     r_max = link["l1"] + link["l2"]
@@ -637,7 +682,12 @@ def fivebar_workspace(link: dict, *, n: int = 161, tol: float = 1e-9) -> dict:
 
 
 def fivebar_reach_interval(link: dict, x_line: float, *, n: int = 801) -> dict:
-    """守備線 x = x_line 上で届く y の区間(格子で、FK∘IK 往復つき)。``{"y_lo","y_hi","ok"}``。"""
+    """守備線 x = x_line 上で届く y の区間(格子で、FK∘IK 往復つき)。``{"y_lo","y_hi","ok"}``。
+
+    空の入力(``link`` が空の dict)は ValueError。
+    """
+    if isinstance(link, dict) and len(link) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("fivebar_reach_interval: link is empty — pass a non-empty dict")
     if n < 3:
         raise ValueError("n must be >= 3")
     r_max = link["l1"] + link["l2"]
@@ -701,7 +751,12 @@ def fivebar_trajectory(q_now, plan: dict, t) -> np.ndarray:
 def puck_scene_mjcf(table: dict, *, cam_height: float = 1.5, fovy: float = 50.0, offwidth: int = 1024,
                     offheight: int = 768) -> str:
     """自前の最小 MJCF(Coulomb 版、mujoco 不要): 摩擦のある平面に円柱のパック(自由関節)、4 枚の壁(箱)、真上カメラ。
-    Challenge の台は粘性減衰なので、Coulomb の等減速を MuJoCo で確かめるにはこちらを使う。壁の反発は軟接触で e は測る。"""
+    Challenge の台は粘性減衰なので、Coulomb の等減速を MuJoCo で確かめるにはこちらを使う。壁の反発は軟接触で e は測る。
+
+    空の入力(``table`` が空の dict)は ValueError。
+    """
+    if isinstance(table, dict) and len(table) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("puck_scene_mjcf: table is empty — pass a non-empty dict")
     if cam_height <= 0 or not (0 < fovy < 180) or offwidth < 8 or offheight < 8:
         raise ValueError("need cam_height > 0, 0 < fovy < 180, offscreen >= 8 px")
     r = table["puck_radius"]

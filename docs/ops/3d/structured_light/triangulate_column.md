@@ -45,6 +45,8 @@ Raises: 形状・行列不正、基線ゼロ、特異なカメラ行列で Value
 *Multiple View Geometry* 2nd ed. §12(射影幾何の交わり)/ Salvi et al.,
 *Pattern Recognition* 43 2010(構造化光パターンの分類と復号)。
 
+空の入力(``column`` が 0 要素)は ValueError。
+
 ## 背景知識ガイド(この op の手前にある物理・規約)
 
 - [depth_sensors](../guides/depth_sensors.md) — 深度センサの知識 — 測距原理・実機の値・欠測の出方

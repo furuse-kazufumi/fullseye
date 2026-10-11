@@ -15,6 +15,7 @@
 <p>dict : <code style="color:#22d3bf">deductions</code>(<code style="color:#22d3bf">(細目, 点, 説明)</code> の列。点 None = 試験中止)、<code style="color:#22d3bf">total</code>(減点の合計)、<code style="color:#22d3bf">score</code>(100 − 合計、</p>
 <p>試験中止なら None)、<code style="color:#22d3bf">test_stopped</code>、<code style="color:#22d3bf">passed</code>(第一種 70 点以上)、<code style="color:#22d3bf">thresholds</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: venue が不正、event の kind が不明・値が非有限。</p>
+<p>空の入力(<code style="color:#22d3bf">events</code> が 0 件)は空を返す(理由: 減点の事象が 0 件の走行は満点で、それが正しい答え)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

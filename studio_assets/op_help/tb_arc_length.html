@@ -15,6 +15,7 @@
 <p style="margin:2px 0 2px 12px">• N=1 では <code style="color:#22d3bf">cumulative=[0.0]</code>・<code style="color:#22d3bf">total=0.0</code>。閉曲線でも終点→始点の区間は数えない(閉じたい場合は先頭点を末尾に複製してから渡す)。</p>
 <p style="margin:2px 0 2px 12px">• 重複点(距離 0 の区間)はそのまま 0 として累積されるので <code style="color:#22d3bf">cumulative</code> は単調非減少だが狭義増加ではない。</p>
 <p><code style="color:#22d3bf">resample_uniform</code> はこの累積弧長をパラメータに線形補間する。曲率の弧長積分など <code style="color:#22d3bf">curvature_torsion</code> と組み合わせるときの ds はこの差分から取る。</p>
+<p>空の入力(<code style="color:#22d3bf">curve</code> が 0 要素)は ValueError。</p>
 <p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">arc_length</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>

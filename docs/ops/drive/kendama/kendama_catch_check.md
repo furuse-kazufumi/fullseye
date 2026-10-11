@@ -28,6 +28,8 @@ kp["catch_window"])。横ずれ δ の玉は √(r_b² − (r_c − δ)²)(δ = 
 先に触れ、皿の中へ転がり込む(横ずれ ≤ r_c なら受けたとする)。
 縁の半径は kp["cup_radius"] (受ける皿、無ければ大皿)。返り値 ``{"caught", "lateral", "height" (縁の面から), "speed" (相対), "descending"}``。
 
+空の入力(``kp`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

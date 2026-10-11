@@ -6,6 +6,7 @@
 <p>Der <b>Randglanz</b> von Stoff (Samt, Satin). Je streifender zum Blick, desto heller.</p>
 <p>normals / light / view: wie oben. sheen: Stärke. exponent: Konzentration zum Rand hin.</p>
 <p>Rückgabewert: (H, W). <b>Umgekehrt zur spiegelnden Reflexion</b>: frontal (n·v = 1) nahe 0, am Rand (n·v → 0) maximal ―― deshalb leuchten die Ränder von Samt weiß, was Phong niemals erzeugen kann.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">normals</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

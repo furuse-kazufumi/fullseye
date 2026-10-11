@@ -28,6 +28,8 @@ Raises ValueError for radius<0 or voxel_size<=0 (both validated up-front, before
 the radius==0 / empty-occupancy short-circuit — otherwise an invalid voxel_size
 slips through unchecked when esdf is never reached).
 
+空の入力(``occupancy`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

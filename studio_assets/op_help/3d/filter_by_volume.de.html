@@ -20,6 +20,7 @@
 <p style="margin:2px 0 2px 12px">• Die Eingabe wird mit allem außer 0 als Vordergrund in bool umgewandelt (auch NaN ist Vordergrund). Achsenreihenfolge (z, y, x).</p>
 <p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: Eingabe nicht 3-dimensional, <code style="color:#22d3bf">connectivity</code> ungleich 6/18/26.</p>
 <p style="margin:2px 0 2px 12px">• Voxelanzahlen sind nicht abstandskorrigiert; für einen Schwellwert in physischen Maßen vorher durch das voxel-Volumen teilen und dann übergeben.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">vol</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Messunsicherheit und Kalibrierung — was nötig ist, um zu behaupten, dass man misst</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

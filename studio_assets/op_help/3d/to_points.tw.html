@@ -13,6 +13,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;voxel&quot;</code>: 以 <code style="color:#22d3bf">kw[&quot;iso&quot;]</code>(預設 0.5)對密度 grid <code style="color:#22d3bf">(D, H, W)</code> 做閾值, 將 <code style="color:#22d3bf">np.argwhere</code> 的 <b>整數 index 座標</b> <code style="color:#22d3bf">(z, y, x)</code> 轉為 float 作為點雲。不轉換為物理座標(不乘 spacing)。</p>
 <p>回傳值: <code style="color:#22d3bf">(N, 3)</code> float64。<code style="color:#22d3bf">kind</code> 不屬於以上任何一種時 <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">samples</code> 在 <code style="color:#22d3bf">&quot;mesh&quot;</code> 以外被忽略。</p>
 <p>注意: <code style="color:#22d3bf">&quot;voxel&quot;</code> 的座標為陣列 index 順序 <code style="color:#22d3bf">(z, y, x)</code>,<code style="color:#22d3bf">&quot;depth&quot;</code> 為相機座標 <code style="color:#22d3bf">(x, y, z)</code>,各種類的軸含義不同。以 <code style="color:#22d3bf">register_cross</code> / <code style="color:#22d3bf">fuse_to_voxel</code> 混合不同種類時,須由呼叫端統一這一差異。</p>
+<p>空輸入(<code style="color:#22d3bf">data</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

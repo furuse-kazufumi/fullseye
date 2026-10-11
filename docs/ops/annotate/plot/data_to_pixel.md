@@ -49,6 +49,8 @@ Notes
 ``"x and y must have the same length"`` で拒否していたので、**同じ族の中で
 規律が割れていた**(片方だけ直しても再発する型なので、文言も揃えてある)。
 
+空の入力(``axes`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [figure_annotation ファミリ ガイド](../guides/figure_annotation.md)

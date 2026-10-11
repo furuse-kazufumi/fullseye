@@ -113,7 +113,12 @@ def _at(path, t):
 
 
 def plan_cost(paths):
-    """総コスト(sum of costs): 各車両が**最後に**目的地へ着いた時刻の和(着いた後に動かないこと)。"""
+    """総コスト(sum of costs): 各車両が**最後に**目的地へ着いた時刻の和(着いた後に動かないこと)。
+
+    空の入力(``paths`` が 0 件)は ValueError。
+    """
+    if isinstance(paths, (list, tuple)) and len(paths) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("plan_cost: paths is empty — pass at least one item")
     total = 0
     for p in paths:
         k = len(p) - 1
@@ -533,7 +538,11 @@ def adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000):
 
     次の行動の依存がすべて済んでいる車両だけが 1 マス進む。返りは dict: ``trajectories``(実際の位置の列)、
     ``makespan``、``collisions``(同じマス・すれ違い)、``deadlock``(誰も進めず未了)、``finished``。
+
+    空の入力(``adg`` が空の dict)は ValueError。
     """
+    if isinstance(adg, dict) and len(adg) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("adg_execute: adg is empty — pass a non-empty dict")
     rng = np.random.default_rng(int(seed))
     cells, deps = adg["cells"], adg["deps"]
     n = len(cells)
@@ -570,7 +579,11 @@ def naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000):
 
     遅れが入ると、計画では時間差ですれ違うはずの 2 台が向かい合って止まる。返りは :func:`adg_execute` と
     同じ形に ``waits_for``(デッドロックの瞬間の「誰が誰を待つか」の辺)を足したもの。
+
+    空の入力(``paths`` が 0 件)は ValueError。
     """
+    if isinstance(paths, (list, tuple)) and len(paths) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("naive_execute: paths is empty — pass at least one item")
     rng = np.random.default_rng(int(seed))
     cells = [_compress(p)[0] for p in paths]
     n = len(cells)
@@ -640,6 +653,8 @@ def vda5050_check(order):
     規則: 必須キー / ノードの sequenceId は 0 から偶数で連番、エッジは奇数で連番 / エッジ数 = ノード数 − 1 /
     各エッジの始点・終点が前後のノード / released は base の先頭から連続(base → horizon の 1 回の切替のみ)/
     エッジの released はその終点ノードと同じ。返りは違反の文言のリスト(空 = 合格)。
+
+    空の入力(``order`` が空の dict)は空を返す(理由: 検査器なので、空の order も検査の対象。足りない鍵の一覧が正しい答え)。
     """
     errs = []
     for key in ("headerId", "timestamp", "version", "manufacturer", "serialNumber", "orderId",

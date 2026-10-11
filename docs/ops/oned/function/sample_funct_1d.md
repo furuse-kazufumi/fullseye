@@ -27,6 +27,8 @@ Nyquist rate).
 :param step: truncated to int, must be >= 1 (``step=1`` copies).
 :raises ValueError: non-1-D / NaN / Inf input, or ``step < 1``.
 
+Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

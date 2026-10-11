@@ -155,7 +155,11 @@ def unwrap_phase_2d(wrapped, mask=None) -> np.ndarray:
     使いどころ: ``wrapped_phase`` → 本 op → ``phase_to_height``(同モジュールの
     関数、``height = k (phase - ref_phase)``)。参照面を同じ手順で展開して引けば
     大域オフセットは相殺される。``decode_fringe`` はこの連鎖を 1 回で行う。
+
+    空の入力(``wrapped`` が 0 要素)は ValueError。
     """
+    if (len(wrapped) if isinstance(wrapped, (list, tuple)) else np.asarray(wrapped).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("unwrap_phase_2d: wrapped is empty — pass at least one element")
     if not _HAVE_SKIMAGE or _sk_unwrap_phase is None:
         raise RuntimeError(
             "skimage.restoration.unwrap_phase is unavailable (install scikit-image)"
@@ -347,7 +351,11 @@ def synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0,
     return_phase: True なら (images, total_phase) を返す(テスト・デバッグ用)。
 
     返り値: (N, H, W) float 配列(値域 [0,1] にクリップ)。return_phase=True なら位相も。
+
+    空の入力(``height`` が 0 要素)は ValueError。
     """
+    if (len(height) if isinstance(height, (list, tuple)) else np.asarray(height).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("synthesize_fringes: height is empty — pass at least one element")
     h = np.asarray(height, dtype=np.float64)
     if h.ndim != 2:
         raise ValueError(f"height must be a 2D array: got shape={h.shape}")
@@ -465,7 +473,11 @@ def triangulate_column(column, k_cam, k_proj, rot, trans) -> np.ndarray:
     来歴(公開文献): 光線と平面の交点による構造化光三角測量 — Hartley & Zisserman,
     *Multiple View Geometry* 2nd ed. §12(射影幾何の交わり)/ Salvi et al.,
     *Pattern Recognition* 43 2010(構造化光パターンの分類と復号)。
+
+    空の入力(``column`` が 0 要素)は ValueError。
     """
+    if (len(column) if isinstance(column, (list, tuple)) else np.asarray(column).size) == 0:   # ★2026-10-12 空入力の方針 A: 黙って値を返さず、何が空かを名指しで拒否
+        raise ValueError("triangulate_column: column is empty — pass at least one element")
     col = np.asarray(column, dtype=np.float64)
     if col.ndim != 2:
         raise ValueError(f"column must be a 2D (H, W) map: got shape={col.shape}")

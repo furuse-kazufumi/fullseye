@@ -32,6 +32,8 @@ ValueError。2 値 volume(0/1)ならそのまま 2 値 dilation になる。``se
 大きいと footprint 走査で遅い。
 後段: ``morph_erode3d`` と組で ``morph_open3d`` / ``morph_close3d`` / ``morph_gradient3d``。
 
+空の入力(``vol`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

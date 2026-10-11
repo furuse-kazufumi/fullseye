@@ -21,6 +21,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 order 2 の結果は画素ごとに a(x, y)・L(x, y) を作る(画像の大きさは較正時と同じであること)。
 **Raises** ``ValueError``: 法線の形 / order 2 で画像の大きさが違う。
 
+空の入力(``normals`` が 0 要素)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

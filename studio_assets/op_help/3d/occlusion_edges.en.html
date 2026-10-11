@@ -6,6 +6,7 @@
 <p>Detect depth discontinuities (the foreground/background boundary = occlusion edges). → bool HxW.</p>
 <p>An occlusion edge is a <b>discontinuity (step)</b> in depth, not a slope. A uniformly sloped surface is continuous and contains no occlusion, so it must not be flagged. The first-order gradient (= depth/pixel) is the slope itself and cannot distinguish a step from a slope (and comparing it with a fraction of the absolute depth is dimensionally inconsistent).</p>
 <p>So the per-axis <b>second-order difference (equivalent to a discrete Laplacian)</b> <code style="color:#22d3bf">d[i+1]-2*d[i]+d[i-1]</code> is used. On a uniform slope (depth linear in the neighbourhood) the second difference ≈ 0; at a fronto-parallel step it is large on both sides. Pixels where this relative depth jump, normalised by the local depth, exceeds rel_thresh are taken as boundaries.</p>
+<p>Empty input (<code style="color:#22d3bf">depth</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Using Blender alongside — build the shape, measure it with fullseye (pitfalls: axes, units, ground truth)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging principles, real-device figures, how dropouts appear</p>

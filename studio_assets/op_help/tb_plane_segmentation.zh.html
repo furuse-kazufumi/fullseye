@@ -27,6 +27,7 @@
 <p>Returns:</p>
 <p>labels: (N,) int。按检测顺序(≈consensus 从大到小)给平面赋 0,1,2,...，</p>
 <p>不属于任何平面的残差点为 -1。空输入为 shape (0,)。</p>
+<p>空输入(<code style="color:#22d3bf">points</code> 为 0 个元素)返回空结果(理由:空点云没有可分配的点,长度为 0 的标签数组就是正确答案。前级的滤波可能输出空点云)。</p>
 <p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">plane_segmentation</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 调节 <code style="color:#22d3bf">max_planes</code>(默认 5)，<code style="color:#22d3bf">b</code> 调节 <code style="color:#22d3bf">iters</code>(默认 300)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

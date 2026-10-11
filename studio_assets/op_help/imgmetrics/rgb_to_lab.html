@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">white</code>: Lab の白色点。sRGB の行列は D65 固定なので、通常は既定のまま。</p>
 <p style="margin:2px 0 2px 12px">• 返り値: 入力と同じ形の float64。<code style="color:#22d3bf">L</code> は <code style="color:#22d3bf">[0, 100]</code>、白 <code style="color:#22d3bf">(1, 1, 1)</code> で <code style="color:#22d3bf">(100, 0, 0)</code> 付近。</p>
 <p>画像 2 枚の色差なら <code style="color:#22d3bf">delta_e_map</code> が変換から色差まで一度にやる。<code style="color:#22d3bf">lab_to_rgb</code> で戻せるが、色域外は切り詰められる。</p>
+<p>空の入力(<code style="color:#22d3bf">rgb</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識ガイド(この op の手前にある物理・規約)</h3>

@@ -10,6 +10,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 采样数(默认 40)。</p>
 <p style="margin:2px 0 2px 12px">• 返回值: 添加位置的 index(从 0 开始)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">apply</code> 结果的 <code style="color:#22d3bf">params</code> 为 <code style="color:#22d3bf">row / col / phi / ra / rb</code>，归一化为 <b><code style="color:#22d3bf">ra &gt;= rb</code> (长轴为 <code style="color:#22d3bf">ra</code>)</b>,<code style="color:#22d3bf">rms</code> 不是代数残差，而是距中心的径向几何残差 [px]。</p>
+<p>空输入(<code style="color:#22d3bf">model</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

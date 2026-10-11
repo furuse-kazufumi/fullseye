@@ -27,6 +27,8 @@ Kuhl–Giardina の正準化: (1) 第1高調波の位相で **始点** の任意
 悪条件で不安定になる。**不変マッチングには本関数でなく** :func:`invariants` /
 :func:`descriptor_distance`(特異値ベース)を使うこと。
 
+空の入力(``model`` が空の dict)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [shape_description_2d ファミリ ガイド](../guides/shape_description_2d.md)

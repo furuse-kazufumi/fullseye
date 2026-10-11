@@ -13,6 +13,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>: पूरी लंबाई का scalar (<code style="color:#22d3bf">center</code> से ±height/2; negative अस्वीकार)।</p>
 <p>Return value: <code style="color:#22d3bf">grid.shape[:-1]</code> का float64।</p>
 <p>कहाँ उपयोग करें: <b>through hole के लिए <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b> (<code style="color:#22d3bf">height</code> को part से लंबा रखें ताकि end face का rim न बचे)। boss, pin और shaft के लिए <code style="color:#22d3bf">sdf_union</code>। अनंत लंबा cylinder चाहिए तो <code style="color:#22d3bf">height</code> को पर्याप्त बड़ा लें (end faces evaluation क्षेत्र से बाहर हों तो केवल side का असर रहता है)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">grid</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

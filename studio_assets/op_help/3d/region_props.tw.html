@@ -29,6 +29,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">surface_area</code> 也計入與陣列邊緣接觸的面(零 padding)。由於離散化,<code style="color:#22d3bf">sphericity</code> 即使是球上限也約為 0.66(參見模組 docstring)。</p>
 <p style="margin:2px 0 2px 12px">• 標籤依 1..n 的順序(與 <code style="color:#22d3bf">label_components</code> 相同的 scipy 掃描順序),而非體積順序。排序由呼叫方進行。</p>
 <p style="margin:2px 0 2px 12px">• 輸入以 0 以外為前景轉為 bool(NaN 也是前景)。Raises <code style="color:#22d3bf">ValueError</code>:非 3 維輸入,<code style="color:#22d3bf">connectivity</code> 不是 6/18/26。</p>
+<p>空輸入(<code style="color:#22d3bf">vol</code> 為 0 個元素)回傳空結果(理由:沒有體素的體積,連通分量為 0 個就是正確答案)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 量測不確定度與校正知識 —— 為了能主張「量得準」</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -15,6 +15,7 @@
 <p><code style="color:#22d3bf">(V (n,3) float64, F (m,3) int64, colors (m,3) float64 0..1, ids (m,) int64)</code>。<code style="color:#22d3bf">ids[f]</code> は面 f が属する建物の番号(入力列の添字)。建物が 0 件なら各配列は空。</p>
 <p>Raises:</p>
 <p>ValueError: color_fn の返り値が RGB 3 要素 0..1 でない、建物の footprint/height が不正。</p>
+<p>空の入力(<code style="color:#22d3bf">buildings</code> が 0 件)は空を返す(理由: 建物が 0 件のタイルは実データに普通にある。空の角柱集合が正しい答え)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

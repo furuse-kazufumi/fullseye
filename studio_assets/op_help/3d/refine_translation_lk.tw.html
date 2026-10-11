@@ -30,6 +30,7 @@
 <p>baseline(mean 0.56 voxel)改善約 60×。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grad_scale=32</code> 是可分離 sobel3d(導數[-1,0,1]×平滑[1,2,1]²)的固定尺度(線性斜坡實測 32.0)。將其正規化到真實梯度以修正 Δp 的尺度。</p>
 <p style="margin:2px 0 2px 12px">• H 中加入微小的 Levenberg 正則化,防止梯度貧乏的平坦樣板出現數值崩潰。</p>
+<p>空輸入(<code style="color:#22d3bf">scene</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

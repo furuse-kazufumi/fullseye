@@ -6,6 +6,7 @@
 <p>合成的連續影格與真值：按 fps 對閉合式路徑(<code style="color:#22d3bf">puck_slide_predict</code>)取樣，並以 <code style="color:#22d3bf">puck_render_frame</code> 繪製。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;frames&quot; [N], &quot;t&quot; (N,), &quot;truth_xy&quot; (N,2) 露光始めの位置, &quot;truth_v&quot; (N,2), &quot;truth_px&quot; (N,2), &quot;pred&quot;, &quot;cam&quot;, &quot;fps&quot;, &quot;exposure&quot;}</code>。</p>
+<p>空の入力(<code style="color:#22d3bf">table</code> が空の dict)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

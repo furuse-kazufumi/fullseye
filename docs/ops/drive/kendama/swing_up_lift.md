@@ -23,6 +23,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 (:func:`catch_plan_staged` の hold は玉がそこを越えるまで皿を寄せない。越えている時間 ≈ 2√(2·0.03/g) = 0.17 s で皿を
 横へ 10 cm 戻す)。減速の加速度 4·lift/T² が g を超えないと玉は飛ばない(ValueError)。
 
+空の入力(``kp`` が空の dict)は ValueError。
+
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。

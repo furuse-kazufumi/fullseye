@@ -45,6 +45,8 @@ Nyquist rate).
 :param step: truncated to int, must be >= 1 (``step=1`` copies).
 :raises ValueError: non-1-D / NaN / Inf input, or ``step < 1``.
 
+Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON's funct_1d), and empty functions flow through chains of function ops).
+
 Typed bridge of the 1d op ``sample_funct_1d`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` drives ``step`` (default 2); ``b`` is unused.
 
 ## 参考(サンプルデータ・文献)

@@ -9,6 +9,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: neighbours की संख्या (default 8)। <code style="color:#22d3bf">N-1</code> से बड़े मान चुपचाप <code style="color:#22d3bf">N-1</code> तक काट दिए जाते हैं।</p>
 <p style="margin:2px 0 2px 12px">• N &lt; 2 होने पर exception नहीं होता, और shape (N,0) के 2 ख़ाली arrays लौटते हैं।</p>
 <p>सावधानी: duplicate coordinates होने पर KD-tree ख़ुद point को column 0 में नहीं लौटा सकता। उस स्थिति में हर row में ख़ुद point की स्थिति ढूँढकर हटाई जाती है, और अगर k+1 में ख़ुद point न हो तो सबसे दूर वाला 1 हटा दिया जाता है (परिणाम फिर भी k होते हैं)। <code style="color:#22d3bf">geodesic_distances</code> / <code style="color:#22d3bf">farthest_point_sampling</code> इस परिणाम को adjacency matrix (directed CSR, Dijkstra की ओर undirected बनाया जाता है) बनाकर geodesic distance के approximation में इस्तेमाल करते हैं।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर खाली परिणाम लौटता है (कारण: 2 से कम बिंदुओं का पड़ोसी ग्राफ़ परिभाषा से खाली होता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -23,6 +23,7 @@
 <p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 3차원이 아닌 입력, <code style="color:#22d3bf">connectivity</code>가 6/18/26 이외.</p>
 <p style="margin:2px 0 2px 12px">• 접촉한 물체는 1 성분으로 융합된다. 분리가 필요하면 전단에서 <code style="color:#22d3bf">morph_erode3d</code> / <code style="color:#22d3bf">morph_open3d</code>나 <code style="color:#22d3bf">vol_watershed</code>로 자른다.</p>
 <p style="margin:2px 0 2px 12px">• 후단: <code style="color:#22d3bf">region_props</code>(계측), <code style="color:#22d3bf">largest_component</code> / <code style="color:#22d3bf">filter_by_volume</code>(선별), <code style="color:#22d3bf">vol_select_labels</code>(특징으로 거르기), <code style="color:#22d3bf">vol_colorize_labels</code>(시각화).</p>
+<p>빈 입력(<code style="color:#22d3bf">vol</code> 이(가) 0 개 요소)은 빈 결과를 반환한다(이유: 복셀이 없는 볼륨의 연결 성분은 0 개가 올바른 답이다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — 측정 불확도와 교정 지식 — ‘측정되고 있다’고 주장하려면</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

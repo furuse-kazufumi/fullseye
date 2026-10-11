@@ -6,6 +6,7 @@
 <p>organized 深度圖 → 網格對齊的 3D 點 (H,W,3)。</p>
 <p>指定 fx,fy 時做透視反投影 P=((u-cx)/fx*d, (v-cy)/fy*d, d)。未指定時為正交(P=(x,y,depth),網格間距 1)。</p>
 <p><code style="color:#22d3bf">u</code> 是行號 (0..W-1),<code style="color:#22d3bf">v</code> 是列號 (0..H-1)。<code style="color:#22d3bf">fx</code>、<code style="color:#22d3bf">fy</code> 是以像素為單位的焦距, <code style="color:#22d3bf">cx</code>、<code style="color:#22d3bf">cy</code> 是主點,省略時為影像中心 <code style="color:#22d3bf">((W-1)/2, (H-1)/2)</code>。<code style="color:#22d3bf">fx</code> 與 <code style="color:#22d3bf">fy</code> 中只要有一個為 None 就進入正交模式,<code style="color:#22d3bf">cx</code>、<code style="color:#22d3bf">cy</code> 被忽略。正交模式下 x, y 就是像素座標本身,因此要注意深度的單位(mm 等)與 x, y 的單位(像素) 混在一起。透視模式下 3 個分量都與深度單位相同。深度 0 或 NaN 會原樣傳播(0 的像素會聚集到 x=y=0 的原點),因此無效像素的排除由呼叫端負責。回傳值為 float64 的 <code style="color:#22d3bf">(H,W,3)</code>,第 3 軸為 (x, y, z),x 向右,y 向下,z 為縱深(影像座標系)。沒有輸入驗證,非 2-D 輸入會在 <code style="color:#22d3bf">d.shape</code> 的展開處失敗。<code style="color:#22d3bf">normals_from_depth</code> 在內部使用本函式的輸出。</p>
+<p>空輸入(<code style="color:#22d3bf">depth</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)</p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — 深度感測器知識 —— 測距原理、實機數值、缺測的表現</p>

@@ -6,6 +6,7 @@
 <p>반투명한 감돌아 들어오는 빛의 근사(잎·피부·대리석·유백 플라스틱).</p>
 <p>thickness: 비침 정도(0–1, 클수록 뒤에서 돌아 들어온다). wrap: 그림자 쪽으로 돌아 들어가는 넓이.</p>
 <p>반환값: (H, W). <b>광원이 뒤에 있을수록 밝은</b> 성분(back-scatter)과, 그림자 쪽으로돌아 들어가는 성분(wrap lighting)의 합. Lambert에서는 0이 되는 영역에 빛이 남는 것이 요점.</p>
+<p>빈 입력(<code style="color:#22d3bf">normals</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

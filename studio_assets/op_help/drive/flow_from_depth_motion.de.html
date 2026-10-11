@@ -6,6 +6,7 @@
 <p><b>Wahrer optischer Fluss</b> aus Tiefenbild und Starrkörperbewegung: <code style="color:#22d3bf">{&quot;u&quot;, &quot;v&quot;, &quot;valid&quot;, &quot;depth1&quot;}</code> (jeweils (H, W)).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>画素の 3-D 点を <code style="color:#22d3bf">T_rel</code> で動かして再投影し、<code style="color:#22d3bf">u = col₁ − col₀</code>、<code style="color:#22d3bf">v = row₁ − row₀</code>。動かした後にカメラの背後へ行く点や深度の無い画素は <code style="color:#22d3bf">valid = False</code>(u, v は NaN)。<code style="color:#22d3bf">depth1</code> は動かした後の深度。光学流の推定器の採点に使う真値(推定器と同じ規約: (x, y) → (x + u, y + v))。</p>
+<p>空の入力(<code style="color:#22d3bf">depth</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
