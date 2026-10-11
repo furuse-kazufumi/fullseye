@@ -255,7 +255,9 @@ def main() -> int:
     gate("outputs are finite and non-constant", all(np.all(np.isfinite(a)) and np.ptp(a) > 0 for a in
                                                   (std["image"], res["image"], res["y"], res["fit4"])), "")
     el = time.time() - t_start
-    gate("run time", el < (120 if FULL else 40), "(%.1f s)" % el)
+    # ★40 s は手元(19-22 s)の 2 倍で決めていたが、CI の py3.10 の走者で 41.6 s に
+    #   なり落ちた(2026-10-11、ほかの 13 門は全部 ok)。走者は手元の約 2 倍遅いので 3 倍の 60 s に。
+    gate("run time", el < (120 if FULL else 60), "(%.1f s)" % el)
     n_ok = sum(ok for _, ok in _GATES)
     print("\n%d / %d gates passed" % (n_ok, len(_GATES)))
     # test_poc_scripts_run は stdout の「PASS」の行を合格の印として見る(exit 0 だけでは通さない)

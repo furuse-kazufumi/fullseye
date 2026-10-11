@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1343. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1344. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -852,6 +852,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_pxrd_phase_peel.py`
 
 - **L184** _(ja)_ — ★a の門 5e-5 の余裕(組み込み時 2026-10-06 に雑音の種を 12 通りずつ振って実測): 誤差は雑音でなく較正の系統で決まり、 この像(傾き 3°・向き −40°)では +3.0〜+4.1e-5(種 21 は +3.8e-5)。種による散らばりは ±0.5e-5 程度で、24 通りの最大は |4.2e-5|。 種は固定なので結果は決定的。門を締めると系統の偏りに当たり、緩める理由も無いので 5e-5 のまま。
+- **L258** _(ja)_ — ★40 s は手元(19-22 s)の 2 倍で決めていたが、CI の py3.10 の走者で 41.6 s に なり落ちた(2026-10-11、ほかの 13 門は全部 ok)。走者は手元の約 2 倍遅いので 3 倍の 60 s に。
 
 ## `examples/poc_real_coin_metrology.py`
 
