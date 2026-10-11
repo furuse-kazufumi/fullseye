@@ -242,6 +242,7 @@ NOT_A_GENERATOR = {
     "tools/check_solution_json.py": "外部の採点器(TUM drivability-checker、WSL)を呼んで合否を JSON に書く。生成物は repo の外(FULLSEYE_COMMONROAD_DATA)。",
     "tools/chain_mine.py": "連鎖の探索(実験)。",
     "tools/ci_wheel_check.py": "門(wheel の完全性を配布物の側から数える)。",
+    "tools/ledger_contracts.py": "門(型付き台帳の全 op の契約探針)。--write は直して台帳を縮めるときだけ手で回す(新しい違反は門が拒む)。",
     "tools/evolve_loop.py": "進化ループ(実験)。",
     "tools/preflight.py": "門(コミット前の一括確認)。",
     "tools/promote_gate.py": "門(昇格の可否)。",
