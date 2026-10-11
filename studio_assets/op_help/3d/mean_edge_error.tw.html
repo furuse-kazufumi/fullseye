@@ -7,7 +7,7 @@
 <p>對每條邊 <code style="color:#22d3bf">(i, j, rvec_meas, t_meas[, w_rot, w_trans])</code>,將預測相對位姿 <code style="color:#22d3bf">T_i⁻¹ ∘ T_j</code> 與量測值 <code style="color:#22d3bf">(rvec_meas, t_meas)</code> 的偏差 <code style="color:#22d3bf">measured⁻¹ ∘ predicted</code> 轉為旋轉向量 3 分量 + 平移 3 分量的 6 維殘差(分別乘以 <code style="color:#22d3bf">sqrt(w_rot)</code>、<code style="color:#22d3bf">sqrt(w_trans)</code>。省略權重時為 1), 回傳所有邊、所有分量合在一起的 2 次方平均的平方根。與 <code style="color:#22d3bf">optimize_pose_graph</code> 的回傳值 <code style="color:#22d3bf">rmse</code> 是同一個量,用於比較最佳化前後。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">poses</code>: 可 reshape 為 (N,6) 的 <code style="color:#22d3bf">[rvec | t]</code>(world←body)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">edges</code>: 上述元組的串列。為空時回傳 0.0。</p>
-<p>注意:旋轉分量(rad)與平移分量(座標單位)在同一陣列中平均,因此值的因次是混合的。在平移尺度較大的場景中平移項占主導,想要統一單位時以 <code style="color:#22d3bf">w_rot</code> / <code style="color:#22d3bf">w_trans</code> 加權。本函式不驗證邊索引的範圍(負索引會透過 numpy 的回繞靜默參照其他節點。<code style="color:#22d3bf">optimize_pose_graph</code> 會做驗證)。</p>
+<p>注意:旋轉分量(rad)與平移分量(座標單位)在同一陣列中平均,因此值的因次是混合的。在平移尺度較大的場景中平移項占主導,想要統一單位時以 <code style="color:#22d3bf">w_rot</code> / <code style="color:#22d3bf">w_trans</code> 加權。本函式不驗證邊索引的範圍(負索引會透過 numpy 的回繞靜默參照其他節點。<code style="color:#22d3bf">optimize_pose_graph</code> 會做驗證)。空輸入(<code style="color:#22d3bf">poses</code> 為 0 個元素)會引發 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

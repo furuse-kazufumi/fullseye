@@ -8,7 +8,7 @@
 <p>전달 함수는 <code style="color:#22d3bf">1 - exp(-|f|^2 / (2 cutoff^2))</code>. DC(<code style="color:#22d3bf">f = 0</code>)는 계수가 0이므로 평균휘도는 완전히 빠지고, <code style="color:#22d3bf">|f| = cutoff</code>에서 <code style="color:#22d3bf">1 - 0.61 ≈ 0.39</code>, 고주파일수록 1에 가까워진다. 반환값은 입력과 같은 <code style="color:#22d3bf">(D, H, W)</code>의 float64이며 <b>부호 있음</b>(음의 값을 포함). <code style="color:#22d3bf">[0, 1]</code>을 전제로 하는 후단(표시·<code style="color:#22d3bf">vol_window_level</code> 등)에 넘기려면 <code style="color:#22d3bf">vol_stretch</code>로정규화하거나, <code style="color:#22d3bf">vol + highpass</code> 형태로 사용한다.</p>
 <p>인자: <code style="color:#22d3bf">cutoff</code>는 양의 유한값. <code style="color:#22d3bf">spacing=None</code>이면 cycles/voxel, <code style="color:#22d3bf">spacing</code> (<code style="color:#22d3bf">(sz, sy, sx)</code> 또는 <code style="color:#22d3bf">volio.VolumeMeta</code>)을 전달하면 cycles/mm.</p>
 <p>검증(<code style="color:#22d3bf">ValueError</code>): <code style="color:#22d3bf">vol_fft_lowpass</code>와 같다(3-D가 아님 / NaN·Inf / <code style="color:#22d3bf">MAX_VOXELS</code> 초과 / cutoff·spacing 부정).</p>
-<p>사용처: 조명 얼룩·두께 드리프트·배경 기울기의 제거(<code style="color:#22d3bf">vol_fft_lowpass</code>의 결과를빼는 것과 동치). 주기적으로 간주하는 FFT의 성질상, 면끼리의 휘도 차는 wrap으로 누설된다.</p>
+<p>사용처: 조명 얼룩·두께 드리프트·배경 기울기의 제거(<code style="color:#22d3bf">vol_fft_lowpass</code>의 결과를빼는 것과 동치). 주기적으로 간주하는 FFT의 성질상, 면끼리의 휘도 차는 wrap으로 누설된다. 빈 입력(<code style="color:#22d3bf">vol</code>가 0개 요소)은 ValueError.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

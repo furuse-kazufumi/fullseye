@@ -527,7 +527,11 @@ def _revolve(profile_rz: np.ndarray, n: int):
 
 
 def mesh_signed_volume(V, F) -> float:
-    """閉じたメッシュの符号つき体積(発散定理: Σ v₀·(v₁×v₂)/6、外向きで正)。"""
+    """閉じたメッシュの符号つき体積(発散定理: Σ v₀·(v₁×v₂)/6、外向きで正)。
+
+    空の入力(``V`` が 0 要素)は ValueError。"""
+    if np.asarray(V).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("mesh_signed_volume: V (the vertices) is empty — pass at least one element")
     V = np.asarray(V, np.float64)
     F = np.asarray(F, np.int64)
     a, b, c = V[F[:, 0]], V[F[:, 1]], V[F[:, 2]]

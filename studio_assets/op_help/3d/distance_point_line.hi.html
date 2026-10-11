@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_point_line(p, line_pt, d)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.distance_point_line(p, line_pt, d)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;distance_point_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>point-line दूरी।</p>
+<p>बिंदु से रेखा (रेखा पर बिंदु + दिशा) तक की लंबवत दूरी लौटाता है (2-D / 3-D दोनों)।</p>
 <p><code style="color:#22d3bf">w = p − line_pt</code> के, दिशा <code style="color:#22d3bf">d̂</code> के लंबवत component की लंबाई <code style="color:#22d3bf">|w − (w·d̂)d̂|</code> को float के रूप में लौटाता है (<code style="color:#22d3bf">d</code> भीतर unit किया जाता है; 2-D/3-D दोनों में समान)। <code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">line_pt</code>, <code style="color:#22d3bf">d</code> संख्यात्मक 2 या 3 vector हैं, आयामों का मिश्रण ValueError देता है। <code style="color:#22d3bf">d</code> zero vector हो तो <code style="color:#22d3bf">|w|</code> जैसा है वैसा लौटता है। इकाई इनपुट निर्देशांकों की इकाई है।</p>
 <p>उपयोग: <code style="color:#22d3bf">fit_line_3d</code> के axis से eccentricity, <code style="color:#22d3bf">line_from_2points</code> की रेखा के सापेक्ष point cloud का फैलाव (हर 1 point के लिए)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

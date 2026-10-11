@@ -663,7 +663,11 @@ def heap_spheres_select(pos, radius: float, floor_height: float, bin_radius: flo
     """山に属する球だけを選ぶ: ビンの底板より下(``z < floor_height − r``)で、ビン半径の 3 倍の内側。
     ビンに残った球(平底の滞留層)と転がって逃げた球は山ではない。返り: ``pos``(選んだ中心)、``n_in_bin``、
     ``n_runaway``、``radius_95``(山の半径の目安)。**Raises** ``ValueError``: 残りが ``keep_min`` 未満(山になって
-    いない —— 滑らかな台で 1,200 個中 600 個が逃げたときに黙って測らないため)。"""
+    いない —— 滑らかな台で 1,200 個中 600 個が逃げたときに黙って測らないため)。
+
+    空の入力(``pos`` が 0 要素)は ValueError。"""
+    if np.asarray(pos).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("heap_spheres_select: pos is empty — pass at least one element")
     P = np.asarray(pos, dtype=np.float64)
     r = _pos(radius, "radius")
     rad = np.hypot(P[:, 0], P[:, 1])

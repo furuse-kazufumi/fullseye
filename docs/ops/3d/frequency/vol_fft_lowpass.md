@@ -41,7 +41,7 @@ unchanged. Typical use: extract the illumination/thickness drift.
 
 注意: FFT は volume を周期的とみなす。向かい合う面の輝度差が大きいと wrap を
 またいで漏れる(窓掛けは黙ってしない)。``vol_fft_highpass`` は厳密にこの補集合
-``1 - lowpass`` で、両者の和は入力に一致する。
+``1 - lowpass`` で、両者の和は入力に一致する。空の入力(``vol`` が 0 要素)は ValueError。
 
 ## 参考(サンプルデータ・文献)
 

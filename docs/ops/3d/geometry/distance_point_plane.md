@@ -17,7 +17,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-点-平面距離(符号なし)。
+点から平面までの距離を返す(符号なし、入力座標と同じ単位)。
 
 ``|(p − plane_pt)·n̂|`` を float で返す(``n`` は内部で単位化)。符号は捨てるので、面のどちら側か
 が要るなら ``(p − plane_pt) @ n̂`` を直接計算する。``p``, ``plane_pt``, ``n`` は数値の 2 または

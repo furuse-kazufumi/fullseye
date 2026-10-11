@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_signed_volume(V, F) -&gt; &#x27;float&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import driveterrain; driveterrain.mesh_signed_volume(V, F) -&gt; &#x27;float&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;mesh_signed_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>閉じたメッシュの符号つき体積(発散定理: Σ v₀·(v₁×v₂)/6、外向きで正)。</p>
+<p>空の入力(<code style="color:#22d3bf">V</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

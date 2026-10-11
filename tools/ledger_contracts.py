@@ -558,11 +558,65 @@ def _batch2_builders():
     }
 
 
+def _knob_builders():
+    """Third batch (2026-10-11): inputs on which a knob CAN show itself.
+
+    The dead-knob gate (``tools/ledger_gaps``) flagged these knobs; reading each op showed
+    the probe input was the reason, not the op:
+
+    * ``refract_rays`` -- the pool handed the same (160, 3) array as directions AND normals,
+      i.e. every ray at normal incidence, where Snell's law leaves the direction unchanged
+      for every n1 / n2. Here: oblique rays (10-60 deg) onto a +z surface.
+    * ``env_lightbox`` -- all probe directions pointed upward; ``floor`` only lights the
+      lower hemisphere. Here: directions over the whole sphere.
+    * ``print_layer_defect_map`` -- observed == expected, so there was no defect for
+      ``tolerance_px`` to forgive. Here: grey printed lines shifted by 3 px.
+    * ``photometric_stereo`` -- ``lit_thresh`` only acts with ``lit_only=True`` (default off,
+      as documented). Here: lit_only on, Lambertian sphere with attached shadows + noise.
+    * ``gs_render`` -- the probe's splats are smaller than 32 px, so the radius cap 64 (and
+      its x0.5 / x2) never bit. Here: a cap of 3 px, which the splats exceed.
+    """
+    def oblique(pool, rng):
+        th = np.deg2rad(np.linspace(10.0, 60.0, 12))
+        d = np.column_stack([np.sin(th), np.zeros_like(th), -np.cos(th)])
+        return [d, np.tile([0.0, 0.0, 1.0], (12, 1))], {}
+
+    def sphere_dirs(pool, rng):
+        v = rng.standard_normal((64, 3))
+        return [v / np.linalg.norm(v, axis=1, keepdims=True)], {}
+
+    def layers(pool, rng):
+        exp = np.zeros((32, 32))
+        exp[8:10, 4:28] = 0.7                 # grey, so ``threshold`` (0.5) is exercised too
+        exp[20:22, 4:28] = 0.7
+        return [np.roll(exp, 3, axis=0), exp], {}
+
+    def ps(pool, rng):
+        yy, xx = np.mgrid[-1:1:24j, -1:1:24j]
+        zz = np.sqrt(np.clip(1.0 - xx ** 2 - yy ** 2, 0.0, None))
+        N = np.stack([xx, yy, zz], -1)
+        L = np.array([[0.6, 0.0, 0.8], [-0.6, 0.0, 0.8], [0.0, 0.6, 0.8], [0.0, -0.6, 0.8], [0.0, 0.0, 1.0]])
+        noise = np.random.default_rng(11).normal(0.0, 2e-3, (5, 24, 24))
+        imgs = [np.clip(N @ l, 0.0, None) * 0.8 + noise[i] for i, l in enumerate(L)]
+        return [imgs, L], {"lit_only": True, "lit_thresh": 0.02}
+
+    def gs(pool, rng):
+        b = _cf().OP_ARG_BUILDERS["gs_render"](pool, rng)
+        if isinstance(b, list):
+            return b, {"max_radius": 3}
+        args, kw = b
+        return list(args), dict(kw, max_radius=3)
+
+    return {"refract_rays": oblique, "env_lightbox": sphere_dirs,
+            "print_layer_defect_map": layers, "photometric_stereo": ps, "gs_render": gs}
+
+
 def probe_builders():
     """Every probe-local builder (name -> builder)."""
     out = dict(_optics_builders())
     out.update(_array_builders())
     out.update(_batch2_builders())
+    out.update(_knob_builders())
     return out
 
 

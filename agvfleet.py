@@ -609,7 +609,10 @@ def vda5050_order(path, *, order_id="order-1", order_update_id=0, cell_size=1.0,
     ノードの ``sequenceId`` は 0, 2, 4 …(偶数)、エッジは 1, 3, 5 …(奇数)、エッジ数 = ノード数 − 1。
     ``released_nodes`` 個までを base(released=True)、残りを horizon にする(既定 = 全部 base)。
     座標は ``x = col * cell_size``、``y = −row * cell_size``(行は下向き、地図の y は上向き)。
+    空の入力(``path`` が 0 マス)は ValueError。
     """
+    if len(path) == 0:   # ★2026-10-11 台帳の空入力の門: 生の IndexError でなく名指しで拒否
+        raise ValueError("vda5050_order: path is empty — pass at least one (row, col) cell")
     cells, _ = _compress(list(map(tuple, path)))
     nr = len(cells) if released_nodes is None else int(released_nodes)
     if not 1 <= nr <= len(cells):

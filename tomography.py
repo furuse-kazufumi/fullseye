@@ -2061,9 +2061,11 @@ def fbp_volume(stack, angles_deg=None, size=None, filter_name="ramp",
     :param span_deg: angular range for the ``d(theta)`` weight.
     :returns: ``(Z, size, size)`` float64 volume.
     :raises ValueError: on a non-3-D stack, or an output over
-        :data:`MAX_STACK_ELEMENTS`.
+        :data:`MAX_STACK_ELEMENTS`. Empty input (``stack`` with 0 elements) raises ``ValueError``.
     """
     op = "fbp_volume"
+    if np.asarray(stack).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("fbp_volume: stack is empty — pass at least one element")
     st = _as_float_array(stack, "stack", MAX_STACK_ELEMENTS, op)
     if st.ndim != 3:
         raise ValueError(

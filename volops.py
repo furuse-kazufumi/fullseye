@@ -1174,8 +1174,10 @@ def vol_euler_number(vol_binary, connectivity=26):
     it inherits the exactness of the other three.
 
     HALCON's ``euler_number`` is 2-D (regions) only; there is no voxel
-    equivalent.
+    equivalent. Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
     """
+    if np.asarray(vol_binary).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("vol_euler_number: vol_binary is empty — pass at least one element")
     m = _as_binary(vol_binary)
     _check_voxels(m, MAX_VOXELS, "vol_euler_number", "MAX_VOXELS")
     rank = {6: 1, 18: 2, 26: 3}.get(int(connectivity)) \

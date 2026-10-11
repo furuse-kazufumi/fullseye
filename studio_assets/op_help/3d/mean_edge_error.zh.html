@@ -7,7 +7,7 @@
 <p>对每条边 <code style="color:#22d3bf">(i, j, rvec_meas, t_meas[, w_rot, w_trans])</code>,将预测相对位姿 <code style="color:#22d3bf">T_i⁻¹ ∘ T_j</code> 与测量值 <code style="color:#22d3bf">(rvec_meas, t_meas)</code> 的偏差 <code style="color:#22d3bf">measured⁻¹ ∘ predicted</code> 转为旋转向量 3 分量 + 平移 3 分量的 6 维残差(分别乘以 <code style="color:#22d3bf">sqrt(w_rot)</code>、<code style="color:#22d3bf">sqrt(w_trans)</code>。省略权重时为 1), 返回所有边、所有分量合在一起的 2 次方平均的平方根。与 <code style="color:#22d3bf">optimize_pose_graph</code> 的返回值 <code style="color:#22d3bf">rmse</code> 是同一个量,用于比较优化前后。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">poses</code>: 可 reshape 为 (N,6) 的 <code style="color:#22d3bf">[rvec | t]</code>(world←body)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">edges</code>: 上述元组的列表。为空时返回 0.0。</p>
-<p>注意:旋转分量(rad)与平移分量(坐标单位)在同一数组中平均,因此值的量纲是混合的。在平移尺度较大的场景中平移项占主导,想要统一单位时用 <code style="color:#22d3bf">w_rot</code> / <code style="color:#22d3bf">w_trans</code> 加权。本函数不校验边下标的范围(负下标会通过 numpy 的回绕静默引用其他节点。<code style="color:#22d3bf">optimize_pose_graph</code> 会做校验)。</p>
+<p>注意:旋转分量(rad)与平移分量(坐标单位)在同一数组中平均,因此值的量纲是混合的。在平移尺度较大的场景中平移项占主导,想要统一单位时用 <code style="color:#22d3bf">w_rot</code> / <code style="color:#22d3bf">w_trans</code> 加权。本函数不校验边下标的范围(负下标会通过 numpy 的回绕静默引用其他节点。<code style="color:#22d3bf">optimize_pose_graph</code> 会做校验)。空输入(<code style="color:#22d3bf">poses</code> 为 0 个元素)会引发 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

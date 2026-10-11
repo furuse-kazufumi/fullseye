@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">• Sind alle Flächen degeneriert (Flächensumme 0), werden die Wahrscheinlichkeiten NaN und <code style="color:#22d3bf">rng.choice</code> wirft ValueError.</p>
 <p style="margin:2px 0 2px 12px">• Normalen werden nicht mitgeliefert (mit <code style="color:#22d3bf">estimate_point_normals</code> ergänzen). Wegen der Flächengewichtung erhalten größere Flächen mehr Punkte;</p>
 <p>von der Vertexdichte hängt das Ergebnis nicht ab.</p>
-<p>Nachgelagert: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">match_pca</code>.</p>
+<p>Nachgelagert: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">match_pca</code>. Leere Eingabe (<code style="color:#22d3bf">vertices</code> mit 0 Elementen) löst ValueError aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

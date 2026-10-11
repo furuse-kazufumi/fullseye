@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。
 
+空の入力(``image1`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [halcon_segmentation ファミリ ガイド](../guides/halcon_segmentation.md)

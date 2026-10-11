@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 全面が退化(面積和 0)なら確率が NaN になり <code style="color:#22d3bf">rng.choice</code> が ValueError。</p>
 <p style="margin:2px 0 2px 12px">• 法線は付かない(<code style="color:#22d3bf">estimate_point_normals</code> で付ける)。面積重みなので大きな面ほど点が多く、</p>
 <p>頂点密度には依存しない。</p>
-<p>後段: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">match_pca</code>。</p>
+<p>後段: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">match_pca</code>。空の入力(<code style="color:#22d3bf">vertices</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

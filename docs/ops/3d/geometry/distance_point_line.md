@@ -17,7 +17,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-点-直線距離。
+点から直線(通過点と方向)までの垂直距離を返す(2-D / 3-D 共通)。
 
 ``w = p − line_pt`` の、方向 ``d̂`` に直交する成分の長さ ``|w − (w·d̂)d̂|`` を float で返す
 (``d`` は内部で単位化。2-D/3-D 共通)。``p``, ``line_pt``, ``d`` は数値の 2 または 3 ベクトル、

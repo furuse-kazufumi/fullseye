@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 全部面都退化(面积和 0)时概率变为 NaN,<code style="color:#22d3bf">rng.choice</code> 抛出 ValueError。</p>
 <p style="margin:2px 0 2px 12px">• 不附带法线(用 <code style="color:#22d3bf">estimate_point_normals</code> 添加)。按面积加权,所以面越大点越多,</p>
 <p>与顶点密度无关。</p>
-<p>后续: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">match_pca</code>。</p>
+<p>后续: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">match_pca</code>。空输入(<code style="color:#22d3bf">vertices</code> 为 0 个元素)会引发 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

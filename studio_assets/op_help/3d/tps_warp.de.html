@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">deformation × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_warp(model, points)</code> (die Implementierung direkt: <code style="color:#22d3bf">import deform3d; deform3d.tps_warp(model, points)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;tps_warp&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Verformt eine Punktmenge mit einem TPS-Modell.</p>
+<p>Wendet die mit <code style="color:#22d3bf">tps_fit</code> angepasste Thin-Plate-Spline-Verformung (TPS) auf eine Punktmenge an.</p>
 <p>Wertet f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖) aus.</p>
 <p>Argumente:</p>
 <p>model: das von <code style="color:#22d3bf">tps_fit</code> zurückgegebene dict.</p>

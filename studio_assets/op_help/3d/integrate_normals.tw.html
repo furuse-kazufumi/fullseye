@@ -9,7 +9,7 @@
 <p style="margin:2px 0 2px 12px">• 由於假定週期邊界,邊緣會像影像上下、左右相連那樣發生畸變。</p>
 <p style="margin:2px 0 2px 12px">• 絕對高度無法確定(平均為 0)。以 1 像素的網格間距積分,因此 <code style="color:#22d3bf">z</code> 也是像素單位的高度,換算為實際尺寸需乘以像素間距。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nz ≈ 0</code>(輪廓附近、與視線平行的面)處梯度發散,波紋會擴散到周圍。請以 <code style="color:#22d3bf">mask</code> 排除或事先平滑法線。</p>
-<p>沒有輸入驗證(<code style="color:#22d3bf">(H,W,3)</code> 以外會在內部索引處失敗)。<code style="color:#22d3bf">surface_normals</code> 是其逆變換, 把 <code style="color:#22d3bf">photometric_stereo</code> 的法線傳到這裡即可得到形狀(高度場)。</p>
+<p>沒有輸入驗證(<code style="color:#22d3bf">(H,W,3)</code> 以外會在內部索引處失敗)。<code style="color:#22d3bf">surface_normals</code> 是其逆變換, 把 <code style="color:#22d3bf">photometric_stereo</code> 的法線傳到這裡即可得到形狀(高度場)。空輸入(<code style="color:#22d3bf">normals</code> 為 0 個元素)會引發 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

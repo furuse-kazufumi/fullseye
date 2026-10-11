@@ -8147,13 +8147,13 @@
    "hi": "3 points से बना कोण (vertex b, डिग्री में)। ∠ABC।"
   },
   "3d/angle_between_lines": {
-   "fp": "684305c98d69",
-   "en": "The acute angle between two line directions (in degrees).",
-   "zh": "两直线方向的锐角(度)。",
-   "tw": "兩直線方向的銳角(度)。",
-   "ko": "두 직선 방향이 이루는 예각(도).",
-   "de": "Der spitze Winkel zwischen zwei Geradenrichtungen (in Grad).",
-   "hi": "2 line directions के बीच न्यून कोण (डिग्री)।"
+   "fp": "a521e572168b",
+   "en": "Returns the acute angle in degrees between the direction vectors of two lines (orientation ignored, 0-90°).",
+   "zh": "返回两条直线方向向量所成的锐角(度,不区分方向,0〜90°)。",
+   "tw": "回傳兩條直線方向向量所成的銳角(度,不區分方向,0〜90°)。",
+   "ko": "두 직선의 방향 벡터가 이루는 예각을 도 단위로 반환한다(방향은 구별하지 않음, 0〜90°).",
+   "de": "Gibt den spitzen Winkel in Grad zwischen den Richtungsvektoren zweier Geraden zurück (ohne Orientierung, 0-90°).",
+   "hi": "दो रेखाओं के दिशा vectors के बीच का न्यून कोण डिग्री में लौटाता है (दिशा का भेद नहीं, 0〜90°)।"
   },
   "3d/angle_between_planes": {
    "fp": "2bc67bab8985",
@@ -8525,22 +8525,22 @@
    "hi": "2 lines के बीच दूरी (skew lines भी चलेंगी)। parallel होने पर point-line दूरी पर लौट जाता है।"
   },
   "3d/distance_point_line": {
-   "fp": "c9c0cddd59c1",
-   "en": "Point-to-line distance.",
-   "zh": "点-直线距离。",
-   "tw": "點-直線距離。",
-   "ko": "점-직선 거리.",
-   "de": "Punkt-Geraden-Abstand.",
-   "hi": "point-line दूरी।"
+   "fp": "848633a0ab95",
+   "en": "Returns the perpendicular distance from a point to a line (point on the line + direction), in 2-D or 3-D.",
+   "zh": "返回点到直线(通过点与方向)的垂直距离(2-D / 3-D 通用)。",
+   "tw": "回傳點到直線(通過點與方向)的垂直距離(2-D / 3-D 通用)。",
+   "ko": "점에서 직선(통과점과 방향)까지의 수직 거리를 반환한다(2-D / 3-D 공통).",
+   "de": "Gibt den senkrechten Abstand eines Punktes von einer Geraden (Aufpunkt + Richtung) zurück, in 2-D und 3-D.",
+   "hi": "बिंदु से रेखा (रेखा पर बिंदु + दिशा) तक की लंबवत दूरी लौटाता है (2-D / 3-D दोनों)।"
   },
   "3d/distance_point_plane": {
-   "fp": "c5e7727fb32d",
-   "en": "Point-to-plane distance (unsigned).",
-   "zh": "点-平面距离(无符号)。",
-   "tw": "點-平面距離(無符號)。",
-   "ko": "점-평면 거리(부호 없음).",
-   "de": "Punkt-Ebenen-Abstand (vorzeichenlos).",
-   "hi": "point-plane दूरी (unsigned)।"
+   "fp": "1e3f9902cc81",
+   "en": "Returns the distance from a point to a plane (unsigned, in the units of the input coordinates).",
+   "zh": "返回点到平面的距离(无符号,单位与输入坐标相同)。",
+   "tw": "回傳點到平面的距離(無符號,單位與輸入座標相同)。",
+   "ko": "점에서 평면까지의 거리를 반환한다(부호 없음, 입력 좌표와 같은 단위).",
+   "de": "Gibt den Abstand eines Punktes von einer Ebene zurück (vorzeichenlos, in den Einheiten der Eingabekoordinaten).",
+   "hi": "बिंदु से समतल तक की दूरी लौटाता है (unsigned, input coordinates की इकाई में)।"
   },
   "3d/distance_ridge": {
    "fp": "b92b96b5f884",
@@ -9038,13 +9038,13 @@
    "hi": "Generalized-ICP (covariance-weighted Mahalanobis ICP) से rigid transform (R,t) का अनुमान लगाता है।"
   },
   "3d/gradient3d": {
-   "fp": "9a872fb836f3",
-   "en": "Compute the central-difference gradient after Gaussian smoothing.",
-   "zh": "计算高斯平滑后的中心差分梯度。",
-   "tw": "計算高斯平滑後的中心差分梯度。",
-   "ko": "가우스 평활 후의 중심차분 기울기를 계산합니다.",
-   "de": "Berechnet den Zentraldifferenzgradienten nach gaußscher Glättung.",
-   "hi": "Gaussian smoothing के बाद central difference gradient की गणना करता है।"
+   "fp": "496de392b5f2",
+   "en": "Smooths a volume with a Gaussian, then takes the 3-D gradient (magnitude and vector) by central differences.",
+   "zh": "先对体数据做高斯平滑,再用中心差分求 3-D 梯度(大小与向量)。",
+   "tw": "先對體資料做高斯平滑,再用中心差分求 3-D 梯度(大小與向量)。",
+   "ko": "볼륨을 가우스로 평활한 뒤 중심차분으로 3-D 기울기(크기와 벡터)를 구한다.",
+   "de": "Glättet ein Volumen gaußsch und bestimmt dann den 3-D-Gradienten (Betrag und Vektor) durch Zentraldifferenzen.",
+   "hi": "volume को Gaussian से smooth करके central differences से 3-D gradient (परिमाण और vector) निकालता है।"
   },
   "3d/graycode_decode": {
    "fp": "118fac3c6afe",
@@ -9434,13 +9434,13 @@
    "hi": "edge residuals का RMS (pose graph की संगति)। → scalar।"
   },
   "3d/mean_reprojection_error": {
-   "fp": "b93024b2f584",
-   "en": "The RMS reprojection error (in pixels).",
-   "zh": "重投影 RMS 误差(像素)。",
-   "tw": "重投影 RMS 誤差(像素)。",
-   "ko": "재투영 RMS 오차(픽셀).",
-   "de": "Der RMS-Reprojektionsfehler (in Pixeln).",
-   "hi": "reprojection RMS error (pixels)।"
+   "fp": "b4e68d66049c",
+   "en": "Returns the RMS reprojection error (pixels) over all observations of a bundle adjustment.",
+   "zh": "返回光束法平差全部观测的重投影误差 RMS(像素)。",
+   "tw": "回傳光束法平差全部觀測的重投影誤差 RMS(像素)。",
+   "ko": "번들 조정의 모든 관측에 대한 재투영 오차의 RMS(픽셀)를 반환한다.",
+   "de": "Gibt den RMS-Reprojektionsfehler (Pixel) über alle Beobachtungen einer Bündelausgleichung zurück.",
+   "hi": "bundle adjustment के सभी observations पर reprojection error का RMS (pixels) लौटाता है।"
   },
   "3d/medial_axis_points": {
    "fp": "171f72a33d48",
@@ -10082,13 +10082,13 @@
    "hi": "outliers के प्रति robust RANSAC plane fitting।"
   },
   "3d/ransac_sphere": {
-   "fp": "381bac9da85d",
-   "en": "Outlier-robust RANSAC sphere fitting.",
-   "zh": "对外点稳健的 RANSAC 球拟合。",
-   "tw": "對外點穩健的 RANSAC 球擬合。",
-   "ko": "이상치에 강건한 RANSAC 구 적합.",
-   "de": "Ausreißerrobuste RANSAC-Kugelanpassung.",
-   "hi": "outliers के प्रति robust RANSAC sphere fitting।"
+   "fp": "d43524470c30",
+   "en": "Fits a sphere (centre and radius) to a point cloud with outlier-robust RANSAC.",
+   "zh": "用对外点稳健的 RANSAC 给点群拟合球(中心与半径)。",
+   "tw": "用對外點穩健的 RANSAC 為點群擬合球(中心與半徑)。",
+   "ko": "이상치에 강건한 RANSAC으로 점군에 구(중심과 반지름)를 적합한다.",
+   "de": "Passt mit ausreißerrobustem RANSAC eine Kugel (Mittelpunkt und Radius) an eine Punktwolke an.",
+   "hi": "outliers के प्रति robust RANSAC से point cloud पर गोला (केंद्र और त्रिज्या) fit करता है।"
   },
   "3d/recover_pose": {
    "fp": "765a33d4bdbb",
@@ -10757,13 +10757,13 @@
    "hi": "control point correspondences से 3D Thin-Plate-Spline fit करता है।"
   },
   "3d/tps_warp": {
-   "fp": "272ce4e5b1ad",
-   "en": "Deform a point set with a TPS model.",
-   "zh": "用 TPS 模型变形点群。",
-   "tw": "用 TPS 模型變形點群。",
-   "ko": "TPS 모델로 점군을 변형합니다.",
-   "de": "Verformt eine Punktmenge mit einem TPS-Modell.",
-   "hi": "TPS model से point cloud को deform करता है।"
+   "fp": "ad948a91ffb7",
+   "en": "Applies the thin-plate-spline (TPS) deformation fitted by ``tps_fit`` to a point set.",
+   "zh": "把 ``tps_fit`` 拟合的薄板样条(TPS)变形施加到点群上。",
+   "tw": "把 ``tps_fit`` 擬合的薄板樣條(TPS)變形套用到點群上。",
+   "ko": "``tps_fit``으로 적합한 박판 스플라인(TPS) 변형을 점군에 적용한다.",
+   "de": "Wendet die mit ``tps_fit`` angepasste Thin-Plate-Spline-Verformung (TPS) auf eine Punktmenge an.",
+   "hi": "``tps_fit`` से fit किया गया thin-plate spline (TPS) विरूपण point set पर लागू करता है।"
   },
   "3d/triangulate": {
    "fp": "f2a414482e67",
@@ -12940,13 +12940,13 @@
    "hi": "normalised mutual information 2*I(A;B) / (H(A) + H(B))। समान image के लिए 1.0।"
   },
   "imgmetrics/psnr": {
-   "fp": "467dd2045c9a",
-   "en": "Peak signal-to-noise ratio [dB].",
-   "zh": "峰值信噪比 [dB]。",
-   "tw": "峰值訊噪比 [dB]。",
-   "ko": "최대 신호 대 잡음비 [dB].",
-   "de": "Spitzen-Signal-Rausch-Verhältnis [dB].",
-   "hi": "peak signal-to-noise ratio [dB]।"
+   "fp": "84ebfc6aaf7e",
+   "en": "Returns the peak signal-to-noise ratio (PSNR, in dB) of two images.",
+   "zh": "返回两幅图像的峰值信噪比(PSNR,单位 dB)。",
+   "tw": "回傳兩張影像的峰值訊噪比(PSNR,單位 dB)。",
+   "ko": "두 영상의 최대 신호 대 잡음비(PSNR, 단위 dB)를 반환한다.",
+   "de": "Gibt das Spitzen-Signal-Rausch-Verhältnis (PSNR, in dB) zweier Bilder zurück.",
+   "hi": "दो images का peak signal-to-noise ratio (PSNR, dB में) लौटाता है।"
   },
   "imgmetrics/rgb_to_lab": {
    "fp": "7d7fd603a583",
@@ -19370,13 +19370,13 @@
    "hi": "railway crossing का चेतावनी sign (× निशान, पीली पृष्ठभूमि पर काला किनारा) + खंभा। plate +x की ओर है।"
   },
   "drive/jp_pole_mesh": {
-   "fp": "462fc00b3e34",
-   "en": "Utility pole (concrete pole + crossarm).",
-   "zh": "电线杆(混凝土杆 + 横担)。",
-   "tw": "電線桿(混凝土桿 + 橫擔)。",
-   "ko": "전신주(콘크리트 기둥 + 완금).",
-   "de": "Leitungsmast (Betonmast + Querträger).",
-   "hi": "बिजली का खंभा (concrete खंभा + crossarm)।"
+   "fp": "2c0097aa2a68",
+   "en": "Builds the triangle mesh of a Japanese utility pole (concrete pole + crossarm).",
+   "zh": "生成日本电线杆(混凝土杆 + 横担)的三角网格。",
+   "tw": "產生日本電線桿(混凝土桿 + 橫擔)的三角網格。",
+   "ko": "일본 전신주(콘크리트 기둥 + 완금)의 삼각형 메시를 만든다.",
+   "de": "Erzeugt das Dreiecksnetz eines japanischen Leitungsmasts (Betonmast + Querträger).",
+   "hi": "जापानी बिजली के खंभे (concrete खंभा + crossarm) का triangle mesh बनाता है।"
   },
   "drive/jp_mirror_mesh": {
    "fp": "9573537bae74",
@@ -19433,13 +19433,13 @@
    "hi": "केवल वे इमारतें लौटाता है जिनका centroid (footprint vertices का औसत) box [xmin,xmax]×[ymin,ymax] में है।"
   },
   "drive/building_prisms": {
-   "fp": "c60ac2e4b4f3",
-   "en": "Combines a list of buildings into an extruded-prism mesh.",
-   "zh": "把建筑列表合并为挤出柱体网格(mesh)。",
-   "tw": "把建築列表合併為擠出柱體網格(mesh)。",
-   "ko": "건물 목록을 압출 기둥 메시로 합칩니다.",
-   "de": "Fasst eine Liste von Gebäuden zu einem Mesh aus extrudierten Prismen zusammen.",
-   "hi": "इमारतों की सूची को extruded prism mesh में मिलाता है।"
+   "fp": "749bf7b97884",
+   "en": "Extrudes building footprints up to their heights and merges them into one triangle mesh.",
+   "zh": "把建筑的占地轮廓(footprint)挤出到高度,合并为一个三角网格。",
+   "tw": "把建築的佔地輪廓(footprint)擠出到高度,合併為一個三角網格。",
+   "ko": "건물의 발자국(footprint)을 높이까지 압출해 하나의 삼각형 메시로 합친다.",
+   "de": "Extrudiert Gebäudegrundrisse (Footprints) bis zu ihrer Höhe und fasst sie zu einem Dreiecksnetz zusammen.",
+   "hi": "इमारतों के footprint को उनकी ऊँचाई तक extrude करके एक triangle mesh में मिलाता है।"
   },
   "drive/prism_mesh": {
    "fp": "8b8a71100b44",

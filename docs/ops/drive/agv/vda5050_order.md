@@ -22,6 +22,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 ノードの ``sequenceId`` は 0, 2, 4 …(偶数)、エッジは 1, 3, 5 …(奇数)、エッジ数 = ノード数 − 1。
 ``released_nodes`` 個までを base(released=True)、残りを horizon にする(既定 = 全部 base)。
 座標は ``x = col * cell_size``、``y = −row * cell_size``(行は下向き、地図の y は上向き)。
+空の入力(``path`` が 0 マス)は ValueError。
 
 ## 参考(サンプルデータ・文献)
 

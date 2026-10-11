@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">deformation × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_warp(model, points)</code>(要直接呼叫實作,<code style="color:#22d3bf">import deform3d; deform3d.tps_warp(model, points)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;tps_warp&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>用 TPS 模型變形點群。</p>
+<p>把 <code style="color:#22d3bf">tps_fit</code> 擬合的薄板樣條(TPS)變形套用到點群上。</p>
 <p>計算 f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖)。</p>
 <p>參數:</p>
 <p>model: <code style="color:#22d3bf">tps_fit</code> 回傳的 dict。</p>

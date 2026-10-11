@@ -25,6 +25,7 @@ Woodham の線形模型は持たないので、引かないと法線が z 側へ
 小さく出る —— 実機の参照フレーム較正に当たる。試作で δ が 3.5 % 低かった原因)。
 返り: ``normals``(H, W, 3)、``albedo``(H, W)、``height``(H, W)[m、平均 0 の相対値]、``pitch``。
 **Raises** ``ValueError``: rgb が (H, W, 3) でない、pitch ≤ 0、ambient < 0。
+空の入力(``rgb`` が 0 要素)は ValueError。
 
 ## 参考(サンプルデータ・文献)
 

@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">deformation × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tps_warp(model, points)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import deform3d; deform3d.tps_warp(model, points)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;tps_warp&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>TPS model से point cloud को deform करता है।</p>
+<p><code style="color:#22d3bf">tps_fit</code> से fit किया गया thin-plate spline (TPS) विरूपण point set पर लागू करता है।</p>
 <p>f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖) का मान निकालता है।</p>
 <p>Arguments:</p>
 <p>model: <code style="color:#22d3bf">tps_fit</code> द्वारा लौटाया गया dict।</p>

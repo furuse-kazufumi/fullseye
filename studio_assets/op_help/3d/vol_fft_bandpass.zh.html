@@ -8,7 +8,7 @@
 <p>传递函数为 <code style="color:#22d3bf">exp(-|f|^2 / (2 high^2)) - exp(-|f|^2 / (2 low^2))</code>。在 DC 处为 <code style="color:#22d3bf">1 - 1 = 0</code>,因此平均亮度被去除,只留下峰值位于 <code style="color:#22d3bf">low</code> 与 <code style="color:#22d3bf">high</code> 之间的高斯差分(DoG 型)频带。峰高达不到 1(因为是 2 个 Gaussian 之差, <code style="color:#22d3bf">low</code> 与 <code style="color:#22d3bf">high</code> 越接近,通过量越小)。返回值是与输入相同 <code style="color:#22d3bf">(D, H, W)</code> 的 float64,有符号。</p>
 <p>参数:必须 <code style="color:#22d3bf">low &lt; high</code>(二者均为正的有限值)。单位在 <code style="color:#22d3bf">spacing=None</code> 时为 cycles/voxel,指定 <code style="color:#22d3bf">spacing</code> 时为 cycles/mm。若按周期(voxel 或 mm)考虑, <code style="color:#22d3bf">1/high</code> 是最小结构尺寸,<code style="color:#22d3bf">1/low</code> 是最大结构尺寸。</p>
 <p>验证(<code style="color:#22d3bf">ValueError</code>):非 3-D / NaN、Inf / 超过 <code style="color:#22d3bf">MAX_VOXELS</code> / <code style="color:#22d3bf">low</code>、<code style="color:#22d3bf">high</code> 非正、非有限、2 次方下溢 / <code style="color:#22d3bf">low &gt;= high</code> / <code style="color:#22d3bf">spacing</code> 无效。</p>
-<p>用途:提取 1 个纹理尺度;取出周期性条纹、环形伪影频带并从输入中减去。与 <code style="color:#22d3bf">vol_fft_lowpass(vol, high) - vol_fft_lowpass(vol, low)</code> 等价。</p>
+<p>用途:提取 1 个纹理尺度;取出周期性条纹、环形伪影频带并从输入中减去。与 <code style="color:#22d3bf">vol_fft_lowpass(vol, high) - vol_fft_lowpass(vol, low)</code> 等价。空输入(<code style="color:#22d3bf">vol</code> 为 0 个元素)会引发 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

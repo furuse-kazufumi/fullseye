@@ -25,6 +25,7 @@ RGBA 画像を、面の色を持つ薄い板のメッシュにする。
 厚さ ``thickness`` を x の ±半分に振る。使われない頂点は残さない(寸法を頂点から測れるように)。
 
 返り値 ``{"V", "F", "color", "label", "front_faces": (0, n), "back_faces": (n, 2n), "cells": (rows, cols)}``。
+空の入力(``rgba`` が 0 要素)は ValueError。
 
 ## 参考(サンプルデータ・文献)
 

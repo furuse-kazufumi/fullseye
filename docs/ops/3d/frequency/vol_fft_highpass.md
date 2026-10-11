@@ -36,6 +36,7 @@ slow drift, keeps edges/texture. Output is signed (mean ~ 0).
 
 使いどころ: 照明むら・厚みドリフト・背景勾配の除去(``vol_fft_lowpass`` の結果を
 引くのと同値)。周期的とみなす FFT の性質上、面どうしの輝度差は wrap で漏れる。
+空の入力(``vol`` が 0 要素)は ValueError。
 
 ## 参考(サンプルデータ・文献)
 

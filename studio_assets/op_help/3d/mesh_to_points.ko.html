@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">• 모든 면이 퇴화(면적 합 0)하면 확률이 NaN이 되어 <code style="color:#22d3bf">rng.choice</code>가 ValueError.</p>
 <p style="margin:2px 0 2px 12px">• 법선은 붙지 않는다(<code style="color:#22d3bf">estimate_point_normals</code>로 붙인다). 면적 가중이므로 큰 면일수록 점이 많고,</p>
 <p>정점 밀도에는 의존하지 않는다.</p>
-<p>후단: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">match_pca</code>.</p>
+<p>후단: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">match_pca</code>. 빈 입력(<code style="color:#22d3bf">vertices</code>가 0개 요소)은 ValueError.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

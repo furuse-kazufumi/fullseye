@@ -396,6 +396,10 @@ def test_empty_promise_reader_and_knob_variants():
         "Raises: ValueError: 形状不正、または pts0 が非空なのに pts1 が空。", "pts0", ["pts1"])
     assert not lg.promises_empty_refusal("``radius <= 0`` は ValueError、空入力は空を返す。")
     assert not lg.promises_empty_refusal("a NaN raises ``ValueError``; empty signal -> zeros.")
+    # 第 1 引数を名指しした約束は、別の引数についての「空でも例外は出ない」より強い
+    assert lg.promises_empty_refusal(
+        "空の入力(``vertices`` が 0 要素)は ValueError。(面 ``faces`` が空なら例外は出さない)",
+        "vertices", ["faces"])
     assert lg.knob_variants(4) == [2, 8] and lg.knob_variants(0) == [1, 2]
     assert lg.knob_variants(0.3) == [0.15, 0.6] and lg.knob_variants(0.0) == [0.5, 1.0]
     assert lg.knob_variants(True) == [] and lg.knob_variants(float("inf")) == []

@@ -324,9 +324,11 @@ def vol_stretch(vol, p_low=1.0, p_high=99.0):
     ------
     ValueError
         Non-3-D / non-finite input, percentiles out of ``[0, 100]``, or
-        ``p_low >= p_high``.
+        ``p_low >= p_high``. Empty input (``vol`` with 0 elements) raises ``ValueError``.
     """
     v = _require_volume(vol)
+    if np.asarray(v).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("vol_stretch: vol is empty — pass at least one element")
     _check_voxels(v, MAX_VOXELS, "vol_stretch", "MAX_VOXELS")
     pl = _finite_scalar(p_low, "p_low")
     ph = _finite_scalar(p_high, "p_high")

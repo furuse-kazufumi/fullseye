@@ -140,7 +140,10 @@ def integrate_normals(normals, mask=None):
       ``mask`` で除くか法線を事前に平滑する。
     入力検証は無い(``(H,W,3)`` 以外は内部の添字で失敗)。``surface_normals`` が逆変換で、
     ``photometric_stereo`` の法線をここへ渡すと形状(高さ場)が得られる。
+    空の入力(``normals`` が 0 要素)は ValueError。
     """
+    if np.asarray(normals).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("integrate_normals: normals is empty — pass at least one element")
     p, q = normals_to_gradients(normals)
     if mask is not None:
         m = np.asarray(mask, bool)

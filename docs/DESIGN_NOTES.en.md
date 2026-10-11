@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 632 of 1355. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 632 of 1356. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -50,18 +50,19 @@ This repository records *why* things are the way they are in **comments in the s
 - **L863** _(ja)_ — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
 - **L918** — ★``annotate.overlay_mask`` is **deliberately not exposed at the top level**. The same-named ``imgio.overlay_mask`` is already public as ``fs.overlay_mask``, and its arguments and meaning differ (imgio = raw RGB, mask>0.5, fill/margin / annotate = role-name colour, weights [0,1] allowed too, rejects a shape mismatch). Putting a different promise on the same name means the caller receives not an exception but **a plausibly different picture**. We don't make breaking changes to the public API on our own, so retrieve the role-carrying one via ``fs.annotate.overlay_mask``.
 - **L1054** _(ja)_ — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L1592** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1617** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1686** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L1981** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L2012** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
-- **L2296** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2332** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2653** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2961** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L2965** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3086** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3096** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L1603** _(ja)_ — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1606** _(ja)_ — ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が 無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
+- **L1622** _(ja)_ — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1691** _(ja)_ — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L1986** _(ja)_ — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L2017** — ★ **There is currently no correct way to call this for colour images**: passing them all at once mixes the colours, and calling three times per channel makes a self-normalizing op divide each channel by its own max, breaking the ratios between channels (the grey-edge angular error goes from 1.03 deg with our own Sobel -> 4.17 deg per image -> 27.86 deg per channel, 29.14 deg at the zero point). Which way to lean is a **contract decision**, so here we change not a single default value, refuse only when `on_error="raise"`, and by default record it in the ledger so it stays visible. Details and options in docs/KNOWN_ISSUES.md.
+- **L2301** _(ja)_ — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L2337** _(ja)_ — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2658** _(ja)_ — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2966** _(ja)_ — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L2970** _(ja)_ — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L3091** _(ja)_ — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3101** _(ja)_ — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -1425,18 +1426,18 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `match3d.py`
 
-- **L333** — ★2026-09-07: Replaced with numpy's FFT. The formula is the same (float32 fftn -> phase only -> real part of ifftn -> argmax), and there was nowhere it needed torch. On CI without torch (py3.10 / 3.12) this op became an ImportError and the PoC failed.
-- **L992** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層なので、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き = 高い値の側)にある(軸平行で 0.5、斜めで最大 0.87)。d が系統的に その分ずれていた。各 voxel を −|n|₁/2·n だけ iso 面側へ戻してから投票する。 実測(40³、真の法線、半 voxel ずらし 10 通り×表裏): 軸平行の平均誤差 ±0.5 → 0.000、 斜め面は投影の離散化で ±0.3 以内が残る。
-- **L1050** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層で、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き)にある。半径が明球で −0.6、暗球で +0.6 voxel 系統的にずれていた。 各 voxel を −|n|₁/2·n だけ iso 面へ戻してから投票する(明球・暗球どちらでも同じ式)。 実測(48³、半径 7〜13、中心を半 voxel 内で乱した球): 平均誤差 明球 −0.64 → +0.17 / 暗球 +0.57 → −0.15 voxel (残りは丸め投票と放物線補間の偏り)。
-- **L1714** — ★2026-09-07: Rewrote the body in numpy. This ICP is **nearest-neighbour search by cKDTree and pose update by a 3x3 SVD**, with not a single task for torch, yet it made torch mandatory. On CI without torch (py3.10 / 3.12), 4 PoCs fell with `ImportError: this operator needs the optional 'torch' backend` and it surfaced (with torch present locally it went unnoticed -- a case of 'put the gate where the accident happens'). The numbers are the same float64 formula, so **the result does not change with the environment**. The return type is kept for compatibility: torch.Tensor if torch is present, numpy.ndarray if not (values identical). If a device other than "cpu" is requested, fail-closed.
-- **L1949** — ★2026-09-07: Rewrote the body in numpy. Nearest-neighbour search, the 6x6 normal equations, and Rodrigues are all small CPU linear algebra with no need for torch, yet it had been made mandatory. On CI without torch (py3.10 / 3.12) the PoC fell with an ImportError and it surfaced. The formula is the same float64, so the result is unchanged (the difference from the torch version was measured as 0 in R/t and 0 in RMSE).
-- **L1964** _(ja)_ — ★2026-10-07 レビュー修正: 小角線形化 R ≈ I+[ω]× は「原点まわり」の回転。原点から遠い 点群(UTM 座標など、オフセット 1e3 で回転誤差 23°)ではてこの腕 p が巨大になり、 回転と並進の自由度がほぼ縮退して Gauss-Newton が誤った姿勢へ収束していた。 dst の外接箱の中心 c へ両点群を寄せてから解き、最後に t = t' + c − R·c で戻す。 外接箱の中心は点の順に依らない(reproducible=True のビット一致を保つ)。
-- **L2796** _(ja)_ — ★2026-10-07 レビュー修正: 未中心化の |p|² は原点から遠い点群(オフセット 1e6)で桁落ちし 半径が 7.5e5 も狂った。重心へ寄せて解き、中心を戻す(数学的には同じ解)。
-- **L2950** — ★2026-09-07: **fail-closed if the ring is outside the image**. ``r_in``/``r_out`` are in pixels, so passing them in mm reads outside the field of view and returns **all 0** with no exception (surfaced when `poc_pipe_wall_loss` produced one pitch-black figure). If not a single radius is inside the maximum distance from the centre to the image's four corners, the return can only be empty.
-- **L2961** — ★2026-09-07: Replaced grid_sample (bilinear, align_corners=True, zeros padding) with scipy's map_coordinates(order=1, mode="constant", cval=0) -- the same bilinear interpolation, and it runs even on CI without torch (py3.10 / 3.12). The measured difference is at most 6.0e-06 (random image over the range 0..1; the rounding difference between float32 and float64).
-- **L3006** — ★2026-09-07: Replaced with map_coordinates for the same reason as polar_unwrap (bilinear, out-of-range 0). Runs even without torch. The measured difference is at most 7.6e-06.
-- **L3077** _(ja)_ — ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
-- **L3281** — ★2026-09-07: Replaced affine_grid + grid_sample (align_corners=False, zeros padding) with numpy coordinate computation + scipy's map_coordinates(order=1). torch was used only for the bilinear resampling, and in an environment without torch (CI py3.10 / 3.12) this op became an ImportError. The convention was carried over verbatim: the normalized coordinate of an output voxel (d,h,w) is ((i+0.5)/N)*2-1, and after rotation it is mapped back to input pixel coordinates by (g+1)/2*N-0.5 (the align_corners=False definition). The last axis of grid is in the order (x, y, z) = (W, H, D). The measured difference from the torch version is at most 7.6e-06.
+- **L336** — ★2026-09-07: Replaced with numpy's FFT. The formula is the same (float32 fftn -> phase only -> real part of ifftn -> argmax), and there was nowhere it needed torch. On CI without torch (py3.10 / 3.12) this op became an ImportError and the PoC failed.
+- **L995** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層なので、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き = 高い値の側)にある(軸平行で 0.5、斜めで最大 0.87)。d が系統的に その分ずれていた。各 voxel を −|n|₁/2·n だけ iso 面側へ戻してから投票する。 実測(40³、真の法線、半 voxel ずらし 10 通り×表裏): 軸平行の平均誤差 ±0.5 → 0.000、 斜め面は投影の離散化で ±0.3 以内が残る。
+- **L1053** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層で、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き)にある。半径が明球で −0.6、暗球で +0.6 voxel 系統的にずれていた。 各 voxel を −|n|₁/2·n だけ iso 面へ戻してから投票する(明球・暗球どちらでも同じ式)。 実測(48³、半径 7〜13、中心を半 voxel 内で乱した球): 平均誤差 明球 −0.64 → +0.17 / 暗球 +0.57 → −0.15 voxel (残りは丸め投票と放物線補間の偏り)。
+- **L1717** — ★2026-09-07: Rewrote the body in numpy. This ICP is **nearest-neighbour search by cKDTree and pose update by a 3x3 SVD**, with not a single task for torch, yet it made torch mandatory. On CI without torch (py3.10 / 3.12), 4 PoCs fell with `ImportError: this operator needs the optional 'torch' backend` and it surfaced (with torch present locally it went unnoticed -- a case of 'put the gate where the accident happens'). The numbers are the same float64 formula, so **the result does not change with the environment**. The return type is kept for compatibility: torch.Tensor if torch is present, numpy.ndarray if not (values identical). If a device other than "cpu" is requested, fail-closed.
+- **L1952** — ★2026-09-07: Rewrote the body in numpy. Nearest-neighbour search, the 6x6 normal equations, and Rodrigues are all small CPU linear algebra with no need for torch, yet it had been made mandatory. On CI without torch (py3.10 / 3.12) the PoC fell with an ImportError and it surfaced. The formula is the same float64, so the result is unchanged (the difference from the torch version was measured as 0 in R/t and 0 in RMSE).
+- **L1967** _(ja)_ — ★2026-10-07 レビュー修正: 小角線形化 R ≈ I+[ω]× は「原点まわり」の回転。原点から遠い 点群(UTM 座標など、オフセット 1e3 で回転誤差 23°)ではてこの腕 p が巨大になり、 回転と並進の自由度がほぼ縮退して Gauss-Newton が誤った姿勢へ収束していた。 dst の外接箱の中心 c へ両点群を寄せてから解き、最後に t = t' + c − R·c で戻す。 外接箱の中心は点の順に依らない(reproducible=True のビット一致を保つ)。
+- **L2802** _(ja)_ — ★2026-10-07 レビュー修正: 未中心化の |p|² は原点から遠い点群(オフセット 1e6)で桁落ちし 半径が 7.5e5 も狂った。重心へ寄せて解き、中心を戻す(数学的には同じ解)。
+- **L2956** — ★2026-09-07: **fail-closed if the ring is outside the image**. ``r_in``/``r_out`` are in pixels, so passing them in mm reads outside the field of view and returns **all 0** with no exception (surfaced when `poc_pipe_wall_loss` produced one pitch-black figure). If not a single radius is inside the maximum distance from the centre to the image's four corners, the return can only be empty.
+- **L2967** — ★2026-09-07: Replaced grid_sample (bilinear, align_corners=True, zeros padding) with scipy's map_coordinates(order=1, mode="constant", cval=0) -- the same bilinear interpolation, and it runs even on CI without torch (py3.10 / 3.12). The measured difference is at most 6.0e-06 (random image over the range 0..1; the rounding difference between float32 and float64).
+- **L3012** — ★2026-09-07: Replaced with map_coordinates for the same reason as polar_unwrap (bilinear, out-of-range 0). Runs even without torch. The measured difference is at most 7.6e-06.
+- **L3083** _(ja)_ — ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
+- **L3287** — ★2026-09-07: Replaced affine_grid + grid_sample (align_corners=False, zeros padding) with numpy coordinate computation + scipy's map_coordinates(order=1). torch was used only for the bilinear resampling, and in an environment without torch (CI py3.10 / 3.12) this op became an ImportError. The convention was carried over verbatim: the normalized coordinate of an output voxel (d,h,w) is ((i+0.5)/N)*2-1, and after rotation it is mapped back to input pixel coordinates by (g+1)/2*N-0.5 (the align_corners=False definition). The last axis of grid is in the order (x, y, z) = (W, H, D). The measured difference from the torch version is at most 7.6e-06.
 
 ## `mathestimation.py`
 
@@ -1531,23 +1532,23 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `ops.py`
 
-- **L307** _(ja)_ — ★勾配は**片側差分の大きい方**で取る。``np.gradient`` の中心差分は 1 画素で 立ち上がる段差を 2 画素に広げてしまい(段差の頂点で 0.5 しか出ない)、 理想の段差が幅 2.00 と報告される —— 測る道具が理想ケースで 2 倍を返す。 片側差分なら段差で 1.0、傾斜 m の斜面でも m となり、どちらも正しい。
-- **L490** _(ja)_ — ★相対床だけでは足りない: 一様面 + 丸め屑では**値域そのものが屑**なので、 相対床も屑まで下がってしまう。絶対床 1e-5(画像は [0,1] 契約)を併せる。
-- **L566** _(ja)_ — ★一様な面では勾配が丸め屑しか残らず、``arctan2`` はその屑の符号で**任意の角度**を 返す —— 明るさを 0.01 変えただけで向きが一斉に変わる。絶対値の床では画像の 明るさに依存してしまうので、必ず**相対量**で切る。
-- **L670** _(ja)_ — ★膨張は前景をはみ出す。連続の世界では半径 r の円は収まっているが、**離散の 円板**で膨らませると境界の外の画素まで塗る —— 実測で前景 197 画素の円に 対し外へ 48 画素(24%)漏れ、そのせいで粒度分布の生存率が 1.0 を超えた。 太さは前景の量なので、必ず前景で切る。
-- **L863** _(ja)_ — ★各画素には「入った時点で属していた山」の persistence を入れる。 ここで find(i)(= 最終的な根)を引くと、全画素が最後に残った 1 つの山の値に なってしまう —— 実測で高さ 1.0 / 0.6 / 0.3 の 3 つの山が全部 1.000 になった。
-- **L870** _(ja)_ — ★画像の最小値そのものの台地(たいていは背景)は 0 にする。そこは最後に 処理されて全体最大の山に吸収されるので、放っておくと**背景一面が最大値**に なって地図が読めない(実測で背景が 1.000 になった)。閾値を新たに選ぶのでは なく「最小値ちょうど」だけを落とすので、閾値フリーの性質は保たれる。
-- **L962** _(ja)_ — ★``m / n**2`` ではなく ``(m + 0.5) / n**2``。前者は値が {0, 1/4, 1/2, 3/4} と なって平均が 0.375 にしかならず、ディザ全体が暗い側へ偏る(1 ビットの傾斜で 平均が 0.031 ずれるのを実測した)。閾値は刻みの**真ん中**に並べる。
-- **L1151** _(ja)_ — ★**歴史的な挙動を ``b <= 0.5`` の帯に置く**。これらの op の ``b`` は 2026-09-17 まで 「未使用」で、保存済みの進化プログラムが持つ ``b`` の値は事実上ばらばらに散って いる。新しい選択肢を上半分だけに割り当てれば、**およそ半数の既存プログラムは 1 ビットも結果が変わらない**(全域に割り当てると全部変わる)。 `b <= 0.5` が旧実装とビット一致することは tests/test_knob_b_options.py が固定する。 --------------------------------------------------------------------------- #
-- **L1165** _(ja)_ — ★境目は **0.5 を含めて**歴史側に置く。0.5 は「まん中」として既定値に使われて いて(api.apply の既定、studio の中央、保存済みプログラムの初期値)、ここを 新しい側に入れると**既定のまま呼んだだけで答えが変わる**。実測で gaussian と その HALCON 別名の一致検査まで割れた。
-- **L1269** _(ja)_ — ★**しきい値は argmax ビンの「上端」で取る**(2026-09-26)。中点で取ると、 argmax が指すのは**背景の山を含むビン**なので、その中点より上に居る背景画素 自身が前景に入る。背景 0.30 / 明部 0.90 の板では 400 px の答えが 4,096 px (全画素)になり、例外も警告も出なかった —— skimage と OpenCV は同じ絵で 400 を返す。ビンの上端で切れば argmax ビンの画素は全部背景側に落ちる。 試験の入力に必ず雑音が載っていたため 30 年物の門が全部通していた (docs/hardening/otsu-threshold-at-the-bin-midpoint.md)。
-- **L1387** _(ja)_ — ★2026-10-07: 0 画素の面積率は 0/0(np.mean が NaN を返し、guard が黙って置き換えていた)
-- **L1497** — ★Pad the edges **with the edge value**. Previously it was ``np.convolve(x, k, "same")``, which averages the w points at both ends **with zero** -- the start and end of a contour got dragged toward the origin (0,0) by up to 50 px or more, producing a figure where the red streaks of 140 contours converged to the upper left (found 2026-09-06 when per-op figures were first made; in numerical tests the mean deviation was 0.3 px and it was invisible).
-- **L2093** _(ja)_ — ★pickle は**名前で**(2026-09-19 外部レビュー N5): ``fn`` は ``backend_safe._safe`` のクロージャで pickle できず、Op を丸ごと multiprocessing / joblib に渡すと PicklingError で止まっていた(``Pipeline`` は名前を持つので通る、という非対称)。 復元先は**復元する側の環境の登録**: backend が入っていない環境で戻すと KeyError(不足 extra の案内つき)になり、黙って別の実装にはならない。
-- **L2262** _(ja)_ — ★2026-09-19 の外部レビュー(#1): scikit-image 無しの環境で ``sk_canny`` を呼ぶと 「unknown operator」になり、**存在しない**のか **backend が入っていない**のかを 区別できなかった。fn は ``backend_safe._safe`` に包まれて ``__module__`` を失う ので、登録の側で出自を残す(後勝ち = ``REGISTRY`` の重複解消と同じ規則)。 ``imgevolve.py index`` がこれを ``module`` / ``requires`` として索引に書き、 ``api._resolve`` が未登録の名前を引かれたときに索引から不足 extra を案内する。
-- **L2271** _(ja)_ — ★pyproject の optional-dependencies と食い違うと案内が嘘になるので ``tests/test_usability_review_2026_09_19.py`` が突き合わせる。
-- **L2556** _(ja)_ — ★2026-10-07: 複素の sort は sanitize(実 sort 向けの規約で**実部だけ**を返す)を通さない。 以前は tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が cimage / beatcube を名乗りながら float64 を返していた(虚部を黙って捨てる = 位相が消える)。 backends_bridge の橋は同じ理由で既に素通しにしていた —— その規約をこちらにも揃える。
-- **L2571** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
+- **L313** _(ja)_ — ★勾配は**片側差分の大きい方**で取る。``np.gradient`` の中心差分は 1 画素で 立ち上がる段差を 2 画素に広げてしまい(段差の頂点で 0.5 しか出ない)、 理想の段差が幅 2.00 と報告される —— 測る道具が理想ケースで 2 倍を返す。 片側差分なら段差で 1.0、傾斜 m の斜面でも m となり、どちらも正しい。
+- **L496** _(ja)_ — ★相対床だけでは足りない: 一様面 + 丸め屑では**値域そのものが屑**なので、 相対床も屑まで下がってしまう。絶対床 1e-5(画像は [0,1] 契約)を併せる。
+- **L572** _(ja)_ — ★一様な面では勾配が丸め屑しか残らず、``arctan2`` はその屑の符号で**任意の角度**を 返す —— 明るさを 0.01 変えただけで向きが一斉に変わる。絶対値の床では画像の 明るさに依存してしまうので、必ず**相対量**で切る。
+- **L676** _(ja)_ — ★膨張は前景をはみ出す。連続の世界では半径 r の円は収まっているが、**離散の 円板**で膨らませると境界の外の画素まで塗る —— 実測で前景 197 画素の円に 対し外へ 48 画素(24%)漏れ、そのせいで粒度分布の生存率が 1.0 を超えた。 太さは前景の量なので、必ず前景で切る。
+- **L869** _(ja)_ — ★各画素には「入った時点で属していた山」の persistence を入れる。 ここで find(i)(= 最終的な根)を引くと、全画素が最後に残った 1 つの山の値に なってしまう —— 実測で高さ 1.0 / 0.6 / 0.3 の 3 つの山が全部 1.000 になった。
+- **L876** _(ja)_ — ★画像の最小値そのものの台地(たいていは背景)は 0 にする。そこは最後に 処理されて全体最大の山に吸収されるので、放っておくと**背景一面が最大値**に なって地図が読めない(実測で背景が 1.000 になった)。閾値を新たに選ぶのでは なく「最小値ちょうど」だけを落とすので、閾値フリーの性質は保たれる。
+- **L968** _(ja)_ — ★``m / n**2`` ではなく ``(m + 0.5) / n**2``。前者は値が {0, 1/4, 1/2, 3/4} と なって平均が 0.375 にしかならず、ディザ全体が暗い側へ偏る(1 ビットの傾斜で 平均が 0.031 ずれるのを実測した)。閾値は刻みの**真ん中**に並べる。
+- **L1157** _(ja)_ — ★**歴史的な挙動を ``b <= 0.5`` の帯に置く**。これらの op の ``b`` は 2026-09-17 まで 「未使用」で、保存済みの進化プログラムが持つ ``b`` の値は事実上ばらばらに散って いる。新しい選択肢を上半分だけに割り当てれば、**およそ半数の既存プログラムは 1 ビットも結果が変わらない**(全域に割り当てると全部変わる)。 `b <= 0.5` が旧実装とビット一致することは tests/test_knob_b_options.py が固定する。 --------------------------------------------------------------------------- #
+- **L1171** _(ja)_ — ★境目は **0.5 を含めて**歴史側に置く。0.5 は「まん中」として既定値に使われて いて(api.apply の既定、studio の中央、保存済みプログラムの初期値)、ここを 新しい側に入れると**既定のまま呼んだだけで答えが変わる**。実測で gaussian と その HALCON 別名の一致検査まで割れた。
+- **L1275** _(ja)_ — ★**しきい値は argmax ビンの「上端」で取る**(2026-09-26)。中点で取ると、 argmax が指すのは**背景の山を含むビン**なので、その中点より上に居る背景画素 自身が前景に入る。背景 0.30 / 明部 0.90 の板では 400 px の答えが 4,096 px (全画素)になり、例外も警告も出なかった —— skimage と OpenCV は同じ絵で 400 を返す。ビンの上端で切れば argmax ビンの画素は全部背景側に落ちる。 試験の入力に必ず雑音が載っていたため 30 年物の門が全部通していた (docs/hardening/otsu-threshold-at-the-bin-midpoint.md)。
+- **L1393** _(ja)_ — ★2026-10-07: 0 画素の面積率は 0/0(np.mean が NaN を返し、guard が黙って置き換えていた)
+- **L1503** — ★Pad the edges **with the edge value**. Previously it was ``np.convolve(x, k, "same")``, which averages the w points at both ends **with zero** -- the start and end of a contour got dragged toward the origin (0,0) by up to 50 px or more, producing a figure where the red streaks of 140 contours converged to the upper left (found 2026-09-06 when per-op figures were first made; in numerical tests the mean deviation was 0.3 px and it was invisible).
+- **L2099** _(ja)_ — ★pickle は**名前で**(2026-09-19 外部レビュー N5): ``fn`` は ``backend_safe._safe`` のクロージャで pickle できず、Op を丸ごと multiprocessing / joblib に渡すと PicklingError で止まっていた(``Pipeline`` は名前を持つので通る、という非対称)。 復元先は**復元する側の環境の登録**: backend が入っていない環境で戻すと KeyError(不足 extra の案内つき)になり、黙って別の実装にはならない。
+- **L2268** _(ja)_ — ★2026-09-19 の外部レビュー(#1): scikit-image 無しの環境で ``sk_canny`` を呼ぶと 「unknown operator」になり、**存在しない**のか **backend が入っていない**のかを 区別できなかった。fn は ``backend_safe._safe`` に包まれて ``__module__`` を失う ので、登録の側で出自を残す(後勝ち = ``REGISTRY`` の重複解消と同じ規則)。 ``imgevolve.py index`` がこれを ``module`` / ``requires`` として索引に書き、 ``api._resolve`` が未登録の名前を引かれたときに索引から不足 extra を案内する。
+- **L2277** _(ja)_ — ★pyproject の optional-dependencies と食い違うと案内が嘘になるので ``tests/test_usability_review_2026_09_19.py`` が突き合わせる。
+- **L2562** _(ja)_ — ★2026-10-07: 複素の sort は sanitize(実 sort 向けの規約で**実部だけ**を返す)を通さない。 以前は tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が cimage / beatcube を名乗りながら float64 を返していた(虚部を黙って捨てる = 位相が消える)。 backends_bridge の橋は同じ理由で既に素通しにしていた —— その規約をこちらにも揃える。
+- **L2577** — ★**A ledger of ops that crash the whole process on the native side with a degenerate input** (2026-09-05). `guard` can only catch Python exceptions. Once something is written out of bounds inside C/C++, it is over there, and the user's whole pipeline vanishes -- the worst way for fail-soft to break. There is no recourse but to reject at the entrance, so **list it here with a reason and set a barrier at registration time**. **Behaviour differs by platform** -- that is the reason this ledger exists. The 3 below crash on Linux (Ubuntu 24.04 / Python 3.12 / PyPI wheel), but **on Windows not one reproduced with the same input**. A different native build means the boundary breaks differently, so a fine line of 'this kind of input is fine' cannot be trusted -- **reject degenerate inputs wholesale**. Not 'remove it once fixed' but **remove it once the upstream can be confirmed fixed** (this is not our own code, so the removal condition differs).
 
 ## `ops1d.py`
 
@@ -1707,9 +1708,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `pose_quat.py`
 
-- **L157** _(ja)_ — ★2026-10-07 レビュー修正: ry = ±90°(ジンバルロック)では R[2,1], R[2,2], R[1,0], R[0,0] が どれも丸め屑になり、rx, rz を屑の atan2 で決めていた(ry=90° ちょうどで行列の往復誤差 0.16)。 cos(ry) = hypot(R[0,0], R[1,0]) が √ε 未満なら rx と rz は和/差しか決まらないので rx = 0 に 固定し、rz を残りの成分から取る(R[0,1] = −sin rz, R[1,1] = cos rz が ±90° の両方で成り立つ)。
-- **L214** _(ja)_ — ★2026-10-07 レビュー修正: 符号を w の正負で揃えると、w≈0 をまたぐ組(yaw +179° と −179°)が 反対の半球に分かれ、平均が恒等(0°)に潰れた。最初の四元数を基準に、内積が負のものを反転する。
-- **L315** _(ja)_ — ★2026-10-07 レビュー修正: 回転が無い(純並進)と sin(θ/2)=0 で割れず、旧実装は 軸 0・並進 0 を返して並進を丸ごと失った。qr = ±1 なら qd = ±(0, t/2) なので t = 2·sign(w)·qd[1:]、軸 = t/|t|、d = |t|(並進も無ければ軸 0・d 0)。
+- **L190** _(ja)_ — ★2026-10-07 レビュー修正: ry = ±90°(ジンバルロック)では R[2,1], R[2,2], R[1,0], R[0,0] が どれも丸め屑になり、rx, rz を屑の atan2 で決めていた(ry=90° ちょうどで行列の往復誤差 0.16)。 cos(ry) = hypot(R[0,0], R[1,0]) が √ε 未満なら rx と rz は和/差しか決まらないので rx = 0 に 固定し、rz を残りの成分から取る(R[0,1] = −sin rz, R[1,1] = cos rz が ±90° の両方で成り立つ)。
+- **L276** _(ja)_ — ★2026-10-07 レビュー修正: 符号を w の正負で揃えると、w≈0 をまたぐ組(yaw +179° と −179°)が 反対の半球に分かれ、平均が恒等(0°)に潰れた。最初の四元数を基準に、内積が負のものを反転する。
+- **L410** _(ja)_ — ★2026-10-07 レビュー修正: 回転が無い(純並進)と sin(θ/2)=0 で割れず、旧実装は 軸 0・並進 0 を返して並進を丸ごと失った。qr = ±1 なら qd = ±(0, t/2) なので t = 2·sign(w)·qd[1:]、軸 = t/|t|、d = |t|(並進も無ければ軸 0・d 0)。
 
 ## `ppf.py`
 
@@ -1849,9 +1850,9 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tacsim.py`
 
-- **L366** _(ja)_ — ★既定の探索半径は窓の縁まで(双線形 ±0.5 px の余白に 2 px)。2026-10-05 までは窓の半分の半分(0.5 × 縁までの距離)で 打ち切っていて、201 px の窓では 50 px で止まり、半径 61 px の実機の接触を 49 px と答えた(tacscalib の門 12: −12.9 px)。 tacsim の合成(256 px・Hertz)は接触が窓の 1/4 より内側なので、直しても結果は 1 桁も変わらない。
-- **L402** _(ja)_ — ★2026-10-07: 窓の端までの距離は中心から測る(原点 = 窓の中心と仮定していて、X・Y・中心を +8 mm ずらすと δ が 11 % 縮んだ)
-- **L488** _(ja)_ — ★2026-10-07: a0 が 20 % 超ずれると黄金分割が区間の端 0.8·a0 / 1.2·a0 をそのまま返していた。端に張り付いたら その端を新しい a0 にして画素の選び(縁の除外の輪)ごとやり直す。8 回で内側に収まらなければ ValueError
+- **L369** _(ja)_ — ★既定の探索半径は窓の縁まで(双線形 ±0.5 px の余白に 2 px)。2026-10-05 までは窓の半分の半分(0.5 × 縁までの距離)で 打ち切っていて、201 px の窓では 50 px で止まり、半径 61 px の実機の接触を 49 px と答えた(tacscalib の門 12: −12.9 px)。 tacsim の合成(256 px・Hertz)は接触が窓の 1/4 より内側なので、直しても結果は 1 桁も変わらない。
+- **L405** _(ja)_ — ★2026-10-07: 窓の端までの距離は中心から測る(原点 = 窓の中心と仮定していて、X・Y・中心を +8 mm ずらすと δ が 11 % 縮んだ)
+- **L491** _(ja)_ — ★2026-10-07: a0 が 20 % 超ずれると黄金分割が区間の端 0.8·a0 / 1.2·a0 をそのまま返していた。端に張り付いたら その端を新しい a0 にして画素の選び(縁の除外の輪)ごとやり直す。8 回で内側に収まらなければ ValueError
 
 ## `tests/conftest.py`
 
@@ -2607,8 +2608,8 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L1136** _(ja)_ — ★半径は刻みの整数倍に落とす。EDT は離散球の中心で半径より少し大きい値を返すので (半径 4 の球で ~4.12)、生の最大値から刻むと直径が系統的に +0.1 ほど大きく出る。
 - **L1149** _(ja)_ — ★膨張は前景をはみ出す(離散の球で膨らませるため)。実測で 24% 漏れ、粒度分布の 生存率が 1.0 を超えた。太さは前景の量なので必ず前景で切る。
-- **L1242** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
-- **L1262** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
+- **L1244** _(ja)_ — ★最大厚さの**次の刻みまで**伸ばす。ここで止めると一番太い特徴の質量が 一度も消えず、分布から丸ごと落ちる(実測: 体積の 71% が欠け、平均径が 18.0 のところ 15.1 になった)。
+- **L1264** _(ja)_ — ★一様なブロックでは勾配が丸め屑しか残らず、固有値分解はその屑から**任意の向き**を 返す。絶対値の床は輝度スケールに依存するので、必ず相対量で切る。
 
 ## `world_render.py`
 

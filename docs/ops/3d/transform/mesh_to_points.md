@@ -30,6 +30,7 @@ mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→
 - 法線は付かない(``estimate_point_normals`` で付ける)。面積重みなので大きな面ほど点が多く、
 頂点密度には依存しない。
 後段: ``points_to_voxel`` / ``icp_point2point_3d`` / ``match_pca``。
+空の入力(``vertices`` が 0 要素)は ValueError。
 
 ## 参考(サンプルデータ・文献)
 

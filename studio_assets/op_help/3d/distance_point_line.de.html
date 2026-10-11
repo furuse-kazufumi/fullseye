@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_point_line(p, line_pt, d)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.distance_point_line(p, line_pt, d)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;distance_point_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>Punkt-Geraden-Abstand.</p>
+<p>Gibt den senkrechten Abstand eines Punktes von einer Geraden (Aufpunkt + Richtung) zurück, in 2-D und 3-D.</p>
 <p>Gibt als float die Länge <code style="color:#22d3bf">|w − (w·d̂)d̂|</code> der zur Richtung <code style="color:#22d3bf">d̂</code> orthogonalen Komponente von <code style="color:#22d3bf">w = p − line_pt</code> zurück (<code style="color:#22d3bf">d</code> wird intern normiert; gemeinsam für 2-D/3-D). <code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">line_pt</code>, <code style="color:#22d3bf">d</code> sind numerische 2- oder 3-Vektoren; gemischte Dimensionen lösen ValueError aus. Ist <code style="color:#22d3bf">d</code> der Nullvektor, wird <code style="color:#22d3bf">|w|</code> unverändert zurückgegeben. Die Einheit ist die der Eingabekoordinaten.</p>
 <p>Verwendung: Exzentrizität zur Achse aus <code style="color:#22d3bf">fit_line_3d</code>, Streuung einer Punktwolke um die Gerade aus <code style="color:#22d3bf">line_from_2points</code> (1 Punkt nach dem anderen).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

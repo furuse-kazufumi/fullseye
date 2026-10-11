@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_sphere(points, thresh, iters=500, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_sphere(points, thresh, iters=500, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;ransac_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>이상치에 강건한 RANSAC 구 적합.</p>
+<p>이상치에 강건한 RANSAC으로 점군에 구(중심과 반지름)를 적합한다.</p>
 <p>4 점 샘플 → 선형법(대수 피팅)으로 구의 중심·반지름 → |‖p-c‖ - r| &lt; <code style="color:#22d3bf">thresh</code>인 inlier를 최대화 → 최종 inlier로 최소제곱 재피팅. 배관 볼/구면 계측용.</p>
 <p>Args:</p>
 <p>points: (N,3) 점군.</p>

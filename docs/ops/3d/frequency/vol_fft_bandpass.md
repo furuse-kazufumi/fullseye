@@ -37,7 +37,7 @@ cycles/voxel、``spacing`` 指定で cycles/mm。周期(voxel または mm)で�
 
 使いどころ: 1 つのテクスチャスケールの抽出、周期的な縞・リングアーティファクト帯
 を取り出して入力から引く。``vol_fft_lowpass(vol, high) - vol_fft_lowpass(vol, low)``
-と同値。
+と同値。空の入力(``vol`` が 0 要素)は ValueError。
 
 ## 参考(サンプルデータ・文献)
 

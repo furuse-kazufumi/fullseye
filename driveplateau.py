@@ -618,7 +618,7 @@ def building_prisms(
     base_z: float | None = 0.0,
     roof_shade: float = 0.92,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """建物列を押し出し柱メッシュにまとめる。
+    """建物の足跡(footprint)を高さまで押し出し、1 つの三角形メッシュにまとめる。
 
     Args:
         buildings: ``plateau_parse`` の ``buildings``(``footprint``, ``height``, ``ground_z``)。

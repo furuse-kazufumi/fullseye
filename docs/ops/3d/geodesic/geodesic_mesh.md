@@ -31,7 +31,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 非多様体・巻き順が不揃いなメッシュでも距離が膨らまないよう辺を一意化している。退化辺(i==j)は
 捨てる。距離は辺に沿った折れ線長なので、粗いメッシュでは真の測地距離より長め(辺の走り方に
 依存する異方性)になる。``voxel_to_mesh`` や ``convex_hull`` が返す (verts, faces) を
-そのまま渡せる。
+そのまま渡せる。空の入力(``vertices`` が 0 要素)は ValueError。(面 ``faces`` が空なのは上の契約どおり受ける)
 
 ## 参考(サンプルデータ・文献)
 

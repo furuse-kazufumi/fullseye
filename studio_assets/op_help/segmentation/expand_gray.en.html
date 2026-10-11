@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.expand_gray(image, seed_region, tol=0.05)</code> (to call the implementation directly, <code style="color:#22d3bf">import segmentation; segmentation.expand_gray(image, seed_region, tol=0.05)</code>; from the registry, <code style="color:#22d3bf">opssegmentation.get(&quot;expand_gray&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Grow a region from a seed by gray-value similarity (|delta| &lt; tol) (expand_gray).</p>
+<p>Empty input (<code style="color:#22d3bf">image</code> with 0 elements) raises ValueError.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

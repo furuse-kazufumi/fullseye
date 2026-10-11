@@ -8,7 +8,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">vertices</code>: (V,3) 顶点坐标(转换为 float64)。<code style="color:#22d3bf">faces</code>: (M,3) 顶点索引(转换为 int)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>: 起点顶点的索引。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">faces</code> 为空时所有顶点返回 <code style="color:#22d3bf">inf</code>(若 source 在范围内则仅该处为 0),不抛出异常。</p>
-<p>实现要点: <code style="color:#22d3bf">csr_matrix</code> 在重复传入相同 (i,j) 时会悄悄把权重相加,因此为了让重复面、非流形、绕序不一致的网格的距离也不膨胀,对边做了去重。退化边(i==j)被丢弃。距离是沿边的折线长度,因此在粗网格上比真实测地距离偏长(依赖于边的走向的各向异性)。<code style="color:#22d3bf">voxel_to_mesh</code> 或 <code style="color:#22d3bf">convex_hull</code> 返回的 (verts, faces) 可以直接传入。</p>
+<p>实现要点: <code style="color:#22d3bf">csr_matrix</code> 在重复传入相同 (i,j) 时会悄悄把权重相加,因此为了让重复面、非流形、绕序不一致的网格的距离也不膨胀,对边做了去重。退化边(i==j)被丢弃。距离是沿边的折线长度,因此在粗网格上比真实测地距离偏长(依赖于边的走向的各向异性)。<code style="color:#22d3bf">voxel_to_mesh</code> 或 <code style="color:#22d3bf">convex_hull</code> 返回的 (verts, faces) 可以直接传入。空输入(<code style="color:#22d3bf">vertices</code> 为 0 个元素)会引发 ValueError。(<code style="color:#22d3bf">faces</code> 为空时仍按上述约定接受)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

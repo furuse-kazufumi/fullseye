@@ -96,6 +96,9 @@ def _check_cutoff(c, name):
 
 def _apply_transfer(vol, spacing, transfer):
     v = _require_volume(vol)
+    if v.size == 0:   # ★2026-10-11 台帳の空入力の門: 周波数の刻みが 0 除算になっていた
+        raise ValueError("vol_fft_*: vol is empty (shape %s) — pass a non-empty (D, H, W) volume"
+                         % (v.shape,))
     fr = _freq_radius(v.shape, spacing)
     spec = np.fft.rfftn(v)
     # axes must be explicit alongside s= (NumPy 2.0 deprecation -> future error)
@@ -127,7 +130,7 @@ def vol_fft_lowpass(vol, cutoff, spacing=None):
 
     注意: FFT は volume を周期的とみなす。向かい合う面の輝度差が大きいと wrap を
     またいで漏れる(窓掛けは黙ってしない)。``vol_fft_highpass`` は厳密にこの補集合
-    ``1 - lowpass`` で、両者の和は入力に一致する。"""
+    ``1 - lowpass`` で、両者の和は入力に一致する。空の入力(``vol`` が 0 要素)は ValueError。"""
     c = _check_cutoff(cutoff, "cutoff")
     return _apply_transfer(vol, spacing, lambda f: np.exp(-(f * f) / (2.0 * c * c)))
 
@@ -150,7 +153,8 @@ def vol_fft_highpass(vol, cutoff, spacing=None):
     ``MAX_VOXELS`` 超 / cutoff・spacing 不正)。
 
     使いどころ: 照明むら・厚みドリフト・背景勾配の除去(``vol_fft_lowpass`` の結果を
-    引くのと同値)。周期的とみなす FFT の性質上、面どうしの輝度差は wrap で漏れる。"""
+    引くのと同値)。周期的とみなす FFT の性質上、面どうしの輝度差は wrap で漏れる。
+    空の入力(``vol`` が 0 要素)は ValueError。"""
     c = _check_cutoff(cutoff, "cutoff")
     return _apply_transfer(vol, spacing,
                            lambda f: 1.0 - np.exp(-(f * f) / (2.0 * c * c)))
@@ -176,7 +180,7 @@ def vol_fft_bandpass(vol, low, high, spacing=None):
 
     使いどころ: 1 つのテクスチャスケールの抽出、周期的な縞・リングアーティファクト帯
     を取り出して入力から引く。``vol_fft_lowpass(vol, high) - vol_fft_lowpass(vol, low)``
-    と同値。"""
+    と同値。空の入力(``vol`` が 0 要素)は ValueError。"""
     lo = _check_cutoff(low, "low")
     hi = _check_cutoff(high, "high")
     if lo >= hi:

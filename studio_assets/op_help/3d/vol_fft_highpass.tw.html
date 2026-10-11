@@ -8,7 +8,7 @@
 <p>傳遞函數為 <code style="color:#22d3bf">1 - exp(-|f|^2 / (2 cutoff^2))</code>。DC(<code style="color:#22d3bf">f = 0</code>)係數為 0,因此平均輝度被完全去除,在 <code style="color:#22d3bf">|f| = cutoff</code> 處為 <code style="color:#22d3bf">1 - 0.61 ≈ 0.39</code>,頻率越高越接近 1。回傳值是與輸入相同 <code style="color:#22d3bf">(D, H, W)</code> 的 float64,且 <b>帶符號</b>(含負值)。若要傳給以 <code style="color:#22d3bf">[0, 1]</code> 為前提的後級(顯示、<code style="color:#22d3bf">vol_window_level</code> 等),請用 <code style="color:#22d3bf">vol_stretch</code> 正規化,或以 <code style="color:#22d3bf">vol + highpass</code> 的形式使用。</p>
 <p>參數: <code style="color:#22d3bf">cutoff</code> 為正有限值。<code style="color:#22d3bf">spacing=None</code> 時為 cycles/voxel,傳入 <code style="color:#22d3bf">spacing</code> (<code style="color:#22d3bf">(sz, sy, sx)</code> 或 <code style="color:#22d3bf">volio.VolumeMeta</code>)時為 cycles/mm。</p>
 <p>驗證(<code style="color:#22d3bf">ValueError</code>): 與 <code style="color:#22d3bf">vol_fft_lowpass</code> 相同(不是 3-D / NaN、Inf / 超過 <code style="color:#22d3bf">MAX_VOXELS</code> / cutoff、spacing 不合法)。</p>
-<p>使用時機: 去除照明不均、厚度漂移、背景梯度(等同於減去 <code style="color:#22d3bf">vol_fft_lowpass</code> 的結果)。由於 FFT 將 volume 視為週期性的,各面之間的輝度差會經 wrap 洩漏。</p>
+<p>使用時機: 去除照明不均、厚度漂移、背景梯度(等同於減去 <code style="color:#22d3bf">vol_fft_lowpass</code> 的結果)。由於 FFT 將 volume 視為週期性的,各面之間的輝度差會經 wrap 洩漏。空輸入(<code style="color:#22d3bf">vol</code> 為 0 個元素)會引發 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

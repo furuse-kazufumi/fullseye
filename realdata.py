@@ -143,7 +143,10 @@ def sample_stereo_pair():
 
 
 def sample_photo_credit(names) -> str:
-    """公開図に添える帰属表記を組み立てる。"""
+    """サンプル写真の名前の列から、公開図に添える帰属表記(出典・ライセンス)を組み立てる。
+
+    1 行 1 枚で ``名前 — 出典 (ライセンス) [引用]`` を改行で連ねた文字列を返す。
+    """
     out = []
     for n in names:
         _fn, _k, lic, src, _pub, cite = SAMPLE_PHOTOS[n]

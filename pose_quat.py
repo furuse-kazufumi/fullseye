@@ -41,22 +41,41 @@ def _unit(v, what, hint):
 
 # ── 四元数 ─────────────────────────────────────────────────────────────────── #
 def axis_angle_to_quat(ax, ay, az, angle):
+    """回転軸 ``(ax, ay, az)`` と回転角 ``angle``(ラジアン)から単位四元数 ``(w, x, y, z)`` を作る。
+
+    軸は内部で単位化する(長さは問わない)。``w = cos(angle/2)``、``(x, y, z) = 軸 · sin(angle/2)``。
+    右手系で、軸の正の向きから見て反時計回りが正の角。**Raises** ``ValueError``: 軸の長さが 0 / 非有限。
+    """
     n = _unit(np.array([ax, ay, az], float), "the rotation axis (ax, ay, az)",
               "there is no rotation to describe")
     return np.concatenate([[np.cos(angle / 2)], n * np.sin(angle / 2)])
 
 
 def quat_normalize(q):
+    """四元数 ``(w, x, y, z)`` を長さ 1 に正規化して返す(回転を表す形にする)。
+
+    長さで厳密に割る(微小量を足して縮ませない)。**Raises** ``ValueError``: 長さ 0 / 非有限
+    (回転を表さないものを「回転しない」に化けさせない)。
+    """
     return _unit(_q(q), "the quaternion",
                  "it denotes no rotation (a rotor must have unit length)")
 
 
 def quat_conjugate(q):
+    """四元数 ``(w, x, y, z)`` の共役 ``(w, −x, −y, −z)`` を返す(単位四元数なら逆回転)。
+
+    四元数は ``(w, x, y, z)``(スカラー部が先頭)、積は Hamilton 積。
+    """
     q = _q(q)
     return np.array([q[0], -q[1], -q[2], -q[3]])
 
 
 def quat_compose(q1, q2):
+    """2 つの四元数の Hamilton 積 ``q1 ⊗ q2`` を返す(回転の合成: 先に q2、次に q1)。
+
+    四元数は ``(w, x, y, z)``(スカラー部が先頭)、積は Hamilton 積。 点への作用は ``q p q*`` なので、
+    ``quat_compose(q1, q2)`` は「q2 で回してから q1 で回す」回転になる。正規化はしない。
+    """
     w1, x1, y1, z1 = _q(q1)
     w2, x2, y2, z2 = _q(q2)
     return np.array([
@@ -67,6 +86,11 @@ def quat_compose(q1, q2):
 
 
 def quat_to_hom_mat3d(q):
+    """四元数 ``(w, x, y, z)`` を 4×4 同次変換行列(回転のみ、並進 0)に変換する。
+
+    入力は先に :func:`quat_normalize` で単位化する。行列は列ベクトルに左から掛ける規約
+    (``p' = R p``)で、:func:`quat_rotate_point_3d` と同じ回転を表す。
+    """
     w, x, y, z = quat_normalize(q)
     R = np.array([[1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)],
                   [2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x)],
@@ -77,13 +101,22 @@ def quat_to_hom_mat3d(q):
 
 
 def quat_rotate_point_3d(q, px, py, pz):
+    """四元数 ``q = (w, x, y, z)`` で 3-D 点 ``(px, py, pz)`` を回転し、``(3,)`` 配列で返す。
+
+    ``q p q*``(``p`` は純四元数 ``(0, px, py, pz)``)で計算する能動回転(同じ座標系の中で点を回す)。
+    ``q`` は単位四元数を渡すこと(正規化はしない —— 長さ s の四元数は点を s² 倍に伸ばす)。
+    """
     qp = np.concatenate([[0.0], [px, py, pz]])
     r = quat_compose(quat_compose(q, qp), quat_conjugate(q))
     return r[1:]
 
 
 def quat_interpolate(q1, q2, t=0.5):
-    """slerp 球面線形補間。"""
+    """2 つの回転(四元数 ``(w, x, y, z)``)の間を球面線形補間(slerp)する。
+
+    ``t = 0`` で ``q1``、``t = 1`` で ``q2``。両方を単位化し、内積が負なら ``q2`` の符号を反転して
+    短い方の弧を通る。ほぼ同じ回転(内積 > 0.9995)は線形補間 + 正規化に切り替える。
+    """
     q1, q2 = quat_normalize(q1), quat_normalize(q2)
     d = float(np.dot(q1, q2))
     if d < 0:
@@ -170,6 +203,11 @@ def _R_to_euler(R):
 
 
 def create_pose(tx=0.0, ty=0.0, tz=0.0, rx=0.0, ry=0.0, rz=0.0):
+    """並進 ``(tx, ty, tz)`` と回転角 ``(rx, ry, rz)``(ラジアン)から pose の 6 要素ベクトルを作る。
+
+    回転は ``R = Rz(rz) · Ry(ry) · Rx(rx)``(:func:`pose_to_hom_mat3d_local`)、点は
+    ``p' = R p + t``。並進の単位は呼び手の座標の単位。HALCON の 7 番目の type 要素は付けない。
+    """
     return np.array([tx, ty, tz, rx, ry, rz], float)
 
 
@@ -184,16 +222,30 @@ def pose_to_hom_mat3d_local(pose):
 
 
 def hom_mat3d_to_pose_local(H):
+    """4×4 同次変換行列を pose ``(tx, ty, tz, rx, ry, rz)``(角はラジアン)に戻す。
+
+    回転部を ``R = Rz · Ry · Rx`` と分解する(:func:`pose_to_hom_mat3d_local` の逆)。``ry = ±90°``
+    (ジンバルロック)では ``rx`` と ``rz`` は和・差しか決まらないので ``rx = 0`` に固定する。
+    """
     H = np.asarray(H, float)
     rx, ry, rz = _R_to_euler(H[:3, :3])
     return np.array([H[0, 3], H[1, 3], H[2, 3], rx, ry, rz])
 
 
 def pose_compose(p1, p2):
+    """2 つの pose を合成する: 行列で ``H(p1) · H(p2)``(先に p2、次に p1 を当てる)。
+
+    pose は ``(tx, ty, tz, rx, ry, rz[, type])``(角はラジアン、``R = Rz·Ry·Rx``、``p' = R p + t``)。
+    3×3 / 4×4 の行列も受ける。返りは 6 要素の pose。
+    """
     return hom_mat3d_to_pose_local(pose_to_hom_mat3d_local(p1) @ pose_to_hom_mat3d_local(p2))
 
 
 def pose_invert(p):
+    """pose の逆変換(``H(p)⁻¹``)を 6 要素の pose で返す。
+
+    ``pose_compose(p, pose_invert(p))`` は恒等(丸め誤差まで)。規約は :func:`pose_compose` と同じ。
+    """
     return hom_mat3d_to_pose_local(np.linalg.inv(pose_to_hom_mat3d_local(p)))
 
 
@@ -203,11 +255,21 @@ def pose_to_quat(pose):
 
 
 def quat_to_pose(q, tx=0.0, ty=0.0, tz=0.0):
+    """四元数 ``(w, x, y, z)`` の回転と並進 ``(tx, ty, tz)`` から pose ``(tx, ty, tz, rx, ry, rz)`` を作る。
+
+    回転は :func:`quat_to_hom_mat3d` で行列にしてから ``R = Rz·Ry·Rx`` の角(ラジアン)に分解する。
+    """
     rx, ry, rz = _R_to_euler(quat_to_hom_mat3d(q)[:3, :3])
     return np.array([tx, ty, tz, rx, ry, rz])
 
 
 def pose_average(poses):
+    """複数の pose の平均(並進は算術平均、回転は四元数の符号を揃えた平均を正規化)を返す。
+
+    ``poses`` は (N, 6) の pose の並び。四元数は最初の 1 つとの内積が負なら符号を反転してから
+    平均する(``q`` と ``−q`` は同じ回転なので、揃えないと ±179° の組が恒等に潰れる)。回転が互いに近い
+    ときの近似(厳密な回転の平均ではない)。
+    """
     poses = np.asarray(poses, float).reshape(-1, 6)
     t = poses[:, :3].mean(0)
     qs = np.array([pose_to_quat(p) for p in poses])
@@ -226,11 +288,21 @@ def convert_pose_type(pose, order="xyz"):
 
 
 def get_pose_type(pose):
+    """pose の型を返す。この実装の pose は常に ``"point_3d_and_euler_xyz"``(並進 + 角)。
+
+    HALCON の ``get_pose_type`` に合わせた口で、回転の順は ``R = Rz·Ry·Rx``(角はラジアン)。
+    引数の中身は見ない(どの pose を渡しても同じ文字列)。
+    """
     return "point_3d_and_euler_xyz"
 
 
 # ── 球面座標 ───────────────────────────────────────────────────────────────── #
 def convert_point_3d_cart_to_spher(x, y, z):
+    """直交座標の点 ``(x, y, z)`` を球面座標 ``(r, lon, lat)`` に変換する(角はラジアン)。
+
+    ``r = |p|``、経度 ``lon = atan2(y, x)``(x 軸から、z 軸まわりに反時計回り)、緯度
+    ``lat = asin(z / r)``(xy 平面から z の正の向きへ)。原点では ``lat = 0``。
+    """
     r = np.sqrt(x * x + y * y + z * z)
     lon = np.arctan2(y, x)
     lat = np.arcsin(np.clip(z / (r + 1e-12), -1, 1))
@@ -238,6 +310,11 @@ def convert_point_3d_cart_to_spher(x, y, z):
 
 
 def convert_point_3d_spher_to_cart(r, lon, lat):
+    """球面座標 ``(r, lon, lat)``(角はラジアン)を直交座標 ``(x, y, z)`` に戻す。
+
+    ``x = r cos(lat) cos(lon)``、``y = r cos(lat) sin(lon)``、``z = r sin(lat)``
+    (:func:`convert_point_3d_cart_to_spher` の逆)。
+    """
     return np.array([r * np.cos(lat) * np.cos(lon),
                      r * np.cos(lat) * np.sin(lon),
                      r * np.sin(lat)])
@@ -254,6 +331,11 @@ def pose_to_dual_quat(pose):
 
 
 def dual_quat_to_pose(dq):
+    """双対四元数 ``(qr[4], qd[4])`` を pose ``(tx, ty, tz, rx, ry, rz)`` に戻す。
+
+    並進は ``t = 2 · qd ⊗ qr*`` のベクトル部、回転は ``qr`` から(:func:`quat_to_pose`)。
+    :func:`pose_to_dual_quat` の逆。四元数は ``(w, x, y, z)``。
+    """
     dq = _q(dq)
     qr, qd = dq[:4], dq[4:8]
     t = 2 * quat_compose(qd, quat_conjugate(qr))
@@ -261,6 +343,11 @@ def dual_quat_to_pose(dq):
 
 
 def dual_quat_normalize(dq):
+    """双対四元数 ``(qr[4], qd[4])`` を実部 ``qr`` の長さで割って正規化する。
+
+    8 成分すべてを ``|qr|`` で割る(``qr`` と ``qd`` の直交条件までは直さない)。
+    **Raises** ``ValueError``: ``qr`` の長さが 0 / 非有限(剛体変換を表さない)。
+    """
     dq = _q(dq)
     n = float(np.linalg.norm(dq[:4]))
     if n == 0.0 or not np.isfinite(n):
@@ -270,11 +357,19 @@ def dual_quat_normalize(dq):
 
 
 def dual_quat_conjugate(dq):
+    """双対四元数 ``(qr, qd)`` の四元数共役 ``(qr*, qd*)`` を返す(単位双対四元数なら逆の剛体変換)。
+
+    実部・双対部それぞれのベクトル部の符号を反転する(双対数としての共役 ``qr − ε qd`` ではない)。
+    """
     dq = _q(dq)
     return np.concatenate([quat_conjugate(dq[:4]), quat_conjugate(dq[4:8])])
 
 
 def dual_quat_trans_point_3d(dq, px, py, pz):
+    """双対四元数の剛体変換で 3-D 点 ``(px, py, pz)`` を写し、``(3,)`` 配列で返す。
+
+    ``p' = R p + t``(回転 ``R`` は実部 ``qr``、並進 ``t`` は :func:`dual_quat_to_pose` から)。
+    """
     return dual_quat_to_pose(dq)[:3] + quat_rotate_point_3d(_q(dq)[:4], px, py, pz)
 
 

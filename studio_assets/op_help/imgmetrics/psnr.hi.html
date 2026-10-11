@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.psnr(a, b, data_range=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.psnr(a, b, data_range=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;psnr&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>peak signal-to-noise ratio [dB]।</p>
+<p>दो images का peak signal-to-noise ratio (PSNR, dB में) लौटाता है।</p>
 <p>पूरी तरह समान 2 images पर यह <b><code style="color:#22d3bf">inf</code></b> लौटाता है (0 से भाग को चुपचाप टालने के लिए कोई छोटा मान नहीं जोड़ता -- वह &quot;बहुत अच्छे मेल&quot; को एक finite संख्या में बदल देता, और औसत लेने पर झूठ बन जाता)।</p>
 <p><code style="color:#22d3bf">data_range</code> कैसे तय करें, इसके लिए <code style="color:#22d3bf">data_range_of</code> देखें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

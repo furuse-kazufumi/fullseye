@@ -17,7 +17,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-建物列を押し出し柱メッシュにまとめる。
+建物の足跡(footprint)を高さまで押し出し、1 つの三角形メッシュにまとめる。
 
 Args:
     buildings: ``plateau_parse`` の ``buildings``(``footprint``, ``height``, ``ground_z``)。

@@ -304,7 +304,10 @@ def membrane_recover(rgb, lights, pitch: float, ambient: float = 0.0, albedo: fl
     Woodham の線形模型は持たないので、引かないと法線が z 側へ寄り、傾きが ambient/sin(仰角) ≈ 3.7 %(0.03/0.82)系統的に
     小さく出る —— 実機の参照フレーム較正に当たる。試作で δ が 3.5 % 低かった原因)。
     返り: ``normals``(H, W, 3)、``albedo``(H, W)、``height``(H, W)[m、平均 0 の相対値]、``pitch``。
-    **Raises** ``ValueError``: rgb が (H, W, 3) でない、pitch ≤ 0、ambient < 0。"""
+    **Raises** ``ValueError``: rgb が (H, W, 3) でない、pitch ≤ 0、ambient < 0。
+    空の入力(``rgb`` が 0 要素)は ValueError。"""
+    if np.asarray(rgb).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("membrane_recover: rgb is empty — pass at least one element")
     img = np.asarray(rgb, np.float64)
     if img.ndim != 3 or img.shape[2] != 3:
         raise ValueError("membrane_recover: rgb must be (H, W, 3)")
@@ -527,7 +530,10 @@ def membrane_delta_from_normals(normals, X, Y, pitch: float, tail: str = "boussi
     ``tail="boussinesq"`` なら遠方場 ū_z ≈ C/r(点荷重の Boussinesq 解、Johnson §3.2)から残りの裾 ū_z(r_max) = r_max · s̄(r_max)
     を足す(窓の端の最後の 3 ビンの中央値)。``tail="none"`` は裾なし(有限窓の過小評価をそのまま返す —— 間違いの量を測るため)。
 
-    高さの FFT 積分を通らないので振幅の減衰を受けない。返り: δ [m]。**Raises** ``ValueError``: 未知の tail、pitch ≤ 0。"""
+    高さの FFT 積分を通らないので振幅の減衰を受けない。返り: δ [m]。**Raises** ``ValueError``: 未知の tail、pitch ≤ 0。
+    空の入力(``normals`` が 0 要素)は ValueError。"""
+    if np.asarray(normals).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("membrane_delta_from_normals: normals is empty — pass at least one element")
     if tail not in ("boussinesq", "none"):
         raise ValueError("membrane_delta_from_normals: tail must be 'boussinesq' | 'none', got %r" % (tail,))
     nrm = np.asarray(normals, np.float64)

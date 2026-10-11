@@ -1572,6 +1572,7 @@ __version__ = _resolve_version()
 
 
 def version() -> str:
+    """インストールされている fullseye パッケージの版(``"0.6.0"`` のような文字列)を返す。"""
     return __version__
 
 
@@ -1589,19 +1590,23 @@ _ALIAS_CANONICAL = {
 
 
 def find_op(name: str):
-    # ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、
-    # `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると
-    # 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-    if not isinstance(name, str) or not name.strip():
-        return None
-    """Return the :class:`ops.Op` for *name*, or ``None``.
+    """op 名か HALCON 別名から 2-D レジストリの :class:`ops.Op` を引く(無ければ ``None``)。
+
+    Return the :class:`ops.Op` for *name*, or ``None``.
 
     Exact op name wins; only then the HALCON alias, preferring the canonical op
     (``name == halcon``) when several ops share an alias, then the explicit
     ``_ALIAS_CANONICAL`` row, and only as a last resort the first registered hit.
     Identical rule to the CLI's ``_find_op`` so programmatic and command-line
-    resolution agree.
+    resolution agree. An empty or blank name (or a non-string) is ``None``.
     """
+    # ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、
+    # `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると
+    # 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+    # ★2026-10-11: このコメントと判定が docstring より**前**にあったので、関数に docstring が
+    #   無かった(``find_op.__doc__`` が None)。説明の門(台帳・facade 版)が拾った。
+    if not isinstance(name, str) or not name.strip():
+        return None
     for o in _ops.REGISTRY:
         if o.name == name:
             return o
@@ -3116,6 +3121,10 @@ def op_names(include_nary: bool = False) -> list[str]:
 
 
 def categories() -> list[str]:
+    """2-D レジストリ(``fullseye.op``)の op が属する分類名の一覧を、重複なしの昇順で返す。
+
+    ``list_ops()`` の行の ``category`` と同じ語。台帳層(``fullseye.ledger``)の分類は含まない。
+    """
     return sorted({o.category for o in _ops.REGISTRY})
 
 

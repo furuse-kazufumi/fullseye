@@ -11,7 +11,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cutoff</code>: 正有限值。<code style="color:#22d3bf">spacing=None</code> 时为 <b>cycles/voxel</b>(Nyquist = 0.5), 传入 <code style="color:#22d3bf">spacing=(sz, sy, sx)</code>(mm,或带 <code style="color:#22d3bf">spacing_mm</code> 的 <code style="color:#22d3bf">volio.VolumeMeta</code>)时为 <b>cycles/mm</b>。各向异性 voxel 时按轴用 <code style="color:#22d3bf">fftfreq(n, d=spacing)</code> 换算为物理频率,因此相同的物理结构得到相同处理。</p>
 <p style="margin:2px 0 2px 12px">• 衰减为 Gaussian,在 <code style="color:#22d3bf">|f| = cutoff</code> 处为 <code style="color:#22d3bf">exp(-1/2) ≈ 0.61</code>(不是 brick-wall。不会出现振铃)。</p>
 <p>校验(<code style="color:#22d3bf">ValueError</code>): 不是 3-D / NaN、Inf / voxel 数超过 <code style="color:#22d3bf">MAX_VOXELS</code>(<code style="color:#22d3bf">1 &lt;&lt; 27</code>) / <code style="color:#22d3bf">cutoff</code> 非正、非有限、小到 2 次方会下溢 / <code style="color:#22d3bf">spacing</code> 长度不为 3、非正。</p>
-<p>注意: FFT 将 volume 视为周期性的。若相对两面的亮度差很大,会跨越 wrap 泄漏(不会默默加窗)。<code style="color:#22d3bf">vol_fft_highpass</code> 严格是其补集 <code style="color:#22d3bf">1 - lowpass</code>,两者之和等于输入。</p>
+<p>注意: FFT 将 volume 视为周期性的。若相对两面的亮度差很大,会跨越 wrap 泄漏(不会默默加窗)。<code style="color:#22d3bf">vol_fft_highpass</code> 严格是其补集 <code style="color:#22d3bf">1 - lowpass</code>,两者之和等于输入。空输入(<code style="color:#22d3bf">vol</code> 为 0 个元素)会引发 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

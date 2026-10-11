@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">gradient</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gradient3d(vol, sigma: &#x27;float&#x27; = 1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import edges3d; edges3d.gradient3d(vol, sigma: &#x27;float&#x27; = 1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;gradient3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>Gaussian smoothing के बाद central difference gradient की गणना करता है।</p>
+<p>volume को Gaussian से smooth करके central differences से 3-D gradient (परिमाण और vector) निकालता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>vol : (D,H,W) array</p>
 <p>grey voxel।</p>

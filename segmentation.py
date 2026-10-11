@@ -24,7 +24,11 @@ def check_difference(image, ref_image, tol=0.1):
 
 
 def class_2dim_sup(image1, image2, ref_region):
-    """2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。"""
+    """2 チャネル特徴空間で ref_region の分布に入る画素を分類(教師つき)(class_2dim_sup)。
+
+    空の入力(``image1`` が 0 要素)は ValueError。"""
+    if np.asarray(image1).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("class_2dim_sup: image1 is empty — pass at least one element")
     a = _img(image1); b = _img(image2); m = np.asarray(ref_region, bool)
     fa = a[m]; fb = b[m]
     lo_a, hi_a = fa.min(), fa.max(); lo_b, hi_b = fb.min(), fb.max()
@@ -80,7 +84,11 @@ def classify_image_class_lut(image, lut):
 
 
 def expand_gray(image, seed_region, tol=0.05):
-    """seed から gray 類似(|Δ|<tol)で領域を膨張(expand_gray)。"""
+    """seed から gray 類似(|Δ|<tol)で領域を膨張(expand_gray)。
+
+    空の入力(``image`` が 0 要素)は ValueError。"""
+    if np.asarray(image).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("expand_gray: image is empty — pass at least one element")
     from scipy.ndimage import binary_dilation
     im = _img(image); reg = np.asarray(seed_region, bool).copy()
     ref = im[reg].mean() if reg.any() else 0.0

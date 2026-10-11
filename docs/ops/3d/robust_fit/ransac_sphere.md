@@ -17,7 +17,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-外れ値に頑健な RANSAC 球適合。
+外れ値に頑健な RANSAC で点群に球(中心と半径)を当てる。
 
 4 点をサンプル → 線形法(代数フィット)で球中心・半径 → |‖p-c‖ - r| < ``thresh`` の
 inlier を最大化 → 最終 inlier で最小二乗リフィット。配管ボール/球面計測用。

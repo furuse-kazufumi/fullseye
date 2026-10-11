@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_point_plane(p, plane_pt, n)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.distance_point_plane(p, plane_pt, n)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;distance_point_plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>点-平面距离(无符号)。</p>
+<p>返回点到平面的距离(无符号,单位与输入坐标相同)。</p>
 <p>以 float 返回 <code style="color:#22d3bf">|(p − plane_pt)·n̂|</code>(<code style="color:#22d3bf">n</code> 在内部单位化)。符号被丢弃,因此若需要知道在面的哪一侧, 请直接计算 <code style="color:#22d3bf">(p − plane_pt) @ n̂</code>。<code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">plane_pt</code>, <code style="color:#22d3bf">n</code> 为数值的 2 或 3 维向量,维度混用则 ValueError。在 2-D 中 <code style="color:#22d3bf">n</code> 作为直线的法线,结果为点到直线的距离。零向量的 <code style="color:#22d3bf">n</code> 返回 0。单位为输入坐标的单位。</p>
 <p>用途: 距 <code style="color:#22d3bf">fit_plane_3d</code> / <code style="color:#22d3bf">hough_plane_3d</code> 平面的高度,<code style="color:#22d3bf">surface_form_error</code> 的点云版(每次 1 个点给出残差)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

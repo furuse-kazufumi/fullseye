@@ -114,6 +114,12 @@ _MATCH_CTX = _MatchCtx()
 
 
 def set_match_template(t) -> None:
+    """テンプレートマッチング系 op が使うテンプレート画像を、このスレッドに登録する(``None`` で解除)。
+
+    マッチング系 op は ``a`` / ``b`` しか取らないので、テンプレートは引数ではなくここで
+    スレッドローカルな ``_MATCH_CTX`` に先に置く(float64 の配列にして保持)。未登録のまま
+    呼ぶとそれらの op は no-match(``[0, 0, 0]``)を返す。
+    """
     _MATCH_CTX["template"] = None if t is None else np.asarray(t, np.float64)
 
 

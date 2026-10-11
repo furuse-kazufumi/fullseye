@@ -40,7 +40,7 @@ Returns ``{"euler": chi, "objects": b0, "tunnels": b1, "cavities": b2,
 it inherits the exactness of the other three.
 
 HALCON's ``euler_number`` is 2-D (regions) only; there is no voxel
-equivalent.
+equivalent. Empty input (``vol_binary`` with 0 elements) raises ``ValueError``.
 
 ## 参考(サンプルデータ・文献)
 

@@ -22,6 +22,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 を足す(窓の端の最後の 3 ビンの中央値)。``tail="none"`` は裾なし(有限窓の過小評価をそのまま返す —— 間違いの量を測るため)。
 
 高さの FFT 積分を通らないので振幅の減衰を受けない。返り: δ [m]。**Raises** ``ValueError``: 未知の tail、pitch ≤ 0。
+空の入力(``normals`` が 0 要素)は ValueError。
 
 ## 参考(サンプルデータ・文献)
 

@@ -3,7 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">any</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jp_pole_mesh(*, height: &#x27;float&#x27; = 10.0, r: &#x27;float&#x27; = 0.17)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivejapan; drivejapan.jp_pole_mesh(*, height: &#x27;float&#x27; = 10.0, r: &#x27;float&#x27; = 0.17)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;jp_pole_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>बिजली का खंभा (concrete खंभा + crossarm)।</p>
+<p>जापानी बिजली के खंभे (concrete खंभा + crossarm) का triangle mesh बनाता है।</p>
+<p>लौटाता है <code style="color:#22d3bf">(V, F, colors)</code>: vertices (n, 3) [m], faces (m, 3), हर face का रंग (m, 3) (0..1)। खंभा त्रिज्या <code style="color:#22d3bf">r</code> [m] और ऊँचाई <code style="color:#22d3bf">height</code> [m] का बेलन है (z ऊपर, आधार origin पर); crossarm शीर्ष से 1 m नीचे बगल में 1.8 m फैला है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

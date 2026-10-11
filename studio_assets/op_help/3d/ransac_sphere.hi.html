@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_sphere(points, thresh, iters=500, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_sphere(points, thresh, iters=500, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;ransac_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
-<p>outliers के प्रति robust RANSAC sphere fitting।</p>
+<p>outliers के प्रति robust RANSAC से point cloud पर गोला (केंद्र और त्रिज्या) fit करता है।</p>
 <p>4 points sample करें → linear method (algebraic fit) से sphere का centre और radius → |‖p-c‖ - r| &lt; <code style="color:#22d3bf">thresh</code> वाले inlier को maximise करें → अंतिम inlier पर least squares refit। pipe ball / spherical surface मापन के लिए।</p>
 <p>Args:</p>
 <p>points: (N,3) point cloud।</p>

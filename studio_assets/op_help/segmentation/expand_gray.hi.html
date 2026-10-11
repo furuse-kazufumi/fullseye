@@ -4,6 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.expand_gray(image, seed_region, tol=0.05)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segmentation; segmentation.expand_gray(image, seed_region, tol=0.05)</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;expand_gray&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>seed से grey समानता (|Δ|&lt;tol) द्वारा region फैलाता है (expand_gray)।</p>
+<p>खाली input (<code style="color:#22d3bf">image</code> में 0 elements) पर ValueError आता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

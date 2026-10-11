@@ -98,7 +98,10 @@ def mean_edge_error(poses, edges):
     並進のスケールが大きいシーンでは並進項が支配的になるので、単位を揃えたいときは ``w_rot`` /
     ``w_trans`` で重み付けする。エッジ添字の範囲検証はこの関数では行わない(負の添字は numpy の
     折り返しで別ノードを黙って参照する。``optimize_pose_graph`` は検証する)。
+    空の入力(``poses`` が 0 要素)は ValueError。
     """
+    if np.asarray(poses).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("mean_edge_error: poses is empty — pass at least one element")
     r = pose_graph_residuals(poses, edges)
     return float(np.sqrt(np.mean(r ** 2))) if len(r) else 0.0
 

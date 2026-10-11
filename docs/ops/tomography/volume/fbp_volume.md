@@ -39,7 +39,7 @@ tomographic volume becomes a wrong number — see
 :param span_deg: angular range for the ``d(theta)`` weight.
 :returns: ``(Z, size, size)`` float64 volume.
 :raises ValueError: on a non-3-D stack, or an output over
-    :data:`MAX_STACK_ELEMENTS`.
+    :data:`MAX_STACK_ELEMENTS`. Empty input (``stack`` with 0 elements) raises ``ValueError``.
 
 ## 参考(サンプルデータ・文献)
 

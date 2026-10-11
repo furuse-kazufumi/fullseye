@@ -132,9 +132,15 @@ def promises_empty_refusal(doc: str, first=None, others=()) -> bool:
 
     A promise that names another parameter right next to the empty-word (``pts1 が空``) is
     about that parameter, not the first one; a docstring that says empty input is accepted
-    is not a promise at all.
+    is not a promise at all -- unless a promise names the first parameter itself
+    (``空の入力(``vertices`` が 0 要素)は ValueError`` beside "empty FACES are accepted").
     """
     d = re.sub(r"\s+", " ", doc or "")
+    if first:
+        named = re.compile(r"((?<!非)空(?![%s])の入力[(（]|(?i:\bempty input) \()``%s``"
+                           % (_NOT_EMPTY, re.escape(first)))
+        if any(named.search(d[m.start():m.end()]) for p in _PROMISE for m in p.finditer(d)):
+            return True
     if any(p.search(d) for p in _ACCEPTS):
         return False
     for p in _PROMISE:

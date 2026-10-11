@@ -47,7 +47,7 @@ Raises
 ------
 ValueError
     Non-3-D / non-finite input, percentiles out of ``[0, 100]``, or
-    ``p_low >= p_high``.
+    ``p_low >= p_high``. Empty input (``vol`` with 0 elements) raises ``ValueError``.
 
 ## 参考(サンプルデータ・文献)
 

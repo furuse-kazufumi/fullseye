@@ -524,7 +524,11 @@ def jp_crossbuck_mesh(*, arm: float = 1.2, height: float = 3.0):
 
 
 def jp_pole_mesh(*, height: float = 10.0, r: float = 0.17):
-    """電柱(コンクリート柱 + 腕金)。"""
+    """日本の電柱(コンクリート柱 + 腕金)の三角形メッシュを作る。
+
+    返り ``(V, F, colors)``: 頂点 (n, 3) [m]・面 (m, 3)・面ごとの色 (m, 3)(0..1)。柱は半径 ``r`` [m]・高さ
+    ``height`` [m] の円柱(z 上向き、足元が原点)、腕金は頂上の 1 m 下に横向き 1.8 m。
+    """
     parts = [_cylinder(r, height, n=10) + ((0.66, 0.65, 0.62),), _box(0.1, 1.8, 0.1, z0=height - 1.0) + ((0.30, 0.30, 0.32),)]
     return _merge(parts)
 

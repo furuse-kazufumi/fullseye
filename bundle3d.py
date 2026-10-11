@@ -82,7 +82,7 @@ def reprojection_residuals(cameras, points, obs_cam, obs_pt, obs_uv, K):
 
 
 def mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K):
-    """再投影 RMS 誤差(ピクセル)。
+    """バンドル調整の全観測について再投影誤差の RMS(ピクセル)を返す。
 
     全観測 k について ``project(points[obs_pt[k]], cameras[obs_cam[k]])`` と ``obs_uv[k]`` の差
     (du, dv) を取り、``sqrt(mean_k(du² + dv²))`` = 観測ごとの再投影距離の 2 乗平均平方根を float で
@@ -97,7 +97,10 @@ def mean_reprojection_error(cameras, points, obs_cam, obs_pt, obs_uv, K):
     ``bundle_adjust`` の返り値 ``rmse`` と同じ計算で、最適化前後の比較に使う。観測が 0 件だと空の
     平均で NaN になる(長さの検証は ``bundle_adjust`` 側にあり、この関数単体では行わない)。
     カメラ後方の点も ``project`` がそのまま射影するので、可視性は呼び出し側で保証する。
+    空の入力(``cameras`` が 0 要素)は ValueError。
     """
+    if np.asarray(cameras).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("mean_reprojection_error: cameras is empty — pass at least one element")
     r = reprojection_residuals(cameras, points, obs_cam, obs_pt, obs_uv, K)
     return float(np.sqrt(np.mean(r.reshape(-1, 2) ** 2 * 2)))
 

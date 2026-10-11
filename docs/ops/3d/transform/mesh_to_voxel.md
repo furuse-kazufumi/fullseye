@@ -32,6 +32,7 @@ mesh(頂点+面)→ 密度 voxel。面上を一様サンプリング → splat(m
 返り値 ``(size, size, size)`` float64 の点密度(占有ではない。占有が要るなら閾値で
 2 値化)。軸順は頂点座標の列順。seed を変えたい・点群も欲しいときは ``mesh_to_points`` で
 点群を作ってから ``points_to_voxel`` へ。
+空の入力(``vertices`` が 0 要素)は ValueError。
 
 ## 参考(サンプルデータ・文献)
 

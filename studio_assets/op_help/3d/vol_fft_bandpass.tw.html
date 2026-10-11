@@ -8,7 +8,7 @@
 <p>轉移函數為 <code style="color:#22d3bf">exp(-|f|^2 / (2 high^2)) - exp(-|f|^2 / (2 low^2))</code>。在 DC 處為 <code style="color:#22d3bf">1 - 1 = 0</code>,因此平均輝度被去除,只留下峰值位於 <code style="color:#22d3bf">low</code> 與 <code style="color:#22d3bf">high</code> 之間的高斯差分(DoG 型)頻帶。峰高達不到 1(因為是 2 個 Gaussian 之差, <code style="color:#22d3bf">low</code> 與 <code style="color:#22d3bf">high</code> 越接近,通過量越小)。回傳值是與輸入相同 <code style="color:#22d3bf">(D, H, W)</code> 的 float64,帶正負號。</p>
 <p>參數:必須 <code style="color:#22d3bf">low &lt; high</code>(兩者皆為正的有限值)。單位在 <code style="color:#22d3bf">spacing=None</code> 時為 cycles/voxel,指定 <code style="color:#22d3bf">spacing</code> 時為 cycles/mm。若以週期(voxel 或 mm)思考, <code style="color:#22d3bf">1/high</code> 是最小結構尺寸,<code style="color:#22d3bf">1/low</code> 是最大結構尺寸。</p>
 <p>驗證(<code style="color:#22d3bf">ValueError</code>):非 3-D / NaN、Inf / 超過 <code style="color:#22d3bf">MAX_VOXELS</code> / <code style="color:#22d3bf">low</code>、<code style="color:#22d3bf">high</code> 非正、非有限、2 次方下溢 / <code style="color:#22d3bf">low &gt;= high</code> / <code style="color:#22d3bf">spacing</code> 無效。</p>
-<p>用途:擷取 1 個紋理尺度;取出週期性條紋、環形假影頻帶並從輸入中減去。與 <code style="color:#22d3bf">vol_fft_lowpass(vol, high) - vol_fft_lowpass(vol, low)</code> 等價。</p>
+<p>用途:擷取 1 個紋理尺度;取出週期性條紋、環形假影頻帶並從輸入中減去。與 <code style="color:#22d3bf">vol_fft_lowpass(vol, high) - vol_fft_lowpass(vol, low)</code> 等價。空輸入(<code style="color:#22d3bf">vol</code> 為 0 個元素)會引發 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

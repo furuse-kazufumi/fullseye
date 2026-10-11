@@ -32,6 +32,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 並進のスケールが大きいシーンでは並進項が支配的になるので、単位を揃えたいときは ``w_rot`` /
 ``w_trans`` で重み付けする。エッジ添字の範囲検証はこの関数では行わない(負の添字は numpy の
 折り返しで別ノードを黙って参照する。``optimize_pose_graph`` は検証する)。
+空の入力(``poses`` が 0 要素)は ValueError。
 
 ## 参考(サンプルデータ・文献)
 

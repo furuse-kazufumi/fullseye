@@ -702,7 +702,7 @@ _計 372 ops / 68 categories。_
 
 ### bundle_adjust(3)
 - `bundle_adjust` (`pose, points → table`) — 再投影誤差最小でカメラ姿勢と 3D 点を同時最適化。→ dict{cameras, points, rmse, cost}。 · 例: `bundle_adjust`
-- `mean_reprojection_error` (`pose, points → measurement`) — 再投影 RMS 誤差(ピクセル)。 · 例: `bundle_adjust`
+- `mean_reprojection_error` (`pose, points → measurement`) — バンドル調整の全観測について再投影誤差の RMS(ピクセル)を返す。 · 例: `bundle_adjust`
 - `project` (`points → keypoints`) — 3D 点 (n,3) をカメラ (rvec,t,K) で 2D (n,2) に射影(透視除算)。 · 例: `bundle_adjust`
 
 ### curvature(5)
@@ -726,7 +726,7 @@ _計 372 ops / 68 categories。_
 
 ### deform(4)
 - `tps_fit` (`points, points → deformation`) — 3D Thin-Plate-Spline を制御点対応から当てはめる。 · 例: `nonrigid_deform`
-- `tps_warp` (`deformation, points → points`) — TPS モデルで点群を変形する。 · 例: `nonrigid_deform`
+- `tps_warp` (`deformation, points → points`) — ``tps_fit`` で当てた薄板スプライン(TPS)の変形を点群に適用する。 · 例: `nonrigid_deform`
 - `register_nonrigid` (`points, points → points`) — 非剛体 ICP で ``src`` を ``dst`` へ寄せる。 · 例: `nonrigid_deform`
 - `register_cpd_rigid` (`points, points → pose`) — Coherent Point Drift(CPD)剛体版で回転+並進を EM 推定する。 · 例: `motion_scene`
 
@@ -751,7 +751,7 @@ _計 372 ops / 68 categories。_
 - `vol_tiled_map` (`voxel → voxel`) — Apply a shape-preserving volume operator in overlapping z-slabs to bound peak memory. · 例: `rle_region_efficiency`
 
 ### edges(5)
-- `gradient3d` (`voxel → gradient`) — ガウス平滑後の中心差分勾配を計算する。 · 例: `edges_3d`
+- `gradient3d` (`voxel → gradient`) — ボリュームをガウス平滑してから中心差分で 3-D 勾配(大きさとベクトル)を求める。 · 例: `edges_3d`
 - `canny3d` (`voxel → voxel`) — 3D Canny エッジ検出(非最大抑制 + ヒステリシス)。 · 例: `edges_3d`
 - `log_zero_crossings` (`voxel → voxel`) — Laplacian-of-Gaussian のゼロ交差エッジ。 · 例: `edges_3d`
 - `link_edges` (`voxel → voxel`) — エッジ mask を 26 近傍で連結成分ラベリングする。 · 例: `sensor_seg`
@@ -814,11 +814,11 @@ _計 372 ops / 68 categories。_
 - `line_from_2points` (`points → primitive`) — 2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
 - `plane_from_3points` (`points → primitive`) — 3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
 - `angle_3points` (`points → measurement`) — 3 点のなす角(頂点 b、度)。∠ABC。 · 例: `geometry_metrology`
-- `angle_between_lines` (`primitive → measurement`) — 2 直線方向のなす鋭角(度)。 · 例: `geometry_metrology`
+- `angle_between_lines` (`primitive → measurement`) — 2 直線の方向ベクトルがなす鋭角を度で返す(向きは区別せず 0〜90°)。 · 例: `geometry_metrology`
 - `angle_between_planes` (`primitive → measurement`) — 2 平面の二面角(法線 n1,n2、度)。 · 例: `geometry_metrology`
 - `angle_line_plane` (`primitive → measurement`) — 直線(方向 d)と平面(法線 n)のなす角(度)。 · 例: `geometry_metrology`
-- `distance_point_plane` (`points, primitive → measurement`) — 点-平面距離(符号なし)。 · 例: `geometry_metrology`
-- `distance_point_line` (`points, primitive → measurement`) — 点-直線距離。 · 例: `geometry_metrology`
+- `distance_point_plane` (`points, primitive → measurement`) — 点から平面までの距離を返す(符号なし、入力座標と同じ単位)。 · 例: `geometry_metrology`
+- `distance_point_line` (`points, primitive → measurement`) — 点から直線(通過点と方向)までの垂直距離を返す(2-D / 3-D 共通)。 · 例: `geometry_metrology`
 - `distance_line_line` (`primitive → measurement`) — 2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。 · 例: `geometry_metrology`
 - `distance_segment_segment` (`primitive → measurement`) — **有限線分**どうしの最短距離と、その最近接点の対。→ ``(distance, cp, cq)``。 · 例: `geometry_metrology`
 - `intersect_line_plane` (`primitive → position`) — 直線 ∩ 平面 → 点(平行なら None)。 · 例: `geometry_metrology`
@@ -1066,7 +1066,7 @@ _計 372 ops / 68 categories。_
 
 ### robust_fit(7)
 - `ransac_plane` (`points → primitive`) — 外れ値に頑健な RANSAC 平面適合。 · 例: `ransac_prim`
-- `ransac_sphere` (`points → primitive`) — 外れ値に頑健な RANSAC 球適合。 · 例: `ransac_prim`
+- `ransac_sphere` (`points → primitive`) — 外れ値に頑健な RANSAC で点群に球(中心と半径)を当てる。 · 例: `ransac_prim`
 - `ransac_line` (`points → primitive`) — 外れ値に頑健な RANSAC 直線適合。 · 例: `geometry_metrology`
 - `ransac_cylinder` (`points, normals → primitive`) — 外れ値に頑健な RANSAC 円筒適合(点法線が必要)。 · 例: `ransac_prim`
 - `fit_cone` (`points → primitive`) — 点群に無限円錐を当てはめ ``{apex, axis, half_angle, residual}`` を返す。 · 例: `fit_primitives_ext`

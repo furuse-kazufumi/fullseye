@@ -318,7 +318,10 @@ def plate_mesh_from_image(rgba, width: float, height: float, *, cell: int = 4, t
     裏面は同じ形で ``back_color``(法線 +x)。原点 = 板の中心、板は y-z 平面(画像の左 = +y、上 = +z)、
     厚さ ``thickness`` を x の ±半分に振る。使われない頂点は残さない(寸法を頂点から測れるように)。
 
-    返り値 ``{"V", "F", "color", "label", "front_faces": (0, n), "back_faces": (n, 2n), "cells": (rows, cols)}``。"""
+    返り値 ``{"V", "F", "color", "label", "front_faces": (0, n), "back_faces": (n, 2n), "cells": (rows, cols)}``。
+    空の入力(``rgba`` が 0 要素)は ValueError。"""
+    if np.asarray(rgba).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("plate_mesh_from_image: rgba is empty — pass at least one element")
     A = np.asarray(rgba, np.float64)
     if A.ndim != 3 or A.shape[2] != 4:
         raise ValueError("rgba は (H, W, 4)")

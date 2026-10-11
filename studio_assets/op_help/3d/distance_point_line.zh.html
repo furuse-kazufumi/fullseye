@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points × primitive</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_point_line(p, line_pt, d)</code>(要直接调用实现,<code style="color:#22d3bf">import match3d; match3d.distance_point_line(p, line_pt, d)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;distance_point_line&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>点-直线距离。</p>
+<p>返回点到直线(通过点与方向)的垂直距离(2-D / 3-D 通用)。</p>
 <p>以 float 返回 <code style="color:#22d3bf">w = p − line_pt</code> 中与方向 <code style="color:#22d3bf">d̂</code> 正交分量的长度 <code style="color:#22d3bf">|w − (w·d̂)d̂|</code> (<code style="color:#22d3bf">d</code> 在内部单位化。2-D/3-D 通用)。<code style="color:#22d3bf">p</code>, <code style="color:#22d3bf">line_pt</code>, <code style="color:#22d3bf">d</code> 为数值的 2 或 3 维向量, 维度混用则 ValueError。若 <code style="color:#22d3bf">d</code> 为零向量,则原样返回 <code style="color:#22d3bf">|w|</code>。单位为输入坐标的单位。</p>
 <p>用途: 距 <code style="color:#22d3bf">fit_line_3d</code> 轴的偏心,点云相对于 <code style="color:#22d3bf">line_from_2points</code> 直线的离散(每次 1 个点)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

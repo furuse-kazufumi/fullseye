@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zentrale Einsenkung δ aus dem Normalenfeld: Die radiale Steigung s̄(r) wird in 1D von der Mitte bis zum Fensterrand integriert (∫ s̄ dr = ū_z(0) − ū_z(r_max)); bei <code style="color:#22d3bf">tail=&quot;boussinesq&quot;</code> wird aus dem Fernfeld ū_z ≈ C/r (Boussinesq-Lösung für eine Punktlast, Johnson §3.2) der restliche Ausläufer ū_z(r_max) = r_max · s̄(r_max) addiert (Median der letzten 3 Bins am Fensterrand). <code style="color:#22d3bf">tail=&quot;none&quot;</code> ohne Ausläufer (gibt die Unterschätzung des endlichen Fensters unverändert zurück — um die Größe des Fehlers zu messen).</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>高さの FFT 積分を通らないので振幅の減衰を受けない。返り: δ [m]。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 未知の tail、pitch ≤ 0。</p>
+<p>高さの FFT 積分を通らないので振幅の減衰を受けない。返り: δ [m]。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 未知の tail、pitch ≤ 0。空の入力(<code style="color:#22d3bf">normals</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -19,6 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 seed から gray 類似(|Δ|<tol)で領域を膨張(expand_gray)。
 
+空の入力(``image`` が 0 要素)は ValueError。
+
 ## 詳しい使い方ガイド
 
 - [halcon_segmentation ファミリ ガイド](../guides/halcon_segmentation.md)

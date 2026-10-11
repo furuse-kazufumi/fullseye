@@ -10,7 +10,7 @@
 <p style="margin:2px 0 2px 12px">• सभी face degenerate हों (area का योग 0), तो probability NaN हो जाती है और <code style="color:#22d3bf">rng.choice</code> ValueError देता है।</p>
 <p style="margin:2px 0 2px 12px">• Normal साथ नहीं आते (<code style="color:#22d3bf">estimate_point_normals</code> से जोड़ें)। Area weighting के कारण बड़े face पर ज़्यादा points आते हैं,</p>
 <p>और यह vertex density पर निर्भर नहीं करता।</p>
-<p>आगे: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">match_pca</code>।</p>
+<p>आगे: <code style="color:#22d3bf">points_to_voxel</code> / <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">match_pca</code>। खाली input (<code style="color:#22d3bf">vertices</code> में 0 elements) पर ValueError आता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

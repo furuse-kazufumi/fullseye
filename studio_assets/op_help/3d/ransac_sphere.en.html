@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_sphere(points, thresh, iters=500, seed=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_sphere(points, thresh, iters=500, seed=0)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;ransac_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>Outlier-robust RANSAC sphere fitting.</p>
+<p>Fits a sphere (centre and radius) to a point cloud with outlier-robust RANSAC.</p>
 <p>Sample 4 points → sphere centre and radius by the linear method (algebraic fit) → maximise the inliers with |‖p-c‖ - r| &lt; <code style="color:#22d3bf">thresh</code> → least-squares refit on the final inliers. For pipe balls / spherical-surface measurement.</p>
 <p>Args:</p>
 <p>points: (N,3) point cloud.</p>

@@ -422,7 +422,7 @@ def colorize_depth(depth, name="viridis", **kw):
 
 
 def colorize_disparity(disp, name="turbo", **kw):
-    """視差マップを塗る。
+    """視差マップをカラーマップで RGB に塗る(既定のマップは ``turbo``)。
 
     ★**既定を ``jet`` から ``turbo`` に変えた**(2026-09-08)。虹色という見た目は
     現場の慣習として残しつつ、``jet`` は明度が行ったり来たりするので**無い境目を

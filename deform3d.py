@@ -172,7 +172,7 @@ def tps_fit(src_ctrl, dst_ctrl, lam=0.0):
 
 
 def tps_warp(model, points):
-    """TPS モデルで点群を変形する。
+    """``tps_fit`` で当てた薄板スプライン(TPS)の変形を点群に適用する。
 
     f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖) を評価する。
 

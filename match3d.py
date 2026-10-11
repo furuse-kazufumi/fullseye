@@ -158,7 +158,10 @@ def mesh_to_voxel(vertices, faces, size, bounds=None, samples=40000,
     返り値 ``(size, size, size)`` float64 の点密度(占有ではない。占有が要るなら閾値で
     2 値化)。軸順は頂点座標の列順。seed を変えたい・点群も欲しいときは ``mesh_to_points`` で
     点群を作ってから ``points_to_voxel`` へ。
+    空の入力(``vertices`` が 0 要素)は ValueError。
     """
+    if np.asarray(vertices).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("mesh_to_voxel: vertices is empty — pass at least one element")
     V = np.asarray(vertices, np.float64)
     Fc = np.asarray(faces, np.int64)
     tri = V[Fc]                                          # (F,3,3)
@@ -2233,7 +2236,10 @@ def mesh_to_points(vertices, faces, samples=20000, seed=0):
     - 法線は付かない(``estimate_point_normals`` で付ける)。面積重みなので大きな面ほど点が多く、
     頂点密度には依存しない。
     後段: ``points_to_voxel`` / ``icp_point2point_3d`` / ``match_pca``。
+    空の入力(``vertices`` が 0 要素)は ValueError。
     """
+    if np.asarray(vertices).size == 0:   # ★2026-10-11 台帳の空入力の門: 生の例外でなく名指しで拒否
+        raise ValueError("mesh_to_points: vertices is empty — pass at least one element")
     V = np.asarray(vertices, np.float64); Fc = np.asarray(faces, np.int64)
     tri = V[Fc]
     areas = 0.5 * np.linalg.norm(np.cross(tri[:, 1] - tri[:, 0],
@@ -2552,7 +2558,7 @@ def angle_3points(a, b, c):
 
 
 def angle_between_lines(d1, d2):
-    """2 直線方向のなす鋭角(度)。
+    """2 直線の方向ベクトルがなす鋭角を度で返す(向きは区別せず 0〜90°)。
 
     ``arccos(|d̂1·d̂2|)`` を度で返す(float)。絶対値を取るので **[0, 90]**(向きの前後を区別しない。
     鈍角側が要るなら ``180 −`` する)。``d1``, ``d2`` は方向ベクトル(長さは問わない、内部で単位化)、
@@ -2591,7 +2597,7 @@ def angle_line_plane(d, n):
 
 
 def distance_point_plane(p, plane_pt, n):
-    """点-平面距離(符号なし)。
+    """点から平面までの距離を返す(符号なし、入力座標と同じ単位)。
 
     ``|(p − plane_pt)·n̂|`` を float で返す(``n`` は内部で単位化)。符号は捨てるので、面のどちら側か
     が要るなら ``(p − plane_pt) @ n̂`` を直接計算する。``p``, ``plane_pt``, ``n`` は数値の 2 または
@@ -2605,7 +2611,7 @@ def distance_point_plane(p, plane_pt, n):
 
 
 def distance_point_line(p, line_pt, d):
-    """点-直線距離。
+    """点から直線(通過点と方向)までの垂直距離を返す(2-D / 3-D 共通)。
 
     ``w = p − line_pt`` の、方向 ``d̂`` に直交する成分の長さ ``|w − (w·d̂)d̂|`` を float で返す
     (``d`` は内部で単位化。2-D/3-D 共通)。``p``, ``line_pt``, ``d`` は数値の 2 または 3 ベクトル、

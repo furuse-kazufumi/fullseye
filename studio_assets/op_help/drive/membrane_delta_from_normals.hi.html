@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normal field से केंद्र का धँसाव δ: radial slope s̄(r) को केंद्र से window के किनारे तक 1D integrate करता है (∫ s̄ dr = ū_z(0) − ū_z(r_max)), और <code style="color:#22d3bf">tail=&quot;boussinesq&quot;</code> पर far field ū_z ≈ C/r (point load का Boussinesq हल, Johnson §3.2) से बचा हुआ tail ū_z(r_max) = r_max · s̄(r_max) जोड़ता है (window के किनारे के अंतिम 3 bins का median)। <code style="color:#22d3bf">tail=&quot;none&quot;</code> में tail नहीं (finite window का कम आकलन जैसे का तैसा लौटाता है —— त्रुटि की मात्रा मापने के लिए)।</p>
 <p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>高さの FFT 積分を通らないので振幅の減衰を受けない。返り: δ [m]。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 未知の tail、pitch ≤ 0。</p>
+<p>高さの FFT 積分を通らないので振幅の減衰を受けない。返り: δ [m]。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 未知の tail、pitch ≤ 0。空の入力(<code style="color:#22d3bf">normals</code> が 0 要素)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

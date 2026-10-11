@@ -147,7 +147,10 @@ def _check(param, value):
 
 
 def get_system(param):
-    """システムパラメータの現在値。"""
+    """システムパラメータ(``set_system`` で設定する値)の現在値を返す。
+
+    **Raises** ``ValueError``: 知らないパラメータ名(既知の名前の一覧を添える)。
+    """
     if param not in _VARS:
         raise ValueError(f"unknown system parameter {param!r}; known: {sorted(SYSTEM_PARAMS)}")
     return _VARS[param].get()

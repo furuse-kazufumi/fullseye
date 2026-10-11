@@ -17,7 +17,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-ガウス平滑後の中心差分勾配を計算する。
+ボリュームをガウス平滑してから中心差分で 3-D 勾配(大きさとベクトル)を求める。
 
 Parameters
 ----------
