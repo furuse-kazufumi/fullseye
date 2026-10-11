@@ -60,6 +60,7 @@ def test_known_counts_are_measured_exactly(tmp_path):
     assert m["mean_abs_error"] == 0.0 and m["max_abs_error"] == 0.0
     assert m["exact_match_rate"] == 1.0
     assert res["capability"] == "blob-and-region"
+    assert len(res["inputs"]["sha256"]) == 4
     assert all(re.fullmatch(r"[0-9a-f]{64}", h) for h in res["inputs"]["sha256"])
 
 

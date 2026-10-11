@@ -112,6 +112,7 @@ def test_two_independent_results_only_reports_promote(tmp_path):
     row = _row(GM.collect(reg), cap)
     assert row["status"] == "validated-hardware"
     assert row["external_rules_met"] == ["hardware-independent-results"]
+    assert len(row["external_reports"]) == 2
     assert all(x["data_sharing"] == "results-only" for x in row["external_reports"])
 
 
@@ -214,6 +215,7 @@ def _form():
 def test_the_issue_form_parses_and_matches_the_generator_link():
     f = _form()
     assert f["name"] and f["description"] and isinstance(f["body"], list)
+    assert len(f["body"]) > 0
     assert os.path.basename(FORM) in GM.ISSUE_FORM_URL
     ids = [b.get("id") for b in f["body"] if b.get("type") != "markdown"]
     assert len(ids) == len(set(ids)), "issue form の id が重複"
@@ -253,6 +255,7 @@ def test_the_reporting_routes_are_linked():
     yaml = pytest.importorskip("yaml")
     with open(cfg, encoding="utf-8") as fh:
         c = yaml.safe_load(fh)
+    assert len(c["contact_links"]) > 0
     assert any("discussions" in x["url"] for x in c["contact_links"])
     with open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8") as fh:
         assert GM.ISSUE_FORM_URL in fh.read()

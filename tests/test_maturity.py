@@ -49,9 +49,11 @@ def test_hardware_validation_needs_an_external_report_that_meets_the_rules():
     「名乗るなら、満たした規則と受理済みの報告が台帳に残っていること」に変えた。
     """
     d = _ledger()
-    assert any(x["id"] == "validated-hardware" for x in d["ladder"]), \
+    ladder, caps = d["ladder"], d["capabilities"]
+    assert ladder and caps, "台帳のはしごか能力の行が空"
+    assert any(x["id"] == "validated-hardware" for x in ladder), \
         "はしごの定義から実機の段が消えている"
-    for r in d["capabilities"]:
+    for r in caps:
         if r["status"] != "validated-hardware":
             continue
         met = [x for x in r.get("external_rules_met", []) if x.startswith("hardware-")]

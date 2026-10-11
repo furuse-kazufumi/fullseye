@@ -57,6 +57,8 @@ CHAIN = [
     (["tools/gen_wingpoc_gallery.py"], "PoC 展示館(総合案内 + 棟、ja/en)"),
     (["tools/gen_examples_readme.py"], "examples/README.md"),
     (["tools/gen_oss_landscape.py"], "既存 OSS の地図(docs/literature/oss_landscape.json → OSS_LANDSCAPE.md)"),
+    # ViEW2026 案内ページ(7 言語)。docmap がその題を読むので gen_docs_index_ops より先。
+    (["tools/gen_view2026_pages.py"], "docs/view2026/**/index.md(論文の QR の行き先、正本は exhibits.json)"),
     (["tools/gen_docs_index_ops.py"], "docs/README*.md の ops / poc / docmap ブロック"),
     (["tools/gen_examples3d_doc.py"], "docs/EXAMPLES_3D.md(3-D 例の一覧)"),
     (["tools/gen_sensor_playbook.py"], "センサー playbook"),
@@ -193,6 +195,8 @@ EXCLUDED = {
     # (E) 画像・動画の書き手(記事・README・Studio の素材)
     "tools/gen_banner.py": _IMAGE_REASON + (" C:/Windows/Fonts を読む。★帯の文言「731 2-D + 265 3-D」は"
                                             "ソースに直書きで、索引から数えていない(2026-10-07 時点で古い)。"),
+    "tools/gen_view2026_thumbs.py": _IMAGE_REASON + (" docs/view2026/thumbs の JPEG/GIF。在ることと"
+                                                     " 全展示ぶん揃うことは gen_view2026_pages の検査が見る。"),
     "tools/gen_hero_channels.py": _IMAGE_REASON + " C:/Windows/Fonts を読む。",
     "tools/gen_hero_ct.py": _IMAGE_REASON + " C:/Windows/Fonts を読む。",
     "tools/gen_hero_making_of.py": _IMAGE_REASON + " 手元の作業画像(C:/...)を素材にする。",

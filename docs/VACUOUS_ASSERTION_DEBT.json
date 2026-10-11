@@ -1,7 +1,7 @@
 {
  "_note": "空になりうる対象への表明の既存分。増やさないための床。減らしたら下げる。",
  "_measured": "2026-09-26",
- "total": 126,
+ "total": 125,
  "per_file": {
   "test_abi_conformance.py": 1,
   "test_accel_3d_toolkit.py": 3,
@@ -49,7 +49,6 @@
   "test_lensimage.py": 2,
   "test_lensopt.py": 1,
   "test_literature_notes.py": 1,
-  "test_maturity.py": 1,
   "test_measure1d.py": 3,
   "test_medial.py": 4,
   "test_meshres.py": 1,

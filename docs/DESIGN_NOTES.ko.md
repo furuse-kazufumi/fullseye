@@ -2538,12 +2538,12 @@
 
 - **L43** _(ja)_ — ★最上流。`auto_specs_data.py` は backends_auto が registry を組む入力(wheel 同梱の data/auto_specs/*.json の複製)なので、registry を読む下流すべてより先に回す。 2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、 spec を足して回し忘れても誰も気づけなかった)。
 - **L54** _(ja)_ — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
-- **L63** — ★`tools/` 밖에 있는 유일한 생성물. 그래서 놓쳤다 — 생성기를 `tools/*.py` 에서 찾는 한, 이것은 영원히 발견되지 않는다.
-- **L66** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
-- **L70** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
-- **L98** — * ★그리고 위험: 생성 직후의 기사는 이미지를 **상대 경로**로 쓴다. 공개판은 `raw.githubusercontent.com` 의 절대 URL 로 고친 것(Qiita 는 상대 경로면 이미지가 나오지 않는다 —— memory `feedback_qiita_svg_path_and_cache`). 생성기만 돌리면 그 절대 URL 이 42 줄만큼 되돌아간다. **돌릴 거면 기사의 공개 절차까지 통째로 할 것.** 제외는 **파일명으로** 쓴다. 산문으로 정리하면("wing*_gallery 의 10 개") 기계로 대조할 수 없어 아래의 `unclassified()` 가 작동하지 않는다.
-- **L309** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
-- **L365** — ★`tools/` 밖에 있는 생성물. `tools/*.py` 만 훑어서는 결코 찾을 수 없는 위치에 있었고, 실제로 `docs/OP_INDEX.json` 을 놓치고 있었다.
+- **L65** — ★`tools/` 밖에 있는 유일한 생성물. 그래서 놓쳤다 — 생성기를 `tools/*.py` 에서 찾는 한, 이것은 영원히 발견되지 않는다.
+- **L68** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
+- **L72** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
+- **L100** — * ★그리고 위험: 생성 직후의 기사는 이미지를 **상대 경로**로 쓴다. 공개판은 `raw.githubusercontent.com` 의 절대 URL 로 고친 것(Qiita 는 상대 경로면 이미지가 나오지 않는다 —— memory `feedback_qiita_svg_path_and_cache`). 생성기만 돌리면 그 절대 URL 이 42 줄만큼 되돌아간다. **돌릴 거면 기사의 공개 절차까지 통째로 할 것.** 제외는 **파일명으로** 쓴다. 산문으로 정리하면("wing*_gallery 의 10 개") 기계로 대조할 수 없어 아래의 `unclassified()` 가 작동하지 않는다.
+- **L313** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L369** — ★`tools/` 밖에 있는 생성물. `tools/*.py` 만 훑어서는 결코 찾을 수 없는 위치에 있었고, 실제로 `docs/OP_INDEX.json` 을 놓치고 있었다.
 
 ## `torch_lazy.py`
 
