@@ -305,7 +305,7 @@ class KnobHook:
             variants = knob_variants(default)
             if not variants:
                 continue
-            ran, changed = 0, False
+            ran, changed, grey = 0, False, False
             for val in variants:
                 kw = dict(kwargs)
                 kw[p.name] = val
@@ -316,10 +316,13 @@ class KnobHook:
                 except Exception:                # noqa: BLE001 - an out-of-range variant
                     continue
                 ran += 1
-                if _differs(base, lc._stable(name, r)):
+                d = _differs(base, lc._stable(name, r))
+                if d is None:
+                    grey = True
+                elif d:
                     changed = True
                     break
-            out[p.name] = "live" if changed else ("dead" if ran else "unmeasured")
+            out[p.name] = ("live" if changed else "unmeasured" if (grey or not ran) else "dead")
         return out
 
 
@@ -345,11 +348,14 @@ def _flat_numbers(x, out, depth=0):
 
 
 def _differs(base, r):
-    """Did turning the knob change the output **beyond rounding**?
+    """Did turning the knob change the output **beyond rounding**? ``True`` / ``False`` / ``None``.
 
     ★2026-10-11: ``foe_from_flow.iters`` は探針の入力で 1 巡目に収束し、巡回を増やした差は丸めの屑だけ。
     手元(Windows の BLAS)は最後の桁が動いて「効く」、CI(Linux)は完全一致で「効かない」—— 厳密一致の
     比較だと判定が環境で割れて CI だけ赤になった。相対 1e-9 より小さい差は「変わっていない」と数える。
+    ★同じ日の 2 度目: 1e-9 の 1 本の線にすると、線のすぐ上にいる op(``flight_fit.dt``: 当てはめが真値へ
+    ~1e-9 で戻る)が Python の版ごとに線の上下へ振れた。線を帯にする —— 1e-9 未満は「変わらない」、
+    1e-6 超は「変わる」、その間は**判定しない**(None → "unmeasured"、どちらの台帳にも入れない)。
     """
     if lc.same(base, r) is True:
         return False
@@ -362,7 +368,11 @@ def _differs(base, r):
         return True
     if np.any(a[~fin] != b[~fin]) and not np.all(np.isnan(a[~fin]) & np.isnan(b[~fin])):
         return True
-    return not np.allclose(a[fin], b[fin], rtol=1e-9, atol=1e-12)
+    if np.allclose(a[fin], b[fin], rtol=1e-9, atol=1e-12):
+        return False
+    if not np.allclose(a[fin], b[fin], rtol=1e-6, atol=1e-9):
+        return True
+    return None
 
 
 def knob_failures(name, g):
