@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(341 例)
+### 2-D 画像/信号/幾何(345 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -385,6 +385,10 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **けん玉・糸・歩く人を置き直す op を剛体の不変量と投影で確かめる** — kendamaworld 6 op と drivehumanoid 1 op: 糸の角柱が閉じて体積 (2r)²L、けんの頂点 = 局所 @ Rᵀ + p、姿勢を変えてもほかの物体はビット一致、大皿の縁の中心の像を自前のピンホール投影と照合、皿の半径 f·r/深度、糸の張り直しで長さ更新、歩く人の頂点 = R(yaw)·局所 + (x, y)・頂点間の距離の保存・1 周期先は同じ形。 `py -3.11 examples/gallery_drive_world_objects.py`
 - **建物・起伏・LiDAR の箱・倉庫の格子を面積・体積・閉形式の距離で確かめる** — driveplateau 3 op・driveterrain・lidarsim・agvfleet 2 op: 凹多角形の三角形の面積和 = 靴紐公式、箱で 2 棟だけ切り出し、角柱の体積 = 足跡の面積 × 高さ、地面の格子の頂点数・道の面 160 枚・道の近くの高さ = うねりの閉形式、光線の距離を6 面を全部調べる第 2 実装と 2000 本照合、壁を回り込む最短手数 6 + c − r、計画の総コスト。 `py -3.11 examples/gallery_drive_city_terrain.py`
 - **鏡の折り返し・ミラーに映る左右・坂道の譲り合い・人の群れの 1 歩を確かめる** — drivedecide・drivepass 2 op・drivetraffic: 鏡映行列の対合と det = −1 と等長、ミラーの像を 3 次元の鏡映行列(別の op)で照合、仮想の眼の角速度 = −像の角速度、教則 6-2-1(6) の譲り合いの表、social force の 1 人の解が刻み幅に依らずv0(1 − e^{−t/τ}) と一致、点対称な配置は点対称のまま、斥力ですれ違いの間隔が開く。 `py -3.11 examples/gallery_drive_mirrors_crowds.py`
+- **分布の距離・検定・行列の分解と関数を閉形式と往復で確かめる(mathestimation / mathops)** — N(0,1) と N(1,1) の KL = 1/2・Bhattacharyya = 1/8、重ならない分布の JS = log 2、歪対称の e^A = Rodrigues、log(e^X) = X の往復と負の固有値の拒否、χ² 適合度の χ² = 20 と自由度 3 の p の閉形式、KS の D = 1/(2n) と 2 標本の厳密な p = 0.1、対応のある t の t = 2√3 と自由度 2 の p の閉形式、Cholesky が L₀ に戻る、回転の固有値 e^{±iθ} と推移行列の定常分布、LU の PA = LU とピボット無しの古典的失敗(9 op)。 `py -3.11 examples/gallery_math_stats_linalg.py`
+- **特殊関数・求積・NURBS・波源の数・Tustin・Daubechies を閉形式で確かめる** — 半整数次の Bessel の閉形式と Wronskian、Gauss 求積が 2n−1 次まで厳密で 2n 次で外れる、有理 2 次 NURBS が円柱の上に厳密に乗る、MDL が 2 波源・1 波源・雑音だけを数え分ける(seed 固定)、Tustin の係数の閉形式と scipy.signal.bilinear(別実装)・前歪みで f_c の利得 1/√2、Haar と db2 の閉形式・db4 の直交性と消失モーメント(6 op)。 `py -3.11 examples/gallery_math_numerics_filters.py`
+- **音のファイルを読み、特徴量と零交差率を出し、1-D 関数を組み替える(dsp / funct1d)** — 一時ディレクトリに標準ライブラリで書いた 16 bit WAV(モノラル・ステレオ)を read_audio で読み戻して整数 / 32768 と完全一致、零交差率を解析的な交差時刻の個数と、整数周期の余弦の rms・peak・波高率・ピーク周波数・重心・帯域を閉形式と、compose / negate / transform_funct_1d を手計算と照合する(6 op)。 `py -3.11 examples/gallery_oned_audio_funct.py`
+- **分割の評価・Chan–Vese のエネルギー・成分木・円の重なり・ボロノイを独立の検算で確かめる** — 分割表と claims、Hausdorff と平均表面距離を cdist の総当たりと、Chan–Vese のエネルギーを式の書き直しと(鋭い版は周長 4s)、max-tree の節と面積を各しきい値の ndimage.label と、円の重なりを閉形式と格子の数え上げと、ボロノイの面積・内部の辺を手計算と照合する(7 op)。 `py -3.11 examples/gallery_seg_measures.py`
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`

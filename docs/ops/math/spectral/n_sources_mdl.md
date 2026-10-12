@@ -4,7 +4,7 @@ dim: math
 category: spectral
 in: matrix
 out: table
-examples: []
+examples: [gallery_math_numerics_filters]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -45,7 +45,7 @@ mathops の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_math_numerics_filters](../../../../examples/gallery_math_numerics_filters.py) — `py -3.11 examples/gallery_math_numerics_filters.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
