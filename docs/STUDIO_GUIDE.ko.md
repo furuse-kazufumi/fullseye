@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: bbeba242062b -->
+<!-- i18n-source-sha: 11529e905883 -->
 # Fullseye Studio 완전 가이드
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · **한국어** · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
@@ -39,7 +39,7 @@ fullseye-studio             # pip install -e .가 되어 있다면 콘솔 스크
 ## 왼쪽 패널: Operators 브라우저
 
 ### 샘플 파이프라인(SAMPLE PIPELINES)
-드롭다운에서 **20개**의 기성 레시피(`recipes.py`) 중 하나를 선택하면, 파이프라인이 그 레시피로 교체됩니다. 예: "Edge — Sobel + Otsu", "Denoise — bilateral + unsharp", "Segment — blob / coin", "Count — blobs", "Texture — Gabor" 등. 우선 실행해 보며 내용을 파악하는 출발점으로 편리합니다.
+드롭다운에서 **25개**의 기성 레시피(`recipes.py`) 중 하나를 선택하면, 파이프라인이 그 레시피로 교체됩니다. 예: "Edge — Sobel + Otsu", "Denoise — bilateral + unsharp", "Segment — blob / coin", "Count — blobs", "Texture — Gabor" 등. 우선 실행해 보며 내용을 파악하는 출발점으로 편리합니다.
 
 ### 연산자 브라우저(OPERATORS)
 - **카테고리 필터**: "all categories" + 31개 카테고리(smoothing / edges / morphology / segmentation / features / texture / region / contour / color / frequency / restoration / 3d …).
@@ -169,9 +169,13 @@ Apply 시 적용됩니다(`docs/HDEVELOP_DEV_OPS.md`에 전체 43개 `dev_*`가 
 
 **직접 실행해 보기**: **File ▸ dev_* visualization demo**를 실행하면, coins 이미지 + 위의 `dev_*`를
 실제로 사용하는 HDevelop 프로그램(분할→영역을 청록색 윤곽선 + 레이블로 표시)이 로드되어 적용됩니다.
-연습용 샘플 이미지는 **File ▸ Sample images**(8장, 출처는 `studio_assets/sample_images/manifest.json`
+연습용 샘플 이미지는 **File ▸ Sample images**(16장, 출처는 `studio_assets/sample_images/manifest.json`
 참조. 합성 이미지 = 자체 제작물／`coins`·`camera` 등 = skimage.data의 BSD/퍼블릭 도메인 소재.
-`tools/gen_sample_images.py`로 재생성 가능)에 있습니다.
+`tools/gen_sample_images.py`로 재생성 가능)에 있습니다. 그중 5장은 외관 검사(FA)용 장면으로, 사진이 아니라
+조명·반사 물리 계산(`illumdesign`)과 PoC의 촬상 모델로 만든 것입니다: 헤어라인 금속의 흠집, 수지의 찍힘과
+이물 섬유, 각인된 로트 번호, 백라이트로 본 구멍 뚫린 플레이트, 용접 X선 영상의 기공. 각각 결함의 정답 마스크
+(`<이름>.truth.png`)와 manifest의 설명이 있고, "FA — ..." 레시피 하나와 짝을 이루며(그 레시피가 결함을
+찾는다는 것을 테스트로 확인), `tools/gen_fa_samples.py`로 재생성합니다.
 
 ---
 

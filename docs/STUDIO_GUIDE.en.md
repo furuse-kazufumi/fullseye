@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: bbeba242062b -->
+<!-- i18n-source-sha: 11529e905883 -->
 # The complete guide to Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · **English** · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
@@ -50,7 +50,7 @@ The initial split widths are 340 / 360 / 640 px, and the right panel stretches.
 ## Left panel: the Operators browser
 
 ### Sample pipelines (SAMPLE PIPELINES)
-Choosing one of the **20** ready-made recipes (`recipes.py`) from the dropdown replaces the
+Choosing one of the **25** ready-made recipes (`recipes.py`) from the dropdown replaces the
 pipeline with that recipe. Examples: "Edge — Sobel + Otsu", "Denoise — bilateral + unsharp",
 "Segment — blob / coin", "Count — blobs", "Texture — Gabor", and so on. Handy as a starting point
 to run something first and then look at what it does.
@@ -216,9 +216,14 @@ unsupported `dev_*` is an error.
 
 **Try it out**: **File ▸ dev_* visualization demo** loads and applies an HDevelop program that
 actually uses the `dev_*` above on the coins image (segment → show the regions with a cyan outline
-+ labels). The working sample images are **File ▸ Sample images** (8 images; provenance is in
++ labels). The working sample images are **File ▸ Sample images** (16 images; provenance is in
 `studio_assets/sample_images/manifest.json`. synthetic = own work / `coins`, `camera`, etc. =
-skimage.data's BSD/public-domain. Regenerated with `tools/gen_sample_images.py`).
+skimage.data's BSD/public-domain. Regenerated with `tools/gen_sample_images.py`). Five of them are
+factory-inspection (FA) scenes computed, not photographed, from lighting and reflection physics
+(`illumdesign`) and the PoCs' imaging models: a scratch on hairline metal, a dent and a foreign fibre on
+resin, an engraved lot code, a back-lit plate with holes, and weld porosity in an X-ray. Each ships its
+defect mask (`<name>.truth.png`) and a description in the manifest, is paired with one "FA — ..." recipe
+that a test shows finds the defects, and is regenerated with `tools/gen_fa_samples.py`.
 
 ---
 

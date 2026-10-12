@@ -6,8 +6,11 @@ can be selected and loaded in the Studio or called programmatically:
     import fullseye
     fullseye.run_pipeline(frame, fullseye.recipe("Edge — Sobel + Otsu")["stages"])
 
-`stages` is a list of `(op, a, b)` tuples. All ops are verified to exist and the
-chains are sort-coherent (checked by `validate()` and the test suite).
+`stages` is a list of `(op, a, b)` tuples. A recipe may also name the bundled sample
+image it was tuned on (`"image"`, a `sample_images` name — the FA inspection set does);
+`fullseye.recipe(name)["image"]` then `sample_images.load(...)` shows it on that scene.
+All ops are verified to exist and the chains are sort-coherent (checked by `validate()`
+and the test suite).
 """
 from __future__ import annotations
 
@@ -62,6 +65,39 @@ RECIPES = [
     {"name": "Spots — local maxima", "task": "features",
      "stages": [("gaussian", 0.4, 0.5), ("local_max", 0.5, 0.5)],
      "note": "bright-spot detection"},
+    # --- factory inspection (FA) -------------------------------------------------- #
+    # Each one is tuned on, and pinned by tests/test_fa_samples.py against, a bundled
+    # physics-made sample image ("image") whose defect mask is known pixel for pixel
+    # (studio_assets/sample_images/<image>.truth.png, written by tools/gen_fa_samples.py).
+    {"name": "FA — scratch on hairline metal", "task": "inspect",
+     "image": "metal_hairline_scratch",
+     "stages": [("gaussian", 0.1, 0.5), ("sk_rolling_ball", 0.2, 0.5), ("threshold", 0.12, 0.5),
+                ("select_shape", 0.0, 0.5)],
+     "note": "dark-field ring light makes the torn scratch floor bright; a rolling ball "
+             "(radius 9) removes the hairline glints' slow background, a fixed threshold "
+             "keeps what is 0.12 above it, specks under 16 px are dropped"},
+    {"name": "FA — dent and foreign fibre on resin", "task": "inspect",
+     "image": "resin_dent_fibre",
+     "stages": [("gaussian", 1.0, 0.5), ("hx_plane_deviation", 0.5, 0.5), ("threshold", 0.05, 0.5),
+                ("select_shape", 0.2, 0.5)],
+     "note": "smooth away the mould texture, subtract the best-fit plane (the bar light's "
+             "fall-off) and keep |deviation| > 0.05 in blobs of 56 px or more; a dent shows as "
+             "its shading pair (dark and bright half), a dark fibre as one line"},
+    {"name": "FA — engraved lot code (binarize for OCR)", "task": "inspect",
+     "image": "engraved_lot_code",
+     "stages": [("gaussian", 0.4, 0.5), ("otsu", 0.5, 0.5), ("select_shape", 0.2, 0.5)],
+     "note": "dark-field ring: the laser-melted engraving is bright on blasted aluminium; "
+             "smooth the blast glints, Otsu, drop specks -> one region per glyph"},
+    {"name": "FA — count holes in a back-lit plate", "task": "measure",
+     "image": "machined_plate_holes",
+     "stages": [("otsu", 0.5, 0.5), ("sk_clear_border", 0.5, 0.5), ("count_obj", 0.5, 0.5)],
+     "note": "back light: light passes through the holes and around the part; Otsu keeps the "
+             "light, clearing what touches the border leaves only the through-holes, then count"},
+    {"name": "FA — weld porosity (X-ray)", "task": "inspect",
+     "image": "weld_xray_porosity",
+     "stages": [("gaussian", 0.4, 0.5), ("local_threshold", 1.0, 0.66), ("select_shape", 0.0, 0.5)],
+     "note": "pores are thinner steel, so brighter; keep pixels 0.048 above a sigma-4 local "
+             "background (follows the weld cap), drop specks under 16 px"},
 ]
 
 

@@ -152,6 +152,9 @@ EXCLUDED = {
                                 "2,817 本中 44 本しか変わらず、非決定なのは tb_project と dots_image の "
                                 "2 本だけだった。"),
     "tools/gen_sample_thumbs.py": "サンプル画像のサムネ。同上(画像)。",
+    "tools/gen_fa_samples.py": _IMAGE_REASON + (" studio_assets/sample_images の FA(外観検査)サンプル"
+                                                "5 枚と真値マスク。手元では 2 回でバイト一致(2026-10-12 実測)。"
+                                                "画素の中身は tests/test_fa_samples.py が真値と処理列で守る。"),
     "tools/build_exhibits.py": ("展示の素材づくり(図の再描画を伴う)。目次側の生成は "
                                 "gen_wingpoc_gallery / gen_op_catalog が担う。"),
     # ---- 2026-10-07: 列挙を repo 直下・tools/** 再帰・画像の書き手まで広げて釣れたもの ----

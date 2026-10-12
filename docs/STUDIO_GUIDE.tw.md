@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: bbeba242062b -->
+<!-- i18n-source-sha: 11529e905883 -->
 # Fullseye Studio 完全指南
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · **繁體中文** · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
@@ -39,7 +39,7 @@ fullseye-studio             # 若已 pip install -e .，可用主控台腳本
 ## 左側面板: Operators 瀏覽器
 
 ### 範例流水線（SAMPLE PIPELINES）
-從下拉選單中選擇 **20 個**現成配方（`recipes.py`）之一，流水線就會替換為該配方。例如「Edge — Sobel + Otsu」「Denoise — bilateral + unsharp」「Segment — blob / coin」「Count — blobs」「Texture — Gabor」等。是先跑起來再觀察內容的便利起點。
+從下拉選單中選擇 **25 個**現成配方（`recipes.py`）之一，流水線就會替換為該配方。例如「Edge — Sobel + Otsu」「Denoise — bilateral + unsharp」「Segment — blob / coin」「Count — blobs」「Texture — Gabor」等。是先跑起來再觀察內容的便利起點。
 
 ### 運算子瀏覽器（OPERATORS）
 - **分類篩選**: 「all categories」+ 31 個分類（smoothing / edges / morphology / segmentation / features / texture / region / contour / color / frequency / restoration / 3d ……）。
@@ -169,9 +169,12 @@ fullseye-studio             # 若已 pip install -e .，可用主控台腳本
 
 **動手試試**: 透過 **File ▸ dev_* visualization demo**，可以載入並執行一個實際使用 coins 影像 +
 上述 `dev_*` 的 HDevelop 程式（分割→用青色輪廓+標籤顯示區域）。用於練習的範例影像位於
-**File ▸ Sample images**（共 8 張，來源見 `studio_assets/sample_images/manifest.json`。
+**File ▸ Sample images**（共 16 張，來源見 `studio_assets/sample_images/manifest.json`。
 合成影像 = 自製作品／`coins`·`camera` 等 = 來自 skimage.data 的 BSD/公眾領域素材。可用
-`tools/gen_sample_images.py` 重新產生）。
+`tools/gen_sample_images.py` 重新產生）。其中 5 張是外觀檢查（FA）用的場景，不是照片，而是由照明與反射的
+物理計算（`illumdesign`）和 PoC 的成像模型算出：髮絲紋金屬上的刮痕、樹脂上的壓痕與異物纖維、雕刻的批號、
+背光下的開孔板、焊道 X 光影像中的氣孔。每張都附有缺陷的真值遮罩（`<名稱>.truth.png`）與 manifest 中的說明，
+各自對應一個「FA — ...」配方（測試確認它能找出缺陷），可用 `tools/gen_fa_samples.py` 重新產生。
 
 ---
 

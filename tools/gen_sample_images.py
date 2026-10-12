@@ -133,7 +133,7 @@ def merge_manifest(mpath: str, entries: list, owner: str) -> dict:
     manifest["images"] = merged
     os.makedirs(os.path.dirname(os.path.abspath(mpath)), exist_ok=True)
     with open(mpath, "w", encoding="utf-8") as f:
-        json.dump(manifest, f, indent=2)
+        json.dump(manifest, f, indent=2, ensure_ascii=False)   # keep description_ja readable
     return manifest
 
 

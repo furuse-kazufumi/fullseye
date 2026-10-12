@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: bbeba242062b -->
+<!-- i18n-source-sha: 11529e905883 -->
 # Fullseye Studio की पूरी गाइड
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · **हिन्दी**
@@ -50,7 +50,7 @@ Launch करने पर 1320×860 की main window खुलती है (
 ## बायाँ panel: Operators browser
 
 ### Sample pipelines (SAMPLE PIPELINES)
-Dropdown से **20** तैयार recipes (`recipes.py`) में से एक चुनने पर
+Dropdown से **25** तैयार recipes (`recipes.py`) में से एक चुनने पर
 pipeline उस recipe से बदल जाती है। Examples: "Edge — Sobel + Otsu", "Denoise — bilateral + unsharp",
 "Segment — blob / coin", "Count — blobs", "Texture — Gabor", आदि। पहले कुछ चलाकर फिर यह देखने के लिए
 कि वह क्या करता है, यह एक अच्छा शुरुआती बिंदु है।
@@ -216,9 +216,14 @@ Unsupported `dev_*` एक error है।
 
 **आज़माकर देखें**: **File ▸ dev_* visualization demo** एक HDevelop program load करके लागू करता है जो
 coins image पर ऊपर के `dev_*` असल में इस्तेमाल करता है (segment → regions को cyan outline
-+ labels के साथ दिखाएँ)। काम करने वाली sample images **File ▸ Sample images** में हैं (8 images; provenance
++ labels के साथ दिखाएँ)। काम करने वाली sample images **File ▸ Sample images** में हैं (16 images; provenance
 `studio_assets/sample_images/manifest.json` में है। synthetic = अपना काम / `coins`, `camera` आदि =
-skimage.data के BSD/public-domain। `tools/gen_sample_images.py` से फिर से बनाई जाती हैं)।
+skimage.data के BSD/public-domain। `tools/gen_sample_images.py` से फिर से बनाई जाती हैं)। इनमें से 5
+factory inspection (FA) के दृश्य हैं, जो फ़ोटो नहीं बल्कि प्रकाश और परावर्तन की भौतिकी (`illumdesign`) और
+PoC के imaging models से गणना करके बनाए गए हैं: hairline धातु पर खरोंच, resin पर dent और बाहरी रेशा,
+खुदा हुआ lot code, back-light में छेद वाली plate, और weld के X-ray में porosity। हर एक के साथ defect mask
+(`<name>.truth.png`) और manifest में विवरण है, हर एक "FA — ..." recipe से जुड़ा है (एक test दिखाता है कि वह
+defects ढूँढता है), और `tools/gen_fa_samples.py` से फिर से बनता है।
 
 ---
 

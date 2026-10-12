@@ -65,6 +65,252 @@
       "file": "brick_quilt.png",
       "source": "synthesized (Fullseye synth.synthesize_like, brick wall, enlarged (image quilting))",
       "licence": "own work"
+    },
+    {
+      "name": "metal_hairline_scratch",
+      "file": "metal_hairline_scratch.png",
+      "truth_mask": "metal_hairline_scratch.truth.png",
+      "source": "computed by Fullseye (tools/gen_fa_samples.py; illumdesign ring light + GGX height-field render)",
+      "licence": "own work (Apache-2.0; computed by Fullseye, no photograph)",
+      "description": "Hairline (brushed) stainless steel, 16 x 16 mm at 50 um/px, lit by a 72-LED ring light at 30 deg elevation (dark field). A curved scratch (V-groove 4-8 um deep, torn rough floor in places) crosses the hairline. The bright streaks along x are glints of the hairline itself, not defects.",
+      "description_ja": "ヘアライン仕上げのステンレス(16 × 16 mm、50 µm/px)を仰角 30° のリング照明(LED 72 個、暗視野)で撮った画像。弧を描く傷(深さ 4〜8 µm の V 溝、底が所々荒れている)がヘアラインを横切る。横方向の明るい筋はヘアライン自身の反射で、欠陥ではない。",
+      "truth": {
+        "kind": "scratch",
+        "count": 1,
+        "pixels": 843,
+        "bezier_row_col": [
+          [
+            60.0,
+            50.0
+          ],
+          [
+            120.0,
+            200.0
+          ],
+          [
+            255.0,
+            265.0
+          ]
+        ],
+        "half_width_px": [
+          0.74,
+          1.88
+        ],
+        "depth_um": [
+          1.54,
+          7.89
+        ],
+        "mask_rule": "groove footprint where the groove is deeper than 1.5 um"
+      },
+      "light": "illumdesign ring, radius 40 mm, elevation 30 deg, 72 emitters",
+      "recipe": "FA — scratch on hairline metal",
+      "owner": "gen_fa_samples"
+    },
+    {
+      "name": "resin_dent_fibre",
+      "file": "resin_dent_fibre.png",
+      "truth_mask": "resin_dent_fibre.truth.png",
+      "source": "computed by Fullseye (tools/gen_fa_samples.py; illumdesign bar light + GGX height-field render)",
+      "licence": "own work (Apache-2.0; computed by Fullseye, no photograph)",
+      "description": "Light-grey injection-moulded resin, 15.4 x 11.5 mm at 40 um/px, lit by a 48-LED bar light raking from the top edge at 25 deg elevation. Two defects: a dent (Gaussian, 80 um deep, sigma 0.56 mm) left of centre, and a dark foreign fibre (1-3 px wide, about 5 mm long) on the right. The slow shading top-to-bottom is the bar light's fall-off, not a defect.",
+      "description_ja": "薄灰色の射出成形樹脂(15.4 × 11.5 mm、40 µm/px)を、上辺から仰角 25° で斜めに当てたバー照明(LED 48 個)で撮った画像。欠陥は 2 つ: 中央左の打痕(ガウス形、深さ 80 µm、σ 0.56 mm)と、右側の黒い異物の繊維(幅 1〜3 px・長さ約 5 mm)。上から下へのゆるい明暗はバー照明の減衰で、欠陥ではない。",
+      "truth": {
+        "kind": "dent+foreign_fibre",
+        "count": 2,
+        "dent": {
+          "center_row_col": [
+            150.0,
+            112.0
+          ],
+          "sigma_px": 14.0,
+          "depth_um": 80.0,
+          "mask_radius_px": 28.0
+        },
+        "fibre": {
+          "bezier_row_col": [
+            [
+              90.0,
+              250.0
+            ],
+            [
+              140.0,
+              300.0
+            ],
+            [
+              205.0,
+              282.0
+            ]
+          ],
+          "half_width_px": [
+            1.35,
+            1.6
+          ],
+          "albedo": 0.04,
+          "surround_albedo": 0.45,
+          "pixels": 361
+        },
+        "pixels": 2814,
+        "mask_rule": "dent: within 2 sigma of its centre; fibre: its painted footprint"
+      },
+      "light": "illumdesign bar, 120 mm long at y = 40 mm, elevation 25 deg, 48 emitters",
+      "recipe": "FA — dent and foreign fibre on resin",
+      "owner": "gen_fa_samples"
+    },
+    {
+      "name": "engraved_lot_code",
+      "file": "engraved_lot_code.png",
+      "truth_mask": "engraved_lot_code.truth.png",
+      "source": "computed by Fullseye (tools/gen_fa_samples.py; illumdesign ring light + GGX height-field render)",
+      "licence": "own work (Apache-2.0; computed by Fullseye, no photograph)",
+      "description": "Bead-blasted aluminium plate, 15.4 x 9.0 mm at 40 um/px, with the lot code 'LOT 2610-A7' / 'FS-0042' laser-engraved 20 um deep (re-solidified, rough floor). A 72-LED ring light at 20 deg elevation (dark field) makes the rough engraving bright on the darker blasted surface.",
+      "description_ja": "ショットブラストしたアルミ板(15.4 × 9.0 mm、40 µm/px)に、ロット番号 'LOT 2610-A7' / 'FS-0042' を深さ 20 µm でレーザー刻印したもの(底は再凝固で荒れている)。仰角 20° のリング照明(LED 72 個、暗視野)で、荒れた刻印がブラスト面より明るく写る。",
+      "truth": {
+        "kind": "engraved_text",
+        "text": [
+          "LOT 2610-A7",
+          "FS-0042"
+        ],
+        "glyph_components": 17,
+        "pixels": 8061,
+        "depth_um": 20.0,
+        "font": "OpenCV Hershey Simplex, scale 1.55, thickness 4",
+        "baselines_row": [
+          88,
+          168
+        ],
+        "left_col": 34,
+        "mask_rule": "the engraved footprint (the rasterised glyph strokes)"
+      },
+      "light": "illumdesign ring, radius 40 mm, elevation 20 deg, 72 emitters",
+      "recipe": "FA — engraved lot code (binarize for OCR)",
+      "owner": "gen_fa_samples"
+    },
+    {
+      "name": "machined_plate_holes",
+      "file": "machined_plate_holes.png",
+      "truth_mask": "machined_plate_holes.truth.png",
+      "source": "computed by Fullseye (tools/gen_fa_samples.py; examples/poc_dimensional_inspection.py render_part: SDF part, area coverage, PSF)",
+      "licence": "own work (Apache-2.0; computed by Fullseye, no photograph)",
+      "description": "A machined plate seen in silhouette on a back light (dark = metal, bright = light passing; 12.5 um/px). Eight through-features: a 68.50 px round hole, a 50.50 px wide slot and six 10.5 px bolt holes on a 104 px pitch circle; also a chamfer, a fillet, a step and a 12 deg end face for edge measurement. PSF sigma 1.2 px, noise 0.012, a 10 % left-right illumination slope.",
+      "description_ja": "バックライトで撮った機械加工プレートの影絵(暗 = 金属、明 = 光が抜ける所。12.5 µm/px)。貫通形状は 8 つ: 直径 68.50 px の丸穴、幅 50.50 px の長穴、ピッチ円 104 px 上の直径 10.5 px のボルト穴 6 個。面取り・丸み・段差・12° の端面もあり、エッジ計測にも使える。PSF σ 1.2 px、雑音 0.012、左右 10 % の照明傾斜。",
+      "truth": {
+        "kind": "through_holes",
+        "count": 8,
+        "pixels": 9645,
+        "round_hole": {
+          "center_row_col": [
+            240.4,
+            500.75
+          ],
+          "diameter_px": 68.5
+        },
+        "slot": {
+          "rows": [
+            162.0,
+            272.0
+          ],
+          "cols": [
+            300.15,
+            350.65
+          ],
+          "width_px": 50.5
+        },
+        "bolt_holes": {
+          "centers_row_col": [
+            [
+              246.337,
+              229.612
+            ],
+            [
+              287.866,
+              198.318
+            ],
+            [
+              281.529,
+              146.706
+            ],
+            [
+              233.663,
+              126.388
+            ],
+            [
+              192.134,
+              157.682
+            ],
+            [
+              198.471,
+              209.294
+            ]
+          ],
+          "diameter_px": 10.5,
+          "pcd_px": 104.0
+        },
+        "um_per_px": 12.5,
+        "mask_rule": "pixel centres inside the analytic hole / slot boundaries"
+      },
+      "light": "back light (silhouette)",
+      "recipe": "FA — count holes in a back-lit plate",
+      "owner": "gen_fa_samples"
+    },
+    {
+      "name": "weld_xray_porosity",
+      "file": "weld_xray_porosity.png",
+      "truth_mask": "weld_xray_porosity.truth.png",
+      "source": "computed by Fullseye (tools/gen_fa_samples.py; examples/poc_weld_radiograph_porosity.py render: Beer-Lambert, scatter, Poisson)",
+      "licence": "own work (Apache-2.0; computed by Fullseye, no photograph)",
+      "description": "X-ray radiograph of a butt weld in 10 mm steel (0.1 mm/px; bright = thinner). The darker horizontal band is the weld cap (2 mm reinforcement). 7 spherical gas pores, 0.6-2.0 mm diameter, sit in the weld; scatter (SPR 0.5), detector blur and photon noise are modelled. Shown with a linear display window (the 0.1-99.9 percentile range mapped to black-white).",
+      "description_ja": "板厚 10 mm 鋼の突合せ溶接の X 線透過像(0.1 mm/px、明るい = 薄い)。横に走る暗い帯は余盛(高さ 2 mm)。溶接部に直径 0.6〜2.0 mm の球形の気孔が 7 個ある。散乱(散乱/一次線比 0.5)・検出器のぼけ・光子雑音を模している。表示用に線形のウィンドウ処理(0.1〜99.9 パーセンタイルを黒〜白に)をかけてある。",
+      "truth": {
+        "kind": "porosity",
+        "count": 7,
+        "pixels": 577,
+        "pores_row_col_dmm": [
+          [
+            163.75,
+            238.99,
+            1.274
+          ],
+          [
+            110.01,
+            270.67,
+            0.787
+          ],
+          [
+            110.27,
+            95.54,
+            1.054
+          ],
+          [
+            123.06,
+            161.34,
+            0.815
+          ],
+          [
+            172.01,
+            78.4,
+            1.269
+          ],
+          [
+            138.13,
+            24.35,
+            0.728
+          ],
+          [
+            105.28,
+            18.34,
+            1.091
+          ]
+        ],
+        "mm_per_px": 0.1,
+        "display_window": [
+          0.33305,
+          0.4263
+        ],
+        "mask_rule": "pixel centres inside each pore's projected circle"
+      },
+      "light": "X-ray (about 250 kV effective), film/detector",
+      "recipe": "FA — weld porosity (X-ray)",
+      "owner": "gen_fa_samples"
     }
   ]
 }

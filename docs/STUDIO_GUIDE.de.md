@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: bbeba242062b -->
+<!-- i18n-source-sha: 11529e905883 -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
 [日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./STUDIO_GUIDE.hi.md)
@@ -49,7 +49,7 @@ Die anfängliche Aufteilungsbreite beträgt 340 / 360 / 640 px, der rechte Berei
 ## Linker Bereich: Operators-Browser
 
 ### Beispielpipelines (SAMPLE PIPELINES)
-Wählt man aus dem Dropdown eines der **20** fertigen Rezepte (`recipes.py`), wird die Pipeline durch dieses Rezept
+Wählt man aus dem Dropdown eines der **25** fertigen Rezepte (`recipes.py`), wird die Pipeline durch dieses Rezept
 ersetzt. Beispiele: "Edge — Sobel + Otsu", "Denoise — bilateral + unsharp", "Segment — blob / coin",
 "Count — blobs", "Texture — Gabor" und mehr. Ein bequemer Ausgangspunkt, um erst einmal etwas laufen zu sehen und
 den Inhalt zu studieren.
@@ -212,9 +212,14 @@ unterstützte `dev_*` führen zu einem Fehler.
 **Zum Ausprobieren**: Über **File ▸ dev_* visualization demo** lässt sich ein HDevelop-Programm laden und
 ausführen, das tatsächlich das coins-Bild sowie die obigen `dev_*` verwendet (Segmentierung → Regionen mit
 cyanfarbener Kontur + Beschriftung dargestellt). Die Beispielbilder dafür liegen unter
-**File ▸ Sample images** (8 Stück, Herkunft siehe `studio_assets/sample_images/manifest.json`. Synthetische Bilder
+**File ▸ Sample images** (16 Stück, Herkunft siehe `studio_assets/sample_images/manifest.json`. Synthetische Bilder
 = eigene Arbeit / `coins` · `camera` usw. = BSD-/Public-Domain-Material aus skimage.data. Mit
-`tools/gen_sample_images.py` neu erzeugbar).
+`tools/gen_sample_images.py` neu erzeugbar). Fünf davon sind Szenen der Sichtprüfung (FA), nicht
+fotografiert, sondern aus Beleuchtungs- und Reflexionsphysik (`illumdesign`) und den Abbildungsmodellen
+der PoCs berechnet: Kratzer auf Hairline-Metall, Delle und Fremdfaser auf Kunststoff, gravierte
+Losnummer, Lochplatte im Durchlicht, Poren im Röntgenbild einer Schweißnaht. Jede hat ihre
+Fehlermaske (`<name>.truth.png`) und eine Beschreibung im Manifest, gehört zu einem Rezept "FA — ..."
+(ein Test zeigt, dass es die Fehler findet) und wird mit `tools/gen_fa_samples.py` neu erzeugt.
 
 ---
 
