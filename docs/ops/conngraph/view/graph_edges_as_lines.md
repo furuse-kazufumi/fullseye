@@ -4,7 +4,7 @@ dim: conngraph
 category: view
 in: conn_graph × points
 out: table
-examples: []
+examples: [gallery_conngraph_closed_forms]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -34,7 +34,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_conngraph_closed_forms](../../../../examples/gallery_conngraph_closed_forms.py) — `py -3.11 examples/gallery_conngraph_closed_forms.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

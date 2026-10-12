@@ -4,7 +4,7 @@ dim: conngraph
 category: stats
 in: conn_graph
 out: measurement
-examples: []
+examples: [gallery_conngraph_closed_forms]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -34,7 +34,7 @@ reciprocal = 相互結合の対の数 (Σ A∧Aᵀ)/2、ffl = Σ_ac (A²)_ac A_a
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_conngraph_closed_forms](../../../../examples/gallery_conngraph_closed_forms.py) — `py -3.11 examples/gallery_conngraph_closed_forms.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 

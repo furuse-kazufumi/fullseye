@@ -4,7 +4,7 @@ dim: live4d
 category: flow
 in: volseq
 out: volseq
-examples: []
+examples: [gallery_live4d_volseq_truth]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -34,7 +34,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_live4d_volseq_truth](../../../../examples/gallery_live4d_volseq_truth.py) — `py -3.11 examples/gallery_live4d_volseq_truth.py`
 
 ## 型が繋がる次の op(`volseq` を入力に取れる)
 

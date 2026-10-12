@@ -1612,6 +1612,19 @@ EXAMPLES = [
     {"id": "gallery_seg_measures", "task": "family_coverage", "data": "synthetic",
      "name": "分割の評価・Chan–Vese のエネルギー・成分木・円の重なり・ボロノイを独立の検算で確かめる",
      "summary": "分割表と claims、Hausdorff と平均表面距離を cdist の総当たりと、Chan–Vese のエネルギーを式の書き直しと(鋭い版は周長 4s)、max-tree の節と面積を各しきい値の ndimage.label と、円の重なりを閉形式と格子の数え上げと、ボロノイの面積・内部の辺を手計算と照合する(7 op)。"},
+    # -- 2026-10-12: 例の無かった op(グループ C: conngraph / illusion・perpetual / live4d / vxcore)に走る例を付ける -- #
+    {"id": "gallery_conngraph_closed_forms", "task": "family_coverage", "data": "synthetic",
+     "name": "結合グラフの 10 op を教科書の閉形式で確かめる(星・道・環・完全グラフ・二つの塊)",
+     "summary": "conngraph の 10 op: 無向の星の媒介中心性 (n−1)(n−2)/2・道の i(n−1−i)、完全グラフのクラスタ係数 1・木 0・三角形 + 1 点で 7/12、環のラプラシアン固有値 2 − 2cos(2πk/n)・成分数 = 零固有値の数、道の Fiedler 配置が単調、離れた K4 二つのモジュラリティ 1/2・1 群で 0、有向三角形・FFL・完全 K4 のモチーフ数(6/24/8)、線分の端点 = 配置、隣接画像の log1p 正規化と次数順。"},
+    {"id": "gallery_illusion_invariants", "task": "family_coverage", "data": "synthetic",
+     "name": "錯視図 7 op と終わらない絵 2 op を、目でなく数で確かめる",
+     "summary": "illusion / perpetual の 9 op: チェッカーシャドウの 2 マスが厳密に同値、同時対比のパッチが厳密に 0.5、ヘルマン格子の交点 = 帯 = 1.0 と帯の幅・間隔、きらめき格子の 81 個の白丸がビット一致で面積 π·6²、フレーザーの環は角度によらず半径一定、カニッツァの錯覚輪郭の上は背景の定数、ポンゾの 2 本の棒が等長、ハーモノグラフは a/b = 3/2 なら周期 2π で閉じ √2 では閉じない、ラングトンの蟻を独立に書いた蟻と照合し周期 104 の高速道路。"},
+    {"id": "gallery_live4d_volseq_truth", "task": "family_coverage", "data": "synthetic",
+     "name": "体積の時系列(4D)を動きの分かった合成で確かめる(断面・MIP・速さ・コマ補間)",
+     "summary": "live4d の 4 op: 断面は k 枚目の切り出しとビット一致、1 点だけ光る voxel の MIP の位置と S.max との一致・断面 ≤ MIP、1 voxel/コマで動く塊の速さ 1 と止まった塊の 0、2 倍のコマ数で作って間引いた動画を流れで補間し抜いたコマとの誤差がただの平均の 1/3 未満。"},
+    {"id": "gallery_openvx_spec_values", "task": "family_coverage", "data": "synthetic",
+     "name": "OpenVX 互換の 10 op を規格の式どおりの値で確かめる(vxcore)",
+     "summary": "vxcore の 10 op: 坂 3x + 5y の Sobel 24/40 と端の扱い、magnitude の丸めと 32767 の飽和、phase の 0/64/128/192/224 と floor・round の 2π 手前、表引きの反転・S16 の offset・表の外で停止、histogram の升と範囲外、median/min/max を scipy と全画素一致、非極大抑制の平らな頂上は右下だけ・S16 は INT16_MIN、remap の恒等と半画素の bilinear、warp_affine の 90° 回転 = np.rot90、warp_perspective の同次座標(行列を 2 倍しても同じ)。"},
 ]
 
 # Scripts under examples/ that are deliberately NOT in the gallery — each with the
