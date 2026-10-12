@@ -286,7 +286,7 @@ eng = fullseye.FullseyeEngine.load("pipeline.json"); result = eng.run(frame)
 
 <!-- docmap:start -->
 
-## Dokumentkarte — alle 233
+## Dokumentkarte — alle 234
 
 Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** (die 3,119 Operator-Notizen und 63 Familien-Leitfäden unter `docs/ops/` über den Operator-Abschnitt oben; Artikel über [articles/](articles/README.md)). **Die Texte sind überwiegend japanisch.**
 
@@ -327,7 +327,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 |---|---|
 | [`AI_RAG_GUIDE.md`](AI_RAG_GUIDE.md) | Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code) → [`AI_RAG_GUIDE.de.md`](AI_RAG_GUIDE.de.md) · Original _(ja)_ |
 
-**Literature layer (manufacturing knowledge → ops)**(5)
+**Literature layer (manufacturing, driving and optical-metrology knowledge → ops)**(9)
 
 | Dokument | Inhalt |
 |---|---|
@@ -335,7 +335,11 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`literature/mech_design.md`](literature/mech_design.md) | 文献層: メカ設計(機械設計) _(ja)_ |
 | [`literature/mechatronics_parts.md`](literature/mechatronics_parts.md) | 文献層: メカトロ部品(アクチュエータ・センサ・電気部品) _(ja)_ |
 | [`literature/manufacturing_processes.md`](literature/manufacturing_processes.md) | 文献層: 製造工程(あらゆる製造技術の開発に) _(ja)_ |
+| [`literature/driving_simulation.md`](literature/driving_simulation.md) | 文献層: 運転のシミュレーションと評価 _(ja)_ |
+| [`literature/sensor_simulation.md`](literature/sensor_simulation.md) | 文献層: センサーの模擬(カメラ・LiDAR・レーダー) _(ja)_ |
+| [`literature/optical_metrology.md`](literature/optical_metrology.md) | 文献層: 光学計測と外観検査の信頼性(厳選) _(ja)_ |
 | [`literature/OSS_LANDSCAPE.md`](literature/OSS_LANDSCAPE.md) | 既存 OSS の地図 —— すでにある道具と、Fullseye との繋ぎ方 _(ja)_ |
+| [`literature/oss_landscape_notes.md`](literature/oss_landscape_notes.md) | OSS landscape notes (verified 2026-09-21) |
 
 **Perception and sensors**(7)
 
@@ -424,7 +428,7 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`ARTICLE_GPU_SHAPEMATCH.md`](ARTICLE_GPU_SHAPEMATCH.md) | 記事材料: 形状マッチングを GPU に載せる —— 勾配方向スコアの conv2d 定式化 _(ja)_ |
 | [`FULLSEYE_OP_ARTICLE_SPEC.md`](FULLSEYE_OP_ARTICLE_SPEC.md) | Fullseye op カタログ画像・専用記事 仕様書(第 2 陣企画書) _(ja)_ |
 
-**Other**(154)
+**Other**(151)
 
 | Dokument | Inhalt |
 |---|---|
@@ -572,9 +576,6 @@ Die vollständige Karte, damit **kein Dokument vom Index aus unerreichbar ist** 
 | [`hardening/table-sort-mixes-rows-and-spec-dicts.md`](hardening/table-sort-mixes-rows-and-spec-dicts.md) | id: table-sort-mixes-rows-and-spec-dicts |
 | [`hardening/unknown-operator-hides-missing-backend.md`](hardening/unknown-operator-hides-missing-backend.md) | id: unknown-operator-hides-missing-backend |
 | [`hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md`](hardening/wrappers-were-scalars-and-hints-were-raw-type-errors.md) | id: wrappers-were-scalars-and-hints-were-raw-type-errors |
-| [`literature/driving_simulation.md`](literature/driving_simulation.md) | 文献層: 運転のシミュレーションと評価 _(ja)_ |
-| [`literature/oss_landscape_notes.md`](literature/oss_landscape_notes.md) | OSS landscape notes (verified 2026-09-21) |
-| [`literature/sensor_simulation.md`](literature/sensor_simulation.md) | 文献層: センサーの模擬(カメラ・LiDAR・レーダー) _(ja)_ |
 | [`view2026/de/index.md`](view2026/de/index.md) | Fullseye — ViEW2026 |
 | [`view2026/en/index.md`](view2026/en/index.md) | Fullseye — ViEW2026 |
 | [`view2026/hi/index.md`](view2026/hi/index.md) | Fullseye — ViEW2026 |

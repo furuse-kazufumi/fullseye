@@ -8,7 +8,7 @@
 
 **来歴**: OpenAlex から取得した論文メタデータの主題側 **1,264 本**(分野違い・重複を落とした後)を、取得クエリの軸 **6 クラスタ**で持つ生のコーパス(LLM による階層化・要約はしていない、2026-10-13)。この層は**人が厳選した層**で、軸ごとの概観は人が抄録を読んで自分の言葉で書いたもの、論文は古典と 2020 年以降の有用なものを手で選んだもの(目録 `docs/literature/curated/optical_metrology.json`)。載せるのは題名・著者・年・DOI だけ(メタデータは CC0。抄録は出版社の権利なので写さない —— 目録の手書き文はコーパスの全抄録と 8 語の並びで突き合わせ、一致があれば生成を止める)。軸の本数は語彙で当たった本数で、2 軸以上に当たる文献は両方で数える。
 
-**使い方(op に落とす)**: 各軸の「**使う op**」は目録に人が書いた対応で、op 名は生成時に出荷ノート 3,102 本の一覧と突き合わせる(無ければ止まる)。op の後ろはなぜ使うかと型。「Fullseye に無いもの」は op に落ちていない部分を正直に書いたもの。読む順: 話題 → 軸の概観 → 使う op → op ノート(型の契約・実行できる例)→ 厳選した文献。末尾の「op → クラスタ」で逆に引ける。
+**使い方(op に落とす)**: 各軸の「**使う op**」は目録に人が書いた対応で、op 名は生成時に出荷ノート 3,113 本の一覧と突き合わせる(無ければ止まる)。op の後ろはなぜ使うかと型。「Fullseye に無いもの」は op に落ちていない部分を正直に書いたもの。読む順: 話題 → 軸の概観 → 使う op → op ノート(型の契約・実行できる例)→ 厳選した文献。末尾の「op → クラスタ」で逆に引ける。
 
 ## 目次
 
@@ -145,6 +145,17 @@ ToF では同じ現象がマルチパス干渉として現れ、複数の変調�
 
 **使う op**(目録の対応。ノートで型と例を確かめてから使う):
 
+- [`separate_direct_global`](../ops/optics/light_transport/separate_direct_global.md)(ずらした高周波の模様の画像から直接成分と大域成分を分ける(Nayar ら 2006)、images → table)
+- [`high_frequency_patterns`](../ops/optics/light_transport/high_frequency_patterns.md)(分離と Micro PS に使う高周波の模様(縞・市松・正弦波)、入力なし → images)
+- [`micro_phase_decode`](../ops/optics/light_transport/micro_phase_decode.md)(狭い高周波帯の位相シフトを絶対座標に復号(Micro Phase Shifting)、images → table)
+- [`groove_profile`](../ops/optics/light_transport/groove_profile.md)(溝・すみ肉などの凹んだ断面を画素ごとの面に分ける、入力なし → table)
+- [`form_factors_2d`](../ops/optics/light_transport/form_factors_2d.md)(凹んだ断面の面どうしの形態係数(Hottel の交差線則)、table → matrix)
+- [`transport_matrix_radiosity`](../ops/optics/light_transport/transport_matrix_radiosity.md)(Lambert 面の光輸送行列(ラジオシティ。相互反射の真値の元)、table → table)
+- [`render_transport`](../ops/optics/light_transport/render_transport.md)(輸送行列を通した、直接光 + 相互反射つきのカメラ画像、table × images → images)
+- [`predict_fringe_phase_error`](../ops/optics/light_transport/predict_fringe_phase_error.md)(相互反射が縞の位相と高さに入れる誤差を画素ごとに予測、table → table)
+- [`fringe_multipath_phase_error`](../ops/optics/light_transport/fringe_multipath_phase_error.md)(直接と大域の 2 つのフェーザの和の位相と、最悪の誤差 asin(a2/a1)、入力なし → table)
+- [`tof_multipath_phase`](../ops/optics/light_transport/tof_multipath_phase.md)(連続波 ToF で複数経路が重なったときの位相と距離の偏り、入力なし → table)
+- [`tof_transport_depth`](../ops/optics/light_transport/tof_transport_depth.md)(部屋の隅のような凹みでの ToF の深度の偏り(経路長つきの輸送)、table → table)
 - [`synthesize_fringes`](../ops/3d/structured_light/synthesize_fringes.md)(直接光だけの縞を合成(大域光の無い基準)、image2d → images)
 - [`wrapped_phase`](../ops/3d/structured_light/wrapped_phase.md)(N ステップの位相(大域光は位相のずれとして出る)、images → image2d)
 - [`unwrap_phase_2d`](../ops/3d/structured_light/unwrap_phase_2d.md)(位相の展開、image2d → image2d)
@@ -152,7 +163,7 @@ ToF では同じ現象がマルチパス干渉として現れ、複数の変調�
 - [`graycode_decode`](../ops/3d/structured_light/graycode_decode.md)(グレイコードの次数(低周波のビットほど相互反射で誤る)、images → image2d)
 - [`decode_fringe`](../ops/3d/structured_light/decode_fringe.md)(位相シフトの一括復号、images → depth)
 - [`dtof_depth`](../ops/photon/dtof/dtof_depth.md)(ToF の距離(マルチパスで誤る側)、counts → measurement)
-- **準備中**: 直接成分と大域成分を分ける op、相互反射に強い位相シフトの op は別の作業で実装中で、まだ出荷していない。出荷したらこの表に足す(それまでは上の op が「直接光だけ」の仮定どおりの基準になる)。
+- **Fullseye に無いもの**: 光輸送行列は押し出した 2-D 断面の Lambert 面に限る。3-D の任意形状、表面下散乱、鏡面どうしの相互反射を解く op は無い。
 
 ### 厳選した文献(10 本、古い順)
 
@@ -267,18 +278,23 @@ POD の側からは、少ない実欠陥と模擬した応答から hit/miss の
 | [`dtof_depth`](../ops/photon/dtof/dtof_depth.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
 | [`emva_snr_curve`](../ops/optics/sensorchar/emva_snr_curve.md) | T2 レーザースペックルと光切断・三角測量の不確かさ |
 | [`fit_sphere_3d`](../ops/3d/geometry/fit_sphere_3d.md) | T5 光学式 3D センサの受入試験と不確かさ |
+| [`form_factors_2d`](../ops/optics/light_transport/form_factors_2d.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
+| [`fringe_multipath_phase_error`](../ops/optics/light_transport/fringe_multipath_phase_error.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
 | [`graycode_decode`](../ops/3d/structured_light/graycode_decode.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
+| [`groove_profile`](../ops/optics/light_transport/groove_profile.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
 | [`gum_expanded`](../ops/spc/uncertainty/gum_expanded.md) | T5 光学式 3D センサの受入試験と不確かさ |
 | [`gum_monte_carlo`](../ops/spc/uncertainty/gum_monte_carlo.md) | T5 光学式 3D センサの受入試験と不確かさ |
 | [`gum_propagate`](../ops/spc/uncertainty/gum_propagate.md) | T5 光学式 3D センサの受入試験と不確かさ |
 | [`gum_standard_uncertainty`](../ops/spc/uncertainty/gum_standard_uncertainty.md) | T5 光学式 3D センサの受入試験と不確かさ |
 | [`gum_validate`](../ops/spc/uncertainty/gum_validate.md) | T5 光学式 3D センサの受入試験と不確かさ |
+| [`high_frequency_patterns`](../ops/optics/light_transport/high_frequency_patterns.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
 | [`illumination_design`](../ops/optics/illumination/illumination_design.md) | T6 検査計画と合成データ |
 | [`illumination_visibility`](../ops/optics/scene/illumination_visibility.md) | T6 検査計画と合成データ |
 | [`inspection_dataset`](../ops/optics/scene/inspection_dataset.md) | T6 検査計画と合成データ |
 | [`laser_line_coherent`](../ops/optics/coherent/laser_line_coherent.md) | T2 レーザースペックルと光切断・三角測量の不確かさ |
 | [`lighting_sweep`](../ops/optics/illumination/lighting_sweep.md) | T6 検査計画と合成データ |
 | [`lines_gauss`](../ops/2d/contour/lines_gauss.md) | T2 レーザースペックルと光切断・三角測量の不確かさ |
+| [`micro_phase_decode`](../ops/optics/light_transport/micro_phase_decode.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
 | [`msa_attribute_agreement`](../ops/spc/msa/msa_attribute_agreement.md) | T1 検出確率(POD)と NDE の信頼性 |
 | [`msa_bias_linearity`](../ops/spc/msa/msa_bias_linearity.md) | T5 光学式 3D センサの受入試験と不確かさ |
 | [`msa_gauge_rr`](../ops/spc/msa/msa_gauge_rr.md) | T5 光学式 3D センサの受入試験と不確かさ |
@@ -295,10 +311,13 @@ POD の側からは、少ない実欠陥と模擬した応答から hit/miss の
 | [`polarization_demosaic_color`](../ops/optics/polarization/polarization_demosaic_color.md) | T3 偏光からの形状復元 |
 | [`polarization_dolp_map`](../ops/specular/polarization/polarization_dolp_map.md) | T3 偏光からの形状復元 |
 | [`polarization_separate`](../ops/specular/polarization/polarization_separate.md) | T3 偏光からの形状復元 |
+| [`predict_fringe_phase_error`](../ops/optics/light_transport/predict_fringe_phase_error.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
 | [`random_defects`](../ops/optics/scene/random_defects.md) | T6 検査計画と合成データ |
 | [`ransac_plane`](../ops/3d/robust_fit/ransac_plane.md) | T5 光学式 3D センサの受入試験と不確かさ |
 | [`ransac_sphere`](../ops/3d/robust_fit/ransac_sphere.md) | T5 光学式 3D センサの受入試験と不確かさ |
 | [`render_optscene`](../ops/optics/scene/render_optscene.md) | T6 検査計画と合成データ |
+| [`render_transport`](../ops/optics/light_transport/render_transport.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
+| [`separate_direct_global`](../ops/optics/light_transport/separate_direct_global.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
 | [`sfp_disambiguate`](../ops/optics/shape_from_polarization/sfp_disambiguate.md) | T3 偏光からの形状復元 |
 | [`sfp_dolp_model`](../ops/optics/shape_from_polarization/sfp_dolp_model.md) | T3 偏光からの形状復元 |
 | [`sfp_estimate_index`](../ops/optics/shape_from_polarization/sfp_estimate_index.md) | T3 偏光からの形状復元 |
@@ -311,6 +330,9 @@ POD の側からは、少ない実欠陥と模擬した応答から hit/miss の
 | [`surface_defect`](../ops/optics/scene/surface_defect.md) | T6 検査計画と合成データ |
 | [`surface_form_error`](../ops/3d/surface_fit/surface_form_error.md) | T5 光学式 3D センサの受入試験と不確かさ |
 | [`synthesize_fringes`](../ops/3d/structured_light/synthesize_fringes.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
+| [`tof_multipath_phase`](../ops/optics/light_transport/tof_multipath_phase.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
+| [`tof_transport_depth`](../ops/optics/light_transport/tof_transport_depth.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
+| [`transport_matrix_radiosity`](../ops/optics/light_transport/transport_matrix_radiosity.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
 | [`triangulate_column`](../ops/3d/structured_light/triangulate_column.md) | T2 レーザースペックルと光切断・三角測量の不確かさ |
 | [`triangulation_speckle_limit`](../ops/optics/coherent/triangulation_speckle_limit.md) | T2 レーザースペックルと光切断・三角測量の不確かさ |
 | [`unwrap_phase_2d`](../ops/3d/structured_light/unwrap_phase_2d.md) | T4 能動 3D の大域光輸送(相互反射・表面下散乱・マルチパス) |
