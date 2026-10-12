@@ -2922,6 +2922,22 @@
    }
   },
   {
+   "id": "poc_laser_line_speckle_floor",
+   "group": "wing_metrology",
+   "media": "01_line.png",
+   "motion": false,
+   "thumb_src": "01_line_720.jpg",
+   "label": {
+    "ja": "光切断のスペックルの床",
+    "en": "Speckle floor of a laser line",
+    "zh": "光切法的散斑下限",
+    "tw": "光切法的散斑下限",
+    "ko": "광절단의 스페클 하한",
+    "de": "Speckle-Grenze der Laserlinie",
+    "hi": "laser line की speckle सीमा"
+   }
+  },
+  {
    "id": "poc_zernike_aberrations",
    "group": "wing_metrology",
    "media": "06_through_focus.gif",
@@ -5699,6 +5715,13 @@
     "ko": "타입이 있는 검사 결과를 Excel(.xlsx) 보고서로",
     "de": "Typisierte Prüfergebnisse in einen Excel-Bericht (.xlsx) schreiben",
     "hi": "Typed inspection results को Excel (.xlsx) report में लिखना"
+   },
+   "laser-speckle-floor": {
+    "zh": "激光光切法的误差下限由散斑决定(相干成像、散斑统计与三角测量的不确定度)",
+    "tw": "雷射光切法的誤差下限由散斑決定(同調成像、散斑統計與三角量測的不確定度)",
+    "ko": "레이저 광절단의 오차 하한은 스페클이 정한다(결맞음 결상, 스페클 통계, 삼각측량의 불확도)",
+    "de": "Speckle setzt die Fehlergrenze des Laser-Lichtschnitts (kohärente Abbildung, Speckle-Statistik und Triangulationsunsicherheit)",
+    "hi": "laser sheet-of-light की त्रुटि की निचली सीमा speckle तय करता है (coherent imaging, speckle आँकड़े और triangulation अनिश्चितता)"
    }
   }
  }

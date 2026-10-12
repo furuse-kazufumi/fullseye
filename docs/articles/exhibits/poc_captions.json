@@ -2562,6 +2562,17 @@
    "caption_en": "V-groove scratches 2-300 µm wide on hairline-finished metal, rendered with the illumination physics, imaged by the same camera and processed by the same chain under three lightings; the truth is the scratch width that was put in. The design formula says the smallest resolvable size is 202 µm, yet with a 70° ring - where the flank mirrors the light into the camera - a90/95 is 8.9 µm, under a dome 27.1 µm, and with a 30° ring 105 of 120 scratches stay below the recording threshold and the a90/95 lies beyond the sizes tested (flagged as extrapolation). Re-rendering 200 scratches at the fitted a90 gives a measured detection rate of 0.910 / 0.845 (band 0.9 +/- 0.064); the hit/miss GLM agrees with the â-vs-a a90 to 0.15 / 0.18 SE; ignoring censoring flattens the slope by up to 4.7 SE; and unflawed sites given random sizes are refused a curve."
   },
   {
+   "id": "poc_laser_line_speckle_floor",
+   "wing": "wing_metrology",
+   "added": "2026-10-13",
+   "numbers_source": "log",
+   "figure": "line",
+   "title_ja": "レーザー光切断の誤差の床はスペックルが決める ―― 平均しても消えない、推定器の順位も入れ替わる",
+   "title_en": "Speckle Sets the Error Floor of a Laser Sheet-of-Light - It Does Not Average Away, and the Estimator Ranking Flips",
+   "caption_ja": "溶接ビード PoC の続編。同じ光条をなめらかな帯 + 加法雑音ではなくコヒーレント結像(粗面の位相 → 観察開口の瞳 → |E|²)で描き直した。真値は描画に入れた高さ。★★加法雑音で輝度最大の画素より 8.6 倍良かった 3 点の対数放物線は、スペックルでは輝度最大と同じ誤差(12.7 vs 13.1 µm)に落ちて重心(6.4 µm)の 2 倍悪い —— 山の 3 点はいちばん明るい粒を追う。列ごとの重心は Dorsch の床 C·λ/(2π sin u sin θ) = 6.9 µm の 0.93 倍。★★静止した部品は 100 枚平均しても 6.91 → 6.79 µm、部品を動かすと 1/√N(0.099 倍)。加法雑音のモデルは静止のまま下がると言ってしまう。★開口と三角測量角を振った誤差は式の線に傾き −0.94 / −0.99 で乗り、実測 / 式は 0.84〜0.90。★★画素を 4 倍にすると見た目のコントラストは 1.02 → 0.80 に鈍るが、重心は 1.6e-13 µm しか動かない。検査 17 件・図 5 枚。",
+   "caption_en": "A sequel to the weld-bead scan: the same laser line, re-rendered by coherent imaging (rough-surface phase, observation pupil, |E|^2) instead of a smooth band plus additive noise; the truth is the height put into the rendering. The three-point log-parabola that beat the brightest-pixel estimator 8.6-fold under additive noise falls to the brightest pixel's error under speckle (12.7 vs 13.1 µm) and is twice as bad as the centroid (6.4 µm, 0.93 of Dorsch's floor C·λ/(2π sin u sin θ) = 6.9 µm) - three samples around the peak follow the brightest grain. Averaging 100 frames of a static part leaves the error at 6.91 -> 6.79 µm; moving the part gives 1/sqrt(N) (0.099). The additive-noise model wrongly promises that averaging helps. Errors over aperture and triangulation angle follow the formula with slopes -0.94 / -0.99 at 0.84-0.90 of its value. Four-times-larger pixels blunt the visible contrast from 1.02 to 0.80 yet move the centroid by 1.6e-13 µm."
+  },
+  {
    "id": "poc_illusions_and_perpetual_drawing",
    "wing": "lane_math",
    "added": "2026-09-23",

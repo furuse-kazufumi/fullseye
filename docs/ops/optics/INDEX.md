@@ -1,4 +1,4 @@
-# OPTICS operator help — 147 ops in 17 categories
+# OPTICS operator help — 153 ops in 18 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -21,6 +21,10 @@
 ### appearance (7)
 
 [cie_xyz_from_wavelength](appearance/cie_xyz_from_wavelength.md) · [grating_rgb](appearance/grating_rgb.md) · [grating_wavelengths](appearance/grating_wavelengths.md) · [spectrum_to_srgb](appearance/spectrum_to_srgb.md) · [thin_film_reflectance](appearance/thin_film_reflectance.md) · [thin_film_rgb](appearance/thin_film_rgb.md) · [ward_anisotropic](appearance/ward_anisotropic.md)
+
+### coherent (6)
+
+[coherent_image](coherent/coherent_image.md) · [laser_line_coherent](coherent/laser_line_coherent.md) · [speckle_field](coherent/speckle_field.md) · [speckle_reduction](coherent/speckle_reduction.md) · [speckle_statistics](coherent/speckle_statistics.md) · [triangulation_speckle_limit](coherent/triangulation_speckle_limit.md)
 
 ### design (15)
 

@@ -693,7 +693,12 @@ def section9_tool_gaps() -> None:
     # (a) 光切断そのものの op が無い。3 層とも引いた。
     for nm in ("laser_stripe", "light_section", "stripe_center", "sheet_of_light"):
         assert not hasattr(fs, nm) and not hasattr(fs.ledger, nm), nm
-    assert fs.op_find("laser") == [], fs.op_find("laser")
+    # ★2026-10-13: `op_find("laser")` は 0 件でなくなった —— coherent 族
+    #   (`laser_line_coherent` / `speckle_field` / `triangulation_speckle_limit`)が引っかかる。
+    #   だがあれは光条を**描く**側と、スペックルが決める誤差の**床**を返す閉形式で、
+    #   画像から列ごとの中心を取る op ではない。穴は残っている(語でなく族で固定する)。
+    laser_hits = fs.op_find("laser")
+    assert all(r.get("module") == "coherent" for r in laser_hits), laser_hits
     # ★2026-09-23: `op_find("stripe")` は 0 件でなくなった —— wave 族の
     #   `wave_fringe_period`(「縞模様の画像から周期を測り返す」)が docstring で
     #   引っかかる。だがあれは**画像全体の 1 本の支配的な周期**を返す op で、
@@ -704,7 +709,8 @@ def section9_tool_gaps() -> None:
     assert not stripe_named, stripe_named
     print("  (a) **輝線の中心を列ごとにサブピクセルで取る op が無い**。")
     print("      `laser_stripe` / `light_section` / `stripe_center` はファサード・")
-    print("      台帳・進化 op のどこにも無く、`op_find(\"laser\")` も 0 件。")
+    print("      台帳・進化 op のどこにも無く、`op_find(\"laser\")` が拾うのは")
+    print("      coherent 族(光条をスペックル込みで描く側と、誤差の床の閉形式)だけ。")
     print("      (`op_find(\"stripe\")` は `wave_fringe_period` を拾うが、あれは")
     print("       画像全体の周期を 1 つ返す op で、輝線の中心ではない。)")
     print("      光切断は産業用 3-D 計測でいちばん普及した方式なので、これは大きい。")

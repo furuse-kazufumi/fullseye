@@ -254,7 +254,7 @@ def test_bigger_pixels_do_not_move_the_centroid():
 
 def test_averaging_frames_of_a_static_part_does_not_help_but_moving_it_does():
     kw = dict(shape=(64, 400), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0,
-              line_width_um=30.0, pixel_oversample=2, noise=0.02)
+              line_width_um=30.0, pixel_oversample=2, noise=0.02, height_um=0.0)
     ny = 64
 
     def err(img):

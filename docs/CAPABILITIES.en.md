@@ -17,9 +17,9 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 36 capabilities**
+**Currently 37 capabilities**
 
-## Measure (10)
+## Measure (11)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -52,6 +52,14 @@ Convert geodetic coordinates to Earth-centred Cartesian (ECEF), to a local ENU f
 Operators: `dem_geodetic_to_ecef`, `dem_ecef_to_geodetic`, `dem_geoid_height`, `dem_height_frame_convert`, `dem_height_frame_residual`, `dem_datum_shift_3param`, `dem_enu_from_geodetic`, `dem_geodetic_from_enu`
 
 Runnable: `poc_geodetic_height_frames`, `poc_geodetic_benchmarks_real`, `dem_geodesy_tour`
+
+### [Speckle sets the error floor of laser sheet-of-light (coherent imaging, speckle statistics and triangulation uncertainty)](capabilities/laser-speckle-floor.md)
+
+Coherent imaging of rough surfaces under laser light: an amplitude/phase object through the coherent transfer function (verified against Bessel closed forms to 1e-12), laser speckle from a random phase screen with finite roughness, polarisation and pattern diversity and pixel integration, speckle statistics (contrast, Kolmogorov–Smirnov against the exponential and gamma laws, autocorrelation width compared with the Airy pattern), a speckled sheet-of-light laser line, and the speckle-limited height uncertainty of triangulation, δz = C·λ/(2π sin u sin θ). The exponents (+1 in wavelength, −1 in the observation aperture and the triangulation angle) are gated against centroids measured on rendered lines; the constant is disclosed (measured / formula = 0.84–0.91), because the primary paper's text was not available to check its 2π factor. Static speckle does not average away over frames; a moving part does, as 1/√N.
+
+Operators: `coherent_image`, `speckle_field`, `speckle_statistics`, `laser_line_coherent`, `triangulation_speckle_limit`, `speckle_reduction`
+
+Runnable: `poc_laser_line_speckle_floor`
 
 ### [How much of that number is your measuring, not your process (gauge R&R and measurement uncertainty)](capabilities/measurement-system-and-uncertainty.md)
 

@@ -996,7 +996,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 37 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 38 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2191,6 +2191,38 @@ Source: [examples/poc_pod_lighting.py](https://github.com/furuse-kazufumi/fullse
 This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pod_lighting)
 
 Ops used (notes): [`light_source`](https://furuse.work/ops/optics/illumination/light_source.html) · [`pod_ahat_fit`](https://furuse.work/ops/spc/pod/pod_ahat_fit.html) · [`pod_decision_tradeoff`](https://furuse.work/ops/spc/pod/pod_decision_tradeoff.html) · [`pod_false_call`](https://furuse.work/ops/spc/pod/pod_false_call.html) · [`pod_from_ahat`](https://furuse.work/ops/spc/pod/pod_from_ahat.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html)
+
+## No.2026.220 —— Speckle Sets the Error Floor of a Laser Sheet-of-Light - It Does Not Average Away, and the Estimator Ranking Flips
+
+[![Speckle Sets the Error Floor of a Laser Sheet-of-Light - It Does Not Average Away, and the Estimator Ranking Flips](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/01_line_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/01_line.png)
+
+*↑ **Speckle Sets the Error Floor of a Laser Sheet-of-Light - It Does Not Average Away, and the Estimator Ranking Flips** ―― A sequel to the weld-bead scan: the same laser line, re-rendered by coherent imaging (rough-surface phase, observation pupil, |E|^2) instead of a smooth band plus additive noise; the truth is the height put into the rendering. The three-point log-parabola that beat the brightest-pixel estimator 8.6-fold under additive noise falls to the brightest pixel's error under speckle (12.7 vs 13.1 µm) and is twice as bad as the centroid (6.4 µm, 0.93 of Dorsch's floor C·λ/(2π sin u sin θ) = 6.9 µm) - three samples around the peak follow the brightest grain. Averaging 100 frames of a static part leaves the error at 6.91 -> 6.79 µm; moving the part gives 1/sqrt(N) (0.099). The additive-noise model wrongly promises that averaging helps. Errors over aperture and triangulation angle follow the formula with slopes -0.94 / -0.99 at 0.84-0.90 of its value. Four-times-larger pixels blunt the visible contrast from 1.02 to 0.80 yet move the centroid by 1.6e-13 µm.*
+
+[![列ごとの高さの RMS 誤差。加法雑音で最良の 3 点当てはめは、スペックルではいちばん明るい粒を追う。光条全体を平均する重心だけが床に着く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/02_estimators_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/02_estimators.png)
+
+*↑ The measurement ―― 列ごとの高さの RMS 誤差。加法雑音で最良の 3 点当てはめは、スペックルではいちばん明るい粒を追う。光条全体を平均する重心だけが床に着く。 (figure labels are in Japanese; the numbers are the same)*
+
+[![部品が止まっていれば 100 枚平均しても誤差はそのまま。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/03_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/03_frames.png)
+
+*↑ 部品が止まっていれば 100 枚平均しても誤差はそのまま。*
+
+[![光条の幅と同じ長さ(48 µm)の束ごとの重心。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/04_aperture_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/04_aperture.png)
+
+*↑ 光条の幅と同じ長さ(48 µm)の束ごとの重心。*
+
+[![θ = 15°〜60°。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/05_angle_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_laser_line_speckle_floor/05_angle.png)
+
+*↑ θ = 15°〜60°。*
+
+```
+py -3.11 examples/poc_laser_line_speckle_floor.py
+```
+
+Source: [examples/poc_laser_line_speckle_floor.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_laser_line_speckle_floor)
+
+Ops used (notes): [`coherent_image`](https://furuse.work/ops/optics/coherent/coherent_image.html) · [`laser_line_coherent`](https://furuse.work/ops/optics/coherent/laser_line_coherent.html) · [`speckle_field`](https://furuse.work/ops/optics/coherent/speckle_field.html) · [`speckle_reduction`](https://furuse.work/ops/optics/coherent/speckle_reduction.html) · [`speckle_statistics`](https://furuse.work/ops/optics/coherent/speckle_statistics.html) · [`triangulation_speckle_limit`](https://furuse.work/ops/optics/coherent/triangulation_speckle_limit.html)
 
 ## No.2026.150 —— Scoring an Aberration as a Picture: Zernike Polynomials and the Point Spread Function
 

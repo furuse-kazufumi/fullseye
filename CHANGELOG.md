@@ -30,6 +30,25 @@ list / dict・空文字列)のものを渡したときの扱いを 1 つに揃�
   (`accept_promise_broken`)を新規の違反として落とす。台帳 `docs/LEDGER_GAP_DEBT.json` の
   空入力の負債は 0 本。
 
+### 追加 — コヒーレント結像とレーザースペックル(光切断・三角測量の誤差の床)
+
+- 新モジュール `coherent.py`(numpy + scipy のみ)と台帳 `opsoptics` の新カテゴリ `coherent` に 6 op:
+  `coherent_image`(振幅 + 位相の物体を円形瞳 = コヒーレント伝達関数に通した強度)/ `speckle_field`
+  (粗面のランダム位相 → 瞳 → |E|²、有限の粗さ・偏光 2 本・独立 N 枚の和・画素の積分)/
+  `speckle_statistics`(コントラスト・指数 / ガンマ分布への KS・自己相関の半値全幅)/
+  `laser_line_coherent`(光切断の光条をスペックル込みで描く: 波長・観察開口・三角測量角・高さ)/
+  `triangulation_speckle_limit`(`δz = C·λ/(2π sin u sin θ)`、Dorsch–Häusler–Herrmann 1994)/
+  `speckle_reduction`(`1/√(N·pol)` と、画素の積分の Goodman の定義式の数値積分)。
+  これまで `lensimage` はインコヒーレント結像だけで、`optscene.light_spec` の `coherent=True` を使う経路が無かった。
+- 門 `tests/test_coherent.py`: 位相格子の 0 次だけで `J0(a)²`・0 と ±1 で `J0²+4J1²sin²`(1e-12)、
+  Goodman の指数分布(C = 0.993)とガンマ分布(C·√M = 0.990〜1.003)、有限の粗さの非円形の閉形式(2.4 % 以内、
+  円形の Rice の式は 22〜46 % 外れる)、粒径の傾き −0.997 と Airy² の自己相関、画素の積分(1.2 % 以内、
+  `πρc²C² → 1`)、光条中心の標準偏差の指数(λ: +1.046、sin θ: −1.005)。Dorsch の式は原論文の本文を
+  読めていない(抄録のみ)ので、門は指数だけで立て、比例定数(実測 / 式 = 0.84〜0.91)は開示する。
+- 例 `examples/poc_laser_line_speckle_floor.py`(溶接ビード PoC の続編): 加法雑音で 8.6 倍勝っていた 3 点当てはめが
+  スペックルでは輝度最大の画素と同じ誤差に落ち、重心の 2 倍悪い。静止した部品は 100 枚平均しても誤差が下がらず
+  (0.98 倍)、部品を動かすと 1/√N(0.099 倍)。画素を 4 倍にしても重心は 1.6e-13 µm しか動かない。
+
 ### 追加 — 検出確率(POD、MIL-HDBK-1823A)
 
 - 新モジュール `pod.py`(numpy + scipy のみ)と台帳 `opsspc` の新カテゴリ `pod` に 5 op:

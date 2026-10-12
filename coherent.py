@@ -386,7 +386,7 @@ def speckle_statistics(image, roi=None, upsample=4):
 # 光切断の光条
 # --------------------------------------------------------------------------- #
 def laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pixel_um=2.0,
-                        line_width_um=20.0, height_um=0.0, sin_theta=0.5, row0=None,
+                        line_width_um=20.0, height_um=20.0, sin_theta=0.5, row0=None,
                         polarizations=1, n_patterns=1, pixel_oversample=2, roughness_rad=None,
                         noise=0.0, seed=0, noise_seed=None):
     """A sheet-of-light laser line on a rough surface, imaged with its speckle (``image2d``).
@@ -395,7 +395,8 @@ def laser_line_coherent(shape=(96, 512), wavelength_um=0.65, sin_u_obs=0.05, pix
     part. The line is a Gaussian band along the columns, intensity 1/e² half-width
     ``line_width_um`` (as seen by the camera), centred on the row
     ``row0 + height_um · sin_theta / pixel_um`` (``height_um`` a number or one value per
-    column; ``row0`` defaults to the middle row) — the triangulation shift. Its amplitude
+    column, default 20 µm so that ``sin_theta`` acts on the default call; ``row0`` defaults
+    to the middle row) — the triangulation shift. Its amplitude
     multiplies a random phase screen fixed to the part (``seed``), the field passes the
     observation pupil ``sin_u_obs`` (cut-off ``sin_u/λ``), and the intensity is integrated
     over each pixel (``pixel_oversample``). ``polarizations`` × ``n_patterns`` independent

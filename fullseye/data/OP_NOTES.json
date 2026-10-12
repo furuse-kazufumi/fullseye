@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3088,
- "n_notes": 3094,
+ "n_ops": 3094,
+ "n_notes": 3100,
  "notes": {
   "vol_dilate": [
    {
@@ -26387,6 +26387,62 @@
     "in": "normalmap",
     "out": "image2d",
     "path": "docs/ops/optics/appearance/ward_anisotropic.md"
+   }
+  ],
+  "coherent_image": [
+   {
+    "op": "coherent_image",
+    "dim": "optics",
+    "category": "coherent",
+    "in": "image2d × image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/coherent/coherent_image.md"
+   }
+  ],
+  "laser_line_coherent": [
+   {
+    "op": "laser_line_coherent",
+    "dim": "optics",
+    "category": "coherent",
+    "out": "image2d",
+    "path": "docs/ops/optics/coherent/laser_line_coherent.md"
+   }
+  ],
+  "speckle_field": [
+   {
+    "op": "speckle_field",
+    "dim": "optics",
+    "category": "coherent",
+    "out": "image2d",
+    "path": "docs/ops/optics/coherent/speckle_field.md"
+   }
+  ],
+  "speckle_reduction": [
+   {
+    "op": "speckle_reduction",
+    "dim": "optics",
+    "category": "coherent",
+    "out": "table",
+    "path": "docs/ops/optics/coherent/speckle_reduction.md"
+   }
+  ],
+  "speckle_statistics": [
+   {
+    "op": "speckle_statistics",
+    "dim": "optics",
+    "category": "coherent",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/coherent/speckle_statistics.md"
+   }
+  ],
+  "triangulation_speckle_limit": [
+   {
+    "op": "triangulation_speckle_limit",
+    "dim": "optics",
+    "category": "coherent",
+    "out": "table",
+    "path": "docs/ops/optics/coherent/triangulation_speckle_limit.md"
    }
   ],
   "chromatic_shift": [

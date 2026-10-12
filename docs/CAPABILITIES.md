@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 36 項目**
+**収録 37 項目**
 
-## 測る (10)
+## 測る (11)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -51,6 +51,14 @@
 使う op: `dem_geodetic_to_ecef`, `dem_ecef_to_geodetic`, `dem_geoid_height`, `dem_height_frame_convert`, `dem_height_frame_residual`, `dem_datum_shift_3param`, `dem_enu_from_geodetic`, `dem_geodetic_from_enu`
 
 動く例: `poc_geodetic_height_frames`, `poc_geodetic_benchmarks_real`, `dem_geodesy_tour`
+
+### [レーザー光切断の誤差の床はスペックルが決める(コヒーレント結像・スペックルの統計・三角測量の不確かさ)](capabilities/laser-speckle-floor.md)
+
+レーザーで照らした粗面を、**コヒーレント結像**で撮ります。面の凹凸が波長より大きいと反射光の位相は場所ごとにでたらめになり、カメラの開口(瞳)で帯域を切られた**複素振幅**が干渉して粒々の模様(スペックル)になります。光切断やレーザー変位計の高さの誤差の下限は、画素の雑音ではなくこの粒で決まります。
+
+使う op: `coherent_image`, `speckle_field`, `speckle_statistics`, `laser_line_coherent`, `triangulation_speckle_limit`, `speckle_reduction`
+
+動く例: `poc_laser_line_speckle_floor`
 
 ### [その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)](capabilities/measurement-system-and-uncertainty.md)
 
