@@ -5586,6 +5586,13 @@
     "de": "Rohbild einer Polarisationskamera in Stokes, DoLP und Mueller umrechnen",
     "hi": "Polarisation camera के raw frame को Stokes, DoLP और Mueller में पढ़ना"
    },
+   "probability-of-detection": {
+    "zh": "哪种尺寸的缺陷能被发现(检出概率 POD 与 a90/95,MIL-HDBK-1823A)",
+    "tw": "多大的缺陷能被發現(檢出機率 POD 與 a90/95,MIL-HDBK-1823A)",
+    "ko": "어떤 크기라면 발견되는가(검출 확률 POD와 a90/95, MIL-HDBK-1823A)",
+    "de": "Welche Fehlergröße wird tatsächlich gefunden (Auffindwahrscheinlichkeit POD und a90/95, MIL-HDBK-1823A)",
+    "hi": "किस आकार का दोष सच में मिलेगा (probability of detection और a90/95, MIL-HDBK-1823A)"
+   },
    "raw-to-display-isp": {
     "zh": "用每一步都能解释的公式把 Bayer 原始帧变成显示图像",
     "tw": "用每一步都能解釋的公式把 Bayer 原始幀變成顯示影像",

@@ -1,4 +1,4 @@
-# SPC operator help — 17 ops in 7 categories
+# SPC operator help — 22 ops in 8 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/spc/<category>/<op>.md` を走査。
 
@@ -27,6 +27,10 @@
 ### multivariate (1)
 
 [spc_hotelling_t2](multivariate/spc_hotelling_t2.md)
+
+### pod (5)
+
+[pod_ahat_fit](pod/pod_ahat_fit.md) · [pod_decision_tradeoff](pod/pod_decision_tradeoff.md) · [pod_false_call](pod/pod_false_call.md) · [pod_from_ahat](pod/pod_from_ahat.md) · [pod_hitmiss_fit](pod/pod_hitmiss_fit.md)
 
 ### uncertainty (5)
 

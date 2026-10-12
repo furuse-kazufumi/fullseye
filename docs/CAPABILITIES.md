@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 35 項目**
+**収録 36 項目**
 
-## 測る (9)
+## 測る (10)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -59,6 +59,14 @@
 使う op: `msa_anova_table`, `msa_gauge_rr`, `msa_bias_linearity`, `msa_attribute_agreement`, `gum_standard_uncertainty`, `gum_propagate`, `gum_expanded`, `gum_monte_carlo`, `gum_validate`, `spc_capability`, `spc_xbar_r`
 
 動く例: `poc_measurement_system_analysis`
+
+### [どの大きさなら見つかるか(検出確率 POD と a90/95、MIL-HDBK-1823A)](capabilities/probability-of-detection.md)
+
+検査の性能を「この大きさの傷は何 % の確率で見つかるか」で言います。欠陥の大きさ `a` と検査系の応答 `â`(あるいは見つけた/見落とした)の組から、POD(a) 曲線・a50・a90・**a90/95**(90 % の確率で見つかると 95 % の信頼で言える最小の大きさ)と、無欠陥部位の応答から誤検出確率を出します。手順は非破壊検査の信頼性評価の公開ハンドブック MIL-HDBK-1823A のとおりです。
+
+使う op: `pod_ahat_fit`, `pod_from_ahat`, `pod_hitmiss_fit`, `pod_false_call`, `pod_decision_tradeoff`, `light_source`, `detectability_limit`
+
+動く例: `poc_pod_lighting`
 
 ### [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md)
 

@@ -30,6 +30,21 @@ list / dict・空文字列)のものを渡したときの扱いを 1 つに揃�
   (`accept_promise_broken`)を新規の違反として落とす。台帳 `docs/LEDGER_GAP_DEBT.json` の
   空入力の負債は 0 本。
 
+### 追加 — 検出確率(POD、MIL-HDBK-1823A)
+
+- 新モジュール `pod.py`(numpy + scipy のみ)と台帳 `opsspc` の新カテゴリ `pod` に 5 op:
+  `pod_ahat_fit`(左右の打ち切りつき â vs a 回帰、Tobit 型の最尤)/ `pod_from_ahat`(POD(a)・a50・
+  a90・デルタ法の a90/95)/ `pod_hitmiss_fit`(logit / probit / cloglog の 2 値 GLM、Wald と尤度比の
+  a90/95)/ `pod_false_call`(誤検出確率: 経験値・二項の片側上限 PFP50/90/95・正規の裾)/
+  `pod_decision_tradeoff`(判定閾値と a90/95・誤検出の取引表)。入出力は既存の table / signal。
+- 傾きが負か標準誤差の z 倍に届かないとき、全部検出・全部見落とし・完全分離は `ValueError`
+  (偽の曲線を返さない)。a90/95 が試した最大の大きさを超えたら `a90_95_beyond_data` の旗。
+- 門 `tests/test_pod.py`: 閉形式(1e-12)・打ち切り無しで `np.polyfit` に一致(1e-10)・別の
+  パラメータ化と別の最小化による第 2 実装(最大差 6.6e-08)・1823A の誤検出確率の表(最大差 7.2e-05)・
+  被覆率(n=1000 で 0.943、n=60 で 0.892 = 小標本では楽観側であることも門にした)。
+- 例 `examples/poc_pod_lighting.py`: 照明の物理モデルで描いた傷で、リング仰角 70° の a90/95 は
+  8.9 µm、ドーム 27.1 µm、設計の式の解像度の限界 202 µm。当てた a90 の傷を描き直して検出率 0.9 を確認。
+
 ### 変更
 
 - 型付き台帳の全 op(2,130 本)に契約の門(例外・非有限・宣言の型・決定性)。既存の違反は

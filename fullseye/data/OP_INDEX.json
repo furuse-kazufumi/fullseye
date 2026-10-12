@@ -1,8 +1,8 @@
 {
- "n_ops": 3083,
+ "n_ops": 3088,
  "tiers": {
   "color": 12,
-  "ledger": 2130,
+  "ledger": 2135,
   "nary": 17,
   "registry": 924
  },
@@ -17661,6 +17661,72 @@
    "in_sorts": [
     "points",
     "keypoints"
+   ]
+  },
+  {
+   "name": "pod_ahat_fit",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pod",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "pod_decision_tradeoff",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pod",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table",
+    "signal"
+   ]
+  },
+  {
+   "name": "pod_false_call",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "pod",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
+   "name": "pod_from_ahat",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pod",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "pod_hitmiss_fit",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pod",
+   "tier": "ledger",
+   "ledger": "opsspc",
+   "dim": "spc",
+   "in_sorts": [
+    "table"
    ]
   },
   {

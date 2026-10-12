@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pod_hitmiss_fit — SPC <code style="color:#22d3bf">pod</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pod_hitmiss_fit(table, size=&#x27;a&#x27;, hit=&#x27;hit&#x27;, link=&#x27;logit&#x27;, log_size=False, level=0.95, n_grid=200)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pod; pod.pod_hitmiss_fit(table, size=&#x27;a&#x27;, hit=&#x27;hit&#x27;, link=&#x27;logit&#x27;, log_size=False, level=0.95, n_grid=200)</code>、台帳から引くなら <code style="color:#22d3bf">opsspc.get(&quot;pod_hitmiss_fit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>見つけた/見落としたの 2 値データから POD(a) を一般化線形モデルで当てる(<code style="color:#22d3bf">table</code>)。</p>
+<p><code style="color:#22d3bf">POD(a) = F(β0 + β1 x)</code>、<code style="color:#22d3bf">x = a</code> または <code style="color:#22d3bf">ln a</code>、<code style="color:#22d3bf">F</code> はリンクの逆(<code style="color:#22d3bf">logit</code> / <code style="color:#22d3bf">probit</code> / <code style="color:#22d3bf">cloglog</code>、MIL-HDBK-1823A G.4.1.1)。最尤推定はニュートン法(logit では反復重み付き最小二乗と同じ)、共分散は観測情報の逆。</p>
+<p><code style="color:#22d3bf">a_p = (F⁻¹(p) − β0)/β1</code> で a50 / a90 を出す(logit なら <code style="color:#22d3bf">a50 = −β0/β1</code>)。a90/95 は 2 通り返す:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a90_95</code>(Wald / デルタ法): <code style="color:#22d3bf">x90 + z_level · se(x90)</code>、<code style="color:#22d3bf">var(x90) = [vβ0 + 2 x90 c + x90² vβ1]/β1²</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a90_95_lr</code>(尤度比、G.4.2.2): x90 を固定して β1 について最大化した <b>プロファイル対数尤度</b> <code style="color:#22d3bf">ℓp(x90)</code> が <code style="color:#22d3bf">ℓmax − χ²₁(2·level − 1)/2</code> まで落ちる x90(片側なので 95 % なら χ² の 90 % 点 2.7055)。1823A のソフトは(μ, σ) の 2 次元の信頼域の包絡線を描くが、ここで返すのは a90 という 1 つの量に対する境界なので自由度 1 のプロファイルを使う —— <b>定義が違う</b>ことを明示しておく。尤度が十分に落ちない(データが少なく上限が無い)ときは <code style="color:#22d3bf">None</code> と <code style="color:#22d3bf">lr_status = &quot;unbounded&quot;</code>。</p>
+<p>曲線 <code style="color:#22d3bf">pod</code> / <code style="color:#22d3bf">pod_lower</code>(Wald、水平方向)は <code style="color:#22d3bf">n_grid</code> 点。<code style="color:#22d3bf">a90_95_beyond_data</code> は Wald の a90/95 が試した最大の大きさを超えた(外挿である)ことの旗。</p>
+<p>空の入力(<code style="color:#22d3bf">table</code> が 0 行、または空の dict)は ValueError。拒否(<code style="color:#22d3bf">ValueError</code>): 空の表・列の欠け、<code style="color:#22d3bf">hit</code> が 0/1 以外、全部検出か全部見落とし(曲線が立たない)、<b>完全分離</b>(ある大きさを境に全部見落とし/全部検出 = 最尤推定が無限大へ発散する)、<code style="color:#22d3bf">β1 &lt;= 0</code> または標準誤差の <code style="color:#22d3bf">z_level</code> 倍以下、未知の <code style="color:#22d3bf">link</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pod_lighting">poc_pod_lighting</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pod_lighting.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">pod</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:pod_ahat_fit">pod_ahat_fit</a> · <a style="color:#22d3bf" href="opspc:pod_from_ahat">pod_from_ahat</a> · <a style="color:#22d3bf" href="opspc:pod_false_call">pod_false_call</a> · <a style="color:#22d3bf" href="opspc:pod_decision_tradeoff">pod_decision_tradeoff</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pod.py — SPC operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

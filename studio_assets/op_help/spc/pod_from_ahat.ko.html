@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pod_from_ahat — SPC <code style="color:#22d3bf">pod</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pod_from_ahat(fit, a_dec, level=0.95, n_grid=200, a=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pod; pod.pod_from_ahat(fit, a_dec, level=0.95, n_grid=200, a=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;pod_from_ahat&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>â 대 a 회귀와 판정 임계값 <code style="color:#22d3bf">a_dec</code> 로부터 POD(a) 곡선과 a50 / a90 / a90/95 (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>判定は <code style="color:#22d3bf">â &gt; a_dec</code> で「検出」。回帰 <code style="color:#22d3bf">y = β0 + β1 x + ε</code> のもとで <code style="color:#22d3bf">POD(x) = Φ((x − μ)/σ_pod)</code>、<code style="color:#22d3bf">μ = (y_dec − β0)/β1</code>、<code style="color:#22d3bf">σ_pod = σ/β1</code> (MIL-HDBK-1823A G.3.4.3。<code style="color:#22d3bf">y_dec</code> は <code style="color:#22d3bf">a_dec</code> を回帰の y 座標へ写したもの)。<code style="color:#22d3bf">a50 = μ</code>、<code style="color:#22d3bf">a90 = μ + z_0.9 σ_pod</code>(<code style="color:#22d3bf">z_0.9 = 1.281552</code>)を元の単位へ戻す。</p>
+<p>a90/95 はデルタ法: <code style="color:#22d3bf">(β0, β1, σ)</code> の共分散をヤコビアン <code style="color:#22d3bf">∂(μ, σ_pod)/∂(β0, β1, σ)</code> で写し、<code style="color:#22d3bf">x90 + z_level · sqrt(vμ + z_0.9² vσ + 2 z_0.9 c)</code>。<code style="color:#22d3bf">level</code> は片側の信頼水準(既定 0.95 → <code style="color:#22d3bf">z = 1.644854</code>)。</p>
+<p>曲線の下限 <code style="color:#22d3bf">pod_lower</code> は「各 POD 水準 p の大きさ a_p の上限」をつないだ線(水平方向のデルタ法)。だから下限が 0.9 を横切る大きさは a90/95 と<b>一致する</b>。<code style="color:#22d3bf">bound_monotone</code> が False のとき(<code style="color:#22d3bf">σ_pod</code> が自分の標準誤差の z 倍に届かない = データが少なすぎる)下限曲線は 1 価にならず、読まないこと。</p>
+<p>★<code style="color:#22d3bf">a90_95_beyond_data</code> が True のとき、a90/95 は<b>試した最大の大きさより先</b>にある —— 回帰の直線を試験の外へ延ばした外挿で、1823A が「データの外で POD を語るな」という領域。数は返すが、その数で合否を決めてはいけないことを旗で同伴させる(PoC の暗視野照明: 試した最大 300 µm に対し a90/95 = 5,952 µm)。</p>
+<p>*a* を渡すとその大きさで曲線を評価する。省略時は当てに使った大きさの範囲を少し広げた <code style="color:#22d3bf">n_grid</code> 点(対数座標なら等比)。</p>
+<p>空の入力(<code style="color:#22d3bf">fit</code> が空の dict)は ValueError。拒否(<code style="color:#22d3bf">ValueError</code>): <code style="color:#22d3bf">pod_ahat_fit</code> の表でない、<code style="color:#22d3bf">β1 &lt;= 0</code>(応答が大きさとともに増えない = 検出曲線が無い)、<code style="color:#22d3bf">β1</code> が自分の標準誤差の <code style="color:#22d3bf">z_level</code> 倍以下(増えると言えない —— その傾きで割った a50 は 10^12 µm のような数になる)、<code style="color:#22d3bf">a_dec</code> が非有限(対数座標で 0 以下)、<code style="color:#22d3bf">level</code> が (0.5, 1) の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pod_lighting">poc_pod_lighting</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pod_lighting.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">pod</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:pod_ahat_fit">pod_ahat_fit</a> · <a style="color:#22d3bf" href="opspc:pod_hitmiss_fit">pod_hitmiss_fit</a> · <a style="color:#22d3bf" href="opspc:pod_false_call">pod_false_call</a> · <a style="color:#22d3bf" href="opspc:pod_decision_tradeoff">pod_decision_tradeoff</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pod.py — SPC 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

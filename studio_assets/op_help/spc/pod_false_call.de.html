@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pod_false_call — SPC <code style="color:#22d3bf">pod</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pod_false_call(noise, a_dec, log_response=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pod; pod.pod_false_call(noise, a_dec, log_response=False)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;pod_false_call&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Fehlanzeige-Wahrscheinlichkeit aus den Antworten <code style="color:#22d3bf">noise</code> fehlerfreier Stellen und der Entscheidungsschwelle <code style="color:#22d3bf">a_dec</code> (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>判定は <code style="color:#22d3bf">â &gt; a_dec</code> で「検出」(POD と同じ規則)。3 通りで返す:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pfp_empirical = k/n</code> —— 素の比率。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pfp50</code> / <code style="color:#22d3bf">pfp90</code> / <code style="color:#22d3bf">pfp95</code> —— k 回 / n 機会の<b>二項の片側上限</b> (Clopper–Pearson、<code style="color:#22d3bf">Beta⁻¹(c; k+1, n−k)</code>)。MIL-HDBK-1823A G.4.6 の表 G-I と同じ定義で、0 回でも 0 にはならない(150 機会で 0 回なら PFP50 = 0.0046)。1823A は報告とリスク計算に PFP50 を使えと言う。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pfp_normal</code> —— 雑音を正規と見た <code style="color:#22d3bf">1 − Φ((y_dec − m)/s)</code>(G.3.5.3、<code style="color:#22d3bf">log_response</code> なら対数座標で)。裾の外挿なので、分布の仮定に敏感(1823A G.3.4.2 が警告するとおり)。</p>
+<p>空の入力(<code style="color:#22d3bf">noise</code> が 0 要素)は ValueError。拒否(<code style="color:#22d3bf">ValueError</code>): 空・非有限・2 点未満、雑音がすべて同じ値(正規の幅が 0)、<code style="color:#22d3bf">a_dec</code> が非有限(対数座標で 0 以下)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pod_lighting">poc_pod_lighting</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pod_lighting.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">pod</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:pod_ahat_fit">pod_ahat_fit</a> · <a style="color:#22d3bf" href="opspc:pod_from_ahat">pod_from_ahat</a> · <a style="color:#22d3bf" href="opspc:pod_hitmiss_fit">pod_hitmiss_fit</a> · <a style="color:#22d3bf" href="opspc:pod_decision_tradeoff">pod_decision_tradeoff</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pod.py — SPC Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

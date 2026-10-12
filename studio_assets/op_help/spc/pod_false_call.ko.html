@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pod_false_call — SPC <code style="color:#22d3bf">pod</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pod_false_call(noise, a_dec, log_response=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pod; pod.pod_false_call(noise, a_dec, log_response=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;pod_false_call&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
+<p>무결함 부위의 응답 <code style="color:#22d3bf">noise</code> 와 판정 임계값 <code style="color:#22d3bf">a_dec</code> 로부터 오검출 확률 (<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
+<p>判定は <code style="color:#22d3bf">â &gt; a_dec</code> で「検出」(POD と同じ規則)。3 通りで返す:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pfp_empirical = k/n</code> —— 素の比率。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pfp50</code> / <code style="color:#22d3bf">pfp90</code> / <code style="color:#22d3bf">pfp95</code> —— k 回 / n 機会の<b>二項の片側上限</b> (Clopper–Pearson、<code style="color:#22d3bf">Beta⁻¹(c; k+1, n−k)</code>)。MIL-HDBK-1823A G.4.6 の表 G-I と同じ定義で、0 回でも 0 にはならない(150 機会で 0 回なら PFP50 = 0.0046)。1823A は報告とリスク計算に PFP50 を使えと言う。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pfp_normal</code> —— 雑音を正規と見た <code style="color:#22d3bf">1 − Φ((y_dec − m)/s)</code>(G.3.5.3、<code style="color:#22d3bf">log_response</code> なら対数座標で)。裾の外挿なので、分布の仮定に敏感(1823A G.3.4.2 が警告するとおり)。</p>
+<p>空の入力(<code style="color:#22d3bf">noise</code> が 0 要素)は ValueError。拒否(<code style="color:#22d3bf">ValueError</code>): 空・非有限・2 点未満、雑音がすべて同じ値(正規の幅が 0)、<code style="color:#22d3bf">a_dec</code> が非有限(対数座標で 0 以下)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
+<p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
+<p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>
+<p style="margin:2px 0 2px 12px">• 알고리즘의 정전(저자·연도)과 용도는 위의 <b>패밀리 사용 가이드</b>에 적혀 있습니다.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">실행 가능한 예제(이 연산자를 실제로 호출하는 검증된 샘플)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pod_lighting">poc_pod_lighting</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pod_lighting.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">타입이 이어지는 다음 연산자(<code style="color:#22d3bf">table</code> 를 입력으로 받는 것)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">같은 카테고리(<code style="color:#22d3bf">pod</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:pod_ahat_fit">pod_ahat_fit</a> · <a style="color:#22d3bf" href="opspc:pod_from_ahat">pod_from_ahat</a> · <a style="color:#22d3bf" href="opspc:pod_hitmiss_fit">pod_hitmiss_fit</a> · <a style="color:#22d3bf" href="opspc:pod_decision_tradeoff">pod_decision_tradeoff</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pod.py — SPC 연산자 레지스트리. 이 op 노트는 <code style="color:#22d3bf">tools/opdocs.py md</code> 가 자동 생성합니다(직접 편집하지 마세요).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3083,
- "n_notes": 3089,
+ "n_ops": 3088,
+ "n_notes": 3094,
  "notes": {
   "vol_dilate": [
    {
@@ -30301,6 +30301,56 @@
     "in": "matrix",
     "out": "table",
     "path": "docs/ops/spc/multivariate/spc_hotelling_t2.md"
+   }
+  ],
+  "pod_ahat_fit": [
+   {
+    "op": "pod_ahat_fit",
+    "dim": "spc",
+    "category": "pod",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/spc/pod/pod_ahat_fit.md"
+   }
+  ],
+  "pod_decision_tradeoff": [
+   {
+    "op": "pod_decision_tradeoff",
+    "dim": "spc",
+    "category": "pod",
+    "in": "table × signal",
+    "out": "table",
+    "path": "docs/ops/spc/pod/pod_decision_tradeoff.md"
+   }
+  ],
+  "pod_false_call": [
+   {
+    "op": "pod_false_call",
+    "dim": "spc",
+    "category": "pod",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/spc/pod/pod_false_call.md"
+   }
+  ],
+  "pod_from_ahat": [
+   {
+    "op": "pod_from_ahat",
+    "dim": "spc",
+    "category": "pod",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/spc/pod/pod_from_ahat.md"
+   }
+  ],
+  "pod_hitmiss_fit": [
+   {
+    "op": "pod_hitmiss_fit",
+    "dim": "spc",
+    "category": "pod",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/spc/pod/pod_hitmiss_fit.md"
    }
   ],
   "gum_expanded": [

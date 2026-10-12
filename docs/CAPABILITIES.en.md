@@ -17,9 +17,9 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 35 capabilities**
+**Currently 36 capabilities**
 
-## Measure (9)
+## Measure (10)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -60,6 +60,14 @@ Separate how much of a number comes from the parts and how much from the act of 
 Operators: `msa_anova_table`, `msa_gauge_rr`, `msa_bias_linearity`, `msa_attribute_agreement`, `gum_standard_uncertainty`, `gum_propagate`, `gum_expanded`, `gum_monte_carlo`, `gum_validate`, `spc_capability`, `spc_xbar_r`
 
 Runnable: `poc_measurement_system_analysis`
+
+### [Which flaw size will you actually find (probability of detection and a90/95, MIL-HDBK-1823A)](capabilities/probability-of-detection.md)
+
+Probability of detection per MIL-HDBK-1823A: â-vs-a regression with left and right censoring (a Tobit-type maximum likelihood, concave in Olsen's coordinates, reducing exactly to least squares when nothing is censored), the POD(a) curve with a50 / a90 / a90/95 by the delta method, the hit/miss generalised linear model with both Wald and likelihood-ratio a90/95, false-call probability from unflawed sites (binomial one-sided bounds that reproduce the handbook's PFP table to 7.2e-05), and the decision-threshold trade-off. Estimates agree with an independently written likelihood minimised by a different algorithm to 6.6e-08. The delta-method a90/95 covers the true a90 in 94.3 % of large-sample replicates but only 89.2 % at n=60 — reported, not hidden. A slope that cannot be told from zero is refused rather than turned into an absurd a90, and an a90/95 beyond the largest size tested carries a flag.
+
+Operators: `pod_ahat_fit`, `pod_from_ahat`, `pod_hitmiss_fit`, `pod_false_call`, `pod_decision_tradeoff`, `light_source`, `detectability_limit`
+
+Runnable: `poc_pod_lighting`
 
 ### [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md)
 
