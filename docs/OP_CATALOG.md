@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(341 例)
+### 2-D 画像/信号/幾何(344 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -385,6 +385,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **けん玉・糸・歩く人を置き直す op を剛体の不変量と投影で確かめる** — kendamaworld 6 op と drivehumanoid 1 op: 糸の角柱が閉じて体積 (2r)²L、けんの頂点 = 局所 @ Rᵀ + p、姿勢を変えてもほかの物体はビット一致、大皿の縁の中心の像を自前のピンホール投影と照合、皿の半径 f·r/深度、糸の張り直しで長さ更新、歩く人の頂点 = R(yaw)·局所 + (x, y)・頂点間の距離の保存・1 周期先は同じ形。 `py -3.11 examples/gallery_drive_world_objects.py`
 - **建物・起伏・LiDAR の箱・倉庫の格子を面積・体積・閉形式の距離で確かめる** — driveplateau 3 op・driveterrain・lidarsim・agvfleet 2 op: 凹多角形の三角形の面積和 = 靴紐公式、箱で 2 棟だけ切り出し、角柱の体積 = 足跡の面積 × 高さ、地面の格子の頂点数・道の面 160 枚・道の近くの高さ = うねりの閉形式、光線の距離を6 面を全部調べる第 2 実装と 2000 本照合、壁を回り込む最短手数 6 + c − r、計画の総コスト。 `py -3.11 examples/gallery_drive_city_terrain.py`
 - **鏡の折り返し・ミラーに映る左右・坂道の譲り合い・人の群れの 1 歩を確かめる** — drivedecide・drivepass 2 op・drivetraffic: 鏡映行列の対合と det = −1 と等長、ミラーの像を 3 次元の鏡映行列(別の op)で照合、仮想の眼の角速度 = −像の角速度、教則 6-2-1(6) の譲り合いの表、social force の 1 人の解が刻み幅に依らずv0(1 − e^{−t/τ}) と一致、点対称な配置は点対称のまま、斥力ですれ違いの間隔が開く。 `py -3.11 examples/gallery_drive_mirrors_crowds.py`
+- **2 入力の画像算術と領域の集合演算(n-ary 層 17 op)と identity を numpy の検算で確かめる** — fullseye.apply([x1, x2], name) で呼ぶ n-ary 層: ゲイン 1 になる a, b で和・差・積・商が numpy と一致(商は q·I2 / I2 で q が戻る)、|I1 − I2| = max − min、8 bit のビット AND/OR と (a AND b) + (a OR b) = a + b、convol_image は相関(右に重み 1 のマスクは右隣を読む)、和・積・差・対称差の包除と (A − B) ∪ (A ∩ B) = A、定義域・塗りつぶし・paint_gray(暗い source も塗る)、identity は入力そのまま。 `py -3.11 examples/gallery_nary_image_algebra.py`
+- **複素スペクトルと 1-D 信号の橋渡し op(tb_cx_* 7 本・tb_negate_funct_1d・tb_zero_crossing_rate)を往復と閉形式で確かめる** — cx_fft → tb_cx_ifft で元の画像に 1e-12 で戻る、実部・虚部で組み直し、直流 = 画素の総和とパーセバル、1 画素ずらした点の位相がシフト定理どおり回る、log 振幅の最大は直流、σ = 0.02 + 0.48a のガウス低域 H を numpy で作って掛けたものと一致、−y と二重否定、零交差率の docstring の例と矩形波。 `py -3.11 examples/gallery_spectrum_signal_bridge.py`
+- **球のメッシュ・分割表・太陽のブルームの円・RGB ゲイン(台帳 op 4 本)を閉形式と手計算で確かめる** — icosphere の頂点 10·4^s + 2・面 20·4^s・オイラー標数 2・外向き・面積が下から 4πr² へ、seg_contingency を手で数えた組と行和・列和で、sun_bloom_fit は中心の分かる合成ブルーム(切れていても円の中心は 0.3 px 以内、重心は 2 px 偏る)、rgb_apply_gains は numpy の積と 0 以下のゲインの拒否。 `py -3.11 examples/gallery_mesh_seg_sun_gains.py`
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`
@@ -1343,7 +1346,7 @@ _計 936 ops / 48 categories。_
 - `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
 - `edge_transition_width` `image → image` · 例: `gallery2d_edges`
 - `grad_dir` `image → image` · 例: `gallery2d_edges`
-- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `poc_colormap_readability`, `poc_datacenter_thermal_field`, `poc_dehazing`, `poc_driving_longitudinal`, `poc_eye_to_brain`, `poc_powder_grinding_ae`, `poc_registration_basin`, `poc_wound_area_tracking`
+- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `gallery_spectrum_signal_bridge`, `poc_colormap_readability`, `poc_datacenter_thermal_field`, `poc_dehazing`, `poc_driving_longitudinal`, `poc_eye_to_brain`, `poc_powder_grinding_ae`, `poc_registration_basin`, `poc_wound_area_tracking`
 - `corner_response` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`, `poc_document_scan`, `poc_matrix_code_reading`
 - `sk_scharr` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
 - `sk_farid` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`

@@ -4,7 +4,7 @@ dim: gfx2d
 category: isp
 in: rgb × vector
 out: rgb
-examples: []
+examples: [gallery_mesh_seg_sun_gains]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -27,7 +27,7 @@ Multiply the R, G, B channels by ``gains`` (3 values) and clip to ``[0, 1]``.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_mesh_seg_sun_gains](../../../../examples/gallery_mesh_seg_sun_gains.py) — `py -3.11 examples/gallery_mesh_seg_sun_gains.py`
 
 ## 型が繋がる次の op(`rgb` を入力に取れる)
 

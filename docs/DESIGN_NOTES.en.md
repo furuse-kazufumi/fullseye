@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 632 of 1362. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 632 of 1364. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -313,6 +313,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/gallery2d_texture_freq.py`
 
 - **L305** _(ja)_ — ★窓は `_k(a)` が決める —— `a=0.5` は **7x7**(5x5 ではない)。ここを取り違えると 閉形式の定数がずれて、正しい実装が落ちる(実際に一度落とした)。
+
+## `examples/gallery_nary_image_algebra.py`
+
+- **L117** _(ja)_ — ★公開の入口 ``fullseye.apply`` は n-ary の 2 入力に「同じ形」を要求する(3×3 のマスクは形の不一致で拒まれる)。 画像と同じ大きさのゼロ配列の中央(scipy の原点 = N // 2)に置けば、同じマスクとして働く。
 
 ## `examples/optics_four_f_processor.py`
 
@@ -2544,13 +2548,14 @@ This repository records *why* things are the way they are in **comments in the s
 - **L959** — ★The n-ary (multi-input) tier. Until 2026-09-09 **17 operators had no note at all** (`add_image`, `sub_image`, `bit_and`, `reduce_domain`, `union2`…). They appear in `OP_INDEX.json` as tier `nary`, but with no note under `docs/ops/` they could **never be retrieved from the RAG corpus**. The reason it went unnoticed is plain: this code walked only `ops.REGISTRY`, and `ops.REGISTRY` (899) matches the 2-D note count (899) — so counting from the registry side it looked complete. It only shows when you count across tiers.
 - **L1001** — ★2026-09-07: ``OPS3D[...]["doc"]`` is, at registration time, just **the first line of the docstring** cut out (ops3d._build). Using it for a note's "usage" turns it into a single line no matter how many paragraphs the implementation writes —— the 3-D share of "494 ops with a one-line usage" was caused by this truncation (many ops have long docstrings themselves). Read the function's docstring in full, as for the ledger dim.
 - **L1024** — ★ A bridging op (``tb_<name>``) has the same implementation as the ledger's ``<name>``, and examples are written under the ledger name. Until 2026-09-06, 147 of them were "zero examples," but that only meant we had not counted that **examples calling the same implementation exist under a different name**. Inherit the ledger-side examples and note explicitly in the note that they are "examples of the original op" (so as not to lie).
-- **L1244** — ★An n-ary operator cannot be called through `fullseye.apply` — that is the one-image model. Writing the one-image call form here makes **the note lie**, and telling the reader how to call the operator is the note's only job, so a wrong call form is worse than none. The public route is `fullseye.FullseyeGraph`.
-- **L1263** — ★2026-09-07: **Write the public path first**. This only wrote a direct import of the implementation module and did not surface `fullseye.ledger.<name>`, which users actually use (all 1,244 ops other than 2-D). The reason PoCs repeatedly reported "not in fs.<name>" was not that the name was missing but that **the entry point was not written**.
-- **L1712** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
-- **L1757** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
-- **L1900** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
-- **L2069** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
-- **L2771** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
+- **L1082** _(ja)_ — ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、 ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
+- **L1260** — ★An n-ary operator cannot be called through `fullseye.apply` — that is the one-image model. Writing the one-image call form here makes **the note lie**, and telling the reader how to call the operator is the note's only job, so a wrong call form is worse than none. The public route is `fullseye.FullseyeGraph`.
+- **L1279** — ★2026-09-07: **Write the public path first**. This only wrote a direct import of the implementation module and did not surface `fullseye.ledger.<name>`, which users actually use (all 1,244 ops other than 2-D). The reason PoCs repeatedly reported "not in fs.<name>" was not that the name was missing but that **the entry point was not written**.
+- **L1728** — ★ Surface the entry points in 6 languages (2026-09-09). The leaves (Studio's op help) have 10,191 pages across 6 languages, yet **the index leading there was Japanese only** —— a gap of the form where the translations exist but cannot be reached. The frame's wording goes into `T()`, so holes in the parallel translations are watched by the existing gate (test_chrome_translation_table_has_no_holes).
+- **L1773** — ★ For a long time this pointed only at `2d/guides/` and never once sent readers to the guides of the 30 families such as optics, PIV, and tomography (fixed 2026-09-09).
+- **L1916** _(ja)_ — コードスパン。★``…``(RST / docstring の二重バッククォート)を `…` より**先に**試す。 2026-10-07 まで `([^`]+)` だけで、``p`` measures … ``p`` が「`` の 2 文字目と次の `` の 1 文字目」で組まれ、コードと散文が**反転して**表示されていた(英語版 3,153 枚中 約 2,800 枚)。前に付いた RST ロール(:func:`x` など)は飲み込み、対象名だけをコードで出す (733 枚で ``:func:`` が生で見えていた)。
+- **L2085** _(ja)_ — ★置き換えは描画時と同じ退避記号で(空白にすると ``**raises `ValueError`**`` の閉じの 直前が空白になって太字の組が外れず、英字にすると ``**name**`(a)``` の閉じの直後が 英字になって外れない —— どちらも「閉じていない」と誤判定して次の箇条書きを飲み込んだ)。
+- **L2787** _(ja)_ — ★2026-09-20: 生成を終えたあと、インタプリタの終了処理(fullseye が引き込む mediapipe の shutdown dispatcher)で 30〜60 分固まり、regen_all の連鎖がその間止まった(2 度実測、CPU 0)。 出力は全部書き終えているので、flush してから os._exit で確定させる。
 
 ## `tools/preflight.py`
 
