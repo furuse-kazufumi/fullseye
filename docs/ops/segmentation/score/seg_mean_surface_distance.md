@@ -4,7 +4,7 @@ dim: segmentation
 category: score
 in: labels2d × labels2d
 out: table
-examples: []
+examples: [gallery_seg_measures]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -38,7 +38,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_seg_measures](../../../../examples/gallery_seg_measures.py) — `py -3.11 examples/gallery_seg_measures.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

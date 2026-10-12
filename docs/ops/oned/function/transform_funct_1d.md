@@ -4,7 +4,7 @@ dim: oned
 category: function
 in: signal
 out: pairs
-examples: []
+examples: [gallery_oned_audio_funct]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -38,7 +38,7 @@ Empty input (``y`` with 0 elements) returns an empty result (reason: a 1-D funct
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_oned_audio_funct](../../../../examples/gallery_oned_audio_funct.py) — `py -3.11 examples/gallery_oned_audio_funct.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 

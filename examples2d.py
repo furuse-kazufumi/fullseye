@@ -1599,6 +1599,19 @@ EXAMPLES = [
     {"id": "gallery_mesh_seg_sun_gains", "task": "family_coverage", "data": "synthetic",
      "name": "球のメッシュ・分割表・太陽のブルームの円・RGB ゲイン(台帳 op 4 本)を閉形式と手計算で確かめる",
      "summary": "icosphere の頂点 10·4^s + 2・面 20·4^s・オイラー標数 2・外向き・面積が下から 4πr² へ、seg_contingency を手で数えた組と行和・列和で、sun_bloom_fit は中心の分かる合成ブルーム(切れていても円の中心は 0.3 px 以内、重心は 2 px 偏る)、rgb_apply_gains は numpy の積と 0 以下のゲインの拒否。"},
+    # -- 2026-10-12: 数学・1-D・セグメンテーションの台帳 op のうち例の無かったもの(グループ B)に走る例を付ける ----- #
+    {"id": "gallery_math_stats_linalg", "task": "family_coverage", "data": "synthetic",
+     "name": "分布の距離・検定・行列の分解と関数を閉形式と往復で確かめる(mathestimation / mathops)",
+     "summary": "N(0,1) と N(1,1) の KL = 1/2・Bhattacharyya = 1/8、重ならない分布の JS = log 2、歪対称の e^A = Rodrigues、log(e^X) = X の往復と負の固有値の拒否、χ² 適合度の χ² = 20 と自由度 3 の p の閉形式、KS の D = 1/(2n) と 2 標本の厳密な p = 0.1、対応のある t の t = 2√3 と自由度 2 の p の閉形式、Cholesky が L₀ に戻る、回転の固有値 e^{±iθ} と推移行列の定常分布、LU の PA = LU とピボット無しの古典的失敗(9 op)。"},
+    {"id": "gallery_math_numerics_filters", "task": "family_coverage", "data": "synthetic",
+     "name": "特殊関数・求積・NURBS・波源の数・Tustin・Daubechies を閉形式で確かめる",
+     "summary": "半整数次の Bessel の閉形式と Wronskian、Gauss 求積が 2n−1 次まで厳密で 2n 次で外れる、有理 2 次 NURBS が円柱の上に厳密に乗る、MDL が 2 波源・1 波源・雑音だけを数え分ける(seed 固定)、Tustin の係数の閉形式と scipy.signal.bilinear(別実装)・前歪みで f_c の利得 1/√2、Haar と db2 の閉形式・db4 の直交性と消失モーメント(6 op)。"},
+    {"id": "gallery_oned_audio_funct", "task": "family_coverage", "data": "synthetic",
+     "name": "音のファイルを読み、特徴量と零交差率を出し、1-D 関数を組み替える(dsp / funct1d)",
+     "summary": "一時ディレクトリに標準ライブラリで書いた 16 bit WAV(モノラル・ステレオ)を read_audio で読み戻して整数 / 32768 と完全一致、零交差率を解析的な交差時刻の個数と、整数周期の余弦の rms・peak・波高率・ピーク周波数・重心・帯域を閉形式と、compose / negate / transform_funct_1d を手計算と照合する(6 op)。"},
+    {"id": "gallery_seg_measures", "task": "family_coverage", "data": "synthetic",
+     "name": "分割の評価・Chan–Vese のエネルギー・成分木・円の重なり・ボロノイを独立の検算で確かめる",
+     "summary": "分割表と claims、Hausdorff と平均表面距離を cdist の総当たりと、Chan–Vese のエネルギーを式の書き直しと(鋭い版は周長 4s)、max-tree の節と面積を各しきい値の ndimage.label と、円の重なりを閉形式と格子の数え上げと、ボロノイの面積・内部の辺を手計算と照合する(7 op)。"},
 ]
 
 # Scripts under examples/ that are deliberately NOT in the gallery — each with the
