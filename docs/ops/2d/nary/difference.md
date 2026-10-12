@@ -5,7 +5,7 @@ category: nary
 in: region × region
 out: region
 halcon: difference
-examples: []
+examples: [gallery_nary_image_algebra, gfx2d_scene, poc_granular_heap_repose, poc_powder_scoop_pour, poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -28,7 +28,11 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_nary_image_algebra](../../../../examples/gallery_nary_image_algebra.py) — `py -3.11 examples/gallery_nary_image_algebra.py`
+- [gfx2d_scene](../../../../examples/gfx2d_scene.py) — `py -3.11 examples/gfx2d_scene.py`
+- [poc_granular_heap_repose](../../../../examples/poc_granular_heap_repose.py) — `py -3.11 examples/poc_granular_heap_repose.py`
+- [poc_powder_scoop_pour](../../../../examples/poc_powder_scoop_pour.py) — `py -3.11 examples/poc_powder_scoop_pour.py`
+- [poc_pxrd_phase_peel](../../../../examples/poc_pxrd_phase_peel.py) — `py -3.11 examples/poc_pxrd_phase_peel.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)
 

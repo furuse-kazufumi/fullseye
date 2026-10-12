@@ -1079,6 +1079,22 @@ def _records_uncached():
         _exl = _base_examples.get(_base, [])
         _r["examples_inherited"] = ([("examples_3d", e, _base) for e in _ex3d]
                                     + [("examples", e, _base) for e in _exl])
+    # ★2026-10-12: 2-D の例索引(``op_example_index._op_names_2d``)は ``ops.REGISTRY`` から identity と
+    # 橋渡し op(category ``typed``)を外し、n-ary 層(``imgops_nary``)はそもそも数えない。そのため
+    # この 3 種のノートは、examples/ に ``fullseye.apply([x1, x2], "add_image")`` や
+    # ``fullseye.apply(F, "tb_cx_ifft")`` と**名指しで呼ぶ例があっても**「(まだありません)」のままだった
+    # (n-ary 17 本・identity・元 op の例を継承できない tb_cx_* 7 本)。カバレッジの門の母集団は変えず、
+    # ノートの案内だけ同じ呼び出し検出(``_index_for``)で名前を直接引く。
+    _direct = sorted({_r["name"] for _r in recs
+                      if _r["dim"] == "2d" and not _r["examples"] and not _r.get("examples_inherited")
+                      and (_r["category"] in ("nary", "typed") or _r["name"] == "identity")})
+    if _direct:
+        from op_example_index import _index_for
+        _didx = _index_for(_direct, "examples")
+        for _r in recs:
+            if (_r["dim"] == "2d" and _r["name"] in _didx and not _r["examples"]
+                    and not _r.get("examples_inherited")):
+                _r["examples"] = sorted(_didx[_r["name"]])
     # 台帳経由(``fs.ledger.<名>``)が**宣言 out 型の値だけ**を返す op には、その旨を
     # レコードに持たせる(ノートに 1 行出す)。判定は :data:`RESULT_ADAPTERS` の実測で、
     # 推測はしない。
