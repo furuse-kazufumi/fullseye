@@ -4371,6 +4371,45 @@ def _b_gum_validate(pool, rng):
     return (guf, mcm), {"ndig": 1}
 
 
+def _pod_ahat_table(rng, n=80):
+    """POD の â vs a 表。大きさは対数一様、応答は ln a に直線 + 正規の散らばり。
+
+    ★打ち切りが**実際に起きる**範囲に閾値を置く(下 2 割・上 1 割ほど)。打ち切りの
+    無い表しか渡さないと、打ち切りの尤度の項が一度も計算されない。
+    """
+    a = np.exp(rng.uniform(np.log(0.1), np.log(2.0), n))
+    ahat = 1.0 + 2.0 * np.log(a) + rng.normal(0.0, 0.4, n)
+    return {"a": a, "ahat": ahat}
+
+
+def _b_pod_ahat_fit(pool, rng):
+    return (_pod_ahat_table(rng),), {"log_size": True, "censor_low": -1.5, "censor_high": 2.0}
+
+
+def _b_pod_from_ahat(pool, rng):
+    """回帰の表は op を通して作る(プールの任意の表では列が合わない)。"""
+    import pod as _pod
+    fit = _pod.pod_ahat_fit(_pod_ahat_table(rng), log_size=True, censor_low=-1.5)
+    return (fit, 0.0), {}
+
+
+def _b_pod_hitmiss_fit(pool, rng):
+    """見つけた/見落とした。**分離しない**ように遷移を広く(分離は op が拒む)。"""
+    a = np.exp(rng.uniform(np.log(0.1), np.log(2.0), 120))
+    p = 1.0 / (1.0 + np.exp(-(np.log(a) - np.log(0.5)) / 0.3))
+    return ({"a": a, "hit": (rng.random(a.size) < p).astype(np.int64)},), {"log_size": True}
+
+
+def _b_pod_false_call(pool, rng):
+    return (rng.normal(-1.0, 0.5, 60), 0.0), {}
+
+
+def _b_pod_decision_tradeoff(pool, rng):
+    import pod as _pod
+    fit = _pod.pod_ahat_fit(_pod_ahat_table(rng), log_size=True, censor_low=-1.5)
+    return (fit, rng.normal(-1.0, 0.5, 60)), {}
+
+
 def _b_perpetual_state(pool, rng):
     """``perpetual_step`` / ``perpetual_render`` に**本物の状態**を渡す。
 
@@ -6026,6 +6065,12 @@ OP_ARG_BUILDERS = {
     "gum_expanded": _b_gum_budget,
     "gum_monte_carlo": _b_gum_mc,
     "gum_validate": _b_gum_validate,
+    # --- 検出確率(POD、MIL-HDBK-1823A)。表の列と回帰の表は自分で組む ------- #
+    "pod_ahat_fit": _b_pod_ahat_fit,
+    "pod_from_ahat": _b_pod_from_ahat,
+    "pod_hitmiss_fit": _b_pod_hitmiss_fit,
+    "pod_false_call": _b_pod_false_call,
+    "pod_decision_tradeoff": _b_pod_decision_tradeoff,
     # --- flyvision(ハエ視葉)の消費 6 op(形の噛み合う入力を組む) ------------ #
     "fly_hex_resample": _b_fly_resample,
     "fly_emd_response": _b_fly_emd,

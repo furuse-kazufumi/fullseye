@@ -22,14 +22,22 @@ Coexistence with existing assets (compose, do not re-implement):
     covariance but does not re-wrap the general estimators — it uses numpy.cov and
     fail-closes on a singular matrix.
 
+POD (2026-10-12): a measurement is only half of an inspection — the other half is *how
+likely the system is to find a flaw of a given size*. The ``pod`` category (pod.py,
+5 ops) is MIL-HDBK-1823A's answer: â vs a regression with left/right censoring, the
+hit/miss GLM, a90/95 by the delta method and by the likelihood ratio, false-call
+probability from unflawed sites, and the decision-threshold trade-off. Same table-in,
+table-out shape as msa / gum, so no new type word.
+
 Usage:
     import opsspc
     opsspc.list_ops("chart")
     opsspc.get("spc_xbar_r")(subgroups)
 """
+import pod
 import spc
 
-_MOD = {"spc": spc}
+_MOD = {"spc": spc, "pod": pod}
 
 # --------------------------------------------------------------------------
 # Type vocabulary: no new word is coined (it all fits the existing pool).
@@ -86,6 +94,18 @@ _CATALOG = {
         ("gum_monte_carlo", "spc", ["table"], "table"),
         # 検証は**2 つの表を突き合わせる** —— 伝播則の結果とモンテカルロの結果。
         ("gum_validate", "spc", ["table", "table"], "table"),
+    ],
+    # 検出確率(POD、MIL-HDBK-1823A)。入力は「1 行 = 1 つの欠陥」の表(大きさ / 応答 or
+    # 検出の有無)と、無欠陥部位の応答の 1-D 列(signal)。返りはすべて表。
+    # ★新しい型の語は作らない。曲線(大きさの格子・POD・下限)も表の列として返す。
+    # ★2-D の橋(tb_*)は架からない: 出力の table は backends_typed.TYPE_TO_SORT に
+    #   写らないので _OP_BRIDGE_SKIP に入れる必要も無い(2026-10-12 に確認して決めた)。
+    "pod": [
+        ("pod_ahat_fit", "pod", ["table"], "table"),
+        ("pod_from_ahat", "pod", ["table"], "table"),
+        ("pod_hitmiss_fit", "pod", ["table"], "table"),
+        ("pod_false_call", "pod", ["signal"], "table"),
+        ("pod_decision_tradeoff", "pod", ["table", "signal"], "table"),
     ],
 }
 

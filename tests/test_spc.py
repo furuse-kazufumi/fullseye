@@ -234,8 +234,10 @@ def test_the_two_registries_agree():
     片方だけ直して穴が半分残る型なので、固定値でなく**両者の一致**を見る。
     """
     import opsspc
-    assert set(spc.SPC) == set(opsspc.OPSSPC), sorted(
-        set(spc.SPC) ^ set(opsspc.OPSSPC))
+    # ★台帳 opsspc は 2026-10-12 から 2 モジュール(spc と pod)を載せる。比べるのは
+    #   「spc モジュールの op」どうし —— pod 側の一致は tests/test_pod.py が見る。
+    mine = {n for n, m in opsspc.OPSSPC.items() if m["module"] == "spc"}
+    assert set(spc.SPC) == mine, sorted(set(spc.SPC) ^ mine)
     assert len(spc.SPC) >= 17, len(spc.SPC)
     for name, fn in spc.SPC.items():
         assert callable(fn), name

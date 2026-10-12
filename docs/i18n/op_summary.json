@@ -16434,6 +16434,51 @@
    "de": "Shewhart-Xbar-R-Regelkarte aus Untergruppen-Messwerten.",
    "hi": "subgroup measurements से Shewhart Xbar-R control chart।"
   },
+  "spc/pod_ahat_fit": {
+   "fp": "bda0bf37bc1f",
+   "en": "Fit the â-vs-a regression by maximum likelihood with left and right censoring (``table``).",
+   "zh": "以带左右删失的最大似然法拟合 â 对 a 的回归(``table``)。",
+   "tw": "以帶左右設限的最大概似法擬合 â 對 a 的迴歸(``table``)。",
+   "ko": "좌우 중도절단을 고려한 최대우도법으로 â 대 a 회귀를 적합 (``table``).",
+   "de": "Die â-über-a-Regression per Maximum-Likelihood mit links- und rechtszensierten Werten anpassen (``table``).",
+   "hi": "बाएँ और दाएँ censoring के साथ maximum likelihood से â बनाम a regression fit करता है (``table``)।"
+  },
+  "spc/pod_from_ahat": {
+   "fp": "029d4d52eedd",
+   "en": "From the â-vs-a regression and the decision threshold ``a_dec``: the POD(a) curve and a50 / a90 / a90/95 (``table``).",
+   "zh": "由 â 对 a 的回归与判定阈值 ``a_dec`` 求 POD(a) 曲线及 a50 / a90 / a90/95(``table``)。",
+   "tw": "由 â 對 a 的迴歸與判定閾值 ``a_dec`` 求 POD(a) 曲線及 a50 / a90 / a90/95(``table``)。",
+   "ko": "â 대 a 회귀와 판정 임계값 ``a_dec`` 로부터 POD(a) 곡선과 a50 / a90 / a90/95 (``table``).",
+   "de": "Aus der â-über-a-Regression und der Entscheidungsschwelle ``a_dec``: POD(a)-Kurve und a50 / a90 / a90/95 (``table``).",
+   "hi": "â बनाम a regression और decision threshold ``a_dec`` से POD(a) curve तथा a50 / a90 / a90/95 (``table``)।"
+  },
+  "spc/pod_hitmiss_fit": {
+   "fp": "7578144a2ac2",
+   "en": "Fit POD(a) to binary found/missed data with a generalised linear model (``table``).",
+   "zh": "用广义线性模型由“检出/漏检”二值数据拟合 POD(a)(``table``)。",
+   "tw": "以廣義線性模型由「檢出/漏檢」二元資料擬合 POD(a)(``table``)。",
+   "ko": "검출/미검출 이진 데이터로부터 일반화 선형모형으로 POD(a)를 적합 (``table``).",
+   "de": "POD(a) mit einem verallgemeinerten linearen Modell an binäre Gefunden/Übersehen-Daten anpassen (``table``).",
+   "hi": "found/missed binary data से generalised linear model द्वारा POD(a) fit करता है (``table``)।"
+  },
+  "spc/pod_false_call": {
+   "fp": "2e5c68cf026e",
+   "en": "Probability of a false call from the responses ``noise`` of unflawed sites and the decision threshold ``a_dec`` (``table``).",
+   "zh": "由无缺陷部位的响应 ``noise`` 与判定阈值 ``a_dec`` 求误检概率(``table``)。",
+   "tw": "由無缺陷部位的響應 ``noise`` 與判定閾值 ``a_dec`` 求誤檢機率(``table``)。",
+   "ko": "무결함 부위의 응답 ``noise`` 와 판정 임계값 ``a_dec`` 로부터 오검출 확률 (``table``).",
+   "de": "Fehlanzeige-Wahrscheinlichkeit aus den Antworten ``noise`` fehlerfreier Stellen und der Entscheidungsschwelle ``a_dec`` (``table``).",
+   "hi": "दोष-रहित स्थलों की प्रतिक्रियाओं ``noise`` और decision threshold ``a_dec`` से false call की संभावना (``table``)।"
+  },
+  "spc/pod_decision_tradeoff": {
+   "fp": "6c5094e5cbce",
+   "en": "Trade-off table of (a50, a90, a90/95, false-call probability) as the decision threshold ``a_dec`` is varied (``table``).",
+   "zh": "改变判定阈值 ``a_dec`` 时 (a50, a90, a90/95, 误检概率) 的权衡表(``table``)。",
+   "tw": "改變判定閾值 ``a_dec`` 時 (a50, a90, a90/95, 誤檢機率) 的權衡表(``table``)。",
+   "ko": "판정 임계값 ``a_dec`` 를 바꿀 때의 (a50, a90, a90/95, 오검출 확률) 트레이드오프 표 (``table``).",
+   "de": "Abwägungstabelle von (a50, a90, a90/95, Fehlanzeige-Wahrscheinlichkeit) bei variierter Entscheidungsschwelle ``a_dec`` (``table``).",
+   "hi": "decision threshold ``a_dec`` बदलने पर (a50, a90, a90/95, false call संभावना) की trade-off तालिका (``table``)।"
+  },
   "specular/brdf_blinn_phong": {
    "fp": "b94a1d5bef72",
    "ja": "Blinn のハーフベクトル鏡面ローブ。→ [0, 1] の (H, W)。",
