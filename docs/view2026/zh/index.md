@@ -146,7 +146,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 全部看
 
-PoC 218 个,另有机器人之眼 4 个。展开分组即可加载缩略图。
+PoC 218 个,另有机器人示例 5 个。展开分组即可加载缩略图。
 
 <noscript><p><a href="../../GALLERY.en.html">(没有 JavaScript 时,可在图库页面查看全部图。)</a></p></noscript>
 
@@ -156,6 +156,12 @@ PoC 218 个,另有机器人之眼 4 个。展开分组即可加载缩略图。
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/evis_bean_track.jpg" alt="筷尖相机追踪豆子" width="200" height="200"><b>&#9654;</b><span>筷尖相机追踪豆子</span></a>
 <a href="../../view2026/media/evis_fullseye_walk.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/evis_walk_rgb_depth_dvs.jpg" alt="以 RGB、深度、DVS 看步行" width="200" height="200"><b>&#9654;</b><span>以 RGB、深度、DVS 看步行</span></a>
 <a href="../../view2026/media/vision_adaptive_walk.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/walker2d_terrain_vision.jpg" alt="看台阶选步态" width="200" height="200"><span>看台阶选步态</span></a>
+</div>
+</details>
+
+<details class="vall"><summary><b>机器人的身体(在 Fullseye 中运行已训练的策略)</b> (1)</summary>
+<div class="vg vs">
+<a href="../../view2026/media/g1_run_fullseye.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/g1_run_policy.jpg" alt="人形机器人 G1 奔跑" width="200" height="200"><b>&#9654;</b><span>人形机器人 G1 奔跑</span></a>
 </div>
 </details>
 

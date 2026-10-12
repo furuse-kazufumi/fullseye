@@ -412,13 +412,13 @@
    "hi": "सब कुछ देखें"
   },
   "all_count": {
-   "ja": "PoC {n} 本と、ロボットの目 {m} 本。グループを開くとサムネイルが出ます。",
-   "en": "{n} PoCs plus {m} robot-eye demos. Open a group to load its thumbnails.",
-   "zh": "PoC {n} 个,另有机器人之眼 {m} 个。展开分组即可加载缩略图。",
-   "tw": "PoC {n} 個,另有機器人之眼 {m} 個。展開分組即可載入縮圖。",
-   "ko": "PoC {n}개와 로봇의 눈 {m}개. 그룹을 펼치면 썸네일이 나옵니다.",
-   "de": "{n} PoCs und {m} Roboteraugen-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.",
-   "hi": "{n} PoCs और {m} robot-eye demos। group खोलने पर thumbnails load होते हैं।"
+   "ja": "PoC {n} 本と、ロボットの例 {m} 本。グループを開くとサムネイルが出ます。",
+   "en": "{n} PoCs plus {m} robot demos. Open a group to load its thumbnails.",
+   "zh": "PoC {n} 个,另有机器人示例 {m} 个。展开分组即可加载缩略图。",
+   "tw": "PoC {n} 個,另有機器人範例 {m} 個。展開分組即可載入縮圖。",
+   "ko": "PoC {n}개와 로봇 예 {m}개. 그룹을 펼치면 썸네일이 나옵니다.",
+   "de": "{n} PoCs und {m} Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.",
+   "hi": "{n} PoCs और {m} robot demos। group खोलने पर thumbnails load होते हैं।"
   },
   "all_nojs": {
    "ja": "(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)",
@@ -1598,6 +1598,18 @@
    }
   },
   {
+   "id": "robot_body",
+   "name": {
+    "ja": "ロボットの身体(学習済み方策を Fullseye 上で実行)",
+    "en": "Robot bodies (trained policies run inside Fullseye)",
+    "zh": "机器人的身体(在 Fullseye 中运行已训练的策略)",
+    "tw": "機器人的身體(在 Fullseye 中執行已訓練的策略)",
+    "ko": "로봇의 몸(학습된 정책을 Fullseye에서 실행)",
+    "de": "Roboterkörper (trainierte Policies laufen in Fullseye)",
+    "hi": "Robot के शरीर (trained policy Fullseye में चलती है)"
+   }
+  },
+  {
    "id": "wing_industrial",
    "name": {
     "ja": "産業検査",
@@ -1831,6 +1843,26 @@
     "ko": "단차를 보고 보행 선택",
     "de": "Stufen sehen, Gang wählen",
     "hi": "steps देखकर gait चुनना"
+   }
+  },
+  {
+   "id": "g1_run_policy",
+   "group": "robot_body",
+   "media": "",
+   "media_path": "view2026/media/g1_run_fullseye.gif",
+   "thumb_src": null,
+   "thumb_path": "view2026/media/g1_run_fullseye.gif",
+   "motion": true,
+   "source_url": "https://github.com/furuse-kazufumi/fullseye/blob/master/g1_policy_bridge.py",
+   "provenance": "fullseye3d.g1_walk_policy で走り方策(MJX+brax PPO で別途学習)を MuJoCo 上で 12 s 実行(50.0 m・平均 4.17 m/s・転倒なし)した出力動画の 4.0〜8.0 s を GIF 化",
+   "label": {
+    "ja": "人型ロボット G1 が走る",
+    "en": "Humanoid G1 running",
+    "zh": "人形机器人 G1 奔跑",
+    "tw": "人形機器人 G1 奔跑",
+    "ko": "휴머노이드 G1 달리기",
+    "de": "Humanoider G1 läuft",
+    "hi": "Humanoid G1 दौड़ता है"
    }
   },
   {

@@ -161,7 +161,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## ぜんぶ見る
 
-PoC 218 本と、ロボットの目 4 本。グループを開くとサムネイルが出ます。
+PoC 218 本と、ロボットの例 5 本。グループを開くとサムネイルが出ます。
 
 <noscript><p><a href="../GALLERY.html">(JavaScript が無い環境では、ギャラリーのページで全部の図を見られます)</a></p></noscript>
 
@@ -171,6 +171,12 @@ PoC 218 本と、ロボットの目 4 本。グループを開くとサムネイ
 <a href="../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/evis_bean_track.jpg" alt="箸先カメラの豆追跡" width="200" height="200"><b>&#9654;</b><span>箸先カメラの豆追跡</span></a>
 <a href="../view2026/media/evis_fullseye_walk.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/evis_walk_rgb_depth_dvs.jpg" alt="歩行を RGB・深度・DVS で" width="200" height="200"><b>&#9654;</b><span>歩行を RGB・深度・DVS で</span></a>
 <a href="../view2026/media/vision_adaptive_walk.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/walker2d_terrain_vision.jpg" alt="段差を見て歩き方を選ぶ" width="200" height="200"><span>段差を見て歩き方を選ぶ</span></a>
+</div>
+</details>
+
+<details class="vall"><summary><b>ロボットの身体(学習済み方策を Fullseye 上で実行)</b> (1)</summary>
+<div class="vg vs">
+<a href="../view2026/media/g1_run_fullseye.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="thumbs/all/g1_run_policy.jpg" alt="人型ロボット G1 が走る" width="200" height="200"><b>&#9654;</b><span>人型ロボット G1 が走る</span></a>
 </div>
 </details>
 

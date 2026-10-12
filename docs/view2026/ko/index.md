@@ -146,7 +146,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## 전부 보기
 
-PoC 218개와 로봇의 눈 4개. 그룹을 펼치면 썸네일이 나옵니다.
+PoC 218개와 로봇 예 5개. 그룹을 펼치면 썸네일이 나옵니다.
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript가 없으면 갤러리 페이지에서 모든 그림을 볼 수 있습니다.)</a></p></noscript>
 
@@ -156,6 +156,12 @@ PoC 218개와 로봇의 눈 4개. 그룹을 펼치면 썸네일이 나옵니다.
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/evis_bean_track.jpg" alt="젓가락 끝 카메라 추적" width="200" height="200"><b>&#9654;</b><span>젓가락 끝 카메라 추적</span></a>
 <a href="../../view2026/media/evis_fullseye_walk.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/evis_walk_rgb_depth_dvs.jpg" alt="보행을 RGB·깊이·DVS로" width="200" height="200"><b>&#9654;</b><span>보행을 RGB·깊이·DVS로</span></a>
 <a href="../../view2026/media/vision_adaptive_walk.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/walker2d_terrain_vision.jpg" alt="단차를 보고 보행 선택" width="200" height="200"><span>단차를 보고 보행 선택</span></a>
+</div>
+</details>
+
+<details class="vall"><summary><b>로봇의 몸(학습된 정책을 Fullseye에서 실행)</b> (1)</summary>
+<div class="vg vs">
+<a href="../../view2026/media/g1_run_fullseye.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/g1_run_policy.jpg" alt="휴머노이드 G1 달리기" width="200" height="200"><b>&#9654;</b><span>휴머노이드 G1 달리기</span></a>
 </div>
 </details>
 

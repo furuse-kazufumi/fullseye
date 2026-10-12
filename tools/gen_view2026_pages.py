@@ -279,7 +279,7 @@ def other_example_count() -> int:
 
 
 def counts(d: dict) -> tuple[int, int]:
-    """(PoC の本数, それ以外=ロボットの目の本数) を all から数える。手で書かない。"""
+    """(PoC の本数, それ以外=ロボットの例(目・身体)の本数) を all から数える。手で書かない。"""
     n_poc = sum(1 for e in d["all"] if e["id"].startswith("poc_"))
     return n_poc, len(d["all"]) - n_poc
 

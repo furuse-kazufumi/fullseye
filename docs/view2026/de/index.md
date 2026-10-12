@@ -146,7 +146,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## Alles ansehen
 
-218 PoCs und 4 Roboteraugen-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
+218 PoCs und 5 Roboter-Demos. Eine Gruppe aufklappen lädt ihre Vorschaubilder.
 
 <noscript><p><a href="../../GALLERY.en.html">(Ohne JavaScript stehen alle Abbildungen auf der Galerieseite.)</a></p></noscript>
 
@@ -156,6 +156,12 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/evis_bean_track.jpg" alt="Stäbchenkamera-Tracking" width="200" height="200"><b>&#9654;</b><span>Stäbchenkamera-Tracking</span></a>
 <a href="../../view2026/media/evis_fullseye_walk.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/evis_walk_rgb_depth_dvs.jpg" alt="Gang in RGB, Tiefe, DVS" width="200" height="200"><b>&#9654;</b><span>Gang in RGB, Tiefe, DVS</span></a>
 <a href="../../view2026/media/vision_adaptive_walk.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/walker2d_terrain_vision.jpg" alt="Stufen sehen, Gang wählen" width="200" height="200"><span>Stufen sehen, Gang wählen</span></a>
+</div>
+</details>
+
+<details class="vall"><summary><b>Roboterkörper (trainierte Policies laufen in Fullseye)</b> (1)</summary>
+<div class="vg vs">
+<a href="../../view2026/media/g1_run_fullseye.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/g1_run_policy.jpg" alt="Humanoider G1 läuft" width="200" height="200"><b>&#9654;</b><span>Humanoider G1 läuft</span></a>
 </div>
 </details>
 

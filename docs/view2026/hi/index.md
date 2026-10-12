@@ -146,7 +146,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## सब कुछ देखें
 
-218 PoCs और 4 robot-eye demos। group खोलने पर thumbnails load होते हैं।
+218 PoCs और 5 robot demos। group खोलने पर thumbnails load होते हैं।
 
 <noscript><p><a href="../../GALLERY.en.html">(JavaScript के बिना सभी figures gallery page पर हैं।)</a></p></noscript>
 
@@ -156,6 +156,12 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/media/evis_bean_track_fullseye.mp4"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/evis_bean_track.jpg" alt="Chopstick-cam tracking" width="200" height="200"><b>&#9654;</b><span>Chopstick-cam tracking</span></a>
 <a href="../../view2026/media/evis_fullseye_walk.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/evis_walk_rgb_depth_dvs.jpg" alt="RGB, depth, DVS में walk" width="200" height="200"><b>&#9654;</b><span>RGB, depth, DVS में walk</span></a>
 <a href="../../view2026/media/vision_adaptive_walk.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/walker2d_terrain_vision.jpg" alt="steps देखकर gait चुनना" width="200" height="200"><span>steps देखकर gait चुनना</span></a>
+</div>
+</details>
+
+<details class="vall"><summary><b>Robot के शरीर (trained policy Fullseye में चलती है)</b> (1)</summary>
+<div class="vg vs">
+<a href="../../view2026/media/g1_run_fullseye.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/g1_run_policy.jpg" alt="Humanoid G1 दौड़ता है" width="200" height="200"><b>&#9654;</b><span>Humanoid G1 दौड़ता है</span></a>
 </div>
 </details>
 
