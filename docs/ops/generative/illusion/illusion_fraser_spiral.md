@@ -4,7 +4,7 @@ dim: generative
 category: illusion
 in: 
 out: rgb
-examples: []
+examples: [gallery_illusion_invariants]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -33,7 +33,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_illusion_invariants](../../../../examples/gallery_illusion_invariants.py) — `py -3.11 examples/gallery_illusion_invariants.py`
 
 ## 型が繋がる次の op(`rgb` を入力に取れる)
 

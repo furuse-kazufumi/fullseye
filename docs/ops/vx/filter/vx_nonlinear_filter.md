@@ -4,7 +4,7 @@ dim: vx
 category: filter
 in: image2d × matrix
 out: image2d
-examples: []
+examples: [gallery_openvx_spec_values]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -39,7 +39,7 @@ REQ-0327: 9×9 までのマスクは必ず扱う(この実装に上限は無い)
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_openvx_spec_values](../../../../examples/gallery_openvx_spec_values.py) — `py -3.11 examples/gallery_openvx_spec_values.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1362. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1364. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -313,6 +313,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/gallery2d_texture_freq.py`
 
 - **L305** _(ja)_ — ★窓は `_k(a)` が決める —— `a=0.5` は **7x7**(5x5 ではない)。ここを取り違えると 閉形式の定数がずれて、正しい実装が落ちる(実際に一度落とした)。
+
+## `examples/gallery_illusion_invariants.py`
+
+- **L231** _(ja)_ — ★docstring は (−2, −2) と書くが、この盤(行・列、上向きで出発・白で右)では (+2, −2)。 定理が言うのは「周期 104 で同じ斜めの 2 マス」で、符号は回転の規約で変わる(perpetual.py の自己検査と同じ読み)。
+
+## `examples/gallery_openvx_spec_values.py`
+
+- **L39** _(ja)_ — vx_nonlinear_filter の function(vx_non_linear_filter_e)。★引用符つきの "median" を書くと、例の索引 (tools/op_example_index.py)が「この例は 2-D の median op を呼んでいる」と数えてしまう (引用符つきの op 名は振り分けの一覧として拾う規則)。ここは fullseye の median op を使わないので 1 本の文字列から分ける。
 
 ## `examples/optics_four_f_processor.py`
 

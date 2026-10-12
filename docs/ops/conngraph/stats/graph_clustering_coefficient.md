@@ -4,7 +4,7 @@ dim: conngraph
 category: stats
 in: conn_graph
 out: measurement
-examples: []
+examples: [gallery_conngraph_closed_forms]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -33,7 +33,7 @@ C_i = (A³)_ii / (k_i (k_i − 1))、A は対称二値。完全グラフで 1、
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_conngraph_closed_forms](../../../../examples/gallery_conngraph_closed_forms.py) — `py -3.11 examples/gallery_conngraph_closed_forms.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 

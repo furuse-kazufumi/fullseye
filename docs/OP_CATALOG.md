@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(341 例)
+### 2-D 画像/信号/幾何(345 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -385,6 +385,10 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **けん玉・糸・歩く人を置き直す op を剛体の不変量と投影で確かめる** — kendamaworld 6 op と drivehumanoid 1 op: 糸の角柱が閉じて体積 (2r)²L、けんの頂点 = 局所 @ Rᵀ + p、姿勢を変えてもほかの物体はビット一致、大皿の縁の中心の像を自前のピンホール投影と照合、皿の半径 f·r/深度、糸の張り直しで長さ更新、歩く人の頂点 = R(yaw)·局所 + (x, y)・頂点間の距離の保存・1 周期先は同じ形。 `py -3.11 examples/gallery_drive_world_objects.py`
 - **建物・起伏・LiDAR の箱・倉庫の格子を面積・体積・閉形式の距離で確かめる** — driveplateau 3 op・driveterrain・lidarsim・agvfleet 2 op: 凹多角形の三角形の面積和 = 靴紐公式、箱で 2 棟だけ切り出し、角柱の体積 = 足跡の面積 × 高さ、地面の格子の頂点数・道の面 160 枚・道の近くの高さ = うねりの閉形式、光線の距離を6 面を全部調べる第 2 実装と 2000 本照合、壁を回り込む最短手数 6 + c − r、計画の総コスト。 `py -3.11 examples/gallery_drive_city_terrain.py`
 - **鏡の折り返し・ミラーに映る左右・坂道の譲り合い・人の群れの 1 歩を確かめる** — drivedecide・drivepass 2 op・drivetraffic: 鏡映行列の対合と det = −1 と等長、ミラーの像を 3 次元の鏡映行列(別の op)で照合、仮想の眼の角速度 = −像の角速度、教則 6-2-1(6) の譲り合いの表、social force の 1 人の解が刻み幅に依らずv0(1 − e^{−t/τ}) と一致、点対称な配置は点対称のまま、斥力ですれ違いの間隔が開く。 `py -3.11 examples/gallery_drive_mirrors_crowds.py`
+- **結合グラフの 10 op を教科書の閉形式で確かめる(星・道・環・完全グラフ・二つの塊)** — conngraph の 10 op: 無向の星の媒介中心性 (n−1)(n−2)/2・道の i(n−1−i)、完全グラフのクラスタ係数 1・木 0・三角形 + 1 点で 7/12、環のラプラシアン固有値 2 − 2cos(2πk/n)・成分数 = 零固有値の数、道の Fiedler 配置が単調、離れた K4 二つのモジュラリティ 1/2・1 群で 0、有向三角形・FFL・完全 K4 のモチーフ数(6/24/8)、線分の端点 = 配置、隣接画像の log1p 正規化と次数順。 `py -3.11 examples/gallery_conngraph_closed_forms.py`
+- **錯視図 7 op と終わらない絵 2 op を、目でなく数で確かめる** — illusion / perpetual の 9 op: チェッカーシャドウの 2 マスが厳密に同値、同時対比のパッチが厳密に 0.5、ヘルマン格子の交点 = 帯 = 1.0 と帯の幅・間隔、きらめき格子の 81 個の白丸がビット一致で面積 π·6²、フレーザーの環は角度によらず半径一定、カニッツァの錯覚輪郭の上は背景の定数、ポンゾの 2 本の棒が等長、ハーモノグラフは a/b = 3/2 なら周期 2π で閉じ √2 では閉じない、ラングトンの蟻を独立に書いた蟻と照合し周期 104 の高速道路。 `py -3.11 examples/gallery_illusion_invariants.py`
+- **体積の時系列(4D)を動きの分かった合成で確かめる(断面・MIP・速さ・コマ補間)** — live4d の 4 op: 断面は k 枚目の切り出しとビット一致、1 点だけ光る voxel の MIP の位置と S.max との一致・断面 ≤ MIP、1 voxel/コマで動く塊の速さ 1 と止まった塊の 0、2 倍のコマ数で作って間引いた動画を流れで補間し抜いたコマとの誤差がただの平均の 1/3 未満。 `py -3.11 examples/gallery_live4d_volseq_truth.py`
+- **OpenVX 互換の 10 op を規格の式どおりの値で確かめる(vxcore)** — vxcore の 10 op: 坂 3x + 5y の Sobel 24/40 と端の扱い、magnitude の丸めと 32767 の飽和、phase の 0/64/128/192/224 と floor・round の 2π 手前、表引きの反転・S16 の offset・表の外で停止、histogram の升と範囲外、median/min/max を scipy と全画素一致、非極大抑制の平らな頂上は右下だけ・S16 は INT16_MIN、remap の恒等と半画素の bilinear、warp_affine の 90° 回転 = np.rot90、warp_perspective の同次座標(行列を 2 倍しても同じ)。 `py -3.11 examples/gallery_openvx_spec_values.py`
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`

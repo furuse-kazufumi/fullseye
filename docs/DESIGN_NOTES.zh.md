@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：610 / 1362 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：610 / 1364 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -313,6 +313,14 @@
 ## `examples/gallery2d_texture_freq.py`
 
 - **L305** _(ja)_ — ★窓は `_k(a)` が決める —— `a=0.5` は **7x7**(5x5 ではない)。ここを取り違えると 閉形式の定数がずれて、正しい実装が落ちる(実際に一度落とした)。
+
+## `examples/gallery_illusion_invariants.py`
+
+- **L231** _(ja)_ — ★docstring は (−2, −2) と書くが、この盤(行・列、上向きで出発・白で右)では (+2, −2)。 定理が言うのは「周期 104 で同じ斜めの 2 マス」で、符号は回転の規約で変わる(perpetual.py の自己検査と同じ読み)。
+
+## `examples/gallery_openvx_spec_values.py`
+
+- **L39** _(ja)_ — vx_nonlinear_filter の function(vx_non_linear_filter_e)。★引用符つきの "median" を書くと、例の索引 (tools/op_example_index.py)が「この例は 2-D の median op を呼んでいる」と数えてしまう (引用符つきの op 名は振り分けの一覧として拾う規則)。ここは fullseye の median op を使わないので 1 本の文字列から分ける。
 
 ## `examples/optics_four_f_processor.py`
 

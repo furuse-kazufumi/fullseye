@@ -4,7 +4,7 @@ dim: vx
 category: gradient
 in: image2d
 out: table
-examples: []
+examples: [gallery_openvx_spec_values]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -38,7 +38,7 @@ Sobel 3×3(3.46 節): G_x = [[−1,0,1],[−2,0,2],[−1,0,1]]、G_y = [[−1,�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_openvx_spec_values](../../../../examples/gallery_openvx_spec_values.py) — `py -3.11 examples/gallery_openvx_spec_values.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
