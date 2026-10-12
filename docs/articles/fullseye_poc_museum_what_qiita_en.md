@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**118 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**119 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1004,7 +1004,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 39 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 40 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2271,6 +2271,46 @@ Source: [examples/poc_shape_from_polarization.py](https://github.com/furuse-kazu
 This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_shape_from_polarization)
 
 Ops used (notes): [`aolp_to_azimuth`](https://furuse.work/ops/optics/shape_from_polarization/aolp_to_azimuth.html) · [`brdf_blinn_phong`](https://furuse.work/ops/specular/reflectance/brdf_blinn_phong.html) · [`dolp_to_zenith`](https://furuse.work/ops/optics/shape_from_polarization/dolp_to_zenith.html) · [`fresnel_dielectric`](https://furuse.work/ops/optics/interface/fresnel_dielectric.html) · [`photometric_stereo_robust`](https://furuse.work/ops/specular/photometric/photometric_stereo_robust.html) · [`polarization_demosaic`](https://furuse.work/ops/optics/polarization/polarization_demosaic.html) · [`sfp_disambiguate`](https://furuse.work/ops/optics/shape_from_polarization/sfp_disambiguate.html) · [`sfp_dolp_model`](https://furuse.work/ops/optics/shape_from_polarization/sfp_dolp_model.html) · [`sfp_estimate_index`](https://furuse.work/ops/optics/shape_from_polarization/sfp_estimate_index.html) · [`sfp_height`](https://furuse.work/ops/optics/shape_from_polarization/sfp_height.html) · [`sfp_normals`](https://furuse.work/ops/optics/shape_from_polarization/sfp_normals.html) · [`sfp_render`](https://furuse.work/ops/optics/shape_from_polarization/sfp_render.html)
+
+## No.2026.222 —— Fringe Projection Misreads Even a White Groove - Separating the Interreflection, Predicting the Error Before Measuring, and Removing It with Micro Phase Shifting
+
+[![Fringe Projection Misreads Even a White Groove - Separating the Interreflection, Predicting the Error Before Measuring, and Removing It with Micro Phase Shifting](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/02_direct_global_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/02_direct_global.png)
+
+*↑ **Fringe Projection Misreads Even a White Groove - Separating the Interreflection, Predicting the Error Before Measuring, and Removing It with Micro Phase Shifting** ―― A white Lambertian part (albedo 0.85, no gloss, no metal) with three 1 mm grooves - a 90 deg inner corner, a 60 deg V-groove and a pocket with rounded corners - measured by fringe projection; the truth is a light-transport matrix (2-D radiosity from Hottel's crossed-strings form factors) and a direct-only rendering with zero bounces. Shifting stripes parallel to the grooves eight times separates direct and global light (Nayar et al. 2006): the global image glows only inside the concave features, 1.28 times the direct light at the bottom of the inner corner and 5.1 times in the 60 deg groove, within 2.2 % / 6.3 % of the truth; the error falls monotonically from 128 to 8 px stripes and collapses to 54 % at 4 px, narrower than a pixel's footprint. The fringe phase error is predictable before measuring: the argument of the direct-plus-global phasor from the transport matrix matches the error decoded by wrapped_phase from rendered fringes to 1e-15 rad and never exceeds asin(global/direct). One fringe over a 4 mm field misreads height by 282 / 579 / 183 um RMS; two-level temporal unwrapping (one fringe, then 16 px) picks the wrong order in 329 of 480 pixels (up to 7 orders) and barely helps; micro phase shifting (Gupta & Nayar 2012, periods 16 / 16.2 / 15.8 px, beat 1296 px) brings it to 0.76 / 1.97 / 0.02 um, leaving up to 19 um at the few pixels next to a V vertex. Continuous-wave ToF in a white room corner (4 m, 20 MHz) sees the corner rounded and up to 24 cm too far. Lambertian, extruded (2-D) shapes only; specular interreflection needs Mitsuba and is not modelled.*
+
+[![反射率 0.85 の Lambert 面。光沢も金属も無い。カメラは真上、プロジェクタは 20° 傾けて縞を溝に平行に投影。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/01_part_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/01_part.png)
+
+*↑ The measurement ―― 反射率 0.85 の Lambert 面。光沢も金属も無い。カメラは真上、プロジェクタは 20° 傾けて縞を溝に平行に投影。 (figure labels are in Japanese; the numbers are the same)*
+
+[![分離は「大域光が縞の周期より滑らか」という仮定で成り立つ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/04_separation_vs_period_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/04_separation_vs_period.png)
+
+*↑ 分離は「大域光が縞の周期より滑らか」という仮定で成り立つ。*
+
+[![白い Lambert の溝でも数百 µm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/06_height_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/06_height_error.png)
+
+*↑ 白い Lambert の溝でも数百 µm。*
+
+[![周期を半分にするたびに誤差は 2〜3 分の 1。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/08_error_vs_period_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/08_error_vs_period.png)
+
+*↑ 周期を半分にするたびに誤差は 2〜3 分の 1。*
+
+[![白い壁(0.8)の 90° の隅を 20 MHz の連続波 ToF で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/10_tof_corner_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/10_tof_corner.png)
+
+*↑ 白い壁(0.8)の 90° の隅を 20 MHz の連続波 ToF で。*
+
+[![縞をずらしながら撮った 8 枚。縞が当たっていない画素も、溝の中では向かいの面からの光で暗くならない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/03_stripes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/03_stripes.gif)
+
+*↑ The animation ―― 縞をずらしながら撮った 8 枚。縞が当たっていない画素も、溝の中では向かいの面からの光で暗くならない。*
+
+```
+py -3.11 examples/poc_interreflection_fringe_error.py
+```
+
+Source: [examples/poc_interreflection_fringe_error.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
+
+This run produced **11 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_interreflection_fringe_error)
+
+Ops used (notes): [`form_factors_2d`](https://furuse.work/ops/optics/light_transport/form_factors_2d.html) · [`fringe_multipath_phase_error`](https://furuse.work/ops/optics/light_transport/fringe_multipath_phase_error.html) · [`groove_profile`](https://furuse.work/ops/optics/light_transport/groove_profile.html) · [`high_frequency_patterns`](https://furuse.work/ops/optics/light_transport/high_frequency_patterns.html) · [`micro_phase_decode`](https://furuse.work/ops/optics/light_transport/micro_phase_decode.html) · [`predict_fringe_phase_error`](https://furuse.work/ops/optics/light_transport/predict_fringe_phase_error.html) · [`render_transport`](https://furuse.work/ops/optics/light_transport/render_transport.html) · [`separate_direct_global`](https://furuse.work/ops/optics/light_transport/separate_direct_global.html) · [`tof_multipath_phase`](https://furuse.work/ops/optics/light_transport/tof_multipath_phase.html) · [`tof_transport_depth`](https://furuse.work/ops/optics/light_transport/tof_transport_depth.html) · [`transport_matrix_radiosity`](https://furuse.work/ops/optics/light_transport/transport_matrix_radiosity.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 
 ## No.2026.150 —— Scoring an Aberration as a Picture: Zernike Polynomials and the Point Spread Function
 

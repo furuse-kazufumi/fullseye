@@ -996,7 +996,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 39 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 40 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2263,6 +2263,46 @@ py -3.11 examples/poc_shape_from_polarization.py
 この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_shape_from_polarization)
 
 使用 op(ノートへ): [`aolp_to_azimuth`](https://furuse.work/ops/optics/shape_from_polarization/aolp_to_azimuth.html) · [`brdf_blinn_phong`](https://furuse.work/ops/specular/reflectance/brdf_blinn_phong.html) · [`dolp_to_zenith`](https://furuse.work/ops/optics/shape_from_polarization/dolp_to_zenith.html) · [`fresnel_dielectric`](https://furuse.work/ops/optics/interface/fresnel_dielectric.html) · [`photometric_stereo_robust`](https://furuse.work/ops/specular/photometric/photometric_stereo_robust.html) · [`polarization_demosaic`](https://furuse.work/ops/optics/polarization/polarization_demosaic.html) · [`sfp_disambiguate`](https://furuse.work/ops/optics/shape_from_polarization/sfp_disambiguate.html) · [`sfp_dolp_model`](https://furuse.work/ops/optics/shape_from_polarization/sfp_dolp_model.html) · [`sfp_estimate_index`](https://furuse.work/ops/optics/shape_from_polarization/sfp_estimate_index.html) · [`sfp_height`](https://furuse.work/ops/optics/shape_from_polarization/sfp_height.html) · [`sfp_normals`](https://furuse.work/ops/optics/shape_from_polarization/sfp_normals.html) · [`sfp_render`](https://furuse.work/ops/optics/shape_from_polarization/sfp_render.html)
+
+## No.2026.222 —— 白い溝でも縞投影は外れる ―― 相互反射を直接光と分け、誤差を撮る前に予測し、マイクロ位相シフトで消す
+
+[![白い溝でも縞投影は外れる ―― 相互反射を直接光と分け、誤差を撮る前に予測し、マイクロ位相シフトで消す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/02_direct_global_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/02_direct_global.png)
+
+*↑ **白い溝でも縞投影は外れる ―― 相互反射を直接光と分け、誤差を撮る前に予測し、マイクロ位相シフトで消す** ―― 幅 1 mm の溝 3 本(90° の内角・60° の V 溝・R つきのポケット)を持つ**真っ白な Lambert の部品**(反射率 0.85、光沢も金属も無し)を縞投影で測る。真値は輸送行列(Hottel の crossed-strings 則の形態係数で解いた 2-D のラジオシティ)と、反射 0 回の直接光だけの描画。★★溝に平行な縞を 8 回ずらして直接光と大域光を分けると(Nayar ら 2006)、大域光は凹みの中だけが光り、内角の底では直接光の 1.28 倍・60° の溝では 5.1 倍。真値との差は直接 2.2 %・大域 6.3 %、縞の周期 128 → 8 px で単調に減り、画素の足跡より細い 4 px では 54 % に崩れる。★★縞の位相の誤差は撮る前に予測できる: 輸送行列から出した「直接 + 大域のフェーザの偏角」が、描いた縞を wrapped_phase で復号した誤差と 1e-15 rad で重なり、上限 asin(大域 / 直接) も超えない。視野 4 mm に縞 1 本では高さ誤差 RMS 282 / 579 / 183 µm(深さ 0.5 mm の内角で 282 µm)。★2 段の位相接続(縞 1 本 → 16 px)は 480 画素中 329 画素で次数を最大 7 段取り違え、ほとんど救えない。★★マイクロ位相シフト(Gupta & Nayar 2012、周期 16 / 16.2 / 15.8 px、うなり 1296 px)で 0.76 / 1.97 / 0.02 µm(溝 3 本で 386 → 1.2 µm)。V 溝の頂点の数画素には最大 19 µm 残る(隣のパッチどうしは縞の位相が近く、平均されない)。★ToF も同じ: 白い壁の部屋の隅(4 m、20 MHz)は相互反射で丸く・最大 24 cm 遠く見える。Lambert と押し出し形状(2-D)だけで、鏡面の相互反射(実物のはんだ・金属)は Mitsuba が要ることは docstring に明記。検査 15 件・約 0.3 秒。*
+
+[![反射率 0.85 の Lambert 面。光沢も金属も無い。カメラは真上、プロジェクタは 20° 傾けて縞を溝に平行に投影。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/01_part_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/01_part.png)
+
+*↑ 測定の図 ―― 反射率 0.85 の Lambert 面。光沢も金属も無い。カメラは真上、プロジェクタは 20° 傾けて縞を溝に平行に投影。*
+
+[![分離は「大域光が縞の周期より滑らか」という仮定で成り立つ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/04_separation_vs_period_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/04_separation_vs_period.png)
+
+*↑ 分離は「大域光が縞の周期より滑らか」という仮定で成り立つ。*
+
+[![白い Lambert の溝でも数百 µm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/06_height_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/06_height_error.png)
+
+*↑ 白い Lambert の溝でも数百 µm。*
+
+[![周期を半分にするたびに誤差は 2〜3 分の 1。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/08_error_vs_period_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/08_error_vs_period.png)
+
+*↑ 周期を半分にするたびに誤差は 2〜3 分の 1。*
+
+[![白い壁(0.8)の 90° の隅を 20 MHz の連続波 ToF で。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/10_tof_corner_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/10_tof_corner.png)
+
+*↑ 白い壁(0.8)の 90° の隅を 20 MHz の連続波 ToF で。*
+
+[![縞をずらしながら撮った 8 枚。縞が当たっていない画素も、溝の中では向かいの面からの光で暗くならない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/03_stripes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_interreflection_fringe_error/03_stripes.gif)
+
+*↑ 動く図 ―― 縞をずらしながら撮った 8 枚。縞が当たっていない画素も、溝の中では向かいの面からの光で暗くならない。*
+
+```
+py -3.11 examples/poc_interreflection_fringe_error.py
+```
+
+ソース: [examples/poc_interreflection_fringe_error.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
+
+この回が作った図は全部で **11 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_interreflection_fringe_error)
+
+使用 op(ノートへ): [`form_factors_2d`](https://furuse.work/ops/optics/light_transport/form_factors_2d.html) · [`fringe_multipath_phase_error`](https://furuse.work/ops/optics/light_transport/fringe_multipath_phase_error.html) · [`groove_profile`](https://furuse.work/ops/optics/light_transport/groove_profile.html) · [`high_frequency_patterns`](https://furuse.work/ops/optics/light_transport/high_frequency_patterns.html) · [`micro_phase_decode`](https://furuse.work/ops/optics/light_transport/micro_phase_decode.html) · [`predict_fringe_phase_error`](https://furuse.work/ops/optics/light_transport/predict_fringe_phase_error.html) · [`render_transport`](https://furuse.work/ops/optics/light_transport/render_transport.html) · [`separate_direct_global`](https://furuse.work/ops/optics/light_transport/separate_direct_global.html) · [`tof_multipath_phase`](https://furuse.work/ops/optics/light_transport/tof_multipath_phase.html) · [`tof_transport_depth`](https://furuse.work/ops/optics/light_transport/tof_transport_depth.html) · [`transport_matrix_radiosity`](https://furuse.work/ops/optics/light_transport/transport_matrix_radiosity.html) · [`wrapped_phase`](https://furuse.work/ops/3d/structured_light/wrapped_phase.html)
 
 ## No.2026.150 —— 収差の絵は、絵のまま採点できる —— ゼルニケ多項式と点像
 

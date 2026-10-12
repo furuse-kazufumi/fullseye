@@ -30,6 +30,27 @@ list / dict・空文字列)のものを渡したときの扱いを 1 つに揃�
   (`accept_promise_broken`)を新規の違反として落とす。台帳 `docs/LEDGER_GAP_DEBT.json` の
   空入力の負債は 0 本。
 
+### 追加 — 大域光輸送(凹みの相互反射と、縞投影・ToF の位相の誤差)
+
+- 新モジュール `lighttransport.py`(numpy のみ)と台帳 `opsoptics` の新カテゴリ `light_transport` に 11 op:
+  `groove_profile`(凹んだ断面をパッチに。V 溝・円弧の樋・フィレット・任意の凹の折れ線、平らな床も)/ `form_factors_2d`
+  (Hottel の crossed-strings 則の形態係数)/ `transport_matrix_radiosity`(Lambert のラジオシティの輸送行列、反射回数の打ち切りも)/
+  `high_frequency_patterns`(点灯率 α の縞・市松・位相シフトの正弦の組)/ `render_transport`(パターン → 輸送行列 → カメラ画像)/
+  `separate_direct_global`(Nayar ら 2006 の L_max / L_min。α・黒レベル b・補のパターン)/ `fringe_multipath_phase_error`
+  (直接と大域のフェーザ和の位相と最悪値 asin(r))/ `predict_fringe_phase_error`(輸送行列から画素ごとの位相と高さの誤差)/
+  `micro_phase_decode`(狭い帯域の高周波の縞を 2 周波のうなりで接続)/ `tof_multipath_phase`(ToF の多経路フェーザ和)/
+  `tof_transport_depth`(反射ごとの遅れを入れた複素ラジオシティ)。これまで縞も dToF も直接光だけで、`gi_render` の相互反射は
+  Mitsuba が要り、分離も誤差予測も無かった。新しい型の語は作らない(断面と輸送行列は印つきの table、縞と ToF は 1 カテゴリ)。
+- 門 `tests/test_lighttransport.py`(127 件、約 3 秒): V 溝の形態係数の閉形式 1 − sin(θ/2) と 5e-15、核の数値積分と 1.2e-14、
+  相反性・開口を含めた行和 = 1・エネルギー収支。Neumann 級数の収束と打ち切り誤差の上界。分離は輸送行列の真値に対して周期
+  128 → 8 px で直接 12.1 → 1.35 %(単調)、4 px で 53 %(解像度の床)。描いた縞を `fringe.wrapped_phase` で復号した位相の誤差 =
+  フェーザ和の予測(1e-12)。白い 90° の V 溝の高さ誤差は縞 1 本で RMS 73 µm、マイクロ位相シフトで座標の誤差 178 分の 1。
+  ToF は時間領域の 4 位相相関と 1e-9、反射 1 回の複素ラジオシティ = 経路を 1 本ずつ数えた和。壊して確かめた 8 通りがすべて落ちる。
+  Nayar ら 2006(§3.3・§4)と Gupta & Nayar 2012(式 (5)–(12)・§3)は本文を読んだ。F + 2 枚の同時解法と Gushov–Solodkin は実装していない。
+- 例 `examples/poc_interreflection_fringe_error.py`: 白い Lambert の溝 3 本。大域光は凹みの中だけが光り、縞 1 本の高さ誤差
+  RMS 282 / 579 / 183 µm を予測と実測で重ね(差 1e-15 rad)、マイクロ位相シフトで 0.76 / 1.97 / 0.02 µm。部屋の隅の ToF は最大 24 cm 遠く見える。
+  範囲は Lambert・2-D(押し出し形状)・溝に平行な縞。鏡面の相互反射は扱っていない。
+
 ### 追加 — 偏光からの形状復元(黒光沢・透明部品の法線と高さ)
 
 - 新モジュール `sfpolar.py`(numpy + scipy のみ)と台帳 `opsoptics` の新カテゴリ `shape_from_polarization` に 8 op:

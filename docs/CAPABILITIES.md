@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 38 項目**
+**収録 39 項目**
 
-## 測る (12)
+## 測る (13)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -59,6 +59,14 @@
 使う op: `coherent_image`, `speckle_field`, `speckle_statistics`, `laser_line_coherent`, `triangulation_speckle_limit`, `speckle_reduction`
 
 動く例: `poc_laser_line_speckle_floor`
+
+### [凹みの相互反射で縞投影と ToF が外れる量を、撮る前に予測する(大域光輸送・直接と大域の分離・マイクロ位相シフト)](capabilities/light-transport.md)
+
+縞投影(位相シフト)も ToF も、「画素に届く光は 1 つの経路から来た」と仮定して位相を距離に変えます。V 溝・加工ポケットの内角・はんだフィレット・部屋の隅のような凹んだ形では、片方の面で反射した光が向かいの面を照らし、画素には**別の場所の位相を持った光**が混ざります(相互反射 = 大域成分)。光沢も金属も要らず、**白い Lambert 面でも凹んでいれば起きます**。このページの op は、その光の行き来を輸送行列として明示的に解き、誤差を閉形式で予測します。
+
+使う op: `groove_profile`, `form_factors_2d`, `transport_matrix_radiosity`, `high_frequency_patterns`, `render_transport`, `separate_direct_global`, `fringe_multipath_phase_error`, `predict_fringe_phase_error`, `micro_phase_decode`, `tof_multipath_phase`, `tof_transport_depth`
+
+動く例: `poc_interreflection_fringe_error`
 
 ### [その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)](capabilities/measurement-system-and-uncertainty.md)
 

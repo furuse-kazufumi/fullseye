@@ -77,7 +77,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## What it can do
 
-38 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
+39 topics, each with an explanation page (how to use it, and its limits) and runnable examples.
 
 <div class="vl" markdown="1">
 
@@ -94,6 +94,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 - Estimate lens distortion coefficients from straight lines (plumb-line, no board): [explanation](../../capabilities/estimate-lens-distortion.md) _(ja)_ · examples [estimate_lens_distortion](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/estimate_lens_distortion.py)
 - Put measurements on the Earth (ECEF, height frames, local ENU): [explanation](../../capabilities/geodetic-frames.md) _(ja)_ · examples [poc_geodetic_height_frames](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_height_frames.py) · [poc_geodetic_benchmarks_real](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_geodetic_benchmarks_real.py) · [dem_geodesy_tour](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/dem_geodesy_tour.py)
 - Speckle sets the error floor of laser sheet-of-light (coherent imaging, speckle statistics and triangulation uncertainty): [explanation](../../capabilities/laser-speckle-floor.md) _(ja)_ · examples [poc_laser_line_speckle_floor](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_laser_line_speckle_floor.py)
+- Predict how far interreflection in concave parts throws fringe projection and ToF off, before measuring (global light transport, direct/global separation, micro phase shifting): [explanation](../../capabilities/light-transport.md) _(ja)_ · examples [poc_interreflection_fringe_error](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_interreflection_fringe_error.py)
 - How much of that number is your measuring, not your process (gauge R&R and measurement uncertainty): [explanation](../../capabilities/measurement-system-and-uncertainty.md) _(ja)_ · examples [poc_measurement_system_analysis](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_measurement_system_analysis.py)
 - Which flaw size will you actually find (probability of detection and a90/95, MIL-HDBK-1823A): [explanation](../../capabilities/probability-of-detection.md) _(ja)_ · examples [poc_pod_lighting](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
 - Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index): [explanation](../../capabilities/shape-from-polarization.md) _(ja)_ · examples [poc_shape_from_polarization](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_shape_from_polarization.py)
@@ -149,7 +150,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 
 ## See everything
 
-221 PoCs plus 5 robot demos. Open a group to load its thumbnails.
+222 PoCs plus 5 robot demos. Open a group to load its thumbnails.
 
 <noscript><p><a href="../../GALLERY.en.html">(Without JavaScript, every figure is on the gallery page.)</a></p></noscript>
 
@@ -205,7 +206,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 </div>
 </details>
 
-<details class="vall"><summary><b>Dimensional and shape metrology</b> (39)</summary>
+<details class="vall"><summary><b>Dimensional and shape metrology</b> (40)</summary>
 <div class="vg vs">
 <a href="../../articles/assets/poc/poc_aoi_ct_traceability/01_aoi_and_ct.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_aoi_ct_traceability.jpg" alt="AOI-to-CT matching" width="200" height="200"><span>AOI-to-CT matching</span></a>
 <a href="../../articles/assets/poc/poc_asbuilt_wall_deviation/01_scene.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_asbuilt_wall_deviation.jpg" alt="As-built walls" width="200" height="200"><span>As-built walls</span></a>
@@ -243,6 +244,7 @@ details.vall > summary { font-size: 15px; padding: 6px 0; cursor: pointer; }
 <a href="../../articles/assets/poc/poc_pod_lighting/03_pod_curves.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_pod_lighting.jpg" alt="POD per lighting" width="200" height="200"><span>POD per lighting</span></a>
 <a href="../../articles/assets/poc/poc_laser_line_speckle_floor/01_line.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_laser_line_speckle_floor.jpg" alt="Speckle floor of a laser line" width="200" height="200"><span>Speckle floor of a laser line</span></a>
 <a href="../../articles/assets/poc/poc_shape_from_polarization/05_normals.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_shape_from_polarization.jpg" alt="Shape from polarisation" width="200" height="200"><span>Shape from polarisation</span></a>
+<a href="../../articles/assets/poc/poc_interreflection_fringe_error/02_direct_global.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_interreflection_fringe_error.jpg" alt="Interreflection and fringe error" width="200" height="200"><span>Interreflection and fringe error</span></a>
 <a href="../../articles/assets/poc/poc_zernike_aberrations/06_through_focus.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_zernike_aberrations.jpg" alt="Zernike aberrations" width="200" height="200"><b>&#9654;</b><span>Zernike aberrations</span></a>
 <a href="../../articles/assets/poc/poc_attention_identities/01_attention_masks.png"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_attention_identities.jpg" alt="Attention identities" width="200" height="200"><span>Attention identities</span></a>
 <a href="../../articles/assets/poc/poc_residue_crt/03_residue_rotation_needle.gif"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="../thumbs/all/poc_residue_crt.jpg" alt="Phase CRT" width="200" height="200"><b>&#9654;</b><span>Phase CRT</span></a>

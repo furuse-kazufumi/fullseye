@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：610 / 1377 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：610 / 1380 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel.py`
@@ -1626,13 +1626,16 @@
 
 ## `opsoptics.py`
 
-- **L139** _(ja)_ — ★真値が閉形式で外部参照が要らない: 恒等フィルタ → 180 度回転、 (i2πf)^n → n 階微分(ガウシアンの微分は閉じた式)、渦位相板の **巻き数が整数**。fourier_plane_filter は入力を取らない生成器で、 four_f_filter が場と透過関数を受ける(cimage 2 つ)。
-- **L150** _(ja)_ — ★ pupil_blur は「画像 × カーネル」の一般畳み込み(filters_freq.convol_fft) ではない —— PSF の標本間隔 λN/oversample を検出器ピッチへ面積積分して から畳む、その単位合わせが本体。だから PSF を作る側に置く。
-- **L185** — ★ 不是 normals（點雲的 (N,3) 法線），而是 normalmap。二者形狀相似，但傳入 (N,3) 會被 _normal_map 以 ValueError 拒絕。此處若宣告為 normals，便是「可以傳入點雲法線」的謊言，鏈式 fuzzer 每次都會以 CONTRACT 結束，從而**一次也不執行此族**（＝化為發現為零）。
-- **L388** _(ja)_ — ★新しい型の語は作らない(位相も image2d、統計は table)。
-- **L389** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op は speckle_statistics だけで、その in の image2d は sort ``image``(_NEW_SORTS の外)、out の table は sort に写らない (2026-10-13 に backends_typed.build の条件で確かめて決めた。_OP_BRIDGE_SKIP 不要)。
-- **L403** _(ja)_ — ★新しい型の語は作らない。曖昧な法線の**集合**(候補 2 本 / 4 本)を normalmap と 区別するために新 sort を作るかを考えたが、集合は ``kind == "sfp_candidates"`` の dict(= table)で返す: (K,H,W,3) を normalmap と申告すると法線を食う op(積分・ 陰影)に 4 本重ねの配列が渡るが、table なら normalmap の枠には入らず、逆に sfp_disambiguate は印の無い table を ValueError で拒む —— 混ぜても黙って嘘を 返す経路が無いので、語彙を増やす理由が無い(2026-10-13 に確かめて決めた)。
-- **L409** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は image2d(sort image、_NEW_SORTS の外) か normalmap / polsweep / table(TYPE_TO_SORT に無い)。_OP_BRIDGE_SKIP 不要。
+- **L149** _(ja)_ — ★真値が閉形式で外部参照が要らない: 恒等フィルタ → 180 度回転、 (i2πf)^n → n 階微分(ガウシアンの微分は閉じた式)、渦位相板の **巻き数が整数**。fourier_plane_filter は入力を取らない生成器で、 four_f_filter が場と透過関数を受ける(cimage 2 つ)。
+- **L160** _(ja)_ — ★ pupil_blur は「画像 × カーネル」の一般畳み込み(filters_freq.convol_fft) ではない —— PSF の標本間隔 λN/oversample を検出器ピッチへ面積積分して から畳む、その単位合わせが本体。だから PSF を作る側に置く。
+- **L195** — ★ 不是 normals（點雲的 (N,3) 法線），而是 normalmap。二者形狀相似，但傳入 (N,3) 會被 _normal_map 以 ValueError 拒絕。此處若宣告為 normals，便是「可以傳入點雲法線」的謊言，鏈式 fuzzer 每次都會以 CONTRACT 結束，從而**一次也不執行此族**（＝化為發現為零）。
+- **L398** _(ja)_ — ★新しい型の語は作らない(位相も image2d、統計は table)。
+- **L399** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op は speckle_statistics だけで、その in の image2d は sort ``image``(_NEW_SORTS の外)、out の table は sort に写らない (2026-10-13 に backends_typed.build の条件で確かめて決めた。_OP_BRIDGE_SKIP 不要)。
+- **L413** _(ja)_ — ★新しい型の語は作らない。曖昧な法線の**集合**(候補 2 本 / 4 本)を normalmap と 区別するために新 sort を作るかを考えたが、集合は ``kind == "sfp_candidates"`` の dict(= table)で返す: (K,H,W,3) を normalmap と申告すると法線を食う op(積分・ 陰影)に 4 本重ねの配列が渡るが、table なら normalmap の枠には入らず、逆に sfp_disambiguate は印の無い table を ValueError で拒む —— 混ぜても黙って嘘を 返す経路が無いので、語彙を増やす理由が無い(2026-10-13 に確かめて決めた)。
+- **L419** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は image2d(sort image、_NEW_SORTS の外) か normalmap / polsweep / table(TYPE_TO_SORT に無い)。_OP_BRIDGE_SKIP 不要。
+- **L434** _(ja)_ — ★新しい型の語は作らない。断面と輸送行列は kind の印つきの dict(table)で渡し、印の無い table は消費する 5 op がすべて ValueError で拒む —— 別の族の table を幾何として黙って 読む経路が無い。パターンと画像は既存の images(2-D 画像の list、fringe の位相シフトと同じ)。
+- **L437** _(ja)_ — ★縞と ToF は 1 つの族(このカテゴリ)にまとめ、sort は分けない。物理は同じ「経路ごとの フェーザの和の偏角」で、op の入出力はどちらも名前つきの値の dict(table)—— 縞は bias [rad] と height_error、ToF は depth / bias [m] と鍵の名前も単位も違い、位置で 並んだ配列を取り違えて渡す経路が無い(混ぜても黙って嘘を返さない)ので語彙を増やす理由が無い。
+- **L441** _(ja)_ — ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table / images(TYPE_TO_SORT に無い)。
 
 ## `opsphoton.py`
 
@@ -2237,9 +2240,9 @@
 ## `tests/test_opdocs.py`
 
 - **L212** — ★2026-09-03：由於所有 backend 的 _safe 都匯聚到了 backend_safe.guard，所以按 guard 立起的結構化標記來判定，而不是按 qualname 的字串匹配（guard 也會在 qualname 裡留下 "_safe(...)"，但那是給顯示用的）。
-- **L765** _(ja)_ — ★2026-10-12: 図が無い理由(``gen_op_figures.DOMAIN_MISMATCH`` の値)も ``T()`` を通すので、その表の原文もキーとして正しい
-- **L881** _(ja)_ — ★2026-10-12: 本文の訳が 2,212 本そろい、実データに「本文だけ未訳」の op が無くなった (以前はここで実在の頁を 1 枚選んでいた → StopIteration)。将来 op を足した瞬間に通る道なので、 本文の訳を 1 本だけ外した状態で生成器を直接呼んで固定する(test_notice_when_nothing_is_translated と同じ作法)。
-- **L1234** — ★沒找到的原因：`ops.REGISTRY`（899）與 2-D 筆記（899）一致，所以**只要從 registry 一側計數就會看起來「零缺失」**。曾經這樣下結論並搞錯了。所以這個門從跨 tier 的索引一側計數（memory: feedback_search_all_tiers_before_declaring_a_gap）。 --------------------------------------------------------------------------- #
+- **L766** _(ja)_ — ★2026-10-12: 図が無い理由(``gen_op_figures.DOMAIN_MISMATCH`` の値)も ``T()`` を通すので、その表の原文もキーとして正しい
+- **L882** _(ja)_ — ★2026-10-12: 本文の訳が 2,212 本そろい、実データに「本文だけ未訳」の op が無くなった (以前はここで実在の頁を 1 枚選んでいた → StopIteration)。将来 op を足した瞬間に通る道なので、 本文の訳を 1 本だけ外した状態で生成器を直接呼んで固定する(test_notice_when_nothing_is_translated と同じ作法)。
+- **L1235** — ★沒找到的原因：`ops.REGISTRY`（899）與 2-D 筆記（899）一致，所以**只要從 registry 一側計數就會看起來「零缺失」**。曾經這樣下結論並搞錯了。所以這個門從跨 tier 的索引一側計數（memory: feedback_search_all_tiers_before_declaring_a_gap）。 --------------------------------------------------------------------------- #
 
 ## `tests/test_packaging_foundation.py`
 
@@ -2397,12 +2400,12 @@
 - **L305** — 事件位置（點過程）-- point_spectrum 的入口。★**不要只用均勻隨機**：沒有週期成分就一次也不會觸及「尋找週期的 op」的有意義行為，所以用把 12 個無關事件混入週期 17.0 序列的**結構化資料**作種子（隨機-only 的測試會隱藏結構缺陷，是本 repo 的規律）。
 - **L922** — ★混有非有限值的點雲會**讓 KD 樹的建構本身以生的 ValueError 崩潰**（scipy："data must be finite"）。池的設計是記錄 NONFINITE 後仍保留值，所以髒點雲來到這裡是預期之內 -- 由建構方防範。2026-09-06 實際踩到：新的族增加後連鎖的走法變了，在 seed 3_000_0xx 命中這條路徑，fuzzer 自身停止了（不是 op 的缺陷而是**工具的缺陷**。無法綁定的輸入約定為跳過而非拋出例外）。
 - **L1241** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
-- **L6871** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
-- **L6993** — ★到 2026-09-02 為止一直是 ``lambda v: True`` = **因為述詞被計為「有」，反而比沒有更糟**（點檢腳本也會把它計為「有述詞」）。實測下它連 None / 42 / 字串 / dict 都放行。正典是透過**全部執行**消費側 6 個 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）來確定的：6 個 op 都只接受上面兩種形狀，其餘的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 變成指名的 fail-closed（實測）。因為**不接受 (2,N)**，把 2-tuple 用 np.stack 壓成 (2,N) 的 3 個 adapter 改成了 axis=1。長度不同的兩條（histogram 的 counts/edges）也不是「對」，予以拒絕。
-- **L7111** — ★「恰好 2 個元素」與 pose（用 `len >= 2` 允許 info）**是刻意不同的**。實測 2026-09-02：把 mesh 作為單個引數接收的 4 個既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）對 3-tuple 會送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 個元素。也就是說 **本 repo 的 mesh sort 正典是 2-tuple**，多餘的元素不是「資訊更多」，而是讓下游全滅的型別層面的謊言。唯一的例外 `voxel_to_mesh`（回傳 (v, f, n)）現在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（與 gicp / vol_label 同樣處理）。
-- **L7320** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
-- **L7341** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
-- **L7449** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
+- **L6950** _(ja)_ — ★2026-10-11: file = 書き出したファイルのパス(write_wav の返り、read_wav の入力)。 述語が無いあいだ、write_wav が None を返しても誰も気づかなかった。
+- **L7072** — ★到 2026-09-02 為止一直是 ``lambda v: True`` = **因為述詞被計為「有」，反而比沒有更糟**（點檢腳本也會把它計為「有述詞」）。實測下它連 None / 42 / 字串 / dict 都放行。正典是透過**全部執行**消費側 6 個 op（reprconv 的 pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar）來確定的：6 個 op 都只接受上面兩種形狀，其餘的都以 "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" 變成指名的 fail-closed（實測）。因為**不接受 (2,N)**，把 2-tuple 用 np.stack 壓成 (2,N) 的 3 個 adapter 改成了 axis=1。長度不同的兩條（histogram 的 counts/edges）也不是「對」，予以拒絕。
+- **L7190** — ★「恰好 2 個元素」與 pose（用 `len >= 2` 允許 info）**是刻意不同的**。實測 2026-09-02：把 mesh 作為單個引數接收的 4 個既有 consumer（face_normals / vertex_normals / mesh_area / vertex_curvature）對 3-tuple 會送出 "mesh must be a 2-element tuple (vertices, faces)"，cadmap 的 `_mesh` 和 render3d._mesh_arrays 也只接受 2 個元素。也就是說 **本 repo 的 mesh sort 正典是 2-tuple**，多餘的元素不是「資訊更多」，而是讓下游全滅的型別層面的謊言。唯一的例外 `voxel_to_mesh`（回傳 (v, f, n)）現在在 ops3d.RESULT_ADAPTERS 中取出正典的排列（與 gicp / vol_label 同樣處理）。
+- **L7399** _(ja)_ — ★2026-10-11: ``system`` キーに最適化後の処方(同じ object_mm = inf)
+- **L7420** _(ja)_ — ★2026-10-11(tests/test_ledger_contracts.py が初めて全台帳 op を呼んで挙げた分のうち、 **docstring が非有限を名指ししている**もの)。どれも「無い・測れない・届かない」を 0 で埋めず nan / inf で言う設計で、実際に非有限だった欄と docstring の欄が一致する ことを 1 本ずつ確かめた。docstring に書かれていない非有限(world_camera の depth の inf など)は**載せていない** —— 台帳の負債(docs/LEDGER_CONTRACT_DEBT.json)に残る。
+- **L7528** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 

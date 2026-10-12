@@ -1,0 +1,118 @@
+[
+ {
+  "file": "01_part.png",
+  "name": "part",
+  "caption": "反射率 0.85 の Lambert 面。光沢も金属も無い。カメラは真上、プロジェクタは 20° 傾けて縞を溝に平行に投影。",
+  "shape": [
+   260,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "02_direct_global.png",
+  "name": "direct_global",
+  "caption": "縞を 8 回ずらした 8 枚の画素ごとの最大と最小から分けた(Nayar ら 2006)。平らな上面に大域光は無く、V 溝の底では相互反射が直接光より明るい。60° の溝の片面に出る細い縦縞は、縞の周期と画素の足跡のずれが残す分離の誤差(真値との差は溝の中で直接 2.2 %、大域 6.3 %)。",
+  "shape": [
+   327,
+   1310,
+   3
+  ]
+ },
+ {
+  "file": "03_stripes.gif",
+  "name": "stripes",
+  "caption": "縞をずらしながら撮った 8 枚。縞が当たっていない画素も、溝の中では向かいの面からの光で暗くならない。",
+  "shape": [
+   96,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 8,
+  "frames_written": 8,
+  "fps": 4.0
+ },
+ {
+  "file": "04_separation_vs_period.png",
+  "name": "separation_vs_period",
+  "caption": "分離は「大域光が縞の周期より滑らか」という仮定で成り立つ。周期 4 px は点灯幅 2 px が画素の足跡(最大 2.7 px)より狭く、どのずらしでも画素が全部は照らされない。",
+  "shape": [
+   360,
+   620,
+   3
+  ]
+ },
+ {
+  "file": "05_phase_error.png",
+  "name": "phase_error",
+  "caption": "差は全画素で 1e-12 rad 未満。誤差は撮る前に輸送行列から出せる。",
+  "shape": [
+   340,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "06_height_error.png",
+  "name": "height_error",
+  "caption": "白い Lambert の溝でも数百 µm。2 段の位相接続は、縞 1 本の誤差が 16 px の縞の半周期を超えたところで次数を何段も取り違え、ほとんど救えない。周期 16 px 前後の縞 3 組だけにすると、相互反射は縞の位相を平均してしまい、誤差は頂点の数画素を除いてほぼ消える。",
+  "shape": [
+   340,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "07_error_maps.png",
+  "name": "error_maps",
+  "caption": "橙と青が高さの誤差の符号。2 段の位相接続は次数を取り違えて階段状に残り、マイクロ位相シフトはほぼ一様に 0。",
+  "shape": [
+   465,
+   660,
+   3
+  ]
+ },
+ {
+  "file": "08_error_vs_period.png",
+  "name": "error_vs_period",
+  "caption": "周期を半分にするたびに誤差は 2〜3 分の 1。60° の溝は 90° より向かいの面がよく見え、誤差が大きい。",
+  "shape": [
+   380,
+   620,
+   3
+  ]
+ },
+ {
+  "file": "09_numbers.png",
+  "name": "numbers",
+  "caption": "真値は反射回数 0 の輸送行列で描いた直接光だけの像を同じ方法で復号した座標。",
+  "shape": [
+   152,
+   825,
+   3
+  ],
+  "csv": "09_numbers.csv",
+  "tsv": "09_numbers.tsv"
+ },
+ {
+  "file": "10_tof_corner.png",
+  "name": "tof_corner",
+  "caption": "白い壁(0.8)の 90° の隅を 20 MHz の連続波 ToF で。壁どうしの相互反射は経路が長く、隅の近くほど距離を長く読む(2-D のモデル)。",
+  "shape": [
+   420,
+   620,
+   3
+  ]
+ },
+ {
+  "file": "11_tof_bias.png",
+  "name": "tof_bias",
+  "caption": "正 = 遠く見える。",
+  "shape": [
+   340,
+   620,
+   3
+  ]
+ }
+]

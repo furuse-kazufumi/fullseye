@@ -2954,6 +2954,22 @@
    }
   },
   {
+   "id": "poc_interreflection_fringe_error",
+   "group": "wing_metrology",
+   "media": "02_direct_global.png",
+   "motion": false,
+   "thumb_src": "02_direct_global_720.jpg",
+   "label": {
+    "ja": "白い溝の相互反射と縞の誤差",
+    "en": "Interreflection and fringe error",
+    "zh": "白色沟槽的相互反射与条纹误差",
+    "tw": "白色溝槽的相互反射與條紋誤差",
+    "ko": "흰 홈의 상호 반사와 줄무늬 오차",
+    "de": "Interreflexion und Streifenfehler",
+    "hi": "सफ़ेद खाँचे का interreflection और fringe त्रुटि"
+   }
+  },
+  {
    "id": "poc_zernike_aberrations",
    "group": "wing_metrology",
    "media": "06_through_focus.gif",
@@ -5745,6 +5761,13 @@
     "ko": "편광으로 흑색 광택 부품과 유리의 형상을 잰다(편광 기반 형상 복원, 모호성 집합, 굴절률 추정)",
     "de": "Die Form schwarz glänzender und gläserner Teile aus der Polarisation messen (Shape from Polarization, die Mehrdeutigkeitsmenge, Brechungsindex)",
     "hi": "polarisation से काले चमकदार और काँच के हिस्सों का आकार मापना (shape from polarisation, अस्पष्टता समुच्चय, refractive index)"
+   },
+   "light-transport": {
+    "zh": "在测量之前预测凹形部件的相互反射使条纹投影与 ToF 偏离多少(全局光传输、直接与全局分离、微相移)",
+    "tw": "在量測之前預測凹形部件的相互反射使條紋投影與 ToF 偏離多少(全域光傳輸、直接與全域分離、微相移)",
+    "ko": "오목한 부품의 상호 반사가 줄무늬 투영과 ToF를 얼마나 어긋나게 하는지 측정 전에 예측한다(전역 광 수송, 직접·전역 분리, 마이크로 위상 이동)",
+    "de": "Vor dem Messen vorhersagen, wie weit Interreflexion in konkaven Teilen Streifenprojektion und ToF verfälscht (globaler Lichttransport, Trennung direkt/global, Micro Phase Shifting)",
+    "hi": "मापने से पहले अनुमान लगाना कि अवतल हिस्सों का interreflection fringe projection और ToF को कितना भटकाता है (global light transport, direct/global पृथक्करण, micro phase shifting)"
    }
   }
  }

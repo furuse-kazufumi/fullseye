@@ -28,8 +28,8 @@ _PAT = re.compile(r"(~?\d[\d,]*)\s+((?:typed |distinct |single-input |evolvable 
 #: 索引の外で決まる数(理由つき)。
 _OTHER = {
     2313: "HALCON の演算子の総数(halcon_names_data)",
-    380: ("SKILL.md の生成ブロック: 物理計測 15 族のノート数(2026-10-13 coherent 6 op で 366 → 372、"
-          "shape_from_polarization 8 op で 372 → 380)"),
+    391: ("SKILL.md の生成ブロック: 物理計測 15 族のノート数(2026-10-13 coherent 6 op で 366 → 372、"
+          "shape_from_polarization 8 op で 372 → 380、light_transport 11 op で 380 → 391)"),
 }
 
 

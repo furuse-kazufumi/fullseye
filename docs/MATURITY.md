@@ -45,6 +45,7 @@
 | [地の色を知らずに線と領域を描く(反転色)](capabilities/inverted-colour-overlays.md) | Draw lines and regions without knowing the background colour | 見せる | `verified-synthetic` | 3/3 | `annotate_paper_tour` synthetic → tests/test_example_scripts_run.py |
 | [レーザー光切断の誤差の床はスペックルが決める(コヒーレント結像・スペックルの統計・三角測量の不確かさ)](capabilities/laser-speckle-floor.md) | Speckle sets the error floor of laser sheet-of-light (coherent imaging, speckle statistics and triangulation uncertainty) | 測る | `verified-synthetic` | 6/6 | `poc_laser_line_speckle_floor` synthetic → tests/test_poc_scripts_run.py |
 | [レンズの歪みを画像ごと補正する(たる型・糸巻き型・接線)](capabilities/lens-distortion-correction.md) | Correct lens distortion over a whole image (barrel, pincushion, tangential) | 形にする | `verified-synthetic` | 4/4 | `lens_undistort` synthetic → tests/test_example_scripts_run.py |
+| [凹みの相互反射で縞投影と ToF が外れる量を、撮る前に予測する(大域光輸送・直接と大域の分離・マイクロ位相シフト)](capabilities/light-transport.md) | Predict how far interreflection in concave parts throws fringe projection and ToF off, before measuring (global light transport, direct/global separation, micro phase shifting) | 測る | `verified-synthetic` | 11/11 | `poc_interreflection_fringe_error` synthetic → tests/test_poc_scripts_run.py |
 | [その数字のうち、いくつが測り方のものか(ゲージ R&R と測定の不確かさ)](capabilities/measurement-system-and-uncertainty.md) | How much of that number is your measuring, not your process (gauge R&R and measurement uncertainty) | 測る | `verified-synthetic` | 11/11 | `poc_measurement_system_analysis` synthetic → tests/test_poc_scripts_run.py |
 | [写真を 1 本の線にする(点描 → 巡回路 → 回る円)](capabilities/one-stroke-drawing.md) | Turn a photograph into a single line (stipple, tour, rotating circles) | 描く | `validated-public-real-data` | 9/9 | `poc_one_stroke_epicycles` real → tests/test_poc_scripts_run.py |
 | [光の反射・屈折・干渉を計算する](capabilities/optics-and-materials.md) | Compute reflection, refraction and interference | 光と色 | `verified-synthetic` | 4/4 | `glass_and_mirror_optics` synthetic → tests/test_example_scripts_run.py<br>`appearance_structural_colour` synthetic → tests/test_example_scripts_run.py |
@@ -76,8 +77,8 @@
 
 | | 件数 |
 |---|---|
-| 2-D 台帳の例 | 355 |
-| `tests/test_poc_scripts_run.py` が走らせる | 221 |
+| 2-D 台帳の例 | 356 |
+| `tests/test_poc_scripts_run.py` が走らせる | 222 |
 | `tests/test_example_scripts_run.py` が走らせる | 134 |
 | **どの門も走らせていない** | **0** |
 

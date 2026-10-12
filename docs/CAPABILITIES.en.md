@@ -17,9 +17,9 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 38 capabilities**
+**Currently 39 capabilities**
 
-## Measure (12)
+## Measure (13)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -60,6 +60,14 @@ Coherent imaging of rough surfaces under laser light: an amplitude/phase object 
 Operators: `coherent_image`, `speckle_field`, `speckle_statistics`, `laser_line_coherent`, `triangulation_speckle_limit`, `speckle_reduction`
 
 Runnable: `poc_laser_line_speckle_floor`
+
+### [Predict how far interreflection in concave parts throws fringe projection and ToF off, before measuring (global light transport, direct/global separation, micro phase shifting)](capabilities/light-transport.md)
+
+Global light transport for concave Lambertian parts and its effect on active 3-D: an explicit light-transport matrix for an extruded concave cross-section (Hottel's crossed-strings form factors, checked against the V-groove closed form 1 − sin(θ/2) and against quadrature of the 2-D kernel to 1e-14; radiosity T = (I − diag(ρ)F)^-1 diag(ρ), or its Neumann partial sum by bounce count); shifted high-frequency patterns and the Nayar et al. (2006) L_max / L_min separation into direct and global images (general fill α, black level b, pattern-plus-complement); the fringe phase as the argument of the direct-plus-global phasor sum, predicted per pixel from the transport matrix and matching the phase decoded from rendered fringes by `fringe.wrapped_phase` to 1e-15 rad; a micro phase-shifting decoder (Gupta & Nayar 2012) that orders narrow-band high-frequency fringes by their beat; and AMCW time-of-flight multipath, both as a phasor sum and as complex radiosity with per-bounce path delay. On a white 1 mm, 0.5 mm deep 90° V-groove, one fringe across a 4 mm field misreads height by 282 µm RMS; the micro set brings it to 0.76 µm.
+
+Operators: `groove_profile`, `form_factors_2d`, `transport_matrix_radiosity`, `high_frequency_patterns`, `render_transport`, `separate_direct_global`, `fringe_multipath_phase_error`, `predict_fringe_phase_error`, `micro_phase_decode`, `tof_multipath_phase`, `tof_transport_depth`
+
+Runnable: `poc_interreflection_fringe_error`
 
 ### [How much of that number is your measuring, not your process (gauge R&R and measurement uncertainty)](capabilities/measurement-system-and-uncertainty.md)
 

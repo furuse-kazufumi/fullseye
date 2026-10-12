@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3102,
- "n_notes": 3108,
+ "n_ops": 3113,
+ "n_notes": 3119,
  "notes": {
   "vol_dilate": [
    {
@@ -26935,6 +26935,112 @@
     "in": "signal",
     "out": "signal",
     "path": "docs/ops/optics/interface/fresnel_dielectric.md"
+   }
+  ],
+  "form_factors_2d": [
+   {
+    "op": "form_factors_2d",
+    "dim": "optics",
+    "category": "light_transport",
+    "in": "table",
+    "out": "matrix",
+    "path": "docs/ops/optics/light_transport/form_factors_2d.md"
+   }
+  ],
+  "fringe_multipath_phase_error": [
+   {
+    "op": "fringe_multipath_phase_error",
+    "dim": "optics",
+    "category": "light_transport",
+    "out": "table",
+    "path": "docs/ops/optics/light_transport/fringe_multipath_phase_error.md"
+   }
+  ],
+  "groove_profile": [
+   {
+    "op": "groove_profile",
+    "dim": "optics",
+    "category": "light_transport",
+    "out": "table",
+    "path": "docs/ops/optics/light_transport/groove_profile.md"
+   }
+  ],
+  "high_frequency_patterns": [
+   {
+    "op": "high_frequency_patterns",
+    "dim": "optics",
+    "category": "light_transport",
+    "out": "images",
+    "path": "docs/ops/optics/light_transport/high_frequency_patterns.md"
+   }
+  ],
+  "micro_phase_decode": [
+   {
+    "op": "micro_phase_decode",
+    "dim": "optics",
+    "category": "light_transport",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/light_transport/micro_phase_decode.md"
+   }
+  ],
+  "predict_fringe_phase_error": [
+   {
+    "op": "predict_fringe_phase_error",
+    "dim": "optics",
+    "category": "light_transport",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/light_transport/predict_fringe_phase_error.md"
+   }
+  ],
+  "render_transport": [
+   {
+    "op": "render_transport",
+    "dim": "optics",
+    "category": "light_transport",
+    "in": "table × images",
+    "out": "images",
+    "path": "docs/ops/optics/light_transport/render_transport.md"
+   }
+  ],
+  "separate_direct_global": [
+   {
+    "op": "separate_direct_global",
+    "dim": "optics",
+    "category": "light_transport",
+    "in": "images",
+    "out": "table",
+    "path": "docs/ops/optics/light_transport/separate_direct_global.md"
+   }
+  ],
+  "tof_multipath_phase": [
+   {
+    "op": "tof_multipath_phase",
+    "dim": "optics",
+    "category": "light_transport",
+    "out": "table",
+    "path": "docs/ops/optics/light_transport/tof_multipath_phase.md"
+   }
+  ],
+  "tof_transport_depth": [
+   {
+    "op": "tof_transport_depth",
+    "dim": "optics",
+    "category": "light_transport",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/light_transport/tof_transport_depth.md"
+   }
+  ],
+  "transport_matrix_radiosity": [
+   {
+    "op": "transport_matrix_radiosity",
+    "dim": "optics",
+    "category": "light_transport",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/optics/light_transport/transport_matrix_radiosity.md"
    }
   ],
   "clearcoat_shade": [

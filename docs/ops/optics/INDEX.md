@@ -1,4 +1,4 @@
-# OPTICS operator help — 161 ops in 19 categories
+# OPTICS operator help — 172 ops in 20 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -57,6 +57,10 @@
 ### interface (4)
 
 [brewster_angle_deg](interface/brewster_angle_deg.md) · [critical_angle_deg](interface/critical_angle_deg.md) · [fresnel_conductor](interface/fresnel_conductor.md) · [fresnel_dielectric](interface/fresnel_dielectric.md)
+
+### light_transport (11)
+
+[form_factors_2d](light_transport/form_factors_2d.md) · [fringe_multipath_phase_error](light_transport/fringe_multipath_phase_error.md) · [groove_profile](light_transport/groove_profile.md) · [high_frequency_patterns](light_transport/high_frequency_patterns.md) · [micro_phase_decode](light_transport/micro_phase_decode.md) · [predict_fringe_phase_error](light_transport/predict_fringe_phase_error.md) · [render_transport](light_transport/render_transport.md) · [separate_direct_global](light_transport/separate_direct_global.md) · [tof_multipath_phase](light_transport/tof_multipath_phase.md) · [tof_transport_depth](light_transport/tof_transport_depth.md) · [transport_matrix_radiosity](light_transport/transport_matrix_radiosity.md)
 
 ### material (6)
 
