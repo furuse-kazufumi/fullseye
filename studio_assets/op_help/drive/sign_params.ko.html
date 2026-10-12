@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표지 <code style="color:#22d3bf">kind</code>의 형태·치수·색을 반환합니다(공표값, 1차 자료로 확인 필요).</p>
 <p><code style="color:#22d3bf">{&quot;shape&quot;, &quot;width&quot;, &quot;height&quot;, &quot;mount_height&quot;, &quot;ground&quot;, &quot;border&quot;, &quot;ink&quot;, &quot;side&quot;}</code>. shape 는 circle / triangle_down / diamond / pentagon / rect. width, height 는 판의 외형 [m]:</p>
-<p>원 직경 0.6, 역삼각형 한 변 0.6(높이 = 한 변 × √3/2), 마름모 한 변 0.45(대각선 = 한 변 × √2), 가로로 긴 직사각형 0.6 × 0.3, 오각형(횡단보도) 0.6 × 0.6 —— 출처: 일본 「도로 표지, 구획선 및 도로 표시에 관한 명령」 별표 제2 / KICTEC 치수표. 직사각형, 오각형의 치수는 같은 표로 확인하지 않았다(확인 필요). <code style="color:#22d3bf">side</code> 를 넘기면 한 변(원은 직경, 마름모는 한 변)을 대체한다(일시정지 800 mm 의 기술에 맞추는 등). mount_height = 1.8(노측식, 판의 아래쪽 끝).</p>
+<p>원 직경 0.6, 역삼각형 한 변 0.6(높이 = 한 변 × √3/2), 마름모 한 변 0.45(대각선 = 한 변 × √2), 가로로 긴 직사각형 0.6 × 0.3, 오각형(횡단보도) 0.6 × 0.6 —— 출처: 일본 「도로 표지, 구획선 및 도로 표시에 관한 명령」 별표 제2 / KICTEC 치수표. 직사각형, 오각형의 치수는 같은 표로 확인하지 않았다(확인 필요). <code style="color:#22d3bf">side</code> 를 넘기면 한 변(원은 직경, 마름모는 한 변)을 대체한다(일시정지를 도시된 800 mm 로 하는 등. 규제·지시 표지는 법령상 도시 치수의 1/2〜2 배가 허용 범위). mount_height = 1.8(노측식, 판의 아래쪽 끝).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

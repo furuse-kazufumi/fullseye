@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳交通標誌 <code style="color:#22d3bf">kind</code> 的形狀、尺寸與顏色(公開值，需以一手資料確認)。</p>
 <p><code style="color:#22d3bf">{&quot;shape&quot;, &quot;width&quot;, &quot;height&quot;, &quot;mount_height&quot;, &quot;ground&quot;, &quot;border&quot;, &quot;ink&quot;, &quot;side&quot;}</code>。shape 為 circle / triangle_down / diamond / pentagon / rect。width、height 為標誌板的外形尺寸 [m]:</p>
-<p>圓 直徑 0.6,倒三角形 邊長 0.6(高 = 邊長 × √3/2),菱形 邊長 0.45(對角線 = 邊長 × √2),橫長矩形 0.6 × 0.3, 五邊形(行人穿越道)0.6 × 0.6 —— 出處:日本《關於道路標誌、區劃線及道路標示的命令》附表第二 / KICTEC 尺寸表。矩形、五邊形的尺寸尚未在該表中核實(待確認)。傳入 <code style="color:#22d3bf">side</code> 會取代邊長(圓為直徑,菱形為邊長) (例如為了符合「暫停標誌 800 mm」的記述)。mount_height = 1.8(路側式,板的下端)。</p>
+<p>圓 直徑 0.6,倒三角形 邊長 0.6(高 = 邊長 × √3/2),菱形 邊長 0.45(對角線 = 邊長 × √2),橫長矩形 0.6 × 0.3, 五邊形(行人穿越道)0.6 × 0.6 —— 出處:日本《關於道路標誌、區劃線及道路標示的命令》附表第二 / KICTEC 尺寸表。矩形、五邊形的尺寸尚未在該表中核實(待確認)。傳入 <code style="color:#22d3bf">side</code> 會取代邊長(圓為直徑,菱形為邊長) (例如把暫停標誌設為圖示的 800 mm;規制標誌與指示標誌在法律上允許為圖示尺寸的 1/2〜2 倍)。mount_height = 1.8(路側式,板的下端)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
