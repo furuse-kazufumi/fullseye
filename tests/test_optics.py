@@ -884,7 +884,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-01: sensorchar(EMVA 1288)10 op を新しい族として追加(137 → 147)。
     # 2026-10-13: coherent(コヒーレント結像とレーザースペックル)6 op を新しい族として追加(147 → 153)。
     # 2026-10-13: shape_from_polarization(偏光からの形状復元)8 op を新しい族として追加(153 → 161)。
-    assert len(opsoptics.OPSOPTICS) == 161
+    # 2026-10-13: light_transport(相互反射・直接/大域の分離・縞と ToF の多経路)11 op を新しい族として追加(161 → 172)。
+    assert len(opsoptics.OPSOPTICS) == 172
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /
     # four_f_filter)を追加(7 → 9)。
     assert len(opsoptics.list_ops("wave")) == 9
@@ -893,7 +894,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
         "appearance", "coherent", "design", "finish", "geometric", "glassbody", "illumination",
-        "imaging", "imaging_sim", "interface", "material", "mirror", "optimization",
+        "imaging", "imaging_sim", "interface", "light_transport", "material", "mirror", "optimization",
         "polarization", "scene", "sensorchar", "shape_from_polarization", "surface", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が
@@ -906,7 +907,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
                      ("mirror", "glassmirror"), ("glassbody", "glassmirror"),
                      ("finish", "metalfinish"), ("material", "surfacelib"),
                      ("surface", "surfacelib"), ("scene", "optscene"), ("coherent", "coherent"),
-                     ("shape_from_polarization", "sfpolar")):
+                     ("shape_from_polarization", "sfpolar"), ("light_transport", "lighttransport")):
         assert all(m["module"] == mod for m in opsoptics.OPSOPTICS.values()
                    if m["category"] == cat), (cat, mod)
     # the optics-module half of the ledger is exactly optics.OPTICS; the design

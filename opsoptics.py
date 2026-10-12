@@ -16,6 +16,14 @@ DoLP から天頂角、AoLP から方位角を逆算して法線にする経路�
 閉形式、方位の π の曖昧さを**集合のまま**返す ``sfp_normals``、凸の事前情報 + Brewster の稜線
 または粗い深度で選ぶ ``sfp_disambiguate``、屈折率の推定、鏡像拡張した Frankot–Chellappa の積分。
 
+light_transport(lighttransport.py、2026-10-13 追加)— **凹みの中の光**。縞投影も ToF も
+「画素に届く光は 1 経路」と仮定していて(``fringe`` / ``photoncount`` は直接光だけ、``gi_render``
+の相互反射は Mitsuba が要り分離も誤差予測も無い)、V 溝・内角・フィレットでは向かいの面からの
+相互反射が位相を引っぱる。2-D(押し出し形状)の Lambert ラジオシティを crossed-strings の
+形態係数で解いた**輸送行列**、Nayar ら(2006)の高周波パターンによる直接・大域の分離、縞の
+位相バイアスの予測(直接と大域のフェーザ和)、マイクロ位相シフトの復号、ToF の多経路
+(反射ごとの遅延を入れた複素ラジオシティ)。
+
 coherent(coherent.py、2026-10-13 追加)— **レーザーで撮る**。imaging_sim は強度の PSF を
 畳み込むインコヒーレント結像だけで、``optscene.light_spec`` がレーザーに付ける
 ``coherent=True`` の印を使う経路が無かった。coherent は粗面のランダム位相を瞳(コヒーレント
@@ -74,6 +82,7 @@ paraboloid / sphere_mirror の 4 処方(テストと例の共通出発点)。
 import coherent
 import edgesfr
 import sfpolar
+import lighttransport
 import sensorchar
 import illumdesign
 import optscene
@@ -92,7 +101,8 @@ _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar,
-        "optscene": optscene, "coherent": coherent, "sfpolar": sfpolar}
+        "optscene": optscene, "coherent": coherent, "sfpolar": sfpolar,
+        "lighttransport": lighttransport}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用: image2d / signal / matrix / measurement(実スカラのみ)/
@@ -417,6 +427,30 @@ _CATALOG = {
         ("sfp_disambiguate", "sfpolar", ["table"], "normalmap"),
         ("sfp_estimate_index", "sfpolar", ["image2d", "image2d"], "table"),
         ("sfp_height", "sfpolar", ["normalmap"], "image2d"),
+    ],
+    # light_transport(lighttransport、2026-10-13 追加): 相互反射(大域光輸送)と、それが縞投影・
+    # ToF に入れる位相の誤差。入口 groove_profile(断面)→ transport_matrix_radiosity(輸送行列)、
+    # 描画 render_transport(table + images → images)、分離 separate_direct_global(images → table)。
+    # ★新しい型の語は作らない。断面と輸送行列は kind の印つきの dict(table)で渡し、印の無い
+    #   table は消費する 5 op がすべて ValueError で拒む —— 別の族の table を幾何として黙って
+    #   読む経路が無い。パターンと画像は既存の images(2-D 画像の list、fringe の位相シフトと同じ)。
+    # ★縞と ToF は 1 つの族(このカテゴリ)にまとめ、sort は分けない。物理は同じ「経路ごとの
+    #   フェーザの和の偏角」で、op の入出力はどちらも名前つきの値の dict(table)—— 縞は
+    #   bias [rad] と height_error、ToF は depth / bias [m] と鍵の名前も単位も違い、位置で
+    #   並んだ配列を取り違えて渡す経路が無い(混ぜても黙って嘘を返さない)ので語彙を増やす理由が無い。
+    # ★2-D の橋(tb_*)は架からない: 1 入力の op の in は table / images(TYPE_TO_SORT に無い)。
+    "light_transport": [
+        ("groove_profile", "lighttransport", [], "table"),
+        ("form_factors_2d", "lighttransport", ["table"], "matrix"),
+        ("transport_matrix_radiosity", "lighttransport", ["table"], "table"),
+        ("high_frequency_patterns", "lighttransport", [], "images"),
+        ("render_transport", "lighttransport", ["table", "images"], "images"),
+        ("separate_direct_global", "lighttransport", ["images"], "table"),
+        ("fringe_multipath_phase_error", "lighttransport", [], "table"),
+        ("predict_fringe_phase_error", "lighttransport", ["table"], "table"),
+        ("micro_phase_decode", "lighttransport", ["images"], "table"),
+        ("tof_multipath_phase", "lighttransport", [], "table"),
+        ("tof_transport_depth", "lighttransport", ["table"], "table"),
     ],
 }
 

@@ -27980,6 +27980,105 @@
    "ko": "거울 확장한 영역에서 Frankot–Chellappa로 법선 맵을 높이 맵으로 적분 — FFT의 주기 경계가 결과를 휘게 하지 않는다 (``image2d``).",
    "de": "Integriert eine Normalenkarte mit Frankot–Chellappa auf einem gespiegelt erweiterten Gebiet zu einer Höhenkarte, damit der periodische FFT-Rand das Ergebnis nicht verbiegt (``image2d``).",
    "hi": "mirror-extended क्षेत्र पर Frankot–Chellappa से normal map को height map में integrate करना, ताकि FFT की periodic सीमा परिणाम को न मोड़े (``image2d``)।"
+  },
+  "optics/groove_profile": {
+   "fp": "84abb9cfec06",
+   "ja": "凹んだ断面(V 溝・円弧の樋・フィレット・任意の凹の折れ線)を、カメラの画素の列 1 本ずつのパッチに分ける(``table``)。",
+   "zh": "把凹形截面(V 形槽、圆弧槽、圆角焊脚或任意下凹折线)划分为面片,每个面片对应一列相机像素(``table``)。",
+   "tw": "把凹形截面(V 形槽、圓弧槽、圓角焊腳或任意下凹折線)劃分為面片,每個面片對應一列相機像素(``table``)。",
+   "ko": "오목한 단면(V 홈, 원호 홈, 필렛 또는 임의의 오목 꺾은선)을 카메라 화소 열 하나씩의 패치로 나눈다 (``table``).",
+   "de": "Zerlegt einen konkaven Querschnitt (V-Nut, Kreisbogenrinne, Kehlnaht oder beliebiger konkaver Polygonzug) in Patches, je eine Kamerapixelspalte (``table``).",
+   "hi": "अवतल अनुप्रस्थ-काट (V-groove, वृत्ताकार trough, fillet या कोई भी अवतल polyline) को patches में बाँटना, हर patch कैमरे का एक pixel स्तंभ (``table``)।"
+  },
+  "optics/form_factors_2d": {
+   "fp": "6a21f12645c7",
+   "ja": "凹んだ 2-D(押し出し形状)断面のパッチ間の形態係数を、Hottel の crossed-strings 則の閉形式で求める(``matrix``)。",
+   "zh": "用 Hottel 交叉线法则的闭式解,求凹形二维(拉伸体)截面面片之间的角系数(``matrix``)。",
+   "tw": "用 Hottel 交叉線法則的閉式解,求凹形二維(擠出體)截面面片之間的形狀因子(``matrix``)。",
+   "ko": "Hottel의 crossed-strings 법칙의 닫힌 형식으로 오목한 2-D(압출 형상) 단면의 패치 간 형태 계수를 구한다 (``matrix``).",
+   "de": "Formfaktoren zwischen den Patches eines konkaven 2-D-Querschnitts (extrudierte Form) in geschlossener Form nach Hottels Crossed-Strings-Regel (``matrix``).",
+   "hi": "Hottel के crossed-strings नियम के बंद रूप से अवतल 2-D (extruded) अनुप्रस्थ-काट के patches के बीच form factors (``matrix``)।"
+  },
+  "optics/transport_matrix_radiosity": {
+   "fp": "137c3f41b1a8",
+   "ja": "Lambert の凹んだ断面の光輸送行列: ラジオシティ B = T E、T = (I − diag(ρ)F)^-1 diag(ρ)(``table``)。",
+   "zh": "朗伯凹形截面的光传输矩阵:辐射度 B = T E,T = (I − diag(ρ)F)^-1 diag(ρ)(``table``)。",
+   "tw": "朗伯凹形截面的光傳輸矩陣:輻射度 B = T E,T = (I − diag(ρ)F)^-1 diag(ρ)(``table``)。",
+   "ko": "Lambert 오목 단면의 광 수송 행렬: 라디오시티 B = T E, T = (I − diag(ρ)F)^-1 diag(ρ) (``table``).",
+   "de": "Lichttransportmatrix eines konkaven Lambert-Querschnitts: Radiosität B = T E mit T = (I − diag(ρ)F)^-1 diag(ρ) (``table``).",
+   "hi": "Lambertian अवतल अनुप्रस्थ-काट का light-transport matrix: radiosity B = T E, जहाँ T = (I − diag(ρ)F)^-1 diag(ρ) (``table``)।"
+  },
+  "optics/high_frequency_patterns": {
+   "fp": "451c81aa453a",
+   "ja": "ずらした高周波の投影パターン: 点灯率 α の 2 値の縞、市松、または位相シフトした正弦(1 周期または複数周期)(``images``)。",
+   "zh": "平移的高频投影图案:点亮率为 α 的二值条纹、棋盘格,或相移正弦(一个或多个周期)(``images``)。",
+   "tw": "平移的高頻投影圖案:點亮率為 α 的二值條紋、棋盤格,或相移正弦(一個或多個週期)(``images``)。",
+   "ko": "평행 이동한 고주파 투영 패턴: 점등률 α의 2값 줄무늬, 체커보드, 또는 위상 이동한 정현파(하나 또는 여러 주기) (``images``).",
+   "de": "Verschobene hochfrequente Projektormuster: binäre Streifen mit Füllgrad α, ein Schachbrett oder phasenverschobene Sinusmuster (eine oder mehrere Perioden) (``images``).",
+   "hi": "खिसकाए गए उच्च-आवृत्ति projector पैटर्न: fill ratio α वाली binary धारियाँ, checkerboard, या phase-shifted sinusoids (एक या कई periods) (``images``)।"
+  },
+  "optics/render_transport": {
+   "fp": "da1182308e06",
+   "ja": "投影パターンの下での Lambert の凹んだ断面のカメラ画像を、光輸送行列(直接 + 相互反射)を通して描く(``images``)。",
+   "zh": "通过光传输矩阵(直接 + 相互反射)渲染投影图案下朗伯凹形截面的相机图像(``images``)。",
+   "tw": "透過光傳輸矩陣(直接 + 相互反射)算繪投影圖案下朗伯凹形截面的相機影像(``images``)。",
+   "ko": "투영 패턴 아래 Lambert 오목 단면의 카메라 영상을 광 수송 행렬(직접 + 상호 반사)을 통해 렌더링한다 (``images``).",
+   "de": "Rendert Kamerabilder eines konkaven Lambert-Querschnitts unter Projektormustern über die Lichttransportmatrix (direkt + Interreflexion) (``images``).",
+   "hi": "projector पैटर्नों के नीचे Lambertian अवतल अनुप्रस्थ-काट की कैमरा छवियाँ light-transport matrix (direct + interreflection) से render करना (``images``)।"
+  },
+  "optics/separate_direct_global": {
+   "fp": "03b465d28983",
+   "ja": "ずらした高周波パターンの画像から、画素ごとの L_max と L_min で直接成分と大域成分(相互反射)を分ける(Nayar ら 2006、``table``)。",
+   "zh": "由平移高频图案下的图像,用逐像素 L_max 与 L_min 分离直接分量与全局分量(相互反射)(Nayar 等 2006,``table``)。",
+   "tw": "由平移高頻圖案下的影像,用逐像素 L_max 與 L_min 分離直接分量與全域分量(相互反射)(Nayar 等 2006,``table``)。",
+   "ko": "평행 이동한 고주파 패턴 영상에서 화소별 L_max와 L_min으로 직접 성분과 전역 성분(상호 반사)을 분리한다 (Nayar 등 2006, ``table``).",
+   "de": "Trennt direkte und globale Anteile (Interreflexion) aus Bildern unter verschobenen hochfrequenten Mustern anhand von L_max und L_min je Pixel (Nayar et al. 2006, ``table``).",
+   "hi": "खिसकाए गए उच्च-आवृत्ति पैटर्नों की छवियों से, हर pixel के L_max और L_min द्वारा direct और global (interreflection) घटकों को अलग करना (Nayar आदि 2006, ``table``)।"
+  },
+  "optics/fringe_multipath_phase_error": {
+   "fp": "62cf3549fef3",
+   "ja": "直接の縞のフェーザと大域のフェーザが足されたときに測られる位相 arg(a1 e^{iφ1} + a2 e^{iφ2})、φ1 に対するバイアス、最悪値 asin(a2/a1)(``table``)。",
+   "zh": "直接条纹相量与全局相量相加时测得的相位 arg(a1 e^{iφ1} + a2 e^{iφ2})、相对 φ1 的偏差,以及最坏值 asin(a2/a1)(``table``)。",
+   "tw": "直接條紋相量與全域相量相加時測得的相位 arg(a1 e^{iφ1} + a2 e^{iφ2})、相對 φ1 的偏差,以及最壞值 asin(a2/a1)(``table``)。",
+   "ko": "직접 줄무늬 페이저와 전역 페이저가 더해질 때 측정되는 위상 arg(a1 e^{iφ1} + a2 e^{iφ2}), φ1에 대한 편향, 최악값 asin(a2/a1) (``table``).",
+   "de": "Gemessene Phase, wenn sich ein direkter Streifen-Phasor und ein globaler Phasor addieren: arg(a1 e^{iφ1} + a2 e^{iφ2}), ihre Abweichung gegenüber φ1 und der Höchstwert asin(a2/a1) (``table``).",
+   "hi": "direct fringe phasor और global phasor जुड़ने पर मापा गया phase arg(a1 e^{iφ1} + a2 e^{iφ2}), φ1 के सापेक्ष उसका bias, और सबसे बुरा मान asin(a2/a1) (``table``)।"
+  },
+  "optics/predict_fringe_phase_error": {
+   "fp": "e4ac10b285c2",
+   "ja": "相互反射が位相シフト法に入れる縞位相のバイアスと高さ誤差を、光輸送行列から画素ごとに予測する(``table``)。",
+   "zh": "由光传输矩阵逐像素预测相互反射在相移轮廓术中造成的条纹相位偏差与高度误差(``table``)。",
+   "tw": "由光傳輸矩陣逐像素預測相互反射在相移輪廓術中造成的條紋相位偏差與高度誤差(``table``)。",
+   "ko": "상호 반사가 위상 이동 형상 측정에 일으키는 줄무늬 위상 편향과 높이 오차를 광 수송 행렬로부터 화소별로 예측한다 (``table``).",
+   "de": "Sagt je Kamerapixel aus der Lichttransportmatrix die Streifenphasen-Abweichung und den Höhenfehler voraus, die Interreflexion bei der Phasenschiebe-Profilometrie verursacht (``table``).",
+   "hi": "light-transport matrix से हर camera pixel के लिए वह fringe-phase bias और ऊँचाई त्रुटि का पूर्वानुमान जो interreflection phase-shifting profilometry में लाता है (``table``)।"
+  },
+  "optics/micro_phase_decode": {
+   "fp": "5ef2b87c6fa9",
+   "ja": "狭い帯域の高周波の縞の組(マイクロ位相シフト、Gupta & Nayar 2012)を、最初の 2 周期のうなりで次数を決めて絶対のプロジェクタ座標に復号する(``table``)。",
+   "zh": "把窄带高频条纹组(微相移,Gupta & Nayar 2012)解码为绝对投影仪坐标,用前两个周期的拍频确定条纹级次(``table``)。",
+   "tw": "把窄頻高頻條紋組(微相移,Gupta & Nayar 2012)解碼為絕對投影機座標,用前兩個週期的拍頻確定條紋級次(``table``)。",
+   "ko": "좁은 대역의 고주파 줄무늬 묶음(마이크로 위상 이동, Gupta & Nayar 2012)을 처음 두 주기의 맥놀이로 차수를 정해 절대 프로젝터 좌표로 복호한다 (``table``).",
+   "de": "Dekodiert einen schmalbandigen hochfrequenten Streifensatz (Micro Phase Shifting, Gupta & Nayar 2012) zu einer absoluten Projektorkoordinate; die Streifenordnung liefert die Schwebung der ersten beiden Perioden (``table``).",
+   "hi": "संकीर्ण-बैंड उच्च-आवृत्ति fringe समूह (micro phase shifting, Gupta & Nayar 2012) को absolute projector coordinate में decode करना, पहले दो periods की beat से fringe order तय करके (``table``)।"
+  },
+  "optics/tof_multipath_phase": {
+   "fp": "a4aa6a65c8b6",
+   "ja": "複数の光路が 1 画素に届くときの連続波 ToF の距離: フェーザ和の位相と、直接経路に対するバイアス(``table``)。",
+   "zh": "多条光路到达同一像素时的连续波飞行时间距离:相量和的相位,以及相对直接路径的偏差(``table``)。",
+   "tw": "多條光路到達同一像素時的連續波飛行時間距離:相量和的相位,以及相對直接路徑的偏差(``table``)。",
+   "ko": "여러 광 경로가 한 화소에 닿을 때의 연속파 ToF 거리: 페이저 합의 위상과 직접 경로에 대한 편향 (``table``).",
+   "de": "Tiefe eines Dauerstrich-Laufzeitsensors, wenn mehrere Lichtwege ein Pixel erreichen: die Phase der Phasorsumme und ihre Abweichung gegenüber dem direkten Weg (``table``).",
+   "hi": "जब कई प्रकाश पथ एक pixel तक पहुँचें तब continuous-wave time-of-flight गहराई: phasor योग का phase और direct पथ के सापेक्ष उसका bias (``table``)।"
+  },
+  "optics/tof_transport_depth": {
+   "fp": "80887b3b006e",
+   "ja": "凹んだ Lambert の断面(部屋の隅)の AMCW ToF 距離を、相互反射ごとに経路長の遅れを入れた複素ラジオシティで求め、画素ごとの距離のバイアスを出す(``table``)。",
+   "zh": "用为每次相互反射计入路径长度延迟的复数辐射度,求凹形朗伯截面(房间墙角)的 AMCW 飞行时间距离及逐像素距离偏差(``table``)。",
+   "tw": "用為每次相互反射計入路徑長度延遲的複數輻射度,求凹形朗伯截面(房間牆角)的 AMCW 飛行時間距離及逐像素距離偏差(``table``)。",
+   "ko": "상호 반사마다 경로 길이만큼의 지연을 넣은 복소 라디오시티로 오목한 Lambert 단면(방의 모서리)의 AMCW ToF 거리와 화소별 거리 편향을 구한다 (``table``).",
+   "de": "AMCW-Laufzeittiefe eines konkaven Lambert-Querschnitts (einer Raumecke), bei der jede Interreflexion um ihre Weglänge verzögert ist: komplexe Radiosität, Tiefenabweichung je Pixel (``table``).",
+   "hi": "अवतल Lambertian अनुप्रस्थ-काट (कमरे का कोना) की AMCW time-of-flight गहराई, जहाँ हर interreflection अपनी पथ-लंबाई से विलंबित है: complex radiosity, हर pixel का गहराई bias (``table``)।"
   }
  }
 }

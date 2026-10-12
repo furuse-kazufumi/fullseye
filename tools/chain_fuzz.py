@@ -4503,6 +4503,73 @@ def _b_sfp_height(pool, rng):
     return (n,), {"mask": m}
 
 
+def _lt_groove(rng, n=24):
+    """大域光輸送の種: 開き角を振った V 溝の断面と輸送行列(プールの table は印が無く拒まれる)。"""
+    import lighttransport as _lt
+    pr = _lt.groove_profile("vgroove", n, angle_deg=float(rng.uniform(50.0, 120.0)))
+    return pr, _lt.transport_matrix_radiosity(pr, float(rng.uniform(0.5, 0.9)))
+
+
+def _b_groove_profile(pool, rng):
+    return (), {"kind": "trough", "n_patches": 24, "angle_deg": float(rng.uniform(30.0, 80.0)), "floor_frac": 0.2}
+
+
+def _b_form_factors_2d(pool, rng):
+    return (_lt_groove(rng)[0],), {}
+
+
+def _b_transport_matrix_radiosity(pool, rng):
+    return (_lt_groove(rng)[0],), {"albedo": float(rng.uniform(0.3, 0.9)), "n_bounces": 3}
+
+
+def _b_high_frequency_patterns(pool, rng):
+    return (), {"shape": (4, 48), "period": 8, "fill": 0.25, "n_shifts": 4}
+
+
+def _b_render_transport(pool, rng):
+    """縞(溝の軸に平行)を 4 枚。黒レベルも効く種。"""
+    import lighttransport as _lt
+    _, tr = _lt_groove(rng)
+    return (tr, _lt.high_frequency_patterns((1, 48), 8)), {"triangulation_deg": 15.0, "black_level": 0.05,
+                                                           "rows": 4}
+
+
+def _b_separate_direct_global(pool, rng):
+    import lighttransport as _lt
+    _, tr = _lt_groove(rng)
+    ims = _lt.render_transport(tr, _lt.high_frequency_patterns((1, 48), 8), 15.0, black_level=0.05, rows=4)
+    return (ims,), {"fill": 0.5, "black_level": 0.05}
+
+
+def _b_fringe_multipath_phase_error(pool, rng):
+    return ((rng.uniform(0.5, 1.0, (8, 8)), rng.uniform(-np.pi, np.pi, (8, 8)),
+             rng.uniform(0.0, 0.8, (8, 8)), rng.uniform(-np.pi, np.pi, (8, 8))), {})
+
+
+def _b_predict_fringe_phase_error(pool, rng):
+    _, tr = _lt_groove(rng)
+    return (tr,), {"period": 12.0, "triangulation_deg": 15.0, "projector_width": 48}
+
+
+def _b_micro_phase_decode(pool, rng):
+    import lighttransport as _lt
+    _, tr = _lt_groove(rng)
+    per = (8.0, 8.5, 7.5)
+    ims = _lt.render_transport(tr, _lt.high_frequency_patterns((1, 48), per, kind="sinusoid"), 15.0, rows=4)
+    return (ims,), {"periods": per, "n_shifts": 4}
+
+
+def _b_tof_multipath_phase(pool, rng):
+    return ((np.array([1.0, float(rng.uniform(0.1, 0.8))]), np.array([4.0, 4.0 + float(rng.uniform(0.1, 3.0))])),
+            {"modulation_hz": 20e6})
+
+
+def _b_tof_transport_depth(pool, rng):
+    import lighttransport as _lt
+    pr = _lt.groove_profile("vgroove", 24, width=4.0, angle_deg=90.0)
+    return (_lt.transport_matrix_radiosity(pr, 0.8),), {"camera_xz": (0.2, 0.6), "modulation_hz": 20e6}
+
+
 def _b_perpetual_state(pool, rng):
     """``perpetual_step`` / ``perpetual_render`` に**本物の状態**を渡す。
 
@@ -6174,6 +6241,18 @@ OP_ARG_BUILDERS = {
     "sfp_disambiguate": _b_sfp_disambiguate,
     "sfp_estimate_index": _b_sfp_estimate_index,
     "sfp_height": _b_sfp_height,
+    # --- 大域光輸送(V 溝の断面と輸送行列から組む。プールの table は印が無く拒まれる) --- #
+    "groove_profile": _b_groove_profile,
+    "form_factors_2d": _b_form_factors_2d,
+    "transport_matrix_radiosity": _b_transport_matrix_radiosity,
+    "high_frequency_patterns": _b_high_frequency_patterns,
+    "render_transport": _b_render_transport,
+    "separate_direct_global": _b_separate_direct_global,
+    "fringe_multipath_phase_error": _b_fringe_multipath_phase_error,
+    "predict_fringe_phase_error": _b_predict_fringe_phase_error,
+    "micro_phase_decode": _b_micro_phase_decode,
+    "tof_multipath_phase": _b_tof_multipath_phase,
+    "tof_transport_depth": _b_tof_transport_depth,
     # --- 検出確率(POD、MIL-HDBK-1823A)。表の列と回帰の表は自分で組む ------- #
     "pod_ahat_fit": _b_pod_ahat_fit,
     "pod_from_ahat": _b_pod_from_ahat,
