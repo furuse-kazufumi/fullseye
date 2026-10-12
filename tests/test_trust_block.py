@@ -148,16 +148,22 @@ def test_a_new_row_alone_is_not_enough(data):
 def test_current_row_against_the_index(data):
     """現行の行と索引: 普段は「行 ≤ 索引」(リリース後に op が増えるのは正常)、
     ``--release-check`` では層ごとに厳密一致。"""
-    assert G.stale_problems(data, release=True) == [], \
-        "版 %s の行がいまの docs/OP_INDEX.json と一致しない" % data["version"]
+    # ★2026-10-12: ここは長らく ``release=True``(厳密一致)で呼んでいて、docstring の
+    #   「普段は 行 ≤ 索引」と食い違っていた。0.6.0 の後に op を 1 本でも足すと(pod 5 op)
+    #   凍結済みの 0.6.0 の行は直せないので、**どの commit でも必ず赤**になる門だった。
+    #   厳密一致はリリース直前に ``tools/gen_trust_block.py --release-check`` で見る
+    #   (その意味は下の grown / shrunk の対で固定してある)。
+    assert G.stale_problems(data) == [], \
+        "版 %s の行がいまの docs/OP_INDEX.json と矛盾する(行 > 索引)" % data["version"]
     grown = copy.deepcopy(data)
     grown["index"]["n_ops"] += 1
     grown["index"]["tiers"]["ledger"] += 1
     assert G.stale_problems(grown) == []
     assert len(G.stale_problems(grown, release=True)) == 2
     shrunk = copy.deepcopy(data)
-    shrunk["index"]["n_ops"] -= 1
-    shrunk["index"]["tiers"]["registry"] -= 1
+    # 行より確実に少なくする(リリース後に op が増えていると -1 では行を下回らない)
+    shrunk["index"]["n_ops"] -= 1000
+    shrunk["index"]["tiers"]["registry"] -= 1000
     assert len(G.stale_problems(shrunk)) == 2
 
 
