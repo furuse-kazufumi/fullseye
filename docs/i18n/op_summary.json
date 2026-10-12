@@ -27854,6 +27854,60 @@
    "ko": "genuinely-new (B): 접촉한 물체를 1번 호출로 자동 분리하는 상용 래퍼.",
    "de": "genuinely-new (B): ein Alltags-Wrapper, der sich berührende Objekte mit 1 Aufruf automatisch trennt.",
    "hi": "genuinely-new (B): छूते हुए object को 1 call में अपने-आप अलग करने वाला रोज़मर्रा का wrapper।"
+  },
+  "optics/coherent_image": {
+   "fp": "fed159d5e488",
+   "ja": "振幅・位相の物体を瞳に通したコヒーレント像の強度(``image2d``)。",
+   "zh": "振幅/相位物体经光瞳成像的相干像强度(``image2d``)。",
+   "tw": "振幅/相位物體經光瞳成像的同調像強度(``image2d``)。",
+   "ko": "진폭·위상 물체를 동공에 통과시킨 결맞음 영상의 강도 (``image2d``).",
+   "de": "Intensität des kohärenten Bildes eines Amplituden-/Phasenobjekts durch eine Pupille (``image2d``).",
+   "hi": "pupil से गुज़रे amplitude/phase object की coherent image intensity (``image2d``)।"
+  },
+  "optics/speckle_field": {
+   "fp": "058fa84ad017",
+   "ja": "円形瞳越しに見た粗面のレーザースペックルの強度(``image2d``)。",
+   "zh": "透过圆形光瞳观察粗糙表面得到的激光散斑强度(``image2d``)。",
+   "tw": "透過圓形光瞳觀察粗糙表面得到的雷射散斑強度(``image2d``)。",
+   "ko": "원형 동공을 통해 본 거친 표면의 레이저 스페클 강도 (``image2d``).",
+   "de": "Laser-Speckle-Intensität einer rauen Oberfläche, gesehen durch eine kreisförmige Pupille (``image2d``).",
+   "hi": "गोल pupil से देखी गई खुरदरी सतह की laser speckle intensity (``image2d``)।"
+  },
+  "optics/speckle_statistics": {
+   "fp": "9bdb992f9746",
+   "ja": "スペックル強度画像の一次・二次統計(``table``)。",
+   "zh": "散斑强度图像的一阶与二阶统计量(``table``)。",
+   "tw": "散斑強度影像的一階與二階統計量(``table``)。",
+   "ko": "스페클 강도 영상의 1차·2차 통계 (``table``).",
+   "de": "Statistik erster und zweiter Ordnung eines Speckle-Intensitätsbildes (``table``).",
+   "hi": "speckle intensity image के प्रथम और द्वितीय कोटि के आँकड़े (``table``)।"
+  },
+  "optics/laser_line_coherent": {
+   "fp": "bbcf4dcd12e8",
+   "ja": "粗面に当てた光切断のレーザー光条を、スペックル込みで撮った像(``image2d``)。",
+   "zh": "照在粗糙表面上的光切法激光线,连同散斑一起成像(``image2d``)。",
+   "tw": "照在粗糙表面上的光切法雷射線,連同散斑一起成像(``image2d``)。",
+   "ko": "거친 표면에 비춘 광절단 레이저 라인을 스페클과 함께 촬영한 영상 (``image2d``).",
+   "de": "Eine Lichtschnitt-Laserlinie auf einer rauen Oberfläche, mitsamt ihrem Speckle abgebildet (``image2d``).",
+   "hi": "खुरदरी सतह पर पड़ी sheet-of-light laser line, उसके speckle सहित imaged (``image2d``)।"
+  },
+  "optics/triangulation_speckle_limit": {
+   "fp": "723c9b40c132",
+   "ja": "レーザー三角測量のスペックルの床(``table``): ``δz = C λ / (2π sin u_obs sin θ)``。",
+   "zh": "激光三角测量的散斑下限(``table``): ``δz = C λ / (2π sin u_obs sin θ)``。",
+   "tw": "雷射三角量測的散斑下限(``table``): ``δz = C λ / (2π sin u_obs sin θ)``。",
+   "ko": "레이저 삼각측량의 스페클 하한 (``table``): ``δz = C λ / (2π sin u_obs sin θ)``.",
+   "de": "Speckle-Grenze der Lasertriangulation (``table``): ``δz = C λ / (2π sin u_obs sin θ)``.",
+   "hi": "laser triangulation की speckle सीमा (``table``): ``δz = C λ / (2π sin u_obs sin θ)``।"
+  },
+  "optics/speckle_reduction": {
+   "fp": "49f3096d04d6",
+   "ja": "スペックル低減後に予測されるコントラスト(``table``)。",
+   "zh": "散斑抑制后预测的对比度(``table``)。",
+   "tw": "散斑抑制後預測的對比度(``table``)。",
+   "ko": "스페클 저감 후 예측되는 대비 (``table``).",
+   "de": "Vorhergesagter Speckle-Kontrast nach der Reduktion (``table``).",
+   "hi": "speckle घटाने के बाद अनुमानित contrast (``table``)।"
   }
  }
 }

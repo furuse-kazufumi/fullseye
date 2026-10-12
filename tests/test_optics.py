@@ -882,7 +882,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # 2026-10-01: imaging に edgesfr の 4 op(edge_spread / sfr_from_edge / mtf50 /
     # veiling_glare_index)を追加(133 → 137)。
     # 2026-10-01: sensorchar(EMVA 1288)10 op を新しい族として追加(137 → 147)。
-    assert len(opsoptics.OPSOPTICS) == 147
+    # 2026-10-13: coherent(コヒーレント結像とレーザースペックル)6 op を新しい族として追加(147 → 153)。
+    assert len(opsoptics.OPSOPTICS) == 153
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /
     # four_f_filter)を追加(7 → 9)。
     assert len(opsoptics.list_ops("wave")) == 9
@@ -890,7 +891,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # glassmirror "interface" 4・"mirror" 2・"glassbody" 4 / metalfinish "finish" 5 /
     # surfacelib "material" 6・"surface" 5。下の module 検査と同じ形で実装元も固定する。
     assert sorted(opsoptics.categories()) == [
-        "appearance", "design", "finish", "geometric", "glassbody", "illumination",
+        "appearance", "coherent", "design", "finish", "geometric", "glassbody", "illumination",
         "imaging", "imaging_sim", "interface", "material", "mirror", "optimization",
         "polarization", "scene", "sensorchar", "surface", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
@@ -903,7 +904,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     for cat, mod in (("appearance", "matappear"), ("interface", "glassmirror"),
                      ("mirror", "glassmirror"), ("glassbody", "glassmirror"),
                      ("finish", "metalfinish"), ("material", "surfacelib"),
-                     ("surface", "surfacelib"), ("scene", "optscene")):
+                     ("surface", "surfacelib"), ("scene", "optscene"), ("coherent", "coherent")):
         assert all(m["module"] == mod for m in opsoptics.OPSOPTICS.values()
                    if m["category"] == cat), (cat, mod)
     # the optics-module half of the ledger is exactly optics.OPTICS; the design

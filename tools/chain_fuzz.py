@@ -4410,6 +4410,33 @@ def _b_pod_decision_tradeoff(pool, rng):
     return (fit, rng.normal(-1.0, 0.5, 60)), {}
 
 
+def _b_coherent_image(pool, rng):
+    """振幅(>= 0)と位相(rad)の 2 枚。プールの任意の 2 枚では振幅が負になりうる。"""
+    return (rng.random((32, 32)), rng.uniform(0.0, 2.0 * np.pi, (32, 32))), {"cutoff": 0.2}
+
+
+def _b_speckle_field(pool, rng):
+    return (), {"shape": (32, 32), "cutoff": 0.2, "seed": int(rng.integers(0, 1 << 30))}
+
+
+def _b_speckle_statistics(pool, rng):
+    """本物のスペックル(プールの一様乱数は指数分布でも粒でもない)。"""
+    import coherent as _co
+    return (_co.speckle_field((64, 64), cutoff=0.2, seed=int(rng.integers(0, 1 << 30))),), {}
+
+
+def _b_laser_line_coherent(pool, rng):
+    return (), {"shape": (32, 64), "seed": int(rng.integers(0, 1 << 30))}
+
+
+def _b_triangulation_speckle_limit(pool, rng):
+    return (), {"wavelength_um": 0.65, "sin_u_obs": 0.05, "sin_theta": 0.5}
+
+
+def _b_speckle_reduction(pool, rng):
+    return (), {"n_patterns": 4, "polarizations": 2, "cutoff": 0.5}
+
+
 def _b_perpetual_state(pool, rng):
     """``perpetual_step`` / ``perpetual_render`` に**本物の状態**を渡す。
 
@@ -6065,6 +6092,13 @@ OP_ARG_BUILDERS = {
     "gum_expanded": _b_gum_budget,
     "gum_monte_carlo": _b_gum_mc,
     "gum_validate": _b_gum_validate,
+    # --- コヒーレント結像とスペックル(物理量の窓と本物のスペックルを組む) ---- #
+    "coherent_image": _b_coherent_image,
+    "speckle_field": _b_speckle_field,
+    "speckle_statistics": _b_speckle_statistics,
+    "laser_line_coherent": _b_laser_line_coherent,
+    "triangulation_speckle_limit": _b_triangulation_speckle_limit,
+    "speckle_reduction": _b_speckle_reduction,
     # --- 検出確率(POD、MIL-HDBK-1823A)。表の列と回帰の表は自分で組む ------- #
     "pod_ahat_fit": _b_pod_ahat_fit,
     "pod_from_ahat": _b_pod_from_ahat,

@@ -9,6 +9,13 @@ fullseye は産業ビジョン(検査ライン)と Physical AI(ロボット知�
 + lensimage.py 5 op + lensopt.py 3 op + illumdesign.py 6 op = 50 op / 8 カテゴリ、
 optics の wave に 2026-09-15 の瞳形状 PSF 3 op を含む)。
 
+coherent(coherent.py、2026-10-13 追加)— **レーザーで撮る**。imaging_sim は強度の PSF を
+畳み込むインコヒーレント結像だけで、``optscene.light_spec`` がレーザーに付ける
+``coherent=True`` の印を使う経路が無かった。coherent は粗面のランダム位相を瞳(コヒーレント
+伝達関数)に通して ``|E|²`` を取る: スペックルの生成と統計(Goodman の指数・ガンマ分布、
+Airy の自己相関、画素の積分)、光切断の光条をスペックル込みで描く op、三角測量の高さの
+不確かさの床 ``δz = C·λ/(2π sin u sin θ)``(Dorsch, Häusler & Herrmann 1994)と低減の閉形式。
+
 optimization(lensopt.py)/ illumination(illumdesign.py)— 2026-09-03 追加。
 raytrace は処方を**評価**する側、lensopt は減衰最小二乗で処方を**変える**側
 (曲率/間隔/円錐/非球面係数を変数に、多視野・多波長の横収差 + EFL 拘束)。
@@ -57,6 +64,7 @@ paraboloid / sphere_mirror の 4 処方(テストと例の共通出発点)。
     opsoptics.list_ops("polarization")
     opsoptics.get("thin_lens")(focal_mm=50.0, object_mm=200.0)
 """
+import coherent
 import edgesfr
 import sensorchar
 import illumdesign
@@ -76,7 +84,7 @@ _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar,
-        "optscene": optscene}
+        "optscene": optscene, "coherent": coherent}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用: image2d / signal / matrix / measurement(実スカラのみ)/
@@ -363,6 +371,23 @@ _CATALOG = {
         ("env_lightbox", "optscene", ["points"], "signal"),
         ("render_studio", "optscene", ["table", "table"], "rgbimage"),
         ("sensor_capture", "optscene", ["rgbimage"], "rgbimage"),
+    ],
+    # coherent(coherent、2026-10-13 追加): コヒーレント結像とレーザースペックル。
+    # coherent_image = 振幅(image2d)+ 位相(image2d、rad)→ 円形瞳 → 強度。
+    # speckle_field / laser_line_coherent は窓と物理量だけで描く生成側(入力なし)。
+    # speckle_statistics = 強度の画像 → コントラスト・KS・粒径の表。
+    # triangulation_speckle_limit / speckle_reduction = 閉形式(表)。
+    # ★新しい型の語は作らない(位相も image2d、統計は table)。
+    # ★2-D の橋(tb_*)は架からない: 1 入力の op は speckle_statistics だけで、その in の
+    #   image2d は sort ``image``(_NEW_SORTS の外)、out の table は sort に写らない
+    #   (2026-10-13 に backends_typed.build の条件で確かめて決めた。_OP_BRIDGE_SKIP 不要)。
+    "coherent": [
+        ("coherent_image", "coherent", ["image2d", "image2d"], "image2d"),
+        ("speckle_field", "coherent", [], "image2d"),
+        ("speckle_statistics", "coherent", ["image2d"], "table"),
+        ("laser_line_coherent", "coherent", [], "image2d"),
+        ("triangulation_speckle_limit", "coherent", [], "table"),
+        ("speckle_reduction", "coherent", [], "table"),
     ],
 }
 
