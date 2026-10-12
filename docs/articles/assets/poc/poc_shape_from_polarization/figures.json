@@ -1,0 +1,106 @@
+[
+ {
+  "file": "01_fresnel.png",
+  "name": "fresnel",
+  "caption": "鏡面の DoLP は Brewster 角でちょうど 1 になり、その両側に同じ値が 2 回出る。拡散は単調だが弱い(最大 (n²−1)/(n²+1))。",
+  "shape": [
+   380,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "02_scene.png",
+  "name": "scene",
+  "caption": "左 = 黒光沢樹脂のドーム(n = 1.57)、右 = ガラスのレンズ(n = 1.52)。DoLP の明るい輪が Brewster 角 57.5° の等高線。",
+  "shape": [
+   391,
+   808,
+   3
+  ]
+ },
+ {
+  "file": "03_analyser.gif",
+  "name": "analyser",
+  "caption": "検光子を 0〜180° 回したときの明るさ。黒い蝶ネクタイが回る —— 暗くなる向きが、その画素の面の傾きの向き(鏡面では入射面に直交)。",
+  "shape": [
+   128,
+   256,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 10.0
+ },
+ {
+  "file": "04_candidates.png",
+  "name": "candidates",
+  "caption": "鏡面の DoLP は Brewster を挟んで 2 つの天頂角を持ち、方位は偏光子にとって π が同じ。どれが正しいかは偏光だけでは決まらない —— だから集合のまま返す。",
+  "shape": [
+   391,
+   808,
+   3
+  ]
+ },
+ {
+  "file": "05_normals.png",
+  "name": "normals",
+  "caption": "照度差ステレオは光沢の点しか見えず、法線を Lambert の式に無理に乗せる。",
+  "shape": [
+   391,
+   808,
+   3
+  ]
+ },
+ {
+  "file": "06_height.png",
+  "name": "height",
+  "caption": "法線を鏡像拡張した Frankot–Chellappa で積分。縁(天頂角 72°)まで形が残る。",
+  "shape": [
+   360,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "07_failures.png",
+  "name": "failures",
+  "caption": "屈折率の誤りは全体を滑らかにずらす。雑音は Brewster の輪(DoLP の頂上は平らで逆算が不安定)と頂点(DoLP → 0 で方位が不定)に集まる。拡散が混ざると偏光の打ち消しで縁ほど崩れる。",
+  "shape": [
+   349,
+   1576,
+   3
+  ]
+ },
+ {
+  "file": "08_where_it_breaks.png",
+  "name": "where_it_breaks",
+  "caption": "中腹(25〜45°)がいちばん安定。",
+  "shape": [
+   380,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "09_index_and_mixing.png",
+  "name": "index_and_mixing",
+  "caption": "較正球で測れば 0.01 以内に入る([4])。",
+  "shape": [
+   340,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "10_mixing.png",
+  "name": "mixing",
+  "caption": "拡散の偏光は鏡面と 90° ずれていて、混ざると打ち消し合う。混合比を推定する op は無い。",
+  "shape": [
+   340,
+   560,
+   3
+  ]
+ }
+]

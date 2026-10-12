@@ -4,7 +4,7 @@ dim: specular
 category: reflectance
 in: normalmap
 out: image2d
-examples: [specular_photometric]
+examples: [poc_shape_from_polarization, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -53,6 +53,7 @@ exactly opposite.
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_shape_from_polarization](../../../../examples/poc_shape_from_polarization.py) — `py -3.11 examples/poc_shape_from_polarization.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

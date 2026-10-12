@@ -16,9 +16,9 @@
 `py -3.11 tools/gen_capabilities_index.py` を実行するだけです
 (この索引は生成物なので直接編集しないでください)。
 
-**収録 37 項目**
+**収録 38 項目**
 
-## 測る (11)
+## 測る (12)
 
 ### [平面ターゲットの多視点から内部行列 K を推定する(Zhang 法)](capabilities/camera-intrinsics-calibration.md)
 
@@ -75,6 +75,14 @@
 使う op: `pod_ahat_fit`, `pod_from_ahat`, `pod_hitmiss_fit`, `pod_false_call`, `pod_decision_tradeoff`, `light_source`, `detectability_limit`
 
 動く例: `poc_pod_lighting`
+
+### [黒光沢とガラスの形を偏光で測る(偏光からの形状復元・曖昧さの集合・屈折率の推定)](capabilities/shape-from-polarization.md)
+
+4 方位のオンチップ偏光子を持つセンサの 1 ショットから、面の**法線**と**高さ**を出します。黒い光沢の樹脂やガラスのレンズは拡散反射がほとんど無く、照明を変えても陰影が出ないので、照度差ステレオや陰影からの形状復元が拠り所を失います。けれど表面で 1 回反射した光の偏光は、面の傾きで決まっています(Fresnel の式)。
+
+使う op: `sfp_dolp_model`, `dolp_to_zenith`, `aolp_to_azimuth`, `sfp_render`, `sfp_normals`, `sfp_disambiguate`, `sfp_estimate_index`, `sfp_height`
+
+動く例: `poc_shape_from_polarization`
 
 ### [画像から寸法をサブピクセルで測る](capabilities/subpixel-2d-metrology.md)
 

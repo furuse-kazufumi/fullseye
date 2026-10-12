@@ -2573,6 +2573,17 @@
    "caption_en": "A sequel to the weld-bead scan: the same laser line, re-rendered by coherent imaging (rough-surface phase, observation pupil, |E|^2) instead of a smooth band plus additive noise; the truth is the height put into the rendering. The three-point log-parabola that beat the brightest-pixel estimator 8.6-fold under additive noise falls to the brightest pixel's error under speckle (12.7 vs 13.1 µm) and is twice as bad as the centroid (6.4 µm, 0.93 of Dorsch's floor C·λ/(2π sin u sin θ) = 6.9 µm) - three samples around the peak follow the brightest grain. Averaging 100 frames of a static part leaves the error at 6.91 -> 6.79 µm; moving the part gives 1/sqrt(N) (0.099). The additive-noise model wrongly promises that averaging helps. Errors over aperture and triangulation angle follow the formula with slopes -0.94 / -0.99 at 0.84-0.90 of its value. Four-times-larger pixels blunt the visible contrast from 1.02 to 0.80 yet move the centroid by 1.6e-13 µm."
   },
   {
+   "id": "poc_shape_from_polarization",
+   "wing": "wing_metrology",
+   "added": "2026-10-13",
+   "numbers_source": "log",
+   "figure": "normals",
+   "title_ja": "黒光沢とガラスの形を偏光で測る ―― 陰影が無くても、偏光は傾きを覚えている",
+   "title_en": "Measuring Black-Gloss and Glass from Polarisation - No Shading, but the Polarisation Remembers the Slope",
+   "caption_ja": "黒光沢樹脂のドーム(n 1.57)とガラスのレンズ(n 1.52)を、4 方位のオンチップ偏光子を持つセンサの**生のモザイク 1 枚**から測る。真値は描画に使った解析的な法線と高さ。★★法線の誤差の中央値はドーム 0.53° / レンズ 1.09°、ドームの高さの RMS 誤差 0.62 px(高さ 37.9 px)。同じドームを 4 方向の照明の照度差ステレオにかけると光沢の点しか写らず中央値 26.4°(50 倍、7,921 画素中 2,408 画素は法線を返せない)。★★曖昧さは隠さない: 解消する前は全画素に法線 4 本(Brewster を挟む天頂角 2 × π の方位 2)、2 つの天頂角の差は Brewster 角 57.5° の上で 0 に縮む。凸 + Brewster の稜線で 1 本を選ぶ。★屈折率は較正球の DoLP に Fresnel の曲線を当てはめて 1.5691(真値 1.57)、DoLP 最大の位置から読む近道は 1.715 と雑音の山を拾う。★★どこで壊れるか: 屈折率を 1.50 と仮定すると 0.89°・1.40 で 2.21°(谷は真値でちょうど 0)、雑音の誤差は Brewster の輪(1.27°)と頂点(4.87°)に集まり中腹は 0.57°、拡散が 30 % 混ざると平均 7.4°(偏光が 90° ずれて打ち消し合う)。裏面反射・相互反射・消光比は入っていない合成であることは docstring に明記。検査 11 件・約 2 秒。",
+   "caption_en": "A black-glossy resin dome (n 1.57) and a glass lens (n 1.52), measured from one raw mosaic of a 4-direction on-chip polariser sensor; the truth is the analytic normals and heights used to render them. Median normal error 0.53 deg on the dome and 1.09 deg on the lens, dome height RMS 0.62 px out of 37.9 px; photometric stereo with four lights sees only the highlights on the same dome and is off by a median 26.4 deg (50x; 2,408 of 7,921 pixels get no normal at all). The ambiguity is kept: before disambiguation every pixel has four normals (two zeniths straddling Brewster's angle x the pi azimuth), the two zeniths merging on the 57.5 deg Brewster ring; convexity plus the Brewster ridge picks one. A calibration ball gives n = 1.5691 (truth 1.57) by fitting the Fresnel curve, while reading tan(theta) at the DoLP maximum gives 1.715 - a noise spike. Where it breaks: assuming n = 1.50 costs 0.89 deg and 1.40 costs 2.21 deg (exactly 0 at the truth); noise concentrates on the Brewster ring (1.27 deg) and at the apex (4.87 deg) against 0.57 deg on the flanks; 30 % diffuse light mixed in costs 7.4 deg (the two polarisations are 90 deg apart and cancel)."
+  },
+  {
    "id": "poc_illusions_and_perpetual_drawing",
    "wing": "lane_math",
    "added": "2026-09-23",

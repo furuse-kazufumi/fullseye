@@ -1,8 +1,8 @@
 {
- "n_ops": 3094,
+ "n_ops": 3102,
  "tiers": {
   "color": 12,
-  "ledger": 2141,
+  "ledger": 2149,
   "nary": 17,
   "registry": 924
  },
@@ -1365,6 +1365,19 @@
    "tier": "ledger",
    "ledger": "ops3d",
    "dim": "3d",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "aolp_to_azimuth",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "shape_from_polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
    "in_sorts": [
     "image2d"
    ]
@@ -6500,6 +6513,19 @@
    "in_sorts": [
     "points",
     "keypoints"
+   ]
+  },
+  {
+   "name": "dolp_to_zenith",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "shape_from_polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -22074,6 +22100,85 @@
    "dim": "segmentation",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "sfp_disambiguate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "normalmap",
+   "category": "shape_from_polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "sfp_dolp_model",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "shape_from_polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "sfp_estimate_index",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "shape_from_polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "sfp_height",
+   "halcon": "",
+   "in_sort": "normalmap",
+   "out_sort": "image2d",
+   "category": "shape_from_polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "normalmap"
+   ]
+  },
+  {
+   "name": "sfp_normals",
+   "halcon": "",
+   "in_sort": "polsweep",
+   "out_sort": "table",
+   "category": "shape_from_polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "polsweep"
+   ]
+  },
+  {
+   "name": "sfp_render",
+   "halcon": "",
+   "in_sort": "normalmap",
+   "out_sort": "polsweep",
+   "category": "shape_from_polarization",
+   "tier": "ledger",
+   "ledger": "opsoptics",
+   "dim": "optics",
+   "in_sorts": [
+    "normalmap"
    ]
   },
   {

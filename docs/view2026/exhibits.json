@@ -2938,6 +2938,22 @@
    }
   },
   {
+   "id": "poc_shape_from_polarization",
+   "group": "wing_metrology",
+   "media": "05_normals.png",
+   "motion": false,
+   "thumb_src": "05_normals_720.jpg",
+   "label": {
+    "ja": "偏光で測る黒光沢とガラス",
+    "en": "Shape from polarisation",
+    "zh": "用偏振测量黑色光泽件与玻璃",
+    "tw": "用偏振量測黑色光澤件與玻璃",
+    "ko": "편광으로 재는 흑색 광택과 유리",
+    "de": "Form aus Polarisation",
+    "hi": "polarisation से आकार"
+   }
+  },
+  {
    "id": "poc_zernike_aberrations",
    "group": "wing_metrology",
    "media": "06_through_focus.gif",
@@ -5722,6 +5738,13 @@
     "ko": "레이저 광절단의 오차 하한은 스페클이 정한다(결맞음 결상, 스페클 통계, 삼각측량의 불확도)",
     "de": "Speckle setzt die Fehlergrenze des Laser-Lichtschnitts (kohärente Abbildung, Speckle-Statistik und Triangulationsunsicherheit)",
     "hi": "laser sheet-of-light की त्रुटि की निचली सीमा speckle तय करता है (coherent imaging, speckle आँकड़े और triangulation अनिश्चितता)"
+   },
+   "shape-from-polarization": {
+    "zh": "用偏振测量黑色光泽件与玻璃的形状(偏振形状恢复、模糊解集、折射率估计)",
+    "tw": "用偏振量測黑色光澤件與玻璃的形狀(偏振形狀復原、模糊解集、折射率估計)",
+    "ko": "편광으로 흑색 광택 부품과 유리의 형상을 잰다(편광 기반 형상 복원, 모호성 집합, 굴절률 추정)",
+    "de": "Die Form schwarz glänzender und gläserner Teile aus der Polarisation messen (Shape from Polarization, die Mehrdeutigkeitsmenge, Brechungsindex)",
+    "hi": "polarisation से काले चमकदार और काँच के हिस्सों का आकार मापना (shape from polarisation, अस्पष्टता समुच्चय, refractive index)"
    }
   }
  }

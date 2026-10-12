@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3094,
- "n_notes": 3100,
+ "n_ops": 3102,
+ "n_notes": 3108,
  "notes": {
   "vol_dilate": [
    {
@@ -27662,6 +27662,86 @@
     "in": "volume × volume",
     "out": "table",
     "path": "docs/ops/optics/sensorchar/emva_spatial_nonuniformity.md"
+   }
+  ],
+  "aolp_to_azimuth": [
+   {
+    "op": "aolp_to_azimuth",
+    "dim": "optics",
+    "category": "shape_from_polarization",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/shape_from_polarization/aolp_to_azimuth.md"
+   }
+  ],
+  "dolp_to_zenith": [
+   {
+    "op": "dolp_to_zenith",
+    "dim": "optics",
+    "category": "shape_from_polarization",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/optics/shape_from_polarization/dolp_to_zenith.md"
+   }
+  ],
+  "sfp_disambiguate": [
+   {
+    "op": "sfp_disambiguate",
+    "dim": "optics",
+    "category": "shape_from_polarization",
+    "in": "table",
+    "out": "normalmap",
+    "path": "docs/ops/optics/shape_from_polarization/sfp_disambiguate.md"
+   }
+  ],
+  "sfp_dolp_model": [
+   {
+    "op": "sfp_dolp_model",
+    "dim": "optics",
+    "category": "shape_from_polarization",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/optics/shape_from_polarization/sfp_dolp_model.md"
+   }
+  ],
+  "sfp_estimate_index": [
+   {
+    "op": "sfp_estimate_index",
+    "dim": "optics",
+    "category": "shape_from_polarization",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/optics/shape_from_polarization/sfp_estimate_index.md"
+   }
+  ],
+  "sfp_height": [
+   {
+    "op": "sfp_height",
+    "dim": "optics",
+    "category": "shape_from_polarization",
+    "in": "normalmap",
+    "out": "image2d",
+    "path": "docs/ops/optics/shape_from_polarization/sfp_height.md"
+   }
+  ],
+  "sfp_normals": [
+   {
+    "op": "sfp_normals",
+    "dim": "optics",
+    "category": "shape_from_polarization",
+    "in": "polsweep",
+    "out": "table",
+    "path": "docs/ops/optics/shape_from_polarization/sfp_normals.md"
+   }
+  ],
+  "sfp_render": [
+   {
+    "op": "sfp_render",
+    "dim": "optics",
+    "category": "shape_from_polarization",
+    "in": "normalmap",
+    "out": "polsweep",
+    "path": "docs/ops/optics/shape_from_polarization/sfp_render.md"
    }
   ],
   "corrosion_mask": [

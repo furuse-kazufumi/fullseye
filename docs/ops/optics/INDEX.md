@@ -1,4 +1,4 @@
-# OPTICS operator help — 153 ops in 18 categories
+# OPTICS operator help — 161 ops in 19 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/optics/<category>/<op>.md` を走査。
 
@@ -81,6 +81,10 @@
 ### sensorchar (10)
 
 [emva_dark_current](sensorchar/emva_dark_current.md) · [emva_defect_pixels](sensorchar/emva_defect_pixels.md) · [emva_dynamic_range](sensorchar/emva_dynamic_range.md) · [emva_linearity_error](sensorchar/emva_linearity_error.md) · [emva_pair_statistics](sensorchar/emva_pair_statistics.md) · [emva_photon_transfer](sensorchar/emva_photon_transfer.md) · [emva_quantum_efficiency](sensorchar/emva_quantum_efficiency.md) · [emva_sensitivity_threshold](sensorchar/emva_sensitivity_threshold.md) · [emva_snr_curve](sensorchar/emva_snr_curve.md) · [emva_spatial_nonuniformity](sensorchar/emva_spatial_nonuniformity.md)
+
+### shape_from_polarization (8)
+
+[aolp_to_azimuth](shape_from_polarization/aolp_to_azimuth.md) · [dolp_to_zenith](shape_from_polarization/dolp_to_zenith.md) · [sfp_disambiguate](shape_from_polarization/sfp_disambiguate.md) · [sfp_dolp_model](shape_from_polarization/sfp_dolp_model.md) · [sfp_estimate_index](shape_from_polarization/sfp_estimate_index.md) · [sfp_height](shape_from_polarization/sfp_height.md) · [sfp_normals](shape_from_polarization/sfp_normals.md) · [sfp_render](shape_from_polarization/sfp_render.md)
 
 ### surface (5)
 

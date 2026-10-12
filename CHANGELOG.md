@@ -30,6 +30,25 @@ list / dict・空文字列)のものを渡したときの扱いを 1 つに揃�
   (`accept_promise_broken`)を新規の違反として落とす。台帳 `docs/LEDGER_GAP_DEBT.json` の
   空入力の負債は 0 本。
 
+### 追加 — 偏光からの形状復元(黒光沢・透明部品の法線と高さ)
+
+- 新モジュール `sfpolar.py`(numpy + scipy のみ)と台帳 `opsoptics` の新カテゴリ `shape_from_polarization` に 8 op:
+  `sfp_dolp_model`(天頂角 → DoLP。鏡面 = Fresnel 反射、拡散 = Fresnel 透過)/ `dolp_to_zenith`(DoLP → 天頂角の解の集合。
+  鏡面は Brewster を挟んで 2 解)/ `aolp_to_azimuth`(AoLP → 方位の 2 候補、拡散と鏡面で 90° ずれ)/ `sfp_render`(法線場 →
+  4 方位の偏光画像、鏡面と拡散の Stokes の和)/ `sfp_normals`(偏光画像 → 画素ごとの法線の**候補の集合**、鏡面 4 本・拡散 2 本)/
+  `sfp_disambiguate`(凸 + Brewster の稜線、または粗い深度・法線で 1 本を選ぶ)/ `sfp_estimate_index`(屈折率の当てはめ)/
+  `sfp_height`(鏡像拡張した Frankot–Chellappa)。これまで偏光は分解(Stokes・DoLP)までで、形状復元は `polar_cam` の順方向デモだけだった。
+  新しい型の語は作らない: 候補の集合は印つきの table(dict)で返し、印の無い table は `sfp_disambiguate` が拒む。
+- 門 `tests/test_sfpolar.py`(107 件、約 4 秒): 閉形式を `glassmirror.fresnel_dielectric` の s / p 反射率(別の式)と 1e-12、
+  Brewster で DoLP = 1(4 ulp)、拡散は単調で最大 (n²−1)/(n²+1)。`optics.mueller_element` / `mueller_apply` の Mueller 行列の経路で
+  描いた球・円柱を逆算すると候補の集合は真値を 1e-9° で含み、解消後は拡散 1e-9°・鏡面 最大 0.092°(Brewster の稜線の離散の頂上)。
+  楕円体を 5 つの角度で回しても同じ、偏光子の座標を回しても候補は 1e-9 で同じ。屈折率の推定は雑音なしで 1e-8、雑音 1 % で 4e-4。
+  壊れる所: 屈折率の誤り(鏡面 n 1.4 で平均 1.36°、拡散 4.41°)、拡散 30 % の混入(平均 11.2°)、雑音の誤差は Brewster の輪と頂点に集まる。
+  壊して確かめた: 鏡面の AoLP のずれ・拡散の分子・鏡面の分母・Brewster の判定・稜線の傾きの符号・鏡像拡張 —— 各門が落ちる。
+  ★Atkinson & Hancock(2006)の閉形式と Miyazaki ら(2003)の Brewster 分割は原論文の本文を読めていない。式は Fresnel から自分で導いて照合した。
+- 例 `examples/poc_shape_from_polarization.py`: 黒光沢のドームとガラスのレンズを生のモザイク 1 枚から。法線の誤差の中央値 0.53° / 1.09°、
+  照度差ステレオは同じドームで 26.4°(50 倍)。較正球で屈折率 1.5691(真値 1.57)。
+
 ### 追加 — コヒーレント結像とレーザースペックル(光切断・三角測量の誤差の床)
 
 - 新モジュール `coherent.py`(numpy + scipy のみ)と台帳 `opsoptics` の新カテゴリ `coherent` に 6 op:

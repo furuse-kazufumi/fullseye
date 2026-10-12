@@ -17,9 +17,9 @@ claim with nothing behind it cannot survive.
 `py -3.11 tools/gen_capabilities_index.py` (this index is generated —
 do not edit it by hand).
 
-**Currently 37 capabilities**
+**Currently 38 capabilities**
 
-## Measure (11)
+## Measure (12)
 
 ### [Estimate the camera intrinsic matrix K from multiple planar views (Zhang)](capabilities/camera-intrinsics-calibration.md)
 
@@ -76,6 +76,14 @@ Probability of detection per MIL-HDBK-1823A: â-vs-a regression with left and ri
 Operators: `pod_ahat_fit`, `pod_from_ahat`, `pod_hitmiss_fit`, `pod_false_call`, `pod_decision_tradeoff`, `light_source`, `detectability_limit`
 
 Runnable: `poc_pod_lighting`
+
+### [Measure the shape of black-glossy and glass parts from polarisation (shape from polarisation, the ambiguity set, refractive index)](capabilities/shape-from-polarization.md)
+
+Shape from polarisation for a 4-direction on-chip polariser sensor: the Fresnel DoLP of specular reflection (exactly 1 at Brewster's angle, two zenith solutions straddling it) and of diffuse emission (monotone, one solution), checked against the s/p reflectances of `glassmirror` written in a different form to 1e-14; AoLP to the two candidate azimuths (diffuse and specular 90° apart, the π ambiguity kept); the explicit candidate set of normals per pixel; disambiguation by a stated prior (convexity with Brewster-ridge segmentation, or a coarse depth / normal map); refractive-index estimation from DoLP at known zenith angles; and integration to height with a mirror-extended Frankot–Chellappa. Round trips through an independent Mueller-matrix forward path (`optics.mueller_element` / `mueller_apply`) recover analytic spheres, cylinders and rotated ellipsoids to 1e-9° (diffuse) and to 0.1° on the discrete Brewster ridge (specular). Where it breaks is measured: a wrong index, noise concentrated on the Brewster ring and at the apex, and a diffuse component mixed into a specular pixel.
+
+Operators: `sfp_dolp_model`, `dolp_to_zenith`, `aolp_to_azimuth`, `sfp_render`, `sfp_normals`, `sfp_disambiguate`, `sfp_estimate_index`, `sfp_height`
+
+Runnable: `poc_shape_from_polarization`
 
 ### [Measure dimensions from an image, below the pixel](capabilities/subpixel-2d-metrology.md)
 

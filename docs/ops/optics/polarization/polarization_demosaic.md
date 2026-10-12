@@ -4,7 +4,7 @@ dim: optics
 category: polarization
 in: image2d
 out: polsweep
-examples: [polarization_camera_pipeline]
+examples: [poc_shape_from_polarization, polarization_camera_pipeline]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -81,11 +81,12 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_shape_from_polarization](../../../../examples/poc_shape_from_polarization.py) — `py -3.11 examples/poc_shape_from_polarization.py`
 - [polarization_camera_pipeline](../../../../examples/polarization_camera_pipeline.py) — `py -3.11 examples/polarization_camera_pipeline.py`
 
 ## 型が繋がる次の op(`polsweep` を入力に取れる)
 
-—
+[sfp_normals](../shape_from_polarization/sfp_normals.md)
 
 ## 同カテゴリ(`polarization`)
 
