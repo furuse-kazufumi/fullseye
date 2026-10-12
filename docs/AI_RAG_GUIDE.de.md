@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 011308e07933 -->
+<!-- i18n-source-sha: 497797fbd121 -->
 # Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -84,6 +84,10 @@ Prozess oder Bauteil → Literatur-Cluster → Ops → Op-Notiz (Typvertrag, lau
 Abstracts werden nicht kopiert, und Ops werden nie über Wortüberlappung gewählt (das brachte nachweislich unpassende Ops
 bei Allerweltswörtern und wurde verworfen). Da die Korpora außerhalb des Repos liegen, wird nur diese Schicht mit
 `tools/gen_literature_notes.py --rad-root <RAD>` neu erzeugt; `tests/test_literature_notes.py` sichert ihre Form.
+
+Optische Messtechnik und Zuverlässigkeit der Sichtprüfung (POD, Laser-Speckle, Form aus Polarisation, globaler Lichttransport, Abnahmeprüfung und Messunsicherheit, synthetische Daten: sechs Achsen) ist eine von Hand kuratierte Schicht: Die Arbeiten wurden von Hand ausgewählt, und jede Achse hat eine von Hand geschriebene Übersicht (Manifest `docs/literature/curated/`).
+
+**Was sie tatsächlich erreicht**: Die Schicht ist auffindbar, wenn man die Dateien des Repositorys liest (Claude-Code-Skill `fullseye-ops`, Checkout-Modus). Die Suche des MCP-Servers (`fullseye_search_ops` / `fullseye_find_ops`) und `fullseye-rag search` indizieren nur die Op-Notizen und liefern die Literaturschicht nicht. Auch das Wheel (pip install) enthält `docs/literature` nicht.
 
 ---
 

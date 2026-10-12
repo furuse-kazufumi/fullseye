@@ -20,10 +20,21 @@ Fullseye の RAG は op ノート(``docs/ops``)が本体で、その役目は **
 repo に無い(数千本・外部)ので **CHAIN には入れない**(``regen_all --list`` の「入れないもの」側)。生成物は commit し、
 ``tests/test_literature_notes.py`` が形(op リンクの実在・抄録なし・手元パスなし・件数の整合)を守る。
 
+**厳選の層**(2026-10-13、``--curated``): 階層化(``*_corpus_v2``)していない生のコーパス(``<rad-root>/<corpus>/`` の
+``papers/*.md`` + ``READING_ORDER.json``)からは、クラスタの要約が無い。そこで repo に **手で書いた目録**
+(``docs/literature/curated/<name>.json``)を置き、軸ごとに (a) 抄録を読んで自分の言葉で書いた概観、(b) 使う op と
+その理由、(c) 厳選した論文(古典 + 2020 年以降の有用なもの、DOI か OpenAlex id で指す)を持つ。生成器は目録の
+論文をコーパスの本体(棄却側ではなく主題側)から引いてメタデータだけを写し、軸の件数はコーパスの
+``READING_ORDER.json`` から数える。fail-closed: 目録の op が出荷ノートに無い / 論文がコーパスの主題側に無い・
+その軸に当たっていない / 目録の手書き文にコーパスの抄録と 8 語以上一致する英語の並びがある(抄録の写し)/
+目録に手元の絶対パスがある、のどれでも exit 1。``pending_ops`` は別の作業で実装中の op を足す口(出荷したら
+名前を入れる。入れた名前も実在を検証する)。
+
 使い方::
 
     py -3.11 tools/gen_literature_notes.py --rad-root C:/path/to/docs        # 既定 = 環境変数 FULLSEYE_RAD_DIR
     py -3.11 tools/gen_literature_notes.py --rad-root ... --corpus mech_design --max-papers 6
+    py -3.11 tools/gen_literature_notes.py --rad-root ... --curated optical_metrology   # 厳選の層だけ
 
 fail-closed: rad-root が無い / コーパスが無い / クラスタが 1 つも読めない / op ノートが読めない / 対応表の op が実在しない
 ときは exit 1(空の文献層・嘘の op リンクを黙って出さない)。
@@ -83,6 +94,11 @@ CORPORA = {
                "LiDAR 方程式)ので、CARLA の写実と比べる前に Fullseye 側の正しさを固められる。",
         "themes": "drive",
     },
+}
+
+#: 厳選の層: 名前 → repo 内の目録(手で書いた JSON)。生のコーパス(v2 の階層なし)から論文を人が選ぶ。
+CURATED = {
+    "optical_metrology": "docs/literature/curated/optical_metrology.json",
 }
 
 #: 知識のテーマ(クラスタ名・葉の名前に出る語)→ 使う op と、その理由。**op 名は生成時に実在を検証**する。
@@ -373,7 +389,7 @@ def _slug(name: str) -> str:
 
 def _fmt_op(idx: OpIndex, op: str, why: str) -> str:
     o = idx.ops[op]
-    sig = ("%s → %s" % (o["in"], o["out"])) if (o["in"] or o["out"]) else o["dim"]
+    sig = ("%s → %s" % (o["in"] or "入力なし", o["out"])) if (o["in"] or o["out"]) else o["dim"]
     return "[`%s`](../ops/%s)(%s%s%s)" % (op, o["rel"], why, "、" if why else "", sig)
 
 
@@ -392,7 +408,7 @@ def _paper(path: str) -> dict | None:
         raise SystemExit("paper without a title line: %s (fail-closed)" % os.path.basename(path))
 
     def field(name: str) -> str:
-        m = re.search(r"^\*\*" + re.escape(name) + r":\*\*\s*(.*)$", md, re.M)
+        m = re.search(r"^\*\*" + re.escape(name) + r":\*\*[ \t]*(.*)$", md, re.M)   # [ \t]: 空欄で次の行を拾わない
         return m.group(1).strip() if m else ""
 
     authors = field("Authors")
@@ -404,7 +420,7 @@ def _paper(path: str) -> dict | None:
     if src and not (authors and field("Date")) and os.path.isfile(src):
         orig = _read(src)
         for key in ("Authors", "Date", "URL"):
-            m2 = re.search(r"^\*\*" + key + r":\*\*\s*(.*)$", orig, re.M)
+            m2 = re.search(r"^\*\*" + key + r":\*\*[ \t]*(.*)$", orig, re.M)
             extra[key] = m2.group(1).strip() if m2 else ""
         authors = authors or extra["Authors"]
     if authors:
@@ -560,19 +576,194 @@ def build_corpus(rad_root: str, name: str, idx: OpIndex, max_papers: int) -> tup
     return "\n".join(out) + "\n", row
 
 
-def build_index(rows: dict[str, dict], n_notes: int) -> str:
+# --------------------------------------------------------------------------- #
+# 厳選の層(生のコーパス + 手で書いた目録)                                          #
+# --------------------------------------------------------------------------- #
+_LOCAL_PATH = re.compile(r"(?<![A-Za-z])[A-Z]:[\\/]|(?<![\w/])/c/|(?<![\w:/.])/(?:home|Users|tmp|mnt)/")
+_SHINGLE = 8                                                               # 抄録の写しとみなす連続英単語の数
+
+
+def _words(text: str) -> list[str]:
+    return re.findall(r"[a-z0-9]+", text.lower())
+
+
+def _shingles(text: str, n: int = _SHINGLE) -> set[tuple[str, ...]]:
+    w = _words(text)
+    return {tuple(w[i:i + n]) for i in range(len(w) - n + 1)}
+
+
+def _abstract(md: str) -> str:
+    m = re.search(r"^## Abstract\s*\n(.*)", md, re.S | re.M)
+    return m.group(1).strip() if m else ""
+
+
+def _manifest_texts(man: dict) -> list[tuple[str, str]]:
+    """目録の手書きの文(場所, 文)。抄録の写し・手元パスの検査の対象。題名・DOI は書誌なので含まない。"""
+    out = [("what", man.get("what", "")), ("why", man.get("why", ""))]
+    for ax in man["axes"]:
+        out += [(ax["id"] + ".overview", p) for p in ax["overview"]]
+        out += [(ax["id"] + ".op " + op, why) for op, why in ax["ops"]]
+        out += [(ax["id"] + "." + k, ax.get(k, "")) for k in ("gaps", "pending_note")]
+        out += [(ax["id"] + ".paper " + (p.get("doi") or p.get("openalex", "")), p.get("note", "")) for p in ax["papers"]]
+    return [(where, t) for where, t in out if t]
+
+
+def load_manifest(repo: str, name: str) -> dict:
+    path = os.path.join(repo, CURATED[name])
+    if not os.path.isfile(path):
+        raise SystemExit("curated manifest not found: %s (fail-closed)" % CURATED[name])
+    man = json.load(open(path, encoding="utf-8"))
+    for key in ("name", "corpus", "title", "what", "why", "axes"):
+        if key not in man:
+            raise SystemExit("%s: manifest key %r missing (fail-closed)" % (CURATED[name], key))
+    if man["name"] != name:
+        raise SystemExit("%s: name %r does not match the registry key %r (fail-closed)" % (CURATED[name], man["name"], name))
+    ids = [ax.get("id") for ax in man["axes"]]
+    if len(ids) < 4 or len(set(ids)) != len(ids):
+        raise SystemExit("%s: need >= 4 axes with distinct ids, got %r (fail-closed)" % (CURATED[name], ids))
+    for ax in man["axes"]:
+        for key in ("id", "name", "overview", "ops", "papers"):
+            if not ax.get(key):
+                raise SystemExit("%s: axis %s has no %r (fail-closed)" % (CURATED[name], ax.get("id"), key))
+        for p in ax["papers"]:
+            if bool(p.get("doi")) == bool(p.get("openalex")) or not p.get("note"):
+                raise SystemExit("%s: axis %s paper needs exactly one of doi / openalex, and a note: %r (fail-closed)"
+                                 % (CURATED[name], ax["id"], p))
+    bad = [where for where, t in _manifest_texts(man) if _LOCAL_PATH.search(t)]
+    if bad:
+        raise SystemExit("%s: local absolute path in %s (fail-closed)" % (CURATED[name], ", ".join(bad)))
+    return man
+
+
+def build_curated(rad_root: str, name: str, idx: OpIndex, repo: str) -> tuple[str, dict]:
+    """厳選の層を 1 本組む。論文のメタデータはコーパスの本体から、件数は READING_ORDER.json から数える。"""
+    man = load_manifest(repo, name)
+    cdir = os.path.join(rad_root, man["corpus"])
+    order_path = os.path.join(cdir, "READING_ORDER.json")
+    if not os.path.isfile(order_path) or not os.path.isdir(os.path.join(cdir, "papers")):
+        raise SystemExit("corpus not found or not a raw corpus (READING_ORDER.json + papers/): %s (fail-closed)" % cdir)
+    order = json.load(open(order_path, encoding="utf-8"))
+    if not order:
+        raise SystemExit("%s: READING_ORDER.json is empty (fail-closed)" % man["corpus"])
+    by_key = {}
+    for r in order:                                                       # DOI が無い文献は OpenAlex id(w…)が doi 欄に入っている
+        if r.get("doi"):
+            by_key[r["doi"].lower()] = r
+    # 目録の op の実在(テーマ表と同じ規律: 改名・削除した op を指したまま公開しない)
+    named = {op for ax in man["axes"] for op, _w in ax["ops"]} | {op for ax in man["axes"] for op in ax.get("pending_ops", [])}
+    missing = sorted(named - set(idx.ops))
+    if missing:
+        raise SystemExit("%s names ops that are not in the shipped notes: %s — fix the manifest (fail-closed)"
+                         % (CURATED[name], ", ".join(missing)))
+    # 抄録の写しの門: 目録の手書き文 × コーパスの全抄録(主題側)を 8 語の並びで突き合わせる
+    abstract_sh: set = set()
+    for r in order:
+        abstract_sh |= _shingles(_abstract(_read(os.path.join(cdir, "papers", r["file"]))))
+    copied = [(where, " ".join(sh)) for where, t in _manifest_texts(man) for sh in sorted(_shingles(t) & abstract_sh)]
+    if copied:
+        raise SystemExit("%s: hand-written text shares %d-word runs with corpus abstracts (copying is not allowed): %s (fail-closed)"
+                         % (CURATED[name], _SHINGLE, copied[:3]))
+    axis_count = {ax["id"]: sum(1 for r in order if ax["id"] in r.get("topics_hit", [])) for ax in man["axes"]}
+    readme = os.path.join(cdir, "README.md")
+    m = re.search(r"\((\d{4}-\d{2}-\d{2}) 作成\)", _read(readme)) if os.path.isfile(readme) else None
+    built = m.group(1) if m else ""
+    n_axes = len(man["axes"])
+    out = ["# 文献層: %s\n" % man["title"],
+           "<!-- generated by tools/gen_literature_notes.py from the RAD corpus %s (raw corpus, papers chosen by hand in %s; built %s); "
+           "do not edit by hand -->\n" % (man["corpus"], CURATED[name], built),
+           "**何のコーパスか**: %s\n" % man["what"],
+           "**Fullseye でなぜ要るか**: %s\n" % man["why"],
+           "**来歴**: OpenAlex から取得した論文メタデータの主題側 **%s 本**(分野違い・重複を落とした後)を、取得クエリの軸 **%d クラスタ**で持つ"
+           "生のコーパス(LLM による階層化・要約はしていない、%s)。この層は**人が厳選した層**で、軸ごとの概観は人が抄録を読んで自分の言葉で書いたもの、"
+           "論文は古典と 2020 年以降の有用なものを手で選んだもの(目録 `%s`)。載せるのは題名・著者・年・DOI だけ"
+           "(メタデータは CC0。抄録は出版社の権利なので写さない —— 目録の手書き文はコーパスの全抄録と %d 語の並びで突き合わせ、一致があれば生成を止める)。"
+           "軸の本数は語彙で当たった本数で、2 軸以上に当たる文献は両方で数える。\n"
+           % (f"{len(order):,}", n_axes, built, CURATED[name], _SHINGLE),
+           "**使い方(op に落とす)**: 各軸の「**使う op**」は目録に人が書いた対応で、op 名は生成時に出荷ノート %s 本の一覧と突き合わせる"
+           "(無ければ止まる)。op の後ろはなぜ使うかと型。「Fullseye に無いもの」は op に落ちていない部分を正直に書いたもの。"
+           "読む順: 話題 → 軸の概観 → 使う op → op ノート(型の契約・実行できる例)→ 厳選した文献。末尾の「op → クラスタ」で逆に引ける。\n"
+           % f"{len(idx.ops):,}",
+           "## 目次\n"]
+    for ax in man["axes"]:
+        head = "%s %s" % (ax["id"], ax["name"])
+        out.append("- [%s](#%s)(%s 本)" % (head, _slug(head), f"{axis_count[ax['id']]:,}"))
+    out.append("")
+    reverse: dict[str, list[str]] = defaultdict(list)
+    n_paper = n_oplink = 0
+    for ax in man["axes"]:
+        head = "%s %s" % (ax["id"], ax["name"])
+        out.append("## %s\n" % head)
+        out.append("**%s 本**(この軸の語彙で当たった本数)\n" % f"{axis_count[ax['id']]:,}")
+        out.extend(p + "\n" for p in ax["overview"])
+        out.append("**使う op**(目録の対応。ノートで型と例を確かめてから使う):\n")
+        for op, why in ax["ops"]:
+            out.append("- " + _fmt_op(idx, op, why))
+            if ax["id"] not in reverse[op]:
+                reverse[op].append(ax["id"])
+            n_oplink += 1
+        for op in ax.get("pending_ops", []):
+            out.append("- " + _fmt_op(idx, op, "準備中の族から"))
+            if ax["id"] not in reverse[op]:
+                reverse[op].append(ax["id"])
+            n_oplink += 1
+        if ax.get("pending_note"):
+            out.append("- **準備中**: " + ax["pending_note"])
+        if ax.get("gaps"):
+            out.append("- **Fullseye に無いもの**: " + ax["gaps"])
+        out.append("")
+        papers = []
+        for p in ax["papers"]:
+            key = (p.get("doi") or p.get("openalex")).lower()
+            r = by_key.get(key)
+            if r is None:
+                raise SystemExit("%s: axis %s cites %s, which is not in the topical side of %s (rejected, duplicate or absent) (fail-closed)"
+                                 % (CURATED[name], ax["id"], key, man["corpus"]))
+            if ax["id"] not in r.get("topics_hit", []):
+                raise SystemExit("%s: axis %s cites %s, but the corpus files it under %s, not %s (fail-closed)"
+                                 % (CURATED[name], ax["id"], key, r.get("topics_hit"), ax["id"]))
+            meta = _paper(os.path.join(cdir, "papers", r["file"]))
+            papers.append((meta, p["note"]))
+        papers.sort(key=lambda mp: (mp[0]["date"], mp[0]["title"]))
+        out.append("### 厳選した文献(%d 本、古い順)\n" % len(papers))
+        out.append("- 題名・著者・年・DOI と、読む理由:")
+        out.extend(_fmt_paper(meta) + " —— " + note for meta, note in papers)
+        out.append("")
+        n_paper += len(papers)
+    out.append("## op → クラスタ(逆引き)\n")
+    out.append("この層で「使う op」に挙がった op と、それが出た軸。op から「どの知識の文脈で使うか」を引く。\n")
+    out.append("| op | 出た軸 |")
+    out.append("|---|---|")
+    names = {ax["id"]: "%s %s" % (ax["id"], ax["name"]) for ax in man["axes"]}
+    for op in sorted(reverse):
+        out.append("| [`%s`](../ops/%s) | %s |" % (op, idx.ops[op]["rel"], "; ".join(names[a] for a in reverse[op])))
+    out.append("")
+    row = {"documents": len(order), "clusters": n_axes, "tops": n_axes, "leaves": n_axes, "papers": n_paper,
+           "oplinks": n_oplink, "ops": len(reverse), "uncovered": 0, "built": built}
+    return "\n".join(out) + "\n", row
+
+
+def _title(repo: str, name: str) -> str:
+    if name in CORPORA:
+        return CORPORA[name]["title"]
+    return load_manifest(repo, name)["title"]
+
+
+def build_index(rows: dict[str, dict], n_notes: int, titles: dict[str, str] | None = None) -> str:
     out = ["# 文献層 —— RAD コーパスからの、op に繋がる来歴つき要約\n",
            "<!-- generated by tools/gen_literature_notes.py; do not edit by hand -->\n",
            "Fullseye の RAG(`docs/ops` の op ノート %s 本)は **op を有効に使うための土台**。この層は周辺分野の知識 —— 製造"
-           "(設計 → 工程 → 検査)と運転(シミュレーション・評価・センサーの模擬)—— を、外部の文献コーパス(raptor の RAD、OpenAlex メタデータ)のクラスタごとに要約し、"
+           "(設計 → 工程 → 検査)、運転(シミュレーション・評価・センサーの模擬)、光学計測と外観検査の信頼性(POD・スペックル・偏光・大域光輸送・受入試験・合成データ)"
+           "—— を、外部の文献コーパス(raptor の RAD、OpenAlex メタデータ)のクラスタごとに要約し、"
            "**その知識で使う op**(人が書いたテーマ → op の対応表、op 名は生成時に出荷ノートと突き合わせる)と、代表論文の題名・年・DOI を"
            "来歴として付けたもの。抄録は写さない。op ノートと違い**コーパス本体は repo に無い**ので `tools/regen_all.py` の鎖には入れず、"
-           "`tools/gen_literature_notes.py --rad-root <RAD>` で作り直す(`tests/test_literature_notes.py` が形を守る)。\n" % f"{n_notes:,}",
+           "`tools/gen_literature_notes.py --rad-root <RAD>` で作り直す(`tests/test_literature_notes.py` が形を守る)。"
+           "題名に「(厳選)」とある層は階層化していない生のコーパスから人が論文を選び、軸の概観を人が書いたもの(目録 `docs/literature/curated/`)で、"
+           "その行の「クラスタ」「上位」「葉」は軸の数。\n" % f"{n_notes:,}",
            "| 文献層 | 論文 | クラスタ | 上位 | 葉 | 載せた代表論文 | op リンク | 挙がった op | op に落ちていない上位クラスタ | 構築日 |",
            "|---|---|---|---|---|---|---|---|---|---|"]
     for name, r in rows.items():
         out.append("| [%s](%s.md) | %s | %d | %d | %d | %d | %d | %d | %d / %d | %s |" % (
-            CORPORA[name]["title"], name, f"{r['documents']:,}", r["clusters"], r["tops"], r["leaves"], r["papers"], r["oplinks"], r["ops"],
+            (titles or {}).get(name) or CORPORA[name]["title"], name, f"{r['documents']:,}", r["clusters"], r["tops"], r["leaves"], r["papers"], r["oplinks"], r["ops"],
             r["uncovered"], r["tops"], r["built"]))
     out.append("\n**読み方**: 工程・部品・運転の評価の話題 → 該当する文献層のクラスタ → 「使う op」→ op ノート(型の契約・実行できる例)→ 実装。"
                "逆に op から引くときは各ファイル末尾の「op → クラスタ」。\n")
@@ -586,7 +777,8 @@ def build_index(rows: dict[str, dict], n_notes: int) -> str:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--rad-root", default=os.environ.get("FULLSEYE_RAD_DIR", ""), help="RAD コーパスの親ディレクトリ(既定 = 環境変数 FULLSEYE_RAD_DIR)")
-    ap.add_argument("--corpus", action="append", choices=sorted(CORPORA), help="出すコーパス(既定 = 全部)")
+    ap.add_argument("--corpus", action="append", choices=sorted(CORPORA), help="出す v2 コーパス(--corpus も --curated も無ければ全部)")
+    ap.add_argument("--curated", action="append", choices=sorted(CURATED), help="出す厳選の層(目録 docs/literature/curated/<name>.json)")
     ap.add_argument("--repo", default=_ROOT, help="Fullseye の checkout(op ノートの在処。既定 = この生成器の 2 つ上)")
     ap.add_argument("--out", default=None, help="出力先(既定 = <repo>/docs/literature)")
     ap.add_argument("--max-papers", type=int, default=6, help="葉クラスタごとに載せる代表論文の上限")
@@ -595,12 +787,18 @@ def main(argv=None) -> int:
         raise SystemExit("--rad-root (or FULLSEYE_RAD_DIR) must point at the RAD corpus directory; got %r" % a.rad_root)
     out_dir = a.out or os.path.join(a.repo, "docs", "literature")
     idx = OpIndex(a.repo)
-    names = a.corpus or sorted(CORPORA)
+    if a.corpus or a.curated:
+        names, curated = a.corpus or [], a.curated or []
+    else:
+        names, curated = sorted(CORPORA), sorted(CURATED)
     os.makedirs(out_dir, exist_ok=True)
     rows = {}
     texts = {}
     for name in names:                                                     # まず全部を組む(途中で止まればファイルは 1 つも触らない)
         texts[name], rows[name] = build_corpus(a.rad_root, name, idx, a.max_papers)
+    for name in curated:
+        texts[name], rows[name] = build_curated(a.rad_root, name, idx, a.repo)
+    names = names + curated
     for name in names:
         with open(os.path.join(out_dir, name + ".md"), "w", encoding="utf-8", newline="\n") as f:
             f.write(texts[name])
@@ -610,7 +808,7 @@ def main(argv=None) -> int:
                  row["uncovered"], row["tops"], name))
     # INDEX は在るファイル全部で組む(今回出さなかったコーパスの行を消さない)
     existing = {}
-    for name in sorted(CORPORA):
+    for name in sorted(set(CORPORA) | set(CURATED)):
         p = os.path.join(out_dir, name + ".md")
         if name in rows:
             existing[name] = rows[name]
@@ -624,7 +822,7 @@ def main(argv=None) -> int:
                               "oplinks": len(re.findall(r"\]\(\.\./ops/", md.split("## op → クラスタ")[0])), "ops": md.count("\n| [`"),
                               "uncovered": md.count("**op に落ちていない**"), "built": m.group(1) if m else ""}
     with open(os.path.join(out_dir, "INDEX.md"), "w", encoding="utf-8", newline="\n") as f:
-        f.write(build_index(existing, len(idx.ops)))
+        f.write(build_index(existing, len(idx.ops), {n: _title(a.repo, n) for n in existing}))
     print("literature INDEX: %d corpora (%s)" % (len(existing), _dt.date.today().isoformat()))
     return 0
 

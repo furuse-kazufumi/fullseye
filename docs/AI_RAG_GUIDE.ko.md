@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 011308e07933 -->
+<!-- i18n-source-sha: 497797fbd121 -->
 # Fullseye를 AI 어시스턴트의 RAG로 사용하는 방법(Claude Code용)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · **한국어** · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -80,6 +80,10 @@ OpenAlex 메타데이터, 주제 → op 대응표는 분야별)를 클러스터�
 op 노트(타입 계약·실행 가능한 예)→ 구현」. 초록은 옮기지 않고, 단어 일치로 op를 고르지도 않습니다(일반어로 무관한 op가 나열되는
 것을 실측하고 버렸습니다). 코퍼스 본체는 저장소에 없으므로 이 층만 `tools/gen_literature_notes.py --rad-root <RAD>`로 다시 만들며,
 `tests/test_literature_notes.py`가 형태를 지킵니다.
+
+광학 계측과 외관 검사의 신뢰성(POD, 레이저 스페클, 편광으로부터의 형상 복원, 전역 광 수송, 수입 시험과 불확도, 합성 데이터의 6개 축)은 사람이 엄선한 층입니다. 논문은 사람이 골랐고 축마다 개요를 사람이 썼습니다(목록 `docs/literature/curated/`).
+
+**실제로 검색되는 범위**: 이 층은 저장소 파일을 읽을 때(Claude Code 스킬 `fullseye-ops`, checkout 모드) 찾을 수 있습니다. MCP 서버의 검색(`fullseye_search_ops` / `fullseye_find_ops`)과 `fullseye-rag search`는 op 노트만 색인하므로 문헌 층을 반환하지 않습니다. wheel(pip install)에도 `docs/literature`는 들어 있지 않습니다.
 
 ---
 

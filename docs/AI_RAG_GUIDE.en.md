@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 011308e07933 -->
+<!-- i18n-source-sha: 497797fbd121 -->
 # Using Fullseye as an AI assistant's RAG (for Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · **English** · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -109,6 +109,10 @@ use → op note (type contract, runnable example) → implementation. Abstracts 
 word overlap (that was measured to surface unrelated ops on generic words and dropped). Because the corpora live outside
 the repo, this layer alone is rebuilt with `tools/gen_literature_notes.py --rad-root <RAD>`, and
 `tests/test_literature_notes.py` guards its shape.
+
+Optical metrology and inspection reliability (POD, laser speckle, shape from polarization, global light transport, acceptance testing and uncertainty, synthetic data: six axes) is a hand-curated layer: the papers were chosen by hand and each axis has an overview written by hand (manifest `docs/literature/curated/`).
+
+**What can actually reach it**: the layer is retrievable by reading the repository files (the Claude Code skill `fullseye-ops`, checkout mode). The MCP server's search (`fullseye_search_ops` / `fullseye_find_ops`) and `fullseye-rag search` index op notes only and do not return the literature layer. The wheel (pip install) does not ship `docs/literature` either.
 
 ---
 

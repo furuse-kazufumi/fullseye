@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 011308e07933 -->
+<!-- i18n-source-sha: 497797fbd121 -->
 # Fullseye को AI assistant के RAG के रूप में इस्तेमाल करना (Claude Code के लिए)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · **हिन्दी**
@@ -109,6 +109,10 @@ ops → op note (type contract, चलाने लायक example) → implem
 word overlap से नहीं चुने जाते (measure करने पर पता चला कि यह generic words पर असंबंधित ops ला देता था, इसलिए हटा दिया गया)। क्योंकि corpora
 repo के बाहर रहते हैं, सिर्फ़ यह layer `tools/gen_literature_notes.py --rad-root <RAD>` से फिर से बनाई जाती है, और
 `tests/test_literature_notes.py` इसके आकार की रक्षा करता है।
+
+Optical metrology और inspection की विश्वसनीयता (POD, laser speckle, shape from polarization, global light transport, acceptance testing और uncertainty, synthetic data — 6 अक्ष) एक हाथ से चुनी गई परत है: papers हाथ से चुने गए हैं और हर अक्ष का overview हाथ से लिखा गया है (manifest `docs/literature/curated/`)।
+
+**असल में कहाँ से मिलती है**: यह परत repository की files पढ़ने पर मिलती है (Claude Code skill `fullseye-ops`, checkout mode)। MCP server की search (`fullseye_search_ops` / `fullseye_find_ops`) और `fullseye-rag search` केवल op notes को index करते हैं, इसलिए literature परत नहीं लौटाते। wheel (pip install) में भी `docs/literature` नहीं है।
 
 ---
 

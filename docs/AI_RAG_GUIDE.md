@@ -96,11 +96,15 @@ py -3.11 raptor_corpus2skill.py --source <fullseye>/docs/ops --name fullseye_ops
 
 op ノートは「この op が何をするか」を答えますが、「この工程・この部品では何を測ればよいか」は答えません。
 その隙間を埋めるのが [`docs/literature/`](literature/INDEX.md) です。外部の文献コーパス(メカ設計・メカトロ部品・
-製造工程、運転のシミュレーションと評価・センサーの模擬、OpenAlex のメタデータ約 8,900 本。テーマ → op の表は分野ごと)をクラスタごとに要約し、**各クラスタで使う op**(人が書いたテーマ → op の
+製造工程、運転のシミュレーションと評価・センサーの模擬、OpenAlex のメタデータ約 8,900 本。テーマ → op の表は分野ごと)をクラスタごとに要約し、
+光学計測と外観検査の信頼性(POD・スペックル・偏光からの形状復元・大域光輸送・受入試験と不確かさ・合成データの 6 軸)は人が論文を厳選して軸ごとに概観を書いた層(目録 `docs/literature/curated/`)として持ち、**各クラスタで使う op**(人が書いたテーマ → op の
 対応表、op 名は生成時に出荷ノートと突き合わせて実在を保証)と、代表論文の題名・年・DOI を来歴として付けてあります。
 読む順は「工程・部品・運転の評価の話題 → 文献層のクラスタ → 使う op → op ノート(型の契約・実行できる例)→ 実装」。抄録は写さず、
 語の一致で op を引くことはしません(一般語で無関係の op が並ぶのを実測して捨てました)。コーパス本体は repo に無いので、
 この層だけは `tools/gen_literature_notes.py --rad-root <RAD>` で作り直し、`tests/test_literature_notes.py` が形を守ります。
+**引ける経路の正直な範囲**: この層はリポジトリのファイルとして読む(Claude Code のスキル `fullseye-ops`、checkout モード)ときに引けます。
+MCP サーバーの検索(`fullseye_search_ops` / `fullseye_find_ops`)と `fullseye-rag search` は op ノートだけを索引するので、文献層は返しません。
+wheel(pip install)にも `docs/literature` は入っていません。
 
 ---
 

@@ -99,3 +99,109 @@ def test_index_counts_match_files():
             "%s: INDEX の クラスタ/葉 (%s/%s) ≠ 本文 (%d/%d)" % (f, cells[2], cells[4], clusters, leaves)
         uncovered = md.count("**op に落ちていない**")
         assert cells[8].startswith("%d / " % uncovered), "%s: INDEX の「op に落ちていない」%s ≠ 本文 %d" % (f, cells[8], uncovered)
+
+
+# --------------------------------------------------------------------------- #
+# 厳選の層(2026-10-13): 生のコーパス + 手で書いた目録 docs/literature/curated/*.json   #
+# --------------------------------------------------------------------------- #
+import json  # noqa: E402
+import sys  # noqa: E402
+
+CURATED_DIR = os.path.join(LIT, "curated")
+MANIFESTS = sorted(f for f in os.listdir(CURATED_DIR) if f.endswith(".json")) if os.path.isdir(CURATED_DIR) else []
+
+
+def _gen():
+    """生成器を import する(登録表 CURATED と、抄録の写しを測る関数を門と共有する)。"""
+    tools = os.path.join(ROOT, "tools")
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
+    import gen_literature_notes as g
+    return g
+
+
+def _manifest(fname: str) -> dict:
+    with open(os.path.join(CURATED_DIR, fname), encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _shipped_ops() -> set:
+    with open(os.path.join(ROOT, "fullseye", "data", "OP_NOTES.json"), encoding="utf-8") as f:
+        notes = json.load(f)["notes"]
+    flat = [n for v in (notes.values() if isinstance(notes, dict) else notes) for n in (v if isinstance(v, list) else [v])]
+    return {n["op"] for n in flat}
+
+
+def test_every_manifest_is_registered_and_generated():
+    """目録を置いたのに生成器の登録表に無い / 生成物が無い、を止める(黙って RAG に載らない目録を作らない)。"""
+    assert MANIFESTS, "docs/literature/curated/ に目録が 1 本も無い"
+    g = _gen()
+    for fname in MANIFESTS:
+        name = _manifest(fname)["name"]
+        assert g.CURATED.get(name) == "docs/literature/curated/" + fname, "%s: 生成器の CURATED に登録されていない" % fname
+        assert name + ".md" in FILES, "%s: 生成物 docs/literature/%s.md が無い(生成器を回すこと)" % (fname, name)
+
+
+@pytest.mark.parametrize("fname", MANIFESTS)
+def test_curated_layer_matches_its_manifest(fname):
+    """目録 ↔ 生成物: 軸の順・論文の本数と DOI・読む理由・op が一致し、op は出荷ノートに実在する。"""
+    man = _manifest(fname)
+    md = _read(man["name"] + ".md")
+    ops = _shipped_ops()
+    sections = re.split(r"^## ", md, flags=re.M)
+    axes_md = [s for s in sections if re.match(r"T\d", s)]
+    assert [s.split(" ", 1)[0] for s in axes_md] == [ax["id"] for ax in man["axes"]], "軸の並びが目録と違う"
+    total = 0
+    assert axes_md, "生成物に軸の節が 1 つも無い"
+    for ax, body in zip(man["axes"], axes_md):
+        assert 6 <= len(ax["papers"]) <= 12, "%s: 厳選は軸あたり 6〜12 本(今 %d)" % (ax["id"], len(ax["papers"]))
+        assert len(ax["ops"]) >= 3, "%s: 使う op が 3 つ未満" % ax["id"]
+        missing = [op for op, _w in ax["ops"] if op not in ops] + [op for op in ax.get("pending_ops", []) if op not in ops]
+        assert not missing, "%s: 出荷ノートに無い op: %s" % (ax["id"], missing)
+        for op, _w in ax["ops"]:
+            assert "[`%s`](../ops/" % op in body, "%s: op %s が生成物に無い" % (ax["id"], op)
+        lines = [ln for ln in body.splitlines() if re.match(r"^  - .+\((?:\d{4}|n\.d\.)\)\. ", ln)]
+        assert len(lines) == len(ax["papers"]), "%s: 文献 %d 行 ≠ 目録 %d 本" % (ax["id"], len(lines), len(ax["papers"]))
+        for p in ax["papers"]:
+            key = p.get("doi") or p.get("openalex")
+            assert any(key.lower() in ln.lower() and ln.endswith(" —— " + p["note"]) for ln in lines), \
+                "%s: %s(と読む理由)が生成物に無い" % (ax["id"], key)
+        total += len(ax["papers"])
+    row = next(ln for ln in _read("INDEX.md").splitlines() if "(%s.md)" % man["name"] in ln)
+    cells = [c.strip() for c in row.strip("|").split("|")]
+    assert int(cells[5]) == total, "INDEX の「載せた代表論文」%s ≠ 目録 %d" % (cells[5], total)
+
+
+@pytest.mark.parametrize("fname", MANIFESTS)
+def test_curated_manifest_has_no_copied_prose_and_no_local_paths(fname):
+    """CI でも回る代理の門: 手書き文に **8 語以上続く英語の並び**があれば抄録の写しを疑って落とす
+    (本物の照合はコーパスが要るので下の門。概観と理由は日本語で書く約束)。手元の絶対パスも落とす。"""
+    g = _gen()
+    man = _manifest(fname)
+    texts = g._manifest_texts(man)
+    assert len(texts) > 20, "目録の手書き文が %d しか取れない(空の検査は何でも通す)" % len(texts)
+    for where, text in texts:
+        runs = re.findall(r"(?:[A-Za-z][A-Za-z0-9'’\-]*[\s,;:]+){7,}[A-Za-z][A-Za-z0-9'’\-]*", text)
+        assert not runs, "%s %s: 英語の長い並び(抄録の写し?): %r" % (fname, where, runs[0][:80])
+        assert not g._LOCAL_PATH.search(text), "%s %s: 手元の絶対パス" % (fname, where)
+
+
+@pytest.mark.parametrize("fname", MANIFESTS)
+def test_curated_text_does_not_copy_corpus_abstracts(fname):
+    """本物の照合: 手書き文 × コーパスの全抄録を 8 語の並びで突き合わせる。コーパスは repo の外なので、
+    ``FULLSEYE_RAD_DIR`` が指していなければ飛ばす(生成器も同じ照合で止まる)。"""
+    rad = os.environ.get("FULLSEYE_RAD_DIR", "")
+    man = _manifest(fname)
+    cdir = os.path.join(rad, man["corpus"])
+    if not rad or not os.path.isfile(os.path.join(cdir, "READING_ORDER.json")):
+        pytest.skip("RAD corpus not available (set FULLSEYE_RAD_DIR)")
+    g = _gen()
+    with open(os.path.join(cdir, "READING_ORDER.json"), encoding="utf-8") as f:
+        order = json.load(f)
+    sh = set()
+    for r in order:
+        with open(os.path.join(cdir, "papers", r["file"]), encoding="utf-8") as f:
+            sh |= g._shingles(g._abstract(f.read()))
+    assert len(sh) > 10000, "抄録の並びが %d しか取れない(読み方が壊れている —— 空の照合は何でも通す)" % len(sh)
+    copied = [(w, " ".join(s)) for w, t in g._manifest_texts(man) for s in g._shingles(t) & sh]
+    assert not copied, "抄録の写し: %s" % copied[:3]

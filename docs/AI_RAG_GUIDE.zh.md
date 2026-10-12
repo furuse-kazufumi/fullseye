@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 011308e07933 -->
+<!-- i18n-source-sha: 497797fbd121 -->
 # 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · **简体中文** · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
@@ -79,6 +79,10 @@ op 笔记回答「这个 op 做什么」，却不回答「在这道工序、这�
 论文的标题 / 年份 / DOI 作为来源。阅读顺序：工序、零件或驾驶评估话题 → 文献聚类 → 要用的 op → op 笔记（类型契约、可运行示例）→ 实现。
 不复制摘要，也从不用词面重合来挑 op（实测会被通用词带出无关 op，已弃用）。语料本体不在仓库里，因此只有这一层用
 `tools/gen_literature_notes.py --rad-root <RAD>` 重建，`tests/test_literature_notes.py` 守住它的形状。
+
+光学计测与外观检查的可靠性(POD、激光散斑、偏振恢复形状、全局光传输、验收测试与不确定度、合成数据,共 6 个轴)是人工精选的层:论文由人挑选,每个轴的概述由人撰写(清单 `docs/literature/curated/`)。
+
+**实际能检索到的范围**:该层只有在读取仓库文件时可用(Claude Code 技能 `fullseye-ops`,checkout 模式)。MCP 服务器的搜索(`fullseye_search_ops` / `fullseye_find_ops`)和 `fullseye-rag search` 只索引 op 笔记,不会返回文献层。wheel(pip install)也不包含 `docs/literature`。
 
 ---
 
