@@ -90,7 +90,13 @@ def test_ledger_example_coverage_does_not_regress():
 
 
 def test_registry_example_coverage_does_not_regress():
-    """2-D 例索引で例を持つ op の本数が、記録した床を下回らないこと(床は定義したまま使われていなかった)。"""
+    """2-D 例索引で例を持つ op の本数が、記録した床を下回らないこと(床は定義したまま使われていなかった)。
+
+    ★2026-10-12: 2-D の母集団(ops.REGISTRY)は optional backend で変わる —— 床 776 は全部入りの
+    手元で測った値で、torch の無い CI の py3.10/3.12 では 750 になり赤だった。満杯の環境だけで測る
+    (CI では py3.11 が満杯。``requires_full_registry`` は満杯が要求される環境での skip を失敗にする)。
+    """
+    requires_full_registry()
     _, idx2d = OEI.build_index(split=True)
     got = sum(1 for ex in idx2d.values() if ex)
     assert got >= _REGISTRY_COVERED_FLOOR, (
