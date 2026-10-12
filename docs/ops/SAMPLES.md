@@ -45,6 +45,11 @@ op の動作確認・デバッグに使える**実在**のサンプルデータ�
 | `grain_synth` | synthesized (Fullseye synth.synthesize_like, 1/f grain (spectral synthesis)) | own work |
 | `weave_synth` | synthesized (Fullseye synth.synthesize_like, fabric weave (spectral synthesis)) | own work |
 | `brick_quilt` | synthesized (Fullseye synth.synthesize_like, brick wall, enlarged (image quilting)) | own work |
+| `metal_hairline_scratch` | computed by Fullseye (tools/gen_fa_samples.py; illumdesign ring light + GGX height-field render) | own work (Apache-2.0; computed by Fullseye, no photograph) |
+| `resin_dent_fibre` | computed by Fullseye (tools/gen_fa_samples.py; illumdesign bar light + GGX height-field render) | own work (Apache-2.0; computed by Fullseye, no photograph) |
+| `engraved_lot_code` | computed by Fullseye (tools/gen_fa_samples.py; illumdesign ring light + GGX height-field render) | own work (Apache-2.0; computed by Fullseye, no photograph) |
+| `machined_plate_holes` | computed by Fullseye (tools/gen_fa_samples.py; examples/poc_dimensional_inspection.py render_part: SDF part, area coverage, PSF) | own work (Apache-2.0; computed by Fullseye, no photograph) |
+| `weld_xray_porosity` | computed by Fullseye (tools/gen_fa_samples.py; examples/poc_weld_radiograph_porosity.py render: Beer-Lambert, scatter, Poisson) | own work (Apache-2.0; computed by Fullseye, no photograph) |
 
 2-D は外部 DL 不要(`skimage.data` は pip 導入済、合成は自作)。`import sample_images; sample_images.load('<name>')` で取得。
 
