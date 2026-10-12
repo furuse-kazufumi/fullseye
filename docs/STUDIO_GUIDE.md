@@ -36,7 +36,7 @@ fullseye-studio             # pip install -e . 済みなら、コンソールス
 ## 左パネル: Operators ブラウザ
 
 ### サンプルパイプライン（SAMPLE PIPELINES）
-ドロップダウンから **20 個**の既製レシピ（`recipes.py`）を選ぶと、パイプラインがそのレシピに置き換わります。例: 「Edge — Sobel + Otsu」「Denoise — bilateral + unsharp」「Segment — blob / coin」「Count — blobs」「Texture — Gabor」など。まず動かして中身を見る出発点に便利です。
+ドロップダウンから **25 個**の既製レシピ（`recipes.py`）を選ぶと、パイプラインがそのレシピに置き換わります。例: 「Edge — Sobel + Otsu」「Denoise — bilateral + unsharp」「Segment — blob / coin」「Count — blobs」「Texture — Gabor」など。まず動かして中身を見る出発点に便利です。「FA — 」で始まる 5 個は外観検査用で、それぞれ対になるサンプル画像（下記）で欠陥を拾えることをテストで確かめてあります。
 
 ### オペレータ・ブラウザ（OPERATORS）
 - **カテゴリ絞り込み**: 「all categories」＋ 31 カテゴリ（smoothing / edges / morphology / segmentation / features / texture / region / contour / color / frequency / restoration / 3d …）。
@@ -166,9 +166,12 @@ off の間はステータスバー右に `updates off: …` が出るため、�
 
 **動かして見る**: **File ▸ dev_* visualization demo** で、coins 画像 + 上記 `dev_*` を実際に使う
 HDevelop プログラム（区分→領域を cyan の輪郭 + ラベルで表示）が読み込まれ適用されます。作業用の
-サンプル画像は **File ▸ Sample images**（8 枚・provenance は `studio_assets/sample_images/manifest.json`。
+サンプル画像は **File ▸ Sample images**（16 枚・provenance は `studio_assets/sample_images/manifest.json`。
 合成 = own work / `coins`・`camera` 等 = skimage.data の BSD/public-domain。`tools/gen_sample_images.py`
-で再生成）。
+で再生成）。うち 5 枚は外観検査（FA）用で、写真ではなく照明と反射の物理計算（`illumdesign`）と
+PoC の撮像モデルで作ったもの: ヘアライン金属の傷・樹脂の打痕と異物・刻印ロット番号・バックライトの穴あき
+プレート・溶接の X 線気孔。欠陥の真値マスク（`<名前>.truth.png`）と「何が写っているか」を manifest に
+記録してあり、`tools/gen_fa_samples.py` で再生成できる。
 
 ---
 

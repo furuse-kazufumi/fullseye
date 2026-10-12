@@ -53,7 +53,7 @@
       "input": "coins",
       "slug": "count_blobs",
       "kind": "feature",
-      "label": "count_obj = 26",
+      "label": "count_obj = 25",
       "file": "count_blobs.png"
     },
     {
@@ -159,6 +159,46 @@
       "kind": "region",
       "label": null,
       "file": "spots_local_maxima.png"
+    },
+    {
+      "name": "FA — scratch on hairline metal",
+      "input": "metal_hairline_scratch",
+      "slug": "fa_scratch_on_hairline_metal",
+      "kind": "region",
+      "label": null,
+      "file": "fa_scratch_on_hairline_metal.png"
+    },
+    {
+      "name": "FA — dent and foreign fibre on resin",
+      "input": "resin_dent_fibre",
+      "slug": "fa_dent_and_foreign_fibre_on_resin",
+      "kind": "region",
+      "label": null,
+      "file": "fa_dent_and_foreign_fibre_on_resin.png"
+    },
+    {
+      "name": "FA — engraved lot code (binarize for OCR)",
+      "input": "engraved_lot_code",
+      "slug": "fa_engraved_lot_code_binarize_for_ocr",
+      "kind": "region",
+      "label": null,
+      "file": "fa_engraved_lot_code_binarize_for_ocr.png"
+    },
+    {
+      "name": "FA — count holes in a back-lit plate",
+      "input": "machined_plate_holes",
+      "slug": "fa_count_holes_in_a_back_lit_plate",
+      "kind": "feature",
+      "label": "count_obj = 8",
+      "file": "fa_count_holes_in_a_back_lit_plate.png"
+    },
+    {
+      "name": "FA — weld porosity (X-ray)",
+      "input": "weld_xray_porosity",
+      "slug": "fa_weld_porosity_x_ray",
+      "kind": "region",
+      "label": null,
+      "file": "fa_weld_porosity_x_ray.png"
     }
   ]
 }

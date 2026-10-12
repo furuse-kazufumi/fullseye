@@ -84,7 +84,9 @@ def _resize_h(a, h):
 def render(recipe):
     """Run one recipe headlessly. Returns ``(png_float_array, meta)`` or ``(None, meta)``."""
     name = recipe["name"]
-    img_name = NAME_IMAGE.get(name) or TASK_IMAGE.get(recipe.get("task"), "camera")
+    # a recipe that names the scene it was tuned on (the FA set) is shown on that scene
+    img_name = (recipe.get("image") or NAME_IMAGE.get(name)
+                or TASK_IMAGE.get(recipe.get("task"), "camera"))
     if sample_images.path(img_name) is None:
         img_name = "camera"
     img = sample_images.load(img_name)
