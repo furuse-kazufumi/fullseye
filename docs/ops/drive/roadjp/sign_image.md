@@ -4,7 +4,7 @@ dim: drive
 category: roadjp
 in: 
 out: rgba
-examples: []
+examples: [gallery_drive_japan_roads]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -37,7 +37,7 @@ ValueError**(豆腐を黙って出さない)。``side`` は :func:`sign_params` 
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_drive_japan_roads](../../../../examples/gallery_drive_japan_roads.py) — `py -3.11 examples/gallery_drive_japan_roads.py`
 
 ## 型が繋がる次の op(`rgba` を入力に取れる)
 

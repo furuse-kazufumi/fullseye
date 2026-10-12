@@ -99,7 +99,7 @@ The 35 capabilities, split by how they are verified (`docs/maturity.json`, rebui
 | `validated-public-real-data` | an example on public measured data runs in a gate | 3 |
 | `validated-hardware` | validated on hardware (only from accepted external reports) | 0 |
 
-Of 330 examples, 330 are actually run by a gate.
+Of 336 examples, 336 are actually run by a gate.
 
 ### Operator counts by version
 

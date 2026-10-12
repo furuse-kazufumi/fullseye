@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(330 例)
+### 2-D 画像/信号/幾何(336 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -374,6 +374,12 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **HALCON 拡充 tier(hx_ 一族)を総なめ** — HALCON 互換の拡充 op(``hx_`` prefix, category=halcon_ext)の全 op を GT 検証。 `py -3.11 examples/gallery2d_halcon_ext.py`
 - **物理PDE・人工生命・トモグラフィ・3Dボリューム op 族を総なめ** — 拡散/反応拡散/CA/tomography/volume など物理・人工生命・3D 族の全 op を GT 検証。 `py -3.11 examples/gallery2d_physics_alife_3d.py`
 - **入口 op(img_to_*、category=bridge)を総なめ** — 1 枚の画像から点群・1-D 信号・動画・体積・ライトフィールド・複素場・光子列・ビート立方体・行列・キーポイント・モノジェニック信号を作る 12 op を、型契約・有限性・決定性・ノブの効きに加え op ごとの閉形式(z = 値×10×s、フレームの変位、距離ビン …)で検証する。 `py -3.11 examples/gallery2d_bridge.py`
+- **CARLA と自前の世界の橋(運転の台帳 op 10 本)を往復と閉形式で確かめる** — carlabridge の 10 op: 水平画角 90° の f = W/2、主点の 0.5 画素を戻すとビット一致、回転行列の直交性と det = +1、CARLA → world → CARLA の往復(差 0)、y と yaw の符号反転、場面記録の検査(鍵の欠けは拒む)、地図で回して動かしても同じ世界に置き直す、撮り直しの深度とラベルが記録と画素単位で一致、一定深度の箱で先行車の距離 h·f/(v+½−c) が厳密。 `py -3.11 examples/gallery_drive_carla_bridge.py`
+- **日本の道の部品(標識・信号機・電柱・踏切警標・カーブミラー・止まれ)を寸法で確かめる** — drivejapan 4 op と roadjp 6 op: 「止まれ」の全長 9.2 m、電柱と腕金の AABB、× 印の上端の閉形式、鏡の頂点が半径 r の円の上、標識の寸法(円 0.6・逆三角形の高さ 一辺·√3/2・菱形の対角 0.45·√2)、alpha の平均 π/4 と 1/2、手作りの RGBA から板の面数・面積・α 重みの色・法線、灯器の幅 1.25 m と青・黄・赤の並び、信号機の灯器の底・表示面の向き・アームの側。 `py -3.11 examples/gallery_drive_japan_roads.py`
+- **外から読むファイル(BVH・イベント列・3DGS)と区画の番号を往復で確かめる** — 一時ディレクトリに小さなファイルを書いて読み戻す: BVH の関節の世界座標(閉形式)と骨の長さの不変、イベント列を見出しつき・見出しなし(列の推定)・npz の 3 通りで往復、コマの総和 = 極性の総和、.splat と INRIA .ply の位置・色・不透明度・大きさ・回転、SplitMix64 の公表ベクトルで検算した第 2 実装と tile_hash が一致、tile_uniform の χ²、global_to_tile の往復。 `py -3.11 examples/gallery_drive_world_io.py`
+- **けん玉・糸・歩く人を置き直す op を剛体の不変量と投影で確かめる** — kendamaworld 6 op と drivehumanoid 1 op: 糸の角柱が閉じて体積 (2r)²L、けんの頂点 = 局所 @ Rᵀ + p、姿勢を変えてもほかの物体はビット一致、大皿の縁の中心の像を自前のピンホール投影と照合、皿の半径 f·r/深度、糸の張り直しで長さ更新、歩く人の頂点 = R(yaw)·局所 + (x, y)・頂点間の距離の保存・1 周期先は同じ形。 `py -3.11 examples/gallery_drive_world_objects.py`
+- **建物・起伏・LiDAR の箱・倉庫の格子を面積・体積・閉形式の距離で確かめる** — driveplateau 3 op・driveterrain・lidarsim・agvfleet 2 op: 凹多角形の三角形の面積和 = 靴紐公式、箱で 2 棟だけ切り出し、角柱の体積 = 足跡の面積 × 高さ、地面の格子の頂点数・道の面 160 枚・道の近くの高さ = うねりの閉形式、光線の距離を6 面を全部調べる第 2 実装と 2000 本照合、壁を回り込む最短手数 6 + c − r、計画の総コスト。 `py -3.11 examples/gallery_drive_city_terrain.py`
+- **鏡の折り返し・ミラーに映る左右・坂道の譲り合い・人の群れの 1 歩を確かめる** — drivedecide・drivepass 2 op・drivetraffic: 鏡映行列の対合と det = −1 と等長、ミラーの像を 3 次元の鏡映行列(別の op)で照合、仮想の眼の角速度 = −像の角速度、教則 6-2-1(6) の譲り合いの表、social force の 1 人の解が刻み幅に依らずv0(1 − e^{−t/τ}) と一致、点対称な配置は点対称のまま、斥力ですれ違いの間隔が開く。 `py -3.11 examples/gallery_drive_mirrors_crowds.py`
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`
@@ -1543,7 +1549,7 @@ _計 936 ops / 48 categories。_
 - `invert` (halcon: `invert_image`) `image → image` · 例: `gallery2d_gray_arith`, `genspark_external_review`, `poc_tacscalib_sphere_lut`
 - `scale_clip` (halcon: `scale_image`) `image → image` · 例: `gallery2d_gray_arith`
 - `equalize` (halcon: `equ_histo_image`) `image → image` · 例: `gallery2d_gray_arith`, `poc_dehazing`
-- `sigmoid` (halcon: `scale_image_max`) `image → image` · 例: `gallery2d_gray_arith`
+- `sigmoid` (halcon: `scale_image_max`) `image → image` · 例: `gallery2d_gray_arith`, `gallery_drive_world_io`
 - `clahe` `image → image` · 例: `gallery2d_gray_arith`, `poc_dehazing`
 - `sk_adapthist` `image → image` · 例: `gallery2d_gray_arith`
 - `sk_enhance_contrast` `image → image` · 例: `gallery2d_gray_arith`
