@@ -9,6 +9,13 @@ fullseye は産業ビジョン(検査ライン)と Physical AI(ロボット知�
 + lensimage.py 5 op + lensopt.py 3 op + illumdesign.py 6 op = 50 op / 8 カテゴリ、
 optics の wave に 2026-09-15 の瞳形状 PSF 3 op を含む)。
 
+shape_from_polarization(sfpolar.py、2026-10-13 追加)— **偏光で形を測る**。偏光の分解
+(``polarization_demosaic`` → specularity の ``polarization_dolp_map`` / Stokes)はあったが、
+DoLP から天頂角、AoLP から方位角を逆算して法線にする経路が無かった(``polar_cam`` の
+順方向デモだけ)。鏡面(Fresnel 反射、Brewster を挟んで 2 解)と拡散(Fresnel 透過、1 解)の
+閉形式、方位の π の曖昧さを**集合のまま**返す ``sfp_normals``、凸の事前情報 + Brewster の稜線
+または粗い深度で選ぶ ``sfp_disambiguate``、屈折率の推定、鏡像拡張した Frankot–Chellappa の積分。
+
 coherent(coherent.py、2026-10-13 追加)— **レーザーで撮る**。imaging_sim は強度の PSF を
 畳み込むインコヒーレント結像だけで、``optscene.light_spec`` がレーザーに付ける
 ``coherent=True`` の印を使う経路が無かった。coherent は粗面のランダム位相を瞳(コヒーレント
@@ -66,6 +73,7 @@ paraboloid / sphere_mirror の 4 処方(テストと例の共通出発点)。
 """
 import coherent
 import edgesfr
+import sfpolar
 import sensorchar
 import illumdesign
 import optscene
@@ -84,7 +92,7 @@ _MOD = {"optics": optics, "raytrace": raytrace, "lensimage": lensimage,
         "matappear": matappear, "glassmirror": glassmirror,
         "metalfinish": metalfinish, "surfacelib": surfacelib,
         "lensopt": lensopt, "illumdesign": illumdesign, "edgesfr": edgesfr, "sensorchar": sensorchar,
-        "optscene": optscene, "coherent": coherent}
+        "optscene": optscene, "coherent": coherent, "sfpolar": sfpolar}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   既存語彙の再利用: image2d / signal / matrix / measurement(実スカラのみ)/
@@ -388,6 +396,27 @@ _CATALOG = {
         ("laser_line_coherent", "coherent", [], "image2d"),
         ("triangulation_speckle_limit", "coherent", [], "table"),
         ("speckle_reduction", "coherent", [], "table"),
+    ],
+    # shape_from_polarization(sfpolar、2026-10-13 追加): 偏光からの形状復元。
+    # 入口 sfp_render(normalmap -> polsweep)と sfp_normals(polsweep -> table)、
+    # 出口 sfp_disambiguate(table -> normalmap)と sfp_height(normalmap -> image2d)。
+    # ★新しい型の語は作らない。曖昧な法線の**集合**(候補 2 本 / 4 本)を normalmap と
+    #   区別するために新 sort を作るかを考えたが、集合は ``kind == "sfp_candidates"`` の
+    #   dict(= table)で返す: (K,H,W,3) を normalmap と申告すると法線を食う op(積分・
+    #   陰影)に 4 本重ねの配列が渡るが、table なら normalmap の枠には入らず、逆に
+    #   sfp_disambiguate は印の無い table を ValueError で拒む —— 混ぜても黙って嘘を
+    #   返す経路が無いので、語彙を増やす理由が無い(2026-10-13 に確かめて決めた)。
+    # ★2-D の橋(tb_*)は架からない: 1 入力の op の in は image2d(sort image、_NEW_SORTS の外)
+    #   か normalmap / polsweep / table(TYPE_TO_SORT に無い)。_OP_BRIDGE_SKIP 不要。
+    "shape_from_polarization": [
+        ("sfp_dolp_model", "sfpolar", ["image2d"], "image2d"),
+        ("dolp_to_zenith", "sfpolar", ["image2d"], "table"),
+        ("aolp_to_azimuth", "sfpolar", ["image2d"], "table"),
+        ("sfp_render", "sfpolar", ["normalmap"], "polsweep"),
+        ("sfp_normals", "sfpolar", ["polsweep"], "table"),
+        ("sfp_disambiguate", "sfpolar", ["table"], "normalmap"),
+        ("sfp_estimate_index", "sfpolar", ["image2d", "image2d"], "table"),
+        ("sfp_height", "sfpolar", ["normalmap"], "image2d"),
     ],
 }
 

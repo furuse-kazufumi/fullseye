@@ -4437,6 +4437,72 @@ def _b_speckle_reduction(pool, rng):
     return (), {"n_patterns": 4, "polarizations": 2, "cutoff": 0.5}
 
 
+def _sfp_dome(rng, h=24):
+    """偏光からの形状復元の種: 凸のドーム(球冠)の解析的な法線と mask。
+
+    プールの normalmap は全面 (0,0,1) の平面で、DoLP が 0 = 方位が定まらない
+    いちばん退屈な場合しか試せない。中心をずらした球冠で、Brewster の稜線を
+    横切る傾き(天頂角 0〜約 65°)を持たせる。"""
+    yy, xx = np.mgrid[0:h, 0:h].astype(float)
+    cy, cx = (h - 1) / 2 + rng.uniform(-1, 1), (h - 1) / 2 + rng.uniform(-1, 1)
+    R = 0.5 * h
+    x, y = (xx - cx) / R, (yy - cy) / R
+    r2 = x * x + y * y
+    m = r2 < 0.81
+    nz = np.sqrt(np.clip(1.0 - r2, 0.0, 1.0))
+    n = np.stack([x, y, nz], axis=-1)
+    n[~m] = (0.0, 0.0, 1.0)
+    return n / np.linalg.norm(n, axis=-1, keepdims=True), m
+
+
+def _b_sfp_dolp_model(pool, rng):
+    return (rng.uniform(0.0, 90.0, (16, 16)),), {"refractive_index": float(rng.uniform(1.3, 1.8))}
+
+
+def _b_dolp_to_zenith(pool, rng):
+    return (rng.uniform(0.0, 1.0, (16, 16)),), {"refractive_index": 1.5, "model": "specular"}
+
+
+def _b_aolp_to_azimuth(pool, rng):
+    return (rng.uniform(0.0, 180.0, (16, 16)),), {"model": "diffuse"}
+
+
+def _b_sfp_render(pool, rng):
+    n, m = _sfp_dome(rng)
+    # 鏡面 + 弱い拡散(混合の画素): 2 つの輝度の両方が出力を変える種
+    return (n,), {"refractive_index": 1.5, "diffuse_radiance": 0.2, "mask": m}
+
+
+def _b_sfp_normals(pool, rng):
+    """雑音つきの掃引: Brewster の稜線で DoLP が 1 を少し超える画素が出るので、
+    violation_tol(雑音として許す超過)が実際に効く入力になる。"""
+    import sfpolar as _sf
+    n, m = _sfp_dome(rng)
+    sweep = _sf.sfp_render(n, 1.5, mask=m)
+    noisy = np.clip(sweep + rng.normal(0.0, 0.01, sweep.shape), 0.0, None) * m
+    return (noisy,), {"refractive_index": 1.5, "model": "specular"}
+
+
+def _b_sfp_disambiguate(pool, rng):
+    """本物の候補集合(プールの table は印の無い dict で、fail-closed で拒まれる)。"""
+    import sfpolar as _sf
+    n, m = _sfp_dome(rng)
+    c = _sf.sfp_normals(_sf.sfp_render(n, 1.5, mask=m), 1.5, "specular")
+    return (c,), {"prior": "convex", "mask": m}
+
+
+def _b_sfp_estimate_index(pool, rng):
+    import sfpolar as _sf
+    z = rng.uniform(0.0, 85.0, (16, 16))
+    n = float(rng.uniform(1.3, 1.8))
+    return (_sf.sfp_dolp_model(z, n, "specular"), z), {"model": "specular"}
+
+
+def _b_sfp_height(pool, rng):
+    n, m = _sfp_dome(rng)
+    return (n,), {"mask": m}
+
+
 def _b_perpetual_state(pool, rng):
     """``perpetual_step`` / ``perpetual_render`` に**本物の状態**を渡す。
 
@@ -6099,6 +6165,15 @@ OP_ARG_BUILDERS = {
     "laser_line_coherent": _b_laser_line_coherent,
     "triangulation_speckle_limit": _b_triangulation_speckle_limit,
     "speckle_reduction": _b_speckle_reduction,
+    # --- 偏光からの形状復元(凸のドームの解析的な法線から組む) --------------- #
+    "sfp_dolp_model": _b_sfp_dolp_model,
+    "dolp_to_zenith": _b_dolp_to_zenith,
+    "aolp_to_azimuth": _b_aolp_to_azimuth,
+    "sfp_render": _b_sfp_render,
+    "sfp_normals": _b_sfp_normals,
+    "sfp_disambiguate": _b_sfp_disambiguate,
+    "sfp_estimate_index": _b_sfp_estimate_index,
+    "sfp_height": _b_sfp_height,
     # --- 検出確率(POD、MIL-HDBK-1823A)。表の列と回帰の表は自分で組む ------- #
     "pod_ahat_fit": _b_pod_ahat_fit,
     "pod_from_ahat": _b_pod_from_ahat,

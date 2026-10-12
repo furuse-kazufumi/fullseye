@@ -883,7 +883,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     # veiling_glare_index)を追加(133 → 137)。
     # 2026-10-01: sensorchar(EMVA 1288)10 op を新しい族として追加(137 → 147)。
     # 2026-10-13: coherent(コヒーレント結像とレーザースペックル)6 op を新しい族として追加(147 → 153)。
-    assert len(opsoptics.OPSOPTICS) == 153
+    # 2026-10-13: shape_from_polarization(偏光からの形状復元)8 op を新しい族として追加(153 → 161)。
+    assert len(opsoptics.OPSOPTICS) == 161
     # 2026-09-26: wave に 4f 光学プロセッサ 2 op(fourier_plane_filter /
     # four_f_filter)を追加(7 → 9)。
     assert len(opsoptics.list_ops("wave")) == 9
@@ -893,7 +894,7 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     assert sorted(opsoptics.categories()) == [
         "appearance", "coherent", "design", "finish", "geometric", "glassbody", "illumination",
         "imaging", "imaging_sim", "interface", "material", "mirror", "optimization",
-        "polarization", "scene", "sensorchar", "surface", "wave"]
+        "polarization", "scene", "sensorchar", "shape_from_polarization", "surface", "wave"]
     assert len(opsoptics.list_ops("scene")) == 44
     # 同名 op は後勝ちで静かに上書きされる。2026-09-05 に optscene.depth_of_field が
     # optics.depth_of_field(被写界深度の数値)を潰していたのを取り逃していたので、
@@ -904,7 +905,8 @@ def test_ledger_is_complete_and_every_op_has_an_implementation():
     for cat, mod in (("appearance", "matappear"), ("interface", "glassmirror"),
                      ("mirror", "glassmirror"), ("glassbody", "glassmirror"),
                      ("finish", "metalfinish"), ("material", "surfacelib"),
-                     ("surface", "surfacelib"), ("scene", "optscene"), ("coherent", "coherent")):
+                     ("surface", "surfacelib"), ("scene", "optscene"), ("coherent", "coherent"),
+                     ("shape_from_polarization", "sfpolar")):
         assert all(m["module"] == mod for m in opsoptics.OPSOPTICS.values()
                    if m["category"] == cat), (cat, mod)
     # the optics-module half of the ledger is exactly optics.OPTICS; the design

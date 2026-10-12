@@ -27908,6 +27908,78 @@
    "ko": "스페클 저감 후 예측되는 대비 (``table``).",
    "de": "Vorhergesagter Speckle-Kontrast nach der Reduktion (``table``).",
    "hi": "speckle घटाने के बाद अनुमानित contrast (``table``)।"
+  },
+  "optics/sfp_dolp_model": {
+   "fp": "4c8c9e4b74cc",
+   "ja": "天頂角に対する鏡面反射光(Fresnel 反射)または拡散光(Fresnel 透過)の直線偏光度(``image2d``)。",
+   "zh": "镜面反射光(Fresnel 反射)或漫射光(Fresnel 透射)的线偏振度随天顶角的变化(``image2d``)。",
+   "tw": "鏡面反射光(Fresnel 反射)或漫射光(Fresnel 穿透)的線偏振度隨天頂角的變化(``image2d``)。",
+   "ko": "천정각에 따른 정반사광(Fresnel 반사) 또는 확산광(Fresnel 투과)의 선형 편광도 (``image2d``).",
+   "de": "Linearer Polarisationsgrad von gespiegeltem (Fresnel-Reflexion) oder diffusem Licht (Fresnel-Transmission) über dem Zenitwinkel (``image2d``).",
+   "hi": "zenith angle के साथ specular (Fresnel reflection) या diffuse (Fresnel transmission) प्रकाश की degree of linear polarisation (``image2d``)।"
+  },
+  "optics/dolp_to_zenith": {
+   "fp": "8dd34691900d",
+   "ja": "DoLP を、それを生む天頂角の解の集合に逆算する —— 拡散は 1 解、鏡面は Brewster 角を挟んで 2 解(``table``)。",
+   "zh": "由 DoLP 反求产生它的天顶角解集 —— 漫射 1 个解,镜面在 Brewster 角两侧 2 个解(``table``)。",
+   "tw": "由 DoLP 反求產生它的天頂角解集 —— 漫射 1 個解,鏡面在 Brewster 角兩側 2 個解(``table``)。",
+   "ko": "DoLP를 그것을 만드는 천정각 해의 집합으로 역산 — 확산은 1개, 정반사는 Brewster 각을 사이에 두고 2개 (``table``).",
+   "de": "Invertiert den DoLP in die Menge der Zenitwinkel, die ihn erzeugen — eine Lösung im diffusen Modell, zwei (beiderseits des Brewster-Winkels) im spiegelnden (``table``).",
+   "hi": "DoLP को उसे पैदा करने वाले zenith angles के समुच्चय में उलटना — diffuse में 1 हल, specular में Brewster कोण के दोनों ओर 2 हल (``table``)।"
+  },
+  "optics/aolp_to_azimuth": {
+   "fp": "217c7cd3a4c0",
+   "ja": "直線偏光の方位角(AoLP)を、面法線の方位角の 2 候補(π の曖昧さ)にする。拡散と鏡面で 90° ずれる(``table``)。",
+   "zh": "把线偏振角(AoLP)变为表面法线方位角的 2 个候选(π 模糊);漫射与镜面相差 90°(``table``)。",
+   "tw": "把線偏振角(AoLP)變為表面法線方位角的 2 個候選(π 模糊);漫射與鏡面相差 90°(``table``)。",
+   "ko": "선형 편광각(AoLP)을 면 법선 방위각의 두 후보(π 모호성)로 바꾼다. 확산과 정반사는 90° 차이 (``table``).",
+   "de": "Macht aus dem Polarisationswinkel (AoLP) die zwei Kandidaten-Azimute der Flächennormale (π-Mehrdeutigkeit); diffus und spiegelnd unterscheiden sich um 90° (``table``).",
+   "hi": "linear polarisation के कोण (AoLP) को surface normal के azimuth के 2 उम्मीदवारों (π अस्पष्टता) में बदलना; diffuse और specular में 90° का अंतर (``table``)।"
+  },
+  "optics/sfp_render": {
+   "fp": "310967b1eebc",
+   "ja": "法線マップの誘電体表面を 4 方位の偏光カメラで撮った画像を描く(偏光からの形状復元の順方向、``polsweep``)。",
+   "zh": "渲染 4 方向偏振相机拍摄给定法线图的电介质表面所得的图像(偏振形状恢复的正向模型,``polsweep``)。",
+   "tw": "繪製 4 方向偏振相機拍攝給定法線圖之介電質表面所得的影像(偏振形狀復原的正向模型,``polsweep``)。",
+   "ko": "주어진 법선 맵의 유전체 표면을 4방향 편광 카메라로 찍은 영상을 그린다 (편광 기반 형상 복원의 순방향, ``polsweep``).",
+   "de": "Rendert die Bilder, die eine 4-Richtungs-Polarisationskamera von einer dielektrischen Fläche mit gegebener Normalenkarte aufnimmt (Vorwärtsmodell von Shape from Polarization, ``polsweep``).",
+   "hi": "दिए गए normal map वाली dielectric सतह की 4-दिशा polarisation camera से ली गई images बनाना (shape from polarisation का forward model, ``polsweep``)।"
+  },
+  "optics/sfp_normals": {
+   "fp": "f0bb373651cf",
+   "ja": "偏光画像から画素ごとの面法線の候補の集合を明示的に返す —— 拡散 2 本、鏡面 4 本(天頂 2 × 方位 2)(``table``)。",
+   "zh": "由偏振扫描得到每个像素表面法线的显式候选集 —— 漫射 2 个,镜面 4 个(天顶 2 × 方位 2)(``table``)。",
+   "tw": "由偏振掃描得到每個像素表面法線的顯式候選集 —— 漫射 2 個,鏡面 4 個(天頂 2 × 方位 2)(``table``)。",
+   "ko": "편광 영상에서 화소별 면 법선 후보 집합을 명시적으로 반환 — 확산 2개, 정반사 4개(천정 2 × 방위 2) (``table``).",
+   "de": "Vom Polarisator-Sweep zur expliziten Menge der Kandidaten-Normalen je Pixel — 2 im diffusen, 4 im spiegelnden Modell (2 Zenit × 2 Azimut) (``table``).",
+   "hi": "polariser sweep से हर pixel के surface normal के उम्मीदवारों का स्पष्ट समुच्चय — diffuse में 2, specular में 4 (2 zenith × 2 azimuth) (``table``)।"
+  },
+  "optics/sfp_disambiguate": {
+   "fp": "48e4316f5f61",
+   "ja": "``sfp_normals`` の候補から画素ごとに 1 本を、明示した事前情報で選ぶ —— 凸 + Brewster の稜線での領域分け、または粗い深度・法線(``normalmap``)。",
+   "zh": "用明确的先验从 ``sfp_normals`` 的候选中为每个像素选 1 个法线 —— 凸性 + Brewster 脊线分割,或粗略深度/法线(``normalmap``)。",
+   "tw": "用明確的先驗從 ``sfp_normals`` 的候選中為每個像素選 1 個法線 —— 凸性 + Brewster 脊線分割,或粗略深度/法線(``normalmap``)。",
+   "ko": "명시한 사전 정보로 ``sfp_normals``의 후보에서 화소마다 하나를 고른다 — 볼록성 + Brewster 능선 분할, 또는 거친 깊이/법선 (``normalmap``).",
+   "de": "Wählt je Pixel eine Normale aus den Kandidaten von ``sfp_normals`` mit einem angegebenen Vorwissen — Konvexität mit Brewster-Kamm-Segmentierung oder eine grobe Tiefe/Normalenkarte (``normalmap``).",
+   "hi": "बताए गए prior से ``sfp_normals`` के उम्मीदवारों में से हर pixel के लिए एक normal चुनना — convexity और Brewster ridge segmentation, या मोटा depth/normal map (``normalmap``)।"
+  },
+  "optics/sfp_estimate_index": {
+   "fp": "4ec5198a9dff",
+   "ja": "既知の天頂角で観測した DoLP から屈折率を推定する —— Fresnel 曲線の最小二乗と、鏡面なら DoLP 最大での ``n = tan(theta_B)``(``table``)。",
+   "zh": "由已知天顶角处观测到的 DoLP 估计折射率 —— Fresnel 曲线最小二乘拟合,镜面时另给出 DoLP 最大处的 ``n = tan(theta_B)``(``table``)。",
+   "tw": "由已知天頂角處觀測到的 DoLP 估計折射率 —— Fresnel 曲線最小平方擬合,鏡面時另給出 DoLP 最大處的 ``n = tan(theta_B)``(``table``)。",
+   "ko": "알려진 천정각에서 관측한 DoLP로 굴절률을 추정 — Fresnel 곡선의 최소제곱, 정반사면 DoLP 최대에서의 ``n = tan(theta_B)``도 (``table``).",
+   "de": "Schätzt den Brechungsindex aus dem bei bekannten Zenitwinkeln beobachteten DoLP — Kleinste-Quadrate-Anpassung der Fresnel-Kurve, im spiegelnden Modell zusätzlich ``n = tan(theta_B)`` am DoLP-Maximum (``table``).",
+   "hi": "ज्ञात zenith angles पर देखे गए DoLP से refractive index का अनुमान — Fresnel वक्र का least-squares fit, और specular में DoLP अधिकतम पर ``n = tan(theta_B)`` (``table``)।"
+  },
+  "optics/sfp_height": {
+   "fp": "4342e8a73989",
+   "ja": "法線マップを、鏡像拡張した領域での Frankot–Chellappa で高さに積分する(FFT の周期境界で形が曲がらない、``image2d``)。",
+   "zh": "在镜像扩展的区域上用 Frankot–Chellappa 把法线图积分为高度图,FFT 的周期边界不会使结果弯曲(``image2d``)。",
+   "tw": "在鏡像擴展的區域上用 Frankot–Chellappa 把法線圖積分為高度圖,FFT 的週期邊界不會使結果彎曲(``image2d``)。",
+   "ko": "거울 확장한 영역에서 Frankot–Chellappa로 법선 맵을 높이 맵으로 적분 — FFT의 주기 경계가 결과를 휘게 하지 않는다 (``image2d``).",
+   "de": "Integriert eine Normalenkarte mit Frankot–Chellappa auf einem gespiegelt erweiterten Gebiet zu einer Höhenkarte, damit der periodische FFT-Rand das Ergebnis nicht verbiegt (``image2d``).",
+   "hi": "mirror-extended क्षेत्र पर Frankot–Chellappa से normal map को height map में integrate करना, ताकि FFT की periodic सीमा परिणाम को न मोड़े (``image2d``)।"
   }
  }
 }
