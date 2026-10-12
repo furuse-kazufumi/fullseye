@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 632 of 1364. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 632 of 1366. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -314,9 +314,17 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L305** _(ja)_ — ★窓は `_k(a)` が決める —— `a=0.5` は **7x7**(5x5 ではない)。ここを取り違えると 閉形式の定数がずれて、正しい実装が落ちる(実際に一度落とした)。
 
+## `examples/gallery_illusion_invariants.py`
+
+- **L231** _(ja)_ — ★docstring は (−2, −2) と書くが、この盤(行・列、上向きで出発・白で右)では (+2, −2)。 定理が言うのは「周期 104 で同じ斜めの 2 マス」で、符号は回転の規約で変わる(perpetual.py の自己検査と同じ読み)。
+
 ## `examples/gallery_nary_image_algebra.py`
 
 - **L117** _(ja)_ — ★公開の入口 ``fullseye.apply`` は n-ary の 2 入力に「同じ形」を要求する(3×3 のマスクは形の不一致で拒まれる)。 画像と同じ大きさのゼロ配列の中央(scipy の原点 = N // 2)に置けば、同じマスクとして働く。
+
+## `examples/gallery_openvx_spec_values.py`
+
+- **L39** _(ja)_ — vx_nonlinear_filter の function(vx_non_linear_filter_e)。★引用符つきの "median" を書くと、例の索引 (tools/op_example_index.py)が「この例は 2-D の median op を呼んでいる」と数えてしまう (引用符つきの op 名は振り分けの一覧として拾う規則)。ここは fullseye の median op を使わないので 1 本の文字列から分ける。
 
 ## `examples/optics_four_f_processor.py`
 

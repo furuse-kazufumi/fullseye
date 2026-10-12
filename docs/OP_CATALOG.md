@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(344 例)
+### 2-D 画像/信号/幾何(352 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -388,6 +388,14 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **2 入力の画像算術と領域の集合演算(n-ary 層 17 op)と identity を numpy の検算で確かめる** — fullseye.apply([x1, x2], name) で呼ぶ n-ary 層: ゲイン 1 になる a, b で和・差・積・商が numpy と一致(商は q·I2 / I2 で q が戻る)、|I1 − I2| = max − min、8 bit のビット AND/OR と (a AND b) + (a OR b) = a + b、convol_image は相関(右に重み 1 のマスクは右隣を読む)、和・積・差・対称差の包除と (A − B) ∪ (A ∩ B) = A、定義域・塗りつぶし・paint_gray(暗い source も塗る)、identity は入力そのまま。 `py -3.11 examples/gallery_nary_image_algebra.py`
 - **複素スペクトルと 1-D 信号の橋渡し op(tb_cx_* 7 本・tb_negate_funct_1d・tb_zero_crossing_rate)を往復と閉形式で確かめる** — cx_fft → tb_cx_ifft で元の画像に 1e-12 で戻る、実部・虚部で組み直し、直流 = 画素の総和とパーセバル、1 画素ずらした点の位相がシフト定理どおり回る、log 振幅の最大は直流、σ = 0.02 + 0.48a のガウス低域 H を numpy で作って掛けたものと一致、−y と二重否定、零交差率の docstring の例と矩形波。 `py -3.11 examples/gallery_spectrum_signal_bridge.py`
 - **球のメッシュ・分割表・太陽のブルームの円・RGB ゲイン(台帳 op 4 本)を閉形式と手計算で確かめる** — icosphere の頂点 10·4^s + 2・面 20·4^s・オイラー標数 2・外向き・面積が下から 4πr² へ、seg_contingency を手で数えた組と行和・列和で、sun_bloom_fit は中心の分かる合成ブルーム(切れていても円の中心は 0.3 px 以内、重心は 2 px 偏る)、rgb_apply_gains は numpy の積と 0 以下のゲインの拒否。 `py -3.11 examples/gallery_mesh_seg_sun_gains.py`
+- **分布の距離・検定・行列の分解と関数を閉形式と往復で確かめる(mathestimation / mathops)** — N(0,1) と N(1,1) の KL = 1/2・Bhattacharyya = 1/8、重ならない分布の JS = log 2、歪対称の e^A = Rodrigues、log(e^X) = X の往復と負の固有値の拒否、χ² 適合度の χ² = 20 と自由度 3 の p の閉形式、KS の D = 1/(2n) と 2 標本の厳密な p = 0.1、対応のある t の t = 2√3 と自由度 2 の p の閉形式、Cholesky が L₀ に戻る、回転の固有値 e^{±iθ} と推移行列の定常分布、LU の PA = LU とピボット無しの古典的失敗(9 op)。 `py -3.11 examples/gallery_math_stats_linalg.py`
+- **特殊関数・求積・NURBS・波源の数・Tustin・Daubechies を閉形式で確かめる** — 半整数次の Bessel の閉形式と Wronskian、Gauss 求積が 2n−1 次まで厳密で 2n 次で外れる、有理 2 次 NURBS が円柱の上に厳密に乗る、MDL が 2 波源・1 波源・雑音だけを数え分ける(seed 固定)、Tustin の係数の閉形式と scipy.signal.bilinear(別実装)・前歪みで f_c の利得 1/√2、Haar と db2 の閉形式・db4 の直交性と消失モーメント(6 op)。 `py -3.11 examples/gallery_math_numerics_filters.py`
+- **音のファイルを読み、特徴量と零交差率を出し、1-D 関数を組み替える(dsp / funct1d)** — 一時ディレクトリに標準ライブラリで書いた 16 bit WAV(モノラル・ステレオ)を read_audio で読み戻して整数 / 32768 と完全一致、零交差率を解析的な交差時刻の個数と、整数周期の余弦の rms・peak・波高率・ピーク周波数・重心・帯域を閉形式と、compose / negate / transform_funct_1d を手計算と照合する(6 op)。 `py -3.11 examples/gallery_oned_audio_funct.py`
+- **分割の評価・Chan–Vese のエネルギー・成分木・円の重なり・ボロノイを独立の検算で確かめる** — 分割表と claims、Hausdorff と平均表面距離を cdist の総当たりと、Chan–Vese のエネルギーを式の書き直しと(鋭い版は周長 4s)、max-tree の節と面積を各しきい値の ndimage.label と、円の重なりを閉形式と格子の数え上げと、ボロノイの面積・内部の辺を手計算と照合する(7 op)。 `py -3.11 examples/gallery_seg_measures.py`
+- **結合グラフの 10 op を教科書の閉形式で確かめる(星・道・環・完全グラフ・二つの塊)** — conngraph の 10 op: 無向の星の媒介中心性 (n−1)(n−2)/2・道の i(n−1−i)、完全グラフのクラスタ係数 1・木 0・三角形 + 1 点で 7/12、環のラプラシアン固有値 2 − 2cos(2πk/n)・成分数 = 零固有値の数、道の Fiedler 配置が単調、離れた K4 二つのモジュラリティ 1/2・1 群で 0、有向三角形・FFL・完全 K4 のモチーフ数(6/24/8)、線分の端点 = 配置、隣接画像の log1p 正規化と次数順。 `py -3.11 examples/gallery_conngraph_closed_forms.py`
+- **錯視図 7 op と終わらない絵 2 op を、目でなく数で確かめる** — illusion / perpetual の 9 op: チェッカーシャドウの 2 マスが厳密に同値、同時対比のパッチが厳密に 0.5、ヘルマン格子の交点 = 帯 = 1.0 と帯の幅・間隔、きらめき格子の 81 個の白丸がビット一致で面積 π·6²、フレーザーの環は角度によらず半径一定、カニッツァの錯覚輪郭の上は背景の定数、ポンゾの 2 本の棒が等長、ハーモノグラフは a/b = 3/2 なら周期 2π で閉じ √2 では閉じない、ラングトンの蟻を独立に書いた蟻と照合し周期 104 の高速道路。 `py -3.11 examples/gallery_illusion_invariants.py`
+- **体積の時系列(4D)を動きの分かった合成で確かめる(断面・MIP・速さ・コマ補間)** — live4d の 4 op: 断面は k 枚目の切り出しとビット一致、1 点だけ光る voxel の MIP の位置と S.max との一致・断面 ≤ MIP、1 voxel/コマで動く塊の速さ 1 と止まった塊の 0、2 倍のコマ数で作って間引いた動画を流れで補間し抜いたコマとの誤差がただの平均の 1/3 未満。 `py -3.11 examples/gallery_live4d_volseq_truth.py`
+- **OpenVX 互換の 10 op を規格の式どおりの値で確かめる(vxcore)** — vxcore の 10 op: 坂 3x + 5y の Sobel 24/40 と端の扱い、magnitude の丸めと 32767 の飽和、phase の 0/64/128/192/224 と floor・round の 2π 手前、表引きの反転・S16 の offset・表の外で停止、histogram の升と範囲外、median/min/max を scipy と全画素一致、非極大抑制の平らな頂上は右下だけ・S16 は INT16_MIN、remap の恒等と半画素の bilinear、warp_affine の 90° 回転 = np.rot90、warp_perspective の同次座標(行列を 2 倍しても同じ)。 `py -3.11 examples/gallery_openvx_spec_values.py`
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`

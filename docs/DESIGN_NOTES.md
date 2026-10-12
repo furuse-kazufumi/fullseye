@@ -312,9 +312,17 @@
 
 - **L305** — ★窓は `_k(a)` が決める —— `a=0.5` は **7x7**(5x5 ではない)。ここを取り違えると 閉形式の定数がずれて、正しい実装が落ちる(実際に一度落とした)。
 
+## `examples/gallery_illusion_invariants.py`
+
+- **L231** — ★docstring は (−2, −2) と書くが、この盤(行・列、上向きで出発・白で右)では (+2, −2)。 定理が言うのは「周期 104 で同じ斜めの 2 マス」で、符号は回転の規約で変わる(perpetual.py の自己検査と同じ読み)。
+
 ## `examples/gallery_nary_image_algebra.py`
 
 - **L117** — ★公開の入口 ``fullseye.apply`` は n-ary の 2 入力に「同じ形」を要求する(3×3 のマスクは形の不一致で拒まれる)。 画像と同じ大きさのゼロ配列の中央(scipy の原点 = N // 2)に置けば、同じマスクとして働く。
+
+## `examples/gallery_openvx_spec_values.py`
+
+- **L39** — vx_nonlinear_filter の function(vx_non_linear_filter_e)。★引用符つきの "median" を書くと、例の索引 (tools/op_example_index.py)が「この例は 2-D の median op を呼んでいる」と数えてしまう (引用符つきの op 名は振り分けの一覧として拾う規則)。ここは fullseye の median op を使わないので 1 本の文字列から分ける。
 
 ## `examples/optics_four_f_processor.py`
 
