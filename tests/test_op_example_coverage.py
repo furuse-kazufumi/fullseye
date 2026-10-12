@@ -61,8 +61,10 @@ def test_coverage_gallery_runs(gallery):
 #: 台帳 op 1,002 本のうち例索引に入っているのは 349 本しかなく、上の 2 本の
 #: 「100 %」は母集団が 3 層のうち 2 層しか無いために成り立っていた。
 #: 経緯と族別の内訳 = docs/KNOWN_ISSUES.md §38。
-_LEDGER_COVERED_FLOOR = 349
-_REGISTRY_COVERED_FLOOR = 749
+#: 2026-10-12 に実測へ引き上げ(台帳 2,144 本中 376・2-D 例索引 776 本中 776)。
+#: 同日、``_REGISTRY_COVERED_FLOOR`` が定義だけで**どの試験からも読まれていなかった**のを見つけ、下に試験を足した。
+_LEDGER_COVERED_FLOOR = 376
+_REGISTRY_COVERED_FLOOR = 776
 
 
 def _covered_names():
@@ -85,6 +87,15 @@ def test_ledger_example_coverage_does_not_regress():
         "台帳 op の例が %d → %d に減った。床を下げて通すのではなく、"
         "例を足すか、なぜ減ったかを docs/KNOWN_ISSUES.md §38 に書くこと。"
         % (_LEDGER_COVERED_FLOOR, got))
+
+
+def test_registry_example_coverage_does_not_regress():
+    """2-D 例索引で例を持つ op の本数が、記録した床を下回らないこと(床は定義したまま使われていなかった)。"""
+    _, idx2d = OEI.build_index(split=True)
+    got = sum(1 for ex in idx2d.values() if ex)
+    assert got >= _REGISTRY_COVERED_FLOOR, (
+        "2-D op の例が %d → %d に減った。床を下げて通すのではなく、例を足すか理由を残すこと。"
+        % (_REGISTRY_COVERED_FLOOR, got))
 
 
 def test_the_two_dimensional_gate_knows_how_much_it_is_not_counting():
