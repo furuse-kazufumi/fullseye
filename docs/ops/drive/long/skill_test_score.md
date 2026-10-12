@@ -4,7 +4,7 @@ dim: drive
 category: long
 in: table
 out: table
-examples: [poc_driving_longitudinal, poc_driving_weather]
+examples: [gallery_drive_lateral_env, poc_driving_longitudinal, poc_driving_weather]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -45,6 +45,7 @@ dict : ``deductions``(``(細目, 点, 説明)`` の列。点 None = 試験中止
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery_drive_lateral_env](../../../../examples/gallery_drive_lateral_env.py) — `py -3.11 examples/gallery_drive_lateral_env.py`
 - [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
 - [poc_driving_weather](../../../../examples/poc_driving_weather.py) — `py -3.11 examples/poc_driving_weather.py`
 

@@ -4,7 +4,7 @@ dim: drive
 category: ball
 in: table
 out: table
-examples: []
+examples: [gallery_drive_ballistics]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -29,7 +29,7 @@ J_n = m(v_n' − v_n) の比が μ —— 滑ったままの領域なら等号�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_drive_ballistics](../../../../examples/gallery_drive_ballistics.py) — `py -3.11 examples/gallery_drive_ballistics.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

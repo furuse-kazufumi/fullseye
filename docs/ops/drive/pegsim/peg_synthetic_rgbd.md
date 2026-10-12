@@ -4,7 +4,7 @@ dim: drive
 category: pegsim
 in: table
 out: table
-examples: [poc_peg_failure_recovery, poc_peg_insertion_tactile, poc_pegsim_insertion]
+examples: [gallery_drive_peg, poc_peg_failure_recovery, poc_peg_insertion_tactile, poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -33,6 +33,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery_drive_peg](../../../../examples/gallery_drive_peg.py) — `py -3.11 examples/gallery_drive_peg.py`
 - [poc_peg_failure_recovery](../../../../examples/poc_peg_failure_recovery.py) — `py -3.11 examples/poc_peg_failure_recovery.py`
 - [poc_peg_insertion_tactile](../../../../examples/poc_peg_insertion_tactile.py) — `py -3.11 examples/poc_peg_insertion_tactile.py`
 - [poc_pegsim_insertion](../../../../examples/poc_pegsim_insertion.py) — `py -3.11 examples/poc_pegsim_insertion.py`

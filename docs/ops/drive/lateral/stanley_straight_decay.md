@@ -4,7 +4,7 @@ dim: drive
 category: lateral
 in: 
 out: signal
-examples: []
+examples: [gallery_drive_lateral_env]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -33,7 +33,7 @@ dF/dt = −v k(一定)。F(e(t)) = F(e₀) − v k t を |e| ∈ (0, |e₀|] の
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_drive_lateral_env](../../../../examples/gallery_drive_lateral_env.py) — `py -3.11 examples/gallery_drive_lateral_env.py`
 
 ## 型が繋がる次の op(`signal` を入力に取れる)
 

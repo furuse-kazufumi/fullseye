@@ -1309,6 +1309,27 @@ EXAMPLES = [
          "ビート立方体・行列・キーポイント・モノジェニック信号を作る 12 op を、型契約・"
          "有限性・決定性・ノブの効きに加え op ごとの閉形式(z = 値×10×s、フレームの変位、"
          "距離ビン …)で検証する。"},
+    # -- 運転(drive)次元の台帳 op ギャラリー(真値つきで 1 本ずつ呼ぶ、2026-10-12)------ #
+    {"id": "gallery_drive_ballistics", "task": "family_coverage", "data": "synthetic",
+     "name": "球の飛翔・跳ね・摩擦と、真上カメラの画素→台の座標(ballistics / puck)", "summary":
+         "振り子の周期を RK4 の積分と、停止距離からの μ を数値積分と、跳ねの (e, μ) と空力係数を"
+         "既知の値で作った軌跡からの往復で、皿の捕球判定を境目の手計算で、針穴カメラを閉形式で確かめる(10 op)。"},
+    {"id": "gallery_drive_kendama_racket", "task": "family_coverage", "data": "synthetic",
+     "name": "けん玉の捕球の計画と卓球ラケットの当たり・動き・打ち方(kendama / racket)", "summary":
+         "放物線の当てはめ・知覚の雑音の σ・捕球計画の閉形式(計画どおり玉を進めると捕れる)、"
+         "ラケットの枠の境目・bang-bang の到着時刻・打球の合法判定(独立の RK4 でネットの上)・2 つの戦略の規則(9 op)。"},
+    {"id": "gallery_drive_lateral_env", "task": "family_coverage", "data": "synthetic",
+     "name": "カーブの限界・Stanley・定常旋回・視界の環境・横の安全距離・技能試験の数字", "summary":
+         "道路構造令の力のつり合い、フレネル積分を scipy と、Stanley の閉形式を積分と、ユリウス日を J2000.0 と、"
+         "視程でコントラスト 5 %、CIE のグレア式、RSS 横の最小間隔の手計算、採点の境目(13 op)。"},
+    {"id": "gallery_drive_soil_tactile", "task": "family_coverage", "data": "synthetic",
+     "name": "土・粒・群れ・触覚の膜(roverslip / scoop / granular / swarmflow / tacdome / tacslip)", "summary":
+         "Bekker の圧力、滑りの CVaR をモンテカルロと、ポアソンの円板から面密度を逆に、円錐の丸めの接線連続、"
+         "SPH の格子密度、大変形補正の係数の 3 つの読み(厳密解と一致するのは導出だけ)、マーカーの対応、Mindlin の向き(8 op)。"},
+    {"id": "gallery_drive_peg", "task": "family_coverage", "data": "synthetic",
+     "name": "ペグ挿入を手首 RGB-D と指の触覚で読む(pegsim / pegtactile)", "summary":
+         "解析的なレイキャストの合成 RGB-D(真値つき)で穴の中心・ペグ先端・手首のたわみを、副画素の縁と既知半径の円柱を、"
+         "成功率の表・触れる候補・2 パッドのせん断の分解を手計算と照合する(8 op、MuJoCo 不要)。"},
     {"id": "dem_geodesy_tour", "task": "terrain", "data": "synthetic",
      "name": "地心座標と地球の丸み(測地⇄ECEF・地心格子・曲率落ち・緯度で変わるセル寸法)",
      "summary": "赤道・極・楕円体方程式・法線移動で ECEF を検算し、3700 点の往復誤差を高さ別に印字する"

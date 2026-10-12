@@ -4,7 +4,7 @@ dim: drive
 category: rss
 in: 
 out: table
-examples: [poc_ttc_rss]
+examples: [gallery_drive_lateral_env, poc_ttc_rss]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ dict : キー名は引数名と同じ。値は float(v_max_accel だけ None を
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery_drive_lateral_env](../../../../examples/gallery_drive_lateral_env.py) — `py -3.11 examples/gallery_drive_lateral_env.py`
 - [poc_ttc_rss](../../../../examples/poc_ttc_rss.py) — `py -3.11 examples/poc_ttc_rss.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

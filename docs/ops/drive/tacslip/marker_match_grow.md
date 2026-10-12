@@ -4,7 +4,7 @@ dim: drive
 category: tacslip
 in: matrix × matrix × scalar
 out: table
-examples: []
+examples: [gallery_drive_soil_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -36,7 +36,7 @@ tol·ピッチ以内の最近傍を取り、tol は小さい値から段階的�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_drive_soil_tactile](../../../../examples/gallery_drive_soil_tactile.py) — `py -3.11 examples/gallery_drive_soil_tactile.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

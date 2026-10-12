@@ -4,7 +4,7 @@ dim: drive
 category: tacslip
 in: scalar × scalar
 out: matrix
-examples: [poc_tacsim_marker_shear, poc_tactile_dipole_torque]
+examples: [gallery_drive_soil_tactile, poc_tacsim_marker_shear, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -28,6 +28,7 @@ n×n 画素の視野に撒くマーカー中心 (N, 2) = (x, y) [px] の規則�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery_drive_soil_tactile](../../../../examples/gallery_drive_soil_tactile.py) — `py -3.11 examples/gallery_drive_soil_tactile.py`
 - [poc_tacsim_marker_shear](../../../../examples/poc_tacsim_marker_shear.py) — `py -3.11 examples/poc_tacsim_marker_shear.py`
 - [poc_tactile_dipole_torque](../../../../examples/poc_tactile_dipole_torque.py) — `py -3.11 examples/poc_tactile_dipole_torque.py`
 

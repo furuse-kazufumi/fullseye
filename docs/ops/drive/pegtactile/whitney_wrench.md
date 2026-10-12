@@ -4,7 +4,7 @@ dim: drive
 category: pegtactile
 in: table × text × scalar × scalar × scalar × scalar
 out: table
-examples: [poc_peg_insertion_tactile]
+examples: [gallery_drive_peg, poc_peg_insertion_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -31,6 +31,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery_drive_peg](../../../../examples/gallery_drive_peg.py) — `py -3.11 examples/gallery_drive_peg.py`
 - [poc_peg_insertion_tactile](../../../../examples/poc_peg_insertion_tactile.py) — `py -3.11 examples/poc_peg_insertion_tactile.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

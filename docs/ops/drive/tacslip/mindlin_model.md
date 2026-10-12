@@ -4,7 +4,7 @@ dim: drive
 category: tacslip
 in: table × matrix × matrix × table × scalar × scalar
 out: table
-examples: [poc_tacsim_marker_shear]
+examples: [gallery_drive_soil_tactile, poc_tacsim_marker_shear]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -35,6 +35,7 @@ c/a の格子を線形補間する模型は場が c に非線形なので c/a �
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery_drive_soil_tactile](../../../../examples/gallery_drive_soil_tactile.py) — `py -3.11 examples/gallery_drive_soil_tactile.py`
 - [poc_tacsim_marker_shear](../../../../examples/poc_tacsim_marker_shear.py) — `py -3.11 examples/poc_tacsim_marker_shear.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

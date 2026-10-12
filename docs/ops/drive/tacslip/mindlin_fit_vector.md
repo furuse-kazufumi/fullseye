@@ -4,7 +4,7 @@ dim: drive
 category: tacslip
 in: table × matrix × matrix
 out: table
-examples: []
+examples: [gallery_drive_soil_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -36,7 +36,7 @@ F_x を 90° 回した場 R(90°)F_x(R(−90°)p)、核は等方な半空間な�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_drive_soil_tactile](../../../../examples/gallery_drive_soil_tactile.py) — `py -3.11 examples/gallery_drive_soil_tactile.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

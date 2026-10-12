@@ -4,7 +4,7 @@ dim: drive
 category: kendama
 in: table
 out: table
-examples: []
+examples: [gallery_drive_kendama_racket]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -38,7 +38,7 @@ kp["catch_window"])。横ずれ δ の玉は √(r_b² − (r_c − δ)²)(δ = 
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_drive_kendama_racket](../../../../examples/gallery_drive_kendama_racket.py) — `py -3.11 examples/gallery_drive_kendama_racket.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

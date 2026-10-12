@@ -4,7 +4,7 @@ dim: drive
 category: pegsim
 in: image2d × image2d × image2d
 out: matrix
-examples: []
+examples: [gallery_drive_peg]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -32,7 +32,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_drive_peg](../../../../examples/gallery_drive_peg.py) — `py -3.11 examples/gallery_drive_peg.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 

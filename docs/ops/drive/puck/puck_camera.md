@@ -4,7 +4,7 @@ dim: drive
 category: puck
 in: table
 out: table
-examples: [poc_air_hockey_intercept]
+examples: [gallery_drive_ballistics, poc_air_hockey_intercept]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -30,6 +30,7 @@ col = (x + x_half + margin)·s、row = (y_half + margin − y)·s。返り値 ``
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery_drive_ballistics](../../../../examples/gallery_drive_ballistics.py) — `py -3.11 examples/gallery_drive_ballistics.py`
 - [poc_air_hockey_intercept](../../../../examples/poc_air_hockey_intercept.py) — `py -3.11 examples/poc_air_hockey_intercept.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

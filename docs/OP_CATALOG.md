@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(330 例)
+### 2-D 画像/信号/幾何(335 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -374,6 +374,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **HALCON 拡充 tier(hx_ 一族)を総なめ** — HALCON 互換の拡充 op(``hx_`` prefix, category=halcon_ext)の全 op を GT 検証。 `py -3.11 examples/gallery2d_halcon_ext.py`
 - **物理PDE・人工生命・トモグラフィ・3Dボリューム op 族を総なめ** — 拡散/反応拡散/CA/tomography/volume など物理・人工生命・3D 族の全 op を GT 検証。 `py -3.11 examples/gallery2d_physics_alife_3d.py`
 - **入口 op(img_to_*、category=bridge)を総なめ** — 1 枚の画像から点群・1-D 信号・動画・体積・ライトフィールド・複素場・光子列・ビート立方体・行列・キーポイント・モノジェニック信号を作る 12 op を、型契約・有限性・決定性・ノブの効きに加え op ごとの閉形式(z = 値×10×s、フレームの変位、距離ビン …)で検証する。 `py -3.11 examples/gallery2d_bridge.py`
+- **球の飛翔・跳ね・摩擦と、真上カメラの画素→台の座標(ballistics / puck)** — 振り子の周期を RK4 の積分と、停止距離からの μ を数値積分と、跳ねの (e, μ) と空力係数を既知の値で作った軌跡からの往復で、皿の捕球判定を境目の手計算で、針穴カメラを閉形式で確かめる(10 op)。 `py -3.11 examples/gallery_drive_ballistics.py`
+- **けん玉の捕球の計画と卓球ラケットの当たり・動き・打ち方(kendama / racket)** — 放物線の当てはめ・知覚の雑音の σ・捕球計画の閉形式(計画どおり玉を進めると捕れる)、ラケットの枠の境目・bang-bang の到着時刻・打球の合法判定(独立の RK4 でネットの上)・2 つの戦略の規則(9 op)。 `py -3.11 examples/gallery_drive_kendama_racket.py`
+- **カーブの限界・Stanley・定常旋回・視界の環境・横の安全距離・技能試験の数字** — 道路構造令の力のつり合い、フレネル積分を scipy と、Stanley の閉形式を積分と、ユリウス日を J2000.0 と、視程でコントラスト 5 %、CIE のグレア式、RSS 横の最小間隔の手計算、採点の境目(13 op)。 `py -3.11 examples/gallery_drive_lateral_env.py`
+- **土・粒・群れ・触覚の膜(roverslip / scoop / granular / swarmflow / tacdome / tacslip)** — Bekker の圧力、滑りの CVaR をモンテカルロと、ポアソンの円板から面密度を逆に、円錐の丸めの接線連続、SPH の格子密度、大変形補正の係数の 3 つの読み(厳密解と一致するのは導出だけ)、マーカーの対応、Mindlin の向き(8 op)。 `py -3.11 examples/gallery_drive_soil_tactile.py`
+- **ペグ挿入を手首 RGB-D と指の触覚で読む(pegsim / pegtactile)** — 解析的なレイキャストの合成 RGB-D(真値つき)で穴の中心・ペグ先端・手首のたわみを、副画素の縁と既知半径の円柱を、成功率の表・触れる候補・2 パッドのせん断の分解を手計算と照合する(8 op、MuJoCo 不要)。 `py -3.11 examples/gallery_drive_peg.py`
 
 **optics_sensing**
 - **光学 op(optics)で検査機を 1 台、紙の上で設計する** — 倍率→焦点距離/物体距離、ABCD 行列で結像確認、回折限界・被写界深度・MTF を要求分解能に対して合否判定する。 `py -3.11 examples/optics_imaging.py`
