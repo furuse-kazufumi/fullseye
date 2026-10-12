@@ -17066,13 +17066,13 @@
    "hi": "Returns\n-------\ndict : ``color`` (कैमरे का रैखिक RGB [0,1], :func:`tone_map` से संपीड़ित —— छवि-प्रसंस्करण इसे पढ़ता है), ``display`` (sRGB में एन्कोड किया गया,\nप्रदर्शन हेतु, केवल चित्रों के लिए), ``radiance`` (RGB दीप्ति cd/m², रैखिक), ``depth``, ``label``,\n``face`` (driveworld.world_camera जैसा), ``shadow`` (bool, सूर्य की छाया वाले पिक्सेल), ``exposure`` (प्रयुक्त गुणक),\n``veil`` (आवरण दीप्ति cd/m² (H,W)), ``illuminance`` (सतह की प्रदीप्ति lx (H,W))।\n\n``ego_pose=(x, y, yaw)`` = हेडलैंप लगे अपने वाहन की मुद्रा (अगले सिरे पर 2.25 m, बाएँ-दाएँ ±0.6 m, ऊँचाई 0.65 m पर 2 लैंप)।\n``shadow_cache`` में dict देने पर सूर्य का शैडो मैप पुनः उपयोग होता है (जब तक सूर्य और संसार न बदलें)।\n\nखाली इनपुट (``world`` एक खाली dict) पर ``ValueError`` उठता है।"
   },
   "drive/events_to_frames": {
-   "fp": "f45338571fa5",
-   "en": "The sum of polarities over all events equals the total over the frames (no events are dropped).\n\nEmpty input (``events`` is an empty dict) raises ``ValueError``.",
-   "zh": "全部事件的极性之和与各帧总和一致(没有丢弃的事件)。\n\n空输入(``events`` 为空 dict)会引发 ``ValueError``。",
-   "tw": "全部事件的極性之和與各影格總和一致(沒有捨棄的事件)。\n\n空輸入(``events`` 為空 dict)會引發 ``ValueError``。",
-   "ko": "모든 이벤트의 극성의 합은 프레임의 총합과 일치한다(버리는 이벤트는 없다).\n\n빈 입력(``events`` 이(가) 빈 dict)은 ``ValueError`` 를 발생시킨다.",
-   "de": "Die Summe der Polaritäten aller Ereignisse stimmt mit der Gesamtsumme der Frames überein (es werden keine Ereignisse verworfen).\n\nLeere Eingabe (``events`` ist ein leeres dict) löst ``ValueError`` aus.",
-   "hi": "सभी घटनाओं की ध्रुवताओं का योग फ़्रेमों के कुल योग के बराबर होता है (कोई घटना नहीं छोड़ी जाती)।\n\nखाली इनपुट (``events`` एक खाली dict) पर ``ValueError`` उठता है।"
+   "fp": "b70db93e6fd2",
+   "en": "The sum of polarities over all events equals the total over the frames (with the default ``shape`` no events are dropped; if ``shape`` is given explicitly, events falling outside it are discarded, so the sums differ by that amount).\n\nEmpty input (``events`` is an empty dict) raises ``ValueError``.",
+   "zh": "全部事件的极性之和与各帧总和一致(使用默认的 ``shape`` 时没有丢弃的事件。若显式给出 ``shape``，落在其外的事件会被丢弃，和也相应地不一致)。\n\n空输入(``events`` 为空 dict)会引发 ``ValueError``。",
+   "tw": "全部事件的極性之和與各影格總和一致(使用預設的 ``shape`` 時沒有捨棄的事件。若明確給出 ``shape``，落在其外的事件會被捨棄，和也相應地不一致)。\n\n空輸入(``events`` 為空 dict)會引發 ``ValueError``。",
+   "ko": "모든 이벤트의 극성의 합은 프레임의 총합과 일치한다(기본 ``shape`` 에서는 버리는 이벤트가 없다. ``shape`` 를 명시하면 그 밖에 떨어지는 이벤트는 버리므로, 그만큼 합이 맞지 않는다).\n\n빈 입력(``events`` 이(가) 빈 dict)은 ``ValueError`` 를 발생시킨다.",
+   "de": "Die Summe der Polaritäten aller Ereignisse stimmt mit der Gesamtsumme der Frames überein (mit dem Standard-``shape`` werden keine Ereignisse verworfen; wird ``shape`` explizit angegeben, werden Ereignisse außerhalb davon verworfen, und die Summen weichen um diesen Anteil ab).\n\nLeere Eingabe (``events`` ist ein leeres dict) löst ``ValueError`` aus.",
+   "hi": "सभी घटनाओं की ध्रुवताओं का योग फ़्रेमों के कुल योग के बराबर होता है (डिफ़ॉल्ट ``shape`` में कोई घटना नहीं छोड़ी जाती; ``shape`` स्पष्ट रूप से देने पर उसके बाहर पड़ने वाली घटनाएँ छोड़ दी जाती हैं, इसलिए उतना योग मेल नहीं खाता)।\n\nखाली इनपुट (``events`` एक खाली dict) पर ``ValueError`` उठता है।"
   },
   "drive/exit_room_check": {
    "fp": "2909c9ae50d0",

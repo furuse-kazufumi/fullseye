@@ -20170,13 +20170,13 @@
    "hi": "rendering की शर्तों को एक साथ बाँधता है (:func:`env_render` को दिया जाता है)।"
   },
   "drive/tone_map": {
-   "fp": "55496895faf8",
-   "en": "Hue-preserving tone compression for an HDR camera: m = per-pixel max channel × exposure, display = luminance × exposure × (1 + m/4)/(1 + m) — linear for m ≪ 1, approaching 1 in bright areas (color ratios = chromaticity unchanged; lamps do not turn white from saturation; assumed: an in-vehicle HDR camera).",
-   "zh": "保持颜色的 HDR 相机阶调压缩: m = 各像素最大通道 × exposure，显示 = 亮度 × exposure × (1 + m/4)/(1 + m) —— m ≪ 1 时为线性，亮处渐近于 1(颜色比 = 色度不变。灯光不会因饱和而变白，假定: 车载 HDR 相机)。",
-   "tw": "保持顏色的 HDR 相機階調壓縮: m = 各像素最大通道 × exposure，顯示 = 輝度 × exposure × (1 + m/4)/(1 + m) —— m ≪ 1 時為線性，亮處漸近於 1(顏色比 = 色度不變。燈光不會因飽和而變白，假定: 車載 HDR 相機)。",
-   "ko": "HDR 카메라의 색을 유지하는 계조 압축: m = 각 픽셀의 최대 채널 × exposure, 표시 = 휘도 × exposure × (1 + m/4)/(1 + m) — m ≪ 1에서는 선형, 밝은 곳은 1에 점근(색의 비 = 색도는 바꾸지 않음. 포화로 등화가 하얘지지 않음, 가정: 차량 탑재 HDR 카메라).",
-   "de": "Farbtonerhaltende Tonwertkompression für eine HDR-Kamera: m = maximaler Kanal je Pixel × exposure, Anzeige = Leuchtdichte × exposure × (1 + m/4)/(1 + m) — linear für m ≪ 1, in hellen Bereichen gegen 1 strebend (Farbverhältnisse = Chromatizität bleiben unverändert; Leuchten werden durch Sättigung nicht weiß; Annahme: fahrzeugeigene HDR-Kamera).",
-   "hi": "HDR camera के लिए रंग बनाए रखने वाला tone compression: m = हर pixel का अधिकतम channel × exposure, display = luminance × exposure × (1 + m/4)/(1 + m) —— m ≪ 1 पर linear, चमकीले भागों में 1 की ओर जाता है (रंगों का अनुपात = chromaticity नहीं बदलती; saturation से lamps सफ़ेद नहीं होतीं; मान्यता: वाहन में लगा HDR camera)।"
+   "fp": "31bc680f12c9",
+   "en": "Hue-preserving tone compression for an HDR camera: m = per-pixel max channel × exposure, display = luminance × exposure × (1 + m/4)/(1 + m) — linear for m ≪ 1, the max channel reaches exactly 1 at m = 2, and brighter pixels are divided so that their max channel is 1 (color ratios = chromaticity unchanged; lamps do not turn white from saturation; assumed: an in-vehicle HDR camera).",
+   "zh": "保持颜色的 HDR 相机阶调压缩: m = 各像素最大通道 × exposure，显示 = 亮度 × exposure × (1 + m/4)/(1 + m) —— m ≪ 1 时为线性，最大通道在 m = 2 时恰好达到 1，更亮的像素整体相除使最大通道为 1(颜色比 = 色度不变。灯光不会因饱和而变白，假定: 车载 HDR 相机)。",
+   "tw": "保持顏色的 HDR 相機階調壓縮: m = 各像素最大通道 × exposure，顯示 = 輝度 × exposure × (1 + m/4)/(1 + m) —— m ≪ 1 時為線性，最大通道在 m = 2 時恰好達到 1，更亮的像素整體相除使最大通道為 1(顏色比 = 色度不變。燈光不會因飽和而變白，假定: 車載 HDR 相機)。",
+   "ko": "HDR 카메라의 색을 유지하는 계조 압축: m = 각 픽셀의 최대 채널 × exposure, 표시 = 휘도 × exposure × (1 + m/4)/(1 + m) — m ≪ 1에서는 선형, 최대 채널은 m = 2에서 정확히 1에 도달하고, 그보다 밝은 픽셀은 최대 채널이 1이 되도록 전체를 나눈다(색의 비 = 색도는 바꾸지 않음. 포화로 등화가 하얘지지 않음, 가정: 차량 탑재 HDR 카메라).",
+   "de": "Farbtonerhaltende Tonwertkompression für eine HDR-Kamera: m = maximaler Kanal je Pixel × exposure, Anzeige = Leuchtdichte × exposure × (1 + m/4)/(1 + m) — linear für m ≪ 1, der maximale Kanal erreicht bei m = 2 genau 1, hellere Pixel werden so geteilt, dass ihr maximaler Kanal 1 ist (Farbverhältnisse = Chromatizität bleiben unverändert; Leuchten werden durch Sättigung nicht weiß; Annahme: fahrzeugeigene HDR-Kamera).",
+   "hi": "HDR camera के लिए रंग बनाए रखने वाला tone compression: m = हर pixel का अधिकतम channel × exposure, display = luminance × exposure × (1 + m/4)/(1 + m) —— m ≪ 1 पर linear, अधिकतम channel m = 2 पर ठीक 1 तक पहुँचता है, और उससे चमकीले pixels को इस तरह भाग दिया जाता है कि उनका अधिकतम channel 1 हो (रंगों का अनुपात = chromaticity नहीं बदलती; saturation से lamps सफ़ेद नहीं होतीं; मान्यता: वाहन में लगा HDR camera)।"
   },
   "drive/env_render": {
    "fp": "8fb570d119bb",

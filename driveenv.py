@@ -592,7 +592,7 @@ def _headlamp_intensity(mode: str, h_deg, v_deg):
 
 def tone_map(radiance, exposure: float):
     """HDR カメラの色を保つ階調の圧縮: m = 各画素の最大チャンネル × exposure、表示 = 輝度 × exposure × (1 + m/4)/(1 + m)
-    —— m ≪ 1 では線形、明るい所は 1 に漸近(色の比 = 色度は変えない。飽和で灯火が白くならない、仮定: 車載の HDR カメラ)。
+    —— m ≪ 1 では線形、最大チャンネルは m = 2 でちょうど 1 に達し、それより明るい画素は最大チャンネルが 1 になるよう全体を割る(色の比 = 色度は変えない。飽和で灯火が白くならない、仮定: 車載の HDR カメラ)。
 
     空の入力(``radiance`` が 0 要素)は ValueError。
     """

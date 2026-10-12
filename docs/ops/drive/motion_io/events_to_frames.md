@@ -19,7 +19,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 イベントを時間で n_frames に等分し、画素ごとに極性を足したコマ (T, H, W) にする(ON = +1、OFF = −1)。
 
-全イベントの極性の和はコマの総和と一致する(落とすイベントは無い)。
+全イベントの極性の和はコマの総和と一致する(既定の ``shape`` では落とすイベントは無い。``shape`` を明示すると、
+その外に落ちるイベントは捨てるので、その分だけ和は合わない)。
 
 空の入力(``events`` が空の dict)は ValueError。
 

@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import motionio; motionio.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;events_to_frames&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이벤트를 시간으로 n_frames에 균등 분할하고, 화소별로 극성을 더한 프레임 (T, H, W)로 만듭니다(ON = +1, OFF = −1).</p>
-<p>모든 이벤트의 극성의 합은 프레임의 총합과 일치한다(버리는 이벤트는 없다).</p>
+<p>모든 이벤트의 극성의 합은 프레임의 총합과 일치한다(기본 <code style="color:#22d3bf">shape</code> 에서는 버리는 이벤트가 없다. <code style="color:#22d3bf">shape</code> 를 명시하면 그 밖에 떨어지는 이벤트는 버리므로, 그만큼 합이 맞지 않는다).</p>
 <p>빈 입력(<code style="color:#22d3bf">events</code> 이(가) 빈 dict)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>

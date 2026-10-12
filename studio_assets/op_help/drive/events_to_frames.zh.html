@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import motionio; motionio.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;events_to_frames&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将事件按时间等分为 n_frames，逐像素累加极性得到帧 (T, H, W)(ON = +1，OFF = −1)。</p>
-<p>全部事件的极性之和与各帧总和一致(没有丢弃的事件)。</p>
+<p>全部事件的极性之和与各帧总和一致(使用默认的 <code style="color:#22d3bf">shape</code> 时没有丢弃的事件。若显式给出 <code style="color:#22d3bf">shape</code>，落在其外的事件会被丢弃，和也相应地不一致)。</p>
 <p>空输入(<code style="color:#22d3bf">events</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

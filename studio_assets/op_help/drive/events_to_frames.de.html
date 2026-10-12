@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import motionio; motionio.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;events_to_frames&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Teilt die Ereignisse zeitlich gleichmäßig in n_frames auf und summiert die Polaritäten pro Pixel zu Frames (T, H, W) (ON = +1, OFF = −1).</p>
-<p>Die Summe der Polaritäten aller Ereignisse stimmt mit der Gesamtsumme der Frames überein (es werden keine Ereignisse verworfen).</p>
+<p>Die Summe der Polaritäten aller Ereignisse stimmt mit der Gesamtsumme der Frames überein (mit dem Standard-<code style="color:#22d3bf">shape</code> werden keine Ereignisse verworfen; wird <code style="color:#22d3bf">shape</code> explizit angegeben, werden Ereignisse außerhalb davon verworfen, und die Summen weichen um diesen Anteil ab).</p>
 <p>Leere Eingabe (<code style="color:#22d3bf">events</code> ist ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
