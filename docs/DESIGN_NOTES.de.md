@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1376. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1377. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2343,7 +2343,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tests/test_studio_ledger_runner.py`
 
-- **L137** _(ja)_ — ★返り値が None の op(tid2013_root はデータの置き場が無ければ None を返す)は、窓でも 「kind: none」で out = None になる。例外が出たかでなく**値が返ったか**で比べる (2026-10-05: 台帳が 63 本増えて抜き取りの 60 本がずれ、tid2013_root が入って鳴った)。
+- **L129** _(ja)_ — ★2026-10-13: 抜き取りを「名前の SHA-1 の小さい順に 60 本」にした。等間隔の抜き取り (names[::len//60])は、前の方に op が 8 本足されただけで 60 本がまるごとずれ、 見本で走る数が 26 → 17 に落ちて門が鳴った(偏光の 8 op は 1 本も抜き取りに入っていない = 窓の欠陥ではなく抜き取りの揺れ)。名前の指紋で選べば、op を足しても既存の 60 本は 新しい名前が指紋の上位に割り込むときしか変わらない。この抜き取りの実測は 60 本中 22 本。
+- **L143** _(ja)_ — ★返り値が None の op(tid2013_root はデータの置き場が無ければ None を返す)は、窓でも 「kind: none」で out = None になる。例外が出たかでなく**値が返ったか**で比べる (2026-10-05: 台帳が 63 本増えて抜き取りの 60 本がずれ、tid2013_root が入って鳴った)。
 
 ## `tests/test_studio_logic.py`
 

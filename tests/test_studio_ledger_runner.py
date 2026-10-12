@@ -126,7 +126,13 @@ def test_the_window_runs_exactly_what_a_direct_call_runs():
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     names = studio.ledger_op_names()
     assert len(names) > 1500
-    pick = names[:: max(1, len(names) // 60)][:60]
+    # ★2026-10-13: 抜き取りを「名前の SHA-1 の小さい順に 60 本」にした。等間隔の抜き取り
+    #   (names[::len//60])は、前の方に op が 8 本足されただけで 60 本がまるごとずれ、
+    #   見本で走る数が 26 → 17 に落ちて門が鳴った(偏光の 8 op は 1 本も抜き取りに入っていない
+    #   = 窓の欠陥ではなく抜き取りの揺れ)。名前の指紋で選べば、op を足しても既存の 60 本は
+    #   新しい名前が指紋の上位に割り込むときしか変わらない。この抜き取りの実測は 60 本中 22 本。
+    import hashlib
+    pick = sorted(names, key=lambda n: hashlib.sha1(n.encode("utf-8")).hexdigest())[:60]
     dlg = win._open_ledger_runner()
     ok, differ = 0, []
     for n in pick:
