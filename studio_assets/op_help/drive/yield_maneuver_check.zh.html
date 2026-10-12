@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.yield_maneuver_check(trajectory, *, t_approach: &#x27;float&#x27;, t_passed: &#x27;float&#x27;, intersections=(), near_margin: &#x27;float&#x27; = 30.0, left_tol: &#x27;float&#x27; = 1.0, stop_speed: &#x27;float&#x27; = 0.1, car_length: &#x27;float&#x27; = 4.5) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivedecide; drivedecide.yield_maneuver_check(trajectory, *, t_approach: &#x27;float&#x27;, t_passed: &#x27;float&#x27;, intersections=(), near_margin: &#x27;float&#x27; = 30.0, left_tol: &#x27;float&#x27; = 1.0, stop_speed: &#x27;float&#x27; = 0.1, car_length: &#x27;float&#x27; = 4.5) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;yield_maneuver_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按道路交通法第40条对紧急车辆接近时本车的动作进行评分。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>40 条 1 項: 交差点又はその附近 → 交差点を避け、道路の左側に寄って <b>一時停止</b>。40 条 2 項: それ以外 → 道路の左側に寄って進路を譲る(停止までは求めない)。(一方通行で左に寄ると妨げる場合の右寄せは扱わない。)</p>
-<p><code style="color:#22d3bf">trajectory</code>: <code style="color:#22d3bf">{&quot;t&quot;, &quot;x&quot;, &quot;y&quot;, &quot;v&quot;}</code>。x = 道に沿った前端の位置、y = 車の左側面と道路の左端の距離(≥ 0)、v = 速さ。<code style="color:#22d3bf">intersections</code> = [(x_in, x_out), ...] (交差点の範囲)。車は [x − car_length, x] を占める。<code style="color:#22d3bf">t_approach</code> = 近づきに気づくべき時刻、<code style="color:#22d3bf">t_passed</code> = 緊急自動車が通り過ぎた時刻。</p>
-<p>判定(閾値はすべて <b>仮定</b>、法は数値を定めていない):</p>
-<p style="margin:2px 0 2px 12px">• 「附近」= t_approach の自車の前端が [x_in − near_margin, x_out + near_margin] に入る交差点がある。</p>
-<p style="margin:2px 0 2px 12px">• 「左に寄る」= 期間中に y ≤ <code style="color:#22d3bf">left_tol</code>。「一時停止」= 期間中に v ≤ <code style="color:#22d3bf">stop_speed</code> の刻みがある。</p>
-<p style="margin:2px 0 2px 12px">• 「交差点を避け」= 期間中に止まっている刻み(v ≤ stop_speed)で車体が交差点の範囲に重ならない。</p>
-<p>返り値: <code style="color:#22d3bf">case</code>(<code style="color:#22d3bf">&quot;40-1&quot;</code> / <code style="color:#22d3bf">&quot;40-2&quot;</code>)、<code style="color:#22d3bf">violations</code>(各 <code style="color:#22d3bf">{&quot;rule&quot;, &quot;detail&quot;, &quot;article&quot;}</code>)、<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">min_y</code>、<code style="color:#22d3bf">stopped</code>、<code style="color:#22d3bf">stopped_in_intersection</code>。</p>
+<p>第 40 条第 1 款: 在交叉口或其附近 → 避开交叉口,靠道路左侧 <b>暂时停车</b>。第 40 条第 2 款: 其他情况 → 靠道路左侧让出路线(不要求停车)。(单行道上靠左会造成妨碍时的靠右不予处理。)</p>
+<p><code style="color:#22d3bf">trajectory</code>: <code style="color:#22d3bf">{&quot;t&quot;, &quot;x&quot;, &quot;y&quot;, &quot;v&quot;}</code>。x = 沿道路的前端位置,y = 车左侧面与道路左端的距离(≥ 0), v = 速度。<code style="color:#22d3bf">intersections</code> = [(x_in, x_out), ...] (交叉口的范围)。车占据 [x − car_length, x]。<code style="color:#22d3bf">t_approach</code> = 应察觉接近的时刻,<code style="color:#22d3bf">t_passed</code> = 紧急车辆驶过的时刻。</p>
+<p>判定(阈值均为 <b>假设</b>,法律未规定数值):</p>
+<p style="margin:2px 0 2px 12px">• &quot;附近&quot; = 存在这样的交叉口: t_approach 时自车前端位于 [x_in − near_margin, x_out + near_margin] 内。</p>
+<p style="margin:2px 0 2px 12px">• &quot;靠左&quot; = 期间内 y ≤ <code style="color:#22d3bf">left_tol</code>。&quot;暂时停车&quot; = 期间内存在 v ≤ <code style="color:#22d3bf">stop_speed</code> 的时间步。</p>
+<p style="margin:2px 0 2px 12px">• &quot;避开交叉口&quot; = 期间内停止的时间步(v ≤ stop_speed)中车身不与交叉口范围重叠。</p>
+<p>返回值: <code style="color:#22d3bf">case</code>(<code style="color:#22d3bf">&quot;40-1&quot;</code>/<code style="color:#22d3bf">&quot;40-2&quot;</code>)、<code style="color:#22d3bf">violations</code>(各为 <code style="color:#22d3bf">{&quot;rule&quot;, &quot;detail&quot;, &quot;article&quot;}</code>)、<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">min_y</code>、<code style="color:#22d3bf">stopped</code>、<code style="color:#22d3bf">stopped_in_intersection</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

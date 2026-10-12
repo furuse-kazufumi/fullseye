@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hill_start_command(t_release: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, b_hold: &#x27;float&#x27;, a_creep: &#x27;float&#x27; = 0.0, technique: &#x27;str&#x27; = &#x27;gap&#x27;, v_cruise: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelong; drivelong.hill_start_command(t_release: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, b_hold: &#x27;float&#x27;, a_creep: &#x27;float&#x27; = 0.0, technique: &#x27;str&#x27; = &#x27;gap&#x27;, v_cruise: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;hill_start_command&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>언덕 출발 명령. t_release까지는 유지(크리프 + 제동 b_hold).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;gap&quot;</code>: t_release でブレーキを離し、τ 後に駆動 a_drive(足を踏み替える間 = ずり下がる。閉形式は <code style="color:#22d3bf">hill_start_rollback</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;overlap&quot;</code>: t_release から τ の間、ブレーキを保ったままアクセルを踏み(駆動 a_drive)、τ 後にブレーキを離す(教習で教える「アクセルを踏んでからブレーキを離す」)。駆動 &gt; 坂なら逆行 0。</p>
-<p><code style="color:#22d3bf">v_cruise</code> を与えると、その速さに達したら駆動を止める(惰行)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;gap&quot;</code>: t_release 에서 브레이크를 떼고, τ 후에 구동 a_drive(발을 옮기는 동안 = 뒤로 밀린다. 닫힌 형식은 <code style="color:#22d3bf">hill_start_rollback</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;overlap&quot;</code>: t_release 부터 τ 동안 브레이크를 유지한 채 가속 페달을 밟고(구동 a_drive), τ 후에 브레이크를 뗀다(교습에서 가르치는 &quot;가속 페달을 밟고 나서 브레이크를 뗀다&quot;). 구동 &gt; 경사면 역행 0.</p>
+<p><code style="color:#22d3bf">v_cruise</code> 를 주면 그 속도에 도달하면 구동을 멈춘다(타행).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

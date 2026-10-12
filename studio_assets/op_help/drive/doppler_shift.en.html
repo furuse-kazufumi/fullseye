@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doppler_shift(f, v_source_radial, c: &#x27;float&#x27; = 343.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivedecide; drivedecide.doppler_shift(f, v_source_radial, c: &#x27;float&#x27; = 343.0)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;doppler_shift&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Heard frequency when the source moves and the listener is stationary (closed form).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>f_obs = f · c / (c − v_r)</p>
-<p><code style="color:#22d3bf">v_source_radial</code> = 音源の <b>聞き手へ近づく向きの</b> 視線速度(近づけば正 → 高く聞こえる)。|v_r| &lt; c。配列も可。</p>
+<p><code style="color:#22d3bf">v_source_radial</code> = the source&#x27;s line-of-sight velocity <b>in the direction towards the listener</b> (positive when approaching → sounds higher). |v_r| &lt; c. Arrays are also accepted.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

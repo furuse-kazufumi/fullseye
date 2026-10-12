@@ -4,11 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ackermann_steer_angles(radius, wheelbase: &#x27;float&#x27;, track: &#x27;float&#x27;) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelateral; drivelateral.ackermann_steer_angles(radius, wheelbase: &#x27;float&#x27;, track: &#x27;float&#x27;) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ackermann_steer_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Ackermann के भीतरी और बाहरी पहियों के steering कोण (पिछले axle के केंद्र की मोड़ त्रिज्या R, wheelbase L, track width t)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>δ_in = atan(L/(R − t/2))、δ_out = atan(L/(R + t/2))、2 輪等価 δ = atan(L/R)。cot δ_out − cot δ_in = t/L。</p>
-<p>返り値: <code style="color:#22d3bf">inner</code>, <code style="color:#22d3bf">outer</code>, <code style="color:#22d3bf">bicycle</code> [rad]、<code style="color:#22d3bf">front_inner_radius</code> √((R − t/2)² + L²)、<code style="color:#22d3bf">front_outer_radius</code>、<code style="color:#22d3bf">rear_inner_radius</code> R − t/2、<code style="color:#22d3bf">offtracking</code>(定常の内輪差 = 前内輪 − 後内輪の半径)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ t/2(内側の後輪が旋回の中心を越える)、L ≤ 0、t &lt; 0。</p>
-<p>空の入力(<code style="color:#22d3bf">radius</code> が 0 要素)は ValueError。</p>
+<p>δ_in = atan(L/(R − t/2)), δ_out = atan(L/(R + t/2)), 2-पहिया समतुल्य δ = atan(L/R)। cot δ_out − cot δ_in = t/L। रिटर्न मान: <code style="color:#22d3bf">inner</code>, <code style="color:#22d3bf">outer</code>, <code style="color:#22d3bf">bicycle</code> [rad], <code style="color:#22d3bf">front_inner_radius</code> √((R − t/2)² + L²), <code style="color:#22d3bf">front_outer_radius</code>, <code style="color:#22d3bf">rear_inner_radius</code> R − t/2, <code style="color:#22d3bf">offtracking</code> (स्थिर अवस्था का भीतरी पहिया अंतर = आगे के भीतरी पहिये − पीछे के भीतरी पहिये की त्रिज्या)।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ t/2 (भीतरी पिछला पहिया मोड़ के केंद्र को पार कर जाता है), L ≤ 0, t &lt; 0।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">radius</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

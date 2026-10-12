@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_reveal_distance(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_reveal_distance(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_reveal_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>갓길 주차 차량(방향이 있는 상자)의 그늘에 있는 점 <code style="color:#22d3bf">emerge_xy</code>가 자차의 눈에서 <b>처음 보이는</b> 때의 종방향 거리.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>自車の目は p(s) = ego_xy + s h(h = (cos ψ, sin ψ)、s ≥ 0 = 前進量)を動く。視線 = 線分 p(s) → e が箱の内部を通らなければ見える。箱は凸なので「見えない s」は区間になり、その端は <b>視線が箱の角をかすめる</b> か、進路が箱の辺を横切る所。各角 c について直線 e + λ(c − e) と進路の交点 s_c を 2×2 の連立で解き(閉形式)、候補 {0, s_c, 進路と辺の交点} の小さい順に見えるかを調べ、最初に見える s* で d = h · (e − p(s*)) を返す。</p>
-<p>軸平行の例(進路 y = 0、+x 向き、陰を作る角 c、e は箱の向こう): d = (e_x − c_x) · e_y / (e_y − c_y)。</p>
-<p><code style="color:#22d3bf">parked_box</code> = (cx, cy, length, width, yaw)(中心・全長・全幅・向き)。最初から見えていれば s* = 0 の縦距離、どこまで進んでも見えない(e が箱の内部)なら <code style="color:#22d3bf">inf</code>。d が負(見えた時には既に e を通り過ぎている)もそのまま返す。角をかすめる視線は「見える」(箱を 1e-9 相対だけ縮めて判定し、浮動小数の揺れで判定が割れないようにする)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・非有限・寸法 ≤ 0。</p>
+<p>자차의 눈은 p(s) = ego_xy + s h(h = (cos ψ, sin ψ), s ≥ 0 = 전진량)를 움직인다. 시선 = 선분 p(s) → e 가 상자의 내부를지나지 않으면 보인다. 상자는 볼록이므로 &quot;보이지 않는 s&quot; 는 구간이 되며, 그 끝은 <b>시선이 상자의 모서리를 스치는</b> 곳이거나 진로가 상자의 변을가로지르는 곳. 각 모서리 c 에 대해 직선 e + λ(c − e) 와 진로의 교점 s_c 를 2×2 연립으로 풀고(닫힌 형식), 후보 {0, s_c, 진로와 변의교점} 를 작은 순서로 보이는지 조사하여, 처음 보이는 s* 에서 d = h · (e − p(s*)) 를 반환한다.</p>
+<p>축 평행의 예(진로 y = 0, +x 방향, 그늘을 만드는 모서리 c, e 는 상자 너머): d = (e_x − c_x) · e_y / (e_y − c_y).</p>
+<p><code style="color:#22d3bf">parked_box</code> = (cx, cy, length, width, yaw)(중심·전장·전폭·방향). 처음부터 보이면 s* = 0 의 종방향 거리, 아무리 나아가도 보이지 않으면(e 가 상자 내부) <code style="color:#22d3bf">inf</code>. d 가 음수(보였을 때는 이미 e 를 지나침)여도 그대로 반환한다. 모서리를 스치는 시선은 &quot;보인다&quot;(상자를 상대 1e-9 만큼 줄여서 판정하여, 부동소수점의 흔들림으로 판정이 갈리지 않게 함).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 형상·비유한·치수 ≤ 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

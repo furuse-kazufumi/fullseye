@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cutting_wrist_mjcf(scene=None, theta_deg: &#x27;float&#x27; = 4.0, k_n_per_mm: &#x27;float&#x27; = 4.0, damping: &#x27;float&#x27; = 25.0, mass: &#x27;float&#x27; = 0.15) -&gt; &#x27;str&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cutting; cutting.cutting_wrist_mjcf(scene=None, theta_deg: &#x27;float&#x27; = 4.0, k_n_per_mm: &#x27;float&#x27; = 4.0, damping: &#x27;float&#x27; = 25.0, mass: &#x27;float&#x27; = 0.15) -&gt; &#x27;str&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cutting_wrist_mjcf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>柔顺腕部的刀刃场景(MJCF 字符串，不需要 mujoco)。刀刃有 1 个竖直滑动关节(弹簧 <code style="color:#22d3bf">k</code>、阻尼)，食材和砧板仅用于显示。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>カメラ <code style="color:#22d3bf">face</code> は正射影で、画素の寸法と <code style="color:#22d3bf">board_row</code> が <code style="color:#22d3bf">cutting_face_render</code> と同じになるよう置く。画像の中心は画素中心で数えて ((H−1)/2, (W−1)/2)(H/2 と書くと 0.5 px ずれる)。関節の摩擦損失は硬くしてある(既定の柔らかい摩擦損失は速度に比例する粘性のように振る舞い、切断力が 1 桁小さく出る)。食材の抵抗は走行中に関節の摩擦損失として毎歩書き換える(<code style="color:#22d3bf">cutting_mujoco_wrist</code>)。</p>
+<p>相机 <code style="color:#22d3bf">face</code> 为正交投影,其放置使像素尺寸和 <code style="color:#22d3bf">board_row</code> 与 <code style="color:#22d3bf">cutting_face_render</code> 相同。图像中心按像素中心计为 ((H−1)/2, (W−1)/2)(写成 H/2 会偏 0.5 px)。关节的摩擦损失设得较硬(默认的柔性摩擦损失表现得像与速度成正比的粘性,切割力会小 1 个数量级)。食材的阻力在运行中每步改写为关节的摩擦损失(<code style="color:#22d3bf">cutting_mujoco_wrist</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

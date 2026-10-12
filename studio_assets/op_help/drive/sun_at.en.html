@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveenv; driveenv.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sun_at&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Solar altitude and azimuth for a date/time (a timezone-aware datetime or a Julian day). The formulas are taken as is from <code style="color:#22d3bf">geocam.sun_position</code> (NOAA solar position equations = low-precision version of Meeus &quot;Astronomical Algorithms&quot; Chapter 25, NOAA refraction), adding the date/time handling and the Earth–Sun distance.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : <code style="color:#22d3bf">elevation</code>(度、<code style="color:#22d3bf">refraction</code> なら大気差つきの見かけ)、<code style="color:#22d3bf">elevation_geometric</code>、<code style="color:#22d3bf">azimuth</code>(北から時計回り 度)、</p>
-<p><code style="color:#22d3bf">declination</code>、<code style="color:#22d3bf">eq_time</code>(均時差 分)、<code style="color:#22d3bf">hour_angle</code>(度)、<code style="color:#22d3bf">jd</code>、<code style="color:#22d3bf">distance_au</code>、<code style="color:#22d3bf">semidiameter</code>(度)。</p>
-<p>NOAA が述べる精度は、日の出入りの時刻で緯度 ±72° 以内 1 分以内(1800〜2100 年)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 素朴な datetime・範囲外の緯度経度。</p>
+<p>dict : <code style="color:#22d3bf">elevation</code> (degrees; with <code style="color:#22d3bf">refraction</code>, the apparent elevation including atmospheric refraction), <code style="color:#22d3bf">elevation_geometric</code>, <code style="color:#22d3bf">azimuth</code> (degrees clockwise from north),</p>
+<p><code style="color:#22d3bf">declination</code>, <code style="color:#22d3bf">eq_time</code> (equation of time, minutes), <code style="color:#22d3bf">hour_angle</code> (degrees), <code style="color:#22d3bf">jd</code>, <code style="color:#22d3bf">distance_au</code>, <code style="color:#22d3bf">semidiameter</code> (degrees).</p>
+<p>The accuracy NOAA states is within 1 minute for sunrise/sunset times within ±72° latitude (years 1800 to 2100).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: naive datetime, latitude/longitude out of range.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

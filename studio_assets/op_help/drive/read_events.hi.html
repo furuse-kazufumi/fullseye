@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_events(path) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import motionio; motionio.read_events(path) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;read_events&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>event camera की event stream पढ़ता है (.txt / .csv / .npy / .npz)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">x</code>・<code style="color:#22d3bf">y</code>(int64)、<code style="color:#22d3bf">t</code>(float64、ファイルの単位のまま)、<code style="color:#22d3bf">p</code>(int8、+1 / −1)、<code style="color:#22d3bf">columns</code> (どの列をどれと読んだか —— 推定したなら <code style="color:#22d3bf">guessed=True</code>)、<code style="color:#22d3bf">shape</code>(x・y の最大 + 1)。</p>
+<p><code style="color:#22d3bf">x</code>, <code style="color:#22d3bf">y</code> (int64), <code style="color:#22d3bf">t</code> (float64, फ़ाइल की इकाई में ही), <code style="color:#22d3bf">p</code> (int8, +1 / −1), <code style="color:#22d3bf">columns</code> (कौन सा स्तंभ किस रूप में पढ़ा गया —— अनुमानित हो तो <code style="color:#22d3bf">guessed=True</code>), <code style="color:#22d3bf">shape</code> (x, y का अधिकतम + 1)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

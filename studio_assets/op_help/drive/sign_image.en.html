@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roadjp; roadjp.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sign_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns a picture of the road sign as RGBA float (H, W, 4) ∈ [0,1] (outside the plate = alpha 0). Width = <code style="color:#22d3bf">size_px</code>; the height follows the shape&#x27;s aspect ratio.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>形と色(規格の配色、記号は単純化):</p>
-<p style="margin:2px 0 2px 12px">• stop: 逆三角形・赤地・白の「止まれ」+ 下に小さく「STOP」。 slow: 逆三角形・白地・赤枠・青の「徐行」+「SLOW」。</p>
-<p style="margin:2px 0 2px 12px">• speed_limit: 円・白地・赤枠・青の数字(<code style="color:#22d3bf">value</code>、既定 40)。 no_entry: 円・赤地・白の横棒。</p>
-<p style="margin:2px 0 2px 12px">• no_parking: 円・青地・赤枠・赤の斜線(左上→右下)。 one_way: 横長の青地に白の矢印(右向き)。</p>
-<p style="margin:2px 0 2px 12px">• crosswalk: 青地の五角形(家型)に白の歩行者と横断歩道の縞。</p>
-<p style="margin:2px 0 2px 12px">• caution_crossing / caution_signal / caution_children: 黄地の菱形・黒縁、黒の記号(踏切 = 遮断機の棒 2 本と ×、信号機 = 3 つの円(赤黄青)、学童 = 2 人の人型)。</p>
-<p>文字は PIL でラスタ化する(annotate と同じフォント探索。<code style="color:#22d3bf">font_path</code> で固定できる)。<b>フォントに字形が無ければ ValueError</b>(豆腐を黙って出さない)。<code style="color:#22d3bf">side</code> は <code style="color:#22d3bf">sign_params</code> と同じ(寸法比だけに効く)。</p>
+<p>Shapes and colours (standard colour schemes, symbols simplified):</p>
+<p style="margin:2px 0 2px 12px">• stop: inverted triangle, red background, white &quot;Tomare&quot; (Japanese for &quot;stop&quot;) + a small &quot;STOP&quot; below. slow: inverted triangle, white background, red border, blue &quot;徐行&quot; (Japanese for &quot;slow down&quot;) + &quot;SLOW&quot;.</p>
+<p style="margin:2px 0 2px 12px">• speed_limit: circle, white background, red border, blue digits (<code style="color:#22d3bf">value</code>, default 40). no_entry: circle, red background, white horizontal bar.</p>
+<p style="margin:2px 0 2px 12px">• no_parking: circle, blue background, red border, red diagonal (top-left → bottom-right). one_way: wide blue rectangle with a white arrow (pointing right).</p>
+<p style="margin:2px 0 2px 12px">• crosswalk: blue pentagon (house shape) with a white pedestrian and crosswalk stripes.</p>
+<p style="margin:2px 0 2px 12px">• caution_crossing / caution_signal / caution_children: yellow diamond, black border, black symbol (railway crossing = 2 barrier arms and ×, traffic light = 3 circles (red, yellow, blue), schoolchildren = 2 human figures).</p>
+<p>Text is rasterised with PIL (same font search as annotate; can be fixed with <code style="color:#22d3bf">font_path</code>). <b>If the font has no glyph, ValueError</b> (it does not silently output tofu boxes). <code style="color:#22d3bf">side</code> is the same as in <code style="color:#22d3bf">sign_params</code> (only affects the size ratio).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

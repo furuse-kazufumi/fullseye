@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_table() -&gt; &#x27;list&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_table() -&gt; &#x27;list&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>failure classification table (data): हर row = {<code style="color:#22d3bf">cls</code>, <code style="color:#22d3bf">when</code> (field → अनुमत मानों का set, <code style="color:#22d3bf">&quot;*&quot;</code> = कुछ भी), <code style="color:#22d3bf">recovery</code>, <code style="color:#22d3bf">basis</code>}।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>行の根拠(<code style="color:#22d3bf">basis</code>)は Whitney 1982(OCW スライドの頁)か接触形成の幾何。順番に意味は無い —— 署名に当たる行は <b>高々 1 行</b> (<code style="color:#22d3bf">insertion_failure_validate</code> が全ペアで確かめる)。回復プリミティブの語彙は <code style="color:#22d3bf">insertion_recovery_primitive</code>。</p>
-<p>表(接触 / 深さの帯 / 進み / くさび / かじり / ずれ → クラス → 回復):</p>
-<p style="margin:2px 0 2px 12px">• none|plate, above|mouth, stalled, *, *, large → <code style="color:#22d3bf">missed_hole</code> → lift_recentre(先端が面取りに乗れない |ε₀| &gt; W + c_r、導出 (4))</p>
-<p style="margin:2px 0 2px 12px">• chamfer, above|mouth, *, *, *, small → <code style="color:#22d3bf">chamfer_sliding</code> → continue(面取り通過は正常な過程、OCW p.26)</p>
-<p style="margin:2px 0 2px 12px">• plate, above|mouth, advancing, *, *, * → <code style="color:#22d3bf">nominal</code> → continue(板に触れたがまだ進んでいる = 柔らかい接触の過渡)</p>
-<p style="margin:2px 0 2px 12px">• chamfer|one_point|two_point|floor, *, *, *, *, large → <code style="color:#22d3bf">wrong_hole</code> → lift_reapproach(接触はあるが治具の目標穴から W + c_r 以上離れている)</p>
-<p style="margin:2px 0 2px 12px">• one_point, mouth|hole, advancing, *, *, small → <code style="color:#22d3bf">nominal</code> → continue(一点接触で進む、p.26)</p>
-<p style="margin:2px 0 2px 12px">• two_point, hole, advancing, *, *, small → <code style="color:#22d3bf">nominal</code> → continue(二点接触で進む = 平行四辺形の中、p.34)</p>
-<p style="margin:2px 0 2px 12px">• two_point, hole, stalled, over, *, small → <code style="color:#22d3bf">wedging</code> → retract_reduce_tilt(θ &gt; c/μ、p.28)</p>
-<p style="margin:2px 0 2px 12px">• two_point, hole, stalled, below, outside, small → <code style="color:#22d3bf">jamming</code> → steer_force(力の比が平行四辺形の外、p.34)</p>
-<p style="margin:2px 0 2px 12px">• one_point, mouth|hole, stalled, *, outside, small → <code style="color:#22d3bf">jamming</code> → steer_force(一点接触の摩擦限界 |F_x/F_z| &gt; 1/μ = 縦の辺)</p>
-<p style="margin:2px 0 2px 12px">• floor, hole, *, *, *, small → <code style="color:#22d3bf">blocked_hole</code> → lift_abort(底に届く前に硬い物に当たった)</p>
-<p style="margin:2px 0 2px 12px">• floor, bottom, *, *, *, small → <code style="color:#22d3bf">seated</code> → stop(底着 = 完了)</p>
-<p style="margin:2px 0 2px 12px">• none, *, advancing, *, *, * → <code style="color:#22d3bf">nominal</code> → continue(空中で降下中)</p>
-<p>当たらない例(わざと unknown): plate・stalled・small(面取りの内側で板に乗って止まるのは幾何的に不可能 = 計測の矛盾)、two_point・stalled・below・inside(Whitney なら滑るはずの停滞 = 模型の外)、none・stalled・small(押していないのに止まる)。</p>
+<p>प्रत्येक पंक्ति का आधार (<code style="color:#22d3bf">basis</code>) Whitney 1982 (OCW स्लाइडों का पृष्ठ) या संपर्क-निर्माण की ज्यामिति है। क्रम का कोई अर्थ नहीं —— किसी हस्ताक्षर से <b>अधिकतम 1 पंक्ति</b> मेल खाती है (<code style="color:#22d3bf">insertion_failure_validate</code> सभी जोड़ों पर जाँचता है)। पुनर्प्राप्ति प्रिमिटिव की शब्दावली <code style="color:#22d3bf">insertion_recovery_primitive</code> है।</p>
+<p>तालिका (संपर्क / गहराई-पट्टी / प्रगति / वेज / जैम / विचलन → वर्ग → पुनर्प्राप्ति):</p>
+<p style="margin:2px 0 2px 12px">• none|plate, above|mouth, stalled, *, *, large → <code style="color:#22d3bf">missed_hole</code> → lift_recentre (सिरा चैम्फर पर नहीं चढ़ पाता |ε₀| &gt; W + c_r, व्युत्पत्ति (4))</p>
+<p style="margin:2px 0 2px 12px">• chamfer, above|mouth, *, *, *, small → <code style="color:#22d3bf">chamfer_sliding</code> → continue (चैम्फर पार करना सामान्य प्रक्रिया है, OCW p.26)</p>
+<p style="margin:2px 0 2px 12px">• plate, above|mouth, advancing, *, *, * → <code style="color:#22d3bf">nominal</code> → continue (प्लेट को छुआ पर अभी भी आगे बढ़ रहा है = नरम संपर्क का क्षणिक दौर)</p>
+<p style="margin:2px 0 2px 12px">• chamfer|one_point|two_point|floor, *, *, *, *, large → <code style="color:#22d3bf">wrong_hole</code> → lift_reapproach (संपर्क है, पर जिग के लक्ष्य छेद से W + c_r या अधिक दूर)</p>
+<p style="margin:2px 0 2px 12px">• one_point, mouth|hole, advancing, *, *, small → <code style="color:#22d3bf">nominal</code> → continue (एक-बिंदु संपर्क में आगे बढ़ना, p.26)</p>
+<p style="margin:2px 0 2px 12px">• two_point, hole, advancing, *, *, small → <code style="color:#22d3bf">nominal</code> → continue (दो-बिंदु संपर्क में आगे बढ़ना = समांतर चतुर्भुज के भीतर, p.34)</p>
+<p style="margin:2px 0 2px 12px">• two_point, hole, stalled, over, *, small → <code style="color:#22d3bf">wedging</code> → retract_reduce_tilt (θ &gt; c/μ, p.28)</p>
+<p style="margin:2px 0 2px 12px">• two_point, hole, stalled, below, outside, small → <code style="color:#22d3bf">jamming</code> → steer_force (बल-अनुपात समांतर चतुर्भुज के बाहर, p.34)</p>
+<p style="margin:2px 0 2px 12px">• one_point, mouth|hole, stalled, *, outside, small → <code style="color:#22d3bf">jamming</code> → steer_force (एक-बिंदु संपर्क की घर्षण सीमा |F_x/F_z| &gt; 1/μ = ऊर्ध्व भुजा)</p>
+<p style="margin:2px 0 2px 12px">• floor, hole, *, *, *, small → <code style="color:#22d3bf">blocked_hole</code> → lift_abort (तल तक पहुँचने से पहले किसी कठोर वस्तु से टकराया)</p>
+<p style="margin:2px 0 2px 12px">• floor, bottom, *, *, *, small → <code style="color:#22d3bf">seated</code> → stop (तल पर बैठ गया = पूर्ण)</p>
+<p style="margin:2px 0 2px 12px">• none, *, advancing, *, *, * → <code style="color:#22d3bf">nominal</code> → continue (हवा में नीचे उतर रहा है)</p>
+<p>मेल न खाने वाले उदाहरण (जानबूझकर unknown): plate·stalled·small (चैम्फर के भीतर प्लेट पर टिककर रुकना ज्यामितीय रूप से असंभव = मापन का विरोधाभास), two_point·stalled·below·inside (जहाँ Whitney के अनुसार फिसलना चाहिए वहाँ रुकना = मॉडल के बाहर), none·stalled·small (बिना धकेले रुक जाना)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

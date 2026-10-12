@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_funct_1d(y1, y2, mode=&#x27;max&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import funct1d; funct1d.distance_funct_1d(y1, y2, mode=&#x27;max&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops1d.get(&quot;distance_funct_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Distance between two functions on the same grid (HALCON <code style="color:#22d3bf">distance_funct_1d</code>).</p>
+<p>同一网格上两个函数之间的距离(HALCON <code style="color:#22d3bf">distance_funct_1d</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">mode=&quot;max&quot;</code> is the Chebyshev / sup distance <code style="color:#22d3bf">max |y1 - y2|</code>; <code style="color:#22d3bf">mode=&quot;mean&quot;</code> the mean absolute difference. Both are symmetric and zero iff the functions are identical.</p>
 <p>:param y1: 1-D function, at least 1 sample. :param y2: 1-D function, <b>same length</b> as *y1* (unequal lengths raise —</p>
 <p>pointwise distance is undefined across different grids; silent numpy</p>

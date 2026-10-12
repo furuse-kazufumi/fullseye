@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_intrinsics_to_fullseye — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_intrinsics_to_fullseye&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*無圖: 型別可達，但通用合成輸入不在此運算子的定義域內 —— 3×3 で焦点距離が正の K だけを受け、汎用の合成 matrix は fail-closed で拒否される(op_probe の探針では走る)。用法見下方可執行範例。*</p>
+<p>*無圖: 型別可達，但通用合成輸入不在此運算子的定義域內 —— 只接受 3×3 且焦距為正的 K,通用的合成 matrix 會以 fail-closed 方式被拒絕(用 op_probe 的探針可以執行)。用法見下方可執行範例。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>CARLA 的 K(像素角點為整數，主點 W/2)→ Fullseye / render3d 的 K(像素中心為整數，主點 (W−1)/2)。只是把主點平移 0.5。</p>
 <p>橋接到 2-D 演化註冊表的 drive op <code style="color:#22d3bf">intrinsics_to_fullseye</code>。實作相同，只是呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調參數，<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>

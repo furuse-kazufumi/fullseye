@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelong; drivelong.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;road_profile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turns a polyline of horizontal distance and height (x, z) (same form as <code style="color:#22d3bf">profile</code> of drivecourse.course_slope) into a longitudinal profile over <b>arc length l along the road surface</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返り値 = <code style="color:#22d3bf">{&quot;l&quot; (n,), &quot;x&quot; (n,), &quot;z&quot; (n,), &quot;sin&quot; (n−1,), &quot;cos&quot; (n−1,)}</code>。l は <code style="color:#22d3bf">l0</code> から始まる折れ点の弧長。区間 i の勾配角 θ_i は sin = Δz/Δl、cos = Δx/Δl(両端の外は平ら: θ = 0、z は端の値)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2 点未満、非有限、x が狭義単調増加でない、勾配が 45° 以上。</p>
+<p>Returns = <code style="color:#22d3bf">{&quot;l&quot; (n,), &quot;x&quot; (n,), &quot;z&quot; (n,), &quot;sin&quot; (n−1,), &quot;cos&quot; (n−1,)}</code>. l is the arc length of the break points starting from <code style="color:#22d3bf">l0</code>. The grade angle θ_i of segment i has sin = Δz/Δl, cos = Δx/Δl (flat outside both ends: θ = 0, z is the end value).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: fewer than 2 points, non-finite, x not strictly increasing, grade of 45° or more.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

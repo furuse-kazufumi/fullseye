@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;social_force_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>social force의 1스텝(단위 질량당. Helbing &amp; Molnár 1995 / Helbing, Farkas, Vicsek 2000의 형태).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>dv_i/dt = (v0_i e_i − v_i)/τ + Σ_j A exp((r_ij − d_ij)/B) n_ij + Σ_W A exp((r_i − d_iW)/B) n_iW</p>
-<p>e_i = 目標への単位ベクトル(目標に 1e-9 m 以内なら 0)、r_ij = r_i + r_j、d_ij = |x_i − x_j|、n_ij = (x_i − x_j)/d_ij。壁 W は線分 ((x0, y0), (x1, y1)) の列で、d_iW と n_iW は最近点から。</p>
-<p>積分(指数積分): 斥力 F を刻みの間一定と置き、線形部分 (v_d − v)/τ(v_d = v0 e + τ F)を厳密に解く:</p>
-<p>v&#x27; = v_d + (v − v_d) e^{−dt/τ}、x&#x27; = x + v_d dt + (v − v_d) τ (1 − e^{−dt/τ})。1 人で斥力が無ければ v(t) = v0(1 − e^{−t/τ}) に <b>dt に依らず</b> 一致する(門)。斥力がある時は 1 次の誤差。</p>
-<p>引数: <code style="color:#22d3bf">pos</code>, <code style="color:#22d3bf">vel</code>, <code style="color:#22d3bf">goals</code> は (N, 2)。<code style="color:#22d3bf">v0</code> と <code style="color:#22d3bf">radius</code> はスカラーか (N,)。<code style="color:#22d3bf">walls</code> は (M, 2, 2) か None。</p>
-<p>戻り値: (pos&#x27;, vel&#x27;)。配置が鏡映・点対称なら結果も同じ対称性を保つ(式が対称なので。門で確かめる)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の不一致、非有限、τ・B・dt ≤ 0、A &lt; 0、半径 &lt; 0、2 人の位置が一致。</p>
+<p>e_i = 목표를 향한 단위 벡터(목표에서 1e-9 m 이내이면 0), r_ij = r_i + r_j, d_ij = |x_i − x_j|, n_ij = (x_i − x_j)/d_ij. 벽 W 는 선분 ((x0, y0), (x1, y1)) 의 열이며, d_iW 와 n_iW 는 최근접점에서 구한다.</p>
+<p>적분(지수 적분): 척력 F 를 한 스텝 동안 일정하다고 두고, 선형 부분 (v_d − v)/τ(v_d = v0 e + τ F)를 엄밀하게 푼다:</p>
+<p>v&#x27; = v_d + (v − v_d) e^{−dt/τ}, x&#x27; = x + v_d dt + (v − v_d) τ (1 − e^{−dt/τ}). 한 사람이고 척력이 없으면 v(t) = v0(1 − e^{−t/τ}) 와 <b>dt 에 상관없이</b> 일치한다(게이트). 척력이 있으면 1 차 오차.</p>
+<p>인수: <code style="color:#22d3bf">pos</code>, <code style="color:#22d3bf">vel</code>, <code style="color:#22d3bf">goals</code> 는 (N, 2). <code style="color:#22d3bf">v0</code> 와 <code style="color:#22d3bf">radius</code> 는 스칼라 또는 (N,). <code style="color:#22d3bf">walls</code> 는 (M, 2, 2) 또는 None.</p>
+<p>반환값: (pos&#x27;, vel&#x27;). 배치가 거울 대칭 또는 점대칭이면 결과도 같은 대칭성을 유지한다(식이 대칭이므로. 게이트로 확인).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 형상 불일치, 비유한값, τ, B, dt ≤ 0, A &lt; 0, 반지름 &lt; 0, 두 사람의 위치가 일치.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

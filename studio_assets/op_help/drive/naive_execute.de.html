@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code> (die Implementierung direkt: <code style="color:#22d3bf">import agvfleet; agvfleet.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;naive_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Naive Ausführung zum Vergleich: nutzt nur die <b>Zellenfolge</b> des Plans und fährt weiter, sobald die nächste Zelle frei ist (keine Reihenfolgevereinbarung).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>遅れが入ると、計画では時間差ですれ違うはずの 2 台が向かい合って止まる。返りは <code style="color:#22d3bf">adg_execute</code> と同じ形に <code style="color:#22d3bf">waits_for</code>(デッドロックの瞬間の「誰が誰を待つか」の辺)を足したもの。</p>
-<p>空の入力(<code style="color:#22d3bf">paths</code> が 0 件)は ValueError。</p>
+<p>Sobald Verzögerungen auftreten, bleiben 2 Fahrzeuge, die laut Plan zeitversetzt aneinander vorbeifahren sollten, einander gegenüber stehen. Die Rückgabe hat dieselbe Form wie <code style="color:#22d3bf">adg_execute</code> plus <code style="color:#22d3bf">waits_for</code> (die Kanten „wer wartet auf wen“ im Moment des Deadlocks).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">paths</code> mit 0 Einträgen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

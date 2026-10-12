@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × indices</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peak_subbin(x, idx=None, mode=&#x27;parabola&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import dsp; dsp.peak_subbin(x, idx=None, mode=&#x27;parabola&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;peak_subbin&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Peak position <b>between</b> samples — the vertex of a fit through 3 points.</p>
+<p>Peakposition <b>zwischen</b> den Stichproben — der Scheitel einer Anpassung durch 3 Punkte.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">find_peaks</code> returns integer indices, so the position of a spectral line or a correlation peak is quantised to the bin grid no matter how finely the peak itself is resolved. This refines each index to a float by fitting the sample and its two neighbours.</p>
 <p>*mode* picks what is fitted:</p>
 <p><code style="color:#22d3bf">&quot;parabola&quot;</code></p>

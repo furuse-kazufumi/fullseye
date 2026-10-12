@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stopping_distance_grade(v: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelong; drivelong.stopping_distance_grade(v: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;stopping_distance_grade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>रुकने की दूरी का closed form = reaction दूरी v ρ + braking दूरी (1/(2k)) ln(1 + k v²/A), A = brake + g sin θ + c_rr g cos θ (k = 0 पर v²/(2A))।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>θ &gt; 0 が上り(止まりやすい)、θ &lt; 0 が下り。ρ の間は速さを保つ。A ≤ 0(下りで制動が坂に負ける)なら止まらない → <code style="color:#22d3bf">inf</code>。平地・c_rr = k = 0 で <code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, 0, brake)</code> と同じ式。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0、非有限、|θ| ≥ 45°。</p>
+<p>θ &gt; 0 चढ़ाई है (रुकना आसान), θ &lt; 0 ढलान (उतराई) है। ρ के दौरान गति बनी रहती है। यदि A ≤ 0 (उतराई पर ब्रेक ढलान से हार जाता है) तो वाहन नहीं रुकता → <code style="color:#22d3bf">inf</code>। समतल पर c_rr = k = 0 के साथ यह <code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, 0, brake)</code> वाला ही सूत्र है।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0, अपरिमित, |θ| ≥ 45°।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

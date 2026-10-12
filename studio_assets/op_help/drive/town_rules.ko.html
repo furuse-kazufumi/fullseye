@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_rules(jurisdiction: &#x27;str&#x27; = &#x27;JP&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetown; drivetown.town_rules(jurisdiction: &#x27;str&#x27; = &#x27;JP&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;town_rules&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법규 팩(<code style="color:#22d3bf">RULE_PACKS</code>의 복사본). <code style="color:#22d3bf">{&quot;jurisdiction&quot;, &quot;side&quot;: &quot;left&quot;|&quot;right&quot;, &quot;crossing_stop&quot;: &quot;always&quot;|&quot;when_active&quot;, &quot;intersection_stop&quot;: &quot;signal&quot;, &quot;hold_s&quot;, &quot;look_required&quot;, &quot;look_hold_s&quot;, &quot;sources&quot;: [...], &quot;verified&quot;, &quot;notes&quot;}</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>JP = 左側通行・踏切は常に一時停止 + 安全確認(道路交通法 33 条 1 項、本文で確認済 → verified True)。US = 右側通行・一般車は警報中だけ停止(州法。<b>一次確認なし → verified False</b>)。DE = 右側通行・StVO §19 で遮断機/灯火が動作している時だけ(<b>一次確認なし → verified False</b>)。verified が False の規則は PoC・報告で断定しない。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 知らない jurisdiction。</p>
+<p>JP = 좌측 통행, 건널목은 항상 일시 정지 + 안전 확인(일본 도로교통법 제33조 제1항, 본문으로 확인 완료 → verified True). US = 우측 통행, 일반 차량은 경보 중에만 정지(주법. <b>1차 확인 없음 → verified False</b>). DE = 우측 통행, StVO §19 에 따라 차단기/등화가작동하고 있을 때만(<b>1차 확인 없음 → verified False</b>). verified 가 False 인 규칙은 PoC/보고에서 단정하지 않는다.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 모르는 jurisdiction.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

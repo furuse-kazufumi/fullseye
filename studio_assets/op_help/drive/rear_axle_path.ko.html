@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;rear_axle_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>앞차축 중심의 꺾은선 궤적으로부터 미끄럼 없이 끌려가는 뒤차축 중심의 궤적(구간마다 엄밀한 추적 곡선).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>前が直線を Δ 進む間、棒(後 → 前)と直線のなす角 θ は tan(θ/2) = tan(θ₀/2) e^{−Δ/L}(厳密)。折線の頂点ごとにこれを繋ぐ。<code style="color:#22d3bf">rear0</code>: 後車軸の初めの位置(None なら最初の区間の向きに L だけ後ろ = 真っすぐ)。|前 − 後| = L を要求。</p>
-<p>返り値: <code style="color:#22d3bf">rear</code> (N, 2)、<code style="color:#22d3bf">heading</code> (N,)(車体の向き = 棒の向き)、<code style="color:#22d3bf">gamma</code> (N,)(棒と前の進む向きのなす角、左旋回で正)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、重複点、L ≤ 0、|前 − 後| ≠ L、θ₀ = π(後ろ向きに押す)。</p>
+<p>앞이 직선을 Δ 나아가는 동안, 막대(뒤 → 앞)와 직선이 이루는 각 θ 는 tan(θ/2) = tan(θ₀/2) e^{−Δ/L}(엄밀). 꺾은선의 꼭짓점마다이것을 잇는다. <code style="color:#22d3bf">rear0</code>: 후차축의 처음 위치(None 이면 첫 구간 방향으로 L 만큼 뒤 = 똑바로). |앞 − 뒤| = L 을 요구.</p>
+<p>반환값: <code style="color:#22d3bf">rear</code> (N, 2), <code style="color:#22d3bf">heading</code> (N,)(차체의 방향 = 막대의 방향), <code style="color:#22d3bf">gamma</code> (N,)(막대와 앞의 진행 방향이 이루는 각, 좌선회에서 양).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 형태 오류, 중복점, L ≤ 0, |앞 − 뒤| ≠ L, θ₀ = π(뒤로 민다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

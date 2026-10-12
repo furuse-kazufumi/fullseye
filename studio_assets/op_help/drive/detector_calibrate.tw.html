@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pxrd; pxrd.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;detector_calibrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由已知標準樣品(如 Si)的繞射環校正偵測器的中心、距離與傾斜。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">d_spacings</code> は標準の面間隔 [Å] の list(強い順でなくてよい)、<code style="color:#22d3bf">geometry_guess</code> には少なくとも <code style="color:#22d3bf">pixel</code> と</p>
-<p><code style="color:#22d3bf">wavelength</code>、分かっていれば <code style="color:#22d3bf">cx</code>・<code style="color:#22d3bf">cy</code>・<code style="color:#22d3bf">distance</code>・<code style="color:#22d3bf">tilt</code>・<code style="color:#22d3bf">tilt_dir</code> を入れる。手順:</p>
-<p style="margin:2px 0 2px 12px">1. 中心が無ければ明るい画素の重心から始め、最も強い環を光線に沿って拾い、円の当てはめで中心を 3 回更新する。</p>
-<p style="margin:2px 0 2px 12px">2. 距離が無ければ、半径方向のプロファイルの最初の山を d の候補(小さい 2θ から 4 本)に当て、他の環の予測と観測の山が最も多く一致する組を選ぶ。</p>
-<p style="margin:2px 0 2px 12px">3. 現在の幾何で各環の位置を <code style="color:#22d3bf">n_azimuth</code> 本の光線上で予測し、窓の中の強度の重心で点を拾い、<code style="color:#22d3bf">scipy.optimize.least_squares</code> で <code style="color:#22d3bf">(cx, cy, distance, tilt の 2 成分)</code> を 2θ の残差 [deg] で当てる。窓を縮めながら 3 回。傾きは回転ベクトルの 2 成分 <code style="color:#22d3bf">tilt·(cos φ, sin φ)</code> で解く(傾き 0 で φ が不定になる特異点を避ける)。</p>
-<p>返り値(dict): 幾何(<code style="color:#22d3bf">cx</code>・<code style="color:#22d3bf">cy</code>・<code style="color:#22d3bf">distance</code>・<code style="color:#22d3bf">pixel</code>・<code style="color:#22d3bf">wavelength</code>・<code style="color:#22d3bf">tilt</code>・<code style="color:#22d3bf">tilt_dir</code>)に</p>
-<p><code style="color:#22d3bf">rms_two_theta_deg</code>・<code style="color:#22d3bf">n_points</code>・<code style="color:#22d3bf">n_rings</code>・<code style="color:#22d3bf">rings_deg</code>・<code style="color:#22d3bf">ok</code>(rms が画素 1/4 の角 <code style="color:#22d3bf">0.25·pixel/distance</code> 未満</p>
-<p>かつ環 &gt;= <code style="color:#22d3bf">min_rings</code>)を足したもの。</p>
-<p>Raises ValueError: 像が 2-D でない、d が 1 本も無い、pixel / wavelength が無い、環が <code style="color:#22d3bf">min_rings</code> 本見つからない。</p>
+<p><code style="color:#22d3bf">d_spacings</code> 為標準面間距 [Å] 的 list(不必依強度排序),<code style="color:#22d3bf">geometry_guess</code> 至少要有 <code style="color:#22d3bf">pixel</code> 與</p>
+<p><code style="color:#22d3bf">wavelength</code>,若已知也放入 <code style="color:#22d3bf">cx</code>、<code style="color:#22d3bf">cy</code>、<code style="color:#22d3bf">distance</code>、<code style="color:#22d3bf">tilt</code>、<code style="color:#22d3bf">tilt_dir</code>。步驟:</p>
+<p style="margin:2px 0 2px 12px">1. 若無中心,從明亮像素的重心開始,沿光線拾取最強的環,以圓擬合更新中心 3 次。</p>
+<p style="margin:2px 0 2px 12px">2. 若無距離,將徑向剖面的第一個峰套用到 d 的候選(從小的 2θ 起 4 條),選出其他環的預測與觀測峰吻合最多的組合。</p>
+<p style="margin:2px 0 2px 12px">3. 以目前的幾何在 <code style="color:#22d3bf">n_azimuth</code> 條光線上預測各環的位置,以視窗內強度的重心拾取點, 用 <code style="color:#22d3bf">scipy.optimize.least_squares</code> 以 2θ 的殘差 [deg] 擬合 <code style="color:#22d3bf">(cx, cy, distance, tilt の 2 成分)</code>。視窗逐步縮小共 3 次。傾斜以旋轉向量的 2 分量 <code style="color:#22d3bf">tilt·(cos φ, sin φ)</code> 求解(避開傾斜 0 時 φ 不定的奇異點)。</p>
+<p>回傳值(dict): 在幾何(<code style="color:#22d3bf">cx</code>、<code style="color:#22d3bf">cy</code>、<code style="color:#22d3bf">distance</code>、<code style="color:#22d3bf">pixel</code>、<code style="color:#22d3bf">wavelength</code>、<code style="color:#22d3bf">tilt</code>、<code style="color:#22d3bf">tilt_dir</code>)之外</p>
+<p>加上 <code style="color:#22d3bf">rms_two_theta_deg</code>、<code style="color:#22d3bf">n_points</code>、<code style="color:#22d3bf">n_rings</code>、<code style="color:#22d3bf">rings_deg</code>、<code style="color:#22d3bf">ok</code>(rms 小於 1/4 像素的角度 <code style="color:#22d3bf">0.25·pixel/distance</code></p>
+<p>且環 &gt;= <code style="color:#22d3bf">min_rings</code>)。</p>
+<p>Raises ValueError: 影像非 2-D、一個 d 都沒有、沒有 pixel / wavelength、找不到 <code style="color:#22d3bf">min_rings</code> 個環。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

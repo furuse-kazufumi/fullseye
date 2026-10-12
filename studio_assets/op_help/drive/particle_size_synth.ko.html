@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_synth(d50: &#x27;float&#x27;, sigma_ln: &#x27;float&#x27;, edges=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import grind; grind.particle_size_synth(d50: &#x27;float&#x27;, sigma_ln: &#x27;float&#x27;, edges=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_synth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>로그 정규 <b>체적</b> 분포를 장치와 같은 구간에 할당한 입도 분포(참값 포함).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>体積の累積 <code style="color:#22d3bf">F(x) = Φ((ln x − ln d50) / σ)</code>。<code style="color:#22d3bf">edges</code> を省くと公開データの装置の 74 端(比 1.13616)。</p>
-<p>返り: <code style="color:#22d3bf">edges</code>・<code style="color:#22d3bf">volume</code>(%)と <code style="color:#22d3bf">truth</code>(<code style="color:#22d3bf">d10</code>・<code style="color:#22d3bf">d50</code>・<code style="color:#22d3bf">d90</code> = <code style="color:#22d3bf">d50 · exp(±1.28155 σ)</code>、<code style="color:#22d3bf">sigma_ln</code>)。区間の外にはみ出す体積が 1e-6 を超えると <code style="color:#22d3bf">ValueError</code>(端で切ると D10/D90 が黙って動く)。</p>
+<p>체적 누적 <code style="color:#22d3bf">F(x) = Φ((ln x − ln d50) / σ)</code>. <code style="color:#22d3bf">edges</code> 를 생략하면 공개 데이터 장치의 74 개 끝(비 1.13616).</p>
+<p>반환: <code style="color:#22d3bf">edges</code>·<code style="color:#22d3bf">volume</code>(%)과 <code style="color:#22d3bf">truth</code>(<code style="color:#22d3bf">d10</code>·<code style="color:#22d3bf">d50</code>·<code style="color:#22d3bf">d90</code> = <code style="color:#22d3bf">d50 · exp(±1.28155 σ)</code>, <code style="color:#22d3bf">sigma_ln</code>). 구간 밖으로 삐져나가는 체적이 1e-6 을 넘으면 <code style="color:#22d3bf">ValueError</code>(끝에서 자르면 D10/D90 이 말없이 움직인다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

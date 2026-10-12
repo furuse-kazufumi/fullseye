@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">file</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.write_wav(path, x, rate=44100)</code>(要直接呼叫實作,<code style="color:#22d3bf">import dsp; dsp.write_wav(path, x, rate=44100)</code>;從台帳取用則 <code style="color:#22d3bf">ops1d.get(&quot;write_wav&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Write a float <code style="color:#22d3bf">[-1,1]</code> mono signal to a 16-bit PCM WAV (stdlib). Non-finite samples raise (they would become garbage PCM).</p>
+<p>把 float <code style="color:#22d3bf">[-1,1]</code> 單聲道訊號寫成 16-bit PCM WAV(標準函式庫)。非有限樣本會拋出例外(否則會變成損壞的 PCM)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Returns the path written (<code style="color:#22d3bf">str</code>) -- the ledger declares this op&#x27;s output as the <code style="color:#22d3bf">file</code> sort, which <code style="color:#22d3bf">read_wav</code> / <code style="color:#22d3bf">read_audio</code> consume (it used to return <code style="color:#22d3bf">None</code>).</p>
 <p>Empty input (<code style="color:#22d3bf">path</code> an empty string) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

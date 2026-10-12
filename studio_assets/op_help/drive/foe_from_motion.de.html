@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivettc; drivettc.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_motion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Pixel <code style="color:#22d3bf">(col, row)</code> des Expansionsfokus (FoE): die Projektion der Translation <code style="color:#22d3bf">t</code> der Relativbewegung im Unendlichen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">T_rel</code> の回転が単位でないと FoE は定義されない(<code style="color:#22d3bf">ValueError</code>)。奥行き方向の並進が 0(純粋な横滑り)なら <code style="color:#22d3bf">(nan, nan)</code>。</p>
+<p>Ist die Rotation von <code style="color:#22d3bf">T_rel</code> nicht die Identität, ist der FoE nicht definiert (<code style="color:#22d3bf">ValueError</code>). Ist die Translation in Tiefenrichtung 0 (reines seitliches Gleiten), <code style="color:#22d3bf">(nan, nan)</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pegsim; pegsim.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;insertion_grid_summary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सफलता दर के grid को जोड़ता है: rows {eps_mm, tilt_deg, correct, success} से, सुधार के साथ/बिना × ε₀ × θ₀ की सफलता दर की table, और &quot;बिना सुधार के सब सफल होने वाला सबसे बड़ा ε₀&quot; तथा &quot;सुधार के साथ सफलताएँ / कुल&quot;।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返り: <code style="color:#22d3bf">eps_mm</code>・<code style="color:#22d3bf">tilt_deg</code>(軸)、<code style="color:#22d3bf">rate</code>: {False: (n_eps, n_tilt) の配列, True: 同}、<code style="color:#22d3bf">n_runs</code>、<code style="color:#22d3bf">max_eps_all_ok</code>:</p>
-<p>{correct: その補正で全 θ₀ が成功する最大の ε₀(無ければ None)}、<code style="color:#22d3bf">success_count</code>: {correct: (成功数, 総数)}。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 行が空、鍵が欠ける。</p>
+<p>वापसी: <code style="color:#22d3bf">eps_mm</code>, <code style="color:#22d3bf">tilt_deg</code> (अक्ष), <code style="color:#22d3bf">rate</code>: {False: (n_eps, n_tilt) का array, True: वही}, <code style="color:#22d3bf">n_runs</code>, <code style="color:#22d3bf">max_eps_all_ok</code>:</p>
+<p>{correct: वह सबसे बड़ा ε₀ जिस पर उस सुधार से सभी θ₀ सफल हों (न हो तो None)}, <code style="color:#22d3bf">success_count</code>: {correct: (सफलताएँ, कुल)}। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: पंक्तियाँ खाली, कुंजियाँ गायब।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

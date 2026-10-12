@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scoop_count(volume: &#x27;float&#x27;, radius: &#x27;float&#x27;, packing: &#x27;float&#x27;, *, density: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import scoop; scoop.scoop_count(volume: &#x27;float&#x27;, radius: &#x27;float&#x27;, packing: &#x27;float&#x27;, *, density: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;scoop_count&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>부피와 충전율로부터 입자 수 <code style="color:#22d3bf">N = V ν / ((4/3) π r³)</code>(<code style="color:#22d3bf">density</code>를 주면 질량 <code style="color:#22d3bf">N m_p</code>와 부피 밀도 <code style="color:#22d3bf">ν ρ_p</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">packing</code> ν は <b>較正値</b>(同じ粒・同じ測り方で、数の分かった 1 回から <code style="color:#22d3bf">N v_p / V_img</code> を取る): 側面の輪郭は粒の外側の包絡なので、ν は充填そのものより小さく出る(包絡の分の体積を含む)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 体積 &lt; 0、半径 ≤ 0、ν が (0, 1] の外。</p>
+<p><code style="color:#22d3bf">packing</code> ν 는 <b>교정값</b>(같은 입자, 같은 측정 방법으로 개수를 아는 1 회에서 <code style="color:#22d3bf">N v_p / V_img</code> 를 취한다): 측면 윤곽은입자 바깥쪽의 포락선이므로 ν 는 충전율 자체보다 작게 나온다(포락선 부분의 체적을 포함한다). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 체적 &lt; 0, 반경 ≤ 0, ν 가 (0, 1] 밖.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

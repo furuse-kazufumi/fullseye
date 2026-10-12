@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetraffic; drivetraffic.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ou_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从等间隔 dt 的观测序列读出横向摆动(均值 0 的 OU 过程 dX = −θX dt + σ dW)的参数。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>厳密離散化 x_{k+1} = φ x_k + ε_k(φ = e^{−θ dt}、ε ~ N(0, q²)、q² = σ²(1 − φ²)/(2θ))の条件つき最尤:</p>
+<p>精确离散化 x_{k+1} = φ x_k + ε_k(φ = e^{−θ dt},ε ~ N(0, q²),q² = σ²(1 − φ²)/(2θ))的条件最大似然:</p>
 <p>φ̂ = Σ x_k x_{k+1} / Σ x_k²,  q̂² = mean((x_{k+1} − φ̂ x_k)²),  θ̂ = −ln φ̂ / dt,  σ̂ = q̂ sqrt(2θ̂ / (1 − φ̂²))</p>
-<p>(Euler の (1 − φ̂)/dt でなく ln を使うので dt が粗くても偏らない)。標準誤差は漸近式: se(φ̂) = sqrt((1 − φ²)/n)、se(q̂) = q/sqrt(2n)、θ̂・σ̂ はデルタ法。<code style="color:#22d3bf">sigma_increment</code> = sqrt(mean(Δx²)/dt) は θ を使わない粗い推定(E[Δx²] = σ²(1 − φ)/θ なので θ dt → 0 で σ。相関時間の長い系列を短く見るとき、位置の標本 SD より σ を安定に読める)。</p>
-<p>戻り値 dict: <code style="color:#22d3bf">theta</code>, <code style="color:#22d3bf">sigma</code>, <code style="color:#22d3bf">sd</code>(定常 SD σ/√(2θ))、<code style="color:#22d3bf">phi</code>, <code style="color:#22d3bf">q</code>, <code style="color:#22d3bf">n</code>(増分の数)、<code style="color:#22d3bf">se_theta</code>, <code style="color:#22d3bf">se_sigma</code>, <code style="color:#22d3bf">sigma_increment</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 1-D でない・3 点未満・非有限、dt ≤ 0、φ̂ ∉ (0, 1)(この dt では平均へ戻る過程に見えない)。</p>
+<p>(因为使用 ln 而非 Euler 的 (1 − φ̂)/dt,即使 dt 粗糙也不会有偏差)。标准误差采用渐近公式:se(φ̂) = sqrt((1 − φ²)/n), se(q̂) = q/sqrt(2n),θ̂、σ̂ 用 delta 法。<code style="color:#22d3bf">sigma_increment</code> = sqrt(mean(Δx²)/dt) 是不使用 θ 的粗略估计(E[Δx²] = σ²(1 − φ)/θ,所以 θ dt → 0 时趋于 σ。在短时间内观察相关时间较长的序列时,它比位置的样本 SD 更稳定地读出 σ)。</p>
+<p>返回 dict:<code style="color:#22d3bf">theta</code>, <code style="color:#22d3bf">sigma</code>, <code style="color:#22d3bf">sd</code>(平稳 SD σ/√(2θ))、<code style="color:#22d3bf">phi</code>, <code style="color:#22d3bf">q</code>, <code style="color:#22d3bf">n</code>(增量个数)、<code style="color:#22d3bf">se_theta</code>, <code style="color:#22d3bf">se_sigma</code>, <code style="color:#22d3bf">sigma_increment</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>:不是 1-D、少于 3 个点、非有限,dt ≤ 0,φ̂ ∉ (0, 1)(在此 dt 下看起来不是均值回复过程)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

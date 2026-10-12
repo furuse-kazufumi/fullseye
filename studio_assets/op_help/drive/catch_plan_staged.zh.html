@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code>(要直接调用实现,<code style="color:#22d3bf">import kendama; kendama.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;catch_plan_staged&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>显式分阶段的接球控制(大皿、小皿、中皿、蜡烛使用同一计划：皿的朝向取自 kp 中招式的姿态)。返回 <code style="color:#22d3bf">plan(t, p, v, cup_state) → dict</code>(<code style="color:#22d3bf">kendama_simulate</code> 的 <code style="color:#22d3bf">catch_plan</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>段階(人のコツ「膝で真上に引き上げ、糸が弛んでから皿を玉の真下へ水平に運び、着地で下げて衝撃を吸う(すくいに行かず待つ)」を写す):</p>
-<p style="margin:2px 0 2px 12px">0. <b>lift / wait</b>(<code style="color:#22d3bf">kendama_simulate</code> 側): 振り上げの間と、弛む前は計画を呼ばない = 弛んでから動かす。</p>
-<p style="margin:2px 0 2px 12px">1. <b>hold</b>: 玉の下端がけん玉のいちばん高い所(手元 + kp[&quot;top_offset&quot;]、+ <code style="color:#22d3bf">margin</code>)より上に出るまで皿を動かさない(けんは玉を押せないので、昇ってくる玉にけんを寄せない。玉がそこまで昇らない軌道なら hold のまま = 捕らない)。</p>
-<p style="margin:2px 0 2px 12px">2. <b>carry</b>: 皿を今の高さのまま<b>水平に</b>、玉が縁に乗る点の真下へ運ぶ: 玉の中心が「皿の中心 + h_c·軸」に下りてくる時刻 τ (z(τ) = 皿の高さ + h_c·a_z の遅い根 = 頂点を過ぎて下降中)の玉の xy から h_c·(a_x, a_y) を引いた点。</p>
-<p style="margin:2px 0 2px 12px">3. <b>absorb</b>: 着地の <code style="color:#22d3bf">absorb_time</code>(既定 √(absorb_depth / a_max) = bang-bang で下げる動きの折り返しの時間)前から、目標を <code style="color:#22d3bf">absorb_depth</code> 下げる: 着地の瞬間に皿が下向きに最高速 √(a_max·absorb_depth)(20 m/s²・2 cm で 0.63 m/s)で動いている = 相対速さを減らす。absorb_time を長く取ると皿は着地の前に下がり切って止まり、玉はその分深く落ちて速くなる(0.06 s で 4 技とも縁で弾かれた —— 測って退けた)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;target&quot; (皿の中心の目標), &quot;stage&quot;, &quot;landing&quot; (玉が縁に乗る点の真下の皿の中心), &quot;t_land&quot;, &quot;wait&quot; (hold の残り), &quot;feasible&quot;, &quot;apex&quot;, &quot;travel&quot;}</code>。頂点が縁に乗る高さに届かない軌道は <code style="color:#22d3bf">feasible=False</code> で hold。制限(正直に): 皿の姿勢は技ごとに固定(手首を回して玉を迎えない)、抗力は予測に入れない(毎回知覚からやり直す)。</p>
-<p>空の入力(<code style="color:#22d3bf">kp</code> が空の dict)は ValueError。</p>
+<p>分阶段(模仿人的诀窍&quot;用膝盖向正上方提起,绳松弛后将皿水平移到球的正下方,着落时下降以吸收冲击(不去舀,而是等待)&quot;):</p>
+<p style="margin:2px 0 2px 12px">0. <b>lift / wait</b>(<code style="color:#22d3bf">kendama_simulate</code> 一侧): 在甩起期间和松弛之前不调用计划 = 松弛后才动。</p>
+<p style="margin:2px 0 2px 12px">1. <b>hold</b>: 在球下端高出剑玉最高处(手部 + kp[&quot;top_offset&quot;],+ <code style="color:#22d3bf">margin</code>)之前不移动皿(剑不能推球,所以不让剑靠近正在上升的球。若轨道中球升不到那里,则保持 hold = 不接)。</p>
+<p style="margin:2px 0 2px 12px">2. <b>carry</b>: 保持皿当前高度,<b>水平地</b> 将其移到球落在边缘上的点的正下方: 取球中心下落到&quot;皿中心 + h_c·轴&quot;的时刻 τ (z(τ) = 皿高度 + h_c·a_z 的较晚的根 = 过了顶点正在下降)的球 xy 减去 h_c·(a_x, a_y) 得到的点。</p>
+<p style="margin:2px 0 2px 12px">3. <b>absorb</b>: 从着落前 <code style="color:#22d3bf">absorb_time</code>(默认 √(absorb_depth / a_max) = bang-bang 下降动作的折返时间)开始,将目标下降 <code style="color:#22d3bf">absorb_depth</code>: 着落瞬间皿正以最高速度 √(a_max·absorb_depth)(20 m/s²、2 cm 时为 0.63 m/s)向下运动 = 减小相对速度。若 absorb_time 取得过长,皿会在着落前降到底并停下,球相应地落得更深、速度更快(0.06 s 时 4 个技巧都在边缘被弹开 —— 经测量后弃用)。</p>
+<p>返回值 <code style="color:#22d3bf">{&quot;target&quot; (皿の中心の目標), &quot;stage&quot;, &quot;landing&quot; (玉が縁に乗る点の真下の皿の中心), &quot;t_land&quot;, &quot;wait&quot; (hold の残り), &quot;feasible&quot;, &quot;apex&quot;, &quot;travel&quot;}</code>。顶点达不到落在边缘上的高度的轨道以 <code style="color:#22d3bf">feasible=False</code> 保持 hold。限制(如实说明): 皿的姿态按技巧固定(不转动手腕去迎球),预测中不计阻力(每次都从感知重新开始)。</p>
+<p>空输入(<code style="color:#22d3bf">kp</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

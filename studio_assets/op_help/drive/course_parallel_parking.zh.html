@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_parallel_parking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>侧方停车：在宽 <code style="color:#22d3bf">road_width</code> 的道路(x ∈ [0, 2·approach + bay_length])路侧设长 car_length + extra(默认 7.5 m)× 宽 car_width 的车位。<b>法规中无数值(通知的附件为图)</b> —— 默认值为惯例值。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>左側通行に合わせ <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y)が既定、<code style="color:#22d3bf">&quot;right&quot;</code> で鏡映。<code style="color:#22d3bf">bay</code> = (x0, x1, y0, y1)。面積 = 道路 + 車室(すみ切りなし)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 寸法が正でない、extra &lt; 0、side が left/right でない。</p>
+<p>按左侧通行,默认 <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y),<code style="color:#22d3bf">&quot;right&quot;</code> 为镜像。<code style="color:#22d3bf">bay</code> = (x0, x1, y0, y1)。面积 = 道路 + 车位(无切角)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 尺寸非正、extra &lt; 0、side 不是 left/right。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

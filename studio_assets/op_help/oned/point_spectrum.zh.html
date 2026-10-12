@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">positions</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.point_spectrum(positions, extent=None, n_freq=2048, f_max=None, method=&#x27;direct&#x27;, weights=None, bins_per_period=8)</code>(要直接调用实现,<code style="color:#22d3bf">import dsp; dsp.point_spectrum(positions, extent=None, n_freq=2048, f_max=None, method=&#x27;direct&#x27;, weights=None, bins_per_period=8)</code>;从台账取用则 <code style="color:#22d3bf">ops1d.get(&quot;point_spectrum&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Periodogram of <b>event positions</b> — defects, impacts, counts, arrivals.</p>
+<p><b>事件位置</b>的周期图——缺陷、冲击、计数、到达。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">spectrum</code> needs an evenly sampled signal, but a great deal of industrial data arrives as a *list of positions*: where each defect was on the web, when each particle was counted, at what angle each dent sits. The usual workaround is to histogram the positions and FFT the histogram, which works but hides two choices — bin width and record length — that decide the answer. This operator makes both explicit and returns them.</p>
 <p>*method* picks the estimator:</p>
 <p><code style="color:#22d3bf">&quot;direct&quot;</code></p>

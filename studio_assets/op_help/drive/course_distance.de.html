@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveterrain; driveterrain.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Abstand von Punkten (N, 2) zum Kurs (Vereinigung der befahrbaren Polygone) und der vom nächstgelegenen Punkt nach außen zeigende Einheitsvektor.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">{&quot;d&quot; (N,), &quot;nx&quot; (N,), &quot;ny&quot; (N,)}</code>。内側は d = 0、n = 0。外側の d は最寄りの辺への点-線分距離の閉形式で、中心軸(最寄り点が 2 つある所)を除いて |∇d| = 1(eikonal)。</p>
-<p>空の入力(<code style="color:#22d3bf">course</code> が空の dict)は ValueError。</p>
+<p><code style="color:#22d3bf">{&quot;d&quot; (N,), &quot;nx&quot; (N,), &quot;ny&quot; (N,)}</code>. Innen d = 0, n = 0. Außen ist d der geschlossene Punkt-Strecken-Abstand zur nächsten Kante; außer auf der Mittelachse (wo es zwei nächste Punkte gibt) gilt |∇d| = 1 (eikonal).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">course</code> ist ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

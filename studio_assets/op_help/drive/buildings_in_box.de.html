@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.buildings_in_box(parsed: &#x27;dict[str, Any]&#x27;, xmin: &#x27;float&#x27;, xmax: &#x27;float&#x27;, ymin: &#x27;float&#x27;, ymax: &#x27;float&#x27;) -&gt; &#x27;list[dict[str, Any]]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveplateau; driveplateau.buildings_in_box(parsed: &#x27;dict[str, Any]&#x27;, xmin: &#x27;float&#x27;, xmax: &#x27;float&#x27;, ymin: &#x27;float&#x27;, ymax: &#x27;float&#x27;) -&gt; &#x27;list[dict[str, Any]]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;buildings_in_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt nur die Gebäude zurück, deren Schwerpunkt (Mittel der Grundrissvertices) in der Box [xmin,xmax]×[ymin,ymax] liegt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
-<p>parsed: <code style="color:#22d3bf">plateau_parse</code> の返り値。xmin, xmax, ymin, ymax: 局所座標の箱 [m] (両端を含む)。</p>
+<p>parsed: Rückgabewert von <code style="color:#22d3bf">plateau_parse</code>. xmin, xmax, ymin, ymax: Box in lokalen Koordinaten [m] (beide Enden eingeschlossen).</p>
 <p>Raises:</p>
-<p>ValueError: parsed に <code style="color:#22d3bf">buildings</code> が無い、xmin &gt; xmax または ymin &gt; ymax。</p>
+<p>ValueError: parsed hat keine <code style="color:#22d3bf">buildings</code>, xmin &gt; xmax oder ymin &gt; ymax.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

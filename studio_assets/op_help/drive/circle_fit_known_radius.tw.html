@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.circle_fit_known_radius(points, r: &#x27;float&#x27;, iters: &#x27;int&#x27; = 30) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.circle_fit_known_radius(points, r: &#x27;float&#x27;, iters: &#x27;int&#x27; = 30) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;circle_fit_known_radius&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將已知半徑 r 的圓擬合到 2-D 點列 (row, col)(僅以 Gauss-Newton 求解圓心；部分圓弧亦穩定)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">measure.fit_circle</code>(代数的、半径も未知)と同じ入出力の規約(<code style="color:#22d3bf">cy</code>・<code style="color:#22d3bf">cx</code>・<code style="color:#22d3bf">rms</code>)。ペグの断面のように半径が図面で分かっている対象は、半径を固定したほうが短い弧でも中心が決まる(自由な当てはめは弧が短いと半径と中心が相殺する)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 点が 2 つ未満、非有限、r ≤ 0。</p>
+<p>與 <code style="color:#22d3bf">measure.fit_circle</code>(代數式,半徑也未知)相同的輸入輸出約定(<code style="color:#22d3bf">cy</code>、<code style="color:#22d3bf">cx</code>、<code style="color:#22d3bf">rms</code>)。像插銷截面這種半徑可由圖面得知的對象,固定半徑後即使是短弧也能決定中心(自由擬合在弧短時半徑與中心會互相抵消)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 點少於 2 個、非有限、r ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

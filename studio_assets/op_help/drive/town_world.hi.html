@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetown; drivetown.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;town_world&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">driveworld.world_build</code> का पतला wrapper (<code style="color:#22d3bf">props</code> और बाकी arguments जैसे के तैसे देता है), जो stop lines, signals और railway crossings की स्थितियों की table <code style="color:#22d3bf">world[&quot;town&quot;]</code> के रूप में जोड़ता है, और हर crossing element पर <b>gate वाले 2 warning signals, gate arms (ऊपर उठे), crossing के तख्ते और train (दूर प्रतीक्षा में)</b> रखता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">world[&quot;town&quot;] = {&quot;stop_lines&quot;: [(x, y, yaw, kind)], &quot;signals&quot;: [(x, y, yaw, kind)], &quot;crossings&quot;: [(x0, y0, x1, y1, s0, s1)], &quot;gear&quot;: [踏切ごとの設備の索引 dict], &quot;total_length&quot;}</code>(signals は交差点の 4 基全部、yaw = 灯器が向く向き。stop_lines は</p>
-<p>左側通行の物)。設備の状態は <code style="color:#22d3bf">town_crossing_state</code> で時刻ごとに書き換える。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: layout が town_chain の物でない(world_build の例外はそのまま)。</p>
+<p><code style="color:#22d3bf">world[&quot;town&quot;] = {&quot;stop_lines&quot;: [(x, y, yaw, kind)], &quot;signals&quot;: [(x, y, yaw, kind)], &quot;crossings&quot;: [(x0, y0, x1, y1, s0, s1)], &quot;gear&quot;: [踏切ごとの設備の索引 dict], &quot;total_length&quot;}</code> (signals चौराहे के सभी 4, yaw = सिग्नल-शीर्ष जिस ओर है। stop_lines बाईं ओर यातायात वाली)। उपकरणों की अवस्था <code style="color:#22d3bf">town_crossing_state</code> द्वारा प्रत्येक समय पर पुनः लिखी जाती है।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: layout town_chain का नहीं (world_build के अपवाद ज्यों के त्यों)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

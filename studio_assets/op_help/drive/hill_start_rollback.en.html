@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hill_start_rollback(theta: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, c_rr: &#x27;float&#x27; = 0.012, a_creep: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelong; drivelong.hill_start_rollback(theta: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, c_rr: &#x27;float&#x27; = 0.012, a_creep: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;hill_start_rollback&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Rollback of a car stopped on an uphill (θ &gt; 0) that releases the brake and gets drive a_drive after τ seconds (closed form without air resistance).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>τ の間の下向きの加速度 a₁ = g sin θ − c_rr g cos θ − a_creep(≤ 0 ならずり下がらない)。距離 ½ a₁ τ²、速さ a₁ τ。駆動が入ると後ろ向きの動きを a₂ = a_drive − g sin θ + c_rr g cos θ で止める(転がり抵抗も動きに逆らう)→ (a₁ τ)²/(2 a₂)。</p>
+<p>Downward acceleration during τ: a₁ = g sin θ − c_rr g cos θ − a_creep (no rollback if ≤ 0). Distance ½ a₁ τ², speed a₁ τ. Once drive engages, the backward motion is stopped by a₂ = a_drive − g sin θ + c_rr g cos θ (rolling resistance also opposes the motion) → (a₁ τ)²/(2 a₂).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : <code style="color:#22d3bf">rollback</code>(合計 [m])、<code style="color:#22d3bf">during_gap</code>(½ a₁ τ²)、<code style="color:#22d3bf">recovery</code>((a₁τ)²/(2a₂))、<code style="color:#22d3bf">a1</code>、<code style="color:#22d3bf">a2</code>、<code style="color:#22d3bf">v_back</code>。</p>
-<p>a₂ ≤ 0(駆動が坂に負ける)なら rollback = inf。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: τ &lt; 0、a_drive ≤ 0、非有限。</p>
+<p>dict : <code style="color:#22d3bf">rollback</code> (total [m]), <code style="color:#22d3bf">during_gap</code> (½ a₁ τ²), <code style="color:#22d3bf">recovery</code> ((a₁τ)²/(2a₂)), <code style="color:#22d3bf">a1</code>, <code style="color:#22d3bf">a2</code>, <code style="color:#22d3bf">v_back</code>.</p>
+<p>If a₂ ≤ 0 (drive loses to the slope), rollback = inf.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: τ &lt; 0, a_drive ≤ 0, non-finite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

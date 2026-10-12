@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;mirror_virtual_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>समतल दर्पण में दिखने वाली image लेने वाला <b>virtual camera</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">cam_pose</code> は world→camera の 4×4(<code style="color:#22d3bf">render3d.look_at</code> の規約: X_cam = P X、−Z 前方)。<code style="color:#22d3bf">mirror_plane</code> は(n_x, n_y, n_z, d)(n·X = d)。</p>
-<p>返り値(dict):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: 折り返し S(<code style="color:#22d3bf">mirror_reflection_matrix</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_mirrored</code> = P·S: 実物の場面をこれで写すと、実カメラが <b>鏡越しに見る像そのもの</b>(画素の位置まで同じ)。回転部の行列式は −1(左右が反転した座標系。描画器によっては面の表裏の判定が逆になる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose</code> = F·P·S、F = diag(−1, 1, 1, 1): 普通の右手系のカメラ(行列式 +1)= 鏡の向こうにいる仮想カメラ。これで撮った画像は鏡に映る像の <b>左右反転</b>(画素では u&#x27; = 2c_x − u)。バックミラーを「後ろ向きのカメラ」として扱うときはこちら(運転者が見る像に戻すには左右を反転する)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eye</code>: 仮想カメラの位置 S(C)(C = 実カメラの位置)。<code style="color:#22d3bf">eye_real</code>: C。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flip</code>: <code style="color:#22d3bf">&quot;x&quot;</code>(<code style="color:#22d3bf">pose</code> の画像は x を反転すると鏡像になる)。</p>
-<p>閉形式: S(X) = X − 2(n·X − d)n。鏡に映る点 Q の像の位置は S(Q)(鏡の向こう側、鏡面から同じ距離)。門(テスト): 入射角 = 反射角を満たす鏡面上の点 M を数値で解き(Fermat の最短経路)、C + (|CM| + |MQ|)·unit(M − C) が S(Q) と一致すること。</p>
+<p><code style="color:#22d3bf">cam_pose</code> world→camera का 4×4 है (<code style="color:#22d3bf">render3d.look_at</code> की परिपाटी: X_cam = P X, −Z आगे)। <code style="color:#22d3bf">mirror_plane</code> (n_x, n_y, n_z, d) है (n·X = d)।</p>
+<p>लौटाया गया मान (dict):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: परावर्तन S (<code style="color:#22d3bf">mirror_reflection_matrix</code>)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_mirrored</code> = P·S: इससे वास्तविक दृश्य को रेंडर करने पर वास्तविक कैमरा <b>दर्पण के पार जो प्रतिबिंब देखता है, ठीक वही</b> मिलता है (पिक्सेल स्थिति तक समान)। घूर्णन भाग का सारणिक −1 है (बाएँ-दाएँ उलटा निर्देशांक तंत्र; कुछ रेंडररों में सतह के आगे-पीछे का निर्धारण उलट जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose</code> = F·P·S, F = diag(−1, 1, 1, 1): सामान्य दक्षिणहस्त कैमरा (सारणिक +1) = दर्पण के उस पार स्थित आभासी कैमरा। इससे लिया गया चित्र दर्पण में दिखने वाले प्रतिबिंब का <b>बाएँ-दाएँ उलटा रूप</b> है (पिक्सेल में u&#x27; = 2c_x − u)। रियर-व्यू मिरर को &quot;पीछे की ओर देखने वाले कैमरे&quot; के रूप में बरतते समय इसका उपयोग करें (चालक को दिखने वाले प्रतिबिंब पर लौटने के लिए बाएँ-दाएँ उलटें)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eye</code>: आभासी कैमरे की स्थिति S(C) (C = वास्तविक कैमरे की स्थिति)। <code style="color:#22d3bf">eye_real</code>: C।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flip</code>: <code style="color:#22d3bf">&quot;x&quot;</code> (<code style="color:#22d3bf">pose</code> के चित्र में x उलटने पर दर्पण-प्रतिबिंब बनता है)।</p>
+<p>संवृत रूप: S(X) = X − 2(n·X − d)n। दर्पण में दिखने वाले बिंदु Q के प्रतिबिंब की स्थिति S(Q) है (दर्पण के उस पार, दर्पण-सतह से समान दूरी पर)। गेट (परीक्षण): दर्पण पर वह बिंदु M संख्यात्मक रूप से हल किया जाता है जो आपतन कोण = परावर्तन कोण को संतुष्ट करता है (Fermat का न्यूनतम पथ), और जाँचा जाता है कि C + (|CM| + |MQ|)·unit(M − C) S(Q) से मेल खाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_render_rgb(normals, lights, albedo: &#x27;float&#x27; = 1.0, ambient: &#x27;float&#x27; = 0.03, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacsim; tacsim.membrane_render_rgb(normals, lights, albedo: &#x27;float&#x27; = 1.0, ambient: &#x27;float&#x27; = 0.03, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;membrane_render_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Normal field (H, W, 3) + lights (3, 3) → visuotactile-sensor-like RGB (H, W, 3) float. Channel k = Lambertian image of light k, albedo·(max(N·L_k, 0) + ambient) (<code style="color:#22d3bf">photometric.render_lambertian</code> 3 times, 2nd implementation). If <code style="color:#22d3bf">noise</code> &gt; 0, normally distributed noise is added.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: normals が (H, W, 3) でない、lights が (3, 3) でない、noise &lt; 0。</p>
-<p>空の入力(<code style="color:#22d3bf">normals</code> が 0 要素)は ValueError。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: normals is not (H, W, 3), lights is not (3, 3), noise &lt; 0.</p>
+<p>Empty input (<code style="color:#22d3bf">normals</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

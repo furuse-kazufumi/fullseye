@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bekker_pressure(sinkage, width, soil) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import roverslip; roverslip.bekker_pressure(sinkage, width, soil) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;bekker_pressure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bekker-Druck-Einsinkung <code style="color:#22d3bf">p = (k_c / b + k_φ) zⁿ</code> [kPa]. <code style="color:#22d3bf">sinkage</code> [m] ist ein Skalar oder ein Array (≥ 0), <code style="color:#22d3bf">width</code> = b [m].</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>返りは <code style="color:#22d3bf">sinkage</code> と同じ形の配列(スカラーなら 0 次元)。z = 0 で 0、z について単調に増える。</p>
+<p>Rückgabe ist ein Array derselben Form wie <code style="color:#22d3bf">sinkage</code> (bei einem Skalar 0-dimensional). 0 bei z = 0, monoton steigend in z.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

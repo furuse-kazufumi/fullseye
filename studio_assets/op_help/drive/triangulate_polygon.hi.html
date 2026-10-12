@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveplateau; driveplateau.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>simple polygon (convex या concave, self-intersection के बिना) को ear clipping से triangles में बाँटता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返す三角形は入力頂点の添字 (k-2, 3) で、各三角形は反時計回り(入力が時計回りなら内部で反転して扱い、添字は元の頂点番号で返す)。</p>
+<p>लौटाए गए त्रिभुज इनपुट शीर्षों के सूचकांक (k-2, 3) हैं, और प्रत्येक त्रिभुज वामावर्त है (इनपुट दक्षिणावर्त हो तो आंतरिक रूप से उलटकर संभाला जाता है, और सूचकांक मूल शीर्ष क्रमांकों के रूप में लौटाए जाते हैं)।</p>
 <p>Args:</p>
-<p>poly: (k,2) 頂点列。閉じていなくてよい。</p>
+<p>poly: (k,2) शीर्षों का क्रम। बंद होना आवश्यक नहीं।</p>
 <p>Returns:</p>
-<p>(k-2, 3) int64 配列。</p>
+<p>(k-2, 3) int64 ऐरे।</p>
 <p>Raises:</p>
-<p>ValueError: 頂点が 3 未満、面積がほぼ 0、耳が見つからない(自己交差や重複点の疑い)。</p>
+<p>ValueError: शीर्ष 3 से कम, क्षेत्रफल लगभग 0, कान नहीं मिला (स्व-प्रतिच्छेदन या दोहरे बिंदुओं का संदेह)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

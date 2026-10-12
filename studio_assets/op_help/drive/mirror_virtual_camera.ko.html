@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;mirror_virtual_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평면 거울에 비친 상을 찍는 <b>가상 카메라</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">cam_pose</code> は world→camera の 4×4(<code style="color:#22d3bf">render3d.look_at</code> の規約: X_cam = P X、−Z 前方)。<code style="color:#22d3bf">mirror_plane</code> は(n_x, n_y, n_z, d)(n·X = d)。</p>
-<p>返り値(dict):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: 折り返し S(<code style="color:#22d3bf">mirror_reflection_matrix</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_mirrored</code> = P·S: 実物の場面をこれで写すと、実カメラが <b>鏡越しに見る像そのもの</b>(画素の位置まで同じ)。回転部の行列式は −1(左右が反転した座標系。描画器によっては面の表裏の判定が逆になる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose</code> = F·P·S、F = diag(−1, 1, 1, 1): 普通の右手系のカメラ(行列式 +1)= 鏡の向こうにいる仮想カメラ。これで撮った画像は鏡に映る像の <b>左右反転</b>(画素では u&#x27; = 2c_x − u)。バックミラーを「後ろ向きのカメラ」として扱うときはこちら(運転者が見る像に戻すには左右を反転する)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eye</code>: 仮想カメラの位置 S(C)(C = 実カメラの位置)。<code style="color:#22d3bf">eye_real</code>: C。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flip</code>: <code style="color:#22d3bf">&quot;x&quot;</code>(<code style="color:#22d3bf">pose</code> の画像は x を反転すると鏡像になる)。</p>
-<p>閉形式: S(X) = X − 2(n·X − d)n。鏡に映る点 Q の像の位置は S(Q)(鏡の向こう側、鏡面から同じ距離)。門(テスト): 入射角 = 反射角を満たす鏡面上の点 M を数値で解き(Fermat の最短経路)、C + (|CM| + |MQ|)·unit(M − C) が S(Q) と一致すること。</p>
+<p><code style="color:#22d3bf">cam_pose</code> 는 world→camera 의 4×4(<code style="color:#22d3bf">render3d.look_at</code> 의 규약: X_cam = P X, −Z 가 앞). <code style="color:#22d3bf">mirror_plane</code> 은(n_x, n_y, n_z, d)(n·X = d).</p>
+<p>반환값(dict):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: 반사 S(<code style="color:#22d3bf">mirror_reflection_matrix</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_mirrored</code> = P·S: 실제 장면을 이것으로 찍으면 실제 카메라가 <b>거울 너머로 보는 상 그 자체</b>(픽셀 위치까지 같음). 회전부의 행렬식은 −1(좌우가 반전된 좌표계. 렌더러에 따라 면의 앞뒤 판정이 반대가 됨).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose</code> = F·P·S, F = diag(−1, 1, 1, 1): 보통의 오른손 좌표계 카메라(행렬식 +1) = 거울 너머에 있는 가상 카메라. 이것으로 찍은 영상은 거울에 비친 상의 <b>좌우 반전</b>(픽셀로는 u&#x27; = 2c_x − u). 백미러를 &quot;뒤를 향한 카메라&quot;로다룰 때는 이쪽(운전자가 보는 상으로 되돌리려면 좌우를 반전한다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eye</code>: 가상 카메라의 위치 S(C)(C = 실제 카메라의 위치). <code style="color:#22d3bf">eye_real</code>: C.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flip</code>: <code style="color:#22d3bf">&quot;x&quot;</code>(<code style="color:#22d3bf">pose</code> 의 영상은 x 를 반전하면 거울상이 됨).</p>
+<p>닫힌 형식: S(X) = X − 2(n·X − d)n. 거울에 비친 점 Q 의 상의 위치는 S(Q)(거울 반대편, 거울면에서 같은 거리). 게이트(테스트): 입사각 = 반사각을 만족하는 거울면 위의 점 M 을 수치로 풀고(Fermat 의 최단 경로), C + (|CM| + |MQ|)·unit(M − C) 가 S(Q) 와 일치하는지 확인.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

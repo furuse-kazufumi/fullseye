@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivedecide; drivedecide.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;tdoa_bearing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 2 个麦克风(左 = +y，右 = −y，间距 <code style="color:#22d3bf">mic_spacing</code>)的到达时间差求声源方位(远场近似)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Δt = t_右 − t_左(左に先に着けば正)、 sin θ = c Δt / d、θ = 前方からの角(左が正)</p>
-<p>Δt は相互相関 Σ right[n] left[n − k] の最大(周波数領域で 0 を詰めて <code style="color:#22d3bf">upsample</code> 倍に補間し、さらに放物線)。探す範囲は物理的にありうる |Δt| ≤ d/c に限る。前後(θ と π − θ)は区別できない。</p>
-<p>返り値: <code style="color:#22d3bf">delay</code>(秒)、<code style="color:#22d3bf">bearing_rad</code> / <code style="color:#22d3bf">bearing_deg</code>、<code style="color:#22d3bf">sin_theta</code>(クリップ前)、<code style="color:#22d3bf">ambiguous</code> (主な周波数 f_peak で d &gt; c/(2 f_peak) なら True = 相関の山が 1/f ごとに並び範囲内に 2 つ入りうる)、<code style="color:#22d3bf">f_peak</code>。</p>
+<p>Δt = t_右 − t_左(先到达左侧为正),sin θ = c Δt / d,θ = 相对前方的角度(左为正)</p>
+<p>Δt 是互相关 Σ right[n] left[n − k] 的最大值(在频域补 0 并以 <code style="color:#22d3bf">upsample</code> 倍插值,再做抛物线拟合)。搜索范围限于物理上可能的 |Δt| ≤ d/c。前后(θ 与 π − θ)无法区分。</p>
+<p>返回值: <code style="color:#22d3bf">delay</code>(秒)、<code style="color:#22d3bf">bearing_rad</code> / <code style="color:#22d3bf">bearing_deg</code>、<code style="color:#22d3bf">sin_theta</code>(裁剪前)、<code style="color:#22d3bf">ambiguous</code> (在主频率 f_peak 下若 d &gt; c/(2 f_peak) 则为 True = 相关峰每隔 1/f 排列,范围内可能出现 2 个)、<code style="color:#22d3bf">f_peak</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

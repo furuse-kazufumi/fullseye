@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_world_to_cv(cam_xmat, cam_xpos) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pegsim; pegsim.camera_world_to_cv(cam_xmat, cam_xpos) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;camera_world_to_cv&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>MuJoCo camera pose (<code style="color:#22d3bf">d.cam_xmat</code> 3×3 = world में camera axes, <code style="color:#22d3bf">d.cam_xpos</code>) को OpenCV / Fullseye extrinsic parameters में बदलता है: X_cv = R X_w + t, R = diag(1, −1, −1) Rwcᵀ, t = −R p (MuJoCo −Z की ओर देखता है और +Y ऊपर है, OpenCV में +Z आगे और +Y नीचे)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返り: <code style="color:#22d3bf">R</code>(3×3)、<code style="color:#22d3bf">t</code>(3,)、<code style="color:#22d3bf">R_cam_to_world</code> = Rᵀ。numpy だけ(mujoco 不要)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形が違う、R が回転でない。</p>
+<p>रिटर्न: <code style="color:#22d3bf">R</code> (3×3), <code style="color:#22d3bf">t</code> (3,), <code style="color:#22d3bf">R_cam_to_world</code> = Rᵀ। केवल numpy (mujoco आवश्यक नहीं)। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: आकार भिन्न है, R घूर्णन नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

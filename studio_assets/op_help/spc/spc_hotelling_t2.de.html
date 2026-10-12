@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;spc_hotelling_t2&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Multivariate SPC by Hotelling&#x27;s T² with an F-distributed control limit.</p>
+<p>Multivariate SPC mit Hotellings T² und F-verteilter Regelgrenze.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">data</code> is a 2-D array of shape <code style="color:#22d3bf">(m, p)</code> — <code style="color:#22d3bf">m</code> observations of <code style="color:#22d3bf">p</code> correlated features. With the sample mean vector <code style="color:#22d3bf">mu</code> and covariance <code style="color:#22d3bf">S</code> (unless passed in explicitly), each row&#x27;s statistic is::</p>
 <p>T^2_i = (x_i - mu)&#x27; S^-1 (x_i - mu)</p>
 <p>charted against the phase-II control limit::</p>

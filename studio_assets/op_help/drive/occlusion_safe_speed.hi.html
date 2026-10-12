@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_safe_speed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>दिखने के क्षण से दूरी d के भीतर रुक सकने वाली अधिकतम गति v = b(−ρ + sqrt(ρ² + 2d/b))।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>v ρ + v²/(2b) = d(空走 + 制動。<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code> と同じ式)を v について解いた正の根。桁落ちを避けて v = 2d / (ρ + sqrt(ρ² + 2d/b)) で計算する(ρ = 0 で sqrt(2 b d))。d は配列でもよい。d ≤ 0 なら 0(見えた時には既に間に合わない)。</p>
-<p>門: <code style="color:#22d3bf">rss_stopping_distance(v, ρ, 0, b)</code> == d(第 2 実装、rtol 1e-12)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: reaction &lt; 0、brake ≤ 0、d が非有限(inf は許して inf を返す)。</p>
-<p>空の入力(<code style="color:#22d3bf">d</code> が 0 要素)は ValueError。</p>
+<p>v ρ + v²/(2b) = d (प्रतिक्रिया-दूरी + ब्रेकिंग; <code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code> जैसा ही सूत्र) को v के लिए हल करने पर धनात्मक मूल। अंक-लोप से बचने के लिए v = 2d / (ρ + sqrt(ρ² + 2d/b)) से गणना की जाती है (ρ = 0 पर sqrt(2 b d))। d सरणी भी हो सकता है। d ≤ 0 हो तो 0 (दिखने तक पहले ही देर हो चुकी)।</p>
+<p>गेट: <code style="color:#22d3bf">rss_stopping_distance(v, ρ, 0, b)</code> == d (दूसरा कार्यान्वयन, rtol 1e-12)।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: reaction &lt; 0, brake ≤ 0, d अपरिमित (inf स्वीकार्य है और inf लौटाता है)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">d</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × points × table</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illumination_visibility(scene, points, light) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.illumination_visibility(scene, points, light) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;illumination_visibility&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>從各點看到的<b>發光點可見比例</b> <a style="color:#22d3bf" href="即落影">0, 1</a>。</p>
+<p>從各點看到的<b>發光點可見比例</b> [0, 1] (即落影)。</p>
 <p>逐點判定對所有發光點的遮擋並取平均。像背光那樣光源在零件背後的配置中為 0，輪廓得以凸顯。回傳值 (M,)。</p>
 <p>步驟：從各點 <code style="color:#22d3bf">p</code> 取指向各發光點 <code style="color:#22d3bf">e</code> 的單位方向 <code style="color:#22d3bf">d</code>，從 <code style="color:#22d3bf">p + 1e-4 d</code>(為了不再次碰到自身表面的 0.1 µm 偏移)發射光線。若在 <code style="color:#22d3bf">e</code> 之前碰到任一圖元即為「被遮擋」。可見率 = 未被遮擋的發光點數 / 發光點總數。<b>僅為幾何遮擋</b>，不計入發光點的朝向(<code style="color:#22d3bf">directions</code>)、強度、餘弦律、距離衰減(那些由 <code style="color:#22d3bf">render_optscene</code> 的著色側負責)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scene</code>：<code style="color:#22d3bf">scene_*</code> 的 dict 或其 list。為空則 <code style="color:#22d3bf">ValueError</code>。</p>

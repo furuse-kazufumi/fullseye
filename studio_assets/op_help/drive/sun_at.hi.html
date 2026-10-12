@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveenv; driveenv.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;sun_at&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>दिनांक-समय (timezone वाला datetime या Julian day) पर सूर्य की ऊँचाई और azimuth। सूत्र <code style="color:#22d3bf">geocam.sun_position</code> (NOAA के सूर्य-स्थिति सूत्र = Meeus &quot;Astronomical Algorithms&quot; अध्याय 25 का कम-precision रूप, NOAA का atmospheric refraction) से जैसे के तैसे लिए गए हैं, दिनांक-समय लेने का तरीका और पृथ्वी–सूर्य की दूरी जोड़ी गई है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : <code style="color:#22d3bf">elevation</code>(度、<code style="color:#22d3bf">refraction</code> なら大気差つきの見かけ)、<code style="color:#22d3bf">elevation_geometric</code>、<code style="color:#22d3bf">azimuth</code>(北から時計回り 度)、</p>
-<p><code style="color:#22d3bf">declination</code>、<code style="color:#22d3bf">eq_time</code>(均時差 分)、<code style="color:#22d3bf">hour_angle</code>(度)、<code style="color:#22d3bf">jd</code>、<code style="color:#22d3bf">distance_au</code>、<code style="color:#22d3bf">semidiameter</code>(度)。</p>
-<p>NOAA が述べる精度は、日の出入りの時刻で緯度 ±72° 以内 1 分以内(1800〜2100 年)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 素朴な datetime・範囲外の緯度経度。</p>
+<p>dict : <code style="color:#22d3bf">elevation</code> (डिग्री; <code style="color:#22d3bf">refraction</code> होने पर वायुमंडलीय अपवर्तन सहित आभासी उन्नतांश), <code style="color:#22d3bf">elevation_geometric</code>, <code style="color:#22d3bf">azimuth</code> (उत्तर से दक्षिणावर्त डिग्री),</p>
+<p><code style="color:#22d3bf">declination</code>, <code style="color:#22d3bf">eq_time</code> (समय-समीकरण, मिनट), <code style="color:#22d3bf">hour_angle</code> (डिग्री), <code style="color:#22d3bf">jd</code>, <code style="color:#22d3bf">distance_au</code>, <code style="color:#22d3bf">semidiameter</code> (डिग्री)।</p>
+<p>NOAA द्वारा बताई गई सटीकता: ±72° अक्षांश के भीतर सूर्योदय/सूर्यास्त के समय में 1 मिनट के भीतर (वर्ष 1800 से 2100)।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: naive datetime, सीमा से बाहर अक्षांश/देशांतर।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

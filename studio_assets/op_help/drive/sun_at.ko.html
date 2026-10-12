@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveenv; driveenv.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sun_at&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>일시(시간대가 있는 datetime 또는 율리우스일)의 태양 고도·방위. 식은 <code style="color:#22d3bf">geocam.sun_position</code>(NOAA 태양 위치 식 = Meeus &quot;Astronomical Algorithms&quot; 제25장의 저정밀도판, NOAA 대기 굴절)을 그대로 쓰고, 일시를 받는 방식과 지구–태양 거리를 추가합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : <code style="color:#22d3bf">elevation</code>(度、<code style="color:#22d3bf">refraction</code> なら大気差つきの見かけ)、<code style="color:#22d3bf">elevation_geometric</code>、<code style="color:#22d3bf">azimuth</code>(北から時計回り 度)、</p>
-<p><code style="color:#22d3bf">declination</code>、<code style="color:#22d3bf">eq_time</code>(均時差 分)、<code style="color:#22d3bf">hour_angle</code>(度)、<code style="color:#22d3bf">jd</code>、<code style="color:#22d3bf">distance_au</code>、<code style="color:#22d3bf">semidiameter</code>(度)。</p>
-<p>NOAA が述べる精度は、日の出入りの時刻で緯度 ±72° 以内 1 分以内(1800〜2100 年)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 素朴な datetime・範囲外の緯度経度。</p>
+<p>dict : <code style="color:#22d3bf">elevation</code>(도, <code style="color:#22d3bf">refraction</code> 이면 대기차를 포함한 겉보기 고도), <code style="color:#22d3bf">elevation_geometric</code>, <code style="color:#22d3bf">azimuth</code>(북에서 시계 방향 도),</p>
+<p><code style="color:#22d3bf">declination</code>, <code style="color:#22d3bf">eq_time</code>(균시차 분), <code style="color:#22d3bf">hour_angle</code>(도), <code style="color:#22d3bf">jd</code>, <code style="color:#22d3bf">distance_au</code>, <code style="color:#22d3bf">semidiameter</code>(도).</p>
+<p>NOAA 가 밝힌 정확도는 일출/일몰 시각에서 위도 ±72° 이내 1 분 이내(1800~2100 년).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: naive datetime, 범위 밖의 위도/경도.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

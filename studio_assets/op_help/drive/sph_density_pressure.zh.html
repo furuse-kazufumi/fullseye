@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import swarmflow; swarmflow.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;sph_density_pressure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点集的 SPH 密度 ρ_i = Σ_j m W(|x_i − x_j|, h)(包含自身)以及弱可压缩状态方程 p = c² (ρ − ρ₀)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>格子の間隔 Δ で m = ρ₀ Δ² に置けば、内側の点の ρ は ρ₀ に近い(h = 1.3Δ で 0.3 % 以内 —— 門で数える)。</p>
+<p>若以网格间距 Δ 取 m = ρ₀ Δ²,则内部点的 ρ 接近 ρ₀(h = 1.3Δ 时在 0.3 % 以内 —— 由门计数)。</p>
 <p>Args:</p>
-<p>points: (N, 2) の位置 [m]。</p>
-<p>h: 平滑化の長さ [m]。</p>
-<p>mass: 1 点の質量(群れでは 1 = 個体数の密度)。</p>
-<p>rho0: 静止の密度。</p>
-<p>c: 音速 [m/s] (圧力の硬さ)。</p>
-<p>box: 周期境界の箱 (Lx, Ly) か None。</p>
+<p>points: (N, 2) 位置 [m]。</p>
+<p>h: 光滑长度 [m]。</p>
+<p>mass: 一个点的质量(对群体而言 1 = 个体数密度)。</p>
+<p>rho0: 静止密度。</p>
+<p>c: 声速 [m/s] (压力的硬度)。</p>
+<p>box: 周期边界的盒子 (Lx, Ly) 或 None。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">rho</code> (N,)、<code style="color:#22d3bf">p</code> (N,)、<code style="color:#22d3bf">n_neighbors</code> (N,)(台の中の他の点の数)。</p>
+<p>dict: <code style="color:#22d3bf">rho</code> (N,)、<code style="color:#22d3bf">p</code> (N,)、<code style="color:#22d3bf">n_neighbors</code> (N,)(支撑域内其他点的数量)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecourse; drivecourse.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_parallel_parking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Längsparken: am Fahrbahnrand einer Straße der Breite <code style="color:#22d3bf">road_width</code> (x ∈ [0, 2·approach + bay_length]) eine Parkbucht der Länge car_length + extra (Standard 7.5 m) × Breite car_width. <b>Keine Zahlenwerte in den Vorschriften (die Anlage des Verwaltungsrundschreibens ist eine Zeichnung)</b> — der Standard ist ein üblicher Wert.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>左側通行に合わせ <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y)が既定、<code style="color:#22d3bf">&quot;right&quot;</code> で鏡映。<code style="color:#22d3bf">bay</code> = (x0, x1, y0, y1)。面積 = 道路 + 車室(すみ切りなし)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 寸法が正でない、extra &lt; 0、side が left/right でない。</p>
+<p>Gemäß Linksverkehr ist <code style="color:#22d3bf">side=&quot;left&quot;</code> (+y) der Standard, <code style="color:#22d3bf">&quot;right&quot;</code> spiegelt. <code style="color:#22d3bf">bay</code> = (x0, x1, y0, y1). Fläche = Straße + Stellplatz (ohne Eckabschrägung).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Abmessungen nicht positiv, extra &lt; 0, side ist nicht left/right.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

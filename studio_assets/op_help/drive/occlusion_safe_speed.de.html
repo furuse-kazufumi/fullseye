@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_safe_speed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Höchstgeschwindigkeit, mit der ab dem Moment der Sichtbarkeit innerhalb der Strecke d angehalten werden kann: v = b(−ρ + sqrt(ρ² + 2d/b)).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>v ρ + v²/(2b) = d(空走 + 制動。<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code> と同じ式)を v について解いた正の根。桁落ちを避けて v = 2d / (ρ + sqrt(ρ² + 2d/b)) で計算する(ρ = 0 で sqrt(2 b d))。d は配列でもよい。d ≤ 0 なら 0(見えた時には既に間に合わない)。</p>
-<p>門: <code style="color:#22d3bf">rss_stopping_distance(v, ρ, 0, b)</code> == d(第 2 実装、rtol 1e-12)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: reaction &lt; 0、brake ≤ 0、d が非有限(inf は許して inf を返す)。</p>
-<p>空の入力(<code style="color:#22d3bf">d</code> が 0 要素)は ValueError。</p>
+<p>Die positive Wurzel von v ρ + v²/(2b) = d (Reaktionsweg + Bremsweg; dieselbe Formel wie <code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code>), nach v aufgelöst. Um Auslöschung zu vermeiden, wird v = 2d / (ρ + sqrt(ρ² + 2d/b)) berechnet (bei ρ = 0 sqrt(2 b d)). d darf ein Array sein. Ist d ≤ 0, dann 0 (wenn es sichtbar wird, ist es bereits zu spät).</p>
+<p>Gate: <code style="color:#22d3bf">rss_stopping_distance(v, ρ, 0, b)</code> == d (zweite Implementierung, rtol 1e-12).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: reaction &lt; 0, brake ≤ 0, d nicht endlich (inf ist erlaubt und liefert inf).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">d</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

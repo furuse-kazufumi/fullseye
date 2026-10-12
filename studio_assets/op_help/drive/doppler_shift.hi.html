@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doppler_shift(f, v_source_radial, c: &#x27;float&#x27; = 343.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivedecide; drivedecide.doppler_shift(f, v_source_radial, c: &#x27;float&#x27; = 343.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;doppler_shift&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>स्रोत चलता है और सुनने वाला स्थिर है, तब सुनाई देने वाली frequency (closed form)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>f_obs = f · c / (c − v_r)</p>
-<p><code style="color:#22d3bf">v_source_radial</code> = 音源の <b>聞き手へ近づく向きの</b> 視線速度(近づけば正 → 高く聞こえる)。|v_r| &lt; c。配列も可。</p>
+<p><code style="color:#22d3bf">v_source_radial</code> = स्रोत का <b>श्रोता की ओर आने की दिशा में</b> दृष्टि-रेखा वेग (पास आने पर धनात्मक → ऊँचा सुनाई देता है)। |v_r| &lt; c। ऐरे भी स्वीकार्य।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

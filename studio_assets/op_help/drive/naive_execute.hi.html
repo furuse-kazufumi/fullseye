@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;naive_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>तुलना के लिए साधारण execution: plan के केवल <b>cells के क्रम</b> का उपयोग करता है और अगला cell खाली हो तो आगे बढ़ता है (क्रम का कोई समझौता नहीं)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>遅れが入ると、計画では時間差ですれ違うはずの 2 台が向かい合って止まる。返りは <code style="color:#22d3bf">adg_execute</code> と同じ形に <code style="color:#22d3bf">waits_for</code>(デッドロックの瞬間の「誰が誰を待つか」の辺)を足したもの。</p>
-<p>空の入力(<code style="color:#22d3bf">paths</code> が 0 件)は ValueError。</p>
+<p>देरी आने पर, योजना के अनुसार समय-अंतर से एक-दूसरे को पार करने वाले 2 वाहन आमने-सामने रुक जाते हैं। लौटाया गया मान <code style="color:#22d3bf">adg_execute</code> के समान रूप का है, साथ में <code style="color:#22d3bf">waits_for</code> (गतिरोध के क्षण में &quot;कौन किसकी प्रतीक्षा करता है&quot; के किनारे) जोड़ा गया है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">paths</code> में 0 प्रविष्टियाँ) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecourse; drivecourse.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;course_loop_bend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>loop course के सिरे पर अर्धवृत्त (बाईं ओर 180° घूमता है): प्रवेश (0, 0, 0) → centre (0, R) के चारों ओर घूमकर निकास (0, 2R, π)। polygon बाहरी arc (त्रिज्या R + w/2) और भीतरी arc (R − w/2) से घिरा आधा annulus है। क्षेत्रफल = π R w (closed form); arcs को polyline बनाने से उतना छोटा होता है, और arc_pts बढ़ाने पर converge करता है। मानक (loop course): चौड़ाई 8 m या अधिक, मोटे तौर पर अंडाकार।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ w/2(内側の弧が潰れる)、幅・半径が正でない、arc_pts が不正。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ w/2 (भीतरी चाप पिचक जाता है), चौड़ाई / त्रिज्या धनात्मक नहीं, arc_pts अमान्य।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

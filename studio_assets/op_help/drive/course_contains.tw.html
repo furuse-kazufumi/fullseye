@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_contains(course, xy)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecourse; drivecourse.course_contains(course, xy)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;course_contains&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以奇偶規則判定點是否位於<b>可行駛區域</b>(要素的多邊形；若為配置則為各要素之聯集)內側的 bool 陣列。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">xy</code> は <code style="color:#22d3bf">(N, 2)</code>(<code style="color:#22d3bf">(2,)</code> なら bool スカラ)。境界上の点は未定義。要素ごとに bounds で先に篩う。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: course が dict でない・polygon が無い・xy の形が悪い・非有限。</p>
+<p><code style="color:#22d3bf">xy</code> 為 <code style="color:#22d3bf">(N, 2)</code>(<code style="color:#22d3bf">(2,)</code> 則為 bool 純量)。邊界上的點未定義。逐元素先以 bounds 篩選。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: course 不是 dict、沒有 polygon、xy 形狀不正確、非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

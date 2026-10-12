@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import agvfleet; agvfleet.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_prioritized&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>帶優先級的規劃：依序每次 1 台，避開先確定車輛的通行路線(預約表)進行規劃。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>速いが<b>不完全</b> —— 解がある問題でも、優先順によっては(どの順でも)見つけられない(Ma ら 2019)。返りは dict: <code style="color:#22d3bf">paths</code>(失敗なら None)、<code style="color:#22d3bf">cost</code>、<code style="color:#22d3bf">solved</code>、<code style="color:#22d3bf">failed_agent</code>(最初に詰まった車両)。</p>
+<p>快速但<b>不完備</b> —— 即使問題有解,也可能因優先順序(無論哪種順序)而找不到(Ma 等 2019)。回傳 dict:<code style="color:#22d3bf">paths</code>(失敗時為 None)、<code style="color:#22d3bf">cost</code>、<code style="color:#22d3bf">solved</code>、<code style="color:#22d3bf">failed_agent</code>(最先卡住的車輛)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

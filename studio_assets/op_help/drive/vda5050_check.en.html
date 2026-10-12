@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vda5050_check(order)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.vda5050_check(order)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;vda5050_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Checks the <b>structural rules</b> of a VDA 5050 order (our own second (independent) implementation, separate from the official JSON schema).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>規則: 必須キー / ノードの sequenceId は 0 から偶数で連番、エッジは奇数で連番 / エッジ数 = ノード数 − 1 / 各エッジの始点・終点が前後のノード / released は base の先頭から連続(base → horizon の 1 回の切替のみ)/ エッジの released はその終点ノードと同じ。返りは違反の文言のリスト(空 = 合格)。</p>
-<p>空の入力(<code style="color:#22d3bf">order</code> が空の dict)は空を返す(理由: 検査器なので、空の order も検査の対象。足りない鍵の一覧が正しい答え)。</p>
+<p>Rules: required keys / node sequenceIds are consecutive even numbers from 0, edges consecutive odd numbers / number of edges = number of nodes − 1 / each edge&#x27;s start and end are the preceding and following nodes / released is contiguous from the start of base (only one switch from base → horizon) / an edge&#x27;s released equals that of its end node. Returns a list of violation messages (empty = pass).</p>
+<p>Empty input (<code style="color:#22d3bf">order</code> an empty dict) returns an empty result (reason: as a checker, an empty order is also subject to checking; the list of missing keys is the correct answer).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

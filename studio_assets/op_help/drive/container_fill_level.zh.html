@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;container_fill_level&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从容器内部的侧视图像(粉体覆盖率，容器内尺寸 = 图像)读取填充率与粉面倾斜。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>充填率 = 列ごとの粉面(しきい値の交差、副画素)の平均 / 行数。粉面 → <code style="color:#22d3bf">fit_line</code> → <code style="color:#22d3bf">surface_tilt_deg</code>(右が高いほど正)と <code style="color:#22d3bf">surface_rms</code>(平面からのずれ [px])。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 空(しきい値以上の画素が無い)/ 満杯で粉面が見えない(最上行が粉)。</p>
+<p>填充率 = 各列粉面(阈值交叉,亚像素)的平均 / 行数。粉面 → <code style="color:#22d3bf">fit_line</code> → <code style="color:#22d3bf">surface_tilt_deg</code>(右侧越高越为正)和 <code style="color:#22d3bf">surface_rms</code>(偏离平面的量 [px])。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 空(没有阈值以上的像素)/ 已满,看不到粉面(最上一行是粉)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

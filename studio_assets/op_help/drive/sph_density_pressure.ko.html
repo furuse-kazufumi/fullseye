@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sph_density_pressure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점 집합의 SPH 밀도 ρ_i = Σ_j m W(|x_i − x_j|, h)(자신 포함)와 약압축성 상태 방정식 p = c² (ρ − ρ₀).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>格子の間隔 Δ で m = ρ₀ Δ² に置けば、内側の点の ρ は ρ₀ に近い(h = 1.3Δ で 0.3 % 以内 —— 門で数える)。</p>
+<p>격자 간격 Δ 로 m = ρ₀ Δ² 로 두면, 내부 점의 ρ 는 ρ₀ 에 가깝다(h = 1.3Δ 에서 0.3 % 이내 —— 게이트로 센다).</p>
 <p>Args:</p>
-<p>points: (N, 2) の位置 [m]。</p>
-<p>h: 平滑化の長さ [m]。</p>
-<p>mass: 1 点の質量(群れでは 1 = 個体数の密度)。</p>
-<p>rho0: 静止の密度。</p>
-<p>c: 音速 [m/s] (圧力の硬さ)。</p>
-<p>box: 周期境界の箱 (Lx, Ly) か None。</p>
+<p>points: (N, 2) 위치 [m].</p>
+<p>h: 평활 길이 [m].</p>
+<p>mass: 한 점의 질량(무리에서는 1 = 개체 수 밀도).</p>
+<p>rho0: 정지 밀도.</p>
+<p>c: 음속 [m/s] (압력의 강성).</p>
+<p>box: 주기 경계의 상자 (Lx, Ly) 또는 None.</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">rho</code> (N,)、<code style="color:#22d3bf">p</code> (N,)、<code style="color:#22d3bf">n_neighbors</code> (N,)(台の中の他の点の数)。</p>
+<p>dict: <code style="color:#22d3bf">rho</code> (N,), <code style="color:#22d3bf">p</code> (N,), <code style="color:#22d3bf">n_neighbors</code> (N,)(지지 영역 안의 다른 점의 수).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

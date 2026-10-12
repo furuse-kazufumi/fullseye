@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_traction_curve(load, wheel, soil, slips=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roverslip; roverslip.wheel_traction_curve(load, wheel, soil, slips=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;wheel_traction_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>1 wheel का भार <code style="color:#22d3bf">load</code> [N] स्थिर रखते हुए हर slip ratio पर धँसाव, drawbar pull और torque (drawbar pull–slip curve)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">slips</code> の既定は 0〜0.95 の 40 点。返り値 <code style="color:#22d3bf">{&quot;slip&quot;, &quot;sinkage&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;DP_over_W&quot;, &quot;efficiency&quot;}</code> (<code style="color:#22d3bf">efficiency</code> = 牽引の仕事率 / 駆動の仕事率 = DP (1 − s) r / T、T ≤ 0 の点は 0)。</p>
+<p><code style="color:#22d3bf">slips</code> का डिफ़ॉल्ट 0 से 0.95 तक 40 बिंदु है। रिटर्न <code style="color:#22d3bf">{&quot;slip&quot;, &quot;sinkage&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;DP_over_W&quot;, &quot;efficiency&quot;}</code> (<code style="color:#22d3bf">efficiency</code> = कर्षण शक्ति / चालन शक्ति = DP (1 − s) r / T, जिन बिंदुओं पर T ≤ 0 वहाँ 0)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

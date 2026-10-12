@@ -1173,7 +1173,7 @@ def _figure_lines(rec, path, lang):
     elif m["status"] == "unreachable":
         out.append(T("*図なし: この op は `%s` を入力に取る。画像から始まる Studio のプログラムでは型が届かないので、下の「実行できる例」で使い方を見ること。*", lang) % m["in_sort"])
     elif m["status"] == "domain":
-        out.append(T("*図なし: 型は届くが、汎用の合成入力では定義域が合わない —— %s。下の「実行できる例」で使い方を見ること。*", lang) % m.get("reason", ""))
+        out.append(T("*図なし: 型は届くが、汎用の合成入力では定義域が合わない —— %s。下の「実行できる例」で使い方を見ること。*", lang) % T(m.get("reason", ""), lang))
     elif m["status"] == "empty":
         out.append(T("*図なし: 走ったが返り値が空だった(合成入力ではこの op の答えが無い —— 零交差や外れ値が無い、など)。空を図にはしない。下の「Studio で試す」のプログラムは走るので、自分の画像で試すこと。*", lang))
     else:

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_road_coverage(eye_xy, mirror_center_xy, mirror_normal_xy, mirror_width: &#x27;float&#x27;, *, mirror_radius=inf, road_point, road_direction) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivepass; drivepass.mirror_road_coverage(eye_xy, mirror_center_xy, mirror_normal_xy, mirror_width: &#x27;float&#x27;, *, mirror_radius=inf, road_point, road_direction) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mirror_road_coverage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>道路凸面镜(凸面圆弧或平面)中映出的道路范围(俯视 2D，闭式)。场景 S064、S130。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>道 = 直線 Q(λ) = road_point + λ·road_direction(単位にする。λ = 0 を交差点の衝突の点に置くと読みやすい)。鏡の両端(円弧なら端の法線 N = cos φ n ± sin φ t、φ = asin(w/2R))で眼からの光線を反射させ、道との交点 λ₁, λ₂ を求める。凸面では反射光線の向きが鏡の上の位置に単調なので、映る範囲 = [min λ, max λ]。光線が道に届かなければ(平行・背を向ける) その側は ±∞(光線の向きと道の向きの内積の符号)。<code style="color:#22d3bf">blind_near</code> = λ = 0 から映る範囲の手前の端までの長さ(0 より奥からしか映らないとき、交差点の直前が映らない死角)。<code style="color:#22d3bf">drivedecide.convex_mirror_fov</code> と同じ端の光線(眼が軸上なら 2 本の向きの差 = 全視野角)。</p>
+<p>道路 = 直线 Q(λ) = road_point + λ·road_direction(归一化为单位向量。把 λ = 0 放在路口的碰撞点便于阅读)。在镜子两端(若为圆弧,端点法线 N = cos φ n ± sin φ t,φ = asin(w/2R))反射来自眼睛的光线,求其与道路的交点 λ₁、λ₂。凸面镜上反射光线的方向随镜面上的位置单调变化,因此映出的范围 = [min λ, max λ]。若光线到达不了道路(平行或背向), 则该侧为 ±∞(光线方向与道路方向内积的符号)。<code style="color:#22d3bf">blind_near</code> = 从 λ = 0 到映出范围近端的长度(只能映出比 0 更远处时,路口正前方映不出来的盲区)。与 <code style="color:#22d3bf">drivedecide.convex_mirror_fov</code> 的端点光线相同(眼睛在轴上时, 2 个方向之差 = 全视场角)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

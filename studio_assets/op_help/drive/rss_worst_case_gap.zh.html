@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_worst_case_gap(d0: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import rsssafety; rsssafety.rss_worst_case_gap(d0: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;rss_worst_case_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按时间追踪同向的最坏情况(论文 Definition 4)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>先行車は t = 0 から <code style="color:#22d3bf">brake_max</code> で停止まで減速。後続車は ρ の間 <code style="color:#22d3bf">accel_max</code>(<code style="color:#22d3bf">v_max_accel</code> で頭打ち)、その後 <code style="color:#22d3bf">brake_min</code> で停止まで減速。各時刻の位置は区分ごとの等加速度の厳密式で、時刻列には ρ・頭打ち時刻・各車の停止時刻を必ず含める(<code style="color:#22d3bf">dt</code> は表示密度で、min_gap は dt に依らない)。</p>
+<p>前车从 t = 0 起以 <code style="color:#22d3bf">brake_max</code> 减速直至停止。后车在 ρ 期间以 <code style="color:#22d3bf">accel_max</code> 加速(以 <code style="color:#22d3bf">v_max_accel</code> 封顶), 之后以 <code style="color:#22d3bf">brake_min</code> 减速直至停止。各时刻的位置采用分段匀加速的精确公式,时间序列中必定包含 ρ、封顶时刻、各车的停止时刻(<code style="color:#22d3bf">dt</code> 仅为显示密度,min_gap 不依赖于 dt)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict : <code style="color:#22d3bf">t, x_rear, x_front, v_rear, v_front, gap</code> (ndarray)、<code style="color:#22d3bf">min_gap, t_min</code> (float)、</p>
 <p><code style="color:#22d3bf">collided</code> (min_gap &lt; 0)、<code style="color:#22d3bf">t_stop_rear, t_stop_front</code>。gap = x_front − x_rear</p>
-<p>(後続の前端と先行の後端の間隔、後続は x = 0、先行は x = d0 から出発)。</p>
-<p><code style="color:#22d3bf">min_gap = d0 − max(d_min − min_distance, 0)</code> が成り立つ(d_min = <code style="color:#22d3bf">rss_longitudinal_same</code>)。</p>
-<p><code style="color:#22d3bf">t_max</code> を与えると(両車の停止より前で)打ち切る。</p>
+<p>(后车前端与前车后端之间的间距,后车从 x = 0、前车从 x = d0 出发)。</p>
+<p><code style="color:#22d3bf">min_gap = d0 − max(d_min − min_distance, 0)</code> 成立(d_min = <code style="color:#22d3bf">rss_longitudinal_same</code>)。</p>
+<p>给定 <code style="color:#22d3bf">t_max</code> 时(在两车停止之前)截断。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_worst_case_gap(d0: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import rsssafety; rsssafety.rss_worst_case_gap(d0: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;rss_worst_case_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>समान दिशा के worst case (पेपर Definition 4) को समय के साथ track करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>先行車は t = 0 から <code style="color:#22d3bf">brake_max</code> で停止まで減速。後続車は ρ の間 <code style="color:#22d3bf">accel_max</code>(<code style="color:#22d3bf">v_max_accel</code> で頭打ち)、その後 <code style="color:#22d3bf">brake_min</code> で停止まで減速。各時刻の位置は区分ごとの等加速度の厳密式で、時刻列には ρ・頭打ち時刻・各車の停止時刻を必ず含める(<code style="color:#22d3bf">dt</code> は表示密度で、min_gap は dt に依らない)。</p>
+<p>आगे वाला वाहन t = 0 से <code style="color:#22d3bf">brake_max</code> से रुकने तक मंदन करता है। पीछे वाला वाहन ρ के दौरान <code style="color:#22d3bf">accel_max</code> (<code style="color:#22d3bf">v_max_accel</code> पर सीमित), उसके बाद <code style="color:#22d3bf">brake_min</code> से रुकने तक मंदन करता है। हर समय की स्थिति खंडवार स्थिर-त्वरण के सटीक सूत्रों से है, और समय-श्रेणी में ρ, सीमा पर पहुँचने का समय, तथा प्रत्येक वाहन के रुकने का समय अवश्य शामिल होता है (<code style="color:#22d3bf">dt</code> केवल प्रदर्शन घनत्व है, min_gap dt पर निर्भर नहीं)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : <code style="color:#22d3bf">t, x_rear, x_front, v_rear, v_front, gap</code> (ndarray)、<code style="color:#22d3bf">min_gap, t_min</code> (float)、</p>
-<p><code style="color:#22d3bf">collided</code> (min_gap &lt; 0)、<code style="color:#22d3bf">t_stop_rear, t_stop_front</code>。gap = x_front − x_rear</p>
-<p>(後続の前端と先行の後端の間隔、後続は x = 0、先行は x = d0 から出発)。</p>
-<p><code style="color:#22d3bf">min_gap = d0 − max(d_min − min_distance, 0)</code> が成り立つ(d_min = <code style="color:#22d3bf">rss_longitudinal_same</code>)。</p>
-<p><code style="color:#22d3bf">t_max</code> を与えると(両車の停止より前で)打ち切る。</p>
+<p>dict : <code style="color:#22d3bf">t, x_rear, x_front, v_rear, v_front, gap</code> (ndarray), <code style="color:#22d3bf">min_gap, t_min</code> (float),</p>
+<p><code style="color:#22d3bf">collided</code> (min_gap &lt; 0), <code style="color:#22d3bf">t_stop_rear, t_stop_front</code>। gap = x_front − x_rear</p>
+<p>(पीछे वाले के अगले सिरे और आगे वाले के पिछले सिरे के बीच का अंतर; पीछे वाला x = 0 से, आगे वाला x = d0 से शुरू करता है)।</p>
+<p><code style="color:#22d3bf">min_gap = d0 − max(d_min − min_distance, 0)</code> सत्य है (d_min = <code style="color:#22d3bf">rss_longitudinal_same</code>)।</p>
+<p><code style="color:#22d3bf">t_max</code> देने पर (दोनों वाहनों के रुकने से पहले) काट दिया जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

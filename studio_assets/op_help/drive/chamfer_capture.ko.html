@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chamfer_capture(kp, eps0: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegsim; pegsim.chamfer_capture(kp, eps0: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;chamfer_capture&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>초기 횡방향 편차 ε₀ [m]를 모따기가 보정 없이 흡수할 수 있는지: |ε₀| ≤ W + c_r(선단 가장자리가 모따기 면 위에 착지하는 조건, 유도).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返り: <code style="color:#22d3bf">captured</code>、<code style="color:#22d3bf">eps_max</code> = W + c_r、<code style="color:#22d3bf">margin</code> = eps_max − |ε₀|。既定の寸法では 1.2 mm。傾き θ₀ があると先端の縁の投影が動くが、θ₀ ≤ 3° では無視できる(試作の格子で ε₀ = 2, 3 mm が補正なしで失敗した根拠)。</p>
+<p>반환: <code style="color:#22d3bf">captured</code>, <code style="color:#22d3bf">eps_max</code> = W + c_r, <code style="color:#22d3bf">margin</code> = eps_max − |ε₀|. 기본 치수에서는 1.2 mm. 기울기 θ₀ 가 있으면 선단 가장자리의 투영이 움직이지만, θ₀ ≤ 3° 에서는 무시할 수 있다(시험 구현의 격자에서 ε₀ = 2, 3 mm 가 보정 없이 실패한 근거).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

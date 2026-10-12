@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_matched_filter(lattice, axis=(0.0, 0.0, 1.0), motion=&#x27;rotation&#x27;, depth_m=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import flyvision; flyvision.fly_matched_filter(lattice, axis=(0.0, 0.0, 1.0), motion=&#x27;rotation&#x27;, depth_m=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_matched_filter&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>The flow field one unit of self-motion writes on the eye — the template a wide-field neuron is matched to.</p>
+<p>단위 자기 운동이 눈 위에 그리는 흐름장 —— 광시야 뉴런이 정합된 템플릿.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Krapp &amp; Hengstenberg measured the local motion sensitivity of single lobula-plate tangential cells across the whole visual field and found a structured vector field, one that looks like the optic flow of a particular rotation of the fly (*Nature* 384:463, 1996). Reading self-motion out of such a cell is then a matched filter (Franz &amp; Krapp, *Biol. Cybern.* 83:185, 2000):</p>
 <p>correlate the measured flow against the template of the motion you are asking about. This op builds the template, for the isotropic world model — every point at the same distance — which is the case in which the rotation template is exactly the geometry and nothing is assumed about the scene:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">motion=&quot;rotation&quot;</code>: one radian per second about the unit vector *axis* moves the viewing direction <code style="color:#22d3bf">d</code> at <code style="color:#22d3bf">-axis x d</code>, which is already tangent to the sphere. Its length is <code style="color:#22d3bf">sin</code> of the angle between the axis and the line of sight, so the template is zero on the axis itself.</p>

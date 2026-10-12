@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;curve_speed_limit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>편경사 i·횡미끄럼 마찰계수 f인 곡선(반경 R)에서 바깥으로 미끄러지지 않는 상한 속도 v = √(g R (i + f)/(1 − i f)) [m/s].</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>道路構造令の解説 (2) 式 Z cos α − G sin α ≤ f (Z sin α + G cos α)(Z = G v²/(gR)、i = tan α)を v について解いた厳密な形。i f ≥ 1 なら(どの速さでも外へは滑らない)<code style="color:#22d3bf">inf</code>。<code style="color:#22d3bf">radius</code> は配列でもよい(&gt; 0)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ 0、f &lt; 0、|i| ≥ 1、i + f ≤ 0(止まっていても内へ滑る)。</p>
-<p>空の入力(<code style="color:#22d3bf">radius</code> が 0 要素)は ValueError。</p>
+<p>도로구조령(일본)의 해설 (2) 식 Z cos α − G sin α ≤ f (Z sin α + G cos α)(Z = G v²/(gR), i = tan α)를 v 에 대해 푼엄밀한 형태. i f ≥ 1 이면(어떤 속력에서도 바깥으로 미끄러지지 않는다) <code style="color:#22d3bf">inf</code>. <code style="color:#22d3bf">radius</code> 는 배열이어도 된다(&gt; 0).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ 0, f &lt; 0, |i| ≥ 1, i + f ≤ 0(정지해 있어도 안쪽으로 미끄러진다).</p>
+<p>빈 입력(<code style="color:#22d3bf">radius</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>볼록거울의 허상(근축, 배열 가능). 장면 S064·S130.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>1/a + 1/b = 2/R(b は鏡の向こうの虚像)→ b = aR/(2a + R)、倍率 m = R/(2a + R)。眼が鏡から e(<code style="color:#22d3bf">eye_distance</code>)のとき像の見かけの大きさ θ = 2 atan(m h /(2(e + b)))、近軸では m h/(e + b) = h/(e + k a)、k = 1 + 2e/R。<code style="color:#22d3bf">flat_equivalent_distance</code> = 同じ大きさに見える平面鏡の距離 k a(遠くに見える量)。</p>
-<p>空の入力(<code style="color:#22d3bf">object_distance</code> が 0 要素)は ValueError。</p>
+<p>1/a + 1/b = 2/R(b 는 거울 너머의 허상)→ b = aR/(2a + R), 배율 m = R/(2a + R). 눈이 거울로부터 e(<code style="color:#22d3bf">eye_distance</code>)일 때상의 겉보기 크기 θ = 2 atan(m h /(2(e + b))), 근축에서는 m h/(e + b) = h/(e + k a), k = 1 + 2e/R. <code style="color:#22d3bf">flat_equivalent_distance</code> = 같은 크기로 보이는 평면경의 거리 k a(멀리 보이는 양).</p>
+<p>빈 입력(<code style="color:#22d3bf">object_distance</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

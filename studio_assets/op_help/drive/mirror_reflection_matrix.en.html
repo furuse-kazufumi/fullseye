@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_reflection_matrix(mirror_plane) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_reflection_matrix(mirror_plane) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;mirror_reflection_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>4×4 homogeneous matrix of the reflection in the plane <code style="color:#22d3bf">mirror_plane</code> = (n_x, n_y, n_z, d) (point X lies on the mirror ⇔ n·X = d; n is normalized).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>S = [[I − 2nnᵀ, 2dn], [0, 1]]</p>
-<p>S·S = I(対合)、回転部の行列式 = −1(向きを反転)。</p>
+<p>S·S = I (involution), determinant of the rotation part = −1 (reverses orientation).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

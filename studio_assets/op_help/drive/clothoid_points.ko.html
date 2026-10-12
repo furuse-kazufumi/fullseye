@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.clothoid_points(length: &#x27;float&#x27;, s, *, kappa0: &#x27;float&#x27; = 0.0, kappa1: &#x27;float&#x27; = 0.0, start=(0.0, 0.0), heading0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.clothoid_points(length: &#x27;float&#x27;, s, *, kappa0: &#x27;float&#x27; = 0.0, kappa1: &#x27;float&#x27; = 0.0, start=(0.0, 0.0), heading0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;clothoid_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>곡률이 호의 길이에 1차인 κ(s) = κ₀ + (κ₁ − κ₀) s / length 곡선(클로소이드의 일부. κ₀ = κ₁이면 원호·직선)의 점.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">s</code>: 0 ≤ s ≤ length の弧長(配列)。<code style="color:#22d3bf">start</code>・<code style="color:#22d3bf">heading0</code>: 始点と始点の向き。左へ曲がる曲率を正。クロソイドの部分は標準形(A² = 1/|dκ/ds|)をフレネル積分で写し、始点・向きに合わせて回す(数値積分を使わない)。</p>
-<p>返り値: <code style="color:#22d3bf">points</code> (N, 2)、<code style="color:#22d3bf">heading</code> (N,)、<code style="color:#22d3bf">curvature</code> (N,)、<code style="color:#22d3bf">A</code>(クロソイドのパラメータ、円弧・直線は inf)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: length ≤ 0、s が範囲外、非有限。</p>
+<p><code style="color:#22d3bf">s</code>: 0 ≤ s ≤ length 의 호 길이(배열). <code style="color:#22d3bf">start</code>·<code style="color:#22d3bf">heading0</code>: 시점과 시점의 방향. 왼쪽으로 도는 곡률을 양으로 한다. 클로소이드 부분은 표준형(A² = 1/|dκ/ds|)을 프레넬 적분으로 옮기고, 시점·방향에 맞춰 회전시킨다(수치 적분을 사용하지 않는다).</p>
+<p>반환값: <code style="color:#22d3bf">points</code> (N, 2), <code style="color:#22d3bf">heading</code> (N,), <code style="color:#22d3bf">curvature</code> (N,), <code style="color:#22d3bf">A</code>(클로소이드의 파라미터, 원호·직선은 inf).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: length ≤ 0, s 가 범위 밖, 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

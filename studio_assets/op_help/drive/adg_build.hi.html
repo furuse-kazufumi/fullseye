@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_build(paths)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.adg_build(paths)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;adg_build&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>action dependency graph (Hönig, Kiesel, Tinka, Durham, Ayanian 2019)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各車両の行動 = 「訪れるマスの列の k 番目に入る」。依存は 2 種類:</p>
-<p style="margin:2px 0 2px 12px">(1) 同じ車両の前の行動、(2) <b>同じマスを先に使う他車がそのマスを出ること</b>(計画の時刻順)。</p>
-<p>返りは dict: <code style="color:#22d3bf">cells</code>(各車両のマスの列)、<code style="color:#22d3bf">deps</code>(<code style="color:#22d3bf">(i, k)</code> → それより先に終わるべき <code style="color:#22d3bf">(j, m)</code> の集合)。計画に衝突があれば ValueError(依存の向きが決まらない)。</p>
+<p>प्रत्येक वाहन की क्रिया = &quot;देखे जाने वाले खानों के क्रम के k-वें खाने में प्रवेश करना&quot;। निर्भरताएँ 2 प्रकार की हैं:</p>
+<p style="margin:2px 0 2px 12px">(1) उसी वाहन की पिछली क्रिया, (2) <b>उसी खाने का पहले उपयोग करने वाला अन्य वाहन उस खाने से निकल जाए</b> (योजना के समय-क्रम के अनुसार)।</p>
+<p>रिटर्न एक dict है: <code style="color:#22d3bf">cells</code> (प्रत्येक वाहन के खानों का क्रम), <code style="color:#22d3bf">deps</code> (<code style="color:#22d3bf">(i, k)</code> → उससे पहले पूर्ण होने वाले <code style="color:#22d3bf">(j, m)</code> का समुच्चय)। योजना में टकराव हो तो ValueError (निर्भरता की दिशा तय नहीं होती)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_crossing_point(pred: &#x27;dict&#x27;, x_line: &#x27;float&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.puck_crossing_point(pred: &#x27;dict&#x27;, x_line: &#x27;float&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;puck_crossing_point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zeitpunkt und Ort, an dem der vorhergesagte Pfad die Verteidigungslinie x = <code style="color:#22d3bf">x_line</code> zum ersten Mal kreuzt (geschlossene Form: löst pro Abschnitt d(τ)·uₓ = benötigte Strecke).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;t&quot;, &quot;p&quot;, &quot;v&quot;, &quot;segment&quot;}</code>、横切らなければ <code style="color:#22d3bf">None</code>(fail-closed —— 止まる・ゴールに入る・時間切れ)。</p>
-<p>空の入力(<code style="color:#22d3bf">pred</code> が空の dict)は ValueError。</p>
+<p>Rückgabewert <code style="color:#22d3bf">{&quot;t&quot;, &quot;p&quot;, &quot;v&quot;, &quot;segment&quot;}</code>; <code style="color:#22d3bf">None</code>, wenn er nicht kreuzt (fail-closed —— er bleibt stehen, geht ins Tor oder die Zeit läuft ab).</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">pred</code> ist ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

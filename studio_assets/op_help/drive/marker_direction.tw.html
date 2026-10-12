@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.marker_direction(marker_uv, center_uv, radius_px, K=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import balltrack; balltrack.marker_direction(marker_uv, center_uv, radius_px, K=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;marker_direction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>影像中標記的位置 (col, row) → 球面上的方向(相機座標系的單位向量，前半球：x 右，y 上，z 朝向觀察者)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">K</code> (3, 3) を渡すと<b>透視で厳密に</b>解く: 球の角半径 α = atan(半径 px / f) から中心までの距離(半径 1 として 1/sin α)と中心の視線を出し、模様の画素の視線を球面と交差させ、交点の法線を返す。★K が無い形は円板を正射影とみなし、中心を通る視線を z とする系で答える —— 球が光軸から外れていると系ごと回り、球が動く映像では視線の変化がそのまま見かけの回転になる(0.6 m 先を 6 m/s で横切る球は 1 ms で視線が 0.01 rad 回り、1 コマの回転 0.15 rad に 7 % 上乗せされた。2026-09-30、PoC ㉔ の近接カメラ)。K が無ければ従来どおり。</p>
+<p>傳入 <code style="color:#22d3bf">K</code> (3, 3) 時<b>依透視精確</b>求解:由球的角半徑 α = atan(半徑 px / f) 得出到中心的距離(半徑取 1 時為 1/sin α)與中心的視線,將圖樣像素的視線與球面相交,回傳交點處的法線。★沒有 K 的形式將圓盤視為正射投影,在以通過中心的視線為 z 的座標系中作答 —— 若球偏離光軸,整個座標系會旋轉,在球運動的影像中視線的變化會直接成為表觀旋轉(在 0.6 m 外以 6 m/s 橫越的球,1 ms 內視線轉動 0.01 rad,在每格 0.15 rad 的旋轉上多加了 7 %。2026-09-30, PoC ㉔ 的近距離攝影機)。沒有 K 時與以往相同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

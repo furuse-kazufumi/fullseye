@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;adg_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Executes according to the ADG. At each time step, each vehicle stops with probability <code style="color:#22d3bf">delay_prob</code> (slipping, people, delays in loading).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>次の行動の依存がすべて済んでいる車両だけが 1 マス進む。返りは dict: <code style="color:#22d3bf">trajectories</code>(実際の位置の列)、<code style="color:#22d3bf">makespan</code>、<code style="color:#22d3bf">collisions</code>(同じマス・すれ違い)、<code style="color:#22d3bf">deadlock</code>(誰も進めず未了)、<code style="color:#22d3bf">finished</code>。</p>
-<p>空の入力(<code style="color:#22d3bf">adg</code> が空の dict)は ValueError。</p>
+<p>Only vehicles whose next action has all its dependencies completed advance by 1 cell. Returns a dict: <code style="color:#22d3bf">trajectories</code> (sequence of actual positions), <code style="color:#22d3bf">makespan</code>, <code style="color:#22d3bf">collisions</code> (same cell / passing each other), <code style="color:#22d3bf">deadlock</code> (nobody can move and not finished), <code style="color:#22d3bf">finished</code>.</p>
+<p>Empty input (<code style="color:#22d3bf">adg</code> as an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_lamina_filter(movie, dt_s, tau_adapt_s=0.2, tau_lp_s=0.02, mode=&#x27;divisive&#x27;, floor=0.001)</code>(要直接调用实现,<code style="color:#22d3bf">import flyvision; flyvision.fly_lamina_filter(movie, dt_s, tau_adapt_s=0.2, tau_lp_s=0.02, mode=&#x27;divisive&#x27;, floor=0.001)</code>;从台账取用则 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_lamina_filter&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Photoreceptor adaptation + the lamina&#x27;s band-pass: intensities in, contrast out.</p>
+<p>光感受器适应 + 视叶板层(lamina)的带通：输入亮度，输出对比度。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>The first thing the optic lobe does to a picture is throw away its brightness. A photoreceptor adapts to the running mean light level and the large monopolar cells (L1/L2) report the *deviation* from it, so the same scene at dawn and at noon arrives at the motion detectors as the same signal. Two closed-form stages, in that order:</p>
 <p style="margin:2px 0 2px 12px">1. <b>adaptation</b> — a first-order low-pass of time constant *tau_adapt_s* per ommatidium is the adaptation state <code style="color:#22d3bf">a(t)</code>. <code style="color:#22d3bf">mode=&quot;divisive&quot;</code> returns the Weber contrast <code style="color:#22d3bf">(x - a)/(a + eps)</code> (<code style="color:#22d3bf">eps = floor * mean(x)</code>, so it scales with the picture and a dark ommatidium cannot divide by zero); <code style="color:#22d3bf">mode=&quot;subtractive&quot;</code> returns <code style="color:#22d3bf">x - a</code>, which is the same high-pass without the gain control.</p>
 <p style="margin:2px 0 2px 12px">2. <b>membrane</b> — a first-order low-pass of time constant *tau_lp_s*, the cell&#x27;s own bandwidth.</p>

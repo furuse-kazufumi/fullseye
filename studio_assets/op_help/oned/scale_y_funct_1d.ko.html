@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scale_y_funct_1d(y, mult=1.0, add=0.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import funct1d; funct1d.scale_y_funct_1d(y, mult=1.0, add=0.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops1d.get(&quot;scale_y_funct_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Linear map of the y-values, <code style="color:#22d3bf">mult * y + add</code> (HALCON <code style="color:#22d3bf">scale_y_funct_1d</code>).</p>
+<p>y 값의 선형 사상 <code style="color:#22d3bf">mult * y + add</code>(HALCON <code style="color:#22d3bf">scale_y_funct_1d</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>The x-grid is untouched (use <code style="color:#22d3bf">transform_funct_1d</code> to move x too).</p>
 <p>:param y: 1-D function (may be empty). :param mult: finite multiplier. :param add: finite offset. :raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.</p>
 <p>Empty input (<code style="color:#22d3bf">y</code> with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON&#x27;s funct_1d), and empty functions flow through chains of function ops).</p>

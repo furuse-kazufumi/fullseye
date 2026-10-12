@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_plane_range(origin, dirs, plane) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import lidarsim; lidarsim.ray_plane_range(origin, dirs, plane) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ray_plane_range&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从原点 <code style="color:#22d3bf">origin</code> 沿方向 <code style="color:#22d3bf">dirs (...,3)</code> 的射线到达平面 <code style="color:#22d3bf">ax+by+cz+d=0</code> 为止的距离。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>閉形式 <code style="color:#22d3bf">t = −(n·O + d)/(n·D)</code>、距離は <code style="color:#22d3bf">t·‖D‖</code>。前方(t &gt; 0)に当たらない・平行なら <code style="color:#22d3bf">inf</code>。法線がゼロなら <code style="color:#22d3bf">ValueError</code>。</p>
+<p>闭式 <code style="color:#22d3bf">t = −(n·O + d)/(n·D)</code>,距离为 <code style="color:#22d3bf">t·‖D‖</code>。前方(t &gt; 0)未命中或平行时为 <code style="color:#22d3bf">inf</code>。法线为零时引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

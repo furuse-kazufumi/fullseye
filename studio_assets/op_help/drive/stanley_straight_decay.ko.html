@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stanley_straight_decay(e0: &#x27;float&#x27;, t, *, gain: &#x27;float&#x27;, speed: &#x27;float&#x27;, softening: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.stanley_straight_decay(e0: &#x27;float&#x27;, t, *, gain: &#x27;float&#x27;, speed: &#x27;float&#x27;, softening: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;stanley_straight_decay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>직선 경로에서 Stanley(클리핑 없음)의 앞차축 횡방향 편차 e(t)의 닫힌 식.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>ė = −v k e / √(a² + k² e²)、a = k_s + v。F(e) = √(a² + k²e²) − a ln((a + √(a² + k²e²))/(k|e|)) は dF/dt = −v k(一定)。F(e(t)) = F(e₀) − v k t を |e| ∈ (0, |e₀|] の二分法(F は |e| に単調増加)で解く。小さい e では e ≈ e₀&#x27; e^{−k t v/a}(指数)、大きい e では |e| がほぼ v t で減る(直線)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: k ≤ 0、v ≤ 0、k_s &lt; 0、t &lt; 0。</p>
+<p>ė = −v k e / √(a² + k² e²), a = k_s + v. F(e) = √(a² + k²e²) − a ln((a + √(a² + k²e²))/(k|e|)) 는 dF/dt = −v k(일정). F(e(t)) = F(e₀) − v k t 를 |e| ∈ (0, |e₀|] 의 이분법(F 는 |e| 에 대해 단조 증가)으로 푼다. 작은 e 에서는 e ≈ e₀&#x27; e^{−k t v/a}(지수), 큰 e 에서는 |e| 가 거의 v t 로 줄어든다(직선).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: k ≤ 0, v ≤ 0, k_s &lt; 0, t &lt; 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

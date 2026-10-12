@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveplateau; driveplateau.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;building_prisms&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把建筑的占地轮廓(footprint)挤出到高度,合并为一个三角网格。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
-<p>buildings: <code style="color:#22d3bf">plateau_parse</code> の <code style="color:#22d3bf">buildings</code>(<code style="color:#22d3bf">footprint</code>, <code style="color:#22d3bf">height</code>, <code style="color:#22d3bf">ground_z</code>)。</p>
-<p>color_fn: <code style="color:#22d3bf">building -&gt; (r,g,b)</code> 0..1。None なら <code style="color:#22d3bf">_default_building_color</code>。</p>
-<p>base_z: 全建物の底 z [m]。None なら各建物の <code style="color:#22d3bf">ground_z</code> を使う(起伏のある世界向け)。</p>
-<p>自前の平らな道路世界には 0.0 が合う。</p>
-<p>roof_shade: 屋根面の色の倍率(側面と見分けるための控えめな陰)。</p>
+<p>buildings: <code style="color:#22d3bf">plateau_parse</code> 的 <code style="color:#22d3bf">buildings</code>(<code style="color:#22d3bf">footprint</code>, <code style="color:#22d3bf">height</code>, <code style="color:#22d3bf">ground_z</code>)。</p>
+<p>color_fn: <code style="color:#22d3bf">building -&gt; (r,g,b)</code> 0..1。None 时为 <code style="color:#22d3bf">_default_building_color</code>。</p>
+<p>base_z: 所有建筑底部的 z [m]。None 时使用各建筑的 <code style="color:#22d3bf">ground_z</code>(面向有起伏的世界)。</p>
+<p>对自建的平坦道路世界宜用 0.0。</p>
+<p>roof_shade: 屋顶面颜色的倍率(用于与侧面区分的轻微阴影)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(V (n,3) float64, F (m,3) int64, colors (m,3) float64 0..1, ids (m,) int64)</code>。<code style="color:#22d3bf">ids[f]</code> は面 f が属する建物の番号(入力列の添字)。建物が 0 件なら各配列は空。</p>
+<p><code style="color:#22d3bf">(V (n,3) float64, F (m,3) int64, colors (m,3) float64 0..1, ids (m,) int64)</code>。<code style="color:#22d3bf">ids[f]</code> 为面 f 所属建筑的编号(输入序列的下标)。建筑为 0 个时各数组为空。</p>
 <p>Raises:</p>
-<p>ValueError: color_fn の返り値が RGB 3 要素 0..1 でない、建物の footprint/height が不正。</p>
-<p>空の入力(<code style="color:#22d3bf">buildings</code> が 0 件)は空を返す(理由: 建物が 0 件のタイルは実データに普通にある。空の角柱集合が正しい答え)。</p>
+<p>ValueError: color_fn 的返回值不是 0..1 的 RGB 3 元素、建筑的 footprint/height 不合法。</p>
+<p>空输入(<code style="color:#22d3bf">buildings</code> 为 0 个)返回空结果(原因: 实际数据中建筑为 0 个的瓦片很常见。空的棱柱集合是正确答案)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

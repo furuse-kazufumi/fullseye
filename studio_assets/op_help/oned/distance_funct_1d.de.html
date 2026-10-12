@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.distance_funct_1d(y1, y2, mode=&#x27;max&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import funct1d; funct1d.distance_funct_1d(y1, y2, mode=&#x27;max&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;distance_funct_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Distance between two functions on the same grid (HALCON <code style="color:#22d3bf">distance_funct_1d</code>).</p>
+<p>Abstand zwischen zwei Funktionen auf demselben Raster (HALCON <code style="color:#22d3bf">distance_funct_1d</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">mode=&quot;max&quot;</code> is the Chebyshev / sup distance <code style="color:#22d3bf">max |y1 - y2|</code>; <code style="color:#22d3bf">mode=&quot;mean&quot;</code> the mean absolute difference. Both are symmetric and zero iff the functions are identical.</p>
 <p>:param y1: 1-D function, at least 1 sample. :param y2: 1-D function, <b>same length</b> as *y1* (unequal lengths raise —</p>
 <p>pointwise distance is undefined across different grids; silent numpy</p>

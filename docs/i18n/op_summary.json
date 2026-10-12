@@ -1974,8 +1974,8 @@
   "2d/highpass_image": {
    "fp": "f0b5955b7e09",
    "en": "A high-pass filter that blocks low frequencies (radius ``<= 0.02+0.3*a``) in the frequency domain and transforms the remainder back to real space via inverse FFT. Because the result is a zero-mean **signed** response, it is mapped to [0,1] with ``signed01`` (0.5 represents zero, so it is normal for roughly half the pixels to fall below 0.5). Corresponds to HALCON's ``highpass_image`` (Extract high frequency components from an image).",
-   "zh": "在频域中截断低频(半径``<= 0.02+0.3*a``),将剩余部分通过逆FFT变换回实空间的高通滤波器。由于结果是零均值的**带符号**响应,因此用``signed01``映射到[0,1](0.5表示零,也就是说约有一半像素小于0.5属于正常现象)。相当于HALCON的``highpass_image``(Extract high frequency components from an image.)。",
-   "tw": "在頻域中截斷低頻(半徑``<= 0.02+0.3*a``),將剩餘部分透過逆FFT轉換回實空間的高通濾波器。由於結果是零均值的**帶符號**響應,因此以``signed01``對應到[0,1](0.5代表零,也就是約有一半像素小於0.5屬於正常現象)。相當於HALCON的``highpass_image``(Extract high frequency components from an image.)。",
+   "zh": "在频域中截断低频(半径``<= 0.02+0.3*a``),将剩余部分通过逆FFT变换回实空间的高通滤波器。由于结果是零均值的**带符号**响应,因此用``signed01``映射到[0,1] (0.5表示零,也就是说约有一半像素小于0.5属于正常现象)。相当于HALCON的``highpass_image``(Extract high frequency components from an image.)。",
+   "tw": "在頻域中截斷低頻(半徑``<= 0.02+0.3*a``),將剩餘部分透過逆FFT轉換回實空間的高通濾波器。由於結果是零均值的**帶符號**響應,因此以``signed01``對應到[0,1] (0.5代表零,也就是約有一半像素小於0.5屬於正常現象)。相當於HALCON的``highpass_image``(Extract high frequency components from an image.)。",
    "ko": "주파수 영역에서 저주파(반경 ``<= 0.02+0.3*a``)를 차단하고, 나머지를 역FFT로 실공간으로 되돌린 하이패스 필터. 평균이 0인 **부호 있는** 응답이 되므로 ``signed01``로 [0,1]에 매핑한다(0.5가 0에 해당하며, 즉 화소의 약 절반이 0.5 미만이 되는 것이 정상이다). HALCON의 ``highpass_image``(Extract high frequency components from an image.)에 해당한다.",
    "de": "Ein Hochpassfilter, der im Frequenzbereich die niedrigen Frequenzen (Radius ``<= 0.02+0.3*a``) blockiert und den Rest über eine inverse FFT in den Realraum zurücktransformiert. Da das Ergebnis eine mittelwertfreie, **vorzeichenbehaftete** Antwort ist, wird es mit ``signed01`` auf [0,1] abgebildet (0,5 entspricht Null, d. h. es ist normal, dass etwa die Hälfte der Pixel unter 0,5 liegt). Entspricht HALCONs ``highpass_image`` (Extract high frequency components from an image.).",
    "hi": "Frequency domain में low band (radius ``<= 0.02+0.3*a``) को रोककर बाकी को inverse FFT से वापस spatial domain में लाने वाला high-pass filter। Response zero-mean और **signed** होता है, इसलिए ``signed01`` से [0,1] में map किया जाता है (0.5 शून्य है, यानी लगभग आधे pixels का 0.5 से कम होना सामान्य है)। HALCON के ``highpass_image`` (Extract high frequency components from an image.) के समकक्ष है।"
@@ -3099,8 +3099,8 @@
   "2d/laplace_of_gauss": {
    "fp": "5622b0afb140",
    "en": "LoG (Laplacian of Gaussian; second-derivative edge detection obtained by applying a Laplacian after Gaussian smoothing). ``signed01`` maps the signed response to [0,1] (0.5 corresponds to a zero crossing), so it can serve as a basis for zero-crossing detection or blob detection. Equivalent to HALCON's ``laplace_of_gauss`` (LoG-Operator (Laplace of Gaussian).).",
-   "zh": "LoG(Laplacian of Gaussian,即高斯平滑后再施加拉普拉斯算子的二阶导数边缘检测)。通过 ``signed01`` 将带符号的响应映射到 [0,1](0.5 对应零交叉),可作为零交叉检测或斑点检测的基础。相当于 HALCON 的 ``laplace_of_gauss``(LoG-Operator (Laplace of Gaussian).)。",
-   "tw": "LoG(Laplacian of Gaussian,即高斯平滑後再套用拉普拉斯運算子的二階導數邊緣偵測)。透過 ``signed01`` 將帶符號的響應映射到 [0,1](0.5 對應零交越),可作為零交越偵測或斑點偵測的基礎。相當於 HALCON 的 ``laplace_of_gauss``(LoG-Operator (Laplace of Gaussian).)。",
+   "zh": "LoG(Laplacian of Gaussian,即高斯平滑后再施加拉普拉斯算子的二阶导数边缘检测)。通过 ``signed01`` 将带符号的响应映射到 [0,1] (0.5 对应零交叉),可作为零交叉检测或斑点检测的基础。相当于 HALCON 的 ``laplace_of_gauss``(LoG-Operator (Laplace of Gaussian).)。",
+   "tw": "LoG(Laplacian of Gaussian,即高斯平滑後再套用拉普拉斯運算子的二階導數邊緣偵測)。透過 ``signed01`` 將帶符號的響應映射到 [0,1] (0.5 對應零交越),可作為零交越偵測或斑點偵測的基礎。相當於 HALCON 的 ``laplace_of_gauss``(LoG-Operator (Laplace of Gaussian).)。",
    "ko": "LoG(Laplacian of Gaussian, 가우시안 평활화 후 라플라시안을 적용한 2차 미분 에지 검출). ``signed01``로 부호 있는 응답을 [0,1]로 매핑하며(0.5가 제로 교차에 해당), 제로 교차 검출이나 블롭 검출의 토대로 쓸 수 있다. HALCON의 ``laplace_of_gauss``(LoG-Operator (Laplace of Gaussian).)에 해당한다.",
    "de": "LoG (Laplacian of Gaussian; Kantenerkennung zweiter Ableitung durch Anwendung eines Laplace-Operators nach Gauß-Glättung). ``signed01`` bildet die vorzeichenbehaftete Antwort auf [0,1] ab (0,5 entspricht einem Nulldurchgang), sodass es als Grundlage für Nulldurchgangs- oder Blob-Erkennung dienen kann. Entspricht HALCONs ``laplace_of_gauss`` (LoG-Operator (Laplace of Gaussian).).",
    "hi": "LoG (Laplacian of Gaussian, Gaussian smoothing के बाद Laplacian लगाने वाला second-order derivative edge detection)। ``signed01`` से signed response को [0,1] में map करता है (0.5 zero crossing के बराबर है), और इसे zero-crossing detection या blob detection के आधार के रूप में इस्तेमाल किया जा सकता है। HALCON के ``laplace_of_gauss`` (LoG-Operator (Laplace of Gaussian).) के समकक्ष है।"
@@ -3657,8 +3657,8 @@
   "2d/phase_rad": {
    "fp": "69e2b02fdb0c",
    "en": "The FFT phase ``angle(F)`` linearly mapped from radians to [0,1] (0 = -pi, 1 = +pi). Visualizes the phase information lost by the power spectrum (which carries most of the spatial positional information of the structure). Corresponds to HALCON's ``phase_rad`` (Return the phase of a complex image in radians).",
-   "zh": "将FFT的相位``angle(F)``从弧度线性映射到[0,1](0=-π,1=+π)。用于可视化功率谱所丢失的相位信息(相位承载了结构大部分的空间位置信息)。相当于HALCON的``phase_rad``(Return the phase of a complex image in radians.)。",
-   "tw": "將FFT的相位``angle(F)``從弧度線性對應到[0,1](0=-π,1=+π)。用於可視化功率譜所遺失的相位資訊(相位承載了結構大部分的空間位置資訊)。相當於HALCON的``phase_rad``(Return the phase of a complex image in radians.)。",
+   "zh": "将FFT的相位``angle(F)``从弧度线性映射到[0,1] (0=-π,1=+π)。用于可视化功率谱所丢失的相位信息(相位承载了结构大部分的空间位置信息)。相当于HALCON的``phase_rad``(Return the phase of a complex image in radians.)。",
+   "tw": "將FFT的相位``angle(F)``從弧度線性對應到[0,1] (0=-π,1=+π)。用於可視化功率譜所遺失的相位資訊(相位承載了結構大部分的空間位置資訊)。相當於HALCON的``phase_rad``(Return the phase of a complex image in radians.)。",
    "ko": "FFT의 위상 ``angle(F)``를 라디안에서 [0,1]로 선형 매핑한 것(0=-π, 1=+π). 파워 스펙트럼이 잃어버리는 위상 정보(구조의 공간적 위치 정보 대부분을 담당)를 시각화한다. HALCON의 ``phase_rad``(Return the phase of a complex image in radians.)에 해당한다.",
    "de": "Die FFT-Phase ``angle(F)``, linear von Radiant auf [0,1] abgebildet (0 = -pi, 1 = +pi). Visualisiert die Phaseninformation, die im Leistungsspektrum verloren geht (sie trägt den größten Teil der räumlichen Positionsinformation der Struktur). Entspricht HALCONs ``phase_rad`` (Return the phase of a complex image in radians.).",
    "hi": "FFT की phase ``angle(F)`` को radians से [0,1] में linear रूप से map किया गया रूप (0=−π, 1=+π)। Power spectrum में खो जाने वाली phase जानकारी (जो संरचना की spatial position की ज़्यादातर जानकारी रखती है) को दिखाता है। HALCON के ``phase_rad`` (Return the phase of a complex image in radians.) के समकक्ष है।"
@@ -5475,11 +5475,19 @@
   "2d/tb_fly_lgmd_eta": {
    "fp": "5a06e38ccd39",
    "ja": "膨張する見込み角からの LGMD looming 応答 —— 角速度に exp(−αθ) を掛ける。",
+   "zh": "由扩张的视张角得到的 LGMD/eta 逼近(looming)响应。",
+   "tw": "由擴張的視張角得到的 LGMD/eta 逼近(looming)響應。",
+   "ko": "팽창하는 시각(subtended angle)에서 얻는 LGMD/eta 접근(looming) 응답.",
+   "de": "LGMD/eta-Looming-Antwort aus einem sich vergrößernden Sehwinkel.",
    "hi": "फैलते subtended angle से LGMD/eta looming response।"
   },
   "2d/tb_fly_tau_from_expansion": {
    "fp": "e9a202014496",
    "ja": "光学的膨張からの衝突時間(τ マージン)—— 円板と球で式が 33% 違う。",
+   "zh": "由光学扩张得到的碰撞时间——tau 余量。",
+   "tw": "由光學擴張得到的碰撞時間——tau 餘裕。",
+   "ko": "광학적 팽창에서 얻는 충돌까지의 시간 —— tau 여유(margin).",
+   "de": "Zeit bis zum Kontakt aus der optischen Expansion — die Tau-Marge.",
    "hi": "optical expansion से time-to-contact — tau margin।"
   },
   "2d/tb_fmcw_range_profile": {
@@ -6637,8 +6645,8 @@
   "2d/unsharp": {
    "fp": "26ac5582b61d",
    "en": "Unsharp mask. ★It clips to [0,1] on the way out (2026-09-02).",
-   "zh": "非锐化掩蔽。★出口处 clip 到 [0,1](2026-09-02)。",
-   "tw": "非銳化遮罩。★出口處 clip 到 [0,1](2026-09-02)。",
+   "zh": "非锐化掩蔽。★出口处 clip 到 [0,1] (2026-09-02)。",
+   "tw": "非銳化遮罩。★出口處 clip 到 [0,1] (2026-09-02)。",
    "ko": "언샤프 마스크. ★출구에서 [0,1] 로 clip 합니다(2026-09-02).",
    "de": "Unscharfmaskierung. ★Sie klippt am Ausgang auf [0,1] (2026-09-02).",
    "hi": "Unsharp mask। ★आउटपुट पर [0,1] में clip करता है (2026-09-02)।"
@@ -7123,8 +7131,8 @@
   "2d/xkor_harris": {
    "fp": "99f7ccd1c472",
    "en": "Harris corner response. Calls ``kornia.feature.harris_response`` and maps the signed response to [0,1] with ``signed01`` (keeping the sign information of the Harris response - positive for corners, negative for edges - while fitting it into a visualizable range).",
-   "zh": "Harris 角点响应。调用 ``kornia.feature.harris_response``，用 ``signed01`` 将带符号的响应映射到 [0,1](在保留 Harris 响应符号信息——角点为正、边缘为负——的同时将其收入可视化范围)。",
-   "tw": "Harris 角點響應。呼叫 ``kornia.feature.harris_response``，以 ``signed01`` 將帶符號的響應映射到 [0,1](在保留 Harris 響應符號資訊——角點為正、邊緣為負——的同時，將其收入可視化範圍)。",
+   "zh": "Harris 角点响应。调用 ``kornia.feature.harris_response``，用 ``signed01`` 将带符号的响应映射到 [0,1] (在保留 Harris 响应符号信息——角点为正、边缘为负——的同时将其收入可视化范围)。",
+   "tw": "Harris 角點響應。呼叫 ``kornia.feature.harris_response``，以 ``signed01`` 將帶符號的響應映射到 [0,1] (在保留 Harris 響應符號資訊——角點為正、邊緣為負——的同時，將其收入可視化範圍)。",
    "ko": "Harris 코너 응답. ``kornia.feature.harris_response``를 호출하여, 부호가 있는 응답을 ``signed01``로 [0,1]에 매핑한다(코너는 양수, 에지는 음수로 나타나는 Harris 응답의 부호 정보를 유지한 채 시각화 영역에 담는다).",
    "de": "Harris-Eckenantwort. Ruft ``kornia.feature.harris_response`` auf und bildet die vorzeichenbehaftete Antwort mit ``signed01`` auf [0,1] ab (dabei bleibt die Vorzeicheninformation der Harris-Antwort erhalten — positiv bei Ecken, negativ bei Kanten — während sie in einen visualisierbaren Bereich gebracht wird).",
    "hi": "Harris corner response। ``kornia.feature.harris_response`` को call करता है और signed response को ``signed01`` से [0,1] में map करता है (corner धनात्मक और edge ऋणात्मक आने वाले Harris response की चिह्न जानकारी बनाए रखते हुए दिखाने योग्य range में लाता है)।"
@@ -10471,8 +10479,8 @@
   "3d/shadow_raycast": {
    "fp": "6e2d3fe7d336",
    "en": "Cast rays directly at the mesh and return the sunlight visibility (H,W) ∈ [0,1] (no shadow map).",
-   "zh": "直接向网格投射光线,返回太阳光可见性 (H,W) ∈ [0,1](不使用 shadow map)。",
-   "tw": "直接向網格投射光線,回傳太陽光可見性 (H,W) ∈ [0,1](不使用 shadow map)。",
+   "zh": "直接向网格投射光线,返回太阳光可见性 (H,W) ∈ [0,1] (不使用 shadow map)。",
+   "tw": "直接向網格投射光線,回傳太陽光可見性 (H,W) ∈ [0,1] (不使用 shadow map)。",
    "ko": "메시로 직접 레이를 쏴 태양광 가시성 (H,W) ∈ [0,1] 을 돌려줍니다(shadow map 미사용).",
    "de": "Schießt Strahlen direkt auf das Mesh und liefert die Sonnenlichtsichtbarkeit (H,W) ∈ [0,1] (ohne Shadow Map).",
    "hi": "mesh पर सीधे rays डालकर sunlight visibility (H,W) ∈ [0,1] लौटाता है (shadow map का उपयोग नहीं)।"
@@ -10489,9 +10497,9 @@
   "3d/shape_index": {
    "fp": "20275007cc99",
    "en": "Koenderink's shape index s∈[-1,1] (convex sphere +1, cylinder +0.5, saddle 0, concave sphere −1). → (N,).",
-   "zh": "Koenderink 的 shape index s∈[-1,1](凸球+1・圆柱+0.5・鞍点0・凹球-1)。→ (N,)。",
-   "tw": "Koenderink 的 shape index s∈[-1,1](凸球+1・圓柱+0.5・鞍點0・凹球-1)。→ (N,)。",
-   "ko": "Koenderink 의 shape index s∈[-1,1](볼록구+1·원기둥+0.5·안장0·오목구-1). → (N,).",
+   "zh": "Koenderink 的 shape index s∈[-1,1] (凸球+1・圆柱+0.5・鞍点0・凹球-1)。→ (N,)。",
+   "tw": "Koenderink 的 shape index s∈[-1,1] (凸球+1・圓柱+0.5・鞍點0・凹球-1)。→ (N,)。",
+   "ko": "Koenderink 의 shape index s∈[-1,1] (볼록구+1·원기둥+0.5·안장0·오목구-1). → (N,).",
    "de": "Koenderinks Formindex s∈[-1,1] (konvexe Kugel +1, Zylinder +0,5, Sattel 0, konkave Kugel −1). → (N,).",
    "hi": "Koenderink का shape index s∈[-1,1] (convex sphere +1, cylinder +0.5, saddle 0, concave sphere -1)। → (N,)।"
   },
@@ -11247,7 +11255,7 @@
    "en": "Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data decimation).",
    "zh": "按每轴整数 *factor* 对 ``(D, H, W)`` 体做块池化(数据抽稀)。",
    "tw": "按每軸整數 *factor* 對 ``(D, H, W)`` 體做區塊池化(資料抽稀)。",
-   "ko": "``(D, H, W)`` 볼륨을 축별 정수 *factor* 로 블록 풀링(데이터 간引き).",
+   "ko": "``(D, H, W)`` 볼륨을 축별 정수 *factor* 로 블록 풀링(데이터 솎아내기).",
    "de": "Block-Pooling eines ``(D, H, W)``-Volumens um einen ganzzahligen *factor* je Achse (Datenreduktion).",
    "hi": "``(D, H, W)`` volume को हर axis पर integer *factor* से block-pool करता है (data decimation)।"
   },
@@ -12154,76 +12162,136 @@
   "flyvision/fly_dsi": {
    "fp": "58870fdff4cc",
    "ja": "刺激方向ごとの応答から方向選択性指数と好み方向(円周上のベクトル和)。",
+   "zh": "由方向调谐响应求方向选择性指数与偏好方向。",
+   "tw": "由方向調諧響應求方向選擇性指數與偏好方向。",
+   "ko": "방향 튜닝 응답으로부터 방향 선택성 지수와 선호 방향을 구한다.",
+   "de": "Richtungsselektivitätsindex und Vorzugsrichtung aus Tuning-Antworten.",
    "hi": "tuning responses से direction-selectivity index और preferred दिशा।"
   },
   "flyvision/fly_egomotion_from_flow": {
    "fp": "a832e559683f",
    "ja": "フロー場から眼の回転を線形最小二乗で求め、識別できたかを条件数で返す。",
+   "zh": "由光流场以最小二乘求眼的旋转——以及眼自身的形状使该解的条件数变得多差。",
+   "tw": "由光流場以最小平方求眼的旋轉——以及眼自身的形狀使該解的條件數變得多差。",
+   "ko": "흐름장(flow field)에서 최소제곱으로 눈의 회전을 구한다 —— 그리고 눈 자체의 형태가 해의 조건을 얼마나 나쁘게 만드는지도.",
+   "de": "Kleinste-Quadrate-Rotation des Auges aus seinem Flussfeld — und wie schlecht die eigene Form des Auges die Lösung konditioniert.",
    "hi": "आँख के flow field से उसका least-squares rotation — और आँख का अपना आकार उत्तर की conditioning को कितना बिगाड़ता है।"
   },
   "flyvision/fly_emd_response": {
    "fp": "ef47e0e0ff07",
    "ja": "隣り合う個眼信号間の Hassenstein–Reichardt 相関(初等運動検出器)。",
+   "zh": "两个相邻小眼信号之间的 Hassenstein-Reichardt 相关器。",
+   "tw": "兩個相鄰小眼訊號之間的 Hassenstein-Reichardt 相關器。",
+   "ko": "인접한 두 낱눈(ommatidium) 신호 사이의 Hassenstein-Reichardt 상관기.",
+   "de": "Hassenstein-Reichardt-Korrelator zwischen zwei benachbarten Ommatidiensignalen.",
    "hi": "दो पड़ोसी ommatidial signals के बीच Hassenstein-Reichardt correlator।"
   },
   "flyvision/fly_eye_merge": {
    "fp": "403083a9560d",
    "ja": "複数の格子を 1 つの広い眼として束ねる(視線方向をそのまま連結する)。",
+   "zh": "把多个晶格视为一只宽视野的眼——合并它们全部的视线方向。",
+   "tw": "把多個晶格視為一隻寬視野的眼——合併它們全部的視線方向。",
+   "ko": "여러 격자를 하나의 넓은 눈으로 본다 —— 그 모두의 시선 방향.",
+   "de": "Mehrere Gitter als ein einziges weites Auge — die Blickrichtungen aller zusammen.",
    "hi": "कई lattices को एक चौड़ी आँख के रूप में देखा जाता है — उन सभी की viewing दिशाएँ।"
   },
   "flyvision/fly_flow_from_directions": {
    "fp": "d15449775f30",
    "ja": "個眼ごとの 6 方向の応答を、接平面上の 1 本の局所フローベクトルにまとめる。",
+   "zh": "输入每个小眼的六个方向响应，输出一个局部光流向量。",
+   "tw": "輸入每個小眼的六個方向響應，輸出一個局部光流向量。",
+   "ko": "낱눈마다 6방향 응답을 넣으면 국소 흐름 벡터 하나가 나온다.",
+   "de": "Sechs Richtungsantworten pro Ommatidium hinein, ein lokaler Flussvektor heraus.",
    "hi": "हर ommatidium के लिए छह directional responses इनपुट, एक local flow vector आउटपुट।"
   },
   "flyvision/fly_hex_lattice": {
    "fp": "6ebc935312b8",
    "ja": "複眼の六角個眼格子 —— 各個眼の方位・仰角と体座標の視線単位ベクトル。",
+   "zh": "六角形小眼晶格：复眼的视线方向。",
+   "tw": "六角形小眼晶格：複眼的視線方向。",
+   "ko": "육각형 낱눈 격자: 겹눈의 시선 방향.",
+   "de": "Hexagonales Ommatidiengitter: Blickrichtungen eines Komplexauges.",
    "hi": "hexagonal ommatidial lattice: compound eye की viewing दिशाएँ।"
   },
   "flyvision/fly_hex_resample": {
    "fp": "7b31d83b2020",
    "ja": "ピンホール画像を個眼格子へ再標本化(眼が見た像)—— ガウス受容野で空間低域化する。",
+   "zh": "把针孔图像重采样到小眼晶格上(眼所见之像)。",
+   "tw": "把針孔影像重取樣到小眼晶格上(眼所見之像)。",
+   "ko": "핀홀 영상을 낱눈 격자로 재표본화한다(눈이 보는 상).",
+   "de": "Ein Lochkamerabild auf ein Ommatidiengitter umtasten (die Sicht des Auges).",
    "hi": "pinhole image को ommatidial lattice पर resample करता है (आँख का दृश्य)।"
   },
   "flyvision/fly_hs_readout": {
    "fp": "4d9904070315",
    "ja": "水平系の広視野読み出し —— 上半視野での好み方向 対 反対方向の opponent 和。",
+   "zh": "水平系统(HS)宽视野读出：上半视野的对抗(opponent)求和。",
+   "tw": "水平系統(HS)寬視野讀出：上半視野的對抗(opponent)加總。",
+   "ko": "수평계(horizontal system) 광시야 판독: 위쪽 시야에 대한 대항(opponent) 합.",
+   "de": "Weitfeld-Auslesung des Horizontalsystems: Opponentensumme über das obere Gesichtsfeld.",
    "hi": "horizontal-system wide-field readout: ऊपरी field पर opponent sum।"
   },
   "flyvision/fly_lamina_filter": {
    "fp": "61762a34b4f5",
    "ja": "光受容器の順応とラミナの帯域通過 —— 明るさを捨てて対比だけを下流へ渡す(Weber)。",
+   "zh": "光感受器适应 + 视叶板层(lamina)的带通：输入亮度，输出对比度。",
+   "tw": "光感受器適應 + 視葉板層(lamina)的帶通：輸入亮度，輸出對比度。",
+   "ko": "광수용기 순응 + 라미나(lamina)의 대역 통과: 밝기를 넣으면 대비가 나온다.",
+   "de": "Photorezeptor-Adaptation + Bandpass der Lamina: Intensitäten hinein, Kontrast heraus.",
    "hi": "photoreceptor adaptation + lamina का band-pass: intensities इनपुट, contrast आउटपुट।"
   },
   "flyvision/fly_lgmd_eta": {
    "fp": "5a06e38ccd39",
    "ja": "膨張する見込み角からの LGMD looming 応答 —— 角速度に exp(−αθ) を掛ける。",
+   "zh": "由扩张的视张角得到的 LGMD/eta 逼近(looming)响应。",
+   "tw": "由擴張的視張角得到的 LGMD/eta 逼近(looming)響應。",
+   "ko": "팽창하는 시각(subtended angle)에서 얻는 LGMD/eta 접근(looming) 응답.",
+   "de": "LGMD/eta-Looming-Antwort aus einem sich vergrößernden Sehwinkel.",
    "hi": "फैलते subtended angle से LGMD/eta looming response।"
   },
   "flyvision/fly_matched_filter": {
    "fp": "cadf52734758",
    "ja": "単位の自己運動が視野に書くフロー場 —— 広視野ニューロンが整合している雛形。",
+   "zh": "单位自运动在眼上写下的光流场——宽视野神经元所匹配的模板。",
+   "tw": "單位自運動在眼上寫下的光流場——寬視野神經元所匹配的模板。",
+   "ko": "단위 자기 운동이 눈 위에 그리는 흐름장 —— 광시야 뉴런이 정합된 템플릿.",
+   "de": "Das Flussfeld, das eine Einheit Eigenbewegung auf das Auge schreibt — die Vorlage, auf die ein Weitfeldneuron abgestimmt ist.",
    "hi": "self-motion की एक unit आँख पर जो flow field लिखती है — वह template जिससे wide-field neuron matched होता है।"
   },
   "flyvision/fly_onoff_split": {
    "fp": "3a3a9008c7a9",
    "ja": "対比の動画を、メデュラが運ぶ ON(Mi1/Tm3)と OFF(Tm1/Tm2)の 2 チャネルに分ける。",
+   "zh": "把对比度影片拆分为髓质(medulla)所承载的 ON 与 OFF 通道。",
+   "tw": "把對比度影片拆分為髓質(medulla)所承載的 ON 與 OFF 通道。",
+   "ko": "대비 동영상을 수질(medulla)이 운반하는 ON 채널과 OFF 채널로 나눈다.",
+   "de": "Einen Kontrastfilm in die ON- und OFF-Kanäle aufteilen, die die Medulla trägt.",
    "hi": "contrast movie को उन ON और OFF channels में बाँटता है जिन्हें medulla ले जाता है।"
   },
   "flyvision/fly_sky_1f": {
    "fp": "cfdb20d5eaa3",
    "ja": "帯状の 1/f 方位テクスチャを持つ合成等距円筒の空パノラマ。",
+   "zh": "带有条带状 1/f 方位纹理的合成等距柱状天空全景。",
+   "tw": "帶有條帶狀 1/f 方位紋理的合成等距圓柱天空全景。",
+   "ko": "띠 모양의 1/f 방위 텍스처를 가진 합성 등장방형(equirectangular) 하늘 파노라마.",
+   "de": "Synthetisches äquirektanguläres Himmelspanorama mit gebänderter 1/f-Azimuttextur.",
    "hi": "banded 1/f azimuthal texture वाला synthetic equirectangular sky panorama।"
   },
   "flyvision/fly_t4t5_field": {
    "fp": "e08a3d50a0a7",
    "ja": "六角格子の 6 方向すべてで方向選択(Haag らの三腕・増強だけ・抑制だけ・相関器を選べる)。",
+   "zh": "全眼范围、六个六角方向上的方向选择性响应。",
+   "tw": "全眼範圍、六個六角方向上的方向選擇性響應。",
+   "ko": "눈 전체에 걸친, 육각형 6방향의 방향 선택적 응답.",
+   "de": "Richtungsselektive Antwort über das ganze Auge, in den sechs hexagonalen Richtungen.",
    "hi": "पूरी आँख पर, छह hexagonal दिशाओं में direction-selective response।"
   },
   "flyvision/fly_tau_from_expansion": {
    "fp": "e9a202014496",
    "ja": "光学的膨張からの衝突時間(τ マージン)—— 円板と球で式が 33% 違う。",
+   "zh": "由光学扩张得到的碰撞时间——tau 余量。",
+   "tw": "由光學擴張得到的碰撞時間——tau 餘裕。",
+   "ko": "광학적 팽창에서 얻는 충돌까지의 시간 —— tau 여유(margin).",
+   "de": "Zeit bis zum Kontakt aus der optischen Expansion — die Tau-Marge.",
    "hi": "optical expansion से time-to-contact — tau margin।"
   },
   "gfx2d/alpha_composite": {
@@ -12625,21 +12693,37 @@
   "graph/graph_cycle3": {
    "fp": "7934e15fdf87",
    "ja": "有向 3 サイクルの数 tr(B³)/3(総当たりの第 2 実装と一致)。",
+   "zh": "有向 3 环 ``i -> j -> k -> i`` 的个数，按 ``tr(B^3) / 3`` 计算。",
+   "tw": "有向 3 環 ``i -> j -> k -> i`` 的個數，按 ``tr(B^3) / 3`` 計算。",
+   "ko": "유향 3-사이클 ``i -> j -> k -> i`` 의 개수를 ``tr(B^3) / 3`` 로 센다.",
+   "de": "Anzahl gerichteter 3-Zyklen ``i -> j -> k -> i`` als ``tr(B^3) / 3``.",
    "hi": "directed 3-cycles ``i -> j -> k -> i`` की संख्या, ``tr(B^3) / 3`` के रूप में।"
   },
   "graph/graph_degree_preserving_null": {
    "fp": "f719ff3602a4",
    "ja": "次数保存のヌルモデルで 3 サイクルと相互辺を比・z にする(各標本で次数列を厳密に保存)。",
+   "zh": "将 3 环与互惠边与保度零模型比较。",
+   "tw": "將 3 環與互惠邊與保度虛無模型比較。",
+   "ko": "3-사이클과 상호성(reciprocity)을 차수 보존 귀무 모형과 비교한다.",
+   "de": "3-Zyklen und Reziprozität mit einem gradtreuen Nullmodell vergleichen.",
    "hi": "3-cycles और reciprocity की degree-preserving null model से तुलना करता है।"
   },
   "graph/graph_degree_summary": {
    "fp": "5fed9a97dd44",
    "ja": "有向配線行列の次数・密度・相互辺(Σ入 = Σ出 = |E| が厳密)。",
+   "zh": "有向连接矩阵的度、密度与互惠性。",
+   "tw": "有向連接矩陣的度、密度與互惠性。",
+   "ko": "유향 배선 행렬의 차수, 밀도, 상호성.",
+   "de": "Grade, Dichte und Reziprozität einer gerichteten Verschaltungsmatrix.",
    "hi": "directed wiring matrix के degrees, density और reciprocity।"
   },
   "graph/graph_swap_symmetry": {
    "fp": "5fedd9945b45",
    "ja": "節点の対を入れ替えた配線との Jaccard(恒等ペアで 1.0)—— 左右対称の検査。",
+   "zh": "交换节点对后连接还保留多少(左右对称检验)。",
+   "tw": "交換節點對後連接還保留多少(左右對稱檢驗)。",
+   "ko": "노드 쌍을 맞바꿨을 때 배선이 얼마나 유지되는가(좌우 검사).",
+   "de": "Wie viel der Verschaltung das Vertauschen von Knotenpaaren übersteht (ein Links/Rechts-Test).",
    "hi": "node pairs की अदला-बदली के बाद wiring का कितना भाग बचता है (left/right test)।"
   },
   "imgforensics/copy_move_regions": {
@@ -13473,6 +13557,10 @@
   "math/interp_scattered": {
    "fp": "d4b14e0217bb",
    "ja": "**散らばった**標本から *query* の位置の値を求める —— センサ網・ボーリング・気象。",
+   "zh": "由**散乱**样本求 *query* 处的值——传感器网、钻孔、气象。",
+   "tw": "由**散亂**樣本求 *query* 處的值——感測器網、鑽孔、氣象。",
+   "ko": "**흩어진** 표본으로부터 *query* 위치의 값을 구한다 —— 센서망, 시추공, 기상.",
+   "de": "Werte an *query* aus **verstreuten** Stichproben — Sensornetze, Bohrlöcher, Wetter.",
    "hi": "**बिखरे हुए** samples से *query* पर मान — sensor nets, boreholes, weather।"
   },
   "math/joukowski_circulation": {
@@ -13811,11 +13899,19 @@
   "oned/abs_funct_1d": {
    "fp": "aa034a6277fd",
    "ja": "y 値の絶対値(HALCON ``abs_funct_1d``)。",
+   "zh": "y 值的绝对值(HALCON ``abs_funct_1d``)。",
+   "tw": "y 值的絕對值(HALCON ``abs_funct_1d``)。",
+   "ko": "y 값의 절댓값(HALCON ``abs_funct_1d``).",
+   "de": "Absolutwert der y-Werte (HALCON ``abs_funct_1d``).",
    "hi": "y-मानों का absolute value (HALCON ``abs_funct_1d``)।"
   },
   "oned/bandpass": {
    "fp": "8760397dbd2c",
    "ja": "*low* と *high* Hz のあいだのバターワース帯域通過。両端とも ``(0, rate/2)`` の内側でなければならず、信号長の契約は :func:`lowpass` と同じ。",
+   "zh": "*low* 与 *high* Hz 之间的巴特沃斯带通。两端都必须在 ``(0, rate/2)`` 之内；长度约定与 :func:`lowpass` 相同。",
+   "tw": "*low* 與 *high* Hz 之間的巴特沃斯帶通。兩端都必須在 ``(0, rate/2)`` 之內；長度約定與 :func:`lowpass` 相同。",
+   "ko": "*low* 와 *high* Hz 사이의 버터워스 대역 통과. 두 경계 모두 ``(0, rate/2)`` 안에 있어야 하며, 길이 계약은 :func:`lowpass` 와 같다.",
+   "de": "Butterworth-Bandpass zwischen *low* und *high* Hz. Beide Grenzen müssen innerhalb von ``(0, rate/2)`` liegen; gleicher Längenvertrag wie :func:`lowpass`.",
    "hi": "*low* और *high* Hz के बीच Butterworth band-pass। दोनों edge ``(0, rate/2)`` के अंदर होने चाहिए; :func:`lowpass` जैसा ही लंबाई का नियम।"
   },
   "oned/companding_mu_law": {
@@ -13830,71 +13926,127 @@
   "oned/compose_funct_1d": {
    "fp": "26abe882531c",
    "ja": "合成 ``y1(y2)`` —— *y2* の値を *y1* への位置として使う(HALCON ``compose_funct_1d``)。",
+   "zh": "复合 ``y1(y2)``：把 *y2* 的值用作 *y1* 中的位置(HALCON ``compose_funct_1d``)。",
+   "tw": "複合 ``y1(y2)``：把 *y2* 的值用作 *y1* 中的位置(HALCON ``compose_funct_1d``)。",
+   "ko": "합성 ``y1(y2)``: *y2* 의 값을 *y1* 안의 위치로 사용한다(HALCON ``compose_funct_1d``).",
+   "de": "Komposition ``y1(y2)``: die Werte von *y2* dienen als Positionen in *y1* (HALCON ``compose_funct_1d``).",
    "hi": "composition ``y1(y2)``: *y2* के मान *y1* में position के रूप में उपयोग होते हैं (HALCON ``compose_funct_1d``)।"
   },
   "oned/create_funct_1d_array": {
    "fp": "cf07817de1af",
    "ja": "等間隔の標本から 1-D 関数を作る(HALCON ``create_funct_1d_array``)。",
+   "zh": "由等间距样本构成的一维函数(HALCON ``create_funct_1d_array``)。",
+   "tw": "由等間距樣本構成的一維函數(HALCON ``create_funct_1d_array``)。",
+   "ko": "등간격 표본으로 만든 1-D 함수(HALCON ``create_funct_1d_array``).",
+   "de": "Eine 1-D-Funktion aus äquidistanten Stichproben (HALCON ``create_funct_1d_array``).",
    "hi": "समान दूरी वाले sample से 1-D function (HALCON ``create_funct_1d_array``)।"
   },
   "oned/create_funct_1d_pairs": {
    "fp": "9ebc290e4d34",
    "ja": "任意の ``(x, y)`` の対から 1-D 関数を作り、等間隔の格子へ再標本化する(HALCON ``create_funct_1d_pairs``)。",
+   "zh": "由任意 ``(x, y)`` 对构成并重采样到等间距网格的一维函数(HALCON ``create_funct_1d_pairs``)。",
+   "tw": "由任意 ``(x, y)`` 對構成並重取樣到等間距網格的一維函數(HALCON ``create_funct_1d_pairs``)。",
+   "ko": "임의의 ``(x, y)`` 쌍으로 만들어 등간격 격자로 재표본화한 1-D 함수(HALCON ``create_funct_1d_pairs``).",
+   "de": "Eine 1-D-Funktion aus beliebigen ``(x, y)``-Paaren, auf ein äquidistantes Raster umgetastet (HALCON ``create_funct_1d_pairs``).",
    "hi": "मनमाने ``(x, y)`` जोड़ों से 1-D function, समान दूरी वाले grid पर resample किया गया (HALCON ``create_funct_1d_pairs``)।"
   },
   "oned/derivate_funct_1d": {
    "fp": "b8ae40e96ee9",
    "ja": "中心差分による 1 階微分(HALCON ``derivate_funct_1d``)。",
+   "zh": "用中心差分求一阶导数(HALCON ``derivate_funct_1d``)。",
+   "tw": "用中心差分求一階導數(HALCON ``derivate_funct_1d``)。",
+   "ko": "중심 차분에 의한 1계 도함수(HALCON ``derivate_funct_1d``).",
+   "de": "Erste Ableitung durch zentrale Differenzen (HALCON ``derivate_funct_1d``).",
    "hi": "central difference से पहला derivative (HALCON ``derivate_funct_1d``)।"
   },
   "oned/distance_funct_1d": {
    "fp": "4caa8f0ae1cb",
    "ja": "同じ格子の上に載る 2 つの関数の距離(HALCON ``distance_funct_1d``)。",
+   "zh": "同一网格上两个函数之间的距离(HALCON ``distance_funct_1d``)。",
+   "tw": "同一網格上兩個函數之間的距離(HALCON ``distance_funct_1d``)。",
+   "ko": "같은 격자 위 두 함수 사이의 거리(HALCON ``distance_funct_1d``).",
+   "de": "Abstand zwischen zwei Funktionen auf demselben Raster (HALCON ``distance_funct_1d``).",
    "hi": "एक ही grid पर 2 function के बीच दूरी (HALCON ``distance_funct_1d``)।"
   },
   "oned/envelope": {
    "fp": "ceccfeaa24f6",
    "ja": "解析信号(ヒルベルト変換)による振幅包絡 —— 打音・衝撃・アコースティックエミッションのバーストの「形」。",
+   "zh": "经解析(希尔伯特)信号求振幅包络——敲击/冲击/声发射猝发的形状。",
+   "tw": "經解析(希爾伯特)訊號求振幅包絡——敲擊/衝擊/聲發射突發的形狀。",
+   "ko": "해석(힐베르트) 신호를 통한 진폭 포락선 —— 타격음/충격/음향 방출 버스트의 형태.",
+   "de": "Amplitudenhüllkurve über das analytische (Hilbert-)Signal — die Form eines Klopf-, Stoß- oder Schallemissions-Bursts.",
    "hi": "analytic (Hilbert) signal से amplitude envelope — knock / impact / acoustic-emission burst का आकार।"
   },
   "oned/find_peaks": {
    "fp": "6af0683861be",
    "ja": "山の添字(scipy.signal.find_peaks)—— 衝撃・欠陥のエコー。",
+   "zh": "峰的索引(scipy.signal.find_peaks)——冲击/缺陷回波。",
+   "tw": "峰的索引(scipy.signal.find_peaks)——衝擊/缺陷回波。",
+   "ko": "피크 인덱스(scipy.signal.find_peaks) —— 충격/결함 에코.",
+   "de": "Peak-Indizes (scipy.signal.find_peaks) — Stöße / Defektechos.",
    "hi": "peak के index (scipy.signal.find_peaks) — impact / defect echo।"
   },
   "oned/funct_1d_to_pairs": {
    "fp": "47dddaf87ca3",
    "ja": "関数を明示的な ``(x, y)`` の対として取り出す(HALCON ``funct_1d_to_pairs``)。",
+   "zh": "以显式 ``(x, y)`` 对的形式取出函数(HALCON ``funct_1d_to_pairs``)。",
+   "tw": "以顯式 ``(x, y)`` 對的形式取出函數(HALCON ``funct_1d_to_pairs``)。",
+   "ko": "함수를 명시적인 ``(x, y)`` 쌍으로 꺼낸다(HALCON ``funct_1d_to_pairs``).",
+   "de": "Die Funktion als explizite ``(x, y)``-Paare (HALCON ``funct_1d_to_pairs``).",
    "hi": "function को स्पष्ट ``(x, y)`` जोड़ों के रूप में (HALCON ``funct_1d_to_pairs``)।"
   },
   "oned/get_pair_funct_1d": {
    "fp": "9e6f9945fec7",
    "ja": "*index* の位置の ``(x, y)`` の対(HALCON ``get_pair_funct_1d``)。",
+   "zh": "*index* 处的 ``(x, y)`` 对(HALCON ``get_pair_funct_1d``)。",
+   "tw": "*index* 處的 ``(x, y)`` 對(HALCON ``get_pair_funct_1d``)。",
+   "ko": "*index* 위치의 ``(x, y)`` 쌍(HALCON ``get_pair_funct_1d``).",
+   "de": "Das ``(x, y)``-Paar an *index* (HALCON ``get_pair_funct_1d``).",
    "hi": "*index* पर ``(x, y)`` जोड़ी (HALCON ``get_pair_funct_1d``)।"
   },
   "oned/get_y_value_funct_1d": {
    "fp": "550fbf126e6e",
    "ja": "(小数を含む)位置 *x* における y 値(HALCON ``get_y_value_funct_1d``)。",
+   "zh": "(可含小数的)位置 *x* 处的 y 值(HALCON ``get_y_value_funct_1d``)。",
+   "tw": "(可含小數的)位置 *x* 處的 y 值(HALCON ``get_y_value_funct_1d``)。",
+   "ko": "(소수도 가능한) 위치 *x* 에서의 y 값(HALCON ``get_y_value_funct_1d``).",
+   "de": "Der y-Wert an der (gebrochenen) Position *x* (HALCON ``get_y_value_funct_1d``).",
    "hi": "(भिन्नात्मक) position *x* पर y-मान (HALCON ``get_y_value_funct_1d``)।"
   },
   "oned/highpass": {
    "fp": "e91dc922a2dd",
    "ja": "バターワース高域通過。ナイキストと信号長の契約は :func:`lowpass` と同じ。",
+   "zh": "巴特沃斯高通。奈奎斯特与长度约定与 :func:`lowpass` 相同。",
+   "tw": "巴特沃斯高通。奈奎斯特與長度約定與 :func:`lowpass` 相同。",
+   "ko": "버터워스 고역 통과. 나이퀴스트/길이 계약은 :func:`lowpass` 와 같다.",
+   "de": "Butterworth-Hochpass. Gleicher Nyquist- / Längenvertrag wie :func:`lowpass`.",
    "hi": "Butterworth high-pass। :func:`lowpass` जैसा ही Nyquist / लंबाई का नियम।"
   },
   "oned/integrate_funct_1d": {
    "fp": "f6470b527a61",
    "ja": "台形則による累積積分(HALCON ``integrate_funct_1d``)。",
+   "zh": "用梯形法则求累积积分(HALCON ``integrate_funct_1d``)。",
+   "tw": "用梯形法則求累積積分(HALCON ``integrate_funct_1d``)。",
+   "ko": "사다리꼴 규칙에 의한 누적 적분(HALCON ``integrate_funct_1d``).",
+   "de": "Kumulatives Integral nach der Trapezregel (HALCON ``integrate_funct_1d``).",
    "hi": "trapezoidal rule से संचयी integral (HALCON ``integrate_funct_1d``)।"
   },
   "oned/invert_funct_1d": {
    "fp": "1431d1e16243",
    "ja": "x と y の役割を入れ替える(``x = f^-1(y)``、HALCON ``invert_funct_1d``)。",
+   "zh": "交换 x 与 y 的角色：``x = f^-1(y)``(HALCON ``invert_funct_1d``)。",
+   "tw": "交換 x 與 y 的角色：``x = f^-1(y)``(HALCON ``invert_funct_1d``)。",
+   "ko": "x 와 y 의 역할을 맞바꾼다: ``x = f^-1(y)``(HALCON ``invert_funct_1d``).",
+   "de": "Die Rollen von x und y vertauschen: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``).",
    "hi": "x और y की भूमिका बदलता है: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``)।"
   },
   "oned/local_min_max_funct_1d": {
    "fp": "77fe88b63165",
    "ja": "厳密な極大・極小の添字(HALCON ``local_min_max_funct_1d``)。",
+   "zh": "严格局部极大/极小的索引(HALCON ``local_min_max_funct_1d``)。",
+   "tw": "嚴格局部極大/極小的索引(HALCON ``local_min_max_funct_1d``)。",
+   "ko": "엄격한 국소 극대/극소의 인덱스(HALCON ``local_min_max_funct_1d``).",
+   "de": "Indizes strikter lokaler Maxima / Minima (HALCON ``local_min_max_funct_1d``).",
    "hi": "strict local maxima / minima के index (HALCON ``local_min_max_funct_1d``)।"
   },
   "oned/local_std": {
@@ -13909,31 +14061,55 @@
   "oned/lowpass": {
    "fp": "3ad5efd11b87",
    "ja": "バターワース低域通過(scipy、零位相 filtfilt)。*cutoff* は ``(0, rate/2)`` の内側でなければならず、ナイキストの外を指定すると**信号を素通しせずに例外**を上げる。零位相 filtfilt に対して短すぎる信号も同様に例外(必要な最小長をメッセージに書く)—— 黙って未フィルタのまま返らない。",
+   "zh": "巴特沃斯低通(scipy，零相位 filtfilt)。*cutoff* 必须在 ``(0, rate/2)`` 之内；超出奈奎斯特的截止频率会抛出异常，而不是让信号直接通过。对零相位 filtfilt 而言过短的信号同样抛出异常(消息中写明确切的最小长度)，而不是悄悄返回未滤波的信号。",
+   "tw": "巴特沃斯低通(scipy，零相位 filtfilt)。*cutoff* 必須在 ``(0, rate/2)`` 之內；超出奈奎斯特的截止頻率會拋出例外，而不是讓訊號直接通過。對零相位 filtfilt 而言過短的訊號同樣拋出例外(訊息中寫明確切的最小長度)，而不是悄悄回傳未濾波的訊號。",
+   "ko": "버터워스 저역 통과(scipy, 영위상 filtfilt). *cutoff* 는 ``(0, rate/2)`` 안에 있어야 하며, 나이퀴스트를 벗어난 차단 주파수는 신호를 그대로 통과시키지 않고 예외를 발생시킨다. 영위상 filtfilt에 비해 너무 짧은 신호도 조용히 필터링되지 않은 채 돌아오지 않고 예외를 발생시킨다(메시지에 정확한 최소 길이를 적는다).",
+   "de": "Butterworth-Tiefpass (scipy, nullphasiges filtfilt). *cutoff* muss innerhalb von ``(0, rate/2)`` liegen; eine Grenzfrequenz außerhalb von Nyquist löst eine Ausnahme aus, statt das Signal durchzureichen. Ein für nullphasiges filtfilt zu kurzes Signal löst ebenfalls eine Ausnahme aus (die Meldung nennt das genaue Minimum), statt stillschweigend ungefiltert zurückzukommen.",
    "hi": "Butterworth low-pass (scipy, zero-phase filtfilt)। *cutoff* ``(0, rate/2)`` के अंदर होना चाहिए; Nyquist से बाहर का cutoff signal को आगे जाने देने के बजाय error देता है। zero-phase filtfilt के लिए बहुत छोटा signal भी error देता है (message में ठीक न्यूनतम लंबाई बताई जाती है), बजाय इसके कि वह चुपचाप बिना filter हुए लौट आए।"
   },
   "oned/match_funct_1d_trans": {
    "fp": "1817d68efe5f",
    "ja": "相関による 2 つの関数の最良の整数平行移動量(HALCON ``match_funct_1d_trans``、平行移動のみ)。",
+   "zh": "通过相关求两个函数之间的最佳整数平移(HALCON ``match_funct_1d_trans``，仅平移)。",
+   "tw": "透過相關求兩個函數之間的最佳整數平移(HALCON ``match_funct_1d_trans``，僅平移)。",
+   "ko": "상관에 의한 두 함수 사이의 최적 정수 평행 이동(HALCON ``match_funct_1d_trans``, 평행 이동만).",
+   "de": "Beste ganzzahlige Verschiebung zwischen zwei Funktionen per Korrelation (HALCON ``match_funct_1d_trans``, nur Translation).",
    "hi": "correlation से 2 function के बीच सबसे अच्छा integer translation (HALCON ``match_funct_1d_trans``, केवल translation)।"
   },
   "oned/negate_funct_1d": {
    "fp": "eb39395fca66",
    "ja": "y 値の符号を反転する(HALCON ``negate_funct_1d``)。",
+   "zh": "符号取反的 y 值(HALCON ``negate_funct_1d``)。",
+   "tw": "符號取反的 y 值(HALCON ``negate_funct_1d``)。",
+   "ko": "부호를 뒤집은 y 값(HALCON ``negate_funct_1d``).",
+   "de": "Vorzeichenumgekehrte y-Werte (HALCON ``negate_funct_1d``).",
    "hi": "sign पलटे हुए y-मान (HALCON ``negate_funct_1d``)।"
   },
   "oned/num_points_funct_1d": {
    "fp": "44c9d0d3d9f8",
    "ja": "標本の個数(HALCON ``num_points_funct_1d``)。",
+   "zh": "样本个数(HALCON ``num_points_funct_1d``)。",
+   "tw": "樣本個數(HALCON ``num_points_funct_1d``)。",
+   "ko": "표본 개수(HALCON ``num_points_funct_1d``).",
+   "de": "Anzahl der Stichproben (HALCON ``num_points_funct_1d``).",
    "hi": "sample की संख्या (HALCON ``num_points_funct_1d``)।"
   },
   "oned/peak_subbin": {
    "fp": "f87546928107",
    "ja": "標本と標本の**あいだ**の山の位置 —— 3 点に当てた曲線の頂点。",
+   "zh": "样本**之间**的峰位置——过 3 点拟合曲线的顶点。",
+   "tw": "樣本**之間**的峰位置——過 3 點擬合曲線的頂點。",
+   "ko": "표본 **사이**의 피크 위치 —— 3점을 지나는 맞춤 곡선의 꼭짓점.",
+   "de": "Peakposition **zwischen** den Stichproben — der Scheitel einer Anpassung durch 3 Punkte.",
    "hi": "sample के **बीच** peak की position — 3 point से गुज़रने वाले fit का शीर्ष।"
   },
   "oned/point_spectrum": {
    "fp": "ad6ca2731439",
    "ja": "**事象の位置**の周期図 —— 欠陥・打痕・計数・到着。",
+   "zh": "**事件位置**的周期图——缺陷、冲击、计数、到达。",
+   "tw": "**事件位置**的週期圖——缺陷、衝擊、計數、到達。",
+   "ko": "**사건 위치**의 주기도(periodogram) —— 결함, 충격, 계수, 도착.",
+   "de": "Periodogramm von **Ereignispositionen** — Defekte, Stöße, Zählungen, Ankünfte.",
    "hi": "**event की position** का periodogram — defect, impact, count, arrival।"
   },
   "oned/quantize": {
@@ -13948,86 +14124,154 @@
   "oned/read_audio": {
    "fp": "5fd7396c4066",
    "ja": "任意の音声形式を読む —— ``(x, rate)``。``soundfile`` があればそれを使い(mp3/flac/ogg/…)、無ければ標準ライブラリの WAV 読み込みへ落ちる。",
+   "zh": "读取任意音频格式 -> ``(x, rate)``。可用时使用 ``soundfile``(mp3/flac/ogg/…)，否则回退到标准库的 WAV 读取器。",
+   "tw": "讀取任意音訊格式 -> ``(x, rate)``。可用時使用 ``soundfile``(mp3/flac/ogg/…)，否則退回標準函式庫的 WAV 讀取器。",
+   "ko": "임의의 오디오 형식을 읽는다 -> ``(x, rate)``. 가능하면 ``soundfile`` 을 쓰고(mp3/flac/ogg/…), 없으면 표준 라이브러리 WAV 리더로 대체한다.",
+   "de": "Beliebiges Audioformat lesen -> ``(x, rate)``. Verwendet ``soundfile``, falls verfügbar (mp3/flac/ogg/…), sonst Rückfall auf den WAV-Leser der Standardbibliothek.",
    "hi": "कोई भी audio format पढ़ता है -> ``(x, rate)``। ``soundfile`` उपलब्ध हो तो उसका उपयोग करता है (mp3/flac/ogg/…), नहीं तो stdlib के WAV reader पर लौट आता है।"
   },
   "oned/read_wav": {
    "fp": "afcd4aad0fef",
    "ja": "WAV ファイルを読む(標準ライブラリ)—— ``(x float64 [-1,1], rate)``。多チャンネルは平均してモノラルにする。8/16/32-bit PCM に対応。",
+   "zh": "读取 WAV 文件(标准库) -> ``(x float64 [-1,1], rate)``。多声道取平均为单声道。支持 8/16/32-bit PCM。",
+   "tw": "讀取 WAV 檔案(標準函式庫) -> ``(x float64 [-1,1], rate)``。多聲道取平均為單聲道。支援 8/16/32-bit PCM。",
+   "ko": "WAV 파일을 읽는다(표준 라이브러리) -> ``(x float64 [-1,1], rate)``. 다채널은 평균하여 모노로 만든다. 8/16/32-bit PCM 지원.",
+   "de": "Eine WAV-Datei lesen (Standardbibliothek) -> ``(x float64 [-1,1], rate)``. Mehrkanal wird zu Mono gemittelt. Unterstützt 8/16/32-bit PCM.",
    "hi": "WAV file पढ़ता है (stdlib) -> ``(x float64 [-1,1], rate)``। multi-channel को औसत करके mono बनाया जाता है। 8/16/32-bit PCM संभालता है।"
   },
   "oned/resample": {
    "fp": "d007dc2f0408",
    "ja": "信号を *new_rate* へ再標本化する(フーリエ法)。",
+   "zh": "把信号重采样到 *new_rate*(傅里叶法)。",
+   "tw": "把訊號重取樣到 *new_rate*(傅立葉法)。",
+   "ko": "신호를 *new_rate* 로 재표본화한다(푸리에 방법).",
+   "de": "Ein Signal auf *new_rate* umtasten (Fourier-Methode).",
    "hi": "signal को *new_rate* पर resample करता है (Fourier विधि)।"
   },
   "oned/rms": {
    "fp": "c283ed572b29",
    "ja": "RMS レベル。信号全体なら 1 個のスカラー、*frame* を与えるとフレームごとの配列(時間軸に沿った振動・エネルギーの包絡)。",
+   "zh": "RMS 电平。对整个信号为标量；给定 *frame* 时为逐帧数组(随时间变化的振动/能量包络)。",
+   "tw": "RMS 電平。對整個訊號為純量；給定 *frame* 時為逐幀陣列(隨時間變化的振動/能量包絡)。",
+   "ko": "RMS 레벨. 신호 전체에 대해서는 스칼라, *frame* 을 주면 프레임별 배열(시간에 따른 진동/에너지 포락선).",
+   "de": "RMS-Pegel. Skalar für das ganze Signal oder ein Array pro Frame, wenn *frame* angegeben ist (eine Schwingungs-/Energiehüllkurve über die Zeit).",
    "hi": "RMS स्तर। पूरे signal के लिए scalar, या *frame* दिए जाने पर frame-वार array (समय के साथ vibration/energy का envelope)।"
   },
   "oned/sample_funct_1d": {
    "fp": "4903a80ffa34",
    "ja": "*step* 個おきに標本を取る(HALCON ``sample_funct_1d``)。",
+   "zh": "每隔 *step* 个取一个样本(HALCON ``sample_funct_1d``)。",
+   "tw": "每隔 *step* 個取一個樣本(HALCON ``sample_funct_1d``)。",
+   "ko": "*step* 번째마다 표본을 취한다(HALCON ``sample_funct_1d``).",
+   "de": "Jede *step*-te Stichprobe (HALCON ``sample_funct_1d``).",
    "hi": "हर *step*-वाँ sample (HALCON ``sample_funct_1d``)।"
   },
   "oned/scale_y_funct_1d": {
    "fp": "4cbd70ed1613",
    "ja": "y 値の線形変換 ``mult * y + add``(HALCON ``scale_y_funct_1d``)。",
+   "zh": "y 值的线性映射 ``mult * y + add``(HALCON ``scale_y_funct_1d``)。",
+   "tw": "y 值的線性映射 ``mult * y + add``(HALCON ``scale_y_funct_1d``)。",
+   "ko": "y 값의 선형 사상 ``mult * y + add``(HALCON ``scale_y_funct_1d``).",
+   "de": "Lineare Abbildung der y-Werte, ``mult * y + add`` (HALCON ``scale_y_funct_1d``).",
    "hi": "y-मानों का linear map, ``mult * y + add`` (HALCON ``scale_y_funct_1d``)।"
   },
   "oned/signal_features": {
    "fp": "98491c0d2f4c",
    "ja": "異常検知向けの音響・振動の特徴量ベクトル: ``rms``、``peak``、``crest_factor``、``zcr``、``spectral_centroid``(Hz)、``peak_freq``(Hz)、``bandwidth``(Hz)。すべて有限 —— NaN / Inf の標本は ``ValueError`` を上げ、NaN の特徴量を作らない(空の信号も同じく ValueError。2026-10-12 から。以前はゼロを返した)。",
+   "zh": "用于异常检测的紧凑声学/振动特征向量：``rms``、``peak``、``crest_factor``、``zcr``、``spectral_centroid``(Hz)、``peak_freq``(Hz)、``bandwidth``(Hz)。全部有限——含 NaN / Inf 的样本会抛出 ``ValueError``，而不是产生 NaN 特征(自 2026-10-12 起空信号亦然；此前返回零)。",
+   "tw": "用於異常偵測的精簡聲學/振動特徵向量：``rms``、``peak``、``crest_factor``、``zcr``、``spectral_centroid``(Hz)、``peak_freq``(Hz)、``bandwidth``(Hz)。全部有限——含 NaN / Inf 的樣本會拋出 ``ValueError``，而不是產生 NaN 特徵(自 2026-10-12 起空訊號亦然；此前回傳零)。",
+   "ko": "이상 탐지를 위한 간결한 음향/진동 특징 벡터: ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid``(Hz), ``peak_freq``(Hz), ``bandwidth``(Hz). 모두 유한 —— NaN / Inf 표본은 NaN 특징을 만드는 대신 ``ValueError`` 를 발생시킨다(2026-10-12부터 빈 신호도 마찬가지; 이전에는 0을 반환했다).",
+   "de": "Ein kompakter Akustik-/Schwingungs-Merkmalsvektor zur Anomalieerkennung: ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid`` (Hz), ``peak_freq`` (Hz), ``bandwidth`` (Hz). Alle endlich — eine NaN- / Inf-Stichprobe löst ``ValueError`` aus, statt NaN-Merkmale zu erzeugen (seit 2026-10-12 auch ein leeres Signal; früher ergab es Nullen).",
    "hi": "anomaly detection के लिए संक्षिप्त acoustic/vibration feature vector: ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid`` (Hz), ``peak_freq`` (Hz), ``bandwidth`` (Hz)। सभी finite — NaN / Inf sample NaN feature बनाने के बजाय ``ValueError`` देता है (खाली signal भी, 2026-10-12 से; पहले शून्य लौटाता था)।"
   },
   "oned/smooth_funct_1d_gauss": {
    "fp": "ec333b182f0b",
    "ja": "1-D 関数のガウス平滑化(HALCON ``smooth_funct_1d_gauss``)。",
+   "zh": "一维函数的高斯平滑(HALCON ``smooth_funct_1d_gauss``)。",
+   "tw": "一維函數的高斯平滑(HALCON ``smooth_funct_1d_gauss``)。",
+   "ko": "1-D 함수의 가우스 평활화(HALCON ``smooth_funct_1d_gauss``).",
+   "de": "Gauß-Glättung einer 1-D-Funktion (HALCON ``smooth_funct_1d_gauss``).",
    "hi": "1-D function की Gaussian smoothing (HALCON ``smooth_funct_1d_gauss``)।"
   },
   "oned/smooth_funct_1d_mean": {
    "fp": "668c93edcc8f",
    "ja": "移動平均の反復による平滑化(HALCON ``smooth_funct_1d_mean``)。",
+   "zh": "迭代滑动平均平滑(HALCON ``smooth_funct_1d_mean``)。",
+   "tw": "迭代移動平均平滑(HALCON ``smooth_funct_1d_mean``)。",
+   "ko": "이동 평균을 반복하는 평활화(HALCON ``smooth_funct_1d_mean``).",
+   "de": "Iterierte Gleitmittel-Glättung (HALCON ``smooth_funct_1d_mean``).",
    "hi": "बार-बार moving average से smoothing (HALCON ``smooth_funct_1d_mean``)।"
   },
   "oned/spectrogram": {
    "fp": "8d14f3e7aa28",
    "ja": "STFT の振幅スペクトログラム ``(freqs, times, S)``。``S`` の形は ``(n_freqs, n_frames)``。ハン窓つきで、*hop* の既定は ``win//2``。",
+   "zh": "STFT 幅度谱图 -> ``(freqs, times, S)``，``S`` 的形状为 ``(n_freqs, n_frames)``。加汉宁窗；*hop* 默认为 ``win//2``。",
+   "tw": "STFT 振幅頻譜圖 -> ``(freqs, times, S)``，``S`` 的形狀為 ``(n_freqs, n_frames)``。加漢寧窗；*hop* 預設為 ``win//2``。",
+   "ko": "STFT 진폭 스펙트로그램 -> ``(freqs, times, S)``, ``S`` 의 형태는 ``(n_freqs, n_frames)``. 한(Hann) 창 적용; *hop* 의 기본값은 ``win//2``.",
+   "de": "STFT-Betragsspektrogramm -> ``(freqs, times, S)`` mit ``S`` der Form ``(n_freqs, n_frames)``. Hann-gefenstert; *hop* ist standardmäßig ``win//2``.",
    "hi": "STFT magnitude spectrogram -> ``(freqs, times, S)``, जहाँ ``S`` का shape ``(n_freqs, n_frames)`` है। Hann window वाला; *hop* का default ``win//2`` है।"
   },
   "oned/spectrum": {
    "fp": "34853709b697",
    "ja": "片側の生の振幅スペクトル ``(freqs, magnitude)``(``np.fft.rfft``)。",
+   "zh": "原始单边幅度谱 -> ``(freqs, magnitude)``(``np.fft.rfft``)。",
+   "tw": "原始單邊振幅頻譜 -> ``(freqs, magnitude)``(``np.fft.rfft``)。",
+   "ko": "가공하지 않은 단측 진폭 스펙트럼 -> ``(freqs, magnitude)``(``np.fft.rfft``).",
+   "de": "Rohes einseitiges Betragsspektrum -> ``(freqs, magnitude)`` (``np.fft.rfft``).",
    "hi": "raw one-sided magnitude spectrum -> ``(freqs, magnitude)`` (``np.fft.rfft``)।"
   },
   "oned/transform_funct_1d": {
    "fp": "46baf8a31865",
    "ja": "x と y をそれぞれ独立にアフィン変換する(HALCON ``transform_funct_1d``)。",
+   "zh": "对 x 与 y 分别独立做仿射变换(HALCON ``transform_funct_1d``)。",
+   "tw": "對 x 與 y 分別獨立做仿射變換(HALCON ``transform_funct_1d``)。",
+   "ko": "x 와 y 에 대한 독립적인 아핀 변환(HALCON ``transform_funct_1d``).",
+   "de": "Unabhängige affine Transformation von x und y (HALCON ``transform_funct_1d``).",
    "hi": "x और y का स्वतंत्र affine transform (HALCON ``transform_funct_1d``)।"
   },
   "oned/write_wav": {
    "fp": "bc667bda4b78",
    "ja": "float ``[-1,1]`` のモノラル信号を 16-bit PCM の WAV に書く(標準ライブラリ)。非有限の標本は例外(そのまま書くと壊れた PCM になるため)。",
+   "zh": "把 float ``[-1,1]`` 单声道信号写成 16-bit PCM WAV(标准库)。非有限样本会抛出异常(否则会变成损坏的 PCM)。",
+   "tw": "把 float ``[-1,1]`` 單聲道訊號寫成 16-bit PCM WAV(標準函式庫)。非有限樣本會拋出例外(否則會變成損壞的 PCM)。",
+   "ko": "float ``[-1,1]`` 모노 신호를 16-bit PCM WAV로 쓴다(표준 라이브러리). 유한하지 않은 표본은 예외를 발생시킨다(그대로 쓰면 깨진 PCM이 된다).",
+   "de": "Ein float-``[-1,1]``-Monosignal als 16-bit-PCM-WAV schreiben (Standardbibliothek). Nicht endliche Stichproben lösen eine Ausnahme aus (sie würden zu unbrauchbarem PCM).",
    "hi": "float ``[-1,1]`` mono signal को 16-bit PCM WAV में लिखता है (stdlib)। non-finite sample error देते हैं (वरना वे बेकार PCM बन जाते)।"
   },
   "oned/x_range_funct_1d": {
    "fp": "f85c48780107",
    "ja": "x の定義域 ``(0.0, n - 1.0)``(HALCON ``x_range_funct_1d``)。",
+   "zh": "x 的定义域 ``(0.0, n - 1.0)``(HALCON ``x_range_funct_1d``)。",
+   "tw": "x 的定義域 ``(0.0, n - 1.0)``(HALCON ``x_range_funct_1d``)。",
+   "ko": "x 의 정의역 ``(0.0, n - 1.0)``(HALCON ``x_range_funct_1d``).",
+   "de": "Der x-Bereich ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``).",
    "hi": "x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``)।"
   },
   "oned/y_range_funct_1d": {
    "fp": "7680ad99812c",
    "ja": "値域 ``(min(y), max(y))``(HALCON ``y_range_funct_1d``)。",
+   "zh": "值域 ``(min(y), max(y))``(HALCON ``y_range_funct_1d``)。",
+   "tw": "值域 ``(min(y), max(y))``(HALCON ``y_range_funct_1d``)。",
+   "ko": "값의 범위 ``(min(y), max(y))``(HALCON ``y_range_funct_1d``).",
+   "de": "Der Wertebereich ``(min(y), max(y))`` (HALCON ``y_range_funct_1d``).",
    "hi": "मानों का दायरा ``(min(y), max(y))`` (HALCON ``y_range_funct_1d``)।"
   },
   "oned/zero_crossing_rate": {
    "fp": "c081a4f906ad",
    "ja": "隣り合う標本のうち符号が変わる割合 —— 安価なピッチ・雑音らしさの手がかり。",
+   "zh": "相邻样本中符号改变的比例——廉价的音高/噪声程度线索。",
+   "tw": "相鄰樣本中符號改變的比例——廉價的音高/雜訊程度線索。",
+   "ko": "인접 표본 중 부호가 바뀌는 비율 —— 값싼 음높이/잡음성 단서.",
+   "de": "Anteil benachbarter Stichproben mit Vorzeichenwechsel — ein billiger Hinweis auf Tonhöhe / Rauschhaftigkeit.",
    "hi": "पड़ोसी sample में से sign बदलने वालों का अनुपात — pitch/noisiness का सस्ता संकेत।"
   },
   "oned/zero_crossings_funct_1d": {
    "fp": "7162f24b56c1",
    "ja": "関数の符号が変わる位置の添字(HALCON ``zero_crossings_funct_1d``)。",
+   "zh": "函数改变符号处的索引(HALCON ``zero_crossings_funct_1d``)。",
+   "tw": "函數改變符號處的索引(HALCON ``zero_crossings_funct_1d``)。",
+   "ko": "함수의 부호가 바뀌는 위치의 인덱스(HALCON ``zero_crossings_funct_1d``).",
+   "de": "Indizes, an denen die Funktion das Vorzeichen wechselt (HALCON ``zero_crossings_funct_1d``).",
    "hi": "वे index जहाँ function का sign बदलता है (HALCON ``zero_crossings_funct_1d``)।"
   },
   "optics/abcd_matrix": {
@@ -14393,9 +14637,9 @@
   "optics/illumination_visibility": {
    "fp": "f7c1b378dc12",
    "en": "The **visible fraction of the emitters** seen from each point, in [0, 1] (i.e. cast shadow).",
-   "zh": "从各点看到的**发光点可见比例** [0, 1](即落影)。",
-   "tw": "從各點看到的**發光點可見比例** [0, 1](即落影)。",
-   "ko": "각 점에서 본 **발광점의 가시율** [0, 1](= 그림자).",
+   "zh": "从各点看到的**发光点可见比例** [0, 1] (即落影)。",
+   "tw": "從各點看到的**發光點可見比例** [0, 1] (即落影)。",
+   "ko": "각 점에서 본 **발광점의 가시율** [0, 1] (= 그림자).",
    "de": "Der von jedem Punkt aus **sichtbare Anteil der Lichtquellen** in [0, 1] (also der Schlagschatten).",
    "hi": "हर point से देखे गए **emitters का visible हिस्सा** [0, 1] (= cast shadow)।"
   },
@@ -16121,41 +16365,73 @@
   "spc/spc_capability": {
    "fp": "b1fb992a47e7",
    "ja": "計測と仕様限界からの工程能力指数 Cp / Cpk(中心なら Cpk = Cp)。",
+   "zh": "由测量值与规格限求过程能力指数 Cp 与 Cpk。",
+   "tw": "由量測值與規格界限求製程能力指數 Cp 與 Cpk。",
+   "ko": "측정값과 규격 한계로부터 공정 능력 지수 Cp 와 Cpk 를 구한다.",
+   "de": "Prozessfähigkeitsindizes Cp und Cpk aus Messwerten und Spezifikationsgrenzen.",
    "hi": "measurements और spec limits से process capability indices Cp और Cpk।"
   },
   "spc/spc_cusum": {
    "fp": "815b50a0d9e5",
    "ja": "個別計測の表形式 CUSUM 管理図 —— 小さな持続ドリフトを Shewhart より早く捕らえる。",
+   "zh": "针对单值测量的表格式 CUSUM 控制图。",
+   "tw": "針對單值量測的表格式 CUSUM 管制圖。",
+   "ko": "개별 측정값에 대한 표 형식 CUSUM 관리도.",
+   "de": "Tabellarische CUSUM-Karte für Einzelmesswerte.",
    "hi": "individual measurements के लिए tabular CUSUM chart।"
   },
   "spc/spc_ewma": {
    "fp": "06bd664da265",
    "ja": "個別計測の EWMA 管理図(Roberts 1959)—— λ で記憶の深さを調節し、CUSUM と同様に小さな持続シフトを Shewhart より早く捕らえる。",
+   "zh": "针对单值测量的 EWMA 控制图(Roberts 1959)。",
+   "tw": "針對單值量測的 EWMA 管制圖(Roberts 1959)。",
+   "ko": "개별 측정값에 대한 EWMA 관리도(Roberts 1959).",
+   "de": "EWMA-Regelkarte für Einzelmesswerte (Roberts 1959).",
    "hi": "individual measurements के लिए EWMA control chart (Roberts 1959)।"
   },
   "spc/spc_hotelling_t2": {
    "fp": "9c8badfbf811",
    "ja": "Hotelling の T² による多変量 SPC(F 分布由来の管理限界で相関する計測を同時に判定)。",
+   "zh": "基于 Hotelling T² 的多变量 SPC，控制限服从 F 分布。",
+   "tw": "基於 Hotelling T² 的多變量 SPC，管制界限服從 F 分配。",
+   "ko": "F 분포를 따르는 관리 한계를 쓰는 Hotelling T² 다변량 SPC.",
+   "de": "Multivariate SPC mit Hotellings T² und F-verteilter Regelgrenze.",
    "hi": "F-distributed control limit के साथ Hotelling के T² द्वारा multivariate SPC।"
   },
   "spc/spc_mt_distance": {
    "fp": "27ade6a39799",
    "ja": "MT 法の単位空間からの距離で観測を採点する(MD² = T²/p)。",
+   "zh": "以 MT 法单位空间为基准给观测打分。",
+   "tw": "以 MT 法單位空間為基準給觀測評分。",
+   "ko": "MT 법 단위 공간을 기준으로 관측값에 점수를 매긴다.",
+   "de": "Beobachtungen gegen einen Einheitsraum der MT-Methode bewerten.",
    "hi": "observations को MT-method unit space के सापेक्ष score करता है।"
   },
   "spc/spc_mt_sn_ratio": {
    "fp": "b11c9e94fcfa",
    "ja": "異常標本の距離から望大特性の SN 比(dB)を出す —— 項目選択の採点。",
+   "zh": "由异常样本距离求望大特性 SN 比，单位为分贝。",
+   "tw": "由異常樣本距離求望大特性 SN 比，單位為分貝。",
+   "ko": "이상 표본 거리의 망대 특성 SN 비(데시벨 단위).",
+   "de": "Größer-ist-besser-SN-Verhältnis der Abstände abnormaler Proben, in Dezibel.",
    "hi": "abnormal-sample distances का larger-the-better SN ratio, decibels में।"
   },
   "spc/spc_mt_unit_space": {
    "fp": "aad803d931f6",
    "ja": "既知良品の観測から MT 法の単位空間を作る(MD² の平均はちょうど (n-1)/n)。",
+   "zh": "由已知良品的观测构建 MT 法单位空间。",
+   "tw": "由已知良品的觀測建構 MT 法單位空間。",
+   "ko": "알려진 양품 관측값으로 MT 법 단위 공간을 만든다.",
+   "de": "Einen Einheitsraum der MT-Methode aus bekannt guten Beobachtungen aufbauen.",
    "hi": "ज्ञात-अच्छे observations से MT-method unit space बनाता है।"
   },
   "spc/spc_xbar_r": {
    "fp": "232365db9c7c",
    "ja": "部分群計測からの Shewhart Xbar-R 管理図(ISO 8258 定数で管理限界と逸脱を出す)。",
+   "zh": "由子组测量得到的 Shewhart Xbar-R 控制图。",
+   "tw": "由子群量測得到的 Shewhart Xbar-R 管制圖。",
+   "ko": "부분군 측정값으로 만드는 Shewhart Xbar-R 관리도.",
+   "de": "Shewhart-Xbar-R-Regelkarte aus Untergruppen-Messwerten.",
    "hi": "subgroup measurements से Shewhart Xbar-R control chart।"
   },
   "specular/brdf_blinn_phong": {
@@ -16701,116 +16977,208 @@
   "graph/graph_edge_consensus": {
    "fp": "92f8ab0f7cf8",
    "ja": "K 個体の配線を同じ節点順で重ね、各結合が何個体に在るかを数える(Σ c·h[c] = Σ|E_i| が厳密)—— 個体差と発生の比較。",
+   "zh": "每条连接被多少个体共有——同一节点顺序上的 K 个连接矩阵。",
+   "tw": "每條連接被多少個體共有——同一節點順序上的 K 個連接矩陣。",
+   "ko": "각 연결을 몇 개체가 공유하는가 —— 같은 노드 순서 위의 K 개 배선 행렬.",
+   "de": "Wie viele Individuen jede Verbindung teilen — K Verschaltungsmatrizen in einer Knotenreihenfolge.",
    "hi": "हर connection को कितने individuals साझा करते हैं — एक node order पर K wiring matrices।"
   },
   "graph/tree_from_swc": {
    "fp": "5509f2b380a9",
    "ja": "SWC(神経の木)を読み、根 1 つ・親 id < 子 id・節点 = 辺 + 1 の約束を破った入力は拒む。",
+   "zh": "把 SWC 文本(或 ``.swc`` 文件的路径)解析为经过检查的树表。",
+   "tw": "把 SWC 文字(或 ``.swc`` 檔案的路徑)解析為經過檢查的樹表。",
+   "ko": "SWC 텍스트(또는 ``.swc`` 파일 경로)를 검사된 트리 표로 파싱한다.",
+   "de": "Einen SWC-Text (oder einen Pfad zu einer ``.swc``-Datei) in eine geprüfte Baumtabelle einlesen.",
    "hi": "SWC text (या ``.swc`` file का path) को parse करके जाँची गई tree table बनाता है।"
   },
   "graph/tree_morphometry": {
    "fp": "078e29be6f16",
    "ja": "木の節点・分岐・先端・ケーブル長(先端 = 1 + Σ(子 − 1) を内部で検査)。",
+   "zh": "树表(来自 :func:`tree_from_swc`)的计数与长度。",
+   "tw": "樹表(來自 :func:`tree_from_swc`)的計數與長度。",
+   "ko": "트리 표(:func:`tree_from_swc` 에서 얻은)의 개수와 길이.",
+   "de": "Anzahlen und Längen einer Baumtabelle (aus :func:`tree_from_swc`).",
    "hi": "tree table (:func:`tree_from_swc` से) की गिनतियाँ और लंबाइयाँ।"
   },
   "graph/tree_sholl": {
    "fp": "a384b132e74d",
    "ja": "Sholl 解析: 根を中心とする球(3-D)か円(投影)と枝の交点数。3-D は回転で整数が動かない。",
+   "zh": "Sholl 分析：以根为中心的球(3-D)或圆(投影)与枝段的交点。",
+   "tw": "Sholl 分析：以根為中心的球(3-D)或圓(投影)與枝段的交點。",
+   "ko": "Sholl 분석: 뿌리를 중심으로 한 구(3-D) 또는 원(투영)과 교차하는 가지 수.",
+   "de": "Sholl-Analyse: Segmente, die Kugeln (3-D) oder Kreise (eine Projektion) um die Wurzel schneiden.",
    "hi": "Sholl analysis: root के चारों ओर spheres (3-D) या circles (projection) को पार करने वाले segments।"
   },
   "emproof/seg_contingency": {
    "fp": "2947bba75095",
    "ja": "正解と候補の 2 つの分割の分割表(同時に現れるラベルの対と画素数)。",
+   "zh": "真值 ``a`` 对候选 ``b`` 的列联表(稀疏)。",
+   "tw": "真值 ``a`` 對候選 ``b`` 的列聯表(稀疏)。",
+   "ko": "정답 ``a`` 대 후보 ``b`` 의 분할표(희소).",
+   "de": "Die Kontingenztafel der Wahrheit ``a`` gegen den Kandidaten ``b`` (dünn besetzt).",
    "hi": "truth ``a`` बनाम candidate ``b`` की contingency table (sparse)।"
   },
   "emproof/seg_variation_of_information": {
    "fp": "5ec73133ccd8",
    "ja": "VOI を split(候補が本物を割った量)と merge(別々のものをくっつけた量)に分けてビットで返す。",
+   "zh": "真值 ``a`` 与候选 ``b`` 之间的信息变差(VOI)，以比特计。",
+   "tw": "真值 ``a`` 與候選 ``b`` 之間的資訊變異(VOI)，以位元計。",
+   "ko": "정답 ``a`` 와 후보 ``b`` 사이의 정보 변이(VOI), 비트 단위.",
+   "de": "Variation of Information zwischen der Wahrheit ``a`` und dem Kandidaten ``b``, in Bit.",
    "hi": "truth ``a`` और candidate ``b`` के बीच variation of information, bit में।"
   },
   "emproof/seg_rand": {
    "fp": "08f56fe88729",
    "ja": "Rand 指数・調整 Rand 指数・CREMI の adapted Rand error(画素の対で数える precision / recall つき)。",
+   "zh": "Rand 指数、调整 Rand 指数与 adapted Rand error(CREMI / SNEMI)。",
+   "tw": "Rand 指數、調整 Rand 指數與 adapted Rand error(CREMI / SNEMI)。",
+   "ko": "Rand 지수, 조정 Rand 지수, adapted Rand error(CREMI / SNEMI).",
+   "de": "Rand-Index, adjustierter Rand-Index und adapted Rand error (CREMI / SNEMI).",
    "hi": "Rand index, adjusted Rand index और adapted Rand error (CREMI / SNEMI)।"
   },
   "emproof/seg_synapse_partners": {
    "fp": "6525a89b9c74",
    "ja": "分割から配線図を読む。シナプスの前後の点がどの物体に落ちるかと、(前の物体, 後の物体) の接続の一覧。",
+   "zh": "读出分割所隐含的连接图：每个突触连接哪些对象。",
+   "tw": "讀出分割所隱含的連接圖：每個突觸連接哪些物件。",
+   "ko": "분할이 함축하는 배선도를 읽는다: 각 시냅스가 어떤 객체를 잇는가.",
+   "de": "Den Schaltplan lesen, den eine Segmentierung impliziert: welches Objekt jede Synapse verbindet.",
    "hi": "segmentation जिस wiring diagram को दर्शाता है उसे पढ़ता है: हर synapse किस object को जोड़ता है।"
   },
   "emproof/seg_wiring_variation": {
    "fp": "1d0212a6d116",
    "ja": "候補の分割が正解の配線図をどう壊すかを VOI で測る。シナプスの端で取る split / merge と、接続ごとに束ねた connection_split / connection_merge の 2 水準。",
+   "zh": "候选分割 ``b`` 如何破坏真值 ``a`` 的连接图，以比特计。",
+   "tw": "候選分割 ``b`` 如何破壞真值 ``a`` 的連接圖，以位元計。",
+   "ko": "후보 분할 ``b`` 가 정답 ``a`` 의 배선도를 얼마나 망가뜨리는가, 비트 단위.",
+   "de": "Wie eine Kandidatensegmentierung ``b`` den Schaltplan der Wahrheit ``a`` verfälscht, in Bit.",
    "hi": "candidate segmentation ``b`` truth ``a`` के wiring diagram को कितना बिगाड़ता है, bit में।"
   },
   "graph/graph_strength_growth": {
    "fp": "542117d70263",
    "ja": "2 つの配線行列(前と後)の間で、どの節点にどれだけシナプスが足されたかを入力と出力に分けて数える。太らせた・新しい・消えた・細った重みの内訳、相手の数との順位相関、ハブの取り分。",
+   "zh": "新的突触去了哪里——连接矩阵 ``a``(较早)对 ``b``(较晚)。",
+   "tw": "新的突觸去了哪裡——連接矩陣 ``a``(較早)對 ``b``(較晚)。",
+   "ko": "새 시냅스가 어디로 갔는가 —— 배선 행렬 ``a``(이전) 대 ``b``(이후).",
+   "de": "Wohin die neuen Synapsen gingen — eine Verschaltungsmatrix ``a`` (früher) gegen ``b`` (später).",
    "hi": "नए synapses कहाँ गए — एक wiring matrix ``a`` (पहले) बनाम ``b`` (बाद में)।"
   },
   "graph/tree_run_length": {
    "fp": "dd6ce39076f6",
    "ja": "走行長(ERL): 正解の骨格を候補のラベルで塗ったとき、同じ物体のまま走れるケーブルの期待値。走行ごとの長さ、切れ目と背景で失ったケーブル、融合した走行(0 とみなす)の数。",
+   "zh": "在候选节点标注下骨架的期望行程长度(ERL)。",
+   "tw": "在候選節點標註下骨架的期望行程長度(ERL)。",
+   "ko": "노드에 대한 후보 라벨링 하에서 골격의 기대 주행 길이(ERL).",
+   "de": "Erwartete Lauflänge (ERL) eines Skeletts unter einer Kandidatenbeschriftung seiner Knoten.",
    "hi": "nodes की किसी candidate labelling के तहत skeleton की expected run length (ERL)।"
   },
   "emproof/seg_synapse_nri": {
    "fp": "9bb8c6ef0fef",
    "ja": "NRI(Reilly 2018): シナプスの端の対のうち、正解でも候補でも同じ物体にある対の F 値。端の上の adapted Rand error の 1 − と厳密に一致することを内部で検査する。",
+   "zh": "候选 ``b`` 相对真值 ``a`` 的神经重建完整性(NRI，Reilly et al. 2018)。",
+   "tw": "候選 ``b`` 相對真值 ``a`` 的神經重建完整性(NRI，Reilly et al. 2018)。",
+   "ko": "정답 ``a`` 에 대한 후보 ``b`` 의 신경 재구성 무결성(NRI, Reilly et al. 2018).",
+   "de": "Neural Reconstruction Integrity (Reilly et al. 2018) des Kandidaten ``b`` gegen die Wahrheit ``a``.",
    "hi": "truth ``a`` के सापेक्ष candidate ``b`` की neural reconstruction integrity (Reilly et al. 2018)।"
   },
   "emproof/seg_wiring_exposure": {
    "fp": "1fa3292d68ed",
    "ja": "物体ごとに、それを切った(または中に融合が隠れていた)時の配線の損傷を、シナプスの端の個数だけから: 上限 s/2n、到達できる最大、端が一様に散っている時の 2 項分布の期待値、相対密度。",
+   "zh": "每个对象因保持为一整块而押上了多少连接——仅由突触端点数得出。",
+   "tw": "每個物件因保持為一整塊而押上了多少連接——僅由突觸端點數得出。",
+   "ko": "각 객체가 한 조각으로 남는 데 얼마만큼의 배선을 걸고 있는가 —— 시냅스 끝점 개수만으로.",
+   "de": "Wie viel Verschaltung jedes Objekt darauf setzt, ein Stück zu bleiben — allein aus den Zahlen der Synapsenenden.",
    "hi": "हर object एक टुकड़े में बने रहने पर कितनी wiring दाँव पर लगाता है — केवल synapse सिरों की गिनती से।"
   },
   "graph/graph_physarum_path": {
    "fp": "e7374e7fe95e",
    "ja": "粘菌(Tero 2010)の管の力学で重み付きグラフの最短路を解く: 単位流量を流し、各管の導電度を |流量| へ寄せる。最短路が一意なら導電度はその指示関数に収束する(Bonifaci 2012)。導電度・流量の行列、道、道の長さ、流れの長さを返す。",
+   "zh": "在带权图上用黏菌的管道动力学求最短路(Tero et al. 2010)。",
+   "tw": "在帶權圖上用黏菌的管道動力學求最短路徑(Tero et al. 2010)。",
+   "ko": "가중 그래프에서 점균의 관 동역학으로 구하는 최단 경로(Tero et al. 2010).",
+   "de": "Kürzester Pfad durch die Röhrendynamik des Schleimpilzes (Tero et al. 2010) auf einem gewichteten Graphen.",
    "hi": "weighted graph पर slime mould की tube dynamics (Tero et al. 2010) से shortest path।"
   },
   "graph/physarum_route": {
    "fp": "55240c7a61a4",
    "ja": "コスト画像の最小コスト経路を粘菌の管の力学で: 隣接画素を長さ (c_u+c_v)/2 の管で結び、route_through_array と同じ量を最小化する。導電度の画像、経路の画素列、経路コスト、途中経過の画像を返す。",
+   "zh": "用黏菌的管道动力学求代价图像上的最小代价路线。",
+   "tw": "用黏菌的管道動力學求代價影像上的最小代價路線。",
+   "ko": "점균의 관 동역학으로 찾은, 비용 영상을 지나는 최소 비용 경로.",
+   "de": "Kostenminimale Route durch ein Kostenbild, gefunden durch die Röhrendynamik des Schleimpilzes.",
    "hi": "slime mould की tube dynamics से मिला cost image के आर-पार minimum-cost route।"
   },
   "graph/graph_kcore": {
    "fp": "4d6c49c3526a",
    "ja": "配線行列の k-core(重み付きなら s-core)分解: 各節点の核の指数。入次数・出次数・総次数・無向のどれで剥くかを選ぶ。定理が門(完全グラフは n−1、木は 1、閉路は 2)。最深殻の節点、殻ごとの個数を返す。",
+   "zh": "连接矩阵的 k-core(或加权 s-core)分解——每个节点的核指数。",
+   "tw": "連接矩陣的 k-core(或加權 s-core)分解——每個節點的核指數。",
+   "ko": "배선 행렬의 k-core(또는 가중 s-core) 분해 —— 각 노드의 코어 지수.",
+   "de": "k-Core- (oder gewichtete s-Core-)Zerlegung einer Verschaltungsmatrix — der Core-Index jedes Knotens.",
    "hi": "wiring matrix का k-core (या weighted s-core) decomposition — हर node का core index।"
   },
   "graph/graph_rich_club_curve": {
    "fp": "cb194aee29c6",
    "ja": "rich club 係数 φ(k) を全 k で一度に: 次数 > k の節点が張る部分グラフの密度を、次数保存ヌルの平均で割る。比 > 1 が rich club の帯。1 点の graph_rich_club と全 k で一致するのが門。",
+   "zh": "对每个 k 计算 rich-club 系数 φ(k)，并与保度零模型比较。",
+   "tw": "對每個 k 計算 rich-club 係數 φ(k)，並與保度虛無模型比較。",
+   "ko": "모든 k 에 대한 rich-club 계수 φ(k), 차수 보존 귀무 모형과 비교.",
+   "de": "Rich-Club-Koeffizient φ(k) für jedes k, gegen das gradtreue Nullmodell.",
    "hi": "degree-preserving null के सापेक्ष हर k के लिए rich-club coefficient φ(k)।"
   },
   "graph/graph_core_persistence": {
    "fp": "73d152744216",
    "ja": "K 個体の配線を同じ節点順で重ね、最深殻(k-core / s-core)に全員で居る節点(persistent)・何匹かで居る(recurrent)・1 匹だけ(transient)を数える。Σ|最深殻| = Σ出現回数 が門。",
+   "zh": "哪些节点位于每个个体的最内核——同一节点顺序上的 K 个连接。",
+   "tw": "哪些節點位於每個個體的最內核——同一節點順序上的 K 個連接。",
+   "ko": "어떤 노드가 모든 개체의 가장 안쪽 코어에 있는가 —— 같은 노드 순서 위의 K 개 배선.",
+   "de": "Welche Knoten im innersten Core jedes Individuums liegen — K Verschaltungen in einer Knotenreihenfolge.",
    "hi": "कौन से nodes हर individual के सबसे भीतरी core में हैं — एक node order पर K wirings।"
   },
   "graph/graph_physarum_transport": {
    "fp": "453fe51547b3",
    "ja": "重み付きグラフの上の L1 最適輸送(Beckmann 問題)を粘菌の管の力学で: 供給ベクトル(Σ = 0)の正の節点から負の節点へ質量を運ぶ流れが Σ L|q| の最小へ収束する(Bonifaci 2017、Facca ら 2020)。費用(上界)と Kantorovich–Rubinstein の下界(圧力の McShane 包絡)、その隙間、導電度・流量の行列、圧力を返す。隙間が閉じたら止まる(証明書つき)。",
+   "zh": "在带权图上用黏菌的管道动力学求 L1 最优传输(Beckmann 问题)。",
+   "tw": "在帶權圖上用黏菌的管道動力學求 L1 最佳傳輸(Beckmann 問題)。",
+   "ko": "가중 그래프에서 점균의 관 동역학으로 푸는 L1 최적 수송(Beckmann 문제).",
+   "de": "L1-optimaler Transport (das Beckmann-Problem) auf einem gewichteten Graphen durch die Röhrendynamik des Schleimpilzes.",
    "hi": "slime mould की tube dynamics से weighted graph पर L1 optimal transport (Beckmann problem)।"
   },
   "graph/physarum_transport_image": {
    "fp": "354bb7603ca0",
    "ja": "質量画像 2 枚の間の Earth Mover 距離を粘菌の管の力学で: 画素を長さ 1(斜め √2)の管で結び、a を源・b を吸込にして流す。費用と双対の下界、導電度の画像、流れの向きの場、圧力、途中経過の画像(管が張られていく様子)を返す。",
+   "zh": "用黏菌的管道动力学求两幅质量图像之间的推土机距离(Earth mover's distance)。",
+   "tw": "用黏菌的管道動力學求兩幅質量影像之間的推土機距離(Earth mover's distance)。",
+   "ko": "점균의 관 동역학으로 구하는 두 질량 영상 사이의 Earth mover's distance.",
+   "de": "Earth Mover's Distance zwischen zwei Massenbildern durch die Röhrendynamik des Schleimpilzes.",
    "hi": "slime mould की tube dynamics से दो mass images के बीच earth mover's distance।"
   },
   "graph/car_dubins_path": {
    "fp": "a7680e4ea297",
    "ja": "前進だけの車(最小回転半径 radius)が姿勢 (x, y, θ) から姿勢 (x', y', θ') へ移る最短路を Dubins(1957)の 6 語(LSL RSR LSR RSL RLR LRL)の閉形式で。各候補は前進積分で終点を検証し、届かない候補は捨てて n_rejected に数える。語・長さ・区間・step 刻みの姿勢列・全候補の長さ・下界(ユークリッド距離)を返す。",
+   "zh": "仅能前进的汽车在两个位姿之间的最短路(Dubins 1957)，由六个闭式词给出。",
+   "tw": "僅能前進的汽車在兩個位姿之間的最短路徑(Dubins 1957)，由六個閉式詞給出。",
+   "ko": "전진만 하는 차가 두 자세 사이를 잇는 최단 경로(Dubins 1957), 6개의 닫힌 형식 단어로.",
+   "de": "Kürzester Nur-Vorwärts-Pfad eines Autos zwischen zwei Posen (Dubins 1957) über die sechs geschlossenen Wörter.",
    "hi": "दो poses के बीच केवल आगे चलने वाली car का shortest path (Dubins 1957), छह closed-form words से।"
   },
   "graph/car_reeds_shepp_path": {
    "fp": "e0206f45e9a6",
    "ja": "後退を許す車の最短路を Reeds–Shepp(1990)の 48 語(OMPL と同じ 44 式)の閉形式で。候補は前進積分で終点を検証して落とした数を返し、最短の語(小文字 = 後退の区間)・長さ・区間 (種類, 前進/後退, 長さ)・姿勢列・全候補を返す。",
+   "zh": "可倒车的汽车在两个位姿之间的最短路(Reeds 与 Shepp 1990)，以闭式求得。",
+   "tw": "可倒車的汽車在兩個位姿之間的最短路徑(Reeds 與 Shepp 1990)，以閉式求得。",
+   "ko": "후진할 수 있는 차가 두 자세 사이를 잇는 최단 경로(Reeds and Shepp 1990), 닫힌 형식으로.",
+   "de": "Kürzester Pfad eines Autos, das rückwärts fahren darf, zwischen zwei Posen (Reeds und Shepp 1990), in geschlossener Form.",
    "hi": "दो poses के बीच ऐसी car का shortest path जो पीछे भी जा सकती है (Reeds and Shepp 1990), closed form से।"
   },
   "graph/car_hybrid_astar": {
    "fp": "748f1361a251",
    "ja": "占有格子(> 0.5 = 障害物)の上で車の道を Hybrid A*(Dolgov ら 2010)で探す: {左・直進・右} × {前進・後退} の運動基本形を離散セル (x, y, θ) で枝刈りしながら A* で繋ぎ、障害物を無視した Reeds–Shepp 長(前進のみなら Dubins 長)を許容ヒューリスティックに、節点から目標へ解析的な一撃を試す。車体の矩形 footprint か余白 clearance、後退・切替・舵の罰則。姿勢列・長さ・費用・下界(RS 長)・区間・展開数を返す。障害物の無い格子では費用 = RS 長。到達不能は ValueError。",
+   "zh": "Hybrid A*(Dolgov、Thrun、Montemerlo 与 Diebel 2010)：汽车穿过占据栅格的路径。",
+   "tw": "Hybrid A*(Dolgov、Thrun、Montemerlo 與 Diebel 2010)：汽車穿過佔據格網的路徑。",
+   "ko": "Hybrid A*(Dolgov, Thrun, Montemerlo and Diebel 2010): 점유 격자를 지나는 차의 경로.",
+   "de": "Hybrid A* (Dolgov, Thrun, Montemerlo und Diebel 2010): der Pfad eines Autos durch ein Belegungsraster.",
    "hi": "Hybrid A* (Dolgov, Thrun, Montemerlo and Diebel 2010): occupancy grid में से car का path।"
   },
   "segmentation/check_difference": {

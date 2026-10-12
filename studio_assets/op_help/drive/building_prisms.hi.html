@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveplateau; driveplateau.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;building_prisms&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>इमारतों के footprint को उनकी ऊँचाई तक extrude करके एक triangle mesh में मिलाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>buildings: <code style="color:#22d3bf">plateau_parse</code> の <code style="color:#22d3bf">buildings</code>(<code style="color:#22d3bf">footprint</code>, <code style="color:#22d3bf">height</code>, <code style="color:#22d3bf">ground_z</code>)。</p>
-<p>color_fn: <code style="color:#22d3bf">building -&gt; (r,g,b)</code> 0..1。None なら <code style="color:#22d3bf">_default_building_color</code>。</p>
-<p>base_z: 全建物の底 z [m]。None なら各建物の <code style="color:#22d3bf">ground_z</code> を使う(起伏のある世界向け)。</p>
-<p>自前の平らな道路世界には 0.0 が合う。</p>
-<p>roof_shade: 屋根面の色の倍率(側面と見分けるための控えめな陰)。</p>
+<p>buildings: <code style="color:#22d3bf">plateau_parse</code> के <code style="color:#22d3bf">buildings</code> (<code style="color:#22d3bf">footprint</code>, <code style="color:#22d3bf">height</code>, <code style="color:#22d3bf">ground_z</code>)।</p>
+<p>color_fn: <code style="color:#22d3bf">building -&gt; (r,g,b)</code> 0..1। None हो तो <code style="color:#22d3bf">_default_building_color</code>।</p>
+<p>base_z: सभी इमारतों का तल z [m]। None हो तो प्रत्येक इमारत का <code style="color:#22d3bf">ground_z</code> उपयोग होता है (ऊँची-नीची भूमि वाले विश्व के लिए)।</p>
+<p>अपने बनाए समतल सड़क-विश्व के लिए 0.0 उपयुक्त है।</p>
+<p>roof_shade: छत के फलक के रंग का गुणक (पार्श्व फलकों से अलग पहचानने के लिए हल्की छाया)।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(V (n,3) float64, F (m,3) int64, colors (m,3) float64 0..1, ids (m,) int64)</code>。<code style="color:#22d3bf">ids[f]</code> は面 f が属する建物の番号(入力列の添字)。建物が 0 件なら各配列は空。</p>
+<p><code style="color:#22d3bf">(V (n,3) float64, F (m,3) int64, colors (m,3) float64 0..1, ids (m,) int64)</code>। <code style="color:#22d3bf">ids[f]</code> उस इमारत की संख्या है जिससे फलक f संबंधित है (इनपुट क्रम का सूचकांक)। इमारतें 0 हों तो प्रत्येक ऐरे खाली होता है।</p>
 <p>Raises:</p>
-<p>ValueError: color_fn の返り値が RGB 3 要素 0..1 でない、建物の footprint/height が不正。</p>
-<p>空の入力(<code style="color:#22d3bf">buildings</code> が 0 件)は空を返す(理由: 建物が 0 件のタイルは実データに普通にある。空の角柱集合が正しい答え)。</p>
+<p>ValueError: color_fn का रिटर्न मान 0..1 के 3 RGB तत्व नहीं है, या इमारत का footprint/height अमान्य है।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">buildings</code> में 0 प्रविष्टियाँ) पर खाली परिणाम लौटाता है (कारण: 0 इमारतों वाली टाइलें वास्तविक डेटा में सामान्य हैं; खाली प्रिज़्म-समुच्चय ही सही उत्तर है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.understeer_gradient(params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.understeer_gradient(params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;understeer_gradient&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>언더스티어 구배 K = (m/L)(l_r/C_f − l_f/C_r) [rad/(m/s²)]와 특성 속도 / 임계 속도.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">params</code>: <code style="color:#22d3bf">mass</code> [kg]、<code style="color:#22d3bf">l_f</code>・<code style="color:#22d3bf">l_r</code>(重心から前・後車軸)[m]、<code style="color:#22d3bf">c_f</code>・<code style="color:#22d3bf">c_r</code>(軸ごとのコーナリングパワー)[N/rad]。</p>
-<p>返り値: <code style="color:#22d3bf">K</code>、<code style="color:#22d3bf">kind</code>(&quot;understeer&quot; / &quot;neutral&quot; / &quot;oversteer&quot;)、<code style="color:#22d3bf">characteristic_speed</code>(K &gt; 0 で √(L/K)、ヨーレートゲインが最大の速さ)、<code style="color:#22d3bf">critical_speed</code>(K &lt; 0 で √(−L/K)、これを超えると不安定)。無いものは <code style="color:#22d3bf">inf</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 欠けた / 正でない母数。</p>
+<p><code style="color:#22d3bf">params</code>: <code style="color:#22d3bf">mass</code> [kg], <code style="color:#22d3bf">l_f</code>/<code style="color:#22d3bf">l_r</code>(무게중심에서 앞/뒤 차축까지)[m], <code style="color:#22d3bf">c_f</code>/<code style="color:#22d3bf">c_r</code>(축별 코너링 파워)[N/rad].</p>
+<p>반환값: <code style="color:#22d3bf">K</code>, <code style="color:#22d3bf">kind</code>(&quot;understeer&quot;/&quot;neutral&quot;/&quot;oversteer&quot;), <code style="color:#22d3bf">characteristic_speed</code>(K &gt; 0 이면 √(L/K), 요 레이트 게인이 최대가 되는 속도), <code style="color:#22d3bf">critical_speed</code>(K &lt; 0 이면 √(−L/K), 이를 넘으면 불안정). 없는 것은 <code style="color:#22d3bf">inf</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 누락되었거나 양수가 아닌 파라미터.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

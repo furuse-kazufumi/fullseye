@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_ecbs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>상위 단계를 초점 탐색으로 한 CBS(ECBS 상위 단계와 같은 발상, Barer 외 2014). 총비용이 <b>최적의 w배 이내</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>開いている節のうち最小の総コスト <code style="color:#22d3bf">LB</code> は最適値以下(最適解はどれかの節の下にある)。そこで <code style="color:#22d3bf">コスト ≤ w · LB</code> の節(焦点)の中から<b>衝突の少ない</b>ものを展開する。返す計画は <code style="color:#22d3bf">cost ≤ w · LB ≤ w · 最適</code>(門)。返りは <code style="color:#22d3bf">mapf_cbs</code> の dict に <code style="color:#22d3bf">lower_bound</code> と <code style="color:#22d3bf">w</code> を足したもの。細い通路で最適の CBS が同じ長さの譲り合いの組を全部調べて止まるのを、衝突の少ない側へ寄せて抜ける。</p>
+<p>열린 노드 중 최소 총비용 <code style="color:#22d3bf">LB</code> 는 최적값 이하(최적해는 어느 노드 아래에 있다). 그래서 <code style="color:#22d3bf">コスト ≤ w · LB</code> 인 노드(초점) 중에서 <b>충돌이 적은</b> 것을 전개한다. 반환하는 계획은 <code style="color:#22d3bf">cost ≤ w · LB ≤ w · 最適</code>(게이트). 반환은 <code style="color:#22d3bf">mapf_cbs</code> 의 dict 에 <code style="color:#22d3bf">lower_bound</code> 와 <code style="color:#22d3bf">w</code> 를 더한 것. 좁은 통로에서 최적의 CBS 가 같은 길이의 양보 조합을 모두 조사하다 멈추는 것을, 충돌이 적은 쪽으로 기울여 빠져나간다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

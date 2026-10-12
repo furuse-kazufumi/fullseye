@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_loop(straight=80.0, radius=30.0, width=8.0, arc_pts=64, overlap=0.05)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecourse; drivecourse.course_loop(straight=80.0, radius=30.0, width=8.0, arc_pts=64, overlap=0.05)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;course_loop&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>loop course (अंडाकार): origin के चारों ओर रखे 2 सीधे भाग + 2 अर्धवृत्त वाला <code style="color:#22d3bf">{&quot;elements&quot;: [...], &quot;placements&quot;: [...]}</code> लौटाता है (इसे सीधे <code style="color:#22d3bf">course_layout</code> को दें)। वामावर्त क्रम में: दक्षिणी सीधा भाग (पूर्व की ओर, y = −R) → पूर्वी अर्धवृत्त → उत्तरी सीधा भाग (पश्चिम की ओर, y = +R) → पश्चिमी अर्धवृत्त। सीधे भाग दोनों सिरों पर <code style="color:#22d3bf">overlap</code> जितना अर्धवृत्तों में घुसते हैं (3-D बनाते समय जोड़ों पर curb न उठे इसके लिए overlap; क्षेत्रफलों के योग में वह भाग दो बार गिना जाता है)। मानक (सामान्य license): 80 m या अधिक का सीधा driving भाग, चौड़ाई 8 m या अधिक।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 直線が正でない、半円の条件(course_loop_bend)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: सीधा भाग धनात्मक नहीं, अर्धवृत्त की शर्तें (course_loop_bend)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

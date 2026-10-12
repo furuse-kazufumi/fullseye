@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cubic_prototype(kind, a, species, b_iso=0.5, name=None)</code>(要直接调用实现,<code style="color:#22d3bf">import pxrd; pxrd.cubic_prototype(kind, a, species, b_iso=0.5, name=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cubic_prototype&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由立方晶系原型(<code style="color:#22d3bf">sc</code>、<code style="color:#22d3bf">bcc</code>、<code style="color:#22d3bf">fcc</code>、<code style="color:#22d3bf">diamond</code>、<code style="color:#22d3bf">rocksalt</code>、<code style="color:#22d3bf">cscl</code>、<code style="color:#22d3bf">zincblende</code>、<code style="color:#22d3bf">fluorite</code>)构建物相。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>CIF が無いときの相の作り方(教科書の座標だけ)。<code style="color:#22d3bf">species</code> は副格子ごとの散乱体の名前の list(rocksalt は <code style="color:#22d3bf">[&quot;Na&quot;, &quot;Cl&quot;]</code>、fluorite は <code style="color:#22d3bf">[&quot;Ca&quot;, &quot;F&quot;]</code> の順 = 陽イオン、陰イオン)。<code style="color:#22d3bf">a</code> [Å]、<code style="color:#22d3bf">b_iso</code> [Å²] は全原子共通。</p>
-<p>返り値は <code style="color:#22d3bf">cif_read</code> と同じ形の相。</p>
-<p>Raises ValueError: 原型の名前の綴り違い、副格子の数と <code style="color:#22d3bf">species</code> の数の不一致、未知の元素、<code style="color:#22d3bf">a &lt;= 0</code>。</p>
+<p>没有 CIF 时构建相的方法(仅用教科书坐标)。<code style="color:#22d3bf">species</code> 为各子晶格散射体名称的 list(rocksalt 为 <code style="color:#22d3bf">[&quot;Na&quot;, &quot;Cl&quot;]</code>,fluorite 为 <code style="color:#22d3bf">[&quot;Ca&quot;, &quot;F&quot;]</code> 的顺序 = 阳离子、阴离子)。<code style="color:#22d3bf">a</code> [Å]、<code style="color:#22d3bf">b_iso</code> [Å²] 对所有原子共用。</p>
+<p>返回值为与 <code style="color:#22d3bf">cif_read</code> 相同形式的相。</p>
+<p>Raises ValueError: 原型名称拼写错误、子晶格数与 <code style="color:#22d3bf">species</code> 数不一致、未知元素、<code style="color:#22d3bf">a &lt;= 0</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

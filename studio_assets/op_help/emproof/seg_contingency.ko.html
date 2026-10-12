@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_contingency(a, b, ignore_label=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import segcompare; segcompare.seg_contingency(a, b, ignore_label=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsemproof.get(&quot;seg_contingency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>The contingency table of truth <code style="color:#22d3bf">a</code> against candidate <code style="color:#22d3bf">b</code> (sparse).</p>
+<p>정답 <code style="color:#22d3bf">a</code> 대 후보 <code style="color:#22d3bf">b</code> 의 분할표(희소).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Returns <code style="color:#22d3bf">labels_a</code> / <code style="color:#22d3bf">labels_b</code> (the distinct labels), <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> (indices into them) and <code style="color:#22d3bf">counts</code> for every co-occurring pair, plus <code style="color:#22d3bf">n</code> (pixels counted), <code style="color:#22d3bf">row_sums</code> (size of each truth object) and <code style="color:#22d3bf">col_sums</code> (size of each candidate object). <code style="color:#22d3bf">counts.sum() == n</code>, <code style="color:#22d3bf">row_sums.sum() == col_sums.sum() == n</code>.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-integer, non-finite, boolean-free-but-string or masked input; not 2-D / 3-D; empty; different shapes; every pixel ignored.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>(要直接调用实现,<code style="color:#22d3bf">import drivetraffic; drivetraffic.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;idm_equilibrium_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>IDM 的平衡车距 s_e(v) = (s0 + v T) / sqrt(1 − (v/v0)^δ)(0 ≤ v &lt; v0)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Δv = 0 で <code style="color:#22d3bf">idm_accel</code> = 0 と置いて解いたもの(s* = s0 + vT)。v → v0 で発散する(希望速度では車間は要らない = 前が無限に遠い)。a, b に依らない。</p>
-<p>門: 先行車が一定速度のとき <code style="color:#22d3bf">idm_platoon_simulate</code> が収束した車間と rtol 1e-6 で一致。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0 または v ≥ v0。</p>
-<p>空の入力(<code style="color:#22d3bf">v</code> が 0 要素)は ValueError。</p>
+<p>令 Δv = 0 时 <code style="color:#22d3bf">idm_accel</code> = 0 而解出(s* = s0 + vT)。v → v0 时发散(在期望速度下不需要车距 = 前车无限远)。与 a, b 无关。</p>
+<p>门:前车匀速时,与 <code style="color:#22d3bf">idm_platoon_simulate</code> 收敛的车距在 rtol 1e-6 内一致。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>:v &lt; 0 或 v ≥ v0。</p>
+<p>空输入(<code style="color:#22d3bf">v</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

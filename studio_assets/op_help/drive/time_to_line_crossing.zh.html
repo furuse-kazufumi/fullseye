@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.time_to_line_crossing(offset: &#x27;float&#x27;, heading_error: &#x27;float&#x27;, curvature: &#x27;float&#x27;, speed: &#x27;float&#x27;, *, line_offset: &#x27;float&#x27;, lane_curvature: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.time_to_line_crossing(offset: &#x27;float&#x27;, heading_error: &#x27;float&#x27;, curvature: &#x27;float&#x27;, speed: &#x27;float&#x27;, *, line_offset: &#x27;float&#x27;, lane_curvature: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;time_to_line_crossing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>TLC：假定车辆(的基准点)以当前曲率沿圆(或直线)行驶，到达车道边界所需的时间 [s]。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>座標: 車線の中心線の上の点を原点、中心線の向きを +x、左を +y。車は (0, <code style="color:#22d3bf">offset</code>)、中心線に対する向き <code style="color:#22d3bf">heading_error</code>、曲率 <code style="color:#22d3bf">curvature</code>(左が正)。境界は中心線から横 <code style="color:#22d3bf">line_offset</code>(左が正)の線 —— 中心線が曲率 <code style="color:#22d3bf">lane_curvature</code> の円なら、それと同心の円。届かなければ <code style="color:#22d3bf">inf</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 非有限、v ≤ 0、車がすでに境界の外側(offset と line_offset の関係で判断)。</p>
+<p>坐标: 以车道中心线上的点为原点,中心线方向为 +x,左为 +y。车位于 (0, <code style="color:#22d3bf">offset</code>),相对中心线的朝向为 <code style="color:#22d3bf">heading_error</code>,曲率为 <code style="color:#22d3bf">curvature</code>(左为正)。边界是从中心线横向偏移 <code style="color:#22d3bf">line_offset</code>(左为正)的线 —— 若中心线是曲率 <code style="color:#22d3bf">lane_curvature</code> 的圆,则为与其同心的圆。到达不了则为 <code style="color:#22d3bf">inf</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 非有限、v ≤ 0、车已在边界外侧(根据 offset 与 line_offset 的关系判断)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

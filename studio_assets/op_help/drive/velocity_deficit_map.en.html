@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.velocity_deficit_map(field, speed=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import swarmflow; swarmflow.velocity_deficit_map(field, speed=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;velocity_deficit_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Velocity field → deficit from the free stream 1 − u/U, lateral deflection v/U, speed deficit 1 − |v|/U. U is given, or the median of u over the upstream 15 % edge.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">deficit</code>・<code style="color:#22d3bf">deflection</code>・<code style="color:#22d3bf">speed_deficit</code> (H, W)(測れない格子は NaN)、<code style="color:#22d3bf">speed</code>(使った U)、<code style="color:#22d3bf">x</code>・<code style="color:#22d3bf">y</code>。</p>
+<p>dict: <code style="color:#22d3bf">deficit</code> / <code style="color:#22d3bf">deflection</code> / <code style="color:#22d3bf">speed_deficit</code> (H, W) (NaN at grid cells that cannot be measured), <code style="color:#22d3bf">speed</code> (the U used), <code style="color:#22d3bf">x</code> / <code style="color:#22d3bf">y</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

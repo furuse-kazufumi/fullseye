@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spin_from_markers(dirs0, dirs1, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import balltrack; balltrack.spin_from_markers(dirs0, dirs1, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;spin_from_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>마커 방향의 쌍(전 (M, 3), 후 (M, 3), 단위 벡터)으로부터 각속도 벡터 ω [rad/s]를 구합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>M ≥ 2 なら Kabsch(SVD)で回転 R を当て、回転角 θ と軸から ω = θ/dt·軸(既知の ω で回した向きを入れると 1e-9 で戻る = 門)。M = 1 なら d₀ → d₁ の最小回転(軸 = d₀ × d₁)を返す(&quot;full&quot; = False): 模様の向きまわりの成分は原理的に決まらず、コマ間の回転角が大きいと ω の直交成分の近似としても外れる(模様は ω の軸まわりの小円を描くので、最小回転の大円と違う)。</p>
-<p>正直に: 1 つの模様で ω を出したいなら dt を小さく(回転角 ≪ 1 rad)、それでも軸まわりの成分は別の模様が要る。返り値 <code style="color:#22d3bf">{&quot;omega&quot;, &quot;angle&quot;, &quot;axis&quot;, &quot;R&quot;, &quot;full&quot;, &quot;rms&quot;}</code>。</p>
+<p>M ≥ 2 이면 Kabsch(SVD)로 회전 R 을 맞추고, 회전각 θ 와 축에서 ω = θ/dt·축(알려진 ω 로 회전시킨 방향을 넣으면 1e-9 로 되돌아온다 = 게이트). M = 1 이면 d₀ → d₁ 의 최소 회전(축 = d₀ × d₁)을 반환한다(&quot;full&quot; = False): 마커 방향 둘레의 성분은 원리적으로 결정되지 않으며, 프레임 간 회전각이 크면 ω 의 직교 성분의 근사로서도 빗나간다(마커는 ω 축 둘레의 소원을 그리므로 최소 회전의 대원과 다르다).</p>
+<p>솔직히: 마커 하나로 ω 를 구하려면 dt 를 작게(회전각 ≪ 1 rad), 그래도 축 둘레 성분은 다른 마커가 필요하다. 반환값 <code style="color:#22d3bf">{&quot;omega&quot;, &quot;angle&quot;, &quot;axis&quot;, &quot;R&quot;, &quot;full&quot;, &quot;rms&quot;}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

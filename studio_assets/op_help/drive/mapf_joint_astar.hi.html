@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;mapf_joint_astar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सभी वाहनों की positions को 1 state मानकर A*। <b>केवल छोटी समस्याओं के लिए</b> optimal हल (CBS gate का ground truth)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>sum of costs を厳密に数えるため、各車両に「終わった(以後は目的地に居続ける)」の旗を持たせる:</p>
-<p>目的地に居る車両はその手の前に終わってよく、1 手の費用 = まだ終わっていない台数。ヒューリスティック = 終わっていない車両の BFS 距離の和(許容的)。</p>
+<p>sum of costs को सटीक गिनने के लिए प्रत्येक वाहन में &quot;समाप्त (इसके बाद गंतव्य पर ही रहता है)&quot; ध्वज होता है:</p>
+<p>गंतव्य पर स्थित वाहन उस चाल से पहले समाप्त हो सकता है, और 1 चाल की लागत = अभी तक समाप्त न हुए वाहनों की संख्या। ह्यूरिस्टिक = समाप्त न हुए वाहनों की BFS दूरियों का योग (स्वीकार्य)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

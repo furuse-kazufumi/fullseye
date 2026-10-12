@@ -4,21 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.long_simulate(s0: &#x27;float&#x27;, v0: &#x27;float&#x27;, command: &#x27;Callable&#x27;, road=None, t_end: &#x27;float&#x27; = 30.0, dt: &#x27;float&#x27; = 0.01, params: &#x27;Optional[dict]&#x27; = None, t_breaks: &#x27;Sequence[float]&#x27; = (), t0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelong; drivelong.long_simulate(s0: &#x27;float&#x27;, v0: &#x27;float&#x27;, command: &#x27;Callable&#x27;, road=None, t_end: &#x27;float&#x27; = 30.0, dt: &#x27;float&#x27; = 0.01, params: &#x27;Optional[dict]&#x27; = None, t_breaks: &#x27;Sequence[float]&#x27; = (), t0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;long_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>longitudinal गति समीकरण को RK4 से integrate करता है (घटनाओं के समय पर step काटे जाते हैं; module का docstring देखें)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>s0, v0 : 初めの位置 [m] (道なりの弧長)と速度 [m/s] (負 = 後ろ向き)</p>
-<p>command : <code style="color:#22d3bf">command(t, s, v) -&gt; (drive, brake)</code>(どちらも ≥ 0 [m/s²]。上限は μ g cos θ と a_max で頭打ち)。</p>
-<p><b>v = 0.0 で呼ばれるのは止まっている間だけ</b>(動いている刻みの中間点で速度が 0 を横切っても、指令には動きの向きの</p>
-<p>±1e-300 を渡す)ので、指令は <code style="color:#22d3bf">v == 0</code> / <code style="color:#22d3bf">v &lt;= 0</code> で「止まったら保持」を書いてよい。</p>
-<p>指令が時刻で不連続に変わるなら、その時刻を <code style="color:#22d3bf">t_breaks</code> に入れると刻みがそこで切れる(厳密さのため)。</p>
-<p>road : 道の縦断(<code style="color:#22d3bf">road_eval</code> と同じ)</p>
-<p>t_end : 終わりの時刻 [s]、dt : 刻み [s]</p>
-<p>params : <code style="color:#22d3bf">long_params</code> の dict(None = 既定)</p>
-<p>t0 : 初めの時刻 [s]</p>
+<p>s0, v0 : प्रारंभिक स्थिति [m] (सड़क के साथ चाप-लंबाई) और गति [m/s] (ऋणात्मक = पीछे की ओर)</p>
+<p>command : <code style="color:#22d3bf">command(t, s, v) -&gt; (drive, brake)</code> (दोनों ≥ 0 [m/s²]। ऊपरी सीमा μ g cos θ और a_max पर रुकती है)।</p>
+<p><b>v = 0.0 के साथ केवल रुके रहने के दौरान ही कॉल होता है</b> (चलते हुए चरण के मध्यबिंदु पर गति 0 को पार करे तब भी आदेश को गति की दिशा में</p>
+<p>±1e-300 दिया जाता है), इसलिए आदेश <code style="color:#22d3bf">v == 0</code> / <code style="color:#22d3bf">v &lt;= 0</code> से &quot;रुकने पर रोके रखो&quot; लिख सकता है।</p>
+<p>यदि आदेश समय के साथ असतत रूप से बदलता है, तो उस समय को <code style="color:#22d3bf">t_breaks</code> में डालें ताकि चरण वहीं कटे (सटीकता के लिए)।</p>
+<p>road : सड़क का अनुदैर्ध्य प्रोफ़ाइल (<code style="color:#22d3bf">road_eval</code> के समान)</p>
+<p>t_end : समाप्ति समय [s], dt : चरण [s]</p>
+<p>params : <code style="color:#22d3bf">long_params</code> का dict (None = डिफ़ॉल्ट)</p>
+<p>t0 : प्रारंभिक समय [s]</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : <code style="color:#22d3bf">t, s, v, a, drive, brake, z, W_drive, W_brake, W_rr, W_drag</code>(各 (n,) の配列、a = その時点の加速度)、</p>
-<p><code style="color:#22d3bf">stopped</code>(bool 配列)、<code style="color:#22d3bf">events</code>(<code style="color:#22d3bf">(&quot;stop&quot;|&quot;move&quot;, t, s, 向き)</code> の列)、<code style="color:#22d3bf">saturated</code>(上限で頭打ちになった刻みがあったか)、<code style="color:#22d3bf">params</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 引数が不正、指令が負や非有限を返した。</p>
+<p>dict : <code style="color:#22d3bf">t, s, v, a, drive, brake, z, W_drive, W_brake, W_rr, W_drag</code> (प्रत्येक (n,) सरणी, a = उस क्षण का त्वरण),</p>
+<p><code style="color:#22d3bf">stopped</code> (bool सरणी), <code style="color:#22d3bf">events</code> (<code style="color:#22d3bf">(&quot;stop&quot;|&quot;move&quot;, t, s, 向き)</code> की सूची), <code style="color:#22d3bf">saturated</code> (क्या कोई चरण सीमा पर रुका), <code style="color:#22d3bf">params</code>।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: तर्क अमान्य, आदेश ने ऋणात्मक या अपरिमित मान लौटाया।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

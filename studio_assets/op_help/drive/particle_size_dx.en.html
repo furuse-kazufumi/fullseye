@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_dx(psd: &#x27;dict&#x27;, q: &#x27;float&#x27; = 50.0, convention: &#x27;str&#x27; = &#x27;log_edges&#x27;) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import grind; grind.particle_size_dx(psd: &#x27;dict&#x27;, q: &#x27;float&#x27; = 50.0, convention: &#x27;str&#x27; = &#x27;log_edges&#x27;) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_dx&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Diameter Dq [µm] at cumulative volume <code style="color:#22d3bf">q</code> % (D10 / D50 / D90 are <code style="color:#22d3bf">q</code> = 10 / 50 / 90).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">convention</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;log_edges&quot;</code>(既定、装置のヘッダの <code style="color:#22d3bf">Dx (50)</code> と一致): 端 i の累積に対して log(径) を線形補間。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;linear_edges&quot;</code>: 端の累積に対して径そのものを線形補間(区間内の体積が径について一様、の仮定)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;lower_cumsum&quot;</code>: 公開の解析コードの学習の段の定義 <code style="color:#22d3bf">np.interp(q/100, cumsum(v), edges)</code>(累積を区間の下の端に置く)。1 区間分小さく出る(この装置で −11.9 %)。比較のために再現しているだけで、推奨しない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;log_edges&quot;</code> (default, matches <code style="color:#22d3bf">Dx (50)</code> in the instrument header): log(diameter) is linearly interpolated against the cumulative value at edge i.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;linear_edges&quot;</code>: the diameter itself is linearly interpolated against the cumulative values at the edges (assumes the volume within a bin is uniform in diameter).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;lower_cumsum&quot;</code>: the training-stage definition in the public analysis code, <code style="color:#22d3bf">np.interp(q/100, cumsum(v), edges)</code> (places the cumulative value at the lower edge of the bin). It comes out one bin smaller (−11.9 % on this instrument). It is reproduced only for comparison and is not recommended.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ackermann_steer_angles(radius, wheelbase: &#x27;float&#x27;, track: &#x27;float&#x27;) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.ackermann_steer_angles(radius, wheelbase: &#x27;float&#x27;, track: &#x27;float&#x27;) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;ackermann_steer_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>애커먼의 내외륜 조향각(뒤차축 중심의 선회 반경 R, 휠베이스 L, 윤거 t).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>δ_in = atan(L/(R − t/2))、δ_out = atan(L/(R + t/2))、2 輪等価 δ = atan(L/R)。cot δ_out − cot δ_in = t/L。</p>
-<p>返り値: <code style="color:#22d3bf">inner</code>, <code style="color:#22d3bf">outer</code>, <code style="color:#22d3bf">bicycle</code> [rad]、<code style="color:#22d3bf">front_inner_radius</code> √((R − t/2)² + L²)、<code style="color:#22d3bf">front_outer_radius</code>、<code style="color:#22d3bf">rear_inner_radius</code> R − t/2、<code style="color:#22d3bf">offtracking</code>(定常の内輪差 = 前内輪 − 後内輪の半径)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ t/2(内側の後輪が旋回の中心を越える)、L ≤ 0、t &lt; 0。</p>
-<p>空の入力(<code style="color:#22d3bf">radius</code> が 0 要素)は ValueError。</p>
+<p>δ_in = atan(L/(R − t/2)), δ_out = atan(L/(R + t/2)), 2륜 등가 δ = atan(L/R). cot δ_out − cot δ_in = t/L.</p>
+<p>반환값: <code style="color:#22d3bf">inner</code>, <code style="color:#22d3bf">outer</code>, <code style="color:#22d3bf">bicycle</code> [rad], <code style="color:#22d3bf">front_inner_radius</code> √((R − t/2)² + L²), <code style="color:#22d3bf">front_outer_radius</code>, <code style="color:#22d3bf">rear_inner_radius</code> R − t/2, <code style="color:#22d3bf">offtracking</code>(정상 상태의 내륜차 = 앞 내륜 − 뒤 내륜의 반경).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ t/2(안쪽 뒷바퀴가 선회 중심을 넘어선다), L ≤ 0, t &lt; 0.</p>
+<p>빈 입력(<code style="color:#22d3bf">radius</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

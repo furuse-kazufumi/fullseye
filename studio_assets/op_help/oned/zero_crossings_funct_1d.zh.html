@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.zero_crossings_funct_1d(y)</code>(要直接调用实现,<code style="color:#22d3bf">import funct1d; funct1d.zero_crossings_funct_1d(y)</code>;从台账取用则 <code style="color:#22d3bf">ops1d.get(&quot;zero_crossings_funct_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Indices where the function changes sign (HALCON <code style="color:#22d3bf">zero_crossings_funct_1d</code>).</p>
+<p>函数改变符号处的索引(HALCON <code style="color:#22d3bf">zero_crossings_funct_1d</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Returns the integer indices <code style="color:#22d3bf">i</code> with <code style="color:#22d3bf">sign(y[i]) * sign(y[i+1]) &lt; 0</code> — the sample *before* each crossing. An empty input returns an empty index array (degenerate case, not an error).</p>
 <p>Honest limitation: the test is a <b>strict</b> sign product, so a crossing that lands exactly on a zero sample (<code style="color:#22d3bf">[-1, 0, 1]</code>) is *not* reported, nor is a touch of zero without a sign change (<code style="color:#22d3bf">[1, 0, 1]</code>).</p>
 <p>:param y: 1-D function (may be empty). :returns: int index array (possibly empty). :raises ValueError: non-1-D / NaN / Inf input.</p>

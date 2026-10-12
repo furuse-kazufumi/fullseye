@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_conflicts(paths)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.plan_conflicts(paths)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;plan_conflicts&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>conflicts की सूची: एक ही समय पर एक ही cell (vertex), एक-दूसरे को पार करना (edge), पीछे चलना (follow)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返りは <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>。着いた車両はその場に居続けるものとして数える。follow は「i が時刻 t にマス v へ<b>入った</b>とき、j が t-1 に v に居た」(i ≠ j)。</p>
+<p>लौटाता है <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>। पहुँच चुका वाहन उसी स्थान पर बना रहता है, ऐसा मानकर गिना जाता है। follow का अर्थ है &quot;जब i समय t पर खाने v में <b>प्रवेश करता</b> है, तब j समय t-1 पर v में था&quot; (i ≠ j)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

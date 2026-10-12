@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plan_conflicts(paths)</code> (die Implementierung direkt: <code style="color:#22d3bf">import agvfleet; agvfleet.plan_conflicts(paths)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;plan_conflicts&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liste der Konflikte: gleiche Zelle zur gleichen Zeit (vertex), Aneinander-Vorbeifahren (edge), Folgen (follow).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>返りは <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>。着いた車両はその場に居続けるものとして数える。follow は「i が時刻 t にマス v へ<b>入った</b>とき、j が t-1 に v に居た」(i ≠ j)。</p>
+<p>Rückgabe ist <code style="color:#22d3bf">[(種類, i, j, 時刻, マス)]</code>. Ein angekommenes Fahrzeug wird so gezählt, als bliebe es an Ort und Stelle. follow bedeutet „wenn i zum Zeitpunkt t in Zelle v <b>eintritt</b>, war j zu t-1 in v“ (i ≠ j).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import roverslip; roverslip.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;wheel_forces&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在沉陷 z [m] 与滑移率 s 下刚性车轮从土壤受到的力(Wong–Reece 应力分布的数值积分)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;Fz&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;theta_f&quot;, &quot;theta_m&quot;, &quot;theta_r&quot;}</code>: 垂直力 [N]、牽引力(drawbar pull、前向き正)[N]、駆動トルク [N·m]、角 [rad]。<code style="color:#22d3bf">sinkage</code>・<code style="color:#22d3bf">slip</code> はスカラーか同じ形に放送できる配列(0 ≤ z &lt; r、−1 &lt; s &lt; 1)。</p>
+<p>返回值 <code style="color:#22d3bf">{&quot;Fz&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;theta_f&quot;, &quot;theta_m&quot;, &quot;theta_r&quot;}</code>: 垂直力 [N]、牵引力(drawbar pull,向前为正)[N]、驱动扭矩 [N·m]、角 [rad]。<code style="color:#22d3bf">sinkage</code>/<code style="color:#22d3bf">slip</code> 为标量或可广播为相同形状的数组(0 ≤ z &lt; r、−1 &lt; s &lt; 1)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

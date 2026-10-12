@@ -4,9 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_velocity_estimate(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;, t_ref=None, iters: &#x27;int&#x27; = 3) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import puck; puck.puck_velocity_estimate(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;, t_ref=None, iters: &#x27;int&#x27; = 3) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;puck_velocity_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>N점의 위치로부터 속도를 최소제곱으로 구합니다: 방향 û를 고정한 등감속 모형 p(τ) = p_ref + v_ref τ − ½ μg τ² û(τ = t − t_ref).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>û は v_ref から取るので 3 回反復(初期値 = 端点の差)。&quot;viscous&quot; は基底 (1 − e^{−kτ})/k で線形、&quot;none&quot; は直線。</p>
-<p>雑音の見積り: 残差から σ_pos、(AᵀA)⁻¹ から v_ref の分散(<code style="color:#22d3bf">sigma_v</code>、等方)。返り値 <code style="color:#22d3bf">{&quot;p_ref&quot;,&quot;v_ref&quot;,&quot;speed&quot;,&quot;u&quot;,&quot;t_ref&quot;,&quot;sigma_pos&quot;,&quot;sigma_v&quot;,&quot;sigma_p&quot;,&quot;resid_rms&quot;,&quot;n&quot;,&quot;model&quot;}</code>。N &lt; 3 は ValueError。</p>
+<p>û 는 v_ref 에서 취하므로 3 회 반복한다(초기값 = 끝점의 차). &quot;viscous&quot; 는 기저 (1 − e^{−kτ})/k 에 대해 선형, &quot;none&quot; 은 직선. 잡음 추정: 잔차에서 σ_pos, (AᵀA)⁻¹ 에서 v_ref 의 분산(<code style="color:#22d3bf">sigma_v</code>, 등방). 반환값 <code style="color:#22d3bf">{&quot;p_ref&quot;,&quot;v_ref&quot;,&quot;speed&quot;,&quot;u&quot;,&quot;t_ref&quot;,&quot;sigma_pos&quot;,&quot;sigma_v&quot;,&quot;sigma_p&quot;,&quot;resid_rms&quot;,&quot;n&quot;,&quot;model&quot;}</code>. N &lt; 3 이면 ValueError.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

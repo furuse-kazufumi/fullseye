@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.powder_flowability_class(phi_deg: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import granular; granular.powder_flowability_class(phi_deg: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;powder_flowability_class&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>안식각 → 유동성 등급(USP &lt;1174&gt; Table 1, 원전 Carr 1965).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返り: <code style="color:#22d3bf">cls</code>(excellent / good / fair / passable / poor / very poor / very, very poor)、<code style="color:#22d3bf">phi_int</code>(表を引いた整数の度 = 四捨五入)、<code style="color:#22d3bf">tabulated</code>(表の下限 25 度以上か)、<code style="color:#22d3bf">band_upper_deg</code>(その区分の上限; 上限の無い最後の区分は None —— 返りに inf を入れない、JSON に載らないため)。表は整数の度なので 30.5 は 31(good)、30.4 は 30(excellent)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 角が (0, 90) の外。</p>
+<p>반환: <code style="color:#22d3bf">cls</code>(excellent / good / fair / passable / poor / very poor / very, very poor), <code style="color:#22d3bf">phi_int</code>(표를 찾은정수 도 = 반올림), <code style="color:#22d3bf">tabulated</code>(표의 하한 25 도 이상인가), <code style="color:#22d3bf">band_upper_deg</code>(그 구분의 상한; 상한이 없는 마지막 구분은 None —— 반환에 inf 를 넣지 않는다, JSON 에 실을 수 없으므로). 표는 정수도이므로 30.5 는 31(good), 30.4 는 30(excellent). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 각이 (0, 90) 의 밖.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecourse; drivecourse.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;course_crank&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲折路線(曲柄彎，Z 形)：進入 → 左 90° → B → 右 90° → 駛出。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>別表第三の図(3JH00000217782)の測り方に合わせる: 幅 A = w、曲角間の長さ B は一方の道の外壁から向かいの道の内壁まで(= 中心線の曲角間距離)、出入口部 C は横断する帯の壁から出入口まで(中心線では C + w/2)、すみ切り D は曲角部の <b>内側</b> の角(外側の角は正方形のまま)。中心線は(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B)、長さ L = 2C + w + B。面積 = w·L + 2r²(1 − π/4) (導出はモジュール docstring)。規格(普通免許): A = 3.5, B = 12, C ≥ 4, D = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・B・C が正でない、r &lt; 0、C &lt; r(すみ切りが出入口にはみ出る)、B &lt; w + r(2 つの角が重なる)、arc_pts が 1 以上の整数でない。</p>
+<p>配合日本法規別表第三的圖(3JH00000217782)的量法: 寬 A = w,轉角間長度 B 為從一側道路的外壁到對向道路的內壁(= 中心線的轉角間距離),出入口部 C 為從橫越帶的壁到出入口(以中心線計為 C + w/2),截角 D 為轉角部 <b>內側</b> 的角(外側的角維持正方形)。中心線為(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B),長度 L = 2C + w + B。面積 = w·L + 2r²(1 − π/4) (推導見模組 docstring)。規格(日本普通駕照): A = 3.5, B = 12, C ≥ 4, D = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 寬、B、C 不為正,r &lt; 0,C &lt; r(截角超出出入口), B &lt; w + r(2 個角重疊),arc_pts 不是 1 以上的整數。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

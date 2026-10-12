@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_egomotion_from_flow(flow, lattice, axes=None, weights=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import flyvision; flyvision.fly_egomotion_from_flow(flow, lattice, axes=None, weights=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_egomotion_from_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Least-squares rotation of the eye from its flow field — and how badly the eye&#x27;s own shape conditions the answer.</p>
+<p>由光流場以最小平方求眼的旋轉——以及眼自身的形狀使該解的條件數變得多差。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Given the flow <code style="color:#22d3bf">f_i</code> at known viewing directions <code style="color:#22d3bf">d_i</code>, a pure rotation <code style="color:#22d3bf">w</code> predicts <code style="color:#22d3bf">f_i = -(w x d_i)</code>, which is <b>linear in w</b>: projecting on the tangent basis gives <code style="color:#22d3bf">f_az = -w . (d x e_az)</code> and <code style="color:#22d3bf">f_el = -w . (d x e_el)</code>, so the estimate is one <code style="color:#22d3bf">2n x 3</code> least-squares solve with no iteration and no starting guess (Franz et al.&#x27;s linear egomotion estimate, *Biol. Cybern.* 2004).</p>
 <p>The catch is not the algebra, it is the eye. A single patch of ommatidia sees a small piece of the sphere, and over a small piece the flow of a yaw and the flow of a sideways translation — or of a pitch — look nearly the same. This op therefore returns the <b>condition number</b> of that solve next to the answer, so that &quot;the fit converged&quot; and &quot;the fit was identifiable&quot; stay separate claims.</p>
 <p>flow: <code style="color:#22d3bf">(n, 2)</code> azimuth/elevation components per ommatidium (<code style="color:#22d3bf">fly_flow_from_directions</code> or <code style="color:#22d3bf">fly_matched_filter</code>).</p>

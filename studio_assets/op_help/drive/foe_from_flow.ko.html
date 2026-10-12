@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_flow(u, v, mask=None, *, min_speed: &#x27;float&#x27; = 0.3, max_speed: &#x27;float&#x27; = inf, iters: &#x27;int&#x27; = 5, angle_scale: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivettc; drivettc.foe_from_flow(u, v, mask=None, *, min_speed: &#x27;float&#x27; = 0.3, max_speed: &#x27;float&#x27; = inf, iters: &#x27;int&#x27; = 5, angle_scale: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>광류로부터 확장 초점(FoE)을 추정합니다: <code style="color:#22d3bf">{&quot;foe&quot;: (col, row), &quot;n&quot;, &quot;residual&quot;}</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>純平行移動の流れは FoE から放射状(Longuet-Higgins &amp; Prazdny 1980)なので、各画素の流線(点 p_i を流れの向きに通る直線)は全部 FoE を通る。FoE = Σ w_i·dist(F, 流線_i)² を最小にする点(2×2 の正規方程式)。重みは反復で <code style="color:#22d3bf">1/|p_i − F|·1/(1 + (角度残差/angle_scale)²)</code>(Cauchy 風)。遠い画素の流線ほど向きの誤差が FoE の位置に効くので距離で割り、外れ値(遮蔽・無地)を角度残差で落とす。15 巡目で「既知」にした FoE を流れから出す口(16 巡目)。</p>
-<p>定理の門: 真の流れ(flow_from_depth_motion)を入れると <code style="color:#22d3bf">foe_from_motion</code> と 1e-9 で一致。</p>
-<p><code style="color:#22d3bf">mask</code> は使う画素(既定 = 有限で速さが [min_speed, max_speed] の画素)。有効画素が 3 未満、または正規方程式が特異(流線が全部平行)なら <code style="color:#22d3bf">ValueError</code>。</p>
+<p>순수 평행 이동의 흐름은 FoE 로부터 방사상이므로(Longuet-Higgins &amp; Prazdny 1980), 각 화소의 유선(점 p_i 를 흐름의 방향으로지나는 직선)은 모두 FoE 를 지난다. FoE = Σ w_i·dist(F, 유선_i)² 를 최소로 하는 점(2×2 정규방정식). 가중치는 반복으로 <code style="color:#22d3bf">1/|p_i − F|·1/(1 + (角度残差/angle_scale)²)</code>(Cauchy 풍). 먼 화소의 유선일수록 방향 오차가 FoE 의 위치에크게 작용하므로 거리로 나누고, 이상치(가림·무늬 없음)를 각도 잔차로 떨어뜨린다. 15 회차에서 &quot;기지&quot; 로 둔 FoE 를 흐름에서 구하는 입구(16 회차). 정리의 게이트: 참 흐름(flow_from_depth_motion)을 넣으면 <code style="color:#22d3bf">foe_from_motion</code> 과 1e-9 로 일치.</p>
+<p><code style="color:#22d3bf">mask</code> 는 사용할 화소(기본 = 유한하고 속력이 [min_speed, max_speed] 인 화소). 유효 화소가 3 미만이거나 정규방정식이특이(유선이 모두 평행)하면 <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

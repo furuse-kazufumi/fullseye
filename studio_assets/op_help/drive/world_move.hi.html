@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_move(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;None&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveworld; driveworld.world_move(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;None&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;world_move&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>object i (asset से रखा गया) को नए pose (x, y, yaw) पर ले जाता है (केवल vertices बदलता है; faces, labels और रंग वैसे ही रहते हैं)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>対向車を 1 コマずつ進める(15 巡目の TTC)ための op。資産でない物体(縁石・路面・信号機)は <code style="color:#22d3bf">ValueError</code>。</p>
-<p>姿勢の意味は <code style="color:#22d3bf">add_asset</code> と同じ(資産の原点 = 箱の底面中心、yaw は +x から反時計回り)。</p>
-<p>空の入力(<code style="color:#22d3bf">world</code> が空の dict)は ValueError。</p>
+<p>सामने से आने वाले वाहन को एक-एक फ़्रेम आगे बढ़ाने के लिए op (15वें दौर का TTC)। एसेट न होने वाली वस्तुएँ (कर्ब, सड़क-सतह, ट्रैफ़िक सिग्नल) पर <code style="color:#22d3bf">ValueError</code>। मुद्रा का अर्थ <code style="color:#22d3bf">add_asset</code> के समान है (एसेट का मूल बिंदु = बॉक्स के तल का केंद्र, yaw +x से वामावर्त)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">world</code> खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

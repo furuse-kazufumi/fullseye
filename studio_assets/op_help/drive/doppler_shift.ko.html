@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doppler_shift(f, v_source_radial, c: &#x27;float&#x27; = 343.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivedecide; drivedecide.doppler_shift(f, v_source_radial, c: &#x27;float&#x27; = 343.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;doppler_shift&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>음원이 움직이고 청자가 정지해 있을 때 들리는 주파수(닫힌 식).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>f_obs = f · c / (c − v_r)</p>
-<p><code style="color:#22d3bf">v_source_radial</code> = 音源の <b>聞き手へ近づく向きの</b> 視線速度(近づけば正 → 高く聞こえる)。|v_r| &lt; c。配列も可。</p>
+<p><code style="color:#22d3bf">v_source_radial</code> = 음원의 <b>청자에게 다가가는 방향의</b> 시선 속도(다가가면 양수 → 높게 들림). |v_r| &lt; c. 배열도 가능.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

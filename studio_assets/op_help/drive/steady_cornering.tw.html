@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivelateral; drivelateral.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;steady_cornering&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>線性 2 輪等效模型的穩態圓周轉向(速度 u，迴轉半徑 R = u/r，左轉為正)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>R は前向きの速さ u とヨーレート r で定義する(線形モデルの慣習)。重心の軌跡の実際の半径は合成の速さ / r = R √(1 + tan²β) で、β が小さい範囲で R に等しい(門で確かめた差は β² の桁)。</p>
-<p>返り値: <code style="color:#22d3bf">steer</code> δ = L/R + K u²/R [rad]、<code style="color:#22d3bf">yaw_rate</code> r = u/R、<code style="color:#22d3bf">lateral_accel</code> u²/R、<code style="color:#22d3bf">sideslip</code> β = l_r/R − m l_f u²/(C_r L R)、<code style="color:#22d3bf">yaw_gain</code> r/δ = (u/L)/(1 + K u²/L)、<code style="color:#22d3bf">front_slip</code>・<code style="color:#22d3bf">rear_slip</code> (軸の横すべり角)、<code style="color:#22d3bf">K</code>。R &lt; 0 で右旋回(符号がそのまま反転)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: u ≤ 0、R = 0 / 非有限、母数の誤り、1 + K u²/L ≤ 0(臨界速度以上)。</p>
+<p>R 由前向速度 u 與橫擺角速度 r 定義(線性模型的慣例)。重心軌跡的實際半徑為合成速度 / r = R √(1 + tan²β),在 β 較小的範圍內等於 R(門所確認的差為 β² 量級)。</p>
+<p>回傳值:<code style="color:#22d3bf">steer</code> δ = L/R + K u²/R [rad]、<code style="color:#22d3bf">yaw_rate</code> r = u/R、<code style="color:#22d3bf">lateral_accel</code> u²/R、<code style="color:#22d3bf">sideslip</code> β = l_r/R − m l_f u²/(C_r L R)、<code style="color:#22d3bf">yaw_gain</code> r/δ = (u/L)/(1 + K u²/L)、<code style="color:#22d3bf">front_slip</code>、<code style="color:#22d3bf">rear_slip</code> (軸的側偏角)、<code style="color:#22d3bf">K</code>。R &lt; 0 為右轉(符號直接反轉)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>:u ≤ 0、R = 0 / 非有限、參數錯誤、1 + K u²/L ≤ 0(臨界速度以上)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

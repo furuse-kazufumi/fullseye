@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_worst_case_gap(d0: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import rsssafety; rsssafety.rss_worst_case_gap(d0: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;rss_worst_case_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Tracks the same-direction worst case (paper Definition 4) over time.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>先行車は t = 0 から <code style="color:#22d3bf">brake_max</code> で停止まで減速。後続車は ρ の間 <code style="color:#22d3bf">accel_max</code>(<code style="color:#22d3bf">v_max_accel</code> で頭打ち)、その後 <code style="color:#22d3bf">brake_min</code> で停止まで減速。各時刻の位置は区分ごとの等加速度の厳密式で、時刻列には ρ・頭打ち時刻・各車の停止時刻を必ず含める(<code style="color:#22d3bf">dt</code> は表示密度で、min_gap は dt に依らない)。</p>
+<p>The leading vehicle decelerates with <code style="color:#22d3bf">brake_max</code> from t = 0 until it stops. The following vehicle uses <code style="color:#22d3bf">accel_max</code> during ρ (capped at <code style="color:#22d3bf">v_max_accel</code>), then decelerates with <code style="color:#22d3bf">brake_min</code> until it stops. Positions at each time use the exact piecewise constant-acceleration formulas, and the time series always includes ρ, the capping time, and each vehicle&#x27;s stop time (<code style="color:#22d3bf">dt</code> is only the display density; min_gap does not depend on dt).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : <code style="color:#22d3bf">t, x_rear, x_front, v_rear, v_front, gap</code> (ndarray)、<code style="color:#22d3bf">min_gap, t_min</code> (float)、</p>
-<p><code style="color:#22d3bf">collided</code> (min_gap &lt; 0)、<code style="color:#22d3bf">t_stop_rear, t_stop_front</code>。gap = x_front − x_rear</p>
-<p>(後続の前端と先行の後端の間隔、後続は x = 0、先行は x = d0 から出発)。</p>
-<p><code style="color:#22d3bf">min_gap = d0 − max(d_min − min_distance, 0)</code> が成り立つ(d_min = <code style="color:#22d3bf">rss_longitudinal_same</code>)。</p>
-<p><code style="color:#22d3bf">t_max</code> を与えると(両車の停止より前で)打ち切る。</p>
+<p>dict : <code style="color:#22d3bf">t, x_rear, x_front, v_rear, v_front, gap</code> (ndarray), <code style="color:#22d3bf">min_gap, t_min</code> (float),</p>
+<p><code style="color:#22d3bf">collided</code> (min_gap &lt; 0), <code style="color:#22d3bf">t_stop_rear, t_stop_front</code>. gap = x_front − x_rear</p>
+<p>(gap between the front end of the following vehicle and the rear end of the leading vehicle; the follower starts at x = 0, the leader at x = d0).</p>
+<p><code style="color:#22d3bf">min_gap = d0 − max(d_min − min_distance, 0)</code> holds (d_min = <code style="color:#22d3bf">rss_longitudinal_same</code>).</p>
+<p>Giving <code style="color:#22d3bf">t_max</code> truncates (before both vehicles stop).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

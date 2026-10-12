@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_depth_from_side(image, track, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, win: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cutting; cutting.cut_depth_from_side(image, track, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, win: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cut_depth_from_side&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由正面图像中食材的上表面(饱和度边缘，逐列亚像素 → 中位数)和刃口直线求切入深度(mm)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>深さ = 上面の z − 食材の幅の中央での刃先の z(<code style="color:#22d3bf">knife_edge_track</code> の直線の内挿)。刃が曲がっていればそのまま誤差になる。</p>
-<p>返り値: <code style="color:#22d3bf">depth_mm</code>、<code style="color:#22d3bf">top_z_mm</code>、<code style="color:#22d3bf">edge_z_mm</code>、<code style="color:#22d3bf">food_cols</code>(左右)、<code style="color:#22d3bf">n_cols</code>、<code style="color:#22d3bf">centre_col</code>。</p>
+<p>深度 = 上表面的 z − 食材宽度中央处刀刃的 z(<code style="color:#22d3bf">knife_edge_track</code> 直线的内插)。若刀刃弯曲,会直接成为误差。</p>
+<p>返回值: <code style="color:#22d3bf">depth_mm</code>、<code style="color:#22d3bf">top_z_mm</code>、<code style="color:#22d3bf">edge_z_mm</code>、<code style="color:#22d3bf">food_cols</code>(左右)、<code style="color:#22d3bf">n_cols</code>、<code style="color:#22d3bf">centre_col</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

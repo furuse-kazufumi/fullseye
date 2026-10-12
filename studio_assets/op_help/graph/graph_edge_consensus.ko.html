@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import graphinv; graphinv.graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgraph.get(&quot;graph_edge_consensus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>How many individuals share each connection — K wiring matrices on one node order.</p>
+<p>각 연결을 몇 개체가 공유하는가 —— 같은 노드 순서 위의 K 개 배선 행렬.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">adjs</code> is either a list of K square matrices or a table <code style="color:#22d3bf">{name: matrix}</code> (its insertion order is the individual order), all on the <b>same</b> node order (align the cell names first; a node absent from an individual is a zero row and column). Weights (synapse counts) are kept for the synapse shares; presence is <code style="color:#22d3bf">&gt; 0</code>. Self-loops are dropped.</p>
 <p>Returns a dict with:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> (K), <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">names</code>, <code style="color:#22d3bf">edges_per_individual</code> and <code style="color:#22d3bf">union</code> (edges seen in at least one individual)</p>

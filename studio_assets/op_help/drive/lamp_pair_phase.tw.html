@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lamp_pair_phase(a, b, fps: &#x27;float&#x27;, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8, tol: &#x27;float&#x27; = 0.25) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecrossing; drivecrossing.lamp_pair_phase(a, b, fps: &#x27;float&#x27;, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8, tol: &#x27;float&#x27; = 0.25) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;lamp_pair_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 2 條亮度時間序列(2 盞燈的像素)，以互頻譜估計共同的閃爍頻率與相位差。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>平均を引き Hann 窓、<code style="color:#22d3bf">pad</code> 倍に 0 を詰めた rFFT。|A| + |B| の山(<code style="color:#22d3bf">f_min</code> 以上、0 Hz の裾を除く)で φ = arg(A_k B̄_k) を [0, π] に畳む。<code style="color:#22d3bf">delay</code> = φ / (2π f)。<code style="color:#22d3bf">alternating</code> = |φ − π| &lt; tol(交互点滅)。周波数は <b>見かけ</b> の値(fps/2 を超える点滅は折り返る)。どちらかが一定なら ValueError。</p>
+<p>減去平均值,加 Hann 窗,以 <code style="color:#22d3bf">pad</code> 倍補 0 後做 rFFT。在 |A| + |B| 的峰(<code style="color:#22d3bf">f_min</code> 以上,排除 0 Hz 的裙邊)處將 φ = arg(A_k B̄_k) 折疊到 [0, π]。<code style="color:#22d3bf">delay</code> = φ / (2π f)。<code style="color:#22d3bf">alternating</code> = |φ − π| &lt; tol(交替閃爍)。頻率為 <b>表觀</b> 值(超過 fps/2 的閃爍會折疊)。任一方恆定則為 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

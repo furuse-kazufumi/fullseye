@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scherrer_size(fwhm, two_theta, wavelength, K=0.9, instrumental_fwhm=0.0, combine=&#x27;gauss&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pxrd; pxrd.scherrer_size(fwhm, two_theta, wavelength, K=0.9, instrumental_fwhm=0.0, combine=&#x27;gauss&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;scherrer_size&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 Scherrer 公式求微晶尺寸 [Å] (<code style="color:#22d3bf">L = K λ / (β cos θ)</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">fwhm</code>・<code style="color:#22d3bf">instrumental_fwhm</code> は 2θ の半値全幅 [deg]、<code style="color:#22d3bf">two_theta</code> [deg]、<code style="color:#22d3bf">wavelength</code> [Å]。試料による広がり β は <code style="color:#22d3bf">combine=&quot;gauss&quot;</code> で <code style="color:#22d3bf">sqrt(fwhm² − inst²)</code>、<code style="color:#22d3bf">&quot;lorentz&quot;</code> で <code style="color:#22d3bf">fwhm − inst</code>。配列を渡せば配列で返す。Scherrer の式は <b>体積で重みを付けた柱の長さ</b> の目安で、ひずみの広がり(tan θ に比例)は区別しない —— ひずみが疑わしいときは複数の山で Williamson–Hall のように tan θ への依存を見ること。</p>
-<p>Raises ValueError: <code style="color:#22d3bf">fwhm &lt;= instrumental_fwhm</code>(装置より細い山 = 径が決まらない)、非正の値、綴り違い。</p>
+<p><code style="color:#22d3bf">fwhm</code>、<code style="color:#22d3bf">instrumental_fwhm</code> 為 2θ 的半高全寬 [deg],<code style="color:#22d3bf">two_theta</code> [deg],<code style="color:#22d3bf">wavelength</code> [Å]。樣品造成的展寬 β 在 <code style="color:#22d3bf">combine=&quot;gauss&quot;</code> 時為 <code style="color:#22d3bf">sqrt(fwhm² − inst²)</code>,在 <code style="color:#22d3bf">&quot;lorentz&quot;</code> 時為 <code style="color:#22d3bf">fwhm − inst</code>。傳入陣列則回傳陣列。Scherrer 公式是 <b>以體積加權的柱長</b> 的估計,不區分應變展寬(與 tan θ 成正比)—— 懷疑存在應變時,應像 Williamson–Hall 那樣用多個峰檢視對 tan θ 的依賴。</p>
+<p>Raises ValueError: <code style="color:#22d3bf">fwhm &lt;= instrumental_fwhm</code>(峰比儀器更窄 = 無法決定尺寸)、非正值、拼寫錯誤。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

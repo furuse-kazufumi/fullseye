@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveplateau; driveplateau.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;plateau_parse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>PLATEAU CityGML से इमारतों के footprint polygons, ऊँचाई और तल की elevation stream रूप में पढ़ता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">iterparse</code> で <code style="color:#22d3bf">Building</code>(ローカル名)の end イベントごとに処理し、処理後 <code style="color:#22d3bf">elem.clear()</code> でメモリを解放する(1 ファイル数百 MB でも動く設計)。</p>
-<p>建物ごとに:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measuredHeight</code> があれば高さに使う。無ければ <code style="color:#22d3bf">lod1Solid</code> の最大標高 − 最小標高。</p>
-<p style="margin:2px 0 2px 12px">• 足元: <code style="color:#22d3bf">lod0FootPrint</code> があればその posList。無ければ <code style="color:#22d3bf">lod1Solid</code> の全面のうち <b>平均標高が最も低い面</b>(LOD1 は押し出し柱なので底面がある)。</p>
-<p style="margin:2px 0 2px 12px">• posList は EPSG:6697 の「緯度 経度 標高」3 つ組として読む。</p>
+<p><code style="color:#22d3bf">iterparse</code> से <code style="color:#22d3bf">Building</code> (स्थानीय नाम) की प्रत्येक end घटना पर प्रसंस्करण करता है, और प्रसंस्करण के बाद <code style="color:#22d3bf">elem.clear()</code> से मेमोरी मुक्त करता है (प्रति फ़ाइल कई सौ MB होने पर भी चलने वाला डिज़ाइन)।</p>
+<p>प्रत्येक इमारत के लिए:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measuredHeight</code> हो तो उसे ऊँचाई के रूप में उपयोग करता है। न हो तो <code style="color:#22d3bf">lod1Solid</code> की अधिकतम ऊँचाई − न्यूनतम ऊँचाई।</p>
+<p style="margin:2px 0 2px 12px">• आधार-रेखा (footprint): <code style="color:#22d3bf">lod0FootPrint</code> हो तो उसका posList। न हो तो <code style="color:#22d3bf">lod1Solid</code> के सभी फलकों में से <b>सबसे कम औसत ऊँचाई वाला फलक</b> (LOD1 एक बहिर्वेधित स्तंभ है, इसलिए उसका तल फलक होता है)।</p>
+<p style="margin:2px 0 2px 12px">• posList को EPSG:6697 के &quot;अक्षांश देशांतर ऊँचाई&quot; त्रिक के रूप में पढ़ा जाता है।</p>
 <p>Args:</p>
-<p>source: CityGML の文字列(<code style="color:#22d3bf">&lt;</code> で始まる)、bytes、またはファイルパス(str/Path)。</p>
-<p>origin: 局所座標の原点 <code style="color:#22d3bf">(lat0, lon0)</code> [deg]。None なら最初に採用した建物の重心。</p>
-<p>max_buildings: 採用する建物数の上限(None で無制限)。到達したら読み取りを止める。</p>
+<p>source: CityGML स्ट्रिंग (<code style="color:#22d3bf">&lt;</code> से आरंभ), bytes, या फ़ाइल पथ (str/Path)।</p>
+<p>origin: स्थानीय निर्देशांकों का मूल बिंदु <code style="color:#22d3bf">(lat0, lon0)</code> [deg]। None हो तो पहली स्वीकृत इमारत का केन्द्रक।</p>
+<p>max_buildings: स्वीकृत इमारतों की संख्या की ऊपरी सीमा (None पर असीमित)। पहुँचने पर पढ़ना रुक जाता है।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">{&quot;origin&quot;: (lat0, lon0), &quot;buildings&quot;: [...], &quot;n_skipped&quot;: int, &quot;crs&quot;: &quot;EPSG:6697 (lat, lon, alt)&quot;}</code>。各建物は</p>
-<p><code style="color:#22d3bf">{&quot;id&quot;, &quot;footprint&quot; (k,2) float64(局所 x,y[m]、閉じない、反時計回り), &quot;height&quot;, &quot;ground_z&quot;, &quot;lat&quot;, &quot;lon&quot;}</code>(lat/lon は足元頂点の平均 = 重心)。</p>
+<p><code style="color:#22d3bf">{&quot;origin&quot;: (lat0, lon0), &quot;buildings&quot;: [...], &quot;n_skipped&quot;: int, &quot;crs&quot;: &quot;EPSG:6697 (lat, lon, alt)&quot;}</code>। प्रत्येक इमारत</p>
+<p><code style="color:#22d3bf">{&quot;id&quot;, &quot;footprint&quot; (k,2) float64(局所 x,y[m]、閉じない、反時計回り), &quot;height&quot;, &quot;ground_z&quot;, &quot;lat&quot;, &quot;lon&quot;}</code> (lat/lon आधार-रेखा के शीर्षों का औसत = केन्द्रक)।</p>
 <p>Raises:</p>
-<p>ValueError: source が空/不正、posList が 3 の倍数でない、XML が壊れている、</p>
-<p>max_buildings が負、origin が不正。</p>
+<p>ValueError: source खाली/अमान्य, posList 3 का गुणज नहीं, XML टूटा हुआ,</p>
+<p>max_buildings ऋणात्मक, origin अमान्य।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

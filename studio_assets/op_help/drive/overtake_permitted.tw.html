@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.overtake_permitted(*, maneuver_start: &#x27;float&#x27;, maneuver_end: &#x27;float&#x27;, zones_result: &#x27;Optional[dict]&#x27; = None, lead_kind: &#x27;str&#x27; = &#x27;car&#x27;, lead_overtaking: &#x27;bool&#x27; = False, lead_keeping_right: &#x27;bool&#x27; = False, side: &#x27;str&#x27; = &#x27;right&#x27;, dist_oncoming: &#x27;float&#x27; = inf, requirement: &#x27;Optional[dict]&#x27; = None, being_overtaken: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivepass; drivepass.overtake_permitted(*, maneuver_start: &#x27;float&#x27;, maneuver_end: &#x27;float&#x27;, zones_result: &#x27;Optional[dict]&#x27; = None, lead_kind: &#x27;str&#x27; = &#x27;car&#x27;, lead_overtaking: &#x27;bool&#x27; = False, lead_keeping_right: &#x27;bool&#x27; = False, side: &#x27;str&#x27; = &#x27;right&#x27;, dist_oncoming: &#x27;float&#x27; = inf, requirement: &#x27;Optional[dict]&#x27; = None, being_overtaken: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;overtake_permitted&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>是否可以開始超車(依條文與交通教則判定)。場景 S077、S078、S079、S080、S081、S083。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">maneuver_start</code> .. <code style="color:#22d3bf">maneuver_end</code> = 進路を変え始めてから前車の側方を通り終えるまでの自車の前端の位置。理由(code, 根拠):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">no_passing_zone</code>(30 条): その区間が <code style="color:#22d3bf">no_overtaking_zones</code> の禁止区間と重なる(前車が <code style="color:#22d3bf">EXEMPT_KINDS</code> なら除く)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">double_overtaking</code>(29 条): 前車が他の自動車を追い越そうとしている。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">wrong_side</code>(28 条 1・2 項): 前車が右折のため中央(右側端)に寄っている(<code style="color:#22d3bf">lead_keeping_right</code>)なら左、それ以外は右。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">oncoming_too_close</code>(28 条 4 項 + 閉形式): <code style="color:#22d3bf">dist_oncoming</code> &lt; <code style="color:#22d3bf">requirement[&quot;d_required&quot;]</code> (<code style="color:#22d3bf">overtake_requirement</code> の返り値)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">being_overtaken</code>(教則 5-6-1(2)エ。<b>法の明文なし</b>、場面 S080): 後ろの車が自車を追い越そうとしている。</p>
-<p>返り値: <code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">reasons</code> = [(code, 根拠)]、<code style="color:#22d3bf">required_side</code>。</p>
+<p><code style="color:#22d3bf">maneuver_start</code> .. <code style="color:#22d3bf">maneuver_end</code> = 從開始變更行進路線到駛過前車側方為止的本車前端位置。理由(code, 依據):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">no_passing_zone</code>(第 30 條):該區間與 <code style="color:#22d3bf">no_overtaking_zones</code> 的禁止區間重疊(前車屬於 <code style="color:#22d3bf">EXEMPT_KINDS</code> 時除外)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">double_overtaking</code>(第 29 條):前車正要超越其他汽車。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">wrong_side</code>(第 28 條第 1、2 項):前車為右轉而靠向中央(右側邊緣)(<code style="color:#22d3bf">lead_keeping_right</code>)時為左側,否則為右側。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">oncoming_too_close</code>(第 28 條第 4 項 + 閉式解):<code style="color:#22d3bf">dist_oncoming</code> &lt; <code style="color:#22d3bf">requirement[&quot;d_required&quot;]</code> (<code style="color:#22d3bf">overtake_requirement</code> 的回傳值)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">being_overtaken</code>(《交通教則》5-6-1(2)(e)。<b>法律無明文規定</b>,場景 S080):後方車輛正要超越本車。</p>
+<p>回傳值:<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">reasons</code> = [(code, 依據)]、<code style="color:#22d3bf">required_side</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_strength_growth(a, b, hub_fraction=0.1)</code>(要直接调用实现,<code style="color:#22d3bf">import graphinv; graphinv.graph_strength_growth(a, b, hub_fraction=0.1)</code>;从台账取用则 <code style="color:#22d3bf">opsgraph.get(&quot;graph_strength_growth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Where the new synapses went — one wiring matrix <code style="color:#22d3bf">a</code> (earlier) against <code style="color:#22d3bf">b</code> (later).</p>
+<p>新的突触去了哪里——连接矩阵 <code style="color:#22d3bf">a</code>(较早)对 <code style="color:#22d3bf">b</code>(较晚)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Both are weight matrices (synapse counts) on the <b>same</b> node order; self-loops are dropped. With <code style="color:#22d3bf">S = sum</code> of each matrix and <code style="color:#22d3bf">dS = S_b - S_a</code>:</p>
 <p style="margin:2px 0 2px 12px">• per node: <code style="color:#22d3bf">in_a</code>, <code style="color:#22d3bf">out_a</code>, <code style="color:#22d3bf">in_b</code>, <code style="color:#22d3bf">out_b</code> (strengths), <code style="color:#22d3bf">degree_a</code> (number of partners, in + out, presence <code style="color:#22d3bf">&gt; 0</code>), <code style="color:#22d3bf">gain_in = in_b - in_a</code>, <code style="color:#22d3bf">gain_out</code>.</p>
 <p>Identity: <code style="color:#22d3bf">gain_in.sum() == gain_out.sum() == dS</code> (every synapse has one pre and one post).</p>

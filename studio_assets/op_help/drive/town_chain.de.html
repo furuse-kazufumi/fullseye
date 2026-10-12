@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetown; drivetown.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;town_chain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Platziert die Elemente, indem sie der Reihe nach verkettet werden: Die Starrkörper-Platzierung, die den entry von Element k+1 auf den exit von Element k (<code style="color:#22d3bf">overlap</code> davor) ausrichtet, wird in geschlossener Form bestimmt und an <code style="color:#22d3bf">drivecourse.course_layout</code> übergeben.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>elements : drivecourse の要素(dict)の列。順に継ぐ。</p>
-<p>start : 最初の要素の entry を置く世界姿勢 (x, y, yaw)。</p>
-<p>overlap : 継ぎ目の食い込み [m] (≥ 0。3-D 化で継ぎ目に縁石が立たないため)。要素の中心線より短いこと。</p>
+<p>elements : Folge von drivecourse-Elementen (dicts). Werden der Reihe nach verbunden.</p>
+<p>start : Weltpose (x, y, yaw), an der der entry des ersten Elements platziert wird.</p>
+<p>overlap : Überlappung an den Stoßstellen [m] (≥ 0, damit bei der 3-D-Umsetzung an den Stoßstellen kein Bordstein steht). Muss kürzer sein als die Mittellinien der Elemente.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : course_layout の dict に <code style="color:#22d3bf">&quot;chain&quot;</code> を足したもの。<code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・layout の入れ子・entry/exit/centerline が無い、start/overlap が非有限、overlap が負、overlap が要素の中心線より長い。</p>
+<p>dict : das course_layout-dict mit hinzugefügtem <code style="color:#22d3bf">&quot;chain&quot;</code>. <code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Elemente leer / verschachteltes layout / entry/exit/centerline fehlt, start/overlap nicht endlich, overlap negativ, overlap länger als die Mittellinie eines Elements.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

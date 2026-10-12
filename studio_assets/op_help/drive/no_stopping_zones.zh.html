@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecrossing; drivecrossing.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;no_stopping_zones&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>根据道路沿线设施生成第44条第1款的禁止停车区间。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(バス停は &quot;at&quot; = 標示板の位置でもよい)。kind ∈ <code style="color:#22d3bf">NO_STOP_DISTANCE</code>。区間 = [start − d, end + d] (d = その号の距離)。バス停は運行時間中(<code style="color:#22d3bf">in_service</code>)だけ。</p>
-<p>返り値: <code style="color:#22d3bf">zones</code> = [(a, b, kind, 号)] (元の順)、<code style="color:#22d3bf">merged</code> = 重なりを併せた (k, 2) の配列(昇順・互いに素)。</p>
-<p>空の入力(<code style="color:#22d3bf">features</code> が 0 件)は空を返す(理由: 施設が 0 件の道路は普通にあり、禁止区間が無いことが正しい答え)。</p>
+<p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(公交站也可用 &quot;at&quot; = 站牌的位置)。kind ∈ <code style="color:#22d3bf">NO_STOP_DISTANCE</code>。区间 = [start − d, end + d] (d = 该项的距离)。公交站仅在运营时间内(<code style="color:#22d3bf">in_service</code>)。</p>
+<p>返回值: <code style="color:#22d3bf">zones</code> = [(a, b, kind, 项)] (原顺序)、<code style="color:#22d3bf">merged</code> = 合并重叠后的 (k, 2) 数组(升序、互不相交)。</p>
+<p>空输入(<code style="color:#22d3bf">features</code> 为 0 件)会返回空结果(理由: 没有设施的道路很常见,没有禁止区间才是正确答案)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

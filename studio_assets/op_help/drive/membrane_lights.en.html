@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_lights(elev_deg: &#x27;float&#x27; = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacsim; tacsim.membrane_lights(elev_deg: &#x27;float&#x27; = 55.0, azimuths_deg=(90.0, 210.0, 330.0)) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;membrane_lights&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Unit direction vectors (N, 3) of multi-directional colored lights (row k = light source for color channel k; the default is 3 lights at azimuth 90/210/330° and elevation 55°).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 仰角が (0°, 90°] の外、光源が 3 灯未満、3 灯が同一平面(rank &lt; 3 でフォトメトリックステレオが解けない)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: elevation outside (0°, 90°], fewer than 3 lights, the 3 lights coplanar (rank &lt; 3, so photometric stereo cannot be solved).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_centerline(layout, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetown; drivetown.town_centerline(layout, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;town_centerline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이어 붙인 중심선을 호 길이 <code style="color:#22d3bf">step</code>마다 샘플링합니다 → <code style="color:#22d3bf">(N, 4) = (s, x, y, yaw)</code>(끝점은 반드시 포함).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>門: 直線部では隣接点の間隔が厳密に step、始点 = 最初の要素の entry、終点 = 最後の要素の exit。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: layout が town_chain の物でない、step が正でない。</p>
+<p>관문: 직선부에서는 인접점의 간격이 엄밀히 step, 시점 = 첫 요소의 entry, 종점 = 마지막 요소의 exit.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: layout 이 town_chain 의 것이 아님, step 이 양수가 아님.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

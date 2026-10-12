@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveplateau; driveplateau.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;building_prisms&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>건물의 발자국(footprint)을 높이까지 압출해 하나의 삼각형 메시로 합친다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Args:</p>
-<p>buildings: <code style="color:#22d3bf">plateau_parse</code> の <code style="color:#22d3bf">buildings</code>(<code style="color:#22d3bf">footprint</code>, <code style="color:#22d3bf">height</code>, <code style="color:#22d3bf">ground_z</code>)。</p>
-<p>color_fn: <code style="color:#22d3bf">building -&gt; (r,g,b)</code> 0..1。None なら <code style="color:#22d3bf">_default_building_color</code>。</p>
-<p>base_z: 全建物の底 z [m]。None なら各建物の <code style="color:#22d3bf">ground_z</code> を使う(起伏のある世界向け)。</p>
-<p>自前の平らな道路世界には 0.0 が合う。</p>
-<p>roof_shade: 屋根面の色の倍率(側面と見分けるための控えめな陰)。</p>
+<p>buildings: <code style="color:#22d3bf">plateau_parse</code> 의 <code style="color:#22d3bf">buildings</code>(<code style="color:#22d3bf">footprint</code>, <code style="color:#22d3bf">height</code>, <code style="color:#22d3bf">ground_z</code>).</p>
+<p>color_fn: <code style="color:#22d3bf">building -&gt; (r,g,b)</code> 0..1. None 이면 <code style="color:#22d3bf">_default_building_color</code>.</p>
+<p>base_z: 모든 건물의 바닥 z [m]. None 이면 각 건물의 <code style="color:#22d3bf">ground_z</code> 를 사용한다(기복이 있는 세계용).</p>
+<p>자체의 평평한 도로 세계에는 0.0 이 맞다.</p>
+<p>roof_shade: 지붕면 색의 배율(측면과 구별하기 위한 절제된 음영).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(V (n,3) float64, F (m,3) int64, colors (m,3) float64 0..1, ids (m,) int64)</code>。<code style="color:#22d3bf">ids[f]</code> は面 f が属する建物の番号(入力列の添字)。建物が 0 件なら各配列は空。</p>
+<p><code style="color:#22d3bf">(V (n,3) float64, F (m,3) int64, colors (m,3) float64 0..1, ids (m,) int64)</code>. <code style="color:#22d3bf">ids[f]</code> 는 면 f 가 속하는 건물의 번호(입력 열의 첨자). 건물이 0 건이면 각 배열은 빈다.</p>
 <p>Raises:</p>
-<p>ValueError: color_fn の返り値が RGB 3 要素 0..1 でない、建物の footprint/height が不正。</p>
-<p>空の入力(<code style="color:#22d3bf">buildings</code> が 0 件)は空を返す(理由: 建物が 0 件のタイルは実データに普通にある。空の角柱集合が正しい答え)。</p>
+<p>ValueError: color_fn 의 반환값이 RGB 3 요소 0..1 이 아님, 건물의 footprint/height 가 부정.</p>
+<p>빈 입력(<code style="color:#22d3bf">buildings</code> 이(가) 0 건)은 빈 결과를 반환한다(이유: 건물이 0 건인 타일은 실데이터에 흔히 있다. 빈 각기둥 집합이 올바른 답이다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

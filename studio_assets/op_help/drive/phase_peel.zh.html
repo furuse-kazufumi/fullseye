@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code>(要直接调用实现,<code style="color:#22d3bf">import pxrd; pxrd.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;phase_peel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从混合物中逐个(每次 1 个)剥离物相(贪心前向选择)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>段 0 は背景だけ。各段で、まだ選んでいない相を 1 つずつ足して <code style="color:#22d3bf">phase_fractions</code> を当て、<code style="color:#22d3bf">rwp</code> が最も下がる相を選ぶ。<code style="color:#22d3bf">rwp</code> の相対的な下がり幅が <code style="color:#22d3bf">min_gain</code> 未満、または選んだ相の重量分率が <code style="color:#22d3bf">min_fraction</code> 未満なら止める。</p>
-<p>全部の相を一度に当てる <code style="color:#22d3bf">phase_fractions</code> と違い、「どの順で、どれだけ説明が進んだか」が残る(図の素材)。</p>
-<p>返り値(dict): <code style="color:#22d3bf">order</code>(選んだ順の名前)・<code style="color:#22d3bf">stages</code>(各段の <code style="color:#22d3bf">phases</code>・<code style="color:#22d3bf">weight_fraction</code>・<code style="color:#22d3bf">fit</code>・<code style="color:#22d3bf">residual</code>・ <code style="color:#22d3bf">rwp</code>)・<code style="color:#22d3bf">final</code>(最後の段の <code style="color:#22d3bf">phase_fractions</code> の結果)。</p>
-<p>Raises ValueError: <code style="color:#22d3bf">phase_fractions</code> と同じ。<code style="color:#22d3bf">min_gain</code> が [0, 1) の外。</p>
+<p>阶段 0 只有背景。每个阶段把尚未选中的相逐个加入并用 <code style="color:#22d3bf">phase_fractions</code> 拟合,选出使 <code style="color:#22d3bf">rwp</code> 下降最多的相。若 <code style="color:#22d3bf">rwp</code> 的相对下降幅度小于 <code style="color:#22d3bf">min_gain</code>,或所选相的重量分数小于 <code style="color:#22d3bf">min_fraction</code>,则停止。</p>
+<p>与一次拟合全部相的 <code style="color:#22d3bf">phase_fractions</code> 不同,它保留了&quot;按什么顺序、解释推进了多少&quot;(图的素材)。</p>
+<p>返回值(dict): <code style="color:#22d3bf">order</code>(按选择顺序的名称)、<code style="color:#22d3bf">stages</code>(各阶段的 <code style="color:#22d3bf">phases</code>、<code style="color:#22d3bf">weight_fraction</code>、<code style="color:#22d3bf">fit</code>、<code style="color:#22d3bf">residual</code>、<code style="color:#22d3bf">rwp</code>)、<code style="color:#22d3bf">final</code>(最后阶段的 <code style="color:#22d3bf">phase_fractions</code> 结果)。</p>
+<p>Raises ValueError: 与 <code style="color:#22d3bf">phase_fractions</code> 相同。<code style="color:#22d3bf">min_gain</code> 在 [0, 1) 之外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

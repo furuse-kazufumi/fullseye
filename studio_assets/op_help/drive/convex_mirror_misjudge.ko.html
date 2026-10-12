@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_misjudge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>볼록거울에 비친 차의 거리와 속력을 평면거울로 여기고 읽었을 때의 오판(근축 닫힌 식, 배열 가능). 장면 S064·S130.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>k = 1 + 2e/R。距離(大きさから): â = k a。速さは読み方で 3 つ:</p>
-<p><code style="color:#22d3bf">speed_size_consistent</code> = k v(大きさの変化を、大きさから読んだ距離と矛盾なく読む → 速く見える)、<code style="color:#22d3bf">speed_size_anchored</code> = k v (e + a)²/(e + k a)²(本当の距離 a にある物の大きさの変化として読む → a &gt; e/√k で遅い)、<code style="color:#22d3bf">speed_lateral_anchored</code> = v (e + a)/(e + k a)(横切る動きの角の速さを本当の距離で読む → 遅い)。<code style="color:#22d3bf">tau_apparent</code> = (e + k a)/(k v)(大きさとその変化率の比 = 見かけの到達時間)、<code style="color:#22d3bf">tau_true</code> = a / v。遠く見える(k &gt; 1)は読み方によらないが、<b>遅く見えるのは本当の距離に錨を置いたときだけ</b> —— 返り値の 3 つで分かる。</p>
+<p>k = 1 + 2e/R. 거리(크기로부터): â = k a. 속력은 읽는 방식에 따라 3 가지:</p>
+<p><code style="color:#22d3bf">speed_size_consistent</code> = k v(크기의 변화를, 크기로부터 읽은 거리와 모순 없이 읽는다 → 빠르게 보인다), <code style="color:#22d3bf">speed_size_anchored</code> = k v (e + a)²/(e + k a)²(실제 거리 a 에 있는 물체의 크기 변화로 읽는다 → a &gt; e/√k 에서 느리다), <code style="color:#22d3bf">speed_lateral_anchored</code> = v (e + a)/(e + k a)(가로지르는 움직임의 각속도를 실제 거리로 읽는다 → 느리다). <code style="color:#22d3bf">tau_apparent</code> = (e + k a)/(k v)(크기와 그 변화율의 비 = 겉보기 도달 시간), <code style="color:#22d3bf">tau_true</code> = a / v. 멀리 보이는 것(k &gt; 1)은 읽는 방식에 의존하지 않지만, <b>느리게 보이는 것은 실제 거리에 닻을 내렸을 때뿐이다</b> —— 반환값의 3 가지로 알 수 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

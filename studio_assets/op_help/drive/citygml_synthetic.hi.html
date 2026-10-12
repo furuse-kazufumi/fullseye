@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.citygml_synthetic(n: &#x27;int&#x27; = 4, *, origin: &#x27;tuple[float, float]&#x27; = (35.6716, 139.765), spacing: &#x27;float&#x27; = 30.0, size: &#x27;float&#x27; = 12.0, heights: &#x27;Sequence[float] | None&#x27; = None, ground_z: &#x27;float&#x27; = 0.0, omit_measured_height: &#x27;Iterable[int]&#x27; = (), use_lod0_footprint: &#x27;bool&#x27; = False, ns_building: &#x27;str&#x27; = &#x27;http://www.opengis.net/citygml/building/2.0&#x27;) -&gt; &#x27;str&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveplateau; driveplateau.citygml_synthetic(n: &#x27;int&#x27; = 4, *, origin: &#x27;tuple[float, float]&#x27; = (35.6716, 139.765), spacing: &#x27;float&#x27; = 30.0, size: &#x27;float&#x27; = 12.0, heights: &#x27;Sequence[float] | None&#x27; = None, ground_z: &#x27;float&#x27; = 0.0, omit_measured_height: &#x27;Iterable[int]&#x27; = (), use_lod0_footprint: &#x27;bool&#x27; = False, ns_building: &#x27;str&#x27; = &#x27;http://www.opengis.net/citygml/building/2.0&#x27;) -&gt; &#x27;str&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;citygml_synthetic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>असली जैसी ही संरचना वाला न्यूनतम CityGML 2.0 string बनाता है (tests और demos के लिए)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>建物は <code style="color:#22d3bf">size</code> [m] の正方形を <code style="color:#22d3bf">spacing</code> [m] 間隔で x 方向に並べ、各建物に <code style="color:#22d3bf">bldg:measuredHeight</code> と <code style="color:#22d3bf">bldg:lod1Solid &gt; gml:Solid &gt; gml:exterior &gt; gml:CompositeSurface &gt; gml:surfaceMember × 6 &gt; gml:Polygon &gt; gml:exterior &gt; gml:LinearRing &gt; gml:posList</code>(底面 + 側面 4 + 天面、lat lon alt の順)を書く。等距円筒近似は線形なので、局所座標で作った正方形は読み戻すと面積が size² に一致する。</p>
+<p>इमारतें <code style="color:#22d3bf">size</code> [m] के वर्ग हैं जिन्हें <code style="color:#22d3bf">spacing</code> [m] के अंतराल पर x दिशा में रखा जाता है, और प्रत्येक इमारत के लिए <code style="color:#22d3bf">bldg:measuredHeight</code> और <code style="color:#22d3bf">bldg:lod1Solid &gt; gml:Solid &gt; gml:exterior &gt; gml:CompositeSurface &gt; gml:surfaceMember × 6 &gt; gml:Polygon &gt; gml:exterior &gt; gml:LinearRing &gt; gml:posList</code> (तल + 4 पार्श्व + शीर्ष, lat lon alt के क्रम में) लिखा जाता है। समदूरस्थ बेलनाकार सन्निकटन रैखिक है, इसलिए स्थानीय निर्देशांक में बनाया गया वर्ग वापस पढ़ने पर क्षेत्रफल size² से मेल खाता है।</p>
 <p>Args:</p>
-<p>n: 建物数(≥ 0)。</p>
-<p>origin: 建物 0 の中心の (lat, lon) [deg]。</p>
-<p>spacing: 建物中心の間隔 [m]。</p>
-<p>size: 正方形の一辺 [m]。</p>
-<p>heights: 各建物の高さ [m]。None なら <code style="color:#22d3bf">10 + 5*i</code>。</p>
-<p>ground_z: 底面の標高 [m]。</p>
-<p>omit_measured_height: この添字の建物では <code style="color:#22d3bf">measuredHeight</code> を書かない。</p>
-<p>use_lod0_footprint: True なら lod1Solid の前に <code style="color:#22d3bf">lod0FootPrint</code>(底面のみ)も書く。</p>
-<p>ns_building: bldg 名前空間 URI(版違いの試験用に差し替え可)。</p>
+<p>n: इमारतों की संख्या (≥ 0)।</p>
+<p>origin: इमारत 0 के केंद्र का (lat, lon) [deg]।</p>
+<p>spacing: इमारतों के केंद्रों का अंतराल [m]।</p>
+<p>size: वर्ग की एक भुजा [m]।</p>
+<p>heights: प्रत्येक इमारत की ऊँचाई [m]। None हो तो <code style="color:#22d3bf">10 + 5*i</code>।</p>
+<p>ground_z: तल की ऊँचाई (समुद्र तल से) [m]।</p>
+<p>omit_measured_height: इस सूचकांक वाली इमारत के लिए <code style="color:#22d3bf">measuredHeight</code> नहीं लिखा जाता।</p>
+<p>use_lod0_footprint: True हो तो lod1Solid से पहले <code style="color:#22d3bf">lod0FootPrint</code> (केवल तल) भी लिखा जाता है।</p>
+<p>ns_building: bldg नेमस्पेस URI (संस्करण-भिन्नता के परीक्षण के लिए बदला जा सकता है)।</p>
 <p>Returns:</p>
-<p>UTF-8 で書き出せる CityGML 文字列。</p>
+<p>UTF-8 में लिखी जा सकने वाली CityGML स्ट्रिंग।</p>
 <p>Raises:</p>
-<p>ValueError: n が負、size/spacing が非正、heights の長さ不一致や非正。</p>
+<p>ValueError: n ऋणात्मक है, size/spacing धनात्मक नहीं है (≤ 0), heights की लंबाई असंगत है या मान धनात्मक नहीं हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

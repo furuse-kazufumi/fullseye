@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.buildings_in_box(parsed: &#x27;dict[str, Any]&#x27;, xmin: &#x27;float&#x27;, xmax: &#x27;float&#x27;, ymin: &#x27;float&#x27;, ymax: &#x27;float&#x27;) -&gt; &#x27;list[dict[str, Any]]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveplateau; driveplateau.buildings_in_box(parsed: &#x27;dict[str, Any]&#x27;, xmin: &#x27;float&#x27;, xmax: &#x27;float&#x27;, ymin: &#x27;float&#x27;, ymax: &#x27;float&#x27;) -&gt; &#x27;list[dict[str, Any]]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;buildings_in_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>केवल वे इमारतें लौटाता है जिनका centroid (footprint vertices का औसत) box [xmin,xmax]×[ymin,ymax] में है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>parsed: <code style="color:#22d3bf">plateau_parse</code> の返り値。xmin, xmax, ymin, ymax: 局所座標の箱 [m] (両端を含む)。</p>
+<p>parsed: <code style="color:#22d3bf">plateau_parse</code> का रिटर्न मान। xmin, xmax, ymin, ymax: स्थानीय निर्देशांक का बॉक्स [m] (दोनों सिरे सम्मिलित)।</p>
 <p>Raises:</p>
-<p>ValueError: parsed に <code style="color:#22d3bf">buildings</code> が無い、xmin &gt; xmax または ymin &gt; ymax。</p>
+<p>ValueError: parsed में <code style="color:#22d3bf">buildings</code> नहीं है, xmin &gt; xmax या ymin &gt; ymax।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

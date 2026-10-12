@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_swap_symmetry(adj, pairs)</code>(要直接呼叫實作,<code style="color:#22d3bf">import graphinv; graphinv.graph_swap_symmetry(adj, pairs)</code>;從台帳取用則 <code style="color:#22d3bf">opsgraph.get(&quot;graph_swap_symmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>How much of the wiring survives exchanging node pairs (a left/right test).</p>
+<p>交換節點對後連接還保留多少(左右對稱檢驗)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">pairs</code> is a sequence of <code style="color:#22d3bf">(i, j)</code> index pairs to exchange (each node in at most one pair). The wiring is re-indexed by the exchange and compared with the original:</p>
 <p><code style="color:#22d3bf">jaccard = |E ∩ E&#x27;| / |E ∪ E&#x27;|</code> over directed edges (self-loops removed). Returns a dict with <code style="color:#22d3bf">jaccard</code>, <code style="color:#22d3bf">shared</code>, <code style="color:#22d3bf">union</code>, <code style="color:#22d3bf">edges</code>, and <code style="color:#22d3bf">n_pairs</code>.</p>
 <p>Identities: the identity pairing (or an empty <code style="color:#22d3bf">pairs</code>) gives exactly 1.0; applying the exchange twice recovers the original matrix exactly. For the C. elegans hermaphrodite chemical connectome with its 98 named left/right pairs the measured value is 0.470 — half the wiring is not mirrored.</p>

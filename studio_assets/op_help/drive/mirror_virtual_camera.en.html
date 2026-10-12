@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;mirror_virtual_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A <b>virtual camera</b> that captures the image seen in a plane mirror.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">cam_pose</code> は world→camera の 4×4(<code style="color:#22d3bf">render3d.look_at</code> の規約: X_cam = P X、−Z 前方)。<code style="color:#22d3bf">mirror_plane</code> は(n_x, n_y, n_z, d)(n·X = d)。</p>
-<p>返り値(dict):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: 折り返し S(<code style="color:#22d3bf">mirror_reflection_matrix</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_mirrored</code> = P·S: 実物の場面をこれで写すと、実カメラが <b>鏡越しに見る像そのもの</b>(画素の位置まで同じ)。回転部の行列式は −1(左右が反転した座標系。描画器によっては面の表裏の判定が逆になる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose</code> = F·P·S、F = diag(−1, 1, 1, 1): 普通の右手系のカメラ(行列式 +1)= 鏡の向こうにいる仮想カメラ。これで撮った画像は鏡に映る像の <b>左右反転</b>(画素では u&#x27; = 2c_x − u)。バックミラーを「後ろ向きのカメラ」として扱うときはこちら(運転者が見る像に戻すには左右を反転する)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eye</code>: 仮想カメラの位置 S(C)(C = 実カメラの位置)。<code style="color:#22d3bf">eye_real</code>: C。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flip</code>: <code style="color:#22d3bf">&quot;x&quot;</code>(<code style="color:#22d3bf">pose</code> の画像は x を反転すると鏡像になる)。</p>
-<p>閉形式: S(X) = X − 2(n·X − d)n。鏡に映る点 Q の像の位置は S(Q)(鏡の向こう側、鏡面から同じ距離)。門(テスト): 入射角 = 反射角を満たす鏡面上の点 M を数値で解き(Fermat の最短経路)、C + (|CM| + |MQ|)·unit(M − C) が S(Q) と一致すること。</p>
+<p><code style="color:#22d3bf">cam_pose</code> is the world→camera 4×4 (convention of <code style="color:#22d3bf">render3d.look_at</code>: X_cam = P X, −Z forward). <code style="color:#22d3bf">mirror_plane</code> is (n_x, n_y, n_z, d) (n·X = d).</p>
+<p>Return value (dict):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: the reflection S (<code style="color:#22d3bf">mirror_reflection_matrix</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_mirrored</code> = P·S: rendering the real scene with this gives <b>exactly the image the real camera sees through the mirror</b> (identical down to pixel positions). The determinant of the rotation part is −1 (a left-right reversed coordinate system; depending on the renderer, front/back face determination is inverted).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose</code> = F·P·S, F = diag(−1, 1, 1, 1): an ordinary right-handed camera (determinant +1) = the virtual camera behind the mirror. An image taken with it is the <b>left-right flip</b> of the image in the mirror (in pixels u&#x27; = 2c_x − u). Use this when treating a rear-view mirror as &quot;a rear-facing camera&quot; (flip left-right to get back the image the driver sees).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eye</code>: position of the virtual camera S(C) (C = position of the real camera). <code style="color:#22d3bf">eye_real</code>: C.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flip</code>: <code style="color:#22d3bf">&quot;x&quot;</code> (flipping x of the <code style="color:#22d3bf">pose</code> image gives the mirror image).</p>
+<p>Closed form: S(X) = X − 2(n·X − d)n. The image of a point Q seen in the mirror is at S(Q) (on the far side of the mirror, at the same distance from the mirror surface). Gate (test): solve numerically for the point M on the mirror that satisfies angle of incidence = angle of reflection (Fermat&#x27;s shortest path), and check that C + (|CM| + |MQ|)·unit(M − C) coincides with S(Q).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

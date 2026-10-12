@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_read(path) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import grind; grind.particle_size_read(path) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>读取激光衍射粒度分布 CSV(表头的 <code style="color:#22d3bf">key,value</code> 行 + 以 <code style="color:#22d3bf">SizeClasses</code> 开头的表)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返り: <code style="color:#22d3bf">edges</code> [µm] (表の 1 列目 = 区間の端)、<code style="color:#22d3bf">volume</code>(2 列目 = 端 i と i+1 の間の体積 %)、<code style="color:#22d3bf">header</code> (文字列の dict)、<code style="color:#22d3bf">dx50_reported</code>(ヘッダの <code style="color:#22d3bf">Dx (50)</code>、無ければ None)、<code style="color:#22d3bf">total_percent</code>(体積の総和)、<code style="color:#22d3bf">n_rows</code>。読み込んだパスは返り値に残さない。表が無い・数値でない・最後の行が 0 でない → <code style="color:#22d3bf">ValueError</code>。</p>
+<p>返回:<code style="color:#22d3bf">edges</code> [µm] (表的第 1 列 = 区间端点)、<code style="color:#22d3bf">volume</code>(第 2 列 = 端点 i 与 i+1 之间的体积 %)、<code style="color:#22d3bf">header</code> (字符串的 dict)、<code style="color:#22d3bf">dx50_reported</code>(表头的 <code style="color:#22d3bf">Dx (50)</code>,没有则为 None)、<code style="color:#22d3bf">total_percent</code>(体积总和)、<code style="color:#22d3bf">n_rows</code>。读取的路径不保留在返回值中。没有表、不是数值、最后一行不为 0 → <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

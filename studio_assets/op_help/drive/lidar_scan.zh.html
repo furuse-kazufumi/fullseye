@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import lidarsim; lidarsim.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;lidar_scan&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以位姿 <code style="color:#22d3bf">T_sensor</code>(world ← sensor)的 LiDAR 对网格世界 <code style="color:#22d3bf">(V, F)</code> 发射 1 次扫描。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">V</code> (N,3) float / <code style="color:#22d3bf">F</code> (M,3) int: 三角形メッシュ(空・非 (N,3)・非有限・範囲外の面番号は <code style="color:#22d3bf">ValueError</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">spec</code>: <code style="color:#22d3bf">lidar_spec</code> の dict。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">T_sensor</code>: 4×4 同次行列(world ← sensor)。センサ座標は x=前, y=左, z=上。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>: 面ごとの int ラベル (M,) または None(None なら当たったセルのラベルは 0)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>: ノイズの乱数種(<code style="color:#22d3bf">noise_std == 0</code> なら乱数を一切引かず、ビット単位で決定的)。</p>
-<p>返り値の dict:</p>
-<p><code style="color:#22d3bf">points</code> (K,3) <b>世界座標</b>の反射点(行優先: beam 0 の列 0 から)/ <code style="color:#22d3bf">ranges</code> (n_beams, n_az) [m] (0 = 無返答)/ <code style="color:#22d3bf">hit_face</code> (n_beams, n_az) int(−1 = 無し)/ <code style="color:#22d3bf">labels</code> (n_beams, n_az) int (−1 = 無し)/ <code style="color:#22d3bf">beam</code> (K,) int / <code style="color:#22d3bf">col</code> (K,) int / <code style="color:#22d3bf">n_hits</code> int。最近接の面が <code style="color:#22d3bf">range_min</code> 未満または <code style="color:#22d3bf">range_max</code> 超なら無返答(奥の面へ抜けない)。ノイズは無ノイズ距離で返答の有無を決めた後、<code style="color:#22d3bf">ranges</code> と <code style="color:#22d3bf">points</code> に足す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">V</code> (N,3) float / <code style="color:#22d3bf">F</code> (M,3) int:三角网格(空、非 (N,3)、非有限、超出范围的面索引会引发 <code style="color:#22d3bf">ValueError</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">spec</code>:<code style="color:#22d3bf">lidar_spec</code> 的 dict。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">T_sensor</code>:4×4 齐次矩阵(world ← sensor)。传感器坐标为 x=前, y=左, z=上。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>:每个面的 int 标签 (M,) 或 None(None 时命中单元的标签为 0)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>:噪声的随机种子(<code style="color:#22d3bf">noise_std == 0</code> 时完全不抽取随机数,按位确定)。</p>
+<p>返回的 dict:</p>
+<p><code style="color:#22d3bf">points</code> (K,3) <b>世界坐标</b>中的反射点(行优先:从 beam 0 的列 0 开始)/ <code style="color:#22d3bf">ranges</code> (n_beams, n_az) [m] (0 = 无回波)/ <code style="color:#22d3bf">hit_face</code> (n_beams, n_az) int(−1 = 无)/ <code style="color:#22d3bf">labels</code> (n_beams, n_az) int (−1 = 无)/ <code style="color:#22d3bf">beam</code> (K,) int / <code style="color:#22d3bf">col</code> (K,) int / <code style="color:#22d3bf">n_hits</code> int。最近的面小于 <code style="color:#22d3bf">range_min</code> 或大于 <code style="color:#22d3bf">range_max</code> 时无回波(不会穿透到后面的面)。噪声在用无噪声距离决定有无回波之后,加到 <code style="color:#22d3bf">ranges</code> 与 <code style="color:#22d3bf">points</code> 上。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

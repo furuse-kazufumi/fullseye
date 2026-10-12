@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_emd_response(signal_a, signal_b, tau_s=0.05, dt_s=0.001)</code> (die Implementierung direkt: <code style="color:#22d3bf">import flyvision; flyvision.fly_emd_response(signal_a, signal_b, tau_s=0.05, dt_s=0.001)</code>; aus dem Register: <code style="color:#22d3bf">opsflyvision.get(&quot;fly_emd_response&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Hassenstein-Reichardt correlator between two adjacent ommatidial signals.</p>
+<p>Hassenstein-Reichardt-Korrelator zwischen zwei benachbarten Ommatidiensignalen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>The opponent elementary motion detector::</p>
 <p>R(t) = LP(a)(t) * b(t) - a(t) * LP(b)(t)</p>
 <p>where <code style="color:#22d3bf">LP</code> is a first-order low-pass of time constant *tau_s*. Delaying one channel and multiplying it against the other, then subtracting the mirror pair, gives a signal whose sign is the direction of motion and whose steady-state mean encodes the temporal frequency.</p>

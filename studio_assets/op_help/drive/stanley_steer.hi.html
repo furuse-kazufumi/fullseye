@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stanley_steer(front_pose, path, *, gain: &#x27;float&#x27;, speed, softening: &#x27;float&#x27; = 0.0, max_steer: &#x27;float&#x27; = inf, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelateral; drivelateral.stanley_steer(front_pose, path, *, gain: &#x27;float&#x27;, speed, softening: &#x27;float&#x27; = 0.0, max_steer: &#x27;float&#x27; = inf, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;stanley_steer&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Stanley का steering कोण δ = ψ_e + atan2(−k e, k_s + v) (अगले axle के केंद्र का lateral offset e path के बाईं ओर धनात्मक, ψ_e = path की दिशा − ψ)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">front_pose</code>: (3,) または (N, 3)。<code style="color:#22d3bf">max_steer</code> で切る(切ると <code style="color:#22d3bf">stanley_straight_decay</code> の閉形式から外れる)。</p>
-<p>返り値: <code style="color:#22d3bf">steer</code>, <code style="color:#22d3bf">lateral</code>, <code style="color:#22d3bf">heading_error</code>, <code style="color:#22d3bf">index</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、k ≤ 0、v &lt; 0、k_s &lt; 0、max_steer ≤ 0。</p>
+<p><code style="color:#22d3bf">front_pose</code>: (3,) या (N, 3)। <code style="color:#22d3bf">max_steer</code> से काटा जाता है (काटने पर <code style="color:#22d3bf">stanley_straight_decay</code> के बंद रूप से हट जाता है)। लौटाया गया मान: <code style="color:#22d3bf">steer</code>, <code style="color:#22d3bf">lateral</code>, <code style="color:#22d3bf">heading_error</code>, <code style="color:#22d3bf">index</code>।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: गलत आकार, k ≤ 0, v &lt; 0, k_s &lt; 0, max_steer ≤ 0।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

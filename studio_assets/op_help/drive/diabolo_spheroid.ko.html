@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import diabolo; diabolo.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_spheroid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스틱 끝 2점(초점)과 끈 길이 → 보조 회전 타원체: a = l/2, c = |x_L − x_R|/2, b = √(a² − c²)(식 1의 올바른 형태).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>★原文の (1b) は b = √(a² − |x_L − x_R|/2) で、長さと長さの 2 乗の差なので次元が合わない。論文の実機寸法(糸 1.45 m、棒の間隔 1.10 m)を入れると根の中が負になる(NaN)。楕円の恒等式 a² = b² + c² の形に直した(公開実装も 2 乗で書いている)。原文の値は <code style="color:#22d3bf">b_paper_literal</code> に残す。原文の前文は「半長軸 b と半短軸 a」と名前が逆(a = l/2 が半長軸)で、式の側に従う。</p>
-<p>返り <code style="color:#22d3bf">{&quot;center&quot;, &quot;axis&quot;(x_L − x_R の単位ベクトル), &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;b_paper_literal&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 間隔 ≥ 糸、棒が重なる、有限でない入力。</p>
+<p>★원문의 (1b) 는 b = √(a² − |x_L − x_R|/2) 로, 길이와 길이 제곱의 차이므로 차원이 맞지 않는다. 논문의 실기 치수(실 1.45 m, 막대 간격 1.10 m)를 넣으면 근호 안이 음수가 된다(NaN). 타원 항등식 a² = b² + c² 의 형태로 고쳤다(공개 구현도 제곱으로 쓴다). 원문의 값은 <code style="color:#22d3bf">b_paper_literal</code> 에 남긴다. 원문의 서문은 &quot;반장축 b 와 반단축 a&quot; 로 이름이 반대(a = l/2 가 반장축)이며, 식 쪽을 따른다.</p>
+<p>반환 <code style="color:#22d3bf">{&quot;center&quot;, &quot;axis&quot;(x_L − x_R の単位ベクトル), &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;b_paper_literal&quot;}</code>. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 간격 ≥ 실, 막대가 겹침, 유한하지 않은 입력.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

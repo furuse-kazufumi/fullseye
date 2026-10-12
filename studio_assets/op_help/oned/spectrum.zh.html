@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectrum(x, rate=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import dsp; dsp.spectrum(x, rate=1.0)</code>;从台账取用则 <code style="color:#22d3bf">ops1d.get(&quot;spectrum&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.spectrum(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">pairs</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.spectrum.raw(...)</code>,或直接调用 <code style="color:#22d3bf">dsp.spectrum</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Raw one-sided magnitude spectrum -&gt; <code style="color:#22d3bf">(freqs, magnitude)</code> (<code style="color:#22d3bf">np.fft.rfft</code>).</p>
+<p>原始单边幅度谱 -&gt; <code style="color:#22d3bf">(freqs, magnitude)</code>(<code style="color:#22d3bf">np.fft.rfft</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><b>Scaling convention — read this before comparing any number.</b> *One-sided* describes the frequency axis, not the amplitude axis. <code style="color:#22d3bf">rfft</code> keeps only the non-negative frequencies, so <code style="color:#22d3bf">freqs</code> runs from 0 to <code style="color:#22d3bf">rate/2</code> in <code style="color:#22d3bf">len(x)//2 + 1</code> bins — but <code style="color:#22d3bf">magnitude</code> is the <b>unnormalised</b> <code style="color:#22d3bf">|rfft(x)|</code>. It is *not* an amplitude and it grows with <code style="color:#22d3bf">len(x)</code>: the same tone recorded twice as long comes back twice as tall. Nothing here divides by <code style="color:#22d3bf">N</code>; the caller does, and the exact factor depends on the bin::</p>
 <p>freqs, mag = spectrum(x, rate)</p>
 <p>amp = mag * (2.0 / len(x))       # one-sided amplitude, bins 1 .. N/2-1</p>

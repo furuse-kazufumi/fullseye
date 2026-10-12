@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_capability(signal, lsl, usl, sigma=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spc; spc.spc_capability(signal, lsl, usl, sigma=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;spc_capability&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Process capability indices Cp and Cpk from measurements and spec limits.</p>
+<p>측정값과 규격 한계로부터 공정 능력 지수 Cp 와 Cpk 를 구한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">signal</code> is a 1-D series of individual measurements; <code style="color:#22d3bf">lsl</code> / <code style="color:#22d3bf">usl</code> are the lower / upper specification limits (<code style="color:#22d3bf">lsl &lt; usl</code>). With the sample mean <code style="color:#22d3bf">mu</code> and standard deviation <code style="color:#22d3bf">sigma</code> (sample std, <code style="color:#22d3bf">ddof=1</code>, unless one is passed in explicitly)::</p>
 <p>Cp  = (USL - LSL) / (6 sigma)</p>
 <p>Cpk = min(USL - mu, mu - LSL) / (3 sigma)</p>

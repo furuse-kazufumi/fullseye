@@ -4,10 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelateral; drivelateral.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;rear_axle_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>अगले axle के केंद्र की polyline trajectory से बिना slip के खींचे गए पिछले axle के केंद्र की trajectory (हर खंड पर सटीक pursuit curve)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>前が直線を Δ 進む間、棒(後 → 前)と直線のなす角 θ は tan(θ/2) = tan(θ₀/2) e^{−Δ/L}(厳密)。折線の頂点ごとにこれを繋ぐ。<code style="color:#22d3bf">rear0</code>: 後車軸の初めの位置(None なら最初の区間の向きに L だけ後ろ = 真っすぐ)。|前 − 後| = L を要求。</p>
-<p>返り値: <code style="color:#22d3bf">rear</code> (N, 2)、<code style="color:#22d3bf">heading</code> (N,)(車体の向き = 棒の向き)、<code style="color:#22d3bf">gamma</code> (N,)(棒と前の進む向きのなす角、左旋回で正)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、重複点、L ≤ 0、|前 − 後| ≠ L、θ₀ = π(後ろ向きに押す)。</p>
+<p>जब आगे का भाग सीधी रेखा पर Δ बढ़ता है, तब छड़ (पीछे → आगे) और रेखा के बीच का कोण θ, tan(θ/2) = tan(θ₀/2) e^{−Δ/L} (यथार्थ) का पालन करता है। पॉलीलाइन के हर शीर्ष पर इसे जोड़ा जाता है। <code style="color:#22d3bf">rear0</code>: पिछले धुरे की प्रारंभिक स्थिति (None हो तो पहले खंड की दिशा में L पीछे = सीधा)। |आगे − पीछे| = L आवश्यक है। रिटर्न मान: <code style="color:#22d3bf">rear</code> (N, 2), <code style="color:#22d3bf">heading</code> (N,) (वाहन की दिशा = छड़ की दिशा), <code style="color:#22d3bf">gamma</code> (N,) (छड़ और आगे की गति-दिशा के बीच का कोण, बाएँ मोड़ पर धनात्मक)।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: गलत आकार, दोहराए बिंदु, L ≤ 0, |आगे − पीछे| ≠ L, θ₀ = π (पीछे की ओर धकेलना)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

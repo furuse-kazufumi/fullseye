@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">file</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.write_wav(path, x, rate=44100)</code> (die Implementierung direkt: <code style="color:#22d3bf">import dsp; dsp.write_wav(path, x, rate=44100)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;write_wav&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Write a float <code style="color:#22d3bf">[-1,1]</code> mono signal to a 16-bit PCM WAV (stdlib). Non-finite samples raise (they would become garbage PCM).</p>
+<p>Ein float-<code style="color:#22d3bf">[-1,1]</code>-Monosignal als 16-bit-PCM-WAV schreiben (Standardbibliothek). Nicht endliche Stichproben lösen eine Ausnahme aus (sie würden zu unbrauchbarem PCM).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Returns the path written (<code style="color:#22d3bf">str</code>) -- the ledger declares this op&#x27;s output as the <code style="color:#22d3bf">file</code> sort, which <code style="color:#22d3bf">read_wav</code> / <code style="color:#22d3bf">read_audio</code> consume (it used to return <code style="color:#22d3bf">None</code>).</p>
 <p>Empty input (<code style="color:#22d3bf">path</code> an empty string) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

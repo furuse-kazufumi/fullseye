@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import swarmflow; swarmflow.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;swarm_render_overhead&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>個體位置 → 俯視的 1 個影格(高斯亮點，直徑 = 標準差的 2 倍 = PIV 慣例，與 pivops 相同)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Args:</p>
-<p>points: (N, 2) の位置 [m] (空でもよい = 背景だけ)。</p>
+<p>points: (N, 2) 的位置 [m] (可以為空 = 只有背景)。</p>
 <p>shape: (H, W) [px]。</p>
-<p>res: 画素の大きさ [m/px]。</p>
-<p>center: 画像の中心の世界座標 [m]。</p>
-<p>diameter_px: 輝点の直径 [px]。</p>
-<p>intensity: 輝点の明るさ。</p>
-<p>background: 一様な下駄。</p>
+<p>res: 像素尺寸 [m/px]。</p>
+<p>center: 影像中心的世界座標 [m]。</p>
+<p>diameter_px: 亮點的直徑 [px]。</p>
+<p>intensity: 亮點的亮度。</p>
+<p>background: 均勻的底值。</p>
 <p>Returns:</p>
 <p>(H, W) float64。</p>
-<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は空を返す(理由: 個体が 0 体の場面は正当で、背景だけの絵が正しい答え)。</p>
+<p>空輸入(<code style="color:#22d3bf">points</code> 為 0 個元素)回傳空結果(理由: 個體為 0 的場景是正當的,只有背景的圖才是正確答案)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

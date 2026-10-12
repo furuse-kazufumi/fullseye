@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_offset_from_rgbd(rgb, depth, K, R_cam_to_world, r_peg: &#x27;float&#x27; = 0.005, hole_radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegsim; pegsim.peg_offset_from_rgbd(rgb, depth, K, R_cam_to_world, r_peg: &#x27;float&#x27; = 0.005, hole_radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;peg_offset_from_rgbd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>손목 RGB-D 1장으로부터 구멍 중심에 대한 페그 선단의 상대 어긋남 (dx, dy) [m]를 월드(이송대) 좌표로 — 시각 서보의 관측량.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">R_cam_to_world</code> はカメラ座標のベクトルを世界へ回す 3×3(hand-eye)。ずれは板の平面内の成分、<code style="color:#22d3bf">height</code> は先端の板からの高さ。<code style="color:#22d3bf">hole_radius</code> を与えると穴の円を既知半径で当てる(<code style="color:#22d3bf">hole_centre_from_rgbd</code>)。</p>
-<p>返り: <code style="color:#22d3bf">hole</code>・<code style="color:#22d3bf">tip</code>(各計測の dict)、<code style="color:#22d3bf">dx</code>・<code style="color:#22d3bf">dy</code>・<code style="color:#22d3bf">height</code>。試作(16 姿勢): |dx|, |dy| の最大 0.010 mm。</p>
+<p><code style="color:#22d3bf">R_cam_to_world</code> 는 카메라 좌표의 벡터를 세계로 돌리는 3×3(hand-eye). 어긋남은 판 평면 안의 성분, <code style="color:#22d3bf">height</code> 는 끝단의 판으로부터의 높이. <code style="color:#22d3bf">hole_radius</code> 를 주면 구멍의 원을 기지 반경으로 맞춘다(<code style="color:#22d3bf">hole_centre_from_rgbd</code>).</p>
+<p>반환: <code style="color:#22d3bf">hole</code>·<code style="color:#22d3bf">tip</code>(각 계측의 dict), <code style="color:#22d3bf">dx</code>·<code style="color:#22d3bf">dy</code>·<code style="color:#22d3bf">height</code>. 시작(16 자세): |dx|, |dy| 의 최대 0.010 mm.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

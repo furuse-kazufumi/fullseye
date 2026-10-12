@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;mapf_prioritized&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>prioritized planning: क्रम से 1-1 वाहन की योजना बनाता है, पहले तय हुए वाहनों के रास्तों (reservation table) से बचते हुए।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>速いが<b>不完全</b> —— 解がある問題でも、優先順によっては(どの順でも)見つけられない(Ma ら 2019)。返りは dict: <code style="color:#22d3bf">paths</code>(失敗なら None)、<code style="color:#22d3bf">cost</code>、<code style="color:#22d3bf">solved</code>、<code style="color:#22d3bf">failed_agent</code>(最初に詰まった車両)。</p>
+<p>तेज़ पर <b>अपूर्ण</b> —— जिस समस्या का हल मौजूद हो उसमें भी, प्राथमिकता-क्रम के अनुसार (किसी भी क्रम में) हल न मिल सके (Ma आदि 2019)। रिटर्न dict: <code style="color:#22d3bf">paths</code> (विफलता पर None), <code style="color:#22d3bf">cost</code>, <code style="color:#22d3bf">solved</code>, <code style="color:#22d3bf">failed_agent</code> (सबसे पहले अटका वाहन)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

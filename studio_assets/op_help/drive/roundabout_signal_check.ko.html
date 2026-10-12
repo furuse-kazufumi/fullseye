@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivepass; drivepass.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;roundabout_signal_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>회전교차로 안의 신호를 채점(제53조 제2·4항, 교칙 5-5-1(2)). 장면 S069.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">progress</code> = 入口から右回りに進んだ角 [rad]、単調非減少、サンプルごと、<code style="color:#22d3bf">left_on</code> / <code style="color:#22d3bf">right_on</code> = 合図の状態(bool)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_late</code>: 合図の角 + <code style="color:#22d3bf">tol</code> から出口の角までの間に左の合図が消えているサンプルがある。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_early</code>: 合図の角 − <code style="color:#22d3bf">tol</code> より手前で左の合図が点いている(手前の出口で出るように見える。53 条 4 項の「行為をしないのに合図」の <b>解釈</b>)。入った直後の出口(合図の角 = 0)では問わない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">right_signal</code>: 環道の中で右の合図(53 条 2 項は出るときだけを求める。4 項の <b>解釈</b>)。</p>
+<p><code style="color:#22d3bf">progress</code> = 입구에서 시계 방향으로 나아간 각 [rad], 단조 비감소, 샘플별, <code style="color:#22d3bf">left_on</code> / <code style="color:#22d3bf">right_on</code> = 신호의 상태(bool).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_late</code>: 신호의 각 + <code style="color:#22d3bf">tol</code> 에서 출구의 각까지의 사이에 왼쪽 신호가 꺼져 있는 샘플이 있다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_early</code>: 신호의 각 − <code style="color:#22d3bf">tol</code> 보다 앞에서 왼쪽 신호가 켜져 있다(앞의 출구로 나가는 것처럼 보인다. 일본 도로교통법 제 53 조 제 4 항의 &quot;행위를 하지 않는데 신호&quot;의 <b>해석</b>). 진입 직후의 출구(신호의 각 = 0)에서는 따지지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">right_signal</code>: 환도 안에서 오른쪽 신호(제 53 조 제 2 항은 나갈 때만을 요구한다. 제 4 항의 <b>해석</b>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

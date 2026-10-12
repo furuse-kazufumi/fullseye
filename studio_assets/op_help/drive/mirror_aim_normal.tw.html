@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_aim_normal(eye, mirror_center, look_dir) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivedecide; drivedecide.mirror_aim_normal(eye, mirror_center, look_dir) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;mirror_aim_normal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使從眼睛 <code style="color:#22d3bf">eye</code> 射向鏡面中心 <code style="color:#22d3bf">mirror_center</code> 的光線反射到方向 <code style="color:#22d3bf">look_dir</code> 的鏡面法線(2D 與 3D 皆可)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>n = normalize(unit(E − M) + unit(ℓ))</p>
-<p>(反射の法則: 入射の逆向きと反射の向きの二等分)。法線は眼の側を向く。<code style="color:#22d3bf">look_dir</code> が眼の方向と正反対(鏡を真横から見る)だと定まらないので ValueError。</p>
+<p>(反射定律: 入射反方向與反射方向的角平分)。法線朝向眼睛一側。若 <code style="color:#22d3bf">look_dir</code> 與眼睛方向正好相反(從正側面看鏡子)則無法確定,因此 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

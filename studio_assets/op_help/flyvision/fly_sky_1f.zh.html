@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">image2d</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_sky_1f(width=1024, height=512, band_lo_deg=20.0, band_hi_deg=60.0, amp=0.12, seed=0, edge_deg=5.0)</code>(要直接调用实现,<code style="color:#22d3bf">import flyvision; flyvision.fly_sky_1f(width=1024, height=512, band_lo_deg=20.0, band_hi_deg=60.0, amp=0.12, seed=0, edge_deg=5.0)</code>;从台账取用则 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_sky_1f&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Synthetic equirectangular sky panorama with a banded 1/f azimuthal texture.</p>
+<p>带有条带状 1/f 方位纹理的合成等距柱状天空全景。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>An equirectangular image (row = elevation +90 deg down to -90 deg, column = azimuth 0 to 360 deg). Luminance is a vertical backlight gradient (0.62 at the zenith to 0.95 at the nadir) modulated in azimuth by a 1/f texture confined to an elevation band with cosine edges::</p>
 <p>L = gradient(el) * (1 + amp * band(el) * noise(az))   clipped to [0, 1]</p>
 <p>where <code style="color:#22d3bf">noise</code> has unit std, is clipped to +-2, and drops azimuthal frequencies below 2 cycles per revolution; <code style="color:#22d3bf">band</code> is 1 inside <code style="color:#22d3bf">[band_lo_deg, band_hi_deg]</code> with raised-cosine edges of width *edge_deg*.</p>

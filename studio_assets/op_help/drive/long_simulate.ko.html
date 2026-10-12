@@ -4,21 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.long_simulate(s0: &#x27;float&#x27;, v0: &#x27;float&#x27;, command: &#x27;Callable&#x27;, road=None, t_end: &#x27;float&#x27; = 30.0, dt: &#x27;float&#x27; = 0.01, params: &#x27;Optional[dict]&#x27; = None, t_breaks: &#x27;Sequence[float]&#x27; = (), t0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelong; drivelong.long_simulate(s0: &#x27;float&#x27;, v0: &#x27;float&#x27;, command: &#x27;Callable&#x27;, road=None, t_end: &#x27;float&#x27; = 30.0, dt: &#x27;float&#x27; = 0.01, params: &#x27;Optional[dict]&#x27; = None, t_breaks: &#x27;Sequence[float]&#x27; = (), t0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;long_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>종방향 운동 방정식을 RK4로 적분합니다(사건 시각에서 스텝을 끊음. 모듈의 docstring 참조).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>s0, v0 : 初めの位置 [m] (道なりの弧長)と速度 [m/s] (負 = 後ろ向き)</p>
-<p>command : <code style="color:#22d3bf">command(t, s, v) -&gt; (drive, brake)</code>(どちらも ≥ 0 [m/s²]。上限は μ g cos θ と a_max で頭打ち)。</p>
-<p><b>v = 0.0 で呼ばれるのは止まっている間だけ</b>(動いている刻みの中間点で速度が 0 を横切っても、指令には動きの向きの</p>
-<p>±1e-300 を渡す)ので、指令は <code style="color:#22d3bf">v == 0</code> / <code style="color:#22d3bf">v &lt;= 0</code> で「止まったら保持」を書いてよい。</p>
-<p>指令が時刻で不連続に変わるなら、その時刻を <code style="color:#22d3bf">t_breaks</code> に入れると刻みがそこで切れる(厳密さのため)。</p>
-<p>road : 道の縦断(<code style="color:#22d3bf">road_eval</code> と同じ)</p>
-<p>t_end : 終わりの時刻 [s]、dt : 刻み [s]</p>
-<p>params : <code style="color:#22d3bf">long_params</code> の dict(None = 既定)</p>
-<p>t0 : 初めの時刻 [s]</p>
+<p>s0, v0 : 처음 위치 [m] (도로를 따른 호의 길이)와 속도 [m/s] (음 = 뒤 방향)</p>
+<p>command : <code style="color:#22d3bf">command(t, s, v) -&gt; (drive, brake)</code>(둘 다 ≥ 0 [m/s²]. 상한은 μ g cos θ 와 a_max 에서 막힌다).</p>
+<p><b>v = 0.0 으로 호출되는 것은 멈춰 있는 동안뿐</b>(움직이는 스텝의 중간점에서 속도가 0 을 가로질러도 지령에는 움직임 방향의</p>
+<p>±1e-300 을 넘긴다)이므로, 지령은 <code style="color:#22d3bf">v == 0</code> / <code style="color:#22d3bf">v &lt;= 0</code> 으로 「멈추면 유지」를 써도 된다.</p>
+<p>지령이 시각에 따라 불연속으로 바뀌면 그 시각을 <code style="color:#22d3bf">t_breaks</code> 에 넣으면 스텝이 거기서 끊긴다(엄밀함을 위해).</p>
+<p>road : 도로의 종단(<code style="color:#22d3bf">road_eval</code> 과 같음)</p>
+<p>t_end : 끝 시각 [s], dt : 스텝 [s]</p>
+<p>params : <code style="color:#22d3bf">long_params</code> 의 dict(None = 기본)</p>
+<p>t0 : 처음 시각 [s]</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : <code style="color:#22d3bf">t, s, v, a, drive, brake, z, W_drive, W_brake, W_rr, W_drag</code>(各 (n,) の配列、a = その時点の加速度)、</p>
-<p><code style="color:#22d3bf">stopped</code>(bool 配列)、<code style="color:#22d3bf">events</code>(<code style="color:#22d3bf">(&quot;stop&quot;|&quot;move&quot;, t, s, 向き)</code> の列)、<code style="color:#22d3bf">saturated</code>(上限で頭打ちになった刻みがあったか)、<code style="color:#22d3bf">params</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 引数が不正、指令が負や非有限を返した。</p>
+<p>dict : <code style="color:#22d3bf">t, s, v, a, drive, brake, z, W_drive, W_brake, W_rr, W_drag</code>(각각 (n,) 배열, a = 그 시점의 가속도),</p>
+<p><code style="color:#22d3bf">stopped</code>(bool 배열), <code style="color:#22d3bf">events</code>(<code style="color:#22d3bf">(&quot;stop&quot;|&quot;move&quot;, t, s, 向き)</code> 의 열), <code style="color:#22d3bf">saturated</code>(상한에서 막힌 스텝이 있었는지), <code style="color:#22d3bf">params</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 인수가 부정, 지령이 음수나 유한하지 않은 값을 반환했다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

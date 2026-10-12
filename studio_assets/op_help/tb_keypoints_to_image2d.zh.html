@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_keypoints_to_image2d — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_keypoints_to_image2d&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一张图 + 两个标量旋钮 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*无图: 类型可达，但通用合成输入不在此算子的定义域内 —— 橋渡しで束縛した raster が 64×64 固定で、128×128 の点は外に落ちる。用法见下方可运行示例。*</p>
+<p>*无图: 类型可达，但通用合成输入不在此算子的定义域内 —— 桥接时绑定的 raster 固定为 64×64,128×128 的点会落到外面。用法见下方可运行示例。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>图像坐标 <code style="color:#22d3bf">(N,2) = (u, v)</code> → 计数图像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">keypoints</code> 的第二个出口。</p>
 <p>以 <code style="color:#22d3bf">round(v)</code> 为行、<code style="color:#22d3bf">round(u)</code> 为列各加 1。<b>向像素网格的量化即为损失</b>，与 <code style="color:#22d3bf">keypoints_from_image2d</code> 往返时位置会最多偏移 0.5 像素(在相隔充分的 225 个点上实测：<b>每轴</b> RMS 0.2835 px = 与均匀量化的理论值 1/sqrt(12) = 0.2887 一致。按 2-D 距离为 sqrt(2) 倍的 0.4009 px，理论 sqrt(2/12) = 0.4082)。</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fbm_params(seed: &#x27;int&#x27; = 0, hurst: &#x27;float&#x27; = 0.8, n_waves: &#x27;int&#x27; = 128, f_min: &#x27;float&#x27; = 0.005, f_max: &#x27;float&#x27; = 0.125, amplitude: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveterrain; driveterrain.fbm_params(seed: &#x27;int&#x27; = 0, hurst: &#x27;float&#x27; = 0.8, n_waves: &#x27;int&#x27; = 128, f_min: &#x27;float&#x27; = 0.005, f_max: &#x27;float&#x27; = 0.125, amplitude: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;fbm_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>무작위 위상 사인파의 합으로 fBm 면을 만들기 위한 매개변수 표(Saupe 1988 스펙트럼 합성의 연속판).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>周波数は [f_min, f_max] に対数一様、向きは一様、位相は一様、振幅 ∝ f^{−H}。対数一様に撒いた波は 2 次元周波数面の密度が ∝ f^{−2} なので、パワースペクトルは ∝ A(f)² f^{−2} = f^{−(2H+2)}、つまり β = 2H + E(E = 2)。振幅は RMS が <code style="color:#22d3bf">amplitude</code> になるよう正規化する。</p>
+<p>주파수는 [f_min, f_max] 에 로그 균일, 방향은 균일, 위상은 균일, 진폭 ∝ f^{−H}. 로그 균일로 뿌린 파는 2 차원 주파수 면의 밀도가 ∝ f^{−2} 이므로 파워 스펙트럼은 ∝ A(f)² f^{−2} = f^{−(2H+2)}, 즉 β = 2H + E(E = 2). 진폭은 RMS 가 <code style="color:#22d3bf">amplitude</code> 가 되도록 정규화한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

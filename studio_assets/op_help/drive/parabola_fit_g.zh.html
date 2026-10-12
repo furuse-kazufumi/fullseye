@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.parabola_fit_g(t, P, *, g: &#x27;float&#x27; = 9.81, t_ref: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import kendama; kendama.parabola_fit_g(t, P, *, g: &#x27;float&#x27; = 9.81, t_ref: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;parabola_fit_g&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在重力 g(−z)已知的前提下，用最小二乘拟合抛物线 p(t) = p_r + v_r (t − t_ref) − ½ g (t − t_ref)² ẑ(未知数 6 个 = 位置与速度)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">t</code> (N,)、<code style="color:#22d3bf">P</code> (N, 3)(NaN の行は飛ばす)。<code style="color:#22d3bf">t_ref</code> 既定 = 使った最後の時刻(= その瞬間の状態を返す)。各軸は [1, t − t_ref] の線形最小二乗(z は ½ g (t − t_ref)² を足してから)。返り値 <code style="color:#22d3bf">{&quot;p&quot;, &quot;v&quot;, &quot;t_ref&quot;, &quot;rms&quot; (残差の RMS [m]), &quot;n&quot;}</code>。有効な点が 2 未満・時刻が全部同じ・g ≤ 0 は ValueError。真空の正確な標本なら (p, v) を丸め誤差で戻す(門)。</p>
+<p><code style="color:#22d3bf">t</code> (N,)、<code style="color:#22d3bf">P</code> (N, 3)(含 NaN 的行跳过)。<code style="color:#22d3bf">t_ref</code> 默认 = 使用的最后时刻(= 返回该瞬间的状态)。各轴在 [1, t − t_ref] 上做线性最小二乘(z 先加上 ½ g (t − t_ref)²)。返回值 <code style="color:#22d3bf">{&quot;p&quot;, &quot;v&quot;, &quot;t_ref&quot;, &quot;rms&quot; (残差の RMS [m]), &quot;n&quot;}</code>。有效点少于 2、时刻全部相同、g ≤ 0 会引发 ValueError。对真空的精确样本,能以舍入误差还原 (p, v)(门)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

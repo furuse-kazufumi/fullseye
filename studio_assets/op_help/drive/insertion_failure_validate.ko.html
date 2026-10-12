@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_validate(table=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_validate(table=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_validate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표를 검증합니다(fail-closed): 칸의 어휘·클래스 이름·회복 이름의 철자, <b>모든 쌍의 배타성</b>(2행이 같은 서명에 해당할 수 없는지 = 모든 칸에서 허용 집합이 교차하는 행 쌍이 없음), <b>도달성</b>(unknown 이외의 모든 클래스에 ≥ 1행).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返り: <code style="color:#22d3bf">n_rows</code>、<code style="color:#22d3bf">classes_covered</code>、<code style="color:#22d3bf">classes_missing</code>、<code style="color:#22d3bf">n_signatures</code>(語彙の直積の大きさ)、<code style="color:#22d3bf">n_covered</code>(どれかの行に当たる署名の数)、<code style="color:#22d3bf">coverage</code>、<code style="color:#22d3bf">overlaps</code>(交わる行の組 —— 空でなければ下の ValueError)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 綴り違い・交わる行・届かないクラス。</p>
+<p>반환: <code style="color:#22d3bf">n_rows</code>, <code style="color:#22d3bf">classes_covered</code>, <code style="color:#22d3bf">classes_missing</code>, <code style="color:#22d3bf">n_signatures</code>(어휘의 직적의 크기), <code style="color:#22d3bf">n_covered</code>(어느 행에든일치하는 서명의 수), <code style="color:#22d3bf">coverage</code>, <code style="color:#22d3bf">overlaps</code>(교차하는 행의 쌍 —— 비어 있지 않으면 아래의 ValueError). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 철자 오류, 교차하는 행, 도달할 수 없는 클래스.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

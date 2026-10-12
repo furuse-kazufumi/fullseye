@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.parking_position_check(rear: &#x27;float&#x27;, front: &#x27;float&#x27;, zones_result: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecrossing; drivecrossing.parking_position_check(rear: &#x27;float&#x27;, front: &#x27;float&#x27;, zones_result: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;parking_position_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>वाहन का body [rear, front] no-stopping-or-parking खंड से overlap करता है या नहीं। <code style="color:#22d3bf">zones_result</code> = <code style="color:#22d3bf">no_stopping_zones</code> की return value।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返り値: <code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">overlap</code> = 重なりの長さの最大 [m]、<code style="color:#22d3bf">reasons</code> = 重なった区間の (kind, 号)。端に触れるだけは重ならない。</p>
+<p>रिटर्न: <code style="color:#22d3bf">ok</code>, <code style="color:#22d3bf">overlap</code> = ओवरलैप की अधिकतम लंबाई [m], <code style="color:#22d3bf">reasons</code> = ओवरलैप हुए खंडों के (kind, मद संख्या)। केवल सिरे को छूना ओवरलैप नहीं माना जाता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

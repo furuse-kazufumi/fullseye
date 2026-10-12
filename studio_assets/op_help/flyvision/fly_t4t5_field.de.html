@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_t4t5_field(movie, lattice, dt_s, tau_s=0.25, k_e=5.0, k_d=5.0, k_s=10.0, dc=1.0, model=&#x27;three_arm&#x27;, tau_hr_s=0.05, reduce=&#x27;mean&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import flyvision; flyvision.fly_t4t5_field(movie, lattice, dt_s, tau_s=0.25, k_e=5.0, k_d=5.0, k_s=10.0, dc=1.0, model=&#x27;three_arm&#x27;, tau_hr_s=0.05, reduce=&#x27;mean&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsflyvision.get(&quot;fly_t4t5_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Direction-selective response over the whole eye, in the six hexagonal directions.</p>
+<p>Richtungsselektive Antwort über das ganze Auge, in den sechs hexagonalen Richtungen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>T4 (ON) and T5 (OFF) are the first direction-selective cells in the fly, and two mechanisms make them so: *preferred-direction enhancement*, which is the Hassenstein-Reichardt multiplication, and *null-direction suppression*, which is the Barlow-Levick division. Haag et al. measured both in one cell and wrote them as three arms reading three adjacent columns — an enhancing arm E one column *before* the centre, the direct arm D, and a suppressing arm S one column *after* it::</p>
 <p>R = (dc + k_e * LP[E]) * (dc + k_d * D) / (dc + k_s * LP[S])</p>
 <p>with first-order low-passes of time constant <code style="color:#22d3bf">tau_s</code> on E and S. This op runs that, or either mechanism alone, at every ommatidium and in all six lattice directions at once.</p>

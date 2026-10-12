@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cubic_prototype(kind, a, species, b_iso=0.5, name=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pxrd; pxrd.cubic_prototype(kind, a, species, b_iso=0.5, name=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cubic_prototype&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>입방정 원형(<code style="color:#22d3bf">sc</code>·<code style="color:#22d3bf">bcc</code>·<code style="color:#22d3bf">fcc</code>·<code style="color:#22d3bf">diamond</code>·<code style="color:#22d3bf">rocksalt</code>·<code style="color:#22d3bf">cscl</code>·<code style="color:#22d3bf">zincblende</code>·<code style="color:#22d3bf">fluorite</code>)으로부터 상을 만듭니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>CIF が無いときの相の作り方(教科書の座標だけ)。<code style="color:#22d3bf">species</code> は副格子ごとの散乱体の名前の list(rocksalt は <code style="color:#22d3bf">[&quot;Na&quot;, &quot;Cl&quot;]</code>、fluorite は <code style="color:#22d3bf">[&quot;Ca&quot;, &quot;F&quot;]</code> の順 = 陽イオン、陰イオン)。<code style="color:#22d3bf">a</code> [Å]、<code style="color:#22d3bf">b_iso</code> [Å²] は全原子共通。</p>
-<p>返り値は <code style="color:#22d3bf">cif_read</code> と同じ形の相。</p>
-<p>Raises ValueError: 原型の名前の綴り違い、副格子の数と <code style="color:#22d3bf">species</code> の数の不一致、未知の元素、<code style="color:#22d3bf">a &lt;= 0</code>。</p>
+<p>CIF 가 없을 때의 상 만드는 법(교과서의 좌표만). <code style="color:#22d3bf">species</code> 는 부격자별 산란체 이름의 list(rocksalt 는 <code style="color:#22d3bf">[&quot;Na&quot;, &quot;Cl&quot;]</code>, fluorite 는 <code style="color:#22d3bf">[&quot;Ca&quot;, &quot;F&quot;]</code> 의 순서 = 양이온, 음이온). <code style="color:#22d3bf">a</code> [Å], <code style="color:#22d3bf">b_iso</code> [Å²] 는 모든 원자 공통.</p>
+<p>반환값은 <code style="color:#22d3bf">cif_read</code> 와 같은 형태의 상.</p>
+<p>Raises ValueError: 원형 이름의 철자 오류, 부격자 수와 <code style="color:#22d3bf">species</code> 수의 불일치, 미지의 원소, <code style="color:#22d3bf">a &lt;= 0</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

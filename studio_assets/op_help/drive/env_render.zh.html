@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.env_render(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, env: &#x27;Optional[dict]&#x27; = None, *, ego=None, ego_pose=None, shadows: &#x27;bool&#x27; = True, shadow_cache: &#x27;Optional[dict]&#x27; = None, shadow_res: &#x27;int&#x27; = 1024) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveenv; driveenv.env_render(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, env: &#x27;Optional[dict]&#x27; = None, *, ego=None, ego_pose=None, shadows: &#x27;bool&#x27; = True, shadow_cache: &#x27;Optional[dict]&#x27; = None, shadow_res: &#x27;int&#x27; = 1024) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;env_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以物理单位渲染太阳、天空、阴影、灯光、前照灯、雾、雨和眩光。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : <code style="color:#22d3bf">color</code>(カメラの線形 RGB [0,1]、<code style="color:#22d3bf">tone_map</code> で圧縮 —— 画像処理はこれを読む)、<code style="color:#22d3bf">display</code>(sRGB に符号化した</p>
-<p>表示用、図だけに使う)、<code style="color:#22d3bf">radiance</code>(RGB の輝度 cd/m²、線形)、<code style="color:#22d3bf">depth</code>・<code style="color:#22d3bf">label</code>・ <code style="color:#22d3bf">face</code>(driveworld.world_camera と同じ)、<code style="color:#22d3bf">shadow</code>(bool、太陽の影の画素)、<code style="color:#22d3bf">exposure</code>(使った倍率)、<code style="color:#22d3bf">veil</code>(光幕輝度 cd/m² (H,W))、<code style="color:#22d3bf">illuminance</code>(面の照度 lx (H,W))。</p>
-<p><code style="color:#22d3bf">ego_pose=(x, y, yaw)</code> = 前照灯を付ける自車の姿勢(前端 2.25 m・左右 ±0.6 m・高さ 0.65 m に 2 灯)。<code style="color:#22d3bf">shadow_cache</code> に dict を渡すと太陽のシャドウマップを使い回す(太陽と世界が変わらない間)。</p>
-<p>空の入力(<code style="color:#22d3bf">world</code> が空の dict)は ValueError。</p>
+<p>dict : <code style="color:#22d3bf">color</code>(相机的线性 RGB [0,1],经 <code style="color:#22d3bf">tone_map</code> 压缩 —— 图像处理读取这个)、<code style="color:#22d3bf">display</code>(编码为 sRGB 的</p>
+<p>显示用图,仅用于插图)、<code style="color:#22d3bf">radiance</code>(RGB 亮度 cd/m²,线性)、<code style="color:#22d3bf">depth</code>、<code style="color:#22d3bf">label</code>、<code style="color:#22d3bf">face</code>(与 driveworld.world_camera 相同)、<code style="color:#22d3bf">shadow</code>(bool,太阳阴影的像素)、<code style="color:#22d3bf">exposure</code>(所用倍率)、<code style="color:#22d3bf">veil</code>(光幕亮度 cd/m² (H,W))、<code style="color:#22d3bf">illuminance</code>(表面照度 lx (H,W))。</p>
+<p><code style="color:#22d3bf">ego_pose=(x, y, yaw)</code> = 装有前照灯的本车姿态(前端 2.25 m、左右 ±0.6 m、高 0.65 m 处 2 灯)。向 <code style="color:#22d3bf">shadow_cache</code> 传入 dict 时会复用太阳的阴影图(在太阳和世界不变期间)。</p>
+<p>空输入(<code style="color:#22d3bf">world</code> 为空 dict)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

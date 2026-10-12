@@ -737,6 +737,38 @@
    "ko": "애니메이션(GIF)",
    "de": "Animation (GIF)",
    "hi": "Motion (GIF)"
+  },
+  "橋渡しで束縛した raster が 64×64 固定で、128×128 の点は外に落ちる": {
+   "en": "the raster bound by the bridge is fixed at 64×64, so 128×128 points fall outside it",
+   "zh": "桥接时绑定的 raster 固定为 64×64,128×128 的点会落到外面",
+   "tw": "橋接時綁定的 raster 固定為 64×64,128×128 的點會落到外面",
+   "ko": "브리지에서 묶은 raster 가 64×64 로 고정되어 있어, 128×128 의 점은 밖으로 떨어진다",
+   "de": "das von der Brücke gebundene Raster ist auf 64×64 festgelegt, daher fallen Punkte aus 128×128 heraus",
+   "hi": "bridge द्वारा बाँधा गया raster 64×64 पर स्थिर है, इसलिए 128×128 के बिंदु उसके बाहर गिरते हैं"
+  },
+  "3×3 で焦点距離が正の K だけを受け、汎用の合成 matrix は fail-closed で拒否される(op_probe の探針では走る)": {
+   "en": "it accepts only a 3×3 K with positive focal lengths, and a generic synthetic matrix is rejected fail-closed (it runs with the op_probe probe)",
+   "zh": "只接受 3×3 且焦距为正的 K,通用的合成 matrix 会以 fail-closed 方式被拒绝(用 op_probe 的探针可以运行)",
+   "tw": "只接受 3×3 且焦距為正的 K,通用的合成 matrix 會以 fail-closed 方式被拒絕(用 op_probe 的探針可以執行)",
+   "ko": "3×3 이고 초점 거리가 양수인 K 만 받으며, 범용 합성 matrix 는 fail-closed 로 거부된다(op_probe 의 탐침으로는 실행된다)",
+   "de": "es akzeptiert nur ein 3×3-K mit positiven Brennweiten; eine generische synthetische Matrix wird fail-closed abgelehnt (mit der op_probe-Sonde läuft es)",
+   "hi": "यह केवल धनात्मक फ़ोकल लंबाई वाला 3×3 K स्वीकार करता है, और सामान्य कृत्रिम matrix fail-closed ढंग से अस्वीकार होता है (op_probe की जाँच से यह चलता है)"
+  },
+  "同上(主点を 0.5 画素戻す橋)": {
+   "en": "same as above (the bridge that shifts the principal point back by 0.5 pixel)",
+   "zh": "同上(把主点移回 0.5 像素的桥)",
+   "tw": "同上(把主點移回 0.5 像素的橋)",
+   "ko": "위와 같음(주점을 0.5 화소 되돌리는 브리지)",
+   "de": "wie oben (die Brücke, die den Hauptpunkt um 0,5 Pixel zurückschiebt)",
+   "hi": "ऊपर जैसा ही (वह bridge जो principal point को 0.5 पिक्सेल वापस खिसकाता है)"
+  },
+  "ECEF は地球表面座標(中心から ~6.4M m)を要るが、画像由来の合成点は原点付近で楕円体の evolute 内に落ち必ず拒否される": {
+   "en": "ECEF needs Earth-surface coordinates (~6.4M m from the centre), but synthetic points derived from an image lie near the origin, fall inside the ellipsoid's evolute and are always rejected",
+   "zh": "ECEF 需要地球表面坐标(距中心约 6.4M m),而由图像得到的合成点位于原点附近,落在椭球的 evolute 内,必然被拒绝",
+   "tw": "ECEF 需要地球表面座標(距中心約 6.4M m),而由影像得到的合成點位於原點附近,落在橢球的 evolute 內,必然被拒絕",
+   "ko": "ECEF 는 지구 표면 좌표(중심에서 약 6.4M m)를 요구하지만, 영상에서 만든 합성 점은 원점 근처에 있어 타원체의 evolute 안에 떨어지므로 반드시 거부된다",
+   "de": "ECEF braucht Koordinaten an der Erdoberfläche (~6,4M m vom Mittelpunkt), aber aus einem Bild abgeleitete synthetische Punkte liegen nahe dem Ursprung, fallen in die Evolute des Ellipsoids und werden immer abgelehnt",
+   "hi": "ECEF को पृथ्वी-सतह के निर्देशांक (केंद्र से ~6.4M m) चाहिए, पर छवि से बने कृत्रिम बिंदु मूलबिंदु के पास होते हैं, ellipsoid के evolute के अंदर गिरते हैं और हमेशा अस्वीकार होते हैं"
   }
  }
 }

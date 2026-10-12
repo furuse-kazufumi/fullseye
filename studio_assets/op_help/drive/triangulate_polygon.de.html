@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveplateau; driveplateau.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Trianguliert ein einfaches Polygon (konvex oder konkav, ohne Selbstüberschneidung) mit dem Ear-Clipping-Verfahren.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>返す三角形は入力頂点の添字 (k-2, 3) で、各三角形は反時計回り(入力が時計回りなら内部で反転して扱い、添字は元の頂点番号で返す)。</p>
+<p>Die zurückgegebenen Dreiecke sind Indizes (k-2, 3) in die Eingabeecken, und jedes Dreieck ist gegen den Uhrzeigersinn orientiert (ist die Eingabe im Uhrzeigersinn, wird sie intern umgekehrt behandelt, und die Indizes werden als ursprüngliche Eckennummern zurückgegeben).</p>
 <p>Args:</p>
-<p>poly: (k,2) 頂点列。閉じていなくてよい。</p>
+<p>poly: (k,2)-Eckenfolge. Muss nicht geschlossen sein.</p>
 <p>Returns:</p>
-<p>(k-2, 3) int64 配列。</p>
+<p>(k-2, 3) int64-Array.</p>
 <p>Raises:</p>
-<p>ValueError: 頂点が 3 未満、面積がほぼ 0、耳が見つからない(自己交差や重複点の疑い)。</p>
+<p>ValueError: weniger als 3 Ecken, Fläche nahezu 0, kein Ohr gefunden (Verdacht auf Selbstüberschneidung oder doppelte Punkte).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ritter_dam_break(x, t: &#x27;float&#x27;, h0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81, particle_mass=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import swarmflow; swarmflow.ritter_dam_break(x, t: &#x27;float&#x27;, h0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81, particle_mass=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ritter_dam_break&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Ritter 溃坝解(浅水方程，干河床，坝位于 x = 0，水位于 x &lt; 0)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>c₀ = √(g h₀)。x ≤ −c₀ t: h = h₀、u = 0 / −c₀ t &lt; x &lt; 2c₀ t: h = (2c₀ − x/t)²/(9g)、u = (2/3)(x/t + c₀) / x ≥ 2c₀ t: h = 0。</p>
-<p>先端の近くは h ∝ (x_f − x)² で水がほとんど無い。先端から δ までの水の量は ∫₀^δ (s/t)²/(9g) ds = δ³/(27 g t²)(導出)。粒子 1 個の量 m(1 次元の SPH なら h₀Δx)を与えると、<b>最も前の粒子の居場所</b>(先端から量 m/2 の所) x_f − (27 g t² m/2)^{1/3} を <code style="color:#22d3bf">lead_particle</code> に返す —— 粒子法の先端は Ritter の先端より必ず遅れて見え、その遅れはこの式で読める(粒子を細かくすると m^{1/3} でしか縮まない)。</p>
+<p>前锋附近 h ∝ (x_f − x)²,几乎没有水。从前锋到 δ 的水量为 ∫₀^δ (s/t)²/(9g) ds = δ³/(27 g t²)(推导)。给出每个粒子的量 m(一维 SPH 则为 h₀Δx),则将 <b>最前方粒子的位置</b>(距前锋量为 m/2 处) x_f − (27 g t² m/2)^{1/3} 返回到 <code style="color:#22d3bf">lead_particle</code> —— 粒子法的前锋看起来必然落后于 Ritter 的前锋,其落后量可由此式读出(将粒子加密也只按 m^{1/3} 缩小)。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">h</code>・<code style="color:#22d3bf">u</code>(x と同じ形)、<code style="color:#22d3bf">front</code> = 2c₀ t、<code style="color:#22d3bf">rarefaction_head</code> = −c₀ t、<code style="color:#22d3bf">c0</code>、<code style="color:#22d3bf">lead_particle</code>(m を与えたとき)。</p>
-<p>空の入力(<code style="color:#22d3bf">x</code> が 0 要素)は ValueError。</p>
+<p>dict: <code style="color:#22d3bf">h</code>、<code style="color:#22d3bf">u</code>(与 x 同形)、<code style="color:#22d3bf">front</code> = 2c₀ t、<code style="color:#22d3bf">rarefaction_head</code> = −c₀ t、<code style="color:#22d3bf">c0</code>、<code style="color:#22d3bf">lead_particle</code>(给出 m 时)。</p>
+<p>空输入(<code style="color:#22d3bf">x</code> 为 0 个元素)会引发 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

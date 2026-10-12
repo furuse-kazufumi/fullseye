@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_ewma(signal, target, lam=0.2, L=3.0, sigma=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import spc; spc.spc_ewma(signal, target, lam=0.2, L=3.0, sigma=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsspc.get(&quot;spc_ewma&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>EWMA control chart for individual measurements (Roberts 1959).</p>
+<p>개별 측정값에 대한 EWMA 관리도(Roberts 1959).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">signal</code> is a 1-D series of individual measurements. With a reference value <code style="color:#22d3bf">target</code> (the in-control mean), a smoothing constant <code style="color:#22d3bf">lam</code> in <code style="color:#22d3bf">(0, 1]</code> and a control-limit width <code style="color:#22d3bf">L</code> (in sigmas), the exponentially weighted moving average and its time-varying limits are::</p>
 <p>z_i  = lam * x_i + (1 - lam) * z_{i-1},          z_0 = target</p>
 <p>var_i = sigma^2 * (lam / (2 - lam)) * (1 - (1 - lam) ** (2 (i + 1)))</p>

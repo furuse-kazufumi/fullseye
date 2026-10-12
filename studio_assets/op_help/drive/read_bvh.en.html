@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_bvh(path) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import motionio; motionio.read_bvh(path) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;read_bvh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reads a BVH file and returns the skeleton and the world coordinates of the joints for all frames.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">names</code> 関節名(End Site は <code style="color:#22d3bf">&lt;親&gt;_end</code>)、<code style="color:#22d3bf">parents</code>(根は −1)、<code style="color:#22d3bf">offsets</code> (J, 3)、<code style="color:#22d3bf">positions</code> (T, J, 3) 世界座標、<code style="color:#22d3bf">frame_time</code> [s]、<code style="color:#22d3bf">channels</code>(関節ごとの CHANNELS の名前)、<code style="color:#22d3bf">motion</code> (T, C) の生の値。</p>
+<p><code style="color:#22d3bf">names</code> joint names (End Site is <code style="color:#22d3bf">&lt;親&gt;_end</code>), <code style="color:#22d3bf">parents</code> (root is −1), <code style="color:#22d3bf">offsets</code> (J, 3), <code style="color:#22d3bf">positions</code> (T, J, 3) world coordinates, <code style="color:#22d3bf">frame_time</code> [s], <code style="color:#22d3bf">channels</code> (names of the CHANNELS per joint), <code style="color:#22d3bf">motion</code> (T, C) raw values.</p>
 <p>Raises:</p>
-<p>ValueError: HIERARCHY / MOTION が無い、括弧の対応が崩れている、コマの値の数が CHANNELS の合計と違う。</p>
+<p>ValueError: HIERARCHY / MOTION missing, unbalanced braces, the number of values in a frame differs from the total of CHANNELS.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

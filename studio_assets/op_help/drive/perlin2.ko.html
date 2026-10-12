@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perlin2(x, y, seed: &#x27;int&#x27; = 0, freq: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveterrain; driveterrain.perlin2(x, y, seed: &#x27;int&#x27; = 0, freq: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;perlin2&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Perlin(2002, improved noise)의 2차원 그래디언트 노이즈를 월드 좌표 (x, y)에서 평가합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>格子は <code style="color:#22d3bf">freq</code> [周期/m] の間隔、勾配は 8 方向の単位ベクトル、補間は quintic fade <code style="color:#22d3bf">6t⁵−15t⁴+10t³</code>。返り値 <code style="color:#22d3bf">{&quot;value&quot;, &quot;dx&quot;, &quot;dy&quot;}</code>(導関数は解析的、<code style="color:#22d3bf">d/dx</code> は世界座標あたり)。定理: 格子点で値 0、周期 256 格子、|value| ≤ 1。</p>
+<p>격자는 <code style="color:#22d3bf">freq</code> [주기/m] 간격, 기울기는 8 방향의 단위 벡터, 보간은 quintic fade <code style="color:#22d3bf">6t⁵−15t⁴+10t³</code>. 반환값 <code style="color:#22d3bf">{&quot;value&quot;, &quot;dx&quot;, &quot;dy&quot;}</code>(도함수는 해석적, <code style="color:#22d3bf">d/dx</code> 는 월드 좌표당). 정리: 격자점에서 값 0, 주기 256 격자, |value| ≤ 1.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

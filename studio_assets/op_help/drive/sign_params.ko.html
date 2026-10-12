@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_params(kind: &#x27;str&#x27;, *, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roadjp; roadjp.sign_params(kind: &#x27;str&#x27;, *, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sign_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표지 <code style="color:#22d3bf">kind</code>의 형태·치수·색을 반환합니다(공표값, 1차 자료로 확인 필요).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">{&quot;shape&quot;, &quot;width&quot;, &quot;height&quot;, &quot;mount_height&quot;, &quot;ground&quot;, &quot;border&quot;, &quot;ink&quot;, &quot;side&quot;}</code>。shape は circle / triangle_down / diamond / pentagon / rect。width・height は板の外形 [m]:</p>
-<p>円 直径 0.6、逆三角形 一辺 0.6(高さ = 一辺 × √3/2)、菱形 一辺 0.45(対角 = 一辺 × √2)、横長矩形 0.6 × 0.3、五角形(横断歩道)0.6 × 0.6 —— 出典: 道路標識、区画線及び道路標示に関する命令 別表第二 / KICTEC 寸法表。矩形・五角形の寸法は同表で確かめていない(要確認)。<code style="color:#22d3bf">side</code> を渡すと一辺(円は直径、菱形は一辺)を置き換える(一時停止 800 mm の記述に合わせるなど)。mount_height = 1.8(路側式、板の下端)。</p>
+<p><code style="color:#22d3bf">{&quot;shape&quot;, &quot;width&quot;, &quot;height&quot;, &quot;mount_height&quot;, &quot;ground&quot;, &quot;border&quot;, &quot;ink&quot;, &quot;side&quot;}</code>. shape 는 circle / triangle_down / diamond / pentagon / rect. width, height 는 판의 외형 [m]:</p>
+<p>원 직경 0.6, 역삼각형 한 변 0.6(높이 = 한 변 × √3/2), 마름모 한 변 0.45(대각선 = 한 변 × √2), 가로로 긴 직사각형 0.6 × 0.3, 오각형(횡단보도) 0.6 × 0.6 —— 출처: 일본 「도로 표지, 구획선 및 도로 표시에 관한 명령」 별표 제2 / KICTEC 치수표. 직사각형, 오각형의 치수는 같은 표로 확인하지 않았다(확인 필요). <code style="color:#22d3bf">side</code> 를 넘기면 한 변(원은 직경, 마름모는 한 변)을 대체한다(일시정지 800 mm 의 기술에 맞추는 등). mount_height = 1.8(노측식, 판의 아래쪽 끝).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_rules(jurisdiction: &#x27;str&#x27; = &#x27;JP&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetown; drivetown.town_rules(jurisdiction: &#x27;str&#x27; = &#x27;JP&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;town_rules&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法规包(<code style="color:#22d3bf">RULE_PACKS</code> 的副本)。<code style="color:#22d3bf">{&quot;jurisdiction&quot;, &quot;side&quot;: &quot;left&quot;|&quot;right&quot;, &quot;crossing_stop&quot;: &quot;always&quot;|&quot;when_active&quot;, &quot;intersection_stop&quot;: &quot;signal&quot;, &quot;hold_s&quot;, &quot;look_required&quot;, &quot;look_hold_s&quot;, &quot;sources&quot;: [...], &quot;verified&quot;, &quot;notes&quot;}</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>JP = 左側通行・踏切は常に一時停止 + 安全確認(道路交通法 33 条 1 項、本文で確認済 → verified True)。US = 右側通行・一般車は警報中だけ停止(州法。<b>一次確認なし → verified False</b>)。DE = 右側通行・StVO §19 で遮断機/灯火が動作している時だけ(<b>一次確認なし → verified False</b>)。verified が False の規則は PoC・報告で断定しない。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 知らない jurisdiction。</p>
+<p>JP = 左侧通行、铁路道口总是暂停 + 安全确认(日本道路交通法第 33 条第 1 款,已在条文中确认 → verified True)。US = 右侧通行、一般车辆仅在警报期间停车(州法。<b>无一手确认 → verified False</b>)。DE = 右侧通行、依 StVO §19 仅在栏杆/灯光动作时(<b>无一手确认 → verified False</b>)。verified 为 False 的规则在 PoC、报告中不作断定。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 未知的 jurisdiction。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

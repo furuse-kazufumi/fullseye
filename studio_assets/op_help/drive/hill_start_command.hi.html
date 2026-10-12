@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hill_start_command(t_release: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, b_hold: &#x27;float&#x27;, a_creep: &#x27;float&#x27; = 0.0, technique: &#x27;str&#x27; = &#x27;gap&#x27;, v_cruise: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Callable&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelong; drivelong.hill_start_command(t_release: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, b_hold: &#x27;float&#x27;, a_creep: &#x27;float&#x27; = 0.0, technique: &#x27;str&#x27; = &#x27;gap&#x27;, v_cruise: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;hill_start_command&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ढलान पर start का command। t_release तक hold (creep + braking b_hold)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;gap&quot;</code>: t_release でブレーキを離し、τ 後に駆動 a_drive(足を踏み替える間 = ずり下がる。閉形式は <code style="color:#22d3bf">hill_start_rollback</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;overlap&quot;</code>: t_release から τ の間、ブレーキを保ったままアクセルを踏み(駆動 a_drive)、τ 後にブレーキを離す(教習で教える「アクセルを踏んでからブレーキを離す」)。駆動 &gt; 坂なら逆行 0。</p>
-<p><code style="color:#22d3bf">v_cruise</code> を与えると、その速さに達したら駆動を止める(惰行)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;gap&quot;</code>: t_release पर brake छोड़ता है, τ के बाद drive a_drive (पैर बदलने के दौरान = कार पीछे खिसकती है; बंद रूप <code style="color:#22d3bf">hill_start_rollback</code> है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;overlap&quot;</code>: t_release से τ तक brake दबाए रखते हुए accelerator दबाता है (drive a_drive), τ के बाद brake छोड़ता है (ड्राइविंग स्कूल में सिखाया जाने वाला &quot;पहले accelerator दबाएँ, फिर brake छोड़ें&quot;)। drive &gt; ढलान हो तो पीछे खिसकना 0।</p>
+<p><code style="color:#22d3bf">v_cruise</code> देने पर उस गति तक पहुँचते ही drive रुक जाता है (बिना शक्ति के चलना)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

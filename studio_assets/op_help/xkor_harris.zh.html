@@ -12,7 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xkor_harris.inputs.jpg">xkor_harris: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>Harris 角点响应。调用 <code style="color:#22d3bf">kornia.feature.harris_response</code>，用 <code style="color:#22d3bf">signed01</code> 将带符号的响应映射到 <a style="color:#22d3bf" href="在保留 Harris 响应符号信息——角点为正、边缘为负——的同时将其收入可视化范围">0,1</a>。</p>
+<p>Harris 角点响应。调用 <code style="color:#22d3bf">kornia.feature.harris_response</code>，用 <code style="color:#22d3bf">signed01</code> 将带符号的响应映射到 [0,1] (在保留 Harris 响应符号信息——角点为正、边缘为负——的同时将其收入可视化范围)。</p>
 <p>a 调节 Harris 的得分系数 k(<code style="color:#22d3bf">0.04 + 0.02 * a</code>，经验上使用 0.04～0.06 范围内的值)。b 未使用。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

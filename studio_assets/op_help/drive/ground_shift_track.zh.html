@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ground_shift_track(frames, pixel_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import roverslip; roverslip.ground_shift_track(frames, pixel_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ground_shift_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从俯视地面的相机帧序列中，用加窗互相关(整数)和平移 Lucas–Kanade(亚像素)测量相邻帧之间的平移并累积。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">frames</code> は (T, H, W) の配列か同じ形の 2-D 配列の列(T ≥ 2)。<code style="color:#22d3bf">pixel_size</code> は地面での画素の大きさ [m]。返り値 <code style="color:#22d3bf">{&quot;step&quot;: (T−1, 2) の (drow, dcol) [m]、&quot;position&quot;: (T, 2) の累積 [m]、&quot;peak&quot;: (T−1,) 合わせた後の正規化相関}</code>。<code style="color:#22d3bf">step</code> は <b>像の中で模様が動いた量</b>(カメラ・車体の移動はその逆向き —— 前に進むと地面は後ろへ流れる)。1 コマの移動は像の 1/4 程度まで(相関は周期的なので、半分を越えると折り返す)。</p>
+<p><code style="color:#22d3bf">frames</code> 为 (T, H, W) 数组或同形 2-D 数组的序列(T ≥ 2)。<code style="color:#22d3bf">pixel_size</code> 为地面上像素的大小 [m]。返回值 <code style="color:#22d3bf">{&quot;step&quot;: (T−1, 2) の (drow, dcol) [m]、&quot;position&quot;: (T, 2) の累積 [m]、&quot;peak&quot;: (T−1,) 合わせた後の正規化相関}</code>。<code style="color:#22d3bf">step</code> 是<b>图像中纹样移动的量</b>(相机·车身的移动方向与之相反 —— 前进时地面向后流)。每帧的移动最多约为图像的 1/4(相关是周期的,超过一半会折返)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

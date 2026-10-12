@@ -760,9 +760,12 @@ def test_chrome_translation_keys_are_real_source_strings():
     表が肥大しても気づけないので、キー側を実ソースと突き合わせる。
     """
     import ast
-    src = open(os.path.join(ROOT, "tools", "opdocs.py"), encoding="utf-8").read()
-    lits = {n.value for n in ast.walk(ast.parse(src))
-            if isinstance(n, ast.Constant) and isinstance(n.value, str)}
+    # ★2026-10-12: 図が無い理由(``gen_op_figures.DOMAIN_MISMATCH`` の値)も ``T()`` を通すので、その表の原文もキーとして正しい
+    lits = set()
+    for f in ("opdocs.py", "gen_op_figures.py"):
+        src = open(os.path.join(ROOT, "tools", f), encoding="utf-8").read()
+        lits |= {n.value for n in ast.walk(ast.parse(src))
+                 if isinstance(n, ast.Constant) and isinstance(n.value, str)}
     with open(os.path.join(ROOT, "docs", "i18n", "opdocs.json"), encoding="utf-8") as f:
         tbl = json.load(f)["strings"]
     orphan = sorted(k for k in tbl if k not in lits)
@@ -873,18 +876,26 @@ def test_translated_pages_say_plainly_what_is_not_translated():
     # (要約すら無い場合の断り書きは下の test_notice_when_nothing_is_translated)。
     notice = tbl["> 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。"]
     root = os.path.join(ROOT, "studio_assets", "op_help")
+    # ★2026-10-12: 本文の訳が 2,212 本そろい、実データに「本文だけ未訳」の op が無くなった
+    # (以前はここで実在の頁を 1 枚選んでいた → StopIteration)。将来 op を足した瞬間に通る道なので、
+    # 本文の訳を 1 本だけ外した状態で生成器を直接呼んで固定する(test_notice_when_nothing_is_translated と同じ作法)。
+    del root
+    by = {(r["dim"], r["name"]): r for r in _RECS}
     rec = next(r for r in _RECS
                if OD.summary_and_rest(r.get("doc"))[1]          # 本文がある
                and OD.op_summary(r, "en")[1]                    # 要約は訳済み
-               and rec_is_japanese_body(r)
-               and not any(OD.op_rest(r, x)[1] for x in _TARGET_LANGS))   # 本文の訳が無い
-    d = root if rec["dim"] == "2d" else os.path.join(root, rec["dim"])
-    for lang in _TARGET_LANGS:
-        with open(os.path.join(d, "%s.%s.html" % (rec["name"], lang)), encoding="utf-8") as f:
-            html = f.read()
-        import html as _h
-        head = _h.escape(notice[lang].lstrip("> ")[:24])   # 頁側は escape 済み
-        assert head in html, ("%s の %s 版に『未訳』の断り書きが無い" % (rec["name"], lang))
+               and rec_is_japanese_body(r))
+    key = "%s/%s" % (rec["dim"], rec["name"])
+    saved = OD.rest_i18n()
+    OD._REST_I18N = {k: v for k, v in saved.items() if k != key}
+    try:
+        for lang in _TARGET_LANGS:
+            assert not OD.op_rest(rec, lang)[1]
+            md = OD._op_md(rec, OD._op_path(rec), by, lang=lang, verbatim_doc=False)
+            head = notice[lang].lstrip("> ")[:24]
+            assert head in md, ("%s の %s 版に『未訳』の断り書きが無い" % (rec["name"], lang))
+    finally:
+        OD._REST_I18N = saved
 
 
 def test_no_stale_summary_translation_is_shipped():
@@ -1065,6 +1076,44 @@ def test_the_help_html_contains_no_raw_markdown():
             bad.append("%s (markdown heading)" % p.name)
     assert not bad, ("Markdown が生で残るヘルプ %d ページ: %s —— "
                      "`py -3.11 tools/opdocs.py html`" % (len(bad), bad[:8]))
+
+
+#: リンク先に現れてはいけない文字 —— 空白・読点・CJK/ハングル/デーヴァナーガリー・全角記号。
+#: これが href に入るのは「]」の直後に「(」が続いた訳文が**リンクとして**描かれたとき。
+_PROSE_IN_HREF = None
+
+
+def prose_hrefs(html):
+    """``<a href="…">`` のうち、URL やパスでなく散文を指すもの(= 訳文が誤ってリンクになった跡)。"""
+    import re
+    global _PROSE_IN_HREF
+    if _PROSE_IN_HREF is None:
+        _PROSE_IN_HREF = re.compile(r"[\s\u3000-\u9fff\uac00-\ud7af\u0900-\u097f\uff00-\uffef,;]")
+    return [h for h in re.findall(r'<a\s[^>]*href="([^"]*)"', html) if not h or _PROSE_IN_HREF.search(h)]
+
+
+def test_help_links_point_at_urls_not_at_prose():
+    """★2026-10-12: 訳文の ``[0,1](0.5 表示零…)`` が**リンクとして**描かれ、href が文章になっていた。
+
+    要約の中・繁訳 18 か所(highpass_image など)。「生の Markdown が残る」門は、Markdown が
+    **正しく変換された結果の**壊れたリンクを見ない —— 頁はきれいに見え、押すと飛び先が無い。
+    """
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1] / "studio_assets" / "op_help"
+    if not root.is_dir():
+        import pytest
+        pytest.skip("studio_assets/op_help が無い")
+    bad = ["%s: %s" % (p.name, h[:40]) for p in root.rglob("*.html")
+           for h in prose_hrefs(p.read_text(encoding="utf-8", errors="replace"))]
+    assert not bad, "リンク先が文章になっているヘルプ %d 件: %s" % (len(bad), bad[:8])
+
+
+def test_prose_href_detector_catches_the_broken_link_it_was_written_for():
+    """壊して確かめる: 実際に出ていた形を検出し、普通のリンクは通す。"""
+    broken = '映射到<a style="color:#22d3bf" href="0.5表示零,也就是说约有一半">[0,1]</a>'
+    assert prose_hrefs(broken)
+    assert not prose_hrefs('<a href="../../SAMPLES.md">x</a> <a href="https://example.org/a_b?c=1#d">y</a>')
 
 
 def test_inline_renders_a_link_whose_text_is_code():

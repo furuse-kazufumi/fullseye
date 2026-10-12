@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;bicycle_model_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선형 2륜 등가 모델의 1스텝(고전적 4차 Runge–Kutta, 스텝 동안 δ와 u는 일정).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">state</code>: (..., 5) = (x, y, ψ, v_y, r)(重心の位置 [m]、向き [rad]、車の座標の横速度 [m/s]、ヨーレート [rad/s])。<code style="color:#22d3bf">steer</code>: 前輪の舵角 δ [rad] (state の先頭の形に放送)。<code style="color:#22d3bf">speed</code>: 前向きの速さ u [m/s] (&gt; 0、放送)。<code style="color:#22d3bf">params</code> には <code style="color:#22d3bf">inertia</code>(I_z [kg m²])も要る。返り値: 次の状態(同じ形)。</p>
-<p>横力は線形(飽和しない)。u → 0 で式が特異になるので u ≥ 0.5 m/s を要求する(低速は運動学で扱う)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、非有限、u &lt; 0.5、dt ≤ 0、I_z が無い。</p>
+<p><code style="color:#22d3bf">state</code>: (..., 5) = (x, y, ψ, v_y, r)(무게중심의 위치 [m], 방향 [rad], 차량 좌표계의 횡속도 [m/s], 요레이트 [rad/s]). <code style="color:#22d3bf">steer</code>: 앞바퀴의 조향각 δ [rad] (state 의 앞쪽 형태로 브로드캐스트). <code style="color:#22d3bf">speed</code>: 전방 속력 u [m/s] (&gt; 0, 브로드캐스트). <code style="color:#22d3bf">params</code> 에는 <code style="color:#22d3bf">inertia</code>(I_z [kg m²])도 필요하다. 반환값: 다음 상태(같은 형태).</p>
+<p>횡력은 선형(포화하지 않는다). u → 0 에서 식이 특이해지므로 u ≥ 0.5 m/s 를 요구한다(저속은 운동학으로 다룬다).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 형태 오류, 비유한, u &lt; 0.5, dt ≤ 0, I_z 가 없음.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

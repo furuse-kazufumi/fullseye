@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.citygml_synthetic(n: &#x27;int&#x27; = 4, *, origin: &#x27;tuple[float, float]&#x27; = (35.6716, 139.765), spacing: &#x27;float&#x27; = 30.0, size: &#x27;float&#x27; = 12.0, heights: &#x27;Sequence[float] | None&#x27; = None, ground_z: &#x27;float&#x27; = 0.0, omit_measured_height: &#x27;Iterable[int]&#x27; = (), use_lod0_footprint: &#x27;bool&#x27; = False, ns_building: &#x27;str&#x27; = &#x27;http://www.opengis.net/citygml/building/2.0&#x27;) -&gt; &#x27;str&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveplateau; driveplateau.citygml_synthetic(n: &#x27;int&#x27; = 4, *, origin: &#x27;tuple[float, float]&#x27; = (35.6716, 139.765), spacing: &#x27;float&#x27; = 30.0, size: &#x27;float&#x27; = 12.0, heights: &#x27;Sequence[float] | None&#x27; = None, ground_z: &#x27;float&#x27; = 0.0, omit_measured_height: &#x27;Iterable[int]&#x27; = (), use_lod0_footprint: &#x27;bool&#x27; = False, ns_building: &#x27;str&#x27; = &#x27;http://www.opengis.net/citygml/building/2.0&#x27;) -&gt; &#x27;str&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;citygml_synthetic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>실제와 같은 구조의 최소 CityGML 2.0 문자열을 만듭니다(테스트·데모용).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>建物は <code style="color:#22d3bf">size</code> [m] の正方形を <code style="color:#22d3bf">spacing</code> [m] 間隔で x 方向に並べ、各建物に <code style="color:#22d3bf">bldg:measuredHeight</code> と <code style="color:#22d3bf">bldg:lod1Solid &gt; gml:Solid &gt; gml:exterior &gt; gml:CompositeSurface &gt; gml:surfaceMember × 6 &gt; gml:Polygon &gt; gml:exterior &gt; gml:LinearRing &gt; gml:posList</code>(底面 + 側面 4 + 天面、lat lon alt の順)を書く。等距円筒近似は線形なので、局所座標で作った正方形は読み戻すと面積が size² に一致する。</p>
+<p>건물은 <code style="color:#22d3bf">size</code> [m] 의 정사각형을 <code style="color:#22d3bf">spacing</code> [m] 간격으로 x 방향으로 늘어놓고, 각 건물에 <code style="color:#22d3bf">bldg:measuredHeight</code> 와 <code style="color:#22d3bf">bldg:lod1Solid &gt; gml:Solid &gt; gml:exterior &gt; gml:CompositeSurface &gt; gml:surfaceMember × 6 &gt; gml:Polygon &gt; gml:exterior &gt; gml:LinearRing &gt; gml:posList</code>(바닥면 + 측면 4 + 윗면, lat lon alt 순)를 쓴다. 등거리 원통 근사는 선형이므로, 국소 좌표로 만든 정사각형은 다시 읽으면 면적이 size² 와 일치한다.</p>
 <p>Args:</p>
-<p>n: 建物数(≥ 0)。</p>
-<p>origin: 建物 0 の中心の (lat, lon) [deg]。</p>
-<p>spacing: 建物中心の間隔 [m]。</p>
-<p>size: 正方形の一辺 [m]。</p>
-<p>heights: 各建物の高さ [m]。None なら <code style="color:#22d3bf">10 + 5*i</code>。</p>
-<p>ground_z: 底面の標高 [m]。</p>
-<p>omit_measured_height: この添字の建物では <code style="color:#22d3bf">measuredHeight</code> を書かない。</p>
-<p>use_lod0_footprint: True なら lod1Solid の前に <code style="color:#22d3bf">lod0FootPrint</code>(底面のみ)も書く。</p>
-<p>ns_building: bldg 名前空間 URI(版違いの試験用に差し替え可)。</p>
+<p>n: 건물 수(≥ 0).</p>
+<p>origin: 건물 0 의 중심 (lat, lon) [deg].</p>
+<p>spacing: 건물 중심의 간격 [m].</p>
+<p>size: 정사각형의 한 변 [m].</p>
+<p>heights: 각 건물의 높이 [m]. None 이면 <code style="color:#22d3bf">10 + 5*i</code>.</p>
+<p>ground_z: 바닥면의 표고 [m].</p>
+<p>omit_measured_height: 이 첨자의 건물에서는 <code style="color:#22d3bf">measuredHeight</code> 를 쓰지 않는다.</p>
+<p>use_lod0_footprint: True 이면 lod1Solid 앞에 <code style="color:#22d3bf">lod0FootPrint</code>(바닥면만)도 쓴다.</p>
+<p>ns_building: bldg 이름공간 URI(버전 차이 시험용으로 교체 가능).</p>
 <p>Returns:</p>
-<p>UTF-8 で書き出せる CityGML 文字列。</p>
+<p>UTF-8 로 써낼 수 있는 CityGML 문자열.</p>
 <p>Raises:</p>
-<p>ValueError: n が負、size/spacing が非正、heights の長さ不一致や非正。</p>
+<p>ValueError: n 이 음수, size/spacing 이 양수가 아님, heights 의 길이 불일치나 양수가 아님.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

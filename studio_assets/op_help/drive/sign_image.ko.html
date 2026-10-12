@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roadjp; roadjp.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sign_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>표지 그림을 RGBA float (H, W, 4) ∈ [0,1]로 반환합니다(판 바깥 = alpha 0). 폭 = <code style="color:#22d3bf">size_px</code>, 높이는 형태의 비율을 따릅니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>形と色(規格の配色、記号は単純化):</p>
-<p style="margin:2px 0 2px 12px">• stop: 逆三角形・赤地・白の「止まれ」+ 下に小さく「STOP」。 slow: 逆三角形・白地・赤枠・青の「徐行」+「SLOW」。</p>
-<p style="margin:2px 0 2px 12px">• speed_limit: 円・白地・赤枠・青の数字(<code style="color:#22d3bf">value</code>、既定 40)。 no_entry: 円・赤地・白の横棒。</p>
-<p style="margin:2px 0 2px 12px">• no_parking: 円・青地・赤枠・赤の斜線(左上→右下)。 one_way: 横長の青地に白の矢印(右向き)。</p>
-<p style="margin:2px 0 2px 12px">• crosswalk: 青地の五角形(家型)に白の歩行者と横断歩道の縞。</p>
-<p style="margin:2px 0 2px 12px">• caution_crossing / caution_signal / caution_children: 黄地の菱形・黒縁、黒の記号(踏切 = 遮断機の棒 2 本と ×、信号機 = 3 つの円(赤黄青)、学童 = 2 人の人型)。</p>
-<p>文字は PIL でラスタ化する(annotate と同じフォント探索。<code style="color:#22d3bf">font_path</code> で固定できる)。<b>フォントに字形が無ければ ValueError</b>(豆腐を黙って出さない)。<code style="color:#22d3bf">side</code> は <code style="color:#22d3bf">sign_params</code> と同じ(寸法比だけに効く)。</p>
+<p>모양과 색(규격의 배색, 기호는 단순화):</p>
+<p style="margin:2px 0 2px 12px">• stop: 역삼각형, 빨간 바탕, 흰색 &quot;Tomare&quot;(일본어로 &quot;멈춤&quot;) + 아래에 작게 &quot;STOP&quot;. slow: 역삼각형, 흰 바탕, 빨간 테두리, 파란 &quot;徐行&quot;(일본어로 &quot;서행&quot;) + &quot;SLOW&quot;.</p>
+<p style="margin:2px 0 2px 12px">• speed_limit: 원, 흰 바탕, 빨간 테두리, 파란 숫자(<code style="color:#22d3bf">value</code>, 기본값 40). no_entry: 원, 빨간 바탕, 흰 가로 막대.</p>
+<p style="margin:2px 0 2px 12px">• no_parking: 원, 파란 바탕, 빨간 테두리, 빨간 사선(왼쪽 위→오른쪽 아래). one_way: 가로로 긴 파란 바탕에 흰 화살표(오른쪽 방향).</p>
+<p style="margin:2px 0 2px 12px">• crosswalk: 파란 바탕의 오각형(집 모양)에 흰 보행자와 횡단보도 줄무늬.</p>
+<p style="margin:2px 0 2px 12px">• caution_crossing / caution_signal / caution_children: 노란 바탕의 마름모, 검은 테두리, 검은 기호(건널목 = 차단기 막대 2 개와 ×, 신호기 = 원 3 개(빨강, 노랑, 파랑), 학동 = 사람 모양 2 개).</p>
+<p>문자는 PIL 로 래스터화한다(annotate 와 같은 글꼴 탐색. <code style="color:#22d3bf">font_path</code> 로 고정할 수 있다). <b>글꼴에 글리프가 없으면 ValueError</b>(두부(tofu)를 조용히 출력하지 않는다). <code style="color:#22d3bf">side</code> 는 <code style="color:#22d3bf">sign_params</code> 와 같다(치수 비에만 영향).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetraffic; drivetraffic.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;idm_equilibrium_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gleichgewichtsabstand des IDM s_e(v) = (s0 + v T) / sqrt(1 − (v/v0)^δ) (0 ≤ v &lt; v0).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Δv = 0 で <code style="color:#22d3bf">idm_accel</code> = 0 と置いて解いたもの(s* = s0 + vT)。v → v0 で発散する(希望速度では車間は要らない = 前が無限に遠い)。a, b に依らない。</p>
-<p>門: 先行車が一定速度のとき <code style="color:#22d3bf">idm_platoon_simulate</code> が収束した車間と rtol 1e-6 で一致。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0 または v ≥ v0。</p>
-<p>空の入力(<code style="color:#22d3bf">v</code> が 0 要素)は ValueError。</p>
+<p>Erhalten durch Setzen von <code style="color:#22d3bf">idm_accel</code> = 0 bei Δv = 0 und Auflösen (s* = s0 + vT). Divergiert für v → v0 (bei Wunschgeschwindigkeit ist kein Abstand nötig = das vordere Fahrzeug ist unendlich weit weg). Unabhängig von a und b.</p>
+<p>Gate: Fährt das vorausfahrende Fahrzeug mit konstanter Geschwindigkeit, stimmt es mit dem Abstand, gegen den <code style="color:#22d3bf">idm_platoon_simulate</code> konvergiert, auf rtol 1e-6 überein.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0 oder v ≥ v0.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">v</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

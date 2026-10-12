@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_slope&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>坡道路线：以缓坡上升到高度 <code style="color:#22d3bf">height</code>、顶部平坦段 <code style="color:#22d3bf">top</code>、再以陡坡下行的矩形道路(沿 x 轴)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>多角形は幅 w × 長さ L = height/g_gentle + top + height/g_steep の矩形。<code style="color:#22d3bf">profile</code> = (s, z) の折線 [(0,0), (s1,h), (s1+top,h), (L,0)]、z は <code style="color:#22d3bf">slope_height</code> で補間(driveworld が路面を持ち上げる)。</p>
-<p>規格: 幅 ≥ 7、高さ ≥ 1.5、緩 6.5〜9.0 %、急 10.0〜12.5 %、平坦部 ≥ 4 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。面積 = w·L。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・高さ・勾配・平坦部が正でない、勾配 ≥ 1(45° 超は道ではない)。</p>
+<p>多边形为宽 w × 长 L = height/g_gentle + top + height/g_steep 的矩形。<code style="color:#22d3bf">profile</code> = (s, z) 折线 [(0,0), (s1,h), (s1+top,h), (L,0)],z 用 <code style="color:#22d3bf">slope_height</code> 插值(driveworld 据此抬高路面)。</p>
+<p>规格: 宽度 ≥ 7、高度 ≥ 1.5、缓坡 6.5〜9.0 %、陡坡 10.0〜12.5 %、平坦部 ≥ 4 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。面积 = w·L。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 宽度、高度、坡度、平坦部非正、坡度 ≥ 1(超过 45° 就不是道路)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

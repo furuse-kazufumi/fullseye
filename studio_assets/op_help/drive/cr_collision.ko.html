@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cr_collision&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>장애물과의 충돌(사각형 간 SAT, time_step마다)과 도로 경계(차량의 4개 모서리가 lanelet 다각형의 합집합 안에 드는지).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">lanelets=&quot;all&quot;</code>(既定)は場面の全 lanelet(採点器の boundary_collision と同じ範囲)、<code style="color:#22d3bf">&quot;route&quot;</code> は経路の lanelet だけ。<code style="color:#22d3bf">margin</code> は障害物の SAT を膨らませる距離(m)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;obstacle_collision&quot;, &quot;first_collision&quot;: (time_step, obstacle_id) | None, &quot;boundary_violation&quot;, &quot;first_outside&quot;: time_step | None, &quot;n_collisions&quot;, &quot;n_outside&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: scene / run が不正、lanelets が &quot;all&quot;/&quot;route&quot; 以外、margin &lt; 0。</p>
+<p><code style="color:#22d3bf">lanelets=&quot;all&quot;</code>(기본값)은 장면의 모든 lanelet(채점기의 boundary_collision 과 같은 범위), <code style="color:#22d3bf">&quot;route&quot;</code> 는 경로의 lanelet 만. <code style="color:#22d3bf">margin</code> 은 장애물의 SAT 를 부풀리는 거리(m).</p>
+<p>반환값 <code style="color:#22d3bf">{&quot;obstacle_collision&quot;, &quot;first_collision&quot;: (time_step, obstacle_id) | None, &quot;boundary_violation&quot;, &quot;first_outside&quot;: time_step | None, &quot;n_collisions&quot;, &quot;n_outside&quot;}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: scene / run 이 부정, lanelets 가 &quot;all&quot;/&quot;route&quot; 이외, margin &lt; 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveenv; driveenv.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;sun_at&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Sonnenhöhe und -azimut für einen Zeitpunkt (zeitzonenbewusstes datetime oder Julianisches Datum). Die Formeln stammen unverändert aus <code style="color:#22d3bf">geocam.sun_position</code> (NOAA-Sonnenstandsformeln = Version geringer Genauigkeit aus Meeus &quot;Astronomical Algorithms&quot; Kapitel 25, NOAA-Refraktion); ergänzt werden die Annahme des Zeitpunkts und der Abstand Erde–Sonne.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : <code style="color:#22d3bf">elevation</code>(度、<code style="color:#22d3bf">refraction</code> なら大気差つきの見かけ)、<code style="color:#22d3bf">elevation_geometric</code>、<code style="color:#22d3bf">azimuth</code>(北から時計回り 度)、</p>
-<p><code style="color:#22d3bf">declination</code>、<code style="color:#22d3bf">eq_time</code>(均時差 分)、<code style="color:#22d3bf">hour_angle</code>(度)、<code style="color:#22d3bf">jd</code>、<code style="color:#22d3bf">distance_au</code>、<code style="color:#22d3bf">semidiameter</code>(度)。</p>
-<p>NOAA が述べる精度は、日の出入りの時刻で緯度 ±72° 以内 1 分以内(1800〜2100 年)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 素朴な datetime・範囲外の緯度経度。</p>
+<p>dict : <code style="color:#22d3bf">elevation</code> (Grad; mit <code style="color:#22d3bf">refraction</code> die scheinbare Höhe inklusive atmosphärischer Refraktion), <code style="color:#22d3bf">elevation_geometric</code>, <code style="color:#22d3bf">azimuth</code> (Grad im Uhrzeigersinn ab Nord),</p>
+<p><code style="color:#22d3bf">declination</code>, <code style="color:#22d3bf">eq_time</code> (Zeitgleichung, Minuten), <code style="color:#22d3bf">hour_angle</code> (Grad), <code style="color:#22d3bf">jd</code>, <code style="color:#22d3bf">distance_au</code>, <code style="color:#22d3bf">semidiameter</code> (Grad).</p>
+<p>Die von NOAA angegebene Genauigkeit liegt für Auf- und Untergangszeiten innerhalb von ±72° Breite bei unter 1 Minute (Jahre 1800 bis 2100).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: naives datetime, Breite/Länge außerhalb des Bereichs.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

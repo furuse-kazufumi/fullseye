@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivepass; drivepass.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;roundabout_signal_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>roundabout के अंदर संकेतों की scoring करता है (धारा 53(2) और (4), Kyosoku 5-5-1(2))। दृश्य S069।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">progress</code> = 入口から右回りに進んだ角 [rad]、単調非減少、サンプルごと、<code style="color:#22d3bf">left_on</code> / <code style="color:#22d3bf">right_on</code> = 合図の状態(bool)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_late</code>: 合図の角 + <code style="color:#22d3bf">tol</code> から出口の角までの間に左の合図が消えているサンプルがある。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_early</code>: 合図の角 − <code style="color:#22d3bf">tol</code> より手前で左の合図が点いている(手前の出口で出るように見える。53 条 4 項の「行為をしないのに合図」の <b>解釈</b>)。入った直後の出口(合図の角 = 0)では問わない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">right_signal</code>: 環道の中で右の合図(53 条 2 項は出るときだけを求める。4 項の <b>解釈</b>)。</p>
+<p><code style="color:#22d3bf">progress</code> = प्रवेश से दक्षिणावर्त तय किया गया कोण [rad], एकदिष्ट अ-ह्रासमान, प्रति नमूना; <code style="color:#22d3bf">left_on</code> / <code style="color:#22d3bf">right_on</code> = संकेतक की अवस्था (bool)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_late</code>: संकेत कोण + <code style="color:#22d3bf">tol</code> से निकास कोण के बीच कोई ऐसा नमूना है जिसमें बायाँ संकेतक बंद है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_early</code>: संकेत कोण − <code style="color:#22d3bf">tol</code> से पहले बायाँ संकेतक जल रहा है (पहले वाले निकास से निकलता प्रतीत होता है; सड़क यातायात अधिनियम (जापान) अनुच्छेद 53 खंड 4 के &quot;कार्य न करते हुए संकेत देना&quot; की <b>व्याख्या</b>)। प्रवेश के तुरंत बाद वाले निकास (संकेत कोण = 0) के लिए नहीं जाँचा जाता।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">right_signal</code>: गोलचक्कर के भीतर दायाँ संकेत (अनुच्छेद 53 खंड 2 केवल निकलते समय इसकी माँग करता है; खंड 4 की <b>व्याख्या</b>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_cbs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Conflict-Based Search(Sharon, Stern, Felner, Sturtevant 2015)。总代价最优的无冲突计划。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>上段は「衝突を 1 つ選び、2 台のどちらかに制約を足す」二分木の最良優先探索、下段は 1 台の時空間 A*。返りは dict: <code style="color:#22d3bf">paths</code>(各車両のマスの列)、<code style="color:#22d3bf">cost</code>(sum of costs)、<code style="color:#22d3bf">nodes</code>(展開した節の数)、<code style="color:#22d3bf">solved</code>。節の上限に達したら <code style="color:#22d3bf">solved=False</code>(<b>黙って最適でない解を返さない</b>)。</p>
+<p>上层是&quot;选出一个冲突,对两辆车中的一辆加约束&quot;的二叉树最佳优先搜索,下层是单车的时空 A*。返回 dict:<code style="color:#22d3bf">paths</code>(各车辆的格子序列)、<code style="color:#22d3bf">cost</code>(sum of costs)、<code style="color:#22d3bf">nodes</code>(展开的节点数)、<code style="color:#22d3bf">solved</code>。达到节点上限时 <code style="color:#22d3bf">solved=False</code>(<b>不会默默返回非最优解</b>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

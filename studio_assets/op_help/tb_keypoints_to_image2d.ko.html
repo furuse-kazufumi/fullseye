@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_keypoints_to_image2d — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">keypoints</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_keypoints_to_image2d&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
-<p>*그림 없음: 타입은 닿지만 범용 합성 입력이 이 op의 정의역 밖 —— 橋渡しで束縛した raster が 64×64 固定で、128×128 の点は外に落ちる. 사용법은 아래 실행 가능한 예제를 볼 것.*</p>
+<p>*그림 없음: 타입은 닿지만 범용 합성 입력이 이 op의 정의역 밖 —— 브리지에서 묶은 raster 가 64×64 로 고정되어 있어, 128×128 의 점은 밖으로 떨어진다. 사용법은 아래 실행 가능한 예제를 볼 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지 좌표 <code style="color:#22d3bf">(N,2) = (u, v)</code> → 카운트 영상 <code style="color:#22d3bf">(H, W)</code>. <code style="color:#22d3bf">keypoints</code>의 두 번째 출구.</p>
 <p><code style="color:#22d3bf">round(v)</code>를 행, <code style="color:#22d3bf">round(u)</code>를 열로 하여 1씩 더한다. <b>화소 격자로의양자화가 손실</b>이며, <code style="color:#22d3bf">keypoints_from_image2d</code>와 왕복하면 위치가최대 0.5 화소 어긋난다(잘 떨어진 225점에서의 실측: <b>축당</b> RMS 0.2835 px = 균일 양자화의 이론값 1/sqrt(12) = 0.2887과 일치. 2-D 거리로는 sqrt(2)배인 0.4009 px이고, 이론 sqrt(2/12) = 0.4082). ★여기서도 한 번 틀렸다: 2-D 거리의 실측을 1-D의 이론값과 나란히 놓고 &quot;0.29여야 하는데 0.40이다&quot;라고 읽을 뻔했다 —— 축별 양과 거리의 양을 섞으면 올바른 구현이틀린 것처럼 보인다. 가까운 점은 연결 성분으로 융합되므로 왕복으로 점 수도 줄 수 있다(실측: 60점을 랜덤으로 두면 54점).</p>

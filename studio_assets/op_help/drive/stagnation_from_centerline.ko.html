@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;stagnation_from_centerline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>중심선의 결손을 직선화하여 상류의 충돌점(정체점)·장애물의 중심·반경을 읽습니다(구현 1, 상류의 점만).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p style="margin:2px 0 2px 12px">1. 欠損(3 × 3 の平均)が <code style="color:#22d3bf">d_range</code> の上限を超える格子のうち、最も上流のものを「衝突点のそば」とする。</p>
-<p style="margin:2px 0 2px 12px">2. その少し上流の列(4 列)で、欠損が最大の行を放物線で副格子に求め、平均を中心線 y_c とする(上流の欠損 R²(Δx² − Δy²)/(Δx² + Δy²)² は Δy = 0 で最大)。</p>
-<p style="margin:2px 0 2px 12px">3. y_c の高さで欠損を行の間の 1 次補間で取り、衝突点のそばより上流で <code style="color:#22d3bf">d_range</code> の中にある格子で 1/√d = (x_c − x)/R を重みつき最小二乗で引く(速さの雑音 σ_d は 1/√d では σ_d/(2d^{3/2}) に増えるので、重み d^{3/2} —— 欠損の小さい遠くの点は雑音で暴れる): R = −1/傾き、x_c = 切片 × R。よどみ点 = (x_c − R, y_c)。</p>
-<p style="margin:2px 0 2px 12px">4. <code style="color:#22d3bf">speed</code> を与えないときは、上流の端の u を閉形式で割り戻して U を推定し直し、3 を繰り返す(U の変化が 1e-9 未満になるか <code style="color:#22d3bf">n_iter</code> 回まで。収束は 1 次で、R = 0.6・端までの距離 3 の場で約 30 回)。上流の端も 1/r² で欠けているので(R = 0.6、距離 3 で 4 %)、端の中央値をそのまま U にすると直線が曲がる。</p>
+<p style="margin:2px 0 2px 12px">1. 결손(3 × 3 평균)이 <code style="color:#22d3bf">d_range</code> 의 상한을 넘는 격자 중 가장 상류의 것을 &quot;충돌점 근처&quot;로 한다.</p>
+<p style="margin:2px 0 2px 12px">2. 그보다 약간 상류의 열(4 열)에서 결손이 최대인 행을 포물선으로 부격자 정밀도로 구하고, 평균을 중심선 y_c 로 한다(상류의 결손 R²(Δx² − Δy²)/(Δx² + Δy²)² 은 Δy = 0 에서 최대).</p>
+<p style="margin:2px 0 2px 12px">3. y_c 높이에서 결손을 행 사이의 1 차 보간으로 취하고, 충돌점 근처보다 상류이며 <code style="color:#22d3bf">d_range</code> 안에 있는 격자에서 1/√d = (x_c − x)/R 을 가중 최소제곱으로 맞춘다(속도 잡음 σ_d 는 1/√d 에서는 σ_d/(2d^{3/2}) 로 커지므로가중치 d^{3/2} —— 결손이 작은 먼 점은 잡음으로 날뛴다): R = −1/기울기, x_c = 절편 × R. 정체점 = (x_c − R, y_c).</p>
+<p style="margin:2px 0 2px 12px">4. <code style="color:#22d3bf">speed</code> 를 주지 않으면 상류 끝의 u 를 닫힌 형식으로 나누어 U 를 다시 추정하고 3 을 반복한다(U 의 변화가 1e-9 미만이 되거나 <code style="color:#22d3bf">n_iter</code> 회까지. 수렴은 1 차이며, R = 0.6, 끝까지의 거리 3 인 장에서 약 30 회). 상류 끝도 1/r² 로 결손되어 있으므로(R = 0.6, 거리 3 에서 4 %), 끝의 중앙값을 그대로 U 로 하면 직선이 휜다.</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">stagnation</code> (x, y)、<code style="color:#22d3bf">center</code> (x, y)、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">n_used</code>、<code style="color:#22d3bf">rms_residual</code>(1/√d の当てはめの残差)、</p>
-<p><code style="color:#22d3bf">speed</code>、<code style="color:#22d3bf">ok</code>(点が足りて傾きが負なら True)。</p>
+<p>dict: <code style="color:#22d3bf">stagnation</code> (x, y), <code style="color:#22d3bf">center</code> (x, y), <code style="color:#22d3bf">radius</code>, <code style="color:#22d3bf">n_used</code>, <code style="color:#22d3bf">rms_residual</code>(1/√d 피팅의 잔차),</p>
+<p><code style="color:#22d3bf">speed</code>, <code style="color:#22d3bf">ok</code>(점이 충분하고 기울기가 음이면 True).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

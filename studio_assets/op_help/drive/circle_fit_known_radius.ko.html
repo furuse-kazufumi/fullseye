@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.circle_fit_known_radius(points, r: &#x27;float&#x27;, iters: &#x27;int&#x27; = 30) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegsim; pegsim.circle_fit_known_radius(points, r: &#x27;float&#x27;, iters: &#x27;int&#x27; = 30) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;circle_fit_known_radius&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>반경 r이 알려진 원을 2-D 점열 (row, col)에 피팅(중심만 Gauss-Newton으로 풀이. 부분 호에서도 안정).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">measure.fit_circle</code>(代数的、半径も未知)と同じ入出力の規約(<code style="color:#22d3bf">cy</code>・<code style="color:#22d3bf">cx</code>・<code style="color:#22d3bf">rms</code>)。ペグの断面のように半径が図面で分かっている対象は、半径を固定したほうが短い弧でも中心が決まる(自由な当てはめは弧が短いと半径と中心が相殺する)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 点が 2 つ未満、非有限、r ≤ 0。</p>
+<p><code style="color:#22d3bf">measure.fit_circle</code>(대수적, 반경도 미지)과 같은 입출력 규약(<code style="color:#22d3bf">cy</code>·<code style="color:#22d3bf">cx</code>·<code style="color:#22d3bf">rms</code>). 페그의 단면처럼 반경이도면으로 알려진 대상은, 반경을 고정하는 편이 짧은 호에서도 중심이 정해진다(자유로운 맞춤은 호가 짧으면 반경과 중심이 상쇄된다). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 점이 2 개 미만, 비유한, r ≤ 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

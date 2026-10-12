@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pegfail; pegfail.jamming_parallelogram_planar(kp, depth: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;jamming_parallelogram_planar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>재밍(jamming)의 평행사변형을 <b>2점 접촉의 평면 정역학으로부터 유도합니다</b>(pegsim.jamming_diagram의 정점 = OCW p.34의 값과 대조하는 2번째 경로).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>平面(x 右、z 上)で、先端の縁が −x 側の壁に深さ l で触れ(法線力 f₁ ≥ 0、+x 向き)、+x 側の口の縁が胴に触れる(f₂ ≥ 0、−x 向き)。両点が下へ滑る Coulomb 摩擦(上向き μf)で、先端に加える (F_x, F_z 下向き正, M 反時計回り正) の釣り合いは</p>
-<p>F_x = f₂ − f₁、F_z = μ(f₁ + f₂)、M = μ r f₁ − (μ r + l) f₂</p>
-<p>→ M/(rF_z) = −λ − μ(λ + 1)·(F_x/F_z)、λ = l/(2rμ)。鏡像の配置(先端が +x の壁)は +λ − μ(λ+1)x。f₁ = 0 / f₂ = 0 が |F_x/F_z| = 1/μ の縦の辺(一点接触の摩擦限界)。4 頂点 = 2 本の斜辺 × 2 本の縦辺の交点 = (−1/μ, 2λ+1), (1/μ, −1), (1/μ, −(2λ+1)), (−1/μ, 1)(OCW の順)。返り: <code style="color:#22d3bf">lambda</code>、<code style="color:#22d3bf">slope</code> = −μ(λ+1)、<code style="color:#22d3bf">vertices</code>(4, 2)、<code style="color:#22d3bf">line_minus</code>・<code style="color:#22d3bf">line_plus</code>(切片)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: l &lt; 0、μ ≤ 0。</p>
+<p>평면(x 오른쪽, z 위)에서 선단의 가장자리가 깊이 l 에서 −x 쪽 벽에 닿고(법선력 f₁ ≥ 0, +x 방향), +x 쪽 입구 가장자리가 몸통에 닿는다(f₂ ≥ 0, −x 방향). 두 점이 아래로 미끄러지는 Coulomb 마찰(위 방향 μf)에서, 선단에 가하는 (F_x, F_z 아래 방향 양, M 반시계 양) 의 평형은</p>
+<p>F_x = f₂ − f₁, F_z = μ(f₁ + f₂), M = μ r f₁ − (μ r + l) f₂</p>
+<p>→ M/(rF_z) = −λ − μ(λ + 1)·(F_x/F_z), λ = l/(2rμ). 거울상 배치(선단이 +x 의 벽)는 +λ − μ(λ+1)x. f₁ = 0 / f₂ = 0 이 |F_x/F_z| = 1/μ 의 세로 변(1 점 접촉의 마찰 한계). 4 꼭짓점 = 빗변 2 개 × 세로 변 2 개의 교점 = (−1/μ, 2λ+1), (1/μ, −1), (1/μ, −(2λ+1)), (−1/μ, 1)(OCW 의 순서). 반환: <code style="color:#22d3bf">lambda</code>, <code style="color:#22d3bf">slope</code> = −μ(λ+1), <code style="color:#22d3bf">vertices</code>(4, 2), <code style="color:#22d3bf">line_minus</code>, <code style="color:#22d3bf">line_plus</code>(절편). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: l &lt; 0, μ ≤ 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

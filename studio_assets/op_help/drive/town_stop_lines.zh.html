@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_stop_lines(layout, *, side: &#x27;str&#x27; = &#x27;left&#x27;) -&gt; &#x27;List[dict]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetown; drivetown.town_stop_lines(layout, *, side: &#x27;str&#x27; = &#x27;left&#x27;) -&gt; &#x27;List[dict]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;town_stop_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按弧长顺序列出城镇的停止线: <code style="color:#22d3bf">[{&quot;s&quot;, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;kind&quot;, &quot;element&quot;, &quot;crossing_zone&quot;: (s0, s1) | None, &quot;drawn&quot;: bool}, ...]</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>交差点: 要素の <code style="color:#22d3bf">stop_lines</code>(線分 (2, 2))のうち <b>中心線に端点が載り、進行方向の <code style="color:#22d3bf">side</code> の側へ延びる物</b> が走行路の停止線(4 本のうち 1 本。左側通行なら左、右側通行なら鏡像の 1 本)。踏切: 停止線の位置は <b>踏切面 − stop_setback の閉形式</b> (drivecourse は左車線にしか白線を描かないので side に依らない。<code style="color:#22d3bf">drawn</code> = その側に白線が描かれているか)。<code style="color:#22d3bf">s</code> は中心線上の弧長、<code style="color:#22d3bf">yaw</code> はそこでの進行方向。踏切は踏切面の弧長の範囲 <code style="color:#22d3bf">crossing_zone</code> も付ける。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: layout が town_chain の物でない、side が left/right でない。</p>
+<p>交叉口: 要素的 <code style="color:#22d3bf">stop_lines</code>(线段 (2, 2))中 <b>端点落在中心线上、并向行进方向 <code style="color:#22d3bf">side</code> 一侧延伸的那条</b> 是行驶路径的停止线(4 条中的 1 条。左侧通行为左边,右侧通行为镜像的 1 条)。铁路道口: 停止线位置为 <b>道口面 − stop_setback 的闭式</b> (drivecourse 只在左车道画白线,因此与 side 无关。<code style="color:#22d3bf">drawn</code> = 该侧是否画有白线)。<code style="color:#22d3bf">s</code> 是中心线上的弧长,<code style="color:#22d3bf">yaw</code> 是该处的行进方向。铁路道口还附带道口面的弧长范围 <code style="color:#22d3bf">crossing_zone</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: layout 不是 town_chain 生成的、side 不是 left/right。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

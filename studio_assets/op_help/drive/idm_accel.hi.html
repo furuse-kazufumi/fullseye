@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.idm_accel(v, gap, dv, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, a: &#x27;float&#x27;, b: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetraffic; drivetraffic.idm_accel(v, gap, dv, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, a: &#x27;float&#x27;, b: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;idm_accel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Intelligent Driver Model का acceleration (Treiber, Hennecke, Helbing 2000)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>a_IDM = a [ 1 − (v/v0)^δ − (s*/s)² ],   s* = s0 + max(0, v T + v Δv / (2 sqrt(a b)))</p>
-<p><code style="color:#22d3bf">dv</code> = Δv = v − v_lead(近づいていれば正)、<code style="color:#22d3bf">gap</code> = s = 先行車の後端までの距離(&gt; 0、<code style="color:#22d3bf">inf</code> = 前が空き)。<code style="color:#22d3bf">v</code>, <code style="color:#22d3bf">gap</code>, <code style="color:#22d3bf">dv</code> は numpy の放送で配列でも動く(スカラーを渡せば float を返す)。</p>
-<p>門: 平衡車間 <code style="color:#22d3bf">idm_equilibrium_gap</code> で Δv = 0 なら 0、gap = inf で a(1 − (v/v0)^δ)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0、gap ≤ 0、非有限、母数が正でない。</p>
+<p><code style="color:#22d3bf">dv</code> = Δv = v − v_lead (निकट आते समय धनात्मक), <code style="color:#22d3bf">gap</code> = s = आगे वाले वाहन के पिछले सिरे तक की दूरी (&gt; 0, <code style="color:#22d3bf">inf</code> = आगे खाली)। <code style="color:#22d3bf">v</code>, <code style="color:#22d3bf">gap</code>, <code style="color:#22d3bf">dv</code> numpy broadcasting से array के रूप में भी काम करते हैं (scalar देने पर float लौटता है)।</p>
+<p>Gate: संतुलन अंतराल <code style="color:#22d3bf">idm_equilibrium_gap</code> पर Δv = 0 हो तो 0, gap = inf पर a(1 − (v/v0)^δ)।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0, gap ≤ 0, अपरिमित मान, प्राचल धनात्मक नहीं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

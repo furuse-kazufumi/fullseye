@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ritter_dam_break(x, t: &#x27;float&#x27;, h0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81, particle_mass=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.ritter_dam_break(x, t: &#x27;float&#x27;, h0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81, particle_mass=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;ritter_dam_break&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Ritter의 댐 붕괴 해(천수 방정식, 마른 바닥, 댐은 x = 0, 물은 x &lt; 0).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>c₀ = √(g h₀)。x ≤ −c₀ t: h = h₀、u = 0 / −c₀ t &lt; x &lt; 2c₀ t: h = (2c₀ − x/t)²/(9g)、u = (2/3)(x/t + c₀) / x ≥ 2c₀ t: h = 0。</p>
-<p>先端の近くは h ∝ (x_f − x)² で水がほとんど無い。先端から δ までの水の量は ∫₀^δ (s/t)²/(9g) ds = δ³/(27 g t²)(導出)。粒子 1 個の量 m(1 次元の SPH なら h₀Δx)を与えると、<b>最も前の粒子の居場所</b>(先端から量 m/2 の所) x_f − (27 g t² m/2)^{1/3} を <code style="color:#22d3bf">lead_particle</code> に返す —— 粒子法の先端は Ritter の先端より必ず遅れて見え、その遅れはこの式で読める(粒子を細かくすると m^{1/3} でしか縮まない)。</p>
+<p>c₀ = √(g h₀). x ≤ −c₀ t: h = h₀, u = 0 / −c₀ t &lt; x &lt; 2c₀ t: h = (2c₀ − x/t)²/(9g), u = (2/3)(x/t + c₀) / x ≥ 2c₀ t: h = 0.</p>
+<p>선단 근처는 h ∝ (x_f − x)² 로 물이 거의 없다. 선단에서 δ 까지의 물의 양은 ∫₀^δ (s/t)²/(9g) ds = δ³/(27 g t²)(유도). 입자 1 개의 양 m(1 차원 SPH 라면 h₀Δx)을 주면, <b>가장 앞 입자의 위치</b>(선단에서 양 m/2 인 곳) x_f − (27 g t² m/2)^{1/3} 를 <code style="color:#22d3bf">lead_particle</code> 에 반환한다 —— 입자법의 선단은 Ritter 의 선단보다 반드시 늦게 보이며, 그 지연은이 식으로 읽을 수 있다(입자를 잘게 해도 m^{1/3} 로밖에 줄지 않는다).</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">h</code>・<code style="color:#22d3bf">u</code>(x と同じ形)、<code style="color:#22d3bf">front</code> = 2c₀ t、<code style="color:#22d3bf">rarefaction_head</code> = −c₀ t、<code style="color:#22d3bf">c0</code>、<code style="color:#22d3bf">lead_particle</code>(m を与えたとき)。</p>
-<p>空の入力(<code style="color:#22d3bf">x</code> が 0 要素)は ValueError。</p>
+<p>dict: <code style="color:#22d3bf">h</code>·<code style="color:#22d3bf">u</code>(x 와 같은 형태), <code style="color:#22d3bf">front</code> = 2c₀ t, <code style="color:#22d3bf">rarefaction_head</code> = −c₀ t, <code style="color:#22d3bf">c0</code>, <code style="color:#22d3bf">lead_particle</code>(m 을 줄 때).</p>
+<p>빈 입력(<code style="color:#22d3bf">x</code> 이(가) 0 개 요소)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

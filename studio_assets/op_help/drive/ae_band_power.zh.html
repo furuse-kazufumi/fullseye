@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_band_power(x, rate: &#x27;float&#x27;, f_lo: &#x27;float&#x27; = 100000.0, f_hi: &#x27;float&#x27; = 1000000.0, start: &#x27;int&#x27; = 0, stop: &#x27;int | None&#x27; = None, win: &#x27;int&#x27; = 4096) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import grind; grind.ae_band_power(x, rate: &#x27;float&#x27;, f_lo: &#x27;float&#x27; = 100000.0, f_hi: &#x27;float&#x27; = 1000000.0, start: &#x27;int&#x27; = 0, stop: &#x27;int | None&#x27; = None, win: &#x27;int&#x27; = 4096) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ae_band_power&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 2 种方式计算 AE 的频带功率(一种按公开分析代码的定义，另一种用 <code style="color:#22d3bf">acoustics.stft</code> 的密度谱)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">power_fft</code>: 窓なし FFT の振幅 <code style="color:#22d3bf">2|X|/N</code> の二乗を <code style="color:#22d3bf">f_lo ≤ f ≤ f_hi</code> で足した値 [V²] (解析コードと同じ。正弦波の振幅 A なら A²)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">power_stft</code>: <code style="color:#22d3bf">acoustics.stft(scaling=&quot;density&quot;)</code> の内側のコマの PSD を帯域で積分した平均 [V²] (= 帯域の平均二乗)。Parseval で <code style="color:#22d3bf">power_fft ≈ 2 · power_stft</code>(振幅² は平均二乗の 2 倍)。比 <code style="color:#22d3bf">ratio = power_fft / (2 power_stft)</code> を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">band_series</code> / <code style="color:#22d3bf">times</code>: コマごとの帯域電力(スペクトログラムの帯の時間変化)、<code style="color:#22d3bf">spectrogram_db</code> は表示用(帯に関係なく全帯域)。</p>
-<p><code style="color:#22d3bf">start</code> / <code style="color:#22d3bf">stop</code> は標本の切り出し(解析コードは雑音の区間を飛ばすため 200013 から)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">power_fft</code>: 无窗 FFT 幅值 <code style="color:#22d3bf">2|X|/N</code> 的平方在 <code style="color:#22d3bf">f_lo ≤ f ≤ f_hi</code> 范围内求和的值 [V²] (与分析代码相同。振幅为 A 的正弦波得 A²)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">power_stft</code>: 对 <code style="color:#22d3bf">acoustics.stft(scaling=&quot;density&quot;)</code> 内侧各帧的 PSD 在频带上积分后的平均 [V²] (= 频带的均方)。由 Parseval 得 <code style="color:#22d3bf">power_fft ≈ 2 · power_stft</code>(振幅² 是均方的 2 倍)。返回比值 <code style="color:#22d3bf">ratio = power_fft / (2 power_stft)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">band_series</code> / <code style="color:#22d3bf">times</code>: 每帧的频带功率(频谱图中该频带随时间的变化),<code style="color:#22d3bf">spectrogram_db</code> 用于显示(与频带无关,全频带)。</p>
+<p><code style="color:#22d3bf">start</code> / <code style="color:#22d3bf">stop</code> 为样本截取范围(分析代码为跳过噪声区间从 200013 开始)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

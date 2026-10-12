@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_crank&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲折路线(曲柄弯，Z 形)：进入 → 左 90° → B → 右 90° → 驶出。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>別表第三の図(3JH00000217782)の測り方に合わせる: 幅 A = w、曲角間の長さ B は一方の道の外壁から向かいの道の内壁まで(= 中心線の曲角間距離)、出入口部 C は横断する帯の壁から出入口まで(中心線では C + w/2)、すみ切り D は曲角部の <b>内側</b> の角(外側の角は正方形のまま)。中心線は(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B)、長さ L = 2C + w + B。面積 = w·L + 2r²(1 − π/4) (導出はモジュール docstring)。規格(普通免許): A = 3.5, B = 12, C ≥ 4, D = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・B・C が正でない、r &lt; 0、C &lt; r(すみ切りが出入口にはみ出る)、B &lt; w + r(2 つの角が重なる)、arc_pts が 1 以上の整数でない。</p>
+<p>按别表第三的图(3JH00000217782)的量法: 宽度 A = w,弯角间长度 B 为从一条路的外壁到对面路的内壁(= 中心线的弯角间距离),出入口部 C 为从横穿带的壁到出入口(中心线上为 C + w/2),切角 D 为弯角部 <b>内侧</b> 的角(外侧的角保持方形)。中心线为(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B),长度 L = 2C + w + B。面积 = w·L + 2r²(1 − π/4) (推导见模块 docstring)。规格(普通驾照): A = 3.5, B = 12, C ≥ 4, D = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 宽度、B、C 非正、r &lt; 0、C &lt; r(切角超出出入口)、B &lt; w + r(2 个角重叠)、arc_pts 不是 1 以上的整数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_reveal_distance(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_reveal_distance(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_reveal_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>路邊停放車輛(有朝向的盒子)背後的點 <code style="color:#22d3bf">emerge_xy</code> 從本車視點<b>首次可見</b>時的縱向距離。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>自車の目は p(s) = ego_xy + s h(h = (cos ψ, sin ψ)、s ≥ 0 = 前進量)を動く。視線 = 線分 p(s) → e が箱の内部を通らなければ見える。箱は凸なので「見えない s」は区間になり、その端は <b>視線が箱の角をかすめる</b> か、進路が箱の辺を横切る所。各角 c について直線 e + λ(c − e) と進路の交点 s_c を 2×2 の連立で解き(閉形式)、候補 {0, s_c, 進路と辺の交点} の小さい順に見えるかを調べ、最初に見える s* で d = h · (e − p(s*)) を返す。</p>
-<p>軸平行の例(進路 y = 0、+x 向き、陰を作る角 c、e は箱の向こう): d = (e_x − c_x) · e_y / (e_y − c_y)。</p>
-<p><code style="color:#22d3bf">parked_box</code> = (cx, cy, length, width, yaw)(中心・全長・全幅・向き)。最初から見えていれば s* = 0 の縦距離、どこまで進んでも見えない(e が箱の内部)なら <code style="color:#22d3bf">inf</code>。d が負(見えた時には既に e を通り過ぎている)もそのまま返す。角をかすめる視線は「見える」(箱を 1e-9 相対だけ縮めて判定し、浮動小数の揺れで判定が割れないようにする)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・非有限・寸法 ≤ 0。</p>
+<p>自車的眼睛沿 p(s) = ego_xy + s h(h = (cos ψ, sin ψ),s ≥ 0 = 前進量)移動。若視線 = 線段 p(s) → e 不穿過箱體內部則可見。箱體為凸,因此「不可見的 s」構成一個區間,其端點是<b>視線擦過箱體角點</b>處,或路徑穿過箱體邊處。對每個角點 c,把直線 e + λ(c − e) 與路徑的交點 s_c 作為 2×2 聯立方程求解(閉式),按候選 {0, s_c, 路徑與邊的交點} 由小到大檢查是否可見,在第一個可見的 s* 處返回 d = h · (e − p(s*))。</p>
+<p>軸平行的例子(路徑 y = 0,朝 +x,形成遮蔽的角點 c,e 在箱體另一側): d = (e_x − c_x) · e_y / (e_y − c_y)。</p>
+<p><code style="color:#22d3bf">parked_box</code> = (cx, cy, length, width, yaw)(中心、全長、全寬、朝向)。若一開始就可見,則為 s* = 0 時的縱向距離; 無論前進多遠都看不見(e 在箱體內部)則為 <code style="color:#22d3bf">inf</code>。d 為負(看見時已經越過 e)也照原樣返回。擦過角點的視線視為「可見」(把箱體按相對 1e-9 縮小後判定,以免浮點抖動使判定分裂)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形狀、非有限值、尺寸 ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

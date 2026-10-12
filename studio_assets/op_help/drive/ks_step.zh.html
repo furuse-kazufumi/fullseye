@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecommonroad; drivecommonroad.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ks_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在分段常值输入 u = (δ̇, a) 下用 RK4 将运动学单轨(KS)模型推进 dt。参考点 = 后轴中心。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>state = (x_rear, y_rear, δ, v, ψ)。式: ẋ = v cos ψ、ẏ = v sin ψ、δ̇ = u₀、v̇ = u₁、ψ̇ = v / l_wb · tan δ (commonroad-vehicle-models <code style="color:#22d3bf">vehicle_dynamics_ks</code>、入力の飽和 <code style="color:#22d3bf">steering_constraints</code> / <code style="color:#22d3bf">acceleration_constraints</code> も同じ)。</p>
-<p>門: δ = 0 で x = x₀ + v t(1e-9)、一定 δ で半径 l_wb / tan δ の円(1 周で始点へ 1e-6)、commonroad-io があれば <code style="color:#22d3bf">vehicle_dynamics_ks</code> の odeint と 1 step で 1e-6 一致。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: state が (5,) でない・非有限、u が (2,) でない、dt ≤ 0、params が不正。</p>
+<p>state = (x_rear, y_rear, δ, v, ψ)。方程: ẋ = v cos ψ、ẏ = v sin ψ、δ̇ = u₀、v̇ = u₁、ψ̇ = v / l_wb · tan δ (commonroad-vehicle-models <code style="color:#22d3bf">vehicle_dynamics_ks</code>,输入的饱和 <code style="color:#22d3bf">steering_constraints</code> / <code style="color:#22d3bf">acceleration_constraints</code> 也相同)。</p>
+<p>门: δ = 0 时 x = x₀ + v t(1e-9),δ 恒定时为半径 l_wb / tan δ 的圆(绕 1 周回到起点,1e-6),若有 commonroad-io,则与 <code style="color:#22d3bf">vehicle_dynamics_ks</code> 的 odeint 在 1 step 内以 1e-6 一致。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: state 不是 (5,) 或非有限、u 不是 (2,)、dt ≤ 0、params 不合法。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

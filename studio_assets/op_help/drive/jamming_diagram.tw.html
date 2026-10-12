@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_diagram(kp, depth: &#x27;float&#x27;, fx_over_fz: &#x27;float | None&#x27; = None, m_over_rfz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.jamming_diagram(kp, depth: &#x27;float&#x27;, fx_over_fz: &#x27;float | None&#x27; = None, m_over_rfz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;jamming_diagram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>卡死(jamming)圖(OCW p.34)：在兩點接觸深度 l [m] 下，施力之比 (F_x/F_z, M/(rF_z)) 能使插入推進的區域(平行四邊形)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>λ = l/(2rμ)。頂点は (−1/μ, 2λ+1), (1/μ, −1), (1/μ, −(2λ+1)), (−1/μ, 1)、縦軸の切片 ±λ、縦辺は F_x/F_z = ±1/μ。深さが増える(λ が増える)と縦に広がり、かじりにくくなる。<code style="color:#22d3bf">fx_over_fz</code> と <code style="color:#22d3bf">m_over_rfz</code> を与えると <code style="color:#22d3bf">inside</code>(内側なら進む)と <code style="color:#22d3bf">margin</code>(4 辺の不等式の最小の余裕、負なら外)も返す。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: l &lt; 0、μ ≤ 0(摩擦なしは平行四辺形が無限に広い)。</p>
+<p>λ = l/(2rμ)。頂點為 (−1/μ, 2λ+1), (1/μ, −1), (1/μ, −(2λ+1)), (−1/μ, 1),縱軸截距 ±λ,縱邊為 F_x/F_z = ±1/μ。深度增加(λ 增大)時縱向變寬,不易卡阻。若給出 <code style="color:#22d3bf">fx_over_fz</code> 與 <code style="color:#22d3bf">m_over_rfz</code>,還會回傳 <code style="color:#22d3bf">inside</code>(在內側則前進)與 <code style="color:#22d3bf">margin</code>(4 條邊不等式的最小餘裕,負則在外)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: l &lt; 0、μ ≤ 0(無摩擦時平行四邊形無限寬)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

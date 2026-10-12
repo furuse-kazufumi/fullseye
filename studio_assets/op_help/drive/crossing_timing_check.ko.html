@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecrossing; drivecrossing.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;crossing_timing_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>철도 건널목의 3가지 시각(경보 개시·차단 동작 종료·열차 도달)을 해석 기준의 표준값 및 최솟값과 대조(배열 = 열차별).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>警報→到達の 30 / 20 秒は解釈基準 5(3) の<b>踏切警報機</b>(遮断機なし)の値。遮断機のある踏切では 4(3)(5) の 2 つ(15 + 20 = 35 秒が標準)が効き、30 / 20 秒の側は自動的に満たされる。</p>
-<p>返り値: <code style="color:#22d3bf">warn_to_closed</code> / <code style="color:#22d3bf">closed_to_arrival</code> / <code style="color:#22d3bf">warn_to_arrival</code>(各 [s])、<code style="color:#22d3bf">meets_minimum</code>(3 つとも最小以上)、<code style="color:#22d3bf">deviation</code>(標準からのずれ、3 つ)、<code style="color:#22d3bf">spread</code>(列車ごとの警報開始→到達の最大 − 最小。解釈基準 5(4)「速度等により大きく異なるものでない」の量)。時刻の順が逆(遮断終了が警報より前など)は ValueError。</p>
+<p>경보→도달의 30 / 20 초는 해석 기준 5(3) 의 <b>건널목 경보기</b>(차단기 없음)의 값. 차단기가 있는 건널목에서는 4(3)(5) 의 2 개(15 + 20 = 35 초가 표준)가 효력을 가지며, 30 / 20 초 쪽은 자동으로 충족된다.</p>
+<p>반환값: <code style="color:#22d3bf">warn_to_closed</code> / <code style="color:#22d3bf">closed_to_arrival</code> / <code style="color:#22d3bf">warn_to_arrival</code>(각 [s]), <code style="color:#22d3bf">meets_minimum</code>(3 개 모두 최소 이상), <code style="color:#22d3bf">deviation</code>(표준으로부터의 어긋남, 3 개), <code style="color:#22d3bf">spread</code>(열차별 경보 개시→도달의 최대 − 최소. 해석 기준 5(4) &quot;속도 등에 의해크게 다르지 않을 것&quot;의 양). 시각의 순서가 반대(차단 종료가 경보보다 앞 등)이면 ValueError.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

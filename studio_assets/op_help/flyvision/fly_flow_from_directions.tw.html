@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_flow_from_directions(responses, lattice)</code>(要直接呼叫實作,<code style="color:#22d3bf">import flyvision; flyvision.fly_flow_from_directions(responses, lattice)</code>;從台帳取用則 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_flow_from_directions&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Six directional responses per ommatidium in, one local flow vector out.</p>
+<p>輸入每個小眼的六個方向響應，輸出一個局部光流向量。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The lobula plate does not keep six numbers per point of the visual field; it keeps the direction and strength of the motion there, split over four layers of opposite preference. This op is that reduction, done as the vector sum on the tangent plane that makes opposite hexagonal directions cancel exactly::</p>
 <p>f_i = (2/6) * sum_k R[k, i] * (cos t_ik, sin t_ik)</p>
 <p>where <code style="color:#22d3bf">t_ik</code> is the angle of the step to ommatidium *i*&#x27;s neighbour in direction *k*, measured in the local tangent plane with azimuth scaled by <code style="color:#22d3bf">cos(elevation)</code> so that it is an angle on the sphere rather than a difference of coordinates. The <code style="color:#22d3bf">2/6</code> normalises the sum so that a cosine-tuned set of responses of amplitude <code style="color:#22d3bf">A</code> returns a vector of length <code style="color:#22d3bf">A</code> — with six directions the raw sum is <code style="color:#22d3bf">3A</code>.</p>

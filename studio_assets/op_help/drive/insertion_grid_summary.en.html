@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegsim; pegsim.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;insertion_grid_summary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Aggregates the success-rate grid: from rows {eps_mm, tilt_deg, correct, success}, the table of success rates for with/without correction × ε₀ × θ₀, plus &quot;the largest ε₀ at which everything succeeds without correction&quot; and &quot;successes / total with correction&quot;.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返り: <code style="color:#22d3bf">eps_mm</code>・<code style="color:#22d3bf">tilt_deg</code>(軸)、<code style="color:#22d3bf">rate</code>: {False: (n_eps, n_tilt) の配列, True: 同}、<code style="color:#22d3bf">n_runs</code>、<code style="color:#22d3bf">max_eps_all_ok</code>:</p>
-<p>{correct: その補正で全 θ₀ が成功する最大の ε₀(無ければ None)}、<code style="color:#22d3bf">success_count</code>: {correct: (成功数, 総数)}。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 行が空、鍵が欠ける。</p>
+<p>Returns: <code style="color:#22d3bf">eps_mm</code>, <code style="color:#22d3bf">tilt_deg</code> (axes), <code style="color:#22d3bf">rate</code>: {False: array of (n_eps, n_tilt), True: same}, <code style="color:#22d3bf">n_runs</code>, <code style="color:#22d3bf">max_eps_all_ok</code>:</p>
+<p>{correct: the largest ε₀ at which every θ₀ succeeds with that correction (None if none)}, <code style="color:#22d3bf">success_count</code>: {correct: (successes, total)}. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: no rows, missing keys.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

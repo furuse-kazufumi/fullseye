@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_visible_intervals(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy, s_max: &#x27;float&#x27;) -&gt; &#x27;list&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_visible_intervals(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy, s_max: &#x27;float&#x27;) -&gt; &#x27;list&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_visible_intervals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>本车视点沿 p(s) = ego_xy + s h 前进 0 ≤ s ≤ s_max 期间，点 <code style="color:#22d3bf">emerge_xy</code> <b>可见</b>的前进量区间列表。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">occlusion_reveal_distance</code> は「最初に見える所」だけを返すが、見え方は単調でない: 駐車車両の幅の帯の外(歩道の上)の点は、遠くからは車と縁石の隙間越しに見え、近づくと隠れ、また見える。ここでは見える/見えないが切り替わり得る候補(角をかすめる視線と進路の交点、進路と辺の交点 —— 閉形式)で [0, s_max] を区切り、各区間の中点で視線を判定して、見える区間を [(s0, s1), ...] (昇順、隣り合う見える区間は結合)で返す。区間の端の縦距離は h · (e − p(s))。点が箱の内部なら []。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・非有限・寸法 ≤ 0、s_max ≤ 0。</p>
+<p><code style="color:#22d3bf">occlusion_reveal_distance</code> 只返回&quot;首次可见的位置&quot;,但可见性并不单调: 停放车辆宽度带之外(人行道上)的点, 从远处可隔着车与路缘石的缝隙看到,靠近后被遮住,之后又可见。这里用可见/不可见可能切换的候选点(擦过角点的视线与路径的交点、路径与边的交点 —— 闭式)划分 [0, s_max],在各区间中点判定视线,把可见区间以 [(s0, s1), ...] (升序,相邻可见区间合并)返回。区间端点的纵向距离为 h · (e − p(s))。点在箱体内部时为 []。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形状、非有限值、尺寸 ≤ 0、s_max ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

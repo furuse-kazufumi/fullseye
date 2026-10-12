@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_stopping_distance(v: &#x27;float&#x27;, rho: &#x27;float&#x27;, accel: &#x27;float&#x27;, brake: &#x27;float&#x27;, v_max: &#x27;Optional[float]&#x27; = None, direction: &#x27;float&#x27; = 1.0) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import rsssafety; rsssafety.rss_stopping_distance(v: &#x27;float&#x27;, rho: &#x27;float&#x27;, accel: &#x27;float&#x27;, brake: &#x27;float&#x27;, v_max: &#x27;Optional[float]&#x27; = None, direction: &#x27;float&#x27; = 1.0) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;rss_stopping_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按 ad-rss-lib 的 stated braking pattern 得到的<b>带符号位置偏移</b>(纵向、横向共用的 1 个公式)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>ρ の間 <code style="color:#22d3bf">accel</code> で加速(<code style="color:#22d3bf">v_max</code> で頭打ち)し、ρ 後の速度 v_ρ が <b>相手へ向いている</b> (<code style="color:#22d3bf">direction · v_ρ &gt; 0</code>)ときだけ停止距離 <code style="color:#22d3bf">direction · v_ρ² / (2 brake)</code> を足す。離れる向きなら足さない(lib <code style="color:#22d3bf">calculateLongitudinalDistanceOffsetAfterStatedBrakingPattern</code> / <code style="color:#22d3bf">calculateLateralDistanceOffsetAfterStatedBrakingPattern</code> の <code style="color:#22d3bf">signbit</code> 判定)。</p>
-<h4 style="color:#17b8a6;margin:6px 0 2px 0">符号規約</h4>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">direction</code> = 相手へ向かう向き(+1 か −1)。縦方向は +1(進行方向 = +x)。横方向は左の車が +1、右の車が −1。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">v</code> は符号つき速度(direction 側が正なら相手へ向かっている)。縦方向は v ≥ 0 で呼ぶ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">accel</code> は符号つきで <b>direction 側に向ける</b>(<code style="color:#22d3bf">direction · accel ≥ 0</code> でないと ValueError)。縦方向は <code style="color:#22d3bf">+a_accel_max</code>、横方向は左 <code style="color:#22d3bf">+a_lat</code>、右 <code style="color:#22d3bf">−a_lat</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">brake</code> は正の大きさ。常に「相手へ向かう速度を 0 にする向き」(= <code style="color:#22d3bf">−direction</code> 側)にかかる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">v_max</code> は direction 側の到達速度の上限(None = 制限なし)。既に |v| がそれ以上なら加速しない。</p>
-<p>縦方向(v ≥ 0, accel ≥ 0)では <code style="color:#22d3bf">v ρ + ½ a ρ² + (v + a ρ)²/(2 b)</code> になり論文 Lemma 2 の後続車の走行距離と一致する。</p>
+<p>在 ρ 期间以 <code style="color:#22d3bf">accel</code> 加速(以 <code style="color:#22d3bf">v_max</code> 封顶),仅当 ρ 后的速度 v_ρ <b>朝向对方</b> (<code style="color:#22d3bf">direction · v_ρ &gt; 0</code>)时才加上停车距离 <code style="color:#22d3bf">direction · v_ρ² / (2 brake)</code>。若朝远离方向则不加(即 lib <code style="color:#22d3bf">calculateLongitudinalDistanceOffsetAfterStatedBrakingPattern</code> / <code style="color:#22d3bf">calculateLateralDistanceOffsetAfterStatedBrakingPattern</code> 中的 <code style="color:#22d3bf">signbit</code> 判定)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">符号约定</h4>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">direction</code> = 朝向对方的方向(+1 或 −1)。纵向为 +1(行进方向 = +x)。横向时左侧车为 +1、右侧车为 −1。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">v</code> 为带符号速度(在 direction 侧为正表示朝向对方)。纵向时以 v ≥ 0 调用。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">accel</code> 带符号,且 <b>朝向 direction 侧</b>(若不满足 <code style="color:#22d3bf">direction · accel ≥ 0</code> 则 ValueError)。纵向为 <code style="color:#22d3bf">+a_accel_max</code>,横向左侧 <code style="color:#22d3bf">+a_lat</code>、右侧 <code style="color:#22d3bf">−a_lat</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">brake</code> 为正的大小。始终作用于&quot;使朝向对方的速度变为 0 的方向&quot;(= <code style="color:#22d3bf">−direction</code> 侧)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">v_max</code> 为 direction 侧到达速度的上限(None = 无限制)。若 |v| 已达到或超过它则不加速。</p>
+<p>纵向(v ≥ 0, accel ≥ 0)时为 <code style="color:#22d3bf">v ρ + ½ a ρ² + (v + a ρ)²/(2 b)</code>,与论文 Lemma 2 中后车的行驶距离一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

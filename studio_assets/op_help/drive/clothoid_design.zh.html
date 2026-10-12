@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.clothoid_design(radius: &#x27;float&#x27;, length: &#x27;float&#x27;, speed: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.clothoid_design(radius: &#x27;float&#x27;, length: &#x27;float&#x27;, speed: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;clothoid_design&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用长度 L 的回旋曲线连接直线 → 圆(半径 R)时的各项量。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返り値: <code style="color:#22d3bf">A</code> = √(R L)、<code style="color:#22d3bf">end_angle</code> τ = L/(2R)、<code style="color:#22d3bf">end_point</code>(終点の (x, y)、フレネル積分)、<code style="color:#22d3bf">shift</code> ΔR = y_end − R(1 − cos τ)(円が直線から離れる量。近似 L²/(24R))、<code style="color:#22d3bf">lateral_jerk</code>(速さ v を与えたとき v³/(R L) [m/s³] = Shortt 式の P)、<code style="color:#22d3bf">min_length_3s</code>(v を与えたとき 3 秒の走行長 3v [m])。</p>
+<p>返回值: <code style="color:#22d3bf">A</code> = √(R L)、<code style="color:#22d3bf">end_angle</code> τ = L/(2R)、<code style="color:#22d3bf">end_point</code>(终点的 (x, y),菲涅耳积分)、<code style="color:#22d3bf">shift</code> ΔR = y_end − R(1 − cos τ)(圆偏离直线的量。近似 L²/(24R))、<code style="color:#22d3bf">lateral_jerk</code>(给定速度 v 时 v³/(R L) [m/s³] = Shortt 公式的 P)、<code style="color:#22d3bf">min_length_3s</code>(给定 v 时 3 秒的行驶长度 3v [m])。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ 0、L ≤ 0、v ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

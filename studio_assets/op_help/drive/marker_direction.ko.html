@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.marker_direction(marker_uv, center_uv, radius_px, K=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import balltrack; balltrack.marker_direction(marker_uv, center_uv, radius_px, K=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;marker_direction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상 속 마커의 위치 (col, row) → 구면 위의 방향(카메라 좌표계의 단위 벡터, 앞 반구: x 오른쪽, y 위, z 앞쪽(관찰자 방향)).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">K</code> (3, 3) を渡すと<b>透視で厳密に</b>解く: 球の角半径 α = atan(半径 px / f) から中心までの距離(半径 1 として 1/sin α)と中心の視線を出し、模様の画素の視線を球面と交差させ、交点の法線を返す。★K が無い形は円板を正射影とみなし、中心を通る視線を z とする系で答える —— 球が光軸から外れていると系ごと回り、球が動く映像では視線の変化がそのまま見かけの回転になる(0.6 m 先を 6 m/s で横切る球は 1 ms で視線が 0.01 rad 回り、1 コマの回転 0.15 rad に 7 % 上乗せされた。2026-09-30、PoC ㉔ の近接カメラ)。K が無ければ従来どおり。</p>
+<p><code style="color:#22d3bf">K</code> (3, 3) 를 넘기면 <b>투시로 엄밀하게</b> 푼다: 구의 각반경 α = atan(반경 px / f) 에서 중심까지의 거리(반경 1 로 하여 1/sin α)와중심의 시선을 구하고, 무늬 화소의 시선을 구면과 교차시켜 교점의 법선을 반환한다. ★K 가 없는 형태는 원판을 정사영으로 보고, 중심을 지나는시선을 z 로 하는 계로 답한다 —— 구가 광축에서 벗어나 있으면 계 전체가 돌고, 구가 움직이는 영상에서는 시선의 변화가 그대로 겉보기 회전이 된다(0.6 m 앞을 6 m/s 로 가로지르는 구는 1 ms 에 시선이 0.01 rad 돌아, 1 프레임의 회전 0.15 rad 에 7 % 가 덧붙었다. 2026-09-30, PoC ㉔ 의 근접 카메라). K 가 없으면 종래대로.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

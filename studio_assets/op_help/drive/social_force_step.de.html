@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetraffic; drivetraffic.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;social_force_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>1 Schritt des Social-Force-Modells (pro Masseneinheit; in der Form von Helbing &amp; Molnár 1995 / Helbing, Farkas, Vicsek 2000).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>dv_i/dt = (v0_i e_i − v_i)/τ + Σ_j A exp((r_ij − d_ij)/B) n_ij + Σ_W A exp((r_i − d_iW)/B) n_iW</p>
-<p>e_i = 目標への単位ベクトル(目標に 1e-9 m 以内なら 0)、r_ij = r_i + r_j、d_ij = |x_i − x_j|、n_ij = (x_i − x_j)/d_ij。壁 W は線分 ((x0, y0), (x1, y1)) の列で、d_iW と n_iW は最近点から。</p>
-<p>積分(指数積分): 斥力 F を刻みの間一定と置き、線形部分 (v_d − v)/τ(v_d = v0 e + τ F)を厳密に解く:</p>
-<p>v&#x27; = v_d + (v − v_d) e^{−dt/τ}、x&#x27; = x + v_d dt + (v − v_d) τ (1 − e^{−dt/τ})。1 人で斥力が無ければ v(t) = v0(1 − e^{−t/τ}) に <b>dt に依らず</b> 一致する(門)。斥力がある時は 1 次の誤差。</p>
-<p>引数: <code style="color:#22d3bf">pos</code>, <code style="color:#22d3bf">vel</code>, <code style="color:#22d3bf">goals</code> は (N, 2)。<code style="color:#22d3bf">v0</code> と <code style="color:#22d3bf">radius</code> はスカラーか (N,)。<code style="color:#22d3bf">walls</code> は (M, 2, 2) か None。</p>
-<p>戻り値: (pos&#x27;, vel&#x27;)。配置が鏡映・点対称なら結果も同じ対称性を保つ(式が対称なので。門で確かめる)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の不一致、非有限、τ・B・dt ≤ 0、A &lt; 0、半径 &lt; 0、2 人の位置が一致。</p>
+<p>e_i = Einheitsvektor zum Ziel (0, wenn innerhalb von 1e-9 m vom Ziel), r_ij = r_i + r_j, d_ij = |x_i − x_j|, n_ij = (x_i − x_j)/d_ij. Wände W sind eine Liste von Strecken ((x0, y0), (x1, y1)); d_iW und n_iW werden vom nächsten Punkt genommen.</p>
+<p>Integration (exponentieller Integrator): Die Abstoßungskraft F wird über den Schritt konstant gehalten, und der lineare Teil (v_d − v)/τ (v_d = v0 e + τ F) wird exakt gelöst:</p>
+<p>v&#x27; = v_d + (v − v_d) e^{−dt/τ}, x&#x27; = x + v_d dt + (v − v_d) τ (1 − e^{−dt/τ}). Für eine Person ohne Abstoßung stimmt das Ergebnis <b>unabhängig von dt</b> mit v(t) = v0(1 − e^{−t/τ}) überein (Gate). Mit Abstoßung ist der Fehler erster Ordnung.</p>
+<p>Argumente: <code style="color:#22d3bf">pos</code>, <code style="color:#22d3bf">vel</code>, <code style="color:#22d3bf">goals</code> sind (N, 2). <code style="color:#22d3bf">v0</code> und <code style="color:#22d3bf">radius</code> sind Skalare oder (N,). <code style="color:#22d3bf">walls</code> ist (M, 2, 2) oder None.</p>
+<p>Rückgabe: (pos&#x27;, vel&#x27;). Ist die Anordnung spiegel- oder punktsymmetrisch, behält das Ergebnis dieselbe Symmetrie (weil die Gleichungen symmetrisch sind; per Gate geprüft).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Formabweichung, nicht-endliche Werte, τ, B oder dt ≤ 0, A &lt; 0, Radius &lt; 0, zwei Personen an derselben Position.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

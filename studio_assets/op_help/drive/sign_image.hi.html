@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roadjp; roadjp.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;sign_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>road sign का चित्र RGBA float (H, W, 4) ∈ [0,1] के रूप में लौटाता है (plate के बाहर = alpha 0)। चौड़ाई = <code style="color:#22d3bf">size_px</code>, ऊँचाई आकार के अनुपात से।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>形と色(規格の配色、記号は単純化):</p>
-<p style="margin:2px 0 2px 12px">• stop: 逆三角形・赤地・白の「止まれ」+ 下に小さく「STOP」。 slow: 逆三角形・白地・赤枠・青の「徐行」+「SLOW」。</p>
-<p style="margin:2px 0 2px 12px">• speed_limit: 円・白地・赤枠・青の数字(<code style="color:#22d3bf">value</code>、既定 40)。 no_entry: 円・赤地・白の横棒。</p>
-<p style="margin:2px 0 2px 12px">• no_parking: 円・青地・赤枠・赤の斜線(左上→右下)。 one_way: 横長の青地に白の矢印(右向き)。</p>
-<p style="margin:2px 0 2px 12px">• crosswalk: 青地の五角形(家型)に白の歩行者と横断歩道の縞。</p>
-<p style="margin:2px 0 2px 12px">• caution_crossing / caution_signal / caution_children: 黄地の菱形・黒縁、黒の記号(踏切 = 遮断機の棒 2 本と ×、信号機 = 3 つの円(赤黄青)、学童 = 2 人の人型)。</p>
-<p>文字は PIL でラスタ化する(annotate と同じフォント探索。<code style="color:#22d3bf">font_path</code> で固定できる)。<b>フォントに字形が無ければ ValueError</b>(豆腐を黙って出さない)。<code style="color:#22d3bf">side</code> は <code style="color:#22d3bf">sign_params</code> と同じ(寸法比だけに効く)。</p>
+<p>आकार और रंग (मानक रंग-योजना, प्रतीक सरलीकृत):</p>
+<p style="margin:2px 0 2px 12px">• stop: उल्टा त्रिभुज, लाल पृष्ठभूमि, सफ़ेद &quot;Tomare&quot; (जापानी में &quot;रुकें&quot;) + नीचे छोटा &quot;STOP&quot;। slow: उल्टा त्रिभुज, सफ़ेद पृष्ठभूमि, लाल किनारा, नीला &quot;徐行&quot; (जापानी में &quot;धीरे चलें&quot;) + &quot;SLOW&quot;।</p>
+<p style="margin:2px 0 2px 12px">• speed_limit: वृत्त, सफ़ेद पृष्ठभूमि, लाल किनारा, नीले अंक (<code style="color:#22d3bf">value</code>, डिफ़ॉल्ट 40)। no_entry: वृत्त, लाल पृष्ठभूमि, सफ़ेद क्षैतिज पट्टी।</p>
+<p style="margin:2px 0 2px 12px">• no_parking: वृत्त, नीली पृष्ठभूमि, लाल किनारा, लाल तिरछी रेखा (ऊपर-बाएँ → नीचे-दाएँ)। one_way: चौड़ी नीली आयताकार पृष्ठभूमि पर सफ़ेद तीर (दाईं ओर)।</p>
+<p style="margin:2px 0 2px 12px">• crosswalk: नीली पृष्ठभूमि वाला पंचभुज (घर के आकार का) जिस पर सफ़ेद पैदल यात्री और ज़ेब्रा क्रॉसिंग की धारियाँ।</p>
+<p style="margin:2px 0 2px 12px">• caution_crossing / caution_signal / caution_children: पीली पृष्ठभूमि वाला समचतुर्भुज, काला किनारा, काला प्रतीक (रेलवे क्रॉसिंग = बैरियर के 2 डंडे और ×, ट्रैफ़िक लाइट = 3 वृत्त (लाल, पीला, नीला), स्कूली बच्चे = 2 मानव आकृतियाँ)।</p>
+<p>अक्षर PIL से रास्टर किए जाते हैं (annotate के समान फ़ॉन्ट खोज; <code style="color:#22d3bf">font_path</code> से स्थिर किया जा सकता है)। <b>फ़ॉन्ट में ग्लिफ़ न हो तो ValueError</b> (चुपचाप tofu बॉक्स नहीं देता)। <code style="color:#22d3bf">side</code> <code style="color:#22d3bf">sign_params</code> के समान है (केवल आयाम-अनुपात पर प्रभाव)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

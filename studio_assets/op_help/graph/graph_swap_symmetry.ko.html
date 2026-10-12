@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_swap_symmetry(adj, pairs)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import graphinv; graphinv.graph_swap_symmetry(adj, pairs)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgraph.get(&quot;graph_swap_symmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>How much of the wiring survives exchanging node pairs (a left/right test).</p>
+<p>노드 쌍을 맞바꿨을 때 배선이 얼마나 유지되는가(좌우 검사).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">pairs</code> is a sequence of <code style="color:#22d3bf">(i, j)</code> index pairs to exchange (each node in at most one pair). The wiring is re-indexed by the exchange and compared with the original:</p>
 <p><code style="color:#22d3bf">jaccard = |E ∩ E&#x27;| / |E ∪ E&#x27;|</code> over directed edges (self-loops removed). Returns a dict with <code style="color:#22d3bf">jaccard</code>, <code style="color:#22d3bf">shared</code>, <code style="color:#22d3bf">union</code>, <code style="color:#22d3bf">edges</code>, and <code style="color:#22d3bf">n_pairs</code>.</p>
 <p>Identities: the identity pairing (or an empty <code style="color:#22d3bf">pairs</code>) gives exactly 1.0; applying the exchange twice recovers the original matrix exactly. For the C. elegans hermaphrodite chemical connectome with its 98 named left/right pairs the measured value is 0.470 — half the wiring is not mirrored.</p>

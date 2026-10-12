@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kyosoku_summary(path=None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetown; drivetown.kyosoku_summary(path=None) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;kyosoku_summary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>读取交通教则场景的再现台账(docs/drive/kyosoku_scenarios.json)，生成 category × status 的计数表。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">path</code> = None なら repo の <code style="color:#22d3bf">docs/drive/kyosoku_scenarios.json</code>(このモジュールの場所から引く)。返り値 <code style="color:#22d3bf">{&quot;total&quot;, &quot;statuses&quot; (順序つき), &quot;by_status&quot;: {status: n}, &quot;categories&quot;: [...] (件数の多い順), &quot;by_category&quot;: {category: {status: n}}, &quot;table&quot;: [[category, n_reproduced, n_partial, n_pending, n_not_reproducible, total], ...]}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: ファイルが無い・JSON でない・<code style="color:#22d3bf">scenarios</code> が無い・場面に id/category/status が無い・ status が <code style="color:#22d3bf">KYOSOKU_STATUSES</code> に無い・id が重複。</p>
+<p>若 <code style="color:#22d3bf">path</code> = None,则使用 repo 的 <code style="color:#22d3bf">docs/drive/kyosoku_scenarios.json</code>(从本模块的位置查找)。返回值 <code style="color:#22d3bf">{&quot;total&quot;, &quot;statuses&quot; (順序つき), &quot;by_status&quot;: {status: n}, &quot;categories&quot;: [...] (件数の多い順), &quot;by_category&quot;: {category: {status: n}}, &quot;table&quot;: [[category, n_reproduced, n_partial, n_pending, n_not_reproducible, total], ...]}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 文件不存在、不是 JSON、没有 <code style="color:#22d3bf">scenarios</code>、场景缺少 id/category/status、status 不在 <code style="color:#22d3bf">KYOSOKU_STATUSES</code> 中、id 重复。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

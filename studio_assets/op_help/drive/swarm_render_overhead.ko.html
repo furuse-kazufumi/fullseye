@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;swarm_render_overhead&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>개체의 위치 → 위에서 본 1프레임(가우스 휘점, 지름 = 표준편차의 2배 = PIV의 관례, pivops와 같음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Args:</p>
-<p>points: (N, 2) の位置 [m] (空でもよい = 背景だけ)。</p>
-<p>shape: (H, W) [px]。</p>
-<p>res: 画素の大きさ [m/px]。</p>
-<p>center: 画像の中心の世界座標 [m]。</p>
-<p>diameter_px: 輝点の直径 [px]。</p>
-<p>intensity: 輝点の明るさ。</p>
-<p>background: 一様な下駄。</p>
+<p>points: (N, 2) 의 위치 [m] (비어 있어도 됨 = 배경만).</p>
+<p>shape: (H, W) [px].</p>
+<p>res: 픽셀 크기 [m/px].</p>
+<p>center: 이미지 중심의 세계 좌표 [m].</p>
+<p>diameter_px: 휘점의 지름 [px].</p>
+<p>intensity: 휘점의 밝기.</p>
+<p>background: 균일한 바닥값.</p>
 <p>Returns:</p>
-<p>(H, W) float64。</p>
-<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は空を返す(理由: 個体が 0 体の場面は正当で、背景だけの絵が正しい答え)。</p>
+<p>(H, W) float64.</p>
+<p>빈 입력(<code style="color:#22d3bf">points</code> 이(가) 0 개 요소)은 빈 결과를 반환한다(이유: 개체가 0 개인 장면은 정당하며, 배경만 있는 그림이 올바른 답이다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

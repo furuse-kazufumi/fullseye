@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import swarmflow; swarmflow.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;swarm_render_overhead&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सदस्यों की position → ऊपर से देखा 1 frame (Gaussian चमकीले बिंदु, व्यास = standard deviation का 2 गुना = PIV की परिपाटी, pivops जैसा ही)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>points: (N, 2) の位置 [m] (空でもよい = 背景だけ)。</p>
-<p>shape: (H, W) [px]。</p>
-<p>res: 画素の大きさ [m/px]。</p>
-<p>center: 画像の中心の世界座標 [m]。</p>
-<p>diameter_px: 輝点の直径 [px]。</p>
-<p>intensity: 輝点の明るさ。</p>
-<p>background: 一様な下駄。</p>
+<p>points: (N, 2) स्थितियाँ [m] (खाली भी हो सकता है = केवल पृष्ठभूमि)।</p>
+<p>shape: (H, W) [px]।</p>
+<p>res: पिक्सेल का आकार [m/px]।</p>
+<p>center: छवि के केंद्र के विश्व निर्देशांक [m]।</p>
+<p>diameter_px: चमकीले बिंदु का व्यास [px]।</p>
+<p>intensity: चमकीले बिंदु की चमक।</p>
+<p>background: एकसमान आधार-मान।</p>
 <p>Returns:</p>
-<p>(H, W) float64。</p>
-<p>空の入力(<code style="color:#22d3bf">points</code> が 0 要素)は空を返す(理由: 個体が 0 体の場面は正当で、背景だけの絵が正しい答え)。</p>
+<p>(H, W) float64।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">points</code> में 0 तत्व) पर खाली परिणाम लौटाया जाता है (कारण: 0 व्यक्तियों वाला दृश्य वैध है, और केवल पृष्ठभूमि वाला चित्र ही सही उत्तर है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_events_xt(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, t_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid=(201, 201)) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.poisson_events_xt(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, t_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid=(201, 201)) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;poisson_events_xt&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>[0, x_max] × [0, t_max]의 시공간 비균질 포아송 과정(율 λ(x, t) [건/(m·s)])을 thinning으로 1개 추출합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>停車中のバスのように、出現率が場所と時刻の両方に依る場合(λ(x, t) = bus_stop_rate(x) · [t &lt; 発車] + base)。率 rate_max の一様な候補(件数 ~ Poisson(rate_max · x_max · t_max)、位置・時刻は一様)を確率 λ/rate_max で残す。件数 ~ Poisson(Λ)、Λ = ∫∫λ dx dt。<code style="color:#22d3bf">rate_fn(x, t)</code> は同じ形の配列 2 つを受けて率を返す関数。<b>引く前に</b> <code style="color:#22d3bf">n_grid = (nx, nt)</code> の格子で λ ≤ rate_max を確かめ、候補の所でも確かめる(超えれば ValueError)。</p>
-<p>戻り値: (N, 2) の配列 [[x, t], ...] (時刻の昇順)。</p>
+<p>정차 중인 버스처럼 출현율이 장소와 시각 양쪽에 의존하는 경우(λ(x, t) = bus_stop_rate(x) · [t &lt; 발차] + base). 율 rate_max 의 균일한 후보(건수 ~ Poisson(rate_max · x_max · t_max), 위치·시각은 균일)를 확률 λ/rate_max 로 남긴다. 건수 ~ Poisson(Λ), Λ = ∫∫λ dx dt. <code style="color:#22d3bf">rate_fn(x, t)</code> 는 같은 형태의 배열 2 개를 받아 율을 반환하는 함수. <b>뽑기 전에</b> <code style="color:#22d3bf">n_grid = (nx, nt)</code> 의 격자에서 λ ≤ rate_max 를 확인하고, 후보의 위치에서도 확인한다(초과하면 ValueError).</p>
+<p>반환값: (N, 2) 의 배열 [[x, t], ...] (시각의 오름차순).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

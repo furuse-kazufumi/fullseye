@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pure_pursuit_circle_offset(radius: &#x27;float&#x27;, lookahead: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, *, understeer: &#x27;float&#x27; = 0.0, speed: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivelateral; drivelateral.pure_pursuit_circle_offset(radius: &#x27;float&#x27;, lookahead: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, *, understeer: &#x27;float&#x27; = 0.0, speed: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;pure_pursuit_circle_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 pure pursuit(以後軸中心為基準)追蹤定常圓(半徑 R)時的穩態圓半徑 ρ 與橫向偏差 ρ − R(向外為正)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><b>運動学 + アンダーステア</b>(<code style="color:#22d3bf">params</code> = None): 指令の舵角 δ = L κ_cmd に対し実際の曲率が κ_cmd / (1 + K v²/L) になるとすると、同心円の定常で ρ = √(R² + (K v²/L) L_d²)(この版で導いた閉形式)。K = 0 なら ρ = R(横ずれ 0)。</p>
-<p><b>線形 2 輪等価モデル</b>(<code style="color:#22d3bf">params</code> を与える。δ = atan(L κ_cmd)): 定常では車体の向きが後車軸の速度(円の接線)より後軸の横すべり角 α_r = m l_f a_y / (C_r L) だけ内を向くので、注視点の見える角が α_r 減る。定常の関係(δ = L/R_c + K u²/R_c、β、回転の中心)を重心の旋回半径 R_c の 1 変数の方程式にして二分法で解く(半閉形式)。運動学の式はこの効果を落とすので横ずれを小さく見積もる(PoC では約半分)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R, L_d, L ≤ 0、注視点が円に届かない、1 + K v²/L ≤ 0、params で v ≤ 0.5。</p>
+<p><b>運動學 + 轉向不足</b>(<code style="color:#22d3bf">params</code> = None): 若對指令轉向角 δ = L κ_cmd,實際曲率變為 κ_cmd / (1 + K v²/L), 則在同心圓穩態下 ρ = √(R² + (K v²/L) L_d²)(本版推導的閉式解)。K = 0 時 ρ = R(橫向偏移 0)。</p>
+<p><b>線性二輪等效模型</b>(給定 <code style="color:#22d3bf">params</code>。δ = atan(L κ_cmd)): 穩態下車身朝向比後軸速度(圓的切線) 向內偏轉後軸側滑角 α_r = m l_f a_y / (C_r L),因此預視點的視角減少 α_r。將穩態關係(δ = L/R_c + K u²/R_c、β、旋轉中心)化為關於重心轉彎半徑 R_c 的單變數方程式,以二分法求解(半閉式)。運動學公式忽略了此效應,因此低估橫向偏移(PoC 中約為一半)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R, L_d, L ≤ 0、預視點到達不了圓、1 + K v²/L ≤ 0、給定 params 時 v ≤ 0.5。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

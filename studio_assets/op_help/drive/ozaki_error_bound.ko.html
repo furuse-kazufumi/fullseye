@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ozakimm; ozakimm.ozaki_error_bound(A, B, n_slices: &#x27;int&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;ozaki_error_bound&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">matmul_ozaki(A, B, n_slices)</code>(Ozaki-I)의 절단 오차에 대한 요소별 보장 상계(행렬).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>切り捨ての残りと捨てた切れ端の組の和の上界で、最後の float64 の組み立ての丸め(<code style="color:#22d3bf">(s+1) u |A||B|</code> 程度)は含めない。門では 26 万点余りの要素で破れ 0(PoC と tests)。並べ替えた和で計算するので、上界そのものも内側の順に依らない。</p>
+<p>절단 나머지와 버린 조각 쌍의 합의 상계로, 마지막 float64 조립의 반올림(<code style="color:#22d3bf">(s+1) u |A||B|</code> 정도)은 포함하지 않는다. 게이트에서는 26만 개 남짓의 요소에서 위반 0(PoC 와 tests). 재배열한 합으로 계산하므로 상계 자체도 내부 순서에 의존하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.spectrogram(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.spectrogram.raw(...)</code>,或直接调用 <code style="color:#22d3bf">dsp.spectrogram</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(freqs, times, S) — S が本体</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>STFT magnitude spectrogram -&gt; <code style="color:#22d3bf">(freqs, times, S)</code> with <code style="color:#22d3bf">S</code> shape <code style="color:#22d3bf">(n_freqs, n_frames)</code>. Hann-windowed; *hop* defaults to <code style="color:#22d3bf">win//2</code>.</p>
+<p>STFT 幅度谱图 -&gt; <code style="color:#22d3bf">(freqs, times, S)</code>，<code style="color:#22d3bf">S</code> 的形状为 <code style="color:#22d3bf">(n_freqs, n_frames)</code>。加汉宁窗；*hop* 默认为 <code style="color:#22d3bf">win//2</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><b>Same raw convention as <code style="color:#22d3bf">spectrum</code>, but a different divisor.</b> Each column is the unnormalised <code style="color:#22d3bf">|rfft(frame * hann(win))|</code>, so it is not an amplitude either — and dividing by <code style="color:#22d3bf">2/win</code> is *wrong* here, because the Hann window has already thrown away part of the signal. The correct one-sided amplitude conversion divides by the window&#x27;s coherent gain::</p>
 <p>w = np.hanning(win)</p>
 <p>amp = S * (2.0 / w.sum())        # bins 1 .. win/2-1; DC / Nyquist: 1/w.sum()</p>

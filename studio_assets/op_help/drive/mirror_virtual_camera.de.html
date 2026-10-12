@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;mirror_virtual_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine <b>virtuelle Kamera</b>, die das Bild in einem Planspiegel aufnimmt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">cam_pose</code> は world→camera の 4×4(<code style="color:#22d3bf">render3d.look_at</code> の規約: X_cam = P X、−Z 前方)。<code style="color:#22d3bf">mirror_plane</code> は(n_x, n_y, n_z, d)(n·X = d)。</p>
-<p>返り値(dict):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: 折り返し S(<code style="color:#22d3bf">mirror_reflection_matrix</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_mirrored</code> = P·S: 実物の場面をこれで写すと、実カメラが <b>鏡越しに見る像そのもの</b>(画素の位置まで同じ)。回転部の行列式は −1(左右が反転した座標系。描画器によっては面の表裏の判定が逆になる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose</code> = F·P·S、F = diag(−1, 1, 1, 1): 普通の右手系のカメラ(行列式 +1)= 鏡の向こうにいる仮想カメラ。これで撮った画像は鏡に映る像の <b>左右反転</b>(画素では u&#x27; = 2c_x − u)。バックミラーを「後ろ向きのカメラ」として扱うときはこちら(運転者が見る像に戻すには左右を反転する)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eye</code>: 仮想カメラの位置 S(C)(C = 実カメラの位置)。<code style="color:#22d3bf">eye_real</code>: C。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flip</code>: <code style="color:#22d3bf">&quot;x&quot;</code>(<code style="color:#22d3bf">pose</code> の画像は x を反転すると鏡像になる)。</p>
-<p>閉形式: S(X) = X − 2(n·X − d)n。鏡に映る点 Q の像の位置は S(Q)(鏡の向こう側、鏡面から同じ距離)。門(テスト): 入射角 = 反射角を満たす鏡面上の点 M を数値で解き(Fermat の最短経路)、C + (|CM| + |MQ|)·unit(M − C) が S(Q) と一致すること。</p>
+<p><code style="color:#22d3bf">cam_pose</code> ist die world→camera-4×4-Matrix (Konvention von <code style="color:#22d3bf">render3d.look_at</code>: X_cam = P X, −Z nach vorn). <code style="color:#22d3bf">mirror_plane</code> ist (n_x, n_y, n_z, d) (n·X = d).</p>
+<p>Rückgabewert (dict):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: die Spiegelung S (<code style="color:#22d3bf">mirror_reflection_matrix</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_mirrored</code> = P·S: Rendert man die reale Szene damit, erhält man <b>genau das Bild, das die reale Kamera durch den Spiegel sieht</b> (bis auf die Pixelposition identisch). Die Determinante des Rotationsteils ist −1 (links-rechts gespiegeltes Koordinatensystem; je nach Renderer kehrt sich die Vorder-/Rückseitenbestimmung von Flächen um).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose</code> = F·P·S, F = diag(−1, 1, 1, 1): eine gewöhnliche rechtshändige Kamera (Determinante +1) = die virtuelle Kamera hinter dem Spiegel. Ein damit aufgenommenes Bild ist die <b>Links-rechts-Spiegelung</b> des Spiegelbildes (in Pixeln u&#x27; = 2c_x − u). Diese verwenden, wenn ein Rückspiegel als „nach hinten gerichtete Kamera“ behandelt wird (zum Zurückgewinnen des vom Fahrer gesehenen Bildes links-rechts spiegeln).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eye</code>: Position der virtuellen Kamera S(C) (C = Position der realen Kamera). <code style="color:#22d3bf">eye_real</code>: C.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flip</code>: <code style="color:#22d3bf">&quot;x&quot;</code> (spiegelt man x des <code style="color:#22d3bf">pose</code>-Bildes, erhält man das Spiegelbild).</p>
+<p>Geschlossene Form: S(X) = X − 2(n·X − d)n. Das Bild eines im Spiegel gesehenen Punktes Q liegt bei S(Q) (auf der anderen Seite des Spiegels, im gleichen Abstand zur Spiegelfläche). Gate (Test): Den Punkt M auf dem Spiegel, der Einfallswinkel = Ausfallswinkel erfüllt, numerisch lösen (kürzester Weg nach Fermat) und prüfen, dass C + (|CM| + |MQ|)·unit(M − C) mit S(Q) übereinstimmt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.course_occupancy(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">image2d</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.course_occupancy.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">drivecourse.course_occupancy</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將路線(要素或配置)落到佔據柵格 <code style="color:#22d3bf">(occ bool [row = y, col = x], extent)</code> 上。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><b>走れる領域の外 = True(障害物)</b>。格子は bounds を <code style="color:#22d3bf">margin</code> だけ広げた範囲を <code style="color:#22d3bf">cell</code> で覆い、各 cell の中心で偶奇判定する。<code style="color:#22d3bf">extent = (xmin, xmax, ymin, ymax)</code> は格子がちょうど覆う範囲(xmax = xmin + nx·cell)、row 0 = ymin。占有率は cell → 0 で 1 − 面積/格子面積 に収束する(門)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: cell ≤ 0、margin &lt; 0、course の形が悪い。</p>
+<p><b>可行駛區域之外 = True(障礙物)</b>。網格以 <code style="color:#22d3bf">margin</code> 覆蓋把 bounds 擴大 <code style="color:#22d3bf">cell</code> 後的範圍, 並在每個 cell 的中心做奇偶判定。<code style="color:#22d3bf">extent = (xmin, xmax, ymin, ymax)</code> 為網格恰好覆蓋的範圍(xmax = xmin + nx·cell),row 0 = ymin。佔有率在 cell → 0 時收斂到 1 − 面積/網格面積(門檻)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: cell ≤ 0、margin &lt; 0、course 的形狀不正確。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

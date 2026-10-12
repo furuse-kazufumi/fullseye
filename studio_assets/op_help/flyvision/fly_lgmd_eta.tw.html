@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_lgmd_eta(theta_signal, dt_s, alpha=4.7, delay_s=0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import flyvision; flyvision.fly_lgmd_eta(theta_signal, dt_s, alpha=4.7, delay_s=0.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_lgmd_eta&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>LGMD/eta looming response from an expanding subtended angle.</p>
+<p>由擴張的視張角得到的 LGMD/eta 逼近(looming)響應。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The multiplicative looming model::</p>
 <p>eta(t) = theta&#x27;(t - delay) * exp(-alpha * theta(t - delay))</p>
 <p>where *theta_signal* is the object&#x27;s full subtended angle over time, in radians. The product of the angular expansion rate and an exponentially decaying gain gives a response that peaks a fixed time before collision.</p>

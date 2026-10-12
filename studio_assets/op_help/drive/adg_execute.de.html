@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code> (die Implementierung direkt: <code style="color:#22d3bf">import agvfleet; agvfleet.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;adg_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Führt gemäß dem ADG aus. Zu jedem Zeitschritt hält jedes Fahrzeug mit der Wahrscheinlichkeit <code style="color:#22d3bf">delay_prob</code> an (Rutschen, Personen, Verzögerungen beim Be- und Entladen).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>次の行動の依存がすべて済んでいる車両だけが 1 マス進む。返りは dict: <code style="color:#22d3bf">trajectories</code>(実際の位置の列)、<code style="color:#22d3bf">makespan</code>、<code style="color:#22d3bf">collisions</code>(同じマス・すれ違い)、<code style="color:#22d3bf">deadlock</code>(誰も進めず未了)、<code style="color:#22d3bf">finished</code>。</p>
-<p>空の入力(<code style="color:#22d3bf">adg</code> が空の dict)は ValueError。</p>
+<p>Nur Fahrzeuge, bei denen alle Abhängigkeiten der nächsten Aktion erfüllt sind, rücken um 1 Zelle vor. Rückgabe ist ein dict: <code style="color:#22d3bf">trajectories</code> (Folge der tatsächlichen Positionen), <code style="color:#22d3bf">makespan</code>, <code style="color:#22d3bf">collisions</code> (gleiche Zelle, Aneinander-Vorbeifahren), <code style="color:#22d3bf">deadlock</code> (niemand kann vorrücken, unvollendet), <code style="color:#22d3bf">finished</code>.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">adg</code> ist ein leeres dict) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

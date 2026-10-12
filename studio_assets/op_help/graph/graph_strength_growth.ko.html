@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_strength_growth(a, b, hub_fraction=0.1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import graphinv; graphinv.graph_strength_growth(a, b, hub_fraction=0.1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgraph.get(&quot;graph_strength_growth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Where the new synapses went — one wiring matrix <code style="color:#22d3bf">a</code> (earlier) against <code style="color:#22d3bf">b</code> (later).</p>
+<p>새 시냅스가 어디로 갔는가 —— 배선 행렬 <code style="color:#22d3bf">a</code>(이전) 대 <code style="color:#22d3bf">b</code>(이후).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Both are weight matrices (synapse counts) on the <b>same</b> node order; self-loops are dropped. With <code style="color:#22d3bf">S = sum</code> of each matrix and <code style="color:#22d3bf">dS = S_b - S_a</code>:</p>
 <p style="margin:2px 0 2px 12px">• per node: <code style="color:#22d3bf">in_a</code>, <code style="color:#22d3bf">out_a</code>, <code style="color:#22d3bf">in_b</code>, <code style="color:#22d3bf">out_b</code> (strengths), <code style="color:#22d3bf">degree_a</code> (number of partners, in + out, presence <code style="color:#22d3bf">&gt; 0</code>), <code style="color:#22d3bf">gain_in = in_b - in_a</code>, <code style="color:#22d3bf">gain_out</code>.</p>
 <p>Identity: <code style="color:#22d3bf">gain_in.sum() == gain_out.sum() == dS</code> (every synapse has one pre and one post).</p>

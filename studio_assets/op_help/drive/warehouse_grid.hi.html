@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;warehouse_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>shelves की rows और गलियारों से बना warehouse grid (True = चलने योग्य)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>棚は横長の 1 行 × <code style="color:#22d3bf">rack_len</code> マスのブロックで、上下左右を幅 <code style="color:#22d3bf">aisle</code> の通路が囲む。外周に <code style="color:#22d3bf">margin</code> マスの走行帯(ステーションの前)を置く。返りは <code style="color:#22d3bf">(grid, info)</code>、info に棚のマスの一覧と外周の帯。</p>
+<p>रैक क्षैतिज 1 पंक्ति × <code style="color:#22d3bf">rack_len</code> सेल के ब्लॉक हैं, जिन्हें चारों ओर से <code style="color:#22d3bf">aisle</code> चौड़ाई के गलियारे घेरते हैं। परिधि पर <code style="color:#22d3bf">margin</code> सेल की ड्राइविंग पट्टी (स्टेशनों के सामने) रखी जाती है। रिटर्न <code style="color:#22d3bf">(grid, info)</code>, info में रैक सेलों की सूची और परिधि पट्टी।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

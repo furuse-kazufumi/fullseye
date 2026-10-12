@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.velocity_deficit_map(field, speed=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import swarmflow; swarmflow.velocity_deficit_map(field, speed=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;velocity_deficit_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>velocity field → free stream से कमी 1 − u/U, पार्श्व विचलन v/U, speed की कमी 1 − |v|/U। U दिया जाता है, या upstream किनारे के 15 % में u का median।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">deficit</code>・<code style="color:#22d3bf">deflection</code>・<code style="color:#22d3bf">speed_deficit</code> (H, W)(測れない格子は NaN)、<code style="color:#22d3bf">speed</code>(使った U)、<code style="color:#22d3bf">x</code>・<code style="color:#22d3bf">y</code>。</p>
+<p>dict: <code style="color:#22d3bf">deficit</code> / <code style="color:#22d3bf">deflection</code> / <code style="color:#22d3bf">speed_deficit</code> (H, W) (न मापे जा सकने वाले ग्रिड पर NaN), <code style="color:#22d3bf">speed</code> (प्रयुक्त U), <code style="color:#22d3bf">x</code> / <code style="color:#22d3bf">y</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

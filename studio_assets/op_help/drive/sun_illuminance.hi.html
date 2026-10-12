@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveenv; driveenv.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;sun_illuminance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>साफ़ आसमान (cloud cover <code style="color:#22d3bf">cloud</code> ∈ [0, 1]) में सूर्य की illuminance [lx]: <code style="color:#22d3bf">direct_normal</code> (सूर्य के सामने वाली सतह), <code style="color:#22d3bf">diffuse</code> (क्षैतिज सतह पर बिखरा प्रकाश), <code style="color:#22d3bf">air_mass</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>直達 = 1361 W/m² × 0.7^{AM^0.678}(Meinel)× 105 lm/W × (1 − cloud)、AM = Kasten &amp; Young 1989 1 / (sin h + 0.50572 (h + 6.07995°)^{−1.6364})。散乱 = 薄明の表(高度 ≤ 0)/ 400 + 16000 sin h(高度 &gt; 0)に雲で (1 + 0.5 cloud) を掛ける —— 仮定(モジュールの docstring)。</p>
+<p>प्रत्यक्ष = 1361 W/m² × 0.7^{AM^0.678} (Meinel) × 105 lm/W × (1 − cloud), AM = Kasten &amp; Young 1989 1 / (sin h + 0.50572 (h + 6.07995°)^{−1.6364})। विसरित = गोधूलि तालिका (उन्नतांश ≤ 0) / 400 + 16000 sin h (उन्नतांश &gt; 0), बादल के लिए (1 + 0.5 cloud) से गुणा —— यह एक धारणा है (मॉड्यूल का docstring देखें)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

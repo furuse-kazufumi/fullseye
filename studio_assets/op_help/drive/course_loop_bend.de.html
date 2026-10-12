@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecourse; drivecourse.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_loop_bend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Halbkreis am Ende des Rundkurses (180° nach links): Einfahrt (0, 0, 0) → um den Mittelpunkt (0, R) → Ausfahrt (0, 2R, π). Das Polygon ist der halbe Kreisring zwischen dem äußeren Bogen (Radius R + w/2) und dem inneren Bogen (R − w/2). Fläche = π R w (geschlossene Form); das Polygon ist um den Anteil der Polygonzug-Näherung der Bögen kleiner und konvergiert mit wachsendem arc_pts. Norm (Rundkurs): Breite mindestens 8 m, annähernd oval.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ w/2(内側の弧が潰れる)、幅・半径が正でない、arc_pts が不正。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ w/2 (der innere Bogen entartet), Breite oder Radius nicht positiv, arc_pts ungültig.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

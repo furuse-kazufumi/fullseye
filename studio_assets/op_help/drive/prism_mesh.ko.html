@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.prism_mesh(footprint: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;, height: &#x27;float&#x27;, *, base_z: &#x27;float&#x27; = 0.0) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveplateau; driveplateau.prism_mesh(footprint: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;, height: &#x27;float&#x27;, *, base_z: &#x27;float&#x27; = 0.0) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;prism_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>바닥 다각형을 높이 <code style="color:#22d3bf">height</code>의 기둥으로 압출합니다(바닥면 없음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>頂点の並びは <code style="color:#22d3bf">V[0:k]</code> が底の環、<code style="color:#22d3bf">V[k:2k]</code> が天井の環(同じ順)。側面は辺ごとに四角形 2 三角形、屋根は耳切りの三角形。外向き法線になる向きで返す。</p>
+<p>정점의 순서는 <code style="color:#22d3bf">V[0:k]</code> 가 바닥의 고리, <code style="color:#22d3bf">V[k:2k]</code> 가 천장의 고리(같은 순서). 측면은 변마다 사각형 2 삼각형, 지붕은 귀 자르기(ear clipping) 삼각형. 바깥쪽 법선이 되는 방향으로 반환한다.</p>
 <p>Args:</p>
-<p>footprint: (k,2) 局所 x,y [m]。向きは任意(内部で反時計回りに揃える)。</p>
-<p>height: 柱の高さ [m] &gt; 0。</p>
-<p>base_z: 底の z [m]。</p>
+<p>footprint: (k,2) 국소 x,y [m]. 방향은 임의(내부에서 반시계 방향으로 맞춘다).</p>
+<p>height: 기둥의 높이 [m] &gt; 0.</p>
+<p>base_z: 바닥의 z [m].</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(V (2k,3) float64, F (m,3) int64, is_roof (m,) bool)</code>。</p>
+<p><code style="color:#22d3bf">(V (2k,3) float64, F (m,3) int64, is_roof (m,) bool)</code>.</p>
 <p>Raises:</p>
-<p>ValueError: height ≤ 0 / 非有限、footprint が不正。</p>
+<p>ValueError: height ≤ 0 / 비유한, footprint 가 부정.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

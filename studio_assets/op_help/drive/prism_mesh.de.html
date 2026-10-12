@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.prism_mesh(footprint: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;, height: &#x27;float&#x27;, *, base_z: &#x27;float&#x27; = 0.0) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveplateau; driveplateau.prism_mesh(footprint: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;, height: &#x27;float&#x27;, *, base_z: &#x27;float&#x27; = 0.0) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;prism_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extrudiert ein Grundrisspolygon zu einem Prisma der Höhe <code style="color:#22d3bf">height</code> (ohne Bodenfläche).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>頂点の並びは <code style="color:#22d3bf">V[0:k]</code> が底の環、<code style="color:#22d3bf">V[k:2k]</code> が天井の環(同じ順)。側面は辺ごとに四角形 2 三角形、屋根は耳切りの三角形。外向き法線になる向きで返す。</p>
+<p>In der Eckpunktreihenfolge ist <code style="color:#22d3bf">V[0:k]</code> der untere Ring und <code style="color:#22d3bf">V[k:2k]</code> der obere Ring (gleiche Reihenfolge). Die Seiten sind pro Kante ein Viereck aus 2 Dreiecken, das Dach besteht aus Ear-Clipping-Dreiecken. Zurückgegeben in der Orientierung, die nach außen gerichtete Normalen ergibt.</p>
 <p>Args:</p>
-<p>footprint: (k,2) 局所 x,y [m]。向きは任意(内部で反時計回りに揃える)。</p>
-<p>height: 柱の高さ [m] &gt; 0。</p>
-<p>base_z: 底の z [m]。</p>
+<p>footprint: (k,2) lokale x,y [m]. Beliebige Orientierung (intern gegen den Uhrzeigersinn ausgerichtet).</p>
+<p>height: Höhe des Prismas [m] &gt; 0.</p>
+<p>base_z: z des Bodens [m].</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(V (2k,3) float64, F (m,3) int64, is_roof (m,) bool)</code>。</p>
+<p><code style="color:#22d3bf">(V (2k,3) float64, F (m,3) int64, is_roof (m,) bool)</code>.</p>
 <p>Raises:</p>
-<p>ValueError: height ≤ 0 / 非有限、footprint が不正。</p>
+<p>ValueError: height ≤ 0 / nicht endlich, ungültiger footprint.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

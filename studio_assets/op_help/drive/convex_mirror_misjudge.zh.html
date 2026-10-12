@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_misjudge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把凸面镜中车辆的距离和速度当作平面镜来读时的误判(近轴闭式，可用数组)。场景 S064、S130。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>k = 1 + 2e/R。距離(大きさから): â = k a。速さは読み方で 3 つ:</p>
-<p><code style="color:#22d3bf">speed_size_consistent</code> = k v(大きさの変化を、大きさから読んだ距離と矛盾なく読む → 速く見える)、<code style="color:#22d3bf">speed_size_anchored</code> = k v (e + a)²/(e + k a)²(本当の距離 a にある物の大きさの変化として読む → a &gt; e/√k で遅い)、<code style="color:#22d3bf">speed_lateral_anchored</code> = v (e + a)/(e + k a)(横切る動きの角の速さを本当の距離で読む → 遅い)。<code style="color:#22d3bf">tau_apparent</code> = (e + k a)/(k v)(大きさとその変化率の比 = 見かけの到達時間)、<code style="color:#22d3bf">tau_true</code> = a / v。遠く見える(k &gt; 1)は読み方によらないが、<b>遅く見えるのは本当の距離に錨を置いたときだけ</b> —— 返り値の 3 つで分かる。</p>
+<p>k = 1 + 2e/R。距离(由大小推断): â = k a。速度按解读方式有 3 种:</p>
+<p><code style="color:#22d3bf">speed_size_consistent</code> = k v(将大小的变化与由大小推断的距离一致地解读 → 看起来更快), <code style="color:#22d3bf">speed_size_anchored</code> = k v (e + a)²/(e + k a)²(解读为位于真实距离 a 处物体的大小变化 → a &gt; e/√k 时更慢), <code style="color:#22d3bf">speed_lateral_anchored</code> = v (e + a)/(e + k a)(以真实距离解读横穿运动的角速度 → 更慢)。<code style="color:#22d3bf">tau_apparent</code> = (e + k a)/(k v)(大小与其变化率之比 = 视在到达时间),<code style="color:#22d3bf">tau_true</code> = a / v。看起来更远(k &gt; 1)与解读方式无关,但 <b>只有以真实距离为锚时才看起来更慢</b> —— 由返回值的 3 个量可知。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

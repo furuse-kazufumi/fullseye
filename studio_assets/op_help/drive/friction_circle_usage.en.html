@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.friction_circle_usage(ax, ay, *, mu: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelateral; drivelateral.friction_circle_usage(ax, ay, *, mu: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;friction_circle_usage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Friction-circle utilization √(a_x² + a_y²) / (μ g) (above 1 = outside the friction circle = exceeds the force the tires can receive from the road surface).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">ax</code>, <code style="color:#22d3bf">ay</code>: 縦・横の加速度 [m/s²] (同じ形、または放送できる形)。<code style="color:#22d3bf">mu</code>: 路面とタイヤの摩擦係数(&gt; 0)。</p>
-<p>返り値: 使用率の配列(入力と同じ形)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 非有限、μ ≤ 0、g ≤ 0。</p>
+<p><code style="color:#22d3bf">ax</code>, <code style="color:#22d3bf">ay</code>: longitudinal and lateral acceleration [m/s²] (same shape, or broadcastable shapes). <code style="color:#22d3bf">mu</code>: road–tyre friction coefficient (&gt; 0).</p>
+<p>Returns: array of usage ratios (same shape as the input).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-finite, μ ≤ 0, g ≤ 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

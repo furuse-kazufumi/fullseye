@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bekker_pressure(sinkage, width, soil) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roverslip; roverslip.bekker_pressure(sinkage, width, soil) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;bekker_pressure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Bekker pressure–sinkage <code style="color:#22d3bf">p = (k_c / b + k_φ) zⁿ</code> [kPa]. <code style="color:#22d3bf">sinkage</code> [m] is a scalar or an array (≥ 0); <code style="color:#22d3bf">width</code> = b [m].</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返りは <code style="color:#22d3bf">sinkage</code> と同じ形の配列(スカラーなら 0 次元)。z = 0 で 0、z について単調に増える。</p>
+<p>Returns an array of the same shape as <code style="color:#22d3bf">sinkage</code> (0-dimensional for a scalar). 0 at z = 0, monotonically increasing in z.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

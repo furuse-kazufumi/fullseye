@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>凸面鏡的虛像(近軸，可用陣列)。場景 S064、S130。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>1/a + 1/b = 2/R(b は鏡の向こうの虚像)→ b = aR/(2a + R)、倍率 m = R/(2a + R)。眼が鏡から e(<code style="color:#22d3bf">eye_distance</code>)のとき像の見かけの大きさ θ = 2 atan(m h /(2(e + b)))、近軸では m h/(e + b) = h/(e + k a)、k = 1 + 2e/R。<code style="color:#22d3bf">flat_equivalent_distance</code> = 同じ大きさに見える平面鏡の距離 k a(遠くに見える量)。</p>
-<p>空の入力(<code style="color:#22d3bf">object_distance</code> が 0 要素)は ValueError。</p>
+<p>1/a + 1/b = 2/R(b 為鏡子另一側的虛像)→ b = aR/(2a + R),倍率 m = R/(2a + R)。眼睛距鏡子 e(<code style="color:#22d3bf">eye_distance</code>)時, 像的視大小 θ = 2 atan(m h /(2(e + b))),近軸下為 m h/(e + b) = h/(e + k a),k = 1 + 2e/R。<code style="color:#22d3bf">flat_equivalent_distance</code> = 看起來同樣大小的平面鏡距離 k a(看起來較遠的量)。</p>
+<p>空輸入(<code style="color:#22d3bf">object_distance</code> 為 0 個元素)會引發 <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

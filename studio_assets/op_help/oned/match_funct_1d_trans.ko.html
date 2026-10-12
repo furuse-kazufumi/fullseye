@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_funct_1d_trans(y1, y2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import funct1d; funct1d.match_funct_1d_trans(y1, y2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops1d.get(&quot;match_funct_1d_trans&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Best integer translation between two functions by correlation (HALCON <code style="color:#22d3bf">match_funct_1d_trans</code>, translation only).</p>
+<p>상관에 의한 두 함수 사이의 최적 정수 평행 이동(HALCON <code style="color:#22d3bf">match_funct_1d_trans</code>, 평행 이동만).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>The returned <code style="color:#22d3bf">shift</code> uses the convention</p>
 <p><code style="color:#22d3bf">y1[i] ~= y2[i - shift]</code></p>
 <p>i.e. if *y2* is *y1* delayed (rolled right) by <code style="color:#22d3bf">s</code> samples, <code style="color:#22d3bf">shift</code> is <code style="color:#22d3bf">-s</code>.</p>

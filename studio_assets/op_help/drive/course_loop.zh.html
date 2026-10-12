@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_loop(straight=80.0, radius=30.0, width=8.0, arc_pts=64, overlap=0.05)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_loop(straight=80.0, radius=30.0, width=8.0, arc_pts=64, overlap=0.05)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_loop&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>环形路线(长圆形)：返回以原点为中心放置 2 条直线 + 2 个半圆的 <code style="color:#22d3bf">{&quot;elements&quot;: [...], &quot;placements&quot;: [...]}</code>(可直接传给 <code style="color:#22d3bf">course_layout</code>)。按逆时针：南侧直线(向东，y = −R)→ 东侧半圆 → 北侧直线(向西，y = +R)→ 西侧半圆。直线两端各以 <code style="color:#22d3bf">overlap</code> 嵌入半圆(为 3-D 化时接缝处不立起路缘石而设的重叠；面积之和对该部分重复计算)。规格(普通驾照)：80 m 以上的直线行驶部分，宽 8 m 以上。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 直線が正でない、半円の条件(course_loop_bend)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 直线非正、半圆的条件(course_loop_bend)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

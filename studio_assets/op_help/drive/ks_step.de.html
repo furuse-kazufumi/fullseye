@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ks_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Integriert das kinematische Einspurmodell (KS) unter stückweise konstantem Eingang u = (δ̇, a) mit RK4 um dt weiter. Bezugspunkt = Mitte der Hinterachse.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>state = (x_rear, y_rear, δ, v, ψ)。式: ẋ = v cos ψ、ẏ = v sin ψ、δ̇ = u₀、v̇ = u₁、ψ̇ = v / l_wb · tan δ (commonroad-vehicle-models <code style="color:#22d3bf">vehicle_dynamics_ks</code>、入力の飽和 <code style="color:#22d3bf">steering_constraints</code> / <code style="color:#22d3bf">acceleration_constraints</code> も同じ)。</p>
-<p>門: δ = 0 で x = x₀ + v t(1e-9)、一定 δ で半径 l_wb / tan δ の円(1 周で始点へ 1e-6)、commonroad-io があれば <code style="color:#22d3bf">vehicle_dynamics_ks</code> の odeint と 1 step で 1e-6 一致。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: state が (5,) でない・非有限、u が (2,) でない、dt ≤ 0、params が不正。</p>
+<p>state = (x_rear, y_rear, δ, v, ψ). Gleichungen: ẋ = v cos ψ, ẏ = v sin ψ, δ̇ = u₀, v̇ = u₁, ψ̇ = v / l_wb · tan δ (commonroad-vehicle-models <code style="color:#22d3bf">vehicle_dynamics_ks</code>; auch die Eingangssättigung <code style="color:#22d3bf">steering_constraints</code> / <code style="color:#22d3bf">acceleration_constraints</code> ist dieselbe).</p>
+<p>Gates: bei δ = 0 ist x = x₀ + v t (1e-9); bei konstantem δ ein Kreis mit Radius l_wb / tan δ (nach einer Runde zurück am Start, 1e-6); ist commonroad-io vorhanden, Übereinstimmung mit dem odeint von <code style="color:#22d3bf">vehicle_dynamics_ks</code> auf 1e-6 über 1 Step.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: state nicht (5,) oder nicht endlich, u nicht (2,), dt ≤ 0, ungültige params.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

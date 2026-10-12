@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × signal × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_scattered(points, values, query, method=&#x27;linear&#x27;, fill_value=nan, rescale=False, neighbors=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathops; mathops.interp_scattered(points, values, query, method=&#x27;linear&#x27;, fill_value=nan, rescale=False, neighbors=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;interp_scattered&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Values at *query* from <b>scattered</b> samples — sensor nets, boreholes, weather.</p>
+<p><b>흩어진</b> 표본으로부터 *query* 위치의 값을 구한다 —— 센서망, 시추공, 기상.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">interp_linear</code> and <code style="color:#22d3bf">interp_cubic</code> need samples on a sorted 1-D axis. A great deal of measurement does not arrive that way: temperature sensors bolted wherever a rack allowed, boreholes drilled where access permitted, weather stations placed by history. This is the N-D scattered entry point (<code style="color:#22d3bf">scipy.interpolate</code>), and it returns <b>how much of the answer was not interpolation at all</b>.</p>
 <p>*method*:</p>
 <p><code style="color:#22d3bf">&quot;nearest&quot;</code></p>

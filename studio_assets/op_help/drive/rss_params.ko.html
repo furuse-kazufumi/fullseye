@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_params(rho: &#x27;float&#x27; = 1.0, accel_max: &#x27;float&#x27; = 3.5, brake_min: &#x27;float&#x27; = 4.0, brake_max: &#x27;float&#x27; = 8.0, brake_min_correct: &#x27;float&#x27; = 3.0, lat_accel_max: &#x27;float&#x27; = 0.2, lat_brake_min: &#x27;float&#x27; = 0.8, lat_margin: &#x27;float&#x27; = 0.1, min_distance: &#x27;float&#x27; = 0.0, v_max_accel: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, Optional[float]]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import rsssafety; rsssafety.rss_params(rho: &#x27;float&#x27; = 1.0, accel_max: &#x27;float&#x27; = 3.5, brake_min: &#x27;float&#x27; = 4.0, brake_max: &#x27;float&#x27; = 8.0, brake_min_correct: &#x27;float&#x27; = 3.0, lat_accel_max: &#x27;float&#x27; = 0.2, lat_brake_min: &#x27;float&#x27; = 0.8, lat_margin: &#x27;float&#x27; = 0.1, min_distance: &#x27;float&#x27; = 0.0, v_max_accel: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, Optional[float]]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;rss_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>RSS 매개변수 dict를 만듭니다(기본 = ad-rss-lib의 공표 표, ρ는 ego의 1 s).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>ad-rss-lib <code style="color:#22d3bf">doc/ad_rss/Appendix-ParameterDiscussion.md</code> の &quot;conservative starting point&quot;:</p>
-<p>ρ_ego = 1 s(他車は <code style="color:#22d3bf">rss_params(rho=2.0)</code>)、a_accel_max = 3.5、a_brake_min = 4、a_brake_max = 8、a_brake_min_correct = 3、a^lat_brake_min = 0.8、a^lat_accel_max = 0.2、δ^lat_min(μ)= 0.1 m。</p>
+<p>ad-rss-lib <code style="color:#22d3bf">doc/ad_rss/Appendix-ParameterDiscussion.md</code> 의 &quot;conservative starting point&quot;:</p>
+<p>ρ_ego = 1 s(타 차량은 <code style="color:#22d3bf">rss_params(rho=2.0)</code>), a_accel_max = 3.5, a_brake_min = 4, a_brake_max = 8, a_brake_min_correct = 3, a^lat_brake_min = 0.8, a^lat_accel_max = 0.2, δ^lat_min(μ) = 0.1 m.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>rho : 応答時間 [s] (≥ 0)</p>
-<p>accel_max : 応答時間中の最大加速度 [m/s²] (≥ 0)</p>
-<p>brake_min : 応答後に最低限かける減速度の大きさ [m/s²] (&gt; 0)</p>
-<p>brake_max : 先行車が急ブレーキでかけうる最大減速度の大きさ [m/s²] (&gt; 0、brake_min ≤ brake_max)</p>
-<p>brake_min_correct : 正しい車線を走る車が対向に対してかける最低減速度の大きさ(&gt; 0、≤ brake_min)</p>
-<p>lat_accel_max : 横方向の最大加速度 [m/s²] (≥ 0)</p>
-<p>lat_brake_min : 横方向の最低減速度の大きさ [m/s²] (&gt; 0)</p>
-<p>lat_margin : 横方向の揺らぎ余裕 μ [m] (≥ 0)</p>
-<p>min_distance : 縦方向に停止後も残す最小間隔 [m] (≥ 0。lib の <code style="color:#22d3bf">min_longitudinal_safety_distance</code>)</p>
-<p>v_max_accel : 応答時間中の加速で到達しうる最大速度 [m/s] (None = 制限なし。lib の <code style="color:#22d3bf">max_speed_on_acceleration</code>)</p>
+<p>rho : 응답 시간 [s] (≥ 0)</p>
+<p>accel_max : 응답 시간 중 최대 가속도 [m/s²] (≥ 0)</p>
+<p>brake_min : 응답 후 최소한 가하는 감속도의 크기 [m/s²] (&gt; 0)</p>
+<p>brake_max : 선행 차량이 급제동으로 가할 수 있는 최대 감속도의 크기 [m/s²] (&gt; 0, brake_min ≤ brake_max)</p>
+<p>brake_min_correct : 올바른 차로를 달리는 차량이 대향 차량에 대해 가하는 최소 감속도의 크기(&gt; 0, ≤ brake_min)</p>
+<p>lat_accel_max : 횡방향 최대 가속도 [m/s²] (≥ 0)</p>
+<p>lat_brake_min : 횡방향 최소 감속도의 크기 [m/s²] (&gt; 0)</p>
+<p>lat_margin : 횡방향 흔들림 여유 μ [m] (≥ 0)</p>
+<p>min_distance : 종방향으로 정지 후에도 남기는 최소 간격 [m] (≥ 0. lib 의 <code style="color:#22d3bf">min_longitudinal_safety_distance</code>)</p>
+<p>v_max_accel : 응답 시간 중 가속으로 도달할 수 있는 최대 속도 [m/s] (None = 제한 없음. lib 의 <code style="color:#22d3bf">max_speed_on_acceleration</code>)</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>dict : キー名は引数名と同じ。値は float(v_max_accel だけ None を許す)。</p>
+<p>dict : 키 이름은 인수 이름과 같다. 값은 float(v_max_accel 만 None 허용).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

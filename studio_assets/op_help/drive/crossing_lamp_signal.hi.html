@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crossing_lamp_signal(t, *, t_on: &#x27;float&#x27;, t_off: &#x27;float&#x27;, flash_per_min: &#x27;float&#x27; = 50.0, duty: &#x27;float&#x27; = 0.5, exposure: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecrossing; drivecrossing.crossing_lamp_signal(t, *, t_on: &#x27;float&#x27;, t_off: &#x27;float&#x27;, flash_per_min: &#x27;float&#x27; = 50.0, duty: &#x27;float&#x27; = 0.5, exposure: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;crossing_lamp_signal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 लाल चमकती lamps की brightness (0..1) समय t (array) पर लौटाता है: shape (n, 2), column 0 = बायाँ, column 1 = दायाँ।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>1 灯の周期 P = 60 / flash_per_min、点灯 duty·P。右の灯は P/2 遅れ(解釈基準「交互に点滅」)。点くのは [t_on, t_off)。<code style="color:#22d3bf">exposure</code> &gt; 0 ならカメラの露光 [t, t + exposure] の平均(点灯時間の原始関数で閉形式)。</p>
+<p>1 बत्ती का आवर्तकाल P = 60 / flash_per_min, जलने का समय duty·P। दाईं बत्ती P/2 पीछे रहती है (व्याख्या मानदंड &quot;बारी-बारी से चमकना&quot;)। जलने का अंतराल [t_on, t_off) है। <code style="color:#22d3bf">exposure</code> &gt; 0 हो तो कैमरे के एक्सपोज़र [t, t + exposure] का औसत (जलने के समय के पूर्वग फलन से बंद-रूप में)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import roadjp; roadjp.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;sign_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 RGBA float (H, W, 4) ∈ [0,1] 返回交通标志的图像(标志板外 = alpha 0)。宽 = <code style="color:#22d3bf">size_px</code>，高按形状的比例。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>形と色(規格の配色、記号は単純化):</p>
-<p style="margin:2px 0 2px 12px">• stop: 逆三角形・赤地・白の「止まれ」+ 下に小さく「STOP」。 slow: 逆三角形・白地・赤枠・青の「徐行」+「SLOW」。</p>
-<p style="margin:2px 0 2px 12px">• speed_limit: 円・白地・赤枠・青の数字(<code style="color:#22d3bf">value</code>、既定 40)。 no_entry: 円・赤地・白の横棒。</p>
-<p style="margin:2px 0 2px 12px">• no_parking: 円・青地・赤枠・赤の斜線(左上→右下)。 one_way: 横長の青地に白の矢印(右向き)。</p>
-<p style="margin:2px 0 2px 12px">• crosswalk: 青地の五角形(家型)に白の歩行者と横断歩道の縞。</p>
-<p style="margin:2px 0 2px 12px">• caution_crossing / caution_signal / caution_children: 黄地の菱形・黒縁、黒の記号(踏切 = 遮断機の棒 2 本と ×、信号機 = 3 つの円(赤黄青)、学童 = 2 人の人型)。</p>
-<p>文字は PIL でラスタ化する(annotate と同じフォント探索。<code style="color:#22d3bf">font_path</code> で固定できる)。<b>フォントに字形が無ければ ValueError</b>(豆腐を黙って出さない)。<code style="color:#22d3bf">side</code> は <code style="color:#22d3bf">sign_params</code> と同じ(寸法比だけに効く)。</p>
+<p>形状与颜色(标准配色,符号已简化):</p>
+<p style="margin:2px 0 2px 12px">• stop:倒三角形、红底、白色的&quot;停止&quot;(日文 Tomare)+ 下方小字&quot;STOP&quot;。 slow:倒三角形、白底、红框、蓝色的&quot;徐行&quot;+&quot;SLOW&quot;。</p>
+<p style="margin:2px 0 2px 12px">• speed_limit:圆形、白底、红框、蓝色数字(<code style="color:#22d3bf">value</code>,默认 40)。 no_entry:圆形、红底、白色横杠。</p>
+<p style="margin:2px 0 2px 12px">• no_parking:圆形、蓝底、红框、红色斜线(左上→右下)。 one_way:横长的蓝底上白色箭头(向右)。</p>
+<p style="margin:2px 0 2px 12px">• crosswalk:蓝底的五边形(房屋形)上白色行人与人行横道条纹。</p>
+<p style="margin:2px 0 2px 12px">• caution_crossing / caution_signal / caution_children:黄底菱形、黑边、黑色符号(铁路道口 = 2 根栏杆与 ×、信号灯 = 3 个圆(红黄青)、学童 = 2 个人形)。</p>
+<p>文字用 PIL 栅格化(与 annotate 相同的字体搜索,可用 <code style="color:#22d3bf">font_path</code> 固定)。<b>字体中没有字形时 ValueError</b>(不会默默输出豆腐块)。<code style="color:#22d3bf">side</code> 与 <code style="color:#22d3bf">sign_params</code> 相同(仅影响尺寸比)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

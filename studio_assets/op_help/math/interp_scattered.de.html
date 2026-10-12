@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × signal × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_scattered(points, values, query, method=&#x27;linear&#x27;, fill_value=nan, rescale=False, neighbors=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathops; mathops.interp_scattered(points, values, query, method=&#x27;linear&#x27;, fill_value=nan, rescale=False, neighbors=None)</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;interp_scattered&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Values at *query* from <b>scattered</b> samples — sensor nets, boreholes, weather.</p>
+<p>Werte an *query* aus <b>verstreuten</b> Stichproben — Sensornetze, Bohrlöcher, Wetter.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">interp_linear</code> and <code style="color:#22d3bf">interp_cubic</code> need samples on a sorted 1-D axis. A great deal of measurement does not arrive that way: temperature sensors bolted wherever a rack allowed, boreholes drilled where access permitted, weather stations placed by history. This is the N-D scattered entry point (<code style="color:#22d3bf">scipy.interpolate</code>), and it returns <b>how much of the answer was not interpolation at all</b>.</p>
 <p>*method*:</p>
 <p><code style="color:#22d3bf">&quot;nearest&quot;</code></p>

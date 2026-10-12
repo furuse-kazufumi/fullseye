@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import graphinv; graphinv.graph_edge_consensus(adjs, ordered=False, n_null=0, swaps_per_edge=5, seed=0)</code>; aus dem Register: <code style="color:#22d3bf">opsgraph.get(&quot;graph_edge_consensus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>How many individuals share each connection — K wiring matrices on one node order.</p>
+<p>Wie viele Individuen jede Verbindung teilen — K Verschaltungsmatrizen in einer Knotenreihenfolge.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">adjs</code> is either a list of K square matrices or a table <code style="color:#22d3bf">{name: matrix}</code> (its insertion order is the individual order), all on the <b>same</b> node order (align the cell names first; a node absent from an individual is a zero row and column). Weights (synapse counts) are kept for the synapse shares; presence is <code style="color:#22d3bf">&gt; 0</code>. Self-loops are dropped.</p>
 <p>Returns a dict with:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> (K), <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">names</code>, <code style="color:#22d3bf">edges_per_individual</code> and <code style="color:#22d3bf">union</code> (edges seen in at least one individual)</p>

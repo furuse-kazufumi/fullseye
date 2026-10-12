@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_dx(psd: &#x27;dict&#x27;, q: &#x27;float&#x27; = 50.0, convention: &#x27;str&#x27; = &#x27;log_edges&#x27;) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import grind; grind.particle_size_dx(psd: &#x27;dict&#x27;, q: &#x27;float&#x27; = 50.0, convention: &#x27;str&#x27; = &#x27;log_edges&#x27;) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_dx&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>संचयी volume <code style="color:#22d3bf">q</code> % पर व्यास Dq [µm] (D10 / D50 / D90 के लिए <code style="color:#22d3bf">q</code> = 10 / 50 / 90)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p><code style="color:#22d3bf">convention</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;log_edges&quot;</code>(既定、装置のヘッダの <code style="color:#22d3bf">Dx (50)</code> と一致): 端 i の累積に対して log(径) を線形補間。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;linear_edges&quot;</code>: 端の累積に対して径そのものを線形補間(区間内の体積が径について一様、の仮定)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;lower_cumsum&quot;</code>: 公開の解析コードの学習の段の定義 <code style="color:#22d3bf">np.interp(q/100, cumsum(v), edges)</code>(累積を区間の下の端に置く)。1 区間分小さく出る(この装置で −11.9 %)。比較のために再現しているだけで、推奨しない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;log_edges&quot;</code> (डिफ़ॉल्ट, उपकरण हेडर के <code style="color:#22d3bf">Dx (50)</code> से मेल खाता है): किनारे i के संचयी मान के सापेक्ष log(व्यास) का रैखिक अंतर्वेशन।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;linear_edges&quot;</code>: किनारों के संचयी मानों के सापेक्ष व्यास का ही रैखिक अंतर्वेशन (मान्यता: अंतराल के भीतर आयतन व्यास के अनुसार एकसमान है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;lower_cumsum&quot;</code>: सार्वजनिक विश्लेषण कोड के प्रशिक्षण चरण की परिभाषा <code style="color:#22d3bf">np.interp(q/100, cumsum(v), edges)</code> (संचयी मान को अंतराल के निचले किनारे पर रखता है)। परिणाम 1 अंतराल छोटा आता है (इस उपकरण पर −11.9 %)। केवल तुलना के लिए पुनरुत्पादित, अनुशंसित नहीं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

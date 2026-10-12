@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import funct1d; funct1d.transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0)</code>;从台账取用则 <code style="color:#22d3bf">ops1d.get(&quot;transform_funct_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Independent affine transform of x and y (HALCON <code style="color:#22d3bf">transform_funct_1d</code>).</p>
+<p>对 x 与 y 分别独立做仿射变换(HALCON <code style="color:#22d3bf">transform_funct_1d</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Returns explicit pairs <code style="color:#22d3bf">(mult_x * i + add_x, mult_y * y[i] + add_y)</code> for <code style="color:#22d3bf">i = 0..n-1</code>. Note <code style="color:#22d3bf">mult_x = 0</code> collapses the abscissa to a single point (accepted; the result is then not a function of x).</p>
 <p>:param y: 1-D function (may be empty). :param mult_x, add_x, mult_y, add_y: finite affine coefficients. :returns: <code style="color:#22d3bf">(n, 2)</code> float64 array of <code style="color:#22d3bf">(x, y)</code> pairs. :raises ValueError: non-1-D / NaN / Inf input, or non-finite parameter.</p>
 <p>Empty input (<code style="color:#22d3bf">y</code> with 0 elements) returns an empty result (reason: a 1-D function with 0 samples is a valid function (as in HALCON&#x27;s funct_1d), and empty functions flow through chains of function ops).</p>

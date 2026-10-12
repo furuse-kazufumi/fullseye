@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largedef_correction(d, n: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tacdome; tacdome.largedef_correction(d, n: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;largedef_correction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बड़े deformation का correction κₙ(d) = [1 − c₁·d + n/(2+n)·d²]/(1 − d)² (समीकरण 3, c₁ <code style="color:#22d3bf">largedef_c1_coefficient</code> से)। F = κₙ·F_L।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">d</code> はスカラーか配列(0 ≤ d &lt; 1)。既定の読みは導出した c₁ = 2n/(1+n)。d → 0 で 1 + 2d/(1+n)、n = 1 で neo-Hookean の円柱の厳密解 [(1 − d)⁻² − (1 − d)]/(3d) に一致する。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、n が [1, 3] の外、読みの綴り違い。</p>
+<p><code style="color:#22d3bf">d</code> अदिश या सरणी है (0 ≤ d &lt; 1)। डिफ़ॉल्ट पठन-विधि व्युत्पन्न c₁ = 2n/(1+n) है। d → 0 पर 1 + 2d/(1+n), और n = 1 पर यह neo-Hookean बेलन के सटीक हल [(1 − d)⁻² − (1 − d)]/(3d) से मेल खाता है। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d का [0, 1) से बाहर होना, n का [1, 3] से बाहर होना, पठन-विधि की वर्तनी गलत।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

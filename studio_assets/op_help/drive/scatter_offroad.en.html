@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scatter_offroad(course, bounds, n: &#x27;int&#x27; = 60, r_min: &#x27;float&#x27; = 4.0, margin: &#x27;float&#x27; = 3.0, seed: &#x27;int&#x27; = 0, max_tries: &#x27;int&#x27; = 20000) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveterrain; driveterrain.scatter_offroad(course, bounds, n: &#x27;int&#x27; = 60, r_min: &#x27;float&#x27; = 4.0, margin: &#x27;float&#x27; = 3.0, seed: &#x27;int&#x27; = 0, max_tries: &#x27;int&#x27; = 20000) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;scatter_offroad&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Scatters objects off the road (dart throwing): each point is at least <code style="color:#22d3bf">margin</code> from the course and at least <code style="color:#22d3bf">r_min</code> from every other point.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返り値 (n&#x27;, 3) = (x, y, yaw)。<code style="color:#22d3bf">max_tries</code> で n に届かなければあるだけ返す(n&#x27; ≤ n)。</p>
-<p>空の入力(<code style="color:#22d3bf">course</code> が空の dict)は ValueError。</p>
+<p>Returns (n&#x27;, 3) = (x, y, yaw). If n is not reached within <code style="color:#22d3bf">max_tries</code>, returns as many as there are (n&#x27; ≤ n).</p>
+<p>Empty input (<code style="color:#22d3bf">course</code> is an empty dict) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

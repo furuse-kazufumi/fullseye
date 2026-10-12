@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;cr_feasible&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Kinematic feasibility (a second (independent) implementation of the same idea as the grader&#x27;s <code style="color:#22d3bf">solution_feasible</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各遷移で記録した u から <code style="color:#22d3bf">ks_step</code> を回し、次の状態と |Δx|, |Δy| &lt; tol[0], tol[1]、|Δψ| &lt; tol[2] か、u が制限内か(δ̇ ∈ [ddelta_min, ddelta_max]、|a| ≤ a_max)、摩擦円 a² + (v ψ̇)² ≤ a_max² か(ψ̇ = v/l_wb tan δ)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;feasible&quot;, &quot;max_pos_err&quot;, &quot;max_psi_err&quot;, &quot;violations&quot;: [(k, reason)], &quot;n_transitions&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: run が cr_drive の物でない、tol が 3 要素でない。</p>
+<p>For each transition, <code style="color:#22d3bf">ks_step</code> is run from the recorded u, and it checks whether the next state has |Δx|, |Δy| &lt; tol[0], tol[1], |Δψ| &lt; tol[2], whether u is within limits (δ̇ ∈ [ddelta_min, ddelta_max], |a| ≤ a_max), and the friction circle a² + (v ψ̇)² ≤ a_max² (ψ̇ = v/l_wb tan δ).</p>
+<p>Return value <code style="color:#22d3bf">{&quot;feasible&quot;, &quot;max_pos_err&quot;, &quot;max_psi_err&quot;, &quot;violations&quot;: [(k, reason)], &quot;n_transitions&quot;}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: run is not from cr_drive, tol is not 3 elements.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

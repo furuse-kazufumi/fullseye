@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecourse; drivecourse.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;course_s_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>curve course (S-आकार): सीधा E → बायाँ arc (central angle 2π·f) → दायाँ arc (वैसा ही) → सीधा E।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>外径 R_o = <code style="color:#22d3bf">radius_outer</code>、内径 R_i = R_o − w、中心線の半径 R_c = (R_o + R_i)/2。2 つの弧は共通接線点で曲率の向きが反転する。多角形は中心線の標本点を法線方向に ±w/2 ずらして作る(弧の標本点は外円・内円の上に厳密に乗る)。面積 = 2πf(R_o² − R_i²) + 2Ew。規格: A = 3.5, B = 7.5, C = 3/8 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・外径が正でない、R_o ≤ w(内径が 0 以下)、arc_fraction ∉ (0, 1)、E &lt; 0、arc_pts が 1 以上の整数でない。</p>
+<p>बाहरी त्रिज्या R_o = <code style="color:#22d3bf">radius_outer</code>, भीतरी त्रिज्या R_i = R_o − w, केंद्र-रेखा की त्रिज्या R_c = (R_o + R_i)/2। दोनों चाप साझा स्पर्श-बिंदु पर वक्रता की दिशा उलट देते हैं। बहुभुज केंद्र-रेखा के नमूना बिंदुओं को normal दिशा में ±w/2 खिसकाकर बनाया जाता है (चाप के नमूना बिंदु बाहरी वृत्त / भीतरी वृत्त पर सटीक रूप से स्थित होते हैं)। क्षेत्रफल = 2πf(R_o² − R_i²) + 2Ew। मानक: A = 3.5, B = 7.5, C = 3/8 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: चौड़ाई / बाहरी त्रिज्या धनात्मक नहीं, R_o ≤ w (भीतरी त्रिज्या 0 या कम), arc_fraction ∉ (0, 1), E &lt; 0, arc_pts 1 या अधिक का पूर्णांक नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

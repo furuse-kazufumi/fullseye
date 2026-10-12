@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveplateau; driveplateau.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;plateau_parse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Stream-reads building footprint polygons, heights and ground elevations from PLATEAU CityGML.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">iterparse</code> で <code style="color:#22d3bf">Building</code>(ローカル名)の end イベントごとに処理し、処理後 <code style="color:#22d3bf">elem.clear()</code> でメモリを解放する(1 ファイル数百 MB でも動く設計)。</p>
-<p>建物ごとに:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measuredHeight</code> があれば高さに使う。無ければ <code style="color:#22d3bf">lod1Solid</code> の最大標高 − 最小標高。</p>
-<p style="margin:2px 0 2px 12px">• 足元: <code style="color:#22d3bf">lod0FootPrint</code> があればその posList。無ければ <code style="color:#22d3bf">lod1Solid</code> の全面のうち <b>平均標高が最も低い面</b>(LOD1 は押し出し柱なので底面がある)。</p>
-<p style="margin:2px 0 2px 12px">• posList は EPSG:6697 の「緯度 経度 標高」3 つ組として読む。</p>
+<p>Uses <code style="color:#22d3bf">iterparse</code> to process each end event of <code style="color:#22d3bf">Building</code> (local name), and frees memory with <code style="color:#22d3bf">elem.clear()</code> after processing (designed to work even with files of several hundred MB each).</p>
+<p>For each building:</p>
+<p style="margin:2px 0 2px 12px">• If <code style="color:#22d3bf">measuredHeight</code> exists, it is used as the height. Otherwise, the maximum elevation − minimum elevation of <code style="color:#22d3bf">lod1Solid</code>.</p>
+<p style="margin:2px 0 2px 12px">• Footprint: the posList of <code style="color:#22d3bf">lod0FootPrint</code> if present. Otherwise, among all faces of <code style="color:#22d3bf">lod1Solid</code>, the <b>face with the lowest mean elevation</b> (LOD1 is an extruded prism, so it has a bottom face).</p>
+<p style="margin:2px 0 2px 12px">• posList is read as &quot;latitude longitude elevation&quot; triples in EPSG:6697.</p>
 <p>Args:</p>
-<p>source: CityGML の文字列(<code style="color:#22d3bf">&lt;</code> で始まる)、bytes、またはファイルパス(str/Path)。</p>
-<p>origin: 局所座標の原点 <code style="color:#22d3bf">(lat0, lon0)</code> [deg]。None なら最初に採用した建物の重心。</p>
-<p>max_buildings: 採用する建物数の上限(None で無制限)。到達したら読み取りを止める。</p>
+<p>source: a CityGML string (starting with <code style="color:#22d3bf">&lt;</code>), bytes, or a file path (str/Path).</p>
+<p>origin: origin <code style="color:#22d3bf">(lat0, lon0)</code> [deg] of the local coordinates. If None, the centroid of the first adopted building.</p>
+<p>max_buildings: upper limit on the number of buildings adopted (None for unlimited). Reading stops when it is reached.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">{&quot;origin&quot;: (lat0, lon0), &quot;buildings&quot;: [...], &quot;n_skipped&quot;: int, &quot;crs&quot;: &quot;EPSG:6697 (lat, lon, alt)&quot;}</code>。各建物は</p>
-<p><code style="color:#22d3bf">{&quot;id&quot;, &quot;footprint&quot; (k,2) float64(局所 x,y[m]、閉じない、反時計回り), &quot;height&quot;, &quot;ground_z&quot;, &quot;lat&quot;, &quot;lon&quot;}</code>(lat/lon は足元頂点の平均 = 重心)。</p>
+<p><code style="color:#22d3bf">{&quot;origin&quot;: (lat0, lon0), &quot;buildings&quot;: [...], &quot;n_skipped&quot;: int, &quot;crs&quot;: &quot;EPSG:6697 (lat, lon, alt)&quot;}</code>. Each building is</p>
+<p><code style="color:#22d3bf">{&quot;id&quot;, &quot;footprint&quot; (k,2) float64(局所 x,y[m]、閉じない、反時計回り), &quot;height&quot;, &quot;ground_z&quot;, &quot;lat&quot;, &quot;lon&quot;}</code> (lat/lon are the mean of the footprint vertices = centroid).</p>
 <p>Raises:</p>
-<p>ValueError: source が空/不正、posList が 3 の倍数でない、XML が壊れている、</p>
-<p>max_buildings が負、origin が不正。</p>
+<p>ValueError: source is empty/invalid, posList is not a multiple of 3, the XML is broken,</p>
+<p>max_buildings is negative, origin is invalid.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

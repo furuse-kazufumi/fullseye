@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveterrain; driveterrain.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;course_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बिंदुओं (N, 2) से course (चलने योग्य polygons का union) तक की दूरी, और निकटतम बिंदु से बाहर की ओर इशारा करने वाला unit vector।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">{&quot;d&quot; (N,), &quot;nx&quot; (N,), &quot;ny&quot; (N,)}</code>。内側は d = 0、n = 0。外側の d は最寄りの辺への点-線分距離の閉形式で、中心軸(最寄り点が 2 つある所)を除いて |∇d| = 1(eikonal)。</p>
-<p>空の入力(<code style="color:#22d3bf">course</code> が空の dict)は ValueError。</p>
+<p><code style="color:#22d3bf">{&quot;d&quot; (N,), &quot;nx&quot; (N,), &quot;ny&quot; (N,)}</code>। भीतर d = 0, n = 0। बाहर d निकटतम भुजा तक बिंदु-रेखाखंड दूरी का बंद-रूप है, और मध्य-अक्ष (जहाँ 2 निकटतम बिंदु हैं) को छोड़कर |∇d| = 1 (eikonal)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">course</code> एक खाली dict) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

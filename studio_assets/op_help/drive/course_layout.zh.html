@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_layout(elements, placements)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_layout(elements, placements)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以刚体运动 <code style="color:#22d3bf">(x, y, yaw)</code> 放置多个要素，合成 1 个 dict。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各要素の polygon / centerline / rails / stop_lines は点として、entry / exit / signal_poses は姿勢として(yaw も回す)変換する。<code style="color:#22d3bf">profile</code>(坂道の (s, z))は要素の局所弧長なのでそのまま。返り値は <code style="color:#22d3bf">{&quot;kind&quot;: &quot;layout&quot;, &quot;elements&quot;: [変換済み要素(各々 &quot;placement&quot; を持つ)], &quot;polygon&quot;: None, &quot;bounds&quot;: (xmin, xmax, ymin, ymax), &quot;placements&quot;: [...]}</code>。内外判定は要素の和(<code style="color:#22d3bf">course_contains</code> / <code style="color:#22d3bf">course_occupancy</code>)。要素の重なりは和として扱う。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・要素と配置の数が違う・要素が dict でない・配置が 3 要素で有限でない。</p>
+<p>各元素的 polygon / centerline / rails / stop_lines 按点变换,entry / exit / signal_poses 按姿态变换(yaw 也旋转)。<code style="color:#22d3bf">profile</code>(坡道的 (s, z))是元素的局部弧长,因此保持不变。返回值为 <code style="color:#22d3bf">{&quot;kind&quot;: &quot;layout&quot;, &quot;elements&quot;: [変換済み要素(各々 &quot;placement&quot; を持つ)], &quot;polygon&quot;: None, &quot;bounds&quot;: (xmin, xmax, ymin, ymax), &quot;placements&quot;: [...]}</code>。内外判定取元素的并集(<code style="color:#22d3bf">course_contains</code> / <code style="color:#22d3bf">course_occupancy</code>)。元素的重叠按并集处理。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 元素为空、元素与布置数量不同、元素不是 dict、布置不是 3 个有限元素。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

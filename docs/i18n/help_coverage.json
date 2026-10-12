@@ -9,60 +9,60 @@
   "en": {
    "pages": 3086,
    "pages_with_example": 2898,
-   "pages_with_kana": 450,
+   "pages_with_kana": 0,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8542
+   "kana_free_share": 1.0
   },
   "zh": {
    "pages": 3086,
    "pages_with_example": 2898,
-   "pages_with_kana": 450,
-   "summaries_untranslated": 92,
-   "summary_translated_share": 0.9702,
-   "kana_free_share": 0.8542
+   "pages_with_kana": 0,
+   "summaries_untranslated": 0,
+   "summary_translated_share": 1.0,
+   "kana_free_share": 1.0
   },
   "tw": {
    "pages": 3086,
    "pages_with_example": 2898,
-   "pages_with_kana": 450,
-   "summaries_untranslated": 92,
-   "summary_translated_share": 0.9702,
-   "kana_free_share": 0.8542
+   "pages_with_kana": 0,
+   "summaries_untranslated": 0,
+   "summary_translated_share": 1.0,
+   "kana_free_share": 1.0
   },
   "ko": {
    "pages": 3086,
    "pages_with_example": 2898,
-   "pages_with_kana": 451,
-   "summaries_untranslated": 92,
-   "summary_translated_share": 0.9702,
-   "kana_free_share": 0.8539
+   "pages_with_kana": 0,
+   "summaries_untranslated": 0,
+   "summary_translated_share": 1.0,
+   "kana_free_share": 1.0
   },
   "de": {
    "pages": 3086,
    "pages_with_example": 2898,
-   "pages_with_kana": 450,
-   "summaries_untranslated": 92,
-   "summary_translated_share": 0.9702,
-   "kana_free_share": 0.8542
+   "pages_with_kana": 0,
+   "summaries_untranslated": 0,
+   "summary_translated_share": 1.0,
+   "kana_free_share": 1.0
   },
   "hi": {
    "pages": 3086,
    "pages_with_example": 2898,
-   "pages_with_kana": 450,
+   "pages_with_kana": 0,
    "summaries_untranslated": 0,
    "summary_translated_share": 1.0,
-   "kana_free_share": 0.8542
+   "kana_free_share": 1.0
   }
  },
  "frame_strings": {
-  "keys": 91,
-  "en": 91,
-  "zh": 91,
-  "tw": 91,
-  "ko": 91,
-  "de": 91,
-  "hi": 91
+  "keys": 95,
+  "en": 95,
+  "zh": 95,
+  "tw": 95,
+  "ko": 95,
+  "de": 95,
+  "hi": 95
  },
  "knowledge_guide_titles": {
   "guides": 17,

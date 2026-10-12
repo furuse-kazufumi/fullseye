@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_intrinsics_to_carla — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_intrinsics_to_carla&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
-<p>*그림 없음: 타입은 닿지만 범용 합성 입력이 이 op의 정의역 밖 —— 同上(主点を 0.5 画素戻す橋). 사용법은 아래 실행 가능한 예제를 볼 것.*</p>
+<p>*그림 없음: 타입은 닿지만 범용 합성 입력이 이 op의 정의역 밖 —— 위와 같음(주점을 0.5 화소 되돌리는 브리지). 사용법은 아래 실행 가능한 예제를 볼 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">intrinsics_to_fullseye</code>의 역변환(주점을 0.5 되돌린다).</p>
 <p>2-D 진화 레지스트리로 연결한 drive의 op <code style="color:#22d3bf">intrinsics_to_carla</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. 이 op에는 조정할 매개변수가 없으며 <code style="color:#22d3bf">a</code>도 <code style="color:#22d3bf">b</code>도 쓰이지 않는다.</p>

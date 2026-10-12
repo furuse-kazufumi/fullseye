@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_summary(adj)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import graphinv; graphinv.graph_degree_summary(adj)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgraph.get(&quot;graph_degree_summary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Degrees, density and reciprocity of a directed wiring matrix.</p>
+<p>유향 배선 행렬의 차수, 밀도, 상호성.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">adj</code> is a square matrix; entry <code style="color:#22d3bf">(i, j) &gt; 0</code> means an edge <code style="color:#22d3bf">i -&gt; j</code>. Self-loops are counted separately and excluded from the edge statistics. Returns a dict with <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">edges</code>, <code style="color:#22d3bf">self_loops</code>, the <code style="color:#22d3bf">in_degree</code> / <code style="color:#22d3bf">out_degree</code> arrays, <code style="color:#22d3bf">density</code> (<code style="color:#22d3bf">edges / (n (n-1))</code>), and <code style="color:#22d3bf">reciprocal_pairs</code> (unordered pairs wired in both directions).</p>
 <p>The identity <code style="color:#22d3bf">in_degree.sum() == out_degree.sum() == edges</code> holds exactly for any directed graph and is checked before returning (fail-closed — if it ever broke, the matrix was not what the caller thought).</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-square / empty / non-finite / negative input, or a matrix over the node cap.</p>

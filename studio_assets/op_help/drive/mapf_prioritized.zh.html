@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.mapf_prioritized(grid, starts, goals, order=None, horizon=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_prioritized&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>带优先级的规划：按顺序每次 1 台，避开先确定车辆的通行路线(预约表)进行规划。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>速いが<b>不完全</b> —— 解がある問題でも、優先順によっては(どの順でも)見つけられない(Ma ら 2019)。返りは dict: <code style="color:#22d3bf">paths</code>(失敗なら None)、<code style="color:#22d3bf">cost</code>、<code style="color:#22d3bf">solved</code>、<code style="color:#22d3bf">failed_agent</code>(最初に詰まった車両)。</p>
+<p>快速但<b>不完备</b> —— 即使问题有解,也可能因优先顺序(无论哪种顺序)而找不到(Ma 等 2019)。返回 dict:<code style="color:#22d3bf">paths</code>(失败时为 None)、<code style="color:#22d3bf">cost</code>、<code style="color:#22d3bf">solved</code>、<code style="color:#22d3bf">failed_agent</code>(最先卡住的车辆)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

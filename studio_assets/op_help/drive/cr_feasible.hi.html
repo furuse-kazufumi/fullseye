@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;cr_feasible&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>kinematic feasibility (grader के <code style="color:#22d3bf">solution_feasible</code> जैसे ही विचार का 2nd implementation)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各遷移で記録した u から <code style="color:#22d3bf">ks_step</code> を回し、次の状態と |Δx|, |Δy| &lt; tol[0], tol[1]、|Δψ| &lt; tol[2] か、u が制限内か(δ̇ ∈ [ddelta_min, ddelta_max]、|a| ≤ a_max)、摩擦円 a² + (v ψ̇)² ≤ a_max² か(ψ̇ = v/l_wb tan δ)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;feasible&quot;, &quot;max_pos_err&quot;, &quot;max_psi_err&quot;, &quot;violations&quot;: [(k, reason)], &quot;n_transitions&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: run が cr_drive の物でない、tol が 3 要素でない。</p>
+<p>प्रत्येक संक्रमण में दर्ज u से <code style="color:#22d3bf">ks_step</code> चलाया जाता है, और जाँचा जाता है कि अगली अवस्था से |Δx|, |Δy| &lt; tol[0], tol[1], |Δψ| &lt; tol[2] है या नहीं, u सीमा के भीतर है या नहीं (δ̇ ∈ [ddelta_min, ddelta_max], |a| ≤ a_max), और घर्षण-वृत्त a² + (v ψ̇)² ≤ a_max² है या नहीं (ψ̇ = v/l_wb tan δ)।</p>
+<p>रिटर्न मान <code style="color:#22d3bf">{&quot;feasible&quot;, &quot;max_pos_err&quot;, &quot;max_psi_err&quot;, &quot;violations&quot;: [(k, reason)], &quot;n_transitions&quot;}</code>।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: run cr_drive का नहीं है, tol 3 तत्वों वाला नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

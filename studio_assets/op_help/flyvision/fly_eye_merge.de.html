@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_eye_merge(lattice_a, lattice_b, *more)</code> (die Implementierung direkt: <code style="color:#22d3bf">import flyvision; flyvision.fly_eye_merge(lattice_a, lattice_b, *more)</code>; aus dem Register: <code style="color:#22d3bf">opsflyvision.get(&quot;fly_eye_merge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Several lattices seen as one wide eye — the viewing directions of all of them.</p>
+<p>Mehrere Gitter als ein einziges weites Auge — die Blickrichtungen aller zusammen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">fly_hex_resample</code> needs a lattice that fits inside one pinhole image, which caps a single patch at well under a hemisphere. A fly is not so</p>
 <p>limited: its two compound eyes together see almost the whole sphere, and the wide-field cells that read self-motion out of them integrate over all of it. This op is that integration made explicit — render each patch through its own camera, run the pathway on each, then merge the *geometry* so that one least-squares fit sees every ommatidium at once.</p>
 <p>It matters more than it looks. In a naturalistic 1/f scene the response of a correlation detector is contrast-weighted, so a narrow patch is at the mercy of whichever few large features happen to be in it; widening the field is what turns the estimate from a guess into a measurement (the PoC measures how much).</p>

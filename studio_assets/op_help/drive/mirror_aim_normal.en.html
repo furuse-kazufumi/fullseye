@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_aim_normal(eye, mirror_center, look_dir) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivedecide; drivedecide.mirror_aim_normal(eye, mirror_center, look_dir) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;mirror_aim_normal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Mirror normal that reflects a ray arriving from the eye <code style="color:#22d3bf">eye</code> at the mirror center <code style="color:#22d3bf">mirror_center</code> into the direction <code style="color:#22d3bf">look_dir</code> (works in 2D and 3D).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>n = normalize(unit(E − M) + unit(ℓ))</p>
-<p>(反射の法則: 入射の逆向きと反射の向きの二等分)。法線は眼の側を向く。<code style="color:#22d3bf">look_dir</code> が眼の方向と正反対(鏡を真横から見る)だと定まらないので ValueError。</p>
+<p>(law of reflection: the bisector of the reversed incident direction and the reflected direction). The normal faces the eye side. If <code style="color:#22d3bf">look_dir</code> is exactly opposite to the direction of the eye (viewing the mirror edge-on), the normal is undefined, so ValueError.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

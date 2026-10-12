@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_capability(signal, lsl, usl, sigma=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import spc; spc.spc_capability(signal, lsl, usl, sigma=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsspc.get(&quot;spc_capability&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Process capability indices Cp and Cpk from measurements and spec limits.</p>
+<p>由量測值與規格界限求製程能力指數 Cp 與 Cpk。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">signal</code> is a 1-D series of individual measurements; <code style="color:#22d3bf">lsl</code> / <code style="color:#22d3bf">usl</code> are the lower / upper specification limits (<code style="color:#22d3bf">lsl &lt; usl</code>). With the sample mean <code style="color:#22d3bf">mu</code> and standard deviation <code style="color:#22d3bf">sigma</code> (sample std, <code style="color:#22d3bf">ddof=1</code>, unless one is passed in explicitly)::</p>
 <p>Cp  = (USL - LSL) / (6 sigma)</p>
 <p>Cpk = min(USL - mu, mu - LSL) / (3 sigma)</p>

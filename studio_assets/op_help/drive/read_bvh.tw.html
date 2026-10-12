@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_bvh(path) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import motionio; motionio.read_bvh(path) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;read_bvh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>讀取 BVH，回傳骨架以及所有影格中關節的世界座標。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">names</code> 関節名(End Site は <code style="color:#22d3bf">&lt;親&gt;_end</code>)、<code style="color:#22d3bf">parents</code>(根は −1)、<code style="color:#22d3bf">offsets</code> (J, 3)、<code style="color:#22d3bf">positions</code> (T, J, 3) 世界座標、<code style="color:#22d3bf">frame_time</code> [s]、<code style="color:#22d3bf">channels</code>(関節ごとの CHANNELS の名前)、<code style="color:#22d3bf">motion</code> (T, C) の生の値。</p>
+<p><code style="color:#22d3bf">names</code> 關節名(End Site 為 <code style="color:#22d3bf">&lt;親&gt;_end</code>)、<code style="color:#22d3bf">parents</code>(根為 −1)、<code style="color:#22d3bf">offsets</code> (J, 3)、<code style="color:#22d3bf">positions</code> (T, J, 3) 世界座標、<code style="color:#22d3bf">frame_time</code> [s]、<code style="color:#22d3bf">channels</code>(每個關節的 CHANNELS 名稱)、<code style="color:#22d3bf">motion</code> (T, C) 原始值。</p>
 <p>Raises:</p>
-<p>ValueError: HIERARCHY / MOTION が無い、括弧の対応が崩れている、コマの値の数が CHANNELS の合計と違う。</p>
+<p>ValueError: 缺少 HIERARCHY / MOTION、括號不對應、影格的值個數與 CHANNELS 總數不同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

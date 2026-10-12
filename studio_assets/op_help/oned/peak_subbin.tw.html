@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × indices</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peak_subbin(x, idx=None, mode=&#x27;parabola&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import dsp; dsp.peak_subbin(x, idx=None, mode=&#x27;parabola&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">ops1d.get(&quot;peak_subbin&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Peak position <b>between</b> samples — the vertex of a fit through 3 points.</p>
+<p>樣本<b>之間</b>的峰位置——過 3 點擬合曲線的頂點。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">find_peaks</code> returns integer indices, so the position of a spectral line or a correlation peak is quantised to the bin grid no matter how finely the peak itself is resolved. This refines each index to a float by fitting the sample and its two neighbours.</p>
 <p>*mode* picks what is fitted:</p>
 <p><code style="color:#22d3bf">&quot;parabola&quot;</code></p>

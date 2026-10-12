@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.understeer_gradient(params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelateral; drivelateral.understeer_gradient(params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;understeer_gradient&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>understeer gradient K = (m/L)(l_r/C_f − l_f/C_r) [rad/(m/s²)], और characteristic / critical speed।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">params</code>: <code style="color:#22d3bf">mass</code> [kg]、<code style="color:#22d3bf">l_f</code>・<code style="color:#22d3bf">l_r</code>(重心から前・後車軸)[m]、<code style="color:#22d3bf">c_f</code>・<code style="color:#22d3bf">c_r</code>(軸ごとのコーナリングパワー)[N/rad]。</p>
-<p>返り値: <code style="color:#22d3bf">K</code>、<code style="color:#22d3bf">kind</code>(&quot;understeer&quot; / &quot;neutral&quot; / &quot;oversteer&quot;)、<code style="color:#22d3bf">characteristic_speed</code>(K &gt; 0 で √(L/K)、ヨーレートゲインが最大の速さ)、<code style="color:#22d3bf">critical_speed</code>(K &lt; 0 で √(−L/K)、これを超えると不安定)。無いものは <code style="color:#22d3bf">inf</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 欠けた / 正でない母数。</p>
+<p><code style="color:#22d3bf">params</code>: <code style="color:#22d3bf">mass</code> [kg], <code style="color:#22d3bf">l_f</code> / <code style="color:#22d3bf">l_r</code> (गुरुत्व केंद्र से अगले / पिछले एक्सल तक) [m], <code style="color:#22d3bf">c_f</code> / <code style="color:#22d3bf">c_r</code> (प्रति एक्सल कॉर्नरिंग स्टिफ़नेस) [N/rad]।</p>
+<p>रिटर्न: <code style="color:#22d3bf">K</code>, <code style="color:#22d3bf">kind</code> (&quot;understeer&quot; / &quot;neutral&quot; / &quot;oversteer&quot;), <code style="color:#22d3bf">characteristic_speed</code> (K &gt; 0 पर √(L/K), वह गति जिस पर यॉ-रेट गेन अधिकतम है), <code style="color:#22d3bf">critical_speed</code> (K &lt; 0 पर √(−L/K), इससे अधिक पर अस्थिर)। जो मौजूद न हो वह <code style="color:#22d3bf">inf</code>।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: अनुपस्थित / अधनात्मक पैरामीटर।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

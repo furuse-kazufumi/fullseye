@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetraffic; drivetraffic.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;idm_equilibrium_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>IDM का equilibrium gap s_e(v) = (s0 + v T) / sqrt(1 − (v/v0)^δ) (0 ≤ v &lt; v0)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Δv = 0 で <code style="color:#22d3bf">idm_accel</code> = 0 と置いて解いたもの(s* = s0 + vT)。v → v0 で発散する(希望速度では車間は要らない = 前が無限に遠い)。a, b に依らない。</p>
-<p>門: 先行車が一定速度のとき <code style="color:#22d3bf">idm_platoon_simulate</code> が収束した車間と rtol 1e-6 で一致。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0 または v ≥ v0。</p>
-<p>空の入力(<code style="color:#22d3bf">v</code> が 0 要素)は ValueError。</p>
+<p>Δv = 0 पर <code style="color:#22d3bf">idm_accel</code> = 0 रखकर हल किया गया (s* = s0 + vT)। v → v0 पर अपसारी होता है (इच्छित गति पर अंतराल की आवश्यकता नहीं = आगे वाला वाहन अनंत दूर)। a, b पर निर्भर नहीं।</p>
+<p>Gate: आगे वाला वाहन स्थिर गति पर हो तो <code style="color:#22d3bf">idm_platoon_simulate</code> द्वारा अभिसरित अंतराल से rtol 1e-6 पर मेल खाता है।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0 या v ≥ v0।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">v</code> में 0 तत्व) पर <code style="color:#22d3bf">ValueError</code> उठता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivedecide; drivedecide.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mirror_virtual_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>拍摄平面镜中映像的<b>虚拟相机</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">cam_pose</code> は world→camera の 4×4(<code style="color:#22d3bf">render3d.look_at</code> の規約: X_cam = P X、−Z 前方)。<code style="color:#22d3bf">mirror_plane</code> は(n_x, n_y, n_z, d)(n·X = d)。</p>
-<p>返り値(dict):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: 折り返し S(<code style="color:#22d3bf">mirror_reflection_matrix</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_mirrored</code> = P·S: 実物の場面をこれで写すと、実カメラが <b>鏡越しに見る像そのもの</b>(画素の位置まで同じ)。回転部の行列式は −1(左右が反転した座標系。描画器によっては面の表裏の判定が逆になる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose</code> = F·P·S、F = diag(−1, 1, 1, 1): 普通の右手系のカメラ(行列式 +1)= 鏡の向こうにいる仮想カメラ。これで撮った画像は鏡に映る像の <b>左右反転</b>(画素では u&#x27; = 2c_x − u)。バックミラーを「後ろ向きのカメラ」として扱うときはこちら(運転者が見る像に戻すには左右を反転する)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eye</code>: 仮想カメラの位置 S(C)(C = 実カメラの位置)。<code style="color:#22d3bf">eye_real</code>: C。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flip</code>: <code style="color:#22d3bf">&quot;x&quot;</code>(<code style="color:#22d3bf">pose</code> の画像は x を反転すると鏡像になる)。</p>
-<p>閉形式: S(X) = X − 2(n·X − d)n。鏡に映る点 Q の像の位置は S(Q)(鏡の向こう側、鏡面から同じ距離)。門(テスト): 入射角 = 反射角を満たす鏡面上の点 M を数値で解き(Fermat の最短経路)、C + (|CM| + |MQ|)·unit(M − C) が S(Q) と一致すること。</p>
+<p><code style="color:#22d3bf">cam_pose</code> 是 world→camera 的 4×4(<code style="color:#22d3bf">render3d.look_at</code> 的约定: X_cam = P X,−Z 为前方)。<code style="color:#22d3bf">mirror_plane</code> 为(n_x, n_y, n_z, d)(n·X = d)。</p>
+<p>返回值(dict):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: 反射 S(<code style="color:#22d3bf">mirror_reflection_matrix</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose_mirrored</code> = P·S: 用它拍摄真实场景,得到的就是实际相机<b>隔着镜子看到的像本身</b>(连像素位置都相同)。旋转部分的行列式为 −1(左右反转的坐标系。某些渲染器中面的正反判定会颠倒)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pose</code> = F·P·S,F = diag(−1, 1, 1, 1): 普通右手系相机(行列式 +1)= 位于镜子另一侧的虚拟相机。用它拍到的图像是镜中像的<b>左右翻转</b>(像素上 u&#x27; = 2c_x − u)。把后视镜当作&quot;朝后的相机&quot; 处理时用这个(要还原为驾驶员看到的像需左右翻转)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eye</code>: 虚拟相机的位置 S(C)(C = 实际相机的位置)。<code style="color:#22d3bf">eye_real</code>: C。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flip</code>: <code style="color:#22d3bf">&quot;x&quot;</code>(<code style="color:#22d3bf">pose</code> 的图像将 x 翻转即为镜像)。</p>
+<p>闭式: S(X) = X − 2(n·X − d)n。镜中所映点 Q 的像的位置为 S(Q)(在镜子另一侧,与镜面距离相同)。门(测试): 数值求解镜面上满足入射角 = 反射角的点 M(Fermat 最短路径),检查 C + (|CM| + |MQ|)·unit(M − C) 与 S(Q) 一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

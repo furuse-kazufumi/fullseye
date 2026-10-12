@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveterrain; driveterrain.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;world_apply_terrain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>world_build के आउटपुट (समतल world) पर terrain लगाता है (in place बदलता है, वही dict लौटाता है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>路面の升(objects[0] &quot;ground&quot;)を terrain_mesh に置き換え、姿勢を持つ物体(資産・木・歩行者)は姿勢の(x, y) の高さだけ剛体で持ち上げ、持たない物体(縁石・白線・停止線・レール・坂)は頂点ごとに持ち上げる。<code style="color:#22d3bf">world[&quot;terrain&quot;] = p</code> を記録する。</p>
+<p>सड़क-सतह मेश (objects[0] &quot;ground&quot;) को terrain_mesh से बदलता है; मुद्रा (pose) वाले वस्तुएँ (एसेट, पेड़, पैदल यात्री) मुद्रा के (x, y) की ऊँचाई जितना दृढ़ पिंड की तरह उठाई जाती हैं, और बिना मुद्रा वाली वस्तुएँ (कर्ब, सफ़ेद रेखाएँ, स्टॉप लाइन, रेल, ढलान) प्रति शीर्ष उठाई जाती हैं। <code style="color:#22d3bf">world[&quot;terrain&quot;] = p</code> दर्ज करता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

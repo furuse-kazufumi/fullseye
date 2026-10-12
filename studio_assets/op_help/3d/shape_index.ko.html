@@ -3,7 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_index(points, k=25, normals=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import curvature3d; curvature3d.shape_index(points, k=25, normals=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;shape_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>Koenderink 의 shape index s∈<a style="color:#22d3bf" href="볼록구+1·원기둥+0.5·안장0·오목구-1">-1,1</a>. → (N,).</p>
+<p>Koenderink 의 shape index s∈[-1,1] (볼록구+1·원기둥+0.5·안장0·오목구-1). → (N,).</p>
 <p>배꼽점/평면 판정은 <b>곡률 스케일 상대</b>(절대 임계값 없음). 완만한 볼록/오목(곡률이 미소해도)은부호=오목·볼록을 유지하고, 평면은 데이터 전체의 곡률 스케일에 대해 상대적으로 0 인 점만 s=0 으로 한다.</p>
 <p>normals(방향이 정해진 참조 법선, (N,3))를 지정하지 않으면 열린 면의 오목/볼록 부호는 부정(볼록 크기로 보고). 방향이 정해진 법선을 넘기면 대역 방향에 맞추어 올바른 부호(오목 구=cup → -1)를 낸다.</p>
 <p>계산(각 점, <code style="color:#22d3bf">principal_curvatures</code> 와 같은 피팅):</p>

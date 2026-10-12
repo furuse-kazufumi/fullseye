@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import puck; puck.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;puck_wall_bounce&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>벽과의 충돌: 법선 성분 vₙ&#x27; = −e vₙ, 접선 성분 vₜ&#x27; = kₜ vₜ(e = 법선 반발계수, kₜ = 접선 유지율 = 접선 반발계수).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>回転は持たない(壁の摩擦で入る回転は接線の減りに畳んである。Cross 2022 のディスク衝突は「滑りか把持か」で接線の反発係数を書く —— その 2 領域は入れていない)。返り値 <code style="color:#22d3bf">{&quot;v&quot;, &quot;vn_in&quot;, &quot;vn_out&quot;, &quot;vt_in&quot;, &quot;vt_out&quot;, &quot;energy_ratio&quot;}</code>。法線だけの衝突なら energy_ratio = e²(門)。<code style="color:#22d3bf">v·n ≥ 0</code>(離れていく)なら何もしない。</p>
+<p>회전은 갖지 않는다(벽 마찰로 생기는 회전은 접선 방향 감소에 접어 넣었다. Cross 2022 의 원판 충돌은 &quot;미끄럼인가 파지인가&quot; 로 접선반발계수를 쓴다 —— 그 2 영역은 넣지 않았다). 반환값 <code style="color:#22d3bf">{&quot;v&quot;, &quot;vn_in&quot;, &quot;vn_out&quot;, &quot;vt_in&quot;, &quot;vt_out&quot;, &quot;energy_ratio&quot;}</code>. 법선 방향만의 충돌이면 energy_ratio = e²(게이트). <code style="color:#22d3bf">v·n ≥ 0</code>(멀어지는 중)이면 아무것도 하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

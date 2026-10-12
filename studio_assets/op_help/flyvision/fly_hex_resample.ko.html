@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_hex_resample(image2d, lattice, drho_deg=8.23, fov_deg=90.0, mode=&#x27;pinhole&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import flyvision; flyvision.fly_hex_resample(image2d, lattice, drho_deg=8.23, fov_deg=90.0, mode=&#x27;pinhole&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsflyvision.get(&quot;fly_hex_resample&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Resample a pinhole image onto an ommatidial lattice (the eye&#x27;s view).</p>
+<p>핀홀 영상을 낱눈 격자로 재표본화한다(눈이 보는 상).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Each ommatidium integrates the image under a Gaussian acceptance function of full width at half maximum *drho_deg* weighted by the pixel solid angle::</p>
 <p>signal_i = sum_p w_ip * image_p / sum_p w_ip</p>
 <p>w_ip = exp(-4 ln2 * a_ip^2 / drho_deg^2) * (1 + X_p^2 + Y_p^2)^(-3/2)</p>

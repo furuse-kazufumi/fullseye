@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import lidarsim; lidarsim.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;lidar_scan&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>메시 월드 <code style="color:#22d3bf">(V, F)</code>에 자세 <code style="color:#22d3bf">T_sensor</code>(world ← sensor)의 LiDAR를 1회 스윕 발사합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">V</code> (N,3) float / <code style="color:#22d3bf">F</code> (M,3) int: 三角形メッシュ(空・非 (N,3)・非有限・範囲外の面番号は <code style="color:#22d3bf">ValueError</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">spec</code>: <code style="color:#22d3bf">lidar_spec</code> の dict。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">T_sensor</code>: 4×4 同次行列(world ← sensor)。センサ座標は x=前, y=左, z=上。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>: 面ごとの int ラベル (M,) または None(None なら当たったセルのラベルは 0)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>: ノイズの乱数種(<code style="color:#22d3bf">noise_std == 0</code> なら乱数を一切引かず、ビット単位で決定的)。</p>
-<p>返り値の dict:</p>
-<p><code style="color:#22d3bf">points</code> (K,3) <b>世界座標</b>の反射点(行優先: beam 0 の列 0 から)/ <code style="color:#22d3bf">ranges</code> (n_beams, n_az) [m] (0 = 無返答)/ <code style="color:#22d3bf">hit_face</code> (n_beams, n_az) int(−1 = 無し)/ <code style="color:#22d3bf">labels</code> (n_beams, n_az) int (−1 = 無し)/ <code style="color:#22d3bf">beam</code> (K,) int / <code style="color:#22d3bf">col</code> (K,) int / <code style="color:#22d3bf">n_hits</code> int。最近接の面が <code style="color:#22d3bf">range_min</code> 未満または <code style="color:#22d3bf">range_max</code> 超なら無返答(奥の面へ抜けない)。ノイズは無ノイズ距離で返答の有無を決めた後、<code style="color:#22d3bf">ranges</code> と <code style="color:#22d3bf">points</code> に足す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">V</code> (N,3) float / <code style="color:#22d3bf">F</code> (M,3) int: 삼각형 메시(비어 있음·(N,3) 아님·유한하지 않음·범위 밖의 면 번호는 <code style="color:#22d3bf">ValueError</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">spec</code>: <code style="color:#22d3bf">lidar_spec</code> 의 dict.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">T_sensor</code>: 4×4 동차 행렬(world ← sensor). 센서 좌표는 x=앞, y=왼쪽, z=위.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>: 면마다의 int 라벨 (M,) 또는 None(None 이면 맞은 셀의 라벨은 0).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>: 노이즈의 난수 시드(<code style="color:#22d3bf">noise_std == 0</code> 이면 난수를 전혀 뽑지 않아 비트 단위로 결정적).</p>
+<p>반환 dict:</p>
+<p><code style="color:#22d3bf">points</code> (K,3) <b>세계 좌표</b>의 반사점(행 우선: beam 0 의 열 0 부터) / <code style="color:#22d3bf">ranges</code> (n_beams, n_az) [m] (0 = 무응답) / <code style="color:#22d3bf">hit_face</code> (n_beams, n_az) int(−1 = 없음) / <code style="color:#22d3bf">labels</code> (n_beams, n_az) int (−1 = 없음) / <code style="color:#22d3bf">beam</code> (K,) int / <code style="color:#22d3bf">col</code> (K,) int / <code style="color:#22d3bf">n_hits</code> int. 최근접 면이 <code style="color:#22d3bf">range_min</code> 미만 또는 <code style="color:#22d3bf">range_max</code> 초과이면 무응답(안쪽 면으로 빠져나가지 않는다). 노이즈는노이즈 없는 거리로 응답 유무를 정한 뒤 <code style="color:#22d3bf">ranges</code> 와 <code style="color:#22d3bf">points</code> 에 더한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_dx(psd: &#x27;dict&#x27;, q: &#x27;float&#x27; = 50.0, convention: &#x27;str&#x27; = &#x27;log_edges&#x27;) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import grind; grind.particle_size_dx(psd: &#x27;dict&#x27;, q: &#x27;float&#x27; = 50.0, convention: &#x27;str&#x27; = &#x27;log_edges&#x27;) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_dx&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>體積累積 <code style="color:#22d3bf">q</code> % 處的粒徑 Dq [µm] (D10 / D50 / D90 對應 <code style="color:#22d3bf">q</code> = 10 / 50 / 90)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">convention</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;log_edges&quot;</code>(既定、装置のヘッダの <code style="color:#22d3bf">Dx (50)</code> と一致): 端 i の累積に対して log(径) を線形補間。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;linear_edges&quot;</code>: 端の累積に対して径そのものを線形補間(区間内の体積が径について一様、の仮定)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;lower_cumsum&quot;</code>: 公開の解析コードの学習の段の定義 <code style="color:#22d3bf">np.interp(q/100, cumsum(v), edges)</code>(累積を区間の下の端に置く)。1 区間分小さく出る(この装置で −11.9 %)。比較のために再現しているだけで、推奨しない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;log_edges&quot;</code>(預設,與儀器表頭的 <code style="color:#22d3bf">Dx (50)</code> 一致):對端點 i 的累積值線性內插 log(粒徑)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;linear_edges&quot;</code>:對端點的累積值線性內插粒徑本身(假設區間內體積對粒徑均勻)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;lower_cumsum&quot;</code>:公開分析程式碼中訓練階段的定義 <code style="color:#22d3bf">np.interp(q/100, cumsum(v), edges)</code>(把累積值放在區間的下端)。結果小 1 個區間(在此儀器上 −11.9 %)。僅為比較而重現,不建議使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

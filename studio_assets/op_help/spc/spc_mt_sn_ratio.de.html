@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_mt_sn_ratio(md)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.spc_mt_sn_ratio(md)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;spc_mt_sn_ratio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Larger-the-better SN ratio of abnormal-sample distances, in decibels.</p>
+<p>Größer-ist-besser-SN-Verhältnis der Abstände abnormaler Proben, in Dezibel.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>MT-method item selection asks which features earn their place: run the unit space with a subset of features, score the *abnormal* samples, and keep the subset whose distances are largest. The figure of merit is the larger-the-better signal-to-noise ratio</p>
 <p>eta = -10 log10( (1/n) sum_i 1 / MD_i^2 )</p>
 <p>an inverse-square average, so one abnormal sample that the subset fails to separate drags the whole score down — which is the behaviour wanted when the cost of a miss dominates. The caller drives the subsets (classically by an orthogonal array); this operator is the closed-form score for one subset.</p>

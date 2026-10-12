@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_cusum(signal, target, k=0.5, h=5.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import spc; spc.spc_cusum(signal, target, k=0.5, h=5.0)</code>; aus dem Register: <code style="color:#22d3bf">opsspc.get(&quot;spc_cusum&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Tabular CUSUM chart for individual measurements.</p>
+<p>Tabellarische CUSUM-Karte für Einzelmesswerte.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">signal</code> is a 1-D series of individual measurements. With a reference value <code style="color:#22d3bf">target</code>, a slack <code style="color:#22d3bf">k</code> (in the same units as the measurements — commonly half the shift you want to catch) and a decision interval <code style="color:#22d3bf">h</code>::</p>
 <p>C+_i = max(0, C+_{i-1} + (x_i - target) - k)</p>
 <p>C-_i = max(0, C-_{i-1} - (x_i - target) - k)</p>

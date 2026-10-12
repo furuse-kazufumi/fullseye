@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_render_frame(cam: &#x27;dict&#x27;, p, *, v=None, exposure: &#x27;float&#x27; = 0.0, n_sub: &#x27;int&#x27; = 16, noise: &#x27;float&#x27; = 0.0, rng=None, puck_value: &#x27;float&#x27; = 0.12, table_value: &#x27;float&#x27; = 0.92, wall_value: &#x27;float&#x27; = 0.55) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import puck; puck.puck_render_frame(cam: &#x27;dict&#x27;, p, *, v=None, exposure: &#x27;float&#x27; = 0.0, n_sub: &#x27;int&#x27; = 16, noise: &#x27;float&#x27; = 0.0, rng=None, puck_value: &#x27;float&#x27; = 0.12, table_value: &#x27;float&#x27; = 0.92, wall_value: &#x27;float&#x27; = 0.55) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;puck_render_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>바로 위에서 본 1프레임을 합성합니다(float (H,W), 0~1): 흰 테이블·회색 벽·어두운 퍽(1차 안티에일리어싱).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">exposure</code> &gt; 0 なら露光の間 [t, t+exposure] にパックが v·exposure 動く分を n_sub 個の副露光の平均で入れる(モーションブラー)。コマの時刻は <b>露光の始め</b>: ブラーした像の重心は v·exposure/2 だけ進む(閉形式、門)。<code style="color:#22d3bf">noise</code> はガウス雑音の σ。</p>
-<p>空の入力(<code style="color:#22d3bf">cam</code> が空の dict)は ValueError。</p>
+<p><code style="color:#22d3bf">exposure</code> &gt; 0 이면 노광 동안 [t, t+exposure] 퍽이 v·exposure 움직이는 분을 n_sub 개 부노광의 평균으로 넣는다(모션 블러). 프레임의 시각은 <b>노광의 시작</b>: 블러된 상의 무게중심은 v·exposure/2 만큼 나아간다(닫힌 형태, 게이트). <code style="color:#22d3bf">noise</code> 는 가우스 잡음의 σ.</p>
+<p>빈 입력(<code style="color:#22d3bf">cam</code> 이(가) 빈 dict)은 <code style="color:#22d3bf">ValueError</code> 를 발생시킨다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

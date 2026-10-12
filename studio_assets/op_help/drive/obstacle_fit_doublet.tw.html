@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obstacle_fit_doublet(field, speed=None, upstream_only: &#x27;bool&#x27; = False, exclude_margin: &#x27;float&#x27; = 1.25, min_explained: &#x27;float&#x27; = 0.5, min_radius=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import swarmflow; swarmflow.obstacle_fit_doublet(field, speed=None, upstream_only: &#x27;bool&#x27; = False, exclude_margin: &#x27;float&#x27; = 1.25, min_explained: &#x27;float&#x27; = 0.5, min_radius=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;obstacle_fit_doublet&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將圓柱繞流的勢流 u − i v = U (1 − R²/(z − z_c)²) 擬合到速度場(實作 2，2 維非線性最小平方)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>未知数は (x_c, y_c, R², U)。出発点は 2 つ: <code style="color:#22d3bf">stagnation_from_centerline</code> と、格子の節点を中心の候補にした粗い探索(U を固定すると模型は R² について 1 次なので閉形式で解ける)。説明できる割合の大きい方を採る。円の <code style="color:#22d3bf">exclude_margin</code> 倍より内側の格子は使わない(格子へ移す核が壁をまたいで速さを均すため)—— 推定し直して 3 回回す。<code style="color:#22d3bf">upstream_only</code> なら衝突点より上流(x &lt; x_c − R)の格子だけで当てはめる(「当たる前に」分かるか)。</p>
-<p>判定: 一様流だけの模型(u, v が定数)の残差 RSS₀ に対して、円柱の模型で減った割合 1 − RSS₁/RSS₀(<b>乱れのうち円柱で説明できる割合</b>)が <code style="color:#22d3bf">min_explained</code> 以上、半径が <code style="color:#22d3bf">min_radius</code>(既定 = 格子の間隔 2 つ)以上、中心が場の中 —— の 3 つで <code style="color:#22d3bf">detected</code>。否定の判定(障害物なし)はこの割合が小さいことで出る。</p>
-<p>★半径の下限は解像の限界: <code style="color:#22d3bf">swarm_field_from_tracks</code> の格子は個体の間隔 s ごとなので、既定では R &lt; 2s の障害物を「ある」と言わない。拒否が正当なことは実測で確かめた(一様に撒いた粒子、R = 0.6 m: R/s ≈ 5 で中心・半径とも 2 % 以内、R/s ≈ 2.5 で 5 % 以内、R/s ≈ 1.2 で半径が 48 % 小さく出る)。</p>
+<p>未知數為 (x_c, y_c, R², U)。起點有 2 個: <code style="color:#22d3bf">stagnation_from_centerline</code>,以及把網格節點作為中心候選的粗搜尋(固定 U 時模型對 R² 是一次的,可用閉式求解)。取可解釋比例較大者。圓的 <code style="color:#22d3bf">exclude_margin</code> 倍以內的網格不使用(因為向網格轉移的核會跨越壁面而把速度平均掉)—— 重新估計並迭代 3 次。<code style="color:#22d3bf">upstream_only</code> 時僅用衝擊點上游(x &lt; x_c − R)的網格擬合(能否「在撞上之前」得知)。</p>
+<p>判定: 相對於僅含均勻流的模型(u、v 為常數)的殘差 RSS₀,圓柱模型減少的比例 1 − RSS₁/RSS₀(<b>擾動中可由圓柱解釋的比例</b>)不小於 <code style="color:#22d3bf">min_explained</code>、半徑不小於 <code style="color:#22d3bf">min_radius</code>(預設 = 2 個網格間距)、中心位於場內 —— 滿足這 3 條即為 <code style="color:#22d3bf">detected</code>。否定判定(無障礙物)由該比例較小得出。</p>
+<p>★半徑下限即解析度極限: <code style="color:#22d3bf">swarm_field_from_tracks</code> 的網格按個體間距 s 劃分,因此預設不會對 R &lt; 2s 的障礙物說「有」。拒絕的正當性已透過實測確認(均勻撒布的粒子,R = 0.6 m: R/s ≈ 5 時中心、半徑均在 2 % 以內, R/s ≈ 2.5 時在 5 % 以內,R/s ≈ 1.2 時半徑偏小 48 %)。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">center</code>・<code style="color:#22d3bf">radius</code>・<code style="color:#22d3bf">speed</code>・<code style="color:#22d3bf">stagnation</code>・<code style="color:#22d3bf">explained</code>・<code style="color:#22d3bf">detected</code>・<code style="color:#22d3bf">n_used</code>・<code style="color:#22d3bf">rms_residual</code></p>
-<p>(m/s)・<code style="color:#22d3bf">rms_null</code>(m/s)。</p>
+<p>dict: <code style="color:#22d3bf">center</code>、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">speed</code>、<code style="color:#22d3bf">stagnation</code>、<code style="color:#22d3bf">explained</code>、<code style="color:#22d3bf">detected</code>、<code style="color:#22d3bf">n_used</code>、<code style="color:#22d3bf">rms_residual</code></p>
+<p>(m/s)、<code style="color:#22d3bf">rms_null</code>(m/s)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

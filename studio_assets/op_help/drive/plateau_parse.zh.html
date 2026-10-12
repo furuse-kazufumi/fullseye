@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveplateau; driveplateau.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;plateau_parse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从 PLATEAU CityGML 流式读取建筑的底面多边形、高度和底面标高。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">iterparse</code> で <code style="color:#22d3bf">Building</code>(ローカル名)の end イベントごとに処理し、処理後 <code style="color:#22d3bf">elem.clear()</code> でメモリを解放する(1 ファイル数百 MB でも動く設計)。</p>
-<p>建物ごとに:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measuredHeight</code> があれば高さに使う。無ければ <code style="color:#22d3bf">lod1Solid</code> の最大標高 − 最小標高。</p>
-<p style="margin:2px 0 2px 12px">• 足元: <code style="color:#22d3bf">lod0FootPrint</code> があればその posList。無ければ <code style="color:#22d3bf">lod1Solid</code> の全面のうち <b>平均標高が最も低い面</b>(LOD1 は押し出し柱なので底面がある)。</p>
-<p style="margin:2px 0 2px 12px">• posList は EPSG:6697 の「緯度 経度 標高」3 つ組として読む。</p>
+<p>用 <code style="color:#22d3bf">iterparse</code> 在 <code style="color:#22d3bf">Building</code>(本地名)的每个 end 事件处理, 处理后用 <code style="color:#22d3bf">elem.clear()</code> 释放内存(设计为即使单个文件数百 MB 也能运行)。</p>
+<p>对每栋建筑:</p>
+<p style="margin:2px 0 2px 12px">• 若有 <code style="color:#22d3bf">measuredHeight</code> 则用作高度。若无,则取 <code style="color:#22d3bf">lod1Solid</code> 的最大标高 − 最小标高。</p>
+<p style="margin:2px 0 2px 12px">• 底面轮廓: 若有 <code style="color:#22d3bf">lod0FootPrint</code> 则用其 posList。若无,则取 <code style="color:#22d3bf">lod1Solid</code> 所有面中 <b>平均标高最低的面</b>(LOD1 是挤出柱体,因此有底面)。</p>
+<p style="margin:2px 0 2px 12px">• posList 按 EPSG:6697 的&quot;纬度 经度 标高&quot;三元组读取。</p>
 <p>Args:</p>
-<p>source: CityGML の文字列(<code style="color:#22d3bf">&lt;</code> で始まる)、bytes、またはファイルパス(str/Path)。</p>
-<p>origin: 局所座標の原点 <code style="color:#22d3bf">(lat0, lon0)</code> [deg]。None なら最初に採用した建物の重心。</p>
-<p>max_buildings: 採用する建物数の上限(None で無制限)。到達したら読み取りを止める。</p>
+<p>source: CityGML 字符串(以 <code style="color:#22d3bf">&lt;</code> 开头)、bytes,或文件路径(str/Path)。</p>
+<p>origin: 局部坐标的原点 <code style="color:#22d3bf">(lat0, lon0)</code> [deg]。None 时为最先采用的建筑的重心。</p>
+<p>max_buildings: 采用的建筑数上限(None 为无限制)。达到时停止读取。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">{&quot;origin&quot;: (lat0, lon0), &quot;buildings&quot;: [...], &quot;n_skipped&quot;: int, &quot;crs&quot;: &quot;EPSG:6697 (lat, lon, alt)&quot;}</code>。各建物は</p>
-<p><code style="color:#22d3bf">{&quot;id&quot;, &quot;footprint&quot; (k,2) float64(局所 x,y[m]、閉じない、反時計回り), &quot;height&quot;, &quot;ground_z&quot;, &quot;lat&quot;, &quot;lon&quot;}</code>(lat/lon は足元頂点の平均 = 重心)。</p>
+<p><code style="color:#22d3bf">{&quot;origin&quot;: (lat0, lon0), &quot;buildings&quot;: [...], &quot;n_skipped&quot;: int, &quot;crs&quot;: &quot;EPSG:6697 (lat, lon, alt)&quot;}</code>。每栋建筑为</p>
+<p><code style="color:#22d3bf">{&quot;id&quot;, &quot;footprint&quot; (k,2) float64(局所 x,y[m]、閉じない、反時計回り), &quot;height&quot;, &quot;ground_z&quot;, &quot;lat&quot;, &quot;lon&quot;}</code>(lat/lon 为底面轮廓顶点的平均 = 重心)。</p>
 <p>Raises:</p>
-<p>ValueError: source が空/不正、posList が 3 の倍数でない、XML が壊れている、</p>
-<p>max_buildings が負、origin が不正。</p>
+<p>ValueError: source 为空/无效、posList 不是 3 的倍数、XML 损坏、</p>
+<p>max_buildings 为负、origin 无效。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

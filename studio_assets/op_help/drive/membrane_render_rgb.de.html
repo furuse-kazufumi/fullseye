@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_render_rgb(normals, lights, albedo: &#x27;float&#x27; = 1.0, ambient: &#x27;float&#x27; = 0.03, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacsim; tacsim.membrane_render_rgb(normals, lights, albedo: &#x27;float&#x27; = 1.0, ambient: &#x27;float&#x27; = 0.03, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;membrane_render_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Normalenfeld (H, W, 3) + Lichtquellen (3, 3) → RGB (H, W, 3) float nach Art eines visuotaktilen Sensors. Kanal k = Lambert-Bild der Lichtquelle k, albedo·(max(N·L_k, 0) + ambient) (<code style="color:#22d3bf">photometric.render_lambertian</code> 3-mal, 2. Implementierung). Bei <code style="color:#22d3bf">noise</code> &gt; 0 wird normalverteiltes Rauschen addiert.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: normals が (H, W, 3) でない、lights が (3, 3) でない、noise &lt; 0。</p>
-<p>空の入力(<code style="color:#22d3bf">normals</code> が 0 要素)は ValueError。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: normals ist nicht (H, W, 3), lights ist nicht (3, 3), noise &lt; 0.</p>
+<p>Leere Eingabe (<code style="color:#22d3bf">normals</code> mit 0 Elementen) löst <code style="color:#22d3bf">ValueError</code> aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

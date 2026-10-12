@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spin_from_markers(dirs0, dirs1, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import balltrack; balltrack.spin_from_markers(dirs0, dirs1, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;spin_from_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由标记方向对(前 (M, 3)、后 (M, 3)，单位向量)求角速度向量 ω [rad/s]。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>M ≥ 2 なら Kabsch(SVD)で回転 R を当て、回転角 θ と軸から ω = θ/dt·軸(既知の ω で回した向きを入れると 1e-9 で戻る = 門)。M = 1 なら d₀ → d₁ の最小回転(軸 = d₀ × d₁)を返す(&quot;full&quot; = False): 模様の向きまわりの成分は原理的に決まらず、コマ間の回転角が大きいと ω の直交成分の近似としても外れる(模様は ω の軸まわりの小円を描くので、最小回転の大円と違う)。</p>
-<p>正直に: 1 つの模様で ω を出したいなら dt を小さく(回転角 ≪ 1 rad)、それでも軸まわりの成分は別の模様が要る。返り値 <code style="color:#22d3bf">{&quot;omega&quot;, &quot;angle&quot;, &quot;axis&quot;, &quot;R&quot;, &quot;full&quot;, &quot;rms&quot;}</code>。</p>
+<p>M ≥ 2 时用 Kabsch(SVD)拟合旋转 R,由旋转角 θ 和轴求 ω = θ/dt·轴(输入按已知 ω 旋转的方向,可在 1e-9 内还原 = 门)。M = 1 时返回 d₀ → d₁ 的最小旋转(轴 = d₀ × d₁)(&quot;full&quot; = False):绕标记方向的分量原理上无法确定, 帧间旋转角较大时,作为 ω 正交分量的近似也会失准(标记绕 ω 轴画小圆,与最小旋转的大圆不同)。</p>
+<p>老实说:想由一个标记求 ω,应把 dt 取小(旋转角 ≪ 1 rad),即便如此,绕轴的分量仍需另一个标记。返回值 <code style="color:#22d3bf">{&quot;omega&quot;, &quot;angle&quot;, &quot;axis&quot;, &quot;R&quot;, &quot;full&quot;, &quot;rms&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

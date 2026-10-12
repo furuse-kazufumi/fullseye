@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.buildings_in_box(parsed: &#x27;dict[str, Any]&#x27;, xmin: &#x27;float&#x27;, xmax: &#x27;float&#x27;, ymin: &#x27;float&#x27;, ymax: &#x27;float&#x27;) -&gt; &#x27;list[dict[str, Any]]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveplateau; driveplateau.buildings_in_box(parsed: &#x27;dict[str, Any]&#x27;, xmin: &#x27;float&#x27;, xmax: &#x27;float&#x27;, ymin: &#x27;float&#x27;, ymax: &#x27;float&#x27;) -&gt; &#x27;list[dict[str, Any]]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;buildings_in_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>무게중심(바닥 정점의 평균)이 상자 [xmin,xmax]×[ymin,ymax] 안에 있는 건물만 반환합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Args:</p>
-<p>parsed: <code style="color:#22d3bf">plateau_parse</code> の返り値。xmin, xmax, ymin, ymax: 局所座標の箱 [m] (両端を含む)。</p>
+<p>parsed: <code style="color:#22d3bf">plateau_parse</code> 의 반환값. xmin, xmax, ymin, ymax: 국소 좌표의 상자 [m] (양 끝을 포함한다).</p>
 <p>Raises:</p>
-<p>ValueError: parsed に <code style="color:#22d3bf">buildings</code> が無い、xmin &gt; xmax または ymin &gt; ymax。</p>
+<p>ValueError: parsed 에 <code style="color:#22d3bf">buildings</code> 가 없음, xmin &gt; xmax 또는 ymin &gt; ymax.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

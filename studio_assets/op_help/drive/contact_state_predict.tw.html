@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_state_predict(kp, tip_xyz, axis, tol: &#x27;float&#x27; = 6e-05) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.contact_state_predict(kp, tip_xyz, axis, tol: &#x27;float&#x27; = 6e-05) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;contact_state_predict&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由真實的銷位姿(末端中心與軸向)<b>僅憑幾何</b>預測接觸點的個數與位置(獨立於接觸計算的第 2 實作)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>先端の縁の円(半径 r、水平投影は e₁ 方向 r・傾き方向 r cos θ の楕円)が穴の最狭部の円 R(面取り帯では高さに応じた円錐の半径)に届けば「tip」、胴の最狭部(z = −W)での水平断面(半径 r と r/cos θ の楕円)が R に届けば「mouth」。胴が面取りの円錐に触れる場所は tan θ &lt; 1 なら必ず最狭部の縁になる(円錐の半径は高さに 1 で増え、断面の中心は tan θ でしか動かない)。</p>
-<p>返り: <code style="color:#22d3bf">n</code>(0/1/2)、<code style="color:#22d3bf">where</code>(&quot;none&quot; / &quot;chamfer&quot; / &quot;tip&quot; / &quot;mouth&quot; / &quot;tip+mouth&quot;)、<code style="color:#22d3bf">depth</code>(口の面からの先端深さ、負なら空中)、<code style="color:#22d3bf">depth_below_chamfer</code>、<code style="color:#22d3bf">tilt</code> [rad]。<code style="color:#22d3bf">tol</code> は「届いた」とみなす半径方向の余裕。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: axis がゼロ、tip_xyz の形が (3,) でない。</p>
+<p>前端邊緣的圓(半徑 r,水平投影為 e₁ 方向 r、傾斜方向 r cos θ 的橢圓)若觸及孔最窄處的圓 R(在倒角帶中為依高度而定的圓錐半徑), 則為「tip」;胴部在最窄處(z = −W)的水平截面(半徑 r 與 r/cos θ 的橢圓)若觸及 R 則為「mouth」。胴部接觸倒角圓錐的位置,在 tan θ &lt; 1 時必定是最窄處的邊緣(圓錐半徑隨高度以 1 增加,截面中心只以 tan θ 移動)。</p>
+<p>回傳: <code style="color:#22d3bf">n</code>(0/1/2)、<code style="color:#22d3bf">where</code>(&quot;none&quot; / &quot;chamfer&quot; / &quot;tip&quot; / &quot;mouth&quot; / &quot;tip+mouth&quot;)、<code style="color:#22d3bf">depth</code>(從口面起算的前端深度, 負值表示在空中)、<code style="color:#22d3bf">depth_below_chamfer</code>、<code style="color:#22d3bf">tilt</code> [rad]。<code style="color:#22d3bf">tol</code> 為視為「觸及」的徑向餘裕。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: axis 為零、tip_xyz 的形狀不是 (3,)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

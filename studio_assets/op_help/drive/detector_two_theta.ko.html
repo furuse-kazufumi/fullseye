@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_two_theta(shape, geometry)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pxrd; pxrd.detector_two_theta(shape, geometry)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;detector_two_theta&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>검출기 각 픽셀의 2θ·방위 χ·상대 입체각(기울기·거리·중심 포함).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">shape = (H, W)</code>、<code style="color:#22d3bf">geometry</code> は module の docstring の Fit2D 型。返り値(dict): <code style="color:#22d3bf">two_theta</code> [deg]・<code style="color:#22d3bf">chi</code> [deg] (<code style="color:#22d3bf">atan2</code>、+列が 0、+行が +90)・<code style="color:#22d3bf">solid_angle</code>(ビームの中心で傾き 0 のとき 1 になる相対値、<code style="color:#22d3bf">cos³</code> で落ちる)。2θ は <code style="color:#22d3bf">atan2(hypot(Pₓ, P_y), P_z)</code> で求める(acos を使うと 2θ → 0 の近くで丸めの床が出る)。</p>
-<p>Raises ValueError: 形が 2 要素の正の整数でない、幾何の鍵の欠け・綴り違い、<code style="color:#22d3bf">|tilt| &gt;= 60</code>。</p>
+<p><code style="color:#22d3bf">shape = (H, W)</code>, <code style="color:#22d3bf">geometry</code> 는 module 의 docstring 의 Fit2D 형. 반환값(dict): <code style="color:#22d3bf">two_theta</code> [deg]·<code style="color:#22d3bf">chi</code> [deg] (<code style="color:#22d3bf">atan2</code>, +열이 0, +행이 +90)·<code style="color:#22d3bf">solid_angle</code>(빔 중심에서 기울기 0 일 때 1 이 되는 상대값, <code style="color:#22d3bf">cos³</code> 로 떨어진다). 2θ 는 <code style="color:#22d3bf">atan2(hypot(Pₓ, P_y), P_z)</code> 로 구한다(acos 를 사용하면 2θ → 0 근처에서 반올림의 바닥이 나온다).</p>
+<p>Raises ValueError: 형태가 2 요소의 양의 정수가 아님, 기하 키의 누락·철자 오류, <code style="color:#22d3bf">|tilt| &gt;= 60</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

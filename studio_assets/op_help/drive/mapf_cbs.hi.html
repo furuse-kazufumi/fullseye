@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;mapf_cbs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Conflict-Based Search (Sharon, Stern, Felner, Sturtevant 2015)। कुल cost में optimal, टक्कर-रहित plan।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>上段は「衝突を 1 つ選び、2 台のどちらかに制約を足す」二分木の最良優先探索、下段は 1 台の時空間 A*。返りは dict: <code style="color:#22d3bf">paths</code>(各車両のマスの列)、<code style="color:#22d3bf">cost</code>(sum of costs)、<code style="color:#22d3bf">nodes</code>(展開した節の数)、<code style="color:#22d3bf">solved</code>。節の上限に達したら <code style="color:#22d3bf">solved=False</code>(<b>黙って最適でない解を返さない</b>)。</p>
+<p>ऊपरी स्तर &quot;एक टकराव चुनकर दो वाहनों में से एक पर बाधा जोड़ने&quot; वाले द्विआधारी वृक्ष की best-first खोज है, निचला स्तर एक वाहन का स्थान-काल A* है। रिटर्न dict: <code style="color:#22d3bf">paths</code> (प्रत्येक वाहन के खानों का क्रम), <code style="color:#22d3bf">cost</code> (sum of costs), <code style="color:#22d3bf">nodes</code> (विस्तारित नोडों की संख्या), <code style="color:#22d3bf">solved</code>। नोड-सीमा पहुँचने पर <code style="color:#22d3bf">solved=False</code> (<b>चुपचाप गैर-इष्टतम हल नहीं लौटाता</b>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

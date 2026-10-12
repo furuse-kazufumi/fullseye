@@ -2,7 +2,7 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_intrinsics_to_carla — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_intrinsics_to_carla&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*No figure: the type is reachable, but the generic synthetic input is outside this op&#x27;s domain — 同上(主点を 0.5 画素戻す橋). See the runnable examples below for usage.*</p>
+<p>*No figure: the type is reachable, but the generic synthetic input is outside this op&#x27;s domain — same as above (the bridge that shifts the principal point back by 0.5 pixel). See the runnable examples below for usage.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Inverse of <code style="color:#22d3bf">intrinsics_to_fullseye</code> (shifts the principal point back by 0.5).</p>
 <p>The drive op <code style="color:#22d3bf">intrinsics_to_carla</code> bridged into the 2-D evolution registry. The implementation is the same; only the calling convention is adapted to <code style="color:#22d3bf">op(v, a, b)</code>. This op has no tunable parameters; neither <code style="color:#22d3bf">a</code> nor <code style="color:#22d3bf">b</code> is used.</p>

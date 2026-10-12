@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;gs_read_file&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>读取 3D Gaussian Splatting 文件，返回高斯的中心、颜色、不透明度、尺度和朝向。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>対応: <b>INRIA 形式の .ply</b>(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。<code style="color:#22d3bf">gsplat_train_native</code> の出力もこれ)と <b>.splat</b>(1 個 32 バイト: 位置 3×f32、大きさ 3×f32、RGBA 4×u8、回転 4×u8(wxyz、(q·128)+128))。</p>
+<p>支持:<b>INRIA 格式的 .ply</b>(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。<code style="color:#22d3bf">gsplat_train_native</code> 的输出也是这种)和 <b>.splat</b>(每个 32 字节:位置 3×f32、大小 3×f32、RGBA 4×u8、旋转 4×u8(wxyz、(q·128)+128))。</p>
 <p>Args:</p>
-<p>path: ファイル。</p>
-<p>min_opacity: これ未満の不透明度のガウスを落とす(0 なら全部)。</p>
+<p>path: 文件。</p>
+<p>min_opacity: 丢弃不透明度低于此值的高斯(0 则全部保留)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">{&quot;xyz&quot; (N,3), &quot;rgb&quot; (N,3) [0,1], &quot;opacity&quot; (N,) [0,1], &quot;scale&quot; (N,3)(実寸、exp 済み), &quot;rot&quot; (N,4) wxyz 単位四元数, &quot;n_total&quot;, &quot;format&quot;}</code>。色は 0 次の球面調和だけ(視点で変わる高次は捨てる)。</p>
+<p><code style="color:#22d3bf">{&quot;xyz&quot; (N,3), &quot;rgb&quot; (N,3) [0,1], &quot;opacity&quot; (N,) [0,1], &quot;scale&quot; (N,3)(実寸、exp 済み), &quot;rot&quot; (N,4) wxyz 単位四元数, &quot;n_total&quot;, &quot;format&quot;}</code>。颜色只用 0 阶球谐(随视点变化的高阶被舍弃)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

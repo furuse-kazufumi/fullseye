@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelong; drivelong.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;road_profile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>क्षैतिज दूरी और ऊँचाई की polyline (x, z) (drivecourse.course_slope के <code style="color:#22d3bf">profile</code> जैसा रूप) को <b>सड़क की सतह के साथ arc length l</b> पर longitudinal profile में बदलता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返り値 = <code style="color:#22d3bf">{&quot;l&quot; (n,), &quot;x&quot; (n,), &quot;z&quot; (n,), &quot;sin&quot; (n−1,), &quot;cos&quot; (n−1,)}</code>。l は <code style="color:#22d3bf">l0</code> から始まる折れ点の弧長。区間 i の勾配角 θ_i は sin = Δz/Δl、cos = Δx/Δl(両端の外は平ら: θ = 0、z は端の値)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2 点未満、非有限、x が狭義単調増加でない、勾配が 45° 以上。</p>
+<p>रिटर्न मान = <code style="color:#22d3bf">{&quot;l&quot; (n,), &quot;x&quot; (n,), &quot;z&quot; (n,), &quot;sin&quot; (n−1,), &quot;cos&quot; (n−1,)}</code>। l, <code style="color:#22d3bf">l0</code> से शुरू होने वाले मोड़-बिंदुओं की चाप-लंबाई है। खंड i के ढलान कोण θ_i के लिए sin = Δz/Δl, cos = Δx/Δl (दोनों सिरों के बाहर समतल: θ = 0, z सिरे का मान)।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2 से कम बिंदु, अपरिमित, x कड़ाई से एकदिष्ट वर्धमान नहीं, ढलान 45° या अधिक।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

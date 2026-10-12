@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.smooth_funct_1d_mean(y, size=3, iterations=1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import funct1d; funct1d.smooth_funct_1d_mean(y, size=3, iterations=1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops1d.get(&quot;smooth_funct_1d_mean&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Iterated moving-average smoothing (HALCON <code style="color:#22d3bf">smooth_funct_1d_mean</code>).</p>
+<p>이동 평균을 반복하는 평활화(HALCON <code style="color:#22d3bf">smooth_funct_1d_mean</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Applies a length-*size* uniform (box) filter *iterations* times with <code style="color:#22d3bf">nearest</code> (edge-replicating) boundary handling. Repeated box filtering approaches a Gaussian (central limit theorem).</p>
 <p>:param y: 1-D function, at least 1 sample. :param size: window length in samples; truncated to int, must be &gt;= 1.</p>
 <p><b>Even sizes are accepted but shift the window origin by half a sample</b></p>

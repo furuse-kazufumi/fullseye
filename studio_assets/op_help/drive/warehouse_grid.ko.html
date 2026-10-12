@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import agvfleet; agvfleet.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;warehouse_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선반 열과 통로로 이루어진 창고 격자(True = 주행 가능).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>棚は横長の 1 行 × <code style="color:#22d3bf">rack_len</code> マスのブロックで、上下左右を幅 <code style="color:#22d3bf">aisle</code> の通路が囲む。外周に <code style="color:#22d3bf">margin</code> マスの走行帯(ステーションの前)を置く。返りは <code style="color:#22d3bf">(grid, info)</code>、info に棚のマスの一覧と外周の帯。</p>
+<p>선반은 가로로 긴 1 행 × <code style="color:#22d3bf">rack_len</code> 칸의 블록이며, 상하좌우를 폭 <code style="color:#22d3bf">aisle</code> 의 통로가 둘러싼다. 외곽에 <code style="color:#22d3bf">margin</code> 칸의 주행대(스테이션 앞)를 둔다. 반환은 <code style="color:#22d3bf">(grid, info)</code>, info 에 선반 칸의 목록과 외곽의 띠.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

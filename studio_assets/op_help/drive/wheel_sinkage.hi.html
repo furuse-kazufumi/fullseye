@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_sinkage(load, wheel, soil, slip=0.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roverslip; roverslip.wheel_sinkage(load, wheel, soil, slip=0.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;wheel_sinkage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>धँसाव z [m] जिस पर 1 wheel slip ratio <code style="color:#22d3bf">slip</code> पर ऊर्ध्वाधर भार <code style="color:#22d3bf">load</code> [N] को सहारा देता है (F_z(z, s) = load पर bisection)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">load</code>・<code style="color:#22d3bf">slip</code> は放送できる配列。車輪の半径まで沈んでも支えられない荷重は ValueError。</p>
+<p><code style="color:#22d3bf">load</code> / <code style="color:#22d3bf">slip</code> ब्रॉडकास्ट होने योग्य ऐरे हैं। पहिए की त्रिज्या तक धँसने पर भी जो भार सहारा न पा सके उस पर <code style="color:#22d3bf">ValueError</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

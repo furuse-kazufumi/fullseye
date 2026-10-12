@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_table() -&gt; &#x27;list&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_table() -&gt; &#x27;list&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>失败分类表(数据)：每行 = {<code style="color:#22d3bf">cls</code>, <code style="color:#22d3bf">when</code>(字段 → 允许值的集合，<code style="color:#22d3bf">&quot;*&quot;</code> = 任意), <code style="color:#22d3bf">recovery</code>, <code style="color:#22d3bf">basis</code>}。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>行の根拠(<code style="color:#22d3bf">basis</code>)は Whitney 1982(OCW スライドの頁)か接触形成の幾何。順番に意味は無い —— 署名に当たる行は <b>高々 1 行</b> (<code style="color:#22d3bf">insertion_failure_validate</code> が全ペアで確かめる)。回復プリミティブの語彙は <code style="color:#22d3bf">insertion_recovery_primitive</code>。</p>
-<p>表(接触 / 深さの帯 / 進み / くさび / かじり / ずれ → クラス → 回復):</p>
-<p style="margin:2px 0 2px 12px">• none|plate, above|mouth, stalled, *, *, large → <code style="color:#22d3bf">missed_hole</code> → lift_recentre(先端が面取りに乗れない |ε₀| &gt; W + c_r、導出 (4))</p>
-<p style="margin:2px 0 2px 12px">• chamfer, above|mouth, *, *, *, small → <code style="color:#22d3bf">chamfer_sliding</code> → continue(面取り通過は正常な過程、OCW p.26)</p>
-<p style="margin:2px 0 2px 12px">• plate, above|mouth, advancing, *, *, * → <code style="color:#22d3bf">nominal</code> → continue(板に触れたがまだ進んでいる = 柔らかい接触の過渡)</p>
-<p style="margin:2px 0 2px 12px">• chamfer|one_point|two_point|floor, *, *, *, *, large → <code style="color:#22d3bf">wrong_hole</code> → lift_reapproach(接触はあるが治具の目標穴から W + c_r 以上離れている)</p>
-<p style="margin:2px 0 2px 12px">• one_point, mouth|hole, advancing, *, *, small → <code style="color:#22d3bf">nominal</code> → continue(一点接触で進む、p.26)</p>
-<p style="margin:2px 0 2px 12px">• two_point, hole, advancing, *, *, small → <code style="color:#22d3bf">nominal</code> → continue(二点接触で進む = 平行四辺形の中、p.34)</p>
-<p style="margin:2px 0 2px 12px">• two_point, hole, stalled, over, *, small → <code style="color:#22d3bf">wedging</code> → retract_reduce_tilt(θ &gt; c/μ、p.28)</p>
-<p style="margin:2px 0 2px 12px">• two_point, hole, stalled, below, outside, small → <code style="color:#22d3bf">jamming</code> → steer_force(力の比が平行四辺形の外、p.34)</p>
-<p style="margin:2px 0 2px 12px">• one_point, mouth|hole, stalled, *, outside, small → <code style="color:#22d3bf">jamming</code> → steer_force(一点接触の摩擦限界 |F_x/F_z| &gt; 1/μ = 縦の辺)</p>
-<p style="margin:2px 0 2px 12px">• floor, hole, *, *, *, small → <code style="color:#22d3bf">blocked_hole</code> → lift_abort(底に届く前に硬い物に当たった)</p>
-<p style="margin:2px 0 2px 12px">• floor, bottom, *, *, *, small → <code style="color:#22d3bf">seated</code> → stop(底着 = 完了)</p>
-<p style="margin:2px 0 2px 12px">• none, *, advancing, *, *, * → <code style="color:#22d3bf">nominal</code> → continue(空中で降下中)</p>
-<p>当たらない例(わざと unknown): plate・stalled・small(面取りの内側で板に乗って止まるのは幾何的に不可能 = 計測の矛盾)、two_point・stalled・below・inside(Whitney なら滑るはずの停滞 = 模型の外)、none・stalled・small(押していないのに止まる)。</p>
+<p>各行的依据(<code style="color:#22d3bf">basis</code>)是 Whitney 1982(OCW 幻灯片的页码)或接触形成的几何。顺序没有意义 —— 与签名命中的行 <b>至多 1 行</b> (<code style="color:#22d3bf">insertion_failure_validate</code> 对所有行对进行确认)。恢复原语的词汇见 <code style="color:#22d3bf">insertion_recovery_primitive</code>。</p>
+<p>表(接触 / 深度带 / 进展 / 楔入 / 卡阻 / 偏移 → 类别 → 恢复):</p>
+<p style="margin:2px 0 2px 12px">• none|plate, above|mouth, stalled, *, *, large → <code style="color:#22d3bf">missed_hole</code> → lift_recentre(前端无法搭上倒角 |ε₀| &gt; W + c_r,推导 (4))</p>
+<p style="margin:2px 0 2px 12px">• chamfer, above|mouth, *, *, *, small → <code style="color:#22d3bf">chamfer_sliding</code> → continue(通过倒角是正常过程,OCW p.26)</p>
+<p style="margin:2px 0 2px 12px">• plate, above|mouth, advancing, *, *, * → <code style="color:#22d3bf">nominal</code> → continue(碰到板但仍在前进 = 柔性接触的过渡)</p>
+<p style="margin:2px 0 2px 12px">• chamfer|one_point|two_point|floor, *, *, *, *, large → <code style="color:#22d3bf">wrong_hole</code> → lift_reapproach(有接触,但离夹具的目标孔 W + c_r 以上)</p>
+<p style="margin:2px 0 2px 12px">• one_point, mouth|hole, advancing, *, *, small → <code style="color:#22d3bf">nominal</code> → continue(以一点接触前进,p.26)</p>
+<p style="margin:2px 0 2px 12px">• two_point, hole, advancing, *, *, small → <code style="color:#22d3bf">nominal</code> → continue(以两点接触前进 = 在平行四边形内,p.34)</p>
+<p style="margin:2px 0 2px 12px">• two_point, hole, stalled, over, *, small → <code style="color:#22d3bf">wedging</code> → retract_reduce_tilt(θ &gt; c/μ,p.28)</p>
+<p style="margin:2px 0 2px 12px">• two_point, hole, stalled, below, outside, small → <code style="color:#22d3bf">jamming</code> → steer_force(力之比在平行四边形外,p.34)</p>
+<p style="margin:2px 0 2px 12px">• one_point, mouth|hole, stalled, *, outside, small → <code style="color:#22d3bf">jamming</code> → steer_force(一点接触的摩擦极限 |F_x/F_z| &gt; 1/μ = 竖边)</p>
+<p style="margin:2px 0 2px 12px">• floor, hole, *, *, *, small → <code style="color:#22d3bf">blocked_hole</code> → lift_abort(到达底部之前撞到了硬物)</p>
+<p style="margin:2px 0 2px 12px">• floor, bottom, *, *, *, small → <code style="color:#22d3bf">seated</code> → stop(触底 = 完成)</p>
+<p style="margin:2px 0 2px 12px">• none, *, advancing, *, *, * → <code style="color:#22d3bf">nominal</code> → continue(在空中下降中)</p>
+<p>不命中的例子(故意设为 unknown): plate·stalled·small(在倒角内侧搭在板上停止在几何上不可能 = 测量矛盾)、two_point·stalled·below·inside(按 Whitney 本应滑动却停滞 = 模型之外)、none·stalled·small(没有推却停止)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecrossing; drivecrossing.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;legal_stop_intervals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>no-stopping-or-parking खंडों (मिलाए गए (k, 2)) से बचते हुए, वाहन का body [rear, rear + car_length] पूरा समा सके ऐसी <b>पिछले सिरे की स्थितियों</b> के अंतराल (m, 2)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>区間の端ちょうど(距離がちょうど 5 m など)は禁止の側に含める(「以内」)ので、車体が端に触れるだけなら許す(閉区間の補集合の閉包)。</p>
-<p>空の入力(<code style="color:#22d3bf">merged</code> が 0 要素)は空を返す(理由: 禁止区間が 0 件なら道路全体が正しい答え。no_stopping_zones は施設があっても空の merged を返しうる(運行時間外のバス停だけのとき))。</p>
+<p>अंतराल के ठीक सिरे (जैसे दूरी ठीक 5 m) निषिद्ध पक्ष में गिने जाते हैं (&quot;भीतर&quot;), इसलिए वाहन का ढाँचा केवल सिरे को छूए तो अनुमति है (बंद अंतरालों के पूरक का संवरण)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">merged</code> में 0 तत्व) खाली परिणाम लौटाता है (कारण: निषिद्ध अंतराल 0 हों तो पूरी सड़क ही सही उत्तर है। no_stopping_zones सुविधाएँ होने पर भी खाली merged लौटा सकता है (जब केवल सेवा-समय के बाहर के बस स्टॉप हों))।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

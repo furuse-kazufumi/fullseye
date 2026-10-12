@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.get_y_value_funct_1d(y, x, interpolate=True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import funct1d; funct1d.get_y_value_funct_1d(y, x, interpolate=True)</code>;從台帳取用則 <code style="color:#22d3bf">ops1d.get(&quot;get_y_value_funct_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>The y-value at (fractional) position *x* (HALCON <code style="color:#22d3bf">get_y_value_funct_1d</code>).</p>
+<p>(可含小數的)位置 *x* 處的 y 值(HALCON <code style="color:#22d3bf">get_y_value_funct_1d</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>With <code style="color:#22d3bf">interpolate=True</code> (default) the value is linearly interpolated between the two neighbouring samples; with <code style="color:#22d3bf">interpolate=False</code> the nearest sample is returned.</p>
 <p>Domain policy (documented, not extrapolated): *x* outside <code style="color:#22d3bf">[0, n-1]</code> <b>clamps</b> to the boundary value (<code style="color:#22d3bf">numpy.interp</code> end-hold semantics / index clip). HALCON&#x27;s <code style="color:#22d3bf">&#x27;zero&#x27;</code>-border variant is not offered.</p>
 <p>:param y: 1-D function, at least 1 sample. :param x: finite scalar position in index units. :param interpolate: linear interpolation (True) or nearest sample (False). :returns: float. :raises ValueError: non-1-D / NaN / Inf input, empty input, or non-finite *x*.</p>

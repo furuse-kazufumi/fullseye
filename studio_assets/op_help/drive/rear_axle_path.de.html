@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivelateral; drivelateral.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;rear_axle_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Trajektorie des Hinterachsmittelpunkts, die ohne Schlupf von der Polygonzug-Trajektorie des Vorderachsmittelpunkts nachgezogen wird (abschnittsweise exakte Verfolgungskurve).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>前が直線を Δ 進む間、棒(後 → 前)と直線のなす角 θ は tan(θ/2) = tan(θ₀/2) e^{−Δ/L}(厳密)。折線の頂点ごとにこれを繋ぐ。<code style="color:#22d3bf">rear0</code>: 後車軸の初めの位置(None なら最初の区間の向きに L だけ後ろ = 真っすぐ)。|前 − 後| = L を要求。</p>
-<p>返り値: <code style="color:#22d3bf">rear</code> (N, 2)、<code style="color:#22d3bf">heading</code> (N,)(車体の向き = 棒の向き)、<code style="color:#22d3bf">gamma</code> (N,)(棒と前の進む向きのなす角、左旋回で正)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、重複点、L ≤ 0、|前 − 後| ≠ L、θ₀ = π(後ろ向きに押す)。</p>
+<p>Während die Front sich entlang einer Geraden um Δ bewegt, gilt für den Winkel θ zwischen Stab (hinten → vorne) und Gerade tan(θ/2) = tan(θ₀/2) e^{−Δ/L} (exakt). Dies wird an jedem Knoten des Polygonzugs verkettet. <code style="color:#22d3bf">rear0</code>: Anfangsposition der Hinterachse (None = um L hinter der Richtung des ersten Segments = gerade). Erfordert |vorne − hinten| = L.</p>
+<p>Rückgabe: <code style="color:#22d3bf">rear</code> (N, 2), <code style="color:#22d3bf">heading</code> (N,) (Fahrzeugausrichtung = Stabrichtung), <code style="color:#22d3bf">gamma</code> (N,) (Winkel zwischen Stab und Fahrtrichtung der Front, positiv bei Linkskurve).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: falsche Form, doppelte Punkte, L ≤ 0, |vorne − hinten| ≠ L, θ₀ = π (rückwärts schieben).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

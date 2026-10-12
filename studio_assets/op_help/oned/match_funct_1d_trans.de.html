@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_funct_1d_trans(y1, y2)</code> (die Implementierung direkt: <code style="color:#22d3bf">import funct1d; funct1d.match_funct_1d_trans(y1, y2)</code>; aus dem Register: <code style="color:#22d3bf">ops1d.get(&quot;match_funct_1d_trans&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Best integer translation between two functions by correlation (HALCON <code style="color:#22d3bf">match_funct_1d_trans</code>, translation only).</p>
+<p>Beste ganzzahlige Verschiebung zwischen zwei Funktionen per Korrelation (HALCON <code style="color:#22d3bf">match_funct_1d_trans</code>, nur Translation).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>The returned <code style="color:#22d3bf">shift</code> uses the convention</p>
 <p><code style="color:#22d3bf">y1[i] ~= y2[i - shift]</code></p>
 <p>i.e. if *y2* is *y1* delayed (rolled right) by <code style="color:#22d3bf">s</code> samples, <code style="color:#22d3bf">shift</code> is <code style="color:#22d3bf">-s</code>.</p>

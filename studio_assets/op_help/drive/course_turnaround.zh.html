@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_turnaround(width=3.5, bay_width=3.5, depth=5.0, entry=5.0, corner_radius=1.0, arc_pts=16, side=&#x27;left&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_turnaround(width=3.5, bay_width=3.5, depth=5.0, entry=5.0, corner_radius=1.0, arc_pts=16, side=&#x27;left&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_turnaround&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>方向转换路线(T 形)：在宽 w 的道路(x ∈ [0, 2E + bay_width])侧面中央设车位(沿道路的宽 bay_width，进深 depth)，车位口两侧各有出入口段 E。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>別表第三の図(3JH00000217784)そのもの: 道路(幅 A)の途中に車庫(幅 B × 奥行 C)が直角に付き、車庫口の両側の道路が出入口部 D、車庫口の凹頂点 2 つがすみ切り E。図は上向きの道路の右側に車庫があるが、ここでは <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y)を既定にし <code style="color:#22d3bf">&quot;right&quot;</code> で鏡映する。車は道路を進み、後退で車庫に入れ、来た方向へ出る(exit = (0, 0, π); 反対側へ出るときは配置側で向きを選ぶ)。centerline は道路の軸 → 車庫の軸。面積 = (2E + bay_width)·w + depth·bay_width + 2r²(1 − π/4)。</p>
-<p>規格: A = 3.5, B = 3.5, C = 5, D ≥ 5, E = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・車庫幅・奥行・E が正でない、r &lt; 0、E &lt; r または depth &lt; r(すみ切りが辺に収まらない)、arc_pts が 1 以上の整数でない、side が left/right でない。</p>
+<p>即别表第三的图(3JH00000217784)本身: 道路(宽 A)中途以直角连接车库(宽 B × 深 C),车库口两侧的道路为出入口部 D,车库口的 2 个凹顶点为切角 E。图中车库位于朝上道路的右侧,此处默认 <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y),<code style="color:#22d3bf">&quot;right&quot;</code> 为镜像。车辆沿道路行驶,倒车入库,再朝来的方向驶出(exit = (0, 0, π);向另一侧驶出时由布置一方选择方向)。centerline 为道路轴线 → 车库轴线。面积 = (2E + bay_width)·w + depth·bay_width + 2r²(1 − π/4)。</p>
+<p>规格: A = 3.5, B = 3.5, C = 5, D ≥ 5, E = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 宽度、车库宽度、深度、E 非正、r &lt; 0、E &lt; r 或 depth &lt; r(切角放不进边内)、arc_pts 不是 1 以上的整数、side 不是 left/right。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

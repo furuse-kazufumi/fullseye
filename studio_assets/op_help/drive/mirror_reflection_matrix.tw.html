@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_reflection_matrix(mirror_plane) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivedecide; drivedecide.mirror_reflection_matrix(mirror_plane) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;mirror_reflection_matrix&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>關於平面 <code style="color:#22d3bf">mirror_plane</code> = (n_x, n_y, n_z, d)(點 X 在鏡面上 ⇔ n·X = d，n 會被正規化)的反射的 4×4 齊次矩陣。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>S = [[I − 2nnᵀ, 2dn], [0, 1]]</p>
-<p>S·S = I(対合)、回転部の行列式 = −1(向きを反転)。</p>
+<p>S·S = I(對合),旋轉部分的行列式 = −1(反轉定向)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

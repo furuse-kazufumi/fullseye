@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">positions</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.point_spectrum(positions, extent=None, n_freq=2048, f_max=None, method=&#x27;direct&#x27;, weights=None, bins_per_period=8)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import dsp; dsp.point_spectrum(positions, extent=None, n_freq=2048, f_max=None, method=&#x27;direct&#x27;, weights=None, bins_per_period=8)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops1d.get(&quot;point_spectrum&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Periodogram of <b>event positions</b> — defects, impacts, counts, arrivals.</p>
+<p><b>사건 위치</b>의 주기도(periodogram) —— 결함, 충격, 계수, 도착.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">spectrum</code> needs an evenly sampled signal, but a great deal of industrial data arrives as a *list of positions*: where each defect was on the web, when each particle was counted, at what angle each dent sits. The usual workaround is to histogram the positions and FFT the histogram, which works but hides two choices — bin width and record length — that decide the answer. This operator makes both explicit and returns them.</p>
 <p>*method* picks the estimator:</p>
 <p><code style="color:#22d3bf">&quot;direct&quot;</code></p>

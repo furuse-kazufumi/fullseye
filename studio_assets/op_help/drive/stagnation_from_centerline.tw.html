@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import swarmflow; swarmflow.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;stagnation_from_centerline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將中心線上的虧損線性化，讀取上游的撞擊點(駐點)、障礙物中心與半徑(實作 1，只用上游的點)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p style="margin:2px 0 2px 12px">1. 欠損(3 × 3 の平均)が <code style="color:#22d3bf">d_range</code> の上限を超える格子のうち、最も上流のものを「衝突点のそば」とする。</p>
-<p style="margin:2px 0 2px 12px">2. その少し上流の列(4 列)で、欠損が最大の行を放物線で副格子に求め、平均を中心線 y_c とする(上流の欠損 R²(Δx² − Δy²)/(Δx² + Δy²)² は Δy = 0 で最大)。</p>
-<p style="margin:2px 0 2px 12px">3. y_c の高さで欠損を行の間の 1 次補間で取り、衝突点のそばより上流で <code style="color:#22d3bf">d_range</code> の中にある格子で 1/√d = (x_c − x)/R を重みつき最小二乗で引く(速さの雑音 σ_d は 1/√d では σ_d/(2d^{3/2}) に増えるので、重み d^{3/2} —— 欠損の小さい遠くの点は雑音で暴れる): R = −1/傾き、x_c = 切片 × R。よどみ点 = (x_c − R, y_c)。</p>
-<p style="margin:2px 0 2px 12px">4. <code style="color:#22d3bf">speed</code> を与えないときは、上流の端の u を閉形式で割り戻して U を推定し直し、3 を繰り返す(U の変化が 1e-9 未満になるか <code style="color:#22d3bf">n_iter</code> 回まで。収束は 1 次で、R = 0.6・端までの距離 3 の場で約 30 回)。上流の端も 1/r² で欠けているので(R = 0.6、距離 3 で 4 %)、端の中央値をそのまま U にすると直線が曲がる。</p>
+<p style="margin:2px 0 2px 12px">1. 在虧損(3 × 3 平均)超過 <code style="color:#22d3bf">d_range</code> 上限的網格中,將最上游者視為「撞擊點附近」。</p>
+<p style="margin:2px 0 2px 12px">2. 在其稍上游的欄(4 欄)中,用拋物線以次網格精度求虧損最大的列,取平均作為中心線 y_c (上游虧損 R²(Δx² − Δy²)/(Δx² + Δy²)² 在 Δy = 0 處最大)。</p>
+<p style="margin:2px 0 2px 12px">3. 在 y_c 高度上以列間一次內插取虧損,對位於撞擊點附近以上游且在 <code style="color:#22d3bf">d_range</code> 內的網格, 以加權最小平方擬合 1/√d = (x_c − x)/R(速度雜訊 σ_d 在 1/√d 中增大為 σ_d/(2d^{3/2}), 故權重為 d^{3/2} —— 虧損小的遠處點會因雜訊而劇烈波動):R = −1/斜率,x_c = 截距 × R。停滯點 = (x_c − R, y_c)。</p>
+<p style="margin:2px 0 2px 12px">4. 未給定 <code style="color:#22d3bf">speed</code> 時,用閉式從上游邊緣的 u 反除以重新估計 U,並重複 3(直到 U 的變化小於 1e-9 或達 <code style="color:#22d3bf">n_iter</code> 次。收斂為一階,在 R = 0.6、到邊緣距離 3 的場中約 30 次)。上游邊緣同樣按 1/r² 虧損(R = 0.6、距離 3 時為 4 %),若直接以邊緣中位數作為 U,直線會彎曲。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">stagnation</code> (x, y)、<code style="color:#22d3bf">center</code> (x, y)、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">n_used</code>、<code style="color:#22d3bf">rms_residual</code>(1/√d の当てはめの残差)、</p>
-<p><code style="color:#22d3bf">speed</code>、<code style="color:#22d3bf">ok</code>(点が足りて傾きが負なら True)。</p>
+<p>dict: <code style="color:#22d3bf">stagnation</code> (x, y)、<code style="color:#22d3bf">center</code> (x, y)、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">n_used</code>、<code style="color:#22d3bf">rms_residual</code>(1/√d 擬合的殘差)、</p>
+<p><code style="color:#22d3bf">speed</code>、<code style="color:#22d3bf">ok</code>(點數足夠且斜率為負時為 True)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

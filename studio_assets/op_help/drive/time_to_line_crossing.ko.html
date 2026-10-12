@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.time_to_line_crossing(offset: &#x27;float&#x27;, heading_error: &#x27;float&#x27;, curvature: &#x27;float&#x27;, speed: &#x27;float&#x27;, *, line_offset: &#x27;float&#x27;, lane_curvature: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.time_to_line_crossing(offset: &#x27;float&#x27;, heading_error: &#x27;float&#x27;, curvature: &#x27;float&#x27;, speed: &#x27;float&#x27;, *, line_offset: &#x27;float&#x27;, lane_curvature: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;time_to_line_crossing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>TLC: 차량(의 기준점)이 현재 곡률 그대로 원(또는 직선)을 주행한다고 할 때 차로 경계에 닿기까지의 시간 [s].</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>座標: 車線の中心線の上の点を原点、中心線の向きを +x、左を +y。車は (0, <code style="color:#22d3bf">offset</code>)、中心線に対する向き <code style="color:#22d3bf">heading_error</code>、曲率 <code style="color:#22d3bf">curvature</code>(左が正)。境界は中心線から横 <code style="color:#22d3bf">line_offset</code>(左が正)の線 —— 中心線が曲率 <code style="color:#22d3bf">lane_curvature</code> の円なら、それと同心の円。届かなければ <code style="color:#22d3bf">inf</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 非有限、v ≤ 0、車がすでに境界の外側(offset と line_offset の関係で判断)。</p>
+<p>좌표: 차로 중심선 위의 점을 원점, 중심선 방향을 +x, 왼쪽을 +y. 차는 (0, <code style="color:#22d3bf">offset</code>), 중심선에 대한 방향 <code style="color:#22d3bf">heading_error</code>, 곡률 <code style="color:#22d3bf">curvature</code>(왼쪽이 양). 경계는 중심선에서 옆으로 <code style="color:#22d3bf">line_offset</code>(왼쪽이 양)만큼 떨어진 선 —— 중심선이곡률 <code style="color:#22d3bf">lane_curvature</code> 의 원이면 그것과 동심인 원. 닿지 않으면 <code style="color:#22d3bf">inf</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 비유한, v ≤ 0, 차가 이미 경계의 바깥쪽(offset 과 line_offset 의 관계로 판단).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

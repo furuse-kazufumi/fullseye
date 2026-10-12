@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import cutting; cutting.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cut_force_csv_load&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>유한요소 절단 시뮬레이션이 출력한 날의 힘 CSV를 읽습니다(1행에 <code style="color:#22d3bf">Rcforc</code>, 2행이 열 이름, 열 = 시각과 힘의 3성분이 교대로).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>想定しているのは arXiv:2105.12244 が公開したデータセット(CC BY-NC 4.0 = 非商用)。<code style="color:#22d3bf">license</code> は呼び手が<b>必ず</b>書く(データの使い道を返り値に残すため、空なら ValueError)。データは repo に入れず、置き場所は環境変数で渡す。</p>
-<p>返り値: <code style="color:#22d3bf">t_s</code>、<code style="color:#22d3bf">F_xyz</code>(N、(N, 3))、<code style="color:#22d3bf">license</code>、<code style="color:#22d3bf">path</code> は返さない(ローカルパスを記録に残さない)。</p>
+<p>상정하고 있는 것은 arXiv:2105.12244 가 공개한 데이터셋(CC BY-NC 4.0 = 비상업). <code style="color:#22d3bf">license</code> 는 호출자가 <b>반드시</b> 쓴다(데이터의 용도를 반환값에 남기기 위해, 비어 있으면 ValueError). 데이터는 repo 에 넣지 않으며, 위치는 환경 변수로 넘긴다.</p>
+<p>반환값: <code style="color:#22d3bf">t_s</code>, <code style="color:#22d3bf">F_xyz</code>(N, (N, 3)), <code style="color:#22d3bf">license</code>, <code style="color:#22d3bf">path</code> 는 반환하지 않는다(로컬 경로를 기록에 남기지 않는다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

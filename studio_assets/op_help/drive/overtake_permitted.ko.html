@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.overtake_permitted(*, maneuver_start: &#x27;float&#x27;, maneuver_end: &#x27;float&#x27;, zones_result: &#x27;Optional[dict]&#x27; = None, lead_kind: &#x27;str&#x27; = &#x27;car&#x27;, lead_overtaking: &#x27;bool&#x27; = False, lead_keeping_right: &#x27;bool&#x27; = False, side: &#x27;str&#x27; = &#x27;right&#x27;, dist_oncoming: &#x27;float&#x27; = inf, requirement: &#x27;Optional[dict]&#x27; = None, being_overtaken: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivepass; drivepass.overtake_permitted(*, maneuver_start: &#x27;float&#x27;, maneuver_end: &#x27;float&#x27;, zones_result: &#x27;Optional[dict]&#x27; = None, lead_kind: &#x27;str&#x27; = &#x27;car&#x27;, lead_overtaking: &#x27;bool&#x27; = False, lead_keeping_right: &#x27;bool&#x27; = False, side: &#x27;str&#x27; = &#x27;right&#x27;, dist_oncoming: &#x27;float&#x27; = inf, requirement: &#x27;Optional[dict]&#x27; = None, being_overtaken: &#x27;bool&#x27; = False) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;overtake_permitted&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>추월을 시작해도 되는지(조문과 교칙에 의한 판정). 장면 S077·S078·S079·S080·S081·S083.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">maneuver_start</code> .. <code style="color:#22d3bf">maneuver_end</code> = 進路を変え始めてから前車の側方を通り終えるまでの自車の前端の位置。理由(code, 根拠):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">no_passing_zone</code>(30 条): その区間が <code style="color:#22d3bf">no_overtaking_zones</code> の禁止区間と重なる(前車が <code style="color:#22d3bf">EXEMPT_KINDS</code> なら除く)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">double_overtaking</code>(29 条): 前車が他の自動車を追い越そうとしている。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">wrong_side</code>(28 条 1・2 項): 前車が右折のため中央(右側端)に寄っている(<code style="color:#22d3bf">lead_keeping_right</code>)なら左、それ以外は右。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">oncoming_too_close</code>(28 条 4 項 + 閉形式): <code style="color:#22d3bf">dist_oncoming</code> &lt; <code style="color:#22d3bf">requirement[&quot;d_required&quot;]</code> (<code style="color:#22d3bf">overtake_requirement</code> の返り値)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">being_overtaken</code>(教則 5-6-1(2)エ。<b>法の明文なし</b>、場面 S080): 後ろの車が自車を追い越そうとしている。</p>
-<p>返り値: <code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">reasons</code> = [(code, 根拠)]、<code style="color:#22d3bf">required_side</code>。</p>
+<p><code style="color:#22d3bf">maneuver_start</code> .. <code style="color:#22d3bf">maneuver_end</code> = 진로를 바꾸기 시작해서 앞차의 측방을 다 지날 때까지의 자차 앞끝 위치. 이유(code, 근거):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">no_passing_zone</code>(제30조): 그 구간이 <code style="color:#22d3bf">no_overtaking_zones</code> 의 금지 구간과 겹친다(앞차가 <code style="color:#22d3bf">EXEMPT_KINDS</code> 이면 제외).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">double_overtaking</code>(제29조): 앞차가 다른 자동차를 추월하려 하고 있다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">wrong_side</code>(제28조 제1·2항): 앞차가 우회전을 위해 중앙(우측 끝)으로 붙어 있으면(<code style="color:#22d3bf">lead_keeping_right</code>) 왼쪽, 그 외에는 오른쪽.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">oncoming_too_close</code>(제28조 제4항 + 닫힌 형식): <code style="color:#22d3bf">dist_oncoming</code> &lt; <code style="color:#22d3bf">requirement[&quot;d_required&quot;]</code> (<code style="color:#22d3bf">overtake_requirement</code> 의 반환값).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">being_overtaken</code>(교통교칙(Kyosoku) 5-6-1(2)(e). <b>법의 명문 규정 없음</b>, 장면 S080): 뒤차가 자차를 추월하려 하고 있다.</p>
+<p>반환값: <code style="color:#22d3bf">ok</code>, <code style="color:#22d3bf">reasons</code> = [(code, 근거)], <code style="color:#22d3bf">required_side</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

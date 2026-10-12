@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aliased_frequency(f, fps)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivedecide; drivedecide.aliased_frequency(f, fps)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;aliased_frequency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>주파수 <code style="color:#22d3bf">f</code> [Hz]의 명멸을 프레임 레이트 <code style="color:#22d3bf">fps</code>로 샘플링했을 때의 <b>겉보기</b> 주파수(닫힌 식).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>f_a = | f − fps · round(f / fps) |  ∈ [0, fps/2]</p>
-<p>f &lt; fps/2 ならそのまま、fps の整数倍に近いほど遅く見える(車輪が止まって見える現象と同じ)。配列も可。</p>
+<p>f &lt; fps/2 이면 그대로, fps 의 정수배에 가까울수록 느리게 보인다(바퀴가 멈춰 보이는 현상과 같다). 배열도 가능하다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lidarsim; lidarsim.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ray_box_ranges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>origin <code style="color:#22d3bf">origin</code> से दिशा <code style="color:#22d3bf">dirs (...,3)</code> वाली rays के axis-aligned box में प्रवेश करने तक की दूरी (slab method)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">box = (xmin, ymin, zmin, xmax, ymax, zmax)</code>。外れは <code style="color:#22d3bf">inf</code>。原点が箱の内側なら前方で最初に当たる面(出口)までの距離。距離は <code style="color:#22d3bf">t·‖D‖</code>。<code style="color:#22d3bf">min &lt; max</code> でない箱は <code style="color:#22d3bf">ValueError</code>。</p>
+<p><code style="color:#22d3bf">box = (xmin, ymin, zmin, xmax, ymax, zmax)</code>। न टकराने पर <code style="color:#22d3bf">inf</code>। यदि मूल बिंदु बॉक्स के भीतर है, तो आगे पहली टकराने वाली सतह (निकास) तक की दूरी। दूरी <code style="color:#22d3bf">t·‖D‖</code> है। <code style="color:#22d3bf">min &lt; max</code> न होने वाला बॉक्स <code style="color:#22d3bf">ValueError</code> देता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

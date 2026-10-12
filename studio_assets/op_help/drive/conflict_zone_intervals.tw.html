@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.conflict_zone_intervals(dist_to_zone, zone_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, v0: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecrossing; drivecrossing.conflict_zone_intervals(dist_to_zone, zone_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, v0: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;conflict_zone_intervals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>車輛佔據衝突區域(路口內 2 條行進路線重疊處)的時刻 [t_in, t_out] (閉合式，可用陣列)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>前端が dist_to_zone 進むと入り、前端が dist_to_zone + zone_length + car_length 進むと後端が出る。初速 v0 から <code style="color:#22d3bf">accel</code> で <code style="color:#22d3bf">v_max</code> まで加速(accel = 0 なら一定の速さ)。既に領域に入っている(dist_to_zone &lt; 0)場合は t_in = 0。</p>
+<p>前端前進 dist_to_zone 時進入,前端前進 dist_to_zone + zone_length + car_length 時後端離開。從初速 v0 以 <code style="color:#22d3bf">accel</code> 加速到 <code style="color:#22d3bf">v_max</code>(accel = 0 則為等速)。若已在區域內(dist_to_zone &lt; 0)則 t_in = 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

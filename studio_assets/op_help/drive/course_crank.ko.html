@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecourse; drivecourse.course_crank(width=3.5, between=12.0, entry=4.0, corner_radius=1.0, arc_pts=16)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;course_crank&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>굴절 코스(크랭크, Z 형): 진입 → 좌 90° → B → 우 90° → 진출.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>別表第三の図(3JH00000217782)の測り方に合わせる: 幅 A = w、曲角間の長さ B は一方の道の外壁から向かいの道の内壁まで(= 中心線の曲角間距離)、出入口部 C は横断する帯の壁から出入口まで(中心線では C + w/2)、すみ切り D は曲角部の <b>内側</b> の角(外側の角は正方形のまま)。中心線は(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B)、長さ L = 2C + w + B。面積 = w·L + 2r²(1 − π/4) (導出はモジュール docstring)。規格(普通免許): A = 3.5, B = 12, C ≥ 4, D = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・B・C が正でない、r &lt; 0、C &lt; r(すみ切りが出入口にはみ出る)、B &lt; w + r(2 つの角が重なる)、arc_pts が 1 以上の整数でない。</p>
+<p>별표 제3 의 그림(3JH00000217782)의 측정 방식에 맞춘다: 폭 A = w, 굴곡 모서리 사이의 길이 B 는 한쪽 길의 바깥벽에서맞은편 길의 안쪽 벽까지(= 중심선의 굴곡 모서리 간 거리), 출입구부 C 는 횡단하는 띠의 벽에서 출입구까지(중심선에서는 C + w/2), 모서리 깎기 D 는 굴곡 모서리부의 <b>안쪽</b> 모서리(바깥쪽 모서리는 정사각형 그대로). 중심선은(0,0)→(C+w/2, 0)→(C+w/2, B)→(2C+w, B), 길이 L = 2C + w + B. 면적 = w·L + 2r²(1 − π/4) (유도는 모듈 docstring). 규격(보통 면허): A = 3.5, B = 12, C ≥ 4, D = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 폭·B·C 가 양수가 아님, r &lt; 0, C &lt; r(모서리 깎기가 출입구로 비어져 나온다), B &lt; w + r(2 개의 모서리가 겹친다), arc_pts 가 1 이상의 정수가 아님.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

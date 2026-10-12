@@ -61,10 +61,10 @@ def test_coverage_gallery_runs(gallery):
 #: 台帳 op 1,002 本のうち例索引に入っているのは 349 本しかなく、上の 2 本の
 #: 「100 %」は母集団が 3 層のうち 2 層しか無いために成り立っていた。
 #: 経緯と族別の内訳 = docs/KNOWN_ISSUES.md §38。
-#: 2026-10-12 に実測へ引き上げ(台帳 2,144 本中 376・2-D 例索引 776 本中 776)。
-#: 同日、``_REGISTRY_COVERED_FLOOR`` が定義だけで**どの試験からも読まれていなかった**のを見つけ、下に試験を足した。
 _LEDGER_COVERED_FLOOR = 376
 _REGISTRY_COVERED_FLOOR = 776
+# 2026-10-12 に実測へ引き上げた(台帳 2,144 本中 376・2-D 例索引 776 本中 776)。同日、
+# ``_REGISTRY_COVERED_FLOOR`` が定義だけで**どの試験からも読まれていなかった**のを見つけ、下に試験を足した。
 
 
 def _covered_names():

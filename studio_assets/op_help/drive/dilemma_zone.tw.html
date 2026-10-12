@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivedecide; drivedecide.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;dilemma_zone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>黃燈的兩難區(Gazis, Herman, Maradudin 1960)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>速度 <code style="color:#22d3bf">v</code> で停止線の手前 x にいるとき黄が点いた:</p>
-<p>止まれる     ⇔ x ≥ x_c = v δ + v²/(2a)                         (δ = reaction、a = decel)</p>
-<p>抜けられる   ⇔ x ≤ x_0 = v τ + ½ a₁ (τ − δ)² − (w + L)          (τ = amber、a₁ = accel ≥ 0、w = 交差点の幅、L = 車長)</p>
-<p>(a₁ = 0 が基本形。加速は反応の後から黄の終わりまで、と置いた形。τ ≤ δ なら加速項は 0。) max(x_0, 0) &lt; x &lt; x_c が <b>ジレンマゾーン</b>(止まれず抜けられない。x &lt; 0 は停止線を越えているので除く)、x_c ≤ x ≤ x_0 が <b>選べる区間</b>(両方できる)。</p>
-<p>日本の法令の読み: 教則 付表1(黄)は「停止位置に近く安全に止まれない場合はそのまま進行可」= <b>停止線を越えればよい</b>(交差点を黄のうちに抜ける義務ではない)。その読みでは <code style="color:#22d3bf">intersection_width = car_length = 0</code> として呼ぶ(x_0 = vτ)。GHM の「交差点を抜ける」は全赤の時間が無い前提の厳しい読み。</p>
-<p>返り値: <code style="color:#22d3bf">x_stop_min</code> = x_c、<code style="color:#22d3bf">x_clear_max</code> = x_0、<code style="color:#22d3bf">dilemma</code>((lo, hi) か None)、<code style="color:#22d3bf">option</code>(同)、<code style="color:#22d3bf">length</code>(ジレンマゾーンの長さ、無ければ 0)、<code style="color:#22d3bf">v_critical</code>(a₁ = 0 のとき x_c = x_0 になる速度の組。実根が無ければ空 = どの速度でもジレンマが無い)。<code style="color:#22d3bf">v</code> は 1 つの数(配列は <code style="color:#22d3bf">np.vectorize</code> などで)。</p>
+<p>以速度 <code style="color:#22d3bf">v</code> 位於停止線前 x 處時黃燈亮起:</p>
+<p>能停住     ⇔ x ≥ x_c = v δ + v²/(2a)                         (δ = reaction、a = decel)</p>
+<p>能通過     ⇔ x ≤ x_0 = v τ + ½ a₁ (τ − δ)² − (w + L)          (τ = amber、a₁ = accel ≥ 0、w = 路口寬度、L = 車長)</p>
+<p>(a₁ = 0 為基本形式。設定加速從反應之後持續到黃燈結束。若 τ ≤ δ 則加速項為 0。) max(x_0, 0) &lt; x &lt; x_c 為 <b>兩難區</b>(既停不住也通不過。x &lt; 0 已越過停止線,故排除), x_c ≤ x ≤ x_0 為 <b>可選區間</b>(兩者皆可)。</p>
+<p>日本法令的解讀: 《交通規則教則》附表1(黃)為「接近停止位置且無法安全停車時可繼續前進」 = <b>越過停止線即可</b>(並無在黃燈期間駛出路口的義務)。依此解讀,以 <code style="color:#22d3bf">intersection_width = car_length = 0</code> 呼叫(x_0 = vτ)。GHM 的「駛出路口」是以沒有全紅時間為前提的嚴格解讀。</p>
+<p>回傳值: <code style="color:#22d3bf">x_stop_min</code> = x_c、<code style="color:#22d3bf">x_clear_max</code> = x_0、<code style="color:#22d3bf">dilemma</code>((lo, hi) 或 None)、<code style="color:#22d3bf">option</code>(同)、<code style="color:#22d3bf">length</code>(兩難區長度,無則為 0)、<code style="color:#22d3bf">v_critical</code>(a₁ = 0 時使 x_c = x_0 的一組速度。無實根時為空 = 任何速度都沒有兩難)。<code style="color:#22d3bf">v</code> 為單一數值(陣列請用 <code style="color:#22d3bf">np.vectorize</code> 等)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

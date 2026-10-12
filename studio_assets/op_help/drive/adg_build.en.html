@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_build(paths)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.adg_build(paths)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;adg_build&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Action dependency graph (Hönig, Kiesel, Tinka, Durham, Ayanian 2019).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各車両の行動 = 「訪れるマスの列の k 番目に入る」。依存は 2 種類:</p>
-<p style="margin:2px 0 2px 12px">(1) 同じ車両の前の行動、(2) <b>同じマスを先に使う他車がそのマスを出ること</b>(計画の時刻順)。</p>
-<p>返りは dict: <code style="color:#22d3bf">cells</code>(各車両のマスの列)、<code style="color:#22d3bf">deps</code>(<code style="color:#22d3bf">(i, k)</code> → それより先に終わるべき <code style="color:#22d3bf">(j, m)</code> の集合)。計画に衝突があれば ValueError(依存の向きが決まらない)。</p>
+<p>Each vehicle&#x27;s action = &quot;enter the k-th cell of its sequence of cells to visit&quot;. There are two kinds of dependency:</p>
+<p style="margin:2px 0 2px 12px">(1) the same vehicle&#x27;s previous action, (2) <b>another vehicle that uses the same cell earlier leaving that cell</b> (in plan time order).</p>
+<p>Returns a dict: <code style="color:#22d3bf">cells</code> (each vehicle&#x27;s cell sequence), <code style="color:#22d3bf">deps</code> (<code style="color:#22d3bf">(i, k)</code> → set of <code style="color:#22d3bf">(j, m)</code> that must finish before it). If the plan contains a collision, raises ValueError (the direction of the dependency cannot be determined).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

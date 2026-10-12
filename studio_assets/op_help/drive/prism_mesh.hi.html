@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.prism_mesh(footprint: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;, height: &#x27;float&#x27;, *, base_z: &#x27;float&#x27; = 0.0) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveplateau; driveplateau.prism_mesh(footprint: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;, height: &#x27;float&#x27;, *, base_z: &#x27;float&#x27; = 0.0) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;prism_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>footprint polygon को ऊँचाई <code style="color:#22d3bf">height</code> के prism में extrude करता है (तल का face नहीं)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>頂点の並びは <code style="color:#22d3bf">V[0:k]</code> が底の環、<code style="color:#22d3bf">V[k:2k]</code> が天井の環(同じ順)。側面は辺ごとに四角形 2 三角形、屋根は耳切りの三角形。外向き法線になる向きで返す。</p>
+<p>शीर्षों के क्रम में <code style="color:#22d3bf">V[0:k]</code> तल का वलय है और <code style="color:#22d3bf">V[k:2k]</code> छत का वलय (समान क्रम)। पार्श्व प्रत्येक किनारे पर चतुर्भुज के 2 त्रिभुज हैं, छत ear-clipping त्रिभुज है। बाहर की ओर अभिलंब देने वाली दिशा में लौटाया जाता है।</p>
 <p>Args:</p>
-<p>footprint: (k,2) 局所 x,y [m]。向きは任意(内部で反時計回りに揃える)。</p>
-<p>height: 柱の高さ [m] &gt; 0。</p>
-<p>base_z: 底の z [m]。</p>
+<p>footprint: (k,2) स्थानीय x,y [m]। दिशा कोई भी (भीतर वामावर्त में संरेखित)।</p>
+<p>height: स्तंभ की ऊँचाई [m] &gt; 0।</p>
+<p>base_z: तल का z [m]।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(V (2k,3) float64, F (m,3) int64, is_roof (m,) bool)</code>。</p>
+<p><code style="color:#22d3bf">(V (2k,3) float64, F (m,3) int64, is_roof (m,) bool)</code>।</p>
 <p>Raises:</p>
-<p>ValueError: height ≤ 0 / 非有限、footprint が不正。</p>
+<p>ValueError: height ≤ 0 / अपरिमित, footprint अमान्य।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

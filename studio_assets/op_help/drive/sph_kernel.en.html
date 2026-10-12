@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_kernel(r, h: &#x27;float&#x27;, dim: &#x27;int&#x27; = 2, derivative: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import swarmflow; swarmflow.sph_kernel(r, h: &#x27;float&#x27;, dim: &#x27;int&#x27; = 2, derivative: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sph_kernel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Cubic (3rd-order) spline kernel W(r, h) (M4, support radius 2h). With <code style="color:#22d3bf">derivative=True</code>, dW/dr (derivative along r, ≤ 0).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>W = σ_d [1 − 1.5 q² + 0.75 q³] (0 ≤ q &lt; 1)、σ_d · 0.25 (2 − q)³(1 ≤ q &lt; 2)、0(q ≥ 2)、q = r/h。σ_1 = 2/(3h)、σ_2 = 10/(7π h²)、σ_3 = 1/(π h³)。この定数で ∫ W dV = 1(恒等式。門で数値の求積と照らす)。</p>
+<p>W = σ_d [1 − 1.5 q² + 0.75 q³] (0 ≤ q &lt; 1), σ_d · 0.25 (2 − q)³ (1 ≤ q &lt; 2), 0 (q ≥ 2), q = r/h. σ_1 = 2/(3h), σ_2 = 10/(7π h²), σ_3 = 1/(π h³). With these constants ∫ W dV = 1 (an identity; a gate compares it with numerical quadrature).</p>
 <p>Args:</p>
-<p>r: 距離の配列(0 以上、形は任意)。</p>
-<p>h: 平滑化の長さ(&gt; 0)。</p>
-<p>dim: 1、2、3。</p>
-<p>derivative: True で dW/dr を返す。</p>
+<p>r: array of distances (≥ 0, any shape).</p>
+<p>h: smoothing length (&gt; 0).</p>
+<p>dim: 1, 2, 3.</p>
+<p>derivative: if True, returns dW/dr.</p>
 <p>Returns:</p>
-<p>r と同じ形の配列。</p>
+<p>array of the same shape as r.</p>
 <p>Raises:</p>
-<p>ValueError: h ≤ 0、dim が 1〜3 でない、r に負・非有限がある。</p>
-<p>空の入力(<code style="color:#22d3bf">r</code> が 0 要素)は ValueError。</p>
+<p>ValueError: h ≤ 0, dim not in 1 to 3, r contains negative or non-finite values.</p>
+<p>Empty input (<code style="color:#22d3bf">r</code> with 0 elements) raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

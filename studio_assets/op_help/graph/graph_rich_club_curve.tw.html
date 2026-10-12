@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_rich_club_curve(adj, mode=&#x27;total&#x27;, n_null=20, swaps_per_edge=5, seed=0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import graphinv; graphinv.graph_rich_club_curve(adj, mode=&#x27;total&#x27;, n_null=20, swaps_per_edge=5, seed=0)</code>;從台帳取用則 <code style="color:#22d3bf">opsgraph.get(&quot;graph_rich_club_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Rich-club coefficient φ(k) for every k, against the degree-preserving null.</p>
+<p>對每個 k 計算 rich-club 係數 φ(k)，並與保度虛無模型比較。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>φ(k) is the directed density of the subgraph spanned by the nodes whose degree exceeds</p>
 <p>k: <code style="color:#22d3bf">edges among them / (r (r − 1))</code>, <code style="color:#22d3bf">r</code> = their number (Colizza et al. 2006; the same formula as <code style="color:#22d3bf">conngraph.graph_rich_club</code>, here for all k at once). <code style="color:#22d3bf">mode</code> is the degree used to rank nodes: <code style="color:#22d3bf">&quot;total&quot;</code> (in + out), <code style="color:#22d3bf">&quot;in&quot;</code> or <code style="color:#22d3bf">&quot;out&quot;</code> (Yadav &amp; Singh 2026 rank by in- and out-degree separately). A rising φ(k) alone means little — high-degree nodes are dense in any graph — so φ is divided by its mean over <code style="color:#22d3bf">n_null</code> rewirings that keep every node&#x27;s in- and out-degree exactly (Maslov &amp; Sneppen 2002; every sample is checked, fail-closed). <code style="color:#22d3bf">ratio &gt; 1</code> is the rich-club regime; Towlson et al. 2013 call it significant where <code style="color:#22d3bf">ratio &gt; 1 + sd</code>.</p>
 <p>Returns a dict: <code style="color:#22d3bf">k</code> (all integers 0 .. max degree − 1), <code style="color:#22d3bf">count</code> (nodes with degree</p>

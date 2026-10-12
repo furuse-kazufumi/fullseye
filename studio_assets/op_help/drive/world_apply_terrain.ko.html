@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveterrain; driveterrain.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;world_apply_terrain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>world_build의 출력(평평한 월드)에 지형을 적용합니다(제자리에서 수정하고 같은 dict를 반환합니다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>路面の升(objects[0] &quot;ground&quot;)を terrain_mesh に置き換え、姿勢を持つ物体(資産・木・歩行者)は姿勢の(x, y) の高さだけ剛体で持ち上げ、持たない物体(縁石・白線・停止線・レール・坂)は頂点ごとに持ち上げる。<code style="color:#22d3bf">world[&quot;terrain&quot;] = p</code> を記録する。</p>
+<p>노면 메시(objects[0] &quot;ground&quot;)를 terrain_mesh 로 바꾸고, 자세를 가진 물체(자산/나무/보행자)는 자세의(x, y) 높이만큼 강체로 들어 올리며, 자세가 없는 물체(연석/백선/정지선/레일/경사로)는 정점마다 들어 올린다. <code style="color:#22d3bf">world[&quot;terrain&quot;] = p</code> 를 기록한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

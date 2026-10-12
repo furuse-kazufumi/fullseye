@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import lidarsim; lidarsim.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;ray_box_ranges&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Distance travelled by rays from the origin <code style="color:#22d3bf">origin</code> in directions <code style="color:#22d3bf">dirs (...,3)</code> until they enter an axis-aligned box (slab method).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">box = (xmin, ymin, zmin, xmax, ymax, zmax)</code>。外れは <code style="color:#22d3bf">inf</code>。原点が箱の内側なら前方で最初に当たる面(出口)までの距離。距離は <code style="color:#22d3bf">t·‖D‖</code>。<code style="color:#22d3bf">min &lt; max</code> でない箱は <code style="color:#22d3bf">ValueError</code>。</p>
+<p><code style="color:#22d3bf">box = (xmin, ymin, zmin, xmax, ymax, zmax)</code>. A miss gives <code style="color:#22d3bf">inf</code>. If the origin is inside the box, the distance to the first face hit ahead (the exit). Distance is <code style="color:#22d3bf">t·‖D‖</code>. A box without <code style="color:#22d3bf">min &lt; max</code> raises <code style="color:#22d3bf">ValueError</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

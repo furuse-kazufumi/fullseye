@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecrossing; drivecrossing.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;no_stopping_zones&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>도로를 따라 있는 시설로부터 제44조 제1항의 주정차 금지 구간을 생성.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(バス停は &quot;at&quot; = 標示板の位置でもよい)。kind ∈ <code style="color:#22d3bf">NO_STOP_DISTANCE</code>。区間 = [start − d, end + d] (d = その号の距離)。バス停は運行時間中(<code style="color:#22d3bf">in_service</code>)だけ。</p>
-<p>返り値: <code style="color:#22d3bf">zones</code> = [(a, b, kind, 号)] (元の順)、<code style="color:#22d3bf">merged</code> = 重なりを併せた (k, 2) の配列(昇順・互いに素)。</p>
-<p>空の入力(<code style="color:#22d3bf">features</code> が 0 件)は空を返す(理由: 施設が 0 件の道路は普通にあり、禁止区間が無いことが正しい答え)。</p>
+<p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(버스 정류장은 &quot;at&quot; = 표지판의 위치여도 됨). kind ∈ <code style="color:#22d3bf">NO_STOP_DISTANCE</code>. 구간 = [start − d, end + d] (d = 해당 호의 거리). 버스 정류장은 운행 시간 중(<code style="color:#22d3bf">in_service</code>)에만.</p>
+<p>반환값: <code style="color:#22d3bf">zones</code> = [(a, b, kind, 호)] (원래 순서), <code style="color:#22d3bf">merged</code> = 겹침을 합친 (k, 2) 배열(오름차순·서로소).</p>
+<p>빈 입력(<code style="color:#22d3bf">features</code> 이(가) 0 건)은 빈 결과를 반환한다(이유: 시설이 0 건인 도로는 흔히 있으며, 금지 구간이 없는 것이 올바른 답).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

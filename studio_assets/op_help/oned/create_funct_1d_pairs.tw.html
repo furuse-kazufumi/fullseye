@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.create_funct_1d_pairs(x, y)</code>(要直接呼叫實作,<code style="color:#22d3bf">import funct1d; funct1d.create_funct_1d_pairs(x, y)</code>;從台帳取用則 <code style="color:#22d3bf">ops1d.get(&quot;create_funct_1d_pairs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>A 1-D function from arbitrary <code style="color:#22d3bf">(x, y)</code> pairs, resampled to an equidistant grid (HALCON <code style="color:#22d3bf">create_funct_1d_pairs</code>).</p>
+<p>由任意 <code style="color:#22d3bf">(x, y)</code> 對構成並重取樣到等間距網格的一維函數(HALCON <code style="color:#22d3bf">create_funct_1d_pairs</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The pairs are sorted by x and linearly interpolated onto the <b>integer</b> grid <code style="color:#22d3bf">floor(min(x)) .. ceil(max(x))</code> (step 1). Grid points outside the convex hull of the data (only the two end points can be) hold the nearest sample&#x27;s value — <code style="color:#22d3bf">numpy.interp</code> end-hold, no extrapolation. Duplicate x values keep numpy&#x27;s interp behaviour (the segment between duplicates is a step). Note the returned function&#x27;s index 0 corresponds to physical <code style="color:#22d3bf">x = floor(min(x))</code>, not necessarily 0.</p>
 <p>:param x: 1-D abscissa values, at least 1 pair, finite. :param y: 1-D ordinate values, same length as *x*, finite. :returns: float64 array on the integer grid. :raises ValueError: non-1-D / NaN / Inf input, empty input, or length mismatch.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

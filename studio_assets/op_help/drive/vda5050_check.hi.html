@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vda5050_check(order)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.vda5050_check(order)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;vda5050_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>VDA 5050 order के <b>structure के नियम</b> जाँचता है (आधिकारिक JSON schema से अलग, हमारा अपना 2nd implementation)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>規則: 必須キー / ノードの sequenceId は 0 から偶数で連番、エッジは奇数で連番 / エッジ数 = ノード数 − 1 / 各エッジの始点・終点が前後のノード / released は base の先頭から連続(base → horizon の 1 回の切替のみ)/ エッジの released はその終点ノードと同じ。返りは違反の文言のリスト(空 = 合格)。</p>
-<p>空の入力(<code style="color:#22d3bf">order</code> が空の dict)は空を返す(理由: 検査器なので、空の order も検査の対象。足りない鍵の一覧が正しい答え)。</p>
+<p>नियम: आवश्यक कुंजियाँ / नोड के sequenceId 0 से क्रमागत सम संख्याएँ, एज क्रमागत विषम / एज की संख्या = नोड की संख्या − 1 / प्रत्येक एज का आरंभ और अंत पहले और बाद के नोड / released, base के आरंभ से निरंतर (base → horizon का केवल 1 बार परिवर्तन) / एज का released उसके अंत-नोड के समान। रिटर्न उल्लंघन संदेशों की सूची है (खाली = उत्तीर्ण)।</p>
+<p>खाली इनपुट (<code style="color:#22d3bf">order</code> खाली dict) खाली परिणाम लौटाता है (कारण: जाँचकर्ता होने के कारण खाली order भी जाँच का विषय है; अनुपस्थित कुंजियों की सूची ही सही उत्तर है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
