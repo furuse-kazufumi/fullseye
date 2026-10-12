@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**115 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**116 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1004,7 +1004,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 36 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 37 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2167,6 +2167,38 @@ Source: [examples/poc_measurement_system_analysis.py](https://github.com/furuse-
 This run produced **22 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_measurement_system_analysis)
 
 Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`gum_expanded`](https://furuse.work/ops/spc/uncertainty/gum_expanded.html) · [`gum_monte_carlo`](https://furuse.work/ops/spc/uncertainty/gum_monte_carlo.html) · [`gum_propagate`](https://furuse.work/ops/spc/uncertainty/gum_propagate.html) · [`gum_standard_uncertainty`](https://furuse.work/ops/spc/uncertainty/gum_standard_uncertainty.html) · [`gum_validate`](https://furuse.work/ops/spc/uncertainty/gum_validate.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`msa_anova_table`](https://furuse.work/ops/spc/msa/msa_anova_table.html) · [`msa_attribute_agreement`](https://furuse.work/ops/spc/msa/msa_attribute_agreement.html) · [`msa_bias_linearity`](https://furuse.work/ops/spc/msa/msa_bias_linearity.html) · [`msa_gauge_rr`](https://furuse.work/ops/spc/msa/msa_gauge_rr.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
+
+## No.2026.219 —— The Resolution Formula Does Not Tell You What You Will Find - Probability of Detection per Lighting (MIL-HDBK-1823A)
+
+[![The Resolution Formula Does Not Tell You What You Will Find - Probability of Detection per Lighting (MIL-HDBK-1823A)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/01_sites_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/01_sites.png)
+
+*↑ **The Resolution Formula Does Not Tell You What You Will Find - Probability of Detection per Lighting (MIL-HDBK-1823A)** ―― V-groove scratches 2-300 µm wide on hairline-finished metal, rendered with the illumination physics, imaged by the same camera and processed by the same chain under three lightings; the truth is the scratch width that was put in. The design formula says the smallest resolvable size is 202 µm, yet with a 70° ring - where the flank mirrors the light into the camera - a90/95 is 8.9 µm, under a dome 27.1 µm, and with a 30° ring 105 of 120 scratches stay below the recording threshold and the a90/95 lies beyond the sizes tested (flagged as extrapolation). Re-rendering 200 scratches at the fitted a90 gives a measured detection rate of 0.910 / 0.845 (band 0.9 +/- 0.064); the hit/miss GLM agrees with the â-vs-a a90 to 0.15 / 0.18 SE; ignoring censoring flattens the slope by up to 4.7 SE; and unflawed sites given random sizes are refused a curve.*
+
+[![記録閾値より下は左打ち切り、応答の天井の 8 割より上は右打ち切りとして尤度に入る(照明ごとに天井が違う)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/02_ahat_vs_a_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/02_ahat_vs_a.png)
+
+*↑ The measurement ―― 記録閾値より下は左打ち切り、応答の天井の 8 割より上は右打ち切りとして尤度に入る(照明ごとに天井が違う)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![仰角 70° の a90/95 = 8.9 µm、ドーム 27.1 µm、設計の式の限界 202 µm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/03_pod_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/03_pod_curves.png)
+
+*↑ 仰角 70° の a90/95 = 8.9 µm、ドーム 27.1 µm、設計の式の限界 202 µm。*
+
+[![閾値を上げれば誤検出は減るが、90 % 見つかる大きさは伸びる(1823A 図 G-28)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/04_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/04_tradeoff.png)
+
+*↑ 閾値を上げれば誤検出は減るが、90 % 見つかる大きさは伸びる(1823A 図 G-28)。*
+
+[![真値は描画に入れた傷の幅。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/05_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/05_numbers.png)
+
+*↑ 真値は描画に入れた傷の幅。*
+
+```
+py -3.11 examples/poc_pod_lighting.py
+```
+
+Source: [examples/poc_pod_lighting.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pod_lighting)
+
+Ops used (notes): [`light_source`](https://furuse.work/ops/optics/illumination/light_source.html) · [`pod_ahat_fit`](https://furuse.work/ops/spc/pod/pod_ahat_fit.html) · [`pod_decision_tradeoff`](https://furuse.work/ops/spc/pod/pod_decision_tradeoff.html) · [`pod_false_call`](https://furuse.work/ops/spc/pod/pod_false_call.html) · [`pod_from_ahat`](https://furuse.work/ops/spc/pod/pod_from_ahat.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html)
 
 ## No.2026.150 —— Scoring an Aberration as a Picture: Zernike Polynomials and the Point Spread Function
 

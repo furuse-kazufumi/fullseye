@@ -2906,6 +2906,22 @@
    }
   },
   {
+   "id": "poc_pod_lighting",
+   "group": "wing_metrology",
+   "media": "03_pod_curves.png",
+   "motion": false,
+   "thumb_src": "03_pod_curves_720.jpg",
+   "label": {
+    "ja": "照明ごとの検出確率",
+    "en": "POD per lighting",
+    "zh": "各照明的检出概率",
+    "tw": "各照明的檢出機率",
+    "ko": "조명별 검출 확률",
+    "de": "POD je Beleuchtung",
+    "hi": "हर lighting का POD"
+   }
+  },
+  {
    "id": "poc_zernike_aberrations",
    "group": "wing_metrology",
    "media": "06_through_focus.gif",

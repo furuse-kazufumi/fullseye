@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **115 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **116 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1004,7 +1004,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 36 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 37 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2167,6 +2167,38 @@ py -3.11 examples/poc_measurement_system_analysis.py
 この回が作った図は全部で **22 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_measurement_system_analysis)
 
 使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`gum_expanded`](https://furuse.work/ops/spc/uncertainty/gum_expanded.html) · [`gum_monte_carlo`](https://furuse.work/ops/spc/uncertainty/gum_monte_carlo.html) · [`gum_propagate`](https://furuse.work/ops/spc/uncertainty/gum_propagate.html) · [`gum_standard_uncertainty`](https://furuse.work/ops/spc/uncertainty/gum_standard_uncertainty.html) · [`gum_validate`](https://furuse.work/ops/spc/uncertainty/gum_validate.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`msa_anova_table`](https://furuse.work/ops/spc/msa/msa_anova_table.html) · [`msa_attribute_agreement`](https://furuse.work/ops/spc/msa/msa_attribute_agreement.html) · [`msa_bias_linearity`](https://furuse.work/ops/spc/msa/msa_bias_linearity.html) · [`msa_gauge_rr`](https://furuse.work/ops/spc/msa/msa_gauge_rr.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html)
+
+## No.2026.219 —— 「解像度の式」は見つかる大きさを教えない ―― 照明ごとの検出確率(MIL-HDBK-1823A)
+
+[![「解像度の式」は見つかる大きさを教えない ―― 照明ごとの検出確率(MIL-HDBK-1823A)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/01_sites_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/01_sites.png)
+
+*↑ **「解像度の式」は見つかる大きさを教えない ―― 照明ごとの検出確率(MIL-HDBK-1823A)** ―― ヘアライン金属の V 字の傷(幅 2〜300 µm)を照明の物理モデルで描き、同じカメラ・同じ処理で照明だけを 3 通りに変えて検出確率を出した。真値は自分で入れた傷の幅。★★設計の式は分解できる最小の大きさを 202 µm と言うが、斜面が光をカメラへ鏡面反射するリング仰角 70° では a90/95 が **8.9 µm**、ドームは 27.1 µm、仰角 30° は傷の 105/120 が記録閾値の下で a90/95 は試した範囲の外(外挿の旗)。解像度は「形が分かるか」、POD は「在ることに気づくか」で別の問い。★★当てた a90 の傷を 200 本描き直すと実測の検出率は 0.910 / 0.845(0.9 ± 0.064 の帯)。★2 値 GLM の a90 は â vs a と 0.15 / 0.18 SE で一致。★打ち切りを無視した最小二乗は傾きを最大 4.7 SE 寝かせる。★無欠陥部位にでたらめな大きさを割り振ると op は曲線を拒む。検査 16 件・図 5 枚。*
+
+[![記録閾値より下は左打ち切り、応答の天井の 8 割より上は右打ち切りとして尤度に入る(照明ごとに天井が違う)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/02_ahat_vs_a_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/02_ahat_vs_a.png)
+
+*↑ 測定の図 ―― 記録閾値より下は左打ち切り、応答の天井の 8 割より上は右打ち切りとして尤度に入る(照明ごとに天井が違う)。*
+
+[![仰角 70° の a90/95 = 8.9 µm、ドーム 27.1 µm、設計の式の限界 202 µm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/03_pod_curves_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/03_pod_curves.png)
+
+*↑ 仰角 70° の a90/95 = 8.9 µm、ドーム 27.1 µm、設計の式の限界 202 µm。*
+
+[![閾値を上げれば誤検出は減るが、90 % 見つかる大きさは伸びる(1823A 図 G-28)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/04_tradeoff_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/04_tradeoff.png)
+
+*↑ 閾値を上げれば誤検出は減るが、90 % 見つかる大きさは伸びる(1823A 図 G-28)。*
+
+[![真値は描画に入れた傷の幅。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/05_numbers_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pod_lighting/05_numbers.png)
+
+*↑ 真値は描画に入れた傷の幅。*
+
+```
+py -3.11 examples/poc_pod_lighting.py
+```
+
+ソース: [examples/poc_pod_lighting.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pod_lighting.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pod_lighting)
+
+使用 op(ノートへ): [`light_source`](https://furuse.work/ops/optics/illumination/light_source.html) · [`pod_ahat_fit`](https://furuse.work/ops/spc/pod/pod_ahat_fit.html) · [`pod_decision_tradeoff`](https://furuse.work/ops/spc/pod/pod_decision_tradeoff.html) · [`pod_false_call`](https://furuse.work/ops/spc/pod/pod_false_call.html) · [`pod_from_ahat`](https://furuse.work/ops/spc/pod/pod_from_ahat.html) · [`pod_hitmiss_fit`](https://furuse.work/ops/spc/pod/pod_hitmiss_fit.html)
 
 ## No.2026.150 —— 収差の絵は、絵のまま採点できる —— ゼルニケ多項式と点像
 

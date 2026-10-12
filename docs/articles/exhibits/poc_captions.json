@@ -2551,6 +2551,17 @@
    "caption_en": "Separate how much of a number comes from the parts and how much from the act of measuring, then combine the components of one measurement into a reportable uncertainty - scored entirely from outside the picture. The analysis-of-variance decomposition closes algebraically (1e-16); repeatability equals the mean of the per-cell sample variance numpy computes independently; the published worked example is reproduced to 1.5e-06 with contribution percentages 3.4/4.4/7.8/92.2 exactly. Keeping or pooling the interaction moves EV by 7.3 %, so the model actually used is reported; a negative variance component appears in 24 of 40 runs when the true component is zero and is declared, not hidden. Ignoring correlation errs in both directions on the same data (0.0702 -> 0.1945, a 2.8x overestimate, while reactance goes the other way). The effective degrees of freedom are truncated immediately before the t lookup (16.64 -> 16, k = 2.1199). At a stationary point the propagation law returns u = 0 and says so through structure rather than silently; Monte Carlo returns [0, 150]e-6 there. A sum of four rectangular distributions has an exact Irwin-Hall interval of -3.879407, against which the normal approximation is structurally 0.040521 too wide."
   },
   {
+   "id": "poc_pod_lighting",
+   "wing": "wing_metrology",
+   "added": "2026-10-12",
+   "numbers_source": "log",
+   "figure": "sites",
+   "title_ja": "「解像度の式」は見つかる大きさを教えない ―― 照明ごとの検出確率(MIL-HDBK-1823A)",
+   "title_en": "The Resolution Formula Does Not Tell You What You Will Find - Probability of Detection per Lighting (MIL-HDBK-1823A)",
+   "caption_ja": "ヘアライン金属の V 字の傷(幅 2〜300 µm)を照明の物理モデルで描き、同じカメラ・同じ処理で照明だけを 3 通りに変えて検出確率を出した。真値は自分で入れた傷の幅。★★設計の式は分解できる最小の大きさを 202 µm と言うが、斜面が光をカメラへ鏡面反射するリング仰角 70° では a90/95 が **8.9 µm**、ドームは 27.1 µm、仰角 30° は傷の 105/120 が記録閾値の下で a90/95 は試した範囲の外(外挿の旗)。解像度は「形が分かるか」、POD は「在ることに気づくか」で別の問い。★★当てた a90 の傷を 200 本描き直すと実測の検出率は 0.910 / 0.845(0.9 ± 0.064 の帯)。★2 値 GLM の a90 は â vs a と 0.15 / 0.18 SE で一致。★打ち切りを無視した最小二乗は傾きを最大 4.7 SE 寝かせる。★無欠陥部位にでたらめな大きさを割り振ると op は曲線を拒む。検査 16 件・図 5 枚。",
+   "caption_en": "V-groove scratches 2-300 µm wide on hairline-finished metal, rendered with the illumination physics, imaged by the same camera and processed by the same chain under three lightings; the truth is the scratch width that was put in. The design formula says the smallest resolvable size is 202 µm, yet with a 70° ring - where the flank mirrors the light into the camera - a90/95 is 8.9 µm, under a dome 27.1 µm, and with a 30° ring 105 of 120 scratches stay below the recording threshold and the a90/95 lies beyond the sizes tested (flagged as extrapolation). Re-rendering 200 scratches at the fitted a90 gives a measured detection rate of 0.910 / 0.845 (band 0.9 +/- 0.064); the hit/miss GLM agrees with the â-vs-a a90 to 0.15 / 0.18 SE; ignoring censoring flattens the slope by up to 4.7 SE; and unflawed sites given random sizes are refused a curve."
+  },
+  {
    "id": "poc_illusions_and_perpetual_drawing",
    "wing": "lane_math",
    "added": "2026-09-23",
