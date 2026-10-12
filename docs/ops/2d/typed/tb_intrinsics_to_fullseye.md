@@ -31,6 +31,7 @@ CARLA の K(画素の角が整数、主点 W/2)→ Fullseye / render3d の K(画
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 次の例は元の台帳 op `intrinsics_to_fullseye` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [gallery_drive_carla_bridge](../../../../examples/gallery_drive_carla_bridge.py) — `py -3.11 examples/gallery_drive_carla_bridge.py`
 - [poc_carla_bridge](../../../../examples/poc_carla_bridge.py) — `py -3.11 examples/poc_carla_bridge.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)

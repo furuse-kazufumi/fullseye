@@ -4,7 +4,7 @@ dim: drive
 category: world
 in: table
 out: table
-examples: [poc_driving_longitudinal, poc_driving_school, poc_driving_weather, poc_ttc_rss, poc_world_terrain]
+examples: [gallery_drive_japan_roads, gallery_drive_world_objects, poc_driving_longitudinal, poc_driving_school, poc_driving_weather, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -34,6 +34,8 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery_drive_japan_roads](../../../../examples/gallery_drive_japan_roads.py) — `py -3.11 examples/gallery_drive_japan_roads.py`
+- [gallery_drive_world_objects](../../../../examples/gallery_drive_world_objects.py) — `py -3.11 examples/gallery_drive_world_objects.py`
 - [poc_driving_longitudinal](../../../../examples/poc_driving_longitudinal.py) — `py -3.11 examples/poc_driving_longitudinal.py`
 - [poc_driving_school](../../../../examples/poc_driving_school.py) — `py -3.11 examples/poc_driving_school.py`
 - [poc_driving_weather](../../../../examples/poc_driving_weather.py) — `py -3.11 examples/poc_driving_weather.py`

@@ -4,7 +4,7 @@ dim: drive
 category: carla
 in: any
 out: matrix
-examples: []
+examples: [gallery_drive_carla_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -28,7 +28,7 @@ R_f = M R_c M、t_f = M t_c(M = diag(1, −1, 1))。物体の局所系は x 前�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_drive_carla_bridge](../../../../examples/gallery_drive_carla_bridge.py) — `py -3.11 examples/gallery_drive_carla_bridge.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)
 

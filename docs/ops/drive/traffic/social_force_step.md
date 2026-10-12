@@ -4,7 +4,7 @@ dim: drive
 category: traffic
 in: points × points × points
 out: any
-examples: []
+examples: [gallery_drive_mirrors_crowds]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -41,7 +41,7 @@ v' = v_d + (v − v_d) e^{−dt/τ}、x' = x + v_d dt + (v − v_d) τ (1 − e^
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_drive_mirrors_crowds](../../../../examples/gallery_drive_mirrors_crowds.py) — `py -3.11 examples/gallery_drive_mirrors_crowds.py`
 
 ## 型が繋がる次の op(`any` を入力に取れる)
 

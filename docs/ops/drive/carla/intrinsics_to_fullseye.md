@@ -4,7 +4,7 @@ dim: drive
 category: carla
 in: matrix
 out: matrix
-examples: [poc_carla_bridge]
+examples: [gallery_drive_carla_bridge, poc_carla_bridge]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -27,6 +27,7 @@ CARLA の K(画素の角が整数、主点 W/2)→ Fullseye / render3d の K(画
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery_drive_carla_bridge](../../../../examples/gallery_drive_carla_bridge.py) — `py -3.11 examples/gallery_drive_carla_bridge.py`
 - [poc_carla_bridge](../../../../examples/poc_carla_bridge.py) — `py -3.11 examples/poc_carla_bridge.py`
 
 ## 型が繋がる次の op(`matrix` を入力に取れる)

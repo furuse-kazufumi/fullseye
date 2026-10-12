@@ -4,7 +4,7 @@ dim: drive
 category: terrain
 in: table × table
 out: scalar
-examples: [poc_driving_crossing, poc_driving_decisions, poc_driving_humanoids, poc_driving_lateral, poc_driving_traffic, poc_world_terrain]
+examples: [gallery_drive_world_objects, poc_driving_crossing, poc_driving_decisions, poc_driving_humanoids, poc_driving_lateral, poc_driving_traffic, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -31,6 +31,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery_drive_world_objects](../../../../examples/gallery_drive_world_objects.py) — `py -3.11 examples/gallery_drive_world_objects.py`
 - [poc_driving_crossing](../../../../examples/poc_driving_crossing.py) — `py -3.11 examples/poc_driving_crossing.py`
 - [poc_driving_decisions](../../../../examples/poc_driving_decisions.py) — `py -3.11 examples/poc_driving_decisions.py`
 - [poc_driving_humanoids](../../../../examples/poc_driving_humanoids.py) — `py -3.11 examples/poc_driving_humanoids.py`

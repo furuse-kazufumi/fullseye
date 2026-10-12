@@ -4,7 +4,7 @@ dim: drive
 category: kendama
 in: 
 out: table
-examples: [gallery_drive_kendama_racket, poc_kendama]
+examples: [gallery_drive_kendama_racket, gallery_drive_world_objects, poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -48,6 +48,7 @@ fail-closed: 未知の preset、寸法 ≤ 0、皿の縁 ≥ 玉(縁で受けら
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery_drive_kendama_racket](../../../../examples/gallery_drive_kendama_racket.py) — `py -3.11 examples/gallery_drive_kendama_racket.py`
+- [gallery_drive_world_objects](../../../../examples/gallery_drive_world_objects.py) — `py -3.11 examples/gallery_drive_world_objects.py`
 - [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

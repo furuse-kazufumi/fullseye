@@ -4,7 +4,7 @@ dim: drive
 category: motion_io
 in: table
 out: voxel
-examples: []
+examples: [gallery_drive_world_io]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -31,7 +31,7 @@ version: 0.6.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_drive_world_io](../../../../examples/gallery_drive_world_io.py) — `py -3.11 examples/gallery_drive_world_io.py`
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)
 

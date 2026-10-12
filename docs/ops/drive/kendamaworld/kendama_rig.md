@@ -4,7 +4,7 @@ dim: drive
 category: kendamaworld
 in: table
 out: table
-examples: [poc_kendama]
+examples: [gallery_drive_world_objects, poc_kendama]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -29,6 +29,7 @@ n = 2: 方位 0° と 90°、n = 4: 90° ごと。全部が ``target``(既定 (0
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [gallery_drive_world_objects](../../../../examples/gallery_drive_world_objects.py) — `py -3.11 examples/gallery_drive_world_objects.py`
 - [poc_kendama](../../../../examples/poc_kendama.py) — `py -3.11 examples/poc_kendama.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

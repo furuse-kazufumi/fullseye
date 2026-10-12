@@ -4,7 +4,7 @@ dim: drive
 category: decide
 in: 
 out: any
-examples: []
+examples: [gallery_drive_mirrors_crowds]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.6.0  # fullseye lib version this note was generated for
@@ -31,7 +31,7 @@ S·S = I(対合)、回転部の行列式 = −1(向きを反転)。
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [gallery_drive_mirrors_crowds](../../../../examples/gallery_drive_mirrors_crowds.py) — `py -3.11 examples/gallery_drive_mirrors_crowds.py`
 
 ## 型が繋がる次の op(`any` を入力に取れる)
 
